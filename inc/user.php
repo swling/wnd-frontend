@@ -15,7 +15,7 @@ function wnd_insert_user() {
 		return array('status' => 0, 'msg' => '注册信息为空');
 	}
 
-	$user_login = isset($_POST['_user_user_login']) ? sanitize_user($_POST['_user_user_login']) : sanitize_user($_POST['_usermeta_phone']);
+	$user_login = isset($_POST['_user_user_login']) ? sanitize_user($_POST['_user_user_login']) : sanitize_user($_POST['_phone']);
 	$user_pass = esc_attr($_POST['_user_user_pass']);
 	$user_pass_repeat = esc_attr($_POST['_user_user_pass_repeat']);
 	$user_email = sanitize_email($_POST['_user_user_email']);
