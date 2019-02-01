@@ -164,7 +164,7 @@ function _wnd_reg_form(){
 		</div>
 	</div>
 	<?php do_action('_wnd_reg_form');?>
-	<?php if(function_exists('wnd_sms_field')) wnd_sms_field(wnd_get_option('wndwp','wnd_ali_TemplateCode_R'),$is_reg=true); ?>
+	<?php if(function_exists('wnd_sms_field')) wnd_sms_field(wnd_get_option('wndwp','wnd_ali_TemplateCode_R'), $type='reg'); ?>
 	<?php wp_nonce_field('wnd_insert_user', '_ajax_nonce'); ?>
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_insert_user">
@@ -287,7 +287,7 @@ function _wnd_lostpassword_form($type='email'){
 			</span>
 		</div>
 	</div>
-	<?php wnd_sms_field(wnd_get_option('wndwp','wnd_ali_TemplateCode_V'));?>
+	<?php wnd_sms_field(wnd_get_option('wndwp','wnd_ali_TemplateCode_V'), 'lostpassword');?>
 	<?php wp_nonce_field('wnd_reset_password_by_sms', '_ajax_nonce'); ?>
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_reset_password_by_sms">
@@ -446,8 +446,7 @@ function _wnd_profile_form($args=array()){
         /*头像上传*/
         $defaults = array(
             'id' => 'user-avatar',
-            'button_color'=>'is-danger',
-            'file_type'=>'image',
+            'is_image'=> 1,
             'meta_key' => 'avatar',
             'post_parent' => 0,
             'save_size' => array('width'=>200, 'height'=>200),

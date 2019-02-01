@@ -11,20 +11,17 @@ require WNDWP_PATH . 'sms/aliyun-sms/sendSms.php';
 
 /**
  *@since 初始化短信发送表单field
- *参数：$is_reg 即为注册操作，注册操作会检测手机是否已经注册
+ *参数：$type='reg' 即为注册操作，注册操作会检测手机是否已经注册，反之如果为 lostpassword 则不能发送给未注册用户
  */
-function wnd_sms_field($sms_template = '', $is_reg = false) {
+function wnd_sms_field($template = '', $type = 'verify') {
 
 	// 注册验证，将手机存入用户字段
-	if ($is_reg) {
+	if ($type=='reg') {
 		$phone_name = '_phone';
 	} else {
 		$phone_name = '_meta_phone';
 	}
-
-	$is_reg = $is_reg ? 1 : 0;
-
-	?>
+?>
 <div class="field is-horizontal">
 	<div class="field-body">
 		<?php if (!wnd_get_user_phone(get_current_user_id())) {?>
@@ -47,8 +44,8 @@ function wnd_sms_field($sms_template = '', $is_reg = false) {
 	</div>
 </div>
 <?php wp_nonce_field('wnd_ajax_send_sms', '_sms_nonce');?>
-<input type="hidden" name="is_reg"  value="<?php echo $is_reg; ?>">
-<input type="hidden" name="sms_template" value="<?php echo $sms_template; //阿里云短信模板 为设置则调用默认模板   ?>">
+<input type="hidden" name="sms_type"  value="<?php echo $type; ?>">
+<input type="hidden" name="sms_template" value="<?php echo $template; //阿里云短信模板 为设置则调用默认模板   ?>">
 <input type="hidden" name="action"  value="wnd_action">
 <script>
 	var wait = 90; // 获取验证码短信时间间隔 按钮不能恢复 可检查号码
@@ -65,7 +62,7 @@ function wnd_sms_field($sms_template = '', $is_reg = false) {
 
     $("#sendSmsBtn").off("click").on("click", function() {
     	var parent = '#' + $(this).parents('form').attr('id');
-        var is_reg = $("input[name=is_reg]").val();
+        var sms_type = $("input[name=sms_type]").val();
         var sms_template = $("input[name=sms_template]").val();
         var sms_nonce = $("input[name=_sms_nonce]").val();    	
 
@@ -92,7 +89,7 @@ function wnd_sms_field($sms_template = '', $is_reg = false) {
                 action: 'wnd_action',
                 action_name: "wnd_ajax_send_sms",
                 sms_phone: sms_phone,
-                sms_is_reg: is_reg,
+                sms_type: sms_type,
                 sms_template: sms_template,
                 _ajax_nonce: sms_nonce
             },
@@ -117,7 +114,7 @@ function wnd_sms_field($sms_template = '', $is_reg = false) {
 
     });
 </script>
-	<?php
+<?php
 
 }
 
@@ -129,17 +126,17 @@ function wnd_sms_field($sms_template = '', $is_reg = false) {
 function wnd_ajax_send_sms() {
 
 	// 此处通过 sms.js单独提取wnd_sms_field数据，非整体提交表单，故命名规则取决于sms.js ajax定义
-	$is_reg = $_POST['sms_is_reg'];
+	$type = $_POST['sms_type'];
 	$phone = trim($_POST['sms_phone']);
 	$template = $_POST['sms_template'] ?: wnd_get_option('wndwp', 'wnd_ali_TemplateCode');
 
 	// 给指定用户发送短信
 	if ( wnd_get_user_phone(get_current_user_id()) ) {
-		return wnd_send_sms_to_user($template);
+		return wnd_send_sms_to_user($template, $type);
 	}
 
 	// 未登录、未验证手机的用户
-	return wnd_send_sms($phone, $is_reg, $template);
+	return wnd_send_sms($phone, $template, $type);
 }
 
 /**
@@ -147,7 +144,7 @@ function wnd_ajax_send_sms() {
  *通过给当前用户发送短信
  *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
  */
-function wnd_send_sms_to_user($template) {
+function wnd_send_sms_to_user($template, $type) {
 
 	// 获取当前用户的手机号码
 	$user_id = get_current_user_id();
@@ -156,17 +153,17 @@ function wnd_send_sms_to_user($template) {
 		return array('status' => 0, 'msg' => '未能获取到手机号码！');
 	}
 
-	return wnd_send_sms($phone, $is_reg = 0, $template);
+	return wnd_send_sms($phone, $template, $type);
 }
 
 /**
  *@since 初始化
  *发送手机短信
  **/
-function wnd_send_sms($phone, $is_reg, $template) {
+function wnd_send_sms($phone, $template, $type) {
 
 	// 权限检测
-	$wnd_can_send_sms = wnd_can_send_sms($phone, $is_reg);
+	$wnd_can_send_sms = wnd_can_send_sms($phone, $type);
 	if ($wnd_can_send_sms['status'] === 0) {
 		return $wnd_can_send_sms;
 	}
@@ -192,7 +189,7 @@ function wnd_send_sms($phone, $is_reg, $template) {
 }
 
 // ###################################################################### 检测
-function wnd_can_send_sms($phone, $is_reg) {
+function wnd_can_send_sms($phone, $type) {
 
 	$send_time = wnd_get_sms_sendtime($phone); //获取改号码上一次发送时间
 
@@ -202,9 +199,15 @@ function wnd_can_send_sms($phone, $is_reg) {
 	}
 
 	// 检测是否为注册类型，注册类型去重
-	if ($is_reg and wnd_get_user_by_phone($phone)) {
+	if ($type=='reg' and wnd_get_user_by_phone($phone)) {
 		return array('status' => 0, 'msg' => '该号码已注册过！');
 	}
+
+	// 找回密码
+	if ($type == 'lostpassword' and !wnd_get_user_by_phone($phone)) {
+	    return array('status' => 0, 'msg' => '该号码尚未注册过！');
+	}
+	
 
 	// 上次发送短信的时间，防止短信攻击
 	if ($send_time and (time() - $send_time < 90)) {
@@ -218,7 +221,7 @@ function wnd_can_send_sms($phone, $is_reg) {
  *@since 初始化
  *@return array
  */
-function wnd_verify_sms($phone, $code, $is_reg) {
+function wnd_verify_sms($phone, $code, $type) {
 	global $wpdb;
 	$errors = false;
 
@@ -230,7 +233,7 @@ function wnd_verify_sms($phone, $code, $is_reg) {
 		$errors = "校验失败：请填写手机号！";
 
 		// 在 wnd_send_sms() 前端初步验证的基础上，再次检验手机号码，防止客户通过匿名方式获取验证码，绕道注册
-	} elseif ($is_reg && wnd_get_user_by_phone($phone)) {
+	} elseif ($type=='reg' && wnd_get_user_by_phone($phone)) {
 
 		$errors = "校验失败：手机号码已注册过！";
 
@@ -258,7 +261,7 @@ function wnd_verify_sms($phone, $code, $is_reg) {
 		/**
 		 *@since 2019.01.22 非注册类校验完成，清空当前手机验证码
 		 */
-		if (!$is_reg) {
+		if ($type!=='reg') {
 			wnd_reset_sms($phone, $reg_user_id = 0);
 		}
 
