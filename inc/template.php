@@ -766,7 +766,7 @@ function _wnd_post_form($args=array()){
 	// 未指定id，新建文章，否则为编辑
 	if(!$post_id){
 		$post_type = $args['post_type'];
-    	$post_id = wnd_get_draft_post($post_type = $post_type, $create_new = true, $only_current_user = false, $interval_time = 0)['msg'];
+    	$post_id = wnd_get_draft_post($post_type = $post_type, $create_new = true, $only_current_user = false, $interval_time = 3600*24 )['msg'];
     }
 
     // 定义文章数据
@@ -799,7 +799,6 @@ if ( $taxonomies ) {
   }unset($taxonomy);
 }
 
-
 ?>
 <form id="new-<?php echo $post_type;?>" name="new_post" method="post" action="" onsubmit="return false;" onkeydown="if(event.keyCode==13){return false;}">
 	<div class="field content">
@@ -809,7 +808,7 @@ if ( $taxonomies ) {
 	<div class="field">
 		<label class="label">标题<span class="required">*</span></label>
 		<div class="control">
-			<input type="text" class="input" name="_post_post_title" required="required" value="<?php echo $post->post_title;?>" placeholder="标题">
+			<input type="text" class="input" name="_post_post_title" required="required" value="<?php if($post->post_title!=='Auto-draft') echo $post->post_title;?>" placeholder="标题">
 		</div>
 	</div>
 
@@ -835,7 +834,6 @@ echo '<div class="field is-horizontal"><div class="field-body">'.PHP_EOL;
 	}unset($cat_taxonomy);
 echo '</div></div>'.PHP_EOL;
 }
-
 ?>
 
 <?php
@@ -857,25 +855,24 @@ echo '</div></div>'.PHP_EOL;
 	}unset($tag_taxonomy); 
 ?>	
 
-
-	<?php if($args['has_excerpt']==1) { //摘要 ?>
+<?php if($args['has_excerpt']==1) { //摘要 ?>
 	<div class="field">
 		<label class="label">摘要</label>
 		<div class="control">
 			<textarea name="_post_post_excerpt" class="textarea" placeholder="摘要"><?php echo $post->post_excerpt;?></textarea>
 		</div>
 	</div>
-	<?php } ?>
+<?php } ?>
 
-	<?php if($args['is_free']!=1 and !wp_doing_ajax()) { //付费内容 
+<?php if($args['is_free']!=1 and !wp_doing_ajax()) { //付费内容 
 		echo '<label class="label">付费内容</label>';
 		_wnd_paid_file_field($post_id);
 	}
-	?>
-	<?php do_action( 'wnd_post_form', $post_id,$post_type,$post ); ?>
+?>
+<?php do_action( 'wnd_post_form', $post_id,$post_type,$post ); ?>
 
 	<div class="field">
-	<?php 
+<?php 
 	// 正文详情
 	if(wp_doing_ajax()){
 
@@ -890,7 +887,7 @@ echo '</div></div>'.PHP_EOL;
         	wp_editor( $post->post_content, '_post_post_content','media_buttons=0');
         }
 	}
-	?>
+?>
 	</div>
 
 	<input type="hidden" name="_post_post_type" value="<?php echo $post_type;?>">

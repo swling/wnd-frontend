@@ -174,13 +174,16 @@ function wnd_get_draft_post($post_type = 'post', $create_new = true, $only_curre
 
 	// 未登录
 	if (!$user_id) {
-		return array('status' => 0, 'msg' => '请登录！');
+		return array('status' => 0, 'msg' => '未登录用户不建议使用富媒体编辑器！');
 	}
 
 	// 查询是否存在草稿，有则调用最近一篇草稿编辑，避免浪费
 	$query_array = array(
-		'post_status' => array('draft', 'auto-draft'),
+		'post_status' => 'auto-draft',
 		'post_type' => $post_type,
+		'orderby' => 'ID',
+		'order'   => 'ASC',
+		'cache_results'  => false,
 		'posts_per_page' => 1,
 	);
 
@@ -189,11 +192,11 @@ function wnd_get_draft_post($post_type = 'post', $create_new = true, $only_curre
 		$query_array = array_merge($query_array, array('author' => $user_id));
 	}
 
-	// 设置时间条件
+	// 设置时间条件 更新自动草稿时候，modified 不会变需要查询 post date
 	if ($interval_time) {
 		$date_query = array(
 			array(
-				'column' => 'post_modified',
+				'column' => 'post_date',
 				'before' => date('Y-m-d H:i', time() - $interval_time),
 			),
 		);
@@ -208,13 +211,17 @@ function wnd_get_draft_post($post_type = 'post', $create_new = true, $only_curre
 
 		$post_id = $user_draft_post_array[0]->ID;
 		// 更新草稿状态
-		$post_id = wp_update_post(array('ID' => $post_id, 'post_status' => 'draft', 'post_title' => '草稿：再次编辑', 'post_author' => $user_id));
-		return array('status' => 1, 'msg' => $post_id);
+		$post_id = wp_update_post(array('ID' => $post_id, 'post_status' => 'auto-draft', 'post_title' => 'Auto-draft', 'post_author' => $user_id));
+		if(!is_wp_error( $post_id )){
+			return array('status' => 1, 'msg' => $post_id);
+		}else{
+			return array('status' => 0,'msg' => $post_id->get_error_message());
+		}
 
 		// 创建新文章用于编辑
 	} elseif ($create_new) {
 
-		$post_id = wp_insert_post(array('post_title' => '草稿：新建', 'post_name' => $user_id . '-' . date("ymdHis"), 'post_type' => $post_type, 'post_author' => $user_id, 'post_status' => 'draft'));
+		$post_id = wp_insert_post(array('post_title' => 'Auto-draft', 'post_name' => '', 'post_type' => $post_type, 'post_author' => $user_id, 'post_status' => 'auto-draft'));
 		return array('status' => 2, 'msg' => $post_id);
 
 	} else {
