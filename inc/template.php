@@ -47,7 +47,7 @@ function _wnd_user_form($action = 'reg'){
 function _wnd_login_form(){
 	// 已登录
 	if(is_user_logged_in()){
-		echo '<script>wnd_alert_msg("已登录!")</script>';
+		echo '<script>wnd_alert_msg("已登录！")</script>';
 		return;
 	}
 	// 获取来源地址
@@ -110,8 +110,12 @@ function _wnd_login_form(){
 function _wnd_reg_form(){
 	// 已登录
 	if(is_user_logged_in()){
-		echo '<script>wnd_alert_msg("已登录!")</script>';
+		echo '<script>wnd_alert_msg("已登录！")</script>';
 		return;
+		//已关闭注册 
+	} elseif(!get_option( 'users_can_register')){
+		echo '<script>wnd_alert_msg("站点已关闭注册！")</script>';
+		retuen;
 	}
 ?>
 <form id="user-reg" class="user-form" action="" method="post" onsubmit="return false">
@@ -768,19 +772,34 @@ function _wnd_post_form($args=array()){
     // 定义文章数据
     $post = get_post($post_id);
     $post_type = $post->post_type;
-
-	// 分类和标签
-	$cat_taxonomy = ($post_type=='post') ? 'category' : $post_type.'_cat';
-	$cat = get_taxonomy($cat_taxonomy);
-	$tag_taxonomy = $post_type.'_tag';
-	$tag = get_taxonomy($tag_taxonomy);
-
-    // 获取当前文章已选择分类ID
-    $current_cat = get_the_terms($post_id, $cat_taxonomy);
-    $current_cat = $current_cat ? reset($current_cat) : 0;
-    $current_cat_id = $current_cat ? $current_cat->term_id : 0;
-
     $post = get_post($post_id);
+
+/**
+*@since 2019.02.01 
+*获取指定 post type的所有注册taxonomy
+*当一个taxonomy 关联多个 post type 时，通过指定post type无法获取（应该为WordPress bug）。
+*解决办法全部获取，然后遍历taxonomy数据中的 object_type 是否包含当前指定 post type（好在taxonomy通常只有几个或十来个）
+*/
+$cat_taxonomies = array();
+$tag_taxonomies = array();
+$taxonomies = get_taxonomies(array('public'=> true), 'object', 'and' );
+
+if ( $taxonomies ) {
+  foreach ( $taxonomies  as $taxonomy ) {
+  	// 未关联当前分类
+  	if(!in_array($post_type,$taxonomy->object_type)){
+  		continue;
+  	}
+  	// 根据是否具有层级，推入分类数组或标签数组
+    if( is_taxonomy_hierarchical($taxonomy->name) ){
+        array_push($cat_taxonomies, $taxonomy->name);
+    }else{
+        array_push($tag_taxonomies, $taxonomy->name);
+    }
+  }unset($taxonomy);
+}
+
+
 ?>
 <form id="new-<?php echo $post_type;?>" name="new_post" method="post" action="" onsubmit="return false;" onkeydown="if(event.keyCode==13){return false;}">
 	<div class="field content">
@@ -794,23 +813,50 @@ function _wnd_post_form($args=array()){
 		</div>
 	</div>
 
-	<?php if(taxonomy_exists( $cat_taxonomy)) { //分类 ?>	
+<?php
+if($cat_taxonomies){
+echo '<div class="field is-horizontal"><div class="field-body">'.PHP_EOL;
+	 //遍历分类 
+	foreach ($cat_taxonomies as $cat_taxonomy ) {
+		$cat = get_taxonomy($cat_taxonomy);
+    	// 获取当前文章已选择分类ID
+    	$current_cat = get_the_terms($post_id, $cat_taxonomy);
+    	$current_cat = $current_cat ? reset($current_cat) : 0;
+    	$current_cat_id = $current_cat ? $current_cat->term_id : 0;
+?>
 	<div class="field">
 		<label for="cat" class="label"><?php echo $cat->labels->name;?><span class="required">*</span></label>
 		<div class="select">
-			<?php wp_dropdown_categories('show_option_none=—选择分类 * —&required=true&name=_term_'.$cat_taxonomy.'&taxonomy='.$cat_taxonomy.'&orderby=name&hide_empty=0&hierarchical=1&selected=' . $current_cat_id );?>
+			<?php wp_dropdown_categories('show_option_none=—选择'.$cat->labels->name.' * —&required=true&name=_term_'.$cat_taxonomy.'&taxonomy='.$cat_taxonomy.'&orderby=name&hide_empty=0&hierarchical=1&selected=' . $current_cat_id );?>
 		</div>
 	</div>
-	<?php } ?>
+<?php
 
-	<?php if(taxonomy_exists( $tag_taxonomy)) { // 标签 ?>
+	}unset($cat_taxonomy);
+echo '</div></div>'.PHP_EOL;
+}
+
+?>
+
+<?php
+	// 遍历标签
+	foreach ($tag_taxonomies as $tag_taxonomy ) {
+		// 排除WordPress原生 文章格式类型
+		if($tag_taxonomy == 'post_format'){
+			continue;
+		}
+		$tag = get_taxonomy($tag_taxonomy);
+?>
 	<div class="field">
 		<label class="label"><?php echo $tag->labels->name;?></label>
 		<div class="control">
 			<input type="text" id="tags" class="input" name="_term_<?php echo $tag_taxonomy; ?>" value="<?php wnd_post_terms_text($post_id, $tag_taxonomy);?>" >
 		</div>
 	</div>
-	<?php } ?>
+<?php 	
+	}unset($tag_taxonomy); 
+?>	
+
 
 	<?php if($args['has_excerpt']==1) { //摘要 ?>
 	<div class="field">
@@ -821,7 +867,7 @@ function _wnd_post_form($args=array()){
 	</div>
 	<?php } ?>
 
-	<?php if($args['is_free']!=1) { //付费内容 
+	<?php if($args['is_free']!=1 and !wp_doing_ajax()) { //付费内容 
 		echo '<label class="label">付费内容</label>';
 		_wnd_paid_file_field($post_id);
 	}

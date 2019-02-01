@@ -16,6 +16,11 @@ if (!defined('ABSPATH')) {
 add_filter('wnd_can_reg', 'wnd_filter_can_reg', 10, 1);
 function wnd_filter_can_reg($can_array) {
 
+	// 后台注册选项
+	if(!get_option( 'users_can_register')){
+		return array ('status'=>0,'msg'=>'站点已关闭注册！');
+	}
+
 	// 手机短信验证:手机 验证码 是否为注册
 	if (function_exists('wnd_verify_sms')) {
 
