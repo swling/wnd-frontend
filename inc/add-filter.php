@@ -25,7 +25,7 @@ function wnd_filter_can_reg($can_array) {
 	if (function_exists('wnd_verify_sms')) {
 
 		$code = $_POST['sms_code'];
-		$phone = $_POST['_usermeta_phone'];
+		$phone = $_POST['sms_phone'];
 		$sms_error = wnd_verify_sms($phone, $code, $is_reg = true);
 
 		if ($sms_error['status'] === 0) {

@@ -17,7 +17,7 @@ function wnd_sms_field($template = '', $type = 'verify') {
 
 	// 注册验证，将手机存入用户字段
 	if ($type=='reg') {
-		$phone_name = '_phone';
+		$phone_name = 'sms_phone';
 	} else {
 		$phone_name = '_meta_phone';
 	}
@@ -279,8 +279,8 @@ add_action('user_register', 'wnd_reset_reg_sms');
 function wnd_reset_reg_sms($user_id) {
 
 	// 注册类，将注册用户id写入对应数据表
-	if (isset($_POST['_phone'])) {
-		$phone = $_POST['_phone'];
+	if (isset($_POST['sms_phone'])) {
+		$phone = $_POST['sms_phone'];
 		wnd_reset_sms($phone, $user_id);
 	}
 }
