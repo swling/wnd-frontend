@@ -118,8 +118,8 @@ function wnd_options(){
 			<tr>
 				<td valign="top">DO页面</td>
 				<td>
-					<?php wp_dropdown_pages( 'required=1&name=wnd_do_page&selected='.wnd_get_option('wndwp','wnd_do_page'));?>
-					<p><i>请选择复制插件demo中的page-do.php所创建的页面</i></p>
+					<?php wp_dropdown_pages( 'show_option_none=—选择—&name=wnd_do_page&selected='.wnd_get_option('wndwp','wnd_do_page'));?>
+					<p><i>复制doc文件夹中的page-do.php到主题文件夹，并创建页面</i></p>
 				</td>
 			</tr>
 		

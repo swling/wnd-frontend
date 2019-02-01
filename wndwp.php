@@ -60,7 +60,7 @@ function wnd_install() {
 				'wnd_allowed_wp_user_meta_key' => 'description',
 
 				'wnd_style' => 1,
-				'wnd_do_page' => 2,
+				'wnd_do_page' => 0,
 				'wnd_pay_return_url' => get_option('home'),
 				'wnd_ali_accessKeyId' => '阿里短信KeyId',
 				'wnd_ali_accessKeySecret' => '阿里短信KeySecret',

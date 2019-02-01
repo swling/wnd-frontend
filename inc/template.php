@@ -800,7 +800,7 @@ if ( $taxonomies ) {
 }
 
 ?>
-<form id="new-<?php echo $post_type;?>" name="new_post" method="post" action="" onsubmit="return false;" onkeydown="if(event.keyCode==13){return false;}">
+<form id="new-post-<?php echo $post_id;?>" name="new_post" method="post" action="" onsubmit="return false;" onkeydown="if(event.keyCode==13){return false;}">
 	<div class="field content">
 		<h3><span class="icon"><i class="fa fa-edit"></i></span> 发布[ID]: <?php echo $post_id;?></h3>
 	</div>	
@@ -898,7 +898,7 @@ echo '</div></div>'.PHP_EOL;
 	<input type="hidden" name="action_name" value="wnd_insert_post">
 	<?php wp_nonce_field('wnd_insert_post', '_ajax_nonce'); ?>
 	<div class="field is-grouped is-grouped-centered">
-		<button name="submit" class="button is-dark" onclick="wnd_ajax_submit('#new-<?php echo $post_type?>')">提交</button>
+		<button name="submit" class="button is-dark" onclick="wnd_ajax_submit('#new-post-<?php echo $post_id?>')">提交</button>
 	</div>	
 </form>
 <?php
