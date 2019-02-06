@@ -109,7 +109,7 @@ function wnd_insert_post($update_id = 0) {
 function wnd_update_post($post_id = 0) {
 
 	// 获取被编辑post
-	$post_id = $post_id ? $post_id : (int) $_POST['_post_post_id'];
+	$post_id = $post_id ?: (int) $_POST['_post_post_id'];
 	$edit_post = get_post($post_id);
 	if (!$edit_post) {
 		return array('status' => 0, 'msg' => '获取内容ID失败！');
@@ -183,8 +183,8 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 		'post_type' => $post_type,
 		'author' => $user_id,
 		'orderby' => 'ID',
-		'order'   => 'ASC',
-		'cache_results'  => false,
+		'order' => 'ASC',
+		'cache_results' => false,
 		'posts_per_page' => 1,
 	);
 	$user_draft_post_array = get_posts($query_array);
@@ -195,14 +195,14 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 		$post_id = $user_draft_post_array[0]->ID;
 		// 更新草稿状态
 		$post_id = wp_update_post(array('ID' => $post_id, 'post_status' => 'auto-draft', 'post_title' => 'Auto-draft', 'post_author' => $user_id));
-		if(!is_wp_error( $post_id )){
+		if (!is_wp_error($post_id)) {
 			return array('status' => 1, 'msg' => $post_id);
-		}else{
-			return array('status' => 0,'msg' => $post_id->get_error_message());
+		} else {
+			return array('status' => 0, 'msg' => $post_id->get_error_message());
 		}
 
-	//2、当前用户没有草稿，查询其他用户超过指定时间未编辑的草稿
-	}else{
+		//2、当前用户没有草稿，查询其他用户超过指定时间未编辑的草稿
+	} else {
 
 		// 设置时间条件 更新自动草稿时候，modified 不会变需要查询 post date
 		$date_query = array(
@@ -216,18 +216,31 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 		$draft_post_array = get_posts($query_array);
 
 		// 有符合条件的其他用户创建的草稿
-		if($draft_post_array){
+		if ($draft_post_array) {
+
 			$post_id = $user_draft_post_array[0]->ID;
 			// 更新草稿状态
 			$post_id = wp_update_post(array('ID' => $post_id, 'post_status' => 'auto-draft', 'post_title' => 'Auto-draft', 'post_author' => $user_id));
-			if(!is_wp_error( $post_id )){
-				return array('status' => 1, 'msg' => $post_id);
-			}else{
-				return array('status' => 0,'msg' => $post_id->get_error_message());
+
+			//清空之前的附件
+			if ($post_id) {
+				$attachments = get_children(array('post_type' => 'attachment', 'post_parent' => $post_id));
+				foreach ($attachments as $attachment) {
+					wp_delete_attachment($attachment->ID, 'true');
+				}
+				unset($attachment);
 			}
+
+			// 返回值
+			if (!is_wp_error($post_id)) {
+				return array('status' => 1, 'msg' => $post_id);
+			} else {
+				return array('status' => 0, 'msg' => $post_id->get_error_message());
+			}
+
 		}
-		
-	} 
+
+	}
 
 	//3、 全站没有可用草稿，创建新文章用于编辑
 	$post_id = wp_insert_post(array('post_title' => 'Auto-draft', 'post_name' => '', 'post_type' => $post_type, 'post_author' => $user_id, 'post_status' => 'auto-draft'));
