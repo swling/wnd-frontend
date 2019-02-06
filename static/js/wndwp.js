@@ -86,7 +86,7 @@ function wnd_reset_modal() {
 
 // 关闭对话框
 jQuery(document).ready(function($) {
-	$("body").off("click").on("click", ".modal-background,.modal-close,.delete", function() {
+	$("body").off("click").on("click", ".modal-background,.modal-close", function() {
 		wnd_reset_modal();
 	});
 
@@ -335,7 +335,7 @@ jQuery(document).ready(function($) {
 	/**
 	 *@since 2019.1.15 ajax 文件上传
 	 */
-	$(".upload-field [type='file']").change(function() {
+	$("body").on("change", "[type='file']", function() {
 
 		// 获取当前上传容器ID
 		var id = "#" + $(this).data("id");
@@ -404,7 +404,7 @@ jQuery(document).ready(function($) {
 	});
 
 	//  ################### 删除图片
-	$(".upload-field").off("click").on("click", ".delete", function() {
+	$("body").on("click", ".upload-field .delete", function() {
 
 		if (!confirm("确定删除？")) {
 			return false;
@@ -479,33 +479,10 @@ jQuery(document).ready(function($) {
 
 	});
 
-	//################ // 定时30S，更新编辑文章状态
-	if (0 && $("#new-post").length > 0 && $("#new-post input[name='_post_post_id']").length > 0) {
-		function wnd_edit_ping() {
-			var post_id = $("input[name='_post_post_id']").val();
-			$.ajax({
-				type: "POST",
-				datatype: "json",
-				async: false, //异步执行设置为 false 否则浏览器刷新时不会执行
-				url: ajaxurl,
-				data: {
-					"post_id": post_id,
-					"action_name": "_wnd_edit_ping",
-					"action": "wnd_action",
-				}
-			});
-		}
-
-		var ping = setInterval(wnd_edit_ping, 30000);
-		$("[name='submit']").off("click").on('click', function(event) {
-			window.clearInterval(ping);
-		});
-	}
-
 	/**
 	 *@since 2019.01.18 表单改变时，取消submit disable状态
 	 */
-	$("form").change(function() {
+	$("body").on("change", "form", function() {
 		$("[name='submit']").attr("disabled", false);
 	});
 

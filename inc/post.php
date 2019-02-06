@@ -162,13 +162,13 @@ function wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $t
 }
 
 /**
- *如果需要上传图片等，需要在提交文章之前，预先获取一篇文章，通过本函数，先查询草稿
- *如果存在，获取最近一篇草稿用于编辑
+ *如果需要上传图片等，需要在提交文章之前，预先获取一篇文章
+ *通过本函数，先查询当前用户的草稿，如果存在获取最近一篇草稿用于编辑
  *如果没有草稿，则创建一篇新文章
  *@since 2018.11.12
  *	默认：获取当前用户，一天以前编辑过的文章（一天内更新过的文章表示正处于编辑状态）
  */
-function wnd_get_draft_post($post_type = 'post', $create_new = true, $only_current_user = true, $interval_time = 3600 * 24) {
+function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 
 	$user_id = get_current_user_id();
 
@@ -177,33 +177,16 @@ function wnd_get_draft_post($post_type = 'post', $create_new = true, $only_curre
 		return array('status' => 0, 'msg' => '未登录用户不建议使用富媒体编辑器！');
 	}
 
-	// 查询是否存在草稿，有则调用最近一篇草稿编辑，避免浪费
+	//1、 查询当前用户否存在草稿，有则调用最近一篇草稿编辑
 	$query_array = array(
 		'post_status' => 'auto-draft',
 		'post_type' => $post_type,
+		'author' => $user_id,
 		'orderby' => 'ID',
 		'order'   => 'ASC',
 		'cache_results'  => false,
 		'posts_per_page' => 1,
 	);
-
-	// 只获取当前用户的草稿
-	if ($only_current_user) {
-		$query_array = array_merge($query_array, array('author' => $user_id));
-	}
-
-	// 设置时间条件 更新自动草稿时候，modified 不会变需要查询 post date
-	if ($interval_time) {
-		$date_query = array(
-			array(
-				'column' => 'post_date',
-				'before' => date('Y-m-d H:i', time() - $interval_time),
-			),
-		);
-		$query_array = array_merge($query_array, array('date_query' => $date_query));
-	}
-
-	// 查询文章
 	$user_draft_post_array = get_posts($query_array);
 
 	// 有草稿：返回第一篇草稿ID
@@ -218,37 +201,37 @@ function wnd_get_draft_post($post_type = 'post', $create_new = true, $only_curre
 			return array('status' => 0,'msg' => $post_id->get_error_message());
 		}
 
-		// 创建新文章用于编辑
-	} elseif ($create_new) {
+	//2、当前用户没有草稿，查询其他用户超过指定时间未编辑的草稿
+	}else{
 
-		$post_id = wp_insert_post(array('post_title' => 'Auto-draft', 'post_name' => '', 'post_type' => $post_type, 'post_author' => $user_id, 'post_status' => 'auto-draft'));
-		return array('status' => 2, 'msg' => $post_id);
+		// 设置时间条件 更新自动草稿时候，modified 不会变需要查询 post date
+		$date_query = array(
+			array(
+				'column' => 'post_date',
+				'before' => date('Y-m-d H:i', time() - $interval_time),
+			),
+		);
+		$query_array = array_merge($query_array, array('date_query' => $date_query));
+		unset($query_array['author']);
+		$draft_post_array = get_posts($query_array);
 
-	} else {
-
-		return array('status' => 0, 'msg' => '未能获取到草稿！');
-	}
-
-}
-
-/**
- *@since 2018.11.12 swling
- *@return array
- *前端文章编辑时，定时发送ajax请求，更新编辑中的post状态
- *获取用户草稿时，排除正处于编辑中的草稿，避免当用户同时打开多个窗口发布内容时，造成id冲突
- */
-function _wnd_edit_ping() {
-
-	$post_id = (int) $_POST['post_id'];
-	if ($post_id) {
-
-		if (!current_user_can('edit_post', $post_id)) {
-			return array('status' => 0, 'msg' => '权限不足');
+		// 有符合条件的其他用户创建的草稿
+		if($draft_post_array){
+			$post_id = $user_draft_post_array[0]->ID;
+			// 更新草稿状态
+			$post_id = wp_update_post(array('ID' => $post_id, 'post_status' => 'auto-draft', 'post_title' => 'Auto-draft', 'post_author' => $user_id));
+			if(!is_wp_error( $post_id )){
+				return array('status' => 1, 'msg' => $post_id);
+			}else{
+				return array('status' => 0,'msg' => $post_id->get_error_message());
+			}
 		}
+		
+	} 
 
-		wp_update_post(array('ID' => $post_id, 'post_title' => 'Ping'));
-		return array('status' => 1, 'msg' => $post_id);
-	}
+	//3、 全站没有可用草稿，创建新文章用于编辑
+	$post_id = wp_insert_post(array('post_title' => 'Auto-draft', 'post_name' => '', 'post_type' => $post_type, 'post_author' => $user_id, 'post_status' => 'auto-draft'));
+	return array('status' => 2, 'msg' => $post_id);
 
 }
 
