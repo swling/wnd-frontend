@@ -205,17 +205,25 @@ function _wnd_post_form($args=array()){
 	);
 	$args = wp_parse_args($args,$defaults);
 	$post_id = $args['post_id'];
+	$post_type = $args['post_type'];
 
 	// 未指定id，新建文章，否则为编辑
 	if(!$post_id){
-		$post_type = $args['post_type'];
-    	$post_id = wnd_get_draft_post($post_type = $post_type, $interval_time = 3600*24 )['msg'];
+    	$post_id = (int) wnd_get_draft_post($post_type = $post_type, $interval_time = 3600*24 )['msg'];
     }
 
-    // 定义文章数据
+    // 获取文章并定义数据
     $post = get_post($post_id);
-    $post_type = $post->post_type;
-    $post = get_post($post_id);
+    if($post){
+    	$post_type = $post->post_type;
+
+    //新建文章失败，如匿名用户，初始化一个空对象 
+	}else{
+		$post = new stdClass();
+		$post->post_title ='';
+		$post->post_excerpt ='';
+		$post->post_content ='';		
+	}
 
 /**
 *@since 2019.02.01 
