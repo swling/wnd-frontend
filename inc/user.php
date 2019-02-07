@@ -15,14 +15,13 @@ function wnd_insert_user() {
 		return array('status' => 0, 'msg' => '注册信息为空');
 	}
 
-	$user_login = isset($_POST['_user_user_login']) ? sanitize_user($_POST['_user_user_login']) : sanitize_user($_POST['sms_phone']);
-	$user_pass = esc_attr($_POST['_user_user_pass']);
-	$user_pass_repeat = esc_attr($_POST['_user_user_pass_repeat']);
-	$user_email = sanitize_email($_POST['_user_user_email']);
-	$display_name = sanitize_text_field($_POST['_user_display_name']);
-	$description = isset($_POST['_wpusermeta_description']) ? esc_textarea($_POST['_wpusermeta_description']) : '';
-
-	$role = isset($_POST['_user_role']) ? $_POST['_user_role'] : get_option('default_role');
+	$user_login = $_POST['_user_user_login'] ?: $_POST['sms_phone'];
+	$user_pass = $_POST['_user_user_pass'];
+	$user_pass_repeat = $_POST['_user_user_pass_repeat'];
+	$user_email = $_POST['_user_user_email'];
+	$display_name = $_POST['_user_display_name'];
+	$description = $_POST['_wpusermeta_description'] ?: '';
+	$role = $_POST['_user_role'] ?: get_option('default_role');
 
 	/*处于安全考虑，form自动组合函数屏蔽了用户敏感字段，此处不可通过 form自动组合，应该手动控制用户数据*/
 	$userdata = array(
@@ -110,11 +109,11 @@ function wnd_insert_user() {
  */
 function wnd_user_login() {
 
-	$username = sanitize_user($_POST['_user_user_login']);
-	$password = esc_attr($_POST['_user_user_pass']);
+	$username = trim($_POST['_user_user_login']);
+	$password = $_POST['_user_user_pass'];
 	$remember = $_POST['remember'] ?? 0;
 	$remember = $remember == 1 ? true : false;
-	$redirect_to = $_REQUEST['redirect_to'] ?? home_url();
+	$redirect_to = $_REQUEST['redirect_to'] ?: home_url();
 
 	// 登录过滤挂钩
 	$wnd_can_login = apply_filters('wnd_can_login', array('status' => 1, 'msg' => '默认通过'));
@@ -171,8 +170,8 @@ function wnd_update_profile() {
 		return array('status' => 0, 'msg' => '获取用户ID失败！');
 	}
 
-	$display_name = sanitize_text_field($_POST['_user_display_name']);
-	$user_url = sanitize_text_field($_POST['_user_user_url']);
+	$display_name = $_POST['_user_display_name'];
+	$user_url = $_POST['_user_user_url'];
 
 	// 初始化用户及profile字段数据
 	$user_array = array('ID' => $user_id,'display_name'=>$display_name,'user_url'=>$user_url);
@@ -230,13 +229,10 @@ function wnd_update_account() {
 	}
 
 	$user_array = array('ID' => $user_id);
-	// 原始密码
 	$user_pass = $_POST['_user_user_pass'];
-	// 新密码
-	$new_password = esc_attr($_POST['_user_new_pass']);
-	$new_password_repeat = esc_attr($_POST['_user_new_pass_repeat']);
-	// 新邮箱
-	$email = sanitize_email($_POST['_user_user_email']);
+	$new_password = $_POST['_user_new_pass'];
+	$new_password_repeat = $_POST['_user_new_pass_repeat'];
+	$email = $_POST['_user_user_email'];
 
 	// 修改密码
 	if (!empty($new_password_repeat)) {
@@ -306,8 +302,8 @@ function wnd_reset_password_by_sms() {
 	}
 
 	// 新密码
-	$new_password = esc_attr($_POST['_user_new_pass']);
-	$new_password_repeat = esc_attr($_POST['_user_new_pass_repeat']);
+	$new_password = $_POST['_user_new_pass'];
+	$new_password_repeat = $_POST['_user_new_pass_repeat'];
 
 	// 验证密码正确性
 	if (strlen($new_password) < 6) {
@@ -345,9 +341,9 @@ function wnd_reset_password_by_sms() {
  */
 function wnd_reset_password_by_email() {
 
-	$email = sanitize_email($_POST['_user_user_email']);
-	$new_password = esc_attr($_POST['_user_new_pass']);
-	$new_password_repeat = esc_attr($_POST['_user_new_pass_repeat']);
+	$email = $_POST['_user_user_email'];
+	$new_password = $_POST['_user_new_pass'];
+	$new_password_repeat = $_POST['_user_new_pass_repeat'];
 	$key = $_POST['_user_reset_key'];
 
 	// 验证密码正确性
@@ -385,7 +381,7 @@ function wnd_reset_password_by_email() {
  */
 function _wnd_get_password_reset_key() {
 
-	$email = sanitize_email($_POST['email']);
+	$email = $_POST['email'];
 	if (!is_email($email)) {
 		return array('status' => 0, 'msg' => '邮件格式错误！');
 	}
