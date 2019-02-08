@@ -18,7 +18,6 @@ function wnd_upload_file() {
 		require ABSPATH . 'wp-admin/includes/media.php';
 	}
 
-	$files = $_FILES["file"];
 	$save_width = (int) $_POST["save_width"] ?? 0;
 	$save_height = (int) $_POST["save_height"] ?? 0;
 	$meta_key = $_POST['meta_key'] ?? 0;
@@ -29,7 +28,7 @@ function wnd_upload_file() {
 		return array('status'=>0,'msg'=>'错误：user ID及post ID均为空！');
 	}
 
-	if (empty($files)) {
+	if (empty($_FILES)) {
 		return array('status' => 0, 'msg' => '获取上传文件失败！');
 	}
 
@@ -37,13 +36,17 @@ function wnd_upload_file() {
 		return array('status' => 0, 'msg' => 'Error: ' . $_FILES['file']['error']);
 	}
 
+	// 定义返回数组，以支持多文件上传
+	$return_array = array();
 	foreach ($_FILES as $file => $array) {
 		//上传文件并附属到对应的post 默认为0 即不附属到
 		$attachment_id = media_handle_upload($file, $post_parent);
 
 		// 上传失败
 		if (is_wp_error($attachment_id)) {
-			return array('status' => 0, 'msg' => $attachment_id->get_error_message());
+			$temp_array =  array('status' => 0, 'msg' => $attachment_id->get_error_message());
+			array_push($return_array, $temp_array);
+			continue;
 		}
 
 		//上传成功，根据尺寸进行图片裁剪
@@ -59,10 +62,15 @@ function wnd_upload_file() {
 		//处理完成根据用途做下一步处理
 		do_action('wnd_upload_file', $attachment_id, $post_parent, $meta_key);
 
-		// 将当前上传的图片信息返回
-		return array('status' => 1, 'msg' => array('url' => wp_get_attachment_url($attachment_id), 'id' => $attachment_id));
+		// 将当前上传的图片信息写入数组
+		$temp_array =  array('status' => 1, 'msg' => array('url' => wp_get_attachment_url($attachment_id), 'id' => $attachment_id));
+		array_push($return_array, $temp_array);
 	}
 	unset($file, $array);
+
+	// 返回上传信息二维数组合集
+	return $return_array;
+
 }
 
 /**

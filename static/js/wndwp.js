@@ -377,22 +377,24 @@ jQuery(document).ready(function($) {
 			},
 			// 提交成功
 			success: function(response) {
+				// 上传文件可能是多个，因此返回值为二维数组
+				for (var i = 0, n = response.length; i < n; i++) {
+					// 上传失败
+					if (response[i].status === 0) {
+						wnd_ajax_msg(response[i].msg, "is-danger", id);
+						continue;
+					}
 
-				// 上传失败
-				if (response.status === 0) {
-					wnd_ajax_msg(response.msg, "is-danger", id);
-					return false;
+					// 上传成功
+					wnd_ajax_msg("上传成功！", "is-success", id);
+					// 图像上传，更新缩略图
+					if (is_image == 1) {
+						$(id + " .thumb").prop("src", response[i].msg.url);
+					} else {
+						$(id + " .file-name").html('上传成功！<a href="' + response[i].msg.url + '">查看文件</a>');
+					}
+					$(id + " .delete").data("attachment-id", response[i].msg.id)
 				}
-
-				// 上传成功
-				wnd_ajax_msg("上传成功！", "is-success", id);
-				// 图像上传，更新缩略图
-				if (is_image == 1) {
-					$(id + " .thumb").prop("src", response.msg.url);
-				} else {
-					$(id + " .file-name").html('上传成功！<a href="' + response.msg.url + '">查看文件</a>');
-				}
-				$(id + " .delete").data("attachment-id", response.msg.id)
 
 			},
 			// 错误
