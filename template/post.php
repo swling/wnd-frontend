@@ -253,7 +253,7 @@ if ( $taxonomies ) {
 ?>
 <form id="new-post-<?php echo $post_id;?>" name="new_post" method="post" action="" onsubmit="return false;" onkeydown="if(event.keyCode==13){return false;}">
 	<div class="field content">
-		<h3><span class="icon"><i class="fa fa-edit"></i></span> 发布[ID]: <?php echo $post_id;?></h3>
+		<h3><span class="icon"><i class="fa fa-edit"></i></span> ID: <?php echo $post_id;?></h3>
 	</div>	
 	<div class="ajax-msg"></div>
 	<div class="field">

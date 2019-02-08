@@ -117,19 +117,19 @@ function wnd_confirm_form_submit(form_id, msg = '') {
 	允许携带一个参数，默认为0
 
 	@since 2019.01.26
-	若需要传递参数值超过一个，可将参数定义为json格式，后端函数将获取到一个包含对应键值的参数数组
+	若需要传递参数值超过一个，可将参数定义为GET参数形式如：'post_id=1&user_id=2'，后端采用:wp_parse_args() 解析参数
 	
 	实例：
 		前端
-		var obj = {"post_id":"1","user_id":"105"};
-		wnd_ajax_modal('xxx',obj);
+		wnd_ajax_modal('xxx','post_id=1&user_id=2');
 
 		后端
 		function _wnd_xxx($args){
+			$args = wp_parse_args($args)
 			print_r($args);
 		}
 		弹窗将输出
-		Array ( [post_id] => 1 [user_id] => 105)
+		Array ( [post_id] => 1 [user_id] =>2)
 
 *典型用途：
 *	点击弹出登录框、点击弹出建议发布文章框
