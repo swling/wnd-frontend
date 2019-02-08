@@ -122,7 +122,15 @@ function wnd_options(){
 					<p><i>复制doc文件夹中的page-do.php到主题文件夹，并创建页面</i></p>
 				</td>
 			</tr>
-		
+
+			<tr>
+				<td valign="top">编辑页面</td>
+				<td>
+					<?php wp_dropdown_pages( 'show_option_none=—选择—&name=wnd_edit_page&selected='.wnd_get_option('wndwp','wnd_edit_page'));?>
+					<p><i>前端编辑页面（设置后将覆盖WordPress前端编辑链接）</i></p>
+				</td>
+			</tr>
+
 			<tr>
 				<td valign="top">注册跳转</td>
 				<td>

@@ -99,14 +99,15 @@ function wnd_filter_limit_upload($file) {
 }
 
 /**
-*@since 2019.01.31 重写WordPress原生编辑链接到指定的页面(未完成)
+*@since 2019.01.31 重写WordPress原生编辑链接到指定的页面
 */
 add_filter( 'get_edit_post_link', 'wnd_filter_edit_post_link', $priority = 10, $accepted_args = 3 );
 function wnd_filter_edit_post_link($link,$post_id,$context){
 
-	// return $context;
-
-	// return 'https://www.baidu.com/?post_id='.$post_id;
+	$edit_page = (int) wnd_get_option('wndwp','wnd_edit_page');
+	if($edit_page){
+		return get_permalink( $edit_page).'?post_id='.$post_id;
+	}
 	return $link;
 
 }
