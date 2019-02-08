@@ -21,8 +21,8 @@ function _wnd_user_form($action = 'reg'){
 		return;
 	}
 
-    $action = $_GET['action'] ?: $action;
-    $type = $_GET['type'] ?: null;
+    $action = $_GET['action'] ?? $action;
+    $type = $_GET['type'] ?? null;
 
     //登录
     if($action=='login'){
@@ -115,7 +115,7 @@ function _wnd_reg_form(){
 		//已关闭注册 
 	} elseif(!get_option( 'users_can_register')){
 		echo '<script>wnd_alert_msg("站点已关闭注册！")</script>';
-		retuen;
+		return;
 	}
 ?>
 <form id="user-reg" class="user-form" action="" method="post" onsubmit="return false">

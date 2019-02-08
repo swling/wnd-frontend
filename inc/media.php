@@ -19,10 +19,10 @@ function wnd_upload_file() {
 	}
 
 	$files = $_FILES["file"];
-	$save_width = $_POST["save_width"] ?: 0;
-	$save_height = $_POST["save_height"] ?: 0;
-	$meta_key = $_POST['meta_key'] ?: 0;
-	$post_parent = (int) $_POST['post_parent'] ?: 0;
+	$save_width = (int) $_POST["save_width"] ?? 0;
+	$save_height = (int) $_POST["save_height"] ?? 0;
+	$meta_key = $_POST['meta_key'] ?? 0;
+	$post_parent = (int) $_POST['post_parent'] ?? 0;
 	$user_id = get_current_user_id();
 	
 	if(!$user_id and !$post_parent){

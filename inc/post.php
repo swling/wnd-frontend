@@ -23,9 +23,9 @@ function wnd_insert_post($update_id = 0) {
 
 	// 组合数据
 	$user_id = get_current_user_id();
-	$post_id = $_POST['_post_post_id'] ?: 0;
+	$post_id = (int) $_POST['_post_post_id'] ?? 0;
 	$update_id = $update_id ?: $post_id;
-	$post_type = $_POST['_post_post_type'] ?: 'post';
+	$post_type = $_POST['_post_post_type'] ?? 'post';
 
 	// 更新文章
 	if ($update_id) {

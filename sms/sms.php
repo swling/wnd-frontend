@@ -240,7 +240,7 @@ function wnd_verify_sms($phone, $code, $type) {
 	} else {
 		// 清空该号码十分钟前的code
 		wnd_clear_sms($phone);
-		$sys_code = $wpdb->get_var($wpdb->prepare("SELECT code FROM $wpdb->wnd_sms WHERE phone = %s;", $phone));
+		$sys_code = $wpdb->get_var($wpdb->prepare("SELECT code FROM $wpdb->wnd_user WHERE phone = %s;", $phone));
 
 		if (empty($sys_code)) {
 			$errors = "校验失败：请先获取短信验证码！";
@@ -287,11 +287,22 @@ function wnd_reset_reg_sms($user_id) {
 
 /**
  *##############################################################################  函数封装
+*
+*/
+
+/** 
  *@since 初始化
+ *生成6位随机数字
  */
-// 生成4位随机数字
 function generateCode() {
-	return mt_rand(0, 9) . mt_rand(100, 999);
+
+	$No='';
+	for ($i = 0; $i<6; $i++) 
+	{
+	    $No .= mt_rand(0,9);
+	}
+	return $No;
+
 }
 
 // 验证是否为手机号
@@ -306,12 +317,12 @@ function isPhone($phone) {
 
 function wnd_insert_sms($phone, $code) {
 	global $wpdb;
-	$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->wnd_sms WHERE phone = %s", $phone));
+	$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->wnd_user WHERE phone = %s", $phone));
 
 	if ($ID) {
-		$db = $wpdb->update($wpdb->wnd_sms, array('code' => $code, 'time' => time()), array('phone' => $phone), array('%s', '%d'), array('%s'));
+		$db = $wpdb->update($wpdb->wnd_user, array('code' => $code, 'time' => time()), array('phone' => $phone), array('%s', '%d'), array('%s'));
 	} else {
-		$db = $wpdb->insert($wpdb->wnd_sms, array('phone' => $phone, 'code' => $code, 'time' => time()), array('%s', '%s', '%d'));
+		$db = $wpdb->insert($wpdb->wnd_user, array('phone' => $phone, 'code' => $code, 'time' => time()), array('%s', '%s', '%d'));
 	}
 
 	if ($db) {
@@ -322,7 +333,7 @@ function wnd_insert_sms($phone, $code) {
 
 function wnd_get_sms_sendtime($phone) {
 	global $wpdb;
-	$time = $wpdb->get_var($wpdb->prepare("SELECT time FROM $wpdb->wnd_sms WHERE phone = %s;", $phone));
+	$time = $wpdb->get_var($wpdb->prepare("SELECT time FROM $wpdb->wnd_user WHERE phone = %s;", $phone));
 	if ($time) {
 		return $time;
 	} else {
@@ -341,7 +352,7 @@ function wnd_get_user_phone($user_id) {
 	}
 
 	global $wpdb;
-	$phone = $wpdb->get_var($wpdb->prepare("SELECT phone FROM $wpdb->wnd_sms WHERE user_id = %d;", $user_id));
+	$phone = $wpdb->get_var($wpdb->prepare("SELECT phone FROM $wpdb->wnd_user WHERE user_id = %d;", $user_id));
 	if ($phone) {
 		return $phone;
 	} else {
@@ -355,7 +366,7 @@ function wnd_get_user_phone($user_id) {
 */
 function wnd_get_user_by_phone($phone) {
 	global $wpdb;
-	$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM $wpdb->wnd_sms WHERE phone = %s;", $phone));
+	$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM $wpdb->wnd_user WHERE phone = %s;", $phone));
 	if ($user_id) {
 		return $user_id;
 	} else {
@@ -367,7 +378,7 @@ function wnd_get_user_by_phone($phone) {
 // 清空号码十分钟前的code
 function wnd_clear_sms($phone) {
 	global $wpdb;
-	$wpdb->query($wpdb->prepare("update $wpdb->wnd_sms  SET code='' WHERE phone=%s AND time < %s ", $phone, (time() - 600)));
+	$wpdb->query($wpdb->prepare("update $wpdb->wnd_user  SET code='' WHERE phone=%s AND time < %s ", $phone, (time() - 600)));
 }
 
 // 号码已完成对应验证后
@@ -376,7 +387,7 @@ function wnd_reset_sms($phone, $reg_user_id) {
 	// 手机注册用户
 	if ($reg_user_id) {
 		$wpdb->update(
-			$wpdb->wnd_sms,
+			$wpdb->wnd_user,
 			array('code' => '', 'time' => time(), 'user_id' => $reg_user_id),
 			array('phone' => $phone),
 			array('%s', '%d', '%d'),
@@ -385,7 +396,7 @@ function wnd_reset_sms($phone, $reg_user_id) {
 		//其他操作
 	} else {
 		$wpdb->update(
-			$wpdb->wnd_sms,
+			$wpdb->wnd_user,
 			array('code' => '', 'time' => time()),
 			array('phone' => $phone),
 			array('%s', '%d'),
