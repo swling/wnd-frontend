@@ -23,28 +23,36 @@ function wnd_upload_file() {
 	$meta_key = $_POST['meta_key'] ?? 0;
 	$post_parent = (int) $_POST['post_parent'] ?? 0;
 	$user_id = get_current_user_id();
-	
-	if(!$user_id and !$post_parent){
-		return array('status'=>0,'msg'=>'错误：user ID及post ID均为空！');
+
+	// 定义二维返回数组，以支持多文件上传
+	$return_array = array();
+
+	if (!$user_id and !$post_parent) {
+		$temp_array = array('status' => 0, 'msg' => '错误：user ID及post ID均为空！');
+		array_push($return_array, $temp_array);
+		return $return_array;
 	}
 
 	if (empty($_FILES)) {
-		return array('status' => 0, 'msg' => '获取上传文件失败！');
+		$temp_array = array('status' => 0, 'msg' => '获取上传文件失败！');
+		array_push($return_array, $temp_array);
+		return $return_array;
 	}
 
 	if (0 < $_FILES['file']['error']) {
-		return array('status' => 0, 'msg' => 'Error: ' . $_FILES['file']['error']);
+		$temp_array = array('status' => 0, 'msg' => 'Error: ' . $_FILES['file']['error']);
+		array_push($return_array, $temp_array);
+		return $return_array;
 	}
 
-	// 定义返回数组，以支持多文件上传
-	$return_array = array();
+	// 遍历文件上传
 	foreach ($_FILES as $file => $array) {
 		//上传文件并附属到对应的post 默认为0 即不附属到
 		$attachment_id = media_handle_upload($file, $post_parent);
 
 		// 上传失败
 		if (is_wp_error($attachment_id)) {
-			$temp_array =  array('status' => 0, 'msg' => $attachment_id->get_error_message());
+			$temp_array = array('status' => 0, 'msg' => $attachment_id->get_error_message());
 			array_push($return_array, $temp_array);
 			continue;
 		}
@@ -63,7 +71,7 @@ function wnd_upload_file() {
 		do_action('wnd_upload_file', $attachment_id, $post_parent, $meta_key);
 
 		// 将当前上传的图片信息写入数组
-		$temp_array =  array('status' => 1, 'msg' => array('url' => wp_get_attachment_url($attachment_id), 'id' => $attachment_id));
+		$temp_array = array('status' => 1, 'msg' => array('url' => wp_get_attachment_url($attachment_id), 'id' => $attachment_id));
 		array_push($return_array, $temp_array);
 	}
 	unset($file, $array);
@@ -132,7 +140,7 @@ function wnd_download_file($file, $parent_id = 0) {
 	Header("Content-type: application/octet-stream");
 	Header("Accept-Ranges: bytes");
 	Header("Accept-Length: " . filesize($file));
-	Header("Content-Disposition: attachment; filename=" . $name . '-' . $parent_id . $ext);// 重命名文件名，防止用户通过文件名绕道直接下载
+	Header("Content-Disposition: attachment; filename=" . $name . '-' . $parent_id . $ext); // 重命名文件名，防止用户通过文件名绕道直接下载
 	//读取文件内容并直接输出到浏览器
 	echo fread($the_file, filesize($file));
 	fclose($the_file);
