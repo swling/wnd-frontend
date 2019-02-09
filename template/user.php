@@ -84,7 +84,7 @@ function _wnd_login_form(){
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_user_login">
 	<div class="field is-grouped is-grouped-centered">
-		<button type="submit" name="submit" class="button is-dark" onclick="wnd_ajax_submit('#user-login')">登录</button>
+		<button type="submit" name="submit" class="button" onclick="wnd_ajax_submit('#user-login')">登录</button>
 	</div>
 	<div class="field">
 		<div class="message is-primary">
@@ -169,7 +169,7 @@ function _wnd_reg_form(){
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_insert_user">
 	<div class="field is-grouped is-grouped-centered">
-		<button type="submit" name="submit" class="button is-dark" onclick="wnd_ajax_submit('#user-reg')">注册</button>
+		<button type="submit" name="submit" class="button" onclick="wnd_ajax_submit('#user-reg')">注册</button>
 	</div>
 	<div class="field">
 		<div class="message is-primary">
@@ -245,7 +245,7 @@ function _wnd_account_form(){
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_update_account">
 	<div class="field is-grouped is-grouped-centered">
-		<button name="submit" class="button is-dark" onclick="wnd_ajax_submit('#user-account')">保存</button>
+		<button name="submit" class="button" onclick="wnd_ajax_submit('#user-account')">保存</button>
 	</div>
 </form>
 <?php	
@@ -292,7 +292,7 @@ function _wnd_lostpassword_form($type='email'){
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_reset_password_by_sms">
 	<div class="field is-grouped is-grouped-centered">
-		<button name="submit" class="button is-dark" onclick="wnd_ajax_submit('#sms-reset-pass')">重置密码</button>
+		<button name="submit" class="button" onclick="wnd_ajax_submit('#sms-reset-pass')">重置密码</button>
 	</div>
 	<div class="field">
 		<div class="message is-primary">
@@ -331,7 +331,7 @@ function _wnd_lostpassword_form($type='email'){
 			<span class="icon is-left"><i class="fa fa-key"></i></span>
 		</div>
 		<div class="control">
-			<span id="sendMailBtn" class="button is-danger">获取秘钥</span>
+			<span id="sendMailBtn" class="button is-primary">获取秘钥</span>
 		</div>
 	</div>
 	<div class="field">
@@ -356,7 +356,7 @@ function _wnd_lostpassword_form($type='email'){
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_reset_password_by_email">
 	<div class="field is-grouped is-grouped-centered">
-		<button name="submit" class="button is-dark" onclick="wnd_ajax_submit('#email-reset-pass')">重置密码</button>
+		<button name="submit" class="button" onclick="wnd_ajax_submit('#email-reset-pass')">重置密码</button>
 	</div>
 	<div class="field">
 		<div class="message is-primary">
@@ -484,7 +484,7 @@ function _wnd_profile_form($args=array()){
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_update_profile">
 	<div class="field is-grouped is-grouped-centered">
-		<button name="submit" class="button is-dark" onclick="wnd_ajax_submit('#profile-form')">保存</button>
+		<button name="submit" class="button" onclick="wnd_ajax_submit('#profile-form')">保存</button>
 	</div>
 
 </form>
@@ -557,7 +557,7 @@ function _wnd_recharge_form(){
 	<?php do_action('_wnd_recharge_form');?>
 	<?php wp_nonce_field('wnd_recharge'); ?>
 	<div class="field is-grouped is-grouped-centered">
-		<button type="submit" name="submit" class="button is-dark">确认充值</button>
+		<button type="submit" name="submit" class="button">确认充值</button>
 	</div>
 </form>
 <?php

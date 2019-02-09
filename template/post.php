@@ -69,7 +69,9 @@ function _wnd_post_status_form($post_id){
 	<?php wp_nonce_field('wnd_update_post_status', '_ajax_nonce'); ?>
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_update_post_status">
-	<button type="submit" name="submit" class="button is-primary align-center" onclick="wnd_ajax_submit('#post-status')">确认</button>
+	<div class="field is-grouped is-grouped-centered">
+		<button type="submit" name="submit" class="button" onclick="wnd_ajax_submit('#post-status')">确认</button>
+	</div>
 </form>
 <script>
 wnd_ajax_msg("<?php echo '当前： '.$status_text;?>", "is-danger", "#post-status")
@@ -349,7 +351,7 @@ echo '</div></div>'.PHP_EOL;
 	<input type="hidden" name="action_name" value="wnd_insert_post">
 	<?php wp_nonce_field('wnd_insert_post', '_ajax_nonce'); ?>
 	<div class="field is-grouped is-grouped-centered">
-		<button name="submit" class="button is-dark" onclick="wnd_ajax_submit('#new-post-<?php echo $post_id?>')">提交</button>
+		<button name="submit" class="button" onclick="wnd_ajax_submit('#new-post-<?php echo $post_id?>')">提交</button>
 	</div>	
 </form>
 <?php

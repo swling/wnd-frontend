@@ -38,7 +38,7 @@ function wnd_sms_field($template = '', $type = 'verify') {
 		    	<span class="icon is-left"><i class="fa fa-comment"></i></span>
 			</div>
 			<div class="control">
-		    	<span id="sendSmsBtn" class="button is-danger">获取验证码</span>
+		    	<span id="sendSmsBtn" class="button is-primary">获取验证码</span>
 			</div>
 		</div>
 	</div>
