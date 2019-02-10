@@ -137,7 +137,7 @@ function _wnd_reg_form() {
 			</span>
 		</div>
 	</div>
-	<?php wnd_mail_field($template = '', $type = 'reg');?>
+	<?php wnd_mail_field($type = 'reg', $template = '');?>
 	<div class="field">
 		<label class="label">密码 <span class="required">*</span></label>
 		<div class="control has-icons-left">
@@ -318,7 +318,7 @@ function _wnd_lostpassword_form($type = 'email') {
 	<div class="field">
 		<div class="ajax-msg"></div>
 	</div>
-	<?php wnd_mail_field($template = '', $type = 'reset-pass');?>
+	<?php wnd_mail_field($type = 'reset-pass', $template = '');?>
 	<div class="field">
 		<label class="label">新密码 <span class="required">*</span></label>
 		<div class="control has-icons-left">
