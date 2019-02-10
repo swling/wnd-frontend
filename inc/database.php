@@ -63,13 +63,18 @@ function wnd_create_table() {
         ID bigint(20) NOT NULL auto_increment,
         object_id bigint(20) NOT NULL,
         user_id bigint(20) NOT NULL,
+        content text NOT NULL,
+        title varchar(255) NOT NULL,
+        value DECIMAL(10,2) NOT NULL,
         type varchar(16) NOT NULL,
         status varchar(16) NOT NULL,
-        value DECIMAL(10,2) NOT NULL,
         time bigint(20) NOT NULL,
+        parent bigint(20) NOT NULL,
         PRIMARY KEY (ID),
         KEY object_id(object_id),
-        KEY user_id(user_id)
+        KEY user_id(user_id),
+        KEY type_status_time(type,status,time,ID),
+        KEY parent(parent)
 
         ) $charset_collate;";
 	dbDelta($create_objects_sql);

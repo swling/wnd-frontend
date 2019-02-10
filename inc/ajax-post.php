@@ -120,6 +120,59 @@ function wnd_update_post($post_id = 0) {
 }
 
 /**
+ *@since 2019.01.21
+ *@return array
+ *前端快速更改文章状态
+ *依赖：wp_update_post、wp_delete_post
+ */
+function wnd_update_post_status() {
+
+	// 获取数据
+	$post_id = (int) $_POST['post_id'];
+	$before_post = get_post($post_id);
+	if (!$before_post) {
+		return array('status' => 0, 'msg' => '获取内容失败！');
+	}
+
+	$after_status = $_POST['post_status'];
+
+	// 权限检测
+	$can_array = array('status' => current_user_can('edit_post', $post_id) ? 1 : 0, 'msg' => '默认权限校验');
+	$can_update_post_status = apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_status);
+	if ($can_update_post_status['status'] == 0) {
+		return $can_update_post_status;
+	}
+
+	// 删除文章
+	if ($after_status == 'delete') {
+		// 无论是否设置了$force_delete 自定义类型的文章都会直接被删除
+		$delete = wp_delete_post($post_id, $force_delete = false);
+		if ($delete) {
+			return array('status' => 1, 'msg' => '内容已删除！');
+		} else {
+			return array('status' => 0, 'msg' => '操作失败，请检查！');
+		}
+	}
+
+	//执行更新
+	$post_data = array(
+		'ID' => $post_id,
+		'post_status' => $after_status,
+	);
+	$update = wp_update_post($post_data);
+
+	// 完成更新
+	if ($update) {
+		return array('status' => 1, 'msg' => '更新成功！');
+
+		//更新失败
+	} else {
+		return array('status' => 0, 'msg' => '更新数据失败！');
+	}
+
+}
+
+/**
  *@since 初始化
  *批量设置文章 meta 及 term
  */
@@ -245,58 +298,5 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 	//3、 全站没有可用草稿，创建新文章用于编辑
 	$post_id = wp_insert_post(array('post_title' => 'Auto-draft', 'post_name' => '', 'post_type' => $post_type, 'post_author' => $user_id, 'post_status' => 'auto-draft'));
 	return array('status' => 2, 'msg' => $post_id);
-
-}
-
-/**
- *@since 2019.01.21
- *@return array
- *前端快速更改文章状态
- *依赖：wp_update_post、wp_delete_post
- */
-function wnd_update_post_status() {
-
-	// 获取数据
-	$post_id = (int) $_POST['post_id'];
-	$before_post = get_post($post_id);
-	if (!$before_post) {
-		return array('status' => 0, 'msg' => '获取内容失败！');
-	}
-
-	$after_status = $_POST['post_status'];
-
-	// 权限检测
-	$can_array = array('status' => current_user_can('edit_post', $post_id) ? 1 : 0, 'msg' => '默认权限校验');
-	$can_update_post_status = apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_status);
-	if ($can_update_post_status['status'] == 0) {
-		return $can_update_post_status;
-	}
-
-	// 删除文章
-	if ($after_status == 'delete') {
-		// 无论是否设置了$force_delete 自定义类型的文章都会直接被删除
-		$delete = wp_delete_post($post_id, $force_delete = false);
-		if ($delete) {
-			return array('status' => 1, 'msg' => '内容已删除！');
-		} else {
-			return array('status' => 0, 'msg' => '操作失败，请检查！');
-		}
-	}
-
-	//执行更新
-	$post_data = array(
-		'ID' => $post_id,
-		'post_status' => $after_status,
-	);
-	$update = wp_update_post($post_data);
-
-	// 完成更新
-	if ($update) {
-		return array('status' => 1, 'msg' => '更新成功！');
-
-		//更新失败
-	} else {
-		return array('status' => 0, 'msg' => '更新数据失败！');
-	}
 
 }
