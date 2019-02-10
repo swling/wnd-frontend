@@ -206,26 +206,27 @@ function wnd_verify_code($email_or_phone, $code, $type) {
 		return array('status' => 0, 'msg' => '校验失败：' . $text . '已注册过！');
 	}
 
-	// 手机清空该号码十分钟前的code
-	if ($field == 'phone') {
-		wnd_clear_code($email_or_phone);
-	}
-	$sys_code = $wpdb->get_var($wpdb->prepare("SELECT code FROM $wpdb->wnd_users WHERE {$field} = %s;", $email_or_phone));
+	// 过期时间设置
+	$intervals = $field == 'phone' ? 600 : 3600;
 
-	if (empty($sys_code)) {
+	$data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE {$field} = %s;", $email_or_phone));
+
+	if (!$data) {
 		return array('status' => 0, 'msg' => '校验失败：请先获取验证码！');
 	}
 
-	if ($code != $sys_code) {
+	if (time() - $data->time > $intervals) {
+		return array('status' => 0, 'msg' => '验证码已失效请重新获取！');
+	}
+
+	if ($code != $data->code) {
 		return array('status' => 0, 'msg' => '校验失败：验证码不正确！');
 	}
 
 	/**
-	 *@since 2019.01.22 非注册类校验完成，清空当前验证码
+	 *@since 2019.01.22 清空当前验证码
 	 */
-	if ($type !== 'reg') {
-		wnd_reset_code($email_or_phone, $reg_user_id = 0);
-	}
+	wnd_reset_code($email_or_phone);
 
 	return array('status' => 1, 'msg' => '验证通过！');
 
@@ -235,7 +236,7 @@ function wnd_verify_code($email_or_phone, $code, $type) {
  *@since 2019.02.09 获取验证码发送时间
  */
 function wnd_get_code_sendtime($email_or_phone) {
-	
+
 	global $wpdb;
 	$field = is_email($email_or_phone, $deprecated = false) ? 'email' : 'phone';
 	$time = $wpdb->get_var($wpdb->prepare("SELECT time FROM {$wpdb->wnd_users} WHERE {$field} = %s;", $email_or_phone));
@@ -281,15 +282,8 @@ function wnd_get_user_by($email_or_phone) {
 
 }
 
-// 清空号码十分钟前的code
-function wnd_clear_code($email_or_phone) {
-	global $wpdb;
-	$field = is_email($email_or_phone, $deprecated = false) ? 'email' : 'phone';
-	$wpdb->query($wpdb->prepare("UPDATE {$wpdb->wnd_users}  SET code='' WHERE {$field}=%s AND time < %s ", $email_or_phone, (time() - 600)));
-}
-
-// 号码已完成对应验证后
-function wnd_reset_code($email_or_phone, $reg_user_id) {
+// 重置验证码
+function wnd_reset_code($email_or_phone, $reg_user_id = 0) {
 	global $wpdb;
 	$field = is_email($email_or_phone, $deprecated = false) ? 'email' : 'phone';
 
