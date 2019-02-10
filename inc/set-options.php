@@ -216,8 +216,8 @@ function wnd_options(){
 			<tr>
 				<td valign="top">是否启用</td>
 				<td>
-					开启<input type="radio" name="wnd_term_enable" value="1" <?php if(wnd_get_option('wndwp','wnd_term_enable')==1) echo 'checked' ?>	/>
-					关闭<input type="radio" name="wnd_term_enable" value="0" <?php if(wnd_get_option('wndwp','wnd_term_enable')==0) echo 'checked' ?>	/>
+					开启<input type="radio" name="wnd_terms_enable" value="1" <?php if(wnd_get_option('wndwp','wnd_terms_enable')==1) echo 'checked' ?>	/>
+					关闭<input type="radio" name="wnd_terms_enable" value="0" <?php if(wnd_get_option('wndwp','wnd_terms_enable')==0) echo 'checked' ?>	/>
 					<p><i>是否开启分类关联标签功能</i></p>
 				</td>
 			</tr>			

@@ -44,7 +44,7 @@ function wnd_filter_can_update_account($can_array) {
 	$code = $_POST['v_code'];
 	$user = wp_get_current_user();
 	$user_id = $user->ID;
-	$email_or_phone = wnd_get_option('wndwp', 'wnd_term_enable') == 1 ? wnd_get_user_meta($user_id, 'phone') : $user->user_email;
+	$email_or_phone = wnd_get_option('wndwp', 'wnd_sms_enable') == 1 ? wnd_get_user_meta($user_id, 'phone') : $user->user_email;
 
 	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $is_reg = false);
 	if ($wnd_verify_code['status'] === 0) {
