@@ -19,7 +19,7 @@ use Aliyun\DySDKLite\SignatureHelper;
 /**
  * 发送短信
  */
-function sendSms($phone,$code,$template) {
+function wnd_ali_send_sms($phone,$code,$template) {
 
     $params = array ();
 

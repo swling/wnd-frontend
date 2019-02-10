@@ -92,6 +92,20 @@ jQuery(document).ready(function($) {
 
 });
 
+
+//按钮倒计时
+var wait = 90; // 获取验证码短信时间间隔 按钮不能恢复 可检查号码
+function wnd_countdown() {
+	if (wait > 0) {
+		$(".send-code").text(wait + "秒");
+		wait--;
+		var t = setTimeout(wnd_countdown, 1000);
+	} else {
+		$(".send-code").text("获取验证码").attr("disabled", false).fadeTo("slow", 1);
+		wait = 90;
+	}
+}
+
 // 点击触发，点击A 元素 触发 B元素点击事件 用于部分UI优化操作
 function wnd_click(target_element) {
 	$(target_element).trigger("click");
@@ -213,11 +227,13 @@ function wnd_ajax_submit(form_id) {
 		if (required == "required") {
 			if ($(this).val() == "") {
 				input_value = false;
+				$(this).addClass('is-danger');
 				return false;
 			}
 			if ($(this).attr("type") == "radio") {
 				if ($('[name=' + $(this).attr("name") + ']:checked').length <= 0) {
 					input_value = false;
+					$(this).addClass('is-danger');
 					return false;
 				}
 			}
@@ -237,6 +253,7 @@ function wnd_ajax_submit(form_id) {
 		option_value = $(this).val();
 		if (required == "required" && option_value == "-1") {
 			option_value = false;
+			$(form_id + " select").addClass('is-danger');
 			return false;
 		}
 	});
@@ -260,15 +277,21 @@ function wnd_ajax_submit(form_id) {
 		$("#" + wp_editor_id).val(content);
 	}
 
-	var options = {
+	// 生成表单数据
+	var form_data = new FormData($(form_id).get(0));
+
+	$.ajax({
 		url: ajaxurl,
 		dataType: "json",
-		beforeSubmit: showRequest,
+		cache: false,
+		contentType: false,
+		processData: false,
+		data: form_data,
+		type: "post",
+		beforeSend: showRequest,
 		success: showResponse,
 		error: showError
-	};
-	// 提交表单数据
-	$(form_id).ajaxSubmit(options);
+	});
 
 	// 提交中
 	function showRequest(formData, jqForm, options) {
@@ -482,10 +505,75 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
+	 *@since 2019.02.09 发送手机或邮箱验证码
+	 */
+	$("body").on("click", ".send-code", function() {
+
+		// ajax中无法直接使用jQuery $(this)，需要提前定义
+		var _this = $(this);
+		var form_id = '#' + _this.parents('form').attr('id');
+		var type = $(this).data('type');
+		var template = $(this).data('template');
+		var nonce = $(this).data('nonce');
+
+		var phone = $(form_id + " input[name='phone']").val();
+		var _user_user_email = $(form_id + " input[name='_user_user_email']").val();
+
+		if (!phone && !_user_user_email) {
+			wnd_ajax_msg("不知道发送到给谁……", "is-danger", form_id);
+			return false;
+		}
+
+		$.ajax({
+			type: "post",
+			dataType: "json",
+			url: ajaxurl,
+			data: {
+				action: 'wnd_action',
+				action_name: "wnd_send_code",
+				email: _user_user_email,
+				phone: phone,
+				type: type,
+				template: template,
+				_ajax_nonce: nonce
+			},
+			beforeSend: function() {
+				_this.addClass("is-loading");
+			},
+			success: function(response) {
+
+				if (response.status <= 0) {
+					var color = "is-danger";
+				} else {
+					var color = "is-success";
+					_this.attr("disabled", true);
+					_this.text("已发送");
+					wnd_countdown();
+				}
+				wnd_ajax_msg(response.msg, color, form_id);
+				_this.removeClass("is-loading");
+			},
+			// 错误
+			error: function() {
+				wnd_ajax_msg("发送失败！", "is-danger", form_id);
+				_this.removeClass("is-loading");
+			}
+		});
+
+	});
+
+	/**
 	 *@since 2019.01.18 表单改变时，取消submit disable状态
 	 */
 	$("body").on("change", "form", function() {
 		$("[name='submit']").attr("disabled", false);
+		$("button").attr("disabled", false);
 	});
 
+	/**
+	 *@since 2019.02.09 表单改变时，移除input警示状态
+	 */
+	$("body").on("input", "input", function() {
+		$(this).removeClass('is-danger');
+	});
 });

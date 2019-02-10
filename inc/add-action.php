@@ -66,19 +66,6 @@ function wnd_action_delete_attachment($attach_id, $post_parent, $meta_key) {
 }
 
 /**
- *删除用户的附加操作
- *@since 2018
- */
-add_action('delete_user', 'wnd_action_delete_user');
-function wnd_action_delete_user($user_id) {
-
-	// 删除手机注册记录
-	global $wpdb;
-	$wpdb->delete($wpdb->wnd_sms, array('user_id' => $user_id));
-
-}
-
-/**
  * 充值、支付
  *@since 2018.9.25
  */
@@ -111,5 +98,37 @@ function wnd_action_pay() {
 		}
 
 	}
+
+}
+
+/*######################################################################### 以下为WordPress原生 action*/
+
+/**
+ *@since 初始化 用户注册后
+ *校验完成后，重置验证码数据
+ */
+add_action('user_register', 'wnd_reset_reg_code');
+function wnd_reset_reg_code($user_id) {
+
+	// 注册类，将注册用户id写入对应数据表
+	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'];
+	wnd_reset_code($email_or_phone, $user_id);
+
+	// 手机注册，写入用户meta
+	if(isset($_POST['phone'])){
+		wnd_update_user_meta($user_id,'phone',$_POST['phone']);
+	}
+}
+
+/**
+ *删除用户的附加操作
+ *@since 2018
+ */
+add_action('delete_user', 'wnd_action_delete_user');
+function wnd_action_delete_user($user_id) {
+
+	// 删除手机注册记录
+	global $wpdb;
+	$wpdb->delete($wpdb->wnd_users, array('user_id' => $user_id));
 
 }

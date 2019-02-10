@@ -26,7 +26,7 @@ function wnd_set_object_terms_action($object_id, $terms, $tt_ids, $taxonomy, $ap
 	*/
 
 	// 选项中是否开启本功能
-	if (wnd_get_option('wndwp', 'wnd_term_enable') == 0) {
+	if (wnd_get_option('wndwp', 'wnd_term_enable') != 1) {
 		return;
 	}
 
@@ -121,7 +121,7 @@ function wnd_update_tag_under_cat($cat_id, $tag_id, $tag_taxonomy, $inc = true) 
 	wp_cache_delete($cat_id . $tag_taxonomy, 'wnd_tag_list_under_cat');
 
 	$result = $wpdb->get_row($wpdb->prepare(
-		"SELECT * FROM $wpdb->wnd_term WHERE cat_id = %d AND tag_id = %d ",
+		"SELECT * FROM $wpdb->wnd_terms WHERE cat_id = %d AND tag_id = %d ",
 		$cat_id,
 		$tag_id
 	));
@@ -134,12 +134,12 @@ function wnd_update_tag_under_cat($cat_id, $tag_id, $tag_taxonomy, $inc = true) 
 
 		// count为0，删除记录 返回
 		if (!$count) {
-			$wpdb->delete($wpdb->wnd_term, array('ID' => $ID));
+			$wpdb->delete($wpdb->wnd_terms, array('ID' => $ID));
 			return true;
 		}
 
 		$do_sql = $wpdb->update(
-			$wpdb->wnd_term, //table
+			$wpdb->wnd_terms, //table
 			array('count' => $count), // data
 			array('ID' => $ID), // where
 			array('%d'), //data format
@@ -150,7 +150,7 @@ function wnd_update_tag_under_cat($cat_id, $tag_id, $tag_taxonomy, $inc = true) 
 	} elseif ($inc) {
 
 		$do_sql = $wpdb->insert(
-			$wpdb->wnd_term,
+			$wpdb->wnd_terms,
 			array('cat_id' => $cat_id, 'tag_id' => $tag_id, 'tag_taxonomy' => $tag_taxonomy, 'count' => 1), //data
 			array('%d', '%d', '%s', '%d') // data format
 		);
@@ -213,9 +213,9 @@ function wnd_pre_delete_term_action($term_id, $taxonmy) {
 
 	global $wpdb;
 	if (strpos($taxonmy, '_tag')) {
-		$wpdb->delete($wpdb->wnd_term, array('tag_id' => $term_id));
+		$wpdb->delete($wpdb->wnd_terms, array('tag_id' => $term_id));
 	} else {
-		$wpdb->delete($wpdb->wnd_term, array('cat_id' => $term_id));
+		$wpdb->delete($wpdb->wnd_terms, array('cat_id' => $term_id));
 	}
 
 }
@@ -233,7 +233,7 @@ function wnd_tag_list_under_cat($args = array()) {
 		'remove_keys' => array(),
 		'title' => '全部',
 	);
-	$args = wp_parse_args($args,$defaults);
+	$args = wp_parse_args($args, $defaults);
 
 	$cat_id = $args['cat_id'];
 	$tag_taxonomy = $args['tag_taxonomy'];
@@ -255,11 +255,11 @@ function wnd_tag_list_under_cat($args = array()) {
 		// 一个分类下可能对应多个tag类型此处区分
 		if ($tag_taxonomy == 'any') {
 			$tag_array = $wpdb->get_results(
-				$wpdb->prepare("SELECT * FROM $wpdb->wnd_term WHERE cat_id = %d ORDER BY count DESC LIMIT %d", $cat_id, $limit)
+				$wpdb->prepare("SELECT * FROM $wpdb->wnd_terms WHERE cat_id = %d ORDER BY count DESC LIMIT %d", $cat_id, $limit)
 			);
 		} else {
 			$tag_array = $wpdb->get_results(
-				$wpdb->prepare("SELECT * FROM $wpdb->wnd_term WHERE cat_id = %d AND tag_taxonomy = %s ORDER BY count DESC LIMIT %d", $cat_id, $tag_taxonomy, $limit)
+				$wpdb->prepare("SELECT * FROM $wpdb->wnd_terms WHERE cat_id = %d AND tag_taxonomy = %s ORDER BY count DESC LIMIT %d", $cat_id, $tag_taxonomy, $limit)
 			);
 		}
 

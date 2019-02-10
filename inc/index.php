@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  *加载php文件
  */
 require WNDWP_PATH . 'inc/handle-array.php'; //数组形式储存 meta、option
@@ -23,13 +23,17 @@ require WNDWP_PATH . 'inc/add-filter.php'; //添加的钩子
 
 require WNDWP_PATH . 'template/user.php'; //user模板
 require WNDWP_PATH . 'template/post.php'; //post模板
+require WNDWP_PATH . 'template/module.php'; //相对独立的模块模板
 
-// 短信功能
-if (wnd_get_option('wndwp', 'wnd_sms_enable') !=0 ) {
-	require WNDWP_PATH . 'sms/sms.php'; //短信模块
+// 验证
+require WNDWP_PATH . 'inc/verify.php'; //验证模块
+
+// 短信
+if (wnd_get_option('wndwp', 'wnd_term_sms') == 1) {
+	require WNDWP_PATH . 'sms/aliyun-sms/sendSms.php'; //阿里云短信
 }
 
-// Term功能
-if (wnd_get_option('wndwp', 'wnd_term_enable') !=0 ) {
+// Term关联
+if (wnd_get_option('wndwp', 'wnd_term_enable') == 1) {
 	require WNDWP_PATH . 'inc/term.php'; //分类、标签
 }

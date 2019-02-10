@@ -4,14 +4,14 @@
  */
 
 global $wpdb;
-// 短信
-$wpdb->wnd_user = $wpdb->prefix . 'wnd_user';
+// 用户数据
+$wpdb->wnd_users = $wpdb->prefix . 'wnd_users';
+
 // 标签关联分类
-$wpdb->wnd_term = $wpdb->prefix . 'wnd_term';
-// 管理数据
-$wpdb->wnd_manage = $wpdb->prefix . 'wnd_manage';
-// 支付
-$wpdb->wnd_payment = $wpdb->prefix . 'wnd_payment';
+$wpdb->wnd_terms = $wpdb->prefix . 'wnd_terms';
+
+// 通用数据（支付，充值，订单，管理等）
+$wpdb->wnd_objects = $wpdb->prefix . 'wnd_objects';
 
 /**
  *@since 2019.01.24
@@ -24,16 +24,18 @@ function wnd_create_table() {
 	require ABSPATH . 'wp-admin/includes/upgrade.php';
 
 	// 创建用户数据库
-	$create_user_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_user (
+	$create_user_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_users (
 
 			ID bigint(20) NOT NULL auto_increment,
 			user_id bigint(20) NOT NULL,
+			email varchar(100) NOT NULL,
 			phone varchar(14) NOT NULL,
-			code char(6) NOT NULL,
+			code varchar(64) NOT NULL,
 			open_id varchar(64) NOT NULL,
 			time bigint(20) NOT NULL,
 			PRIMARY KEY (ID),
 			KEY user_id(user_id),
+			KEY email(email),
 			KEY phone(phone),
 			KEY open_id(open_id)
 
@@ -42,7 +44,7 @@ function wnd_create_table() {
 	dbDelta($create_user_sql);
 
 	// 创建标签关联分类数据库
-	$create_tag_under_cat_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_term (
+	$create_terms_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_terms (
         ID bigint(20) NOT NULL auto_increment,
         cat_id bigint(20) NOT NULL,
         tag_id bigint(20) NOT NULL,
@@ -52,43 +54,24 @@ function wnd_create_table() {
         UNIQUE KEY cat_tag(cat_id,tag_id)
 
         ) $charset_collate;";
-	dbDelta($create_tag_under_cat_sql);
+	dbDelta($create_terms_sql);
 
 	/**
-	 * @since 2019.01.30 支付订单数据库
+	 * @since 2019.02.10 objects公共数据表
 	 */
-	$create_payment_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_payment (
+	$create_objects_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_objects (
         ID bigint(20) NOT NULL auto_increment,
-        post_id bigint(20) NOT NULL,
+        object_id bigint(20) NOT NULL,
         user_id bigint(20) NOT NULL,
-        price DECIMAL(6,2) NOT NULL,
+        type varchar(16) NOT NULL,
+        status varchar(16) NOT NULL,
+        value DECIMAL(10,2) NOT NULL,
         time bigint(20) NOT NULL,
-        status varchar(20) NOT NULL,
-        type varchar(20) NOT NULL,
         PRIMARY KEY (ID),
-        KEY post_id(post_id),
+        KEY object_id(object_id),
         KEY user_id(user_id)
 
         ) $charset_collate;";
-	dbDelta($create_payment_sql);
-
-	/**
-	 *@since 2019.02.08 前端管理数据库
-	 */
-	$create_manage_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_manage (
-
-			ID bigint(20) NOT NULL auto_increment,
-			post_id bigint(20) NOT NULL,
-			user_id bigint(20) NOT NULL,
-			type varchar(32) NOT NULL,
-			status varchar(32) NOT NULL,
-			time bigint(20) NOT NULL,
-			PRIMARY KEY (ID),
-			KEY post_id(post_id),
-			KEY user_id(user_id)
-
-			) $charset_collate;";
-
-	dbDelta($create_manage_sql);
+	dbDelta($create_objects_sql);
 
 }

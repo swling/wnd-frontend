@@ -174,7 +174,7 @@ function wnd_update_profile() {
 	$user_url = $_POST['_user_user_url'];
 
 	// 初始化用户及profile字段数据
-	$user_array = array('ID' => $user_id,'display_name'=>$display_name,'user_url'=>$user_url);
+	$user_array = array('ID' => $user_id, 'display_name' => $display_name, 'user_url' => $user_url);
 	$user_meta_array = array(); //自定义数组字段 wnd_user_meta
 	$wp_user_meta_array = array(); //WordPress 原生用户字段
 
@@ -292,18 +292,17 @@ function wnd_update_account() {
 }
 
 /**
- *@since 2019.01.28 手机号码验证重置密码
+ *@since 2019.02.10 用户找回密码
  */
-function wnd_reset_password_by_sms() {
+function wnd_reset_password() {
 
-	// 手机短信验证
-	if (!function_exists('wnd_verify_sms')) {
-		return array('status' => 0, 'msg' => '未开启短信验证功能，请使用邮箱找回！');
-	}
+	// $email = $_POST['_user_user_email'];
+	$email_or_phone = $_POST['_meta_phone'] ?? $_POST['_user_user_email'];
+	$text = $field == 'phone' ? '手机' : '邮箱';
 
-	// 新密码
 	$new_password = $_POST['_user_new_pass'];
 	$new_password_repeat = $_POST['_user_new_pass_repeat'];
+	$code = $_POST['v_code'];
 
 	// 验证密码正确性
 	if (strlen($new_password) < 6) {
@@ -313,93 +312,24 @@ function wnd_reset_password_by_sms() {
 		return array('status' => 0, 'msg' => '两次输入的新密码不匹配！');
 	}
 
-	//手机短信
-	$code = $_POST['sms_code'];
-	$phone = $_POST['_meta_phone'];
-
-	//根据号码获取用户
-	$user_id = wnd_get_user_by_phone($phone);
-	$user = get_user_by('id', $user_id);
-	if (!$user_id) {
-		return array('status' => 0, 'msg' => '该手机号码尚未注册！');
-	}
-
-	// 验证短信
-	$sms_error = wnd_verify_sms($phone, $code, $is_reg = false);
-	if ($sms_error['status'] === 0) {
-		return $sms_error;
-	}
-
-	// 重置密码
-	reset_password($user, $new_password);
-	return array('status' => 1, 'msg' => '密码修改成功！<a onclick="wnd_ajax_modal(\'login_form\');">登录</a>');
-
-}
-
-/**
- *@since 2019.01.28 用户邮箱找回密码
- */
-function wnd_reset_password_by_email() {
-
-	$email = $_POST['_user_user_email'];
-	$new_password = $_POST['_user_new_pass'];
-	$new_password_repeat = $_POST['_user_new_pass_repeat'];
-	$key = $_POST['_user_reset_key'];
-
-	// 验证密码正确性
-	if (strlen($new_password) < 6) {
-		return array('status' => 0, 'msg' => '新密码不能低于6位！');
-
-	} elseif ($new_password_repeat != $new_password) {
-		return array('status' => 0, 'msg' => '两次输入的新密码不匹配！');
-	}
-
-	if (empty($key)) {
+	if (empty($code)) {
 		return array('status' => 0, 'msg' => '请输入验证秘钥！');
 	}
 
 	//获取用户
-	$user = get_user_by('email', $email);
+	$user = wnd_get_user_by($email_or_phone);
 	if (!$user) {
-		return array('status' => 0, 'msg' => '该邮箱尚未注册！');
+		return array('status' => 0, 'msg' => '该' . $text . '尚未注册！');
 	}
 
 	// 检查秘钥
-	$check = check_password_reset_key($key, $user->user_login);
-	if (is_wp_error($check)) {
-		return array('status' => 0, 'msg' => $check->get_error_message());
+	$check = wnd_verify_code($email_or_phone, $code, $type='v');
+	if ($check['status']===0) {
+		return $check;
 
 	} else {
 		reset_password($user, $new_password);
 		return array('status' => 1, 'msg' => '密码修改成功！<a onclick="wnd_ajax_modal(\'login_form\');">登录</a>');
-	}
-
-}
-
-/**
- *@since 2019.01.28 发送邮箱验证秘钥
- */
-function _wnd_get_password_reset_key() {
-
-	$email = $_POST['email'];
-	if (!is_email($email)) {
-		return array('status' => 0, 'msg' => '邮件格式错误！');
-	}
-
-	$user = get_user_by('email', $email);
-	if (!$user) {
-		return array('status' => 0, 'msg' => '该邮箱尚未注册！');
-	}
-
-	$key = get_password_reset_key($user);
-	$message = '密码重置秘钥【' . $key . '】（不含括号），关键凭证，请勿泄露！';
-
-	$action = wp_mail($email, '重置密码', $message);
-
-	if ($action) {
-		return array('status' => 1, 'msg' => '发送成功，请注意查收！');
-	} else {
-		return array('status' => 0, 'msg' => '发送失败，请稍后重试！');
 	}
 
 }

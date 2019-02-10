@@ -137,10 +137,6 @@ form input type hidden （*action_name 与WordPress nonce filed校验名称 、�
 #支付配置：
 支付宝：inc/pay/payment/alipay/config.php
 
-#支付数据库
-依赖WordPress comment
-在当前文章插入comment_type=>payment 的评论作为支付凭证
-
 #付费阅读
 ##价格：
 文章字段设置 wp post meta: price
@@ -153,7 +149,9 @@ form input type hidden （*action_name 与WordPress nonce filed校验名称 、�
 ##文件
 文章字段：file 存储上传附件的id
 
-
 #action filter函数命名规则：
 wnd_action_xxx
 wnd_filter_xxx
+
+#数据库
+如果需要用户昵称唯一：建议对users->display_name 新增索引

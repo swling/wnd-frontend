@@ -169,3 +169,29 @@ function wnd_random($length) {
     }
     return $hash;
 }
+
+/**
+ *@since 初始化
+ *生成N位随机数字
+ */
+function wnd_random_code($length = 6) {
+
+	$No = '';
+	for ($i = 0; $i < $length; $i++) {
+		$No .= mt_rand(0, 9);
+	}
+	return $No;
+
+}
+
+/**
+* @since 2019.02.09  验证是否为手机号
+*/
+function wnd_is_phone($phone) {
+	if ((empty($phone) || !preg_match("/^(((13[0-9]{1})|(15[0-9]{1})|(17[0-9]{1})|(18[0-9]{1}))+\d{8})$/", $phone))) {
+		return 0;
+	} else {
+		return 1;
+	}
+
+}

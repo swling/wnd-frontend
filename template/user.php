@@ -125,7 +125,6 @@ function _wnd_reg_form(){
 	<div class="field">
 		<div class="ajax-msg"></div>
 	</div>
-	<?php if(!function_exists('wnd_sms_field')) { ?>
 	<div class="field">
 		<label class="label">用户名 <span class="required">*</span></label>
 		<div class="control has-icons-left">
@@ -135,16 +134,7 @@ function _wnd_reg_form(){
 			</span>
 		</div>
 	</div>
-	<?php } ?>
-	<div class="field">
-		<label class="label">Email <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="text" class="input" required="required" name="_user_user_email" placeholder="常用的电子邮箱">
-			<span class="icon is-left">
-				<i class="fa fa-at"></i>
-			</span>
-		</div>
-	</div>
+	<?php wnd_mail_field($type = 'reg');?>
 	<div class="field">
 		<label class="label">密码 <span class="required">*</span></label>
 		<div class="control has-icons-left">
@@ -164,7 +154,7 @@ function _wnd_reg_form(){
 		</div>
 	</div>
 	<?php do_action('_wnd_reg_form');?>
-	<?php if(function_exists('wnd_sms_field')) wnd_sms_field(wnd_get_option('wndwp','wnd_ali_TemplateCode_R'), $type='reg'); ?>
+	<?php if(wnd_get_option('wndwp', 'wnd_sms_enable') ==1) wnd_sms_field(wnd_get_option('wndwp','wnd_ali_TemplateCode_R'), $type='reg'); ?>
 	<?php wp_nonce_field('wnd_insert_user', '_ajax_nonce'); ?>
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_insert_user">
@@ -183,6 +173,8 @@ function _wnd_reg_form(){
 		</div>
 	</div>
 </form>
+<script>
+</script>
 <?php
 
 }
@@ -240,7 +232,7 @@ function _wnd_account_form(){
             </span>            
 		</div>
 	</div>
-	<?php if(function_exists('wnd_sms_field')) wnd_sms_field(wnd_get_option('wndwp','wnd_ali_TemplateCode_V')); ?>
+	<?php if(wnd_get_option('wndwp', 'wnd_sms_enable') == 1) wnd_sms_field(wnd_get_option('wndwp','wnd_ali_TemplateCode_V')); ?>
 	<?php wp_nonce_field('wnd_update_account', '_ajax_nonce'); ?>
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_update_account">
@@ -252,12 +244,12 @@ function _wnd_account_form(){
 }
 
 /**
-*@since 2019.01.28 邮箱找回密码
+*@since 2019.01.28 找回密码
 */
 function _wnd_lostpassword_form($type='email'){
 ?>
 <?php if($type=='sms'){ //1、验证短信重置密码 ?>
-<?php if (!function_exists('wnd_sms_field')) { 
+<?php if (wnd_get_option('wndwp', 'wnd_sms_enable') !=1) { 
 		echo '<script type="text/javascript">wnd_alert_msg(\'短信验证功能未启用！\')</script>';
 		return; 
 		}
@@ -287,10 +279,10 @@ function _wnd_lostpassword_form($type='email'){
 			</span>
 		</div>
 	</div>
-	<?php wnd_sms_field(wnd_get_option('wndwp','wnd_ali_TemplateCode_V'), 'lostpassword');?>
-	<?php wp_nonce_field('wnd_reset_password_by_sms', '_ajax_nonce'); ?>
+	<?php wnd_sms_field(wnd_get_option('wndwp','wnd_ali_TemplateCode_V'), 'reset-pass');?>
+	<?php wp_nonce_field('wnd_reset_password', '_ajax_nonce'); ?>
 	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_reset_password_by_sms">
+	<input type="hidden" name="action_name" value="wnd_reset_password">
 	<div class="field is-grouped is-grouped-centered">
 		<button name="submit" class="button" onclick="wnd_ajax_submit('#sms-reset-pass')">重置密码</button>
 	</div>
@@ -316,24 +308,7 @@ function _wnd_lostpassword_form($type='email'){
 	<div class="field">
 		<div class="ajax-msg"></div>
 	</div>
-	<div class="field">
-		<label class="label">Email <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="text" class="input" required="required" name="_user_user_email" placeholder="注册邮箱">
-			<span class="icon is-left">
-				<i class="fa fa-at"></i>
-			</span>
-		</div>
-	</div>
-	<div class="field has-addons">
-		<div class="control is-expanded has-icons-left">
-			<input required="required" type="text" class="input" name="_user_reset_key" placeholder="邮箱验证秘钥">
-			<span class="icon is-left"><i class="fa fa-key"></i></span>
-		</div>
-		<div class="control">
-			<span id="sendMailBtn" class="button is-primary">获取秘钥</span>
-		</div>
-	</div>
+	<?php wnd_mail_field($type = 'reset-pass'); ?>  
 	<div class="field">
 		<label class="label">新密码 <span class="required">*</span></label>
 		<div class="control has-icons-left">
@@ -352,9 +327,9 @@ function _wnd_lostpassword_form($type='email'){
 			</span>
 		</div>
 	</div>
-	<?php wp_nonce_field('wnd_reset_password_by_email', '_ajax_nonce'); ?>
+	<?php wp_nonce_field('wnd_reset_password', '_ajax_nonce'); ?>
 	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_reset_password_by_email">
+	<input type="hidden" name="action_name" value="wnd_reset_password">
 	<div class="field is-grouped is-grouped-centered">
 		<button name="submit" class="button" onclick="wnd_ajax_submit('#email-reset-pass')">重置密码</button>
 	</div>
@@ -362,66 +337,16 @@ function _wnd_lostpassword_form($type='email'){
 		<div class="message is-primary">
 			<div class="message-body">
 				<?php if(wp_doing_ajax()) { //是否在ajax中  ?>
-				<?php if(function_exists('wnd_sms_field')){echo '<a onclick="wnd_ajax_modal(\'lostpassword_form\',\'sms\');">手机验证找回</a> | ';}?>
+				<?php if(wnd_get_option('wndwp', 'wnd_sms_enable') == 1){echo '<a onclick="wnd_ajax_modal(\'lostpassword_form\',\'sms\');">手机验证找回</a> | ';}?>
 				<a onclick="wnd_ajax_modal('login_form');">登录</a>
 				<?php } else {?>
-				<?php if(function_exists('wnd_sms_field')){echo '<a href="'.add_query_arg('type','sms').'">手机验证找回</a> | ';}?>
+				<?php if(wnd_get_option('wndwp', 'wnd_sms_enable') == 1){echo '<a href="'.add_query_arg('type','sms').'">手机验证找回</a> | ';}?>
 				<a href="<?php echo add_query_arg('action','login',remove_query_arg('type'))?>">马上登录</a>
 				<?php } ?>
 			</div>
 		</div>
 	</div>
 </form>
-<script>
-var wait = 120; // 获取验证码短信时间间隔 按钮不能恢复 可检查号码
-function countdown() {
-	if (wait > 0) {
-		$("#sendMailBtn").text(wait + "秒");
-		wait--;
-		setTimeout(countdown, 1000);
-	} else {
-		$("#sendMailBtn").attr("disabled", false).fadeTo("slow", 1);
-		wait = 120;
-	}
-}
-
-$("#sendMailBtn").off("click").on("click", function() {
-	var email = $("#email-reset-pass input[name=_user_user_email]").val();
-	if (email == '') {
-		wnd_ajax_msg("未能获取到email地址！", "is-danger", "#email-reset-pass");
-		return false;
-	}
-
-	$.ajax({
-		type: "post",
-		dataType: "json",
-		url: ajaxurl,
-		data: {
-			action: 'wnd_action',
-			action_name: "_wnd_get_password_reset_key",
-			email: email
-		},
-		beforeSend: function() {
-			$("#sendMailBtn").addClass("is-loading");
-		},
-		success: function(response) {
-			if (response.status === 0) {
-				wnd_ajax_msg(response.msg, "is-danger", "#email-reset-pass");
-			} else {
-				$("#sendMailBtn").attr("disabled", true).fadeTo("slow", 0.5);
-				countdown();
-			}
-			$("#sendMailBtn").removeClass("is-loading");
-		},
-		// 错误
-		error: function() {
-			wnd_ajax_msg("发送失败！", "is-danger", "#email-reset-pass");
-			$("#sendMailBtn").removeClass("is-loading");
-		}
-	});
-
-});
-</script>
 <?php } ?>
 <?php
 
@@ -489,77 +414,4 @@ function _wnd_profile_form($args=array()){
 
 </form>
 <?php 
-}
-
-
-/**
-*@since 2019.01.21 充值表单
-*/
-function _wnd_recharge_form(){
-?>
-<style>
-/*单选样式优化*/
-.radio-toolbar,
-.paytype {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.radio-toolbar input[type="radio"] {
-	display: none;
-}
-
-.radio-toolbar label {
-	display: inline-block;
-	cursor: pointer;
-	border-radius: 3px;
-	background: #f5f5f5;
-	text-align: center;
-}
-
-.radio-toolbar label {
-	font-size: 18px;
-	padding: 10px 20px;
-	margin: 1.5%;
-	min-width: 80px;
-}
-
-.radio-toolbar input[type="radio"]:checked+label {
-	background-color: #00d1b2;
-	color: #FFF;
-}
-</style>
-<form id="recharge" action="<?php echo wnd_get_do_url(); ?>?action=recharge" method="post">
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-	<div class="radio-toolbar field recharge">
-		<input id="radio1" required="required" name="money" type="radio" value="0.01" checked="checked" />
-		<label for="radio1">¥0.01</label>
-
-		<input id="radio2" required="required" name="money" type="radio" value="10">
-		<label for="radio2">¥10</label>
-
-		<input id="radio3" required="required" name="money" type="radio" value="100">
-		<label for="radio3">¥100</label>
-
-		<input id="radio4" required="required" name="money" type="radio" value="500">
-		<label for="radio4">¥500</label>
-
-		<input id="radio5" required="required" name="money" type="radio" value="1000">
-		<label for="radio5">¥1000</label>
-	</div>
-	<div class="paytype field">
-		<label for="paytype1"><img src="https://t.alipayobjects.com/images/T1HHFgXXVeXXXXXXXX.png"></label>
-		<input type="radio" name="paytype" value="alipay" checked="checked" />
-	</div>
-	<?php do_action('_wnd_recharge_form');?>
-	<?php wp_nonce_field('wnd_recharge'); ?>
-	<div class="field is-grouped is-grouped-centered">
-		<button type="submit" name="submit" class="button">确认充值</button>
-	</div>
-</form>
-<?php
-
 }

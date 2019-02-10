@@ -17,21 +17,17 @@ add_filter('wnd_can_reg', 'wnd_filter_can_reg', 10, 1);
 function wnd_filter_can_reg($can_array) {
 
 	// 后台注册选项
-	if(!get_option( 'users_can_register')){
-		return array ('status'=>0,'msg'=>'站点已关闭注册！');
+	if (!get_option('users_can_register')) {
+		return array('status' => 0, 'msg' => '站点已关闭注册！');
 	}
 
-	// 手机短信验证:手机 验证码 是否为注册
-	if (function_exists('wnd_verify_sms')) {
+	// 验证:手机或邮箱 验证码
+	$code = $_POST['v_code'];
+	$email_or_phone = $_POST['_meta_phone'] ?? $_POST['_user_user_email'];
+	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = "reg");
 
-		$code = $_POST['sms_code'];
-		$phone = $_POST['sms_phone'];
-		$sms_error = wnd_verify_sms($phone, $code, $is_reg = true);
-
-		if ($sms_error['status'] === 0) {
-			return $sms_error;
-		}
-
+	if ($wnd_verify_code['status'] === 0) {
+		return $wnd_verify_code;
 	}
 
 	return $can_array;
@@ -45,23 +41,18 @@ function wnd_filter_can_reg($can_array) {
 add_filter('wnd_can_update_account', 'wnd_filter_can_update_account', 10, 1);
 function wnd_filter_can_update_account($can_array) {
 
-	// return array('status'=>0,'msg'=>'更新账户，测试拒绝！');
+	$code = $_POST['v_code'];
+	$user = wp_get_current_user();
+	$user_id = $user->ID;
+	$email_or_phone = wnd_get_option('wndwp', 'wnd_term_enable') == 1 ? wnd_get_user_meta($user_id, 'phone') : $user->user_email;
 
-	// 手机短信验证
-	if (function_exists('wnd_verify_sms')) {
+	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $is_reg = false);
+	if ($wnd_verify_code['status'] === 0) {
+		return $wnd_verify_code;
+	} else {
 
-		$code = $_POST['sms_code'];
-		$user_id = get_current_user_id();
-		$phone = wnd_get_user_meta($user_id, 'phone');
-
-		$sms_error = wnd_verify_sms($phone, $code, $is_reg = false);
-
-		if ($sms_error['status'] === 0) {
-			return $sms_error;
-		}
+		return $can_array;
 	}
-
-	return $can_array;
 
 }
 
@@ -91,7 +82,7 @@ function wnd_filter_limit_upload($file) {
 	$ext = '.' . $info['extension'];
 
 	// 对随机码再做md5加密
-	$md5 = md5(wnd_random(6).time());
+	$md5 = md5(wnd_random(6) . time());
 	$file['name'] = $md5 . $ext;
 
 	return $file;
@@ -99,14 +90,14 @@ function wnd_filter_limit_upload($file) {
 }
 
 /**
-*@since 2019.01.31 重写WordPress原生编辑链接到指定的页面
-*/
-add_filter( 'get_edit_post_link', 'wnd_filter_edit_post_link', $priority = 10, $accepted_args = 3 );
-function wnd_filter_edit_post_link($link,$post_id,$context){
+ *@since 2019.01.31 重写WordPress原生编辑链接到指定的页面
+ */
+add_filter('get_edit_post_link', 'wnd_filter_edit_post_link', $priority = 10, $accepted_args = 3);
+function wnd_filter_edit_post_link($link, $post_id, $context) {
 
-	$edit_page = (int) wnd_get_option('wndwp','wnd_edit_page');
-	if($edit_page){
-		return get_permalink( $edit_page).'?post_id='.$post_id;
+	$edit_page = (int) wnd_get_option('wndwp', 'wnd_edit_page');
+	if ($edit_page) {
+		return get_permalink($edit_page) . '?post_id=' . $post_id;
 	}
 	return $link;
 
