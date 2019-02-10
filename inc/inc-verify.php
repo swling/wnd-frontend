@@ -27,18 +27,18 @@ function wnd_send_code() {
 	if ($email) {
 
 		if (is_user_logged_in()) {
-			return wnd_send_mail_code_to_user($template, $type);
+			return wnd_send_mail_code_to_user($type, $template);
 		} else {
-			return wnd_send_mail_code($email, $template, $type);
+			return wnd_send_mail_code($email, $type, $template);
 		}
 
 		//手机验证
 	} elseif ($phone) {
 
 		if (is_user_logged_in()) {
-			return wnd_send_sms_code_to_user($template, $type);
+			return wnd_send_sms_code_to_user($type, $template);
 		} else {
-			return wnd_send_sms_code($phone, $template, $type);
+			return wnd_send_sms_code($phone, $type, $template);
 		}
 
 		// 既不是手机也不是邮箱
@@ -88,7 +88,7 @@ function wnd_can_send_code($email_or_phone, $type) {
 /**
  *@since 2019.01.28 发送邮箱验证码
  */
-function wnd_send_mail_code($email, $template = '', $type = 'v') {
+function wnd_send_mail_code($email, $type = 'v', $template = '') {
 
 	$user = get_user_by('email', $email);
 	$code = wnd_random_code($length = 6);
@@ -110,14 +110,14 @@ function wnd_send_mail_code($email, $template = '', $type = 'v') {
 /**
  *@since 2019.01.28 发送邮箱验证码
  */
-function wnd_send_mail_code_to_user($template = '', $type = 'v') {
+function wnd_send_mail_code_to_user($type = 'v', $template = '') {
 
 	$user = wp_get_current_user();
 	if (!$user->user_email) {
 		return array('status' => 0, 'msg' => '用户未绑定邮箱！');
 	}
 
-	return wnd_send_mail_code($user->user_email, $template, $type);
+	return wnd_send_mail_code($user->user_email, $type, $template);
 
 }
 
@@ -126,11 +126,11 @@ function wnd_send_mail_code_to_user($template = '', $type = 'v') {
  *通过ajax发送短信
  *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
  */
-function wnd_send_sms_code($phone, $template = '', $type) {
+function wnd_send_sms_code($phone, $type, $template = '') {
 
 	$template = empty($template) ?: wnd_get_option('wndwp', 'wnd_ali_TemplateCode');
-
 	$code = wnd_random_code($length = 6);
+	
 	// 写入手机记录
 	if (!wnd_insert_code($phone, $code)) {
 		return array('status' => 0, 'msg' => '数据库写入失败！');
@@ -150,7 +150,7 @@ function wnd_send_sms_code($phone, $template = '', $type) {
  *通过给当前用户发送短信
  *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
  */
-function wnd_send_sms_to_user($template, $type) {
+function wnd_send_sms_to_user($type, $template) {
 
 	// 获取当前用户的手机号码
 	$user_id = get_current_user_id();
@@ -159,7 +159,7 @@ function wnd_send_sms_to_user($template, $type) {
 		return array('status' => 0, 'msg' => '未能获取到手机号码！');
 	}
 
-	return wnd_send_sms_code($phone, $template, $type);
+	return wnd_send_sms_code($phone, $type, $template);
 }
 
 /**

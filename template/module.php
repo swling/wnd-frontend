@@ -4,12 +4,11 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-
 /**
-*@since 2019.01.21 充值表单
-*/
-function _wnd_recharge_form(){
-?>
+ *@since 2019.01.21 充值表单
+ */
+function _wnd_recharge_form() {
+	?>
 <style>
 /*单选样式优化*/
 .radio-toolbar,
@@ -68,7 +67,7 @@ function _wnd_recharge_form(){
 		<input type="radio" name="paytype" value="alipay" checked="checked" />
 	</div>
 	<?php do_action('_wnd_recharge_form');?>
-	<?php wp_nonce_field('wnd_recharge'); ?>
+	<?php wp_nonce_field('wnd_recharge');?>
 	<div class="field is-grouped is-grouped-centered">
 		<button type="submit" name="submit" class="button">确认充值</button>
 	</div>
@@ -81,12 +80,12 @@ function _wnd_recharge_form(){
  *@since 初始化短信发送表单field
  *参数：$type='reg' 即为注册操作，注册操作会检测手机是否已经注册，反之如果为 lostpassword 则不能发送给未注册用户
  */
-function wnd_sms_field($template = '', $type = 'verify') {
+function wnd_sms_field($type = 'verify', $template = '') {
 
-?>
+	?>
 <div class="field is-horizontal">
 	<div class="field-body">
-		<?php if (!wnd_get_user_phone(get_current_user_id())) { ?>
+		<?php if (!wnd_get_user_phone(get_current_user_id())) {?>
 		<div class="field">
 			<div class="control has-icons-left">
 		    	<input id="sms-phone" class="input" required="required" type="text" name="phone" placeholder="手机号码" />
@@ -100,7 +99,7 @@ function wnd_sms_field($template = '', $type = 'verify') {
 		    	<span class="icon is-left"><i class="fa fa-comment"></i></span>
 			</div>
 			<div class="control">
-		    	<button class="send-code button is-primary" data-type="<?php echo $type; ?>" data-type="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_send_code') ?>">获取验证码</button>
+		    	<button class="send-code button is-primary" data-type="<?php echo $type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_send_code') ?>">获取验证码</button>
 			</div>
 		</div>
 	</div>
@@ -109,12 +108,11 @@ function wnd_sms_field($template = '', $type = 'verify') {
 
 }
 
-
 /**
-*@since 2019.02.10 邮箱验证表单字段
-*/
-function wnd_mail_field($type='v'){
-?>
+ *@since 2019.02.10 邮箱验证表单字段
+ */
+function wnd_mail_field($type = 'v', $template = '') {
+	?>
 <div class="field">
 	<label class="label">Email <span class="required">*</span></label>
 	<div class="control has-icons-left">
@@ -124,17 +122,17 @@ function wnd_mail_field($type='v'){
 		</span>
 	</div>
 </div>
-<?php if(wnd_get_option('wndwp', 'wnd_sms_enable') !=1) { ?>
+<?php if (wnd_get_option('wndwp', 'wnd_sms_enable') != 1) {?>
 <div class="field has-addons">
 	<div class="control is-expanded has-icons-left">
 		<input required="required" type="text" class="input" name="v_code" placeholder="邮箱验证码">
 		<span class="icon is-left"><i class="fa fa-key"></i></span>
 	</div>
 	<div class="control">
-		<button class="button is-primary send-code" data-type="<?php echo $type; ?>" data-nonce="<?php echo wp_create_nonce('wnd_send_code')?>">发送验证码</button>
+		<button class="button is-primary send-code" data-type="<?php echo $type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_send_code') ?>">发送验证码</button>
 	</div>
 </div>
-<?php } ?>
+<?php }?>
 <?php
 
 }
