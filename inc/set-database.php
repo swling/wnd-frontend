@@ -65,7 +65,7 @@ function wnd_create_table() {
         user_id bigint(20) NOT NULL,
         content text NOT NULL,
         title varchar(255) NOT NULL,
-        value DECIMAL(10,2) NOT NULL,
+        value varchar(255) NOT NULL,
         type varchar(16) NOT NULL,
         status varchar(16) NOT NULL,
         time bigint(20) NOT NULL,

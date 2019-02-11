@@ -31,7 +31,7 @@ if (!defined("AOP_SDK_DEV_MODE"))
  */
 
 //加载核心文件：通过引入 AlipayTradeService.php 引入本文件 因此要注销 AlipayTradeService.php
-require dirname(__FILE__).'/aop/request/AlipayTradePagePayRequest.php';
+// require dirname(__FILE__).'/aop/request/AlipayTradePagePayRequest.php';
 require dirname(__FILE__).'/aop/AopClient.php';
 // require dirname(__FILE__).'/pagepay/service/AlipayTradeService.php';
-require dirname(__FILE__).'/pagepay/buildermodel/AlipayTradePagePayContentBuilder.php';
+// require dirname(__FILE__).'/pagepay/buildermodel/AlipayTradePagePayContentBuilder.php';

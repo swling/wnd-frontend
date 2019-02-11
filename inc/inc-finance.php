@@ -3,41 +3,98 @@
 if (!defined('ABSPATH')) {
 	exit;
 }
+
 /**
  *@since 2019.01.30 用户余额充值
  */
-
-// 创建充值订单
-function wnd_insert_recharge($user_id, $money, $note = '', $post_status = 'pending') {
+function wnd_insert_recharge($user_id, $money, $status = 'pending', $content = '') {
 	// $user_id = get_current_user_id ();
-	$postarr = array(
-		'post_author' => $user_id,
-		'post_content' => $note,
-		'post_title' => $money,
-		'post_name' => $user_id . '-' . date("ymdHis"),
-		'post_status' => $post_status,
-		'post_type' => 'recharge',
+	$object_arr = array(
+		'user_id' => $user_id,
+		'value' => $money,
+		'status' => $status,
+		'content' => $content,
+		'type' => 'recharge',
 	);
-	$post_id = wp_insert_post($postarr);
 
-	if ($post_id) {
-		return $post_id;
-	} else {
-		return false;
-	}
+	// 写入object数据库
+	return wnd_insert_object($object_arr);
+
 }
 
-// 充值成功更新充值订单状态 id 为数据库表id非用户字段
-function wnd_update_recharge($ID, $status, $note = '') {
+/**
+ *@since 2019.02.11
+ *更新充值订单状态
+ *@return int or false
+ */
+function wnd_update_recharge($ID, $status, $content = '') {
 
-	$postarr = array(
+	$object = wnd_get_object($ID);
+	if ($object->type != 'recharge') {
+		return;
+	}
+
+	$object_arr = array(
 		'ID' => $ID,
-		'post_content' => $note,
-		'post_status' => $status,
+		'status' => $status,
+		'content' => $content,
 	);
-	$post_id = wp_update_post($postarr);
+	return wnd_update_object($object_arr);
 
-	return $post_id;
+}
+
+/**
+ *@since 2019.02.11
+ *写入用户消费数据
+ */
+function wnd_insert_expense($user_id, $money, $status = '', $content) {
+
+	$object_arr = array(
+		'user_id' => $user_id,
+		'value' => $money,
+		'status' => $status,
+		'content' => $content,
+		'type' => 'expense',
+	);
+	return wnd_insert_object($object_arr);
+
+}
+
+/**
+ *@since 2019.02.11
+ *更新消费订单状态
+ *@return int or false
+ */
+function wnd_update_expense($ID, $status, $content = '') {
+
+	$object = wnd_get_object($ID);
+	if ($object->type != 'expense') {
+		return;
+	}
+
+	$object_arr = array(
+		'ID' => $ID,
+		'status' => $status,
+		'content' => $content,
+	);
+	return wnd_update_object($object_arr);
+
+}
+
+/**
+ *@since 2019.02.11 查询是否已经支付
+ **/
+
+function wnd_user_has_paid($user_id, $object_id) {
+
+	global $wpdb;
+	$objects = $wpdb->get_var( $wpdb->prepare("
+		SELECT ID FROM $wpdb->wnd_objects WHERE user_id = %d AND object_id = %d AND type ='expense' LIMIT 1 ",
+		$user_id,
+		$object_id
+	));
+	return $objects;
+
 }
 
 // 充值成功 写入用户 字段
@@ -80,31 +137,17 @@ function wnd_get_post_price($post_id) {
 	return $price;
 }
 
-// 常规消费记录写入
-function wnd_insert_expense($user_id, $price, $note) {
-	$postarr = array(
-		'post_author' => $user_id,
-		'post_title' => $price,
-		'post_content' => $note,
-		'post_name' => $user_id . '-' . date("ymdHis"),
-		'post_status' => 'private',
-		'post_type' => 'expense',
-		// 'post_parent' => $post_parent,
-	);
-	$expense_id = wp_insert_post($postarr);
-	return $expense_id;
-}
-
 /**
-统计整站财务数据，当用户发生充值或消费行为时触发
-按月统计，每月生成两条post数据
-
-用户充值post_type:stats_re
-用户消费post_type:stats_ex
-根据用户金额变动>0 或者 <0 判断类型
-用户金额记录：post_title，记录值均为正数
-
-写入前，按post type 和时间查询，如果存在记录则更新记录，否则写入一条记录
+ *@since 初始化
+ *统计整站财务数据，当用户发生充值或消费行为时触发
+ *按月统计，每月生成两条post数据
+ *
+ *用户充值post_type:stats_re
+ *用户消费post_type:stats_ex
+ *根据用户金额变动>0 或者 <0 判断类型
+ *用户金额记录：post_title，记录值均为正数
+ *
+ *写入前，按post type 和时间查询，如果存在记录则更新记录，否则写入一条记录
  **/
 function wnd_fin_stats($money = 0) {
 

@@ -10,6 +10,9 @@ if (!defined('ABSPATH')) {
  */
 function wnd_insert_object($object_arr) {
 
+	global $wpdb;
+
+	//数据组合
 	$user_id = get_current_user_id();
 	$defaults = array(
 		'object_id' => 0,
@@ -24,6 +27,13 @@ function wnd_insert_object($object_arr) {
 	);
 	$object_arr = wp_parse_args($object_arr, $defaults);
 
+	// 数据过滤
+	$object_arr['content'] = sanitize_textarea_field($object_arr['content']);
+	$object_arr['title'] = sanitize_text_field($object_arr['title']);
+	$object_arr['type'] = sanitize_text_field($object_arr['type']);
+	$object_arr['status'] = sanitize_text_field($object_arr['status']);
+	$object_arr['value'] = sanitize_text_field($object_arr['value']);
+
 	// 权限判断
 	$wnd_can_insert_object = apply_filters('wnd_can_insert_object', array('status' => 1, 'msg' => '默认通过'), $object_arr);
 	if ($wnd_can_insert_object['status'] === 0) {
@@ -31,12 +41,16 @@ function wnd_insert_object($object_arr) {
 	}
 
 	// 更新
-	if ($object_arr['ID']) {
-		return wnd_update_object($object_arr);
+	if (!empty($object_arr['ID'])) {
+		$object_id = $wpdb->update(
+			$wpdb->wnd_objects,
+			$object_arr,
+			array('ID' => $object_arr['ID'])
+		);
+		return $object_id;
 	}
 
-	// 写入object数据库
-	global $wpdb;
+	// 写入
 	$object_id = $wpdb->insert($wpdb->wnd_objects, $object_arr);
 
 	// add action hook
@@ -54,7 +68,7 @@ function wnd_insert_object($object_arr) {
  */
 function wnd_update_object($object_arr) {
 
-	if (!$object_arr['ID']) {
+	if (empty($object_arr['ID'])) {
 		return false;
 	}
 
@@ -65,12 +79,7 @@ function wnd_update_object($object_arr) {
 	}
 
 	$object_arr = array_merge($object, $object_arr);
-
-	$object_id = $wpdb->update(
-		$wpdb->wnd_objects,
-		$object_arr,
-		array('ID' => $object_arr['ID'])
-	);
+	$object_id = wnd_insert_object($object_arr);
 
 	// add action hook
 	if ($object_id) {
@@ -99,7 +108,7 @@ function wnd_get_object($ID) {
 /**
  *@since 2019.01.31 获取指定文章对象数据
  */
-function wnd_get_objects_by_object($post_id) {
+function wnd_get_objects_by_object($post_id, $type = '', $status = '') {
 
 	if (!$post_id) {
 		return array();
@@ -113,7 +122,7 @@ function wnd_get_objects_by_object($post_id) {
 /**
  *@since 2019.01.31 获取指定用户对象数据
  */
-function wnd_get_objects_by_user($user_id) {
+function wnd_get_objects_by_user($user_id, $type = '', $status = '') {
 
 	if (!$user_id) {
 		return array();

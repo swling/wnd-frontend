@@ -70,7 +70,7 @@ function _wnd_post_status_form($post_id){
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_update_post_status">
 	<div class="field is-grouped is-grouped-centered">
-		<button type="submit" name="submit" class="button" onclick="wnd_ajax_submit('#post-status')">确认</button>
+		<button type="button" class="button" onclick="wnd_ajax_submit('#post-status')">确认</button>
 	</div>
 </form>
 <script>
@@ -124,7 +124,7 @@ function _wnd_upload_field($args) {
 	<?php if ($args['is_image'] == 1) { // 1、图片类型，缩略图 ?>
 	<div class="field">
 		<a onclick="wnd_click('input[data-id=\'<?php echo $args['id'];?>\']')"><img class="thumb" src="<?php echo $attachment_url; ?>" height="<?php echo $args['thumb_size']['height']?>" width="<?php echo $args['thumb_size']['width']?>" title="上传图像"></a>
-		<button class="delete" data-id="<?php echo $args['id'];?>" data-attachment-id="<?php echo $attachment_id;?>"></button>
+		<a class="delete" data-id="<?php echo $args['id'];?>" data-attachment-id="<?php echo $attachment_id;?>"></a>
 	</div>
 	<div class="file">
 		<input type="file" class="file-input" name="file[]" accept="image/*" data-id="<?php echo $args['id'];?>" />
@@ -154,7 +154,7 @@ function _wnd_upload_field($args) {
 			</div>
 		</div>
 		<div class="column is-narrow">
-			<button class="delete" data-id="<?php echo $args['id'];?>" data-attachment-id="<?php echo $attachment_id;?>"></button>
+			<a class="delete" data-id="<?php echo $args['id'];?>" data-attachment-id="<?php echo $attachment_id;?>"></a>
 		</div>
 	</div>
 	<?php } ?>
@@ -351,7 +351,7 @@ echo '</div></div>'.PHP_EOL;
 	<input type="hidden" name="action_name" value="wnd_insert_post">
 	<?php wp_nonce_field('wnd_insert_post', '_ajax_nonce'); ?>
 	<div class="field is-grouped is-grouped-centered">
-		<button name="submit" class="button" onclick="wnd_ajax_submit('#new-post-<?php echo $post_id?>')">提交</button>
+		<button type="button" class="button" onclick="wnd_ajax_submit('#new-post-<?php echo $post_id?>')">提交</button>
 	</div>	
 </form>
 <?php

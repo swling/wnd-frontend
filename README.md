@@ -77,7 +77,7 @@ apply_filters('wnd_update_account_return', array('status' => 1, 'msg' => '更新
 ##支付
 ```php
 // 用户是否有权限支付
-apply_filters('wnd_can_insert_payment', array('status'=>1,'msg'=>'默认通过'), $post_id);
+apply_filters('wnd_can_insert_expense', array('status'=>1,'msg'=>'默认通过'), $post_id);
 ```
 
 
@@ -135,7 +135,7 @@ form input type hidden （*action_name 与WordPress nonce filed校验名称 、�
 	以"_wnd_" 开头的函数 不进行 wp nonce校验，用于一些非敏感ajax操作，如弹窗，界面请求等
 
 #支付配置：
-支付宝：inc/pay/payment/alipay/config.php
+支付宝：inc/pay/expense/alipay/config.php
 
 #付费阅读
 ##价格：

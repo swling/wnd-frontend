@@ -5,8 +5,10 @@ if ( !defined( 'ABSPATH' ) ) exit;
 
 // 创建充值订单
 require dirname(dirname(__FILE__)).'/config.php';
+require dirname(dirname(__FILE__)).'/aop/request/AlipayTradePagePayRequest.php';
+
 require dirname(__FILE__).'/service/AlipayTradeService.php';
-// require dirname(__FILE__).'/buildermodel/AlipayTradePagePayContentBuilder.php';
+require dirname(__FILE__).'/buildermodel/AlipayTradePagePayContentBuilder.php';
 
 $money = isset($_POST['money']) && is_numeric($_POST['money']) ? $_POST['money'] : 0;
 $money = esc_sql ($money);

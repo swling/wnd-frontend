@@ -17,7 +17,7 @@ use Aliyun\DySDKLite\SignatureHelper;
 
 
 /**
- * 发送短信
+ *@since 2019.02.11 发送短信
  */
 function wnd_ali_send_sms($phone,$code,$template) {
 

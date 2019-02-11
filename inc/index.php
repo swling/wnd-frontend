@@ -14,6 +14,7 @@ require WNDWP_PATH . 'inc/set-database.php'; //数据库
 require WNDWP_PATH . 'inc/inc-verify.php'; //验证模块
 require WNDWP_PATH . 'inc/inc-object.php'; //通用对象
 require WNDWP_PATH . 'inc/inc-term.php'; //分类、标签
+require WNDWP_PATH . 'inc/inc-finance.php'; //财务
 
 require WNDWP_PATH . 'inc/ajax-post.php'; //ajax 文章发布编辑
 require WNDWP_PATH . 'inc/ajax-media.php'; //ajax 媒体处理
@@ -27,9 +28,7 @@ require WNDWP_PATH . 'template/user.php'; //user模板
 require WNDWP_PATH . 'template/post.php'; //post模板
 require WNDWP_PATH . 'template/module.php'; //相对独立的模块模板
 
-require WNDWP_PATH . 'pay/functions.php'; //充值模块
 // 短信
 if (wnd_get_option('wndwp', 'wnd_term_sms') == 1) {
-	require WNDWP_PATH . 'sms/aliyun-sms/sendSms.php'; //阿里云短信
+	require WNDWP_PATH . 'component/sms/aliyun-sms/sendSms.php'; //阿里云短信
 }
-

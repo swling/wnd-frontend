@@ -5,127 +5,43 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- *@since 2019.01.30 写入支付数据库
+ *@since 2019.01.30 写入消费数据库
  */
-function wnd_insert_payment() {
+function wnd_insert_order() {
 
 	$post_id = (int) $_POST['post_id'];
 	$post_title = $_POST['post_title'];
-	$comment_content = isset($_POST['comment_content']) ? $_POST['comment_content'] : '';
+	$content = $_POST['content'] ?? '';
 	$user_id = get_current_user_id();
 
 	// 权限判断
 	if (!$user_id) {
 		return array('msg' => 0, 'msg' => '请登录后操作');
 	}
-	$wnd_can_insert_payment = apply_filters('wnd_can_insert_payment', array('status' => 1, 'msg' => '默认通过'), $post_id);
-	if ($wnd_can_insert_payment['status'] === 0) {
-		return $wnd_can_insert_payment;
+	$wnd_can_insert_expense = apply_filters('wnd_can_insert_expense', array('status' => 1, 'msg' => '默认通过'), $post_id);
+	if ($wnd_can_insert_expense['status'] === 0) {
+		return $wnd_can_insert_expense;
 	}
 
-	// 写入消费记录
-	$price = wnd_get_post_price($post_id);
-	$expense_note = '<a href="' . get_the_permalink($post_id) . '" target="_blank">「付费」' . $post_title . '</a>';
-	wnd_insert_expense($user_id, $price, $expense_note);
+	// 余额判断
+	$money = wnd_get_post_price($post_id);
+	if($money > wnd_get_user_money($user_id)){
+		return array('status' => 0, 'msg' => '余额不足！');
+	}
 
-	// 写入payment数据库
-	global $wpdb;
-	$action = $wpdb->insert($wpdb->wnd_payment, array('post_id' => $post_id, 'user_id' => $user_id, 'price' => $price, 'time' => time()));
+	// 写入object数据库
+	$object_id =  wnd_insert_expense($user_id, $money, $status = '', $note);
 
 	// 支付成功
-	if ($action) {
+	if ($object_id) {
 		// 消费：增加负数金额
-		wnd_inc_user_money($user_id, $price * -1);
+		wnd_inc_money($user_id, $price * -1);
 		// 增加消费记录
-		wnd_inc_wnd_user_meta($user_id, 'order_num', 1);
+		// wnd_inc_wnd_user_meta($user_id, 'order_num', 1);
 		return array('status' => 1, 'msg' => '支付成功！');
 	} else {
 		return array('status' => 0, 'msg' => '支付失败！');
 	}
-
-}
-
-/**
- *@since 2019.01.30 更新支付数据
- *采用类似wp update post的格式，必须输入主键ID，以数组形式注入更新
- */
-function wnd_update_payment($payment_arr) {
-
-	if (!$payment_arr['ID']) {
-		return false;
-	}
-
-	global $wpdb;
-	$payment = $wpdb->get_row("SELECT * FROM $wpdb->wnd_payment WHERE ID = {$payment_arr['ID']}", ARRAY_A);
-	if (!$payment) {
-		return;
-	}
-
-	$payment_arr = array_merge($payment, $payment_arr);
-
-	$wpdb->update(
-		$wpdb->wnd_payment,
-		$payment_arr,
-		array('ID' => $payment_arr['ID'])
-	);
-
-}
-
-/**
- *@since 2019.01.31 获取指定ID支付数据
- */
-function wnd_get_payment($payment_id) {
-
-	if (!$payment_id) {
-		return array();
-	}
-
-	global $wpdb;
-	$payments = $wpdb->get_row("SELECT * FROM $wpdb->wnd_payment WHERE ID = {$payment_id}", ARRAY_A);
-	return $payments;
-}
-
-/**
- *@since 2019.01.31 获取指定文章支付数据
- */
-function wnd_get_payments_by_post($post_id) {
-
-	if (!$post_id) {
-		return array();
-	}
-
-	global $wpdb;
-	$payments = $wpdb->get_results("SELECT * FROM $wpdb->wnd_payment WHERE post_id = {$post_id}", ARRAY_A);
-	return $payments;
-}
-
-/**
- *@since 2019.01.31 获取指定用户支付数据
- */
-function wnd_get_payments_by_user($user_id) {
-
-	if (!$user_id) {
-		return array();
-	}
-
-	global $wpdb;
-	$payments = $wpdb->get_results("SELECT * FROM $wpdb->wnd_payment WHERE user_id = {$user_id}", ARRAY_A);
-	return $payments;
-}
-
-/**
- *@since 2019.01.30 查询是否已经支付
- **/
-function wnd_user_has_paid($post_id) {
-
-	$user_id = get_current_user_id();
-	if (!$user_id) {
-		return false;
-	}
-
-	global $wpdb;
-	$payment_ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->wnd_payment WHERE post_id = %d AND user_id = %d;", $post_id, $user_id));
-	return $payment_ID;
 
 }
 
@@ -141,14 +57,14 @@ function wnd_pay_for_reading() {
 	}
 
 	// 2、支付失败
-	$pay = wnd_insert_payment();
+	$pay = wnd_insert_expense();
 	if ($pay['status'] === 0) {
 		return $pay;
 	}
 
 	// 文章作者新增资金
 	$income = wnd_get_post_price($post_id, 'price');
-	wnd_inc_user_money($post->post_author, $income);
+	wnd_inc_money($post->post_author, $income);
 	// 更新充值记录
 	wnd_insert_recharge($user_id = $post->post_author, $money = $income, $note = '《' . $post->post_title . '》收益', $post_status = 'private');
 
@@ -195,13 +111,13 @@ function wnd_pay_for_download() {
 	}
 
 	//3、 付费下载
-	$pay = wnd_insert_payment();
+	$pay = wnd_insert_expense();
 	if ($pay['status'] === 0) {
 		return $pay;
 	}
 	// 文章作者新增资金
 	$income = $price;
-	wnd_inc_user_money($post->post_author, $income);
+	wnd_inc_money($post->post_author, $income);
 	// 更新充值记录
 	wnd_insert_recharge($user_id = $post->post_author, $money = $income, $note = '《' . $post->post_title . '》收益', $post_status = 'private');
 	// 发送文件
