@@ -58,9 +58,9 @@ function wnd_insert_object($object_arr) {
 	$action = $wpdb->insert($wpdb->wnd_objects, $object_arr);
 	if ($action) {
 
+		$object_id = (int) $wpdb->insert_id;
 		do_action('wnd_insert_object', $object_id, $user_id);
-		$ID = (int) $wpdb->insert_id;
-		return $ID;
+		return $object_id;
 
 	} else {
 
