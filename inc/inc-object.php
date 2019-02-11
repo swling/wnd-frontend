@@ -55,18 +55,18 @@ function wnd_insert_object($object_arr) {
 	}
 
 	// 写入
-	$action = $wpdb->insert($wpdb->wnd_objects, $object_arr);
-	if ($action) {
-
-		$object_id = (int) $wpdb->insert_id;
-		do_action('wnd_insert_object', $object_id, $user_id);
-		return $object_id;
-
-	} else {
-
+	if (false === $wpdb->insert($wpdb->wnd_objects, $object_arr)) {
 		return 0;
-
 	}
+	/**
+	*@since 2019.02.11
+	*执行数据插入后，应该立即使用 $wpdb->insert_id 否则可能导致返回的主键错误
+	*/
+	$object_id = (int) $wpdb->insert_id;
+
+	do_action('wnd_insert_object', $object_id, $user_id);
+	
+	return $object_id;
 
 }
 

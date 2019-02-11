@@ -63,9 +63,7 @@ function wnd_pay_for_reading() {
 
 	// 文章作者新增资金
 	$income = wnd_get_post_price($post_id, 'price');
-	wnd_inc_user_money($post->post_author, $income);
-	// 更新充值记录
-	wnd_insert_recharge($user_id = $post->post_author, $money = $income, $note = '《' . $post->post_title . '》收益', $post_status = 'private');
+	wnd_insert_payment($post->post_author, $income, 'success', $note = '《' . $post->post_title . '》收益');
 
 	// 根据标记切割内容
 	$content_array = explode('<p><!--more--></p>', $post->post_content);
@@ -114,11 +112,11 @@ function wnd_pay_for_download() {
 	if ($pay['status'] === 0) {
 		return $pay;
 	}
+
 	// 文章作者新增资金
 	$income = $price;
-	wnd_inc_user_money($post->post_author, $income);
-	// 更新充值记录
-	wnd_insert_recharge($user_id = $post->post_author, $money = $income, $note = '《' . $post->post_title . '》收益', $post_status = 'private');
+	wnd_insert_payment($post->post_author, $income, 'success', $note = '《' . $post->post_title . '》收益');
+
 	// 发送文件
 	return wnd_download_file($file, $post_id);
 

@@ -5,17 +5,17 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- *@since 2019.01.30 用户余额充值
+ *@since 2019.01.30 用户付款
  *创建时：status=>pending，验证成功后：status=>success
  */
-function wnd_insert_recharge($user_id, $money, $status = 'pending', $content = '') {
-	// $user_id = get_current_user_id ();
+function wnd_insert_payment($user_id, $money, $status = 'pending', $content = '') {
+	
 	$object_arr = array(
 		'user_id' => $user_id,
 		'value' => $money,
 		'status' => $status,
 		'content' => $content,
-		'type' => 'recharge',
+		'type' => 'payment',
 	);
 
 	// 写入object数据库
@@ -33,10 +33,10 @@ function wnd_insert_recharge($user_id, $money, $status = 'pending', $content = '
  *更新充值订单状态
  *@return int or false
  */
-function wnd_update_recharge($ID, $status, $content = '') {
+function wnd_update_payment($ID, $status, $content = '') {
 
 	$object = wnd_get_object($ID);
-	if ($object->type != 'recharge') {
+	if ($object->type != 'payment') {
 		return;
 	}
 	$before_status = $object->status;
@@ -84,7 +84,7 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 	if ($recharge->status == 'pending') {
 
 		//  写入用户账户信息
-		if (wnd_update_recharge($recharge->ID, 'success', $type)) {
+		if (wnd_update_payment($recharge->ID, 'success', $type)) {
 
 			return array('status' => 1, 'msg' => '充值已完成！');
 

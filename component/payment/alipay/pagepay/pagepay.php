@@ -22,7 +22,7 @@ if (!$money) {
 
 $subject = get_bloginfo('name') . '充值订单[' . get_the_author_meta('user_login', $user_id) . ']';
 
-$out_trade_no = wnd_insert_recharge($user_id, $money);
+$out_trade_no = wnd_insert_payment($user_id, $money);
 if (!$out_trade_no) {
 	wp_die('订单创建错误！', get_bloginfo('name'));
 }

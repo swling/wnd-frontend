@@ -134,8 +134,10 @@ form input type hidden （*action_name 与WordPress nonce filed校验名称 、�
 
 	以"_wnd_" 开头的函数 不进行 wp nonce校验，用于一些非敏感ajax操作，如弹窗，界面请求等
 
-#支付配置：
-支付宝：inc/pay/expense/alipay/config.php
+#支付：
+自定义:objects数据表
+付费交易type：payment
+消费支出type：expense
 
 #付费阅读
 ##价格：
