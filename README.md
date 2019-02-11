@@ -74,10 +74,10 @@ apply_filters('wnd_can_update_account', array('status'=>1,'msg'=>'默认通过')
 apply_filters('wnd_update_account_return', array('status' => 1, 'msg' => '更新成功'), $user_id);		
 
 ```
-##支付
+##订单
 ```php
-// 用户是否有权限支付
-apply_filters('wnd_can_insert_expense', array('status'=>1,'msg'=>'默认通过'), $post_id);
+// 用户订单权限
+apply_filters('wnd_can_insert_order', array('status'=>1,'msg'=>'默认通过'), $post_id);
 ```
 
 

@@ -10,34 +10,33 @@ if (!defined('ABSPATH')) {
 function wnd_insert_order() {
 
 	$post_id = (int) $_POST['post_id'];
-	$post_title = $_POST['post_title'];
 	$content = $_POST['content'] ?? '';
 	$user_id = get_current_user_id();
 
+	if (!$post_id) {
+		return array('msg' => 0, 'msg' => 'ID无效！');
+	}
+
 	// 权限判断
 	if (!$user_id) {
-		return array('msg' => 0, 'msg' => '请登录后操作');
+		return array('msg' => 0, 'msg' => '请登录后操作！');
 	}
-	$wnd_can_insert_expense = apply_filters('wnd_can_insert_expense', array('status' => 1, 'msg' => '默认通过'), $post_id);
-	if ($wnd_can_insert_expense['status'] === 0) {
-		return $wnd_can_insert_expense;
+	$wnd_can_insert_order = apply_filters('wnd_can_insert_order', array('status' => 1, 'msg' => '默认通过'), $post_id);
+	if ($wnd_can_insert_order['status'] === 0) {
+		return $wnd_can_insert_order;
 	}
 
 	// 余额判断
 	$money = wnd_get_post_price($post_id);
-	if($money > wnd_get_user_money($user_id)){
+	if ($money > wnd_get_user_money($user_id)) {
 		return array('status' => 0, 'msg' => '余额不足！');
 	}
 
 	// 写入object数据库
-	$object_id =  wnd_insert_expense($user_id, $money, $status = '', $note);
+	$object_id = wnd_insert_expense($user_id, $money, $post_id, $note);
 
 	// 支付成功
 	if ($object_id) {
-		// 消费：增加负数金额
-		wnd_inc_money($user_id, $price * -1);
-		// 增加消费记录
-		// wnd_inc_wnd_user_meta($user_id, 'order_num', 1);
 		return array('status' => 1, 'msg' => '支付成功！');
 	} else {
 		return array('status' => 0, 'msg' => '支付失败！');
@@ -64,7 +63,7 @@ function wnd_pay_for_reading() {
 
 	// 文章作者新增资金
 	$income = wnd_get_post_price($post_id, 'price');
-	wnd_inc_money($post->post_author, $income);
+	wnd_inc_user_money($post->post_author, $income);
 	// 更新充值记录
 	wnd_insert_recharge($user_id = $post->post_author, $money = $income, $note = '《' . $post->post_title . '》收益', $post_status = 'private');
 
@@ -117,7 +116,7 @@ function wnd_pay_for_download() {
 	}
 	// 文章作者新增资金
 	$income = $price;
-	wnd_inc_money($post->post_author, $income);
+	wnd_inc_user_money($post->post_author, $income);
 	// 更新充值记录
 	wnd_insert_recharge($user_id = $post->post_author, $money = $income, $note = '《' . $post->post_title . '》收益', $post_status = 'private');
 	// 发送文件

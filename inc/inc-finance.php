@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 
 /**
  *@since 2019.01.30 用户余额充值
+ *创建时：status=>pending，验证成功后：status=>success
  */
 function wnd_insert_recharge($user_id, $money, $status = 'pending', $content = '') {
 	// $user_id = get_current_user_id ();
@@ -18,8 +19,13 @@ function wnd_insert_recharge($user_id, $money, $status = 'pending', $content = '
 	);
 
 	// 写入object数据库
-	return wnd_insert_object($object_arr);
+	$object_id = wnd_insert_object($object_arr);
 
+	if ($object_id and $status == 'success') {
+		wnd_inc_user_money($user_id, $money);
+	}
+
+	return $object_id;
 }
 
 /**
@@ -33,13 +39,64 @@ function wnd_update_recharge($ID, $status, $content = '') {
 	if ($object->type != 'recharge') {
 		return;
 	}
+	$before_status = $object->status;
 
 	$object_arr = array(
 		'ID' => $ID,
 		'status' => $status,
 		'content' => $content,
 	);
-	return wnd_update_object($object_arr);
+	$object_id = wnd_update_object($object_arr);
+
+	// 当充值订单，从pending更新到 success，表示充值完成，更新用户余额
+	if ($object_id and $before_status == 'pending' and $status == 'success') {
+		wnd_inc_user_money($user_id, $money);
+	}
+
+	return $object_id;
+
+}
+
+/**
+ *@since 2019.02.11
+ *充值付款校验
+ */
+function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
+
+	$type = !empty($_POST) ? '异步' : '同步';
+
+	$recharge = wnd_get_object($out_trade_no);
+	if (!$recharge) {
+		return array('status' => 0, 'msg' => 'ID无效！');
+	}
+
+	//如果订单金额匹配
+	if ($recharge->value == $amount) {
+		return array('status' => 0, 'msg' => '金额不匹配！');
+	}
+
+	//订单已经更新过
+	if ($recharge->status == 'success') {
+		return array('status' => 2, 'msg' => '支付已完成！');
+	}
+
+	// 订单支付状态检查
+	if ($recharge->status == 'pending') {
+
+		//  写入用户账户信息
+		if (wnd_update_recharge($recharge->ID, 'success', $type)) {
+
+			return array('status' => 1, 'msg' => '充值已完成！');
+
+		} else {
+
+			return array('status' => 0, 'msg' => $type . '写入数据失败！');
+		}
+
+	}
+
+	//订单状态不符合校验规则
+	return array('status' => 0, 'msg' => '支付状态无效！');
 
 }
 
@@ -47,16 +104,23 @@ function wnd_update_recharge($ID, $status, $content = '') {
  *@since 2019.02.11
  *写入用户消费数据
  */
-function wnd_insert_expense($user_id, $money, $status = '', $content) {
+function wnd_insert_expense($user_id, $money, $object_id = 0, $content = '') {
 
 	$object_arr = array(
 		'user_id' => $user_id,
 		'value' => $money,
-		'status' => $status,
+		'object_id' => $object_id,
 		'content' => $content,
 		'type' => 'expense',
 	);
-	return wnd_insert_object($object_arr);
+	$object_id = wnd_insert_object($object_arr);
+
+	// 更新用户余额
+	if ($object) {
+		wnd_inc_user_money($user_id, $money * -1);
+	}
+
+	return $object_id;
 
 }
 
@@ -84,11 +148,10 @@ function wnd_update_expense($ID, $status, $content = '') {
 /**
  *@since 2019.02.11 查询是否已经支付
  **/
-
 function wnd_user_has_paid($user_id, $object_id) {
 
 	global $wpdb;
-	$objects = $wpdb->get_var( $wpdb->prepare("
+	$objects = $wpdb->get_var($wpdb->prepare("
 		SELECT ID FROM $wpdb->wnd_objects WHERE user_id = %d AND object_id = %d AND type ='expense' LIMIT 1 ",
 		$user_id,
 		$object_id
