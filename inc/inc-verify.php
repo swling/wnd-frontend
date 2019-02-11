@@ -177,9 +177,7 @@ function wnd_insert_code($email_or_phone, $code) {
 		$db = $wpdb->insert($wpdb->wnd_users, array($field => $email_or_phone, 'code' => $code, 'time' => time()), array('%s', '%s', '%d'));
 	}
 
-	if ($db) {
-		return true;
-	}
+	return $db;
 
 }
 

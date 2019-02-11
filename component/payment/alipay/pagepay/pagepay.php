@@ -16,7 +16,7 @@ require dirname(__FILE__) . '/buildermodel/AlipayTradePagePayContentBuilder.php'
 $user_id = get_current_user_id();
 
 $money = isset($_POST['money']) && is_numeric($_POST['money']) ? $_POST['money'] : 0;
-if ($money) {
+if (!$money) {
 	wp_die('获取金额错误！', get_bloginfo('name'));
 }
 

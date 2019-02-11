@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 /**
  *@since 2019.01.30 写入支付数据库
- *@return object id  或者 false
+ *@return int 成功返回主键ID 失败返回 0
  */
 function wnd_insert_object($object_arr) {
 
@@ -42,23 +42,31 @@ function wnd_insert_object($object_arr) {
 
 	// 更新
 	if (!empty($object_arr['ID'])) {
-		$object_id = $wpdb->update(
+		$action = $wpdb->update(
 			$wpdb->wnd_objects,
 			$object_arr,
 			array('ID' => $object_arr['ID'])
 		);
-		return $object_id;
+		if ($action) {
+			return $object_arr['ID'];
+		} else {
+			return 0;
+		}
 	}
 
 	// 写入
-	$object_id = $wpdb->insert($wpdb->wnd_objects, $object_arr);
+	$action = $wpdb->insert($wpdb->wnd_objects, $object_arr);
+	if ($action) {
 
-	// add action hook
-	if ($object_id) {
 		do_action('wnd_insert_object', $object_id, $user_id);
-	}
+		$ID = (int) $wpdb->insert_id;
+		return $ID;
 
-	return $object_id;
+	} else {
+
+		return 0;
+
+	}
 
 }
 
