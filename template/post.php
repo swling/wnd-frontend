@@ -218,6 +218,7 @@ function _wnd_post_form($args=array()){
     $post = get_post($post_id);
     if($post){
     	$post_type = $post->post_type;
+    	$args['is_free'] = get_post_meta( $post_id, 'price', 1 );
 
     //新建文章失败，如匿名用户，初始化一个空对象 
 	}else{

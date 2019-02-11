@@ -136,8 +136,8 @@ form input type hidden （*action_name 与WordPress nonce filed校验名称 、�
 
 #支付：
 自定义:objects数据表
-付费交易type：payment
-消费支出type：expense
+	现金充值type：payment
+	站内消费type：expense
 
 #付费阅读
 ##价格：

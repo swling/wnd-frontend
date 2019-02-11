@@ -118,6 +118,7 @@ function wnd_filter_the_content($content) {
 	if (!$price) {
 		return $content;
 	}
+	$user_id = get_current_user_id();
 
 	$file = wnd_get_post_meta($post->ID, 'file');
 
@@ -132,7 +133,7 @@ function wnd_filter_the_content($content) {
 			return $content;
 		}
 
-		if (wnd_user_has_paid($post->ID)) {
+		if (wnd_user_has_paid($user_id, $post->ID)) {
 
 			$button_text = '您已购买点击下载';
 
@@ -154,7 +155,7 @@ function wnd_filter_the_content($content) {
 			<input type="hidden" name="action_name"  value="wnd_pay_for_download">
 			<input type="hidden" name="post_id"  value="' . $post->ID . '">
 			<input type="hidden" name="post_title"  value="' . $post->post_title . '">
-			<button type="submit" class="button is-danger">' . $button_text . '</button>
+			<button type="submit" class="button">' . $button_text . '</button>
 			</form>';
 
 		$content .= $form;
@@ -162,35 +163,36 @@ function wnd_filter_the_content($content) {
 		//付费阅读
 	} else {
 
-		$content_array = explode('<p><!--more--></p>', $post->post_content);
-		if (!isset($content_array[1])) {
-			$content_array = explode('<!--more-->', $post->post_content);
+		list($free_content, $paid_content) = explode('<p><!--more--></p>', $post->post_content, 2);
+		if (empty($paid_content)) {
+			list($free_content, $paid_content) = explode('<p><!--more--></p>', $post->post_content, 2);
 		}
+		$paid_content ?: '获取付费内容出错！';
 
 		// 已支付
-		if (wnd_user_has_paid($post->ID)) {
+		if (wnd_user_has_paid($user_id, $post->ID)) {
 
-			$content = '<div id="free-content">' . $content_array[0] . '</div>';
-			$content .= '<div id="paid-content">' . $content_array[1] . '</div>';
+			$content = '<div id="free-content">' . $free_content . '</div>';
+			$content .= '<div id="paid-content">' . $paid_content . '</div>';
 			$button_text = '您已付费';
 
 			// 作者本人
 		} elseif ($post->post_author == get_current_user_id()) {
 
-			$content = '<div id="free-content">' . $content_array[0] . '</div>';
-			$content .= '<div id="paid-content">' . $content_array[1] . '</div>';
+			$content = '<div id="free-content">' . $free_content . '</div>';
+			$content .= '<div id="paid-content">' . $paid_content . '</div>';
 			$button_text = '您的付费文章';
 
 			// 已登录未支付
 		} elseif (is_user_logged_in()) {
 
-			$content = '<div id="free-content">' . $content_array[0] . '</div>';
+			$content = '<div id="free-content">' . $free_content . '</div>';
 			$content .= '<div id="paid-content"><p class="notice">以下为付费内容</p></div>';
 			$button_text = '付费阅读： ¥' . wnd_get_post_price($post->ID);
 
 			// 未登录用户
 		} else {
-			$content = '<div id="free-content">' . $content_array[0] . '</div>';
+			$content = '<div id="free-content">' . $free_content . '</div>';
 			$content .= '<div id="paid-content"><p class="notice">以下为付费内容</p></div>';
 			$button_text = '请登录后付费阅读： ¥' . wnd_get_post_price($post->ID);
 			// $form = '<p class="notice">'.$button_text.'</p>';
@@ -199,13 +201,14 @@ function wnd_filter_the_content($content) {
 		}
 
 		$form =
-		'<form id="my-insert-payment" action="" method="post" onsubmit="return false">'
+		'<form id="pay-for-reading" action="" method="post" onsubmit="return false">
+		<div class="ajax-msg"></div>'
 		. wp_nonce_field('wnd_pay_for_reading', '_ajax_nonce') . '
 		<input type="hidden" name="action"  value="wnd_action">
 		<input type="hidden" name="action_name"  value="wnd_pay_for_reading">
 		<input type="hidden" name="post_id"  value="' . $post->ID . '">
 		<input type="hidden" name="post_title"  value="' . $post->post_title . '">
-		<button type="submit" class="button is-danger" >' . $button_text . '</button>
+		<button type="button" class="button" onclick="wnd_ajax_submit(\'#pay-for-reading\')" >' . $button_text . '</button>
 		</form>';
 
 		$content .= $form;

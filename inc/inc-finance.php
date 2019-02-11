@@ -5,11 +5,12 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- *@since 2019.01.30 用户付款
+ *@since 2019.01.30
+ *用户通过第三方金融平台充值付款到本站
  *创建时：status=>pending，验证成功后：status=>success
  */
 function wnd_insert_payment($user_id, $money, $status = 'pending', $content = '') {
-	
+
 	$object_arr = array(
 		'user_id' => $user_id,
 		'value' => $money,
@@ -30,7 +31,7 @@ function wnd_insert_payment($user_id, $money, $status = 'pending', $content = ''
 
 /**
  *@since 2019.02.11
- *更新充值订单状态
+ *更新支付订单状态
  *@return int or false
  */
 function wnd_update_payment($ID, $status, $content = '') {
@@ -102,7 +103,7 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 
 /**
  *@since 2019.02.11
- *写入用户消费数据
+ *用户本站消费数据
  */
 function wnd_insert_expense($user_id, $money, $object_id = 0, $content = '') {
 

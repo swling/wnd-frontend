@@ -10,8 +10,8 @@ if (!defined('ABSPATH')) {
 function wnd_insert_order() {
 
 	$post_id = (int) $_POST['post_id'];
-	$content = $_POST['content'] ?? '';
 	$user_id = get_current_user_id();
+	$note = $_POST['note'] ?? '';
 
 	if (!$post_id) {
 		return array('msg' => 0, 'msg' => 'ID无效！');
@@ -49,28 +49,32 @@ function wnd_pay_for_reading() {
 
 	$post_id = (int) $_POST['post_id'];
 	$post = get_post($post_id);
+	$user_id = get_current_user_id();
+
+	// 根据标记切割内容
+	list($free_content, $paid_content) = explode('<p><!--more--></p>', $post->post_content, 2);
+	if (empty($paid_content)) {
+		list($free_content, $paid_content) = explode('<p><!--more--></p>', $post->post_content, 2);
+	}
+
+	if(!$paid_content){
+		return array('status' => 0, 'msg' => '获取付费内容出错！');
+	}
 
 	//1、已付费
-	if (wnd_user_has_paid($post_id)) {
+	if (wnd_user_has_paid($user_id, $post_id)) {
 		return array('status' => 0, 'msg' => '请勿重复购买！');
 	}
 
 	// 2、支付失败
-	$pay = wnd_insert_expense();
-	if ($pay['status'] === 0) {
-		return $pay;
+	$order = wnd_insert_order();
+	if ($order['status'] === 0) {
+		return $order;
 	}
 
 	// 文章作者新增资金
 	$income = wnd_get_post_price($post_id, 'price');
 	wnd_insert_payment($post->post_author, $income, 'success', $note = '《' . $post->post_title . '》收益');
-
-	// 根据标记切割内容
-	$content_array = explode('<p><!--more--></p>', $post->post_content);
-	if (!isset($content_array[1])) {
-		$content_array = explode('<!--more-->', $post->post_content);
-	}
-	$paid_content = $content_arrayn[1] ?? '获取内容出错！';
 
 	return array('status' => 1, 'msg' => $paid_content);
 }
@@ -85,6 +89,8 @@ function wnd_pay_for_download() {
 	// 获取文章
 	$post_id = (int) $_POST['post_id'];
 	$post = get_post($post_id);
+	$user_id = get_current_user_id();
+
 	if (!$post) {
 		return array('status' => 0, 'msg' => 'ID无效！');
 	}
@@ -98,7 +104,7 @@ function wnd_pay_for_download() {
 	}
 
 	//1、免费，或者已付费
-	if (!$price or wnd_user_has_paid($post_id)) {
+	if (!$price or wnd_user_has_paid($user_id, $post_id)) {
 		return wnd_download_file($file, $post_id);
 	}
 
@@ -108,9 +114,9 @@ function wnd_pay_for_download() {
 	}
 
 	//3、 付费下载
-	$pay = wnd_insert_expense();
-	if ($pay['status'] === 0) {
-		return $pay;
+	$order = wnd_insert_order();
+	if ($order['status'] === 0) {
+		return $order;
 	}
 
 	// 文章作者新增资金

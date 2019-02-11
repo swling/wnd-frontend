@@ -87,7 +87,7 @@ function _wnd_login_form() {
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_user_login">
 	<div class="field is-grouped is-grouped-centered">
-		<button type="button" class="button" onclick="wnd_ajax_submit('#user-login')">登录</button>
+		<button class="button" onclick="wnd_ajax_submit('#user-login')">登录</button>
 	</div>
 	<div class="field">
 		<div class="message is-primary">
