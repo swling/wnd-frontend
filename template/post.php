@@ -115,7 +115,7 @@ function _wnd_upload_field($args) {
 	if($args['is_image']==1){
 		$attachment_url = $attachment_url ?: $args['default_thumb'];
 	}else{
-		$attachment_url = $attachment_url ?: '……';
+		$attachment_url = $attachment_url ?: false;
 	}
 
 	?>
@@ -148,7 +148,7 @@ function _wnd_upload_field($args) {
 						</span>
 					</span>
 					<span class="file-name">
-						<?php echo $attachment_url;?>
+						<?php if($attachment_url) echo '已上传：<a href="'.$attachment_url.'">查看文件</a>'; else echo'……';?>
 					</span>
 				</label>
 			</div>
