@@ -115,35 +115,55 @@ function wnd_delete_attachment() {
 }
 
 /**
- *@since 初始化
- *下载文件
- *通过php脚本的方式将文件发送到浏览器下载，避免保留文件的真实路径
- *然而，用户仍然可能通过文件名和网站结构，猜测到可能的真实路径，
- *因此建议将$file定义在网站目录之外，这样通过任何url都无法访问到文件存储目录
- *主要用户付费下载
+ *@since 2019.02.12 文件校验下载
  */
-function wnd_download_file($file, $parent_id = 0) {
+function wnd_ajax_download_file() {
 
-	//检查文件是否存在
-	if (!file_exists($file)) {
-		echo "文件找不到";
-		exit();
+	$post_id = (int) $_REQUEST['post_id'];
+	$price = get_post_meta($post_id, 'price', 1);
+	$attachment_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
 
+	$file = get_attached_file($attachment_id, $unfiltered = true);
+	if (!$file) {
+		wp_die('获取文件失败！', get_option('blogname'));
 	}
 
-	// 获取文件信息
-	$name = get_option('blogname');
-	$ext = '.' . pathinfo($file)['extension'];
+	/**
+	 *@since 2019.02.12
+	 *此处必须再次校验用户下载权限。
+	 *否则用户下载一次后即可获得ajax_nonce，从而在24小时内可以通过ajax校验
+	 *此期间通过修改 post_id 可参数下载其他为经过权限校验的文件
+	 *校验方式：
+	 *1、通过生成特定nonce，$action必须包含 $post_id 或$attachment_id以确保文件唯一性，且改nonce不得通过其他任何获得
+	 *（wp_nonce已包含了当前用户数据）
+	 *2、再次完整验证用户权限
+	 *（安全性更高，但重复验证稍显繁琐）
+	 */
 
-	//打开文件
-	$the_file = fopen($file, "r");
-	Header("Content-type: application/octet-stream");
-	Header("Accept-Ranges: bytes");
-	Header("Accept-Length: " . filesize($file));
-	Header("Content-Disposition: attachment; filename=" . $name . '-' . $parent_id . $ext); // 重命名文件名，防止用户通过文件名绕道直接下载
-	//读取文件内容并直接输出到浏览器
-	echo fread($the_file, filesize($file));
-	fclose($the_file);
-	exit();
+	/**
+	*@since 2019.02.12 nonce验证
+	*/
+	// wp_create_nonce($post_id.'_download_key')
+	// $action  = $post_id.'_paid_download_key';
+	// if(wp_verify_nonce( $_REQUEST['_download_key'], $action )){
+	// 	return wnd_download_file($file, $post_id);
+	// }
+
+	/**
+	*@since 2019.02.12 重复权限验证
+	*/
+	$user_id = get_current_user_id();
+	//1、免费，或者已付费
+	if (!$price or wnd_user_has_paid($user_id, $post_id)) {
+		return wnd_download_file($file, $post_id);
+	}
+
+	//2、 作者直接下载
+	if (get_post_field('post_author', $post_id) == get_current_user_id()) {
+		return wnd_download_file($file, $post_id);
+	}
+
+	// 校验失败
+	wp_die('下载权限校验失败！', get_option('blogname'));
 
 }

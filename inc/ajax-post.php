@@ -240,12 +240,12 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 		'cache_results' => false,
 		'posts_per_page' => 1,
 	);
-	$user_draft_post_array = get_posts($query_array);
+	$draft_post_array = get_posts($query_array);
 
 	// 有草稿：返回第一篇草稿ID
-	if ($user_draft_post_array) {
+	if ($draft_post_array) {
 
-		$post_id = $user_draft_post_array[0]->ID;
+		$post_id = $draft_post_array[0]->ID;
 		// 更新草稿状态
 		$post_id = wp_update_post(array('ID' => $post_id, 'post_status' => 'auto-draft', 'post_title' => 'Auto-draft', 'post_author' => $user_id));
 		if (!is_wp_error($post_id)) {
@@ -271,7 +271,7 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 		// 有符合条件的其他用户创建的草稿
 		if ($draft_post_array) {
 
-			$post_id = $user_draft_post_array[0]->ID;
+			$post_id = $draft_post_array[0]->ID;
 			// 更新草稿状态
 			$post_id = wp_update_post(array('ID' => $post_id, 'post_status' => 'auto-draft', 'post_title' => 'Auto-draft', 'post_author' => $user_id));
 

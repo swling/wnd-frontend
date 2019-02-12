@@ -88,14 +88,23 @@ function wnd_action_pay() {
 		return;
 	}
 
-	//2.0 其他操作需要用户已登录
-	if (is_user_logged_in()) {
+	//2.0其他自定义action
+	$action = $_GET['action'] ?? '';
+	switch ($action) {
 
-		//充值
-		if (isset($_GET['action']) && $_GET['action'] == 'recharge') {
+	case 'recharge':
+		if (is_user_logged_in()) {
+			//充值
 			check_admin_referer('wnd_recharge');
 			require WNDWP_PATH . 'component/payment/alipay/pagepay/pagepay.php';
+		} else {
+			wp_die('请登录！', bloginfo('name'));
 		}
+		break;
+
+	default:
+		wp_die('无效的操作！', bloginfo('name'));
+		break;
 
 	}
 
@@ -115,8 +124,8 @@ function wnd_reset_reg_code($user_id) {
 	wnd_reset_code($email_or_phone, $user_id);
 
 	// 手机注册，写入用户meta
-	if(isset($_POST['phone'])){
-		wnd_update_user_meta($user_id,'phone',$_POST['phone']);
+	if (isset($_POST['phone'])) {
+		wnd_update_user_meta($user_id, 'phone', $_POST['phone']);
 	}
 }
 

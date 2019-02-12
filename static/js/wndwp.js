@@ -36,7 +36,7 @@ function isMob() {
 	}
 }
 
-/** 
+/**
  *@since 2019.1 bulma重构
  */
 
@@ -132,7 +132,7 @@ function wnd_confirm_form_submit(form_id, msg = '') {
 
 	@since 2019.01.26
 	若需要传递参数值超过一个，可将参数定义为GET参数形式如：'post_id=1&user_id=2'，后端采用:wp_parse_args() 解析参数
-	
+
 	实例：
 		前端
 		wnd_ajax_modal('xxx','post_id=1&user_id=2');
@@ -319,7 +319,7 @@ function wnd_ajax_submit(form_id) {
 				wnd_ajax_msg(response.msg, color, form_id);
 				break;
 
-				//更新类 
+				//更新类
 			case 2:
 				wnd_ajax_msg('提交成功！<a href="' + response.msg + '" target="_blank">查看</a>', color, form_id);
 				break;
@@ -335,7 +335,13 @@ function wnd_ajax_submit(form_id) {
 				window.location.reload(true);
 				break;
 
-				//默认展示提示信息 
+				// 下载类
+			case 6:
+				wnd_ajax_msg("下载中……", color, form_id);
+				$(window.location).attr("href", response.msg);
+				break;
+
+				//默认展示提示信息
 			default:
 				wnd_ajax_msg(response.msg, color, form_id);
 				break;

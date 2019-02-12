@@ -118,7 +118,7 @@ function wnd_insert_expense($user_id, $money, $object_id = 0, $content = '') {
 	$object_id = wnd_insert_object($object_arr);
 
 	// 更新用户余额
-	if ($object) {
+	if ($object_id) {
 		wnd_inc_user_money($user_id, $money * -1);
 	}
 

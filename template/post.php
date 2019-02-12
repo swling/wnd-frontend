@@ -211,7 +211,8 @@ function _wnd_post_form($args=array()){
 
 	// 未指定id，新建文章，否则为编辑
 	if(!$post_id){
-    	$post_id = (int) wnd_get_draft_post($post_type = $post_type, $interval_time = 3600*24 )['msg'];
+    	$action = wnd_get_draft_post($post_type = $post_type, $interval_time = 3600*24 );
+    	$post_id = $action['msg'];
     }
 
     // 获取文章并定义数据
@@ -220,8 +221,15 @@ function _wnd_post_form($args=array()){
     	$post_type = $post->post_type;
     	$args['is_free'] = get_post_meta( $post_id, 'price', 1 );
 
-    //新建文章失败，如匿名用户，初始化一个空对象 
+    //新建文章失败
 	}else{
+
+		// 已知用户创建失败，说明产生了错误，退出
+		if(is_user_logged_in()){
+			echo "<script>wnd_alert_msg('".$action['msg']."')</script>";
+			return;  
+		}
+		// 匿名用户不允许创建草稿，上传，因而初始化一个空对象
 		$post = new stdClass();
 		$post->post_title ='';
 		$post->post_excerpt ='';

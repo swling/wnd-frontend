@@ -106,14 +106,27 @@ function wnd_pay_for_download() {
 		return array('status' => 0, 'msg' => '获取文件失败！');
 	}
 
+	/**
+	 *@since 2019.02.12
+	 *组合ajax验证下载参数:该url地址并发文件实际下载地址，而是一个调用参数的请求
+	 *前端接收后跳转至该网址（status == 6 是专为下载类ajax请求设置的代码前端响应），以实现ajax下载
+	 */
+	$download_args = array(
+		'action' => 'wnd_action',
+		'action_name' => 'wnd_ajax_download_file',
+		'post_id' => $post_id,
+		'_ajax_nonce' => wp_create_nonce('wnd_ajax_download_file'),
+	);
+	$download_url = add_query_arg($download_args, admin_url('admin-ajax.php'));
+
 	//1、免费，或者已付费
 	if (!$price or wnd_user_has_paid($user_id, $post_id)) {
-		return wnd_download_file($file, $post_id);
+		return array('status' => 6, 'msg' => $download_url);
 	}
 
 	//2、 作者直接下载
 	if ($post->post_author == get_current_user_id()) {
-		return wnd_download_file($file, $post_id);
+		return array('status' => 6, 'msg' => $download_url);
 	}
 
 	//3、 付费下载
@@ -128,7 +141,6 @@ function wnd_pay_for_download() {
 		wnd_insert_payment($post->post_author, $commission, 'success', $note = '《' . $post->post_title . '》收益');
 	}
 
-	// 发送文件
-	return wnd_download_file($file, $post_id);
+	return array('status' => 6, 'msg' => $download_url);
 
 }

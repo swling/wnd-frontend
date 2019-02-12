@@ -113,15 +113,16 @@ add_filter('the_content', 'wnd_filter_the_content', $priority = 10, $accepted_ar
 function wnd_filter_the_content($content) {
 
 	global $post;
-	$price = get_post_meta($post->ID, 'price', true);
-	// 价格为空直接返回
-	if (!$price) {
-		return $content;
-	}
-	$user_id = get_current_user_id();
-
+	$price = get_post_meta($post->ID, 'price', true) ?: 0;
 	$file = wnd_get_post_meta($post->ID, 'file');
 
+	// 价格为空且没有文件，免费文章
+	if (!$price and !$file) {
+		return $content;
+	}
+
+	$user_id = get_current_user_id();
+	
 	// 付费下载
 	if ($file) {
 
@@ -141,21 +142,25 @@ function wnd_filter_the_content($content) {
 
 			$button_text = '您发布的下载文件';
 
+		} elseif ($price) {
+
+			$button_text = '付费下载 ¥' . $price;
+
 		} else {
-
-			$button_text = '付费下载 ¥' . wnd_get_post_price($post->ID);
-
+			$button_text = '免费下载';
 		}
 
 		$form =
-		'<form id="pay-for-download" action="' . admin_url('admin-ajax.php') . '" method="post" >'
+		'<form id="pay-for-download" action="" method="post" >'
 		. '<div class="ajax-msg"></div>'
 		. wp_nonce_field('wnd_pay_for_download', '_ajax_nonce') . '
 			<input type="hidden" name="action"  value="wnd_action">
 			<input type="hidden" name="action_name"  value="wnd_pay_for_download">
 			<input type="hidden" name="post_id"  value="' . $post->ID . '">
 			<input type="hidden" name="post_title"  value="' . $post->post_title . '">
-			<button type="submit" class="button">' . $button_text . '</button>
+			<div class="field is-grouped is-grouped-centered">
+			<button type="button" name="submit" class="button" onclick="wnd_ajax_submit(\'#pay-for-download\')" >' . $button_text . '</button>
+			</div>
 			</form>';
 
 		$content .= $form;
@@ -209,7 +214,9 @@ function wnd_filter_the_content($content) {
 		<input type="hidden" name="action_name"  value="wnd_pay_for_reading">
 		<input type="hidden" name="post_id"  value="' . $post->ID . '">
 		<input type="hidden" name="post_title"  value="' . $post->post_title . '">
-		<button type="button" class="button" onclick="wnd_ajax_submit(\'#pay-for-reading\')" >' . $button_text . '</button>
+		<div class="field is-grouped is-grouped-centered">
+		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit(\'#pay-for-reading\')" >' . $button_text . '</button>
+		</div>
 		</form>';
 
 		$content .= $form;
