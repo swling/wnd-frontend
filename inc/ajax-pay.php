@@ -113,9 +113,9 @@ function wnd_pay_for_download() {
 	 */
 	$download_args = array(
 		'action' => 'wnd_action',
-		'action_name' => 'wnd_ajax_download_file',
+		'action_name' => 'wnd_paid_download',
 		'post_id' => $post_id,
-		'_ajax_nonce' => wp_create_nonce('wnd_ajax_download_file'),
+		'_ajax_nonce' => wp_create_nonce('wnd_paid_download'),
 	);
 	$download_url = add_query_arg($download_args, admin_url('admin-ajax.php'));
 

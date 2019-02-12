@@ -117,7 +117,7 @@ function wnd_delete_attachment() {
 /**
  *@since 2019.02.12 文件校验下载
  */
-function wnd_ajax_download_file() {
+function wnd_paid_download() {
 
 	$post_id = (int) $_REQUEST['post_id'];
 	$price = get_post_meta($post_id, 'price', 1);
@@ -143,7 +143,6 @@ function wnd_ajax_download_file() {
 	/**
 	*@since 2019.02.12 nonce验证
 	*/
-	// wp_create_nonce($post_id.'_download_key')
 	// $action  = $post_id.'_paid_download_key';
 	// if(wp_verify_nonce( $_REQUEST['_download_key'], $action )){
 	// 	return wnd_download_file($file, $post_id);
