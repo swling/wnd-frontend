@@ -70,7 +70,7 @@ function _wnd_post_status_form($post_id){
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_update_post_status">
 	<div class="field is-grouped is-grouped-centered">
-		<button type="button" class="button" onclick="wnd_ajax_submit('#post-status')">确认</button>
+		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#post-status')">确认</button>
 	</div>
 </form>
 <script>
@@ -170,9 +170,9 @@ function _wnd_upload_field($args) {
 }
 
 /**
-*@since 2019.01.30 上传付费文件表单字段
+*@since 2019.01.30 付费内容表单字段
 */
-function _wnd_paid_file_field($post_parent){
+function _wnd_paid_field($post_parent){
 
     $args = array(
         'id'=>'upload-file',
@@ -185,7 +185,7 @@ function _wnd_paid_file_field($post_parent){
 ?>
 <div class="field">
 	<div class="control has-icons-left">
-		<input type="number" min="0" step="0.01" class="input" required="required" name="_wpmeta_price" placeholder="下载价格">
+		<input type="number" min="0" step="0.01" class="input" value="<?php echo get_post_meta( $post_parent, 'price', 1)?>" name="_wpmeta_price" placeholder="价格">
 		<span class="icon is-left">
 			<i class="fa fa-money"></i>
 		</span>
@@ -320,10 +320,10 @@ echo '</div></div>'.PHP_EOL;
 
 <?php if($args['is_free']!=1 ) { //付费内容 
 		echo '<label class="label">付费内容</label>';
-		_wnd_paid_file_field($post_id);
+		_wnd_paid_field($post_id);
 	}
 ?>
-<?php do_action( 'wnd_post_form', $post_id,$post_type,$post ); ?>
+<?php do_action( '_wnd_post_form', $post_id,$post_type,$post ); ?>
 
 	<div class="field">
 <?php 
@@ -352,7 +352,7 @@ echo '</div></div>'.PHP_EOL;
 	<input type="hidden" name="action_name" value="wnd_insert_post">
 	<?php wp_nonce_field('wnd_insert_post', '_ajax_nonce'); ?>
 	<div class="field is-grouped is-grouped-centered">
-		<button type="button" class="button" onclick="wnd_ajax_submit('#new-post-<?php echo $post_id?>')">提交</button>
+		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#new-post-<?php echo $post_id?>')">提交</button>
 	</div>	
 </form>
 <?php

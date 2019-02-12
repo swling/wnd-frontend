@@ -69,7 +69,7 @@ function _wnd_recharge_form() {
 	<?php do_action('_wnd_recharge_form');?>
 	<?php wp_nonce_field('wnd_recharge');?>
 	<div class="field is-grouped is-grouped-centered">
-		<button type="submit" class="button">确认充值</button>
+		<button type="submit" name="submit" class="button">确认充值</button>
 	</div>
 </form>
 <?php

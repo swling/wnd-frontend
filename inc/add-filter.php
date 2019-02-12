@@ -163,38 +163,39 @@ function wnd_filter_the_content($content) {
 		//付费阅读
 	} else {
 
-		list($free_content, $paid_content) = explode('<p><!--more--></p>', $post->post_content, 2);
-		if (empty($paid_content)) {
-			list($free_content, $paid_content) = explode('<p><!--more--></p>', $post->post_content, 2);
+		//查找是否有more标签，否则免费部分为空（全文付费）
+		$content_array = explode('<!--more-->', $post->post_content, 2);
+		if (count($content_array) == 1) {
+			$content_array = array('', $post->post_content);
 		}
-		$paid_content ?: '获取付费内容出错！';
+		list($free_content, $paid_content) = $content_array;
 
 		// 已支付
 		if (wnd_user_has_paid($user_id, $post->ID)) {
 
-			$content = '<div id="free-content">' . $free_content . '</div>';
-			$content .= '<div id="paid-content">' . $paid_content . '</div>';
+			$content = '<div class="free-content">' . $free_content . '</div>';
+			$content .= '<div class="paid-content">' . $paid_content . '</div>';
 			$button_text = '您已付费';
 
 			// 作者本人
 		} elseif ($post->post_author == get_current_user_id()) {
 
-			$content = '<div id="free-content">' . $free_content . '</div>';
-			$content .= '<div id="paid-content">' . $paid_content . '</div>';
+			$content = '<div class="free-content">' . $free_content . '</div>';
+			$content .= '<div class="paid-content">' . $paid_content . '</div>';
 			$button_text = '您的付费文章';
 
 			// 已登录未支付
 		} elseif (is_user_logged_in()) {
 
-			$content = '<div id="free-content">' . $free_content . '</div>';
-			$content .= '<div id="paid-content"><p class="notice">以下为付费内容</p></div>';
+			$content = '<div class="free-content">' . $free_content . '</div>';
+			$content .= '<div class="paid-content"><p class="ajax-msg">以下为付费内容</p></div>';
 			$button_text = '付费阅读： ¥' . wnd_get_post_price($post->ID);
 
 			// 未登录用户
 		} else {
-			$content = '<div id="free-content">' . $free_content . '</div>';
-			$content .= '<div id="paid-content"><p class="notice">以下为付费内容</p></div>';
-			$button_text = '请登录后付费阅读： ¥' . wnd_get_post_price($post->ID);
+			$content = '<div class="free-content">' . $free_content . '</div>';
+			$content .= '<div class="paid-content"><div class="message is-warning"><div class="message-body">付费内容：¥' . wnd_get_post_price($post->ID) . '</div></div></div>';
+			$button_text = '请登录';
 			// $form = '<p class="notice">'.$button_text.'</p>';
 			// $content = $form;
 			// return $content;

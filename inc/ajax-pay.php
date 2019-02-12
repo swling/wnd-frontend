@@ -14,12 +14,12 @@ function wnd_insert_order() {
 	$note = $_POST['note'] ?? '';
 
 	if (!$post_id) {
-		return array('msg' => 0, 'msg' => 'ID无效！');
+		return array('status' => 0, 'msg' => 'ID无效！');
 	}
 
 	// 权限判断
 	if (!$user_id) {
-		return array('msg' => 0, 'msg' => '请登录后操作！');
+		return array('status' => 0, 'msg' => '请登录后操作！');
 	}
 	$wnd_can_insert_order = apply_filters('wnd_can_insert_order', array('status' => 1, 'msg' => '默认通过'), $post_id);
 	if ($wnd_can_insert_order['status'] === 0) {
@@ -51,13 +51,14 @@ function wnd_pay_for_reading() {
 	$post = get_post($post_id);
 	$user_id = get_current_user_id();
 
-	// 根据标记切割内容
-	list($free_content, $paid_content) = explode('<p><!--more--></p>', $post->post_content, 2);
-	if (empty($paid_content)) {
-		list($free_content, $paid_content) = explode('<p><!--more--></p>', $post->post_content, 2);
+	//查找是否有more标签，否则免费部分为空（全文付费）
+	$content_array = explode('<!--more-->', $post->post_content, 2);
+	if (count($content_array) == 1) {
+		$content_array = array('', $post->post_content);
 	}
+	list($free_content, $paid_content) = $content_array;
 
-	if(!$paid_content){
+	if (!$paid_content) {
 		return array('status' => 0, 'msg' => '获取付费内容出错！');
 	}
 
@@ -73,8 +74,10 @@ function wnd_pay_for_reading() {
 	}
 
 	// 文章作者新增资金
-	$income = wnd_get_post_price($post_id, 'price');
-	wnd_insert_payment($post->post_author, $income, 'success', $note = '《' . $post->post_title . '》收益');
+	$commission = wnd_get_commission($post_id);
+	if ($commission) {
+		wnd_insert_payment($post->post_author, $commission, 'success', $note = '《' . $post->post_title . '》收益');
+	}
 
 	return array('status' => 1, 'msg' => $paid_content);
 }
@@ -120,8 +123,10 @@ function wnd_pay_for_download() {
 	}
 
 	// 文章作者新增资金
-	$income = $price;
-	wnd_insert_payment($post->post_author, $income, 'success', $note = '《' . $post->post_title . '》收益');
+	$commission = wnd_get_commission($post_id);
+	if ($commission) {
+		wnd_insert_payment($post->post_author, $commission, 'success', $note = '《' . $post->post_title . '》收益');
+	}
 
 	// 发送文件
 	return wnd_download_file($file, $post_id);

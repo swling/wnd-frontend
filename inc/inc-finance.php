@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
  *@since 2019.01.30
  *用户通过第三方金融平台充值付款到本站
  *创建时：status=>pending，验证成功后：status=>success
+ *@return int object ID
  */
 function wnd_insert_payment($user_id, $money, $status = 'pending', $content = '') {
 
@@ -196,9 +197,18 @@ function wnd_get_user_expense($user_id) {
 // 订单价格
 function wnd_get_post_price($post_id) {
 
-	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1);
-	$price = $price ?: wnd_get_option('wndwp', 'wnd_post_default_price');
+	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1) ?: wnd_get_option('wndwp', 'wnd_post_default_price');
 	return $price;
+}
+
+/**
+*@since 2019.02.12
+*用户佣金分成 默认为付费文章的全部价格收益
+*/
+function wnd_get_commission($post_id){
+
+	return apply_filters( 'wnd_commission', wnd_get_post_price($post_id), $post_id );
+
 }
 
 /**
