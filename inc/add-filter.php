@@ -128,9 +128,9 @@ function wnd_filter_the_content($content) {
 
 		// 未登录用户
 		if (!is_user_logged_in()) {
-			$button_text = '请登录后付费下载： ¥' . wnd_get_post_price($post->ID);
-			$form = '<p class="notice">' . $button_text . '</p>';
-			$content .= $form;
+			$button_text = '请登录后下载';
+			$button = '<div class="field is-grouped is-grouped-centered"><button class="button" onclick="wnd_ajax_modal(\'login_form\')">' . $button_text . '</button></div>';
+			$content .= $button;
 			return $content;
 		}
 
