@@ -194,20 +194,24 @@ function wnd_get_user_expense($user_id) {
 	return $expense;
 }
 
-// 订单价格
+/**
+ *@since 2019.02.13
+ *文章价格
+ */
 function wnd_get_post_price($post_id) {
 
-	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1) ?: wnd_get_option('wndwp', 'wnd_post_default_price');
-	return $price;
+	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1);
+
+	return apply_filters('wnd_post_price', $price, $post_id);
 }
 
 /**
-*@since 2019.02.12
-*用户佣金分成 默认为付费文章的全部价格收益
-*/
-function wnd_get_commission($post_id){
+ *@since 2019.02.12
+ *用户佣金分成 默认为付费文章的全部价格收益
+ */
+function wnd_get_commission($post_id) {
 
-	return apply_filters( 'wnd_commission', wnd_get_post_price($post_id), $post_id );
+	return apply_filters('wnd_commission', wnd_get_post_price($post_id), $post_id);
 
 }
 

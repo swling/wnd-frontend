@@ -5,50 +5,6 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- *@since 2019.01.28 发送手机或邮箱验证码
- */
-function wnd_send_code() {
-
-	$type = $_POST['type'];
-	$template = $_POST['template'];
-
-	$phone = $_POST['phone'];
-	$email = $_POST['email'];
-
-	$email_or_phone = $phone ?: $email;
-
-	// 权限检测
-	$wnd_can_send_code = wnd_can_send_code($email_or_phone, $type);
-	if ($wnd_can_send_code['status'] === 0) {
-		return $wnd_can_send_code;
-	}
-
-	// 邮箱验证
-	if ($email) {
-
-		if (is_user_logged_in()) {
-			return wnd_send_mail_code_to_user($type, $template);
-		} else {
-			return wnd_send_mail_code($email, $type, $template);
-		}
-
-		//手机验证
-	} elseif ($phone) {
-
-		if (is_user_logged_in()) {
-			return wnd_send_sms_code_to_user($type, $template);
-		} else {
-			return wnd_send_sms_code($phone, $type, $template);
-		}
-
-		// 既不是手机也不是邮箱
-	} else {
-		return array('status' => 0, 'msg' => '手机或邮箱格式不正确！');
-	}
-
-}
-
-/**
  *@since 2019.02.10 权限检测
  */
 function wnd_can_send_code($email_or_phone, $type) {
@@ -126,17 +82,19 @@ function wnd_send_mail_code_to_user($type = 'v', $template = '') {
  *通过ajax发送短信
  *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
  */
-function wnd_send_sms_code($phone, $type, $template = '') {
+function wnd_send_sms_code($phone, $type = 'v', $template = '') {
 
-	$template = empty($template) ?: wnd_get_option('wndwp', 'wnd_ali_TemplateCode');
+	require WNDWP_PATH . 'component/sms/aliyun-sms/sendSms.php'; //阿里云短信
+
+	$template = $template ?: wnd_get_option('wndwp', 'wnd_ali_TemplateCode');
 	$code = wnd_random_code($length = 6);
-	
+
 	// 写入手机记录
 	if (!wnd_insert_code($phone, $code)) {
 		return array('status' => 0, 'msg' => '数据库写入失败！');
 	}
 
-	$send_status = wnd_ali_send_sms($phone, $code, $template);
+	$send_status = wnd_send_sms($phone, $code, $template);
 	if ($send_status->Code == "OK") {
 		return array('status' => 1, 'msg' => '发送成功！');
 	} else {
@@ -150,7 +108,7 @@ function wnd_send_sms_code($phone, $type, $template = '') {
  *通过给当前用户发送短信
  *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
  */
-function wnd_send_sms_to_user($type, $template) {
+function wnd_send_sms_to_user($type = '', $template = '') {
 
 	// 获取当前用户的手机号码
 	$user_id = get_current_user_id();

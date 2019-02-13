@@ -8,20 +8,20 @@ if (!defined('ABSPATH')) {
  *@since 初始化
  *用户注册
  */
-function wnd_insert_user() {
+function wnd_reg() {
 
 	// 1、数据组成
 	if (empty($_POST)) {
 		return array('status' => 0, 'msg' => '注册信息为空');
 	}
 
-	$user_login = $_POST['_user_user_login'] ?: $_POST['sms_phone'];
+	$user_login = $_POST['_user_user_login'] ?? $_POST['sms_phone'];
 	$user_pass = $_POST['_user_user_pass'];
-	$user_pass_repeat = $_POST['_user_user_pass_repeat'];
+	$user_pass_repeat = $_POST['_user_user_pass_repeat'] ?? $_POST['_user_user_pass'];
 	$user_email = $_POST['_user_user_email'];
-	$display_name = $_POST['_user_display_name'];
-	$description = $_POST['_wpusermeta_description'] ?: '';
-	$role = $_POST['_user_role'] ?: get_option('default_role');
+	$display_name = $_POST['_user_display_name'] ?? '';
+	$description = $_POST['_wpusermeta_description'] ?? '';
+	$role = get_option('default_role');
 
 	/*处于安全考虑，form自动组合函数屏蔽了用户敏感字段，此处不可通过 form自动组合，应该手动控制用户数据*/
 	$userdata = array(
@@ -107,7 +107,7 @@ function wnd_insert_user() {
  *@since 2019.1.13
  *用户登录
  */
-function wnd_user_login() {
+function wnd_login() {
 
 	$username = trim($_POST['_user_user_login']);
 	$password = $_POST['_user_user_pass'];

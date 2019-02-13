@@ -2,18 +2,6 @@
 // Exit if accessed directly
 if ( !defined( 'ABSPATH' ) ) exit;
 
-
-/**
-*@since 2019.01.16 转移option选项
-*author：swling 
-*email：tangfou@gmail.com
-*/
-if(!get_option('wndwp')){
-    update_option( 'wndwp', get_option( 'wnd_wndwp'),'no' );
-}else{
-    delete_option( 'wnd_wndwp' );
-}
-
 /**
 *@since 2019.01.16 注册设置页面
 */
@@ -177,13 +165,6 @@ function wnd_options(){
 					<input type="text" name="wnd_pay_return_url" value="<?php echo wnd_get_option('wndwp','wnd_pay_return_url');?>" class="large-text" />
 					<p><i>用户充值后跳转地址</i></p>
 				</td>
-			</tr>
-
-			<tr>
-			    <td valign="top">缺省价格：</td>
-			    <td>
-			    <input type="number" name="wnd_post_default_price" min="1" value="<?php echo wnd_get_option('wndwp','wnd_post_default_price'); ?>" required="required" /> *未设置单独价格时，默认文章的价格
-			    </td>
 			</tr>
 
 			<tr>

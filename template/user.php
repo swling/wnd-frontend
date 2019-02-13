@@ -83,9 +83,9 @@ function _wnd_login_form() {
 	</div>
 	<?php do_action('_wnd_login_form');?>
 	<input type="hidden" name="redirect_to" value="<?php echo $redirect_to; ?>">
-	<?php wp_nonce_field('wnd_user_login', '_ajax_nonce');?>
+	<?php wp_nonce_field('wnd_login', '_ajax_nonce');?>
 	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_user_login">
+	<input type="hidden" name="action_name" value="wnd_login">
 	<div class="field is-grouped is-grouped-centered">
 		<button class="button" name="submit" onclick="wnd_ajax_submit('#user-login')">登录</button>
 	</div>
@@ -161,9 +161,9 @@ function _wnd_reg_form() {
 		wnd_sms_field($type = 'reg', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
 	}
 	?>
-	<?php wp_nonce_field('wnd_insert_user', '_ajax_nonce');?>
+	<?php wp_nonce_field('wnd_reg', '_ajax_nonce');?>
 	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_insert_user">
+	<input type="hidden" name="action_name" value="wnd_reg">
 	<div class="field is-grouped is-grouped-centered">
 		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#user-reg')">注册</button>
 	</div>

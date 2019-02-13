@@ -64,7 +64,7 @@ apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_sta
 ###用户注册（默认通过）
 apply_filters('wnd_can_reg', array('status'=>1,'msg'=>'默认通过'));
 ###返回值过滤
-apply_filters('wnd_reg_return',  array('status' => 3, 'msg' => home_url()), $user_id);
+apply_filters('wnd_reg_return',  array('status' => 3, 'msg' => $redirect_to), $user_id);
 
 
 ##用户登录 @since 2019.01.21
@@ -86,8 +86,15 @@ apply_filters('wnd_update_account_return', array('status' => 1, 'msg' => '更新
 // 用户订单权限
 apply_filters('wnd_can_insert_order', array('status'=>1,'msg'=>'默认通过'), $post_id);
 
-// 付费文章作者分成金额：默认为付费文章价格
+/**
+*@since 2019.02.12 付费内容，作者收益提成，默认为文章价格
+*/
 apply_filters( 'wnd_commission', $price, $post_id )
+
+/**
+*@since 2019.02.13 post价格
+*/
+apply_filters('wnd_post_price', $price, $post_id);
 ```
 
 
