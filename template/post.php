@@ -89,11 +89,11 @@ function _wnd_upload_field($args) {
 	$defaults = array(
 		'id'=>'upload-file',
 		'meta_key' => '',
-		'is_image'=> 1,
+		'has_thumbnail'=> 1,
 		'post_parent' => 0,
 		'save_size'=>array('width'=>0,'height'=>0),
 		'thumb_size'=>array('width'=>200,'height'=>200),
-		'default_thumb' => WNDWP_URL . '/static/images/default.jpg',
+		'default_thumbnail' => WNDWP_URL . '/static/images/default.jpg',
 	);
 	$args = wp_parse_args($args,$defaults);
 
@@ -112,8 +112,8 @@ function _wnd_upload_field($args) {
 	}
 
 	//根据上传类型，设置默认样式 
-	if($args['is_image']==1){
-		$attachment_url = $attachment_url ?: $args['default_thumb'];
+	if($args['has_thumbnail']==1){
+		$attachment_url = $attachment_url ?: $args['default_thumbnail'];
 	}else{
 		$attachment_url = $attachment_url ?: false;
 	}
@@ -121,7 +121,7 @@ function _wnd_upload_field($args) {
 	?>
 <div id="<?php echo $args['id'];?>" class="upload-field field">
 	<div class="ajax-msg"></div>
-	<?php if ($args['is_image'] == 1) { // 1、图片类型，缩略图 ?>
+	<?php if ($args['has_thumbnail'] == 1) { // 1、图片类型，缩略图 ?>
 	<div class="field">
 		<a onclick="wnd_click('input[data-id=\'<?php echo $args['id'];?>\']')"><img class="thumb" src="<?php echo $attachment_url; ?>" height="<?php echo $args['thumb_size']['height']?>" width="<?php echo $args['thumb_size']['width']?>" title="上传图像"></a>
 		<a class="delete" data-id="<?php echo $args['id'];?>" data-attachment-id="<?php echo $attachment_id;?>"></a>
@@ -132,7 +132,7 @@ function _wnd_upload_field($args) {
 	<!-- 图片信息 -->
 	<input type="hidden" name="file_save_width" value="<?php echo $args['save_size']['width']; ?>" />
 	<input type="hidden" name="file_save_height" value="<?php echo $args['save_size']['height']; ?>" />
-	<input type="hidden" name="file_default_thumb" value="<?php echo $args['default_thumb'] ?>" />
+	<input type="hidden" name="file_default_thumbnail" value="<?php echo $args['default_thumbnail'] ?>" />
 	<?php } else { ///2、文件上传 ?>
 	<div class="columns is-mobile">
 		<div class="column">
@@ -161,7 +161,7 @@ function _wnd_upload_field($args) {
 	<!-- 自定义属性，用于区分上传用途，方便后端区分处理 -->
 	<input type="hidden" name="file_post_parent" value="<?php echo $args['post_parent'] ?>" />
 	<input type="hidden" name="file_meta_key" value="<?php echo $args['meta_key']; ?>" />
-	<input type="hidden" name="file_is_image" value="<?php if($args['is_image']==1) echo '1'; else echo '0'; ?>" />
+	<input type="hidden" name="file_has_thumbnail" value="<?php if($args['has_thumbnail']==1) echo '1'; else echo '0'; ?>" />
 	<?php wp_nonce_field('wnd_upload_file','file_upload_nonce');?>
 	<?php wp_nonce_field('wnd_delete_attachment','file_delete_nonce');?>
 </div>
@@ -177,7 +177,7 @@ function _wnd_paid_field($post_parent){
     $args = array(
         'id'=>'upload-file',
         'meta_key' => 'file',
-        'is_image'=> 0,
+        'has_thumbnail'=> 0,
         'post_parent' => $post_parent,
     );
     _wnd_upload_field($args);
