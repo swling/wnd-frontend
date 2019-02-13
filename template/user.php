@@ -147,15 +147,6 @@ function _wnd_reg_form() {
 			</span>
 		</div>
 	</div>
-	<div class="field">
-		<label class="label">确认密码 <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="password" class="input" required="required" name="_user_user_pass_repeat" placeholder="确认密码">
-			<span class="icon is-left">
-				<i class="fa fa-unlock-alt"></i>
-			</span>
-		</div>
-	</div>
 	<?php do_action('_wnd_reg_form');?>
 	<?php if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
 		wnd_sms_field($type = 'reg', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
