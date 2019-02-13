@@ -102,8 +102,8 @@ function _wnd_upload_field($args) {
 	$attachment_id = $attachment_id ?: wnd_get_user_meta( get_current_user_id(), $args['meta_key']);
 	$attachment_url = wp_get_attachment_url($attachment_id);
 
-	// 如果文件不存在，例如已被后台删除，删除对应meta key
-	if(!$attachment_url){
+	// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
+	if($attachment_id and !$attachment_url){
 		if($args['post_parent']){
 			wnd_delete_post_meta($args['post_parent'],$args['meta_key']);
 		}else{
