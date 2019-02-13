@@ -73,6 +73,14 @@ function wnd_upload_file() {
 		// 将当前上传的图片信息写入数组
 		$temp_array = array('status' => 1, 'msg' => array('url' => wp_get_attachment_url($attachment_id), 'id' => $attachment_id));
 		array_push($return_array, $temp_array);
+
+		/**
+		*@since 2019.02.13 当存在meta key时，表明上传文件为特定用途存储，仅允许上传单个文件 
+		*/
+		if($meta_key){
+			break;
+		}
+		
 	}
 	unset($file, $array);
 
