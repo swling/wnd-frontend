@@ -240,7 +240,7 @@ function _wnd_post_form($args=array()){
 	*@since 2019.02.13 表单标题
 	**/
 	if(!isset($args['form_title'])){
-		$args['form_title'] = '<span class="icon"><i class="fa fa-edit"></i></span>'.($post_id ? 'ID: '.$post_id : '');
+		$args['form_title'] = $post_id ? '<span class="icon"><i class="fa fa-edit"></i></span>ID: '.$post_id : '';
 	}elseif(!empty($args['form_title'])){
 		$args['form_title'] = '<span class="icon"><i class="fa fa-edit"></i></span>'.$args['form_title'];
 	}
