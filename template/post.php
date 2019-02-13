@@ -359,6 +359,16 @@ echo '</div></div>'.PHP_EOL;
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_insert_post">
 	<?php wp_nonce_field('wnd_insert_post', '_ajax_nonce'); ?>
+	<?php if(is_user_logged_in()) { ?>
+	<div class="field">
+		<div class="control">
+			<label class="checkbox">
+				<input type="checkbox" name="_post_post_status" value="draft">
+				存为草稿
+			</label>
+		</div>
+	</div>
+	<?php }?>
 	<div class="field is-grouped is-grouped-centered">
 		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#new-post-<?php echo $post_id?>')">提交</button>
 	</div>	

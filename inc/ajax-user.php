@@ -92,7 +92,7 @@ function wnd_reg() {
 		wp_set_current_user($user_id, $user->user_login);
 		wp_set_auth_cookie($user_id, 1);
 		// 注册后跳转地址
-		$redirect_to = $_REQUEST['redirect_to'] ?: wnd_get_option('wndwp', 'wnd_reg_redirect_url') ?: home_url();
+		$redirect_to = $_REQUEST['redirect_to'] ?? wnd_get_option('wndwp', 'wnd_reg_redirect_url') ?: home_url();
 		$return_array = apply_filters('wnd_reg_return', array('status' => 3, 'msg' => $redirect_to), $user_id);
 		return $return_array;
 
@@ -113,7 +113,7 @@ function wnd_login() {
 	$password = $_POST['_user_user_pass'];
 	$remember = $_POST['remember'] ?? 0;
 	$remember = $remember == 1 ? true : false;
-	$redirect_to = $_REQUEST['redirect_to'] ?: home_url();
+	$redirect_to = $_REQUEST['redirect_to'] ?? home_url();
 
 	// 登录过滤挂钩
 	$wnd_can_login = apply_filters('wnd_can_login', array('status' => 1, 'msg' => '默认通过'));

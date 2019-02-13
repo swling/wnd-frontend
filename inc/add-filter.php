@@ -4,8 +4,9 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-/*
-通过WordPress filter重写一些WordPress原生功能
+/**
+ *@see wndwp/READEME.md
+ * ############################################################################ 以下为WndWP插件过滤钩子
  */
 
 /**
@@ -55,6 +56,27 @@ function wnd_filter_can_update_account($can_array) {
 	}
 
 }
+
+/**
+ *@since 2019.02.13
+ *文章状态过滤，允许前端表单设置为草稿状态（执行顺序较晚99，因而 会覆盖掉其他默认10 的filter）
+ *如果 $update_id 为0 表示为新发布文章
+ *否则为更新文章
+ */
+add_filter('wnd_post_status', 'wnd_filter_post_status', 99, 2);
+function wnd_filter_post_status($post_status, $update_id) {
+
+	if (isset($_POST['_post_post_status']) and $_POST['_post_post_status'] == 'draft') {
+		$post_status = 'draft';
+	}
+	// 返回状态
+	return $post_status;
+
+}
+
+/**
+ * ############################################################################ 以下为WordPress原生filter
+ */
 
 /**
  *@since 2019.01.16
@@ -122,7 +144,7 @@ function wnd_filter_the_content($content) {
 	}
 
 	$user_id = get_current_user_id();
-	
+
 	// 付费下载
 	if ($file) {
 

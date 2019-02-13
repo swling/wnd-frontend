@@ -120,6 +120,14 @@ function wnd_options(){
 			</tr>
 
 			<tr>
+				<td valign="top">注册协议</td>
+				<td>
+					<input type="text" name="wnd_agreement_url" value="<?php echo wnd_get_option('wndwp','wnd_agreement_url');?>" class="large-text" />
+					<p><i>新用户注册协议页面</i></p>
+				</td>
+			</tr>
+
+			<tr>
 				<td valign="top">注册跳转</td>
 				<td>
 					<input type="text" name="wnd_reg_redirect_url" value="<?php echo wnd_get_option('wndwp','wnd_reg_redirect_url');?>" class="large-text" />

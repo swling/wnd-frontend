@@ -164,6 +164,16 @@ function _wnd_reg_form() {
 	<?php wp_nonce_field('wnd_reg', '_ajax_nonce');?>
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_reg">
+	<?php if(wnd_get_option('wndwp','wnd_agreement_url')){ ?>
+	<div class="field">
+		<div class="control">
+			<label class="checkbox">
+				<input type="checkbox" name="agreement" value="agree" checked="checked" required="required">
+				我已阅读并同意注册协议<a href="<?php echo wnd_get_option('wndwp','wnd_agreement_url');?>" target="_blank">《注册协议》</a>
+			</label>
+		</div>
+	</div>
+	<?php } ?>
 	<div class="field is-grouped is-grouped-centered">
 		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#user-reg')">注册</button>
 	</div>
