@@ -8,7 +8,8 @@ if (!defined('ABSPATH')) {
  *@since 2019.01.21 充值表单
  */
 function _wnd_recharge_form() {
-	?>
+
+?>
 <style>
 /*单选样式优化*/
 .radio-toolbar,
@@ -46,25 +47,37 @@ function _wnd_recharge_form() {
 	<div class="field">
 		<div class="ajax-msg"></div>
 	</div>
-	<div class="radio-toolbar field recharge">
-		<input id="radio1" required="required" name="money" type="radio" value="0.01" checked="checked" />
-		<label for="radio1">¥0.01</label>
+	<div class="radio-toolbar field level content">
+		<div class="level-item">
+			<input id="radio1" required="required" name="money" type="radio" value="0.01" checked="checked">
+			<label for="radio1">¥0.01</label>
+		</div>
 
-		<input id="radio2" required="required" name="money" type="radio" value="10">
-		<label for="radio2">¥10</label>
+		<div class="level-item">
+			<input id="radio2" required="required" name="money" type="radio" value="10">
+			<label for="radio2">¥10</label>
+		</div>
 
-		<input id="radio3" required="required" name="money" type="radio" value="100">
-		<label for="radio3">¥100</label>
+		<div class="level-item">
+			<input id="radio3" required="required" name="money" type="radio" value="100">
+			<label for="radio3">¥100</label>
+		</div>
 
-		<input id="radio4" required="required" name="money" type="radio" value="500">
-		<label for="radio4">¥500</label>
-
-		<input id="radio5" required="required" name="money" type="radio" value="1000">
-		<label for="radio5">¥1000</label>
+		<div class="level-item">
+			<input id="radio4" required="required" name="money" type="radio" value="500">
+			<label for="radio4">¥500</label>
+		</div>
+		
+		<div class="level-item">
+			<input id="radio5" required="required" name="money" type="radio" value="1000">
+			<label for="radio5">¥1000</label>
+		</div>
 	</div>
-	<div class="paytype field">
-		<label for="paytype1"><img src="https://t.alipayobjects.com/images/T1HHFgXXVeXXXXXXXX.png"></label>
-		<input type="radio" name="paytype" value="alipay" checked="checked" />
+	<div class="paytype field level is-mobile">
+		<div class="level-item">
+			<label for="paytype1"><img src="https://t.alipayobjects.com/images/T1HHFgXXVeXXXXXXXX.png"></label>
+			<input type="radio" name="paytype" value="alipay" checked="checked" />
+		</div>
 	</div>
 	<?php do_action('_wnd_recharge_form');?>
 	<?php wp_nonce_field('wnd_recharge');?>
@@ -88,18 +101,18 @@ function wnd_sms_field($type = 'verify', $template = '') {
 		<?php if (!wnd_get_user_phone(get_current_user_id())) {?>
 		<div class="field">
 			<div class="control has-icons-left">
-		    	<input id="sms-phone" class="input" required="required" type="text" name="phone" placeholder="手机号码" />
+				<input id="sms-phone" class="input" required="required" type="text" name="phone" placeholder="手机号码">
 				<span class="icon is-left"><i class="fa fa-phone-square"></i></span>
-		    </div>
+			</div>
 		</div>
 		<?php }?>
 		<div class="field has-addons">
-		    <div class="control is-expanded has-icons-left">
-		    	<input id="sms-code" required="required" type="text" class="input" name="v_code" placeholder="验证码"/>
-		    	<span class="icon is-left"><i class="fa fa-comment"></i></span>
+			<div class="control is-expanded has-icons-left">
+				<input id="sms-code" required="required" type="text" class="input" name="v_code" placeholder="验证码">
+				<span class="icon is-left"><i class="fa fa-comment"></i></span>
 			</div>
 			<div class="control">
-		    	<button type="button" class="send-code button is-primary" data-type="<?php echo $type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_send_code') ?>">获取验证码</button>
+				<button type="button" class="send-code button is-primary" data-type="<?php echo $type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_send_code') ?>">获取验证码</button>
 			</div>
 		</div>
 	</div>

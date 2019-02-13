@@ -84,7 +84,7 @@ function wnd_send_mail_code_to_user($type = 'v', $template = '') {
  */
 function wnd_send_sms_code($phone, $type = 'v', $template = '') {
 
-	require WNDWP_PATH . 'component/sms/aliyun-sms/sendSms.php'; //阿里云短信
+	require WNDWP_PATH . 'components/sms/aliyun-sms/sendSms.php'; //阿里云短信
 
 	$template = $template ?: wnd_get_option('wndwp', 'wnd_ali_TemplateCode');
 	$code = wnd_random_code($length = 6);
