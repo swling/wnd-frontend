@@ -204,7 +204,6 @@ function _wnd_post_form($args=array()){
 		'post_type' => 'post',
 		'is_free'	=> 1,
 		'has_excerpt' => 1,
-		'form_title' => '',
 	);
 	$args = wp_parse_args($args,$defaults);
 	$post_id = $args['post_id'];
@@ -237,39 +236,43 @@ function _wnd_post_form($args=array()){
 		$post->post_content ='';		
 	}
 
-	// if(empty())
-	$args['form_title'] = $args['form_title'] ?: ($post_id ? 'ID: '.$post_id : '');
+	/**
+	*@since 2019.02.13 表单标题
+	**/
+	if(!isset($args['form_title'])){
+		$args['form_title'] = '<span class="icon"><i class="fa fa-edit"></i></span>'.($post_id ? 'ID: '.$post_id : '');
+	}elseif(!empty($args['form_title'])){
+		$args['form_title'] = '<span class="icon"><i class="fa fa-edit"></i></span>'.$args['form_title'];
+	}
 
-/**
-*@since 2019.02.01 
-*获取指定 post type的所有注册taxonomy
-*当一个taxonomy 关联多个 post type 时，通过指定post type无法获取（应该为WordPress bug）。
-*解决办法全部获取，然后遍历taxonomy数据中的 object_type 是否包含当前指定 post type（好在taxonomy通常只有几个或十来个）
-*/
-$cat_taxonomies = array();
-$tag_taxonomies = array();
-$taxonomies = get_taxonomies(array('public'=> true), 'object', 'and' );
-
-if ( $taxonomies ) {
-  foreach ( $taxonomies  as $taxonomy ) {
-  	// 未关联当前分类
-  	if(!in_array($post_type,$taxonomy->object_type)){
-  		continue;
-  	}
-  	// 根据是否具有层级，推入分类数组或标签数组
-    if( is_taxonomy_hierarchical($taxonomy->name) ){
-        array_push($cat_taxonomies, $taxonomy->name);
-    }else{
-        array_push($tag_taxonomies, $taxonomy->name);
-    }
-  }unset($taxonomy);
-}
+	/**
+	*@since 2019.02.01 
+	*获取指定 post type的所有注册taxonomy
+	*当一个taxonomy 关联多个 post type 时，通过指定post type无法获取（应该为WordPress bug）。
+	*解决办法全部获取，然后遍历taxonomy数据中的 object_type 是否包含当前指定 post type（好在taxonomy通常只有几个或十来个）
+	*/
+	$cat_taxonomies = array();
+	$tag_taxonomies = array();
+	$taxonomies = get_taxonomies(array('public'=> true), 'object', 'and' );
+	
+	if ( $taxonomies ) {
+	  foreach ( $taxonomies  as $taxonomy ) {
+	  	// 未关联当前分类
+	  	if(!in_array($post_type,$taxonomy->object_type)){
+	  		continue;
+	  	}
+	  	// 根据是否具有层级，推入分类数组或标签数组
+	    if( is_taxonomy_hierarchical($taxonomy->name) ){
+	        array_push($cat_taxonomies, $taxonomy->name);
+	    }else{
+	        array_push($tag_taxonomies, $taxonomy->name);
+	    }
+	  }unset($taxonomy);
+	}
 
 ?>
 <form id="new-post-<?php echo $post_id;?>" name="new_post" method="post" action="" onsubmit="return false;" onkeydown="if(event.keyCode==13){return false;}">
-	<div class="field content">
-		<p><span class="icon"><i class="fa fa-edit"></i></span><?php echo $args['form_title'];?></p>
-	</div>	
+	<?php if($args['form_title']) echo '<div class="field content"><h3 class="form-title">'. $args['form_title'] . '</h3></div>';?>
 	<div class="ajax-msg"></div>
 	<div class="field">
 		<label class="label">标题<span class="required">*</span></label>
