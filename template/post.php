@@ -204,6 +204,7 @@ function _wnd_post_form($args=array()){
 		'post_type' => 'post',
 		'is_free'	=> 1,
 		'has_excerpt' => 1,
+		'form_title' => '',
 	);
 	$args = wp_parse_args($args,$defaults);
 	$post_id = $args['post_id'];
@@ -212,7 +213,7 @@ function _wnd_post_form($args=array()){
 	// 未指定id，新建文章，否则为编辑
 	if(!$post_id){
     	$action = wnd_get_draft_post($post_type = $post_type, $interval_time = 3600*24 );
-    	$post_id = $action['msg'];
+    	$post_id = $action['status'] > 0 ? $action['msg'] : 0 ;
     }
 
     // 获取文章并定义数据
@@ -235,6 +236,9 @@ function _wnd_post_form($args=array()){
 		$post->post_excerpt ='';
 		$post->post_content ='';		
 	}
+
+	// if(empty())
+	$args['form_title'] = $args['form_title'] ?: ($post_id ? 'ID: '.$post_id : '');
 
 /**
 *@since 2019.02.01 
@@ -264,7 +268,7 @@ if ( $taxonomies ) {
 ?>
 <form id="new-post-<?php echo $post_id;?>" name="new_post" method="post" action="" onsubmit="return false;" onkeydown="if(event.keyCode==13){return false;}">
 	<div class="field content">
-		<h3><span class="icon"><i class="fa fa-edit"></i></span> ID: <?php echo $post_id;?></h3>
+		<p><span class="icon"><i class="fa fa-edit"></i></span><?php echo $args['form_title'];?></p>
 	</div>	
 	<div class="ajax-msg"></div>
 	<div class="field">

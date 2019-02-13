@@ -227,7 +227,7 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 
 	// 未登录
 	if (!$user_id) {
-		return array('status' => 0, 'msg' => '未登录用户不建议使用富媒体编辑器！');
+		return array('status' => 0, 'msg' => '未登录用户！');
 	}
 
 	//1、 查询当前用户否存在草稿，有则调用最近一篇草稿编辑
