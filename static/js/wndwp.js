@@ -37,6 +37,19 @@ function isMob() {
 }
 
 /**
+ *@since 2019.02.14 搜索引擎爬虫
+ */
+function is_spider() {
+	var userAgent = navigator.userAgent;
+	// 蜘蛛判断
+	if (userAgent.match(/(Googlebot|Baiduspider|spider)/i)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/**
  *@since 2019.1 bulma重构
  */
 
@@ -230,7 +243,7 @@ function wnd_ajax_submit(form_id) {
 				$(this).addClass('is-danger');
 				return false;
 			}
-			if ($(this).attr("type") == "radio" || $(this).attr("type") == "checkbox" ) {
+			if ($(this).attr("type") == "radio" || $(this).attr("type") == "checkbox") {
 				if ($('[name=' + $(this).attr("name") + ']:checked').length <= 0) {
 					input_value = false;
 					$(this).addClass('is-danger');

@@ -108,7 +108,7 @@ function wnd_pay_for_download() {
 
 	/**
 	 *@since 2019.02.12
-	 *组合ajax验证下载参数:该url地址并发文件实际下载地址，而是一个调用参数的请求
+	 *组合ajax验证下载参数:该url地址并非文件实际下载地址，而是一个调用参数的请求
 	 *前端接收后跳转至该网址（status == 6 是专为下载类ajax请求设置的代码前端响应），以实现ajax下载
 	 */
 	$download_args = array(

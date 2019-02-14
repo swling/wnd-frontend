@@ -328,3 +328,31 @@ if (wnd_get_option('wndwp', 'wnd_disable_locale') == 1) {
 		return $locale;
 	}
 }
+
+/**
+ *@since 2019.02.14 当仅允许用户在前端操作时，可注销一些字段，降低wp_usermeta数据库开销
+ *@link https://developer.wordpress.org/reference/hooks/insert_user_meta/
+ */
+if (wnd_get_option('wndwp', 'wnd_unset_user_meta') == 1) {
+	add_filter('insert_user_meta', 'wnd_filter_unset_user_meta', 10, 2);
+	function wnd_filter_unset_user_meta($meta,$user) {
+
+		// 排除超级管理员
+		if($user->roles[0] == 'administrator'){
+			return $meta;
+		}
+
+		unset($meta['nickname']);
+		unset($meta['first_name']);
+		unset($meta['last_name']);
+		unset($meta['rich_editing']);
+		unset($meta['syntax_highlighting']);
+		unset($meta['comment_shortcuts']);//评论快捷方式
+		unset($meta['admin_color']);
+		unset($meta['use_ssl']);
+		unset($meta['show_admin_bar_front']);
+		unset($meta['locale']);
+
+		return $meta;
+	}
+}

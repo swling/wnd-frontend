@@ -155,10 +155,19 @@ function wnd_options(){
 				<td valign="top">前台禁用语言包</td>
 				<td>
 					禁用语言包<input type="radio" required="required" name="wnd_disable_locale" value="1" <?php if(wnd_get_option('wndwp','wnd_disable_locale')==1) echo 'checked' ?> />
-					启用语言包<input type="radio" required="required" name="wnd_disable_locale" value="0" <?php if(wnd_get_option('wndwp','wnd_disable_locale')==0) echo 'checked' ?> />
+					启用语言包<input type="radio" required="required" name="wnd_disable_locale" value="0" <?php if(wnd_get_option('wndwp','wnd_disable_locale')!=1) echo 'checked' ?> />
 					<p><i>前端禁用语言包，有效节省内存和生成时间，但某些情况下可能会出现英文信息，请先行测试</i></p>
 				</td>
-			</tr>							
+			</tr>
+
+			<tr>
+				<td valign="top">优化用户字段</td>
+				<td>
+					开启优化<input type="radio" required="required" name="wnd_unset_user_meta" value="1" <?php if(wnd_get_option('wndwp','wnd_unset_user_meta')==1) echo 'checked' ?> />
+					禁用优化<input type="radio" required="required" name="wnd_unset_user_meta" value="0" <?php if(wnd_get_option('wndwp','wnd_unset_user_meta')!=1) echo 'checked' ?> />
+					<p><i>注册用户不需要登录到WordPress后台时可开启</i></p>
+				</td>
+			</tr>										
 
 			<!--支付设置-->
 			<tr>
@@ -206,7 +215,7 @@ function wnd_options(){
 				<td valign="top">是否启用</td>
 				<td>
 					开启<input type="radio" name="wnd_terms_enable" value="1" <?php if(wnd_get_option('wndwp','wnd_terms_enable')==1) echo 'checked' ?>	/>
-					关闭<input type="radio" name="wnd_terms_enable" value="0" <?php if(wnd_get_option('wndwp','wnd_terms_enable')==0) echo 'checked' ?>	/>
+					关闭<input type="radio" name="wnd_terms_enable" value="0" <?php if(wnd_get_option('wndwp','wnd_terms_enable')!=0) echo 'checked' ?>	/>
 					<p><i>是否开启分类关联标签功能</i></p>
 				</td>
 			</tr>			
@@ -221,7 +230,7 @@ function wnd_options(){
 				<td valign="top">启用短信功能</td>
 				<td>
 					开启<input type="radio" name="wnd_sms_enable" value="1" <?php if(wnd_get_option('wndwp','wnd_sms_enable')==1) echo 'checked' ?>	/>
-					关闭<input type="radio" name="wnd_sms_enable" value="0" <?php if(wnd_get_option('wndwp','wnd_sms_enable')==0) echo 'checked' ?>	/>
+					关闭<input type="radio" name="wnd_sms_enable" value="0" <?php if(wnd_get_option('wndwp','wnd_sms_enable')!=0) echo 'checked' ?>	/>
 					<p><i>是否开启短信验证功能</i></p>
 				</td>
 			</tr>
