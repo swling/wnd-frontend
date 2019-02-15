@@ -67,7 +67,7 @@ function _wnd_recharge_form() {
 			<input id="radio4" required="required" name="money" type="radio" value="500">
 			<label for="radio4">¥500</label>
 		</div>
-		
+
 		<div class="level-item">
 			<input id="radio5" required="required" name="money" type="radio" value="1000">
 			<label for="radio5">¥1000</label>
@@ -93,7 +93,7 @@ function _wnd_recharge_form() {
  *@since 初始化短信发送表单field
  *参数：$type='reg' 即为注册操作，注册操作会检测手机是否已经注册，反之如果为 lostpassword 则不能发送给未注册用户
  */
-function wnd_sms_field($type = 'verify', $template = '') {
+function _wnd_sms_field($type = 'verify', $template = '') {
 
 	?>
 <div class="field is-horizontal">
@@ -124,7 +124,7 @@ function wnd_sms_field($type = 'verify', $template = '') {
 /**
  *@since 2019.02.10 邮箱验证表单字段
  */
-function wnd_mail_field($type = 'v', $template = '') {
+function _wnd_mail_field($type = 'v', $template = '') {
 	?>
 <div class="field">
 	<label class="label">Email <span class="required">*</span></label>
@@ -147,5 +147,77 @@ function wnd_mail_field($type = 'v', $template = '') {
 </div>
 <?php }?>
 <?php
+
+}
+
+/**
+*@since 2019.02.15
+*以表格形式输出WordPress文章列表
+*/
+function _wnd_post_list($query_args='',$pages_key='pages',$color='is-primary'){
+
+	$paged = ( isset($_GET[$pages_key]) ) ? intval($_GET[$pages_key]) : 1;
+	$defaults = array(
+		'posts_per_page' => 20,
+		'paged' => $paged,
+		'post_type' => 'post',
+		'post_status' => 'publish',
+		//'date_query'=>$date_query,
+		// 'no_found_rows' => true, //$query->max_num_pages;
+	);
+	$query_args = wp_parse_args( $query_args, $defaults);
+	$query = new WP_Query( $query_args );
+?>	
+<?php if ($query->have_posts()) :?>
+<table class="table is-fullwidth is-hoverable is-striped">
+	<thead>
+		<tr>
+			<th class="is-narrow"><abbr title="Position">日期</abbr></th>
+			<th>标题</th>
+			<th class="is-narrow">操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php while ($query->have_posts()) : $query->the_post(); ?>
+		<tr>
+			<td class="is-narrow"><?php the_time('m-d H:i');?></td>
+			<td><a href="<?php echo the_permalink();?>" target="_blank"><?php the_title();?></a></td>
+			<td class="is-narrow">
+				<a onclick="wnd_ajax_modal('post_info','post_id=<?php the_ID();?>&color=<?php echo $color;?>')">预览</a>
+				<!-- <a>删除</a> -->
+				<a onclick="wnd_ajax_modal('post_status_form','<?php the_ID();?>')">[管理]</a>
+			</td>
+		</tr>
+		<?php endwhile; ?>
+	</tbody>
+	<?php wp_reset_postdata(); //重置查询?>
+	<?php// else : ?>
+</table>
+<?php endif; ?>
+<?php wnd_next_page($args['posts_per_page'],$query->post_count,$pages_key);?>
+<?php
+
+}
+
+
+/**
+*@since 2019.02.15 简单分页
+*不查询总数的情况下，简单实现下一页翻页
+*/
+function wnd_next_page($posts_per_page,$current_post_count,$pages_key='pages'){ 
+
+    $paged = ( isset($_GET[$pages_key]) ) ? intval($_GET[$pages_key]) : 1;
+
+	echo '<nav class="pagination is-centered" role="navigation" aria-label="pagination">';
+	echo '<ul class="pagination-list">';
+
+		if( $paged >= 2 ){
+	        echo '<li><a class="pagination-link" href="' .add_query_arg($pages_key,$paged - 1). '">上一页</a>';
+	    }
+	    if( $current_post_count >= $posts_per_page ){
+		    echo '<li><a class="pagination-link" href="' .add_query_arg($pages_key,$paged + 1). '">下一页</a>';
+	    }
+	echo '</ul>';
+	echo '</nav>';
 
 }

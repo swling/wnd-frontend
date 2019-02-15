@@ -137,7 +137,7 @@ function wnd_update_post_status() {
 	$after_status = $_POST['post_status'];
 
 	// 权限检测
-	$can_array = array('status' => current_user_can('edit_post', $post_id) ? 1 : 0, 'msg' => '默认权限校验');
+	$can_array = array('status' => current_user_can('edit_post', $post_id) ? 1 : 0, 'msg' => '权限错误！');
 	$can_update_post_status = apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_status);
 	if ($can_update_post_status['status'] == 0) {
 		return $can_update_post_status;

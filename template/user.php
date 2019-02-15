@@ -137,7 +137,7 @@ function _wnd_reg_form() {
 			</span>
 		</div>
 	</div>
-	<?php wnd_mail_field($type = 'reg', $template = '');?>
+	<?php _wnd_mail_field($type = 'reg', $template = '');?>
 	<div class="field">
 		<label class="label">密码 <span class="required">*</span></label>
 		<div class="control has-icons-left">
@@ -149,7 +149,7 @@ function _wnd_reg_form() {
 	</div>
 	<?php do_action('_wnd_reg_form');?>
 	<?php if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
-		wnd_sms_field($type = 'reg', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
+		_wnd_sms_field($type = 'reg', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
 	}
 	?>
 	<?php wp_nonce_field('wnd_reg', '_ajax_nonce');?>
@@ -240,7 +240,7 @@ function _wnd_account_form() {
 		</div>
 	</div>
 	<?php if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
-		wnd_sms_field($type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
+		_wnd_sms_field($type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
 	}
 	?>
 	<?php wp_nonce_field('wnd_update_account', '_ajax_nonce');?>
@@ -290,7 +290,7 @@ function _wnd_lostpassword_form($type = 'email') {
 			</span>
 		</div>
 	</div>
-	<?php wnd_sms_field($type = 'reset-pass', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));?>
+	<?php _wnd_sms_field($type = 'reset-pass', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));?>
 	<?php wp_nonce_field('wnd_reset_password', '_ajax_nonce');?>
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_reset_password">
@@ -319,7 +319,7 @@ function _wnd_lostpassword_form($type = 'email') {
 	<div class="field">
 		<div class="ajax-msg"></div>
 	</div>
-	<?php wnd_mail_field($type = 'reset-pass', $template = '');?>
+	<?php _wnd_mail_field($type = 'reset-pass', $template = '');?>
 	<div class="field">
 		<label class="label">新密码 <span class="required">*</span></label>
 		<div class="control has-icons-left">

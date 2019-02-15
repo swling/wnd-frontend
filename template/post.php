@@ -385,6 +385,32 @@ echo '</div></div>'.PHP_EOL;
 }
 
 /**
+*@since 2019.02.15
+*ajax请求获取文章信息
+*/
+function _wnd_post_info($args){
+
+	$defaults = array('post_id'=>0,'color'=>'is-primay');
+	$args = wp_parse_args( $args, $defaults);
+
+	$post = get_post($args['post_id']);
+	if(!$post){
+		echo '<script>wnd_alert_msg("ID无效！")</script>';
+		return;
+	}
+	setup_postdata( $post );
+
+?>
+<article class="message <?php echo $args['color'];?>">
+	<div class="message-body">
+		<?php the_content();?>
+	</div>
+</article>
+<?php
+
+}
+
+/**
 *@since ≈2018.07
 *###################################################### 表单设置：标签编辑器
 */
