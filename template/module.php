@@ -184,8 +184,9 @@ function _wnd_post_list($query_args='',$pages_key='pages',$color='is-primary'){
 			<td><a href="<?php echo the_permalink();?>" target="_blank"><?php the_title();?></a></td>
 			<td class="is-narrow">
 				<a onclick="wnd_ajax_modal('post_info','post_id=<?php the_ID();?>&color=<?php echo $color;?>')">预览</a>
-				<!-- <a>删除</a> -->
+				<?php if(current_user_can( 'edit_post',get_the_ID())){ ?>
 				<a onclick="wnd_ajax_modal('post_status_form','<?php the_ID();?>')">[管理]</a>
+				<?php }?>
 			</td>
 		</tr>
 		<?php endwhile; ?>
@@ -194,7 +195,7 @@ function _wnd_post_list($query_args='',$pages_key='pages',$color='is-primary'){
 	<?php// else : ?>
 </table>
 <?php endif; ?>
-<?php wnd_next_page($args['posts_per_page'],$query->post_count,$pages_key);?>
+<?php if($pages_key) _wnd_next_page($args['posts_per_page'],$query->post_count,$pages_key);?>
 <?php
 
 }
@@ -204,7 +205,7 @@ function _wnd_post_list($query_args='',$pages_key='pages',$color='is-primary'){
 *@since 2019.02.15 简单分页
 *不查询总数的情况下，简单实现下一页翻页
 */
-function wnd_next_page($posts_per_page,$current_post_count,$pages_key='pages'){ 
+function _wnd_next_page($posts_per_page,$current_post_count,$pages_key='pages'){ 
 
     $paged = ( isset($_GET[$pages_key]) ) ? intval($_GET[$pages_key]) : 1;
 

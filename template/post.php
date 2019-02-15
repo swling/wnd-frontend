@@ -172,7 +172,7 @@ function _wnd_upload_field($args) {
 /**
 *@since 2019.01.30 付费内容表单字段
 */
-function _wnd_paid_field($post_parent){
+function _wnd_paid_post_field($post_parent){
 
     $args = array(
         'id'=>'upload-file',
@@ -335,7 +335,7 @@ echo '</div></div>'.PHP_EOL;
 
 <?php if($args['is_free']!=1 ) { //付费内容 
 		echo '<label class="label">付费内容</label>';
-		_wnd_paid_field($post_id);
+		_wnd_paid_post_field($post_id);
 	}
 ?>
 <?php do_action( '_wnd_post_form', $post_id,$post_type,$post ); ?>
