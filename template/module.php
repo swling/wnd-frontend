@@ -135,7 +135,10 @@ function _wnd_mail_field($type = 'v', $template = '') {
 		</span>
 	</div>
 </div>
-<?php if (wnd_get_option('wndwp', 'wnd_sms_enable') != 1) {?>
+<?php
+// 如果开启了短信验证，在注册时则验证短信，不重复验证邮箱以简化流程
+if ($type != 'reg' or wnd_get_option('wndwp', 'wnd_sms_enable') != 1) {
+?>
 <div class="field has-addons">
 	<div class="control is-expanded has-icons-left">
 		<input required="required" type="text" class="input" name="v_code" placeholder="邮箱验证码">
@@ -163,7 +166,7 @@ function _wnd_post_list($query_args='',$pages_key='pages',$color='is-primary'){
 		'post_type' => 'post',
 		'post_status' => 'publish',
 		//'date_query'=>$date_query,
-		// 'no_found_rows' => true, //$query->max_num_pages;
+		'no_found_rows' => true, //$query->max_num_pages;
 	);
 	$query_args = wp_parse_args( $query_args, $defaults);
 	$query = new WP_Query( $query_args );
@@ -192,8 +195,9 @@ function _wnd_post_list($query_args='',$pages_key='pages',$color='is-primary'){
 		<?php endwhile; ?>
 	</tbody>
 	<?php wp_reset_postdata(); //重置查询?>
-	<?php// else : ?>
 </table>
+<?php else : ?>
+<div class="message is-primary"><div class="message-body">没有匹配的内容！</div></div>	
 <?php endif; ?>
 <?php if($pages_key) _wnd_next_page($args['posts_per_page'],$query->post_count,$pages_key);?>
 <?php

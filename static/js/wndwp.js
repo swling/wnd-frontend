@@ -197,7 +197,7 @@ function wnd_ajax_modal(handle, param = 0) {
 /**
  *@since 2019.1.10  从后端请求ajax内容并填充到指定DOM
  **/
-function wnd_ajax_embed(container, handle, param) {
+function wnd_ajax_embed(container, handle, param = 0) {
 
 	$.ajax({
 		type: "POST",
