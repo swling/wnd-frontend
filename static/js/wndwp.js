@@ -171,6 +171,7 @@ function wnd_ajax_modal(handle, param = 0) {
 		data: {
 			"handle": handle,
 			"param": param,
+			"ajax_type": "modal",
 			"action_name": "_wnd_ajax_r",
 			"action": "wnd_action"
 		},
@@ -196,7 +197,7 @@ function wnd_ajax_modal(handle, param = 0) {
 /**
  *@since 2019.1.10  从后端请求ajax内容并填充到指定DOM
  **/
-function wnd_ajax_r(container = "body", handle, param) {
+function wnd_ajax_embed(container, handle, param) {
 
 	$.ajax({
 		type: "POST",
@@ -204,12 +205,13 @@ function wnd_ajax_r(container = "body", handle, param) {
 		data: {
 			"handle": handle,
 			"param": param,
+			"ajax_type": "embed",
 			"action_name": "_wnd_ajax_r",
 			"action": "wnd_action"
 		},
 		//后台返回数据前
 		beforeSend: function() {
-			wnd_alert_msg("……")
+			// wnd_alert_msg("……")
 		},
 		//成功后
 		success: function(response) {
