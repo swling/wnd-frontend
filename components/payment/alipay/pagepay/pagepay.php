@@ -14,15 +14,22 @@ require dirname(__FILE__) . '/service/AlipayTradeService.php';
 require dirname(__FILE__) . '/buildermodel/AlipayTradePagePayContentBuilder.php';
 
 $user_id = get_current_user_id();
+$post_id = $_REQUEST['post_id'] ?? 0;
 
-$money = isset($_POST['money']) && is_numeric($_POST['money']) ? $_POST['money'] : 0;
+// 获取金额
+if($post_id){
+	$money = wnd_get_post_price($post_id);
+}else{
+	$money = isset($_POST['money']) && is_numeric($_POST['money']) ? $_POST['money'] : 0;
+}
 if (!$money) {
 	wp_die('获取金额错误！', get_bloginfo('name'));
 }
 
-$subject = get_bloginfo('name') . '充值订单[' . get_the_author_meta('user_login', $user_id) . ']';
+// 判断支付类型：充值或下单
+$subject = $post_id ? '订单 [' . get_the_title($post_id) . ']' : get_bloginfo('name') . '充值订单[' . get_userdata( $user_id )->user_login . ']';
+$out_trade_no = $post_id ? wnd_insert_expense($user_id, $money, $post_id ,'pending') : wnd_insert_recharge($user_id, $money, 0, 'pending' );
 
-$out_trade_no = wnd_insert_payment($user_id, $money);
 if (!$out_trade_no) {
 	wp_die('订单创建错误！', get_bloginfo('name'));
 }

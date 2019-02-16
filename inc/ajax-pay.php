@@ -11,7 +11,7 @@ function wnd_insert_order() {
 
 	$post_id = (int) $_POST['post_id'];
 	$user_id = get_current_user_id();
-	$note = $_POST['note'] ?? '';
+	// $note = $_POST['note'] ?? '';
 
 	if (!$post_id) {
 		return array('status' => 0, 'msg' => 'ID无效！');
@@ -33,7 +33,10 @@ function wnd_insert_order() {
 	}
 
 	// 写入object数据库
-	$object_id = wnd_insert_expense($user_id, $money, $post_id, $note);
+	$object_id = wnd_insert_expense($user_id, $money, $post_id, 'success', get_the_title( $post_id ) . '(余额支付)');
+	/**
+	*@since 2019.02.16 待解决问题：余额不足时，直接第三方平台付款下单
+	*/
 
 	// 支付成功
 	if ($object_id) {
@@ -76,7 +79,7 @@ function wnd_pay_for_reading() {
 	// 文章作者新增资金
 	$commission = wnd_get_commission($post_id);
 	if ($commission) {
-		wnd_insert_payment($post->post_author, $commission, 'success', $note = '《' . $post->post_title . '》收益');
+		wnd_insert_recharge($post->post_author, $commission, $post_id, 'success', $title = '《' . $post->post_title . '》收益');
 	}
 
 	return array('status' => 1, 'msg' => $paid_content);
@@ -138,7 +141,7 @@ function wnd_pay_for_download() {
 	// 文章作者新增资金
 	$commission = wnd_get_commission($post_id);
 	if ($commission) {
-		wnd_insert_payment($post->post_author, $commission, 'success', $note = '《' . $post->post_title . '》收益');
+		wnd_insert_recharge($post->post_author, $commission, $post_id, 'success', $title = '《' . $post->post_title . '》收益');
 	}
 
 	return array('status' => 6, 'msg' => $download_url);

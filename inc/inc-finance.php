@@ -10,14 +10,15 @@ if (!defined('ABSPATH')) {
  *创建时：status=>pending，验证成功后：status=>success
  *@return int object ID
  */
-function wnd_insert_payment($user_id, $money, $status = 'pending', $content = '') {
+function wnd_insert_recharge($user_id, $money, $object_id = 0, $status = 'pending', $title = '') {
 
 	$object_arr = array(
 		'user_id' => $user_id,
+		'object_id' => $object_id,
 		'value' => $money,
 		'status' => $status,
-		'content' => $content,
-		'type' => 'payment',
+		'title' => $title,
+		'type' => 'recharge',
 	);
 
 	// 写入object数据库
@@ -35,10 +36,10 @@ function wnd_insert_payment($user_id, $money, $status = 'pending', $content = ''
  *更新支付订单状态
  *@return int or false
  */
-function wnd_update_payment($ID, $status, $content = '') {
+function wnd_update_recharge($ID, $status, $title = '') {
 
 	$object = wnd_get_object($ID);
-	if ($object->type != 'payment') {
+	if ($object->type != 'recharge') {
 		return;
 	}
 	$before_status = $object->status;
@@ -46,7 +47,7 @@ function wnd_update_payment($ID, $status, $content = '') {
 	$object_arr = array(
 		'ID' => $ID,
 		'status' => $status,
-		'content' => $content,
+		'title' => $content,
 	);
 	$object_id = wnd_update_object($object_arr);
 
@@ -62,36 +63,49 @@ function wnd_update_payment($ID, $status, $content = '') {
 /**
  *@since 2019.02.11
  *充值付款校验
+ *@return array
+ *当支付信息中包含 object id表示为订单支付，否则为余额充值
+ *订单支付，返回 status=> 2, msg => object_id
  */
 function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 
 	$type = !empty($_POST) ? '异步' : '同步';
 
-	$recharge = wnd_get_object($out_trade_no);
-	if (!$recharge) {
+	$object = wnd_get_object($out_trade_no);
+	if (!$object) {
 		return array('status' => 0, 'msg' => 'ID无效！');
 	}
 
 	//如果订单金额匹配
-	if ($recharge->value == $amount) {
+	if ($object->value == $amount) {
 		return array('status' => 0, 'msg' => '金额不匹配！');
 	}
 
 	//订单已经更新过
-	if ($recharge->status == 'success') {
+	if ($object->status == 'success') {
 		return array('status' => 2, 'msg' => '支付已完成！');
 	}
 
 	// 订单支付状态检查
-	if ($recharge->status == 'pending') {
+	if ($object->status == 'pending') {
+
+		// 订单
+		if ($object->object_id) {
+			$update = wnd_update_expense($ID, 'success', $object->title . ' - ' . $type);
+
+			//充值
+		} else {
+			$update = wnd_update_recharge($object->ID, 'success', $type);
+		}
 
 		//  写入用户账户信息
-		if (wnd_update_payment($recharge->ID, 'success', $type)) {
-
-			return array('status' => 1, 'msg' => '充值已完成！');
-
+		if ($update) {
+			if($object->object_id){
+				return array('status' => 2, 'msg' => $object->object_id);
+			}else{
+				return array('status' => 1, 'msg' => '余额充值成功！');
+			}
 		} else {
-
 			return array('status' => 0, 'msg' => $type . '写入数据失败！');
 		}
 
@@ -104,15 +118,16 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 
 /**
  *@since 2019.02.11
- *用户本站消费数据
+ *用户本站消费数据(含余额消费，或直接第三方支付消费)
  */
-function wnd_insert_expense($user_id, $money, $object_id = 0, $content = '') {
+function wnd_insert_expense($user_id, $money, $object_id = 0, $status = 'pending', $title = '') {
 
 	$object_arr = array(
 		'user_id' => $user_id,
 		'value' => $money,
 		'object_id' => $object_id,
-		'content' => $content,
+		'title' => $title,
+		'status' => 'pending',
 		'type' => 'expense',
 	);
 	$object_id = wnd_insert_object($object_arr);
@@ -131,7 +146,7 @@ function wnd_insert_expense($user_id, $money, $object_id = 0, $content = '') {
  *更新消费订单状态
  *@return int or false
  */
-function wnd_update_expense($ID, $status, $content = '') {
+function wnd_update_expense($ID, $status, $title = '') {
 
 	$object = wnd_get_object($ID);
 	if ($object->type != 'expense') {
@@ -141,7 +156,7 @@ function wnd_update_expense($ID, $status, $content = '') {
 	$object_arr = array(
 		'ID' => $ID,
 		'status' => $status,
-		'content' => $content,
+		'title' => $title,
 	);
 	return wnd_update_object($object_arr);
 
@@ -154,7 +169,7 @@ function wnd_user_has_paid($user_id, $object_id) {
 
 	global $wpdb;
 	$objects = $wpdb->get_var($wpdb->prepare("
-		SELECT ID FROM $wpdb->wnd_objects WHERE user_id = %d AND object_id = %d AND type ='expense' LIMIT 1 ",
+		SELECT ID FROM $wpdb->wnd_objects WHERE user_id = %d AND object_id = %d AND type = 'expense' AND status = 'success' LIMIT 1 ",
 		$user_id,
 		$object_id
 	));
