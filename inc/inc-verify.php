@@ -34,7 +34,7 @@ function wnd_can_send_code($email_or_phone, $type) {
 	// 上次发送短信的时间，防止短信攻击
 	$send_time = wnd_get_code_sendtime($email_or_phone);
 	if ($send_time and (time() - $send_time < 90)) {
-		return array('status' => 0, 'msg' => '操作太频繁，请稍后！');
+		return array('status' => 0, 'msg' => '操作太频繁，请'.(90 - (time() - $send_time)).'秒后重试！');
 	}
 
 	return array('status' => 1, 'msg' => '校验通过！');

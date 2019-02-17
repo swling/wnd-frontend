@@ -28,7 +28,7 @@ function setCookie(name, value, seconds, path = "/") {
 }
 
 //判断是否为移动端
-function isMob() {
+function wnd_is_mob() {
 	if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android|ios|App\/)/i)) {
 		return true;
 	} else {
@@ -39,13 +39,28 @@ function isMob() {
 /**
  *@since 2019.02.14 搜索引擎爬虫
  */
-function is_spider() {
+function wnd_is_spider() {
 	var userAgent = navigator.userAgent;
 	// 蜘蛛判断
 	if (userAgent.match(/(Googlebot|Baiduspider|spider)/i)) {
 		return true;
 	} else {
 		return false;
+	}
+}
+
+//发送按钮倒计时
+var wait = 90; // 获取验证码短信时间间隔 按钮不能恢复 可检查号码
+var send_countdown;
+
+function wnd_send_countdown() {
+	if (wait > 0) {
+		$(".send-code").text(wait + "秒");
+		wait--;
+		send_countdown = setTimeout(wnd_send_countdown, 1000);
+	} else {
+		$(".send-code").text("获取验证码").attr("disabled", false).fadeTo("slow", 1);
+		wait = 90;
 	}
 }
 
@@ -60,15 +75,29 @@ function wnd_alert_modal(html) {
 	$(".modal-entry").addClass("box");
 	$(".modal-entry").html(html);
 }
+
 // 直接弹出消息
-function wnd_alert_msg(msg) {
+var ajax_alert_time_out;
+
+function wnd_alert_msg(msg, wait = 0) {
+
 	wnd_reset_modal();
 	$(".modal").addClass("is-active");
 	$(".modal-entry").removeClass("box");
 	$(".modal-entry").html('<div class="alert-msg" style="color:#FFF;text-align:center">' + msg + '</div>');
+	// 定时关闭
+	if (wait > 0) {
+		ajax_alert_time_out = setTimeout(function() {
+			wnd_reset_modal()
+		}, wait * 1000);
+	}
+
 }
+
 // 在表单提交时反馈信息
-function wnd_ajax_msg(msg, color = "is-danger", parent = "body") {
+var ajax_msg_time_out;
+
+function wnd_ajax_msg(msg, color = "is-danger", parent = "body", wait = 0) {
 	$(parent + " .ajax-msg:first").html('<div class="message ' + color + '"><div class="message-body">' + msg + '</div></div>');
 	// 非对话框，返回表单顶部以展示提示信息
 	if (!$(".modal").hasClass("is-active")) {
@@ -77,9 +106,21 @@ function wnd_ajax_msg(msg, color = "is-danger", parent = "body") {
 			behavior: "smooth"
 		});
 	}
+	// 定时清空
+	if (wait > 0) {
+		ajax_msg_time_out = setTimeout(function() {
+			$(parent + " .ajax-msg:first").empty();
+		}, wait * 1000);
+	}
 }
+
 // 初始化对话框
 function wnd_reset_modal() {
+	// 清空定时器
+	clearTimeout(ajax_msg_time_out);
+	clearTimeout(ajax_alert_time_out);
+	clearTimeout(send_countdown);
+
 	if ($("#modal").length) {
 		$(".modal").removeClass("is-active");
 		$(".ajax-msg").empty();
@@ -104,20 +145,6 @@ jQuery(document).ready(function($) {
 	});
 
 });
-
-
-//按钮倒计时
-var wait = 90; // 获取验证码短信时间间隔 按钮不能恢复 可检查号码
-function wnd_countdown() {
-	if (wait > 0) {
-		$(".send-code").text(wait + "秒");
-		wait--;
-		var t = setTimeout(wnd_countdown, 1000);
-	} else {
-		$(".send-code").text("获取验证码").attr("disabled", false).fadeTo("slow", 1);
-		wait = 90;
-	}
-}
 
 // 点击触发，点击A 元素 触发 B元素点击事件 用于部分UI优化操作
 function wnd_click(target_element) {
@@ -350,9 +377,14 @@ function wnd_ajax_submit(form_id) {
 				window.location.reload(true);
 				break;
 
+				// 弹出信息并自动消失
+			case 5:
+				wnd_alert_msg(response.msg, 3);
+				break;
+
 				// 下载类
 			case 6:
-				wnd_ajax_msg("下载中……", color, form_id);
+				wnd_ajax_msg("下载中……", color, form_id, 10);
 				$(window.location).attr("href", response.msg);
 				break;
 
@@ -530,6 +562,10 @@ jQuery(document).ready(function($) {
 	 */
 	$("body").on("click", ".send-code", function() {
 
+		// 清除定时器
+		clearTimeout(send_countdown);
+		wait = 90;
+
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
 		var form_id = '#' + _this.parents('form').attr('id');
@@ -569,7 +605,7 @@ jQuery(document).ready(function($) {
 					var color = "is-success";
 					_this.attr("disabled", true);
 					_this.text("已发送");
-					wnd_countdown();
+					wnd_send_countdown();
 				}
 				wnd_ajax_msg(response.msg, color, form_id);
 				_this.removeClass("is-loading");
