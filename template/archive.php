@@ -100,7 +100,7 @@ function _wnd_objects_list($query_args, $pages_key='pages',$color='is-primary'){
 
 	global $wpdb;
 	$objects = $wpdb->get_results("
-		SELECT * FROM $wpdb->wnd_objects WHERE user_id = {$user_id} AND type = '{$type}' and status = '{$status}' LIMIT {$offset},{$per_page}",
+		SELECT * FROM $wpdb->wnd_objects WHERE user_id = {$user_id} AND type = '{$type}' and status = '{$status}' ORDER BY time DESC LIMIT {$offset},{$per_page}",
 		OBJECT
 	);
 	$object_count = count($objects);
@@ -159,7 +159,7 @@ function _wnd_user_fin_list($query_args, $pages_key='pages',$color='is-primary')
 
 	global $wpdb;
 	$objects = $wpdb->get_results("
-		SELECT * FROM $wpdb->wnd_objects WHERE user_id = {$user_id} AND type = '{$type}' and status = '{$status}' LIMIT {$offset},{$per_page}",
+		SELECT * FROM $wpdb->wnd_objects WHERE user_id = {$user_id} AND type = '{$type}' and status = '{$status}' ORDER BY time DESC LIMIT {$offset},{$per_page}",
 		OBJECT
 	);
 	$object_count = count($objects);
