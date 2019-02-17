@@ -92,10 +92,10 @@ function wnd_action_pay() {
 	$action = $_GET['action'] ?? '';
 	switch ($action) {
 
-	case 'recharge':
+		//创建支付 
+	case 'payment':
 		if (is_user_logged_in()) {
-			//充值
-			check_admin_referer('wnd_recharge');
+			check_admin_referer('wnd_payment');
 			require WNDWP_PATH . 'components/payment/alipay/pagepay/pagepay.php';
 		} else {
 			wp_die('请登录！', bloginfo('name'));

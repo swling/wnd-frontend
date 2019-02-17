@@ -22,13 +22,13 @@ function wnd_insert_recharge($user_id, $money, $object_id = 0, $status = 'pendin
 	);
 
 	// 写入object数据库
-	$object_id = wnd_insert_object($object_arr);
+	$recharge_id = wnd_insert_object($object_arr);
 
-	if ($object_id and $status == 'success') {
+	if ($recharge_id and $status == 'success') {
 		wnd_inc_user_money($user_id, $money);
 	}
 
-	return $object_id;
+	return $recharge_id;
 }
 
 /**
@@ -43,20 +43,40 @@ function wnd_update_recharge($ID, $status, $title = '') {
 		return;
 	}
 	$before_status = $object->status;
+	$money = $object->value;
 
 	$object_arr = array(
 		'ID' => $ID,
 		'status' => $status,
-		'title' => $content,
 	);
-	$object_id = wnd_update_object($object_arr);
+	if ($title) {
+		$object_arr['title'] = $title;
+	}
+
+	$recharge_id = wnd_update_object($object_arr);
 
 	// 当充值订单，从pending更新到 success，表示充值完成，更新用户余额
-	if ($object_id and $before_status == 'pending' and $status == 'success') {
+	if ($recharge_id and $before_status == 'pending' and $status == 'success') {
 		wnd_inc_user_money($user_id, $money);
 	}
 
-	return $object_id;
+	return $recharge_id;
+
+}
+
+/**
+ *@since 2019.02.17 写入支付信息
+ *@return int object_id
+ */
+function wnd_insert_payment($user_id, $money, $post_id = 0) {
+
+	if ($post_id) {
+		// 在线订单
+		return wnd_insert_expense($user_id, $money, $post_id, 'pending');
+	} else {
+		// 在线充值
+		return wnd_insert_recharge($user_id, $money, 0, 'pending');
+	}
 
 }
 
@@ -100,9 +120,9 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 
 		//  写入用户账户信息
 		if ($update) {
-			if($object->object_id){
+			if ($object->object_id) {
 				return array('status' => 2, 'msg' => $object->object_id);
-			}else{
+			} else {
 				return array('status' => 1, 'msg' => '余额充值成功！');
 			}
 		} else {
@@ -120,24 +140,28 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
  *@since 2019.02.11
  *用户本站消费数据(含余额消费，或直接第三方支付消费)
  */
-function wnd_insert_expense($user_id, $money, $object_id = 0, $status = 'pending', $title = '') {
+function wnd_insert_expense($user_id, $money, $object_id = 0, $status = 'success', $title = '') {
 
 	$object_arr = array(
 		'user_id' => $user_id,
 		'value' => $money,
 		'object_id' => $object_id,
 		'title' => $title,
-		'status' => 'pending',
+		'status' => $status,
 		'type' => 'expense',
 	);
-	$object_id = wnd_insert_object($object_arr);
+	$expense_id = wnd_insert_object($object_arr);
 
-	// 更新用户余额
-	if ($object_id) {
+	/**
+	 *@since 2019.02.17
+	 *success表示直接余额消费，更新用户余额
+	 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see wnd_update_expense();
+	 */
+	if ($expense_id && $status == 'success') {
 		wnd_inc_user_money($user_id, $money * -1);
 	}
 
-	return $object_id;
+	return $expense_id;
 
 }
 
@@ -152,13 +176,31 @@ function wnd_update_expense($ID, $status, $title = '') {
 	if ($object->type != 'expense') {
 		return;
 	}
+	$before_status = $object->status;
+	$money = $object->value;
 
 	$object_arr = array(
 		'ID' => $ID,
 		'status' => $status,
-		'title' => $title,
 	);
-	return wnd_update_object($object_arr);
+	if ($title) {
+		$object_arr['title'] = $title;
+	}
+
+	$expense_id = wnd_update_object($object_arr);
+
+	/**
+	 *@since 2019.02.17
+	 *当消费订单，从pending更新到 success，表示该消费订单是通过在线支付，而非余额支付，无需扣除用户余额
+	 *由于此处没有触发 wnd_inc_user_money 因此需要单独统计财务信息
+	 */
+	if ($expense_id and $before_status == 'pending' and $status == 'success') {
+		// wnd_inc_user_money($user_id, $money * -1 );
+		// 整站按月统计充值和消费
+		wnd_fin_stats($money * -1);
+	}
+
+	return $expense_id;
 
 }
 
@@ -215,8 +257,8 @@ function wnd_get_user_expense($user_id) {
  */
 function wnd_get_post_price($post_id) {
 
-	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1);
-
+	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1) ?: 0;
+	$price = is_numeric($price) ? number_format($price, 2) : 0;
 	return apply_filters('wnd_post_price', $price, $post_id);
 }
 
@@ -254,32 +296,15 @@ function wnd_fin_stats($money = 0) {
 		$post_type = 'stats_ex';
 	}
 
-	$year = (int) date('Y', time());
-	$month = (int) date('m', time());
-	$slug = $post_type . '-' . $year . '-' . $month;
+	$year = date('Y', time());
+	$month = date('m', time());
+	$slug = $year . '-' . $month . '-' . $post_type;
 
-	// 查询统计post
-	$date_query = array(
-		array(
-			'year' => $year,
-			'month' => $month,
-		),
-	);
-	$args = array(
-		'posts_per_page' => 1,
-		'name' => $slug,
-		'author' => 1,
-		'post_type' => $post_type,
-		'post_status' => 'private',
-		'date_query' => $date_query,
-		'no_found_rows' => true,
-	);
-	$query = get_posts($args);
+	$stats_post = wnd_get_post_by_slug($slug, $post_type);
 
 	// 更新统计
-	if ($query) {
+	if ($stats_post) {
 
-		$stats_post = $query[0];
 		$old_money = $stats_post->post_title;
 		$new_money = $old_money + abs($money);
 		wp_update_post(array('ID' => $stats_post->ID, 'post_title' => $new_money));
@@ -287,7 +312,14 @@ function wnd_fin_stats($money = 0) {
 		// 新增统计
 	} else {
 
-		wp_insert_post(array('post_author' => 1, 'post_type' => $post_type, 'post_title' => abs($money), 'post_status' => 'private', 'post_name' => $slug));
+		$post_arr = array(
+			'post_author' => 1,
+			'post_type' => $post_type,
+			'post_title' => abs($money),
+			'post_status' => 'private',
+			'post_name' => $slug,
+		);
+		wp_insert_post($post_arr);
 
 	}
 

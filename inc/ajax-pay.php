@@ -29,15 +29,16 @@ function wnd_insert_order() {
 	// 余额判断
 	$money = wnd_get_post_price($post_id);
 	if ($money > wnd_get_user_money($user_id)) {
-		return array('status' => 0, 'msg' => '余额不足！');
+		if (wnd_get_option('wndwp', 'wnd_alipay_appid')) {
+			$pay_url = wnd_get_do_url() . '?action=payment&post_id=' . $post_id . '&_wpnonce=' . wp_create_nonce('wnd_payment');
+			return array('status' => 0, 'msg' => '余额不足！<a href="' . $pay_url . '">在线下单</a> | <a onclick="wnd_ajax_modal(\'recharge_form\')">充值</a>');
+		} else {
+			return array('status' => 0, 'msg' => '余额不足！');
+		}
 	}
 
 	// 写入object数据库
-	$object_id = wnd_insert_expense($user_id, $money, $post_id, 'success', get_the_title( $post_id ) . '(余额支付)');
-	/**
-	*@since 2019.02.16 待解决问题：余额不足时，直接第三方平台付款下单
-	*/
-
+	$object_id = wnd_insert_expense($user_id, $money, $post_id, 'success', get_the_title($post_id) . '(余额支付)');
 	// 支付成功
 	if ($object_id) {
 		return array('status' => 1, 'msg' => '支付成功！');

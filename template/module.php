@@ -43,7 +43,7 @@ function _wnd_recharge_form() {
 	color: #FFF;
 }
 </style>
-<form id="recharge" action="<?php echo wnd_get_do_url(); ?>?action=recharge" method="post">
+<form id="recharge" action="<?php echo wnd_get_do_url(); ?>?action=payment" method="post">
 	<div class="field">
 		<div class="ajax-msg"></div>
 	</div>
@@ -80,7 +80,7 @@ function _wnd_recharge_form() {
 		</div>
 	</div>
 	<?php do_action('_wnd_recharge_form');?>
-	<?php wp_nonce_field('wnd_recharge');?>
+	<?php wp_nonce_field('wnd_payment');?>
 	<div class="field is-grouped is-grouped-centered">
 		<button type="submit" name="submit" class="button">确认充值</button>
 	</div>

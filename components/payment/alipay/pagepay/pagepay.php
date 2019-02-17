@@ -17,19 +17,19 @@ $user_id = get_current_user_id();
 $post_id = $_REQUEST['post_id'] ?? 0;
 
 // 获取金额
-if($post_id){
+if ($post_id) {
 	$money = wnd_get_post_price($post_id);
-}else{
-	$money = isset($_POST['money']) && is_numeric($_POST['money']) ? $_POST['money'] : 0;
+} else {
+	$money = isset($_POST['money']) && is_numeric($_POST['money']) ? number_format($_POST['money'], 2) : 0;
 }
 if (!$money) {
 	wp_die('获取金额错误！', get_bloginfo('name'));
 }
 
 // 判断支付类型：充值或下单
-$subject = $post_id ? '订单 [' . get_the_title($post_id) . ']' : get_bloginfo('name') . '充值订单[' . get_userdata( $user_id )->user_login . ']';
-$out_trade_no = $post_id ? wnd_insert_expense($user_id, $money, $post_id ,'pending') : wnd_insert_recharge($user_id, $money, 0, 'pending' );
-
+$subject = $post_id ? '订单 [' . get_the_title($post_id) . ']' : get_bloginfo('name') . '充值订单[' . get_userdata($user_id)->user_login . ']';
+// 创建支付数据
+$out_trade_no = wnd_insert_payment($user_id, $money, $post_id);
 if (!$out_trade_no) {
 	wp_die('订单创建错误！', get_bloginfo('name'));
 }

@@ -139,7 +139,7 @@ function wnd_filter_the_content($content) {
 	$file = wnd_get_post_meta($post->ID, 'file');
 
 	// 价格为空且没有文件，免费文章
-	if (!$price and !$file) {
+	if ($price <= 0 and !$file) {
 		return $content;
 	}
 
@@ -183,7 +183,7 @@ function wnd_filter_the_content($content) {
 			<div class="field is-grouped is-grouped-centered">
 			<button type="button" name="submit" class="button" onclick="wnd_ajax_submit(\'#pay-for-download\')" >' . $button_text . '</button>
 			</div>
-			</form>';
+		</form>';
 
 		$content .= $form;
 
