@@ -73,7 +73,7 @@ function _wnd_ajax_next_page($function, $args) {
  *@since 2019.02.15
  *以表格形式输出WordPress文章列表
  */
-function _wnd_post_list($query_args = '', $pages_key = 'pages', $color = 'is-primary') {
+function _wnd_list_posts($query_args = '', $pages_key = 'pages', $color = 'is-primary') {
 
 	$paged = (isset($_REQUEST[$pages_key])) ? intval($_REQUEST[$pages_key]) : 1;
 	$defaults = array(
@@ -127,7 +127,7 @@ function _wnd_post_list($query_args = '', $pages_key = 'pages', $color = 'is-pri
  *@since 2019.02.17
  *以表格形式输出自定义常规object列表
  */
-function _wnd_objects_list($query_args, $pages_key = 'pages', $color = 'is-primary') {
+function _wnd_list_objects($query_args, $pages_key = 'pages', $color = 'is-primary') {
 
 	$paged = (isset($_REQUEST[$pages_key])) ? intval($_REQUEST[$pages_key]) : 1;
 	$defaults = array(

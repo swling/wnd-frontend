@@ -52,7 +52,7 @@ function _wnd_user_fin($args = array()) {
 		</div>
 	</div>
 
-	<div class="tabs is-centered">
+	<div class="tabs">
 		<ul>
 		<?php		
 		if (wp_doing_ajax()) {
@@ -71,7 +71,7 @@ function _wnd_user_fin($args = array()) {
 		</ul>
 	</div>
 	<div id="user-fin-list">
-	<?php _wnd_user_fin_list($args);?>
+	<?php _wnd_list_user_fin($args);?>
 	</div>
 </div>
 <?php
@@ -83,7 +83,7 @@ function _wnd_user_fin($args = array()) {
  *以表格形式输出用户财务信息列表
  * 列表必须放在 #user-fin-list 容器中，否则ajax环境中无法实现翻页
  */
-function _wnd_user_fin_list($args) {
+function _wnd_list_user_fin($args) {
 
 	$user_id = get_current_user_id();
 	$defaults = array(
@@ -97,7 +97,7 @@ function _wnd_user_fin_list($args) {
 	$status = $args['status'];
 	$pages = $_GET['pages'] ?? $args['pages'];
 
-	$per_page = 3;
+	$per_page = 20;
 	$offset = $per_page * ($pages - 1);
 
 	global $wpdb;
