@@ -18,8 +18,8 @@ function _wnd_user_fin($args = array()) {
 		'status' => '',
 	);
 	$args = wp_parse_args($args, $defaults);
-	$type = $_GET['type'] ?? $args['type'];
-	$status = $_GET['status'] ?? $args['status'];
+	$type = $_REQUEST['type'] ?? $args['type'];
+	$status = $_REQUEST['status'] ?? $args['status'];
 
 	$expense_is_active = $type == 'expense' ? 'class="is-active"' : '';
 	$recharge_is_active = $type == 'recharge' ? 'class="is-active"' : '';
@@ -64,14 +64,16 @@ function _wnd_user_fin($args = array()) {
 				echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin\',\'type=recharge\');">充值记录</a></li>';
 			}
 		} else {
-			echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('type', 'expense') . '">消费记录</a></li>';
-			echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('tab', 'recharge') . '">充值记录</a></li>';
+			echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('type', 'expense',remove_query_arg('pages')) . '">消费记录</a></li>';
+			echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('tab', 'recharge',remove_query_arg('pages')) . '">充值记录</a></li>';
 		}
 		?>
 		</ul>
 	</div>
-	<?php _wnd_user_fin_list($type, $status);?>
+	<div id="user-fin-list">
+	<?php _wnd_user_fin_list($args);?>
 	</div>
+</div>
 <?php
 
 }
@@ -79,15 +81,24 @@ function _wnd_user_fin($args = array()) {
 /**
  *@since 2019.02.17
  *以表格形式输出用户财务信息列表
+ * 列表必须放在 #user-fin-list 容器中，否则ajax环境中无法实现翻页
  */
-function _wnd_user_fin_list($type = 'expense', $status = '') {
+function _wnd_user_fin_list($args) {
 
-	$paged = (isset($_GET['pages'])) ? intval($_GET['pages']) : 1;
 	$user_id = get_current_user_id();
-	// $type = $query_args['type'];
-	// $status = $query_args['status'];
+	$defaults = array(
+		'type' => 'recharge',
+		'status' => '',
+		'pages'	=> 1
+	);
+	$args = wp_parse_args($args, $defaults);
+
+	$type = $args['type'];
+	$status = $args['status'];
+	$pages = $_GET['pages'] ?? $args['pages'];
+
 	$per_page = 3;
-	$offset = $per_page * ($paged - 1);
+	$offset = $per_page * ($pages - 1);
 
 	global $wpdb;
 	if ($status) {
@@ -116,8 +127,7 @@ function _wnd_user_fin_list($type = 'expense', $status = '') {
 		</tr>
 	</thead>
 	<tbody>
-	<?php foreach ($objects as $object) {
-			?>
+	<?php foreach ($objects as $object) {?>
 		<tr>
 			<td class="is-narrow"><?php echo date('m-d:H:i', $object->time); ?></td>
 			<td class="is-narrow"><?php echo $object->value; ?></td>
@@ -132,14 +142,19 @@ function _wnd_user_fin_list($type = 'expense', $status = '') {
 				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $object->ID; ?>')">[管理]</a>
 			</td>
 		</tr>
-	<?php }
-		unset($object)?>
+	<?php }	unset($object); ?>
 	</tbody>
 </table>
-<?php } else {?>
+<?php 
+if(!wp_doing_ajax()){
+	_wnd_next_page($per_page, $object_count, 'pages');
+}else{
+	_wnd_ajax_next_page(__FUNCTION__, $args);
+}
+?>
+<?php } else { ?>
 <div class="message is-primary"><div class="message-body">没有匹配的内容！</div></div>
 <?php }?>
-<?php _wnd_next_page($per_page, $object_count, 'pages');?>
 <?php
 
 }
