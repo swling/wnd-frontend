@@ -28,4 +28,5 @@ require WNDWP_PATH . 'inc/add-filter.php'; //添加的钩子
 require WNDWP_PATH . 'template/user.php'; //user模板
 require WNDWP_PATH . 'template/post.php'; //post模板
 require WNDWP_PATH . 'template/archive.php'; //归档和列表
+require WNDWP_PATH . 'template/finance.php'; //财务
 require WNDWP_PATH . 'template/module.php'; //相对独立的模块模板

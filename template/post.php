@@ -120,7 +120,9 @@ function _wnd_upload_field($args) {
 
 	?>
 <div id="<?php echo $args['id'];?>" class="upload-field field">
-	<div class="ajax-msg"></div>
+	<div class="field">
+		<div class="ajax-msg"></div>
+	</div>
 	<?php if ($args['has_thumbnail'] == 1) { // 1、图片类型，缩略图 ?>
 	<div class="field">
 		<a onclick="wnd_click('input[data-id=\'<?php echo $args['id'];?>\']')"><img class="thumb" src="<?php echo $attachment_url; ?>" height="<?php echo $args['thumb_size']['height']?>" width="<?php echo $args['thumb_size']['width']?>" title="上传图像"></a>

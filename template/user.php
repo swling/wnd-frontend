@@ -11,48 +11,74 @@ if (!defined('ABSPATH')) {
  *以_wnd_做前缀的函数可用于ajax请求，无需nonce校验，因此相关模板函数中不应有任何数据库操作，仅作为界面响应输出。
  */
 
-/*
-########################################################################## part1： 未登录用户
-*/
-
 /**
- *@since 2019.01.28 
- *封装未登录用户表单：
- *用户登录、注册表单、找回密码，账户面板（已登录时）
- *@param $action :login/reg/lostpassword/
+ *@since 2019.02.16 封装：用户中心
+ *@param string or array ：action => reg / login / lostpassword, tab => string :profile / account
+ *@return echo el
  */
-function _wnd_user_form($action = 'reg') {
+function _wnd_user_center($args = array()) {
 
-	echo '<div id="user-form">';
+	$defaults = array(
+		'action' => 'reg',
+		'tab' => 'profile',
+	);
+	$args = wp_parse_args($args, $defaults);
+	$action = $_GET['action'] ?? $args['action'];
+	$tab = $_GET['tab'] ?? $args['tab'];
 
-	// 已登录用户面板
-	if (is_user_logged_in()) {
-		_wnd_user_panel();
-		return;
-	}
+	echo '<div id="user-center">';
 
-	$action = $_GET['action'] ?? $action;
-	$action = $action ?: 'reg';
+	//1、 未登录用户面板
+	if (!is_user_logged_in()) {
 
-	//登录
-	if ($action == 'login') {
-		_wnd_login_form();
+		switch ($action) {
 
-		//找回密码
-	} elseif ($action == 'lostpassword') {
-		$type = $_GET['type'] ?? null;
-		if ($type == 'sms') {
-			_wnd_lostpassword_form('sms');
-		} else {
-			_wnd_lostpassword_form('email');
+		case 'reg':
+			_wnd_reg_form();
+			break;
+
+		case 'login':
+			_wnd_login_form();
+			break;
+
+		case 'lostpassword':
+			$type = $_GET['type'] ?? null;
+			if ($type == 'sms') {
+				_wnd_lostpassword_form('sms');
+			} else {
+				_wnd_lostpassword_form('email');
+			}
+			break;
+
+		default:
+			_wnd_login_form();
+			break;
+
 		}
 
-		//注册
+		//2、已登录用户面板
 	} else {
-		_wnd_reg_form();
+
+		switch ($tab) {
+
+		case 'profile':
+			_wnd_profile_form();
+			break;
+
+		case 'account':
+			_wnd_account_form();
+			break;
+
+		default:
+			_wnd_profile_form();
+			break;
+
+		}
+
 	}
 
 	echo '</div>';
+
 }
 
 /**
@@ -106,13 +132,13 @@ function _wnd_login_form() {
 	<div class="field">
 		<div class="message is-primary">
 			<div class="message-body">
-				<?php if (wp_doing_ajax()) {
+	<?php if (wp_doing_ajax()) {
 		if ($ajax_type == 'modal') {
 			echo '没有账户？<a onclick="wnd_ajax_modal(\'reg_form\');">立即注册</a> | ';
 			echo '<a onclick="wnd_ajax_modal(\'lostpassword_form\');">忘记密码？</a>';
 		} else {
-			echo '没有账户？<a onclick="wnd_ajax_embed(\'#user-form\',\'reg_form\');">立即注册</a> | ';
-			echo '<a onclick="wnd_ajax_embed(\'#user-form\',\'lostpassword_form\');">忘记密码</a>';
+			echo '没有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'reg_form\');">立即注册</a> | ';
+			echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'lostpassword_form\');">忘记密码</a>';
 		}
 	} else {
 		echo '没有账户？<a href="' . add_query_arg('action', 'reg') . '">立即注册</a> | ';
@@ -194,12 +220,12 @@ function _wnd_reg_form() {
 	<div class="field">
 		<div class="message is-primary">
 			<div class="message-body">
-				<?php if (wp_doing_ajax()) {
+	<?php if (wp_doing_ajax()) {
 		//是否在ajax中
 		if ($ajax_type == 'modal') {
 			echo '已有账户？<a onclick="wnd_ajax_modal(\'login_form\');">登录</a>';
 		} else {
-			echo '已有账户？<a onclick="wnd_ajax_embed(\'#user-form\',\'login_form\');">登录</a>';
+			echo '已有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'login_form\');">登录</a>';
 		}
 	} else {
 		echo '已有账户？<a href="' . add_query_arg('action', 'login') . '">登录</a>';
@@ -264,13 +290,13 @@ function _wnd_lostpassword_form($type = 'email') {
 	<div class="field">
 		<div class="message is-primary">
 			<div class="message-body">
-				<?php if (wp_doing_ajax()) {
+		<?php if (wp_doing_ajax()) {
 			if ($ajax_type == 'modal') {
 				echo '<a onclick="wnd_ajax_modal(\'lostpassword_form\');">邮箱验证找回</a> | ';
 				echo '<a onclick="wnd_ajax_modal(\'login_form\');">登录</a>';
 			} else {
-				echo '<a onclick="wnd_ajax_embed(\'#user-form\',\'lostpassword_form\');">邮箱验证找回</a> | ';
-				echo '<a onclick="wnd_ajax_embed(\'#user-form\',\'login_form\');">马上登陆</a>';
+				echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'lostpassword_form\');">邮箱验证找回</a> | ';
+				echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'login_form\');">马上登陆</a>';
 			}
 		} else {
 			echo '<a href="' . add_query_arg('type', 'email') . '">邮箱验证找回</a> | ';
@@ -317,7 +343,7 @@ function _wnd_lostpassword_form($type = 'email') {
 	<div class="field">
 		<div class="message is-primary">
 			<div class="message-body">
-				<?php if (wp_doing_ajax()) {
+		<?php if (wp_doing_ajax()) {
 			if ($ajax_type == 'modal') {
 				if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
 					echo '<a onclick="wnd_ajax_modal(\'lostpassword_form\',\'sms\');">手机验证找回</a> | ';
@@ -325,9 +351,9 @@ function _wnd_lostpassword_form($type = 'email') {
 				echo '<a onclick="wnd_ajax_modal(\'login_form\');">马上登录</a>';
 			} else {
 				if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
-					echo '<a onclick="wnd_ajax_embed(\'#user-form\',\'lostpassword_form\',\'sms\');">手机验证找回</a> | ';
+					echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'lostpassword_form\',\'sms\');">手机验证找回</a> | ';
 				}
-				echo '<a onclick="wnd_ajax_embed(\'#user-form\',\'login_form\');">登录</a>';
+				echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'login_form\');">登录</a>';
 			}
 		} else {
 			if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
@@ -346,41 +372,7 @@ function _wnd_lostpassword_form($type = 'email') {
 
 /*
 ########################################################################## part2： 已登录用户
-*/
-
-/**
-*@since 2019.02.16 封装：已登录用户控制面板
-*
-*/
-function _wnd_user_panel($tab='profile'){
-
-	echo '<div id="user-panel">';
-
-	// 未登录用户面板
-	if (!is_user_logged_in()) {
-		_wnd_user_form();
-		return;
-	}
-
-	$tab = $_GET['tab'] ?? $tab;
-	$tab = $tab ?: 'profile';
-
-	//资料
-	if ($tab == 'profile') {
-		_wnd_profile_form();
-
-		//账户
-	} elseif ($tab == 'account') {
-		_wnd_account_form();
-
-		//默认
-	} else {
-		_wnd_profile_form();
-	}
-
-	echo '</div>';
-
-}
+ */
 
 /**
  *@since 2019.01.29 用户常规资料表单
@@ -396,7 +388,7 @@ function _wnd_profile_form($args = array()) {
 	// ajax请求类型
 	$ajax_type = $_POST['ajax_type'] ?? 'modal';
 
-?>
+	?>
 <div class="tabs">
 	<ul class="tab">
 	<?php if (wp_doing_ajax()) {
@@ -404,8 +396,8 @@ function _wnd_profile_form($args = array()) {
 			echo '<li class="is-active"><a onclick="wnd_ajax_modal(\'profile_form\');">资料</a></li>';
 			echo '<li><a onclick="wnd_ajax_modal(\'account_form\');">账户</a></li>';
 		} else {
-			echo '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-panel\',\'profile_form\',\'sms\');">资料</a></li>';
-			echo '<li><a onclick="wnd_ajax_embed(\'#user-panel\',\'account_form\',\'sms\');">账户</a></li>';
+			echo '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-center\',\'profile_form\',\'sms\');">资料</a></li>';
+			echo '<li><a onclick="wnd_ajax_embed(\'#user-center\',\'account_form\',\'sms\');">账户</a></li>';
 		}
 	} else {
 		echo '<li class="is-active"><a href="' . add_query_arg('tab', 'profile') . '">资料</a></li>';
@@ -420,7 +412,7 @@ function _wnd_profile_form($args = array()) {
 	</div>
 	<div class="field">
 	<?php
-	/*头像上传*/
+/*头像上传*/
 	$defaults = array(
 		'id' => 'user-avatar',
 		'is_image' => 1,
@@ -479,8 +471,8 @@ function _wnd_account_form() {
 	$user = wp_get_current_user();
 
 	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';	
-?>
+	$ajax_type = $_POST['ajax_type'] ?? 'modal';
+	?>
 <div class="tabs">
 	<ul class="tab">
 	<?php if (wp_doing_ajax()) {
@@ -488,8 +480,8 @@ function _wnd_account_form() {
 			echo '<li><a onclick="wnd_ajax_modal(\'profile_form\');">资料</a></li>';
 			echo '<li class="is-active"><a onclick="wnd_ajax_modal(\'account_form\');">账户</a></li>';
 		} else {
-			echo '<li><a onclick="wnd_ajax_embed(\'#user-panel\',\'profile_form\',\'sms\');">资料</a></li>';
-			echo '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-panel\',\'account_form\',\'sms\');">账户</a></li>';
+			echo '<li><a onclick="wnd_ajax_embed(\'#user-center\',\'profile_form\',\'sms\');">资料</a></li>';
+			echo '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-center\',\'account_form\',\'sms\');">账户</a></li>';
 		}
 	} else {
 		echo '<li><a href="' . add_query_arg('tab', 'profile') . '">资料</a></li>';

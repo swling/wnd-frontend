@@ -239,7 +239,8 @@ function wnd_inc_user_money($user_id, $money) {
 function wnd_get_user_money($user_id) {
 
 	$money = wnd_get_user_meta($user_id, 'money');
-	$money = $money ?: 0;
+	// $money = $money ?: 0;
+	$money = is_numeric($money) ? number_format($money, 2) : 0;
 	return $money;
 }
 
@@ -247,8 +248,18 @@ function wnd_get_user_money($user_id) {
 function wnd_get_user_expense($user_id) {
 
 	$expense = wnd_get_user_meta($user_id, 'expense');
-	$expense = $expense ?: 0;
+	$expense = is_numeric($expense) ? number_format($expense, 2) : 0;
 	return $expense;
+}
+
+/**
+*@since 2019.02.18 获取用户佣金
+*/
+function wnd_get_user_commission($user_id) {
+
+	$commission = wnd_get_user_meta($user_id, 'commission');
+	$commission = is_numeric($commission) ? number_format($commission, 2) : 0;
+	return $commission;
 }
 
 /**
