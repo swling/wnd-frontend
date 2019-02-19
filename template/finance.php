@@ -14,7 +14,7 @@ function _wnd_user_fin($args = array()) {
 	$user_id = get_current_user_id();
 
 	$defaults = array(
-		'type' => 'recharge',
+		'type' => 'expense',
 		'status' => '',
 		'posts_per_page' => get_option( 'posts_per_page')
 	);
@@ -88,14 +88,14 @@ function _wnd_list_user_fin($args) {
 
 	$user_id = get_current_user_id();
 	$defaults = array(
-		'type' => 'recharge',
+		'type' => 'expense',
 		'status' => '',
 		'posts_per_page' => get_option( 'posts_per_page'),
 		'paged'	=> 1
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	$type = $args['type'];
+	$type = $args['type'] =='expense' ? 'expense' : 'recharge' ;//确保只有两种类型
 	$status = $args['status'];
 
 	// 分页
