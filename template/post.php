@@ -10,193 +10,6 @@ if ( !defined( 'ABSPATH' ) ) exit;
 */
 
 /**
-*@since 2019.01.20 
-*快速编辑文章状态表单
-*/
-function _wnd_post_status_form($post_id){
-
-	$post_status = get_post_status( $post_id );
-	switch ($post_status) {
-
-		case 'publish':
-			$status_text = '已发布';
-			break;
-
-		case 'pending':
-			$status_text = '待审核';
-			break;	
-
-		case 'draft':
-			$status_text = '草稿';
-			break;
-
-		case false:
-			$status_text = '已删除';
-			break;					
-
-		default:
-			$status_text = $post_status;
-			break;
-	}
-
-?>
-<form id="post-status" action="" method="post" onsubmit="return false">
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-	<div class="field text-centered">
-		<label class="radio">
-			<input type="radio" class="radio" name="post_status" value="publish" <?php if($post_status=='publish' ) echo ' checked="checked" ' ?>>
-			发布
-		</label>
-
-		<label class="radio">
-			<input type="radio" class="radio" name="post_status" value="draft" <?php if($post_status=='draft') echo ' checked="checked" ' ?>>
-			草稿
-		</label>
-
-		<label class="radio">
-			<input type="radio" class="radio" name="post_status" value="delete">
-			<span class="is-danger">删除</span>
-		</label>
-	</div>
-	<?php if(wnd_is_manager()) { ?>
-	<div class="field">
-		<textarea name="remarks" class="textarea" placeholder="备注（可选）"></textarea>
-	</div>
-	<?php } ?>
-	<input type="hidden" name="post_id" value="<?php echo $post_id; ?>">
-	<?php wp_nonce_field('wnd_update_post_status', '_ajax_nonce'); ?>
-	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_update_post_status">
-	<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#post-status')">确认</button>
-	</div>
-</form>
-<script>
-wnd_ajax_msg("<?php echo '当前： '.$status_text;?>", "is-danger", "#post-status")
-</script>
-<?php
-
-}
-
-/**
-*###################################################### 附件上传表单
-*@since 2019.01.16
-*/
-function _wnd_upload_field($args) {
-
-	$defaults = array(
-		'id'=>'upload-file',
-		'meta_key' => '',
-		'has_thumbnail'=> 1,
-		'post_parent' => 0,
-		'save_size'=>array('width'=>0,'height'=>0),
-		'thumb_size'=>array('width'=>200,'height'=>200),
-		'default_thumbnail' => WNDWP_URL . '/static/images/default.jpg',
-	);
-	$args = wp_parse_args($args,$defaults);
-
-	// 根据user type 查找目标文件
-	$attachment_id = wnd_get_post_meta( $args['post_parent'], $args['meta_key']);
-	$attachment_id = $attachment_id ?: wnd_get_user_meta( get_current_user_id(), $args['meta_key']);
-	$attachment_url = wp_get_attachment_url($attachment_id);
-
-	// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
-	if($attachment_id and !$attachment_url){
-		if($args['post_parent']){
-			wnd_delete_post_meta($args['post_parent'],$args['meta_key']);
-		}else{
-			wnd_delete_user_meta(get_current_user_id(),$args['meta_key']);
-		}
-	}
-
-	//根据上传类型，设置默认样式 
-	if($args['has_thumbnail']==1){
-		$attachment_url = $attachment_url ?: $args['default_thumbnail'];
-	}else{
-		$attachment_url = $attachment_url ?: false;
-	}
-
-	?>
-<div id="<?php echo $args['id'];?>" class="upload-field field">
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-	<?php if ($args['has_thumbnail'] == 1) { // 1、图片类型，缩略图 ?>
-	<div class="field">
-		<a onclick="wnd_click('input[data-id=\'<?php echo $args['id'];?>\']')"><img class="thumb" src="<?php echo $attachment_url; ?>" height="<?php echo $args['thumb_size']['height']?>" width="<?php echo $args['thumb_size']['width']?>" title="上传图像"></a>
-		<a class="delete" data-id="<?php echo $args['id'];?>" data-attachment-id="<?php echo $attachment_id;?>"></a>
-	</div>
-	<div class="file">
-		<input type="file" class="file-input" name="file[]" accept="image/*" data-id="<?php echo $args['id'];?>" />
-	</div>
-	<!-- 图片信息 -->
-	<input type="hidden" name="file_save_width" value="<?php echo $args['save_size']['width']; ?>" />
-	<input type="hidden" name="file_save_height" value="<?php echo $args['save_size']['height']; ?>" />
-	<input type="hidden" name="file_default_thumbnail" value="<?php echo $args['default_thumbnail'] ?>" />
-	<?php } else { ///2、文件上传 ?>
-	<div class="columns is-mobile">
-		<div class="column">
-			<div class="file has-name is-fullwidth">
-				<label class="file-label">
-					<input type="file" class="file-input" name="file[]" data-id="<?php echo $args['id'];?>" />
-					<span class="file-cta">
-						<span class="file-icon">
-							<i class="fa fa-upload"></i>
-						</span>
-						<span class="file-label">
-							选择文件
-						</span>
-					</span>
-					<span class="file-name">
-						<?php if($attachment_url) echo '已上传：<a href="'.$attachment_url.'">查看文件</a>'; else echo'……';?>
-					</span>
-				</label>
-			</div>
-		</div>
-		<div class="column is-narrow">
-			<a class="delete" data-id="<?php echo $args['id'];?>" data-attachment-id="<?php echo $attachment_id;?>"></a>
-		</div>
-	</div>
-	<?php } ?>
-	<!-- 自定义属性，用于区分上传用途，方便后端区分处理 -->
-	<input type="hidden" name="file_post_parent" value="<?php echo $args['post_parent'] ?>" />
-	<input type="hidden" name="file_meta_key" value="<?php echo $args['meta_key']; ?>" />
-	<input type="hidden" name="file_has_thumbnail" value="<?php if($args['has_thumbnail']==1) echo '1'; else echo '0'; ?>" />
-	<?php wp_nonce_field('wnd_upload_file','file_upload_nonce');?>
-	<?php wp_nonce_field('wnd_delete_attachment','file_delete_nonce');?>
-</div>
-<?php
-
-}
-
-/**
-*@since 2019.01.30 付费内容表单字段
-*/
-function _wnd_paid_post_field($post_parent){
-
-    $args = array(
-        'id'=>'upload-file',
-        'meta_key' => 'file',
-        'has_thumbnail'=> 0,
-        'post_parent' => $post_parent,
-    );
-    _wnd_upload_field($args);
-
-?>
-<div class="field">
-	<div class="control has-icons-left">
-		<input type="number" min="0" step="0.01" class="input" value="<?php echo get_post_meta( $post_parent, 'price', 1)?>" name="_wpmeta_price" placeholder="价格">
-		<span class="icon is-left">
-			<i class="fa fa-money"></i>
-		</span>
-	</div>
-</div>
-<?php
-}
-
-/**
 *@since 2019.01.31 发布/编辑文章通用模板
 */
 function _wnd_post_form($args=array()){
@@ -410,6 +223,193 @@ function _wnd_post_info($args){
 </article>
 <?php
 
+}
+
+/**
+*@since 2019.01.20 
+*快速编辑文章状态表单
+*/
+function _wnd_post_status_form($post_id){
+
+	$post_status = get_post_status( $post_id );
+	switch ($post_status) {
+
+		case 'publish':
+			$status_text = '已发布';
+			break;
+
+		case 'pending':
+			$status_text = '待审核';
+			break;	
+
+		case 'draft':
+			$status_text = '草稿';
+			break;
+
+		case false:
+			$status_text = '已删除';
+			break;					
+
+		default:
+			$status_text = $post_status;
+			break;
+	}
+
+?>
+<form id="post-status" action="" method="post" onsubmit="return false">
+	<div class="field">
+		<div class="ajax-msg"></div>
+	</div>
+	<div class="field text-centered">
+		<label class="radio">
+			<input type="radio" class="radio" name="post_status" value="publish" <?php if($post_status=='publish' ) echo ' checked="checked" ' ?>>
+			发布
+		</label>
+
+		<label class="radio">
+			<input type="radio" class="radio" name="post_status" value="draft" <?php if($post_status=='draft') echo ' checked="checked" ' ?>>
+			草稿
+		</label>
+
+		<label class="radio">
+			<input type="radio" class="radio" name="post_status" value="delete">
+			<span class="is-danger">删除</span>
+		</label>
+	</div>
+	<?php if(wnd_is_manager()) { ?>
+	<div class="field">
+		<textarea name="remarks" class="textarea" placeholder="备注（可选）"></textarea>
+	</div>
+	<?php } ?>
+	<input type="hidden" name="post_id" value="<?php echo $post_id; ?>">
+	<?php wp_nonce_field('wnd_update_post_status', '_ajax_nonce'); ?>
+	<input type="hidden" name="action" value="wnd_action">
+	<input type="hidden" name="action_name" value="wnd_update_post_status">
+	<div class="field is-grouped is-grouped-centered">
+		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#post-status')">确认</button>
+	</div>
+</form>
+<script>
+wnd_ajax_msg("<?php echo '当前： '.$status_text;?>", "is-danger", "#post-status")
+</script>
+<?php
+
+}
+
+/**
+*###################################################### 附件上传表单
+*@since 2019.01.16
+*/
+function _wnd_upload_field($args) {
+
+	$defaults = array(
+		'id'=>'upload-file',
+		'meta_key' => '',
+		'has_thumbnail'=> 1,
+		'post_parent' => 0,
+		'save_size'=>array('width'=>0,'height'=>0),
+		'thumb_size'=>array('width'=>200,'height'=>200),
+		'default_thumbnail' => WNDWP_URL . '/static/images/default.jpg',
+	);
+	$args = wp_parse_args($args,$defaults);
+
+	// 根据user type 查找目标文件
+	$attachment_id = wnd_get_post_meta( $args['post_parent'], $args['meta_key']);
+	$attachment_id = $attachment_id ?: wnd_get_user_meta( get_current_user_id(), $args['meta_key']);
+	$attachment_url = wp_get_attachment_url($attachment_id);
+
+	// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
+	if($attachment_id and !$attachment_url){
+		if($args['post_parent']){
+			wnd_delete_post_meta($args['post_parent'],$args['meta_key']);
+		}else{
+			wnd_delete_user_meta(get_current_user_id(),$args['meta_key']);
+		}
+	}
+
+	//根据上传类型，设置默认样式 
+	if($args['has_thumbnail']==1){
+		$attachment_url = $attachment_url ?: $args['default_thumbnail'];
+	}else{
+		$attachment_url = $attachment_url ?: false;
+	}
+
+	?>
+<div id="<?php echo $args['id'];?>" class="upload-field field">
+	<div class="field">
+		<div class="ajax-msg"></div>
+	</div>
+	<?php if ($args['has_thumbnail'] == 1) { // 1、图片类型，缩略图 ?>
+	<div class="field">
+		<a onclick="wnd_click('input[data-id=\'<?php echo $args['id'];?>\']')"><img class="thumb" src="<?php echo $attachment_url; ?>" height="<?php echo $args['thumb_size']['height']?>" width="<?php echo $args['thumb_size']['width']?>" title="上传图像"></a>
+		<a class="delete" data-id="<?php echo $args['id'];?>" data-attachment-id="<?php echo $attachment_id;?>"></a>
+	</div>
+	<div class="file">
+		<input type="file" class="file-input" name="file[]" accept="image/*" data-id="<?php echo $args['id'];?>" />
+	</div>
+	<!-- 图片信息 -->
+	<input type="hidden" name="file_save_width" value="<?php echo $args['save_size']['width']; ?>" />
+	<input type="hidden" name="file_save_height" value="<?php echo $args['save_size']['height']; ?>" />
+	<input type="hidden" name="file_default_thumbnail" value="<?php echo $args['default_thumbnail'] ?>" />
+	<?php } else { ///2、文件上传 ?>
+	<div class="columns is-mobile">
+		<div class="column">
+			<div class="file has-name is-fullwidth">
+				<label class="file-label">
+					<input type="file" class="file-input" name="file[]" data-id="<?php echo $args['id'];?>" />
+					<span class="file-cta">
+						<span class="file-icon">
+							<i class="fa fa-upload"></i>
+						</span>
+						<span class="file-label">
+							选择文件
+						</span>
+					</span>
+					<span class="file-name">
+						<?php if($attachment_url) echo '已上传：<a href="'.$attachment_url.'">查看文件</a>'; else echo'……';?>
+					</span>
+				</label>
+			</div>
+		</div>
+		<div class="column is-narrow">
+			<a class="delete" data-id="<?php echo $args['id'];?>" data-attachment-id="<?php echo $attachment_id;?>"></a>
+		</div>
+	</div>
+	<?php } ?>
+	<!-- 自定义属性，用于区分上传用途，方便后端区分处理 -->
+	<input type="hidden" name="file_post_parent" value="<?php echo $args['post_parent'] ?>" />
+	<input type="hidden" name="file_meta_key" value="<?php echo $args['meta_key']; ?>" />
+	<input type="hidden" name="file_has_thumbnail" value="<?php if($args['has_thumbnail']==1) echo '1'; else echo '0'; ?>" />
+	<?php wp_nonce_field('wnd_upload_file','file_upload_nonce');?>
+	<?php wp_nonce_field('wnd_delete_attachment','file_delete_nonce');?>
+</div>
+<?php
+
+}
+
+/**
+*@since 2019.01.30 付费内容表单字段
+*/
+function _wnd_paid_post_field($post_parent){
+
+    $args = array(
+        'id'=>'upload-file',
+        'meta_key' => 'file',
+        'has_thumbnail'=> 0,
+        'post_parent' => $post_parent,
+    );
+    _wnd_upload_field($args);
+
+?>
+<div class="field">
+	<div class="control has-icons-left">
+		<input type="number" min="0" step="0.01" class="input" value="<?php echo get_post_meta( $post_parent, 'price', 1)?>" name="_wpmeta_price" placeholder="价格">
+		<span class="icon is-left">
+			<i class="fa fa-money"></i>
+		</span>
+	</div>
+</div>
+<?php
 }
 
 /**

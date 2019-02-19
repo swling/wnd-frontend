@@ -98,7 +98,7 @@ function _wnd_list_user_fin($args) {
 	$status = $args['status'];
 
 	// 分页
-	$paged = $_GET['paged'] ?? $args['paged'];
+	$paged = $_GET['pages'] ?? $args['paged'];
 	$posts_per_page = $args['posts_per_page'];
 	$offset = $posts_per_page * ($paged - 1);
 

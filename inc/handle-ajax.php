@@ -66,3 +66,24 @@ function _wnd_ajax_r() {
 	// 必须
 	wp_die('', '', array('response' => null));
 }
+
+/**
+*@since 2019.02.19 在当前位置自动生成一个容器，以供ajax嵌入模板
+*@param $handle string  被调用函数去除'_wnd_'前缀后的字符
+*@param $args array or string 传递给被调用模板函数的参数
+*/
+function _wnd_ajax_embed($handle,$args){
+
+	$function_name = '_wnd_'.$handle;
+	if(!function_exists($function_name)){
+		return;
+	}
+
+	$div_id = 'wnd_'.$handle;
+	$args = wp_parse_args( $args);
+	$js_args = http_build_query($args);
+
+	echo '<div id="'.$div_id.'">';
+	echo '<script>wnd_ajax_embed(\'#'.$div_id.'\',\''.$handle.'\',\''.$js_args.'\')</script>';
+	echo '</div>';
+}
