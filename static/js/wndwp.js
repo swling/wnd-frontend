@@ -633,4 +633,21 @@ jQuery(document).ready(function($) {
 	$("body").on("input", "input", function() {
 		$(this).removeClass('is-danger');
 	});
+
+	/**
+	 *@since 2019.02.18 点击菜单 新增active
+	 */
+	$("body").on("click", ".menu a", function() {
+		$(this).parents(".menu").find("a").removeClass("is-active");
+		$(this).addClass("is-active");
+	});
+
+	/**
+	 *@since 2019.02.18 点击Tabs 新增active
+	 */
+	$("body").on("click", ".tabs a", function() {
+		$(this).parent("li").addClass("is-active");
+		$(this).parent("li").siblings().removeClass("is-active");
+	});
+
 });

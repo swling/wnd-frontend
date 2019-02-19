@@ -79,15 +79,19 @@ function _wnd_ajax_next_page($function, $args) {
  */
 function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary') {
 
-	$paged = $_REQUEST[$pages_key] ?? $args['paged'] ?? 1;
+	// $paged = $_REQUEST[$pages_key] ?? $args['paged'] ?? 1;
 	$defaults = array(
 		'posts_per_page' => get_option('posts_per_page'),
-		'paged' => $paged,
+		'paged' => 1,
 		'post_type' => 'post',
 		'post_status' => 'publish',
 		'no_found_rows' => true, //$query->max_num_pages;
 	);
 	$args = wp_parse_args($args, $defaults);
+
+	// 翻页参数优先
+	$args['paged'] = $_REQUEST[$pages_key] ?? $args['paged'];
+
 	$query = new WP_Query($args);
 
 	if ($query->have_posts()):
@@ -98,14 +102,16 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 		<tr>
 			<th class="is-narrow"><abbr title="Position">日期</abbr></th>
 			<th>标题</th>
+			<th class="is-narrow">状态</th>
 			<th class="is-narrow">操作</th>
 		</tr>
 	</thead>
 	<tbody>
-		<?php while ($query->have_posts()): $query->the_post();?>
+		<?php while ($query->have_posts()): $query->the_post(); ?>
 		<tr>
 			<td class="is-narrow"><?php the_time('m-d H:i');?></td>
 			<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php the_title();?></a></td>
+			<th class="is-narrow"><?php echo get_post_status(); ?></th>
 			<td class="is-narrow">
 				<a onclick="wnd_ajax_modal('post_info','post_id=<?php the_ID();?>&color=<?php echo $color; ?>')">预览</a>
 				<?php if (current_user_can('edit_post', get_the_ID())) {?>
@@ -128,7 +134,7 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 
 // 没有内容
 	else :
-		$no_more_text = $paged >= 2 ? '没有更多内容！' : '没有匹配的内容！';
+		$no_more_text = ($args['paged'] >= 2) ? '没有更多内容！' : '没有匹配的内容！';
 		echo '<div class="message is-primary"><div class="message-body">' . $no_more_text . '</div></div>';
 	endif;
 
@@ -204,11 +210,73 @@ function _wnd_list_objects($args = array(), $pages_key = 'pages', $color = 'is-p
 
 // 没有内容
 	else :
-		$no_more_text = $paged >= 2 ? '没有更多内容！' : '没有匹配的内容！';
+		$no_more_text = ($paged >= 2) ? '没有更多内容！' : '没有匹配的内容！';
 		echo '<div class="message is-primary"><div class="message-body">' . $no_more_text . '</div></div>';
 	endif;
 	?>
 <?php
 
 // end function
+}
+
+/**
+ *@since 2019.02.19 封装前端当前用户内容管理
+ *@param array or string ：wp_query args
+ */
+function _wnd_list_user_posts($args = array()) {
+
+	if (!is_user_logged_in()) {
+		echo '<div class="message is-danger"><div class="message-body">请登录！</div></div>';
+		return;
+	}
+
+	// ajax请求类型
+	$ajax_type = $_POST['ajax_type'] ?? 'modal';
+
+	// 查询参数
+	$defaults = array(
+		'post_status' => 'any',
+		'post_type' => 'post',
+	);
+	$args = wp_parse_args($args, $defaults);
+	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type']; // 翻页优先参数
+	$args['author'] = get_current_user_id(); // 不可通过外部参数更改的参数（仅查询当前用户内容）
+
+	// 容器开始
+	echo '<div id="user-posts">';
+	echo '<div class="tabs"><ul class="tab">';
+
+	// 查询内容并输出导航链接
+	$post_types = get_post_types(array('public' => true), $output = 'objects', $operator = 'and');
+	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
+
+	foreach ($post_types as $post_type) {
+
+		$active = ($args['post_type'] == $post_type->name) ? 'class="is-active"' : '';
+
+		// 配置ajax请求参数
+		$ajax_args = array_merge($args, array('post_type' => $post_type->name));
+		$ajax_args = http_build_query($ajax_args);
+
+		if (wp_doing_ajax()) {
+			if ($ajax_type == 'modal') {
+				echo '<li><a onclick="wnd_ajax_modal(\'list_posts\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
+			} else {
+				echo '<li><a onclick="wnd_ajax_embed(\'#user-posts .post-list\',\'list_posts\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
+			}
+		} else {
+			echo '<li ' . $active . '><a href="' . add_query_arg('tab', $post_type->name, remove_query_arg('pages')) . '">' . $post_type->label . '</a></li>';
+		}
+
+	}
+	unset($post_type);
+	echo '</ul></div>';
+
+	echo '<div class="posts-list">';
+	_wnd_list_posts($args);
+	echo '</div>';
+
+	// 容器结束
+	echo '</div>';
+
 }
