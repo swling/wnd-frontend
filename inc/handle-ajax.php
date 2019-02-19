@@ -72,7 +72,7 @@ function _wnd_ajax_r() {
 *@param $handle string  被调用函数去除'_wnd_'前缀后的字符
 *@param $args array or string 传递给被调用模板函数的参数
 */
-function _wnd_ajax_embed($handle,$args){
+function _wnd_ajax_embed($handle,$args=''){
 
 	$function_name = '_wnd_'.$handle;
 	if(!function_exists($function_name)){
