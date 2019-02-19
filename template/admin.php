@@ -31,7 +31,7 @@ function _wnd_admin_panel($args = array()) {
 	echo '<div class="tabs"><ul class="tab">';
 
 	// 查询内容并输出导航链接
-	$post_types = get_post_types(array('public' => true, 'show_ui'=>true), $output = 'objects', $operator = 'and');
+	$post_types = get_post_types(array('public' => true, 'show_ui' => true), $output = 'objects', $operator = 'and');
 	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
 
 	foreach ($post_types as $post_type) {
@@ -79,10 +79,20 @@ function _wnd_user_posts_panel($args = array()) {
 	// ajax请求类型
 	$ajax_type = $_POST['ajax_type'] ?? 'modal';
 
+	// post types 过滤
+	$post_types = get_post_types(array('public' => true), $output = 'objects', $operator = 'and');
+	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
+	foreach ($post_types as $post_type) {
+		if (!in_array($post_type->name, wnd_get_allowed_post_types())) {
+			unset($post_types[$post_type->name]);
+		}
+	}
+	unset($post_type);
+
 	// 查询参数
 	$defaults = array(
 		'post_status' => 'any',
-		'post_type' => 'post',
+		'post_type' => reset($post_types)->name, //$post_types 为多维数组，获取第一个type 的 name
 	);
 	$args = wp_parse_args($args, $defaults);
 	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type']; // 类型
@@ -91,11 +101,6 @@ function _wnd_user_posts_panel($args = array()) {
 	// 容器开始
 	echo '<div id="user-posts">';
 	echo '<div class="tabs"><ul class="tab">';
-
-	// post types 过滤
-	$post_types = get_post_types(array('public' => true), $output = 'objects', $operator = 'and');
-	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
-	$post_types = apply_filters( '_wnd_allowed_post_types', $post_types );
 
 	foreach ($post_types as $post_type) {
 

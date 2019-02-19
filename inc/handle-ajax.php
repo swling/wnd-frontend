@@ -81,9 +81,9 @@ function _wnd_ajax_embed($handle,$args){
 
 	$div_id = 'wnd_'.$handle;
 	$args = wp_parse_args( $args);
-	$js_args = http_build_query($args);
+	$ajax_args = http_build_query($args);
 
 	echo '<div id="'.$div_id.'">';
-	echo '<script>wnd_ajax_embed(\'#'.$div_id.'\',\''.$handle.'\',\''.$js_args.'\')</script>';
+	echo '<script>wnd_ajax_embed(\'#'.$div_id.'\',\''.$handle.'\',\''.$ajax_args.'\')</script>';
 	echo '</div>';
 }

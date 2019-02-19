@@ -45,8 +45,7 @@ function wnd_insert_post($update_id = 0) {
 	 *@since 2019.02.19
 	 * 写入post type检测
 	 */
-	$allowed_post_types = apply_filters( '_wnd_allowed_post_types', get_post_types(array('public' => true), 'names', 'and') );
-	if (!$update_id and !in_array($post_type, $allowed_post_types)) {
+	if (!$update_id and !in_array($post_type, wnd_get_allowed_post_types())) {
 		return array('status' => 0, 'msg' => '类型无效！');
 	}
 
@@ -240,9 +239,10 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 	}
 
 	/**
-	 *@since 2019.02.19 只允许已注册的公开的post type
+	 *@since 2019.02.19
+	 * 写入post type检测
 	 */
-	if (!in_array($post_type, get_post_types(array('public' => true), 'names', 'and'))) {
+	if (!in_array($post_type, wnd_get_allowed_post_types())) {
 		return array('status' => 0, 'msg' => '类型无效！');
 	}
 
@@ -319,4 +319,14 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 		return array('status' => 0, 'msg' => $post_id->get_error_message());
 	}
 
+}
+
+/**
+*@since 2019.02.19
+*获取当前站点注册为公开状态的post type
+*@return array : post type name数组
+*/
+function wnd_get_allowed_post_types(){
+
+	return apply_filters('_wnd_allowed_post_types', get_post_types(array('public' => true), 'names', 'and'));	
 }
