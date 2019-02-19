@@ -43,9 +43,10 @@ function wnd_insert_post($update_id = 0) {
 
 	/**
 	 *@since 2019.02.19
-	 * 写入post type检测：只允许提交已注册的post type
+	 * 写入post type检测
 	 */
-	if (!$update_id and !in_array($post_type, get_post_types(array('public' => true), 'names', 'and'))) {
+	$allowed_post_types = apply_filters( '_wnd_allowed_post_types', get_post_types(array('public' => true), 'names', 'and') );
+	if (!$update_id and !in_array($post_type, $allowed_post_types)) {
 		return array('status' => 0, 'msg' => '类型无效！');
 	}
 

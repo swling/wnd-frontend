@@ -58,6 +58,12 @@ apply_filters('wnd_post_status', 'pending', $post_type, $update_id);
 
 ##更新文章状态权限 @since 2019.01.21（默认根据WordPress判断当前用户是否可以编辑文章）
 apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_status );
+
+/**
+*@since 2019.02.19 过滤当前用户可以发布管理的 post types 
+*@param $post_types array 文章类型数组 如移除 post 类型： unset($post_type['post'])
+*/
+apply_filters( '_wnd_allowed_post_types', $post_types );
 ```
 
 ##用户

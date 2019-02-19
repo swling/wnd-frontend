@@ -31,7 +31,7 @@ function _wnd_admin_panel($args = array()) {
 	echo '<div class="tabs"><ul class="tab">';
 
 	// 查询内容并输出导航链接
-	$post_types = get_post_types(array('public' => true), $output = 'objects', $operator = 'and');
+	$post_types = get_post_types(array('public' => true, 'show_ui'=>true), $output = 'objects', $operator = 'and');
 	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
 
 	foreach ($post_types as $post_type) {
@@ -92,9 +92,10 @@ function _wnd_user_posts_panel($args = array()) {
 	echo '<div id="user-posts">';
 	echo '<div class="tabs"><ul class="tab">';
 
-	// 查询内容并输出导航链接
+	// post types 过滤
 	$post_types = get_post_types(array('public' => true), $output = 'objects', $operator = 'and');
 	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
+	$post_types = apply_filters( '_wnd_allowed_post_types', $post_types );
 
 	foreach ($post_types as $post_type) {
 

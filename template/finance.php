@@ -16,6 +16,7 @@ function _wnd_user_fin($args = array()) {
 	$defaults = array(
 		'type' => 'recharge',
 		'status' => '',
+		'posts_per_page' => get_option( 'posts_per_page')
 	);
 	$args = wp_parse_args($args, $defaults);
 	$type = $_REQUEST['type'] ?? $args['type'];
