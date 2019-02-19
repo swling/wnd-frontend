@@ -239,7 +239,7 @@ function _wnd_list_user_posts($args = array()) {
 		'post_type' => 'post',
 	);
 	$args = wp_parse_args($args, $defaults);
-	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type']; // 翻页优先参数
+	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type']; // 类型
 	$args['author'] = get_current_user_id(); // 不可通过外部参数更改的参数（仅查询当前用户内容）
 
 	// 容器开始
@@ -262,7 +262,7 @@ function _wnd_list_user_posts($args = array()) {
 			if ($ajax_type == 'modal') {
 				echo '<li><a onclick="wnd_ajax_modal(\'list_posts\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
 			} else {
-				echo '<li><a onclick="wnd_ajax_embed(\'#user-posts .post-list\',\'list_posts\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
+				echo '<li><a onclick="wnd_ajax_embed(\'#user-posts .posts-list\',\'list_posts\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
 			}
 		} else {
 			echo '<li ' . $active . '><a href="' . add_query_arg('tab', $post_type->name, remove_query_arg('pages')) . '">' . $post_type->label . '</a></li>';
