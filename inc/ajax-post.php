@@ -41,6 +41,14 @@ function wnd_insert_post($update_id = 0) {
 		}
 	}
 
+	/**
+	 *@since 2019.02.19
+	 * 写入post type检测：只允许提交已注册的post type
+	 */
+	if (!$update_id and !in_array($post_type, get_post_types(array('public' => true), 'names', 'and'))) {
+		return array('status' => 0, 'msg' => '类型无效！');
+	}
+
 	// 写入及更新权限过滤
 	$can_insert_post = apply_filters('wnd_can_insert_post', array('status' => 1, 'msg' => '默认通过'), $post_type, $update_id);
 	if ($can_insert_post['status'] === 0) {
@@ -230,6 +238,13 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 		return array('status' => 0, 'msg' => '未登录用户！');
 	}
 
+	/**
+	 *@since 2019.02.19 只允许已注册的公开的post type
+	 */
+	if (!in_array($post_type, get_post_types(array('public' => true), 'names', 'and'))) {
+		return array('status' => 0, 'msg' => '类型无效！');
+	}
+
 	//1、 查询当前用户否存在草稿，有则调用最近一篇草稿编辑
 	$query_array = array(
 		'post_status' => 'auto-draft',
@@ -297,6 +312,10 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 
 	//3、 全站没有可用草稿，创建新文章用于编辑
 	$post_id = wp_insert_post(array('post_title' => 'Auto-draft', 'post_name' => '', 'post_type' => $post_type, 'post_author' => $user_id, 'post_status' => 'auto-draft'));
-	return array('status' => 2, 'msg' => $post_id);
+	if (!is_wp_error($post_id)) {
+		return array('status' => 2, 'msg' => $post_id);
+	} else {
+		return array('status' => 0, 'msg' => $post_id->get_error_message());
+	}
 
 }
