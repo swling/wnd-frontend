@@ -62,7 +62,7 @@ function _wnd_post_status_form($post_id){
 	</div>
 	<?php if(wnd_is_manager()) { ?>
 	<div class="field">
-		<textarea name="remark" class="textarea" placeholder="备注（可选）"></textarea>
+		<textarea name="remarks" class="textarea" placeholder="备注（可选）"></textarea>
 	</div>
 	<?php } ?>
 	<input type="hidden" name="post_id" value="<?php echo $post_id; ?>">

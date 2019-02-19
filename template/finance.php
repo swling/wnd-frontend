@@ -89,26 +89,28 @@ function _wnd_list_user_fin($args) {
 	$defaults = array(
 		'type' => 'recharge',
 		'status' => '',
-		'pages'	=> 1
+		'posts_per_page' => get_option( 'posts_per_page'),
+		'paged'	=> 1
 	);
 	$args = wp_parse_args($args, $defaults);
 
 	$type = $args['type'];
 	$status = $args['status'];
-	$pages = $_GET['pages'] ?? $args['pages'];
 
-	$per_page = 20;
-	$offset = $per_page * ($pages - 1);
+	// 分页
+	$paged = $_GET['paged'] ?? $args['paged'];
+	$posts_per_page = $args['posts_per_page'];
+	$offset = $posts_per_page * ($paged - 1);
 
 	global $wpdb;
 	if ($status) {
 		$objects = $wpdb->get_results("
-		SELECT * FROM $wpdb->wnd_objects WHERE user_id = {$user_id} AND type = '{$type}' and status = '{$status}' ORDER BY time DESC LIMIT {$offset},{$per_page}",
+		SELECT * FROM $wpdb->wnd_objects WHERE user_id = {$user_id} AND type = '{$type}' and status = '{$status}' ORDER BY time DESC LIMIT {$offset},{$posts_per_page}",
 			OBJECT
 		);
 	} else {
 		$objects = $wpdb->get_results("
-		SELECT * FROM $wpdb->wnd_objects WHERE user_id = {$user_id} AND type = '{$type}' ORDER BY time DESC LIMIT {$offset},{$per_page}",
+		SELECT * FROM $wpdb->wnd_objects WHERE user_id = {$user_id} AND type = '{$type}' ORDER BY time DESC LIMIT {$offset},{$posts_per_page}",
 			OBJECT
 		);
 	}
@@ -146,16 +148,21 @@ function _wnd_list_user_fin($args) {
 	</tbody>
 </table>
 <?php 
-if(!wp_doing_ajax()){
-	_wnd_next_page($per_page, $object_count, 'pages');
-}else{
-	_wnd_ajax_next_page(__FUNCTION__, $args);
-}
+		if(!wp_doing_ajax()){
+			_wnd_next_page($posts_per_page, $object_count, 'pages');
+		}else{
+			_wnd_ajax_next_page(__FUNCTION__, $args);
+		}
+
+	// 没有内容
+	} else {
+
+		$no_more_text = $paged >= 2 ? '没有更多内容！' : '没有匹配的内容！';
+		echo '<div class="message is-primary"><div class="message-body">' . $no_more_text . '</div></div>';
+	}
 ?>
-<?php } else { ?>
-<div class="message is-primary"><div class="message-body">没有匹配的内容！</div></div>
-<?php }?>
 <?php
+// end function
 
 }
 

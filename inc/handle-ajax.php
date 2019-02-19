@@ -45,10 +45,10 @@ function wnd_ajax_action() {
 
 /**
  * @since 2019.1.12
- * 依赖于 wnd_ajax_axtion
+ * 依赖于 wnd_ajax_action
  * 响应函数必须以 _wnd_开头，形如：_wnd_handle，此类函数应不包含敏感操作，通常仅作为前端响应界面
  * 典型应用：弹出登录框，弹出表单等
- * Ajax 请求：@see /static/js/wndwp.js ： wnd_ajax_modal()、wnd_ajax_r()
+ * Ajax 请求：@see /static/js/wndwp.js ： wnd_ajax_modal()、wnd_ajax_embed()
  */
 function _wnd_ajax_r() {
 
