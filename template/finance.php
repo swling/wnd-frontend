@@ -134,15 +134,9 @@ function _wnd_list_user_fin($args) {
 		<tr>
 			<td class="is-narrow"><?php echo date('m-d:H:i', $object->time); ?></td>
 			<td class="is-narrow"><?php echo $object->value; ?></td>
-			<td><a href ="<?php if ($object->object_id) {
-				echo get_permalink($object->object_id);
-			} else {
-				echo '#';
-			}
-			?>" target="_blank"><?php echo $object->title; ?></a></td>
+			<td><a href ="<?php if ($object->object_id) echo get_permalink($object->object_id); else echo '#';?>" target="_blank"><?php echo $object->title; ?></a></td>
 			<td class="is-narrow">
-				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $object->ID; ?>&color=danger')">预览</a>
-				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $object->ID; ?>')">[管理]</a>
+				<a onclick="wnd_ajax_modal('object_status_form','<?php echo $object->ID; ?>')">[管理]</a>
 			</td>
 		</tr>
 	<?php }	unset($object); ?>

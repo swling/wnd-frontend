@@ -107,15 +107,15 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 		</tr>
 	</thead>
 	<tbody>
-		<?php while ($query->have_posts()): $query->the_post(); ?>
+		<?php while ($query->have_posts()): $query->the_post(); global $post;?>
 		<tr>
 			<td class="is-narrow"><?php the_time('m-d H:i');?></td>
-			<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php the_title();?></a></td>
-			<th class="is-narrow"><?php echo get_post_status(); ?></th>
+			<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title;?></a></td>
+			<th class="is-narrow"><?php echo $post->post_status; ?></th>
 			<td class="is-narrow">
-				<a onclick="wnd_ajax_modal('post_info','post_id=<?php the_ID();?>&color=<?php echo $color; ?>')">预览</a>
-				<?php if (current_user_can('edit_post', get_the_ID())) {?>
-				<a onclick="wnd_ajax_modal('post_status_form','<?php the_ID();?>')">[管理]</a>
+				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID;?>&color=<?php echo $color; ?>')">预览</a>
+				<?php if (current_user_can('edit_post', $post->ID)) {?>
+				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID;?>')">[管理]</a>
 				<?php }?>
 			</td>
 		</tr>
