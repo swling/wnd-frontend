@@ -19,7 +19,7 @@ function _wnd_post_form($args=array()){
 		'post_type' => 'post',
 		'is_free'	=> 1,
 		'has_excerpt' => 1,
-		'has_thumbnail' => 2,//0 无缩略图，1、wp原生缩略图，2，存储在wnd_meta字段
+		'has_thumbnail' => 0,//0 无缩略图，1、wp原生缩略图(存储在post meta _thumbnail_id 字段)，2，存储在wnd_meta _thumbnail_id字段
 		'thumbnail_size' => array ('width'=>150, 'height'=>150)
 	);
 	$args = wp_parse_args($args,$defaults);
@@ -162,11 +162,10 @@ echo '</div></div>'.PHP_EOL;
 	*/
 	/*wp原生缩略图*/
 	if($args['has_thumbnail'] == 1){
-		 _wnd_post_thumbnail_field($post_id, $args['thumbnail_size'], $is_wpthumbnail = 1);
+		_wnd_post_thumbnail_field($post_id, $args['thumbnail_size'], $is_wpthumbnail = 1);
 	
 	/*自定义缩略图*/ 
 	}elseif($args['has_thumbnail'] == 2){
-
 		_wnd_post_thumbnail_field($post_id, $args['thumbnail_size'], $is_wpthumbnail = 0);
 	}
 
