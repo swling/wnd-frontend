@@ -9,6 +9,10 @@ if (!defined('ABSPATH')) {
  */
 function _wnd_user_fin($args = array()) {
 
+	if(!is_user_logged_in()){
+		return;
+	}
+
 	// ajax请求类型
 	$ajax_type = $_POST['ajax_type'] ?? 'modal';
 	$user_id = get_current_user_id();
@@ -19,7 +23,7 @@ function _wnd_user_fin($args = array()) {
 		'posts_per_page' => get_option( 'posts_per_page')
 	);
 	$args = wp_parse_args($args, $defaults);
-	$type = $_REQUEST['type'] ?? $args['type'];
+	$type = $_REQUEST['tab'] ?? $args['type'];
 	$status = $_REQUEST['status'] ?? $args['status'];
 
 	$expense_is_active = $type == 'expense' ? 'class="is-active"' : '';
@@ -65,7 +69,7 @@ function _wnd_user_fin($args = array()) {
 				echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin\',\'type=recharge\');">充值记录</a></li>';
 			}
 		} else {
-			echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('type', 'expense',remove_query_arg('pages')) . '">消费记录</a></li>';
+			echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('tab', 'expense',remove_query_arg('pages')) . '">消费记录</a></li>';
 			echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('tab', 'recharge',remove_query_arg('pages')) . '">充值记录</a></li>';
 		}
 		?>
@@ -119,7 +123,7 @@ function _wnd_list_user_fin($args) {
 
 	if ($objects) {
 
-		?>
+?>
 <table class="table is-fullwidth is-hoverable is-striped">
 	<thead>
 		<tr>
