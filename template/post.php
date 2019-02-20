@@ -19,6 +19,8 @@ function _wnd_post_form($args=array()){
 		'post_type' => 'post',
 		'is_free'	=> 1,
 		'has_excerpt' => 1,
+		'has_thumbnail' => 2,//0 无缩略图，1、wp原生缩略图，2，存储在wnd_meta字段
+		'thumbnail_size' => array ('width'=>150, 'height'=>150)
 	);
 	$args = wp_parse_args($args,$defaults);
 	$post_id = $args['post_id'];
@@ -148,10 +150,26 @@ echo '</div></div>'.PHP_EOL;
 	</div>
 <?php } ?>
 
-<?php if($args['is_free']!=1 ) { //付费内容 
-		echo '<label class="label">付费内容</label>';
-		_wnd_paid_post_field($post_id);
+<?php 
+
+	if($args['is_free']!=1 ) { //付费内容 
+			echo '<label class="label">付费内容</label>';
+			_wnd_paid_post_field($post_id);
+		}
+	
+	/**
+	*@since 2019.02.20 缩略图
+	*/
+	/*wp原生缩略图*/
+	if($args['has_thumbnail'] == 1){
+		 _wnd_post_thumbnail_field($post_id, $args['thumbnail_size'], $is_wpthumbnail = 1);
+	
+	/*自定义缩略图*/ 
+	}elseif($args['has_thumbnail'] == 2){
+
+		_wnd_post_thumbnail_field($post_id, $args['thumbnail_size'], $is_wpthumbnail = 0);
 	}
+
 ?>
 <?php do_action( '_wnd_post_form', $post_id,$post_type,$post ); ?>
 
@@ -308,7 +326,7 @@ function _wnd_upload_field($args) {
 		'has_thumbnail'=> 1,
 		'post_parent' => 0,
 		'save_size'=>array('width'=>0,'height'=>0),
-		'thumb_size'=>array('width'=>200,'height'=>200),
+		'thumbnail_size'=>array('width'=>200,'height'=>200),
 		'default_thumbnail' => WNDWP_URL . '/static/images/default.jpg',
 	);
 	$args = wp_parse_args($args,$defaults);
@@ -341,7 +359,7 @@ function _wnd_upload_field($args) {
 	</div>
 	<?php if ($args['has_thumbnail'] == 1) { // 1、图片类型，缩略图 ?>
 	<div class="field">
-		<a onclick="wnd_click('input[data-id=\'<?php echo $args['id'];?>\']')"><img class="thumb" src="<?php echo $attachment_url; ?>" height="<?php echo $args['thumb_size']['height']?>" width="<?php echo $args['thumb_size']['width']?>" title="上传图像"></a>
+		<a onclick="wnd_click('input[data-id=\'<?php echo $args['id'];?>\']')"><img class="thumb" src="<?php echo $attachment_url; ?>" height="<?php echo $args['thumbnail_size']['height']?>" width="<?php echo $args['thumbnail_size']['width']?>" title="上传图像"></a>
 		<a class="delete" data-id="<?php echo $args['id'];?>" data-attachment-id="<?php echo $attachment_id;?>"></a>
 	</div>
 	<div class="file">
@@ -410,6 +428,23 @@ function _wnd_paid_post_field($post_parent){
 	</div>
 </div>
 <?php
+}
+
+/**
+*@since 2019.02.20 缩略图上传字段
+*/
+function _wnd_post_thumbnail_field($post_parent, $size = array('width'=>150, 'height'=>150), $is_wpthumbnail){
+
+	$meta_key = $is_wpthumbnail ? '_wpthumbnail_id' : '_thumbnail_id';
+    $args = array(
+        'id'=>'post-thumbnail-upload',
+        'meta_key' => $meta_key,
+        'post_parent' => $post_parent,
+        'thumbnail_size' => $size,
+        'save_size' => $size,
+    );
+    _wnd_upload_field($args);
+
 }
 
 /**

@@ -21,7 +21,7 @@ function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
 	}
 
 	//WordPress原生缩略图
-	if ($meta_key == 'wpthumbnail') {
+	if ($meta_key == '_wpthumbnail_id') {
 		set_post_thumbnail($post_parent, $attachment_id);
 	}
 	// 储存在文章字段

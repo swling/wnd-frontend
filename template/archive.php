@@ -135,7 +135,7 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 // 没有内容
 	else :
 		$no_more_text = ($args['paged'] >= 2) ? '没有更多内容！' : '没有匹配的内容！';
-		echo '<div class="message is-primary"><div class="message-body">' . $no_more_text . '</div></div>';
+		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
 	endif;
 
 	?>
@@ -211,7 +211,7 @@ function _wnd_list_objects($args = array(), $pages_key = 'pages', $color = 'is-p
 // 没有内容
 	else :
 		$no_more_text = ($paged >= 2) ? '没有更多内容！' : '没有匹配的内容！';
-		echo '<div class="message is-primary"><div class="message-body">' . $no_more_text . '</div></div>';
+		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
 	endif;
 	?>
 <?php

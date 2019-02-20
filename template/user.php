@@ -419,8 +419,8 @@ function _wnd_profile_form($args = array()) {
 		'meta_key' => 'avatar',
 		'post_parent' => 0,
 		'save_size' => array('width' => 200, 'height' => 200),
-		'thumb_size' => array('width' => 130, 'height' => 130),
-		'default_thumb' => WNDWP_URL . '/static/images/default.jpg',
+		'thumbnail_size' => array('width' => 130, 'height' => 130),
+		'default_thumbnail' => WNDWP_URL . '/static/images/default.jpg',
 	);
 	$args = wp_parse_args($args, $defaults);
 	_wnd_upload_field($args);

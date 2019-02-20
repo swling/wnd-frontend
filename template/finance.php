@@ -159,7 +159,7 @@ function _wnd_list_user_fin($args) {
 	} else {
 
 		$no_more_text = $paged >= 2 ? '没有更多内容！' : '没有匹配的内容！';
-		echo '<div class="message is-primary"><div class="message-body">' . $no_more_text . '</div></div>';
+		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
 	}
 ?>
 <?php
