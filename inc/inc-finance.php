@@ -6,23 +6,27 @@ if (!defined('ABSPATH')) {
 
 /**
  *@since 2019.01.30
+ *金额：post_content
+ *关联：post_parent
+ *状态：post_status
+ *类型：post_type (recharge / expense)
  *用户通过第三方金融平台充值付款到本站
- *创建时：status=>pending，验证成功后：status=>success
+ *创建时：post_status=>pending，验证成功后：post_status=>success
  *@return int object ID
  */
 function wnd_insert_recharge($user_id, $money, $object_id = 0, $status = 'pending', $title = '') {
 
-	$object_arr = array(
-		'user_id' => $user_id,
-		'object_id' => $object_id,
-		'value' => $money,
-		'status' => $status,
-		'title' => $title,
-		'type' => 'recharge',
+	$post_arr = array(
+		'post_author' => $user_id,
+		'post_parent' => $object_id,
+		'post_content' => $money,
+		'post_status' => $status,
+		'post_title' => $title,
+		'post_type' => 'recharge',
 	);
 
 	// 写入object数据库
-	$recharge_id = wnd_insert_object($object_arr);
+	$recharge_id = wp_insert_post($post_arr);
 
 	if ($recharge_id and $status == 'success') {
 		wnd_inc_user_money($user_id, $money);
@@ -38,26 +42,26 @@ function wnd_insert_recharge($user_id, $money, $object_id = 0, $status = 'pendin
  */
 function wnd_update_recharge($ID, $status, $title = '') {
 
-	$object = wnd_get_object($ID);
-	if ($object->type != 'recharge') {
+	$post = get_post($ID);
+	if ($post->post_type != 'recharge') {
 		return;
 	}
-	$before_status = $object->status;
-	$money = $object->value;
+	$before_status = $post->post_status;
+	$money = $post->post_content;
 
-	$object_arr = array(
+	$post_arr = array(
 		'ID' => $ID,
-		'status' => $status,
+		'post_status' => $status,
 	);
 	if ($title) {
-		$object_arr['title'] = $title;
+		$post_arr['title'] = $title;
 	}
 
-	$recharge_id = wnd_update_object($object_arr);
+	$recharge_id = wp_update_post($post_arr);
 
 	// 当充值订单，从pending更新到 success，表示充值完成，更新用户余额
 	if ($recharge_id and $before_status == 'pending' and $status == 'success') {
-		wnd_inc_user_money($user_id, $money);
+		wnd_inc_user_money($post->post_author, $money);
 	}
 
 	return $recharge_id;
@@ -91,37 +95,37 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 
 	$type = !empty($_POST) ? '异步' : '同步';
 
-	$object = wnd_get_object($out_trade_no);
-	if (!$object) {
+	$post = get_post($out_trade_no);
+	if (!$post) {
 		return array('status' => 0, 'msg' => 'ID无效！');
 	}
 
 	//如果订单金额匹配
-	if ($object->value == $amount) {
+	if ($post->post_content == $amount) {
 		return array('status' => 0, 'msg' => '金额不匹配！');
 	}
 
 	//订单已经更新过
-	if ($object->status == 'success') {
+	if ($post->post_status == 'success') {
 		return array('status' => 2, 'msg' => '支付已完成！');
 	}
 
 	// 订单支付状态检查
-	if ($object->status == 'pending') {
+	if ($post->post_status == 'pending') {
 
 		// 订单
-		if ($object->object_id) {
-			$update = wnd_update_expense($ID, 'success', $object->title . ' - ' . $type);
+		if ($post->post_parent) {
+			$update = wnd_update_expense($post->ID, 'success', $post->post_title . ' - ' . $type);
 
 			//充值
 		} else {
-			$update = wnd_update_recharge($object->ID, 'success', $type);
+			$update = wnd_update_recharge($post->ID, 'success', '充值 - '.$type);
 		}
 
 		//  写入用户账户信息
 		if ($update) {
-			if ($object->object_id) {
-				return array('status' => 2, 'msg' => $object->object_id);
+			if ($post->post_parent) {
+				return array('status' => 2, 'msg' => $post->post_parent);
 			} else {
 				return array('status' => 1, 'msg' => '余额充值成功！');
 			}
@@ -142,15 +146,15 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
  */
 function wnd_insert_expense($user_id, $money, $object_id = 0, $status = 'success', $title = '') {
 
-	$object_arr = array(
-		'user_id' => $user_id,
-		'value' => $money,
-		'object_id' => $object_id,
-		'title' => $title,
-		'status' => $status,
-		'type' => 'expense',
+	$post_arr = array(
+		'post_author' => $user_id,
+		'post_content' => $money,
+		'post_parent' => $object_id,
+		'post_title' => $title,
+		'post_status' => $status,
+		'post_type' => 'expense',
 	);
-	$expense_id = wnd_insert_object($object_arr);
+	$expense_id = wp_insert_post($post_arr);
 
 	/**
 	 *@since 2019.02.17
@@ -172,22 +176,22 @@ function wnd_insert_expense($user_id, $money, $object_id = 0, $status = 'success
  */
 function wnd_update_expense($ID, $status, $title = '') {
 
-	$object = wnd_get_object($ID);
-	if ($object->type != 'expense') {
+	$post = get_post($ID);
+	if ($post->post_type != 'expense') {
 		return;
 	}
-	$before_status = $object->status;
-	$money = $object->value;
+	$before_status = $post->post_status;
+	$money = $post->post_content;
 
-	$object_arr = array(
+	$post_arr = array(
 		'ID' => $ID,
-		'status' => $status,
+		'post_status' => $status,
 	);
 	if ($title) {
-		$object_arr['title'] = $title;
+		$post_arr['post_title'] = $title;
 	}
 
-	$expense_id = wnd_update_object($object_arr);
+	$expense_id = wp_update_post($post_arr);
 
 	/**
 	 *@since 2019.02.17
@@ -209,13 +213,19 @@ function wnd_update_expense($ID, $status, $title = '') {
  **/
 function wnd_user_has_paid($user_id, $object_id) {
 
-	global $wpdb;
-	$objects = $wpdb->get_var($wpdb->prepare("
-		SELECT ID FROM $wpdb->wnd_objects WHERE user_id = %d AND object_id = %d AND type = 'expense' AND status = 'success' LIMIT 1 ",
-		$user_id,
-		$object_id
-	));
-	return $objects;
+	$args = array(
+		'posts_per_page' => 1,
+		'post_type' => 'expense',
+		'post_parent' => $object_id,
+		'author' => $user_id,
+		'post_status' => 'success',
+	);
+
+	if (empty(get_posts($args))) {
+		return false;
+	} else {
+		return true;
+	}
 
 }
 
@@ -253,8 +263,8 @@ function wnd_get_user_expense($user_id) {
 }
 
 /**
-*@since 2019.02.18 获取用户佣金
-*/
+ *@since 2019.02.18 获取用户佣金
+ */
 function wnd_get_user_commission($user_id) {
 
 	$commission = wnd_get_user_meta($user_id, 'commission');
@@ -311,7 +321,7 @@ function wnd_fin_stats($money = 0) {
 	$month = date('m', time());
 	$slug = $year . '-' . $month . '-' . $post_type;
 
-	$stats_post = wnd_get_post_by_slug($slug, $post_type);
+	$stats_post = wnd_get_post_by_slug($slug, $post_type, 'private');
 
 	// 更新统计
 	if ($stats_post) {

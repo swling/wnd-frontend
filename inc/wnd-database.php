@@ -56,27 +56,4 @@ function wnd_create_table() {
         ) $charset_collate;";
 	dbDelta($create_terms_sql);
 
-	/**
-	 * @since 2019.02.10 objects公共数据表
-	 */
-	$create_objects_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_objects (
-        ID bigint(20) NOT NULL auto_increment,
-        object_id bigint(20) NOT NULL,
-        user_id bigint(20) NOT NULL,
-        content text NOT NULL,
-        title varchar(255) NOT NULL,
-        value varchar(255) NOT NULL,
-        type varchar(16) NOT NULL,
-        status varchar(16) NOT NULL,
-        time bigint(20) NOT NULL,
-        parent bigint(20) NOT NULL,
-        PRIMARY KEY (ID),
-        KEY object_id(object_id),
-        KEY user_id(user_id),
-        KEY type_status_time(type,status,time,ID),
-        KEY parent(parent)
-
-        ) $charset_collate;";
-	dbDelta($create_objects_sql);
-
 }

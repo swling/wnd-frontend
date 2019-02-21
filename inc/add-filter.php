@@ -164,7 +164,7 @@ function wnd_filter_the_content($content) {
 
 			$button_text = '您发布的下载文件';
 
-		} elseif ($price) {
+		} elseif ($price > 0) {
 
 			$button_text = '付费下载 ¥' . $price;
 

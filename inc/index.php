@@ -12,7 +12,6 @@ require WNDWP_PATH . 'inc/wnd-options.php'; //配置选项
 require WNDWP_PATH . 'inc/wnd-database.php'; //数据库
 
 require WNDWP_PATH . 'inc/inc-verify.php'; //验证模块
-require WNDWP_PATH . 'inc/inc-object.php'; //通用对象
 require WNDWP_PATH . 'inc/inc-term.php'; //分类、标签
 require WNDWP_PATH . 'inc/inc-finance.php'; //财务
 require WNDWP_PATH . 'inc/inc-recharge-card.php'; //充值卡

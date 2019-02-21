@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
  */
 function _wnd_user_fin($args = array()) {
 
-	if(!is_user_logged_in()){
+	if (!is_user_logged_in()) {
 		return;
 	}
 
@@ -18,65 +18,70 @@ function _wnd_user_fin($args = array()) {
 	$user_id = get_current_user_id();
 
 	$defaults = array(
-		'type' => 'expense',
-		'status' => '',
-		'posts_per_page' => get_option( 'posts_per_page')
+		'post_type' => 'expense',
+		'post_status' => 'any',
+		'posts_per_page' => get_option('posts_per_page'),
 	);
 	$args = wp_parse_args($args, $defaults);
-	$type = $_REQUEST['tab'] ?? $args['type'];
-	$status = $_REQUEST['status'] ?? $args['status'];
+	$type = $_REQUEST['tab'] ?? $args['post_type'];
+	$status = $_REQUEST['status'] ?? $args['post_status'];
 
 	$expense_is_active = $type == 'expense' ? 'class="is-active"' : '';
 	$recharge_is_active = $type == 'recharge' ? 'class="is-active"' : '';
-?>
+	?>
 <div id="user-fin">
 	<nav class="level">
 	  <div class="level-item has-text-centered">
 	    <div>
 	      <p class="heading">余额</p>
-	      <p class="title"><?php echo wnd_get_user_money($user_id);?></p>
+	      <p class="title"><?php echo wnd_get_user_money($user_id); ?></p>
 	    </div>
 	  </div>
 	  <div class="level-item has-text-centered">
 	    <div>
 	      <p class="heading">消费</p>
-	      <p class="title"><?php echo wnd_get_user_expense($user_id);?></p>
+	      <p class="title"><?php echo wnd_get_user_expense($user_id); ?></p>
 	    </div>
 	  </div>
 	  <div class="level-item has-text-centered">
 	    <div>
 	      <p class="heading">佣金</p>
-	      <p class="title"><?php echo wnd_get_user_commission($user_id);?></p>
+	      <p class="title"><?php echo wnd_get_user_commission($user_id); ?></p>
 	    </div>
 	  </div>
 	</nav>
 
 	<div class="level">
 		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal('recharge_form')">充值</button>
+			<button class="button" onclick="wnd_ajax_modal('recharge_form')">在线充值</button>
 		</div>
+		<div class="level-item">
+			<button class="button" onclick="wnd_ajax_modal('recharge_card_form')">充值卡</button>
+		</div>		
 	</div>
 
 	<div class="tabs">
 		<ul>
-		<?php		
+		<?php
 		if (wp_doing_ajax()) {
 			if ($ajax_type == 'modal') {
-				echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin\',\'type=expense\');">消费记录</a></li>';
-				echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin\',\'type=recharge\');">充值记录</a></li>';
+				echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin\',\'post_type=expense\');">消费记录</a></li>';
+				echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin\',\'post_type=recharge\');">充值记录</a></li>';
 			} else {
-				echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin\',\'type=expense\');">消费记录</a></li>';
-				echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin\',\'type=recharge\');">充值记录</a></li>';
+				echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin\',\'post_type=expense\');">消费记录</a></li>';
+				echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin\',\'post_type=recharge\');">充值记录</a></li>';
 			}
 		} else {
-			echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('tab', 'expense',remove_query_arg('pages')) . '">消费记录</a></li>';
-			echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('tab', 'recharge',remove_query_arg('pages')) . '">充值记录</a></li>';
+			echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('tab', 'expense', remove_query_arg('pages')) . '">消费记录</a></li>';
+			echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('tab', 'recharge', remove_query_arg('pages')) . '">充值记录</a></li>';
 		}
 		?>
 		</ul>
 	</div>
 	<div id="user-fin-list">
-	<?php _wnd_list_user_fin($args);?>
+	<?php
+	_wnd_list_user_fin($args);
+	?>
 	</div>
 </div>
 <?php
@@ -84,81 +89,73 @@ function _wnd_user_fin($args = array()) {
 }
 
 /**
- *@since 2019.02.17
- *以表格形式输出用户财务信息列表
- * 列表必须放在 #user-fin-list 容器中，否则ajax环境中无法实现翻页
+ *@since 2019.02.15
+ *以表格形式输出WordPress文章列表
+ *$pages_key = 'pages', $color = 'is-primary' 仅在非ajax状态下有效
  */
-function _wnd_list_user_fin($args) {
+function _wnd_list_user_fin($args = array()) {
 
-	$user_id = get_current_user_id();
+	// $paged = $_REQUEST[$pages_key] ?? $args['paged'] ?? 1;
 	$defaults = array(
-		'type' => 'expense',
-		'status' => '',
-		'posts_per_page' => get_option( 'posts_per_page'),
-		'paged'	=> 1
+		'posts_per_page' => get_option('posts_per_page'),
+		'paged' => 1,
+		'post_type' => 'post',
+		'post_status' => 'publish',
+		'no_found_rows' => true, //$query->max_num_pages;
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	$type = $args['type'] =='expense' ? 'expense' : 'recharge' ;//确保只有两种类型
-	$status = $args['status'];
+	// 优先参数
+	$args['paged'] = $_REQUEST[$pages_key] ?? $args['paged'];
+	$args['post_author'] = get_current_user_id();
 
-	// 分页
-	$paged = $_GET['pages'] ?? $args['paged'];
-	$posts_per_page = $args['posts_per_page'];
-	$offset = $posts_per_page * ($paged - 1);
+	$query = new WP_Query($args);
 
-	global $wpdb;
-	if ($status) {
-		$objects = $wpdb->get_results("
-		SELECT * FROM $wpdb->wnd_objects WHERE user_id = {$user_id} AND type = '{$type}' and status = '{$status}' ORDER BY time DESC LIMIT {$offset},{$posts_per_page}",
-			OBJECT
-		);
-	} else {
-		$objects = $wpdb->get_results("
-		SELECT * FROM $wpdb->wnd_objects WHERE user_id = {$user_id} AND type = '{$type}' ORDER BY time DESC LIMIT {$offset},{$posts_per_page}",
-			OBJECT
-		);
-	}
-	$object_count = count($objects);
+	if ($query->have_posts()):
 
-	if ($objects) {
-
-?>
+	?>
 <table class="table is-fullwidth is-hoverable is-striped">
 	<thead>
 		<tr>
 			<th class="is-narrow"><abbr title="Position">日期</abbr></th>
-			<th class="is-narrow">金额</th>
-			<th>标题</th>
+			<th>金额</th>
+			<th>详情</th>
+			<th class="is-narrow">状态</th>
 			<th class="is-narrow">操作</th>
 		</tr>
 	</thead>
 	<tbody>
-	<?php foreach ($objects as $object) {?>
-		<tr>
-			<td class="is-narrow"><?php echo date('m-d:H:i', $object->time); ?></td>
-			<td class="is-narrow"><?php echo $object->value; ?></td>
-			<td><a href ="<?php if ($object->object_id) echo get_permalink($object->object_id); else echo '#';?>" target="_blank"><?php echo $object->title; ?></a></td>
-			<td class="is-narrow">
-				<a onclick="wnd_ajax_modal('object_status_form','<?php echo $object->ID; ?>')">[管理]</a>
-			</td>
-		</tr>
-	<?php }	unset($object); ?>
+		<?php while ($query->have_posts()): $query->the_post();global $post;?>
+			<tr>
+				<td class="is-narrow"><?php the_time('m-d H:i');?></td>
+				<td><?php echo $post->post_content; ?></td>
+				<td><a href="<?php echo the_permalink($post->post_parent); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
+				<th class="is-narrow"><?php echo $post->post_status; ?></th>
+				<td class="is-narrow">
+					<?php if (current_user_can('edit_post', $post->ID)) {?>
+					<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
+					<?php }?>
+				</td>
+			</tr>
+			<?php endwhile;?>
 	</tbody>
+	<?php wp_reset_postdata(); //重置查询?>
 </table>
-<?php 
-		if(!wp_doing_ajax()){
-			_wnd_next_page($posts_per_page, $object_count, 'pages');
-		}else{
-			_wnd_ajax_next_page(__FUNCTION__, $args);
-		}
+<?php
+
+	// 分页
+	if (!wp_doing_ajax()) {
+		_wnd_next_page($posts_per_page, $query->post_count, $pages_key);
+	} else {
+		_wnd_ajax_next_page(__FUNCTION__, $args);
+	}
 
 	// 没有内容
-	} else {
-
-		$no_more_text = $paged >= 2 ? '没有更多内容！' : '没有匹配的内容！';
+	else :
+		$no_more_text = ($args['paged'] >= 2) ? '没有更多内容！' : '没有匹配的内容！';
 		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
-	}
+	endif;
+
 ?>
 <?php
 // end function
@@ -244,6 +241,47 @@ function _wnd_recharge_form() {
 	<?php wp_nonce_field('wnd_payment');?>
 	<div class="field is-grouped is-grouped-centered">
 		<button type="submit" name="submit" class="button">确认充值</button>
+	</div>
+</form>
+<?php
+
+}
+
+/**
+ *@since 2019.02.201
+ *充值卡验证
+ */
+function _wnd_recharge_card_form() {
+
+	?>
+<form id="verity-recharge-card-form" action="" method="post" onsubmit="return false">
+
+	<div class="field">
+		<div class="ajax-msg"></div>
+	</div>
+
+	<div class="field is-horizontal">
+		<div class="field-body">
+			<div class="field">
+				<label class="label">卡号<span class="required">*</span></label>
+				<div class="control">
+					<input type="text" class="input" name="card" required="required" placeholder="充值卡卡号" />
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">密码<span class="required">*</span></label>
+				<div class="control">
+					<input type="text" class="input" name="password" placeholder="充值卡密码" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<?php wp_nonce_field('wnd_ajax_verity_recharge_card', '_ajax_nonce');?>
+	<input type="hidden" name="action" value="wnd_action">
+	<input type="hidden" name="action_name" value="wnd_ajax_verity_recharge_card">
+	<div class="field is-grouped is-grouped-centered">
+		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#verity-recharge-card-form')">验证并充值</button>
 	</div>
 </form>
 <?php
