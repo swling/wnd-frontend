@@ -27,7 +27,7 @@ function _wnd_sms_field($type = 'verify', $template = '') {
 				<span class="icon is-left"><i class="fa fa-comment"></i></span>
 			</div>
 			<div class="control">
-				<button type="button" class="send-code button is-primary" data-type="<?php echo $type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_send_code') ?>">获取验证码</button>
+				<button type="button" class="send-code button is-primary" data-type="<?php echo $type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_ajax_send_code') ?>">获取验证码</button>
 			</div>
 		</div>
 	</div>
@@ -60,7 +60,7 @@ if ($type != 'reg' or wnd_get_option('wndwp', 'wnd_sms_enable') != 1) {
 		<span class="icon is-left"><i class="fa fa-key"></i></span>
 	</div>
 	<div class="control">
-		<button type="button" class="button is-primary send-code" data-type="<?php echo $type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_send_code') ?>">发送验证码</button>
+		<button type="button" class="button is-primary send-code" data-type="<?php echo $type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_ajax_send_code') ?>">发送验证码</button>
 	</div>
 </div>
 <?php }?>

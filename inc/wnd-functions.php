@@ -85,15 +85,15 @@ function wnd_is_name_repeated($display_name, $exclude_id = 0) {
  *@since 2019.02.17 根据post name 获取post
  *@return post object or null
  */
-function wnd_get_post_by_slug($post_name, $post_type = 'post') {
+function wnd_get_post_by_slug($post_name, $post_type = 'post', $post_status = 'publish') {
 
 	global $wpdb;
 	$post_name = urlencode($post_name);
-	$post = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s LIMIT 1", $post_name, $post_type));
+	$post = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND post_status = %s LIMIT 1", $post_name, $post_type, $post_status));
 	if ($post) {
 		return $post[0];
 	}
-	return null;
+	return false;
 
 }
 

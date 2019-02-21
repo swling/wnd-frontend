@@ -587,7 +587,7 @@ jQuery(document).ready(function($) {
 			url: ajaxurl,
 			data: {
 				action: 'wnd_action',
-				action_name: "wnd_send_code",
+				action_name: "wnd_ajax_send_code",
 				email: _user_user_email,
 				phone: phone,
 				type: type,
