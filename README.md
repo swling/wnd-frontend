@@ -161,19 +161,31 @@ do_action('wnd_update_object', $object_id);
 
 	<!-- php后台返回msg 不带标点 js返回msg带标点 -->
 
-#支付模块：
-自定义:objects数据表
-	现金充值type：payment
-	站内消费type：expense
+#充值、消费(自定义文章类型)
+金额：post_content
+关联：post_parent
+标题：post_title
+状态：post_status: pengding / success
+类型：post_type：recharge / expense
+
+#充值卡 (自定义文章类型)
+post_type => recharge-card
+post_name => $recharge_card['card'];
+post_password =>  $recharge_card['password'];
+post_content => $recharge_card['value']
+post_status => publish（正常）private(已用)
 
 #付费内容
 必须设置价格
 优先检测文件，如果设置了付费文件，则文章内容将全文输出
+
 ##价格：
 文章字段设置 wp post meta: price
+
 ###内容：
 用more标签分割免费内容和付费内容
 如不含more标签，则全文付费后可见
+
 ##下载
 文章字段：file 存储上传附件的id
 
