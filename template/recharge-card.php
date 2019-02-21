@@ -33,10 +33,8 @@ function _wnd_recharge_card_panel($args = array(), $pages_key = 'pages', $color 
 	$publish_is_active = $args['post_status'] == 'publish' ? 'class="is-active"' : '';
 	$private_is_active = $args['post_status'] == 'private' ? 'class="is-active"' : '';	
 
-	// 最终查询参数
-	$query = new WP_Query($args);
 ?>
-<div id="list-recharge-card">
+<div id="recharge-card-panel">
 	<?php _wnd_create_recharge_card_form(); ?>
 	<div class="tabs">
 		<ul>
@@ -66,8 +64,22 @@ function _wnd_recharge_card_panel($args = array(), $pages_key = 'pages', $color 
 		?>
 		</ul>
 	</div>
+	<div id="list-recharge-card">
+		<?php _wnd_list_recharge_card($args); ?>
+	</div>
+</div>
 <?php
+// end function
 
+}
+
+/**
+*@since 2019.02.21
+*充值卡列表
+*/
+function _wnd_list_recharge_card($args){
+
+	$query = new WP_Query($args);
 	if ($query->have_posts()):
 
 ?>
@@ -115,10 +127,9 @@ function _wnd_recharge_card_panel($args = array(), $pages_key = 'pages', $color 
 		_wnd_ajax_next_page(__FUNCTION__, $args);
 	}
 ?>
-</div>
 <?php
-// end function
 
+//end function 
 }
 
 /**
