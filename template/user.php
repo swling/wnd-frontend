@@ -26,6 +26,9 @@ function _wnd_user_center($args = array()) {
 	$action = $_GET['action'] ?? $args['action'];
 	$tab = $_GET['tab'] ?? $args['tab'];
 
+	// ajax请求类型
+	$ajax_type = $_POST['ajax_type'] ?? 'modal';
+
 	echo '<div id="user-center">';
 
 	//1、 未登录用户面板
@@ -34,24 +37,94 @@ function _wnd_user_center($args = array()) {
 		switch ($action) {
 
 		case 'reg':
+
 			_wnd_reg_form();
+
+			echo '<div class="user-form"><div class="message is-primary"><div class="message-body">';
+			if (wp_doing_ajax()) {
+				//是否在ajax中
+				if ($ajax_type == 'modal') {
+					echo '已有账户？<a onclick="wnd_ajax_modal(\'user_center\',\'action=login\');">登录</a>';
+				} else {
+					echo '已有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'user_center\',\'action=login\');">登录</a>';
+				}
+			} else {
+				echo '已有账户？<a href="' . add_query_arg('action', 'login') . '">登录</a>';
+			}
+			echo '</div></div></div>';
+
 			break;
 
-		case 'login':
+		default:case 'login':
+
 			_wnd_login_form();
+
+			echo '<div class="user-form"><div class="message is-primary"><div class="message-body">';
+			if (wp_doing_ajax()) {
+				if ($ajax_type == 'modal') {
+					echo '没有账户？<a onclick="wnd_ajax_modal(\'user_center\',\'action=reg\');">立即注册</a> | ';
+					echo '<a onclick="wnd_ajax_modal(\'user_center\',\'action=lostpassword\');">忘记密码？</a>';
+				} else {
+					echo '没有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'user_center\',\'action=reg\');">立即注册</a> | ';
+					echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'user_center\',\'action=lostpassword\');">忘记密码</a>';
+				}
+			} else {
+				echo '没有账户？<a href="' . add_query_arg('action', 'reg') . '">立即注册</a> | ';
+				echo '<a href="' . add_query_arg('action', 'lostpassword') . '">忘记密码？</a>';
+			}
+			echo '</div></div></div>';
+
 			break;
 
 		case 'lostpassword':
-			$type = $_GET['type'] ?? null;
-			if ($type == 'sms') {
-				_wnd_lostpassword_form('sms');
-			} else {
-				_wnd_lostpassword_form('email');
-			}
-			break;
 
-		default:
-			_wnd_login_form();
+			$type = $_GET['type'] ?? $args['type'] ?? 'email';
+
+			if ($type == 'sms') {
+
+				_wnd_lostpassword_form('sms');
+
+				echo '<div class="user-form"><div class="message is-primary"><div class="message-body">';
+				if (wp_doing_ajax()) {
+					if ($ajax_type == 'modal') {
+						echo '<a onclick="wnd_ajax_modal(\'user_center\',\'action=lostpassword&type=email\');">邮箱验证找回</a> | ';
+						echo '<a onclick="wnd_ajax_modal(\'user_center\',\'action=login\');">登录</a>';
+					} else {
+						echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'user_center\',\'action=lostpassword&type=email\');">邮箱验证找回</a> | ';
+						echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'user_center\',\'action=login\');">登录</a>';
+					}
+				} else {
+					echo '<a href="' . add_query_arg('type', 'email') . '">邮箱验证找回</a> | ';
+					echo '<a href="' . add_query_arg('action', 'login') . '">登录</a>';
+				}
+				echo '</div></div></div>';
+
+			} else {
+
+				_wnd_lostpassword_form('email');
+
+				echo '<div class="user-form"><div class="message is-primary"><div class="message-body">';
+				if (wp_doing_ajax()) {
+					if ($ajax_type == 'modal') {
+						if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
+							echo '<a onclick="wnd_ajax_modal(\'user_center\',\'action=lostpassword&type=sms\');">手机验证找回</a> | ';
+						}
+						echo '<a onclick="wnd_ajax_modal(\'user_center\',\'action=login\');">登录</a>';
+					} else {
+						if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
+							echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'user_center\',\'action=lostpassword&type=sms\');">手机验证找回</a> | ';
+						}
+						echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'user_center\',\'action=login\');">登录</a>';
+					}
+				} else {
+					if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
+						echo '<a href="' . add_query_arg('type', 'email') . '">手机验证找回</a> | ';
+					}
+					echo '<a href="' . add_query_arg('action', 'login') . '">登录</a>';
+				}
+				echo '</div></div></div>';
+			}
+
 			break;
 
 		}
@@ -61,16 +134,46 @@ function _wnd_user_center($args = array()) {
 
 		switch ($tab) {
 
-		case 'profile':
+		case 'profile':default:
+
+			echo '<div class="tabs"><ul class="tab">';
+			if (wp_doing_ajax()) {
+				if ($ajax_type == 'modal') {
+					echo '<li class="is-active"><a onclick="wnd_ajax_modal(\'user_center\',\'tab=profile\');">资料</a></li>';
+					echo '<li><a onclick="wnd_ajax_modal(\'user_center\',\'tab=account\');">账户</a></li>';
+				} else {
+					echo '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-center\',\'user_center\',\'tab=profile\');">资料</a></li>';
+					echo '<li><a onclick="wnd_ajax_embed(\'#user-center\',\'user_center\',\'tab=account\');">账户</a></li>';
+				}
+			} else {
+				echo '<li class="is-active"><a href="' . add_query_arg('tab', 'profile') . '">资料</a></li>';
+				echo '<li><a href="' . add_query_arg('tab', 'account') . '">账户</a></li>';
+			}
+			echo '</ul></div>';
+
 			_wnd_profile_form();
+
 			break;
 
 		case 'account':
-			_wnd_account_form();
-			break;
 
-		default:
-			_wnd_profile_form();
+			echo '<div class="tabs"><ul class="tab">';
+			if (wp_doing_ajax()) {
+				if ($ajax_type == 'modal') {
+					echo '<li><a onclick="wnd_ajax_modal(\'user_center\',\'tab=profile\');">资料</a></li>';
+					echo '<li class="is-active"><a onclick="wnd_ajax_modal(\'user_center\',\'tab=account\');">账户</a></li>';
+				} else {
+					echo '<li><a onclick="wnd_ajax_embed(\'#user-center\',\'user_center\',\'tab=profile\');">资料</a></li>';
+					echo '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-center\',\'user_center\',\'tab=account\');">账户</a></li>';
+				}
+			} else {
+				echo '<li><a href="' . add_query_arg('tab', 'profile') . '">资料</a></li>';
+				echo '<li class="is-active"><a href="' . add_query_arg('tab', 'account') . '">账户</a></li>';
+			}
+			echo '</ul></div>';
+
+			_wnd_account_form();
+
 			break;
 
 		}
@@ -93,9 +196,7 @@ function _wnd_login_form() {
 	// 获取来源地址
 	$redirect_to = $_SERVER['HTTP_REFERER'] ?? home_url();
 
-	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
-	?>
+?>
 <form id="user-login" class="user-form" action="" method="post" onsubmit="return false">
 	<div class="field is-grouped is-grouped-centered content">
 		<h3><span class="icon"><i class="fa fa-user"></i></span>登录</h3>
@@ -129,24 +230,6 @@ function _wnd_login_form() {
 	<div class="field is-grouped is-grouped-centered">
 		<button class="button" name="submit" onclick="wnd_ajax_submit('#user-login')">登录</button>
 	</div>
-	<div class="field">
-		<div class="message is-primary">
-			<div class="message-body">
-	<?php if (wp_doing_ajax()) {
-		if ($ajax_type == 'modal') {
-			echo '没有账户？<a onclick="wnd_ajax_modal(\'reg_form\');">立即注册</a> | ';
-			echo '<a onclick="wnd_ajax_modal(\'lostpassword_form\');">忘记密码？</a>';
-		} else {
-			echo '没有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'reg_form\');">立即注册</a> | ';
-			echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'lostpassword_form\');">忘记密码</a>';
-		}
-	} else {
-		echo '没有账户？<a href="' . add_query_arg('action', 'reg') . '">立即注册</a> | ';
-		echo '<a href="' . add_query_arg('action', 'lostpassword') . '">忘记密码？</a>';
-	}?>
-			</div>
-		</div>
-	</div>
 </form>
 <?php
 
@@ -166,10 +249,7 @@ function _wnd_reg_form() {
 		return;
 	}
 
-	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
-
-	?>
+?>
 <form id="user-reg" class="user-form" action="" method="post" onsubmit="return false">
 	<div class="field is-grouped is-grouped-centered content">
 		<h3 class="text-centered"><span class="icon"><i class="fa fa-user"></i></span>注册</h3>
@@ -217,22 +297,6 @@ function _wnd_reg_form() {
 	<div class="field is-grouped is-grouped-centered">
 		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#user-reg')">注册</button>
 	</div>
-	<div class="field">
-		<div class="message is-primary">
-			<div class="message-body">
-	<?php if (wp_doing_ajax()) {
-		//是否在ajax中
-		if ($ajax_type == 'modal') {
-			echo '已有账户？<a onclick="wnd_ajax_modal(\'login_form\');">登录</a>';
-		} else {
-			echo '已有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'login_form\');">登录</a>';
-		}
-	} else {
-		echo '已有账户？<a href="' . add_query_arg('action', 'login') . '">登录</a>';
-	}?>
-			</div>
-		</div>
-	</div>
 </form>
 <script>
 </script>
@@ -245,16 +309,13 @@ function _wnd_reg_form() {
  */
 function _wnd_lostpassword_form($type = 'email') {
 
-	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
-
 	if ($type == 'sms') {
 		//1、验证短信重置密码
 		if (wnd_get_option('wndwp', 'wnd_sms_enable') != 1) {
 			echo '<script type="text/javascript">wnd_alert_msg(\'短信验证功能未启用！\')</script>';
 			return;
 		}
-		?>
+?>
 <form id="sms-reset-pass" class="user-form" action="" method="post" onsubmit="return false">
 	<div class="field content">
 		<h3><span class="icon"><i class="fa fa-phone"></i></span>手机验证</h3>
@@ -286,24 +347,6 @@ function _wnd_lostpassword_form($type = 'email') {
 	<input type="hidden" name="action_name" value="wnd_reset_password">
 	<div class="field is-grouped is-grouped-centered">
 		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#sms-reset-pass')">重置密码</button>
-	</div>
-	<div class="field">
-		<div class="message is-primary">
-			<div class="message-body">
-		<?php if (wp_doing_ajax()) {
-			if ($ajax_type == 'modal') {
-				echo '<a onclick="wnd_ajax_modal(\'lostpassword_form\');">邮箱验证找回</a> | ';
-				echo '<a onclick="wnd_ajax_modal(\'login_form\');">登录</a>';
-			} else {
-				echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'lostpassword_form\');">邮箱验证找回</a> | ';
-				echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'login_form\');">马上登陆</a>';
-			}
-		} else {
-			echo '<a href="' . add_query_arg('type', 'email') . '">邮箱验证找回</a> | ';
-			echo '<a href="' . add_query_arg('action', 'login') . '">登录</a>';
-		}?>
-			</div>
-		</div>
 	</div>
 </form>
 <?php } else {
@@ -340,30 +383,6 @@ function _wnd_lostpassword_form($type = 'email') {
 	<div class="field is-grouped is-grouped-centered">
 		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#email-reset-pass')">重置密码</button>
 	</div>
-	<div class="field">
-		<div class="message is-primary">
-			<div class="message-body">
-		<?php if (wp_doing_ajax()) {
-			if ($ajax_type == 'modal') {
-				if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
-					echo '<a onclick="wnd_ajax_modal(\'lostpassword_form\',\'sms\');">手机验证找回</a> | ';
-				}
-				echo '<a onclick="wnd_ajax_modal(\'login_form\');">马上登录</a>';
-			} else {
-				if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
-					echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'lostpassword_form\',\'sms\');">手机验证找回</a> | ';
-				}
-				echo '<a onclick="wnd_ajax_embed(\'#user-center\',\'login_form\');">登录</a>';
-			}
-		} else {
-			if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
-				echo '<a href="' . add_query_arg('type', 'sms') . '">手机验证找回</a> | ';
-			}
-			echo '<a href="' . add_query_arg('action', 'login') . '">登录</a>';
-		}?>
-			</div>
-		</div>
-	</div>
 </form>
 <?php }?>
 <?php
@@ -385,26 +404,7 @@ function _wnd_profile_form($args = array()) {
 	}
 	$user = wp_get_current_user();
 
-	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
-
-	?>
-<div class="tabs">
-	<ul class="tab">
-	<?php if (wp_doing_ajax()) {
-		if ($ajax_type == 'modal') {
-			echo '<li class="is-active"><a onclick="wnd_ajax_modal(\'profile_form\');">资料</a></li>';
-			echo '<li><a onclick="wnd_ajax_modal(\'account_form\');">账户</a></li>';
-		} else {
-			echo '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-center\',\'profile_form\',\'sms\');">资料</a></li>';
-			echo '<li><a onclick="wnd_ajax_embed(\'#user-center\',\'account_form\',\'sms\');">账户</a></li>';
-		}
-	} else {
-		echo '<li class="is-active"><a href="' . add_query_arg('tab', 'profile') . '">资料</a></li>';
-		echo '<li><a href="' . add_query_arg('tab', 'account') . '">账户</a></li>';
-	}?>
-	</ul>
-</div>
+?>
 <form id="profile-form" action="" method="post" onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}">
 
 	<div class="field">
@@ -470,25 +470,7 @@ function _wnd_account_form() {
 	}
 	$user = wp_get_current_user();
 
-	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
-	?>
-<div class="tabs">
-	<ul class="tab">
-	<?php if (wp_doing_ajax()) {
-		if ($ajax_type == 'modal') {
-			echo '<li><a onclick="wnd_ajax_modal(\'profile_form\');">资料</a></li>';
-			echo '<li class="is-active"><a onclick="wnd_ajax_modal(\'account_form\');">账户</a></li>';
-		} else {
-			echo '<li><a onclick="wnd_ajax_embed(\'#user-center\',\'profile_form\',\'sms\');">资料</a></li>';
-			echo '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-center\',\'account_form\',\'sms\');">账户</a></li>';
-		}
-	} else {
-		echo '<li><a href="' . add_query_arg('tab', 'profile') . '">资料</a></li>';
-		echo '<li class="is-active"><a href="' . add_query_arg('tab', 'account') . '">账户</a></li>';
-	}?>
-	</ul>
-</div>
+?>
 <form id="user-account" class="user-form" action="" method="post" onsubmit="return false">
 	<div class="field is-grouped is-grouped-centered content">
 		<h3><span class="icon"><i class="fa fa-user"></i></span>账户安全</h3>
@@ -532,7 +514,8 @@ function _wnd_account_form() {
             </span>
 		</div>
 	</div>
-	<?php if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
+	<?php 
+	if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
 		_wnd_sms_field($type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
 	}
 	?>
@@ -544,4 +527,5 @@ function _wnd_account_form() {
 	</div>
 </form>
 <?php
+
 }

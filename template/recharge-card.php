@@ -1,85 +1,7 @@
 <?php
-
-/**
- *@since 2019.02.201
- *充值卡验证
- */
-function _wnd_verity_recharge_card_form() {
-
-	?>
-<form id="verity-recharge-card-form" action="" method="post" onsubmit="return false">
-
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-
-	<div class="field is-horizontal">
-		<div class="field-body">
-			<div class="field">
-				<label class="label">卡号<span class="required">*</span></label>
-				<div class="control">
-					<input type="text" class="input" name="card" required="required" placeholder="充值卡卡号" />
-				</div>
-			</div>
-			<div class="field">
-				<label class="label">密码<span class="required">*</span></label>
-				<div class="control">
-					<input type="text" class="input" name="password" placeholder="充值卡密码" />
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<?php wp_nonce_field('wnd_ajax_verity_recharge_card', '_ajax_nonce');?>
-	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_ajax_verity_recharge_card">
-	<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#verity-recharge-card-form')">验证并充值</button>
-	</div>
-</form>
-<?php
-
-}
-
-/**
- *@since 2019.02.201
- *批量创建充值卡
- */
-function _wnd_create_recharge_card_form() {
-
-	?>
-<form id="create-recharge-card-form" action="" method="post" onsubmit="return false">
-
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-
-	<div class="field is-horizontal">
-		<div class="field-body">
-			<div class="field">
-				<label class="label">金额<span class="required">*</span></label>
-				<div class="control">
-					<input type="number" class="input" name="value" required="required" placeholder="充值卡面值" min="1" />
-				</div>
-			</div>
-			<div class="field">
-				<label class="label">数量<span class="required">*</span></label>
-				<div class="control">
-					<input type="number" class="input" name="num" placeholder="充值卡数量" min="1" />
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<?php wp_nonce_field('wnd_ajax_create_recharge_card', '_ajax_nonce');?>
-	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_ajax_create_recharge_card">
-	<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#create-recharge-card-form')">验证并充值</button>
-	</div>
-</form>
-<?php
-
+// Exit if accessed directly
+if (!defined('ABSPATH')) {
+	exit;
 }
 
 /**
@@ -87,7 +9,7 @@ function _wnd_create_recharge_card_form() {
  *以表格形式输出WordPress文章列表
  *$pages_key = 'pages', $color = 'is-primary' 仅在非ajax状态下有效
  */
-function _wnd_list_recharge_card($args = array(), $pages_key = 'pages', $color = 'is-primary') {
+function _wnd_recharge_card_panel($args = array(), $pages_key = 'pages', $color = 'is-primary') {
 
 	// 仅超级管理员
 	if(!is_super_admin( )){
@@ -114,7 +36,8 @@ function _wnd_list_recharge_card($args = array(), $pages_key = 'pages', $color =
 	// 最终查询参数
 	$query = new WP_Query($args);
 ?>
-<div id="list-recharge-card">	
+<div id="list-recharge-card">
+	<?php _wnd_create_recharge_card_form(); ?>
 	<div class="tabs">
 		<ul>
 		<?php
@@ -195,5 +118,87 @@ function _wnd_list_recharge_card($args = array(), $pages_key = 'pages', $color =
 </div>
 <?php
 // end function
+
+}
+
+/**
+ *@since 2019.02.201
+ *批量创建充值卡
+ */
+function _wnd_create_recharge_card_form() {
+
+?>
+<form id="create-recharge-card-form" action="" method="post" onsubmit="return false">
+
+	<div class="field">
+		<div class="ajax-msg"></div>
+	</div>
+
+	<div class="field is-horizontal">
+		<div class="field-body">
+			<div class="field">
+				<label class="label">金额<span class="required">*</span></label>
+				<div class="control">
+					<input type="number" class="input" name="value" required="required" placeholder="充值卡面值" min="1" />
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">数量<span class="required">*</span></label>
+				<div class="control">
+					<input type="number" class="input" name="num" placeholder="充值卡数量" min="1" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<?php wp_nonce_field('wnd_ajax_create_recharge_card', '_ajax_nonce');?>
+	<input type="hidden" name="action" value="wnd_action">
+	<input type="hidden" name="action_name" value="wnd_ajax_create_recharge_card">
+	<div class="field is-grouped is-grouped-centered">
+		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#create-recharge-card-form')">生成充值卡</button>
+	</div>
+</form>
+<?php
+
+}
+
+/**
+ *@since 2019.02.201
+ *充值卡验证
+ */
+function _wnd_verity_recharge_card_form() {
+
+?>
+<form id="verity-recharge-card-form" action="" method="post" onsubmit="return false">
+
+	<div class="field">
+		<div class="ajax-msg"></div>
+	</div>
+
+	<div class="field is-horizontal">
+		<div class="field-body">
+			<div class="field">
+				<label class="label">卡号<span class="required">*</span></label>
+				<div class="control">
+					<input type="text" class="input" name="card" required="required" placeholder="充值卡卡号" />
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">密码<span class="required">*</span></label>
+				<div class="control">
+					<input type="text" class="input" name="password" placeholder="充值卡密码" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<?php wp_nonce_field('wnd_ajax_verity_recharge_card', '_ajax_nonce');?>
+	<input type="hidden" name="action" value="wnd_action">
+	<input type="hidden" name="action_name" value="wnd_ajax_verity_recharge_card">
+	<div class="field is-grouped is-grouped-centered">
+		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#verity-recharge-card-form')">验证并充值</button>
+	</div>
+</form>
+<?php
 
 }
