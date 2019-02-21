@@ -36,6 +36,9 @@ function wnd_create_recharge_card($value, $num = 1) {
 	if(!is_super_admin()){
 		return array('status'=>0,'msg'=>'仅超级管理员可添加充值卡！');
 	}
+	
+	// 控制单次最大数量
+	$num = $num >100 ? 100 : $num;
 
 	$card_num = 0;
 	for ($i = 0; $i < $num; $i++) {

@@ -156,7 +156,7 @@ function _wnd_create_recharge_card_form() {
 			<div class="field">
 				<label class="label">数量<span class="required">*</span></label>
 				<div class="control">
-					<input type="number" class="input" name="num" placeholder="充值卡数量" min="1" />
+					<input type="number" class="input" name="num" placeholder="充值卡数量（单次最多100张）" min="1" />
 				</div>
 			</div>
 		</div>
