@@ -62,9 +62,7 @@ function wnd_reg() {
 
 	//注册账户失败
 	if (is_wp_error($user_id)) {
-		$msg = $user_id->get_error_message();
-		return array('status' => 0, 'msg' => $msg);
-
+		return array('status' => 0, 'msg' => $user_id->get_error_message());
 	}
 
 	// 写入用户自定义数组meta
@@ -323,8 +321,8 @@ function wnd_reset_password() {
 	}
 
 	// 检查秘钥
-	$check = wnd_verify_code($email_or_phone, $code, $type='v');
-	if ($check['status']===0) {
+	$check = wnd_verify_code($email_or_phone, $code, $type = 'v');
+	if ($check['status'] === 0) {
 		return $check;
 
 	} else {

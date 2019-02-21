@@ -65,24 +65,16 @@ function _wnd_post_form($args=array()){
 	/**
 	*@since 2019.02.01 
 	*获取指定 post type的所有注册taxonomy
-	*当一个taxonomy 关联多个 post type 时，通过指定post type无法获取（应该为WordPress bug）。
-	*解决办法全部获取，然后遍历taxonomy数据中的 object_type 是否包含当前指定 post type（好在taxonomy通常只有几个或十来个）
 	*/
 	$cat_taxonomies = array();
 	$tag_taxonomies = array();
-	$taxonomies = get_taxonomies(array('public'=> true), 'object', 'and' );
-	
+	$taxonomies = get_object_taxonomies( $post_type, $output = 'names' );
 	if ( $taxonomies ) {
 	  foreach ( $taxonomies  as $taxonomy ) {
-	  	// 未关联当前分类
-	  	if(!in_array($post_type,$taxonomy->object_type)){
-	  		continue;
-	  	}
-	  	// 根据是否具有层级，推入分类数组或标签数组
-	    if( is_taxonomy_hierarchical($taxonomy->name) ){
-	        array_push($cat_taxonomies, $taxonomy->name);
+	    if( is_taxonomy_hierarchical($taxonomy) ){
+	        array_push($cat_taxonomies, $taxonomy);
 	    }else{
-	        array_push($tag_taxonomies, $taxonomy->name);
+	        array_push($tag_taxonomies, $taxonomy);
 	    }
 	  }unset($taxonomy);
 	}
@@ -100,7 +92,7 @@ function _wnd_post_form($args=array()){
 
 <?php
 if($cat_taxonomies){
-echo '<div class="field is-horizontal"><div class="field-body">'.PHP_EOL;
+	echo '<div class="field is-horizontal"><div class="field-body">'.PHP_EOL;
 	 //遍历分类 
 	foreach ($cat_taxonomies as $cat_taxonomy ) {
 		$cat = get_taxonomy($cat_taxonomy);
@@ -118,11 +110,12 @@ echo '<div class="field is-horizontal"><div class="field-body">'.PHP_EOL;
 <?php
 
 	}unset($cat_taxonomy);
-echo '</div></div>'.PHP_EOL;
+	echo '</div></div>'.PHP_EOL;
 }
 ?>
 
 <?php
+if($tag_taxonomies){
 	// 遍历标签
 	foreach ($tag_taxonomies as $tag_taxonomy ) {
 		// 排除WordPress原生 文章格式类型
@@ -137,8 +130,10 @@ echo '</div></div>'.PHP_EOL;
 			<input type="text" id="tags" class="input" name="_term_<?php echo $tag_taxonomy; ?>" value="<?php wnd_post_terms_text($post_id, $tag_taxonomy);?>" >
 		</div>
 	</div>
-<?php 	
+<?php
+
 	}unset($tag_taxonomy); 
+}
 ?>	
 
 <?php if($args['has_excerpt']==1) { //摘要 ?>
