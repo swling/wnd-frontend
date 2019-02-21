@@ -42,6 +42,7 @@ function _wnd_admin_posts_panel($args = array()) {
 
 		// 配置ajax请求参数
 		$ajax_args = array_merge($args, array('post_type' => $post_type->name));
+		unset($ajax_args['paged']);
 		$ajax_args = http_build_query($ajax_args);
 
 		if (wp_doing_ajax()) {
@@ -112,6 +113,7 @@ function _wnd_user_posts_panel($args = array()) {
 
 		// 配置ajax请求参数
 		$ajax_args = array_merge($args, array('post_type' => $post_type->name));
+		unset($ajax_args['paged']);
 		$ajax_args = http_build_query($ajax_args);
 
 		if (wp_doing_ajax()) {

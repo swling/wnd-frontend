@@ -69,10 +69,12 @@ function _wnd_user_fin($args = array()) {
 
 		// 配置ajax请求参数
 		$ajax_args_expense = array_merge($args, array('post_type' => 'expense'));
+		unset($ajax_args_expense['paged']);
 		$ajax_args_expense = http_build_query($ajax_args_expense);
 
 		// 配置ajax请求参数
 		$ajax_args_recharge = array_merge($args, array('post_type' => 'recharge'));
+		unset($ajax_args_recharge['paged']);
 		$ajax_args_recharge = http_build_query($ajax_args_recharge);	
 
 		if (wp_doing_ajax()) {

@@ -120,10 +120,12 @@ function _wnd_list_recharge_card($args = array(), $pages_key = 'pages', $color =
 		<?php
 		// 配置ajax请求参数
 		$ajax_args_publish = array_merge($args, array('post_status' => 'publish'));
+		unset($ajax_args_publish['paged']);
 		$ajax_args_publish = http_build_query($ajax_args_publish);
 
 		// 配置ajax请求参数
 		$ajax_args_private = array_merge($args, array('post_status' => 'private'));
+		unset($ajax_args_private['paged']);
 		$ajax_args_private = http_build_query($ajax_args_private);		
 
 		if (wp_doing_ajax()) {
