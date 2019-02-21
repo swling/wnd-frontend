@@ -16,89 +16,6 @@ function wnd_get_do_url() {
 
 /**
  *@since 初始化
- *标题去重
- */
-function wnd_is_title_repeated($title, $exclude_id = 0, $post_type = 'post') {
-
-	if (empty($title)) {
-		return array('status' => 0, 'msg' => '标题为空');
-	}
-
-	global $wpdb;
-	$results = $wpdb->get_var($wpdb->prepare(
-		"SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = %s AND  ID != %d  limit 1",
-		$title,
-		$post_type,
-		$exclude_id
-	));
-
-	if ($results) {
-		$value = array('status' => 1, 'msg' => $results);
-	} else {
-		$value = array('status' => 0, 'msg' => '标题唯一');
-	}
-
-	return $value;
-}
-
-/**
- *@since 初始化
- *ajax标题去重
- */
-function _wnd_is_title_repeated() {
-
-	$title = $_POST['post_title'];
-	$exclude_id = $_POST['post_id'];
-	$post_type = $_POST['post_type'];
-	return wnd_is_title_repeated($title, $exclude_id, $post_type);
-
-}
-
-/**
- *@since 初始化
- *用户display name去重
- */
-function wnd_is_name_repeated($display_name, $exclude_id = 0) {
-
-	// 名称为空
-	if (empty($display_name)) {
-		return array('status' => 0, 'msg' => '名称为空');
-	}
-
-	global $wpdb;
-	$results = $wpdb->get_var($wpdb->prepare(
-		"SELECT ID FROM $wpdb->users WHERE display_name = %s AND  ID != %d  limit 1",
-		$display_name,
-		$exclude_id
-	));
-
-	if ($results) {
-		$value = array('status' => 1, 'msg' => $results);
-	} else {
-		$value = array('status' => 0, 'msg' => '昵称唯一');
-	}
-
-	return $value;
-}
-
-/**
- *@since 2019.02.17 根据post name 获取post
- *@return post object or null
- */
-function wnd_get_post_by_slug($post_name, $post_type = 'post', $post_status = 'publish') {
-
-	global $wpdb;
-	$post_name = urlencode($post_name);
-	$post = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND post_status = %s LIMIT 1", $post_name, $post_type, $post_status));
-	if ($post) {
-		return $post[0];
-	}
-	return false;
-
-}
-
-/**
- *@since 初始化
  *获取用户ip
  */
 function wnd_get_user_ip($hidden = false) {
@@ -141,33 +58,6 @@ function wnd_is_robot() {
 	}
 
 	return false;
-
-}
-
-/**
- *@since 初始化 判断当前用户是否为管理员
- *@return bool
- *用户角色为：管理员或编辑 返回 true
- */
-function wnd_is_manager($user_id = 0) {
-
-	$user_id = $user_id ?: get_current_user_id();
-
-	if (!$user_id) {
-		return false;
-	}
-
-	$user = get_user_by('id', $user_id);
-	if (!$user) {
-		return false;
-	}
-
-	$user_role = $user->roles[0];
-	if ($user_role == 'administrator' or $user_role == 'editor') {
-		return true;
-	} else {
-		return false;
-	}
 
 }
 

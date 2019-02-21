@@ -125,6 +125,12 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 </table>
 <?php
 
+	// 没有内容
+	else :
+		$no_more_text = ($args['paged'] >= 2) ? '没有更多内容！' : '没有匹配的内容！';
+		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
+	endif;
+
 	// 分页
 	if (!wp_doing_ajax()) {
 		_wnd_next_page($posts_per_page, $query->post_count, $pages_key);
@@ -132,90 +138,9 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 		_wnd_ajax_next_page(__FUNCTION__, $args);
 	}
 
-	// 没有内容
-	else :
-		$no_more_text = ($args['paged'] >= 2) ? '没有更多内容！' : '没有匹配的内容！';
-		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
-	endif;
-
 	?>
 <?php
 // end function
 
-}
-
-/**
- *@since 2019.02.17
- *以表格形式输出当前用户自定义常规object列表
- *$pages_key = 'pages', $color = 'is-primary' 仅在非ajax状态下有效
- */
-function _wnd_list_objects($args = array(), $pages_key = 'pages', $color = 'is-primary') {
-
-	$defaults = array(
-		'posts_per_page' => get_option('posts_per_page'),
-		'type' => 'expense',
-		'status' => 'success',
-		'paged' => 1,
-	);
-	$args = wp_parse_args($args, $defaults);
-
-	$user_id = get_current_user_id();
-	$type = $args['type'];
-	$status = $args['status'];
-
-	// 分页
-	$posts_per_page = $args['posts_per_page'];
-	$paged = $_REQUEST[$pages_key] ?? $args['paged'] ?? 1;
-	$offset = $posts_per_page * ($paged - 1);
-
-	global $wpdb;
-	$objects = $wpdb->get_results(
-		"SELECT * FROM $wpdb->wnd_objects WHERE user_id = {$user_id} AND type = '{$type}' and status = '{$status}' ORDER BY time DESC LIMIT {$offset},{$posts_per_page}",
-		OBJECT
-	);
-	$object_count = count($objects);
-
-	if ($objects):
-
-?>
-<table class="table is-fullwidth is-hoverable is-striped">
-	<thead>
-		<tr>
-			<th class="is-narrow"><abbr title="Position">日期</abbr></th>
-			<th>标题</th>
-			<th class="is-narrow">操作</th>
-		</tr>
-	</thead>
-	<tbody>
-		<?php foreach ($objects as $object) { ?>
-		<tr>
-			<td class="is-narrow"><?php echo date('m-d:H:i', $object->time); ?></td>
-			<td><a href ="<?php if ($object->object_id) echo get_permalink($object->object_id); else echo '#';?>" target="_blank"><?php echo $object->title; ?></a></td>
-			<td class="is-narrow">
-				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $object->ID; ?>&color=<?php echo $color; ?>')">预览</a>
-				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $object->ID; ?>')">[管理]</a>
-			</td>
-		</tr>
-		<?php }	unset($object); ?>
-	</tbody>
-</table>
-<?php
-
-	// 分页
-	if (!wp_doing_ajax()) {
-		_wnd_next_page($posts_per_page, $object_count, $pages_key);
-	} else {
-		_wnd_ajax_next_page(__FUNCTION__, $args);
-	}
-
-// 没有内容
-	else :
-		$no_more_text = ($paged >= 2) ? '没有更多内容！' : '没有匹配的内容！';
-		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
-	endif;
-	?>
-<?php
-
-// end function
 }
 

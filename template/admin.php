@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
  *@since 2019.02.19 封装前端管理员内容审核平台
  *@param array or string ：wp_query args
  */
-function _wnd_admin_panel($args = array()) {
+function _wnd_admin_posts_panel($args = array()) {
 
 	if (!wnd_is_manager()) {
 		echo '<div class="message is-danger"><div class="message-body">当前账户没有管理权限！</div></div>';
@@ -24,7 +24,9 @@ function _wnd_admin_panel($args = array()) {
 		'post_type' => 'post',
 	);
 	$args = wp_parse_args($args, $defaults);
-	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type']; // 类型优先顺序
+
+	// 优先参数
+	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type']; 
 
 	// 容器开始
 	echo '<div id="admin-panel">';
@@ -95,8 +97,10 @@ function _wnd_user_posts_panel($args = array()) {
 		'post_type' => reset($post_types)->name, //$post_types 为多维数组，获取第一个type 的 name
 	);
 	$args = wp_parse_args($args, $defaults);
-	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type']; // 类型
-	$args['author'] = get_current_user_id(); // 不可通过外部参数更改的参数（仅查询当前用户内容）
+
+	// 优先参数
+	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type'];
+	$args['author'] = get_current_user_id();
 
 	// 容器开始
 	echo '<div id="user-posts">';
