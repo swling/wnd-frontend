@@ -66,13 +66,22 @@ function _wnd_user_fin($args = array()) {
 	<div class="tabs">
 		<ul>
 		<?php
+
+		// 配置ajax请求参数
+		$ajax_args_expense = array_merge($args, array('post_type' => 'expense'));
+		$ajax_args_expense = http_build_query($ajax_args_expense);
+
+		// 配置ajax请求参数
+		$ajax_args_recharge = array_merge($args, array('post_type' => 'recharge'));
+		$ajax_args_recharge = http_build_query($ajax_args_recharge);	
+
 		if (wp_doing_ajax()) {
 			if ($ajax_type == 'modal') {
-				echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin\',\'post_type=expense\');">消费记录</a></li>';
-				echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin\',\'post_type=recharge\');">充值记录</a></li>';
+				echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin\',\''.$ajax_args_expense.'\');">消费记录</a></li>';
+				echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin\',\''.$ajax_args_recharge.'\');">充值记录</a></li>';
 			} else {
-				echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin\',\'post_type=expense\');">消费记录</a></li>';
-				echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin\',\'post_type=recharge\');">充值记录</a></li>';
+				echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin\',\''.$ajax_args_expense.'\');">消费记录</a></li>';
+				echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin\',\''.$ajax_args_recharge.'\');">充值记录</a></li>';
 			}
 		} else {
 			echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('tab', 'expense', remove_query_arg('pages')) . '">消费记录</a></li>';

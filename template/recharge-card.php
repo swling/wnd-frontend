@@ -118,13 +118,21 @@ function _wnd_list_recharge_card($args = array(), $pages_key = 'pages', $color =
 	<div class="tabs">
 		<ul>
 		<?php
+		// 配置ajax请求参数
+		$ajax_args_publish = array_merge($args, array('post_status' => 'publish'));
+		$ajax_args_publish = http_build_query($ajax_args_publish);
+
+		// 配置ajax请求参数
+		$ajax_args_private = array_merge($args, array('post_status' => 'private'));
+		$ajax_args_private = http_build_query($ajax_args_private);		
+
 		if (wp_doing_ajax()) {
 			if ($ajax_type == 'modal') {
-				echo '<li ' . $publish_is_active . ' ><a onclick="wnd_ajax_modal(\'list_recharge_card\',\'post_status=publish\');">生效中</a></li>';
-				echo '<li ' . $private_is_active . ' ><a onclick="wnd_ajax_modal(\'list_recharge_card\',\'post_status=private\');">已使用</a></li>';
+				echo '<li ' . $publish_is_active . ' ><a onclick="wnd_ajax_modal(\'list_recharge_card\',\''.$ajax_args_publish.'\');">生效中</a></li>';
+				echo '<li ' . $private_is_active . ' ><a onclick="wnd_ajax_modal(\'list_recharge_card\',\''.$ajax_args_private.'\');">已使用</a></li>';
 			} else {
-				echo '<li ' . $publish_is_active . ' ><a onclick="wnd_ajax_embed(\'#list-recharge-card\',\'list_recharge_card\',\'post_status=publish\');">生效中</a></li>';
-				echo '<li ' . $private_is_active . ' ><a onclick="wnd_ajax_embed(\'#list-recharge-card\',\'list_recharge_card\',\'post_status=private\');">已使用</a></li>';
+				echo '<li ' . $publish_is_active . ' ><a onclick="wnd_ajax_embed(\'#list-recharge-card\',\'list_recharge_card\',\''.$ajax_args_publish.'\');">生效中</a></li>';
+				echo '<li ' . $private_is_active . ' ><a onclick="wnd_ajax_embed(\'#list-recharge-card\',\'list_recharge_card\',\''.$ajax_args_private.'\');">已使用</a></li>';
 			}
 		} else {
 			echo '<li ' . $publish_is_active . ' ><a href="' . add_query_arg('tab', 'publish', remove_query_arg('pages')) . '">生效中</a></li>';
