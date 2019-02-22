@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
  */
 function _wnd_sms_field($verity_type = 'verify', $template = '') {
 
-	?>
+?>
 <div class="field is-horizontal">
 	<div class="field-body">
 		<?php if (!wnd_get_user_phone(get_current_user_id())) {?>
@@ -40,7 +40,8 @@ function _wnd_sms_field($verity_type = 'verify', $template = '') {
  *@since 2019.02.10 邮箱验证表单字段
  */
 function _wnd_mail_field($verity_type = 'v', $template = '') {
-	?>
+	
+?>
 <div class="field">
 	<label class="label">Email <span class="required">*</span></label>
 	<div class="control has-icons-left">
@@ -50,10 +51,6 @@ function _wnd_mail_field($verity_type = 'v', $template = '') {
 		</span>
 	</div>
 </div>
-<?php
-// 如果开启了短信验证，在注册时则验证短信，不重复验证邮箱以简化流程
-if ($verity_type != 'reg' or wnd_get_option('wndwp', 'wnd_sms_enable') != 1) {
-?>
 <div class="field has-addons">
 	<div class="control is-expanded has-icons-left">
 		<input required="required" type="text" class="input" name="v_code" placeholder="邮箱验证码">
@@ -63,7 +60,6 @@ if ($verity_type != 'reg' or wnd_get_option('wndwp', 'wnd_sms_enable') != 1) {
 		<button type="button" class="button is-primary send-code" data-verity-type="<?php echo $verity_type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_ajax_send_code') ?>">发送验证码</button>
 	</div>
 </div>
-<?php }?>
 <?php
 
 }

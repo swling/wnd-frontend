@@ -235,6 +235,14 @@ function wnd_options(){
 				</td>
 			</tr>
 			<tr>
+				<td valign="top">强制手机注册</td>
+				<td>
+					关闭邮箱注册<input type="radio" name="wnd_disable_email_reg" value="1" <?php if(wnd_get_option('wndwp','wnd_disable_email_reg')==1) echo 'checked' ?>	/>
+					开启邮箱注册<input type="radio" name="wnd_disable_email_reg" value="0" <?php if(wnd_get_option('wndwp','wnd_disable_email_reg')!=1) echo 'checked' ?>	/>
+					<p><i>关闭邮箱验证注册，强制手机验证注册。请确保手机验证可用，否则用户无法注册！</i></p>
+				</td>
+			</tr>			
+			<tr>
 				<td valign="top">阿里云accessKeyId</td>
 				<td>
 					<input type="text" name="wnd_ali_accessKeyId" value="<?php echo wnd_get_option('wndwp','wnd_ali_accessKeyId');?>" class="regular-text" />
