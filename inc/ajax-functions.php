@@ -10,12 +10,18 @@ if (!defined('ABSPATH')) {
 function wnd_ajax_send_code() {
 
 	$verity_type = $_POST['verity_type'] ?? '';
+	$send_type = $_POST['send_type'] ?? ''; // email or sms
 	$template = $_POST['template'] ?? '';
-	$phone = $_POST['phone'];
-	$email = $_POST['email'];
+
+	$phone = $_POST['phone'] ?? '';
+	$email = $_POST['email'] ?? '';
 	$email_or_phone = $phone ?: $email;
 
-	return wnd_send_code($email_or_phone, $verity_type, $template);
+	if (is_user_logged_in()) {
+		return wnd_send_code_to_user($send_type, $verity_type, $template);
+	} else {
+		return wnd_send_code_to_anonymous($email_or_phone, $verity_type, $template);
+	}
 
 }
 

@@ -25,7 +25,7 @@ function wnd_filter_can_reg($can_array) {
 	// 验证:手机或邮箱 验证码
 	$code = $_POST['v_code'];
 	$email_or_phone = $_POST['_meta_phone'] ?? $_POST['_user_user_email'];
-	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = "reg");
+	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = 'reg');
 
 	if ($wnd_verify_code['status'] === 0) {
 		return $wnd_verify_code;
@@ -47,7 +47,7 @@ function wnd_filter_can_update_account($can_array) {
 	$user_id = $user->ID;
 	$email_or_phone = wnd_get_option('wndwp', 'wnd_sms_enable') == 1 ? wnd_get_user_meta($user_id, 'phone') : $user->user_email;
 
-	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $is_reg = false);
+	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = 'v');
 	if ($wnd_verify_code['status'] === 0) {
 		return $wnd_verify_code;
 	} else {
@@ -334,10 +334,10 @@ if (wnd_get_option('wndwp', 'wnd_disable_locale') == 1) {
  */
 if (wnd_get_option('wndwp', 'wnd_unset_user_meta') == 1) {
 	add_filter('insert_user_meta', 'wnd_filter_unset_user_meta', 10, 2);
-	function wnd_filter_unset_user_meta($meta,$user) {
+	function wnd_filter_unset_user_meta($meta, $user) {
 
 		// 排除超级管理员
-		if($user->roles[0] == 'administrator'){
+		if ($user->roles[0] == 'administrator') {
 			return $meta;
 		}
 
@@ -346,7 +346,7 @@ if (wnd_get_option('wndwp', 'wnd_unset_user_meta') == 1) {
 		unset($meta['last_name']);
 		unset($meta['rich_editing']);
 		unset($meta['syntax_highlighting']);
-		unset($meta['comment_shortcuts']);//评论快捷方式
+		unset($meta['comment_shortcuts']); //评论快捷方式
 		unset($meta['admin_color']);
 		unset($meta['use_ssl']);
 		unset($meta['show_admin_bar_front']);

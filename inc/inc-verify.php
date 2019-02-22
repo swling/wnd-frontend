@@ -5,9 +5,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
-*@since 2019.02.21 统一封装发送验证码
-*/
-function wnd_send_code($email_or_phone, $verity_type, $template) {
+ *@since 2019.02.21 发送验证码给匿名用户
+ */
+function wnd_send_code_to_anonymous($email_or_phone, $verity_type, $template) {
 
 	// 权限检测
 	$wnd_can_send_code = wnd_can_send_code($email_or_phone, $verity_type);
@@ -16,26 +16,40 @@ function wnd_send_code($email_or_phone, $verity_type, $template) {
 	}
 
 	// 邮箱验证
-	if ($email) {
-
-		if (is_user_logged_in()) {
-			return wnd_send_mail_code_to_user($verity_type, $template);
-		} else {
-			return wnd_send_mail_code($email, $verity_type, $template);
-		}
+	if (is_email($email_or_phone)) {
+		return wnd_send_mail_code($email_or_phone, $template);
 
 		//手机验证
-	} elseif ($phone) {
-
-		if (is_user_logged_in()) {
-			return wnd_send_sms_code_to_user($verity_type, $template);
-		} else {
-			return wnd_send_sms_code($phone, $verity_type, $template);
-		}
-
-		// 既不是手机也不是邮箱
 	} else {
-		return array('status' => 0, 'msg' => '手机或邮箱格式不正确！');
+		return wnd_send_sms_code($email_or_phone, $template);
+	}
+
+}
+
+/**
+ *@since 2019.02.22 发送验证码给已知用户
+ */
+function wnd_send_code_to_user($send_type, $verity_type, $template) {
+
+	if (!is_user_logged_in()) {
+		return array('status' => 0, 'msg' => '用户未登录！');
+	}
+
+	$user = wp_get_current_user();
+
+	// 根据发送类型获取当前用户邮箱或手机
+	$email_or_phone = ($send_type == 'email') ? $user->user_email : wnd_get_user_meta($user->ID, 'phone');
+
+	// 权限检测
+	$wnd_can_send_code = wnd_can_send_code($email_or_phone, $verity_type);
+	if ($wnd_can_send_code['status'] === 0) {
+		return $wnd_can_send_code;
+	}
+
+	if ($send_type == 'email') {
+		return wnd_send_mail_code_to_user($template);
+	} else {
+		return wnd_send_sms_code_to_user($template);
 	}
 
 }
@@ -70,7 +84,7 @@ function wnd_can_send_code($email_or_phone, $verity_type) {
 	// 上次发送短信的时间，防止短信攻击
 	$send_time = wnd_get_code_sendtime($email_or_phone);
 	if ($send_time and (time() - $send_time < 90)) {
-		return array('status' => 0, 'msg' => '操作太频繁，请'.(90 - (time() - $send_time)).'秒后重试！');
+		return array('status' => 0, 'msg' => '操作太频繁，请' . (90 - (time() - $send_time)) . '秒后重试！');
 	}
 
 	return array('status' => 1, 'msg' => '校验通过！');
@@ -80,9 +94,9 @@ function wnd_can_send_code($email_or_phone, $verity_type) {
 /**
  *@since 2019.01.28 发送邮箱验证码
  */
-function wnd_send_mail_code($email, $verity_type = 'v', $template = '') {
+function wnd_send_mail_code($email, $template = '') {
 
-	$user = get_user_by('email', $email);
+	// $user = get_user_by('email', $email);
 	$code = wnd_random_code($length = 6);
 	$action = wnd_insert_code($email, $code);
 	if (!$action) {
@@ -102,14 +116,14 @@ function wnd_send_mail_code($email, $verity_type = 'v', $template = '') {
 /**
  *@since 2019.01.28 发送邮箱验证码
  */
-function wnd_send_mail_code_to_user($verity_type = 'v', $template = '') {
+function wnd_send_mail_code_to_user($template = '') {
 
 	$user = wp_get_current_user();
 	if (!$user->user_email) {
 		return array('status' => 0, 'msg' => '用户未绑定邮箱！');
 	}
 
-	return wnd_send_mail_code($user->user_email, $verity_type, $template);
+	return wnd_send_mail_code($user->user_email, $template);
 
 }
 
@@ -118,7 +132,7 @@ function wnd_send_mail_code_to_user($verity_type = 'v', $template = '') {
  *通过ajax发送短信
  *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
  */
-function wnd_send_sms_code($phone, $verity_type = 'v', $template = '') {
+function wnd_send_sms_code($phone, $template = '') {
 
 	require WNDWP_PATH . 'components/sms/aliyun-sms/sendSms.php'; //阿里云短信
 
@@ -144,7 +158,7 @@ function wnd_send_sms_code($phone, $verity_type = 'v', $template = '') {
  *通过给当前用户发送短信
  *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
  */
-function wnd_send_sms_to_user($verity_type = '', $template = '') {
+function wnd_send_sms_to_user($template = '') {
 
 	// 获取当前用户的手机号码
 	$user_id = get_current_user_id();
@@ -153,7 +167,7 @@ function wnd_send_sms_to_user($verity_type = '', $template = '') {
 		return array('status' => 0, 'msg' => '未能获取到手机号码！');
 	}
 
-	return wnd_send_sms_code($phone, $verity_type, $template);
+	return wnd_send_sms_code($phone, $template);
 }
 
 /**

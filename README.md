@@ -165,13 +165,6 @@ do_action('wnd_update_object', $object_id);
 状态：post_status: pengding / success
 类型：post_type：recharge / expense
 
-#充值卡 (自定义文章类型)
-post_type => recharge-card
-post_name => $recharge_card['card'];
-post_password =>  $recharge_card['password'];
-post_content => $recharge_card['value']
-post_status => publish（正常）private(已用)
-
 #付费内容
 必须设置价格
 优先检测文件，如果设置了付费文件，则文章内容将全文输出
@@ -180,7 +173,7 @@ post_status => publish（正常）private(已用)
 文章字段设置 wp post meta: price
 
 ###内容：
-用more标签分割免费内容和付费内容
+用WordPress经典编辑器的more标签分割免费内容和付费内容（<!--more-->）
 如不含more标签，则全文付费后可见
 
 ##下载
@@ -192,3 +185,9 @@ wnd_filter_xxx
 
 #数据库
 如果需要用户昵称唯一：建议对users->display_name 新增索引
+
+#自定义文章类型
+（以下 post_type 并未注册，而是在对应操作中直接使用wp_insert_post插入，因此在WordPress后台无法查看到）
+##充值：recharge
+##消费、订单：expense
+##站内信：mail

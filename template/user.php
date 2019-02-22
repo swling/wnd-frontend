@@ -547,7 +547,9 @@ function _wnd_account_form() {
 	</div>
 	<?php 
 	if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
-		_wnd_sms_field($type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
+		_wnd_sms_field($verity_type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
+	}else{
+		_wnd_mail_field($verity_type = 'v');
 	}
 	?>
 	<?php wp_nonce_field('wnd_update_account', '_ajax_nonce');?>

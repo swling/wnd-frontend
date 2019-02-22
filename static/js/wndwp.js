@@ -570,13 +570,13 @@ jQuery(document).ready(function($) {
 		var _this = $(this);
 		var form_id = '#' + _this.parents('form').attr('id');
 		var verity_type = $(this).data('verity-type');
+		var send_type = $(this).data('send-type');
 		var template = $(this).data('template');
 		var nonce = $(this).data('nonce');
 
 		var phone = $(form_id + " input[name='phone']").val();
 		var _user_user_email = $(form_id + " input[name='_user_user_email']").val();
-
-		if (!phone && !_user_user_email) {
+		if (_user_user_email == "" || phone == "") {
 			wnd_ajax_msg("不知道发送到给谁……", "is-danger", form_id);
 			return false;
 		}
@@ -591,6 +591,7 @@ jQuery(document).ready(function($) {
 				email: _user_user_email,
 				phone: phone,
 				verity_type: verity_type,
+				send_type: send_type,
 				template: template,
 				_ajax_nonce: nonce
 			},
