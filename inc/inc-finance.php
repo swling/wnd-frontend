@@ -119,7 +119,7 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 
 			//充值
 		} else {
-			$update = wnd_update_recharge($post->ID, 'success', '充值 - '.$type);
+			$update = wnd_update_recharge($post->ID, 'success', '充值 - ' . $type);
 		}
 
 		//  写入用户账户信息
@@ -290,6 +290,32 @@ function wnd_get_post_price($post_id) {
 function wnd_get_commission($post_id) {
 
 	return apply_filters('wnd_commission', wnd_get_post_price($post_id), $post_id);
+
+}
+
+/**
+ *@since 2019.02.22
+ *管理员手动新增用户金额
+ */
+function wnd_admin_recharge($user_field, $money, $remarks = '') {
+
+	if (!is_super_admin()) {
+		return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作！');
+	}
+
+	// 查询用户
+	$field = is_email($user_field) ? 'email' : is_numeric($user_field) ? 'id' : 'login';
+	$user = get_user_by($field, $user_field);
+	if (!$user) {
+		return array('status' => 0, 'msg' => '用户不存在！');
+	}
+
+	// 写入充值记录
+	if (wnd_insert_recharge($user->ID, $money, $status = 'success', $title = $remarks)) {
+		return array('status' => 1, 'msg' => $user->display_name . ' 充值：¥' . $money);
+	} else {
+		return array('status' => 0, 'msg' => '充值失败！');
+	}
 
 }
 

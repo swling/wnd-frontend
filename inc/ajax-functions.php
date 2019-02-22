@@ -15,28 +15,8 @@ function wnd_ajax_send_code() {
 	$email = $_POST['email'];
 	$email_or_phone = $phone ?: $email;
 
-	return wnd_send_code($email_or_phone,$type,$template);
+	return wnd_send_code($email_or_phone, $type, $template);
 
-}
-
-/**
-*@since 2019.02.21 验证充值卡
-*/
-function wnd_ajax_verity_recharge_card(){
-
-	return wnd_verity_recharge_card($_POST['card'], $_POST['password']);	
-
-}
-
-/**
-*@since 2019.02.21 ajax 批量生成充值卡
-*/
-function wnd_ajax_create_recharge_card() {
-
-	$value =$_POST['value'];
-	$num =$_POST['num'];
-
-	return wnd_create_recharge_card($value, $num);
 }
 
 /**
@@ -50,4 +30,21 @@ function _wnd_ajax_is_title_repeated() {
 	$post_type = $_POST['post_type'];
 	return wnd_is_title_repeated($title, $exclude_id, $post_type);
 
+}
+
+/**
+ *@since 2019.02.22
+ *管理员ajax手动新增用户金额
+ */
+function wnd_ajax_admin_recharge() {
+
+	if (!is_super_admin()) {
+		return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作！');
+	}
+
+	$user_field = $_POST['user_field'];
+	$money = $_POST['money'];
+	$remarks = $_POST['remarks'] ?? '';
+
+	return wnd_admin_recharge($user_field, $money, $remarks);
 }

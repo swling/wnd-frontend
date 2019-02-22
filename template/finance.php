@@ -143,7 +143,12 @@ function _wnd_list_user_fin($args = array(),$pages_key = 'pages', $color = 'is-p
 			<tr>
 				<td class="is-narrow"><?php the_time('m-d H:i');?></td>
 				<td><?php echo $post->post_content; ?></td>
-				<td><a href="<?php echo the_permalink($post->post_parent); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
+				<?php if( $post->post_parent ){ ?>	
+				<td><a href="<?php the_permalink($post->post_parent); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
+				<?php } else { ?>
+				<td><?php echo $post->post_title; ?></td>
+			 	<?php } ?>
+
 				<th class="is-narrow"><?php echo $post->post_status; ?></th>
 				<td class="is-narrow">
 					<?php if (current_user_can('edit_post', $post->ID)) {?>
@@ -255,6 +260,52 @@ function _wnd_recharge_form() {
 	<?php wp_nonce_field('wnd_payment');?>
 	<div class="field is-grouped is-grouped-centered">
 		<button type="submit" name="submit" class="button">确认充值</button>
+	</div>
+</form>
+<?php
+
+}
+
+/**
+*@since 2019.02.22
+*管理员手动增加用户余额
+*/
+function _wnd_admin_recharge_form(){
+
+?>
+<form id="admin-recharge-form" action="" method="post" onsubmit="return false">
+
+	<div class="field">
+		<div class="ajax-msg"></div>
+	</div>
+
+	<div class="field is-horizontal">
+		<div class="field-body">
+			<div class="field">
+				<label class="label">用户<span class="required">*</span></label>
+				<div class="control">
+					<input type="text" class="input" name="user_field" required="required" placeholder="用户名、ID、或邮箱" />
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">金额<span class="required">*</span></label>
+				<div class="control">
+					<input type="text" class="input" name="money" placeholder="充值金额（负数可扣款）" />
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="field">
+		<div class="control">
+			<input name="remarks" class="input" placeholder="备注（可选）">
+		</div>
+	</div>	
+
+	<?php wp_nonce_field('wnd_ajax_admin_recharge', '_ajax_nonce');?>
+	<input type="hidden" name="action" value="wnd_action">
+	<input type="hidden" name="action_name" value="wnd_ajax_admin_recharge">
+	<div class="field is-grouped is-grouped-centered">
+		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#admin-recharge-form')">验证并充值</button>
 	</div>
 </form>
 <?php

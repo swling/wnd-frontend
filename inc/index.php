@@ -16,7 +16,6 @@ require WNDWP_PATH . 'inc/inc-user.php'; //user相关自定义函数
 require WNDWP_PATH . 'inc/inc-verify.php'; //验证模块
 require WNDWP_PATH . 'inc/inc-term.php'; //分类、标签
 require WNDWP_PATH . 'inc/inc-finance.php'; //财务
-require WNDWP_PATH . 'inc/inc-recharge-card.php'; //充值卡
 
 require WNDWP_PATH . 'inc/ajax-post.php'; //ajax 文章发布编辑
 require WNDWP_PATH . 'inc/ajax-media.php'; //ajax 媒体处理
@@ -33,4 +32,3 @@ require WNDWP_PATH . 'template/post.php'; //post模板
 require WNDWP_PATH . 'template/archive.php'; //归档和列表模板
 require WNDWP_PATH . 'template/finance.php'; //财务模板
 require WNDWP_PATH . 'template/admin.php'; //前端管理模板
-require WNDWP_PATH . 'template/recharge-card.php'; //充值卡模板
