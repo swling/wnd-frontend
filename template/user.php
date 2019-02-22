@@ -537,9 +537,9 @@ function _wnd_account_form() {
 		</div>
 	</div>
 	<div class="field">
-		<label class="label">电子邮件<span class="required">*</span></label>
+		<label class="label">新电子邮件</label>
 		<div class="control has-icons-left">
-			<input type="text" class="input" required="required" name="_user_new_user_email" value="<?php echo $user->user_email; ?>">
+			<input type="text" class="input" name="_user_new_user_email">
             <span class="icon is-left">
                 <i class="fa fa-at"></i>
             </span>

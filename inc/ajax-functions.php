@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 function wnd_ajax_send_code() {
 
 	$verity_type = $_POST['verity_type'] ?? '';
-	$send_type = $_POST['send_type'] ?? ''; // email or sms
+	$send_type = $_POST['send_type'] ?? ''; // email or sms, to login user
 	$template = $_POST['template'] ?? '';
 
 	$phone = $_POST['phone'] ?? '';

@@ -56,6 +56,8 @@ function wnd_send_code_to_user($send_type, $verity_type, $template) {
 
 /**
  *@since 2019.02.10 权限检测
+ *此处的权限校验仅作为前端是否可以发送验证验证码的初级校验，较容易被绕过
+ *在对验证码正确性进行校验时，应该再次进行类型权限校验
  */
 function wnd_can_send_code($email_or_phone, $verity_type) {
 
@@ -232,7 +234,7 @@ function wnd_verify_code($email_or_phone, $code, $verity_type) {
 	/**
 	 *@since 2019.01.22 清空当前验证码
 	 */
-	wnd_reset_code($email_or_phone);
+	// wnd_reset_code($email_or_phone);
 
 	return array('status' => 1, 'msg' => '验证通过！');
 
