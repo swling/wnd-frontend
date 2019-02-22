@@ -80,7 +80,7 @@ function wnd_pay_for_reading() {
 	// 文章作者新增资金
 	$commission = wnd_get_commission($post_id);
 	if ($commission) {
-		wnd_insert_recharge($post->post_author, $commission, $post_id, 'success', $title = '《' . $post->post_title . '》收益');
+		wnd_insert_recharge($post->post_author, $commission, 'success', $title = '《' . $post->post_title . '》收益', $post_id);
 	}
 
 	return array('status' => 1, 'msg' => $paid_content);
@@ -142,7 +142,7 @@ function wnd_pay_for_download() {
 	// 文章作者新增资金
 	$commission = wnd_get_commission($post_id);
 	if ($commission) {
-		wnd_insert_recharge($post->post_author, $commission, $post_id, 'success', $title = '《' . $post->post_title . '》收益');
+		wnd_insert_recharge($post->post_author, $commission, 'success', $title = '《' . $post->post_title . '》收益', $post_id);
 	}
 
 	return array('status' => 6, 'msg' => $download_url);

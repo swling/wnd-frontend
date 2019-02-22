@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  *创建时：post_status=>pending，验证成功后：post_status=>success
  *@return int object ID
  */
-function wnd_insert_recharge($user_id, $money, $object_id = 0, $status = 'pending', $title = '') {
+function wnd_insert_recharge($user_id, $money, $status = 'pending', $title = '', $object_id = 0) {
 
 	$post_arr = array(
 		'post_author' => $user_id,
@@ -79,7 +79,7 @@ function wnd_insert_payment($user_id, $money, $post_id = 0) {
 		return wnd_insert_expense($user_id, $money, $post_id, 'pending');
 	} else {
 		// 在线充值
-		return wnd_insert_recharge($user_id, $money, 0, 'pending');
+		return wnd_insert_recharge($user_id, $money, 'pending');
 	}
 
 }

@@ -33,12 +33,12 @@ function wnd_generate_recharge_card($value) {
 function wnd_create_recharge_card($value, $num = 1) {
 
 	// 仅超级管理员
-	if(!is_super_admin()){
-		return array('status'=>0,'msg'=>'仅超级管理员可添加充值卡！');
+	if (!is_super_admin()) {
+		return array('status' => 0, 'msg' => '仅超级管理员可添加充值卡！');
 	}
-	
+
 	// 控制单次最大数量
-	$num = $num >100 ? 100 : $num;
+	$num = $num > 100 ? 100 : $num;
 
 	$card_num = 0;
 	for ($i = 0; $i < $num; $i++) {
@@ -51,12 +51,12 @@ function wnd_create_recharge_card($value, $num = 1) {
 		$object_data['post_type'] = 'recharge-card';
 		$object_data['post_status'] = 'publish';
 
-		if(wp_insert_post($object_data)){
-			$card_num ++; 
+		if (wp_insert_post($object_data)) {
+			$card_num++;
 		}
 	}
 
-	return array('status'=>1,'msg'=>'成功创建'.$card_num.'张面值：¥'.$value.' 的充值卡！');
+	return array('status' => 1, 'msg' => '成功创建' . $card_num . '张面值：¥' . $value . ' 的充值卡！');
 
 }
 
@@ -79,7 +79,7 @@ function wnd_verity_recharge_card($card, $password) {
 	}
 
 	// 写入充值记录
-	wnd_insert_recharge(get_current_user_id(), $recharge_card->post_content, $object_id = 0, $status = 'success', $title = '充值卡充值');
+	wnd_insert_recharge(get_current_user_id(), $recharge_card->post_content, $status = 'success', $title = '充值卡充值', $object_id = 0);
 	// 更新充值卡
 	wp_update_post(array('ID' => $recharge_card->ID, 'post_status' => 'private', 'post_title' => '0'));
 
