@@ -7,10 +7,10 @@ if (!defined('ABSPATH')) {
 /**
 *@since 2019.02.21 统一封装发送验证码
 */
-function wnd_send_code($email_or_phone, $type, $template) {
+function wnd_send_code($email_or_phone, $verity_type, $template) {
 
 	// 权限检测
-	$wnd_can_send_code = wnd_can_send_code($email_or_phone, $type);
+	$wnd_can_send_code = wnd_can_send_code($email_or_phone, $verity_type);
 	if ($wnd_can_send_code['status'] === 0) {
 		return $wnd_can_send_code;
 	}
@@ -19,18 +19,18 @@ function wnd_send_code($email_or_phone, $type, $template) {
 	if ($email) {
 
 		if (is_user_logged_in()) {
-			return wnd_send_mail_code_to_user($type, $template);
+			return wnd_send_mail_code_to_user($verity_type, $template);
 		} else {
-			return wnd_send_mail_code($email, $type, $template);
+			return wnd_send_mail_code($email, $verity_type, $template);
 		}
 
 		//手机验证
 	} elseif ($phone) {
 
 		if (is_user_logged_in()) {
-			return wnd_send_sms_code_to_user($type, $template);
+			return wnd_send_sms_code_to_user($verity_type, $template);
 		} else {
-			return wnd_send_sms_code($phone, $type, $template);
+			return wnd_send_sms_code($phone, $verity_type, $template);
 		}
 
 		// 既不是手机也不是邮箱
@@ -43,7 +43,7 @@ function wnd_send_code($email_or_phone, $type, $template) {
 /**
  *@since 2019.02.10 权限检测
  */
-function wnd_can_send_code($email_or_phone, $type) {
+function wnd_can_send_code($email_or_phone, $verity_type) {
 
 	if (empty($email_or_phone) && !is_user_logged_in()) {
 		return array('status' => 0, 'msg' => '发送地址为空！');
@@ -58,12 +58,12 @@ function wnd_can_send_code($email_or_phone, $type) {
 	}
 
 	// 检测是否为注册类型，注册类型去重
-	if ($type == 'reg' and wnd_get_user_by($email_or_phone)) {
+	if ($verity_type == 'reg' and wnd_get_user_by($email_or_phone)) {
 		return array('status' => 0, 'msg' => '该' . $text . '已注册过！');
 	}
 
 	// 找回密码
-	elseif ($type == 'reset-pass' and !wnd_get_user_by($email_or_phone)) {
+	elseif ($verity_type == 'reset-pass' and !wnd_get_user_by($email_or_phone)) {
 		return array('status' => 0, 'msg' => '该' . $text . '尚未注册！');
 	}
 
@@ -80,7 +80,7 @@ function wnd_can_send_code($email_or_phone, $type) {
 /**
  *@since 2019.01.28 发送邮箱验证码
  */
-function wnd_send_mail_code($email, $type = 'v', $template = '') {
+function wnd_send_mail_code($email, $verity_type = 'v', $template = '') {
 
 	$user = get_user_by('email', $email);
 	$code = wnd_random_code($length = 6);
@@ -102,14 +102,14 @@ function wnd_send_mail_code($email, $type = 'v', $template = '') {
 /**
  *@since 2019.01.28 发送邮箱验证码
  */
-function wnd_send_mail_code_to_user($type = 'v', $template = '') {
+function wnd_send_mail_code_to_user($verity_type = 'v', $template = '') {
 
 	$user = wp_get_current_user();
 	if (!$user->user_email) {
 		return array('status' => 0, 'msg' => '用户未绑定邮箱！');
 	}
 
-	return wnd_send_mail_code($user->user_email, $type, $template);
+	return wnd_send_mail_code($user->user_email, $verity_type, $template);
 
 }
 
@@ -118,7 +118,7 @@ function wnd_send_mail_code_to_user($type = 'v', $template = '') {
  *通过ajax发送短信
  *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
  */
-function wnd_send_sms_code($phone, $type = 'v', $template = '') {
+function wnd_send_sms_code($phone, $verity_type = 'v', $template = '') {
 
 	require WNDWP_PATH . 'components/sms/aliyun-sms/sendSms.php'; //阿里云短信
 
@@ -144,7 +144,7 @@ function wnd_send_sms_code($phone, $type = 'v', $template = '') {
  *通过给当前用户发送短信
  *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
  */
-function wnd_send_sms_to_user($type = '', $template = '') {
+function wnd_send_sms_to_user($verity_type = '', $template = '') {
 
 	// 获取当前用户的手机号码
 	$user_id = get_current_user_id();
@@ -153,7 +153,7 @@ function wnd_send_sms_to_user($type = '', $template = '') {
 		return array('status' => 0, 'msg' => '未能获取到手机号码！');
 	}
 
-	return wnd_send_sms_code($phone, $type, $template);
+	return wnd_send_sms_code($phone, $verity_type, $template);
 }
 
 /**
@@ -180,7 +180,7 @@ function wnd_insert_code($email_or_phone, $code) {
  *@since 初始化
  *@return array
  */
-function wnd_verify_code($email_or_phone, $code, $type) {
+function wnd_verify_code($email_or_phone, $code, $verity_type) {
 
 	global $wpdb;
 	$field = is_email($email_or_phone, $deprecated = false) ? 'email' : 'phone';
@@ -194,7 +194,7 @@ function wnd_verify_code($email_or_phone, $code, $type) {
 		return array('status' => 0, 'msg' => '校验失败：请填写' . $text . '！');
 	}
 
-	if ($type == 'reg' && wnd_get_user_by($email_or_phone)) {
+	if ($verity_type == 'reg' && wnd_get_user_by($email_or_phone)) {
 		return array('status' => 0, 'msg' => '校验失败：' . $text . '已注册过！');
 	}
 

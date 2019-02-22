@@ -9,13 +9,13 @@ if (!defined('ABSPATH')) {
  */
 function wnd_ajax_send_code() {
 
-	$type = $_POST['type'] ?? '';
+	$verity_type = $_POST['verity_type'] ?? '';
 	$template = $_POST['template'] ?? '';
 	$phone = $_POST['phone'];
 	$email = $_POST['email'];
 	$email_or_phone = $phone ?: $email;
 
-	return wnd_send_code($email_or_phone, $type, $template);
+	return wnd_send_code($email_or_phone, $verity_type, $template);
 
 }
 

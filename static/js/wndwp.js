@@ -569,7 +569,7 @@ jQuery(document).ready(function($) {
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
 		var form_id = '#' + _this.parents('form').attr('id');
-		var type = $(this).data('type');
+		var verity_type = $(this).data('verity-type');
 		var template = $(this).data('template');
 		var nonce = $(this).data('nonce');
 
@@ -590,7 +590,7 @@ jQuery(document).ready(function($) {
 				action_name: "wnd_ajax_send_code",
 				email: _user_user_email,
 				phone: phone,
-				type: type,
+				verity_type: verity_type,
 				template: template,
 				_ajax_nonce: nonce
 			},
