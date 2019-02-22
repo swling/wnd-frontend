@@ -235,11 +235,11 @@ function wnd_options(){
 				</td>
 			</tr>
 			<tr>
-				<td valign="top">强制手机注册</td>
+				<td valign="top">邮箱注册</td>
 				<td>
-					关闭邮箱注册<input type="radio" name="wnd_disable_email_reg" value="1" <?php if(wnd_get_option('wndwp','wnd_disable_email_reg')==1) echo 'checked' ?>	/>
-					开启邮箱注册<input type="radio" name="wnd_disable_email_reg" value="0" <?php if(wnd_get_option('wndwp','wnd_disable_email_reg')!=1) echo 'checked' ?>	/>
-					<p><i>关闭邮箱验证注册，强制手机验证注册。请确保手机验证可用，否则用户无法注册！</i></p>
+					关闭<input type="radio" name="wnd_disable_email_reg" value="1" <?php if(wnd_get_option('wndwp','wnd_disable_email_reg')==1) echo 'checked' ?>	/>
+					开启<input type="radio" name="wnd_disable_email_reg" value="0" <?php if(wnd_get_option('wndwp','wnd_disable_email_reg')!=1) echo 'checked' ?>	/>
+					<p><i>关闭邮箱注册则强制手机注册。请确保手机验证可用，否则用户无法注册！</i></p>
 				</td>
 			</tr>			
 			<tr>

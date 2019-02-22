@@ -56,11 +56,8 @@ function _wnd_user_fin_panel($args = array()) {
 
 	<div class="level">
 		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal('recharge_form')">在线充值</button>
+			<button class="button" onclick="wnd_ajax_modal('recharge_form')">余额充值</button>
 		</div>
-		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal('verity_recharge_card_form')">充值卡</button>
-		</div>		
 	</div>
 
 	<div class="tabs">
