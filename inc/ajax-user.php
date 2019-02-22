@@ -230,7 +230,7 @@ function wnd_update_account() {
 	$user_pass = $_POST['_user_user_pass'];
 	$new_password = $_POST['_user_new_pass'];
 	$new_password_repeat = $_POST['_user_new_pass_repeat'];
-	$email = $_POST['_user_user_email'];
+	$new_email = $_POST['_user_new_user_email'];
 
 	// 修改密码
 	if (!empty($new_password_repeat)) {
@@ -250,12 +250,12 @@ function wnd_update_account() {
 	}
 
 	// 修改邮箱
-	if ($email != $user->user_email) {
-		if (!is_email($email)) {
+	if ($new_email != $user->user_email) {
+		if (!is_email($new_email)) {
 			return array('status' => 0, 'msg' => '邮件格式错误！');
 		} else {
 			// 新email没有错误 更新数据中插入email字段
-			$array_temp = array('user_email' => $email);
+			$array_temp = array('user_email' => $new_email);
 			$user_array = array_merge($user_array, $array_temp);
 		}
 
