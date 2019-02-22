@@ -152,7 +152,7 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 */
 function wnd_get_allowed_post_types(){
 
-	return apply_filters('_wnd_allowed_post_types', get_post_types(array('public' => true), 'names', 'and'));	
+	return apply_filters('wnd_allowed_post_types', get_post_types(array('public' => true), 'names', 'and'));	
 }
 
 /**

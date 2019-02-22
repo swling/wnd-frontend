@@ -44,7 +44,7 @@ form input type hidden
 	action_name = wp_nonce_field('action_name', '_ajax_nonce')  = funcrion action_name()
 	以"_wnd_" 开头的函数 不进行 wp nonce校验，用于一些非敏感ajax操作，如弹窗，界面请求等
 
-#钩子
+#filter
 
 ##文章
 ```php
@@ -63,7 +63,7 @@ apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_sta
 *@since 2019.02.19 过滤当前用户可以发布管理的 post types 
 *@param $post_types array 文章类型数组 如移除 post 类型： unset($post_type['post'])
 */
-apply_filters( '_wnd_allowed_post_types', $post_types );
+apply_filters( 'wnd_allowed_post_types', $post_types );
 ```
 
 ##用户
@@ -94,19 +94,16 @@ apply_filters('wnd_update_account_return', array('status' => 1, 'msg' => '更新
 apply_filters('wnd_can_insert_order', array('status'=>1,'msg'=>'默认通过'), $post_id);
 
 /**
-*@since 2019.02.12 付费内容，作者收益提成，默认为文章价格
+*@since 2019.02.12 付费内容，作者收益提成，默认为文章价格* 后台比例设置
 */
-apply_filters( 'wnd_commission', $price, $post_id )
+apply_filters( 'wnd_get_post_commission', $commission, $post_id )
 
 /**
 *@since 2019.02.13 post价格
 */
-apply_filters('wnd_post_price', $price, $post_id);
+apply_filters('wnd_get_post_price', $price, $post_id);
 ```
-
-
-
-#动作
+#action
 ```php
 ##上传文件后
 do_action('wnd_upload_file', $attachment_id,$post_parent, $meta_key);

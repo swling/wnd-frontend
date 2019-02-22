@@ -78,7 +78,7 @@ function wnd_pay_for_reading() {
 	}
 
 	// 文章作者新增资金
-	$commission = wnd_get_commission($post_id);
+	$commission = wnd_get_post_commission($post_id);
 	if ($commission) {
 		wnd_insert_recharge($post->post_author, $commission, 'success', $title = '《' . $post->post_title . '》收益', $post_id);
 	}
@@ -140,7 +140,7 @@ function wnd_pay_for_download() {
 	}
 
 	// 文章作者新增资金
-	$commission = wnd_get_commission($post_id);
+	$commission = wnd_get_post_commission($post_id);
 	if ($commission) {
 		wnd_insert_recharge($post->post_author, $commission, 'success', $title = '《' . $post->post_title . '》收益', $post_id);
 	}

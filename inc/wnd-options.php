@@ -122,7 +122,7 @@ function wnd_options(){
 			<tr>
 				<td valign="top">注册协议</td>
 				<td>
-					<input type="text" name="wnd_agreement_url" value="<?php echo wnd_get_option('wndwp','wnd_agreement_url');?>" class="large-text" />
+					<input type="text" name="wnd_agreement_url" value="<?php echo wnd_get_option('wndwp','wnd_agreement_url');?>" class="large-text">
 					<p><i>新用户注册协议页面</i></p>
 				</td>
 			</tr>
@@ -130,7 +130,7 @@ function wnd_options(){
 			<tr>
 				<td valign="top">注册跳转</td>
 				<td>
-					<input type="text" name="wnd_reg_redirect_url" value="<?php echo wnd_get_option('wndwp','wnd_reg_redirect_url');?>" class="large-text" />
+					<input type="text" name="wnd_reg_redirect_url" value="<?php echo wnd_get_option('wndwp','wnd_reg_redirect_url');?>" class="large-text">
 					<p><i>新用户注册后跳转地址</i></p>
 				</td>
 			</tr>
@@ -138,7 +138,7 @@ function wnd_options(){
 			<tr>
 				<td valign="top">默认头像</td>
 				<td>
-					<input type="text" name="wnd_default_avatar" value="<?php echo wnd_get_option('wndwp','wnd_default_avatar');?>" class="large-text" />
+					<input type="text" name="wnd_default_avatar" value="<?php echo wnd_get_option('wndwp','wnd_default_avatar');?>" class="large-text">
 					<p><i>默认用户头像地址</i></p>
 				</td>
 			</tr>
@@ -146,7 +146,7 @@ function wnd_options(){
 			<tr>
 				<td valign="top">前端最大上传（KB）</td>
 				<td>
-					<input type="number" name="wnd_max_upload" value="<?php echo wnd_get_option('wndwp','wnd_max_upload');?>" class="text" min="1" />
+					<input type="number" name="wnd_max_upload" value="<?php echo wnd_get_option('wndwp','wnd_max_upload');?>" class="text" min="1">
 					<p><i>前端文件最大上传限制（默认2048KB，不得大于服务器设置）</i></p>
 				</td>
 			</tr>
@@ -168,6 +168,17 @@ function wnd_options(){
 					<p><i>注册用户不需要登录到WordPress后台时可开启</i></p>
 				</td>
 			</tr>										
+			
+			<!-- 佣金设置 -->
+			<tr>
+				<th valign="top">
+					作者佣金设置
+				</th>
+				<td>
+					<input type="number" name="wnd_commission_rate" value="<?php echo wnd_get_option('wndwp','wnd_commission_rate');?>" class="text" max="1" min="0" step="0.01">
+					<p><i>当用户发布的付费内容产生消费时，作者获得的佣金比例（0.00 ~ 1.00）</i></p>
+				</td>
+			</tr>
 
 			<!--支付设置-->
 			<tr>
@@ -179,7 +190,7 @@ function wnd_options(){
 			<tr>
 				<td valign="top">充值后返回</td>
 				<td>
-					<input type="text" name="wnd_pay_return_url" value="<?php echo wnd_get_option('wndwp','wnd_pay_return_url');?>" class="large-text" />
+					<input type="text" name="wnd_pay_return_url" value="<?php echo wnd_get_option('wndwp','wnd_pay_return_url');?>" class="large-text">
 					<p><i>用户充值后跳转地址</i></p>
 				</td>
 			</tr>
@@ -187,7 +198,7 @@ function wnd_options(){
 			<tr>
 				<td valign="top">支付宝APP ID</td>
 				<td>
-					<input type="text" name="wnd_alipay_appid" value="<?php echo wnd_get_option('wndwp','wnd_alipay_appid');?>" class="regular-text" />
+					<input type="text" name="wnd_alipay_appid" value="<?php echo wnd_get_option('wndwp','wnd_alipay_appid');?>" class="regular-text">
 				</td>
 			</tr>
 
@@ -214,8 +225,8 @@ function wnd_options(){
 			<tr>
 				<td valign="top">是否启用</td>
 				<td>
-					开启<input type="radio" name="wnd_terms_enable" value="1" <?php if(wnd_get_option('wndwp','wnd_terms_enable')==1) echo 'checked' ?>	/>
-					关闭<input type="radio" name="wnd_terms_enable" value="0" <?php if(wnd_get_option('wndwp','wnd_terms_enable')!=1) echo 'checked' ?>	/>
+					开启<input type="radio" name="wnd_terms_enable" value="1" <?php if(wnd_get_option('wndwp','wnd_terms_enable')==1) echo 'checked' ?>>
+					关闭<input type="radio" name="wnd_terms_enable" value="0" <?php if(wnd_get_option('wndwp','wnd_terms_enable')!=1) echo 'checked' ?>>
 					<p><i>是否开启分类关联标签功能</i></p>
 				</td>
 			</tr>			
@@ -229,8 +240,8 @@ function wnd_options(){
 			<tr>
 				<td valign="top">启用短信功能</td>
 				<td>
-					开启<input type="radio" name="wnd_sms_enable" value="1" <?php if(wnd_get_option('wndwp','wnd_sms_enable')==1) echo 'checked' ?>	/>
-					关闭<input type="radio" name="wnd_sms_enable" value="0" <?php if(wnd_get_option('wndwp','wnd_sms_enable')!=1) echo 'checked' ?>	/>
+					开启<input type="radio" name="wnd_sms_enable" value="1" <?php if(wnd_get_option('wndwp','wnd_sms_enable')==1) echo 'checked' ?>>
+					关闭<input type="radio" name="wnd_sms_enable" value="0" <?php if(wnd_get_option('wndwp','wnd_sms_enable')!=1) echo 'checked' ?>>
 					<p><i>是否开启短信验证功能</i></p>
 				</td>
 			</tr>
@@ -245,7 +256,7 @@ function wnd_options(){
 			<tr>
 				<td valign="top">阿里云accessKeyId</td>
 				<td>
-					<input type="text" name="wnd_ali_accessKeyId" value="<?php echo wnd_get_option('wndwp','wnd_ali_accessKeyId');?>" class="regular-text" />
+					<input type="text" name="wnd_ali_accessKeyId" value="<?php echo wnd_get_option('wndwp','wnd_ali_accessKeyId');?>" class="regular-text">
 				</td>
 			</tr>
 			<tr>
@@ -258,35 +269,35 @@ function wnd_options(){
 			<tr>
 				<td valign="top">阿里云短信签名</td>
 				<td>
-					<input type="text" name="wnd_ali_SignName" value="<?php echo wnd_get_option('wndwp','wnd_ali_SignName');?>" class="regular-text" />
+					<input type="text" name="wnd_ali_SignName" value="<?php echo wnd_get_option('wndwp','wnd_ali_SignName');?>" class="regular-text">
 					*请注意：签名需要先在阿里云后台提交审核
 				</td>
 			</tr>
 			<tr>
 				<td valign="top">默认短信模板</td>
 				<td>
-					<input type="text" name="wnd_ali_TemplateCode" value="<?php echo wnd_get_option('wndwp','wnd_ali_TemplateCode');?>" class="regular-text" />
+					<input type="text" name="wnd_ali_TemplateCode" value="<?php echo wnd_get_option('wndwp','wnd_ali_TemplateCode');?>" class="regular-text">
 					*默认短信模板，短信表单未指定短信模板时，最后调用本模板
 				</td>
 			</tr>
 			<tr>
 				<td valign="top">注册短信模板</td>
 				<td>
-					<input type="text" name="wnd_ali_TemplateCode_R" value="<?php echo wnd_get_option('wndwp','wnd_ali_TemplateCode_R');?>" class="regular-text" />
+					<input type="text" name="wnd_ali_TemplateCode_R" value="<?php echo wnd_get_option('wndwp','wnd_ali_TemplateCode_R');?>" class="regular-text">
 					*注册时的短信模板代码
 				</td>
 			</tr>
 			<tr>
 				<td valign="top">信息变更验证码</td>
 				<td>
-					<input type="text" name="wnd_ali_TemplateCode_V" value="<?php echo wnd_get_option('wndwp','wnd_ali_TemplateCode_V');?>" class="regular-text" />
+					<input type="text" name="wnd_ali_TemplateCode_V" value="<?php echo wnd_get_option('wndwp','wnd_ali_TemplateCode_V');?>" class="regular-text">
 					*信息变更验证码代码（如修改密码等）
 				</td>
 			</tr>						
 
 		</table>
 		<?php wp_nonce_field('wnd_update'); ?>
-		<input type="submit" value="保存设置" class="button-primary" />
+		<input type="submit" value="保存设置" class="button-primary">
 	</form>
 	<p><a href="https://wndwp.com">插件教程</a></p>
 </div>

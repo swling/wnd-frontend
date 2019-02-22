@@ -34,24 +34,26 @@ function _wnd_user_fin_panel($args = array()) {
 ?>
 <div id="user-fin">
 	<nav class="level">
-	  <div class="level-item has-text-centered">
-	    <div>
-	      <p class="heading">余额</p>
-	      <p class="title"><?php echo wnd_get_user_money($user_id); ?></p>
-	    </div>
-	  </div>
-	  <div class="level-item has-text-centered">
-	    <div>
-	      <p class="heading">消费</p>
-	      <p class="title"><?php echo wnd_get_user_expense($user_id); ?></p>
-	    </div>
-	  </div>
-	  <div class="level-item has-text-centered">
-	    <div>
-	      <p class="heading">佣金</p>
-	      <p class="title"><?php echo wnd_get_user_commission($user_id); ?></p>
-	    </div>
-	  </div>
+		<div class="level-item has-text-centered">
+			<div>
+				<p class="heading">余额</p>
+				<p class="title"><?php echo wnd_get_user_money($user_id); ?></p>
+			</div>
+		</div>
+		<div class="level-item has-text-centered">
+			<div>
+				<p class="heading">消费</p>
+				<p class="title"><?php echo wnd_get_user_expense($user_id); ?></p>
+			</div>
+		</div>
+		<?php if(wnd_get_option('wndwp', 'wnd_commission_rate') ) { ?>
+		<div class="level-item has-text-centered">
+			<div>
+				<p class="heading">佣金</p>
+				<p class="title"><?php echo wnd_get_user_commission($user_id); ?></p>
+			</div>
+		</div>
+		<?php }?>
 	</nav>
 
 	<div class="level">

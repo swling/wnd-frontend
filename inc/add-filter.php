@@ -60,8 +60,7 @@ function wnd_filter_can_update_account($can_array) {
 /**
  *@since 2019.02.13
  *文章状态过滤，允许前端表单设置为草稿状态（执行顺序较晚99，因而 会覆盖掉其他默认10 的filter）
- *如果 $update_id 为0 表示为新发布文章
- *否则为更新文章
+ *如果 $update_id 为0 表示为新发布文章，否则为更新文章
  */
 add_filter('wnd_post_status', 'wnd_filter_post_status', 99, 2);
 function wnd_filter_post_status($post_status, $update_id) {
@@ -126,7 +125,7 @@ function wnd_filter_edit_post_link($link, $post_id, $context) {
 }
 
 /**
- *############################################################################ 付费内容
+ * 付费内容
  *@since 2018.09.17
  *设置 文章自定义字段 price
  *使用WordPress经典编辑器插入 more标签 或者编辑源码插入 <!--more--> 以区分免费内容和付费内容

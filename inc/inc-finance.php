@@ -29,7 +29,13 @@ function wnd_insert_recharge($user_id, $money, $status = 'pending', $title = '',
 	$recharge_id = wp_insert_post($post_arr);
 
 	if ($recharge_id and $status == 'success') {
-		wnd_inc_user_money($user_id, $money);
+
+		// 当充值包含关联object 如post，表面收入来自站内，如佣金收入
+		if ($object_id) {
+			wnd_inc_user_commission($user_id, $money);
+		} else {
+			wnd_inc_user_money($user_id, $money);
+		}
 	}
 
 	return $recharge_id;
@@ -263,6 +269,16 @@ function wnd_get_user_expense($user_id) {
 }
 
 /**
+ *@since 2019.02.22
+ *写入用户佣金
+ */
+function wnd_inc_user_commission($user_id, $money) {
+
+	wnd_inc_wnd_user_meta($user_id, 'commission', $money);
+
+}
+
+/**
  *@since 2019.02.18 获取用户佣金
  */
 function wnd_get_user_commission($user_id) {
@@ -280,16 +296,17 @@ function wnd_get_post_price($post_id) {
 
 	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1) ?: 0;
 	$price = is_numeric($price) ? number_format($price, 2) : 0;
-	return apply_filters('wnd_post_price', $price, $post_id);
+	return apply_filters('wnd_get_post_price', $price, $post_id);
 }
 
 /**
  *@since 2019.02.12
- *用户佣金分成 默认为付费文章的全部价格收益
+ *用户佣金分成
  */
-function wnd_get_commission($post_id) {
+function wnd_get_post_commission($post_id) {
 
-	return apply_filters('wnd_commission', wnd_get_post_price($post_id), $post_id);
+	$commission = wnd_get_post_price($post_id) * wnd_get_option('wndwp', 'wnd_commission_rate');
+	return apply_filters('wnd_get_post_commission', $commission, $post_id);
 
 }
 
