@@ -74,6 +74,27 @@ function wnd_filter_post_status($post_status, $update_id) {
 }
 
 /**
+ *@since 2019.02.25
+ *文章列表输出模板 文章状态文字过滤
+ **/
+add_filter('_wnd_list_posts_status_text', 'wnd_filter_list_posts_status_text', 10, 2);
+function wnd_filter_list_posts_status_text($post_status, $post_type) {
+
+	if ($post_type == 'mail') {
+		if ($post_status == 'private') {
+			return '已读';
+		} elseif ($post_status == 'pending') {
+			return '已读';
+		} elseif ($post_status == 'draft') {
+			return '草稿';
+		}
+	}
+
+	return $post_status;
+
+}
+
+/**
  * ############################################################################ 以下为WordPress原生filter
  */
 

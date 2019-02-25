@@ -9,6 +9,7 @@
 通过白名单设置允许提交的字段，实现安全过滤
 前端上传图片，并按用途做处理，并按指定尺寸裁剪
 用户注册，用户更新，文章发布，文章编辑，附件上传，附件删除等功能，最终底层实现均采用WordPress原生函数，因此对应操作中WordPress原生的action 及filter均有效
+（如未特别说明，字段均指WndWP自定义数组字段，而非wp原生字段）
 
 ##功能列表
 0.基于bulma框架，ajax表单提交，ajax弹窗模块
@@ -18,6 +19,12 @@
 4.支付，短信模块
 5.前端文件、图片上传
 6.数组形式合并存储多个user_meta、post_meta、option
+
+#自定义文章类型
+（以下 post_type 并未注册，而是在对应操作中直接使用wp_insert_post插入，因此在WordPress后台无法查看到）
+##充值：recharge
+##消费、订单：expense
+##站内信：mail
 
 #ajax交互概述：
 ```php
@@ -135,18 +142,6 @@ do_action('_wnd_recharge_form')
 ##文章发布编辑表单 @since 2019.01.31
 do_action( '_wnd_post_form', $post_id,$post_type,$post )
 
-/**
-*@since 2019.02.22
-*自定义object数据，写入
-*/
-do_action('wnd_insert_object', $object_id, $type);
-
-/**
-*@since 2019.02.22
-*自定义object数据，更新
-*/
-do_action('wnd_update_object', $object_id);
-
 ```
 #前端Form name规则 
 前端表单遵循以下规则定义的name，后台获取后自动提取，并更新到数据库
@@ -176,7 +171,7 @@ do_action('wnd_update_object', $object_id);
 优先检测文件，如果设置了付费文件，则文章内容将全文输出
 
 ##价格：
-文章字段设置 wp post meta: price
+文章字段设置 wp_post_meta: price (此处使用独立字段，方便用户对付费和免费内容进行筛选区分)
 
 ###内容：
 用WordPress经典编辑器的more标签分割免费内容和付费内容（<!--more-->）
@@ -192,8 +187,6 @@ wnd_filter_xxx
 #数据库
 如果需要用户昵称唯一：建议对users->display_name 新增索引
 
-#自定义文章类型
-（以下 post_type 并未注册，而是在对应操作中直接使用wp_insert_post插入，因此在WordPress后台无法查看到）
-##充值：recharge
-##消费、订单：expense
-##站内信：mail
+#站内信功能
+post_type => mail
+post_status => 未读：pengding 已读: private
