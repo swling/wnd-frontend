@@ -13,6 +13,7 @@ require WNDWP_PATH . 'inc/wnd-database.php'; //数据库
 
 require WNDWP_PATH . 'inc/inc-post.php'; //post相关自定义函数
 require WNDWP_PATH . 'inc/inc-user.php'; //user相关自定义函数
+require WNDWP_PATH . 'inc/inc-media.php'; //媒体文件处理函数
 require WNDWP_PATH . 'inc/inc-verify.php'; //验证模块
 require WNDWP_PATH . 'inc/inc-term.php'; //分类、标签
 require WNDWP_PATH . 'inc/inc-finance.php'; //财务
