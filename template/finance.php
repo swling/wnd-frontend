@@ -112,7 +112,7 @@ function _wnd_list_user_fin($args = array(),$pages_key = 'pages', $color = 'is-p
 	$defaults = array(
 		'posts_per_page' => get_option('posts_per_page'),
 		'paged' => 1,
-		'post_type' => 'post',
+		'post_type' => 'expense',
 		'post_status' => 'publish',
 		'no_found_rows' => true, //$query->max_num_pages;
 	);

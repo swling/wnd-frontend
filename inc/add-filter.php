@@ -84,7 +84,7 @@ function wnd_filter_list_posts_status_text($post_status, $post_type) {
 		if ($post_status == 'private') {
 			return '已读';
 		} elseif ($post_status == 'pending') {
-			return '已读';
+			return '未读';
 		} elseif ($post_status == 'draft') {
 			return '草稿';
 		}
