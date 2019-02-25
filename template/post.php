@@ -227,6 +227,11 @@ function _wnd_post_info($args){
 	}
 	setup_postdata( $post );
 
+	// 站内信阅读后，更新为已读 @since 2019.02.25
+	if($post->post_type == 'mail' and $post->post_type !== 'private'){
+		wp_update_post( array('ID'=>$post->ID,'post_status'=>'private'));
+	}
+
 ?>
 <article class="message <?php echo $args['color'];?>">
 	<div class="message-body">
