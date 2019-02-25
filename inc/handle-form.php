@@ -105,7 +105,7 @@ function wnd_get_form_data($form_date_type = 'all', $array_name) {
 				// 提交的字段名是否在允许范围内
 				$key = str_replace('_wpusermeta_', '', $key);
 				$allowed_fields = wnd_get_allowed_fields('wp_user_meta_key');
-				if (!in_array($key, $allowed_fields)) {
+				if (wnd_get_option('wndwp', 'wnd_enable_white_list') == 1 and !in_array($key, $allowed_fields)) {
 					continue;
 				}
 
@@ -118,7 +118,7 @@ function wnd_get_form_data($form_date_type = 'all', $array_name) {
 				// 提交的字段名是否在允许范围内
 				$key = str_replace('_usermeta_', '', $key);
 				$allowed_fields = wnd_get_allowed_fields('user_meta_key');
-				if (!in_array($key, $allowed_fields)) {
+				if (wnd_get_option('wndwp', 'wnd_enable_white_list') == 1 and !in_array($key, $allowed_fields)) {
 					continue;
 				}
 
@@ -139,7 +139,7 @@ function wnd_get_form_data($form_date_type = 'all', $array_name) {
 				// Allowed fields
 				$key = str_replace('_post_', '', $key);
 				$allowed_fields = wnd_get_allowed_fields('post_field');
-				if (!in_array($key, $allowed_fields)) {
+				if (wnd_get_option('wndwp', 'wnd_enable_white_list') == 1 and !in_array($key, $allowed_fields)) {
 					continue;
 				}
 
@@ -152,7 +152,7 @@ function wnd_get_form_data($form_date_type = 'all', $array_name) {
 				// Allowed fields
 				$key = str_replace('_wpmeta_', '', $key);
 				$allowed_fields = wnd_get_allowed_fields('wp_post_meta_key');
-				if (!in_array($key, $allowed_fields)) {
+				if (wnd_get_option('wndwp', 'wnd_enable_white_list') == 1 and !in_array($key, $allowed_fields)) {
 					continue;
 				}
 
@@ -165,7 +165,7 @@ function wnd_get_form_data($form_date_type = 'all', $array_name) {
 				// Allowed fields
 				$key = str_replace('_meta_', '', $key);
 				$allowed_fields = wnd_get_allowed_fields('post_meta_key');
-				if (!in_array($key, $allowed_fields)) {
+				if (wnd_get_option('wndwp', 'wnd_enable_white_list') == 1 and !in_array($key, $allowed_fields)) {
 					continue;
 				}
 

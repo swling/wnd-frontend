@@ -42,24 +42,24 @@ function _wnd_sms_field($verity_type = 'verify', $template = '') {
 function _wnd_mail_field($verity_type = 'v', $template = '') {
 	
 ?>
-<?php if(!wp_get_current_user()->user_email) { ?>
 <div class="field">
-	<label class="label">Email <span class="required">*</span></label>
-	<div class="control has-icons-left">
-		<input type="text" class="input" required="required" name="_user_user_email" placeholder="注册邮箱">
-		<span class="icon is-left">
-			<i class="fa fa-at"></i>
-		</span>
+	<div class="field">
+		<label class="label">邮箱 <span class="required">*</span></label>
+		<div class="control has-icons-left">
+			<input type="text" class="input" required="required" name="_user_user_email" placeholder="常用电子邮箱">
+			<span class="icon is-left">
+				<i class="fa fa-at"></i>
+			</span>
+		</div>
 	</div>
-</div>
-<?php } ?>
-<div class="field has-addons">
-	<div class="control is-expanded has-icons-left">
-		<input required="required" type="text" class="input" name="v_code" placeholder="邮箱验证码">
-		<span class="icon is-left"><i class="fa fa-key"></i></span>
-	</div>
-	<div class="control">
-		<button type="button" class="button is-primary send-code" data-verity-type="<?php echo $verity_type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_ajax_send_code') ?>" data-send-type="email">发送验证码</button>
+	<div class="field has-addons">
+		<div class="control is-expanded has-icons-left">
+			<input required="required" type="text" class="input" name="v_code" placeholder="邮箱验证码">
+			<span class="icon is-left"><i class="fa fa-key"></i></span>
+		</div>
+		<div class="control">
+			<button type="button" class="button is-primary send-code" data-verity-type="<?php echo $verity_type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_ajax_send_code') ?>" data-send-type="email">发送验证码</button>
+		</div>
 	</div>
 </div>
 <?php

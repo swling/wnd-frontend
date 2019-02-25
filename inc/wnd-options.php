@@ -54,9 +54,17 @@ function wnd_options(){
 					表单字段白名单
 				</th>
 				<td>
-					<p><i>作用：通过前端表单提交数据时，只有在白名单内的字段会被写入到数据库中。防止用户通过浏览器开发模式篡改表单，提交为未知数据，若需完全禁止，请用输入英文逗号</i></p>
+					<p><i>作用：通过前端表单提交数据时，只有在白名单内的字段会被写入到数据库中。防止用户通过浏览器开发模式篡改表单，提交为未知数据</i></p>
 				</td>
 			</tr>
+			<tr>
+				<td valign="top">字段名单过滤</td>
+				<td>
+					开启过滤<input type="radio" required="required" name="wnd_enable_white_list" value="1" <?php if(wnd_get_option('wndwp','wnd_enable_white_list')==1) echo 'checked' ?> />
+					关闭过滤<input type="radio" required="required" name="wnd_enable_white_list" value="0" <?php if(wnd_get_option('wndwp','wnd_enable_white_list')!=1) echo 'checked' ?> />
+					<p><i>警告：仅在开发测试中关闭过滤，否则可能引发安全问题</i></p>
+				</td>
+			</tr>			
 			<tr>
 				<td valign="top">允许的文章数据</td>
 				<td>
@@ -97,8 +105,8 @@ function wnd_options(){
 			<tr>
 				<td valign="top">默认样式</td>
 				<td>
-					开启<input type="radio" required="required" name="wnd_style" value="1" <?php if(wnd_get_option('wndwp','wnd_style')==1) echo 'checked' ?> />
-					关闭<input type="radio" required="required" name="wnd_style" value="0" <?php if(wnd_get_option('wndwp','wnd_style')!=1) echo 'checked' ?> />
+					开启<input type="radio" required="required" name="wnd_default_style" value="1" <?php if(wnd_get_option('wndwp','wnd_default_style')==1) echo 'checked' ?> />
+					关闭<input type="radio" required="required" name="wnd_default_style" value="0" <?php if(wnd_get_option('wndwp','wnd_default_style')!=1) echo 'checked' ?> />
 					<p><i>是否启用默认样式，默认采用bulma css框架font-awesome图标，关闭后需要自行设置前端效果</i></p>
 				</td>
 			</tr>

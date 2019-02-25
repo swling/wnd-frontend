@@ -536,15 +536,6 @@ function _wnd_account_form() {
 			</span>
 		</div>
 	</div>
-	<div class="field">
-		<label class="label">新电子邮件</label>
-		<div class="control has-icons-left">
-			<input type="text" class="input" name="_user_new_user_email">
-            <span class="icon is-left">
-                <i class="fa fa-at"></i>
-            </span>
-		</div>
-	</div>
 	<?php 
 	if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
 		_wnd_sms_field($verity_type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));

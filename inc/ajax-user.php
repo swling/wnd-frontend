@@ -167,14 +167,7 @@ function wnd_update_profile() {
 	if (!$user_id) {
 		return array('status' => 0, 'msg' => '获取用户ID失败！');
 	}
-
-	$display_name = $_POST['_user_display_name'];
-	$user_url = $_POST['_user_user_url'];
-
-	// 初始化用户及profile字段数据
-	$user_array = array('ID' => $user_id, 'display_name' => $display_name, 'user_url' => $user_url);
-	$user_meta_array = array(); //自定义数组字段 wnd_user_meta
-	$wp_user_meta_array = array(); //WordPress 原生用户字段
+	$user_array = array('ID' => $user_id, 'display_name' => $_POST['_user_display_name'], 'user_url' => $_POST['_user_user_url']);
 
 	// 更新权限过滤挂钩
 	$user_can_update_profile = apply_filters('wnd_can_update_profile', array('status' => 1, 'msg' => '默认通过'));
@@ -278,8 +271,7 @@ function wnd_update_account() {
 	// 更新失败，返回错误信息
 	if (is_wp_error($user_id)) {
 
-		$msg = $user_id->get_error_message();
-		return array('status' => 0, 'msg' => $msg);
+		return array('status' => 0, 'msg' => $user_id->get_error_message());
 
 	}
 

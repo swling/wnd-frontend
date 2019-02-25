@@ -53,15 +53,18 @@ function wnd_install() {
 		if (!get_option('wndwp', $default = false)) {
 
 			$default_option = array(
+				
+				'wnd_enable_white_list' => 1,
 				'wnd_allowed_post_field' => 'post_title,post_excerpt,post_content,post_parent',
 				'wnd_allowed_post_meta_key' => '',
 				'wnd_allowed_wp_post_meta_key' => 'price',
 				'wnd_allowed_user_meta_key' => '',
 				'wnd_allowed_wp_user_meta_key' => 'description',
 
-				'wnd_style' => 1,
+				'wnd_default_style' => 1,
 				'wnd_do_page' => 0,
 				'wnd_pay_return_url' => get_option('home'),
+				
 				'wnd_ali_accessKeyId' => '阿里短信KeyId',
 				'wnd_ali_accessKeySecret' => '阿里短信KeySecret',
 				'wnd_ali_SignName' => get_option('blogname'),
@@ -90,7 +93,7 @@ function wnd_scripts() {
 	global $ver;
 	wp_enqueue_script('wndwp', WNDWP_URL . 'static/js/wndwp.js', array('jquery'), $ver);
 
-	if (wnd_get_option('wndwp', 'wnd_style') != 0) {
+	if (wnd_get_option('wndwp', 'wnd_default_style') != 0) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.min.css', array(), $ver);
 		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css', array(), $ver);
 	}
