@@ -64,6 +64,12 @@ apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_sta
 *@param $post_types array 文章类型数组 如移除 post 类型： unset($post_type['post'])
 */
 apply_filters( 'wnd_allowed_post_types', $post_types );
+
+/**
+*@since 2019.02.25
+*文章列表输出模板 文章状态文字过滤
+*/
+apply_filters( '_wnd_list_posts_status_text', $post->post_status, $post->post_type);
 ```
 
 ##用户

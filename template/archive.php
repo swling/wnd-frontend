@@ -111,7 +111,7 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 		<tr>
 			<td class="is-narrow"><?php the_time('m-d H:i');?></td>
 			<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title;?></a></td>
-			<th class="is-narrow"><?php echo $post->post_status; ?></th>
+			<th class="is-narrow"><?php echo apply_filters( '_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
 			<td class="is-narrow">
 				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID;?>&color=<?php echo $color; ?>')">预览</a>
 				<?php if (current_user_can('edit_post', $post->ID)) {?>
@@ -133,7 +133,7 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 
 	// 分页
 	if (!wp_doing_ajax()) {
-		_wnd_next_page($posts_per_page, $query->post_count, $pages_key);
+		_wnd_next_page($args['posts_per_page'], $query->post_count, $pages_key);
 	} else {
 		_wnd_ajax_next_page(__FUNCTION__, $args);
 	}
