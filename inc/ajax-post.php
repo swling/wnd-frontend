@@ -24,6 +24,7 @@ function wnd_insert_post($update_id = 0) {
 	// 组合数据
 	$user_id = get_current_user_id();
 	$post_id = (int) $_POST['_post_post_id'] ?? 0;
+	$post_parent = (int) $_POST['_post_post_parent'] ?? 0;
 	$update_id = $update_id ?: $post_id;
 	$post_type = $_POST['_post_post_type'] ?? 'post';
 
@@ -61,14 +62,23 @@ function wnd_insert_post($update_id = 0) {
 	// 初始化文章数组
 	if (!$update_id) {
 		// 判断是否为更新
-		$post_array = array('post_author' => $user_id, 'post_type' => $post_type, 'post_status' => $post_status);
+		$post_array = array(
+			'post_author' => $user_id,
+			'post_type' => $post_type,
+			'post_status' => $post_status,
+			'post_parent' => $post_parent,
+		);
 
 		//更新内容，只只允许更新状态及白名单内的字段防止用户通过编辑文章，改变文章类型等敏感数据
 	} else {
-		$post_array = array('ID' => $update_id, 'post_status' => $post_status);
+		$post_array = array(
+			'ID' => $update_id,
+			'post_status' => $post_status,
+			'post_parent' => $post_parent,
+		);
 	}
 	// 最终post array数据
-	$post_array = array_merge($post_array, $post_array_temp);
+	$post_array = array_merge($post_array_temp, $post_array);
 
 	// 写入文章
 	if (!$update_id) {

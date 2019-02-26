@@ -17,6 +17,7 @@ function _wnd_post_form($args=array()){
 	$defaults = array(
 		'post_id'	=> 0,
 		'post_type' => 'post',
+		'post_parent' => 0,
 		'is_free'	=> 1,
 		'has_excerpt' => 1,
 		'has_thumbnail' => 0,//0 无缩略图，1、wp原生缩略图(存储在post meta _thumbnail_id 字段)，2，存储在wnd_meta _thumbnail_id字段
@@ -190,6 +191,9 @@ if($tag_taxonomies){
 	<?php if($post_id) { ?>
 	<input type="hidden" name="_post_post_id" value="<?php echo $post_id; ?>">
 	<?php }?>
+	<?php if($post_parent) { ?>
+	<input type="hidden" name="_post_post_parent" value="<?php echo $post_parent; ?>">
+	<?php }?>	
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_insert_post">
 	<?php wp_nonce_field('wnd_insert_post', '_ajax_nonce'); ?>
