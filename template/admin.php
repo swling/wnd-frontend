@@ -30,34 +30,9 @@ function _wnd_admin_posts_panel($args = array()) {
 
 	// 容器开始
 	echo '<div id="admin-panel">';
-	echo '<div class="tabs"><ul class="tab">';
 
-	// 查询内容并输出导航链接
-	$post_types = get_post_types(array('public' => true, 'show_ui' => true), $output = 'objects', $operator = 'and');
-	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
-
-	foreach ($post_types as $post_type) {
-
-		$active = ($args['post_type'] == $post_type->name) ? 'class="is-active"' : '';
-
-		// 配置ajax请求参数
-		$ajax_args = array_merge($args, array('post_type' => $post_type->name));
-		unset($ajax_args['paged']);
-		$ajax_args = http_build_query($ajax_args);
-
-		if (wp_doing_ajax()) {
-			if ($ajax_type == 'modal') {
-				echo '<li ' . $active . '><a onclick="wnd_ajax_modal(\'list_posts\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
-			} else {
-				echo '<li ' . $active . '><a onclick="wnd_ajax_embed(\'#admin-panel-posts-list\',\'list_posts\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
-			}
-		} else {
-			echo '<li ' . $active . '><a href="' . add_query_arg('tab', $post_type->name, remove_query_arg('pages')) . '">' . $post_type->label . '</a></li>';
-		}
-
-	}
-	unset($post_type);
-	echo '</ul></div>';
+	// post types 切换
+	_wnd_post_types_tabs($args, $ajax_list_posts_call = 'list_posts', $ajax_embed_container = '#admin-panel-posts-list');
 
 	echo '<div id="admin-panel-posts-list">';
 	_wnd_list_posts($args);
@@ -105,30 +80,9 @@ function _wnd_user_posts_panel($args = array()) {
 
 	// 容器开始
 	echo '<div id="user-posts">';
-	echo '<div class="tabs"><ul class="tab">';
 
-	foreach ($post_types as $post_type) {
-
-		$active = ($args['post_type'] == $post_type->name) ? 'class="is-active"' : '';
-
-		// 配置ajax请求参数
-		$ajax_args = array_merge($args, array('post_type' => $post_type->name));
-		unset($ajax_args['paged']);
-		$ajax_args = http_build_query($ajax_args);
-
-		if (wp_doing_ajax()) {
-			if ($ajax_type == 'modal') {
-				echo '<li ' . $active . '><a onclick="wnd_ajax_modal(\'list_posts\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
-			} else {
-				echo '<li ' . $active . '><a onclick="wnd_ajax_embed(\'#user-posts-list\',\'list_posts\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
-			}
-		} else {
-			echo '<li ' . $active . '><a href="' . add_query_arg('tab', $post_type->name, remove_query_arg('pages')) . '">' . $post_type->label . '</a></li>';
-		}
-
-	}
-	unset($post_type);
-	echo '</ul></div>';
+	// post types 切换
+	_wnd_post_types_tabs($args, $ajax_list_posts_call = 'list_posts', $ajax_embed_container = '#user-posts-list');
 
 	echo '<div id="user-posts-list">';
 	_wnd_list_posts($args);

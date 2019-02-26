@@ -144,3 +144,54 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 
 }
 
+/**
+ *@since 2019.02.26
+ *遍历文章类型，并配合外部调用函数，生成tabs查询参数，
+ *（在非ajax状态中，生成 ?tab=post_type，ajax中，在当前查询参数新增post_type参数，并注销paged翻页参数以实现菜单切换）
+ *@param $args 外部调用函数ajax查询文章的参数
+ *@param $ajax_list_posts_call 外部调用函数查询文章的调用函数
+ *@param $ajax_embed_container 外部调用函数ajax查询文章后嵌入的html容器
+ */
+function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
+
+	// 查询post types
+	$post_types = get_post_types(array('public' => true, 'show_ui' => true), $output = 'objects', $operator = 'and');
+	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
+	// 仅输出允许的post types
+	foreach ($post_types as $post_type) {
+		if (!in_array($post_type->name, wnd_get_allowed_post_types())) {
+			unset($post_types[$post_type->name]);
+		}
+	}
+	unset($post_type);	
+
+	// 输出容器
+	echo '<div class="tabs"><ul class="tab">';
+
+	// 输出tabs
+	foreach ($post_types as $post_type) {
+
+		$active = (isset($args['post_type']) and $args['post_type'] == $post_type->name) ? 'class="is-active"' : '';
+
+		// 配置ajax请求参数
+		$ajax_args = array_merge($args, array('post_type' => $post_type->name));
+		unset($ajax_args['paged']);
+		$ajax_args = http_build_query($ajax_args);
+
+		if (wp_doing_ajax()) {
+			if ($ajax_type == 'modal') {
+				echo '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
+			} else {
+				echo '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
+			}
+		} else {
+			echo '<li ' . $active . '><a href="' . add_query_arg('tab', $post_type->name, remove_query_arg('pages')) . '">' . $post_type->label . '</a></li>';
+		}
+
+	}
+	unset($post_type);
+	
+	// 输出结束
+	echo '</ul></div>';
+
+}
