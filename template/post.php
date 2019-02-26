@@ -191,8 +191,8 @@ if($tag_taxonomies){
 	<?php if($post_id) { ?>
 	<input type="hidden" name="_post_post_id" value="<?php echo $post_id; ?>">
 	<?php }?>
-	<?php if($post_parent) { ?>
-	<input type="hidden" name="_post_post_parent" value="<?php echo $post_parent; ?>">
+	<?php if($args['post_parent']) { ?>
+	<input type="hidden" name="_post_post_parent" value="<?php echo $args['post_parent']; ?>">
 	<?php }?>	
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_insert_post">

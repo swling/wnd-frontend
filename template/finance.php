@@ -25,11 +25,11 @@ function _wnd_user_fin_panel($args = array()) {
 	$args = wp_parse_args($args, $defaults);
 
 	// 优先参数
-	$type = $_REQUEST['tab'] ?? $args['post_type'];
+	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type'];
 	// $status = $_REQUEST['status'] ?? $args['post_status'];
 
-	$expense_is_active = $type == 'expense' ? 'class="is-active"' : '';
-	$recharge_is_active = $type == 'recharge' ? 'class="is-active"' : '';
+	$expense_is_active = $args['post_type'] == 'expense' ? 'class="is-active"' : '';
+	$recharge_is_active = $args['post_type'] == 'recharge' ? 'class="is-active"' : '';
 
 ?>
 <div id="user-fin">
