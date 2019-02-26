@@ -414,7 +414,7 @@ function _wnd_upload_field($args) {
 function _wnd_paid_post_field($post_parent){
 
     $args = array(
-        'id'=>'upload-file',
+        'id'=>'upload-file-' . $post_parent,
         'meta_key' => 'file',
         'has_thumbnail'=> 0,
         'post_parent' => $post_parent,
@@ -440,7 +440,7 @@ function _wnd_post_thumbnail_field($post_parent, $size = array('width'=>150, 'he
 
 	$meta_key = $is_wpthumbnail ? '_wpthumbnail_id' : '_thumbnail_id';
     $args = array(
-        'id'=>'post-thumbnail-upload',
+        'id'=>'post-thumbnail-' . $post_parent,
         'meta_key' => $meta_key,
         'post_parent' => $post_parent,
         'thumbnail_size' => $size,
