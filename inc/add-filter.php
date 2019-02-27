@@ -139,6 +139,10 @@ function wnd_filter_limit_upload($file) {
 add_filter('get_edit_post_link', 'wnd_filter_edit_post_link', $priority = 10, $accepted_args = 3);
 function wnd_filter_edit_post_link($link, $post_id, $context) {
 
+	if(is_admin()){
+		return $link;
+	}
+
 	$edit_page = (int) wnd_get_option('wndwp', 'wnd_edit_page');
 	if ($edit_page) {
 		return get_permalink($edit_page) . '?post_id=' . $post_id;
