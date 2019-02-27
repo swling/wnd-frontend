@@ -1,7 +1,7 @@
 <?php
 
 //###################################################### 生成taxonomy 多重查询参数 默认 GET name 为 term_id, GET值为 id
-function wnd_terms_query_arg($query = array(), $key = 'term_id', $remove_key = '', $title = '全部') {
+function _wnd_terms_query_arg($query = array(), $key = 'term_id', $remove_key = '', $title = '全部') {
 
 	if (!$query) {
 		return false;
@@ -9,15 +9,15 @@ function wnd_terms_query_arg($query = array(), $key = 'term_id', $remove_key = '
 
 	$terms = get_terms($query);
 	$current_term_id = isset($_GET[$key]) ? $_GET[$key] : false;
-	$all_class = !$current_term_id ? 'class="on"' : false;
+	$all_class = !$current_term_id ? 'class="is-active"' : false;
 
 	if ($terms) {
-		echo '<ul class="' . $query['taxonomy'] . '">';
+		echo '<ul class="' . $query['taxonomy'] . '-query-args term-query-args">';
 		array_push($remove_key, $key);
 		echo '<li><a href="' . remove_query_arg($remove_key) . '" ' . $all_class . ' >' . $title . '</a></li>';
 		foreach ($terms as $term) {
 
-			$current = ($current_term_id == $term->term_id) ? 'class="on"' : null;
+			$current = ($current_term_id == $term->term_id) ? 'class="is-active"' : null;
 			echo '<li><a href="' . add_query_arg($key, $term->term_id, $url = remove_query_arg($remove_key)) . '" ' . $current . '>' . $term->name . '</a></li>' . PHP_EOL;
 
 		}
@@ -32,7 +32,7 @@ function wnd_terms_query_arg($query = array(), $key = 'term_id', $remove_key = '
 目的：避免产生过多没有内容的多重筛选
 @2018.12.14 首次封装
  */
-function wnd_related_terms_query_arg($current_term_id, $related_taxonmy, $key, $remove_key = array(), $title = 'All', $query_post_max = 1000) {
+function _wnd_related_terms_query_arg($current_term_id, $related_taxonmy, $key, $remove_key = array(), $title = 'All', $query_post_max = 1000) {
 
 	$current_term = get_term($current_term_id);
 
