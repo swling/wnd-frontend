@@ -95,7 +95,7 @@ function wnd_scripts() {
 
 	if (wnd_get_option('wndwp', 'wnd_default_style') != 0) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.7.4/css/bulma.min.css', array(), $ver);
-		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css', array(), $ver);
+		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.7.2/css/all.min.css', array(), $ver);
 	}
 }
 add_action('wp_enqueue_scripts', 'wnd_scripts');
