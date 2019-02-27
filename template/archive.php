@@ -108,18 +108,18 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 	</thead>
 	<tbody>
 		<?php while ($query->have_posts()): $query->the_post();global $post;?>
-			<tr>
-				<td class="is-narrow"><?php the_time('m-d H:i');?></td>
-				<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
-				<th class="is-narrow"><?php echo apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
-				<td class="is-narrow">
-					<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>&color=<?php echo $color; ?>')">预览</a>
-					<?php if (current_user_can('edit_post', $post->ID)) {?>
-					<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
-					<?php }?>
-				</td>
-			</tr>
-			<?php endwhile;?>
+				<tr>
+					<td class="is-narrow"><?php the_time('m-d H:i');?></td>
+					<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
+					<th class="is-narrow"><?php echo apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
+					<td class="is-narrow">
+						<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>&color=<?php echo $color; ?>')">预览</a>
+						<?php if (current_user_can('edit_post', $post->ID)) {?>
+						<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
+						<?php }?>
+					</td>
+				</tr>
+				<?php endwhile;?>
 	</tbody>
 	<?php wp_reset_postdata(); //重置查询?>
 </table>
@@ -154,6 +154,11 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
  */
 function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
 
+	$defaults = array(
+		'remove_query_arg' => array('paged', 'pages'),
+	);
+	$args = wp_parse_args($args, $defaults);
+
 	// 查询post types
 	$post_types = get_post_types(array('public' => true, 'show_ui' => true), $output = 'objects', $operator = 'and');
 	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
@@ -173,12 +178,16 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 
 		$active = (isset($args['post_type']) and $args['post_type'] == $post_type->name) ? 'class="is-active"' : '';
 
-		// 配置ajax请求参数
-		$ajax_args = array_merge($args, array('post_type' => $post_type->name));
-		unset($ajax_args['paged']);
-		$ajax_args = http_build_query($ajax_args);
-
 		if (wp_doing_ajax()) {
+
+			// 配置ajax请求参数
+			$ajax_args = array_merge($args, array('post_type' => $post_type->name));
+			foreach ($args['remove_query_arg'] as $remove_query_arg) {
+				unset($ajax_args[$query_arg]);
+			}
+			unset($remove_query_arg);
+			$ajax_args = http_build_query($ajax_args);
+
 			if ($ajax_type == 'modal') {
 				echo '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
 			} else {
@@ -187,11 +196,11 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		} else {
 
 			/**
-			*@since 2019.02.27
-			* 切换类型时，需要从当前网址移除的参数（用于在多重筛选时，移除仅针对当前类型有效的参数）
-			*/
+			 *@since 2019.02.27
+			 * 切换类型时，需要从当前网址移除的参数（用于在多重筛选时，移除仅针对当前类型有效的参数）
+			 */
 			$args['remove_query_arg'] = isset($args['remove_query_arg']) ? array_merge($args['remove_query_arg'], array('pages')) : array('pages');
-			
+
 			echo '<li ' . $active . '><a href="' . add_query_arg('tab', $post_type->name, remove_query_arg($args['remove_query_arg'])) . '">' . $post_type->label . '</a></li>';
 		}
 
