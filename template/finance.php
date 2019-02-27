@@ -60,6 +60,11 @@ function _wnd_user_fin_panel($args = array()) {
 		<div class="level-item">
 			<button class="button" onclick="wnd_ajax_modal('recharge_form')">余额充值</button>
 		</div>
+		<?php if(is_super_admin( )) { ?>
+		<div class="level-item">
+			<button class="button" onclick="wnd_ajax_modal('admin_recharge_form')">管理员充值</button>
+		</div>
+		<?php } ?>
 	</div>
 
 	<div class="tabs">
@@ -307,7 +312,7 @@ function _wnd_admin_recharge_form(){
 	<input type="hidden" name="action" value="wnd_action">
 	<input type="hidden" name="action_name" value="wnd_ajax_admin_recharge">
 	<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#admin-recharge-form')">验证并充值</button>
+		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#admin-recharge-form')">确认充值</button>
 	</div>
 </form>
 <?php
