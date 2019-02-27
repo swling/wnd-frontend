@@ -66,10 +66,12 @@ add_filter('wnd_post_status', 'wnd_filter_post_status', 99, 2);
 function wnd_filter_post_status($post_status, $update_id) {
 
 	if (isset($_POST['_post_post_status']) and $_POST['_post_post_status'] == 'draft') {
-		$post_status = 'draft';
+		return 'draft';
 	}
-	// 返回状态
-	return $post_status;
+
+	if(wnd_is_manager()){
+		return 'publish';
+	}
 
 }
 
