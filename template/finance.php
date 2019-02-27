@@ -185,7 +185,9 @@ function _wnd_list_user_fin($args = array(),$pages_key = 'pages', $color = 'is-p
  */
 function _wnd_recharge_form() {
 
-	?>
+	if(wnd_get_option('wndwp','wnd_alipay_appid')){
+
+?>
 <style>
 /*单选样式优化*/
 .radio-toolbar,
@@ -255,11 +257,12 @@ function _wnd_recharge_form() {
 			<input type="radio" name="paytype" value="alipay" checked="checked" />
 		</div>
 	</div>
-	<?php do_action('_wnd_recharge_form');?>
 	<?php wp_nonce_field('wnd_payment');?>
 	<div class="field is-grouped is-grouped-centered">
-		<button type="submit" name="submit" class="button">确认充值</button>
-	</div>
+		<button type="submit" name="submit" class="button">支付宝充值</button>
+	</div>	
+<?php } ?>
+	<?php do_action('_wnd_recharge_form');?>
 </form>
 <?php
 
