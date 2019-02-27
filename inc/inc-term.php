@@ -317,7 +317,7 @@ function _wnd_list_tags_under_category($args = array()) {
 }
 
 //############################################################################ 获取指定taxonomy的分类列表并附带下属标签
-function wnd_list_categories_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $limit = 10, $show_count = false, $hide_empty = 1) {
+function _wnd_list_categories_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $limit = 10, $show_count = false, $hide_empty = 1) {
 
 	$args = array('hide_empty' => $hide_empty, 'orderby' => 'count', 'order' => 'DESC');
 	$terms = get_terms($cat_taxonomy, $args);
