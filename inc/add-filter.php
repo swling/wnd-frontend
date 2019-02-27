@@ -177,7 +177,7 @@ function wnd_filter_the_content($content) {
 		// 未登录用户
 		if (!is_user_logged_in()) {
 			$button_text = '请登录后下载';
-			$button = '<div class="field is-grouped is-grouped-centered"><button class="button" onclick="wnd_ajax_modal(\'login_form\')">' . $button_text . '</button></div>';
+			$button = '<div class="field is-grouped is-grouped-centered pay"><button class="button" onclick="wnd_ajax_modal(\'login_form\')">' . $button_text . '</button></div>';
 			$content .= $button;
 			return $content;
 		}
@@ -206,7 +206,7 @@ function wnd_filter_the_content($content) {
 			<input type="hidden" name="action_name"  value="wnd_pay_for_download">
 			<input type="hidden" name="post_id"  value="' . $post->ID . '">
 			<input type="hidden" name="post_title"  value="' . $post->post_title . '">
-			<div class="field is-grouped is-grouped-centered">
+			<div class="field is-grouped is-grouped-centered pay">
 			<button type="button" name="submit" class="button" onclick="wnd_ajax_submit(\'#pay-for-download\')" >' . $button_text . '</button>
 			</div>
 		</form>';
@@ -262,7 +262,7 @@ function wnd_filter_the_content($content) {
 		<input type="hidden" name="action_name"  value="wnd_pay_for_reading">
 		<input type="hidden" name="post_id"  value="' . $post->ID . '">
 		<input type="hidden" name="post_title"  value="' . $post->post_title . '">
-		<div class="field is-grouped is-grouped-centered">
+		<div class="field is-grouped is-grouped-centered pay">
 		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit(\'#pay-for-reading\')" >' . $button_text . '</button>
 		</div>
 		</form>';
