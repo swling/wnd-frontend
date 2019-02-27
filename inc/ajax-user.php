@@ -35,20 +35,16 @@ function wnd_reg() {
 
 	// 2、数据正确性检测
 	if (strlen($user_login) < 4) {
-		$reg_errors = '用户名不能低于4位！';
-		return $value = array('status' => 0, 'msg' => $reg_errors);
+		return $value = array('status' => 0, 'msg' => '用户名不能低于4位！');
 	}
 	if (strlen($user_pass) < 6) {
-		$reg_errors = '密码不能低于6位！';
-		return $value = array('status' => 0, 'msg' => $reg_errors);
+		return $value = array('status' => 0, 'msg' => '密码不能低于6位！');
 	}
 	if (!empty($user_pass_repeat) && $user_pass_repeat !== $user_pass_repeat) {
-		$reg_errors = '两次输入的新密码不匹配！';
-		return $value = array('status' => 0, 'msg' => $reg_errors);
+		return $value = array('status' => 0, 'msg' => '两次输入的新密码不匹配！');
 	}
 	if (!is_email($user_email)) {
-		$reg_errors = '邮箱地址无效！';
-		return $value = array('status' => 0, 'msg' => $reg_errors);
+		return $value = array('status' => 0, 'msg' => '邮箱地址无效！');
 	}
 
 	// 注册权限过滤挂钩
