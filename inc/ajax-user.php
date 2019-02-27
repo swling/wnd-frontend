@@ -37,14 +37,14 @@ function wnd_reg() {
 	if (strlen($user_login) < 4) {
 		return $value = array('status' => 0, 'msg' => '用户名不能低于4位！');
 	}
+	if (is_numeric($user_login)) {
+		return $value = array('status' => 0, 'msg' => '用户名不能是纯数字！');
+	}	
 	if (strlen($user_pass) < 6) {
 		return $value = array('status' => 0, 'msg' => '密码不能低于6位！');
 	}
 	if (!empty($user_pass_repeat) && $user_pass_repeat !== $user_pass_repeat) {
 		return $value = array('status' => 0, 'msg' => '两次输入的新密码不匹配！');
-	}
-	if (!is_email($user_email)) {
-		return $value = array('status' => 0, 'msg' => '邮箱地址无效！');
 	}
 
 	// 注册权限过滤挂钩
