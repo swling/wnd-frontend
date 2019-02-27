@@ -21,7 +21,8 @@ function _wnd_post_form($args=array()){
 		'is_free'	=> 1,
 		'with_excerpt' => 0,
 		'with_thumbnail' => 0,//0 无缩略图，1、wp原生缩略图(存储在post meta _thumbnail_id 字段)，2，存储在wnd_meta _thumbnail_id字段
-		'thumbnail_size' => array ('width'=>150, 'height'=>150)
+		'thumbnail_size' => array ('width'=>150, 'height'=>150),
+		'rich_media_editor' => 1
 	);
 	$args = wp_parse_args($args,$defaults);
 	$post_id = $args['post_id'];
@@ -176,7 +177,7 @@ if($tag_taxonomies){
 	<div class="field">
 <?php 
 	// 正文详情
-	if(wp_doing_ajax()){
+	if(wp_doing_ajax() or !$args['rich_media_editor']){
 
 		echo '<textarea class="textarea" name="_post_post_content" placeholder="详情"></textarea>';
 
