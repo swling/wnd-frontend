@@ -19,7 +19,7 @@ function _wnd_post_form($args=array()){
 		'post_type' => 'post',
 		'post_parent' => 0,
 		'is_free'	=> 1,
-		'with_excerpt' => 1,
+		'with_excerpt' => 0,
 		'with_thumbnail' => 0,//0 无缩略图，1、wp原生缩略图(存储在post meta _thumbnail_id 字段)，2，存储在wnd_meta _thumbnail_id字段
 		'thumbnail_size' => array ('width'=>150, 'height'=>150)
 	);
@@ -80,10 +80,15 @@ function _wnd_post_form($args=array()){
 	  }unset($taxonomy);
 	}
 
+	if(!wp_doing_ajax()){
+		wnd_tags_editor($maxTags=3, $maxLength=10, $placeholder='标签', $taxonomy=$post_type.'_tag' ,$initialTags='' );
+	}	
+
 ?>
 <form id="new-post-<?php echo $post_id;?>" name="new_post" method="post" action="" onsubmit="return false;" onkeydown="if(event.keyCode==13){return false;}">
 	<?php if($args['form_title']) echo '<div class="field content"><h3 class="form-title">'. $args['form_title'] . '</h3></div>';?>
 	<div class="ajax-msg"></div>
+
 	<div class="field">
 		<label class="label">标题<span class="required">*</span></label>
 		<div class="control">
@@ -105,7 +110,7 @@ if($cat_taxonomies){
 	<div class="field">
 		<label for="cat" class="label"><?php echo $cat->labels->name;?><span class="required">*</span></label>
 		<div class="select">
-			<?php wp_dropdown_categories('show_option_none=—选择'.$cat->labels->name.' * —&required=true&name=_term_'.$cat_taxonomy.'&taxonomy='.$cat_taxonomy.'&orderby=name&hide_empty=0&hierarchical=1&selected=' . $current_cat_id );?>
+			<?php wp_dropdown_categories('show_option_none=—选择'.$cat->labels->name.'—&required=true&name=_term_'.$cat_taxonomy.'&taxonomy='.$cat_taxonomy.'&orderby=name&hide_empty=0&hierarchical=1&selected=' . $current_cat_id );?>
 		</div>
 	</div>
 <?php
