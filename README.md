@@ -25,6 +25,7 @@
 ##充值：recharge
 ##消费、订单：expense
 ##站内信：mail
+##整站月度财务统计：stats_re（充值）、stats_ex（消费）
 
 #ajax交互概述：
 ```php
