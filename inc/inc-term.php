@@ -118,7 +118,7 @@ function wnd_update_tag_under_cat($cat_id, $tag_id, $tag_taxonomy, $inc = true) 
 	global $wpdb;
 
 	// 删除对象缓存
-	wp_cache_delete($cat_id . $tag_taxonomy, 'wnd_tag_list_under_cat');
+	wp_cache_delete($cat_id . $tag_taxonomy, 'wnd_list_tags_under_category');
 
 	$result = $wpdb->get_row($wpdb->prepare(
 		"SELECT * FROM $wpdb->wnd_terms WHERE cat_id = %d AND tag_id = %d ",
@@ -231,7 +231,7 @@ function wnd_pre_delete_term_action($term_id, $taxonmy) {
 }
 
 //############################################################################ 获取当前分类下的标签列表
-function wnd_tag_list_under_cat($args = array()) {
+function _wnd_list_tags_under_category($args = array()) {
 
 	$defaults = array(
 		'cat_id' => 0,
@@ -255,7 +255,7 @@ function wnd_tag_list_under_cat($args = array()) {
 	$title = $args['title'];
 
 	// 获取缓存
-	$tag_array = wp_cache_get($cat_id . $tag_taxonomy, 'wnd_tag_list_under_cat');
+	$tag_array = wp_cache_get($cat_id . $tag_taxonomy, 'wnd_list_tags_under_category');
 
 	// 缓存无效
 	if ($tag_array === false) {
@@ -274,12 +274,12 @@ function wnd_tag_list_under_cat($args = array()) {
 		}
 
 		// 缓存查询结果
-		wp_cache_set($cat_id . $tag_taxonomy, $tag_array, 'wnd_tag_list_under_cat', 3600);
+		wp_cache_set($cat_id . $tag_taxonomy, $tag_array, 'wnd_list_tags_under_category', 3600);
 	}
 
 	if ($tag_array) {
 
-		$tag_list = '<ul id="tag-list-under-' . $cat_id . '"  class="tag-list" >' . PHP_EOL;
+		$tag_list = '<ul class="list-tags-under-' . $cat_id . ' list-tags-under-category menu-list" >' . PHP_EOL;
 		if ($template == 'query_arg') {
 			$current_term_id = $_GET[$key] ?? false;
 			$all_class = !$current_term_id ? 'class="on"' : false;
@@ -317,21 +317,21 @@ function wnd_tag_list_under_cat($args = array()) {
 }
 
 //############################################################################ 获取指定taxonomy的分类列表并附带下属标签
-function wnd_cat_list_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $limit = 10, $show_count = false, $hide_empty = 0) {
+function wnd_list_categories_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $limit = 10, $show_count = false, $hide_empty = 1) {
 
 	$args = array('hide_empty' => $hide_empty, 'orderby' => 'count', 'order' => 'DESC');
 	$terms = get_terms($cat_taxonomy, $args);
 
 	if (!empty($terms) && !is_wp_error($terms)) {
 
-		echo '<div id="' . $cat_taxonomy . '-list-with-tags" class="cat-list-with-tags">' . PHP_EOL;
+		echo '<div class="list-' . $cat_taxonomy . '-with-tags list-categories-with-tags">' . PHP_EOL;
 
 		foreach ($terms as $term) {
 
 			// 获取分类
-			echo '<div id="cat-' . $term->term_id . '" class="cat-with-tags">' . PHP_EOL . '<h3><i class="iconfont"></i><a href="' . get_term_link($term) . '">' . $term->name . '</a></h3>' . PHP_EOL;
+			echo '<div id="category-' . $term->term_id . '" class="category-with-tags">' . PHP_EOL . '<h3><span class="iconfont"></span><a href="' . get_term_link($term) . '">' . $term->name . '</a></h3>' . PHP_EOL;
 			// 获取分类下的标签
-			wnd_tag_list_under_cat(array(
+			_wnd_list_tags_under_category(array(
 				'cat_id' => $term->term_id,
 				'tag_taxonomy' => $tag_taxonomy,
 				'limit' => $limit,
