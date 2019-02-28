@@ -135,17 +135,17 @@ function _wnd_list_user_fin($args = array(),$pages_key = 'pages', $color = 'is-p
 <table class="table is-fullwidth is-hoverable is-striped">
 	<thead>
 		<tr>
-			<th class="is-narrow"><abbr title="Position">日期</abbr></th>
-			<th>金额</th>
+			<th class="is-narrow is-hidden-mobile"><abbr title="Position">日期</abbr></th>
 			<th>详情</th>
-			<th class="is-narrow">状态</th>
-			<th class="is-narrow">操作</th>
+			<th>金额</th>
+			<th class="is-narrow is-hidden-mobile">状态</th>
+			<th class="is-narrow is-hidden-mobile">操作</th>
 		</tr>
 	</thead>
 	<tbody>
 		<?php while ($query->have_posts()): $query->the_post();global $post;?>
 			<tr>
-				<td class="is-narrow"><?php the_time('m-d H:i');?></td>
+				<td class="is-narrow is-hidden-mobile"><?php the_time('m-d H:i');?></td>
 				<td><?php echo $post->post_content; ?></td>
 				<?php if( $post->post_parent ){ ?>	
 				<td><a href="<?php the_permalink($post->post_parent); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
@@ -153,8 +153,8 @@ function _wnd_list_user_fin($args = array(),$pages_key = 'pages', $color = 'is-p
 				<td><?php echo $post->post_title; ?></td>
 			 	<?php } ?>
 
-				<th class="is-narrow"><?php echo $post->post_status; ?></th>
-				<td class="is-narrow">
+				<th class="is-narrow is-hidden-mobile"><?php echo $post->post_status; ?></th>
+				<td class="is-narrow is-hidden-mobile">
 					<?php if (current_user_can('edit_post', $post->ID)) {?>
 					<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
 					<?php }?>

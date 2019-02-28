@@ -100,26 +100,26 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 <table class="table is-fullwidth is-hoverable is-striped">
 	<thead>
 		<tr>
-			<th class="is-narrow"><abbr title="Position">日期</abbr></th>
+			<th class="is-narrow is-hidden-mobile"><abbr title="Position">日期</abbr></th>
 			<th>标题</th>
-			<th class="is-narrow">状态</th>
-			<th class="is-narrow">操作</th>
+			<th class="is-narrow is-hidden-mobile">状态</th>
+			<th class="is-narrow is-hidden-mobile">操作</th>
 		</tr>
 	</thead>
 	<tbody>
 		<?php while ($query->have_posts()): $query->the_post();global $post;?>
-					<tr>
-						<td class="is-narrow"><?php the_time('m-d H:i');?></td>
-						<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
-						<th class="is-narrow"><?php echo apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
-						<td class="is-narrow">
-							<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>&color=<?php echo $color; ?>')">预览</a>
-							<?php if (current_user_can('edit_post', $post->ID)) {?>
-							<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
-							<?php }?>
-						</td>
-					</tr>
-					<?php endwhile;?>
+		<tr>
+			<td class="is-narrow is-hidden-mobile"><?php the_time('m-d H:i');?></td>
+			<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
+			<th class="is-narrow is-hidden-mobile"><?php echo apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
+			<td class="is-narrow is-hidden-mobile">
+				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>&color=<?php echo $color; ?>')">预览</a>
+				<?php if (current_user_can('edit_post', $post->ID)) {?>
+				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
+				<?php }?>
+			</td>
+		</tr>
+		<?php endwhile;?>
 	</tbody>
 	<?php wp_reset_postdata(); //重置查询?>
 </table>
@@ -231,18 +231,36 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	// 输出容器
 	echo '<div class="tabs"><ul class="tab">';
 
-	// print_r( $args['tax_query']);
 
 	// 输出tabs
 	foreach (get_terms($args) as $term) {
 
-		// $active = (isset($args['term_name']) and $args['term_name'] == $term->name) ? 'class="is-active"' : '';
-		$active = (isset($args['tax_query'][0]['terms']) and $args['tax_query'][0]['terms'] == $term->term_id) ? 'class="is-active"' : '';
+		$active = '';
+
+		// 遍历当前tax query查询是否匹配当前tab
+		if (isset($args['tax_query'])) {
+
+			foreach ($args['tax_query'] as $term_query) {
+				if ($term_query['taxonomy'] != $args['taxonomy']) {
+					continue;
+				}
+				if ($term_query['terms'] == $term->term_id) {
+					$active = 'class="is-active"';
+				}
+			}
+			unset($term_query);
+
+		}
 
 		if (wp_doing_ajax()) {
 
 			// 配置ajax请求参数
-			$ajax_args = array_merge($args, array('term_id' => $term->term_id));
+			$term_query = array(
+				'taxonomy' => $args['taxonomy'],
+				'field' => 'term_id',
+				'terms' => $term->term_id,
+			);
+			$ajax_args = array_merge($args, array('tax_query' => $term_query));
 			foreach ($args['remove_query_arg'] as $remove_query_arg) {
 				unset($ajax_args[$query_arg]);
 			}
@@ -254,6 +272,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 			} else {
 				echo '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
 			}
+
 		} else {
 
 			/**
@@ -262,7 +281,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 			 */
 			$args['remove_query_arg'] = isset($args['remove_query_arg']) ? array_merge($args['remove_query_arg'], array('pages')) : array('pages');
 
-			echo '<li ' . $active . '><a href="' . add_query_arg($args['taxonomy'].'_id', $term->term_id, remove_query_arg($args['remove_query_arg'])) . '">' . $term->name . '</a></li>';
+			echo '<li ' . $active . '><a href="' . add_query_arg($args['taxonomy'] . '_id', $term->term_id, remove_query_arg($args['remove_query_arg'])) . '">' . $term->name . '</a></li>';
 		}
 
 	}

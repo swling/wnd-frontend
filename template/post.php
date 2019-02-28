@@ -38,7 +38,7 @@ function _wnd_post_form($args=array()){
     $post = get_post($post_id);
     if($post){
     	$post_type = $post->post_type;
-    	$args['is_free'] = get_post_meta( $post_id, 'price', 1 );
+    	// $args['is_free'] = !get_post_meta( $post_id, 'price', 1 );
 
     //新建文章失败
 	}else{
@@ -432,7 +432,7 @@ function _wnd_paid_post_field($post_parent){
 	<div class="control has-icons-left">
 		<input type="number" min="0" step="0.01" class="input" value="<?php echo get_post_meta( $post_parent, 'price', 1)?>" name="_wpmeta_price" placeholder="价格">
 		<span class="icon is-left">
-			<i class="fa fa-money"></i>
+			<i class="fas fa-yen-sign"></i>
 		</span>
 	</div>
 </div>
