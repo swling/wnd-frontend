@@ -452,6 +452,7 @@ function _wnd_post_thumbnail_field($post_parent, $size = array('width'=>150, 'he
         'thumbnail_size' => $size,
         'save_size' => $size,
     );
+    echo '<label class="label">缩略图</label>';
     _wnd_upload_field($args);
 
 }
