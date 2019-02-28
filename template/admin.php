@@ -25,21 +25,7 @@ function _wnd_admin_posts_panel($args = array()) {
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	// 优先参数
-	$args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
-
-	// 容器开始
-	echo '<div id="admin-panel">';
-
-	// post types 切换
-	_wnd_post_types_tabs($args, $ajax_list_posts_call = 'list_posts', $ajax_embed_container = '#admin-panel-posts-list');
-
-	echo '<div id="admin-panel-posts-list">';
-	_wnd_list_posts($args);
-	echo '</div>';
-
-	// 容器结束
-	echo '</div>';
+	_wnd_list_posts_with_post_types_tabs($args);
 
 }
 
@@ -57,20 +43,9 @@ function _wnd_user_posts_panel($args = array()) {
 	// ajax请求类型
 	$ajax_type = $_POST['ajax_type'] ?? 'modal';
 
-	// post types 过滤
-	$post_types = get_post_types(array('public' => true), $output = 'objects', $operator = 'and');
-	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
-	foreach ($post_types as $post_type) {
-		if (!in_array($post_type->name, wnd_get_allowed_post_types())) {
-			unset($post_types[$post_type->name]);
-		}
-	}
-	unset($post_type);
-
 	// 查询参数
 	$defaults = array(
 		'post_status' => 'any',
-		'post_type' => reset($post_types)->name, //$post_types 为多维数组，获取第一个type 的 name
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -78,18 +53,7 @@ function _wnd_user_posts_panel($args = array()) {
 	$args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
 	$args['author'] = get_current_user_id();
 
-	// 容器开始
-	echo '<div id="user-posts">';
-
-	// post types 切换
-	_wnd_post_types_tabs($args, $ajax_list_posts_call = 'list_posts', $ajax_embed_container = '#user-posts-list');
-
-	echo '<div id="user-posts-list">';
-	_wnd_list_posts($args);
-	echo '</div>';
-
-	// 容器结束
-	echo '</div>';
+	_wnd_list_posts_with_post_types_tabs($args);
 
 }
 

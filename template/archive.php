@@ -79,7 +79,6 @@ function _wnd_ajax_next_page($function, $args) {
  */
 function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary') {
 
-	// $paged = $_REQUEST[$pages_key] ?? $args['paged'] ?? 1;
 	$defaults = array(
 		'posts_per_page' => get_option('posts_per_page'),
 		'paged' => 1,
@@ -108,18 +107,18 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 	</thead>
 	<tbody>
 		<?php while ($query->have_posts()): $query->the_post();global $post;?>
-		<tr>
-			<td class="is-narrow is-hidden-mobile"><?php the_time('m-d H:i');?></td>
-			<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
-			<th class="is-narrow is-hidden-mobile"><?php echo apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
-			<td class="is-narrow is-hidden-mobile">
-				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>&color=<?php echo $color; ?>')">预览</a>
-				<?php if (current_user_can('edit_post', $post->ID)) {?>
-				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
-				<?php }?>
-			</td>
-		</tr>
-		<?php endwhile;?>
+			<tr>
+				<td class="is-narrow is-hidden-mobile"><?php the_time('m-d H:i');?></td>
+				<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
+				<th class="is-narrow is-hidden-mobile"><?php echo apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
+				<td class="is-narrow is-hidden-mobile">
+					<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>&color=<?php echo $color; ?>')">预览</a>
+					<?php if (current_user_can('edit_post', $post->ID)) {?>
+					<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
+					<?php }?>
+				</td>
+			</tr>
+			<?php endwhile;?>
 	</tbody>
 	<?php wp_reset_postdata(); //重置查询?>
 </table>
@@ -148,14 +147,15 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
  *@since 2019.02.26
  *遍历文章类型，并配合外部调用函数，生成tabs查询参数，
  *（在非ajax状态中，生成 ?type=post_type，ajax中，在当前查询参数新增post_type参数，并注销paged翻页参数以实现菜单切换）
- *@param $args 外部调用函数ajax查询文章的参数，其中 $args['remove_query_arg'] 参数为非ajax状态下，需要从当前网址中移除的参数数组
+ *@param $args 外部调用函数ajax查询文章的参数
  *@param $ajax_list_posts_call 外部调用函数查询文章的调用函数
  *@param $ajax_embed_container 外部调用函数ajax查询文章后嵌入的html容器
+ *@param 自定义：array  $args['wnd_remove_query_arg'] 需要从当前请求参数中移除的参数数组
  */
 function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
 
 	$defaults = array(
-		'remove_query_arg' => array('paged', 'pages'),
+		'wnd_remove_query_arg' => array('paged', 'pages'),
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -182,7 +182,7 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 
 			// 配置ajax请求参数
 			$ajax_args = array_merge($args, array('post_type' => $post_type->name));
-			foreach ($args['remove_query_arg'] as $remove_query_arg) {
+			foreach ($args['wnd_remove_query_arg'] as $remove_query_arg) {
 				unset($ajax_args[$query_arg]);
 			}
 			unset($remove_query_arg);
@@ -199,9 +199,9 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 			 *@since 2019.02.27
 			 * 切换类型时，需要从当前网址移除的参数（用于在多重筛选时，移除仅针对当前类型有效的参数）
 			 */
-			$args['remove_query_arg'] = isset($args['remove_query_arg']) ? array_merge($args['remove_query_arg'], array('pages')) : array('pages');
+			$args['wnd_remove_query_arg'] = isset($args['wnd_remove_query_arg']) ? array_merge($args['wnd_remove_query_arg'], array('pages')) : array('pages');
 
-			echo '<li ' . $active . '><a href="' . add_query_arg('type', $post_type->name, remove_query_arg($args['remove_query_arg'])) . '">' . $post_type->label . '</a></li>';
+			echo '<li ' . $active . '><a href="' . add_query_arg('type', $post_type->name, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $post_type->label . '</a></li>';
 		}
 
 	}
@@ -216,24 +216,25 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
  *@since 2019.02.28
  *遍历指定taxonomy的term，并配合外部调用函数，生成tabs查询参数，
  *（在非ajax状态中，生成 ?$taxonomy.'_id'=$term_id，ajax中，在当前查询参数新增post_type参数，并注销paged翻页参数以实现菜单切换）
- *@param $args 外部调用函数ajax查询文章的参数，其中 $args['remove_query_arg'] 参数为非ajax状态下，需要从当前网址中移除的参数数组
+ *@param $args 外部调用函数ajax查询文章的参数，其中 $args['wnd_remove_query_arg'] 参数为非ajax状态下，需要从当前网址中移除的参数数组
  *@param $ajax_list_posts_call 外部调用函数查询文章的调用函数
  *@param $ajax_embed_container 外部调用函数ajax查询文章后嵌入的html容器
+ *@param：自定义参数：'wnd_taxonomy' => 'category'
+ *@param array  'wnd_remove_query_arg' => array('paged', 'pages'), 需要从当前请求参数中移除的参数键名数组
  */
 function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
 
 	$defaults = array(
-		'taxonomy' => 'category',
-		'remove_query_arg' => array('paged', 'pages'),
+		'wnd_taxonomy' => 'category',
+		'wnd_remove_query_arg' => array('paged', 'pages'),
 	);
 	$args = wp_parse_args($args, $defaults);
 
 	// 输出容器
 	echo '<div class="tabs"><ul class="tab">';
 
-
 	// 输出tabs
-	foreach (get_terms($args) as $term) {
+	foreach (get_terms(array('taxonomy' => $args['wnd_taxonomy'])) as $term) {
 
 		$active = '';
 
@@ -241,9 +242,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		if (isset($args['tax_query'])) {
 
 			foreach ($args['tax_query'] as $term_query) {
-				if ($term_query['taxonomy'] != $args['taxonomy']) {
-					continue;
-				}
+
 				if ($term_query['terms'] == $term->term_id) {
 					$active = 'class="is-active"';
 				}
@@ -256,12 +255,13 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 
 			// 配置ajax请求参数
 			$term_query = array(
-				'taxonomy' => $args['taxonomy'],
+				'taxonomy' => $args['wnd_taxonomy'],
 				'field' => 'term_id',
 				'terms' => $term->term_id,
 			);
-			$ajax_args = array_merge($args, array('tax_query' => $term_query));
-			foreach ($args['remove_query_arg'] as $remove_query_arg) {
+			$ajax_args = array_merge($args, array('tax_query' => array($term_query)));
+
+			foreach ($args['wnd_remove_query_arg'] as $remove_query_arg) {
 				unset($ajax_args[$query_arg]);
 			}
 			unset($remove_query_arg);
@@ -279,9 +279,9 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 			 *@since 2019.02.27
 			 * 切换类型时，需要从当前网址移除的参数（用于在多重筛选时，移除仅针对当前类型有效的参数）
 			 */
-			$args['remove_query_arg'] = isset($args['remove_query_arg']) ? array_merge($args['remove_query_arg'], array('pages')) : array('pages');
+			$args['wnd_remove_query_arg'] = isset($args['wnd_remove_query_arg']) ? array_merge($args['wnd_remove_query_arg'], array('pages')) : array('pages');
 
-			echo '<li ' . $active . '><a href="' . add_query_arg($args['taxonomy'] . '_id', $term->term_id, remove_query_arg($args['remove_query_arg'])) . '">' . $term->name . '</a></li>';
+			echo '<li ' . $active . '><a href="' . add_query_arg($args['wnd_taxonomy'] . '_id', $term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $term->name . '</a></li>';
 		}
 
 	}
@@ -290,4 +290,97 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	// 输出结束
 	echo '</ul></div>';
 
+}
+
+/**
+ *@since 2019.02.28
+ *@param $args : wp_query args
+ *按wp query 查询文章，输出带有分类切换tabs的文章列表
+ *@param 自定义：array  $args['wnd_remove_query_arg'] 需要从当前请求参数中移除的参数数组
+ */
+function _wnd_list_posts_with_categories_tabs($args = array()) {
+
+	// ajax请求类型
+	$ajax_type = $_POST['ajax_type'] ?? 'modal';
+
+	// 查询参数
+	$defaults = array(
+		'post_status' => 'any',
+		'post_type' => 'post', //$post_types 为多维数组，获取第一个type 的 name
+	);
+	$args = wp_parse_args($args, $defaults);
+
+	$cat_taxonomies = array();
+	$tag_taxonomies = array();
+	$taxonomies = get_object_taxonomies($args['post_type'], $output = 'names');
+	if ($taxonomies) {
+		foreach ($taxonomies as $taxonomy) {
+			if (is_taxonomy_hierarchical($taxonomy)) {
+				array_push($cat_taxonomies, $taxonomy);
+			} else {
+				array_push($tag_taxonomies, $taxonomy);
+			}
+		}
+		unset($taxonomy);
+	}
+
+	// 获取当前文章类型第一个分类 taxonomy（暂未考虑一个类型存在多个分类类型的情况）
+	$args['wnd_taxonomy'] = reset($cat_taxonomies);
+
+	// 容器开始
+	echo '<div class="list-posts">';
+
+	// post types 切换
+	_wnd_categories_tabs($args, $ajax_list_posts_call = 'list_posts', $ajax_embed_container = '#list-posts-with-categories-tabs');
+
+	echo '<div id="list-posts-with-categories-tabs">';
+	_wnd_list_posts($args);
+	echo '</div>';
+
+	// 容器结束
+	echo '</div>';
+}
+
+/**
+ *@since 2019.02.28
+ *输出带有 poet_type切换标签的文章列表
+ *@param $args wp_query $args
+ *@param 自定义： array $args['wnd_remove_query_arg'] 需要从当前请求参数中移除的参数数组
+ */
+function _wnd_list_posts_with_post_types_tabs($args = array()) {
+
+	// ajax请求类型
+	$ajax_type = $_POST['ajax_type'] ?? 'modal';
+
+	// post types 过滤
+	$post_types = get_post_types(array('public' => true), $output = 'objects', $operator = 'and');
+	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
+	foreach ($post_types as $post_type) {
+		if (!in_array($post_type->name, wnd_get_allowed_post_types())) {
+			unset($post_types[$post_type->name]);
+		}
+	}
+	unset($post_type);
+
+	// 查询参数
+	$defaults = array(
+		'post_type' => reset($post_types)->name, //$post_types 为多维数组，获取第一个type 的 name
+	);
+	$args = wp_parse_args($args, $defaults);
+
+	// 优先参数
+	$args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
+
+	// 容器开始
+	echo '<div class="list-posts">';
+
+	// post types 切换
+	_wnd_post_types_tabs($args, $ajax_list_posts_call = 'list_posts', $ajax_embed_container = '#list-posts-with-post-types-tabs');
+
+	echo '<div id="list-posts-with-post-types-tabs">';
+	_wnd_list_posts($args);
+	echo '</div>';
+
+	// 容器结束
+	echo '</div>';
 }
