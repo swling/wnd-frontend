@@ -125,7 +125,7 @@ function _wnd_list_user_fin($args = array(),$pages_key = 'pages', $color = 'is-p
 
 	// 优先参数
 	$args['paged'] = $_REQUEST[$pages_key] ?? $args['paged'];
-	$args['post_author'] = get_current_user_id();
+	$args['author'] = get_current_user_id();
 
 	$query = new WP_Query($args);
 
