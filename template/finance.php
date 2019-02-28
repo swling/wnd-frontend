@@ -25,7 +25,7 @@ function _wnd_user_fin_panel($args = array()) {
 	$args = wp_parse_args($args, $defaults);
 
 	// 优先参数
-	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type'];
+	$args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
 	// $status = $_REQUEST['status'] ?? $args['post_status'];
 
 	$expense_is_active = $args['post_type'] == 'expense' ? 'class="is-active"' : '';
@@ -90,8 +90,8 @@ function _wnd_user_fin_panel($args = array()) {
 				echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin_panel\',\''.$ajax_args_recharge.'\');">充值记录</a></li>';
 			}
 		} else {
-			echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('tab', 'expense', remove_query_arg('pages')) . '">消费记录</a></li>';
-			echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('tab', 'recharge', remove_query_arg('pages')) . '">充值记录</a></li>';
+			echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('type', 'expense', remove_query_arg('pages')) . '">消费记录</a></li>';
+			echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('type', 'recharge', remove_query_arg('pages')) . '">充值记录</a></li>';
 		}
 		?>
 		</ul>

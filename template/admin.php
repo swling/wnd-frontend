@@ -26,7 +26,7 @@ function _wnd_admin_posts_panel($args = array()) {
 	$args = wp_parse_args($args, $defaults);
 
 	// 优先参数
-	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type'];
+	$args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
 
 	// 容器开始
 	echo '<div id="admin-panel">';
@@ -75,7 +75,7 @@ function _wnd_user_posts_panel($args = array()) {
 	$args = wp_parse_args($args, $defaults);
 
 	// 优先参数
-	$args['post_type'] = $_REQUEST['tab'] ?? $args['post_type'];
+	$args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
 	$args['author'] = get_current_user_id();
 
 	// 容器开始
@@ -115,7 +115,7 @@ function _wnd_user_mail_box($args = array()) {
 	$args = wp_parse_args($args, $defaults);
 
 	// 优先参数
-	$args['post_status'] = $_REQUEST['tab'] ?? $args['post_status'];
+	$args['post_status'] = $_REQUEST['status'] ?? $args['post_status'];
 	$args['author'] = get_current_user_id();
 
 	// active
@@ -148,8 +148,8 @@ function _wnd_user_mail_box($args = array()) {
 
 	} else {
 
-		echo '<li ' . $all_active . '><a href="' . remove_query_arg('tab') . '">全部</a></li>';
-		echo '<li ' . $unread_active . ' ><a href="' . add_query_arg('tab', 'private') . '">未读</a></li>';
+		echo '<li ' . $all_active . '><a href="' . remove_query_arg('status') . '">全部</a></li>';
+		echo '<li ' . $unread_active . ' ><a href="' . add_query_arg('status', 'private') . '">未读</a></li>';
 
 	}
 

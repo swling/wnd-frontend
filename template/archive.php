@@ -108,18 +108,18 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 	</thead>
 	<tbody>
 		<?php while ($query->have_posts()): $query->the_post();global $post;?>
-				<tr>
-					<td class="is-narrow"><?php the_time('m-d H:i');?></td>
-					<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
-					<th class="is-narrow"><?php echo apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
-					<td class="is-narrow">
-						<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>&color=<?php echo $color; ?>')">预览</a>
-						<?php if (current_user_can('edit_post', $post->ID)) {?>
-						<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
-						<?php }?>
-					</td>
-				</tr>
-				<?php endwhile;?>
+					<tr>
+						<td class="is-narrow"><?php the_time('m-d H:i');?></td>
+						<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
+						<th class="is-narrow"><?php echo apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
+						<td class="is-narrow">
+							<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>&color=<?php echo $color; ?>')">预览</a>
+							<?php if (current_user_can('edit_post', $post->ID)) {?>
+							<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
+							<?php }?>
+						</td>
+					</tr>
+					<?php endwhile;?>
 	</tbody>
 	<?php wp_reset_postdata(); //重置查询?>
 </table>
@@ -147,7 +147,7 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 /**
  *@since 2019.02.26
  *遍历文章类型，并配合外部调用函数，生成tabs查询参数，
- *（在非ajax状态中，生成 ?tab=post_type，ajax中，在当前查询参数新增post_type参数，并注销paged翻页参数以实现菜单切换）
+ *（在非ajax状态中，生成 ?type=post_type，ajax中，在当前查询参数新增post_type参数，并注销paged翻页参数以实现菜单切换）
  *@param $args 外部调用函数ajax查询文章的参数，其中 $args['remove_query_arg'] 参数为非ajax状态下，需要从当前网址中移除的参数数组
  *@param $ajax_list_posts_call 外部调用函数查询文章的调用函数
  *@param $ajax_embed_container 外部调用函数ajax查询文章后嵌入的html容器
@@ -171,7 +171,7 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	unset($post_type);
 
 	// 输出容器
-	echo '<div class="tabs"><ul class="tab">';
+	echo '<div class="tabs is-boxed"><ul class="tab">';
 
 	// 输出tabs
 	foreach ($post_types as $post_type) {
@@ -201,11 +201,72 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 			 */
 			$args['remove_query_arg'] = isset($args['remove_query_arg']) ? array_merge($args['remove_query_arg'], array('pages')) : array('pages');
 
-			echo '<li ' . $active . '><a href="' . add_query_arg('tab', $post_type->name, remove_query_arg($args['remove_query_arg'])) . '">' . $post_type->label . '</a></li>';
+			echo '<li ' . $active . '><a href="' . add_query_arg('type', $post_type->name, remove_query_arg($args['remove_query_arg'])) . '">' . $post_type->label . '</a></li>';
 		}
 
 	}
 	unset($post_type);
+
+	// 输出结束
+	echo '</ul></div>';
+
+}
+
+/**
+ *@since 2019.02.28
+ *遍历指定taxonomy的term，并配合外部调用函数，生成tabs查询参数，
+ *（在非ajax状态中，生成 ?$taxonomy.'_id'=$term_id，ajax中，在当前查询参数新增post_type参数，并注销paged翻页参数以实现菜单切换）
+ *@param $args 外部调用函数ajax查询文章的参数，其中 $args['remove_query_arg'] 参数为非ajax状态下，需要从当前网址中移除的参数数组
+ *@param $ajax_list_posts_call 外部调用函数查询文章的调用函数
+ *@param $ajax_embed_container 外部调用函数ajax查询文章后嵌入的html容器
+ */
+function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
+
+	$defaults = array(
+		'taxonomy' => 'category',
+		'remove_query_arg' => array('paged', 'pages'),
+	);
+	$args = wp_parse_args($args, $defaults);
+
+	// 输出容器
+	echo '<div class="tabs"><ul class="tab">';
+
+	// print_r( $args['tax_query']);
+
+	// 输出tabs
+	foreach (get_terms($args) as $term) {
+
+		// $active = (isset($args['term_name']) and $args['term_name'] == $term->name) ? 'class="is-active"' : '';
+		$active = (isset($args['tax_query'][0]['terms']) and $args['tax_query'][0]['terms'] == $term->term_id) ? 'class="is-active"' : '';
+
+		if (wp_doing_ajax()) {
+
+			// 配置ajax请求参数
+			$ajax_args = array_merge($args, array('term_id' => $term->term_id));
+			foreach ($args['remove_query_arg'] as $remove_query_arg) {
+				unset($ajax_args[$query_arg]);
+			}
+			unset($remove_query_arg);
+			$ajax_args = http_build_query($ajax_args);
+
+			if ($ajax_type == 'modal') {
+				echo '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
+			} else {
+				echo '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
+			}
+		} else {
+
+			/**
+			 *@since 2019.02.27
+			 * 切换类型时，需要从当前网址移除的参数（用于在多重筛选时，移除仅针对当前类型有效的参数）
+			 */
+			$args['remove_query_arg'] = isset($args['remove_query_arg']) ? array_merge($args['remove_query_arg'], array('pages')) : array('pages');
+
+			echo '<li ' . $active . '><a href="' . add_query_arg($args['taxonomy'].'_id', $term->term_id, remove_query_arg($args['remove_query_arg'])) . '">' . $term->name . '</a></li>';
+		}
+
+	}
+	unset($term);
 
 	// 输出结束
 	echo '</ul></div>';
