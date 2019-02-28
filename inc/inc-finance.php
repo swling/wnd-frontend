@@ -60,7 +60,7 @@ function wnd_update_recharge($ID, $status, $title = '') {
 		'post_status' => $status,
 	);
 	if ($title) {
-		$post_arr['title'] = $title;
+		$post_arr['post_title'] = $title;
 	}
 
 	$recharge_id = wp_update_post($post_arr);

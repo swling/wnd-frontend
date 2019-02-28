@@ -136,8 +136,8 @@ function _wnd_list_user_fin($args = array(),$pages_key = 'pages', $color = 'is-p
 	<thead>
 		<tr>
 			<th class="is-narrow is-hidden-mobile"><abbr title="Position">日期</abbr></th>
-			<th>详情</th>
 			<th>金额</th>
+			<th>详情</th>
 			<th class="is-narrow is-hidden-mobile">状态</th>
 			<th class="is-narrow is-hidden-mobile">操作</th>
 		</tr>
