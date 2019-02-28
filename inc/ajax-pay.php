@@ -31,7 +31,7 @@ function wnd_insert_order() {
 	if ($money > wnd_get_user_money($user_id)) {
 		if (wnd_get_option('wndwp', 'wnd_alipay_appid')) {
 			$pay_url = wnd_get_do_url() . '?action=payment&post_id=' . $post_id . '&_wpnonce=' . wp_create_nonce('wnd_payment');
-			return array('status' => 0, 'msg' => '余额不足！<a href="' . $pay_url . '">在线下单</a> | <a onclick="wnd_ajax_modal(\'recharge_form\')">充值</a>');
+			return array('status' => 0, 'msg' => '余额不足！<a href="' . $pay_url . '">在线支付</a> | <a onclick="wnd_ajax_modal(\'recharge_form\')">余额充值</a>');
 		} else {
 			return array('status' => 0, 'msg' => '余额不足！');
 		}
