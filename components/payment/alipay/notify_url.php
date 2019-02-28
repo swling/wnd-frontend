@@ -71,7 +71,7 @@ if ($trade_status == 'TRADE_FINISHED') {
 	//注意：
 	//付款完成后，支付宝系统发送该交易状态通知
 
-	$wnd_verify_recharge = wnd_verify_payment($out_trade_no, $amount, $app_id);
+	$wnd_verify_recharge = wnd_verify_payment($out_trade_no, $total_amount, $app_id);
 	
 	if ($wnd_verify_recharge['status'] > 0) {
 		echo "success";

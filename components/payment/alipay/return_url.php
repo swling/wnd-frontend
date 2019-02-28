@@ -40,7 +40,7 @@ if (!$result) {
 //商户订单号
 $out_trade_no = $_GET['out_trade_no'];
 //交易状态
-$trade_status = $_GET['trade_status'];
+// $trade_status = $_GET['trade_status'];
 // 金额
 $total_amount = $_GET['total_amount'];
 // app_id
@@ -49,7 +49,7 @@ $app_id = $_GET['app_id'];
 /**
  *@since 2019.02.11 支付宝同步校验
  */
-$wnd_verify_recharge = wnd_verify_payment($out_trade_no, $amount, $app_id);
+$wnd_verify_recharge = wnd_verify_payment($out_trade_no, $total_amount, $app_id);
 
 // 充值
 if ($wnd_verify_recharge['status'] = 1) {

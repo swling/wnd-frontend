@@ -107,7 +107,7 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 	}
 
 	//如果订单金额匹配
-	if ($post->post_content == $amount) {
+	if ($post->post_content != $amount) {
 		return array('status' => 0, 'msg' => '金额不匹配！');
 	}
 
