@@ -52,14 +52,14 @@ $app_id = $_GET['app_id'];
 $wnd_verify_recharge = wnd_verify_payment($out_trade_no, $total_amount, $app_id);
 
 // 充值
-if ($wnd_verify_recharge['status'] = 1) {
+if ($wnd_verify_recharge['status'] == 1) {
 
 	$link = wnd_get_option('wndwp', 'wnd_pay_return_url') ?: home_url();
 	header("Location:" . $link);
 	exit;
 
 	//在线支付订单 
-} elseif ($wnd_verify_recharge['status'] = 2) {
+} elseif ($wnd_verify_recharge['status'] == 2) {
 
 	$link = get_permalink( $wnd_verify_recharge['msg']) ?: wnd_get_option('wndwp', 'wnd_pay_return_url') ?: home_url();
 	header("Location:" . $link);
