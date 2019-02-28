@@ -468,7 +468,7 @@ function _wnd_the_post_thumbnail($width = 0, $height = 0){
 
 	if($image_id){
 		if($width and $height){
-			echo '<img src="' . wp_get_attachment_url($image_id) . '" widht="' . $width . '" height="' . $height . '"  >';
+			echo '<img src="' . wp_get_attachment_url($image_id) . '" width="' . $width . '" height="' . $height . '"  >';
 		}else{
 			echo '<img src="' . wp_get_attachment_url($image_id) . '" >';
 		}
