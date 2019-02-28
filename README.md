@@ -62,7 +62,7 @@ apply_filters('wnd_can_insert_post', array('status'=>1,'msg'=>'默认通过'), $
 apply_filters('wnd_insert_post_return', $return_array, $post_type, $post_id);
 
 ###写入文章时的状态（默pending）
-apply_filters('wnd_post_status', 'pending', $post_type, $update_id);
+apply_filters('wnd_insert_post_status', 'pending', $post_type, $update_id);
 
 ##更新文章状态权限 @since 2019.01.21（默认根据WordPress判断当前用户是否可以编辑文章）
 apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_status );

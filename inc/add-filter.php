@@ -62,7 +62,7 @@ function wnd_filter_can_update_account($can_array) {
  *文章状态过滤，允许前端表单设置为草稿状态（执行顺序较晚99，因而 会覆盖掉其他默认10 的filter）
  *如果 $update_id 为0 表示为新发布文章，否则为更新文章
  */
-add_filter('wnd_post_status', 'wnd_filter_post_status', 99, 2);
+add_filter('wnd_insert_post_status', 'wnd_filter_post_status', 99, 2);
 function wnd_filter_post_status($post_status, $update_id) {
 
 	if (isset($_POST['_post_post_status']) and $_POST['_post_post_status'] == 'draft') {
@@ -72,6 +72,8 @@ function wnd_filter_post_status($post_status, $update_id) {
 	if(wnd_is_manager()){
 		return 'publish';
 	}
+
+	return 'pending';
 
 }
 

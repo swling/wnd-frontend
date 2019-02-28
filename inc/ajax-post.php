@@ -57,7 +57,7 @@ function wnd_insert_post($update_id = 0) {
 	}
 
 	// 文章状态过滤
-	$post_status = apply_filters('wnd_post_status', 'pending', $post_type, $update_id);
+	$post_status = apply_filters('wnd_insert_post_status', 'pending', $post_type, $update_id);
 
 	// 初始化文章数组
 	if (!$update_id) {
