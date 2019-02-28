@@ -113,7 +113,13 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 
 	//订单已经更新过
 	if ($post->post_status == 'success') {
-		return array('status' => 2, 'msg' => '支付已完成！');
+
+		if ($post->post_parent) {
+			return array('status' => 2, 'msg' => $post->post_parent);
+		} else {
+			return array('status' => 1, 'msg' => '余额充值成功！');
+		}
+
 	}
 
 	// 订单支付状态检查
@@ -151,6 +157,8 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
  *用户本站消费数据(含余额消费，或直接第三方支付消费)
  */
 function wnd_insert_expense($user_id, $money, $object_id = 0, $status = 'success', $title = '') {
+
+	$title = $title ?: $object_id ? get_the_title( $object_id ) : '';
 
 	$post_arr = array(
 		'post_author' => $user_id,
