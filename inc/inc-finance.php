@@ -341,8 +341,8 @@ function wnd_admin_recharge($user_field, $money, $remarks = '') {
  *统计整站财务数据，当用户发生充值或消费行为时触发
  *按月统计，每月生成两条post数据
  *
- *用户充值post_type:stats_re
- *用户消费post_type:stats_ex
+ *用户充值post_type:stats-re
+ *用户消费post_type:stats-ex
  *根据用户金额变动>0 或者 <0 判断类型
  *用户金额记录：post_content，记录值均为正数
  *
@@ -355,16 +355,16 @@ function wnd_update_fin_stats($money = 0) {
 	}
 
 	if ($money > 0) {
-		$post_type = 'stats_re';
+		$post_type = 'stats-re';
 	} else {
-		$post_type = 'stats_ex';
+		$post_type = 'stats-ex';
 	}
 
 	$year = date('Y', time());
 	$month = date('m', time());
 
 	$slug = $year . '-' . $month . '-' . $post_type;
-	$post_title = $post_type == 'stats_re' ? $year . '-' . $month . ' - 充值统计' : $year . '-' . $month . ' - 消费统计';
+	$post_title = $post_type == 'stats-re' ? $year . '-' . $month . ' - 充值统计' : $year . '-' . $month . ' - 消费统计';
 
 	$stats_post = wnd_get_post_by_slug($slug, $post_type, 'private');
 

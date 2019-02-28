@@ -17,6 +17,7 @@ require WNDWP_PATH . 'inc/inc-media.php'; //媒体文件处理函数
 require WNDWP_PATH . 'inc/inc-verify.php'; //验证模块
 require WNDWP_PATH . 'inc/inc-term.php'; //分类、标签
 require WNDWP_PATH . 'inc/inc-finance.php'; //财务
+require WNDWP_PATH . 'inc/inc-post-type.php'; //自定义类型
 
 require WNDWP_PATH . 'inc/ajax-post.php'; //ajax 文章发布编辑
 require WNDWP_PATH . 'inc/ajax-media.php'; //ajax 媒体处理

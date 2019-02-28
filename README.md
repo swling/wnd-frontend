@@ -21,11 +21,11 @@
 6.数组形式合并存储多个user_meta、post_meta、option
 
 #自定义文章类型
-（以下 post_type 并未注册，而是在对应操作中直接使用wp_insert_post插入，因此在WordPress后台无法查看到）
+（以下 post_type 并未均为私有属性（'public' => false），因此在WordPress后台无法查看到）
 ##充值：recharge
 ##消费、订单：expense
 ##站内信：mail
-##整站月度财务统计：stats_re（充值）、stats_ex（消费）
+##整站月度财务统计：stats-re（充值）、stats-ex（消费）
 
 #ajax交互概述：
 ```php
