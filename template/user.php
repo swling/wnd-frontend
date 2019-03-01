@@ -150,7 +150,7 @@ function _wnd_user_center($args = array()) {
 
 		case 'profile':default:
 
-			echo '<div class="tabs"><ul class="tab">';
+			echo '<div class="tabs is-boxed"><ul class="tab">';
 			if (wp_doing_ajax()) {
 				if ($ajax_type == 'modal') {
 					echo '<li class="is-active"><a onclick="wnd_ajax_modal(\'user_center\',\'tab=profile\');">资料</a></li>';
@@ -171,7 +171,7 @@ function _wnd_user_center($args = array()) {
 
 		case 'account':
 
-			echo '<div class="tabs"><ul class="tab">';
+			echo '<div class="tabs is-boxed"><ul class="tab">';
 			if (wp_doing_ajax()) {
 				if ($ajax_type == 'modal') {
 					echo '<li><a onclick="wnd_ajax_modal(\'user_center\',\'tab=profile\');">资料</a></li>';
