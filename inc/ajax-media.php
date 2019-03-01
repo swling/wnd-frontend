@@ -75,12 +75,12 @@ function wnd_upload_file() {
 		array_push($return_array, $temp_array);
 
 		/**
-		*@since 2019.02.13 当存在meta key时，表明上传文件为特定用途存储，仅允许上传单个文件 
-		*/
-		if($meta_key){
+		 *@since 2019.02.13 当存在meta key时，表明上传文件为特定用途存储，仅允许上传单个文件
+		 */
+		if ($meta_key) {
 			break;
 		}
-		
+
 	}
 	unset($file, $array);
 
@@ -149,19 +149,20 @@ function wnd_paid_download() {
 	 */
 
 	/**
-	*@since 2019.02.12 nonce验证
-	*/
+	 *@since 2019.02.12 nonce验证
+	 */
 	// $action  = $post_id.'_paid_download_key';
 	// if(wp_verify_nonce( $_REQUEST['_download_key'], $action )){
 	// 	return wnd_download_file($file, $post_id);
 	// }
 
 	/**
-	*@since 2019.02.12 重复权限验证
-	*/
+	 *@since 2019.02.12 重复权限验证
+	 */
 	$user_id = get_current_user_id();
 	//1、免费，或者已付费
 	if (!$price or wnd_user_has_paid($user_id, $post_id)) {
+		wnd_inc_wnd_post_meta($post_id, 'download_count', 1);
 		return wnd_download_file($file, $post_id);
 	}
 

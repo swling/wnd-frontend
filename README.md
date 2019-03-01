@@ -183,7 +183,8 @@ do_action( '_wnd_post_form', $post_id,$post_type,$post )
 如不含more标签，则全文付费后可见
 
 ##下载
-文章字段：file 存储上传附件的id
+文章字段：wnd_post_meta: file (存储上传附件的id)
+下载计数：wnd_post_meta: download_count ;
 
 #action filter函数命名规则：
 wnd_action_xxx
