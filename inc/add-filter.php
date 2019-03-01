@@ -373,7 +373,7 @@ if (wnd_get_option('wndwp', 'wnd_unset_user_meta') == 1) {
 		unset($meta['nickname']);
 		unset($meta['first_name']);
 		unset($meta['last_name']);
-		unset($meta['rich_editing']);
+		// unset($meta['rich_editing']);
 		unset($meta['syntax_highlighting']);
 		unset($meta['comment_shortcuts']); //评论快捷方式
 		unset($meta['admin_color']);
