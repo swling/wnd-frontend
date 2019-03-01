@@ -27,6 +27,10 @@
 ##站内信：mail
 ##整站月度财务统计：stats-re（充值）、stats-ex（消费）
 
+#自定义文章状态
+##success
+ 用于功能型post、（如：充值，订单等） wp_insert_post 可直接写入未经注册的 post_status，但未经注册的post_status无法通过wp_query进行筛选，故此注册
+
 #ajax交互概述：
 ```php
 // 提交的数据中必须包含，$_POST['action_name'] 并通过该值，判断将当前数据交由对应的后端 action_name() 函数处理
