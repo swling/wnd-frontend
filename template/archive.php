@@ -30,9 +30,9 @@ function _wnd_next_page($posts_per_page, $current_post_count, $pages_key = 'page
 /**
  *@since 2019.02.18 ajax分页
  *在当前ajax请求的基础上，自增一个翻页参数，并再次发送(paged)
- *@param $function 需要请求的输出函数
+ *@param $function 需要请求的内容列表输出函数名
  *@param $function 的参数
- *函数应该与请求函数，处于同一个父元素之下，父容器必须设置 id
+ *函数应该与请求函数处于同一个父元素之下，父容器必须设置 id
  */
 function _wnd_ajax_next_page($function, $args) {
 
@@ -419,8 +419,10 @@ function _wnd_list_posts_with_tabs($args = array()) {
 	// 分类 切换
 	_wnd_categories_tabs($args, $ajax_list_posts_call = 'list_posts_with_tabs', $ajax_embed_container = '#list-posts-with-tabs');
 
-	// 输出列表
+	// 输出列表：根据_wnd_ajax_next_page，此处需设置容器及容器ID，否则ajax请求的翻页内容可能无法正确嵌入
+	echo '<div id="post-list-wrap">';
 	$args['wnd_list_template']($args);
+	echo '</div>';
 
 	// 容器结束
 	echo '</div>';
