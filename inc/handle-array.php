@@ -5,9 +5,9 @@ if (!defined('ABSPATH')) {
 }
 
 //############################################################################ 用户字段增量函数
-function wnd_inc_user_meta($user_id, $meta_key, $var, $min_zero = false) {
+function wnd_inc_user_meta($user_id, $meta_key, $var = 1, $min_zero = false) {
 
-	if(!is_numeric($var)){
+	if (!is_numeric($var)) {
 		return;
 	}
 
@@ -24,11 +24,11 @@ function wnd_inc_user_meta($user_id, $meta_key, $var, $min_zero = false) {
 }
 
 //############################################################################ 用户数组字段增量函数
-function wnd_inc_wnd_user_meta($user_id, $meta_key, $var, $min_zero = false) {
+function wnd_inc_wnd_user_meta($user_id, $meta_key, $var = 1, $min_zero = false) {
 
-	if(!is_numeric($var)){
+	if (!is_numeric($var)) {
 		return;
-	}	
+	}
 
 	$old_user_meta = wnd_get_user_meta($user_id, $meta_key);
 	$old_user_meta = $old_user_meta ? $old_user_meta : 0;
@@ -43,11 +43,11 @@ function wnd_inc_wnd_user_meta($user_id, $meta_key, $var, $min_zero = false) {
 }
 
 //############################################################################ 文章字段增量函数
-function wnd_inc_post_meta($post_id, $meta_key, $var, $min_zero = false) {
+function wnd_inc_post_meta($post_id, $meta_key, $var = 1, $min_zero = false) {
 
-	if(!is_numeric($var)){
+	if (!is_numeric($var)) {
 		return;
-	}	
+	}
 
 	$old_post_meta = get_post_meta($post_id, $meta_key, 1);
 	$old_post_meta = $old_post_meta ? $old_post_meta : 0;
@@ -62,11 +62,11 @@ function wnd_inc_post_meta($post_id, $meta_key, $var, $min_zero = false) {
 }
 
 //############################################################################ 文章数组字段增量函数
-function wnd_inc_wnd_post_meta($post_id, $meta_key, $var, $min_zero = false) {
+function wnd_inc_wnd_post_meta($post_id, $meta_key, $var = 1, $min_zero = false) {
 
-	if(!is_numeric($var)){
+	if (!is_numeric($var)) {
 		return;
-	}	
+	}
 
 	$old_post_meta = wnd_get_post_meta($post_id, $meta_key);
 	$old_post_meta = $old_post_meta ? $old_post_meta : 0;
@@ -241,7 +241,7 @@ function wnd_update_option($option_name, $array_key, $array_value) {
 
 	// 空值，删除
 	if ($array_value == '') {
-		wnd_delete_option($option_name,$array_key);
+		wnd_delete_option($option_name, $array_key);
 		return;
 	}
 
