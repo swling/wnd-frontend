@@ -156,7 +156,7 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
 
 	$defaults = array(
-		'wnd_remove_query_arg' => array('paged', 'pages','tax_query'),
+		'wnd_remove_query_arg' => array('paged', 'pages', 'tax_query'),
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -257,15 +257,13 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		unset($args['wnd_remove_query_arg'][$tax_query_key]);
 	}
 
+	// 遍历当前文章类型taxonomy，并获取具有层级的taxonomy作为输出的category
 	$cat_taxonomies = array();
-	$tag_taxonomies = array();
 	$taxonomies = get_object_taxonomies($args['post_type'], $output = 'names');
 	if ($taxonomies) {
 		foreach ($taxonomies as $taxonomy) {
 			if (is_taxonomy_hierarchical($taxonomy)) {
 				array_push($cat_taxonomies, $taxonomy);
-			} else {
-				array_push($tag_taxonomies, $taxonomy);
 			}
 		}
 		unset($taxonomy);
@@ -344,8 +342,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
  *@since 2019.03.01
  *输出同时带有 poet_type和分类切换标签的文章列表
  *@param $args wp_query $args
- *@param 自定义： array $args['wnd_remove_query_arg'] 需要从当前请求参数中移除的参数数组
- *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数
+ *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
  *@see:
  *仅ajax状态下自动切换
  */

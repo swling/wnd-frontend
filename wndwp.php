@@ -53,7 +53,7 @@ function wnd_install() {
 		if (!get_option('wndwp', $default = false)) {
 
 			$default_option = array(
-				
+
 				'wnd_enable_white_list' => 1,
 				'wnd_allowed_post_field' => 'post_title,post_excerpt,post_content,post_parent',
 				'wnd_allowed_post_meta_key' => '',
@@ -64,7 +64,10 @@ function wnd_install() {
 				'wnd_default_style' => 1,
 				'wnd_do_page' => 0,
 				'wnd_pay_return_url' => get_option('home'),
-				
+
+				'wnd_disable_admin_panel' => 1,
+				'wnd_unset_user_meta' => 0,
+
 				'wnd_ali_accessKeyId' => '阿里短信KeyId',
 				'wnd_ali_accessKeySecret' => '阿里短信KeySecret',
 				'wnd_ali_SignName' => get_option('blogname'),

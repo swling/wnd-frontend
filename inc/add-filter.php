@@ -69,7 +69,7 @@ function wnd_filter_post_status($post_status, $update_id) {
 		return 'draft';
 	}
 
-	if(wnd_is_manager()){
+	if (wnd_is_manager()) {
 		return 'publish';
 	}
 
@@ -141,7 +141,7 @@ function wnd_filter_limit_upload($file) {
 add_filter('get_edit_post_link', 'wnd_filter_edit_post_link', $priority = 10, $accepted_args = 3);
 function wnd_filter_edit_post_link($link, $post_id, $context) {
 
-	if(is_admin()){
+	if (is_admin()) {
 		return $link;
 	}
 
@@ -383,4 +383,14 @@ if (wnd_get_option('wndwp', 'wnd_unset_user_meta') == 1) {
 
 		return $meta;
 	}
+}
+
+/**
+ * 禁止WordPress admin bar
+ *@since 2019.03.01
+ */
+if (wnd_get_option('wndwp', 'wnd_disable_admin_panel') == 1) {
+
+	//禁用前台工具栏
+	add_filter('show_admin_bar', '__return_false');
 }
