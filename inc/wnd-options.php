@@ -175,7 +175,16 @@ function wnd_options(){
 					禁用优化<input type="radio" required="required" name="wnd_unset_user_meta" value="0" <?php if(wnd_get_option('wndwp','wnd_unset_user_meta')!=1) echo 'checked' ?> />
 					<p><i>注册用户不需要登录到WordPress后台时可开启</i></p>
 				</td>
-			</tr>										
+			</tr>
+
+			<tr>
+				<td valign="top">禁止WP后台</td>
+				<td>
+					禁止<input type="radio" required="required" name="wnd_disable_admin_panel" value="1" <?php if(wnd_get_option('wndwp','wnd_disable_admin_panel')==1) echo 'checked' ?> />
+					允许<input type="radio" required="required" name="wnd_disable_admin_panel" value="0" <?php if(wnd_get_option('wndwp','wnd_disable_admin_panel')!=1) echo 'checked' ?> />
+					<p><i>是否禁止普通用户访问WordPress管理后台</i></p>
+				</td>
+			</tr>												
 			
 			<!-- 佣金设置 -->
 			<tr>

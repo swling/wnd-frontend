@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
  *@since 2018.09.07
  */
 
+/*######################################################################### 1、以下为WndWP action*/
 /**
  *ajax上传文件时，根据 meta_key 做后续处理
  *@since 2018
@@ -92,7 +93,7 @@ function wnd_action_pay() {
 	$action = $_GET['action'] ?? '';
 	switch ($action) {
 
-		//创建支付 
+	//创建支付
 	case 'payment':
 		if (is_user_logged_in()) {
 			check_admin_referer('wnd_payment');
@@ -110,7 +111,7 @@ function wnd_action_pay() {
 
 }
 
-/*######################################################################### 以下为WordPress原生 action*/
+/*#########################################################################2、以下为WordPress原生 action*/
 
 /**
  *@since 初始化 用户注册后
@@ -139,5 +140,29 @@ function wnd_action_delete_user($user_id) {
 	// 删除手机注册记录
 	global $wpdb;
 	$wpdb->delete($wpdb->wnd_users, array('user_id' => $user_id));
+
+}
+
+/**
+ * 禁止WordPress原生登录和注册
+ *@since 2019.03.01
+ */
+if (wnd_get_option('wndwp', 'wnd_disable_admin_panel') == 1) {
+
+	// 禁止非管理员登录后台
+	add_action('admin_init', 'redirect_non_admin_users');
+	function redirect_non_admin_users() {
+		if (!is_super_admin() && empty($_REQUEST)) {
+			wp_redirect(home_url('?from=wp-admin'));
+			exit;
+		}
+	}
+
+	// 移除原生登录注册
+	add_action('login_head', 'redirect_login_form_register');
+	function redirect_login_form_register() {
+		wp_redirect(home_url('?from=wp-admin'));
+		exit(); // always call `exit()` after `wp_redirect`
+	}
 
 }
