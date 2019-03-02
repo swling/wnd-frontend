@@ -34,7 +34,7 @@ class AlipayService {
 
 		//调用openssl内置方法验签，返回bool值
 		if ("RSA2" == $signType) {
-			$result = (bool) openssl_verify($data, base64_decode($sign), $res, version_compare(PHP_VERSION, '5.4.0', '<') ? SHA256 : OPENSSL_ALGO_SHA256);
+			$result = (bool) openssl_verify($data, base64_decode($sign), $res, OPENSSL_ALGO_SHA256);
 		} else {
 			$result = (bool) openssl_verify($data, base64_decode($sign), $res);
 		}

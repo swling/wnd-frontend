@@ -102,7 +102,7 @@ class AlipayWapPayBuilder {
 			"\n-----END RSA PRIVATE KEY-----";
 		($res) or die('您使用的私钥格式错误，请检查RSA私钥配置');
 		if ("RSA2" == $signType) {
-			openssl_sign($data, $sign, $res, version_compare(PHP_VERSION, '5.4.0', '<') ? SHA256 : OPENSSL_ALGO_SHA256); //OPENSSL_ALGO_SHA256是php5.4.8以上版本才支持
+			openssl_sign($data, $sign, $res, OPENSSL_ALGO_SHA256); //OPENSSL_ALGO_SHA256是php5.4.8以上版本才支持
 		} else {
 			openssl_sign($data, $sign, $res);
 		}
