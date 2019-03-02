@@ -4,7 +4,7 @@
  *@since 2019.03.02 支付宝验签
  */
 class AlipayService {
-    
+
 	//支付宝公钥
 	protected $alipayPublicKey;
 	protected $charset;
@@ -38,10 +38,10 @@ class AlipayService {
 		} else {
 			$result = (bool) openssl_verify($data, base64_decode($sign), $res);
 		}
-//        if(!$this->checkEmpty($this->alipayPublicKey)) {
-		//            //释放资源
-		//            openssl_free_key($res);
-		//        }
+		if (!$this->checkEmpty($this->alipayPublicKey)) {
+			//释放资源
+			openssl_free_key($res);
+		}
 		return $result;
 	}
 

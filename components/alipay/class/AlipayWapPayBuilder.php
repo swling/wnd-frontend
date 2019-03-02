@@ -4,7 +4,7 @@
  *@since 2019.03.02 支付宝wap支付构造类
  */
 class AlipayWapPayBuilder {
-    
+
 	protected $appId;
 	protected $charset;
 	protected $returnUrl;
@@ -80,12 +80,13 @@ class AlipayWapPayBuilder {
 	 */
 	protected function buildRequestForm($para_temp) {
 		$sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='https://openapi.alipay.com/gateway.do?charset=" . $this->charset . "' method='POST'>";
-		while (list($key, $val) = each($para_temp)) {
+		// while (list($key, $val) = each($para_temp)) {
+		foreach ($para_temp as $key => $val) {
 			if (false === $this->checkEmpty($val)) {
 				$val = str_replace("'", "&apos;", $val);
 				$sHtml .= "<input type='hidden' name='" . $key . "' value='" . $val . "'/>";
 			}
-		}
+		}unset($key, $val);
 		//submit按钮控件请不要含有name属性
 		$sHtml = $sHtml . "<input type='submit' value='ok' style='display:none;''></form>";
 		$sHtml = $sHtml . "<script>document.forms['alipaysubmit'].submit();</script>";
