@@ -153,7 +153,9 @@ function wnd_update_post_status() {
 	}
 
 	$after_status = $_POST['post_status'];
-	if (!in_array($after_status, get_post_stati())) {
+
+	// 在现有注册的post status基础上新增 delete，该状态表示直接删除文章 @since 2019.03.03
+	if (!in_array($after_status, array_merge(get_post_stati(), array('delete')))) {
 		return array('status' => 0, 'msg' => '未注册的状态！');
 	}
 
