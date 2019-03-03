@@ -14,7 +14,7 @@ class AlipayPagePayBuilder {
 	protected $method;
 	protected $product_code;
 	protected $private_key;
-	
+
 	protected $total_amount;
 	protected $out_trade_no;
 	protected $subject;
@@ -24,7 +24,7 @@ class AlipayPagePayBuilder {
 	}
 
 	// 通过外部配置修改内部受保护的类属性
-	public function __set($var,$val){
+	public function __set($var, $val) {
 		$this->$var = $val;
 	}
 
@@ -64,7 +64,7 @@ class AlipayPagePayBuilder {
 	 */
 	protected function buildRequestForm($para_temp) {
 
-		$sHtml = '<form id="alipaysubmit" name="alipaysubmit" action="'.$this->gateway_url.'?charset='.$this->$charset.'" method="POST">';
+		$sHtml = '<form id="alipaysubmit" name="alipaysubmit" action="' . $this->gateway_url . '?charset=' . $this->charset . '" method="POST">';
 		foreach ($para_temp as $key => $val) {
 			if (false === $this->checkEmpty($val)) {
 				$val = str_replace("'", "&apos;", $val);
