@@ -27,7 +27,7 @@ if (!$money) {
 }
 
 // 判断支付类型：充值或下单
-$subject = $post_id ? '订单 [' . get_the_title($post_id) . ']' : get_bloginfo('name') . '充值订单[' . get_userdata($user_id)->user_login . ']';
+$subject = $post_id ? get_bloginfo('name') . '订单 [' . get_the_title($post_id) . ']' : get_bloginfo('name') . '充值订单[' . get_userdata($user_id)->user_login . ']';
 
 // 创建支付数据
 $out_trade_no = wnd_insert_payment($user_id, $money, $post_id);
@@ -50,7 +50,7 @@ $aliPay->subject = $subject;
 /**
  *@since 2019.03.03
  * 配置支付宝API
- * PC支付和wap支付中：product_code 、method 参数有所不同，详情查阅如下 
+ * PC支付和wap支付中：product_code 、method 参数有所不同，详情查阅如下
  *@link https://docs.open.alipay.com/270/alipay.trade.page.pay
  *@link https://docs.open.alipay.com/203/107090/
  */
