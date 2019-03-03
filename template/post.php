@@ -289,17 +289,17 @@ function _wnd_post_status_form($post_id){
 	</div>
 	<div class="field text-centered">
 		<label class="radio">
-			<input type="radio" class="radio" name="post_status" value="publish" <?php if($post_status=='publish' ) echo ' checked="checked" ' ?>>
+			<input type="radio" required="required" class="radio" name="post_status" value="publish" <?php if($post_status=='publish' ) echo ' checked="checked" ' ?>>
 			发布
 		</label>
 
 		<label class="radio">
-			<input type="radio" class="radio" name="post_status" value="draft" <?php if($post_status=='draft') echo ' checked="checked" ' ?>>
+			<input type="radio" required="required" class="radio" name="post_status" value="draft" <?php if($post_status=='draft') echo ' checked="checked" ' ?>>
 			草稿
 		</label>
 
 		<label class="radio">
-			<input type="radio" class="radio" name="post_status" value="delete">
+			<input type="radio" required="required" class="radio" name="post_status" value="delete">
 			<span class="is-danger">删除</span>
 		</label>
 	</div>

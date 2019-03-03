@@ -153,6 +153,9 @@ function wnd_update_post_status() {
 	}
 
 	$after_status = $_POST['post_status'];
+	if (!in_array($after_status, get_post_stati())) {
+		return array('status' => 0, 'msg' => '未注册的状态！');
+	}
 
 	// 权限检测
 	$can_array = array('status' => current_user_can('edit_post', $post_id) ? 1 : 0, 'msg' => '权限错误！');
