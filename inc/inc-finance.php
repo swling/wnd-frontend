@@ -77,6 +77,7 @@ function wnd_update_recharge($ID, $status, $title = '') {
 /**
  *@since 2019.02.17 写入支付信息
  *@return int object_id
+ *@see 2019.3.02 待解决问题：创建支付订单，不能直接用id作为订单号，如果有多个站点共用一个app id就会出现订单id重复的问题
  */
 function wnd_insert_payment($user_id, $money, $post_id = 0) {
 

@@ -10,7 +10,7 @@ class AlipayService {
 	protected $charset;
 
 	public function __construct($alipayPublicKey) {
-		$this->charset = 'utf8';
+		$this->charset = 'utf-8';
 		$this->alipayPublicKey = $alipayPublicKey;
 	}
 
