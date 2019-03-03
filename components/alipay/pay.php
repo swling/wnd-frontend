@@ -47,9 +47,16 @@ $aliPay->total_amount = $money;
 $aliPay->out_trade_no = $out_trade_no;
 $aliPay->subject = $subject;
 
-// 配置属性
+/**
+ *@since 2019.03.03
+ * 配置支付宝API
+ * PC支付和wap支付中：product_code 、method 参数有所不同，详情查阅如下 
+ *@link https://docs.open.alipay.com/270/alipay.trade.page.pay
+ *@link https://docs.open.alipay.com/203/107090/
+ */
 $aliPay->product_code = wp_is_mobile() ? 'QUICK_WAP_WAY' : 'FAST_INSTANT_TRADE_PAY';
 $aliPay->method = wp_is_mobile() ? 'alipay.trade.wap.pay' : 'alipay.trade.page.pay';
+
 $aliPay->gateway_url = $config['gateway_url'];
 $aliPay->app_id = $config['app_id'];
 $aliPay->return_url = $config['return_url'];
