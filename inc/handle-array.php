@@ -5,15 +5,15 @@ if (!defined('ABSPATH')) {
 }
 
 //############################################################################ 用户字段增量函数
-function wnd_inc_user_meta($user_id, $meta_key, $var = 1, $min_zero = false) {
+function wnd_inc_user_meta($user_id, $meta_key, $val = 1, $min_zero = false) {
 
-	if (!is_numeric($var)) {
+	if (!is_numeric($val)) {
 		return;
 	}
 
 	$old_user_meta = get_user_meta($user_id, $meta_key, 1);
 	$old_user_meta = $old_user_meta ? $old_user_meta : 0;
-	$new_user_meta = $old_user_meta + $var;
+	$new_user_meta = $old_user_meta + $val;
 
 	// 不为负数
 	if ($min_zero and $new_user_meta < 0) {
@@ -24,15 +24,15 @@ function wnd_inc_user_meta($user_id, $meta_key, $var = 1, $min_zero = false) {
 }
 
 //############################################################################ 用户数组字段增量函数
-function wnd_inc_wnd_user_meta($user_id, $meta_key, $var = 1, $min_zero = false) {
+function wnd_inc_wnd_user_meta($user_id, $meta_key, $val = 1, $min_zero = false) {
 
-	if (!is_numeric($var)) {
+	if (!is_numeric($val)) {
 		return;
 	}
 
 	$old_user_meta = wnd_get_user_meta($user_id, $meta_key);
 	$old_user_meta = $old_user_meta ? $old_user_meta : 0;
-	$new_user_meta = $old_user_meta + $var;
+	$new_user_meta = $old_user_meta + $val;
 
 	// 不为负数
 	if ($min_zero and $new_user_meta < 0) {
@@ -43,15 +43,15 @@ function wnd_inc_wnd_user_meta($user_id, $meta_key, $var = 1, $min_zero = false)
 }
 
 //############################################################################ 文章字段增量函数
-function wnd_inc_post_meta($post_id, $meta_key, $var = 1, $min_zero = false) {
+function wnd_inc_post_meta($post_id, $meta_key, $val = 1, $min_zero = false) {
 
-	if (!is_numeric($var)) {
+	if (!is_numeric($val)) {
 		return;
 	}
 
 	$old_post_meta = get_post_meta($post_id, $meta_key, 1);
 	$old_post_meta = $old_post_meta ? $old_post_meta : 0;
-	$new_post_meta = $old_post_meta + $var;
+	$new_post_meta = $old_post_meta + $val;
 
 	// 不为负数
 	if ($min_zero and $new_post_meta < 0) {
@@ -62,15 +62,15 @@ function wnd_inc_post_meta($post_id, $meta_key, $var = 1, $min_zero = false) {
 }
 
 //############################################################################ 文章数组字段增量函数
-function wnd_inc_wnd_post_meta($post_id, $meta_key, $var = 1, $min_zero = false) {
+function wnd_inc_wnd_post_meta($post_id, $meta_key, $val = 1, $min_zero = false) {
 
-	if (!is_numeric($var)) {
+	if (!is_numeric($val)) {
 		return;
 	}
 
 	$old_post_meta = wnd_get_post_meta($post_id, $meta_key);
 	$old_post_meta = $old_post_meta ? $old_post_meta : 0;
-	$new_post_meta = $old_post_meta + $var;
+	$new_post_meta = $old_post_meta + $val;
 
 	// 不为负数
 	if ($min_zero and $new_post_meta < 0) {
