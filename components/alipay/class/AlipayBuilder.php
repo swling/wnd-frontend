@@ -64,7 +64,7 @@ class AlipayPagePayBuilder {
 	 */
 	protected function buildRequestForm($para_temp) {
 
-		$sHtml = '<form id="alipaysubmit" name="alipaysubmit" action="'.$this->gateway_url.'" method="POST">';
+		$sHtml = '<form id="alipaysubmit" name="alipaysubmit" action="'.$this->gateway_url.'?charset='.$this->$charset.'" method="POST">';
 		foreach ($para_temp as $key => $val) {
 			if (false === $this->checkEmpty($val)) {
 				$val = str_replace("'", "&apos;", $val);
