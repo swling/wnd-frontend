@@ -33,5 +33,5 @@ $config = array(
 	'sign_type' => "RSA2",
 
 	//支付宝网关
-	'gatewayUrl' => "https://openapi.alipay.com/gateway.do",
+	'gateway_url' => "https://openapi.alipay.com/gateway.do",
 );

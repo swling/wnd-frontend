@@ -27,7 +27,7 @@ if (!$money) {
 }
 
 // 判断支付类型：充值或下单
-$order_name = $post_id ? '订单 [' . get_the_title($post_id) . ']' : get_bloginfo('name') . '充值订单[' . get_userdata($user_id)->user_login . ']';
+$subject = $post_id ? '订单 [' . get_the_title($post_id) . ']' : get_bloginfo('name') . '充值订单[' . get_userdata($user_id)->user_login . ']';
 
 // 创建支付数据
 $out_trade_no = wnd_insert_payment($user_id, $money, $post_id);
@@ -39,41 +39,22 @@ if (!$out_trade_no) {
 
 // 引入支付基础配置信息
 require dirname(__FILE__) . '/config.php';
+require dirname(__FILE__) . '/class/AlipayBuilder.php';
+$aliPay = new AlipayPagePayBuilder();
 
-// PC网页支付
-if (!wp_is_mobile()) {
+// 订单属性
+$aliPay->total_amount = $money;
+$aliPay->out_trade_no = $out_trade_no;
+$aliPay->subject = $subject;
 
-	require dirname(__FILE__) . '/class/AlipayPagePayBuilder.php';
-	$aliPay = new AlipayPagePayBuilder();
-	$aliPay->setAppid($config['app_id']);
-	$aliPay->setReturnUrl($config['return_url']);
-	$aliPay->setNotifyUrl($config['notify_url']);
-	$aliPay->setRsaPrivateKey($config['merchant_private_key']);
+// 配置属性
+$aliPay->product_code = wp_is_mobile() ? 'QUICK_WAP_WAY' : 'FAST_INSTANT_TRADE_PAY';
+$aliPay->method = wp_is_mobile() ? 'alipay.trade.wap.pay' : 'alipay.trade.page.pay';
+$aliPay->gateway_url = $config['gateway_url'];
+$aliPay->app_id = $config['app_id'];
+$aliPay->return_url = $config['return_url'];
+$aliPay->notify_url = $config['notify_url'];
+$aliPay->private_key = $config['merchant_private_key'];
 
-	$aliPay->setTotalAmount($money);
-	$aliPay->setOutTradeNo($out_trade_no);
-	$aliPay->setOrderName($order_name);
-	$sHtml = $aliPay->doPay();
-	echo $sHtml;
-}
-
-/**
- *@since 2019.03.02 支付宝wap支付
- */
-else {
-
-	require dirname(__FILE__) . '/class/AlipayWapPayBuilder.php';
-	// 构造wap移动支付
-	$aliPay = new AlipayWapPayBuilder();
-	$aliPay->setAppid($config['app_id']);
-	$aliPay->setReturnUrl($config['return_url']);
-	$aliPay->setNotifyUrl($config['notify_url']);
-	$aliPay->setRsaPrivateKey($config['merchant_private_key']);
-
-	$aliPay->setTotalAmount($money);
-	$aliPay->setOutTradeNo($out_trade_no);
-	$aliPay->setOrderName($order_name);
-	$sHtml = $aliPay->doPay();
-	echo $sHtml;
-
-}
+// 生成数据表单并提交
+echo $aliPay->doPay();

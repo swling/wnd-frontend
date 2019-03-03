@@ -5,46 +5,27 @@
  */
 class AlipayPagePayBuilder {
 
-	protected $appId;
-	protected $returnUrl;
-	protected $notifyUrl;
+	protected $gateway_url;
+	protected $app_id;
+	protected $return_url;
+	protected $notify_url;
 	protected $charset;
-	//私钥值
-	protected $rsaPrivateKey;
-	protected $totalFee;
-	protected $outTradeNo;
-	protected $orderName;
+
+	protected $method;
+	protected $product_code;
+	protected $private_key;
+	
+	protected $total_amount;
+	protected $out_trade_no;
+	protected $subject;
 
 	public function __construct() {
 		$this->charset = 'utf-8';
 	}
 
-	public function setAppid($appid) {
-		$this->appId = $appid;
-	}
-
-	public function setReturnUrl($returnUrl) {
-		$this->returnUrl = $returnUrl;
-	}
-
-	public function setNotifyUrl($notifyUrl) {
-		$this->notifyUrl = $notifyUrl;
-	}
-
-	public function setRsaPrivateKey($saPrivateKey) {
-		$this->rsaPrivateKey = $saPrivateKey;
-	}
-
-	public function setTotalAmount($payAmount) {
-		$this->totalFee = $payAmount;
-	}
-
-	public function setOutTradeNo($outTradeNo) {
-		$this->outTradeNo = $outTradeNo;
-	}
-
-	public function setOrderName($orderName) {
-		$this->orderName = $orderName;
+	// 通过外部配置修改内部受保护的类属性
+	public function __set($var,$val){
+		$this->$var = $val;
 	}
 
 	/**
@@ -54,22 +35,22 @@ class AlipayPagePayBuilder {
 	public function doPay() {
 		//请求参数
 		$requestConfigs = array(
-			'out_trade_no' => $this->outTradeNo,
-			'product_code' => 'FAST_INSTANT_TRADE_PAY',
-			'total_amount' => $this->totalFee, //单位 元
-			'subject' => $this->orderName, //订单标题
+			'out_trade_no' => $this->out_trade_no,
+			'product_code' => $this->product_code,
+			'total_amount' => $this->total_amount, //单位 元
+			'subject' => $this->subject, //订单标题
 		);
 		$commonConfigs = array(
 			//公共参数
-			'app_id' => $this->appId,
-			'method' => 'alipay.trade.page.pay', //接口名称
+			'app_id' => $this->app_id,
+			'method' => $this->methid, //接口名称
 			'format' => 'JSON',
-			'return_url' => $this->returnUrl,
+			'return_url' => $this->return_url,
 			'charset' => $this->charset,
 			'sign_type' => 'RSA2',
 			'timestamp' => date('Y-m-d H:i:s'),
 			'version' => '1.0',
-			'notify_url' => $this->notifyUrl,
+			'notify_url' => $this->notify_url,
 			'biz_content' => json_encode($requestConfigs),
 		);
 		$commonConfigs["sign"] = $this->generateSign($commonConfigs, $commonConfigs['sign_type']);
@@ -83,17 +64,16 @@ class AlipayPagePayBuilder {
 	 */
 	protected function buildRequestForm($para_temp) {
 
-		$sHtml = "正在跳转至支付页面...<form id='alipaysubmit' name='alipaysubmit' action='https://openapi.alipay.com/gateway.do?charset=" . $this->charset . "' method='POST'>";
-		// while (list($key, $val) = each($para_temp)) {
+		$sHtml = '<form id="alipaysubmit" name="alipaysubmit" action="'.$this->$gateway_url.'" method="POST">';
 		foreach ($para_temp as $key => $val) {
 			if (false === $this->checkEmpty($val)) {
 				$val = str_replace("'", "&apos;", $val);
-				$sHtml .= "<input type='hidden' name='" . $key . "' value='" . $val . "'/>";
+				$sHtml .= '<input type="hidden" name="' . $key . '" value="' . $val . '"/>';
 			}
 		}unset($key, $val);
 		//submit按钮控件请不要含有name属性
-		$sHtml = $sHtml . "<input type='submit' value='ok' style='display:none;''></form>";
-		$sHtml = $sHtml . "<script>document.forms['alipaysubmit'].submit();</script>";
+		$sHtml = $sHtml . '<input type="submit" value="ok" style="display:none;"></form>';
+		$sHtml = $sHtml . '<script>document.forms[\'alipaysubmit\'].submit();</script>';
 		return $sHtml;
 	}
 
@@ -102,7 +82,7 @@ class AlipayPagePayBuilder {
 	}
 
 	protected function sign($data, $signType = "RSA") {
-		$priKey = $this->rsaPrivateKey;
+		$priKey = $this->private_key;
 		$res = "-----BEGIN RSA PRIVATE KEY-----\n" .
 		wordwrap($priKey, 64, "\n", true) .
 			"\n-----END RSA PRIVATE KEY-----";
