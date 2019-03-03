@@ -43,7 +43,7 @@ class AlipayPagePayBuilder {
 		$commonConfigs = array(
 			//公共参数
 			'app_id' => $this->app_id,
-			'method' => $this->methid, //接口名称
+			'method' => $this->method, //接口名称
 			'format' => 'JSON',
 			'return_url' => $this->return_url,
 			'charset' => $this->charset,
@@ -64,7 +64,7 @@ class AlipayPagePayBuilder {
 	 */
 	protected function buildRequestForm($para_temp) {
 
-		$sHtml = '<form id="alipaysubmit" name="alipaysubmit" action="'.$this->$gateway_url.'" method="POST">';
+		$sHtml = '<form id="alipaysubmit" name="alipaysubmit" action="'.$this->gateway_url.'" method="POST">';
 		foreach ($para_temp as $key => $val) {
 			if (false === $this->checkEmpty($val)) {
 				$val = str_replace("'", "&apos;", $val);
