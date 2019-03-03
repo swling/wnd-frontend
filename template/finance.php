@@ -226,7 +226,7 @@ function _wnd_recharge_form() {
 	color: #FFF;
 }
 </style>
-<form id="recharge" action="<?php echo wnd_get_do_url(); ?>?action=payment" method="post">
+<form id="recharge" action="<?php echo wnd_get_do_url(); ?>?action=payment" method="post" target="_blank">
 	<div class="field">
 		<div class="ajax-msg"></div>
 	</div>
