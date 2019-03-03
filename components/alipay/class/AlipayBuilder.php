@@ -64,16 +64,16 @@ class AlipayPagePayBuilder {
 	 */
 	protected function buildRequestForm($para_temp) {
 
-		$sHtml = '<form id="alipaysubmit" name="alipaysubmit" action="' . $this->gateway_url . '?charset=' . $this->charset . '" method="POST">';
+		$sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='" . $this->gateway_url . "?charset=" . $this->charset . "' method='POST'>";
 		foreach ($para_temp as $key => $val) {
 			if (false === $this->checkEmpty($val)) {
 				$val = str_replace("'", "&apos;", $val);
-				$sHtml .= '<input type="hidden" name="' . $key . '" value="' . $val . '"/>';
+				$sHtml .= "<input type='hidden' name='" . $key . "' value='" . $val . "'>";
 			}
 		}unset($key, $val);
 		//submit按钮控件请不要含有name属性
-		$sHtml = $sHtml . '<input type="submit" value="ok" style="display:none;"></form>';
-		$sHtml = $sHtml . '<script>document.forms[\'alipaysubmit\'].submit();</script>';
+		$sHtml = $sHtml . "<input type='submit' value='ok' style='display:none;'></form>";
+		$sHtml = $sHtml . "<script>document.forms['alipaysubmit'].submit();</script>";
 		return $sHtml;
 	}
 
