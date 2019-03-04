@@ -52,5 +52,9 @@ function wnd_ajax_admin_recharge() {
 	$money = $_POST['money'];
 	$remarks = $_POST['remarks'] ?? '';
 
+	if(!is_numeric($money)){
+		return array('status' => 0, 'msg' => '请输入一个有效的充值金额！');
+	}
+
 	return wnd_admin_recharge($user_field, $money, $remarks);
 }
