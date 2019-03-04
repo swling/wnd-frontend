@@ -37,7 +37,7 @@ function wnd_insert_recharge($args = array()) {
 	// 写入object数据库
 	$recharge_id = wp_insert_post($post_arr);
 
-	if ($recharge_id and $status == 'success') {
+	if ($recharge_id and $args['status'] == 'success') {
 
 		// 当充值包含关联object 如post，表面收入来自站内，如佣金收入
 		if ($object_id) {
@@ -229,7 +229,7 @@ function wnd_insert_expense($args = array()) {
 	 *success表示直接余额消费，更新用户余额
 	 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see wnd_update_expense();
 	 */
-	if ($expense_id && $status == 'success') {
+	if ($expense_id && $args['status'] == 'success') {
 		wnd_inc_user_money($user_id, $money * -1);
 	}
 

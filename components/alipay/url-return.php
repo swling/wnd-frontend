@@ -56,7 +56,7 @@ if ($wnd_verify_recharge['status'] == 1) {
 } else {
 
 	echo "fail";
-	$alipaySevice->writeLog($wnd_verify_recharge['msg']);
+	echo $wnd_verify_recharge['msg'];
 
 }
 
