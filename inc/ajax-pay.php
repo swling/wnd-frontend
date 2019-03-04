@@ -37,8 +37,16 @@ function wnd_insert_order() {
 		}
 	}
 
-	// 写入object数据库
-	$object_id = wnd_insert_expense($user_id, $money, $post_id, 'success', get_the_title($post_id) . '(余额支付)');
+	// 写入消费数据
+	$object_id = wnd_insert_expense(
+		array(
+			'user_id' => $user_id,
+			'money' => $money,
+			'object_id' => $post_id,
+			'status' => 'success',
+			'title' => get_the_title($post_id) . '(余额支付)',
+		)
+	);
 	// 支付成功
 	if ($object_id) {
 		return array('status' => 1, 'msg' => '支付成功！');
@@ -80,7 +88,15 @@ function wnd_pay_for_reading() {
 	// 文章作者新增资金
 	$commission = wnd_get_post_commission($post_id);
 	if ($commission) {
-		wnd_insert_recharge($post->post_author, $commission, 'success', $title = '《' . $post->post_title . '》收益', $post_id);
+		wnd_insert_recharge(
+			array(
+				'user_id' => $post->post_author,
+				'money' => $commission,
+				'status' => 'success',
+				'title' => '《' . $post->post_title . '》收益',
+				'object_id' => $post_id,
+			)
+		);
 	}
 
 	return array('status' => 1, 'msg' => $paid_content);
@@ -142,7 +158,15 @@ function wnd_pay_for_download() {
 	// 文章作者新增资金
 	$commission = wnd_get_post_commission($post_id);
 	if ($commission) {
-		wnd_insert_recharge($post->post_author, $commission, 'success', $title = '《' . $post->post_title . '》收益', $post_id);
+		wnd_insert_recharge(
+			array(
+				'user_id' => $post->post_author,
+				'money' => $commission,
+				'status' => 'success',
+				'title' => '《' . $post->post_title . '》收益',
+				'object_id' => $post_id,
+			)
+		);
 	}
 
 	return array('status' => 6, 'msg' => $download_url);

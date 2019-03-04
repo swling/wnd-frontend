@@ -14,14 +14,23 @@ if (!defined('ABSPATH')) {
  *创建时：post_status=>pending，验证成功后：post_status=>success
  *@return int object ID
  */
-function wnd_insert_recharge($user_id, $money, $status = 'pending', $title = '', $object_id = 0) {
+function wnd_insert_recharge($args) {
+
+	$defaults = array(
+		'user_id' => 0,
+		'money' => 0,
+		'status' => 'pending',
+		'title' => '',
+		'object_id' => 0,
+	);
+	$args = wp_parse_args($args, $defaults);
 
 	$post_arr = array(
-		'post_author' => $user_id,
-		'post_parent' => $object_id,
-		'post_content' => $money,
-		'post_status' => $status,
-		'post_title' => $title,
+		'post_author' => $args['user_id'],
+		'post_parent' => $args['object_id'],
+		'post_content' => $args['money'],
+		'post_status' => $args['status'],
+		'post_title' => $args['title'],
 		'post_type' => 'recharge',
 	);
 
@@ -91,10 +100,25 @@ function wnd_insert_payment($user_id, $money, $post_id = 0) {
 
 	if ($post_id) {
 		// 在线订单
-		return wnd_get_site_prefix() . '-' . wnd_insert_expense($user_id, $money, $post_id, 'pending');
+		// return wnd_get_site_prefix() . '-' . wnd_insert_expense($user_id, $money, $post_id, 'pending');
+		return wnd_get_site_prefix() . '-' . wnd_insert_expense(
+			array(
+				'user_id' => $user_id,
+				'money' => $money,
+				'object_id' => $post_id,
+				'status' => 'pending',
+			)
+		);
 	} else {
 		// 在线充值
-		return wnd_get_site_prefix() . '-' . wnd_insert_recharge($user_id, $money, 'pending');
+		// return wnd_get_site_prefix() . '-' . wnd_insert_recharge($user_id, $money, 'pending');
+		return wnd_get_site_prefix() . '-' . wnd_insert_recharge(
+			array(
+				'user_id' => $user_id,
+				'money' => $money,
+				'status' => 'pending',
+			)
+		);
 	}
 
 }
@@ -177,18 +201,27 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
  *@since 2019.02.11
  *用户本站消费数据(含余额消费，或直接第三方支付消费)
  */
-function wnd_insert_expense($user_id, $money, $object_id = 0, $status = 'success', $title = '') {
+function wnd_insert_expense($args) {
 
-	$title = $title ?: $object_id ? get_the_title($object_id) : '';
+	$defaults = array(
+		'user_id' => 0,
+		'money' => 0,
+		'status' => 'pending',
+		'title' => '',
+		'object_id' => 0,
+	);
+	$args = wp_parse_args($args, $defaults);
+	$args['title'] = $args['title'] ?: ($args['object_id'] ? get_the_title($args['object_id']) : '');
 
 	$post_arr = array(
-		'post_author' => $user_id,
-		'post_content' => $money,
-		'post_parent' => $object_id,
-		'post_title' => $title,
-		'post_status' => $status,
-		'post_type' => 'expense',
+		'post_author' => $args['user_id'],
+		'post_parent' => $args['object_id'],
+		'post_content' => $args['money'],
+		'post_status' => $args['status'],
+		'post_title' => $args['title'],
+		'post_type' => 'recharge',
 	);
+
 	$expense_id = wp_insert_post($post_arr);
 
 	/**
@@ -357,7 +390,7 @@ function wnd_admin_recharge($user_field, $money, $remarks = '') {
 	}
 
 	// 写入充值记录
-	if (wnd_insert_recharge($user->ID, $money, $status = 'success', $title = $remarks)) {
+	if (wnd_insert_recharge(array('user_id' => $user->ID, 'money' => $money, 'status' => 'success', 'title' => $remarks))) {
 		return array('status' => 1, 'msg' => $user->display_name . ' 充值：¥' . $money);
 	} else {
 		return array('status' => 0, 'msg' => '充值失败！');
