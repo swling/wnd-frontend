@@ -107,7 +107,7 @@ function wnd_insert_payment($user_id, $money, $object_id = 0) {
 			array(
 				'user_id' => $user_id,
 				'money' => $money,
-				'object_id' => $post_id,
+				'object_id' => $object_id,
 				'status' => 'pending',
 			)
 		);
@@ -234,7 +234,7 @@ function wnd_insert_expense($args = array()) {
 		'post_content' => $args['money'],
 		'post_status' => $args['status'],
 		'post_title' => $args['title'],
-		'post_type' => 'recharge',
+		'post_type' => 'expense',
 		'post_name' => uniqid() . '-' . get_current_user_id(),
 	);
 
