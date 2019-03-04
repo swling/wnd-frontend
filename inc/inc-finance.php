@@ -42,10 +42,10 @@ function wnd_insert_recharge($args = array()) {
 	if ($recharge_id and $args['status'] == 'success') {
 
 		// 当充值包含关联object 如post，表面收入来自站内，如佣金收入
-		if ($object_id) {
-			wnd_inc_user_commission($user_id, $money);
+		if ($args['object_id']) {
+			wnd_inc_user_commission($args['user_id'], $args['money']);
 		} else {
-			wnd_inc_user_money($user_id, $money);
+			wnd_inc_user_money($args['user_id'], $args['money']);
 		}
 	}
 
@@ -246,7 +246,7 @@ function wnd_insert_expense($args = array()) {
 	 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see wnd_update_expense();
 	 */
 	if ($expense_id && $args['status'] == 'success') {
-		wnd_inc_user_money($user_id, $money * -1);
+		wnd_inc_user_money($args['user_id'], $args['money'] * -1);
 	}
 
 	return $expense_id;
