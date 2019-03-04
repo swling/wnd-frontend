@@ -103,6 +103,11 @@ function wnd_action_pay() {
 		}
 		break;
 
+	//@since 2019.03.04 刷新所有缓存（主要用于刷新对象缓存，静态缓存通常通过缓存插件本身删除）
+	case 'wp_cache_flush':
+		wp_cache_flush();
+		break;
+
 	default:
 		wp_die('无效的操作！', bloginfo('name'));
 		break;
