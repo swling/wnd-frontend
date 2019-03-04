@@ -81,12 +81,19 @@ function wnd_update_recharge($ID, $status, $title = '') {
  */
 function wnd_insert_payment($user_id, $money, $post_id = 0) {
 
+	/**
+	 *充值支付订单的id基于WordPress post id，因而在一些情况下，可能会产生重复ID如：不同站点共用一个支付宝app id，测试环境与正式环境等
+	 *该前缀对唯一性要求不高，仅用于区分上述情况下的冲突
+	 *@since 2019.03.04
+	 */
+	$prefix = substr(md5(home_url()), 0, 4);
+
 	if ($post_id) {
 		// 在线订单
-		return wnd_insert_expense($user_id, $money, $post_id, 'pending');
+		return $prefix . ':' . wnd_insert_expense($user_id, $money, $post_id, 'pending');
 	} else {
 		// 在线充值
-		return wnd_insert_recharge($user_id, $money, 'pending');
+		return $prefix . ':' . wnd_insert_recharge($user_id, $money, 'pending');
 	}
 
 }
@@ -102,7 +109,18 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 
 	$type = !empty($_POST) ? '异步' : '同步';
 
-	$post = get_post($out_trade_no);
+	/**
+	 *切割订单号，获取WordPress充值post id
+	 *为防止多站点公用一个支付应用id，或测试环境与正式环境中产生重复的支付订单id，在充值id的前缀前，添加了基于该站点home_url()的前缀字符
+	 *@since 2019.03.04
+	 */
+	list($prefix, $post_id) = explode(':', $out_trade_no, 2);
+
+	if ($prefix != substr(md5(home_url()), 0, 4)) {
+		return array('status' => 0, 'msg' => '当前支付信息非本站点订单！');
+	}
+
+	$post = get_post($post_id);
 	if (!$post) {
 		return array('status' => 0, 'msg' => 'ID无效！');
 	}
@@ -159,7 +177,7 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
  */
 function wnd_insert_expense($user_id, $money, $object_id = 0, $status = 'success', $title = '') {
 
-	$title = $title ?: $object_id ? get_the_title( $object_id ) : '';
+	$title = $title ?: $object_id ? get_the_title($object_id) : '';
 
 	$post_arr = array(
 		'post_author' => $user_id,

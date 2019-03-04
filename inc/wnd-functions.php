@@ -90,6 +90,16 @@ function wnd_random_code($length = 6) {
 }
 
 /**
+ *@since 2019.03.04
+ *生成包含当前日期信息的高强度的唯一性ID
+ */
+function wnd_generate_order_NO() {
+	$today = date("Ymd");
+	$rand = substr(hash('sha256', uniqid(rand(), TRUE)), 0, 10);
+	return $today . $rand;
+}
+
+/**
  * @since 2019.02.09  验证是否为手机号
  */
 function wnd_is_phone($phone) {
@@ -103,7 +113,7 @@ function wnd_is_phone($phone) {
 
 /**
  * @since 2019.01.16
-*/
+ */
 function _wnd_update_post_views() {
 
 	$post_id = (int) $_POST['post_id'];
@@ -154,20 +164,20 @@ function _wnd_update_post_views() {
 	}
 
 	// 统计
-	if ($should_count) 	{
+	if ($should_count) {
 
 		wnd_inc_post_meta($post_id, 'views', 1);
 
 		// 完成统计时附加动作
-		do_action( 'wnd_update_post_views', $post_id );
+		do_action('wnd_update_post_views', $post_id);
 
 		// 统计更新成功
-		return array('status' => 1, 'msg' =>time() );
+		return array('status' => 1, 'msg' => time());
 
-	}else{
+	} else {
 
 		// 未更新
-		return array('status' => 0, 'msg' =>time() );
+		return array('status' => 0, 'msg' => time());
 
 	}
 

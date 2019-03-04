@@ -171,6 +171,16 @@ do_action( '_wnd_post_form', $post_id,$post_type,$post )
 状态：post_status: pengding / success
 类型：post_type：recharge / expense
 
+#支付订单前缀算法：
+```php
+	/**
+	 *充值支付订单的id基于WordPress post id，因而在一些情况下，可能会产生重复ID如：不同站点共用一个支付宝app id，测试环境与正式环境等
+	 *该前缀对唯一性要求不高，仅用于区分上述情况下的冲突
+	 *@since 2019.03.04
+	 */
+	$prefix = substr(md5(home_url()), 0, 4);
+```
+
 #付费内容
 必须设置价格
 优先检测文件，如果设置了付费文件，则文章内容将全文输出
