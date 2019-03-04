@@ -12,6 +12,7 @@ if (!defined('ABSPATH')) {
  *类型：post_type (recharge / expense)
  *用户通过第三方金融平台充值付款到本站
  *创建时：post_status=>pending，验证成功后：post_status=>success
+ *写入post时需要设置别名，否则更新时会自动根据标题设置别名，而充值类标题一致，会导致WordPress持续循环查询并设置 -2、-3这类自增标题，产生大量查询
  *@return int object ID
  */
 function wnd_insert_recharge($args = array()) {
@@ -32,6 +33,7 @@ function wnd_insert_recharge($args = array()) {
 		'post_status' => $args['status'],
 		'post_title' => $args['title'],
 		'post_type' => 'recharge',
+		'post_name' => uniqid() . '-' . get_current_user_id(),
 	);
 
 	// 写入object数据库
@@ -85,23 +87,23 @@ function wnd_update_recharge($ID, $status, $title = '') {
 
 /**
  *@since 2019.02.17 写入支付信息
- *@return int object_id
- *@see 2019.3.02 待解决问题：创建支付订单，不能直接用id作为订单号，如果有多个站点共用一个app id就会出现订单id重复的问题
+ *@return string or false ：wnd_get_site_prefix() .'-'. $post_id or false on failed
  */
-function wnd_insert_payment($user_id, $money, $post_id = 0) {
+function wnd_insert_payment($user_id, $money, $object_id = 0) {
 
 	/**
 	 *充值支付订单的id基于WordPress post id，因而在一些情况下，可能会产生重复ID如：不同站点共用一个支付宝app id，测试环境与正式环境等
+	 *@see 不采用别名做订单的原因：在WordPress中，不同类型的post type别名可以是重复的值，会在一定程度上导致不确定性，同时根据别名查询post的语句也更复杂
 	 *该前缀对唯一性要求不高，仅用于区分上述情况下的冲突
 	 *@see wnd_get_prefix() 基于 站点的 home_url
 	 *wnd_get_prefix() 基于md5，组成为：数字字母，post_id为整数，因而分割字符需要回避数字和字母
 	 *@since 2019.03.04
 	 */
 
-	if ($post_id) {
-		// 在线订单
-		// return wnd_get_site_prefix() . '-' . wnd_insert_expense($user_id, $money, $post_id, 'pending');
-		return wnd_get_site_prefix() . '-' . wnd_insert_expense(
+	// 在线订单
+	if ($object_id) {
+
+		$expense_id = wnd_insert_expense(
 			array(
 				'user_id' => $user_id,
 				'money' => $money,
@@ -109,16 +111,29 @@ function wnd_insert_payment($user_id, $money, $post_id = 0) {
 				'status' => 'pending',
 			)
 		);
+
+		if ($expense_id and !is_wp_error($expense_id)) {
+			return wnd_get_site_prefix() . '-' . $expense_id;
+		} else {
+			return false;
+		}
+
+		//余额充值
 	} else {
-		// 在线充值
-		// return wnd_get_site_prefix() . '-' . wnd_insert_recharge($user_id, $money, 'pending');
-		return wnd_get_site_prefix() . '-' . wnd_insert_recharge(
+
+		$recharge_id = wnd_insert_recharge(
 			array(
 				'user_id' => $user_id,
 				'money' => $money,
 				'status' => 'pending',
 			)
 		);
+
+		if ($recharge_id and !is_wp_error($recharge_id)) {
+			return wnd_get_site_prefix() . '-' . $recharge_id;
+		} else {
+			return false;
+		}
 	}
 
 }
@@ -220,6 +235,7 @@ function wnd_insert_expense($args = array()) {
 		'post_status' => $args['status'],
 		'post_title' => $args['title'],
 		'post_type' => 'recharge',
+		'post_name' => uniqid() . '-' . get_current_user_id(),
 	);
 
 	$expense_id = wp_insert_post($post_arr);
