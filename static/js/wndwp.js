@@ -426,7 +426,7 @@ jQuery(document).ready(function($) {
 		var _ajax_nonce = $(id + " [name='file_upload_nonce']").val();
 		var save_width = $(id + " [name='file_save_width']").val();
 		var save_height = $(id + " [name='file_save_height']").val();
-		var with_thumbnail = $(id + " [name='file_with_thumbnail']").val();
+		var thumbnail = $(id + " [name='file_thumbnail']").val();
 
 		// 组合表单数据
 		form_data.append("file", file_data);
@@ -464,7 +464,7 @@ jQuery(document).ready(function($) {
 					// 上传成功
 					wnd_ajax_msg("上传成功！", "is-success", id);
 					// 图像上传，更新缩略图
-					if (with_thumbnail == 1) {
+					if (thumbnail == 1) {
 						$(id + " .thumb").prop("src", response[i].msg.url);
 					} else {
 						$(id + " .file-name").html('上传成功！<a href="' + response[i].msg.url + '">查看文件</a>');
@@ -504,7 +504,7 @@ jQuery(document).ready(function($) {
 		var meta_key = $(id + " [name='file_meta_key']").val();
 		var post_parent = $(id + " [name='file_post_parent']").val();
 		var _ajax_nonce = $(id + " [name='file_delete_nonce']").val();
-		var with_thumbnail = $(id + " [name='file_with_thumbnail']").val();
+		var thumbnail = $(id + " [name='file_thumbnail']").val();
 
 		// 默认图
 		var default_thumbnail = $(id + " [name='file_default_thumbnail']").val();
@@ -541,7 +541,7 @@ jQuery(document).ready(function($) {
 
 				wnd_ajax_msg("已删除！", "is-success", id);
 				// 图像删除还原为默认缩略图
-				if (with_thumbnail == 1) {
+				if (thumbnail == 1) {
 					$(id + " .thumb").prop("src", default_thumbnail);
 				} else {
 					$(id + " .file-name").text('文件已删除……');

@@ -18,9 +18,9 @@ function _wnd_post_form($args=array()){
 		'post_id'	=> 0,
 		'post_type' => 'post',
 		'post_parent' => 0,
-		'is_free'	=> 1,
-		'with_excerpt' => 0,
-		'with_thumbnail' => 0,//0 无缩略图，1、wp原生缩略图(存储在post meta _thumbnail_id 字段)，2，存储在wnd_meta _thumbnail_id字段
+		'free'	=> 1,
+		'excerpt' => 0,
+		'thumbnail' => 0,//0 无缩略图，1、wp原生缩略图(存储在post meta _thumbnail_id 字段)，2，存储在wnd_meta _thumbnail_id字段
 		'thumbnail_size' => array ('width'=>150, 'height'=>150),
 		'rich_media_editor' => 1
 	);
@@ -143,7 +143,7 @@ if($tag_taxonomies){
 }
 ?>	
 
-<?php if($args['with_excerpt']==1) { //摘要 ?>
+<?php if($args['excerpt']==1) { //摘要 ?>
 	<div class="field">
 		<label class="label">摘要</label>
 		<div class="control">
@@ -163,11 +163,11 @@ if($tag_taxonomies){
 	*@since 2019.02.20 缩略图
 	*/
 	/*wp原生缩略图*/
-	if($args['with_thumbnail'] == 1){
+	if($args['thumbnail'] == 1){
 		_wnd_post_thumbnail_field($post_id, $args['thumbnail_size'], $is_wpthumbnail = 1);
 	
 	/*自定义缩略图*/ 
-	}elseif($args['with_thumbnail'] == 2){
+	}elseif($args['thumbnail'] == 2){
 		_wnd_post_thumbnail_field($post_id, $args['thumbnail_size'], $is_wpthumbnail = 0);
 	}
 
@@ -332,7 +332,7 @@ function _wnd_upload_field($args) {
 	$defaults = array(
 		'id'=>'upload-file',
 		'meta_key' => '',
-		'with_thumbnail'=> 1,
+		'thumbnail'=> 1,
 		'post_parent' => 0,
 		'save_size'=>array('width'=>0,'height'=>0),
 		'thumbnail_size'=>array('width'=>200,'height'=>200),
@@ -355,7 +355,7 @@ function _wnd_upload_field($args) {
 	}
 
 	//根据上传类型，设置默认样式 
-	if($args['with_thumbnail']==1){
+	if($args['thumbnail']==1){
 		$attachment_url = $attachment_url ?: $args['default_thumbnail'];
 	}else{
 		$attachment_url = $attachment_url ?: false;
@@ -366,7 +366,7 @@ function _wnd_upload_field($args) {
 	<div class="field">
 		<div class="ajax-msg"></div>
 	</div>
-	<?php if ($args['with_thumbnail'] == 1) { // 1、图片类型，缩略图 ?>
+	<?php if ($args['thumbnail'] == 1) { // 1、图片类型，缩略图 ?>
 	<div class="field">
 		<a onclick="wnd_click('input[data-id=\'<?php echo $args['id'];?>\']')"><img class="thumb" src="<?php echo $attachment_url; ?>" height="<?php echo $args['thumbnail_size']['height']?>" width="<?php echo $args['thumbnail_size']['width']?>" title="上传图像"></a>
 		<a class="delete" data-id="<?php echo $args['id'];?>" data-attachment-id="<?php echo $attachment_id;?>"></a>
@@ -406,7 +406,7 @@ function _wnd_upload_field($args) {
 	<!-- 自定义属性，用于区分上传用途，方便后端区分处理 -->
 	<input type="hidden" name="file_post_parent" value="<?php echo $args['post_parent'] ?>" />
 	<input type="hidden" name="file_meta_key" value="<?php echo $args['meta_key']; ?>" />
-	<input type="hidden" name="file_with_thumbnail" value="<?php if($args['with_thumbnail']==1) echo '1'; else echo '0'; ?>" />
+	<input type="hidden" name="file_thumbnail" value="<?php if($args['thumbnail']==1) echo '1'; else echo '0'; ?>" />
 	<?php wp_nonce_field('wnd_upload_file','file_upload_nonce');?>
 	<?php wp_nonce_field('wnd_delete_attachment','file_delete_nonce');?>
 </div>
@@ -422,7 +422,7 @@ function _wnd_paid_post_field($post_parent){
     $args = array(
         'id'=>'upload-file-' . $post_parent,
         'meta_key' => 'file',
-        'with_thumbnail'=> 0,
+        'thumbnail'=> 0,
         'post_parent' => $post_parent,
     );
     _wnd_upload_field($args);
