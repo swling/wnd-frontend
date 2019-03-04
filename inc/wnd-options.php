@@ -64,12 +64,6 @@ function wnd_options(){
 					关闭过滤<input type="radio" required="required" name="wnd_enable_white_list" value="0" <?php if(wnd_get_option('wndwp','wnd_enable_white_list')!=1) echo 'checked' ?> />
 					<p><i>警告：仅在开发测试中关闭过滤，否则可能引发安全问题</i></p>
 				</td>
-			</tr>			
-			<tr>
-				<td valign="top">允许的文章数据</td>
-				<td>
-					<textarea name="wnd_allowed_post_field" value="" class="regular-text"><?php echo wnd_get_option('wndwp','wnd_allowed_post_field');?></textarea>
-				</td>
 			</tr>
 			<tr>
 				<td valign="top">允许的wnd_post_meta</td>

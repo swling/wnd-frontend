@@ -61,15 +61,17 @@ function wnd_reg() {
 		return array('status' => 0, 'msg' => $user_id->get_error_message());
 	}
 
+	// 实例化WndWP表单数据处理对象
+	$form_data = new wnd_form_data();
+
 	// 写入用户自定义数组meta
-	$user_meta_array = wnd_get_form_data($form_date_type = 'user', 'user_meta_array');
+	$user_meta_array = $form_data->get_user_meta_array();
 	if (!empty($user_meta_array)) {
 		wnd_update_user_meta_array($user_id, $user_meta_array);
 	}
 
 	// 写入WordPress原生用户字段
-	$wp_user_meta_array_temp = wnd_get_form_data($form_date_type = 'user', 'wp_user_meta_array');
-	$wp_user_meta_array = array_merge($wp_user_meta_array, $wp_user_meta_array_temp);
+	$wp_user_meta_array = $form_data->get_wp_user_meta_array();;
 	if (!empty($wp_user_meta_array)) {
 		foreach ($wp_user_meta_array as $key => $value) {
 			// 下拉菜单默认未选择时，值为 -1 。过滤
@@ -153,9 +155,11 @@ function wnd_update_profile() {
 	if (empty($_POST)) {
 		return array('status' => 0, 'msg' => '获取用户数据失败！');
 	}
-	//获取表单提交的用户字段并合并到对应数组
-	$user_meta_array = wnd_get_form_data($form_date_type = 'user', 'user_meta_array');
-	$wp_user_meta_array = wnd_get_form_data($form_date_type = 'user', 'wp_user_meta_array');
+
+	// 实例化WndWP表单数据处理对象
+	$form_data = new wnd_form_data();
+	$user_meta_array = $form_data->get_user_meta_array();
+	$wp_user_meta_array = $form_data->get_wp_user_meta_array();;
 
 	// ################### 组成用户数据
 	$user = wp_get_current_user();

@@ -15,11 +15,12 @@ function wnd_insert_post($update_id = 0) {
 		return array('status' => 0, 'msg' => '数据为空');
 	}
 
-	// 遍历表单提交的数据，并合并到对应的初始化数组中
-	$meta_array = wnd_get_form_data($form_date_type = 'post', 'meta_array');
-	$wp_meta_array = wnd_get_form_data($form_date_type = 'post', 'wp_meta_array');
-	$post_array_temp = wnd_get_form_data($form_date_type = 'post', 'post_array');
-	$term_array = wnd_get_form_data($form_date_type = 'post', 'term_array');
+	// 实例化当前提交的表单数据
+	$form_data = new wnd_form_data();
+	$post_array_temp = $form_data->get_post_array();
+	$meta_array = $form_data->get_post_meta_array();
+	$wp_meta_array = $form_data->get_wp_post_meta_array();
+	$term_array = $form_data->get_term_array();
 
 	// 组合数据
 	$user_id = get_current_user_id();
