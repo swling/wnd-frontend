@@ -236,6 +236,13 @@ function _wnd_login_form() {
 			</span>
 		</div>
 	</div>
+	<div class="field">
+		<div class="control">
+			<label class="checkbox">
+				<input type="checkbox" name="remember" value="1" checked="checked"> 记住我
+			</label>
+		</div>
+	</div>	
 	<?php do_action('_wnd_login_form');?>
 	<input type="hidden" name="redirect_to" value="<?php echo $redirect_to; ?>">
 	<?php wp_nonce_field('wnd_login', '_ajax_nonce');?>

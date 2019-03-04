@@ -160,7 +160,7 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	// 从指定排除的参数中移除 tax query 否则分类参数添加无效
+	// 从指定排除的参数中添加 tax query，强制移除tax query
 	$tax_query_key = array_search('tax_query', $args['wnd_remove_query_arg']);
 	if (!$tax_query_key) {
 		array_push($args['wnd_remove_query_arg'], 'tax_query');
