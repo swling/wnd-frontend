@@ -38,10 +38,10 @@ class AlipayService {
 		} else {
 			$result = (bool) openssl_verify($data, base64_decode($sign), $res);
 		}
-		if (!$this->checkEmpty($this->alipayPublicKey)) {
-			//释放资源
-			openssl_free_key($res);
-		}
+		// if (!$this->checkEmpty($this->alipayPublicKey)) {
+		// 	//释放资源仅在读取文件时
+		// 	openssl_free_key($res);
+		// }
 		return $result;
 	}
 
