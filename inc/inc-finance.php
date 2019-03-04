@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  *创建时：post_status=>pending，验证成功后：post_status=>success
  *@return int object ID
  */
-function wnd_insert_recharge($args) {
+function wnd_insert_recharge($args = array()) {
 
 	$defaults = array(
 		'user_id' => 0,
@@ -201,7 +201,7 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
  *@since 2019.02.11
  *用户本站消费数据(含余额消费，或直接第三方支付消费)
  */
-function wnd_insert_expense($args) {
+function wnd_insert_expense($args = array()) {
 
 	$defaults = array(
 		'user_id' => 0,
