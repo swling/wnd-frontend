@@ -34,7 +34,7 @@ function _wnd_next_page($posts_per_page, $current_post_count, $pages_key = 'page
  *@param $function 的参数
  *函数应该与请求函数处于同一个父元素之下，父容器必须设置 id
  */
-function _wnd_ajax_next_page($function, $args) {
+function _wnd_ajax_next_page($function, $args, $post_count) {
 
 	$current_pages = $args['paged'] ?? 1;
 
@@ -66,7 +66,10 @@ function _wnd_ajax_next_page($function, $args) {
 	if ($current_pages >= 2) {
 		echo '<li><a class="pagination-link" onclick="' . $pre_onclick . '">上一页</a>';
 	}
-	echo '<li><a class="pagination-link" onclick="' . $next_onclick . '">下一页</a>';
+	if ($post_count >= $args['posts_per_page']) {
+		echo '<li><a class="pagination-link" onclick="' . $next_onclick . '">下一页</a>';
+	}
+
 	echo '</ul>';
 	echo '</nav>';
 
@@ -77,19 +80,9 @@ function _wnd_ajax_next_page($function, $args) {
  *以表格形式输出WordPress文章列表
  *$pages_key = 'pages', $color = 'is-primary' 仅在非ajax状态下有效
  */
-function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary') {
+function _wnd_list_posts_in_table($args = '', $pages_key = 'pages', $color = 'is-primary') {
 
-	$defaults = array(
-		'posts_per_page' => get_option('posts_per_page'),
-		'paged' => 1,
-		'post_type' => 'post',
-		'post_status' => 'publish',
-		'no_found_rows' => true, //$query->max_num_pages;
-	);
-	$args = wp_parse_args($args, $defaults);
-
-	// 翻页参数优先
-	$args['paged'] = $_REQUEST[$pages_key] ?? $args['paged'];
+	$args = wp_parse_args($args);
 
 	$query = new WP_Query($args);
 
@@ -135,12 +128,53 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
 	if (!wp_doing_ajax()) {
 		_wnd_next_page($args['posts_per_page'], $query->post_count, $pages_key);
 	} else {
-		_wnd_ajax_next_page(__FUNCTION__, $args);
+		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}
 
 	?>
 <?php
 // end function
+
+}
+
+/**
+ *@since 2019.03.05
+ *调用主题文章输出列表模板
+ *$pages_key = 'pages', $color = 'is-primary' 仅在非ajax状态下有效
+ *将对应的文章模板放置在主题文件夹中，具体形式：template-parts/list/list-post_type.php
+ *@see get_template_part() @link https://developer.wordpress.org/reference/functions/get_template_part/
+ */
+function _wnd_list_posts_in_theme($args = '', $pages_key = 'pages', $color = 'is-primary') {
+
+	$args = wp_parse_args($args);
+
+	$query = new WP_Query($args);
+
+	if ($query->have_posts()) {
+
+		while ($query->have_posts()) {
+			$query->the_post();
+
+			get_template_part('template-parts/list/list', get_post_type());
+
+			wp_reset_postdata(); //重置查询
+
+		}
+
+		// 没有内容
+	} else {
+
+		$no_more_text = ($args['paged'] >= 2) ? '没有更多内容！' : '没有匹配的内容！';
+		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
+
+		// 分页
+		if (!wp_doing_ajax()) {
+			_wnd_next_page($args['posts_per_page'], $query->post_count, $pages_key);
+		} else {
+			_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
+		}
+
+	}
 
 }
 
@@ -340,7 +374,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
  *@since 2019.03.01
  *输出同时带有 poet_type和分类切换标签的文章列表
  *@param $args wp_query $args
- *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
+ *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数的名称（传递值：wp_query:$args）内置了：_wnd_list_posts_in_table 及 _wnd_list_posts_in_theme
  *@param 自定义： string $args['wnd_post_types'] 需要展示的文章类型
  *@see:
  *仅ajax状态下自动切换
@@ -349,9 +383,13 @@ function _wnd_list_posts_with_tabs($args = array()) {
 
 	// 查询参数
 	$defaults = array(
+		'posts_per_page' => get_option('posts_per_page'),
+		'paged' => 1,
+		'post_type' => 'post',
+		'post_status' => 'publish',		
 		'tax_query' => array(),
 		'meta_query' => array(),
-		'wnd_list_template' => '_wnd_list_posts', //输出列表模板函数
+		'wnd_list_template' => '_wnd_list_posts_in_table', //输出列表模板函数
 		'wnd_post_types' => array(), //允许的类型数组
 	);
 	$args = wp_parse_args($args, $defaults);

@@ -170,7 +170,7 @@ function _wnd_list_user_fin($args = array(),$pages_key = 'pages', $color = 'is-p
 	if (!wp_doing_ajax()) {
 		_wnd_next_page($posts_per_page, $query->post_count, $pages_key);
 	} else {
-		_wnd_ajax_next_page(__FUNCTION__, $args);
+		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}
 
 	// 没有内容
