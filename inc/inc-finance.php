@@ -369,12 +369,14 @@ function wnd_get_user_commission($user_id) {
 /**
  *@since 2019.02.13
  *文章价格
+ *@return 两位数的价格信息 或者 0 
  */
 function wnd_get_post_price($post_id) {
 
-	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1) ?: 0;
+	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1) ?: false;
 	$price = is_numeric($price) ? number_format($price, 2) : 0;
 	return apply_filters('wnd_get_post_price', $price, $post_id);
+	
 }
 
 /**

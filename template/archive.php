@@ -445,7 +445,7 @@ function _wnd_list_posts_with_tabs($args = array()) {
 	echo '<div id="list-posts-with-tabs" class="list-posts">';
 
 	// post types 切换
-	if (count($args['wnd_post_types']) > 1) {
+	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
 		_wnd_post_types_tabs($args, $ajax_list_posts_call = 'list_posts_with_tabs', $ajax_embed_container = '#list-posts-with-tabs');
 	}
 

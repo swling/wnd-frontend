@@ -235,7 +235,6 @@ function _wnd_post_info($args){
 		echo '<script>wnd_alert_msg("ID无效！")</script>';
 		return;
 	}
-	setup_postdata( $post );
 
 	// 站内信阅读后，更新为已读 @since 2019.02.25
 	if($post->post_type == 'mail' and $post->post_type !== 'private'){
@@ -245,7 +244,13 @@ function _wnd_post_info($args){
 ?>
 <article class="message <?php echo $args['color'];?>">
 	<div class="message-body">
-		<?php the_content();?>
+		<?php 
+			if(!wnd_get_post_price($post->ID)){
+				echo $post->post_content;
+			}else{
+				echo "付费文章不支持预览！";
+			}
+		?>
 	</div>
 </article>
 <?php

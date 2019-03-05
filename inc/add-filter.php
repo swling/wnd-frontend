@@ -163,11 +163,15 @@ add_filter('the_content', 'wnd_filter_the_content', $priority = 10, $accepted_ar
 function wnd_filter_the_content($content) {
 
 	global $post;
+	if(!$post){
+		return;
+	}
+	
 	$price = wnd_get_post_price($post->ID);
 	$file = wnd_get_post_meta($post->ID, 'file');
 
 	// 价格为空且没有文件，免费文章
-	if ($price <= 0 and !$file) {
+	if (!$price and !$file) {
 		return $content;
 	}
 
