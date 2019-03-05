@@ -154,7 +154,7 @@ if($tag_taxonomies){
 
 <?php 
 
-	if($args['is_free']!=1 ) { //付费内容 
+	if($args['free']!=1 ) { //付费内容 
 			echo '<label class="label">付费内容</label>';
 			_wnd_paid_post_field($post_id);
 		}

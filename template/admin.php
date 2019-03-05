@@ -15,9 +15,6 @@ function _wnd_admin_posts_panel($args = array()) {
 		return;
 	}
 
-	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
-
 	// 查询参数
 	$defaults = array(
 		'post_status' => 'pending',
@@ -39,9 +36,6 @@ function _wnd_user_posts_panel($args = array()) {
 		echo '<div class="message is-danger"><div class="message-body">请登录！</div></div>';
 		return;
 	}
-
-	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
 
 	// 查询参数
 	$defaults = array(
@@ -68,9 +62,6 @@ function _wnd_user_mail_box($args = array()) {
 		echo '<div class="message is-danger"><div class="message-body">请登录！</div></div>';
 		return;
 	}
-
-	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
 
 	// 查询参数
 	$defaults = array(
@@ -103,6 +94,8 @@ function _wnd_user_mail_box($args = array()) {
 
 	if (wp_doing_ajax()) {
 
+		// ajax请求类型
+		$ajax_type = $_POST['ajax_type'] ?? 'modal';
 		if ($ajax_type == 'modal') {
 			echo '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'list_posts\',\'' . $ajax_args_all . '\');">全部</a></li>';
 			echo '<li ' . $unread_active . '><a onclick="wnd_ajax_modal(\'list_posts\',\'' . $ajax_args_unread . '\');">未读</a></li>';

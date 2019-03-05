@@ -193,7 +193,7 @@ function _wnd_list_posts_in_theme($args = '', $pages_key = 'pages') {
 function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
 
 	// 非数组，无需显示切换标签
-	if (!is_array($args['wnd_post_types'])) {
+	if (!isset($args['wnd_post_types']) or !is_array($args['wnd_post_types'])) {
 		return;
 	}
 
@@ -376,10 +376,11 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
  *@since 2019.03.01
  *输出同时带有 poet_type和分类切换标签的文章列表
  *@param $args wp_query $args
- *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数的名称（传递值：wp_query:$args）内置了：_wnd_list_posts_in_table 及 _wnd_list_posts_in_theme
- *@param 自定义： string $args['wnd_post_types'] 需要展示的文章类型
- *@see:
- *仅ajax状态下自动切换
+ *@param 自定义： string $args['wnd_list_template']
+ *文章输出列表模板函数的名称（传递值：wp_query:$args）
+ *内置了：_wnd_list_posts_in_table 及 _wnd_list_posts_in_theme
+ *@param 自定义： string $args['wnd_post_types']
+ *需要展示的文章类型
  */
 function _wnd_list_posts_with_tabs($args = array()) {
 
