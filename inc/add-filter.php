@@ -250,10 +250,9 @@ function wnd_filter_the_content($content) {
 		} else {
 			$content = '<div class="free-content">' . $free_content . '</div>';
 			$content .= '<div class="paid-content"><div class="message is-warning"><div class="message-body">付费内容：¥' . wnd_get_post_price($post->ID) . '</div></div></div>';
-			$button_text = '请登录';
-			// $form = '<p class="notice">'.$button_text.'</p>';
-			// $content = $form;
-			// return $content;
+			$button = '<div class="field is-grouped is-grouped-centered pay"><button class="button" onclick="wnd_ajax_modal(\'user_center\',\'action=login\')">请登录</button></div>';
+			$content .= $button;
+			return $content;
 		}
 
 		$form =
