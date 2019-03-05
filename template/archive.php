@@ -149,11 +149,17 @@ function _wnd_list_posts($args = '', $pages_key = 'pages', $color = 'is-primary'
  *遍历文章类型，并配合外部调用函数，生成tabs查询参数，
  *（在非ajax状态中，生成 ?type=post_type，ajax中，在当前查询参数新增post_type参数，并注销paged翻页参数以实现菜单切换）
  *@param $args 外部调用函数ajax查询文章的参数
+ *@param $args['wnd_post_types'] array 需要列表输出的类型数组
  *@param $ajax_list_posts_call 外部调用函数查询文章的调用函数
  *@param $ajax_embed_container 外部调用函数ajax查询文章后嵌入的html容器
  *@param 自定义：array  $args['wnd_remove_query_arg'] 需要从当前请求参数中移除的参数数组
  */
 function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
+
+	// 非数组，无需显示切换标签
+	if (!is_array($args['wnd_post_types'])) {
+		return;
+	}
 
 	$defaults = array(
 		'wnd_remove_query_arg' => array('paged', 'pages', 'tax_query'),
@@ -166,22 +172,14 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		array_push($args['wnd_remove_query_arg'], 'tax_query');
 	}
 
-	// 查询post types
-	$post_types = get_post_types(array('public' => true, 'show_ui' => true), $output = 'objects', $operator = 'and');
-	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
-	// 仅输出允许的post types
-	foreach ($post_types as $post_type) {
-		if (!in_array($post_type->name, wnd_get_allowed_post_types())) {
-			unset($post_types[$post_type->name]);
-		}
-	}
-	unset($post_type);
-
 	// 输出容器
 	echo '<div class="tabs is-boxed"><ul class="tab">';
 
 	// 输出tabs
-	foreach ($post_types as $post_type) {
+	foreach ($args['wnd_post_types'] as $post_type) {
+
+		// 根据类型名，获取完整的类型信息
+		$post_type = get_post_type_object($post_type);
 
 		$active = (isset($args['post_type']) and $args['post_type'] == $post_type->name) ? 'class="is-active"' : '';
 
@@ -343,31 +341,37 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
  *输出同时带有 poet_type和分类切换标签的文章列表
  *@param $args wp_query $args
  *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
+ *@param 自定义： string $args['wnd_post_types'] 需要展示的文章类型
  *@see:
  *仅ajax状态下自动切换
  */
 function _wnd_list_posts_with_tabs($args = array()) {
 
-	// post types 过滤
-	$post_types = get_post_types(array('public' => true), $output = 'objects', $operator = 'and');
-	unset($post_types['page'], $post_types['attachment']); // 排除页面和附件
-	foreach ($post_types as $post_type) {
-		if (!in_array($post_type->name, wnd_get_allowed_post_types())) {
-			unset($post_types[$post_type->name]);
-		}
-	}
-	unset($post_type);
-
 	// 查询参数
 	$defaults = array(
-		'post_type' => reset($post_types)->name, //$post_types 为多维数组，获取第一个type 的 name
-		'wnd_list_template' => '_wnd_list_posts', //输出列表模板
 		'tax_query' => array(),
 		'meta_query' => array(),
+		'wnd_list_template' => '_wnd_list_posts', //输出列表模板函数
+		'wnd_post_types' => array(), //允许的类型数组
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	// 优先参数
+	// 如未指定类型，遍历循环输出当前站点允许的类型
+	if (empty($args['wnd_post_types']) or $args['wnd_post_types'] == 'any') {
+
+		$args['wnd_post_types'] = get_post_types(array('public' => true), $output = 'names', $operator = 'and');
+		unset($args['wnd_post_types']['page'], $args['wnd_post_types']['attachment']); // 排除页面和附件
+		foreach ($args['wnd_post_types'] as $post_type) {
+			if (!in_array($post_type, wnd_get_allowed_post_types())) {
+				unset($args['wnd_post_types'][$post_type->name]);
+			}
+		}
+		unset($post_type);
+
+	}
+
+	// GET参数优先;指定参数优先;当未指定类型：为数组时，默认数组第一个类型为当期查询值
+	$args['post_type'] = $args['post_type'] ?? (is_array($args['wnd_post_types']) ? reset($args['wnd_post_types']) : $args['wnd_post_types']);
 	$args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
 
 	// 自动获取taxonomy查询参数 (?$taxonmy=term_name)
@@ -414,7 +418,9 @@ function _wnd_list_posts_with_tabs($args = array()) {
 	echo '<div id="list-posts-with-tabs" class="list-posts">';
 
 	// post types 切换
-	_wnd_post_types_tabs($args, $ajax_list_posts_call = 'list_posts_with_tabs', $ajax_embed_container = '#list-posts-with-tabs');
+	if (count($args['wnd_post_types']) > 1) {
+		_wnd_post_types_tabs($args, $ajax_list_posts_call = 'list_posts_with_tabs', $ajax_embed_container = '#list-posts-with-tabs');
+	}
 
 	// 分类 切换
 	_wnd_categories_tabs($args, $ajax_list_posts_call = 'list_posts_with_tabs', $ajax_embed_container = '#list-posts-with-tabs');
