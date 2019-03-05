@@ -78,7 +78,9 @@ function _wnd_ajax_next_page($function, $args, $post_count) {
 /**
  *@since 2019.02.15
  *以表格形式输出WordPress文章列表
- *$pages_key = 'pages', $color = 'is-primary' 仅在非ajax状态下有效
+ *@param $args wp_query参数
+ *@param $pages_key = 'pages' 仅在非ajax状态下有效
+ *@param $color 预览弹窗颜色
  */
 function _wnd_list_posts_in_table($args = '', $pages_key = 'pages', $color = 'is-primary') {
 
@@ -140,11 +142,12 @@ function _wnd_list_posts_in_table($args = '', $pages_key = 'pages', $color = 'is
 /**
  *@since 2019.03.05
  *调用主题文章输出列表模板
- *$pages_key = 'pages', $color = 'is-primary' 仅在非ajax状态下有效
  *将对应的文章模板放置在主题文件夹中，具体形式：template-parts/list/list-post_type.php
+ *@param $args  wp_query $args
+ *@param $pages_key = 'pages',  仅在非ajax状态下有效
  *@see get_template_part() @link https://developer.wordpress.org/reference/functions/get_template_part/
  */
-function _wnd_list_posts_in_theme($args = '', $pages_key = 'pages', $color = 'is-primary') {
+function _wnd_list_posts_in_theme($args = '', $pages_key = 'pages') {
 
 	$args = wp_parse_args($args);
 
