@@ -169,14 +169,13 @@ function _wnd_list_posts_in_theme($args = '', $pages_key = 'pages') {
 
 		$no_more_text = ($args['paged'] >= 2) ? '没有更多内容！' : '没有匹配的内容！';
 		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
+	}
 
-		// 分页
-		if (!wp_doing_ajax()) {
-			_wnd_next_page($args['posts_per_page'], $query->post_count, $pages_key);
-		} else {
-			_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
-		}
-
+	// 分页
+	if (!wp_doing_ajax()) {
+		_wnd_next_page($args['posts_per_page'], $query->post_count, $pages_key);
+	} else {
+		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}
 
 }
