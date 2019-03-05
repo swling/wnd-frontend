@@ -388,7 +388,7 @@ function _wnd_list_posts_with_tabs($args = array()) {
 		'posts_per_page' => get_option('posts_per_page'),
 		'paged' => 1,
 		'post_type' => 'post',
-		'post_status' => 'publish',		
+		'post_status' => 'publish',
 		'tax_query' => array(),
 		'meta_query' => array(),
 		'wnd_list_template' => '_wnd_list_posts_in_table', //输出列表模板函数
@@ -414,40 +414,26 @@ function _wnd_list_posts_with_tabs($args = array()) {
 	$args['post_type'] = $args['post_type'] ?? (is_array($args['wnd_post_types']) ? reset($args['wnd_post_types']) : $args['wnd_post_types']);
 	$args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
 
-	// 自动获取taxonomy查询参数 (?$taxonmy=term_name)
+	// 自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
 	if (!empty($_GET)) {
 
-		$cat_taxonomies = array();
-		$tag_taxonomies = array();
 		$taxonomies = get_object_taxonomies($args['post_type'], $output = 'names');
-		if ($taxonomies) {
-			foreach ($taxonomies as $taxonomy) {
-				if (is_taxonomy_hierarchical($taxonomy)) {
-					array_push($cat_taxonomies, $taxonomy);
-				} else {
-					array_push($tag_taxonomies, $taxonomy);
-				}
-			}
-			unset($taxonomy);
-		}
 
 		foreach ($_GET as $key => $value) {
 
 			/*
-				*categories tabs生成的GET参数为：$taxonomy.'_id'，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+				*categories tabs生成的GET参数为：$taxonomy.'_id'，
+				*直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			*/
 			$key = str_replace('_id', '', $key);
-
-			if (in_array($key, $cat_taxonomies)) {
+			if (in_array($key, $taxonomies)) {
 
 				$term_query = array(
 					'taxonomy' => $key,
 					'field' => 'term_id',
 					'terms' => $value,
 				);
-
 				array_push($args['tax_query'], $term_query);
-
 			}
 
 		}
