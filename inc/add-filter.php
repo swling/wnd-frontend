@@ -163,10 +163,10 @@ add_filter('the_content', 'wnd_filter_the_content', $priority = 10, $accepted_ar
 function wnd_filter_the_content($content) {
 
 	global $post;
-	if(!$post){
+	if (!$post) {
 		return;
 	}
-	
+
 	$price = wnd_get_post_price($post->ID);
 	$file = wnd_get_post_meta($post->ID, 'file');
 
@@ -299,8 +299,8 @@ function wnd_filter_comment_author_url($url, $id, $comment) {
 add_filter('get_avatar', 'wnd_filter_avatar', 1, 5);
 function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 
-	// 后台，不添加链接
-	if (is_admin()) {
+	// 后台，不添加链接 @since 2019.03.06 ajax中会被判定为后台，需要排除
+	if (is_admin() and !wp_doing_ajax()) {
 		return $avatar;
 	}
 

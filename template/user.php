@@ -356,7 +356,7 @@ function _wnd_lostpassword_form($type = 'email') {
 ?>
 <form id="sms-reset-pass" class="user-form" action="" method="post" onsubmit="return false">
 	<div class="field content">
-		<h3><span class="icon"><i class="fa fa-phone"></i></span>手机验证</h3>
+		<h3><span class="icon"><i class="fa fa-phone-square"></i></span>手机验证</h3>
 	</div>
 	<div class="field">
 		<div class="ajax-msg"></div>

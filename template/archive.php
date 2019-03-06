@@ -381,6 +381,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
  *内置了：_wnd_list_posts_in_table 及 _wnd_list_posts_in_theme
  *@param 自定义： string $args['wnd_post_types']
  *需要展示的文章类型
+ *非ajax状态下：自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
  */
 function _wnd_list_posts_with_tabs($args = array()) {
 
