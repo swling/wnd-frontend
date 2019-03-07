@@ -198,7 +198,7 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	}
 
 	$defaults = array(
-		'wnd_remove_query_arg' => array('paged', 'pages'),
+		'wnd_remove_query_arg' => array('paged', 'pages', 'tax_query'),
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -282,7 +282,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	$defaults = array(
 		'post_type' => 'post',
 		'wnd_remove_query_arg' => array('paged', 'pages'),
-		'tax_query'	=>	array()
+		'tax_query' => array(),
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -291,6 +291,9 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	if ($tax_query_key) {
 		unset($args['wnd_remove_query_arg'][$tax_query_key]);
 	}
+
+	// ajax请求类型
+	$ajax_type = $_POST['ajax_type'] ?? false;
 
 	// 遍历当前文章类型taxonomy，并获取具有层级的taxonomy作为输出的category
 	$cat_taxonomies = array();
@@ -310,19 +313,44 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		/**
 		 *查找在当前的查询参数中，当前taxonomy的键名，如果没有则加入
 		 *tax_query是一个无键名的数组，无法根据键名合并，因此需要准确定位
+		 *(数组默认键值从0开始， 当首元素即匹配则array_search返回 0，此处需要严格区分 0 和 false)
+		 *@since 2019.03.07
 		 */
-		foreach ($args['tax_query'] as $tax_query_key => $tax_query) {	
+		$tax_query_key = false;
+		$all_active = 'class="is-active"';
+		foreach ($args['tax_query'] as $key => $tax_query) {
 
-			if(array_search($taxonomy, $tax_query)){
+			if (array_search($taxonomy, $tax_query) !== false) {
+				$tax_query_key = $key;
+				$all_active = '';
 				break;
-			}else{
-				$tax_query_key = count($args['tax_query'])+1;
 			}
-		}unset($tax_query);	
-
+		}
+		unset($key, $tax_query);
 
 		// 输出容器
 		echo '<div class="tabs"><ul class="tab">';
+
+		/**
+		 * 全部选项
+		 * @since 2019.03.07
+		 */
+		if (wp_doing_ajax()) {
+
+			$all_ajax_args = $args;
+			if ($tax_query_key !== false) {
+				unset($all_ajax_args['tax_query'][$tax_query_key]);
+			}
+			$all_ajax_args = http_build_query($all_ajax_args);
+
+			if ($ajax_type == 'modal') {
+				echo '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+			} else {
+				echo '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+			}
+		} else {
+			echo '<li ' . $all_active . '><a href="' . remove_query_arg($taxonomy . '_id', remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
+		}
 
 		// 输出tabs
 		foreach (get_terms(array('taxonomy' => $taxonomy)) as $term) {
@@ -344,9 +372,6 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 
 			if (wp_doing_ajax()) {
 
-				// ajax请求类型
-				$ajax_type = $_POST['ajax_type'] ?? 'modal';
-
 				// 配置ajax请求参数
 				$term_query = array(
 					'taxonomy' => $taxonomy,
@@ -355,13 +380,21 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 				);
 
 				$ajax_args = $args;
-				// 定位当前taxonomy查询在tax_query中的位置
-				$ajax_args['tax_query'][$tax_query_key] = $term_query;
 
+				// 定位当前taxonomy查询在tax_query中的位置（数组键值从0开始，此处必须以 false array_search返回值判断）
+				if ($tax_query_key !== false) {
+					$ajax_args['tax_query'][$tax_query_key] = $term_query;
+				} else {
+					array_push($ajax_args['tax_query'], $term_query);
+				}
+
+				// 按配置移除参数
 				foreach ($args['wnd_remove_query_arg'] as $remove_query_arg) {
 					unset($ajax_args[$remove_query_arg]);
 				}
 				unset($remove_query_arg);
+
+				// 构建ajax查询字符串
 				$ajax_args = http_build_query($ajax_args);
 
 				if ($ajax_type == 'modal') {
@@ -382,8 +415,8 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		}
 		unset($term);
 
-			// 输出结束
-	echo '</ul></div>';
+		// 输出结束
+		echo '</ul></div>';
 	}
 	unset($taxonomy);
 
