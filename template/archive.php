@@ -198,7 +198,7 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	}
 
 	$defaults = array(
-		'wnd_remove_query_arg' => array('paged', 'pages', 'tax_query'),
+		'wnd_remove_query_arg' => array('paged', 'pages'),
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -282,6 +282,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	$defaults = array(
 		'post_type' => 'post',
 		'wnd_remove_query_arg' => array('paged', 'pages'),
+		'tax_query'	=>	array()
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -306,6 +307,20 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	// 循环输出（当一个文章类型注册有多个分类 taxonomy时）
 	foreach ($cat_taxonomies as $taxonomy) {
 
+		/**
+		 *查找在当前的查询参数中，当前taxonomy的键名，如果没有则加入
+		 *tax_query是一个无键名的数组，无法根据键名合并，因此需要准确定位
+		 */
+		foreach ($args['tax_query'] as $tax_query_key => $tax_query) {	
+
+			if(array_search($taxonomy, $tax_query)){
+				break;
+			}else{
+				$tax_query_key = count($args['tax_query'])+1;
+			}
+		}unset($tax_query);	
+
+
 		// 输出容器
 		echo '<div class="tabs"><ul class="tab">';
 
@@ -317,13 +332,13 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 			// 遍历当前tax query查询是否匹配当前tab
 			if (isset($args['tax_query'])) {
 
-				foreach ($args['tax_query'] as $term_query) {
+				foreach ($args['tax_query'] as $current_term_query) {
 
-					if ($term_query['terms'] == $term->term_id) {
+					if ($current_term_query['terms'] == $term->term_id) {
 						$active = 'class="is-active"';
 					}
 				}
-				unset($term_query);
+				unset($current_term_query);
 
 			}
 
@@ -338,7 +353,10 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 					'field' => 'term_id',
 					'terms' => $term->term_id,
 				);
-				$ajax_args = array_merge($args, array('tax_query' => array($term_query)));
+
+				$ajax_args = $args;
+				// 定位当前taxonomy查询在tax_query中的位置
+				$ajax_args['tax_query'][$tax_query_key] = $term_query;
 
 				foreach ($args['wnd_remove_query_arg'] as $remove_query_arg) {
 					unset($ajax_args[$remove_query_arg]);
@@ -364,11 +382,10 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		}
 		unset($term);
 
+			// 输出结束
+	echo '</ul></div>';
 	}
 	unset($taxonomy);
-
-	// 输出结束
-	echo '</ul></div>';
 
 }
 
