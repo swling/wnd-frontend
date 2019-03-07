@@ -473,6 +473,28 @@ function _wnd_list_posts_with_tabs($args = array()) {
 
 		foreach ($_GET as $key => $value) {
 
+			/**
+			 *@since 2019.3.07 自动匹配meta query
+			 *?_meta_price=1 则查询 price = 1的文章
+			 *?_meta_price=exists 则查询 存在price的文章
+			 */
+			if (strpos($key, '_meta_') === 0) {
+
+				$key = str_replace('_meta_', '', $key);
+				$compare = $value == 'exists' ? 'exists' : '=';
+				$meta_query = array(
+					'key' => $key,
+					'value' => $value,
+					'compare' => $compare,
+				);
+				if ($compare == 'exists') {
+					unset($meta_query['value']);
+				}
+
+				array_push($args['meta_query'], $meta_query);
+				continue;
+			}
+
 			/*
 				*categories tabs生成的GET参数为：$taxonomy.'_id'，
 				*直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
