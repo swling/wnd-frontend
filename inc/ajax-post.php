@@ -16,7 +16,7 @@ function wnd_insert_post($update_id = 0) {
 	}
 
 	// 实例化当前提交的表单数据
-	$form_data = new wnd_form_data();
+	$form_data = new Wnd_Form_Data();
 	$post_array_temp = $form_data->get_post_array();
 	$meta_array = $form_data->get_post_meta_array();
 	$wp_meta_array = $form_data->get_wp_post_meta_array();

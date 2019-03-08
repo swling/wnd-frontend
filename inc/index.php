@@ -4,8 +4,10 @@
  *加载php文件
  */
 require WNDWP_PATH . 'inc/handle-array.php'; //数组形式储存 meta、option
-require WNDWP_PATH . 'inc/handle-form.php'; //表单数据处理
 require WNDWP_PATH . 'inc/handle-ajax.php'; //处理ajax action
+
+require WNDWP_PATH . 'inc/class-WndFormData.php'; //表单数据处理
+require WNDWP_PATH . 'inc/class-WndForm.php'; //表单生成类
 
 require WNDWP_PATH . 'inc/wnd-functions.php'; //通用函数定义
 require WNDWP_PATH . 'inc/wnd-options.php'; //配置选项

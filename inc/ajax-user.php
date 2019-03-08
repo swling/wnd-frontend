@@ -62,7 +62,7 @@ function wnd_reg() {
 	}
 
 	// 实例化WndWP表单数据处理对象
-	$form_data = new wnd_form_data();
+	$form_data = new Wnd_Form_Data();
 
 	// 写入用户自定义数组meta
 	$user_meta_array = $form_data->get_user_meta_array();
@@ -157,7 +157,7 @@ function wnd_update_profile() {
 	}
 
 	// 实例化WndWP表单数据处理对象
-	$form_data = new wnd_form_data();
+	$form_data = new Wnd_Form_Data();
 	$user_meta_array = $form_data->get_user_meta_array();
 	$wp_user_meta_array = $form_data->get_wp_user_meta_array();;
 

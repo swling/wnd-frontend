@@ -6,7 +6,7 @@
  *后台保存表单数据检测name是否在下面允许列表中，否则舍弃
  *@since 2019.03.04
  */
-class wnd_form_data {
+class Wnd_Form_Data {
 
 	private $allowed_post_meta_key;
 	private $allowed_wp_post_meta_key;

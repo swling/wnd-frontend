@@ -1,5 +1,8 @@
 <?php
-
+// Exit if accessed directly
+if (!defined('ABSPATH')) {
+	exit;
+}
 /**
  *媒体处理
  */
@@ -48,11 +51,11 @@ function wnd_upload_file() {
 	// 遍历文件上传
 	foreach ($_FILES as $file => $array) {
 		//上传文件并附属到对应的post 默认为0 即不附属到
-		$attachment_id = media_handle_upload($file, $post_parent);
+		$file_id = media_handle_upload($file, $post_parent);
 
 		// 上传失败
-		if (is_wp_error($attachment_id)) {
-			$temp_array = array('status' => 0, 'msg' => $attachment_id->get_error_message());
+		if (is_wp_error($file_id)) {
+			$temp_array = array('status' => 0, 'msg' => $file_id->get_error_message());
 			array_push($return_array, $temp_array);
 			continue;
 		}
@@ -60,7 +63,7 @@ function wnd_upload_file() {
 		//上传成功，根据尺寸进行图片裁剪
 		if ($save_width or $save_height) {
 			//获取文件服务器路径
-			$image_file = get_attached_file($attachment_id);
+			$image_file = get_attached_file($file_id);
 			$image = wp_get_image_editor($image_file);
 			if (!is_wp_error($image)) {
 				$image->resize($save_width, $save_height, array('center', 'center'));
@@ -68,10 +71,10 @@ function wnd_upload_file() {
 			}
 		}
 		//处理完成根据用途做下一步处理
-		do_action('wnd_upload_file', $attachment_id, $post_parent, $meta_key);
+		do_action('wnd_upload_file', $file_id, $post_parent, $meta_key);
 
 		// 将当前上传的图片信息写入数组
-		$temp_array = array('status' => 1, 'msg' => array('url' => wp_get_attachment_url($attachment_id), 'id' => $attachment_id));
+		$temp_array = array('status' => 1, 'msg' => array('url' => wp_get_attachment_url($file_id), 'id' => $file_id));
 		array_push($return_array, $temp_array);
 
 		/**
@@ -93,25 +96,25 @@ function wnd_upload_file() {
  *删除附件
  *@since 2019.01.23
  */
-function wnd_delete_attachment() {
+function wnd_delete_file() {
 
 	$meta_key = $_POST['meta_key'];
 	$post_parent = $_POST["post_parent"];
-	$attachment_id = $_POST["attachment_id"];
+	$file_id = $_POST["file_id"];
 
-	if (!$attachment_id) {
+	if (!$file_id) {
 		return array('status' => 0, 'msg' => '文件不存在！');
 	}
 
-	if (!current_user_can('edit_post', $attachment_id)) {
+	if (!current_user_can('edit_post', $file_id)) {
 		return array('status' => 0, 'msg' => '权限错误或文件不存在！');
 	}
 
 	// 执行删除
-	if (wp_delete_attachment($attachment_id)) {
+	if (wp_delete_attachment($file_id)) {
 
-		do_action('wnd_delete_attachment', $attachment_id, $post_parent, $meta_key);
-		return array('status' => 1, 'msg' => $attachment_id);
+		do_action('wnd_delete_attachment', $file_id, $post_parent, $meta_key);
+		return array('status' => 1, 'msg' => $file_id);
 
 		//删除失败
 	} else {
@@ -129,9 +132,9 @@ function wnd_paid_download() {
 
 	$post_id = (int) $_REQUEST['post_id'];
 	$price = get_post_meta($post_id, 'price', 1);
-	$attachment_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
+	$file_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
 
-	$file = get_attached_file($attachment_id, $unfiltered = true);
+	$file = get_attached_file($file_id, $unfiltered = true);
 	if (!$file) {
 		wp_die('获取文件失败！', get_option('blogname'));
 	}
@@ -142,7 +145,7 @@ function wnd_paid_download() {
 	 *否则用户下载一次后即可获得ajax_nonce，从而在24小时内可以通过ajax校验
 	 *此期间通过修改 post_id 可参数下载其他为经过权限校验的文件
 	 *校验方式：
-	 *1、通过生成特定nonce，$action必须包含 $post_id 或$attachment_id以确保文件唯一性，且改nonce不得通过其他任何获得
+	 *1、通过生成特定nonce，$action必须包含 $post_id 或$file_id以确保文件唯一性，且改nonce不得通过其他任何获得
 	 *（wp_nonce已包含了当前用户数据）
 	 *2、再次完整验证用户权限
 	 *（安全性更高，但重复验证稍显繁琐）

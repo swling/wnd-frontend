@@ -421,12 +421,12 @@ jQuery(document).ready(function($) {
 		var file_data = $(this).prop("files")[0];
 
 		// 获取属性
-		var meta_key = $(id + " [name='file_meta_key']").val();
-		var post_parent = $(id + " [name='file_post_parent']").val();
-		var _ajax_nonce = $(id + " [name='file_upload_nonce']").val();
-		var save_width = $(id + " [name='file_save_width']").val();
-		var save_height = $(id + " [name='file_save_height']").val();
-		var thumbnail = $(id + " [name='file_thumbnail']").val();
+		var meta_key = $(id + " [name='meta_key']").val();
+		var post_parent = $(id + " [name='post_parent']").val();
+		var _ajax_nonce = $(id + " [name='upload_nonce']").val();
+		var save_width = $(id + " [name='save_width']").val();
+		var save_height = $(id + " [name='save_height']").val();
+		var is_image = $(id + " [name='is_image']").val();
 
 		// 组合表单数据
 		form_data.append("file", file_data);
@@ -464,12 +464,12 @@ jQuery(document).ready(function($) {
 					// 上传成功
 					wnd_ajax_msg("上传成功！", "is-success", id);
 					// 图像上传，更新缩略图
-					if (thumbnail == 1) {
-						$(id + " .thumb").prop("src", response[i].msg.url);
+					if (is_image == 1) {
+						$(id + " .thumbnail").prop("src", response[i].msg.url);
 					} else {
 						$(id + " .file-name").html('上传成功！<a href="' + response[i].msg.url + '">查看文件</a>');
 					}
-					$(id + " .delete").data("attachment-id", response[i].msg.id)
+					$(id + " .delete").data("file-id", response[i].msg.id)
 				}
 
 			},
@@ -491,8 +491,8 @@ jQuery(document).ready(function($) {
 		// 获取当前上传容器ID
 		var id = "#" + $(this).data("id");
 		// 获取被删除的附件ID
-		var attachment_id = $(this).data("attachment-id");
-		if (!attachment_id) {
+		var file_id = $(this).data("file-id");
+		if (!file_id) {
 			wnd_ajax_msg("没有可删除的文件！", "is-danger", id);
 			return false;
 		}
@@ -501,22 +501,22 @@ jQuery(document).ready(function($) {
 		var form_data = new FormData();
 
 		// 获取属性
-		var meta_key = $(id + " [name='file_meta_key']").val();
-		var post_parent = $(id + " [name='file_post_parent']").val();
-		var _ajax_nonce = $(id + " [name='file_delete_nonce']").val();
-		var thumbnail = $(id + " [name='file_thumbnail']").val();
+		var meta_key = $(id + " [name='meta_key']").val();
+		var post_parent = $(id + " [name='post_parent']").val();
+		var _ajax_nonce = $(id + " [name='delete_nonce']").val();
+		var is_image = $(id + " [name='is_image']").val();
 
 		// 默认图
-		var default_thumbnail = $(id + " [name='file_default_thumbnail']").val();
+		var thumbnail = $(id + " [name='thumbnail']").val();
 
 		// 组合表单数据
 		form_data.append("meta_key", meta_key);
 		form_data.append("post_parent", post_parent);
-		form_data.append("attachment_id", attachment_id);
+		form_data.append("file_id", file_id);
 		form_data.append("_ajax_nonce", _ajax_nonce);
 		// ajax handle
 		form_data.append("action", "wnd_action");
-		form_data.append("action_name", "wnd_delete_attachment");
+		form_data.append("action_name", "wnd_delete_file");
 
 		$.ajax({
 			url: ajaxurl,
@@ -541,13 +541,13 @@ jQuery(document).ready(function($) {
 
 				wnd_ajax_msg("已删除！", "is-success", id);
 				// 图像删除还原为默认缩略图
-				if (thumbnail == 1) {
-					$(id + " .thumb").prop("src", default_thumbnail);
+				if (is_image == 1) {
+					$(id + " .thumbnail").prop("src", thumbnail);
 				} else {
 					$(id + " .file-name").text('文件已删除……');
 				}
 				// 清空删除按钮数据绑定
-				$(id + " .delete").data("attachment-id", 0)
+				$(id + " .delete").data("file-id", 0)
 			},
 			// 错误
 			error: function() {
