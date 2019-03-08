@@ -398,7 +398,7 @@ function wnd_ajax_submit(form_id) {
 
 	// 提交错误
 	function showError() {
-		wnd_ajax_msg("系统错误！", "is-danger");
+		wnd_ajax_msg("系统错误！", "is-danger", form_id);
 		$(form_id + " [name='submit']").removeClass("is-loading");
 		$(form_id + " [name='submit']").attr("disabled", false);
 	}

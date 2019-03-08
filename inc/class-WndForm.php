@@ -15,23 +15,23 @@ if (!defined('ABSPATH')) {
 
 class Wnd_Form {
 
-	private $form_attr;
+	protected $form_attr;
 
-	private $input_values = array();
+	protected $input_values = array();
 
-	private $submit;
+	protected $submit;
 
-	private $submit_style;
+	protected $submit_style;
 
-	private $action;
+	protected $action;
 
-	private $method;
+	protected $method;
+
+	protected $size;
+
+	protected $upload;
 
 	public $html;
-
-	private $size;
-
-	private $upload;
 
 	static private $defaults = array(
 		'name' => 'name',
@@ -72,20 +72,17 @@ class Wnd_Form {
 		));
 	}
 
-	// _text
-	function add_hidden($args = array()) {
-
-		$args = array_merge(Wnd_form::$defaults, $args);
-
+	// _hidden
+	function add_hidden($name, $value) {
 		array_push($this->input_values, array(
 			'type' => 'hidden',
-			'name' => $args['name'],
-			'value' => $args['value'],
+			'name' => $name,
+			'value' => $value,
 			'id' => NULL,
 		));
 	}
 
-	// _text
+	// _textarea
 	function add_textarea($args = array()) {
 
 		$args = array_merge(Wnd_form::$defaults, $args);
@@ -325,7 +322,7 @@ class Wnd_Form {
 		$this->build_form_footer();
 	}
 
-	private function build_form_header() {
+	protected function build_form_header() {
 		$html = '<form';
 		if (!is_null($this->method)) {
 			$html .= ' method="' . $this->method . '"';
@@ -344,7 +341,7 @@ class Wnd_Form {
 		$this->html = $html;
 	}
 
-	private function build_input_values() {
+	protected function build_input_values() {
 		$html = '';
 		foreach ($this->input_values as $input_value) {
 			switch ($input_value['type']) {
@@ -390,7 +387,7 @@ class Wnd_Form {
 		$this->html .= $html;
 	}
 
-	private function build_dropdown($input_value) {
+	protected function build_dropdown($input_value) {
 		$html = '<div class="field">';
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
@@ -409,7 +406,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	private function build_radio($input_value) {
+	protected function build_radio($input_value) {
 
 		$html = '<div class="field">';
 		$html .= '<div class="control">';
@@ -427,14 +424,14 @@ class Wnd_Form {
 
 	}
 
-	private function build_hidden($input_value) {
+	protected function build_hidden($input_value) {
 
-		$html = '<input name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '" >';
+		$html = '<input name="' . $input_value['name'] . '" type="hidden" value="' . $this->get_value($input_value) . '" >';
 
 		return $html;
 	}
 
-	private function build_input($input_value) {
+	protected function build_input($input_value) {
 		$html = '<div class="field">';
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
@@ -460,7 +457,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	private function build_checkbox($input_value) {
+	protected function build_checkbox($input_value) {
 
 		$html = '<div class="field">';
 		$html .= '<div class="control">';
@@ -477,7 +474,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	private function build_image_upload($input_value) {
+	protected function build_image_upload($input_value) {
 
 		$html = '<div ' . $this->get_id($input_value) . ' class="field upload-field">';
 		$html .= '<div class="field"><div class="ajax-msg"></div></div>';
@@ -513,7 +510,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	private function build_file_upload($input_value) {
+	protected function build_file_upload($input_value) {
 
 		$html = '<div ' . $this->get_id($input_value) . ' class="field upload-field">';
 
@@ -548,11 +545,11 @@ class Wnd_Form {
 		return $html;
 	}
 
-	private function build_html($input_value) {
+	protected function build_html($input_value) {
 		return $input_value['value'];
 	}
 
-	private function build_switch($input_value) {
+	protected function build_switch($input_value) {
 		$html = '<div class="field">';
 		$checked = $input_value['checked'] ? 'checked="checked"' : '';
 		$id = $input_value['id'];
@@ -562,7 +559,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	private function build_textarea($input_value) {
+	protected function build_textarea($input_value) {
 
 		$html = '<div class="field">';
 		if (!empty($input_value['label'])) {
@@ -573,7 +570,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	private function build_submit_button() {
+	protected function build_submit_button() {
 		if (is_null($this->submit)) {
 			$submit = Base::instance()->get('form.submit_label_default');
 		} else {
@@ -582,39 +579,39 @@ class Wnd_Form {
 		$this->html .= '<button type="submit" value="upload" class="button ' . $this->submit_style . ' ' . $this->get_size() . '">' . $submit . '</button>';
 	}
 
-	private function build_form_footer() {
+	protected function build_form_footer() {
 		$this->html .= '</form>';
 	}
 
-	private function get_value($input_value) {
+	protected function get_value($input_value) {
 		if (empty($input_value['value'])) {
 			return '';
 		}
-		return $value;
+		return $input_value['value'];
 	}
 
-	private function get_required($input_value) {
+	protected function get_required($input_value) {
 		if ($input_value['required']) {
 			return ' required="required"';
 		}
 		return '';
 	}
 
-	private function get_id($input_value) {
+	protected function get_id($input_value) {
 		if ($input_value['id']) {
 			return ' id="' . $input_value['id'] . '"';
 		}
 		return '';
 	}
 
-	private function get_autofocus($input_value) {
+	protected function get_autofocus($input_value) {
 		if ($input_value['autofocus']) {
 			return ' autofocus="autofocus"';
 		}
 		return '';
 	}
 
-	private function get_size() {
+	protected function get_size() {
 		$size = $this->size;
 		return $size;
 	}
