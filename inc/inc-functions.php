@@ -174,13 +174,17 @@ function _wnd_update_post_views() {
 	// 统计
 	if ($should_count) {
 
-		wnd_inc_post_meta($post_id, 'views', 1);
+		if (wnd_inc_post_meta($post_id, 'views', 1)) {
 
-		// 完成统计时附加动作
-		do_action('wnd_update_post_views', $post_id);
+			// 完成统计时附加动作
+			do_action('wnd_update_post_views', $post_id);
+			// 统计更新成功
+			return array('status' => 1, 'msg' => time());
 
-		// 统计更新成功
-		return array('status' => 1, 'msg' => time());
+			//字段写入失败，清除对象缓存
+		} else {
+			wp_cache_delete($post_id, 'post_meta');
+		}
 
 	} else {
 
