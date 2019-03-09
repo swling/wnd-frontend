@@ -181,7 +181,7 @@ function wnd_filter_the_content($content) {
 	if ($file) {
 
 		// 未登录用户
-		if (!is_user_logged_in()) {
+		if (!$user_id()) {
 			$button_text = '请登录后下载';
 			$button = '<div class="field is-grouped is-grouped-centered pay"><button class="button" onclick="wnd_ajax_modal(\'user_center\',\'action=login\')">' . $button_text . '</button></div>';
 			$content .= $button;
@@ -229,6 +229,15 @@ function wnd_filter_the_content($content) {
 		}
 		list($free_content, $paid_content) = $content_array;
 
+		// 未登录用户
+		if (!$user_id) {
+			$content = '<div class="free-content">' . $free_content . '</div>';
+			$content .= '<div class="paid-content"><div class="message is-warning"><div class="message-body">付费内容：¥' . wnd_get_post_price($post->ID) . '</div></div></div>';
+			$button = '<div class="field is-grouped is-grouped-centered pay"><button class="button" onclick="wnd_ajax_modal(\'user_center\',\'action=login\')">请登录</button></div>';
+			$content .= $button;
+			return $content;
+		}
+
 		// 已支付
 		if (wnd_user_has_paid($user_id, $post->ID)) {
 
@@ -244,19 +253,12 @@ function wnd_filter_the_content($content) {
 			$button_text = '您的付费文章';
 
 			// 已登录未支付
-		} elseif (is_user_logged_in()) {
+		} else {
 
 			$content = '<div class="free-content">' . $free_content . '</div>';
 			$content .= '<div class="paid-content"><p class="ajax-msg">以下为付费内容</p></div>';
 			$button_text = '付费阅读： ¥' . wnd_get_post_price($post->ID);
 
-			// 未登录用户
-		} else {
-			$content = '<div class="free-content">' . $free_content . '</div>';
-			$content .= '<div class="paid-content"><div class="message is-warning"><div class="message-body">付费内容：¥' . wnd_get_post_price($post->ID) . '</div></div></div>';
-			$button = '<div class="field is-grouped is-grouped-centered pay"><button class="button" onclick="wnd_ajax_modal(\'user_center\',\'action=login\')">请登录</button></div>';
-			$content .= $button;
-			return $content;
 		}
 
 		$form =

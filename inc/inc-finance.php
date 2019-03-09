@@ -297,6 +297,10 @@ function wnd_update_expense($ID, $status, $title = '') {
  **/
 function wnd_user_has_paid($user_id, $object_id) {
 
+	if(!$user_id or !$object_id){
+		return false;
+	}
+
 	$args = array(
 		'posts_per_page' => 1,
 		'post_type' => 'expense',
