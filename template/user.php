@@ -200,85 +200,20 @@ function _wnd_user_center($args = array()) {
 
 /**
  *@since 2019.01.13 登录框
- */
-function _wnd_login_form_() {
-	// 已登录
-	if (is_user_logged_in()) {
-		echo '<script>wnd_alert_msg("已登录！")</script>';
-		return;
-	}
-	// 获取来源地址
-	$redirect_to = $_SERVER['HTTP_REFERER'] ?? home_url();
-
-	?>
-<form id="user-login" class="user-form" action="" method="post" onsubmit="return false">
-	<div class="field is-grouped is-grouped-centered content">
-		<h3><span class="icon"><i class="fa fa-user"></i></span>登录</h3>
-	</div>
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-	<div class="field">
-		<label class="label">用户名 <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="text" class="input" required="required" name="_user_user_login" placeholder="用户名、手机、邮箱">
-			<span class="icon is-left">
-				<i class="fa fa-user"></i>
-			</span>
-		</div>
-	</div>
-	<div class="field">
-		<label class="label">密码 <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="password" class="input" required="required" name="_user_user_pass" placeholder="密码">
-			<span class="icon is-left">
-				<i class="fa fa-unlock-alt"></i>
-			</span>
-		</div>
-	</div>
-	<div class="field">
-		<div class="control">
-			<label class="checkbox">
-				<input type="checkbox" name="remember" value="1" checked="checked"> 记住我
-			</label>
-		</div>
-	</div>
-	<?php do_action('_wnd_login_form');?>
-	<input type="hidden" name="redirect_to" value="<?php echo $redirect_to; ?>">
-	<?php wp_nonce_field('wnd_login', '_ajax_nonce');?>
-	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_login">
-	<div class="field is-grouped is-grouped-centered">
-		<button class="button" name="submit" onclick="wnd_ajax_submit('#user-login')">登录</button>
-	</div>
-</form>
-<?php
-
-}
-
-/**
- *@since 2019.01.13 登录框
+ *@since 2019.03.10 Wnd_Ajax_Form
  */
 function _wnd_login_form() {
+
 	// 已登录
 	if (is_user_logged_in()) {
 		echo '<script>wnd_alert_msg("已登录！")</script>';
 		return;
 	}
-	// 获取来源地址
-	$redirect_to = $_SERVER['HTTP_REFERER'] ?? home_url();
 
 	$form = new Wnd_Ajax_Form();
 
-	$form->add_html('<div class="field is-grouped is-grouped-centered content">
-		<h3><span class="icon"><i class="fa fa-user"></i></span>登录</h3>
-	</div>
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>');
-
-	$form->add_action('POST', '');
-	$form->set_form_attr('id="user-login" onsubmit="return false"');
+	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>登录');
+	$form->set_form_attr('id="user-login" class="user-form"');
 
 	$form->add_text(
 		array(
@@ -301,38 +236,36 @@ function _wnd_login_form() {
 			'placeholder' => '密码',
 			'has_icons' => 'left',
 			'icon' => '<i class="fas fa-unlock-alt"></i>',
-			'required' => false,
+			'required' => true,
 		)
 	);
-
-	$form->add_submit_button('Submit', 'is-primary');
 
 	$form->add_checkbox(
 		array(
 
 			'name' => 'remember',
-			'value' => array('remember' => '1'),
+			'value' => array('保持登录' => '1'),
 			'label' => 'checkbox',
 			'checked' => '1', //default checked value
 		)
 	);
 
-	// $form->add_html('<div class="field is-grouped is-grouped-centered">
-	// 	<button class="button" name="submit" onclick="wnd_ajax_submit(\'#user-login\')">登录</button>
-	// </div>');
+	$form->add_hidden('redirect_to', $_SERVER['HTTP_REFERER'] ?? home_url());
 
-	$form->add_hidden('action', 'wnd_action');
-	$form->add_hidden('action_name', 'wnd_login');
-	$form->add_hidden('redirect_to', $redirect_to);
-	$form->add_hidden('_ajax_nonce', wp_create_nonce('wnd_login'));
+	// 与该表单数据匹配的后端处理函数
+	$form->set_action('wnd_login');
 
+	$form->set_submit_button('登录', 'is-primary');
+
+	// 以当前函数名设置filter hook
+	$form->set_filter(__FUNCTION__);
+
+	// 构造表单
 	$form->build();
 
+	// 输出表单
 	echo $form->html;
 
-	?>
-
-<?php
 
 }
 
@@ -365,60 +298,61 @@ function _wnd_reg_form($type = 'email') {
 
 	}
 
-	?>
-<form id="user-reg" class="user-form" action="" method="post" onsubmit="return false">
-	<div class="field is-grouped is-grouped-centered content">
-		<h3 class="text-centered"><span class="icon"><i class="fa fa-user"></i></span>注册</h3>
-	</div>
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-	<div class="field">
-		<label class="label">用户名 <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="text" class="input" required="required" name="_user_user_login" placeholder="登录用户名">
-			<span class="icon is-left">
-				<i class="fa fa-user"></i>
-			</span>
-		</div>
-	</div>
-	<div class="field">
-		<label class="label">密码 <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="password" class="input" required="required" name="_user_user_pass" placeholder="登录密码">
-			<span class="icon is-left">
-				<i class="fa fa-unlock-alt"></i>
-			</span>
-		</div>
-	</div>
-	<?php
-if ($type == 'sms') {
-		_wnd_sms_field($verity_type = 'reg', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
+	$form = new Wnd_Ajax_Form();
+
+	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>注册');
+	$form->set_form_attr('id="user-reg" class="user-form"');
+
+	$form->add_text(
+		array(
+			'name' => '_user_user_login',
+			'has-icons' => 'left',
+			'icon' => '<i class="fa fa-user"></i>',
+			'required' => true,
+			'placeholder' => '用户名',
+		)
+	);
+
+	$form->add_password(
+		array(
+			'name' => '_user_user_pass',
+			'value' => '',
+			'label' => '密码 <span class="required">*</span>',
+			'placeholder' => '密码',
+			'has_icons' => 'left',
+			'icon' => '<i class="fas fa-unlock-alt"></i>',
+			'required' => true,
+		)
+	);
+
+	if ($type == 'sms') {
+		$form->add_sms_verify($verify_type = 'reg', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
 	} else {
-		_wnd_mail_field($verity_type = 'reg', $template = '');
+		$form->add_email_verify($verify_type = 'reg', $template = '');
 	}
-	?>
-	<?php do_action('_wnd_reg_form');?>
-	<?php wp_nonce_field('wnd_reg', '_ajax_nonce');?>
-	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_reg">
-	<?php if (wnd_get_option('wndwp', 'wnd_agreement_url')) {?>
-	<div class="field">
-		<div class="control">
-			<label class="checkbox">
-				<input type="checkbox" name="agreement" value="agree" checked="checked" required="required">
-				我已阅读并同意注册协议<a href="<?php echo wnd_get_option('wndwp', 'wnd_agreement_url'); ?>" target="_blank">《注册协议》</a>
-			</label>
-		</div>
-	</div>
-	<?php }?>
-	<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#user-reg')">注册</button>
-	</div>
-</form>
-<script>
-</script>
-<?php
+	if (wnd_get_option('wndwp', 'wnd_agreement_url')) {
+
+		$form->add_html('
+		<div class="field">
+			<div class="control">
+				<label class="checkbox">
+					<input type="checkbox" name="agreement" value="agree" checked="checked" required="required">
+					我已阅读并同意注册协议<a href="' . wnd_get_option('wndwp', 'wnd_agreement_url') . '" target="_blank">《注册协议》</a>
+				</label>
+			</div>
+		</div>');
+	}
+
+	$form->set_action('wnd_reg');
+	$form->set_submit_button('注册');
+
+	// 以当前函数名设置filter hook
+	$form->set_filter(__FUNCTION__);
+
+	$form->build();
+
+	echo $form->html;
+
 
 }
 
@@ -433,77 +367,53 @@ function _wnd_lostpassword_form($type = 'email') {
 			echo '<script type="text/javascript">wnd_alert_msg(\'短信验证功能未启用！\')</script>';
 			return;
 		}
-		?>
-<form id="sms-reset-pass" class="user-form" action="" method="post" onsubmit="return false">
-	<div class="field content">
-		<h3><span class="icon"><i class="fa fa-phone-square"></i></span>手机验证</h3>
-	</div>
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-	<div class="field">
-		<label class="label">新密码 <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="password" class="input" required="required" name="_user_new_pass" placeholder="新密码">
-			<span class="icon is-left">
-				<i class="fa fa-unlock-alt"></i>
-			</span>
-		</div>
-	</div>
-	<div class="field">
-		<label class="label">确认新密码 <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="password" class="input" required="required" name="_user_new_pass_repeat" placeholder="确认新密码">
-			<span class="icon is-left">
-				<i class="fa fa-unlock-alt"></i>
-			</span>
-		</div>
-	</div>
-	<?php _wnd_sms_field($type = 'reset-pass', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));?>
-	<?php wp_nonce_field('wnd_reset_password', '_ajax_nonce');?>
-	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_reset_password">
-	<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#sms-reset-pass')">重置密码</button>
-	</div>
-</form>
-<?php } else {
-		//2、验证邮箱重置密码 ?>
-<form id="email-reset-pass" class="user-form" action="" method="post" onsubmit="return false">
-	<div class="field content">
-		<h3><span class="icon"><i class="fa fa-at"></i></span>邮箱验证</h3>
-	</div>
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-	<?php _wnd_mail_field($type = 'reset-pass', $template = '');?>
-	<div class="field">
-		<label class="label">新密码 <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="password" class="input" required="required" name="_user_new_pass" placeholder="新密码">
-			<span class="icon is-left">
-				<i class="fa fa-unlock-alt"></i>
-			</span>
-		</div>
-	</div>
-	<div class="field">
-		<label class="label">确认新密码 <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="password" class="input" required="required" name="_user_new_pass_repeat" placeholder="确认新密码">
-			<span class="icon is-left">
-				<i class="fa fa-unlock-alt"></i>
-			</span>
-		</div>
-	</div>
-	<?php wp_nonce_field('wnd_reset_password', '_ajax_nonce');?>
-	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_reset_password">
-	<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#email-reset-pass')">重置密码</button>
-	</div>
-</form>
-<?php }?>
-<?php
+	}
+
+	$form = new Wnd_Ajax_Form();
+
+	if ($type == 'sms') {
+		$form->set_form_title('<span class="icon"><i class="fa fa-phone-square"></i></span>手机验证');
+	} else {
+		$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>邮箱验证</h3>');
+	}
+
+	$form->set_form_attr('id="user-lost-password" class="user-form"');
+
+	$form->add_password(
+		array(
+			'name' => '_user_new_pass',
+			'value' => '',
+			'label' => '新密码 <span class="required">*</span>',
+			'placeholder' => '新密码',
+			'has_icons' => 'left',
+			'icon' => '<i class="fas fa-unlock-alt"></i>',
+			'required' => true,
+		)
+	);
+
+	$form->add_password(
+		array(
+			'name' => '_user_new_pass_repeat',
+			'value' => '',
+			'label' => '确认新密码 <span class="required">*</span>',
+			'placeholder' => '确认新密码',
+			'has_icons' => 'left',
+			'icon' => '<i class="fas fa-unlock-alt"></i>',
+			'required' => true,
+		)
+	);
+
+	if ($type == 'sms') {
+		$form->add_sms_verify($verify_type = 'reset-pass', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
+	} else {
+		$form->add_email_verify($verify_type = 'reset-pass', $template = '');
+	}
+
+	$form->set_action('wnd_reset_password');
+	$form->set_submit_button('重置密码');
+	$form->build();
+
+	echo $form->html;
 
 }
 
@@ -522,60 +432,67 @@ function _wnd_profile_form($args = array()) {
 	}
 	$user = wp_get_current_user();
 
-	?>
-<form id="profile-form" action="" method="post" onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}">
+	$form = new Wnd_Ajax_Form();
 
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-	<div class="field">
-	<?php
-/*头像上传*/
+	$form->set_form_attr('id="user-profile"');
+
+	/*头像上传*/
 	$defaults = array(
 		'id' => 'user-avatar',
-		'is_image' => 1,
-		'meta_key' => 'avatar',
-		'post_parent' => 0,
-		'save_size' => array('width' => 200, 'height' => 200),
-		'thumbnail_size' => array('width' => 130, 'height' => 130),
-		'default_thumbnail' => WNDWP_URL . '/static/images/default.jpg',
+		'thumbnail_size' => array('width' => 150, 'height' => 150),
+		'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
+		'hidden_input' => array(
+			'meta_key' => 'avatar',
+			'save_width' => 200,
+			'savve_height' => 200,
+		),
 	);
 	$args = wp_parse_args($args, $defaults);
-	_wnd_upload_field($args);
-	?>
-	</div>
-	<div class="field is-horizontal">
-		<div class="field-body">
-			<div class="field">
-				<label for="name" class="label">名称<span class="required">*</span></label>
-				<div class="control">
-					<input type="text" class="input" required="required" name="_user_display_name"	value="<?php echo $user->display_name; ?>">
-				</div>
-			</div>
-			<div class="field">
-				<label for="website" class="label">网站</label>
-				<div class="control">
-					<input type="text" class="input" name="_user_user_url" value="<?php echo $user->user_url; ?>">
-				</div>
-			</div>
-		</div>
-	</div>
-	<?php do_action('_wnd_profile_form', $user);?>
-	<div class="field">
-		<label for="description" class="label">简介</label>
-		<div class="control">
-			<textarea class="textarea" name="_wpusermeta_description" rows="5" cols="60"><?php echo esc_html($user->description); ?></textarea>
-		</div>
-	</div>
-	<?php wp_nonce_field('wnd_update_profile', '_ajax_nonce');?>
-	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_update_profile">
-	<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#profile-form')">保存</button>
-	</div>
+	$form->add_image_upload($args);
 
-</form>
-<?php
+	$form->add_text(
+		array(
+			'name' => '_user_display_name',
+			'value' => $user->display_name,
+			'label' => '名称 <span class="required">*</span>',
+			'placeholder' => '用户名称',
+			'has_icons' => 'left',
+			'icon' => '<i class="fas fa-unlock-alt"></i>',
+			'required' => true,
+		)
+	);
+
+	$form->add_text(
+		array(
+			'name' => '_user_user_url',
+			'value' => $user->user_url,
+			'label' => '网站',
+			'placeholder' => '网站链接',
+			'has_icons' => 'left',
+			'icon' => '<i class="fas fa-unlock-alt"></i>',
+			'required' => false,
+		)
+	);
+
+	// textarea
+	$form->add_textarea(
+		array(
+			'name' => '_wpusermeta_description',
+			'label' => '简介',
+			'placeholder' => '简介资料',
+			'value' => $user->description,
+		)
+	);
+
+	$form->set_action('wnd_update_profile');
+	$form->set_submit_button('保存');
+
+	// 以当前函数名设置filter hook
+	$form->set_filter(__FUNCTION__);
+	$form->build();
+
+	echo $form->html;
+
 }
 
 /**
@@ -586,57 +503,57 @@ function _wnd_account_form() {
 		echo '<script>wnd_alert_msg(\'请登录\')</script>';
 		return;
 	}
-	$user = wp_get_current_user();
 
-	?>
-<form id="user-account" class="user-form" action="" method="post" onsubmit="return false">
-	<div class="field is-grouped is-grouped-centered content">
-		<h3><span class="icon"><i class="fa fa-user"></i></span>账户安全</h3>
-	</div>
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-	<div class="field">
-		<label class="label">当前密码<span class="required">*</span></label>
-		<div class="control has-icons-left">
-            <input type="password" class="input" name="_user_user_pass" required="required">
-            <span class="icon is-left">
-                <i class="fa fa-unlock-alt"></i>
-            </span>
-        </div>
-	</div>
-	<div class="field">
-		<label class="label">新密码 <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="password" class="input" required="required" name="_user_new_pass" placeholder="登录密码">
-			<span class="icon is-left">
-				<i class="fa fa-unlock-alt"></i>
-			</span>
-		</div>
-	</div>
-	<div class="field">
-		<label class="label">确认新密码 <span class="required">*</span></label>
-		<div class="control has-icons-left">
-			<input type="password" class="input" required="required" name="_user_new_pass_repeat" placeholder="确认密码">
-			<span class="icon is-left">
-				<i class="fa fa-unlock-alt"></i>
-			</span>
-		</div>
-	</div>
-	<?php
-if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
-		_wnd_sms_field($verity_type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
+	$form = new Wnd_Ajax_Form();
+	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>账户安全');
+	$form->set_form_attr('id="user-account" class="user-form"');
+
+	$form->add_password(
+		array(
+			'name' => '_user_user_pass',
+			'value' => '',
+			'label' => '当前密码 <span class="required">*</span>',
+			'placeholder' => '当前密码',
+			'has_icons' => 'left',
+			'icon' => '<i class="fas fa-unlock-alt"></i>',
+			'required' => true,
+		)
+	);
+
+	$form->add_password(
+		array(
+			'name' => '_user_new_pass',
+			'value' => '',
+			'label' => '新密码 <span class="required">*</span>',
+			'placeholder' => '新密码',
+			'has_icons' => 'left',
+			'icon' => '<i class="fas fa-unlock-alt"></i>',
+			'required' => true,
+		)
+	);
+
+	$form->add_password(
+		array(
+			'name' => '_user_new_pass_repeat',
+			'value' => '',
+			'label' => '确认新密码 <span class="required">*</span>',
+			'placeholder' => '确认新密码',
+			'has_icons' => 'left',
+			'icon' => '<i class="fas fa-unlock-alt"></i>',
+			'required' => true,
+		)
+	);
+
+	if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
+		$form->add_sms_verify($verify_type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
 	} else {
-		_wnd_mail_field($verity_type = 'v');
+		$form->add_email_verify($verify_type = 'v', $template = '');
 	}
-	?>
-	<?php wp_nonce_field('wnd_update_account', '_ajax_nonce');?>
-	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_update_account">
-	<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#user-account')">保存</button>
-	</div>
-</form>
-<?php
+
+	$form->set_action('wnd_reset_password');
+	$form->set_submit_button('保存');
+	$form->build();
+
+	echo $form->html;
 
 }

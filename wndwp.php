@@ -94,7 +94,7 @@ function wnd_uninstall() {
 function wnd_scripts() {
 
 	global $ver;
-	wp_enqueue_script('wndwp', WNDWP_URL . 'static/js/wndwp.min.js', array('jquery'), $ver);
+	wp_enqueue_script('wndwp', WNDWP_URL . 'static/js/wndwp.js', array('jquery'), $ver);
 
 	if (wnd_get_option('wndwp', 'wnd_default_style') != 0) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.7.4/css/bulma.min.css', array(), $ver);

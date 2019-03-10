@@ -113,7 +113,7 @@ function wnd_delete_file() {
 	// 执行删除
 	if (wp_delete_attachment($file_id)) {
 
-		do_action('wnd_delete_attachment', $file_id, $post_parent, $meta_key);
+		do_action('wnd_delete_file', $file_id, $post_parent, $meta_key);
 		return array('status' => 1, 'msg' => $file_id);
 
 		//删除失败

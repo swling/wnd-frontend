@@ -49,7 +49,7 @@ function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
  * ajax删除附件时
  *@since 2018
  */
-add_action('wnd_delete_attachment', 'wnd_action_delete_attachment', 1, 3);
+add_action('wnd_delete_file', 'wnd_action_delete_attachment', 1, 3);
 function wnd_action_delete_attachment($attach_id, $post_parent, $meta_key) {
 
 	if (!$meta_key) {

@@ -125,26 +125,30 @@ apply_filters( 'wnd_get_post_commission', $commission, $post_id )
 *@since 2019.02.13 post价格
 */
 apply_filters('wnd_get_post_price', $price, $post_id);
+
 ```
+##表单
+```php
+##注册表单@since 2019.03.10
+apply_filters( '_wnd_login_form', $input_values )
+
+##登录表单@since 2019.03.10
+apply_filters( '_wnd_reg_form', $input_values )
+
+##用户资料表单@since 2019.03.10
+apply_filters( '_wnd_profile_form', $input_values )
+```
+
 #action
 ```php
 ##上传文件后
 do_action('wnd_upload_file', $attachment_id,$post_parent, $meta_key);
 
 ##删除文件后
-do_action('wnd_delete_attachment', $attach_id, $post_parent, $meta_key);
+do_action('wnd_delete_file', $attach_id, $post_parent, $meta_key);
 
 ##更新用户资料后
 do_action( 'wnd_update_profile', $user_id );
-
-##注册表单@since 2019.01.21
-do_action('_wnd_reg_form')
-
-##登录表单@since 2019.01.21
-do_action('_wnd_login_form');
-
-##用户资料表单@since 2019.01.29
-do_action('_wnd_profile_form',$user)
 
 ##充值表单 @since 2019.01.21
 do_action('_wnd_recharge_form')

@@ -263,6 +263,7 @@ function wnd_ajax_embed(container, handle, param = 0) {
 function wnd_ajax_submit(form_id) {
 
 	// 带有required属性的input 不能为空
+	var form_id = "#"+form_id;
 	var input_value = true;
 	$(form_id + " input").each(function() {
 		var required = $(this).attr("required");
@@ -469,7 +470,7 @@ jQuery(document).ready(function($) {
 					} else {
 						$(id + " .file-name").html('上传成功！<a href="' + response[i].msg.url + '">查看文件</a>');
 					}
-					$(id + " .delete").data("file-id", response[i].msg.id)
+					$(id + " .delete").data("file_id", response[i].msg.id)
 				}
 
 			},
@@ -491,7 +492,7 @@ jQuery(document).ready(function($) {
 		// 获取当前上传容器ID
 		var id = "#" + $(this).data("id");
 		// 获取被删除的附件ID
-		var file_id = $(this).data("file-id");
+		var file_id = $(this).data("file_id");
 		if (!file_id) {
 			wnd_ajax_msg("没有可删除的文件！", "is-danger", id);
 			return false;
@@ -547,7 +548,7 @@ jQuery(document).ready(function($) {
 					$(id + " .file-name").text('文件已删除……');
 				}
 				// 清空删除按钮数据绑定
-				$(id + " .delete").data("file-id", 0)
+				$(id + " .delete").data("file_id", 0)
 			},
 			// 错误
 			error: function() {
@@ -569,7 +570,7 @@ jQuery(document).ready(function($) {
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
 		var form_id = '#' + _this.parents('form').attr('id');
-		var verity_type = $(this).data('verity-type');
+		var verify_type = $(this).data('verify-type');
 		var send_type = $(this).data('send-type');
 		var template = $(this).data('template');
 		var nonce = $(this).data('nonce');
@@ -590,7 +591,7 @@ jQuery(document).ready(function($) {
 				action_name: "wnd_ajax_send_code",
 				email: _user_user_email,
 				phone: phone,
-				verity_type: verity_type,
+				verify_type: verify_type,
 				send_type: send_type,
 				template: template,
 				_ajax_nonce: nonce
@@ -650,5 +651,14 @@ jQuery(document).ready(function($) {
 		$(this).parent("li").addClass("is-active");
 		$(this).parent("li").siblings().removeClass("is-active");
 	});
+
+	/**
+	 *@since 2019.03.10 ajax提交表单
+	 */
+	$("body").on("click", "[data-submit-type='ajax'] button.submit", function() {
+		var form_id = $(this).parents("form").attr("id");
+		wnd_ajax_submit(form_id);
+	});
+
 
 });

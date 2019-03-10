@@ -6,9 +6,9 @@ if (!defined('ABSPATH')) {
 
 /**
  *@since 初始化短信发送表单field
- *参数：$verity_type='reg' 即为注册操作，注册操作会检测手机是否已经注册，反之如果为 lostpassword 则不能发送给未注册用户
+ *参数：$verify_type='reg' 即为注册操作，注册操作会检测手机是否已经注册，反之如果为 lostpassword 则不能发送给未注册用户
  */
-function _wnd_sms_field($verity_type = 'verify', $template = '') {
+function _wnd_sms_field($verify_type = 'verify', $template = '') {
 
 ?>
 <div class="field is-horizontal">
@@ -27,7 +27,7 @@ function _wnd_sms_field($verity_type = 'verify', $template = '') {
 				<span class="icon is-left"><i class="fa fa-comment"></i></span>
 			</div>
 			<div class="control">
-				<button type="button" class="send-code button is-primary" data-verity-type="<?php echo $verity_type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_ajax_send_code') ?>" data-send-type="sms">获取验证码</button>
+				<button type="button" class="send-code button is-primary" data-verify-type="<?php echo $verify_type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_ajax_send_code') ?>" data-send-type="sms">获取验证码</button>
 			</div>
 		</div>
 	</div>
@@ -39,7 +39,7 @@ function _wnd_sms_field($verity_type = 'verify', $template = '') {
 /**
  *@since 2019.02.10 邮箱验证表单字段
  */
-function _wnd_mail_field($verity_type = 'v', $template = '') {
+function _wnd_mail_field($verify_type = 'v', $template = '') {
 	
 ?>
 <div class="field">
@@ -58,7 +58,7 @@ function _wnd_mail_field($verity_type = 'v', $template = '') {
 			<span class="icon is-left"><i class="fa fa-key"></i></span>
 		</div>
 		<div class="control">
-			<button type="button" class="button is-primary send-code" data-verity-type="<?php echo $verity_type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_ajax_send_code') ?>" data-send-type="email">发送验证码</button>
+			<button type="button" class="button is-primary send-code" data-verify-type="<?php echo $verify_type; ?>" data-template="<?php echo $template; ?>" data-nonce="<?php echo wp_create_nonce('wnd_ajax_send_code') ?>" data-send-type="email">发送验证码</button>
 		</div>
 	</div>
 </div>

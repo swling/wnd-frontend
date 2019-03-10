@@ -107,7 +107,7 @@ function wnd_login() {
 
 	$username = trim($_POST['_user_user_login']);
 	$password = $_POST['_user_user_pass'];
-	$remember = $_POST['remember'] ?? 0;
+	$remember = $_POST['remember'][0] ?? 0;
 	$remember = $remember == 1 ? true : false;
 	$redirect_to = $_REQUEST['redirect_to'] ?? home_url();
 

@@ -181,7 +181,7 @@ function wnd_filter_the_content($content) {
 	if ($file) {
 
 		// 未登录用户
-		if (!$user_id()) {
+		if (!$user_id) {
 			$button_text = '请登录后下载';
 			$button = '<div class="field is-grouped is-grouped-centered pay"><button class="button" onclick="wnd_ajax_modal(\'user_center\',\'action=login\')">' . $button_text . '</button></div>';
 			$content .= $button;

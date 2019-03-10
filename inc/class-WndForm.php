@@ -17,7 +17,7 @@ class Wnd_Form {
 
 	protected $form_attr;
 
-	protected $input_values = array();
+	protected $input_values;
 
 	protected $submit;
 
@@ -31,28 +31,69 @@ class Wnd_Form {
 
 	protected $upload;
 
+	public $form_title;
+
 	public $html;
 
-	static private $defaults = array(
-		'name' => 'name',
-		'placeholder' => 'placeholder',
-		'label' => 'label',
+	static protected $defaults = array(
+		'name' => '',
+		'placeholder' => '',
+		'label' => '',
 		'checked' => '',
-		'value' => 'value',
+		'value' => '',
 		'required' => '',
 		'options' => NULL,
 		'has_icons' => NULL,
 		'icon' => '',
+		'addon' => null,
 		'autofocus' => '',
 		'id' => NULL,
 
 	);
+
+	// 初始化构建
+	function __construct() {
+		$this->input_values = array();
+		$this->form_title = null;
+		$this->form_attr = 'id="wnd-form"';
+	}
 
 	// 允许外部更改私有变量
 	function __set($var, $val) {
 		$this->$var = $val;
 	}
 
+	/**
+	 *@since 2019.03.10 设置表单属性
+	 */
+	function set_form_title($form_title) {
+		$this->form_title = $form_title;
+	}
+
+	function set_form_attr($form_attr) {
+		$this->form_attr = $form_attr;
+	}
+
+	// Submit
+	function set_submit_button($label, $submit_style = '') {
+		$this->submit = $label;
+		$this->submit_style = $submit_style;
+	}
+
+	// _action
+	function set_action($method, $action) {
+		$this->method = $method;
+		$this->action = $action;
+	}
+
+	// _size (e.g. 'is-large', 'is-small')
+	function set_size($size) {
+		$this->size = $size;
+	}
+
+	/**
+	 *@since 20190.30.10 设置常规input 字段
+	 */
 	// _text
 	function add_text($args = array()) {
 
@@ -68,6 +109,7 @@ class Wnd_Form {
 			'autofocus' => $args['autofocus'],
 			'has_icons' => $args['has_icons'],
 			'icon' => $args['icon'],
+			'addon' => $args['addon'],
 			'id' => NULL,
 		));
 	}
@@ -112,6 +154,7 @@ class Wnd_Form {
 			'autofocus' => $args['autofocus'],
 			'has_icons' => $args['has_icons'],
 			'icon' => $args['icon'],
+			'addon' => $args['addon'],
 			'id' => NULL,
 		));
 	}
@@ -131,6 +174,7 @@ class Wnd_Form {
 			'autofocus' => $args['autofocus'],
 			'has_icons' => $args['has_icons'],
 			'icon' => $args['icon'],
+			'addon' => $args['addon'],
 			'id' => NULL,
 		));
 	}
@@ -222,18 +266,6 @@ class Wnd_Form {
 		));
 	}
 
-	// Submit
-	function add_submit_button($label, $submit_style) {
-		$this->submit = $label;
-		$this->submit_style = $submit_style;
-	}
-
-	// _action
-	function add_action($method, $action) {
-		$this->method = $method;
-		$this->action = $action;
-	}
-
 	// Image upload
 	function add_image_upload($args) {
 
@@ -266,7 +298,7 @@ class Wnd_Form {
 
 	}
 
-	// Image upload
+	// File upload
 	function add_file_upload($args) {
 
 		$defaults = array(
@@ -278,7 +310,7 @@ class Wnd_Form {
 			'required' => null,
 			'id' => 'file-upload-field',
 		);
-		$args = array_merge(Wnd_form::$defaults, $args);
+		$args = array_merge($defaults, $args);
 
 		array_push($this->input_values, array(
 			'type' => "file",
@@ -304,11 +336,6 @@ class Wnd_Form {
 			'type' => 'html',
 			'value' => $html,
 		));
-	}
-
-	// _size (e.g. 'is-large', 'is-small')
-	function set_size($size) {
-		$this->size = $size;
 	}
 
 	/**
@@ -338,6 +365,13 @@ class Wnd_Form {
 			$html .= ' ' . $this->form_attr;
 		}
 		$html .= '>';
+
+		if ($this->form_title) {
+			$html .= '<div class="field is-grouped is-grouped-centered content">';
+			$html .= '<h3>' . $this->form_title . '</h3>';
+			$html .= '</div>';
+		}
+
 		$this->html = $html;
 	}
 
@@ -432,7 +466,7 @@ class Wnd_Form {
 	}
 
 	protected function build_input($input_value) {
-		$html = '<div class="field">';
+		$html = $input_value['addon'] ? '<div class="field has-addons">' : '<div class="field">';
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
@@ -440,17 +474,22 @@ class Wnd_Form {
 		// input icon
 		if ($input_value['has_icons']) {
 
-			$html .= '<div class="control has-icons-' . $input_value['has_icons'] . '">';
-			$html .= '<input class="input ' . $this->get_size() . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder'] . '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
-			$html .= '<span class="icon ' . $this->get_size() . ' is-' . $input_value['has_icons'] . '">' . $input_value['icon'] . '</span>';
+			$html .= $input_value['addon'] ? '<div class="control is-expanded has-icons-' . $input_value['has_icons'] . '">' : '<div class="control has-icons-' . $input_value['has_icons'] . '">';
+			$html .= '<input class="input ' . $this->size . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder'] . '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
+			$html .= '<span class="icon ' . $this->size . ' is-' . $input_value['has_icons'] . '">' . $input_value['icon'] . '</span>';
 			$html .= '</div>';
 
 		} else {
 
-			$html .= '<div class="control">';
-			$html .= '<input class="input ' . $this->get_size() . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder']
+			$html .= $input_value['addon'] ? '<div class="control is-expanded">' : '<div class="control">';
+			$html .= '<input class="input ' . $this->size . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder']
 			. '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
 			$html .= '</div>';
+
+		}
+
+		if ($input_value['addon']) {
+			$html .= '<div class="control">' . $input_value['addon'] . '</div>';
 		}
 
 		$html .= '</div>';
@@ -489,21 +528,15 @@ class Wnd_Form {
 
 		foreach ($input_value['hidden_input'] as $key => $value) {
 			$html .= '<input type="hidden" name="' . $key . '" value="' . $value . '">';
-		}
-		$html .= '<input type="hidden" name="is_image" value="1">';
-		$html .= '<input type="hidden" name="thumbnail" value="' . $input_value['thumbnail'] . '">';
-		$html .= '<input type="hidden" name="upload_nonce" value="' . wp_create_nonce('wnd_upload_file') . '">';
-		$html .= '<input type="hidden" name="delete_nonce" value="' . wp_create_nonce('wnd_delete_file') . '">';
+		}unset($key, $value);
 
 		$html .= '
 		<script type="text/javascript">
-		    window.onload = function () {
-		        var fileupload = document.querySelector("#' . $input_value['id'] . ' input[type=\'file\']");
-		        var image = document.querySelector("#' . $input_value['id'] . ' .thumbnail");
-		        image.onclick = function () {
-		            fileupload.click();
-		        };
-		    };
+			var fileupload = document.querySelector("#' . $input_value['id'] . ' input[type=\'file\']");
+			var image = document.querySelector("#' . $input_value['id'] . ' .thumbnail");
+			image.onclick = function () {
+			    fileupload.click();
+			};
 		</script>';
 
 		$html .= '</div>';
@@ -537,9 +570,7 @@ class Wnd_Form {
 
 		foreach ($input_value['hidden_input'] as $key => $value) {
 			$html .= '<input type="hidden" name="' . $key . '" value="' . $value . '">';
-		}
-		$html .= '<input type="hidden" name="upload_nonce" value="' . wp_create_nonce('wnd_upload_file') . '">';
-		$html .= '<input type="hidden" name="delete_nonce" value="' . wp_create_nonce('wnd_delete_file') . '">';
+		}unset($key, $value);
 
 		$html .= '</div>';
 		return $html;
@@ -565,18 +596,15 @@ class Wnd_Form {
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
-		$html .= '<textarea class="textarea" name="' . $input_value['name'] . '"' . $this->get_required($input_value) . ' placeholder="' . $input_value['placeholder'] . '" ></textarea>';
+		$html .= '<textarea class="textarea" name="' . $input_value['name'] . '"' . $this->get_required($input_value) . ' placeholder="' . $input_value['placeholder'] . '" >'.$input_value['value'].'</textarea>';
 		$html .= '</div>';
 		return $html;
 	}
 
 	protected function build_submit_button() {
-		if (is_null($this->submit)) {
-			$submit = Base::instance()->get('form.submit_label_default');
-		} else {
-			$submit = $this->submit;
-		}
-		$this->html .= '<button type="submit" value="upload" class="button ' . $this->submit_style . ' ' . $this->get_size() . '">' . $submit . '</button>';
+		$this->html .= '<div class="field is-grouped is-grouped-centered">';
+		$this->html .= '<button type="submit" class="button ' . $this->submit_style . '">' . $this->submit . '</button>';
+		$this->html .= '</div>';
 	}
 
 	protected function build_form_footer() {
@@ -611,19 +639,4 @@ class Wnd_Form {
 		return '';
 	}
 
-	protected function get_size() {
-		$size = $this->size;
-		return $size;
-	}
-
-	/**
-	 *@since 2019.03.06 给表头添加额自定义属性
-	 */
-	public function set_form_attr($form_attr) {
-		$this->form_attr = $form_attr;
-	}
-
-	public function the_form_data() {
-		print_r($this->input_values);
-	}
 }

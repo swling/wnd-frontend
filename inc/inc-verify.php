@@ -7,10 +7,10 @@ if (!defined('ABSPATH')) {
 /**
  *@since 2019.02.21 发送验证码给匿名用户
  */
-function wnd_send_code_to_anonymous($email_or_phone, $verity_type, $template) {
+function wnd_send_code_to_anonymous($email_or_phone, $verify_type, $template) {
 
 	// 权限检测
-	$wnd_can_send_code = wnd_can_send_code($email_or_phone, $verity_type);
+	$wnd_can_send_code = wnd_can_send_code($email_or_phone, $verify_type);
 	if ($wnd_can_send_code['status'] === 0) {
 		return $wnd_can_send_code;
 	}
@@ -29,7 +29,7 @@ function wnd_send_code_to_anonymous($email_or_phone, $verity_type, $template) {
 /**
  *@since 2019.02.22 发送验证码给已知用户
  */
-function wnd_send_code_to_user($send_type, $verity_type, $template) {
+function wnd_send_code_to_user($send_type, $verify_type, $template) {
 
 	if (!is_user_logged_in()) {
 		return array('status' => 0, 'msg' => '用户未登录！');
@@ -41,7 +41,7 @@ function wnd_send_code_to_user($send_type, $verity_type, $template) {
 	$email_or_phone = ($send_type == 'email') ? $user->user_email : wnd_get_user_meta($user->ID, 'phone');
 
 	// 权限检测
-	$wnd_can_send_code = wnd_can_send_code($email_or_phone, $verity_type);
+	$wnd_can_send_code = wnd_can_send_code($email_or_phone, $verify_type);
 	if ($wnd_can_send_code['status'] === 0) {
 		return $wnd_can_send_code;
 	}
@@ -59,7 +59,7 @@ function wnd_send_code_to_user($send_type, $verity_type, $template) {
  *此处的权限校验仅作为前端是否可以发送验证验证码的初级校验，较容易被绕过
  *在对验证码正确性进行校验时，应该再次进行类型权限校验
  */
-function wnd_can_send_code($email_or_phone, $verity_type) {
+function wnd_can_send_code($email_or_phone, $verify_type) {
 
 	if (empty($email_or_phone) && !is_user_logged_in()) {
 		return array('status' => 0, 'msg' => '发送地址为空！');
@@ -74,12 +74,12 @@ function wnd_can_send_code($email_or_phone, $verity_type) {
 	}
 
 	// 检测是否为注册类型，注册类型去重
-	if ($verity_type == 'reg' and wnd_get_user_by($email_or_phone)) {
+	if ($verify_type == 'reg' and wnd_get_user_by($email_or_phone)) {
 		return array('status' => 0, 'msg' => '该' . $text . '已注册过！');
 	}
 
 	// 找回密码
-	elseif ($verity_type == 'reset-pass' and !wnd_get_user_by($email_or_phone)) {
+	elseif ($verify_type == 'reset-pass' and !wnd_get_user_by($email_or_phone)) {
 		return array('status' => 0, 'msg' => '该' . $text . '尚未注册！');
 	}
 
@@ -196,7 +196,7 @@ function wnd_insert_code($email_or_phone, $code) {
  *@since 初始化
  *@return array
  */
-function wnd_verify_code($email_or_phone, $code, $verity_type) {
+function wnd_verify_code($email_or_phone, $code, $verify_type) {
 
 	global $wpdb;
 	$field = is_email($email_or_phone, $deprecated = false) ? 'email' : 'phone';
@@ -210,7 +210,7 @@ function wnd_verify_code($email_or_phone, $code, $verity_type) {
 		return array('status' => 0, 'msg' => '校验失败：请填写' . $text . '！');
 	}
 
-	if ($verity_type == 'reg' && wnd_get_user_by($email_or_phone)) {
+	if ($verify_type == 'reg' && wnd_get_user_by($email_or_phone)) {
 		return array('status' => 0, 'msg' => '校验失败：' . $text . '已注册过！');
 	}
 

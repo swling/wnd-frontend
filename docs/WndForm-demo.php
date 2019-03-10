@@ -1,9 +1,12 @@
-#表单生成器例子
+<?php
+/**
+*常规表单生成
+*@since 2019.03.10
+*/
 
-```php
 $form = new Wnd_Form();
 
-$form->add_html('<div class="field"><div class="ajax-msg"></div></div>');
+$form->set_form_title('标题');
 
 // input
 $form->add_text(
@@ -11,7 +14,7 @@ $form->add_text(
 		'name' => 'user_name',
 		'value' => '',
 		'placeholder' => 'user name',
-		'label' => 'User name<span class="required">*</span>',
+		'label' => 'User name<span class="required">*</span> ',
 		'has_icons' => 'left', //icon position "left" orf "right"
 		'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 		'autofocus' => 'autofocus',
@@ -42,6 +45,15 @@ $form->add_password(
 		'has_icons' => 'left',
 		'icon' => '<i class="fas fa-unlock-alt"></i>',
 		'required' => false,
+	)
+);
+
+// has addon
+$form->add_text(
+	array(
+		'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
+		'name'=>'test',
+		// 'label'	=>'addon'
 	)
 );
 
@@ -122,12 +134,10 @@ $form->add_textarea(
 	)
 );
 
-$form->add_action('POST', '');
+$form->set_action('post', 'https://www.baidu.com');
 $form->set_form_attr('id="my-form-id"');
-$form->add_submit_button('Submit', 'is-primary');
+$form->set_submit_button('Submit', 'is-primary');
 
 $form->build();
 
 echo $form->html;
-
-```

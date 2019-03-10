@@ -413,7 +413,7 @@ function _wnd_upload_field($args) {
 	<input type="hidden" name="file_meta_key" value="<?php echo $args['meta_key']; ?>" />
 	<input type="hidden" name="file_thumbnail" value="<?php if($args['thumbnail']==1) echo '1'; else echo '0'; ?>" />
 	<?php wp_nonce_field('wnd_upload_file','file_upload_nonce');?>
-	<?php wp_nonce_field('wnd_delete_attachment','file_delete_nonce');?>
+	<?php wp_nonce_field('wnd_delete_file','file_delete_nonce');?>
 </div>
 <?php
 

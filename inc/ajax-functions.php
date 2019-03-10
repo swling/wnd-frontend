@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
  */
 function wnd_ajax_send_code() {
 
-	$verity_type = $_POST['verity_type'] ?? '';
+	$verify_type = $_POST['verify_type'] ?? '';
 	$send_type = $_POST['send_type'] ?? ''; // email or sms, to login user
 	$template = $_POST['template'] ?? '';
 
@@ -18,9 +18,9 @@ function wnd_ajax_send_code() {
 	$email_or_phone = $phone ?: $email;
 
 	if (is_user_logged_in()) {
-		return wnd_send_code_to_user($send_type, $verity_type, $template);
+		return wnd_send_code_to_user($send_type, $verify_type, $template);
 	} else {
-		return wnd_send_code_to_anonymous($email_or_phone, $verity_type, $template);
+		return wnd_send_code_to_anonymous($email_or_phone, $verify_type, $template);
 	}
 
 }

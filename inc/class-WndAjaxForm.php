@@ -6,14 +6,36 @@
  */
 class Wnd_Ajax_Form extends Wnd_Form {
 
-	protected function build_form_header() {
-		$html = '<form ';
-		if (!is_null($this->method)) {
-			$html .= ' method="' . $this->method . '"';
+	// 新增WordPressfilter过滤
+	public $filter;
+
+	function set_filter($filter) {
+		$this->filter = $filter;
+	}
+
+	// 输出当前表单的组成数据数组（通常用于配合 filter 过滤）
+	function get_input_values() {
+		return $this->input_values;
+	}
+
+	// 设置当前表单的组成数组（通常用于配合 filter 过滤）
+	function set_input_values($input_values) {
+		$this->input_values = $input_values;
+	}
+
+	// 构造表单，可设置WordPress filter 过滤表单的input_values
+	function build() {
+
+		if ($this->filter) {
+			$this->input_values = apply_filters($this->filter, $this->input_values);
 		}
-		if (!is_null($this->action)) {
-			$html .= ' action="' . $this->action . '"';
-		}
+		parent::build();
+
+	}
+
+	function build_form_header() {
+		$html = '<form action="" method="POST" data-submit-type="ajax" onsubmit="return false" ';
+
 		if ($this->upload) {
 			$html .= ' enctype="multipart/form-data"';
 		}
@@ -21,14 +43,189 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		if ($this->form_attr) {
 			$html .= ' ' . $this->form_attr;
 		}
+
 		$html .= '>';
+
+		if ($this->form_title) {
+			$html .= '<div class="field is-grouped is-grouped-centered content">';
+			$html .= '<h3>' . $this->form_title . '</h3>';
+			$html .= '</div>';
+		}
+
+		$html .= '<div class="ajax-msg"></div>';
+
 		$this->html = $html;
 	}
 
-	protected function build_submit_button() {
+	// ajax提交只需要设置 action_name 但常规表单action包含提交地址和提交方式，在类中，必须保持参数个数一致
+	function set_action($action_name, $method = '') {
+		parent::add_hidden('action', 'wnd_action');
+		parent::add_hidden('action_name', $action_name);
+		parent::add_hidden('_ajax_nonce', wp_create_nonce($action_name));
+	}
+
+	function build_submit_button() {
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="submit" value="upload" class="button ' . $this->submit_style . ' ' . $this->get_size() . '">' . $this->submit . '</button>';
+		$this->html .= '<button type="button" class="button submit ' . $this->submit_style . '">' . $this->submit . '</button>';
 		$this->html .= '</div>';
+	}
+
+	// 短信验证
+	function add_sms_verify($verify_type = 'verify', $template = '') {
+
+		parent::add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
+
+		if (!wnd_get_user_phone(get_current_user_id())) {
+
+			parent::add_text(
+				array(
+					'name' => 'phone',
+					'has_icons' => 'left',
+					'icon' => '<i class="fa fa-phone-square"></i>',
+					'required' => 'required',
+					'label' => '',
+					'placeholder' => '手机号码',
+				)
+			);
+		}
+
+		parent::add_text(
+			array(
+				'name' => 'v_code',
+				'has_icons' => 'left',
+				'icon' => '<i class="fa fa-phone-square"></i>',
+				'required' => 'required',
+				'label' => '',
+				'placeholder' => '短信验证码',
+				'addon' => '<button type="button" class="send-code button is-primary" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wp_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
+			)
+		);
+
+		parent::add_html('</div>');
+
+	}
+
+	// 邮箱验证
+	function add_email_verify($verify_type = 'verify', $template = '') {
+
+		parent::add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
+
+		parent::add_text(
+			array(
+				'name' => '_user_user_email',
+				'has_icons' => 'left',
+				'icon' => '<i class="fa fa-at"></i>',
+				'required' => 'required',
+				'placeholder' => '电子邮箱',
+			)
+		);
+
+		parent::add_text(
+			array(
+				'name' => 'v_code',
+				'has_icons' => 'left',
+				'icon' => '<i class="fa fa-key"></i>',
+				'required' => 'required',
+				'label' => '',
+				'placeholder' => '邮箱验证码',
+				'addon' => '<button type="button" class="send-code button is-primary" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wp_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
+			)
+		);
+
+		parent::add_html('</div>');
+
+	}
+
+	// Image upload 后台wnd_file_upload已匹配规则，此处强制input name: file
+	function add_image_upload($args) {
+
+		$defaults = array(
+			'name' => 'file',
+			'label' => 'Image upland',
+			'thumbnail' => '',
+			'thumbnail_size' => array('height' => '100', 'width' => '100'),
+			'required' => null,
+			'file_id' => 0,
+			'hidden_input' => array(),
+			'id' => 'image-upload-field',
+		);
+		$args = array_merge($defaults, $args);
+
+		// 合并hidden input
+		$hidden_input = array(
+			'is_image' => '1',
+			'thumbnail' => $args['thumbnail'],
+			'upload_nonce' => wp_create_nonce('wnd_upload_file'),
+			'delete_nonce' => wp_create_nonce('wnd_delete_file'),
+			'post_parent' => 0,
+			'meta_key' => 0,
+		);
+		$args['hidden_input'] = array_merge($hidden_input, $args['hidden_input']);
+
+		// 根据user type 查找目标文件
+		$file_id = wnd_get_post_meta($args['hidden_input']['post_parent'], $args['hidden_input']['meta_key']);
+		$file_id = $file_id ?: wnd_get_user_meta(get_current_user_id(), $args['hidden_input']['meta_key']);
+		$file_url = wp_get_attachment_url($file_id);
+
+		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
+		if ($file_id and !$file_url) {
+			if ($args['hidden_input']['post_parent']) {
+				wnd_delete_post_meta($args['hidden_input']['post_parent'], $args['hidden_input']['meta_key']);
+			} else {
+				wnd_delete_user_meta(get_current_user_id(), $args['hidden_input']['meta_key']);
+			}
+		}
+
+		$args['name'] = 'file';
+		$args['thumbnail'] = $file_url ?: $args['thumbnail'];
+		$args['file_id'] = $file_id ?: $args['file_id'];
+
+		parent::add_image_upload($args);
+
+	}
+
+	// File upload 后台wnd_file_upload已匹配规则，此处强制input name: file
+	function add_file_upload($args) {
+
+		$defaults = array(
+			'name' => 'file',
+			'label' => 'File upload',
+			'file_name' => 'file name',
+			'file_id' => 0,
+			'hidden_input' => array(),
+			'required' => null,
+			'id' => 'file-upload-field',
+		);
+		$args = array_merge($defaults, $args);
+
+		$hidden_input = array(
+			'upload_nonce' => wp_create_nonce('wnd_upload_file'),
+			'delete_nonce' => wp_create_nonce('wnd_delete_file'),
+			'post_parent' => 0,
+			'meta_key' => 0,
+		);
+		$args['hidden_input'] = array_merge($hidden_input, $args['hidden_input']);
+
+		// 根据meta key 查找目标文件
+		$file_id = wnd_get_post_meta($args['hidden_input']['post_parent'], $args['hidden_input']['meta_key']);
+		$file_id = $file_id ?: wnd_get_user_meta(get_current_user_id(), $args['hidden_input']['meta_key']);
+		$file_url = wp_get_attachment_url($file_id);
+
+		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
+		if ($file_id and !$file_url) {
+			if ($args['hidden_input']['post_parent']) {
+				wnd_delete_post_meta($args['hidden_input']['post_parent'], $args['hidden_input']['meta_key']);
+			} else {
+				wnd_delete_user_meta(get_current_user_id(), $args['hidden_input']['meta_key']);
+			}
+		}
+
+		$args['name'] = 'file';
+		$args['file_id'] = $file_id ?: $args['file_id'];
+		$args['file_name'] = $file_url ? '<a href="' . $file_url . '">查看文件</a>' : '……';
+
+		parent::add_file_upload($args);
+
 	}
 
 }
