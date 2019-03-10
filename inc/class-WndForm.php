@@ -51,6 +51,7 @@ class Wnd_Form {
 		$this->input_values = array();
 		$this->form_title = null;
 		$this->form_attr = 'id="wnd-form"';
+		$this->submit = 'Submit';
 	}
 
 	// 允许外部更改私有变量
@@ -513,7 +514,7 @@ class Wnd_Form {
 		$data = 'data-id="' . $input_value['id'] . '"';
 		foreach ($input_value['data'] as $key => $value) {
 			$data .= ' data-' . $key . '="' . $value . '" ';
-		}unset($key, $value);		
+		}unset($key, $value);
 
 		$html = '<div ' . $this->get_id($input_value) . ' class="field upload-field">';
 		$html .= '<div class="field"><div class="ajax-msg"></div></div>';
@@ -522,7 +523,7 @@ class Wnd_Form {
 		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['height'] . '"></a>';
 		$html .= '<a class="delete" data-id="' . $input_value['id'] . '" data-file_id="' . $input_value['file_id'] . '"></a>';
 		$html .= '<div class="file">';
-		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' .$data. 'accept="image/*" >';
+		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . 'accept="image/*" >';
 		$html .= '</div>';
 		$html .= '</div>';
 
@@ -544,7 +545,7 @@ class Wnd_Form {
 		$data = 'data-id="' . $input_value['id'] . '"';
 		foreach ($input_value['data'] as $key => $value) {
 			$data .= ' data-' . $key . '="' . $value . '" ';
-		}unset($key, $value);		
+		}unset($key, $value);
 
 		$html = '<div ' . $this->get_id($input_value) . ' class="field upload-field">';
 
@@ -593,7 +594,7 @@ class Wnd_Form {
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
-		$html .= '<textarea class="textarea" name="' . $input_value['name'] . '"' . $this->get_required($input_value) . ' placeholder="' . $input_value['placeholder'] . '" >'.$input_value['value'].'</textarea>';
+		$html .= '<textarea class="textarea" name="' . $input_value['name'] . '"' . $this->get_required($input_value) . ' placeholder="' . $input_value['placeholder'] . '" >' . $input_value['value'] . '</textarea>';
 		$html .= '</div>';
 		return $html;
 	}
