@@ -145,7 +145,7 @@ function _wnd_demo_form() {
 			'thumbnail' => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
 			'thumbnail_size' => array('width' => 100, 'height' => 100), //thumbnail image size
 			'file_id' => 0, //data-file-id on delete button，in some situation, you want delete the file
-			'hidden_input' => array( // some hidden input,maybe useful in ajax upload
+			'data' => array( // some hidden input,maybe useful in ajax upload
 				'meta_key' => 'avatar',
 				'save_width' => '0', //图片文件存储最大宽度 0 为不限制
 				'save_hight' => '0', //图片文件存储最大过度 0 为不限制
@@ -161,7 +161,7 @@ function _wnd_demo_form() {
 			'label' => 'File upland',
 			'file_name' => 'file name', //文件显示名称
 			'file_id' => 0, //data-file-id on delete button，in some situation, you want delete the file
-			'hidden_input' => array( // some hidden input,maybe useful in ajax upload
+			'data' => array( // some hidden input,maybe useful in ajax upload
 				'meta_key' => 'file',
 				'post_parent' => 0, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
 			),

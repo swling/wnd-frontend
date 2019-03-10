@@ -306,7 +306,7 @@ function _wnd_reg_form($type = 'email') {
 	$form->add_text(
 		array(
 			'name' => '_user_user_login',
-			'has-icons' => 'left',
+			'has_icons' => 'left',
 			'icon' => '<i class="fa fa-user"></i>',
 			'required' => true,
 			'placeholder' => '用户名',
@@ -441,7 +441,7 @@ function _wnd_profile_form($args = array()) {
 		'id' => 'user-avatar',
 		'thumbnail_size' => array('width' => 150, 'height' => 150),
 		'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
-		'hidden_input' => array(
+		'data' => array(
 			'meta_key' => 'avatar',
 			'save_width' => 200,
 			'savve_height' => 200,

@@ -422,12 +422,12 @@ jQuery(document).ready(function($) {
 		var file_data = $(this).prop("files")[0];
 
 		// 获取属性
-		var meta_key = $(id + " [name='meta_key']").val();
-		var post_parent = $(id + " [name='post_parent']").val();
-		var _ajax_nonce = $(id + " [name='upload_nonce']").val();
-		var save_width = $(id + " [name='save_width']").val();
-		var save_height = $(id + " [name='save_height']").val();
-		var is_image = $(id + " [name='is_image']").val();
+		var meta_key = $(this).data("meta_key");
+		var post_parent = $(this).data("post_parent");
+		var _ajax_nonce = $(this).data("upload_nonce");
+		var save_width = $(this).data("save_width");
+		var save_height = $(this).data("save_height");
+		var is_image = $(this).data("is_image");
 
 		// 组合表单数据
 		form_data.append("file", file_data);
@@ -502,13 +502,13 @@ jQuery(document).ready(function($) {
 		var form_data = new FormData();
 
 		// 获取属性
-		var meta_key = $(id + " [name='meta_key']").val();
-		var post_parent = $(id + " [name='post_parent']").val();
-		var _ajax_nonce = $(id + " [name='delete_nonce']").val();
-		var is_image = $(id + " [name='is_image']").val();
+		var meta_key = $(id + " [type='file']").data("meta_key");
+		var post_parent = $(id + " [type='file']").data("post_parent");
+		var _ajax_nonce = $(id + " [type='file']").data("delete_nonce");
+		var is_image = $(id + " [type='file']").data("is_image");
 
 		// 默认图
-		var thumbnail = $(id + " [name='thumbnail']").val();
+		var thumbnail = $(id + " [type='file']").data("thumbnail");
 
 		// 组合表单数据
 		form_data.append("meta_key", meta_key);

@@ -146,13 +146,13 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			'thumbnail_size' => array('height' => '100', 'width' => '100'),
 			'required' => null,
 			'file_id' => 0,
-			'hidden_input' => array(),
+			'data' => array(),
 			'id' => 'image-upload-field',
 		);
 		$args = array_merge($defaults, $args);
 
-		// 合并hidden input
-		$hidden_input = array(
+		// 合并$data
+		$data = array(
 			'is_image' => '1',
 			'thumbnail' => $args['thumbnail'],
 			'upload_nonce' => wp_create_nonce('wnd_upload_file'),
@@ -160,19 +160,19 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			'post_parent' => 0,
 			'meta_key' => 0,
 		);
-		$args['hidden_input'] = array_merge($hidden_input, $args['hidden_input']);
+		$args['data'] = array_merge($data, $args['data']);
 
 		// 根据user type 查找目标文件
-		$file_id = wnd_get_post_meta($args['hidden_input']['post_parent'], $args['hidden_input']['meta_key']);
-		$file_id = $file_id ?: wnd_get_user_meta(get_current_user_id(), $args['hidden_input']['meta_key']);
+		$file_id = wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']);
+		$file_id = $file_id ?: wnd_get_user_meta(get_current_user_id(), $args['data']['meta_key']);
 		$file_url = wp_get_attachment_url($file_id);
 
 		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
 		if ($file_id and !$file_url) {
-			if ($args['hidden_input']['post_parent']) {
-				wnd_delete_post_meta($args['hidden_input']['post_parent'], $args['hidden_input']['meta_key']);
+			if ($args['data']['post_parent']) {
+				wnd_delete_post_meta($args['data']['post_parent'], $args['data']['meta_key']);
 			} else {
-				wnd_delete_user_meta(get_current_user_id(), $args['hidden_input']['meta_key']);
+				wnd_delete_user_meta(get_current_user_id(), $args['data']['meta_key']);
 			}
 		}
 
@@ -192,31 +192,31 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			'label' => 'File upload',
 			'file_name' => 'file name',
 			'file_id' => 0,
-			'hidden_input' => array(),
+			'data' => array(),
 			'required' => null,
 			'id' => 'file-upload-field',
 		);
 		$args = array_merge($defaults, $args);
 
-		$hidden_input = array(
+		$data = array(
 			'upload_nonce' => wp_create_nonce('wnd_upload_file'),
 			'delete_nonce' => wp_create_nonce('wnd_delete_file'),
 			'post_parent' => 0,
 			'meta_key' => 0,
 		);
-		$args['hidden_input'] = array_merge($hidden_input, $args['hidden_input']);
+		$args['data'] = array_merge($data, $args['data']);
 
 		// 根据meta key 查找目标文件
-		$file_id = wnd_get_post_meta($args['hidden_input']['post_parent'], $args['hidden_input']['meta_key']);
-		$file_id = $file_id ?: wnd_get_user_meta(get_current_user_id(), $args['hidden_input']['meta_key']);
+		$file_id = wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']);
+		$file_id = $file_id ?: wnd_get_user_meta(get_current_user_id(), $args['data']['meta_key']);
 		$file_url = wp_get_attachment_url($file_id);
 
 		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
 		if ($file_id and !$file_url) {
-			if ($args['hidden_input']['post_parent']) {
-				wnd_delete_post_meta($args['hidden_input']['post_parent'], $args['hidden_input']['meta_key']);
+			if ($args['data']['post_parent']) {
+				wnd_delete_post_meta($args['data']['post-parent'], $args['data']['meta_key']);
 			} else {
-				wnd_delete_user_meta(get_current_user_id(), $args['hidden_input']['meta_key']);
+				wnd_delete_user_meta(get_current_user_id(), $args['data']['meta_key']);
 			}
 		}
 

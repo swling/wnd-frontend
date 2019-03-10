@@ -104,7 +104,7 @@ $form->add_image_upload(
 		'thumbnail' => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
 		'thumbnail_size' => array('width' => 100, 'height' => 100), //thumbnail image size
 		'file_id' => 10, //data-file-id on delete button，in some situation, you want delete the file
-		'hidden_input' => array( // some hidden input,maybe useful in ajax upload
+		'data' => array( // some hidden input,maybe useful in ajax upload
 			'meta_key' => 'avatar',
 			'save_width' => '0',
 			'save_hight' => '0',
@@ -120,7 +120,7 @@ $form->add_file_upload(
 		'label' => 'File upland',
 		'file_name' => 'file name',
 		'file_id' => 0, //data-file-id on delete button，in some situation, you want delete the file
-		'hidden_input' => array('meta_key' => 'file'), // some hidden input,maybe useful in ajax upload
+		'data' => array('meta_key' => 'file'), // some hidden input,maybe useful in ajax upload
 	)
 );
 
