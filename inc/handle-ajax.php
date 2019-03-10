@@ -31,7 +31,7 @@ function wnd_ajax_action() {
 		$response = $action_name();
 
 		// 2、常规函数操作 需要安全校验
-	} elseif (function_exists($action_name)) {
+	} else {
 
 		check_ajax_referer($action_name);
 		$response = $action_name();
