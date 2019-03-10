@@ -1,8 +1,8 @@
 <?php
 /**
-*常规表单生成
-*@since 2019.03.10
-*/
+ *常规表单生成
+ *@since 2019.03.10
+ */
 
 $form = new Wnd_Form();
 
@@ -52,7 +52,7 @@ $form->add_password(
 $form->add_text(
 	array(
 		'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
-		'name'=>'test',
+		'name' => 'test',
 		// 'label'	=>'addon'
 	)
 );

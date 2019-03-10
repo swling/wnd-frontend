@@ -40,7 +40,7 @@ function _wnd_demo_form() {
 	$form->set_form_attr('id="my-form-id"');
 	$form->set_form_title('标题');
 
-// input
+	// input
 	$form->add_text(
 		array(
 			'name' => 'user_name',
@@ -54,7 +54,7 @@ function _wnd_demo_form() {
 		)
 	);
 
-// input
+	// input
 	$form->add_email(
 		array(
 			'name' => 'email',
@@ -67,7 +67,7 @@ function _wnd_demo_form() {
 		)
 	);
 
-// password
+	// password
 	$form->add_password(
 		array(
 			'name' => 'password',
@@ -80,7 +80,7 @@ function _wnd_demo_form() {
 		)
 	);
 
-// has addon
+	// has addon
 	$form->add_text(
 		array(
 			'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
@@ -88,10 +88,10 @@ function _wnd_demo_form() {
 		)
 	);
 
-// html
+	// html
 	$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 
-// dropdown
+	// dropdown
 	$form->add_dropdown(
 		array(
 			'name' => 'dropdown1',
@@ -102,7 +102,7 @@ function _wnd_demo_form() {
 		)
 	);
 
-// dropdown
+	// dropdown
 	$form->add_dropdown(
 		array(
 			'name' => 'dropdown2',
@@ -115,7 +115,7 @@ function _wnd_demo_form() {
 
 	$form->add_html('</div></div>');
 
-// radio
+	// radio
 	$form->add_Radio(
 		array(
 			'name' => 'radio',
@@ -126,7 +126,7 @@ function _wnd_demo_form() {
 		)
 	);
 
-// checkbox
+	// checkbox
 	$form->add_checkbox(
 		array(
 
@@ -137,7 +137,7 @@ function _wnd_demo_form() {
 		)
 	);
 
-// upload image ajax 后台wnd_file_upload已匹配规则，此处强制input name: file 无需额外设置
+	// upload image ajax 后台wnd_file_upload已匹配规则，此处强制input name: file 无需额外设置
 	$form->add_image_upload(
 		array(
 			'id' => 'image-upload', //container id
@@ -154,7 +154,7 @@ function _wnd_demo_form() {
 		)
 	);
 
-// upload file ajax 后台wnd_file_upload已匹配规则，此处强制input name: file 无需额外设置
+	// upload file ajax 后台wnd_file_upload已匹配规则，此处强制input name: file 无需额外设置
 	$form->add_file_upload(
 		array(
 			'id' => 'file-upload', //container id
@@ -168,7 +168,7 @@ function _wnd_demo_form() {
 		)
 	);
 
-// textarea
+	// textarea
 	$form->add_textarea(
 		array(
 			'name' => 'content',
@@ -182,14 +182,14 @@ function _wnd_demo_form() {
 
 	$form->add_email_verify($verify_type = 'verify', $template = '');
 
-// 与该表单数据匹配的后端处理函数
+	// 与该表单数据匹配的后端处理函数
 	$form->set_action('wnd_inset_post');
 
 	$form->set_submit_button('Submit', 'is-primary');
 
-/**
- *@since 2019.03.10 设置表单结构filter，用法详见顶部代码*
- */
+	/**
+	 *@since 2019.03.10 设置表单结构filter，用法详见顶部代码*
+	 */
 	// 以当前函数名设置filter hook
 	$form->set_filter(__FUNCTION__);
 
