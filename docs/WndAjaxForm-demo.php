@@ -91,10 +91,10 @@ function _wnd_demo_form() {
 	// html
 	$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 
-	// dropdown
-	$form->add_dropdown(
+	// select
+	$form->add_select(
 		array(
-			'name' => 'dropdown1',
+			'name' => 'select1',
 			'options' => array('select1' => 'value1', 'select2' => 'value2'),
 			'label' => 'Dropdown1',
 			'required' => false,
@@ -102,10 +102,10 @@ function _wnd_demo_form() {
 		)
 	);
 
-	// dropdown
-	$form->add_dropdown(
+	// select
+	$form->add_select(
 		array(
-			'name' => 'dropdown2',
+			'name' => 'select2',
 			'options' => array('select1' => 'value1', 'select2' => 'value2'),
 			'label' => 'Dropdown2',
 			'required' => false,
@@ -131,9 +131,9 @@ function _wnd_demo_form() {
 		array(
 
 			'name' => 'checkbox',
-			'value' => array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3'),
+			'value' => 1,
 			'label' => 'checkbox',
-			'checked' => 'value3', //default checked value
+			'checked' => 1, //default checked
 		)
 	);
 
@@ -144,7 +144,7 @@ function _wnd_demo_form() {
 			'label' => 'Image upload',
 			'thumbnail' => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
 			'thumbnail_size' => array('width' => 100, 'height' => 100), //thumbnail image size
-			'file_id' => 0, //data-file-id on delete button，in some situation, you want delete the file
+			// 'file_id' => 0, //data-file-id on delete button，in some situation, you want delete the file
 			'data' => array( // some hidden input,maybe useful in ajax upload
 				'meta_key' => 'avatar',
 				'save_width' => '0', //图片文件存储最大宽度 0 为不限制
@@ -159,8 +159,8 @@ function _wnd_demo_form() {
 		array(
 			'id' => 'file-upload', //container id
 			'label' => 'File upland',
-			'file_name' => 'file name', //文件显示名称
-			'file_id' => 0, //data-file-id on delete button，in some situation, you want delete the file
+			// 'file_name' => 'file name', //文件显示名称
+			// 'file_id' => 0, //data-file-id on delete button，in some situation, you want delete the file
 			'data' => array( // some hidden input,maybe useful in ajax upload
 				'meta_key' => 'file',
 				'post_parent' => 0, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta

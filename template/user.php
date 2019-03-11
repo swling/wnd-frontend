@@ -244,8 +244,8 @@ function _wnd_login_form() {
 		array(
 
 			'name' => 'remember',
-			'value' => array('保持登录' => '1'),
-			'label' => 'checkbox',
+			'value' => 1,
+			'label' => '保持登录',
 			'checked' => '1', //default checked value
 		)
 	);
@@ -265,7 +265,6 @@ function _wnd_login_form() {
 
 	// 输出表单
 	echo $form->html;
-
 
 }
 
@@ -330,17 +329,17 @@ function _wnd_reg_form($type = 'email') {
 	} else {
 		$form->add_email_verify($verify_type = 'reg', $template = '');
 	}
-	if (wnd_get_option('wndwp', 'wnd_agreement_url')) {
+	if (wnd_get_option('wndwp', 'wnd_agreement_url') or 1) {
 
-		$form->add_html('
-		<div class="field">
-			<div class="control">
-				<label class="checkbox">
-					<input type="checkbox" name="agreement" value="agree" checked="checked" required="required">
-					我已阅读并同意注册协议<a href="' . wnd_get_option('wndwp', 'wnd_agreement_url') . '" target="_blank">《注册协议》</a>
-				</label>
-			</div>
-		</div>');
+		$form->add_checkbox(
+			array(
+				'name' => 'agreement',
+				'value' => 1,
+				'checked' => 1,
+				'label' => '我已阅读并同意注册协议<a href="' . wnd_get_option('wndwp', 'wnd_agreement_url') . '" target="_blank">《注册协议》</a>',
+				'required' => 'required',
+			)
+		);
 	}
 
 	$form->set_action('wnd_reg');
@@ -352,7 +351,6 @@ function _wnd_reg_form($type = 'email') {
 	$form->build();
 
 	echo $form->html;
-
 
 }
 

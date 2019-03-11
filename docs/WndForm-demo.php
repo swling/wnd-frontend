@@ -73,10 +73,10 @@ $form->add_Radio(
 
 $form->add_html('</div></div>');
 
-// dropdown
-$form->add_dropdown(
+// select
+$form->add_select(
 	array(
-		'name' => 'dropdown',
+		'name' => 'select',
 		'options' => array('select1' => 'value1', 'select2' => 'value2'),
 		'label' => 'Dropdown',
 		'required' => false,
@@ -89,9 +89,9 @@ $form->add_checkbox(
 	array(
 
 		'name' => 'checkbox',
-		'value' => array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3'),
+		'value' => 1,
 		'label' => 'checkbox',
-		'checked' => 'value3', //default checked value
+		'checked' => 1, //default checked
 	)
 );
 

@@ -175,13 +175,13 @@ class Wnd_Form {
 		));
 	}
 
-	// _dropdown
-	function add_dropdown($args = array()) {
+	// _select
+	function add_select($args = array()) {
 
 		$args = array_merge(Wnd_form::$defaults, $args);
 
 		array_push($this->input_values, array(
-			'type' => "dropdown",
+			'type' => "select",
 			'name' => $args['name'],
 			'label' => $args['label'],
 			'checked' => $args['checked'],
@@ -389,8 +389,8 @@ class Wnd_Form {
 			case 'checkbox':
 				$html .= $this->build_checkbox($input_value);
 				break;
-			case 'dropdown':
-				$html .= $this->build_dropdown($input_value);
+			case 'select':
+				$html .= $this->build_select($input_value);
 				break;
 			case 'image':
 				$html .= $this->build_image_upload($input_value);
@@ -417,7 +417,7 @@ class Wnd_Form {
 		$this->html .= $html;
 	}
 
-	protected function build_dropdown($input_value) {
+	protected function build_select($input_value) {
 		$html = '<div class="field">';
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
@@ -471,14 +471,14 @@ class Wnd_Form {
 		if ($input_value['has_icons']) {
 
 			$html .= $input_value['addon'] ? '<div class="control is-expanded has-icons-' . $input_value['has_icons'] . '">' : '<div class="control has-icons-' . $input_value['has_icons'] . '">';
-			$html .= '<input class="input ' . $this->size . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder'] . '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
-			$html .= '<span class="icon ' . $this->size . ' is-' . $input_value['has_icons'] . '">' . $input_value['icon'] . '</span>';
+			$html .= '<input class="input' . $this->get_size() . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder'] . '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
+			$html .= '<span class="icon' . $this->get_size() . ' is-' . $input_value['has_icons'] . '">' . $input_value['icon'] . '</span>';
 			$html .= '</div>';
 
 		} else {
 
 			$html .= $input_value['addon'] ? '<div class="control is-expanded">' : '<div class="control">';
-			$html .= '<input class="input ' . $this->size . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder']
+			$html .= '<input class="input' . $this->get_size() . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder']
 			. '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
 			$html .= '</div>';
 
@@ -494,18 +494,11 @@ class Wnd_Form {
 
 	protected function build_checkbox($input_value) {
 
-		$html = '<div class="field">';
-		$html .= '<div class="control">';
-		foreach ($input_value['value'] as $key => $value) {
-			$html .= '<label class="checkbox">';
-			$html .= '<input type="checkbox" name="' . $input_value['name'] . '[]" value="' . $value . '"' . $this->get_required($input_value);
-			$html .= ($input_value['checked'] == $value) ? ' checked="checked" >' : ' >';
-			$html .= ' ' . $key;
+			$html = '<label class="checkbox">';
+			$html .= '<input type="checkbox" name="' . $input_value['name'].'" value="' . $input_value['value'] . '"' . $this->get_required($input_value);
+			$html .= $input_value['checked'] ? ' checked="checked" >' : ' >';
+			$html .= ' ' . $input_value['label'];
 			$html .= '</label>&nbsp;&nbsp;';
-		}unset($key, $value);
-		$html .= '</div>';
-		$html .= '</div>';
-
 		return $html;
 	}
 
@@ -629,6 +622,13 @@ class Wnd_Form {
 		}
 		return '';
 	}
+
+	protected function get_size() {
+		if($this->size){
+			return ' '.$this->size;
+		}
+		return '';
+	}	
 
 	protected function get_autofocus($input_value) {
 		if ($input_value['autofocus']) {
