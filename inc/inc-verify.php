@@ -79,7 +79,7 @@ function wnd_can_send_code($email_or_phone, $verify_type) {
 	}
 
 	// 找回密码
-	elseif ($verify_type == 'reset-pass' and !wnd_get_user_by($email_or_phone)) {
+	elseif ($verify_type == 'reset_pass' and !wnd_get_user_by($email_or_phone)) {
 		return array('status' => 0, 'msg' => '该' . $text . '尚未注册！');
 	}
 

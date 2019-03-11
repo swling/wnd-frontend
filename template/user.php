@@ -402,9 +402,9 @@ function _wnd_lostpassword_form($type = 'email') {
 	);
 
 	if ($type == 'sms') {
-		$form->add_sms_verify($verify_type = 'reset-pass', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
+		$form->add_sms_verify($verify_type = 'reset_pass', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
 	} else {
-		$form->add_email_verify($verify_type = 'reset-pass', $template = '');
+		$form->add_email_verify($verify_type = 'reset_pass', $template = '');
 	}
 
 	$form->set_action('wnd_reset_password');
@@ -442,7 +442,7 @@ function _wnd_profile_form($args = array()) {
 		'data' => array(
 			'meta_key' => 'avatar',
 			'save_width' => 200,
-			'savve_height' => 200,
+			'save_height' => 200,
 		),
 	);
 	$args = wp_parse_args($args, $defaults);
@@ -543,7 +543,7 @@ function _wnd_account_form() {
 	);
 
 	if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
-		$form->add_sms_verify($verify_type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
+		$form->add_sms_verify($verify_type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
 	} else {
 		$form->add_email_verify($verify_type = 'v', $template = '');
 	}

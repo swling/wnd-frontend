@@ -22,6 +22,15 @@ $form->add_text(
 	)
 );
 
+// has addon
+$form->add_text(
+	array(
+		'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
+		'name' => 'test',
+		'label' => 'Input with addons',
+	)
+);
+
 // input
 $form->add_email(
 	array(
@@ -48,18 +57,6 @@ $form->add_password(
 	)
 );
 
-// has addon
-$form->add_text(
-	array(
-		'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
-		'name' => 'test',
-		// 'label'	=>'addon'
-	)
-);
-
-// html
-$form->add_html('<div class="field is-horizontal"><div class="field-body">');
-
 // radio
 $form->add_Radio(
 	array(
@@ -71,7 +68,8 @@ $form->add_Radio(
 	)
 );
 
-$form->add_html('</div></div>');
+// html
+$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 
 // select
 $form->add_select(
@@ -87,13 +85,14 @@ $form->add_select(
 // checkbox
 $form->add_checkbox(
 	array(
-
 		'name' => 'checkbox',
 		'value' => 1,
 		'label' => 'checkbox',
 		'checked' => 1, //default checked
 	)
 );
+
+$form->add_html('</div></div>');
 
 // upload image
 $form->add_image_upload(
@@ -104,7 +103,7 @@ $form->add_image_upload(
 		'thumbnail' => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
 		'thumbnail_size' => array('width' => 100, 'height' => 100), //thumbnail image size
 		'file_id' => 10, //data-file-id on delete button，in some situation, you want delete the file
-		'data' => array( // some hidden input,maybe useful in ajax upload
+		'data' => array( // some data on file input, maybe useful in ajax upload
 			'meta_key' => 'avatar',
 			'save_width' => '0',
 			'save_hight' => '0',
@@ -120,7 +119,7 @@ $form->add_file_upload(
 		'label' => 'File upland',
 		'file_name' => 'file name',
 		'file_id' => 0, //data-file-id on delete button，in some situation, you want delete the file
-		'data' => array('meta_key' => 'file'), // some hidden input,maybe useful in ajax upload
+		'data' => array('meta_key' => 'file'), // some data on file input, maybe useful in ajax upload
 	)
 );
 

@@ -140,13 +140,10 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	function add_image_upload($args) {
 
 		$defaults = array(
-			'name' => 'file',
 			'label' => 'Image upland',
-			'thumbnail' => '',
+			'thumbnail' => '', //默认缩略图
 			'thumbnail_size' => array('height' => '100', 'width' => '100'),
-			'required' => null,
-			'file_id' => 0,
-			'data' => array(),
+			'data' => array('post_parent' => 0, 'meta_key' => 0),
 			'id' => 'image-upload-field',
 		);
 		$args = array_merge($defaults, $args);
@@ -177,7 +174,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		$args['name'] = 'file';
 		$args['thumbnail'] = $file_url ?: $args['thumbnail'];
-		$args['file_id'] = $file_id ?: $args['file_id'];
+		$args['file_id'] = $file_id ?: 0;
 
 		parent::add_image_upload($args);
 
@@ -187,13 +184,9 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	function add_file_upload($args) {
 
 		$defaults = array(
-			'name' => 'file',
 			'label' => 'File upload',
-			'file_name' => 'file name',
-			'file_id' => 0,
 			'data' => array(),
-			'required' => null,
-			'id' => 'file-upload-field',
+			'id' => array('post_parent' => 0, 'meta_key' => 0),
 		);
 		$args = array_merge($defaults, $args);
 
@@ -219,7 +212,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		}
 
 		$args['name'] = 'file';
-		$args['file_id'] = $file_id ?: $args['file_id'];
+		$args['file_id'] = $file_id ?: 0;
 		$args['file_name'] = $file_url ? '<a href="' . $file_url . '">查看文件</a>' : '……';
 
 		parent::add_file_upload($args);
