@@ -35,7 +35,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_category_select($cat_taxonomy, $post_id = 0) {
+	function add_post_category_select($cat_taxonomy, $post_id = 0) {
 
 		$cat = get_taxonomy($cat_taxonomy);
 		// 获取当前文章已选择分类ID
