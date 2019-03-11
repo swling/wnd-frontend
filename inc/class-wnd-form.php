@@ -6,6 +6,7 @@
  *Base on form-builder @link https://github.com/swling/form-builder
  *@link https://wndwp.com
  *contact: tangfou@gmail.com
+ *这是一个独立的php表单生成器，可于任何PHP环境中使用
  */
 
 class Wnd_Form {
@@ -494,11 +495,11 @@ class Wnd_Form {
 
 	protected function build_checkbox($input_value) {
 
-			$html = '<label class="checkbox">';
-			$html .= '<input type="checkbox" name="' . $input_value['name'].'" value="' . $input_value['value'] . '"' . $this->get_required($input_value);
-			$html .= $input_value['checked'] ? ' checked="checked" >' : ' >';
-			$html .= ' ' . $input_value['label'];
-			$html .= '</label>&nbsp;&nbsp;';
+		$html = '<label class="checkbox">';
+		$html .= '<input type="checkbox" name="' . $input_value['name'] . '" value="' . $input_value['value'] . '"' . $this->get_required($input_value);
+		$html .= $input_value['checked'] ? ' checked="checked" >' : ' >';
+		$html .= ' ' . $input_value['label'];
+		$html .= '</label>&nbsp;&nbsp;';
 		return $html;
 	}
 
@@ -624,11 +625,11 @@ class Wnd_Form {
 	}
 
 	protected function get_size() {
-		if($this->size){
-			return ' '.$this->size;
+		if ($this->size) {
+			return ' ' . $this->size;
 		}
 		return '';
-	}	
+	}
 
 	protected function get_autofocus($input_value) {
 		if ($input_value['autofocus']) {

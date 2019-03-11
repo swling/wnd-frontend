@@ -6,11 +6,11 @@
 require WNDWP_PATH . 'inc/handle-array.php'; //数组形式储存 meta、option
 require WNDWP_PATH . 'inc/handle-ajax.php'; //处理ajax action
 
-require WNDWP_PATH . 'inc/class-WndFormData.php'; //表单数据处理类
-require WNDWP_PATH . 'inc/class-WndForm.php'; //表单生成类
-require WNDWP_PATH . 'inc/class-WndAjaxForm.php'; //表单生成类
-require WNDWP_PATH . 'inc/class-WndUserForm.php'; //表单生成类
-require WNDWP_PATH . 'inc/class-WndPostForm.php'; //表单生成类
+require WNDWP_PATH . 'inc/class-wnd-form-data.php'; //表单数据处理类
+require WNDWP_PATH . 'inc/class-wnd-form.php'; //表单生成类
+require WNDWP_PATH . 'inc/class-wnd-ajax-form.php'; //表单生成类
+require WNDWP_PATH . 'inc/class-wnd-user-form.php'; //表单生成类
+require WNDWP_PATH . 'inc/class-wnd-post-form.php'; //表单生成类
 
 require WNDWP_PATH . 'inc/wnd-options.php'; //配置选项
 require WNDWP_PATH . 'inc/wnd-database.php'; //数据库

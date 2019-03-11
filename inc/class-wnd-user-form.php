@@ -1,7 +1,7 @@
 <?php
 
 /**
- *适配本插件的ajax Post表单类
+ *适配本插件的ajax User表单类
  *@since 2019.03.11
  */
 class Wnd_User_Form extends Wnd_Ajax_Form {
