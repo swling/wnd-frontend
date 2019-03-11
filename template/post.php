@@ -16,6 +16,11 @@ if (!defined('ABSPATH')) {
  */
 function _wnd_post_form($args = array()) {
 
+	/**
+	 *@since 2019.3.11 调用外部页面变量，后续更改为当前编辑的post，否则，wp_editor上传的文件将归属到页面，而非当前编辑的文章
+	 */
+	global $post;
+
 	$defaults = array(
 		'post_id' => 0,
 		'post_type' => 'post',
