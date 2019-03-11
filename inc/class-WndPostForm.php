@@ -6,39 +6,36 @@
  */
 class Wnd_Post_Form extends Wnd_Ajax_Form {
 
-	function add_post_title() {
+	function add_post_title($post_title = '', $label = '标题<span class="required">*</span>', $placeholder = "标题") {
 
 		parent::add_text(
 			array(
 				'name' => '_post_post_title',
-				'value' => $post->post_title != 'Auto-draft' ? $post->post_title : '',
-				'placeholder' => '标题',
-				'label' => '标题<span class="required">*</span>',
-				// 'has_icons' => 'left', //icon position "left" orf "right"
-				// 'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+				'value' => $post_title,
+				'placeholder' => $placeholder,
+				'label' => $label,
+				'has_icons' => 'left', //icon position "left" orf "right"
+				'icon' => '<i class="fas fa-edit"></i>', // icon html @link https://fontawesome.com/
 				'autofocus' => 'autofocus',
 				'required' => true,
 			)
 		);
 	}
 
-	function add_post_excerpt() {
+	function add_post_excerpt($post_excerpt = '', $label = '摘要', $placeholder = '摘要') {
 
 		parent::add_textarea(
 			array(
 				'name' => '_post_post_excerpt',
-				'value' => $post->post_excerpt,
-				'placeholder' => '摘要',
-				'label' => '摘要',
-				// 'has_icons' => 'left', //icon position "left" orf "right"
-				// 'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
-				'autofocus' => 'autofocus',
+				'value' => $post_excerpt,
+				'placeholder' => $placeholder,
+				'label' => $label,
 				'required' => false,
 			)
 		);
 	}
 
-	function add_category_select($cat_taxonomy) {
+	function add_category_select($cat_taxonomy, $post_id = 0) {
 
 		$cat = get_taxonomy($cat_taxonomy);
 		// 获取当前文章已选择分类ID
@@ -68,56 +65,79 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 	}
 
-	function add_tag($tag_taxonomy) {
+	function add_post_tag($tag_taxonomy, $post_id = 0) {
 
 		$tag = get_taxonomy($tag_taxonomy);
+
+		$terms_list = '';
+		$terms = wp_get_object_terms($post_id, $tag_taxonomy);
+		if (!empty($terms)) {
+			foreach ($terms as $term) {
+				$terms_list .= $term->name . ',';
+				// 移除末尾的逗号
+				echo rtrim($terms_list, ",");
+			}
+		}
 
 		parent::add_text(
 			array(
 				'id' => 'tags',
 				'name' => '_term_' . $tag_taxonomy,
-				'value' => '',
+				'value' => $terms_list,
 				'placeholder' => '标签',
 				'label' => $tag->labels->name,
-				// 'has_icons' => 'left', //icon position "left" orf "right"
-				// 'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
-				// 'autofocus' => 'autofocus',
-				// 'required' => true,
 			)
 		);
 	}
 
-	function add_post_thumbnail() {
-		/*缩略图上传*/
+	function add_post_thumbnail($post_id, $size = 200) {
 		$thumbnail_defaults = array(
 			'id' => 'thumbnail',
-			'thumbnail_size' => array('width' => 150, 'height' => 150),
+			'thumbnail_size' => array('width' => $size, 'height' => $size),
 			'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
 			'data' => array(
+				'post_parent' => $post_id,
 				'meta_key' => '_thumbnail_id',
-				'save_width' => 200,
-				'savve_height' => 200,
+				'save_width' => $size,
+				'savve_height' => $size,
 			),
 		);
 		$thumbnail_args = $thumbnail_defaults;
 		parent::add_image_upload($thumbnail_args);
 	}
 
-	function add_post_file($post_id, $meta_key) {
-
+	function add_post_file($post_id, $meta_key, $label = '文件上传') {
 		parent::add_file_upload(
 			array(
 				'id' => 'file-upload', //container id
-				'label' => '文件上传',
-				// 'file_name' => 'file name', //文件显示名称
-				// 'file_id' => 0, //data-file-id on delete button，in some situation, you want delete the file
+				'label' => $label,
 				'data' => array( // some hidden input,maybe useful in ajax upload
 					'meta_key' => 'file',
 					'post_parent' => $post_id, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
 				),
 			)
 		);
+	}
 
+	function add_post_content($wp_editor = 0) {
+
+		if ($wp_editor) {
+			/**
+			 *@since 2019.03.11无法直接通过方法创建 wp_editor
+			 *需要提前在静态页面中创建一个 #hidden-wp-editor 包裹下的 隐藏wp_editor
+			 *然后通过js提取HTML的方式实现在指定位置嵌入
+			 */
+			parent::add_html('<div id="wnd-wp-editor" class="field"></div>');
+			parent::add_html('<script type="text/javascript">var wp_editor = $("#hidden-wp-editor").html();$("#hidden-wp-editor").remove();$("#wnd-wp-editor").html(wp_editor);</script>');
+		} else {
+			parent::add_textarea(
+				array(
+					'name' => '_post_post_content',
+					'placeholder' => '正文详情',
+					'required' => true,
+				)
+			);
+		}
 	}
 
 }

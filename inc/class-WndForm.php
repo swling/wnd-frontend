@@ -504,7 +504,7 @@ class Wnd_Form {
 
 	protected function build_image_upload($input_value) {
 
-		$data = 'data-id="' . $input_value['id'] . '"';
+		$data = ' data-id="' . $input_value['id'] . '"';
 		foreach ($input_value['data'] as $key => $value) {
 			$data .= ' data-' . $key . '="' . $value . '" ';
 		}unset($key, $value);
@@ -535,7 +535,7 @@ class Wnd_Form {
 
 	protected function build_file_upload($input_value) {
 
-		$data = 'data-id="' . $input_value['id'] . '"';
+		$data = ' data-id="' . $input_value['id'] . '"';
 		foreach ($input_value['data'] as $key => $value) {
 			$data .= ' data-' . $key . '="' . $value . '" ';
 		}unset($key, $value);

@@ -137,6 +137,9 @@ apply_filters( '_wnd_reg_form', $input_values )
 
 ##用户资料表单@since 2019.03.10
 apply_filters( '_wnd_profile_form', $input_values )
+
+##文章发布编辑表单 @since 2019.03.11
+apply_filters( '_wnd_post_form', $input_values )
 ```
 
 #action
@@ -152,9 +155,6 @@ do_action( 'wnd_update_profile', $user_id );
 
 ##充值表单 @since 2019.01.21
 do_action('_wnd_recharge_form')
-
-##文章发布编辑表单 @since 2019.01.31
-do_action( '_wnd_post_form', $post_id,$post_type,$post )
 
 ```
 #前端Form name规则 

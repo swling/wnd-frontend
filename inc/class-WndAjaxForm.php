@@ -93,7 +93,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			array(
 				'name' => 'v_code',
 				'has_icons' => 'left',
-				'icon' => '<i class="fa fa-phone-square"></i>',
+				'icon' => '<i class="fas fa-comment-alt"></i>',
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '短信验证码',

@@ -210,35 +210,14 @@ function _wnd_login_form() {
 		return;
 	}
 
-	$form = new Wnd_Ajax_Form();
+	$form = new Wnd_User_Form();
 
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>登录');
 	$form->set_form_attr('id="user-login" class="user-form"');
 
-	$form->add_text(
-		array(
-			'name' => '_user_user_login',
-			'value' => '',
-			'placeholder' => '用户名、手机、邮箱',
-			'label' => '用户名 <span class="required">*</span>',
-			'has_icons' => 'left', //icon position "left" orf "right"
-			'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
-			'autofocus' => 'autofocus',
-			'required' => true,
-		)
-	);
+	$form->add_user_login();
 
-	$form->add_password(
-		array(
-			'name' => '_user_user_pass',
-			'value' => '',
-			'label' => '密码 <span class="required">*</span>',
-			'placeholder' => '密码',
-			'has_icons' => 'left',
-			'icon' => '<i class="fas fa-unlock-alt"></i>',
-			'required' => true,
-		)
-	);
+	$form->add_user_password();
 
 	$form->add_checkbox(
 		array(
@@ -297,32 +276,14 @@ function _wnd_reg_form($type = 'email') {
 
 	}
 
-	$form = new Wnd_Ajax_Form();
+	$form = new Wnd_User_Form();
 
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>注册');
 	$form->set_form_attr('id="user-reg" class="user-form"');
 
-	$form->add_text(
-		array(
-			'name' => '_user_user_login',
-			'has_icons' => 'left',
-			'icon' => '<i class="fa fa-user"></i>',
-			'required' => true,
-			'placeholder' => '用户名',
-		)
-	);
+	$form->add_user_login();
 
-	$form->add_password(
-		array(
-			'name' => '_user_user_pass',
-			'value' => '',
-			'label' => '密码 <span class="required">*</span>',
-			'placeholder' => '密码',
-			'has_icons' => 'left',
-			'icon' => '<i class="fas fa-unlock-alt"></i>',
-			'required' => true,
-		)
-	);
+	$form->add_user_password();
 
 	if ($type == 'sms') {
 		$form->add_sms_verify($verify_type = 'reg', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
@@ -367,7 +328,7 @@ function _wnd_lostpassword_form($type = 'email') {
 		}
 	}
 
-	$form = new Wnd_Ajax_Form();
+	$form = new Wnd_User_Form();
 
 	if ($type == 'sms') {
 		$form->set_form_title('<span class="icon"><i class="fa fa-phone-square"></i></span>手机验证');
@@ -377,29 +338,9 @@ function _wnd_lostpassword_form($type = 'email') {
 
 	$form->set_form_attr('id="user-lost-password" class="user-form"');
 
-	$form->add_password(
-		array(
-			'name' => '_user_new_pass',
-			'value' => '',
-			'label' => '新密码 <span class="required">*</span>',
-			'placeholder' => '新密码',
-			'has_icons' => 'left',
-			'icon' => '<i class="fas fa-unlock-alt"></i>',
-			'required' => true,
-		)
-	);
+	$form->add_user_new_password();
 
-	$form->add_password(
-		array(
-			'name' => '_user_new_pass_repeat',
-			'value' => '',
-			'label' => '确认新密码 <span class="required">*</span>',
-			'placeholder' => '确认新密码',
-			'has_icons' => 'left',
-			'icon' => '<i class="fas fa-unlock-alt"></i>',
-			'required' => true,
-		)
-	);
+	$form->add_user_new_password_repeat();
 
 	if ($type == 'sms') {
 		$form->add_sms_verify($verify_type = 'reset_pass', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
@@ -430,57 +371,19 @@ function _wnd_profile_form($args = array()) {
 	}
 	$user = wp_get_current_user();
 
-	$form = new Wnd_Ajax_Form();
+	$form = new Wnd_User_Form();
 
 	$form->set_form_attr('id="user-profile"');
 
 	/*头像上传*/
-	$defaults = array(
-		'id' => 'user-avatar',
-		'thumbnail_size' => array('width' => 150, 'height' => 150),
-		'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
-		'data' => array(
-			'meta_key' => 'avatar',
-			'save_width' => 200,
-			'save_height' => 200,
-		),
-	);
-	$args = wp_parse_args($args, $defaults);
-	$form->add_image_upload($args);
+	$form->add_user_avatar($thumbnail_size = 150, $save_size = 200);
 
-	$form->add_text(
-		array(
-			'name' => '_user_display_name',
-			'value' => $user->display_name,
-			'label' => '名称 <span class="required">*</span>',
-			'placeholder' => '用户名称',
-			'has_icons' => 'left',
-			'icon' => '<i class="fas fa-unlock-alt"></i>',
-			'required' => true,
-		)
-	);
+	$form->add_user_display_name();
 
-	$form->add_text(
-		array(
-			'name' => '_user_user_url',
-			'value' => $user->user_url,
-			'label' => '网站',
-			'placeholder' => '网站链接',
-			'has_icons' => 'left',
-			'icon' => '<i class="fas fa-unlock-alt"></i>',
-			'required' => false,
-		)
-	);
+	$form->add_user_url();
 
 	// textarea
-	$form->add_textarea(
-		array(
-			'name' => '_wpusermeta_description',
-			'label' => '简介',
-			'placeholder' => '简介资料',
-			'value' => $user->description,
-		)
-	);
+	$form->add_user_description();
 
 	$form->set_action('wnd_update_profile');
 	$form->set_submit_button('保存');
@@ -502,45 +405,15 @@ function _wnd_account_form() {
 		return;
 	}
 
-	$form = new Wnd_Ajax_Form();
+	$form = new Wnd_User_Form();
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>账户安全');
 	$form->set_form_attr('id="user-account" class="user-form"');
 
-	$form->add_password(
-		array(
-			'name' => '_user_user_pass',
-			'value' => '',
-			'label' => '当前密码 <span class="required">*</span>',
-			'placeholder' => '当前密码',
-			'has_icons' => 'left',
-			'icon' => '<i class="fas fa-unlock-alt"></i>',
-			'required' => true,
-		)
-	);
+	$form->add_user_password();
 
-	$form->add_password(
-		array(
-			'name' => '_user_new_pass',
-			'value' => '',
-			'label' => '新密码 <span class="required">*</span>',
-			'placeholder' => '新密码',
-			'has_icons' => 'left',
-			'icon' => '<i class="fas fa-unlock-alt"></i>',
-			'required' => true,
-		)
-	);
+	$form->add_user_new_password();
 
-	$form->add_password(
-		array(
-			'name' => '_user_new_pass_repeat',
-			'value' => '',
-			'label' => '确认新密码 <span class="required">*</span>',
-			'placeholder' => '确认新密码',
-			'has_icons' => 'left',
-			'icon' => '<i class="fas fa-unlock-alt"></i>',
-			'required' => true,
-		)
-	);
+	$form->add_user_new_password_repeat();
 
 	if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
 		$form->add_sms_verify($verify_type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));

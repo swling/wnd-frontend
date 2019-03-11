@@ -660,5 +660,4 @@ jQuery(document).ready(function($) {
 		wnd_ajax_submit(form_id);
 	});
 
-
 });

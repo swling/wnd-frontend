@@ -63,7 +63,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_user_display_name($display_name='') {
+	function add_user_display_name($display_name = '') {
 		parent::add_text(
 			array(
 				'name' => '_user_display_name',
@@ -71,13 +71,13 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 				'label' => '名称 <span class="required">*</span>',
 				'placeholder' => '用户名称',
 				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-unlock-alt"></i>',
+				'icon' => '<i class="fas fa-user"></i>',
 				'required' => true,
 			)
 		);
 	}
 
-	function add_user_url($user_url='') {
+	function add_user_url($user_url = '') {
 		parent::add_text(
 			array(
 				'name' => '_user_user_url',
@@ -85,13 +85,13 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 				'label' => '网站',
 				'placeholder' => '网站链接',
 				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-unlock-alt"></i>',
+				'icon' => '<i class="fas fa-link"></i>',
 				'required' => false,
 			)
 		);
 	}
 
-	function add_user_description($description='') {
+	function add_user_description($description = '') {
 		parent::add_textarea(
 			array(
 				'name' => '_wpusermeta_description',
@@ -102,16 +102,16 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_user_avatar($size) {
+	function add_user_avatar($thumbnail_size, $save_size) {
 		/*头像上传*/
-		$defaults = array(
+		$args = array(
 			'id' => 'user-avatar',
-			'thumbnail_size' => array('width' => $size, 'height' => $size),
+			'thumbnail_size' => array('width' => $thumbnail_size, 'height' => $thumbnail_size),
 			'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
 			'data' => array(
 				'meta_key' => 'avatar',
-				'save_width' => $size,
-				'save_height' => $size,
+				'save_width' => $save_size,
+				'save_height' => $save_size,
 			),
 		);
 		parent::add_image_upload($args);
