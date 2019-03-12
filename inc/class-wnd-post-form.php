@@ -120,6 +120,17 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		);
 	}
 
+	function add_post_price($post_id) {
+		parent::add_text(
+			array(
+				'name' => '_wpmeta_price',
+				'value' => get_post_meta($post_id, 'price', 1),
+				'label' => '',
+				'placeholder' => '付费价格',
+			)
+		);
+	}
+
 	function add_post_content($wp_editor = 0) {
 
 		if ($wp_editor) {

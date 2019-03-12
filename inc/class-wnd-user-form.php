@@ -131,6 +131,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		/*头像上传*/
 		$args = array(
 			'id' => 'user-avatar',
+			'label'	=>'',
 			'thumbnail_size' => array('width' => $thumbnail_size, 'height' => $thumbnail_size),
 			'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
 			'data' => array(
