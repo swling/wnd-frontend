@@ -27,7 +27,7 @@ function _wnd_post_form($args = array()) {
 		'post_parent' => 0,
 		'free' => 1,
 		'excerpt' => 0,
-		'thumbnail' => 0, //0 无缩略图，1、wp原生缩略图(存储在post meta _thumbnail_id 字段)，2，存储在wnd_meta _thumbnail_id字段
+		'thumbnail' => 0, //0 无缩略图，1、存储在wnd_meta _thumbnail_id字段: _wnd_the_post_thumbnail($width = 0, $height = 0)
 		'thumbnail_size' => array('width' => 150, 'height' => 150),
 		'rich_media_editor' => 1,
 	);
@@ -45,7 +45,6 @@ function _wnd_post_form($args = array()) {
 	$post = get_post($post_id);
 	if ($post) {
 		$post_type = $post->post_type;
-		// $args['is_free'] = !get_post_meta( $post_id, 'price', 1 );
 
 		//新建文章失败
 	} else {
@@ -70,18 +69,6 @@ function _wnd_post_form($args = array()) {
 	} elseif (!empty($args['form_title'])) {
 		$args['form_title'] = '<span class="icon"><i class="fa fa-edit"></i></span>' . $args['form_title'];
 	}
-
-	/**
-	 *@since 2019.03.11 wp_editor无法使用表单类创建，此处生成一个隐藏编辑器，再用js嵌入到指定DOM
-	 */
-	echo '<div id="hidden-wp-editor" style="display: none;">';
-	if (isset($post)) {
-		$post = $post;
-		wp_editor($post->post_content, '_post_post_content', 'media_buttons=1');
-	} else {
-		wp_editor($post->post_content, '_post_post_content', 'media_buttons=0');
-	}
-	echo '</div>';
 
 	/**
 	 *@since 2019.02.01
@@ -111,6 +98,7 @@ function _wnd_post_form($args = array()) {
 	$form = new Wnd_Post_Form();
 
 	$form->set_form_attr('id="post-form-' . $post_id . '" onkeydown="if(event.keyCode==13){return false;}"');
+	$form->set_form_title($args['form_title']);
 	$form->add_post_title($post->post_title == 'Auto-draft' ? '' : $post->post_title);
 	$form->add_post_excerpt($post->post_excerpt);
 
@@ -137,11 +125,36 @@ function _wnd_post_form($args = array()) {
 		unset($tag_taxonomy);
 	}
 
-	$form->add_post_thumbnail($post_id, $size = 200);
+	if ($args['thumbnail']) {
+		$form->add_post_thumbnail($post_id, $size = 200);
+	}
 
-	$form->add_post_file($post_id, $meta_key = 'file');
+	if (!$args['free']) {
+		$form->add_post_file($post_id, $meta_key = 'file');
+		$form->add_text(array(
+			'name' => '_wpmeta_price',
+			'value' => get_post_meta($args['post_id'], 'price', 1),
+			'label' => '',
+			'placeholder' => '付费价格',
+		));
+	}
 
-	$form->add_post_content(1);
+	/**
+	 *@since 2019.03.11 wp_editor无法使用表单类创建，此处生成一个隐藏编辑器，再用js嵌入到指定DOM
+	 */
+	if ($args['rich_media_editor']) {
+		echo '<div id="hidden-wp-editor" style="display: none;">';
+		if (isset($post)) {
+			$post = $post;
+			wp_editor($post->post_content, '_post_post_content', 'media_buttons=1');
+		} else {
+			wp_editor($post->post_content, '_post_post_content', 'media_buttons=0');
+		}
+		echo '</div>';
+		$form->add_post_content(1);
+	} else {
+		$form->add_post_content(0);
+	}
 
 	$form->add_checkbox(
 		array(
