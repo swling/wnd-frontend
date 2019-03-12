@@ -535,7 +535,7 @@ function _wnd_list_posts_with_tabs($args = array()) {
 		unset($args['wnd_post_types']['page'], $args['wnd_post_types']['attachment']); // 排除页面和附件
 		foreach ($args['wnd_post_types'] as $post_type) {
 			if (!in_array($post_type, wnd_get_allowed_post_types())) {
-				unset($args['wnd_post_types'][$post_type->name]);
+				unset($args['wnd_post_types'][$post_type]);
 			}
 		}
 		unset($post_type);
