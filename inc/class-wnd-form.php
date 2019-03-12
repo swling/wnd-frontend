@@ -511,6 +511,9 @@ class Wnd_Form {
 		}unset($key, $value);
 
 		$html = '<div ' . $this->get_id($input_value) . ' class="field upload-field">';
+		if ($input_value['label']) {
+			$html .= '<label class="label">' . $input_value['label'] . '</label>';
+		}
 		$html .= '<div class="field"><div class="ajax-msg"></div></div>';
 
 		$html .= '<div class="field">';

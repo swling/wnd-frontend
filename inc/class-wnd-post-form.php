@@ -90,9 +90,10 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_post_thumbnail($post_id, $size = 200) {
+	function add_post_thumbnail($post_id, $size = 200, $label = '') {
 		$thumbnail_defaults = array(
 			'id' => 'thumbnail',
+			'label' => $label,
 			'thumbnail_size' => array('width' => $size, 'height' => $size),
 			'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
 			'data' => array(
