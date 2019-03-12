@@ -655,7 +655,7 @@ jQuery(document).ready(function($) {
 	/**
 	 *@since 2019.03.10 ajax提交表单
 	 */
-	$("body").on("click", "[data-submit-type='ajax'] button.submit", function() {
+	$("body").on("click", "[data-submit-type='ajax'] [name='submit']", function() {
 		var form_id = $(this).parents("form").attr("id");
 		wnd_ajax_submit(form_id);
 	});

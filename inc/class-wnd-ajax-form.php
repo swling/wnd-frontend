@@ -66,7 +66,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 	function build_submit_button() {
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="button" class="button submit ' . $this->submit_style . '">' . $this->submit . '</button>';
+		$this->html .= '<button type="button" name="submit" class="button ' . $this->submit_style . '">' . $this->submit . '</button>';
 		$this->html .= '</div>';
 	}
 
