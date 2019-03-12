@@ -131,12 +131,7 @@ function _wnd_post_form($args = array()) {
 
 	if (!$args['free']) {
 		$form->add_post_file($post_id, $meta_key = 'file');
-		$form->add_text(array(
-			'name' => '_wpmeta_price',
-			'value' => get_post_meta($args['post_id'], 'price', 1),
-			'label' => '',
-			'placeholder' => '付费价格',
-		));
+		$form->add_post_price($post_id);
 	}
 
 	/**
