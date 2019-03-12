@@ -126,7 +126,9 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 				'name' => '_wpmeta_price',
 				'value' => get_post_meta($post_id, 'price', 1),
 				'label' => '',
-				'placeholder' => '付费价格',
+				'has_icons'=>'left',
+				'icon'	=>'<i class="fas fa-yen-sign"></i>',
+				'placeholder' => '价格',
 			)
 		);
 	}

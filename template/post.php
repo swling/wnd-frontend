@@ -129,8 +129,9 @@ function _wnd_post_form($args = array()) {
 		$form->add_post_thumbnail($post_id, $size = 200);
 	}
 
+	$form->add_post_file($post_id, $meta_key = 'file');
+
 	if (!$args['free']) {
-		$form->add_post_file($post_id, $meta_key = 'file');
 		$form->add_post_price($post_id);
 	}
 
@@ -242,76 +243,38 @@ function _wnd_post_status_form($post_id) {
 		break;
 	}
 
-	?>
-<form id="post-status" action=""  data-submit-type="ajax" method="post" onsubmit="return false">
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-	<div class="field text-centered">
-		<label class="radio">
-			<input type="radio" required="required" class="radio" name="post_status" value="publish" <?php if ($post_status == 'publish') {
-		echo ' checked="checked" ';
-	}
-	?>>
-			发布
-		</label>
-
-		<label class="radio">
-			<input type="radio" required="required" class="radio" name="post_status" value="draft" <?php if ($post_status == 'draft') {
-		echo ' checked="checked" ';
-	}
-	?>>
-			草稿
-		</label>
-
-		<label class="radio">
-			<input type="radio" required="required" class="radio" name="post_status" value="delete">
-			<span class="is-danger">删除</span>
-		</label>
-	</div>
-	<?php if (wnd_is_manager()) {?>
-	<div class="field">
-		<textarea name="remarks" class="textarea" placeholder="备注（可选）"></textarea>
-	</div>
-	<?php }?>
-	<input type="hidden" name="post_id" value="<?php echo $post_id; ?>">
-	<?php wp_nonce_field('wnd_update_post_status', '_ajax_nonce');?>
-	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_update_post_status">
-	<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#post-status')">确认</button>
-	</div>
-</form>
-<script>
-wnd_ajax_msg("<?php echo '当前： ' . $status_text; ?>", "is-danger", "#post-status")
-</script>
-<?php
-
-}
-
-/**
- *@since 2019.01.30 付费内容表单字段
- */
-function _wnd_paid_post_field($post_parent) {
-
-	$args = array(
-		'id' => 'upload-file-' . $post_parent,
-		'meta_key' => 'file',
-		'thumbnail' => 0,
-		'post_parent' => $post_parent,
+	$form = new Wnd_Ajax_Form();
+	$form->add_html('<div class="field is-grouped is-grouped-centered">');
+	$form->add_radio(
+		array(
+			'name' => 'post_status',
+			'value' => array(
+				'发布' => 'publish',
+				'待审' => 'pending',
+				'草稿' => 'draft',
+				'删除' => 'delete',
+			),
+			'required' => 'required',
+		)
 	);
-	_wnd_upload_field($args);
+	$form->add_html('</div>');
+	if (wnd_is_manager()) {
+		$form->add_textarea(
+			array(
+				'name' => 'remarks',
+				'placeholder' => '备注（可选）',
+			)
+		);
+	}
+	$form->add_hidden('post_id', $post_id);
+	$form->set_action('wnd_update_post_status');
+	$form->set_form_attr('id="post-status"');
+	$form->set_submit_button('提交');
+	$form->build();
+	echo $form->html;
 
-	?>
-<div class="field">
-	<div class="control has-icons-left">
-		<input type="number" min="0" step="0.01" class="input" value="<?php echo get_post_meta($post_parent, 'price', 1) ?>" name="_wpmeta_price" placeholder="价格">
-		<span class="icon is-left">
-			<i class="fas fa-yen-sign"></i>
-		</span>
-	</div>
-</div>
-<?php
+	echo '<script>wnd_ajax_msg(\'当前： ' . $status_text . '\', \'is-danger\', \'#post-status\')</script>';
+
 }
 
 /**

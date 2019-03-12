@@ -33,7 +33,6 @@ require WNDWP_PATH . 'inc/ajax-pay.php'; //ajax付费服务
 require WNDWP_PATH . 'inc/add-action.php'; //添加的动作
 require WNDWP_PATH . 'inc/add-filter.php'; //添加的钩子
 
-require WNDWP_PATH . 'template/module.php'; //相对独立的模块模板
 require WNDWP_PATH . 'template/user.php'; //user模板
 require WNDWP_PATH . 'template/post.php'; //post模板
 require WNDWP_PATH . 'template/term.php'; //term模板
