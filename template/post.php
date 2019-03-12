@@ -243,7 +243,7 @@ function _wnd_post_status_form($post_id) {
 	}
 
 	?>
-<form id="post-status" action="" method="post" onsubmit="return false">
+<form id="post-status" action=""  data-submit-type="ajax" method="post" onsubmit="return false">
 	<div class="field">
 		<div class="ajax-msg"></div>
 	</div>

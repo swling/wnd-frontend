@@ -297,7 +297,7 @@ function wnd_update_expense($ID, $status, $title = '') {
  **/
 function wnd_user_has_paid($user_id, $object_id) {
 
-	if(!$user_id or !$object_id){
+	if (!$user_id or !$object_id) {
 		return false;
 	}
 
@@ -373,14 +373,14 @@ function wnd_get_user_commission($user_id) {
 /**
  *@since 2019.02.13
  *文章价格
- *@return 两位数的价格信息 或者 0 
+ *@return 两位数的价格信息 或者 0
  */
 function wnd_get_post_price($post_id) {
 
 	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1) ?: false;
 	$price = is_numeric($price) ? number_format($price, 2) : 0;
 	return apply_filters('wnd_get_post_price', $price, $post_id);
-	
+
 }
 
 /**
@@ -389,7 +389,8 @@ function wnd_get_post_price($post_id) {
  */
 function wnd_get_post_commission($post_id) {
 
-	$commission = wnd_get_post_price($post_id) * wnd_get_option('wndwp', 'wnd_commission_rate');
+	$commission_rate = is_numeric(wnd_get_option('wndwp', 'wnd_commission_rate')) ? wnd_get_option('wndwp', 'wnd_commission_rate') : 0;
+	$commission = wnd_get_post_price($post_id) * $commission_rate;
 	return apply_filters('wnd_get_post_commission', $commission, $post_id);
 
 }
