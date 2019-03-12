@@ -364,7 +364,7 @@ class Wnd_Form {
 		$html .= '>';
 
 		if ($this->form_title) {
-			$html .= '<div class="field is-grouped is-grouped-centered content">';
+			$html .= '<div class="field content">';
 			$html .= '<h3>' . $this->form_title . '</h3>';
 			$html .= '</div>';
 		}
