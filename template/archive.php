@@ -311,17 +311,17 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	foreach ($cat_taxonomies as $taxonomy) {
 
 		/**
-		 *查找在当前的查询参数中，当前taxonomy的键名，如果没有则加入
+		 *查找在当前的tax_query查询参数中，当前taxonomy的键名，如果没有则加入
 		 *tax_query是一个无键名的数组，无法根据键名合并，因此需要准确定位
 		 *(数组默认键值从0开始， 当首元素即匹配则array_search返回 0，此处需要严格区分 0 和 false)
 		 *@since 2019.03.07
 		 */
-		$tax_query_key = false;
+		$taxonomy_query_key = false;
 		$all_active = 'class="is-active"';
 		foreach ($args['tax_query'] as $key => $tax_query) {
 
 			if (array_search($taxonomy, $tax_query) !== false) {
-				$tax_query_key = $key;
+				$taxonomy_query_key = $key;
 				$all_active = '';
 				break;
 			}
@@ -338,8 +338,8 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		if (wp_doing_ajax()) {
 
 			$all_ajax_args = $args;
-			if ($tax_query_key !== false) {
-				unset($all_ajax_args['tax_query'][$tax_query_key]);
+			if ($taxonomy_query_key !== false) {
+				unset($all_ajax_args['tax_query'][$taxonomy_query_key]);
 			}
 			$all_ajax_args = http_build_query($all_ajax_args);
 
@@ -353,7 +353,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		}
 
 		// 输出tabs
-		foreach (get_terms(array('taxonomy' => $taxonomy)) as $term) {
+		foreach (get_terms(array('taxonomy' => $taxonomy, 'parent' => 0)) as $term) {
 
 			$active = '';
 
@@ -362,8 +362,13 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 
 				foreach ($args['tax_query'] as $current_term_query) {
 
-					if ($current_term_query['terms'] == $term->term_id) {
+					// 查询父级分类
+					$current_parent = get_term($current_term_query['terms'])->parent;
+
+					if ($current_term_query['terms'] == $term->term_id or $term->term_id == $current_parent) {
 						$active = 'class="is-active"';
+						// 当前一级分类处于active，对应term id将写入父级数组
+						$current_term_parent[$taxonomy] = $term->term_id;
 					}
 				}
 				unset($current_term_query);
@@ -382,8 +387,8 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 				$ajax_args = $args;
 
 				// 定位当前taxonomy查询在tax_query中的位置（数组键值从0开始，此处必须以 false array_search返回值判断）
-				if ($tax_query_key !== false) {
-					$ajax_args['tax_query'][$tax_query_key] = $term_query;
+				if ($taxonomy_query_key !== false) {
+					$ajax_args['tax_query'][$taxonomy_query_key] = $term_query;
 				} else {
 					array_push($ajax_args['tax_query'], $term_query);
 				}
@@ -417,6 +422,81 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 
 		// 输出结束
 		echo '</ul></div>';
+
+		/**
+		 * @since 2019.03.12 当前分类的子分类
+		 */
+		if (!isset($current_term_parent[$taxonomy])) {
+			continue;
+		}
+
+		$child_terms = get_terms(array('taxonomy' => $taxonomy, 'parent' => $current_term_parent[$taxonomy]));
+		if (!$child_terms) {
+			continue;
+		}
+
+		echo '<div class="tabs"><ul class="tab">';
+		foreach ($child_terms as $child_term) {
+
+			$child_active = '';
+
+			// 遍历当前tax query查询是否匹配当前tab
+			if (isset($args['tax_query'])) {
+
+				foreach ($args['tax_query'] as $current_term_query) {
+
+					if ($current_term_query['terms'] == $child_term->term_id) {
+						$child_active = 'class="is-active"';
+					}
+				}
+				unset($current_term_query);
+
+			}
+			if (wp_doing_ajax()) {
+
+				// 配置ajax请求参数
+				$term_query = array(
+					'taxonomy' => $taxonomy,
+					'field' => 'term_id',
+					'terms' => $child_term->term_id,
+				);
+
+				$ajax_args = $args;
+
+				// 定位当前taxonomy查询在tax_query中的位置（数组键值从0开始，此处必须以 false array_search返回值判断）
+				if ($taxonomy_query_key !== false) {
+					$ajax_args['tax_query'][$taxonomy_query_key] = $term_query;
+				} else {
+					array_push($ajax_args['tax_query'], $term_query);
+				}
+
+				// 按配置移除参数
+				foreach ($args['wnd_remove_query_arg'] as $remove_query_arg) {
+					unset($ajax_args[$remove_query_arg]);
+				}
+				unset($remove_query_arg);
+
+				// 构建ajax查询字符串
+				$ajax_args = http_build_query($ajax_args);
+
+				if ($ajax_type == 'modal') {
+					echo '<li ' . $child_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $child_term->name . '</a></li>';
+				} else {
+					echo '<li ' . $child_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $child_term->name . '</a></li>';
+				}
+
+			} else {
+				/**
+				 *@since 2019.02.27
+				 * 切换类型时，需要从当前网址移除的参数（用于在多重筛选时，移除仅针对当前类型有效的参数）
+				 *categories tabs生成的GET参数为：$taxonomy.'_id'，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+				 */
+				echo '<li ' . $active . '><a href="' . add_query_arg($taxonomy . '_id', $child_term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $child_term->name . '</a></li>';
+			}
+		}
+		unset($child_term);
+		echo '</ul></div>';
+
 	}
 	unset($taxonomy);
 
