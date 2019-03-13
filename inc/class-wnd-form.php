@@ -107,7 +107,7 @@ class Wnd_Form {
 			'has_icons' => $args['has_icons'],
 			'icon' => $args['icon'],
 			'addon' => $args['addon'],
-			'id' => NULL,
+			'id' => $args['id'],
 		));
 	}
 
@@ -132,7 +132,7 @@ class Wnd_Form {
 			'addon' => $args['addon'],
 			'id' => NULL,
 		));
-	}	
+	}
 
 	// _hidden
 	function add_hidden($name, $value) {
@@ -496,14 +496,14 @@ class Wnd_Form {
 		if ($input_value['has_icons']) {
 
 			$html .= $input_value['addon'] ? '<div class="control is-expanded has-icons-' . $input_value['has_icons'] . '">' : '<div class="control has-icons-' . $input_value['has_icons'] . '">';
-			$html .= '<input class="input' . $this->get_size() . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder'] . '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
+			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_size() . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder'] . '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
 			$html .= '<span class="icon' . $this->get_size() . ' is-' . $input_value['has_icons'] . '">' . $input_value['icon'] . '</span>';
 			$html .= '</div>';
 
 		} else {
 
 			$html .= $input_value['addon'] ? '<div class="control is-expanded">' : '<div class="control">';
-			$html .= '<input class="input' . $this->get_size() . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder']
+			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_size() . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder']
 			. '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
 			$html .= '</div>';
 
@@ -534,7 +534,7 @@ class Wnd_Form {
 			$data .= ' data-' . $key . '="' . $value . '" ';
 		}unset($key, $value);
 
-		$html = '<div ' . $this->get_id($input_value) . ' class="field upload-field">';
+		$html = '<div' . $this->get_id($input_value) . ' class="field upload-field">';
 		if ($input_value['label']) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
@@ -568,7 +568,7 @@ class Wnd_Form {
 			$data .= ' data-' . $key . '="' . $value . '" ';
 		}unset($key, $value);
 
-		$html = '<div ' . $this->get_id($input_value) . ' class="field upload-field">';
+		$html = '<div' . $this->get_id($input_value) . ' class="field upload-field">';
 
 		$html .= '<div class="field"><div class="ajax-msg"></div></div>';
 		$html .= '<div class="columns is-mobile">';
@@ -615,7 +615,7 @@ class Wnd_Form {
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
-		$html .= '<textarea class="textarea" name="' . $input_value['name'] . '"' . $this->get_required($input_value) . ' placeholder="' . $input_value['placeholder'] . '" >' . $input_value['value'] . '</textarea>';
+		$html .= '<textarea' . $this->get_id($input_value) . ' class="textarea" name="' . $input_value['name'] . '"' . $this->get_required($input_value) . ' placeholder="' . $input_value['placeholder'] . '" >' . $input_value['value'] . '</textarea>';
 		$html .= '</div>';
 		return $html;
 	}
