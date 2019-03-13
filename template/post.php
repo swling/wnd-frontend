@@ -88,8 +88,9 @@ function _wnd_post_form($args = array()) {
 		unset($taxonomy);
 	}
 
+	// 标签编辑器
 	if (!wp_doing_ajax()) {
-		wnd_tags_editor($maxTags = 3, $maxLength = 10, $placeholder = '标签', $taxonomy = $post_type . '_tag', $initialTags = '');
+		_wnd_tags_editor($maxTags = 3, $maxLength = 10, $placeholder = '标签', $taxonomy = $post_type . '_tag', $initialTags = '');
 	}
 
 	/**
@@ -301,7 +302,7 @@ function _wnd_the_post_thumbnail($width = 0, $height = 0) {
  *@since ≈2018.07
  *###################################################### 表单设置：标签编辑器
  */
-function wnd_tags_editor($maxTags = 3, $maxLength = 10, $placeholder = '标签', $taxonomy = '', $initialTags = '') {
+function _wnd_tags_editor($maxTags = 3, $maxLength = 10, $placeholder = '标签', $taxonomy = '', $initialTags = '') {
 
 	?>
 <!--jquery标签编辑器 Begin-->
