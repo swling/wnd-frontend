@@ -134,7 +134,7 @@ function wnd_paid_download() {
 	$price = get_post_meta($post_id, 'price', 1);
 	$file_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
 
-	$file = get_attached_file($file_id, $unfiltered = true);
+	$file = get_attached_file($file_id, $unfiltered = false);
 	if (!$file) {
 		wp_die('获取文件失败！', get_option('blogname'));
 	}

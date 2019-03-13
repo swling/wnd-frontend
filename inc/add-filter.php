@@ -371,14 +371,13 @@ if (wnd_get_option('wndwp', 'wnd_unset_user_meta') == 1) {
 	function wnd_filter_unset_user_meta($meta, $user) {
 
 		// 排除超级管理员
-		if ($user->roles[0] == 'administrator') {
+		if (is_super_admin()) {
 			return $meta;
 		}
 
 		unset($meta['nickname']);
 		unset($meta['first_name']);
 		unset($meta['last_name']);
-		// unset($meta['rich_editing']);
 		unset($meta['syntax_highlighting']);
 		unset($meta['comment_shortcuts']); //评论快捷方式
 		unset($meta['admin_color']);
