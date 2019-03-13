@@ -3,9 +3,9 @@
 /**
  *@since 2019.03.13
  */
-class Wnd_Post_Table {
+class Wnd_Posts_Table {
 
-	public $columns = array();
+	protected $columns = array();
 	public $html;
 	public $preview_link;
 	public $edit_link;
@@ -13,7 +13,6 @@ class Wnd_Post_Table {
 		'post_field' => '',
 		'title' => '',
 		'content' => '',
-		'is_link' => '',
 		'attr' => '',
 	);
 
@@ -24,9 +23,16 @@ class Wnd_Post_Table {
 	}
 
 	function add_column($column = array()) {
-		$column = array_merge(Wnd_Post_Table::$defaults, $column);
+		$column = array_merge(Wnd_Posts_Table::$defaults, $column);
 		array_push($this->columns, $column);
 	}
+
+	function get_attr($column) {
+		if ($column['attr']) {
+			return ' ' . $column['attr'];
+		}
+		return '';
+	}	
 
 	function build() {
 
@@ -54,7 +60,7 @@ class Wnd_Post_Table {
 		while ($wp_query->have_posts()): $wp_query->the_post();global $post;
 			$this->html .= '<tr>';
 			foreach ($this->columns as $column) {
-				if ($column['post_field'] == 'post_title' and $column['is_link']) {
+				if ($column['post_field'] == 'post_title_with_link') {
 					$content = '<a href="' . get_permalink() . '" target="_blank">' . get_the_title() . '</a>';
 				} else {
 					$content = $column['post_field'] ? get_post_field($column['post_field']) : $column['content'];
@@ -79,15 +85,6 @@ class Wnd_Post_Table {
 
 		// 表单结束
 		$this->html .= '</table>';
-	}
-
-	function get_attr($column) {
-
-		if ($column['attr']) {
-			return ' ' . $column['attr'];
-		}
-		return '';
-
 	}
 
 }
