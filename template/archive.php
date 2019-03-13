@@ -549,18 +549,16 @@ function _wnd_list_posts_with_tabs($args = array()) {
 	// 自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
 	if (!empty($_GET)) {
 
-		$taxonomies = get_object_taxonomies($args['post_type'], $output = 'names');
-
 		foreach ($_GET as $key => $value) {
 
 			/**
 			 *@since 2019.3.07 自动匹配meta query
-			 *?_meta_price=1 则查询 price = 1的文章
-			 *?_meta_price=exists 则查询 存在price的文章
+			 *?meta_price=1 则查询 price = 1的文章
+			 *?meta_price=exists 则查询 存在price的文章
 			 */
-			if (strpos($key, '_meta_') === 0) {
+			if (strpos($key, 'meta_') === 0) {
 
-				$key = str_replace('_meta_', '', $key);
+				$key = str_replace('meta_', '', $key);
 				$compare = $value == 'exists' ? 'exists' : '=';
 				$meta_query = array(
 					'key' => $key,
@@ -575,12 +573,12 @@ function _wnd_list_posts_with_tabs($args = array()) {
 				continue;
 			}
 
-			/*
-				*categories tabs生成的GET参数为：$taxonomy.'_id'，
-				*直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
-			*/
+			/**
+			 *categories tabs生成的GET参数为：$taxonomy.'_id'，
+			 *直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+			 */
 			$key = str_replace('_id', '', $key);
-			if (in_array($key, $taxonomies)) {
+			if (in_array($key, get_object_taxonomies($args['post_type'], $output = 'names'))) {
 
 				$term_query = array(
 					'taxonomy' => $key,
