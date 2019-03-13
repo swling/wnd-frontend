@@ -94,7 +94,7 @@ class Wnd_Form {
 	// _text
 	function add_text($args = array()) {
 
-		$args = array_merge(Wnd_form::$defaults, $args);
+		$args = array_merge(Wnd_Form::$defaults, $args);
 
 		array_push($this->input_values, array(
 			'type' => 'text',
@@ -117,7 +117,7 @@ class Wnd_Form {
 	// _text
 	function add_number($args = array()) {
 
-		$args = array_merge(Wnd_form::$defaults, $args);
+		$args = array_merge(Wnd_Form::$defaults, $args);
 
 		array_push($this->input_values, array(
 			'type' => 'number',
@@ -147,7 +147,7 @@ class Wnd_Form {
 	// _textarea
 	function add_textarea($args = array()) {
 
-		$args = array_merge(Wnd_form::$defaults, $args);
+		$args = array_merge(Wnd_Form::$defaults, $args);
 
 		array_push($this->input_values, array(
 			'type' => 'textarea',
@@ -162,7 +162,7 @@ class Wnd_Form {
 
 	function add_email($args = array()) {
 
-		$args = array_merge(Wnd_form::$defaults, $args);
+		$args = array_merge(Wnd_Form::$defaults, $args);
 
 		array_push($this->input_values, array(
 			'type' => 'email',
@@ -182,7 +182,7 @@ class Wnd_Form {
 	// _password
 	function add_password($args = array()) {
 
-		$args = array_merge(Wnd_form::$defaults, $args);
+		$args = array_merge(Wnd_Form::$defaults, $args);
 
 		array_push($this->input_values, array(
 			'type' => "password",
@@ -202,7 +202,7 @@ class Wnd_Form {
 	// _select
 	function add_select($args = array()) {
 
-		$args = array_merge(Wnd_form::$defaults, $args);
+		$args = array_merge(Wnd_Form::$defaults, $args);
 
 		array_push($this->input_values, array(
 			'type' => "select",
@@ -218,7 +218,7 @@ class Wnd_Form {
 	// _radio
 	function add_radio($args) {
 
-		$args = array_merge(Wnd_form::$defaults, $args);
+		$args = array_merge(Wnd_Form::$defaults, $args);
 
 		array_push($this->input_values, array(
 			'type' => "radio",
@@ -236,7 +236,7 @@ class Wnd_Form {
 	// _checkbox
 	function add_checkbox($args = array()) {
 
-		$args = array_merge(Wnd_form::$defaults, $args);
+		$args = array_merge(Wnd_Form::$defaults, $args);
 
 		array_push($this->input_values, array(
 			'type' => "checkbox",
@@ -254,7 +254,7 @@ class Wnd_Form {
 	// in order to display a thin switch with info color. See documentation for details.
 	function add_switch($args) {
 
-		$args = array_merge(Wnd_form::$defaults, $args);
+		$args = array_merge(Wnd_Form::$defaults, $args);
 
 		array_push($this->input_values, array(
 			'type' => "switch",
