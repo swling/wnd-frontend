@@ -63,6 +63,20 @@ function _wnd_demo_form() {
 	);
 
 	// input
+	$form->add_number(
+		array(
+			'name' => 'number',
+			'value' => '',
+			'placeholder' => 'number',
+			'label' => 'Number<span class="required">*</span> ',
+			'has_icons' => 'left', //icon position "left" orf "right"
+			'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+			'autofocus' => 'autofocus',
+			'required' => true,
+		)
+	);
+
+	// input
 	$form->add_email(
 		array(
 			'name' => 'email',
