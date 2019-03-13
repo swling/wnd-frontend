@@ -89,7 +89,7 @@ class Wnd_Form {
 	}
 
 	/**
-	 *@since 20190.30.10 设置常规input 字段
+	 *@since 2019.03.10 设置常规input 字段
 	 */
 	// _text
 	function add_text($args = array()) {
@@ -110,6 +110,29 @@ class Wnd_Form {
 			'id' => NULL,
 		));
 	}
+
+	/**
+	 *@since 20190.30.10 设置常规input 字段
+	 */
+	// _text
+	function add_number($args = array()) {
+
+		$args = array_merge(Wnd_form::$defaults, $args);
+
+		array_push($this->input_values, array(
+			'type' => 'number',
+			'name' => $args['name'],
+			'placeholder' => $args['placeholder'],
+			'label' => $args['label'],
+			'value' => $args['value'],
+			'required' => $args['required'],
+			'autofocus' => $args['autofocus'],
+			'has_icons' => $args['has_icons'],
+			'icon' => $args['icon'],
+			'addon' => $args['addon'],
+			'id' => NULL,
+		));
+	}	
 
 	// _hidden
 	function add_hidden($name, $value) {
@@ -377,6 +400,7 @@ class Wnd_Form {
 		foreach ($this->input_values as $input_value) {
 			switch ($input_value['type']) {
 			case 'text':
+			case 'number':
 			case 'email':
 			case 'password':
 				$html .= $this->build_input($input_value);

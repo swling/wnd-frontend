@@ -405,6 +405,10 @@ function wnd_admin_recharge($user_field, $money, $remarks = '') {
 		return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作！');
 	}
 
+	if(!is_numeric($money)){
+		return array('status' => 0, 'msg' => '请输入一个有效的充值金额！');
+	}	
+
 	// 查询用户
 	$field = is_email($user_field) ? 'email' : is_numeric($user_field) ? 'id' : 'login';
 	$user = get_user_by($field, $user_field);

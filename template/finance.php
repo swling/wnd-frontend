@@ -279,42 +279,41 @@ function _wnd_recharge_form() {
 */
 function _wnd_admin_recharge_form(){
 
-?>
-<form id="admin-recharge-form" action="" method="post" onsubmit="return false">
+	$form = new Wnd_Ajax_Form();
+	$form->set_form_attr('id="admin-recharge-form"');
 
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
+	$form->add_html('<div class="field is-horizontal"><div class="field-body">');
+	$form->add_text(
+		array(
+			'label'=>'用户<span class="required">*</span>',
+			'name'=>'user_field',
+			'required'=>'required',
+			'placeholder'=>'用户名、ID、或邮箱',
+		)
+	);
+	$form->add_text(
+		array(
+			'label'=>'金额<span class="required">*</span>',
+			'name'=>'money',
+			'required'=>'required',
+			'placeholder'=>'充值金额（负数可扣款）',
+		)
+	);
+	$form->add_html('</div></div>');
 
-	<div class="field is-horizontal">
-		<div class="field-body">
-			<div class="field">
-				<label class="label">用户<span class="required">*</span></label>
-				<div class="control">
-					<input type="text" class="input" name="user_field" required="required" placeholder="用户名、ID、或邮箱" />
-				</div>
-			</div>
-			<div class="field">
-				<label class="label">金额<span class="required">*</span></label>
-				<div class="control">
-					<input type="text" class="input" name="money" placeholder="充值金额（负数可扣款）" />
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="field">
-		<div class="control">
-			<input name="remarks" class="input" placeholder="备注（可选）">
-		</div>
-	</div>	
+	$form->add_text(
+		array(
+			// 'label'=>'金额<span class="required">*</span>',
+			'name'=>'remarks',
+			// 'required'=>'required',
+			'placeholder'=>'备注（可选）',
+		)
+	);	
 
-	<?php wp_nonce_field('wnd_ajax_admin_recharge', '_ajax_nonce');?>
-	<input type="hidden" name="action" value="wnd_action">
-	<input type="hidden" name="action_name" value="wnd_ajax_admin_recharge">
-	<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button" onclick="wnd_ajax_submit('#admin-recharge-form')">确认充值</button>
-	</div>
-</form>
-<?php
+	$form->set_action('wnd_ajax_admin_recharge');
+	$form->set_submit_button('确认充值');
+	$form->build();
+
+	echo $form->html;
 
 }
