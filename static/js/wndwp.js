@@ -339,7 +339,6 @@ function wnd_ajax_submit(form_id) {
 	// 提交中
 	function showRequest(formData, jqForm, options) {
 		$(form_id + " [name='submit']").addClass("is-loading");
-		$(form_id + " [name='submit']").attr("disabled", true);
 	}
 
 	// 返回结果
@@ -349,7 +348,6 @@ function wnd_ajax_submit(form_id) {
 
 		if (response.status <= 0) {
 			var color = "is-danger";
-			$(form_id + " [name='submit']").attr("disabled", false);
 		} else {
 			var color = "is-success";
 		}
@@ -401,7 +399,6 @@ function wnd_ajax_submit(form_id) {
 	function showError() {
 		wnd_ajax_msg("系统错误！", "is-danger", form_id);
 		$(form_id + " [name='submit']").removeClass("is-loading");
-		$(form_id + " [name='submit']").attr("disabled", false);
 	}
 
 }
@@ -619,14 +616,6 @@ jQuery(document).ready(function($) {
 			}
 		});
 
-	});
-
-	/**
-	 *@since 2019.01.18 表单改变时，取消submit disable状态
-	 */
-	$("body").on("change", "form", function() {
-		$("[name='submit']").attr("disabled", false);
-		$("button").attr("disabled", false);
 	});
 
 	/**

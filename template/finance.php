@@ -353,8 +353,8 @@ function _wnd_admin_fin_panel($args = '') {
 			echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#admin-fin\',\'admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
 		}
 	} else {
-		echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('type', 'expense', remove_query_arg('pages')) . '">消费统计</a></li>';
-		echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('type', 'recharge', remove_query_arg('pages')) . '">充值统计</a></li>';
+		echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('type', 'stats-ex', remove_query_arg('pages')) . '">消费统计</a></li>';
+		echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('type', 'stats-re', remove_query_arg('pages')) . '">充值统计</a></li>';
 	}
 	?>
 		</ul>
@@ -412,7 +412,7 @@ function _wnd_list_fin_stats($args = '') {
 
 	// 分页
 	if (!wp_doing_ajax()) {
-		_wnd_next_page($args['posts_per_page'], $query->post_count, $pages_key);
+		_wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
 	} else {
 		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}
