@@ -198,7 +198,7 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	}
 
 	$defaults = array(
-		'wnd_remove_query_arg' => array('paged', 'pages', 'tax_query','meta_query'),
+		'wnd_remove_query_arg' => array('paged', 'pages', 'tax_query', 'meta_query'),
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -212,7 +212,7 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	$tax_query_key = array_search('meta_query', $args['wnd_remove_query_arg']);
 	if (!$tax_query_key) {
 		array_push($args['wnd_remove_query_arg'], 'meta_query');
-	}	
+	}
 
 	// 输出容器
 	echo '<div class="tabs is-boxed"><ul class="tab">';
@@ -262,6 +262,17 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 				}
 				unset($taxonomy);
 			}
+
+			/**
+			 *@since 2019.3.14 移除meta查询
+			 */
+			foreach ($_GET as $key => $value) {
+				if (strpos($key, 'meta_') === 0) {
+					array_push($args['wnd_remove_query_arg'], $key);
+					continue;
+				}
+			}
+			unset($key, $value);
 
 			echo '<li ' . $active . '><a href="' . add_query_arg('type', $post_type->name, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $post_type->label . '</a></li>';
 		}
