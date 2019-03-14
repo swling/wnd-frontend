@@ -11,7 +11,6 @@ require WNDWP_PATH . 'inc/class-wnd-form.php'; //表单生成类
 require WNDWP_PATH . 'inc/class-wnd-ajax-form.php'; //Ajax表单生成类
 require WNDWP_PATH . 'inc/class-wnd-user-form.php'; //用户表单生成类
 require WNDWP_PATH . 'inc/class-wnd-post-form.php'; //文章表单生成类
-require WNDWP_PATH . 'inc/class-wnd-post-table.php'; //文章表单列表生成类
 
 require WNDWP_PATH . 'inc/wnd-options.php'; //配置选项
 require WNDWP_PATH . 'inc/wnd-database.php'; //数据库
