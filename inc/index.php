@@ -16,6 +16,7 @@ require WNDWP_PATH . 'inc/wnd-options.php'; //配置选项
 require WNDWP_PATH . 'inc/wnd-database.php'; //数据库
 
 require WNDWP_PATH . 'inc/inc-functions.php'; //通用函数定义
+require WNDWP_PATH . 'inc/inc-admin.php'; //管理函数
 require WNDWP_PATH . 'inc/inc-post.php'; //post相关自定义函数
 require WNDWP_PATH . 'inc/inc-user.php'; //user相关自定义函数
 require WNDWP_PATH . 'inc/inc-media.php'; //媒体文件处理函数

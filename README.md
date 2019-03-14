@@ -156,6 +156,9 @@ do_action( 'wnd_update_profile', $user_id );
 ##充值表单 @since 2019.01.21
 do_action('_wnd_recharge_form')
 
+##@since 2019.03.14 站点清理
+do_action('wnd_clean_up');
+
 ```
 #前端Form name规则 
 前端表单遵循以下规则定义的name，后台获取后自动提取，并更新到数据库
