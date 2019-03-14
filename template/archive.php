@@ -79,10 +79,8 @@ function _wnd_ajax_next_page($function, $args, $post_count) {
  *@since 2019.02.15
  *以表格形式输出WordPress文章列表
  *@param $args wp_query参数
- *@param $pages_key = 'pages' 仅在非ajax状态下有效
- *@param $color 预览弹窗颜色
  */
-function _wnd_list_posts_by_table($args = '', $pages_key = 'pages', $color = 'is-primary') {
+function _wnd_list_posts_by_table($args = '') {
 
 	$args = wp_parse_args($args);
 
@@ -107,7 +105,7 @@ function _wnd_list_posts_by_table($args = '', $pages_key = 'pages', $color = 'is
 			<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
 			<th class="is-narrow is-hidden-mobile"><?php echo apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
 			<td class="is-narrow is-hidden-mobile">
-				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>&color=<?php echo $color; ?>')">预览</a>
+				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>')">预览</a>
 				<?php if (current_user_can('edit_post', $post->ID)) {?>
 				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
 				<?php }?>
@@ -128,7 +126,7 @@ function _wnd_list_posts_by_table($args = '', $pages_key = 'pages', $color = 'is
 
 	// 分页
 	if (!wp_doing_ajax()) {
-		_wnd_next_page($args['posts_per_page'], $query->post_count, $pages_key);
+		_wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
 	} else {
 		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}
@@ -144,10 +142,9 @@ function _wnd_list_posts_by_table($args = '', $pages_key = 'pages', $color = 'is
  *调用主题文章输出列表模板
  *将对应的文章模板放置在主题文件夹中，具体形式：template-parts/list/list-post_type.php
  *@param $args  wp_query $args
- *@param $pages_key = 'pages',  仅在非ajax状态下有效
  *@see get_template_part() @link https://developer.wordpress.org/reference/functions/get_template_part/
  */
-function _wnd_list_posts_by_template($args = '', $pages_key = 'pages') {
+function _wnd_list_posts_by_template($args = '') {
 
 	$args = wp_parse_args($args);
 
@@ -173,7 +170,7 @@ function _wnd_list_posts_by_template($args = '', $pages_key = 'pages') {
 
 	// 分页
 	if (!wp_doing_ajax()) {
-		_wnd_next_page($args['posts_per_page'], $query->post_count, $pages_key);
+		_wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
 	} else {
 		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}

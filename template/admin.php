@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
  *@since 2019.02.19 封装前端管理员内容审核平台
  *@param array or string ：wp_query args
  */
-function _wnd_admin_posts_panel($args = array()) {
+function _wnd_admin_posts_panel($args = '') {
 
 	if (!wnd_is_manager()) {
 		echo '<div class="message is-danger"><div class="message-body">当前账户没有管理权限！</div></div>';
@@ -30,7 +30,7 @@ function _wnd_admin_posts_panel($args = array()) {
  *@since 2019.02.19 封装前端当前用户内容管理面板
  *@param array or string ：wp_query args
  */
-function _wnd_user_posts_panel($args = array()) {
+function _wnd_user_posts_panel($args = '') {
 
 	if (!is_user_logged_in()) {
 		echo '<div class="message is-danger"><div class="message-body">请登录！</div></div>';
@@ -56,7 +56,7 @@ function _wnd_user_posts_panel($args = array()) {
  *@since 2019.02.19 封装前端当前用户站内信
  *@param array or string ：wp_query args
  */
-function _wnd_user_mail_box($args = array()) {
+function _wnd_user_mail_box($args = '') {
 
 	if (!is_user_logged_in()) {
 		echo '<div class="message is-danger"><div class="message-body">请登录！</div></div>';
@@ -97,11 +97,11 @@ function _wnd_user_mail_box($args = array()) {
 		// ajax请求类型
 		$ajax_type = $_POST['ajax_type'] ?? 'modal';
 		if ($ajax_type == 'modal') {
-			echo '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'list_posts\',\'' . $ajax_args_all . '\');">全部</a></li>';
-			echo '<li ' . $unread_active . '><a onclick="wnd_ajax_modal(\'list_posts\',\'' . $ajax_args_unread . '\');">未读</a></li>';
+			echo '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
+			echo '<li ' . $unread_active . '><a onclick="wnd_ajax_modal(\'user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
 		} else {
-			echo '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'#user-mail-list\',\'list_posts\',\'' . $ajax_args_all . '\');">全部</a></li>';
-			echo '<li ' . $unread_active . '><a onclick="wnd_ajax_embed(\'#user-mail-list\',\'list_posts\',\'' . $ajax_args_unread . '\');">未读</a></li>';
+			echo '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
+			echo '<li ' . $unread_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
 		}
 
 	} else {
@@ -114,7 +114,7 @@ function _wnd_user_mail_box($args = array()) {
 	echo '</ul></div>';
 
 	echo '<div id="user-mail-list">';
-	_wnd_list_posts($args);
+	_wnd_list_posts_by_table($args);
 	echo '</div>';
 
 	// 容器结束

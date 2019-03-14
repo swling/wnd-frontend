@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 /**
  *@since 2019.02.18 封装用户财务中心
  */
-function _wnd_user_fin_panel($args = array()) {
+function _wnd_user_fin_panel($args = '') {
 
 	if (!is_user_logged_in()) {
 		return;
@@ -17,17 +17,16 @@ function _wnd_user_fin_panel($args = array()) {
 	$ajax_type = $_POST['ajax_type'] ?? 'modal';
 	$user_id = get_current_user_id();
 
+	// args
 	$defaults = array(
-		'post_type' => 'expense',
+		'post_type' => $_GET['type'] ?? 'expense',
 		'post_status' => 'any',
+		'paged' => $_GET['pages'] ?? 1,
 		'posts_per_page' => get_option('posts_per_page'),
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	// 优先参数
-	$args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
-	// $status = $_REQUEST['status'] ?? $args['post_status'];
-
+	// active
 	$expense_is_active = $args['post_type'] == 'expense' ? 'class="is-active"' : '';
 	$recharge_is_active = $args['post_type'] == 'recharge' ? 'class="is-active"' : '';
 
@@ -109,19 +108,11 @@ function _wnd_user_fin_panel($args = array()) {
  *以表格形式输出WordPress文章列表
  *$pages_key = 'pages', $color = 'is-primary' 仅在非ajax状态下有效
  */
-function _wnd_list_user_fin($args = array(), $pages_key = 'pages', $color = 'is-primary') {
+function _wnd_list_user_fin($args = '') {
 
-	$defaults = array(
-		'posts_per_page' => get_option('posts_per_page'),
-		'paged' => 1,
-		'post_type' => 'expense',
-		'post_status' => 'any',
-		'no_found_rows' => true, //$query->max_num_pages;
-	);
-	$args = wp_parse_args($args, $defaults);
+	$args = wp_parse_args($args);
 
 	// 优先参数
-	$args['paged'] = $_REQUEST[$pages_key] ?? $args['paged'];
 	$args['author'] = get_current_user_id();
 
 	$query = new WP_Query($args);
@@ -141,23 +132,22 @@ function _wnd_list_user_fin($args = array(), $pages_key = 'pages', $color = 'is-
 	</thead>
 	<tbody>
 		<?php while ($query->have_posts()): $query->the_post();global $post;?>
-					<tr>
-						<td class="is-narrow is-hidden-mobile"><?php the_time('m-d H:i');?></td>
-						<td><?php echo $post->post_content; ?></td>
-						<?php if ($post->post_parent) {?>
-						<td><a href="<?php the_permalink($post->post_parent);?>" target="_blank"><?php echo $post->post_title; ?></a></td>
-						<?php } else {?>
-						<td><?php echo $post->post_title; ?></td>
-					 	<?php }?>
-
-						<th class="is-narrow is-hidden-mobile"><?php echo $post->post_status; ?></th>
-						<td class="is-narrow is-hidden-mobile">
-							<?php if (current_user_can('edit_post', $post->ID)) {?>
-							<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
-							<?php }?>
-						</td>
-					</tr>
-					<?php endwhile;?>
+		<tr>
+			<td class="is-narrow is-hidden-mobile"><?php the_time('m-d H:i');?></td>
+			<td><?php echo $post->post_content; ?></td>
+			<?php if ($post->post_parent) {?>
+			<td><a href="<?php the_permalink($post->post_parent);?>" target="_blank"><?php echo $post->post_title; ?></a></td>
+			<?php } else {?>
+			<td><?php echo $post->post_title; ?></td>
+		 	<?php }?>
+			<th class="is-narrow is-hidden-mobile"><?php echo $post->post_status; ?></th>
+			<td class="is-narrow is-hidden-mobile">
+				<?php if (current_user_can('edit_post', $post->ID)) {?>
+				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
+				<?php }?>
+			</td>
+		</tr>
+		<?php endwhile;?>
 	</tbody>
 	<?php wp_reset_postdata(); //重置查询?>
 </table>
@@ -165,7 +155,7 @@ function _wnd_list_user_fin($args = array(), $pages_key = 'pages', $color = 'is-
 
 	// 分页
 	if (!wp_doing_ajax()) {
-		_wnd_next_page($posts_per_page, $query->post_count, $pages_key);
+		_wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
 	} else {
 		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}
@@ -189,7 +179,7 @@ function _wnd_recharge_form() {
 
 	if (wnd_get_option('wndwp', 'wnd_alipay_appid')) {
 
-	?>
+		?>
 <style>
 /*单选样式优化*/
 .radio-toolbar,
@@ -300,9 +290,7 @@ function _wnd_admin_recharge_form() {
 
 	$form->add_text(
 		array(
-			// 'label'=>'金额<span class="required">*</span>',
 			'name' => 'remarks',
-			// 'required'=>'required',
 			'placeholder' => '备注（可选）',
 		)
 	);
@@ -318,7 +306,7 @@ function _wnd_admin_recharge_form() {
 /**
  *@since 2019.03.14 财务统计中心
  */
-function _wnd_admin_fin_panel($args = array()) {
+function _wnd_admin_fin_panel($args = '') {
 
 	if (!is_user_logged_in()) {
 		return;
@@ -326,58 +314,22 @@ function _wnd_admin_fin_panel($args = array()) {
 
 	// ajax请求类型
 	$ajax_type = $_POST['ajax_type'] ?? 'modal';
-	$user_id = get_current_user_id();
 
+	// args
 	$defaults = array(
-		'post_type' => 'stats-ex',
+		'post_type' => $_GET['type'] ?? 'stats-ex',
 		'post_status' => 'any',
+		'paged' => $_GET['pages'] ?? 1,
 		'posts_per_page' => get_option('posts_per_page'),
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	// 优先参数
-	$args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
-	// $status = $_REQUEST['status'] ?? $args['post_status'];
-
+	// active
 	$recharge_is_active = $args['post_type'] == 'stats-re' ? 'class="is-active"' : '';
 	$expense_is_active = $args['post_type'] == 'stats-ex' ? 'class="is-active"' : '';
 
 	?>
-<div id="user-fin">
-	<nav class="level">
-		<div class="level-item has-text-centered">
-			<div>
-				<p class="heading">余额</p>
-				<p class="title"><?php echo wnd_get_user_money($user_id); ?></p>
-			</div>
-		</div>
-		<div class="level-item has-text-centered">
-			<div>
-				<p class="heading">消费</p>
-				<p class="title"><?php echo wnd_get_user_expense($user_id); ?></p>
-			</div>
-		</div>
-		<?php if (wnd_get_option('wndwp', 'wnd_commission_rate')) {?>
-		<div class="level-item has-text-centered">
-			<div>
-				<p class="heading">佣金</p>
-				<p class="title"><?php echo wnd_get_user_commission($user_id); ?></p>
-			</div>
-		</div>
-		<?php }?>
-	</nav>
-
-	<div class="level">
-		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal('recharge_form')">余额充值</button>
-		</div>
-		<?php if (is_super_admin()) {?>
-		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal('admin_recharge_form')">管理员充值</button>
-		</div>
-		<?php }?>
-	</div>
-
+<div id="admin-fin">
 	<div class="tabs">
 		<ul>
 		<?php
@@ -397,8 +349,8 @@ function _wnd_admin_fin_panel($args = array()) {
 			echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_modal(\'admin_fin_panel\',\'' . $ajax_args_expense . '\');">消费统计</a></li>';
 			echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
 		} else {
-			echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'admin_fin_panel\',\'' . $ajax_args_expense . '\');">消费统计</a></li>';
-			echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
+			echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_embed(\'#admin-fin\',\'admin_fin_panel\',\'' . $ajax_args_expense . '\');">消费统计</a></li>';
+			echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#admin-fin\',\'admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
 		}
 	} else {
 		echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('type', 'expense', remove_query_arg('pages')) . '">消费统计</a></li>';
@@ -407,7 +359,7 @@ function _wnd_admin_fin_panel($args = array()) {
 	?>
 		</ul>
 	</div>
-	<div id="user-fin-list">
+	<div id="admin-fin-list">
 	<?php _wnd_list_fin_stats($args);?>
 	</div>
 </div>
@@ -418,24 +370,10 @@ function _wnd_admin_fin_panel($args = array()) {
 /**
  *@since 2019.03.14
  *以表格形式输出按月统计
- *$pages_key = 'pages', $color = 'is-primary' 仅在非ajax状态下有效
  */
-function _wnd_list_fin_stats($args = array(), $pages_key = 'pages', $color = 'is-primary') {
+function _wnd_list_fin_stats($args = '') {
 
-	// $paged = $_REQUEST[$pages_key] ?? $args['paged'] ?? 1;
-	$defaults = array(
-		'posts_per_page' => get_option('posts_per_page'),
-		'paged' => 1,
-		'post_type' => 'stats-re',
-		'post_status' => 'publish',
-		'no_found_rows' => true, //$query->max_num_pages;
-	);
-	$args = wp_parse_args($args, $defaults);
-
-	// 优先参数
-	$args['paged'] = $_REQUEST[$pages_key] ?? $args['paged'];
-	$args['author'] = get_current_user_id();
-
+	$args = wp_parse_args($args);
 	$query = new WP_Query($args);
 
 	if ($query->have_posts()):
@@ -452,22 +390,21 @@ function _wnd_list_fin_stats($args = array(), $pages_key = 'pages', $color = 'is
 	</thead>
 	<tbody>
 		<?php while ($query->have_posts()): $query->the_post();global $post;?>
-					<tr>
-						<td class="is-narrow is-hidden-mobile"><?php the_time('m-d');?></td>
-						<td><?php echo $post->post_content; ?></td>
-						<?php if ($post->post_parent) {?>
-						<td><a href="<?php the_permalink($post->post_parent);?>" target="_blank"><?php echo $post->post_title; ?></a></td>
-						<?php } else {?>
-						<td><?php echo $post->post_title; ?></td>
-					 	<?php }?>
-
-						<td class="is-narrow is-hidden-mobile">
-							<?php if (current_user_can('edit_post', $post->ID)) {?>
-							<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
-							<?php }?>
-						</td>
-					</tr>
-					<?php endwhile;?>
+		<tr>
+			<td class="is-narrow is-hidden-mobile"><?php the_time('m-d');?></td>
+			<td><?php echo $post->post_content; ?></td>
+			<?php if ($post->post_parent) {?>
+			<td><a href="<?php the_permalink($post->post_parent);?>" target="_blank"><?php echo $post->post_title; ?></a></td>
+			<?php } else {?>
+			<td><?php echo $post->post_title; ?></td>
+		 	<?php }?>
+			<td class="is-narrow is-hidden-mobile">
+				<?php if (current_user_can('edit_post', $post->ID)) {?>
+				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
+				<?php }?>
+			</td>
+		</tr>
+		<?php endwhile;?>
 	</tbody>
 	<?php wp_reset_postdata(); //重置查询?>
 </table>
@@ -475,7 +412,7 @@ function _wnd_list_fin_stats($args = array(), $pages_key = 'pages', $color = 'is
 
 	// 分页
 	if (!wp_doing_ajax()) {
-		_wnd_next_page($posts_per_page, $query->post_count, $pages_key);
+		_wnd_next_page($args['posts_per_page'], $query->post_count, $pages_key);
 	} else {
 		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}
