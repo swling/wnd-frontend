@@ -531,7 +531,7 @@ function _wnd_list_posts_with_tabs($args = array()) {
 	$defaults = array(
 		'posts_per_page' => get_option('posts_per_page'),
 		'paged' => 1,
-		'post_type' => 'post',
+		'post_type' => '',
 		'post_status' => 'publish',
 		'tax_query' => array(),
 		'meta_query' => array(),
@@ -556,7 +556,7 @@ function _wnd_list_posts_with_tabs($args = array()) {
 	}
 
 	// GET参数优先;指定参数优先;当未指定类型：为数组时，默认数组第一个类型为当期查询值
-	$args['post_type'] = $args['post_type'] ?? (is_array($args['wnd_post_types']) ? reset($args['wnd_post_types']) : $args['wnd_post_types']);
+	$args['post_type'] = $args['post_type'] ?: (is_array($args['wnd_post_types']) ? reset($args['wnd_post_types']) : $args['wnd_post_types']);
 	$args['post_type'] = $_GET['type'] ?? $args['post_type'];
 	// 分页优先参数
 	$args['paged'] = $_GET['pages'] ?? $args['paged'];
