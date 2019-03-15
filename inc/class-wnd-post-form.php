@@ -90,17 +90,17 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_post_thumbnail($post_id, $size = 200, $label = '') {
+	function add_post_thumbnail($post_id, $size = array(), $label = '') {
 		$thumbnail_defaults = array(
 			'id' => 'thumbnail',
 			'label' => $label,
-			'thumbnail_size' => array('width' => $size, 'height' => $size),
+			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
 			'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
 			'data' => array(
 				'post_parent' => $post_id,
 				'meta_key' => '_thumbnail_id',
-				'save_width' => $size,
-				'savve_height' => $size,
+				'save_width' => $size['width'],
+				'savve_height' => $size['height'],
 			),
 		);
 		$thumbnail_args = $thumbnail_defaults;
@@ -126,8 +126,8 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 				'name' => '_wpmeta_price',
 				'value' => get_post_meta($post_id, 'price', 1),
 				'label' => '',
-				'has_icons'=>'left',
-				'icon'	=>'<i class="fas fa-yen-sign"></i>',
+				'has_icons' => 'left',
+				'icon' => '<i class="fas fa-yen-sign"></i>',
 				'placeholder' => '价格',
 			)
 		);

@@ -127,7 +127,7 @@ function _wnd_post_form($args = array()) {
 	}
 
 	if ($args['thumbnail']) {
-		$form->add_post_thumbnail($post_id, $size = 200);
+		$form->add_post_thumbnail($post_id, $args['thumbnail_size']);
 	}
 
 	$form->add_post_file($post_id, $meta_key = 'file');
