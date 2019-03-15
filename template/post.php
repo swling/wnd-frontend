@@ -281,12 +281,12 @@ function _wnd_post_status_form($post_id) {
 /**
  *@since 2019.02.27 获取WndWP文章缩略图
  */
-function _wnd_the_post_thumbnail($width = 0, $height = 0) {
+function _wnd_the_post_thumbnail($width = 0, $height = 0, $post_id = 0) {
 
-	global $post;
+	$post_id = $post_id ?: get_the_ID();
 
-	if ($post->ID) {
-		$image_id = wnd_get_post_meta($post->ID, '_thumbnail_id');
+	if ($post_id) {
+		$image_id = wnd_get_post_meta($post_id, '_thumbnail_id');
 	}
 
 	if ($image_id) {
