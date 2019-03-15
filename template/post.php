@@ -34,6 +34,7 @@ function _wnd_post_form($args = array()) {
 	$args = wp_parse_args($args, $defaults);
 	$post_id = $args['post_id'];
 	$post_type = $args['post_type'];
+	$post_parent = $args['post_parent'];
 
 	// 未指定id，新建文章，否则为编辑
 	if (!$post_id) {
@@ -45,7 +46,7 @@ function _wnd_post_form($args = array()) {
 	$post = get_post($post_id);
 	if ($post) {
 		$post_type = $post->post_type;
-
+		$post_parent = $post->post_parent;
 		//新建文章失败
 	} else {
 
@@ -165,7 +166,7 @@ function _wnd_post_form($args = array()) {
 
 	$form->add_hidden('_post_post_type', $post_type);
 	$form->add_hidden('_post_post_id', $post_id);
-	$form->add_hidden('_post_post_parent', $args['post_parent']);
+	$form->add_hidden('_post_post_parent', $post_parent);
 
 	$form->set_submit_button('保存');
 

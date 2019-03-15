@@ -263,7 +263,7 @@ function wnd_ajax_embed(container, handle, param = 0) {
 function wnd_ajax_submit(form_id) {
 
 	// 带有required属性的input 不能为空
-	var form_id = "#"+form_id;
+	var form_id = "#" + form_id;
 	var input_value = true;
 	$(form_id + " input").each(function() {
 		var required = $(this).attr("required");
@@ -401,6 +401,64 @@ function wnd_ajax_submit(form_id) {
 		$(form_id + " [name='submit']").removeClass("is-loading");
 	}
 
+}
+
+/**
+ * 流量统计
+ */
+function wnd_update_post_views(post_id, interval = 3600) {
+
+	var timestamp = Date.parse(new Date()) / 1000;
+	var visit = getCookie('visit') ? JSON.parse(getCookie('visit')) : [];
+	var max_length = 10;
+	var is_new_visit = true;
+	var update = false;
+	// 数据处理
+	for (var i = 0; i < visit.length; i++) {
+		var post = visit[i];
+		if (post.post_id == post_id) {
+			// 存在记录中：且时间过期
+			if (post.timestamp < timestamp - interval) {
+				visit[i].timestamp = timestamp;
+				var update = true;
+			}
+			var is_new_visit = false;
+			break;
+		}
+	}
+	// 新浏览写入cookie
+	if (is_new_visit) {
+		var new_visit = {
+			'post_id': post_id,
+			'timestamp': timestamp
+		};
+		visit.unshift(new_visit);
+		var update = true;
+	}
+	// 删除超过长度的元素
+	if (visit.length > max_length) {
+		visit.length = max_length;
+	}
+	// 更新服务器数据
+	if (update) {
+		$.ajax({
+			type: "POST",
+			datatype: 'json',
+			url: ajaxurl,
+			data: {
+				'post_id': post_id,
+				'useragent': navigator.userAgent,
+				'action_name': '_wnd_update_post_views',
+				'action': 'wnd_action',
+			},
+			success: function(response) {
+				if (response.status === 1) {
+					// 转为字符串形式写入cookie
+					setCookie('visit', JSON.stringify(visit), 3600 * 24 * 30, '/');
+				}
+			}
+		});
+	}
 }
 
 //####################### 文档加载完成后才能执行的功能
