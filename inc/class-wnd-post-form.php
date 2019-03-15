@@ -100,7 +100,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 				'post_parent' => $post_id,
 				'meta_key' => '_thumbnail_id',
 				'save_width' => $size['width'],
-				'savve_height' => $size['height'],
+				'save_height' => $size['height'],
 			),
 		);
 		$thumbnail_args = $thumbnail_defaults;
