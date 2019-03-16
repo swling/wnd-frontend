@@ -70,6 +70,12 @@ form input type hidden
 
 #filter
 
+##ajax表单数据
+```php
+// @since 2019.03.16 Wnd_Form_Data 过滤前端表单提交的数据
+$this->form_data = apply_filters('wnd_form_data', $_POST, $_POST);
+```
+
 ##文章
 ```php
 ### 文章写入（默认直接通过，当$update_id有效，默认根据WordPress判断当前用户是否可以编辑）

@@ -158,6 +158,7 @@ function wnd_update_profile() {
 
 	// 实例化WndWP表单数据处理对象
 	$form_data = new Wnd_Form_Data();
+	$user_array = $form_data->get_user_array();
 	$user_meta_array = $form_data->get_user_meta_array();
 	$wp_user_meta_array = $form_data->get_wp_user_meta_array();;
 
@@ -167,7 +168,7 @@ function wnd_update_profile() {
 	if (!$user_id) {
 		return array('status' => 0, 'msg' => '获取用户ID失败！');
 	}
-	$user_array = array('ID' => $user_id, 'display_name' => $_POST['_user_display_name'], 'user_url' => $_POST['_user_user_url']);
+	$user_array = array('ID' => $user_id, 'display_name' => $user_array['display_name'], 'user_url' => $user_array['user_url']);
 
 	// 更新权限过滤挂钩
 	$user_can_update_profile = apply_filters('wnd_can_update_profile', array('status' => 1, 'msg' => '默认通过'));

@@ -12,12 +12,31 @@ class Wnd_Form_Data {
 	private $allowed_wp_post_meta_key;
 	private $allowed_user_meta_key;
 	private $allowed_wp_user_meta_key;
+	public $form_data;
 
 	function __construct() {
 		$this->allowed_post_meta_key = explode(',', wnd_get_option('wndwp', 'wnd_allowed_post_meta_key'));
 		$this->allowed_wp_post_meta_key = explode(',', wnd_get_option('wndwp', 'wnd_allowed_wp_post_meta_key'));
 		$this->allowed_user_meta_key = explode(',', wnd_get_option('wndwp', 'wnd_allowed_user_meta_key'));
 		$this->allowed_wp_user_meta_key = explode(',', wnd_get_option('wndwp', 'wnd_allowed_wp_user_meta_key'));
+		$this->form_data = apply_filters('wnd_form_data', $_POST, $_POST);
+	}
+
+	// 0、获取WordPress user数据数组
+	public function get_user_array() {
+
+		$user_array = array();
+
+		foreach ($this->form_data as $key => $value) {
+
+			if (strpos($key, '_user_') === 0) {
+				$key = str_replace('_user_', '', $key);
+				$user_array = array_merge($user_array, array($key => $value));
+			}
+
+		}unset($key, $value);
+
+		return $user_array;
 	}
 
 	// 1、获取WordPress原生use meta数据数组
@@ -25,7 +44,7 @@ class Wnd_Form_Data {
 
 		$wp_user_meta_array = array();
 
-		foreach ($_POST as $key => $value) {
+		foreach ($this->form_data as $key => $value) {
 
 			if (strpos($key, '_wpusermeta_') === 0) {
 				$key = str_replace('_wpusermeta_', '', $key);
@@ -45,7 +64,7 @@ class Wnd_Form_Data {
 
 		$user_meta_array = array();
 
-		foreach ($_POST as $key => $value) {
+		foreach ($this->form_data as $key => $value) {
 
 			if (strpos($key, '_usermeta_') === 0) {
 				$key = str_replace('_usermeta_', '', $key);
@@ -65,7 +84,7 @@ class Wnd_Form_Data {
 
 		$post_array = array();
 
-		foreach ($_POST as $key => $value) {
+		foreach ($this->form_data as $key => $value) {
 
 			if (strpos($key, '_post_') === 0) {
 				$key = str_replace('_post_', '', $key);
@@ -82,7 +101,7 @@ class Wnd_Form_Data {
 
 		$wp_post_meta_array = array();
 
-		foreach ($_POST as $key => $value) {
+		foreach ($this->form_data as $key => $value) {
 
 			if (strpos($key, '_wpmeta_') === 0) {
 				$key = str_replace('_wpmeta_', '', $key);
@@ -102,7 +121,7 @@ class Wnd_Form_Data {
 
 		$post_meta_array = array();
 
-		foreach ($_POST as $key => $value) {
+		foreach ($this->form_data as $key => $value) {
 
 			if (strpos($key, '_meta_') === 0) {
 				$key = str_replace('_meta_', '', $key);
@@ -122,7 +141,7 @@ class Wnd_Form_Data {
 
 		$term_array = array();
 
-		foreach ($_POST as $key => $value) {
+		foreach ($this->form_data as $key => $value) {
 
 			if (strpos($key, '_term_') === 0) {
 				$key = str_replace('_term_', '', $key);
