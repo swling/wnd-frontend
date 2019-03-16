@@ -369,14 +369,13 @@ function _wnd_profile_form($args = array()) {
 		echo '<script>wnd_alert_msg(\'请登录\')</script>';
 		return;
 	}
-	$user = wp_get_current_user();
 
 	$form = new Wnd_User_Form();
 
 	$form->set_form_attr('id="user-profile"');
 
 	/*头像上传*/
-	$form->add_user_avatar($thumbnail_size = 150, $save_size = 200);
+	$form->add_user_avatar();
 
 	$form->add_user_display_name();
 
