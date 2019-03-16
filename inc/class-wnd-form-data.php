@@ -19,7 +19,7 @@ class Wnd_Form_Data {
 		$this->allowed_wp_post_meta_key = explode(',', wnd_get_option('wndwp', 'wnd_allowed_wp_post_meta_key'));
 		$this->allowed_user_meta_key = explode(',', wnd_get_option('wndwp', 'wnd_allowed_user_meta_key'));
 		$this->allowed_wp_user_meta_key = explode(',', wnd_get_option('wndwp', 'wnd_allowed_wp_user_meta_key'));
-		$this->form_data = apply_filters('wnd_form_data', $_POST, $_POST);
+		$this->form_data = apply_filters('wnd_form_data', $_POST);
 	}
 
 	// 0、获取WordPress user数据数组
