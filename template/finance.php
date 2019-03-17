@@ -179,7 +179,7 @@ function _wnd_recharge_form() {
 
 	if (wnd_get_option('wndwp', 'wnd_alipay_appid')) {
 
-		?>
+?>
 <style>
 /*单选样式优化*/
 .radio-toolbar,
@@ -308,7 +308,7 @@ function _wnd_admin_recharge_form() {
  */
 function _wnd_admin_fin_panel($args = '') {
 
-	if (!is_user_logged_in()) {
+	if (!is_super_admin()) {
 		return;
 	}
 
