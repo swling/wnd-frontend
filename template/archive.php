@@ -358,12 +358,12 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 			$all_ajax_args = http_build_query($all_ajax_args);
 
 			if ($ajax_type == 'modal') {
-				echo '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+				echo '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">' . get_taxonomy($taxonomy)->label . '</a></li>';
 			} else {
-				echo '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+				echo '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">' . get_taxonomy($taxonomy)->label . '</a></li>';
 			}
 		} else {
-			echo '<li ' . $all_active . '><a href="' . remove_query_arg($taxonomy . '_id', remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
+			echo '<li ' . $all_active . '><a href="' . remove_query_arg($taxonomy . '_id', remove_query_arg($args['wnd_remove_query_arg'])) . '">' . get_taxonomy($taxonomy)->label . '</a></li>';
 		}
 
 		// 输出tabs
