@@ -102,7 +102,9 @@ function _wnd_post_form($args = array()) {
 	$form->set_form_attr('id="post-form-' . $post_id . '" onkeydown="if(event.keyCode==13){return false;}"');
 	$form->set_form_title($args['form_title']);
 	$form->add_post_title($post->post_title == 'Auto-draft' ? '' : $post->post_title);
-	$form->add_post_excerpt($post->post_excerpt);
+	if($args['excerpt']){
+		$form->add_post_excerpt($post->post_excerpt);
+	}
 
 	// 遍历分类
 	if ($cat_taxonomies) {
