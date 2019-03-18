@@ -343,7 +343,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		unset($key, $tax_query);
 
 		// 输出容器
-		echo '<div class="tabs"><ul class="tab">';
+		echo '<div class="tabs ' . $taxonomy . '-tabs"><ul class="tab">';
 
 		/**
 		 * 全部选项
