@@ -92,7 +92,7 @@ function _wnd_list_posts_by_table($args = '') {
 <table class="table is-fullwidth is-hoverable is-striped">
 	<thead>
 		<tr>
-			<th class="is-narrow is-hidden-mobile"><abbr title="Position">日期</abbr></th>
+			<th class="is-narrow is-hidden-mobile">日期</th>
 			<th>标题</th>
 			<th class="is-narrow is-hidden-mobile">状态</th>
 			<th class="is-narrow is-hidden-mobile">操作</th>
