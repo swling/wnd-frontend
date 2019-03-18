@@ -610,13 +610,14 @@ function _wnd_list_posts_with_tabs($args = array()) {
 	// 容器开始
 	echo '<div id="list-posts-with-tabs" class="list-posts">';
 
+	echo '<div id="tabs-wrap">';
 	// post types 切换
 	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
 		_wnd_post_types_tabs($args, $ajax_list_posts_call = 'list_posts_with_tabs', $ajax_embed_container = '#list-posts-with-tabs');
 	}
-
 	// 分类 切换
 	_wnd_categories_tabs($args, $ajax_list_posts_call = 'list_posts_with_tabs', $ajax_embed_container = '#list-posts-with-tabs');
+	echo '</div>';
 
 	// 输出列表：根据_wnd_ajax_next_page，此处需设置容器及容器ID，否则ajax请求的翻页内容可能无法正确嵌入
 	echo '<div id="post-list-wrap">';

@@ -152,7 +152,7 @@ apply_filters( '_wnd_reg_form', $input_values )
 apply_filters( '_wnd_profile_form', $input_values )
 
 ##文章发布编辑表单 @since 2019.03.11
-apply_filters( '_wnd_post_form', $input_values )
+apply_filters( '_wnd_post_form_{$post_type}', $input_values )
 ```
 
 #action

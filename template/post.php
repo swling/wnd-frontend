@@ -171,7 +171,7 @@ function _wnd_post_form($args = array()) {
 	$form->set_submit_button('保存');
 
 	// 以当前函数名设置filter hook
-	$form->set_filter(__FUNCTION__);
+	$form->set_filter(__FUNCTION__ . '_' . $post_type);
 
 	$form->build();
 

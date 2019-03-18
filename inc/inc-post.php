@@ -53,7 +53,7 @@ function wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $t
  *@since 2018.11.12
  *	默认：获取当前用户，一天以前编辑过的文章（一天内更新过的文章表示正处于编辑状态）
  */
-function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
+function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 
 	$user_id = get_current_user_id();
 
@@ -146,13 +146,13 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 3600 * 24) {
 }
 
 /**
-*@since 2019.02.19
-*获取当前站点注册为公开状态的post type
-*@return array : post type name数组
-*/
-function wnd_get_allowed_post_types(){
+ *@since 2019.02.19
+ *获取当前站点注册为公开状态的post type
+ *@return array : post type name数组
+ */
+function wnd_get_allowed_post_types() {
 
-	return apply_filters('wnd_allowed_post_types', get_post_types(array('public' => true), 'names', 'and'));	
+	return apply_filters('wnd_allowed_post_types', get_post_types(array('public' => true), 'names', 'and'));
 }
 
 /**
