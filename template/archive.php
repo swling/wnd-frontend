@@ -105,9 +105,9 @@ function _wnd_list_posts_by_table($args = '') {
 			<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
 			<th class="is-narrow is-hidden-mobile"><?php echo apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
 			<td class="is-narrow is-hidden-mobile">
-				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>')">预览</a>
+				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>')"><i class="fas fa-info-circle"></i></a>
 				<?php if (current_user_can('edit_post', $post->ID)) {?>
-				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
+				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')"><i class="fas fa-pen-square"></i></a>
 				<?php }?>
 			</td>
 		</tr>

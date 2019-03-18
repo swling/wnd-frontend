@@ -143,7 +143,7 @@ function _wnd_list_user_fin($args = '') {
 			<th class="is-narrow is-hidden-mobile"><?php echo $post->post_status; ?></th>
 			<td class="is-narrow is-hidden-mobile">
 				<?php if (current_user_can('edit_post', $post->ID)) {?>
-				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')">[管理]</a>
+				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')"><i class="fas fa-pen-square"></i></a>
 				<?php }?>
 			</td>
 		</tr>
