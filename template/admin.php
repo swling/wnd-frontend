@@ -18,7 +18,7 @@ function _wnd_admin_posts_panel($args = '') {
 	// 查询参数
 	$defaults = array(
 		'post_status' => 'pending',
-		'post_type' => 'post',
+		// 'post_type' => 'post',
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -40,12 +40,12 @@ function _wnd_user_posts_panel($args = '') {
 	// 查询参数
 	$defaults = array(
 		'post_status' => 'any',
-		'post_type' => 'post',
+		// 'post_type' => 'post',
 	);
 	$args = wp_parse_args($args, $defaults);
 
 	// 优先参数
-	$args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
+	// $args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
 	$args['author'] = get_current_user_id();
 
 	_wnd_list_posts_with_tabs($args);
@@ -67,6 +67,8 @@ function _wnd_user_mail_box($args = '') {
 	$defaults = array(
 		'post_status' => 'any',
 		'post_type' => 'mail',
+		'posts_per_page' => get_option('posts_per_page'),
+		'paged' => 1,
 	);
 	$args = wp_parse_args($args, $defaults);
 

@@ -337,8 +337,7 @@ function wnd_inc_user_money($user_id, $money) {
 function wnd_get_user_money($user_id) {
 
 	$money = wnd_get_user_meta($user_id, 'money');
-	// $money = $money ?: 0;
-	$money = is_numeric($money) ? number_format($money, 2) : 0;
+	$money = is_numeric($money) ? $money : 0;
 	return $money;
 }
 
@@ -346,7 +345,7 @@ function wnd_get_user_money($user_id) {
 function wnd_get_user_expense($user_id) {
 
 	$expense = wnd_get_user_meta($user_id, 'expense');
-	$expense = is_numeric($expense) ? number_format($expense, 2) : 0;
+	$expense = is_numeric($expense) ? $expense : 0;
 	return $expense;
 }
 
@@ -366,7 +365,7 @@ function wnd_inc_user_commission($user_id, $money) {
 function wnd_get_user_commission($user_id) {
 
 	$commission = wnd_get_user_meta($user_id, 'commission');
-	$commission = is_numeric($commission) ? number_format($commission, 2) : 0;
+	$commission = is_numeric($commission) ? $commission : 0;
 	return $commission;
 }
 
@@ -378,7 +377,7 @@ function wnd_get_user_commission($user_id) {
 function wnd_get_post_price($post_id) {
 
 	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1) ?: false;
-	$price = is_numeric($price) ? number_format($price, 2) : 0;
+	$price = is_numeric($price) ? $price : 0;
 	return apply_filters('wnd_get_post_price', $price, $post_id);
 
 }
@@ -405,9 +404,9 @@ function wnd_admin_recharge($user_field, $money, $remarks = '') {
 		return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作！');
 	}
 
-	if(!is_numeric($money)){
+	if (!is_numeric($money)) {
 		return array('status' => 0, 'msg' => '请输入一个有效的充值金额！');
-	}	
+	}
 
 	// 查询用户
 	$field = is_email($user_field) ? 'email' : is_numeric($user_field) ? 'id' : 'login';

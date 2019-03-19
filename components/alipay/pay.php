@@ -20,7 +20,7 @@ $post_id = $_REQUEST['post_id'] ?? 0;
 if ($post_id) {
 	$money = wnd_get_post_price($post_id);
 } else {
-	$money = isset($_POST['money']) && is_numeric($_POST['money']) ? number_format($_POST['money'], 2) : 0;
+	$money = isset($_POST['money']) && is_numeric($_POST['money']) ? $_POST['money'] : 0;
 }
 if (!$money) {
 	wp_die('获取金额错误！', get_bloginfo('name'));
