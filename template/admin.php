@@ -77,8 +77,8 @@ function _wnd_user_mail_box($args = '') {
 	$args['author'] = get_current_user_id();
 
 	// active
-	$unread_active = ($args['post_status'] == 'private') ? 'class="is-active"' : '';
-	$all_active = ($args['post_status'] != 'private') ? 'class="is-active"' : '';
+	$unread_active = ($args['post_status'] == 'pending') ? 'class="is-active"' : '';
+	$all_active = ($args['post_status'] == 'any') ? 'class="is-active"' : '';
 
 	// 容器开始
 	echo '<div id="user-mail-box">';
