@@ -213,7 +213,7 @@ function _wnd_login_form() {
 	$form = new Wnd_User_Form();
 
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>登录');
-	$form->set_form_attr('id="user-login" class="user-form"');
+	$form->set_form_attr('class="user-form"');
 
 	$form->add_user_login();
 
@@ -279,7 +279,7 @@ function _wnd_reg_form($type = 'email') {
 	$form = new Wnd_User_Form();
 
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>注册');
-	$form->set_form_attr('id="user-reg" class="user-form"');
+	$form->set_form_attr('class="user-form"');
 
 	$form->add_user_login();
 
@@ -336,7 +336,7 @@ function _wnd_lostpassword_form($type = 'email') {
 		$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>邮箱验证</h3>');
 	}
 
-	$form->set_form_attr('id="user-lost-password" class="user-form"');
+	$form->set_form_attr('class="user-form"');
 
 	$form->add_user_new_password();
 
@@ -372,8 +372,6 @@ function _wnd_profile_form($args = array()) {
 
 	$form = new Wnd_User_Form();
 
-	$form->set_form_attr('id="user-profile"');
-
 	/*头像上传*/
 	$form->add_user_avatar();
 
@@ -406,7 +404,7 @@ function _wnd_account_form() {
 
 	$form = new Wnd_User_Form();
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>账户安全');
-	$form->set_form_attr('id="user-account" class="user-form"');
+	$form->set_form_attr('class="user-form"');
 
 	$form->add_user_password();
 
