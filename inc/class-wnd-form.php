@@ -11,21 +11,23 @@
 
 class Wnd_Form {
 
-	protected $form_attr;
+	public $form_id;
 
-	protected $input_values;
+	public $form_attr;
 
-	protected $submit;
+	public $input_values;
 
-	protected $submit_style;
+	public $submit;
 
-	protected $action;
+	public $submit_style;
 
-	protected $method;
+	public $action;
 
-	protected $size;
+	public $method;
 
-	protected $upload;
+	public $size;
+
+	public $upload;
 
 	public $form_title;
 
@@ -51,7 +53,7 @@ class Wnd_Form {
 	function __construct() {
 		$this->input_values = array();
 		$this->form_title = null;
-		$this->form_attr = 'id="wnd-form"';
+		$this->form_id = uniqid();
 		$this->submit = 'Submit';
 	}
 
@@ -371,6 +373,9 @@ class Wnd_Form {
 
 	protected function build_form_header() {
 		$html = '<form';
+
+		$html .= ' id="' . $this->form_id . '"';
+
 		if (!is_null($this->method)) {
 			$html .= ' method="' . $this->method . '"';
 		}

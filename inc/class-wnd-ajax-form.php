@@ -34,7 +34,9 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	function build_form_header() {
-		$html = '<form action="" method="POST" data-submit-type="ajax" onsubmit="return false" ';
+		$html = '<form action="" method="POST" data-submit-type="ajax" onsubmit="return false"';
+
+		$html .= ' id="' . $this->form_id . '"';
 
 		if ($this->upload) {
 			$html .= ' enctype="multipart/form-data"';
