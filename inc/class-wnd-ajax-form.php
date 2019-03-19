@@ -48,7 +48,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		if ($this->form_title) {
 			$html .= '<div class="field content">';
-			$html .= '<h3>' . $this->form_title . '</h3>';
+			$html .= '<h5>' . $this->form_title . '</h5>';
 			$html .= '</div>';
 		}
 
@@ -65,6 +65,9 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	function build_submit_button() {
+		if (!$this->submit) {
+			return;
+		}
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
 		$this->html .= '<button type="button" name="submit" class="button ' . $this->submit_style . '">' . $this->submit . '</button>';
 		$this->html .= '</div>';

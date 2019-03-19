@@ -388,7 +388,7 @@ class Wnd_Form {
 
 		if ($this->form_title) {
 			$html .= '<div class="field content">';
-			$html .= '<h3>' . $this->form_title . '</h3>';
+			$html .= '<h5>' . $this->form_title . '</h5>';
 			$html .= '</div>';
 		}
 

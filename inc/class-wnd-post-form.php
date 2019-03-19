@@ -45,7 +45,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 		// 获取taxonomy下的term
 		$terms = get_terms($args = array('taxonomy' => $cat_taxonomy, 'hide_empty' => 0));
-		$options = array('—选择' . $cat->labels->name . '—' => -1);
+		$options = array('— ' . $cat->labels->name . ' —' => -1);
 		foreach ($terms as $term) {
 			$options[$term->name] = $term->term_id;
 		}
@@ -57,7 +57,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 			array(
 				'name' => '_term_' . $cat_taxonomy,
 				'options' => $options,
-				'label' => $cat->labels->name . '<span class="required">*</span>',
+				// 'label' => $cat->labels->name . '<span class="required">*</span>',
 				'required' => true,
 				'checked' => $current_cat_id, //default checked value
 			)
@@ -113,7 +113,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 				'id' => 'file-upload', //container id
 				'label' => $label,
 				'data' => array( // some hidden input,maybe useful in ajax upload
-					'meta_key' => 'file',
+					'meta_key' => $meta_key,
 					'post_parent' => $post_id, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
 				),
 			)
@@ -133,7 +133,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_post_content($wp_editor = 0) {
+	function add_post_content($wp_editor = 0, $placeholder = '详情', $required = 0) {
 
 		if ($wp_editor) {
 			/**
@@ -147,8 +147,8 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 			parent::add_textarea(
 				array(
 					'name' => '_post_post_content',
-					'placeholder' => '正文详情',
-					'required' => true,
+					'placeholder' => $placeholder,
+					'required' => $required,
 				)
 			);
 		}
