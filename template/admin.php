@@ -85,7 +85,7 @@ function _wnd_user_mail_box($args = '') {
 	echo '<div class="tabs"><ul class="tab">';
 
 	// 配置未读邮件ajax请求参数
-	$ajax_args_unread = array_merge($args, array('post_status' => 'private'));
+	$ajax_args_unread = array_merge($args, array('post_status' => 'pending'));
 	unset($ajax_args_unread['paged']);
 	$ajax_args_unread = http_build_query($ajax_args_unread);
 
