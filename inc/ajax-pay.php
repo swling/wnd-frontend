@@ -11,7 +11,6 @@ function wnd_insert_order() {
 
 	$post_id = (int) $_POST['post_id'];
 	$user_id = get_current_user_id();
-	// $note = $_POST['note'] ?? '';
 
 	if (!$post_id) {
 		return array('status' => 0, 'msg' => 'ID无效！');

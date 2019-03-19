@@ -6,7 +6,7 @@
  */
 class Wnd_Post_Form extends Wnd_Ajax_Form {
 
-	function add_post_title($post_title = '', $label = '标题<span class="required">*</span>', $placeholder = "标题") {
+	function add_post_title($post_title = '', $label = '', $placeholder = "请输入标题") {
 
 		parent::add_text(
 			array(
@@ -22,7 +22,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_post_excerpt($post_excerpt = '', $label = '摘要', $placeholder = '摘要') {
+	function add_post_excerpt($post_excerpt = '', $label = '', $placeholder = '内容摘要') {
 
 		parent::add_textarea(
 			array(
