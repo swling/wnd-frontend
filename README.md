@@ -73,7 +73,8 @@ form input type hidden
 ##ajax表单数据
 ```php
 // @since 2019.03.16 Wnd_Form_Data 过滤前端表单提交的数据
-$this->form_data = apply_filters('wnd_form_data', $_POST);
+// $this->form_data = apply_filters('wnd_form_data', $_POST);
+apply_filters('wnd_form_data', $_POST)
 ```
 
 ##文章
