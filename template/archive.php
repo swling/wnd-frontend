@@ -343,7 +343,9 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		unset($key, $tax_query);
 
 		// 输出容器
-		echo '<div class="tabs ' . $taxonomy . '-tabs"><ul class="tab">';
+		echo '<div class="columns">';
+		echo '<div class="column is-narrow ' . $taxonomy . '-label">' . get_taxonomy($taxonomy)->label . '：</div>';
+		echo '<div class="tabs column  ' . $taxonomy . '-tabs"><ul class="tab">';
 
 		/**
 		 * 全部选项
@@ -358,12 +360,12 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 			$all_ajax_args = http_build_query($all_ajax_args);
 
 			if ($ajax_type == 'modal') {
-				echo '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">' . get_taxonomy($taxonomy)->label . '</a></li>';
+				echo '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
 			} else {
-				echo '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">' . get_taxonomy($taxonomy)->label . '</a></li>';
+				echo '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
 			}
 		} else {
-			echo '<li ' . $all_active . '><a href="' . remove_query_arg($taxonomy . '_id', remove_query_arg($args['wnd_remove_query_arg'])) . '">' . get_taxonomy($taxonomy)->label . '</a></li>';
+			echo '<li ' . $all_active . '><a href="' . remove_query_arg($taxonomy . '_id', remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
 		}
 
 		// 输出tabs
@@ -434,6 +436,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 
 		// 输出结束
 		echo '</ul></div>';
+		echo '</div>';
 
 		/**
 		 * @since 2019.03.12 当前分类的子分类
@@ -447,7 +450,9 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 			continue;
 		}
 
-		echo '<div class="tabs"><ul class="tab">';
+		echo '<div class="columns">';
+		echo '<div class="column is-narrow">当前子类：</div>';
+		echo '<div class="column"><div class="tabs"><ul class="tab">';
 		foreach ($child_terms as $child_term) {
 
 			$child_active = '';
@@ -505,7 +510,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 			}
 		}
 		unset($child_term);
-		echo '</ul></div>';
+		echo '</ul></div></div></div>';
 
 	}
 	unset($taxonomy);
