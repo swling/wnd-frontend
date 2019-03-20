@@ -45,7 +45,7 @@ wnd_meta: avatar_url：头像外链
 
 #ajax交互概述：
 ```php
-// 提交的数据中必须包含，$_POST['action_name'] 并通过该值，判断将当前数据交由对应的后端 action_name() 函数处理
+// 提交的数据中必须包含，$_POST['handler'] 并通过该值，判断将当前数据交由对应的后端 handler() 函数处理
 // 后端函数接收$_POST数据并处理后，返回数组值：array('status'=>'状态值','msg'=>'消息');通过统一将结果转为json格式，输出交付前端处理
 // 权限控制中通过WordPress add_filters 实现
 
@@ -64,8 +64,8 @@ function wnd_can_insert_post($default_return, $post_type, $update_id) {
 
 ##校验
 form input type hidden 
-	（action_name 与WordPress nonce filed校验名称 、及对应的功能函数名称统一）
-	action_name = wp_nonce_field('action_name', '_ajax_nonce')  = funcrion action_name()
+	（handler 与WordPress nonce filed校验名称 、及对应的功能函数名称统一）
+	handler = wp_nonce_field('handler', '_ajax_nonce')  = funcrion handler()
 	以"_wnd_" 开头的函数 不进行 wp nonce校验，用于一些非敏感ajax操作，如弹窗，界面请求等
 
 #filter
