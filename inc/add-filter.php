@@ -210,7 +210,7 @@ function wnd_filter_the_content($content) {
 		. '<div class="ajax-msg"></div>'
 		. wp_nonce_field('wnd_pay_for_download', '_ajax_nonce') . '
 			<input type="hidden" name="action"  value="wnd_action">
-			<input type="hidden" name="action_name"  value="wnd_pay_for_download">
+			<input type="hidden" name="handler"  value="wnd_pay_for_download">
 			<input type="hidden" name="post_id"  value="' . $post->ID . '">
 			<input type="hidden" name="post_title"  value="' . $post->post_title . '">
 			<div class="field is-grouped is-grouped-centered pay">
@@ -267,7 +267,7 @@ function wnd_filter_the_content($content) {
 		<div class="ajax-msg"></div>'
 		. wp_nonce_field('wnd_pay_for_reading', '_ajax_nonce') . '
 		<input type="hidden" name="action"  value="wnd_action">
-		<input type="hidden" name="action_name"  value="wnd_pay_for_reading">
+		<input type="hidden" name="handler"  value="wnd_pay_for_reading">
 		<input type="hidden" name="post_id"  value="' . $post->ID . '">
 		<input type="hidden" name="post_title"  value="' . $post->post_title . '">
 		<div class="field is-grouped is-grouped-centered pay">

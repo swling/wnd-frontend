@@ -189,17 +189,17 @@ function wnd_confirm_form_submit(form_id, msg = '') {
 *	点击弹出登录框、点击弹出建议发布文章框
 */
 // ajax 从后端请求内容，并以弹窗形式展现
-function wnd_ajax_modal(handle, param = 0) {
+function wnd_ajax_modal(template, param = 0) {
 
 	wnd_reset_modal();
 	$.ajax({
 		type: "POST",
 		url: ajaxurl,
 		data: {
-			"handle": handle,
+			"template": template,
 			"param": param,
 			"ajax_type": "modal",
-			"action_name": "_wnd_ajax_r",
+			"handler": "_wnd_ajax_r",
 			"action": "wnd_action"
 		},
 		//后台返回数据前
@@ -224,16 +224,16 @@ function wnd_ajax_modal(handle, param = 0) {
 /**
  *@since 2019.1.10  从后端请求ajax内容并填充到指定DOM
  **/
-function wnd_ajax_embed(container, handle, param = 0) {
+function wnd_ajax_embed(container, template, param = 0) {
 
 	$.ajax({
 		type: "POST",
 		url: ajaxurl,
 		data: {
-			"handle": handle,
+			"template": template,
 			"param": param,
 			"ajax_type": "embed",
-			"action_name": "_wnd_ajax_r",
+			"handler": "_wnd_ajax_r",
 			"action": "wnd_action"
 		},
 		//后台返回数据前
@@ -448,7 +448,7 @@ function wnd_update_post_views(post_id, interval = 3600) {
 			data: {
 				'post_id': post_id,
 				'useragent': navigator.userAgent,
-				'action_name': '_wnd_update_post_views',
+				'handler': '_wnd_update_post_views',
 				'action': 'wnd_action',
 			},
 			success: function(response) {
@@ -492,7 +492,7 @@ jQuery(document).ready(function($) {
 		form_data.append("save_width", save_width);
 		form_data.append("save_height", save_height);
 		form_data.append("action", "wnd_action");
-		form_data.append("action_name", "wnd_upload_file");
+		form_data.append("handler", "wnd_upload_file");
 
 		$.ajax({
 			url: ajaxurl,
@@ -570,9 +570,9 @@ jQuery(document).ready(function($) {
 		form_data.append("post_parent", post_parent);
 		form_data.append("file_id", file_id);
 		form_data.append("_ajax_nonce", _ajax_nonce);
-		// ajax handle
+		// ajax请求配置
 		form_data.append("action", "wnd_action");
-		form_data.append("action_name", "wnd_delete_file");
+		form_data.append("handler", "wnd_delete_file");
 
 		$.ajax({
 			url: ajaxurl,
@@ -643,7 +643,7 @@ jQuery(document).ready(function($) {
 			url: ajaxurl,
 			data: {
 				action: 'wnd_action',
-				action_name: "wnd_ajax_send_code",
+				handler: "wnd_ajax_send_code",
 				email: _user_user_email,
 				phone: phone,
 				verify_type: verify_type,

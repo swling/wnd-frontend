@@ -132,7 +132,7 @@ function wnd_pay_for_download() {
 	 */
 	$download_args = array(
 		'action' => 'wnd_action',
-		'action_name' => 'wnd_paid_download',
+		'handler' => 'wnd_paid_download',
 		'post_id' => $post_id,
 		'_ajax_nonce' => wp_create_nonce('wnd_paid_download'),
 	);
