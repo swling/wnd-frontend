@@ -14,8 +14,6 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 				'value' => $post_title,
 				'placeholder' => $placeholder,
 				'label' => $label,
-				'has_icons' => 'left', //icon position "left" orf "right"
-				'icon' => '<i class="fas fa-edit"></i>', // icon html @link https://fontawesome.com/
 				'autofocus' => 'autofocus',
 				'required' => true,
 			)
