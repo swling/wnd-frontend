@@ -309,16 +309,25 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 	// ajax请求类型
 	$ajax_type = $_POST['ajax_type'] ?? false;
 
-	// 遍历当前文章类型taxonomy，并获取具有层级的taxonomy作为输出的category
-	$cat_taxonomies = array();
-	$taxonomies = get_object_taxonomies($args['post_type'], $output = 'names');
-	if ($taxonomies) {
-		foreach ($taxonomies as $taxonomy) {
-			if (is_taxonomy_hierarchical($taxonomy)) {
-				array_push($cat_taxonomies, $taxonomy);
+	// 需要展示的taxonomy列表 @since 2019.03.21
+	if ($args['wnd_taxonomies']) {
+
+		$cat_taxonomies = $args['wnd_taxonomies'];
+
+		// 未指定，遍历当前文章类型taxonomy，并获取具有层级的taxonomy作为输出的category
+	} else {
+
+		$cat_taxonomies = array();
+		$taxonomies = get_object_taxonomies($args['post_type'], $output = 'names');
+		if ($taxonomies) {
+			foreach ($taxonomies as $taxonomy) {
+				if (is_taxonomy_hierarchical($taxonomy)) {
+					array_push($cat_taxonomies, $taxonomy);
+				}
 			}
+			unset($taxonomy);
 		}
-		unset($taxonomy);
+
 	}
 
 	// 循环输出（当一个文章类型注册有多个分类 taxonomy时）
@@ -343,9 +352,9 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		unset($key, $tax_query);
 
 		// 输出容器
-		echo '<div class="columns">';
+		echo '<div class="columns ' . $taxonomy . '-tabs">';
 		echo '<div class="column is-narrow ' . $taxonomy . '-label">' . get_taxonomy($taxonomy)->label . '：</div>';
-		echo '<div class="tabs column  ' . $taxonomy . '-tabs"><ul class="tab">';
+		echo '<div class="tabs column"><ul class="tab">';
 
 		/**
 		 * 全部选项
@@ -524,8 +533,8 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
  *@param 自定义： string $args['wnd_list_template']
  *文章输出列表模板函数的名称（传递值：wp_query:$args）
  *内置了：_wnd_list_posts_by_table 及 _wnd_list_posts_by_template
- *@param 自定义： string $args['wnd_post_types']
- *需要展示的文章类型
+ *@param 自定义： array $args['wnd_post_types']需要展示的文章类型
+ *@param 自定义： array $args['wnd_taxonomies']需要展示的taxonomy
  *非ajax状态下：
  *自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
  *自动从GET参数中获取meta查询参数 (?meta_$meta_key=meta_value or ?meta_$meta_key=exists)
@@ -543,6 +552,7 @@ function _wnd_list_posts_with_tabs($args = array()) {
 		'no_found_rows' => true, //无需原生的分页
 		'wnd_list_template' => '_wnd_list_posts_by_table', //输出列表模板函数
 		'wnd_post_types' => array(), //允许的类型数组
+		'wnd_taxonomies' => array(), //允许的taxonomy数组
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -618,10 +628,10 @@ function _wnd_list_posts_with_tabs($args = array()) {
 	echo '<div id="tabs-wrap">';
 	// post types 切换
 	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
-		_wnd_post_types_tabs($args, $ajax_list_posts_call = 'list_posts_with_tabs', $ajax_embed_container = '#list-posts-with-tabs');
+		_wnd_post_types_tabs($args, 'list_posts_with_tabs', '#list-posts-with-tabs');
 	}
 	// 分类 切换
-	_wnd_categories_tabs($args, $ajax_list_posts_call = 'list_posts_with_tabs', $ajax_embed_container = '#list-posts-with-tabs');
+	_wnd_categories_tabs($args, 'list_posts_with_tabs', '#list-posts-with-tabs');
 	echo '</div>';
 
 	// 输出列表：根据_wnd_ajax_next_page，此处需设置容器及容器ID，否则ajax请求的翻页内容可能无法正确嵌入

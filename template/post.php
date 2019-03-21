@@ -92,7 +92,7 @@ function _wnd_post_form($args = array()) {
 
 	// 标签编辑器
 	if (!wp_doing_ajax()) {
-		_wnd_tags_editor($maxTags = 3, $maxLength = 10, $placeholder = '标签', $taxonomy = $post_type . '_tag', $initialTags = '');
+		_wnd_tags_editor(3, 10, '标签（多个标签请用回车键区分）', $post_type . '_tag', '');
 	}
 
 	/**
