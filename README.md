@@ -42,6 +42,7 @@ wnd_meta: expense：消费
 wnd_meta: commission：佣金
 wnd_meta: avatar：头像文件id
 wnd_meta: avatar_url：头像外链
+wnd_meta: phone：用户手机号码
 
 #ajax交互概述：
 ```php

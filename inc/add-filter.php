@@ -372,7 +372,7 @@ if (wnd_get_option('wndwp', 'wnd_unset_user_meta') == 1) {
 	function wnd_filter_unset_user_meta($meta, $user) {
 
 		// 排除超级管理员
-		if (is_super_admin()) {
+		if (is_super_admin($user->ID)) {
 			return $meta;
 		}
 

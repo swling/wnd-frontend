@@ -299,7 +299,7 @@ function wnd_options(){
 				</td>
 			</tr>
 			<tr>
-				<td valign="top">信息变更验证码</td>
+				<td valign="top">信息变更模板</td>
 				<td>
 					<input type="text" name="wnd_ali_TemplateCode_V" value="<?php echo wnd_get_option('wndwp','wnd_ali_TemplateCode_V');?>" class="regular-text">
 					*信息变更验证码代码（如修改密码等）
