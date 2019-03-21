@@ -113,7 +113,14 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 
 			$post_id = $draft_post_array[0]->ID;
 			// 更新草稿状态
-			$post_id = wp_update_post(array('ID' => $post_id, 'post_status' => 'auto-draft', 'post_title' => 'Auto-draft', 'post_author' => $user_id));
+			$post_id = wp_update_post(
+				array(
+					'ID' => $post_id,
+					'post_status' => 'auto-draft',
+					'post_title' => 'Auto-draft',
+					'post_author' => $user_id,
+				)
+			);
 
 			//清空之前的附件
 			if ($post_id) {
@@ -136,7 +143,15 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 	}
 
 	//3、 全站没有可用草稿，创建新文章用于编辑
-	$post_id = wp_insert_post(array('post_title' => 'Auto-draft', 'post_name' => '', 'post_type' => $post_type, 'post_author' => $user_id, 'post_status' => 'auto-draft'));
+	$post_id = wp_insert_post(
+		array(
+			'post_title' => 'Auto-draft',
+			'post_name' => uniqid(),
+			'post_type' => $post_type,
+			'post_author' => $user_id,
+			'post_status' => 'auto-draft',
+		)
+	);
 	if (!is_wp_error($post_id)) {
 		return array('status' => 2, 'msg' => $post_id);
 	} else {
