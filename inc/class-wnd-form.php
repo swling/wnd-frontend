@@ -393,7 +393,7 @@ class Wnd_Form {
 
 		if ($this->form_title) {
 			$html .= '<div class="field content">';
-			$html .= '<h5>' . $this->form_title . '</h5>';
+			$html .= '<h3>' . $this->form_title . '</h3>';
 			$html .= '</div>';
 		}
 
@@ -625,9 +625,12 @@ class Wnd_Form {
 		return $html;
 	}
 
-	protected function build_submit_button() {
+	function build_submit_button() {
+		if (!$this->submit) {
+			return;
+		}
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="submit" class="button ' . $this->submit_style . '">' . $this->submit . '</button>';
+		$this->html .= '<button type="submit" class="button' . $this->get_submit_style() . '">' . $this->submit . '</button>';
 		$this->html .= '</div>';
 	}
 
@@ -656,6 +659,13 @@ class Wnd_Form {
 		return '';
 	}
 
+	protected function get_autofocus($input_value) {
+		if ($input_value['autofocus']) {
+			return ' autofocus="autofocus"';
+		}
+		return '';
+	}
+
 	protected function get_size() {
 		if ($this->size) {
 			return ' ' . $this->size;
@@ -663,9 +673,9 @@ class Wnd_Form {
 		return '';
 	}
 
-	protected function get_autofocus($input_value) {
-		if ($input_value['autofocus']) {
-			return ' autofocus="autofocus"';
+	protected function get_submit_style() {
+		if ($this->submit_style) {
+			return ' ' . $this->submit_style;
 		}
 		return '';
 	}

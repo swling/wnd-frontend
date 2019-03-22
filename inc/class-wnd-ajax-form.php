@@ -47,8 +47,8 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$html .= '>';
 
 		if ($this->form_title) {
-			$html .= '<div class="field content">';
-			$html .= '<h5>' . $this->form_title . '</h5>';
+			$html .= '<div class="field has-text-centered content">';
+			$html .= '<h3>' . $this->form_title . '</h3>';
 			$html .= '</div>';
 		}
 
@@ -62,15 +62,6 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		parent::add_hidden('action', 'wnd_action');
 		parent::add_hidden('handler', $handler);
 		parent::add_hidden('_ajax_nonce', wp_create_nonce($handler));
-	}
-
-	function build_submit_button() {
-		if (!$this->submit) {
-			return;
-		}
-		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="submit" class="button ' . $this->submit_style . '">' . $this->submit . '</button>';
-		$this->html .= '</div>';
 	}
 
 	// 短信验证

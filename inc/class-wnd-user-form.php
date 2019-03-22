@@ -6,31 +6,6 @@
  */
 class Wnd_User_Form extends Wnd_Ajax_Form {
 
-	// 用户表单标题居中
-	function build_form_header() {
-		$html = '<form id="' . $this->form_id . '" action="" method="POST" data-submit-type="ajax" onsubmit="return false"';
-
-		if ($this->upload) {
-			$html .= ' enctype="multipart/form-data"';
-		}
-
-		if ($this->form_attr) {
-			$html .= ' ' . $this->form_attr;
-		}
-
-		$html .= '>';
-
-		if ($this->form_title) {
-			$html .= '<div class="field is-grouped is-grouped-centered content">';
-			$html .= '<h3>' . $this->form_title . '</h3>';
-			$html .= '</div>';
-		}
-
-		$html .= '<div class="ajax-msg"></div>';
-
-		$this->html = $html;
-	}
-
 	function add_user_login() {
 		parent::add_text(
 			array(
