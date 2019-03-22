@@ -319,7 +319,7 @@ jQuery(document).ready(function($) {
 			position: {
 				collision: "flip"
 			},
-			source: [' . _wnd_get_terms_text($taxonomy, 50) . ']
+			source: [' . _wnd_get_terms_text($taxonomy, 200) . ']
 		},
 		forceLowercase: false,
 		placeholder: "' . $placeholder . '",
