@@ -6,6 +6,32 @@
  */
 class Wnd_Post_Form extends Wnd_Ajax_Form {
 
+	// 用户表单标题居中
+	function build_form_header() {
+		$html = '<form id="' . $this->form_id . '" action="" method="POST" data-submit-type="ajax"';
+		$html .= ' onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}"';
+
+		if ($this->upload) {
+			$html .= ' enctype="multipart/form-data"';
+		}
+
+		if ($this->form_attr) {
+			$html .= ' ' . $this->form_attr;
+		}
+
+		$html .= '>';
+
+		if ($this->form_title) {
+			$html .= '<div class="content">';
+			$html .= '<h5>' . $this->form_title . '</h5>';
+			$html .= '</div>';
+		}
+
+		$html .= '<div class="ajax-msg"></div>';
+
+		$this->html = $html;
+	}
+
 	function add_post_title($post_title = '', $label = '', $placeholder = "请输入标题") {
 
 		parent::add_text(
@@ -63,7 +89,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 	}
 
-	function add_post_tag($tag_taxonomy, $post_id = 0) {
+	function add_post_tag($tag_taxonomy, $post_id = 0, $placeholder = '标签') {
 
 		$tag = get_taxonomy($tag_taxonomy);
 
@@ -73,7 +99,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 			foreach ($terms as $term) {
 				$terms_list .= $term->name . ',';
 				// 移除末尾的逗号
-				echo rtrim($terms_list, ",");
+				$terms_list = rtrim($terms_list, ",");
 			}
 		}
 
@@ -82,10 +108,12 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 				'id' => 'tags',
 				'name' => '_term_' . $tag_taxonomy,
 				'value' => $terms_list,
-				'placeholder' => '标签',
+				'placeholder' => $placeholder,
 				'label' => $tag->labels->name,
 			)
 		);
+
+		parent::add_html(_wnd_get_tags_editor_script(3, 20, $placeholder, $tag_taxonomy));
 	}
 
 	function add_post_thumbnail($post_id, $size = array(), $label = '') {

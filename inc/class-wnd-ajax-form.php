@@ -34,9 +34,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	function build_form_header() {
-		$html = '<form action="" method="POST" data-submit-type="ajax" onsubmit="return false"';
-
-		$html .= ' id="' . $this->form_id . '"';
+		$html = '<form id="' . $this->form_id . '" action="" method="POST" data-submit-type="ajax" onsubmit="return false"';
 
 		if ($this->upload) {
 			$html .= ' enctype="multipart/form-data"';
@@ -71,7 +69,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			return;
 		}
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="button" name="submit" class="button ' . $this->submit_style . '">' . $this->submit . '</button>';
+		$this->html .= '<button type="submit" class="button ' . $this->submit_style . '">' . $this->submit . '</button>';
 		$this->html .= '</div>';
 	}
 

@@ -90,17 +90,11 @@ function _wnd_post_form($args = array()) {
 		unset($taxonomy);
 	}
 
-	// 标签编辑器
-	if (!wp_doing_ajax()) {
-		_wnd_tags_editor(3, 10, '标签（多个标签请用回车键区分）', $post_type . '_tag', '');
-	}
-
 	/**
 	 *@since 2019.03.11 表单类
 	 */
 	$form = new Wnd_Post_Form();
 
-	$form->set_form_attr('id="post-form-' . $post_id . '" onkeydown="if(event.keyCode==13){return false;}"');
 	$form->set_form_title($args['form_title']);
 
 	$form->add_post_title($post->post_title == 'Auto-draft' ? '' : $post->post_title);
@@ -125,7 +119,7 @@ function _wnd_post_form($args = array()) {
 			if ($tag_taxonomy == 'post_format') {
 				continue;
 			}
-			$form->add_post_tag($tag_taxonomy, $post_id);
+			$form->add_post_tag($tag_taxonomy, $post_id, '请用回车键区分多个标签');
 
 		}
 		unset($tag_taxonomy);
@@ -309,68 +303,41 @@ function _wnd_the_post_thumbnail($width = 0, $height = 0, $post_id = 0) {
  *@since ≈2018.07
  *###################################################### 表单设置：标签编辑器
  */
-function _wnd_tags_editor($maxTags = 3, $maxLength = 10, $placeholder = '标签', $taxonomy = '', $initialTags = '') {
+function _wnd_get_tags_editor_script($maxTags = 3, $maxLength = 10, $placeholder = '标签', $taxonomy = '') {
 
-	?>
-<!--jquery标签编辑器 Begin-->
-<script src="<?php echo WNDWP_URL . 'static/js/jquery.tag-editor.js' ?>"></script>
-<script src="<?php echo WNDWP_URL . 'static/js/jquery.caret.min.js' ?>"></script>
-<link rel="stylesheet" href="<?php echo WNDWP_URL . 'static/css/jquery.tag-editor.css' ?>">
+	$html = '<script src="' . WNDWP_URL . 'static/js/jquery.tag-editor.js"></script>';
+	$html .= '<script src="' . WNDWP_URL . 'static/js/jquery.caret.min.js"></script>';
+	$html .= '<link rel="stylesheet" href="' . WNDWP_URL . 'static/css/jquery.tag-editor.css">';
+	$html .= '
 <script>
 jQuery(document).ready(function($) {
-	$('#tags').tagEditor({
+	$("#tags").tagEditor({
 		//自动提示
 		autocomplete: {
 			delay: 0,
 			position: {
-				collision: 'flip'
+				collision: "flip"
 			},
-			source: [<?php if ($taxonomy) {
-		wnd_terms_text($taxonomy, 100);
-	}
-	?>]
-			// source: ['ActionScript', 'AppleScript', 'Asp', 'BASIC']  //demo
+			source: [' . wnd_get_terms_text($taxonomy, 100) . ']
 		},
 		forceLowercase: false,
-		placeholder: '<?php echo $placeholder; ?>',
-		maxTags: '<?php echo $maxTags; ?>', //最多标签个数
-		maxLength: '<?php echo $maxLength; ?>', //单个标签最长字数
+		placeholder: "' . $placeholder . '",
+		maxTags: "' . $maxTags . '", //最多标签个数
+		maxLength: "' . $maxLength . '", //单个标签最长字数
 		onChange: function(field, editor, tags) {
-			// alert("变了");
+
 		},
-		// 预设标签
-		initialTags: [<?php if ($initialTags) {
-		echo $initialTags;
-	}
-	?>],
-		// initialTags: ['ActionScript', 'AppleScript', 'Asp', 'BASIC'], //demo
 	});
 });
-</script>
-<?php
+</script>';
 
-}
+	return $html;
 
-// ###################################################################################
-// 以文本方式输出当前文章标签、分类名称 主要用于前端编辑器输出形式： tag1, tag2, tag3
-function wnd_post_terms_text($post_id, $taxonomy) {
-	$terms = wp_get_object_terms($post_id, $taxonomy);
-	if (!empty($terms)) {
-		if (!is_wp_error($terms)) {
-			$terms_list = '';
-			foreach ($terms as $term) {
-				$terms_list .= $term->name . ',';
-			}
-
-			// 移除末尾的逗号
-			echo rtrim($terms_list, ",");
-		}
-	}
 }
 
 //###################################################################################
 // 以文本方式列出热门标签，分类名称 用于标签编辑器，自动提示文字： 'tag1', 'tag2', 'tag3'
-function wnd_terms_text($taxonomy, $number) {
+function wnd_get_terms_text($taxonomy, $number) {
 
 	$terms = get_terms($taxonomy, 'orderby=count&order=DESC&hide_empty=0&number=' . $number);
 	if (!empty($terms)) {
@@ -381,7 +348,7 @@ function wnd_terms_text($taxonomy, $number) {
 			}
 
 			// 移除末尾的逗号
-			echo rtrim($terms_list, ",");
+			return rtrim($terms_list, ",");
 		}
 	}
 

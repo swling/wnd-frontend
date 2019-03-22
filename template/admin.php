@@ -18,7 +18,6 @@ function _wnd_admin_posts_panel($args = '') {
 	// 查询参数
 	$defaults = array(
 		'post_status' => 'pending',
-		// 'post_type' => 'post',
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -40,12 +39,10 @@ function _wnd_user_posts_panel($args = '') {
 	// 查询参数
 	$defaults = array(
 		'post_status' => 'any',
-		// 'post_type' => 'post',
 	);
 	$args = wp_parse_args($args, $defaults);
 
 	// 优先参数
-	// $args['post_type'] = $_REQUEST['type'] ?? $args['post_type'];
 	$args['author'] = get_current_user_id();
 
 	_wnd_list_posts_with_tabs($args);
