@@ -367,7 +367,7 @@ function wnd_ajax_submit(form_id) {
 
 				// 跳转类
 			case 3:
-				wnd_ajax_msg("提交成功！", color, form_id);
+				wnd_ajax_msg("请稍后……", color, form_id);
 				$(window.location).attr("href", response.msg);
 				break;
 

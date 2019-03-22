@@ -372,6 +372,9 @@ function _wnd_profile_form($args = array()) {
 
 	$form = new Wnd_User_Form();
 
+	// profile表单可能有较为复杂的编辑界面，阻止回车提交
+	$form->set_form_attr('onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}"');
+
 	/*头像上传*/
 	$form->add_user_avatar();
 

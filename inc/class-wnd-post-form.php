@@ -98,9 +98,9 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		if (!empty($terms)) {
 			foreach ($terms as $term) {
 				$terms_list .= $term->name . ',';
-				// 移除末尾的逗号
-				$terms_list = rtrim($terms_list, ",");
-			}
+			}unset($term);
+			// 移除末尾的逗号
+			$terms_list = rtrim($terms_list, ",");
 		}
 
 		parent::add_text(
