@@ -338,13 +338,13 @@ function wnd_ajax_submit(form_id) {
 
 	// 提交中
 	function showRequest(formData, jqForm, options) {
-		$(form_id + " [name='submit']").addClass("is-loading");
+		$(form_id + " [type='submit']").addClass("is-loading");
 	}
 
 	// 返回结果
 	function showResponse(response, statusText, xhr, $form) {
 
-		$(form_id + " [name='submit']").removeClass("is-loading");
+		$(form_id + " [type='submit']").removeClass("is-loading");
 
 		if (response.status <= 0) {
 			var color = "is-danger";
@@ -398,7 +398,7 @@ function wnd_ajax_submit(form_id) {
 	// 提交错误
 	function showError() {
 		wnd_ajax_msg("系统错误！", "is-danger", form_id);
-		$(form_id + " [name='submit']").removeClass("is-loading");
+		$(form_id + " [type='submit']").removeClass("is-loading");
 	}
 
 }

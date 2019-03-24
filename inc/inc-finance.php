@@ -33,7 +33,7 @@ function wnd_insert_recharge($args = array()) {
 		'post_status' => $args['status'],
 		'post_title' => $args['title'],
 		'post_type' => 'recharge',
-		'post_name' => uniqid() . '-' . get_current_user_id(),
+		'post_name' => uniqid(),
 	);
 
 	// 写入object数据库
@@ -41,7 +41,7 @@ function wnd_insert_recharge($args = array()) {
 
 	if ($recharge_id and $args['status'] == 'success') {
 
-		// 当充值包含关联object 如post，表面收入来自站内，如佣金收入
+		// 当充值包含关联object 如post，表示收入来自站内，如佣金收入
 		if ($args['object_id']) {
 			wnd_inc_user_commission($args['user_id'], $args['money']);
 		} else {
@@ -235,7 +235,7 @@ function wnd_insert_expense($args = array()) {
 		'post_status' => $args['status'],
 		'post_title' => $args['title'],
 		'post_type' => 'expense',
-		'post_name' => uniqid() . '-' . get_current_user_id(),
+		'post_name' => uniqid(),
 	);
 
 	$expense_id = wp_insert_post($post_arr);

@@ -46,6 +46,7 @@ function wnd_insert_order() {
 			'title' => get_the_title($post_id) . '(余额支付)',
 		)
 	);
+	
 	// 支付成功
 	if ($object_id) {
 		return array('status' => 1, 'msg' => '支付成功！');
