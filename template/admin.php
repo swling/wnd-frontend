@@ -21,7 +21,7 @@ function _wnd_admin_posts_panel($args = '') {
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	_wnd_list_posts_with_tabs($args);
+	_wnd_list_posts_with_filter($args);
 
 }
 
@@ -45,7 +45,7 @@ function _wnd_user_posts_panel($args = '') {
 	// 优先参数
 	$args['author'] = get_current_user_id();
 
-	_wnd_list_posts_with_tabs($args);
+	_wnd_list_posts_with_filter($args);
 
 }
 

@@ -25,10 +25,10 @@ function _wnd_post_form($args = array()) {
 		'post_id' => 0,
 		'post_type' => 'post',
 		'post_parent' => 0,
-		'free' => 1,
-		'file' => 0,
-		'excerpt' => 0,
-		'thumbnail' => 0, //0 无缩略图，1、存储在wnd_meta _thumbnail_id字段: _wnd_the_post_thumbnail($width = 0, $height = 0)
+		'is_free' => 1,
+		'has_file' => 0,
+		'has_excerpt' => 0,
+		'has_thumbnail' => 0, //0 无缩略图，1、存储在wnd_meta _thumbnail_id字段: _wnd_the_post_thumbnail($width = 0, $height = 0)
 		'thumbnail_size' => array('width' => 150, 'height' => 150),
 		'rich_media_editor' => 1,
 	);
@@ -98,7 +98,7 @@ function _wnd_post_form($args = array()) {
 	$form->set_form_title($args['form_title']);
 
 	$form->add_post_title($post->post_title == 'Auto-draft' ? '' : $post->post_title);
-	if ($args['excerpt']) {
+	if ($args['has_excerpt']) {
 		$form->add_post_excerpt($post->post_excerpt);
 	}
 
@@ -125,15 +125,15 @@ function _wnd_post_form($args = array()) {
 		unset($tag_taxonomy);
 	}
 
-	if ($args['thumbnail']) {
+	if ($args['has_thumbnail']) {
 		$form->add_post_thumbnail($post_id, $args['thumbnail_size']);
 	}
 
-	if ($args['file'] or !$args['free']) {
+	if ($args['has_file'] or !$args['is_free']) {
 		$form->add_post_file($post_id, $meta_key = 'file');
 	}
 
-	if (!$args['free']) {
+	if (!$args['is_free']) {
 		$form->add_post_price($post_id);
 	}
 
