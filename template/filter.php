@@ -10,7 +10,7 @@
  *@param $ajax_embed_container 外部调用函数ajax查询文章后嵌入的html容器
  *@param 自定义：array  $args['wnd_remove_query_arg'] 需要从当前请求参数中移除的参数数组
  */
-function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
+function _wnd_post_types_filter($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
 
 	// 非数组，无需显示切换标签
 	if (!isset($args['wnd_post_types']) or !is_array($args['wnd_post_types'])) {
@@ -114,7 +114,7 @@ function _wnd_post_types_tabs($args = array(), $ajax_list_posts_call = '', $ajax
  *@param $ajax_embed_container 外部调用函数ajax查询文章后嵌入的html容器
  *@param array  'wnd_remove_query_arg' => array('paged', 'pages'), 需要从当前请求参数中移除的参数键名数组
  */
-function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
+function _wnd_categories_filter($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
 
 	$defaults = array(
 		'post_type' => 'post',
@@ -208,7 +208,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 		}
 
 		// 输出tabs
-		foreach (get_terms(array('taxonomy' => $taxonomy, 'parent' => 0)) as $term) {
+		foreach (get_terms(array('taxonomy' => $taxonomy, 'parent' => 0, 'orderby' => 'count', 'order' => 'DESC')) as $term) {
 
 			$active = '';
 
@@ -284,7 +284,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
 			continue;
 		}
 
-		$child_terms = get_terms(array('taxonomy' => $taxonomy, 'parent' => $current_term_parent[$taxonomy]));
+		$child_terms = get_terms(array('taxonomy' => $taxonomy, 'parent' => $current_term_parent[$taxonomy], 'orderby' => 'count', 'order' => 'DESC'));
 		if (!$child_terms) {
 			continue;
 		}
@@ -360,7 +360,7 @@ function _wnd_categories_tabs($args = array(), $ajax_list_posts_call = '', $ajax
  * 获取当前分类下的关联标签tabs
  *@since 2019.03.25
  */
-function _wnd_tags_under_category_tabs($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '', $limit = 10) {
+function _wnd_tags_filter($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '', $limit = 10) {
 
 	// 标签taxonomy
 	$taxonomy = $args['post_type'] . '_tag';
@@ -374,7 +374,7 @@ function _wnd_tags_under_category_tabs($args = array(), $ajax_list_posts_call = 
 		'wnd_remove_query_arg' => array('paged', 'pages'),
 		'tax_query' => array(),
 	);
-	$args = wp_parse_args($args, $defaults);	
+	$args = wp_parse_args($args, $defaults);
 
 	/**
 	 *查找在当前的tax_query查询参数中，当前taxonomy的键名，如果没有则加入
@@ -520,16 +520,14 @@ function _wnd_tags_under_category_tabs($args = array(), $ajax_list_posts_call = 
  *@since 2019.03.01
  *输出同时带有 poet_type和分类切换标签的文章列表
  *@param $args wp_query $args
- *@param 自定义： string $args['wnd_list_template']
- *文章输出列表模板函数的名称（传递值：wp_query:$args）
- *内置了：_wnd_list_posts_by_table 及 _wnd_list_posts_by_template
+ *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
  *@param 自定义： array $args['wnd_post_types']需要展示的文章类型
- *@param 自定义： array $args['wnd_taxonomies']需要展示的taxonomy
+ *@param 自定义： array $args['wnd_taxonomies']需要展示的taxonomy(若不指定，则自动获取当前文章类型的所有分类)
  *非ajax状态下：
  *自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
  *自动从GET参数中获取meta查询参数 (?meta_$meta_key=meta_value or ?meta_$meta_key=exists)
  */
-function _wnd_list_posts_with_tabs($args = array()) {
+function _wnd_list_posts_with_filter($args = array()) {
 
 	// 查询参数
 	$defaults = array(
@@ -618,14 +616,14 @@ function _wnd_list_posts_with_tabs($args = array()) {
 	echo '<div class="tabs-container">';
 	// post types 切换
 	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
-		_wnd_post_types_tabs($args, 'list_posts_with_tabs', '#wnd-tabs');
+		_wnd_post_types_filter($args, 'list_posts_with_filter', '#wnd-tabs');
 	}
+
 	// 分类 切换
-	_wnd_categories_tabs($args, 'list_posts_with_tabs', '#wnd-tabs');
+	_wnd_categories_filter($args, 'list_posts_with_filter', '#wnd-tabs');
 
 	// 获取分类下关联的标签
-	_wnd_tags_under_category_tabs($args, 'list_posts_with_tabs', '#wnd-tabs');
-
+	_wnd_tags_filter($args, 'list_posts_with_filter', '#wnd-tabs');
 	// 容器结束
 	echo '</div>';
 

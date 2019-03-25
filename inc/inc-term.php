@@ -116,7 +116,7 @@ function wnd_update_tag_under_cat($cat_id, $tag_id, $tag_taxonomy, $inc = true) 
 	global $wpdb;
 
 	// 删除对象缓存
-	wp_cache_delete($cat_id . $tag_taxonomy, 'wnd_list_tags_under_category');
+	wp_cache_delete($cat_id . $tag_taxonomy, 'wnd_tags_under_category');
 
 	$result = $wpdb->get_row($wpdb->prepare(
 		"SELECT * FROM $wpdb->wnd_terms WHERE cat_id = %d AND tag_id = %d ",
@@ -253,7 +253,7 @@ function wnd_get_tags_under_category($cat_id, $tag_taxonomy, $limit = 50) {
 		}
 
 		// 缓存查询结果
-		wp_cache_set($cat_id . $tag_taxonomy, $tags, 'wnd_tags_under_category', 3600);
+		wp_cache_set($cat_id . $tag_taxonomy, $tags, 'wnd_tags_under_category', 86400);
 	}
 
 	return $tags;
