@@ -30,11 +30,11 @@
 #自定义文章状态
 ##success
  用于功能型post、（如：充值，订单等） wp_insert_post 可直接写入未经注册的 post_status，但未经注册的post_status无法通过wp_query进行筛选，故此注册
- 
+
 #文章自定义字段
 wp_post_meta: price (价格)
 wnd_meta: file (存储上传附件的id)
-wnd_meta: download_count (下载统计) 
+wnd_meta: download_count (下载统计)
 
 #用户自定义字段
 wnd_meta: money：余额
@@ -61,10 +61,10 @@ function wnd_can_insert_post($default_return, $post_type, $update_id) {
 ##匹配
 表单数据必须包含
 	action(name) : wnd_action（value）如 <input type="hidden" name="action" value="wnd_action">
-才能匹配到本插件的ajax请求	
+才能匹配到本插件的ajax请求
 
 ##校验
-form input type hidden 
+form input type hidden
 	（handler 与WordPress nonce filed校验名称 、及对应的功能函数名称统一）
 	handler = wp_nonce_field('handler', '_ajax_nonce')  = funcrion handler()
 	以"_wnd_" 开头的函数 不进行 wp nonce校验，用于一些非敏感ajax操作，如弹窗，界面请求等
@@ -92,7 +92,7 @@ apply_filters('wnd_insert_post_status', 'pending', $post_type, $update_id);
 apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_status );
 
 /**
-*@since 2019.02.19 过滤当前用户可以发布管理的 post types 
+*@since 2019.02.19 过滤当前用户可以发布管理的 post types
 *@param $post_types array 文章类型数组 如移除 post 类型： unset($post_type['post'])
 */
 apply_filters( 'wnd_allowed_post_types', $post_types );
@@ -175,7 +175,7 @@ do_action('_wnd_recharge_form')
 do_action('wnd_clean_up');
 
 ```
-#前端Form name规则 
+#前端Form name规则
 前端表单遵循以下规则定义的name，后台获取后自动提取，并更新到数据库
 	文章：_post_{field}
 
@@ -213,6 +213,12 @@ do_action('wnd_clean_up');
 文章字段：wnd_post_meta: file (存储上传附件的id)
 下载计数：wnd_post_meta: download_count ;
 
+#标签分类关联
+分类与标签关联，需要自定义taxonomy，并遵循以下规则：
+```php
+$post_type.'_cat';//分类taxonomy
+$post_type.'_tag';//标签taxonomy
+```
 #action filter函数命名规则：
 wnd_action_xxx
 wnd_filter_xxx

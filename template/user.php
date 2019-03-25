@@ -234,7 +234,7 @@ function _wnd_login_form() {
 	// 与该表单数据匹配的后端处理函数
 	$form->set_action('wnd_login');
 
-	$form->set_submit_button('登录', 'is-primary');
+	$form->set_submit_button('登录');
 
 	// 以当前函数名设置filter hook
 	$form->set_filter(__FUNCTION__);

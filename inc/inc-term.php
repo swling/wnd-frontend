@@ -20,7 +20,6 @@ function wnd_set_object_terms_action($object_id, $terms, $tt_ids, $taxonomy, $ap
 
 	/**
 	 *自定义分类法约定taxonomy：分类为 $post_type_cat 标签为：$post_type_tag
-	 *默认post：分类 category 标签 post_tag
 	 */
 
 	// 选项中是否开启本功能
@@ -30,17 +29,18 @@ function wnd_set_object_terms_action($object_id, $terms, $tt_ids, $taxonomy, $ap
 
 	$post_type = get_post_type($object_id);
 
+	// 默认post文章不添加记录，通常用于各类多重筛选，建议通过自定义文章类型使用
+	if ($post_type == 'post') {
+		return;
+	}
+
 	// 当前文章类型不包含标签 退出
 	if (!taxonomy_exists($post_type . '_tag')) {
 		return;
 	}
 
-	$cat_taxonomy = ($post_type == 'post') ? 'category' : $post_type . '_cat';
+	$cat_taxonomy = $post_type . '_cat';
 	$tag_taxonomy = $post_type . '_tag';
-
-	// 默认post文章不添加记录，通常用于各类多重筛选，建议通过自定义文章类型使用
-	// if( $post_type =='post')
-	// return;
 
 	// 1、分类改变
 	if ($taxonomy == $cat_taxonomy) {

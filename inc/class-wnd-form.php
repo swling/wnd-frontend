@@ -53,7 +53,7 @@ class Wnd_Form {
 	function __construct() {
 		$this->input_values = array();
 		$this->form_title = null;
-		$this->form_id = uniqid();
+		$this->form_id = 'form-'.uniqid();
 		$this->submit = 'Submit';
 	}
 

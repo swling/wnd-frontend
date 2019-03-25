@@ -38,5 +38,6 @@ require WNDWP_PATH . 'template/user.php'; //user模板
 require WNDWP_PATH . 'template/post.php'; //post模板
 require WNDWP_PATH . 'template/term.php'; //term模板
 require WNDWP_PATH . 'template/archive.php'; //归档和列表模板
+require WNDWP_PATH . 'template/multiple-tabs.php'; //多重筛选
 require WNDWP_PATH . 'template/finance.php'; //财务模板
 require WNDWP_PATH . 'template/admin.php'; //前端管理模板
