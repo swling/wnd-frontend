@@ -59,22 +59,24 @@ function wnd_filter_can_update_account($can_array) {
 
 /**
  *@since 2019.02.13
- *文章状态过滤，允许前端表单设置为草稿状态（执行顺序较晚99，因而 会覆盖掉其他默认10 的filter）
+ *文章状态过滤，允许前端表单设置为草稿状态（执行顺序10，因而会被其他顺序晚于10的filter覆盖）
  *如果 $update_id 为0 表示为新发布文章，否则为更新文章
  */
-add_filter('wnd_insert_post_status', 'wnd_filter_post_status', 99, 2);
-function wnd_filter_post_status($post_status, $update_id) {
+add_filter('wnd_insert_post_status', 'wnd_filter_post_status', 10, 3);
+function wnd_filter_post_status($post_status, $post_type, $update_id) {
 
+	// 允许用户设置为草稿
 	if (isset($_POST['_post_post_status']) and $_POST['_post_post_status'] == 'draft') {
 		return 'draft';
 	}
 
+	// 管理员通过
 	if (wnd_is_manager()) {
 		return 'publish';
 	}
 
-	return 'pending';
-
+	// 已公开发布过的内容，再次编辑无需审核
+	return (get_post_status($update_id) == 'publish') ? 'publish' : $post_status;
 }
 
 /**

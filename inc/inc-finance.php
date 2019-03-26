@@ -320,12 +320,13 @@ function wnd_user_has_paid($user_id, $object_id) {
 // 充值成功 写入用户 字段
 function wnd_inc_user_money($user_id, $money) {
 
-	// $money 为负数时表示消费
-	wnd_inc_wnd_user_meta($user_id, 'money', $money);
+	$new_money = wnd_get_user_money($user_id) + $money;
+	$new_money = round($new_money, 2);
+	wnd_update_user_meta($user_id, 'money', $new_money);
 
 	// $money 为负数 更新消费金额记录
 	if ($money < 0) {
-		wnd_inc_wnd_user_meta($user_id, 'expense', $money * -1);
+		wnd_inc_wnd_user_meta($user_id, 'expense', round($money, 2) * -1);
 	}
 
 	// 整站按月统计充值和消费
@@ -338,7 +339,7 @@ function wnd_get_user_money($user_id) {
 
 	$money = wnd_get_user_meta($user_id, 'money');
 	$money = is_numeric($money) ? $money : 0;
-	return $money;
+	return round($money, 2);
 }
 
 // 获取用户消费
@@ -346,7 +347,7 @@ function wnd_get_user_expense($user_id) {
 
 	$expense = wnd_get_user_meta($user_id, 'expense');
 	$expense = is_numeric($expense) ? $expense : 0;
-	return $expense;
+	return round($expense, 2);
 }
 
 /**
@@ -355,7 +356,7 @@ function wnd_get_user_expense($user_id) {
  */
 function wnd_inc_user_commission($user_id, $money) {
 
-	wnd_inc_wnd_user_meta($user_id, 'commission', $money);
+	wnd_inc_wnd_user_meta($user_id, 'commission', round($money, 2));
 
 }
 
@@ -366,7 +367,7 @@ function wnd_get_user_commission($user_id) {
 
 	$commission = wnd_get_user_meta($user_id, 'commission');
 	$commission = is_numeric($commission) ? $commission : 0;
-	return $commission;
+	return round($commission, 2);
 }
 
 /**
@@ -377,7 +378,7 @@ function wnd_get_user_commission($user_id) {
 function wnd_get_post_price($post_id) {
 
 	$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1) ?: false;
-	$price = is_numeric($price) ? $price : 0;
+	$price = is_numeric($price) ? round($price, 2) : 0;
 	return apply_filters('wnd_get_post_price', $price, $post_id);
 
 }
@@ -390,6 +391,7 @@ function wnd_get_post_commission($post_id) {
 
 	$commission_rate = is_numeric(wnd_get_option('wndwp', 'wnd_commission_rate')) ? wnd_get_option('wndwp', 'wnd_commission_rate') : 0;
 	$commission = wnd_get_post_price($post_id) * $commission_rate;
+	$commission = round($commission, 2);
 	return apply_filters('wnd_get_post_commission', $commission, $post_id);
 
 }
@@ -461,6 +463,7 @@ function wnd_update_fin_stats($money = 0) {
 
 		$old_money = $stats_post->post_content;
 		$new_money = $old_money + abs($money);
+		$new_money = round($new_money, 2);
 		wp_update_post(array('ID' => $stats_post->ID, 'post_content' => $new_money));
 
 		// 新增统计

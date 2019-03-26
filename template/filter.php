@@ -520,7 +520,7 @@ function _wnd_tags_filter($args = array(), $ajax_list_posts_call = '', $ajax_emb
  *@since 2019.03.26
  *遍历当前查询参数中的分类查询，输出取消当前分类选项链接
  */
-function _wnd_cancel_terms_query($args, $ajax_list_posts_call, $ajax_embed_container) {
+function _wnd_current_filter($args, $ajax_list_posts_call, $ajax_embed_container) {
 
 	// 默认参数
 	$defaults = array(
@@ -594,7 +594,7 @@ function _wnd_cancel_terms_query($args, $ajax_list_posts_call, $ajax_embed_conta
  *自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
  *自动从GET参数中获取meta查询参数 (?meta_$meta_key=meta_value or ?meta_$meta_key=exists)
  */
-function _wnd_list_posts_with_filter($args = array()) {
+function _wnd_posts_filter($args = array()) {
 
 	// 查询参数
 	$defaults = array(
@@ -678,22 +678,22 @@ function _wnd_list_posts_with_filter($args = array()) {
 	}
 
 	// 容器开始
-	echo '<div id="wnd-tabs" class="list-posts">';
+	echo '<div id="wnd-filter">';
 
-	echo '<div class="tabs-container">';
+	echo '<div class="filter-container">';
 	// post types 切换
 	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
-		_wnd_post_types_filter($args, 'list_posts_with_filter', '#wnd-tabs');
+		_wnd_post_types_filter($args, 'posts_filter', '#wnd-filter');
 	}
 
 	// 分类 切换
-	_wnd_categories_filter($args, 'list_posts_with_filter', '#wnd-tabs');
+	_wnd_categories_filter($args, 'posts_filter', '#wnd-filter');
 
 	// 获取分类下关联的标签
-	_wnd_tags_filter($args, 'list_posts_with_filter', '#wnd-tabs');
+	_wnd_tags_filter($args, 'posts_filter', '#wnd-filter');
 
 	// 列出当前term查询，并附带取消链接
-	_wnd_cancel_terms_query($args, 'list_posts_with_filter', '#wnd-tabs');
+	_wnd_current_filter($args, 'posts_filter', '#wnd-filter');
 	// 容器结束
 	echo '</div>';
 
