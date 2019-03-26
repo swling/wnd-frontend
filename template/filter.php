@@ -289,7 +289,7 @@ function _wnd_categories_filter($args = array(), $ajax_list_posts_call = '', $aj
 			continue;
 		}
 
-		echo '<div class="columns is-vcentered is-marginless">';
+		echo '<div class="columns is-marginless">';
 		echo '<div class="column is-narrow">当前子类：</div>';
 		echo '<div class="column"><div class="tabs"><ul class="tab">';
 		foreach ($child_terms as $child_term) {
@@ -517,6 +517,73 @@ function _wnd_tags_filter($args = array(), $ajax_list_posts_call = '', $ajax_emb
 }
 
 /**
+ *@since 2019.03.26
+ *遍历当前查询参数中的分类查询，输出取消当前分类选项链接
+ */
+function _wnd_cancel_terms_query($args, $ajax_list_posts_call, $ajax_embed_container) {
+
+	// 默认参数
+	$defaults = array(
+		'post_type' => 'post',
+		'wnd_remove_query_arg' => array('paged', 'pages'),
+		'tax_query' => array(),
+	);
+	$args = wp_parse_args($args, $defaults);
+
+	if (empty($args['tax_query'])) {
+		return;
+	}
+
+	// 输出容器
+	echo '<div class="columns is-marginless">';
+	echo '<div class="column is-narrow">当前条件：</div>';
+	echo '<div class="column">';
+
+	foreach ($args['tax_query'] as $key => $term_query) {
+
+		$term = get_term($term_query['terms']);
+
+		if (wp_doing_ajax()) {
+
+			// ajax请求类型
+			$ajax_type = $_POST['ajax_type'] ?? false;
+
+			$ajax_args = $args;
+
+			// 定位当前taxonomy查询在tax_query中的位置，移除
+			unset($ajax_args['tax_query'][$key]);
+
+			// 按配置移除参数
+			foreach ($args['wnd_remove_query_arg'] as $remove_query_arg) {
+				unset($ajax_args[$remove_query_arg]);
+			}
+			unset($remove_query_arg);
+
+			// 构建ajax查询字符串
+			$ajax_args = http_build_query($ajax_args);
+
+			if ($ajax_type == 'modal') {
+				echo '<span class="tag">' . $term->name . '<button class="delete is-small" onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');"></button></span>&nbsp;&nbsp;';
+			} else {
+				echo '<span class="tag">' . $term->name . '<button class="delete is-small" onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');"></button></span>&nbsp;&nbsp;';
+			}
+
+		} else {
+			/**
+			 *categories tabs生成的GET参数为：$taxonomy.'_id'，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+			 */
+			echo '<span class="tag">' . $term->name . '<a class="delete is-small" href="' . remove_query_arg($term->taxonomy . '_id', remove_query_arg($args['wnd_remove_query_arg'])) . '"></a></span>&nbsp;&nbsp;';
+		}
+	}
+	unset($key, $term_query);
+
+	// 输出结束
+	echo '</div>';
+	echo '</div>';
+
+}
+
+/**
  *@since 2019.03.01
  *输出同时带有 poet_type和分类切换标签的文章列表
  *@param $args wp_query $args
@@ -624,6 +691,9 @@ function _wnd_list_posts_with_filter($args = array()) {
 
 	// 获取分类下关联的标签
 	_wnd_tags_filter($args, 'list_posts_with_filter', '#wnd-tabs');
+
+	// 列出当前term查询，并附带取消链接
+	_wnd_cancel_terms_query($args, 'list_posts_with_filter', '#wnd-tabs');
 	// 容器结束
 	echo '</div>';
 
