@@ -128,7 +128,7 @@ apply_filters('wnd_update_account_return', array('status' => 1, 'msg' => '更新
 ##订单
 ```php
 // 用户订单权限
-apply_filters('wnd_can_submit_order', array('status'=>1,'msg'=>'默认通过'), $post_id);
+apply_filters('wnd_can_create_order', array('status'=>1,'msg'=>'默认通过'), $post_id);
 
 /**
 *@since 2019.02.12 付费内容，作者收益提成，默认为文章价格* 后台比例设置

@@ -5,9 +5,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- *@since 2019.01.30 写入消费数据库
+ *@since 2019.01.30 创建订单
  */
-function wnd_submit_order() {
+function wnd_create_order() {
 
 	$post_id = (int) $_POST['post_id'];
 	$user_id = get_current_user_id();
@@ -20,9 +20,9 @@ function wnd_submit_order() {
 	if (!$user_id) {
 		return array('status' => 0, 'msg' => '请登录后操作！');
 	}
-	$wnd_can_submit_order = apply_filters('wnd_can_submit_order', array('status' => 1, 'msg' => '默认通过'), $post_id);
-	if ($wnd_can_submit_order['status'] === 0) {
-		return $wnd_can_submit_order;
+	$wnd_can_create_order = apply_filters('wnd_can_create_order', array('status' => 1, 'msg' => '默认通过'), $post_id);
+	if ($wnd_can_create_order['status'] === 0) {
+		return $wnd_can_create_order;
 	}
 
 	// 余额判断
@@ -80,7 +80,7 @@ function wnd_pay_for_reading() {
 	}
 
 	// 2、支付失败
-	$order = wnd_submit_order();
+	$order = wnd_create_order();
 	if ($order['status'] === 0) {
 		return $order;
 	}
@@ -150,7 +150,7 @@ function wnd_pay_for_download() {
 	}
 
 	//3、 付费下载
-	$order = wnd_submit_order();
+	$order = wnd_create_order();
 	if ($order['status'] === 0) {
 		return $order;
 	}
