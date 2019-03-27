@@ -6,12 +6,14 @@ if (!defined('ABSPATH')) {
 
 /**
  *@since 2019.02.28 如不注册类型，直接创建pending状态post时，会有notice级别的错误
+ *@see wp-includes/post.php @3509
  */
 function wnd_post_type_recharge() {
 	$args = array(
 		'description' => '充值',
 		'public' => false,
 		'has_archive' => false,
+		'query_var' => false,
 	);
 	register_post_type('recharge', $args);
 }
@@ -25,6 +27,7 @@ function wnd_post_type_order() {
 		'description' => '订单',
 		'public' => false,
 		'has_archive' => false,
+		'query_var' => false, //order 为wp_query的排序参数，如果查询参数中包含order排序，会导致冲突，此处需要注销
 	);
 	register_post_type('order', $args);
 }
