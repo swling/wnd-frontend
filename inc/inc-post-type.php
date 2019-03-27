@@ -18,17 +18,17 @@ function wnd_post_type_recharge() {
 add_action('init', 'wnd_post_type_recharge');
 
 /**
- *@since 2019.02.28 消费
+ *@since 2019.02.28 订单
  */
-function wnd_post_type_expense() {
+function wnd_post_type_order() {
 	$args = array(
-		'description' => '消费',
+		'description' => '订单',
 		'public' => false,
 		'has_archive' => false,
 	);
-	register_post_type('expense', $args);
+	register_post_type('order', $args);
 }
-add_action('init', 'wnd_post_type_expense');
+add_action('init', 'wnd_post_type_order');
 
 /**
  *@since 2019.02.28 站内信

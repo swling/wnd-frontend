@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
  *金额：post_content
  *关联：post_parent
  *状态：post_status
- *类型：post_type (recharge / expense)
+ *类型：post_type (recharge / order)
  *用户通过第三方金融平台充值付款到本站
  *创建时：post_status=>pending，验证成功后：post_status=>success
  *写入post时需要设置别名，否则更新时会自动根据标题设置别名，而充值类标题一致，会导致WordPress持续循环查询并设置 -2、-3这类自增标题，产生大量查询
@@ -103,7 +103,7 @@ function wnd_insert_payment($user_id, $money, $object_id = 0) {
 	// 在线订单
 	if ($object_id) {
 
-		$expense_id = wnd_insert_expense(
+		$order_id = wnd_insert_order(
 			array(
 				'user_id' => $user_id,
 				'money' => $money,
@@ -112,8 +112,8 @@ function wnd_insert_payment($user_id, $money, $object_id = 0) {
 			)
 		);
 
-		if ($expense_id and !is_wp_error($expense_id)) {
-			return wnd_get_site_prefix() . '-' . $expense_id;
+		if ($order_id and !is_wp_error($order_id)) {
+			return wnd_get_site_prefix() . '-' . $order_id;
 		} else {
 			return false;
 		}
@@ -187,7 +187,7 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 
 		// 订单
 		if ($post->post_parent) {
-			$update = wnd_update_expense($post->ID, 'success', $post->post_title . ' - ' . $type);
+			$update = wnd_update_order($post->ID, 'success', $post->post_title . ' - ' . $type);
 
 			//充值
 		} else {
@@ -216,7 +216,7 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
  *@since 2019.02.11
  *用户本站消费数据(含余额消费，或直接第三方支付消费)
  */
-function wnd_insert_expense($args = array()) {
+function wnd_insert_order($args = array()) {
 
 	$defaults = array(
 		'user_id' => 0,
@@ -234,22 +234,22 @@ function wnd_insert_expense($args = array()) {
 		'post_content' => $args['money'],
 		'post_status' => $args['status'],
 		'post_title' => $args['title'],
-		'post_type' => 'expense',
+		'post_type' => 'order',
 		'post_name' => uniqid(),
 	);
 
-	$expense_id = wp_insert_post($post_arr);
+	$order_id = wp_insert_post($post_arr);
 
 	/**
 	 *@since 2019.02.17
 	 *success表示直接余额消费，更新用户余额
-	 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see wnd_update_expense();
+	 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see wnd_update_order();
 	 */
-	if ($expense_id && $args['status'] == 'success') {
+	if ($order_id && $args['status'] == 'success') {
 		wnd_inc_user_money($args['user_id'], $args['money'] * -1);
 	}
 
-	return $expense_id;
+	return $order_id;
 
 }
 
@@ -258,10 +258,10 @@ function wnd_insert_expense($args = array()) {
  *更新消费订单状态
  *@return int or false
  */
-function wnd_update_expense($ID, $status, $title = '') {
+function wnd_update_order($ID, $status, $title = '') {
 
 	$post = get_post($ID);
-	if ($post->post_type != 'expense') {
+	if ($post->post_type != 'order') {
 		return;
 	}
 	$before_status = $post->post_status;
@@ -275,20 +275,20 @@ function wnd_update_expense($ID, $status, $title = '') {
 		$post_arr['post_title'] = $title;
 	}
 
-	$expense_id = wp_update_post($post_arr);
+	$order_id = wp_update_post($post_arr);
 
 	/**
 	 *@since 2019.02.17
 	 *当消费订单，从pending更新到 success，表示该消费订单是通过在线支付，而非余额支付，无需扣除用户余额
 	 *由于此处没有触发 wnd_inc_user_money 因此需要单独统计财务信息
 	 */
-	if ($expense_id and $before_status == 'pending' and $status == 'success') {
+	if ($order_id and $before_status == 'pending' and $status == 'success') {
 		// wnd_inc_user_money($user_id, $money * -1 );
 		// 整站按月统计充值和消费
 		wnd_update_fin_stats($money * -1);
 	}
 
-	return $expense_id;
+	return $order_id;
 
 }
 
@@ -303,7 +303,7 @@ function wnd_user_has_paid($user_id, $object_id) {
 
 	$args = array(
 		'posts_per_page' => 1,
-		'post_type' => 'expense',
+		'post_type' => 'order',
 		'post_parent' => $object_id,
 		'author' => $user_id,
 		'post_status' => 'success',

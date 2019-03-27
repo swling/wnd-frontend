@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 /**
  *@since 2019.01.30 写入消费数据库
  */
-function wnd_insert_order() {
+function wnd_submit_order() {
 
 	$post_id = (int) $_POST['post_id'];
 	$user_id = get_current_user_id();
@@ -20,9 +20,9 @@ function wnd_insert_order() {
 	if (!$user_id) {
 		return array('status' => 0, 'msg' => '请登录后操作！');
 	}
-	$wnd_can_insert_order = apply_filters('wnd_can_insert_order', array('status' => 1, 'msg' => '默认通过'), $post_id);
-	if ($wnd_can_insert_order['status'] === 0) {
-		return $wnd_can_insert_order;
+	$wnd_can_submit_order = apply_filters('wnd_can_submit_order', array('status' => 1, 'msg' => '默认通过'), $post_id);
+	if ($wnd_can_submit_order['status'] === 0) {
+		return $wnd_can_submit_order;
 	}
 
 	// 余额判断
@@ -37,7 +37,7 @@ function wnd_insert_order() {
 	}
 
 	// 写入消费数据
-	$object_id = wnd_insert_expense(
+	$object_id = wnd_insert_order(
 		array(
 			'user_id' => $user_id,
 			'money' => $money,
@@ -80,7 +80,7 @@ function wnd_pay_for_reading() {
 	}
 
 	// 2、支付失败
-	$order = wnd_insert_order();
+	$order = wnd_submit_order();
 	if ($order['status'] === 0) {
 		return $order;
 	}
@@ -150,7 +150,7 @@ function wnd_pay_for_download() {
 	}
 
 	//3、 付费下载
-	$order = wnd_insert_order();
+	$order = wnd_submit_order();
 	if ($order['status'] === 0) {
 		return $order;
 	}

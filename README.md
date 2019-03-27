@@ -23,7 +23,7 @@
 #自定义文章类型
 （以下 post_type 并未均为私有属性（'public' => false），因此在WordPress后台无法查看到）
 ##充值：recharge
-##消费、订单：expense
+##消费、订单：order
 ##站内信：mail
 ##整站月度财务统计：stats-re（充值）、stats-ex（消费）
 
@@ -111,7 +111,6 @@ apply_filters('wnd_can_reg', array('status'=>1,'msg'=>'默认通过'));
 ###返回值过滤
 apply_filters('wnd_reg_return',  array('status' => 3, 'msg' => $redirect_to), $user_id);
 
-
 ##用户登录 @since 2019.01.21
 apply_filters('wnd_can_login', array('status'=>1,'msg'=>'默认通过'));
 
@@ -129,7 +128,7 @@ apply_filters('wnd_update_account_return', array('status' => 1, 'msg' => '更新
 ##订单
 ```php
 // 用户订单权限
-apply_filters('wnd_can_insert_order', array('status'=>1,'msg'=>'默认通过'), $post_id);
+apply_filters('wnd_can_submit_order', array('status'=>1,'msg'=>'默认通过'), $post_id);
 
 /**
 *@since 2019.02.12 付费内容，作者收益提成，默认为文章价格* 后台比例设置
@@ -168,11 +167,14 @@ do_action('wnd_delete_file', $attach_id, $post_parent, $meta_key);
 ##更新用户资料后
 do_action( 'wnd_update_profile', $user_id );
 
+##@since 2019.03.14 站点清理
+do_action('wnd_clean_up');
+
 ##充值表单 @since 2019.01.21
 do_action('_wnd_recharge_form')
 
-##@since 2019.03.14 站点清理
-do_action('wnd_clean_up');
+// @since 2019.03.26 文章过滤器
+do_action('_wnd_posts_filter', $args);
 
 ```
 #前端Form name规则
@@ -196,7 +198,7 @@ do_action('wnd_clean_up');
 关联：post_parent
 标题：post_title
 状态：post_status: pengding / success
-类型：post_type：recharge / expense
+类型：post_type：recharge / order
 
 #付费内容
 必须设置价格

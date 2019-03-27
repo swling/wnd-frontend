@@ -19,7 +19,7 @@ function _wnd_user_fin_panel($args = '') {
 
 	// args
 	$defaults = array(
-		'post_type' => $_GET['type'] ?? 'expense',
+		'post_type' => $_GET['type'] ?? 'order',
 		'post_status' => 'any',
 		'paged' => $_GET['pages'] ?? 1,
 		'posts_per_page' => get_option('posts_per_page'),
@@ -27,7 +27,7 @@ function _wnd_user_fin_panel($args = '') {
 	$args = wp_parse_args($args, $defaults);
 
 	// active
-	$expense_is_active = $args['post_type'] == 'expense' ? 'class="is-active"' : '';
+	$order_is_active = $args['post_type'] == 'order' ? 'class="is-active"' : '';
 	$recharge_is_active = $args['post_type'] == 'recharge' ? 'class="is-active"' : '';
 
 	?>
@@ -71,9 +71,9 @@ function _wnd_user_fin_panel($args = '') {
 		<?php
 
 	// 配置ajax请求参数
-	$ajax_args_expense = array_merge($args, array('post_type' => 'expense'));
-	unset($ajax_args_expense['paged']);
-	$ajax_args_expense = http_build_query($ajax_args_expense);
+	$ajax_args_order = array_merge($args, array('post_type' => 'order'));
+	unset($ajax_args_order['paged']);
+	$ajax_args_order = http_build_query($ajax_args_order);
 
 	// 配置ajax请求参数
 	$ajax_args_recharge = array_merge($args, array('post_type' => 'recharge'));
@@ -82,14 +82,14 @@ function _wnd_user_fin_panel($args = '') {
 
 	if (wp_doing_ajax()) {
 		if ($ajax_type == 'modal') {
-			echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin_panel\',\'' . $ajax_args_expense . '\');">消费记录</a></li>';
+			echo '<li ' . $order_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin_panel\',\'' . $ajax_args_order . '\');">订单记录</a></li>';
 			echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin_panel\',\'' . $ajax_args_recharge . '\');">充值记录</a></li>';
 		} else {
-			echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin_panel\',\'' . $ajax_args_expense . '\');">消费记录</a></li>';
+			echo '<li ' . $order_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin_panel\',\'' . $ajax_args_order . '\');">订单记录</a></li>';
 			echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin_panel\',\'' . $ajax_args_recharge . '\');">充值记录</a></li>';
 		}
 	} else {
-		echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('type', 'expense', remove_query_arg('pages')) . '">消费记录</a></li>';
+		echo '<li ' . $order_is_active . ' ><a href="' . add_query_arg('type', 'order', remove_query_arg('pages')) . '">订单记录</a></li>';
 		echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('type', 'recharge', remove_query_arg('pages')) . '">充值记录</a></li>';
 	}
 	?>

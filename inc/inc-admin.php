@@ -20,7 +20,7 @@ function wnd_clean_up() {
 
 	// 超期七天未完成的充值消费订单
 	$old_posts = $wpdb->get_col(
-		"SELECT ID FROM $wpdb->posts WHERE post_type IN ('expense','recharge') AND post_status = 'pending' AND DATE_SUB( NOW(), INTERVAL 7 DAY ) > post_date"
+		"SELECT ID FROM $wpdb->posts WHERE post_type IN ('order','recharge') AND post_status = 'pending' AND DATE_SUB( NOW(), INTERVAL 7 DAY ) > post_date"
 	);
 	foreach ((array) $old_posts as $delete) {
 		// Force delete.

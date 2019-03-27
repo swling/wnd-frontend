@@ -182,7 +182,7 @@ function _wnd_categories_filter($args = array(), $ajax_list_posts_call = '', $aj
 		unset($key, $tax_query);
 
 		// 输出容器
-		echo '<div class="columns is-marginless ' . $taxonomy . '-tabs">';
+		echo '<div class="columns is-marginless is-vcentered ' . $taxonomy . '-tabs">';
 		echo '<div class="column is-narrow ' . $taxonomy . '-label">' . get_taxonomy($taxonomy)->label . '：</div>';
 		echo '<div class="tabs column"><ul class="tab">';
 
@@ -289,7 +289,7 @@ function _wnd_categories_filter($args = array(), $ajax_list_posts_call = '', $aj
 			continue;
 		}
 
-		echo '<div class="columns is-marginless">';
+		echo '<div class="columns is-marginless is-vcentered">';
 		echo '<div class="column is-narrow">当前子类：</div>';
 		echo '<div class="column"><div class="tabs"><ul class="tab">';
 		foreach ($child_terms as $child_term) {
@@ -405,7 +405,7 @@ function _wnd_tags_filter($args = array(), $ajax_list_posts_call = '', $ajax_emb
 	$ajax_type = $_POST['ajax_type'] ?? false;
 
 	// 输出容器
-	echo '<div class="columns is-marginless ' . $taxonomy . '-tabs">';
+	echo '<div class="columns is-marginless is-vcentered ' . $taxonomy . '-tabs">';
 	echo '<div class="column is-narrow ' . $taxonomy . '-label">' . get_taxonomy($taxonomy)->label . '：</div>';
 	echo '<div class="tabs column"><ul class="tab">';
 
@@ -535,7 +535,7 @@ function _wnd_current_filter($args, $ajax_list_posts_call, $ajax_embed_container
 	}
 
 	// 输出容器
-	echo '<div class="columns is-marginless">';
+	echo '<div class="columns is-marginless is-vcentered">';
 	echo '<div class="column is-narrow">当前条件：</div>';
 	echo '<div class="column">';
 
@@ -691,6 +691,9 @@ function _wnd_posts_filter($args = array()) {
 
 	// 获取分类下关联的标签
 	_wnd_tags_filter($args, 'posts_filter', '#wnd-filter');
+
+	// @since 2019.03.26 添加动作
+	do_action('_wnd_posts_filter', $args);
 
 	// 列出当前term查询，并附带取消链接
 	_wnd_current_filter($args, 'posts_filter', '#wnd-filter');
