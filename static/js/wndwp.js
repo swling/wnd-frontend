@@ -345,6 +345,10 @@ function wnd_ajax_submit(form_id) {
 	function showResponse(response, statusText, xhr, $form) {
 
 		$(form_id + " [type='submit']").removeClass("is-loading");
+		
+		if (response.status != 2) {
+			$(form_id + " [type='submit']").attr("disabled", "disabled");
+		}
 
 		if (response.status <= 0) {
 			var color = "is-danger";
@@ -681,6 +685,13 @@ jQuery(document).ready(function($) {
 	 */
 	$("body").on("input", "input", function() {
 		$(this).removeClass('is-danger');
+	});
+	
+	/**
+	 *@since 2019.03.28 表单改变时，移除提交按钮禁止状态
+	 */
+	$("body").on("change", "form", function() {
+		$(this).find("[type='submit']").attr("disabled", false);
 	});
 
 	/**
