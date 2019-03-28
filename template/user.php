@@ -281,7 +281,7 @@ function _wnd_reg_form($type = 'email') {
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>注册');
 	$form->set_form_attr('class="user-form"');
 
-	$form->add_user_login();
+	$form->add_user_login('用户名');
 
 	$form->add_user_password();
 

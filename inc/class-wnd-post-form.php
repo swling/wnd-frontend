@@ -146,7 +146,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_post_price($post_id) {
+	function add_post_price($post_id, $placeholder = '价格') {
 		parent::add_text(
 			array(
 				'name' => '_wpmeta_price',
@@ -154,7 +154,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 				'label' => '',
 				'has_icons' => 'left',
 				'icon' => '<i class="fas fa-yen-sign"></i>',
-				'placeholder' => '价格',
+				'placeholder' => $placeholder,
 			)
 		);
 	}
