@@ -257,6 +257,7 @@ function _wnd_post_status_form($post_id) {
 				'删除' => 'delete',
 			),
 			'required' => 'required',
+			'checked' => $post_status,
 		)
 	);
 	$form->add_html('</div>');

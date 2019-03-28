@@ -35,6 +35,7 @@
 wp_post_meta: price (价格)
 wnd_meta: file (存储上传附件的id)
 wnd_meta: download_count (下载统计)
+wnd_meta: order_count (订单统计)
 
 #用户自定义字段
 wnd_meta: money：余额

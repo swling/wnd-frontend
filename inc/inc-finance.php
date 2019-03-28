@@ -246,7 +246,10 @@ function wnd_insert_order($args = array()) {
 	 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see wnd_update_order();
 	 */
 	if ($order_id && $args['status'] == 'success') {
+		// 更新余额
 		wnd_inc_user_money($args['user_id'], $args['money'] * -1);
+		// 更新订单统计
+		wnd_inc_wnd_post_meta($args['object_id'], 'order_count', 1);
 	}
 
 	return $order_id;
@@ -283,9 +286,12 @@ function wnd_update_order($ID, $status, $title = '') {
 	 *由于此处没有触发 wnd_inc_user_money 因此需要单独统计财务信息
 	 */
 	if ($order_id and $before_status == 'pending' and $status == 'success') {
-		// wnd_inc_user_money($user_id, $money * -1 );
+		
 		// 整站按月统计充值和消费
 		wnd_update_fin_stats($money * -1);
+
+		// 更新订单统计
+		wnd_inc_wnd_post_meta($args['object_id'], 'order_count', 1);
 	}
 
 	return $order_id;

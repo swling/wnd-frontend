@@ -163,6 +163,27 @@ function wnd_action_delete_user($user_id) {
 }
 
 /**
+ *@since 2019.03.28
+ *删除文章时，删除附属的子文章
+ */
+add_action('deleted_post', 'wnd_action_delete_children');
+function wnd_action_delete_children($post_id) {
+
+	$args = array(
+		'posts_per_page' => -1,
+		'post_type' => get_post_types(), //此处需要删除所有子文章，如果设置为 any，自定义类型中设置public为false的仍然无法包含，故获取全部注册类型
+		'post_status' => 'any',
+		'post_parent' => $post_id,
+	);
+
+	// 获取并删除
+	foreach (get_posts($args) as $post) {
+		wp_delete_post($post->ID, true);
+	}
+	unset($post);
+}
+
+/**
  * 禁止WordPress原生登录和注册
  *@since 2019.03.01
  */

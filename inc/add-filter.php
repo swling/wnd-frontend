@@ -401,3 +401,12 @@ if (wnd_get_option('wndwp', 'wnd_disable_admin_panel') == 1) {
 	//禁用前台工具栏
 	add_filter('show_admin_bar', '__return_false');
 }
+
+/**
+ * 修改通知系统邮件发件人名称“WordPress”为博客名称
+ *@since 2019.03.28
+ */
+function wnd_action_mail_from_name($email) {
+	return get_option('blogname');
+}
+add_filter('wp_mail_from_name', 'wnd_action_mail_from_name');

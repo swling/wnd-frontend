@@ -180,12 +180,12 @@ function wnd_delete_tag_under_cat($object_id) {
 	$tag_taxonomy = $post_type . '_tag';
 
 	$cats = get_the_terms($object_id, $cat_taxonomy);
-	if (!$cats) {
+	if (!$cats or is_wp_error($cats)) {
 		return;
 	}
 
 	$tags = get_the_terms($object_id, $tag_taxonomy);
-	if (!$tags) {
+	if (!$tags or is_wp_error($tags)) {
 		return;
 	}
 

@@ -5,6 +5,7 @@
 	margin: 0;
 	overflow: hidden;
 	cursor: text;
+	border-bottom: 1px solid #DDD;
 }
 
 /* core styles usually need no change */
