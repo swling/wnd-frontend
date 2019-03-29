@@ -246,10 +246,7 @@ function wnd_insert_order($args = array()) {
 	 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see wnd_update_order();
 	 */
 	if ($order_id && $args['status'] == 'success') {
-		// 更新余额
 		wnd_inc_user_money($args['user_id'], $args['money'] * -1);
-		// 更新订单统计
-		wnd_inc_wnd_post_meta($args['object_id'], 'order_count', 1);
 	}
 
 	return $order_id;
@@ -286,12 +283,7 @@ function wnd_update_order($ID, $status, $title = '') {
 	 *由于此处没有触发 wnd_inc_user_money 因此需要单独统计财务信息
 	 */
 	if ($order_id and $before_status == 'pending' and $status == 'success') {
-		
-		// 整站按月统计充值和消费
 		wnd_update_fin_stats($money * -1);
-
-		// 更新订单统计
-		wnd_inc_wnd_post_meta($args['object_id'], 'order_count', 1);
 	}
 
 	return $order_id;
@@ -320,6 +312,44 @@ function wnd_user_has_paid($user_id, $object_id) {
 	} else {
 		return true;
 	}
+
+}
+
+/**
+ *@since 2019.03.29 查询订单统计
+ *不使用post_meta的方式统计原因在于，如果需要限制订单总数，且用户采用在线支付的方式，在支付过程中存在时间缝隙
+ *因此导致最终支付成功的订单超过限制的订单。故此采用数据库查询订单的方式。
+ **/
+function wnd_get_order_count($object_id, $status = 'any') {
+
+	// 删除半小时以前未完成的订单
+	$args = array(
+		'posts_per_page' => -1,
+		'post_type' => 'order',
+		'post_parent' => $object_id,
+		'post_status' => 'pending',
+		'date_query' => array(
+			array(
+				'column' => 'post_date',
+				'before' => date('Y-m-d H:i:s', current_time('timestamp', $gmt = 0) - 1800),
+				'inclusive' => true,
+			),
+		),
+	);
+	foreach (get_posts($args) as $post) {
+		wp_delete_post($post->ID, $force_delete = true);
+	}
+	unset($post, $args);
+
+	// 查询订单总数
+	$args = array(
+		'posts_per_page' => -1,
+		'post_type' => 'order',
+		'post_parent' => $object_id,
+		'post_status' => $status,
+	);
+
+	return count(get_posts($args));
 
 }
 
