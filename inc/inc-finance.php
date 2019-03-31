@@ -100,6 +100,20 @@ function wnd_insert_payment($user_id, $money, $object_id = 0) {
 	 *@since 2019.03.04
 	 */
 
+	//@since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
+	$old_payment = get_posts(
+		array(
+			'author' => $user_id,
+			'post_parent' => $object_id,
+			'post_status' => 'pending',
+			'post_type' => $object_id ? 'order' : 'recharge',
+			'posts_per_page' => 1,
+		)
+	);
+	if ($old_payment and $old_payment[0]->post_content == $money) {
+		return wnd_get_site_prefix() . '-' . $old_payment[0]->ID;
+	}
+
 	// 在线订单
 	if ($object_id) {
 

@@ -109,7 +109,7 @@ function _wnd_list_posts_by_table($args = '') {
 			<td class="is-narrow is-hidden-mobile">
 				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>')"><i class="fas fa-info-circle"></i></a>
 				<?php if (current_user_can('edit_post', $post->ID)) {?>
-				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')"><i class="fas fa-pen-square"></i></a>
+				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')"><i class="fas fa-cog"></i></a>
 				<?php }?>
 			</td>
 		</tr>

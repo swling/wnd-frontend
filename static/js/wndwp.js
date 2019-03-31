@@ -375,6 +375,7 @@ function wnd_ajax_submit(form_id) {
 
 				// 刷新当前页面
 			case 4:
+				wnd_reset_modal();
 				window.location.reload(true);
 				break;
 

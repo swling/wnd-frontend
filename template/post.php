@@ -221,8 +221,8 @@ if (!wnd_get_post_price($post->ID)) {
  */
 function _wnd_post_status_form($post_id) {
 
-	$post_status = get_post_status($post_id);
-	switch ($post_status) {
+	$post = get_post($post_id);
+	switch ($post->post_status) {
 
 	case 'publish':
 		$status_text = '已发布';
@@ -241,7 +241,7 @@ function _wnd_post_status_form($post_id) {
 		break;
 
 	default:
-		$status_text = $post_status;
+		$status_text = $post->post_status;
 		break;
 	}
 
@@ -257,10 +257,11 @@ function _wnd_post_status_form($post_id) {
 				'删除' => 'delete',
 			),
 			'required' => 'required',
-			'checked' => $post_status,
+			'checked' => $post->post_status,
 		)
 	);
 	$form->add_html('</div>');
+
 	if (wnd_is_manager()) {
 		$form->add_textarea(
 			array(
@@ -269,6 +270,11 @@ function _wnd_post_status_form($post_id) {
 			)
 		);
 	}
+
+	if ($post->post_type == 'order') {
+		$form->add_html('<div class="message is-danger"><div class="message-body">删除订单记录，不可退款，请谨慎操作！</div></div>');
+	}
+
 	$form->add_hidden('post_id', $post_id);
 	$form->set_action('wnd_update_post_status');
 	$form->set_form_attr('id="post-status"');
