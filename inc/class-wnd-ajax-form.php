@@ -34,7 +34,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	function build_form_header() {
-		$html = '<form id="' . $this->form_id . '" action="" method="POST" data-submit-type="ajax" onsubmit="return false"';
+		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax" onsubmit="return false"';
 
 		if ($this->upload) {
 			$html .= ' enctype="multipart/form-data"';
@@ -138,7 +138,6 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			'thumbnail' => '', //默认缩略图
 			'thumbnail_size' => array('height' => '100', 'width' => '100'),
 			'data' => array('post_parent' => 0, 'meta_key' => 0),
-			'id' => 'image-upload-field',
 		);
 		$args = array_merge($defaults, $args);
 
@@ -179,8 +178,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		$defaults = array(
 			'label' => 'File upload',
-			'data' => array(),
-			'id' => array('post_parent' => 0, 'meta_key' => 0),
+			'data' => array('post_parent' => 0, 'meta_key' => 0),
 		);
 		$args = array_merge($defaults, $args);
 

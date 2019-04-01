@@ -114,6 +114,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 				'save_width' => $save_size,
 				'save_height' => $save_size,
 			),
+			'delete_button' => false,
 		);
 		parent::add_image_upload($args);
 	}

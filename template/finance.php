@@ -178,7 +178,6 @@ function _wnd_list_user_fin($args = '') {
 function _wnd_recharge_form() {
 
 	if (wnd_get_option('wndwp', 'wnd_alipay_appid')) {
-
 ?>
 <style>
 /*单选样式优化*/
@@ -187,6 +186,7 @@ function _wnd_recharge_form() {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-wrap: wrap;
 }
 
 .radio-toolbar input[type="radio"] {
@@ -217,31 +217,21 @@ function _wnd_recharge_form() {
 	<div class="field">
 		<div class="ajax-msg"></div>
 	</div>
-	<div class="radio-toolbar field level content">
-		<div class="level-item">
+	<div class="radio-toolbar field">
 			<input id="radio1" required="required" name="money" type="radio" value="0.01" checked="checked">
 			<label for="radio1">¥0.01</label>
-		</div>
 
-		<div class="level-item">
 			<input id="radio2" required="required" name="money" type="radio" value="10">
 			<label for="radio2">¥10</label>
-		</div>
 
-		<div class="level-item">
 			<input id="radio3" required="required" name="money" type="radio" value="100">
 			<label for="radio3">¥100</label>
-		</div>
 
-		<div class="level-item">
 			<input id="radio4" required="required" name="money" type="radio" value="500">
 			<label for="radio4">¥500</label>
-		</div>
 
-		<div class="level-item">
 			<input id="radio5" required="required" name="money" type="radio" value="1000">
 			<label for="radio5">¥1000</label>
-		</div>
 	</div>
 	<div class="paytype field level is-mobile">
 		<div class="level-item">
@@ -253,7 +243,7 @@ function _wnd_recharge_form() {
 	<div class="field is-grouped is-grouped-centered">
 		<button type="submit" name="submit" class="button">支付宝充值</button>
 	</div>
-<?php }?>
+<?php } ?>
 	<?php do_action('_wnd_recharge_form');?>
 </form>
 <?php

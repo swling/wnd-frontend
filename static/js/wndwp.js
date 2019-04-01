@@ -343,7 +343,7 @@ function wnd_ajax_submit(form_id) {
 	function showResponse(response, statusText, xhr, $form) {
 
 		$(form_id + " [type='submit']").removeClass("is-loading");
-		
+
 		if (response.status != 2) {
 			$(form_id + " [type='submit']").attr("disabled", "disabled");
 		}
@@ -685,12 +685,13 @@ jQuery(document).ready(function($) {
 	$("body").on("input", "input", function() {
 		$(this).removeClass('is-danger');
 	});
-	
+
 	/**
 	 *@since 2019.03.28 表单改变时，移除提交按钮禁止状态
 	 */
 	$("body").on("change", "form", function() {
 		$(this).find("[type='submit']").attr("disabled", false);
+		$(this).find(".ajax-msg").empty();
 	});
 
 	/**
@@ -715,6 +716,16 @@ jQuery(document).ready(function($) {
 	$("body").on("click", "[data-submit-type='ajax'] [type='submit']", function() {
 		var form_id = $(this).parents("form").attr("id");
 		wnd_ajax_submit(form_id);
+	});
+
+	/**
+	 *@since 2019.04.01 ajax翻页后，滑动到顶部
+	 */
+	$("body").on("click", ".pagination-link", function() {
+		// $(this).parents("nav").parent().get(0).scrollIntoView({
+		$("body").get(0).scrollIntoView({
+			behavior: "smooth"
+		});
 	});
 
 });

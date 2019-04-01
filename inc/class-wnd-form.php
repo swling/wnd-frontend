@@ -11,7 +11,7 @@
 
 class Wnd_Form {
 
-	public $form_id;
+	public $id;
 
 	public $form_attr;
 
@@ -53,7 +53,7 @@ class Wnd_Form {
 	function __construct() {
 		$this->input_values = array();
 		$this->form_title = null;
-		$this->form_id = 'form-'.uniqid();
+		$this->id = uniqid();
 		$this->submit = 'Submit';
 	}
 
@@ -292,6 +292,7 @@ class Wnd_Form {
 	function add_image_upload($args) {
 
 		$defaults = array(
+			'id' => 'image-upload-' . $this->id,
 			'name' => 'file',
 			'label' => 'Image upland',
 			'thumbnail' => '',
@@ -299,11 +300,12 @@ class Wnd_Form {
 			'required' => null,
 			'file_id' => 0,
 			'data' => array(),
-			'id' => 'image-upload-field',
+			'delete_button' => true,
 		);
 		$args = array_merge($defaults, $args);
 
 		array_push($this->input_values, array(
+			'id' => $args['id'],
 			'type' => "image",
 			'name' => $args['name'],
 			'label' => $args['label'],
@@ -312,7 +314,7 @@ class Wnd_Form {
 			'required' => $args['required'],
 			'file_id' => $args['file_id'],
 			'data' => $args['data'],
-			'id' => $args['id'],
+			'delete_button' => $args['delete_button'],
 		));
 		if (!$this->upload) {
 			$this->upload = true;
@@ -324,17 +326,19 @@ class Wnd_Form {
 	function add_file_upload($args) {
 
 		$defaults = array(
+			'id' => 'file-upload-' . $this->id,
 			'name' => 'file',
 			'label' => 'File upload',
 			'file_name' => 'file name',
 			'file_id' => 0,
 			'data' => array(),
 			'required' => null,
-			'id' => 'file-upload-field',
+			'delete_button' => true,
 		);
 		$args = array_merge($defaults, $args);
 
 		array_push($this->input_values, array(
+			'id' => $args['id'],
 			'type' => "file",
 			'name' => $args['name'],
 			'label' => $args['label'],
@@ -342,7 +346,7 @@ class Wnd_Form {
 			'file_id' => $args['file_id'],
 			'data' => $args['data'],
 			'required' => $args['required'],
-			'id' => $args['id'],
+			'delete_button' => $args['delete_button'],
 		));
 		if (!$this->upload) {
 			$this->upload = true;
@@ -374,7 +378,7 @@ class Wnd_Form {
 	protected function build_form_header() {
 		$html = '<form';
 
-		$html .= ' id="' . $this->form_id . '"';
+		$html .= ' id="form-' . $this->id . '"';
 
 		if (!is_null($this->method)) {
 			$html .= ' method="' . $this->method . '"';
@@ -547,7 +551,7 @@ class Wnd_Form {
 
 		$html .= '<div class="field">';
 		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['height'] . '"></a>';
-		$html .= '<a class="delete" data-id="' . $input_value['id'] . '" data-file_id="' . $input_value['file_id'] . '"></a>';
+		$html .= $input_value['delete_button'] ? '<a class="delete" data-id="' . $input_value['id'] . '" data-file_id="' . $input_value['file_id'] . '"></a>' : '';
 		$html .= '<div class="file">';
 		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . 'accept="image/*" >';
 		$html .= '</div>';
@@ -591,11 +595,13 @@ class Wnd_Form {
 		$html .= '</div>';
 		$html .= '</div>';
 
-		$html .= '<div class="column is-narrow">';
-		$html .= '<a class="delete" data-id="' . $input_value['id'] . '" data-file_id="' . $input_value['file_id'] . '"></a>';
-		$html .= '</div>';
-		$html .= '</div>';
+		if ($input_value['delete_button']) {
+			$html .= '<div class="column is-narrow">';
+			$html .= '<a class="delete" data-id="' . $input_value['id'] . '" data-file_id="' . $input_value['file_id'] . '"></a>';
+			$html .= '</div>';
+		}
 
+		$html .= '</div>';
 		$html .= '</div>';
 		return $html;
 	}

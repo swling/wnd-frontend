@@ -41,3 +41,4 @@ require WNDWP_PATH . 'template/archive.php'; //归档和列表模板
 require WNDWP_PATH . 'template/filter.php'; //多重筛选
 require WNDWP_PATH . 'template/finance.php'; //财务模板
 require WNDWP_PATH . 'template/admin.php'; //前端管理模板
+require WNDWP_PATH . 'template/upload.php'; //文件上传模板

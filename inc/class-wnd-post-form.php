@@ -8,7 +8,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 	// 用户表单标题居中
 	function build_form_header() {
-		$html = '<form id="' . $this->form_id . '" action="" method="POST" data-submit-type="ajax"';
+		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax"';
 		$html .= ' onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}"';
 
 		if ($this->upload) {

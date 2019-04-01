@@ -338,15 +338,15 @@ function _wnd_lostpassword_form($type = 'email') {
 
 	$form->set_form_attr('class="user-form"');
 
-	$form->add_user_new_password();
-
-	$form->add_user_new_password_repeat();
-
 	if ($type == 'sms') {
 		$form->add_sms_verify($verify_type = 'reset_pass', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
 	} else {
 		$form->add_email_verify($verify_type = 'reset_pass', $template = '');
 	}
+
+	$form->add_user_new_password();
+
+	$form->add_user_new_password_repeat();	
 
 	$form->set_action('wnd_reset_password');
 	$form->set_submit_button('重置密码');

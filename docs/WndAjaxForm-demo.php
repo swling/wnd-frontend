@@ -164,6 +164,7 @@ function _wnd_demo_form() {
 				'save_hight' => '0', //图片文件存储最大过度 0 为不限制
 				'post_parent' => 0, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
 			),
+			'delete_button' => true,
 		)
 	);
 
@@ -176,6 +177,7 @@ function _wnd_demo_form() {
 				'meta_key' => 'file',
 				'post_parent' => 0, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
 			),
+			'delete_button' => true,
 		)
 	);
 
