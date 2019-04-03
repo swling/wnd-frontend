@@ -74,6 +74,7 @@ function wnd_mail($to, $subject, $message) {
 		'post_title' => $subject,
 		'post_content' => $message,
 		'post_status' => 'pending',
+		'post_name' => uniqid(),
 	);
 
 	$mail_id = wp_insert_post($postarr);

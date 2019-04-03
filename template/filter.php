@@ -614,9 +614,7 @@ function _wnd_posts_filter($args = array()) {
 
 	// 如未指定类型，遍历循环输出当前站点允许的类型
 	if (empty($args['wnd_post_types']) or $args['wnd_post_types'] == 'any') {
-
-		$args['wnd_post_types'] = get_post_types(array('public' => true), $output = 'names', $operator = 'and');
-		unset($args['wnd_post_types']['page'], $args['wnd_post_types']['attachment']); // 排除页面和附件
+		$args['wnd_post_types'] = get_post_types();
 		foreach ($args['wnd_post_types'] as $post_type) {
 			if (!in_array($post_type, wnd_get_allowed_post_types())) {
 				unset($args['wnd_post_types'][$post_type]);

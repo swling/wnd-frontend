@@ -20,6 +20,9 @@
 5.前端文件、图片上传
 6.数组形式合并存储多个user_meta、post_meta、option
 
+#注意事项
+##普通注册用户的角色：author、editor及以上角色定义为管理员
+
 #自定义文章类型
 （以下 post_type 并未均为私有属性（'public' => false），因此在WordPress后台无法查看到）
 ##充值：recharge

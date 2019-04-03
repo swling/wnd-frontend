@@ -167,7 +167,11 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
  */
 function wnd_get_allowed_post_types() {
 
-	return apply_filters('wnd_allowed_post_types', get_post_types(array('public' => true), 'names', 'and'));
+	$post_types = get_post_types(array('public' => true), 'names', 'and');
+	// 排除页面/附件/站内信
+	unset($post_types['page'], $post_types['attachment'], $post_types['mail']);
+
+	return apply_filters('wnd_allowed_post_types', $post_types);
 }
 
 /**

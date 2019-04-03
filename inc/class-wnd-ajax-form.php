@@ -205,7 +205,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		$args['name'] = 'file';
 		$args['file_id'] = $file_id ?: 0;
-		$args['file_name'] = $file_url ? '<a href="' . $file_url . '">查看文件</a>' : '……';
+		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">查看文件</a>' : '……';
 
 		parent::add_file_upload($args);
 

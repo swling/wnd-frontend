@@ -344,7 +344,7 @@ function wnd_ajax_submit(form_id) {
 
 		$(form_id + " [type='submit']").removeClass("is-loading");
 
-		if (response.status != 2) {
+		if (response.status != 2 && response.status != 0) {
 			$(form_id + " [type='submit']").attr("disabled", "disabled");
 		}
 
@@ -526,7 +526,7 @@ jQuery(document).ready(function($) {
 					if (is_image == 1) {
 						$(id + " .thumbnail").prop("src", response[i].msg.url);
 					} else {
-						$(id + " .file-name").html('上传成功！<a href="' + response[i].msg.url + '">查看文件</a>');
+						$(id + " .file-name").html('上传成功！<a href="' + response[i].msg.url + '" target="_blank">查看文件</a>');
 					}
 					$(id + " .delete").data("file_id", response[i].msg.id)
 				}
@@ -722,8 +722,8 @@ jQuery(document).ready(function($) {
 	 *@since 2019.04.01 ajax翻页后，滑动到顶部
 	 */
 	$("body").on("click", ".pagination-link", function() {
-		// $(this).parents("nav").parent().get(0).scrollIntoView({
-		$("body").get(0).scrollIntoView({
+		$(this).parents("nav").parent().get(0).scrollIntoView({
+			// $("body").get(0).scrollIntoView({
 			behavior: "smooth"
 		});
 	});

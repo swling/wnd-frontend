@@ -37,10 +37,16 @@ add_action('init', 'wnd_post_type_order');
  *@since 2019.02.28 站内信
  */
 function wnd_post_type_mail() {
+	$labels = array(
+		'name' => '站内信',
+	);
 	$args = array(
+		'labels' => $labels,
 		'description' => '站内信',
-		'public' => false,
+		'public' => true,
 		'has_archive' => false,
+		'show_ui' => false,
+		'rewrite' => array('slug' => 'mail', 'with_front' => false),
 	);
 	register_post_type('mail', $args);
 }

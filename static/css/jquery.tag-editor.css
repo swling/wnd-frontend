@@ -63,13 +63,14 @@
 
 /* tag style */
 .tag-editor .tag-editor-tag {
-	padding: 3px 15px;
+	padding: 3px 10px;
 	color: #FFF;
 	background: hsl(348, 100%, 61%);
 	white-space: nowrap;
 	overflow: hidden;
 	cursor: pointer;
 	border-radius: 2px;
+	font-size: 0.9em;
 }
 
 /* delete icon */

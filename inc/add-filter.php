@@ -156,6 +156,21 @@ function wnd_filter_edit_post_link($link, $post_id, $context) {
 }
 
 /**
+ *@since 2019.04.03
+ *apply_filters( 'wp_insert_post_data', $data, $postarr )
+ *防止插入相同标题文章时（功能型post），反复查询post name，故此设置为随机值
+ */
+add_filter('wp_insert_post_data', 'wnd_filter_wp_insert_post_data', 10, 1);
+function wnd_filter_wp_insert_post_data($data) {
+
+	if (empty($data['post_name'])) {
+		$data['post_name'] = uniqid();
+	}
+
+	return $data;
+}
+
+/**
  * 付费内容
  *@since 2018.09.17
  *设置 文章自定义字段 price
