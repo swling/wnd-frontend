@@ -22,6 +22,11 @@
 
 #注意事项
 ##普通注册用户的角色：author、editor及以上角色定义为管理员
+##分类与标签关联，需要自定义taxonomy，并遵循以下规则：
+```php
+$post_type.'_cat';//分类taxonomy
+$post_type.'_tag';//标签taxonomy
+```
 
 #自定义文章类型
 （以下 post_type 并未均为私有属性（'public' => false），因此在WordPress后台无法查看到）
@@ -218,12 +223,6 @@ do_action('_wnd_posts_filter', $args);
 文章字段：wnd_post_meta: file (存储上传附件的id)
 下载计数：wnd_post_meta: download_count ;
 
-#标签分类关联
-分类与标签关联，需要自定义taxonomy，并遵循以下规则：
-```php
-$post_type.'_cat';//分类taxonomy
-$post_type.'_tag';//标签taxonomy
-```
 #action filter函数命名规则：
 wnd_action_xxx
 wnd_filter_xxx

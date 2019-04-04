@@ -39,6 +39,7 @@ function _wnd_user_posts_panel($args = '') {
 	// 查询参数
 	$defaults = array(
 		'post_status' => 'any',
+		'wnd_only_cat' => 1,
 	);
 	$args = wp_parse_args($args, $defaults);
 

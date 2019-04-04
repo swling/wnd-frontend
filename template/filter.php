@@ -110,7 +110,6 @@ function _wnd_post_types_filter($args = array(), $ajax_list_posts_call = '', $aj
  *遍历当前post_type 具有层级关系的taxonomy，并配合外部调用函数，生成tabs查询参数，
  *（在非ajax状态中，生成 ?$taxonomy.'_id'=$term_id，ajax中，在当前查询参数新增tax query参数，并注销paged翻页参数以实现菜单切换）
  *@param $args 外部调用函数ajax查询文章的参数，其中 $args['wnd_remove_query_arg'] 参数为非ajax状态下，需要从当前网址中移除的参数数组
- *$args['wnd_taxonomies'] 需要展示的分类类型，默认查询当前文章类型的所有分类
  *@param $ajax_list_posts_call 外部调用函数查询文章的调用函数
  *@param $ajax_embed_container 外部调用函数ajax查询文章后嵌入的html容器
  *@param array  'wnd_remove_query_arg' => array('paged', 'pages'), 需要从当前请求参数中移除的参数键名数组
@@ -134,11 +133,14 @@ function _wnd_categories_filter($args = array(), $ajax_list_posts_call = '', $aj
 	$ajax_type = $_POST['ajax_type'] ?? false;
 
 	// 需要展示的taxonomy列表 @since 2019.03.21
-	if ($args['wnd_taxonomies']) {
+	if ($args['wnd_only_cat']) {
 
-		$cat_taxonomies = $args['wnd_taxonomies'];
+		$cat_taxonomies = $args['post_type'] == 'post' ? array('category') : array($args['post_type'] . '_cat');
+		if (!get_taxonomy($cat_taxonomies[0])) {
+			return;
+		}
 
-		// 未指定，遍历当前文章类型taxonomy，并获取具有层级的taxonomy作为输出的category
+		// 遍历当前文章类型taxonomy，并获取具有层级的taxonomy作为输出的category
 	} else {
 
 		$cat_taxonomies = array();
@@ -590,7 +592,7 @@ function _wnd_current_filter($args, $ajax_list_posts_call, $ajax_embed_container
  *@param $args wp_query $args
  *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
  *@param 自定义： array $args['wnd_post_types']需要展示的文章类型
- *@param 自定义： array $args['wnd_taxonomies']需要展示的taxonomy(若不指定，则自动获取当前文章类型的所有分类)
+ *@param 自定义： bool args['wnd_only_cat']是否只筛选分类
  *非ajax状态下：
  *自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
  *自动从GET参数中获取meta查询参数 (?meta_$meta_key=meta_value or ?meta_$meta_key=exists)
@@ -608,7 +610,7 @@ function _wnd_posts_filter($args = array()) {
 		'no_found_rows' => true, //无需原生的分页
 		'wnd_list_template' => '_wnd_list_posts_by_table', //输出列表模板函数
 		'wnd_post_types' => array(), //允许的类型数组
-		'wnd_taxonomies' => array(), //允许的taxonomy数组
+		'wnd_only_cat' => 0, // 只筛选分类
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -689,7 +691,9 @@ function _wnd_posts_filter($args = array()) {
 	_wnd_categories_filter($args, 'posts_filter', '#wnd-filter');
 
 	// 获取分类下关联的标签
-	_wnd_tags_filter($args, 'posts_filter', '#wnd-filter');
+	if (!$args['wnd_only_cat']) {
+		_wnd_tags_filter($args, 'posts_filter', '#wnd-filter');
+	}
 
 	// @since 2019.03.26 添加动作
 	do_action('_wnd_posts_filter', $args);
