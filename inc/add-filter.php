@@ -119,19 +119,21 @@ function wnd_filter_limit_upload($file) {
 		$file['error'] = '上传文件不得超过' . $limit . 'KB';
 	}
 
-	// 检测文件的类型是否是图片
-	$mimes = array('image/jpeg', 'image/png', 'image/gif');
-	if (in_array($file['type'], $mimes)) {
-		return $file;
-	}
-
-	// 非图片文件MD5重命名（用于付费下载加密）
+	// 文件信息
 	$info = pathinfo($file['name']);
 	$ext = '.' . $info['extension'];
 
-	// 对随机码再做md5加密
-	$md5 = md5(wnd_random(6) . time());
-	$file['name'] = $md5 . $ext;
+	// 检测文件的类型是否是图片
+	$mimes = array('image/jpeg', 'image/png', 'image/gif', 'image/jpg');
+	if (in_array($file['type'], $mimes)) {
+
+		$file['name'] = uniqid() . $ext;
+		
+	} else {
+
+		// 非图片文件MD5重命名（用于付费下载加密）
+		$file['name'] = md5(wnd_random(6) . time()) . $ext;
+	}
 
 	return $file;
 
