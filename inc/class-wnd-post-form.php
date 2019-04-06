@@ -62,6 +62,10 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 	function add_post_category_select($cat_taxonomy, $post_id = 0) {
 
 		$cat = get_taxonomy($cat_taxonomy);
+		if (!$cat) {
+			return;
+		}
+				
 		// 获取当前文章已选择分类ID
 		$current_cat = get_the_terms($post_id, $cat_taxonomy);
 		$current_cat = $current_cat ? reset($current_cat) : 0;

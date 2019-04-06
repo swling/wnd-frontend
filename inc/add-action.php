@@ -190,8 +190,8 @@ function wnd_action_delete_children($post_id) {
 if (wnd_get_option('wndwp', 'wnd_disable_admin_panel') == 1) {
 
 	// 禁止非管理员登录后台
-	add_action('admin_init', 'redirect_non_admin_users');
-	function redirect_non_admin_users() {
+	add_action('admin_init', 'wnd_action_redirect_non_admin_users');
+	function wnd_action_redirect_non_admin_users() {
 		if (!is_super_admin() && empty($_REQUEST)) {
 			wp_redirect(home_url('?from=wp-admin'));
 			exit;
@@ -199,8 +199,8 @@ if (wnd_get_option('wndwp', 'wnd_disable_admin_panel') == 1) {
 	}
 
 	// 移除原生登录注册
-	add_action('login_head', 'redirect_login_form_register');
-	function redirect_login_form_register() {
+	add_action('login_head', 'wnd_action_redirect_login_form_register');
+	function wnd_action_redirect_login_form_register() {
 		wp_redirect(home_url('?from=wp-admin'));
 		exit(); // always call `exit()` after `wp_redirect`
 	}
