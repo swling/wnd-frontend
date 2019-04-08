@@ -13,17 +13,19 @@ function _wnd_next_page($posts_per_page, $current_post_count, $pages_key = 'page
 
 	$paged = (isset($_GET[$pages_key])) ? intval($_GET[$pages_key]) : 1;
 
-	echo '<nav class="pagination is-centered" role="navigation" aria-label="pagination">';
-	echo '<ul class="pagination-list">';
+	$html = '<nav class="pagination is-centered" role="navigation" aria-label="pagination">';
+	$html .= '<ul class="pagination-list">';
 
 	if ($paged >= 2) {
-		echo '<li><a class="pagination-link" href="' . add_query_arg($pages_key, $paged - 1) . '">上一页</a>';
+		$html .= '<li><a class="pagination-link" href="' . add_query_arg($pages_key, $paged - 1) . '">上一页</a>';
 	}
 	if ($current_post_count >= $posts_per_page) {
-		echo '<li><a class="pagination-link" href="' . add_query_arg($pages_key, $paged + 1) . '">下一页</a>';
+		$html .= '<li><a class="pagination-link" href="' . add_query_arg($pages_key, $paged + 1) . '">下一页</a>';
 	}
-	echo '</ul>';
-	echo '</nav>';
+	$html .= '</ul>';
+	$html .= '</nav>';
+
+	return $html;
 
 }
 
@@ -61,17 +63,18 @@ function _wnd_ajax_next_page($function, $args, $post_count) {
 		$pre_onclick = 'wnd_ajax_embed(' . $container . ',' . $js_pre_args . ')';
 	}
 
-	echo '<nav class="pagination is-centered" role="navigation" aria-label="pagination">';
-	echo '<ul class="pagination-list">';
+	$html = '<nav class="pagination is-centered" role="navigation" aria-label="pagination">';
+	$html .= '<ul class="pagination-list">';
 	if ($current_pages >= 2) {
-		echo '<li><a class="pagination-link" onclick="' . $pre_onclick . '">上一页</a>';
+		$html .= '<li><a class="pagination-link" onclick="' . $pre_onclick . '">上一页</a>';
 	}
 	if ($post_count >= $args['posts_per_page']) {
-		echo '<li><a class="pagination-link" onclick="' . $next_onclick . '">下一页</a>';
+		$html .= '<li><a class="pagination-link" onclick="' . $next_onclick . '">下一页</a>';
 	}
 
-	echo '</ul>';
-	echo '</nav>';
+	$html .= '</ul>';
+	$html .= '</nav>';
+	return $html;
 
 }
 
@@ -88,54 +91,56 @@ function _wnd_list_posts_by_table($args = '') {
 
 	if ($query->have_posts()):
 
-	?>
-<table class="table is-fullwidth is-hoverable is-striped">
-	<thead>
-		<tr>
-			<th class="is-narrow is-hidden-mobile">日期</th>
-			<th>标题</th>
-			<th class="is-narrow is-hidden-mobile">状态</th>
-			<th class="is-narrow is-hidden-mobile">操作</th>
-		</tr>
-	</thead>
-	<tbody>
-		<?php while ($query->have_posts()) {$query->the_post();global $post;?>
-		<tr>
-			<td class="is-narrow is-hidden-mobile"><?php the_time('m-d H:i');?></td>
-			<td><a href="<?php echo the_permalink(); ?>" target="_blank"><?php echo $post->post_title; ?></a></td>
-			<?php if (current_user_can('edit_post', $post->ID)) {?>
-			<th class="is-narrow is-hidden-mobile"><?php echo apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type); ?></th>
-			<?php }?>
-			<td class="is-narrow is-hidden-mobile">
-				<a onclick="wnd_ajax_modal('post_info','post_id=<?php echo $post->ID; ?>')"><i class="fas fa-info-circle"></i></a>
-				<?php if (current_user_can('edit_post', $post->ID)) {?>
-				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')"><i class="fas fa-cog"></i></a>
-				<?php }?>
-			</td>
-		</tr>
-		<?php }?>
-	</tbody>
-</table>
-<?php
+		$html = '<table class="table is-fullwidth is-hoverable is-striped">';
 
-	wp_reset_postdata(); //重置查询
+		$html .= '<thead>';
+		$html .= '<tr>';
+		$html .= '<th class="is-narrow is-hidden-mobile">日期</th>';
+		$html .= '<th>标题</th>';
+		$html .= '<th class="is-narrow is-hidden-mobile">状态</th>';
+		$html .= '<th class="is-narrow is-hidden-mobile">操作</th>';
+		$html .= '</tr>';
+		$html .= '</thead>';
 
-	// 没有内容
+		$html .= '<tbody>';
+		while ($query->have_posts()) {
+			$query->the_post();global $post;
+
+			$html .= '<tr>';
+			$html .= '<td class="is-narrow is-hidden-mobile">' . get_the_time('m-d H:i') . '</td>';
+			$html .= '<td><a href="' . get_the_permalink() . '" target="_blank">' . $post->post_title . '</a></td>';
+			if (current_user_can('edit_post', $post->ID)) {
+				$html .= '<th class="is-narrow is-hidden-mobile">' . apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type) . '</th>';
+			}
+
+			$html .= '<td class="is-narrow is-hidden-mobile">';
+			$html .= '<a onclick="wnd_ajax_modal(\'post_info\',\'post_id=' . $post->ID . '\')"><i class="fas fa-info-circle"></i></a>';
+			if (current_user_can('edit_post', $post->ID)) {
+				$html .= '<a onclick="wnd_ajax_modal(\'post_status_form\',\'' . $post->ID . '\')"><i class="fas fa-cog"></i></a>';
+			}
+			$html .= '</td>';
+			$html .= '</tr>';
+		}
+		$html .= '</tbody>';
+
+		$html .= '</table>';
+
+		wp_reset_postdata(); //重置查询
+
+		// 没有内容
 	else:
 		$no_more_text = ($args['paged'] >= 2) ? '没有更多内容！' : '没有匹配的内容！';
-		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
+		$html = '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
 	endif;
 
 	// 分页
-	if (!wp_doing_ajax()) {
-		_wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
+	if (!wnd_doing_ajax()) {
+		$html .= _wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
 	} else {
-		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
+		$html .= _wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}
 
-	?>
-<?php
-// end function
+	return $html;
 
 }
 
@@ -148,6 +153,7 @@ function _wnd_list_posts_by_table($args = '') {
  */
 function _wnd_list_posts_by_template($args = '') {
 
+	$html = '';
 	$args = wp_parse_args($args);
 
 	$query = new WP_Query($args);
@@ -156,8 +162,9 @@ function _wnd_list_posts_by_template($args = '') {
 
 		while ($query->have_posts()) {
 			$query->the_post();
+			global $post;
 
-			get_template_part('template-parts/list/list', get_post_type());
+			$html .= wnd_get_post_list($post);
 
 			wp_reset_postdata(); //重置查询
 
@@ -167,14 +174,23 @@ function _wnd_list_posts_by_template($args = '') {
 	} else {
 
 		$no_more_text = ($args['paged'] >= 2) ? '没有更多内容！' : '没有匹配的内容！';
-		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
+		$html .= '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
 	}
 
 	// 分页
-	if (!wp_doing_ajax()) {
-		_wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
+	if (!wnd_doing_ajax()) {
+		$html .= _wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
 	} else {
-		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
+		$html .= _wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}
 
+	return $html;
+
+}
+
+/**
+ *@since 2019.04.07
+ */
+function wnd_get_post_list($post) {
+	return $post->post_title;
 }

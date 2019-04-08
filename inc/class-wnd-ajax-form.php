@@ -57,11 +57,10 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$this->html = $html;
 	}
 
-	// ajax提交只需要设置 handler 但常规表单action包含提交地址和提交方式，在类中，必须保持参数个数一致
-	function set_action($handler, $method = '') {
-		parent::add_hidden('action', 'wnd_action');
-		parent::add_hidden('handler', $handler);
-		parent::add_hidden('_ajax_nonce', wp_create_nonce($handler));
+	// ajax提交只需要设置 action 但常规表单action包含提交地址和提交方式，在类中，必须保持参数个数一致
+	function set_action($action, $method = '') {
+		parent::add_hidden('action', $action);
+		parent::add_hidden('_ajax_nonce', wp_create_nonce($action));
 	}
 
 	// 短信验证

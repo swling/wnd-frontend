@@ -190,8 +190,7 @@ function _wnd_post_info($args) {
 
 	$post = get_post($args['post_id']);
 	if (!$post) {
-		echo '<script>wnd_alert_msg("ID无效！")</script>';
-		return;
+		return '<script>wnd_alert_msg("ID无效！")</script>';
 	}
 
 	// 站内信阅读后，更新为已读 @since 2019.02.25
@@ -199,20 +198,18 @@ function _wnd_post_info($args) {
 		wp_update_post(array('ID' => $post->ID, 'post_status' => 'private'));
 	}
 
-	?>
-<article class="message <?php echo $args['color']; ?>">
-	<div class="message-body">
-		<?php
-if (!wnd_get_post_price($post->ID)) {
-		echo $post->post_content;
-	} else {
-		echo "付费文章不支持预览！";
-	}
-	?>
-	</div>
-</article>
-<?php
+	$html = '<article class="message ' . $args['color'] . '">';
+	$html .= '<div class="message-body">';
 
+	if (!wnd_get_post_price($post->ID)) {
+		$html .= $post->post_content;
+	} else {
+		$html .= "付费文章不支持预览！";
+	}
+	$html .= '</div>';
+	$html .= '</article>';
+
+	return $html;
 }
 
 /**
@@ -247,6 +244,7 @@ function _wnd_post_status_form($post_id) {
 
 	$form = new Wnd_Ajax_Form();
 	$form->add_html('<div class="field is-grouped is-grouped-centered">');
+	$form->add_html('<script>wnd_ajax_msg(\'当前： ' . $status_text . '\', \'is-danger\', \'#post-status\')</script>');
 	$form->add_radio(
 		array(
 			'name' => 'post_status',
@@ -280,9 +278,7 @@ function _wnd_post_status_form($post_id) {
 	$form->set_form_attr('id="post-status"');
 	$form->set_submit_button('提交');
 	$form->build();
-	echo $form->html;
-
-	echo '<script>wnd_ajax_msg(\'当前： ' . $status_text . '\', \'is-danger\', \'#post-status\')</script>';
+	return $form->html;
 
 }
 
@@ -299,9 +295,9 @@ function _wnd_the_post_thumbnail($width = 0, $height = 0, $post_id = 0) {
 
 	if ($image_id) {
 		if ($width and $height) {
-			echo '<img src="' . wp_get_attachment_url($image_id) . '" width="' . $width . '" height="' . $height . '"  >';
+			return '<img src="' . wp_get_attachment_url($image_id) . '" width="' . $width . '" height="' . $height . '"  >';
 		} else {
-			echo '<img src="' . wp_get_attachment_url($image_id) . '" >';
+			return '<img src="' . wp_get_attachment_url($image_id) . '" >';
 		}
 	}
 }

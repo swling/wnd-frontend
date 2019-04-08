@@ -30,45 +30,52 @@ function _wnd_user_fin_panel($args = '') {
 	$order_is_active = $args['post_type'] == 'order' ? 'class="is-active"' : '';
 	$recharge_is_active = $args['post_type'] == 'recharge' ? 'class="is-active"' : '';
 
-	?>
-<div id="user-fin">
-	<nav class="level">
+	$html = '<div id="user-fin">';
+
+	$html .= '<nav class="level">';
+	$html .= '
 		<div class="level-item has-text-centered">
 			<div>
 				<p class="heading">余额</p>
-				<p class="title"><?php echo wnd_get_user_money($user_id); ?></p>
+				<p class="title">' . wnd_get_user_money($user_id) . '</p>
 			</div>
-		</div>
+		</div>';
+
+	$html .= '
 		<div class="level-item has-text-centered">
 			<div>
 				<p class="heading">消费</p>
-				<p class="title"><?php echo wnd_get_user_expense($user_id); ?></p>
+				<p class="title">' . wnd_get_user_expense($user_id) . '</p>
 			</div>
-		</div>
-		<?php if (wnd_get_option('wndwp', 'wnd_commission_rate')) {?>
+		</div>';
+
+	if (wnd_get_option('wndwp', 'wnd_commission_rate')) {
+		$html .= '
 		<div class="level-item has-text-centered">
 			<div>
 				<p class="heading">佣金</p>
-				<p class="title"><?php echo wnd_get_user_commission($user_id); ?></p>
+				<p class="title">' . wnd_get_user_commission($user_id) . '</p>
 			</div>
-		</div>
-		<?php }?>
-	</nav>
+		</div>';
+	}
+	$html .= '</nav>';
 
-	<div class="level">
+	$html .= '<div class="level">';
+	$html .= '
 		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal('recharge_form')">余额充值</button>
-		</div>
-		<?php if (is_super_admin()) {?>
-		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal('admin_recharge_form')">管理员充值</button>
-		</div>
-		<?php }?>
-	</div>
+			<button class="button" onclick="wnd_ajax_modal(\'recharge_form\')">余额充值</button>
+		</div>';
 
-	<div class="tabs">
-		<ul>
-		<?php
+	if (is_super_admin()) {
+		$html .= '
+		<div class="level-item">
+			<button class="button" onclick="wnd_ajax_modal(\'admin_recharge_form\')">管理员充值</button>
+		</div>';
+	}
+	$html .= '</div>';
+
+	$html .= '<div class="tabs">';
+	$html .= '<ul>';
 
 	// 配置ajax请求参数
 	$ajax_args_order = array_merge($args, array('post_type' => 'order'));
@@ -80,26 +87,27 @@ function _wnd_user_fin_panel($args = '') {
 	unset($ajax_args_recharge['paged']);
 	$ajax_args_recharge = http_build_query($ajax_args_recharge);
 
-	if (wp_doing_ajax()) {
+	if (wnd_doing_ajax()) {
 		if ($ajax_type == 'modal') {
-			echo '<li ' . $order_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin_panel\',\'' . $ajax_args_order . '\');">订单记录</a></li>';
-			echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin_panel\',\'' . $ajax_args_recharge . '\');">充值记录</a></li>';
+			$html .= '<li ' . $order_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin_panel\',\'' . $ajax_args_order . '\');">订单记录</a></li>';
+			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin_panel\',\'' . $ajax_args_recharge . '\');">充值记录</a></li>';
 		} else {
-			echo '<li ' . $order_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin_panel\',\'' . $ajax_args_order . '\');">订单记录</a></li>';
-			echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin_panel\',\'' . $ajax_args_recharge . '\');">充值记录</a></li>';
+			$html .= '<li ' . $order_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin_panel\',\'' . $ajax_args_order . '\');">订单记录</a></li>';
+			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin_panel\',\'' . $ajax_args_recharge . '\');">充值记录</a></li>';
 		}
 	} else {
-		echo '<li ' . $order_is_active . ' ><a href="' . add_query_arg('type', 'order', remove_query_arg('pages')) . '">订单记录</a></li>';
-		echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('type', 'recharge', remove_query_arg('pages')) . '">充值记录</a></li>';
+		$html .= '<li ' . $order_is_active . ' ><a href="' . add_query_arg('type', 'order', remove_query_arg('pages')) . '">订单记录</a></li>';
+		$html .= '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('type', 'recharge', remove_query_arg('pages')) . '">充值记录</a></li>';
 	}
-	?>
-		</ul>
-	</div>
-	<div id="user-fin-list">
-	<?php _wnd_list_user_fin($args);?>
-	</div>
-</div>
-<?php
+
+	$html .= '</ul>';
+	$html .= '</div>';
+
+	$html .= '<div id="user-fin-list">';
+	$html .= _wnd_list_user_fin($args);
+	$html .= '</div></div>';
+
+	return $html;
 
 }
 
@@ -119,57 +127,61 @@ function _wnd_list_user_fin($args = '') {
 
 	if ($query->have_posts()):
 
-	?>
-<table class="table is-fullwidth is-hoverable is-striped">
-	<thead>
-		<tr>
-			<th class="is-narrow is-hidden-mobile"><abbr title="Position">日期</abbr></th>
-			<th>金额</th>
-			<th>详情</th>
-			<th class="is-narrow is-hidden-mobile">状态</th>
-			<th class="is-narrow is-hidden-mobile">操作</th>
-		</tr>
-	</thead>
-	<tbody>
-		<?php while ($query->have_posts()): $query->the_post();global $post;?>
-		<tr>
-			<td class="is-narrow is-hidden-mobile"><?php the_time('m-d H:i');?></td>
-			<td><?php echo $post->post_content; ?></td>
-			<?php if ($post->post_parent) {?>
-			<td><a href="<?php the_permalink($post->post_parent);?>" target="_blank"><?php echo $post->post_title; ?></a></td>
-			<?php } else {?>
-			<td><?php echo $post->post_title; ?></td>
-		 	<?php }?>
-			<th class="is-narrow is-hidden-mobile"><?php echo $post->post_status; ?></th>
-			<td class="is-narrow is-hidden-mobile">
-				<?php if (current_user_can('edit_post', $post->ID)) {?>
-				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')"><i class="fas fa-cog"></i></a>
-				<?php }?>
-			</td>
-		</tr>
-		<?php endwhile;?>
-	</tbody>
-	<?php wp_reset_postdata(); //重置查询?>
-</table>
-<?php
+		$html = '<table class="table is-fullwidth is-hoverable is-striped">';
+		$html .= '<thead>';
+		$html .= '<tr>';
+		$html .= '<th class="is-narrow is-hidden-mobile"><abbr title="Position">日期</abbr></th>';
+		$html .= '<th>金额</th>';
+		$html .= '<th>详情</th>';
+		$html .= '<th class="is-narrow is-hidden-mobile">状态</th>';
+		$html .= '<th class="is-narrow is-hidden-mobile">操作</th>';
+		$html .= '</tr>';
+		$html .= '</thead>';
+		$html .= '<tbody>';
 
-	// 分页
-	if (!wp_doing_ajax()) {
-		_wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
-	} else {
-		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
-	}
+		while ($query->have_posts()): $query->the_post();
+			global $post;
 
-	// 没有内容
+			$html .= '<tr>';
+
+			$html .= '<td class="is-narrow is-hidden-mobile">' . get_the_time('m-d H:i') . '</td>';
+			$html .= '<td>' . $post->post_content . '</td>';
+
+			if ($post->post_parent) {
+				$html .= '<td><a href="' . get_the_permalink($post->post_parent) . '" target="_blank">' . $post->post_title . '</a></td>';
+			} else {
+				$html .= '<td>' . $post->post_title . '</td>';
+			}
+
+			$html .= '<td class="is-narrow is-hidden-mobile">' . $post->post_status . '</td>';
+
+			$html .= '<td class="is-narrow is-hidden-mobile">';
+			if (current_user_can('edit_post', $post->ID)) {
+				$html .= '<a onclick="wnd_ajax_modal(\'post_status_form\',\'' . $post->ID . '\')"><i class="fas fa-cog"></i></a>';
+			}
+			$html .= '</td>';
+
+			$html .= '</tr>';
+		endwhile;
+		wp_reset_postdata(); //重置查询?
+
+		$html .= '</tbody>';
+		$html .= '</table>';
+
+		// 分页
+		if (!wnd_doing_ajax()) {
+			$html .= _wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
+		} else {
+			$html .= _wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
+		}
+
+		// 没有内容
 	else :
 		$no_more_text = ($args['paged'] >= 2) ? '没有更多内容！' : '没有匹配的内容！';
-		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
+		$html = '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
 	endif;
 
-	?>
-<?php
-// end function
-
+	return $html;
 }
 
 /**
@@ -178,7 +190,39 @@ function _wnd_list_user_fin($args = '') {
 function _wnd_recharge_form() {
 
 	if (wnd_get_option('wndwp', 'wnd_alipay_appid')) {
-?>
+
+	}
+
+	$form = new Wnd_Form;
+// radio
+	$form->add_Radio(
+		array(
+			'name' => 'money',
+			'value' => array('0.01' => '0.01', '10' => '10'),
+			'required' => 'required',
+			'checked' => '0.01', //default checked value
+			'class'=>'is-checkradio is-danger'
+		)
+	);
+
+$form->add_checkbox(
+	array(
+		'name' => 'checkbox',
+		'value' => 5,
+		'label' => 'checkbox',
+		'checked' => true, //default checked
+		'class'=>"switch is-danger",
+	)
+);	
+
+// $form->set_action();
+	$form->set_action('post', wnd_get_do_url() . '?action=payment');
+	$form->set_submit_button('充值');
+	$form->build();
+
+	return $form->html;
+
+	?>
 <style>
 /*单选样式优化*/
 .radio-toolbar,
@@ -213,7 +257,7 @@ function _wnd_recharge_form() {
 	color: #FFF;
 }
 </style>
-<form id="recharge" action="<?php echo wnd_get_do_url(); ?>?action=payment" method="post" target="_blank">
+<form id="recharge" action="<?php $html .= wnd_get_do_url();?>?action=payment" method="post" target="_blank">
 	<div class="field">
 		<div class="ajax-msg"></div>
 	</div>
@@ -243,7 +287,6 @@ function _wnd_recharge_form() {
 	<div class="field is-grouped is-grouped-centered">
 		<button type="submit" name="submit" class="button">支付宝充值</button>
 	</div>
-<?php } ?>
 	<?php do_action('_wnd_recharge_form');?>
 </form>
 <?php
@@ -289,7 +332,7 @@ function _wnd_admin_recharge_form() {
 	$form->set_submit_button('确认充值');
 	$form->build();
 
-	echo $form->html;
+	return $form->html;
 
 }
 
@@ -318,11 +361,9 @@ function _wnd_admin_fin_panel($args = '') {
 	$recharge_is_active = $args['post_type'] == 'stats-re' ? 'class="is-active"' : '';
 	$expense_is_active = $args['post_type'] == 'stats-ex' ? 'class="is-active"' : '';
 
-	?>
-<div id="admin-fin">
-	<div class="tabs">
-		<ul>
-		<?php
+	$html = '<div id="admin-fin">';
+	$html .= '<div class="tabs">';
+	$html .= '<ul>';
 
 	// 配置ajax请求参数
 	$ajax_args_expense = array_merge($args, array('post_type' => 'stats-ex'));
@@ -334,27 +375,27 @@ function _wnd_admin_fin_panel($args = '') {
 	unset($ajax_args_recharge['paged']);
 	$ajax_args_recharge = http_build_query($ajax_args_recharge);
 
-	if (wp_doing_ajax()) {
+	if (wnd_doing_ajax()) {
 		if ($ajax_type == 'modal') {
-			echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_modal(\'admin_fin_panel\',\'' . $ajax_args_expense . '\');">消费统计</a></li>';
-			echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
+			$html .= '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_modal(\'admin_fin_panel\',\'' . $ajax_args_expense . '\');">消费统计</a></li>';
+			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
 		} else {
-			echo '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_embed(\'#admin-fin\',\'admin_fin_panel\',\'' . $ajax_args_expense . '\');">消费统计</a></li>';
-			echo '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#admin-fin\',\'admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
+			$html .= '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_embed(\'#admin-fin\',\'admin_fin_panel\',\'' . $ajax_args_expense . '\');">消费统计</a></li>';
+			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#admin-fin\',\'admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
 		}
 	} else {
-		echo '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('type', 'stats-ex', remove_query_arg('pages')) . '">消费统计</a></li>';
-		echo '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('type', 'stats-re', remove_query_arg('pages')) . '">充值统计</a></li>';
+		$html .= '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('type', 'stats-ex', remove_query_arg('pages')) . '">消费统计</a></li>';
+		$html .= '<li ' . $recharge_is_active . ' ><a href="' . add_query_arg('type', 'stats-re', remove_query_arg('pages')) . '">充值统计</a></li>';
 	}
-	?>
-		</ul>
-	</div>
-	<div id="admin-fin-list">
-	<?php _wnd_list_fin_stats($args);?>
-	</div>
-</div>
-<?php
+	$html .= '</ul>';
+	$html .= '</div>';
+	$html .= '<div id="admin-fin-list">';
+	$html .= _wnd_list_fin_stats($args);
 
+	$html .= '</div>';
+	$html .= '</div>';
+
+	return $html;
 }
 
 /**
@@ -368,53 +409,51 @@ function _wnd_list_fin_stats($args = '') {
 
 	if ($query->have_posts()):
 
-	?>
-<table class="table is-fullwidth is-hoverable is-striped">
-	<thead>
-		<tr>
-			<th class="is-narrow is-hidden-mobile"><abbr title="Position">月份</abbr></th>
-			<th>金额</th>
-			<th>详情</th>
-			<th class="is-narrow is-hidden-mobile">操作</th>
-		</tr>
-	</thead>
-	<tbody>
-		<?php while ($query->have_posts()): $query->the_post();global $post;?>
-		<tr>
-			<td class="is-narrow is-hidden-mobile"><?php the_time('m-d');?></td>
-			<td><?php echo $post->post_content; ?></td>
-			<?php if ($post->post_parent) {?>
-			<td><a href="<?php the_permalink($post->post_parent);?>" target="_blank"><?php echo $post->post_title; ?></a></td>
-			<?php } else {?>
-			<td><?php echo $post->post_title; ?></td>
-		 	<?php }?>
-			<td class="is-narrow is-hidden-mobile">
-				<?php if (current_user_can('edit_post', $post->ID)) {?>
-				<a onclick="wnd_ajax_modal('post_status_form','<?php echo $post->ID; ?>')"><i class="fas fa-cog"></i></a>
-				<?php }?>
-			</td>
-		</tr>
-		<?php endwhile;?>
-	</tbody>
-	<?php wp_reset_postdata(); //重置查询?>
-</table>
-<?php
+		$html = '<table class="table is-fullwidth is-hoverable is-striped">';
+		$html .= '<thead>';
+		$html .= '<tr>';
+		$html .= '<th class="is-narrow is-hidden-mobile"><abbr title="Position">月份</abbr></th>';
+		$html .= '<th>金额</th>';
+		$html .= '<th>详情</th>';
+		$html .= '<th class="is-narrow is-hidden-mobile">操作</th>';
+		$html .= '</tr>';
+		$html .= '</thead>';
 
-	// 分页
-	if (!wp_doing_ajax()) {
-		_wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
-	} else {
-		_wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
-	}
+		$html .= '<tbody>';
+		while ($query->have_posts()): $query->the_post();
+			global $post;
+			$html .= '<tr>';
+			$html .= '<td class="is-narrow is-hidden-mobile">' . get_the_time('m-d') . '</td>';
+			$html .= '<td>' . $post->post_content . '</td>';
+			if ($post->post_parent) {
+				$html .= '<td><a href="' . get_the_permalink($post->post_parent) . '" target="_blank">' . $post->post_title . '</a></td>';
+			} else {
+				$html .= '<td>' . $post->post_title . '</td>';
+			}
+			$html .= '<td class="is-narrow is-hidden-mobile">';
+			if (current_user_can('edit_post', $post->ID)) {
+				$html .= '<a onclick="wnd_ajax_modal(\'post_status_form\',\'' . $post->ID . '\')"><i class="fas fa-cog"></i></a>';
+			}
+			$html .= '</td>';
+			$html .= '</tr>';
+		endwhile;
+		wp_reset_postdata(); //重置查询?
+		$html .= '</tbody>';
 
-	// 没有内容
+		$html .= '</table>';
+		// 分页
+		if (!wnd_doing_ajax()) {
+			$html .= _wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
+		} else {
+			$html .= _wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
+		}
+
+		// 没有内容
 	else :
 		$no_more_text = ($args['paged'] >= 2) ? '没有更多内容！' : '没有匹配的内容！';
-		echo '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
+		$html = '<div class="message is-warning"><div class="message-body">' . $no_more_text . '</div></div>';
 	endif;
 
-	?>
-<?php
-// end function
+	return $html;
 
 }

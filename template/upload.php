@@ -80,7 +80,7 @@ function _wnd_image_upload($args) {
 		</script>';
 
 	$html .= '</div>';
-	echo $html;
+	return $html;
 }
 
 /**
@@ -155,5 +155,5 @@ function _wnd_file_upload($args) {
 
 	$html .= '</div>';
 	$html .= '</div>';
-	echo $html;
+	return $html;
 }

@@ -100,18 +100,12 @@ function wnd_scripts() {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.7.4/css/bulma.min.css', array(), $ver);
 		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.7.2/css/all.min.css', array(), $ver);
 	}
+
+	$wnd_data = array(
+		'api_nonce' => wp_create_nonce('wp_rest'),
+		'api_url' => site_url('wp-json/wnd/rest-api'),
+	);
+
+	wp_localize_script('wndwp', 'wnd_api', $wnd_data);
 }
 add_action('wp_enqueue_scripts', 'wnd_scripts');
-
-/**
- *@since 初始化
- * WndWP头部
- */
-add_action('wp_head', 'wnd_head');
-function wnd_head() {
-	// 头部引入WordPress ajaxurl
-	?>
-<script type="text/javascript" >var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';</script>
-<?php
-
-}

@@ -194,16 +194,16 @@ function wnd_ajax_modal(template, param = 0) {
 	wnd_reset_modal();
 	$.ajax({
 		type: "POST",
-		url: ajaxurl,
+		url: wnd_api.api_url,
 		data: {
 			"template": template,
 			"param": param,
 			"ajax_type": "modal",
-			"handler": "_wnd_ajax_r",
-			"action": "wnd_action"
+			"action": "_wnd_ajax_r",
 		},
 		//后台返回数据前
-		beforeSend: function() {
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader("X-WP-Nonce", wnd_api.api_nonce);
 			wnd_alert_msg("……")
 		},
 		//成功后
@@ -228,16 +228,16 @@ function wnd_ajax_embed(container, template, param = 0) {
 
 	$.ajax({
 		type: "POST",
-		url: ajaxurl,
+		url: wnd_api.api_url,
 		data: {
 			"template": template,
 			"param": param,
 			"ajax_type": "embed",
-			"handler": "_wnd_ajax_r",
-			"action": "wnd_action"
+			"action": "_wnd_ajax_r",
 		},
 		//后台返回数据前
-		beforeSend: function() {
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader("X-WP-Nonce", wnd_api.api_nonce);
 			// wnd_alert_msg("……")
 		},
 		//成功后
@@ -322,87 +322,85 @@ function wnd_ajax_submit(form_id) {
 	var form_data = new FormData($(form_id).get(0));
 
 	$.ajax({
-		url: ajaxurl,
+		url: wnd_api.api_url,
 		dataType: "json",
 		cache: false,
 		contentType: false,
 		processData: false,
 		data: form_data,
-		type: "post",
-		beforeSend: showRequest,
-		success: showResponse,
-		error: showError
+		type: "POST",
+
+		// 提交中
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader("X-WP-Nonce", wnd_api.api_nonce);
+			$(form_id + " [type='submit']").addClass("is-loading");
+		},
+
+		// 返回结果
+		success: function(response) {
+
+			$(form_id + " [type='submit']").removeClass("is-loading");
+
+			if (response.status != 2 && response.status != 0) {
+				$(form_id + " [type='submit']").attr("disabled", "disabled");
+			}
+
+			if (response.status <= 0) {
+				var color = "is-danger";
+			} else {
+				var color = "is-success";
+			}
+
+			// 根据后端响应处理
+			switch (response.status) {
+
+				// 常规类，展示后端提示信息
+				case 1:
+					wnd_ajax_msg(response.msg, color, form_id);
+					break;
+
+					//更新类
+				case 2:
+					wnd_ajax_msg('提交成功！<a href="' + response.msg + '" target="_blank">查看</a>', color, form_id);
+					break;
+
+					// 跳转类
+				case 3:
+					wnd_ajax_msg("请稍后……", color, form_id);
+					$(window.location).attr("href", response.msg);
+					break;
+
+					// 刷新当前页面
+				case 4:
+					wnd_reset_modal();
+					window.location.reload(true);
+					break;
+
+					// 弹出信息并自动消失
+				case 5:
+					wnd_alert_msg(response.msg, 3);
+					break;
+
+					// 下载类
+				case 6:
+					wnd_ajax_msg("下载中……", color, form_id, 10);
+					$(window.location).attr("href", response.msg);
+					break;
+
+					//默认展示提示信息
+				default:
+					wnd_ajax_msg(response.msg, color, form_id);
+					break;
+			}
+
+		},
+
+		// 提交错误
+		error: function() {
+			wnd_ajax_msg("系统错误！", "is-danger", form_id);
+			$(form_id + " [type='submit']").removeClass("is-loading");
+		},
 	});
-
-	// 提交中
-	function showRequest(formData, jqForm, options) {
-		$(form_id + " [type='submit']").addClass("is-loading");
-	}
-
-	// 返回结果
-	function showResponse(response, statusText, xhr, $form) {
-
-		$(form_id + " [type='submit']").removeClass("is-loading");
-
-		if (response.status != 2 && response.status != 0) {
-			$(form_id + " [type='submit']").attr("disabled", "disabled");
-		}
-
-		if (response.status <= 0) {
-			var color = "is-danger";
-		} else {
-			var color = "is-success";
-		}
-
-		// 根据后端响应处理
-		switch (response.status) {
-
-			// 常规类，展示后端提示信息
-			case 1:
-				wnd_ajax_msg(response.msg, color, form_id);
-				break;
-
-				//更新类
-			case 2:
-				wnd_ajax_msg('提交成功！<a href="' + response.msg + '" target="_blank">查看</a>', color, form_id);
-				break;
-
-				// 跳转类
-			case 3:
-				wnd_ajax_msg("请稍后……", color, form_id);
-				$(window.location).attr("href", response.msg);
-				break;
-
-				// 刷新当前页面
-			case 4:
-				wnd_reset_modal();
-				window.location.reload(true);
-				break;
-
-				// 弹出信息并自动消失
-			case 5:
-				wnd_alert_msg(response.msg, 3);
-				break;
-
-				// 下载类
-			case 6:
-				wnd_ajax_msg("下载中……", color, form_id, 10);
-				$(window.location).attr("href", response.msg);
-				break;
-
-				//默认展示提示信息
-			default:
-				wnd_ajax_msg(response.msg, color, form_id);
-				break;
-		}
-
-	}
-
-	// 提交错误
-	function showError() {
-		wnd_ajax_msg("系统错误！", "is-danger", form_id);
-		$(form_id + " [type='submit']").removeClass("is-loading");
-	}
 
 }
 
@@ -447,12 +445,11 @@ function wnd_update_post_views(post_id, interval = 3600) {
 		$.ajax({
 			type: "POST",
 			datatype: 'json',
-			url: ajaxurl,
+			url: wnd_api.api_url,
 			data: {
 				'post_id': post_id,
 				'useragent': navigator.userAgent,
-				'handler': '_wnd_update_post_views',
-				'action': 'wnd_action',
+				'action': '_wnd_update_post_views',
 			},
 			success: function(response) {
 				if (response.status === 1) {
@@ -495,19 +492,19 @@ jQuery(document).ready(function($) {
 		form_data.append("save_width", save_width);
 		form_data.append("save_height", save_height);
 		form_data.append("action", "wnd_action");
-		form_data.append("handler", "wnd_upload_file");
+		form_data.append("action", "wnd_upload_file");
 
 		$.ajax({
-			url: ajaxurl,
+			url: wnd_api.api_url,
 			dataType: "json",
 			cache: false,
 			contentType: false,
 			processData: false,
 			data: form_data,
-			type: "post",
+			type: "POST",
 			//后台返回数据前
-			beforeSend: function() {
-				// wnd_ajax_msg("……")
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd_api.api_nonce);
 				wnd_ajax_msg("正在处理，请勿关闭页面！", "is-warning", id);
 			},
 			// 提交成功
@@ -575,10 +572,10 @@ jQuery(document).ready(function($) {
 		form_data.append("_ajax_nonce", _ajax_nonce);
 		// ajax请求配置
 		form_data.append("action", "wnd_action");
-		form_data.append("handler", "wnd_delete_file");
+		form_data.append("action", "wnd_delete_file");
 
 		$.ajax({
-			url: ajaxurl,
+			url: wnd_api.api_url,
 			dataType: "json",
 			cache: false,
 			contentType: false,
@@ -586,8 +583,8 @@ jQuery(document).ready(function($) {
 			data: form_data,
 			type: "post",
 			//后台返回数据前
-			beforeSend: function() {
-				// wnd_ajax_msg("……")
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd_api.api_nonce);
 				wnd_ajax_msg("删除中……", "is-warning", id);
 			},
 			// 上传成功
@@ -643,10 +640,10 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			type: "post",
 			dataType: "json",
-			url: ajaxurl,
+			url: wnd_api.api_url,
 			data: {
 				action: 'wnd_action',
-				handler: "wnd_ajax_send_code",
+				action: "wnd_ajax_send_code",
 				email: _user_user_email,
 				phone: phone,
 				verify_type: verify_type,
@@ -654,7 +651,8 @@ jQuery(document).ready(function($) {
 				template: template,
 				_ajax_nonce: nonce
 			},
-			beforeSend: function() {
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd_api.api_nonce);
 				_this.addClass("is-loading");
 			},
 			success: function(response) {
@@ -682,7 +680,7 @@ jQuery(document).ready(function($) {
 	/**
 	 *@since 2019.02.09 表单改变时，移除input警示状态
 	 */
-	$("body").on("input", "input", function() {
+	$("body").on("input", "input[type='text']", function() {
 		$(this).removeClass('is-danger');
 	});
 

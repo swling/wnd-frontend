@@ -25,7 +25,7 @@ class Wnd_Form {
 
 	public $method;
 
-	public $size;
+	public $class;
 
 	public $upload;
 
@@ -46,6 +46,7 @@ class Wnd_Form {
 		'addon' => null,
 		'autofocus' => '',
 		'id' => NULL,
+		'class' => NULL,
 
 	);
 
@@ -85,11 +86,6 @@ class Wnd_Form {
 		$this->action = $action;
 	}
 
-	// _size (e.g. 'is-large', 'is-small')
-	function set_size($size) {
-		$this->size = $size;
-	}
-
 	/**
 	 *@since 2019.03.10 设置常规input 字段
 	 */
@@ -110,6 +106,7 @@ class Wnd_Form {
 			'icon' => $args['icon'],
 			'addon' => $args['addon'],
 			'id' => $args['id'],
+			'class' => $args['class'],
 		));
 	}
 
@@ -133,6 +130,7 @@ class Wnd_Form {
 			'icon' => $args['icon'],
 			'addon' => $args['addon'],
 			'id' => NULL,
+			'class' => $args['class'],
 		));
 	}
 
@@ -159,6 +157,7 @@ class Wnd_Form {
 			'value' => $args['value'],
 			'required' => $args['required'],
 			'id' => NULL,
+			'class' => $args['class'],
 		));
 	}
 
@@ -178,6 +177,7 @@ class Wnd_Form {
 			'icon' => $args['icon'],
 			'addon' => $args['addon'],
 			'id' => NULL,
+			'class' => $args['class'],
 		));
 	}
 
@@ -198,6 +198,7 @@ class Wnd_Form {
 			'icon' => $args['icon'],
 			'addon' => $args['addon'],
 			'id' => NULL,
+			'class' => $args['class'],
 		));
 	}
 
@@ -214,6 +215,7 @@ class Wnd_Form {
 			'required' => $args['required'],
 			'options' => $args['options'],
 			'id' => NULL,
+			'class' => $args['class'],
 		));
 	}
 
@@ -232,6 +234,7 @@ class Wnd_Form {
 			'required' => $args['required'],
 			'options' => NULL,
 			'id' => NULL,
+			'class' => $args['class'],
 		));
 	}
 
@@ -248,43 +251,7 @@ class Wnd_Form {
 			'value' => $args['value'],
 			'required' => $args['required'],
 			'id' => NULL,
-		));
-	}
-
-	// _switch (custom, see https://wikiki.github.io/form/switch/)
-	// The id is related to how the switch should look like. For instance, you can pass 'switchThinColorInfo'
-	// in order to display a thin switch with info color. See documentation for details.
-	function add_switch($args) {
-
-		$args = array_merge(Wnd_Form::$defaults, $args);
-
-		array_push($this->input_values, array(
-			'type' => "switch",
-			'name' => $args['name'],
-			'placeholder' => NULL,
-			'label' => $args['label'],
-			'checked' => $args['checked'],
-			'value' => NULL,
-			'required' => NULL,
-			'options' => NULL,
-			'id' => $args['id'],
-			// 'is_public' => NULL,
-		));
-	}
-
-	// TinyMCE textarea
-	function addTinyMCE($name, $placeholder, $label, $isPublic) {
-		array_push($this->input_values, array(
-			'type' => "tinymce",
-			'name' => $args['name'],
-			'placeholder' => $args['placeholder'],
-			'label' => $args['label'],
-			'checked' => NULL,
-			'value' => NULL,
-			'required' => NULL,
-			'options' => NULL,
-			'id' => NULL,
-			'is_public' => $args['isPublic'],
+			'class' => $args['class'],
 		));
 	}
 
@@ -457,7 +424,7 @@ class Wnd_Form {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
 		$html .= '<div class="control">';
-		$html .= '<div class="select">';
+		$html .= '<div class="select"' . $this->get_class($input_value) . '>';
 		$html .= '<select name="' . $input_value['name'] . '"' . $this->get_required($input_value) . ' >';
 		foreach ($input_value['options'] as $key => $value) {
 			$checked = ($input_value['checked'] == $value) ? ' selected="selected"' : '';
@@ -473,15 +440,13 @@ class Wnd_Form {
 	protected function build_radio($input_value) {
 
 		$html = '<div class="field">';
-		$html .= '<div class="control">';
 		foreach ($input_value['value'] as $key => $value) {
-			$html .= '<label class="radio">';
-			$html .= '<input type="radio" name="' . $input_value['name'] . '" value="' . $value . '"' . $this->get_required($input_value);
+			$input_id = md5($key);
+			$html .= '<input type="radio" id="' . $input_id . '" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $value . '"' . $this->get_required($input_value);
 			$html .= ($input_value['checked'] == $value) ? ' checked="checked" >' : ' >';
-			$html .= ' ' . $key;
-			$html .= '</label>';
+
+			$html .= '<label for="' . $input_id . '" class="radio">' . $key . '</label>';
 		}unset($key, $value);
-		$html .= '</div>';
 		$html .= '</div>';
 
 		return $html;
@@ -505,14 +470,14 @@ class Wnd_Form {
 		if ($input_value['has_icons']) {
 
 			$html .= $input_value['addon'] ? '<div class="control is-expanded has-icons-' . $input_value['has_icons'] . '">' : '<div class="control has-icons-' . $input_value['has_icons'] . '">';
-			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_size() . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder'] . '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
-			$html .= '<span class="icon' . $this->get_size() . ' is-' . $input_value['has_icons'] . '">' . $input_value['icon'] . '</span>';
+			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder'] . '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
+			$html .= '<span class="icon is-' . $input_value['has_icons'] . '">' . $input_value['icon'] . '</span>';
 			$html .= '</div>';
 
 		} else {
 
 			$html .= $input_value['addon'] ? '<div class="control is-expanded">' : '<div class="control">';
-			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_size() . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder']
+			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder']
 			. '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . '>';
 			$html .= '</div>';
 
@@ -528,11 +493,10 @@ class Wnd_Form {
 
 	protected function build_checkbox($input_value) {
 
-		$html = '<label class="checkbox">';
-		$html .= '<input type="checkbox" name="' . $input_value['name'] . '" value="' . $input_value['value'] . '"' . $this->get_required($input_value);
+		$html = '<div class="field">';
+		$html .= '<input type="checkbox" id="' . $input_value['name'] . '" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $input_value['value'] . '"' . $this->get_required($input_value);
 		$html .= $input_value['checked'] ? ' checked="checked" >' : ' >';
-		$html .= ' ' . $input_value['label'];
-		$html .= '</label>&nbsp;&nbsp;';
+		$html .= '<label  for="' . $input_value['name'] . '" class="checkbox">' . $input_value['label'] . '</label>';
 		return $html;
 	}
 
@@ -626,7 +590,7 @@ class Wnd_Form {
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
-		$html .= '<textarea' . $this->get_id($input_value) . ' class="textarea" name="' . $input_value['name'] . '"' . $this->get_required($input_value) . ' placeholder="' . $input_value['placeholder'] . '" >' . $input_value['value'] . '</textarea>';
+		$html .= '<textarea' . $this->get_id($input_value) . ' class="textarea' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '"' . $this->get_required($input_value) . ' placeholder="' . $input_value['placeholder'] . '" >' . $input_value['value'] . '</textarea>';
 		$html .= '</div>';
 		return $html;
 	}
@@ -672,9 +636,9 @@ class Wnd_Form {
 		return '';
 	}
 
-	protected function get_size() {
-		if ($this->size) {
-			return ' ' . $this->size;
+	protected function get_class($input_value) {
+		if ($input_value['class']) {
+			return ' ' . $input_value['class'];
 		}
 		return '';
 	}

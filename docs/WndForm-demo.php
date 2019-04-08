@@ -108,6 +108,34 @@ $form->add_checkbox(
 
 $form->add_html('</div></div>');
 
+/**
+ *@since 2019.04.08 bulma拓展样式
+ *https://wikiki.github.io/form/checkradio/
+ */
+$form->add_Radio(
+	array(
+		'name' => 'money',
+		'value' => array('0.01' => '0.01', '10' => '10'),
+		'required' => 'required',
+		'checked' => '0.01', //default checked value
+		'class' => 'is-checkradio is-danger',
+	)
+);
+
+/**
+ *@since 2019.04.08 bulma拓展样式
+ *@link https://wikiki.github.io/form/switch/
+ */
+$form->add_checkbox(
+	array(
+		'name' => 'checkbox',
+		'value' => 1,
+		'label' => 'checkbox',
+		'checked' => true, //default checked
+		'class' => "switch is-danger",
+	)
+);
+
 // upload image
 $form->add_image_upload(
 	array(

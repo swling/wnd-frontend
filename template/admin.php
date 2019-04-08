@@ -11,8 +11,7 @@ if (!defined('ABSPATH')) {
 function _wnd_admin_posts_panel($args = '') {
 
 	if (!wnd_is_manager()) {
-		echo '<div class="message is-danger"><div class="message-body">当前账户没有管理权限！</div></div>';
-		return;
+		return '<div class="message is-danger"><div class="message-body">当前账户没有管理权限！</div></div>';
 	}
 
 	// 查询参数
@@ -21,7 +20,7 @@ function _wnd_admin_posts_panel($args = '') {
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	_wnd_posts_filter($args);
+	return _wnd_posts_filter($args);
 
 }
 
@@ -32,8 +31,7 @@ function _wnd_admin_posts_panel($args = '') {
 function _wnd_user_posts_panel($args = '') {
 
 	if (!is_user_logged_in()) {
-		echo '<div class="message is-danger"><div class="message-body">请登录！</div></div>';
-		return;
+		return '<div class="message is-danger"><div class="message-body">请登录！</div></div>';
 	}
 
 	// 查询参数
@@ -46,7 +44,7 @@ function _wnd_user_posts_panel($args = '') {
 	// 优先参数
 	$args['author'] = get_current_user_id();
 
-	_wnd_posts_filter($args);
+	return _wnd_posts_filter($args);
 
 }
 
@@ -57,8 +55,7 @@ function _wnd_user_posts_panel($args = '') {
 function _wnd_user_mail_box($args = '') {
 
 	if (!is_user_logged_in()) {
-		echo '<div class="message is-danger"><div class="message-body">请登录！</div></div>';
-		return;
+		return '<div class="message is-danger"><div class="message-body">请登录！</div></div>';
 	}
 
 	// 查询参数
@@ -78,10 +75,6 @@ function _wnd_user_mail_box($args = '') {
 	$unread_active = ($args['post_status'] == 'pending') ? 'class="is-active"' : '';
 	$all_active = ($args['post_status'] == 'any') ? 'class="is-active"' : '';
 
-	// 容器开始
-	echo '<div id="user-mail-box">';
-	echo '<div class="tabs"><ul class="tab">';
-
 	// 配置未读邮件ajax请求参数
 	$ajax_args_unread = array_merge($args, array('post_status' => 'pending'));
 	unset($ajax_args_unread['paged']);
@@ -92,32 +85,40 @@ function _wnd_user_mail_box($args = '') {
 	unset($ajax_args_all['paged']);
 	$ajax_args_all = http_build_query($ajax_args_all);
 
-	if (wp_doing_ajax()) {
+	// 容器开始
+	$html = '<div id="user-mail-box">';
+	$html .= '<div class="tabs">';
+	$html .= '<ul class="tab">';
+
+	if (wnd_doing_ajax()) {
 
 		// ajax请求类型
 		$ajax_type = $_POST['ajax_type'] ?? 'modal';
 		if ($ajax_type == 'modal') {
-			echo '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
-			echo '<li ' . $unread_active . '><a onclick="wnd_ajax_modal(\'user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
+			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_modal(\'user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
 		} else {
-			echo '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
-			echo '<li ' . $unread_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
+			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
 		}
 
 	} else {
 
-		echo '<li ' . $all_active . '><a href="' . remove_query_arg('status') . '">全部</a></li>';
-		echo '<li ' . $unread_active . ' ><a href="' . add_query_arg('status', 'private') . '">未读</a></li>';
+		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg('status') . '">全部</a></li>';
+		$html .= '<li ' . $unread_active . ' ><a href="' . add_query_arg('status', 'private') . '">未读</a></li>';
 
 	}
 
-	echo '</ul></div>';
+	$html .= '</ul>';
+	$html .= '</div>';
 
-	echo '<div id="user-mail-list">';
-	_wnd_list_posts_by_table($args);
-	echo '</div>';
+	$html .= '<div id="user-mail-list">';
+	$html .= _wnd_list_posts_by_table($args);
+	$html .= '</div>';
 
 	// 容器结束
-	echo '</div>';
+	$html .= '</div>';
+
+	return $html;
 
 }

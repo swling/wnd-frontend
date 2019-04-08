@@ -15,6 +15,18 @@ function wnd_get_do_url() {
 }
 
 /**
+ *@since 2019.04.07
+ */
+function wnd_doing_ajax() {
+
+	if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) and $_SERVER['HTTP_X_REQUESTED_WITH'] == "XMLHttpRequest") {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/**
  *@since 初始化
  *获取用户ip
  */

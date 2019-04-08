@@ -151,6 +151,34 @@ function _wnd_demo_form() {
 		)
 	);
 
+	/**
+	 *@since 2019.04.08
+	 *https://wikiki.github.io/form/checkradio/
+	 */
+	$form->add_Radio(
+		array(
+			'name' => 'money',
+			'value' => array('0.01' => '0.01', '10' => '10'),
+			'required' => 'required',
+			'checked' => '0.01', //default checked value
+			'class' => 'is-checkradio is-danger',
+		)
+	);
+
+	/**
+	 *@since 2019.04.08
+	 *@link https://wikiki.github.io/form/switch/
+	 */
+	$form->add_checkbox(
+		array(
+			'name' => 'checkbox',
+			'value' => 1,
+			'label' => 'checkbox',
+			'checked' => true, //default checked
+			'class' => "switch is-danger",
+		)
+	);
+
 	// upload image ajax 后台wnd_file_upload已匹配规则，此处强制input name: file 无需额外设置
 	$form->add_image_upload(
 		array(

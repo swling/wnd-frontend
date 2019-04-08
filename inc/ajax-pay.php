@@ -132,8 +132,7 @@ function wnd_pay_for_download() {
 	 *前端接收后跳转至该网址（status == 6 是专为下载类ajax请求设置的代码前端响应），以实现ajax下载
 	 */
 	$download_args = array(
-		'action' => 'wnd_action',
-		'handler' => 'wnd_paid_download',
+		'action' => 'wnd_paid_download',
 		'post_id' => $post_id,
 		'_ajax_nonce' => wp_create_nonce('wnd_paid_download'),
 	);
