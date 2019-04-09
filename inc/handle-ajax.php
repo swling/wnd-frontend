@@ -5,42 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- *form表单规则：
- *input action : wnd_action
- *input action = wp_nonce_field('action', '_ajax_nonce')  = funcrion action()
- */
-add_action('wp_ajax_wnd_action', 'wnd_ajax_action');
-add_action('wp_ajax_nopriv_wnd_action', 'wnd_ajax_action');
-function wnd_ajax_action() {
-
-	$action = trim($_REQUEST['action']);
-
-	// 请求的函数不存在
-	if (!function_exists($action)) {
-		$response = array('status' => 0, 'msg' => '未定义的ajax请求！');
-		wp_send_json($response, $status_code = null);
-	}
-
-	//1、以_wnd_ 开头的函数为无需进行安全校验的函数
-	if (strpos($action, '_wnd_') === 0) {
-
-		$response = $action();
-
-		// 2、常规函数操作 需要安全校验
-	} else {
-
-		check_ajax_referer($action);
-		$response = $action();
-
-	}
-
-	// 发送json数据到前端
-	wp_send_json($response, $status_code = null);
-
-}
-
-/**
- *@since 2019.04.07 测试API改造
+ *@since 2019.04.07 API改造
  */
 add_action('rest_api_init', 'wnd_action_rest_register_route');
 function wnd_action_rest_register_route() {
@@ -75,7 +40,10 @@ function wnd_api_callback($request) {
 		// 2、常规函数操作 需要安全校验
 	} else {
 
-		check_ajax_referer($action);
+		if (!wp_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $action)) {
+			return array('status' => 0, 'msg' => '安全校验失败！');
+		}
+
 		return $action();
 
 	}

@@ -18,7 +18,7 @@ function _wnd_post_types_filter($args = array(), $ajax_list_posts_call = '', $aj
 	}
 
 	$defaults = array(
-		'wnd_remove_query_arg' => array('paged', 'pages', 'tax_query', 'meta_query'),
+		'wnd_remove_query_arg' => array('paged', 'pages'),
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -144,15 +144,15 @@ function _wnd_categories_filter($args = array(), $ajax_list_posts_call = '', $aj
 			return;
 		}
 
-		// 遍历当前文章类型taxonomy，并获取具有层级的taxonomy作为输出的category
+		// 遍历当前文章类型taxonomy，并获取具有层级、且show_ui为true的taxonomy 作为输出的category
 	} else {
 
 		$cat_taxonomies = array();
-		$taxonomies = get_object_taxonomies($args['post_type'], $output = 'names');
+		$taxonomies = get_object_taxonomies($args['post_type'], $output = 'object');
 		if ($taxonomies) {
 			foreach ($taxonomies as $taxonomy) {
-				if (is_taxonomy_hierarchical($taxonomy)) {
-					array_push($cat_taxonomies, $taxonomy);
+				if ($taxonomy->hierarchical and $taxonomy->show_ui) {
+					array_push($cat_taxonomies, $taxonomy->name);
 				}
 			}
 			unset($taxonomy);

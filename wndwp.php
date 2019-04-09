@@ -55,7 +55,6 @@ function wnd_install() {
 			$default_option = array(
 
 				'wnd_enable_white_list' => 1,
-				// 'wnd_allowed_post_field' => 'post_title,post_excerpt,post_content,post_parent',
 				'wnd_allowed_post_meta_key' => '',
 				'wnd_allowed_wp_post_meta_key' => 'price',
 				'wnd_allowed_user_meta_key' => '',
@@ -106,6 +105,6 @@ function wnd_scripts() {
 		'api_url' => site_url('wp-json/wnd/rest-api'),
 	);
 
-	wp_localize_script('wndwp', 'wnd_api', $wnd_data);
+	wp_localize_script('wndwp', 'wnd', $wnd_data);
 }
 add_action('wp_enqueue_scripts', 'wnd_scripts');

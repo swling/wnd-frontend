@@ -5,6 +5,48 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ *@since 2019.01.26 根据用户id获取号码
+ */
+function wnd_get_user_phone($user_id) {
+
+	if (!$user_id) {
+		return false;
+	}
+
+	$phone = wnd_get_user_meta(get_current_user_id(), 'phone');
+	if ($phone) {
+		return $phone;
+	}
+
+	global $wpdb;
+	$phone = $wpdb->get_var($wpdb->prepare("SELECT phone FROM $wpdb->wnd_users WHERE user_id = %d;", $user_id));
+	if ($phone) {
+		return $phone;
+	} else {
+		return false;
+	}
+
+}
+
+/**
+ *@since 2019.01.28 根据号码或邮箱查询用户(用于验证码)
+ */
+function wnd_get_user_by($email_or_phone) {
+
+	global $wpdb;
+	
+	$field = is_email($email_or_phone, $deprecated = false) ? 'email' : 'phone';
+	$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE {$field} = %s;", $email_or_phone));
+
+	if ($user_id) {
+		return $user_id;
+	} else {
+		return false;
+	}
+
+}
+
+/**
  *@since 初始化 判断当前用户是否为管理员
  *@return bool
  *用户角色为：管理员或编辑 返回 true

@@ -78,13 +78,20 @@ function _wnd_post_form($args = array()) {
 	 */
 	$cat_taxonomies = array();
 	$tag_taxonomies = array();
-	$taxonomies = get_object_taxonomies($post_type, $output = 'names');
+	$taxonomies = get_object_taxonomies($post_type, $output = 'object');
+
 	if ($taxonomies) {
 		foreach ($taxonomies as $taxonomy) {
-			if (is_taxonomy_hierarchical($taxonomy)) {
-				array_push($cat_taxonomies, $taxonomy);
+
+			// 私有taxonomy 排除
+			if (!$taxonomy->public) {
+				continue;
+			}
+
+			if ($taxonomy->hierarchical) {
+				array_push($cat_taxonomies, $taxonomy->name);
 			} else {
-				array_push($tag_taxonomies, $taxonomy);
+				array_push($tag_taxonomies, $taxonomy->name);
 			}
 		}
 		unset($taxonomy);
