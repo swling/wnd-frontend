@@ -191,6 +191,7 @@ function _wnd_demo_form() {
 				'save_width' => '0', //图片文件存储最大宽度 0 为不限制
 				'save_hight' => '0', //图片文件存储最大过度 0 为不限制
 				'post_parent' => 0, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+				'user_id' => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
 			),
 			'delete_button' => true,
 		)
@@ -204,6 +205,7 @@ function _wnd_demo_form() {
 			'data' => array( // some data on file input, maybe useful in ajax upload
 				'meta_key' => 'file',
 				'post_parent' => 0, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+				'user_id' => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
 			),
 			'delete_button' => true,
 		)

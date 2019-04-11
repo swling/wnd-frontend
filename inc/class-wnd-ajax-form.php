@@ -147,12 +147,13 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			'upload_nonce' => wp_create_nonce('wnd_upload_file'),
 			'delete_nonce' => wp_create_nonce('wnd_delete_file'),
 			'post_parent' => 0,
+			'user_id' => get_current_user_id(),
 			'meta_key' => 0,
 		);
 		$args['data'] = array_merge($data, $args['data']);
 
 		// 根据user type 查找目标文件
-		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta(get_current_user_id(), $args['data']['meta_key']);
+		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
 		$file_url = $file_id ? wp_get_attachment_url($file_id) : '';
 
 		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
@@ -160,7 +161,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			if ($args['data']['post_parent']) {
 				wnd_delete_post_meta($args['data']['post_parent'], $args['data']['meta_key']);
 			} else {
-				wnd_delete_user_meta(get_current_user_id(), $args['data']['meta_key']);
+				wnd_delete_user_meta($args['data']['user_id'], $args['data']['meta_key']);
 			}
 		}
 
@@ -185,12 +186,13 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			'upload_nonce' => wp_create_nonce('wnd_upload_file'),
 			'delete_nonce' => wp_create_nonce('wnd_delete_file'),
 			'post_parent' => 0,
+			'user_id' => get_current_user_id(),
 			'meta_key' => 0,
 		);
 		$args['data'] = array_merge($data, $args['data']);
 
 		// 根据meta key 查找目标文件
-		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta(get_current_user_id(), $args['data']['meta_key']);
+		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
 		$file_url = $file_id ? wp_get_attachment_url($file_id) : '';
 
 		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
@@ -198,7 +200,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			if ($args['data']['post_parent']) {
 				wnd_delete_post_meta($args['data']['post_parent'], $args['data']['meta_key']);
 			} else {
-				wnd_delete_user_meta(get_current_user_id(), $args['data']['meta_key']);
+				wnd_delete_user_meta($args['data']['user_id'], $args['data']['meta_key']);
 			}
 		}
 

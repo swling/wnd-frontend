@@ -164,7 +164,7 @@ function _wnd_list_posts_by_template($args = '') {
 			$query->the_post();
 			global $post;
 
-			$html .= wnd_get_post_list($post);
+			$html .= _wnd_get_post_list($post);
 
 			wp_reset_postdata(); //重置查询
 
@@ -191,6 +191,6 @@ function _wnd_list_posts_by_template($args = '') {
 /**
  *@since 2019.04.07
  */
-function wnd_get_post_list($post) {
+function _wnd_get_post_list($post) {
 	return $post->post_title;
 }

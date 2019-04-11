@@ -172,7 +172,7 @@ function _wnd_post_form($args = array()) {
 	$form->set_action('wnd_insert_post');
 
 	$form->add_hidden('_post_post_type', $post_type);
-	$form->add_hidden('_post_post_id', $post_id);
+	$form->add_hidden('_post_ID', $post_id);
 	$form->add_hidden('_post_post_parent', $post_parent);
 
 	$form->set_submit_button('保存');

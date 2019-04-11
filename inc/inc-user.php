@@ -34,7 +34,7 @@ function wnd_get_user_phone($user_id) {
 function wnd_get_user_by($email_or_phone) {
 
 	global $wpdb;
-	
+
 	$field = is_email($email_or_phone, $deprecated = false) ? 'email' : 'phone';
 	$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE {$field} = %s;", $email_or_phone));
 
@@ -126,5 +126,34 @@ function wnd_mail($to, $subject, $message) {
 	} else {
 		return array('status' => 1, 'msg' => '发送成功！');
 	}
+
+}
+
+/**
+ *获取最近的10封未读邮件
+ *@since 2019.04.11
+ */
+function wnd_get_mail_notify() {
+
+	$user_id = get_current_user_id();
+	$user_mail_count = wp_cache_get($user_id, 'wnd_user_mail');
+
+	if (false === $user_mail_count) {
+
+		$args = array(
+			'posts_per_page' => 10,
+			'author' => $user_id,
+			'post_type' => 'mail',
+			'post_status' => 'pending',
+			// 'no_found_rows' => true,
+		);
+		$query = new WP_Query($args);
+
+		$user_mail_count = $query->found_posts;
+		wp_cache_set($user_id, $user_mail_count, 'wnd_user_mail');
+
+	}
+
+	return $user_mail_count ?: 0;
 
 }

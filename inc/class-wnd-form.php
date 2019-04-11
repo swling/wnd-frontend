@@ -609,9 +609,6 @@ class Wnd_Form {
 	}
 
 	protected function get_value($input_value) {
-		if (empty($input_value['value'])) {
-			return '';
-		}
 		return $input_value['value'];
 	}
 
