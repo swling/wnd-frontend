@@ -18,7 +18,7 @@ function wnd_reg() {
 	$user_login = $_POST['_user_user_login'] ?? $_POST['sms_phone'];
 	$user_pass = $_POST['_user_user_pass'];
 	$user_pass_repeat = $_POST['_user_user_pass_repeat'] ?? $_POST['_user_user_pass'];
-	$user_email = $_POST['_user_user_email'];
+	$user_email = $_POST['_user_user_email'] ?? '';
 	$display_name = $_POST['_user_display_name'] ?? '';
 	$description = $_POST['_wpusermeta_description'] ?? '';
 	$role = get_option('default_role');
@@ -287,8 +287,7 @@ function wnd_update_account() {
  */
 function wnd_reset_password() {
 
-	// $email = $_POST['_user_user_email'];
-	$email_or_phone = $_POST['_meta_phone'] ?? $_POST['_user_user_email'];
+	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'];
 	$text = $field == 'phone' ? '手机' : '邮箱';
 
 	$new_password = $_POST['_user_new_pass'];

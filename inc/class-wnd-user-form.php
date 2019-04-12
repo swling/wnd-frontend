@@ -21,6 +21,20 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		);
 	}
 
+	function add_user_email($placeholder = '邮箱') {
+		parent::add_text(
+			array(
+				'name' => '_user_user_email',
+				'value' => wp_get_current_user()->user_email,
+				'label' => '邮箱 <span class="required">*</span>',
+				'has_icons' => 'left',
+				'icon' => '<i class="fa fa-at"></i>',
+				'required' => 'required',
+				'placeholder' => $placeholder,
+			)
+		);
+	}
+
 	function add_user_password($placeholder = '密码') {
 		parent::add_password(
 			array(

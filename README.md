@@ -183,7 +183,8 @@ do_action('_wnd_recharge_form')
 
 ```
 #前端Form name规则
-前端表单遵循以下规则定义的name，后台获取后自动提取，并更新到数据库
+
+##前端表单遵循以下规则定义的name，后台获取后自动提取，并更新到数据库
 	文章：_post_{field}
 
 	文章字段：
@@ -195,8 +196,10 @@ do_action('_wnd_recharge_form')
 	用户字段：
 	_usermeta_{key} （*自定义数组字段）
 	_wpusermeta_{key} （*WordPress原生字段）
-
-	<!-- php后台返回msg 不带标点 js返回msg带标点 -->
+	
+##手机验证表单：
+	phone
+	v_code
 
 #充值、消费(自定义文章类型)
 金额：post_content

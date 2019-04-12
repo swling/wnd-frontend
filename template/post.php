@@ -53,8 +53,7 @@ function _wnd_post_form($args = array()) {
 
 		// 已知用户创建失败，说明产生了错误，退出
 		if (is_user_logged_in()) {
-			echo "<script>wnd_alert_msg('" . $action['msg'] . "')</script>";
-			return;
+			return "<script>wnd_alert_msg('" . $action['msg'] . "')</script>";
 		}
 		// 匿名用户不允许创建草稿，上传，因而初始化一个空对象
 		$post = new stdClass();
@@ -147,7 +146,7 @@ function _wnd_post_form($args = array()) {
 	/**
 	 *@since 2019.03.11 wp_editor无法使用表单类创建，此处生成一个隐藏编辑器，再用js嵌入到指定DOM
 	 */
-	if ($args['rich_media_editor']) {
+	if ($args['rich_media_editor'] and !wnd_doing_ajax()) {
 		echo '<div id="hidden-wp-editor" style="display: none;">';
 		if (isset($post)) {
 			$post = $post;
@@ -182,7 +181,7 @@ function _wnd_post_form($args = array()) {
 
 	$form->build();
 
-	echo $form->html;
+	return $form->html;
 
 }
 
@@ -263,6 +262,7 @@ function _wnd_post_status_form($post_id) {
 			),
 			'required' => 'required',
 			'checked' => $post->post_status,
+			'class' =>'is-checkradio is-danger',
 		)
 	);
 	$form->add_html('</div>');

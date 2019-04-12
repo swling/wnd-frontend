@@ -405,9 +405,6 @@ class Wnd_Form {
 			case 'textarea':
 				$html .= $this->build_textarea($input_value);
 				break;
-			case 'switch':
-				$html .= $this->build_switch($input_value);
-				break;
 			case 'html':
 				$html .= $this->build_html($input_value);
 				break;
@@ -572,16 +569,6 @@ class Wnd_Form {
 
 	protected function build_html($input_value) {
 		return $input_value['value'];
-	}
-
-	protected function build_switch($input_value) {
-		$html = '<div class="field">';
-		$checked = $input_value['checked'] ? 'checked="checked"' : '';
-		$id = $input_value['id'];
-		$html .= '<input id="' . $id . '" type="checkbox" name="' . $input_value['name'] . '" class="switch" ' . $checked . '">';
-		$html .= '<label for="' . $id . '">' . $input_value['label'] . '</label>';
-		$html .= '</div>';
-		return $html;
 	}
 
 	protected function build_textarea($input_value) {

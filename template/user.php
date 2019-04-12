@@ -165,7 +165,7 @@ function _wnd_user_center($args = array()) {
 			}
 			$html .= '</ul></div>';
 
-			$html .=_wnd_profile_form();
+			$html .= _wnd_profile_form();
 
 			break;
 
@@ -186,7 +186,7 @@ function _wnd_user_center($args = array()) {
 			}
 			$html .= '</ul></div>';
 
-			$html .=_wnd_account_form();
+			$html .= _wnd_account_form();
 
 			break;
 
@@ -281,6 +281,7 @@ function _wnd_reg_form($type = 'email') {
 	$form->add_user_password();
 
 	if ($type == 'sms') {
+		// $form->add_user_email($placeholder = '邮箱');
 		$form->add_sms_verify($verify_type = 'reg', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
 	} else {
 		$form->add_email_verify($verify_type = 'reg', $template = '');
@@ -340,7 +341,7 @@ function _wnd_lostpassword_form($type = 'email') {
 
 	$form->add_user_new_password();
 
-	$form->add_user_new_password_repeat();	
+	$form->add_user_new_password_repeat();
 
 	$form->set_action('wnd_reset_password');
 	$form->set_submit_button('重置密码');
@@ -406,6 +407,8 @@ function _wnd_account_form() {
 	$form->add_user_new_password();
 
 	$form->add_user_new_password_repeat();
+
+	$form->add_user_email();
 
 	if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
 		$form->add_sms_verify($verify_type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));

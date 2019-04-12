@@ -194,102 +194,26 @@ function _wnd_recharge_form() {
 	}
 
 	$form = new Wnd_Form;
-// radio
+
+	$form->add_html('<div class="has-text-centered">');
 	$form->add_Radio(
 		array(
 			'name' => 'money',
 			'value' => array('0.01' => '0.01', '10' => '10'),
 			'required' => 'required',
 			'checked' => '0.01', //default checked value
-			'class'=>'is-checkradio is-danger'
+			'class' => 'is-checkradio is-danger',
 		)
 	);
+	$form->add_html('<img src="https://t.alipayobjects.com/images/T1HHFgXXVeXXXXXXXX.png">');
+	$form->add_html('</div>');
 
-$form->add_checkbox(
-	array(
-		'name' => 'checkbox',
-		'value' => 5,
-		'label' => 'checkbox',
-		'checked' => true, //default checked
-		'class'=>"switch is-danger",
-	)
-);	
-
-// $form->set_action();
 	$form->set_action('post', wnd_get_do_url() . '?action=payment');
+	$form->add_hidden('_wpnonce', wp_create_nonce('wnd_payment'));
 	$form->set_submit_button('充值');
 	$form->build();
 
 	return $form->html;
-
-	?>
-<style>
-/*单选样式优化*/
-.radio-toolbar,
-.paytype {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-wrap: wrap;
-}
-
-.radio-toolbar input[type="radio"] {
-	display: none;
-}
-
-.radio-toolbar label {
-	display: inline-block;
-	cursor: pointer;
-	border-radius: 3px;
-	background: #f5f5f5;
-	text-align: center;
-}
-
-.radio-toolbar label {
-	font-size: 18px;
-	padding: 10px 20px;
-	margin: 1.5%;
-	min-width: 80px;
-}
-
-.radio-toolbar input[type="radio"]:checked+label {
-	background-color: #00d1b2;
-	color: #FFF;
-}
-</style>
-<form id="recharge" action="<?php $html .= wnd_get_do_url();?>?action=payment" method="post" target="_blank">
-	<div class="field">
-		<div class="ajax-msg"></div>
-	</div>
-	<div class="radio-toolbar field">
-			<input id="radio1" required="required" name="money" type="radio" value="0.01" checked="checked">
-			<label for="radio1">¥0.01</label>
-
-			<input id="radio2" required="required" name="money" type="radio" value="10">
-			<label for="radio2">¥10</label>
-
-			<input id="radio3" required="required" name="money" type="radio" value="100">
-			<label for="radio3">¥100</label>
-
-			<input id="radio4" required="required" name="money" type="radio" value="500">
-			<label for="radio4">¥500</label>
-
-			<input id="radio5" required="required" name="money" type="radio" value="1000">
-			<label for="radio5">¥1000</label>
-	</div>
-	<div class="paytype field level is-mobile">
-		<div class="level-item">
-			<label for="paytype1"><img src="https://t.alipayobjects.com/images/T1HHFgXXVeXXXXXXXX.png"></label>
-			<input type="radio" name="paytype" value="alipay" checked="checked" />
-		</div>
-	</div>
-	<?php wp_nonce_field('wnd_payment');?>
-	<div class="field is-grouped is-grouped-centered">
-		<button type="submit" name="submit" class="button">支付宝充值</button>
-	</div>
-	<?php do_action('_wnd_recharge_form');?>
-</form>
-<?php
 
 }
 
