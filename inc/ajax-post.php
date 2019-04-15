@@ -46,11 +46,12 @@ function wnd_insert_post($update_id = 0) {
 
 	/**
 	 *@since 2019.02.19
-	 * 写入post type检测
+	 * 写入post type检测 
+	 *@since 2019.04.15 废弃
 	 */
-	if (!$update_id and !in_array($post_type, wnd_get_allowed_post_types())) {
-		return array('status' => 0, 'msg' => '类型无效！');
-	}
+	// if (!$update_id and !in_array($post_type, wnd_get_allowed_post_types())) {
+	// 	return array('status' => 0, 'msg' => '类型无效！');
+	// }
 
 	// 写入及更新权限过滤
 	$can_insert_post = apply_filters('wnd_can_insert_post', array('status' => 1, 'msg' => '默认通过'), $post_type, $update_id);

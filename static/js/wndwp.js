@@ -123,7 +123,7 @@ function wnd_reset_modal() {
 
 	if ($("#modal").length) {
 		$(".modal").removeClass("is-active");
-		$(".ajax-msg").empty();
+		// $(".ajax-msg").empty();
 		$(".modal-entry").empty();
 	} else {
 		$("body").append(

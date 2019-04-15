@@ -98,7 +98,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		$tag = get_taxonomy($tag_taxonomy);
 
 		$terms_list = '';
-		$terms = wp_get_object_terms($post_id, $tag_taxonomy);
+		$terms = get_the_terms($post_id, $tag_taxonomy);
 		if (!empty($terms)) {
 			foreach ($terms as $term) {
 				$terms_list .= $term->name . ',';

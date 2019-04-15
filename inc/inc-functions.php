@@ -54,22 +54,9 @@ function wnd_get_user_ip($hidden = false) {
  */
 function wnd_is_robot() {
 
-	$userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);
-	$spiders = array(
-		'Googlebot', // Google 爬虫
-		'Baiduspider', // 百度爬虫
-		'spider',
-		// 更多爬虫关键字
+	return (
+		isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/bot|crawl|slurp|spider|mediapartners/i', $_SERVER['HTTP_USER_AGENT'])
 	);
-
-	foreach ($spiders as $spider) {
-		$spider = strtolower($spider);
-		if (strpos($userAgent, $spider) !== false) {
-			return true;
-		}
-	}
-
-	return false;
 
 }
 
