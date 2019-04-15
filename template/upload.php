@@ -11,7 +11,7 @@ function _wnd_image_upload($args) {
 		'label' => '',
 		'thumbnail' => WNDWP_URL . '/static/images/default.jpg', //默认缩略图
 		'thumbnail_size' => array('height' => '100', 'width' => '100'),
-		'data' => array(
+			'data' => array(
 			'post_parent' => 0,
 			'meta_key' => 0,
 			'save_width' => 0,
@@ -25,15 +25,16 @@ function _wnd_image_upload($args) {
 	$data = array(
 		'is_image' => '1',
 		'thumbnail' => $args['thumbnail'],
-		'upload_nonce' => wp_create_nonce('wnd_upload_file'),
-		'delete_nonce' => wp_create_nonce('wnd_delete_file'),
+		'upload_nonce' => wp_create_nonce('wnd_ajax_upload_file'),
+		'delete_nonce' => wp_create_nonce('wnd_ajax_delete_file'),
 		'post_parent' => 0,
+		'user_id' => get_current_user_id(),
 		'meta_key' => 0,
 	);
 	$args['data'] = array_merge($data, $args['data']);
 
 	// 根据user type 查找目标文件
-	$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta(get_current_user_id(), $args['data']['meta_key']);
+	$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
 	$file_url = $file_id ? wp_get_attachment_url($file_id) : '';
 
 	// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
@@ -98,15 +99,16 @@ function _wnd_file_upload($args) {
 	$args = array_merge($defaults, $args);
 
 	$data = array(
-		'upload_nonce' => wp_create_nonce('wnd_upload_file'),
-		'delete_nonce' => wp_create_nonce('wnd_delete_file'),
+		'upload_nonce' => wp_create_nonce('wnd_ajax_upload_file'),
+		'delete_nonce' => wp_create_nonce('wnd_ajax_delete_file'),
 		'post_parent' => 0,
+		'user_id' => get_current_user_id(),
 		'meta_key' => 0,
 	);
 	$args['data'] = array_merge($data, $args['data']);
 
 	// 根据meta key 查找目标文件
-	$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta(get_current_user_id(), $args['data']['meta_key']);
+	$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
 	$file_url = $file_id ? wp_get_attachment_url($file_id) : '';
 
 	// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key

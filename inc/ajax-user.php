@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
  *@since 初始化
  *用户注册
  */
-function wnd_reg() {
+function wnd_ajax_reg() {
 
 	// 1、数据组成
 	if (empty($_POST)) {
@@ -103,7 +103,7 @@ function wnd_reg() {
  *@since 2019.1.13
  *用户登录
  */
-function wnd_login() {
+function wnd_ajax_login() {
 
 	$username = trim($_POST['_user_user_login']);
 	$password = $_POST['_user_user_pass'];
@@ -150,7 +150,7 @@ function wnd_login() {
  *用户资料修改：昵称，简介，字段等
  *修改账户密码、邮箱，请使用：wnd_wpdate_account
  */
-function wnd_update_profile() {
+function wnd_ajax_update_profile() {
 
 	if (empty($_POST)) {
 		return array('status' => 0, 'msg' => '获取用户数据失败！');
@@ -212,7 +212,7 @@ function wnd_update_profile() {
  *@since 初始化
  *用户账户更新：修改密码，邮箱
  */
-function wnd_update_account() {
+function wnd_ajax_update_account() {
 
 	$user = wp_get_current_user();
 	$user_id = $user->ID;
@@ -285,7 +285,7 @@ function wnd_update_account() {
 /**
  *@since 2019.02.10 用户找回密码
  */
-function wnd_reset_password() {
+function wnd_ajax_reset_password() {
 
 	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'];
 	$text = $field == 'phone' ? '手机' : '邮箱';

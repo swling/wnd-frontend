@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 /**
  *@since 2019.01.30 创建订单
  */
-function wnd_create_order() {
+function wnd_ajax_create_order() {
 
 	$post_id = (int) $_POST['post_id'];
 	$user_id = get_current_user_id();
@@ -57,7 +57,7 @@ function wnd_create_order() {
 }
 
 // ##################################################### 付费阅读
-function wnd_pay_for_reading() {
+function wnd_ajax_pay_for_reading() {
 
 	$post_id = (int) $_POST['post_id'];
 	$post = get_post($post_id);
@@ -80,7 +80,7 @@ function wnd_pay_for_reading() {
 	}
 
 	// 2、支付失败
-	$order = wnd_create_order();
+	$order = wnd_ajax_create_order();
 	if ($order['status'] === 0) {
 		return $order;
 	}
@@ -107,7 +107,7 @@ function wnd_pay_for_reading() {
  * 付费下载
  *上传文件，并将文件id添加到wnd字段 file中
  */
-function wnd_pay_for_download() {
+function wnd_ajax_pay_for_download() {
 
 	// 获取文章
 	$post_id = (int) $_POST['post_id'];
@@ -132,9 +132,9 @@ function wnd_pay_for_download() {
 	 *前端接收后跳转至该网址（status == 6 是专为下载类ajax请求设置的代码前端响应），以实现ajax下载
 	 */
 	$download_args = array(
-		'action' => 'wnd_paid_download',
+		'action' => 'wnd_ajax_paid_download',
 		'post_id' => $post_id,
-		'_ajax_nonce' => wp_create_nonce('wnd_paid_download'),
+		'_ajax_nonce' => wp_create_nonce('wnd_ajax_paid_download'),
 	);
 	$download_url = add_query_arg($download_args, admin_url('admin-ajax.php'));
 
@@ -149,7 +149,7 @@ function wnd_pay_for_download() {
 	}
 
 	//3、 付费下载
-	$order = wnd_create_order();
+	$order = wnd_ajax_create_order();
 	if ($order['status'] === 0) {
 		return $order;
 	}

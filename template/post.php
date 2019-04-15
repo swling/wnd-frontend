@@ -168,7 +168,7 @@ function _wnd_post_form($args = array()) {
 		)
 	);
 
-	$form->set_action('wnd_insert_post');
+	$form->set_action('wnd_ajax_insert_post');
 
 	$form->add_hidden('_post_post_type', $post_type);
 	$form->add_hidden('_post_ID', $post_id);
@@ -281,7 +281,7 @@ function _wnd_post_status_form($post_id) {
 	}
 
 	$form->add_hidden('post_id', $post_id);
-	$form->set_action('wnd_update_post_status');
+	$form->set_action('wnd_ajax_update_post_status');
 	$form->set_form_attr('id="post-status"');
 	$form->set_submit_button('提交');
 	$form->build();

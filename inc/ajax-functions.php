@@ -54,3 +54,79 @@ function wnd_ajax_admin_recharge() {
 
 	return wnd_admin_recharge($user_field, $money, $remarks);
 }
+
+/**
+ * @since 2019.01.16
+ */
+function _wnd_ajax_update_views() {
+
+	$post_id = (int) $_POST['post_id'];
+	if (!$post_id) {
+		return;
+	}
+	$useragent = $_POST['useragent'];
+	$should_count = true;
+
+	// 根据 useragent 排除搜索引擎
+	$bots = array
+		(
+		'Google Bot' => 'google'
+		, 'MSN' => 'msnbot'
+		, 'Alex' => 'ia_archiver'
+		, 'Lycos' => 'lycos'
+		, 'Ask Jeeves' => 'jeeves'
+		, 'Altavista' => 'scooter'
+		, 'AllTheWeb' => 'fast-webcrawler'
+		, 'Inktomi' => 'slurp@inktomi'
+		, 'Turnitin.com' => 'turnitinbot'
+		, 'Technorati' => 'technorati'
+		, 'Yahoo' => 'yahoo'
+		, 'Findexa' => 'findexa'
+		, 'NextLinks' => 'findlinks'
+		, 'Gais' => 'gaisbo'
+		, 'WiseNut' => 'zyborg'
+		, 'WhoisSource' => 'surveybot'
+		, 'Bloglines' => 'bloglines'
+		, 'BlogSearch' => 'blogsearch'
+		, 'PubSub' => 'pubsub'
+		, 'Syndic8' => 'syndic8'
+		, 'RadioUserland' => 'userland'
+		, 'Gigabot' => 'gigabot'
+		, 'Become.com' => 'become.com'
+		, 'Baidu' => 'baiduspider'
+		, 'so.com' => '360spider'
+		, 'Sogou' => 'spider'
+		, 'soso.com' => 'sosospider'
+		, 'Yandex' => 'yandex',
+	);
+
+	foreach ($bots as $name => $lookfor) {
+		if (!empty($useragent) && (stristr($useragent, $lookfor) !== false)) {
+			$should_count = false;
+			break;
+		}
+	}
+
+	// 统计
+	if ($should_count) {
+
+		if (wnd_inc_post_meta($post_id, 'views', 1)) {
+
+			// 完成统计时附加动作
+			do_action('wnd_ajax_update_views', $post_id);
+			// 统计更新成功
+			return array('status' => 1, 'msg' => time());
+
+			//字段写入失败，清除对象缓存
+		} else {
+			wp_cache_delete($post_id, 'post_meta');
+		}
+
+	} else {
+
+		// 未更新
+		return array('status' => 0, 'msg' => time());
+
+	}
+
+}

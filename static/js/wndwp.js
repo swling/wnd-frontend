@@ -407,7 +407,7 @@ function wnd_ajax_submit(form_id) {
 /**
  * 流量统计
  */
-function wnd_update_post_views(post_id, interval = 3600) {
+function wnd_ajax_update_views(post_id, interval = 3600) {
 
 	var timestamp = Date.parse(new Date()) / 1000;
 	var visit = getCookie('visit') ? JSON.parse(getCookie('visit')) : [];
@@ -449,7 +449,7 @@ function wnd_update_post_views(post_id, interval = 3600) {
 			data: {
 				'post_id': post_id,
 				'useragent': navigator.userAgent,
-				'action': '_wnd_update_post_views',
+				'action': '_wnd_ajax_update_views',
 			},
 			success: function(response) {
 				if (response.status === 1) {
@@ -492,7 +492,7 @@ jQuery(document).ready(function($) {
 		form_data.append("save_width", save_width);
 		form_data.append("save_height", save_height);
 		form_data.append("action", "wnd_action");
-		form_data.append("action", "wnd_upload_file");
+		form_data.append("action", "wnd_ajax_upload_file");
 
 		$.ajax({
 			url: wnd.api_url,
@@ -572,7 +572,7 @@ jQuery(document).ready(function($) {
 		form_data.append("_ajax_nonce", _ajax_nonce);
 		// ajax请求配置
 		form_data.append("action", "wnd_action");
-		form_data.append("action", "wnd_delete_file");
+		form_data.append("action", "wnd_ajax_delete_file");
 
 		$.ajax({
 			url: wnd.api_url,

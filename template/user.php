@@ -231,7 +231,7 @@ function _wnd_login_form() {
 	$form->add_hidden('redirect_to', $_SERVER['HTTP_REFERER'] ?? home_url());
 
 	// 与该表单数据匹配的后端处理函数
-	$form->set_action('wnd_login');
+	$form->set_action('wnd_ajax_login');
 
 	$form->set_submit_button('登录');
 
@@ -299,7 +299,7 @@ function _wnd_reg_form($type = 'email') {
 		);
 	}
 
-	$form->set_action('wnd_reg');
+	$form->set_action('wnd_ajax_reg');
 	$form->set_submit_button('注册');
 
 	// 以当前函数名设置filter hook
@@ -343,7 +343,7 @@ function _wnd_lostpassword_form($type = 'email') {
 
 	$form->add_user_new_password_repeat();
 
-	$form->set_action('wnd_reset_password');
+	$form->set_action('wnd_ajax_reset_password');
 	$form->set_submit_button('重置密码');
 	$form->build();
 
@@ -379,7 +379,7 @@ function _wnd_profile_form($args = array()) {
 	// textarea
 	$form->add_user_description();
 
-	$form->set_action('wnd_update_profile');
+	$form->set_action('wnd_ajax_update_profile');
 	$form->set_submit_button('保存');
 
 	// 以当前函数名设置filter hook
@@ -416,7 +416,7 @@ function _wnd_account_form() {
 		$form->add_email_verify($verify_type = 'v', $template = '');
 	}
 
-	$form->set_action('wnd_reset_password');
+	$form->set_action('wnd_ajax_reset_password');
 	$form->set_submit_button('保存');
 	$form->build();
 

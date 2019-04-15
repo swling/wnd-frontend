@@ -137,6 +137,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			'thumbnail' => '', //默认缩略图
 			'thumbnail_size' => array('height' => '100', 'width' => '100'),
 			'data' => array('post_parent' => 0, 'meta_key' => 0),
+			'delete_button' => true,
 		);
 		$args = array_merge($defaults, $args);
 
@@ -144,8 +145,8 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$data = array(
 			'is_image' => '1',
 			'thumbnail' => $args['thumbnail'],
-			'upload_nonce' => wp_create_nonce('wnd_upload_file'),
-			'delete_nonce' => wp_create_nonce('wnd_delete_file'),
+			'upload_nonce' => wp_create_nonce('wnd_ajax_upload_file'),
+			'delete_nonce' => wp_create_nonce('wnd_ajax_delete_file'),
 			'post_parent' => 0,
 			'user_id' => get_current_user_id(),
 			'meta_key' => 0,
@@ -179,12 +180,13 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$defaults = array(
 			'label' => 'File upload',
 			'data' => array('post_parent' => 0, 'meta_key' => 0),
+			'delete_button' => true,
 		);
 		$args = array_merge($defaults, $args);
 
 		$data = array(
-			'upload_nonce' => wp_create_nonce('wnd_upload_file'),
-			'delete_nonce' => wp_create_nonce('wnd_delete_file'),
+			'upload_nonce' => wp_create_nonce('wnd_ajax_upload_file'),
+			'delete_nonce' => wp_create_nonce('wnd_ajax_delete_file'),
 			'post_parent' => 0,
 			'user_id' => get_current_user_id(),
 			'meta_key' => 0,

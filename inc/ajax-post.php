@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
  *保存提交数据
  *@return array
  **/
-function wnd_insert_post($update_id = 0) {
+function wnd_ajax_insert_post($update_id = 0) {
 
 	if (empty($_POST)) {
 		return array('status' => 0, 'msg' => '数据为空');
@@ -128,7 +128,7 @@ function wnd_insert_post($update_id = 0) {
  *@return array
  *更新文章
  */
-function wnd_update_post($post_id = 0) {
+function wnd_ajax_update_post($post_id = 0) {
 
 	// 获取被编辑post
 	$post_id = $post_id ?: (int) $_POST['_post_ID'];
@@ -137,7 +137,7 @@ function wnd_update_post($post_id = 0) {
 		return array('status' => 0, 'msg' => '获取内容ID失败！');
 	}
 
-	return wnd_insert_post($post_id);
+	return wnd_ajax_insert_post($post_id);
 
 }
 
@@ -147,7 +147,7 @@ function wnd_update_post($post_id = 0) {
  *前端快速更改文章状态
  *依赖：wp_update_post、wp_delete_post
  */
-function wnd_update_post_status() {
+function wnd_ajax_update_post_status() {
 
 	// 获取数据
 	$post_id = (int) $_POST['post_id'];

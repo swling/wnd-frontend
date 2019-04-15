@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
  *ajax文件上传
  *
  */
-function wnd_upload_file() {
+function wnd_ajax_upload_file() {
 
 	// These files need to be included as dependencies when on the front end.
 	if (!is_admin()) {
@@ -96,7 +96,7 @@ function wnd_upload_file() {
  *删除附件
  *@since 2019.01.23
  */
-function wnd_delete_file() {
+function wnd_ajax_delete_file() {
 
 	$meta_key = $_POST['meta_key'];
 	$post_parent = $_POST["post_parent"];
@@ -128,7 +128,7 @@ function wnd_delete_file() {
 /**
  *@since 2019.02.12 文件校验下载
  */
-function wnd_paid_download() {
+function wnd_ajax_paid_download() {
 
 	$post_id = (int) $_REQUEST['post_id'];
 	$price = get_post_meta($post_id, 'price', 1);

@@ -227,8 +227,8 @@ function wnd_filter_the_content($content) {
 		$form =
 		'<form id="pay-for-download" data-submit-type="ajax" action="" method="post" >'
 		. '<div class="ajax-msg"></div>'
-		. wp_nonce_field('wnd_pay_for_download', '_ajax_nonce') . '
-			<input type="hidden" name="action"  value="wnd_pay_for_download">
+		. wp_nonce_field('wnd_ajax_pay_for_download', '_ajax_nonce') . '
+			<input type="hidden" name="action"  value="wnd_ajax_pay_for_download">
 			<input type="hidden" name="post_id"  value="' . $post->ID . '">
 			<input type="hidden" name="post_title"  value="' . $post->post_title . '">
 			<div class="field is-grouped is-grouped-centered">
@@ -283,8 +283,8 @@ function wnd_filter_the_content($content) {
 		$form =
 		'<form id="pay-for-reading" action="" data-submit-type="ajax" method="post" onsubmit="return false">
 		<div class="ajax-msg"></div>'
-		. wp_nonce_field('wnd_pay_for_reading', '_ajax_nonce') . '
-		<input type="hidden" name="action"  value="wnd_pay_for_reading">
+		. wp_nonce_field('wnd_ajax_pay_for_reading', '_ajax_nonce') . '
+		<input type="hidden" name="action"  value="wnd_ajax_pay_for_reading">
 		<input type="hidden" name="post_id"  value="' . $post->ID . '">
 		<input type="hidden" name="post_title"  value="' . $post->post_title . '">
 		<div class="field is-grouped is-grouped-centered">

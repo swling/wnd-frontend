@@ -181,6 +181,9 @@ do_action('wnd_clean_up');
 ##充值表单 @since 2019.01.21
 do_action('_wnd_recharge_form')
 
+// 完成统计时附加动作
+do_action('wnd_ajax_update_views', $post_id);
+
 ```
 #前端Form name规则
 
