@@ -5,8 +5,14 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- *@since 初始化
- *用户注册
+ *@since 初始化 用户注册
+ *@param $_POST['_user_user_login']
+ *@param $_POST['_user_user_pass']
+ *@param $_POST['_user_user_pass_repeat']
+ *
+ *@param $_POST['_user_user_email']
+ *@param $_POST['_user_display_name']
+ *@param $_POST['_wpusermeta_description']
  */
 function wnd_ajax_reg() {
 
@@ -39,7 +45,7 @@ function wnd_ajax_reg() {
 	}
 	if (is_numeric($user_login)) {
 		return $value = array('status' => 0, 'msg' => '用户名不能是纯数字！');
-	}	
+	}
 	if (strlen($user_pass) < 6) {
 		return $value = array('status' => 0, 'msg' => '密码不能低于6位！');
 	}
@@ -71,7 +77,7 @@ function wnd_ajax_reg() {
 	}
 
 	// 写入WordPress原生用户字段
-	$wp_user_meta_array = $form_data->get_wp_user_meta_array();;
+	$wp_user_meta_array = $form_data->get_wp_user_meta_array();
 	if (!empty($wp_user_meta_array)) {
 		foreach ($wp_user_meta_array as $key => $value) {
 			// 下拉菜单默认未选择时，值为 -1 。过滤
@@ -100,8 +106,12 @@ function wnd_ajax_reg() {
 }
 
 /**
- *@since 2019.1.13
- *用户登录
+ *@since 2019.1.13 用户登录
+ *@param $username = trim($_POST['_user_user_login']);
+ *@param $password = $_POST['_user_user_pass'];
+ *
+ *@param $remember = $_POST['remember'] ?? 0;
+ *@param $redirect_to = $_REQUEST['redirect_to'] ?? home_url();
  */
 function wnd_ajax_login() {
 
@@ -147,8 +157,8 @@ function wnd_ajax_login() {
 
 /**
  *@since 初始化
- *用户资料修改：昵称，简介，字段等
- *修改账户密码、邮箱，请使用：wnd_wpdate_account
+ *用户资料修改：昵称，简介，字段等 修改账户密码、邮箱，请使用：wnd_wpdate_account
+ *@param $_POST 	用户资料表单数据
  */
 function wnd_ajax_update_profile() {
 
@@ -160,7 +170,7 @@ function wnd_ajax_update_profile() {
 	$form_data = new Wnd_Form_Data();
 	$user_array = $form_data->get_user_array();
 	$user_meta_array = $form_data->get_user_meta_array();
-	$wp_user_meta_array = $form_data->get_wp_user_meta_array();;
+	$wp_user_meta_array = $form_data->get_wp_user_meta_array();
 
 	// ################### 组成用户数据
 	$user = wp_get_current_user();
@@ -211,6 +221,10 @@ function wnd_ajax_update_profile() {
 /**
  *@since 初始化
  *用户账户更新：修改密码，邮箱
+ *@param $_POST['_user_user_pass']
+ *@param $_POST['_user_new_pass']
+ *@param $_POST['_user_new_pass_repeat']
+ *@param $_POST['_user_new_user_email']
  */
 function wnd_ajax_update_account() {
 
@@ -284,6 +298,10 @@ function wnd_ajax_update_account() {
 
 /**
  *@since 2019.02.10 用户找回密码
+ *@param $_POST['phone'] ?? $_POST['_user_user_email'];
+ *@param $_POST['v_code']
+ *@param $_POST['_user_new_pass']
+ *@param $_POST['_user_new_pass_repeat']
  */
 function wnd_ajax_reset_password() {
 

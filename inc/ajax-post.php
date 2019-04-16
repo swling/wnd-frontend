@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 /**
  *@since 初始化
  *保存提交数据
+ *@param $_POST 	表单数据
  *@return array
  **/
 function wnd_ajax_insert_post($update_id = 0) {
@@ -46,7 +47,7 @@ function wnd_ajax_insert_post($update_id = 0) {
 
 	/**
 	 *@since 2019.02.19
-	 * 写入post type检测 
+	 * 写入post type检测
 	 *@since 2019.04.15 废弃
 	 */
 	// if (!$update_id and !in_array($post_type, wnd_get_allowed_post_types())) {
@@ -125,6 +126,8 @@ function wnd_ajax_insert_post($update_id = 0) {
 
 /**
  *@since 初始化
+ *@param $_POST 	表单数据
+ *@param $post_id 	文章id
  *@return array
  *更新文章
  */
@@ -143,6 +146,8 @@ function wnd_ajax_update_post($post_id = 0) {
 
 /**
  *@since 2019.01.21
+ *@param  $_POST['post_id']
+ *@param  $_POST['post_status']
  *@return array
  *前端快速更改文章状态
  *依赖：wp_update_post、wp_delete_post

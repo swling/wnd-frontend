@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 
 /**
  *@since 2019.01.30 创建订单
+ *@param $_POST['post_id']
  */
 function wnd_ajax_create_order() {
 
@@ -46,7 +47,7 @@ function wnd_ajax_create_order() {
 			'title' => get_the_title($post_id) . '(余额支付)',
 		)
 	);
-	
+
 	// 支付成功
 	if ($object_id) {
 		return array('status' => 1, 'msg' => '支付成功！');
@@ -56,7 +57,10 @@ function wnd_ajax_create_order() {
 
 }
 
-// ##################################################### 付费阅读
+/**
+ *@since 2019.01
+ *@param $_POST['post_id']
+ */
 function wnd_ajax_pay_for_reading() {
 
 	$post_id = (int) $_POST['post_id'];
@@ -103,9 +107,9 @@ function wnd_ajax_pay_for_reading() {
 }
 
 /**
- * @since 2019.01.30
- * 付费下载
- *上传文件，并将文件id添加到wnd字段 file中
+ *@since 2019.01.30
+ *付费下载
+ *@param $_POST['post_id']
  */
 function wnd_ajax_pay_for_download() {
 

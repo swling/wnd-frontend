@@ -6,6 +6,10 @@ if (!defined('ABSPATH')) {
 
 /**
  *@since 2019.01.28 ajax 发送手机或邮箱验证码
+ *@param $_POST['verify_type']				验证类型（注册，非注册等）
+ *@param $_POST['send_type']				发送类型（邮件，短信等）
+ *@param $_POST['template']					信息模板
+ *@param $_POST['phone'] or $_POST['email']	手机或邮件
  */
 function wnd_ajax_send_code() {
 
@@ -26,8 +30,10 @@ function wnd_ajax_send_code() {
 }
 
 /**
- *@since 初始化
- *ajax标题去重
+ *@since 初始化 ajax标题去重
+ *@param $_POST['post_title']
+ *@param $_POST['post_id']
+ *@param $_POST['post_type']
  */
 function _wnd_ajax_is_title_repeated() {
 
@@ -41,6 +47,9 @@ function _wnd_ajax_is_title_repeated() {
 /**
  *@since 2019.02.22
  *管理员ajax手动新增用户金额
+ *@param $_POST['user_field']
+ *@param $_POST['money']
+ *@param $_POST['remarks']
  */
 function wnd_ajax_admin_recharge() {
 
@@ -56,7 +65,9 @@ function wnd_ajax_admin_recharge() {
 }
 
 /**
- * @since 2019.01.16
+ *@since 2019.01.16
+ *@param $_POST['post_id']
+ *@param $_POST['useragent']
  */
 function _wnd_ajax_update_views() {
 

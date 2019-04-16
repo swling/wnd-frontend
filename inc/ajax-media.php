@@ -10,7 +10,11 @@ if (!defined('ABSPATH')) {
 /**
  *@since 2019.01.20
  *ajax文件上传
- *
+ *@param $_FILES
+ *@param $_POST["save_width"]
+ *@param $_POST["save_height"]
+ *@param $_POST['meta_key']
+ *@param $_POST['post_parent']
  */
 function wnd_ajax_upload_file() {
 
@@ -95,6 +99,9 @@ function wnd_ajax_upload_file() {
 /**
  *删除附件
  *@since 2019.01.23
+ *@param $_POST['meta_key'];
+ *@param $_POST["post_parent"];
+ *@param $_POST["file_id"];
  */
 function wnd_ajax_delete_file() {
 
@@ -127,6 +134,7 @@ function wnd_ajax_delete_file() {
 
 /**
  *@since 2019.02.12 文件校验下载
+ *@param $_REQUEST['post_id']
  */
 function wnd_ajax_paid_download() {
 
