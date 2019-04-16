@@ -206,3 +206,9 @@ if (wnd_get_option('wndwp', 'wnd_disable_admin_panel') == 1) {
 	}
 
 }
+
+/**
+ *@since 2019.04.16
+ *访问后台时候，触发执行清理动作
+ */
+add_action('admin_init', 'wnd_clean_up');
