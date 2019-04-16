@@ -262,7 +262,7 @@ function _wnd_post_status_form($post_id) {
 			),
 			'required' => 'required',
 			'checked' => $post->post_status,
-			'class' =>'is-checkradio is-danger',
+			'class' => 'is-checkradio is-danger',
 		)
 	);
 	$form->add_html('</div>');
@@ -292,7 +292,7 @@ function _wnd_post_status_form($post_id) {
 /**
  *@since 2019.02.27 获取WndWP文章缩略图
  */
-function _wnd_the_post_thumbnail($width = 0, $height = 0, $post_id = 0) {
+function _wnd_post_thumbnail($post_id = 0, $width = 0, $height = 0) {
 
 	$post_id = $post_id ?: get_the_ID();
 
@@ -307,6 +307,8 @@ function _wnd_the_post_thumbnail($width = 0, $height = 0, $post_id = 0) {
 			return '<img src="' . wp_get_attachment_url($image_id) . '" >';
 		}
 	}
+
+	return false;
 }
 
 /**

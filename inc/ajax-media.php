@@ -31,6 +31,16 @@ function wnd_ajax_upload_file() {
 	$post_parent = (int) $_POST['post_parent'] ?? 0;
 	$user_id = get_current_user_id();
 
+	/**
+	 *@since 2019.04.16
+	 *上传权限过滤
+	 */
+	$can_upload_file = apply_filters('wnd_can_upload_file', array('status' => 1, 'msg' => '默认通过'), $post_parent, $meta_key);
+	if ($can_upload_file['status'] === 0) {
+		return array($can_upload_file);
+		// return array(array('status'=>0,'msg'=>$meta_key));
+	}
+
 	// 定义二维返回数组，以支持多文件上传
 	$return_array = array();
 

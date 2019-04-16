@@ -111,6 +111,11 @@ apply_filters( 'wnd_allowed_post_types', $post_types );
 */
 apply_filters( '_wnd_list_posts_status_text', $post->post_status, $post->post_type);
 ```
+##文件上传
+```php
+###文件上传权限控制
+apply_filters('wnd_can_upload_file', array('status' => 1, 'msg' => '默认通过'), $post_parent, $meta_key);
+```
 
 ##用户
 ```php
@@ -199,7 +204,7 @@ do_action('wnd_ajax_update_views', $post_id);
 	用户字段：
 	_usermeta_{key} （*自定义数组字段）
 	_wpusermeta_{key} （*WordPress原生字段）
-	
+
 ##手机验证表单：
 	phone
 	v_code
