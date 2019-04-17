@@ -151,6 +151,7 @@ $form->add_image_upload(
 			'save_hight' => '0',
 		),
 		'delete_button' => true,
+		'required'=>'required',
 	)
 );
 
@@ -164,6 +165,7 @@ $form->add_file_upload(
 		'file_id' => 0, //data-file-id on delete button，in some situation, you want delete the file
 		'data' => array('meta_key' => 'file'), // some data on file input, maybe useful in ajax upload
 		'delete_button' => true,
+		'required'=>'required',
 	)
 );
 
