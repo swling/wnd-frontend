@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
  *@param $_POST 	表单数据
  *@return array
  **/
-function wnd_ajax_insert_post($update_id = 0) {
+function wnd_ajax_insert_post() {
 
 	if (empty($_POST)) {
 		return array('status' => 0, 'msg' => '数据为空');
@@ -25,9 +25,8 @@ function wnd_ajax_insert_post($update_id = 0) {
 
 	// 组合数据
 	$user_id = get_current_user_id();
-	$post_id = $_POST['_post_ID'] ?? 0;
+	$update_id = $_POST['_post_ID'] ?? 0;
 	$post_parent = $_POST['_post_post_parent'] ?? 0;
-	$update_id = $update_id ?: $post_id;
 	$post_type = $_POST['_post_post_type'] ?? 'post';
 	$post_name = $_POST['_post_post_name'] ?? uniqid();
 
@@ -140,6 +139,7 @@ function wnd_ajax_update_post($post_id = 0) {
 		return array('status' => 0, 'msg' => '获取内容ID失败！');
 	}
 
+	$_POST['_post_ID'] = $post_id;
 	return wnd_ajax_insert_post($post_id);
 
 }
