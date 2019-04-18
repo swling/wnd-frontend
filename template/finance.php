@@ -196,10 +196,10 @@ function _wnd_recharge_form() {
 	$form = new Wnd_Form;
 
 	$form->add_html('<div class="has-text-centered">');
-	$form->add_Radio(
+	$form->add_radio(
 		array(
 			'name' => 'money',
-			'value' => array('0.01' => '0.01', '10' => '10'),
+			'options' => array('0.01' => '0.01', '10' => '10'),
 			'required' => 'required',
 			'checked' => '0.01', //default checked value
 			'class' => 'is-checkradio is-danger',

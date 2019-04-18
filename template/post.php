@@ -254,7 +254,7 @@ function _wnd_post_status_form($post_id) {
 	$form->add_radio(
 		array(
 			'name' => 'post_status',
-			'value' => array(
+			'options' => array(
 				'发布' => 'publish',
 				'待审' => 'pending',
 				'草稿' => 'draft',

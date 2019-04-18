@@ -130,10 +130,10 @@ function _wnd_demo_form() {
 	$form->add_html('</div></div>');
 
 	// radio
-	$form->add_Radio(
+	$form->add_radio(
 		array(
 			'name' => 'radio',
-			'value' => array('key1' => 'value1', 'key2' => 'value2'),
+			'options' => array('key1' => 'value1', 'key2' => 'value2'),
 			'label' => 'SEX',
 			'required' => false,
 			'checked' => 'woman', //default checked value
@@ -155,10 +155,10 @@ function _wnd_demo_form() {
 	 *@since 2019.04.08
 	 *https://wikiki.github.io/form/checkradio/
 	 */
-	$form->add_Radio(
+	$form->add_radio(
 		array(
 			'name' => 'money',
-			'value' => array('0.01' => '0.01', '10' => '10'),
+			'options' => array('0.01' => '0.01', '10' => '10'),
 			'required' => 'required',
 			'checked' => '0.01', //default checked value
 			'class' => 'is-checkradio is-danger',

@@ -230,9 +230,9 @@ class Wnd_Form {
 			'placeholder' => $args['placeholder'],
 			'label' => $args['label'],
 			'checked' => $args['checked'],
-			'value' => $args['value'],
+			// 'value' => $args['value'],
 			'required' => $args['required'],
-			'options' => NULL,
+			'options' => $args['options'],
 			'id' => NULL,
 			'class' => $args['class'],
 		));
@@ -437,7 +437,7 @@ class Wnd_Form {
 	protected function build_radio($input_value) {
 
 		$html = '<div class="field">';
-		foreach ($input_value['value'] as $key => $value) {
+		foreach ($input_value['options'] as $key => $value) {
 			$input_id = md5($key);
 			$html .= '<input type="radio" id="' . $input_id . '" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $value . '"' . $this->get_required($input_value);
 			$html .= ($input_value['checked'] == $value) ? ' checked="checked" >' : ' >';
