@@ -113,7 +113,7 @@ function _wnd_user_mail_box($args = '') {
 	$html .= '</div>';
 
 	$html .= '<div id="user-mail-list">';
-	$html .= _wnd_list_posts_by_table($args);
+	$html .= _wnd_list_table($args);
 	$html .= '</div>';
 
 	// 容器结束

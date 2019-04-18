@@ -628,7 +628,7 @@ function _wnd_posts_filter($args = array()) {
 		'tax_query' => array(),
 		'meta_query' => array(),
 		'no_found_rows' => true, //无需原生的分页
-		'wnd_list_template' => '_wnd_list_posts_by_table', //输出列表模板函数
+		'wnd_list_template' => '_wnd_list_table', //输出列表模板函数
 		'wnd_post_types' => array(), //允许的类型数组
 		'wnd_only_cat' => 0, // 只筛选分类
 	);

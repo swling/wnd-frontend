@@ -83,7 +83,7 @@ function _wnd_ajax_next_page($function, $args, $post_count) {
  *以表格形式输出WordPress文章列表
  *@param $args wp_query参数
  */
-function _wnd_list_posts_by_table($args = '') {
+function _wnd_list_table($args = '') {
 
 	$args = wp_parse_args($args);
 
@@ -104,13 +104,16 @@ function _wnd_list_posts_by_table($args = '') {
 
 		$html .= '<tbody>';
 		while ($query->have_posts()) {
-			$query->the_post();global $post;
+			$query->the_post();
+
+			global $post;
+			$post = apply_filters('_wnd_list_table', $post);
 
 			$html .= '<tr>';
 			$html .= '<td class="is-narrow is-hidden-mobile">' . get_the_time('m-d H:i') . '</td>';
 			$html .= '<td><a href="' . get_the_permalink() . '" target="_blank">' . $post->post_title . '</a></td>';
 			if (current_user_can('edit_post', $post->ID)) {
-				$html .= '<th class="is-narrow is-hidden-mobile">' . apply_filters('_wnd_list_posts_status_text', $post->post_status, $post->post_type) . '</th>';
+				$html .= '<th class="is-narrow is-hidden-mobile">' . $post->post_status . '</th>';
 			}
 
 			$html .= '<td class="is-narrow is-hidden-mobile">';
@@ -151,7 +154,7 @@ function _wnd_list_posts_by_table($args = '') {
  *@param $args  wp_query $args
  *@see get_template_part() @link https://developer.wordpress.org/reference/functions/get_template_part/
  */
-function _wnd_list_posts_by_template($args = '') {
+function _wnd_list_post($args = '') {
 
 	$html = '';
 	$args = wp_parse_args($args);
@@ -164,7 +167,12 @@ function _wnd_list_posts_by_template($args = '') {
 			$query->the_post();
 			global $post;
 
-			$html .= _wnd_get_post_list($post);
+			/**
+			 *@since 2019.04.18
+			 *默认输出带链接的标题，外部函数通过filter实现自定义
+			 */
+			$list = '<h3><a href="' . get_permalink($post) . '">' . $post->post_title . '</a></h3>';
+			$html .= apply_filters('_wnd_list_post', $list, $post);
 
 			wp_reset_postdata(); //重置查询
 
@@ -186,11 +194,4 @@ function _wnd_list_posts_by_template($args = '') {
 
 	return $html;
 
-}
-
-/**
- *@since 2019.04.07
- */
-function _wnd_get_post_list($post) {
-	return $post->post_title;
 }

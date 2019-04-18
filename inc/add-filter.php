@@ -81,22 +81,26 @@ function wnd_filter_post_status($post_status, $post_type, $update_id) {
 
 /**
  *@since 2019.02.25
- *文章列表输出模板 文章状态文字过滤
+ *文章列表输出模板 文章过滤
  **/
-add_filter('_wnd_list_posts_status_text', 'wnd_filter_list_posts_status_text', 10, 2);
-function wnd_filter_list_posts_status_text($post_status, $post_type) {
+add_filter('_wnd_list_table', 'wnd_filter_list_table', 10, 1);
+function wnd_filter_list_table($post) {
 
-	if ($post_type == 'mail') {
-		if ($post_status == 'private') {
-			return '已读';
-		} elseif ($post_status == 'pending') {
-			return '未读';
-		} elseif ($post_status == 'draft') {
-			return '草稿';
+	if ($post->post_type == 'mail') {
+
+		if ($post->post_status == 'private') {
+			$post->post_status = '未读';
+		} elseif ($post->post_status == 'pending') {
+			$post->post_status = '已读';
+		} elseif ($post->post_status == 'draft') {
+			$post->post_status = '草稿';
 		}
+
 	}
 
-	return $post_status;
+	$post->post_status == '草稿';
+
+	return $post;
 
 }
 
@@ -128,7 +132,7 @@ function wnd_filter_limit_upload($file) {
 	if (in_array($file['type'], $mimes)) {
 
 		$file['name'] = uniqid() . $ext;
-		
+
 	} else {
 
 		// 非图片文件MD5重命名（用于付费下载加密）
