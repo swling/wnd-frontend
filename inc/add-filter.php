@@ -83,7 +83,7 @@ function wnd_filter_post_status($post_status, $post_type, $update_id) {
  *@since 2019.02.25
  *文章列表输出模板 文章过滤
  **/
-add_filter('_wnd_list_table', 'wnd_filter_list_table', 10, 1);
+add_filter('_wnd_table_list', 'wnd_filter_list_table', 10, 1);
 function wnd_filter_list_table($post) {
 
 	if ($post->post_type == 'mail') {

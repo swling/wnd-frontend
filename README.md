@@ -108,12 +108,12 @@ apply_filters( 'wnd_allowed_post_types', $post_types );
 /**
 *@since 2019.02.25 文章列表输出模板 文章状态文字过滤
 */
-apply_filters('_wnd_list_table', $post);
+apply_filters('_wnd_table_list', $post);
 
 /**
 *@since 2019.04.18 多重筛选，文章输出模板
 */
-apply_filters('_wnd_list_post', $list, $post);
+apply_filters('_wnd_post_list', $list, $post);
 ```
 ##文件上传
 ```php

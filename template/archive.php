@@ -83,7 +83,7 @@ function _wnd_ajax_next_page($function, $args, $post_count) {
  *以表格形式输出WordPress文章列表
  *@param $args wp_query参数
  */
-function _wnd_list_table($args = '') {
+function _wnd_table_list($args = '') {
 
 	$args = wp_parse_args($args);
 
@@ -107,7 +107,7 @@ function _wnd_list_table($args = '') {
 			$query->the_post();
 
 			global $post;
-			$post = apply_filters('_wnd_list_table', $post);
+			$post = apply_filters('_wnd_table_list', $post);
 
 			$html .= '<tr>';
 			$html .= '<td class="is-narrow is-hidden-mobile">' . get_the_time('m-d H:i') . '</td>';
@@ -154,7 +154,7 @@ function _wnd_list_table($args = '') {
  *@param $args  wp_query $args
  *@see get_template_part() @link https://developer.wordpress.org/reference/functions/get_template_part/
  */
-function _wnd_list_post($args = '') {
+function _wnd_post_list($args = '') {
 
 	$html = '';
 	$args = wp_parse_args($args);
@@ -172,7 +172,7 @@ function _wnd_list_post($args = '') {
 			 *默认输出带链接的标题，外部函数通过filter实现自定义
 			 */
 			$list = '<h3><a href="' . get_permalink($post) . '">' . $post->post_title . '</a></h3>';
-			$html .= apply_filters('_wnd_list_post', $list, $post);
+			$html .= apply_filters('_wnd_post_list', $list, $post);
 
 			wp_reset_postdata(); //重置查询
 
