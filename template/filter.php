@@ -18,7 +18,7 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
 	}
 
 	$defaults = array(
-		'wnd_remove_query_arg' => array('paged', 'pages'),
+		'wnd_remove_query_arg' => array('paged', 'pages', 'orderby', 'order'),
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -113,7 +113,7 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
  *@since 2019.02.28
  *遍历当前post_type 具有层级关系的taxonomy，并配合外部调用函数，生成tabs查询参数，
  *（在非ajax状态中，生成 ?$taxonomy.'_id'=$term_id，ajax中，在当前查询参数新增tax query参数，并注销paged翻页参数以实现菜单切换）
- *@param $args 外部调用函数ajax查询文章的参数，其中 $args['wnd_remove_query_arg'] 参数为非ajax状态下，需要从当前网址中移除的参数数组
+ *@param $args 外部调用函数ajax查询文章的参数，其中 $args['wnd_remove_query_arg'] 为需要从当前网址中移除的参数数组
  *@param $ajax_call 外部调用函数查询文章的调用函数
  *@param $ajax_container 外部调用函数ajax查询文章后嵌入的html容器
  *@param array  'wnd_remove_query_arg' => array('paged', 'pages'), 需要从当前请求参数中移除的参数键名数组
@@ -374,7 +374,10 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 }
 
 /**
- * 获取当前分类下的关联标签tabs
+ * 标签筛选
+ * 定义taxonomy：{$post_type}.'_tag'
+ * 读取wp_query中tax_query 提取taxonomy为{$post_type}.'_cat'的分类id，并获取对应的关联标签(需启用标签分类关联功能)
+ * 若未设置关联分类，则查询所有热门标签
  *@since 2019.03.25
  */
 function _wnd_tags_filter($args = array(), $ajax_call = '', $ajax_container = '', $limit = 10) {
@@ -810,7 +813,7 @@ function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
 
 /**
  *@since 2019.03.26
- *遍历当前查询参数中的分类查询，输出取消当前分类选项链接
+ *遍历当前查询参数，输出取消当前查询链接
  */
 function _wnd_current_filter($args, $ajax_call, $ajax_container) {
 
@@ -1034,15 +1037,16 @@ function _wnd_posts_filter($args = array()) {
 			 *categories tabs生成的GET参数为：$taxonomy.'_id'，
 			 *直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$key = str_replace('_id', '', $key);
-			if (in_array($key, get_object_taxonomies($args['post_type'], $output = 'names'))) {
-
-				$term_query = array(
-					'taxonomy' => $key,
-					'field' => 'term_id',
-					'terms' => $value,
-				);
-				array_push($args['tax_query'], $term_query);
+			if (strpos($key, '_id')) {
+				if (in_array(str_replace('_id', '', $key), get_object_taxonomies($args['post_type'], $output = 'names'))) {
+					$term_query = array(
+						'taxonomy' => str_replace('_id', '', $key),
+						'field' => 'term_id',
+						'terms' => $value,
+					);
+					array_push($args['tax_query'], $term_query);
+					continue;
+				}
 			}
 
 			// 其他、按键名自动匹配
