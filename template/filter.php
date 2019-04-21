@@ -6,11 +6,11 @@
  *（在非ajax状态中，生成 ?type=post_type，ajax中，在当前查询参数新增post_type参数，并注销paged翻页参数以实现菜单切换）
  *@param $args 外部调用函数ajax查询文章的参数
  *@param $args['wnd_post_types'] array 需要列表输出的类型数组
- *@param $ajax_list_posts_call 外部调用函数查询文章的调用函数
- *@param $ajax_embed_container 外部调用函数ajax查询文章后嵌入的html容器
+ *@param $ajax_call 外部调用函数查询文章的调用函数(不含_wnd_前缀) @see js function wnd_ajax_embed()
+ *@param $ajax_container 外部调用函数ajax查询文章后嵌入的html容器
  *@param 自定义：array  $args['wnd_remove_query_arg'] 需要从当前请求参数中移除的参数数组
  */
-function _wnd_post_types_filter($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
+function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_container = '') {
 
 	// 非数组，无需显示切换标签
 	if (!isset($args['wnd_post_types']) or !is_array($args['wnd_post_types'])) {
@@ -60,9 +60,9 @@ function _wnd_post_types_filter($args = array(), $ajax_list_posts_call = '', $aj
 			$ajax_args = http_build_query($ajax_args);
 
 			if ($ajax_type == 'modal') {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
+				$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
 			} else {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
+				$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
 			}
 
 		} else {
@@ -114,11 +114,11 @@ function _wnd_post_types_filter($args = array(), $ajax_list_posts_call = '', $aj
  *遍历当前post_type 具有层级关系的taxonomy，并配合外部调用函数，生成tabs查询参数，
  *（在非ajax状态中，生成 ?$taxonomy.'_id'=$term_id，ajax中，在当前查询参数新增tax query参数，并注销paged翻页参数以实现菜单切换）
  *@param $args 外部调用函数ajax查询文章的参数，其中 $args['wnd_remove_query_arg'] 参数为非ajax状态下，需要从当前网址中移除的参数数组
- *@param $ajax_list_posts_call 外部调用函数查询文章的调用函数
- *@param $ajax_embed_container 外部调用函数ajax查询文章后嵌入的html容器
+ *@param $ajax_call 外部调用函数查询文章的调用函数
+ *@param $ajax_container 外部调用函数ajax查询文章后嵌入的html容器
  *@param array  'wnd_remove_query_arg' => array('paged', 'pages'), 需要从当前请求参数中移除的参数键名数组
  */
-function _wnd_categories_filter($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '') {
+function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_container = '') {
 
 	$defaults = array(
 		'post_type' => 'post',
@@ -208,9 +208,9 @@ function _wnd_categories_filter($args = array(), $ajax_list_posts_call = '', $aj
 			$all_ajax_args = http_build_query($all_ajax_args);
 
 			if ($ajax_type == 'modal') {
-				$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+				$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
 			} else {
-				$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+				$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
 			}
 		} else {
 			$html .= '<li ' . $all_active . '><a href="' . remove_query_arg($taxonomy . '_id', remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
@@ -267,9 +267,9 @@ function _wnd_categories_filter($args = array(), $ajax_list_posts_call = '', $aj
 				$ajax_args = http_build_query($ajax_args);
 
 				if ($ajax_type == 'modal') {
-					$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
+					$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
 				} else {
-					$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
+					$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
 				}
 
 			} else {
@@ -348,9 +348,9 @@ function _wnd_categories_filter($args = array(), $ajax_list_posts_call = '', $aj
 				$ajax_args = http_build_query($ajax_args);
 
 				if ($ajax_type == 'modal') {
-					$html .= '<li ' . $child_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $child_term->name . '</a></li>';
+					$html .= '<li ' . $child_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $child_term->name . '</a></li>';
 				} else {
-					$html .= '<li ' . $child_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $child_term->name . '</a></li>';
+					$html .= '<li ' . $child_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $child_term->name . '</a></li>';
 				}
 
 			} else {
@@ -377,7 +377,7 @@ function _wnd_categories_filter($args = array(), $ajax_list_posts_call = '', $aj
  * 获取当前分类下的关联标签tabs
  *@since 2019.03.25
  */
-function _wnd_tags_filter($args = array(), $ajax_list_posts_call = '', $ajax_embed_container = '', $limit = 10) {
+function _wnd_tags_filter($args = array(), $ajax_call = '', $ajax_container = '', $limit = 10) {
 
 	// 标签taxonomy
 	$taxonomy = $args['post_type'] . '_tag';
@@ -440,9 +440,9 @@ function _wnd_tags_filter($args = array(), $ajax_list_posts_call = '', $ajax_emb
 		$all_ajax_args = http_build_query($all_ajax_args);
 
 		if ($ajax_type == 'modal') {
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
 		} else {
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
 		}
 	} else {
 		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg($taxonomy . '_id', remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
@@ -513,9 +513,9 @@ function _wnd_tags_filter($args = array(), $ajax_list_posts_call = '', $ajax_emb
 			$ajax_args = http_build_query($ajax_args);
 
 			if ($ajax_type == 'modal') {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
+				$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
 			} else {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
+				$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
 			}
 
 		} else {
@@ -539,20 +539,32 @@ function _wnd_tags_filter($args = array(), $ajax_list_posts_call = '', $ajax_emb
 
 /**
  *@since 2019.04.18 meta query
- *@param 自定义： array args['wnd_meta_query'] meta字段筛选（暂只支持单一 meta_key）:
+ *@param 自定义： array args['wnd_meta_query'] meta字段筛选:
+ *		暂只支持单一 meta_key
+ *		非ajax状态环境中仅支持 = 、exists 两种compare
  *
  *	$args['wnd_meta_query'] = array(
  *		'label' => '文章价格',
  *		'key' => 'price',
- *		'value' => array(
- *			'免费' => 'free',
- *			'收费' => 'paid',
+ *		'options' => array(
+ *			'10' => '10',
+ *			'0.1' => '0.1',
  *		),
  *		'compare' => '=',
  *	);
  *
+ *	查询一个字段是否存在：options只需要设置一个：其作用为key值显示为选项文章，value不参与查询，可设置为任意值
+ *	$args['wnd_meta_query'] = array(
+ *		'label' => '文章价格',
+ *		'key' => 'price',
+ *		'options' => array(
+ *			'包含' => 'exists',
+ *		),
+ *		'compare' => 'exists',
+ *	);
+ *
  */
-function _wnd_meta_filter($args, $ajax_list_posts_call, $ajax_embed_container) {
+function _wnd_meta_filter($args, $ajax_call = '', $ajax_container = '') {
 
 	if (empty($args['wnd_meta_query'])) {
 		return;
@@ -600,15 +612,16 @@ function _wnd_meta_filter($args, $ajax_list_posts_call, $ajax_embed_container) {
 		$all_ajax_args = http_build_query($all_ajax_args);
 
 		if ($ajax_type == 'modal') {
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
 		} else {
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
 		}
 	} else {
 		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg('meta_' . $args['wnd_meta_query']['key'], remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
 	}
 
-	foreach ($args['wnd_meta_query']['value'] as $key => $value) {
+	// 输出tabs
+	foreach ($args['wnd_meta_query']['options'] as $key => $value) {
 
 		// 遍历当前meta query查询是否匹配当前tab
 		$active = '';
@@ -616,7 +629,11 @@ function _wnd_meta_filter($args, $ajax_list_posts_call, $ajax_embed_container) {
 
 			foreach ($args['meta_query'] as $current_meta_query) {
 
-				if ($current_meta_query['value'] == $value) {
+				if ($current_meta_query['compare'] != 'exists' and $current_meta_query['value'] == $value) {
+					$active = 'class="is-active"';
+
+					// meta query compare 为 exists时，没有value值，仅查询是否包含对应key值
+				} elseif ($current_meta_query['key'] = $args['wnd_meta_query']['key']) {
 					$active = 'class="is-active"';
 				}
 			}
@@ -632,6 +649,9 @@ function _wnd_meta_filter($args, $ajax_list_posts_call, $ajax_embed_container) {
 				'value' => $value,
 				'compare' => $args['wnd_meta_query']['compare'],
 			);
+			if ($args['wnd_meta_query']['compare'] == 'exists') {
+				unset($meta_query['value']);
+			}
 
 			$ajax_args = $args;
 
@@ -652,9 +672,9 @@ function _wnd_meta_filter($args, $ajax_list_posts_call, $ajax_embed_container) {
 			$ajax_args = http_build_query($ajax_args);
 
 			if ($ajax_type == 'modal') {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $key . '</a></li>';
+				$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $key . '</a></li>';
 			} else {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');">' . $key . '</a></li>';
+				$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $key . '</a></li>';
 			}
 
 		} else {
@@ -675,10 +695,124 @@ function _wnd_meta_filter($args, $ajax_list_posts_call, $ajax_embed_container) {
 }
 
 /**
+ *@since 2019.04.21 排序（未完成）
+ *@param 自定义： array args['wnd_orderby'] meta字段筛选（暂只支持单一 meta_key）:
+ *
+ *	$args['wnd_orderby'] = array(
+ *		'label' => '排序',
+ *		'options' => array(
+ *			'发布时间' => 'date', //常规排序 date title等
+ *			'浏览量' => array( // 需要多个参数的排序
+ *				'orderby'=>'meta_value_num'
+ *				'meta_key'   => 'views',
+ *			),
+ *		),
+ *		'order' => 'DESC',
+ *	);
+ *
+ */
+function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
+
+	if (empty($args['orderby'])) {
+		return;
+	}
+	$args['wnd_remove_query_arg'] = array('paged', 'pages');
+
+	// ajax请求类型
+	$ajax_type = $_POST['ajax_type'] ?? false;
+
+	// 当前
+	$all_active = 'class="is-active"';
+	if (array_search($args['orderby'], $args['wnd_orderby']) !== false) {
+		$all_active = '';
+	}
+
+	// 输出容器
+	$html = '<div class="columns is-marginless is-vcentered">';
+	$html .= '<div class="column is-narrow">' . $args['wnd_orderby']['label'] . '：</div>';
+	$html .= '<div class="tabs column">';
+	$html .= '<ul class="tab">';
+
+	/**
+	 * 全部选项
+	 * @since 2019.03.07（copy）
+	 */
+	if (wnd_doing_ajax()) {
+
+		$all_ajax_args = $args;
+		unset($all_ajax_args['orderby']);
+		$all_ajax_args = http_build_query($all_ajax_args);
+
+		if ($ajax_type == 'modal') {
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+		} else {
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+		}
+	} else {
+		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg('orderby' . $args['orderby'], remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
+	}
+
+	// 输出tabs
+	foreach ($args['wnd_orderby'] as $orderby) {
+
+		// 遍历当前meta query查询是否匹配当前tab
+		$active = '';
+		if (isset($args['orderby'])) {
+
+			foreach ($args['meta_query'] as $current_meta_query) {
+
+				if ($current_meta_query['value'] == $value) {
+					$active = 'class="is-active"';
+				}
+			}
+			unset($current_meta_query);
+
+		}
+
+		if (wnd_doing_ajax()) {
+
+			$ajax_args = $args;
+
+			// 定位当前taxonomy查询在tax_query中的位置（数组键值从0开始，此处必须以 false array_search返回值判断）
+			$ajax_args['orderby'] = $value;
+
+			// 按配置移除参数
+			foreach ($args['wnd_remove_query_arg'] as $remove_query_arg) {
+				unset($ajax_args[$remove_query_arg]);
+			}
+			unset($remove_query_arg);
+
+			// 构建ajax查询字符串
+			$ajax_args = http_build_query($ajax_args);
+
+			if ($ajax_type == 'modal') {
+				$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $key . '</a></li>';
+			} else {
+				$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $key . '</a></li>';
+			}
+
+		} else {
+			/**
+			 *meta_query GET参数为：meta_{key}?=
+			 */
+			$html .= '<li ' . $active . '><a href="' . add_query_arg('orderby' . $args['orderby'], $value, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $key . '</a></li>';
+		}
+	}
+	unset($key, $value);
+
+	// 输出结束
+	$html .= '</ul>';
+	$html .= '</div>';
+	$html .= '</div>';
+
+	return $html;
+}
+
+/**
  *@since 2019.03.26
  *遍历当前查询参数中的分类查询，输出取消当前分类选项链接
  */
-function _wnd_current_filter($args, $ajax_list_posts_call, $ajax_embed_container) {
+function _wnd_current_filter($args, $ajax_call, $ajax_container) {
 
 	// 默认参数
 	$defaults = array(
@@ -700,6 +834,7 @@ function _wnd_current_filter($args, $ajax_list_posts_call, $ajax_embed_container
 	$html .= '<div class="column is-narrow">当前条件：</div>';
 	$html .= '<div class="column">';
 
+	// 1、tax_query
 	foreach ($args['tax_query'] as $key => $term_query) {
 
 		$term = get_term($term_query['terms']);
@@ -721,9 +856,9 @@ function _wnd_current_filter($args, $ajax_list_posts_call, $ajax_embed_container
 			$ajax_args = http_build_query($ajax_args);
 
 			if ($ajax_type == 'modal') {
-				$html .= '<span class="tag">' . $term->name . '<button class="delete is-small" onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');"></button></span>&nbsp;&nbsp;';
+				$html .= '<span class="tag">' . $term->name . '<button class="delete is-small" onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');"></button></span>&nbsp;&nbsp;';
 			} else {
-				$html .= '<span class="tag">' . $term->name . '<button class="delete is-small" onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');"></button></span>&nbsp;&nbsp;';
+				$html .= '<span class="tag">' . $term->name . '<button class="delete is-small" onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');"></button></span>&nbsp;&nbsp;';
 			}
 
 		} else {
@@ -736,14 +871,21 @@ function _wnd_current_filter($args, $ajax_list_posts_call, $ajax_embed_container
 	unset($key, $term_query);
 
 	/**
-	 *@since 2019.04.18 移除meta_query
+	 *@since 2019.04.18
+	 *2、meta_query
 	 */
 	foreach ($args['meta_query'] as $meta_query) {
 
 		// 通过wp meta query中的value值，反向查询自定义 key
-		$key = array_search($meta_query['value'], $args['wnd_meta_query']['value']);
-		if (!$key) {
-			continue;
+		if ($meta_query['compare'] != 'exists') {
+			$key = array_search($meta_query['value'], $args['wnd_meta_query']['options']);
+			if (!$key) {
+				continue;
+			}
+
+			// meta query compare 为 exists时，没有value值
+		} else {
+			$key = $args['wnd_meta_query']['label'];
 		}
 
 		if (wnd_doing_ajax()) {
@@ -763,9 +905,9 @@ function _wnd_current_filter($args, $ajax_list_posts_call, $ajax_embed_container
 			$ajax_args = http_build_query($ajax_args);
 
 			if ($ajax_type == 'modal') {
-				$html .= '<span class="tag">' . $key . '<button class="delete is-small" onclick="wnd_ajax_modal(\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');"></button></span>&nbsp;&nbsp;';
+				$html .= '<span class="tag">' . $key . '<button class="delete is-small" onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');"></button></span>&nbsp;&nbsp;';
 			} else {
-				$html .= '<span class="tag">' . $key . '<button class="delete is-small" onclick="wnd_ajax_embed(\'' . $ajax_embed_container . '\',\'' . $ajax_list_posts_call . '\',\'' . $ajax_args . '\');"></button></span>&nbsp;&nbsp;';
+				$html .= '<span class="tag">' . $key . '<button class="delete is-small" onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');"></button></span>&nbsp;&nbsp;';
 			}
 
 		} else {
@@ -788,28 +930,41 @@ function _wnd_current_filter($args, $ajax_list_posts_call, $ajax_embed_container
 
 /**
  *@since 2019.03.01
- *输出同时带有 poet_type和分类切换标签的文章列表
- *@param $args wp_query $args
+ *WordPress文章多重筛选器
+ *@param $args： wp_query $args
  *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
  *@param 自定义： array $args['wnd_post_types']需要展示的文章类型
  *@param 自定义： bool args['wnd_only_cat']是否只筛选分类
- *
- *@param 自定义： array args['wnd_meta_query'] meta字段筛选（暂只支持单一 meta_key）:
+ *@param 自定义： array args['wnd_meta_query'] meta字段筛选
+ *		暂只支持单一 meta_key
+ *		非ajax状态环境中仅支持 = 、exists 两种对比关系
+ *		ajax状态支持WordPress原生 大于等于等对比关系
  *
  *	$args['wnd_meta_query'] = array(
  *		'label' => '文章价格',
  *		'key' => 'price',
- *		'value' => array(
- *			'免费' => 'free',
- *			'收费' => 'paid',
+ *		'options' => array(
+ *			'10' => '10',
+ *			'0.1' => '0.1',
  *		),
  *		'compare' => '=',
+ *	);
+ *
+ *	查询一个字段是否存在：options只需要设置一个：其作用为key值显示为选项文章，value不参与查询，可设置为任意值
+ *	$args['wnd_meta_query'] = array(
+ *		'label' => '文章价格',
+ *		'key' => 'price',
+ *		'options' => array(
+ *			'包含' => 'exists',
+ *		),
+ *		'compare' => 'exists',
  *	);
  *
  *
  *非ajax状态下：
  *自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
  *自动从GET参数中获取meta查询参数 (?meta_$meta_key=meta_value or ?meta_$meta_key=exists)
+ *自动从GET参数中获取参数，并按对应键值配置：$args[$key] = $value;
  */
 function _wnd_posts_filter($args = array()) {
 
@@ -847,7 +1002,11 @@ function _wnd_posts_filter($args = array()) {
 	// 分页优先参数
 	$args['paged'] = $_GET['pages'] ?? $args['paged'];
 
-	// 自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
+	/**
+	 *自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
+	 *字段参数：?meta_meta_key
+	 *自动键名匹配： $args[$key] = $value;
+	 */
 	if (!empty($_GET)) {
 
 		foreach ($_GET as $key => $value) {
@@ -866,9 +1025,6 @@ function _wnd_posts_filter($args = array()) {
 					'value' => $value,
 					'compare' => $compare,
 				);
-				if ($compare == 'exists') {
-					unset($meta_query['value']);
-				}
 
 				array_push($args['meta_query'], $meta_query);
 				continue;
@@ -889,8 +1045,22 @@ function _wnd_posts_filter($args = array()) {
 				array_push($args['tax_query'], $term_query);
 			}
 
+			// 其他、按键名自动匹配
+			$args[$key] = $value;
+
 		}
 		unset($key, $value);
+	}
+
+	/**
+	 *@since 2019.04.21 当meta_query compare == exists 不能设置value
+	 */
+	if (isset($args['meta_query'])) {
+		foreach ($args['meta_query'] as $key => $meta_query) {
+			if ($meta_query['compare'] == 'exists') {
+				unset($args['meta_query'][$key]['value']);
+			}
+		}
 	}
 
 	// 容器开始

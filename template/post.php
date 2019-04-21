@@ -219,6 +219,42 @@ function _wnd_post_info($args) {
 }
 
 /**
+ *@since 2019.01.20 输出中文文章状态
+ */
+function _wnd_post_status($post_id = 0) {
+
+	if (!$post_id) {
+		global $post;
+	} else {
+		$post = get_post($post_id);
+	}
+
+	if (!$post) {
+		return "获取状态失败！";
+	}
+
+	switch ($post->post_status) {
+
+	case 'publish':
+		return "公开";
+		break;
+
+	case 'pending':
+		return "待审";
+		break;
+
+	case 'draft':
+		return "草稿";
+		break;
+
+	default:
+		return $post->post_status;
+		break;
+	}
+
+}
+
+/**
  *@since 2019.01.20
  *快速编辑文章状态表单
  */
