@@ -1115,32 +1115,34 @@ function _wnd_posts_filter($args = array()) {
 	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
 		$html .= _wnd_post_types_filter($args, 'posts_filter', '#wnd-filter');
 	}
-
 	// 分类 切换
 	$html .= _wnd_categories_filter($args, 'posts_filter', '#wnd-filter');
-
 	// 获取分类下关联的标签
 	if (!$args['wnd_only_cat']) {
 		$html .= _wnd_tags_filter($args, 'posts_filter', '#wnd-filter');
 	}
-
 	// meta query
 	$html .= _wnd_meta_filter($args, 'posts_filter', '#wnd-filter');
-
 	// orderby
 	$html .= _wnd_orderby_filter($args, 'posts_filter', '#wnd-filter');
-
 	// 列出当前term查询，并附带取消链接
 	$html .= _wnd_current_filter($args, 'posts_filter', '#wnd-filter');
-	// 容器结束
 	$html .= '</div>';
 
+	$html .= '<div class="columns">';
+
 	// 输出列表：根据_wnd_ajax_next_page，此处需设置容器及容器class，否则ajax请求的翻页内容可能无法正确嵌入
-	$html .= '<div class="post-list-container">';
+	$html .= '<div class="post-list-container column">';
 	$html .= $args['wnd_list_template']($args);
 	$html .= '</div>';
 
-	// 容器结束
+	// 边栏
+	$sidebar = apply_filters('_wnd_posts_filter_sidebar', '', $args);
+	if ($sidebar) {
+		$html .= '<div class="column is-narrow">' . $sidebar . '</div>';
+	}
+	$html .= '</div>';
+
 	$html .= '</div>';
 	return $html;
 
