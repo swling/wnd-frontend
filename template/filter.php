@@ -620,7 +620,7 @@ function _wnd_meta_filter($args, $ajax_call = '', $ajax_container = '') {
 			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
 		}
 	} else {
-		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg('meta_' . $args['wnd_meta_query']['key'], remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
+		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg('_meta_' . $args['wnd_meta_query']['key'], remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
 	}
 
 	// 输出tabs
@@ -630,17 +630,17 @@ function _wnd_meta_filter($args, $ajax_call = '', $ajax_container = '') {
 		$active = '';
 		if (isset($args['meta_query'])) {
 
-			foreach ($args['meta_query'] as $current_meta_query) {
+			foreach ($args['meta_query'] as $meta_query) {
 
-				if ($current_meta_query['compare'] != 'exists' and $current_meta_query['value'] == $value) {
+				if ($meta_query['compare'] != 'exists' and $meta_query['value'] == $value) {
 					$active = 'class="is-active"';
 
 					// meta query compare 为 exists时，没有value值，仅查询是否包含对应key值
-				} elseif ($current_meta_query['key'] = $args['wnd_meta_query']['key']) {
+				} elseif ($meta_query['key'] = $args['wnd_meta_query']['key']) {
 					$active = 'class="is-active"';
 				}
 			}
-			unset($current_meta_query);
+			unset($meta_query);
 
 		}
 
@@ -684,7 +684,7 @@ function _wnd_meta_filter($args, $ajax_call = '', $ajax_container = '') {
 			/**
 			 *meta_query GET参数为：meta_{key}?=
 			 */
-			$html .= '<li ' . $active . '><a href="' . add_query_arg('meta_' . $args['wnd_meta_query']['key'], $value, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $key . '</a></li>';
+			$html .= '<li ' . $active . '><a href="' . add_query_arg('_meta_' . $args['wnd_meta_query']['key'], $value, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $key . '</a></li>';
 		}
 	}
 	unset($key, $value);
@@ -698,8 +698,8 @@ function _wnd_meta_filter($args, $ajax_call = '', $ajax_container = '') {
 }
 
 /**
- *@since 2019.04.21 排序（未完成）
- *@param 自定义： array args['wnd_orderby'] meta字段筛选（暂只支持单一 meta_key）:
+ *@since 2019.04.21 排序
+ *@param 自定义： array args['wnd_orderby']
  *
  *	$args['wnd_orderby'] = array(
  *		'label' => '排序',
@@ -716,17 +716,18 @@ function _wnd_meta_filter($args, $ajax_call = '', $ajax_container = '') {
  */
 function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
 
-	if (empty($args['orderby'])) {
+	if (empty($args['wnd_orderby'])) {
 		return;
 	}
+
 	$args['wnd_remove_query_arg'] = array('paged', 'pages');
 
 	// ajax请求类型
 	$ajax_type = $_POST['ajax_type'] ?? false;
 
-	// 当前
+	// 全部
 	$all_active = 'class="is-active"';
-	if (array_search($args['orderby'], $args['wnd_orderby']) !== false) {
+	if (!empty($args['orderby'] and $args['orderby'] != 'post_date')) {
 		$all_active = '';
 	}
 
@@ -747,28 +748,42 @@ function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
 		$all_ajax_args = http_build_query($all_ajax_args);
 
 		if ($ajax_type == 'modal') {
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">默认</a></li>';
 		} else {
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">默认</a></li>';
 		}
 	} else {
-		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg('orderby' . $args['orderby'], remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
+		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg(array('orderby', 'order', 'meta_key'), remove_query_arg($args['wnd_remove_query_arg'])) . '">默认</a></li>';
 	}
 
 	// 输出tabs
-	foreach ($args['wnd_orderby'] as $orderby) {
+	foreach ($args['wnd_orderby']['options'] as $key => $orderby) {
 
-		// 遍历当前meta query查询是否匹配当前tab
+		// 查询当前orderby是否匹配当前tab
 		$active = '';
 		if (isset($args['orderby'])) {
 
-			foreach ($args['meta_query'] as $current_meta_query) {
+			/**
+			 *	post meta排序
+			 *	$args = array(
+			 *		'post_type' => 'product',
+			 *		'orderby'   => 'meta_value_num',
+			 *		'meta_key'  => 'price',
+			 *	);
+			 *	$query = new WP_Query( $args );
+			 */
+			if (is_array($orderby) and isset($args['meta_key'])) {
 
-				if ($current_meta_query['value'] == $value) {
+				if ($orderby['meta_key'] == $args['meta_key']) {
+					$active = 'class="is-active"';
+				}
+
+				// 常规排序
+			} else {
+				if ($orderby == $args['orderby']) {
 					$active = 'class="is-active"';
 				}
 			}
-			unset($current_meta_query);
 
 		}
 
@@ -776,8 +791,12 @@ function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
 
 			$ajax_args = $args;
 
-			// 定位当前taxonomy查询在tax_query中的位置（数组键值从0开始，此处必须以 false array_search返回值判断）
-			$ajax_args['orderby'] = $value;
+			if (is_array($orderby)) {
+				$ajax_args['orderby'] = $orderby['orderby'];
+				$ajax_args['meta_key'] = $orderby['meta_key'];
+			} else {
+				$ajax_args['orderby'] = $orderby;
+			}
 
 			// 按配置移除参数
 			foreach ($args['wnd_remove_query_arg'] as $remove_query_arg) {
@@ -795,13 +814,15 @@ function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
 			}
 
 		} else {
-			/**
-			 *meta_query GET参数为：meta_{key}?=
-			 */
-			$html .= '<li ' . $active . '><a href="' . add_query_arg('orderby' . $args['orderby'], $value, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $key . '</a></li>';
+
+			// 当采用 post meta排序时，需要指定meta key，切换时需要去除
+			array_push($args['wnd_remove_query_arg'], 'meta_key');
+
+			$query_arg = is_array($orderby) ? $orderby : array('orderby' => $orderby);
+			$html .= '<li ' . $active . '><a href="' . add_query_arg($query_arg, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $key . '</a></li>';
 		}
 	}
-	unset($key, $value);
+	unset($key, $orderby);
 
 	// 输出结束
 	$html .= '</ul>';
@@ -935,10 +956,11 @@ function _wnd_current_filter($args, $ajax_call, $ajax_container) {
  *@since 2019.03.01
  *WordPress文章多重筛选器
  *@param $args： wp_query $args
+ *
  *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
  *@param 自定义： array $args['wnd_post_types']需要展示的文章类型
  *@param 自定义： bool args['wnd_only_cat']是否只筛选分类
- *@param 自定义： array args['wnd_meta_query'] meta字段筛选
+ *@param 自定义： array args['wnd_meta_query'] meta字段筛选 @link https://codex.wordpress.org/Class_Reference/WP_Query#Custom_Field_Parameters
  *		暂只支持单一 meta_key
  *		非ajax状态环境中仅支持 = 、exists 两种对比关系
  *		ajax状态支持WordPress原生 大于等于等对比关系
@@ -964,6 +986,20 @@ function _wnd_current_filter($args, $ajax_call, $ajax_container) {
  *	);
  *
  *
+ *@param 自定义： array args['wnd_orderby'] @link https://codex.wordpress.org/Class_Reference/WP_Query#Order_.26_Orderby_Parameters
+ *
+ *	$args['wnd_orderby'] = array(
+ *		'label' => '排序',
+ *		'options' => array(
+ *			'发布时间' => 'date', //常规排序 date title等
+ *			'浏览量' => array( // 需要多个参数的排序
+ *				'orderby'=>'meta_value_num'
+ *				'meta_key'   => 'views',
+ *			),
+ *		),
+ *		'order' => 'DESC',
+ *	);
+ *
  *非ajax状态下：
  *自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
  *自动从GET参数中获取meta查询参数 (?meta_$meta_key=meta_value or ?meta_$meta_key=exists)
@@ -983,6 +1019,7 @@ function _wnd_posts_filter($args = array()) {
 		'wnd_list_template' => '_wnd_table_list', //输出列表模板函数
 		'wnd_post_types' => array(), //允许的类型数组
 		'wnd_meta_query' => array(), // meta筛选项
+		'wnd_orderby' => array(), // 排序
 		'wnd_only_cat' => 0, // 只筛选分类
 	);
 	$args = wp_parse_args($args, $defaults);
@@ -1019,9 +1056,9 @@ function _wnd_posts_filter($args = array()) {
 			 *?meta_price=1 则查询 price = 1的文章
 			 *?meta_price=exists 则查询 存在price的文章
 			 */
-			if (strpos($key, 'meta_') === 0) {
+			if (strpos($key, '_meta_') === 0) {
 
-				$key = str_replace('meta_', '', $key);
+				$key = str_replace('_meta_', '', $key);
 				$compare = $value == 'exists' ? 'exists' : '=';
 				$meta_query = array(
 					'key' => $key,
@@ -1086,6 +1123,9 @@ function _wnd_posts_filter($args = array()) {
 
 	// meta query
 	$html .= _wnd_meta_filter($args, 'posts_filter', '#wnd-filter');
+
+	// orderby
+	$html .= _wnd_orderby_filter($args, 'posts_filter', '#wnd-filter');
 
 	// 列出当前term查询，并附带取消链接
 	$html .= _wnd_current_filter($args, 'posts_filter', '#wnd-filter');
