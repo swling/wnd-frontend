@@ -5,6 +5,50 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ *@since 2019.04.22常规分页导航栏
+ *@param $max_page 页面总数
+ *@param $show_page 当前页右侧需要显示的页面数量
+ */
+function _wnd_pagination($max_page, $show_page = 5) {
+
+	$paged = (isset($_GET['pages'])) ? intval($_GET['pages']) : 1;
+	// $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
+	if ($max_page <= 1) {
+		return;
+	}
+
+	$html = '<div class="pagination is-centered">';
+	if ($paged > 1) {
+		$html .= '<a class="pagination-previous" href="' . add_query_arg('pages', $paged - 1) . '">上一页</a>';
+	}
+
+	if ($paged < $max_page) {
+		$html .= '<a class="pagination-next" href="' . add_query_arg('pages', $paged + 1) . '">下一页</a>';
+	}
+
+	$html .= '<ul class="pagination-list">';
+	$html .= '<li><a class="pagination-link" href="' . remove_query_arg('pages') . '" >首页</a></li>';
+	for ($i = $paged - 1; $i <= $paged + $show_page; $i++) {
+		if ($i > 0 && $i <= $max_page) {
+			if ($i == $paged) {
+				$html .= '<li><a class="pagination-link is-current" href="' . add_query_arg('pages', $i) . '"> <span>' . $i . '</span> </a></li>';
+			} else {
+				$html .= '<li><a class="pagination-link" href="' . add_query_arg('pages', $i) . '"> <span>' . $i . '</span> </a></li>';
+			}
+		}
+	}
+	if ($paged < $max_page - 3) {
+		$html .= '<li><span class="pagination-ellipsis">&hellip;</span></li>';
+	}
+
+	$html .= '<li><a class="pagination-link" href="' . add_query_arg('pages', $max_page) . '">尾页</a></li>';
+	$html .= '</ul></div>';
+
+	return $html;
+}
+
+/**
  *@since 2019.02.15 简单分页
  *不查询总数的情况下，简单实现下一页翻页
  *翻页参数键名$pages_key 不能设置为 paged 可能会与原生WordPress翻页机制产生冲突
