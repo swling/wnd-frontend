@@ -727,7 +727,7 @@ function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
 
 	// 全部
 	$all_active = 'class="is-active"';
-	if (!empty($args['orderby'] and $args['orderby'] != 'post_date')) {
+	if (!empty($args['orderby']) and $args['orderby'] != 'post_date') {
 		$all_active = '';
 	}
 
@@ -745,6 +745,7 @@ function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
 
 		$all_ajax_args = $args;
 		unset($all_ajax_args['orderby']);
+		unset($all_ajax_args['meta_key']);
 		$all_ajax_args = http_build_query($all_ajax_args);
 
 		if ($ajax_type == 'modal') {
@@ -795,6 +796,8 @@ function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
 				$ajax_args['orderby'] = $orderby['orderby'];
 				$ajax_args['meta_key'] = $orderby['meta_key'];
 			} else {
+				// 常规排序，移除meta_key，保留参数会导致无法判断当前激活条件（is-active）
+				unset($ajax_args['meta_key']);
 				$ajax_args['orderby'] = $orderby;
 			}
 
