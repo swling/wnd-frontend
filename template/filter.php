@@ -74,12 +74,12 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
 
 			/**
 			 *移除term查询
-			 *categories tabs生成的GET参数为：$taxonomy.'_id'，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
 			$taxonomies = get_object_taxonomies($args['post_type'], $output = 'names');
 			if ($taxonomies) {
 				foreach ($taxonomies as $taxonomy) {
-					array_push($args['wnd_remove_query_arg'], $taxonomy . '_id');
+					array_push($args['wnd_remove_query_arg'], '_term_' . $taxonomy);
 				}
 				unset($taxonomy);
 			}
@@ -112,7 +112,7 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
 /**
  *@since 2019.02.28
  *遍历当前post_type 具有层级关系的taxonomy，并配合外部调用函数，生成tabs查询参数，
- *（在非ajax状态中，生成 ?$taxonomy.'_id'=$term_id，ajax中，在当前查询参数新增tax query参数，并注销paged翻页参数以实现菜单切换）
+ *（在非ajax状态中，生成 ?'_term_' . $taxonomy=$term_id，ajax中，在当前查询参数新增tax query参数，并注销paged翻页参数以实现菜单切换）
  *@param $args 外部调用函数ajax查询文章的参数，其中 $args['wnd_remove_query_arg'] 为需要从当前网址中移除的参数数组
  *@param $ajax_call 外部调用函数查询文章的调用函数
  *@param $ajax_container 外部调用函数ajax查询文章后嵌入的html容器
@@ -184,7 +184,7 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 			// 获取tag类型taxonomy的键名（切换分类时，需要移除关联分类查询）
 			if (array_search($args['post_type'] . '_tag', $tax_query) !== false) {
 				unset($args['tax_query'][$key]);
-				array_push($args['wnd_remove_query_arg'], $args['post_type'] . '_tag' . '_id');
+				array_push($args['wnd_remove_query_arg'], '_term_' . $args['post_type'] . '_tag');
 			}
 		}
 		unset($key, $tax_query);
@@ -213,7 +213,7 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 				$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
 			}
 		} else {
-			$html .= '<li ' . $all_active . '><a href="' . remove_query_arg($taxonomy . '_id', remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
+			$html .= '<li ' . $all_active . '><a href="' . remove_query_arg('_term_' . $taxonomy, remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
 		}
 
 		// 输出tabs
@@ -274,9 +274,9 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 
 			} else {
 				/**
-				 *categories tabs生成的GET参数为：$taxonomy.'_id'，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+				 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 				 */
-				$html .= '<li ' . $active . '><a href="' . add_query_arg($taxonomy . '_id', $term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $term->name . '</a></li>';
+				$html .= '<li ' . $active . '><a href="' . add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $term->name . '</a></li>';
 			}
 
 		}
@@ -355,9 +355,9 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 
 			} else {
 				/**
-				 *categories tabs生成的GET参数为：$taxonomy.'_id'，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+				 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 				 */
-				$html .= '<li ' . $child_active . '><a href="' . add_query_arg($taxonomy . '_id', $child_term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $child_term->name . '</a></li>';
+				$html .= '<li ' . $child_active . '><a href="' . add_query_arg('_term_' . $taxonomy, $child_term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $child_term->name . '</a></li>';
 			}
 		}
 		unset($child_term);
@@ -448,7 +448,7 @@ function _wnd_tags_filter($args = array(), $ajax_call = '', $ajax_container = ''
 			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
 		}
 	} else {
-		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg($taxonomy . '_id', remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
+		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg('_term_' . $taxonomy, remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
 	}
 
 	/**
@@ -523,9 +523,9 @@ function _wnd_tags_filter($args = array(), $ajax_call = '', $ajax_container = ''
 
 		} else {
 			/**
-			 *categories tabs生成的GET参数为：$taxonomy.'_id'，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$html .= '<li ' . $active . '><a href="' . add_query_arg($taxonomy . '_id', $term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $term->name . '</a></li>';
+			$html .= '<li ' . $active . '><a href="' . add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $term->name . '</a></li>';
 		}
 
 	}
@@ -890,9 +890,9 @@ function _wnd_current_filter($args, $ajax_call, $ajax_container) {
 
 		} else {
 			/**
-			 *categories tabs生成的GET参数为：$taxonomy.'_id'，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$html .= '<span class="tag">' . $term->name . '<a class="delete is-small" href="' . remove_query_arg($term->taxonomy . '_id', remove_query_arg($args['wnd_remove_query_arg'])) . '"></a></span>&nbsp;&nbsp;';
+			$html .= '<span class="tag">' . $term->name . '<a class="delete is-small" href="' . remove_query_arg('_term_' . $term->taxonomy, remove_query_arg($args['wnd_remove_query_arg'])) . '"></a></span>&nbsp;&nbsp;';
 		}
 	}
 	unset($key, $term_query);
@@ -1074,19 +1074,17 @@ function _wnd_posts_filter($args = array()) {
 			}
 
 			/**
-			 *categories tabs生成的GET参数为：$taxonomy.'_id'，
+			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，
 			 *直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			if (strpos($key, '_id')) {
-				if (in_array(str_replace('_id', '', $key), get_object_taxonomies($args['post_type'], $output = 'names'))) {
-					$term_query = array(
-						'taxonomy' => str_replace('_id', '', $key),
-						'field' => 'term_id',
-						'terms' => $value,
-					);
-					array_push($args['tax_query'], $term_query);
-					continue;
-				}
+			if (strpos($key, '_term_') === 0) {
+				$term_query = array(
+					'taxonomy' => str_replace('_term_', '', $key),
+					'field' => 'term_id',
+					'terms' => $value,
+				);
+				array_push($args['tax_query'], $term_query);
+				continue;
 			}
 
 			// 其他、按键名自动匹配
