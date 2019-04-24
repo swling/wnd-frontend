@@ -1014,7 +1014,7 @@ function _wnd_posts_filter($args = array()) {
 	$defaults = array(
 		'posts_per_page' => get_option('posts_per_page'),
 		'paged' => 1,
-		'post_type' => 'post',
+		'post_type' => '',
 		'post_status' => 'publish',
 		'tax_query' => array(),
 		'meta_query' => array(),
@@ -1108,7 +1108,7 @@ function _wnd_posts_filter($args = array()) {
 	// 容器开始
 	$html = '<div id="wnd-filter">';
 
-	$html .= '<div class="filter-container">';
+	$html .= '<div id="filter-container">';
 	// post types 切换
 	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
 		$html .= _wnd_post_types_filter($args, 'posts_filter', '#wnd-filter');
@@ -1129,8 +1129,8 @@ function _wnd_posts_filter($args = array()) {
 
 	$html .= '<div class="columns">';
 
-	// 输出列表：根据_wnd_ajax_next_page，此处需设置容器及容器class，否则ajax请求的翻页内容可能无法正确嵌入
-	$html .= '<div class="post-list-container column">';
+	// 输出列表：根据_wnd_ajax_next_page，此处需设置容器及容器ID，否则ajax请求的翻页内容可能无法正确嵌入
+	$html .= '<div id="post-list-container" class="column">';
 	$html .= $args['wnd_list_template']($args);
 	$html .= '</div>';
 

@@ -78,7 +78,7 @@ function _wnd_next_page($posts_per_page, $current_post_count, $pages_key = 'page
  *在当前ajax请求的基础上，自增一个翻页参数，并再次发送(paged)
  *@param $function 需要请求的内容列表输出函数名
  *@param $function 的参数
- *函数应该与请求函数处于同一个父元素之下，父容器必须设置class
+ *函数应该与请求函数处于同一个父元素之下，父容器必须设置ID
  */
 function _wnd_ajax_next_page($function, $args, $post_count) {
 
@@ -100,8 +100,8 @@ function _wnd_ajax_next_page($function, $args, $post_count) {
 		$pre_onclick = 'wnd_ajax_modal(' . $js_pre_args . ')';
 	} else {
 
-		// 获取翻页元素的父元素Iclass
-		$container = '\'.\' + $(this).parents(\'nav\').parent().attr(\'class\')';
+		// 获取翻页元素的父元素ID
+		$container = '\'#\' + $(this).parents(\'nav\').parent().attr(\'id\')';
 
 		$next_onclick = 'wnd_ajax_embed(' . $container . ',' . $js_next_args . ')';
 		$pre_onclick = 'wnd_ajax_embed(' . $container . ',' . $js_pre_args . ')';

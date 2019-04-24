@@ -104,7 +104,9 @@ apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_sta
 *@param $post_types array 文章类型数组 如移除 post 类型： unset($post_type['post'])
 */
 apply_filters( 'wnd_allowed_post_types', $post_types );
-
+```
+##多重筛选
+```php
 /**
 *@since 2019.02.25 文章列表输出模板 文章状态文字过滤
 */
@@ -114,10 +116,7 @@ apply_filters('_wnd_table_list', $post);
 *@since 2019.04.18 多重筛选，文章输出模板
 */
 apply_filters('_wnd_post_list', $list, $post);
-```
 
-##多重筛选
-```php
 /**
 *@since 2019.04.18 多重筛选，边栏，默认没有边栏内容（返回html数据）
 */
