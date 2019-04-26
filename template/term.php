@@ -54,64 +54,170 @@ function _wnd_list_categories_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $l
 
 }
 
-//###################################################### 生成taxonomy 多重查询参数 默认 GET name 为 term_id, GET值为 id
-function _wnd_terms_query_arg($query = array(), $key = 'term_id', $remove_key = '', $title = '全部') {
+/**
+ *@since 2019.04.25
+ *生成taxonomy 多重查询参数 GET key：_term_{$taxonomy} GET value: $term_id
+ *@param $args 						array 		get_terms参数
+ *@param $remove_query_arg 			array 		需要移除的参数
+ *@param $title 					string 		标题label
+ */
+function _wnd_term_query_arg($args = array(), $remove_query_arg = array('page', 'pages'), $title = '全部') {
 
-	if (!$query) {
+	if (!$args) {
 		return false;
 	}
 
-	$terms = get_terms($query);
-	$current_term_id = isset($_GET[$key]) ? $_GET[$key] : false;
-	$all_class = !$current_term_id ? 'class="is-active"' : false;
-
+	$terms = get_terms($args);
 	if (!$terms) {
 		return;
 	}
 
-	$html = '<ul class="' . $query['taxonomy'] . '-query-args term-query-args">';
-	array_push($remove_key, $key);
-	$html .= '<li><a href="' . remove_query_arg($remove_key) . '" ' . $all_class . ' >' . $title . '</a></li>';
+	$key = '_term_' . $args['taxonomy'];
+	$current_term_id = isset($_GET[$key]) ? $_GET[$key] : false;
+	$all_class = !$current_term_id ? 'class="is-active"' : false;
+
+	// 输出容器
+	$html = '<div class="columns is-marginless is-vcentered ' . $args['taxonomy'] . '-tabs">';
+	$html .= '<div class="column is-narrow ' . $args['taxonomy'] . '-label">' . get_taxonomy($args['taxonomy'])->label . '：</div>';
+	$html .= '<div class="tabs column">';
+	$html .= '<ul class="tab">';
+
+	// 全部
+	$html .= '<li ' . $all_class . '><a href="' . remove_query_arg(array_merge($remove_query_arg, array($key))) . '">' . $title . '</a></li>';
+
 	foreach ($terms as $term) {
 
 		$current = ($current_term_id == $term->term_id) ? 'class="is-active"' : null;
-		$html .= '<li><a href="' . add_query_arg($key, $term->term_id, $url = remove_query_arg($remove_key)) . '" ' . $current . '>' . $term->name . '</a></li>' . PHP_EOL;
+		$html .= '<li ' . $current . '><a href="' . add_query_arg($key, $term->term_id, remove_query_arg($remove_query_arg)) . '">' . $term->name . '</a></li>' . PHP_EOL;
 
 	}
 	unset($term);
+
+	// 输出结束
 	$html .= '</ul>';
+	$html .= '</div>';
+	$html .= '</div>';
+
 	return $html;
 
 }
 
-/*
-在文章内容比较少的情况下，通过数据库查询的方式获取当前term关联的其他term生成多重查询参数
-目的：避免产生过多没有内容的多重筛选
-@2018.12.14 首次封装
+/**
+ *@since 2019.04.25
+ *获取分类下关联标签，并生产查询参数 GET key：_term_{$taxonomy} GET value: $term_id
+ *@param $cat_id 		int 	分类id
+ *@param $tag_taxonomy 	string 	标签taxonomy
+ *@param $post_limits 	int 	标签输出数量
  */
-function _wnd_related_terms_query_arg($current_term_id, $related_taxonmy, $key, $remove_key = array(), $title = 'All', $query_post_max = 1000) {
+function _wnd_related_tags_query_arg($cat_id, $tag_taxonomy, $limit = 10, $remove_query_arg = array('page', 'pages'), $title = '全部') {
 
-	$current_term = get_term($current_term_id);
+	$key = '_term_' . $tag_taxonomy;
+	$current_term_id = isset($_GET[$key]) ? $_GET[$key] : false;
+	$all_class = !$current_term_id ? 'class="is-active"' : false;
 
-	if ($current_term->count < $query_post_max) {
+	// 输出容器
+	$html = '<div class="columns is-marginless is-vcentered ' . $tag_taxonomy . '-tabs">';
+	$html .= '<div class="column is-narrow ' . $tag_taxonomy . '-label">' . get_taxonomy($tag_taxonomy)->label . '：</div>';
+	$html .= '<div class="tabs column">';
+	$html .= '<ul class="tab">';
 
-		$terms = wndbiz_get_related_terms($term_id = $current_term_id, $terms_type = $related_taxonmy);
-		if (!$terms) {
-			return $terms;
+	// 全部
+	$html .= '<li ' . $all_class . '><a href="' . remove_query_arg(array_merge($remove_query_arg, array($key))) . '">' . $title . '</a></li>';
+
+	$tags = wnd_get_tags_under_category($cat_id, $tag_taxonomy, $limit);
+	foreach ($tags as $tag) {
+
+		$tag_id = (int) $tag->tag_id;
+		$term = get_term($tag_id);
+		$current = ($current_term_id == $term->term_id) ? 'class="is-active"' : null;
+
+		$html .= '<li ' . $current . '><a href="' . add_query_arg($key, $term->term_id, remove_query_arg($remove_query_arg)) . '">' . $term->name . '</a></li>';
+
+	}
+	unset($tag);
+
+	// 输出结束
+	$html .= '</ul>';
+	$html .= '</div>';
+	$html .= '</div>';
+
+	return $html;
+}
+
+/**
+ *@since 2019.04.25（未完成）
+ *下拉菜单形式，生成taxonomy 多重查询参数 GET key：_term_{$taxonomy} GET value: $term_id
+ *@param $args 						array 		get_terms参数
+ *@param $remove_query_arg 			array 		需要移除的参数
+ *@param $title 					string 		标题label
+ */
+function _wnd_term_select_query_arg() {
+	?>
+<div class="dropdown is-hoverable">
+  <div class="dropdown-trigger">
+    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
+      <span><?php if (isset($_GET['local'])) {
+		echo $_GET['local'];
+	} else {
+		echo '—所在地—';
+	}
+	?></span>
+      <span class="icon is-small">
+        <i class="fa fa-angle-down" aria-hidden="true"></i>
+      </span>
+    </button>
+  </div>
+  <div class="dropdown-menu" role="menu">
+    <div class="dropdown-content">
+    	<div class="dropdown-item" style="min-width: 50px;">
+	    <?php
+// 内容少于1000条时，不一定每个省份都有，采用查询发，反之，直接输出全部地域
+	if ($term_count < 1000) {
+		$terms = wndbiz_get_related_terms($term_id = $term_id, $terms_type = 'area');
+	} else {
+		$terms = get_terms('taxonomy=area&hide_empty=1');
+	}
+	foreach ($terms as $term) {
+		?>
+        <a href="?local=<?php echo $term->name; ?>" class="<?php if (isset($_GET['local']) && $_GET['local'] == $term->name) {
+			echo 'on';
 		}
-		$all_class = isset($_GET[$key]) ? '' : 'class="on"';
+		?>"><?php echo $term->name; ?></a>
+        <?php
+unset($term);
+	}
+	?>
+        </div>
+    </div>
+  </div>
+</div>
+<?php
+}
 
-		array_push($remove_key, $key);
-		$html = '<ul class="' . $related_taxonmy . '">';
-		$html .= '<li><a href="' . remove_query_arg($remove_key) . '" ' . $all_class . ' >' . $title . '</a></li>';
-		foreach ($terms as $term) {
-			$is_active = $_GET[$key] == $term->term_id ? 'class="is-active"' : '';
-			$html .= '<li><a href="' . add_query_arg($key, $term->term_id, $url = remove_query_arg($remove_key)) . '"  ' . $is_active . '>' . $term->name . '</a></li>';
-		}
-		unset($term);
-		$html .= '</ul>';
+/**
+ *term分类复选框（未完成）
+ *@since 2019.04.25
+ */
+function _wnd_terms_checkbox($taxonomy, $value = 'slug', $name = '', $require = false) {
 
-		return $html;
+	if ($name == '') {
+		$name = $taxonomy;
 	}
 
+	$args = array('hide_empty' => 0);
+	$terms = get_terms($taxonomy, $args);
+
+	if (!empty($terms) && !is_wp_error($terms)) {
+
+		foreach ($terms as $term) {
+			if ($value == 'slug') {
+				echo '<input name="' . $name . '[]" type="checkbox" value="' . $term->slug . '"/>' . $term->name . PHP_EOL;
+			} else {
+				echo '<input name="' . $name . '[]" type="checkbox" value="' . $term->term_id . '"/>' . $term->name . PHP_EOL;
+			}
+
+		}
+		unset($term);
+
+	}
 }

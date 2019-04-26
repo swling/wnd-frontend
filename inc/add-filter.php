@@ -429,3 +429,14 @@ function wnd_action_mail_from_name($email) {
 	return get_option('blogname');
 }
 add_filter('wp_mail_from_name', 'wnd_action_mail_from_name');
+
+/**
+ *@since 2019.1.14 移除错误网址的智能重定向，智能重定向可能会导致百度收录及改版校验等出现问题
+ */
+add_filter('redirect_canonical', 'wnd_action_no_redirect_404');
+function wnd_action_no_redirect_404($redirect_url) {
+	if (is_404()) {
+		return false;
+	}
+	return $redirect_url;
+}
