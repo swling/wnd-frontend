@@ -118,7 +118,7 @@ apply_filters('_wnd_table_list', $post);
 apply_filters('_wnd_post_list', $list, $post);
 
 /**
-*@since 2019.04.18 多重筛选，边栏，默认没有边栏内容（返回html数据）
+*@since 2019.04.27 多重筛选，边栏，默认没有边栏内容（返回html数据）
 */
 $sidebar = apply_filters('_wnd_posts_filter_sidebar', '', $args);
 ```

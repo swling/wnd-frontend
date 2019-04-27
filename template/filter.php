@@ -4,11 +4,11 @@
  *@since 2019.02.26
  *遍历文章类型，并配合外部调用函数，生成tabs查询参数，
  *（在非ajax状态中，生成 ?type=post_type，ajax中，在当前查询参数新增post_type参数，并注销paged翻页参数以实现菜单切换）
- *@param $args 外部调用函数ajax查询文章的参数
- *@param $args['wnd_post_types'] array 需要列表输出的类型数组
- *@param $ajax_call 外部调用函数查询文章的调用函数(不含_wnd_前缀) @see js function wnd_ajax_embed()
- *@param $ajax_container 外部调用函数ajax查询文章后嵌入的html容器
- *@param 自定义：array  $args['wnd_remove_query_arg'] 需要从当前请求参数中移除的参数数组
+ *@param $args 							外部调用函数ajax查询文章的参数
+ *@param $args['wnd_post_types'] 		array 需要列表输出的类型数组
+ *@param $args['wnd_remove_query_arg'] 	需要从当前请求参数中移除的参数数组 
+ *@param $ajax_call 					外部调用函数  @see js function wnd_ajax_embed()
+ *@param $ajax_container 				外部调用函数ajax查询文章后嵌入的html容器
  */
 function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_container = '') {
 
@@ -113,10 +113,11 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
  *@since 2019.02.28
  *遍历当前post_type 具有层级关系的taxonomy，并配合外部调用函数，生成tabs查询参数，
  *（在非ajax状态中，生成 ?'_term_' . $taxonomy=$term_id，ajax中，在当前查询参数新增tax query参数，并注销paged翻页参数以实现菜单切换）
- *@param $args 外部调用函数ajax查询文章的参数，其中 $args['wnd_remove_query_arg'] 为需要从当前网址中移除的参数数组
- *@param $ajax_call 外部调用函数查询文章的调用函数
- *@param $ajax_container 外部调用函数ajax查询文章后嵌入的html容器
- *@param array  'wnd_remove_query_arg' => array('paged', 'pages'), 需要从当前请求参数中移除的参数键名数组
+ *@param $args 										外部调用函数查询文章的参数
+ *@param $ajax_call 								外部调用函数查询文章的调用函数
+ *@param $ajax_container 							外部调用函数ajax查询文章后嵌入的html容器
+ *@param $args['wnd_remove_query_arg']		array 	需要从当前请求参数中移除的参数键名数组
+ *@param $args['wnd_only_cat'] 				bool 	仅显示分类
  */
 function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_container = '') {
 
@@ -839,7 +840,7 @@ function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
  *@since 2019.03.26
  *遍历当前查询参数，输出取消当前查询链接
  */
-function _wnd_current_filter($args, $ajax_call, $ajax_container) {
+function _wnd_current_filter($args, $ajax_call = '', $ajax_container = '') {
 
 	// 默认参数
 	$defaults = array(
@@ -963,6 +964,7 @@ function _wnd_current_filter($args, $ajax_call, $ajax_container) {
  *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
  *@param 自定义： array $args['wnd_post_types']需要展示的文章类型
  *@param 自定义： bool args['wnd_only_cat']是否只筛选分类
+ *@param 自定义： bool args['wnd_with_sidrbar']是否包含边栏
  *@param 自定义： array args['wnd_meta_query'] meta字段筛选 @link https://codex.wordpress.org/Class_Reference/WP_Query#Custom_Field_Parameters
  *		暂只支持单一 meta_key
  *		非ajax状态环境中仅支持 = 、exists 两种对比关系
@@ -1024,6 +1026,7 @@ function _wnd_posts_filter($args = array()) {
 		'wnd_meta_query' => array(), // meta筛选项
 		'wnd_orderby' => array(), // 排序
 		'wnd_only_cat' => 0, // 只筛选分类
+		'wnd_with_sidebar' => false, // 边栏
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -1111,20 +1114,20 @@ function _wnd_posts_filter($args = array()) {
 	$html .= '<div id="filter-container">';
 	// post types 切换
 	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
-		$html .= _wnd_post_types_filter($args, 'posts_filter', '#wnd-filter');
+		$html .= _wnd_post_types_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	}
 	// 分类 切换
-	$html .= _wnd_categories_filter($args, 'posts_filter', '#wnd-filter');
+	$html .= _wnd_categories_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	// 获取分类下关联的标签
 	if (!$args['wnd_only_cat']) {
-		$html .= _wnd_tags_filter($args, 'posts_filter', '#wnd-filter');
+		$html .= _wnd_tags_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	}
 	// meta query
-	$html .= _wnd_meta_filter($args, 'posts_filter', '#wnd-filter');
+	$html .= _wnd_meta_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	// orderby
-	$html .= _wnd_orderby_filter($args, 'posts_filter', '#wnd-filter');
+	$html .= _wnd_orderby_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	// 列出当前term查询，并附带取消链接
-	$html .= _wnd_current_filter($args, 'posts_filter', '#wnd-filter');
+	$html .= _wnd_current_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	$html .= '</div>';
 
 	$html .= '<div class="columns">';
@@ -1135,13 +1138,14 @@ function _wnd_posts_filter($args = array()) {
 	$html .= '</div>';
 
 	// 边栏
-	$sidebar = apply_filters('_wnd_posts_filter_sidebar', '', $args);
-	if ($sidebar) {
-		$html .= '<div class="column is-narrow">' . $sidebar . '</div>';
+	if ($args['wnd_with_sidebar']) {
+		$html .= '<div class="column is-narrow">' . apply_filters('_wnd_posts_filter_sidebar', '', $args) . '</div>';
 	}
+
 	$html .= '</div>';
 
 	$html .= '</div>';
+
 	return $html;
 
 }

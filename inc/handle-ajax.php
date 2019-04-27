@@ -19,6 +19,12 @@ function wnd_action_rest_register_route() {
 	);
 }
 
+/**
+ *@since 2019.04.07
+ *@param $_REQUEST['_ajax_nonce'] 	string 		wp nonce校验
+ *@param $_REQUEST['action']	 	string 		后端响应函数
+ *@param $_REQUEST['XXX'] 			string 		后端响应函数传参
+ */
 function wnd_api_callback($request) {
 
 	if (empty($_REQUEST) or !isset($_REQUEST['action'])) {
@@ -52,16 +58,22 @@ function wnd_api_callback($request) {
 
 /**
  * @since 2019.1.12
- * 依赖于 wnd_ajax_action
- * 响应函数必须以 _wnd_开头，形如：_wnd_template，此类函数应不包含敏感操作，通常仅作为前端响应界面
+ * 基于wnd_api_callback($request)，专用于处理UI类界面请求
+ * 响应函数必须以 _wnd开头，形如：_wnd_template，此类函数应不包含敏感操作，通常仅作为前端响应界面
  * 典型应用：弹出登录框，弹出表单等
  * Ajax 请求：@see /static/js/wndwp.js ： wnd_ajax_modal()、wnd_ajax_embed()
+ *@param $_REQUEST['template']  	string 		后端响应函数
+ *@param $_REQUEST['param']  		string 		后端响应函数传参
  */
 function _wnd_ajax_r() {
 
 	// 匹配目标函数
-	$template = $_REQUEST['template'];
-	$function_name = '_wnd_' . $template;
+	$function_name = $_REQUEST['template'];
+
+	if (strpos($function_name, '_wnd') !== 0) {
+		return array('status' => 0, 'msg' => '非模板请求！');
+	}
+
 	if (!function_exists($function_name)) {
 		return array('status' => 0, 'msg' => '未定义的模板请求！');
 	}
@@ -70,20 +82,17 @@ function _wnd_ajax_r() {
 	return $function_name($_REQUEST['param']);
 
 	// 必须
-	wp_die('', '', array('response' => null));
+	// wp_die('', '', array('response' => null));
 }
 
 /**
  *@since 2019.02.19 在当前位置自动生成一个容器，以供ajax嵌入模板
- *@param $template string  被调用函数去除'_wnd_'前缀后的字符
- *@param $args array or string 传递给被调用模板函数的参数
+ *@param $template 	string  			被调用函数(必须以 _wnd为前缀)
+ *@param $args 		array or string 	传递给被调用模板函数的参数
  */
 function _wnd_ajax_embed($template, $args = '') {
 
-	$function_name = '_wnd_' . $template;
-	if (!function_exists($function_name)) {
-		return;
-	}
+	$function_name = $template;
 
 	$div_id = 'wnd_' . $template;
 	$args = wp_parse_args($args);
