@@ -1,8 +1,12 @@
 <?php
+
 /**
- *适配WndWP插件ajax表单生成
+ *仅仅输出表单字段
  *@since 2019.03.10
  */
+$form = new wnd_ajax_form;
+$form->add_post_file_upload(1,'meta_key');
+echo $form->get_input_fields();
 
 /**
  *@since 2019.03.10 表单filter举例
@@ -194,7 +198,7 @@ function _wnd_demo_form() {
 				'user_id' => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
 			),
 			'delete_button' => true,
-			'required'=>'required',
+			'required' => 'required',
 		)
 	);
 
@@ -209,9 +213,20 @@ function _wnd_demo_form() {
 				'user_id' => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
 			),
 			'delete_button' => true,
-			'required'=>'required',
+			'required' => 'required',
 		)
 	);
+
+	/**
+	*@since 2019.04.28 简易封装后的，上传图像或文件到指定post meta 或 user meta
+	*/
+	$form->add_post_image_upload($post_id, $meta_key, $size = array('width' => 200, 'height' => 200), $label = '');
+
+	$form->add_user_image_upload($user_id, $meta_key, $size = array('width' => 200, 'height' => 200), $label = '');
+
+	$form->add_post_file_upload($post_id, $meta_key, $label = '文件上传');
+
+	$form->add_user_file_upload($user_id, $meta_key, $label = '文件上传');
 
 	// textarea
 	$form->add_textarea(

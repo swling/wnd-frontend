@@ -6,6 +6,19 @@
  */
 class Wnd_Post_Form extends Wnd_Ajax_Form {
 
+	// 初始化构建
+	function __construct() {
+
+		// 继承基础变量
+		parent::__construct();
+
+		// 新增拓展变量
+		// $this->input_values = array();
+		// $this->form_title = null;
+		// $this->id = uniqid();
+		// $this->submit = 'Submit';
+	}
+
 	// 用户表单标题居中
 	function build_form_header() {
 		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax"';
@@ -59,13 +72,13 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_post_category_select($cat_taxonomy, $post_id = 0) {
+	function add_post_term_select($cat_taxonomy, $post_id = 0) {
 
 		$cat = get_taxonomy($cat_taxonomy);
 		if (!$cat) {
 			return;
 		}
-				
+
 		// 获取当前文章已选择分类ID
 		$current_cat = get_the_terms($post_id, $cat_taxonomy);
 		$current_cat = $current_cat ? reset($current_cat) : 0;
@@ -93,7 +106,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 	}
 
-	function add_post_tag($tag_taxonomy, $post_id = 0, $placeholder = '标签') {
+	function add_post_tags($tag_taxonomy, $post_id = 0, $placeholder = '标签') {
 
 		$tag = get_taxonomy($tag_taxonomy);
 
@@ -120,34 +133,8 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		parent::add_html(_wnd_get_tags_editor_script(3, 20, $placeholder, $tag_taxonomy));
 	}
 
-	function add_post_thumbnail($post_id, $size = array(), $label = '') {
-		$thumbnail_defaults = array(
-			'id' => 'thumbnail',
-			'label' => $label,
-			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
-			'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
-			'data' => array(
-				'post_parent' => $post_id,
-				'meta_key' => '_thumbnail_id',
-				'save_width' => $size['width'],
-				'save_height' => $size['height'],
-			),
-		);
-		$thumbnail_args = $thumbnail_defaults;
-		parent::add_image_upload($thumbnail_args);
-	}
-
-	function add_post_file($post_id, $meta_key, $label = '文件上传') {
-		parent::add_file_upload(
-			array(
-				'id' => 'file-upload', //container id
-				'label' => $label,
-				'data' => array( // some hidden input,maybe useful in ajax upload
-					'meta_key' => $meta_key,
-					'post_parent' => $post_id, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
-				),
-			)
-		);
+	function add_post_thumbnail($post_id, $size = array('width' => 200, 'height' => 200), $label = '') {
+		parent::add_post_image_upload($post_id, '_thumbnail_id', array('width' => 200, 'height' => 200), '');
 	}
 
 	function add_post_price($post_id, $label = '', $placeholder = '价格') {

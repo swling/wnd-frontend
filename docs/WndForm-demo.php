@@ -1,9 +1,35 @@
 <?php
+
+/**
+ *仅仅输出表单字段
+ *@since 2019.04.28
+ */
+$form = new Wnd_Form;
+$form->add_text(
+	array(
+		'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
+		'name' => 'test',
+	)
+);
+echo $form->get_input_fields();
+
+/**
+ *字段数组数据输出与设置
+ *@since 2019.04.28
+ */
+$form = new Wnd_Form();
+$form->add_post_file_upload(1, 'meta_key');
+
+// 获取当前表单的组成数据数组（通常用于配合 filter 过滤）
+$form->get_input_values();
+
+// 直接设置表单的组成数组（通常用于配合 filter 过滤）
+$form->set_input_values($input_values);
+
 /**
  *常规表单生成
  *@since 2019.03.10
  */
-
 $form = new Wnd_Form();
 
 $form->set_form_title('标题');
@@ -151,7 +177,7 @@ $form->add_image_upload(
 			'save_hight' => '0',
 		),
 		'delete_button' => true,
-		'required'=>'required',
+		'required' => 'required',
 	)
 );
 
@@ -165,7 +191,7 @@ $form->add_file_upload(
 		'file_id' => 0, //data-file-id on delete button，in some situation, you want delete the file
 		'data' => array('meta_key' => 'file'), // some data on file input, maybe useful in ajax upload
 		'delete_button' => true,
-		'required'=>'required',
+		'required' => 'required',
 	)
 );
 

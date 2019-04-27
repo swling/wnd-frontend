@@ -112,7 +112,7 @@ function _wnd_post_form($args = array()) {
 	if ($cat_taxonomies) {
 		$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 		foreach ($cat_taxonomies as $cat_taxonomy) {
-			$form->add_post_category_select($cat_taxonomy, $post_id);
+			$form->add_post_term_select($cat_taxonomy, $post_id);
 		}
 		unset($cat_taxonomy);
 		$form->add_html('</div></div>');
@@ -125,7 +125,7 @@ function _wnd_post_form($args = array()) {
 			if ($tag_taxonomy == 'post_format') {
 				continue;
 			}
-			$form->add_post_tag($tag_taxonomy, $post_id, '请用回车键区分多个标签');
+			$form->add_post_tags($tag_taxonomy, $post_id, '请用回车键区分多个标签');
 
 		}
 		unset($tag_taxonomy);
@@ -136,7 +136,7 @@ function _wnd_post_form($args = array()) {
 	}
 
 	if ($args['has_file'] or !$args['is_free']) {
-		$form->add_post_file($post_id, $meta_key = 'file');
+		$form->add_post_file_upload($post_id, $meta_key = 'file');
 	}
 
 	if (!$args['is_free']) {

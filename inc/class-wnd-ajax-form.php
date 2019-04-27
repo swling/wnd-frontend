@@ -13,16 +13,6 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$this->filter = $filter;
 	}
 
-	// 输出当前表单的组成数据数组（通常用于配合 filter 过滤）
-	function get_input_values() {
-		return $this->input_values;
-	}
-
-	// 设置当前表单的组成数组（通常用于配合 filter 过滤）
-	function set_input_values($input_values) {
-		$this->input_values = $input_values;
-	}
-
 	// 构造表单，可设置WordPress filter 过滤表单的input_values
 	function build() {
 
@@ -136,13 +126,13 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			'label' => 'Image upland',
 			'thumbnail' => '', //默认缩略图
 			'thumbnail_size' => array('height' => '100', 'width' => '100'),
-			'data' => array('post_parent' => 0, 'meta_key' => 0),
+			'data' => array(),
 			'delete_button' => true,
 		);
 		$args = array_merge($defaults, $args);
 
 		// 合并$data
-		$data = array(
+		$defaults_data = array(
 			'is_image' => '1',
 			'thumbnail' => $args['thumbnail'],
 			'upload_nonce' => wp_create_nonce('wnd_ajax_upload_file'),
@@ -151,7 +141,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			'user_id' => get_current_user_id(),
 			'meta_key' => 0,
 		);
-		$args['data'] = array_merge($data, $args['data']);
+		$args['data'] = array_merge($defaults_data, $args['data']);
 
 		// 根据user type 查找目标文件
 		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
@@ -179,19 +169,19 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		$defaults = array(
 			'label' => 'File upload',
-			'data' => array('post_parent' => 0, 'meta_key' => 0),
+			'data' => array(),
 			'delete_button' => true,
 		);
 		$args = array_merge($defaults, $args);
 
-		$data = array(
+		$defaults_data = array(
 			'upload_nonce' => wp_create_nonce('wnd_ajax_upload_file'),
 			'delete_nonce' => wp_create_nonce('wnd_ajax_delete_file'),
 			'post_parent' => 0,
 			'user_id' => get_current_user_id(),
 			'meta_key' => 0,
 		);
-		$args['data'] = array_merge($data, $args['data']);
+		$args['data'] = array_merge($defaults_data, $args['data']);
 
 		// 根据meta key 查找目标文件
 		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
@@ -212,6 +202,66 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		parent::add_file_upload($args);
 
+	}
+
+	function add_post_image_upload($post_id, $meta_key, $size = array('width' => 200, 'height' => 200), $label = '') {
+		$thumbnail_defaults = array(
+			// 'id' => 'thumbnail',
+			'label' => $label,
+			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
+			'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
+			'data' => array(
+				'post_parent' => $post_id,
+				'meta_key' => $meta_key,
+				'save_width' => $size['width'],
+				'save_height' => $size['height'],
+			),
+			'delete_button' => false,
+		);
+		$thumbnail_args = $thumbnail_defaults;
+		$this->add_image_upload($thumbnail_args);
+	}
+
+	function add_user_image_upload($user_id, $meta_key, $size = array('width' => 200, 'height' => 200), $label = '') {
+		$thumbnail_defaults = array(
+			// 'id' => 'thumbnail',
+			'label' => $label,
+			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
+			'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
+			'data' => array(
+				'user_id' => $user_id,
+				'meta_key' => $meta_key,
+				'save_width' => $size['width'],
+				'save_height' => $size['height'],
+			),
+			'delete_button' => false,
+		);
+		$thumbnail_args = $thumbnail_defaults;
+		$this->add_image_upload($thumbnail_args);
+	}
+
+	function add_post_file_upload($post_id, $meta_key, $label = '文件上传') {
+		$this->add_file_upload(
+			array(
+				'label' => $label,
+				'data' => array( // some hidden input,maybe useful in ajax upload
+					'meta_key' => $meta_key,
+					'post_parent' => $post_id, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+				),
+			)
+		);
+	}
+
+	function add_user_file_upload($user_id, $meta_key, $label = '文件上传') {
+		$this->add_file_upload(
+			array(
+				'label' => $label,
+				'data' => array( // some hidden input,maybe useful in ajax upload
+					'meta_key' => $meta_key,
+					'user_id' => $user_id, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+				),
+			)
+		);
 	}
 
 }

@@ -6,6 +6,18 @@
  */
 class Wnd_User_Form extends Wnd_Ajax_Form {
 
+	public $user;
+
+	// 初始化构建
+	function __construct() {
+
+		// 继承基础变量
+		parent::__construct();
+
+		// 新增拓展变量
+		$this->user = wp_get_current_user();
+	}
+
 	function add_user_login($placeholder = '用户名、手机、邮箱') {
 		parent::add_text(
 			array(
@@ -25,7 +37,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		parent::add_text(
 			array(
 				'name' => '_user_user_email',
-				'value' => wp_get_current_user()->user_email,
+				'value' => $this->user->user_email,
 				'label' => '邮箱 <span class="required">*</span>',
 				'has_icons' => 'left',
 				'icon' => '<i class="fa fa-at"></i>',
@@ -81,7 +93,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		parent::add_text(
 			array(
 				'name' => '_user_display_name',
-				'value' => wp_get_current_user()->display_name,
+				'value' => $this->user->display_name,
 				'label' => '名称 <span class="required">*</span>',
 				'placeholder' => $placeholder,
 				'has_icons' => 'left',
@@ -95,7 +107,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		parent::add_text(
 			array(
 				'name' => '_user_user_url',
-				'value' => wp_get_current_user()->user_url,
+				'value' => $this->user->user_url,
 				'label' => '网站',
 				'placeholder' => $placeholder,
 				'has_icons' => 'left',
@@ -111,15 +123,13 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 				'name' => '_wpusermeta_description',
 				'label' => '简介',
 				'placeholder' => $placeholder,
-				'value' => wp_get_current_user()->description,
+				'value' => $this->user->description,
 			)
 		);
 	}
 
 	function add_user_avatar($thumbnail_size = 150, $save_size = 200) {
-		/*头像上传*/
 		$args = array(
-			'id' => 'user-avatar',
 			'label' => '',
 			'thumbnail_size' => array('width' => $thumbnail_size, 'height' => $thumbnail_size),
 			'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
