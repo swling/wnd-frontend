@@ -87,12 +87,12 @@ function _wnd_ajax_next_page($function, $args, $post_count) {
 	// 下一页参数
 	$args['paged'] = $current_pages + 1;
 	$js_next_args = '\'' . $function . '\',\'' . http_build_query($args) . '\'';
-	$js_next_args = str_replace('_wnd_', '', $js_next_args);
+	// $js_next_args = str_replace('_wnd_', '', $js_next_args);
 
 	// 上一页参数
 	$args['paged'] = $current_pages - 1;
 	$js_pre_args = '\'' . $function . '\',\'' . http_build_query($args) . '\'';
-	$js_pre_args = str_replace('_wnd_', '', $js_pre_args);
+	// $js_pre_args = str_replace('_wnd_', '', $js_pre_args);
 
 	$ajax_type = $_POST['ajax_type'] ?? 'modal';
 	if ($ajax_type == 'modal') {
@@ -161,9 +161,9 @@ function _wnd_table_list($args = '') {
 			}
 
 			$html .= '<td class="is-narrow is-hidden-mobile">';
-			$html .= '<a onclick="wnd_ajax_modal(\'post_info\',\'post_id=' . $post->ID . '\')"><i class="fas fa-info-circle"></i></a>';
+			$html .= '<a onclick="wnd_ajax_modal(\'_wnd_post_info\',\'post_id=' . $post->ID . '\')"><i class="fas fa-info-circle"></i></a>';
 			if (current_user_can('edit_post', $post->ID)) {
-				$html .= '&nbsp<a onclick="wnd_ajax_modal(\'post_status_form\',\'' . $post->ID . '\')"><i class="fas fa-cog"></i></a>';
+				$html .= '&nbsp<a onclick="wnd_ajax_modal(\'_wnd_post_status_form\',\'' . $post->ID . '\')"><i class="fas fa-cog"></i></a>';
 			}
 			$html .= '</td>';
 			$html .= '</tr>';

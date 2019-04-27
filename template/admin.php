@@ -95,11 +95,11 @@ function _wnd_user_mail_box($args = '') {
 		// ajax请求类型
 		$ajax_type = $_POST['ajax_type'] ?? 'modal';
 		if ($ajax_type == 'modal') {
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
-			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_modal(\'user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'_wnd_user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
+			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_modal(\'_wnd_user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
 		} else {
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
-			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'_wnd_user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
+			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'_wnd_user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
 		}
 
 	} else {

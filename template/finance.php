@@ -63,13 +63,13 @@ function _wnd_user_fin_panel($args = '') {
 	$html .= '<div class="level">';
 	$html .= '
 		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal(\'recharge_form\')">余额充值</button>
+			<button class="button" onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</button>
 		</div>';
 
 	if (is_super_admin()) {
 		$html .= '
 		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal(\'admin_recharge_form\')">管理员充值</button>
+			<button class="button" onclick="wnd_ajax_modal(\'_wnd_admin_recharge_form\')">管理员充值</button>
 		</div>';
 	}
 	$html .= '</div>';
@@ -89,11 +89,11 @@ function _wnd_user_fin_panel($args = '') {
 
 	if (wnd_doing_ajax()) {
 		if ($ajax_type == 'modal') {
-			$html .= '<li ' . $order_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin_panel\',\'' . $ajax_args_order . '\');">订单记录</a></li>';
-			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'user_fin_panel\',\'' . $ajax_args_recharge . '\');">充值记录</a></li>';
+			$html .= '<li ' . $order_is_active . ' ><a onclick="wnd_ajax_modal(\'_wnd_user_fin_panel\',\'' . $ajax_args_order . '\');">订单记录</a></li>';
+			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'_wnd_user_fin_panel\',\'' . $ajax_args_recharge . '\');">充值记录</a></li>';
 		} else {
-			$html .= '<li ' . $order_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin_panel\',\'' . $ajax_args_order . '\');">订单记录</a></li>';
-			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'user_fin_panel\',\'' . $ajax_args_recharge . '\');">充值记录</a></li>';
+			$html .= '<li ' . $order_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'_wnd_user_fin_panel\',\'' . $ajax_args_order . '\');">订单记录</a></li>';
+			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#user-fin\',\'_wnd_user_fin_panel\',\'' . $ajax_args_recharge . '\');">充值记录</a></li>';
 		}
 	} else {
 		$html .= '<li ' . $order_is_active . ' ><a href="' . add_query_arg('type', 'order', remove_query_arg('pages')) . '">订单记录</a></li>';
@@ -157,7 +157,7 @@ function _wnd_list_user_fin($args = '') {
 
 			$html .= '<td class="is-narrow is-hidden-mobile">';
 			if (current_user_can('edit_post', $post->ID)) {
-				$html .= '<a onclick="wnd_ajax_modal(\'post_status_form\',\'' . $post->ID . '\')"><i class="fas fa-cog"></i></a>';
+				$html .= '<a onclick="wnd_ajax_modal(\'_wnd_post_status_form\',\'' . $post->ID . '\')"><i class="fas fa-cog"></i></a>';
 			}
 			$html .= '</td>';
 
@@ -301,11 +301,11 @@ function _wnd_admin_fin_panel($args = '') {
 
 	if (wnd_doing_ajax()) {
 		if ($ajax_type == 'modal') {
-			$html .= '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_modal(\'admin_fin_panel\',\'' . $ajax_args_expense . '\');">消费统计</a></li>';
-			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
+			$html .= '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_modal(\'_wnd_admin_fin_panel\',\'' . $ajax_args_expense . '\');">消费统计</a></li>';
+			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_modal(\'_wnd_admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
 		} else {
-			$html .= '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_embed(\'#admin-fin\',\'admin_fin_panel\',\'' . $ajax_args_expense . '\');">消费统计</a></li>';
-			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#admin-fin\',\'admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
+			$html .= '<li ' . $expense_is_active . ' ><a onclick="wnd_ajax_embed(\'#admin-fin\',\'_wnd_admin_fin_panel\',\'' . $ajax_args_expense . '\');">消费统计</a></li>';
+			$html .= '<li ' . $recharge_is_active . ' ><a onclick="wnd_ajax_embed(\'#admin-fin\',\'_wnd_admin_fin_panel\',\'' . $ajax_args_recharge . '\');">充值统计</a></li>';
 		}
 	} else {
 		$html .= '<li ' . $expense_is_active . ' ><a href="' . add_query_arg('type', 'stats-ex', remove_query_arg('pages')) . '">消费统计</a></li>';
