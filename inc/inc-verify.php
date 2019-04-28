@@ -234,7 +234,7 @@ function wnd_verify_code($email_or_phone, $code, $verify_type) {
 	/**
 	 *@since 2019.01.22 清空当前验证码
 	 */
-	wnd_reset_code($email_or_phone, 0);
+	// wnd_reset_code($email_or_phone, 0);
 
 	return array('status' => 1, 'msg' => '验证通过！');
 

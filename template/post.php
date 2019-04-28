@@ -16,11 +16,6 @@ if (!defined('ABSPATH')) {
  */
 function _wnd_post_form($args = array()) {
 
-	/**
-	 *@since 2019.3.11 调用外部页面变量，后续更改为当前编辑的post，否则，wp_editor上传的文件将归属到页面，而非当前编辑的文章
-	 */
-	global $post;
-
 	$defaults = array(
 		'post_id' => 0,
 		'post_type' => 'post',
@@ -34,33 +29,8 @@ function _wnd_post_form($args = array()) {
 	);
 	$args = wp_parse_args($args, $defaults);
 	$post_id = $args['post_id'];
-	$post_type = $args['post_type'];
+	$post_type = $args['post_id'] ? get_post_type($args['post_id']) : $args['post_type'];
 	$post_parent = $args['post_parent'];
-
-	// 未指定id，新建文章，否则为编辑
-	if (!$post_id) {
-		$action = wnd_get_draft_post($post_type = $post_type, $interval_time = 3600 * 24);
-		$post_id = $action['status'] > 0 ? $action['msg'] : 0;
-	}
-
-	// 获取文章并定义数据
-	$post = get_post($post_id);
-	if ($post) {
-		$post_type = $post->post_type;
-		$post_parent = $post->post_parent;
-		//新建文章失败
-	} else {
-
-		// 已知用户创建失败，说明产生了错误，退出
-		if (is_user_logged_in()) {
-			return "<script>wnd_alert_msg('" . $action['msg'] . "')</script>";
-		}
-		// 匿名用户不允许创建草稿，上传，因而初始化一个空对象
-		$post = new stdClass();
-		$post->post_title = '';
-		$post->post_excerpt = '';
-		$post->post_content = '';
-	}
 
 	/**
 	 *@since 2019.02.13 表单标题
@@ -99,20 +69,21 @@ function _wnd_post_form($args = array()) {
 	/**
 	 *@since 2019.03.11 表单类
 	 */
-	$form = new Wnd_Post_Form();
+	$form = new Wnd_Post_Form($post_type, $post_id);
 
 	$form->set_form_title($args['form_title']);
 
-	$form->add_post_title($post->post_title == 'Auto-draft' ? '' : $post->post_title);
+	$form->add_post_title();
+
 	if ($args['has_excerpt']) {
-		$form->add_post_excerpt($post->post_excerpt);
+		$form->add_post_excerpt();
 	}
 
 	// 遍历分类
 	if ($cat_taxonomies) {
 		$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 		foreach ($cat_taxonomies as $cat_taxonomy) {
-			$form->add_post_term_select($cat_taxonomy, $post_id);
+			$form->add_post_term_select($cat_taxonomy);
 		}
 		unset($cat_taxonomy);
 		$form->add_html('</div></div>');
@@ -125,39 +96,31 @@ function _wnd_post_form($args = array()) {
 			if ($tag_taxonomy == 'post_format') {
 				continue;
 			}
-			$form->add_post_tags($tag_taxonomy, $post_id, '请用回车键区分多个标签');
+			$form->add_post_tags($tag_taxonomy, '请用回车键区分多个标签');
 
 		}
 		unset($tag_taxonomy);
 	}
 
 	if ($args['has_thumbnail']) {
-		$form->add_post_thumbnail($post_id, $args['thumbnail_size']);
+		$form->add_post_thumbnail($args['thumbnail_size']);
 	}
 
 	if ($args['has_file'] or !$args['is_free']) {
-		$form->add_post_file_upload($post_id, $meta_key = 'file');
+		$form->add_post_file_upload($meta_key = 'file');
 	}
 
 	if (!$args['is_free']) {
-		$form->add_post_price($post_id);
+		$form->add_post_price();
 	}
 
 	/**
 	 *@since 2019.03.11 wp_editor无法使用表单类创建，此处生成一个隐藏编辑器，再用js嵌入到指定DOM
 	 */
-	if ($args['rich_media_editor'] and !wnd_doing_ajax()) {
-		echo '<div id="hidden-wp-editor" style="display: none;">';
-		if (isset($post)) {
-			$post = $post;
-			wp_editor($post->post_content, '_post_post_content', 'media_buttons=1');
-		} else {
-			wp_editor($post->post_content, '_post_post_content', 'media_buttons=0');
-		}
-		echo '</div>';
-		$form->add_post_content(1);
+	if ($args['rich_media_editor']) {
+		$form->add_post_content(true);
 	} else {
-		$form->add_post_content(0);
+		$form->add_post_content(false);
 	}
 
 	$form->add_checkbox(
@@ -168,10 +131,6 @@ function _wnd_post_form($args = array()) {
 		)
 	);
 
-	$form->set_action('wnd_ajax_insert_post');
-
-	$form->add_hidden('_post_post_type', $post_type);
-	$form->add_hidden('_post_ID', $post_id);
 	$form->add_hidden('_post_post_parent', $post_parent);
 
 	$form->set_submit_button('保存');

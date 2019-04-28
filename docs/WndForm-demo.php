@@ -18,11 +18,9 @@ echo $form->get_input_fields();
  *@since 2019.04.28
  */
 $form = new Wnd_Form();
-$form->add_post_file_upload(1, 'meta_key');
-
+$form->add_hidden('hidden_key', 'hidden_value');
 // 获取当前表单的组成数据数组（通常用于配合 filter 过滤）
 $form->get_input_values();
-
 // 直接设置表单的组成数组（通常用于配合 filter 过滤）
 $form->set_input_values($input_values);
 

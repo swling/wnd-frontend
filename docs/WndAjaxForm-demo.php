@@ -5,7 +5,12 @@
  *@since 2019.03.10
  */
 $form = new wnd_ajax_form;
-$form->add_post_file_upload(1,'meta_key');
+$form->add_text(
+	array(
+		'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
+		'name' => 'test',
+	)
+);
 echo $form->get_input_fields();
 
 /**
@@ -147,7 +152,6 @@ function _wnd_demo_form() {
 	// checkbox
 	$form->add_checkbox(
 		array(
-
 			'name' => 'checkbox',
 			'value' => 1,
 			'label' => 'checkbox',
@@ -217,17 +221,6 @@ function _wnd_demo_form() {
 		)
 	);
 
-	/**
-	*@since 2019.04.28 简易封装后的，上传图像或文件到指定post meta 或 user meta
-	*/
-	$form->add_post_image_upload($post_id, $meta_key, $size = array('width' => 200, 'height' => 200), $label = '');
-
-	$form->add_user_image_upload($user_id, $meta_key, $size = array('width' => 200, 'height' => 200), $label = '');
-
-	$form->add_post_file_upload($post_id, $meta_key, $label = '文件上传');
-
-	$form->add_user_file_upload($user_id, $meta_key, $label = '文件上传');
-
 	// textarea
 	$form->add_textarea(
 		array(
@@ -243,7 +236,7 @@ function _wnd_demo_form() {
 	$form->add_email_verify($verify_type = 'verify', $template = '');
 
 	// 与该表单数据匹配的后端处理函数
-	$form->set_action('wnd_inset_post');
+	$form->set_action('wnd_ajax_inset_post');
 
 	$form->set_submit_button('Submit', 'is-primary');
 

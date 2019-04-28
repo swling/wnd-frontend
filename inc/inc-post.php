@@ -90,7 +90,7 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 		// 更新草稿状态
 		$post_id = wp_update_post(array('ID' => $post_id, 'post_status' => 'auto-draft', 'post_title' => 'Auto-draft', 'post_author' => $user_id));
 		if (!is_wp_error($post_id)) {
-			return array('status' => 1, 'msg' => $post_id);
+			return array('status' => 1, 'data' => $post_id, 'msg' => '以获取当前用户草稿');
 		} else {
 			return array('status' => 0, 'msg' => $post_id->get_error_message());
 		}
@@ -134,7 +134,7 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 
 			// 返回值
 			if (!is_wp_error($post_id)) {
-				return array('status' => 1, 'msg' => $post_id);
+				return array('status' => 1, 'data' => $post_id, 'msg' => '已获取并更新其他用户草稿');
 			} else {
 				return array('status' => 0, 'msg' => $post_id->get_error_message());
 			}
@@ -154,7 +154,7 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 		)
 	);
 	if (!is_wp_error($post_id)) {
-		return array('status' => 2, 'msg' => $post_id);
+		return array('status' => 2, 'data' => $post_id, 'msg' => '创建新草稿');
 	} else {
 		return array('status' => 0, 'msg' => $post_id->get_error_message());
 	}

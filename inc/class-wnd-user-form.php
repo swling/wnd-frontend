@@ -143,4 +143,36 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		parent::add_image_upload($args);
 	}
 
+	/**
+	 *@since 2019.04.28 上传字段简易封装
+	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Ajax_Form
+	 */
+	function add_user_image_upload($meta_key, $size = array('width' => 200, 'height' => 200), $label = '') {
+		$args = array(
+			'label' => $label,
+			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
+			'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
+			'data' => array(
+				'user_id' => $this->user->ID,
+				'meta_key' => $meta_key,
+				'save_width' => $size['width'],
+				'save_height' => $size['height'],
+			),
+			'delete_button' => false,
+		);
+		self::add_image_upload($args);
+	}
+
+	function add_user_file_upload($meta_key, $label = '文件上传') {
+		self::add_file_upload(
+			array(
+				'label' => $label,
+				'data' => array( // some hidden input,maybe useful in ajax upload
+					'meta_key' => $meta_key,
+					'user_id' => $this->user->ID, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+				),
+			)
+		);
+	}
+
 }
