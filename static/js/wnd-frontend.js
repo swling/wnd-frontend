@@ -200,7 +200,7 @@ function wnd_ajax_modal(template, param = 0) {
 			"template": template,
 			"param": param,
 			"ajax_type": "modal",
-			"action": "_wnd_ajax_r",
+			"action": "_wnd_ajax_request",
 		},
 		//后台返回数据前
 		beforeSend: function(xhr) {
@@ -235,7 +235,7 @@ function wnd_ajax_embed(container, template, param = 0) {
 			"template": template,
 			"param": param,
 			"ajax_type": "embed",
-			"action": "_wnd_ajax_r",
+			"action": "_wnd_ajax_request",
 		},
 		//后台返回数据前
 		beforeSend: function(xhr) {
