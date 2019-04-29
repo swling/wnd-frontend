@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 *@since 2019.01.16 注册设置页面
 */
 function wnd_menu(){
-    add_options_page( 'WndWP', 'WndWP', 'administrator', 'wndwp_options','wnd_options');
+    add_options_page( 'Wnd Frontend Setting', 'Wnd Frontend', 'administrator', 'wndwp_options','wnd_options');
 }
 add_action('admin_menu', 'wnd_menu');
 
