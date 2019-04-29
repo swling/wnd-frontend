@@ -313,9 +313,9 @@ function _wnd_post_thumbnail($post_id = 0, $width = 0, $height = 0) {
 function _wnd_get_tags_editor_script($maxTags = 3, $maxLength = 10, $placeholder = '标签', $taxonomy = '') {
 
 	$html = '<script src="https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.12.1/jquery-ui.min.js"></script>';
-	$html .= '<script src="' . WNDWP_URL . 'static/js/jquery.tag-editor.min.js"></script>';
-	$html .= '<script src="' . WNDWP_URL . 'static/js/jquery.caret.min.js"></script>';
-	$html .= '<link rel="stylesheet" href="' . WNDWP_URL . 'static/css/jquery.tag-editor.min.css">';
+	$html .= '<script src="' . WND_URL . 'static/js/jquery.tag-editor.min.js"></script>';
+	$html .= '<script src="' . WND_URL . 'static/js/jquery.caret.min.js"></script>';
+	$html .= '<link rel="stylesheet" href="' . WND_URL . 'static/css/jquery.tag-editor.min.css">';
 	$html .= '
 <script>
 jQuery(document).ready(function($) {

@@ -27,13 +27,13 @@ $ver = '0.20';
  *插件基础配置
  */
 // 定义插件网址路径
-define('WNDWP_URL', plugin_dir_url(__FILE__));
+define('WND_URL', plugin_dir_url(__FILE__));
 
 // 定义插件文件路径
-define('WNDWP_PATH', plugin_dir_path(__FILE__));
+define('WND_PATH', plugin_dir_path(__FILE__));
 
 // 加载核心文件
-require WNDWP_PATH . 'inc/index.php';
+require WND_PATH . 'inc/index.php';
 
 /**
  *@since 初始化
@@ -65,7 +65,7 @@ function wnd_install() {
 				'wnd_pay_return_url' => get_option('home'),
 
 				'wnd_disable_admin_panel' => 1,
-				'wnd_unset_user_meta' => 0,
+				'wnd_unset_user_meta' => 1,
 
 				'wnd_ali_accessKeyId' => '阿里短信KeyId',
 				'wnd_ali_accessKeySecret' => '阿里短信KeySecret',
@@ -93,7 +93,7 @@ function wnd_uninstall() {
 function wnd_scripts() {
 
 	global $ver;
-	wp_enqueue_script('wnd-frontend', WNDWP_URL . 'static/js/wnd-frontend.js', array('jquery'), $ver);
+	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.js', array('jquery'), $ver);
 
 	if (wnd_get_option('wnd', 'wnd_default_style') != 0) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.7.4/css/bulma.min.css', array(), $ver);

@@ -12,8 +12,6 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 	public $post_type;
 
-	public $post_parent;
-
 	public $post;
 
 	// 初始化构建
@@ -225,7 +223,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		$args = array(
 			'label' => $label,
 			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
-			'thumbnail' => WNDWP_URL . '/static/images/default.jpg',
+			'thumbnail' => WND_URL . '/static/images/default.jpg',
 			'data' => array(
 				'post_parent' => $this->post_id,
 				'meta_key' => $meta_key,
