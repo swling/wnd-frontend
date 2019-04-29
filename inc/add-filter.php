@@ -45,7 +45,7 @@ function wnd_filter_can_update_account($can_array) {
 	$code = $_POST['v_code'];
 	$user = wp_get_current_user();
 	$user_id = $user->ID;
-	$email_or_phone = wnd_get_option('wndwp', 'wnd_sms_enable') == 1 ? wnd_get_user_meta($user_id, 'phone') : $user->user_email;
+	$email_or_phone = wnd_get_option('wnd', 'wnd_sms_enable') == 1 ? wnd_get_user_meta($user_id, 'phone') : $user->user_email;
 
 	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = 'v');
 	if ($wnd_verify_code['status'] === 0) {
@@ -117,7 +117,7 @@ function wnd_filter_limit_upload($file) {
 
 	// 上传体积限制
 	$image_size = $file['size'] / 1024;
-	$limit = wnd_get_option('wndwp', 'wnd_max_upload') ?: 2048;
+	$limit = wnd_get_option('wnd', 'wnd_max_upload') ?: 2048;
 
 	if ($image_size > $limit) {
 		$file['error'] = '上传文件不得超过' . $limit . 'KB';
@@ -153,7 +153,7 @@ function wnd_filter_edit_post_link($link, $post_id, $context) {
 		return $link;
 	}
 
-	$edit_page = (int) wnd_get_option('wndwp', 'wnd_edit_page');
+	$edit_page = (int) wnd_get_option('wnd', 'wnd_edit_page');
 	if ($edit_page) {
 		return get_permalink($edit_page) . '?post_id=' . $post_id;
 	}
@@ -329,7 +329,7 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 	}
 
 	// 默认头像
-	$avatar_url = wnd_get_option('wndwp', 'wnd_default_avatar') ?: WNDWP_URL . '/static/images/avatar.jpg';
+	$avatar_url = wnd_get_option('wnd', 'wnd_default_avatar') ?: WNDWP_URL . '/static/images/avatar.jpg';
 
 	// 获取用户 ID
 	if (is_numeric($id_or_email)) {
@@ -376,7 +376,7 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 /**
  *@since 2019.01.26 前端禁用语言包
  */
-if (wnd_get_option('wndwp', 'wnd_disable_locale') == 1) {
+if (wnd_get_option('wnd', 'wnd_disable_locale') == 1) {
 	add_filter('locale', 'wnd_filter_locale');
 	function wnd_filter_locale($locale) {
 		$locale = (is_admin()) ? $locale : 'en_US';
@@ -388,7 +388,7 @@ if (wnd_get_option('wndwp', 'wnd_disable_locale') == 1) {
  *@since 2019.02.14 当仅允许用户在前端操作时，可注销一些字段，降低wp_usermeta数据库开销
  *@link https://developer.wordpress.org/reference/hooks/insert_user_meta/
  */
-if (wnd_get_option('wndwp', 'wnd_unset_user_meta') == 1) {
+if (wnd_get_option('wnd', 'wnd_unset_user_meta') == 1) {
 	add_filter('insert_user_meta', 'wnd_filter_unset_user_meta', 10, 2);
 	function wnd_filter_unset_user_meta($meta, $user) {
 
@@ -415,7 +415,7 @@ if (wnd_get_option('wndwp', 'wnd_unset_user_meta') == 1) {
  * 禁止WordPress admin bar
  *@since 2019.03.01
  */
-if (wnd_get_option('wndwp', 'wnd_disable_admin_panel') == 1) {
+if (wnd_get_option('wnd', 'wnd_disable_admin_panel') == 1) {
 
 	//禁用前台工具栏
 	add_filter('show_admin_bar', '__return_false');

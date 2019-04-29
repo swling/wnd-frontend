@@ -15,10 +15,10 @@ class Wnd_Form_Data {
 	public $form_data;
 
 	function __construct() {
-		$this->allowed_post_meta_key = explode(',', wnd_get_option('wndwp', 'wnd_allowed_post_meta_key'));
-		$this->allowed_wp_post_meta_key = explode(',', wnd_get_option('wndwp', 'wnd_allowed_wp_post_meta_key'));
-		$this->allowed_user_meta_key = explode(',', wnd_get_option('wndwp', 'wnd_allowed_user_meta_key'));
-		$this->allowed_wp_user_meta_key = explode(',', wnd_get_option('wndwp', 'wnd_allowed_wp_user_meta_key'));
+		$this->allowed_post_meta_key = explode(',', wnd_get_option('wnd', 'wnd_allowed_post_meta_key'));
+		$this->allowed_wp_post_meta_key = explode(',', wnd_get_option('wnd', 'wnd_allowed_wp_post_meta_key'));
+		$this->allowed_user_meta_key = explode(',', wnd_get_option('wnd', 'wnd_allowed_user_meta_key'));
+		$this->allowed_wp_user_meta_key = explode(',', wnd_get_option('wnd', 'wnd_allowed_wp_user_meta_key'));
 		$this->form_data = apply_filters('wnd_form_data', $_POST);
 	}
 
@@ -48,7 +48,7 @@ class Wnd_Form_Data {
 
 			if (strpos($key, '_wpusermeta_') === 0) {
 				$key = str_replace('_wpusermeta_', '', $key);
-				if (wnd_get_option('wndwp', 'wnd_enable_white_list') == 1 and !in_array($key, $this->allowed_wp_user_meta_key)) {
+				if (wnd_get_option('wnd', 'wnd_enable_white_list') == 1 and !in_array($key, $this->allowed_wp_user_meta_key)) {
 					continue;
 				}
 				$wp_user_meta_array = array_merge($wp_user_meta_array, array($key => $value));
@@ -68,7 +68,7 @@ class Wnd_Form_Data {
 
 			if (strpos($key, '_usermeta_') === 0) {
 				$key = str_replace('_usermeta_', '', $key);
-				if (wnd_get_option('wndwp', 'wnd_enable_white_list') == 1 and !in_array($key, $this->allowed_user_meta_key)) {
+				if (wnd_get_option('wnd', 'wnd_enable_white_list') == 1 and !in_array($key, $this->allowed_user_meta_key)) {
 					continue;
 				}
 				$user_meta_array = array_merge($user_meta_array, array($key => $value));
@@ -105,7 +105,7 @@ class Wnd_Form_Data {
 
 			if (strpos($key, '_wpmeta_') === 0) {
 				$key = str_replace('_wpmeta_', '', $key);
-				if (wnd_get_option('wndwp', 'wnd_enable_white_list') == 1 and !in_array($key, $this->allowed_wp_post_meta_key)) {
+				if (wnd_get_option('wnd', 'wnd_enable_white_list') == 1 and !in_array($key, $this->allowed_wp_post_meta_key)) {
 					continue;
 				}
 				$wp_post_meta_array = array_merge($wp_post_meta_array, array($key => $value));
@@ -125,7 +125,7 @@ class Wnd_Form_Data {
 
 			if (strpos($key, '_meta_') === 0) {
 				$key = str_replace('_meta_', '', $key);
-				if (wnd_get_option('wndwp', 'wnd_enable_white_list') == 1 and !in_array($key, $this->allowed_post_meta_key)) {
+				if (wnd_get_option('wnd', 'wnd_enable_white_list') == 1 and !in_array($key, $this->allowed_post_meta_key)) {
 					continue;
 				}
 				$post_meta_array = array_merge($post_meta_array, array($key => $value));

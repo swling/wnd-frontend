@@ -29,20 +29,25 @@ function wnd_get_user_phone($user_id) {
 }
 
 /**
- *@since 2019.01.28 根据号码或邮箱查询用户(用于验证码)
+ *@since 2019.01.28 根据邮箱，手机，或用户名查询用户
+ *@param wp user object or false
  */
-function wnd_get_user_by($email_or_phone) {
+function wnd_get_user_by($email_or_phone_or_login) {
 
 	global $wpdb;
 
-	$field = is_email($email_or_phone, $deprecated = false) ? 'email' : 'phone';
-	$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE {$field} = %s;", $email_or_phone));
+	if (is_email($email_or_phone_or_login)) {
+		$user = get_user_by('email', $email_or_phone_or_login);
 
-	if ($user_id) {
-		return $user_id;
+	} elseif (wnd_is_phone($email_or_phone_or_login)) {
+		$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE phone = %s;", $email_or_phone_or_login));
+		$user = get_user_by('ID', $user_id);
+
 	} else {
-		return false;
+		$user = get_user_by('login', $email_or_phone_or_login);
 	}
+
+	return $user;
 
 }
 

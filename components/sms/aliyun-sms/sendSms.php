@@ -26,14 +26,14 @@ function wnd_send_sms($phone,$code,$template) {
     // *** 需用户填写部分 ***
 
     // fixme 必填: 请参阅 https://ak-console.aliyun.com/ 取得您的AK信息
-    $accessKeyId = wnd_get_option('wndwp','wnd_ali_accessKeyId');
-    $accessKeySecret = wnd_get_option('wndwp','wnd_ali_accessKeySecret');
+    $accessKeyId = wnd_get_option('wnd','wnd_ali_accessKeyId');
+    $accessKeySecret = wnd_get_option('wnd','wnd_ali_accessKeySecret');
 
     // fixme 必填: 短信接收号码
     $params["PhoneNumbers"] = $phone;
 
     // fixme 必填: 短信签名，应严格按"签名名称"填写，请参考: https://dysms.console.aliyun.com/dysms.htm#/develop/sign
-    $params["SignName"] = wnd_get_option('wndwp','wnd_ali_SignName');
+    $params["SignName"] = wnd_get_option('wnd','wnd_ali_SignName');
 
     // fixme 必填: 短信模板Code，应严格按"模板CODE"填写, 请参考: https://dysms.console.aliyun.com/dysms.htm#/develop/template
     $params["TemplateCode"] = $template;

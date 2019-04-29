@@ -50,7 +50,7 @@ function wnd_install() {
 		wnd_create_table();
 
 		// 默认option数据
-		if (!get_option('wndwp', $default = false)) {
+		if (!get_option('wnd')) {
 
 			$default_option = array(
 
@@ -75,14 +75,14 @@ function wnd_install() {
 				'wnd_ali_TemplateCode_V' => 'SMS_76590738',
 			);
 
-			update_option('wndwp', $default_option, $autoload = null);
+			update_option('wnd', $default_option);
 
 		}
 	}
 
 }
 function wnd_uninstall() {
-	// delete_option('wndwp');
+	// delete_option('wnd');
 	return;
 }
 
@@ -93,9 +93,9 @@ function wnd_uninstall() {
 function wnd_scripts() {
 
 	global $ver;
-	wp_enqueue_script('wndwp', WNDWP_URL . 'static/js/wnd-frontend.js', array('jquery'), $ver);
+	wp_enqueue_script('wnd-frontend', WNDWP_URL . 'static/js/wnd-frontend.js', array('jquery'), $ver);
 
-	if (wnd_get_option('wndwp', 'wnd_default_style') != 0) {
+	if (wnd_get_option('wnd', 'wnd_default_style') != 0) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.7.4/css/bulma.min.css', array(), $ver);
 		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.7.2/css/all.min.css', array(), $ver);
 	}
@@ -105,6 +105,6 @@ function wnd_scripts() {
 		'api_url' => site_url('wp-json/wnd/rest-api'),
 	);
 
-	wp_localize_script('wndwp', 'wnd', $wnd_data);
+	wp_localize_script('wnd-frontend', 'wnd', $wnd_data);
 }
 add_action('wp_enqueue_scripts', 'wnd_scripts');

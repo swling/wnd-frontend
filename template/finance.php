@@ -49,7 +49,7 @@ function _wnd_user_fin_panel($args = '') {
 			</div>
 		</div>';
 
-	if (wnd_get_option('wndwp', 'wnd_commission_rate')) {
+	if (wnd_get_option('wnd', 'wnd_commission_rate')) {
 		$html .= '
 		<div class="level-item has-text-centered">
 			<div>
@@ -189,7 +189,7 @@ function _wnd_list_user_fin($args = '') {
  */
 function _wnd_recharge_form() {
 
-	if (wnd_get_option('wndwp', 'wnd_alipay_appid')) {
+	if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
 
 	}
 
@@ -232,7 +232,7 @@ function _wnd_admin_recharge_form() {
 			'label' => '用户<span class="required">*</span>',
 			'name' => 'user_field',
 			'required' => 'required',
-			'placeholder' => '用户名、ID、或邮箱',
+			'placeholder' => '用户名、邮箱、注册手机',
 		)
 	);
 	$form->add_text(

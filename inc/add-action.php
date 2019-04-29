@@ -74,7 +74,7 @@ add_action('wnd_do_action', 'wnd_action_pay', $priority = 10, $accepted_args = 1
 function wnd_action_pay() {
 
 	//1.0 支付宝异步校验 支付宝发起post请求 匿名
-	if (isset($_POST['app_id']) && $_POST['app_id'] == wnd_get_option('wndwp', 'wnd_alipay_appid')) {
+	if (isset($_POST['app_id']) && $_POST['app_id'] == wnd_get_option('wnd', 'wnd_alipay_appid')) {
 		// WordPress 始终开启了魔法引号，因此需要对post 数据做还原处理
 		$_POST = stripslashes_deep($_POST);
 		require WNDWP_PATH . 'components/alipay/url-notify.php';
@@ -82,7 +82,7 @@ function wnd_action_pay() {
 	}
 
 	//1.1 支付宝支付跳转返回
-	if (isset($_GET['app_id']) && $_GET['app_id'] == wnd_get_option('wndwp', 'wnd_alipay_appid')) {
+	if (isset($_GET['app_id']) && $_GET['app_id'] == wnd_get_option('wnd', 'wnd_alipay_appid')) {
 		// WordPress 始终开启了魔法引号，因此需要对post 数据做还原处理
 		$_GET = stripslashes_deep($_GET);
 		require WNDWP_PATH . 'components/alipay/url-return.php';
@@ -187,7 +187,7 @@ function wnd_action_delete_children($post_id) {
  * 禁止WordPress原生登录和注册
  *@since 2019.03.01
  */
-if (wnd_get_option('wndwp', 'wnd_disable_admin_panel') == 1) {
+if (wnd_get_option('wnd', 'wnd_disable_admin_panel') == 1) {
 
 	// 禁止非管理员登录后台
 	add_action('admin_init', 'wnd_action_redirect_non_admin_users');

@@ -39,7 +39,7 @@ function _wnd_user_center($args = array()) {
 		case 'reg':
 
 			// 关闭邮箱注册强制短信注册
-			$type = wnd_get_option('wndwp', 'wnd_disable_email_reg') == 1 ? 'sms' : ($_GET['type'] ?? $args['type'] ?? 'email');
+			$type = wnd_get_option('wnd', 'wnd_disable_email_reg') == 1 ? 'sms' : ($_GET['type'] ?? $args['type'] ?? 'email');
 
 			$html .= _wnd_reg_form($type);
 
@@ -48,18 +48,18 @@ function _wnd_user_center($args = array()) {
 				//是否在ajax中
 				if ($ajax_type == 'modal') {
 
-					if ($type == 'email' and wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
+					if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
 						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reg&type=sms\');">手机注册</a> | ';
-					} elseif ($type == 'sms' and wnd_get_option('wndwp', 'wnd_disable_email_reg') != 1) {
+					} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
 						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reg&type=email\');">邮箱注册</a> | ';
 					}
 					$html .= '已有账户？<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\');">登录</a>';
 
 				} else {
 
-					if ($type == 'email' and wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
+					if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
 						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reg&type=sms\');">手机注册</a> | ';
-					} elseif ($type == 'sms' and wnd_get_option('wndwp', 'wnd_disable_email_reg') != 1) {
+					} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
 						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reg&type=email\');">邮箱注册</a> | ';
 					}
 					$html .= '已有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=login\');">登录</a>';
@@ -68,9 +68,9 @@ function _wnd_user_center($args = array()) {
 
 			} else {
 
-				if ($type == 'email' and wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
+				if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
 					$html .= '<a href="' . add_query_arg('type', 'sms') . '">手机注册</a> | ';
-				} elseif ($type == 'sms' and wnd_get_option('wndwp', 'wnd_disable_email_reg') != 1) {
+				} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
 					$html .= '<a href="' . add_query_arg('type', 'email') . '">邮箱注册</a> | ';
 				}
 				$html .= '已有账户？<a href="' . add_query_arg('action', 'login') . '">登录</a>';
@@ -110,7 +110,7 @@ function _wnd_user_center($args = array()) {
 			if (wnd_doing_ajax()) {
 				if ($ajax_type == 'modal') {
 
-					if ($type == 'email' and wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
+					if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
 						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=lostpassword&type=sms\');">手机验证找回</a> | ';
 					} elseif ($type == 'sms') {
 						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=lostpassword&type=email\');">邮箱验证找回</a> | ';
@@ -119,7 +119,7 @@ function _wnd_user_center($args = array()) {
 
 				} else {
 
-					if ($type == 'email' and wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
+					if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
 						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=lostpassword&type=sms\');">手机验证找回</a> | ';
 					} elseif ($type == 'sms') {
 						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=lostpassword&type=email\');">邮箱验证找回</a> | ';
@@ -129,7 +129,7 @@ function _wnd_user_center($args = array()) {
 				}
 			} else {
 
-				if ($type == 'email' and wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
+				if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
 					$html .= '<a href="' . add_query_arg('type', 'sms') . '">手机验证找回</a> | ';
 				} elseif ($type == 'sms') {
 					$html .= '<a href="' . add_query_arg('type', 'email') . '">邮箱验证找回</a> | ';
@@ -260,12 +260,12 @@ function _wnd_reg_form($type = 'email') {
 		return '<script>wnd_alert_msg("站点已关闭注册！")</script>';
 
 		// 关闭了邮箱注册（强制手机验证）
-	} elseif ($type == 'email' and wnd_get_option('wndwp', 'wnd_disable_email_reg') == 1) {
+	} elseif ($type == 'email' and wnd_get_option('wnd', 'wnd_disable_email_reg') == 1) {
 
 		return "<script>wnd_alert_msg('当前设置禁止邮箱注册！')</script>";
 
 		//为开启手机验证
-	} elseif ($type == 'sms' and wnd_get_option('wndwp', 'wnd_sms_enable') != 1) {
+	} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_sms_enable') != 1) {
 
 		return "<script>wnd_alert_msg('当前未配置短信验证！')</script>";
 
@@ -282,18 +282,18 @@ function _wnd_reg_form($type = 'email') {
 
 	if ($type == 'sms') {
 		// $form->add_user_email($placeholder = '邮箱');
-		$form->add_sms_verify($verify_type = 'reg', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_R'));
+		$form->add_sms_verify($verify_type = 'reg', wnd_get_option('wnd', 'wnd_ali_TemplateCode_R'));
 	} else {
 		$form->add_email_verify($verify_type = 'reg', $template = '');
 	}
-	if (wnd_get_option('wndwp', 'wnd_agreement_url') or 1) {
+	if (wnd_get_option('wnd', 'wnd_agreement_url') or 1) {
 
 		$form->add_checkbox(
 			array(
 				'name' => 'agreement',
 				'value' => 1,
 				'checked' => 1,
-				'label' => '我已阅读并同意注册协议<a href="' . wnd_get_option('wndwp', 'wnd_agreement_url') . '" target="_blank">《注册协议》</a>',
+				'label' => '我已阅读并同意注册协议<a href="' . wnd_get_option('wnd', 'wnd_agreement_url') . '" target="_blank">《注册协议》</a>',
 				'required' => 'required',
 			)
 		);
@@ -318,7 +318,7 @@ function _wnd_lostpassword_form($type = 'email') {
 
 	if ($type == 'sms') {
 		//1、验证短信重置密码
-		if (wnd_get_option('wndwp', 'wnd_sms_enable') != 1) {
+		if (wnd_get_option('wnd', 'wnd_sms_enable') != 1) {
 			return '<script type="text/javascript">wnd_alert_msg(\'短信验证功能未启用！\')</script>';
 		}
 	}
@@ -334,7 +334,7 @@ function _wnd_lostpassword_form($type = 'email') {
 	$form->set_form_attr('class="user-form"');
 
 	if ($type == 'sms') {
-		$form->add_sms_verify($verify_type = 'reset_pass', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
+		$form->add_sms_verify($verify_type = 'reset_pass', wnd_get_option('wnd', 'wnd_ali_TemplateCode_V'));
 	} else {
 		$form->add_email_verify($verify_type = 'reset_pass', $template = '');
 	}
@@ -410,8 +410,8 @@ function _wnd_account_form() {
 
 	$form->add_user_email();
 
-	if (wnd_get_option('wndwp', 'wnd_sms_enable') == 1) {
-		$form->add_sms_verify($verify_type = 'v', wnd_get_option('wndwp', 'wnd_ali_TemplateCode_V'));
+	if (wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
+		$form->add_sms_verify($verify_type = 'v', wnd_get_option('wnd', 'wnd_ali_TemplateCode_V'));
 	} else {
 		$form->add_email_verify($verify_type = 'v', $template = '');
 	}

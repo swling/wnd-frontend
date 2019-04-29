@@ -6,19 +6,19 @@
  */
 $config = array(
 	//应用ID,您的APPID。
-	'app_id' => wnd_get_option('wndwp', 'wnd_alipay_appid'),
+	'app_id' => wnd_get_option('wnd', 'wnd_alipay_appid'),
 
 	/**
 	 *@link https://docs.open.alipay.com/58/103242
 	 *商户私钥 用工具生成的应用私钥
 	 **/
-	'merchant_private_key' => wnd_get_option('wndwp', 'wnd_alipay_private_key'),
+	'merchant_private_key' => wnd_get_option('wnd', 'wnd_alipay_private_key'),
 
 	/**
 	 *支付宝公钥 @link https://openhome.alipay.com/platform/keyManage.htm
 	 *对应APPID下的支付宝公钥。用工具生成应用公钥后，上传到支付宝，再由支付宝生成
 	 */
-	'alipay_public_key' => wnd_get_option('wndwp', 'wnd_alipay_public_key'),
+	'alipay_public_key' => wnd_get_option('wnd', 'wnd_alipay_public_key'),
 
 	//异步通知地址 *不能带参数否则校验不过 （插件执行页面地址）
 	'notify_url' => wnd_get_do_url(),

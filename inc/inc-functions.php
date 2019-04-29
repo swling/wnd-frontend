@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
  */
 function wnd_get_do_url() {
 
-	$do_page = wnd_get_option('wndwp', 'wnd_do_page');
+	$do_page = wnd_get_option('wnd', 'wnd_do_page');
 	$do_url = $do_page ? get_the_permalink($do_page) : WNDWP_URL . 'do.php';
 	return $do_url;
 }
@@ -111,9 +111,9 @@ function wnd_get_site_prefix() {
  */
 function wnd_is_phone($phone) {
 	if ((empty($phone) || !preg_match("/^(((13[0-9]{1})|(15[0-9]{1})|(17[0-9]{1})|(18[0-9]{1}))+\d{8})$/", $phone))) {
-		return 0;
+		return false;
 	} else {
-		return 1;
+		return true;
 	}
 
 }

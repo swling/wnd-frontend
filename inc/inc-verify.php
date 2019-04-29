@@ -138,7 +138,7 @@ function wnd_send_sms_code($phone, $template = '') {
 
 	require WNDWP_PATH . 'components/sms/aliyun-sms/sendSms.php'; //阿里云短信
 
-	$template = $template ?: wnd_get_option('wndwp', 'wnd_ali_TemplateCode');
+	$template = $template ?: wnd_get_option('wnd', 'wnd_ali_TemplateCode');
 	$code = wnd_random_code($length = 6);
 
 	// 写入手机记录

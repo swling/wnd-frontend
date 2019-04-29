@@ -94,7 +94,7 @@ function wnd_ajax_reg() {
 		wp_set_current_user($user_id, $user->user_login);
 		wp_set_auth_cookie($user_id, 1);
 		// 注册后跳转地址
-		$redirect_to = $_REQUEST['redirect_to'] ?? wnd_get_option('wndwp', 'wnd_reg_redirect_url') ?: home_url();
+		$redirect_to = $_REQUEST['redirect_to'] ?? wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url();
 		$return_array = apply_filters('wnd_reg_return', array('status' => 3, 'msg' => $redirect_to), $user_id);
 		return $return_array;
 
@@ -127,11 +127,8 @@ function wnd_ajax_login() {
 		return $wnd_can_login;
 	}
 
-	if (is_email($username)) {
-		$user = get_user_by('email', $username);
-	} else {
-		$user = get_user_by('login', $username);
-	}
+	// 可根据邮箱，手机，或用户名查询用户
+	$user =  wnd_get_user_by($username);
 
 	if (!$user) {
 

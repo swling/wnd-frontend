@@ -439,7 +439,7 @@ function wnd_get_post_price($post_id) {
  */
 function wnd_get_post_commission($post_id) {
 
-	$commission_rate = is_numeric(wnd_get_option('wndwp', 'wnd_commission_rate')) ? wnd_get_option('wndwp', 'wnd_commission_rate') : 0;
+	$commission_rate = is_numeric(wnd_get_option('wnd', 'wnd_commission_rate')) ? wnd_get_option('wnd', 'wnd_commission_rate') : 0;
 	$commission = wnd_get_post_price($post_id) * $commission_rate;
 	$commission = round($commission, 2);
 	return apply_filters('wnd_get_post_commission', $commission, $post_id);
@@ -460,9 +460,9 @@ function wnd_admin_recharge($user_field, $money, $remarks = '') {
 		return array('status' => 0, 'msg' => '请输入一个有效的充值金额！');
 	}
 
-	// 查询用户
-	$field = is_email($user_field) ? 'email' : is_numeric($user_field) ? 'id' : 'login';
-	$user = get_user_by($field, $user_field);
+	// 根据邮箱，手机，或用户名查询用户
+	$user = wnd_get_user_by($user_field);
+
 	if (!$user) {
 		return array('status' => 0, 'msg' => '用户不存在！');
 	}
