@@ -117,3 +117,24 @@ function wnd_is_phone($phone) {
 	}
 
 }
+
+/**
+ *复制taxonomy term数据到 另一个 taxonomy下
+ *@since 2019.04.30
+ */
+function wnd_copy_taxonomy($old_taxonomy, $new_taxonomy) {
+
+	$terms = get_terms($old_taxonomy, 'hide_empty=0');
+
+	if (!empty($terms) && !is_wp_error($terms)) {
+
+		foreach ($terms as $term) {
+
+			wp_insert_term($term->name, $new_taxonomy);
+
+		}
+		unset($term);
+
+	}
+
+}
