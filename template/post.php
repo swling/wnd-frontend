@@ -128,6 +128,7 @@ function _wnd_post_form($args = array()) {
 			'name' => '_post_post_status',
 			'value' => 'draft',
 			'label' => '存为草稿',
+			'class' => "switch is-primary",
 		)
 	);
 

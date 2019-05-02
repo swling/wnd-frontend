@@ -961,7 +961,7 @@ function _wnd_current_filter($args, $ajax_call = '', $ajax_container = '') {
  *WordPress文章多重筛选器
  *@param $args： wp_query $args
  *
- *@param 自定义： string $args['wnd_list_template'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
+ *@param 自定义： string $args['wnd_list_tpl'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
  *@param 自定义： array $args['wnd_post_types']需要展示的文章类型
  *@param 自定义： bool args['wnd_only_cat']是否只筛选分类
  *@param 自定义： bool args['wnd_with_sidrbar']是否包含边栏
@@ -1021,7 +1021,7 @@ function _wnd_posts_filter($args = array()) {
 		'tax_query' => array(),
 		'meta_query' => array(),
 		'no_found_rows' => true, //无需原生的分页
-		'wnd_list_template' => '_wnd_table_list', //输出列表模板函数
+		'wnd_list_tpl' => '_wnd_table_list', //输出列表模板函数
 		'wnd_post_types' => array(), //允许的类型数组
 		'wnd_meta_query' => array(), // meta筛选项
 		'wnd_orderby' => array(), // 排序
@@ -1134,7 +1134,7 @@ function _wnd_posts_filter($args = array()) {
 
 	// 输出列表：根据_wnd_ajax_next_page，此处需设置容器及容器ID，否则ajax请求的翻页内容可能无法正确嵌入
 	$html .= '<div id="post-list-container" class="column">';
-	$html .= $args['wnd_list_template']($args);
+	$html .= $args['wnd_list_tpl']($args);
 	$html .= '</div>';
 
 	// 边栏

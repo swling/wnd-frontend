@@ -109,7 +109,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		$current_cat_id = $current_cat ? $current_cat->term_id : 0;
 
 		// 获取taxonomy下的term
-		$terms = get_terms($args = array('taxonomy' => $cat_taxonomy, 'hidden_empty' => 0));
+		$terms = get_terms($args = array('taxonomy' => $cat_taxonomy, 'hide_empty' => false));
 		$options = array('— ' . $cat->labels->name . ' —' => -1);
 		foreach ($terms as $term) {
 			$options[$term->name] = $term->term_id;

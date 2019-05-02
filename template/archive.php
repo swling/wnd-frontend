@@ -151,7 +151,7 @@ function _wnd_table_list($args = '') {
 			$query->the_post();
 
 			global $post;
-			$post = apply_filters('_wnd_table_list', $post);
+			$post = apply_filters('_wnd_table_list_data', $post);
 
 			$html .= '<tr>';
 			$html .= '<td class="is-narrow is-hidden-mobile">' . get_the_time('m-d H:i') . '</td>';
@@ -216,7 +216,7 @@ function _wnd_post_list($args = '') {
 			 *默认输出带链接的标题，外部函数通过filter实现自定义
 			 */
 			$list = '<h3><a href="' . get_permalink($post) . '">' . $post->post_title . '</a></h3>';
-			$html .= apply_filters('_wnd_post_list', $list, $post);
+			$html .= apply_filters('_wnd_post_list_tpl', $list, $post);
 
 			wp_reset_postdata(); //重置查询
 
