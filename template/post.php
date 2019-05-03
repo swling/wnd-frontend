@@ -97,6 +97,7 @@ function _wnd_post_form($args = array()) {
 				continue;
 			}
 			$form->add_post_tags($tag_taxonomy, '请用回车键区分多个标签');
+			$form->add_html('<div class="message is-warning"><div class="message-body">请用回车键区分多个标签</div></div>');
 
 		}
 		unset($tag_taxonomy);

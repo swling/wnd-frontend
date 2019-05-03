@@ -283,11 +283,6 @@ function wnd_ajax_submit(form_id) {
 		}
 	});
 
-	if (input_value === false) {
-		wnd_ajax_msg('<span class="required">*</span>星标为必填项目！', 'is-danger', form_id);
-		return false;
-	}
-
 	// 下拉必选，默认未选择 value = -1
 	var option_value = true;
 	$(form_id + " select option:selected").each(function() {
@@ -297,12 +292,24 @@ function wnd_ajax_submit(form_id) {
 		if (required == "required" && option_value == "-1") {
 			option_value = false;
 			$(form_id + " select").addClass('is-danger');
-			return false;
+			return false; //此处为退出each循环，而非阻止提交
 		}
 	});
 
-	if (option_value === false) {
-		wnd_ajax_msg('<span class="required">*</span>星标为必选项目！', "is-danger", form_id);
+	// 文本框
+	var textarea_value = true;
+	$(form_id + " textarea").each(function() {
+		var required = $(this).attr("required");
+		if (required == "required") {
+			if ($(this).val() == "") {
+				textarea_value = false;
+				$(this).addClass('is-danger');
+			}
+		}
+	});
+
+	if (input_value === false || option_value === false || textarea_value === false) {
+		wnd_ajax_msg('<span class="required">*</span>星标为必填项目！', 'is-danger', form_id);
 		return false;
 	}
 
@@ -680,9 +687,9 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
-	 *@since 2019.02.09 表单改变时，移除input警示状态
+	 *@since 2019.02.09 表单改变时，移除警示状态
 	 */
-	$("body").on("input", "input[type='text']", function() {
+	$("body").on("input", "input,textarea", function() {
 		$(this).removeClass('is-danger');
 	});
 

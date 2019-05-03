@@ -96,21 +96,21 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_post_term_select($cat_taxonomy) {
+	function add_post_term_select($taxonomy, $required = true) {
 
-		$cat = get_taxonomy($cat_taxonomy);
-		if (!$cat) {
+		$taxonomy_object = get_taxonomy($taxonomy);
+		if (!$taxonomy_object) {
 			return;
 		}
 
 		// 获取当前文章已选择分类id
-		$current_cat = get_the_terms($this->post_id, $cat_taxonomy);
-		$current_cat = $current_cat ? reset($current_cat) : 0;
-		$current_cat_id = $current_cat ? $current_cat->term_id : 0;
+		$current_term = get_the_terms($this->post_id, $taxonomy);
+		$current_term = $current_term ? reset($current_term) : 0;
+		$current_term_id = $current_term ? $current_term->term_id : 0;
 
 		// 获取taxonomy下的term
-		$terms = get_terms($args = array('taxonomy' => $cat_taxonomy, 'hide_empty' => false));
-		$options = array('— ' . $cat->labels->name . ' —' => -1);
+		$terms = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false));
+		$options = array('— ' . $taxonomy_object->labels->name . ' —' => -1);
 		foreach ($terms as $term) {
 			$options[$term->name] = $term->term_id;
 		}
@@ -120,41 +120,41 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		parent::add_select(
 
 			array(
-				'name' => '_term_' . $cat_taxonomy,
+				'name' => '_term_' . $taxonomy,
 				'options' => $options,
-				// 'label' => $cat->labels->name . '<span class="required">*</span>',
-				'required' => true,
-				'checked' => $current_cat_id, //default checked value
+				// 'label' => $taxonomy_object->labels->name . '<span class="required">*</span>',
+				'required' => $required,
+				'checked' => $current_term_id, //default checked value
 			)
 		);
 
 	}
 
-	function add_post_tags($tag_taxonomy, $placeholder = '标签') {
+	function add_post_tags($taxonomy, $placeholder = '标签') {
 
-		$tag = get_taxonomy($tag_taxonomy);
+		$taxonomy_object = get_taxonomy($taxonomy);
 
-		$terms_list = '';
-		$terms = get_the_terms($this->post_id, $tag_taxonomy);
+		$term_list = '';
+		$terms = get_the_terms($this->post_id, $taxonomy);
 		if (!empty($terms)) {
 			foreach ($terms as $term) {
-				$terms_list .= $term->name . ',';
+				$term_list .= $term->name . ',';
 			}unset($term);
 			// 移除末尾的逗号
-			$terms_list = rtrim($terms_list, ",");
+			$term_list = rtrim($term_list, ",");
 		}
 
 		parent::add_text(
 			array(
 				'id' => 'tags',
-				'name' => '_term_' . $tag_taxonomy,
-				'value' => $terms_list,
+				'name' => '_term_' . $taxonomy,
+				'value' => $term_list,
 				'placeholder' => $placeholder,
-				'label' => $tag->labels->name,
+				'label' => $taxonomy_object->labels->name,
 			)
 		);
 
-		parent::add_html(_wnd_get_tags_editor_script(3, 20, $placeholder, $tag_taxonomy));
+		parent::add_html(_wnd_get_tags_editor_script(3, 20, $placeholder, $taxonomy));
 	}
 
 	function add_post_thumbnail($size = array('width' => 200, 'height' => 200), $label = '') {
