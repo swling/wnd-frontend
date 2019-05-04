@@ -136,9 +136,9 @@ function wnd_send_mail_code_to_user($template = '') {
  */
 function wnd_send_sms_code($phone, $template = '') {
 
-	require WND_PATH . 'components/sms/aliyun-sms/sendSms.php'; //阿里云短信
+	require WND_PATH . 'components/tencent-sms/sendSms.php'; //阿里云短信
 
-	$template = $template ?: wnd_get_option('wnd', 'wnd_ali_TemplateCode');
+	$template = $template ?: wnd_get_option('wnd', 'wnd_sms_template');
 	$code = wnd_random_code($length = 6);
 
 	// 写入手机记录
@@ -147,7 +147,7 @@ function wnd_send_sms_code($phone, $template = '') {
 	}
 
 	$send_status = wnd_send_sms($phone, $code, $template);
-	if ($send_status->Code == "OK") {
+	if ($send_status->result == 0) {
 		return array('status' => 1, 'msg' => '发送成功！');
 	} else {
 		return array('status' => 0, 'msg' => '系统错误，请联系客服处理！');

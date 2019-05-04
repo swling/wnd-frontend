@@ -161,20 +161,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		self::add_post_image_upload('_thumbnail_id', array('width' => 200, 'height' => 200), '');
 	}
 
-	function add_post_price($label = '', $placeholder = '价格') {
-		parent::add_text(
-			array(
-				'name' => '_wpmeta_price',
-				'value' => get_post_meta($this->post_id, 'price', 1),
-				'label' => $label,
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-yen-sign"></i>',
-				'placeholder' => $placeholder,
-			)
-		);
-	}
-
-	function add_post_content($rich_media_editor = true, $placeholder = '详情', $required = 0) {
+	function add_post_content($rich_media_editor = true, $required = false, $placeholder = '详情') {
 
 		/**
 		 *@since 2019.3.11 调用外部页面变量，后续更改为当前编辑的post，否则，wp_editor上传的文件将归属到页面，而非当前编辑的文章
@@ -213,6 +200,19 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 		parent::add_html('<div id="wnd-wp-editor" class="field"></div>');
 		parent::add_html('<script type="text/javascript">var wp_editor = $("#hidden-wp-editor").html();$("#hidden-wp-editor").remove();$("#wnd-wp-editor").html(wp_editor);</script>');
+	}
+
+	function add_post_price($label = '', $placeholder = '价格') {
+		parent::add_text(
+			array(
+				'name' => '_wpmeta_price',
+				'value' => get_post_meta($this->post_id, 'price', 1),
+				'label' => $label,
+				'has_icons' => 'left',
+				'icon' => '<i class="fas fa-yen-sign"></i>',
+				'placeholder' => $placeholder,
+			)
+		);
 	}
 
 	/**

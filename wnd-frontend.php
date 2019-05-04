@@ -72,12 +72,12 @@ function wnd_install() {
 			'wnd_disable_admin_panel' => 1,
 			'wnd_unset_user_meta' => 1,
 
-			'wnd_ali_accessKeyId' => '阿里短信KeyId',
-			'wnd_ali_accessKeySecret' => '阿里短信KeySecret',
-			'wnd_ali_SignName' => get_option('blogname'),
-			'wnd_ali_TemplateCode' => 'SMS_76590738',
-			'wnd_ali_TemplateCode_R' => 'SMS_76590740',
-			'wnd_ali_TemplateCode_V' => 'SMS_76590738',
+			'wnd_sms_appid' => '腾讯短信appid',
+			'wnd_sms_appkey' => '腾讯短信appkey',
+			'wnd_sms_sign' => get_option('blogname'),
+			'wnd_sms_template' => '通用短信模板ID',
+			'wnd_sms_template_r' => '注册短信模板ID',
+			'wnd_sms_template_v' => '身份验证短信模板ID',
 		);
 
 		update_option('wnd', $default_option);

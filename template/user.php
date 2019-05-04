@@ -282,7 +282,7 @@ function _wnd_reg_form($type = 'email') {
 
 	if ($type == 'sms') {
 		// $form->add_user_email($placeholder = '邮箱');
-		$form->add_sms_verify($verify_type = 'reg', wnd_get_option('wnd', 'wnd_ali_TemplateCode_R'));
+		$form->add_sms_verify($verify_type = 'reg', wnd_get_option('wnd', 'wnd_sms_template_r'));
 	} else {
 		$form->add_email_verify($verify_type = 'reg', $template = '');
 	}
@@ -334,7 +334,7 @@ function _wnd_lostpassword_form($type = 'email') {
 	$form->set_form_attr('class="user-form"');
 
 	if ($type == 'sms') {
-		$form->add_sms_verify($verify_type = 'reset_pass', wnd_get_option('wnd', 'wnd_ali_TemplateCode_V'));
+		$form->add_sms_verify($verify_type = 'reset_pass', wnd_get_option('wnd', 'wnd_sms_template_v'));
 	} else {
 		$form->add_email_verify($verify_type = 'reset_pass', $template = '');
 	}
@@ -411,7 +411,7 @@ function _wnd_account_form() {
 	$form->add_user_email();
 
 	if (wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
-		$form->add_sms_verify($verify_type = 'v', wnd_get_option('wnd', 'wnd_ali_TemplateCode_V'));
+		$form->add_sms_verify($verify_type = 'v', wnd_get_option('wnd', 'wnd_sms_template_v'));
 	} else {
 		$form->add_email_verify($verify_type = 'v', $template = '');
 	}

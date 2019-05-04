@@ -265,44 +265,44 @@ function wnd_options(){
 				</td>
 			</tr>			
 			<tr>
-				<td valign="top">阿里云accessKeyId</td>
+				<td valign="top">腾讯云短信APP ID</td>
 				<td>
-					<input type="text" name="wnd_ali_accessKeyId" value="<?php echo wnd_get_option('wnd','wnd_ali_accessKeyId');?>" class="regular-text">
+					<input type="text" name="wnd_sms_appid" value="<?php echo wnd_get_option('wnd','wnd_sms_appid');?>" class="regular-text">
 				</td>
 			</tr>
 			<tr>
-				<td valign="top">阿里云accessKeySecret</td>
+				<td valign="top">腾讯云短信APP Key</td>
 				<td>
-					<input type="text" name="wnd_ali_accessKeySecret" value="<?php echo wnd_get_option('wnd','wnd_ali_accessKeySecret');?>"
+					<input type="text" name="wnd_sms_appkey" value="<?php echo wnd_get_option('wnd','wnd_sms_appkey');?>"
 					 class="regular-text" />
 				</td>
 			</tr>
 			<tr>
-				<td valign="top">阿里云短信签名</td>
+				<td valign="top">腾讯云短信签名</td>
 				<td>
-					<input type="text" name="wnd_ali_SignName" value="<?php echo wnd_get_option('wnd','wnd_ali_SignName');?>" class="regular-text">
-					*请注意：签名需要先在阿里云后台提交审核
+					<input type="text" name="wnd_sms_sign" value="<?php echo wnd_get_option('wnd','wnd_sms_sign');?>" class="regular-text">
+					*请注意：签名需要先在腾讯云后台提交审核
 				</td>
 			</tr>
 			<tr>
 				<td valign="top">默认短信模板</td>
 				<td>
-					<input type="text" name="wnd_ali_TemplateCode" value="<?php echo wnd_get_option('wnd','wnd_ali_TemplateCode');?>" class="regular-text">
+					<input type="text" name="wnd_sms_template" value="<?php echo wnd_get_option('wnd','wnd_sms_template');?>" class="regular-text">
 					*默认短信模板，短信表单未指定短信模板时，最后调用本模板
 				</td>
 			</tr>
 			<tr>
 				<td valign="top">注册短信模板</td>
 				<td>
-					<input type="text" name="wnd_ali_TemplateCode_R" value="<?php echo wnd_get_option('wnd','wnd_ali_TemplateCode_R');?>" class="regular-text">
-					*注册时的短信模板代码
+					<input type="text" name="wnd_sms_template_r" value="<?php echo wnd_get_option('wnd','wnd_sms_template_r');?>" class="regular-text">
+					注册时的短信模板代码（可选）
 				</td>
 			</tr>
 			<tr>
 				<td valign="top">信息变更模板</td>
 				<td>
-					<input type="text" name="wnd_ali_TemplateCode_V" value="<?php echo wnd_get_option('wnd','wnd_ali_TemplateCode_V');?>" class="regular-text">
-					*信息变更验证码代码（如修改密码等）
+					<input type="text" name="wnd_sms_template_v" value="<?php echo wnd_get_option('wnd','wnd_sms_template_v');?>" class="regular-text">
+					信息变更验证码代码（如修改密码等，可选）
 				</td>
 			</tr>						
 

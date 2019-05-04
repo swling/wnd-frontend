@@ -116,7 +116,7 @@ function _wnd_post_form($args = array()) {
 	}
 
 	/**
-	 *@since 2019.03.11 wp_editor无法使用表单类创建，此处生成一个隐藏编辑器，再用js嵌入到指定DOM
+	 *@since 2019.04 富媒体编辑器仅在非ajax请求中有效
 	 */
 	if ($args['rich_media_editor']) {
 		$form->add_post_content(true);
