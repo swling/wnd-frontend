@@ -14,6 +14,12 @@ function wnd_post_type_recharge() {
 		'public' => false,
 		'has_archive' => false,
 		'query_var' => false,
+		/**
+		 *支持author的post type 删除用户时才能自动删除对应的自定义post
+		 *@see wp-admin/includes/user.php @370
+		 *@since 2019.05.05
+		 */
+		'supports' => array('title', 'author', 'editor'),
 	);
 	register_post_type('recharge', $args);
 }
@@ -28,6 +34,7 @@ function wnd_post_type_order() {
 		'public' => false,
 		'has_archive' => false,
 		'query_var' => false, //order 为wp_query的排序参数，如果查询参数中包含order排序，会导致冲突，此处需要注销
+		'supports' => array('title', 'author', 'editor'),
 	);
 	register_post_type('order', $args);
 }
@@ -46,6 +53,7 @@ function wnd_post_type_mail() {
 		'public' => true,
 		'has_archive' => false,
 		'show_ui' => false,
+		'supports' => array('title', 'author', 'editor', 'thumbnail', 'excerpt', 'comments', 'custom-fields'),
 		'rewrite' => array('slug' => 'mail', 'with_front' => false),
 	);
 	register_post_type('mail', $args);
@@ -61,6 +69,7 @@ function wnd_post_type_stats_re() {
 		'description' => '充值统计',
 		'public' => false,
 		'has_archive' => false,
+		'supports' => array('title', 'author', 'editor'),
 	);
 	register_post_type('stats-re', $args);
 }
@@ -74,6 +83,7 @@ function wnd_post_type_stats_ex() {
 		'description' => '消费统计',
 		'public' => false,
 		'has_archive' => false,
+		'supports' => array('title', 'author', 'editor'),
 	);
 	register_post_type('stats-ex', $args);
 }
