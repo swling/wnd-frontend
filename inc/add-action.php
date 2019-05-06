@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  *ajax上传文件时，根据 meta_key 做后续处理
  *@since 2018
  */
-add_action('wnd_upload_file', 'wnd_action_upload_file', $priority = 10, $accepted_args = 3);
+add_action('wnd_upload_file', 'wnd_action_upload_file', 10, 3);
 function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
 
 	if (!$meta_key) {
@@ -24,9 +24,9 @@ function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
 	//WordPress原生缩略图
 	if ($meta_key == '_wpthumbnail_id') {
 		set_post_thumbnail($post_parent, $attachment_id);
-	}
-	// 储存在文章字段
-	elseif ($post_parent) {
+
+		// 储存在文章字段
+	} elseif ($post_parent) {
 		$old_meta = wnd_get_post_meta($post_parent, $meta_key);
 		if ($old_meta) {
 			wp_delete_attachment($old_meta);
@@ -46,6 +46,29 @@ function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
 }
 
 /**
+ *@since 2019.05.05 相册
+ *do_action('wnd_upload_gallery', $return_array, $post_parent);
+ **/
+add_action('wnd_upload_gallery', 'wnd_action_upload_gallery', 10, 2);
+function wnd_action_upload_gallery($image_array, $post_parent) {
+
+	$images = array();
+
+	foreach ($image_array as $image_info) {
+
+		// 将附件id转字符串 作为键名（整型直接做数组键名会存在有效范围，超过整型范围后会出现负数，0等错乱）
+		$images['\'' . $image_info['data']['id'] . '\''] = $image_info['data']['url'];
+	}
+
+	$old_images = wnd_get_post_meta($post_parent, 'gallery');
+	$old_images = is_array($old_images) ? $old_images : array();
+	$new_images = array_merge($old_images, $images);
+
+	wnd_update_post_meta($post_parent, 'gallery', $new_images);
+
+}
+
+/**
  * ajax删除附件时
  *@since 2018
  */
@@ -53,6 +76,21 @@ add_action('wnd_delete_file', 'wnd_action_delete_attachment', 1, 3);
 function wnd_action_delete_attachment($attach_id, $post_parent, $meta_key) {
 
 	if (!$meta_key) {
+		return;
+	}
+
+	/**
+	 *@since 2019.05.06 相册编辑
+	 */
+	if ($meta_key == 'gallery' and $post_parent) {
+
+		// 从相册数组中删除当前图片
+		$images = wnd_get_post_meta($post_parent, 'gallery');
+		$images = is_array($images) ? $images : array();
+		unset($images['\'' . $attach_id . '\'']);
+
+		wnd_update_post_meta($post_parent, 'gallery', $images);
+
 		return;
 	}
 

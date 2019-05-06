@@ -27,9 +27,12 @@ function wnd_ajax_upload_file() {
 
 	$save_width = (int) $_POST["save_width"] ?? 0;
 	$save_height = (int) $_POST["save_height"] ?? 0;
-	$meta_key = $_POST['meta_key'] ?? 0;
+	$meta_key = $_POST['meta_key'] ?? NULL;
 	$post_parent = (int) $_POST['post_parent'] ?? 0;
 	$user_id = get_current_user_id();
+
+	// 定义返回信息
+	$return_array = array();
 
 	/**
 	 *@since 2019.04.16
@@ -38,14 +41,17 @@ function wnd_ajax_upload_file() {
 	$can_upload_file = apply_filters('wnd_can_upload_file', array('status' => 1, 'msg' => '默认通过'), $post_parent, $meta_key);
 	if ($can_upload_file['status'] === 0) {
 		return array($can_upload_file);
-		// return array(array('status'=>0,'msg'=>$meta_key));
 	}
 
-	// 定义二维返回数组，以支持多文件上传
-	$return_array = array();
-
+	// 上传信息校验
 	if (!$user_id and !$post_parent) {
 		$temp_array = array('status' => 0, 'msg' => '错误：user ID及post ID均为空！');
+		array_push($return_array, $temp_array);
+		return $return_array;
+	}
+
+	if (!$meta_key) {
+		$temp_array = array('status' => 0, 'msg' => '错误：未定义meta_key！');
 		array_push($return_array, $temp_array);
 		return $return_array;
 	}
@@ -56,16 +62,33 @@ function wnd_ajax_upload_file() {
 		return $return_array;
 	}
 
-	if (0 < $_FILES['file']['error']) {
-		$temp_array = array('status' => 0, 'msg' => 'Error: ' . $_FILES['file']['error']);
-		array_push($return_array, $temp_array);
-		return $return_array;
-	}
+	/**
+	 *@since 2019.05.06 改写
+	 *遍历文件上传
+	 */
+	$files = $_FILES["file"]; //需要与input name 值匹配
 
-	// 遍历文件上传
-	foreach ($_FILES as $file => $array) {
-		//上传文件并附属到对应的post 默认为0 即不附属到
-		$file_id = media_handle_upload($file, $post_parent);
+	foreach ($files['name'] as $key => $value) {
+
+		// 将多文件上传数据遍历循环后，重写为适配 media_handle_upload 的单文件模式
+		$file = array(
+			'name' => $files['name'][$key],
+			'type' => $files['type'][$key],
+			'tmp_name' => $files['tmp_name'][$key],
+			'error' => $files['error'][$key],
+			'size' => $files['size'][$key],
+		);
+		$_FILES = array('temp_key' => $file);
+
+		// 单文件错误检测
+		if ($_FILES['temp_key']['error'] > 0) {
+			$temp_array = array('status' => 0, 'msg' => 'Error: ' . $_FILES['temp_key']['error']);
+			array_push($return_array, $temp_array);
+			return $return_array;
+		}
+
+		//上传文件并附属到对应的post 默认为0 即孤立文件
+		$file_id = media_handle_upload('temp_key', $post_parent);
 
 		// 上传失败
 		if (is_wp_error($file_id)) {
@@ -84,22 +107,33 @@ function wnd_ajax_upload_file() {
 				$image->save($image_file);
 			}
 		}
-		//处理完成根据用途做下一步处理
-		do_action('wnd_upload_file', $file_id, $post_parent, $meta_key);
 
 		// 将当前上传的图片信息写入数组
-		$temp_array = array('status' => 1, 'msg' => array('url' => wp_get_attachment_url($file_id), 'id' => $file_id));
+		$temp_array = array(
+			'status' => 1,
+			'data' => array('url' => wp_get_attachment_url($file_id), 'id' => $file_id),
+			'msg' => '上传成功！',
+		);
 		array_push($return_array, $temp_array);
 
 		/**
 		 *@since 2019.02.13 当存在meta key时，表明上传文件为特定用途存储，仅允许上传单个文件
+		 *@since 2019.05.05 当meta key == gallery 表示为上传图集相册 允许上传多个文件
 		 */
-		if ($meta_key) {
+		if ($meta_key != 'gallery') {
+			//处理完成根据用途做下一步处理
+			do_action('wnd_upload_file', $file_id, $post_parent, $meta_key);
 			break;
 		}
 
 	}
-	unset($file, $array);
+
+	/**
+	 *@since 2019.05.05 当meta key == gallery 表示为上传图集相册 允许上传多个文件
+	 */
+	if ($meta_key == 'gallery') {
+		do_action('wnd_upload_gallery', $return_array, $post_parent);
+	}
 
 	// 返回上传信息二维数组合集
 	return $return_array;

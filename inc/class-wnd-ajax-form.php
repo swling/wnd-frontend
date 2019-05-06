@@ -133,17 +133,19 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		// 合并$data
 		$defaults_data = array(
-			'is_image' => '1',
-			'thumbnail' => $args['thumbnail'],
-			'upload_nonce' => wp_create_nonce('wnd_ajax_upload_file'),
-			'delete_nonce' => wp_create_nonce('wnd_ajax_delete_file'),
 			'post_parent' => 0,
-			'user_id' => get_current_user_id(),
 			'meta_key' => 0,
 			'save_width' => 0, //图片文件存储最大宽度 0 为不限制
-			'save_hight' => 0, //图片文件存储最大过度 0 为不限制
+			'save_height' => 0, //图片文件存储最大过度 0 为不限制
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
+
+		// 固定data
+		$args['data']['is_image'] = '1';
+		$args['data']['upload_nonce'] = wp_create_nonce('wnd_ajax_upload_file');
+		$args['data']['delete_nonce'] = wp_create_nonce('wnd_ajax_delete_file');
+		$args['data']['user_id'] = get_current_user_id();
+		$args['data']['thumbnail'] = $args['thumbnail'];
 
 		// 根据user type 查找目标文件
 		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
@@ -177,13 +179,15 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$args = array_merge($defaults, $args);
 
 		$defaults_data = array(
-			'upload_nonce' => wp_create_nonce('wnd_ajax_upload_file'),
-			'delete_nonce' => wp_create_nonce('wnd_ajax_delete_file'),
 			'post_parent' => 0,
-			'user_id' => get_current_user_id(),
 			'meta_key' => 0,
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
+
+		// 固定data
+		$args['data']['upload_nonce'] = wp_create_nonce('wnd_ajax_upload_file');
+		$args['data']['delete_nonce'] = wp_create_nonce('wnd_ajax_delete_file');
+		$args['data']['user_id'] = get_current_user_id();
 
 		// 根据meta key 查找目标文件
 		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
@@ -203,6 +207,92 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">查看文件</a>' : '……';
 
 		parent::add_file_upload($args);
+
+	}
+
+	// 相册上传
+	function add_gallery_upload($args) {
+
+		$defaults = array(
+			'label' => 'Gallery',
+			'thumbnail' => '', //默认缩略图
+			'thumbnail_size' => array('height' => '100', 'width' => '100'),
+			'data' => array(),
+			'delete_button' => true,
+		);
+		$args = array_merge($defaults, $args);
+
+		// 合并$data
+		$defaults_data = array(
+			'post_parent' => 0,
+			'save_width' => 0, //图片文件存储最大宽度 0 为不限制
+			'save_height' => 0, //图片文件存储最大过度 0 为不限制
+		);
+		$args['data'] = array_merge($defaults_data, $args['data']);
+
+		// 固定data
+		$args['data']['is_image'] = '1';
+		$args['data']['meta_key'] = 'gallery';
+		$args['data']['upload_nonce'] = wp_create_nonce('wnd_ajax_upload_file');
+		$args['data']['delete_nonce'] = wp_create_nonce('wnd_ajax_delete_file');
+		$args['data']['user_id'] = get_current_user_id();
+		$args['data']['thumbnail'] = $args['thumbnail'];
+
+		// 根据user type 查找目标文件
+		// $file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
+		// $file_url = $file_id ? wp_get_attachment_url($file_id) : '';
+
+		// // 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
+		// if ($file_id and !$file_url) {
+		// 	if ($args['data']['post_parent']) {
+		// 		wnd_delete_post_meta($args['data']['post_parent'], $args['data']['meta_key']);
+		// 	} else {
+		// 		wnd_delete_user_meta($args['data']['user_id'], $args['data']['meta_key']);
+		// 	}
+		// }
+
+		$args['name'] = 'file';
+		$args['file_id'] = $file_id ?? 0;
+
+		// parent::add_file_upload($args);
+
+		/**
+		 *@since 2019.05.06 构建 html
+		 */
+		$input_value = $args;
+
+		$id = 'gallery-' . $this->id;
+		$data = ' data-id="' . $id . '"';
+		foreach ($input_value['data'] as $key => $value) {
+			$data .= ' data-' . $key . '="' . $value . '" ';
+		}unset($key, $value);
+
+		$html = '<div id="' . $id . '" class="field upload-field">';
+		if ($input_value['label']) {
+			$html .= '<label class="label">' . $input_value['label'] . '</label>';
+		}
+		$html .= '<div class="field"><div class="ajax-msg"></div></div>';
+
+		$html .= '<div class="field">';
+		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['height'] . '"></a>';
+		$html .= $input_value['delete_button'] ? '<a class="delete" data-id="' . $id . '" data-file_id="' . $input_value['file_id'] . '"></a>' : '';
+		$html .= '<div class="file">';
+		$html .= '<input type="file" multiple="multiple" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . 'accept="image/*" >';
+		$html .= '</div>';
+		$html .= '</div>';
+
+		$html .= '
+		<script type="text/javascript">
+			var fileupload = document.querySelector("#' . $id . ' input[type=\'file\']");
+			var image = document.querySelector("#' . $id . ' .thumbnail");
+			image.onclick = function () {
+			    fileupload.click();
+			};
+		</script>';
+
+		$html .= '</div>';
+
+		parent::add_html($html);
 
 	}
 

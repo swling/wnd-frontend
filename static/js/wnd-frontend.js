@@ -480,10 +480,14 @@ jQuery(document).ready(function($) {
 
 		// 获取当前上传容器ID
 		var id = "#" + $(this).data("id");
+
 		//创建表单
 		var form_data = new FormData();
-		// 获取文件
-		var file_data = $(this).prop("files")[0];
+
+		// 获取文件，支持多文件上传
+		for (var i = 0; i < $(this).get(0).files.length; ++i) {
+			form_data.append("file[" + i + "]", $(this).prop("files")[i]);
+		}
 
 		// 获取属性
 		var meta_key = $(this).data("meta_key");
@@ -493,14 +497,12 @@ jQuery(document).ready(function($) {
 		var save_height = $(this).data("save_height");
 		var is_image = $(this).data("is_image");
 
-		// 组合表单数据
-		form_data.append("file", file_data);
+		// 组合表单属性数据
 		form_data.append("meta_key", meta_key);
 		form_data.append("post_parent", post_parent);
 		form_data.append("_ajax_nonce", _ajax_nonce);
 		form_data.append("save_width", save_width);
 		form_data.append("save_height", save_height);
-		form_data.append("action", "wnd_action");
 		form_data.append("action", "wnd_ajax_upload_file");
 
 		$.ajax({
@@ -530,11 +532,11 @@ jQuery(document).ready(function($) {
 					wnd_ajax_msg("上传成功！", "is-success", id);
 					// 图像上传，更新缩略图
 					if (is_image == 1) {
-						$(id + " .thumbnail").prop("src", response[i].msg.url);
+						$(id + " .thumbnail").prop("src", response[i].data.url);
 					} else {
-						$(id + " .file-name").html('上传成功！<a href="' + response[i].msg.url + '" target="_blank">查看文件</a>');
+						$(id + " .file-name").html('上传成功！<a href="' + response[i].data.url + '" target="_blank">查看文件</a>');
 					}
-					$(id + " .delete").data("file_id", response[i].msg.id)
+					$(id + " .delete").data("file_id", response[i].data.id)
 				}
 
 			},
@@ -580,7 +582,6 @@ jQuery(document).ready(function($) {
 		form_data.append("file_id", file_id);
 		form_data.append("_ajax_nonce", _ajax_nonce);
 		// ajax请求配置
-		form_data.append("action", "wnd_action");
 		form_data.append("action", "wnd_ajax_delete_file");
 
 		$.ajax({
@@ -651,7 +652,6 @@ jQuery(document).ready(function($) {
 			dataType: "json",
 			url: wnd.api_url,
 			data: {
-				action: 'wnd_action',
 				action: "wnd_ajax_send_code",
 				email: _user_user_email,
 				phone: phone,

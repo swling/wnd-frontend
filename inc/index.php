@@ -35,10 +35,11 @@ require WND_PATH . 'inc/ajax-pay.php'; //ajax付费服务
 require WND_PATH . 'inc/add-action.php'; //添加的动作
 require WND_PATH . 'inc/add-filter.php'; //添加的钩子
 
-require WND_PATH . 'template/user.php'; //user模板
-require WND_PATH . 'template/post.php'; //post模板
-require WND_PATH . 'template/term.php'; //term模板
-require WND_PATH . 'template/archive.php'; //归档和列表模板
-require WND_PATH . 'template/filter.php'; //多重筛选
-require WND_PATH . 'template/finance.php'; //财务模板
-require WND_PATH . 'template/admin.php'; //前端管理模板
+require WND_PATH . 'template/tpl-user.php'; //user模板
+require WND_PATH . 'template/tpl-post.php'; //post模板
+require WND_PATH . 'template/tpl-term.php'; //term模板
+require WND_PATH . 'template/tpl-archive.php'; //归档和列表模板
+require WND_PATH . 'template/tpl-filter.php'; //多重筛选
+require WND_PATH . 'template/tpl-finance.php'; //财务模板
+require WND_PATH . 'template/tpl-admin.php'; //前端管理模板
+require WND_PATH . 'template/tpl-gallery.php'; //橱窗相册

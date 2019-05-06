@@ -172,7 +172,7 @@ $form->add_image_upload(
 		'data' => array( // some data on file input, maybe useful in ajax upload
 			'meta_key' => 'avatar',
 			'save_width' => '0',
-			'save_hight' => '0',
+			'save_height' => '0',
 		),
 		'delete_button' => true,
 		'required' => 'required',
