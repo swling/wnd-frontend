@@ -80,6 +80,11 @@ class Wnd_Form {
 		$this->action = $action;
 	}
 
+	// 直接设置当前表单的组成数组（通常用于配合 filter 过滤）
+	protected function set_input_values($input_values) {
+		$this->input_values = $input_values;
+	}
+
 	/**
 	 *@since 2019.03.10 设置常规input 字段
 	 */
@@ -327,7 +332,7 @@ class Wnd_Form {
 	 *@since 2019.03.06
 	 *表单构造函数
 	 **/
-	function build() {
+	protected function build() {
 		$this->build_form_header();
 		$this->build_input_values();
 		$this->build_submit_button();
@@ -538,7 +543,7 @@ class Wnd_Form {
 		$html = '<div' . $this->get_id($input_value) . ' class="field upload-field">';
 
 		$html .= '<div class="field"><div class="ajax-msg"></div></div>';
-		$html .= '<div class="columns is-mobile">';
+		$html .= '<div class="columns is-mobile is-vcentered">';
 
 		$html .= '<div class="column">';
 		$html .= '<div class="file has-name is-fullwidth">';
@@ -579,7 +584,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	function build_submit_button() {
+	protected function build_submit_button() {
 		if (!$this->submit) {
 			return;
 		}
@@ -645,11 +650,6 @@ class Wnd_Form {
 	// 获取当前表单的组成数据数组（通常用于配合 filter 过滤）
 	function get_input_values() {
 		return $this->input_values;
-	}
-
-	// 设置当前表单的组成数组（通常用于配合 filter 过滤）
-	function set_input_values($input_values) {
-		$this->input_values = $input_values;
 	}
 
 }

@@ -216,11 +216,13 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$defaults = array(
 			'label' => 'Gallery',
 			'thumbnail' => '', //默认缩略图
-			'thumbnail_size' => array('height' => '100', 'width' => '100'),
+			'thumbnail_size' => array('height' => '160', 'width' => '120'),
 			'data' => array(),
-			'delete_button' => true,
 		);
 		$args = array_merge($defaults, $args);
+
+		// 固定args
+		$args['name'] = 'file';
 
 		// 合并$data
 		$defaults_data = array(
@@ -238,47 +240,35 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$args['data']['user_id'] = get_current_user_id();
 		$args['data']['thumbnail'] = $args['thumbnail'];
 
+		// 定义一些本方法需要重复使用的变量
+		$post_parent = $args['data']['post_parent'];
+		$meta_key = $args['data']['meta_key'];
+		$thumbnail_width = $args['thumbnail_size']['width'];
+		$thumbnail_height = $args['thumbnail_size']['height'];
+
 		// 根据user type 查找目标文件
-		// $file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
-		// $file_url = $file_id ? wp_get_attachment_url($file_id) : '';
-
-		// // 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
-		// if ($file_id and !$file_url) {
-		// 	if ($args['data']['post_parent']) {
-		// 		wnd_delete_post_meta($args['data']['post_parent'], $args['data']['meta_key']);
-		// 	} else {
-		// 		wnd_delete_user_meta($args['data']['user_id'], $args['data']['meta_key']);
-		// 	}
-		// }
-
-		$args['name'] = 'file';
-		$args['file_id'] = $file_id ?? 0;
-
-		// parent::add_file_upload($args);
+		$images = $post_parent ? wnd_get_post_meta($post_parent, $meta_key) : wnd_get_user_meta($args['data']['user_id'], $meta_key);
 
 		/**
 		 *@since 2019.05.06 构建 html
 		 */
-		$input_value = $args;
-
 		$id = 'gallery-' . $this->id;
 		$data = ' data-id="' . $id . '"';
-		foreach ($input_value['data'] as $key => $value) {
+		foreach ($args['data'] as $key => $value) {
 			$data .= ' data-' . $key . '="' . $value . '" ';
 		}unset($key, $value);
 
+		// 上传区域
 		$html = '<div id="' . $id . '" class="field upload-field">';
-		if ($input_value['label']) {
-			$html .= '<label class="label">' . $input_value['label'] . '</label>';
-		}
+		$html .= $args['label'] ? '<label class="label">' . $args['label'] . '</label>' : '';
 		$html .= '<div class="field"><div class="ajax-msg"></div></div>';
 
 		$html .= '<div class="field">';
-		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['height'] . '"></a>';
-		$html .= $input_value['delete_button'] ? '<a class="delete" data-id="' . $id . '" data-file_id="' . $input_value['file_id'] . '"></a>' : '';
+
+		$html .= '<a><img class="thumbnail" src="' . $args['thumbnail'] . '" height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
+
 		$html .= '<div class="file">';
-		$html .= '<input type="file" multiple="multiple" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . 'accept="image/*" >';
-		$html .= '</div>';
+		$html .= '<input type="file" multiple="multiple" class="file-input" name="' . $args['name'] . '[]' . '"' . $data . 'accept="image/*" >';
 		$html .= '</div>';
 
 		$html .= '
@@ -289,6 +279,29 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			    fileupload.click();
 			};
 		</script>';
+
+		$html .= '</div>';
+
+		// 遍历输出图片集
+		$html .= '<div class="gallery columns is-vcentered" data-thumbnail-width="' . $thumbnail_width . '" data-thumbnail-height="' . $thumbnail_height . '">';
+		foreach ($images as $key => $attachment_id) {
+
+			$attachment_url = wp_get_attachment_url($attachment_id);
+			if (!$attachment_url) {
+				unset($images[$key]); // 在字段数据中取消已经被删除的图片
+				continue;
+			}
+
+			$html .= '<div id="img' . $attachment_id . '" class="column is-narrow">';
+			$html .= '<a><img class="thumbnail" src="' . $attachment_url . '" height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
+			$html .= '<a class="delete" data-id="' . $id . '" data-file_id="' . $attachment_id . '"></a>';
+			$html .= '</div>';
+
+		}
+		unset($key, $attachment_id);
+		wnd_update_post_meta($post_parent, $meta_key, $images); // 若字段中存在被删除的图片数据，此处更新
+
+		$html .= '</div>';
 
 		$html .= '</div>';
 

@@ -52,17 +52,23 @@ function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
 add_action('wnd_upload_gallery', 'wnd_action_upload_gallery', 10, 2);
 function wnd_action_upload_gallery($image_array, $post_parent) {
 
+	if (empty($image_array)) {
+		return;
+	}
+
 	$images = array();
 
 	foreach ($image_array as $image_info) {
 
-		// 将附件id转字符串 作为键名（整型直接做数组键名会存在有效范围，超过整型范围后会出现负数，0等错乱）
-		$images['\'' . $image_info['data']['id'] . '\''] = $image_info['data']['url'];
+		// 将 img+附件id 作为键名（整型直接做数组键名会存在有效范围，超过整型范围后会出现负数，0等错乱）
+		$images['img' . $image_info['data']['id']] = $image_info['data']['id'];
 	}
 
 	$old_images = wnd_get_post_meta($post_parent, 'gallery');
 	$old_images = is_array($old_images) ? $old_images : array();
-	$new_images = array_merge($old_images, $images);
+
+	// 合并数组，注意新旧数据顺序 array_merge($images, $old_images) 表示将旧数据合并到新数据，因而新上传的在顶部，反之在尾部
+	$new_images = array_merge($images, $old_images);
 
 	wnd_update_post_meta($post_parent, 'gallery', $new_images);
 
@@ -87,7 +93,7 @@ function wnd_action_delete_attachment($attach_id, $post_parent, $meta_key) {
 		// 从相册数组中删除当前图片
 		$images = wnd_get_post_meta($post_parent, 'gallery');
 		$images = is_array($images) ? $images : array();
-		unset($images['\'' . $attach_id . '\'']);
+		unset($images['img' . $attach_id]);
 
 		wnd_update_post_meta($post_parent, 'gallery', $images);
 
