@@ -332,7 +332,7 @@ class Wnd_Form {
 	 *@since 2019.03.06
 	 *表单构造函数
 	 **/
-	protected function build() {
+	function build() {
 		$this->build_form_header();
 		$this->build_input_values();
 		$this->build_submit_button();
@@ -492,6 +492,7 @@ class Wnd_Form {
 		$html .= '<input type="checkbox" id="' . $input_value['name'] . '" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $input_value['value'] . '"' . $this->get_required($input_value);
 		$html .= $input_value['checked'] ? ' checked="checked" >' : ' >';
 		$html .= '<label  for="' . $input_value['name'] . '" class="checkbox">' . $input_value['label'] . '</label>';
+		$html .= '</div>';
 		return $html;
 	}
 

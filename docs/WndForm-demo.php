@@ -22,7 +22,7 @@ $form->add_hidden('hidden_key', 'hidden_value');
 // 获取当前表单的组成数据数组（通常用于配合 filter 过滤）
 $form->get_input_values();
 // 直接设置表单的组成数组（通常用于配合 filter 过滤）
-$form->set_input_values($input_values);
+// $form->set_input_values($input_values);
 
 /**
  *常规表单生成
@@ -190,22 +190,6 @@ $form->add_file_upload(
 		'data' => array('meta_key' => 'file'), // some data on file input, maybe useful in ajax upload
 		'delete_button' => true,
 		'required' => 'required',
-	)
-);
-
-/**
- *@since 2019.05.07 产品相册
- */
-$form->add_gallery_upload(
-	array(
-		'label' => '产品相册',
-		'thumbnail' => WND_URL . 'static/images/default.jpg',
-		'thumbnail_size' => array('height' => '160', 'width' => '120'),
-		'data' => array(
-			'post_parent' => 507, //post id
-			'save_width' => 0, //图片文件存储最大宽度 0 为不限制
-			'save_height' => 0, //图片文件存储最大过度 0 为不限制
-		),
 	)
 );
 

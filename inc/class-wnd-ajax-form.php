@@ -23,7 +23,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 	}
 
-	function build_form_header() {
+	protected function build_form_header() {
 		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax" onsubmit="return false"';
 
 		if ($this->upload) {
