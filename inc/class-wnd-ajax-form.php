@@ -146,6 +146,8 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$args['data']['upload_nonce'] = wp_create_nonce('wnd_ajax_upload_file');
 		$args['data']['delete_nonce'] = wp_create_nonce('wnd_ajax_delete_file');
 		$args['data']['thumbnail'] = $args['thumbnail'];
+		$args['data']['thumbnail-width'] = $args['thumbnail_size']['width'];
+		$args['data']['thumbnail-height'] = $args['thumbnail_size']['height'];
 
 		// 根据user type 查找目标文件
 		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
@@ -272,12 +274,12 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$html .= '<div class="gallery columns is-vcentered has-text-centered">';
 		if (!$images) {
 			$html .= '<div class="column default-msg">';
-			$html .='<p>'.$args['label'].'</p>';
+			$html .= '<p>' . $args['label'] . '</p>';
 			$html .= '</div>';
 		}
 		foreach ($images as $key => $attachment_id) {
 
-			$attachment_url = wp_get_attachment_url($attachment_id);
+			$attachment_url = wnd_get_thumbnail_url($attachment_id, $thumbnail_width, $thumbnail_height);
 			if (!$attachment_url) {
 				unset($images[$key]); // 在字段数据中取消已经被删除的图片
 				continue;

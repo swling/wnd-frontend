@@ -24,7 +24,7 @@ function _wnd_post_form($args = array()) {
 		'with_file' => 0,
 		'with_excerpt' => 0,
 		'with_thumbnail' => 0, //0 无缩略图，1、存储在wnd_meta _thumbnail_id字段: _wnd_the_post_thumbnail($width = 0, $height = 0)
-		'thumbnail_size' => array('width' => 150, 'height' => 150),
+		'thumbnail_size' => array('width' => 160, 'height' => 120),
 		'with_gallery' => 0, //相册
 		'gallery_label' => '', //相册默认提示信息
 		'rich_media_editor' => 1,

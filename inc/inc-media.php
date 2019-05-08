@@ -75,3 +75,15 @@ function wnd_save_remote_image($url, $post_parent, $desc) {
 	$image_src = media_sideload_image($url, $post_parent, $desc, 'src');
 	return $image_src;
 }
+
+/**
+ *@since 2019.05.08 获取图像缩略图
+ *需要将图像存储在阿里云oss，并利用filter对wp_get_attachment_url重写为阿里oss地址
+ *阿里云的图片处理
+ *@link https://help.aliyun.com/document_detail/44688.html
+ */
+function wnd_get_thumbnail_url($attachment_id, $width = 160, $height = 120) {
+
+	return wp_get_attachment_url($attachment_id) . '?x-oss-process=image/resize,m_fill,w_' . $width . ',h_' . $height;
+
+}

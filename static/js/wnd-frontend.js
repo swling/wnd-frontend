@@ -500,7 +500,7 @@ jQuery(document).ready(function($) {
 		var save_height = $(this).data("save_height");
 		var is_image = $(this).data("is_image");
 
-		// 相册缩略图尺寸
+		// 缩略图尺寸
 		var thumbnail_width = $(this).data("thumbnail-width");
 		var thumbnail_height = $(this).data("thumbnail-height");
 
@@ -510,6 +510,8 @@ jQuery(document).ready(function($) {
 		form_data.append("_ajax_nonce", _ajax_nonce);
 		form_data.append("save_width", save_width);
 		form_data.append("save_height", save_height);
+		form_data.append("thumbnail_height", thumbnail_height);
+		form_data.append("thumbnail_width", thumbnail_width);
 		form_data.append("action", "wnd_ajax_upload_file");
 
 		$.ajax({

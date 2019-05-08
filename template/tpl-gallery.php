@@ -17,7 +17,7 @@ function _wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120)
 	$html = '<div class="gallery columns is-vcentered has-text-centered">';
 	foreach ($images as $key => $attachment_id) {
 
-		$attachment_url = _wnd_get_thumbnail_url($attachment_id, $thumbnail_width, $thumbnail_height);
+		$attachment_url = wnd_get_thumbnail_url($attachment_id, $thumbnail_width, $thumbnail_height);
 		if (!$attachment_url) {
 			unset($images[$key]); // 在字段数据中取消已经被删除的图片
 			continue;
@@ -33,17 +33,5 @@ function _wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120)
 	$html .= '</div>';
 
 	return $html;
-
-}
-
-/**
- *@since 2019.05.08 获取图像缩略图
- *需要将图像存储在阿里云oss，并利用filter对wp_get_attachment_url重写为阿里oss地址
- *阿里云的图片处理
- *@link https://help.aliyun.com/document_detail/44688.html
- */
-function _wnd_get_thumbnail_url($attachment_id, $width = 160, $height = 120) {
-
-	return wp_get_attachment_url($attachment_id) . '?x-oss-process=image/resize,m_fill,w_' . $width . ',h_' . $height;
 
 }

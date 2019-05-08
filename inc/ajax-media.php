@@ -28,6 +28,8 @@ function wnd_ajax_upload_file() {
 
 	$save_width = (int) $_POST["save_width"] ?? 0;
 	$save_height = (int) $_POST["save_height"] ?? 0;
+	$thumbnail_height = (int) $_POST["thumbnail_height"] ?? 0;
+	$thumbnail_width = (int) $_POST["thumbnail_width"] ?? 0;
 	$meta_key = $_POST['meta_key'] ?? NULL;
 	$post_parent = (int) $_POST['post_parent'] ?? 0;
 	$user_id = get_current_user_id();
@@ -43,10 +45,10 @@ function wnd_ajax_upload_file() {
 	if ($can_upload_file['status'] === 0) {
 		return array(array($can_upload_file));
 	}
-	
+
 	if ($post_parent and !current_user_can('edit_post', $post_parent)) {
 		return array(array('status' => 0, 'msg' => '权限错误！'));
-	}	
+	}
 
 	// 上传信息校验
 	if (!$user_id and !$post_parent) {
@@ -107,10 +109,17 @@ function wnd_ajax_upload_file() {
 			}
 		}
 
+		// 判断是否为图片
+		if (strrpos($file['type'], 'image') === false) {
+			$url = wp_get_attachment_url($file_id);
+		} else {
+			$url = wnd_get_thumbnail_url($file_id, $thumbnail_width, $thumbnail_height);
+		}
+
 		// 将当前上传的图片信息写入数组
 		$temp_array = array(
 			'status' => 1,
-			'data' => array('url' => wp_get_attachment_url($file_id), 'id' => $file_id),
+			'data' => array('url' => $url, 'id' => $file_id),
 			'msg' => '上传成功！',
 		);
 		array_push($return_array, $temp_array);
