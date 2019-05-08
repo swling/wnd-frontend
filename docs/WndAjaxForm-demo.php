@@ -227,10 +227,9 @@ function _wnd_demo_form() {
 	$form->add_gallery_upload(
 		array(
 			'label' => '产品相册',
-			'thumbnail' => WND_URL . 'static/images/default.jpg',
 			'thumbnail_size' => array('height' => '160', 'width' => '120'),
 			'data' => array(
-				'post_parent' => 507, //post id
+				'post_parent' => 1,
 				'save_width' => 0, //图片文件存储最大宽度 0 为不限制
 				'save_height' => 0, //图片文件存储最大过度 0 为不限制
 			),

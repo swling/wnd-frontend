@@ -157,8 +157,8 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		parent::add_html(_wnd_get_tags_editor_script(3, 20, $placeholder, $taxonomy));
 	}
 
-	function add_post_thumbnail($size = array('width' => 200, 'height' => 200), $label = '') {
-		self::add_post_image_upload('_thumbnail_id', array('width' => 200, 'height' => 200), '');
+	function add_post_thumbnail($width = 200, $height = 200, $label = '') {
+		self::add_post_image_upload('_thumbnail_id', $width, $height, $label);
 	}
 
 	function add_post_content($rich_media_editor = true, $required = false, $placeholder = '详情') {
@@ -219,16 +219,16 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 	 *@since 2019.04.28 上传字段简易封装
 	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Ajax_Form
 	 */
-	function add_post_image_upload($meta_key, $size = array('width' => 200, 'height' => 200), $label = '') {
+	function add_post_image_upload($meta_key, $width = 200, $height = 200, $label = '') {
 		$args = array(
 			'label' => $label,
-			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
+			'thumbnail_size' => array('width' => $width, 'height' => $height),
 			'thumbnail' => WND_URL . '/static/images/default.jpg',
 			'data' => array(
 				'post_parent' => $this->post_id,
 				'meta_key' => $meta_key,
-				'save_width' => $size['width'],
-				'save_height' => $size['height'],
+				'save_width' => $width,
+				'save_height' => $height,
 			),
 			'delete_button' => false,
 		);
@@ -245,6 +245,24 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 				),
 			)
 		);
+	}
+
+	/**
+	 *@since 2019.05.08 上传图片集
+	 */
+	function add_post_gallery_upload($thumbnail_width = 160, $thumbnail_height = 120, $label = '') {
+
+		$args = array(
+			'label' => $label,
+			'thumbnail_size' => array('width' => $thumbnail_width, 'height' => $thumbnail_height),
+			'data' => array(
+				'post_parent' => $this->post_id,
+				'save_width' => 0, //图片文件存储最大宽度 0 为不限制
+				'save_height' => 0, //图片文件存储最大过度 0 为不限制
+			),
+		);
+
+		parent::add_gallery_upload($args);
 	}
 
 }

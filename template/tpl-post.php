@@ -21,10 +21,12 @@ function _wnd_post_form($args = array()) {
 		'post_type' => 'post',
 		'post_parent' => 0,
 		'is_free' => 1,
-		'has_file' => 0,
-		'has_excerpt' => 0,
-		'has_thumbnail' => 0, //0 无缩略图，1、存储在wnd_meta _thumbnail_id字段: _wnd_the_post_thumbnail($width = 0, $height = 0)
+		'with_file' => 0,
+		'with_excerpt' => 0,
+		'with_thumbnail' => 0, //0 无缩略图，1、存储在wnd_meta _thumbnail_id字段: _wnd_the_post_thumbnail($width = 0, $height = 0)
 		'thumbnail_size' => array('width' => 150, 'height' => 150),
+		'with_gallery' => 0, //相册
+		'gallery_label' => '', //相册默认提示信息
 		'rich_media_editor' => 1,
 	);
 	$args = wp_parse_args($args, $defaults);
@@ -75,7 +77,7 @@ function _wnd_post_form($args = array()) {
 
 	$form->add_post_title();
 
-	if ($args['has_excerpt']) {
+	if ($args['with_excerpt']) {
 		$form->add_post_excerpt();
 	}
 
@@ -103,11 +105,17 @@ function _wnd_post_form($args = array()) {
 		unset($tag_taxonomy);
 	}
 
-	if ($args['has_thumbnail']) {
-		$form->add_post_thumbnail($args['thumbnail_size']);
+	// 缩略图
+	if ($args['with_thumbnail']) {
+		$form->add_post_thumbnail($args['thumbnail_size']['width'], $args['thumbnail_size']['height']);
 	}
 
-	if ($args['has_file'] or !$args['is_free']) {
+	// 相册
+	if ($args['with_gallery']) {
+		$form->add_post_gallery_upload($args['thumbnail_size']['width'], $args['thumbnail_size']['height'], $args['gallery_label']);
+	}
+
+	if ($args['with_file'] or !$args['is_free']) {
 		$form->add_post_file_upload($meta_key = 'file');
 	}
 

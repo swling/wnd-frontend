@@ -136,7 +136,7 @@ function wnd_filter_limit_upload($file) {
 	} else {
 
 		// 非图片文件MD5重命名（用于付费下载加密）
-		$file['name'] = md5(wnd_random(6) . time()) . $ext;
+		$file['name'] = md5(wnd_random(16) . time()) . $ext;
 	}
 
 	return $file;

@@ -15,6 +15,7 @@ if (!defined('ABSPATH')) {
  *@param $_POST["save_height"]
  *@param $_POST['meta_key']
  *@param $_POST['post_parent']
+ *@param $return_array array 二维数组
  */
 function wnd_ajax_upload_file() {
 
@@ -40,26 +41,24 @@ function wnd_ajax_upload_file() {
 	 */
 	$can_upload_file = apply_filters('wnd_can_upload_file', array('status' => 1, 'msg' => '默认通过'), $post_parent, $meta_key);
 	if ($can_upload_file['status'] === 0) {
-		return array($can_upload_file);
+		return array(array($can_upload_file));
 	}
+	
+	if ($post_parent and !current_user_can('edit_post', $post_parent)) {
+		return array(array('status' => 0, 'msg' => '权限错误！'));
+	}	
 
 	// 上传信息校验
 	if (!$user_id and !$post_parent) {
-		$temp_array = array('status' => 0, 'msg' => '错误：user ID及post ID均为空！');
-		array_push($return_array, $temp_array);
-		return $return_array;
+		return array(array('status' => 0, 'msg' => '错误：user ID及post ID均为空！'));
 	}
 
 	if (!$meta_key) {
-		$temp_array = array('status' => 0, 'msg' => '错误：未定义meta_key！');
-		array_push($return_array, $temp_array);
-		return $return_array;
+		return array(array('status' => 0, 'msg' => '错误：未定义meta_key！'));
 	}
 
 	if (empty($_FILES)) {
-		$temp_array = array('status' => 0, 'msg' => '获取上传文件失败！');
-		array_push($return_array, $temp_array);
-		return $return_array;
+		return array(array('status' => 0, 'msg' => '获取上传文件失败！'));
 	}
 
 	/**

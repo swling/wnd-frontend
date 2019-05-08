@@ -124,7 +124,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		$defaults = array(
 			'label' => 'Image upland',
-			'thumbnail' => '', //默认缩略图
+			'thumbnail' => WND_URL . 'static/images/default.jpg', //默认缩略图
 			'thumbnail_size' => array('height' => '100', 'width' => '100'),
 			'data' => array(),
 			'delete_button' => true,
@@ -134,6 +134,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		// 合并$data
 		$defaults_data = array(
 			'post_parent' => 0,
+			'user_id' => get_current_user_id(),
 			'meta_key' => 0,
 			'save_width' => 0, //图片文件存储最大宽度 0 为不限制
 			'save_height' => 0, //图片文件存储最大过度 0 为不限制
@@ -144,7 +145,6 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$args['data']['is_image'] = '1';
 		$args['data']['upload_nonce'] = wp_create_nonce('wnd_ajax_upload_file');
 		$args['data']['delete_nonce'] = wp_create_nonce('wnd_ajax_delete_file');
-		$args['data']['user_id'] = get_current_user_id();
 		$args['data']['thumbnail'] = $args['thumbnail'];
 
 		// 根据user type 查找目标文件
@@ -180,6 +180,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		$defaults_data = array(
 			'post_parent' => 0,
+			'user_id' => get_current_user_id(),
 			'meta_key' => 0,
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
@@ -187,7 +188,6 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		// 固定data
 		$args['data']['upload_nonce'] = wp_create_nonce('wnd_ajax_upload_file');
 		$args['data']['delete_nonce'] = wp_create_nonce('wnd_ajax_delete_file');
-		$args['data']['user_id'] = get_current_user_id();
 
 		// 根据meta key 查找目标文件
 		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
@@ -215,30 +215,26 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		$defaults = array(
 			'label' => 'Gallery',
-			'thumbnail' => '', //默认缩略图
-			'thumbnail_size' => array('height' => '160', 'width' => '120'),
+			'thumbnail_size' => array('width' => '160', 'height' => '120'),
 			'data' => array(),
 		);
 		$args = array_merge($defaults, $args);
 
-		// 固定args
-		$args['name'] = 'file';
-
 		// 合并$data
 		$defaults_data = array(
 			'post_parent' => 0,
+			'user_id' => get_current_user_id(),
 			'save_width' => 0, //图片文件存储最大宽度 0 为不限制
 			'save_height' => 0, //图片文件存储最大过度 0 为不限制
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
 		// 固定data
-		$args['data']['is_image'] = '1';
 		$args['data']['meta_key'] = 'gallery';
 		$args['data']['upload_nonce'] = wp_create_nonce('wnd_ajax_upload_file');
 		$args['data']['delete_nonce'] = wp_create_nonce('wnd_ajax_delete_file');
-		$args['data']['user_id'] = get_current_user_id();
-		$args['data']['thumbnail'] = $args['thumbnail'];
+		$args['data']['thumbnail-width'] = $args['thumbnail_size']['width'];
+		$args['data']['thumbnail-height'] = $args['thumbnail_size']['height'];
 
 		// 定义一些本方法需要重复使用的变量
 		$post_parent = $args['data']['post_parent'];
@@ -248,6 +244,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		// 根据user type 查找目标文件
 		$images = $post_parent ? wnd_get_post_meta($post_parent, $meta_key) : wnd_get_user_meta($args['data']['user_id'], $meta_key);
+		$images = is_array($images) ? $images : array();
 
 		/**
 		 *@since 2019.05.06 构建 html
@@ -258,32 +255,26 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			$data .= ' data-' . $key . '="' . $value . '" ';
 		}unset($key, $value);
 
-		// 上传区域
 		$html = '<div id="' . $id . '" class="field upload-field">';
-		$html .= $args['label'] ? '<label class="label">' . $args['label'] . '</label>' : '';
 		$html .= '<div class="field"><div class="ajax-msg"></div></div>';
 
+		// 上传区域
 		$html .= '<div class="field">';
-
-		$html .= '<a><img class="thumbnail" src="' . $args['thumbnail'] . '" height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
-
 		$html .= '<div class="file">';
-		$html .= '<input type="file" multiple="multiple" class="file-input" name="' . $args['name'] . '[]' . '"' . $data . 'accept="image/*" >';
+		$html .= '<label class="file-label">';
+		$html .= '<input type="file" multiple="multiple" class="file-input" name="file[]' . '"' . $data . 'accept="image/*" >';
+		$html .= ' <span class="file-cta"><span class="file-icon"><i class="fas fa-upload"></i></span><span class="file-label">选择图片</span></span>';
+		$html .= '</label>';
 		$html .= '</div>';
-
-		$html .= '
-		<script type="text/javascript">
-			var fileupload = document.querySelector("#' . $id . ' input[type=\'file\']");
-			var image = document.querySelector("#' . $id . ' .thumbnail");
-			image.onclick = function () {
-			    fileupload.click();
-			};
-		</script>';
-
 		$html .= '</div>';
 
 		// 遍历输出图片集
-		$html .= '<div class="gallery columns is-vcentered" data-thumbnail-width="' . $thumbnail_width . '" data-thumbnail-height="' . $thumbnail_height . '">';
+		$html .= '<div class="gallery columns is-vcentered has-text-centered">';
+		if (!$images) {
+			$html .= '<div class="column default-msg">';
+			$html .='<p>'.$args['label'].'</p>';
+			$html .= '</div>';
+		}
 		foreach ($images as $key => $attachment_id) {
 
 			$attachment_url = wp_get_attachment_url($attachment_id);
@@ -300,7 +291,6 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		}
 		unset($key, $attachment_id);
 		wnd_update_post_meta($post_parent, $meta_key, $images); // 若字段中存在被删除的图片数据，此处更新
-
 		$html .= '</div>';
 
 		$html .= '</div>';

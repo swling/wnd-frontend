@@ -500,6 +500,10 @@ jQuery(document).ready(function($) {
 		var save_height = $(this).data("save_height");
 		var is_image = $(this).data("is_image");
 
+		// 相册缩略图尺寸
+		var thumbnail_width = $(this).data("thumbnail-width");
+		var thumbnail_height = $(this).data("thumbnail-height");
+
 		// 组合表单属性数据
 		form_data.append("meta_key", meta_key);
 		form_data.append("post_parent", post_parent);
@@ -537,8 +541,8 @@ jQuery(document).ready(function($) {
 
 					// 相册
 					if (meta_key == "gallery") {
-						var thumbnail_width = $("#" + id + " .gallery").data("thumbnail-width");
-						var thumbnail_height = $("#" + id + " .gallery").data("thumbnail-height");
+						// 清除默认提示信息
+						$("#" + id + " .gallery .default-msg").remove();
 						var new_img_element =
 							'<div id="img' + response[i].data.id + '" class="column is-narrow">' +
 							'<a><img class="thumbnail" src="' + response[i].data.url + '" width="' + thumbnail_width + '" width="' + thumbnail_height + '"></a>' +
@@ -633,6 +637,10 @@ jQuery(document).ready(function($) {
 				// 相册
 				if (meta_key == "gallery") {
 					$("#img" + file_id).remove();
+					// 删除全部图片时，显示提示信息
+					if ($("#" + id + " .gallery").html() == "") {
+						$("#" + id + " .gallery").html('<div class="column default-msg"><p>已删除全部图片</p></div>')
+					}
 
 					// 单张图片
 				} else if (is_image == 1) {
