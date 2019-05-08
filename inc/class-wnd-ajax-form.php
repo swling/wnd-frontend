@@ -151,7 +151,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		// 根据user type 查找目标文件
 		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
-		$file_url = $file_id ? wp_get_attachment_url($file_id) : '';
+		$file_url = $file_id ? wnd_get_thumbnail_url($file_id, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']) : '';
 
 		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
 		if ($file_id and !$file_url) {

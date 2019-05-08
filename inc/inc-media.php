@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 function wnd_download_file($the_file, $rename = 'download') {
 
 	// 获取文件后缀信息
-	$ext = '.' . pathinfo($the_file)['extension'];	
+	$ext = '.' . pathinfo($the_file)['extension'];
 
 	// Force download
 	header("Content-type: application/x-file-to-save");
@@ -84,6 +84,11 @@ function wnd_save_remote_image($url, $post_parent, $desc) {
  */
 function wnd_get_thumbnail_url($attachment_id, $width = 160, $height = 120) {
 
-	return wp_get_attachment_url($attachment_id) . '?x-oss-process=image/resize,m_fill,w_' . $width . ',h_' . $height;
+	$url = wp_get_attachment_url($attachment_id);
+	if (!$url) {
+		return false;
+	}
+
+	return $url . '?x-oss-process=image/resize,m_fill,w_' . $width . ',h_' . $height;
 
 }
