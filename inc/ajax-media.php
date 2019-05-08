@@ -26,11 +26,8 @@ if (!defined('ABSPATH')) {
  */
 function wnd_ajax_upload_file() {
 
-	// These files need to be included as dependencies when on the front end.
-	if (!is_admin()) {
-		require ABSPATH . 'wp-admin/includes/image.php';
-		require ABSPATH . 'wp-admin/includes/file.php';
-		require ABSPATH . 'wp-admin/includes/media.php';
+	if (empty($_FILES)) {
+		return array(array('status' => 0, 'msg' => '获取上传文件失败！'));
 	}
 
 	$save_width = (int) $_POST["save_width"] ?? 0;
@@ -43,6 +40,18 @@ function wnd_ajax_upload_file() {
 
 	// 定义返回信息
 	$return_array = array();
+
+	/**
+	 *@since 2019.05.08 上传文件meta key过滤
+	 */
+	if (!$meta_key) {
+		return array(array('status' => 0, 'msg' => '错误：未定义meta_key！'));
+	}
+	if (wnd_get_option('wnd', 'wnd_enable_white_list')) {
+		if (!in_array($meta_key, explode(',', wnd_get_option('wnd', 'wnd_allowed_upload_meta_key')))) {
+			return array(array('status' => 0, 'msg' => 'Meta_Key未经允许！'));
+		}
+	}
 
 	/**
 	 *@since 2019.04.16
@@ -62,12 +71,11 @@ function wnd_ajax_upload_file() {
 		return array(array('status' => 0, 'msg' => '错误：user ID及post ID均为空！'));
 	}
 
-	if (!$meta_key) {
-		return array(array('status' => 0, 'msg' => '错误：未定义meta_key！'));
-	}
-
-	if (empty($_FILES)) {
-		return array(array('status' => 0, 'msg' => '获取上传文件失败！'));
+	// These files need to be included as dependencies when on the front end.
+	if (!is_admin()) {
+		require ABSPATH . 'wp-admin/includes/image.php';
+		require ABSPATH . 'wp-admin/includes/file.php';
+		require ABSPATH . 'wp-admin/includes/media.php';
 	}
 
 	/**
