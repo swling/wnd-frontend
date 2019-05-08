@@ -81,10 +81,11 @@ function wnd_save_remote_image($url, $post_parent, $desc) {
  *需要将图像存储在阿里云oss，并利用filter对wp_get_attachment_url重写为阿里oss地址
  *阿里云的图片处理
  *@link https://help.aliyun.com/document_detail/44688.html
+ *@param $is_or_url int 	or string 	附件post id 或者oss完整图片地址
  */
-function wnd_get_thumbnail_url($attachment_id, $width = 160, $height = 120) {
+function wnd_get_thumbnail_url($id_or_url, $width = 160, $height = 120) {
 
-	$url = wp_get_attachment_url($attachment_id);
+	$url = is_numeric($id_or_url) ? wp_get_attachment_url($id_or_url) : $id_or_url;
 	if (!$url) {
 		return false;
 	}

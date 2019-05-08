@@ -57,12 +57,17 @@ function wnd_action_upload_gallery($image_array, $post_parent) {
 	}
 
 	$images = array();
-
 	foreach ($image_array as $image_info) {
+
+		// 上传失败的图片跳出
+		if ($image_info['status'] === 0) {
+			continue;
+		}
 
 		// 将 img+附件id 作为键名（整型直接做数组键名会存在有效范围，超过整型范围后会出现负数，0等错乱）
 		$images['img' . $image_info['data']['id']] = $image_info['data']['id'];
 	}
+	unset($image_array, $image_info);
 
 	$old_images = wnd_get_post_meta($post_parent, 'gallery');
 	$old_images = is_array($old_images) ? $old_images : array();

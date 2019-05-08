@@ -279,14 +279,15 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		}
 		foreach ($images as $key => $attachment_id) {
 
-			$attachment_url = wnd_get_thumbnail_url($attachment_id, $thumbnail_width, $thumbnail_height);
+			$attachment_url = wp_get_attachment_url($attachment_id);
+			$thumbnail_url = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
 			if (!$attachment_url) {
 				unset($images[$key]); // 在字段数据中取消已经被删除的图片
 				continue;
 			}
 
 			$html .= '<div id="img' . $attachment_id . '" class="column is-narrow">';
-			$html .= '<a><img class="thumbnail" src="' . $attachment_url . '" height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
+			$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '"height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
 			$html .= '<a class="delete" data-id="' . $id . '" data-file_id="' . $attachment_id . '"></a>';
 			$html .= '</div>';
 

@@ -547,7 +547,7 @@ jQuery(document).ready(function($) {
 						$("#" + id + " .gallery .default-msg").remove();
 						var new_img_element =
 							'<div id="img' + response[i].data.id + '" class="column is-narrow">' +
-							'<a><img class="thumbnail" src="' + response[i].data.url + '" width="' + thumbnail_width + '" width="' + thumbnail_height + '"></a>' +
+							'<a><img class="thumbnail" src="' + response[i].data.thumbnail + '" data-url="' + response[i].data.url + '" width="' + thumbnail_width + '" width="' + thumbnail_height + '"></a>' +
 							'<a class="delete" data-id="' + id + '" data-file_id="' + response[i].data.id + '"></a>' +
 							'</div>';
 						$("#" + id + " .gallery").prepend(new_img_element);
@@ -556,7 +556,7 @@ jQuery(document).ready(function($) {
 					} else if (is_image == 1) {
 
 						//常规单张图片
-						$("#" + id + " .thumbnail").prop("src", response[i].data.url);
+						$("#" + id + " .thumbnail").prop("src", response[i].data.thumbnail);
 						$("#" + id + " .delete").data("file_id", response[i].data.id)
 
 						// 单个文件上传
@@ -793,7 +793,7 @@ jQuery(document).ready(function($) {
 		})
 
 
-		var element = '<img src="' + $(this).attr("src") + '" />';
+		var element = '<img src="' + $(this).data("url") + '" />';
 		wnd_alert_modal(element, true);
 	});
 

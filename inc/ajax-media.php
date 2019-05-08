@@ -16,6 +16,13 @@ if (!defined('ABSPATH')) {
  *@param $_POST['meta_key']
  *@param $_POST['post_parent']
  *@param $return_array array 二维数组
+ *	array(
+ *		array(
+ *			'status' => 1,
+ *			'data' => array('url' => $url, 'thumbnail' => $thumbnail ?? 0, 'id' => $file_id),
+ *			'msg' => '上传成功！',
+ *		),
+ *	);
  */
 function wnd_ajax_upload_file() {
 
@@ -43,7 +50,7 @@ function wnd_ajax_upload_file() {
 	 */
 	$can_upload_file = apply_filters('wnd_can_upload_file', array('status' => 1, 'msg' => '默认通过'), $post_parent, $meta_key);
 	if ($can_upload_file['status'] === 0) {
-		return array(array($can_upload_file));
+		return array($can_upload_file);
 	}
 
 	if ($post_parent and !current_user_can('edit_post', $post_parent)) {
@@ -83,43 +90,43 @@ function wnd_ajax_upload_file() {
 
 		// 单文件错误检测
 		if ($_FILES['temp_key']['error'] > 0) {
-			$temp_array = array('status' => 0, 'msg' => 'Error: ' . $_FILES['temp_key']['error']);
-			array_push($return_array, $temp_array);
-			return $return_array;
+			array_push($return_array, array('status' => 0, 'msg' => 'Error: ' . $_FILES['temp_key']['error']));
+			continue;
 		}
 
-		//上传文件并附属到对应的post 默认为0 即孤立文件
+		//上传文件并附属到对应的post parent 默认为0 即孤立文件
 		$file_id = media_handle_upload('temp_key', $post_parent);
 
 		// 上传失败
 		if (is_wp_error($file_id)) {
-			$temp_array = array('status' => 0, 'msg' => $file_id->get_error_message());
-			array_push($return_array, $temp_array);
+			array_push($return_array, array('status' => 0, 'msg' => $file_id->get_error_message()));
 			continue;
 		}
 
-		//上传成功，根据尺寸进行图片裁剪
-		if ($save_width or $save_height) {
-			//获取文件服务器路径
-			$image_file = get_attached_file($file_id);
-			$image = wp_get_image_editor($image_file);
-			if (!is_wp_error($image)) {
-				$image->resize($save_width, $save_height, array('center', 'center'));
-				$image->save($image_file);
-			}
-		}
+		$url = wp_get_attachment_url($file_id);
 
 		// 判断是否为图片
-		if (strrpos($file['type'], 'image') === false) {
-			$url = wp_get_attachment_url($file_id);
-		} else {
-			$url = wnd_get_thumbnail_url($file_id, $thumbnail_width, $thumbnail_height);
+		if (strrpos($file['type'], 'image') !== false) {
+
+			//根据尺寸进行图片裁剪
+			if ($save_width or $save_height) {
+				//获取文件服务器路径
+				$image_file = get_attached_file($file_id);
+				$image = wp_get_image_editor($image_file);
+				if (!is_wp_error($image)) {
+					$image->resize($save_width, $save_height, array('center', 'center'));
+					$image->save($image_file);
+				}
+			}
+
+			// 返回缩略图
+			$thumbnail = wnd_get_thumbnail_url($url, $thumbnail_width, $thumbnail_height);
 		}
 
 		// 将当前上传的图片信息写入数组
 		$temp_array = array(
 			'status' => 1,
-			'data' => array('url' => $url, 'id' => $file_id),
+			'data' => array('url' => $url, 'thumbnail' => $thumbnail ?? 0, 'id' => $file_id),
 			'msg' => '上传成功！',
 		);
 		array_push($return_array, $temp_array);
