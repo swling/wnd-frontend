@@ -105,6 +105,23 @@ function wnd_filter_list_table_data($post) {
 }
 
 /**
+ *@since 2019.05.08 文件上传meta_key过滤
+ */
+add_filter('wnd_can_upload_file', 'wnd_filter_upload_file', 10, 3);
+function wnd_filter_upload_file($can_array, $post_parent, $meta_key) {
+
+	if (!wnd_get_option('wnd', 'wnd_enable_white_list') == 1) {
+		return $can_array;
+	}
+
+	$allowed_upload_meta_key = explode(',', wnd_get_option('wnd', 'wnd_allowed_upload_meta_key'));
+	if (!in_array($meta_key, $allowed_upload_meta_key)) {
+		return array('status' => 0, 'msg' => '未经允许的文件上传');
+	}
+
+}
+
+/**
  * ############################################################################ 以下为WordPress原生filter
  */
 

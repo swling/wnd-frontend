@@ -89,6 +89,12 @@ function wnd_options(){
 					<textarea name="wnd_allowed_wp_user_meta_key" value="" class="regular-text"><?php echo wnd_get_option('wnd','wnd_allowed_wp_user_meta_key');?></textarea>
 				</td>
 			</tr>
+			<tr>
+				<td valign="top">允许的文件上传meta_key</td>
+				<td>
+					<textarea name="wnd_allowed_upload_meta_key" value="" class="regular-text"><?php echo wnd_get_option('wnd','wnd_allowed_upload_meta_key');?></textarea>
+				</td>
+			</tr>			
 
 			<!--优化选项-->
 			<tr>
