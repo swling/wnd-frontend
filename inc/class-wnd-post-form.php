@@ -5,6 +5,7 @@
  *@since 2019.03.11
  *@param $post_type 	string
  *@param $post_id 		int
+ *@param $field_only 	bool 	是否只生成表单字段（不添加post form 属性字段）
  */
 class Wnd_Post_Form extends Wnd_Ajax_Form {
 

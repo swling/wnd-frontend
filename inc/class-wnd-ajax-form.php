@@ -15,11 +15,33 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$this->filter = $filter;
 	}
 
+	// 构造表单，可设置WordPress filter 过滤表单的input_values
+	function build() {
+
+		/**
+		 *设置表单过滤filter
+		 **/
+		if ($this->filter) {
+			$this->input_values = apply_filters($this->filter, $this->input_values);
+		}
+
+		/**
+		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
+		 **/
+		$this->build_form_nonce();
+
+		/**
+		 *构建表单
+		 */
+		parent::build();
+
+	}
+
 	/**
 	 *@since 2019.05.09
 	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
 	 */
-	function set_form_nonce() {
+	protected function build_form_nonce() {
 
 		$form_names = array('_wnd_form_nonce'); // nonce自身字段也需要包含在内
 		foreach ($this->get_input_values() as $input_value) {
@@ -42,29 +64,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$nonce = wp_create_nonce(md5(implode('', $form_names)));
 		parent::add_hidden('_wnd_form_nonce', $nonce);
 
-	}
-
-	// 构造表单，可设置WordPress filter 过滤表单的input_values
-	function build() {
-
-		/**
-		 *设置表单过滤filter
-		 **/
-		if ($this->filter) {
-			$this->input_values = apply_filters($this->filter, $this->input_values);
-		}
-
-		/**
-		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
-		 **/
-		$this->set_form_nonce();
-
-		/**
-		 *构建表单
-		 */
-		parent::build();
-
-	}
+	}	
 
 	protected function build_form_header() {
 		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax" onsubmit="return false"';

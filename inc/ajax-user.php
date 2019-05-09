@@ -307,7 +307,7 @@ function wnd_ajax_update_account() {
 function wnd_ajax_reset_password() {
 
 	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'];
-	$text = $field == 'phone' ? '手机' : '邮箱';
+	$text = is_email($email_or_phone) ? '邮箱' : '手机';
 
 	$new_password = $_POST['_user_new_pass'];
 	$new_password_repeat = $_POST['_user_new_pass_repeat'];

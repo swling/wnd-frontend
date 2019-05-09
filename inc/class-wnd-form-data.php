@@ -3,17 +3,18 @@
 /**
  *根据表单name提取标题数据
  *@since 2019.03.04
+ *@param $verify_form_nonce 	bool 	是否校验表单字段由Wnd_Ajax_Form表单类生成
  */
 class Wnd_Form_Data {
 
 	static $enable_white_list;
 	public $form_data;
 
-	function __construct() {
+	function __construct($verify_form_nonce = true) {
 
 		Wnd_Form_Data::$enable_white_list = wnd_get_option('wnd', 'wnd_enable_white_list');
 
-		if (Wnd_Form_Data::$enable_white_list and !$this->verify_nonce()) {
+		if ($verify_form_nonce and Wnd_Form_Data::$enable_white_list and !$this->verify_form_nonce()) {
 			exit('表单数据为空或已被篡改！');
 		}
 
@@ -27,7 +28,7 @@ class Wnd_Form_Data {
 	 *此处应该校验全局变量 $_POST 而非 $this->form_data 因为后者可能被filter修改，而修改后的数据与表单提交可能不同
 	 *通过filter修改的数据视为自动允许的数据
 	 */
-	public function verify_nonce() {
+	protected function verify_form_nonce() {
 
 		if (!isset($_POST['_wnd_form_nonce'])) {
 			return false;

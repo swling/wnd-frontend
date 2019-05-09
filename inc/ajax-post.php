@@ -7,17 +7,18 @@ if (!defined('ABSPATH')) {
 /**
  *@since 初始化
  *保存提交数据
- *@param $_POST 	表单数据
- *@return array
+ *@param 	$_POST 						全局表单数据
+ *@param 	$verify_form_nonce  bool 	是否校验表单数据来源 
+ *@return 	array 						操作结果
  **/
-function wnd_ajax_insert_post() {
+function wnd_ajax_insert_post($verify_form_nonce = true) {
 
 	if (empty($_POST)) {
 		return array('status' => 0, 'msg' => '数据为空');
 	}
 
 	// 实例化当前提交的表单数据
-	$form_data = new Wnd_Form_Data();
+	$form_data = new Wnd_Form_Data($verify_form_nonce);
 	$post_array = $form_data->get_post_array();
 	$meta_array = $form_data->get_post_meta_array();
 	$wp_meta_array = $form_data->get_wp_post_meta_array();
