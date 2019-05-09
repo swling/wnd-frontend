@@ -270,7 +270,7 @@ class Wnd_Form {
 
 		array_push($this->input_values, array(
 			'id' => $args['id'],
-			'type' => "image",
+			'type' => 'image_upload',
 			'name' => $args['name'],
 			'label' => $args['label'],
 			'thumbnail' => $args['thumbnail'],
@@ -303,7 +303,7 @@ class Wnd_Form {
 
 		array_push($this->input_values, array(
 			'id' => $args['id'],
-			'type' => "file",
+			'type' => 'file_upload',
 			'name' => $args['name'],
 			'label' => $args['label'],
 			'file_name' => $args['file_name'],
@@ -390,10 +390,10 @@ class Wnd_Form {
 			case 'select':
 				$html .= $this->build_select($input_value);
 				break;
-			case 'image':
+			case 'image_upload':
 				$html .= $this->build_image_upload($input_value);
 				break;
-			case 'file':
+			case 'file_upload':
 				$html .= $this->build_file_upload($input_value);
 				break;
 			case 'textarea':

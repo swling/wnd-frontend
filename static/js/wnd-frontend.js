@@ -373,13 +373,13 @@ function wnd_ajax_submit(form_id) {
 
 					//更新类
 				case 2:
-					wnd_ajax_msg('提交成功！<a href="' + response.msg + '" target="_blank">查看</a>', color, "#" + form_id);
+					wnd_ajax_msg('提交成功！<a href="' + response.data.url + '" target="_blank">查看</a>', color, "#" + form_id);
 					break;
 
 					// 跳转类
 				case 3:
 					wnd_ajax_msg("请稍后……", color, "#" + form_id);
-					$(window.location).attr("href", response.msg);
+					$(window.location).attr("href", response.data.redirect_to);
 					break;
 
 					// 刷新当前页面
@@ -396,7 +396,7 @@ function wnd_ajax_submit(form_id) {
 					// 下载类
 				case 6:
 					wnd_ajax_msg("下载中……", color, "#" + form_id, 10);
-					$(window.location).attr("href", response.msg);
+					$(window.location).attr("href", response.data.redirect_to);
 					break;
 
 					//默认展示提示信息
@@ -496,6 +496,7 @@ jQuery(document).ready(function($) {
 		var meta_key = $(this).data("meta_key");
 		var post_parent = $(this).data("post_parent");
 		var _ajax_nonce = $(this).data("upload_nonce");
+		var _meta_key_nonce = $(this).data("meta_key_nonce");
 		var save_width = $(this).data("save_width");
 		var save_height = $(this).data("save_height");
 		var is_image = $(this).data("is_image");
@@ -508,6 +509,7 @@ jQuery(document).ready(function($) {
 		form_data.append("meta_key", meta_key);
 		form_data.append("post_parent", post_parent);
 		form_data.append("_ajax_nonce", _ajax_nonce);
+		form_data.append("_meta_key_nonce", _meta_key_nonce);
 		form_data.append("save_width", save_width);
 		form_data.append("save_height", save_height);
 		form_data.append("thumbnail_height", thumbnail_height);

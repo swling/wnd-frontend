@@ -101,12 +101,37 @@ function wnd_ajax_insert_post() {
 
 		// 完成返回
 		$redirect_to = $_REQUEST['redirect_to'] ?? null;
+		$permalink = get_permalink($post_id);
+
 		if ($redirect_to) {
-			$return_array = array('status' => 3, 'msg' => $redirect_to);
+			$return_array = array(
+				'status' => 3,
+				'msg' => '发布成功！',
+				'data' => array(
+					'id' => $post_id,
+					'url' => $permalink,
+					'redirect_to' => $redirect_to,
+				),
+			);
 		} else if ($update_id) {
-			$return_array = array('status' => 2, 'msg' => get_permalink($post_id));
+			$return_array = array(
+				'status' => 2,
+				'msg' => '发布成功！',
+				'data' => array(
+					'id' => $post_id,
+					'url' => $permalink,
+				),
+			);
 		} else {
-			$return_array = array('status' => 3, 'msg' => get_permalink($post_id));
+			$return_array = array(
+				'status' => 3,
+				'msg' => '发布成功！',
+				'data' => array(
+					'id' => $post_id,
+					'url' => $permalink,
+					'redirect_to' => $permalink,
+				),
+			);
 		}
 
 		// 写入失败，返回错误信息

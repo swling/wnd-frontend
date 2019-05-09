@@ -64,7 +64,6 @@ function wnd_install() {
 			'wnd_allowed_wp_post_meta_key' => 'price',
 			'wnd_allowed_user_meta_key' => '',
 			'wnd_allowed_wp_user_meta_key' => 'description',
-			'wnd_allowed_upload_meta_key' => 'avatar,gallery',
 
 			'wnd_default_style' => 1,
 			'wnd_do_page' => 0,

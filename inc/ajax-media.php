@@ -42,15 +42,13 @@ function wnd_ajax_upload_file() {
 	$return_array = array();
 
 	/**
-	 *@since 2019.05.08 上传文件meta key过滤
+	 *@since 2019.05.08 上传文件meta key校验
 	 */
 	if (!$meta_key) {
 		return array(array('status' => 0, 'msg' => '错误：未定义meta_key！'));
 	}
-	if (wnd_get_option('wnd', 'wnd_enable_white_list')) {
-		if (!in_array($meta_key, explode(',', wnd_get_option('wnd', 'wnd_allowed_upload_meta_key')))) {
-			return array(array('status' => 0, 'msg' => 'Meta_Key未经允许！'));
-		}
+	if (!wp_verify_nonce($_POST['_meta_key_nonce'], $meta_key)) {
+		return array(array('status' => 0, 'msg' => '错误：未经允许的meta_key！'));
 	}
 
 	/**

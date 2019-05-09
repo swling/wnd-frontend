@@ -145,6 +145,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$args['data']['is_image'] = '1';
 		$args['data']['upload_nonce'] = wp_create_nonce('wnd_ajax_upload_file');
 		$args['data']['delete_nonce'] = wp_create_nonce('wnd_ajax_delete_file');
+		$args['data']['meta_key_nonce'] = wp_create_nonce($args['data']['meta_key']);
 		$args['data']['thumbnail'] = $args['thumbnail'];
 		$args['data']['thumbnail-width'] = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail-height'] = $args['thumbnail_size']['height'];
@@ -190,6 +191,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		// 固定data
 		$args['data']['upload_nonce'] = wp_create_nonce('wnd_ajax_upload_file');
 		$args['data']['delete_nonce'] = wp_create_nonce('wnd_ajax_delete_file');
+		$args['data']['meta_key_nonce'] = wp_create_nonce($args['data']['meta_key']);
 
 		// 根据meta key 查找目标文件
 		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
@@ -235,6 +237,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$args['data']['meta_key'] = 'gallery';
 		$args['data']['upload_nonce'] = wp_create_nonce('wnd_ajax_upload_file');
 		$args['data']['delete_nonce'] = wp_create_nonce('wnd_ajax_delete_file');
+		$args['data']['meta_key_nonce'] = wp_create_nonce($args['data']['meta_key']);
 		$args['data']['thumbnail-width'] = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail-height'] = $args['thumbnail_size']['height'];
 

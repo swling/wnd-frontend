@@ -144,12 +144,12 @@ function wnd_ajax_pay_for_download() {
 
 	//1、免费，或者已付费
 	if (!$price or wnd_user_has_paid($user_id, $post_id)) {
-		return array('status' => 6, 'msg' => $download_url);
+		return array('status' => 6, 'msg' => 'ok', 'data' => array('redirect_to' => $download_url));
 	}
 
 	//2、 作者直接下载
 	if ($post->post_author == get_current_user_id()) {
-		return array('status' => 6, 'msg' => $download_url);
+		return array('status' => 6, 'msg' => 'ok', 'data' => array('redirect_to' => $download_url));
 	}
 
 	//3、 付费下载
@@ -172,6 +172,6 @@ function wnd_ajax_pay_for_download() {
 		);
 	}
 
-	return array('status' => 6, 'msg' => $download_url);
+	return array('status' => 6, 'msg' => 'ok', 'data' => array('redirect_to' => $download_url));
 
 }
