@@ -186,3 +186,14 @@ function _wnd_ajax_update_views() {
 	}
 
 }
+
+/**
+ *@since 2019.05.09  测试函数
+ */
+function wnd_ajax_test() {
+	return array(
+		'status' => 1,
+		'msg' => '测试函数触发成功!',
+		'data' => $_REQUEST,
+	);
+}

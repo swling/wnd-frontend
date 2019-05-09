@@ -15,7 +15,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 	public $post;
 
 	// 初始化构建
-	function __construct($post_type = 'post', $post_id = 0) {
+	function __construct($post_type = 'post', $post_id = 0, $field_only = false) {
 
 		// 继承基础变量
 		parent::__construct();
@@ -29,17 +29,13 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 		$this->post = get_post($this->post_id);
 		$this->post_type = $this->post->post_type ?? $post_type;
-	}
 
-	function build() {
-
-		// 文章表单所需的统一格式
-		parent::add_hidden('_post_ID', $this->post_id);
-		parent::add_hidden('_post_post_type', $this->post_type);
-		parent::set_action('wnd_ajax_insert_post');
-
-		// 基础类
-		parent::build();
+		// 文章表单固有字段
+		if (!$field_only) {
+			parent::add_hidden('_post_ID', $this->post_id);
+			parent::add_hidden('_post_post_type', $this->post_type);
+			parent::set_action('wnd_ajax_insert_post');
+		}
 	}
 
 	// 文章表头，屏蔽回车提交
@@ -176,6 +172,12 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		 */
 
 		if (!wnd_doing_ajax() and $rich_media_editor and $this->post_id) {
+
+			/**
+			 *@since 2019.05.09
+			 * 通过html方式直接创建的字段需要在表单input values 数据中新增一个同名names，否则无法通过nonce校验
+			 */
+			parent::add_hidden('_post_post_content', '');
 
 			echo '<div id="hidden-wp-editor" style="display: none;">';
 			if ($post) {

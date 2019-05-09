@@ -40,8 +40,6 @@ function wnd_options(){
     
 	}
 
-	// $wndwp_options  = get_option('wnd');
-
 ?>
 <div class="wrap">
 	<h1>万能的WordPress前端框架设置</h1>
@@ -51,10 +49,10 @@ function wnd_options(){
 			<!--前端表单设置-->
 			<tr>
 				<th valign="top">
-					表单字段白名单
+					表单字段校验
 				</th>
 				<td>
-					<p><i>作用：通过前端表单提交数据时，只有在白名单内的字段会被写入到数据库中。防止用户通过浏览器开发模式篡改表单，提交为未知数据</i></p>
+					<p><i>作用：ajax标题提交数据时，是否校验表单字段名（防止用户通过浏览器开发模式提交位置数据）</i></p>
 				</td>
 			</tr>
 			<tr>
@@ -65,30 +63,6 @@ function wnd_options(){
 					<p><i>警告：仅在开发测试中关闭过滤，否则可能引发安全问题</i></p>
 				</td>
 			</tr>
-			<tr>
-				<td valign="top">允许的wnd_post_meta</td>
-				<td>
-					<textarea name="wnd_allowed_post_meta_key" value="" class="regular-text"><?php echo wnd_get_option('wnd','wnd_allowed_post_meta_key');?></textarea>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top">允许的post_meta</td>
-				<td>
-					<textarea name="wnd_allowed_wp_post_meta_key" value="" class="regular-text"><?php echo wnd_get_option('wnd','wnd_allowed_wp_post_meta_key');?></textarea>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top">允许的wnd_user_meta</td>
-				<td>
-					<textarea name="wnd_allowed_user_meta_key" value="" class="regular-text"><?php echo wnd_get_option('wnd','wnd_allowed_user_meta_key');?></textarea>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top">允许的user_meta</td>
-				<td>
-					<textarea name="wnd_allowed_wp_user_meta_key" value="" class="regular-text"><?php echo wnd_get_option('wnd','wnd_allowed_wp_user_meta_key');?></textarea>
-				</td>
-			</tr>	
 
 			<!--优化选项-->
 			<tr>

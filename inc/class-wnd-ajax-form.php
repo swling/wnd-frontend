@@ -3,6 +3,8 @@
 /**
  *适配本插件的ajax表单类
  *@since 2019.03.08
+ *常规情况下，未选中的checkbox 和radio等字段不会出现在提交的表单数据中
+ *在本环境中，为实现字段name nonce校验，未选中的字段也会发送一个空值到后台（通过 hidden字段实现），在相关数据处理上需要注意
  */
 class Wnd_Ajax_Form extends Wnd_Form {
 
@@ -13,12 +15,53 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$this->filter = $filter;
 	}
 
+	/**
+	 *@since 2019.05.09
+	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
+	 */
+	function set_form_nonce() {
+
+		$form_names = array('_wnd_form_nonce'); // nonce自身字段也需要包含在内
+		foreach ($this->get_input_values() as $input_value) {
+
+			if (!isset($input_value['name'])) {
+				continue;
+			}
+			// 排除文件上传字段（后端表单数据似乎不包含文件上传字段）
+			if (in_array($input_value['type'], array('image_upload', 'file_upload'))) {
+				continue;
+			}
+			array_push($form_names, $input_value['name']);
+
+		}
+		unset($input_value);
+
+		// 将input name去重，排序，转为字符串作为action
+		$form_names = array_unique($form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
+		sort($form_names);
+		$nonce = wp_create_nonce(md5(implode('', $form_names)));
+		parent::add_hidden('_wnd_form_nonce', $nonce);
+
+	}
+
 	// 构造表单，可设置WordPress filter 过滤表单的input_values
 	function build() {
 
+		/**
+		 *设置表单过滤filter
+		 **/
 		if ($this->filter) {
 			$this->input_values = apply_filters($this->filter, $this->input_values);
 		}
+
+		/**
+		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
+		 **/
+		$this->set_form_nonce();
+
+		/**
+		 *构建表单
+		 */
 		parent::build();
 
 	}
@@ -51,6 +94,20 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	function set_action($action, $method = '') {
 		parent::add_hidden('action', $action);
 		parent::add_hidden('_ajax_nonce', wp_create_nonce($action));
+	}
+
+	/**
+	 *@since 2019.05.09
+	 *未被选中的radio 与checkbox将不会发送到后端，会导致wnd_form_nonce 校验失败，此处通过设置hidden字段修改
+	 */
+	function add_radio($args) {
+		parent::add_hidden($args['name'], '');
+		parent::add_radio($args);
+	}
+
+	function add_checkbox($args) {
+		parent::add_hidden($args['name'], '');
+		parent::add_checkbox($args);
 	}
 
 	// 短信验证

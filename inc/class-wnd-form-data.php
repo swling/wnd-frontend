@@ -1,27 +1,48 @@
 <?php
 
 /**
- *############################################
- *允许通过表单更新的用户及文章字段
- *后台保存表单数据检测name是否在下面允许列表中，否则舍弃
+ *根据表单name提取标题数据
  *@since 2019.03.04
  */
 class Wnd_Form_Data {
 
 	static $enable_white_list;
-	static $allowed_post_meta_key;
-	static $allowed_wp_post_meta_key;
-	static $allowed_user_meta_key;
-	static $allowed_wp_user_meta_key;
 	public $form_data;
 
 	function __construct() {
+
 		Wnd_Form_Data::$enable_white_list = wnd_get_option('wnd', 'wnd_enable_white_list');
-		Wnd_Form_Data::$allowed_post_meta_key = explode(',', wnd_get_option('wnd', 'wnd_allowed_post_meta_key'));
-		Wnd_Form_Data::$allowed_wp_post_meta_key = explode(',', wnd_get_option('wnd', 'wnd_allowed_wp_post_meta_key'));
-		Wnd_Form_Data::$allowed_user_meta_key = explode(',', wnd_get_option('wnd', 'wnd_allowed_user_meta_key'));
-		Wnd_Form_Data::$allowed_wp_user_meta_key = explode(',', wnd_get_option('wnd', 'wnd_allowed_wp_user_meta_key'));
+
+		if (Wnd_Form_Data::$enable_white_list and !$this->verify_nonce()) {
+			exit('表单数据为空或已被篡改！');
+		}
+
+		// 允许修改表单提交数据
 		$this->form_data = apply_filters('wnd_form_data', $_POST);
+	}
+
+	/**
+	 *@since 2019.05.09 校验表单字段是否被篡改
+	 *@see Wnd_Ajax_Form -> build_form_nonce()
+	 *此处应该校验全局变量 $_POST 而非 $this->form_data 因为后者可能被filter修改，而修改后的数据与表单提交可能不同
+	 *通过filter修改的数据视为自动允许的数据
+	 */
+	public function verify_nonce() {
+
+		if (!isset($_POST['_wnd_form_nonce'])) {
+			return false;
+		}
+
+		// 提取POST数组键值并排序
+		$form_names = array();
+		foreach ($_POST as $key => $value) {
+			array_push($form_names, $key);
+		}
+		unset($key, $value);
+		sort($form_names);
+
+		// 校验数组键值是否一直
+		return wp_verify_nonce($_POST['_wnd_form_nonce'], md5(implode('', $form_names)));
 	}
 
 	// 0、获取WordPress user数据数组
@@ -50,9 +71,6 @@ class Wnd_Form_Data {
 
 			if (strpos($key, '_wpusermeta_') === 0) {
 				$key = str_replace('_wpusermeta_', '', $key);
-				if (Wnd_Form_Data::$enable_white_list == 1 and !in_array($key, Wnd_Form_Data::$allowed_wp_user_meta_key)) {
-					continue;
-				}
 				$wp_user_meta_array = array_merge($wp_user_meta_array, array($key => $value));
 			}
 
@@ -70,9 +88,6 @@ class Wnd_Form_Data {
 
 			if (strpos($key, '_usermeta_') === 0) {
 				$key = str_replace('_usermeta_', '', $key);
-				if (Wnd_Form_Data::$enable_white_list == 1 and !in_array($key, Wnd_Form_Data::$allowed_user_meta_key)) {
-					continue;
-				}
 				$user_meta_array = array_merge($user_meta_array, array($key => $value));
 			}
 
@@ -107,9 +122,6 @@ class Wnd_Form_Data {
 
 			if (strpos($key, '_wpmeta_') === 0) {
 				$key = str_replace('_wpmeta_', '', $key);
-				if (Wnd_Form_Data::$enable_white_list == 1 and !in_array($key, Wnd_Form_Data::$allowed_wp_post_meta_key)) {
-					continue;
-				}
 				$wp_post_meta_array = array_merge($wp_post_meta_array, array($key => $value));
 			}
 
@@ -127,9 +139,6 @@ class Wnd_Form_Data {
 
 			if (strpos($key, '_meta_') === 0) {
 				$key = str_replace('_meta_', '', $key);
-				if (Wnd_Form_Data::$enable_white_list == 1 and !in_array($key, Wnd_Form_Data::$allowed_post_meta_key)) {
-					continue;
-				}
 				$post_meta_array = array_merge($post_meta_array, array($key => $value));
 			}
 

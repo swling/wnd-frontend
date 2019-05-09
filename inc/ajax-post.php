@@ -18,17 +18,16 @@ function wnd_ajax_insert_post() {
 
 	// 实例化当前提交的表单数据
 	$form_data = new Wnd_Form_Data();
-	$post_array_temp = $form_data->get_post_array();
+	$post_array = $form_data->get_post_array();
 	$meta_array = $form_data->get_post_meta_array();
 	$wp_meta_array = $form_data->get_wp_post_meta_array();
 	$term_array = $form_data->get_term_array();
 
 	// 组合数据
-	$user_id = get_current_user_id();
-	$update_id = $_POST['_post_ID'] ?? 0;
-	$post_parent = $_POST['_post_post_parent'] ?? 0;
-	$post_type = $_POST['_post_post_type'] ?? 'post';
-	$post_name = $_POST['_post_post_name'] ?? uniqid();
+	$update_id = $post_array['ID'] ?? 0;
+	$post_parent = $post_array['post_parent'] ?? 0;
+	$post_type = $post_array['post_type'] ?? 'post';
+	$post_name = $post_array['post_name'] ?? uniqid();
 
 	// 更新文章
 	if ($update_id) {
@@ -46,12 +45,11 @@ function wnd_ajax_insert_post() {
 
 	/**
 	 *@since 2019.02.19
-	 * 写入post type检测
-	 *@since 2019.04.15 废弃
+	 *仅限public post types，非public类型，请使用wp_insert_post
 	 */
-	// if (!$update_id and !in_array($post_type, wnd_get_allowed_post_types())) {
-	// 	return array('status' => 0, 'msg' => '类型无效！');
-	// }
+	if (!in_array($post_type, get_post_types(array('public' => true)))) {
+		return array('status' => 0, 'msg' => '类型无效！');
+	}
 
 	// 写入及更新权限过滤
 	$can_insert_post = apply_filters('wnd_can_insert_post', array('status' => 1, 'msg' => '默认通过'), $post_type, $update_id);
@@ -62,27 +60,24 @@ function wnd_ajax_insert_post() {
 	// 文章状态过滤
 	$post_status = apply_filters('wnd_insert_post_status', 'pending', $post_type, $update_id);
 
-	// 初始化文章数组
+	// 判断是否为更新
 	if (!$update_id) {
-		// 判断是否为更新
-		$post_array = array(
-			'post_author' => $user_id,
+		$_post_array = array(
 			'post_type' => $post_type,
 			'post_status' => $post_status,
-			'post_parent' => $post_parent,
 			'post_name' => $post_name,
 		);
 
 		//更新内容，只只允许更新状态及白名单内的字段防止用户通过编辑文章，改变文章类型等敏感数据
 	} else {
-		$post_array = array(
+		$_post_array = array(
 			'ID' => $update_id,
+			'post_type' => $post_type,
 			'post_status' => $post_status,
-			'post_parent' => $post_parent,
 		);
 	}
 	// 最终post array数据
-	$post_array = array_merge($post_array_temp, $post_array);
+	$post_array = array_merge($post_array, $_post_array);
 
 	// 写入文章
 	if (!$update_id) {

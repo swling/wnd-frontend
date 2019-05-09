@@ -89,7 +89,7 @@ class Wnd_Form {
 	 *@since 2019.03.10 设置常规input 字段
 	 */
 	// _text
-	function add_text($args = array()) {
+	function add_text($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 
@@ -110,7 +110,7 @@ class Wnd_Form {
 	}
 
 	// _number
-	function add_number($args = array()) {
+	function add_number($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 
@@ -141,7 +141,7 @@ class Wnd_Form {
 	}
 
 	// _textarea
-	function add_textarea($args = array()) {
+	function add_textarea($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 
@@ -158,7 +158,7 @@ class Wnd_Form {
 	}
 
 	// _email
-	function add_email($args = array()) {
+	function add_email($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 
@@ -179,7 +179,7 @@ class Wnd_Form {
 	}
 
 	// _password
-	function add_password($args = array()) {
+	function add_password($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 
@@ -200,7 +200,7 @@ class Wnd_Form {
 	}
 
 	// _select
-	function add_select($args = array()) {
+	function add_select($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 
@@ -236,7 +236,7 @@ class Wnd_Form {
 	}
 
 	// _checkbox
-	function add_checkbox($args = array()) {
+	function add_checkbox($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 
