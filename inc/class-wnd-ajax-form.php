@@ -119,11 +119,12 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 	}
 
-	// Image upload 后台wnd_file_upload已匹配规则，此处强制input name: file
+	// Image upload
 	function add_image_upload($args) {
 
 		$defaults = array(
 			'label' => 'Image upland',
+			'name' => 'wnd_file',
 			'thumbnail' => WND_URL . 'static/images/default.jpg', //默认缩略图
 			'thumbnail_size' => array('height' => '100', 'width' => '100'),
 			'data' => array(),
@@ -163,7 +164,6 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			}
 		}
 
-		$args['name'] = 'file';
 		$args['thumbnail'] = $file_url ?: $args['thumbnail'];
 		$args['file_id'] = $file_id ?: 0;
 
@@ -171,11 +171,12 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 	}
 
-	// File upload 后台wnd_file_upload已匹配规则，此处强制input name: file
+	// File upload
 	function add_file_upload($args) {
 
 		$defaults = array(
 			'label' => 'File upload',
+			'name' => 'wnd_file',
 			'data' => array(),
 			'delete_button' => true,
 		);
@@ -206,7 +207,6 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			}
 		}
 
-		$args['name'] = 'file';
 		$args['file_id'] = $file_id ?: 0;
 		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">查看文件</a>' : '……';
 
@@ -267,7 +267,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$html .= '<div class="field">';
 		$html .= '<div class="file">';
 		$html .= '<label class="file-label">';
-		$html .= '<input type="file" multiple="multiple" class="file-input" name="file[]' . '"' . $data . 'accept="image/*" >';
+		$html .= '<input type="file" multiple="multiple" class="file-input" name="wnd_file[]' . '"' . $data . 'accept="image/*" >';
 		$html .= ' <span class="file-cta"><span class="file-icon"><i class="fas fa-upload"></i></span><span class="file-label">选择图片</span></span>';
 		$html .= '</label>';
 		$html .= '</div>';

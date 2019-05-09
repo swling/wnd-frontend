@@ -489,7 +489,7 @@ jQuery(document).ready(function($) {
 
 		// 获取文件，支持多文件上传
 		for (var i = 0; i < $(this).get(0).files.length; ++i) {
-			form_data.append("file[" + i + "]", $(this).prop("files")[i]);
+			form_data.append("wnd_file[" + i + "]", $(this).prop("files")[i]);
 		}
 
 		// 获取属性

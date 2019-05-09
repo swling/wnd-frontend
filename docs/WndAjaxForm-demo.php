@@ -187,10 +187,11 @@ function _wnd_demo_form() {
 		)
 	);
 
-	// upload image ajax 后台wnd_file_upload已匹配规则，此处强制input name: file 无需额外设置
+	// upload image
 	$form->add_image_upload(
 		array(
 			'id' => 'image-upload', //container id
+			'name' => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
 			'label' => 'Image upload',
 			'thumbnail' => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
 			'thumbnail_size' => array('width' => 100, 'height' => 100), //thumbnail image size
@@ -206,10 +207,11 @@ function _wnd_demo_form() {
 		)
 	);
 
-	// upload file ajax 后台wnd_file_upload已匹配规则，此处强制input name: file 无需额外设置
+	// upload file
 	$form->add_file_upload(
 		array(
 			'id' => 'file-upload', //container id
+			'name' => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
 			'label' => 'File upland',
 			'data' => array( // some data on file input, maybe useful in ajax upload
 				'meta_key' => 'file',

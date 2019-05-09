@@ -26,7 +26,8 @@ if (!defined('ABSPATH')) {
  */
 function wnd_ajax_upload_file() {
 
-	if (empty($_FILES)) {
+	//$_FILES['wnd_file']需要与input name 值匹配
+	if (empty($_FILES['wnd_file'])) {
 		return array(array('status' => 0, 'msg' => '获取上传文件失败！'));
 	}
 
@@ -80,7 +81,7 @@ function wnd_ajax_upload_file() {
 	 *@since 2019.05.06 改写
 	 *遍历文件上传
 	 */
-	$files = $_FILES["file"]; //需要与input name 值匹配
+	$files = $_FILES['wnd_file']; //暂存原始上传信息，后续将重写$_FILES全局变量以适配WordPress上传方式
 
 	foreach ($files['name'] as $key => $value) {
 
