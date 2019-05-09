@@ -39,32 +39,6 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		}
 	}
 
-	// 文章表头，屏蔽回车提交
-	function build_form_header() {
-		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax"';
-		$html .= ' onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}"';
-
-		if ($this->upload) {
-			$html .= ' enctype="multipart/form-data"';
-		}
-
-		if ($this->form_attr) {
-			$html .= ' ' . $this->form_attr;
-		}
-
-		$html .= '>';
-
-		if ($this->form_title) {
-			$html .= '<div class="content">';
-			$html .= '<h5>' . $this->form_title . '</h5>';
-			$html .= '</div>';
-		}
-
-		$html .= '<div class="ajax-msg"></div>';
-
-		$this->html = $html;
-	}
-
 	function add_post_title($label = '', $placeholder = "请输入标题") {
 
 		$post_title = $this->post->post_title ?? '';
@@ -267,5 +241,31 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 		parent::add_gallery_upload($args);
 	}
+
+	// 文章表头，屏蔽回车提交
+	function build_form_header() {
+		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax"';
+		$html .= ' onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}"';
+
+		if ($this->upload) {
+			$html .= ' enctype="multipart/form-data"';
+		}
+
+		if ($this->form_attr) {
+			$html .= ' ' . $this->form_attr;
+		}
+
+		$html .= '>';
+
+		if ($this->form_title) {
+			$html .= '<div class="content">';
+			$html .= '<h5>' . $this->form_title . '</h5>';
+			$html .= '</div>';
+		}
+
+		$html .= '<div class="ajax-msg"></div>';
+
+		$this->html = $html;
+	}	
 
 }

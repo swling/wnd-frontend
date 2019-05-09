@@ -14,6 +14,12 @@ class Wnd_Form_Data {
 
 		Wnd_Form_Data::$enable_white_list = wnd_get_option('wnd', 'wnd_enable_white_list');
 
+		/**
+		 *@since 2019.05.10
+		 *apply_filters('wnd_form_data', $_POST) 操作可能会直接修改$_POST
+		 *因而校验表单操作应该在filter应用之前执行
+		 *通过filter添加的数据，自动视为被允许提交的数据
+		 */
 		if ($verify_form_nonce and Wnd_Form_Data::$enable_white_list and !$this->verify_form_nonce()) {
 			exit('表单数据为空或已被篡改！');
 		}
@@ -25,8 +31,6 @@ class Wnd_Form_Data {
 	/**
 	 *@since 2019.05.09 校验表单字段是否被篡改
 	 *@see Wnd_Ajax_Form -> build_form_nonce()
-	 *此处应该校验全局变量 $_POST 而非 $this->form_data 因为后者可能被filter修改，而修改后的数据与表单提交可能不同
-	 *通过filter修改的数据视为自动允许的数据
 	 */
 	protected function verify_form_nonce() {
 

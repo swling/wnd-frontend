@@ -15,81 +15,6 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$this->filter = $filter;
 	}
 
-	// 构造表单，可设置WordPress filter 过滤表单的input_values
-	function build() {
-
-		/**
-		 *设置表单过滤filter
-		 **/
-		if ($this->filter) {
-			$this->input_values = apply_filters($this->filter, $this->input_values);
-		}
-
-		/**
-		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
-		 **/
-		$this->build_form_nonce();
-
-		/**
-		 *构建表单
-		 */
-		parent::build();
-
-	}
-
-	/**
-	 *@since 2019.05.09
-	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
-	 */
-	protected function build_form_nonce() {
-
-		$form_names = array('_wnd_form_nonce'); // nonce自身字段也需要包含在内
-		foreach ($this->get_input_values() as $input_value) {
-
-			if (!isset($input_value['name'])) {
-				continue;
-			}
-			// 排除文件上传字段（后端表单数据似乎不包含文件上传字段）
-			if (in_array($input_value['type'], array('image_upload', 'file_upload'))) {
-				continue;
-			}
-			array_push($form_names, $input_value['name']);
-
-		}
-		unset($input_value);
-
-		// 将input name去重，排序，转为字符串作为action
-		$form_names = array_unique($form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
-		sort($form_names);
-		$nonce = wp_create_nonce(md5(implode('', $form_names)));
-		parent::add_hidden('_wnd_form_nonce', $nonce);
-
-	}	
-
-	protected function build_form_header() {
-		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax" onsubmit="return false"';
-
-		if ($this->upload) {
-			$html .= ' enctype="multipart/form-data"';
-		}
-
-		if ($this->form_attr) {
-			$html .= ' ' . $this->form_attr;
-		}
-
-		$html .= '>';
-
-		if ($this->form_title) {
-			$html .= '<div class="field has-text-centered content">';
-			$html .= '<h3>' . $this->form_title . '</h3>';
-			$html .= '</div>';
-		}
-
-		$html .= '<div class="ajax-msg"></div>';
-
-		$this->html = $html;
-	}
-
 	// ajax提交只需要设置 action 但常规表单action包含提交地址和提交方式，在类中，必须保持参数个数一致
 	function set_action($action, $method = '') {
 		parent::add_hidden('action', $action);
@@ -360,6 +285,81 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 		parent::add_html($html);
 
+	}
+
+	// 构造表单，可设置WordPress filter 过滤表单的input_values
+	function build() {
+
+		/**
+		 *设置表单过滤filter
+		 **/
+		if ($this->filter) {
+			$this->input_values = apply_filters($this->filter, $this->input_values);
+		}
+
+		/**
+		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
+		 **/
+		$this->build_form_nonce();
+
+		/**
+		 *构建表单
+		 */
+		parent::build();
+
+	}
+
+	/**
+	 *@since 2019.05.09
+	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
+	 */
+	protected function build_form_nonce() {
+
+		$form_names = array('_wnd_form_nonce'); // nonce自身字段也需要包含在内
+		foreach ($this->get_input_values() as $input_value) {
+
+			if (!isset($input_value['name'])) {
+				continue;
+			}
+			// 排除文件上传字段（后端表单数据似乎不包含文件上传字段）
+			if (in_array($input_value['type'], array('image_upload', 'file_upload'))) {
+				continue;
+			}
+			array_push($form_names, $input_value['name']);
+
+		}
+		unset($input_value);
+
+		// 将input name去重，排序，转为字符串作为action
+		$form_names = array_unique($form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
+		sort($form_names);
+		$nonce = wp_create_nonce(md5(implode('', $form_names)));
+		parent::add_hidden('_wnd_form_nonce', $nonce);
+
+	}
+
+	protected function build_form_header() {
+		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax" onsubmit="return false"';
+
+		if ($this->upload) {
+			$html .= ' enctype="multipart/form-data"';
+		}
+
+		if ($this->form_attr) {
+			$html .= ' ' . $this->form_attr;
+		}
+
+		$html .= '>';
+
+		if ($this->form_title) {
+			$html .= '<div class="field has-text-centered content">';
+			$html .= '<h3>' . $this->form_title . '</h3>';
+			$html .= '</div>';
+		}
+
+		$html .= '<div class="ajax-msg"></div>';
+
+		$this->html = $html;
 	}
 
 }

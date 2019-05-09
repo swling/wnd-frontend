@@ -31,7 +31,7 @@ editor及以上角色定义为管理员 wnd_is_manager()
 $post_type.'_cat';//分类taxonomy
 $post_type.'_tag';//标签taxonomy
 ```
-#add_filter priority: 10 
+#add_filter priority: 10
 10 为WordPress默认值，该值越大，表示filter越靠后执行，可覆盖前面filter已设置的值，也可理解为值越大，当前add_filter的权重越高
 
 #自定义文章类型
@@ -82,8 +82,11 @@ function wnd_can_insert_post($default_return, $post_type, $update_id) {
 
 ##ajax表单数据
 ```php
-// @since 2019.03.16 Wnd_Form_Data 过滤前端表单提交的数据
-// $this->form_data = apply_filters('wnd_form_data', $_POST);
+/**
+*@since 2019.03.16 Wnd_Form_Data
+*过滤前端表单提交的数据，改操作在verify_form_nonce()校验通过后执行
+*$this->form_data = apply_filters('wnd_form_data', $_POST);
+*/
 apply_filters('wnd_form_data', $_POST)
 ```
 
