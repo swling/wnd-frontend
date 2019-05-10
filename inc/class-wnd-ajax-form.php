@@ -33,6 +33,15 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	/**
+	 *@since 2019.05.10
+	 *直接新增表单names数组元素
+	 *用于nonce校验，如直接通过html方式新增的表单字段，无法被提取，需要通过这种方式新增name，以通过nonce校验
+	 **/
+	function add_input_name($name) {
+		array_push($this->form_names, $name);
+	}
+
+	/**
 	 *@since 2019.05.09
 	 *未被选中的radio 与checkbox将不会发送到后端，会导致wnd_form_nonce 校验失败，此处通过设置hidden字段修改
 	 */
@@ -44,15 +53,6 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	function add_checkbox($args) {
 		parent::add_hidden($args['name'], '');
 		parent::add_checkbox($args);
-	}
-
-	/**
-	 *@since 2019.05.10
-	 *直接新增表单names数组元素
-	 *用于nonce校验，如直接通过html方式新增的表单字段，无法被提取，需要通过这种方式新增name，以通过nonce校验
-	 **/
-	function add_field_name($name) {
-		array_push($this->form_names, $name);
 	}
 
 	// 短信验证

@@ -244,7 +244,7 @@ function _wnd_demo_form() {
 	 *需要对应新增一个同名name，告知表单校验，此处额外新增另一个name
 	 */
 	$form->add_html('<input type="text" name="demo" value="demo">');
-	$form->add_field_name('demo');
+	$form->add_input_name('demo');
 
 	// textarea
 	$form->add_textarea(
