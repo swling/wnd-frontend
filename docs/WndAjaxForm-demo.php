@@ -238,6 +238,14 @@ function _wnd_demo_form() {
 		)
 	);
 
+	/**
+	 *@since 2019.05.10
+	 *通过html方式新增的字段，无法直接通过表单name一致性验证
+	 *需要对应新增一个同名name，告知表单校验，此处额外新增另一个name
+	 */
+	$form->add_html('<input type="text" name="demo" value="demo">');
+	$form->add_field_name('demo');
+
 	// textarea
 	$form->add_textarea(
 		array(

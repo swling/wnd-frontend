@@ -64,10 +64,10 @@ function wnd_install() {
 
 			'wnd_default_style' => 1,
 			'wnd_do_page' => 0,
-			'wnd_pay_return_url' => get_option('home'),
-
 			'wnd_disable_admin_panel' => 1,
-			'wnd_unset_user_meta' => 1,
+			'wnd_unset_user_meta' => 1,			
+
+			'wnd_pay_return_url' => get_option('home'),
 
 			'wnd_sms_appid' => '腾讯短信appid',
 			'wnd_sms_appkey' => '腾讯短信appkey',

@@ -192,7 +192,7 @@ function _wnd_ajax_update_views() {
  */
 function wnd_ajax_test() {
 	return array(
-		'status' => 1,
+		'status' => 2,
 		'msg' => '测试函数触发成功!',
 		'data' => $_REQUEST,
 	);

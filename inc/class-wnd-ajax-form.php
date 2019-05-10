@@ -5,11 +5,22 @@
  *@since 2019.03.08
  *常规情况下，未选中的checkbox 和radio等字段不会出现在提交的表单数据中
  *在本环境中，为实现字段name nonce校验，未选中的字段也会发送一个空值到后台（通过 hidden字段实现），在相关数据处理上需要注意
+ *为保障表单不被前端篡改，会提取所有字段的name值，结合算法生成校验码，后端通过同样的方式提取$_POST数据，并做校验
  */
 class Wnd_Ajax_Form extends Wnd_Form {
 
 	// 新增WordPressfilter过滤
 	public $filter;
+	public $form_names;
+
+	function __construct() {
+
+		// 继承基础变量
+		parent::__construct();
+
+		// 新增拓展变量
+		$this->form_names = array();
+	}
 
 	function set_filter($filter) {
 		$this->filter = $filter;
@@ -33,6 +44,15 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	function add_checkbox($args) {
 		parent::add_hidden($args['name'], '');
 		parent::add_checkbox($args);
+	}
+
+	/**
+	 *@since 2019.05.10
+	 *直接新增表单names数组元素
+	 *用于nonce校验，如直接通过html方式新增的表单字段，无法被提取，需要通过这种方式新增name，以通过nonce校验
+	 **/
+	function add_field_name($name) {
+		array_push($this->form_names, $name);
 	}
 
 	// 短信验证
@@ -318,7 +338,8 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		// 表单验证秘钥
 		$form_nonce_key = wnd_get_option('wnd', 'wnd_form_nonce_key');
 
-		$form_names = array('_wnd_form_nonce'); // nonce自身字段也需要包含在内
+		// 提取表单字段names 去重，排序
+		array_push($this->form_names, '_wnd_form_nonce'); // nonce自身字段也需要包含在内
 		foreach ($this->get_input_values() as $input_value) {
 
 			if (!isset($input_value['name'])) {
@@ -328,15 +349,17 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			if (in_array($input_value['type'], array('image_upload', 'file_upload'))) {
 				continue;
 			}
-			array_push($form_names, $input_value['name']);
+			array_push($this->form_names, $input_value['name']);
 
 		}
 		unset($input_value);
+		$this->form_names = array_unique($this->form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
+		sort($this->form_names);
 
-		// 将input name去重，排序，转为字符串作为action
-		$form_names = array_unique($form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
-		sort($form_names);
-		$nonce = wp_create_nonce(md5(implode('', $form_names) . $form_nonce_key));
+		// 根据表单字段，和表单验证秘钥生成wp nonce
+		$nonce = wp_create_nonce(md5(implode('', $this->form_names) . $form_nonce_key));
+
+		// 将nonce字段添加到表单
 		parent::add_hidden('_wnd_form_nonce', $nonce);
 
 	}
