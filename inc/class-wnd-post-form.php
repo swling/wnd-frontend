@@ -243,7 +243,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 	}
 
 	// 文章表头，屏蔽回车提交
-	function build_form_header() {
+	protected function build_form_header() {
 		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax"';
 		$html .= ' onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}"';
 
@@ -266,6 +266,6 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		$html .= '<div class="ajax-msg"></div>';
 
 		$this->html = $html;
-	}	
+	}
 
 }

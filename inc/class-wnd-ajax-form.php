@@ -315,6 +315,9 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	 */
 	protected function build_form_nonce() {
 
+		// 表单验证秘钥
+		$form_nonce_key = wnd_get_option('wnd', 'wnd_form_nonce_key');
+
 		$form_names = array('_wnd_form_nonce'); // nonce自身字段也需要包含在内
 		foreach ($this->get_input_values() as $input_value) {
 
@@ -333,7 +336,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		// 将input name去重，排序，转为字符串作为action
 		$form_names = array_unique($form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
 		sort($form_names);
-		$nonce = wp_create_nonce(md5(implode('', $form_names)));
+		$nonce = wp_create_nonce(md5(implode('', $form_names) . $form_nonce_key));
 		parent::add_hidden('_wnd_form_nonce', $nonce);
 
 	}

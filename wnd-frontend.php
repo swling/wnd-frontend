@@ -59,11 +59,8 @@ function wnd_install() {
 
 		$default_option = array(
 
-			'wnd_enable_white_list' => 1,
-			'wnd_allowed_post_meta_key' => '',
-			'wnd_allowed_wp_post_meta_key' => 'price',
-			'wnd_allowed_user_meta_key' => '',
-			'wnd_allowed_wp_user_meta_key' => 'description',
+			'wnd_form_verify' => 1,
+			'wnd_form_nonce_key' => wnd_random('16'),
 
 			'wnd_default_style' => 1,
 			'wnd_do_page' => 0,

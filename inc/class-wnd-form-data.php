@@ -12,7 +12,7 @@ class Wnd_Form_Data {
 
 	function __construct($verify_form_nonce = true) {
 
-		Wnd_Form_Data::$enable_white_list = wnd_get_option('wnd', 'wnd_enable_white_list');
+		Wnd_Form_Data::$enable_white_list = wnd_get_option('wnd', 'wnd_form_verify');
 
 		/**
 		 *@since 2019.05.10
@@ -38,6 +38,9 @@ class Wnd_Form_Data {
 			return false;
 		}
 
+		// 表单验证秘钥
+		$form_nonce_key = wnd_get_option('wnd', 'wnd_form_nonce_key');
+
 		// 提取POST数组键值并排序
 		$form_names = array();
 		foreach ($_POST as $key => $value) {
@@ -47,11 +50,11 @@ class Wnd_Form_Data {
 		sort($form_names);
 
 		// 校验数组键值是否一直
-		return wp_verify_nonce($_POST['_wnd_form_nonce'], md5(implode('', $form_names)));
+		return wp_verify_nonce($_POST['_wnd_form_nonce'], md5(implode('', $form_names) . $form_nonce_key));
 	}
 
 	// 0、获取WordPress user数据数组
-	public function get_user_array() {
+	function get_user_array() {
 
 		$user_array = array();
 
@@ -68,7 +71,7 @@ class Wnd_Form_Data {
 	}
 
 	// 1、获取WordPress原生use meta数据数组
-	public function get_wp_user_meta_array() {
+	function get_wp_user_meta_array() {
 
 		$wp_user_meta_array = array();
 
@@ -85,7 +88,7 @@ class Wnd_Form_Data {
 	}
 
 	// 2、获取自定义WndWP user meta数据数组
-	public function get_user_meta_array() {
+	function get_user_meta_array() {
 
 		$user_meta_array = array();
 
@@ -102,7 +105,7 @@ class Wnd_Form_Data {
 	}
 
 	// 3、获取WordPress原生post meta数据数组
-	public function get_post_array() {
+	function get_post_array() {
 
 		$post_array = array();
 
@@ -119,7 +122,7 @@ class Wnd_Form_Data {
 	}
 
 	// 4、获取WordPress原生post meta数据数组
-	public function get_wp_post_meta_array() {
+	function get_wp_post_meta_array() {
 
 		$wp_post_meta_array = array();
 
@@ -136,7 +139,7 @@ class Wnd_Form_Data {
 	}
 
 	// 5、获取WndWP post meta数据数组
-	public function get_post_meta_array() {
+	function get_post_meta_array() {
 
 		$post_meta_array = array();
 
@@ -153,7 +156,7 @@ class Wnd_Form_Data {
 	}
 
 	// 6、获取WordPress分类：term数组
-	public function get_term_array() {
+	function get_term_array() {
 
 		$term_array = array();
 
