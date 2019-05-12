@@ -49,7 +49,7 @@ function wnd_options(){
 			<!--前端表单设置-->
 			<tr>
 				<th valign="top">
-					表单校验
+					安全校验
 				</th>
 				<td>
 					<p><i>作用：表单提交数据时，是否校验表单字段名（防止用户通过浏览器开发模式篡改表单结构）</i></p>
@@ -63,11 +63,12 @@ function wnd_options(){
 				</td>
 			</tr>			
 			<tr>
-				<td valign="top">开启校验</td>
+				<td valign="top">表单校验</td>
 				<td>
-					开启校验<input type="radio" required="required" name="wnd_form_verify" value="1" <?php if(wnd_get_option('wnd','wnd_form_verify')==1) echo 'checked' ?> />
-					关闭校验<input type="radio" required="required" name="wnd_form_verify" value="0" <?php if(wnd_get_option('wnd','wnd_form_verify')!=1) echo 'checked' ?> />
-					<p><i>警告：仅在开发测试中关闭过滤，否则可能引发安全问题</i></p>
+					开启校验<input type="radio" required="required" name="wnd_enable_form_verify" value="1" <?php if(wnd_get_option('wnd','wnd_enable_form_verify')==1) echo 'checked' ?> />
+					关闭校验<input type="radio" required="required" name="wnd_enable_form_verify" value="0" <?php if(wnd_get_option('wnd','wnd_enable_form_verify')!=1) echo 'checked' ?> />
+					<p><i>作用：表单提交数据时，是否校验表单字段名（防止用户通过浏览器开发模式篡改表单结构）<br/>
+					警告：仅在开发测试中关闭过滤，否则可能引发安全问题</i></p>
 				</td>
 			</tr>
 
