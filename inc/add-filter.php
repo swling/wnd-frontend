@@ -146,7 +146,7 @@ function wnd_filter_limit_upload($file) {
 /**
  *@since 2019.01.31 重写WordPress原生编辑链接到指定的页面
  */
-add_filter('get_edit_post_link', 'wnd_filter_edit_post_link', $priority = 10, $accepted_args = 3);
+add_filter('get_edit_post_link', 'wnd_filter_edit_post_link', 10, 3);
 function wnd_filter_edit_post_link($link, $post_id, $context) {
 
 	if (is_admin()) {
@@ -182,7 +182,7 @@ function wnd_filter_wp_insert_post_data($data) {
  *设置 文章自定义字段 price
  *使用WordPress经典编辑器插入 more标签 或者编辑源码插入 <!--more--> 以区分免费内容和付费内容
  */
-add_filter('the_content', 'wnd_filter_the_content', $priority = 10, $accepted_args = 1);
+add_filter('the_content', 'wnd_filter_the_content', 10, 1);
 function wnd_filter_the_content($content) {
 
 	global $post;

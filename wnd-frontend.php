@@ -59,15 +59,17 @@ function wnd_install() {
 
 		$default_option = array(
 
-			'wnd_form_verify' => 1,
 			'wnd_secret_key' => wnd_random('16'),
+			'wnd_form_verify' => 1,
 
 			'wnd_default_style' => 1,
 			'wnd_do_page' => 0,
 			'wnd_disable_admin_panel' => 1,
-			'wnd_unset_user_meta' => 1,			
+			'wnd_unset_user_meta' => 1,
 
 			'wnd_pay_return_url' => get_option('home'),
+
+			'wnd_enable_terms' => 1,
 
 			'wnd_sms_appid' => '腾讯短信appid',
 			'wnd_sms_appkey' => '腾讯短信appkey',

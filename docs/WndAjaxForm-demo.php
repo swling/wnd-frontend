@@ -17,8 +17,8 @@ echo $form->get_input_fields();
  *@since 2019.03.10 表单filter举例
  *
  */
-add_filter('_wnd_demo_form', 'my_add_filer_form_filter', $priority = 10, $accepted_args = 1);
-function my_add_filer_form_filter($input_values) {
+add_filter('_wnd_demo_form', 'wnd_filer_form_filter', 10, 1);
+function wnd_filer_form_filter($input_values) {
 
 	// 去掉一个现有字段（按表单顺序 0、1、2……）
 	unset($input_values[0]);

@@ -26,13 +26,23 @@
 ##用户角色
 普通注册用户的角色：author
 editor及以上角色定义为管理员 wnd_is_manager()
+
 ##分类与标签关联，需要自定义taxonomy，并遵循以下规则：
 ```php
 $post_type.'_cat';//分类taxonomy
 $post_type.'_tag';//标签taxonomy
 ```
-#add_filter priority: 10
-10 为WordPress默认值，该值越大，表示filter越靠后执行，可覆盖前面filter已设置的值，也可理解为值越大，当前add_filter的权重越高
+##nonce校验
+在本插件中，nonce校验作为重要的权限检测方式，不仅作为防止跨站攻击的方式，也作为当前用户执行对应操作的权限判断依据
+为增强安全性，在WordPress原生wp_nonce的基础上加入了秘钥混淆
+详见：inc-function.php wnd_create_nonce / wnd_verify_nonce 
+
+#add_filter / add_action priority: 10
+10 为WordPress默认值，该值越大，表示越靠后执行
+##对于filter：
+可理解为值越大，当前add_filter的权重越高
+##对于action：
+越早执行可能通常理解为权重更高
 
 #自定义文章类型
 *以下 post_type 并未均为私有属性（'public' => false），因此在WordPress后台无法查看到*

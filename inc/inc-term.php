@@ -23,7 +23,7 @@ function wnd_set_object_terms_action($object_id, $terms, $tt_ids, $taxonomy, $ap
 	 */
 
 	// 选项中是否开启本功能
-	if (wnd_get_option('wnd', 'wnd_terms_enable') != 1) {
+	if (wnd_get_option('wnd', 'wnd_enable_terms') != 1) {
 		return;
 	}
 
@@ -170,7 +170,7 @@ add_action('before_delete_post', 'wnd_delete_tag_under_cat', 10, 1);
 function wnd_delete_tag_under_cat($object_id) {
 
 	// 选项中是否开启本功能
-	if (wnd_get_option('wnd', 'wnd_terms_enable') != 1) {
+	if (wnd_get_option('wnd', 'wnd_enable_terms') != 1) {
 		return;
 	}
 
@@ -211,11 +211,11 @@ function wnd_delete_tag_under_cat($object_id) {
 
 //############################################################################ 删除term时，更新 tag under category数据
 // do_action( 'pre_delete_term', $term, $taxonomy );
-add_action('pre_delete_term', '', $priority = 10, $accepted_args = 2);
+add_action('pre_delete_term', '', 10, 2);
 function wnd_pre_delete_term_action($term_id, $taxonmy) {
 
 	// 选项中是否开启本功能
-	if (wnd_get_option('wnd', 'wnd_terms_enable') != 1) {
+	if (wnd_get_option('wnd', 'wnd_enable_terms') != 1) {
 		return;
 	}
 

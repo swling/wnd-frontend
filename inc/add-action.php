@@ -116,11 +116,12 @@ function wnd_action_delete_attachment($attach_id, $post_parent, $meta_key) {
 }
 
 /**
- * 充值、支付
+ *do action
+ *在没有任何html输出的WordPress环境中执行的相关操作
  *@since 2018.9.25
  */
-add_action('wnd_do_action', 'wnd_action_pay', $priority = 10, $accepted_args = 1);
-function wnd_action_pay() {
+add_action('wnd_do_action', 'wnd_action_do_action', 10, 1);
+function wnd_action_do_action() {
 
 	//1.0 支付宝异步校验 支付宝发起post请求 匿名
 	if (isset($_POST['app_id']) && $_POST['app_id'] == wnd_get_option('wnd', 'wnd_alipay_appid')) {
