@@ -190,7 +190,7 @@ function _wnd_post_info($args) {
 /**
  *@since 2019.01.20 输出中文文章状态
  */
-function _wnd_post_status($post_id = 0) {
+function _wnd_post_status($post_id) {
 
 	if (!$post_id) {
 		global $post;
@@ -297,7 +297,7 @@ function _wnd_post_status_form($post_id) {
 /**
  *@since 2019.02.27 获取WndWP文章缩略图
  */
-function _wnd_post_thumbnail($post_id = 0, $width = 0, $height = 0) {
+function _wnd_post_thumbnail($post_id, $width, $height) {
 
 	$post_id = $post_id ?: get_the_ID();
 

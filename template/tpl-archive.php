@@ -194,9 +194,7 @@ function _wnd_table_list($args = '') {
 /**
  *@since 2019.03.05
  *调用主题文章输出列表模板
- *将对应的文章模板放置在主题文件夹中，具体形式：template-parts/list/list-post_type.php
  *@param $args  wp_query $args
- *@see get_template_part() @link https://developer.wordpress.org/reference/functions/get_template_part/
  */
 function _wnd_post_list($args = '') {
 

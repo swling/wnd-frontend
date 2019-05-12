@@ -170,8 +170,7 @@ function wnd_confirm_form_submit(form_id, msg = '') {
 /**
  * @since 2019.1
 *######################## ajax动态内容请求
-*原理等同于wnd_ajax_submit()表单提交，不同之处如下：
-	使用本函数主要用以返回更复杂的结果如：表单，页面以弹窗或嵌入指定DOM的形式呈现，以供用户操作。表单提交则通常返回较为简单的结果
+*使用本函数主要用以返回更复杂的结果如：表单，页面以弹窗或嵌入指定DOM的形式呈现，以供用户操作。表单提交则通常返回较为简单的结果
 	允许携带一个参数，默认为0
 
 	@since 2019.01.26
@@ -201,10 +200,9 @@ function wnd_ajax_modal(template, param = 0) {
 		type: "POST",
 		url: wnd.api_url,
 		data: {
-			"template": template,
+			"action": template,
 			"param": param,
 			"ajax_type": "modal",
-			"action": "_wnd_ajax_request",
 		},
 		//后台返回数据前
 		beforeSend: function(xhr) {
@@ -236,10 +234,9 @@ function wnd_ajax_embed(container, template, param = 0) {
 		type: "POST",
 		url: wnd.api_url,
 		data: {
-			"template": template,
+			"action": template,
 			"param": param,
 			"ajax_type": "embed",
-			"action": "_wnd_ajax_request",
 		},
 		//后台返回数据前
 		beforeSend: function(xhr) {

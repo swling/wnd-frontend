@@ -248,6 +248,7 @@ function _wnd_login_form() {
 
 /**
  *@since 2019.01.21 注册表单
+ *@param $type 		string 		email/sms
  */
 function _wnd_reg_form($type = 'email') {
 
@@ -313,6 +314,7 @@ function _wnd_reg_form($type = 'email') {
 
 /**
  *@since 2019.01.28 找回密码
+ *@param $type 		string 		email/sms
  */
 function _wnd_lostpassword_form($type = 'email') {
 
@@ -358,7 +360,7 @@ function _wnd_lostpassword_form($type = 'email') {
 /**
  *@since 2019.01.29 用户常规资料表单
  */
-function _wnd_profile_form($args = array()) {
+function _wnd_profile_form() {
 
 	if (!is_user_logged_in()) {
 		return '<script>wnd_alert_msg(\'请登录\')</script>';
