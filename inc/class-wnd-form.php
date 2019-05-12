@@ -590,7 +590,7 @@ class Wnd_Form {
 			return;
 		}
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="submit" class="button' . $this->get_submit_style() . '">' . $this->submit . '</button>';
+		$this->html .= '<button type="submit" data-text="' . $this->submit . '" class="button' . $this->get_submit_style() . '">' . $this->submit . '</button>';
 		$this->html .= '</div>';
 	}
 

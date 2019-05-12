@@ -38,12 +38,21 @@ function wnd_api_callback($request) {
 		return array('status' => 0, 'msg' => '无效的API请求！');
 	}
 
-	//1、以_wnd 开头的函数为无需进行安全校验的模板函数，使用$_REQUEST['param']传参
+	/**
+	 *1、以_wnd 开头的函数为无需进行安全校验的模板函数，
+	 *为统一ajax请求规则，ajax类模板函数统一使用唯一的超全局变量$_REQUEST['param']传参
+	 *若模板函数需要传递多个参数，请整合为数组形式纳入$_REQUEST['param']实现
+	 *不在ajax请求中使用的模板函数则不受此规则约束
+	 */
 	if (strpos($action, '_wnd') === 0) {
 
 		return $action($_REQUEST['param']);
 
-		// 2、常规函数操作 需要安全校验，常规ajax函数，请直接使用超全局变量传参
+		/**
+		 * 2、常规函数操作 需要安全校验
+		 *函数可能同时接收超全局变量和指定参数变量
+		 *为避免混乱在ajax请求中，不接受指定传参，统一使用超全局变量传参
+		 */
 	} else {
 
 		if (!wnd_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $action)) {

@@ -101,8 +101,8 @@ function wnd_alert_msg(msg, wait = 0) {
 // 在表单提交时反馈信息
 var ajax_msg_time_out;
 
-function wnd_ajax_msg(msg, color = "is-danger", parent = "body", wait = 0) {
-	$(parent + " .ajax-msg:first").html('<div class="message ' + color + '"><div class="message-body">' + msg + '</div></div>');
+function wnd_ajax_msg(msg, style = "is-danger", parent = "body", wait = 0) {
+	$(parent + " .ajax-msg:first").html('<div class="message ' + style + '"><div class="message-body">' + msg + '</div></div>');
 	// 非对话框，返回表单顶部以展示提示信息
 	// if (!$(".modal").hasClass("is-active")) {
 	// 	var target = $(parent).get(0);
@@ -330,6 +330,9 @@ function wnd_ajax_submit(form_id) {
 	// 生成表单数据
 	var form_data = new FormData($("#" + form_id).get(0));
 
+	// 提交按钮
+	var submit_button = $("#" + form_id + " [type='submit']");
+
 	$.ajax({
 		url: wnd.api_url,
 		dataType: "json",
@@ -342,40 +345,37 @@ function wnd_ajax_submit(form_id) {
 		// 提交中
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
-			$("#" + form_id + " [type='submit']").addClass("is-loading");
+			submit_button.addClass("is-loading");
 		},
 
 		// 返回结果
 		success: function(response) {
 
-			$("#" + form_id + " [type='submit']").removeClass("is-loading");
-
+			submit_button.removeClass("is-loading");
 			if (response.status != 2 && response.status != 0) {
-				$("#" + form_id + " [type='submit']").attr("disabled", "disabled");
+				submit_button.attr("disabled", "disabled");
 			}
+			var submit_text = response.msg.length <= 10 ? response.msg : (response.status > 0 ? "操作成功" : "操作失败");
+			submit_button.text(submit_text);
 
-			if (response.status <= 0) {
-				var color = "is-danger";
-			} else {
-				var color = "is-success";
-			}
+			var style = response.status > 0 ? "is-success" : "is-danger";
 
 			// 根据后端响应处理
 			switch (response.status) {
 
 				// 常规类，展示后端提示信息
 				case 1:
-					wnd_ajax_msg(response.msg, color, "#" + form_id);
+					wnd_ajax_msg(response.msg, style, "#" + form_id);
 					break;
 
 					//更新类
 				case 2:
-					wnd_ajax_msg('提交成功！<a href="' + response.data.url + '" target="_blank">查看</a>', color, "#" + form_id);
+					wnd_ajax_msg('提交成功！<a href="' + response.data.url + '" target="_blank">查看</a>', style, "#" + form_id);
 					break;
 
 					// 跳转类
 				case 3:
-					wnd_ajax_msg("请稍后……", color, "#" + form_id);
+					wnd_ajax_msg("请稍后……", style, "#" + form_id);
 					$(window.location).attr("href", response.data.redirect_to);
 					break;
 
@@ -392,13 +392,13 @@ function wnd_ajax_submit(form_id) {
 
 					// 下载类
 				case 6:
-					wnd_ajax_msg("下载中……", color, "#" + form_id, 10);
+					wnd_ajax_msg("下载中……", style, "#" + form_id, 5);
 					$(window.location).attr("href", response.data.redirect_to);
 					break;
 
 					//默认展示提示信息
 				default:
-					wnd_ajax_msg(response.msg, color, "#" + form_id);
+					wnd_ajax_msg(response.msg, style, "#" + form_id);
 					break;
 			}
 
@@ -407,7 +407,7 @@ function wnd_ajax_submit(form_id) {
 		// 提交错误
 		error: function() {
 			wnd_ajax_msg("系统错误！", "is-danger", "#" + form_id);
-			$("#" + form_id + " [type='submit']").removeClass("is-loading");
+			submit_button.removeClass("is-loading");
 		},
 	});
 
@@ -716,14 +716,14 @@ jQuery(document).ready(function($) {
 			success: function(response) {
 
 				if (response.status <= 0) {
-					var color = "is-danger";
+					var style = "is-danger";
 				} else {
-					var color = "is-success";
+					var style = "is-success";
 					_this.attr("disabled", true);
 					_this.text("已发送");
 					wnd_send_countdown();
 				}
-				wnd_ajax_msg(response.msg, color, "#" + form_id);
+				wnd_ajax_msg(response.msg, style, "#" + form_id);
 				_this.removeClass("is-loading");
 			},
 			// 错误
@@ -743,10 +743,12 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
-	 *@since 2019.03.28 表单改变时，移除提交按钮禁止状态
+	 *@since 2019.03.28 表单改变时，移除提交按钮禁止状态,恢复提交文字
 	 */
 	$("body").on("change", "form", function() {
-		$(this).find("[type='submit']").attr("disabled", false);
+		var submit_button = $(this).find("[type='submit']");
+		submit_button.attr("disabled", false);
+		submit_button.text(submit_button.data("text"));
 		$(this).find(".ajax-msg").empty();
 	});
 

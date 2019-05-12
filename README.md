@@ -27,7 +27,8 @@
 普通注册用户的角色：author
 editor及以上角色定义为管理员 wnd_is_manager()
 
-##分类与标签关联，需要自定义taxonomy，并遵循以下规则：
+##分类与标签关联
+默认已支持WordPress原生post分类和标签关联。如需要支持自定义taxonomy，并遵循以下规则：
 ```php
 $post_type.'_cat';//分类taxonomy
 $post_type.'_tag';//标签taxonomy
@@ -273,3 +274,9 @@ wnd_filter_xxx
 #站内信功能
 post_type => mail
 post_status => 未读：pengding 已读: private
+
+#模板函数定义
+*'_wnd'为前缀*
+若需要在ajax中调用，且传参在两个及以上，建议整合为数组形式传参
+详情参见js函数：wnd_ajax_modal(template, param = 0)、wnd_ajax_embed(container, template, param = 0)
+及WordPress json处理函数：wnd_api_callback()
