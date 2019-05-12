@@ -30,7 +30,7 @@ function wnd_ajax_create_order() {
 	$money = wnd_get_post_price($post_id);
 	if ($money > wnd_get_user_money($user_id)) {
 		if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
-			$pay_url = wnd_get_do_url() . '?action=payment&post_id=' . $post_id . '&_wpnonce=' . wp_create_nonce('wnd_payment');
+			$pay_url = wnd_get_do_url() . '?action=payment&post_id=' . $post_id . '&_wpnonce=' . wnd_create_nonce('payment');
 			return array('status' => 0, 'msg' => '余额不足！<a href="' . $pay_url . '">在线支付</a> | <a onclick="wnd_ajax_modal(\'recharge_form\')">余额充值</a>');
 		} else {
 			return array('status' => 0, 'msg' => '余额不足！');
@@ -138,9 +138,9 @@ function wnd_ajax_pay_for_download() {
 	$download_args = array(
 		'action' => 'wnd_ajax_paid_download',
 		'post_id' => $post_id,
-		'_ajax_nonce' => wp_create_nonce('wnd_ajax_paid_download'),
+		'_wpnonce' => wnd_create_nonce('wnd_ajax_paid_download'),
 	);
-	$download_url = add_query_arg($download_args, admin_url('admin-ajax.php'));
+	$download_url = add_query_arg($download_args, wnd_get_do_url());
 
 	//1、免费，或者已付费
 	if (!$price or wnd_user_has_paid($user_id, $post_id)) {

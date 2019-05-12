@@ -209,7 +209,7 @@ function _wnd_recharge_form() {
 	$form->add_html('</div>');
 
 	$form->set_action('post', wnd_get_do_url() . '?action=payment');
-	$form->add_hidden('_wpnonce', wp_create_nonce('wnd_payment'));
+	$form->add_hidden('_wpnonce', wnd_create_nonce('payment'));
 	$form->set_submit_button('充值');
 	$form->build();
 

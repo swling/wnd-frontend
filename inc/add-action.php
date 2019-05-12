@@ -145,8 +145,9 @@ function wnd_action_pay() {
 	//创建支付
 	case 'payment':
 		if (is_user_logged_in()) {
-			check_admin_referer('wnd_payment');
-			require WND_PATH . 'components/alipay/pay.php';
+			if (wnd_verify_nonce($_REQUEST['_wpnonce'], 'payment')) {
+				require WND_PATH . 'components/alipay/pay.php';
+			}
 		} else {
 			wp_die('请登录！', bloginfo('name'));
 		}
@@ -157,8 +158,13 @@ function wnd_action_pay() {
 		wp_cache_flush();
 		break;
 
+	//@since 2019.05.12 默认：校验nonce后执行action对应函数
 	default:
-		wp_die('无效的操作！', bloginfo('name'));
+		if (wnd_verify_nonce($_REQUEST['_wpnonce'], $action)) {
+			return $action();
+		} else {
+			wp_die('无效的操作！', bloginfo('name'));
+		}
 		break;
 
 	}

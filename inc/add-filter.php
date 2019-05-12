@@ -228,19 +228,13 @@ function wnd_filter_the_content($content) {
 			$button_text = '免费下载';
 		}
 
-		$form =
-		'<form id="pay-for-download" data-submit-type="ajax" action="" method="post" >'
-		. '<div class="ajax-msg"></div>'
-		. wp_nonce_field('wnd_ajax_pay_for_download', '_ajax_nonce') . '
-			<input type="hidden" name="action"  value="wnd_ajax_pay_for_download">
-			<input type="hidden" name="post_id"  value="' . $post->ID . '">
-			<input type="hidden" name="post_title"  value="' . $post->post_title . '">
-			<div class="field is-grouped is-grouped-centered">
-			<button type="button" name="submit" class="button is-outlined is-danger">' . $button_text . '</button>
-			</div>
-		</form>';
+		$form = new Wnd_Ajax_Form;
+		$form->add_hidden('post_id', $post->ID);
+		$form->set_action('wnd_ajax_pay_for_download');
+		$form->set_submit_button($button_text);
+		$form->build();
 
-		$content .= $form;
+		$content .= $form->html;
 
 		//付费阅读
 	} else {
@@ -284,19 +278,13 @@ function wnd_filter_the_content($content) {
 
 		}
 
-		$form =
-		'<form id="pay-for-reading" action="" data-submit-type="ajax" method="post" onsubmit="return false">
-		<div class="ajax-msg"></div>'
-		. wp_nonce_field('wnd_ajax_pay_for_reading', '_ajax_nonce') . '
-		<input type="hidden" name="action"  value="wnd_ajax_pay_for_reading">
-		<input type="hidden" name="post_id"  value="' . $post->ID . '">
-		<input type="hidden" name="post_title"  value="' . $post->post_title . '">
-		<div class="field is-grouped is-grouped-centered">
-		<button type="button" name="submit" class="button is-outlined is-danger">' . $button_text . '</button>
-		</div>
-		</form>';
+		$form = new Wnd_Ajax_Form;
+		$form->add_hidden('post_id', $post->ID);
+		$form->set_action('wnd_ajax_pay_for_reading');
+		$form->set_submit_button($button_text);
+		$form->build();
 
-		$content .= $form;
+		$content .= $form->html;
 
 	}
 

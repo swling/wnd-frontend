@@ -104,12 +104,12 @@ var ajax_msg_time_out;
 function wnd_ajax_msg(msg, color = "is-danger", parent = "body", wait = 0) {
 	$(parent + " .ajax-msg:first").html('<div class="message ' + color + '"><div class="message-body">' + msg + '</div></div>');
 	// 非对话框，返回表单顶部以展示提示信息
-	if (!$(".modal").hasClass("is-active")) {
-		var target = $(parent).get(0);
-		target.scrollIntoView({
-			behavior: "smooth"
-		});
-	}
+	// if (!$(".modal").hasClass("is-active")) {
+	// 	var target = $(parent).get(0);
+	// 	target.scrollIntoView({
+	// 		behavior: "smooth"
+	// 	});
+	// }
 	// 定时清空
 	if (wait > 0) {
 		ajax_msg_time_out = setTimeout(function() {
