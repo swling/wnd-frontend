@@ -20,7 +20,7 @@ class Wnd_Form {
 
 	public $upload;
 
-	public $submit = 'Submit';
+	public $submit_text = 'Submit';
 
 	public $submit_style;
 
@@ -69,8 +69,8 @@ class Wnd_Form {
 	}
 
 	// Submit
-	function set_submit_button($label, $submit_style = '') {
-		$this->submit = $label;
+	function set_submit_button($submit_text, $submit_style = '') {
+		$this->submit_text = $submit_text;
 		$this->submit_style = $submit_style;
 	}
 
@@ -586,11 +586,11 @@ class Wnd_Form {
 	}
 
 	protected function build_submit_button() {
-		if (!$this->submit) {
+		if (!$this->submit_text) {
 			return;
 		}
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="submit" data-text="' . $this->submit . '" class="button' . $this->get_submit_style() . '">' . $this->submit . '</button>';
+		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="button' . $this->get_submit_style() . '">' . $this->submit_text . '</button>';
 		$this->html .= '</div>';
 	}
 
