@@ -749,7 +749,7 @@ jQuery(document).ready(function($) {
 		var submit_button = $(this).find("[type='submit']");
 		submit_button.attr("disabled", false);
 		submit_button.text(submit_button.data("text"));
-		$(this).find(".ajax-msg").empty();
+		// $(this).find(".ajax-msg").empty();
 	});
 
 	/**
