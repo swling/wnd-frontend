@@ -15,8 +15,8 @@ if (!defined('ABSPATH')) {
  */
 
 //############################################################################ 通过WordPress动作捕捉文章分类及标签设置
-add_action('set_object_terms', 'wnd_set_object_terms_action', 10, 6);
-function wnd_set_object_terms_action($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids) {
+add_action('set_object_terms', 'wnd_action_set_object_terms', 10, 6);
+function wnd_action_set_object_terms($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids) {
 
 	/**
 	 *自定义分类法约定taxonomy：分类为 $post_type_cat 标签为：$post_type_tag
@@ -28,19 +28,13 @@ function wnd_set_object_terms_action($object_id, $terms, $tt_ids, $taxonomy, $ap
 	}
 
 	$post_type = get_post_type($object_id);
-
-	// 默认post文章不添加记录，通常用于各类多重筛选，建议通过自定义文章类型使用
-	if ($post_type == 'post') {
-		return;
-	}
-
-	// 当前文章类型不包含标签 退出
-	if (!taxonomy_exists($post_type . '_tag')) {
-		return;
-	}
-
-	$cat_taxonomy = $post_type . '_cat';
+	$cat_taxonomy = ($post_type == 'post') ? 'category' : $post_type . '_cat';
 	$tag_taxonomy = $post_type . '_tag';
+
+	// taxonomy合法性检测
+	if (!taxonomy_exists($cat_taxonomy) or !taxonomy_exists($tag_taxonomy)) {
+		return;
+	}
 
 	// 1、分类改变
 	if ($taxonomy == $cat_taxonomy) {
@@ -58,7 +52,7 @@ function wnd_set_object_terms_action($object_id, $terms, $tt_ids, $taxonomy, $ap
 			$delete_tt_ids = array_diff($old_tt_ids, $tt_ids);
 			if ($delete_tt_ids) {
 				foreach ($delete_tt_ids as $cat_id) {
-					wnd_update_tag_under_cat($cat_id, $tag_id, $tag_taxonomy, $inc = 0);
+					wnd_update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc = 0);
 				}
 				unset($cat_id);
 			}
@@ -67,7 +61,7 @@ function wnd_set_object_terms_action($object_id, $terms, $tt_ids, $taxonomy, $ap
 			$add_tt_ids = array_diff($tt_ids, $old_tt_ids);
 			if ($add_tt_ids) {
 				foreach ($add_tt_ids as $cat_id) {
-					wnd_update_tag_under_cat($cat_id, $tag_id, $tag_taxonomy, $inc = 1);
+					wnd_update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc = 1);
 				}
 				unset($cat_id);
 			}
@@ -91,7 +85,7 @@ function wnd_set_object_terms_action($object_id, $terms, $tt_ids, $taxonomy, $ap
 			$delete_tt_ids = array_diff($old_tt_ids, $tt_ids);
 			if ($delete_tt_ids) {
 				foreach ($delete_tt_ids as $tag_id) {
-					wnd_update_tag_under_cat($cat_id, $tag_id, $taxonomy, $inc = 0);
+					wnd_update_tag_under_category($cat_id, $tag_id, $taxonomy, $inc = 0);
 				}
 				unset($tag_id);
 			}
@@ -100,7 +94,7 @@ function wnd_set_object_terms_action($object_id, $terms, $tt_ids, $taxonomy, $ap
 			$add_tt_ids = array_diff($tt_ids, $old_tt_ids);
 			if ($add_tt_ids) {
 				foreach ($add_tt_ids as $tag_id) {
-					wnd_update_tag_under_cat($cat_id, $tag_id, $taxonomy, $inc = 1);
+					wnd_update_tag_under_category($cat_id, $tag_id, $taxonomy, $inc = 1);
 				}
 				unset($tag_id);
 			}
@@ -112,7 +106,7 @@ function wnd_set_object_terms_action($object_id, $terms, $tt_ids, $taxonomy, $ap
 }
 
 //############################################################################ 写入标签和分类数据库
-function wnd_update_tag_under_cat($cat_id, $tag_id, $tag_taxonomy, $inc = true) {
+function wnd_update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc = true) {
 	global $wpdb;
 
 	// 删除对象缓存
@@ -166,8 +160,8 @@ function wnd_update_tag_under_cat($cat_id, $tag_id, $tag_taxonomy, $inc = true) 
 }
 
 //############################################################################ 删除文章时，更新 tag under category数据
-add_action('before_delete_post', 'wnd_delete_tag_under_cat', 10, 1);
-function wnd_delete_tag_under_cat($object_id) {
+add_action('before_delete_post', 'wnd_action_delete_tag_under_category', 10, 1);
+function wnd_action_delete_tag_under_category($object_id) {
 
 	// 选项中是否开启本功能
 	if (wnd_get_option('wnd', 'wnd_enable_terms') != 1) {
@@ -175,7 +169,6 @@ function wnd_delete_tag_under_cat($object_id) {
 	}
 
 	$post_type = get_post_type($object_id);
-	// if( $post_type =='post') return;
 	$cat_taxonomy = ($post_type == 'post') ? 'category' : $post_type . '_cat';
 	$tag_taxonomy = $post_type . '_tag';
 
@@ -197,7 +190,7 @@ function wnd_delete_tag_under_cat($object_id) {
 			foreach ($tags as $tag) {
 
 				$tag_id = $tag->term_id;
-				wnd_update_tag_under_cat($cat_id, $tag_id, $tag_taxonomy, $inc = 0);
+				wnd_update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc = 0);
 
 			}
 			unset($tag);
@@ -211,8 +204,8 @@ function wnd_delete_tag_under_cat($object_id) {
 
 //############################################################################ 删除term时，更新 tag under category数据
 // do_action( 'pre_delete_term', $term, $taxonomy );
-add_action('pre_delete_term', '', 10, 2);
-function wnd_pre_delete_term_action($term_id, $taxonmy) {
+add_action('pre_delete_term', 'wnd_action_pre_delete_term', 10, 2);
+function wnd_action_pre_delete_term($term_id, $taxonmy) {
 
 	// 选项中是否开启本功能
 	if (wnd_get_option('wnd', 'wnd_enable_terms') != 1) {

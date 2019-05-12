@@ -13,9 +13,13 @@ if (!defined('ABSPATH')) {
  *@param $_FILES
  *@param $_POST["save_width"]
  *@param $_POST["save_height"]
+ *@param $_POST["thumbnail_width"]
+ *@param $_POST["thumbnail_height"]
  *@param $_POST['meta_key']
+ *@param $_POST['_meta_key_nonce']
  *@param $_POST['post_parent']
- *@param $return_array array 二维数组
+ *
+ *@return $return_array array 二维数组
  *	array(
  *		array(
  *			'status' => 1,
@@ -23,6 +27,7 @@ if (!defined('ABSPATH')) {
  *			'msg' => '上传成功！',
  *		),
  *	);
+ *
  */
 function wnd_ajax_upload_file() {
 
