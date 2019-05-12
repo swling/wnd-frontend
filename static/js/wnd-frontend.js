@@ -531,6 +531,13 @@ jQuery(document).ready(function($) {
 			},
 			// 提交成功
 			success: function(response) {
+
+				// 错误
+				if (response.status === 0) {
+					wnd_ajax_msg(response.msg, "is-danger", "#" + id);
+					return false;
+				}
+
 				// 上传文件可能是多个，因此返回值为二维数组
 				for (var i = 0, n = response.length; i < n; i++) {
 					// 上传失败

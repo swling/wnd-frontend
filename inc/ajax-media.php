@@ -28,7 +28,7 @@ function wnd_ajax_upload_file() {
 
 	//$_FILES['wnd_file']需要与input name 值匹配
 	if (empty($_FILES['wnd_file'])) {
-		return array(array('status' => 0, 'msg' => '获取上传文件失败！'));
+		return array('status' => 0, 'msg' => '获取上传文件失败！');
 	}
 
 	$save_width = (int) $_POST["save_width"] ?? 0;
@@ -39,17 +39,14 @@ function wnd_ajax_upload_file() {
 	$post_parent = (int) $_POST['post_parent'] ?? 0;
 	$user_id = get_current_user_id();
 
-	// 定义返回信息
-	$return_array = array();
-
 	/**
 	 *@since 2019.05.08 上传文件meta key校验
 	 */
 	if (!$meta_key) {
-		return array(array('status' => 0, 'msg' => '错误：未定义meta_key！'));
+		return array('status' => 0, 'msg' => '错误：未定义meta_key！');
 	}
-	if (!wp_verify_nonce($_POST['_meta_key_nonce'], $meta_key)) {
-		return array(array('status' => 0, 'msg' => '错误：未经允许的meta_key！'));
+	if (!wnd_verify_nonce($_POST['_meta_key_nonce'], $meta_key)) {
+		return array('status' => 0, 'msg' => '错误：未经允许的meta_key！');
 	}
 
 	/**
@@ -58,16 +55,16 @@ function wnd_ajax_upload_file() {
 	 */
 	$can_upload_file = apply_filters('wnd_can_upload_file', array('status' => 1, 'msg' => '默认通过'), $post_parent, $meta_key);
 	if ($can_upload_file['status'] === 0) {
-		return array($can_upload_file);
+		return $can_upload_file;
 	}
 
 	if ($post_parent and !current_user_can('edit_post', $post_parent)) {
-		return array(array('status' => 0, 'msg' => '权限错误！'));
+		return array('status' => 0, 'msg' => '权限错误！');
 	}
 
 	// 上传信息校验
 	if (!$user_id and !$post_parent) {
-		return array(array('status' => 0, 'msg' => '错误：user ID及post ID均为空！'));
+		return array('status' => 0, 'msg' => '错误：user ID及post ID均为空！');
 	}
 
 	// These files need to be included as dependencies when on the front end.
@@ -81,6 +78,7 @@ function wnd_ajax_upload_file() {
 	 *@since 2019.05.06 改写
 	 *遍历文件上传
 	 */
+	$return_array = array(); // 定义图片信息返回数组
 	$files = $_FILES['wnd_file']; //暂存原始上传信息，后续将重写$_FILES全局变量以适配WordPress上传方式
 
 	foreach ($files['name'] as $key => $value) {
@@ -229,7 +227,7 @@ function wnd_ajax_paid_download() {
 	 *@since 2019.02.12 nonce验证
 	 */
 	// $action  = $post_id.'_paid_download_key';
-	// if(wp_verify_nonce( $_REQUEST['_download_key'], $action )){
+	// if(wnd_verify_nonce( $_REQUEST['_download_key'], $action )){
 	// 	return wnd_download_file($file, $post_id);
 	// }
 

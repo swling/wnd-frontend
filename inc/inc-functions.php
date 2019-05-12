@@ -5,6 +5,27 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ *增强版nonce校验，在nonce校验中加入秘钥
+ *@since 2019.05.12
+ **/
+function wnd_create_nonce($action) {
+
+	$secret_key = wnd_get_option('wnd', 'wnd_secret_key');
+	return wp_create_nonce(md5($action . $secret_key));
+}
+
+/**
+ *校验nonce
+ *@since 2019.05.12
+ **/
+function wnd_verify_nonce($nonce, $action) {
+
+	$secret_key = wnd_get_option('wnd', 'wnd_secret_key');
+	return wp_verify_nonce($nonce, md5($action . $secret_key));
+
+}
+
+/**
  *@since 2019.01.21 获取do page地址
  */
 function wnd_get_do_url() {

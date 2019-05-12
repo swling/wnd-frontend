@@ -56,6 +56,13 @@ function wnd_options(){
 				</td>
 			</tr>
 			<tr>
+				<td valign="top">校验秘钥</td>
+				<td>
+					<input type="text" name="wnd_secret_key" value="<?php echo wnd_get_option('wnd','wnd_secret_key');?>" class="regular-text">
+					<p><i>前端操作权限校验秘钥，请设置一个较为复杂的秘钥，避免在流量高峰期修改</i></p>
+				</td>
+			</tr>			
+			<tr>
 				<td valign="top">开启校验</td>
 				<td>
 					开启校验<input type="radio" required="required" name="wnd_form_verify" value="1" <?php if(wnd_get_option('wnd','wnd_form_verify')==1) echo 'checked' ?> />
@@ -63,13 +70,6 @@ function wnd_options(){
 					<p><i>警告：仅在开发测试中关闭过滤，否则可能引发安全问题</i></p>
 				</td>
 			</tr>
-			<tr>
-				<td valign="top">校验秘钥</td>
-				<td>
-					<input type="text" name="wnd_form_nonce_key" value="<?php echo wnd_get_option('wnd','wnd_form_nonce_key');?>" class="regular-text">
-					<p><i>提高表单数据校验安全性，请设置一个较为复杂的秘钥，避免在流量高峰期修改</i></p>
-				</td>
-			</tr>			
 
 			<!--优化选项-->
 			<tr>

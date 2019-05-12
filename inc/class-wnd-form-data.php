@@ -38,9 +38,6 @@ class Wnd_Form_Data {
 			return false;
 		}
 
-		// 表单验证秘钥
-		$form_nonce_key = wnd_get_option('wnd', 'wnd_form_nonce_key');
-
 		// 提取POST数组键值并排序
 		$form_names = array();
 		foreach ($_POST as $key => $value) {
@@ -50,7 +47,7 @@ class Wnd_Form_Data {
 		sort($form_names);
 
 		// 校验数组键值是否一直
-		return wp_verify_nonce($_POST['_wnd_form_nonce'], md5(implode('', $form_names) . $form_nonce_key));
+		return wnd_verify_nonce($_POST['_wnd_form_nonce'], md5(implode('', $form_names)));
 	}
 
 	// 0、获取WordPress user数据数组

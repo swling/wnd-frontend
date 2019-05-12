@@ -46,7 +46,7 @@ function wnd_api_callback($request) {
 		// 2、常规函数操作 需要安全校验
 	} else {
 
-		if (!wp_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $action)) {
+		if (!wnd_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $action)) {
 			return array('status' => 0, 'msg' => '安全校验失败！');
 		}
 

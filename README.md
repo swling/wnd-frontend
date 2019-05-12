@@ -62,8 +62,11 @@ wnd_meta: phone：用户手机号码
 ```php
 /**
  *自定义api：wp-json/wnd/rest-api Allow: GET, POST, PUT, PATCH, DELETE
+ *
  *提交的数据中必须包含，$_POST['action'] = $action_name 通过该值，将当前数据交由对应的后端 $action_name() 处理
- *提交的数据中，必须包含$_POST['_ajax_nonce'] = $wp_nonce， 生成方式：$wp_nonce = wp_create_nonce($action_name)
+ *提交的数据中，必须包含$_POST['_ajax_nonce'] = $wp_nonce nonce生成方式：$wp_nonce = wnd_create_nonce($action_name )
+ *@see Wnd_Ajax_Form->set_action
+ *
  *以"_wnd"为前缀的函数，定义为UI响应函数，无需安全校验
  *后端函数接收$_POST数据并处理后，返回数组值：array('status'=>'状态值','msg'=>'消息');通过统一将结果转为json格式，输出交付前端处理
  *权限控制中通过WordPress add_filters 实现

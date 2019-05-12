@@ -81,7 +81,9 @@ function wnd_save_remote_image($url, $post_parent, $desc) {
  *需要将图像存储在阿里云oss，并利用filter对wp_get_attachment_url重写为阿里oss地址
  *阿里云的图片处理
  *@link https://help.aliyun.com/document_detail/44688.html
- *@param $is_or_url int 	or string 	附件post id 或者oss完整图片地址
+ *截至2019.05.11图片处理定价：每月0-10TB：免费 >10TB：0.025元/GB
+ *
+ *@param $is_or_url 	int	or string 	附件post id 或者oss完整图片地址
  */
 function wnd_get_thumbnail_url($id_or_url, $width = 160, $height = 120) {
 

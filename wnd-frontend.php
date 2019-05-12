@@ -60,7 +60,7 @@ function wnd_install() {
 		$default_option = array(
 
 			'wnd_form_verify' => 1,
-			'wnd_form_nonce_key' => wnd_random('16'),
+			'wnd_secret_key' => wnd_random('16'),
 
 			'wnd_default_style' => 1,
 			'wnd_do_page' => 0,
