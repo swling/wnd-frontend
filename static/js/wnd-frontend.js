@@ -408,6 +408,8 @@ function wnd_ajax_submit(form_id) {
 		error: function() {
 			wnd_ajax_msg("系统错误！", "is-danger", "#" + form_id);
 			submit_button.removeClass("is-loading");
+			submit_button.text("系统错误");
+			submit_button.attr("disabled", "disabled");
 		},
 	});
 

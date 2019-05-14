@@ -374,9 +374,10 @@ function _wnd_profile_form() {
 	/*头像上传*/
 	$form->add_user_avatar();
 
+	$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 	$form->add_user_display_name();
-
 	$form->add_user_url();
+	$form->add_html('</div></div>');
 
 	// textarea
 	$form->add_user_description();
