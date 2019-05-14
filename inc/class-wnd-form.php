@@ -18,7 +18,7 @@ class Wnd_Form {
 
 	public $input_values = array();
 
-	public $upload;
+	public $with_upload;
 
 	public $submit_text = 'Submit';
 
@@ -47,7 +47,7 @@ class Wnd_Form {
 		'has_icons' => NULL, //left or right
 		'icon' => NULL,
 		'addon' => null,
-		
+
 	);
 
 	// 初始化构建
@@ -197,8 +197,8 @@ class Wnd_Form {
 			'data' => $args['data'],
 			'delete_button' => $args['delete_button'],
 		));
-		if (!$this->upload) {
-			$this->upload = true;
+		if (!$this->with_upload) {
+			$this->with_upload = true;
 		}
 
 	}
@@ -229,8 +229,8 @@ class Wnd_Form {
 			'required' => $args['required'],
 			'delete_button' => $args['delete_button'],
 		));
-		if (!$this->upload) {
-			$this->upload = true;
+		if (!$this->with_upload) {
+			$this->with_upload = true;
 		}
 
 	}
@@ -267,7 +267,7 @@ class Wnd_Form {
 		if (!is_null($this->action)) {
 			$html .= ' action="' . $this->action . '"';
 		}
-		if ($this->upload) {
+		if ($this->with_upload) {
 			$html .= ' enctype="multipart/form-data"';
 		}
 

@@ -370,7 +370,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	protected function build_form_header() {
 		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax" onsubmit="return false"';
 
-		if ($this->upload) {
+		if ($this->with_upload) {
 			$html .= ' enctype="multipart/form-data"';
 		}
 

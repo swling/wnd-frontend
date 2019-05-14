@@ -5,7 +5,7 @@
  *@since 2019.03.11
  *@param $post_type 	string
  *@param $post_id 		int
- *@param $field_only 	bool 	是否只生成表单字段（不添加post form 属性字段）
+ *@param $input_fields_only 	bool 	是否只生成表单字段（不添加post form 属性字段）
  */
 class Wnd_Post_Form extends Wnd_Ajax_Form {
 
@@ -16,7 +16,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 	public $post;
 
 	// 初始化构建
-	function __construct($post_type = 'post', $post_id = 0, $field_only = false) {
+	function __construct($post_type = 'post', $post_id = 0, $input_fields_only = false) {
 
 		// 继承基础变量
 		parent::__construct();
@@ -32,7 +32,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		$this->post_type = $this->post->post_type ?? $post_type;
 
 		// 文章表单固有字段
-		if (!$field_only) {
+		if (!$input_fields_only) {
 			parent::add_hidden('_post_ID', $this->post_id);
 			parent::add_hidden('_post_post_type', $this->post_type);
 			parent::set_action('wnd_ajax_insert_post');
@@ -247,7 +247,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax"';
 		$html .= ' onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}"';
 
-		if ($this->upload) {
+		if ($this->with_upload) {
 			$html .= ' enctype="multipart/form-data"';
 		}
 
