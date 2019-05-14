@@ -60,6 +60,7 @@ $post_type.'_tag';//标签taxonomy
 wp_post_meta: price (价格)
 wnd_meta: file (存储上传附件的id)
 wnd_meta: download_count (下载统计)
+wnd_meta：gallery （文章相册）
 
 #用户自定义字段
 wnd_meta: money：余额
@@ -68,6 +69,7 @@ wnd_meta: commission：佣金
 wnd_meta: avatar：头像文件id
 wnd_meta: avatar_url：头像外链
 wnd_meta: phone：用户手机号码
+wnd_meta：gallery （用户相册）
 
 #ajax交互概述：
 ```php

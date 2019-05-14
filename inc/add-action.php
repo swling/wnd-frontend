@@ -161,7 +161,7 @@ function wnd_action_do_action() {
 
 	//@since 2019.05.12 默认：校验nonce后执行action对应函数
 	default:
-		if (wnd_verify_nonce($_REQUEST['_wpnonce'], $action)) {
+		if (wnd_verify_nonce($_REQUEST['_wpnonce'] ?? '', $action)) {
 			return $action();
 		} else {
 			wp_die('无效的操作！', bloginfo('name'));

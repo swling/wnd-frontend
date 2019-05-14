@@ -46,12 +46,13 @@ $form->add_text(
 	)
 );
 
-// has addon
+// has addon and disabled
 $form->add_text(
 	array(
 		'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
 		'name' => 'test',
 		'label' => 'Input with addons',
+		'disabled' => true,
 	)
 );
 
