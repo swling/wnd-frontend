@@ -273,7 +273,7 @@ function wnd_filter_the_content($content) {
 		} else {
 
 			$content = '<div class="free-content">' . $free_content . '</div>';
-			$content .= '<div class="paid-content"><p class="ajax-msg">以下为付费内容</p></div>';
+			$content .= '<div class="paid-content"><p class="ajax-message">以下为付费内容</p></div>';
 			$button_text = '付费阅读： ¥' . wnd_get_post_price($post->ID);
 
 		}

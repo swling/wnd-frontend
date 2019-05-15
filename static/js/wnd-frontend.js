@@ -88,7 +88,7 @@ function wnd_alert_msg(msg, wait = 0) {
 	wnd_reset_modal();
 	$(".modal").addClass("is-active");
 	$(".modal-entry").removeClass("box");
-	$(".modal-entry").html('<div class="alert-msg" style="color:#FFF;text-align:center">' + msg + '</div>');
+	$(".modal-entry").html('<div class="alert-message" style="color:#FFF;text-align:center">' + msg + '</div>');
 	// 定时关闭
 	if (wait > 0) {
 		ajax_alert_time_out = setTimeout(function() {
@@ -102,7 +102,7 @@ function wnd_alert_msg(msg, wait = 0) {
 var ajax_msg_time_out;
 
 function wnd_ajax_msg(msg, style = "is-danger", parent = "body", wait = 0) {
-	$(parent + " .ajax-msg:first").html('<div class="message ' + style + '"><div class="message-body">' + msg + '</div></div>');
+	$(parent + " .ajax-message:first").html('<div class="message ' + style + '"><div class="message-body">' + msg + '</div></div>');
 	// 非对话框，返回表单顶部以展示提示信息
 	// if (!$(".modal").hasClass("is-active")) {
 	// 	var target = $(parent).get(0);
@@ -113,7 +113,7 @@ function wnd_ajax_msg(msg, style = "is-danger", parent = "body", wait = 0) {
 	// 定时清空
 	if (wait > 0) {
 		ajax_msg_time_out = setTimeout(function() {
-			$(parent + " .ajax-msg:first").empty();
+			$(parent + " .ajax-message:first").empty();
 		}, wait * 1000);
 	}
 }
@@ -355,7 +355,7 @@ function wnd_ajax_submit(form_id) {
 			if (response.status != 2 && response.status != 0) {
 				submit_button.attr("disabled", "disabled");
 			}
-			var submit_text = response.msg.length <= 10 ? response.msg : (response.status > 0 ? "操作成功" : "操作失败");
+			var submit_text = response.msg.length <= 10 ? response.msg : (response.status > 0 ? "提交成功" : "提交失败");
 			submit_button.text(submit_text);
 
 			var style = response.status > 0 ? "is-success" : "is-danger";
@@ -387,7 +387,7 @@ function wnd_ajax_submit(form_id) {
 
 					// 弹出信息并自动消失
 				case 5:
-					wnd_alert_msg(response.msg, 3);
+					wnd_alert_msg(response.msg, 1);
 					break;
 
 					// 下载类
@@ -552,7 +552,7 @@ jQuery(document).ready(function($) {
 					// 相册
 					if (meta_key == "gallery") {
 						// 清除默认提示信息
-						$("#" + id + " .gallery .default-msg").remove();
+						$("#" + id + " .gallery .default-message").remove();
 						var new_img_element =
 							'<div id="img' + response[i].data.id + '" class="column is-narrow">' +
 							'<a><img class="thumbnail" src="' + response[i].data.thumbnail + '" data-url="' + response[i].data.url + '" width="' + thumbnail_width + '" width="' + thumbnail_height + '"></a>' +
@@ -649,7 +649,7 @@ jQuery(document).ready(function($) {
 					$("#img" + file_id).remove();
 					// 删除全部图片时，显示提示信息
 					if ($("#" + id + " .gallery").html() == "") {
-						$("#" + id + " .gallery").html('<div class="column default-msg"><p>已删除全部图片</p></div>')
+						$("#" + id + " .gallery").html('<div class="column default-message"><p>已删除全部图片</p></div>')
 					}
 
 					// 单张图片
@@ -751,7 +751,7 @@ jQuery(document).ready(function($) {
 		var submit_button = $(this).find("[type='submit']");
 		submit_button.attr("disabled", false);
 		submit_button.text(submit_button.data("text"));
-		// $(this).find(".ajax-msg").empty();
+		// $(this).find(".ajax-message").empty();
 	});
 
 	/**

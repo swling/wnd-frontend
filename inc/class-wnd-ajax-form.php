@@ -9,17 +9,15 @@
  */
 class Wnd_Ajax_Form extends Wnd_Form {
 
-	// 新增WordPressfilter过滤
-	public $filter;
-	public $form_names;
+	public $filter = NULL;
+	public $form_names = array();
+	public $message = NULL;
 
 	function __construct() {
 
 		// 继承基础变量
 		parent::__construct();
 
-		// 新增拓展变量
-		$this->form_names = array();
 	}
 
 	function set_filter($filter) {
@@ -30,6 +28,10 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	function set_action($action, $method = '') {
 		parent::add_hidden('action', $action);
 		parent::add_hidden('_ajax_nonce', wnd_create_nonce($action));
+	}
+
+	function set_message($message) {
+		$this->message = $message;
 	}
 
 	/**
@@ -263,7 +265,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		}unset($key, $value);
 
 		$html = '<div id="' . $id . '" class="field upload-field">';
-		$html .= '<div class="field"><div class="ajax-msg"></div></div>';
+		$html .= '<div class="field"><div class="ajax-message"></div></div>';
 
 		// 上传区域
 		$html .= '<div class="field">';
@@ -278,7 +280,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		// 遍历输出图片集
 		$html .= '<div class="gallery columns is-vcentered has-text-centered">';
 		if (!$images) {
-			$html .= '<div class="column default-msg">';
+			$html .= '<div class="column default-message">';
 			$html .= '<p>' . $args['label'] . '</p>';
 			$html .= '</div>';
 		}
@@ -386,7 +388,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 			$html .= '</div>';
 		}
 
-		$html .= '<div class="ajax-msg"></div>';
+		$html .= '<div class="ajax-message">' . $this->message . '</div>';
 
 		$this->html = $html;
 	}

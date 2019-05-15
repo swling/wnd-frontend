@@ -204,7 +204,7 @@ apply_filters( '_wnd_post_form_{$post_type}', $input_values )
 #action
 ```php
 ##单上传文件后
-do_action('wnd_upload_file', $attachment_id,$post_parent, $meta_key);
+do_action('wnd_upload_file', $attachment_id, $post_parent, $meta_key);
 
 ##相册上传（多图片上传）
 do_action('wnd_upload_gallery', $return_array, $post_parent);
@@ -213,7 +213,7 @@ do_action('wnd_upload_gallery', $return_array, $post_parent);
 do_action('wnd_delete_file', $attachment_id, $post_parent, $meta_key);
 
 ##更新用户资料后
-do_action( 'wnd_update_profile', $user_id );
+do_action( 'wnd_update_profile', $user_id);
 
 ##@since 2019.03.14 站点清理
 do_action('wnd_clean_up');

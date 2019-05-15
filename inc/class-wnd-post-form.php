@@ -263,7 +263,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 			$html .= '</div>';
 		}
 
-		$html .= '<div class="ajax-msg"></div>';
+		$html .= '<div class="ajax-message"></div>';
 
 		$this->html = $html;
 	}

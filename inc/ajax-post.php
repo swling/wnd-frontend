@@ -201,7 +201,7 @@ function wnd_ajax_update_post_status() {
 		// 无论是否设置了$force_delete 自定义类型的文章都会直接被删除
 		$delete = wp_delete_post($post_id, $force_delete = false);
 		if ($delete) {
-			return array('status' => 1, 'msg' => '内容已删除！');
+			return array('status' => 5, 'msg' => '已删除！');
 		} else {
 			return array('status' => 0, 'msg' => '操作失败，请检查！');
 		}
@@ -216,7 +216,7 @@ function wnd_ajax_update_post_status() {
 
 	// 完成更新
 	if ($update) {
-		return array('status' => 1, 'msg' => '更新成功！');
+		return array('status' => 5, 'msg' => '更新成功！');
 
 		//更新失败
 	} else {

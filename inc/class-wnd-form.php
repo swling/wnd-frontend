@@ -425,7 +425,7 @@ class Wnd_Form {
 		if ($input_value['label']) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
-		$html .= '<div class="field"><div class="ajax-msg"></div></div>';
+		$html .= '<div class="field"><div class="ajax-message"></div></div>';
 
 		$html .= '<div class="field">';
 		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['height'] . '"></a>';
@@ -459,7 +459,7 @@ class Wnd_Form {
 
 		$html = '<div id="' . $id . '" class="field upload-field">';
 
-		$html .= '<div class="field"><div class="ajax-msg"></div></div>';
+		$html .= '<div class="field"><div class="ajax-message"></div></div>';
 		$html .= '<div class="columns is-mobile is-vcentered">';
 
 		$html .= '<div class="column">';
