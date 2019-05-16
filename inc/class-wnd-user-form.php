@@ -9,7 +9,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 	public $user;
 
 	// 初始化构建
-	function __construct() {
+	public function __construct() {
 
 		// 继承基础变量
 		parent::__construct();
@@ -18,7 +18,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		$this->user = wp_get_current_user();
 	}
 
-	function add_user_login($placeholder = '用户名、手机、邮箱') {
+	public function add_user_login($placeholder = '用户名、手机、邮箱') {
 		parent::add_text(
 			array(
 				'name' => '_user_user_login',
@@ -33,7 +33,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_user_email($placeholder = '邮箱') {
+	public function add_user_email($placeholder = '邮箱') {
 		parent::add_text(
 			array(
 				'name' => '_user_user_email',
@@ -47,7 +47,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_user_password($placeholder = '密码') {
+	public function add_user_password($placeholder = '密码') {
 		parent::add_password(
 			array(
 				'name' => '_user_user_pass',
@@ -61,7 +61,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_user_new_password($placeholder = '新密码') {
+	public function add_user_new_password($placeholder = '新密码') {
 		parent::add_password(
 			array(
 				'name' => '_user_new_pass',
@@ -75,7 +75,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_user_new_password_repeat($placeholder = '确认新密码') {
+	public function add_user_new_password_repeat($placeholder = '确认新密码') {
 		parent::add_password(
 			array(
 				'name' => '_user_new_pass_repeat',
@@ -89,7 +89,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_user_display_name($placeholder = '名称') {
+	public function add_user_display_name($placeholder = '名称') {
 		parent::add_text(
 			array(
 				'name' => '_user_display_name',
@@ -103,7 +103,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_user_url($placeholder = '网站链接') {
+	public function add_user_url($placeholder = '网站链接') {
 		parent::add_text(
 			array(
 				'name' => '_user_user_url',
@@ -117,7 +117,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_user_description($placeholder = '资料简介') {
+	public function add_user_description($placeholder = '资料简介') {
 		parent::add_textarea(
 			array(
 				'name' => '_wpusermeta_description',
@@ -128,7 +128,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_user_avatar($thumbnail_size = 150, $save_size = 200) {
+	public function add_user_avatar($thumbnail_size = 150, $save_size = 200) {
 		$args = array(
 			'label' => '',
 			'thumbnail_size' => array('width' => $thumbnail_size, 'height' => $thumbnail_size),
@@ -147,7 +147,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 	 *@since 2019.04.28 上传字段简易封装
 	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Ajax_Form
 	 */
-	function add_user_image_upload($meta_key, $size = array('width' => 200, 'height' => 200), $label = '') {
+	public function add_user_image_upload($meta_key, $size = array('width' => 200, 'height' => 200), $label = '') {
 		$args = array(
 			'label' => $label,
 			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
@@ -163,7 +163,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		self::add_image_upload($args);
 	}
 
-	function add_user_file_upload($meta_key, $label = '文件上传') {
+	public function add_user_file_upload($meta_key, $label = '文件上传') {
 		self::add_file_upload(
 			array(
 				'label' => $label,

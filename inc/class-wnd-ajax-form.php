@@ -9,28 +9,28 @@
  */
 class Wnd_Ajax_Form extends Wnd_Form {
 
-	public $filter = NULL;
+	public $filter = null;
 	public $form_names = array();
-	public $message = NULL;
+	public $message = null;
 
-	function __construct() {
+	public function __construct() {
 
 		// 继承基础变量
 		parent::__construct();
 
 	}
 
-	function set_filter($filter) {
+	public function set_filter($filter) {
 		$this->filter = $filter;
 	}
 
 	// ajax提交只需要设置 action 但常规表单action包含提交地址和提交方式，在类中，必须保持参数个数一致
-	function set_action($action, $method = '') {
+	public function set_action($action, $method = '') {
 		parent::add_hidden('action', $action);
 		parent::add_hidden('_ajax_nonce', wnd_create_nonce($action));
 	}
 
-	function set_message($message) {
+	public function set_message($message) {
 		$this->message = $message;
 	}
 
@@ -39,7 +39,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	 *直接新增表单names数组元素
 	 *用于nonce校验，如直接通过html方式新增的表单字段，无法被提取，需要通过这种方式新增name，以通过nonce校验
 	 **/
-	function add_input_name($name) {
+	public function add_input_name($name) {
 		array_push($this->form_names, $name);
 	}
 
@@ -47,18 +47,18 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	 *@since 2019.05.09
 	 *未被选中的radio 与checkbox将不会发送到后端，会导致wnd_form_nonce 校验失败，此处通过设置hidden字段修改
 	 */
-	function add_radio($args) {
+	public function add_radio($args) {
 		parent::add_hidden($args['name'], '');
 		parent::add_radio($args);
 	}
 
-	function add_checkbox($args) {
+	public function add_checkbox($args) {
 		parent::add_hidden($args['name'], '');
 		parent::add_checkbox($args);
 	}
 
 	// 短信验证
-	function add_sms_verify($verify_type = 'verify', $template = '') {
+	public function add_sms_verify($verify_type = 'verify', $template = '') {
 
 		parent::add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
 
@@ -93,7 +93,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	// 邮箱验证
-	function add_email_verify($verify_type = 'verify', $template = '') {
+	public function add_email_verify($verify_type = 'verify', $template = '') {
 
 		parent::add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
 
@@ -124,7 +124,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	// Image upload
-	function add_image_upload($args) {
+	public function add_image_upload($args) {
 
 		$defaults = array(
 			'label' => 'Image upland',
@@ -176,7 +176,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	// File upload
-	function add_file_upload($args) {
+	public function add_file_upload($args) {
 
 		$defaults = array(
 			'label' => 'File upload',
@@ -219,7 +219,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	// 相册上传
-	function add_gallery_upload($args) {
+	public function add_gallery_upload($args) {
 
 		$defaults = array(
 			'label' => 'Gallery',
@@ -310,7 +310,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	// 构造表单，可设置WordPress filter 过滤表单的input_values
-	function build() {
+	public function build() {
 
 		/**
 		 *设置表单过滤filter

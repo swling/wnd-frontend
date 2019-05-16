@@ -16,7 +16,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 	public $post;
 
 	// 初始化构建
-	function __construct($post_type = 'post', $post_id = 0, $input_fields_only = false) {
+	public function __construct($post_type = 'post', $post_id = 0, $input_fields_only = false) {
 
 		// 继承基础变量
 		parent::__construct();
@@ -39,7 +39,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		}
 	}
 
-	function add_post_title($label = '', $placeholder = "请输入标题") {
+	public function add_post_title($label = '', $placeholder = "请输入标题") {
 
 		$post_title = $this->post->post_title ?? '';
 		parent::add_text(
@@ -54,7 +54,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_post_excerpt($label = '', $placeholder = '内容摘要') {
+	public function add_post_excerpt($label = '', $placeholder = '内容摘要') {
 
 		parent::add_textarea(
 			array(
@@ -67,7 +67,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		);
 	}
 
-	function add_post_term_select($taxonomy, $required = true) {
+	public function add_post_term_select($taxonomy, $required = true) {
 
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
@@ -101,7 +101,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 	}
 
-	function add_post_tags($taxonomy, $placeholder = '标签') {
+	public function add_post_tags($taxonomy, $placeholder = '标签') {
 
 		$taxonomy_object = get_taxonomy($taxonomy);
 
@@ -128,11 +128,11 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		parent::add_html(_wnd_get_tags_editor_script(3, 20, $placeholder, $taxonomy));
 	}
 
-	function add_post_thumbnail($width = 200, $height = 200, $label = '') {
+	public function add_post_thumbnail($width = 200, $height = 200, $label = '') {
 		self::add_post_image_upload('_thumbnail_id', $width, $height, $label);
 	}
 
-	function add_post_content($rich_media_editor = true, $required = false, $placeholder = '详情') {
+	public function add_post_content($rich_media_editor = true, $required = false, $placeholder = '详情') {
 
 		/**
 		 *@since 2019.3.11 调用外部页面变量，后续更改为当前编辑的post，否则，wp_editor上传的文件将归属到页面，而非当前编辑的文章
@@ -179,7 +179,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		parent::add_html('<script type="text/javascript">var wp_editor = $("#hidden-wp-editor").html();$("#hidden-wp-editor").remove();$("#wnd-wp-editor").html(wp_editor);</script>');
 	}
 
-	function add_post_price($label = '', $placeholder = '价格') {
+	public function add_post_price($label = '', $placeholder = '价格') {
 		parent::add_text(
 			array(
 				'name' => '_wpmeta_price',
@@ -196,7 +196,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 	 *@since 2019.04.28 上传字段简易封装
 	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Ajax_Form
 	 */
-	function add_post_image_upload($meta_key, $width = 200, $height = 200, $label = '') {
+	public function add_post_image_upload($meta_key, $width = 200, $height = 200, $label = '') {
 		$args = array(
 			'label' => $label,
 			'thumbnail_size' => array('width' => $width, 'height' => $height),
@@ -212,7 +212,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		parent::add_image_upload($args);
 	}
 
-	function add_post_file_upload($meta_key, $label = '文件上传') {
+	public function add_post_file_upload($meta_key, $label = '文件上传') {
 		parent::add_file_upload(
 			array(
 				'label' => $label,
@@ -227,7 +227,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 	/**
 	 *@since 2019.05.08 上传图片集
 	 */
-	function add_post_gallery_upload($thumbnail_width = 160, $thumbnail_height = 120, $label = '') {
+	public function add_post_gallery_upload($thumbnail_width = 160, $thumbnail_height = 120, $label = '') {
 
 		$args = array(
 			'label' => $label,

@@ -40,7 +40,7 @@ function wnd_ajax_upload_file() {
 	$save_height = (int) $_POST["save_height"] ?? 0;
 	$thumbnail_height = (int) $_POST["thumbnail_height"] ?? 0;
 	$thumbnail_width = (int) $_POST["thumbnail_width"] ?? 0;
-	$meta_key = $_POST['meta_key'] ?? NULL;
+	$meta_key = $_POST['meta_key'] ?? null;
 	$post_parent = (int) $_POST['post_parent'] ?? 0;
 	$user_id = get_current_user_id();
 

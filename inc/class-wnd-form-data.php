@@ -10,7 +10,7 @@ class Wnd_Form_Data {
 	static $enable_form_verify;
 	public $form_data;
 
-	function __construct($verify_form_nonce = true) {
+	public function __construct($verify_form_nonce = true) {
 
 		Wnd_Form_Data::$enable_form_verify = wnd_get_option('wnd', 'wnd_enable_form_verify');
 
@@ -51,7 +51,7 @@ class Wnd_Form_Data {
 	}
 
 	// 0、获取WordPress user数据数组
-	function get_user_array() {
+	public function get_user_array() {
 
 		$user_array = array();
 
@@ -68,7 +68,7 @@ class Wnd_Form_Data {
 	}
 
 	// 1、获取WordPress原生use meta数据数组
-	function get_wp_user_meta_array() {
+	public function get_wp_user_meta_array() {
 
 		$wp_user_meta_array = array();
 
@@ -85,7 +85,7 @@ class Wnd_Form_Data {
 	}
 
 	// 2、获取自定义WndWP user meta数据数组
-	function get_user_meta_array() {
+	public function get_user_meta_array() {
 
 		$user_meta_array = array();
 
@@ -102,7 +102,7 @@ class Wnd_Form_Data {
 	}
 
 	// 3、获取WordPress原生post meta数据数组
-	function get_post_array() {
+	public function get_post_array() {
 
 		$post_array = array();
 
@@ -119,7 +119,7 @@ class Wnd_Form_Data {
 	}
 
 	// 4、获取WordPress原生post meta数据数组
-	function get_wp_post_meta_array() {
+	public function get_wp_post_meta_array() {
 
 		$wp_post_meta_array = array();
 
@@ -136,7 +136,7 @@ class Wnd_Form_Data {
 	}
 
 	// 5、获取WndWP post meta数据数组
-	function get_post_meta_array() {
+	public function get_post_meta_array() {
 
 		$post_meta_array = array();
 
@@ -153,7 +153,7 @@ class Wnd_Form_Data {
 	}
 
 	// 6、获取WordPress分类：term数组
-	function get_term_array() {
+	public function get_term_array() {
 
 		$term_array = array();
 

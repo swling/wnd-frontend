@@ -14,7 +14,7 @@ class Wnd_Form {
 
 	public $form_attr;
 
-	public $form_title = NULL;
+	public $form_title = null;
 
 	public $input_values = array();
 
@@ -34,51 +34,51 @@ class Wnd_Form {
 
 		'name' => '',
 		'value' => '',
-		'label' => NULL,
+		'label' => null,
 		'options' => array(), //value of select/radio. Example: array(label=>value)
 		'required' => false,
 		'placeholder' => '',
-		'checked' => NULL, // checked value od select/radio/checkbox
+		'checked' => null, // checked value od select/radio/checkbox
 		'disabled' => false,
 		'autofocus' => false,
 
-		'id' => NULL,
-		'class' => NULL,
-		'has_icons' => NULL, //left or right
-		'icon' => NULL,
+		'id' => null,
+		'class' => null,
+		'has_icons' => null, //left or right
+		'icon' => null,
 		'addon' => null,
 
 	);
 
 	// 初始化构建
-	function __construct() {
+	public function __construct() {
 		$this->id = uniqid();
 	}
 
 	// 允许外部更改私有变量
-	function __set($var, $val) {
+	public function __set($var, $val) {
 		$this->$var = $val;
 	}
 
 	/**
 	 *@since 2019.03.10 设置表单属性
 	 */
-	function set_form_title($form_title) {
+	public function set_form_title($form_title) {
 		$this->form_title = $form_title;
 	}
 
-	function set_form_attr($form_attr) {
+	public function set_form_attr($form_attr) {
 		$this->form_attr = $form_attr;
 	}
 
 	// Submit
-	function set_submit_button($submit_text, $submit_style = '') {
+	public function set_submit_button($submit_text, $submit_style = '') {
 		$this->submit_text = $submit_text;
 		$this->submit_style = $submit_style;
 	}
 
 	// _action
-	function set_action($method, $action) {
+	public function set_action($method, $action) {
 		$this->method = $method;
 		$this->action = $action;
 	}
@@ -92,7 +92,7 @@ class Wnd_Form {
 	 *@since 2019.03.10 设置常规input 字段
 	 */
 	// _text
-	function add_text($args) {
+	public function add_text($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 		$args['type'] = 'text';
@@ -100,7 +100,7 @@ class Wnd_Form {
 	}
 
 	// _number
-	function add_number($args) {
+	public function add_number($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 		$args['type'] = 'number';
@@ -108,17 +108,17 @@ class Wnd_Form {
 	}
 
 	// _hidden
-	function add_hidden($name, $value) {
+	public function add_hidden($name, $value) {
 		array_push($this->input_values, array(
 			'type' => 'hidden',
 			'name' => $name,
 			'value' => $value,
-			'id' => NULL,
+			'id' => null,
 		));
 	}
 
 	// _textarea
-	function add_textarea($args) {
+	public function add_textarea($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 		$args['type'] = 'textarea';
@@ -126,7 +126,7 @@ class Wnd_Form {
 	}
 
 	// _email
-	function add_email($args) {
+	public function add_email($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 		$args['type'] = 'email';
@@ -135,7 +135,7 @@ class Wnd_Form {
 	}
 
 	// _password
-	function add_password($args) {
+	public function add_password($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 
@@ -144,7 +144,7 @@ class Wnd_Form {
 	}
 
 	// _select
-	function add_select($args) {
+	public function add_select($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 		$args['type'] = 'select';
@@ -152,7 +152,7 @@ class Wnd_Form {
 	}
 
 	// _radio
-	function add_radio($args) {
+	public function add_radio($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 		$args['type'] = 'radio';
@@ -161,7 +161,7 @@ class Wnd_Form {
 	}
 
 	// _checkbox
-	function add_checkbox($args) {
+	public function add_checkbox($args) {
 
 		$args = array_merge(Wnd_Form::$defaults, $args);
 		$args['type'] = 'checkbox';
@@ -170,7 +170,7 @@ class Wnd_Form {
 	}
 
 	// Image upload
-	function add_image_upload($args) {
+	public function add_image_upload($args) {
 
 		$defaults = array(
 			'id' => 'image-upload-' . $this->id,
@@ -204,7 +204,7 @@ class Wnd_Form {
 	}
 
 	// File upload
-	function add_file_upload($args) {
+	public function add_file_upload($args) {
 
 		$defaults = array(
 			'id' => 'file-upload-' . $this->id,
@@ -238,7 +238,7 @@ class Wnd_Form {
 	/**
 	 *@since 2019.03.06 在表单当前位置插入指定html代码以补充现有方法无法实现的效果
 	 */
-	function add_html($html) {
+	public function add_html($html) {
 		array_push($this->input_values, array(
 			'type' => 'html',
 			'value' => $html,
@@ -249,7 +249,7 @@ class Wnd_Form {
 	 *@since 2019.03.06
 	 *表单构造函数
 	 **/
-	function build() {
+	public function build() {
 		$this->build_form_header();
 		$this->build_input_values();
 		$this->build_submit_button();
@@ -567,12 +567,12 @@ class Wnd_Form {
 	 *表单数据获取与设置
 	 *@since 2019.04.28
 	 */
-	function get_input_fields() {
+	public function get_input_fields() {
 		return $this->build_input_values();
 	}
 
 	// 获取当前表单的组成数据数组（通常用于配合 filter 过滤）
-	function get_input_values() {
+	public function get_input_values() {
 		return $this->input_values;
 	}
 

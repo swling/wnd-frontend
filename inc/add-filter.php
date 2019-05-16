@@ -89,9 +89,9 @@ function wnd_filter_list_table_data($post) {
 	if ($post->post_type == 'mail') {
 
 		if ($post->post_status == 'private') {
-			$post->post_status = '未读';
-		} elseif ($post->post_status == 'pending') {
 			$post->post_status = '已读';
+		} elseif ($post->post_status == 'pending') {
+			$post->post_status = '未读';
 		} elseif ($post->post_status == 'draft') {
 			$post->post_status = '草稿';
 		}

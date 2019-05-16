@@ -35,6 +35,7 @@ require WND_PATH . 'inc/ajax-pay.php'; //ajax付费服务
 require WND_PATH . 'inc/add-action.php'; //添加的动作
 require WND_PATH . 'inc/add-filter.php'; //添加的钩子
 
+require WND_PATH . 'template/tpl-functions.php'; //模板函数
 require WND_PATH . 'template/tpl-user.php'; //user模板
 require WND_PATH . 'template/tpl-post.php'; //post模板
 require WND_PATH . 'template/tpl-term.php'; //term模板
