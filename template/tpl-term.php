@@ -111,6 +111,10 @@ function _wnd_term_query_arg($args = array(), $remove_query_arg = array('page', 
  */
 function _wnd_related_tags_query_arg($cat_id, $tag_taxonomy, $limit = 10, $remove_query_arg = array('page', 'pages'), $title = '全部') {
 
+	if (!taxonomy_exists($tag_taxonomy)) {
+		return;
+	}
+
 	$key = '_term_' . $tag_taxonomy;
 	$current_term_id = isset($_GET[$key]) ? $_GET[$key] : false;
 	$all_class = !$current_term_id ? 'class="is-active"' : false;

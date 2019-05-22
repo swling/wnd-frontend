@@ -9,7 +9,7 @@ function _wnd_breadcrumb() {
 	/**
 	 *columns
 	 **/
-	$html = '<div class="columns">';
+	$html = '<div class="columns is-mobile">';
 
 	/**
 	 *左侧导航
@@ -49,7 +49,9 @@ function _wnd_breadcrumb() {
 		//归档页
 	} elseif (is_archive()) {
 
-		$html .= '<li class="is-active"><a href="#">' . get_taxonomy($queried_object->taxonomy)->label . ' : ' . $queried_object->name . '</a></li>';
+		$args = http_build_query(array('taxonomy' => $queried_object->taxonomy, 'orderby' => 'name'));
+		$html .= '<li><a onclick="wnd_ajax_modal(\'_wnd_terms_list\',\'' . $args . '\')">' . get_taxonomy($queried_object->taxonomy)->label . '</a></li>';
+		$html .= '<li class="is-active"><a href="#">' . $queried_object->name . '</a></li>';
 
 	}
 
@@ -70,9 +72,6 @@ function _wnd_breadcrumb() {
 		// 分类切换
 	} elseif (is_archive()) {
 
-		$args = http_build_query(array('taxonomy' => $queried_object->taxonomy, 'orderby' => 'name'));
-		$html .= '<i class="fas fa-ellipsis-h"></i> ';
-		$html .= '<a onclick="wnd_ajax_modal(\'_wnd_terms_list\',\'' . $args . '\')">更多' . get_taxonomy($queried_object->taxonomy)->label . '</a>';
 	}
 
 	$html .= '</div>';
