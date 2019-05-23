@@ -230,7 +230,7 @@ function _wnd_post_status($post_id) {
 function _wnd_post_status_form($post_id) {
 
 	$post = get_post($post_id);
-	if(!$post){
+	if (!$post) {
 		return 'ID无效！';
 	}
 
@@ -311,9 +311,9 @@ function _wnd_post_thumbnail($post_id, $width, $height) {
 
 	if ($image_id) {
 		if ($width and $height) {
-			return '<img src="' . wp_get_attachment_url($image_id) . '" width="' . $width . '" height="' . $height . '"  >';
+			return '<img class="thumbnail" src="' . wp_get_attachment_url($image_id) . '" width="' . $width . '" height="' . $height . '"  >';
 		} else {
-			return '<img src="' . wp_get_attachment_url($image_id) . '" >';
+			return '<img class="thumbnail" src="' . wp_get_attachment_url($image_id) . '" >';
 		}
 	}
 

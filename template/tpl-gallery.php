@@ -10,7 +10,7 @@ function _wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120)
 
 	$images = $post_id ? wnd_get_post_meta($post_id, 'gallery') : wnd_get_user_meta(get_current_user_id(), 'gallery');
 	if (!$images) {
-		return '没有图集';
+		return false;
 	}
 
 	// 遍历输出图片集

@@ -141,7 +141,7 @@ function wnd_mail($to, $subject, $message) {
 function wnd_get_mail_notify() {
 
 	$user_id = get_current_user_id();
-	$user_mail_count = wp_cache_get($user_id, 'wnd_user_mail');
+	$user_mail_count = wp_cache_get($user_id, 'wnd_mail_notify');
 
 	if (false === $user_mail_count) {
 
@@ -155,7 +155,7 @@ function wnd_get_mail_notify() {
 		$query = new WP_Query($args);
 
 		$user_mail_count = $query->found_posts;
-		wp_cache_set($user_id, $user_mail_count, 'wnd_user_mail');
+		wp_cache_set($user_id, $user_mail_count, 'wnd_mail_notify');
 
 	}
 

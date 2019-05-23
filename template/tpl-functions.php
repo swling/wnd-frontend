@@ -39,7 +39,7 @@ function _wnd_breadcrumb() {
 			unset($taxonomy);
 		}
 
-		$html .= $terms_link . '<li class="is-active"><a href="#">' . $queried_object->post_title . '</a></li>';
+		$html .= $terms_link . '<li class="is-active"><a href="#">' . get_post_type_object($queried_object->post_type)->label . '详情</a></li>';
 
 		//页面
 	} elseif (is_page()) {
