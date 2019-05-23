@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
  *@since 初始化
  *保存提交数据
  *@param 	$_POST 						全局表单数据
- *@param 	$verify_form_nonce  bool 	是否校验表单数据来源 
+ *@param 	$verify_form_nonce  bool 	是否校验表单数据来源
  *@return 	array 						操作结果
  **/
 function wnd_ajax_insert_post($verify_form_nonce = true) {

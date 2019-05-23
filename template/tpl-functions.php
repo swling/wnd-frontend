@@ -1,5 +1,9 @@
 <?php
 
+/**
+ *@since 2019.05.23
+ *面包屑导航
+ **/
 function _wnd_breadcrumb() {
 
 	if (is_home()) {

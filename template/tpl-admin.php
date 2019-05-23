@@ -17,7 +17,7 @@ function _wnd_admin_posts_panel($args = '') {
 	// 查询参数
 	$defaults = array(
 		'post_status' => 'pending',
-		'wnd_list_tpl'=>'_wnd_table_list',
+		'wnd_list_tpl' => '_wnd_table_list',
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -39,7 +39,7 @@ function _wnd_user_posts_panel($args = '') {
 	$defaults = array(
 		'post_status' => 'any',
 		'wnd_only_cat' => 1,
-		'wnd_list_tpl'=>'_wnd_table_list',
+		'wnd_list_tpl' => '_wnd_table_list',
 	);
 	$args = wp_parse_args($args, $defaults);
 

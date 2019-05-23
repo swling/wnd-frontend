@@ -6,7 +6,7 @@
  *（在非ajax状态中，生成 ?type=post_type，ajax中，在当前查询参数新增post_type参数，并注销paged翻页参数以实现菜单切换）
  *@param $args 							外部调用函数ajax查询文章的参数
  *@param $args['wnd_post_types'] 		array 需要列表输出的类型数组
- *@param $args['wnd_remove_query_arg'] 	需要从当前请求参数中移除的参数数组 
+ *@param $args['wnd_remove_query_arg'] 	需要从当前请求参数中移除的参数数组
  *@param $ajax_call 					外部调用函数  @see js function wnd_ajax_embed()
  *@param $ajax_container 				外部调用函数ajax查询文章后嵌入的html容器
  */

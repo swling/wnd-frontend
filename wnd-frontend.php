@@ -87,6 +87,11 @@ function wnd_install() {
 	update_option('wnd_ver', WND_VER);
 
 }
+
+/**
+ *@since 初始化
+ *卸载插件
+ */
 function wnd_uninstall() {
 	// delete_option('wnd');
 	return;
