@@ -58,7 +58,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	// 短信验证
-	public function add_sms_verify($verify_type = 'verify', $template = '') {
+	public function add_sms_verify($verify_type = 'verify', $template = '', $style = 'is-primary') {
 
 		parent::add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
 
@@ -84,7 +84,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '短信验证码',
-				'addon' => '<button type="button" class="send-code button is-primary" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button ' . $style . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
 			)
 		);
 
@@ -93,7 +93,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	// 邮箱验证
-	public function add_email_verify($verify_type = 'verify', $template = '') {
+	public function add_email_verify($verify_type = 'verify', $template = '', $style = 'is-primary') {
 
 		parent::add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
 
@@ -115,7 +115,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '邮箱验证码',
-				'addon' => '<button type="button" class="send-code button is-primary" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button ' . $style . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
 			)
 		);
 
