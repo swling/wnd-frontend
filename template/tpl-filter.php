@@ -1112,20 +1112,25 @@ function _wnd_posts_filter($args = array()) {
 	$html = '<div id="wnd-filter">';
 
 	$html .= '<div id="filter-container">';
+
 	// post types 切换
 	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
 		$html .= _wnd_post_types_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	}
+
 	// 分类 切换
 	$html .= _wnd_categories_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	// 获取分类下关联的标签
 	if (!$args['wnd_only_cat']) {
 		$html .= _wnd_tags_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	}
+
 	// meta query
 	$html .= _wnd_meta_filter($args, '_wnd_posts_filter', '#wnd-filter');
+
 	// orderby
 	$html .= _wnd_orderby_filter($args, '_wnd_posts_filter', '#wnd-filter');
+
 	// 列出当前term查询，并附带取消链接
 	$html .= _wnd_current_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	$html .= '</div>';

@@ -52,7 +52,7 @@ function wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $t
  *2、若当前用户没有草稿，则查询其他用户超过一天未发布的自动草稿，并初始化标题、清除相关附件等
  *3、以上皆无结果，则创建一篇新文章
  *@since 2018.11.12
- *	默认：获取当前用户，一天以前编辑过的文章（一天内更新过的文章表示正处于编辑状态）
+ *默认：获取当前用户，一天以前编辑过的文章（一天内更新过的文章表示正处于编辑状态）
  */
 function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 
@@ -95,50 +95,47 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 			return array('status' => 0, 'msg' => $post_id->get_error_message());
 		}
 
-		//2、当前用户没有草稿，查询其他用户超过指定时间未编辑的草稿
-	} else {
+	}
 
-		// 设置时间条件 更新自动草稿时候，modified 不会变需要查询 post date
-		$date_query = array(
+	//2、当前用户没有草稿，查询其他用户超过指定时间未编辑的草稿(更新自动草稿时候，modified 不会变需要查询 post_date)
+	$date_query = array(
+		array(
+			'column' => 'post_date',
+			'before' => date('Y-m-d H:i', time() - $interval_time),
+		),
+	);
+	$query_array = array_merge($query_array, array('date_query' => $date_query));
+	unset($query_array['author']);
+	$draft_post_array = get_posts($query_array);
+
+	// 有符合条件的其他用户创建的草稿
+	if ($draft_post_array) {
+
+		$post_id = $draft_post_array[0]->ID;
+		// 更新草稿状态
+		$post_id = wp_update_post(
 			array(
-				'column' => 'post_date',
-				'before' => date('Y-m-d H:i', time() - $interval_time),
-			),
+				'ID' => $post_id,
+				'post_status' => 'auto-draft',
+				'post_title' => 'Auto-draft',
+				'post_author' => $user_id,
+			)
 		);
-		$query_array = array_merge($query_array, array('date_query' => $date_query));
-		unset($query_array['author']);
-		$draft_post_array = get_posts($query_array);
 
-		// 有符合条件的其他用户创建的草稿
-		if ($draft_post_array) {
-
-			$post_id = $draft_post_array[0]->ID;
-			// 更新草稿状态
-			$post_id = wp_update_post(
-				array(
-					'ID' => $post_id,
-					'post_status' => 'auto-draft',
-					'post_title' => 'Auto-draft',
-					'post_author' => $user_id,
-				)
-			);
-
-			//清空之前的附件
-			if ($post_id) {
-				$attachments = get_children(array('post_type' => 'attachment', 'post_parent' => $post_id));
-				foreach ($attachments as $attachment) {
-					wp_delete_attachment($attachment->ID, 'true');
-				}
-				unset($attachment);
+		//清空之前的附件
+		if ($post_id) {
+			$attachments = get_children(array('post_type' => 'attachment', 'post_parent' => $post_id));
+			foreach ($attachments as $attachment) {
+				wp_delete_attachment($attachment->ID, 'true');
 			}
+			unset($attachment);
+		}
 
-			// 返回值
-			if (!is_wp_error($post_id)) {
-				return array('status' => 1, 'data' => $post_id, 'msg' => '已获取并更新其他用户草稿');
-			} else {
-				return array('status' => 0, 'msg' => $post_id->get_error_message());
-			}
-
+		// 返回值
+		if (!is_wp_error($post_id)) {
+			return array('status' => 1, 'data' => $post_id, 'msg' => '已获取并更新其他用户草稿');
+		} else {
+			return array('status' => 0, 'msg' => $post_id->get_error_message());
 		}
 
 	}

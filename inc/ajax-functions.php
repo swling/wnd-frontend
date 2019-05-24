@@ -13,7 +13,7 @@ function _wnd_ajax_embed($template, $args = '') {
 
 	$function_name = $template;
 
-	$div_id = 'wnd_' . $template;
+	$div_id = 'wnd-filter-' . uniqid();
 	$args = wp_parse_args($args);
 	$ajax_args = http_build_query($args);
 
