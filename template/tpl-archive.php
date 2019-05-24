@@ -216,9 +216,8 @@ function _wnd_post_list($args = '') {
 			$list = '<h3><a href="' . get_permalink($post) . '">' . $post->post_title . '</a></h3>';
 			$html .= apply_filters('_wnd_post_list_tpl', $list, $post);
 
-			wp_reset_postdata(); //重置查询
-
 		}
+		wp_reset_postdata(); //重置查询
 
 		// 没有内容
 	} else {
