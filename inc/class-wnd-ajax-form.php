@@ -57,7 +57,12 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		parent::add_checkbox($args);
 	}
 
-	// 短信验证
+	/**
+	 *短信校验
+	 *@param $verify_type 	string 'reg' / 'reset_pass' 为保留字段, 用途为：注册 / 重置密码
+	 *注册时若当前手机已注册，则无法发送验证码
+	 *找回密码时若当前手机未注册，则无法发送验证码
+	 **/
 	public function add_sms_verify($verify_type = 'verify', $template = '', $style = 'is-primary') {
 
 		parent::add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
@@ -92,7 +97,12 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 	}
 
-	// 邮箱验证
+	/**
+	 *邮箱校验
+	 *@param $verify_type 	string 'reg' / 'reset_pass' 为保留字段, 用途为：注册 / 重置密码
+	 *注册时若当前邮箱已注册，则无法发送验证码
+	 *找回密码时若当前邮箱未注册，则无法发送验证码
+	 **/
 	public function add_email_verify($verify_type = 'verify', $template = '', $style = 'is-primary') {
 
 		parent::add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');

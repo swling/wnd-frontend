@@ -257,9 +257,21 @@ function _wnd_demo_form() {
 		)
 	);
 
-	$form->add_sms_verify($verify_type = 'verify', $template = '');
+	/**
+	 *短信校验
+	 *@param $verify_type 	string 'reg' / 'reset_pass' 为保留字段, 用途为：注册 / 重置密码
+	 *注册时若当前手机已注册，则无法发送验证码
+	 *找回密码时若当前手机未注册，则无法发送验证码
+	 **/
+	$form->add_sms_verify($verify_type = 'verify', $template = '', $style = 'is-primary');
 
-	$form->add_email_verify($verify_type = 'verify', $template = '');
+	/**
+	 *邮箱校验
+	 *@param $verify_type 	string 'reg' / 'reset_pass' 为保留字段, 用途为：注册 / 重置密码
+	 *注册时若当前邮箱已注册，则无法发送验证码
+	 *找回密码时若当前邮箱未注册，则无法发送验证码
+	 **/
+	$form->add_email_verify($verify_type = 'verify', $template = '', $style = 'is-primary');
 
 	// 与该表单数据匹配的后端处理函数
 	$form->set_action('wnd_ajax_inset_post');
