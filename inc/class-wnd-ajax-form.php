@@ -13,7 +13,14 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	public $form_names = array();
 	public $message = null;
 
+	static $primary_color;
+	static $second_color;
+
 	public function __construct() {
+
+		// 色调
+		Wnd_Ajax_Form::$primary_color = wnd_get_option('wnd', 'wnd_primary_color');
+		Wnd_Ajax_Form::$second_color = wnd_get_option('wnd', 'wnd_second_color');
 
 		// 继承基础变量
 		parent::__construct();
@@ -32,6 +39,14 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 	public function set_message($message) {
 		$this->message = $message;
+	}
+
+	/**
+	 *@since 2019.05.26 表单按钮默认配色
+	 */
+	public function set_submit_button($submit_text, $submit_style = '') {
+		$submit_style = $submit_style ?: Wnd_Ajax_Form::$primary_color;
+		parent::set_submit_button($submit_text, $submit_style);
 	}
 
 	/**
@@ -63,7 +78,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	 *注册时若当前手机已注册，则无法发送验证码
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
-	public function add_sms_verify($verify_type = 'verify', $template = '', $style = 'is-primary') {
+	public function add_sms_verify($verify_type = 'verify', $template = '') {
 
 		parent::add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
 
@@ -89,7 +104,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '短信验证码',
-				'addon' => '<button type="button" class="send-code button ' . $style . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button ' . Wnd_Ajax_Form::$second_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
 			)
 		);
 
@@ -103,7 +118,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	 *注册时若当前邮箱已注册，则无法发送验证码
 	 *找回密码时若当前邮箱未注册，则无法发送验证码
 	 **/
-	public function add_email_verify($verify_type = 'verify', $template = '', $style = 'is-primary') {
+	public function add_email_verify($verify_type = 'verify', $template = '') {
 
 		parent::add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
 
@@ -125,7 +140,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '邮箱验证码',
-				'addon' => '<button type="button" class="send-code button ' . $style . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button ' . Wnd_Ajax_Form::$second_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
 			)
 		);
 

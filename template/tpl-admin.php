@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 function _wnd_admin_posts_panel($args = '') {
 
 	if (!wnd_is_manager()) {
-		return '<div class="message is-danger"><div class="message-body">当前账户没有管理权限！</div></div>';
+		return '<div class="message is-warning"><div class="message-body">当前账户没有管理权限！</div></div>';
 	}
 
 	// 查询参数
@@ -32,7 +32,7 @@ function _wnd_admin_posts_panel($args = '') {
 function _wnd_user_posts_panel($args = '') {
 
 	if (!is_user_logged_in()) {
-		return '<div class="message is-danger"><div class="message-body">请登录！</div></div>';
+		return '<div class="message is-warning"><div class="message-body">请登录！</div></div>';
 	}
 
 	// 查询参数
@@ -57,7 +57,7 @@ function _wnd_user_posts_panel($args = '') {
 function _wnd_user_mail_box($args = '') {
 
 	if (!is_user_logged_in()) {
-		return '<div class="message is-danger"><div class="message-body">请登录！</div></div>';
+		return '<div class="message is-warning"><div class="message-body">请登录！</div></div>';
 	}
 
 	// 查询参数

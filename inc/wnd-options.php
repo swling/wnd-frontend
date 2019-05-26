@@ -161,6 +161,28 @@ function wnd_options() {
 					</td>
 				</tr>
 
+				<!--优化选项-->
+				<tr>
+					<th valign="top">
+						色调配置
+					</th>
+					<td><p><i>用于配置表单按钮等颜色，参考bulma框架，若需更详细的颜色控制，请在主题CSS中设置颜色覆盖</i></p></td>
+				</tr>
+
+				<tr>
+					<td valign="top">主色调</td>
+					<td>
+						<?php echo _wnd_dropdown_colors('wnd_primary_color', wnd_get_option('wnd', 'wnd_primary_color')); ?>
+					</td>
+				</tr>
+
+				<tr>
+					<td valign="top">辅色调</td>
+					<td>
+						<?php echo _wnd_dropdown_colors('wnd_second_color', wnd_get_option('wnd', 'wnd_second_color')); ?>
+					</td>
+				</tr>
+
 				<!-- 佣金设置 -->
 				<tr>
 					<th valign="top">

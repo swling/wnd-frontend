@@ -116,3 +116,37 @@ function _wnd_terms_list($args) {
 
 	return $html;
 }
+
+/**
+ *@since 2019.05.26 bulma 颜色下拉选择
+ */
+function _wnd_dropdown_colors($name, $selected) {
+
+	$colors = array(
+		'is-primary',
+		'is-success',
+		'is-info',
+		'is-link',
+		'is-warning',
+		'is-danger',
+		'is-dark',
+		'is-black',
+		'is-light',
+	);
+
+	$html = '<select name="' . $name . '">';
+
+	foreach ($colors as $color) {
+		if ($selected == $color) {
+			$html .= '<option selected="selected" value="' . $color . '">' . $color . '</option>';
+		} else {
+			$html .= '<option value="' . $color . '">' . $color . '</option>';
+		}
+
+	}
+	unset($color);
+
+	$html .= '</select>';
+
+	return $html;
+}
