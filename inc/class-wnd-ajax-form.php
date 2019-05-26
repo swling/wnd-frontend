@@ -45,7 +45,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	 *@since 2019.05.26 表单按钮默认配色
 	 */
 	public function set_submit_button($submit_text, $submit_style = '') {
-		$submit_style = $submit_style ?: Wnd_Ajax_Form::$primary_color;
+		$submit_style = $submit_style ?: 'is-' . Wnd_Ajax_Form::$primary_color;
 		parent::set_submit_button($submit_text, $submit_style);
 	}
 
@@ -104,7 +104,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '短信验证码',
-				'addon' => '<button type="button" class="send-code button ' . Wnd_Ajax_Form::$second_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button is-' . Wnd_Ajax_Form::$second_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
 			)
 		);
 
@@ -140,7 +140,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '邮箱验证码',
-				'addon' => '<button type="button" class="send-code button ' . Wnd_Ajax_Form::$second_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button is-' . Wnd_Ajax_Form::$second_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
 			)
 		);
 

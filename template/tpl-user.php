@@ -43,7 +43,7 @@ function _wnd_user_center($args = array()) {
 
 			$html .= _wnd_reg_form($type);
 
-			$html .= '<div class="user-form"><div class="message ' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
+			$html .= '<div class="user-form"><div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
 			if (wnd_doing_ajax()) {
 				//是否在ajax中
 				if ($ajax_type == 'modal') {
@@ -84,7 +84,7 @@ function _wnd_user_center($args = array()) {
 
 			$html .= _wnd_login_form();
 
-			$html .= '<div class="user-form"><div class="message ' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
+			$html .= '<div class="user-form"><div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
 			if (wnd_doing_ajax()) {
 				if ($ajax_type == 'modal') {
 					$html .= '没有账户？<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reg\');">立即注册</a> | ';
@@ -106,7 +106,7 @@ function _wnd_user_center($args = array()) {
 			$type = $_GET['type'] ?? $args['type'] ?? 'email';
 			$html .= _wnd_lostpassword_form($type);
 
-			$html .= '<div class="user-form"><div class="message ' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
+			$html .= '<div class="user-form"><div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
 			if (wnd_doing_ajax()) {
 				if ($ajax_type == 'modal') {
 

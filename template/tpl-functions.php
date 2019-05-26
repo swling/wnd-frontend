@@ -123,15 +123,15 @@ function _wnd_terms_list($args) {
 function _wnd_dropdown_colors($name, $selected) {
 
 	$colors = array(
-		'is-primary',
-		'is-success',
-		'is-info',
-		'is-link',
-		'is-warning',
-		'is-danger',
-		'is-dark',
-		'is-black',
-		'is-light',
+		'primary',
+		'success',
+		'info',
+		'link',
+		'warning',
+		'danger',
+		'dark',
+		'black',
+		'light',
 	);
 
 	$html = '<select name="' . $name . '">';
