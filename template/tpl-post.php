@@ -137,7 +137,7 @@ function _wnd_post_form($args = array()) {
 			'name' => '_post_post_status',
 			'value' => 'draft',
 			'label' => '存为草稿',
-			'class' => 'switch ' . Wnd_Post_Form::$second_color,
+			'class' => 'switch is-' . Wnd_Post_Form::$second_color,
 		)
 	);
 
