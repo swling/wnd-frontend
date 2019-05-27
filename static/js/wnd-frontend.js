@@ -313,7 +313,7 @@ function wnd_ajax_submit(form_id) {
 
 	if (input_value === false || option_value === false || textarea_value === false) {
 		wnd_ajax_msg('<span class="required">*</span>星标为必填项目！', 'is-danger', "#" + form_id);
-		wnd_alert_msg('必填项不能为空！');
+		submit_button.text('必填项不能为空');
 		return false;
 	}
 
