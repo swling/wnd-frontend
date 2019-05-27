@@ -121,7 +121,7 @@ function wnd_options() {
 				<tr>
 					<td valign="top">默认头像</td>
 					<td>
-						<input type="text" name="wnd_default_avatar" value="<?php echo wnd_get_option('wnd', 'wnd_default_avatar'); ?>" class="large-text">
+						<input type="text" name="wnd_default_avatar_url" value="<?php echo wnd_get_option('wnd', 'wnd_default_avatar_url'); ?>" class="large-text">
 						<p><i>默认用户头像地址</i></p>
 					</td>
 				</tr>
@@ -129,7 +129,7 @@ function wnd_options() {
 				<tr>
 					<td valign="top">前端最大上传（KB）</td>
 					<td>
-						<input type="number" name="wnd_max_upload" value="<?php echo wnd_get_option('wnd', 'wnd_max_upload'); ?>" class="text" min="1">
+						<input type="number" name="wnd_max_upload_size" value="<?php echo wnd_get_option('wnd', 'wnd_max_upload_size'); ?>" class="text" min="1">
 						<p><i>前端文件最大上传限制（默认2048KB，不得大于服务器设置）</i></p>
 					</td>
 				</tr>
@@ -254,8 +254,8 @@ function wnd_options() {
 				<tr>
 					<td valign="top">启用短信功能</td>
 					<td>
-						开启<input type="radio" name="wnd_sms_enable" value="1" <?php if (wnd_get_option('wnd', 'wnd_sms_enable') == 1) echo 'checked'; ?>>
-						关闭<input type="radio" name="wnd_sms_enable" value="0" <?php if (wnd_get_option('wnd', 'wnd_sms_enable') != 1) echo 'checked'; ?>>
+						开启<input type="radio" name="wnd_enable_sms" value="1" <?php if (wnd_get_option('wnd', 'wnd_enable_sms') == 1) echo 'checked'; ?>>
+						关闭<input type="radio" name="wnd_enable_sms" value="0" <?php if (wnd_get_option('wnd', 'wnd_enable_sms') != 1) echo 'checked'; ?>>
 						<p><i>是否开启短信验证功能</i></p>
 					</td>
 				</tr>

@@ -38,7 +38,10 @@ function wnd_send_code_to_user($send_type, $verify_type, $template) {
 	$user = wp_get_current_user();
 
 	// 根据发送类型获取当前用户邮箱或手机
-	$email_or_phone = ($send_type == 'email') ? $user->user_email : wnd_get_user_meta($user->ID, 'phone');
+	$email_or_phone = ($send_type == 'email') ? $user->user_email : wnd_get_user_phone($user->ID);
+	if (!$email_or_phone) {
+		return array('status' => 0, 'msg' => '获取发送对象失败！');
+	}
 
 	// 权限检测
 	$wnd_can_send_code = wnd_can_send_code($email_or_phone, $verify_type);
@@ -47,9 +50,9 @@ function wnd_send_code_to_user($send_type, $verify_type, $template) {
 	}
 
 	if ($send_type == 'email') {
-		return wnd_send_mail_code_to_user($template);
+		return wnd_send_mail_code($email_or_phone, $template);
 	} else {
-		return wnd_send_sms_code_to_user($template);
+		return wnd_send_sms_code($email_or_phone, $template);
 	}
 
 }
@@ -116,20 +119,6 @@ function wnd_send_mail_code($email, $template = '') {
 }
 
 /**
- *@since 2019.01.28 发送邮箱验证码
- */
-function wnd_send_mail_code_to_user($template = '') {
-
-	$user = wp_get_current_user();
-	if (!$user->user_email) {
-		return array('status' => 0, 'msg' => '用户未绑定邮箱！');
-	}
-
-	return wnd_send_mail_code($user->user_email, $template);
-
-}
-
-/**
  *@since 初始化
  *通过ajax发送短信
  *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
@@ -153,23 +142,6 @@ function wnd_send_sms_code($phone, $template = '') {
 		return array('status' => 0, 'msg' => '系统错误，请联系客服处理！');
 	}
 
-}
-
-/**
- *@since 初始化
- *通过给当前用户发送短信
- *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
- */
-function wnd_send_sms_to_user($template = '') {
-
-	// 获取当前用户的手机号码
-	$user_id = get_current_user_id();
-	$phone = wnd_get_user_phone($user_id);
-	if (!$phone) {
-		return array('status' => 0, 'msg' => '未能获取到手机号码！');
-	}
-
-	return wnd_send_sms_code($phone, $template);
 }
 
 /**

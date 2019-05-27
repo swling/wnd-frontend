@@ -45,7 +45,7 @@ function wnd_filter_can_update_account($can_array) {
 	$code = $_POST['v_code'];
 	$user = wp_get_current_user();
 	$user_id = $user->ID;
-	$email_or_phone = wnd_get_option('wnd', 'wnd_sms_enable') == 1 ? wnd_get_user_meta($user_id, 'phone') : $user->user_email;
+	$email_or_phone = wnd_get_option('wnd', 'wnd_enable_sms') == 1 ? wnd_get_user_meta($user_id, 'phone') : $user->user_email;
 
 	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = 'v');
 	if ($wnd_verify_code['status'] === 0) {
@@ -117,7 +117,7 @@ function wnd_filter_limit_upload($file) {
 
 	// 上传体积限制
 	$image_size = $file['size'] / 1024;
-	$limit = wnd_get_option('wnd', 'wnd_max_upload') ?: 2048;
+	$limit = wnd_get_option('wnd', 'wnd_max_upload_size') ?: 2048;
 
 	if ($image_size > $limit) {
 		$file['error'] = '上传文件不得超过' . $limit . 'KB';
@@ -317,7 +317,7 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 	}
 
 	// 默认头像
-	$avatar_url = wnd_get_option('wnd', 'wnd_default_avatar') ?: WND_URL . '/static/images/avatar.jpg';
+	$avatar_url = wnd_get_option('wnd', 'wnd_default_avatar_url') ?: WND_URL . '/static/images/avatar.jpg';
 
 	// 获取用户 ID
 	if (is_numeric($id_or_email)) {

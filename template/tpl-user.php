@@ -48,7 +48,7 @@ function _wnd_user_center($args = array()) {
 				//是否在ajax中
 				if ($ajax_type == 'modal') {
 
-					if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
+					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
 						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reg&type=sms\');">手机注册</a> | ';
 					} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
 						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reg&type=email\');">邮箱注册</a> | ';
@@ -57,7 +57,7 @@ function _wnd_user_center($args = array()) {
 
 				} else {
 
-					if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
+					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
 						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reg&type=sms\');">手机注册</a> | ';
 					} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
 						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reg&type=email\');">邮箱注册</a> | ';
@@ -68,7 +68,7 @@ function _wnd_user_center($args = array()) {
 
 			} else {
 
-				if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
+				if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
 					$html .= '<a href="' . add_query_arg('type', 'sms') . '">手机注册</a> | ';
 				} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
 					$html .= '<a href="' . add_query_arg('type', 'email') . '">邮箱注册</a> | ';
@@ -110,7 +110,7 @@ function _wnd_user_center($args = array()) {
 			if (wnd_doing_ajax()) {
 				if ($ajax_type == 'modal') {
 
-					if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
+					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
 						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=lostpassword&type=sms\');">手机验证找回</a> | ';
 					} elseif ($type == 'sms') {
 						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=lostpassword&type=email\');">邮箱验证找回</a> | ';
@@ -119,7 +119,7 @@ function _wnd_user_center($args = array()) {
 
 				} else {
 
-					if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
+					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
 						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=lostpassword&type=sms\');">手机验证找回</a> | ';
 					} elseif ($type == 'sms') {
 						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=lostpassword&type=email\');">邮箱验证找回</a> | ';
@@ -129,7 +129,7 @@ function _wnd_user_center($args = array()) {
 				}
 			} else {
 
-				if ($type == 'email' and wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
+				if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
 					$html .= '<a href="' . add_query_arg('type', 'sms') . '">手机验证找回</a> | ';
 				} elseif ($type == 'sms') {
 					$html .= '<a href="' . add_query_arg('type', 'email') . '">邮箱验证找回</a> | ';
@@ -266,7 +266,7 @@ function _wnd_reg_form($type = 'email') {
 		return "<script>wnd_alert_msg('当前设置禁止邮箱注册！')</script>";
 
 		//为开启手机验证
-	} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_sms_enable') != 1) {
+	} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_enable_sms') != 1) {
 
 		return "<script>wnd_alert_msg('当前未配置短信验证！')</script>";
 
@@ -320,7 +320,7 @@ function _wnd_lostpassword_form($type = 'email') {
 
 	if ($type == 'sms') {
 		//1、验证短信重置密码
-		if (wnd_get_option('wnd', 'wnd_sms_enable') != 1) {
+		if (wnd_get_option('wnd', 'wnd_enable_sms') != 1) {
 			return '<script type="text/javascript">wnd_alert_msg(\'短信验证功能未启用！\')</script>';
 		}
 	}
@@ -413,7 +413,7 @@ function _wnd_account_form() {
 
 	$form->add_user_email();
 
-	if (wnd_get_option('wnd', 'wnd_sms_enable') == 1) {
+	if (wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
 		$form->add_sms_verify($verify_type = 'v', wnd_get_option('wnd', 'wnd_sms_template_v'));
 	} else {
 		$form->add_email_verify($verify_type = 'v', $template = '');
