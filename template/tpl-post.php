@@ -311,9 +311,9 @@ function _wnd_post_thumbnail($post_id, $width, $height) {
 
 	if ($image_id) {
 		if ($width and $height) {
-			return '<img class="thumbnail" src="' . wp_get_attachment_url($image_id) . '" width="' . $width . '" height="' . $height . '"  >';
+			return '<img class="thumbnail" src="' . wnd_get_thumbnail_url($image_id, $width, $height) . '" width="' . $width . '" height="' . $height . '">';
 		} else {
-			return '<img class="thumbnail" src="' . wp_get_attachment_url($image_id) . '" >';
+			return '<img class="thumbnail" src="' . wp_get_attachment_url($image_id) . '">';
 		}
 	}
 
