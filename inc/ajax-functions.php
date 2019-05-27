@@ -34,10 +34,7 @@ function wnd_ajax_send_code() {
 	$verify_type = $_POST['verify_type'] ?? '';
 	$send_type = $_POST['send_type'] ?? ''; // email or sms, to login user
 	$template = $_POST['template'] ?? '';
-
-	$phone = $_POST['phone'] ?? '';
-	$email = $_POST['email'] ?? '';
-	$email_or_phone = $phone ?: $email;
+	$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? '';
 
 	if (is_user_logged_in()) {
 		return wnd_send_code_to_user($send_type, $verify_type, $template);

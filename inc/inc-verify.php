@@ -39,8 +39,10 @@ function wnd_send_code_to_user($send_type, $verify_type, $template) {
 
 	// 根据发送类型获取当前用户邮箱或手机
 	$email_or_phone = ($send_type == 'email') ? $user->user_email : wnd_get_user_phone($user->ID);
+
+	// 当前用户邮箱或手机不存在，从表单数据中提取
 	if (!$email_or_phone) {
-		return array('status' => 0, 'msg' => '获取发送对象失败！');
+		$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? '';
 	}
 
 	// 权限检测
