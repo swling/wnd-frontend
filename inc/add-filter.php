@@ -317,7 +317,7 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 	}
 
 	// 默认头像
-	$avatar_url = wnd_get_option('wnd', 'wnd_default_avatar_url') ?: WND_URL . '/static/images/avatar.jpg';
+	$avatar_url = wnd_get_option('wnd', 'wnd_default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
 
 	// 获取用户 ID
 	if (is_numeric($id_or_email)) {

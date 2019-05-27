@@ -132,7 +132,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		$args = array(
 			'label' => '',
 			'thumbnail_size' => array('width' => $thumbnail_size, 'height' => $thumbnail_size),
-			'thumbnail' => WND_URL . '/static/images/default.jpg',
+			'thumbnail' => WND_URL . 'static/images/default.jpg',
 			'data' => array(
 				'meta_key' => 'avatar',
 				'save_width' => $save_size,
@@ -151,7 +151,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 		$args = array(
 			'label' => $label,
 			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
-			'thumbnail' => WND_URL . '/static/images/default.jpg',
+			'thumbnail' => WND_URL . 'static/images/default.jpg',
 			'data' => array(
 				'user_id' => $this->user->ID,
 				'meta_key' => $meta_key,

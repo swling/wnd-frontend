@@ -200,7 +200,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		$args = array(
 			'label' => $label,
 			'thumbnail_size' => array('width' => $width, 'height' => $height),
-			'thumbnail' => WND_URL . '/static/images/default.jpg',
+			'thumbnail' => WND_URL . 'static/images/default.jpg',
 			'data' => array(
 				'post_parent' => $this->post_id,
 				'meta_key' => $meta_key,
