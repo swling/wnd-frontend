@@ -265,6 +265,9 @@ function wnd_ajax_embed(container, template, param = 0) {
 //############################### 根据表单id自动提交表单 并根据返回代码执行对应操作
 function wnd_ajax_submit(form_id) {
 
+	// 提交按钮
+	var submit_button = $("#" + form_id + " [type='submit']");
+
 	// 带有required属性的字段不能为空
 	var input_value = true;
 	$("#" + form_id + " input").each(function() {
@@ -310,6 +313,7 @@ function wnd_ajax_submit(form_id) {
 
 	if (input_value === false || option_value === false || textarea_value === false) {
 		wnd_ajax_msg('<span class="required">*</span>星标为必填项目！', 'is-danger', "#" + form_id);
+		wnd_alert_msg('必填项不能为空！');
 		return false;
 	}
 
@@ -329,9 +333,6 @@ function wnd_ajax_submit(form_id) {
 
 	// 生成表单数据
 	var form_data = new FormData($("#" + form_id).get(0));
-
-	// 提交按钮
-	var submit_button = $("#" + form_id + " [type='submit']");
 
 	$.ajax({
 		url: wnd.api_url,

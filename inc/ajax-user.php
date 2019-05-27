@@ -21,12 +21,12 @@ function wnd_ajax_reg() {
 		return array('status' => 0, 'msg' => '注册信息为空');
 	}
 
-	$user_login = $_POST['_user_user_login'] ?? $_POST['sms_phone'];
-	$user_pass = $_POST['_user_user_pass'];
+	$user_login = $_POST['_user_user_login'] ?? $_POST['phone'] ?? null;
+	$user_pass = $_POST['_user_user_pass'] ?? null;
 	$user_pass_repeat = $_POST['_user_user_pass_repeat'] ?? $_POST['_user_user_pass'];
-	$user_email = $_POST['_user_user_email'] ?? '';
-	$display_name = $_POST['_user_display_name'] ?? '';
-	$description = $_POST['_wpusermeta_description'] ?? '';
+	$user_email = $_POST['_user_user_email'] ?? null;
+	$display_name = $_POST['_user_display_name'] ?? null;
+	$description = $_POST['_wpusermeta_description'] ?? null;
 	$role = get_option('default_role');
 
 	/*处于安全考虑，form自动组合函数屏蔽了用户敏感字段，此处不可通过 form自动组合，应该手动控制用户数据*/
@@ -236,10 +236,10 @@ function wnd_ajax_update_account() {
 	}
 
 	$user_array = array('ID' => $user_id);
-	$user_pass = $_POST['_user_user_pass'];
-	$new_password = $_POST['_user_new_pass'];
-	$new_password_repeat = $_POST['_user_new_pass_repeat'];
-	$new_email = $_POST['_user_new_user_email'];
+	$user_pass = $_POST['_user_user_pass'] ?? null;
+	$new_password = $_POST['_user_new_pass'] ?? null;
+	$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? null;
+	$new_email = $_POST['_user_new_user_email'] ?? null;
 
 	// 修改密码
 	if (!empty($new_password_repeat)) {
@@ -306,11 +306,11 @@ function wnd_ajax_update_account() {
  */
 function wnd_ajax_reset_password() {
 
-	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'];
+	$email_or_phone = $_POST['_user_user_email'] ?? $_POST['phone'] ?? null;
 	$text = is_email($email_or_phone) ? '邮箱' : '手机';
 
-	$new_password = $_POST['_user_new_pass'];
-	$new_password_repeat = $_POST['_user_new_pass_repeat'];
+	$new_password = $_POST['_user_new_pass'] ?? null;
+	$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? null;
 	$code = $_POST['v_code'];
 
 	// 验证密码正确性
@@ -338,7 +338,7 @@ function wnd_ajax_reset_password() {
 
 	} else {
 		reset_password($user, $new_password);
-		return array('status' => 1, 'msg' => '密码修改成功！<a onclick="wnd_ajax_modal(\'login_form\');">登录</a>');
+		return array('status' => 1, 'msg' => '密码修改成功！<a onclick="wnd_ajax_modal(\'_wnd_login_form\');">登录</a>');
 	}
 
 }

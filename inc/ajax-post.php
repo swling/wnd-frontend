@@ -80,67 +80,58 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 	// 最终post array数据
 	$post_array = array_merge($post_array, $_post_array);
 
-	// 写入文章
+	// 写入或更新文章
 	if (!$update_id) {
 		$post_id = wp_insert_post($post_array);
-	}
-
-	// 更新文章
-	else {
+	} else {
 		$post_id = wp_update_post($post_array);
 	}
 
-	if (!is_wp_error($post_id)) {
+	// 写入失败，返回错误信息
+	if (is_wp_error($post_id)) {
+		return array('status' => 0, 'msg' => $post_id->get_error_message());
+	}
 
-		// 更新字段，分类，及标签
-		wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $term_array);
+	// 更新字段，分类，及标签
+	wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $term_array);
 
-		// 完成返回
-		$redirect_to = $_REQUEST['redirect_to'] ?? null;
-		$permalink = get_permalink($post_id);
+	// 完成返回
+	$redirect_to = $_REQUEST['redirect_to'] ?? null;
+	$permalink = get_permalink($post_id);
 
-		if ($redirect_to) {
-			$return_array = array(
-				'status' => 3,
-				'msg' => '发布成功！',
-				'data' => array(
-					'id' => $post_id,
-					'url' => $permalink,
-					'redirect_to' => $redirect_to,
-				),
-			);
-		} else if ($update_id) {
-			$return_array = array(
-				'status' => 2,
-				'msg' => '发布成功！',
-				'data' => array(
-					'id' => $post_id,
-					'url' => $permalink,
-				),
-			);
-		} else {
-			$return_array = array(
-				'status' => 3,
-				'msg' => '发布成功！',
-				'data' => array(
-					'id' => $post_id,
-					'url' => $permalink,
-					'redirect_to' => $permalink,
-				),
-			);
-		}
-
-		// 写入失败，返回错误信息
+	if ($redirect_to) {
+		$return_array = array(
+			'status' => 3,
+			'msg' => '发布成功！',
+			'data' => array(
+				'id' => $post_id,
+				'url' => $permalink,
+				'redirect_to' => $redirect_to,
+			),
+		);
+	} else if ($update_id) {
+		$return_array = array(
+			'status' => 2,
+			'msg' => '发布成功！',
+			'data' => array(
+				'id' => $post_id,
+				'url' => $permalink,
+			),
+		);
 	} else {
-
-		$return_array = array('status' => 0, 'msg' => $post_id->get_error_message());
-
+		$return_array = array(
+			'status' => 3,
+			'msg' => '发布成功！',
+			'data' => array(
+				'id' => $post_id,
+				'url' => $permalink,
+				'redirect_to' => $permalink,
+			),
+		);
 	}
 
 	// 返回值过滤
-	$return_array = apply_filters('wnd_insert_post_return', $return_array, $post_type, $post_id);
-
-	return $return_array;
+	return apply_filters('wnd_insert_post_return', $return_array, $post_type, $post_id);
 
 }
 
@@ -192,7 +183,7 @@ function wnd_ajax_update_post_status() {
 	// 权限检测
 	$can_array = array('status' => current_user_can('edit_post', $post_id) ? 1 : 0, 'msg' => '权限错误！');
 	$can_update_post_status = apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_status);
-	if ($can_update_post_status['status'] == 0) {
+	if ($can_update_post_status['status'] === 0) {
 		return $can_update_post_status;
 	}
 
