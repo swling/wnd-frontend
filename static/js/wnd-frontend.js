@@ -799,11 +799,6 @@ jQuery(document).ready(function($) {
 		/**
 		 *@link http://www.w3school.com.cn/jquery/traversing_each.asp
 		 */
-		images.each(function(index, e) {
-			console.log($(this).attr("src"));
-		})
-
-
 		var element = '<img src="' + $(this).data("url") + '" />';
 		wnd_alert_modal(element, true);
 	});
