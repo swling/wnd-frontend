@@ -31,7 +31,7 @@ function wnd_download_file($the_file, $rename = 'download') {
  *@since 2019.01.22
  *保存文章中的外链图片，并替换html图片地址
  */
-function wnd_save_content_images($content, $upload_dir, $post_id) {
+function wnd_download_remote_images($content, $upload_dir, $post_id) {
 
 	if (empty($content)) {
 		return;
@@ -48,9 +48,10 @@ function wnd_save_content_images($content, $upload_dir, $post_id) {
 
 			$pos = strpos($image_url, $upload_dir); // 判断图片链接是否为外链
 			if ($pos === false) {
-				$replace = wnd_save_remote_image($image_url, $post_id, time() . '-' . $i);
-				// 完成替换
-				$content = str_replace($image_url, $replace, $content);
+				$local_url = wnd_download_remote_image($image_url, $post_id, time() . '-' . $i);
+				if (!is_wp_error($local_url)) {
+					$content = str_replace($image_url, $local_url, $content);
+				}
 			}
 			$i++;
 		}
@@ -65,15 +66,14 @@ function wnd_save_content_images($content, $upload_dir, $post_id) {
  *@since 2019.01.22
  *WordPress 远程下载图片 并返回上传后的图片地址
  */
-function wnd_save_remote_image($url, $post_parent, $desc) {
+function wnd_download_remote_image($url, $post_parent, $title) {
 
 	if (!function_exists('media_sideload_image')) {
 		require ABSPATH . 'wp-admin/includes/media.php';
 		require ABSPATH . 'wp-admin/includes/file.php';
 		require ABSPATH . 'wp-admin/includes/image.php';
 	}
-	$image_src = media_sideload_image($url, $post_parent, $desc, 'src');
-	return $image_src;
+	return media_sideload_image($url, $post_parent, $title, 'src');
 }
 
 /**
