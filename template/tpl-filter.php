@@ -193,7 +193,7 @@ function _wnd_post_status_filter($args = array(), $ajax_call = '', $ajax_contain
 
 		} else {
 
-			$html .= '<li ' . $active . '><a href="' . add_query_arg('_post_status', $post_status, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $label . '</a></li>';
+			$html .= '<li ' . $active . '><a href="' . add_query_arg('_post_post_status', $post_status, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $label . '</a></li>';
 		}
 
 	}
