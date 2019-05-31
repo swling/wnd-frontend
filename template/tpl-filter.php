@@ -1234,9 +1234,6 @@ function _wnd_posts_filter($args = array()) {
 		$html .= _wnd_post_types_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	}
 
-	// post status
-	$html .= $args['wnd_post_status'] ? _wnd_post_status_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
-
 	// 分类 切换
 	$html .= _wnd_categories_filter($args, '_wnd_posts_filter', '#wnd-filter');
 
@@ -1245,6 +1242,9 @@ function _wnd_posts_filter($args = array()) {
 
 	// meta query
 	$html .= _wnd_meta_filter($args, '_wnd_posts_filter', '#wnd-filter');
+
+	// post status
+	$html .= $args['wnd_post_status'] ? _wnd_post_status_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
 
 	// orderby
 	$html .= _wnd_orderby_filter($args, '_wnd_posts_filter', '#wnd-filter');
