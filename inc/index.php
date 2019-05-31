@@ -24,7 +24,7 @@ require WND_PATH . 'inc/inc-term.php'; //分类、标签
 require WND_PATH . 'inc/inc-admin.php'; //管理函数
 require WND_PATH . 'inc/inc-verify.php'; //验证模块
 require WND_PATH . 'inc/inc-finance.php'; //财务
-require WND_PATH . 'inc/inc-post-type.php'; //自定义类型
+require WND_PATH . 'inc/inc-post-type-status.php'; //自定义文章类型及状态
 
 require WND_PATH . 'inc/ajax-post.php'; //ajax 文章发布编辑
 require WND_PATH . 'inc/ajax-media.php'; //ajax 媒体处理

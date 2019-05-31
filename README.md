@@ -36,7 +36,7 @@ $post_type.'_tag';//标签taxonomy
 ##nonce校验
 在本插件中，nonce校验作为重要的权限检测方式，不仅作为防止跨站攻击的方式，也作为当前用户执行对应操作的权限判断依据
 为增强安全性，在WordPress原生wp_nonce的基础上加入了秘钥混淆
-详见：inc-function.php wnd_create_nonce / wnd_verify_nonce 
+详见：inc-function.php wnd_create_nonce / wnd_verify_nonce
 
 #add_filter / add_action priority: 10
 10 为WordPress默认值，该值越大，表示越靠后执行
@@ -55,6 +55,8 @@ $post_type.'_tag';//标签taxonomy
 #自定义文章状态
 ##success
 用于功能型post、（如：充值，订单等） wp_insert_post 可直接写入未经注册的 post_status，但未经注册的post_status无法通过wp_query进行筛选，故此注册
+##close
+用于关闭文章相关功能，但不删除文章，保留前端可浏览
 
 #文章自定义字段
 wp_post_meta: price (价格)

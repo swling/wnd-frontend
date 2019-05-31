@@ -174,21 +174,6 @@ function wnd_action_do_action() {
 
 /*#########################################################################2、以下为WordPress原生 action*/
 /**
- *@since 2019.03.01 注册自定义状态：success 用于功能型post
- *wp_insert_post可直接写入未经注册的post_status
- *未经注册的post_status无法通过wp_query进行筛选，故此注册
- **/
-function wnd_custom_post_status() {
-	register_post_status('success', array(
-		'public' => false,
-		'exclude_from_search' => false,
-		'show_in_admin_all_list' => false,
-		'show_in_admin_status_list' => false,
-	));
-}
-add_action('init', 'wnd_custom_post_status');
-
-/**
  *@since 初始化 用户注册后
  *校验完成后，重置验证码数据
  */

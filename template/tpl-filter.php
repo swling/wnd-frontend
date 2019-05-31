@@ -110,6 +110,106 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
 }
 
 /**
+ *@since 2019.05.31
+ *遍历文章类型，并配合外部调用函数，生成tabs查询参数，
+ *（在非ajax状态中，生成 ?_post_status=post_status，ajax中，在当前查询参数新增post_status参数，并注销paged翻页参数以实现菜单切换）
+ *@param $args 							外部调用函数ajax查询文章的参数
+ *@param $args['wnd_post_status'] 		array 需要列表输出的类型数组
+ *@param $args['wnd_remove_query_arg'] 	需要从当前请求参数中移除的参数数组
+ *@param $ajax_call 					外部调用函数  @see js function wnd_ajax_embed()
+ *@param $ajax_container 				外部调用函数ajax查询文章后嵌入的html容器
+ */
+function _wnd_post_status_filter($args = array(), $ajax_call = '', $ajax_container = '') {
+
+	// 非数组，无需显示切换标签
+	if (!isset($args['wnd_post_status']) or !is_array($args['wnd_post_status'])) {
+		return;
+	}
+
+	$defaults = array(
+		'wnd_remove_query_arg' => array('paged', 'pages', 'orderby', 'order'),
+	);
+	$args = wp_parse_args($args, $defaults);
+	// ajax请求类型
+	$ajax_type = $_POST['ajax_type'] ?? false;
+
+	// 输出容器
+	$html = '<div class="columns is-marginless is-vcentered post-status-tabs">';
+	$html .= '<div class="column is-narrow">' . get_post_type_object($args['post_type'])->label . '状态：</div>';
+	$html .= '<div class="tabs column">';
+	$html .= '<div class="tabs">';
+	$html .= '<ul class="tab">';
+
+	/**
+	 * 全部选项
+	 */
+	if (wnd_doing_ajax()) {
+
+		$all_ajax_args = $args;
+		if (is_array($all_ajax_args['post_status'])) {
+			$all_active = 'class="is-active"';
+		} else {
+			unset($all_ajax_args['post_status']);
+			$all_active = '';
+		}
+		$all_ajax_args = http_build_query($all_ajax_args);
+
+		if ($ajax_type == 'modal') {
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+		} else {
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+		}
+
+	} else {
+
+		$all_active = is_array($args['post_status']) ? 'class="is-active"' : null;
+		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg('_post_status', remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
+
+	}
+
+	// 输出tabs
+	foreach ($args['wnd_post_status'] as $label => $post_status) {
+
+		$active = (isset($args['post_status']) and $args['post_status'] == $post_status) ? 'class="is-active"' : '';
+
+		if (wnd_doing_ajax()) {
+
+			// ajax请求类型
+			$ajax_type = $_POST['ajax_type'] ?? 'modal';
+
+			// 配置ajax请求参数
+			$ajax_args = array_merge($args, array('post_status' => $post_status));
+			foreach ($args['wnd_remove_query_arg'] as $remove_query_arg) {
+				unset($ajax_args[$remove_query_arg]);
+			}
+			unset($remove_query_arg);
+			$ajax_args = http_build_query($ajax_args);
+
+			if ($ajax_type == 'modal') {
+				$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $label . '</a></li>';
+			} else {
+				$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $label . '</a></li>';
+			}
+
+		} else {
+
+			$html .= '<li ' . $active . '><a href="' . add_query_arg('_post_status', $post_status, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $label . '</a></li>';
+		}
+
+	}
+	unset($label, $post_status);
+
+	// 输出结束
+	$html .= '</ul>';
+	$html .= '</div>';
+	$html .= '</div>';
+	$html .= '</div>';
+
+	return $html;
+
+}
+
+/**
  *@since 2019.02.28
  *遍历当前post_type 具有层级关系的taxonomy，并配合外部调用函数，生成tabs查询参数，
  *（在非ajax状态中，生成 ?'_term_' . $taxonomy=$term_id，ajax中，在当前查询参数新增tax query参数，并注销paged翻页参数以实现菜单切换）
@@ -963,6 +1063,13 @@ function _wnd_current_filter($args, $ajax_call = '', $ajax_container = '') {
  *
  *@param 自定义： string $args['wnd_list_tpl'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
  *@param 自定义： array $args['wnd_post_types']需要展示的文章类型
+ *@param 自定义： array $args['wnd_post_status']需要筛选的文章状态
+ *
+ * $args['wnd_post_status'] = array(
+ *	'已发布'=>'publish',
+ *	'草稿'=>'draft',
+ * )
+ *
  *@param 自定义： bool args['wnd_only_cat']是否只筛选分类
  *@param 自定义： bool args['wnd_with_sidrbar']是否包含边栏
  *@param 自定义： array args['wnd_meta_query'] meta字段筛选 @link https://codex.wordpress.org/Class_Reference/WP_Query#Custom_Field_Parameters
@@ -1017,16 +1124,17 @@ function _wnd_posts_filter($args = array()) {
 		'posts_per_page' => get_option('posts_per_page'),
 		'paged' => 1,
 		'post_type' => '',
-		'post_status' => 'publish',
+		'post_status' => get_post_stati(array('public' => true), 'names', 'and'),
 		'tax_query' => array(),
 		'meta_query' => array(),
 		'no_found_rows' => true, //无需原生的分页
 		'wnd_list_tpl' => '_wnd_post_list', //输出列表模板函数
 		'wnd_post_types' => array(), //允许的类型数组
-		'wnd_meta_query' => array(), // meta筛选项
-		'wnd_orderby' => array(), // 排序
-		'wnd_only_cat' => 0, // 只筛选分类
-		'wnd_with_sidebar' => false, // 边栏
+		'wnd_post_status' => array(), //状态筛选项
+		'wnd_meta_query' => array(), //meta筛选项
+		'wnd_orderby' => array(), //排序
+		'wnd_only_cat' => 0, //只筛选分类
+		'wnd_with_sidebar' => false, //边栏
 	);
 	$args = wp_parse_args($args, $defaults);
 
@@ -1090,6 +1198,14 @@ function _wnd_posts_filter($args = array()) {
 				continue;
 			}
 
+			/**
+			 *@since 2019.05.31 post field查询
+			 */
+			if (strpos($key, '_post_') === 0) {
+				$args[str_replace('_post_', '', $key)] = $value;
+				continue;
+			}
+
 			// 其他、按键名自动匹配
 			$args[$key] = $value;
 
@@ -1118,12 +1234,14 @@ function _wnd_posts_filter($args = array()) {
 		$html .= _wnd_post_types_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	}
 
+	// post status
+	$html .= $args['wnd_post_status'] ? _wnd_post_status_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
+
 	// 分类 切换
 	$html .= _wnd_categories_filter($args, '_wnd_posts_filter', '#wnd-filter');
+
 	// 获取分类下关联的标签
-	if (!$args['wnd_only_cat']) {
-		$html .= _wnd_tags_filter($args, '_wnd_posts_filter', '#wnd-filter');
-	}
+	$html .= !$args['wnd_only_cat'] ? _wnd_tags_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
 
 	// meta query
 	$html .= _wnd_meta_filter($args, '_wnd_posts_filter', '#wnd-filter');

@@ -8,7 +8,9 @@ if (!defined('ABSPATH')) {
  *@since 2019.02.28 如不注册类型，直接创建pending状态post时，会有notice级别的错误
  *@see wp-includes/post.php @3509
  */
-function wnd_post_type_recharge() {
+function wnd_action_register_post_type() {
+
+	/*充值记录*/
 	$args = array(
 		'description' => '充值',
 		'public' => false,
@@ -22,13 +24,8 @@ function wnd_post_type_recharge() {
 		'supports' => array('title', 'author', 'editor'),
 	);
 	register_post_type('recharge', $args);
-}
-add_action('init', 'wnd_post_type_recharge');
 
-/**
- *@since 2019.02.28 订单
- */
-function wnd_post_type_order() {
+	/*订单记录*/
 	$args = array(
 		'description' => '订单',
 		'public' => false,
@@ -37,13 +34,8 @@ function wnd_post_type_order() {
 		'supports' => array('title', 'author', 'editor'),
 	);
 	register_post_type('order', $args);
-}
-add_action('init', 'wnd_post_type_order');
 
-/**
- *@since 2019.02.28 站内信
- */
-function wnd_post_type_mail() {
+	/*站内信*/
 	$labels = array(
 		'name' => '站内信',
 	);
@@ -57,14 +49,8 @@ function wnd_post_type_mail() {
 		'rewrite' => array('slug' => 'mail', 'with_front' => false),
 	);
 	register_post_type('mail', $args);
-}
-add_action('init', 'wnd_post_type_mail');
 
-##整站月度财务统计：stats_re（充值）、stats_ex（消费）
-/**
- *@since 2019.02.28 充值统计
- */
-function wnd_post_type_stats_re() {
+	/*整站充值统计*/
 	$args = array(
 		'description' => '充值统计',
 		'public' => false,
@@ -72,13 +58,8 @@ function wnd_post_type_stats_re() {
 		'supports' => array('title', 'author', 'editor'),
 	);
 	register_post_type('stats-re', $args);
-}
-add_action('init', 'wnd_post_type_stats_re');
 
-/**
- *@since 2019.02.28 消费统计
- */
-function wnd_post_type_stats_ex() {
+	/*整站消费统计*/
 	$args = array(
 		'description' => '消费统计',
 		'public' => false,
@@ -86,5 +67,39 @@ function wnd_post_type_stats_ex() {
 		'supports' => array('title', 'author', 'editor'),
 	);
 	register_post_type('stats-ex', $args);
+
 }
-add_action('init', 'wnd_post_type_stats_ex');
+add_action('init', 'wnd_action_register_post_type');
+
+/**
+ *注册自定义post status
+ **/
+function wnd_action_register_post_status() {
+
+	/**
+	 *@since 2019.03.01 注册自定义状态：success 用于功能型post
+	 *wp_insert_post可直接写入未经注册的post_status
+	 *未经注册的post_status无法通过wp_query进行筛选，故此注册
+	 **/
+	register_post_status('success', array(
+		'public' => false,
+		'exclude_from_search' => false,
+		'show_in_admin_all_list' => false,
+		'show_in_admin_status_list' => false,
+	));
+
+	/**
+	 *@since 2019.05.31 注册自定义状态：close 用于关闭文章条目，但前端可以正常浏览
+	 *wp_insert_post可直接写入未经注册的post_status
+	 *未经注册的post_status无法通过wp_query进行筛选，故此注册
+	 **/
+	register_post_status('close', array(
+		'label' => '关闭',
+		'public' => true,
+		'exclude_from_search' => false,
+		'show_in_admin_all_list' => false,
+		'show_in_admin_status_list' => false,
+	));
+	
+}
+add_action('init', 'wnd_action_register_post_status');
