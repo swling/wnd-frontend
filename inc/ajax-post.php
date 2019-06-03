@@ -190,7 +190,7 @@ function wnd_ajax_update_post_status() {
 	// 删除文章
 	if ($after_status == 'delete') {
 		// 无论是否设置了$force_delete 自定义类型的文章都会直接被删除
-		$delete = wp_delete_post($post_id, $force_delete = false);
+		$delete = wp_delete_post($post_id, true);
 		if ($delete) {
 			return array('status' => 5, 'msg' => '已删除！');
 		} else {
