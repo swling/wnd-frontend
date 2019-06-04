@@ -255,6 +255,14 @@ function wnd_insert_order($args = array()) {
 	$order_id = wp_insert_post($post_arr);
 
 	/**
+	 *@since 2019.06.04
+	 *新增订单统计
+	 *插入订单时，无论订单状态均新增订单统计，以实现某些场景下需要限定订单总数时，锁定数据，预留支付时间
+	 *获取订单统计时，删除超时未完成的订单，并减去对应订单统计 @see wnd_get_order_count($object_id)
+	 */
+	wnd_inc_wnd_post_meta($args['object_id'], 'order_count', 1);
+
+	/**
 	 *@since 2019.02.17
 	 *success表示直接余额消费，更新用户余额
 	 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see wnd_update_order();
@@ -262,6 +270,12 @@ function wnd_insert_order($args = array()) {
 	if ($order_id && $args['status'] == 'success') {
 		wnd_inc_user_money($args['user_id'], $args['money'] * -1);
 	}
+
+	/**
+	 *@since 2019.06.04
+	 *删除对象缓存
+	 **/
+	wp_cache_delete($args['user_id'] . $args['object_id'], $group = 'user_has_paid');
 
 	return $order_id;
 
@@ -300,6 +314,12 @@ function wnd_update_order($ID, $status, $title = '') {
 		wnd_update_fin_stats($money * -1);
 	}
 
+	/**
+	 *@since 2019.06.04
+	 *删除对象缓存
+	 **/
+	wp_cache_delete($post->post_author . $post->post_parent, $group = 'user_has_paid');
+
 	return $order_id;
 
 }
@@ -313,30 +333,35 @@ function wnd_user_has_paid($user_id, $object_id) {
 		return false;
 	}
 
-	$args = array(
-		'posts_per_page' => 1,
-		'post_type' => 'order',
-		'post_parent' => $object_id,
-		'author' => $user_id,
-		'post_status' => 'success',
-	);
+	$user_has_paid = wp_cache_get($user_id . $object_id, 'user_has_paid');
 
-	if (empty(get_posts($args))) {
-		return false;
-	} else {
-		return true;
+	if (false === $user_has_paid) {
+
+		$args = array(
+			'posts_per_page' => 1,
+			'post_type' => 'order',
+			'post_parent' => $object_id,
+			'author' => $user_id,
+			'post_status' => 'success',
+		);
+
+		// 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
+		$user_has_paid = empty(get_posts($args)) ? 0 : 1;
+		wp_cache_set($user_id . $object_id, $user_has_paid, 'user_has_paid');
+
 	}
+
+	return ($user_has_paid === 1 ? true : false);
 
 }
 
 /**
  *@since 2019.03.29 查询订单统计
- *不使用post_meta的方式统计原因在于，如果需要限制订单总数，且用户采用在线支付的方式，在支付过程中存在时间缝隙
- *因此导致最终支付成功的订单超过限制的订单。故此采用数据库查询订单的方式。
+ *@param $object_id int 商品ID
  **/
-function wnd_get_order_count($object_id, $status = 'any') {
+function wnd_get_order_count($object_id) {
 
-	// 删除半小时以前未完成的订单
+	// 删除15分钟前未完成的订单，并扣除订单统计
 	$args = array(
 		'posts_per_page' => -1,
 		'post_type' => 'order',
@@ -345,25 +370,19 @@ function wnd_get_order_count($object_id, $status = 'any') {
 		'date_query' => array(
 			array(
 				'column' => 'post_date',
-				'before' => date('Y-m-d H:i:s', current_time('timestamp', $gmt = 0) - 1800),
+				'before' => date('Y-m-d H:i:s', current_time('timestamp', $gmt = 0) - 900),
 				'inclusive' => true,
 			),
 		),
 	);
 	foreach (get_posts($args) as $post) {
+		wnd_inc_post_meta($post->ID, 'order_count', -1, 1);
 		wp_delete_post($post->ID, $force_delete = true);
 	}
 	unset($post, $args);
 
-	// 查询订单总数
-	$args = array(
-		'posts_per_page' => -1,
-		'post_type' => 'order',
-		'post_parent' => $object_id,
-		'post_status' => $status,
-	);
-
-	return count(get_posts($args));
+	// 返回清理过期数据后的订单统计
+	return wnd_get_post_meta($object_id, 'order_count') ?: 0;
 
 }
 

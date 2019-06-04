@@ -138,10 +138,10 @@ function wnd_mail($to, $subject, $message) {
  *获取最近的10封未读邮件
  *@since 2019.04.11
  */
-function wnd_get_mail_notify() {
+function wnd_get_mail_count() {
 
 	$user_id = get_current_user_id();
-	$user_mail_count = wp_cache_get($user_id, 'wnd_mail_notify');
+	$user_mail_count = wp_cache_get($user_id, 'wnd_mail_count');
 
 	if (false === $user_mail_count) {
 
@@ -155,7 +155,7 @@ function wnd_get_mail_notify() {
 		$query = new WP_Query($args);
 
 		$user_mail_count = $query->found_posts;
-		wp_cache_set($user_id, $user_mail_count, 'wnd_mail_notify');
+		wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
 
 	}
 

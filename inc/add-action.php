@@ -205,11 +205,16 @@ function wnd_action_delete_user($user_id) {
 
 /**
  *@since 2019.03.28
- *删除文章时，删除附属的子文章
+ *删除文章时附件操作
  */
-add_action('deleted_post', 'wnd_action_delete_children');
-function wnd_action_delete_children($post_id) {
+add_action('deleted_post', 'wnd_action_deleted_post');
+function wnd_action_deleted_post($post_id) {
 
+	$delete_post = get_post($post_id);
+
+	/**
+	 *删除附属文件
+	 */
 	$args = array(
 		'posts_per_page' => -1,
 		'post_type' => get_post_types(), //此处需要删除所有子文章，如果设置为 any，自定义类型中设置public为false的仍然无法包含，故获取全部注册类型
@@ -218,10 +223,18 @@ function wnd_action_delete_children($post_id) {
 	);
 
 	// 获取并删除
-	foreach (get_posts($args) as $post) {
-		wp_delete_post($post->ID, true);
+	foreach (get_posts($args) as $child) {
+		wp_delete_post($child->ID, true);
 	}
-	unset($post);
+	unset($child);
+
+	/**
+	 *@since 2019.06.04 删除订单时，扣除订单统计字段
+	 */
+	if ($delete_post->post_type == 'order') {
+		wnd_inc_wnd_post_meta($delete_post->post_parent, 'order_count', -1, true);
+	}
+
 }
 
 /**
