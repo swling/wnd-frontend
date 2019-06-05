@@ -27,12 +27,11 @@ function wnd_verify_nonce($nonce, $action) {
 
 /**
  *@since 2019.01.21 获取do page地址
+ *一个没有空白的WordPress环境，接收或执行一些操作
  */
 function wnd_get_do_url() {
 
-	$do_page = wnd_get_option('wnd', 'wnd_do_page');
-	$do_url = $do_page ? get_the_permalink($do_page) : WND_URL . 'do.php';
-	return $do_url;
+	return WND_URL . 'do.php';
 }
 
 /**
