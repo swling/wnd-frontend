@@ -238,6 +238,22 @@ function wnd_action_deleted_post($post_id) {
 }
 
 /**
+ *@since 2019.06.05
+ *文章更新
+ */
+add_action('post_updated', 'wnd_action_post_updated', 10, 3);
+function wnd_action_post_updated($post_ID, $post_after, $post_before) {
+
+	/**
+	 * @since 2019.06.05 邮件状态改变时删除邮件查询对象缓存
+	 */
+	if ($post_after->post_type == 'mail') {
+		wp_cache_delete($post_after->post_author, 'wnd_mail_count');
+	}
+
+}
+
+/**
  * 禁止WordPress原生登录和注册
  *@since 2019.03.01
  */
