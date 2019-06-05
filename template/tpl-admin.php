@@ -62,7 +62,7 @@ function _wnd_user_mail_box($args = '') {
 
 	// 查询参数
 	$defaults = array(
-		'post_status' => 'any',
+		'post_status' => 'pending',
 		'post_type' => 'mail',
 		'posts_per_page' => get_option('posts_per_page'),
 		'paged' => 1,
@@ -75,7 +75,7 @@ function _wnd_user_mail_box($args = '') {
 
 	// active
 	$unread_active = ($args['post_status'] == 'pending') ? 'class="is-active"' : '';
-	$all_active = ($args['post_status'] == 'any') ? 'class="is-active"' : '';
+	$all_active = is_array($args['post_status']) ? 'class="is-active"' : '';
 
 	// 配置未读邮件ajax请求参数
 	$ajax_args_unread = array_merge($args, array('post_status' => 'pending'));
@@ -83,7 +83,7 @@ function _wnd_user_mail_box($args = '') {
 	$ajax_args_unread = http_build_query($ajax_args_unread);
 
 	// 配置全部邮箱ajax请求参数
-	$ajax_args_all = array_merge($args, array('post_status' => 'any'));
+	$ajax_args_all = array_merge($args, array('post_status' => array('pending', 'private')));
 	unset($ajax_args_all['paged']);
 	$ajax_args_all = http_build_query($ajax_args_all);
 
@@ -97,11 +97,11 @@ function _wnd_user_mail_box($args = '') {
 		// ajax请求类型
 		$ajax_type = $_POST['ajax_type'] ?? 'modal';
 		if ($ajax_type == 'modal') {
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'_wnd_user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
 			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_modal(\'_wnd_user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'_wnd_user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
 		} else {
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'_wnd_user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
 			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'_wnd_user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'_wnd_user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
 		}
 
 	} else {
