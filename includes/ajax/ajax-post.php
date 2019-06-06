@@ -46,9 +46,10 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 
 	/**
 	 *@since 2019.02.19
-	 *仅限public post types，非public类型，请使用wp_insert_post
+	 *限制ajax可以创建的post类型，避免功能型post被意外创建
+	 *功能型post应通常具有更复杂的权限控制，并wp_insert_post创建
 	 */
-	if (!in_array($post_type, get_post_types(array('public' => true)))) {
+	if (!in_array($post_type, wnd_get_allowed_post_types())) {
 		return array('status' => 0, 'msg' => '类型无效！');
 	}
 
