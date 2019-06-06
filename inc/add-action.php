@@ -83,8 +83,8 @@ function wnd_action_upload_gallery($image_array, $post_parent) {
  * ajax删除附件时
  *@since 2018
  */
-add_action('wnd_delete_file', 'wnd_action_delete_attachment', 1, 3);
-function wnd_action_delete_attachment($attach_id, $post_parent, $meta_key) {
+add_action('wnd_delete_file', 'wnd_action_delete_file', 10, 3);
+function wnd_action_delete_file($attach_id, $post_parent, $meta_key) {
 
 	if (!$meta_key) {
 		return;
@@ -175,10 +175,9 @@ function wnd_action_do_action() {
 /*#########################################################################2、以下为WordPress原生 action*/
 /**
  *@since 初始化 用户注册后
- *校验完成后，重置验证码数据
  */
-add_action('user_register', 'wnd_reset_reg_code');
-function wnd_reset_reg_code($user_id) {
+add_action('user_register', 'wnd_action_user_register', 10, 1);
+function wnd_action_user_register($user_id) {
 
 	// 注册类，将注册用户id写入对应数据表
 	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'];
@@ -194,7 +193,7 @@ function wnd_reset_reg_code($user_id) {
  *删除用户的附加操作
  *@since 2018
  */
-add_action('delete_user', 'wnd_action_delete_user');
+add_action('delete_user', 'wnd_action_delete_user', 10, 1);
 function wnd_action_delete_user($user_id) {
 
 	// 删除手机注册记录
@@ -207,7 +206,7 @@ function wnd_action_delete_user($user_id) {
  *@since 2019.03.28
  *删除文章时附件操作
  */
-add_action('deleted_post', 'wnd_action_deleted_post');
+add_action('deleted_post', 'wnd_action_deleted_post', 10, 1);
 function wnd_action_deleted_post($post_id) {
 
 	$delete_post = get_post($post_id);
