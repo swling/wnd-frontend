@@ -35,7 +35,7 @@ define('WND_URL', plugin_dir_url(__FILE__));
 define('WND_PATH', plugin_dir_path(__FILE__));
 
 // 加载核心文件
-require WND_PATH . 'inc/index.php';
+require WND_PATH . 'includes/index.php';
 
 /**
  *@since 初始化
