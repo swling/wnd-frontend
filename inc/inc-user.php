@@ -146,15 +146,15 @@ function wnd_get_mail_count() {
 	if (false === $user_mail_count) {
 
 		$args = array(
-			'posts_per_page' => 10,
+			'posts_per_page' => 11,
 			'author' => $user_id,
 			'post_type' => 'mail',
 			'post_status' => 'pending',
-			// 'no_found_rows' => true,
 		);
-		$query = new WP_Query($args);
 
-		$user_mail_count = $query->found_posts;
+		$user_mail_count = count(get_posts($args));
+		$user_mail_count = ($user_mail_count > 10) ? '10+' : $user_mail_count;
+
 		wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
 
 	}
