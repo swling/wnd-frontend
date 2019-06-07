@@ -80,7 +80,8 @@ function _wnd_user_center($args = array()) {
 
 			break;
 
-		default:case 'login':
+		default:
+		case 'login':
 
 			$html .= _wnd_login_form();
 
@@ -148,7 +149,8 @@ function _wnd_user_center($args = array()) {
 
 		switch ($tab) {
 
-		case 'profile':default:
+		default:
+		case 'profile':
 
 			$html .= '<div class="tabs is-boxed"><ul class="tab">';
 			if (wnd_doing_ajax()) {
@@ -397,6 +399,7 @@ function _wnd_profile_form() {
  *@since 2019.01.23 用户更新账户表单
  */
 function _wnd_account_form() {
+
 	if (!is_user_logged_in()) {
 		return '<script>wnd_alert_msg(\'请登录\')</script>';
 	}
@@ -405,7 +408,7 @@ function _wnd_account_form() {
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>账户安全');
 	$form->set_form_attr('class="user-form"');
 
-	$form->add_user_password();
+	$form->add_user_password('当前密码');
 
 	$form->add_user_new_password();
 
