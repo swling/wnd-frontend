@@ -54,7 +54,7 @@ function _wnd_user_posts_panel($args = '') {
  *@since 2019.02.19 封装前端当前用户站内信
  *@param array or string ：wp_query args
  */
-function _wnd_user_mail_box($args = '') {
+function _wnd_user_mail_panel($args = '') {
 
 	if (!is_user_logged_in()) {
 		return '<div class="message is-warning"><div class="message-body">请登录！</div></div>';
@@ -97,11 +97,11 @@ function _wnd_user_mail_box($args = '') {
 		// ajax请求类型
 		$ajax_type = $_POST['ajax_type'] ?? 'modal';
 		if ($ajax_type == 'modal') {
-			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_modal(\'_wnd_user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'_wnd_user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
+			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_modal(\'_wnd_user_mail_panel\',\'' . $ajax_args_unread . '\');">未读</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'_wnd_user_mail_panel\',\'' . $ajax_args_all . '\');">全部</a></li>';
 		} else {
-			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'_wnd_user_mail_box\',\'' . $ajax_args_unread . '\');">未读</a></li>';
-			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'_wnd_user_mail_box\',\'' . $ajax_args_all . '\');">全部</a></li>';
+			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'_wnd_user_mail_panel\',\'' . $ajax_args_unread . '\');">未读</a></li>';
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'#user-mail-box\',\'_wnd_user_mail_panel\',\'' . $ajax_args_all . '\');">全部</a></li>';
 		}
 
 	} else {
