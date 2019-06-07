@@ -188,42 +188,6 @@ function _wnd_post_info($args) {
 }
 
 /**
- *@since 2019.01.20 输出中文文章状态
- */
-function _wnd_post_status($post_id) {
-
-	if (!$post_id) {
-		global $post;
-	} else {
-		$post = get_post($post_id);
-	}
-
-	if (!$post) {
-		return "获取状态失败！";
-	}
-
-	switch ($post->post_status) {
-
-	case 'publish':
-		return "公开";
-		break;
-
-	case 'pending':
-		return "待审";
-		break;
-
-	case 'draft':
-		return "草稿";
-		break;
-
-	default:
-		return $post->post_status;
-		break;
-	}
-
-}
-
-/**
  *@since 2019.01.20
  *快速编辑文章状态表单
  */
@@ -318,60 +282,4 @@ function _wnd_post_thumbnail($post_id, $width, $height) {
 	}
 
 	return false;
-}
-
-/**
- *@since ≈2018.07
- *###################################################### 表单设置：标签编辑器
- */
-function _wnd_get_tags_editor_script($maxTags = 3, $maxLength = 10, $placeholder = '标签', $taxonomy = '') {
-
-	$html = '<script src="https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.12.1/jquery-ui.min.js"></script>';
-	$html .= '<script src="' . WND_URL . 'static/js/jquery.tag-editor.min.js"></script>';
-	$html .= '<script src="' . WND_URL . 'static/js/jquery.caret.min.js"></script>';
-	$html .= '<link rel="stylesheet" href="' . WND_URL . 'static/css/jquery.tag-editor.min.css">';
-	$html .= '
-<script>
-jQuery(document).ready(function($) {
-	$("#tags").tagEditor({
-		//自动提示
-		autocomplete: {
-			delay: 0,
-			position: {
-				collision: "flip"
-			},
-			source: [' . _wnd_get_terms_text($taxonomy, 200) . ']
-		},
-		forceLowercase: false,
-		placeholder: "' . $placeholder . '",
-		maxTags: "' . $maxTags . '", //最多标签个数
-		maxLength: "' . $maxLength . '", //单个标签最长字数
-		onChange: function(field, editor, tags) {
-
-		},
-	});
-});
-</script>';
-
-	return $html;
-
-}
-
-//###################################################################################
-// 以文本方式列出热门标签，分类名称 用于标签编辑器，自动提示文字： 'tag1', 'tag2', 'tag3'
-function _wnd_get_terms_text($taxonomy, $number) {
-
-	$terms = get_terms($taxonomy, 'orderby=count&order=DESC&hide_empty=0&number=' . $number);
-	if (!empty($terms)) {
-		if (!is_wp_error($terms)) {
-			$terms_list = '';
-			foreach ($terms as $term) {
-				$terms_list .= '\'' . $term->name . '\',';
-			}
-
-			// 移除末尾的逗号
-			return rtrim($terms_list, ",");
-		}
-	}
-
 }

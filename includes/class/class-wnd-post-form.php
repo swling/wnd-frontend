@@ -125,7 +125,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 			)
 		);
 
-		parent::add_html(_wnd_get_tags_editor_script(3, 20, $placeholder, $taxonomy));
+		parent::add_html(_wnd_tags_editor_script(3, 20, $placeholder, $taxonomy));
 	}
 
 	public function add_post_thumbnail($width = 200, $height = 200, $label = '') {

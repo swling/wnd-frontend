@@ -90,34 +90,6 @@ function _wnd_breadcrumb() {
 }
 
 /**
- *@since 2019.05.16
- *列出term链接列表
- **/
-function _wnd_terms_list($args) {
-
-	$defaults = array(
-		'taxonomy' => 'post_tag',
-		'number' => 50,
-		'hidden_empty' => true,
-		'orderby' => 'count',
-		'order' => 'DESC',
-	);
-	$args = wp_parse_args($args, $defaults);
-
-	$html = '<div class="columns has-text-centered" style="flex-wrap: wrap;">';
-	$terms = get_terms($args);
-	foreach ($terms as $term) {
-
-		$html .= '<div class="column is-half"><a href="' . get_term_link($term->term_id) . '">' . $term->name . '</a></div>';
-
-	}
-	unset($term);
-	$html .= '</div>';
-
-	return $html;
-}
-
-/**
  *@since 2019.05.26 bulma 颜色下拉选择
  */
 function _wnd_dropdown_colors($name, $selected) {

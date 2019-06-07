@@ -156,46 +156,7 @@ function _wnd_related_tags_query_arg($cat_id, $tag_taxonomy, $limit = 10, $remov
  *@param $title 					string 		标题label
  */
 function _wnd_term_select_query_arg() {
-	?>
-<div class="dropdown is-hoverable">
-  <div class="dropdown-trigger">
-    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
-      <span><?php if (isset($_GET['local'])) {
-		echo $_GET['local'];
-	} else {
-		echo '—所在地—';
-	}
-	?></span>
-      <span class="icon is-small">
-        <i class="fa fa-angle-down" aria-hidden="true"></i>
-      </span>
-    </button>
-  </div>
-  <div class="dropdown-menu" role="menu">
-    <div class="dropdown-content">
-    	<div class="dropdown-item" style="min-width: 50px;">
-	    <?php
-// 内容少于1000条时，不一定每个省份都有，采用查询发，反之，直接输出全部地域
-	if ($term_count < 1000) {
-		$terms = wndbiz_get_related_terms($term_id = $term_id, $terms_type = 'area');
-	} else {
-		$terms = get_terms('taxonomy=area&hide_empty=1');
-	}
-	foreach ($terms as $term) {
-		?>
-        <a href="?local=<?php echo $term->name; ?>" class="<?php if (isset($_GET['local']) && $_GET['local'] == $term->name) {
-			echo 'on';
-		}
-		?>"><?php echo $term->name; ?></a>
-        <?php
-unset($term);
-	}
-	?>
-        </div>
-    </div>
-  </div>
-</div>
-<?php
+
 }
 
 /**
@@ -224,4 +185,90 @@ function _wnd_terms_checkbox($taxonomy, $value = 'slug', $name = '', $require = 
 		unset($term);
 
 	}
+}
+
+/**
+ *@since 2019.05.16
+ *列出term链接列表
+ **/
+function _wnd_terms_list($args) {
+
+	$defaults = array(
+		'taxonomy' => 'post_tag',
+		'number' => 50,
+		'hidden_empty' => true,
+		'orderby' => 'count',
+		'order' => 'DESC',
+	);
+	$args = wp_parse_args($args, $defaults);
+
+	$html = '<div class="columns has-text-centered" style="flex-wrap: wrap;">';
+	$terms = get_terms($args);
+	foreach ($terms as $term) {
+
+		$html .= '<div class="column is-half"><a href="' . get_term_link($term->term_id) . '">' . $term->name . '</a></div>';
+
+	}
+	unset($term);
+	$html .= '</div>';
+
+	return $html;
+}
+
+//###################################################################################
+// 以文本方式列出热门标签，分类名称 用于标签编辑器，自动提示文字： 'tag1', 'tag2', 'tag3'
+function _wnd_terms_text($taxonomy, $number) {
+
+	$terms = get_terms($taxonomy, 'orderby=count&order=DESC&hide_empty=0&number=' . $number);
+	if (!empty($terms)) {
+		if (!is_wp_error($terms)) {
+			$terms_list = '';
+			foreach ($terms as $term) {
+				$terms_list .= '\'' . $term->name . '\',';
+			}
+
+			// 移除末尾的逗号
+			return rtrim($terms_list, ",");
+		}
+	}
+
+}
+
+/**
+ *@since ≈2018.07
+ *###################################################### 表单设置：标签编辑器
+ */
+function _wnd_tags_editor_script($maxTags = 3, $maxLength = 10, $placeholder = '标签', $taxonomy = '') {
+
+	$html = '<script src="https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.12.1/jquery-ui.min.js"></script>';
+	$html .= '<script src="' . WND_URL . 'static/js/jquery.tag-editor.min.js"></script>';
+	$html .= '<script src="' . WND_URL . 'static/js/jquery.caret.min.js"></script>';
+	$html .= '<link rel="stylesheet" href="' . WND_URL . 'static/css/jquery.tag-editor.min.css">';
+	$html .=
+	'
+	<script>
+	jQuery(document).ready(function($) {
+		$("#tags").tagEditor({
+			//自动提示
+			autocomplete: {
+				delay: 0,
+				position: {
+					collision: "flip"
+				},
+				source: [' . _wnd_terms_text($taxonomy, 200) . ']
+			},
+			forceLowercase: false,
+			placeholder: "' . $placeholder . '",
+			maxTags: "' . $maxTags . '", //最多标签个数
+			maxLength: "' . $maxLength . '", //单个标签最长字数
+			onChange: function(field, editor, tags) {
+
+			},
+		});
+	});
+	</script>
+	';
+
+	return $html;
+
 }
