@@ -72,6 +72,7 @@ function _wnd_breadcrumb() {
 	if (is_single() and current_user_can('edit_post', $queried_object->ID)) {
 
 		$html .= '<a href="' . get_edit_post_link($queried_object->ID) . '">[编辑]</a>';
+		$html .= '&nbsp<a onclick="wnd_ajax_modal(\'_wnd_post_status_form\',\'' . $queried_object->ID . '\')">[管理]</a>';
 
 		// 分类切换
 	} elseif (is_archive()) {
