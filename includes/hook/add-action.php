@@ -164,7 +164,7 @@ function wnd_action_do_action() {
 		if (wnd_verify_nonce($_REQUEST['_wpnonce'] ?? '', $action)) {
 			return $action();
 		} else {
-			wp_die('无效的操作！', bloginfo('name'));
+			exit;
 		}
 		break;
 
