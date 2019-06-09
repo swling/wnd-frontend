@@ -227,7 +227,7 @@ function wnd_action_pre_delete_term($term_id, $taxonmy) {
 function wnd_get_tags_under_category($cat_id, $tag_taxonomy, $limit = 50) {
 
 	// 获取缓存
-	$tags = wp_cache_get($cat_id . $tag_taxonomy, 'wnd_tags_under_category');
+	$tags = wp_cache_get($cat_id . $tag_taxonomy . $limit, 'wnd_tags_under_category');
 
 	// 缓存无效
 	if ($tags === false) {
@@ -246,7 +246,7 @@ function wnd_get_tags_under_category($cat_id, $tag_taxonomy, $limit = 50) {
 		}
 
 		// 缓存查询结果
-		wp_cache_set($cat_id . $tag_taxonomy, $tags, 'wnd_tags_under_category', 86400);
+		wp_cache_set($cat_id . $tag_taxonomy . $limit, $tags, 'wnd_tags_under_category', 86400);
 	}
 
 	return $tags;
