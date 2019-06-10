@@ -162,3 +162,16 @@ function wnd_get_mail_count() {
 	return $user_mail_count ?: 0;
 
 }
+
+/**
+ *@since 2019.06.10
+ *获取用户面板允许的post types
+ */
+function wnd_get_user_panel_post_types() {
+
+	$post_types = get_post_types(array('public' => true), 'names', 'and');
+	// 排除页面/附件/站内信
+	unset($post_types['page'], $post_types['attachment'], $post_types['mail']);
+
+	return apply_filters('wnd_user_panel_post_types', $post_types);
+}

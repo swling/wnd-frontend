@@ -160,7 +160,7 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 
 /**
  *@since 2019.02.19
- *获取当前站点注册为公开状态的post type
+ *当前用户可以写入或管理的文章类型
  *@return array : post type name数组
  */
 function wnd_get_allowed_post_types() {

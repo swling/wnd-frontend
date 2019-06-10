@@ -172,6 +172,12 @@ apply_filters('wnd_can_update_account', array('status'=>1,'msg'=>'默认通过')
 ####用户更新返回值
 apply_filters('wnd_update_account_return', array('status' => 1, 'msg' => '更新成功'), $user_id);
 
+/**
+ *@since 2019.06.10
+ *用户面板允许的post types
+ */
+apply_filters('wnd_user_panel_post_types', $post_types);
+
 ```
 ##订单
 ```php

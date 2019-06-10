@@ -153,7 +153,7 @@ function wnd_ajax_update_post($post_id = 0) {
 	}
 
 	$_POST['_post_ID'] = $post_id;
-	return wnd_ajax_insert_post($post_id);
+	return wnd_ajax_insert_post();
 
 }
 

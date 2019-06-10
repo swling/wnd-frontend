@@ -1142,7 +1142,7 @@ function _wnd_posts_filter($args = array()) {
 	if (empty($args['wnd_post_types']) or $args['wnd_post_types'] == 'any') {
 		$args['wnd_post_types'] = get_post_types();
 		foreach ($args['wnd_post_types'] as $post_type) {
-			if (!in_array($post_type, wnd_get_allowed_post_types())) {
+			if (!in_array($post_type, wnd_get_user_panel_post_types())) {
 				unset($args['wnd_post_types'][$post_type]);
 			}
 		}
