@@ -184,14 +184,15 @@ function wnd_verify_code($email_or_phone, $code, $verify_type) {
 		return array('status' => 0, 'msg' => '校验失败：请填写' . $text . '！');
 	}
 
+	// 注册
 	if ($verify_type == 'register' && wnd_get_user_by($email_or_phone)) {
 		return array('status' => 0, 'msg' => '校验失败：' . $text . '已注册过！');
 	}
 
 	// 找回密码
 	if ($verify_type == 'reset_password' and !wnd_get_user_by($email_or_phone)) {
-		return array('status' => 0, 'msg' => '未注册！');
-	}	
+		return array('status' => 0, 'msg' => '该' . $text . '尚未注册！');
+	}
 
 	// 过期时间设置
 	$intervals = $field == 'phone' ? 600 : 3600;
