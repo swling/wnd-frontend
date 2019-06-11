@@ -79,12 +79,12 @@ function wnd_can_send_code($email_or_phone, $verify_type) {
 	}
 
 	// 检测是否为注册类型，注册类型去重
-	if ($verify_type == 'reg' and wnd_get_user_by($email_or_phone)) {
+	if ($verify_type == 'register' and wnd_get_user_by($email_or_phone)) {
 		return array('status' => 0, 'msg' => '该' . $text . '已注册过！');
 	}
 
 	// 找回密码
-	elseif ($verify_type == 'reset_pass' and !wnd_get_user_by($email_or_phone)) {
+	elseif ($verify_type == 'reset_password' and !wnd_get_user_by($email_or_phone)) {
 		return array('status' => 0, 'msg' => '该' . $text . '尚未注册！');
 	}
 
@@ -184,9 +184,14 @@ function wnd_verify_code($email_or_phone, $code, $verify_type) {
 		return array('status' => 0, 'msg' => '校验失败：请填写' . $text . '！');
 	}
 
-	if ($verify_type == 'reg' && wnd_get_user_by($email_or_phone)) {
+	if ($verify_type == 'register' && wnd_get_user_by($email_or_phone)) {
 		return array('status' => 0, 'msg' => '校验失败：' . $text . '已注册过！');
 	}
+
+	// 找回密码
+	if ($verify_type == 'reset_password' and !wnd_get_user_by($email_or_phone)) {
+		return array('status' => 0, 'msg' => '未注册！');
+	}	
 
 	// 过期时间设置
 	$intervals = $field == 'phone' ? 600 : 3600;

@@ -74,7 +74,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 	/**
 	 *短信校验
-	 *@param $verify_type 	string 'reg' / 'reset_pass' 为保留字段, 用途为：注册 / 重置密码
+	 *@param $verify_type 	string 'register' / 'reset_password' 为保留字段, 用途为：注册 / 重置密码
 	 *注册时若当前手机已注册，则无法发送验证码
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
@@ -114,7 +114,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 
 	/**
 	 *邮箱校验
-	 *@param $verify_type 	string 'reg' / 'reset_pass' 为保留字段, 用途为：注册 / 重置密码
+	 *@param $verify_type 	string 'register' / 'reset_password' 为保留字段, 用途为：注册 / 重置密码
 	 *注册时若当前邮箱已注册，则无法发送验证码
 	 *找回密码时若当前邮箱未注册，则无法发送验证码
 	 **/

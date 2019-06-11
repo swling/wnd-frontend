@@ -13,13 +13,13 @@ if (!defined('ABSPATH')) {
 
 /**
  *@since 2019.02.16 封装：用户中心
- *@param string or array ：action => reg / login / lostpassword, tab => string :profile / account
+ *@param string or array ：action => register / login / reset_password, tab => string :profile / account
  *@return $html .= el
  */
 function _wnd_user_center($args = array()) {
 
 	$defaults = array(
-		'action' => 'reg',
+		'action' => 'register',
 		'tab' => 'profile',
 	);
 	$args = wp_parse_args($args, $defaults);
@@ -36,7 +36,7 @@ function _wnd_user_center($args = array()) {
 
 		switch ($action) {
 
-		case 'reg':
+		case 'register':
 
 			// 关闭邮箱注册强制短信注册
 			$type = wnd_get_option('wnd', 'wnd_disable_email_reg') == 1 ? 'sms' : ($_GET['type'] ?? $args['type'] ?? 'email');
@@ -49,18 +49,18 @@ function _wnd_user_center($args = array()) {
 				if ($ajax_type == 'modal') {
 
 					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
-						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reg&type=sms\');">手机注册</a> | ';
+						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=register&type=sms\');">手机注册</a> | ';
 					} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
-						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reg&type=email\');">邮箱注册</a> | ';
+						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=register&type=email\');">邮箱注册</a> | ';
 					}
 					$html .= '已有账户？<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\');">登录</a>';
 
 				} else {
 
 					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
-						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reg&type=sms\');">手机注册</a> | ';
+						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=register&type=sms\');">手机注册</a> | ';
 					} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
-						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reg&type=email\');">邮箱注册</a> | ';
+						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=register&type=email\');">邮箱注册</a> | ';
 					}
 					$html .= '已有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=login\');">登录</a>';
 
@@ -88,21 +88,21 @@ function _wnd_user_center($args = array()) {
 			$html .= '<div class="user-form"><div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
 			if (wnd_doing_ajax()) {
 				if ($ajax_type == 'modal') {
-					$html .= '没有账户？<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reg\');">立即注册</a> | ';
-					$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=lostpassword\');">忘记密码？</a>';
+					$html .= '没有账户？<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=register\');">立即注册</a> | ';
+					$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reset_password\');">忘记密码？</a>';
 				} else {
-					$html .= '没有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reg\');">立即注册</a> | ';
-					$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=lostpassword\');">忘记密码</a>';
+					$html .= '没有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=register\');">立即注册</a> | ';
+					$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reset_password\');">忘记密码</a>';
 				}
 			} else {
-				$html .= '没有账户？<a href="' . add_query_arg('action', 'reg') . '">立即注册</a> | ';
-				$html .= '<a href="' . add_query_arg('action', 'lostpassword') . '">忘记密码？</a>';
+				$html .= '没有账户？<a href="' . add_query_arg('action', 'register') . '">立即注册</a> | ';
+				$html .= '<a href="' . add_query_arg('action', 'reset_password') . '">忘记密码？</a>';
 			}
 			$html .= '</div></div></div>';
 
 			break;
 
-		case 'lostpassword':
+		case 'reset_password':
 
 			$type = $_GET['type'] ?? $args['type'] ?? 'email';
 			$html .= _wnd_lostpassword_form($type);
@@ -112,18 +112,18 @@ function _wnd_user_center($args = array()) {
 				if ($ajax_type == 'modal') {
 
 					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
-						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=lostpassword&type=sms\');">手机验证找回</a> | ';
+						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reset_password&type=sms\');">手机验证找回</a> | ';
 					} elseif ($type == 'sms') {
-						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=lostpassword&type=email\');">邮箱验证找回</a> | ';
+						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reset_password&type=email\');">邮箱验证找回</a> | ';
 					}
 					$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\');">登录</a>';
 
 				} else {
 
 					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
-						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=lostpassword&type=sms\');">手机验证找回</a> | ';
+						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reset_password&type=sms\');">手机验证找回</a> | ';
 					} elseif ($type == 'sms') {
-						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=lostpassword&type=email\');">邮箱验证找回</a> | ';
+						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reset_password&type=email\');">邮箱验证找回</a> | ';
 					}
 
 					$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=login\');">登录</a>';
@@ -285,9 +285,9 @@ function _wnd_reg_form($type = 'email') {
 
 	if ($type == 'sms') {
 		// $form->add_user_email($placeholder = '邮箱');
-		$form->add_sms_verify($verify_type = 'reg', wnd_get_option('wnd', 'wnd_sms_template_r'));
+		$form->add_sms_verify($verify_type = 'register', wnd_get_option('wnd', 'wnd_sms_template_r'));
 	} else {
-		$form->add_email_verify($verify_type = 'reg', $template = '');
+		$form->add_email_verify($verify_type = 'register', $template = '');
 	}
 	if (wnd_get_option('wnd', 'wnd_agreement_url') or 1) {
 
@@ -338,9 +338,9 @@ function _wnd_lostpassword_form($type = 'email') {
 	$form->set_form_attr('class="user-form"');
 
 	if ($type == 'sms') {
-		$form->add_sms_verify($verify_type = 'reset_pass', wnd_get_option('wnd', 'wnd_sms_template_v'));
+		$form->add_sms_verify($verify_type = 'reset_password', wnd_get_option('wnd', 'wnd_sms_template_v'));
 	} else {
-		$form->add_email_verify($verify_type = 'reset_pass', $template = '');
+		$form->add_email_verify($verify_type = 'reset_password', $template = '');
 	}
 
 	$form->add_user_new_password();

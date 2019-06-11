@@ -25,7 +25,7 @@ function wnd_filter_can_reg($can_array) {
 	// 验证:手机或邮箱 验证码
 	$code = $_POST['v_code'];
 	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'];
-	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = 'reg');
+	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = 'register');
 
 	if ($wnd_verify_code['status'] === 0) {
 		return $wnd_verify_code;
