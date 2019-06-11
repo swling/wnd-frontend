@@ -5,6 +5,14 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ *@see README.md
+ *ajax post $_POST name规则：
+ *post field：_post_{field}
+ *post meta：
+ *_meta_{key} (*自定义数组字段)
+ *_wpmeta_{key} (*WordPress原生字段)
+ *_term_{taxonomy}(*taxonomy)
+ *
  *@since 初始化
  *保存提交数据
  *@param 	$_POST 						全局表单数据
@@ -137,6 +145,14 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 }
 
 /**
+ *@see README.md
+ *ajax post $_POST name规则：
+ *post field：_post_{field}
+ *post meta：
+ *_meta_{key} (*自定义数组字段)
+ *_wpmeta_{key} (*WordPress原生字段)
+ *_term_{taxonomy}(*taxonomy)
+ *
  *@since 初始化
  *@param $_POST 	表单数据
  *@param $post_id 	文章id
@@ -205,6 +221,20 @@ function wnd_ajax_update_post_status() {
 		'post_status' => $after_status,
 	);
 	$update = wp_update_post($post_data);
+
+	/**
+	 *@since 2019.06.11 置顶操作
+	 */
+	if (wnd_is_manager()) {
+		$action = $_POST['stick_post'] ?? false;
+		if ('stick' == $action and 'publish' == $after_status) {
+			wnd_stick_post($post_id);
+
+		} elseif ('unstick' == $action) {
+			wnd_unstick_post($post_id);
+
+		}
+	}
 
 	// 完成更新
 	if ($update) {

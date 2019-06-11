@@ -128,6 +128,14 @@ function wnd_options() {
 				</tr>
 
 				<tr>
+					<td valign="top">最大置顶文章数量</td>
+					<td>
+						<input type="number" name="wnd_max_stick_posts" value="<?php echo wnd_get_option('wnd', 'wnd_max_stick_posts'); ?>" class="text" min="1">
+						<p><i>限制置顶文章数量，按新旧顺序保留（非WordPress原生置顶功能）</i></p>
+					</td>
+				</tr>				
+
+				<tr>
 					<td valign="top">前台禁用语言包</td>
 					<td>
 						禁用语言包<input type="radio" required="required" name="wnd_disable_locale" value="1" <?php if (wnd_get_option('wnd', 'wnd_disable_locale') == 1) echo 'checked'; ?> />

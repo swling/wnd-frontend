@@ -5,6 +5,13 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ *@see README.md
+ *ajax user POST name规则：
+ *user field：_user_{field}
+ *user meta：
+ *_usermeta_{key} （*自定义数组字段）
+ *_wpusermeta_{key} （*WordPress原生字段）
+ *
  *@since 初始化 用户注册
  *@param $_POST['_user_user_login']
  *@param $_POST['_user_user_pass']
@@ -160,6 +167,14 @@ function wnd_ajax_login() {
  *@since 初始化
  *用户资料修改：昵称，简介，字段等 修改账户密码、邮箱，请使用：wnd_wpdate_account
  *@param $_POST 	用户资料表单数据
+ *
+ *@see README.md
+ *ajax user POST name规则：
+ *user field：_user_{field}
+ *user meta：
+ *_usermeta_{key} （*自定义数组字段）
+ *_wpusermeta_{key} （*WordPress原生字段）
+ *
  */
 function wnd_ajax_update_profile() {
 

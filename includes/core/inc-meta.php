@@ -84,7 +84,7 @@ function wnd_inc_wnd_post_meta($post_id, $meta_key, $val = 1, $min_zero = false)
 function wnd_update_user_meta($user_id, $array_key, $array_value) {
 
 	// 空值，删除
-	if ($array_value == '') {
+	if (empty($array_value) and !is_numeric($array_value)) {
 		wnd_delete_user_meta($user_id, $array_key);
 		return;
 	}
@@ -119,7 +119,7 @@ function wnd_update_user_meta_array($user_id, $update_array) {
 	$new_array = array_merge($old_array, $update_array);
 	// 删除空值
 	foreach ($new_array as $array_key => $array_value) {
-		if ($array_value == '') {
+		if (empty($array_value) and !is_numeric($array_value)) {
 			unset($new_array[$array_key]);
 		}
 	}
@@ -162,7 +162,7 @@ function wnd_delete_user_meta($user_id, $array_key) {
 function wnd_update_post_meta($post_id, $array_key, $array_value) {
 
 	// 空值，删除
-	if ($array_value == '') {
+	if (empty($array_value) and !is_numeric($array_value)) {
 		wnd_delete_post_meta($post_id, $array_key);
 		return;
 	}
@@ -197,7 +197,7 @@ function wnd_update_post_meta_array($post_id, $update_array) {
 	$new_array = array_merge($old_array, $update_array);
 	// 删除空值
 	foreach ($new_array as $array_key => $array_value) {
-		if ($array_value == '') {
+		if (empty($array_value) and !is_numeric($array_value)) {
 			unset($new_array[$array_key]);
 		}
 	}
@@ -240,7 +240,7 @@ function wnd_delete_post_meta($post_id, $array_key) {
 function wnd_update_option($option_name, $array_key, $array_value) {
 
 	// 空值，删除
-	if ($array_value == '') {
+	if (empty($array_value) and !is_numeric($array_value)) {
 		wnd_delete_option($option_name, $array_key);
 		return;
 	}
@@ -276,7 +276,7 @@ function wnd_update_option_array($option_name, $update_array) {
 	$new_array = array_merge($old_array, $update_array);
 	// 删除空值
 	foreach ($new_array as $array_key => $array_value) {
-		if ($array_value == '') {
+		if (empty($array_value) and !is_numeric($array_value)) {
 			unset($new_array[$array_key]);
 		}
 	}

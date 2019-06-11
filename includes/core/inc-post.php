@@ -214,3 +214,64 @@ function wnd_get_post_by_slug($post_name, $post_type = 'post', $post_status = 'p
 	return false;
 
 }
+
+/**
+ *@since 2019.06.11
+ *精选置顶文章
+ *精选post id存储方式：
+ *option：二维数组 wnd_sticky_posts[$post_type]['post'.$post_id]
+ *@param $post_id
+ **/
+function wnd_stick_post($post_id) {
+
+	$post_type = get_post_type($post_id);
+	if (!$post_type) {
+		return;
+	}
+
+	$max = wnd_get_option('wnd', 'wnd_max_stick_posts') ?: 10;
+	$old_sticky_posts = wnd_get_option('wnd_sticky_posts', $post_type);
+	$old_sticky_posts = is_array($old_sticky_posts) ? $old_sticky_posts : array();
+
+	// 创建以post+id作为键名，id作为键值的数组，并合并入数组（注意顺序）
+	$sticky_post = array('post' . $post_id => $post_id);
+	$new_sticky_posts = array_merge($sticky_post, $old_sticky_posts);
+
+	// 仅保留指定个数元素（按最新）
+	$new_sticky_posts = array_slice($new_sticky_posts, 0, $max);
+
+	return wnd_update_option('wnd_sticky_posts', $post_type, $new_sticky_posts);
+}
+
+/**
+ *@since 2019.06.11
+ *取消精选置顶文章
+ *@param $post_id
+ **/
+function wnd_unstick_post($post_id) {
+
+	$post_type = get_post_type($post_id);
+	if (!$post_type) {
+		return;
+	}
+
+	$sticky_posts = wnd_get_option('wnd_sticky_posts', $post_type);
+	$sticky_posts = is_array($sticky_posts) ? $sticky_posts : array();
+
+	// 移除指定post id
+	unset($sticky_posts['post' . $post_id]);
+
+	return wnd_update_option('wnd_sticky_posts', $post_type, $sticky_posts);
+}
+
+/**
+ *@since 2019.06.11
+ *获取精选置顶文章
+ *@param 	$post_type 		文章类型
+ *@return 	array or false 	文章id数组
+ **/
+function wnd_get_sticky_posts($post_type) {
+
+	$sticky_posts = wnd_get_option('wnd_sticky_posts', $post_type);
+	return is_array($sticky_posts) ? $sticky_posts : array();
+}
