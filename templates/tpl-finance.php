@@ -148,7 +148,7 @@ function _wnd_list_user_fin($args = '') {
 			$html .= '<td>' . $post->post_content . '</td>';
 
 			if ($post->post_parent) {
-				$html .= '<td><a href="' . get_the_permalink($post->post_parent) . '" target="_blank">' . $post->post_title . '</a></td>';
+				$html .= '<td><a href="' . get_permalink($post->post_parent) . '" target="_blank">' . $post->post_title . '</a></td>';
 			} else {
 				$html .= '<td>' . $post->post_title . '</td>';
 			}
@@ -350,7 +350,7 @@ function _wnd_list_fin_stats($args = '') {
 			$html .= '<td class="is-narrow is-hidden-mobile">' . get_the_time('m-d') . '</td>';
 			$html .= '<td>' . $post->post_content . '</td>';
 			if ($post->post_parent) {
-				$html .= '<td><a href="' . get_the_permalink($post->post_parent) . '" target="_blank">' . $post->post_title . '</a></td>';
+				$html .= '<td><a href="' . get_permalink($post->post_parent) . '" target="_blank">' . $post->post_title . '</a></td>';
 			} else {
 				$html .= '<td>' . $post->post_title . '</td>';
 			}

@@ -155,7 +155,7 @@ function _wnd_table_list($args = '') {
 
 			$html .= '<tr>';
 			$html .= '<td class="is-narrow is-hidden-mobile">' . get_the_time('m-d H:i') . '</td>';
-			$html .= '<td><a href="' . get_the_permalink() . '" target="_blank">' . $post->post_title . '</a></td>';
+			$html .= '<td><a href="' . get_permalink() . '" target="_blank">' . $post->post_title . '</a></td>';
 			if (current_user_can('edit_post', $post->ID)) {
 				$html .= '<th class="is-narrow is-hidden-mobile">' . $post->post_status . '</th>';
 			}
