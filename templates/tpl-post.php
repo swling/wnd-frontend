@@ -250,7 +250,6 @@ function _wnd_post_status_form($post_id) {
 					'置顶' => 'stick',
 					'取消' => 'unstick',
 				),
-				'required' => 'required',
 				'checked' => (array_search($post->ID, wnd_get_sticky_posts($post->post_type)) === false) ? '' : 'stick',
 				'class' => 'is-checkradio is-danger',
 			)
