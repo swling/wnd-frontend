@@ -158,3 +158,28 @@ function wnd_copy_taxonomy($old_taxonomy, $new_taxonomy) {
 	}
 
 }
+
+/**
+ * @since 2019.06.12
+ * 获取当前页面查询类型基本信息
+ * 通常用于在ajax请求中传递请求页面信息以供后端判断请求来源
+ * */
+function wnd_get_queried_type() {
+
+	if (is_single()) {
+		return array('type' => 'single', 'ID' => get_queried_object()->ID);
+
+	} elseif (is_page()) {
+		return array('type' => 'page', 'ID' => get_queried_object()->ID);
+
+	} elseif (is_tax()) {
+		return array('type' => 'tax', 'ID' => get_queried_object()->term_id);
+
+	} elseif (is_home()) {
+		return array('type' => 'home');
+
+	} else {
+
+		return array('type' => 'ajax');
+	}
+}

@@ -1061,8 +1061,8 @@ function _wnd_current_filter($args, $ajax_call = '', $ajax_container = '') {
  *WordPress文章多重筛选器
  *@param $args： wp_query $args
  *
- *@param 自定义： string $args['wnd_list_tpl'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
  *@param 自定义： array $args['wnd_post_types']需要展示的文章类型
+ *
  *@param 自定义： array $args['wnd_post_status']需要筛选的文章状态
  *
  * $args['wnd_post_status'] = array(
@@ -1070,8 +1070,6 @@ function _wnd_current_filter($args, $ajax_call = '', $ajax_container = '') {
  *	'草稿'=>'draft',
  * )
  *
- *@param 自定义： bool args['wnd_only_cat']是否只筛选分类
- *@param 自定义： bool args['wnd_with_sidrbar']是否包含边栏
  *@param 自定义： array args['wnd_meta_query'] meta字段筛选 @link https://codex.wordpress.org/Class_Reference/WP_Query#Custom_Field_Parameters
  *		暂只支持单一 meta_key
  *		非ajax状态环境中仅支持 = 、exists 两种对比关系
@@ -1112,6 +1110,10 @@ function _wnd_current_filter($args, $ajax_call = '', $ajax_container = '') {
  *		'order' => 'DESC',
  *	);
  *
+ *@param 自定义： string $args['wnd_list_tpl'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
+ *@param 自定义： bool args['wnd_only_cat']是否只筛选分类
+ *@param 自定义： bool args['wnd_with_sidrbar']是否包含边栏
+ *@param 自定义： string args['wnd_queried_type']向后端传递请求页面类型供后端判断（singular，tax，home等）
  *非ajax状态下：
  *自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
  *自动从GET参数中获取meta查询参数 (?meta_$meta_key=meta_value or ?meta_$meta_key=exists)
@@ -1128,13 +1130,14 @@ function _wnd_posts_filter($args = array()) {
 		'tax_query' => array(),
 		'meta_query' => array(),
 		'no_found_rows' => true, //无需原生的分页
-		'wnd_list_tpl' => '_wnd_post_list', //输出列表模板函数
 		'wnd_post_types' => array(), //允许的类型数组
 		'wnd_post_status' => array(), //状态筛选项
 		'wnd_meta_query' => array(), //meta筛选项
 		'wnd_orderby' => array(), //排序
+		'wnd_list_tpl' => '_wnd_post_list', //输出列表模板函数
 		'wnd_only_cat' => 0, //只筛选分类
 		'wnd_with_sidebar' => false, //边栏
+		'wnd_queried_type' => wnd_get_queried_type(), //向后端传递请求页面类型供后端判断
 	);
 	$args = wp_parse_args($args, $defaults);
 
