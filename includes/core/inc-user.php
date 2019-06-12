@@ -81,12 +81,13 @@ function wnd_is_manager($user_id = 0) {
 /**
  *@since 初始化
  *用户display name去重
+ *@return int or false
  */
 function wnd_is_name_repeated($display_name, $exclude_id = 0) {
 
 	// 名称为空
 	if (empty($display_name)) {
-		return array('status' => 0, 'msg' => '名称为空');
+		return false;
 	}
 
 	global $wpdb;
@@ -96,13 +97,7 @@ function wnd_is_name_repeated($display_name, $exclude_id = 0) {
 		$exclude_id
 	));
 
-	if ($results) {
-		$value = array('status' => 1, 'msg' => $results);
-	} else {
-		$value = array('status' => 0, 'msg' => '昵称唯一');
-	}
-
-	return $value;
+	return $results ?: false;
 }
 
 /**

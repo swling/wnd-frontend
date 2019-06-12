@@ -55,7 +55,12 @@ function _wnd_ajax_is_title_repeated() {
 	$title = $_POST['post_title'];
 	$exclude_id = $_POST['post_id'];
 	$post_type = $_POST['post_type'];
-	return wnd_is_title_repeated($title, $exclude_id, $post_type);
+	
+	if (wnd_is_title_repeated($title, $exclude_id, $post_type)) {
+		return array('status' => 1, 'msg' => '标题重复！');
+	} else {
+		return array('status' => 0, 'msg' => '标题唯一！');
+	}
 
 }
 

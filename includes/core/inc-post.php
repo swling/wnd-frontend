@@ -175,11 +175,12 @@ function wnd_get_allowed_post_types() {
 /**
  *@since 初始化
  *标题去重
+ *@return int or false
  */
 function wnd_is_title_repeated($title, $exclude_id = 0, $post_type = 'post') {
 
 	if (empty($title)) {
-		return array('status' => 0, 'msg' => '标题为空');
+		return false;
 	}
 
 	global $wpdb;
@@ -190,13 +191,8 @@ function wnd_is_title_repeated($title, $exclude_id = 0, $post_type = 'post') {
 		$exclude_id
 	));
 
-	if ($results) {
-		$value = array('status' => 1, 'msg' => $results);
-	} else {
-		$value = array('status' => 0, 'msg' => '标题唯一');
-	}
+	return $results ?: false;
 
-	return $value;
 }
 
 /**

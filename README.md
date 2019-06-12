@@ -281,7 +281,12 @@ wnd_action_xxx
 wnd_filter_xxx
 
 #数据库
-如果需要用户昵称唯一：建议对users->display_name 新增索引
+
+##wp_users:
+如果需要用户昵称唯一：建议对display_name 新增索引
+
+##wp_posts：
+如需保证标题唯一：建议对post_title添加前缀索引
 
 #站内信功能
 post_type => mail
