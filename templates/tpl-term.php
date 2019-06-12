@@ -202,7 +202,7 @@ function _wnd_terms_list($args) {
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	$html = '<div class="columns has-text-centered" style="flex-wrap: wrap;">';
+	$html = '<div class="columns has-text-centered is-multiline is-mobile">';
 	$terms = get_terms($args);
 	foreach ($terms as $term) {
 
