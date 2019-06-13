@@ -376,7 +376,10 @@ function wnd_get_order_count($object_id) {
 		),
 	);
 	foreach (get_posts($args) as $post) {
-		wnd_inc_post_meta($post->ID, 'order_count', -1, 1);
+		/**
+		 * 此处不直接修正order_count，而是在删除订单时，通过action修正order_count @see wnd_action_deleted_post
+		 * 以此确保订单统计的准确性，如用户主动删除，或其他原因人为删除订单时亦能自动修正订单统计
+		 */
 		wp_delete_post($post->ID, $force_delete = true);
 	}
 	unset($post, $args);

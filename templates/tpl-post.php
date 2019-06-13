@@ -243,19 +243,23 @@ function _wnd_post_status_form($post_id) {
 
 	// 管理员权限
 	if (wnd_is_manager()) {
-		$form->add_html('<div class="field is-grouped is-grouped-centered">');
-		$form->add_radio(
-			array(
-				'name' => 'stick_post',
-				'options' => array(
-					'置顶' => 'stick',
-					'取消' => 'unstick',
-				),
-				'checked' => (array_search($post->ID, wnd_get_sticky_posts($post->post_type)) === false) ? '' : 'stick',
-				'class' => 'is-checkradio is-danger',
-			)
-		);
-		$form->add_html('</div>');
+
+		// 公开的post type可设置置顶
+		if (in_array($post->post_type, get_post_types(array('public' => true)))) {
+			$form->add_html('<div class="field is-grouped is-grouped-centered">');
+			$form->add_radio(
+				array(
+					'name' => 'stick_post',
+					'options' => array(
+						'置顶' => 'stick',
+						'取消' => 'unstick',
+					),
+					'checked' => (array_search($post->ID, wnd_get_sticky_posts($post->post_type)) === false) ? '' : 'stick',
+					'class' => 'is-checkradio is-danger',
+				)
+			);
+			$form->add_html('</div>');
+		}
 
 		$form->add_textarea(
 			array(
