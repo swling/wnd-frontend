@@ -428,3 +428,51 @@ function wnd_action_no_redirect_404($redirect_url) {
 	}
 	return $redirect_url;
 }
+
+/**
+ *@since 2019.06.13
+ *将文章流量统计：views字段缓存在对象缓存中，降低数据库读写
+ */
+add_filter('update_post_metadata', 'wnd_filter_update_post_metadata', 10, 5);
+function wnd_filter_update_post_metadata($check, $object_id, $meta_key, $meta_value, $prev_value) {
+
+	//已经安装了 memcached 插件
+	global $wp_object_cache;
+	if (!isset($wp_object_cache->mc) or !$wp_object_cache->mc) {
+		return $check;
+	}
+
+	if ($meta_key == 'views') {
+		wp_cache_set($object_id, $meta_value, 'views');
+		$cached_post_views = 10;
+		if ($meta_value % $cached_post_views == 0) {
+			//每增加 10 次浏览才写入数据库中去
+			return $check;
+		} else {
+			return true;
+		}
+	} else {
+		return $check;
+	}
+}
+
+add_filter('get_post_metadata', 'wnd_filter_get_post_metadata', 10, 4);
+function wnd_filter_get_post_metadata($check, $object_id, $meta_key, $single) {
+
+	//已经安装了 memcached 插件
+	global $wp_object_cache;
+	if (!isset($wp_object_cache->mc) or !$wp_object_cache->mc) {
+		return $check;
+	}
+
+	if ($single and $meta_key == 'views') {
+		$views = wp_cache_get($object_id, 'views'); //显示的时候直接从内存中获取
+		if ($views === false) {
+			return $check;
+		} else {
+			return $views;
+		}
+	} else {
+		return $check;
+	}
+}
