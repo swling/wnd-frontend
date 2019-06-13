@@ -230,6 +230,7 @@ function _wnd_post_status_form($post_id) {
 			'options' => array(
 				'发布' => 'publish',
 				'待审' => 'pending',
+				'关闭' => 'close',
 				'草稿' => 'draft',
 				'删除' => 'delete',
 			),
