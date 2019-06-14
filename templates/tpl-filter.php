@@ -238,7 +238,7 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 	$ajax_type = $_POST['ajax_type'] ?? false;
 
 	// 需要展示的taxonomy列表 @since 2019.03.21
-	if ($args['wnd_only_cat']) {
+	if ($args['wnd_only_cat'] ?? false) {
 
 		$cat_taxonomies = $args['post_type'] == 'post' ? array('category') : array($args['post_type'] . '_cat');
 		if (!get_taxonomy($cat_taxonomies[0])) {
@@ -274,6 +274,11 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 		$taxonomy_query_key = false;
 		$all_active = 'class="is-active"';
 		foreach ($args['tax_query'] as $key => $tax_query) {
+
+			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
+			if (!is_array($tax_query)) {
+				continue;
+			}
 
 			// 当前分类在tax query中的键名
 			if (array_search($taxonomy, $tax_query) !== false) {
@@ -325,18 +330,23 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 			// 遍历当前tax query查询是否匹配当前tab
 			if (isset($args['tax_query'])) {
 
-				foreach ($args['tax_query'] as $current_term_query) {
+				foreach ($args['tax_query'] as $tax_query) {
+
+					// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
+					if (!is_array($tax_query)) {
+						continue;
+					}
 
 					// 查询父级分类
-					$current_parent = get_term($current_term_query['terms'])->parent;
+					$current_parent = get_term($tax_query['terms'])->parent;
 
-					if ($current_term_query['terms'] == $term->term_id or $term->term_id == $current_parent) {
+					if ($tax_query['terms'] == $term->term_id or $term->term_id == $current_parent) {
 						$active = 'class="is-active"';
 						// 当前一级分类处于active，对应term id将写入父级数组
 						$current_term_parent[$taxonomy] = $term->term_id;
 					}
 				}
-				unset($current_term_query);
+				unset($tax_query);
 
 			}
 
@@ -412,13 +422,13 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 			// 遍历当前tax query查询是否匹配当前tab
 			if (isset($args['tax_query'])) {
 
-				foreach ($args['tax_query'] as $current_term_query) {
+				foreach ($args['tax_query'] as $tax_query) {
 
-					if ($current_term_query['terms'] == $child_term->term_id) {
+					if ($tax_query['terms'] == $child_term->term_id) {
 						$child_active = 'class="is-active"';
 					}
 				}
-				unset($current_term_query);
+				unset($tax_query);
 
 			}
 			if (wnd_doing_ajax()) {
@@ -507,6 +517,11 @@ function _wnd_tags_filter($args = array(), $ajax_call = '', $ajax_container = ''
 	$all_active = 'class="is-active"';
 	foreach ($args['tax_query'] as $key => $tax_query) {
 
+		// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
+		if (!is_array($tax_query)) {
+			continue;
+		}
+
 		//遍历当前tax query 获取post type的category(格式$post_type.'_cat')	@since 2019.03.25
 		if (array_search($args['post_type'] . '_cat', $tax_query) !== false) {
 			$category_id = $tax_query['terms'];
@@ -579,13 +594,18 @@ function _wnd_tags_filter($args = array(), $ajax_call = '', $ajax_container = ''
 		// 遍历当前tax query查询是否匹配当前tab
 		if (isset($args['tax_query'])) {
 
-			foreach ($args['tax_query'] as $current_term_query) {
+			foreach ($args['tax_query'] as $tax_query) {
 
-				if ($current_term_query['terms'] == $term->term_id) {
+				// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
+				if (!is_array($tax_query)) {
+					continue;
+				}
+
+				if ($tax_query['terms'] == $term->term_id) {
 					$active = 'class="is-active"';
 				}
 			}
-			unset($current_term_query);
+			unset($tax_query);
 
 		}
 
@@ -963,9 +983,14 @@ function _wnd_current_filter($args, $ajax_call = '', $ajax_container = '') {
 	$html .= '<div class="column">';
 
 	// 1、tax_query
-	foreach ($args['tax_query'] as $key => $term_query) {
+	foreach ($args['tax_query'] as $key => $tax_query) {
 
-		$term = get_term($term_query['terms']);
+		// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
+		if (!is_array($tax_query)) {
+			continue;
+		}
+
+		$term = get_term($tax_query['terms']);
 
 		if (wnd_doing_ajax()) {
 
@@ -996,7 +1021,7 @@ function _wnd_current_filter($args, $ajax_call = '', $ajax_container = '') {
 			$html .= '<span class="tag">' . $term->name . '<a class="delete is-small" href="' . remove_query_arg('_term_' . $term->taxonomy, remove_query_arg($args['wnd_remove_query_arg'])) . '"></a></span>&nbsp;&nbsp;';
 		}
 	}
-	unset($key, $term_query);
+	unset($key, $tax_query);
 
 	/**
 	 *@since 2019.04.18
