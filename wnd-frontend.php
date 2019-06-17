@@ -86,6 +86,22 @@ function wnd_install() {
 	// 版本
 	update_option('wnd_ver', WND_VER);
 
+	/**
+	 * @since 2019.06.17
+	 *关闭WordPress缩略图裁剪
+	 */
+	update_option('medium_large_size_w', 0);
+	update_option('medium_large_size_h', 0);
+
+	update_option('thumbnail_size_w', 0);
+	update_option('thumbnail_size_h', 0);
+
+	update_option('medium_size_w', 0);
+	update_option('medium_size_h', 0);
+
+	update_option('large_size_h', 0);
+	update_option('large_size_h', 0);
+
 }
 
 /**
