@@ -81,8 +81,8 @@ function wnd_options() {
 				<tr>
 					<td valign="top">默认样式</td>
 					<td>
-						开启<input type="radio" required="required" name="wnd_default_style" value="1" <?php if (wnd_get_option('wnd', 'wnd_default_style') == 1) echo 'checked' ?> />
-						关闭<input type="radio" required="required" name="wnd_default_style" value="0" <?php if (wnd_get_option('wnd', 'wnd_default_style') != 1) echo 'checked' ?> />
+						开启<input type="radio" required="required" name="wnd_enable_default_style" value="1" <?php if (wnd_get_option('wnd', 'wnd_enable_default_style') == 1) echo 'checked' ?> />
+						关闭<input type="radio" required="required" name="wnd_enable_default_style" value="0" <?php if (wnd_get_option('wnd', 'wnd_enable_default_style') != 1) echo 'checked' ?> />
 						<p><i>是否启用默认样式，默认采用bulma css框架font-awesome图标，关闭后需要自行设置前端效果</i></p>
 					</td>
 				</tr>

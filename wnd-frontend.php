@@ -62,15 +62,32 @@ function wnd_install() {
 			'wnd_secret_key' => wnd_random('16'),
 			'wnd_enable_form_verify' => 1,
 
-			'wnd_default_style' => 1,
-			'wnd_do_page' => 0,
+			'wnd_enable_default_style' => 1,
+			'wnd_edit_page' => '',
+			'wnd_agreement_url' => '',
+			'wnd_reg_redirect_url' => '',
+			'wnd_default_avatar_url' => '',
+
+			'wnd_max_upload_size' => '',
+			'wnd_max_stick_posts' => '',
+
+			'wnd_disable_locale' => '',
 			'wnd_disable_admin_panel' => 1,
 			'wnd_unset_user_meta' => 1,
 
+			'wnd_primary_color'=>'',
+			'wnd_second_color'=>'',
+			'wnd_commission_rate'=>'',
+
 			'wnd_pay_return_url' => get_option('home'),
+			'wnd_alipay_appid' => '',
+			'wnd_alipay_private_key' => '',
+			'wnd_alipay_public_key' => '',
 
 			'wnd_enable_terms' => 1,
-
+			'wnd_disable_email_reg' => 0,
+			
+			'wnd_enable_sms' => '腾讯短信appid',
 			'wnd_sms_appid' => '腾讯短信appid',
 			'wnd_sms_appkey' => '腾讯短信appkey',
 			'wnd_sms_sign' => get_option('blogname'),
@@ -121,7 +138,7 @@ function wnd_scripts() {
 
 	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.js', array('jquery'), WND_VER);
 
-	if (wnd_get_option('wnd', 'wnd_default_style') != 0) {
+	if (wnd_get_option('wnd', 'wnd_enable_default_style') != 0) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.7.4/css/bulma.min.css', array(), WND_VER);
 		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.7.2/css/all.min.css', array(), WND_VER);
 	}
