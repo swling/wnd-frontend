@@ -199,7 +199,7 @@ function _wnd_recharge_form() {
 	$form->add_radio(
 		array(
 			'name' => 'money',
-			'options' => array('0.01' => '0.01', '10' => '10'),
+			'options' => array('0.01' => '0.01', '10' => '10', '100' => '100', '200' => '200', '500' => '500'),
 			'required' => 'required',
 			'checked' => '0.01', //default checked value
 			'class' => 'is-checkradio is-danger',
