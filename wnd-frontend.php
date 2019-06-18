@@ -66,7 +66,7 @@ function wnd_install() {
 			'wnd_edit_page' => '',
 			'wnd_agreement_url' => '',
 			'wnd_reg_redirect_url' => '',
-			'wnd_default_avatar_url' => '',
+			'wnd_default_avatar_url' => WND_URL . 'static/images/avatar.jpg',
 
 			'wnd_max_upload_size' => '',
 			'wnd_max_stick_posts' => '',
@@ -75,9 +75,9 @@ function wnd_install() {
 			'wnd_disable_admin_panel' => 1,
 			'wnd_unset_user_meta' => 1,
 
-			'wnd_primary_color'=>'',
-			'wnd_second_color'=>'',
-			'wnd_commission_rate'=>'',
+			'wnd_primary_color' => '',
+			'wnd_second_color' => '',
+			'wnd_commission_rate' => '',
 
 			'wnd_pay_return_url' => get_option('home'),
 			'wnd_alipay_appid' => '',
@@ -86,7 +86,7 @@ function wnd_install() {
 
 			'wnd_enable_terms' => 1,
 			'wnd_disable_email_reg' => 0,
-			
+
 			'wnd_enable_sms' => '腾讯短信appid',
 			'wnd_sms_appid' => '腾讯短信appid',
 			'wnd_sms_appkey' => '腾讯短信appkey',

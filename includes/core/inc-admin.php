@@ -150,4 +150,7 @@ function wnd_upgrade_02() {
 
 	// options
 	delete_option('my_wndwp');
+
+	// 删除对象缓存
+	wp_cache_flush();
 }
