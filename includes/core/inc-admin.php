@@ -137,8 +137,6 @@ function wnd_upgrade_02() {
 		array('tag_taxonomy' => 'profile_tag')
 	);
 
-	wnd_copy_taxonomy('company_cat', 'people_cat');
-
 	// post type
 	$wpdb->update(
 		$wpdb->posts,
@@ -153,4 +151,7 @@ function wnd_upgrade_02() {
 
 	// 删除对象缓存
 	wp_cache_flush();
+
+	// 复制taxonomy
+	wnd_copy_taxonomy('company_cat', 'people_cat');
 }
