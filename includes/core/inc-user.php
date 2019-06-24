@@ -124,6 +124,7 @@ function wnd_mail($to, $subject, $message) {
 	if (is_wp_error($mail_id)) {
 		return array('status' => 0, 'msg' => $mail_id->get_error_message());
 	} else {
+		wp_cache_delete($to, 'wnd_mail_count');
 		return array('status' => 1, 'msg' => '发送成功！');
 	}
 
