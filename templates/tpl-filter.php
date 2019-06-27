@@ -1256,7 +1256,6 @@ function _wnd_posts_filter($args = array()) {
 	$html = '<div id="wnd-filter">';
 
 	$html .= '<div id="filter-container">';
-
 	// post types 切换
 	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
 		$html .= _wnd_post_types_filter($args, '_wnd_posts_filter', '#wnd-filter');
@@ -1281,20 +1280,21 @@ function _wnd_posts_filter($args = array()) {
 	$html .= _wnd_current_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	$html .= '</div>';
 
+	$html .= '<div id="filter-main-container">';
 	$html .= '<div class="columns">';
-
 	// 输出列表：根据_wnd_ajax_next_page，此处需设置容器及容器ID，否则ajax请求的翻页内容可能无法正确嵌入
-	$html .= '<div id="post-list-container" class="column">';
+	$html .= '<div class="filter-list column">';
 	$html .= $args['wnd_list_tpl']($args);
 	$html .= '</div>';
 
 	// 边栏
 	if ($args['wnd_with_sidebar']) {
-		$html .= '<div class="column is-narrow">' . apply_filters('_wnd_posts_filter_sidebar', '', $args) . '</div>';
+		$html .= '<div class="filter-sidebar column is-narrow">' . apply_filters('_wnd_posts_filter_sidebar', '', $args) . '</div>';
 	}
-
+	$html .= '</div>';
 	$html .= '</div>';
 
+	// 容器关闭
 	$html .= '</div>';
 
 	return $html;
