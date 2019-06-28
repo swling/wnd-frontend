@@ -6,7 +6,7 @@
  **/
 function _wnd_breadcrumb() {
 
-	if (is_home()) {
+	if (is_home() or is_author()) {
 		return;
 	}
 
@@ -66,18 +66,19 @@ function _wnd_breadcrumb() {
 	/**
 	 *左侧导航
 	 **/
-	$html .= '<div class="column is-narrow is-size-7">';
+	$html .= '<div class="column is-narrow is-size-7 breadcrumb-right">';
+
+	$breadcrumb_right = null;
 
 	// 内页编辑
-	if (is_single() and current_user_can('edit_post', $queried_object->ID)) {
-
-		$html .= '<a href="' . get_edit_post_link($queried_object->ID) . '">[编辑]</a>';
-		$html .= '&nbsp<a onclick="wnd_ajax_modal(\'_wnd_post_status_form\',\'' . $queried_object->ID . '\')">[管理]</a>';
-
-		// 分类切换
-	} elseif (is_archive()) {
-
+	if (is_single()) {
+		if (current_user_can('edit_post', $queried_object->ID)) {
+			$breadcrumb_right .= '<a href="' . get_edit_post_link($queried_object->ID) . '">[编辑]</a>';
+			$breadcrumb_right .= '&nbsp<a onclick="wnd_ajax_modal(\'_wnd_post_status_form\',\'' . $queried_object->ID . '\')">[管理]</a>';
+		}
 	}
+
+	$html .= apply_filters('_wnd_breadcrumb_right', $breadcrumb_right);
 
 	$html .= '</div>';
 
