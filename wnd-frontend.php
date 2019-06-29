@@ -146,6 +146,7 @@ function wnd_scripts() {
 	$wnd_data = array(
 		'api_nonce' => wp_create_nonce('wp_rest'),
 		'api_url' => site_url('wp-json/wnd/rest-api'),
+		'root_url' => site_url(),
 	);
 
 	wp_localize_script('wnd-frontend', 'wnd', $wnd_data);

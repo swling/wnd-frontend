@@ -64,16 +64,16 @@ function wnd_download_remote_images($content, $upload_dir, $post_id) {
 
 /**
  *@since 2019.01.22
- *WordPress 远程下载图片 并返回上传后的图片地址
+ *WordPress 远程下载图片 并返回上传后的图片地址/html 或 id
  */
-function wnd_download_remote_image($url, $post_parent, $title) {
+function wnd_download_remote_image($url, $post_parent, $title, $return = 'src') {
 
 	if (!function_exists('media_sideload_image')) {
 		require ABSPATH . 'wp-admin/includes/media.php';
 		require ABSPATH . 'wp-admin/includes/file.php';
 		require ABSPATH . 'wp-admin/includes/image.php';
 	}
-	return media_sideload_image($url, $post_parent, $title, 'src');
+	return media_sideload_image($url, $post_parent, $title, $return);
 }
 
 /**
