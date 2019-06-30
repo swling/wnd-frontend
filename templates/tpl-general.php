@@ -74,7 +74,7 @@ function _wnd_breadcrumb() {
 	if (is_single()) {
 		if (current_user_can('edit_post', $queried_object->ID)) {
 			$breadcrumb_right .= '<a href="' . get_edit_post_link($queried_object->ID) . '">[编辑]</a>';
-			$breadcrumb_right .= '&nbsp<a onclick="wnd_ajax_modal(\'_wnd_post_status_form\',\'' . $queried_object->ID . '\')">[管理]</a>';
+			$breadcrumb_right .= '&nbsp;<a onclick="wnd_ajax_modal(\'_wnd_post_status_form\',\'' . $queried_object->ID . '\')">[管理]</a>';
 		}
 	}
 
