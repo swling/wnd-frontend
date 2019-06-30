@@ -215,6 +215,12 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 			} else {
 				return array('status' => 1, 'msg' => '余额充值成功！');
 			}
+
+			/**
+			 * @since 2019.06.30
+			 *成功完成付款后*
+			 */
+			do_action('wnd_verified_payment', $post);
 		} else {
 			return array('status' => 0, 'msg' => $type . '写入数据失败！');
 		}

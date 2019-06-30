@@ -237,6 +237,12 @@ do_action('_wnd_recharge_form')
 // 完成统计时附加动作
 do_action('wnd_ajax_update_views', $post_id);
 
+/**
+ * @since 2019.06.30
+ *成功完成付款后*
+ */
+do_action('wnd_verified_payment', $post);
+
 ```
 # 前端Form name规则
 
