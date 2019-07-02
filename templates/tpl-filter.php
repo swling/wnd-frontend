@@ -76,12 +76,14 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
 			 *移除term查询
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$taxonomies = get_object_taxonomies($args['post_type'], $output = 'names');
-			if ($taxonomies) {
-				foreach ($taxonomies as $taxonomy) {
-					array_push($args['wnd_remove_query_arg'], '_term_' . $taxonomy);
+			if (isset($args['post_type'])) {
+				$taxonomies = get_object_taxonomies($args['post_type'], $output = 'names');
+				if ($taxonomies) {
+					foreach ($taxonomies as $taxonomy) {
+						array_push($args['wnd_remove_query_arg'], '_term_' . $taxonomy);
+					}
+					unset($taxonomy);
 				}
-				unset($taxonomy);
 			}
 
 			/**
