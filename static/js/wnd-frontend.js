@@ -803,4 +803,101 @@ jQuery(document).ready(function($) {
 		wnd_alert_modal(element, true);
 	});
 
+	/**
+	 *@since 2019.07.02 非表单形式发送ajax请求
+	 */
+	var can_click_ajax_link = true;
+	$("body").on("click", ".ajax-link", function() {
+
+		// 点击频率控制
+		if (!can_click_ajax_link) {
+			return;
+		}
+		can_click_ajax_link = false;
+		setTimeout(function() {
+			can_click_ajax_link = true;
+		}, 1000);
+
+		if (1 == $(this).data("disabled")) {
+			wnd_alert_msg("请勿重复操作！", 1);
+			return;
+		}
+
+		// 判断当前操作是否为取消
+		var is_cancel = $(this).data("is-cancel");
+		var action = is_cancel ? $(this).data("cancel") : $(this).data("action");
+		var nonce = is_cancel ? $(this).data("cancel-nonce") : $(this).data("action-nonce");
+
+		// $(this) 在ajax 中无效，故此需要单独定义变量
+		var _this = $(this);
+		$.ajax({
+			type: "POST",
+			url: wnd.api_url,
+			data: {
+				"action": action,
+				"param": $(this).data("param"),
+				"_ajax_nonce": nonce,
+			},
+			//后台返回数据前
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+			},
+			//成功后
+			success: function(response) {
+
+				// 正向操作成功
+				if (response.status != 0 && action == _this.data("action")) {
+
+					// 设置了逆向操作
+					if (_this.data("cancel")) {
+						_this.data("is-cancel", 1);
+						// 未设置逆向操作，禁止重复点击事件
+					} else {
+						_this.data("disabled", 1);
+					}
+
+				} else {
+					_this.data("is-cancel", 0);
+				}
+
+
+				// 根据后端响应处理
+				switch (response.status) {
+
+					// 常规类，展示后端提示信息
+					case 1:
+						_this.html(response.msg);
+						break;
+
+						// 弹出消息
+					case 2:
+						wnd_alert_msg(response.msg, 1);
+						break;
+
+						// 跳转类
+					case 3:
+						wnd_alert_msg("请稍后……");
+						$(window.location).attr("href", response.data.redirect_to);
+						break;
+
+						// 刷新当前页面
+					case 4:
+						wnd_reset_modal();
+						window.location.reload(true);
+						break;
+
+						//默认展示提示信息
+					default:
+						_this.html(response.msg);
+						break;
+				}
+
+			},
+			// 错误
+			error: function() {
+				wnd_alert_msg("系统错误！");
+			}
+		});
+	});
+
 });

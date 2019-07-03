@@ -312,3 +312,16 @@ post_status => 未读：pengding 已读: private
 ## 插件配置：wnd
 ## 自定义置顶文章：wnd_sticky_posts
 置顶文章数据格式：二维数组 wnd_sticky_posts[$post_type]['post'.$post_id] 
+
+# object cache
+
+```php
+wp_cache_set($user_id . $object_id, $user_has_paid, 'user_has_paid');
+
+wp_cache_set($cat_id . $tag_taxonomy . $limit, $tags, 'wnd_tags_under_category', 86400);
+
+wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
+
+// 将文章流量统计：views字段缓存在对象缓存中，降低数据库读写（满10次，写入一次数据库）
+wp_cache_set($object_id, $meta_value, 'views');
+```

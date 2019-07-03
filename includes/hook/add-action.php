@@ -231,9 +231,11 @@ function wnd_action_deleted_post($post_id) {
 
 	/**
 	 *@since 2019.06.04 删除订单时，扣除订单统计字段
+	 *@since 2019.07.03 删除订单时，删除user_has_paid缓存
 	 */
 	if ($delete_post->post_type == 'order') {
 		wnd_inc_wnd_post_meta($delete_post->post_parent, 'order_count', -1, true);
+		wp_cache_delete($delete_post->post_author . $delete_post->post_parent, 'user_has_paid');
 	}
 
 }
