@@ -143,7 +143,7 @@ function _wnd_ajax_link($args) {
 	// 解析传参
 	$param = (is_array($args['param']) or is_object($args['param'])) ? http_build_query($args['param']) : $args['param'];
 
-	$html = '<a	class="ajax-link ' . $args['class'] . '"	data-is-cancel="0" data-disabled="0"
+	$html = '<a	class="ajax-link ' . $args['class'] . '" data-is-cancel="0" data-disabled="0"
 	data-action="' . $args['action'] . '" data-cancel="' . $args['cancel'] . '" data-param="' . $args['param'] . '"
 	data-action-nonce="' . wnd_create_nonce($args['action']) . '" data-cancel-nonce="' . wnd_create_nonce($args['cancel']) . '"
 	>' . $args['text'] . '</a>';
