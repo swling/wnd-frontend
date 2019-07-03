@@ -265,7 +265,7 @@ if (wnd_get_option('wnd', 'wnd_disable_admin_panel') == 1) {
 	// 禁止非管理员登录后台
 	add_action('admin_init', 'wnd_action_redirect_non_admin_users');
 	function wnd_action_redirect_non_admin_users() {
-		if (!is_super_admin() && empty($_REQUEST)) {
+		if (!is_super_admin() and false === strpos($_SERVER['PHP_SELF'], 'admin-ajax.php')) {
 			wp_redirect(home_url('?from=wp-admin'));
 			exit;
 		}
