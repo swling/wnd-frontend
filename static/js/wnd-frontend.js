@@ -156,7 +156,7 @@ function wnd_click(target_element) {
 }
 
 // 表单提交确认对话框  注意：提交表单的触发按钮，不应该是submit or button 而应该单独定义如 input 等，绑定本函数
-function wnd_confirm_form_submit(form_id, msg = '') {
+function wnd_confirm_form_submit(form_id, msg = "") {
 	wnd_alert_modal(
 		'<p>' + msg + '</p>' +
 		'<div class="field is-grouped is-grouped-centered">' +
@@ -174,11 +174,11 @@ function wnd_confirm_form_submit(form_id, msg = '') {
 	允许携带一个参数，默认为0
 
 	@since 2019.01.26
-	若需要传递参数值超过一个，可将参数定义为GET参数形式如：'post_id=1&user_id=2'，后端采用:wp_parse_args() 解析参数
+	若需要传递参数值超过一个，可将参数定义为GET参数形式如："post_id=1&user_id=2"，后端采用:wp_parse_args() 解析参数
 
 	实例：
 		前端
-		wnd_ajax_modal('_wndxxx','post_id=1&user_id=2');
+		wnd_ajax_modal("_wndxxx","post_id=1&user_id=2");
 
 		后端
 		function _wndxxx($args){
@@ -189,7 +189,7 @@ function wnd_confirm_form_submit(form_id, msg = '') {
 		Array ( [post_id] => 1 [user_id] =>2)
 
 *典型用途：	击弹出登录框、点击弹出建议发布文章框
-*@param 	template 	string 		template 必须以 '_wnd' 为前缀
+*@param 	template 	string 		template 必须以 "_wnd" 为前缀
 *@param 	param 		srting 		传参
 */
 // ajax 从后端请求内容，并以弹窗形式展现
@@ -275,12 +275,12 @@ function wnd_ajax_submit(form_id) {
 		if (required == "required") {
 			if ($(this).val() == "") {
 				input_value = false;
-				$(this).addClass('is-danger');
+				$(this).addClass("is-danger");
 			}
 			if ($(this).attr("type") == "radio" || $(this).attr("type") == "checkbox") {
 				if ($('[name=' + $(this).attr("name") + ']:checked').length <= 0) {
 					input_value = false;
-					$(this).addClass('is-danger');
+					$(this).addClass("is-danger");
 				}
 			}
 		}
@@ -294,7 +294,7 @@ function wnd_ajax_submit(form_id) {
 		option_value = $(this).val();
 		if (required == "required" && option_value == "-1") {
 			option_value = false;
-			$("#" + form_id + " select").addClass('is-danger');
+			$("#" + form_id + " select").addClass("is-danger");
 			return false; //此处为退出each循环，而非阻止提交
 		}
 	});
@@ -306,14 +306,14 @@ function wnd_ajax_submit(form_id) {
 		if (required == "required") {
 			if ($(this).val() == "") {
 				textarea_value = false;
-				$(this).addClass('is-danger');
+				$(this).addClass("is-danger");
 			}
 		}
 	});
 
 	if (input_value === false || option_value === false || textarea_value === false) {
-		wnd_ajax_msg('<span class="required">*</span>星标为必填项目！', 'is-danger', "#" + form_id);
-		submit_button.text('必填项不能为空');
+		wnd_ajax_msg('<span class="required">*</span>星标为必填项目！', "is-danger", "#" + form_id);
+		submit_button.text("必填项不能为空");
 		return false;
 	}
 
@@ -422,51 +422,58 @@ function wnd_ajax_submit(form_id) {
 function wnd_ajax_update_views(post_id, interval = 3600) {
 
 	var timestamp = Date.parse(new Date()) / 1000;
-	var visit = getCookie('visit') ? JSON.parse(getCookie('visit')) : [];
+	var wnd_views = localStorage.getItem("wnd_views") ? JSON.parse(localStorage.getItem("wnd_views")) : [];
 	var max_length = 10;
-	var is_new_visit = true;
-	var update = false;
+	var is_new = true;
+
 	// 数据处理
-	for (var i = 0; i < visit.length; i++) {
-		var post = visit[i];
-		if (post.post_id == post_id) {
+	for (var i = 0; i < wnd_views.length; i++) {
+		if (wnd_views[i].post_id == post_id) {
+
 			// 存在记录中：且时间过期
-			if (post.timestamp < timestamp - interval) {
-				visit[i].timestamp = timestamp;
-				var update = true;
+			if (wnd_views[i].timestamp < timestamp - interval) {
+				wnd_views[i].timestamp = timestamp;
+				var is_new = true;
+			} else {
+				var is_new = false;
 			}
-			var is_new_visit = false;
+
 			break;
 		}
 	}
-	// 新浏览写入cookie
-	if (is_new_visit) {
-		var new_visit = {
-			'post_id': post_id,
-			'timestamp': timestamp
+
+	// 新浏览
+	if (is_new) {
+		var new_view = {
+			"post_id": post_id,
+			"timestamp": timestamp
 		};
-		visit.unshift(new_visit);
-		var update = true;
+		wnd_views.unshift(new_view);
 	}
+
 	// 删除超过长度的元素
-	if (visit.length > max_length) {
-		visit.length = max_length;
+	if (wnd_views.length > max_length) {
+		wnd_views.length = max_length;
 	}
+
 	// 更新服务器数据
-	if (update) {
+	if (is_new) {
 		$.ajax({
 			type: "POST",
-			datatype: 'json',
+			datatype: "json",
 			url: wnd.api_url,
 			data: {
-				'post_id': post_id,
-				'useragent': navigator.userAgent,
-				'action': '_wnd_ajax_update_views',
+				"param": post_id,
+				"useragent": navigator.userAgent,
+				"action": "_wnd_ajax_update_views",
+			},
+			// 提交中
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
 			},
 			success: function(response) {
 				if (response.status === 1) {
-					// 转为字符串形式写入cookie
-					setCookie('visit', JSON.stringify(visit), 3600 * 24 * 30, '/');
+					localStorage.setItem("wnd_views", JSON.stringify(wnd_views));
 				}
 			}
 		});
@@ -686,11 +693,11 @@ jQuery(document).ready(function($) {
 
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
-		var form_id = _this.parents('form').attr('id');
-		var verify_type = $(this).data('verify-type');
-		var send_type = $(this).data('send-type');
-		var template = $(this).data('template');
-		var nonce = $(this).data('nonce');
+		var form_id = _this.parents("form").attr("id");
+		var verify_type = $(this).data("verify-type");
+		var send_type = $(this).data("send-type");
+		var template = $(this).data("template");
+		var nonce = $(this).data("nonce");
 
 		var phone = $("#" + form_id + " input[name='phone']").val();
 		var _user_user_email = $("#" + form_id + " input[name='_user_user_email']").val();
@@ -742,7 +749,7 @@ jQuery(document).ready(function($) {
 	 *@since 2019.02.09 表单改变时，移除警示状态
 	 */
 	$("body").on("input", "input,textarea", function() {
-		$(this).removeClass('is-danger');
+		$(this).removeClass("is-danger");
 	});
 
 	/**

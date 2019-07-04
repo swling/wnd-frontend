@@ -91,7 +91,7 @@ function wnd_ajax_admin_recharge() {
  */
 function _wnd_ajax_update_views() {
 
-	$post_id = (int) $_POST['post_id'];
+	$post_id = (int) $_POST['param'];
 	if (!$post_id) {
 		return;
 	}
