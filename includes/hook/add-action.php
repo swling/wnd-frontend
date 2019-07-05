@@ -195,7 +195,7 @@ function wnd_action_user_register($user_id) {
  *删除用户的附加操作
  *@since 2018
  */
-add_action('delete_user', 'wnd_action_delete_user', 10, 1);
+add_action('deleted_user', 'wnd_action_delete_user', 10, 1);
 function wnd_action_delete_user($user_id) {
 
 	// 删除手机注册记录
