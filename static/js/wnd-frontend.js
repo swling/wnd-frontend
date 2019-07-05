@@ -873,11 +873,14 @@ jQuery(document).ready(function($) {
 
 					// 常规类，展示后端提示信息
 					case 1:
-						_this.html(response.msg);
+						_this.html(response.data);
 						break;
 
 						// 弹出消息
 					case 2:
+						if (response.data) {
+							_this.html(response.data);
+						}
 						wnd_alert_msg(response.msg, 1);
 						break;
 
@@ -895,7 +898,7 @@ jQuery(document).ready(function($) {
 
 						//默认展示提示信息
 					default:
-						_this.html(response.msg);
+						_this.html(response.data);
 						break;
 				}
 
