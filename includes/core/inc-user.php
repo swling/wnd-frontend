@@ -58,18 +58,9 @@ function wnd_get_user_by($email_or_phone_or_login) {
  */
 function wnd_is_manager($user_id = 0) {
 
-	$user_id = $user_id ?: get_current_user_id();
+	$user = wp_get_current_user();
 
-	if (!$user_id) {
-		return false;
-	}
-
-	$user = get_user_by('id', $user_id);
-	if (!$user) {
-		return false;
-	}
-
-	$user_role = $user->roles[0];
+	$user_role = $user->roles[0] ?? false;
 	if ($user_role == 'administrator' or $user_role == 'editor') {
 		return true;
 	} else {
