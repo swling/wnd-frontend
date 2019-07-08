@@ -746,71 +746,6 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
-	 *@since 2019.02.09 表单改变时，移除警示状态
-	 */
-	$("body").on("input", "input,textarea", function() {
-		$(this).removeClass("is-danger");
-	});
-
-	/**
-	 *@since 2019.03.28 表单改变时，移除提交按钮禁止状态,恢复提交文字
-	 */
-	$("body").on("change", "form", function() {
-		var submit_button = $(this).find("[type='submit']");
-		submit_button.attr("disabled", false);
-		submit_button.text(submit_button.data("text"));
-		// $(this).find(".ajax-message").empty();
-	});
-
-	/**
-	 *@since 2019.02.18 点击菜单 新增active
-	 */
-	$("body").on("click", ".menu a", function() {
-		$(this).parents(".menu").find("a").removeClass("is-active");
-		$(this).addClass("is-active");
-	});
-
-	/**
-	 *@since 2019.02.18 点击Tabs 新增active
-	 */
-	$("body").on("click", ".tabs a", function() {
-		$(this).parent("li").addClass("is-active");
-		$(this).parent("li").siblings().removeClass("is-active");
-	});
-
-	/**
-	 *@since 2019.03.10 ajax提交表单
-	 */
-	$("body").on("click", "[data-submit-type='ajax'] [type='submit']", function() {
-		var form_id = $(this).parents("form").attr("id");
-		wnd_ajax_submit(form_id);
-	});
-
-	/**
-	 *@since 2019.04.01 ajax翻页后，滑动到顶部
-	 */
-	$("body").on("click", ".pagination-link", function() {
-		$(this).parents("nav").parent().get(0).scrollIntoView({
-			// $("body").get(0).scrollIntoView({
-			behavior: "smooth"
-		});
-	});
-
-	/**
-	 *@since 2019.05.07 相册放大
-	 */
-	$("body").on("click", ".gallery img", function() {
-
-		var images = $(this).parents(".gallery").find("img");
-
-		/**
-		 *@link http://www.w3school.com.cn/jquery/traversing_each.asp
-		 */
-		var element = '<img src="' + $(this).data("url") + '" />';
-		wnd_alert_modal(element, true);
-	});
-
-	/**
 	 *@since 2019.07.02 非表单形式发送ajax请求
 	 */
 	var can_click_ajax_link = true;
@@ -899,6 +834,7 @@ jQuery(document).ready(function($) {
 						//默认展示提示信息
 					default:
 						_this.html(response.data);
+						wnd_alert_msg(response.msg, 1);
 						break;
 				}
 
@@ -908,6 +844,71 @@ jQuery(document).ready(function($) {
 				wnd_alert_msg("系统错误！");
 			}
 		});
+	});
+
+	/**
+	 *@since 2019.02.09 表单改变时，移除警示状态
+	 */
+	$("body").on("input", "input,textarea", function() {
+		$(this).removeClass("is-danger");
+	});
+
+	/**
+	 *@since 2019.03.28 表单改变时，移除提交按钮禁止状态,恢复提交文字
+	 */
+	$("body").on("change", "form", function() {
+		var submit_button = $(this).find("[type='submit']");
+		submit_button.attr("disabled", false);
+		submit_button.text(submit_button.data("text"));
+		// $(this).find(".ajax-message").empty();
+	});
+
+	/**
+	 *@since 2019.02.18 点击菜单 新增active
+	 */
+	$("body").on("click", ".menu a", function() {
+		$(this).parents(".menu").find("a").removeClass("is-active");
+		$(this).addClass("is-active");
+	});
+
+	/**
+	 *@since 2019.02.18 点击Tabs 新增active
+	 */
+	$("body").on("click", ".tabs a", function() {
+		$(this).parent("li").addClass("is-active");
+		$(this).parent("li").siblings().removeClass("is-active");
+	});
+
+	/**
+	 *@since 2019.03.10 ajax提交表单
+	 */
+	$("body").on("click", "[data-submit-type='ajax'] [type='submit']", function() {
+		var form_id = $(this).parents("form").attr("id");
+		wnd_ajax_submit(form_id);
+	});
+
+	/**
+	 *@since 2019.04.01 ajax翻页后，滑动到顶部
+	 */
+	$("body").on("click", ".pagination-link", function() {
+		$(this).parents("nav").parent().get(0).scrollIntoView({
+			// $("body").get(0).scrollIntoView({
+			behavior: "smooth"
+		});
+	});
+
+	/**
+	 *@since 2019.05.07 相册放大
+	 */
+	$("body").on("click", ".gallery img", function() {
+
+		var images = $(this).parents(".gallery").find("img");
+
+		/**
+		 *@link http://www.w3school.com.cn/jquery/traversing_each.asp
+		 */
+		var element = '<img src="' + $(this).data("url") + '" />';
+		wnd_alert_modal(element, true);
 	});
 
 });
