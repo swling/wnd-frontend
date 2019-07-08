@@ -86,7 +86,7 @@ function wnd_update_user_meta($user_id, $array_key, $array_value) {
 	// 空值，删除
 	if (empty($array_value) and !is_numeric($array_value)) {
 		wnd_delete_user_meta($user_id, $array_key);
-		return;
+		return true;
 	}
 
 	$update_array = array($array_key => $array_value);
@@ -94,7 +94,7 @@ function wnd_update_user_meta($user_id, $array_key, $array_value) {
 	$old_array = $old_array ? $old_array : array();
 
 	if (!is_array($old_array)) {
-		return;
+		return false;
 	}
 
 	$new_array = array_merge($old_array, $update_array);
@@ -106,14 +106,14 @@ function wnd_update_user_meta_array($user_id, $update_array) {
 
 	// $update_array = array( $array_key => $array_value );
 	if (!is_array($update_array)) {
-		return;
+		return false;
 	}
 
 	$old_array = get_user_meta($user_id, 'wnd_meta', 1);
 	$old_array = $old_array ? $old_array : array();
 
 	if (!is_array($old_array)) {
-		return;
+		return false;
 	}
 
 	$new_array = array_merge($old_array, $update_array);
@@ -146,7 +146,7 @@ function wnd_delete_user_meta($user_id, $array_key) {
 
 	$array = get_user_meta($user_id, 'wnd_meta', 1);
 	if (!$array) {
-		return;
+		return false;
 	}
 
 	if (is_array($array) and array_key_exists($array_key, $array)) {
@@ -164,7 +164,7 @@ function wnd_update_post_meta($post_id, $array_key, $array_value) {
 	// 空值，删除
 	if (empty($array_value) and !is_numeric($array_value)) {
 		wnd_delete_post_meta($post_id, $array_key);
-		return;
+		return true;
 	}
 
 	$update_array = array($array_key => $array_value);
@@ -172,7 +172,7 @@ function wnd_update_post_meta($post_id, $array_key, $array_value) {
 	$old_array = $old_array ? $old_array : array();
 
 	if (!is_array($old_array)) {
-		return;
+		return false;
 	}
 
 	$new_array = array_merge($old_array, $update_array);
@@ -184,7 +184,7 @@ function wnd_update_post_meta($post_id, $array_key, $array_value) {
 function wnd_update_post_meta_array($post_id, $update_array) {
 
 	if (!is_array($update_array)) {
-		return;
+		return false;
 	}
 
 	$old_array = get_post_meta($post_id, 'wnd_meta', 1);
@@ -224,7 +224,7 @@ function wnd_delete_post_meta($post_id, $array_key) {
 
 	$array = get_post_meta($post_id, 'wnd_meta', 1);
 	if (!$array) {
-		return;
+		return false;
 	}
 
 	if (is_array($array) and array_key_exists($array_key, $array)) {
@@ -242,7 +242,7 @@ function wnd_update_option($option_name, $array_key, $array_value) {
 	// 空值，删除
 	if (empty($array_value) and !is_numeric($array_value)) {
 		wnd_delete_option($option_name, $array_key);
-		return;
+		return true;
 	}
 
 	$update_array = array($array_key => $array_value);
@@ -251,7 +251,7 @@ function wnd_update_option($option_name, $array_key, $array_value) {
 	$old_array = $old_array ? $old_array : array();
 
 	if (!is_array($old_array)) {
-		return;
+		return false;
 	}
 
 	$new_array = array_merge($old_array, $update_array);
@@ -263,14 +263,14 @@ function wnd_update_option($option_name, $array_key, $array_value) {
 function wnd_update_option_array($option_name, $update_array) {
 
 	if (!is_array($update_array)) {
-		return;
+		return false;
 	}
 
 	$old_array = get_option($option_name);
 	$old_array = $old_array ? $old_array : array();
 
 	if (!is_array($old_array)) {
-		return;
+		return false;
 	}
 
 	$new_array = array_merge($old_array, $update_array);
@@ -303,7 +303,7 @@ function wnd_delete_option($option_name, $array_key) {
 
 	$array = get_option($option_name);
 	if (!$array) {
-		return;
+		return false;
 	}
 
 	if (is_array($array) and array_key_exists($array_key, $array)) {
