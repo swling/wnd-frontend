@@ -326,3 +326,8 @@ wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
 // 将文章流量统计：views字段缓存在对象缓存中，降低数据库读写（满10次，写入一次数据库）
 wp_cache_set($object_id, $meta_value, 'views');
 ```
+# 创建支付
+创建地址：do.php?action=payment&_wpnonce=wnd_create_nonce('payment')
+表单字段：
+post_id：	如果设置了post_id 则表示该支付为订单类型，即为特定post付费，对应支付价格通过 wnd_get_post_price($post_id) 获取
+money：		如果未设置post_id 则表示该支付为充值类型，对应支付金额，即为表单提交数据

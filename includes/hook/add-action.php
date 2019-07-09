@@ -146,7 +146,7 @@ function wnd_action_do_action() {
 	//创建支付
 	case 'payment':
 		if (is_user_logged_in()) {
-			if (wnd_verify_nonce($_REQUEST['_wpnonce'], 'payment')) {
+			if (wnd_verify_nonce($_GET['_wpnonce'] ?? '', 'payment')) {
 				require WND_PATH . 'components/alipay/pay.php';
 			}
 		} else {
@@ -163,8 +163,8 @@ function wnd_action_do_action() {
 
 	//@since 2019.05.12 默认：校验nonce后执行action对应函数
 	default:
-		if (wnd_verify_nonce($_REQUEST['_wpnonce'] ?? '', $action)) {
-			return $action();
+		if (wnd_verify_nonce($_GET['_wpnonce'] ?? '', $action)) {
+			return function_exists($action) ? $action() : '未定义的action！';
 		} else {
 			exit;
 		}
