@@ -179,6 +179,22 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		parent::add_html('<script type="text/javascript">var wp_editor = $("#hidden-wp-editor").html();$("#hidden-wp-editor").remove();$("#wnd-wp-editor").html(wp_editor);</script>');
 	}
 
+	/**
+	 *@since 2019.07.09 常规文章字段input
+	 **/
+	public function add_post_meta($meta_key, $label = '', $placeholder = '', $is_wnd_meta = false) {
+		$name = $is_wnd_meta ? '_meta_' . $meta_key : '_wpmeta_' . $meta_key;
+		$value = $is_wnd_meta ? wnd_get_post_meta($this->post_id, $meta_key) : get_post_meta($this->post_id, $meta_key, 1);
+		parent::add_text(
+			array(
+				'name' => $name,
+				'value' => $value,
+				'label' => $label,
+				'placeholder' => $placeholder,
+			)
+		);
+	}
+
 	public function add_post_price($label = '', $placeholder = '价格') {
 		parent::add_text(
 			array(
