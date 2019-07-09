@@ -28,7 +28,7 @@ function setCookie(name, value, seconds, path = "/") {
 }
 
 //判断是否为移动端
-function wnd_is_mob() {
+function wnd_is_mobile() {
 	if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android|ios|App\/)/i)) {
 		return true;
 	} else {
