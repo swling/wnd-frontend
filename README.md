@@ -240,6 +240,7 @@ do_action('wnd_ajax_update_views', $post_id);
 /**
  * @since 2019.06.30
  *成功完成付款后*
+ *$post:支付订单post object
  */
 do_action('wnd_verified_payment', $post);
 
