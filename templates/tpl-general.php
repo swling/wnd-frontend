@@ -57,6 +57,8 @@ function _wnd_breadcrumb() {
 		$html .= '<li><a onclick="wnd_ajax_modal(\'_wnd_terms_list\',\'' . $args . '\')">' . get_taxonomy($queried_object->taxonomy)->label . '</a></li>';
 		$html .= '<li class="is-active"><a href="#">' . $queried_object->name . '</a></li>';
 
+	} else {
+		$html .= '<li class="is-active"><a href="#">' . wp_title('', false) . '</a></li>';
 	}
 
 	$html .= '</ul>';
