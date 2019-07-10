@@ -34,9 +34,40 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
 		array_push($args['wnd_remove_query_arg'], 'meta_query');
 	}
 
+	// ajax请求类型
+	$ajax_type = $_POST['ajax_type'] ?? 'modal';
+
 	// 输出容器
 	$html = '<div class="tabs is-boxed">';
 	$html .= '<ul class="tab">';
+
+	/**
+	 *全部选项
+	 *@since 2019.07.10
+	 */
+	if (wnd_doing_ajax()) {
+
+		$all_ajax_args = $args;
+		if (empty($all_ajax_args['post_type'])) {
+			$all_active = 'class="is-active"';
+		} else {
+			unset($all_ajax_args['post_type']);
+			$all_active = '';
+		}
+		$all_ajax_args = http_build_query($all_ajax_args);
+
+		if ($ajax_type == 'modal') {
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+		} else {
+			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $all_ajax_args . '\');">全部</a></li>';
+		}
+
+	} else {
+
+		$all_active = empty($args['post_type']) ? 'class="is-active"' : null;
+		$html .= '<li ' . $all_active . '><a href="' . remove_query_arg('type', remove_query_arg($args['wnd_remove_query_arg'])) . '">全部</a></li>';
+
+	}
 
 	// 输出tabs
 	foreach ($args['wnd_post_types'] as $post_type) {
@@ -47,9 +78,6 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
 		$active = (isset($args['post_type']) and $args['post_type'] == $post_type->name) ? 'class="is-active"' : '';
 
 		if (wnd_doing_ajax()) {
-
-			// ajax请求类型
-			$ajax_type = $_POST['ajax_type'] ?? 'modal';
 
 			// 配置ajax请求参数
 			$ajax_args = array_merge($args, array('post_type' => $post_type->name));
