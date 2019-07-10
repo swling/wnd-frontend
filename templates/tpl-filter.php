@@ -1257,30 +1257,39 @@ function _wnd_posts_filter($args = array()) {
 	// 容器开始
 	$html = '<div id="wnd-filter">';
 
-	$html .= '<div id="filter-container">';
+	/**
+	 *@since 2019.07.10
+	 *单独定义筛选条件容器，若无任何可用筛选条件，则不输出对应HTML容器
+	 **/
+	$filter_html = '';
 	// post types 切换
 	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
-		$html .= _wnd_post_types_filter($args, '_wnd_posts_filter', '#wnd-filter');
+		$filter_html .= _wnd_post_types_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	}
 
 	// 分类 切换
-	$html .= _wnd_categories_filter($args, '_wnd_posts_filter', '#wnd-filter');
+	$filter_html .= _wnd_categories_filter($args, '_wnd_posts_filter', '#wnd-filter');
 
 	// 获取分类下关联的标签
-	$html .= !$args['wnd_only_cat'] ? _wnd_tags_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
+	$filter_html .= !$args['wnd_only_cat'] ? _wnd_tags_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
 
 	// meta query
-	$html .= _wnd_meta_filter($args, '_wnd_posts_filter', '#wnd-filter');
+	$filter_html .= _wnd_meta_filter($args, '_wnd_posts_filter', '#wnd-filter');
 
 	// post status
-	$html .= $args['wnd_post_status'] ? _wnd_post_status_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
+	$filter_html .= $args['wnd_post_status'] ? _wnd_post_status_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
 
 	// orderby
-	$html .= _wnd_orderby_filter($args, '_wnd_posts_filter', '#wnd-filter');
+	$filter_html .= _wnd_orderby_filter($args, '_wnd_posts_filter', '#wnd-filter');
 
 	// 列出当前term查询，并附带取消链接
-	$html .= _wnd_current_filter($args, '_wnd_posts_filter', '#wnd-filter');
-	$html .= '</div>';
+	$filter_html .= _wnd_current_filter($args, '_wnd_posts_filter', '#wnd-filter');
+
+	/**
+	 *@since 2019.07.10
+	 *单独定义筛选条件容器，若无任何可用筛选条件，则不输出对应HTML容器
+	 **/
+	$html .= $filter_html ? '<div id="filter-container">' . $filter_html . '</div>' : '';
 
 	$html .= '<div id="filter-main-container">';
 	$html .= '<div class="columns">';
