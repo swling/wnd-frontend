@@ -1313,7 +1313,7 @@ function _wnd_posts_filter($args = array()) {
 	$html .= '<div id="filter-main-container">';
 	$html .= '<div class="columns">';
 	// 输出列表：根据_wnd_ajax_next_page，此处需设置容器及容器ID，否则ajax请求的翻页内容可能无法正确嵌入
-	$html .= '<div class="filter-list column">';
+	$html .= '<div id="filter-list" class="filter-list column">';
 	$html .= $args['wnd_list_tpl']($args);
 	$html .= '</div>';
 
