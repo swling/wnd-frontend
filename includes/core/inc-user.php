@@ -30,7 +30,8 @@ function wnd_get_user_phone($user_id) {
 
 /**
  *@since 2019.01.28 根据邮箱，手机，或用户名查询用户
- *@param wp user object or false
+ *@param $email_or_phone_or_login
+ *@return WordPress user object or false
  */
 function wnd_get_user_by($email_or_phone_or_login) {
 
@@ -41,13 +42,28 @@ function wnd_get_user_by($email_or_phone_or_login) {
 
 	} elseif (wnd_is_phone($email_or_phone_or_login)) {
 		$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE phone = %s;", $email_or_phone_or_login));
-		$user = get_user_by('ID', $user_id);
+		$user = !$user_id ? false : get_user_by('ID', $user_id);
 
 	} else {
 		$user = get_user_by('login', $email_or_phone_or_login);
 	}
 
 	return $user;
+
+}
+
+/**
+ *@since 2019.07.11
+ *根据openID获取WordPress用户，用于第三方账户登录
+ *@param openID
+ *@return user object or false（WordPress：get_user_by）
+ */
+function wnd_get_user_by_openid($openid) {
+
+	global $wpdb;
+
+	$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE open_id = %s;", $openid));
+	return !$user_id ? false : get_user_by('ID', $user_id);
 
 }
 
