@@ -751,6 +751,9 @@ jQuery(document).ready(function($) {
 	var can_click_ajax_link = true;
 	$("body").on("click", ".ajax-link", function() {
 
+		// 是否在弹窗中操作
+		var is_in_modal = $(this).parents(".modal.is-active").length ? true : false;
+
 		// 点击频率控制
 		if (!can_click_ajax_link) {
 			return;
@@ -816,7 +819,9 @@ jQuery(document).ready(function($) {
 						if (response.data) {
 							_this.html(response.data);
 						}
-						wnd_alert_msg(response.msg, 1);
+						if (!is_in_modal) {
+							wnd_alert_msg(response.msg, 1);
+						}
 						break;
 
 						// 跳转类
@@ -834,7 +839,9 @@ jQuery(document).ready(function($) {
 						//默认展示提示信息
 					default:
 						_this.html(response.data);
-						wnd_alert_msg(response.msg, 1);
+						if (!is_in_modal) {
+							wnd_alert_msg(response.msg, 1);
+						}
 						break;
 				}
 
