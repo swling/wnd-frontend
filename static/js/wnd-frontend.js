@@ -880,6 +880,15 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
+	 *@since 2019.07.11 从主题中移植
+	 *移动导航点击展开效果
+	 */
+	$("body").on("click", ".navbar-burger", function() {
+		$(".navbar-menu").toggleClass("is-active");
+		$(this).toggleClass("is-active");
+	});
+
+	/**
 	 *@since 2019.03.10 ajax提交表单
 	 */
 	$("body").on("click", "[data-submit-type='ajax'] [type='submit']", function() {
