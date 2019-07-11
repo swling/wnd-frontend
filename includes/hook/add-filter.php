@@ -207,7 +207,7 @@ function wnd_filter_the_content($content) {
 		if (!$user_id) {
 			$content .= $price ? '<div class="message is-warning"><div class="message-body">付费下载：¥' . $price . '</div></div>' : '';
 			$button_text = '请登录后下载';
-			$button = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'user_center\',\'action=login\')">' . $button_text . '</button></div>';
+			$button = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\')">' . $button_text . '</button></div>';
 			$content .= $button;
 			return $content;
 		}
@@ -250,7 +250,7 @@ function wnd_filter_the_content($content) {
 		if (!$user_id) {
 			$content = '<div class="free-content">' . $free_content . '</div>';
 			$content .= '<div class="paid-content"><div class="message is-warning"><div class="message-body">付费内容：¥' . $price . '</div></div></div>';
-			$button = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'user_center\',\'action=login\')">请登录</button></div>';
+			$button = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\')">请登录</button></div>';
 			$content .= $button;
 			return $content;
 		}
