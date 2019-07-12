@@ -891,7 +891,7 @@ jQuery(document).ready(function($) {
 	 *移动导航点击展开效果
 	 */
 	$("body").on("click", ".navbar-burger", function() {
-		$(".navbar-menu").toggleClass("is-active");
+		$(this).parents(".navbar").find(".navbar-menu").toggleClass("is-active");
 		$(this).toggleClass("is-active");
 	});
 
