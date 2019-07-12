@@ -210,17 +210,19 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 
 		//  写入用户账户信息
 		if ($update) {
-			if ($post->post_parent) {
-				return array('status' => 2, 'msg' => $post->post_parent);
-			} else {
-				return array('status' => 1, 'msg' => '余额充值成功！');
-			}
 
 			/**
 			 * @since 2019.06.30
 			 *成功完成付款后*
 			 */
 			do_action('wnd_verified_payment', $post);
+
+			if ($post->post_parent) {
+				return array('status' => 2, 'msg' => $post->post_parent);
+			} else {
+				return array('status' => 1, 'msg' => '余额充值成功！');
+			}
+
 		} else {
 			return array('status' => 0, 'msg' => $type . '写入数据失败！');
 		}
