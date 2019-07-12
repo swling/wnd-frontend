@@ -88,7 +88,7 @@ function wnd_alert_msg(msg, wait = 0) {
 	wnd_reset_modal();
 	$(".modal").addClass("is-active");
 	$(".modal-entry").removeClass("box");
-	$(".modal-entry").html('<div class="alert-message" style="color:#FFF;text-align:center">' + msg + '</div>');
+	$(".modal-entry").html('<div class="alert-message content" style="color:#FFF;text-align:center">' + msg + '</div>');
 	// 定时关闭
 	if (wait > 0) {
 		ajax_alert_time_out = setTimeout(function() {
@@ -195,7 +195,6 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 // ajax 从后端请求内容，并以弹窗形式展现
 function wnd_ajax_modal(template, param = 0) {
 
-	wnd_reset_modal();
 	$.ajax({
 		type: "POST",
 		url: wnd.api_url,
@@ -207,10 +206,11 @@ function wnd_ajax_modal(template, param = 0) {
 		//后台返回数据前
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
-			wnd_alert_msg("……")
+			wnd_alert_msg("……");
 		},
 		//成功后
 		success: function(response) {
+			wnd_reset_modal();
 			if (typeof response == "object") {
 				wnd_alert_msg(response.msg);
 			} else {
