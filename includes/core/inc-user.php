@@ -68,6 +68,28 @@ function wnd_get_user_by_openid($openid) {
 }
 
 /**
+ *@since 2019.07.11
+ *写入用户open id
+ *@param 	int 	user_id
+ *@param 	string 	open_id
+ *@return 	user_id or bool of wpdb->insert
+ */
+function wnd_insert_user_openid($user_id, $openid) {
+
+	global $wpdb;
+
+	// 查询
+	$result = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE open_id = %s", $openid));
+	if ($result) {
+		return $result;
+	}
+
+	//写入
+	return $wpdb->insert($wpdb->wnd_users, array('user_id' => $user_id, 'open_id' => $openid, 'time' => time()), array('%d', '%s', '%d'));
+
+}
+
+/**
  *@since 初始化 判断当前用户是否为管理员
  *@return bool
  *用户角色为：管理员或编辑 返回 true
