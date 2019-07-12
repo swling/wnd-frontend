@@ -1292,7 +1292,7 @@ function _wnd_posts_filter($args = array()) {
 	$html .= $filter_html ? '<div id="filter-container">' . $filter_html . '</div>' : '';
 
 	$html .= '<div id="filter-main-container">';
-	$html .= '<div class="columns">';
+	$html .= '<div class="columns is-marginless">';
 	// 输出列表：根据_wnd_ajax_next_page，此处需设置容器及容器ID，否则ajax请求的翻页内容可能无法正确嵌入
 	$html .= '<div id="filter-list" class="filter-list column">';
 	$html .= $args['wnd_list_tpl']($args);
