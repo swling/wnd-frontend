@@ -88,7 +88,7 @@ function wnd_alert_msg(msg, wait = 0) {
 	wnd_reset_modal();
 	$(".modal").addClass("is-active");
 	$(".modal-entry").removeClass("box");
-	$(".modal-entry").html('<div class="alert-message content" style="color:#FFF;text-align:center">' + msg + '</div>');
+	$(".modal-entry").html('<div class="alert-message content has-text-white has-text-centered">' + msg + '</div>');
 	// 定时关闭
 	if (wait > 0) {
 		ajax_alert_time_out = setTimeout(function() {
