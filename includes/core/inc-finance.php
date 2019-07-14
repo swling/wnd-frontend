@@ -277,6 +277,12 @@ function wnd_insert_order($args = array()) {
 	 */
 	if ($order_id && $args['status'] == 'success') {
 		wnd_inc_user_money($args['user_id'], $args['money'] * -1);
+		
+		/**
+		 * @since 2019.07.14
+		 *订单完成
+		 */
+		do_action('wnd_order_completed', $order_id);
 	}
 
 	/**
@@ -320,6 +326,12 @@ function wnd_update_order($ID, $status, $title = '') {
 	 */
 	if ($order_id and $before_status == 'pending' and $status == 'success') {
 		wnd_update_fin_stats($money * -1);
+
+		/**
+		 * @since 2019.07.14
+		 *订单完成
+		 */
+		do_action('wnd_order_completed', $order_id);
 	}
 
 	/**

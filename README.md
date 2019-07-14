@@ -244,6 +244,12 @@ do_action('wnd_ajax_update_views', $post_id);
  */
 do_action('wnd_verified_payment', $post);
 
+/**
+ * @since 2019.07.14
+ *订单完成
+ */
+do_action('wnd_order_completed', $order_id);
+
 ```
 # 前端Form name规则
 
