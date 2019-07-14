@@ -75,7 +75,11 @@ function wnd_ajax_reg() {
 	}
 
 	// 实例化WndWP表单数据处理对象
-	$form_data = new Wnd_Form_Data();
+	try {
+		$form_data = new Wnd_Form_Data();
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
+	}
 
 	// 写入用户自定义数组meta
 	$user_meta_array = $form_data->get_user_meta_array();
@@ -183,7 +187,11 @@ function wnd_ajax_update_profile() {
 	}
 
 	// 实例化WndWP表单数据处理对象
-	$form_data = new Wnd_Form_Data();
+	try {
+		$form_data = new Wnd_Form_Data();
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
+	}
 	$user_array = $form_data->get_user_array();
 	$user_meta_array = $form_data->get_user_meta_array();
 	$wp_user_meta_array = $form_data->get_wp_user_meta_array();

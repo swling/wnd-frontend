@@ -26,7 +26,12 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 	}
 
 	// 实例化当前提交的表单数据
-	$form_data = new Wnd_Form_Data($verify_form_nonce);
+	try {
+		$form_data = new Wnd_Form_Data($verify_form_nonce);
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
+	}
+
 	$post_array = $form_data->get_post_array();
 	$meta_array = $form_data->get_post_meta_array();
 	$wp_meta_array = $form_data->get_wp_post_meta_array();

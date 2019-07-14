@@ -21,7 +21,7 @@ class Wnd_Form_Data {
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
 		if ($verify_form_nonce and Wnd_Form_Data::$enable_form_verify and !$this->verify_form_nonce()) {
-			exit('表单数据为空或已被篡改！');
+			throw new Exception('表单已被篡改！');
 		}
 
 		// 允许修改表单提交数据
