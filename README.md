@@ -242,7 +242,7 @@ do_action('wnd_ajax_update_views', $post_id);
  *成功完成付款后*
  *$post:支付订单post object
  */
-do_action('wnd_verified_payment', $post);
+do_action('wnd_payment_verified', $post);
 
 /**
  * @since 2019.07.14

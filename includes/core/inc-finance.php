@@ -215,7 +215,7 @@ function wnd_verify_payment($out_trade_no, $amount, $app_id = '') {
 			 * @since 2019.06.30
 			 *成功完成付款后*
 			 */
-			do_action('wnd_verified_payment', $post);
+			do_action('wnd_payment_verified', $post);
 
 			if ($post->post_parent) {
 				return array('status' => 2, 'msg' => $post->post_parent);
