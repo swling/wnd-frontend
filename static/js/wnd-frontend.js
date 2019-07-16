@@ -595,7 +595,7 @@ jQuery(document).ready(function($) {
 					 *ajax上传时，后端会自动根据post_parent和meta_key做常规处理，此处额外发送，供开发中其他特殊情况使用
 					 */
 					if (meta_key != "gallery") {
-						_this.parents("form").append('<input class="attachment-' + response[i].data.id + '" type="hidden" name="_ignore_attachment_id[]" value="' + response[i].data.id + '">');
+						$("#" + id).append('<input class="attachment-' + response[i].data.id + '" type="hidden" name="_ignore_attachment_id[]" value="' + response[i].data.id + '">');
 					}
 				}
 
