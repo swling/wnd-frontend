@@ -129,6 +129,12 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 	}
 
 	public function add_user_avatar($thumbnail_size = 150, $save_size = 200) {
+
+		if (!$this->user->ID) {
+			parent::add_html('<div class="notification">获取用户ID失败，无法上传头像！</div>');
+			return;
+		}
+
 		$args = array(
 			'label' => '',
 			'thumbnail_size' => array('width' => $thumbnail_size, 'height' => $thumbnail_size),
@@ -148,6 +154,12 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Ajax_Form
 	 */
 	public function add_user_image_upload($meta_key, $size = array('width' => 200, 'height' => 200), $label = '') {
+
+		if (!$this->user->ID) {
+			parent::add_html('<div class="notification">获取用户ID失败，无法设置图像上传！</div>');
+			return;
+		}
+
 		$args = array(
 			'label' => $label,
 			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
@@ -164,6 +176,12 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 	}
 
 	public function add_user_file_upload($meta_key, $label = '文件上传') {
+
+		if (!$this->user->ID) {
+			parent::add_html('<div class="notification">获取用户ID失败，无法设置文件上传！</div>');
+			return;
+		}
+
 		self::add_file_upload(
 			array(
 				'label' => $label,

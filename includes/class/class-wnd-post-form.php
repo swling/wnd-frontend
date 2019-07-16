@@ -250,6 +250,12 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Ajax_Form
 	 */
 	public function add_post_image_upload($meta_key, $width = 200, $height = 200, $label = '') {
+
+		if (!$this->post_id) {
+			parent::add_html('<div class="notification">获取post ID失败，无法设置图像上传！</div>');
+			return;
+		}
+
 		$args = array(
 			'label' => $label,
 			'thumbnail_size' => array('width' => $width, 'height' => $height),
@@ -266,6 +272,12 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 	}
 
 	public function add_post_file_upload($meta_key, $label = '文件上传') {
+
+		if (!$this->post_id) {
+			parent::add_html('<div class="notification">获取post ID失败，无法设置文件上传！</div>');
+			return;
+		}
+
 		parent::add_file_upload(
 			array(
 				'label' => $label,
@@ -281,6 +293,11 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 	 *@since 2019.05.08 上传图片集
 	 */
 	public function add_post_gallery_upload($thumbnail_width = 160, $thumbnail_height = 120, $label = '') {
+
+		if (!$this->post_id) {
+			parent::add_html('<div class="notification">获取post ID失败，无法设置相册上传！</div>');
+			return;
+		}
 
 		$args = array(
 			'label' => $label,

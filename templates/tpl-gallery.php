@@ -24,7 +24,7 @@ function _wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120)
 			continue;
 		}
 
-		$html .= '<div id="img' . $attachment_id . '" class="column is-narrow">';
+		$html .= '<div class="attachment-' . $attachment_id . '" class="column is-narrow">';
 		$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '"height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
 		$html .= '</div>';
 

@@ -523,6 +523,8 @@ jQuery(document).ready(function($) {
 		form_data.append("thumbnail_width", thumbnail_width);
 		form_data.append("action", "wnd_ajax_upload_file");
 
+		// ajax中无法直接使用jQuery $(this)，需要提前定义
+		var _this = $(this);
 		$.ajax({
 			url: wnd.api_url,
 			dataType: "json",
@@ -538,6 +540,9 @@ jQuery(document).ready(function($) {
 			},
 			// 提交成功
 			success: function(response) {
+
+				// 清空input，防止随表单重复提交文件
+				_this.val('');
 
 				// 错误
 				if (response.status === 0) {
@@ -562,7 +567,7 @@ jQuery(document).ready(function($) {
 						// 清除默认提示信息
 						$("#" + id + " .gallery .default-message").remove();
 						var new_img_element =
-							'<div id="img' + response[i].data.id + '" class="column is-narrow">' +
+							'<div class="column is-narrow attachment-' + response[i].data.id + '">' +
 							'<a><img class="thumbnail" src="' + response[i].data.thumbnail + '" data-url="' + response[i].data.url + '" width="' + thumbnail_width + '" width="' + thumbnail_height + '"></a>' +
 							'<a class="delete" data-id="' + id + '" data-file_id="' + response[i].data.id + '"></a>' +
 							'</div>';
@@ -579,6 +584,18 @@ jQuery(document).ready(function($) {
 					} else {
 						$("#" + id + " .file-name").html('上传成功！<a href="' + response[i].data.url + '" target="_blank">查看文件</a>');
 						$("#" + id + " .delete").data("file_id", response[i].data.id)
+					}
+
+					/**
+					 *@since 2019.07.16
+					 *若为单个文件，将当前上传的文件id新增到所属表单字段发送给后端，以供二次处理
+					 *由于此处的字段为JavaScript动态添加，需要设置字段name为 "_ignore_" 前缀，否则无法通过wnd_form_data类的表单一致性校验
+					 *@see PHP Class：Wnd_Form_Data 方法：verify_form_nonce()
+					 *
+					 *ajax上传时，后端会自动根据post_parent和meta_key做常规处理，此处额外发送，供开发中其他特殊情况使用
+					 */
+					if (meta_key != "gallery") {
+						_this.parents("form").append('<input class="attachment-' + response[i].data.id + '" type="hidden" name="_ignore_attachment_id[]" value="' + response[i].data.id + '">');
 					}
 				}
 
@@ -651,10 +668,14 @@ jQuery(document).ready(function($) {
 
 				wnd_ajax_msg("已删除！", "is-success", "#" + id);
 
+				/**
+				 *@since 2019.07.16
+				 * 删除以"attachment-{file_id} 为class的html
+				 */
+				$(".attachment-" + file_id).remove();
 
 				// 相册
 				if (meta_key == "gallery") {
-					$("#img" + file_id).remove();
 					// 删除全部图片时，显示提示信息
 					if ($("#" + id + " .gallery").html() == "") {
 						$("#" + id + " .gallery").html('<div class="column default-message"><p>已删除全部图片</p></div>')

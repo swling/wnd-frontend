@@ -41,6 +41,15 @@ class Wnd_Form_Data {
 		// 提取POST数组键值并排序
 		$form_names = array();
 		foreach ($_POST as $key => $value) {
+
+			/**
+			 *@since 2019.07.17
+			 *以_ignore_开头的字段，表示为需要忽略校验的字段名
+			 **/
+			if (0 === stripos($key, '_ignore_')) {
+				continue;
+			}
+
 			array_push($form_names, $key);
 		}
 		unset($key, $value);
