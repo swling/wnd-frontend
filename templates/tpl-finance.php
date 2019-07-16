@@ -381,3 +381,12 @@ function _wnd_list_fin_stats($args = '') {
 	return $html;
 
 }
+
+/**
+ *@since 2019.07.16
+ *创建订单链接
+ *@param int $post_id 产品/文章ID
+ */
+function _wnd_order_link($post_id) {
+	return wnd_get_do_url() . '?action=payment&post_id=' . $post_id . '&_wpnonce=' . wnd_create_nonce('payment');
+}

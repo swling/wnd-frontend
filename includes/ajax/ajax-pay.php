@@ -30,8 +30,7 @@ function wnd_ajax_create_order() {
 	$money = wnd_get_post_price($post_id);
 	if ($money > wnd_get_user_money($user_id)) {
 		if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
-			$pay_url = wnd_get_do_url() . '?action=payment&post_id=' . $post_id . '&_wpnonce=' . wnd_create_nonce('payment');
-			return array('status' => 0, 'msg' => '余额不足！<a href="' . $pay_url . '">在线支付</a> | <a onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</a>');
+			return array('status' => 0, 'msg' => '余额不足！<a href="' . _wnd_order_link($post_id) . '">在线支付</a> | <a onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</a>');
 		} else {
 			return array('status' => 0, 'msg' => '余额不足！');
 		}

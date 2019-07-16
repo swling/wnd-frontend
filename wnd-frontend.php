@@ -68,8 +68,8 @@ function wnd_install() {
 			'wnd_reg_redirect_url' => '',
 			'wnd_default_avatar_url' => WND_URL . 'static/images/avatar.jpg',
 
-			'wnd_max_upload_size' => '',
-			'wnd_max_stick_posts' => '',
+			'wnd_max_upload_size' => '2048',
+			'wnd_max_stick_posts' => '10',
 
 			'wnd_disable_locale' => '',
 			'wnd_disable_admin_panel' => 1,
