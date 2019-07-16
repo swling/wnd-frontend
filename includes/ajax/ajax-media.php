@@ -44,14 +44,25 @@ function wnd_ajax_upload_file() {
 	$post_parent = (int) $_POST['post_parent'] ?? 0;
 	$user_id = get_current_user_id();
 
-	/**
-	 *@since 2019.05.08 上传文件meta key校验
-	 */
-	if (!$meta_key) {
-		return array('status' => 0, 'msg' => '错误：未定义meta_key！');
+	// 上传信息校验
+	if (!$user_id and !$post_parent) {
+		return array('status' => 0, 'msg' => '错误：user ID及post ID均为空！');
 	}
+
+	/**
+	 *@since 2019.05.08 上传文件meta_key post_parent校验
+	 *meta_key 及 post_parent同时为空时，上传文件将成为孤立的的文件，在前端上传附件应该具有明确的用途，应避免这种情况
+	 */
+	if (!$meta_key and !$post_parent) {
+		return array('status' => 0, 'msg' => '错误：meta_key 与 post_parent 同时为空！');
+	}
+
 	if (!wnd_verify_nonce($_POST['_meta_key_nonce'], $meta_key)) {
 		return array('status' => 0, 'msg' => '错误：未经允许的meta_key！');
+	}
+
+	if ($post_parent and !get_post($post_parent)) {
+		return array('status' => 0, 'msg' => 'post_parent无效！');
 	}
 
 	/**
@@ -61,15 +72,6 @@ function wnd_ajax_upload_file() {
 	$can_upload_file = apply_filters('wnd_can_upload_file', array('status' => 1, 'msg' => '默认通过'), $post_parent, $meta_key);
 	if ($can_upload_file['status'] === 0) {
 		return $can_upload_file;
-	}
-
-	if ($post_parent and !current_user_can('edit_post', $post_parent)) {
-		return array('status' => 0, 'msg' => '权限错误！');
-	}
-
-	// 上传信息校验
-	if (!$user_id and !$post_parent) {
-		return array('status' => 0, 'msg' => '错误：user ID及post ID均为空！');
 	}
 
 	// These files need to be included as dependencies when on the front end.
