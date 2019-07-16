@@ -48,7 +48,6 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		parent::__construct();
 
 		// 新增拓展变量
-		$this->post_type = $post_type;
 		$this->post_id = $post_id;
 		if (!$this->post_id) {
 			$action = wnd_get_draft_post($post_type, $interval_time = 3600 * 24);
@@ -62,6 +61,13 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		 *2019.07.16
 		 */
 		$this->post = $this->post_id ? get_post($this->post_id) : (object) Wnd_Post_Form::$default_post;
+
+		/**
+		 *文章类型：
+		 *若指定了id，则获取对应id的post type
+		 *若无则外部传入参数
+		 **/
+		$this->post_type = $this->post_id ? $this->post->post_type : $post_type;
 
 		// 文章表单固有字段
 		if (!$input_fields_only) {
