@@ -486,7 +486,7 @@ jQuery(document).ready(function($) {
 	/**
 	 *@since 2019.1.15 ajax 文件上传
 	 */
-	$("body").on("change", "[type='file']", function() {
+	$("body").on("change", ".upload-field [type='file']", function() {
 
 		// 获取当前上传容器ID
 		var id = $(this).data("id");
