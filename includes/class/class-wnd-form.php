@@ -84,7 +84,7 @@ class Wnd_Form {
 	}
 
 	// 直接设置当前表单的组成数组（通常用于配合 filter 过滤）
-	protected function set_input_values($input_values) {
+	public function set_input_values($input_values) {
 		$this->input_values = $input_values;
 	}
 
