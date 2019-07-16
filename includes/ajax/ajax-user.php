@@ -30,7 +30,7 @@ function wnd_ajax_reg() {
 
 	$user_login = $_POST['_user_user_login'] ?? $_POST['phone'] ?? null;
 	$user_pass = $_POST['_user_user_pass'] ?? null;
-	$user_pass_repeat = $_POST['_user_user_pass_repeat'] ?? $_POST['_user_user_pass'];
+	$user_pass_repeat = $_POST['_user_user_pass_repeat'] ?? ($_POST['_user_user_pass'] ?? null);
 	$user_email = $_POST['_user_user_email'] ?? null;
 	$display_name = $_POST['_user_display_name'] ?? null;
 	$description = $_POST['_wpusermeta_description'] ?? null;
