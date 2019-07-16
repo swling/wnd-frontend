@@ -15,6 +15,32 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 	public $post;
 
+	static protected $default_post = array(
+		'ID' => 0,
+		'post_author' => 0,
+		'post_date' => null,
+		'post_date_gmt' => null,
+		'post_content' => null,
+		'post_title' => null,
+		'post_excerpt' => null,
+		'post_status' => null,
+		'comment_status' => null,
+		'ping_status' => null,
+		'post_password' => null,
+		'post_name' => null,
+		'to_ping' => null,
+		'pinged' => null,
+		'post_modified' => null,
+		'post_modified_gmt' => null,
+		'post_content_filtered' => null,
+		'post_parent' => 0,
+		'guid' => null,
+		'menu_order' => 0,
+		'post_type' => null,
+		'post_mime_type' => null,
+		'comment_count' => 0,
+	);
+
 	// 初始化构建
 	public function __construct($post_type = 'post', $post_id = 0, $input_fields_only = false) {
 
@@ -22,14 +48,20 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		parent::__construct();
 
 		// 新增拓展变量
+		$this->post_type = $post_type;
 		$this->post_id = $post_id;
 		if (!$this->post_id) {
 			$action = wnd_get_draft_post($post_type, $interval_time = 3600 * 24);
 			$this->post_id = $action['status'] > 0 ? $action['data'] : 0;
 		}
 
-		$this->post = get_post($this->post_id);
-		$this->post_type = $this->post->post_type ?? $post_type;
+		/**
+		 *@see WordPress get_post()
+		 *当创建草稿失败，$this->post_id = 0 $this->post获取得到的将是WordPress当前页面
+		 *因此初始化一个空白的对象
+		 *2019.07.16
+		 */
+		$this->post = $this->post_id ? get_post($this->post_id) : (object) Wnd_Post_Form::$default_post;
 
 		// 文章表单固有字段
 		if (!$input_fields_only) {
@@ -41,11 +73,10 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 	public function add_post_title($label = '', $placeholder = "请输入标题") {
 
-		$post_title = $this->post->post_title ?? '';
 		parent::add_text(
 			array(
 				'name' => '_post_post_title',
-				'value' => $post_title == 'Auto-draft' ? '' : $post_title,
+				'value' => $this->post->post_title == 'Auto-draft' ? '' : $this->post->post_title,
 				'placeholder' => 'ID:' . $this->post_id . ' ' . $placeholder,
 				'label' => $label,
 				'autofocus' => 'autofocus',
@@ -59,7 +90,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 		parent::add_textarea(
 			array(
 				'name' => '_post_post_excerpt',
-				'value' => $this->post->post_excerpt ?? '',
+				'value' => $this->post->post_excerpt,
 				'placeholder' => $placeholder,
 				'label' => $label,
 				'required' => false,
