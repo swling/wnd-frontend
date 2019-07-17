@@ -319,7 +319,6 @@ function _wnd_attachment_form($args) {
 
 	// 构建父级表单字段，以供文件ajax上传归属到父级post
 	$parent_post_form = new Wnd_WP_Form();
-	// $parent_post_form->set_form_attr('onsubmit="return false"');
 	$parent_post_form->add_file_upload(
 		array(
 			'label' => '附件上传',
