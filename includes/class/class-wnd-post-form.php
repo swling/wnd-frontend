@@ -47,11 +47,10 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		// 继承基础变量
 		parent::__construct();
 
-		// 新增拓展变量
-		$this->post_id = $post_id;
-		if (!$this->post_id) {
+		// 获取或新建post
+		if (!$post_id) {
 			$action = wnd_get_draft_post($post_type, $interval_time = 3600 * 24);
-			$this->post_id = $action['status'] > 0 ? $action['data'] : 0;
+			$post_id = $action['status'] > 0 ? $action['data'] : 0;
 		}
 
 		/**
@@ -60,7 +59,8 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		 *因此初始化一个空白的对象
 		 *2019.07.16
 		 */
-		$this->post = $this->post_id ? get_post($this->post_id) : (object) Wnd_Post_Form::$default_post;
+		$this->post = get_post($post_id) ?: (object) Wnd_Post_Form::$default_post;
+		$this->post_id = $this->post->ID;
 
 		/**
 		 *文章类型：
