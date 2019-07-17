@@ -192,6 +192,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		$args['data']['thumbnail'] = $args['thumbnail'];
 		$args['data']['thumbnail-width'] = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail-height'] = $args['thumbnail_size']['height'];
+		$args['data']['method'] = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据user type 查找目标文件
 		if (!$args['file_id']) {
@@ -240,6 +241,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		$args['data']['upload_nonce'] = wnd_create_nonce('wnd_ajax_upload_file');
 		$args['data']['delete_nonce'] = wnd_create_nonce('wnd_ajax_delete_file');
 		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
+		$args['data']['method'] = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据meta key 查找目标文件
 		if (!$args['file_id']) {
@@ -291,6 +293,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
 		$args['data']['thumbnail-width'] = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail-height'] = $args['thumbnail_size']['height'];
+		$args['data']['method'] = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 定义一些本方法需要重复使用的变量
 		$post_parent = $args['data']['post_parent'];
@@ -425,7 +428,7 @@ class Wnd_WP_Form extends Wnd_Form {
 			parent::build_form_header();
 		}
 
-		$html = '<form id="form-' . $this->id . '" action="" method="POST" class="ajax-submit" onsubmit="return false"';
+		$html = '<form id="form-' . $this->id . '" action="" method="POST" onsubmit="return false"';
 
 		if ($this->with_upload) {
 			$html .= ' enctype="multipart/form-data"';
