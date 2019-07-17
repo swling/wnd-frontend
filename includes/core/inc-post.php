@@ -66,8 +66,11 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 	/**
 	 *@since 2019.02.19
 	 * 写入post type检测
+	 *@since 2019.7.17
+	 *attachment为附件类型，前端可能会允许编辑更新attachment post信息，但此种类型应该是上传文件后由WordPress自动创建
+	 *@see media_handle_upload()
 	 */
-	if (!in_array($post_type, wnd_get_allowed_post_types())) {
+	if (!in_array($post_type, wnd_get_allowed_post_types()) or $post_type == 'attachment') {
 		return array('status' => 0, 'msg' => '类型无效！');
 	}
 
@@ -166,8 +169,8 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 function wnd_get_allowed_post_types() {
 
 	$post_types = get_post_types(array('public' => true), 'names', 'and');
-	// 排除页面/附件/站内信
-	unset($post_types['page'], $post_types['attachment'], $post_types['mail']);
+	// 排除页面/站内信
+	unset($post_types['page'], $post_types['mail']);
 
 	return apply_filters('wnd_allowed_post_types', $post_types);
 }
