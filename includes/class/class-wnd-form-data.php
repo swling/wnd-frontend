@@ -38,21 +38,8 @@ class Wnd_Form_Data {
 			return false;
 		}
 
-		// 提取POST数组键值并排序
-		$form_names = array();
-		foreach ($_POST as $key => $value) {
-
-			/**
-			 *@since 2019.07.17
-			 *以_safe_开头的字段，将忽略校验
-			 **/
-			if (0 === stripos($key, '_safe_')) {
-				continue;
-			}
-
-			array_push($form_names, $key);
-		}
-		unset($key, $value);
+		// 提取POST $_FILES数组键值并排序
+		$form_names = array_merge(array_keys($_POST), array_keys($_FILES));
 		sort($form_names);
 
 		// 校验数组键值是否一直
@@ -176,6 +163,16 @@ class Wnd_Form_Data {
 		}unset($key, $value);
 
 		return $term_array;
+	}
+
+	/**
+	 *@since 2019.07.17
+	 *获取表单数据
+	 *返回表单提交数据
+	 *与原$_POST相比，此时获取的表单提交数据，执行了wnd_form_data filter，并通过了表单一致性校验
+	 */
+	public function get_form_data() {
+		return $this->form_data;
 	}
 
 }

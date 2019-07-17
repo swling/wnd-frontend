@@ -183,3 +183,20 @@ function wnd_get_queried_type() {
 		return array('type' => 'ajax');
 	}
 }
+
+/**
+ *@since 2019.07.17
+ *设置默认的异常处理函数
+ */
+set_exception_handler('wnd_exception_handler');
+function wnd_exception_handler($exception) {
+
+	$html = '<article class="column message is-danger">';
+	$html .= '<div class="message-header">';
+	$html .= '<p>异常</p>';
+	$html .= '</div>';
+	$html .= '<div class="message-body">' . $exception->getMessage() . '</div>';
+	$html .= '</article>';
+
+	echo $html;
+}

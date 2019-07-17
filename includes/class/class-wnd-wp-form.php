@@ -399,11 +399,6 @@ class Wnd_WP_Form extends Wnd_Form {
 				continue;
 			}
 
-			// 排除文件上传字段（后端表单数据似乎无法接受到文件上传字段名）
-			if (in_array($input_value['type'], array('image_upload', 'file_upload'))) {
-				continue;
-			}
-
 			array_push($this->form_names, $input_value['name']);
 
 		}
