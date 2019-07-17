@@ -589,13 +589,13 @@ jQuery(document).ready(function($) {
 					/**
 					 *@since 2019.07.16
 					 *若为单个文件，将当前上传的文件id新增到所属表单字段发送给后端，以供二次处理
-					 *由于此处的字段为JavaScript动态添加，需要设置字段name为 "_ignore_" 前缀，否则无法通过wnd_form_data类的表单一致性校验
+					 *由于此处的字段为JavaScript动态添加，需要设置字段name为 "_safe_" 前缀，否则无法通过wnd_form_data类的表单一致性校验
 					 *@see PHP Class：Wnd_Form_Data 方法：verify_form_nonce()
 					 *
 					 *ajax上传时，后端会自动根据post_parent和meta_key做常规处理，此处额外发送，供开发中其他特殊情况使用
 					 */
 					if (meta_key != "gallery") {
-						$("#" + id).append('<input class="attachment-' + response[i].data.id + '" type="hidden" name="_ignore_attachment_id[]" value="' + response[i].data.id + '">');
+						$("#" + id).append('<input class="attachment-' + response[i].data.id + '" type="hidden" name="_safe_attachment_id[]" value="' + response[i].data.id + '">');
 					}
 				}
 

@@ -44,9 +44,9 @@ class Wnd_Form_Data {
 
 			/**
 			 *@since 2019.07.17
-			 *以_ignore_开头的字段，表示为需要忽略校验的字段名
+			 *以_safe_开头的字段，将忽略校验
 			 **/
-			if (0 === stripos($key, '_ignore_')) {
+			if (0 === stripos($key, '_safe_')) {
 				continue;
 			}
 

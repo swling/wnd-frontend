@@ -6,7 +6,7 @@
 
 ## 核心原理：
 1、通过前端表单name前缀自动归类提交的数据对应到WordPress文章，文章字段，用户字段等，从而实现可拓展的前端表单提交
-2、通过生成表单的同时，根据表单字段name值生成wp nonce，以防止表单字段被前端篡改（以"_ignore_" 前缀的字段名，将忽略校验）
+2、通过生成表单的同时，根据表单字段name值生成wp nonce，以防止表单字段被前端篡改（以"_safe_" 前缀的字段名，将忽略校验）
 3、前端上传图片，并按meta_key做存储在用户字段，或文章字段(以对应meta_key生成wp nonce，以实现meta_key校验)
 4、用户即文章的增删改最终底层实现均采用WordPress原生函数，因此对应操作中WordPress原生的action 及filter均有效
 5、相关ajax操作中，设置array filter以实现权限控制
