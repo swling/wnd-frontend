@@ -36,12 +36,12 @@ function wnd_ajax_upload_file() {
 		return array('status' => 0, 'msg' => '获取上传文件失败！');
 	}
 
-	$save_width = (int) $_POST["save_width"] ?? 0;
-	$save_height = (int) $_POST["save_height"] ?? 0;
-	$thumbnail_height = (int) $_POST["thumbnail_height"] ?? 0;
-	$thumbnail_width = (int) $_POST["thumbnail_width"] ?? 0;
+	$save_width = $_POST["save_width"] ?? 0;
+	$save_height = $_POST["save_height"] ?? 0;
+	$thumbnail_height = $_POST["thumbnail_height"] ?? 0;
+	$thumbnail_width = $_POST["thumbnail_width"] ?? 0;
 	$meta_key = $_POST['meta_key'] ?? null;
-	$post_parent = (int) $_POST['post_parent'] ?? 0;
+	$post_parent = $_POST['post_parent'] ?? 0;
 	$user_id = get_current_user_id();
 
 	// 上传信息校验

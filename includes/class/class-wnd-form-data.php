@@ -3,7 +3,7 @@
 /**
  *根据表单name提取标题数据
  *@since 2019.03.04
- *@param $verify_form_nonce 	bool 	是否校验表单字段由Wnd_Ajax_Form表单类生成
+ *@param $verify_form_nonce 	bool 	是否校验表单字段由Wnd_WP_Form表单类生成
  */
 class Wnd_Form_Data {
 
@@ -30,7 +30,7 @@ class Wnd_Form_Data {
 
 	/**
 	 *@since 2019.05.09 校验表单字段是否被篡改
-	 *@see Wnd_Ajax_Form -> build_form_nonce()
+	 *@see Wnd_WP_Form -> build_form_nonce()
 	 */
 	protected function verify_form_nonce() {
 

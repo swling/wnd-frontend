@@ -228,7 +228,7 @@ function wnd_filter_the_content($content) {
 			$button_text = '免费下载';
 		}
 
-		$form = new Wnd_Ajax_Form;
+		$form = new Wnd_WP_Form;
 		$form->add_hidden('post_id', $post->ID);
 		$form->set_action('wnd_ajax_pay_for_download');
 		$form->set_submit_button($button_text);
@@ -278,7 +278,7 @@ function wnd_filter_the_content($content) {
 
 		}
 
-		$form = new Wnd_Ajax_Form;
+		$form = new Wnd_WP_Form;
 		$form->add_hidden('post_id', $post->ID);
 		$form->set_action('wnd_ajax_pay_for_reading');
 		$form->set_submit_button($button_text);

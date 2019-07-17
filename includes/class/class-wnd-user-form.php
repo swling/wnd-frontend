@@ -4,7 +4,7 @@
  *适配本插件的ajax User表单类
  *@since 2019.03.11
  */
-class Wnd_User_Form extends Wnd_Ajax_Form {
+class Wnd_User_Form extends Wnd_WP_Form {
 
 	public $user;
 
@@ -151,7 +151,7 @@ class Wnd_User_Form extends Wnd_Ajax_Form {
 
 	/**
 	 *@since 2019.04.28 上传字段简易封装
-	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Ajax_Form
+	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_WP_Form
 	 */
 	public function add_user_image_upload($meta_key, $size = array('width' => 200, 'height' => 200), $label = '') {
 

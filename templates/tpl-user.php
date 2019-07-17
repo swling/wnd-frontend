@@ -202,7 +202,7 @@ function _wnd_user_center($args = array()) {
 
 /**
  *@since 2019.01.13 登录框
- *@since 2019.03.10 Wnd_Ajax_Form
+ *@since 2019.03.10 Wnd_WP_Form
  */
 function _wnd_login_form() {
 

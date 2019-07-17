@@ -55,6 +55,13 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 		if (!current_user_can('edit_post', $update_id)) {
 			return array('status' => 0, 'msg' => '权限错误！');
 		}
+
+		/**
+		 *@since 2019.07.17
+		 *attachment仅允许更新，而不能直接写入（写入应在文件上传时完成）
+		 */
+	} elseif ('attachment' == $post_type) {
+		return array('status' => 0, 'msg' => '无法直接创建attachment！');
 	}
 
 	/**
@@ -123,7 +130,7 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 				'redirect_to' => $redirect_to,
 			),
 		);
-	} else if ($update_id) {
+	} elseif ($update_id) {
 		$return_array = array(
 			'status' => 2,
 			'msg' => '发布成功！',

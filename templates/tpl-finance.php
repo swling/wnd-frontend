@@ -223,7 +223,7 @@ function _wnd_recharge_form() {
  */
 function _wnd_admin_recharge_form() {
 
-	$form = new Wnd_Ajax_Form();
+	$form = new Wnd_WP_Form();
 	$form->set_form_attr('id="admin-recharge-form"');
 
 	$form->add_html('<div class="field is-horizontal"><div class="field-body">');

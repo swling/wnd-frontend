@@ -7,7 +7,7 @@
  *@param $post_id 		int
  *@param $input_fields_only 	bool 	是否只生成表单字段（不添加post form 属性字段）
  */
-class Wnd_Post_Form extends Wnd_Ajax_Form {
+class Wnd_Post_Form extends Wnd_WP_Form {
 
 	public $post_id;
 
@@ -247,7 +247,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 	/**
 	 *@since 2019.04.28 上传字段简易封装
-	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Ajax_Form
+	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_WP_Form
 	 */
 	public function add_post_image_upload($meta_key, $width = 200, $height = 200, $label = '') {
 
@@ -314,7 +314,7 @@ class Wnd_Post_Form extends Wnd_Ajax_Form {
 
 	// 文章表头，屏蔽回车提交
 	protected function build_form_header() {
-		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax"';
+		$html = '<form id="form-' . $this->id . '" action="" method="POST" class="ajax-submit"';
 		$html .= ' onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}"';
 
 		if ($this->with_upload) {

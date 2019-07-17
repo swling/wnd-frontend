@@ -22,7 +22,7 @@ class Wnd_Form {
 
 	public $submit_text = 'Submit';
 
-	public $submit_style;
+	public $submit_class;
 
 	public $action;
 
@@ -72,13 +72,13 @@ class Wnd_Form {
 	}
 
 	// Submit
-	public function set_submit_button($submit_text, $submit_style = '') {
+	public function set_submit_button($submit_text, $submit_class = '') {
 		$this->submit_text = $submit_text;
-		$this->submit_style = $submit_style;
+		$this->submit_class = $submit_class;
 	}
 
 	// _action
-	public function set_action($method, $action) {
+	public function set_action($action, $method) {
 		$this->method = $method;
 		$this->action = $action;
 	}
@@ -506,7 +506,7 @@ class Wnd_Form {
 			return;
 		}
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="button' . $this->get_submit_style() . '">' . $this->submit_text . '</button>';
+		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="button' . $this->get_submit_class() . '">' . $this->submit_text . '</button>';
 		$this->html .= '</div>';
 	}
 
@@ -556,9 +556,9 @@ class Wnd_Form {
 		return '';
 	}
 
-	protected function get_submit_style() {
-		if ($this->submit_style) {
-			return ' ' . $this->submit_style;
+	protected function get_submit_class() {
+		if ($this->submit_class) {
+			return ' ' . $this->submit_class;
 		}
 		return '';
 	}

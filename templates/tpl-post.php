@@ -221,7 +221,7 @@ function _wnd_post_status_form($post_id) {
 		break;
 	}
 
-	$form = new Wnd_Ajax_Form();
+	$form = new Wnd_WP_Form();
 	$form->add_html('<div class="field is-grouped is-grouped-centered">');
 	$form->add_html('<script>wnd_ajax_msg(\'当前： ' . $status_text . '\', \'is-danger\', \'#post-status\')</script>');
 	$form->add_radio(
@@ -302,4 +302,52 @@ function _wnd_post_thumbnail($post_id, $width, $height) {
 	}
 
 	return false;
+}
+
+/**
+ *@since 2019.07.16
+ *上传或编辑附件信息
+ */
+function _wnd_attachment_form($args) {
+
+	$defaults = array(
+		'attachment_id' => 0,
+		'post_parent' => 0,
+		'meta_key' => null,
+	);
+	$args = wp_parse_args($args, $defaults);
+
+	// 构建父级表单字段，以供文件ajax上传归属到父级post
+	$parent_post_form = new Wnd_WP_Form();
+	// $parent_post_form->set_form_attr('onsubmit="return false"');
+	$parent_post_form->add_file_upload(
+		array(
+			'label' => '附件上传',
+			'file_id' => $args['attachment_id'],
+
+			/**
+			 *如果设置了meta_key及post parent, 则上传的附件id将保留在对应的wnd_post_meta
+			 *若仅设置了meta_key否则保留为 wnd_user_meta
+			 *若未设置meta_key、则不在meta中保留附件信息，仅能通过指定id方式查询
+			 */
+			'data' => array(
+				'meta_key' => $args['meta_key'],
+				'post_parent' => $args['post_parent'],
+			),
+		)
+	);
+
+	// 上传媒体信息表单字段。attachment 无法也不应创建草稿, 此处的post_ID将根据上传文件后，ajax返回值获取
+	$attachment_post_form = new Wnd_Post_Form('attachment', $args['attachment_id'], false);
+	$attachment_post_form->add_post_title('文件名称');
+	$attachment_post_form->add_post_content(true, false, '简介 *');
+	$attachment_post_form->set_submit_button("保存");
+
+	// 将上述两个表单字段，合并组成一个表单字段
+	$input_values = array_merge($parent_post_form->get_input_values(), $attachment_post_form->get_input_values());
+	$attachment_post_form->set_input_values($input_values);
+	$attachment_post_form->build();
+
+	return $attachment_post_form->html;
+
 }

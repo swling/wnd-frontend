@@ -486,7 +486,7 @@ jQuery(document).ready(function($) {
 	/**
 	 *@since 2019.1.15 ajax 文件上传
 	 */
-	$("body").on("change", ".upload-field [type='file']", function() {
+	$("body").on("change", ".ajax-submit [type='file']", function() {
 
 		// 获取当前上传容器ID
 		var id = $(this).data("id");
@@ -588,15 +588,15 @@ jQuery(document).ready(function($) {
 
 					/**
 					 *@since 2019.07.16
-					 *若为单个文件，将当前上传的文件id新增到所属表单字段发送给后端，以供二次处理
-					 *由于此处的字段为JavaScript动态添加，需要设置字段name为 "_safe_" 前缀，否则无法通过wnd_form_data类的表单一致性校验
-					 *@see PHP Class：Wnd_Form_Data 方法：verify_form_nonce()
+					 *若当前表单为文章表单，且类型为：attachment，则认为当前表单作为为编辑附件详情信息
+					 *将当前上传的文件id新增到所属表单字段发送给后端，以供二次处理
 					 *
 					 *ajax上传时，后端会自动根据post_parent和meta_key做常规处理，此处额外发送，供开发中其他特殊情况使用
 					 */
-					if (meta_key != "gallery") {
-						$("#" + id).append('<input class="attachment-' + response[i].data.id + '" type="hidden" name="_safe_attachment_id[]" value="' + response[i].data.id + '">');
+					if (_this.parents("form").find("input[name='_post_post_type']").val() == "attachment") {
+						_this.parents("form").find("input[name='_post_ID']").val(response[i].data.id);
 					}
+
 				}
 
 			},
@@ -919,9 +919,13 @@ jQuery(document).ready(function($) {
 	/**
 	 *@since 2019.03.10 ajax提交表单
 	 */
-	$("body").on("click", "[data-submit-type='ajax'] [type='submit']", function() {
+	$("body").on("click", "[type='submit'].ajax-submit", function() {
 		var form_id = $(this).parents("form").attr("id");
-		wnd_ajax_submit(form_id);
+		if (form_id) {
+			wnd_ajax_submit(form_id);
+		} else {
+			wnd_alert_msg("未找到指定表单", 1);
+		}
 	});
 
 	/**

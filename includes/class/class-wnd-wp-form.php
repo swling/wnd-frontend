@@ -7,20 +7,27 @@
  *在本环境中，为实现字段name nonce校验，未选中的字段也会发送一个空值到后台（通过 hidden字段实现），在相关数据处理上需要注意
  *为保障表单不被前端篡改，会提取所有字段的name值，结合算法生成校验码，后端通过同样的方式提取$_POST数据，并做校验
  */
-class Wnd_Ajax_Form extends Wnd_Form {
+class Wnd_WP_Form extends Wnd_Form {
 
 	public $filter = null;
 	public $form_names = array();
 	public $message = null;
+	public $is_ajax_submit;
 
 	static $primary_color;
 	static $second_color;
 
-	public function __construct() {
+	public function __construct($is_ajax_submit = true) {
+
+		/**
+		 *@since 2019.07.17
+		 *添加是否为ajax提交选项
+		 */
+		$this->is_ajax_submit = $is_ajax_submit;
 
 		// 色调
-		Wnd_Ajax_Form::$primary_color = wnd_get_option('wnd', 'wnd_primary_color');
-		Wnd_Ajax_Form::$second_color = wnd_get_option('wnd', 'wnd_second_color');
+		Wnd_WP_Form::$primary_color = wnd_get_option('wnd', 'wnd_primary_color');
+		Wnd_WP_Form::$second_color = wnd_get_option('wnd', 'wnd_second_color');
 
 		// 继承基础变量
 		parent::__construct();
@@ -32,9 +39,13 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	// ajax提交只需要设置 action 但常规表单action包含提交地址和提交方式，在类中，必须保持参数个数一致
-	public function set_action($action, $method = '') {
-		parent::add_hidden('action', $action);
-		parent::add_hidden('_ajax_nonce', wnd_create_nonce($action));
+	public function set_action($action, $method = 'POST') {
+		if ($this->is_ajax_submit) {
+			parent::add_hidden('action', $action);
+			parent::add_hidden('_ajax_nonce', wnd_create_nonce($action));
+		} else {
+			parent::set_action($action, $method);
+		}
 	}
 
 	public function set_message($message) {
@@ -44,9 +55,10 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	/**
 	 *@since 2019.05.26 表单按钮默认配色
 	 */
-	public function set_submit_button($submit_text, $submit_style = '') {
-		$submit_style = $submit_style ?: 'is-' . Wnd_Ajax_Form::$primary_color;
-		parent::set_submit_button($submit_text, $submit_style);
+	public function set_submit_button($submit_text, $submit_class = '') {
+		$submit_class = $submit_class ?: 'is-' . Wnd_WP_Form::$primary_color;
+		$submit_class .= $this->is_ajax_submit ? ' ajax-submit' : '';
+		parent::set_submit_button($submit_text, $submit_class);
 	}
 
 	/**
@@ -104,7 +116,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '短信验证码',
-				'addon' => '<button type="button" class="send-code button is-outlined is-' . Wnd_Ajax_Form::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button is-outlined is-' . Wnd_WP_Form::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
 			)
 		);
 
@@ -140,7 +152,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '邮箱验证码',
-				'addon' => '<button type="button" class="send-code button is-outlined is-' . Wnd_Ajax_Form::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button is-outlined is-' . Wnd_WP_Form::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
 			)
 		);
 
@@ -154,6 +166,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$defaults = array(
 			'label' => 'Image upland',
 			'name' => 'wnd_file',
+			'file_id' => 0,
 			'thumbnail' => WND_URL . 'static/images/default.jpg', //默认缩略图
 			'thumbnail_size' => array('height' => '100', 'width' => '100'),
 			'data' => array(),
@@ -181,7 +194,11 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$args['data']['thumbnail-height'] = $args['thumbnail_size']['height'];
 
 		// 根据user type 查找目标文件
-		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
+		if (!$args['file_id']) {
+			$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
+		} else {
+			$file_id = $args['file_id'];
+		}
 		$file_url = $file_id ? wnd_get_thumbnail_url($file_id, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']) : '';
 
 		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
@@ -206,6 +223,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$defaults = array(
 			'label' => 'File upload',
 			'name' => 'wnd_file',
+			'file_id' => 0,
 			'data' => array(),
 			'delete_button' => true,
 		);
@@ -224,7 +242,11 @@ class Wnd_Ajax_Form extends Wnd_Form {
 		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
 
 		// 根据meta key 查找目标文件
-		$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
+		if (!$args['file_id']) {
+			$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
+		} else {
+			$file_id = $args['file_id'];
+		}
 		$file_url = $file_id ? wp_get_attachment_url($file_id) : '';
 
 		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
@@ -360,7 +382,7 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	 *@since 2019.05.09
 	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
 	 */
-	protected function build_form_nonce() {
+	public function build_form_nonce() {
 
 		// 提取表单字段names 去重，排序
 		array_push($this->form_names, '_wnd_form_nonce'); // nonce自身字段也需要包含在内
@@ -395,7 +417,15 @@ class Wnd_Ajax_Form extends Wnd_Form {
 	}
 
 	protected function build_form_header() {
-		$html = '<form id="form-' . $this->id . '" action="" method="POST" data-submit-type="ajax" onsubmit="return false"';
+
+		/**
+		 *@since 2019.07.17 常规非ajax表单
+		 */
+		if (!$this->is_ajax_submit) {
+			parent::build_form_header();
+		}
+
+		$html = '<form id="form-' . $this->id . '" action="" method="POST" class="ajax-submit" onsubmit="return false"';
 
 		if ($this->with_upload) {
 			$html .= ' enctype="multipart/form-data"';

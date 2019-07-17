@@ -11,7 +11,7 @@ require WND_PATH . 'wnd-api.php'; // API
 // 表单类
 require WND_PATH . 'includes/class/class-wnd-form-data.php'; //表单数据处理类
 require WND_PATH . 'includes/class/class-wnd-form.php'; //表单生成类
-require WND_PATH . 'includes/class/class-wnd-ajax-form.php'; //Ajax表单生成类
+require WND_PATH . 'includes/class/class-wnd-wp-form.php'; //WordPress环境下的表单生成类
 require WND_PATH . 'includes/class/class-wnd-user-form.php'; //用户表单生成类
 require WND_PATH . 'includes/class/class-wnd-post-form.php'; //文章表单生成类
 
