@@ -60,7 +60,7 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 		 *attachment仅允许更新，而不能直接写入（写入应在文件上传时完成）
 		 */
 	} elseif ('attachment' == $post_type) {
-		return array('status' => 0, 'msg' => '无法直接创建attachment！');
+		return array('status' => 0, 'msg' => '未指定文件！');
 	}
 
 	/**

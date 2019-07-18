@@ -602,6 +602,18 @@ jQuery(document).ready(function($) {
 					 */
 					if (_this.parents("form").find("input[name='_post_post_type']").val() == "attachment") {
 						_this.parents("form").find("input[name='_post_ID']").val(response[i].data.id);
+
+						// 如果当前未手动设定menu order及标题，则返回自动生成的值
+						if (!_this.parents("form").find("input[name='_post_post_title']").val()) {
+							_this.parents("form").find("input[name='_post_post_title']").val(response[i].data.title);
+						}
+						if (!_this.parents("form").find("input[name='_post_menu_order']").val()) {
+							_this.parents("form").find("input[name='_post_menu_order']").val(response[i].data.menu_order);
+						}
+
+						// 上传后，若再次选择文件，则自动生成新的attachment记录，因此上传后因禁用input，如需修改应该删除当前文件
+						_this.attr("disabled", true);
+						wnd_ajax_msg("上传成功，如需更改，请删除后再重新选择文件！", "is-success", "#" + id);
 					}
 
 				}
@@ -615,7 +627,7 @@ jQuery(document).ready(function($) {
 
 	});
 
-	//  ################### 删除图片
+	//  ################### 删除文件
 	$("body").on("click", ".upload-field .delete", function() {
 
 		if (!confirm("确定删除？")) {
@@ -674,6 +686,12 @@ jQuery(document).ready(function($) {
 				}
 
 				wnd_ajax_msg("已删除！", "is-success", "#" + id);
+
+				/**
+				 *@since 2019.07.18
+				 *如果上传后，设置了禁用，当删除文件后恢复文件上传
+				 **/
+				$("#" + id + " [type='file']").attr("disabled", false);
 
 				/**
 				 *@since 2019.07.16

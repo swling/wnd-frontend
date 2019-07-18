@@ -116,6 +116,7 @@ function wnd_ajax_upload_file() {
 		}
 
 		$url = wp_get_attachment_url($file_id);
+		$post = get_post($file_id);
 
 		// 判断是否为图片
 		if (strrpos($file['type'], 'image') !== false) {
@@ -138,7 +139,13 @@ function wnd_ajax_upload_file() {
 		// 将当前上传的图片信息写入数组
 		$temp_array = array(
 			'status' => 1,
-			'data' => array('url' => $url, 'thumbnail' => $thumbnail ?? 0, 'id' => $file_id),
+			'data' => array(
+				'url' => $url,
+				'thumbnail' => $thumbnail ?? 0,
+				'id' => $file_id,
+				'title' => $post->post_title,
+				'menu_order' => $post->menu_order,
+			),
 			'msg' => '上传成功！',
 		);
 		array_push($return_array, $temp_array);

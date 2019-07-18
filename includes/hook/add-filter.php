@@ -121,11 +121,16 @@ function wnd_filter_limit_upload($file) {
 
 	if ($image_size > $limit) {
 		$file['error'] = '上传文件不得超过' . $limit . 'KB';
+		return $file;
 	}
 
 	// 文件信息
 	$info = pathinfo($file['name']);
-	$ext = '.' . $info['extension'];
+	$ext = isset($info['extension']) ? '.' . $info['extension'] : null;
+	if (!$ext) {
+		$file['error'] = '未能获取到文件拓展名';
+		return $file;
+	}
 
 	// 检测文件的类型是否是图片
 	$mimes = array('image/jpeg', 'image/png', 'image/gif', 'image/jpg');
@@ -174,6 +179,29 @@ function wnd_filter_wp_insert_post_data($data) {
 	}
 
 	return $data;
+}
+
+/**
+ *@since 2019.07.18
+ *$data = apply_filters( 'wp_insert_attachment_data', $data, $postarr );
+ *自动给上传的附件依次设置 menu_order
+ *
+ *menu order值为当前附属的post上传附件总次数
+ *@see wnd_action_add_attachment
+ */
+add_filter('wp_insert_attachment_data', 'wnd_filter_wp_insert_attachment_data', 10, 2);
+function wnd_filter_wp_insert_attachment_data($data, $postarr) {
+
+	// 如果已经指定了menu order
+	if ($data['menu_order']) {
+		return $data;
+	}
+
+	$menu_order = wnd_get_post_meta($data['post_parent'], 'attachment_records') ?: 0;
+	$data['menu_order'] = ++$menu_order;
+
+	return $data;
+
 }
 
 /**

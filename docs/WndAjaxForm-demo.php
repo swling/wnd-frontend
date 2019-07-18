@@ -212,6 +212,7 @@ function _wnd_demo_form() {
 				'user_id' => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
 			),
 			'delete_button' => true,
+			'disabled' => false,
 			'required' => 'required',
 		)
 	);
@@ -229,6 +230,7 @@ function _wnd_demo_form() {
 				'user_id' => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
 			),
 			'delete_button' => true,
+			'disabled' => false,
 			'required' => 'required',
 		)
 	);

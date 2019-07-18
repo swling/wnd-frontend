@@ -307,6 +307,7 @@ function _wnd_post_thumbnail($post_id, $width, $height) {
 /**
  *@since 2019.07.16
  *上传或编辑附件信息
+ *指定$args['attachment_id'] 表示为编辑
  */
 function _wnd_attachment_form($args) {
 
@@ -317,11 +318,18 @@ function _wnd_attachment_form($args) {
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	// 构建父级表单字段，以供文件ajax上传归属到父级post
+	/**
+	 * 构建父级表单字段，以供文件ajax上传归属到父级post
+	 * 附件不支持文件替换，因此一旦指定附件id，则无法上传只可编辑信息
+	 */
 	$parent_post_form = new Wnd_WP_Form();
+
+	// 文件上传字段可能被前端设置disabled属性，导致无法通过表单一致性校验，故此设置同名固定隐藏字段
+	$parent_post_form->add_hidden('wnd_file', '');
 	$parent_post_form->add_file_upload(
 		array(
 			'label' => '附件上传',
+			'disabled' => $args['attachment_id'] ? 'disabled' : false,
 			'file_id' => $args['attachment_id'],
 
 			/**
@@ -338,7 +346,21 @@ function _wnd_attachment_form($args) {
 
 	// 上传媒体信息表单字段。attachment 无法也不应创建草稿, 此处的post_ID将根据上传文件后，ajax返回值获取
 	$attachment_post_form = new Wnd_Post_Form('attachment', $args['attachment_id'], false);
+	if ($args['attachment_id']) {
+		$attachment_post_form->set_message('如需更改文件，请先删除后重新选择文件！');
+	}
 	$attachment_post_form->add_post_title('文件名称');
+	$attachment_post_form->add_html('<div class="field is-horizontal"><div class="field-body">');
+	$attachment_post_form->add_post_menu_order('排序', "输入排序");
+	$attachment_post_form->add_text(
+		array(
+			'label' => '文件ID',
+			'name' => '_post_ID',
+			'value' => $args['attachment_id'],
+			'disabled' => true,
+		)
+	);
+	$attachment_post_form->add_html('</div></div>');
 	$attachment_post_form->add_post_content(true, false, '简介 *');
 	$attachment_post_form->set_submit_button("保存");
 

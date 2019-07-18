@@ -182,6 +182,7 @@ class Wnd_Form {
 			'file_id' => 0,
 			'data' => array(),
 			'delete_button' => true,
+			'disabled' => false,
 		);
 		$args = array_merge($defaults, $args);
 
@@ -196,6 +197,7 @@ class Wnd_Form {
 			'file_id' => $args['file_id'],
 			'data' => $args['data'],
 			'delete_button' => $args['delete_button'],
+			'disabled' => $args['disabled'],
 		));
 		if (!$this->with_upload) {
 			$this->with_upload = true;
@@ -215,6 +217,7 @@ class Wnd_Form {
 			'data' => array(),
 			'required' => null,
 			'delete_button' => true,
+			'disabled' => false,
 		);
 		$args = array_merge($defaults, $args);
 
@@ -228,6 +231,7 @@ class Wnd_Form {
 			'data' => $args['data'],
 			'required' => $args['required'],
 			'delete_button' => $args['delete_button'],
+			'disabled' => $args['disabled'],
 		));
 		if (!$this->with_upload) {
 			$this->with_upload = true;
@@ -431,7 +435,7 @@ class Wnd_Form {
 		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['height'] . '"></a>';
 		$html .= $input_value['delete_button'] ? '<a class="delete" data-id="' . $id . '" data-file_id="' . $input_value['file_id'] . '"></a>' : '';
 		$html .= '<div class="file">';
-		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . 'accept="image/*"' . $this->get_required($input_value) . '>';
+		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . 'accept="image/*"' . $this->get_required($input_value) . $this->get_disabled($input_value) . '>';
 		$html .= '</div>';
 		$html .= '</div>';
 
@@ -465,7 +469,7 @@ class Wnd_Form {
 		$html .= '<div class="column">';
 		$html .= '<div class="file has-name is-fullwidth">';
 		$html .= '<label class="file-label">';
-		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . $this->get_required($input_value) . '>';
+		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . $this->get_required($input_value) . $this->get_disabled($input_value) . '>';
 		$html .= '<span class="file-cta">';
 		$html .= '<span class="file-icon"><i class="fa fa-upload"></i></span>';
 		$html .= '<span class="file-label">' . $input_value['label'] . '</span>';

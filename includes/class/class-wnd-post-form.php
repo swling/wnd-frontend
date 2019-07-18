@@ -232,6 +232,24 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		);
 	}
 
+	/**
+	 *@since 2019.07.17
+	 *设置post menu_order
+	 *常用菜单、附件等排序
+	 **/
+	public function add_post_menu_order($label = '排序', $placeholder = "输入排序") {
+		parent::add_number(
+			array(
+				'name' => '_post_menu_order',
+				'value' => $this->post->menu_order ?: '',
+				'placeholder' => 'menu_order',
+				'label' => $label,
+				'autofocus' => 'autofocus',
+				'required' => false,
+			)
+		);
+	}
+
 	public function add_post_price($label = '', $placeholder = '价格') {
 		parent::add_text(
 			array(
@@ -333,7 +351,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			$html .= '</div>';
 		}
 
-		$html .= '<div class="ajax-message"></div>';
+		$html .= '<div class="ajax-message">' . $this->message . '</div>';
 
 		$this->html = $html;
 	}

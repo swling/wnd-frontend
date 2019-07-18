@@ -257,6 +257,33 @@ function wnd_action_post_updated($post_ID, $post_after, $post_before) {
 }
 
 /**
+ *@since 2019.07.18
+ *do_action( 'add_attachment', $post_ID );
+ *新增上传附件时
+ */
+add_action('add_attachment', 'wnd_action_add_attachment', 10, 1);
+function wnd_action_add_attachment($post_ID) {
+
+	$post = get_post($post_ID);
+
+	/**
+	 *记录附件children_max_menu_order、删除附件时不做修改
+	 *记录值用途：读取后，自动给上传附件依次设置menu_order，以便按menu_order排序
+	 *@see wnd_filter_wp_insert_attachment_data
+	 *
+	 *
+	 *典型场景：
+	 *删除某个特定附件后，需要新上传附件，并恢复原有排序。此时要求新附件menu_order与删除的附件一致
+	 *通过_wnd_attachment_form()上传文件，并编辑menu_order即可达到上述要求
+	 */
+	if ($post->post_parent) {
+		wnd_inc_wnd_post_meta($post->post_parent, 'attachment_records');
+
+	}
+
+}
+
+/**
  * 禁止WordPress原生登录和注册
  *@since 2019.03.01
  */
