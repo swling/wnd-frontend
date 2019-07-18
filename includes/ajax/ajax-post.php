@@ -39,7 +39,6 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 
 	// 组合数据
 	$update_id = $post_array['ID'] ?? 0;
-	$post_parent = $post_array['post_parent'] ?? 0;
 	$post_type = $post_array['post_type'] ?? 'post';
 	$post_name = $post_array['post_name'] ?? uniqid();
 
