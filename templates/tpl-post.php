@@ -350,7 +350,7 @@ function _wnd_attachment_form($args) {
 	// 上传媒体信息表单字段。attachment 无法也不应创建草稿, 此处的post_ID将根据上传文件后，ajax返回值获取
 	$attachment_post_form = new Wnd_Post_Form('attachment', $attachment_id, false);
 	if ($attachment_id) {
-		$attachment_post_form->set_message('如需更改文件，请先删除后重新选择文件！');
+		$attachment_post_form->set_message('<div class="message is-' . Wnd_WP_Form::$second_color . '"><div class="message-body">如需更改文件，请先删除后重新选择文件！</div></div>');
 	}
 	$attachment_post_form->add_post_title('文件名称');
 	$attachment_post_form->add_html('<div class="field is-horizontal"><div class="field-body">');

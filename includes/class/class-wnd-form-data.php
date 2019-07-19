@@ -38,8 +38,9 @@ class Wnd_Form_Data {
 			return false;
 		}
 
-		// 提取POST $_FILES数组键值并排序
+		// 提取POST $_FILES数组键值，去重并排序
 		$form_names = array_merge(array_keys($_POST), array_keys($_FILES));
+		$form_names = array_unique($form_names);
 		sort($form_names);
 
 		// 校验数组键值是否一直
