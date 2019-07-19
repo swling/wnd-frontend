@@ -308,6 +308,17 @@ function _wnd_post_thumbnail($post_id, $width, $height) {
  *@since 2019.07.16
  *上传或编辑附件信息
  *指定$args['attachment_id'] 表示为编辑
+ *
+ *原理：
+ *基于 post parent创建文件上传字段，ajax上传附件并附属到指定post parent
+ *attachment post在上传文件后，由WordPress创建
+ *后端将附件文件attachment post信息返回
+ *@see wnd_ajax_upload_file()
+ *
+ *创建空白的attachment post form
+ *利用JavaScript捕获上传文件后返回的attachment post信息
+ *JavaScript动态修改当前文章表单相关值，从而实现上传文件后，即可对对应附件信息进行编辑
+ *
  */
 function _wnd_attachment_form($args) {
 
