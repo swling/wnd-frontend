@@ -501,6 +501,10 @@ jQuery(document).ready(function($) {
 		//创建表单
 		var form_data = new FormData();
 
+		// 获取本地上传文件的名称，并去除拓展
+		var filename = $(this).val().split('\\').pop();
+		filename = filename.substring(0, filename.lastIndexOf('.'));
+
 		// 获取文件，支持多文件上传
 		for (var i = 0; i < $(this).get(0).files.length; ++i) {
 			form_data.append("wnd_file[" + i + "]", $(this).prop("files")[i]);
@@ -603,22 +607,36 @@ jQuery(document).ready(function($) {
 					if (_this.parents("form").find("input[name='_post_post_type']").val() == "attachment") {
 						_this.parents("form").find("input[name='_post_ID']").val(response[i].data.id);
 
-						// 如果当前未手动设定menu order及标题，则返回自动生成的值
+						/**
+						 *如果当前未手动设定：标题、别名、menu order，则返回自动生成的值
+						 *由于插件对上传文件做了自动文件名加密处理，此处自动设置为本地文件名
+						 */
 						if (!_this.parents("form").find("input[name='_post_post_title']").val()) {
-							_this.parents("form").find("input[name='_post_post_title']").val(response[i].data.title);
+							_this.parents("form").find("input[name='_post_post_title']").val(filename);
 						}
-						if (!_this.parents("form").find("input[name='_post_menu_order']").val()) {
-							_this.parents("form").find("input[name='_post_menu_order']").val(response[i].data.menu_order);
+						if (!_this.parents("form").find("input[name='_post_post_name']").val()) {
+							_this.parents("form").find("input[name='_post_post_name']").val(response[i].data.post.post_name);
 						}
 
-						// 上传后，若再次选择文件，则自动生成新的attachment记录，因此上传后因禁用input，如需修改应该删除当前文件
+						if (!_this.parents("form").find("input[name='_post_menu_order']").val()) {
+							_this.parents("form").find("input[name='_post_menu_order']").val(response[i].data.post.menu_order);
+						}
+
+						/** 
+						 *上传后，若再次选择文件，则将自动生成新的attachment记录，当前表单信息也将更改为最新上传的附件
+						 *因此上传后因禁用input，避免误操作，如需更换文件，应该先删除当前文件
+						 */
 						_this.attr("disabled", true);
 						wnd_ajax_msg("上传成功，如需更改，请删除后再重新选择文件！", "is-success", "#" + id);
-					}
 
+						// 上传后，自动提交保存媒体信息
+						wnd_ajax_submit(_this.parents("form").attr("id"));
+
+					}
 				}
 
 			},
+
 			// 错误
 			error: function() {
 				wnd_ajax_msg("系统错误！", "is-danger", "#" + id);

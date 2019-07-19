@@ -116,7 +116,6 @@ function wnd_ajax_upload_file() {
 		}
 
 		$url = wp_get_attachment_url($file_id);
-		$post = get_post($file_id);
 
 		// 判断是否为图片
 		if (strrpos($file['type'], 'image') !== false) {
@@ -143,8 +142,7 @@ function wnd_ajax_upload_file() {
 				'url' => $url,
 				'thumbnail' => $thumbnail ?? 0,
 				'id' => $file_id,
-				'title' => $post->post_title,
-				'menu_order' => $post->menu_order,
+				'post' => get_post($file_id),
 			),
 			'msg' => '上传成功！',
 		);

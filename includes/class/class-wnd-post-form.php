@@ -242,10 +242,27 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			array(
 				'name' => '_post_menu_order',
 				'value' => $this->post->menu_order ?: '',
-				'placeholder' => 'menu_order',
+				'placeholder' => $placeholder,
 				'label' => $label,
 				'autofocus' => 'autofocus',
 				'required' => false,
+			)
+		);
+	}
+
+	/**
+	 *@since 2019.07.18
+	 *设置post_name 固定链接别名
+	 **/
+	public function add_post_name($label = '别名', $placeholder = "文章固定连接别名") {
+		parent::add_text(
+			array(
+				'name' => '_post_post_name',
+				'value' => $this->post->post_name ?: '',
+				'placeholder' => $placeholder,
+				'label' => $label,
+				'autofocus' => 'autofocus',
+				'required' => true,
 			)
 		);
 	}
