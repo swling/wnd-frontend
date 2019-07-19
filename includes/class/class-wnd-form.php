@@ -36,11 +36,13 @@ class Wnd_Form {
 		'value' => '',
 		'label' => null,
 		'options' => array(), //value of select/radio. Example: array(label=>value)
-		'required' => false,
+		'checked' => null, // checked value of select/radio; bool of checkbox
+
 		'placeholder' => '',
-		'checked' => null, // checked value od select/radio/checkbox
+		'required' => false,
 		'disabled' => false,
 		'autofocus' => false,
+		'readonly' => false,
 
 		'id' => null,
 		'class' => null,
@@ -340,8 +342,8 @@ class Wnd_Form {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
 		$html .= '<div class="control">';
-		$html .= '<div class="select"' . $this->get_class($input_value) . '>';
-		$html .= '<select name="' . $input_value['name'] . '"' . $this->get_required($input_value) . ' >';
+		$html .= '<div' . $this->get_id($input_value) . ' class="select"' . $this->get_class($input_value) . '>';
+		$html .= '<select name="' . $input_value['name'] . '"' . $this->get_attr($input_value) . ' >';
 		foreach ($input_value['options'] as $key => $value) {
 			$checked = ($input_value['checked'] == $value) ? ' selected="selected"' : '';
 			$html .= '<option value="' . $value . '"' . $checked . '>' . $key . '</option>';
@@ -358,7 +360,7 @@ class Wnd_Form {
 		$html = '<div class="field">';
 		foreach ($input_value['options'] as $key => $value) {
 			$input_id = md5($key);
-			$html .= '<input type="radio" id="' . $input_id . '" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $value . '"' . $this->get_required($input_value);
+			$html .= '<input type="radio" id="' . $input_id . '" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $value . '"' . $this->get_attr($input_value);
 			$html .= ($input_value['checked'] == $value) ? ' checked="checked" >' : ' >';
 
 			$html .= '<label for="' . $input_id . '" class="radio">' . $key . '</label>';
@@ -386,14 +388,14 @@ class Wnd_Form {
 		if ($input_value['has_icons']) {
 
 			$html .= $input_value['addon'] ? '<div class="control is-expanded has-icons-' . $input_value['has_icons'] . '">' : '<div class="control has-icons-' . $input_value['has_icons'] . '">';
-			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder'] . '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . $this->get_disabled($input_value) . '>';
+			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_attr($input_value) . '>';
 			$html .= '<span class="icon is-' . $input_value['has_icons'] . '">' . $input_value['icon'] . '</span>';
 			$html .= '</div>';
 
 		} else {
 
 			$html .= $input_value['addon'] ? '<div class="control is-expanded">' : '<div class="control">';
-			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" placeholder="' . $input_value['placeholder'] . '"' . $this->get_autofocus($input_value) . ' value="' . $this->get_value($input_value) . '"' . $this->get_required($input_value) . $this->get_disabled($input_value) . '>';
+			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_attr($input_value) . '>';
 			$html .= '</div>';
 
 		}
@@ -409,7 +411,7 @@ class Wnd_Form {
 	protected function build_checkbox($input_value) {
 
 		$html = '<div class="field">';
-		$html .= '<input type="checkbox" id="' . $input_value['name'] . '" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $input_value['value'] . '"' . $this->get_required($input_value);
+		$html .= '<input' . $this->get_id($input_value) . ' type="checkbox" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_attr($input_value);
 		$html .= $input_value['checked'] ? ' checked="checked" >' : ' >';
 		$html .= '<label  for="' . $input_value['name'] . '" class="checkbox">' . $input_value['label'] . '</label>';
 		$html .= '</div>';
@@ -435,7 +437,7 @@ class Wnd_Form {
 		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['height'] . '"></a>';
 		$html .= $input_value['delete_button'] ? '<a class="delete" data-id="' . $id . '" data-file_id="' . $input_value['file_id'] . '"></a>' : '';
 		$html .= '<div class="file">';
-		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . 'accept="image/*"' . $this->get_required($input_value) . $this->get_disabled($input_value) . '>';
+		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . 'accept="image/*"' . $this->get_attr($input_value) . '>';
 		$html .= '</div>';
 		$html .= '</div>';
 
@@ -469,7 +471,7 @@ class Wnd_Form {
 		$html .= '<div class="column">';
 		$html .= '<div class="file has-name is-fullwidth">';
 		$html .= '<label class="file-label">';
-		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . $this->get_required($input_value) . $this->get_disabled($input_value) . '>';
+		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . $this->get_attr($input_value) . '>';
 		$html .= '<span class="file-cta">';
 		$html .= '<span class="file-icon"><i class="fa fa-upload"></i></span>';
 		$html .= '<span class="file-label">' . $input_value['label'] . '</span>';
@@ -500,7 +502,7 @@ class Wnd_Form {
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
-		$html .= '<textarea' . $this->get_id($input_value) . ' class="textarea' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '"' . $this->get_required($input_value) . $this->get_disabled($input_value) . ' placeholder="' . $input_value['placeholder'] . '" >' . $input_value['value'] . '</textarea>';
+		$html .= '<textarea' . $this->get_id($input_value) . ' class="textarea' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '"' . $this->get_attr($input_value) . '>' . $this->get_value($input_value) . '</textarea>';
 		$html .= '</div>';
 		return $html;
 	}
@@ -522,42 +524,52 @@ class Wnd_Form {
 	 *辅助函数
 	 */
 	protected function get_value($input_value) {
-		return $input_value['value'];
-	}
-
-	protected function get_required($input_value) {
-		if ($input_value['required']) {
-			return ' required="required"';
-		}
-		return '';
+		return $input_value['value'] ?? '';
 	}
 
 	protected function get_id($input_value) {
-		if ($input_value['id']) {
+		if ($input_value['id'] ?? false) {
 			return ' id="' . $input_value['id'] . '"';
 		}
 		return '';
 	}
 
-	protected function get_autofocus($input_value) {
-		if ($input_value['autofocus']) {
-			return ' autofocus="autofocus"';
-		}
-		return '';
-	}
-
 	protected function get_class($input_value) {
-		if ($input_value['class']) {
+		if ($input_value['class'] ?? false) {
 			return ' ' . $input_value['class'];
 		}
-		return '';
 	}
 
-	protected function get_disabled($input_value) {
-		if ($input_value['disabled']) {
-			return ' disabled="disabled"';
+	/**
+	 *@since 2019.07.19
+	 *统一封装获取字段attribute
+	 *不含：id、class、value
+	 */
+	protected function get_attr($input_value) {
+
+		$attr = '';
+
+		if ($input_value['readonly'] ?? false) {
+			$attr .= ' readonly="readonly"';
 		}
-		return '';
+
+		if ($input_value['disabled'] ?? false) {
+			$attr .= ' disabled="disabled"';
+		}
+
+		if ($input_value['autofocus'] ?? false) {
+			$attr .= ' autofocus="autofocus"';
+		}
+
+		if ($input_value['required'] ?? false) {
+			$attr .= ' required="required"';
+		}
+
+		if ($input_value['placeholder'] ?? false) {
+			$attr .= ' placeholder="' . $input_value['placeholder'] . '"';
+		}
+
+		return $attr;
 	}
 
 	protected function get_submit_class() {

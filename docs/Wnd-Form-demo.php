@@ -43,6 +43,7 @@ $form->add_text(
 		'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 		'autofocus' => 'autofocus',
 		'required' => true,
+		'readonly' => false,
 	)
 );
 
