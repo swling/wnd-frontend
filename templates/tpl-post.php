@@ -313,11 +313,21 @@ function _wnd_post_thumbnail($post_id, $width, $height) {
  *基于 post parent创建文件上传字段，ajax上传附件并附属到指定post parent
  *attachment post在上传文件后，由WordPress创建
  *后端将附件文件attachment post信息返回
- *@see wnd_ajax_upload_file()
+ *@see php: wnd_ajax_upload_file()
  *
- *创建空白的attachment post form
+ *创建父级文件上传字段的同时，创建空白的attachment post form（实际表单是通过这两个表单的字段重新形成）
  *利用JavaScript捕获上传文件后返回的attachment post信息
- *JavaScript动态修改当前文章表单相关值，从而实现上传文件后，即可对对应附件信息进行编辑
+ *JavaScript捕获新上传的attachment post信息后，首先判断当前表单对应字段是否已有信息，若有值，则不作修改。ID除外。
+ *完成对表单字段信息的动态替换后，自动提交一次
+ *若需修改信息，则编辑对应字段，手动提交一次
+ *@see JavaScript: wnd_ajax_upload_file()
+ *
+ *文件替换：
+ *指定attachment_id，并调用本函数，为防止上传附件后忘记删除原有文件（操作直观上，这是一次替换），此时文件字段为禁用状态
+ *删除原有文件后，前端恢复上传
+ *选择新的文件，则重复上述ajax文件上传过程，即此时表单已经动态更改为编辑最新上传的attachment post
+ *通过保留相同的post_name(别名)、及menu_order（排序）可实现用户端的无缝替换文件。
+ *本质上，替换文件，是删除后的新建，是全新的attachment post
  *
  */
 function _wnd_attachment_form($args) {
@@ -334,7 +344,6 @@ function _wnd_attachment_form($args) {
 
 	/**
 	 * 构建父级表单字段，以供文件ajax上传归属到父级post
-	 * 附件不支持文件替换，因此一旦指定附件id，则无法上传只可编辑信息
 	 */
 	$parent_post_form = new Wnd_WP_Form();
 
@@ -358,7 +367,10 @@ function _wnd_attachment_form($args) {
 		)
 	);
 
-	// 上传媒体信息表单字段。attachment 无法也不应创建草稿, 此处的post_ID将根据上传文件后，ajax返回值获取
+	/**
+	 *上传媒体信息表单字段。attachment 无法也不应创建草稿
+	 *此处的attachment post_ID将根据上传文件后，ajax返回值获取
+	 */
 	$attachment_post_form = new Wnd_Post_Form('attachment', $attachment_id, false);
 	if ($attachment_id) {
 		$attachment_post_form->set_message('<div class="message is-' . Wnd_WP_Form::$second_color . '"><div class="message-body">如需更改文件，请先删除后重新选择文件！</div></div>');
