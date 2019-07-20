@@ -65,7 +65,7 @@ wp_post_meta: price (价格)
 wp_post_meta: attachment_records (上传到当前文章的附件总次数，含已删除，用于给附件自动设置 menu_order)
 
 ## wnd自定义字段
-wnd_meta: file (存储上传附件的id)
+wnd_meta: file (存储付费附件的id)
 wnd_meta: download_count (下载统计)
 wnd_meta: order_count (订单统计，含15分钟以内未完成的订单)
 wnd_meta：gallery (文章相册，数组形式存放附件id)

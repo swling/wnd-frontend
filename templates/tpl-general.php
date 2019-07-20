@@ -27,38 +27,56 @@ function _wnd_breadcrumb() {
 	// 内容页
 	if (is_single()) {
 
-		$terms_link = '';
+		$html .= '<li><a href="' . get_post_type_archive_link($queried_object->post_type) . '">' . get_post_type_object($queried_object->post_type)->label . '</a></li>';
 
 		$taxonomies = get_object_taxonomies($queried_object->post_type, $output = 'object');
 		if ($taxonomies) {
+			// 如果存在父级则调用父级的分类信息
+			$post_id = $queried_object->post_parent ?: $queried_object->ID;
+
 			foreach ($taxonomies as $taxonomy) {
 
 				if (!is_taxonomy_hierarchical($taxonomy->name) or !$taxonomy->public) {
 					continue;
 				}
 
-				$terms_link .= get_the_term_list($queried_object->ID, $taxonomy->name, $before = '<li>', $sep = '', $after = '</li>');
+				$html .= get_the_term_list($queried_object->ID, $taxonomy->name, '<li>', '', '</li>');
 
 			}
 			unset($taxonomy);
 		}
 
-		$html .= $terms_link . '<li class="is-active"><a href="#">' . get_post_type_object($queried_object->post_type)->label . '详情</a></li>';
+		// 父级post
+		if ($queried_object->post_parent) {
+			$html .= '<li><a href="' . get_permalink($queried_object->post_parent) . '">' . get_the_title($queried_object->post_parent) . '</a></li>';
+		}
+
+		$html .= '<li class="is-active"><a>详情</a></li>';
 
 		//页面
 	} elseif (is_page()) {
 
-		$html .= '<li class="is-active"><a href="#">' . $queried_object->post_title . '</a></li>';
+		// 父级page
+		if ($queried_object->post_parent) {
+			$html .= '<li><a href="' . get_permalink($queried_object->post_parent) . '">' . get_the_title($queried_object->post_parent) . '</a></li>';
+		}
 
-		//归档页
+		$html .= '<li class="is-active"><a>' . $queried_object->post_title . '</a></li>';
+
+		//post类型归档
+	} elseif (is_post_type_archive()) {
+
+		$html .= '<li class="is-active"><a>' . $queried_object->label . '</a></li>';
+
+		//其他归档页
 	} elseif (is_archive()) {
 
 		$args = http_build_query(array('taxonomy' => $queried_object->taxonomy, 'orderby' => 'name'));
 		$html .= '<li><a onclick="wnd_ajax_modal(\'_wnd_terms_list\',\'' . $args . '\')">' . get_taxonomy($queried_object->taxonomy)->label . '</a></li>';
-		$html .= '<li class="is-active"><a href="#">' . $queried_object->name . '</a></li>';
+		$html .= '<li class="is-active"><a>' . $queried_object->name . '</a></li>';
 
 	} else {
-		$html .= '<li class="is-active"><a href="#">' . wp_title('', false) . '</a></li>';
+		$html .= '<li class="is-active"><a>' . wp_title('', false) . '</a></li>';
 	}
 
 	$html .= '</ul>';
