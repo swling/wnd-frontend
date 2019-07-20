@@ -132,17 +132,8 @@ function wnd_filter_limit_upload($file) {
 		return $file;
 	}
 
-	// 检测文件的类型是否是图片
-	$mimes = array('image/jpeg', 'image/png', 'image/gif', 'image/jpg');
-	if (in_array($file['type'], $mimes)) {
-
-		$file['name'] = uniqid() . $ext;
-
-	} else {
-
-		// 非图片文件MD5重命名（用于付费下载加密）
-		$file['name'] = md5(wnd_random(16) . time()) . $ext;
-	}
+	// 重命名文件名为随机码：用于美化附件slug，同时实现基本的文件路径加密
+	$file['name'] = uniqid('file') . $ext;
 
 	return $file;
 
