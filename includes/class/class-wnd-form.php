@@ -413,7 +413,7 @@ class Wnd_Form {
 		$html = '<div class="field">';
 		$html .= '<input' . $this->get_id($input_value) . ' type="checkbox" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_attr($input_value);
 		$html .= $input_value['checked'] ? ' checked="checked" >' : ' >';
-		$html .= '<label  for="' . $input_value['name'] . '" class="checkbox">' . $input_value['label'] . '</label>';
+		$html .= '<label  for="' . $input_value['id'] . '" class="checkbox">' . $input_value['label'] . '</label>';
 		$html .= '</div>';
 		return $html;
 	}

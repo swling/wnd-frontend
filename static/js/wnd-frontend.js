@@ -920,9 +920,9 @@ jQuery(document).ready(function($) {
 	/**
 	 *@since 2019.02.09 表单改变时，移除警示状态
 	 */
-	$("body").on("input", "input,textarea", function() {
-		$(this).removeClass("is-danger");
-	});
+	// $("body").on("input", "input,textarea", function() {
+	// 	$(this).removeClass("is-danger");
+	// });
 
 	/**
 	 *@since 2019.03.28 表单改变时，移除提交按钮禁止状态,恢复提交文字
