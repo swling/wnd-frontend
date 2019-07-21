@@ -896,7 +896,7 @@ function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
 			 *	);
 			 *	$query = new WP_Query( $args );
 			 */
-			if (is_array($orderby) and isset($args['meta_key'])) {
+			if (is_array($orderby) and ($args['orderby'] == 'meta_value_num' or $args['orderby'] == 'meta_value')) {
 
 				if ($orderby['meta_key'] == $args['meta_key']) {
 					$active = 'class="is-active"';
@@ -919,8 +919,6 @@ function _wnd_orderby_filter($args, $ajax_call = '', $ajax_container = '') {
 				$ajax_args['orderby'] = $orderby['orderby'];
 				$ajax_args['meta_key'] = $orderby['meta_key'];
 			} else {
-				// 常规排序，移除meta_key，保留参数会导致无法判断当前激活条件（is-active）
-				unset($ajax_args['meta_key']);
 				$ajax_args['orderby'] = $orderby;
 			}
 
