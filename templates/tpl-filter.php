@@ -47,7 +47,8 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
 		// 根据类型名，获取完整的类型信息
 		$post_type = get_post_type_object($post_type);
 
-		$active = (isset($args['post_type']) and $args['post_type'] == $post_type->name) ? 'class="is-active"' : '';
+		$class = 'post-type-' . $post_type->name;
+		$class .= (isset($args['post_type']) and $args['post_type'] == $post_type->name) ? ' is-active' : '';
 
 		if (wnd_doing_ajax()) {
 
@@ -60,9 +61,9 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
 			$ajax_args = http_build_query($ajax_args);
 
 			if ($ajax_type == 'modal') {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
+				$html .= '<li class="' . $class . '"><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
 			} else {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
+				$html .= '<li class="' . $class . '"><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $post_type->label . '</a></li>';
 			}
 
 		} else {
@@ -97,7 +98,7 @@ function _wnd_post_types_filter($args = array(), $ajax_call = '', $ajax_containe
 			}
 			unset($key, $value);
 
-			$html .= '<li ' . $active . '><a href="' . add_query_arg('type', $post_type->name, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $post_type->label . '</a></li>';
+			$html .= '<li class="' . $class . '"><a href="' . add_query_arg('type', $post_type->name, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $post_type->label . '</a></li>';
 		}
 
 	}
@@ -172,7 +173,8 @@ function _wnd_post_status_filter($args = array(), $ajax_call = '', $ajax_contain
 	// 输出tabs
 	foreach ($args['wnd_post_status'] as $label => $post_status) {
 
-		$active = (isset($args['post_status']) and $args['post_status'] == $post_status) ? 'class="is-active"' : '';
+		$class = 'post-status-' . $post_status;
+		$class .= (isset($args['post_status']) and $args['post_status'] == $post_status) ? ' is-active' : '';
 
 		if (wnd_doing_ajax()) {
 
@@ -188,14 +190,14 @@ function _wnd_post_status_filter($args = array(), $ajax_call = '', $ajax_contain
 			$ajax_args = http_build_query($ajax_args);
 
 			if ($ajax_type == 'modal') {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $label . '</a></li>';
+				$html .= '<li class="' . $class . '"><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $label . '</a></li>';
 			} else {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $label . '</a></li>';
+				$html .= '<li class="' . $class . '"><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $label . '</a></li>';
 			}
 
 		} else {
 
-			$html .= '<li ' . $active . '><a href="' . add_query_arg('_post_post_status', $post_status, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $label . '</a></li>';
+			$html .= '<li class="' . $class . '"><a href="' . add_query_arg('_post_post_status', $post_status, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $label . '</a></li>';
 		}
 
 	}
@@ -327,7 +329,7 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 		// 输出tabs
 		foreach (get_terms(array('taxonomy' => $taxonomy, 'parent' => 0, 'orderby' => 'count', 'order' => 'DESC')) as $term) {
 
-			$active = '';
+			$class = 'term-id-' . $term->term_id;
 
 			// 遍历当前tax query查询是否匹配当前tab
 			if (isset($args['tax_query'])) {
@@ -343,7 +345,7 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 					$current_parent = get_term($tax_query['terms'])->parent;
 
 					if ($tax_query['terms'] == $term->term_id or $term->term_id == $current_parent) {
-						$active = 'class="is-active"';
+						$class .= ' is-active';
 						// 当前一级分类处于active，对应term id将写入父级数组
 						$current_term_parent[$taxonomy] = $term->term_id;
 					}
@@ -380,16 +382,16 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 				$ajax_args = http_build_query($ajax_args);
 
 				if ($ajax_type == 'modal') {
-					$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
+					$html .= '<li class="' . $class . '"><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
 				} else {
-					$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
+					$html .= '<li class="' . $class . '"><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
 				}
 
 			} else {
 				/**
 				 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 				 */
-				$html .= '<li ' . $active . '><a href="' . add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $term->name . '</a></li>';
+				$html .= '<li class="' . $class . '"><a href="' . add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $term->name . '</a></li>';
 			}
 
 		}
@@ -419,7 +421,7 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 		$html .= '<ul class="tab">';
 		foreach ($child_terms as $child_term) {
 
-			$child_active = '';
+			$child_class = 'term-id-' . $child_term->term_id;
 
 			// 遍历当前tax query查询是否匹配当前tab
 			if (isset($args['tax_query'])) {
@@ -427,7 +429,7 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 				foreach ($args['tax_query'] as $tax_query) {
 
 					if ($tax_query['terms'] == $child_term->term_id) {
-						$child_active = 'class="is-active"';
+						$child_class .= ' is-active';
 					}
 				}
 				unset($tax_query);
@@ -461,16 +463,16 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 				$ajax_args = http_build_query($ajax_args);
 
 				if ($ajax_type == 'modal') {
-					$html .= '<li ' . $child_active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $child_term->name . '</a></li>';
+					$html .= '<li class="' . $child_class . '"><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $child_term->name . '</a></li>';
 				} else {
-					$html .= '<li ' . $child_active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $child_term->name . '</a></li>';
+					$html .= '<li class="' . $child_class . '"><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $child_term->name . '</a></li>';
 				}
 
 			} else {
 				/**
 				 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 				 */
-				$html .= '<li ' . $child_active . '><a href="' . add_query_arg('_term_' . $taxonomy, $child_term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $child_term->name . '</a></li>';
+				$html .= '<li class="' . $child_class . '"><a href="' . add_query_arg('_term_' . $taxonomy, $child_term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $child_term->name . '</a></li>';
 			}
 		}
 		unset($child_term);
@@ -591,12 +593,14 @@ function _wnd_tags_filter($args = array(), $ajax_call = '', $ajax_container = ''
 	foreach ($tags as $tag) {
 
 		$term = isset($category_id) ? get_term($tag->tag_id) : $tag;
-		$active = '';
 
 		// 遍历当前tax query查询是否匹配当前tab
+		$class = '';
 		if (isset($args['tax_query'])) {
 
 			foreach ($args['tax_query'] as $tax_query) {
+
+				$class .= 'term-id-' . $term->term_id;
 
 				// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
 				if (!is_array($tax_query)) {
@@ -604,7 +608,7 @@ function _wnd_tags_filter($args = array(), $ajax_call = '', $ajax_container = ''
 				}
 
 				if ($tax_query['terms'] == $term->term_id) {
-					$active = 'class="is-active"';
+					$class .= ' is-active';
 				}
 			}
 			unset($tax_query);
@@ -639,16 +643,16 @@ function _wnd_tags_filter($args = array(), $ajax_call = '', $ajax_container = ''
 			$ajax_args = http_build_query($ajax_args);
 
 			if ($ajax_type == 'modal') {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
+				$html .= '<li class="' . $class . '"><a onclick="wnd_ajax_modal(\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
 			} else {
-				$html .= '<li ' . $active . '><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
+				$html .= '<li class="' . $class . '"><a onclick="wnd_ajax_embed(\'' . $ajax_container . '\',\'' . $ajax_call . '\',\'' . $ajax_args . '\');">' . $term->name . '</a></li>';
 			}
 
 		} else {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$html .= '<li ' . $active . '><a href="' . add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $term->name . '</a></li>';
+			$html .= '<li class="' . $class . '"><a href="' . add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($args['wnd_remove_query_arg'])) . '">' . $term->name . '</a></li>';
 		}
 
 	}
