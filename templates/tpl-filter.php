@@ -1202,37 +1202,43 @@ function _wnd_posts_filter($args = array()) {
 	 *@since 2019.07.10
 	 *单独定义筛选条件容器，若无任何可用筛选条件，则不输出对应HTML容器
 	 **/
-	$filter_html = '';
+	$tabs = '';
 	// post types 切换
 	if (is_array($args['wnd_post_types']) and count($args['wnd_post_types']) > 1) {
-		$filter_html .= _wnd_post_types_filter($args, '_wnd_posts_filter', '#wnd-filter');
+		$tabs .= _wnd_post_types_filter($args, '_wnd_posts_filter', '#wnd-filter');
 	}
 
 	// 分类 切换
-	$filter_html .= _wnd_categories_filter($args, '_wnd_posts_filter', '#wnd-filter');
+	$tabs .= _wnd_categories_filter($args, '_wnd_posts_filter', '#wnd-filter');
 
 	// 获取分类下关联的标签
-	$filter_html .= !$args['wnd_only_cat'] ? _wnd_tags_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
+	$tabs .= !$args['wnd_only_cat'] ? _wnd_tags_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
 
 	// meta query
-	$filter_html .= _wnd_meta_filter($args, '_wnd_posts_filter', '#wnd-filter');
+	$tabs .= _wnd_meta_filter($args, '_wnd_posts_filter', '#wnd-filter');
 
 	// post status
-	$filter_html .= $args['wnd_post_status'] ? _wnd_post_status_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
+	$tabs .= $args['wnd_post_status'] ? _wnd_post_status_filter($args, '_wnd_posts_filter', '#wnd-filter') : null;
 
 	// orderby
-	$filter_html .= _wnd_orderby_filter($args, '_wnd_posts_filter', '#wnd-filter');
+	$tabs .= _wnd_orderby_filter($args, '_wnd_posts_filter', '#wnd-filter');
 
 	// 列出当前term查询，并附带取消链接
-	$filter_html .= _wnd_current_filter($args, '_wnd_posts_filter', '#wnd-filter');
+	$tabs .= _wnd_current_filter($args, '_wnd_posts_filter', '#wnd-filter');
+
+	/**
+	 *@since 2019.07.22
+	 *新增filter过滤
+	 */
+	$tabs = apply_filters('_wnd_posts_filter_tabs', $tabs, $args);
 
 	/**
 	 *@since 2019.07.10
 	 *单独定义筛选条件容器，若无任何可用筛选条件，则不输出对应HTML容器
 	 **/
-	$html .= $filter_html ? '<div id="filter-container">' . $filter_html . '</div>' : '';
+	$html .= $tabs ? '<div id="filter-tabs">' . $tabs . '</div>' : '';
 
-	$html .= '<div id="filter-main-container">';
+	$html .= '<div id="filter-main">';
 	$html .= '<div class="columns is-marginless">';
 	// 输出列表：根据_wnd_ajax_next_page，此处需设置容器及容器ID，否则ajax请求的翻页内容可能无法正确嵌入
 	$html .= '<div id="filter-list" class="filter-list column">';
@@ -1240,9 +1246,8 @@ function _wnd_posts_filter($args = array()) {
 	$html .= '</div>';
 
 	// 边栏
-	if ($args['wnd_with_sidebar']) {
-		$html .= '<div class="filter-sidebar column is-narrow">' . apply_filters('_wnd_posts_filter_sidebar', '', $args) . '</div>';
-	}
+	$sidebar = apply_filters('_wnd_posts_filter_sidebar', '', $args);
+	$html .= $sidebar ? '<div id="filter-sidebar column is-narrow">' . $sidebar . '</div>' : '';
 	$html .= '</div>';
 	$html .= '</div>';
 

@@ -149,6 +149,13 @@ apply_filters('_wnd_post_list_tpl', $list, $post);
 *@since 2019.04.27 多重筛选，边栏，默认没有边栏内容(返回html数据)
 */
 $sidebar = apply_filters('_wnd_posts_filter_sidebar', '', $args);
+
+/**
+ *@since 2019.07.22
+ *多重筛选筛选选项
+ *例如可在筛选选项下新增广告，通知等等
+ */
+$filter_html = apply_filters('_wnd_posts_filter_tabs', $tabs, $args);
 ```
 
 ## 文件上传
