@@ -163,7 +163,7 @@ function wnd_action_do_action() {
 
 	//@since 2019.05.12 默认：校验nonce后执行action对应函数
 	default:
-		if (isset($_GET['_wpnonce']) and wnd_verify_nonce($_GET['_wpnonce'] ?? '', $action)) {
+		if (wnd_verify_nonce($_GET['_wpnonce'] ?? '', $action)) {
 			return function_exists($action) ? $action() : '未定义的action！';
 		} else {
 			return;
