@@ -1141,7 +1141,6 @@ function _wnd_current_filter($args, $ajax_call = '', $ajax_container = '') {
  *
  *@param 自定义： string $args['wnd_list_tpl'] 文章输出列表模板函数的名称（传递值：wp_query:$args）
  *@param 自定义： bool args['wnd_only_cat']是否只筛选分类
- *@param 自定义： bool args['wnd_with_sidrbar']是否包含边栏
  *@param 自定义： string args['wnd_queried_type']向后端传递请求页面类型供后端判断（singular，tax，home等）
  *非ajax状态下：
  *自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
