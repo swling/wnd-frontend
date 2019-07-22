@@ -183,6 +183,9 @@ function wnd_action_user_register($user_id) {
 
 	// 注册类，将注册用户id写入对应数据表
 	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'] ?? '';
+	if (!$email_or_phone) {
+		return;
+	}
 	wnd_reset_code($email_or_phone, $user_id);
 
 	// 手机注册，写入用户meta
