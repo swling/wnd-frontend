@@ -128,7 +128,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 		);
 	}
 
-	public function add_user_avatar($thumbnail_size = 150, $save_size = 200) {
+	public function add_user_avatar($thumbnail_size = 100, $save_size = 200) {
 
 		if (!$this->user->ID) {
 			parent::add_html('<div class="notification">获取用户ID失败，无法上传头像！</div>');
@@ -138,7 +138,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 		$args = array(
 			'label' => '',
 			'thumbnail_size' => array('width' => $thumbnail_size, 'height' => $thumbnail_size),
-			'thumbnail' => WND_URL . 'static/images/default.jpg',
+			'thumbnail' => wnd_get_user_meta($this->user->ID, 'avatar_url') ?: WND_URL . 'static/images/default.jpg',
 			'data' => array(
 				'meta_key' => 'avatar',
 				'save_width' => $save_size,
