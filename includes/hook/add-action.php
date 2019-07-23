@@ -302,9 +302,9 @@ if (wnd_get_option('wnd', 'wnd_disable_admin_panel') == 1) {
 	}
 
 	// 移除原生登录注册
-	add_action('login_head', 'wnd_action_redirect_login_form_register');
+	add_action('login_init', 'wnd_action_redirect_login_form_register');
 	function wnd_action_redirect_login_form_register() {
-		wp_redirect(home_url('?from=wp-admin'));
+		wp_redirect(home_url('?from=wp-login.php'));
 		exit(); // always call `exit()` after `wp_redirect`
 	}
 
