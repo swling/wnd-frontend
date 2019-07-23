@@ -357,8 +357,15 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 		if (wnd_get_user_meta($user_id, 'avatar')) {
 			$avatar_id = wnd_get_user_meta($user_id, 'avatar');
 			$avatar_url = wp_get_attachment_url($avatar_id) ?: $avatar_url;
+			/**
+			 *@since 2019.07.23
+			 * 统一按阿里云oss裁剪缩略图
+			 */
+			$avatar_url = wnd_get_thumbnail_url($avatar_url, $size, $size);
+
 		} elseif (wnd_get_user_meta($user_id, 'avatar_url')) {
 			$avatar_url = wnd_get_user_meta($user_id, 'avatar_url') ?: $avatar_url;
+
 		}
 
 	}
