@@ -70,23 +70,175 @@ function wnd_get_user_by_openid($openid) {
 /**
  *@since 2019.07.11
  *写入用户open id
- *@param 	int 	user_id
- *@param 	string 	open_id
+ *@param 	int 	$user_id
+ *@param 	string 	$open_id
  *@return 	user_id or bool of wpdb->insert
  */
-function wnd_insert_user_openid($user_id, $openid) {
+function wnd_update_user_openid($user_id, $openid) {
 
 	global $wpdb;
 
 	// 查询
-	$result = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE open_id = %s", $openid));
-	if ($result) {
-		return $result;
+	$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->wnd_users} WHERE user_id = %d LIMIT 1", $user_id));
+
+	// 更新
+	if ($ID) {
+		$db = $wpdb->update(
+			$wpdb->wnd_users,
+			array('open_id' => $openid, 'time' => time()),
+			array('ID' => $ID),
+			array('%s', '%d'),
+			array('%d')
+		);
+
+		// 写入
+	} else {
+		$db = $wpdb->insert(
+			$wpdb->wnd_users,
+			array('user_id' => $user_id, 'open_id' => $openid, 'time' => time()),
+			array('%d', '%s', '%d')
+		);
 	}
 
-	//写入
-	return $wpdb->insert($wpdb->wnd_users, array('user_id' => $user_id, 'open_id' => $openid, 'time' => time()), array('%d', '%s', '%d'));
+	return $db;
+}
 
+/**
+ *@since 2019.07.11
+ *更新用户电子邮箱 同时更新插件用户数据库email，及WordPress账户email
+ *@param 	int 	$user_id
+ *@param 	string 	$email
+ *@return 	user_id or bool of wpdb->insert
+ */
+function wnd_update_user_email($user_id, $email) {
+
+	global $wpdb;
+
+	// 查询
+	$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->wnd_users} WHERE user_id = %d LIMIT 1", $user_id));
+
+	// 更新
+	if ($ID) {
+		$db = $wpdb->update(
+			$wpdb->wnd_users,
+			array('email' => $email, 'time' => time()),
+			array('ID' => $ID),
+			array('%s', '%d'),
+			array('%d')
+		);
+
+		// 写入
+	} else {
+		$db = $wpdb->insert(
+			$wpdb->wnd_users,
+			array('user_id' => $user_id, 'email' => $email, 'time' => time()),
+			array('%d', '%s', '%d')
+		);
+	}
+
+	// 更新WordPress账户email
+	if ($db) {
+		wp_update_user(array('ID' => $user_id, 'user_email' => $email));
+	}
+
+	return $db;
+}
+
+/**
+ *@since 2019.07.11
+ *写入用户手机号码
+ *@param 	int 	$user_id
+ *@param 	string 	$phone
+ *@return 	user_id or bool of wpdb->insert
+ */
+function wnd_update_user_phone($user_id, $phone) {
+
+	global $wpdb;
+
+	// 查询
+	$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->wnd_users} WHERE user_id = %d LIMIT 1", $user_id));
+
+	// 更新
+	if ($ID) {
+		$db = $wpdb->update(
+			$wpdb->wnd_users,
+			array('phone' => $phone, 'time' => time()),
+			array('ID' => $ID),
+			array('%s', '%d'),
+			array('%d')
+		);
+
+		// 写入
+	} else {
+		$db = $wpdb->insert(
+			$wpdb->wnd_users,
+			array('user_id' => $user_id, 'phone' => $phone, 'time' => time()),
+			array('%d', '%s', '%d')
+		);
+	}
+
+	// 更新字段
+	if ($db) {
+		wnd_update_user_meta($user_id, 'phone', $phone);
+	}
+
+	return $db;
+}
+
+/**
+ *@since 2019.07.23
+ * 根据第三方网站获取的用户信息，注册或者登录到WordPress站点
+ *
+ *
+ **/
+function wnd_social_login($open_id, $display_name = '', $avatar_url = '') {
+
+	//当前用户已登录，同步信息
+	if (is_user_logged_in()) {
+
+		$this_user = wp_get_current_user();
+		$may_be_user = wnd_get_user_by_openid($open_id);
+		if ($may_be_user and $may_be_user->ID != $this_user->ID) {
+			exit('第三方账户已被占用！');
+		}
+
+		if ($avatar_url) {
+			wnd_update_user_meta($this_user->ID, "avatar_url", $avatar_url);
+		}
+		if ($open_id) {
+			wnd_update_user_openid($this_user->ID, $open_id);
+		}
+		wp_redirect(wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url());
+		exit;
+	}
+
+	//当前用户未登录，注册或者登录 检测是否已注册
+	$user = wnd_get_user_by_openid($open_id);
+	if (!$user) {
+
+		// 自定义随机用户名
+		$user_login = 'user_' . uniqid();
+		$user_pass = wp_generate_password();
+		$user_array = array('user_login' => $user_login, 'user_pass' => $user_pass, 'display_name' => $display_name);
+		$user_id = wp_insert_user($user_array);
+
+		// 注册失败
+		if (is_wp_error($user_id)) {
+			wp_die($user_id->get_error_message(), get_option('blogname'));
+
+			// 注册成功，记录用户open id
+		} else {
+			wnd_update_user_openid($user_id, $open_id);
+		}
+
+	}
+
+	// 获取用户id
+	$user_id = $user ? $user->ID : $user_id;
+
+	wnd_update_user_meta($user_id, "avatar_url", $avatar_url);
+	wp_set_auth_cookie($user_id, 1);
+	wp_redirect(wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url());
 }
 
 /**

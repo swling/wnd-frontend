@@ -365,3 +365,62 @@ function wnd_ajax_reset_password() {
 	}
 
 }
+
+/**
+ *@since 2019.07.23 已登录用户设置邮箱
+ *@param $_POST['_user_user_email'];
+ *@param $_POST['v_code']
+ */
+function wnd_ajax_verify_email() {
+
+	$email = $_POST['_user_user_email'] ?? null;
+	$code = $_POST['v_code'] ?? null;
+	$user_id = get_current_user_id();
+	if (!$user_id) {
+		return array('status' => 0, 'msg' => '未登录！');
+	}
+
+	// 检查秘钥 已登录用户验证码为临时验证码，验证成功后应该删除
+	$check = wnd_verify_code($email, $code, $type = 'register', $delete_after_success = true);
+	if ($check['status'] === 0) {
+		return $check;
+
+	}
+
+	if (wnd_update_user_email($user_id, $email)) {
+		return array('status' => 1, 'msg' => '邮箱设置成功！');
+	} else {
+		return array('status' => 0, 'msg' => '未知错误！');
+	}
+
+}
+
+/**
+ *@since 2019.02.10 已登录用户设置手机
+ *@param $_POST['phone'];
+ *@param $_POST['v_code']
+ */
+function wnd_ajax_verify_phone() {
+
+	$phone = $_POST['phone'] ?? null;
+	$code = $_POST['v_code'] ?? null;
+	$user_id = get_current_user_id();
+
+	if (!$user_id) {
+		return array('status' => 0, 'msg' => '未登录！');
+	}
+
+	// 检查秘钥 已登录用户验证码为临时验证码，验证成功后应该删除
+	$check = wnd_verify_code($phone, $code, $type = 'register', $delete_after_success = true);
+	if ($check['status'] === 0) {
+		return $check;
+
+	}
+
+	if (wnd_update_user_phone($user_id, $phone)) {
+		return array('status' => 1, 'msg' => '手机设置成功！');
+	} else {
+		return array('status' => 0, 'msg' => '未知错误！');
+	}
+
+}

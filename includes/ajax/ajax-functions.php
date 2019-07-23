@@ -36,7 +36,11 @@ function wnd_ajax_send_code() {
 	$template = $_POST['template'] ?? '';
 	$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? '';
 
-	if (is_user_logged_in()) {
+	/**
+	 *@since 2019.07.23
+	 *当已登录用户，且验证类型为register表示当前用户，正在绑定邮箱或手机时，
+	 */
+	if (is_user_logged_in() and $verify_type != 'register') {
 		return wnd_send_code_to_user($send_type, $verify_type, $template);
 	} else {
 		return wnd_send_code_to_anonymous($email_or_phone, $verify_type, $template);
@@ -55,7 +59,7 @@ function _wnd_ajax_is_title_repeated() {
 	$title = $_POST['post_title'];
 	$exclude_id = $_POST['post_id'];
 	$post_type = $_POST['post_type'];
-	
+
 	if (wnd_is_title_repeated($title, $exclude_id, $post_type)) {
 		return array('status' => 1, 'msg' => '标题重复！');
 	} else {

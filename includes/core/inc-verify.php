@@ -170,7 +170,7 @@ function wnd_insert_code($email_or_phone, $code) {
  *@since 初始化
  *@return array
  */
-function wnd_verify_code($email_or_phone, $code, $verify_type) {
+function wnd_verify_code($email_or_phone, $code, $verify_type, $delete_after_success = false) {
 
 	global $wpdb;
 	$field = is_email($email_or_phone, $deprecated = false) ? 'email' : 'phone';
@@ -212,9 +212,12 @@ function wnd_verify_code($email_or_phone, $code, $verify_type) {
 	}
 
 	/**
-	 *@since 2019.01.22 清空当前验证码
+	 *@since 2019.07.23
+	 *验证完成后是否删除
 	 */
-	// wnd_reset_code($email_or_phone, 0);
+	if ($delete_after_success) {
+		$wpdb->delete($wpdb->wnd_users, array('ID' => $data->ID), array('%d'));
+	}
 
 	return array('status' => 1, 'msg' => '验证通过！');
 

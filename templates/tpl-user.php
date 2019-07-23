@@ -429,3 +429,47 @@ function _wnd_account_form() {
 	return $form->html;
 
 }
+
+/**
+ *@since 2019.07.23 用户设置邮箱表单
+ */
+function _wnd_verify_email_form() {
+
+	if (!is_user_logged_in()) {
+		return '<script>wnd_alert_msg(\'请登录\')</script>';
+	}
+
+	$form = new Wnd_User_Form();
+	$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>绑定邮箱');
+	$form->set_form_attr('class="user-form"');
+	$form->add_email_verify($verify_type = 'register', $template = '');
+
+	$form->set_action('wnd_ajax_verify_email');
+	$form->set_submit_button('保存');
+	$form->build();
+
+	return $form->html;
+
+}
+
+/**
+ *@since 2019.07.23 用户设置手机表单
+ */
+function _wnd_verify_phone_form() {
+
+	if (!is_user_logged_in()) {
+		return '<script>wnd_alert_msg(\'请登录\')</script>';
+	}
+
+	$form = new Wnd_User_Form();
+	$form->set_form_title('<span class="icon"><i class="fa fa-phone"></i></span>绑定手机');
+	$form->set_form_attr('class="user-form"');
+	$form->add_sms_verify($verify_type = 'register', $template = '');
+
+	$form->set_action('wnd_ajax_verify_phone');
+	$form->set_submit_button('保存');
+	$form->build();
+
+	return $form->html;
+
+}
