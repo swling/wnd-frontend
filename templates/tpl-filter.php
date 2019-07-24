@@ -327,7 +327,7 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 		}
 
 		// 输出tabs
-		foreach (get_terms(array('taxonomy' => $taxonomy, 'parent' => 0, 'orderby' => 'count', 'order' => 'DESC')) as $term) {
+		foreach (get_terms(array('taxonomy' => $taxonomy, 'parent' => 0)) as $term) {
 
 			$class = 'term-id-' . $term->term_id;
 
@@ -409,7 +409,7 @@ function _wnd_categories_filter($args = array(), $ajax_call = '', $ajax_containe
 			continue;
 		}
 
-		$child_terms = get_terms(array('taxonomy' => $taxonomy, 'parent' => $current_term_parent[$taxonomy], 'orderby' => 'count', 'order' => 'DESC'));
+		$child_terms = get_terms(array('taxonomy' => $taxonomy, 'parent' => $current_term_parent[$taxonomy]));
 		if (!$child_terms) {
 			continue;
 		}

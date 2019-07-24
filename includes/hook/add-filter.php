@@ -471,8 +471,8 @@ function wnd_filter_update_post_metadata($check, $object_id, $meta_key, $meta_va
 	if ($meta_key == 'views') {
 		wp_cache_set($object_id, $meta_value, 'views');
 		$cached_post_views = 10;
-		if ($meta_value % $cached_post_views == 0) {
-			//每增加 10 次浏览才写入数据库中去
+		if ($meta_value % $cached_post_views == 0 or $meta_value == 1) {
+			//每增加 10 次浏览 或首次 写入数据库中去
 			return $check;
 		} else {
 			return true;
