@@ -129,7 +129,7 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 		if ($post_id) {
 			$attachments = get_children(array('post_type' => 'attachment', 'post_parent' => $post_id));
 			foreach ($attachments as $attachment) {
-				wp_delete_attachment($attachment->ID, 'true');
+				wp_delete_attachment($attachment->ID, true);
 			}
 			unset($attachment);
 		}

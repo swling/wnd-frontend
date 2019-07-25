@@ -29,7 +29,7 @@ function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
 	} elseif ($post_parent) {
 		$old_meta = wnd_get_post_meta($post_parent, $meta_key);
 		if ($old_meta) {
-			wp_delete_attachment($old_meta);
+			wp_delete_attachment($old_meta, true);
 		}
 		wnd_update_post_meta($post_parent, $meta_key, $attachment_id);
 
@@ -38,7 +38,7 @@ function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
 		$user_id = get_current_user_id();
 		$old_user_meta = wnd_get_user_meta($user_id, $meta_key);
 		if ($old_user_meta) {
-			wp_delete_attachment($old_user_meta);
+			wp_delete_attachment($old_user_meta, true);
 		}
 		wnd_update_user_meta($user_id, $meta_key, $attachment_id);
 	}

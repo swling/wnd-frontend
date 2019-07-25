@@ -194,7 +194,7 @@ function wnd_ajax_delete_file() {
 	}
 
 	// 执行删除
-	if (wp_delete_attachment($file_id)) {
+	if (wp_delete_attachment($file_id, true)) {
 
 		do_action('wnd_delete_file', $file_id, $post_parent, $meta_key);
 		return array('status' => 1, 'msg' => $file_id);
