@@ -59,7 +59,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		 *因此初始化一个空白的对象
 		 *2019.07.16
 		 */
-		$this->post = get_post($post_id) ?: (object) Wnd_Post_Form::$default_post;
+		$this->post = $post_id ? get_post($post_id) : (object) Wnd_Post_Form::$default_post;
 		$this->post_id = $this->post->ID;
 
 		/**
