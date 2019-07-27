@@ -330,11 +330,6 @@ function wnd_filter_comment_author_url($url, $id, $comment) {
 add_filter('get_avatar', 'wnd_filter_avatar', 1, 5);
 function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 
-	// 后台，不添加链接 @since 2019.03.06 ajax中会被判定为后台，需要排除
-	if (is_admin() and !wp_doing_ajax()) {
-		return $avatar;
-	}
-
 	// 默认头像
 	$avatar_url = wnd_get_option('wnd', 'wnd_default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
 
@@ -374,7 +369,7 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 	$avatar = "<img alt='{$alt}' src='$avatar_url' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
 
 	//注册用户，添加链接
-	if ($user_id) {
+	if ($user_id and !is_admin()) {
 
 		$author_url = get_author_posts_url($user_id);
 		$avatar = sprintf(
