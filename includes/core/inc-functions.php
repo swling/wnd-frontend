@@ -241,6 +241,13 @@ function wnd_parse_http_wp_query($args) {
 					'compare' => $compare,
 				);
 
+				/**
+				 *@since 2019.04.21 当meta_query compare == exists 不能设置value
+				 */
+				if ('exists' == $compare) {
+					unset($meta_query['value']);
+				}
+
 				array_push($args['meta_query'], $meta_query);
 				continue;
 			}
@@ -272,17 +279,6 @@ function wnd_parse_http_wp_query($args) {
 
 		}
 		unset($key, $value);
-	}
-
-	/**
-	 *@since 2019.04.21 当meta_query compare == exists 不能设置value
-	 */
-	if (isset($args['meta_query'])) {
-		foreach ($args['meta_query'] as $key => $meta_query) {
-			if ($meta_query['compare'] == 'exists') {
-				unset($args['meta_query'][$key]['value']);
-			}
-		}
 	}
 
 	return $args;
