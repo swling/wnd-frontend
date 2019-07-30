@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  */
 function _wnd_pagination($max_page, $show_page = 5) {
 
-	$paged = (isset($_GET['pages'])) ? intval($_GET['pages']) : 1;
+	$paged = (isset($_GET['page'])) ? intval($_GET['page']) : 1;
 	// $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 
 	if ($max_page <= 1) {
@@ -20,21 +20,21 @@ function _wnd_pagination($max_page, $show_page = 5) {
 
 	$html = '<div class="pagination is-centered">';
 	if ($paged > 1) {
-		$html .= '<a class="pagination-previous" href="' . add_query_arg('pages', $paged - 1) . '">上一页</a>';
+		$html .= '<a class="pagination-previous" href="' . add_query_arg('page', $paged - 1) . '">上一页</a>';
 	}
 
 	if ($paged < $max_page) {
-		$html .= '<a class="pagination-next" href="' . add_query_arg('pages', $paged + 1) . '">下一页</a>';
+		$html .= '<a class="pagination-next" href="' . add_query_arg('page', $paged + 1) . '">下一页</a>';
 	}
 
 	$html .= '<ul class="pagination-list">';
-	$html .= '<li><a class="pagination-link" href="' . remove_query_arg('pages') . '" >首页</a></li>';
+	$html .= '<li><a class="pagination-link" href="' . remove_query_arg('page') . '" >首页</a></li>';
 	for ($i = $paged - 1; $i <= $paged + $show_page; $i++) {
 		if ($i > 0 && $i <= $max_page) {
 			if ($i == $paged) {
-				$html .= '<li><a class="pagination-link is-current" href="' . add_query_arg('pages', $i) . '"> <span>' . $i . '</span> </a></li>';
+				$html .= '<li><a class="pagination-link is-current" href="' . add_query_arg('page', $i) . '"> <span>' . $i . '</span> </a></li>';
 			} else {
-				$html .= '<li><a class="pagination-link" href="' . add_query_arg('pages', $i) . '"> <span>' . $i . '</span> </a></li>';
+				$html .= '<li><a class="pagination-link" href="' . add_query_arg('page', $i) . '"> <span>' . $i . '</span> </a></li>';
 			}
 		}
 	}
@@ -42,7 +42,7 @@ function _wnd_pagination($max_page, $show_page = 5) {
 		$html .= '<li><span class="pagination-ellipsis">&hellip;</span></li>';
 	}
 
-	$html .= '<li><a class="pagination-link" href="' . add_query_arg('pages', $max_page) . '">尾页</a></li>';
+	$html .= '<li><a class="pagination-link" href="' . add_query_arg('page', $max_page) . '">尾页</a></li>';
 	$html .= '</ul></div>';
 
 	return $html;
@@ -51,20 +51,20 @@ function _wnd_pagination($max_page, $show_page = 5) {
 /**
  *@since 2019.02.15 简单分页
  *不查询总数的情况下，简单实现下一页翻页
- *翻页参数键名$pages_key 不能设置为 paged 可能会与原生WordPress翻页机制产生冲突
+ *翻页参数键名$page_key 不能设置为 paged 可能会与原生WordPress翻页机制产生冲突
  */
-function _wnd_next_page($posts_per_page, $current_post_count, $pages_key = 'pages') {
+function _wnd_next_page($posts_per_page, $current_post_count, $page_key = 'page') {
 
-	$paged = (isset($_GET[$pages_key])) ? intval($_GET[$pages_key]) : 1;
+	$paged = (isset($_GET[$page_key])) ? intval($_GET[$page_key]) : 1;
 
 	$html = '<nav class="pagination is-centered" role="navigation" aria-label="pagination">';
 	$html .= '<ul class="pagination-list">';
 
 	if ($paged >= 2) {
-		$html .= '<li><a class="pagination-link" href="' . add_query_arg($pages_key, $paged - 1) . '">上一页</a>';
+		$html .= '<li><a class="pagination-link" href="' . add_query_arg($page_key, $paged - 1) . '">上一页</a>';
 	}
 	if ($current_post_count >= $posts_per_page) {
-		$html .= '<li><a class="pagination-link" href="' . add_query_arg($pages_key, $paged + 1) . '">下一页</a>';
+		$html .= '<li><a class="pagination-link" href="' . add_query_arg($page_key, $paged + 1) . '">下一页</a>';
 	}
 	$html .= '</ul>';
 	$html .= '</nav>';
@@ -82,15 +82,15 @@ function _wnd_next_page($posts_per_page, $current_post_count, $pages_key = 'page
  */
 function _wnd_ajax_next_page($function, $args, $post_count) {
 
-	$current_pages = $args['paged'] ?? 1;
+	$current_page = $args['paged'] ?? 1;
 
 	// 下一页参数
-	$args['paged'] = $current_pages + 1;
+	$args['paged'] = $current_page + 1;
 	$js_next_args = '\'' . $function . '\',\'' . http_build_query($args) . '\'';
 	// $js_next_args = str_replace('_wnd_', '', $js_next_args);
 
 	// 上一页参数
-	$args['paged'] = $current_pages - 1;
+	$args['paged'] = $current_page - 1;
 	$js_pre_args = '\'' . $function . '\',\'' . http_build_query($args) . '\'';
 	// $js_pre_args = str_replace('_wnd_', '', $js_pre_args);
 
@@ -109,7 +109,7 @@ function _wnd_ajax_next_page($function, $args, $post_count) {
 
 	$html = '<nav class="pagination is-centered" role="navigation" aria-label="pagination">';
 	$html .= '<ul class="pagination-list">';
-	if ($current_pages >= 2) {
+	if ($current_page >= 2) {
 		$html .= '<li><a class="pagination-link" onclick="' . $pre_onclick . '">上一页</a>';
 	}
 	if ($post_count >= $args['posts_per_page']) {
@@ -182,7 +182,7 @@ function _wnd_table_list($args = '') {
 
 	// 分页
 	if (!wnd_doing_ajax()) {
-		$html .= _wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
+		$html .= _wnd_next_page($args['posts_per_page'], $query->post_count, 'page');
 	} else {
 		$html .= _wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}
@@ -228,7 +228,7 @@ function _wnd_post_list($args = '') {
 
 	// 分页
 	if (!wnd_doing_ajax()) {
-		$html .= _wnd_next_page($args['posts_per_page'], $query->post_count, 'pages');
+		$html .= _wnd_next_page($args['posts_per_page'], $query->post_count, 'page');
 	} else {
 		$html .= _wnd_ajax_next_page(__FUNCTION__, $args, $query->post_count);
 	}

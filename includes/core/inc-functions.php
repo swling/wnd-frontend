@@ -208,7 +208,7 @@ function wnd_exception_handler($exception) {
  *
  *@return 	array 	wp_query $args
  **/
-function wnd_parse_http_wp_query($args) {
+function wnd_parse_http_wp_query($args = array()) {
 
 	$defaults = array(
 		'meta_query' => array(),
@@ -222,64 +222,83 @@ function wnd_parse_http_wp_query($args) {
 	 *字段参数：?meta_meta_key
 	 *自动键名匹配： $args[$key] = $value;
 	 */
-	if (!empty($_GET)) {
-
-		foreach ($_GET as $key => $value) {
-
-			/**
-			 *@since 2019.3.07 自动匹配meta query
-			 *?meta_price=1 则查询 price = 1的文章
-			 *?meta_price=exists 则查询 存在price的文章
-			 */
-			if (strpos($key, '_meta_') === 0) {
-
-				$key = str_replace('_meta_', '', $key);
-				$compare = $value == 'exists' ? 'exists' : '=';
-				$meta_query = array(
-					'key' => $key,
-					'value' => $value,
-					'compare' => $compare,
-				);
-
-				/**
-				 *@since 2019.04.21 当meta_query compare == exists 不能设置value
-				 */
-				if ('exists' == $compare) {
-					unset($meta_query['value']);
-				}
-
-				array_push($args['meta_query'], $meta_query);
-				continue;
-			}
-
-			/**
-			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，
-			 *直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
-			 */
-			if (strpos($key, '_term_') === 0) {
-				$term_query = array(
-					'taxonomy' => str_replace('_term_', '', $key),
-					'field' => 'term_id',
-					'terms' => $value,
-				);
-				array_push($args['tax_query'], $term_query);
-				continue;
-			}
-
-			/**
-			 *@since 2019.05.31 post field查询
-			 */
-			if (strpos($key, '_post_') === 0) {
-				$args[str_replace('_post_', '', $key)] = $value;
-				continue;
-			}
-
-			// 其他、按键名自动匹配
-			$args[$key] = $value;
-
-		}
-		unset($key, $value);
+	if (empty($_GET)) {
+		return array();
 	}
+
+	foreach ($_GET as $key => $value) {
+
+		/**
+		 *post type tabs生成的GET参数为：type={$post_type}
+		 *直接用 post_type 作为参数会触发WordPress原生请求导致错误
+		 */
+		if ('type' === $key) {
+			$args['post_type'] = $value;
+			continue;
+		}
+
+		/**
+		 *@since 2019.3.07 自动匹配meta query
+		 *?_meta_price=1 则查询 price = 1的文章
+		 *?_meta_price=exists 则查询 存在price的文章
+		 */
+		if (strpos($key, '_meta_') === 0) {
+
+			$key = str_replace('_meta_', '', $key);
+			$compare = $value == 'exists' ? 'exists' : '=';
+			$meta_query = array(
+				'key' => $key,
+				'value' => $value,
+				'compare' => $compare,
+			);
+
+			/**
+			 *@since 2019.04.21 当meta_query compare == exists 不能设置value
+			 */
+			if ('exists' == $compare) {
+				unset($meta_query['value']);
+			}
+
+			array_push($args['meta_query'], $meta_query);
+			continue;
+		}
+
+		/**
+		 *categories tabs生成的GET参数为：'_term_' . $taxonomy，
+		 *直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+		 */
+		if (strpos($key, '_term_') === 0) {
+			$term_query = array(
+				'taxonomy' => str_replace('_term_', '', $key),
+				'field' => 'term_id',
+				'terms' => $value,
+			);
+			array_push($args['tax_query'], $term_query);
+			continue;
+		}
+
+		/**
+		 *@since 2019.05.31 post field查询
+		 */
+		if (strpos($key, '_post_') === 0) {
+			$args[str_replace('_post_', '', $key)] = $value;
+			continue;
+		}
+
+		/**
+		 *@since 2019.07.30
+		 *分页
+		 */
+		if ('page' == $key) {
+			$args['paged'] = $value ?: 1;
+			continue;
+		}
+
+		// 其他、按键名自动匹配
+		$args[$key] = $value;
+
+	}
+	unset($key, $value);
 
 	return $args;
 }
