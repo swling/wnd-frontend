@@ -196,8 +196,8 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 function wnd_ajax_modal(template, param = 0) {
 
 	$.ajax({
-		type: "POST",
-		url: wnd.api_url,
+		type: "GET",
+		url: wnd.root_url + wnd.rest_api,
 		data: {
 			"action": template,
 			"param": param,
@@ -231,8 +231,8 @@ function wnd_ajax_modal(template, param = 0) {
 function wnd_ajax_embed(container, template, param = 0) {
 
 	$.ajax({
-		type: "POST",
-		url: wnd.api_url,
+		type: "GET",
+		url: wnd.root_url + wnd.rest_api,
 		data: {
 			"action": template,
 			"param": param,
@@ -335,7 +335,7 @@ function wnd_ajax_submit(form_id) {
 	var form_data = new FormData($("#" + form_id).get(0));
 
 	$.ajax({
-		url: wnd.api_url,
+		url: wnd.root_url + wnd.rest_api,
 		dataType: "json",
 		cache: false,
 		contentType: false,
@@ -461,7 +461,7 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 		$.ajax({
 			type: "POST",
 			datatype: "json",
-			url: wnd.api_url,
+			url: wnd.root_url + wnd.rest_api,
 			data: {
 				"param": post_id,
 				"useragent": navigator.userAgent,
@@ -537,7 +537,7 @@ jQuery(document).ready(function($) {
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
 		$.ajax({
-			url: wnd.api_url,
+			url: wnd.root_url + wnd.rest_api,
 			dataType: "json",
 			cache: false,
 			contentType: false,
@@ -622,7 +622,7 @@ jQuery(document).ready(function($) {
 							_this.parents("form").find("input[name='_post_menu_order']").val(response[i].data.post.menu_order);
 						}
 
-						/** 
+						/**
 						 *上传后，若再次选择文件，则将自动生成新的attachment记录，当前表单信息也将更改为最新上传的附件
 						 *因此上传后因禁用input，避免误操作，如需更换文件，应该先删除当前文件
 						 */
@@ -683,7 +683,7 @@ jQuery(document).ready(function($) {
 		form_data.append("action", "wnd_ajax_delete_file");
 
 		$.ajax({
-			url: wnd.api_url,
+			url: wnd.root_url + wnd.rest_api,
 			dataType: "json",
 			cache: false,
 			contentType: false,
@@ -773,7 +773,7 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			type: "post",
 			dataType: "json",
-			url: wnd.api_url,
+			url: wnd.root_url + wnd.rest_api,
 			data: {
 				action: "wnd_ajax_send_code",
 				email: _user_user_email,
@@ -841,7 +841,7 @@ jQuery(document).ready(function($) {
 		var _this = $(this);
 		$.ajax({
 			type: "POST",
-			url: wnd.api_url,
+			url: wnd.root_url + wnd.rest_api,
 			data: {
 				"action": action,
 				"param": $(this).data("param"),
@@ -915,6 +915,65 @@ jQuery(document).ready(function($) {
 				wnd_alert_msg("系统错误！");
 			}
 		});
+	});
+
+	/**
+	 *@since 2019.07.31 Wnd_Filter筛选
+	 *点击链接，获取对应data值，组合参数并发送ajax请求
+	 */
+	var filter_param = {};
+	$("body").on("click", ".wnd-filter-tabs.is-ajax a", function() {
+
+		var key = $(this).data("key");
+		var value = $(this).data("value");
+		filter_param[key] = value;
+
+		// 值为空删除
+		if (!value && typeof filter_param[key] != "undefined") {
+			delete filter_param[key];
+		}
+
+		// type 切换需要特殊处理，切换时，应该清空所有其余参数
+		if ("type" == key) {
+			filter_param = {};
+			filter_param['type'] = $(this).data("value");
+		} else {
+			filter_param['type'] = $(".post-type-tabs .is-active a").data("value");
+		}
+
+		var _this = $(this);
+		$.ajax({
+			url: wnd.root_url + wnd.filter_api,
+			type: "GET",
+			async: false,
+			data: filter_param,
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+			},
+			success: function(response) {
+
+				// 切换post type时，隐藏所有taxonomy 再根据当前post type支持的taxonomy选择性显示，以达到ajax切换的效果
+				if ("type" == key) {
+					$(".taxonomy-tabs").addClass("is-hidden");
+					for (var i = 0; i < response.data.taxonomies.length; i++) {
+						$("." + response.data.taxonomies[i] + "-tabs").removeClass("is-hidden");
+					}
+
+					// _this.parent("ul").addClass("is-active");
+					// _this.parent("li").parent("ul").siblings().find("li").removeClass("is-active");
+					_this.parents(".wnd-filter-tabs").find("ul").find("li:not(:first)").removeClass("is-active");
+					_this.parents(".wnd-filter-tabs").find("ul").find("li:first").addClass("is-active");
+				}
+
+			},
+			error: function() {
+				wnd_alert_msg("请求失败");
+				_this.parent("li").removeClass("is-active");
+			}
+		});
+
+		// 阻止链接跳转
+		return false;
 	});
 
 	/**

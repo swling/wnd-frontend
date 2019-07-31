@@ -202,11 +202,28 @@ function wnd_exception_handler($exception) {
 }
 
 /**
- *@since 2019.07.20
- *从GET参数中解析wp_query参数
- *@param 	array 	wp_query $args
+ * @since 2019.07.20
+ * 从GET参数中解析wp_query参数
+ * @param 	array 	wp_query $args
  *
- *@return 	array 	wp_query $args
+ * @return 	array 	wp_query $args
+ *
+ * @see 解析规则：
+ * type={post_type}
+ * status={post_status}
+ *
+ * post字段
+ * _post_{post_field}={value}
+ *
+ *meta查询
+ * _meta_{key}={$meta_value}
+ * _meta_{key}=exists
+ *
+ *分类查询
+ * _term_{$taxonomy}={term_id}
+ *
+ * 其他查询（具体参考 wp_query）
+ * $wp_query_args[$key] = $value;
  **/
 function wnd_parse_http_wp_query($args = array()) {
 
@@ -234,6 +251,14 @@ function wnd_parse_http_wp_query($args = array()) {
 		 */
 		if ('type' === $key) {
 			$args['post_type'] = $value;
+			continue;
+		}
+
+		/**
+		 *post status tabs生成的GET参数为：status={$post_status}
+		 */
+		if ('status' === $key) {
+			$args['post_status'] = $value;
 			continue;
 		}
 

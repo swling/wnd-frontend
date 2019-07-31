@@ -136,7 +136,7 @@ function wnd_uninstall() {
  */
 function wnd_scripts() {
 
-	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.min.js', array('jquery'), WND_VER);
+	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.js', array('jquery'), WND_VER);
 
 	if (wnd_get_option('wnd', 'wnd_enable_default_style') != 0) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.7.5/css/bulma.min.css', array(), null);
@@ -145,8 +145,9 @@ function wnd_scripts() {
 
 	$wnd_data = array(
 		'api_nonce' => wp_create_nonce('wp_rest'),
-		'api_url' => site_url('wp-json/wnd/rest-api'),
-		'root_url' => site_url(),
+		'rest_api' => '/wp-json/wnd/rest-api',
+		'filter_api' => '/wp-json/wnd/filter',
+		'root_url' => site_url(''),
 	);
 
 	wp_localize_script('wnd-frontend', 'wnd', $wnd_data);

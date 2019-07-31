@@ -8,13 +8,6 @@
 require WND_PATH . 'wnd-options.php'; //配置选项
 require WND_PATH . 'wnd-api.php'; // API
 
-// 表单类
-require WND_PATH . 'includes/class/class-wnd-form-data.php'; //表单数据处理类
-require WND_PATH . 'includes/class/class-wnd-form.php'; //表单生成类
-require WND_PATH . 'includes/class/class-wnd-wp-form.php'; //WordPress环境下的表单生成类
-require WND_PATH . 'includes/class/class-wnd-user-form.php'; //用户表单生成类
-require WND_PATH . 'includes/class/class-wnd-post-form.php'; //文章表单生成类
-
 // core
 require WND_PATH . 'includes/core/inc-functions.php'; //通用函数定义
 require WND_PATH . 'includes/core/inc-post.php'; //post相关自定义函数
@@ -47,7 +40,23 @@ require WND_PATH . 'templates/tpl-user.php'; //user模板
 require WND_PATH . 'templates/tpl-post.php'; //post模板
 require WND_PATH . 'templates/tpl-term.php'; //term模板
 require WND_PATH . 'templates/tpl-archive.php'; //归档和列表模板
-require WND_PATH . 'templates/tpl-filter.php'; //多重筛选
 require WND_PATH . 'templates/tpl-finance.php'; //财务模板
 require WND_PATH . 'templates/tpl-panel.php'; //前端管理面板
 require WND_PATH . 'templates/tpl-gallery.php'; //橱窗相册
+
+/**
+ *@since 2019.07.31
+ *自动加载类文件
+ *
+ *实例
+ *类名: 	Wnd_Form
+ *路径: 	/includes/class/class-wnd-form.php
+ */
+function wnd_class_loader($class) {
+	$file_name = 'class-' . str_replace('_', '-', $class);
+	$file = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'class' . DIRECTORY_SEPARATOR . $file_name . '.php';
+	if (file_exists($file)) {
+		require $file;
+	}
+}
+spl_autoload_register('wnd_class_loader');

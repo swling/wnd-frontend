@@ -14,7 +14,16 @@ function wnd_action_rest_register_route() {
 		'rest-api',
 		array(
 			'methods' => WP_REST_Server::ALLMETHODS,
-			'callback' => 'wnd_api_callback',
+			'callback' => 'wnd_rest_api_callback',
+		)
+	);
+
+	register_rest_route(
+		'wnd',
+		'filter',
+		array(
+			'methods' => 'GET',
+			'callback' => 'wnd_filter_api_callback',
 		)
 	);
 }
@@ -25,7 +34,7 @@ function wnd_action_rest_register_route() {
  *@param $_REQUEST['action']	 	string 		后端响应函数
  *@param $_REQUEST['param']		 	string 		模板响应函数传参
  */
-function wnd_api_callback($request) {
+function wnd_rest_api_callback($request) {
 
 	if (empty($_REQUEST) or !isset($_REQUEST['action'])) {
 		return array('status' => 0, 'msg' => '未定义的API请求！');
@@ -44,7 +53,7 @@ function wnd_api_callback($request) {
 	 *若模板函数需要传递多个参数，请整合为数组形式纳入$_REQUEST['param']实现
 	 *不在ajax请求中使用的模板函数则不受此规则约束
 	 */
-	if (strpos($action, '_wnd') === 0) {
+	if ('GET' == $_SERVER['REQUEST_METHOD']) {
 
 		return $action($_REQUEST['param']);
 
@@ -63,4 +72,37 @@ function wnd_api_callback($request) {
 
 	}
 
+}
+
+/**
+ *@since 2019.07.31
+ *多重筛选API
+ **/
+function wnd_filter_api_callback() {
+
+	try {
+		$filter = new Wnd_Filter;
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
+	}
+
+	$query = new WP_Query($filter->wp_query_args);
+
+	$post_list = '';
+	if ($query->have_posts()) {
+		while ($query->have_posts()): $query->the_post();
+			global $post;
+			$post_list .= _wndbiz_post_list_tpl($post);
+		endwhile;
+		wp_reset_postdata(); //重置查询
+	}
+
+	return array(
+		'status' => 1,
+		'data' => array(
+			'post_list' => $post_list,
+			'wp_query_args' => $filter->wp_query_args,
+			'taxonomies' => get_object_taxonomies($filter->wp_query_args['post_type'], $output = 'names'),
+		),
+	);
 }
