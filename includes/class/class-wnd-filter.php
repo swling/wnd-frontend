@@ -9,7 +9,7 @@ class Wnd_Filter {
 	// 筛选项
 	public $tabs = '';
 	// 筛选结果
-	public $posts = '';
+	public $results = '';
 	// 是否ajax
 	public $is_ajax;
 
@@ -32,7 +32,7 @@ class Wnd_Filter {
 		'tax_query' => array(),
 		'meta_key' => '',
 		'meta_value' => '',
-		'post_type' => 'post',
+		'post_type' => '',
 		'post_status' => 'publish',
 	);
 
@@ -83,8 +83,18 @@ class Wnd_Filter {
 	 *@since 2019.07.31
 	 *获取筛结果HTML
 	 */
-	public function get_posts() {
-		return $this->posts;
+	public function get_results() {
+
+		$query = new WP_Query($this->wp_query_args);
+		if ($query->have_posts()) {
+			while ($query->have_posts()): $query->the_post();
+				global $post;
+				$this->results .= _wndbiz_post_list_tpl($post);
+			endwhile;
+			wp_reset_postdata(); //重置查询
+		}
+
+		return $this->results;
 	}
 
 	/**
@@ -94,8 +104,8 @@ class Wnd_Filter {
 
 		// 属性赋值以供其他方法查询
 		$this->post_type_filter_args = $args;
-		// 设置第一个pos type为默认值
-		$this->wp_query_args['post_type'] = reset($args);
+		// 若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post类型
+		$this->wp_query_args['post_type'] = $this->wp_query_args['post_type'] ?: ($args ? reset($args) : 'post');
 
 		// 若筛选项少于2个，即无需筛选post type：隐藏tabs
 		$tabs = '<div class="tabs is-boxed post-type-tabs ' . (count($args) < 2 ? 'is-hidden' : '') . '">';
