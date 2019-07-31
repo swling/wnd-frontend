@@ -166,7 +166,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	}
 
 	public function add_post_thumbnail($width = 200, $height = 200, $label = '') {
-		self::add_post_image_upload('_thumbnail_id', $width, $height, $label);
+		$this->add_post_image_upload('_thumbnail_id', $width, $height, $label);
 	}
 
 	public function add_post_content($rich_media_editor = true, $required = false, $placeholder = '详情') {

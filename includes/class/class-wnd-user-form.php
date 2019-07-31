@@ -172,7 +172,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			),
 			'delete_button' => false,
 		);
-		self::add_image_upload($args);
+		parent::add_image_upload($args);
 	}
 
 	public function add_user_file_upload($meta_key, $label = '文件上传') {
@@ -182,7 +182,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			return;
 		}
 
-		self::add_file_upload(
+		parent::add_file_upload(
 			array(
 				'label' => $label,
 				'data' => array( // some hidden input,maybe useful in ajax upload

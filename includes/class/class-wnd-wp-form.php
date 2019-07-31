@@ -343,7 +343,7 @@ class Wnd_WP_Form extends Wnd_Form {
 				continue;
 			}
 
-			$html .= '<div id="img' . $attachment_id . '" class="column is-narrow">';
+			$html .= '<div class="attachment-' . $attachment_id . ' column is-narrow">';
 			$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '"height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
 			$html .= '<a class="delete" data-id="' . $id . '" data-file_id="' . $attachment_id . '"></a>';
 			$html .= '</div>';

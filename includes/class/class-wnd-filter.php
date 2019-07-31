@@ -39,7 +39,7 @@ class Wnd_Filter {
 	public function __construct($is_ajax = false) {
 
 		// 解析GET参数为wp_query参数并与默认参数合并
-		$this->wp_query_args = wp_parse_args(self::parse_url_to_wp_query(), $this->wp_query_args);
+		$this->wp_query_args = wp_parse_args($this->parse_url_to_wp_query(), $this->wp_query_args);
 		$this->is_ajax = $is_ajax;
 
 		// 仅可查询当前用户自己的非公开post，管理员除外
@@ -63,7 +63,7 @@ class Wnd_Filter {
 	 *@since 2019.07.31
 	 *设置post列表嵌入容器
 	 **/
-	public function set_posts_container() {
+	public function set_results_container() {
 
 	}
 
