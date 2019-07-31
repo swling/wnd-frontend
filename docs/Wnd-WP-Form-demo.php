@@ -51,9 +51,9 @@ function wnd_filer_form_filter($input_values) {
  */
 function _wnd_demo_form() {
 
-	$form = new Wnd_WP_Form();
+	$form = new Wnd_WP_Form($is_ajax_submit = true);
 
-	$form->set_form_attr('id="my-form-id"');
+	$form->set_form_attr('data-test="test-value"');
 	$form->set_form_title('标题');
 
 	// input
@@ -199,9 +199,9 @@ function _wnd_demo_form() {
 	// upload image
 	$form->add_image_upload(
 		array(
-			'id' => 'image-upload', //container id
+			// 'id' => 'image-upload', //container id
 			'name' => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
-			'file_id' => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户di综合查询
+			'file_id' => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户id综合查询
 			'label' => 'Image upload',
 			'thumbnail' => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
 			'thumbnail_size' => array('width' => 100, 'height' => 100), //thumbnail image size
@@ -221,9 +221,9 @@ function _wnd_demo_form() {
 	// upload file
 	$form->add_file_upload(
 		array(
-			'id' => 'file-upload', //container id
+			// 'id' => 'file-upload', //container id
 			'name' => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
-			'file_id' => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户di综合查询
+			'file_id' => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户id综合查询
 			'label' => 'File upland',
 			'data' => array( // some data on file input, maybe useful in ajax upload
 				'meta_key' => 'file',
