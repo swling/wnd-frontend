@@ -77,22 +77,43 @@ function wnd_rest_api_callback($request) {
 /**
  *@since 2019.07.31
  *多重筛选API
+ *
+ *
+ * @see Wnd_Filter: parse_url_to_wp_query() 解析$_GET规则：
+ * type={post_type}
+ * status={post_status}
+ *
+ * post字段
+ * _post_{post_field}={value}
+ *
+ *meta查询
+ * _meta_{key}={$meta_value}
+ * _meta_{key}=exists
+ *
+ *分类查询
+ * _term_{$taxonomy}={term_id}
+ *
+ * 其他查询（具体参考 wp_query）
+ * $wp_query_args[$key] = $value;
+ *
  **/
 function wnd_filter_api_callback() {
 
+	// 根据请求GET参数，获取wp_query查询参数
 	try {
 		$filter = new Wnd_Filter;
 	} catch (Exception $e) {
 		return array('status' => 0, 'msg' => $e->getMessage());
 	}
 
+	// 查询post并返回数据
 	$query = new WP_Query($filter->wp_query_args);
 
-	$post_list = '';
+	$posts = '';
 	if ($query->have_posts()) {
 		while ($query->have_posts()): $query->the_post();
 			global $post;
-			$post_list .= _wndbiz_post_list_tpl($post);
+			$posts .= _wndbiz_post_list_tpl($post);
 		endwhile;
 		wp_reset_postdata(); //重置查询
 	}
@@ -100,7 +121,8 @@ function wnd_filter_api_callback() {
 	return array(
 		'status' => 1,
 		'data' => array(
-			'post_list' => $post_list,
+			'posts' => $posts,
+			'post_count' => $query->post_count,
 			'wp_query_args' => $filter->wp_query_args,
 			'taxonomies' => get_object_taxonomies($filter->wp_query_args['post_type'], $output = 'names'),
 		),
