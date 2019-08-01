@@ -13,28 +13,28 @@ if (!defined('ABSPATH')) {
 
 /**
  *@since 2019.02.16 封装：用户中心
- *@param string or array ：action => register / login / reset_password, tab => string :profile / account
+ *@param string or array ：do => register / login / reset_password, tab => string :profile / account
  *@return $html .= el
  */
 function _wnd_user_center($args = array()) {
 
 	$defaults = array(
-		'action' => 'register',
+		'do' => 'register',
 		'tab' => 'profile',
 	);
 	$args = wp_parse_args($args, $defaults);
-	$action = $_GET['action'] ?? $args['action'];
+	$do = $_GET['do'] ?? $args['do'];
 	$tab = $_GET['tab'] ?? $args['tab'];
 
 	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
+	$ajax_type = $_GET['ajax_type'] ?? 'modal';
 
 	$html = '<div id="user-center">';
 
 	//1、 未登录用户面板
 	if (!is_user_logged_in()) {
 
-		switch ($action) {
+		switch ($do) {
 
 		case 'register':
 
@@ -49,20 +49,20 @@ function _wnd_user_center($args = array()) {
 				if ($ajax_type == 'modal') {
 
 					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
-						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=register&type=sms\');">手机注册</a> | ';
+						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'do=register&type=sms\');">手机注册</a> | ';
 					} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
-						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=register&type=email\');">邮箱注册</a> | ';
+						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'do=register&type=email\');">邮箱注册</a> | ';
 					}
-					$html .= '已有账户？<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\');">登录</a>';
+					$html .= '已有账户？<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'do=login\');">登录</a>';
 
 				} else {
 
 					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
-						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=register&type=sms\');">手机注册</a> | ';
+						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'do=register&type=sms\');">手机注册</a> | ';
 					} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
-						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=register&type=email\');">邮箱注册</a> | ';
+						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'do=register&type=email\');">邮箱注册</a> | ';
 					}
-					$html .= '已有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=login\');">登录</a>';
+					$html .= '已有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'do=login\');">登录</a>';
 
 				}
 
@@ -73,7 +73,7 @@ function _wnd_user_center($args = array()) {
 				} elseif ($type == 'sms' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
 					$html .= '<a href="' . add_query_arg('type', 'email') . '">邮箱注册</a> | ';
 				}
-				$html .= '已有账户？<a href="' . add_query_arg('action', 'login') . '">登录</a>';
+				$html .= '已有账户？<a href="' . add_query_arg('do', 'login') . '">登录</a>';
 
 			}
 			$html .= '</div></div></div>';
@@ -88,15 +88,15 @@ function _wnd_user_center($args = array()) {
 			$html .= '<div class="user-form"><div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
 			if (wnd_doing_ajax()) {
 				if ($ajax_type == 'modal') {
-					$html .= '没有账户？<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=register\');">立即注册</a> | ';
-					$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reset_password\');">忘记密码？</a>';
+					$html .= '没有账户？<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'do=register\');">立即注册</a> | ';
+					$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'do=reset_password\');">忘记密码？</a>';
 				} else {
-					$html .= '没有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=register\');">立即注册</a> | ';
-					$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reset_password\');">忘记密码</a>';
+					$html .= '没有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'do=register\');">立即注册</a> | ';
+					$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'do=reset_password\');">忘记密码</a>';
 				}
 			} else {
-				$html .= '没有账户？<a href="' . add_query_arg('action', 'register') . '">立即注册</a> | ';
-				$html .= '<a href="' . add_query_arg('action', 'reset_password') . '">忘记密码？</a>';
+				$html .= '没有账户？<a href="' . add_query_arg('do', 'register') . '">立即注册</a> | ';
+				$html .= '<a href="' . add_query_arg('do', 'reset_password') . '">忘记密码？</a>';
 			}
 			$html .= '</div></div></div>';
 
@@ -112,21 +112,21 @@ function _wnd_user_center($args = array()) {
 				if ($ajax_type == 'modal') {
 
 					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
-						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reset_password&type=sms\');">手机验证找回</a> | ';
+						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'do=reset_password&type=sms\');">手机验证找回</a> | ';
 					} elseif ($type == 'sms') {
-						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=reset_password&type=email\');">邮箱验证找回</a> | ';
+						$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'do=reset_password&type=email\');">邮箱验证找回</a> | ';
 					}
-					$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\');">登录</a>';
+					$html .= '<a onclick="wnd_ajax_modal(\'_wnd_user_center\',\'do=login\');">登录</a>';
 
 				} else {
 
 					if ($type == 'email' and wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
-						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reset_password&type=sms\');">手机验证找回</a> | ';
+						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'do=reset_password&type=sms\');">手机验证找回</a> | ';
 					} elseif ($type == 'sms') {
-						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=reset_password&type=email\');">邮箱验证找回</a> | ';
+						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'do=reset_password&type=email\');">邮箱验证找回</a> | ';
 					}
 
-					$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'action=login\');">登录</a>';
+					$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'_wnd_user_center\',\'do=login\');">登录</a>';
 				}
 			} else {
 
@@ -135,7 +135,7 @@ function _wnd_user_center($args = array()) {
 				} elseif ($type == 'sms') {
 					$html .= '<a href="' . add_query_arg('type', 'email') . '">邮箱验证找回</a> | ';
 				}
-				$html .= '<a href="' . add_query_arg('action', 'login') . '">登录</a>';
+				$html .= '<a href="' . add_query_arg('do', 'login') . '">登录</a>';
 
 			}
 			$html .= '</div></div></div>';

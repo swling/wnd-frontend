@@ -94,7 +94,7 @@ function _wnd_ajax_next_page($function, $args, $post_count) {
 	$js_pre_args = '\'' . $function . '\',\'' . http_build_query($args) . '\'';
 	// $js_pre_args = str_replace('_wnd_', '', $js_pre_args);
 
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
+	$ajax_type = $_GET['ajax_type'] ?? 'modal';
 	if ($ajax_type == 'modal') {
 		$next_onclick = 'wnd_ajax_modal(' . $js_next_args . ')';
 		$pre_onclick = 'wnd_ajax_modal(' . $js_pre_args . ')';

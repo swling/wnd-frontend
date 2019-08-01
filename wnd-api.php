@@ -53,7 +53,7 @@ function wnd_rest_api_callback($request) {
 	 *若模板函数需要传递多个参数，请整合为数组形式纳入$_REQUEST['param']实现
 	 *不在ajax请求中使用的模板函数则不受此规则约束
 	 */
-	if ('GET' == $_SERVER['REQUEST_METHOD']) {
+	if ('GET' == $_SERVER['REQUEST_METHOD'] and strpos($action, '_wnd') === 0) {
 
 		return $action($_REQUEST['param']);
 

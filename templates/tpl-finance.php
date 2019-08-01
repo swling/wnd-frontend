@@ -14,7 +14,7 @@ function _wnd_user_fin_panel($args = '') {
 	}
 
 	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
+	$ajax_type = $_GET['ajax_type'] ?? 'modal';
 	$user_id = get_current_user_id();
 
 	// args
@@ -271,7 +271,7 @@ function _wnd_admin_fin_panel($args = '') {
 	}
 
 	// ajax请求类型
-	$ajax_type = $_POST['ajax_type'] ?? 'modal';
+	$ajax_type = $_GET['ajax_type'] ?? 'modal';
 
 	// args
 	$defaults = array(

@@ -70,7 +70,7 @@ function _wnd_user_mail_panel($args = '') {
 	$args = wp_parse_args($args, $defaults);
 
 	// 优先参数
-	$args['post_status'] = $_REQUEST['status'] ?? $args['post_status'];
+	$args['post_status'] = $_GET['status'] ?? $args['post_status'];
 	$args['author'] = get_current_user_id();
 
 	// active
@@ -95,7 +95,7 @@ function _wnd_user_mail_panel($args = '') {
 	if (wnd_doing_ajax()) {
 
 		// ajax请求类型
-		$ajax_type = $_POST['ajax_type'] ?? 'modal';
+		$ajax_type = $_GET['ajax_type'] ?? 'modal';
 		if ($ajax_type == 'modal') {
 			$html .= '<li ' . $unread_active . '><a onclick="wnd_ajax_modal(\'_wnd_user_mail_panel\',\'' . $ajax_args_unread . '\');">未读</a></li>';
 			$html .= '<li ' . $all_active . '><a onclick="wnd_ajax_modal(\'_wnd_user_mail_panel\',\'' . $ajax_args_all . '\');">全部</a></li>';

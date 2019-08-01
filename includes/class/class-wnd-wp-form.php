@@ -6,6 +6,8 @@
  *常规情况下，未选中的checkbox 和radio等字段不会出现在提交的表单数据中
  *在本环境中，为实现字段name nonce校验，未选中的字段也会发送一个空值到后台（通过 hidden字段实现），在相关数据处理上需要注意
  *为保障表单不被前端篡改，会提取所有字段的name值，结合算法生成校验码，后端通过同样的方式提取$_POST数据，并做校验
+ *
+ *@param bool $is_ajax_submit 是否ajax提交
  */
 class Wnd_WP_Form extends Wnd_Form {
 
