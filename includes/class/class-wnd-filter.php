@@ -62,6 +62,11 @@ class Wnd_Filter {
 	 */
 	public $wp_query;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param bool $is_ajax 是否为ajax查询
+	 */
 	public function __construct($is_ajax = false) {
 		// 解析GET参数为wp_query参数并与默认参数合并
 		$this->wp_query_args = wp_parse_args($this->parse_url_to_wp_query(), $this->wp_query_args);
@@ -460,9 +465,8 @@ class Wnd_Filter {
 
 	/**
 	 *@since 2019.04.18 meta query
-	 *@param 自定义： array args['wnd_meta_query'] meta字段筛选:
-	 *		暂只支持单一 meta_key
-	 *		非ajax状态环境中仅支持 = 、exists 两种compare
+	 *@param 自定义： array args meta字段筛选:
+	 *		暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
 	 *
 	 *	$args = array(
 	 *		'label' => '文章价格',
@@ -553,7 +557,7 @@ class Wnd_Filter {
 
 	/**
 	 *@since 2019.04.21 排序
-	 *@param 自定义： array args['wnd_orderby']
+	 *@param 自定义： array args
 	 *
 	 *	$args = array(
 	 *		'label' => '排序',
@@ -869,8 +873,11 @@ class Wnd_Filter {
 		 */
 		$paged = $this->wp_query->query_vars['paged'] ?: 1;
 
-		// 未查询文章总数，以上一页下一页的形式翻页(在数据较多的情况下，可以提升查询性能)
-		if (!$this->wp_query->max_num_pages) {
+		/**
+		 *未查询文章总数，以上一页下一页的形式翻页(在数据较多的情况下，可以提升查询性能)
+		 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
+		 */
+		if (!$this->wp_query->max_num_pages or $this->is_ajax) {
 			$html = '<nav class="pagination is-centered ' . $this->ajax_element . '" role="navigation" aria-label="pagination">';
 			$html .= '<ul class="pagination-list">';
 
@@ -885,7 +892,10 @@ class Wnd_Filter {
 
 			return $html;
 
-			// 常规翻页
+			/**
+			 *常规分页，需要查询文章总数
+			 *据称，在数据量较大的站点，查询文章总数会较为费时
+			 */
 		} else {
 			$html = '<div class="pagination is-centered ' . $this->ajax_element . '">';
 
