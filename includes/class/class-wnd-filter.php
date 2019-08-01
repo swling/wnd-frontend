@@ -3,15 +3,21 @@
 /**
  * @since 2019.07.30
  * 多重筛选类
+ * 样式基于bulma css
  */
 class Wnd_Filter {
 
-	// 筛选项
+	// 筛选项HTML
 	public $tabs = '';
-	// 筛选结果
-	public $results = '';
+
+	// 筛选结果HTML
+	public $posts = '';
+
 	// 是否ajax
 	public $is_ajax;
+
+	// ajax HTML标记
+	public $ajax_element;
 
 	// 筛选参数
 	public $post_type_filter_args;
@@ -22,9 +28,21 @@ class Wnd_Filter {
 	public $orderby_filter_args;
 
 	// 默认切换筛选项时需要移除的参数
-	public $remove_query_arg = array('paged', 'pages');
+	public $remove_query_arg = array('paged', 'page');
 
-	// wp_query默认值
+	/**
+	 *从$_GET中解析出来的wp_query参数
+	 *@see $this->parse_url_to_wp_query();
+	 */
+	public $http_query_args = array(
+		'meta_query' => array(),
+		'tax_query' => array(),
+	);
+
+	/**
+	 *wp_query查询参数
+	 *默认值与 $this->$http_query_args 合并后组成最终查询参数
+	 */
 	public $wp_query_args = array(
 		'orderby' => 'date',
 		'order' => 'DESC',
@@ -32,15 +50,23 @@ class Wnd_Filter {
 		'tax_query' => array(),
 		'meta_key' => '',
 		'meta_value' => '',
-		'post_type' => '',
+		'post_type' => 'post',
 		'post_status' => 'publish',
+		'no_found_rows' => false,
+		'paged' => 1,
 	);
 
-	public function __construct($is_ajax = false) {
+	/**
+	 *WP_Query 查询结果：
+	 *@see $this->query();
+	 */
+	public $wp_query;
 
+	public function __construct($is_ajax = false) {
 		// 解析GET参数为wp_query参数并与默认参数合并
 		$this->wp_query_args = wp_parse_args($this->parse_url_to_wp_query(), $this->wp_query_args);
 		$this->is_ajax = $is_ajax;
+		$this->ajax_element = $this->is_ajax ? 'ajax-filter' : '';
 
 		// 仅可查询当前用户自己的非公开post，管理员除外
 		if ($this->wp_query_args['post_status'] != 'publish' and !is_super_admin()) {
@@ -52,49 +78,11 @@ class Wnd_Filter {
 	}
 
 	/**
-	 *@since 2019.7.31
-	 *设置输出模板函数
+	 *@since 2019.07.31
+	 *设置ajax post列表嵌入容器
 	 **/
-	public function set_post_template() {
+	public function set_ajax_container() {
 
-	}
-
-	/**
-	 *@since 2019.07.31
-	 *设置post列表嵌入容器
-	 **/
-	public function set_results_container() {
-
-	}
-
-	/**
-	 *@since 2019.07.31
-	 *获取筛选项HTML
-	 */
-	public function get_tabs() {
-		if ($this->is_ajax) {
-			return '<div class="wnd-filter-tabs is-ajax">' . $this->tabs . '</div>';
-		} else {
-			return '<div class="wnd-filter-tabs">' . $this->tabs . '</div>';
-		}
-	}
-
-	/**
-	 *@since 2019.07.31
-	 *获取筛结果HTML
-	 */
-	public function get_results() {
-
-		$query = new WP_Query($this->wp_query_args);
-		if ($query->have_posts()) {
-			while ($query->have_posts()): $query->the_post();
-				global $post;
-				$this->results .= _wndbiz_post_list_tpl($post);
-			endwhile;
-			wp_reset_postdata(); //重置查询
-		}
-
-		return $this->results;
 	}
 
 	/**
@@ -104,8 +92,9 @@ class Wnd_Filter {
 
 		// 属性赋值以供其他方法查询
 		$this->post_type_filter_args = $args;
+
 		// 若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post类型
-		$this->wp_query_args['post_type'] = $this->wp_query_args['post_type'] ?: ($args ? reset($args) : 'post');
+		$this->wp_query_args['post_type'] = $this->http_query_args['post_type'] ?? ($args ? reset($args) : 'post');
 
 		// 若筛选项少于2个，即无需筛选post type：隐藏tabs
 		$tabs = '<div class="tabs is-boxed post-type-tabs ' . (count($args) < 2 ? 'is-hidden' : '') . '">';
@@ -113,20 +102,18 @@ class Wnd_Filter {
 
 		// 输出tabs
 		foreach ($args as $post_type) {
-
 			// 根据类型名，获取完整的类型信息
 			$post_type = get_post_type_object($post_type);
-
 			$class = 'post-type-' . $post_type->name;
 			$class .= ($this->wp_query_args['post_type'] == $post_type->name) ? ' is-active' : '';
 
 			/**
 			 *@since 2019.02.27
-			 * 切换类型时，需要从当前网址移除的参数（用于在多重筛选时，移除仅针对当前类型有效的参数）
-			 *切换post type时移除term / orderby / order
+			 *切换类型时，需要从当前网址移除的参数（用于在多重筛选时，移除仅针对当前类型有效的参数）
+			 *切换post type时移除term / orderby / order / status
 			 *taxonomy filter 生成的GET参数为：'_term_' . $taxonomy
 			 */
-			$remove_query_arg = array_merge(array('orderby', 'order'), $this->remove_query_arg);
+			$remove_query_arg = array_merge(array('orderby', 'order', 'status'), $this->remove_query_arg);
 			if (isset($this->wp_query_args['post_type'])) {
 				$taxonomies = get_object_taxonomies($this->wp_query_args['post_type'], $output = 'names');
 				if ($taxonomies) {
@@ -186,18 +173,16 @@ class Wnd_Filter {
 		 * 全部选项
 		 */
 		$all_active = 'any' == $this->wp_query_args['post_status'] ? 'class="is-active"' : null;
-		$tabs .= '<li ' . $all_active . '><a data-key="status" data-value="" href="' . remove_query_arg('_post_post_status', remove_query_arg($this->remove_query_arg)) . '">全部</a></li>';
+		$tabs .= '<li ' . $all_active . '><a data-key="status" data-value="" href="' . remove_query_arg('status', remove_query_arg($this->remove_query_arg)) . '">全部</a></li>';
 
 		// 输出tabs
 		foreach ($args as $label => $post_status) {
-
 			$class = 'post-status-' . $post_status;
 			$class .= (isset($this->wp_query_args['post_status']) and $this->wp_query_args['post_status'] == $post_status) ? ' is-active' : '';
 
 			$tabs .= '<li class="' . $class . '">';
-			$tabs .= '<a data-key="status" data-value="' . $post_status . '" href="' . add_query_arg('_post_post_status', $post_status, remove_query_arg($this->remove_query_arg)) . '">' . $label . '</a>';
+			$tabs .= '<a data-key="status" data-value="' . $post_status . '" href="' . add_query_arg('status', $post_status, remove_query_arg($this->remove_query_arg)) . '">' . $label . '</a>';
 			$tabs .= '</li>';
-
 		}
 		unset($label, $post_status);
 
@@ -208,9 +193,7 @@ class Wnd_Filter {
 		$tabs .= '</div>';
 
 		$this->tabs .= $tabs;
-
 		return $tabs;
-
 	}
 
 	/**
@@ -230,7 +213,6 @@ class Wnd_Filter {
 		$hidden_class = '';
 		$current_post_type_taxonomies = get_object_taxonomies($this->wp_query_args['post_type'], $output = 'names');
 		if (!in_array($taxonomy, $current_post_type_taxonomies)) {
-
 			if (!$this->is_ajax) {
 				return;
 			} else {
@@ -249,7 +231,6 @@ class Wnd_Filter {
 		 */
 		$all_active = 'class="is-active"';
 		foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
-
 			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
 			if (!is_array($tax_query)) {
 				continue;
@@ -260,7 +241,6 @@ class Wnd_Filter {
 				$all_active = '';
 				continue;
 			}
-
 		}
 		unset($key, $tax_query);
 
@@ -280,11 +260,9 @@ class Wnd_Filter {
 		foreach (get_terms($args) as $term) {
 
 			$class = 'term-id-' . $term->term_id;
-
 			// 遍历当前tax query查询是否匹配当前tab
 			if (isset($this->wp_query_args['tax_query'])) {
 				foreach ($this->wp_query_args['tax_query'] as $tax_query) {
-
 					// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
 					if (!is_array($tax_query)) {
 						continue;
@@ -339,20 +317,16 @@ class Wnd_Filter {
 		$tabs .= '<div class="tabs">';
 		$tabs .= '<ul class="tab">';
 		foreach ($child_terms as $child_term) {
-
 			$child_class = 'term-id-' . $child_term->term_id;
 
 			// 遍历当前tax query查询是否匹配当前tab
 			if (isset($this->wp_query_args['tax_query'])) {
-
 				foreach ($this->wp_query_args['tax_query'] as $tax_query) {
-
 					if ($tax_query['terms'] == $child_term->term_id) {
 						$child_class .= ' is-active';
 					}
 				}
 				unset($tax_query);
-
 			}
 
 			/**
@@ -367,9 +341,7 @@ class Wnd_Filter {
 		$tabs .= '</div>';
 
 		$this->tabs .= $tabs;
-
 		return $tabs;
-
 	}
 
 	/**
@@ -448,15 +420,12 @@ class Wnd_Filter {
 
 		// 输出tabs
 		foreach ($tags as $tag) {
-
 			$term = isset($category_id) ? get_term($tag->tag_id) : $tag;
-
 			// 遍历当前tax query查询是否匹配当前tab
 			$class = '';
+
 			if (isset($this->wp_query_args['tax_query'])) {
-
 				foreach ($this->wp_query_args['tax_query'] as $tax_query) {
-
 					$class .= 'term-id-' . $term->term_id;
 
 					// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
@@ -487,7 +456,6 @@ class Wnd_Filter {
 
 		$this->tabs .= $tabs;
 		return $tabs;
-
 	}
 
 	/**
@@ -548,7 +516,6 @@ class Wnd_Filter {
 		 * 全部选项
 		 * @since 2019.03.07（copy）
 		 */
-
 		$tabs .= '<li ' . $all_active . '><a data-key="_meta_' . $args['key'] . '" data-value="" href="' . remove_query_arg('_meta_' . $args['key'], remove_query_arg($this->remove_query_arg)) . '">全部</a></li>';
 
 		// 输出tabs
@@ -557,19 +524,15 @@ class Wnd_Filter {
 			// 遍历当前meta query查询是否匹配当前tab
 			$active = '';
 			if (isset($this->wp_query_args['meta_query'])) {
-
 				foreach ($this->wp_query_args['meta_query'] as $meta_query) {
-
 					if ($meta_query['compare'] != 'exists' and $meta_query['value'] == $value) {
 						$active = 'class="is-active"';
-
 						// meta query compare 为 exists时，没有value值，仅查询是否包含对应key值
 					} elseif ($meta_query['key'] = $args['key']) {
 						$active = 'class="is-active"';
 					}
 				}
 				unset($meta_query);
-
 			}
 
 			/**
@@ -645,11 +608,9 @@ class Wnd_Filter {
 				 *	$query = new WP_Query( $args );
 				 */
 				if (is_array($orderby) and ($this->wp_query_args['orderby'] == 'meta_value_num' or $this->wp_query_args['orderby'] == 'meta_value')) {
-
 					if ($orderby['meta_key'] == $this->wp_query_args['meta_key']) {
 						$active = 'class="is-active"';
 					}
-
 					// 常规排序
 				} else {
 					if ($orderby == $this->wp_query_args['orderby']) {
@@ -660,7 +621,6 @@ class Wnd_Filter {
 			}
 
 			// data-key="orderby" data-value="' . $orderby . '"
-
 			$query_arg = is_array($orderby) ? $orderby : array('orderby' => $orderby);
 			$tabs .= '<li ' . $active . '><a href="' . add_query_arg($query_arg, remove_query_arg($remove_query_arg)) . '">' . $key . '</a></li>';
 		}
@@ -692,7 +652,6 @@ class Wnd_Filter {
 
 		// 1、tax_query
 		foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
-
 			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
 			if (!is_array($tax_query)) {
 				continue;
@@ -739,13 +698,11 @@ class Wnd_Filter {
 
 		$this->tabs .= $tabs;
 		return $tabs;
-
 	}
 
 	/**
 	 * @since 2019.07.20
 	 * 从GET参数中解析wp_query参数
-	 * @param 	array 	wp_query $args
 	 *
 	 * @return 	array 	wp_query $args
 	 *
@@ -764,7 +721,7 @@ class Wnd_Filter {
 	 * _term_{$taxonomy}={term_id}
 	 *
 	 * 其他查询（具体参考 wp_query）
-	 * $wp_query_args[$key] = $value;
+	 * $args[$key] = $value;
 	 **/
 	public function parse_url_to_wp_query() {
 
@@ -779,7 +736,7 @@ class Wnd_Filter {
 			 *直接用 post_type 作为参数会触发WordPress原生请求导致错误
 			 */
 			if ('type' === $key) {
-				$this->wp_query_args['post_type'] = $value;
+				$this->http_query_args['post_type'] = $value;
 				continue;
 			}
 
@@ -787,7 +744,7 @@ class Wnd_Filter {
 			 *post status tabs生成的GET参数为：status={$post_status}
 			 */
 			if ('status' === $key) {
-				$this->wp_query_args['post_status'] = $value;
+				$this->http_query_args['post_status'] = $value;
 				continue;
 			}
 
@@ -797,7 +754,6 @@ class Wnd_Filter {
 			 *?_meta_price=exists 则查询 存在price的文章
 			 */
 			if (strpos($key, '_meta_') === 0) {
-
 				$key = str_replace('_meta_', '', $key);
 				$compare = $value == 'exists' ? 'exists' : '=';
 				$meta_query = array(
@@ -813,7 +769,7 @@ class Wnd_Filter {
 					unset($meta_query['value']);
 				}
 
-				array_push($this->wp_query_args['meta_query'], $meta_query);
+				array_push($this->http_query_args['meta_query'], $meta_query);
 				continue;
 			}
 
@@ -827,7 +783,7 @@ class Wnd_Filter {
 					'field' => 'term_id',
 					'terms' => $value,
 				);
-				array_push($this->wp_query_args['tax_query'], $term_query);
+				array_push($this->http_query_args['tax_query'], $term_query);
 				continue;
 			}
 
@@ -835,7 +791,7 @@ class Wnd_Filter {
 			 *@since 2019.05.31 post field查询
 			 */
 			if (strpos($key, '_post_') === 0) {
-				$this->wp_query_args[str_replace('_post_', '', $key)] = $value;
+				$this->http_query_args[str_replace('_post_', '', $key)] = $value;
 				continue;
 			}
 
@@ -844,17 +800,126 @@ class Wnd_Filter {
 			 *分页
 			 */
 			if ('page' == $key) {
-				$this->wp_query_args['paged'] = $value ?: 1;
+				$this->http_query_args['paged'] = $value ?: 1;
 				continue;
 			}
 
 			// 其他、按键名自动匹配
-			$this->wp_query_args[$key] = $value;
+			$this->http_query_args[$key] = $value;
 
 		}
 		unset($key, $value);
 
-		return $this->wp_query_args;
+		return $this->http_query_args;
+	}
+
+	/**
+	 *@since 2019.08.01
+	 *执行查询
+	 */
+	public function query() {
+		$this->wp_query = new WP_Query($this->wp_query_args);
+	}
+
+	/**
+	 *@since 2019.07.31
+	 *获取筛选项HTML
+	 */
+	public function get_tabs() {
+		return '<div class="wnd-filter-tabs ' . $this->ajax_element . '">' . $this->tabs . '</div>';
+	}
+
+	/**
+	 *@since 2019.07.31
+	 *获取筛结果HTML
+	 *@param string $post_template 文章模板函数
+	 */
+	public function get_posts($post_template) {
+
+		if (!$this->wp_query) {
+			return '未执行WP_Query';
+		}
+
+		if ($this->wp_query->have_posts()) {
+			while ($this->wp_query->have_posts()): $this->wp_query->the_post();
+				global $post;
+				$this->posts .= $post_template($post);
+			endwhile;
+			wp_reset_postdata(); //重置查询
+		}
+
+		return $this->posts;
+	}
+
+	/**
+	 *@since 2019.02.15 简单分页导航
+	 *不查询总数的情况下，简单实现下一页翻页
+	 *翻页参数键名page 不能设置为 paged 会与原生WordPress翻页机制产生冲突
+	 */
+	public function get_pagination($show_page = 5) {
+
+		if (!$this->wp_query) {
+			return '未执行WP_Query';
+		}
+
+		/**
+		 *$this->wp_query->query_vars :
+		 *WP_Query实际执行的查询参数 new WP_query($args) $args 经过WP_Query解析后
+		 *@see Class WP_Query
+		 */
+		$paged = $this->wp_query->query_vars['paged'] ?: 1;
+
+		// 未查询文章总数，以上一页下一页的形式翻页(在数据较多的情况下，可以提升查询性能)
+		if (!$this->wp_query->max_num_pages) {
+			$html = '<nav class="pagination is-centered ' . $this->ajax_element . '" role="navigation" aria-label="pagination">';
+			$html .= '<ul class="pagination-list">';
+
+			if ($paged >= 2) {
+				$html .= '<li><a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-link" href="' . add_query_arg('page', $paged - 1) . '">上一页</a>';
+			}
+			if ($this->wp_query->post_count >= $this->wp_query->query_vars['posts_per_page']) {
+				$html .= '<li><a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-link" href="' . add_query_arg('page', $paged + 1) . '">下一页</a>';
+			}
+			$html .= '</ul>';
+			$html .= '</nav>';
+
+			return $html;
+
+			// 常规翻页
+		} else {
+			$html = '<div class="pagination is-centered ' . $this->ajax_element . '">';
+
+			if ($paged > 1) {
+				$html .= '<a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . add_query_arg('page', $paged - 1) . '">上一页</a>';
+			} else {
+				$html .= '<a class="pagination-previous" disabled="disabled">第一页</a>';
+			}
+			if ($paged < $this->wp_query->max_num_pages) {
+				$html .= '<a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . add_query_arg('page', $paged + 1) . '">下一页</a>';
+			}
+
+			$html .= '<ul class="pagination-list">';
+			$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . remove_query_arg('page') . '" >首页</a></li>';
+			for ($i = $paged - 1; $i <= $paged + $show_page; $i++) {
+				if ($i > 0 && $i <= $this->wp_query->max_num_pages) {
+					if ($i == $paged) {
+						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link is-current" href="' . add_query_arg('page', $i) . '"> <span>' . $i . '</span> </a></li>';
+					} else {
+						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link" href="' . add_query_arg('page', $i) . '"> <span>' . $i . '</span> </a></li>';
+					}
+				}
+			}
+			if ($paged < $this->wp_query->max_num_pages - 3) {
+				$html .= '<li><span class="pagination-ellipsis">&hellip;</span></li>';
+			}
+
+			$html .= '<li><a data-key="page" data-value="' . $this->wp_query->max_num_pages . '" class="pagination-link" href="' . add_query_arg('page', $this->wp_query->max_num_pages) . '">尾页</a></li>';
+			$html .= '</ul>';
+
+			$html .= '</div>';
+
+			return $html;
+		}
 	}
 
 }

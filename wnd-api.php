@@ -107,11 +107,11 @@ function wnd_filter_api_callback() {
 	}
 
 	// 查询post并返回数据
-	$query = new WP_Query($filter->wp_query_args);
+	$wp_query = new WP_Query($filter->$args);
 
 	$posts = '';
-	if ($query->have_posts()) {
-		while ($query->have_posts()): $query->the_post();
+	if ($wp_query->have_posts()) {
+		while ($wp_query->have_posts()): $wp_query->the_post();
 			global $post;
 			$posts .= _wndbiz_post_list_tpl($post);
 		endwhile;
@@ -122,9 +122,9 @@ function wnd_filter_api_callback() {
 		'status' => 1,
 		'data' => array(
 			'posts' => $posts,
-			'post_count' => $query->post_count,
-			'wp_query_args' => $filter->wp_query_args,
-			'taxonomies' => get_object_taxonomies($filter->wp_query_args['post_type'], $output = 'names'),
+			'post_count' => $wp_query->post_count,
+			'wp_query_vars' => $filter->wp_query->query_vars, //实际执行的wp query参数
+			'taxonomies' => get_object_taxonomies($filter->args['post_type'], $output = 'names'),
 		),
 	);
 }

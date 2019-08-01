@@ -922,7 +922,7 @@ jQuery(document).ready(function($) {
 	 *点击链接，获取对应data值，组合参数并发送ajax请求
 	 */
 	var filter_param = {};
-	$("body").on("click", ".wnd-filter-tabs.is-ajax a", function() {
+	$("body").on("click", ".ajax-filter a", function() {
 
 		var key = $(this).data("key");
 		var value = $(this).data("value");
@@ -1010,6 +1010,14 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
+	 *@since 2019.08.01 点击pagination 新增is-current
+	 */
+	$("body").on("click", ".pagination-list a", function() {
+		$(this).addClass("is-current");
+		$(this).parent("li").siblings().find("a").removeClass("is-current");
+	});
+
+	/**
 	 *@since 2019.07.11 从主题中移植
 	 *移动导航点击展开效果
 	 */
@@ -1033,12 +1041,11 @@ jQuery(document).ready(function($) {
 	/**
 	 *@since 2019.04.01 ajax翻页后，滑动到顶部
 	 */
-	$("body").on("click", ".pagination-link", function() {
-		$(this).parents("nav").parent().get(0).scrollIntoView({
-			// $("body").get(0).scrollIntoView({
-			behavior: "smooth"
-		});
-	});
+	// $("body").on("click", ".pagination-link", function() {
+	// 	$(this).parents().get(0).scrollIntoView({
+	// 		behavior: "smooth"
+	// 	});
+	// });
 
 	/**
 	 *@since 2019.05.07 相册放大
