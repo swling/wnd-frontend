@@ -13,11 +13,17 @@ class Wnd_Filter {
 	// 筛选结果HTML
 	public $posts = '';
 
-	// 是否ajax
+	// bool 是否ajax
 	public $is_ajax;
 
-	// ajax HTML标记
-	public $ajax_element;
+	// class
+	public $class;
+
+	/**
+	 * filter html data属性
+	 * data-{key}="{value}" 将转化为 ajax url请求参数 ?{key}={value}
+	 */
+	public $html_data = array();
 
 	// 筛选参数
 	public $post_type_filter_args;
@@ -52,7 +58,7 @@ class Wnd_Filter {
 		'meta_value' => '',
 		'post_type' => 'post',
 		'post_status' => 'publish',
-		'no_found_rows' => false,
+		'no_found_rows' => true,
 		'paged' => 1,
 	);
 
@@ -71,7 +77,7 @@ class Wnd_Filter {
 		// 解析GET参数为wp_query参数并与默认参数合并
 		$this->wp_query_args = wp_parse_args($this->parse_url_to_wp_query(), $this->wp_query_args);
 		$this->is_ajax = $is_ajax;
-		$this->ajax_element = $this->is_ajax ? 'ajax-filter' : '';
+		$this->class .= $this->is_ajax ? 'ajax-filter' : '';
 
 		// 仅可查询当前用户自己的非公开post，管理员除外
 		if ($this->wp_query_args['post_status'] != 'publish' and !is_super_admin()) {
@@ -84,10 +90,54 @@ class Wnd_Filter {
 
 	/**
 	 *@since 2019.07.31
-	 *设置ajax post列表嵌入容器
+	 *添加新的http query请求参数
+	 *
+	 *@param array $query array(key=>value)
+	 *
+	 *
+	 *在非ajax环境中，直接将写入$http_query_args[key]=value
+	 *
+	 *在ajax环境中，将对应生成html data属性：data-{key}="{value}" 通过JavaScript获取后将转化为 ajax url请求参数 ?{key}={value}，
+	 *ajax发送到api接口，再通过parse_url_to_wp_query() 解析后，写入$wp_query_args[key]=value
 	 **/
-	public function set_ajax_container() {
+	public function add_query($query = array()) {
+		foreach ($query as $key => $value) {
 
+			// 新增的 http query不会自动添加到wp_query_args，因此需要同步设置
+			$this->http_query_args[$key] = $value;
+			$this->wp_query_args[$key] = $value;
+
+			// 在html data属性中新增对应属性，以实现在ajax请求中添加
+			$this->html_data[$key] = $value;
+		}
+		unset($key, $value);
+	}
+
+	/**
+	 *@since 2019.07.31
+	 *设置ajax post列表嵌入容器
+	 *@param string $container posts列表ajax嵌入容器
+	 **/
+	public function set_ajax_container($container) {
+		$this->html_data['ajax_container'] = $container;
+	}
+
+	/**
+	 *@since 2019.07.31
+	 *设置ajax post列表嵌入容器
+	 *@param string $container posts列表ajax嵌入容器
+	 **/
+	public function set_posts_per_page($posts_per_page) {
+		$this->add_query(array('posts_per_page' => $posts_per_page));
+	}
+
+	/**
+	 *@since 2019.08.02
+	 *设置列表post样式函数
+	 *@param string $template posts模板 函数名
+	 **/
+	public function set_post_template($template) {
+		$this->add_query(array('template' => $template));
 	}
 
 	/**
@@ -100,6 +150,9 @@ class Wnd_Filter {
 
 		// 若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post类型
 		$this->wp_query_args['post_type'] = $this->http_query_args['post_type'] ?? ($args ? reset($args) : 'post');
+
+		// 需要移除的查询参数
+		$remove_query_arg = array_merge(array('orderby', 'order', 'status'), $this->remove_query_arg);
 
 		// 若筛选项少于2个，即无需筛选post type：隐藏tabs
 		$tabs = '<div class="tabs is-boxed post-type-tabs ' . (count($args) < 2 ? 'is-hidden' : '') . '">';
@@ -118,7 +171,6 @@ class Wnd_Filter {
 			 *切换post type时移除term / orderby / order / status
 			 *taxonomy filter 生成的GET参数为：'_term_' . $taxonomy
 			 */
-			$remove_query_arg = array_merge(array('orderby', 'order', 'status'), $this->remove_query_arg);
 			if (isset($this->wp_query_args['post_type'])) {
 				$taxonomies = get_object_taxonomies($this->wp_query_args['post_type'], $output = 'names');
 				if ($taxonomies) {
@@ -826,11 +878,26 @@ class Wnd_Filter {
 	}
 
 	/**
+	 *
+	 *@since 2019.08.02
+	 *构造HTML data属性
+	 */
+	public function get_html_data() {
+
+		$data = '';
+		foreach ($this->html_data as $key => $value) {
+			$data .= 'data-' . $key . '="' . $value . '" ';
+		}
+
+		return $data;
+	}
+
+	/**
 	 *@since 2019.07.31
 	 *获取筛选项HTML
 	 */
 	public function get_tabs() {
-		return '<div class="wnd-filter-tabs ' . $this->ajax_element . '">' . $this->tabs . '</div>';
+		return '<div class="wnd-filter-tabs ' . $this->class . '" ' . $this->get_html_data() . '>' . $this->tabs . '</div>';
 	}
 
 	/**
@@ -838,21 +905,32 @@ class Wnd_Filter {
 	 *获取筛结果HTML
 	 *@param string $post_template 文章模板函数
 	 */
-	public function get_posts($post_template) {
+	public function get_posts() {
 
 		if (!$this->wp_query) {
 			return '未执行WP_Query';
 		}
 
+		$template = $this->http_query_args['template'];
+
 		if ($this->wp_query->have_posts()) {
 			while ($this->wp_query->have_posts()): $this->wp_query->the_post();
 				global $post;
-				$this->posts .= $post_template($post);
+				$this->posts .= $template($post);
 			endwhile;
 			wp_reset_postdata(); //重置查询
 		}
 
 		return $this->posts;
+	}
+
+	/**
+	 *@since 2019.07.31
+	 *获取筛结果HTML
+	 *@param string $post_template 文章模板函数
+	 */
+	public function get_results() {
+		return $this->get_posts() . $this->get_pagination($show_page = 5);
 	}
 
 	/**
@@ -862,7 +940,7 @@ class Wnd_Filter {
 	 */
 	public function get_pagination($show_page = 5) {
 
-		if (!$this->wp_query) {
+		if (!$this->wp_query and !$this->is_ajax) {
 			return '未执行WP_Query';
 		}
 
@@ -877,27 +955,28 @@ class Wnd_Filter {
 		 *未查询文章总数，以上一页下一页的形式翻页(在数据较多的情况下，可以提升查询性能)
 		 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
 		 */
-		if (!$this->wp_query->max_num_pages or $this->is_ajax) {
-			$html = '<nav class="pagination is-centered ' . $this->ajax_element . '" role="navigation" aria-label="pagination">';
+		if (!$this->wp_query->max_num_pages) {
+			$html = '<nav class="pagination is-centered ' . $this->class . '" ' . $this->get_html_data() . '>';
 			$html .= '<ul class="pagination-list">';
 
 			if ($paged >= 2) {
-				$html .= '<li><a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-link" href="' . add_query_arg('page', $paged - 1) . '">上一页</a>';
+				$html .= '<li><a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . add_query_arg('page', $paged - 1) . '">上一页</a>';
 			}
 			if ($this->wp_query->post_count >= $this->wp_query->query_vars['posts_per_page']) {
-				$html .= '<li><a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-link" href="' . add_query_arg('page', $paged + 1) . '">下一页</a>';
+				$html .= '<li><a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . add_query_arg('page', $paged + 1) . '">下一页</a>';
 			}
 			$html .= '</ul>';
 			$html .= '</nav>';
 
 			return $html;
 
+		} else {
 			/**
 			 *常规分页，需要查询文章总数
 			 *据称，在数据量较大的站点，查询文章总数会较为费时
 			 */
-		} else {
-			$html = '<div class="pagination is-centered ' . $this->ajax_element . '">';
+
+			$html = '<div class="pagination is-centered ' . $this->class . '" ' . $this->get_html_data() . '>';
 
 			if ($paged > 1) {
 				$html .= '<a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . add_query_arg('page', $paged - 1) . '">上一页</a>';

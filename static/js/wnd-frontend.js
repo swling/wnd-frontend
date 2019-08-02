@@ -924,6 +924,18 @@ jQuery(document).ready(function($) {
 	var filter_param = {};
 	$("body").on("click", ".ajax-filter a", function() {
 
+		// 提取data，并合并入参数
+		var filter_parent = $(this).parents(".ajax-filter");
+		var html_data = filter_parent.data();
+		filter_param = Object.assign(filter_param, html_data);
+
+		// 非分页情况，删除page请求参数
+		var is_pagination = $(this).parents(".pagination-list").length > 0 ? true : false;
+		if (!is_pagination) {
+			delete filter_param.page;
+		}
+
+
 		var key = $(this).data("key");
 		var value = $(this).data("value");
 		filter_param[key] = value;
@@ -935,8 +947,21 @@ jQuery(document).ready(function($) {
 
 		// type 切换需要特殊处理，切换时，应该清空所有其余参数
 		if ("type" == key) {
-			filter_param = {};
+
+			/**
+			 *filter_param = html_data;
+			 *JavaScript 中，如果直接对数组、对象赋值，会导致关联的双方都同步改变
+			 *因此需要做JSON.parse(JSON.stringify(html_data)) 处理
+			 */
+			filter_param = JSON.parse(JSON.stringify(html_data));
 			filter_param['type'] = $(this).data("value");
+
+			/**
+			 *清空参数的同时同步清空：is-active
+			 **/
+			filter_parent.find("ul.tab li").removeClass("is-active");
+			filter_parent.find("ul.tab li:first-child").addClass("is-active");
+
 		} else {
 			filter_param['type'] = $(".post-type-tabs .is-active a").data("value");
 		}
@@ -945,7 +970,6 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			url: wnd.root_url + wnd.filter_api,
 			type: "GET",
-			async: false,
 			data: filter_param,
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
@@ -958,12 +982,12 @@ jQuery(document).ready(function($) {
 					for (var i = 0; i < response.data.taxonomies.length; i++) {
 						$("." + response.data.taxonomies[i] + "-tabs").removeClass("is-hidden");
 					}
-
-					// _this.parent("ul").addClass("is-active");
-					// _this.parent("li").parent("ul").siblings().find("li").removeClass("is-active");
-					_this.parents(".wnd-filter-tabs").find("ul").find("li:not(:first)").removeClass("is-active");
-					_this.parents(".wnd-filter-tabs").find("ul").find("li:first").addClass("is-active");
+					// _this.parents(".wnd-filter-tabs").find("ul").find("li:not(:first)").removeClass("is-active");
+					// _this.parents(".wnd-filter-tabs").find("ul").find("li:first").addClass("is-active");
 				}
+
+				// 嵌入查询结果
+				$(filter_param.ajax_container).html(response.data.posts + response.data.pagination);
 
 			},
 			error: function() {
@@ -1012,10 +1036,10 @@ jQuery(document).ready(function($) {
 	/**
 	 *@since 2019.08.01 点击pagination 新增is-current
 	 */
-	$("body").on("click", ".pagination-list a", function() {
-		$(this).addClass("is-current");
-		$(this).parent("li").siblings().find("a").removeClass("is-current");
-	});
+	// $("body").on("click", ".pagination-list a", function() {
+	// $(this).addClass("is-current");
+	// $(this).parent("li").siblings().find("a").removeClass("is-current");
+	// });
 
 	/**
 	 *@since 2019.07.11 从主题中移植

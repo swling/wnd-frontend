@@ -101,30 +101,22 @@ function wnd_filter_api_callback() {
 
 	// 根据请求GET参数，获取wp_query查询参数
 	try {
-		$filter = new Wnd_Filter;
+		$filter = new Wnd_Filter($is_ajax = true);
 	} catch (Exception $e) {
 		return array('status' => 0, 'msg' => $e->getMessage());
 	}
 
-	// 查询post并返回数据
-	$wp_query = new WP_Query($filter->$args);
-
-	$posts = '';
-	if ($wp_query->have_posts()) {
-		while ($wp_query->have_posts()): $wp_query->the_post();
-			global $post;
-			$posts .= _wndbiz_post_list_tpl($post);
-		endwhile;
-		wp_reset_postdata(); //重置查询
-	}
+	// 执行查询
+	$filter->query();
 
 	return array(
 		'status' => 1,
 		'data' => array(
-			'posts' => $posts,
-			'post_count' => $wp_query->post_count,
+			'posts' => $filter->get_posts(),
+			'pagination' => $filter->get_pagination(),
+			'post_count' => $filter->wp_query->post_count,
 			'wp_query_vars' => $filter->wp_query->query_vars, //实际执行的wp query参数
-			'taxonomies' => get_object_taxonomies($filter->args['post_type'], $output = 'names'),
+			'taxonomies' => get_object_taxonomies($filter->wp_query->query_vars['post_type'], $output = 'names'),
 		),
 	);
 }
