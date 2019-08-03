@@ -236,3 +236,25 @@ function _wnd_post_list($args = '') {
 	return $html;
 
 }
+
+/**
+ *@since 名片列表
+ */
+function _wnd_post_list_tpl($post) {
+
+	$html = '<div class="post-list columns is-multiline is-tablet people-list">';
+
+	$html .= '<div class="column">';
+	$html .= '<h3><a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
+	$html .= '</h3>';
+	$html .= '</div>';
+
+	$html .= '<div class="column is-narrow">';
+	$html .= '</div>';
+
+	$html .= '<div class="column is-full">' . wp_trim_words($post->post_excerpt, 100) . '</div>';
+
+	$html .= '</div>';
+
+	return $html;
+}

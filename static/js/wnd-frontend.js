@@ -59,7 +59,7 @@ function wnd_send_countdown() {
 		wait--;
 		send_countdown = setTimeout(wnd_send_countdown, 1000);
 	} else {
-		$(".send-code").text("获取验证码").attr("disabled", false).fadeTo("slow", 1);
+		$(".send-code").text("获取验证码").prop("disabled", false).fadeTo("slow", 1);
 		wait = 90;
 	}
 }
@@ -271,8 +271,7 @@ function wnd_ajax_submit(form_id) {
 	// 带有required属性的字段不能为空
 	var input_value = true;
 	$("#" + form_id + " input").each(function() {
-		var required = $(this).attr("required");
-		if (required == "required") {
+		if ($(this).prop("required")) {
 			if ($(this).val() == "") {
 				input_value = false;
 				$(this).addClass("is-danger");
@@ -290,9 +289,8 @@ function wnd_ajax_submit(form_id) {
 	var option_value = true;
 	$("#" + form_id + " select option:selected").each(function() {
 		// 查看当前下拉option的父元素select是否具有required属性
-		var required = $(this).parent().attr("required");
 		option_value = $(this).val();
-		if (required == "required" && option_value == "-1") {
+		if ($(this).parent().prop("required") && option_value == "-1") {
 			option_value = false;
 			$("#" + form_id + " select").addClass("is-danger");
 			return false; //此处为退出each循环，而非阻止提交
@@ -302,8 +300,7 @@ function wnd_ajax_submit(form_id) {
 	// 文本框
 	var textarea_value = true;
 	$("#" + form_id + " textarea").each(function() {
-		var required = $(this).attr("required");
-		if (required == "required") {
+		if ($(this).prop("required")) {
 			if ($(this).val() == "") {
 				textarea_value = false;
 				$(this).addClass("is-danger");
@@ -354,7 +351,7 @@ function wnd_ajax_submit(form_id) {
 
 			submit_button.removeClass("is-loading");
 			if (response.status != 2 && response.status != 0) {
-				submit_button.attr("disabled", "disabled");
+				submit_button.prop("disabled", true);
 			}
 			var submit_text = response.msg.length <= 10 ? response.msg : (response.status > 0 ? "提交成功" : "提交失败");
 			submit_button.text(submit_text);
@@ -377,7 +374,7 @@ function wnd_ajax_submit(form_id) {
 					// 跳转类
 				case 3:
 					wnd_ajax_msg("请稍后……", style, "#" + form_id);
-					$(window.location).attr("href", response.data.redirect_to);
+					$(window.location).prop("href", response.data.redirect_to);
 					break;
 
 					// 刷新当前页面
@@ -394,7 +391,7 @@ function wnd_ajax_submit(form_id) {
 					// 下载类
 				case 6:
 					wnd_ajax_msg("下载中……", style, "#" + form_id, 5);
-					$(window.location).attr("href", response.data.redirect_to);
+					$(window.location).prop("href", response.data.redirect_to);
 					break;
 
 					//默认展示提示信息
@@ -410,7 +407,7 @@ function wnd_ajax_submit(form_id) {
 			wnd_ajax_msg("系统错误！", "is-danger", "#" + form_id);
 			submit_button.removeClass("is-loading");
 			submit_button.text("系统错误");
-			submit_button.attr("disabled", "disabled");
+			submit_button.prop("disabled", true);
 		},
 	});
 
@@ -626,7 +623,7 @@ jQuery(document).ready(function($) {
 						 *上传后，若再次选择文件，则将自动生成新的attachment记录，当前表单信息也将更改为最新上传的附件
 						 *因此上传后因禁用input，避免误操作，如需更换文件，应该先删除当前文件
 						 */
-						_this.attr("disabled", true);
+						_this.prop("disabled", true);
 						wnd_ajax_msg("上传成功，如需更改，请删除后再重新选择文件！", "is-success", "#" + id);
 
 						// 上传后，自动提交保存媒体信息
@@ -709,7 +706,7 @@ jQuery(document).ready(function($) {
 				 *@since 2019.07.18
 				 *如果上传后，设置了禁用，当删除文件后恢复文件上传
 				 **/
-				$("#" + id + " [type='file']").attr("disabled", false);
+				$("#" + id + " [type='file']").prop("disabled", false);
 
 				/**
 				 *@since 2019.07.16
@@ -793,7 +790,7 @@ jQuery(document).ready(function($) {
 					var style = "is-danger";
 				} else {
 					var style = "is-success";
-					_this.attr("disabled", true);
+					_this.prop("disabled", true);
 					_this.text("已发送");
 					wnd_send_countdown();
 				}
@@ -891,7 +888,7 @@ jQuery(document).ready(function($) {
 						// 跳转类
 					case 3:
 						wnd_alert_msg("请稍后……");
-						$(window.location).attr("href", response.data.redirect_to);
+						$(window.location).prop("href", response.data.redirect_to);
 						break;
 
 						// 刷新当前页面
@@ -934,7 +931,6 @@ jQuery(document).ready(function($) {
 		if (!is_pagination) {
 			delete filter_param.page;
 		}
-
 
 		var key = $(this).data("key");
 		var value = $(this).data("value");
@@ -982,12 +978,10 @@ jQuery(document).ready(function($) {
 					for (var i = 0; i < response.data.taxonomies.length; i++) {
 						$("." + response.data.taxonomies[i] + "-tabs").removeClass("is-hidden");
 					}
-					// _this.parents(".wnd-filter-tabs").find("ul").find("li:not(:first)").removeClass("is-active");
-					// _this.parents(".wnd-filter-tabs").find("ul").find("li:first").addClass("is-active");
 				}
 
 				// 嵌入查询结果
-				$(filter_param.ajax_container).html(response.data.posts + response.data.pagination);
+				$(filter_param.wnd_ajax_container).html(response.data.posts + response.data.pagination);
 
 			},
 			error: function() {
@@ -1012,7 +1006,7 @@ jQuery(document).ready(function($) {
 	 */
 	$("body").on("change", "form", function() {
 		var submit_button = $(this).find("[type='submit']");
-		submit_button.attr("disabled", false);
+		submit_button.prop("disabled", false);
 		submit_button.text(submit_button.data("text"));
 		// $(this).find(".ajax-message").empty();
 	});

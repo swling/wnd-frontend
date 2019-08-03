@@ -22,6 +22,7 @@ class Wnd_Filter {
 	/**
 	 * filter html data属性
 	 * data-{key}="{value}" 将转化为 ajax url请求参数 ?{key}={value}
+	 * 将在筛选容器，及分页容器上出现，以绑定点击事件，发送到api接口
 	 */
 	public $html_data = array();
 
@@ -37,17 +38,10 @@ class Wnd_Filter {
 	public $remove_query_arg = array('paged', 'page');
 
 	/**
-	 *从$_GET中解析出来的wp_query参数
-	 *@see $this->parse_url_to_wp_query();
-	 */
-	public $http_query_args = array(
-		'meta_query' => array(),
-		'tax_query' => array(),
-	);
-
-	/**
-	 *wp_query查询参数
-	 *默认值与 $this->$http_query_args 合并后组成最终查询参数
+	 *根据配置设定的wp_query查询参数
+	 *默认值将随用户设定而改变
+	 *
+	 *参数中包含自定义的非wp_query参数以"wnd"前缀区分
 	 */
 	public $wp_query_args = array(
 		'orderby' => 'date',
@@ -56,10 +50,14 @@ class Wnd_Filter {
 		'tax_query' => array(),
 		'meta_key' => '',
 		'meta_value' => '',
-		'post_type' => 'post',
+		'post_type' => '',
 		'post_status' => 'publish',
 		'no_found_rows' => true,
 		'paged' => 1,
+
+		// 自定义
+		'wnd_ajax_container' => '',
+		'wnd_post_tpl' => '',
 	);
 
 	/**
@@ -79,7 +77,7 @@ class Wnd_Filter {
 		$this->is_ajax = $is_ajax;
 		$this->class .= $this->is_ajax ? 'ajax-filter' : '';
 
-		// 仅可查询当前用户自己的非公开post，管理员除外
+		// 非管理员除，仅可查询当前用户自己的非公开post
 		if ($this->wp_query_args['post_status'] != 'publish' and !is_super_admin()) {
 			if (!is_user_logged_in()) {
 				throw new Exception('未登录用户，仅可查询公开信息！');
@@ -90,24 +88,22 @@ class Wnd_Filter {
 
 	/**
 	 *@since 2019.07.31
-	 *添加新的http query请求参数
+	 *添加新的请求参数
+	 *添加的参数，将覆盖之前的设定，并将在所有请求中有效，直到被新的设定覆盖
 	 *
 	 *@param array $query array(key=>value)
 	 *
 	 *
-	 *在非ajax环境中，直接将写入$http_query_args[key]=value
+	 *在非ajax环境中，直接将写入$wp_query_args[key]=value
 	 *
 	 *在ajax环境中，将对应生成html data属性：data-{key}="{value}" 通过JavaScript获取后将转化为 ajax url请求参数 ?{key}={value}，
 	 *ajax发送到api接口，再通过parse_url_to_wp_query() 解析后，写入$wp_query_args[key]=value
 	 **/
 	public function add_query($query = array()) {
 		foreach ($query as $key => $value) {
-
-			// 新增的 http query不会自动添加到wp_query_args，因此需要同步设置
-			$this->http_query_args[$key] = $value;
 			$this->wp_query_args[$key] = $value;
 
-			// 在html data属性中新增对应属性，以实现在ajax请求中添加
+			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
 			$this->html_data[$key] = $value;
 		}
 		unset($key, $value);
@@ -119,7 +115,7 @@ class Wnd_Filter {
 	 *@param string $container posts列表ajax嵌入容器
 	 **/
 	public function set_ajax_container($container) {
-		$this->html_data['ajax_container'] = $container;
+		$this->html_data['wnd_ajax_container'] = $container;
 	}
 
 	/**
@@ -137,7 +133,7 @@ class Wnd_Filter {
 	 *@param string $template posts模板 函数名
 	 **/
 	public function set_post_template($template) {
-		$this->add_query(array('template' => $template));
+		$this->add_query(array('wnd_post_tpl' => $template));
 	}
 
 	/**
@@ -148,8 +144,12 @@ class Wnd_Filter {
 		// 属性赋值以供其他方法查询
 		$this->post_type_filter_args = $args;
 
-		// 若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post类型
-		$this->wp_query_args['post_type'] = $this->http_query_args['post_type'] ?? ($args ? reset($args) : 'post');
+		/**
+		 *若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post
+		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
+		 */
+		$default_type = $this->wp_query_args['post_type'] ?: ($args ? reset($args) : 'post');
+		$this->add_query(array('post_type' => $default_type));
 
 		// 需要移除的查询参数
 		$remove_query_arg = array_merge(array('orderby', 'order', 'status'), $this->remove_query_arg);
@@ -219,8 +219,15 @@ class Wnd_Filter {
 
 		$this->post_status_filter_args = $args;
 
+		/**
+		 *若当前请求未指定post_status，设置第一个post_status为默认值；若筛选项也为空，最后默认publish
+		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
+		 */
+		$default_status = $this->wp_query_args['status'] ?? ($args ? reset($args) : 'publish');
+		$this->add_query(array('post_status' => $default_status));
+
 		// 输出容器
-		$tabs = '<div class="columns is-marginless is-vcentered post-status-tabs">';
+		$tabs = '<div class="columns is-marginless is-vcentered post-status-tabs ' . (count($args) < 2 ? 'is-hidden' : '') . '">';
 		$tabs .= '<div class="column is-narrow">' . get_post_type_object($this->wp_query_args['post_type'])->label . '状态：</div>';
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<div class="tabs">';
@@ -626,6 +633,8 @@ class Wnd_Filter {
 	 */
 	public function add_orderby_filter($args) {
 
+		$this->orderby_filter_args = $args;
+
 		// 移除选项
 		$remove_query_arg = array_merge(array('orderby', 'order', 'meta_key'), $this->remove_query_arg);
 
@@ -792,7 +801,7 @@ class Wnd_Filter {
 			 *直接用 post_type 作为参数会触发WordPress原生请求导致错误
 			 */
 			if ('type' === $key) {
-				$this->http_query_args['post_type'] = $value;
+				$this->wp_query_args['post_type'] = $value;
 				continue;
 			}
 
@@ -800,7 +809,7 @@ class Wnd_Filter {
 			 *post status tabs生成的GET参数为：status={$post_status}
 			 */
 			if ('status' === $key) {
-				$this->http_query_args['post_status'] = $value;
+				$this->wp_query_args['post_status'] = $value;
 				continue;
 			}
 
@@ -825,7 +834,7 @@ class Wnd_Filter {
 					unset($meta_query['value']);
 				}
 
-				array_push($this->http_query_args['meta_query'], $meta_query);
+				array_push($this->wp_query_args['meta_query'], $meta_query);
 				continue;
 			}
 
@@ -839,7 +848,7 @@ class Wnd_Filter {
 					'field' => 'term_id',
 					'terms' => $value,
 				);
-				array_push($this->http_query_args['tax_query'], $term_query);
+				array_push($this->wp_query_args['tax_query'], $term_query);
 				continue;
 			}
 
@@ -847,7 +856,7 @@ class Wnd_Filter {
 			 *@since 2019.05.31 post field查询
 			 */
 			if (strpos($key, '_post_') === 0) {
-				$this->http_query_args[str_replace('_post_', '', $key)] = $value;
+				$this->wp_query_args[str_replace('_post_', '', $key)] = $value;
 				continue;
 			}
 
@@ -856,17 +865,19 @@ class Wnd_Filter {
 			 *分页
 			 */
 			if ('page' == $key) {
-				$this->http_query_args['paged'] = $value ?: 1;
+				$this->wp_query_args['paged'] = $value ?: 1;
 				continue;
 			}
 
-			// 其他、按键名自动匹配
-			$this->http_query_args[$key] = $value;
+			// 其他、按键名自动匹配、排除指定作者的参数
+			if ($key != 'author') {
+				$this->wp_query_args[$key] = $value;
+			}
 
 		}
 		unset($key, $value);
 
-		return $this->http_query_args;
+		return $this->wp_query_args;
 	}
 
 	/**
@@ -883,7 +894,6 @@ class Wnd_Filter {
 	 *构造HTML data属性
 	 */
 	public function get_html_data() {
-
 		$data = '';
 		foreach ($this->html_data as $key => $value) {
 			$data .= 'data-' . $key . '="' . $value . '" ';
@@ -895,6 +905,11 @@ class Wnd_Filter {
 	/**
 	 *@since 2019.07.31
 	 *获取筛选项HTML
+	 *
+	 *tabs筛选项由于参数繁杂，无法通过api动态生成，因此不包含在api请求响应中
+	 *但已生成的相关筛选项会根据wp_query->query_var参数做动态修改
+	 *
+	 *@see wnd_filter_api_callback()
 	 */
 	public function get_tabs() {
 		return '<div class="wnd-filter-tabs ' . $this->class . '" ' . $this->get_html_data() . '>' . $this->tabs . '</div>';
@@ -903,15 +918,23 @@ class Wnd_Filter {
 	/**
 	 *@since 2019.07.31
 	 *获取筛结果HTML
-	 *@param string $post_template 文章模板函数
+	 *
+	 *合并返回：文章列表及分页导航
+	 */
+	public function get_results() {
+		return $this->get_posts() . $this->get_pagination($show_page = 5);
+	}
+
+	/**
+	 *@since 2019.07.31
+	 *获取筛结果HTML
 	 */
 	public function get_posts() {
-
 		if (!$this->wp_query) {
 			return '未执行WP_Query';
 		}
 
-		$template = $this->http_query_args['template'];
+		$template = $this->wp_query_args['wnd_post_tpl'];
 
 		if ($this->wp_query->have_posts()) {
 			while ($this->wp_query->have_posts()): $this->wp_query->the_post();
@@ -925,21 +948,11 @@ class Wnd_Filter {
 	}
 
 	/**
-	 *@since 2019.07.31
-	 *获取筛结果HTML
-	 *@param string $post_template 文章模板函数
-	 */
-	public function get_results() {
-		return $this->get_posts() . $this->get_pagination($show_page = 5);
-	}
-
-	/**
 	 *@since 2019.02.15 简单分页导航
 	 *不查询总数的情况下，简单实现下一页翻页
 	 *翻页参数键名page 不能设置为 paged 会与原生WordPress翻页机制产生冲突
 	 */
 	public function get_pagination($show_page = 5) {
-
 		if (!$this->wp_query and !$this->is_ajax) {
 			return '未执行WP_Query';
 		}

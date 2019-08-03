@@ -10,18 +10,18 @@ if (!defined('ABSPATH')) {
  */
 function _wnd_admin_posts_panel($args = '') {
 
-	if (!wnd_is_manager()) {
-		return '<div class="message is-warning"><div class="message-body">当前账户没有管理权限！</div></div>';
+	if (!is_user_logged_in()) {
+		return '<div class="message is-warning"><div class="message-body">请登录！</div></div>';
 	}
 
-	// 查询参数
-	$defaults = array(
-		'post_status' => 'pending',
-		'wnd_list_tpl' => '_wnd_table_list',
-	);
-	$args = wp_parse_args($args, $defaults);
-
-	return _wnd_posts_filter($args);
+	$filter = new Wnd_Filter(true);
+	$filter->add_post_type_filter(get_post_types(array('public' => true)));
+	$filter->add_post_status_filter(array('待审' => 'pending'));
+	$filter->set_post_template('_wnd_post_list_tpl');
+	$filter->set_posts_per_page(5);
+	$filter->set_ajax_container('#admin-posts-panel');
+	$filter->query();
+	return $filter->get_tabs() . '<div id="admin-posts-panel">' . $filter->get_results() . '</div>';
 
 }
 
@@ -29,24 +29,21 @@ function _wnd_admin_posts_panel($args = '') {
  *@since 2019.02.19 封装前端当前用户内容管理面板
  *@param array or string ：wp_query args
  */
-function _wnd_user_posts_panel($args = '') {
+function _wnd_user_posts_panel() {
 
 	if (!is_user_logged_in()) {
 		return '<div class="message is-warning"><div class="message-body">请登录！</div></div>';
 	}
 
-	// 查询参数
-	$defaults = array(
-		'post_status' => 'any',
-		'wnd_only_cat' => 1,
-		'wnd_list_tpl' => '_wnd_table_list',
-	);
-	$args = wp_parse_args($args, $defaults);
-
-	// 优先参数
-	$args['author'] = get_current_user_id();
-
-	return _wnd_posts_filter($args);
+	$filter = new Wnd_Filter(true);
+	$filter->add_post_type_filter(wnd_get_allowed_post_types());
+	$filter->add_post_status_filter(array('发布' => 'publish', '待审' => 'pending'));
+	$filter->add_taxonomy_filter(array('taxonomy' => 'company_cat'));
+	$filter->set_post_template('_wnd_post_list_tpl');
+	$filter->set_posts_per_page(5);
+	$filter->set_ajax_container('#user-posts-panel');
+	$filter->query();
+	return $filter->get_tabs() . '<div id="user-posts-panel">' . $filter->get_results() . '</div>';
 
 }
 

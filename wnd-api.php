@@ -115,8 +115,18 @@ function wnd_filter_api_callback() {
 			'posts' => $filter->get_posts(),
 			'pagination' => $filter->get_pagination(),
 			'post_count' => $filter->wp_query->post_count,
-			'wp_query_vars' => $filter->wp_query->query_vars, //实际执行的wp query参数
-			'taxonomies' => get_object_taxonomies($filter->wp_query->query_vars['post_type'], $output = 'names'),
+
+			/**
+			 *实际执行的wp query参数
+			 *前端可据此修改页面行为
+			 */
+			'wp_query_vars' => $filter->wp_query->query_vars,
+
+			/**
+			 *当前post type支持的taxonomy
+			 *前端可据此修改页面行为
+			 */
+			'taxonomies' => get_object_taxonomies($filter->wp_query->query_vars['post_type'], 'names'),
 		),
 	);
 }
