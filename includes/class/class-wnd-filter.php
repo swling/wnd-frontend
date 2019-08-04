@@ -4,6 +4,7 @@
  * @since 2019.07.30
  * 多重筛选类
  * 样式基于bulma css
+ * @param bool $is_ajax 是否为ajax筛选（需要对应的前端支持）
  */
 class Wnd_Filter {
 
@@ -72,10 +73,11 @@ class Wnd_Filter {
 	 * @param bool $is_ajax 是否为ajax查询
 	 */
 	public function __construct($is_ajax = false) {
-		// 解析GET参数为wp_query参数并与默认参数合并
-		$this->wp_query_args = wp_parse_args($this->parse_url_to_wp_query(), $this->wp_query_args);
 		$this->is_ajax = $is_ajax;
 		$this->class .= $this->is_ajax ? 'ajax-filter' : '';
+
+		// 解析GET参数为wp_query参数并与默认参数合并
+		$this->wp_query_args = wp_parse_args($this->parse_url_to_wp_query(), $this->wp_query_args);
 
 		// 非管理员除，仅可查询当前用户自己的非公开post
 		if ($this->wp_query_args['post_status'] != 'publish' and !is_super_admin()) {
@@ -685,9 +687,9 @@ class Wnd_Filter {
 
 			}
 
-			// data-key="orderby" data-value="' . $orderby . '"
+			// data-key="orderby" data-value="' . http_build_query($query_arg) . '"
 			$query_arg = is_array($orderby) ? $orderby : array('orderby' => $orderby);
-			$tabs .= '<li ' . $active . '><a href="' . add_query_arg($query_arg, remove_query_arg($remove_query_arg)) . '">' . $key . '</a></li>';
+			$tabs .= '<li ' . $active . '><a data-key="orderby" data-value="' . http_build_query($query_arg) . '" href="' . add_query_arg($query_arg, remove_query_arg($remove_query_arg)) . '">' . $key . '</a></li>';
 		}
 		unset($key, $orderby);
 
@@ -869,9 +871,19 @@ class Wnd_Filter {
 				continue;
 			}
 
+			/**
+			 *@since 2019.08.04
+			 *ajax中，orderby将发送数组形式的信息而非单个
+			 */
+			if ('orderby' == $key and $this->is_ajax) {
+				$this->wp_query_args = wp_parse_args($value, $this->wp_query_args);
+				continue;
+			}
+
 			// 其他、按键名自动匹配、排除指定作者的参数
 			if ($key != 'author') {
 				$this->wp_query_args[$key] = $value;
+				continue;
 			}
 
 		}
