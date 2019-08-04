@@ -372,7 +372,7 @@ function wnd_ajax_reset_password() {
  *@param $_POST['_user_user_email'];
  *@param $_POST['v_code']
  */
-function wnd_ajax_verify_email() {
+function wnd_ajax_bind_email() {
 
 	$email = $_POST['_user_user_email'] ?? null;
 	$code = $_POST['v_code'] ?? null;
@@ -401,7 +401,7 @@ function wnd_ajax_verify_email() {
  *@param $_POST['phone'];
  *@param $_POST['v_code']
  */
-function wnd_ajax_verify_phone() {
+function wnd_ajax_bind_phone() {
 
 	$phone = $_POST['phone'] ?? null;
 	$code = $_POST['v_code'] ?? null;

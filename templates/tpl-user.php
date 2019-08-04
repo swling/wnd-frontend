@@ -433,7 +433,7 @@ function _wnd_account_form() {
 /**
  *@since 2019.07.23 用户设置邮箱表单
  */
-function _wnd_verify_email_form() {
+function _wnd_bind_email_form() {
 
 	if (!is_user_logged_in()) {
 		return '<script>wnd_alert_msg(\'请登录\')</script>';
@@ -444,7 +444,7 @@ function _wnd_verify_email_form() {
 	$form->set_form_attr('class="user-form"');
 	$form->add_email_verify($verify_type = 'register', $template = '');
 
-	$form->set_action('wnd_ajax_verify_email');
+	$form->set_action('wnd_ajax_bind_email');
 	$form->set_submit_button('保存');
 	$form->build();
 
@@ -455,7 +455,7 @@ function _wnd_verify_email_form() {
 /**
  *@since 2019.07.23 用户设置手机表单
  */
-function _wnd_verify_phone_form() {
+function _wnd_bind_phone_form() {
 
 	if (!is_user_logged_in()) {
 		return '<script>wnd_alert_msg(\'请登录\')</script>';
@@ -466,7 +466,7 @@ function _wnd_verify_phone_form() {
 	$form->set_form_attr('class="user-form"');
 	$form->add_sms_verify($verify_type = 'register', $template = '');
 
-	$form->set_action('wnd_ajax_verify_phone');
+	$form->set_action('wnd_ajax_bind_phone');
 	$form->set_submit_button('保存');
 	$form->build();
 
