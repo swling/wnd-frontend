@@ -17,15 +17,15 @@ class Wnd_Filter {
 	// bool 是否ajax
 	public $is_ajax;
 
-	// class
+	// string html class
 	public $class;
 
 	/**
-	 * filter html data属性
-	 * data-{key}="{value}" 将转化为 ajax url请求参数 ?{key}={value}
+	 * 每次请求携带的固定的查询参数
 	 * 将在筛选容器，及分页容器上出现，以绑定点击事件，发送到api接口
+	 * 以data-{key}="{value}"形式出现，ajax请求中，将转化为 url请求参数 ?{key}={value}
 	 */
-	public $html_data = array();
+	public $const_query = array();
 
 	// 筛选参数
 	public $post_type_filter_args;
@@ -36,7 +36,7 @@ class Wnd_Filter {
 	public $orderby_filter_args;
 
 	// 默认切换筛选项时需要移除的参数
-	public $remove_query_arg = array('paged', 'page');
+	public $remove_query_args = array('paged', 'page');
 
 	/**
 	 *根据配置设定的wp_query查询参数
@@ -106,7 +106,7 @@ class Wnd_Filter {
 			$this->wp_query_args[$key] = $value;
 
 			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
-			$this->html_data[$key] = $value;
+			$this->const_query[$key] = $value;
 		}
 		unset($key, $value);
 	}
@@ -117,7 +117,7 @@ class Wnd_Filter {
 	 *@param string $container posts列表ajax嵌入容器
 	 **/
 	public function set_ajax_container($container) {
-		$this->html_data['wnd_ajax_container'] = $container;
+		$this->add_query(array('wnd_ajax_container' => $container));
 	}
 
 	/**
@@ -154,7 +154,7 @@ class Wnd_Filter {
 		$this->add_query(array('post_type' => $default_type));
 
 		// 需要移除的查询参数
-		$remove_query_arg = array_merge(array('orderby', 'order', 'status'), $this->remove_query_arg);
+		$remove_query_args = array_merge(array('orderby', 'order', 'status'), $this->remove_query_args);
 
 		// 若筛选项少于2个，即无需筛选post type：隐藏tabs
 		$tabs = '<div class="tabs is-boxed post-type-tabs ' . (count($args) < 2 ? 'is-hidden' : '') . '">';
@@ -177,7 +177,7 @@ class Wnd_Filter {
 				$taxonomies = get_object_taxonomies($this->wp_query_args['post_type'], $output = 'names');
 				if ($taxonomies) {
 					foreach ($taxonomies as $taxonomy) {
-						array_push($remove_query_arg, '_term_' . $taxonomy);
+						array_push($remove_query_args, '_term_' . $taxonomy);
 					}
 					unset($taxonomy);
 				}
@@ -188,18 +188,18 @@ class Wnd_Filter {
 			 */
 			foreach ($_GET as $key => $value) {
 				if (strpos($key, '_meta_') === 0) {
-					array_push($remove_query_arg, $key);
+					array_push($remove_query_args, $key);
 					continue;
 				}
 				if (strpos($key, 'meta_') === 0) {
-					array_push($remove_query_arg, $key);
+					array_push($remove_query_args, $key);
 					continue;
 				}
 			}
 			unset($key, $value);
 
 			$tabs .= '<li class="' . $class . '">';
-			$tabs .= '<a data-key="type" data-value="' . $post_type->name . '" href="' . add_query_arg('type', $post_type->name, remove_query_arg($remove_query_arg)) . '">' . $post_type->label . '</a>';
+			$tabs .= '<a data-key="type" data-value="' . $post_type->name . '" href="' . add_query_arg('type', $post_type->name, remove_query_arg($remove_query_args)) . '">' . $post_type->label . '</a>';
 			$tabs .= '</li>';
 
 		}
@@ -239,7 +239,7 @@ class Wnd_Filter {
 		 * 全部选项
 		 */
 		$all_active = 'any' == $this->wp_query_args['post_status'] ? 'class="is-active"' : null;
-		$tabs .= '<li ' . $all_active . '><a data-key="status" data-value="" href="' . remove_query_arg('status', remove_query_arg($this->remove_query_arg)) . '">全部</a></li>';
+		$tabs .= '<li ' . $all_active . '><a data-key="status" data-value="" href="' . remove_query_arg('status', remove_query_arg($this->remove_query_args)) . '">全部</a></li>';
 
 		// 输出tabs
 		foreach ($args as $label => $post_status) {
@@ -247,7 +247,7 @@ class Wnd_Filter {
 			$class .= (isset($this->wp_query_args['post_status']) and $this->wp_query_args['post_status'] == $post_status) ? ' is-active' : '';
 
 			$tabs .= '<li class="' . $class . '">';
-			$tabs .= '<a data-key="status" data-value="' . $post_status . '" href="' . add_query_arg('status', $post_status, remove_query_arg($this->remove_query_arg)) . '">' . $label . '</a>';
+			$tabs .= '<a data-key="status" data-value="' . $post_status . '" href="' . add_query_arg('status', $post_status, remove_query_arg($this->remove_query_args)) . '">' . $label . '</a>';
 			$tabs .= '</li>';
 		}
 		unset($label, $post_status);
@@ -290,7 +290,7 @@ class Wnd_Filter {
 		 * 切换分类时，需要移除关联分类查询
 		 * @since 2019.07.30
 		 */
-		$remove_query_arg = array_merge(array('_term_' . $this->wp_query_args['post_type'] . '_tag'), $this->remove_query_arg);
+		$remove_query_args = array_merge(array('_term_' . $this->wp_query_args['post_type'] . '_tag'), $this->remove_query_args);
 
 		/**
 		 * 遍历当前tax query 查询是否设置了对应的taxonomy查询
@@ -320,7 +320,7 @@ class Wnd_Filter {
 		 * 全部选项
 		 * @since 2019.03.07
 		 */
-		$tabs .= '<li ' . $all_active . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . remove_query_arg('_term_' . $taxonomy, remove_query_arg($remove_query_arg)) . '">全部</a></li>';
+		$tabs .= '<li ' . $all_active . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . remove_query_arg('_term_' . $taxonomy, remove_query_arg($remove_query_args)) . '">全部</a></li>';
 
 		// 输出tabs
 		foreach (get_terms($args) as $term) {
@@ -353,7 +353,7 @@ class Wnd_Filter {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$tabs .= '<li class="' . $class . '"><a data-key="_term_' . $taxonomy . '" data-value="' . $term->term_id . '" href="' . add_query_arg('_term_' . $args['taxonomy'], $term->term_id, remove_query_arg($remove_query_arg)) . '">' . $term->name . '</a></li>';
+			$tabs .= '<li class="' . $class . '"><a data-key="_term_' . $taxonomy . '" data-value="' . $term->term_id . '" href="' . add_query_arg('_term_' . $args['taxonomy'], $term->term_id, remove_query_arg($remove_query_args)) . '">' . $term->name . '</a></li>';
 
 		}
 		unset($term);
@@ -398,7 +398,7 @@ class Wnd_Filter {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$tabs .= '<li class="' . $child_class . '"><a href="' . add_query_arg('_term_' . $taxonomy, $child_term->term_id, remove_query_arg($remove_query_arg)) . '">' . $child_term->name . '</a></li>';
+			$tabs .= '<li class="' . $child_class . '"><a href="' . add_query_arg('_term_' . $taxonomy, $child_term->term_id, remove_query_arg($remove_query_args)) . '">' . $child_term->name . '</a></li>';
 		}
 		unset($child_term);
 		$tabs .= '</ul>';
@@ -466,7 +466,7 @@ class Wnd_Filter {
 		 * 全部选项
 		 * @since 2019.03.07
 		 */
-		$tabs .= '<li ' . $all_active . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . remove_query_arg('_term_' . $taxonomy, remove_query_arg($this->remove_query_arg)) . '">全部</a></li>';
+		$tabs .= '<li ' . $all_active . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . remove_query_arg('_term_' . $taxonomy, remove_query_arg($this->remove_query_args)) . '">全部</a></li>';
 
 		/**
 		 *指定category_id时查询关联标签，否则调用热门标签
@@ -510,7 +510,7 @@ class Wnd_Filter {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$tabs .= '<li class="' . $class . '"><a data-key="_term_' . $taxonomy . '" data-value="' . $term->term_id . '" href="' . add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($this->remove_query_arg)) . '">' . $term->name . '</a></li>';
+			$tabs .= '<li class="' . $class . '"><a data-key="_term_' . $taxonomy . '" data-value="' . $term->term_id . '" href="' . add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($this->remove_query_args)) . '">' . $term->name . '</a></li>';
 
 		}
 		unset($tag);
@@ -581,7 +581,7 @@ class Wnd_Filter {
 		 * 全部选项
 		 * @since 2019.03.07（copy）
 		 */
-		$tabs .= '<li ' . $all_active . '><a data-key="_meta_' . $args['key'] . '" data-value="" href="' . remove_query_arg('_meta_' . $args['key'], remove_query_arg($this->remove_query_arg)) . '">全部</a></li>';
+		$tabs .= '<li ' . $all_active . '><a data-key="_meta_' . $args['key'] . '" data-value="" href="' . remove_query_arg('_meta_' . $args['key'], remove_query_arg($this->remove_query_args)) . '">全部</a></li>';
 
 		// 输出tabs
 		foreach ($args['options'] as $key => $value) {
@@ -603,7 +603,7 @@ class Wnd_Filter {
 			/**
 			 *meta_query GET参数为：_meta_{key}?=
 			 */
-			$tabs .= '<li ' . $active . '><a data-key="_meta_' . $args['key'] . '" data-value="' . $value . '" href="' . add_query_arg('_meta_' . $args['key'], $value, remove_query_arg($this->remove_query_arg)) . '">' . $key . '</a></li>';
+			$tabs .= '<li ' . $active . '><a data-key="_meta_' . $args['key'] . '" data-value="' . $value . '" href="' . add_query_arg('_meta_' . $args['key'], $value, remove_query_arg($this->remove_query_args)) . '">' . $key . '</a></li>';
 		}
 		unset($key, $value);
 
@@ -638,7 +638,7 @@ class Wnd_Filter {
 		$this->orderby_filter_args = $args;
 
 		// 移除选项
-		$remove_query_arg = array_merge(array('orderby', 'order', 'meta_key'), $this->remove_query_arg);
+		$remove_query_args = array_merge(array('orderby', 'order', 'meta_key'), $this->remove_query_args);
 
 		// 全部
 		$all_active = 'class="is-active"';
@@ -656,7 +656,7 @@ class Wnd_Filter {
 		 * 全部选项
 		 * @since 2019.03.07（copy）
 		 */
-		$tabs .= '<li ' . $all_active . '><a data-key="orderby" data-value="" href="' . remove_query_arg($remove_query_arg) . '">默认</a></li>';
+		$tabs .= '<li ' . $all_active . '><a data-key="orderby" data-value="" href="' . remove_query_arg($remove_query_args) . '">默认</a></li>';
 
 		// 输出tabs
 		foreach ($args['options'] as $key => $orderby) {
@@ -689,7 +689,7 @@ class Wnd_Filter {
 
 			// data-key="orderby" data-value="' . http_build_query($query_arg) . '"
 			$query_arg = is_array($orderby) ? $orderby : array('orderby' => $orderby);
-			$tabs .= '<li ' . $active . '><a data-key="orderby" data-value="' . http_build_query($query_arg) . '" href="' . add_query_arg($query_arg, remove_query_arg($remove_query_arg)) . '">' . $key . '</a></li>';
+			$tabs .= '<li ' . $active . '><a data-key="orderby" data-value="' . http_build_query($query_arg) . '" href="' . add_query_arg($query_arg, remove_query_arg($remove_query_args)) . '">' . $key . '</a></li>';
 		}
 		unset($key, $orderby);
 
@@ -729,7 +729,7 @@ class Wnd_Filter {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$tabs .= '<span class="tag">' . $term->name . '<a data-key="_term_' . $term->taxonomy . '" data-value="" class="delete is-small" href="' . remove_query_arg('_term_' . $term->taxonomy, remove_query_arg($this->remove_query_arg)) . '"></a></span>&nbsp;&nbsp;';
+			$tabs .= '<span class="tag">' . $term->name . '<a data-key="_term_' . $term->taxonomy . '" data-value="" class="delete is-small" href="' . remove_query_arg('_term_' . $term->taxonomy, remove_query_arg($this->remove_query_args)) . '"></a></span>&nbsp;&nbsp;';
 		}
 		unset($key, $tax_query);
 
@@ -754,7 +754,7 @@ class Wnd_Filter {
 			/**
 			 *meta_query GET参数为：meta_{key}?=
 			 */
-			$tabs .= '<span class="tag">' . $key . '<a data-key="_meta_' . $this->meta_filter_args['key'] . '" data-value="" class="delete is-small" href="' . remove_query_arg('_meta_' . $this->meta_filter_args['key'], remove_query_arg($this->remove_query_arg)) . '"></a></span>&nbsp;&nbsp;';
+			$tabs .= '<span class="tag">' . $key . '<a data-key="_meta_' . $this->meta_filter_args['key'] . '" data-value="" class="delete is-small" href="' . remove_query_arg('_meta_' . $this->meta_filter_args['key'], remove_query_arg($this->remove_query_args)) . '"></a></span>&nbsp;&nbsp;';
 
 		}
 		unset($key, $meta_query);
@@ -904,10 +904,11 @@ class Wnd_Filter {
 	 *
 	 *@since 2019.08.02
 	 *构造HTML data属性
+	 *获取查询常量，并转化为html data属性，供前端读取后在ajax请求中发送到api
 	 */
-	public function get_html_data() {
+	public function build_html_data() {
 		$data = '';
-		foreach ($this->html_data as $key => $value) {
+		foreach ($this->const_query as $key => $value) {
 			$data .= 'data-' . $key . '="' . $value . '" ';
 		}
 
@@ -924,7 +925,7 @@ class Wnd_Filter {
 	 *@see wnd_filter_api_callback()
 	 */
 	public function get_tabs() {
-		return '<div class="wnd-filter-tabs ' . $this->class . '" ' . $this->get_html_data() . '>' . $this->tabs . '</div>';
+		return '<div class="wnd-filter-tabs ' . $this->class . '" ' . $this->build_html_data() . '>' . $this->tabs . '</div>';
 	}
 
 	/**
@@ -981,7 +982,7 @@ class Wnd_Filter {
 		 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
 		 */
 		if (!$this->wp_query->max_num_pages) {
-			$html = '<nav class="pagination is-centered ' . $this->class . '" ' . $this->get_html_data() . '>';
+			$html = '<nav class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			$html .= '<ul class="pagination-list">';
 
 			if ($paged >= 2) {
@@ -1001,7 +1002,7 @@ class Wnd_Filter {
 			 *据称，在数据量较大的站点，查询文章总数会较为费时
 			 */
 
-			$html = '<div class="pagination is-centered ' . $this->class . '" ' . $this->get_html_data() . '>';
+			$html = '<div class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 
 			if ($paged > 1) {
 				$html .= '<a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . add_query_arg('page', $paged - 1) . '">上一页</a>';
