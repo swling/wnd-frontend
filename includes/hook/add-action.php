@@ -306,7 +306,7 @@ if (wnd_get_option('wnd', 'wnd_disable_admin_panel') == 1) {
 	function wnd_action_redirect_login_form_register() {
 
 		$action = $_REQUEST['action'] ?? '';
-		if ($action = 'logout') {
+		if ('logout' == $action) {
 			return;
 		}
 
