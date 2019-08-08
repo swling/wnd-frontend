@@ -28,8 +28,8 @@ class Wnd_WP_Form extends Wnd_Form {
 		$this->is_ajax_submit = $is_ajax_submit;
 
 		// 色调
-		Wnd_WP_Form::$primary_color = wnd_get_option('wnd', 'wnd_primary_color');
-		Wnd_WP_Form::$second_color = wnd_get_option('wnd', 'wnd_second_color');
+		self::$primary_color = wnd_get_option('wnd', 'wnd_primary_color');
+		self::$second_color = wnd_get_option('wnd', 'wnd_second_color');
 
 		// 继承基础变量
 		parent::__construct();
@@ -58,7 +58,7 @@ class Wnd_WP_Form extends Wnd_Form {
 	 *@since 2019.05.26 表单按钮默认配色
 	 */
 	public function set_submit_button($submit_text, $submit_class = '') {
-		$submit_class = $submit_class ?: 'is-' . Wnd_WP_Form::$primary_color;
+		$submit_class = $submit_class ?: 'is-' . self::$primary_color;
 		$submit_class .= $this->is_ajax_submit ? ' ajax-submit' : '';
 		parent::set_submit_button($submit_text, $submit_class);
 	}
@@ -118,7 +118,7 @@ class Wnd_WP_Form extends Wnd_Form {
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '短信验证码',
-				'addon' => '<button type="button" class="send-code button is-outlined is-' . Wnd_WP_Form::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
 			)
 		);
 
@@ -154,7 +154,7 @@ class Wnd_WP_Form extends Wnd_Form {
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '邮箱验证码',
-				'addon' => '<button type="button" class="send-code button is-outlined is-' . Wnd_WP_Form::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
 			)
 		);
 

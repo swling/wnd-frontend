@@ -96,7 +96,7 @@ class Wnd_Form {
 	// _text
 	public function add_text($args) {
 
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'text';
 		array_push($this->input_values, $args);
 	}
@@ -104,7 +104,7 @@ class Wnd_Form {
 	// _number
 	public function add_number($args) {
 
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'number';
 		array_push($this->input_values, $args);
 	}
@@ -122,7 +122,7 @@ class Wnd_Form {
 	// _textarea
 	public function add_textarea($args) {
 
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'textarea';
 		array_push($this->input_values, $args);
 	}
@@ -130,7 +130,7 @@ class Wnd_Form {
 	// _email
 	public function add_email($args) {
 
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'email';
 		array_push($this->input_values, $args);
 
@@ -139,7 +139,7 @@ class Wnd_Form {
 	// _password
 	public function add_password($args) {
 
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 
 		$args['type'] = 'password';
 		array_push($this->input_values, $args);
@@ -148,7 +148,7 @@ class Wnd_Form {
 	// _select
 	public function add_select($args) {
 
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'select';
 		array_push($this->input_values, $args);
 	}
@@ -156,7 +156,7 @@ class Wnd_Form {
 	// _radio
 	public function add_radio($args) {
 
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'radio';
 		array_push($this->input_values, $args);
 
@@ -165,7 +165,7 @@ class Wnd_Form {
 	// _checkbox
 	public function add_checkbox($args) {
 
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'checkbox';
 		array_push($this->input_values, $args);
 

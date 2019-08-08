@@ -12,7 +12,7 @@ class Wnd_Form_Data {
 
 	public function __construct($verify_form_nonce = true) {
 
-		Wnd_Form_Data::$enable_form_verify = wnd_get_option('wnd', 'wnd_enable_form_verify');
+		self::$enable_form_verify = wnd_get_option('wnd', 'wnd_enable_form_verify');
 
 		/**
 		 *@since 2019.05.10
@@ -20,7 +20,7 @@ class Wnd_Form_Data {
 		 *因而校验表单操作应该在filter应用之前执行
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
-		if ($verify_form_nonce and Wnd_Form_Data::$enable_form_verify and !$this->verify_form_nonce()) {
+		if ($verify_form_nonce and self::$enable_form_verify and !$this->verify_form_nonce()) {
 			throw new Exception('表单已被篡改！');
 		}
 
