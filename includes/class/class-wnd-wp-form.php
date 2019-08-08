@@ -33,7 +33,6 @@ class Wnd_WP_Form extends Wnd_Form {
 
 		// 继承基础变量
 		parent::__construct();
-
 	}
 
 	public function set_filter($filter) {
@@ -43,8 +42,8 @@ class Wnd_WP_Form extends Wnd_Form {
 	// ajax提交只需要设置 action 但常规表单action包含提交地址和提交方式，在类中，必须保持参数个数一致
 	public function set_action($action, $method = 'POST') {
 		if ($this->is_ajax_submit) {
-			parent::add_hidden('action', $action);
-			parent::add_hidden('_ajax_nonce', wnd_create_nonce($action));
+			$this->add_hidden('action', $action);
+			$this->add_hidden('_ajax_nonce', wnd_create_nonce($action));
 		} else {
 			parent::set_action($action, $method);
 		}
@@ -77,12 +76,12 @@ class Wnd_WP_Form extends Wnd_Form {
 	 *未被选中的radio 与checkbox将不会发送到后端，会导致wnd_form_nonce 校验失败，此处通过设置hidden字段修改
 	 */
 	public function add_radio($args) {
-		parent::add_hidden($args['name'], '');
+		$this->add_hidden($args['name'], '');
 		parent::add_radio($args);
 	}
 
 	public function add_checkbox($args) {
-		parent::add_hidden($args['name'], '');
+		$this->add_hidden($args['name'], '');
 		parent::add_checkbox($args);
 	}
 
@@ -93,12 +92,10 @@ class Wnd_WP_Form extends Wnd_Form {
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
 	public function add_sms_verify($verify_type = 'verify', $template = '') {
-
-		parent::add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
+		$this->add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
 
 		if (!wnd_get_user_phone(get_current_user_id())) {
-
-			parent::add_text(
+			$this->add_text(
 				array(
 					'name' => 'phone',
 					'has_icons' => 'left',
@@ -110,7 +107,7 @@ class Wnd_WP_Form extends Wnd_Form {
 			);
 		}
 
-		parent::add_text(
+		$this->add_text(
 			array(
 				'name' => 'v_code',
 				'has_icons' => 'left',
@@ -122,8 +119,7 @@ class Wnd_WP_Form extends Wnd_Form {
 			)
 		);
 
-		parent::add_html('</div>');
-
+		$this->add_html('</div>');
 	}
 
 	/**
@@ -133,10 +129,9 @@ class Wnd_WP_Form extends Wnd_Form {
 	 *找回密码时若当前邮箱未注册，则无法发送验证码
 	 **/
 	public function add_email_verify($verify_type = 'verify', $template = '') {
+		$this->add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
 
-		parent::add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
-
-		parent::add_text(
+		$this->add_text(
 			array(
 				'name' => '_user_user_email',
 				'has_icons' => 'left',
@@ -146,7 +141,7 @@ class Wnd_WP_Form extends Wnd_Form {
 			)
 		);
 
-		parent::add_text(
+		$this->add_text(
 			array(
 				'name' => 'v_code',
 				'has_icons' => 'left',
@@ -158,13 +153,11 @@ class Wnd_WP_Form extends Wnd_Form {
 			)
 		);
 
-		parent::add_html('</div>');
-
+		$this->add_html('</div>');
 	}
 
 	// Image upload
 	public function add_image_upload($args) {
-
 		$defaults = array(
 			'label' => 'Image upland',
 			'name' => 'wnd_file',
@@ -217,12 +210,10 @@ class Wnd_WP_Form extends Wnd_Form {
 		$args['file_id'] = $file_id ?: 0;
 
 		parent::add_image_upload($args);
-
 	}
 
 	// File upload
 	public function add_file_upload($args) {
-
 		$defaults = array(
 			'label' => 'File upload',
 			'name' => 'wnd_file',
@@ -266,12 +257,10 @@ class Wnd_WP_Form extends Wnd_Form {
 		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">查看文件</a>' : '……';
 
 		parent::add_file_upload($args);
-
 	}
 
 	// 相册上传
 	public function add_gallery_upload($args) {
-
 		$defaults = array(
 			'label' => 'Gallery',
 			'thumbnail_size' => array('width' => '160', 'height' => '120'),
@@ -357,8 +346,7 @@ class Wnd_WP_Form extends Wnd_Form {
 
 		$html .= '</div>';
 
-		parent::add_html($html);
-
+		$this->add_html($html);
 	}
 
 	// 构造表单，可设置WordPress filter 过滤表单的input_values
@@ -380,7 +368,6 @@ class Wnd_WP_Form extends Wnd_Form {
 		 *构建表单
 		 */
 		parent::build();
-
 	}
 
 	/**
@@ -392,7 +379,6 @@ class Wnd_WP_Form extends Wnd_Form {
 		// 提取表单字段names 去重，排序
 		array_push($this->form_names, '_wnd_form_nonce'); // nonce自身字段也需要包含在内
 		foreach ($this->get_input_values() as $input_value) {
-
 			if (!isset($input_value['name'])) {
 				continue;
 			}
@@ -402,9 +388,9 @@ class Wnd_WP_Form extends Wnd_Form {
 			}
 
 			array_push($this->form_names, $input_value['name']);
-
 		}
 		unset($input_value);
+
 		$this->form_names = array_unique($this->form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
 		sort($this->form_names);
 
@@ -412,8 +398,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		$nonce = wnd_create_nonce(md5(implode('', $this->form_names)));
 
 		// 将nonce字段添加到表单
-		parent::add_hidden('_wnd_form_nonce', $nonce);
-
+		$this->add_hidden('_wnd_form_nonce', $nonce);
 	}
 
 	protected function build_form_header() {
@@ -426,7 +411,6 @@ class Wnd_WP_Form extends Wnd_Form {
 		}
 
 		$html = '<form id="form-' . $this->id . '" action="" method="POST" onsubmit="return false"';
-
 		if ($this->with_upload) {
 			$html .= ' enctype="multipart/form-data"';
 		}
@@ -434,7 +418,6 @@ class Wnd_WP_Form extends Wnd_Form {
 		if ($this->form_attr) {
 			$html .= ' ' . $this->form_attr;
 		}
-
 		$html .= '>';
 
 		if ($this->form_title) {
@@ -447,5 +430,4 @@ class Wnd_WP_Form extends Wnd_Form {
 
 		$this->html = $html;
 	}
-
 }

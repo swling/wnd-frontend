@@ -71,15 +71,14 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 
 		// 文章表单固有字段
 		if (!$input_fields_only) {
-			parent::add_hidden('_post_ID', $this->post_id);
-			parent::add_hidden('_post_post_type', $this->post_type);
-			parent::set_action('wnd_ajax_insert_post');
+			$this->add_hidden('_post_ID', $this->post_id);
+			$this->add_hidden('_post_post_type', $this->post_type);
+			$this->set_action('wnd_ajax_insert_post');
 		}
 	}
 
 	public function add_post_title($label = '', $placeholder = "请输入标题") {
-
-		parent::add_text(
+		$this->add_text(
 			array(
 				'name' => '_post_post_title',
 				'value' => $this->post->post_title == 'Auto-draft' ? '' : $this->post->post_title,
@@ -92,8 +91,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	}
 
 	public function add_post_excerpt($label = '', $placeholder = '内容摘要') {
-
-		parent::add_textarea(
+		$this->add_textarea(
 			array(
 				'name' => '_post_post_excerpt',
 				'value' => $this->post->post_excerpt,
@@ -105,7 +103,6 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	}
 
 	public function add_post_term_select($taxonomy, $required = true) {
-
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
@@ -125,8 +122,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		unset($term);
 
 		// 新增表单字段
-		parent::add_select(
-
+		$this->add_select(
 			array(
 				'name' => '_term_' . $taxonomy,
 				'options' => $options,
@@ -135,11 +131,9 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 				'checked' => $current_term_id, //default checked value
 			)
 		);
-
 	}
 
 	public function add_post_tags($taxonomy, $placeholder = '标签') {
-
 		$taxonomy_object = get_taxonomy($taxonomy);
 
 		$term_list = '';
@@ -152,7 +146,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			$term_list = rtrim($term_list, ",");
 		}
 
-		parent::add_text(
+		$this->add_text(
 			array(
 				'id' => 'tags',
 				'name' => '_term_' . $taxonomy,
@@ -162,7 +156,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			)
 		);
 
-		parent::add_html(_wnd_tags_editor_script(3, 20, $placeholder, $taxonomy));
+		$this->add_html(_wnd_tags_editor_script(3, 20, $placeholder, $taxonomy));
 	}
 
 	public function add_post_thumbnail($width = 200, $height = 200, $label = '') {
@@ -182,14 +176,13 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		 *需要提前在静态页面中创建一个 #hidden-wp-editor 包裹下的 隐藏wp_editor
 		 *然后通过js提取HTML的方式实现在指定位置嵌入
 		 */
-
 		if (!wnd_doing_ajax() and $rich_media_editor and $this->post_id) {
 
 			/**
 			 *@since 2019.05.09
 			 * 通过html方式直接创建的字段需要在表单input values 数据中新增一个同名names，否则无法通过nonce校验
 			 */
-			parent::add_hidden('_post_post_content', '');
+			$this->add_hidden('_post_post_content', '');
 
 			echo '<div id="hidden-wp-editor" style="display: none;">';
 			if ($post) {
@@ -200,8 +193,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			echo '</div>';
 
 		} else {
-
-			parent::add_textarea(
+			$this->add_textarea(
 				array(
 					'name' => '_post_post_content',
 					'value' => $post->post_content ?? '',
@@ -209,11 +201,10 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 					'required' => $required,
 				)
 			);
-
 		}
 
-		parent::add_html('<div id="wnd-wp-editor" class="field"></div>');
-		parent::add_html('<script type="text/javascript">var wp_editor = $("#hidden-wp-editor").html();$("#hidden-wp-editor").remove();$("#wnd-wp-editor").html(wp_editor);</script>');
+		$this->add_html('<div id="wnd-wp-editor" class="field"></div>');
+		$this->add_html('<script type="text/javascript">var wp_editor = $("#hidden-wp-editor").html();$("#hidden-wp-editor").remove();$("#wnd-wp-editor").html(wp_editor);</script>');
 	}
 
 	/**
@@ -222,7 +213,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	public function add_post_meta($meta_key, $label = '', $placeholder = '', $is_wnd_meta = false) {
 		$name = $is_wnd_meta ? '_meta_' . $meta_key : '_wpmeta_' . $meta_key;
 		$value = $is_wnd_meta ? wnd_get_post_meta($this->post_id, $meta_key) : get_post_meta($this->post_id, $meta_key, 1);
-		parent::add_text(
+		$this->add_text(
 			array(
 				'name' => $name,
 				'value' => $value,
@@ -238,7 +229,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	 *常用菜单、附件等排序
 	 **/
 	public function add_post_menu_order($label = '排序', $placeholder = "输入排序") {
-		parent::add_number(
+		$this->add_number(
 			array(
 				'name' => '_post_menu_order',
 				'value' => $this->post->menu_order ?: '',
@@ -255,7 +246,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	 *设置post_name 固定链接别名
 	 **/
 	public function add_post_name($label = '别名', $placeholder = "文章固定连接别名") {
-		parent::add_text(
+		$this->add_text(
 			array(
 				'name' => '_post_post_name',
 				'value' => $this->post->post_name ?: '',
@@ -268,7 +259,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	}
 
 	public function add_post_price($label = '', $placeholder = '价格') {
-		parent::add_text(
+		$this->add_text(
 			array(
 				'name' => '_wpmeta_price',
 				'value' => get_post_meta($this->post_id, 'price', 1),
@@ -285,9 +276,8 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_WP_Form
 	 */
 	public function add_post_image_upload($meta_key, $width = 200, $height = 200, $label = '') {
-
 		if (!$this->post_id) {
-			parent::add_html('<div class="notification">获取post ID失败，无法设置图像上传！</div>');
+			$this->add_html('<div class="notification">获取post ID失败，无法设置图像上传！</div>');
 			return;
 		}
 
@@ -303,17 +293,16 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			),
 			'delete_button' => false,
 		);
-		parent::add_image_upload($args);
+		$this->add_image_upload($args);
 	}
 
 	public function add_post_file_upload($meta_key, $label = '文件上传') {
-
 		if (!$this->post_id) {
-			parent::add_html('<div class="notification">获取post ID失败，无法设置文件上传！</div>');
+			$this->add_html('<div class="notification">获取post ID失败，无法设置文件上传！</div>');
 			return;
 		}
 
-		parent::add_file_upload(
+		$this->add_file_upload(
 			array(
 				'label' => $label,
 				'data' => array( // some hidden input,maybe useful in ajax upload
@@ -328,9 +317,8 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	 *@since 2019.05.08 上传图片集
 	 */
 	public function add_post_gallery_upload($thumbnail_width = 160, $thumbnail_height = 120, $label = '') {
-
 		if (!$this->post_id) {
-			parent::add_html('<div class="notification">获取post ID失败，无法设置相册上传！</div>');
+			$this->add_html('<div class="notification">获取post ID失败，无法设置相册上传！</div>');
 			return;
 		}
 
@@ -344,7 +332,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			),
 		);
 
-		parent::add_gallery_upload($args);
+		$this->add_gallery_upload($args);
 	}
 
 	// 文章表头，屏蔽回车提交
@@ -372,5 +360,4 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 
 		$this->html = $html;
 	}
-
 }
