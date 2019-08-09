@@ -983,6 +983,18 @@ jQuery(document).ready(function($) {
 				// 嵌入查询结果
 				$(filter_param.wnd_ajax_container).html(response.data.posts + response.data.pagination);
 
+				// 分类关联标签tabs
+				var related_tags = $(filter_parent).children(".related-tags");
+				if (related_tags) {
+					related_tags.after(response.data.related_tags);
+					related_tags.remove();
+				}
+
+				// 子类筛选tabs
+				$(filter_parent).children(".sub-tabs").remove();
+				for (taxonomy in response.data.sub_tabs) {
+					$(filter_parent).children("." + taxonomy + "-tabs:last").after(response.data.sub_tabs[taxonomy]);
+				}
 			},
 			error: function() {
 				wnd_alert_msg("请求失败");

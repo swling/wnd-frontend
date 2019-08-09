@@ -83,7 +83,14 @@ class Wnd_Filter {
 		// 解析GET参数为wp_query参数并与默认参数合并
 		$this->wp_query_args = wp_parse_args($this->parse_url_to_wp_query(), $this->wp_query_args);
 
-		// 非管理员除，仅可查询当前用户自己的非公开post
+		/**
+		 *定义当前post type的主分类：$category_taxonomy
+		 */
+		if ($this->wp_query_args['post_type']) {
+			$this->category_taxonomy = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
+		}
+
+		// 非管理员，仅可查询当前用户自己的非公开post
 		if ($this->wp_query_args['post_status'] != 'publish' and !is_super_admin()) {
 			if (!is_user_logged_in()) {
 				throw new Exception('未登录用户，仅可查询公开信息！');
@@ -150,12 +157,13 @@ class Wnd_Filter {
 		/**
 		 *若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post
 		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
+		 *
+		 * 当前请求为包含post_type参数时，当前的主分类（category_taxonomy）无法在构造函数中无法完成定义，需在此处补充
 		 */
-		$default_type = $this->wp_query_args['post_type'] ?: ($args ? reset($args) : 'post');
-		$this->add_query(array('post_type' => $default_type));
-
-		// 定义当前post type的category taxonomy
-		$this->category_taxonomy = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
+		if (!$this->wp_query_args['post_type']) {
+			$this->wp_query_args['post_type'] = $args ? reset($args) : 'post';
+			$this->category_taxonomy = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
+		}
 
 		/**
 		 *@since 2019.08.06
@@ -177,7 +185,6 @@ class Wnd_Filter {
 			$tabs .= '<li class="' . $class . '">';
 			$tabs .= '<a data-key="type" data-value="' . $post_type->name . '" href="' . add_query_arg('type', $post_type->name, $uri) . '">' . $post_type->label . '</a>';
 			$tabs .= '</li>';
-
 		}
 		unset($post_type);
 
@@ -259,7 +266,7 @@ class Wnd_Filter {
 		}
 
 		/**
-		 * 切换分类时，需要移除分类关联标签查询
+		 * 切换主分类时，需要移除分类关联标签查询
 		 * @since 2019.07.30
 		 */
 		if ($taxonomy == $this->category_taxonomy) {
@@ -303,9 +310,9 @@ class Wnd_Filter {
 			$class = 'term-id-' . $term->term_id;
 
 			// 本层循环只展示一级分类
-			// if ($term->parent) {
-			// 	continue;
-			// }
+			if ($term->parent) {
+				continue;
+			}
 
 			// 遍历当前tax query查询是否匹配当前tab
 			foreach ($this->wp_query_args['tax_query'] as $tax_query) {
@@ -316,13 +323,10 @@ class Wnd_Filter {
 
 				/**
 				 *如果当前tax_query参数中包含当前分类，或者当前分类的子类，则添加is-active
-				 *当分类处于active，对应term id将写入数组：$current_tax_query[$taxonomy] 用于下一步查询当前分类是否具有子分类
 				 */
 				$current_tax_query_parent = get_term($tax_query['terms'])->parent;
 				if ($tax_query['terms'] == $term->term_id or $term->term_id == $current_tax_query_parent) {
 					$class .= ' is-active';
-
-					$current_tax_query[$taxonomy] = $term->term_id;
 					break;
 				}
 			}
@@ -331,7 +335,7 @@ class Wnd_Filter {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$tabs .= '<li class="' . $class . '"><a data-key="_term_' . $taxonomy . '" data-value="' . $term->term_id . '" href="' . add_query_arg('_term_' . $args['taxonomy'], $term->term_id, remove_query_arg($remove_query_args)) . '">' . $term->name . '</a></li>';
+			$tabs .= '<li class="' . $class . '"><a data-key="_term_' . $taxonomy . '" data-value="' . $term->term_id . '" href="' . add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($remove_query_args)) . '">' . $term->name . '</a></li>';
 
 		}
 		unset($term);
@@ -344,48 +348,16 @@ class Wnd_Filter {
 		/**
 		 * @since 2019.03.12 当前分类的子分类
 		 */
-		if (!isset($current_tax_query[$taxonomy])) {
+		if ($all_class) {
 			$this->tabs .= $tabs;
-			return;
+			return $tabs;
 		}
 
-		$child_terms = get_terms(array('taxonomy' => $taxonomy, 'parent' => $current_tax_query[$taxonomy]));
-		if (!$child_terms) {
-			$this->tabs .= $tabs;
-			return;
-		}
+		// 获取当前taxonomy子类tabs
+		$sub_tabs = $this->get_sub_tabs()[$taxonomy];
 
-		$tabs .= '<div class="columns is-marginless is-vcentered">';
-		$tabs .= '<div class="column is-narrow">当前子类：</div>';
-		$tabs .= '<div class="column">';
-		$tabs .= '<div class="tabs">';
-		$tabs .= '<ul class="tab">';
-		foreach ($child_terms as $child_term) {
-			$child_class = 'term-id-' . $child_term->term_id;
-
-			// 遍历当前tax query查询是否匹配当前tab
-			if (isset($this->wp_query_args['tax_query'])) {
-				foreach ($this->wp_query_args['tax_query'] as $tax_query) {
-					if ($tax_query['terms'] == $child_term->term_id) {
-						$child_class .= ' is-active';
-					}
-				}
-				unset($tax_query);
-			}
-
-			/**
-			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
-			 */
-			$tabs .= '<li class="' . $child_class . '"><a href="' . add_query_arg('_term_' . $taxonomy, $child_term->term_id, remove_query_arg($remove_query_args)) . '">' . $child_term->name . '</a></li>';
-		}
-		unset($child_term);
-		$tabs .= '</ul>';
-		$tabs .= '</div>';
-		$tabs .= '</div>';
-		$tabs .= '</div>';
-
-		$this->tabs .= $tabs;
-		return $tabs;
+		$this->tabs .= $tabs . $sub_tabs;
+		return $tabs . $sub_tabs;
 	}
 
 	/**
@@ -431,7 +403,7 @@ class Wnd_Filter {
 		unset($key, $tax_query);
 
 		// 输出容器
-		$tabs = '<div class="columns is-marginless is-vcentered taxonomy-tabs ' . $taxonomy . '-tabs">';
+		$tabs = '<div class="columns is-marginless is-vcentered related-tags taxonomy-tabs ' . $taxonomy . '-tabs">';
 		$tabs .= '<div class="column is-narrow ' . $taxonomy . '-label">' . get_taxonomy($taxonomy)->label . '：</div>';
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<ul class="tab">';
@@ -900,13 +872,157 @@ class Wnd_Filter {
 	}
 
 	/**
+	 *@since 2019.08.09
+	 *获取分类关联标签的HTML
+	 *
+	 *分类关联标签需要根据当前主分类筛选情况动态加载
+	 *在ajax状态中，需要经由此方法，交付api响应动态生成
+	 *
+	 *非ajax请求中，直接使用 add_related_tags_filter方法即可
+	 *
+	 *@see wnd_filter_api_callback()
+	 */
+	public function get_related_tags($limit = 10) {
+		return $this->add_related_tags_filter($limit);
+	}
+
+	/**
+	 *@since 2019.08.09
+	 *获取子分类筛选tabs
+	 **/
+	public function get_sub_taxonomy_filter($parent, $taxonomy) {
+		$child_terms = get_terms(array('taxonomy' => $taxonomy, 'parent' => $parent));
+		if (!$child_terms) {
+			return false;
+		}
+
+		/**
+		 * 切换主分类时，需要移除分类关联标签查询
+		 * @since 2019.07.30
+		 */
+		if ($taxonomy == $this->category_taxonomy) {
+			$remove_query_args = array_merge(array('_term_' . $this->wp_query_args['post_type'] . '_tag'), $this->remove_query_args);
+		} else {
+			$remove_query_args = $this->remove_query_args;
+		}
+
+		$sub_tabs = '<div class="columns is-marginless is-vcentered sub-tabs taxonomy-tabs ' . $taxonomy . '-tabs">';
+		$sub_tabs .= '<div class="column is-narrow">当前子类：</div>';
+		$sub_tabs .= '<div class="column">';
+		$sub_tabs .= '<div class="tabs">';
+		$sub_tabs .= '<ul class="tab">';
+		foreach ($child_terms as $term) {
+			$class = 'term-id-' . $term->term_id;
+
+			// 遍历当前tax query查询是否匹配当前tab
+			if (isset($this->wp_query_args['tax_query'])) {
+				foreach ($this->wp_query_args['tax_query'] as $tax_query) {
+					if ($tax_query['terms'] == $term->term_id) {
+						$class .= ' is-active';
+					}
+				}
+				unset($tax_query);
+			}
+
+			/**
+			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+			 */
+			$sub_tabs .= '<li class="' . $class . '"><a data-key="_term_' . $taxonomy . '" data-value="' . $term->term_id . '" href="' . add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($remove_query_args)) . '">' . $term->name . '</a></li>';
+		}
+		unset($term);
+		$sub_tabs .= '</ul>';
+		$sub_tabs .= '</div>';
+		$sub_tabs .= '</div>';
+		$sub_tabs .= '</div>';
+
+		// 存储子分类筛选，ajax筛选中需要据此动态返回
+		return $sub_tabs;
+	}
+
+	/**
+	 *@since 2019.08.09
+	 *当前tax query的子类筛选HTML
+	 *
+	 *子类查询需要根据当前tax query动态生成
+	 *在ajax状态中，需要经由此方法，交付api响应动态生成
+	 *
+	 *非ajax请求中，直接使用echo get_sub_taxonomy_filter可单独查询某个分类子类
+	 *非ajax请求中，add_taxonomy_filter，在选择分类后，自动查询生成子类tabs
+	 *
+	 *@see wnd_filter_api_callback()
+	 */
+	public function get_sub_tabs() {
+		$sub_tabs_array = array();
+
+		// 遍历当前tax query是否包含子类
+		foreach ($this->wp_query_args['tax_query'] as $tax_query) {
+			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
+			if (!is_array($tax_query)) {
+				continue;
+			}
+
+			$sub_tabs = '';
+
+			// 递归查询当前分类的父级分类
+			$parents = $this->get_tax_query_patents()[$tax_query['taxonomy']];
+			foreach ($parents as $parent) {
+				$sub_tabs .= $this->get_sub_taxonomy_filter($parent, $tax_query['taxonomy']);
+			}
+
+			// 当前分类的子类
+			$sub_tabs .= $this->get_sub_taxonomy_filter($tax_query['terms'], $tax_query['taxonomy']);
+
+			// 构造子类查询
+			$sub_tabs_array[$tax_query['taxonomy']] = $sub_tabs;
+		}
+		unset($tax_query);
+
+		return $sub_tabs_array;
+	}
+
+	/**
+	 *@since 2019.08.09
+	 *获取当前tax_query的所有父级term_id
+	 *@return array $parents 当前分类查询的所有父级
+	 *
+	 * $parents[$taxonomy] = array($term_id);
+	 */
+	public function get_tax_query_patents() {
+		$parents = array();
+
+		// 遍历当前tax query是否包含子类
+		foreach ($this->wp_query_args['tax_query'] as $tax_query) {
+			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
+			if (!isset($tax_query['taxonomy'])) {
+				continue;
+			}
+
+			// 递归查询当前分类的父级分类
+			$parents[$tax_query['taxonomy']] = array();
+
+			$parent = get_term($tax_query['terms'])->parent;
+			while ($parent) {
+				$parents[$tax_query['taxonomy']][] = $parent;
+				$parent = get_term($parent)->parent;
+			}
+
+			// 排序
+			sort($parents[$tax_query['taxonomy']]);
+
+		}
+		unset($tax_query);
+
+		return $parents;
+	}
+
+	/**
 	 *@since 2019.07.31
 	 *获取筛结果HTML
 	 *
 	 *合并返回：文章列表及分页导航
 	 */
 	public function get_results() {
-		return $this->get_posts() . $this->get_pagination($show_page = 5);
+		return $this->get_posts() . $this->get_pagination();
 	}
 
 	/**
