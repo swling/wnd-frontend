@@ -113,8 +113,8 @@ function wnd_filter_api_callback() {
 		'status' => 1,
 		'data' => array(
 			'posts' => $filter->get_posts(),
-			'sub_tabs' => $filter->get_sub_tabs(),
-			'related_tags' => $filter->get_related_tags(),
+			'sub_taxonomy_tabs' => $filter->get_sub_taxonomy_tabs(),
+			'related_tags_tabs' => $filter->get_related_tags_tabs(),
 			'pagination' => $filter->get_pagination(),
 			'post_count' => $filter->wp_query->post_count,
 

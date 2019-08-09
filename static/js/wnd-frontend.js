@@ -986,14 +986,14 @@ jQuery(document).ready(function($) {
 				// 分类关联标签tabs
 				var related_tags = $(filter_parent).children(".related-tags");
 				if (related_tags) {
-					related_tags.after(response.data.related_tags);
+					related_tags.after(response.data.related_tags_tabs);
 					related_tags.remove();
 				}
 
 				// 子类筛选tabs
 				$(filter_parent).children(".sub-tabs").remove();
-				for (taxonomy in response.data.sub_tabs) {
-					$(filter_parent).children("." + taxonomy + "-tabs:last").after(response.data.sub_tabs[taxonomy]);
+				for (taxonomy in response.data.sub_taxonomy_tabs) {
+					$(filter_parent).children("." + taxonomy + "-tabs:last").after(response.data.sub_taxonomy_tabs[taxonomy]);
 				}
 			},
 			error: function() {
