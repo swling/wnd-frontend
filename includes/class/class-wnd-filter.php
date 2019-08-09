@@ -207,7 +207,7 @@ class Wnd_Filter {
 		$taxonomy_query = false;
 		foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
 			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-			if (!isset($tax_query['taxonomy'])) {
+			if (!isset($tax_query['terms'])) {
 				continue;
 			}
 
@@ -554,7 +554,7 @@ class Wnd_Filter {
 		$all_class = 'class="is-active"';
 		foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
 			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-			if (!is_array($tax_query)) {
+			if (!isset($tax_query['terms'])) {
 				continue;
 			}
 
@@ -596,15 +596,15 @@ class Wnd_Filter {
 			// 遍历当前tax query查询是否匹配当前tab
 			foreach ($this->wp_query_args['tax_query'] as $tax_query) {
 				// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-				if (!is_array($tax_query)) {
+				if (!isset($tax_query['terms'])) {
 					continue;
 				}
 
 				/**
 				 *如果当前tax_query参数中包含当前分类，或者当前分类的子类，则添加is-active
 				 */
-				$current_tax_query_parent = get_term($tax_query['terms'])->parent;
-				if ($tax_query['terms'] == $term->term_id or $term->term_id == $current_tax_query_parent) {
+				$parents = $this->get_tax_query_patents()[$taxonomy] ?? array();
+				if ($tax_query['terms'] == $term->term_id or in_array($term->term_id, $parents)) {
 					$class .= ' is-active';
 					break;
 				}
@@ -649,7 +649,7 @@ class Wnd_Filter {
 		$all_class = 'class="is-active"';
 		foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
 			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-			if (!is_array($tax_query)) {
+			if (!isset($tax_query['terms'])) {
 				continue;
 			}
 
@@ -700,7 +700,7 @@ class Wnd_Filter {
 				$class .= 'term-id-' . $term->term_id;
 
 				// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-				if (!is_array($tax_query)) {
+				if (!isset($tax_query['terms'])) {
 					continue;
 				}
 
@@ -912,7 +912,7 @@ class Wnd_Filter {
 		// 1、tax_query
 		foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
 			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-			if (!is_array($tax_query)) {
+			if (!isset($tax_query['terms'])) {
 				continue;
 			}
 
@@ -1020,7 +1020,7 @@ class Wnd_Filter {
 		// 遍历当前tax query是否包含子类
 		foreach ($this->wp_query_args['tax_query'] as $tax_query) {
 			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-			if (!is_array($tax_query)) {
+			if (!isset($tax_query['terms'])) {
 				continue;
 			}
 
@@ -1035,8 +1035,8 @@ class Wnd_Filter {
 				);
 
 				$sub_tabs .= $this->build_taxonomy_filter($args, 'sub-tabs');
-
 			}
+			unset($parent);
 
 			// 当前分类的子类
 			$args = array(
@@ -1066,7 +1066,7 @@ class Wnd_Filter {
 		// 遍历当前tax query是否包含子类
 		foreach ($this->wp_query_args['tax_query'] as $tax_query) {
 			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-			if (!isset($tax_query['taxonomy'])) {
+			if (!isset($tax_query['terms'])) {
 				continue;
 			}
 
