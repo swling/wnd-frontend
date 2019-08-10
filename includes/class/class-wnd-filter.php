@@ -361,9 +361,10 @@ class Wnd_Filter {
 	 *@since 2019.08.10
 	 *快捷新增主分类筛选tabs
 	 *
-	 *post：category / $post_type . '_cat'
+	 *@param array  $args 	WordPress:get_terms() 查询参数
+	 *分类taxonomy约定：post（category） / 自定义类型 ($post_type . '_cat')
 	 */
-	public function add_category_filter() {
+	public function add_category_filter($args = array()) {
 		$args['taxonomy'] = $this->category_taxonomy;
 		return $this->add_taxonomy_filter($args);
 	}

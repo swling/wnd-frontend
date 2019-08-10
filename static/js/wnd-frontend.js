@@ -995,7 +995,7 @@ jQuery(document).ready(function($) {
 					response.data.category_tabs &&
 					$(filter_parent).find("." + response.data.category_taxonomy + "-tabs").length == 0
 				) {
-					category_tabs.after(response.data.category_tabs);
+					category_tabs.last().after(response.data.category_tabs);
 					category_tabs.remove();
 				}
 
