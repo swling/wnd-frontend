@@ -31,15 +31,14 @@ class Wnd_Filter {
 	public $const_query = array();
 
 	/**
-	 *meta / orderby 查询参数需要供current filter查询使用
+	 *meta 查询参数需要供current filter查询使用
 	 **/
 	public $meta_filter_args;
-	public $orderby_filter_args;
 
 	// 默认切换筛选项时需要移除的参数
 	public $remove_query_args = array('paged', 'page');
 
-	// 当前post type的主分类taxonomy：用于分类关联标签
+	// 当前post type的主分类taxonomy 约定：post(category) / 自定义类型 （$post_type . '_cat'）
 	public $category_taxonomy;
 
 	/**
@@ -97,215 +96,6 @@ class Wnd_Filter {
 			}
 			$this->wp_query_args['author'] = get_current_user_id();
 		}
-	}
-
-	/**
-	 *@since 2019.07.31
-	 *设置ajax post列表嵌入容器
-	 *@param string $container posts列表ajax嵌入容器
-	 **/
-	public function set_ajax_container($container) {
-		$this->add_query(array('wnd_ajax_container' => $container));
-	}
-
-	/**
-	 *@since 2019.07.31
-	 *设置ajax post列表嵌入容器
-	 *@param string $container posts列表ajax嵌入容器
-	 **/
-	public function set_posts_per_page($posts_per_page) {
-		$this->add_query(array('posts_per_page' => $posts_per_page));
-	}
-
-	/**
-	 *@since 2019.08.02
-	 *设置列表post样式函数
-	 *@param string $template posts模板 函数名
-	 **/
-	public function set_post_template($template) {
-		$this->add_query(array('wnd_post_tpl' => $template));
-	}
-
-	/**
-	 *@since 2019.07.31
-	 *添加新的请求参数
-	 *添加的参数，将覆盖之前的设定，并将在所有请求中有效，直到被新的设定覆盖
-	 *
-	 *@param array $query array(key=>value)
-	 *
-	 *
-	 *在非ajax环境中，直接将写入$wp_query_args[key]=value
-	 *
-	 *在ajax环境中，将对应生成html data属性：data-{key}="{value}" 通过JavaScript获取后将转化为 ajax url请求参数 ?{key}={value}，
-	 *ajax发送到api接口，再通过parse_url_to_wp_query() 解析后，写入$wp_query_args[key]=value
-	 **/
-	public function add_query($query = array()) {
-		foreach ($query as $key => $value) {
-			$this->wp_query_args[$key] = $value;
-
-			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
-			$this->const_query[$key] = $value;
-		}
-		unset($key, $value);
-	}
-
-	/**
-	 *@param array $args 需要筛选的类型数组
-	 */
-	public function add_post_type_filter($args = array()) {
-
-		/**
-		 *若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post
-		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
-		 *
-		 * 当前请求为包含post_type参数时，当前的主分类（category_taxonomy）无法在构造函数中无法完成定义，需在此处补充
-		 */
-		if (!$this->wp_query_args['post_type']) {
-			$this->wp_query_args['post_type'] = $args ? reset($args) : 'post';
-			$this->category_taxonomy = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
-		}
-
-		$tabs = $this->build_post_type_filter($args);
-		$this->tabs .= $tabs;
-
-		return $tabs;
-	}
-
-	/**
-	 *状态筛选
-	 *@param array $args 需要筛选的文章状态数组
-	 */
-	public function add_post_status_filter($args = array()) {
-
-		/**
-		 *若当前请求未指定post_status，设置第一个post_status为默认值；若筛选项也为空，最后默认publish
-		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
-		 */
-		$default_status = $this->wp_query_args['status'] ?? ($args ? reset($args) : 'publish');
-		$this->add_query(array('post_status' => $default_status));
-
-		$tabs = $this->build_post_status_filter($args);
-		$this->tabs .= $tabs;
-		return $tabs;
-	}
-
-	/**
-	 *@since 2019.02.28
-	 *@param $args 	array get_terms 参数
-	 *若查询的taxonomy与当前post type未关联，则不输出
-	 */
-	public function add_taxonomy_filter(array $args) {
-
-		$args['parent'] = $args['parent'] ?? 0;
-		$tabs = $this->build_taxonomy_filter($args);
-
-		/**
-		 * @since 2019.03.12
-		 * 遍历当前tax query 查询是否设置了对应的taxonomy查询
-		 */
-		$taxonomy = $args['taxonomy'];
-		$taxonomy_query = false;
-		foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
-			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-			if (!isset($tax_query['terms'])) {
-				continue;
-			}
-
-			if (array_search($taxonomy, $tax_query) !== false) {
-				$taxonomy_query = true;
-				break;
-			}
-		}
-		unset($key, $tax_query);
-
-		if (!$taxonomy_query) {
-			$this->tabs .= $tabs;
-			return $tabs;
-		}
-
-		// 获取当前taxonomy子类tabs
-		$sub_tabs = $this->get_sub_taxonomy_tabs()[$taxonomy];
-
-		$this->tabs .= $tabs . $sub_tabs;
-		return $tabs . $sub_tabs;
-	}
-
-	/**
-	 * 标签筛选
-	 * 定义taxonomy：{$post_type}.'_tag'
-	 * 读取wp_query中tax_query 提取taxonomy为{$post_type}.'_cat'的分类id，并获取对应的关联标签(需启用标签分类关联功能)
-	 * 若未设置关联分类，则查询所有热门标签
-	 *@since 2019.03.25
-	 */
-	public function add_related_tags_filter($limit = 10) {
-		$tabs = $this->build_related_tags_filter($limit);
-		$this->tabs .= $tabs;
-		return $tabs;
-	}
-
-	/**
-	 *@since 2019.04.18 meta query
-	 *@param 自定义： array args meta字段筛选:
-	 *		暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
-	 *
-	 *	$args = array(
-	 *		'label' => '文章价格',
-	 *		'key' => 'price',
-	 *		'options' => array(
-	 *			'10' => '10',
-	 *			'0.1' => '0.1',
-	 *		),
-	 *		'compare' => '=',
-	 *	);
-	 *
-	 *	查询一个字段是否存在：options只需要设置一个：其作用为key值显示为选项文章，value不参与查询，可设置为任意值
-	 *	$args = array(
-	 *		'label' => '文章价格',
-	 *		'key' => 'price',
-	 *		'options' => array(
-	 *			'包含' => 'exists',
-	 *		),
-	 *		'compare' => 'exists',
-	 *	);
-	 *
-	 */
-	public function add_meta_filter($args) {
-		$tabs = $this->build_meta_filter($args);
-		$this->tabs .= $tabs;
-		return $tabs;
-	}
-
-	/**
-	 *@since 2019.04.21 排序
-	 *@param 自定义： array args
-	 *
-	 *	$args = array(
-	 *		'label' => '排序',
-	 *		'options' => array(
-	 *			'发布时间' => 'date', //常规排序 date title等
-	 *			'浏览量' => array( // 需要多个参数的排序
-	 *				'orderby'=>'meta_value_num',
-	 *				'meta_key'   => 'views',
-	 *			),
-	 *		),
-	 *		'order' => 'DESC',
-	 *	);
-	 *
-	 */
-	public function add_orderby_filter($args) {
-		$tabs = $this->build_orderby_filter($args);
-		$this->tabs .= $tabs;
-		return $tabs;
-	}
-
-	/**
-	 *@since 2019.03.26
-	 *遍历当前查询参数，输出取消当前查询链接
-	 */
-	public function add_current_filter() {
-		$tabs = $this->build_current_filter();
-		$this->tabs .= $tabs;
-		return $tabs;
 	}
 
 	/**
@@ -433,11 +223,254 @@ class Wnd_Filter {
 	}
 
 	/**
-	 *@since 2019.08.01
-	 *执行查询
+	 *@since 2019.07.31
+	 *设置ajax post列表嵌入容器
+	 *@param string $container posts列表ajax嵌入容器
+	 **/
+	public function set_ajax_container($container) {
+		$this->add_query(array('wnd_ajax_container' => $container));
+	}
+
+	/**
+	 *@since 2019.07.31
+	 *设置ajax post列表嵌入容器
+	 *@param string $container posts列表ajax嵌入容器
+	 **/
+	public function set_posts_per_page($posts_per_page) {
+		$this->add_query(array('posts_per_page' => $posts_per_page));
+	}
+
+	/**
+	 *@since 2019.08.02
+	 *设置列表post样式函数
+	 *@param string $template posts模板 函数名
+	 **/
+	public function set_post_template($template) {
+		$this->add_query(array('wnd_post_tpl' => $template));
+	}
+
+	/**
+	 *@since 2019.07.31
+	 *添加新的请求参数
+	 *添加的参数，将覆盖之前的设定，并将在所有请求中有效，直到被新的设定覆盖
+	 *
+	 *@param array $query array(key=>value)
+	 *
+	 *
+	 *在非ajax环境中，直接将写入$wp_query_args[key]=value
+	 *
+	 *在ajax环境中，将对应生成html data属性：data-{key}="{value}" 通过JavaScript获取后将转化为 ajax url请求参数 ?{key}={value}，
+	 *ajax发送到api接口，再通过parse_url_to_wp_query() 解析后，写入$wp_query_args[key]=value
+	 **/
+	public function add_query($query = array()) {
+		foreach ($query as $key => $value) {
+			$this->wp_query_args[$key] = $value;
+
+			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
+			$this->const_query[$key] = $value;
+		}
+		unset($key, $value);
+	}
+
+	/**
+	 *@param array $args 需要筛选的类型数组
 	 */
-	public function query() {
-		$this->wp_query = new WP_Query($this->wp_query_args);
+	public function add_post_type_filter($args = array()) {
+
+		/**
+		 *若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post
+		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
+		 *
+		 * 当前请求为包含post_type参数时，当前的主分类（category_taxonomy）无法在构造函数中无法完成定义，需在此处补充
+		 */
+		if (!$this->wp_query_args['post_type']) {
+			$this->wp_query_args['post_type'] = $args ? reset($args) : 'post';
+			$this->category_taxonomy = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
+		}
+
+		$tabs = $this->build_post_type_filter($args);
+		$this->tabs .= $tabs;
+
+		return $tabs;
+	}
+
+	/**
+	 *状态筛选
+	 *@param array $args 需要筛选的文章状态数组
+	 */
+	public function add_post_status_filter($args = array()) {
+
+		/**
+		 *若当前请求未指定post_status，设置第一个post_status为默认值；若筛选项也为空，最后默认publish
+		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
+		 */
+		$default_status = $this->wp_query_args['status'] ?? ($args ? reset($args) : 'publish');
+		$this->add_query(array('post_status' => $default_status));
+
+		$tabs = $this->build_post_status_filter($args);
+		$this->tabs .= $tabs;
+		return $tabs;
+	}
+
+	/**
+	 *@since 2019.02.28
+	 *@param $args 	array get_terms 参数
+	 *若查询的taxonomy与当前post type未关联，则不输出
+	 */
+	public function add_taxonomy_filter(array $args) {
+		$args['parent'] = $args['parent'] ?? 0;
+		$tabs = $this->build_taxonomy_filter($args);
+
+		/**
+		 *@since 2019.03.12
+		 *遍历当前tax query 查询是否设置了对应的taxonomy查询，若存在则查询其对应子类
+		 */
+		$taxonomy = $args['taxonomy'];
+		$taxonomy_query = false;
+		foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
+			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
+			if (!isset($tax_query['terms'])) {
+				continue;
+			}
+
+			if (array_search($taxonomy, $tax_query) !== false) {
+				$taxonomy_query = true;
+				break;
+			}
+		}
+		unset($key, $tax_query);
+
+		if (!$taxonomy_query) {
+			$this->tabs .= $tabs;
+			return $tabs;
+		}
+
+		// 获取当前taxonomy子类tabs
+		$sub_tabs = $this->get_sub_taxonomy_tabs()[$taxonomy];
+
+		$this->tabs .= $tabs . $sub_tabs;
+		return $tabs . $sub_tabs;
+	}
+
+	/**
+	 *@since 2019.08.10
+	 *快捷新增主分类筛选tabs
+	 *
+	 *post：category / $post_type . '_cat'
+	 */
+	public function add_category_filter() {
+		$args['taxonomy'] = $this->category_taxonomy;
+		return $this->add_taxonomy_filter($args);
+	}
+
+	/**
+	 * 标签筛选
+	 * 定义taxonomy：{$post_type}.'_tag'
+	 * 读取wp_query中tax_query 提取taxonomy为{$post_type}.'_cat'的分类id，并获取对应的关联标签(需启用标签分类关联功能)
+	 * 若未设置关联分类，则查询所有热门标签
+	 *@since 2019.03.25
+	 */
+	public function add_related_tags_filter($limit = 10) {
+		$tabs = $this->build_related_tags_filter($limit);
+		$this->tabs .= $tabs;
+		return $tabs;
+	}
+
+	/**
+	 *@since 2019.04.18 meta query
+	 *@param 自定义： array args meta字段筛选:
+	 *		暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
+	 *
+	 *	$args = array(
+	 *		'label' => '文章价格',
+	 *		'key' => 'price',
+	 *		'options' => array(
+	 *			'10' => '10',
+	 *			'0.1' => '0.1',
+	 *		),
+	 *		'compare' => '=',
+	 *	);
+	 *
+	 *	查询一个字段是否存在：options只需要设置一个：其作用为key值显示为选项文章，value不参与查询，可设置为任意值
+	 *	$args = array(
+	 *		'label' => '文章价格',
+	 *		'key' => 'price',
+	 *		'options' => array(
+	 *			'包含' => 'exists',
+	 *		),
+	 *		'compare' => 'exists',
+	 *	);
+	 *
+	 */
+	public function add_meta_filter($args) {
+		$tabs = $this->build_meta_filter($args);
+		$this->tabs .= $tabs;
+		return $tabs;
+	}
+
+	/**
+	 *@since 2019.04.21 排序
+	 *@param 自定义： array args
+	 *
+	 *	$args = array(
+	 *		'label' => '排序',
+	 *		'options' => array(
+	 *			'发布时间' => 'date', //常规排序 date title等
+	 *			'浏览量' => array( // 需要多个参数的排序
+	 *				'orderby'=>'meta_value_num',
+	 *				'meta_key'   => 'views',
+	 *			),
+	 *		),
+	 *		'order' => 'DESC',
+	 *	);
+	 *
+	 */
+	public function add_orderby_filter($args) {
+		$tabs = $this->build_orderby_filter($args);
+		$this->tabs .= $tabs;
+		return $tabs;
+	}
+
+	/**
+	 *@since 2019.08.10 排序方式
+	 *@param 自定义： array args
+	 *
+	 *	$args = array(
+	 *		'降序' => 'DESC',
+	 *		'升序' =>'ASC'
+	 *	);
+	 *
+	 *@param string $label 选项名称
+	 */
+	public function add_order_filter($args, $label = '排序') {
+		$tabs = $this->build_order_filter($args, $label);
+		$this->tabs .= $tabs;
+		return $tabs;
+	}
+
+	/**
+	 *@since 2019.03.26
+	 *遍历当前查询参数，输出取消当前查询链接
+	 */
+	public function add_current_filter() {
+		$tabs = $this->build_current_filter();
+		$this->tabs .= $tabs;
+		return $tabs;
+	}
+
+	/**
+	 *
+	 *@since 2019.08.02
+	 *构造HTML data属性
+	 *获取查询常量，并转化为html data属性，供前端读取后在ajax请求中发送到api
+	 */
+	protected function build_html_data() {
+		$data = '';
+		foreach ($this->const_query as $key => $value) {
+			$data .= 'data-' . $key . '="' . $value . '" ';
+		}
+
+		return $data;
 	}
 
 	/**
@@ -531,7 +564,7 @@ class Wnd_Filter {
 		$taxonomy = $args['taxonomy'];
 		$parent = $args['parent'] ?? 0;
 		$terms = get_terms($args);
-		if (!$terms) {
+		if (!$terms or is_wp_error($terms)) {
 			return;
 		}
 
@@ -544,8 +577,13 @@ class Wnd_Filter {
 			if (!$this->is_ajax) {
 				return;
 			} else {
-				$class .= 'is-hidden';
+				$class .= ' is-hidden';
 			}
+		}
+
+		// 标记主分类
+		if ($taxonomy == $this->category_taxonomy) {
+			$class .= ' main-category-tabs'; //不可为 category-tabs，会与post默认分类法category重复
 		}
 
 		/**
@@ -687,15 +725,14 @@ class Wnd_Filter {
 		$tabs .= '<div class="column is-narrow ' . $taxonomy . '-label">' . get_taxonomy($taxonomy)->label . '：</div>';
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<ul class="tab">';
-
 		$tabs .= '<li ' . $all_class . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . remove_query_arg('_term_' . $taxonomy, remove_query_arg($this->remove_query_args)) . '">全部</a></li>';
 
 		// 输出tabs
 		foreach ($tags as $tag) {
 			$term = isset($category_id) ? get_term($tag->tag_id) : $tag;
+
 			// 遍历当前tax query查询是否匹配当前tab
 			$class = '';
-
 			foreach ($this->wp_query_args['tax_query'] as $tax_query) {
 				$class .= 'term-id-' . $term->term_id;
 
@@ -785,14 +822,14 @@ class Wnd_Filter {
 		foreach ($args['options'] as $key => $value) {
 
 			// 遍历当前meta query查询是否匹配当前tab
-			$active = '';
+			$class = '';
 			if (isset($this->wp_query_args['meta_query'])) {
 				foreach ($this->wp_query_args['meta_query'] as $meta_query) {
 					if ($meta_query['compare'] != 'exists' and $meta_query['value'] == $value) {
-						$active = 'class="is-active"';
+						$class = 'class="is-active"';
 						// meta query compare 为 exists时，没有value值，仅查询是否包含对应key值
 					} elseif ($meta_query['key'] = $args['key']) {
-						$active = 'class="is-active"';
+						$class = 'class="is-active"';
 					}
 				}
 				unset($meta_query);
@@ -801,7 +838,7 @@ class Wnd_Filter {
 			/**
 			 *meta_query GET参数为：_meta_{key}?=
 			 */
-			$tabs .= '<li ' . $active . '><a data-key="_meta_' . $args['key'] . '" data-value="' . $value . '" href="' . add_query_arg('_meta_' . $args['key'], $value, remove_query_arg($this->remove_query_args)) . '">' . $key . '</a></li>';
+			$tabs .= '<li ' . $class . '><a data-key="_meta_' . $args['key'] . '" data-value="' . $value . '" href="' . add_query_arg('_meta_' . $args['key'], $value, remove_query_arg($this->remove_query_args)) . '">' . $key . '</a></li>';
 		}
 		unset($key, $value);
 
@@ -855,9 +892,9 @@ class Wnd_Filter {
 
 		// 输出tabs
 		foreach ($args['options'] as $key => $orderby) {
-			// 查询当前orderby是否匹配当前tab
-			$active = '';
 
+			// 查询当前orderby是否匹配当前tab
+			$class = '';
 			if (isset($this->wp_query_args['orderby'])) {
 				/**
 				 *	post meta排序
@@ -870,12 +907,12 @@ class Wnd_Filter {
 				 */
 				if (is_array($orderby) and ($this->wp_query_args['orderby'] == 'meta_value_num' or $this->wp_query_args['orderby'] == 'meta_value')) {
 					if ($orderby['meta_key'] == $this->wp_query_args['meta_key']) {
-						$active = 'class="is-active"';
+						$class = 'class="is-active"';
 					}
 					// 常规排序
 				} else {
 					if ($orderby == $this->wp_query_args['orderby']) {
-						$active = 'class="is-active"';
+						$class = 'class="is-active"';
 					}
 				}
 
@@ -883,9 +920,56 @@ class Wnd_Filter {
 
 			// data-key="orderby" data-value="' . http_build_query($query_arg) . '"
 			$query_arg = is_array($orderby) ? $orderby : array('orderby' => $orderby);
-			$tabs .= '<li ' . $active . '><a data-key="orderby" data-value="' . http_build_query($query_arg) . '" href="' . add_query_arg($query_arg, remove_query_arg($remove_query_args)) . '">' . $key . '</a></li>';
+			$tabs .= '<li ' . $class . '><a data-key="orderby" data-value="' . http_build_query($query_arg) . '" href="' . add_query_arg($query_arg, remove_query_arg($remove_query_args)) . '">' . $key . '</a></li>';
 		}
 		unset($key, $orderby);
+
+		// 输出结束
+		$tabs .= '</ul>';
+		$tabs .= '</div>';
+		$tabs .= '</div>';
+
+		return $tabs;
+	}
+
+	/**
+	 *@since 2019.08.10 构建排序方式
+	 *@param 自定义： array args
+	 *
+	 *	$args = array(
+	 *		'降序' => 'DESC',
+	 *		'升序' =>'ASC'
+	 *	);
+	 *
+	 *@param string $label 选项名称
+	 */
+	public function build_order_filter($args, $label) {
+
+		// 是否已设置order参数
+		$all_class = isset($this->wp_query_args['orderby']) ? '' : 'class="is-active"';
+
+		// 输出容器
+		$tabs = '<div class="columns is-marginless is-vcentered order-tabs">';
+		$tabs .= '<div class="column is-narrow">' . $label . '：</div>';
+		$tabs .= '<div class="tabs column">';
+		$tabs .= '<ul class="tab">';
+		$tabs .= '<li ' . $all_class . '><a data-key="order" data-value="" href="' . remove_query_arg('order', remove_query_arg($this->remove_query_args)) . '">默认</a></li>';
+
+		// 输出tabs
+		foreach ($args as $key => $value) {
+
+			// 遍历当前meta query查询是否匹配当前tab
+			$class = '';
+			if (isset($this->wp_query_args['order']) and $this->wp_query_args['order'] == $value) {
+				$class = 'class="is-active"';
+			}
+
+			/**
+			 *meta_query GET参数为：_meta_{key}?=
+			 */
+			$tabs .= '<li ' . $class . '><a data-key="order" data-value="' . $value . '" href="' . add_query_arg('order', $value, remove_query_arg($this->remove_query_args)) . '">' . $key . '</a></li>';
+		}
+		unset($key, $value);
 
 		// 输出结束
 		$tabs .= '</ul>';
@@ -930,6 +1014,7 @@ class Wnd_Filter {
 		 *2、meta_query
 		 */
 		foreach ($this->wp_query_args['meta_query'] as $meta_query) {
+
 			// 通过wp meta query中的value值，反向查询自定义 key
 			if ($meta_query['compare'] != 'exists') {
 				$key = array_search($meta_query['value'], $this->meta_filter_args['options']);
@@ -946,7 +1031,6 @@ class Wnd_Filter {
 			 *meta_query GET参数为：meta_{key}?=
 			 */
 			$tabs .= '<span class="tag">' . $key . '<a data-key="_meta_' . $this->meta_filter_args['key'] . '" data-value="" class="delete is-small" href="' . remove_query_arg('_meta_' . $this->meta_filter_args['key'], remove_query_arg($this->remove_query_args)) . '"></a></span>&nbsp;&nbsp;';
-
 		}
 		unset($key, $meta_query);
 
@@ -958,18 +1042,83 @@ class Wnd_Filter {
 	}
 
 	/**
-	 *
-	 *@since 2019.08.02
-	 *构造HTML data属性
-	 *获取查询常量，并转化为html data属性，供前端读取后在ajax请求中发送到api
+	 *@since 2019.02.15 简单分页导航
+	 *不查询总数的情况下，简单实现下一页翻页
+	 *翻页参数键名page 不能设置为 paged 会与原生WordPress翻页机制产生冲突
 	 */
-	protected function build_html_data() {
-		$data = '';
-		foreach ($this->const_query as $key => $value) {
-			$data .= 'data-' . $key . '="' . $value . '" ';
-		}
+	protected function build_pagination($show_page = 5) {
 
-		return $data;
+		/**
+		 *$this->wp_query->query_vars :
+		 *WP_Query实际执行的查询参数 new WP_query($args) $args 经过WP_Query解析后
+		 *@see Class WP_Query
+		 */
+		$paged = $this->wp_query->query_vars['paged'] ?: 1;
+
+		/**
+		 *未查询文章总数，以上一页下一页的形式翻页(在数据较多的情况下，可以提升查询性能)
+		 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
+		 */
+		if (!$this->wp_query->max_num_pages) {
+			$html = '<nav class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
+			$html .= '<ul class="pagination-list">';
+			if ($paged >= 2) {
+				$html .= '<li><a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . add_query_arg('page', $paged - 1) . '">上一页</a>';
+			}
+			if ($this->wp_query->post_count >= $this->wp_query->query_vars['posts_per_page']) {
+				$html .= '<li><a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . add_query_arg('page', $paged + 1) . '">下一页</a>';
+			}
+			$html .= '</ul>';
+			$html .= '</nav>';
+
+			return $html;
+
+		} else {
+			/**
+			 *常规分页，需要查询文章总数
+			 *据称，在数据量较大的站点，查询文章总数会较为费时
+			 */
+			$html = '<div class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
+			if ($paged > 1) {
+				$html .= '<a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . add_query_arg('page', $paged - 1) . '">上一页</a>';
+			} else {
+				$html .= '<a class="pagination-previous" disabled="disabled">第一页</a>';
+			}
+			if ($paged < $this->wp_query->max_num_pages) {
+				$html .= '<a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . add_query_arg('page', $paged + 1) . '">下一页</a>';
+			}
+
+			$html .= '<ul class="pagination-list">';
+			$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . remove_query_arg('page') . '" >首页</a></li>';
+			for ($i = $paged - 1; $i <= $paged + $show_page; $i++) {
+				if ($i > 0 && $i <= $this->wp_query->max_num_pages) {
+					if ($i == $paged) {
+						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link is-current" href="' . add_query_arg('page', $i) . '"> <span>' . $i . '</span> </a></li>';
+					} else {
+						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link" href="' . add_query_arg('page', $i) . '"> <span>' . $i . '</span> </a></li>';
+					}
+				}
+			}
+			if ($paged < $this->wp_query->max_num_pages - 3) {
+				$html .= '<li><span class="pagination-ellipsis">&hellip;</span></li>';
+			}
+
+			$html .= '<li><a data-key="page" data-value="' . $this->wp_query->max_num_pages . '" class="pagination-link" href="' . add_query_arg('page', $this->wp_query->max_num_pages) . '">尾页</a></li>';
+			$html .= '</ul>';
+
+			$html .= '</div>';
+
+			$this->pagination = $html;
+			return $this->pagination;
+		}
+	}
+
+	/**
+	 *@since 2019.08.01
+	 *执行查询
+	 */
+	public function query() {
+		$this->wp_query = new WP_Query($this->wp_query_args);
 	}
 
 	/**
@@ -983,6 +1132,23 @@ class Wnd_Filter {
 	 */
 	public function get_tabs() {
 		return '<div class="wnd-filter-tabs ' . $this->class . '" ' . $this->build_html_data() . '>' . $this->tabs . '</div>';
+	}
+
+	/**
+	 *@since 2019.08.09
+	 *获取分类Tabs的HTML
+	 *
+	 *分类Tabs需要根据当前post type情况动态加载
+	 *在ajax状态中，需要经由此方法，交付api响应动态生成
+	 *
+	 *非ajax请求中，直接使用 add_category_filter方法即可
+	 *
+	 *@see wnd_filter_api_callback()
+	 */
+	public function get_category_tabs($args = array()) {
+		$args['taxonomy'] = $this->category_taxonomy;
+		$args['parent'] = $args['parent'] ?? 0;
+		return $this->build_taxonomy_filter($args);
 	}
 
 	/**
@@ -1024,16 +1190,14 @@ class Wnd_Filter {
 				continue;
 			}
 
-			$sub_tabs = '';
-
 			// 递归查询当前分类的父级分类
+			$sub_tabs = '';
 			$parents = $this->get_tax_query_patents()[$tax_query['taxonomy']];
 			foreach ($parents as $parent) {
 				$args = array(
 					'taxonomy' => $tax_query['taxonomy'],
 					'parent' => $parent,
 				);
-
 				$sub_tabs .= $this->build_taxonomy_filter($args, 'sub-tabs');
 			}
 			unset($parent);
@@ -1058,7 +1222,7 @@ class Wnd_Filter {
 	 *获取当前tax_query的所有父级term_id
 	 *@return array $parents 当前分类查询的所有父级
 	 *
-	 * $parents[$taxonomy] = array($term_id_1,$term_id_2);
+	 *$parents[$taxonomy] = array($term_id_1,$term_id_2);
 	 */
 	public function get_tax_query_patents() {
 		$parents = array();
@@ -1072,7 +1236,6 @@ class Wnd_Filter {
 
 			// 递归查询当前分类的父级分类
 			$parents[$tax_query['taxonomy']] = array();
-
 			$parent = get_term($tax_query['terms'])->parent;
 			while ($parent) {
 				$parents[$tax_query['taxonomy']][] = $parent;
@@ -1081,7 +1244,6 @@ class Wnd_Filter {
 
 			// 排序
 			sort($parents[$tax_query['taxonomy']]);
-
 		}
 		unset($tax_query);
 
@@ -1121,80 +1283,16 @@ class Wnd_Filter {
 	}
 
 	/**
-	 *@since 2019.02.15 简单分页导航
-	 *不查询总数的情况下，简单实现下一页翻页
-	 *翻页参数键名page 不能设置为 paged 会与原生WordPress翻页机制产生冲突
+	 *@since 2019.02.15
+	 *分页导航
 	 */
 	public function get_pagination($show_page = 5) {
 		if (!$this->wp_query and !$this->is_ajax) {
 			return '未执行WP_Query';
 		}
 
-		/**
-		 *$this->wp_query->query_vars :
-		 *WP_Query实际执行的查询参数 new WP_query($args) $args 经过WP_Query解析后
-		 *@see Class WP_Query
-		 */
-		$paged = $this->wp_query->query_vars['paged'] ?: 1;
-
-		/**
-		 *未查询文章总数，以上一页下一页的形式翻页(在数据较多的情况下，可以提升查询性能)
-		 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
-		 */
-		if (!$this->wp_query->max_num_pages) {
-			$html = '<nav class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
-			$html .= '<ul class="pagination-list">';
-
-			if ($paged >= 2) {
-				$html .= '<li><a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . add_query_arg('page', $paged - 1) . '">上一页</a>';
-			}
-			if ($this->wp_query->post_count >= $this->wp_query->query_vars['posts_per_page']) {
-				$html .= '<li><a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . add_query_arg('page', $paged + 1) . '">下一页</a>';
-			}
-			$html .= '</ul>';
-			$html .= '</nav>';
-
-			return $html;
-
-		} else {
-			/**
-			 *常规分页，需要查询文章总数
-			 *据称，在数据量较大的站点，查询文章总数会较为费时
-			 */
-			$html = '<div class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
-
-			if ($paged > 1) {
-				$html .= '<a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . add_query_arg('page', $paged - 1) . '">上一页</a>';
-			} else {
-				$html .= '<a class="pagination-previous" disabled="disabled">第一页</a>';
-			}
-			if ($paged < $this->wp_query->max_num_pages) {
-				$html .= '<a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . add_query_arg('page', $paged + 1) . '">下一页</a>';
-			}
-
-			$html .= '<ul class="pagination-list">';
-			$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . remove_query_arg('page') . '" >首页</a></li>';
-			for ($i = $paged - 1; $i <= $paged + $show_page; $i++) {
-				if ($i > 0 && $i <= $this->wp_query->max_num_pages) {
-					if ($i == $paged) {
-						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link is-current" href="' . add_query_arg('page', $i) . '"> <span>' . $i . '</span> </a></li>';
-					} else {
-						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link" href="' . add_query_arg('page', $i) . '"> <span>' . $i . '</span> </a></li>';
-					}
-				}
-			}
-			if ($paged < $this->wp_query->max_num_pages - 3) {
-				$html .= '<li><span class="pagination-ellipsis">&hellip;</span></li>';
-			}
-
-			$html .= '<li><a data-key="page" data-value="' . $this->wp_query->max_num_pages . '" class="pagination-link" href="' . add_query_arg('page', $this->wp_query->max_num_pages) . '">尾页</a></li>';
-			$html .= '</ul>';
-
-			$html .= '</div>';
-
-			$this->pagination = $html;
-			return $this->pagination;
-		}
+		$this->pagination = $this->build_pagination($show_page);
+		return $this->pagination;
 	}
 
 }

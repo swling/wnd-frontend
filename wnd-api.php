@@ -113,22 +113,32 @@ function wnd_filter_api_callback() {
 		'status' => 1,
 		'data' => array(
 			'posts' => $filter->get_posts(),
+
+			/**
+			 *@since 2019.08.10
+			 *当前post type的主分类筛选项 约定：post(category) / 自定义类型 （$post_type . '_cat'）
+			 *
+			 *动态插入主分类的情况，通常用在用于一些封装的用户面板：如果用户内容管理面板
+			 *常规筛选页面中，应通过add_taxonomy_filter方法添加
+			 */
+			'category_tabs' => $filter->get_category_tabs(),
 			'sub_taxonomy_tabs' => $filter->get_sub_taxonomy_tabs(),
 			'related_tags_tabs' => $filter->get_related_tags_tabs(),
 			'pagination' => $filter->get_pagination(),
 			'post_count' => $filter->wp_query->post_count,
 
 			/**
-			 *实际执行的wp query参数
-			 *前端可据此修改页面行为
-			 */
-			'wp_query_vars' => $filter->wp_query->query_vars,
-
-			/**
 			 *当前post type支持的taxonomy
 			 *前端可据此修改页面行为
 			 */
 			'taxonomies' => get_object_taxonomies($filter->wp_query->query_vars['post_type'], 'names'),
+
+			/**
+			 *@since 2019.08.10
+			 *当前post type的主分类taxonomy
+			 *约定：post(category) / 自定义类型 （$post_type . '_cat'）
+			 */
+			'category_taxonomy' => $filter->category_taxonomy,
 		),
 	);
 }

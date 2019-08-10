@@ -983,11 +983,29 @@ jQuery(document).ready(function($) {
 				// 嵌入查询结果
 				$(filter_param.wnd_ajax_container).html(response.data.posts + response.data.pagination);
 
+				/**
+				 *@since 2019.08.10
+				 *主分类：当前tabs设置了主分类筛选项，且切换type后当前type主分类不存在时，插入当前type主分类
+				 *动态插入主分类的情况，通常用在用于一些封装的用户面板：如果用户内容管理面板
+				 *常规filter应该通过 Wnd_Filter->add_taxonomy_filter() 方法静态输出
+				 */
+				var category_tabs = $(filter_parent).children(".main-category-tabs");
+				if (
+					category_tabs &&
+					response.data.category_tabs &&
+					$(filter_parent).find("." + response.data.category_taxonomy + "-tabs").length == 0
+				) {
+					category_tabs.after(response.data.category_tabs);
+					category_tabs.remove();
+				}
+
 				// 分类关联标签tabs
-				var related_tags = $(filter_parent).children(".related-tags");
-				if (related_tags) {
-					related_tags.after(response.data.related_tags_tabs);
-					related_tags.remove();
+				var related_tags_tabs = $(filter_parent).children(".related-tags");
+				if (related_tags_tabs && response.data.related_tags_tabs) {
+					related_tags_tabs.after(response.data.related_tags_tabs);
+					related_tags_tabs.remove();
+				} else {
+					related_tags_tabs.addClass("is-hidden");
 				}
 
 				// 子类筛选tabs
