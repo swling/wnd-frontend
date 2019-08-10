@@ -48,8 +48,8 @@ function wnd_ajax_reg() {
 	);
 
 	// 2、数据正确性检测
-	if (strlen($user_login) < 4) {
-		return $value = array('status' => 0, 'msg' => '用户名不能低于4位！');
+	if (strlen($user_login) < 3) {
+		return $value = array('status' => 0, 'msg' => '用户名不能低于3位！');
 	}
 	if (is_numeric($user_login)) {
 		return $value = array('status' => 0, 'msg' => '用户名不能是纯数字！');
@@ -58,7 +58,7 @@ function wnd_ajax_reg() {
 		return $value = array('status' => 0, 'msg' => '密码不能低于6位！');
 	}
 	if (!empty($user_pass_repeat) && $user_pass_repeat !== $user_pass_repeat) {
-		return $value = array('status' => 0, 'msg' => '两次输入的新密码不匹配！');
+		return $value = array('status' => 0, 'msg' => '两次输入的密码不匹配！');
 	}
 
 	// 注册权限过滤挂钩
