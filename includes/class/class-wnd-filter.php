@@ -1122,6 +1122,39 @@ class Wnd_Filter {
 	}
 
 	/**
+	 *@since 2019.08.09
+	 *获取当前tax_query的所有父级term_id
+	 *@return array $parents 当前分类查询的所有父级
+	 *
+	 *$parents[$taxonomy] = array($term_id_1,$term_id_2);
+	 */
+	public function get_tax_query_patents() {
+		$parents = array();
+
+		// 遍历当前tax query是否包含子类
+		foreach ($this->wp_query_args['tax_query'] as $tax_query) {
+			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
+			if (!isset($tax_query['terms'])) {
+				continue;
+			}
+
+			// 递归查询当前分类的父级分类
+			$parents[$tax_query['taxonomy']] = array();
+			$parent = get_term($tax_query['terms'])->parent;
+			while ($parent) {
+				$parents[$tax_query['taxonomy']][] = $parent;
+				$parent = get_term($parent)->parent;
+			}
+
+			// 排序
+			sort($parents[$tax_query['taxonomy']]);
+		}
+		unset($tax_query);
+
+		return $parents;
+	}
+
+	/**
 	 *@since 2019.07.31
 	 *获取筛选项HTML
 	 *
@@ -1215,39 +1248,6 @@ class Wnd_Filter {
 		unset($tax_query);
 
 		return $sub_tabs_array;
-	}
-
-	/**
-	 *@since 2019.08.09
-	 *获取当前tax_query的所有父级term_id
-	 *@return array $parents 当前分类查询的所有父级
-	 *
-	 *$parents[$taxonomy] = array($term_id_1,$term_id_2);
-	 */
-	public function get_tax_query_patents() {
-		$parents = array();
-
-		// 遍历当前tax query是否包含子类
-		foreach ($this->wp_query_args['tax_query'] as $tax_query) {
-			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-			if (!isset($tax_query['terms'])) {
-				continue;
-			}
-
-			// 递归查询当前分类的父级分类
-			$parents[$tax_query['taxonomy']] = array();
-			$parent = get_term($tax_query['terms'])->parent;
-			while ($parent) {
-				$parents[$tax_query['taxonomy']][] = $parent;
-				$parent = get_term($parent)->parent;
-			}
-
-			// 排序
-			sort($parents[$tax_query['taxonomy']]);
-		}
-		unset($tax_query);
-
-		return $parents;
 	}
 
 	/**
