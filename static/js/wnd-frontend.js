@@ -504,32 +504,23 @@ jQuery(document).ready(function($) {
 
 		// 获取文件，支持多文件上传
 		for (var i = 0; i < $(this).get(0).files.length; ++i) {
-			form_data.append("wnd_file[" + i + "]", $(this).prop("files")[i]);
+			form_data.set("wnd_file[" + i + "]", $(this).prop("files")[i]);
 		}
 
 		// 获取属性
+		for (key in $(this).data()) {
+			form_data.set(key, $(this).data(key));
+		}
+
+		// 需要前端判断处理的变量
 		var meta_key = $(this).data("meta_key");
-		var post_parent = $(this).data("post_parent");
-		var _ajax_nonce = $(this).data("upload_nonce");
-		var _meta_key_nonce = $(this).data("meta_key_nonce");
-		var save_width = $(this).data("save_width");
-		var save_height = $(this).data("save_height");
 		var is_image = $(this).data("is_image");
+		var thumbnail_width = $(this).data("thumbnail_width");
+		var thumbnail_height = $(this).data("thumbnail_height");		
 
-		// 缩略图尺寸
-		var thumbnail_width = $(this).data("thumbnail-width");
-		var thumbnail_height = $(this).data("thumbnail-height");
-
-		// 组合表单属性数据
-		form_data.append("meta_key", meta_key);
-		form_data.append("post_parent", post_parent);
-		form_data.append("_ajax_nonce", _ajax_nonce);
-		form_data.append("_meta_key_nonce", _meta_key_nonce);
-		form_data.append("save_width", save_width);
-		form_data.append("save_height", save_height);
-		form_data.append("thumbnail_height", thumbnail_height);
-		form_data.append("thumbnail_width", thumbnail_width);
-		form_data.append("action", "wnd_ajax_upload_file");
+		// ajax api请求函数及其nonce
+		form_data.set("_ajax_nonce", $(this).data("upload_nonce"));
+		form_data.set("action", "wnd_ajax_upload_file");
 
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
@@ -663,21 +654,21 @@ jQuery(document).ready(function($) {
 		var form_data = new FormData();
 
 		// 获取属性
-		var meta_key = $("#" + id + " [type='file']").data("meta_key");
-		var post_parent = $("#" + id + " [type='file']").data("post_parent");
-		var _ajax_nonce = $("#" + id + " [type='file']").data("delete_nonce");
-		var is_image = $("#" + id + " [type='file']").data("is_image");
+		form_data.set("file_id", file_id);
+		file_data = $("#" + id + " [type='file']").data();
+		for (key in file_data) {
+			form_data.set(key, file_data[key]);
+		}
 
+		// 需要前端判断处理的变量
+		var meta_key = file_data["meta_key"];
+		var is_image = file_data["is_image"];
 		// 默认图
-		var thumbnail = $("#" + id + " [type='file']").data("thumbnail");
+		var thumbnail = file_data["thumbnail"];		
 
-		// 组合表单数据
-		form_data.append("meta_key", meta_key);
-		form_data.append("post_parent", post_parent);
-		form_data.append("file_id", file_id);
-		form_data.append("_ajax_nonce", _ajax_nonce);
-		// ajax请求配置
-		form_data.append("action", "wnd_ajax_delete_file");
+		// ajax api请求函数及其nonce
+		form_data.set("_ajax_nonce",file_data["delete_nonce"]);
+		form_data.set("action", "wnd_ajax_delete_file");
 
 		$.ajax({
 			url: wnd.root_url + wnd.rest_api,

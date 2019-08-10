@@ -57,7 +57,7 @@ function wnd_ajax_upload_file() {
 		return array('status' => 0, 'msg' => '错误：meta_key 与 post_parent 同时为空！');
 	}
 
-	if (!wnd_verify_nonce($_POST['_meta_key_nonce'], $meta_key)) {
+	if (!wnd_verify_nonce($_POST['meta_key_nonce'], $meta_key)) {
 		return array('status' => 0, 'msg' => '错误：未经允许的meta_key！');
 	}
 

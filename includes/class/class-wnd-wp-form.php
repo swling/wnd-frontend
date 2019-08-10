@@ -185,8 +185,8 @@ class Wnd_WP_Form extends Wnd_Form {
 		$args['data']['delete_nonce'] = wnd_create_nonce('wnd_ajax_delete_file');
 		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
 		$args['data']['thumbnail'] = $args['thumbnail'];
-		$args['data']['thumbnail-width'] = $args['thumbnail_size']['width'];
-		$args['data']['thumbnail-height'] = $args['thumbnail_size']['height'];
+		$args['data']['thumbnail_width'] = $args['thumbnail_size']['width'];
+		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
 		$args['data']['method'] = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据user type 查找目标文件
@@ -282,8 +282,8 @@ class Wnd_WP_Form extends Wnd_Form {
 		$args['data']['upload_nonce'] = wnd_create_nonce('wnd_ajax_upload_file');
 		$args['data']['delete_nonce'] = wnd_create_nonce('wnd_ajax_delete_file');
 		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
-		$args['data']['thumbnail-width'] = $args['thumbnail_size']['width'];
-		$args['data']['thumbnail-height'] = $args['thumbnail_size']['height'];
+		$args['data']['thumbnail_width'] = $args['thumbnail_size']['width'];
+		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
 		$args['data']['method'] = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 定义一些本方法需要重复使用的变量
