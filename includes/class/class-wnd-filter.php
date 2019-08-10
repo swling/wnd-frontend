@@ -80,7 +80,7 @@ class Wnd_Filter {
 		$this->class .= $this->is_ajax ? 'ajax-filter' : '';
 
 		// 解析GET参数为wp_query参数并与默认参数合并
-		$this->wp_query_args = wp_parse_args($this->parse_url_to_wp_query(), $this->wp_query_args);
+		$this->wp_query_args = wp_parse_args(self::parse_query_vars(), $this->wp_query_args);
 
 		/**
 		 *定义当前post type的主分类：$category_taxonomy
@@ -121,10 +121,15 @@ class Wnd_Filter {
 	 * 其他查询（具体参考 wp_query）
 	 * $args[$key] = $value;
 	 **/
-	public function parse_url_to_wp_query() {
+	public static function parse_query_vars() {
 		if (empty($_GET)) {
 			return array();
 		}
+
+		$query_vars = array(
+			'meta_query' => array(),
+			'tax_query' => array(),
+		);
 
 		foreach ($_GET as $key => $value) {
 
@@ -133,7 +138,7 @@ class Wnd_Filter {
 			 *直接用 post_type 作为参数会触发WordPress原生请求导致错误
 			 */
 			if ('type' === $key) {
-				$this->wp_query_args['post_type'] = $value;
+				$query_vars['post_type'] = $value;
 				continue;
 			}
 
@@ -141,7 +146,7 @@ class Wnd_Filter {
 			 *post status tabs生成的GET参数为：status={$post_status}
 			 */
 			if ('status' === $key) {
-				$this->wp_query_args['post_status'] = $value;
+				$query_vars['post_status'] = $value;
 				continue;
 			}
 
@@ -166,7 +171,7 @@ class Wnd_Filter {
 					unset($meta_query['value']);
 				}
 
-				array_push($this->wp_query_args['meta_query'], $meta_query);
+				array_push($query_vars['meta_query'], $meta_query);
 				continue;
 			}
 
@@ -180,7 +185,7 @@ class Wnd_Filter {
 					'field' => 'term_id',
 					'terms' => $value,
 				);
-				array_push($this->wp_query_args['tax_query'], $term_query);
+				array_push($query_vars['tax_query'], $term_query);
 				continue;
 			}
 
@@ -188,7 +193,7 @@ class Wnd_Filter {
 			 *@since 2019.05.31 post field查询
 			 */
 			if (strpos($key, '_post_') === 0) {
-				$this->wp_query_args[str_replace('_post_', '', $key)] = $value;
+				$query_vars[str_replace('_post_', '', $key)] = $value;
 				continue;
 			}
 
@@ -197,7 +202,7 @@ class Wnd_Filter {
 			 *分页
 			 */
 			if ('page' == $key) {
-				$this->wp_query_args['paged'] = $value ?: 1;
+				$query_vars['paged'] = $value ?: 1;
 				continue;
 			}
 
@@ -206,20 +211,20 @@ class Wnd_Filter {
 			 *ajax中，orderby将发送数组形式的信息而非单个
 			 */
 			if ('orderby' == $key and $this->is_ajax) {
-				$this->wp_query_args = wp_parse_args($value, $this->wp_query_args);
+				$query_vars = wp_parse_args($value, $query_vars);
 				continue;
 			}
 
 			// 其他、按键名自动匹配、排除指定作者的参数
 			if ($key != 'author') {
-				$this->wp_query_args[$key] = $value;
+				$query_vars[$key] = $value;
 				continue;
 			}
 
 		}
 		unset($key, $value);
 
-		return $this->wp_query_args;
+		return $query_vars;
 	}
 
 	/**
@@ -260,7 +265,7 @@ class Wnd_Filter {
 	 *在非ajax环境中，直接将写入$wp_query_args[key]=value
 	 *
 	 *在ajax环境中，将对应生成html data属性：data-{key}="{value}" 通过JavaScript获取后将转化为 ajax url请求参数 ?{key}={value}，
-	 *ajax发送到api接口，再通过parse_url_to_wp_query() 解析后，写入$wp_query_args[key]=value
+	 *ajax发送到api接口，再通过parse_query_vars() 解析后，写入$wp_query_args[key]=value
 	 **/
 	public function add_query($query = array()) {
 		foreach ($query as $key => $value) {
