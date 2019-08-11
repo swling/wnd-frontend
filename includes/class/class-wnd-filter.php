@@ -18,7 +18,7 @@ class Wnd_Filter {
 	public $pagination = '';
 
 	// bool 是否ajax
-	public $is_ajax;
+	static $is_ajax;
 
 	// string html class
 	public $class;
@@ -75,9 +75,9 @@ class Wnd_Filter {
 	 *
 	 * @param bool $is_ajax 是否为ajax查询
 	 */
-	public function __construct($is_ajax = false) {
-		$this->is_ajax = $is_ajax;
-		$this->class .= $this->is_ajax ? 'ajax-filter' : '';
+	public function __construct(bool $is_ajax = false) {
+		self::$is_ajax = $is_ajax;
+		$this->class .= self::$is_ajax ? 'ajax-filter' : '';
 
 		// 解析GET参数为wp_query参数并与默认参数合并
 		$this->wp_query_args = wp_parse_args(self::parse_query_vars(), $this->wp_query_args);
@@ -208,9 +208,9 @@ class Wnd_Filter {
 
 			/**
 			 *@since 2019.08.04
-			 *ajax中，orderby将发送数组形式的信息而非单个
+			 *ajax请求中，orderby将发送数组形式的信息，需要解析后并入查询参数
 			 */
-			if ('orderby' == $key and $this->is_ajax) {
+			if ('orderby' == $key and self::$is_ajax) {
 				$query_vars = wp_parse_args($value, $query_vars);
 				continue;
 			}
@@ -324,13 +324,17 @@ class Wnd_Filter {
 	 */
 	public function add_taxonomy_filter(array $args) {
 		$args['parent'] = $args['parent'] ?? 0;
+		$taxonomy = $args['taxonomy'] ?? null;
+		if (!$taxonomy) {
+			return;
+		}
+
 		$tabs = $this->build_taxonomy_filter($args);
 
 		/**
 		 *@since 2019.03.12
 		 *遍历当前tax query 查询是否设置了对应的taxonomy查询，若存在则查询其对应子类
 		 */
-		$taxonomy = $args['taxonomy'];
 		$taxonomy_query = false;
 		foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
 			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
@@ -355,18 +359,6 @@ class Wnd_Filter {
 
 		$this->tabs .= $tabs . $sub_tabs;
 		return $tabs . $sub_tabs;
-	}
-
-	/**
-	 *@since 2019.08.10
-	 *快捷新增主分类筛选tabs
-	 *
-	 *@param array  $args 	WordPress:get_terms() 查询参数
-	 *分类taxonomy约定：post（category） / 自定义类型 ($post_type . '_cat')
-	 */
-	public function add_category_filter($args = array()) {
-		$args['taxonomy'] = $this->category_taxonomy;
-		return $this->add_taxonomy_filter($args);
 	}
 
 	/**
@@ -567,12 +559,16 @@ class Wnd_Filter {
 	 *若查询的taxonomy与当前post type未关联，则不输出
 	 */
 	protected function build_taxonomy_filter(array $args, $class = '') {
-		$taxonomy = $args['taxonomy'];
-		$parent = $args['parent'] ?? 0;
+		if (!isset($args['taxonomy'])) {
+			return;
+		}
 		$terms = get_terms($args);
 		if (!$terms or is_wp_error($terms)) {
 			return;
 		}
+
+		$taxonomy = $args['taxonomy'];
+		$parent = $args['parent'] ?? 0;
 
 		/**
 		 *@since 2019.07.30
@@ -580,7 +576,7 @@ class Wnd_Filter {
 		 */
 		$current_post_type_taxonomies = get_object_taxonomies($this->wp_query_args['post_type'], $output = 'names');
 		if (!in_array($taxonomy, $current_post_type_taxonomies)) {
-			if (!$this->is_ajax) {
+			if (!self::$is_ajax) {
 				return;
 			} else {
 				$class .= ' is-hidden';
@@ -1293,7 +1289,7 @@ class Wnd_Filter {
 	 *分页导航
 	 */
 	public function get_pagination($show_page = 5) {
-		if (!$this->wp_query and !$this->is_ajax) {
+		if (!$this->wp_query and !self::$is_ajax) {
 			return '未执行WP_Query';
 		}
 

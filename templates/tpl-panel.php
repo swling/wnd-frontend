@@ -38,7 +38,7 @@ function _wnd_user_posts_panel() {
 	$filter = new Wnd_Filter(true);
 	$filter->add_post_type_filter(wnd_get_allowed_post_types());
 	$filter->add_post_status_filter(array('发布' => 'publish', '待审' => 'pending'));
-	$filter->add_category_filter();
+	$filter->add_taxonomy_filter(array('taxonomy' => $filter->category_taxonomy));
 	$filter->set_post_template('_wnd_post_list_tpl');
 	$filter->set_posts_per_page(5);
 	$filter->set_ajax_container('#user-posts-panel');

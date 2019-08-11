@@ -17,8 +17,10 @@ $filter->add_post_status_filter(
 	)
 );
 
-$filter->add_category_filter();
+// 快速新增主分类查询
+$filter->add_taxonomy_filter(array('taxonomy' => $filter->category_taxonomy));
 
+// 分别查询
 $filter->add_taxonomy_filter(
 	array('taxonomy' => 'category')
 );
@@ -35,6 +37,7 @@ $filter->add_taxonomy_filter(
 	array('taxonomy' => 'region')
 );
 
+// 相关性标签
 $filter->add_related_tags_filter($limit = 10);
 
 $filter->add_meta_filter(
@@ -70,6 +73,7 @@ $filter->add_order_filter(
 	$label = '排序'
 );
 
+// 当前查询条件
 $filter->add_current_filter();
 
 /**
