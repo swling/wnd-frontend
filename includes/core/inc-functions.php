@@ -122,9 +122,9 @@ function wnd_generate_order_NO() {
  *@since 2019.03.04
  *基于当前站点的首页地址，生成四位字符站点前缀标识符
  */
-function wnd_get_site_prefix() {
-	return strtoupper(substr(md5(home_url()), 0, 4));
-}
+// function wnd_get_site_prefix() {
+// 	return strtoupper(substr(md5(home_url()), 0, 4));
+// }
 
 /**
  * @since 2019.02.09  验证是否为手机号
