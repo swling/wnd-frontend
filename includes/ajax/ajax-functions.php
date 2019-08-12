@@ -10,7 +10,6 @@ if (!defined('ABSPATH')) {
  *@param $args 		array or string 	传递给被调用模板函数的参数
  */
 function _wnd_ajax_embed($template, $args = '') {
-
 	$function_name = $template;
 
 	$div_id = 'wnd-filter-' . uniqid();
@@ -30,7 +29,6 @@ function _wnd_ajax_embed($template, $args = '') {
  *@param $_POST['phone'] or $_POST['email']	手机或邮件
  */
 function wnd_ajax_send_code() {
-
 	$verify_type = $_POST['verify_type'] ?? '';
 	$send_type = $_POST['send_type'] ?? ''; // email or sms, to login user
 	$template = $_POST['template'] ?? '';
@@ -45,7 +43,6 @@ function wnd_ajax_send_code() {
 	} else {
 		return wnd_send_code_to_anonymous($email_or_phone, $verify_type, $template);
 	}
-
 }
 
 /**
@@ -55,7 +52,6 @@ function wnd_ajax_send_code() {
  *@param $_POST['post_type']
  */
 function _wnd_ajax_is_title_repeated() {
-
 	$title = $_POST['post_title'];
 	$exclude_id = $_POST['post_id'];
 	$post_type = $_POST['post_type'];
@@ -65,24 +61,22 @@ function _wnd_ajax_is_title_repeated() {
 	} else {
 		return array('status' => 0, 'msg' => '标题唯一！');
 	}
-
 }
 
 /**
  *@since 2019.02.22
  *管理员ajax手动新增用户金额
  *@param $_POST['user_field']
- *@param $_POST['money']
+ *@param $_POST['total_amount']
  *@param $_POST['remarks']
  */
 function wnd_ajax_admin_recharge() {
-
 	if (!is_super_admin()) {
 		return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作！');
 	}
 
 	$user_field = $_POST['user_field'];
-	$money = $_POST['money'];
+	$money = $_POST['total_amount'];
 	$remarks = $_POST['remarks'] ?: '管理员充值';
 
 	return wnd_admin_recharge($user_field, $money, $remarks);
@@ -94,7 +88,6 @@ function wnd_ajax_admin_recharge() {
  *@param $_POST['useragent']
  */
 function _wnd_ajax_update_views() {
-
 	$post_id = (int) $_POST['param'];
 	if (!$post_id) {
 		return;
@@ -144,7 +137,6 @@ function _wnd_ajax_update_views() {
 
 	// 统计
 	if ($should_count) {
-
 		if (wnd_inc_post_meta($post_id, 'views', 1)) {
 
 			// 完成统计时附加动作
@@ -161,9 +153,7 @@ function _wnd_ajax_update_views() {
 
 		// 未更新
 		return array('status' => 0, 'msg' => time());
-
 	}
-
 }
 
 /**

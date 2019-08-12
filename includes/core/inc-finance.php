@@ -136,12 +136,12 @@ function wnd_get_post_commission($post_id) {
  *@since 2019.02.22
  *管理员手动新增用户金额
  */
-function wnd_admin_recharge($user_field, $money, $remarks = '') {
+function wnd_admin_recharge($user_field, $total_amount, $remarks = '') {
 	if (!is_super_admin()) {
 		return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作！');
 	}
 
-	if (!is_numeric($money)) {
+	if (!is_numeric($total_amount)) {
 		return array('status' => 0, 'msg' => '请输入一个有效的充值金额！');
 	}
 
@@ -153,11 +153,17 @@ function wnd_admin_recharge($user_field, $money, $remarks = '') {
 	}
 
 	// 写入充值记录
-	if (wnd_insert_recharge(array('user_id' => $user->ID, 'money' => $money, 'status' => 'success', 'title' => $remarks))) {
-		return array('status' => 1, 'msg' => $user->display_name . ' 充值：¥' . $money);
-	} else {
-		return array('status' => 0, 'msg' => '充值失败！');
+	try {
+		$recharge = new Wnd_Recharge();
+		$recharge->set_user_id($user->ID);
+		$recharge->set_total_amount($total_amount);
+		$recharge->set_subject($remarks);
+		$recharge->create(true); // 直接写入余额
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
+
+	return array('status' => 1, 'msg' => $user->display_name . ' 充值：¥' . $total_amount);
 }
 
 /**
@@ -211,5 +217,4 @@ function wnd_update_fin_stats($money = 0) {
 		);
 		wp_insert_post($post_arr);
 	}
-
 }

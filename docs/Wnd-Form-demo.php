@@ -140,7 +140,7 @@ $form->add_html('</div></div>');
  */
 $form->add_radio(
 	array(
-		'name' => 'money',
+		'name' => 'total_amount',
 		'options' => array('0.01' => '0.01', '10' => '10'),
 		'required' => 'required',
 		'checked' => '0.01', //default checked value
