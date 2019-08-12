@@ -4,7 +4,6 @@
  *@since 2019.03.02 支付宝支付同步跳转
  *同步回调一般不处理业务逻辑，显示一个付款成功的页面，或者跳转到用户的财务记录页面即可。
  */
-
 header('Content-type:text/html; Charset=utf-8');
 require dirname(__FILE__) . '/config.php';
 require dirname(__FILE__) . '/class/AlipayService.php';
@@ -17,8 +16,7 @@ $result = $aliPay->rsaCheck($_GET);
 
 //校验失败
 if ($result !== true) {
-	echo '校验失败';
-	exit();
+	exit('校验失败');
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,29 +35,26 @@ $app_id = $_GET['app_id'];
 /**
  *@since 2019.02.11 支付宝同步校验
  */
-$wnd_verify_recharge = wnd_verify_payment($out_trade_no, $total_amount, $app_id);
+try {
+	$payment = new Wnd_Payment();
+	$payment->set_total_amount($total_amount);
+	$payment->set_out_trade_no($out_trade_no);
+	$payment->verify();
+
+	$object_id = $payment->get_object_id();
+} catch (Exception $e) {
+	exit($e->getMessage());
+}
+
+// 校验通过，跳转
+if ($object_id) {
+	$link = get_permalink($object_id) ?: wnd_get_option('wnd', 'wnd_pay_return_url') ?: home_url();
+	header("Location:" . $link);
+	exit;
 
 // 充值
-if ($wnd_verify_recharge['status'] == 1) {
-
+} else {
 	$link = wnd_get_option('wnd', 'wnd_pay_return_url') ?: home_url();
 	header("Location:" . $link);
 	exit;
-
-	//在线支付订单
-} elseif ($wnd_verify_recharge['status'] == 2) {
-
-	$link = get_permalink($wnd_verify_recharge['msg']) ?: wnd_get_option('wnd', 'wnd_pay_return_url') ?: home_url();
-	header("Location:" . $link);
-	exit;
-
-} else {
-
-	echo "fail";
-	echo $wnd_verify_recharge['msg'];
-
 }
-
-//——请根据您的业务逻辑来编写程序（以上代码仅作参考）——
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

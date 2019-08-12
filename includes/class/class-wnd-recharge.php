@@ -18,7 +18,7 @@
  *	状态：post_status: pengding / success
  *	类型：post_type：recharge
  *
- *
+ *	# 示例代码
  * // 创建常规支付
  * $recharge = new Wnd_Recharge();
  * $recharge->set_total_amount(0.1);
@@ -73,7 +73,7 @@ class Wnd_Recharge {
 	 *@since 2019.08.12
 	 *设定金额
 	 **/
-	public function set_total_amount(float $total_amount) {
+	public function set_total_amount($total_amount) {
 		$this->total_amount = $total_amount;
 	}
 

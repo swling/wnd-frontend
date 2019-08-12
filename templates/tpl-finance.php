@@ -198,7 +198,7 @@ function _wnd_recharge_form() {
 	$form->add_html('<div class="has-text-centered">');
 	$form->add_radio(
 		array(
-			'name' => 'money',
+			'name' => 'total_amount',
 			'options' => array('0.01' => '0.01', '10' => '10', '100' => '100', '200' => '200', '500' => '500'),
 			'required' => 'required',
 			'checked' => '0.01', //default checked value
@@ -239,7 +239,7 @@ function _wnd_admin_recharge_form() {
 	$form->add_text(
 		array(
 			'label' => '金额<span class="required">*</span>',
-			'name' => 'money',
+			'name' => 'total_amount',
 			'required' => 'required',
 			'placeholder' => '充值金额（负数可扣款）',
 		)

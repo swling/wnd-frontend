@@ -17,7 +17,7 @@
  *	状态：post_status: pengding / success
  *	类型：post_type：order
  *
- *
+ * # 示例代码
  * // 创建支付订单
  * $order = new Wnd_Order();
  * $order->set_object_id(616);
@@ -71,7 +71,7 @@ class Wnd_Order {
 	 *@since 2019.08.12
 	 *设定金额
 	 **/
-	public function set_total_amount(float $total_amount) {
+	public function set_total_amount($total_amount) {
 		$this->total_amount = $total_amount;
 	}
 
