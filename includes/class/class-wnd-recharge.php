@@ -154,8 +154,7 @@ class Wnd_Recharge {
 				'posts_per_page' => 1,
 			)
 		);
-		// 充值订单需要校验当前充值金额，与未完成的充值订单金额是否匹配
-		if ($old_recharges and $old_recharges[0]->post_content == $this->total_amount) {
+		if ($old_recharges) {
 			$this->ID = $old_recharges[0]->ID;
 		}
 
