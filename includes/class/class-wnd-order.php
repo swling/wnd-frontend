@@ -33,6 +33,12 @@
  * $order->set_object_id(616);
  * $order->create($is_success =true);
  *
+ * // 手动指定价格，并创建支付订单
+ * $order = new Wnd_Order();
+ * $order->set_total_amount(0.16);
+ * $order->set_object_id(616);
+ * $order->create();
+ *
  */
 class Wnd_Order {
 
@@ -125,7 +131,7 @@ class Wnd_Order {
 		}
 
 		// 定义变量
-		$this->total_amount = wnd_get_post_price($this->object_id);
+		$this->total_amount = $this->total_amount ?: wnd_get_post_price($this->object_id);
 		$status = $is_success ? 'success' : 'pending';
 		$this->subject = $this->subject ?: get_the_title($this->object_id);
 
