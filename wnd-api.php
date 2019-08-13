@@ -35,7 +35,6 @@ function wnd_action_rest_register_route() {
  *@param $_REQUEST['param']		 	string 		模板响应函数传参
  */
 function wnd_rest_api_callback($request) {
-
 	if (empty($_REQUEST) or !isset($_REQUEST['action'])) {
 		return array('status' => 0, 'msg' => '未定义的API请求！');
 	}
@@ -53,8 +52,7 @@ function wnd_rest_api_callback($request) {
 	 *若模板函数需要传递多个参数，请整合为数组形式纳入$_REQUEST['param']实现
 	 *不在ajax请求中使用的模板函数则不受此规则约束
 	 */
-	if ('GET' == $_SERVER['REQUEST_METHOD'] and strpos($action, '_wnd') === 0) {
-
+	if (strpos($action, '_wnd') === 0) {
 		return $action($_REQUEST['param']);
 
 		/**
@@ -63,15 +61,12 @@ function wnd_rest_api_callback($request) {
 		 *为避免混乱在ajax请求中，不接受指定传参，统一使用超全局变量传参
 		 */
 	} else {
-
 		if (!wnd_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $action)) {
 			return array('status' => 0, 'msg' => '安全校验失败！');
 		}
 
 		return $action();
-
 	}
-
 }
 
 /**

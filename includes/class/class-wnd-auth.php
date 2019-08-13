@@ -45,7 +45,7 @@ class Wnd_Auth {
 	}
 
 	/**
-	 *设置邮件或手机号码
+	 *设置验证码，覆盖本实例默认的验证码
 	 */
 	public function set_auth_code($auth_code) {
 		$this->auth_code = $auth_code;
@@ -76,6 +76,10 @@ class Wnd_Auth {
 	 *
 	 *@param string $this->email_or_phone 	邮箱或手机
 	 *@param string $this->type 			验证类型
+	 *
+	 *register / reset_password / verify / bind
+	 *register / bind 	：注册、绑定	当前邮箱或手机已注册、则不可发送
+	 *reset_password 	：找回密码 		当前邮箱或手机未注册、则不可发送
 	 *
 	 *@return true|exception
 	 */
