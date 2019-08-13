@@ -27,13 +27,22 @@ $auth = new Wnd_Auth;
 $auth->set_email_or_phone('xxx');
 $auth->delete($user_id = 16);
 
-# 发送给已知用户
+# 绑定手机
 $auth = new Wnd_Auth;
-// 类型：register / reset_password / verify / bind
 $auth->set_type('bind');
-// 验证码（可选，默认生成六位随机数字）
-$auth->set_auth_code('6507080');
-// 短信模板
 $auth->set_template('324234');
-// 发送
-$auth->send_to_user($is_email = true);
+$auth->set_email_or_phone('xxx');
+// 发送短信：$is_email = false / 发送邮件： $is_email = true
+$auth->send();
+
+# 绑定邮箱
+$auth = new Wnd_Auth;
+$auth->set_type('bind');
+$auth->set_email_or_phone('xxx');
+// 发送短信：$is_email = false / 发送邮件： $is_email = true
+$auth->send();
+
+# 验证当前登录用户
+$auth = new Wnd_Auth;
+$auth->set_type('verify');
+$auth->send_to_current_user($is_email = true);

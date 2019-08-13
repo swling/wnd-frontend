@@ -14,7 +14,7 @@ class Wnd_Auth {
 	// bool 是否为邮件
 	protected $is_email;
 
-	// string 验证类型 register / reset_password / verify
+	// string 验证类型 register / reset_password / verify / bind
 	protected $type;
 
 	// string 短信模板
@@ -24,7 +24,7 @@ class Wnd_Auth {
 	protected $auth_code;
 
 	// object 当前用户
-	protected $user;
+	protected $current_user;
 
 	/**
 	 *@since 2019.08.13
@@ -33,7 +33,7 @@ class Wnd_Auth {
 	public function __construct() {
 		$this->auth_code = wnd_random_code(6);
 		$this->template = wnd_get_option('wnd', 'wnd_sms_template');
-		$user = wp_get_current_user();
+		$this->current_user = wp_get_current_user();
 	}
 
 	/**
@@ -80,7 +80,7 @@ class Wnd_Auth {
 	 *@return true|exception
 	 */
 	protected function check() {
-		if (empty($this->email_or_phone) && !$this->user->ID) {
+		if (empty($this->email_or_phone) && !$this->current_user->ID) {
 			throw new Exception('发送地址为空！');
 		}
 
@@ -108,8 +108,13 @@ class Wnd_Auth {
 		if ($this->type == 'register' and $temp_user) {
 			throw new Exception($text . '已注册过！');
 			// 绑定
-		} elseif ($this->type == 'bind' and $temp_user) {
-			throw new Exception($text . '已注册过！');
+		} elseif ($this->type == 'bind') {
+			if (!$this->current_user->ID) {
+				throw new Exception('请未登录后再绑定！');
+			}
+			if ($temp_user) {
+				throw new Exception($text . '已注册过！');
+			}
 			// 找回密码
 		} elseif ($this->type == 'reset_password' and !$temp_user) {
 			throw new Exception($text . '尚未注册！');
@@ -147,15 +152,21 @@ class Wnd_Auth {
 
 	/**
 	 *@since 2019.02.22 发送验证码给已知用户
-	 *@param mixed  $user
-	 *@param string $this->email_or_phone 	邮箱或手机
+	 *@param mixed  $current_user
 	 *@param string $this->auth_code  		验证码
 	 *@param string $this->type 			验证类型
 	 */
-	public function send_to_user($is_email) {
+	public function send_to_current_user($is_email) {
+		$this->is_email = $is_email;
+
 		// 根据发送类型获取当前用户邮箱或手机
-		$user = $this->user;
-		$this->email_or_phone = $is_email ? $user->user_email : wnd_get_user_phone($user->ID);
+		if (!$this->current_user->ID) {
+			throw new Exception('当前账户未登录！');
+		}
+		$this->email_or_phone = $is_email ? $this->current_user->user_email : wnd_get_user_phone($this->current_user->ID);
+		if (!$this->email_or_phone) {
+			throw new Exception('当前账户邮箱或手机为空');
+		}
 
 		// 权限检测
 		$this->check();
@@ -175,8 +186,7 @@ class Wnd_Auth {
 	 *@return true|exception
 	 */
 	protected function send_mail_code() {
-		$action = $this->insert();
-		if (!$action) {
+		if (!$this->insert()) {
 			throw new Exception('写入数据库失败！');
 		}
 
