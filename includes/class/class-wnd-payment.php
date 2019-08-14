@@ -148,7 +148,6 @@ class Wnd_Payment {
 			$this->subject = $recharge->get_subject();
 			$this->total_amount = $recharge->get_total_amount();
 		}
-
 	}
 
 	/**
