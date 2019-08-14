@@ -19,27 +19,6 @@
  *	状态：post_status: pengding / success
  *	类型：post_type：recharge / order
  *
- * # 示例代码
- * // 创建支付
- * $payment = new Wnd_Payment();
- * $payment->set_total_amount(10);
- * // or
- * $payment->set_object_id(616);
- *
- * $payment->create();
- * $payment->get_out_trade_no();
- * $payment->get_subject();
- * $payment->get_total_amount();
- *
- *
- * // 获取支付平台返回数据，并完成支付
- * $payment = new Wnd_Payment();
- * $payment->set_total_amount(11);
- * $payment->set_out_trade_no($out_trade_no = $payment->site_prefix.'-616');
- * $payment->verify();
- *
- * $payment->get_object_id();
- *
  */
 class Wnd_Payment {
 

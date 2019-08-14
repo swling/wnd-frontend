@@ -18,23 +18,6 @@
  *	状态：post_status: pengding / success
  *	类型：post_type：recharge
  *
- *	# 示例代码
- * // 创建常规支付
- * $recharge = new Wnd_Recharge();
- * $recharge->set_total_amount(0.1);
- * $recharge->create();
- *
- * // 创建来源支付
- * $recharge = new Wnd_Recharge();
- * $recharge->set_object_id(616); // 设置充值来源
- * $recharge->set_total_amount(0.1);
- * $recharge->create(true); // 直接写入余额
- *
- * // 完成充值
- * $recharge = new Wnd_Recharge();
- * $recharge->set_ID(654);
- * $recharge->verify();
- *
  */
 class Wnd_Recharge {
 
