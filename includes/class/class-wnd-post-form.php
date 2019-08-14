@@ -9,11 +9,11 @@
  */
 class Wnd_Post_Form extends Wnd_WP_Form {
 
-	public $post_id;
+	protected $post_id;
 
-	public $post_type;
+	protected $post_type;
 
-	public $post;
+	protected $post;
 
 	static protected $default_post = array(
 		'ID' => 0,

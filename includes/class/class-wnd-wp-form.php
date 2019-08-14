@@ -11,13 +11,13 @@
  */
 class Wnd_WP_Form extends Wnd_Form {
 
-	public $filter = null;
-	public $form_names = array();
-	public $message = null;
-	public $is_ajax_submit;
+	protected $filter = null;
+	protected $form_names = array();
+	protected $message = null;
+	protected $is_ajax_submit;
 
-	static $primary_color;
-	static $second_color;
+	public static $primary_color;
+	public static $second_color;
 
 	public function __construct($is_ajax_submit = true) {
 
@@ -374,7 +374,7 @@ class Wnd_WP_Form extends Wnd_Form {
 	 *@since 2019.05.09
 	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
 	 */
-	public function build_form_nonce() {
+	protected function build_form_nonce() {
 
 		// 提取表单字段names 去重，排序
 		array_push($this->form_names, '_wnd_form_nonce'); // nonce自身字段也需要包含在内

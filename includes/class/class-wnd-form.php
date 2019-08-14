@@ -10,23 +10,23 @@
  */
 class Wnd_Form {
 
-	public $id;
+	protected $id;
 
-	public $form_attr;
+	protected $form_attr;
 
-	public $form_title = null;
+	protected $form_title = null;
 
-	public $input_values = array();
+	protected $input_values = array();
 
-	public $with_upload;
+	protected $with_upload;
 
-	public $submit_text = 'Submit';
+	protected $submit_text = 'Submit';
 
-	public $submit_class;
+	protected $submit_class;
 
-	public $action;
+	protected $action;
 
-	public $method;
+	protected $method;
 
 	public $html;
 

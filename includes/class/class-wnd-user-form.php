@@ -6,7 +6,7 @@
  */
 class Wnd_User_Form extends Wnd_WP_Form {
 
-	public $user;
+	protected $user;
 
 	// 初始化构建
 	public function __construct() {
