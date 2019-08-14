@@ -239,7 +239,7 @@ class Wnd_Filter {
 	/**
 	 *@since 2019.07.31
 	 *设置ajax post列表嵌入容器
-	 *@param string $container posts列表ajax嵌入容器
+	 *@param int $posts_per_page 每页post数目
 	 **/
 	public function set_posts_per_page($posts_per_page) {
 		$this->add_query(array('posts_per_page' => $posts_per_page));

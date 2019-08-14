@@ -5,7 +5,7 @@
  *多重筛选演示代码
  **/
 
-$is_ajax = is_user_logged_in() ? 1 : 0;
+$is_ajax = is_user_logged_in() ? true : false;
 $filter = new Wnd_Filter($is_ajax);
 
 $filter->add_post_type_filter(array('company', 'resource', 'post'));
