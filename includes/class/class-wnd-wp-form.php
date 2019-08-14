@@ -87,14 +87,16 @@ class Wnd_WP_Form extends Wnd_Form {
 
 	/**
 	 *短信校验
-	 *@param $verify_type 	string 'register' / 'reset_password' 为保留字段, 用途为：注册 / 重置密码
+	 *@param string 	$type 		  	register / reset_password / bind / verify
+	 *@param string 	$template 		短信模板
 	 *注册时若当前手机已注册，则无法发送验证码
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
-	public function add_sms_verify($verify_type = 'verify', $template = '') {
+	public function add_sms_verify($type = 'verify', $template = '') {
 		$this->add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
 
-		if (!wnd_get_user_phone(get_current_user_id())) {
+		// 当前用户为绑定手机或更换绑定手机
+		if (!wnd_get_user_phone(get_current_user_id()) or 'bind' == $type) {
 			$this->add_text(
 				array(
 					'name' => 'phone',
@@ -109,13 +111,13 @@ class Wnd_WP_Form extends Wnd_Form {
 
 		$this->add_text(
 			array(
-				'name' => 'v_code',
+				'name' => 'auth_code',
 				'has_icons' => 'left',
 				'icon' => '<i class="fas fa-comment-alt"></i>',
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '短信验证码',
-				'addon' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-is_email="0">获取验证码</button>',
 			)
 		);
 
@@ -124,32 +126,35 @@ class Wnd_WP_Form extends Wnd_Form {
 
 	/**
 	 *邮箱校验
-	 *@param $verify_type 	string 'register' / 'reset_password' 为保留字段, 用途为：注册 / 重置密码
+	 *@param string 	$type 		  	register / reset_password / bind / verify
 	 *注册时若当前邮箱已注册，则无法发送验证码
 	 *找回密码时若当前邮箱未注册，则无法发送验证码
 	 **/
-	public function add_email_verify($verify_type = 'verify', $template = '') {
+	public function add_email_verify($type = 'verify', $template = '') {
 		$this->add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
 
-		$this->add_text(
-			array(
-				'name' => '_user_user_email',
-				'has_icons' => 'left',
-				'icon' => '<i class="fa fa-at"></i>',
-				'required' => 'required',
-				'placeholder' => '电子邮箱',
-			)
-		);
+		// 当前用户为绑定邮箱或更换绑定邮箱
+		if (!wp_get_current_user()->user_email or 'bind' == $type) {
+			$this->add_text(
+				array(
+					'name' => '_user_user_email',
+					'has_icons' => 'left',
+					'icon' => '<i class="fa fa-at"></i>',
+					'required' => 'required',
+					'placeholder' => '电子邮箱',
+				)
+			);
+		}
 
 		$this->add_text(
 			array(
-				'name' => 'v_code',
+				'name' => 'auth_code',
 				'has_icons' => 'left',
 				'icon' => '<i class="fa fa-key"></i>',
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '邮箱验证码',
-				'addon' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-is_email="email">获取验证码</button>',
 			)
 		);
 

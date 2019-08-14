@@ -18,7 +18,6 @@ require WND_PATH . 'includes/core/inc-term.php'; //分类、标签
 
 require WND_PATH . 'includes/core/inc-database.php'; //数据库
 require WND_PATH . 'includes/core/inc-admin.php'; //管理函数
-require WND_PATH . 'includes/core/inc-verify.php'; //验证模块
 require WND_PATH . 'includes/core/inc-finance.php'; //财务
 require WND_PATH . 'includes/core/inc-post-type-status.php'; //自定义文章类型及状态
 

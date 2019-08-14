@@ -220,7 +220,7 @@ class Wnd_Auth {
 		}
 
 		$send_status = wnd_send_sms($this->email_or_phone, $this->auth_code, $this->template);
-		if ($send_status->result == 0) {
+		if (0 == $send_status->result) {
 			return true;
 		} else {
 			throw new Exception('系统错误，请联系客服处理！');
@@ -230,12 +230,15 @@ class Wnd_Auth {
 	/**
 	 *校验短信验证
 	 *@since 初始化
+	 *
+	 *@param bool 		$$delete_after_verified 	验证成功后是否删除本条记录(对应记录必须没有绑定用户)
+	 *@param string 	$this->email_or_phone 		邮箱或手机
+	 *@param string 	$this->type 				验证类型
+	 *@param string 	$this->auth_code	 		验证码
+	 *
 	 *@return true|exception
-	 *@param string $this->email_or_phone 邮箱或手机
-	 *@param string $this->type 			验证类型
-	 *@param string $this->auth_code	 	验证码
 	 */
-	public function verify() {
+	public function verify(bool $delete_after_verified = false) {
 		global $wpdb;
 		$field = $this->is_email ? 'email' : 'phone';
 		$text = $this->is_email ? '邮箱' : '手机';
@@ -273,6 +276,15 @@ class Wnd_Auth {
 
 		if ($this->auth_code != $data->code) {
 			throw new Exception('校验失败：验证码不正确！');
+		}
+
+		/**
+		 *@since 2019.07.23
+		 *验证完成后是否删除
+		 *删除的记录必须没有绑定用户
+		 */
+		if ($delete_after_verified) {
+			$wpdb->delete($wpdb->wnd_users, array('ID' => $data->ID, 'user_id' => 0), array('%d'));
 		}
 
 		return true;

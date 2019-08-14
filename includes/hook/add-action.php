@@ -186,7 +186,11 @@ function wnd_action_user_register($user_id) {
 	if (!$email_or_phone) {
 		return;
 	}
-	wnd_reset_code($email_or_phone, $user_id);
+
+	# 充值验证码并绑定邮箱或手机
+	$auth = new Wnd_Auth;
+	$auth->set_email_or_phone($email_or_phone);
+	$auth->reset_code($user_id);
 
 	// 手机注册，写入用户meta
 	if (isset($_POST['phone'])) {

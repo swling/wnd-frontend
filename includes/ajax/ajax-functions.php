@@ -23,25 +23,32 @@ function _wnd_ajax_embed($template, $args = '') {
 
 /**
  *@since 2019.01.28 ajax 发送手机或邮箱验证码
- *@param $_POST['verify_type']				验证类型（注册，非注册等）
- *@param $_POST['send_type']				发送类型（邮件，短信等）
- *@param $_POST['template']					信息模板
- *@param $_POST['phone'] or $_POST['email']	手机或邮件
+ *@param $_POST['type']							验证类型
+ *@param $_POST['is_email']						发送类型（邮件，短信等）
+ *@param $_POST['template']						信息模板
+ *@param $_POST['phone'] or $_POST['email']		手机或邮件
  */
 function wnd_ajax_send_code() {
-	$verify_type = $_POST['verify_type'] ?? '';
-	$send_type = $_POST['send_type'] ?? ''; // email or sms, to login user
-	$template = $_POST['template'] ?? '';
-	$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? '';
+	$type = $_POST['type'] ?? '';
+	$is_email = $_POST['is_email'] ?: false;
+	$template = $_POST['template'] ?: wnd_get_option('wnd', 'wnd_sms_template');
+	$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? null;
 
-	/**
-	 *@since 2019.07.23
-	 *当已登录用户，且验证类型为register表示当前用户，正在绑定邮箱或手机时，
-	 */
-	if (is_user_logged_in() and $verify_type != 'register') {
-		return wnd_send_code_to_user($send_type, $verify_type, $template);
-	} else {
-		return wnd_send_code_to_anonymous($email_or_phone, $verify_type, $template);
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type($type);
+		$auth->set_email_or_phone($email_or_phone);
+		$auth->set_template($template);
+
+		if (is_user_logged_in() and $type != 'bind') {
+			$auth->send_to_current_user($is_email);
+		} else {
+			$auth->send();
+		}
+
+		return array('status' => 1, 'msg' => '发送成功，请注意查收！');
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
 }
 

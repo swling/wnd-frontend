@@ -324,18 +324,15 @@ function wnd_ajax_update_account() {
 /**
  *@since 2019.02.10 用户找回密码
  *@param $_POST['phone'] ?? $_POST['_user_user_email'];
- *@param $_POST['v_code']
+ *@param $_POST['auth_code']
  *@param $_POST['_user_new_pass']
  *@param $_POST['_user_new_pass_repeat']
  */
 function wnd_ajax_reset_password() {
-
 	$email_or_phone = $_POST['_user_user_email'] ?? $_POST['phone'] ?? null;
-	$text = is_email($email_or_phone) ? '邮箱' : '手机';
-
 	$new_password = $_POST['_user_new_pass'] ?? null;
 	$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? null;
-	$code = $_POST['v_code'];
+	$auth_code = $_POST['auth_code'];
 
 	// 验证密码正确性
 	if (strlen($new_password) < 6) {
@@ -345,83 +342,75 @@ function wnd_ajax_reset_password() {
 		return array('status' => 0, 'msg' => '两次输入的新密码不匹配！');
 	}
 
-	if (empty($code)) {
-		return array('status' => 0, 'msg' => '请输入验证秘钥！');
-	}
+	// 核对验证码
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type('reset_password');
+		$auth->set_auth_code($auth_code);
+		$auth->set_email_or_phone($email_or_phone);
+		$auth->verify();
 
-	//获取用户
-	$user = wnd_get_user_by($email_or_phone);
-	if (!$user) {
-		return array('status' => 0, 'msg' => '该' . $text . '尚未注册！');
-	}
-
-	// 检查秘钥
-	$check = wnd_verify_code($email_or_phone, $code, $type = 'v');
-	if ($check['status'] === 0) {
-		return $check;
-
-	} else {
-		reset_password($user, $new_password);
+		reset_password(wp_get_current_user(), $new_password);
 		return array('status' => 1, 'msg' => '密码修改成功！<a onclick="wnd_ajax_modal(\'_wnd_login_form\');">登录</a>');
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
 }
 
 /**
  *@since 2019.07.23 已登录用户设置邮箱
  *@param $_POST['_user_user_email'];
- *@param $_POST['v_code']
+ *@param $_POST['auth_code']
  */
 function wnd_ajax_bind_email() {
-
 	$email = $_POST['_user_user_email'] ?? null;
-	$code = $_POST['v_code'] ?? null;
-	$user_id = get_current_user_id();
-	if (!$user_id) {
-		return array('status' => 0, 'msg' => '未登录！');
+	$auth_code = $_POST['auth_code'] ?? null;
+
+	// 核对验证码
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type('bind');
+		$auth->set_auth_code($auth_code);
+		$auth->set_email_or_phone($email);
+
+		// 已注册用户，已有数据记录，绑定成功后更新对应数据记录，并删除当前验证数据记录
+		$auth->verify($delete_after_verified = true);
+
+		if (wnd_update_user_email(get_current_user_id(), $email)) {
+			return array('status' => 1, 'msg' => '邮箱绑定成功！');
+		} else {
+			return array('status' => 0, 'msg' => '未知错误！');
+		}
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
-	// 检查秘钥 已登录用户验证码为临时验证码，验证成功后应该删除
-	$check = wnd_verify_code($email, $code, $type = 'register', $delete_after_success = true);
-	if ($check['status'] === 0) {
-		return $check;
-
-	}
-
-	if (wnd_update_user_email($user_id, $email)) {
-		return array('status' => 1, 'msg' => '邮箱设置成功！');
-	} else {
-		return array('status' => 0, 'msg' => '未知错误！');
-	}
-
 }
 
 /**
  *@since 2019.02.10 已登录用户设置手机
  *@param $_POST['phone'];
- *@param $_POST['v_code']
+ *@param $_POST['auth_code']
  */
 function wnd_ajax_bind_phone() {
-
 	$phone = $_POST['phone'] ?? null;
-	$code = $_POST['v_code'] ?? null;
-	$user_id = get_current_user_id();
+	$auth_code = $_POST['auth_code'] ?? null;
 
-	if (!$user_id) {
-		return array('status' => 0, 'msg' => '未登录！');
+	// 核对验证码
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type('bind');
+		$auth->set_auth_code($auth_code);
+		$auth->set_email_or_phone($phone);
+
+		// 已注册用户，已有数据记录，绑定成功后更新对应数据记录，并删除当前验证数据记录
+		$auth->verify($delete_after_verified = true);
+
+		if (wnd_update_user_phone(get_current_user_id(), $phone)) {
+			return array('status' => 1, 'msg' => '手机绑定成功！');
+		} else {
+			return array('status' => 0, 'msg' => '未知错误！');
+		}
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
-	// 检查秘钥 已登录用户验证码为临时验证码，验证成功后应该删除
-	$check = wnd_verify_code($phone, $code, $type = 'register', $delete_after_success = true);
-	if ($check['status'] === 0) {
-		return $check;
-
-	}
-
-	if (wnd_update_user_phone($user_id, $phone)) {
-		return array('status' => 1, 'msg' => '手机设置成功！');
-	} else {
-		return array('status' => 0, 'msg' => '未知错误！');
-	}
-
 }

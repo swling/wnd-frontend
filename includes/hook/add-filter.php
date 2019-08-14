@@ -16,22 +16,23 @@ if (!defined('ABSPATH')) {
 // apply_filters('wnd_can_reg', array('status'=>1,'msg'=>'默认通过'));
 add_filter('wnd_can_reg', 'wnd_filter_can_reg', 10, 1);
 function wnd_filter_can_reg($can_array) {
-
-	// 后台注册选项
 	if (!get_option('users_can_register')) {
 		return array('status' => 0, 'msg' => '站点已关闭注册！');
 	}
 
 	// 验证:手机或邮箱 验证码
-	$code = $_POST['v_code'];
+	$auth_code = $_POST['auth_code'];
 	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'];
-	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = 'register');
-
-	if ($wnd_verify_code['status'] === 0) {
-		return $wnd_verify_code;
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type('register');
+		$auth->set_auth_code($auth_code);
+		$auth->set_email_or_phone($email_or_phone);
+		$auth->verify();
+		return $can_array;
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
-	return $can_array;
 
 }
 
@@ -41,20 +42,21 @@ function wnd_filter_can_reg($can_array) {
  */
 add_filter('wnd_can_update_account', 'wnd_filter_can_update_account', 10, 1);
 function wnd_filter_can_update_account($can_array) {
-
-	$code = $_POST['v_code'];
+	$auth_code = $_POST['auth_code'];
 	$user = wp_get_current_user();
 	$user_id = $user->ID;
 	$email_or_phone = wnd_get_option('wnd', 'wnd_enable_sms') == 1 ? wnd_get_user_meta($user_id, 'phone') : $user->user_email;
 
-	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = 'v');
-	if ($wnd_verify_code['status'] === 0) {
-		return $wnd_verify_code;
-	} else {
-
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type('verify');
+		$auth->set_auth_code($auth_code);
+		$auth->set_email_or_phone($email_or_phone);
+		$auth->verify();
 		return $can_array;
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
 }
 
 /**

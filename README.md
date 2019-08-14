@@ -281,7 +281,7 @@ do_action('wnd_order_completed', $order_id);
 
 ## 手机验证表单：
 	phone
-	v_code
+	auth_code
 
 # 充值、消费(自定义文章类型)
 金额：post_content

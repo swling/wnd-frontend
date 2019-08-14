@@ -516,7 +516,7 @@ jQuery(document).ready(function($) {
 		var meta_key = $(this).data("meta_key");
 		var is_image = $(this).data("is_image");
 		var thumbnail_width = $(this).data("thumbnail_width");
-		var thumbnail_height = $(this).data("thumbnail_height");		
+		var thumbnail_height = $(this).data("thumbnail_height");
 
 		// ajax api请求函数及其nonce
 		form_data.set("_ajax_nonce", $(this).data("upload_nonce"));
@@ -664,10 +664,10 @@ jQuery(document).ready(function($) {
 		var meta_key = file_data["meta_key"];
 		var is_image = file_data["is_image"];
 		// 默认图
-		var thumbnail = file_data["thumbnail"];		
+		var thumbnail = file_data["thumbnail"];
 
 		// ajax api请求函数及其nonce
-		form_data.set("_ajax_nonce",file_data["delete_nonce"]);
+		form_data.set("_ajax_nonce", file_data["delete_nonce"]);
 		form_data.set("action", "wnd_ajax_delete_file");
 
 		$.ajax({
@@ -746,14 +746,13 @@ jQuery(document).ready(function($) {
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
 		var form_id = _this.parents("form").attr("id");
-		var verify_type = $(this).data("verify-type");
-		var send_type = $(this).data("send-type");
-		var template = $(this).data("template");
-		var nonce = $(this).data("nonce");
 
-		var phone = $("#" + form_id + " input[name='phone']").val();
-		var _user_user_email = $("#" + form_id + " input[name='_user_user_email']").val();
-		if (_user_user_email == "" || phone == "") {
+		var data = $(this).data();
+		data._ajax_nonce = $(this).data("nonce");
+		data.action = "wnd_ajax_send_code";
+		data.phone = $("#" + form_id + " input[name='phone']").val();
+		data.email = $("#" + form_id + " input[name='_user_user_email']").val();
+		if (data.email == "" || data.phone == "") {
 			wnd_ajax_msg("不知道发送到给谁……", "is-danger", "#" + form_id);
 			return false;
 		}
@@ -762,15 +761,7 @@ jQuery(document).ready(function($) {
 			type: "post",
 			dataType: "json",
 			url: wnd.root_url + wnd.rest_api,
-			data: {
-				action: "wnd_ajax_send_code",
-				email: _user_user_email,
-				phone: phone,
-				verify_type: verify_type,
-				send_type: send_type,
-				template: template,
-				_ajax_nonce: nonce
-			},
+			data: data,
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
 				_this.addClass("is-loading");
