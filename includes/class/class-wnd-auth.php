@@ -246,7 +246,6 @@ class Wnd_Auth {
 		if (empty($this->auth_code)) {
 			throw new Exception('校验失败：请填写验证码！');
 		}
-
 		if (empty($this->email_or_phone)) {
 			throw new Exception('校验失败：请填写' . $text . '！');
 		}
@@ -256,8 +255,13 @@ class Wnd_Auth {
 		if ($this->type == 'register' and $temp_user) {
 			throw new Exception($text . '已注册过！');
 			// 绑定
-		} elseif ($this->type == 'bind' and $temp_user) {
-			throw new Exception($text . '已注册过！');
+		} elseif ($this->type == 'bind') {
+			if (!$this->current_user->ID) {
+				throw new Exception('请未登录后再绑定！');
+			}
+			if ($temp_user) {
+				throw new Exception($text . '已注册过！');
+			}
 			// 找回密码
 		} elseif ($this->type == 'reset_password' and !$temp_user) {
 			throw new Exception($text . '尚未注册！');
@@ -269,11 +273,9 @@ class Wnd_Auth {
 		if (!$data) {
 			throw new Exception('校验失败：请先获取验证码！');
 		}
-
 		if (time() - $data->time > $intervals) {
 			throw new Exception('验证码已失效请重新获取！');
 		}
-
 		if ($this->auth_code != $data->code) {
 			throw new Exception('校验失败：验证码不正确！');
 		}
