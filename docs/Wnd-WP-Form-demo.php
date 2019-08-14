@@ -59,6 +59,7 @@ function _wnd_demo_form() {
 	// input
 	$form->add_text(
 		array(
+			'id' => 'demo' . uniqid(),
 			'name' => 'user_name',
 			'value' => '',
 			'placeholder' => 'user name',
