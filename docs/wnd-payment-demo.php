@@ -4,7 +4,9 @@
 /**
  *@since 2019.8.12
  *payment 示例代码
+ *若设置object id则为创建在线订单，反之为在线余额充值
  */
+
 // 创建支付
 $payment = new Wnd_Payment();
 $payment->set_total_amount(10);
