@@ -56,9 +56,7 @@ function wnd_install() {
 
 	// 默认option数据
 	if (!get_option('wnd')) {
-
 		$default_option = array(
-
 			'wnd_secret_key' => wnd_random('16'),
 			'wnd_enable_form_verify' => 1,
 
@@ -97,7 +95,6 @@ function wnd_install() {
 		);
 
 		update_option('wnd', $default_option);
-
 	}
 
 	// 版本
@@ -118,7 +115,6 @@ function wnd_install() {
 
 	update_option('large_size_w', 0);
 	update_option('large_size_h', 0);
-
 }
 
 /**
@@ -135,9 +131,7 @@ function wnd_uninstall() {
  *加载静态资源
  */
 function wnd_scripts() {
-
 	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.js', array('jquery'), WND_VER);
-
 	if (wnd_get_option('wnd', 'wnd_enable_default_style') != 0) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.7.5/css/bulma.min.css', array(), null);
 		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.7.2/css/all.min.css', array(), null);
@@ -149,7 +143,6 @@ function wnd_scripts() {
 		'filter_api' => '/wp-json/wnd/filter',
 		'root_url' => site_url(''),
 	);
-
 	wp_localize_script('wnd-frontend', 'wnd', $wnd_data);
 }
 add_action('wp_enqueue_scripts', 'wnd_scripts');

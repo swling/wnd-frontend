@@ -169,7 +169,6 @@ function wnd_ajax_upload_file() {
 
 	// 返回上传信息二维数组合集
 	return $return_array;
-
 }
 
 /**
@@ -180,7 +179,6 @@ function wnd_ajax_upload_file() {
  *@param $_POST["file_id"];
  */
 function wnd_ajax_delete_file() {
-
 	$meta_key = $_POST['meta_key'];
 	$post_parent = $_POST["post_parent"];
 	$file_id = $_POST["file_id"];
@@ -205,7 +203,6 @@ function wnd_ajax_delete_file() {
 		return array('status' => 0, 'msg' => '权限错误！');
 
 	}
-
 }
 
 /**
@@ -213,7 +210,6 @@ function wnd_ajax_delete_file() {
  *@param $_REQUEST['post_id']
  */
 function wnd_ajax_paid_download() {
-
 	$post_id = (int) $_REQUEST['post_id'];
 	$price = get_post_meta($post_id, 'price', 1);
 	$file_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
@@ -260,5 +256,4 @@ function wnd_ajax_paid_download() {
 
 	// 校验失败
 	wp_die('下载权限校验失败！', get_option('blogname'));
-
 }

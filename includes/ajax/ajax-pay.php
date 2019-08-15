@@ -47,7 +47,6 @@ function wnd_ajax_create_order() {
 
 	// 支付成功
 	return array('status' => 1, 'msg' => '支付成功！');
-
 }
 
 /**
@@ -55,7 +54,6 @@ function wnd_ajax_create_order() {
  *@param $_POST['post_id']
  */
 function wnd_ajax_pay_for_reading() {
-
 	$post_id = (int) $_POST['post_id'];
 	$post = get_post($post_id);
 	$user_id = get_current_user_id();
@@ -166,5 +164,4 @@ function wnd_ajax_pay_for_download() {
 	}
 
 	return array('status' => 6, 'msg' => 'ok', 'data' => array('redirect_to' => $download_url));
-
 }

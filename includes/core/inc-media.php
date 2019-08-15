@@ -14,7 +14,6 @@ if (!defined('ABSPATH')) {
  *@param $the_file string 本地或远程完整文件地址
  */
 function wnd_download_file($the_file, $rename = 'download') {
-
 	// 获取文件后缀信息
 	$ext = '.' . pathinfo($the_file)['extension'];
 
@@ -24,7 +23,6 @@ function wnd_download_file($the_file, $rename = 'download') {
 	ob_end_clean();
 	readfile($the_file);
 	exit;
-
 }
 
 /**
@@ -32,13 +30,11 @@ function wnd_download_file($the_file, $rename = 'download') {
  *保存文章中的外链图片，并替换html图片地址
  */
 function wnd_download_remote_images($content, $upload_dir, $post_id) {
-
 	if (empty($content)) {
 		return;
 	}
 
 	$preg = preg_match_all('/<img.*?src="(.*?)"/', stripslashes($content), $matches);
-
 	if ($preg) {
 		$i = 1;
 		foreach ($matches[1] as $image_url) {
@@ -59,7 +55,6 @@ function wnd_download_remote_images($content, $upload_dir, $post_id) {
 	}
 
 	return $content;
-
 }
 
 /**
@@ -67,7 +62,6 @@ function wnd_download_remote_images($content, $upload_dir, $post_id) {
  *WordPress 远程下载图片 并返回上传后的图片地址/html 或 id
  */
 function wnd_download_remote_image($url, $post_parent, $title, $return = 'src') {
-
 	if (!function_exists('media_sideload_image')) {
 		require ABSPATH . 'wp-admin/includes/media.php';
 		require ABSPATH . 'wp-admin/includes/file.php';
@@ -86,12 +80,10 @@ function wnd_download_remote_image($url, $post_parent, $title, $return = 'src') 
  *@param $is_or_url 	int	or string 	附件post id 或者oss完整图片地址
  */
 function wnd_get_thumbnail_url($id_or_url, $width = 160, $height = 120) {
-
 	$url = is_numeric($id_or_url) ? wp_get_attachment_url($id_or_url) : $id_or_url;
 	if (!$url) {
 		return false;
 	}
 
 	return $url . '?x-oss-process=image/resize,m_fill,w_' . $width . ',h_' . $height;
-
 }

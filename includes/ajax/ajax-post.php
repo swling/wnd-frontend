@@ -20,7 +20,6 @@ if (!defined('ABSPATH')) {
  *@return 	array 						操作结果
  **/
 function wnd_ajax_insert_post($verify_form_nonce = true) {
-
 	if (empty($_POST)) {
 		return array('status' => 0, 'msg' => '数据为空');
 	}
@@ -152,7 +151,6 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 
 	// 返回值过滤
 	return apply_filters('wnd_insert_post_return', $return_array, $post_type, $post_id);
-
 }
 
 /**
@@ -181,7 +179,6 @@ function wnd_ajax_update_post($post_id = 0) {
 
 	$_POST['_post_ID'] = $post_id;
 	return wnd_ajax_insert_post();
-
 }
 
 /**
@@ -255,5 +252,4 @@ function wnd_ajax_update_post_status() {
 	} else {
 		return array('status' => 0, 'msg' => '更新数据失败！');
 	}
-
 }

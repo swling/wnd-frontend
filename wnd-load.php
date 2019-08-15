@@ -52,8 +52,7 @@ require WND_PATH . 'templates/tpl-gallery.php'; //橱窗相册
  *路径: 	/includes/class/class-wnd-form.php
  */
 function wnd_class_loader($class) {
-	$file_name = 'class-' . str_replace('_', '-', $class);
-	$file_name = strtolower($file_name);
+	$file_name = 'class-' . str_replace('_', '-', strtolower($class));
 	$file = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'class' . DIRECTORY_SEPARATOR . $file_name . '.php';
 	if (file_exists($file)) {
 		require $file;

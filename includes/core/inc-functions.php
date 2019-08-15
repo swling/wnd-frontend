@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
  *@since 2019.05.12
  **/
 function wnd_create_nonce($action) {
-
 	$secret_key = wnd_get_option('wnd', 'wnd_secret_key');
 	return wp_create_nonce(md5($action . $secret_key));
 }
@@ -19,10 +18,8 @@ function wnd_create_nonce($action) {
  *@since 2019.05.12
  **/
 function wnd_verify_nonce($nonce, $action) {
-
 	$secret_key = wnd_get_option('wnd', 'wnd_secret_key');
 	return wp_verify_nonce($nonce, md5($action . $secret_key));
-
 }
 
 /**
@@ -30,7 +27,6 @@ function wnd_verify_nonce($nonce, $action) {
  *一个没有空白的WordPress环境，接收或执行一些操作
  */
 function wnd_get_do_url() {
-
 	return WND_URL . 'do.php';
 }
 
@@ -38,7 +34,6 @@ function wnd_get_do_url() {
  *@since 2019.04.07
  */
 function wnd_doing_ajax() {
-
 	if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) and $_SERVER['HTTP_X_REQUESTED_WITH'] == "XMLHttpRequest") {
 		return true;
 	} else {
@@ -51,7 +46,6 @@ function wnd_doing_ajax() {
  *获取用户ip
  */
 function wnd_get_user_ip($hidden = false) {
-
 	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 		$ip = $_SERVER['HTTP_CLIENT_IP'];
 	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -65,7 +59,6 @@ function wnd_get_user_ip($hidden = false) {
 	} else {
 		return $ip;
 	}
-
 }
 
 /**
@@ -73,11 +66,9 @@ function wnd_get_user_ip($hidden = false) {
  *搜索引擎判断
  */
 function wnd_is_robot() {
-
 	return (
 		isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/bot|crawl|slurp|spider|mediapartners/i', $_SERVER['HTTP_USER_AGENT'])
 	);
-
 }
 
 /**
@@ -99,13 +90,11 @@ function wnd_random($length) {
  *生成N位随机数字
  */
 function wnd_random_code($length = 6) {
-
 	$No = '';
 	for ($i = 0; $i < $length; $i++) {
 		$No .= mt_rand(0, 9);
 	}
 	return $No;
-
 }
 
 /**
@@ -127,7 +116,6 @@ function wnd_is_phone($phone) {
 	} else {
 		return true;
 	}
-
 }
 
 /**
@@ -135,20 +123,14 @@ function wnd_is_phone($phone) {
  *@since 2019.04.30
  */
 function wnd_copy_taxonomy($old_taxonomy, $new_taxonomy) {
-
 	$terms = get_terms($old_taxonomy, 'hide_empty=0');
 
 	if (!empty($terms) && !is_wp_error($terms)) {
-
 		foreach ($terms as $term) {
-
 			wp_insert_term($term->name, $new_taxonomy);
-
 		}
 		unset($term);
-
 	}
-
 }
 
 /**
@@ -157,7 +139,6 @@ function wnd_copy_taxonomy($old_taxonomy, $new_taxonomy) {
  * 通常用于在ajax请求中传递请求页面信息以供后端判断请求来源
  * */
 function wnd_get_queried_type() {
-
 	if (is_single()) {
 		return array('type' => 'single', 'ID' => get_queried_object()->ID);
 
@@ -171,7 +152,6 @@ function wnd_get_queried_type() {
 		return array('type' => 'home');
 
 	} else {
-
 		return array('type' => 'ajax');
 	}
 }
@@ -182,7 +162,6 @@ function wnd_get_queried_type() {
  */
 set_exception_handler('wnd_exception_handler');
 function wnd_exception_handler($exception) {
-
 	$html = '<article class="column message is-danger">';
 	$html .= '<div class="message-header">';
 	$html .= '<p>异常</p>';

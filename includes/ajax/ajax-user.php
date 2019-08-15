@@ -118,7 +118,6 @@ function wnd_ajax_reg() {
 	} else {
 		return array('status' => 0, 'msg' => '注册失败！');
 	}
-
 }
 
 /**
@@ -130,7 +129,6 @@ function wnd_ajax_reg() {
  *@param $redirect_to = $_REQUEST['redirect_to'] ?? home_url();
  */
 function wnd_ajax_login() {
-
 	$username = trim($_POST['_user_user_login']);
 	$password = $_POST['_user_user_pass'];
 	$remember = $_POST['remember'] ?? 0;
@@ -147,14 +145,11 @@ function wnd_ajax_login() {
 	$user = wnd_get_user_by($username);
 
 	if (!$user) {
-
 		return array('status' => 0, 'msg' => '用户不存在');
 
 	} elseif (wp_check_password($password, $user->data->user_pass, $user->ID)) {
-
 		wp_set_current_user($user->ID, $user->user_login);
 		wp_set_auth_cookie($user->ID, $remember);
-
 		if ($redirect_to) {
 			return array('status' => 3, 'msg' => '登录成功！', 'data' => array('redirect_to' => $redirect_to, 'user_id' => $user->ID));
 		} else {
@@ -162,10 +157,8 @@ function wnd_ajax_login() {
 		}
 
 	} else {
-
 		return array('status' => 0, 'msg' => '账户密码不匹配！');
 	}
-
 }
 
 /**
@@ -182,7 +175,6 @@ function wnd_ajax_login() {
  *
  */
 function wnd_ajax_update_profile() {
-
 	if (empty($_POST)) {
 		return array('status' => 0, 'msg' => '获取用户数据失败！');
 	}
@@ -214,10 +206,8 @@ function wnd_ajax_update_profile() {
 	//################### 没有错误 更新用户
 	$user_id = wp_update_user($user_array);
 	if (is_wp_error($user_id)) {
-
 		$msg = $user_id->get_error_message();
 		return array('status' => 0, 'msg' => $msg);
-
 	}
 
 	//################### 用户更新成功，写入meta 及profile数据
@@ -252,7 +242,6 @@ function wnd_ajax_update_profile() {
  *@param $_POST['_user_new_user_email']
  */
 function wnd_ajax_update_account() {
-
 	$user = wp_get_current_user();
 	$user_id = $user->ID;
 	if (!$user_id) {
@@ -267,7 +256,6 @@ function wnd_ajax_update_account() {
 
 	// 修改密码
 	if (!empty($new_password_repeat)) {
-
 		if (strlen($new_password) < 6) {
 			return array('status' => 0, 'msg' => '新密码不能低于6位！');
 
@@ -279,7 +267,6 @@ function wnd_ajax_update_account() {
 			$array_temp = array('user_pass' => $new_password);
 			$user_array = array_merge($user_array, $array_temp);
 		}
-
 	}
 
 	// 修改邮箱
@@ -291,7 +278,6 @@ function wnd_ajax_update_account() {
 			$array_temp = array('user_email' => $new_email);
 			$user_array = array_merge($user_array, $array_temp);
 		}
-
 	}
 
 	// 原始密码校验
@@ -310,15 +296,12 @@ function wnd_ajax_update_account() {
 
 	// 更新失败，返回错误信息
 	if (is_wp_error($user_id)) {
-
 		return array('status' => 0, 'msg' => $user_id->get_error_message());
-
 	}
 
 	// 用户更新成功
 	$return_array = apply_filters('wnd_update_account_return', array('status' => 1, 'msg' => '更新成功'), $user_id);
 	return $return_array;
-
 }
 
 /**

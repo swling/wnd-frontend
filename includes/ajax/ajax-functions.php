@@ -103,8 +103,7 @@ function _wnd_ajax_update_views() {
 	$should_count = true;
 
 	// 根据 useragent 排除搜索引擎
-	$bots = array
-		(
+	$bots = array(
 		'Google Bot' => 'google'
 		, 'MSN' => 'msnbot'
 		, 'Alex' => 'ia_archiver'
@@ -145,7 +144,6 @@ function _wnd_ajax_update_views() {
 	// 统计
 	if ($should_count) {
 		if (wnd_inc_post_meta($post_id, 'views', 1)) {
-
 			// 完成统计时附加动作
 			do_action('wnd_ajax_update_views', $post_id);
 			// 统计更新成功
@@ -157,7 +155,6 @@ function _wnd_ajax_update_views() {
 		}
 
 	} else {
-
 		// 未更新
 		return array('status' => 0, 'msg' => time());
 	}
