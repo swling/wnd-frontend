@@ -264,7 +264,12 @@ class Wnd_WP_Form extends Wnd_Form {
 		parent::add_file_upload($args);
 	}
 
-	// 相册上传
+	/**
+	 *
+	 *相册上传
+	 *如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+	 *meta_key: 	gallery
+	 */
 	public function add_gallery_upload($args) {
 		$defaults = array(
 			'label' => 'Gallery',

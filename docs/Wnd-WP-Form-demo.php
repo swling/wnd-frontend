@@ -245,7 +245,8 @@ function _wnd_demo_form() {
 			'label' => '产品相册',
 			'thumbnail_size' => array('height' => '160', 'width' => '120'),
 			'data' => array(
-				'post_parent' => 1,
+				'post_parent' => 1, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+				'user_id' => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
 				'save_width' => 0, //图片文件存储最大宽度 0 为不限制
 				'save_height' => 0, //图片文件存储最大过度 0 为不限制
 			),
