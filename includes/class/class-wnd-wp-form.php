@@ -282,6 +282,95 @@ class Wnd_WP_Form extends Wnd_Form {
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
+		$this->build_gallery_upload($args);
+	}
+
+	// 构造表单，可设置WordPress filter 过滤表单的input_values
+	public function build() {
+
+		/**
+		 *设置表单过滤filter
+		 **/
+		if ($this->filter) {
+			$this->input_values = apply_filters($this->filter, $this->input_values);
+		}
+
+		/**
+		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
+		 **/
+		$this->build_form_nonce();
+
+		/**
+		 *构建表单
+		 */
+		parent::build();
+	}
+
+	/**
+	 *@since 2019.05.09
+	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
+	 */
+	protected function build_form_nonce() {
+		// 提取表单字段names 去重，排序
+		array_push($this->form_names, '_wnd_form_nonce'); // nonce自身字段也需要包含在内
+		foreach ($this->get_input_values() as $input_value) {
+			if (!isset($input_value['name'])) {
+				continue;
+			}
+
+			if (isset($input_value['disabled']) and $input_value['disabled']) {
+				continue;
+			}
+
+			array_push($this->form_names, $input_value['name']);
+		}
+		unset($input_value);
+
+		$this->form_names = array_unique($this->form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
+		sort($this->form_names);
+
+		// 根据表单字段，和表单验证秘钥生成wp nonce
+		$nonce = wnd_create_nonce(md5(implode('', $this->form_names)));
+
+		// 将nonce字段添加到表单
+		$this->add_hidden('_wnd_form_nonce', $nonce);
+	}
+
+	/**
+	 *构建表单头部
+	 */
+	protected function build_form_header() {
+
+		/**
+		 *@since 2019.07.17 常规非ajax表单
+		 */
+		if (!$this->is_ajax_submit) {
+			parent::build_form_header();
+		}
+
+		$html = '<form id="form-' . $this->id . '" action="" method="POST" onsubmit="return false"';
+		if ($this->with_upload) {
+			$html .= ' enctype="multipart/form-data"';
+		}
+
+		if ($this->form_attr) {
+			$html .= ' ' . $this->form_attr;
+		}
+		$html .= '>';
+
+		if ($this->form_title) {
+			$html .= '<div class="field has-text-centered content">';
+			$html .= '<h3>' . $this->form_title . '</h3>';
+			$html .= '</div>';
+		}
+
+		$html .= '<div class="ajax-message">' . $this->message . '</div>';
+
+		$this->html = $html;
+	}
+
+	// 构建相册上传
+	protected function build_gallery_upload($args) {
 		// 固定data
 		$args['data']['meta_key'] = 'gallery';
 		$args['data']['upload_nonce'] = wnd_create_nonce('wnd_ajax_upload_file');
@@ -331,7 +420,6 @@ class Wnd_WP_Form extends Wnd_Form {
 			$html .= '</div>';
 		}
 		foreach ($images as $key => $attachment_id) {
-
 			$attachment_url = wp_get_attachment_url($attachment_id);
 			$thumbnail_url = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
 			if (!$attachment_url) {
@@ -343,96 +431,12 @@ class Wnd_WP_Form extends Wnd_Form {
 			$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '"height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
 			$html .= '<a class="delete" data-id="' . $id . '" data-file_id="' . $attachment_id . '"></a>';
 			$html .= '</div>';
-
 		}
 		unset($key, $attachment_id);
 		wnd_update_post_meta($post_parent, $meta_key, $images); // 若字段中存在被删除的图片数据，此处更新
 		$html .= '</div>';
-
 		$html .= '</div>';
 
 		$this->add_html($html);
-	}
-
-	// 构造表单，可设置WordPress filter 过滤表单的input_values
-	public function build() {
-
-		/**
-		 *设置表单过滤filter
-		 **/
-		if ($this->filter) {
-			$this->input_values = apply_filters($this->filter, $this->input_values);
-		}
-
-		/**
-		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
-		 **/
-		$this->build_form_nonce();
-
-		/**
-		 *构建表单
-		 */
-		parent::build();
-	}
-
-	/**
-	 *@since 2019.05.09
-	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
-	 */
-	protected function build_form_nonce() {
-
-		// 提取表单字段names 去重，排序
-		array_push($this->form_names, '_wnd_form_nonce'); // nonce自身字段也需要包含在内
-		foreach ($this->get_input_values() as $input_value) {
-			if (!isset($input_value['name'])) {
-				continue;
-			}
-
-			if (isset($input_value['disabled']) and $input_value['disabled']) {
-				continue;
-			}
-
-			array_push($this->form_names, $input_value['name']);
-		}
-		unset($input_value);
-
-		$this->form_names = array_unique($this->form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
-		sort($this->form_names);
-
-		// 根据表单字段，和表单验证秘钥生成wp nonce
-		$nonce = wnd_create_nonce(md5(implode('', $this->form_names)));
-
-		// 将nonce字段添加到表单
-		$this->add_hidden('_wnd_form_nonce', $nonce);
-	}
-
-	protected function build_form_header() {
-
-		/**
-		 *@since 2019.07.17 常规非ajax表单
-		 */
-		if (!$this->is_ajax_submit) {
-			parent::build_form_header();
-		}
-
-		$html = '<form id="form-' . $this->id . '" action="" method="POST" onsubmit="return false"';
-		if ($this->with_upload) {
-			$html .= ' enctype="multipart/form-data"';
-		}
-
-		if ($this->form_attr) {
-			$html .= ' ' . $this->form_attr;
-		}
-		$html .= '>';
-
-		if ($this->form_title) {
-			$html .= '<div class="field has-text-centered content">';
-			$html .= '<h3>' . $this->form_title . '</h3>';
-			$html .= '</div>';
-		}
-
-		$html .= '<div class="ajax-message">' . $this->message . '</div>';
-
-		$this->html = $html;
 	}
 }
