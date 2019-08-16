@@ -62,6 +62,7 @@ class Wnd_Filter {
 		// 自定义
 		'wnd_ajax_container' => '',
 		'wnd_post_tpl' => '',
+		'wnd_posts_tpl' => '',
 	);
 
 	/**
@@ -247,11 +248,21 @@ class Wnd_Filter {
 
 	/**
 	 *@since 2019.08.02
-	 *设置列表post样式函数
-	 *@param string $template posts模板 函数名
+	 *设置列表post模板函数，传递$post对象
+	 *@param string $template post模板函数名
 	 **/
 	public function set_post_template($template) {
 		$this->add_query(array('wnd_post_tpl' => $template));
+	}
+
+	/**
+	 *@since 2019.08.16
+	 *文章列表页整体模板函数，传递wp_query查询结果
+	 *设置模板后，$this->get_posts() 即为被该函数返回值
+	 *@param string $template posts模板函数名
+	 **/
+	public function set_posts_template($template) {
+		$this->add_query(array('wnd_posts_tpl' => $template));
 	}
 
 	/**
@@ -1271,14 +1282,21 @@ class Wnd_Filter {
 			return '未执行WP_Query';
 		}
 
-		$template = $this->wp_query_args['wnd_post_tpl'];
+		// Posts list
+		if ($this->wp_query_args['wnd_posts_tpl']) {
+			$template = $this->wp_query_args['wnd_posts_tpl'];
+			$this->posts = $template($this->wp_query);
 
-		if ($this->wp_query->have_posts()) {
-			while ($this->wp_query->have_posts()): $this->wp_query->the_post();
-				global $post;
-				$this->posts .= $template($post);
-			endwhile;
-			wp_reset_postdata(); //重置查询
+			// post list
+		} else {
+			$template = $this->wp_query_args['wnd_post_tpl'];
+			if ($this->wp_query->have_posts()) {
+				while ($this->wp_query->have_posts()): $this->wp_query->the_post();
+					global $post;
+					$this->posts .= $template($post);
+				endwhile;
+				wp_reset_postdata(); //重置查询
+			}
 		}
 
 		return $this->posts;
