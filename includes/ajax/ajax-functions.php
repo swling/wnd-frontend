@@ -10,8 +10,6 @@ if (!defined('ABSPATH')) {
  *@param $args 		array or string 	传递给被调用模板函数的参数
  */
 function _wnd_ajax_embed($template, $args = '') {
-	$function_name = $template;
-
 	$div_id = 'wnd-filter-' . uniqid();
 	$args = wp_parse_args($args);
 	$ajax_args = http_build_query($args);
@@ -58,12 +56,12 @@ function wnd_ajax_send_code() {
  *@param $_POST['post_id']
  *@param $_POST['post_type']
  */
-function _wnd_ajax_is_title_repeated() {
+function _wnd_ajax_is_title_duplicated() {
 	$title = $_POST['post_title'];
 	$exclude_id = $_POST['post_id'];
 	$post_type = $_POST['post_type'];
 
-	if (wnd_is_title_repeated($title, $exclude_id, $post_type)) {
+	if (wnd_is_title_duplicated($title, $exclude_id, $post_type)) {
 		return array('status' => 1, 'msg' => '标题重复！');
 	} else {
 		return array('status' => 0, 'msg' => '标题唯一！');

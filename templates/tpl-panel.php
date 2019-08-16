@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
  *@since 2019.02.19 封装前端管理员内容审核平台
  *@param array or string ：wp_query args
  */
-function _wnd_admin_posts_panel($args = '') {
+function _wnd_admin_posts_panel() {
 	if (!is_user_logged_in()) {
 		return '<div class="message is-warning"><div class="message-body">请登录！</div></div>';
 	}
@@ -47,7 +47,7 @@ function _wnd_user_posts_panel() {
  *@since 2019.02.19 封装前端当前用户站内信
  *@param array or string ：wp_query args
  */
-function _wnd_user_mail_panel($args = '') {
+function _wnd_user_mail_panel() {
 	if (!is_user_logged_in()) {
 		return '<div class="message is-warning"><div class="message-body">请登录！</div></div>';
 	}

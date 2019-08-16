@@ -172,7 +172,7 @@ function wnd_get_allowed_post_types() {
  *标题去重
  *@return int or false
  */
-function wnd_is_title_repeated($title, $exclude_id = 0, $post_type = 'post') {
+function wnd_is_title_duplicated($title, $exclude_id = 0, $post_type = 'post') {
 	if (empty($title)) {
 		return false;
 	}

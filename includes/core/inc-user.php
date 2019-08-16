@@ -254,7 +254,7 @@ function wnd_is_manager($user_id = 0) {
  *用户display name去重
  *@return int or false
  */
-function wnd_is_name_repeated($display_name, $exclude_id = 0) {
+function wnd_is_name_duplicated($display_name, $exclude_id = 0) {
 	// 名称为空
 	if (empty($display_name)) {
 		return false;
