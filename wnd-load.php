@@ -38,7 +38,6 @@ require WND_PATH . 'templates/tpl-general.php'; //通用模板
 require WND_PATH . 'templates/tpl-user.php'; //user模板
 require WND_PATH . 'templates/tpl-post.php'; //post模板
 require WND_PATH . 'templates/tpl-term.php'; //term模板
-require WND_PATH . 'templates/tpl-archive.php'; //归档和列表模板
 require WND_PATH . 'templates/tpl-finance.php'; //财务模板
 require WND_PATH . 'templates/tpl-panel.php'; //前端管理面板
 require WND_PATH . 'templates/tpl-gallery.php'; //橱窗相册

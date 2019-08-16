@@ -84,9 +84,9 @@ $filter->set_ajax_container('#filter-container');
 $filter->set_posts_per_page($posts_per_page = 3);
 
 // 设置输出结果列表样式，传递参数：$post对象
-$filter->set_post_template('_wnd_post_list_tpl');
+$filter->set_post_template('_wnd_post_tpl');
 // or 设置输出结果整体模板，传递参数：wp_query查询结果
-$filter->set_posts_template('_wnd_mail_posts_tpl');
+$filter->set_posts_template('_wnd_posts_tpl');
 
 // 新增查询参数
 $filter->add_query($query = array('test_key' => 'test_value'));
