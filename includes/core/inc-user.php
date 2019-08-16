@@ -178,8 +178,10 @@ function wnd_update_user_phone($user_id, $phone) {
 
 /**
  *@since 2019.07.23
- * 根据第三方网站获取的用户信息，注册或者登录到WordPress站点
- *
+ *根据第三方网站获取的用户信息，注册或者登录到WordPress站点
+ *@param string $open_id 		第三方账号openID
+ *@param string $display_name 	用户名称
+ *@param string $avatar_url 	用户外链头像
  *
  **/
 function wnd_social_login($open_id, $display_name = '', $avatar_url = '') {

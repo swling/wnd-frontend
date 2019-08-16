@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
  *@param $_POST["thumbnail_width"]
  *@param $_POST["thumbnail_height"]
  *@param $_POST['meta_key']
- *@param $_POST['_meta_key_nonce']
+ *@param $_POST['meta_key_nonce']
  *@param $_POST['post_parent']
  *
  *@return $return_array array 二维数组
@@ -157,7 +157,6 @@ function wnd_ajax_upload_file() {
 			do_action('wnd_upload_file', $file_id, $post_parent, $meta_key);
 			break;
 		}
-
 	}
 
 	/**
@@ -193,15 +192,12 @@ function wnd_ajax_delete_file() {
 
 	// 执行删除
 	if (wp_delete_attachment($file_id, true)) {
-
 		do_action('wnd_delete_file', $file_id, $post_parent, $meta_key);
 		return array('status' => 1, 'msg' => $file_id);
 
 		//删除失败
 	} else {
-
 		return array('status' => 0, 'msg' => '权限错误！');
-
 	}
 }
 

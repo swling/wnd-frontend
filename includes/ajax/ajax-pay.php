@@ -11,7 +11,6 @@ if (!defined('ABSPATH')) {
 function wnd_ajax_create_order() {
 	$post_id = (int) $_POST['post_id'];
 	$user_id = get_current_user_id();
-
 	if (!$post_id) {
 		return array('status' => 0, 'msg' => 'ID无效！');
 	}

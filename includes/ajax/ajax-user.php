@@ -356,7 +356,11 @@ function wnd_ajax_bind_email() {
 		$auth->set_auth_code($auth_code);
 		$auth->set_email_or_phone($email);
 
-		// 已注册用户，已有数据记录，绑定成功后更新对应数据记录，并删除当前验证数据记录
+		/**
+		 * 通常，正常前端注册的用户，已通过了邮件或短信验证中的一种，已有数据记录，绑定成功后更新对应数据记录，并删除当前验证数据记录
+		 * 删除时会验证该条记录是否绑定用户，只删除未绑定用户的记录
+		 * 若当前用户没有任何验证绑定记录，删除本条验证记录后，会通过 wnd_update_user_email() 重新新增一条记录
+		 */
 		$auth->verify($delete_after_verified = true);
 
 		if (wnd_update_user_email(get_current_user_id(), $email)) {
@@ -385,7 +389,11 @@ function wnd_ajax_bind_phone() {
 		$auth->set_auth_code($auth_code);
 		$auth->set_email_or_phone($phone);
 
-		// 已注册用户，已有数据记录，绑定成功后更新对应数据记录，并删除当前验证数据记录
+		/**
+		 * 通常，正常前端注册的用户，已通过了邮件或短信验证中的一种，已有数据记录，绑定成功后更新对应数据记录，并删除当前验证数据记录
+		 * 删除时会验证该条记录是否绑定用户，只删除未绑定用户的记录
+		 * 若当前用户没有任何验证绑定记录，删除本条验证记录后，会通过 wnd_update_user_phone() 重新新增一条记录
+		 */
 		$auth->verify($delete_after_verified = true);
 
 		if (wnd_update_user_phone(get_current_user_id(), $phone)) {
