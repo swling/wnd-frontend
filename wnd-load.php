@@ -31,7 +31,7 @@ require WND_PATH . 'includes/ajax/ajax-pay.php'; //ajax付费服务
 // hook
 require WND_PATH . 'includes/hook/add-action.php'; //添加动作
 require WND_PATH . 'includes/hook/add-filter.php'; //添加钩子
-require WND_PATH . 'includes/hook/remove-action.php'; //移除动作
+require WND_PATH . 'includes/hook/remove.php'; //移除
 
 // template
 require WND_PATH . 'templates/tpl-general.php'; //通用模板
