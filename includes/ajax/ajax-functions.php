@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
  *@param $args 		array or string 	传递给被调用模板函数的参数
  */
 function _wnd_ajax_embed($template, $args = '') {
-	$div_id = 'wnd-filter-' . uniqid();
+	$div_id = 'wnd-embed-' . uniqid();
 	$args = wp_parse_args($args);
 	$ajax_args = http_build_query($args);
 

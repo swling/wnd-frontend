@@ -82,31 +82,6 @@ function wnd_filter_post_status($post_status, $post_type, $update_id) {
 }
 
 /**
- *@since 2019.02.25
- *文章列表输出模板 文章过滤
- **/
-add_filter('_wnd_table_list_data', 'wnd_filter_list_table_data', 10, 1);
-function wnd_filter_list_table_data($post) {
-
-	if ($post->post_type == 'mail') {
-
-		if ($post->post_status == 'private') {
-			$post->post_status = '已读';
-		} elseif ($post->post_status == 'pending') {
-			$post->post_status = '未读';
-		} elseif ($post->post_status == 'draft') {
-			$post->post_status = '草稿';
-		}
-
-	}
-
-	$post->post_status == '草稿';
-
-	return $post;
-
-}
-
-/**
  * ############################################################################ 以下为WordPress原生filter
  */
 
@@ -350,7 +325,6 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 
 	//已登录用户调用字段头像
 	if ($user_id) {
-
 		if (wnd_get_user_meta($user_id, 'avatar')) {
 			$avatar_id = wnd_get_user_meta($user_id, 'avatar');
 			$avatar_url = wp_get_attachment_url($avatar_id) ?: $avatar_url;
@@ -372,7 +346,6 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 
 	//注册用户，添加链接
 	if ($user_id and !is_admin()) {
-
 		$author_url = get_author_posts_url($user_id);
 		$avatar = sprintf(
 			'<a href="%s" rel="external nofollow" class="url">%s</a>',
@@ -402,7 +375,6 @@ if (wnd_get_option('wnd', 'wnd_disable_locale') == 1) {
 if (wnd_get_option('wnd', 'wnd_unset_user_meta') == 1) {
 	add_filter('insert_user_meta', 'wnd_filter_unset_user_meta', 10, 2);
 	function wnd_filter_unset_user_meta($meta, $user) {
-
 		// 排除超级管理员
 		if (is_super_admin($user->ID)) {
 			return $meta;

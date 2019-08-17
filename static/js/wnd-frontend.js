@@ -147,7 +147,6 @@ jQuery(document).ready(function($) {
 	$("body").off("click").on("click", ".modal-background,.modal-close", function() {
 		wnd_reset_modal();
 	});
-
 });
 
 // 点击触发，点击A 元素 触发 B元素点击事件 用于部分UI优化操作
@@ -194,7 +193,6 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 */
 // ajax 从后端请求内容，并以弹窗形式展现
 function wnd_ajax_modal(template, param = 0) {
-
 	$.ajax({
 		type: "GET",
 		url: wnd.root_url + wnd.rest_api,
@@ -229,7 +227,6 @@ function wnd_ajax_modal(template, param = 0) {
  *原理同 wnd_ajax_modal()，区别为，响应方式为嵌入
  **/
 function wnd_ajax_embed(container, template, param = 0) {
-
 	$.ajax({
 		type: "GET",
 		url: wnd.root_url + wnd.rest_api,
@@ -259,12 +256,10 @@ function wnd_ajax_embed(container, template, param = 0) {
 			wnd_alert_msg("系统错误！");
 		}
 	});
-
 }
 
 //############################### 根据表单id自动提交表单 并根据返回代码执行对应操作
 function wnd_ajax_submit(form_id) {
-
 	// 提交按钮
 	var submit_button = $("#" + form_id + " [type='submit']");
 
@@ -348,7 +343,6 @@ function wnd_ajax_submit(form_id) {
 
 		// 返回结果
 		success: function(response) {
-
 			submit_button.removeClass("is-loading");
 			if (response.status != 2 && response.status != 0) {
 				submit_button.prop("disabled", true);
@@ -399,7 +393,6 @@ function wnd_ajax_submit(form_id) {
 					wnd_ajax_msg(response.msg, style, "#" + form_id);
 					break;
 			}
-
 		},
 
 		// 提交错误
@@ -410,14 +403,12 @@ function wnd_ajax_submit(form_id) {
 			submit_button.prop("disabled", true);
 		},
 	});
-
 }
 
 /**
  * 流量统计
  */
 function wnd_ajax_update_views(post_id, interval = 3600) {
-
 	var timestamp = Date.parse(new Date()) / 1000;
 	var wnd_views = localStorage.getItem("wnd_views") ? JSON.parse(localStorage.getItem("wnd_views")) : [];
 	var max_length = 10;
@@ -426,7 +417,6 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 	// 数据处理
 	for (var i = 0; i < wnd_views.length; i++) {
 		if (wnd_views[i].post_id == post_id) {
-
 			// 存在记录中：且时间过期
 			if (wnd_views[i].timestamp < timestamp - interval) {
 				wnd_views[i].timestamp = timestamp;
@@ -434,7 +424,6 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 			} else {
 				var is_new = false;
 			}
-
 			break;
 		}
 	}
@@ -456,7 +445,7 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 	// 更新服务器数据
 	if (is_new) {
 		$.ajax({
-			type: "POST",
+			type: "GET",
 			datatype: "json",
 			url: wnd.root_url + wnd.rest_api,
 			data: {
@@ -560,7 +549,6 @@ jQuery(document).ready(function($) {
 					// 上传成功
 					wnd_ajax_msg("上传成功！", "is-success", "#" + id);
 
-
 					// 相册
 					if (meta_key == "gallery") {
 						// 清除默认提示信息
@@ -619,10 +607,8 @@ jQuery(document).ready(function($) {
 
 						// 上传后，自动提交保存媒体信息
 						wnd_ajax_submit(_this.parents("form").attr("id"));
-
 					}
 				}
-
 			},
 
 			// 错误
@@ -630,12 +616,12 @@ jQuery(document).ready(function($) {
 				wnd_ajax_msg("系统错误！", "is-danger", "#" + id);
 			}
 		});
-
 	});
 
-	//  ################### 删除文件
+	/**
+	 *@since 2019.1.15 ajax 文件删除
+	 */
 	$("body").on("click", ".upload-field .delete", function() {
-
 		if (!confirm("确定删除？")) {
 			return false;
 		}
@@ -685,12 +671,10 @@ jQuery(document).ready(function($) {
 			},
 			// 上传成功
 			success: function(response) {
-
 				if (response.status === 0) {
 					wnd_ajax_msg(response.msg, "is-danger", "#" + id);
 					return false;
 				}
-
 				wnd_ajax_msg("已删除！", "is-success", "#" + id);
 
 				/**
@@ -714,7 +698,6 @@ jQuery(document).ready(function($) {
 
 					// 单张图片
 				} else if (is_image == 1) {
-
 					$("#" + id + " .thumbnail").prop("src", thumbnail);
 					// 清空删除按钮数据绑定
 					$("#" + id + " .delete").data("file_id", 0)
@@ -731,14 +714,12 @@ jQuery(document).ready(function($) {
 				wnd_ajax_msg("系统错误！", "is-danger", "#" + id);
 			}
 		});
-
 	});
 
 	/**
 	 *@since 2019.02.09 发送手机或邮箱验证码
 	 */
 	$("body").on("click", ".send-code", function() {
-
 		// 清除定时器
 		clearTimeout(send_countdown);
 		wait = 90;
@@ -767,7 +748,6 @@ jQuery(document).ready(function($) {
 				_this.addClass("is-loading");
 			},
 			success: function(response) {
-
 				if (response.status <= 0) {
 					var style = "is-danger";
 				} else {
@@ -785,7 +765,6 @@ jQuery(document).ready(function($) {
 				_this.removeClass("is-loading");
 			}
 		});
-
 	});
 
 	/**
@@ -835,7 +814,6 @@ jQuery(document).ready(function($) {
 
 				// 正向操作成功
 				if (response.status != 0 && action == _this.data("action")) {
-
 					// 设置了逆向操作
 					if (_this.data("cancel")) {
 						_this.data("is-cancel", 1);
@@ -848,10 +826,8 @@ jQuery(document).ready(function($) {
 					_this.data("is-cancel", 0);
 				}
 
-
 				// 根据后端响应处理
 				switch (response.status) {
-
 					// 常规类，展示后端提示信息
 					case 1:
 						_this.html(response.data);
@@ -887,7 +863,6 @@ jQuery(document).ready(function($) {
 						}
 						break;
 				}
-
 			},
 			// 错误
 			error: function() {
@@ -953,7 +928,6 @@ jQuery(document).ready(function($) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
 			},
 			success: function(response) {
-
 				// 切换post type时，隐藏所有taxonomy 再根据当前post type支持的taxonomy选择性显示，以达到ajax切换的效果
 				if ("type" == key) {
 					$(".taxonomy-tabs").addClass("is-hidden");
@@ -1007,13 +981,6 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
-	 *@since 2019.02.09 表单改变时，移除警示状态
-	 */
-	// $("body").on("input", "input,textarea", function() {
-	// 	$(this).removeClass("is-danger");
-	// });
-
-	/**
 	 *@since 2019.03.28 表单改变时，移除提交按钮禁止状态,恢复提交文字
 	 */
 	$("body").on("change", "form", function() {
@@ -1040,14 +1007,6 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
-	 *@since 2019.08.01 点击pagination 新增is-current
-	 */
-	// $("body").on("click", ".pagination-list a", function() {
-	// $(this).addClass("is-current");
-	// $(this).parent("li").siblings().find("a").removeClass("is-current");
-	// });
-
-	/**
 	 *@since 2019.07.11 从主题中移植
 	 *移动导航点击展开效果
 	 */
@@ -1069,19 +1028,9 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
-	 *@since 2019.04.01 ajax翻页后，滑动到顶部
-	 */
-	// $("body").on("click", ".pagination-link", function() {
-	// 	$(this).parents().get(0).scrollIntoView({
-	// 		behavior: "smooth"
-	// 	});
-	// });
-
-	/**
 	 *@since 2019.05.07 相册放大
 	 */
 	$("body").on("click", ".gallery img", function() {
-
 		var images = $(this).parents(".gallery").find("img");
 
 		/**
@@ -1090,5 +1039,4 @@ jQuery(document).ready(function($) {
 		var element = '<img src="' + $(this).data("url") + '" />';
 		wnd_alert_modal(element, true);
 	});
-
 });
