@@ -1137,9 +1137,7 @@ class Wnd_Filter {
 	/**
 	 *@since 2019.08.09
 	 *获取当前tax_query的所有父级term_id
-	 *@return array $parents 当前分类查询的所有父级
-	 *
-	 *$parents[$taxonomy] = array($term_id_1,$term_id_2);
+	 *@return array $parents 当前分类查询的所有父级：$parents[$taxonomy] = array($term_id_1, $term_id_2);
 	 */
 	public function get_tax_query_patents() {
 		$parents = array();
@@ -1236,7 +1234,7 @@ class Wnd_Filter {
 				continue;
 			}
 
-			// 递归查询当前分类的父级分类
+			// 查询当前分类的所有上级分类的子分类
 			$sub_tabs = '';
 			$parents = $this->get_tax_query_patents()[$tax_query['taxonomy']];
 			foreach ($parents as $parent) {

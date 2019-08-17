@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 /**
  *@since 2019.02.18 封装用户财务中心
  */
-function _wnd_user_fin_panel($args = '') {
+function _wnd_user_fin_panel($args = array()) {
 	if (!is_user_logged_in()) {
 		return;
 	}
@@ -15,9 +15,9 @@ function _wnd_user_fin_panel($args = '') {
 
 	// args
 	$defaults = array(
-		'post_type' => $_GET['type'] ?? 'order',
+		'post_type' => 'order',
 		'post_status' => 'any',
-		'paged' => $_GET['pages'] ?? 1,
+		'paged' => 1,
 		'posts_per_page' => get_option('posts_per_page'),
 	);
 	$args = wp_parse_args($args, $defaults);
