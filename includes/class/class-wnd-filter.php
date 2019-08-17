@@ -762,10 +762,8 @@ class Wnd_Filter {
 			$term = isset($category_id) ? get_term($tag->tag_id) : $tag;
 
 			// 遍历当前tax query查询是否匹配当前tab
-			$class = '';
+			$class = 'term-id-' . $term->term_id;
 			foreach ($this->wp_query_args['tax_query'] as $tax_query) {
-				$class .= 'term-id-' . $term->term_id;
-
 				// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
 				if (!isset($tax_query['terms'])) {
 					continue;

@@ -919,6 +919,15 @@ jQuery(document).ready(function($) {
 			filter_param['type'] = $(".post-type-tabs .is-active a").data("value");
 		}
 
+		// 主分类切换时删除标签查询
+		if ("_term_category" == key) {
+			var tag_taxonomy_key = "_term_post_tag";
+			delete filter_param[tag_taxonomy_key];
+		} else if (key.indexOf("_cat") > 0) {
+			var tag_taxonomy_key = key.replace("_cat", "_tag");
+			delete filter_param[tag_taxonomy_key];
+		}
+
 		var _this = $(this);
 		$.ajax({
 			url: wnd.root_url + wnd.filter_api,
