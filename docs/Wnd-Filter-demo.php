@@ -88,13 +88,22 @@ $filter->set_post_template('_wnd_post_tpl');
 // or 设置输出结果整体模板，传递参数：wp_query查询结果
 $filter->set_posts_template('_wnd_posts_tpl');
 
-// 新增查询参数
+// 新增查询参数：单个或数组
 $filter->add_query($query = array('test_key' => 'test_value'));
+$tax_query = array(
+	'relation' => 'AND',
+	array(
+		'taxonomy' => 'category',
+		'field' => 'term_id',
+		'terms' => 1,
+	),
+);
+$filter->add_query(array('tax_query' => $tax_query));
+
+echo $filter->get_tabs();
 
 // 执行查询
 $filter->query();
-
-echo $filter->get_tabs();
 echo '<div class="box">';
 echo '<div id="filter-container">' . $filter->get_results() . '</div>';
 '</div>';

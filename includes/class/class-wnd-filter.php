@@ -52,6 +52,7 @@ class Wnd_Filter {
 		'order' => 'DESC',
 		'meta_query' => array(),
 		'tax_query' => array(),
+		'date_query' => array(),
 		'meta_key' => '',
 		'meta_value' => '',
 		'post_type' => '',
@@ -80,7 +81,7 @@ class Wnd_Filter {
 		self::$is_ajax = $is_ajax;
 		$this->class .= self::$is_ajax ? 'ajax-filter' : '';
 
-		// 解析GET参数为wp_query参数并与默认参数合并
+		// 解析GET参数为wp_query参数并与默认参数合并，以防止出现参数未定义的警告信息
 		$this->wp_query_args = wp_parse_args(self::parse_query_vars(), $this->wp_query_args);
 
 		/**
@@ -130,6 +131,7 @@ class Wnd_Filter {
 		$query_vars = array(
 			'meta_query' => array(),
 			'tax_query' => array(),
+			'date_query' => array(),
 		);
 
 		foreach ($_GET as $key => $value) {
@@ -216,6 +218,15 @@ class Wnd_Filter {
 				continue;
 			}
 
+			/**
+			 *@since 2019.08.17
+			 *ajax请求中，数组类型查询参数，需要解析后并入查询参数
+			 */
+			if (in_array($key, array('tax_query', 'meta_query', 'date_query')) and self::$is_ajax) {
+				$query_vars[$key] = wp_parse_args($value, $query_vars[$key]);
+				continue;
+			}
+
 			// 其他、按键名自动匹配、排除指定作者的参数
 			if ($key != 'author') {
 				$query_vars[$key] = $value;
@@ -280,7 +291,12 @@ class Wnd_Filter {
 	 **/
 	public function add_query($query = array()) {
 		foreach ($query as $key => $value) {
-			$this->wp_query_args[$key] = $value;
+			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
+			if (isset($this->wp_query_args[$key]) and is_array($this->wp_query_args[$key])) {
+				$this->wp_query_args[$key] = array_merge($this->wp_query_args[$key], $value);
+			} else {
+				$this->wp_query_args[$key] = $value;
+			}
 
 			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
 			$this->const_query[$key] = $value;
@@ -476,6 +492,7 @@ class Wnd_Filter {
 	protected function build_html_data() {
 		$data = '';
 		foreach ($this->const_query as $key => $value) {
+			$value = is_array($value) ? http_build_query($value) : $value;
 			$data .= 'data-' . $key . '="' . $value . '" ';
 		}
 
@@ -1283,11 +1300,17 @@ class Wnd_Filter {
 		// Posts list
 		if ($this->wp_query_args['wnd_posts_tpl']) {
 			$template = $this->wp_query_args['wnd_posts_tpl'];
+			if (!$template) {
+				return '未定义输出模板';
+			}
 			$this->posts = $template($this->wp_query);
 
 			// post list
 		} else {
 			$template = $this->wp_query_args['wnd_post_tpl'];
+			if (!$template) {
+				return '未定义输出模板';
+			}
 			if ($this->wp_query->have_posts()) {
 				while ($this->wp_query->have_posts()): $this->wp_query->the_post();
 					global $post;
@@ -1312,5 +1335,4 @@ class Wnd_Filter {
 		$this->pagination = $this->build_pagination($show_page);
 		return $this->pagination;
 	}
-
 }

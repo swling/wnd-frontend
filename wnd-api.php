@@ -135,6 +135,11 @@ function wnd_filter_api_callback() {
 			 *约定：post(category) / 自定义类型 （$post_type . '_cat'）
 			 */
 			'category_taxonomy' => $filter->category_taxonomy,
+
+			/**
+			 *在debug模式下，返回当前WP_Query查询参数
+			 **/
+			'query_vars' => WP_DEBUG ? $filter->wp_query->query_vars : '请开启Debug',
 		),
 	);
 }
