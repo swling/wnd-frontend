@@ -215,12 +215,29 @@ class Wnd_Filter {
 
 			/**
 			 *@since 2019.08.04
-			 *ajax Orderby tabs链接请求中，orderby将发送数组形式的信息，需要解析后并入查询参数
+			 *ajax Orderby tabs链接请求中，orderby将发送HTTP query形式的信息，需要解析后并入查询参数
 			 *
-			 *@see build_orderby_filter
 			 */
 			if ('orderby' == $key and self::$is_ajax) {
-				$query_vars = wp_parse_args($value, $query_vars);
+				/**
+				 * @see 	build_orderby_filter
+				 * @since 	2019.08.18
+				 *
+				 * orderby=meta_value_num&meta_key=views
+				 * 解析结果
+				 * $query_vars['orderby'] =>meta_value_num
+				 * $query_vars['meta_ket'] =>views
+				 *
+				 * 判断方法：此类传参，必须包含 = 符号
+				 */
+				if (false !== strpos($value, '=')) {
+					$query_vars = wp_parse_args($value, $query_vars);
+
+					// 常规形式直接指定orderby
+				} else {
+					$query_vars['orderby'] = $value;
+				}
+
 				continue;
 			}
 
