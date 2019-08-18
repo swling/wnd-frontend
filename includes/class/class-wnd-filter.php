@@ -314,6 +314,11 @@ class Wnd_Filter {
 	 **/
 	public function add_query($query = array()) {
 		foreach ($query as $key => $value) {
+			// $_GET参数优先，无法重新设置
+			if (in_array($key, array_keys($_GET))) {
+				continue;
+			}
+
 			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
 			if (isset($this->wp_query_args[$key]) and is_array($this->wp_query_args[$key])) {
 				$this->wp_query_args[$key] = array_merge($this->wp_query_args[$key], $value);
@@ -325,9 +330,6 @@ class Wnd_Filter {
 			$this->const_query[$key] = $value;
 		}
 		unset($key, $value);
-
-		// GET参数优先，如有冲突覆盖add_query设置
-		$this->wp_query_args = array_merge($this->wp_query_args, self::parse_query_vars());
 	}
 
 	/**
