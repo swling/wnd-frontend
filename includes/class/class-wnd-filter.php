@@ -1244,7 +1244,8 @@ class Wnd_Filter {
 	 *@see wnd_filter_api_callback()
 	 */
 	public function get_tabs() {
-		return '<div class="wnd-filter-tabs ' . $this->class . '" ' . $this->build_html_data() . '>' . $this->tabs . '</div>';
+		$tabs = apply_filters('wnd_filter_tabs', $this->tabs, $this->wp_query_args);
+		return '<div class="wnd-filter-tabs ' . $this->class . '" ' . $this->build_html_data() . '>' . $tabs . '</div>';
 	}
 
 	/**
