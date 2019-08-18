@@ -134,29 +134,6 @@ apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_sta
 apply_filters( 'wnd_allowed_post_types', $post_types );
 ```
 ## 多重筛选
-```php
-/**
-*@since 2019.02.25 文章列表输出模板 $post数据过滤
-*/
-apply_filters('_wnd_table_list_data', $post);
-
-/**
-*@since 2019.04.18 多重筛选，文章输出模板
-*/
-apply_filters('_wnd_post_list_tpl', $list, $post);
-
-/**
-*@since 2019.04.27 多重筛选，边栏，默认没有边栏内容(返回html数据)
-*/
-$sidebar = apply_filters('_wnd_posts_filter_sidebar', '', $args);
-
-/**
- *@since 2019.07.22
- *多重筛选筛选选项
- *例如可在筛选选项下新增广告，通知等等
- */
-$filter_html = apply_filters('_wnd_posts_filter_tabs', $tabs, $args);
-```
 
 ## 文件上传
 ```php
@@ -281,7 +258,7 @@ do_action('wnd_order_completed', $order_id);
 
 ## 手机验证表单：
 	phone
-	v_code
+	auth_code
 
 # 充值、消费(自定义文章类型)
 金额：post_content

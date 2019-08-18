@@ -59,7 +59,7 @@ function wnd_send_countdown() {
 		wait--;
 		send_countdown = setTimeout(wnd_send_countdown, 1000);
 	} else {
-		$(".send-code").text("获取验证码").attr("disabled", false).fadeTo("slow", 1);
+		$(".send-code").text("获取验证码").prop("disabled", false).fadeTo("slow", 1);
 		wait = 90;
 	}
 }
@@ -147,7 +147,6 @@ jQuery(document).ready(function($) {
 	$("body").off("click").on("click", ".modal-background,.modal-close", function() {
 		wnd_reset_modal();
 	});
-
 });
 
 // 点击触发，点击A 元素 触发 B元素点击事件 用于部分UI优化操作
@@ -194,10 +193,9 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 */
 // ajax 从后端请求内容，并以弹窗形式展现
 function wnd_ajax_modal(template, param = 0) {
-
 	$.ajax({
-		type: "POST",
-		url: wnd.api_url,
+		type: "GET",
+		url: wnd.root_url + wnd.rest_api,
 		data: {
 			"action": template,
 			"param": param,
@@ -229,10 +227,9 @@ function wnd_ajax_modal(template, param = 0) {
  *原理同 wnd_ajax_modal()，区别为，响应方式为嵌入
  **/
 function wnd_ajax_embed(container, template, param = 0) {
-
 	$.ajax({
-		type: "POST",
-		url: wnd.api_url,
+		type: "GET",
+		url: wnd.root_url + wnd.rest_api,
 		data: {
 			"action": template,
 			"param": param,
@@ -259,20 +256,17 @@ function wnd_ajax_embed(container, template, param = 0) {
 			wnd_alert_msg("系统错误！");
 		}
 	});
-
 }
 
 //############################### 根据表单id自动提交表单 并根据返回代码执行对应操作
 function wnd_ajax_submit(form_id) {
-
 	// 提交按钮
 	var submit_button = $("#" + form_id + " [type='submit']");
 
 	// 带有required属性的字段不能为空
 	var input_value = true;
 	$("#" + form_id + " input").each(function() {
-		var required = $(this).attr("required");
-		if (required == "required") {
+		if ($(this).prop("required")) {
 			if ($(this).val() == "") {
 				input_value = false;
 				$(this).addClass("is-danger");
@@ -290,9 +284,8 @@ function wnd_ajax_submit(form_id) {
 	var option_value = true;
 	$("#" + form_id + " select option:selected").each(function() {
 		// 查看当前下拉option的父元素select是否具有required属性
-		var required = $(this).parent().attr("required");
 		option_value = $(this).val();
-		if (required == "required" && option_value == "-1") {
+		if ($(this).parent().prop("required") && option_value == "-1") {
 			option_value = false;
 			$("#" + form_id + " select").addClass("is-danger");
 			return false; //此处为退出each循环，而非阻止提交
@@ -302,8 +295,7 @@ function wnd_ajax_submit(form_id) {
 	// 文本框
 	var textarea_value = true;
 	$("#" + form_id + " textarea").each(function() {
-		var required = $(this).attr("required");
-		if (required == "required") {
+		if ($(this).prop("required")) {
 			if ($(this).val() == "") {
 				textarea_value = false;
 				$(this).addClass("is-danger");
@@ -335,7 +327,7 @@ function wnd_ajax_submit(form_id) {
 	var form_data = new FormData($("#" + form_id).get(0));
 
 	$.ajax({
-		url: wnd.api_url,
+		url: wnd.root_url + wnd.rest_api,
 		dataType: "json",
 		cache: false,
 		contentType: false,
@@ -351,10 +343,9 @@ function wnd_ajax_submit(form_id) {
 
 		// 返回结果
 		success: function(response) {
-
 			submit_button.removeClass("is-loading");
 			if (response.status != 2 && response.status != 0) {
-				submit_button.attr("disabled", "disabled");
+				submit_button.prop("disabled", true);
 			}
 			var submit_text = response.msg.length <= 10 ? response.msg : (response.status > 0 ? "提交成功" : "提交失败");
 			submit_button.text(submit_text);
@@ -377,7 +368,7 @@ function wnd_ajax_submit(form_id) {
 					// 跳转类
 				case 3:
 					wnd_ajax_msg("请稍后……", style, "#" + form_id);
-					$(window.location).attr("href", response.data.redirect_to);
+					$(window.location).prop("href", response.data.redirect_to);
 					break;
 
 					// 刷新当前页面
@@ -394,7 +385,7 @@ function wnd_ajax_submit(form_id) {
 					// 下载类
 				case 6:
 					wnd_ajax_msg("下载中……", style, "#" + form_id, 5);
-					$(window.location).attr("href", response.data.redirect_to);
+					$(window.location).prop("href", response.data.redirect_to);
 					break;
 
 					//默认展示提示信息
@@ -402,7 +393,6 @@ function wnd_ajax_submit(form_id) {
 					wnd_ajax_msg(response.msg, style, "#" + form_id);
 					break;
 			}
-
 		},
 
 		// 提交错误
@@ -410,17 +400,15 @@ function wnd_ajax_submit(form_id) {
 			wnd_ajax_msg("系统错误！", "is-danger", "#" + form_id);
 			submit_button.removeClass("is-loading");
 			submit_button.text("系统错误");
-			submit_button.attr("disabled", "disabled");
+			submit_button.prop("disabled", true);
 		},
 	});
-
 }
 
 /**
  * 流量统计
  */
 function wnd_ajax_update_views(post_id, interval = 3600) {
-
 	var timestamp = Date.parse(new Date()) / 1000;
 	var wnd_views = localStorage.getItem("wnd_views") ? JSON.parse(localStorage.getItem("wnd_views")) : [];
 	var max_length = 10;
@@ -429,7 +417,6 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 	// 数据处理
 	for (var i = 0; i < wnd_views.length; i++) {
 		if (wnd_views[i].post_id == post_id) {
-
 			// 存在记录中：且时间过期
 			if (wnd_views[i].timestamp < timestamp - interval) {
 				wnd_views[i].timestamp = timestamp;
@@ -437,7 +424,6 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 			} else {
 				var is_new = false;
 			}
-
 			break;
 		}
 	}
@@ -459,9 +445,9 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 	// 更新服务器数据
 	if (is_new) {
 		$.ajax({
-			type: "POST",
+			type: "GET",
 			datatype: "json",
-			url: wnd.api_url,
+			url: wnd.root_url + wnd.rest_api,
 			data: {
 				"param": post_id,
 				"useragent": navigator.userAgent,
@@ -507,37 +493,28 @@ jQuery(document).ready(function($) {
 
 		// 获取文件，支持多文件上传
 		for (var i = 0; i < $(this).get(0).files.length; ++i) {
-			form_data.append("wnd_file[" + i + "]", $(this).prop("files")[i]);
+			form_data.set("wnd_file[" + i + "]", $(this).prop("files")[i]);
 		}
 
 		// 获取属性
+		for (key in $(this).data()) {
+			form_data.set(key, $(this).data(key));
+		}
+
+		// 需要前端判断处理的变量
 		var meta_key = $(this).data("meta_key");
-		var post_parent = $(this).data("post_parent");
-		var _ajax_nonce = $(this).data("upload_nonce");
-		var _meta_key_nonce = $(this).data("meta_key_nonce");
-		var save_width = $(this).data("save_width");
-		var save_height = $(this).data("save_height");
 		var is_image = $(this).data("is_image");
+		var thumbnail_width = $(this).data("thumbnail_width");
+		var thumbnail_height = $(this).data("thumbnail_height");
 
-		// 缩略图尺寸
-		var thumbnail_width = $(this).data("thumbnail-width");
-		var thumbnail_height = $(this).data("thumbnail-height");
-
-		// 组合表单属性数据
-		form_data.append("meta_key", meta_key);
-		form_data.append("post_parent", post_parent);
-		form_data.append("_ajax_nonce", _ajax_nonce);
-		form_data.append("_meta_key_nonce", _meta_key_nonce);
-		form_data.append("save_width", save_width);
-		form_data.append("save_height", save_height);
-		form_data.append("thumbnail_height", thumbnail_height);
-		form_data.append("thumbnail_width", thumbnail_width);
-		form_data.append("action", "wnd_ajax_upload_file");
+		// ajax api请求函数及其nonce
+		form_data.set("_ajax_nonce", $(this).data("upload_nonce"));
+		form_data.set("action", "wnd_ajax_upload_file");
 
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
 		$.ajax({
-			url: wnd.api_url,
+			url: wnd.root_url + wnd.rest_api,
 			dataType: "json",
 			cache: false,
 			contentType: false,
@@ -571,7 +548,6 @@ jQuery(document).ready(function($) {
 
 					// 上传成功
 					wnd_ajax_msg("上传成功！", "is-success", "#" + id);
-
 
 					// 相册
 					if (meta_key == "gallery") {
@@ -622,19 +598,17 @@ jQuery(document).ready(function($) {
 							_this.parents("form").find("input[name='_post_menu_order']").val(response[i].data.post.menu_order);
 						}
 
-						/** 
+						/**
 						 *上传后，若再次选择文件，则将自动生成新的attachment记录，当前表单信息也将更改为最新上传的附件
 						 *因此上传后因禁用input，避免误操作，如需更换文件，应该先删除当前文件
 						 */
-						_this.attr("disabled", true);
+						_this.prop("disabled", true);
 						wnd_ajax_msg("上传成功，如需更改，请删除后再重新选择文件！", "is-success", "#" + id);
 
 						// 上传后，自动提交保存媒体信息
 						wnd_ajax_submit(_this.parents("form").attr("id"));
-
 					}
 				}
-
 			},
 
 			// 错误
@@ -642,12 +616,12 @@ jQuery(document).ready(function($) {
 				wnd_ajax_msg("系统错误！", "is-danger", "#" + id);
 			}
 		});
-
 	});
 
-	//  ################### 删除文件
+	/**
+	 *@since 2019.1.15 ajax 文件删除
+	 */
 	$("body").on("click", ".upload-field .delete", function() {
-
 		if (!confirm("确定删除？")) {
 			return false;
 		}
@@ -666,24 +640,24 @@ jQuery(document).ready(function($) {
 		var form_data = new FormData();
 
 		// 获取属性
-		var meta_key = $("#" + id + " [type='file']").data("meta_key");
-		var post_parent = $("#" + id + " [type='file']").data("post_parent");
-		var _ajax_nonce = $("#" + id + " [type='file']").data("delete_nonce");
-		var is_image = $("#" + id + " [type='file']").data("is_image");
+		form_data.set("file_id", file_id);
+		file_data = $("#" + id + " [type='file']").data();
+		for (key in file_data) {
+			form_data.set(key, file_data[key]);
+		}
 
+		// 需要前端判断处理的变量
+		var meta_key = file_data["meta_key"];
+		var is_image = file_data["is_image"];
 		// 默认图
-		var thumbnail = $("#" + id + " [type='file']").data("thumbnail");
+		var thumbnail = file_data["thumbnail"];
 
-		// 组合表单数据
-		form_data.append("meta_key", meta_key);
-		form_data.append("post_parent", post_parent);
-		form_data.append("file_id", file_id);
-		form_data.append("_ajax_nonce", _ajax_nonce);
-		// ajax请求配置
-		form_data.append("action", "wnd_ajax_delete_file");
+		// ajax api请求函数及其nonce
+		form_data.set("_ajax_nonce", file_data["delete_nonce"]);
+		form_data.set("action", "wnd_ajax_delete_file");
 
 		$.ajax({
-			url: wnd.api_url,
+			url: wnd.root_url + wnd.rest_api,
 			dataType: "json",
 			cache: false,
 			contentType: false,
@@ -697,19 +671,17 @@ jQuery(document).ready(function($) {
 			},
 			// 上传成功
 			success: function(response) {
-
 				if (response.status === 0) {
 					wnd_ajax_msg(response.msg, "is-danger", "#" + id);
 					return false;
 				}
-
 				wnd_ajax_msg("已删除！", "is-success", "#" + id);
 
 				/**
 				 *@since 2019.07.18
 				 *如果上传后，设置了禁用，当删除文件后恢复文件上传
 				 **/
-				$("#" + id + " [type='file']").attr("disabled", false);
+				$("#" + id + " [type='file']").prop("disabled", false);
 
 				/**
 				 *@since 2019.07.16
@@ -726,7 +698,6 @@ jQuery(document).ready(function($) {
 
 					// 单张图片
 				} else if (is_image == 1) {
-
 					$("#" + id + " .thumbnail").prop("src", thumbnail);
 					// 清空删除按钮数据绑定
 					$("#" + id + " .delete").data("file_id", 0)
@@ -743,14 +714,12 @@ jQuery(document).ready(function($) {
 				wnd_ajax_msg("系统错误！", "is-danger", "#" + id);
 			}
 		});
-
 	});
 
 	/**
 	 *@since 2019.02.09 发送手机或邮箱验证码
 	 */
 	$("body").on("click", ".send-code", function() {
-
 		// 清除定时器
 		clearTimeout(send_countdown);
 		wait = 90;
@@ -758,14 +727,13 @@ jQuery(document).ready(function($) {
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
 		var form_id = _this.parents("form").attr("id");
-		var verify_type = $(this).data("verify-type");
-		var send_type = $(this).data("send-type");
-		var template = $(this).data("template");
-		var nonce = $(this).data("nonce");
 
-		var phone = $("#" + form_id + " input[name='phone']").val();
-		var _user_user_email = $("#" + form_id + " input[name='_user_user_email']").val();
-		if (_user_user_email == "" || phone == "") {
+		var data = $(this).data();
+		data._ajax_nonce = $(this).data("nonce");
+		data.action = "wnd_ajax_send_code";
+		data.phone = $("#" + form_id + " input[name='phone']").val();
+		data.email = $("#" + form_id + " input[name='_user_user_email']").val();
+		if (data.email == "" || data.phone == "") {
 			wnd_ajax_msg("不知道发送到给谁……", "is-danger", "#" + form_id);
 			return false;
 		}
@@ -773,27 +741,18 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			type: "post",
 			dataType: "json",
-			url: wnd.api_url,
-			data: {
-				action: "wnd_ajax_send_code",
-				email: _user_user_email,
-				phone: phone,
-				verify_type: verify_type,
-				send_type: send_type,
-				template: template,
-				_ajax_nonce: nonce
-			},
+			url: wnd.root_url + wnd.rest_api,
+			data: data,
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
 				_this.addClass("is-loading");
 			},
 			success: function(response) {
-
 				if (response.status <= 0) {
 					var style = "is-danger";
 				} else {
 					var style = "is-success";
-					_this.attr("disabled", true);
+					_this.prop("disabled", true);
 					_this.text("已发送");
 					wnd_send_countdown();
 				}
@@ -806,7 +765,6 @@ jQuery(document).ready(function($) {
 				_this.removeClass("is-loading");
 			}
 		});
-
 	});
 
 	/**
@@ -841,7 +799,7 @@ jQuery(document).ready(function($) {
 		var _this = $(this);
 		$.ajax({
 			type: "POST",
-			url: wnd.api_url,
+			url: wnd.root_url + wnd.rest_api,
 			data: {
 				"action": action,
 				"param": $(this).data("param"),
@@ -856,7 +814,6 @@ jQuery(document).ready(function($) {
 
 				// 正向操作成功
 				if (response.status != 0 && action == _this.data("action")) {
-
 					// 设置了逆向操作
 					if (_this.data("cancel")) {
 						_this.data("is-cancel", 1);
@@ -869,10 +826,8 @@ jQuery(document).ready(function($) {
 					_this.data("is-cancel", 0);
 				}
 
-
 				// 根据后端响应处理
 				switch (response.status) {
-
 					// 常规类，展示后端提示信息
 					case 1:
 						_this.html(response.data);
@@ -891,7 +846,7 @@ jQuery(document).ready(function($) {
 						// 跳转类
 					case 3:
 						wnd_alert_msg("请稍后……");
-						$(window.location).attr("href", response.data.redirect_to);
+						$(window.location).prop("href", response.data.redirect_to);
 						break;
 
 						// 刷新当前页面
@@ -908,7 +863,6 @@ jQuery(document).ready(function($) {
 						}
 						break;
 				}
-
 			},
 			// 错误
 			error: function() {
@@ -918,18 +872,129 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
-	 *@since 2019.02.09 表单改变时，移除警示状态
+	 *@since 2019.07.31 Wnd_Filter筛选
+	 *点击链接，获取对应data值，组合参数并发送ajax请求
 	 */
-	// $("body").on("input", "input,textarea", function() {
-	// 	$(this).removeClass("is-danger");
-	// });
+	var filter_param = {};
+	$("body").on("click", ".ajax-filter a", function() {
+
+		// 提取data，并合并入参数
+		var filter_parent = $(this).parents(".ajax-filter");
+		var html_data = filter_parent.data();
+		filter_param = Object.assign(filter_param, html_data);
+
+		// 非分页情况，删除page请求参数
+		var is_pagination = $(this).parents(".pagination-list").length > 0 ? true : false;
+		if (!is_pagination) {
+			delete filter_param.page;
+		}
+
+		var key = $(this).data("key");
+		var value = $(this).data("value");
+		filter_param[key] = value;
+
+		// 值为空删除
+		if (!value && typeof filter_param[key] != "undefined") {
+			delete filter_param[key];
+		}
+
+		// type 切换需要特殊处理，切换时，应该清空所有其余参数
+		if ("type" == key) {
+
+			/**
+			 *filter_param = html_data;
+			 *JavaScript 中，如果直接对数组、对象赋值，会导致关联的双方都同步改变
+			 *因此需要做JSON.parse(JSON.stringify(html_data)) 处理
+			 */
+			filter_param = JSON.parse(JSON.stringify(html_data));
+			filter_param['type'] = $(this).data("value");
+
+			/**
+			 *清空参数的同时同步清空：is-active
+			 **/
+			filter_parent.find("ul.tab li").removeClass("is-active");
+			filter_parent.find("ul.tab li:first-child").addClass("is-active");
+
+		} else {
+			filter_param['type'] = $(".post-type-tabs .is-active a").data("value");
+		}
+
+		// 主分类切换时删除标签查询
+		if ("_term_category" == key) {
+			var tag_taxonomy_key = "_term_post_tag";
+			delete filter_param[tag_taxonomy_key];
+		} else if (key.indexOf("_cat") > 0) {
+			var tag_taxonomy_key = key.replace("_cat", "_tag");
+			delete filter_param[tag_taxonomy_key];
+		}
+
+		var _this = $(this);
+		$.ajax({
+			url: wnd.root_url + wnd.filter_api,
+			type: "GET",
+			data: filter_param,
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+			},
+			success: function(response) {
+				// 切换post type时，隐藏所有taxonomy 再根据当前post type支持的taxonomy选择性显示，以达到ajax切换的效果
+				if ("type" == key) {
+					$(".taxonomy-tabs").addClass("is-hidden");
+					for (var i = 0; i < response.data.taxonomies.length; i++) {
+						$("." + response.data.taxonomies[i] + "-tabs").removeClass("is-hidden");
+					}
+				}
+
+				// 嵌入查询结果
+				$(filter_param.wnd_ajax_container).html(response.data.posts + response.data.pagination);
+
+				/**
+				 *@since 2019.08.10
+				 *主分类：当前tabs设置了主分类筛选项，且切换type后当前type主分类不存在时，插入当前type主分类
+				 *动态插入主分类的情况，通常用在用于一些封装的用户面板：如果用户内容管理面板
+				 *常规filter应该通过 Wnd_Filter->add_taxonomy_filter() 方法静态输出
+				 */
+				var category_tabs = $(filter_parent).children(".main-category-tabs");
+				if (
+					category_tabs &&
+					response.data.category_tabs &&
+					$(filter_parent).find("." + response.data.category_taxonomy + "-tabs").length == 0
+				) {
+					category_tabs.last().after(response.data.category_tabs);
+					category_tabs.remove();
+				}
+
+				// 分类关联标签tabs
+				var related_tags_tabs = $(filter_parent).children(".related-tags");
+				if (related_tags_tabs && response.data.related_tags_tabs) {
+					related_tags_tabs.after(response.data.related_tags_tabs);
+					related_tags_tabs.remove();
+				} else {
+					related_tags_tabs.addClass("is-hidden");
+				}
+
+				// 子类筛选tabs
+				$(filter_parent).children(".sub-tabs").remove();
+				for (taxonomy in response.data.sub_taxonomy_tabs) {
+					$(filter_parent).children("." + taxonomy + "-tabs:last").after(response.data.sub_taxonomy_tabs[taxonomy]);
+				}
+			},
+			error: function() {
+				wnd_alert_msg("请求失败");
+				_this.parent("li").removeClass("is-active");
+			}
+		});
+
+		// 阻止链接跳转
+		return false;
+	});
 
 	/**
 	 *@since 2019.03.28 表单改变时，移除提交按钮禁止状态,恢复提交文字
 	 */
 	$("body").on("change", "form", function() {
 		var submit_button = $(this).find("[type='submit']");
-		submit_button.attr("disabled", false);
+		submit_button.prop("disabled", false);
 		submit_button.text(submit_button.data("text"));
 		// $(this).find(".ajax-message").empty();
 	});
@@ -972,20 +1037,9 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
-	 *@since 2019.04.01 ajax翻页后，滑动到顶部
-	 */
-	$("body").on("click", ".pagination-link", function() {
-		$(this).parents("nav").parent().get(0).scrollIntoView({
-			// $("body").get(0).scrollIntoView({
-			behavior: "smooth"
-		});
-	});
-
-	/**
 	 *@since 2019.05.07 相册放大
 	 */
 	$("body").on("click", ".gallery img", function() {
-
 		var images = $(this).parents(".gallery").find("img");
 
 		/**
@@ -994,5 +1048,4 @@ jQuery(document).ready(function($) {
 		var element = '<img src="' + $(this).data("url") + '" />';
 		wnd_alert_modal(element, true);
 	});
-
 });

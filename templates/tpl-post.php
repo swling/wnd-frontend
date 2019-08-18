@@ -15,7 +15,6 @@ if (!defined('ABSPATH')) {
  *@since 2019.01.31 发布/编辑文章通用模板
  */
 function _wnd_post_form($args = array()) {
-
 	$defaults = array(
 		'post_id' => 0,
 		'post_type' => 'post',
@@ -50,10 +49,8 @@ function _wnd_post_form($args = array()) {
 	$cat_taxonomies = array();
 	$tag_taxonomies = array();
 	$taxonomies = get_object_taxonomies($post_type, $output = 'object');
-
 	if ($taxonomies) {
 		foreach ($taxonomies as $taxonomy) {
-
 			// 私有taxonomy 排除
 			if (!$taxonomy->public) {
 				continue;
@@ -72,9 +69,7 @@ function _wnd_post_form($args = array()) {
 	 *@since 2019.03.11 表单类
 	 */
 	$form = new Wnd_Post_Form($post_type, $post_id);
-
 	$form->set_form_title($args['form_title']);
-
 	$form->add_post_title();
 
 	if ($args['with_excerpt']) {
@@ -142,16 +137,12 @@ function _wnd_post_form($args = array()) {
 	);
 
 	$form->add_hidden('_post_post_parent', $post_parent);
-
 	$form->set_submit_button('保存');
-
 	// 以当前函数名设置filter hook
 	$form->set_filter(__FUNCTION__ . '_' . $post_type);
-
 	$form->build();
 
 	return $form->html;
-
 }
 
 /**
@@ -159,7 +150,6 @@ function _wnd_post_form($args = array()) {
  *ajax请求获取文章信息
  */
 function _wnd_post_info($args) {
-
 	$defaults = array('post_id' => 0, 'color' => 'is-primay');
 	$args = wp_parse_args($args, $defaults);
 
@@ -192,7 +182,6 @@ function _wnd_post_info($args) {
  *快速编辑文章状态表单
  */
 function _wnd_post_status_form($post_id) {
-
 	$post = get_post($post_id);
 	if (!$post) {
 		return 'ID无效！';
@@ -243,7 +232,6 @@ function _wnd_post_status_form($post_id) {
 
 	// 管理员权限
 	if (wnd_is_manager()) {
-
 		// 公开的post type可设置置顶
 		if (in_array($post->post_type, get_post_types(array('public' => true)))) {
 			$form->add_html('<div class="field is-grouped is-grouped-centered">');
@@ -279,16 +267,13 @@ function _wnd_post_status_form($post_id) {
 	$form->set_submit_button('提交');
 	$form->build();
 	return $form->html;
-
 }
 
 /**
  *@since 2019.02.27 获取WndWP文章缩略图
  */
 function _wnd_post_thumbnail($post_id, $width, $height) {
-
 	$post_id = $post_id ?: get_the_ID();
-
 	if ($post_id) {
 		$image_id = wnd_get_post_meta($post_id, '_thumbnail_id');
 	}
@@ -331,7 +316,6 @@ function _wnd_post_thumbnail($post_id, $width, $height) {
  *
  */
 function _wnd_attachment_form($args) {
-
 	$defaults = array(
 		'attachment_id' => 0,
 		'post_parent' => 0,
@@ -397,5 +381,4 @@ function _wnd_attachment_form($args) {
 	$attachment_post_form->build();
 
 	return $attachment_post_form->html;
-
 }

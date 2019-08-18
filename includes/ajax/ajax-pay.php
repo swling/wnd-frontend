@@ -9,10 +9,8 @@ if (!defined('ABSPATH')) {
  *@param $_POST['post_id']
  */
 function wnd_ajax_create_order() {
-
 	$post_id = (int) $_POST['post_id'];
 	$user_id = get_current_user_id();
-
 	if (!$post_id) {
 		return array('status' => 0, 'msg' => 'ID无效！');
 	}
@@ -37,23 +35,17 @@ function wnd_ajax_create_order() {
 	}
 
 	// 写入消费数据
-	$object_id = wnd_insert_order(
-		array(
-			'user_id' => $user_id,
-			'money' => $money,
-			'object_id' => $post_id,
-			'status' => 'success',
-			'title' => get_the_title($post_id) . '(余额支付)',
-		)
-	);
-
-	// 支付成功
-	if ($object_id) {
-		return array('status' => 1, 'msg' => '支付成功！');
-	} else {
-		return array('status' => 0, 'msg' => '支付失败！');
+	try {
+		$order = new Wnd_Order();
+		$order->set_object_id($post_id);
+		$order->set_subject(get_the_title($post_id) . '(余额支付)');
+		$order->create($is_success = true);
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
 
+	// 支付成功
+	return array('status' => 1, 'msg' => '支付成功！');
 }
 
 /**
@@ -61,7 +53,6 @@ function wnd_ajax_create_order() {
  *@param $_POST['post_id']
  */
 function wnd_ajax_pay_for_reading() {
-
 	$post_id = (int) $_POST['post_id'];
 	$post = get_post($post_id);
 	$user_id = get_current_user_id();
@@ -91,15 +82,15 @@ function wnd_ajax_pay_for_reading() {
 	// 文章作者新增资金
 	$commission = wnd_get_post_commission($post_id);
 	if ($commission) {
-		wnd_insert_recharge(
-			array(
-				'user_id' => $post->post_author,
-				'money' => $commission,
-				'status' => 'success',
-				'title' => '《' . $post->post_title . '》收益',
-				'object_id' => $post_id,
-			)
-		);
+		try {
+			$recharge = new Wnd_Recharge();
+			$recharge->set_object_id($post->ID); // 设置充值来源
+			$recharge->set_user_id($post->post_author);
+			$recharge->set_total_amount($commission);
+			$recharge->create(true); // 直接写入余额
+		} catch (Exception $e) {
+			return array('status' => 0, 'msg' => $e->getMessage());
+		}
 	}
 
 	return array('status' => 1, 'msg' => $paid_content);
@@ -160,17 +151,16 @@ function wnd_ajax_pay_for_download() {
 	// 文章作者新增资金
 	$commission = wnd_get_post_commission($post_id);
 	if ($commission) {
-		wnd_insert_recharge(
-			array(
-				'user_id' => $post->post_author,
-				'money' => $commission,
-				'status' => 'success',
-				'title' => '《' . $post->post_title . '》收益',
-				'object_id' => $post_id,
-			)
-		);
+		try {
+			$recharge = new Wnd_Recharge();
+			$recharge->set_object_id($post->ID); // 设置充值来源
+			$recharge->set_user_id($post->post_author);
+			$recharge->set_total_amount($commission);
+			$recharge->create(true); // 直接写入余额
+		} catch (Exception $e) {
+			return array('status' => 0, 'msg' => $e->getMessage());
+		}
 	}
 
 	return array('status' => 6, 'msg' => 'ok', 'data' => array('redirect_to' => $download_url));
-
 }

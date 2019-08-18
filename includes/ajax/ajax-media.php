@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
  *@param $_POST["thumbnail_width"]
  *@param $_POST["thumbnail_height"]
  *@param $_POST['meta_key']
- *@param $_POST['_meta_key_nonce']
+ *@param $_POST['meta_key_nonce']
  *@param $_POST['post_parent']
  *
  *@return $return_array array 二维数组
@@ -57,7 +57,7 @@ function wnd_ajax_upload_file() {
 		return array('status' => 0, 'msg' => '错误：meta_key 与 post_parent 同时为空！');
 	}
 
-	if (!wnd_verify_nonce($_POST['_meta_key_nonce'], $meta_key)) {
+	if (!wnd_verify_nonce($_POST['meta_key_nonce'], $meta_key)) {
 		return array('status' => 0, 'msg' => '错误：未经允许的meta_key！');
 	}
 
@@ -157,7 +157,6 @@ function wnd_ajax_upload_file() {
 			do_action('wnd_upload_file', $file_id, $post_parent, $meta_key);
 			break;
 		}
-
 	}
 
 	/**
@@ -169,7 +168,6 @@ function wnd_ajax_upload_file() {
 
 	// 返回上传信息二维数组合集
 	return $return_array;
-
 }
 
 /**
@@ -180,7 +178,6 @@ function wnd_ajax_upload_file() {
  *@param $_POST["file_id"];
  */
 function wnd_ajax_delete_file() {
-
 	$meta_key = $_POST['meta_key'];
 	$post_parent = $_POST["post_parent"];
 	$file_id = $_POST["file_id"];
@@ -195,17 +192,13 @@ function wnd_ajax_delete_file() {
 
 	// 执行删除
 	if (wp_delete_attachment($file_id, true)) {
-
 		do_action('wnd_delete_file', $file_id, $post_parent, $meta_key);
 		return array('status' => 1, 'msg' => $file_id);
 
 		//删除失败
 	} else {
-
 		return array('status' => 0, 'msg' => '权限错误！');
-
 	}
-
 }
 
 /**
@@ -213,7 +206,6 @@ function wnd_ajax_delete_file() {
  *@param $_REQUEST['post_id']
  */
 function wnd_ajax_paid_download() {
-
 	$post_id = (int) $_REQUEST['post_id'];
 	$price = get_post_meta($post_id, 'price', 1);
 	$file_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
@@ -260,5 +252,4 @@ function wnd_ajax_paid_download() {
 
 	// 校验失败
 	wp_die('下载权限校验失败！', get_option('blogname'));
-
 }

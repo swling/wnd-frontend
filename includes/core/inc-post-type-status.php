@@ -11,7 +11,11 @@ if (!defined('ABSPATH')) {
 function wnd_action_register_post_type() {
 
 	/*充值记录*/
+	$labels = array(
+		'name' => '充值记录',
+	);
 	$args = array(
+		'labels' => $labels,
 		'description' => '充值',
 		'public' => false,
 		'has_archive' => false,
@@ -26,7 +30,11 @@ function wnd_action_register_post_type() {
 	register_post_type('recharge', $args);
 
 	/*订单记录*/
+	$labels = array(
+		'name' => '订单记录',
+	);
 	$args = array(
+		'labels' => $labels,
 		'description' => '订单',
 		'public' => false,
 		'has_archive' => false,
@@ -51,7 +59,11 @@ function wnd_action_register_post_type() {
 	register_post_type('mail', $args);
 
 	/*整站充值统计*/
+	$labels = array(
+		'name' => '充值统计',
+	);
 	$args = array(
+		'labels' => $labels,
 		'description' => '充值统计',
 		'public' => false,
 		'has_archive' => false,
@@ -60,7 +72,11 @@ function wnd_action_register_post_type() {
 	register_post_type('stats-re', $args);
 
 	/*整站消费统计*/
+	$labels = array(
+		'name' => '消费统计',
+	);
 	$args = array(
+		'labels' => $labels,
 		'description' => '消费统计',
 		'public' => false,
 		'has_archive' => false,
@@ -100,6 +116,5 @@ function wnd_action_register_post_status() {
 		'show_in_admin_all_list' => false,
 		'show_in_admin_status_list' => false,
 	));
-	
 }
 add_action('init', 'wnd_action_register_post_status');

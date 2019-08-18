@@ -11,8 +11,7 @@ class Wnd_Form_Data {
 	public $form_data;
 
 	public function __construct($verify_form_nonce = true) {
-
-		Wnd_Form_Data::$enable_form_verify = wnd_get_option('wnd', 'wnd_enable_form_verify');
+		self::$enable_form_verify = wnd_get_option('wnd', 'wnd_enable_form_verify');
 
 		/**
 		 *@since 2019.05.10
@@ -20,7 +19,7 @@ class Wnd_Form_Data {
 		 *因而校验表单操作应该在filter应用之前执行
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
-		if ($verify_form_nonce and Wnd_Form_Data::$enable_form_verify and !$this->verify_form_nonce()) {
+		if ($verify_form_nonce and self::$enable_form_verify and !$this->verify_form_nonce()) {
 			throw new Exception('表单已被篡改！');
 		}
 
@@ -33,7 +32,6 @@ class Wnd_Form_Data {
 	 *@see Wnd_WP_Form -> build_form_nonce()
 	 */
 	protected function verify_form_nonce() {
-
 		if (!isset($_POST['_wnd_form_nonce'])) {
 			return false;
 		}
@@ -49,7 +47,6 @@ class Wnd_Form_Data {
 
 	// 0、获取WordPress user数据数组
 	public function get_user_array() {
-
 		$user_array = array();
 
 		foreach ($this->form_data as $key => $value) {
@@ -66,7 +63,6 @@ class Wnd_Form_Data {
 
 	// 1、获取WordPress原生use meta数据数组
 	public function get_wp_user_meta_array() {
-
 		$wp_user_meta_array = array();
 
 		foreach ($this->form_data as $key => $value) {
@@ -83,7 +79,6 @@ class Wnd_Form_Data {
 
 	// 2、获取自定义WndWP user meta数据数组
 	public function get_user_meta_array() {
-
 		$user_meta_array = array();
 
 		foreach ($this->form_data as $key => $value) {
@@ -100,7 +95,6 @@ class Wnd_Form_Data {
 
 	// 3、获取WordPress原生post meta数据数组
 	public function get_post_array() {
-
 		$post_array = array();
 
 		foreach ($this->form_data as $key => $value) {
@@ -117,7 +111,6 @@ class Wnd_Form_Data {
 
 	// 4、获取WordPress原生post meta数据数组
 	public function get_wp_post_meta_array() {
-
 		$wp_post_meta_array = array();
 
 		foreach ($this->form_data as $key => $value) {
@@ -134,7 +127,6 @@ class Wnd_Form_Data {
 
 	// 5、获取WndWP post meta数据数组
 	public function get_post_meta_array() {
-
 		$post_meta_array = array();
 
 		foreach ($this->form_data as $key => $value) {
@@ -151,7 +143,6 @@ class Wnd_Form_Data {
 
 	// 6、获取WordPress分类：term数组
 	public function get_term_array() {
-
 		$term_array = array();
 
 		foreach ($this->form_data as $key => $value) {
@@ -175,5 +166,4 @@ class Wnd_Form_Data {
 	public function get_form_data() {
 		return $this->form_data;
 	}
-
 }

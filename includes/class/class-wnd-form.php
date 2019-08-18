@@ -10,28 +10,27 @@
  */
 class Wnd_Form {
 
-	public $id;
+	protected $id;
 
-	public $form_attr;
+	protected $form_attr;
 
-	public $form_title = null;
+	protected $form_title = null;
 
-	public $input_values = array();
+	protected $input_values = array();
 
-	public $with_upload;
+	protected $with_upload;
 
-	public $submit_text = 'Submit';
+	protected $submit_text = 'Submit';
 
-	public $submit_class;
+	protected $submit_class;
 
-	public $action;
+	protected $action;
 
-	public $method;
+	protected $method;
 
 	public $html;
 
 	static protected $defaults = array(
-
 		'name' => '',
 		'value' => '',
 		'label' => null,
@@ -49,7 +48,6 @@ class Wnd_Form {
 		'has_icons' => null, //left or right
 		'icon' => null,
 		'addon' => null,
-
 	);
 
 	// 初始化构建
@@ -95,16 +93,14 @@ class Wnd_Form {
 	 */
 	// _text
 	public function add_text($args) {
-
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'text';
 		array_push($this->input_values, $args);
 	}
 
 	// _number
 	public function add_number($args) {
-
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'number';
 		array_push($this->input_values, $args);
 	}
@@ -121,59 +117,48 @@ class Wnd_Form {
 
 	// _textarea
 	public function add_textarea($args) {
-
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'textarea';
 		array_push($this->input_values, $args);
 	}
 
 	// _email
 	public function add_email($args) {
-
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'email';
 		array_push($this->input_values, $args);
-
 	}
 
 	// _password
 	public function add_password($args) {
-
-		$args = array_merge(Wnd_Form::$defaults, $args);
-
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'password';
 		array_push($this->input_values, $args);
 	}
 
 	// _select
 	public function add_select($args) {
-
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'select';
 		array_push($this->input_values, $args);
 	}
 
 	// _radio
 	public function add_radio($args) {
-
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'radio';
 		array_push($this->input_values, $args);
-
 	}
 
 	// _checkbox
 	public function add_checkbox($args) {
-
-		$args = array_merge(Wnd_Form::$defaults, $args);
+		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'checkbox';
 		array_push($this->input_values, $args);
-
 	}
 
 	// Image upload
 	public function add_image_upload($args) {
-
 		$defaults = array(
 			'id' => 'image-upload-' . $this->id,
 			'name' => 'file',
@@ -201,15 +186,14 @@ class Wnd_Form {
 			'delete_button' => $args['delete_button'],
 			'disabled' => $args['disabled'],
 		));
+
 		if (!$this->with_upload) {
 			$this->with_upload = true;
 		}
-
 	}
 
 	// File upload
 	public function add_file_upload($args) {
-
 		$defaults = array(
 			'id' => 'file-upload-' . $this->id,
 			'name' => 'file',
@@ -235,10 +219,10 @@ class Wnd_Form {
 			'delete_button' => $args['delete_button'],
 			'disabled' => $args['disabled'],
 		));
+
 		if (!$this->with_upload) {
 			$this->with_upload = true;
 		}
-
 	}
 
 	/**
@@ -264,7 +248,6 @@ class Wnd_Form {
 
 	protected function build_form_header() {
 		$html = '<form';
-
 		$html .= ' id="form-' . $this->id . '"';
 
 		if (!is_null($this->method)) {
@@ -332,18 +315,17 @@ class Wnd_Form {
 		unset($input_value);
 
 		$this->html .= $html;
-
 		return $html;
 	}
 
-	protected function build_select($input_value) {
+	protected function build_select($input_value, $input_key) {
 		$html = '<div class="field">';
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
 		$html .= '<div class="control">';
-		$html .= '<div' . $this->get_id($input_value) . ' class="select"' . $this->get_class($input_value) . '>';
-		$html .= '<select name="' . $input_value['name'] . '"' . $this->get_attr($input_value) . ' >';
+		$html .= '<div' . $this->get_the_id($input_value) . ' class="select"' . $this->get_class($input_value) . '>';
+		$html .= '<select name="' . $input_value['name'] . '"' . $this->get_the_attr($input_value) . ' >';
 		foreach ($input_value['options'] as $key => $value) {
 			$checked = ($input_value['checked'] == $value) ? ' selected="selected"' : '';
 			$html .= '<option value="' . $value . '"' . $checked . '>' . $key . '</option>';
@@ -355,12 +337,11 @@ class Wnd_Form {
 		return $html;
 	}
 
-	protected function build_radio($input_value) {
-
-		$html = '<div class="field">';
+	protected function build_radio($input_value, $input_key) {
+		$html = '<div' . $this->get_the_id($input_value) . ' class="field">';
 		foreach ($input_value['options'] as $key => $value) {
-			$input_id = md5($key);
-			$html .= '<input type="radio" id="' . $input_id . '" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $value . '"' . $this->get_attr($input_value);
+			$input_id = md5($key . $input_key);
+			$html .= '<input type="radio" id="' . $input_id . '" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $value . '"' . $this->get_the_attr($input_value);
 			$html .= ($input_value['checked'] == $value) ? ' checked="checked" >' : ' >';
 
 			$html .= '<label for="' . $input_id . '" class="radio">' . $key . '</label>';
@@ -368,17 +349,14 @@ class Wnd_Form {
 		$html .= '</div>';
 
 		return $html;
-
 	}
 
-	protected function build_hidden($input_value) {
-
+	protected function build_hidden($input_value, $input_key) {
 		$html = '<input name="' . $input_value['name'] . '" type="hidden" value="' . $this->get_value($input_value) . '" >';
-
 		return $html;
 	}
 
-	protected function build_input($input_value) {
+	protected function build_input($input_value, $input_key) {
 		$html = $input_value['addon'] ? '<div class="field has-addons">' : '<div class="field">';
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
@@ -386,18 +364,15 @@ class Wnd_Form {
 
 		// input icon
 		if ($input_value['has_icons']) {
-
 			$html .= $input_value['addon'] ? '<div class="control is-expanded has-icons-' . $input_value['has_icons'] . '">' : '<div class="control has-icons-' . $input_value['has_icons'] . '">';
-			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_attr($input_value) . '>';
+			$html .= '<input' . $this->get_the_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_the_attr($input_value) . '>';
 			$html .= '<span class="icon is-' . $input_value['has_icons'] . '">' . $input_value['icon'] . '</span>';
 			$html .= '</div>';
 
 		} else {
-
 			$html .= $input_value['addon'] ? '<div class="control is-expanded">' : '<div class="control">';
-			$html .= '<input' . $this->get_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_attr($input_value) . '>';
+			$html .= '<input' . $this->get_the_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_the_attr($input_value) . '>';
 			$html .= '</div>';
-
 		}
 
 		if ($input_value['addon']) {
@@ -408,18 +383,17 @@ class Wnd_Form {
 		return $html;
 	}
 
-	protected function build_checkbox($input_value) {
-
+	protected function build_checkbox($input_value, $input_key) {
+		$id = $input_value['id'] ?: $this->id . '-' . $input_key;
 		$html = '<div class="field">';
-		$html .= '<input' . $this->get_id($input_value) . ' type="checkbox" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_attr($input_value);
+		$html .= '<input id="' . $id . '" type="checkbox" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_the_attr($input_value);
 		$html .= $input_value['checked'] ? ' checked="checked" >' : ' >';
-		$html .= '<label  for="' . $input_value['id'] . '" class="checkbox">' . $input_value['label'] . '</label>';
+		$html .= '<label  for="' . $id . '" class="checkbox">' . $input_value['label'] . '</label>';
 		$html .= '</div>';
 		return $html;
 	}
 
 	protected function build_image_upload($input_value, $input_key) {
-
 		$id = $input_value['id'] . '-' . $input_key;
 
 		$data = ' data-id="' . $id . '"';
@@ -437,7 +411,7 @@ class Wnd_Form {
 		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['height'] . '"></a>';
 		$html .= $input_value['delete_button'] ? '<a class="delete" data-id="' . $id . '" data-file_id="' . $input_value['file_id'] . '"></a>' : '';
 		$html .= '<div class="file">';
-		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . 'accept="image/*"' . $this->get_attr($input_value) . '>';
+		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . 'accept="image/*"' . $this->get_the_attr($input_value) . '>';
 		$html .= '</div>';
 		$html .= '</div>';
 
@@ -455,7 +429,6 @@ class Wnd_Form {
 	}
 
 	protected function build_file_upload($input_value, $input_key) {
-
 		$id = $input_value['id'] . '-' . $input_key;
 
 		$data = ' data-id="' . $id . '"';
@@ -471,7 +444,7 @@ class Wnd_Form {
 		$html .= '<div class="column">';
 		$html .= '<div class="file has-name is-fullwidth">';
 		$html .= '<label class="file-label">';
-		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . $this->get_attr($input_value) . '>';
+		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . $this->get_the_attr($input_value) . '>';
 		$html .= '<span class="file-cta">';
 		$html .= '<span class="file-icon"><i class="fa fa-upload"></i></span>';
 		$html .= '<span class="file-label">' . $input_value['label'] . '</span>';
@@ -492,17 +465,16 @@ class Wnd_Form {
 		return $html;
 	}
 
-	protected function build_html($input_value) {
+	protected function build_html($input_value, $input_key) {
 		return $input_value['value'];
 	}
 
-	protected function build_textarea($input_value) {
-
+	protected function build_textarea($input_value, $input_key) {
 		$html = '<div class="field">';
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
-		$html .= '<textarea' . $this->get_id($input_value) . ' class="textarea' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '"' . $this->get_attr($input_value) . '>' . $this->get_value($input_value) . '</textarea>';
+		$html .= '<textarea' . $this->get_the_id($input_value) . ' class="textarea' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '"' . $this->get_the_attr($input_value) . '>' . $this->get_value($input_value) . '</textarea>';
 		$html .= '</div>';
 		return $html;
 	}
@@ -527,7 +499,7 @@ class Wnd_Form {
 		return $input_value['value'] ?? '';
 	}
 
-	protected function get_id($input_value) {
+	protected function get_the_id($input_value) {
 		if ($input_value['id'] ?? false) {
 			return ' id="' . $input_value['id'] . '"';
 		}
@@ -545,8 +517,7 @@ class Wnd_Form {
 	 *统一封装获取字段attribute
 	 *不含：id、class、value
 	 */
-	protected function get_attr($input_value) {
-
+	protected function get_the_attr($input_value) {
 		$attr = '';
 
 		if ($input_value['readonly'] ?? false) {
@@ -580,7 +551,7 @@ class Wnd_Form {
 	}
 
 	/**
-	 *表单数据获取与设置
+	 *获取表单字段HTML
 	 *@since 2019.04.28
 	 */
 	public function get_input_fields() {
@@ -591,5 +562,4 @@ class Wnd_Form {
 	public function get_input_values() {
 		return $this->input_values;
 	}
-
 }

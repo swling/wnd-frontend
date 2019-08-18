@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
  *批量设置文章 meta 及 term
  */
 function wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $term_array) {
-
 	if (!get_post($post_id)) {
 		return false;
 	}
@@ -43,7 +42,6 @@ function wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $t
 		}
 		unset($taxonomy, $term);
 	}
-
 }
 
 /**
@@ -55,10 +53,7 @@ function wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $t
  *默认：获取当前用户，一天以前编辑过的文章（一天内更新过的文章表示正处于编辑状态）
  */
 function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
-
 	$user_id = get_current_user_id();
-
-	// 未登录
 	if (!$user_id) {
 		return array('status' => 0, 'msg' => '未登录用户！');
 	}
@@ -158,7 +153,6 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
 	} else {
 		return array('status' => 0, 'msg' => $post_id->get_error_message());
 	}
-
 }
 
 /**
@@ -167,11 +161,9 @@ function wnd_get_draft_post($post_type = 'post', $interval_time = 86400) {
  *@return array : post type name数组
  */
 function wnd_get_allowed_post_types() {
-
 	$post_types = get_post_types(array('public' => true), 'names', 'and');
 	// 排除页面/站内信
 	unset($post_types['page'], $post_types['mail']);
-
 	return apply_filters('wnd_allowed_post_types', $post_types);
 }
 
@@ -180,8 +172,7 @@ function wnd_get_allowed_post_types() {
  *标题去重
  *@return int or false
  */
-function wnd_is_title_repeated($title, $exclude_id = 0, $post_type = 'post') {
-
+function wnd_is_title_duplicated($title, $exclude_id = 0, $post_type = 'post') {
 	if (empty($title)) {
 		return false;
 	}
@@ -195,7 +186,6 @@ function wnd_is_title_repeated($title, $exclude_id = 0, $post_type = 'post') {
 	));
 
 	return $results ?: false;
-
 }
 
 /**
@@ -203,7 +193,6 @@ function wnd_is_title_repeated($title, $exclude_id = 0, $post_type = 'post') {
  *@return post object or null
  */
 function wnd_get_post_by_slug($post_name, $post_type = 'post', $post_status = 'publish') {
-
 	global $wpdb;
 	$post_name = urlencode($post_name);
 	$post = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND post_status = %s LIMIT 1", $post_name, $post_type, $post_status));
@@ -211,7 +200,6 @@ function wnd_get_post_by_slug($post_name, $post_type = 'post', $post_status = 'p
 		return $post[0];
 	}
 	return false;
-
 }
 
 /**
@@ -222,7 +210,6 @@ function wnd_get_post_by_slug($post_name, $post_type = 'post', $post_status = 'p
  *@param $post_id
  **/
 function wnd_stick_post($post_id) {
-
 	$post_type = get_post_type($post_id);
 	if (!$post_type) {
 		return;
@@ -248,7 +235,6 @@ function wnd_stick_post($post_id) {
  *@param $post_id
  **/
 function wnd_unstick_post($post_id) {
-
 	$post_type = get_post_type($post_id);
 	if (!$post_type) {
 		return;
@@ -270,7 +256,6 @@ function wnd_unstick_post($post_id) {
  *@return 	array or false 	文章id数组
  **/
 function wnd_get_sticky_posts($post_type) {
-
 	$sticky_posts = wnd_get_option('wnd_sticky_posts', $post_type);
 	return is_array($sticky_posts) ? $sticky_posts : array();
 }

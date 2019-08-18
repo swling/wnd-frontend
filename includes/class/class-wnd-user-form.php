@@ -6,7 +6,7 @@
  */
 class Wnd_User_Form extends Wnd_WP_Form {
 
-	public $user;
+	protected $user;
 
 	// 初始化构建
 	public function __construct() {
@@ -19,7 +19,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	}
 
 	public function add_user_login($placeholder = '用户名、手机、邮箱') {
-		parent::add_text(
+		$this->add_text(
 			array(
 				'name' => '_user_user_login',
 				'value' => '',
@@ -34,7 +34,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	}
 
 	public function add_user_email($placeholder = '邮箱') {
-		parent::add_text(
+		$this->add_text(
 			array(
 				'name' => '_user_user_email',
 				'value' => $this->user->user_email,
@@ -48,7 +48,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	}
 
 	public function add_user_password($placeholder = '密码') {
-		parent::add_password(
+		$this->add_password(
 			array(
 				'name' => '_user_user_pass',
 				'value' => '',
@@ -62,7 +62,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	}
 
 	public function add_user_new_password($placeholder = '新密码') {
-		parent::add_password(
+		$this->add_password(
 			array(
 				'name' => '_user_new_pass',
 				'value' => '',
@@ -76,7 +76,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	}
 
 	public function add_user_new_password_repeat($placeholder = '确认新密码') {
-		parent::add_password(
+		$this->add_password(
 			array(
 				'name' => '_user_new_pass_repeat',
 				'value' => '',
@@ -90,7 +90,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	}
 
 	public function add_user_display_name($placeholder = '名称') {
-		parent::add_text(
+		$this->add_text(
 			array(
 				'name' => '_user_display_name',
 				'value' => $this->user->display_name,
@@ -104,7 +104,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	}
 
 	public function add_user_url($placeholder = '网站链接') {
-		parent::add_text(
+		$this->add_text(
 			array(
 				'name' => '_user_user_url',
 				'value' => $this->user->user_url,
@@ -118,7 +118,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	}
 
 	public function add_user_description($placeholder = '资料简介') {
-		parent::add_textarea(
+		$this->add_textarea(
 			array(
 				'name' => '_wpusermeta_description',
 				'label' => '简介',
@@ -129,9 +129,8 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	}
 
 	public function add_user_avatar($thumbnail_size = 100, $save_size = 200) {
-
 		if (!$this->user->ID) {
-			parent::add_html('<div class="notification">获取用户ID失败，无法上传头像！</div>');
+			$this->add_html('<div class="notification">获取用户ID失败，无法上传头像！</div>');
 			return;
 		}
 
@@ -146,7 +145,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			),
 			'delete_button' => false,
 		);
-		parent::add_image_upload($args);
+		$this->add_image_upload($args);
 	}
 
 	/**
@@ -154,9 +153,8 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_WP_Form
 	 */
 	public function add_user_image_upload($meta_key, $size = array('width' => 200, 'height' => 200), $label = '') {
-
 		if (!$this->user->ID) {
-			parent::add_html('<div class="notification">获取用户ID失败，无法设置图像上传！</div>');
+			$this->add_html('<div class="notification">获取用户ID失败，无法设置图像上传！</div>');
 			return;
 		}
 
@@ -172,17 +170,16 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			),
 			'delete_button' => false,
 		);
-		self::add_image_upload($args);
+		$this->add_image_upload($args);
 	}
 
 	public function add_user_file_upload($meta_key, $label = '文件上传') {
-
 		if (!$this->user->ID) {
-			parent::add_html('<div class="notification">获取用户ID失败，无法设置文件上传！</div>');
+			$this->add_html('<div class="notification">获取用户ID失败，无法设置文件上传！</div>');
 			return;
 		}
 
-		self::add_file_upload(
+		$this->add_file_upload(
 			array(
 				'label' => $label,
 				'data' => array( // some hidden input,maybe useful in ajax upload
@@ -192,5 +189,4 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			)
 		);
 	}
-
 }

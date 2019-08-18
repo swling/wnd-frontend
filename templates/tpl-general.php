@@ -5,7 +5,6 @@
  *面包屑导航
  **/
 function _wnd_breadcrumb() {
-
 	if (is_home() or is_author()) {
 		return;
 	}
@@ -26,7 +25,6 @@ function _wnd_breadcrumb() {
 
 	// 内容页
 	if (is_single()) {
-
 		$html .= '<li><a href="' . get_post_type_archive_link($queried_object->post_type) . '">' . get_post_type_object($queried_object->post_type)->label . '</a></li>';
 
 		$taxonomies = get_object_taxonomies($queried_object->post_type, $output = 'object');
@@ -35,13 +33,11 @@ function _wnd_breadcrumb() {
 			$post_id = $queried_object->post_parent ?: $queried_object->ID;
 
 			foreach ($taxonomies as $taxonomy) {
-
 				if (!is_taxonomy_hierarchical($taxonomy->name) or !$taxonomy->public) {
 					continue;
 				}
 
 				$html .= get_the_term_list($queried_object->ID, $taxonomy->name, '<li>', '', '</li>');
-
 			}
 			unset($taxonomy);
 		}
@@ -65,12 +61,10 @@ function _wnd_breadcrumb() {
 
 		//post类型归档
 	} elseif (is_post_type_archive()) {
-
 		$html .= '<li class="is-active"><a>' . $queried_object->label . '</a></li>';
 
 		//其他归档页
 	} elseif (is_archive()) {
-
 		$args = http_build_query(array('taxonomy' => $queried_object->taxonomy, 'orderby' => 'name'));
 		$html .= '<li><a onclick="wnd_ajax_modal(\'_wnd_terms_list\',\'' . $args . '\')">' . get_taxonomy($queried_object->taxonomy)->label . '</a></li>';
 		$html .= '<li class="is-active"><a>' . $queried_object->name . '</a></li>';
@@ -87,9 +81,7 @@ function _wnd_breadcrumb() {
 	 *左侧导航
 	 **/
 	$html .= '<div class="column is-narrow is-size-7 breadcrumb-right">';
-
 	$breadcrumb_right = null;
-
 	// 内页编辑
 	if (is_single()) {
 		if (current_user_can('edit_post', $queried_object->ID)) {
@@ -97,9 +89,7 @@ function _wnd_breadcrumb() {
 			$breadcrumb_right .= '&nbsp;<a onclick="wnd_ajax_modal(\'_wnd_post_status_form\',\'' . $queried_object->ID . '\')">[管理]</a>';
 		}
 	}
-
 	$html .= apply_filters('_wnd_breadcrumb_right', $breadcrumb_right);
-
 	$html .= '</div>';
 
 	/**
@@ -108,14 +98,12 @@ function _wnd_breadcrumb() {
 	$html .= '</div>';
 
 	return $html;
-
 }
 
 /**
  *@since 2019.05.26 bulma 颜色下拉选择
  */
 function _wnd_dropdown_colors($name, $selected) {
-
 	$colors = array(
 		'primary',
 		'success',
@@ -129,17 +117,14 @@ function _wnd_dropdown_colors($name, $selected) {
 	);
 
 	$html = '<select name="' . $name . '">';
-
 	foreach ($colors as $color) {
 		if ($selected == $color) {
 			$html .= '<option selected="selected" value="' . $color . '">' . $color . '</option>';
 		} else {
 			$html .= '<option value="' . $color . '">' . $color . '</option>';
 		}
-
 	}
 	unset($color);
-
 	$html .= '</select>';
 
 	return $html;
@@ -150,7 +135,6 @@ function _wnd_dropdown_colors($name, $selected) {
  *封装一个按钮，发送ajax请求到后端
  **/
 function _wnd_ajax_link($args) {
-
 	$defaults = array(
 		'text' => '',
 		'action' => '',

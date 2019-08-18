@@ -29,7 +29,7 @@ function wnd_ajax_reg() {
 	}
 
 	$user_login = $_POST['_user_user_login'] ?? $_POST['phone'] ?? null;
-	$user_login = sanitize_user($user_login, true);
+	$user_login = sanitize_user($user_login, true); //移除特殊字符
 	$user_pass = $_POST['_user_user_pass'] ?? null;
 	$user_pass_repeat = $_POST['_user_user_pass_repeat'] ?? ($_POST['_user_user_pass'] ?? null);
 	$user_email = $_POST['_user_user_email'] ?? null;
@@ -48,8 +48,8 @@ function wnd_ajax_reg() {
 	);
 
 	// 2、数据正确性检测
-	if (strlen($user_login) < 4) {
-		return $value = array('status' => 0, 'msg' => '用户名不能低于4位！');
+	if (strlen($user_login) < 3) {
+		return $value = array('status' => 0, 'msg' => '用户名不能低于3位！');
 	}
 	if (is_numeric($user_login)) {
 		return $value = array('status' => 0, 'msg' => '用户名不能是纯数字！');
@@ -58,7 +58,7 @@ function wnd_ajax_reg() {
 		return $value = array('status' => 0, 'msg' => '密码不能低于6位！');
 	}
 	if (!empty($user_pass_repeat) && $user_pass_repeat !== $user_pass_repeat) {
-		return $value = array('status' => 0, 'msg' => '两次输入的新密码不匹配！');
+		return $value = array('status' => 0, 'msg' => '两次输入的密码不匹配！');
 	}
 
 	// 注册权限过滤挂钩
@@ -118,7 +118,6 @@ function wnd_ajax_reg() {
 	} else {
 		return array('status' => 0, 'msg' => '注册失败！');
 	}
-
 }
 
 /**
@@ -130,7 +129,6 @@ function wnd_ajax_reg() {
  *@param $redirect_to = $_REQUEST['redirect_to'] ?? home_url();
  */
 function wnd_ajax_login() {
-
 	$username = trim($_POST['_user_user_login']);
 	$password = $_POST['_user_user_pass'];
 	$remember = $_POST['remember'] ?? 0;
@@ -147,14 +145,11 @@ function wnd_ajax_login() {
 	$user = wnd_get_user_by($username);
 
 	if (!$user) {
-
 		return array('status' => 0, 'msg' => '用户不存在');
 
 	} elseif (wp_check_password($password, $user->data->user_pass, $user->ID)) {
-
 		wp_set_current_user($user->ID, $user->user_login);
 		wp_set_auth_cookie($user->ID, $remember);
-
 		if ($redirect_to) {
 			return array('status' => 3, 'msg' => '登录成功！', 'data' => array('redirect_to' => $redirect_to, 'user_id' => $user->ID));
 		} else {
@@ -162,10 +157,8 @@ function wnd_ajax_login() {
 		}
 
 	} else {
-
 		return array('status' => 0, 'msg' => '账户密码不匹配！');
 	}
-
 }
 
 /**
@@ -182,7 +175,6 @@ function wnd_ajax_login() {
  *
  */
 function wnd_ajax_update_profile() {
-
 	if (empty($_POST)) {
 		return array('status' => 0, 'msg' => '获取用户数据失败！');
 	}
@@ -214,10 +206,8 @@ function wnd_ajax_update_profile() {
 	//################### 没有错误 更新用户
 	$user_id = wp_update_user($user_array);
 	if (is_wp_error($user_id)) {
-
 		$msg = $user_id->get_error_message();
 		return array('status' => 0, 'msg' => $msg);
-
 	}
 
 	//################### 用户更新成功，写入meta 及profile数据
@@ -252,7 +242,6 @@ function wnd_ajax_update_profile() {
  *@param $_POST['_user_new_user_email']
  */
 function wnd_ajax_update_account() {
-
 	$user = wp_get_current_user();
 	$user_id = $user->ID;
 	if (!$user_id) {
@@ -267,7 +256,6 @@ function wnd_ajax_update_account() {
 
 	// 修改密码
 	if (!empty($new_password_repeat)) {
-
 		if (strlen($new_password) < 6) {
 			return array('status' => 0, 'msg' => '新密码不能低于6位！');
 
@@ -279,7 +267,6 @@ function wnd_ajax_update_account() {
 			$array_temp = array('user_pass' => $new_password);
 			$user_array = array_merge($user_array, $array_temp);
 		}
-
 	}
 
 	// 修改邮箱
@@ -291,7 +278,6 @@ function wnd_ajax_update_account() {
 			$array_temp = array('user_email' => $new_email);
 			$user_array = array_merge($user_array, $array_temp);
 		}
-
 	}
 
 	// 原始密码校验
@@ -310,32 +296,26 @@ function wnd_ajax_update_account() {
 
 	// 更新失败，返回错误信息
 	if (is_wp_error($user_id)) {
-
 		return array('status' => 0, 'msg' => $user_id->get_error_message());
-
 	}
 
 	// 用户更新成功
 	$return_array = apply_filters('wnd_update_account_return', array('status' => 1, 'msg' => '更新成功'), $user_id);
 	return $return_array;
-
 }
 
 /**
  *@since 2019.02.10 用户找回密码
  *@param $_POST['phone'] ?? $_POST['_user_user_email'];
- *@param $_POST['v_code']
+ *@param $_POST['auth_code']
  *@param $_POST['_user_new_pass']
  *@param $_POST['_user_new_pass_repeat']
  */
 function wnd_ajax_reset_password() {
-
 	$email_or_phone = $_POST['_user_user_email'] ?? $_POST['phone'] ?? null;
-	$text = is_email($email_or_phone) ? '邮箱' : '手机';
-
 	$new_password = $_POST['_user_new_pass'] ?? null;
 	$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? null;
-	$code = $_POST['v_code'];
+	$auth_code = $_POST['auth_code'];
 
 	// 验证密码正确性
 	if (strlen($new_password) < 6) {
@@ -345,83 +325,83 @@ function wnd_ajax_reset_password() {
 		return array('status' => 0, 'msg' => '两次输入的新密码不匹配！');
 	}
 
-	if (empty($code)) {
-		return array('status' => 0, 'msg' => '请输入验证秘钥！');
-	}
+	// 核对验证码
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type('reset_password');
+		$auth->set_auth_code($auth_code);
+		$auth->set_email_or_phone($email_or_phone);
+		$auth->verify();
 
-	//获取用户
-	$user = wnd_get_user_by($email_or_phone);
-	if (!$user) {
-		return array('status' => 0, 'msg' => '该' . $text . '尚未注册！');
-	}
-
-	// 检查秘钥
-	$check = wnd_verify_code($email_or_phone, $code, $type = 'v');
-	if ($check['status'] === 0) {
-		return $check;
-
-	} else {
-		reset_password($user, $new_password);
+		reset_password(wp_get_current_user(), $new_password);
 		return array('status' => 1, 'msg' => '密码修改成功！<a onclick="wnd_ajax_modal(\'_wnd_login_form\');">登录</a>');
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
 }
 
 /**
  *@since 2019.07.23 已登录用户设置邮箱
  *@param $_POST['_user_user_email'];
- *@param $_POST['v_code']
+ *@param $_POST['auth_code']
  */
-function wnd_ajax_verify_email() {
-
+function wnd_ajax_bind_email() {
 	$email = $_POST['_user_user_email'] ?? null;
-	$code = $_POST['v_code'] ?? null;
-	$user_id = get_current_user_id();
-	if (!$user_id) {
-		return array('status' => 0, 'msg' => '未登录！');
+	$auth_code = $_POST['auth_code'] ?? null;
+
+	// 核对验证码
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type('bind');
+		$auth->set_auth_code($auth_code);
+		$auth->set_email_or_phone($email);
+
+		/**
+		 * 通常，正常前端注册的用户，已通过了邮件或短信验证中的一种，已有数据记录，绑定成功后更新对应数据记录，并删除当前验证数据记录
+		 * 删除时会验证该条记录是否绑定用户，只删除未绑定用户的记录
+		 * 若当前用户没有任何验证绑定记录，删除本条验证记录后，会通过 wnd_update_user_email() 重新新增一条记录
+		 */
+		$auth->verify($delete_after_verified = true);
+
+		if (wnd_update_user_email(get_current_user_id(), $email)) {
+			return array('status' => 1, 'msg' => '邮箱绑定成功！');
+		} else {
+			return array('status' => 0, 'msg' => '未知错误！');
+		}
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
-	// 检查秘钥 已登录用户验证码为临时验证码，验证成功后应该删除
-	$check = wnd_verify_code($email, $code, $type = 'register', $delete_after_success = true);
-	if ($check['status'] === 0) {
-		return $check;
-
-	}
-
-	if (wnd_update_user_email($user_id, $email)) {
-		return array('status' => 1, 'msg' => '邮箱设置成功！');
-	} else {
-		return array('status' => 0, 'msg' => '未知错误！');
-	}
-
 }
 
 /**
  *@since 2019.02.10 已登录用户设置手机
  *@param $_POST['phone'];
- *@param $_POST['v_code']
+ *@param $_POST['auth_code']
  */
-function wnd_ajax_verify_phone() {
-
+function wnd_ajax_bind_phone() {
 	$phone = $_POST['phone'] ?? null;
-	$code = $_POST['v_code'] ?? null;
-	$user_id = get_current_user_id();
+	$auth_code = $_POST['auth_code'] ?? null;
 
-	if (!$user_id) {
-		return array('status' => 0, 'msg' => '未登录！');
+	// 核对验证码
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type('bind');
+		$auth->set_auth_code($auth_code);
+		$auth->set_email_or_phone($phone);
+
+		/**
+		 * 通常，正常前端注册的用户，已通过了邮件或短信验证中的一种，已有数据记录，绑定成功后更新对应数据记录，并删除当前验证数据记录
+		 * 删除时会验证该条记录是否绑定用户，只删除未绑定用户的记录
+		 * 若当前用户没有任何验证绑定记录，删除本条验证记录后，会通过 wnd_update_user_phone() 重新新增一条记录
+		 */
+		$auth->verify($delete_after_verified = true);
+
+		if (wnd_update_user_phone(get_current_user_id(), $phone)) {
+			return array('status' => 1, 'msg' => '手机绑定成功！');
+		} else {
+			return array('status' => 0, 'msg' => '未知错误！');
+		}
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
-	// 检查秘钥 已登录用户验证码为临时验证码，验证成功后应该删除
-	$check = wnd_verify_code($phone, $code, $type = 'register', $delete_after_success = true);
-	if ($check['status'] === 0) {
-		return $check;
-
-	}
-
-	if (wnd_update_user_phone($user_id, $phone)) {
-		return array('status' => 1, 'msg' => '手机设置成功！');
-	} else {
-		return array('status' => 0, 'msg' => '未知错误！');
-	}
-
 }

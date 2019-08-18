@@ -7,7 +7,6 @@
  *@param $thumbnail_height 	number 		缩略图高度
  **/
 function _wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120) {
-
 	$images = $post_id ? wnd_get_post_meta($post_id, 'gallery') : wnd_get_user_meta(get_current_user_id(), 'gallery');
 	if (!$images) {
 		return false;
@@ -16,7 +15,6 @@ function _wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120)
 	// 遍历输出图片集
 	$html = '<div class="gallery columns is-vcentered is-multiline has-text-centered">';
 	foreach ($images as $key => $attachment_id) {
-
 		$attachment_url = wp_get_attachment_url($attachment_id);
 		$thumbnail_url = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
 		if (!$attachment_url) {
@@ -27,12 +25,10 @@ function _wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120)
 		$html .= '<div class="attachment-' . $attachment_id . '" class="column is-narrow">';
 		$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '"height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
 		$html .= '</div>';
-
 	}
 	unset($key, $attachment_id);
 	wnd_update_post_meta($post_id, 'gallery', $images); // 若字段中存在被删除的图片数据，此处更新
 	$html .= '</div>';
 
 	return $html;
-
 }

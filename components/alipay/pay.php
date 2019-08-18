@@ -8,31 +8,28 @@ if (!defined('ABSPATH')) {
  **/
 
 /*** 请填写以下配置信息
-$out_trade_no = uniqid();  	//你自己的商品订单号，不能重复
-$money = 0.01; 				//付款金额，单位:元
-$order_name = '支付测试';   //订单标题
+$out_trade_no  	//你自己的商品订单号，不能重复
+$total_amount	//付款金额，单位:元
+$subject    	//订单标题
  */
-
-$user_id = get_current_user_id();
 $post_id = $_REQUEST['post_id'] ?? 0;
+$total_amount = $_REQUEST['total_amount'] ?? 0;
 
-// 获取金额
-if ($post_id) {
-	$money = wnd_get_post_price($post_id);
-} else {
-	$money = isset($_REQUEST['money']) && is_numeric($_REQUEST['money']) ? $_REQUEST['money'] : 0;
-}
-if (!$money) {
-	wp_die('获取金额错误！', get_bloginfo('name'));
-}
+/**
+ *@since 2019.08.12
+ *面向对象重构
+ **/
+try {
+	$payment = new Wnd_Payment();
+	$payment->set_object_id($post_id);
+	$payment->set_total_amount($total_amount);
+	$payment->create();
 
-// 判断支付类型：充值或下单
-$subject = $post_id ? get_bloginfo('name') . '订单 [' . get_the_title($post_id) . ']' : get_bloginfo('name') . '充值订单[' . get_userdata($user_id)->user_login . ']';
-
-// 创建支付数据
-$out_trade_no = wnd_insert_payment($user_id, $money, $post_id);
-if (!$out_trade_no) {
-	wp_die('订单创建错误！', get_bloginfo('name'));
+	$out_trade_no = $payment->get_out_trade_no();
+	$subject = $payment->get_subject();
+	$total_amount = $payment->get_total_amount();
+} catch (Exception $e) {
+	exit($e->getMessage());
 }
 
 /*** ########################################################## 配置结束 构建支付数据 通常以下信息无需修改 ***/
@@ -43,7 +40,7 @@ require dirname(__FILE__) . '/class/AlipayBuilder.php';
 $aliPay = new AlipayPagePayBuilder();
 
 // 订单属性
-$aliPay->total_amount = $money;
+$aliPay->total_amount = $total_amount;
 $aliPay->out_trade_no = $out_trade_no;
 $aliPay->subject = $subject;
 

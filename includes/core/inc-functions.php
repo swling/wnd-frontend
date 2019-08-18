@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
  *@since 2019.05.12
  **/
 function wnd_create_nonce($action) {
-
 	$secret_key = wnd_get_option('wnd', 'wnd_secret_key');
 	return wp_create_nonce(md5($action . $secret_key));
 }
@@ -19,10 +18,8 @@ function wnd_create_nonce($action) {
  *@since 2019.05.12
  **/
 function wnd_verify_nonce($nonce, $action) {
-
 	$secret_key = wnd_get_option('wnd', 'wnd_secret_key');
 	return wp_verify_nonce($nonce, md5($action . $secret_key));
-
 }
 
 /**
@@ -30,7 +27,6 @@ function wnd_verify_nonce($nonce, $action) {
  *一个没有空白的WordPress环境，接收或执行一些操作
  */
 function wnd_get_do_url() {
-
 	return WND_URL . 'do.php';
 }
 
@@ -38,7 +34,6 @@ function wnd_get_do_url() {
  *@since 2019.04.07
  */
 function wnd_doing_ajax() {
-
 	if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) and $_SERVER['HTTP_X_REQUESTED_WITH'] == "XMLHttpRequest") {
 		return true;
 	} else {
@@ -51,7 +46,6 @@ function wnd_doing_ajax() {
  *获取用户ip
  */
 function wnd_get_user_ip($hidden = false) {
-
 	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 		$ip = $_SERVER['HTTP_CLIENT_IP'];
 	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -65,7 +59,6 @@ function wnd_get_user_ip($hidden = false) {
 	} else {
 		return $ip;
 	}
-
 }
 
 /**
@@ -73,11 +66,9 @@ function wnd_get_user_ip($hidden = false) {
  *搜索引擎判断
  */
 function wnd_is_robot() {
-
 	return (
 		isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/bot|crawl|slurp|spider|mediapartners/i', $_SERVER['HTTP_USER_AGENT'])
 	);
-
 }
 
 /**
@@ -99,13 +90,11 @@ function wnd_random($length) {
  *生成N位随机数字
  */
 function wnd_random_code($length = 6) {
-
 	$No = '';
 	for ($i = 0; $i < $length; $i++) {
 		$No .= mt_rand(0, 9);
 	}
 	return $No;
-
 }
 
 /**
@@ -119,14 +108,6 @@ function wnd_generate_order_NO() {
 }
 
 /**
- *@since 2019.03.04
- *基于当前站点的首页地址，生成四位字符站点前缀标识符
- */
-function wnd_get_site_prefix() {
-	return strtoupper(substr(md5(home_url()), 0, 4));
-}
-
-/**
  * @since 2019.02.09  验证是否为手机号
  */
 function wnd_is_phone($phone) {
@@ -135,7 +116,6 @@ function wnd_is_phone($phone) {
 	} else {
 		return true;
 	}
-
 }
 
 /**
@@ -143,20 +123,14 @@ function wnd_is_phone($phone) {
  *@since 2019.04.30
  */
 function wnd_copy_taxonomy($old_taxonomy, $new_taxonomy) {
-
 	$terms = get_terms($old_taxonomy, 'hide_empty=0');
 
 	if (!empty($terms) && !is_wp_error($terms)) {
-
 		foreach ($terms as $term) {
-
 			wp_insert_term($term->name, $new_taxonomy);
-
 		}
 		unset($term);
-
 	}
-
 }
 
 /**
@@ -165,7 +139,6 @@ function wnd_copy_taxonomy($old_taxonomy, $new_taxonomy) {
  * 通常用于在ajax请求中传递请求页面信息以供后端判断请求来源
  * */
 function wnd_get_queried_type() {
-
 	if (is_single()) {
 		return array('type' => 'single', 'ID' => get_queried_object()->ID);
 
@@ -179,7 +152,6 @@ function wnd_get_queried_type() {
 		return array('type' => 'home');
 
 	} else {
-
 		return array('type' => 'ajax');
 	}
 }
@@ -190,7 +162,6 @@ function wnd_get_queried_type() {
  */
 set_exception_handler('wnd_exception_handler');
 function wnd_exception_handler($exception) {
-
 	$html = '<article class="column message is-danger">';
 	$html .= '<div class="message-header">';
 	$html .= '<p>异常</p>';
@@ -199,87 +170,4 @@ function wnd_exception_handler($exception) {
 	$html .= '</article>';
 
 	echo $html;
-}
-
-/**
- *@since 2019.07.20
- *从GET参数中解析wp_query参数
- *@param 	array 	wp_query $args
- *
- *@return 	array 	wp_query $args
- **/
-function wnd_parse_http_wp_query($args) {
-
-	$defaults = array(
-		'meta_query' => array(),
-		'tax_query' => array(),
-	);
-
-	$args = wp_parse_args($args, $defaults);
-
-	/**
-	 *自动从GET参数中获取taxonomy查询参数 (?$taxonmy_id=term_id)
-	 *字段参数：?meta_meta_key
-	 *自动键名匹配： $args[$key] = $value;
-	 */
-	if (!empty($_GET)) {
-
-		foreach ($_GET as $key => $value) {
-
-			/**
-			 *@since 2019.3.07 自动匹配meta query
-			 *?meta_price=1 则查询 price = 1的文章
-			 *?meta_price=exists 则查询 存在price的文章
-			 */
-			if (strpos($key, '_meta_') === 0) {
-
-				$key = str_replace('_meta_', '', $key);
-				$compare = $value == 'exists' ? 'exists' : '=';
-				$meta_query = array(
-					'key' => $key,
-					'value' => $value,
-					'compare' => $compare,
-				);
-
-				/**
-				 *@since 2019.04.21 当meta_query compare == exists 不能设置value
-				 */
-				if ('exists' == $compare) {
-					unset($meta_query['value']);
-				}
-
-				array_push($args['meta_query'], $meta_query);
-				continue;
-			}
-
-			/**
-			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，
-			 *直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
-			 */
-			if (strpos($key, '_term_') === 0) {
-				$term_query = array(
-					'taxonomy' => str_replace('_term_', '', $key),
-					'field' => 'term_id',
-					'terms' => $value,
-				);
-				array_push($args['tax_query'], $term_query);
-				continue;
-			}
-
-			/**
-			 *@since 2019.05.31 post field查询
-			 */
-			if (strpos($key, '_post_') === 0) {
-				$args[str_replace('_post_', '', $key)] = $value;
-				continue;
-			}
-
-			// 其他、按键名自动匹配
-			$args[$key] = $value;
-
-		}
-		unset($key, $value);
-	}
-
-	return $args;
 }

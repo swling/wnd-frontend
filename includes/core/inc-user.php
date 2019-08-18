@@ -8,7 +8,6 @@ if (!defined('ABSPATH')) {
  *@since 2019.01.26 根据用户id获取号码
  */
 function wnd_get_user_phone($user_id) {
-
 	if (!$user_id) {
 		return false;
 	}
@@ -25,7 +24,6 @@ function wnd_get_user_phone($user_id) {
 	} else {
 		return false;
 	}
-
 }
 
 /**
@@ -34,7 +32,6 @@ function wnd_get_user_phone($user_id) {
  *@return WordPress user object or false
  */
 function wnd_get_user_by($email_or_phone_or_login) {
-
 	global $wpdb;
 
 	if (is_email($email_or_phone_or_login)) {
@@ -49,7 +46,6 @@ function wnd_get_user_by($email_or_phone_or_login) {
 	}
 
 	return $user;
-
 }
 
 /**
@@ -59,12 +55,10 @@ function wnd_get_user_by($email_or_phone_or_login) {
  *@return user object or false（WordPress：get_user_by）
  */
 function wnd_get_user_by_openid($openid) {
-
 	global $wpdb;
 
 	$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE open_id = %s;", $openid));
 	return !$user_id ? false : get_user_by('ID', $user_id);
-
 }
 
 /**
@@ -75,7 +69,6 @@ function wnd_get_user_by_openid($openid) {
  *@return 	user_id or bool of wpdb->insert
  */
 function wnd_update_user_openid($user_id, $openid) {
-
 	global $wpdb;
 
 	// 查询
@@ -111,7 +104,6 @@ function wnd_update_user_openid($user_id, $openid) {
  *@return 	user_id or bool of wpdb->insert
  */
 function wnd_update_user_email($user_id, $email) {
-
 	global $wpdb;
 
 	// 查询
@@ -152,7 +144,6 @@ function wnd_update_user_email($user_id, $email) {
  *@return 	user_id or bool of wpdb->insert
  */
 function wnd_update_user_phone($user_id, $phone) {
-
 	global $wpdb;
 
 	// 查询
@@ -187,12 +178,13 @@ function wnd_update_user_phone($user_id, $phone) {
 
 /**
  *@since 2019.07.23
- * 根据第三方网站获取的用户信息，注册或者登录到WordPress站点
- *
+ *根据第三方网站获取的用户信息，注册或者登录到WordPress站点
+ *@param string $open_id 		第三方账号openID
+ *@param string $display_name 	用户名称
+ *@param string $avatar_url 	用户外链头像
  *
  **/
 function wnd_social_login($open_id, $display_name = '', $avatar_url = '') {
-
 	//当前用户已登录，同步信息
 	if (is_user_logged_in()) {
 
@@ -247,8 +239,7 @@ function wnd_social_login($open_id, $display_name = '', $avatar_url = '') {
  *用户角色为：管理员或编辑 返回 true
  */
 function wnd_is_manager($user_id = 0) {
-
-	$user = wp_get_current_user();
+	$user = $user_id ? get_user_by('id', $user_id) : wp_get_current_user();
 
 	$user_role = $user->roles[0] ?? false;
 	if ($user_role == 'administrator' or $user_role == 'editor') {
@@ -256,7 +247,6 @@ function wnd_is_manager($user_id = 0) {
 	} else {
 		return false;
 	}
-
 }
 
 /**
@@ -264,8 +254,7 @@ function wnd_is_manager($user_id = 0) {
  *用户display name去重
  *@return int or false
  */
-function wnd_is_name_repeated($display_name, $exclude_id = 0) {
-
+function wnd_is_name_duplicated($display_name, $exclude_id = 0) {
 	// 名称为空
 	if (empty($display_name)) {
 		return false;
@@ -286,7 +275,6 @@ function wnd_is_name_repeated($display_name, $exclude_id = 0) {
  *发送站内信
  */
 function wnd_mail($to, $subject, $message) {
-
 	if (!get_user_by('id', $to)) {
 		return array('status' => 0, 'msg' => '用户不存在！');
 	}
@@ -308,7 +296,6 @@ function wnd_mail($to, $subject, $message) {
 		wp_cache_delete($to, 'wnd_mail_count');
 		return array('status' => 1, 'msg' => '发送成功！');
 	}
-
 }
 
 /**
@@ -316,12 +303,10 @@ function wnd_mail($to, $subject, $message) {
  *@since 2019.04.11
  */
 function wnd_get_mail_count() {
-
 	$user_id = get_current_user_id();
 	$user_mail_count = wp_cache_get($user_id, 'wnd_mail_count');
 
 	if (false === $user_mail_count) {
-
 		$args = array(
 			'posts_per_page' => 11,
 			'author' => $user_id,
@@ -331,13 +316,10 @@ function wnd_get_mail_count() {
 
 		$user_mail_count = count(get_posts($args));
 		$user_mail_count = ($user_mail_count > 10) ? '10+' : $user_mail_count;
-
 		wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
-
 	}
 
 	return $user_mail_count ?: 0;
-
 }
 
 /**
@@ -345,10 +327,8 @@ function wnd_get_mail_count() {
  *获取用户面板允许的post types
  */
 function wnd_get_user_panel_post_types() {
-
 	$post_types = get_post_types(array('public' => true), 'names', 'and');
 	// 排除页面/附件/站内信
 	unset($post_types['page'], $post_types['attachment'], $post_types['mail']);
-
 	return apply_filters('wnd_user_panel_post_types', $post_types);
 }

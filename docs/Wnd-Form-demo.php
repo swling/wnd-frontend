@@ -35,6 +35,7 @@ $form->set_form_title('标题');
 // input
 $form->add_text(
 	array(
+		'id' => 'demo' . uniqid(),
 		'name' => 'user_name',
 		'value' => '',
 		'placeholder' => 'user name',
@@ -140,7 +141,7 @@ $form->add_html('</div></div>');
  */
 $form->add_radio(
 	array(
-		'name' => 'money',
+		'name' => 'total_amount',
 		'options' => array('0.01' => '0.01', '10' => '10'),
 		'required' => 'required',
 		'checked' => '0.01', //default checked value
@@ -165,7 +166,7 @@ $form->add_checkbox(
 // upload image
 $form->add_image_upload(
 	array(
-		'id' => 'image-upload',
+		// 'id' => 'image-upload',
 		'name' => 'file', // file input field name
 		'label' => 'Image upload',
 		'thumbnail' => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
@@ -184,7 +185,7 @@ $form->add_image_upload(
 // upload file
 $form->add_file_upload(
 	array(
-		'id' => 'file-upload',
+		// 'id' => 'file-upload',
 		'name' => 'file', // file input field name
 		'label' => 'File upland',
 		'file_name' => 'file name',
@@ -206,7 +207,7 @@ $form->add_textarea(
 );
 
 $form->set_action('post', 'https://www.baidu.com');
-$form->set_form_attr('id="my-form-id"');
+$form->set_form_attr('data-test="test-value"');
 $form->set_submit_button('Submit', 'is-primary');
 
 $form->build();

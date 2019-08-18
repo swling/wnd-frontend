@@ -16,22 +16,23 @@ if (!defined('ABSPATH')) {
 // apply_filters('wnd_can_reg', array('status'=>1,'msg'=>'默认通过'));
 add_filter('wnd_can_reg', 'wnd_filter_can_reg', 10, 1);
 function wnd_filter_can_reg($can_array) {
-
-	// 后台注册选项
 	if (!get_option('users_can_register')) {
 		return array('status' => 0, 'msg' => '站点已关闭注册！');
 	}
 
 	// 验证:手机或邮箱 验证码
-	$code = $_POST['v_code'];
+	$auth_code = $_POST['auth_code'];
 	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'];
-	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = 'register');
-
-	if ($wnd_verify_code['status'] === 0) {
-		return $wnd_verify_code;
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type('register');
+		$auth->set_auth_code($auth_code);
+		$auth->set_email_or_phone($email_or_phone);
+		$auth->verify();
+		return $can_array;
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
-	return $can_array;
 
 }
 
@@ -41,20 +42,21 @@ function wnd_filter_can_reg($can_array) {
  */
 add_filter('wnd_can_update_account', 'wnd_filter_can_update_account', 10, 1);
 function wnd_filter_can_update_account($can_array) {
-
-	$code = $_POST['v_code'];
+	$auth_code = $_POST['auth_code'];
 	$user = wp_get_current_user();
 	$user_id = $user->ID;
 	$email_or_phone = wnd_get_option('wnd', 'wnd_enable_sms') == 1 ? wnd_get_user_meta($user_id, 'phone') : $user->user_email;
 
-	$wnd_verify_code = wnd_verify_code($email_or_phone, $code, $type = 'v');
-	if ($wnd_verify_code['status'] === 0) {
-		return $wnd_verify_code;
-	} else {
-
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type('verify');
+		$auth->set_auth_code($auth_code);
+		$auth->set_email_or_phone($email_or_phone);
+		$auth->verify();
 		return $can_array;
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
 }
 
 /**
@@ -77,31 +79,6 @@ function wnd_filter_post_status($post_status, $post_type, $update_id) {
 
 	// 已公开发布过的内容，再次编辑无需审核
 	return (get_post_status($update_id) == 'publish') ? 'publish' : $post_status;
-}
-
-/**
- *@since 2019.02.25
- *文章列表输出模板 文章过滤
- **/
-add_filter('_wnd_table_list_data', 'wnd_filter_list_table_data', 10, 1);
-function wnd_filter_list_table_data($post) {
-
-	if ($post->post_type == 'mail') {
-
-		if ($post->post_status == 'private') {
-			$post->post_status = '已读';
-		} elseif ($post->post_status == 'pending') {
-			$post->post_status = '未读';
-		} elseif ($post->post_status == 'draft') {
-			$post->post_status = '草稿';
-		}
-
-	}
-
-	$post->post_status == '草稿';
-
-	return $post;
-
 }
 
 /**
@@ -348,7 +325,6 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 
 	//已登录用户调用字段头像
 	if ($user_id) {
-
 		if (wnd_get_user_meta($user_id, 'avatar')) {
 			$avatar_id = wnd_get_user_meta($user_id, 'avatar');
 			$avatar_url = wp_get_attachment_url($avatar_id) ?: $avatar_url;
@@ -370,7 +346,6 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 
 	//注册用户，添加链接
 	if ($user_id and !is_admin()) {
-
 		$author_url = get_author_posts_url($user_id);
 		$avatar = sprintf(
 			'<a href="%s" rel="external nofollow" class="url">%s</a>',
@@ -400,7 +375,6 @@ if (wnd_get_option('wnd', 'wnd_disable_locale') == 1) {
 if (wnd_get_option('wnd', 'wnd_unset_user_meta') == 1) {
 	add_filter('insert_user_meta', 'wnd_filter_unset_user_meta', 10, 2);
 	function wnd_filter_unset_user_meta($meta, $user) {
-
 		// 排除超级管理员
 		if (is_super_admin($user->ID)) {
 			return $meta;

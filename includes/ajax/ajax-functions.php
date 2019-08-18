@@ -10,10 +10,7 @@ if (!defined('ABSPATH')) {
  *@param $args 		array or string 	传递给被调用模板函数的参数
  */
 function _wnd_ajax_embed($template, $args = '') {
-
-	$function_name = $template;
-
-	$div_id = 'wnd-filter-' . uniqid();
+	$div_id = 'wnd-embed-' . uniqid();
 	$args = wp_parse_args($args);
 	$ajax_args = http_build_query($args);
 
@@ -24,28 +21,33 @@ function _wnd_ajax_embed($template, $args = '') {
 
 /**
  *@since 2019.01.28 ajax 发送手机或邮箱验证码
- *@param $_POST['verify_type']				验证类型（注册，非注册等）
- *@param $_POST['send_type']				发送类型（邮件，短信等）
- *@param $_POST['template']					信息模板
- *@param $_POST['phone'] or $_POST['email']	手机或邮件
+ *@param $_POST['type']							验证类型
+ *@param $_POST['is_email']						发送类型（邮件，短信等）
+ *@param $_POST['template']						信息模板
+ *@param $_POST['phone'] or $_POST['email']		手机或邮件
  */
 function wnd_ajax_send_code() {
+	$type = $_POST['type'] ?? '';
+	$is_email = $_POST['is_email'] ?: false;
+	$template = $_POST['template'] ?: wnd_get_option('wnd', 'wnd_sms_template');
+	$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? null;
 
-	$verify_type = $_POST['verify_type'] ?? '';
-	$send_type = $_POST['send_type'] ?? ''; // email or sms, to login user
-	$template = $_POST['template'] ?? '';
-	$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? '';
+	try {
+		$auth = new Wnd_Auth;
+		$auth->set_type($type);
+		$auth->set_email_or_phone($email_or_phone);
+		$auth->set_template($template);
 
-	/**
-	 *@since 2019.07.23
-	 *当已登录用户，且验证类型为register表示当前用户，正在绑定邮箱或手机时，
-	 */
-	if (is_user_logged_in() and $verify_type != 'register') {
-		return wnd_send_code_to_user($send_type, $verify_type, $template);
-	} else {
-		return wnd_send_code_to_anonymous($email_or_phone, $verify_type, $template);
+		if (is_user_logged_in() and $type != 'bind') {
+			$auth->send_to_current_user($is_email);
+		} else {
+			$auth->send();
+		}
+
+		return array('status' => 1, 'msg' => '发送成功，请注意查收！');
+	} catch (Exception $e) {
+		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
 }
 
 /**
@@ -54,35 +56,32 @@ function wnd_ajax_send_code() {
  *@param $_POST['post_id']
  *@param $_POST['post_type']
  */
-function _wnd_ajax_is_title_repeated() {
-
+function _wnd_ajax_is_title_duplicated() {
 	$title = $_POST['post_title'];
 	$exclude_id = $_POST['post_id'];
 	$post_type = $_POST['post_type'];
 
-	if (wnd_is_title_repeated($title, $exclude_id, $post_type)) {
+	if (wnd_is_title_duplicated($title, $exclude_id, $post_type)) {
 		return array('status' => 1, 'msg' => '标题重复！');
 	} else {
 		return array('status' => 0, 'msg' => '标题唯一！');
 	}
-
 }
 
 /**
  *@since 2019.02.22
  *管理员ajax手动新增用户金额
  *@param $_POST['user_field']
- *@param $_POST['money']
+ *@param $_POST['total_amount']
  *@param $_POST['remarks']
  */
 function wnd_ajax_admin_recharge() {
-
 	if (!is_super_admin()) {
 		return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作！');
 	}
 
 	$user_field = $_POST['user_field'];
-	$money = $_POST['money'];
+	$money = $_POST['total_amount'];
 	$remarks = $_POST['remarks'] ?: '管理员充值';
 
 	return wnd_admin_recharge($user_field, $money, $remarks);
@@ -94,7 +93,6 @@ function wnd_ajax_admin_recharge() {
  *@param $_POST['useragent']
  */
 function _wnd_ajax_update_views() {
-
 	$post_id = (int) $_POST['param'];
 	if (!$post_id) {
 		return;
@@ -103,8 +101,7 @@ function _wnd_ajax_update_views() {
 	$should_count = true;
 
 	// 根据 useragent 排除搜索引擎
-	$bots = array
-		(
+	$bots = array(
 		'Google Bot' => 'google'
 		, 'MSN' => 'msnbot'
 		, 'Alex' => 'ia_archiver'
@@ -144,9 +141,7 @@ function _wnd_ajax_update_views() {
 
 	// 统计
 	if ($should_count) {
-
 		if (wnd_inc_post_meta($post_id, 'views', 1)) {
-
 			// 完成统计时附加动作
 			do_action('wnd_ajax_update_views', $post_id);
 			// 统计更新成功
@@ -158,12 +153,9 @@ function _wnd_ajax_update_views() {
 		}
 
 	} else {
-
 		// 未更新
 		return array('status' => 0, 'msg' => time());
-
 	}
-
 }
 
 /**

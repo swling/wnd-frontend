@@ -16,7 +16,6 @@ if (!defined('ABSPATH')) {
  */
 add_action('wnd_upload_file', 'wnd_action_upload_file', 10, 3);
 function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
-
 	if (!$meta_key) {
 		return;
 	}
@@ -42,7 +41,6 @@ function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
 		}
 		wnd_update_user_meta($user_id, $meta_key, $attachment_id);
 	}
-
 }
 
 /**
@@ -51,14 +49,12 @@ function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
  **/
 add_action('wnd_upload_gallery', 'wnd_action_upload_gallery', 10, 2);
 function wnd_action_upload_gallery($image_array, $post_parent) {
-
 	if (empty($image_array)) {
 		return;
 	}
 
 	$images = array();
 	foreach ($image_array as $image_info) {
-
 		// 上传失败的图片跳出
 		if ($image_info['status'] === 0) {
 			continue;
@@ -74,9 +70,7 @@ function wnd_action_upload_gallery($image_array, $post_parent) {
 
 	// 合并数组，注意新旧数据顺序 array_merge($images, $old_images) 表示将旧数据合并到新数据，因而新上传的在顶部，反之在尾部
 	$new_images = array_merge($images, $old_images);
-
 	wnd_update_post_meta($post_parent, 'gallery', $new_images);
-
 }
 
 /**
@@ -85,7 +79,6 @@ function wnd_action_upload_gallery($image_array, $post_parent) {
  */
 add_action('wnd_delete_file', 'wnd_action_delete_file', 10, 3);
 function wnd_action_delete_file($attach_id, $post_parent, $meta_key) {
-
 	if (!$meta_key) {
 		return;
 	}
@@ -94,14 +87,11 @@ function wnd_action_delete_file($attach_id, $post_parent, $meta_key) {
 	 *@since 2019.05.06 相册编辑
 	 */
 	if ($meta_key == 'gallery' and $post_parent) {
-
 		// 从相册数组中删除当前图片
 		$images = wnd_get_post_meta($post_parent, 'gallery');
 		$images = is_array($images) ? $images : array();
 		unset($images['img' . $attach_id]);
-
 		wnd_update_post_meta($post_parent, 'gallery', $images);
-
 		return;
 	}
 
@@ -112,7 +102,6 @@ function wnd_action_delete_file($attach_id, $post_parent, $meta_key) {
 	} else {
 		wnd_delete_user_meta(get_current_user_id(), $meta_key);
 	}
-
 }
 
 /**
@@ -171,7 +160,6 @@ function wnd_action_do_action() {
 		break;
 
 	}
-
 }
 
 /*#########################################################################2、以下为WordPress原生 action*/
@@ -186,7 +174,11 @@ function wnd_action_user_register($user_id) {
 	if (!$email_or_phone) {
 		return;
 	}
-	wnd_reset_code($email_or_phone, $user_id);
+
+	# 充值验证码并绑定邮箱或手机
+	$auth = new Wnd_Auth;
+	$auth->set_email_or_phone($email_or_phone);
+	$auth->reset_code($user_id);
 
 	// 手机注册，写入用户meta
 	if (isset($_POST['phone'])) {
@@ -200,7 +192,6 @@ function wnd_action_user_register($user_id) {
  */
 add_action('deleted_user', 'wnd_action_delete_user', 10, 1);
 function wnd_action_delete_user($user_id) {
-
 	// 删除手机注册记录
 	global $wpdb;
 	$wpdb->delete($wpdb->wnd_users, array('user_id' => $user_id));
@@ -213,7 +204,6 @@ function wnd_action_delete_user($user_id) {
  */
 add_action('deleted_post', 'wnd_action_deleted_post', 10, 1);
 function wnd_action_deleted_post($post_id) {
-
 	$delete_post = get_post($post_id);
 
 	/**
@@ -240,7 +230,6 @@ function wnd_action_deleted_post($post_id) {
 		wnd_inc_wnd_post_meta($delete_post->post_parent, 'order_count', -1, true);
 		wp_cache_delete($delete_post->post_author . $delete_post->post_parent, 'user_has_paid');
 	}
-
 }
 
 /**
@@ -256,7 +245,6 @@ function wnd_action_post_updated($post_ID, $post_after, $post_before) {
 	if ($post_after->post_type == 'mail') {
 		wp_cache_delete($post_after->post_author, 'wnd_mail_count');
 	}
-
 }
 
 /**
@@ -266,7 +254,6 @@ function wnd_action_post_updated($post_ID, $post_after, $post_before) {
  */
 add_action('add_attachment', 'wnd_action_add_attachment', 10, 1);
 function wnd_action_add_attachment($post_ID) {
-
 	$post = get_post($post_ID);
 
 	/**
@@ -281,9 +268,7 @@ function wnd_action_add_attachment($post_ID) {
 	 */
 	if ($post->post_parent) {
 		wnd_inc_wnd_post_meta($post->post_parent, 'attachment_records');
-
 	}
-
 }
 
 /**
@@ -313,7 +298,6 @@ if (wnd_get_option('wnd', 'wnd_disable_admin_panel') == 1) {
 		wp_redirect(home_url('?from=wp-login.php'));
 		exit(); // always call `exit()` after `wp_redirect`
 	}
-
 }
 
 /**

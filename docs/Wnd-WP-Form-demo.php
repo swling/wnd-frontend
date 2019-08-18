@@ -51,14 +51,15 @@ function wnd_filer_form_filter($input_values) {
  */
 function _wnd_demo_form() {
 
-	$form = new Wnd_WP_Form();
+	$form = new Wnd_WP_Form($is_ajax_submit = true);
 
-	$form->set_form_attr('id="my-form-id"');
+	$form->set_form_attr('data-test="test-value"');
 	$form->set_form_title('标题');
 
 	// input
 	$form->add_text(
 		array(
+			'id' => 'demo' . uniqid(),
 			'name' => 'user_name',
 			'value' => '',
 			'placeholder' => 'user name',
@@ -174,7 +175,7 @@ function _wnd_demo_form() {
 	 */
 	$form->add_radio(
 		array(
-			'name' => 'money',
+			'name' => 'total_amount',
 			'options' => array('0.01' => '0.01', '10' => '10'),
 			'required' => 'required',
 			'checked' => '0.01', //default checked value
@@ -199,9 +200,9 @@ function _wnd_demo_form() {
 	// upload image
 	$form->add_image_upload(
 		array(
-			'id' => 'image-upload', //container id
+			// 'id' => 'image-upload', //container id
 			'name' => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
-			'file_id' => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户di综合查询
+			'file_id' => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户id综合查询
 			'label' => 'Image upload',
 			'thumbnail' => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
 			'thumbnail_size' => array('width' => 100, 'height' => 100), //thumbnail image size
@@ -221,9 +222,9 @@ function _wnd_demo_form() {
 	// upload file
 	$form->add_file_upload(
 		array(
-			'id' => 'file-upload', //container id
+			// 'id' => 'file-upload', //container id
 			'name' => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
-			'file_id' => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户di综合查询
+			'file_id' => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户id综合查询
 			'label' => 'File upland',
 			'data' => array( // some data on file input, maybe useful in ajax upload
 				'meta_key' => 'file',
@@ -244,7 +245,8 @@ function _wnd_demo_form() {
 			'label' => '产品相册',
 			'thumbnail_size' => array('height' => '160', 'width' => '120'),
 			'data' => array(
-				'post_parent' => 1,
+				'post_parent' => 1, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+				'user_id' => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
 				'save_width' => 0, //图片文件存储最大宽度 0 为不限制
 				'save_height' => 0, //图片文件存储最大过度 0 为不限制
 			),

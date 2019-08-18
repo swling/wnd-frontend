@@ -6,16 +6,18 @@
  *常规情况下，未选中的checkbox 和radio等字段不会出现在提交的表单数据中
  *在本环境中，为实现字段name nonce校验，未选中的字段也会发送一个空值到后台（通过 hidden字段实现），在相关数据处理上需要注意
  *为保障表单不被前端篡改，会提取所有字段的name值，结合算法生成校验码，后端通过同样的方式提取$_POST数据，并做校验
+ *
+ *@param bool $is_ajax_submit 是否ajax提交
  */
 class Wnd_WP_Form extends Wnd_Form {
 
-	public $filter = null;
-	public $form_names = array();
-	public $message = null;
-	public $is_ajax_submit;
+	protected $filter = null;
+	protected $form_names = array();
+	protected $message = null;
+	protected $is_ajax_submit;
 
-	static $primary_color;
-	static $second_color;
+	public static $primary_color;
+	public static $second_color;
 
 	public function __construct($is_ajax_submit = true) {
 
@@ -26,12 +28,11 @@ class Wnd_WP_Form extends Wnd_Form {
 		$this->is_ajax_submit = $is_ajax_submit;
 
 		// 色调
-		Wnd_WP_Form::$primary_color = wnd_get_option('wnd', 'wnd_primary_color');
-		Wnd_WP_Form::$second_color = wnd_get_option('wnd', 'wnd_second_color');
+		self::$primary_color = wnd_get_option('wnd', 'wnd_primary_color');
+		self::$second_color = wnd_get_option('wnd', 'wnd_second_color');
 
 		// 继承基础变量
 		parent::__construct();
-
 	}
 
 	public function set_filter($filter) {
@@ -41,8 +42,8 @@ class Wnd_WP_Form extends Wnd_Form {
 	// ajax提交只需要设置 action 但常规表单action包含提交地址和提交方式，在类中，必须保持参数个数一致
 	public function set_action($action, $method = 'POST') {
 		if ($this->is_ajax_submit) {
-			parent::add_hidden('action', $action);
-			parent::add_hidden('_ajax_nonce', wnd_create_nonce($action));
+			$this->add_hidden('action', $action);
+			$this->add_hidden('_ajax_nonce', wnd_create_nonce($action));
 		} else {
 			parent::set_action($action, $method);
 		}
@@ -56,7 +57,7 @@ class Wnd_WP_Form extends Wnd_Form {
 	 *@since 2019.05.26 表单按钮默认配色
 	 */
 	public function set_submit_button($submit_text, $submit_class = '') {
-		$submit_class = $submit_class ?: 'is-' . Wnd_WP_Form::$primary_color;
+		$submit_class = $submit_class ?: 'is-' . self::$primary_color;
 		$submit_class .= $this->is_ajax_submit ? ' ajax-submit' : '';
 		parent::set_submit_button($submit_text, $submit_class);
 	}
@@ -75,28 +76,28 @@ class Wnd_WP_Form extends Wnd_Form {
 	 *未被选中的radio 与checkbox将不会发送到后端，会导致wnd_form_nonce 校验失败，此处通过设置hidden字段修改
 	 */
 	public function add_radio($args) {
-		parent::add_hidden($args['name'], '');
+		$this->add_hidden($args['name'], '');
 		parent::add_radio($args);
 	}
 
 	public function add_checkbox($args) {
-		parent::add_hidden($args['name'], '');
+		$this->add_hidden($args['name'], '');
 		parent::add_checkbox($args);
 	}
 
 	/**
 	 *短信校验
-	 *@param $verify_type 	string 'register' / 'reset_password' 为保留字段, 用途为：注册 / 重置密码
+	 *@param string 	$type 		  	register / reset_password / bind / verify
+	 *@param string 	$template 		短信模板
 	 *注册时若当前手机已注册，则无法发送验证码
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
-	public function add_sms_verify($verify_type = 'verify', $template = '') {
+	public function add_sms_verify($type = 'verify', $template = '') {
+		$this->add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
 
-		parent::add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
-
-		if (!wnd_get_user_phone(get_current_user_id())) {
-
-			parent::add_text(
+		// 当前用户为绑定手机或更换绑定手机
+		if (!wnd_get_user_phone(get_current_user_id()) or 'bind' == $type) {
+			$this->add_text(
 				array(
 					'name' => 'phone',
 					'has_icons' => 'left',
@@ -108,61 +109,60 @@ class Wnd_WP_Form extends Wnd_Form {
 			);
 		}
 
-		parent::add_text(
+		$this->add_text(
 			array(
-				'name' => 'v_code',
+				'name' => 'auth_code',
 				'has_icons' => 'left',
 				'icon' => '<i class="fas fa-comment-alt"></i>',
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '短信验证码',
-				'addon' => '<button type="button" class="send-code button is-outlined is-' . Wnd_WP_Form::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="sms">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-is_email="0">获取验证码</button>',
 			)
 		);
 
-		parent::add_html('</div>');
-
+		$this->add_html('</div>');
 	}
 
 	/**
 	 *邮箱校验
-	 *@param $verify_type 	string 'register' / 'reset_password' 为保留字段, 用途为：注册 / 重置密码
+	 *@param string 	$type 		  	register / reset_password / bind / verify
 	 *注册时若当前邮箱已注册，则无法发送验证码
 	 *找回密码时若当前邮箱未注册，则无法发送验证码
 	 **/
-	public function add_email_verify($verify_type = 'verify', $template = '') {
+	public function add_email_verify($type = 'verify', $template = '') {
+		$this->add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
 
-		parent::add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
+		// 当前用户为绑定邮箱或更换绑定邮箱
+		if (!wp_get_current_user()->user_email or 'bind' == $type) {
+			$this->add_text(
+				array(
+					'name' => '_user_user_email',
+					'has_icons' => 'left',
+					'icon' => '<i class="fa fa-at"></i>',
+					'required' => 'required',
+					'placeholder' => '电子邮箱',
+				)
+			);
+		}
 
-		parent::add_text(
+		$this->add_text(
 			array(
-				'name' => '_user_user_email',
-				'has_icons' => 'left',
-				'icon' => '<i class="fa fa-at"></i>',
-				'required' => 'required',
-				'placeholder' => '电子邮箱',
-			)
-		);
-
-		parent::add_text(
-			array(
-				'name' => 'v_code',
+				'name' => 'auth_code',
 				'has_icons' => 'left',
 				'icon' => '<i class="fa fa-key"></i>',
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '邮箱验证码',
-				'addon' => '<button type="button" class="send-code button is-outlined is-' . Wnd_WP_Form::$primary_color . '" data-verify-type="' . $verify_type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-send-type="email">获取验证码</button>',
+				'addon' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-is_email="email">获取验证码</button>',
 			)
 		);
 
-		parent::add_html('</div>');
-
+		$this->add_html('</div>');
 	}
 
 	// Image upload
 	public function add_image_upload($args) {
-
 		$defaults = array(
 			'label' => 'Image upland',
 			'name' => 'wnd_file',
@@ -190,8 +190,8 @@ class Wnd_WP_Form extends Wnd_Form {
 		$args['data']['delete_nonce'] = wnd_create_nonce('wnd_ajax_delete_file');
 		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
 		$args['data']['thumbnail'] = $args['thumbnail'];
-		$args['data']['thumbnail-width'] = $args['thumbnail_size']['width'];
-		$args['data']['thumbnail-height'] = $args['thumbnail_size']['height'];
+		$args['data']['thumbnail_width'] = $args['thumbnail_size']['width'];
+		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
 		$args['data']['method'] = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据user type 查找目标文件
@@ -215,12 +215,10 @@ class Wnd_WP_Form extends Wnd_Form {
 		$args['file_id'] = $file_id ?: 0;
 
 		parent::add_image_upload($args);
-
 	}
 
 	// File upload
 	public function add_file_upload($args) {
-
 		$defaults = array(
 			'label' => 'File upload',
 			'name' => 'wnd_file',
@@ -264,12 +262,15 @@ class Wnd_WP_Form extends Wnd_Form {
 		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">查看文件</a>' : '……';
 
 		parent::add_file_upload($args);
-
 	}
 
-	// 相册上传
+	/**
+	 *
+	 *相册上传
+	 *如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+	 *meta_key: 	gallery
+	 */
 	public function add_gallery_upload($args) {
-
 		$defaults = array(
 			'label' => 'Gallery',
 			'thumbnail_size' => array('width' => '160', 'height' => '120'),
@@ -286,13 +287,102 @@ class Wnd_WP_Form extends Wnd_Form {
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
+		$this->build_gallery_upload($args);
+	}
+
+	// 构造表单，可设置WordPress filter 过滤表单的input_values
+	public function build() {
+
+		/**
+		 *设置表单过滤filter
+		 **/
+		if ($this->filter) {
+			$this->input_values = apply_filters($this->filter, $this->input_values);
+		}
+
+		/**
+		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
+		 **/
+		$this->build_form_nonce();
+
+		/**
+		 *构建表单
+		 */
+		parent::build();
+	}
+
+	/**
+	 *@since 2019.05.09
+	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
+	 */
+	protected function build_form_nonce() {
+		// 提取表单字段names 去重，排序
+		array_push($this->form_names, '_wnd_form_nonce'); // nonce自身字段也需要包含在内
+		foreach ($this->get_input_values() as $input_value) {
+			if (!isset($input_value['name'])) {
+				continue;
+			}
+
+			if (isset($input_value['disabled']) and $input_value['disabled']) {
+				continue;
+			}
+
+			array_push($this->form_names, $input_value['name']);
+		}
+		unset($input_value);
+
+		$this->form_names = array_unique($this->form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
+		sort($this->form_names);
+
+		// 根据表单字段，和表单验证秘钥生成wp nonce
+		$nonce = wnd_create_nonce(md5(implode('', $this->form_names)));
+
+		// 将nonce字段添加到表单
+		$this->add_hidden('_wnd_form_nonce', $nonce);
+	}
+
+	/**
+	 *构建表单头部
+	 */
+	protected function build_form_header() {
+
+		/**
+		 *@since 2019.07.17 常规非ajax表单
+		 */
+		if (!$this->is_ajax_submit) {
+			parent::build_form_header();
+		}
+
+		$html = '<form id="form-' . $this->id . '" action="" method="POST" onsubmit="return false"';
+		if ($this->with_upload) {
+			$html .= ' enctype="multipart/form-data"';
+		}
+
+		if ($this->form_attr) {
+			$html .= ' ' . $this->form_attr;
+		}
+		$html .= '>';
+
+		if ($this->form_title) {
+			$html .= '<div class="field has-text-centered content">';
+			$html .= '<h3>' . $this->form_title . '</h3>';
+			$html .= '</div>';
+		}
+
+		$html .= '<div class="ajax-message">' . $this->message . '</div>';
+
+		$this->html = $html;
+	}
+
+	// 构建相册上传
+	protected function build_gallery_upload($args) {
 		// 固定data
 		$args['data']['meta_key'] = 'gallery';
 		$args['data']['upload_nonce'] = wnd_create_nonce('wnd_ajax_upload_file');
 		$args['data']['delete_nonce'] = wnd_create_nonce('wnd_ajax_delete_file');
 		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
-		$args['data']['thumbnail-width'] = $args['thumbnail_size']['width'];
-		$args['data']['thumbnail-height'] = $args['thumbnail_size']['height'];
+		$args['data']['thumbnail_width'] = $args['thumbnail_size']['width'];
+		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
 		$args['data']['method'] = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 定义一些本方法需要重复使用的变量
@@ -335,7 +425,6 @@ class Wnd_WP_Form extends Wnd_Form {
 			$html .= '</div>';
 		}
 		foreach ($images as $key => $attachment_id) {
-
 			$attachment_url = wp_get_attachment_url($attachment_id);
 			$thumbnail_url = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
 			if (!$attachment_url) {
@@ -343,107 +432,16 @@ class Wnd_WP_Form extends Wnd_Form {
 				continue;
 			}
 
-			$html .= '<div id="img' . $attachment_id . '" class="column is-narrow">';
+			$html .= '<div class="attachment-' . $attachment_id . ' column is-narrow">';
 			$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '"height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
 			$html .= '<a class="delete" data-id="' . $id . '" data-file_id="' . $attachment_id . '"></a>';
 			$html .= '</div>';
-
 		}
 		unset($key, $attachment_id);
 		wnd_update_post_meta($post_parent, $meta_key, $images); // 若字段中存在被删除的图片数据，此处更新
 		$html .= '</div>';
-
 		$html .= '</div>';
 
-		parent::add_html($html);
-
+		$this->add_html($html);
 	}
-
-	// 构造表单，可设置WordPress filter 过滤表单的input_values
-	public function build() {
-
-		/**
-		 *设置表单过滤filter
-		 **/
-		if ($this->filter) {
-			$this->input_values = apply_filters($this->filter, $this->input_values);
-		}
-
-		/**
-		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
-		 **/
-		$this->build_form_nonce();
-
-		/**
-		 *构建表单
-		 */
-		parent::build();
-
-	}
-
-	/**
-	 *@since 2019.05.09
-	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
-	 */
-	public function build_form_nonce() {
-
-		// 提取表单字段names 去重，排序
-		array_push($this->form_names, '_wnd_form_nonce'); // nonce自身字段也需要包含在内
-		foreach ($this->get_input_values() as $input_value) {
-
-			if (!isset($input_value['name'])) {
-				continue;
-			}
-
-			if (isset($input_value['disabled']) and $input_value['disabled']) {
-				continue;
-			}
-
-			array_push($this->form_names, $input_value['name']);
-
-		}
-		unset($input_value);
-		$this->form_names = array_unique($this->form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
-		sort($this->form_names);
-
-		// 根据表单字段，和表单验证秘钥生成wp nonce
-		$nonce = wnd_create_nonce(md5(implode('', $this->form_names)));
-
-		// 将nonce字段添加到表单
-		parent::add_hidden('_wnd_form_nonce', $nonce);
-
-	}
-
-	protected function build_form_header() {
-
-		/**
-		 *@since 2019.07.17 常规非ajax表单
-		 */
-		if (!$this->is_ajax_submit) {
-			parent::build_form_header();
-		}
-
-		$html = '<form id="form-' . $this->id . '" action="" method="POST" onsubmit="return false"';
-
-		if ($this->with_upload) {
-			$html .= ' enctype="multipart/form-data"';
-		}
-
-		if ($this->form_attr) {
-			$html .= ' ' . $this->form_attr;
-		}
-
-		$html .= '>';
-
-		if ($this->form_title) {
-			$html .= '<div class="field has-text-centered content">';
-			$html .= '<h3>' . $this->form_title . '</h3>';
-			$html .= '</div>';
-		}
-
-		$html .= '<div class="ajax-message">' . $this->message . '</div>';
-
-		$this->html = $html;
-	}
-
 }
