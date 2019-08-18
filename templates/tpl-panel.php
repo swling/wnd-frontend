@@ -38,6 +38,7 @@ function _wnd_user_posts_panel(int $posts_per_page = 0) {
 	$filter->add_post_type_filter(wnd_get_user_panel_post_types());
 	$filter->add_post_status_filter(array('发布' => 'publish', '待审' => 'pending', '关闭' => 'close', '草稿' => 'draft'));
 	$filter->add_taxonomy_filter(array('taxonomy' => $filter->category_taxonomy));
+	$filter->add_query(array('author' => get_current_user_id()));
 	$filter->set_posts_template('_wnd_posts_tpl');
 	$filter->set_posts_per_page($posts_per_page);
 	$filter->set_ajax_container('#user-posts-panel');
@@ -58,6 +59,7 @@ function _wnd_user_mail_panel(int $posts_per_page = 0) {
 	$filter = new Wnd_Filter(true);
 	$filter->add_post_type_filter(array('mail'));
 	$filter->add_post_status_filter(array('未读' => 'pending', '已读' => 'private'));
+	$filter->add_query(array('author' => get_current_user_id()));
 	$filter->set_posts_template('_wnd_mail_posts_tpl');
 	$filter->set_posts_per_page($posts_per_page);
 	$filter->set_ajax_container('#user-mail-panel');

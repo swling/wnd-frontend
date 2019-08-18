@@ -61,6 +61,7 @@ function _wnd_user_fin_panel(int $posts_per_page = 0) {
 	$filter = new Wnd_Filter(true);
 	$filter->add_post_type_filter(array('order', 'recharge'));
 	$filter->add_post_status_filter(array('any'));
+	$filter->add_query(array('author' => get_current_user_id()));
 	$filter->set_posts_template('_wnd_user_fin_posts_tpl');
 	$filter->set_posts_per_page($posts_per_page);
 	$filter->set_ajax_container('#admin-fin-panel');

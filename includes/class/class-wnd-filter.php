@@ -4,18 +4,9 @@
  * @since 2019.07.30
  * 多重筛选类
  * 样式基于bulma css
- * @param bool $is_ajax 是否为ajax筛选（需要对应的前端支持）
+ * @param bool $is_ajax 	是否为ajax筛选（需要对应的前端支持）
  */
 class Wnd_Filter {
-
-	// 筛选项HTML
-	protected $tabs = '';
-
-	// 筛选结果HTML
-	protected $posts = '';
-
-	// 分页导航HTML
-	protected $pagination = '';
 
 	// bool 是否ajax
 	protected static $is_ajax;
@@ -74,6 +65,15 @@ class Wnd_Filter {
 
 	// 当前post type的主分类taxonomy 约定：post(category) / 自定义类型 （$post_type . '_cat'）
 	public $category_taxonomy;
+
+	// 筛选项HTML
+	protected $tabs = '';
+
+	// 筛选结果HTML
+	protected $posts = '';
+
+	// 分页导航HTML
+	protected $pagination = '';
 
 	/**
 	 * Constructor.
@@ -251,11 +251,8 @@ class Wnd_Filter {
 			}
 
 			// 其他、按键名自动匹配、排除指定作者的参数
-			if ($key != 'author') {
-				$query_vars[$key] = $value;
-				continue;
-			}
-
+			$query_vars[$key] = $value;
+			continue;
 		}
 		unset($key, $value);
 
