@@ -72,7 +72,7 @@ class Wnd_Posts_Table {
 					$content = '<a href="' . get_permalink() . '" target="_blank">' . $post->post_title . '</a>';
 
 				} elseif ('post_date' == $column['post_field']) {
-					$content = get_the_date('y-m-d H:m');
+					$content = get_the_date('y-m-d H:i');
 
 				} elseif ('post_parent_with_link' == $column['post_field']) {
 					if ($post->post_parent) {
