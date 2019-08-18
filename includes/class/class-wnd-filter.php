@@ -86,7 +86,7 @@ class Wnd_Filter {
 		$this->class .= self::$is_ajax ? 'ajax-filter' : '';
 
 		// 解析GET参数为wp_query参数并与默认参数合并，以防止出现参数未定义的警告信息
-		$this->wp_query_args = wp_parse_args(self::parse_query_vars(), $this->wp_query_args);
+		$this->wp_query_args = array_merge($this->wp_query_args, self::parse_query_vars());
 
 		/**
 		 *定义当前post type的主分类：$category_taxonomy
@@ -306,6 +306,9 @@ class Wnd_Filter {
 			$this->const_query[$key] = $value;
 		}
 		unset($key, $value);
+
+		// GET参数优先，如有冲突覆盖add_query设置
+		$this->wp_query_args = array_merge($this->wp_query_args, self::parse_query_vars());
 	}
 
 	/**
