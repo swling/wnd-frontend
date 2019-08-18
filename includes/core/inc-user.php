@@ -239,7 +239,7 @@ function wnd_social_login($open_id, $display_name = '', $avatar_url = '') {
  *用户角色为：管理员或编辑 返回 true
  */
 function wnd_is_manager($user_id = 0) {
-	$user = wp_get_current_user();
+	$user = $user_id ? get_user_by('id', $user_id) : wp_get_current_user();
 
 	$user_role = $user->roles[0] ?? false;
 	if ($user_role == 'administrator' or $user_role == 'editor') {
