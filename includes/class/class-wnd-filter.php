@@ -215,7 +215,9 @@ class Wnd_Filter {
 
 			/**
 			 *@since 2019.08.04
-			 *ajax请求中，orderby将发送数组形式的信息，需要解析后并入查询参数
+			 *ajax Orderby tabs链接请求中，orderby将发送数组形式的信息，需要解析后并入查询参数
+			 *
+			 *@see build_orderby_filter
 			 */
 			if ('orderby' == $key and self::$is_ajax) {
 				$query_vars = wp_parse_args($value, $query_vars);
@@ -909,7 +911,6 @@ class Wnd_Filter {
 	 *				'meta_key'   => 'views',
 	 *			),
 	 *		),
-	 *		'order' => 'DESC',
 	 *	);
 	 *
 	 */
@@ -934,8 +935,8 @@ class Wnd_Filter {
 		 * 全部选项
 		 * @since 2019.03.07（copy）
 		 */
-		$all_link = self::$doing_ajax ? '' : remove_query_arg($remove_query_args);
-		$tabs .= '<li ' . $all_class . '><a data-key="orderby" data-value="" href="' . $all_link . '">默认</a></li>';
+		// $all_link = self::$doing_ajax ? '' : remove_query_arg($remove_query_args);
+		// $tabs .= '<li ' . $all_class . '><a data-key="orderby" data-value="" href="' . $all_link . '">默认</a></li>';
 
 		// 输出tabs
 		foreach ($args['options'] as $key => $orderby) {

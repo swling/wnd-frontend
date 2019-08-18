@@ -61,7 +61,6 @@ $filter->add_orderby_filter(
 				'meta_key' => 'views',
 			),
 		),
-		'order' => 'DESC',
 	)
 );
 
