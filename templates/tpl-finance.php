@@ -6,21 +6,14 @@ if (!defined('ABSPATH')) {
 
 /**
  *@since 2019.02.18 封装用户财务中心
+ *@param $posts_per_page 每页列表数目
  */
-function _wnd_user_fin_panel($args = array()) {
+function _wnd_user_fin_panel(int $posts_per_page = 0) {
 	if (!is_user_logged_in()) {
 		return;
 	}
 	$user_id = get_current_user_id();
-
-	// args
-	$defaults = array(
-		'post_type' => 'order',
-		'post_status' => 'any',
-		'paged' => 1,
-		'posts_per_page' => get_option('posts_per_page'),
-	);
-	$args = wp_parse_args($args, $defaults);
+	$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 
 	$html = '<div id="user-fin">';
 	$html .= '<nav class="level">';
@@ -69,7 +62,7 @@ function _wnd_user_fin_panel($args = array()) {
 	$filter->add_post_type_filter(array('order', 'recharge'));
 	$filter->add_post_status_filter(array('any'));
 	$filter->set_posts_template('_wnd_user_fin_posts_tpl');
-	$filter->set_posts_per_page(10);
+	$filter->set_posts_per_page($posts_per_page);
 	$filter->set_ajax_container('#admin-fin-panel');
 	$filter->query();
 	$filter_html = $filter->get_tabs() . '<div id="admin-fin-panel">' . $filter->get_results() . '</div>';
@@ -116,17 +109,19 @@ function _wnd_user_fin_posts_tpl($query) {
 
 /**
  *@since 2019.03.14 财务统计中心
+ *@param $posts_per_page 每页列表数目
  */
-function _wnd_admin_fin_panel() {
+function _wnd_admin_fin_panel(int $posts_per_page = 0) {
 	if (!is_super_admin()) {
 		return;
 	}
+	$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 
 	$filter = new Wnd_Filter(true);
-	$filter->add_post_type_filter(array('stats-re', 'stats-ex'));
+	$filter->add_post_type_filter(array('stats-ex', 'stats-re'));
 	$filter->add_post_status_filter(array('any'));
 	$filter->set_posts_template('_wnd_fin_stats_posts_tpl');
-	$filter->set_posts_per_page(12);
+	$filter->set_posts_per_page($posts_per_page);
 	$filter->set_ajax_container('#admin-fin-panel');
 	$filter->query();
 	return $filter->get_tabs() . '<div id="admin-fin-panel">' . $filter->get_results() . '</div>';
