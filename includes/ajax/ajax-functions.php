@@ -89,15 +89,15 @@ function wnd_ajax_admin_recharge() {
 
 /**
  *@since 2019.01.16
- *@param $_POST['post_id']
- *@param $_POST['useragent']
+ *@param $_GET['post_id']
+ *@param $_GET['useragent']
  */
 function _wnd_ajax_update_views() {
-	$post_id = (int) $_POST['param'];
+	$post_id = (int) $_GET['param'];
 	if (!$post_id) {
 		return;
 	}
-	$useragent = $_POST['useragent'];
+	$useragent = $_GET['useragent'];
 	$should_count = true;
 
 	// 根据 useragent 排除搜索引擎

@@ -229,7 +229,7 @@ class Wnd_Order {
 	}
 
 	/**
-	 *构建包含当前站点标识的订单号码作为发送至三方支付平台的订单号
+	 *获取WordPress order post ID
 	 */
 	public function get_ID() {
 		return $this->ID;
