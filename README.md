@@ -80,6 +80,7 @@ wnd_meta: phone：用户手机号码
 wnd_meta：gallery (用户相册)
 
 # ajax交互概述：
+后端返回json属性：status,msg,data
 ```php
 /**
  *自定义api：wp-json/wnd/rest-api Allow: GET, POST, PUT, PATCH, DELETE
