@@ -28,7 +28,7 @@
 editor及以上角色定义为管理员 wnd_is_manager()
 
 ## 分类与标签关联
-默认已支持WordPress原生post分类和标签关联。如需要支持自定义taxonomy，并遵循以下规则：
+默认已支持WordPress原生post分类和标签关联。如需要支持自定义taxonomy，请遵循以下规则：
 ```php
 $post_type.'_cat';//分类taxonomy
 $post_type.'_tag';//标签taxonomy
@@ -333,4 +333,4 @@ wp_cache_set($object_id, $meta_value, 'views');
 创建地址：do.php?action=payment&_wpnonce=wnd_create_nonce('payment')
 表单字段：
 post_id(GET/POST)：	如果设置了post_id 则表示该支付为订单类型，即为特定post付费，对应支付价格通过 wnd_get_post_price($post_id) 获取
-money(POST)：		如果未设置post_id 则表示该支付为充值类型，对应支付金额，即为表单提交数据
+money(GET/POST)：	如果未设置post_id 则表示该支付为充值类型，对应支付金额，即为表单提交数据
