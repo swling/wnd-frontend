@@ -51,7 +51,7 @@ function wnd_install() {
 
 	// 升级
 	if (get_option('wnd_var') != WND_VER) {
-		wnd_upgrade_02();
+		// wnd_upgrade_02();
 	}
 
 	// 默认option数据
