@@ -113,5 +113,4 @@ class Wnd_Posts_Table {
 			return ' class="' . $column['class'] . '"';
 		}
 	}
-
 }
