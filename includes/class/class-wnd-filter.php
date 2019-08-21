@@ -18,11 +18,11 @@ class Wnd_Filter {
 	protected $class;
 
 	/**
-	 * 每次请求携带的固定的查询参数
+	 * 现有方法之外，其他新增的查询参数
 	 * 将在筛选容器，及分页容器上出现，以绑定点击事件，发送到api接口
 	 * 以data-{key}="{value}"形式出现，ajax请求中，将转化为 url请求参数 ?{key}={value}
 	 */
-	protected $const_query = array();
+	protected $add_query = array();
 
 	/**
 	 *meta 查询参数需要供current filter查询使用
@@ -324,7 +324,7 @@ class Wnd_Filter {
 			}
 
 			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
-			$this->const_query[$key] = $value;
+			$this->add_query[$key] = $value;
 		}
 		unset($key, $value);
 	}
@@ -512,11 +512,11 @@ class Wnd_Filter {
 	 *
 	 *@since 2019.08.02
 	 *构造HTML data属性
-	 *获取查询常量，并转化为html data属性，供前端读取后在ajax请求中发送到api
+	 *获取新增查询，并转化为html data属性，供前端读取后在ajax请求中发送到api
 	 */
 	protected function build_html_data() {
 		$data = '';
-		foreach ($this->const_query as $key => $value) {
+		foreach ($this->add_query as $key => $value) {
 			$value = is_array($value) ? http_build_query($value) : $value;
 			$data .= 'data-' . $key . '="' . $value . '" ';
 		}
