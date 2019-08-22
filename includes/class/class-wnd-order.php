@@ -182,8 +182,8 @@ class Wnd_Order {
 	 *确认消费订单
 	 *@return int or false
 	 *
-	 *@param int|Exception 		$this->ID  			required
-	 *@param string 			$this->subject 		option
+	 *@param int 		$this->ID  			required
+	 *@param string 	$this->subject 		option
 	 */
 	public function verify() {
 		$post = get_post($this->ID);

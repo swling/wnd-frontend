@@ -180,8 +180,8 @@ class Wnd_Recharge {
 	 *更新支付订单状态
 	 *@return int or Exception
 	 *
-	 *@param int|Exception 		$this->ID  			required
-	 *@param string 			$this->subject 		option
+	 *@param int 		$this->ID  			required
+	 *@param string 	$this->subject 		option
 	 */
 	public function verify() {
 		$post = get_post($this->ID);
