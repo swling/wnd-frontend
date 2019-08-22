@@ -135,7 +135,7 @@ class Wnd_WP_Form extends Wnd_Form {
 
 		// 当前用户为绑定邮箱或更换绑定邮箱
 		if (!wp_get_current_user()->user_email or 'bind' == $type) {
-			$this->add_text(
+			$this->add_email(
 				array(
 					'name' => '_user_user_email',
 					'has_icons' => 'left',
@@ -146,7 +146,7 @@ class Wnd_WP_Form extends Wnd_Form {
 			);
 		}
 
-		$this->add_text(
+		$this->add_email(
 			array(
 				'name' => 'auth_code',
 				'has_icons' => 'left',

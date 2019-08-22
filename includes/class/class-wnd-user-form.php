@@ -34,7 +34,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	}
 
 	public function add_user_email($placeholder = '邮箱') {
-		$this->add_text(
+		$this->add_email(
 			array(
 				'name' => '_user_user_email',
 				'value' => $this->user->user_email,

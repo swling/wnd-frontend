@@ -357,9 +357,9 @@ function _wnd_account_form() {
 	$form->add_user_email();
 
 	if (wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
-		$form->add_sms_verify($verify_type = 'v', wnd_get_option('wnd', 'wnd_sms_template_v'));
+		$form->add_sms_verify('verify', wnd_get_option('wnd', 'wnd_sms_template_v'));
 	} else {
-		$form->add_email_verify($verify_type = 'v', $template = '');
+		$form->add_email_verify('verify', $template = '');
 	}
 
 	$form->set_action('wnd_ajax_reset_password');
