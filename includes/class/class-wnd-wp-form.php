@@ -146,7 +146,7 @@ class Wnd_WP_Form extends Wnd_Form {
 			);
 		}
 
-		$this->add_email(
+		$this->add_text(
 			array(
 				'name' => 'auth_code',
 				'has_icons' => 'left',
