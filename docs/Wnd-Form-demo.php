@@ -206,6 +206,49 @@ $form->add_textarea(
 	)
 );
 
+/**
+ *@since 2019.08.23
+ *新增HTML5 字段
+ **/
+$form->add_color(
+	array(
+		'name' => 'color',
+		'value' => '#990000',
+	)
+);
+
+$form->add_date(
+	array(
+		'name' => 'date',
+		'min' => '2019-08-23',
+		'max' => '3019-08-31',
+	)
+);
+
+$form->add_range(
+	array(
+		'name' => 'range',
+		'min' => '0',
+		'max' => '10',
+		'step' => '0.1',
+	)
+);
+
+$form->add_url(
+	array(
+		'name' => 'url',
+	)
+);
+
+// 138-5200-1900
+$form->add_tel(
+	array(
+		'name' => 'tel',
+		'label' => '格式：xxx-xxxx-xxxx',
+		'pattern' => '[0-9]{3}-[0-9]{4}-[0-9]{4}',
+	)
+);
+
 $form->set_action('post', 'https://www.baidu.com');
 $form->set_form_attr('data-test="test-value"');
 $form->set_submit_button('Submit', 'is-primary');

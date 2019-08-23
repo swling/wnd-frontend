@@ -30,18 +30,24 @@ class Wnd_Form {
 
 	public $html;
 
-	static protected $defaults = array(
+	protected static $defaults = array(
 		'name' => '',
 		'value' => '',
 		'label' => null,
 		'options' => array(), //value of select/radio. Example: array(label=>value)
 		'checked' => null, // checked value of select/radio; bool of checkbox
 
-		'placeholder' => '',
 		'required' => false,
 		'disabled' => false,
 		'autofocus' => false,
 		'readonly' => false,
+		'placeholder' => '',
+		'size' => '',
+		'maxlength' => '',
+		'min' => '',
+		'max' => '',
+		'step' => '',
+		'pattern' => '',
 
 		'id' => null,
 		'class' => null,
@@ -77,7 +83,7 @@ class Wnd_Form {
 		$this->submit_class = $submit_class;
 	}
 
-	// _action
+	// action
 	public function set_action($action, $method) {
 		$this->method = $method;
 		$this->action = $action;
@@ -91,66 +97,104 @@ class Wnd_Form {
 	/**
 	 *@since 2019.03.10 设置常规input 字段
 	 */
-	// _text
+	// text
 	public function add_text($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'text';
 		array_push($this->input_values, $args);
 	}
 
-	// _number
+	// number
 	public function add_number($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'number';
 		array_push($this->input_values, $args);
 	}
 
-	// _hidden
+	// hidden
 	public function add_hidden($name, $value) {
 		array_push($this->input_values, array(
 			'type' => 'hidden',
 			'name' => $name,
 			'value' => $value,
-			'id' => null,
 		));
 	}
 
-	// _textarea
+	// textarea
 	public function add_textarea($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'textarea';
 		array_push($this->input_values, $args);
 	}
 
-	// _email
+	// email
 	public function add_email($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'email';
 		array_push($this->input_values, $args);
 	}
 
-	// _password
+	// password
 	public function add_password($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'password';
 		array_push($this->input_values, $args);
 	}
 
-	// _select
+	/**
+	 *@since 2019.08.23
+	 *新增HTML5 字段
+	 */
+	// URL
+	public function add_url($args) {
+		$args = array_merge(self::$defaults, $args);
+		$args['type'] = 'url';
+		array_push($this->input_values, $args);
+	}
+
+	// color
+	public function add_color($args) {
+		$args = array_merge(self::$defaults, $args);
+		$args['type'] = 'color';
+		array_push($this->input_values, $args);
+	}
+
+	// date
+	public function add_date($args) {
+		$args = array_merge(self::$defaults, $args);
+		$args['type'] = 'date';
+		array_push($this->input_values, $args);
+	}
+
+	// range
+	public function add_range($args) {
+		$args = array_merge(self::$defaults, $args);
+		$args['type'] = 'range';
+		array_push($this->input_values, $args);
+	}
+
+	// tel
+	public function add_tel($args) {
+		$args = array_merge(self::$defaults, $args);
+		$args['type'] = 'tel';
+		array_push($this->input_values, $args);
+	}
+
+	// select
 	public function add_select($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'select';
 		array_push($this->input_values, $args);
 	}
 
-	// _radio
+	// radio
 	public function add_radio($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'radio';
 		array_push($this->input_values, $args);
 	}
 
-	// _checkbox
+	// checkbox
 	public function add_checkbox($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'checkbox';
@@ -282,6 +326,11 @@ class Wnd_Form {
 			case 'number':
 			case 'email':
 			case 'password':
+			case 'url':
+			case 'color':
+			case 'date':
+			case 'range':
+			case 'tel':
 				$html .= $this->build_input($input_value, $input_key);
 				break;
 			case 'hidden':
@@ -518,27 +567,26 @@ class Wnd_Form {
 	 *不含：id、class、value
 	 */
 	protected function get_the_attr($input_value) {
+		$bool_attrs = array('readonly', 'disabled', 'autofocus', 'required');
+		$normal_attrs = array('placeholder', 'size', 'maxlength', 'min', 'max', 'step', 'pattern');
 		$attr = '';
 
-		if ($input_value['readonly'] ?? false) {
-			$attr .= ' readonly="readonly"';
-		}
+		foreach ($input_value as $key => $value) {
+			if (!$value and !is_numeric($value)) {
+				continue;
+			}
 
-		if ($input_value['disabled'] ?? false) {
-			$attr .= ' disabled="disabled"';
-		}
+			if (in_array($key, $bool_attrs)) {
+				$attr .= ' ' . $key . '="' . $key . '"';
+				continue;
+			}
 
-		if ($input_value['autofocus'] ?? false) {
-			$attr .= ' autofocus="autofocus"';
+			if (in_array($key, $normal_attrs)) {
+				$attr .= ' ' . $key . '="' . $value . '"';
+				continue;
+			}
 		}
-
-		if ($input_value['required'] ?? false) {
-			$attr .= ' required="required"';
-		}
-
-		if ($input_value['placeholder'] ?? false) {
-			$attr .= ' placeholder="' . $input_value['placeholder'] . '"';
-		}
+		unset($key, $value);
 
 		return $attr;
 	}
