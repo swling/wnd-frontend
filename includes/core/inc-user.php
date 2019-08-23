@@ -28,8 +28,8 @@ function wnd_get_user_phone($user_id) {
 
 /**
  *@since 2019.01.28 根据邮箱，手机，或用户名查询用户
- *@param $email_or_phone_or_login
- *@return WordPress user object or false
+ *@param string 		$email_or_phone_or_login
+ *@return object|false	WordPress user object on success
  */
 function wnd_get_user_by($email_or_phone_or_login) {
 	global $wpdb;

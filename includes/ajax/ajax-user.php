@@ -325,6 +325,12 @@ function wnd_ajax_reset_password() {
 		return array('status' => 0, 'msg' => '两次输入的新密码不匹配！');
 	}
 
+	//获取用户
+	$user = wnd_get_user_by($email_or_phone);
+	if (!$user) {
+		return array('status' => 0, 'msg' => '账户未注册！');
+	}
+
 	// 核对验证码
 	try {
 		$auth = new Wnd_Auth;
@@ -333,7 +339,7 @@ function wnd_ajax_reset_password() {
 		$auth->set_email_or_phone($email_or_phone);
 		$auth->verify();
 
-		reset_password(wp_get_current_user(), $new_password);
+		reset_password($user, $new_password);
 		return array('status' => 1, 'msg' => '密码修改成功！<a onclick="wnd_ajax_modal(\'_wnd_login_form\');">登录</a>');
 	} catch (Exception $e) {
 		return array('status' => 0, 'msg' => $e->getMessage());
