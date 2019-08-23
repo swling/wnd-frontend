@@ -580,22 +580,23 @@ jQuery(document).ready(function($) {
 					 *
 					 *ajax上传时，后端会自动根据post_parent和meta_key做常规处理，此处额外发送，供开发中其他特殊情况使用
 					 */
-					if (_this.parents("form").find("input[name='_post_post_type']").val() == "attachment") {
-						_this.parents("form").find("input[name='_post_ID']").val(response[i].data.id);
+					var parent_form = _this.parents("form");
+					if (parent_form.length > 0 && parent_form.find("input[name='_post_post_type']").val() == "attachment") {
+						parent_form.find("input[name='_post_ID']").val(response[i].data.id);
 
 						/**
 						 *如果当前未手动设定：标题、别名、menu order，则返回自动生成的值
 						 *由于插件对上传文件做了自动文件名加密处理，此处自动设置为本地文件名
 						 */
-						if (!_this.parents("form").find("input[name='_post_post_title']").val()) {
-							_this.parents("form").find("input[name='_post_post_title']").val(filename);
+						if (!parent_form.find("input[name='_post_post_title']").val()) {
+							parent_form.find("input[name='_post_post_title']").val(filename);
 						}
-						if (!_this.parents("form").find("input[name='_post_post_name']").val()) {
-							_this.parents("form").find("input[name='_post_post_name']").val(response[i].data.post.post_name);
+						if (!parent_form.find("input[name='_post_post_name']").val()) {
+							parent_form.find("input[name='_post_post_name']").val(response[i].data.post.post_name);
 						}
 
-						if (!_this.parents("form").find("input[name='_post_menu_order']").val()) {
-							_this.parents("form").find("input[name='_post_menu_order']").val(response[i].data.post.menu_order);
+						if (!parent_form.find("input[name='_post_menu_order']").val()) {
+							parent_form.find("input[name='_post_menu_order']").val(response[i].data.post.menu_order);
 						}
 
 						/**
@@ -606,7 +607,7 @@ jQuery(document).ready(function($) {
 						wnd_ajax_msg("上传成功，如需更改，请删除后再重新选择文件！", "is-success", "#" + id);
 
 						// 上传后，自动提交保存媒体信息
-						wnd_ajax_submit(_this.parents("form").attr("id"));
+						wnd_ajax_submit(parent_form.attr("id"));
 					}
 				}
 			},
@@ -916,7 +917,7 @@ jQuery(document).ready(function($) {
 			filter_parent.find("ul.tab li:first-child").addClass("is-active");
 
 		} else {
-			filter_param['type'] = $(".post-type-tabs .is-active a").data("value");
+			filter_param['type'] = filter_parent.find(".post-type-tabs .is-active a").data("value");
 		}
 
 		// 主分类切换时删除标签查询
@@ -939,9 +940,9 @@ jQuery(document).ready(function($) {
 			success: function(response) {
 				// 切换post type时，隐藏所有taxonomy 再根据当前post type支持的taxonomy选择性显示，以达到ajax切换的效果
 				if ("type" == key) {
-					$(".taxonomy-tabs").addClass("is-hidden");
+					filter_parent.find(".taxonomy-tabs").addClass("is-hidden");
 					for (var i = 0; i < response.data.taxonomies.length; i++) {
-						$("." + response.data.taxonomies[i] + "-tabs").removeClass("is-hidden");
+						filter_parent.find("." + response.data.taxonomies[i] + "-tabs").removeClass("is-hidden");
 					}
 				}
 
