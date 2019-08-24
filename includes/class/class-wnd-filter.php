@@ -178,7 +178,7 @@ class Wnd_Filter {
 					unset($meta_query['value']);
 				}
 
-				array_push($query_vars['meta_query'], $meta_query);
+				$query_vars['meta_query'][] = $meta_query;
 				continue;
 			}
 
@@ -192,7 +192,7 @@ class Wnd_Filter {
 					'field' => 'term_id',
 					'terms' => $value,
 				);
-				array_push($query_vars['tax_query'], $term_query);
+				$query_vars['tax_query'][] = $term_query;
 				continue;
 			}
 

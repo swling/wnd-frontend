@@ -57,9 +57,9 @@ function _wnd_post_form($args = array()) {
 			}
 
 			if ($taxonomy->hierarchical) {
-				array_push($cat_taxonomies, $taxonomy->name);
+				$cat_taxonomies[] = $taxonomy->name;
 			} else {
-				array_push($tag_taxonomies, $taxonomy->name);
+				$tag_taxonomies[] = $taxonomy->name;
 			}
 		}
 		unset($taxonomy);

@@ -68,7 +68,7 @@ class Wnd_WP_Form extends Wnd_Form {
 	 *用于nonce校验，如直接通过html方式新增的表单字段，无法被提取，需要通过这种方式新增name，以通过nonce校验
 	 **/
 	public function add_input_name($name) {
-		array_push($this->form_names, $name);
+		$this->form_names[] = $name;
 	}
 
 	/**
@@ -317,7 +317,7 @@ class Wnd_WP_Form extends Wnd_Form {
 	 */
 	protected function build_form_nonce() {
 		// 提取表单字段names 去重，排序
-		array_push($this->form_names, '_wnd_form_nonce'); // nonce自身字段也需要包含在内
+		$this->form_names[] = '_wnd_form_nonce'; // nonce自身字段也需要包含在内
 		foreach ($this->get_input_values() as $input_value) {
 			if (!isset($input_value['name'])) {
 				continue;
@@ -327,7 +327,7 @@ class Wnd_WP_Form extends Wnd_Form {
 				continue;
 			}
 
-			array_push($this->form_names, $input_value['name']);
+			$this->form_names[] = $input_value['name'];
 		}
 		unset($input_value);
 

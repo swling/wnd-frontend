@@ -102,7 +102,7 @@ function wnd_ajax_upload_file() {
 
 		// 单文件错误检测
 		if ($_FILES['temp_key']['error'] > 0) {
-			array_push($return_array, array('status' => 0, 'msg' => 'Error: ' . $_FILES['temp_key']['error']));
+			$return_array[] = array('status' => 0, 'msg' => 'Error: ' . $_FILES['temp_key']['error']);
 			continue;
 		}
 
@@ -111,7 +111,7 @@ function wnd_ajax_upload_file() {
 
 		// 上传失败
 		if (is_wp_error($file_id)) {
-			array_push($return_array, array('status' => 0, 'msg' => $file_id->get_error_message()));
+			$return_array[] = array('status' => 0, 'msg' => $file_id->get_error_message());
 			continue;
 		}
 
@@ -146,7 +146,7 @@ function wnd_ajax_upload_file() {
 			),
 			'msg' => '上传成功！',
 		);
-		array_push($return_array, $temp_array);
+		$return_array[] = $temp_array;
 
 		/**
 		 *@since 2019.02.13 当存在meta key时，表明上传文件为特定用途存储，仅允许上传单个文件
@@ -158,6 +158,7 @@ function wnd_ajax_upload_file() {
 			break;
 		}
 	}
+	unset($key, $value);
 
 	/**
 	 *@since 2019.05.05 当meta key == gallery 表示为上传图集相册 允许上传多个文件

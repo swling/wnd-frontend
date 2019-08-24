@@ -34,7 +34,7 @@ class Wnd_Posts_Table {
 	 */
 	public function add_column($column = array()) {
 		$column = array_merge(self::$defaults, $column);
-		array_push($this->columns, $column);
+		$this->columns[] = $column;
 	}
 
 	/**

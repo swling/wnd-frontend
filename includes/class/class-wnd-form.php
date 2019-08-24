@@ -101,44 +101,44 @@ class Wnd_Form {
 	public function add_text($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'text';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// number
 	public function add_number($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'number';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// hidden
 	public function add_hidden($name, $value) {
-		array_push($this->input_values, array(
+		$this->input_values[] = array(
 			'type' => 'hidden',
 			'name' => $name,
 			'value' => $value,
-		));
+		);
 	}
 
 	// textarea
 	public function add_textarea($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'textarea';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// email
 	public function add_email($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'email';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// password
 	public function add_password($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'password';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	/**
@@ -149,56 +149,56 @@ class Wnd_Form {
 	public function add_url($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'url';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// color
 	public function add_color($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'color';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// date
 	public function add_date($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'date';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// range
 	public function add_range($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'range';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// tel
 	public function add_tel($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'tel';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// select
 	public function add_select($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'select';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// radio
 	public function add_radio($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'radio';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// checkbox
 	public function add_checkbox($args) {
 		$args = array_merge(self::$defaults, $args);
 		$args['type'] = 'checkbox';
-		array_push($this->input_values, $args);
+		$this->input_values[] = $args;
 	}
 
 	// Image upload
@@ -217,7 +217,7 @@ class Wnd_Form {
 		);
 		$args = array_merge($defaults, $args);
 
-		array_push($this->input_values, array(
+		$this->input_values[] = array(
 			'id' => $args['id'],
 			'type' => 'image_upload',
 			'name' => $args['name'],
@@ -229,7 +229,7 @@ class Wnd_Form {
 			'data' => $args['data'],
 			'delete_button' => $args['delete_button'],
 			'disabled' => $args['disabled'],
-		));
+		);
 
 		if (!$this->with_upload) {
 			$this->with_upload = true;
@@ -251,7 +251,7 @@ class Wnd_Form {
 		);
 		$args = array_merge($defaults, $args);
 
-		array_push($this->input_values, array(
+		$this->input_values[] = array(
 			'id' => $args['id'],
 			'type' => 'file_upload',
 			'name' => $args['name'],
@@ -262,7 +262,7 @@ class Wnd_Form {
 			'required' => $args['required'],
 			'delete_button' => $args['delete_button'],
 			'disabled' => $args['disabled'],
-		));
+		);
 
 		if (!$this->with_upload) {
 			$this->with_upload = true;
@@ -273,10 +273,10 @@ class Wnd_Form {
 	 *@since 2019.03.06 在表单当前位置插入指定html代码以补充现有方法无法实现的效果
 	 */
 	public function add_html($html) {
-		array_push($this->input_values, array(
+		$this->input_values[] = array(
 			'type' => 'html',
 			'value' => $html,
-		));
+		);
 	}
 
 	/**
