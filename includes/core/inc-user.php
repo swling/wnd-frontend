@@ -6,6 +6,8 @@ if (!defined('ABSPATH')) {
 
 /**
  *@since 2019.01.26 根据用户id获取号码
+ *@param 	int 			$user_id
+ *@return 	string|false 	用户手机号或false
  */
 function wnd_get_user_phone($user_id) {
 	if (!$user_id) {
@@ -28,8 +30,8 @@ function wnd_get_user_phone($user_id) {
 
 /**
  *@since 2019.01.28 根据邮箱，手机，或用户名查询用户
- *@param string 		$email_or_phone_or_login
- *@return object|false	WordPress user object on success
+ *@param 	string 			$email_or_phone_or_login
+ *@return 	object|false	WordPress user object on success
  */
 function wnd_get_user_by($email_or_phone_or_login) {
 	global $wpdb;
@@ -51,8 +53,8 @@ function wnd_get_user_by($email_or_phone_or_login) {
 /**
  *@since 2019.07.11
  *根据openID获取WordPress用户，用于第三方账户登录
- *@param openID
- *@return user object or false（WordPress：get_user_by）
+ *@param 	openID
+ *@return 	object|false 	（WordPress：get_user_by）
  */
 function wnd_get_user_by_openid($openid) {
 	global $wpdb;
@@ -66,7 +68,7 @@ function wnd_get_user_by_openid($openid) {
  *写入用户open id
  *@param 	int 	$user_id
  *@param 	string 	$open_id
- *@return 	user_id or bool of wpdb->insert
+ *@return 	int 	$wpdb->insert
  */
 function wnd_update_user_openid($user_id, $openid) {
 	global $wpdb;
@@ -101,7 +103,7 @@ function wnd_update_user_openid($user_id, $openid) {
  *更新用户电子邮箱 同时更新插件用户数据库email，及WordPress账户email
  *@param 	int 	$user_id
  *@param 	string 	$email
- *@return 	user_id or bool of wpdb->insert
+ *@return 	int 	$wpdb->insert
  */
 function wnd_update_user_email($user_id, $email) {
 	global $wpdb;
@@ -141,7 +143,7 @@ function wnd_update_user_email($user_id, $email) {
  *写入用户手机号码
  *@param 	int 	$user_id
  *@param 	string 	$phone
- *@return 	user_id or bool of wpdb->insert
+ *@return 	int 	$wpdb->insert
  */
 function wnd_update_user_phone($user_id, $phone) {
 	global $wpdb;
@@ -235,7 +237,8 @@ function wnd_social_login($open_id, $display_name = '', $avatar_url = '') {
 
 /**
  *@since 初始化 判断当前用户是否为管理员
- *@return bool
+ *@param 	int 	$user_id
+ *@return 	bool
  *用户角色为：管理员或编辑 返回 true
  */
 function wnd_is_manager($user_id = 0) {
@@ -252,7 +255,9 @@ function wnd_is_manager($user_id = 0) {
 /**
  *@since 初始化
  *用户display name去重
- *@return int or false
+ *@param 	string 		$display_name
+ *@param 	int 		$exclude_id
+ *@return 	int|false
  */
 function wnd_is_name_duplicated($display_name, $exclude_id = 0) {
 	// 名称为空
@@ -273,6 +278,10 @@ function wnd_is_name_duplicated($display_name, $exclude_id = 0) {
 /**
  *@since 2019.02.25
  *发送站内信
+ *@param 	int 	$to 		收件人ID
+ *@param 	string 	$subject 	邮件主题
+ *@param 	string 	$message 	邮件内容
+ *@return 	bool 	true on success
  */
 function wnd_mail($to, $subject, $message) {
 	if (!get_user_by('id', $to)) {
@@ -291,16 +300,17 @@ function wnd_mail($to, $subject, $message) {
 	$mail_id = wp_insert_post($postarr);
 
 	if (is_wp_error($mail_id)) {
-		return array('status' => 0, 'msg' => $mail_id->get_error_message());
+		return false;
 	} else {
 		wp_cache_delete($to, 'wnd_mail_count');
-		return array('status' => 1, 'msg' => '发送成功！');
+		return true;
 	}
 }
 
 /**
  *获取最近的10封未读邮件
  *@since 2019.04.11
+ *@return 	int 	用户未读邮件
  */
 function wnd_get_mail_count() {
 	$user_id = get_current_user_id();
@@ -325,6 +335,7 @@ function wnd_get_mail_count() {
 /**
  *@since 2019.06.10
  *获取用户面板允许的post types
+ *@return array 	文章类型数组
  */
 function wnd_get_user_panel_post_types() {
 	$post_types = get_post_types(array('public' => true), 'names', 'and');

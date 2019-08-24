@@ -7,6 +7,8 @@ if (!defined('ABSPATH')) {
 /**
  *增强版nonce校验，在nonce校验中加入秘钥
  *@since 2019.05.12
+ *@param 	string 	$action
+ *@return 	string 	nonce
  **/
 function wnd_create_nonce($action) {
 	$secret_key = wnd_get_option('wnd', 'wnd_secret_key');
@@ -16,6 +18,11 @@ function wnd_create_nonce($action) {
 /**
  *校验nonce
  *@since 2019.05.12
+ *
+ *@param 	string 	$anone
+ *@param 	string 	$action
+ *
+ *@return 	bool
  **/
 function wnd_verify_nonce($nonce, $action) {
 	$secret_key = wnd_get_option('wnd', 'wnd_secret_key');
@@ -25,6 +32,8 @@ function wnd_verify_nonce($nonce, $action) {
 /**
  *@since 2019.01.21 获取do page地址
  *一个没有空白的WordPress环境，接收或执行一些操作
+ *
+ *@return string 	url
  */
 function wnd_get_do_url() {
 	return WND_URL . 'do.php';
@@ -44,6 +53,8 @@ function wnd_doing_ajax() {
 /**
  *@since 初始化
  *获取用户ip
+ *@param 	bool 	$hidden 	是否隐藏IP部分字段
+ *@return 	string 	IP address
  */
 function wnd_get_user_ip($hidden = false) {
 	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
@@ -64,6 +75,7 @@ function wnd_get_user_ip($hidden = false) {
 /**
  *@since 初始化
  *搜索引擎判断
+ *@return bool 	是否是搜索引擎
  */
 function wnd_is_robot() {
 	return (
@@ -74,6 +86,9 @@ function wnd_is_robot() {
 /**
  *@since 2019.01.30
  *获取随机大小写字母和数字组合字符串
+ *
+ *@param 	int 	$length 	随机字符串长度
+ *@return 	string 	随机字符
  */
 function wnd_random($length) {
 	$chars = '123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ';
@@ -88,6 +103,8 @@ function wnd_random($length) {
 /**
  *@since 初始化
  *生成N位随机数字
+ *@param 	int 	$length 	随机字符串长度
+ *@return 	string 	随机字符
  */
 function wnd_random_code($length = 6) {
 	$No = '';
@@ -100,6 +117,7 @@ function wnd_random_code($length = 6) {
 /**
  *@since 2019.03.04
  *生成包含当前日期信息的高强度的唯一性ID
+ *@return 	string 	随机字符
  */
 function wnd_generate_order_NO() {
 	$today = date("Ymd");
@@ -108,7 +126,10 @@ function wnd_generate_order_NO() {
 }
 
 /**
- * @since 2019.02.09  验证是否为手机号
+ *@since 2019.02.09  验证是否为手机号
+ *
+ *@param 	string 	$phone 	需要验证的手机号
+ *@return 	bool 	是否为合法的手机号码格式
  */
 function wnd_is_phone($phone) {
 	if ((empty($phone) || !preg_match("/^(((13[0-9]{1})|(15[0-9]{1})|(17[0-9]{1})|(18[0-9]{1}))+\d{8})$/", $phone))) {
@@ -121,6 +142,8 @@ function wnd_is_phone($phone) {
 /**
  *复制taxonomy term数据到 另一个 taxonomy下
  *@since 2019.04.30
+ *@param 	string 	$old_taxonomy	需要被复制的taxonomy
+ *@param 	string 	$new_taxonomy	需要创建的taxonomy
  */
 function wnd_copy_taxonomy($old_taxonomy, $new_taxonomy) {
 	$terms = get_terms($old_taxonomy, 'hide_empty=0');

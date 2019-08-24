@@ -27,23 +27,21 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 	// 实例化当前提交的表单数据
 	try {
 		$form_data = new Wnd_Form_Data($verify_form_nonce);
+		$post_array = $form_data->get_post_array();
+		$meta_array = $form_data->get_post_meta_array();
+		$wp_meta_array = $form_data->get_wp_post_meta_array();
+		$term_array = $form_data->get_term_array();
 	} catch (Exception $e) {
 		return array('status' => 0, 'msg' => $e->getMessage());
 	}
 
-	$post_array = $form_data->get_post_array();
-	$meta_array = $form_data->get_post_meta_array();
-	$wp_meta_array = $form_data->get_wp_post_meta_array();
-	$term_array = $form_data->get_term_array();
-
-	// 组合数据
+	// 定义数据
 	$update_id = $post_array['ID'] ?? 0;
 	$post_type = $post_array['post_type'] ?? 'post';
-	$post_name = $post_array['post_name'] ?? uniqid();
+	$post_array['post_name'] = $post_array['post_name'] ?? uniqid();
 
-	// 更新文章
+	// 基础检测
 	if ($update_id) {
-
 		$post_type = get_post_type($update_id);
 		if (!$post_type) {
 			return array('status' => 0, 'msg' => 'ID无效！');
@@ -64,9 +62,17 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 
 	/**
 	 *@since 2019.02.19
-	 *限制ajax可以创建的post类型，避免功能型post被意外创建
-	 *功能型post应通常具有更复杂的权限控制，并wp_insert_post创建
+	 *
+	 *post_type检测
+	 *
+	 *编辑权限filter
+	 *
+	 *post_status filter
+	 *
+	 *
 	 */
+
+	// 限制ajax可以创建的post类型，避免功能型post被意外创建，功能型post应通常具有更复杂的权限控制，并wp_insert_post创建
 	if (!in_array($post_type, wnd_get_allowed_post_types())) {
 		return array('status' => 0, 'msg' => '类型无效！');
 	}
@@ -80,23 +86,11 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 	// 文章状态过滤
 	$post_status = apply_filters('wnd_insert_post_status', 'pending', $post_type, $update_id);
 
-	// 判断是否为更新
-	if (!$update_id) {
-		$_post_array = array(
-			'post_type' => $post_type,
-			'post_status' => $post_status,
-			'post_name' => $post_name,
-		);
-
-		//更新内容，只只允许更新状态及白名单内的字段防止用户通过编辑文章，改变文章类型等敏感数据
-	} else {
-		$_post_array = array(
-			'ID' => $update_id,
-			'post_type' => $post_type,
-			'post_status' => $post_status,
-		);
-	}
-	// 最终post array数据
+	// 不可被表单POST数据修改的固有字段：post_type / post_status 合并入post data
+	$_post_array = array(
+		'post_type' => $post_type,
+		'post_status' => $post_status,
+	);
 	$post_array = array_merge($post_array, $_post_array);
 
 	// 写入或更新文章
@@ -105,8 +99,6 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 	} else {
 		$post_id = wp_update_post($post_array);
 	}
-
-	// 写入失败，返回错误信息
 	if (is_wp_error($post_id)) {
 		return array('status' => 0, 'msg' => $post_id->get_error_message());
 	}
@@ -117,7 +109,6 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 	// 完成返回
 	$redirect_to = $_REQUEST['redirect_to'] ?? null;
 	$permalink = get_permalink($post_id);
-
 	if ($redirect_to) {
 		$return_array = array(
 			'status' => 3,

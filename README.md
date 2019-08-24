@@ -331,7 +331,48 @@ wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
 wp_cache_set($object_id, $meta_value, 'views');
 ```
 # 创建支付
-创建地址：do.php?action=payment&_wpnonce=wnd_create_nonce('payment')
+创建地址：
+*do.php?action=payment&_wpnonce=wnd_create_nonce('payment')*
+
 表单字段：
 post_id(GET/POST)：	如果设置了post_id 则表示该支付为订单类型，即为特定post付费，对应支付价格通过 wnd_get_post_price($post_id) 获取
 money(GET/POST)：	如果未设置post_id 则表示该支付为充值类型，对应支付金额，即为表单提交数据
+
+# ajax表单响应代码表
+```JavaScript
+// 根据后端响应处理 form_id 为当前表单ID
+var style = response.status > 0 ? "is-success" : "is-danger";
+switch (response.status) {
+	// 常规类，展示后端提示信息
+	case 1:
+		wnd_ajax_msg(response.msg, style, "#" + form_id);
+		break;
+		//更新类
+	case 2:
+		wnd_ajax_msg('提交成功！<a href="' + response.data.url + '" target="_blank">查看</a>', style, "#" + form_id);
+		break;
+		// 跳转类
+	case 3:
+		wnd_ajax_msg("请稍后……", style, "#" + form_id);
+		$(window.location).prop("href", response.data.redirect_to);
+		break;
+		// 刷新当前页面
+	case 4:
+		wnd_reset_modal();
+		window.location.reload(true);
+		break;
+		// 弹出信息并自动消失
+	case 5:
+		wnd_alert_msg(response.msg, 1);
+		break;
+		// 下载类
+	case 6:
+		wnd_ajax_msg("下载中……", style, "#" + form_id, 5);
+		$(window.location).prop("href", response.data.redirect_to);
+		break;
+		//默认展示提示信息
+	default:
+		wnd_ajax_msg(response.msg, style, "#" + form_id);
+		break;
+}
+```			

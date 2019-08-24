@@ -7,6 +7,10 @@ if (!defined('ABSPATH')) {
 /**
  *@since 初始化
  *批量设置文章 meta 及 term
+ *@param int 	$post_id
+ *@param array 	$meta_array 	wnd meta array
+ *@param array 	$wp_meta_array  wp meta array
+ *@param array 	$term_array  	term_array
  */
 function wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $term_array) {
 	if (!get_post($post_id)) {
@@ -59,7 +63,12 @@ function wnd_get_allowed_post_types() {
 /**
  *@since 初始化
  *标题去重
- *@return int or false
+ *
+ *@param string 	$title
+ *@param int 	$exclude_id
+ *@param string 	$post_type
+ *
+ *@return int|false
  */
 function wnd_is_title_duplicated($title, $exclude_id = 0, $post_type = 'post') {
 	if (empty($title)) {
@@ -79,7 +88,12 @@ function wnd_is_title_duplicated($title, $exclude_id = 0, $post_type = 'post') {
 
 /**
  *@since 2019.02.17 根据post name 获取post
- *@return post object or null
+ *
+ *@param string $post_name
+ *@param string $post_type
+ *@param string $post_status
+ *
+ *@return object|null
  */
 function wnd_get_post_by_slug($post_name, $post_type = 'post', $post_status = 'publish') {
 	global $wpdb;
