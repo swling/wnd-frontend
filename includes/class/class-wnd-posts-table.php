@@ -79,7 +79,7 @@ class Wnd_Posts_Table {
 						$parent_post = get_post($post->post_parent);
 						$content = '<a href="' . get_permalink($post->post_parent) . '" target="_blank">' . $parent_post->post_title . '</a>';
 					} else {
-						$content = '';
+						$content = 'post_parent为空';
 					}
 
 				} else {

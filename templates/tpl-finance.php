@@ -93,7 +93,7 @@ function _wnd_user_fin_posts_tpl($query) {
 	);
 	$table->add_column(
 		array(
-			'post_field' => 'post_parent_with_link',
+			'post_field' => 'order' == $query->query_vars['post_type'] ? 'post_parent_with_link' : 'post_title',
 			'title' => '详情',
 		)
 	);

@@ -1331,16 +1331,6 @@ class Wnd_Filter {
 	/**
 	 *@since 2019.07.31
 	 *获取筛结果HTML
-	 *
-	 *合并返回：文章列表及分页导航
-	 */
-	public function get_results() {
-		return $this->get_posts() . $this->get_pagination();
-	}
-
-	/**
-	 *@since 2019.07.31
-	 *获取筛结果HTML
 	 */
 	public function get_posts() {
 		if (!$this->wp_query) {
@@ -1384,5 +1374,13 @@ class Wnd_Filter {
 
 		$this->pagination = $this->build_pagination($show_page);
 		return $this->pagination;
+	}
+
+	/**
+	 *@since 2019.07.31
+	 *合并返回：文章列表及分页导航
+	 */
+	public function get_results() {
+		return $this->get_posts() . $this->get_pagination();
 	}
 }
