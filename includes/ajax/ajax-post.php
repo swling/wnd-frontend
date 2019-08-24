@@ -15,8 +15,8 @@ if (!defined('ABSPATH')) {
  *
  *@since 初始化
  *保存提交数据
- *@param 	$_POST 						全局表单数据
- *@param 	$verify_form_nonce  bool 	是否校验表单数据来源
+ *@param 	array	$_POST 				全局表单数据
+ *@param 	bool 	$verify_form_nonce  是否校验表单数据来源
  *@return 	array 						操作结果
  **/
 function wnd_ajax_insert_post($verify_form_nonce = true) {
@@ -154,9 +154,9 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
  *_term_{taxonomy}(*taxonomy)
  *
  *@since 初始化
- *@param $_POST 	表单数据
- *@param $post_id 	文章id
- *@return array
+ *@param 	array 	$_POST 		表单数据
+ *@param 	int 	$post_id 	文章id
+ *@return 	array
  *更新文章
  */
 function wnd_ajax_update_post($post_id = 0) {

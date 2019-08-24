@@ -165,7 +165,7 @@ function wnd_get_post_commission($post_id) {
  *@since 2019.02.22
  *管理员手动新增用户金额
  *
- *@param 	string 		$user_field 	查询用户字段：id/emial/phone
+ *@param 	string 		$user_field 	查询用户字段：login/emial/phone
  *@param 	float 		$total_amount 	充值金额
  *@param 	string 		$remarks 		备注
  */
