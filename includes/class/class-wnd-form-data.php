@@ -52,7 +52,7 @@ class Wnd_Form_Data {
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_user_') === 0) {
 				$key = str_replace('_user_', '', $key);
-				$user_array = array_merge($user_array, array($key => $value));
+				$user_array[$key] = $value;
 			}
 		}unset($key, $value);
 
@@ -66,7 +66,7 @@ class Wnd_Form_Data {
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_wpusermeta_') === 0) {
 				$key = str_replace('_wpusermeta_', '', $key);
-				$wp_user_meta_array = array_merge($wp_user_meta_array, array($key => $value));
+				$wp_user_meta_array[$key] = $value;
 			}
 		}unset($key, $value);
 
@@ -80,7 +80,7 @@ class Wnd_Form_Data {
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_usermeta_') === 0) {
 				$key = str_replace('_usermeta_', '', $key);
-				$user_meta_array = array_merge($user_meta_array, array($key => $value));
+				$user_meta_array[$key] = $value;
 			}
 		}unset($key, $value);
 
@@ -94,7 +94,7 @@ class Wnd_Form_Data {
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_post_') === 0) {
 				$key = str_replace('_post_', '', $key);
-				$post_array = array_merge($post_array, array($key => $value));
+				$post_array[$key] = $value;
 			}
 		}unset($key, $value);
 
@@ -108,7 +108,7 @@ class Wnd_Form_Data {
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_wpmeta_') === 0) {
 				$key = str_replace('_wpmeta_', '', $key);
-				$wp_post_meta_array = array_merge($wp_post_meta_array, array($key => $value));
+				$wp_post_meta_array[$key] = $value;
 			}
 		}unset($key, $value);
 
@@ -122,7 +122,7 @@ class Wnd_Form_Data {
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_meta_') === 0) {
 				$key = str_replace('_meta_', '', $key);
-				$post_meta_array = array_merge($post_meta_array, array($key => $value));
+				$post_meta_array[$key] = $value;
 			}
 		}unset($key, $value);
 
@@ -136,7 +136,7 @@ class Wnd_Form_Data {
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_term_') === 0) {
 				$key = str_replace('_term_', '', $key);
-				$term_array = array_merge($term_array, array($key => $value));
+				$term_array[$key] = $value;
 			}
 		}unset($key, $value);
 
