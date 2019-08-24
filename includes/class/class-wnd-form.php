@@ -61,11 +61,6 @@ class Wnd_Form {
 		$this->id = uniqid();
 	}
 
-	// 允许外部更改私有变量
-	public function __set($var, $val) {
-		$this->$var = $val;
-	}
-
 	/**
 	 *@since 2019.03.10 设置表单属性
 	 */

@@ -5,8 +5,10 @@
  */
 class AlipayService {
 
-	//支付宝公钥
+	// 支付宝公钥
 	protected $alipayPublicKey;
+
+	// 字符编码
 	protected $charset;
 
 	public function __construct($alipayPublicKey) {
@@ -15,7 +17,7 @@ class AlipayService {
 	}
 
 	/**
-	 *  验证签名
+	 * 验证签名
 	 **/
 	public function rsaCheck($params) {
 		$sign = $params['sign'];
@@ -25,7 +27,7 @@ class AlipayService {
 		return $this->verify($this->getSignContent($params), $sign, $signType);
 	}
 
-	function verify($data, $sign, $signType = 'RSA') {
+	public function verify($data, $sign, $signType = 'RSA') {
 		$pubKey = $this->alipayPublicKey;
 		$res = "-----BEGIN PUBLIC KEY-----\n" .
 		wordwrap($pubKey, 64, "\n", true) .
@@ -47,8 +49,8 @@ class AlipayService {
 
 	/**
 	 * 校验$value是否非空
-	 *  if not set ,return true;
-	 *    if is null , return true;
+	 * if not set ,return true;
+	 * if is null , return true;
 	 **/
 	protected function checkEmpty($value) {
 		if (!isset($value)) {
@@ -92,7 +94,7 @@ class AlipayService {
 	 * @param $targetCharset
 	 * @return string
 	 */
-	function characet($data, $targetCharset) {
+	protected function characet($data, $targetCharset) {
 		if (!empty($data)) {
 			$fileType = $this->charset;
 			if (strcasecmp($fileType, $targetCharset) != 0) {

@@ -96,7 +96,6 @@ class Wnd_Order {
 	 *
 	 *@param int 		$this->user_id  	required
 	 *@param int 		$this->object_id  	required
-	 *@param string 	$status 			option
 	 *@param string 	$this->subject 		option
 	 *@param bool 	 	$is_success 		option 	是否直接写入，无需支付平台校验
 	 */

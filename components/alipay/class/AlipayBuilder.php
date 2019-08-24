@@ -98,8 +98,8 @@ class AlipayPagePayBuilder {
 
 	/**
 	 * 校验$value是否非空
-	 *  if not set ,return true;
-	 *    if is null , return true;
+	 * if not set ,return true;
+	 * if is null , return true;
 	 **/
 	protected function checkEmpty($value) {
 		if (!isset($value)) {
@@ -144,7 +144,7 @@ class AlipayPagePayBuilder {
 	 * @param $targetCharset
 	 * @return string
 	 */
-	function characet($data, $targetCharset) {
+	protected function characet($data, $targetCharset) {
 		if (!empty($data)) {
 			$fileType = $this->charset;
 			if (strcasecmp($fileType, $targetCharset) != 0) {

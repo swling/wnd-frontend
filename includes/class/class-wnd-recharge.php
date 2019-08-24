@@ -107,7 +107,6 @@ class Wnd_Recharge {
 	 *@param int 		$this->user_id  	required
 	 *@param float  	$this->total_money	required
 	 *@param string 	$this->subject 		option
-	 *@param string 	$status 			option
 	 *@param int 		$this->object_id  	option
 	 *@param bool 	 	$is_success 		option 	是否直接写入，无需支付平台校验
 	 *
