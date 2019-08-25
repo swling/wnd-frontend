@@ -372,7 +372,7 @@ function _wnd_attachment_form($args) {
 	);
 	$attachment_post_form->add_html('</div></div>');
 	$attachment_post_form->add_post_name('链接别名', '附件的固定链接别名');
-	$attachment_post_form->add_post_content(true, false, '简介 *');
+	$attachment_post_form->add_post_content(true, '简介', true);
 	$attachment_post_form->set_submit_button("保存");
 
 	// 将上述两个表单字段，合并组成一个表单字段

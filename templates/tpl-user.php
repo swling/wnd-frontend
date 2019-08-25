@@ -195,7 +195,6 @@ function _wnd_login_form() {
 	$form->add_user_password();
 	$form->add_checkbox(
 		array(
-
 			'name' => 'remember',
 			'value' => 1,
 			'label' => '保持登录',
@@ -241,7 +240,7 @@ function _wnd_reg_form($type = 'email') {
 	$form = new Wnd_User_Form();
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>注册');
 	$form->set_form_attr('class="user-form"');
-	$form->add_user_login('用户名');
+	$form->add_user_login();
 	$form->add_user_password();
 
 	if ($type == 'phone') {
@@ -298,8 +297,8 @@ function _wnd_lostpassword_form($type = 'email') {
 		$form->add_email_verify($verify_type = 'reset_password', $template = '');
 	}
 
-	$form->add_user_new_password();
-	$form->add_user_new_password_repeat();
+	$form->add_user_new_password('新密码', '新密码', true);
+	$form->add_user_new_password_repeat('确认新密码', '确认新密码', true);
 	$form->set_action('wnd_ajax_reset_password');
 	$form->set_submit_button('重置密码');
 	$form->build();
@@ -325,15 +324,16 @@ function _wnd_profile_form() {
 
 	/*头像上传*/
 	$form->add_user_avatar();
+
 	$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 	$form->add_user_display_name();
 	$form->add_user_url();
 	$form->add_html('</div></div>');
+
 	$form->add_user_description();
 	$form->set_action('wnd_ajax_update_profile');
 	$form->set_submit_button('保存');
 
-	// 以当前函数名设置filter hook
 	$form->set_filter(__FUNCTION__);
 	$form->build();
 
@@ -354,15 +354,14 @@ function _wnd_account_form() {
 	$form->add_user_password('当前密码');
 	$form->add_user_new_password();
 	$form->add_user_new_password_repeat();
-	$form->add_user_email();
 
 	if (wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
-		$form->add_sms_verify('verify', wnd_get_option('wnd', 'wnd_sms_template_v'));
+		$form->add_sms_verify('bind', wnd_get_option('wnd', 'wnd_sms_template_v'));
 	} else {
-		$form->add_email_verify('verify', $template = '');
+		$form->add_email_verify('bind', $template = '');
 	}
 
-	$form->set_action('wnd_ajax_reset_password');
+	$form->set_action('wnd_ajax_update_account');
 	$form->set_submit_button('保存');
 	$form->build();
 

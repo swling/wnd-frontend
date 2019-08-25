@@ -374,6 +374,17 @@ class Wnd_WP_Form extends Wnd_Form {
 		$this->html = $html;
 	}
 
+	/**
+	 *@since 2019.08.25
+	 *构建label HTML
+	 *
+	 *@var string 	$label
+	 *@var string 	$required
+	 */
+	protected function build_label($label, $required) {
+		return $required ? $label . ' <span class="required">*</span>' : $label;
+	}
+
 	// 构建相册上传
 	protected function build_gallery_upload($args) {
 		// 固定data

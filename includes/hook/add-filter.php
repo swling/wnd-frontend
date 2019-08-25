@@ -22,7 +22,7 @@ function wnd_filter_can_reg($can_array) {
 
 	// 验证:手机或邮箱 验证码
 	$auth_code = $_POST['auth_code'];
-	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'];
+	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'] ?? '';
 	try {
 		$auth = new Wnd_Auth;
 		$auth->set_type('register');
@@ -45,7 +45,7 @@ function wnd_filter_can_update_account($can_array) {
 	$auth_code = $_POST['auth_code'];
 	$user = wp_get_current_user();
 	$user_id = $user->ID;
-	$email_or_phone = wnd_get_option('wnd', 'wnd_enable_sms') == 1 ? wnd_get_user_meta($user_id, 'phone') : $user->user_email;
+	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'] ?? '';
 
 	try {
 		$auth = new Wnd_Auth;

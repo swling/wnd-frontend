@@ -239,7 +239,7 @@ function wnd_ajax_update_profile() {
  *@param $_POST['_user_user_pass']
  *@param $_POST['_user_new_pass']
  *@param $_POST['_user_new_pass_repeat']
- *@param $_POST['_user_new_user_email']
+ *@param $_POST['_user_user_email']
  */
 function wnd_ajax_update_account() {
 	$user = wp_get_current_user();
@@ -252,7 +252,7 @@ function wnd_ajax_update_account() {
 	$user_pass = $_POST['_user_user_pass'] ?? null;
 	$new_password = $_POST['_user_new_pass'] ?? null;
 	$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? null;
-	$new_email = $_POST['_user_new_user_email'] ?? null;
+	$new_email = $_POST['_user_user_email'] ?? null;
 
 	// 修改密码
 	if (!empty($new_password_repeat)) {
@@ -263,9 +263,7 @@ function wnd_ajax_update_account() {
 			return array('status' => 0, 'msg' => '两次输入的新密码不匹配！');
 
 		} else {
-			// 新密码没有错误 更新数据中插入密码字段
-			$array_temp = array('user_pass' => $new_password);
-			$user_array = array_merge($user_array, $array_temp);
+			$user_array['user_pass'] = $new_password;
 		}
 	}
 
@@ -274,9 +272,7 @@ function wnd_ajax_update_account() {
 		if (!is_email($new_email)) {
 			return array('status' => 0, 'msg' => '邮件格式错误！');
 		} else {
-			// 新email没有错误 更新数据中插入email字段
-			$array_temp = array('user_email' => $new_email);
-			$user_array = array_merge($user_array, $array_temp);
+			$user_array['user_email'] = $new_email;
 		}
 	}
 
@@ -291,7 +287,7 @@ function wnd_ajax_update_account() {
 		return $user_can_update_account;
 	}
 
-	//################### 更新用户
+	// 更新用户
 	$user_id = wp_update_user($user_array);
 
 	// 更新失败，返回错误信息

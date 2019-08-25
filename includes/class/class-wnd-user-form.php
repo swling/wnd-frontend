@@ -18,112 +18,127 @@ class Wnd_User_Form extends Wnd_WP_Form {
 		$this->user = wp_get_current_user();
 	}
 
-	public function add_user_login($placeholder = '用户名、手机、邮箱') {
+	public function add_user_login($label = '用户名', $placeholder = '用户名、手机、邮箱', $required = true) {
 		$this->add_text(
 			array(
 				'name' => '_user_user_login',
 				'value' => '',
 				'placeholder' => $placeholder,
-				'label' => '用户名 <span class="required">*</span>',
+				'label' => $this->build_label($label, $required),
 				'has_icons' => 'left', //icon position "left" orf "right"
 				'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 				'autofocus' => 'autofocus',
-				'required' => true,
+				'required' => $required,
 			)
 		);
 	}
 
-	public function add_user_email($placeholder = '邮箱') {
+	public function add_user_email($label = '邮箱', $placeholder = '邮箱', $required = true) {
 		$this->add_email(
 			array(
 				'name' => '_user_user_email',
 				'value' => $this->user->user_email,
-				'label' => '邮箱 <span class="required">*</span>',
+				'label' => $this->build_label($label, $required),
 				'has_icons' => 'left',
 				'icon' => '<i class="fa fa-at"></i>',
-				'required' => 'required',
+				'required' => $required,
 				'placeholder' => $placeholder,
 			)
 		);
 	}
 
-	public function add_user_password($placeholder = '密码') {
-		$this->add_password(
-			array(
-				'name' => '_user_user_pass',
-				'value' => '',
-				'label' => '密码 <span class="required">*</span>',
-				'placeholder' => $placeholder,
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-unlock-alt"></i>',
-				'required' => true,
-			)
-		);
-	}
-
-	public function add_user_new_password($placeholder = '新密码') {
-		$this->add_password(
-			array(
-				'name' => '_user_new_pass',
-				'value' => '',
-				'label' => '新密码 <span class="required">*</span>',
-				'placeholder' => $placeholder,
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-unlock-alt"></i>',
-				'required' => true,
-			)
-		);
-	}
-
-	public function add_user_new_password_repeat($placeholder = '确认新密码') {
-		$this->add_password(
-			array(
-				'name' => '_user_new_pass_repeat',
-				'value' => '',
-				'label' => '确认新密码 <span class="required">*</span>',
-				'placeholder' => $placeholder,
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-unlock-alt"></i>',
-				'required' => true,
-			)
-		);
-	}
-
-	public function add_user_display_name($placeholder = '名称') {
+	public function add_user_display_name($label = '名称', $placeholder = '名称', $required = true) {
 		$this->add_text(
 			array(
 				'name' => '_user_display_name',
 				'value' => $this->user->display_name,
-				'label' => '名称 <span class="required">*</span>',
+				'label' => $this->build_label($label, $required),
 				'placeholder' => $placeholder,
 				'has_icons' => 'left',
 				'icon' => '<i class="fas fa-user"></i>',
-				'required' => true,
+				'required' => $required,
 			)
 		);
 	}
 
-	public function add_user_url($placeholder = '网站链接') {
+	public function add_user_password($label = '密码', $placeholder = '密码', $required = true) {
+		$this->add_password(
+			array(
+				'name' => '_user_user_pass',
+				'value' => '',
+				'label' => $this->build_label($label, $required),
+				'placeholder' => $placeholder,
+				'has_icons' => 'left',
+				'icon' => '<i class="fas fa-unlock-alt"></i>',
+				'required' => $required,
+			)
+		);
+	}
+
+	public function add_user_password_repeat($label = '确认密码', $placeholder = '密码', $required = true) {
+		$this->add_password(
+			array(
+				'name' => '_user_user_pass_repeat',
+				'value' => '',
+				'label' => $this->build_label($label, $required),
+				'placeholder' => $placeholder,
+				'has_icons' => 'left',
+				'icon' => '<i class="fas fa-unlock-alt"></i>',
+				'required' => $required,
+			)
+		);
+	}
+
+	public function add_user_new_password($label = '新密码', $placeholder = '新密码', $required = false) {
+		$this->add_password(
+			array(
+				'name' => '_user_new_pass',
+				'value' => '',
+				'label' => $this->build_label($label, $required),
+				'placeholder' => $placeholder,
+				'has_icons' => 'left',
+				'icon' => '<i class="fas fa-unlock-alt"></i>',
+				'required' => $required,
+			)
+		);
+	}
+
+	public function add_user_new_password_repeat($label = '确认新密码', $placeholder = '确认新密码', $required = false) {
+		$this->add_password(
+			array(
+				'name' => '_user_new_pass_repeat',
+				'value' => '',
+				'label' => $this->build_label($label, $required),
+				'placeholder' => $placeholder,
+				'has_icons' => 'left',
+				'icon' => '<i class="fas fa-unlock-alt"></i>',
+				'required' => $required,
+			)
+		);
+	}
+
+	public function add_user_url($label = '网站', $placeholder = '网站链接', $required = false) {
 		$this->add_text(
 			array(
 				'name' => '_user_user_url',
 				'value' => $this->user->user_url,
-				'label' => '网站',
+				'label' => $this->build_label($label, $required),
 				'placeholder' => $placeholder,
 				'has_icons' => 'left',
 				'icon' => '<i class="fas fa-link"></i>',
-				'required' => false,
+				'required' => $required,
 			)
 		);
 	}
 
-	public function add_user_description($placeholder = '资料简介') {
+	public function add_user_description($label = '简介', $placeholder = '资料简介', $required = false) {
 		$this->add_textarea(
 			array(
 				'name' => '_wpusermeta_description',
-				'label' => '简介',
+				'label' => $this->build_label($label, $required),
 				'placeholder' => $placeholder,
 				'value' => $this->user->description,
+				'required' => $required,
 			)
 		);
 	}
