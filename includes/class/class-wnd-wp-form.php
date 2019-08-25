@@ -382,6 +382,10 @@ class Wnd_WP_Form extends Wnd_Form {
 	 *@var string 	$required
 	 */
 	protected function build_label($label, $required) {
+		if (empty($label)) {
+			return;
+		}
+
 		return $required ? $label . ' <span class="required">*</span>' : $label;
 	}
 
