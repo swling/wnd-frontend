@@ -106,7 +106,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		);
 	}
 
-	public function add_post_term_select($taxonomy, $required = true) {
+	public function add_post_category_select($taxonomy, $required = true) {
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;

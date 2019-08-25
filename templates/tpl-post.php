@@ -80,7 +80,7 @@ function _wnd_post_form($args = array()) {
 	if ($cat_taxonomies) {
 		$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 		foreach ($cat_taxonomies as $cat_taxonomy) {
-			$form->add_post_term_select($cat_taxonomy);
+			$form->add_post_category_select($cat_taxonomy);
 		}
 		unset($cat_taxonomy);
 		$form->add_html('</div></div>');
