@@ -589,13 +589,6 @@ class Wnd_Filter {
 		$tabs .= '<div class="tabs">';
 		$tabs .= '<ul class="tab">';
 
-		/**
-		 * 全部选项
-		 */
-		$all_class = 'any' == $this->wp_query_args['post_status'] ? 'class="is-active"' : null;
-		$all_link = self::$doing_ajax ? '' : add_query_arg('status', 'any', remove_query_arg($this->remove_query_args));
-		$tabs .= '<li ' . $all_class . '><a data-key="status" data-value="any" href="' . $all_link . '">全部</a></li>';
-
 		// 输出tabs
 		foreach ($args as $label => $post_status) {
 			$class = 'post-status-' . $post_status;

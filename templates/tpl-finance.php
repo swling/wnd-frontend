@@ -120,7 +120,7 @@ function _wnd_admin_fin_panel(int $posts_per_page = 0) {
 
 	$filter = new Wnd_Filter(true);
 	$filter->add_post_type_filter(array('stats-ex', 'stats-re', 'order', 'recharge'));
-	$filter->add_post_status_filter(array('已完成' => 'success', '进行中' => 'pending'));
+	$filter->add_post_status_filter(array('全部' => 'any', '已完成' => 'success', '进行中' => 'pending'));
 	$filter->set_posts_template('_wnd_fin_stats_posts_tpl');
 	$filter->set_posts_per_page($posts_per_page);
 	$filter->set_ajax_container('#admin-fin-panel');
