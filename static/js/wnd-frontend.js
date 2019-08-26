@@ -879,8 +879,11 @@ jQuery(document).ready(function($) {
 	var filter_param = {};
 	$("body").on("click", ".ajax-filter a", function() {
 
-		// 提取data，并合并入参数
+		// 获取容器
 		var filter_parent = $(this).parents(".ajax-filter");
+		var filter_id = filter_parent.attr("ID").split("-")[1];
+
+		// 提取data，并合并入参数
 		var html_data = filter_parent.data();
 		filter_param = Object.assign(filter_param, html_data);
 
@@ -917,7 +920,7 @@ jQuery(document).ready(function($) {
 			filter_parent.find("ul.tab li:first-child").addClass("is-active");
 
 		} else {
-			filter_param['type'] = filter_parent.find(".post-type-tabs .is-active a").data("value");
+			filter_param['type'] = $("#tabs-" + filter_id).find(".post-type-tabs .is-active a").data("value");
 		}
 
 		// 主分类切换时删除标签查询

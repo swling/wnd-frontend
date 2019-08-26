@@ -50,9 +50,11 @@ class Wnd_Posts_Table {
 		$this->html .= '<tr>';
 		foreach ($this->columns as $column) {
 			$this->html .= '<th' . $this->get_the_class($column) . '>' . $column['title'] . '</th>';
-		}unset($column);
+		}
+		unset($column);
+
 		if ($this->show_edit or $this->show_preview) {
-			$this->html .= '<td class="is-narrow is-hidden-mobile">';
+			$this->html .= '<td class="is-narrow">';
 			$this->html .= '操作';
 			$this->html .= '</td>';
 		}
@@ -70,11 +72,24 @@ class Wnd_Posts_Table {
 			foreach ($this->columns as $column) {
 				if ('post_title_with_link' == $column['post_field']) {
 					$content = '<a href="' . get_permalink() . '" target="_blank">' . $post->post_title . '</a>';
+					$this->html .= '<td' . $this->get_the_class($column) . '>' . $content . '</td>';
+					continue;
 
-				} elseif ('post_date' == $column['post_field']) {
+				}
+
+				if ('post_date' == $column['post_field']) {
 					$content = get_the_date('y-m-d H:i');
+					$this->html .= '<td' . $this->get_the_class($column) . '>' . $content . '</td>';
+					continue;
+				}
 
-				} elseif ('post_parent_with_link' == $column['post_field']) {
+				if ('post_author' == $column['post_field']) {
+					$content = '<a href="' . get_author_posts_url($post->post_author) . '">' . get_usermeta($post->post_author, 'display_name') . '</a>';
+					$this->html .= '<td' . $this->get_the_class($column) . '>' . $content . '</td>';
+					continue;
+				}
+
+				if ('post_parent_with_link' == $column['post_field']) {
 					if ($post->post_parent) {
 						$parent_post = get_post($post->post_parent);
 						$content = '<a href="' . get_permalink($post->post_parent) . '" target="_blank">' . $parent_post->post_title . '</a>';
@@ -82,15 +97,18 @@ class Wnd_Posts_Table {
 						$content = 'post_parent为空';
 					}
 
-				} else {
-					$content = $column['content'] ?: get_post_field($column['post_field']);
+					$this->html .= '<td' . $this->get_the_class($column) . '>' . $content . '</td>';
+					continue;
 				}
+
+				$content = $column['content'] ?: get_post_field($column['post_field']);
 				$this->html .= '<td' . $this->get_the_class($column) . '>' . $content . '</td>';
-			}unset($column);
+			}
+			unset($column);
 
 			// 编辑管理
 			if ($this->show_edit or $this->show_preview) {
-				$this->html .= '<td class="is-narrow is-hidden-mobile has-text-centered">';
+				$this->html .= '<td class="is-narrow has-text-centered">';
 				$this->html .= $this->show_preview ? '<a onclick="wnd_ajax_modal(\'_wnd_post_info\',\'post_id=' . get_the_ID() . '&amp;color=primary\')"> <i class="fas fa-info-circle"></i> </a>' : '';
 				$this->html .= $this->show_edit ? '<a onclick="wnd_ajax_modal(\'_wnd_post_status_form\',\'' . get_the_ID() . '\')"> <i class="fas fa-cog"></i> </a>' : '';
 				$this->html .= '</td>';

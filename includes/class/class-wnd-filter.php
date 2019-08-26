@@ -4,7 +4,8 @@
  * @since 2019.07.30
  * 多重筛选类
  * 样式基于bulma css
- * @param bool $is_ajax 	是否为ajax筛选（需要对应的前端支持）
+ * @param bool 		$is_ajax 	是否为ajax筛选（需要对应的前端支持）
+ * @param string 	$uniqid 	HTML容器识别ID。默认值 uniqid() @see build_pagination() / get_tabs()
  */
 class Wnd_Filter {
 
@@ -13,6 +14,9 @@ class Wnd_Filter {
 
 	// bool 是否正处于ajax环境中
 	protected static $doing_ajax;
+
+	// string 当前筛选器唯一标识
+	protected $uniqid;
 
 	// string html class
 	protected $class;
@@ -55,6 +59,7 @@ class Wnd_Filter {
 		'wnd_ajax_container' => '',
 		'wnd_post_tpl' => '',
 		'wnd_posts_tpl' => '',
+		'wnd_uniqid' => '',
 	);
 
 	/**
@@ -80,13 +85,17 @@ class Wnd_Filter {
 	 *
 	 * @param bool $is_ajax 是否为ajax查询
 	 */
-	public function __construct(bool $is_ajax = false) {
+	public function __construct(bool $is_ajax = false, string $uniqid = '') {
 		self::$is_ajax = $is_ajax;
 		self::$doing_ajax = wnd_doing_ajax();
 		$this->class .= self::$is_ajax ? 'ajax-filter' : '';
 
 		// 解析GET参数为wp_query参数并与默认参数合并，以防止出现参数未定义的警告信息
 		$this->wp_query_args = array_merge($this->wp_query_args, self::parse_query_vars());
+
+		// 初始化时生成uniqid，并加入query参数，以便在ajax生成的新请求中保持一致
+		$this->uniqid = $uniqid ?: $this->wp_query_args['wnd_uniqid'] ?: uniqid();
+		$this->add_query(array('wnd_uniqid' => $this->uniqid));
 
 		/**
 		 *定义当前post type的主分类：$category_taxonomy
@@ -1132,7 +1141,7 @@ class Wnd_Filter {
 			$previous_link = self::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
 			$next_link = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
 
-			$html = '<nav class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
+			$html = '<nav id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			$html .= '<ul class="pagination-list">';
 			if ($paged >= 2) {
 				$html .= '<li><a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">上一页</a>';
@@ -1155,7 +1164,7 @@ class Wnd_Filter {
 			$next_link = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
 			$last_link = self::$doing_ajax ? '' : add_query_arg('page', $this->wp_query->max_num_pages);
 
-			$html = '<div class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
+			$html = '<div id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			if ($paged > 1) {
 				$html .= '<a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">上一页</a>';
 			} else {
@@ -1242,7 +1251,7 @@ class Wnd_Filter {
 	 */
 	public function get_tabs() {
 		$tabs = apply_filters('wnd_filter_tabs', $this->tabs, $this->wp_query_args);
-		return '<div class="wnd-filter-tabs ' . $this->class . '" ' . $this->build_html_data() . '>' . $tabs . '</div>';
+		return '<div id="tabs-' . $this->uniqid . '" class="wnd-filter-tabs ' . $this->class . '" ' . $this->build_html_data() . '>' . $tabs . '</div>';
 	}
 
 	/**

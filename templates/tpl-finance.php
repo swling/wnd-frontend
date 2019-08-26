@@ -119,8 +119,8 @@ function _wnd_admin_fin_panel(int $posts_per_page = 0) {
 	$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 
 	$filter = new Wnd_Filter(true);
-	$filter->add_post_type_filter(array('stats-ex', 'stats-re'));
-	$filter->add_post_status_filter(array('any'));
+	$filter->add_post_type_filter(array('stats-ex', 'stats-re', 'order', 'recharge'));
+	$filter->add_post_status_filter(array('已完成' => 'success', '进行中' => 'pending'));
 	$filter->set_posts_template('_wnd_fin_stats_posts_tpl');
 	$filter->set_posts_per_page($posts_per_page);
 	$filter->set_ajax_container('#admin-fin-panel');
@@ -143,6 +143,13 @@ function _wnd_fin_stats_posts_tpl($query) {
 	);
 	$table->add_column(
 		array(
+			'post_field' => 'post_author',
+			'title' => '用户',
+			'class' => 'is-narrow',
+		)
+	);
+	$table->add_column(
+		array(
 			'post_field' => 'post_content',
 			'title' => '金额',
 		)
@@ -151,6 +158,13 @@ function _wnd_fin_stats_posts_tpl($query) {
 		array(
 			'post_field' => 'post_title_with_link',
 			'title' => '详情',
+			'class' => 'is-hidden-mobile',
+		)
+	);
+	$table->add_column(
+		array(
+			'post_field' => 'post_status',
+			'title' => '状态',
 		)
 	);
 	$table->build();
