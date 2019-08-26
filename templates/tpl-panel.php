@@ -36,7 +36,7 @@ function _wnd_user_posts_panel(int $posts_per_page = 0) {
 
 	$filter = new Wnd_Filter(true);
 	$filter->add_post_type_filter(wnd_get_user_panel_post_types());
-	$filter->add_post_status_filter(array('发布' => 'publish', '待审' => 'pending', '关闭' => 'close', '草稿' => 'draft'));
+	$filter->add_post_status_filter(array('全部' => 'any', '发布' => 'publish', '待审' => 'pending', '关闭' => 'close', '草稿' => 'draft'));
 	$filter->add_taxonomy_filter(array('taxonomy' => $filter->category_taxonomy));
 	$filter->add_query(array('author' => get_current_user_id()));
 	$filter->set_posts_template('_wnd_posts_tpl');
@@ -58,7 +58,7 @@ function _wnd_user_mail_panel(int $posts_per_page = 0) {
 
 	$filter = new Wnd_Filter(true);
 	$filter->add_post_type_filter(array('mail'));
-	$filter->add_post_status_filter(array('未读' => 'pending', '已读' => 'private'));
+	$filter->add_post_status_filter(array('全部' => 'any', '未读' => 'pending', '已读' => 'private'));
 	$filter->add_query(array('author' => get_current_user_id()));
 	$filter->set_posts_template('_wnd_mail_posts_tpl');
 	$filter->set_posts_per_page($posts_per_page);
@@ -80,7 +80,7 @@ function _wnd_mail_posts_tpl($query) {
 		array(
 			'post_field' => 'post_date',
 			'title' => '日期',
-			'class' => 'is-narrow',
+			'class' => 'is-narrow is-hidden-mobile',
 		)
 	);
 	$table->add_column(
@@ -106,13 +106,20 @@ function _wnd_posts_tpl($query) {
 		array(
 			'post_field' => 'post_date',
 			'title' => '日期',
-			'class' => 'is-narrow',
+			'class' => 'is-narrow is-hidden-mobile',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'post_title_with_link',
 			'title' => '标题',
+		)
+	);
+	$table->add_column(
+		array(
+			'post_field' => 'post_status',
+			'title' => '状态',
+			'class' => 'is-narrow',
 		)
 	);
 	$table->build();

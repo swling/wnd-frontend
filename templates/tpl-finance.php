@@ -81,7 +81,7 @@ function _wnd_user_fin_posts_tpl($query) {
 		array(
 			'post_field' => 'post_date',
 			'title' => '日期',
-			'class' => 'is-narrow',
+			'class' => 'is-narrow is-hidden-mobile',
 		)
 	);
 	$table->add_column(
@@ -138,7 +138,7 @@ function _wnd_fin_stats_posts_tpl($query) {
 		array(
 			'post_field' => 'post_date',
 			'title' => '日期',
-			'class' => 'is-narrow',
+			'class' => 'is-narrow is-hidden-mobile',
 		)
 	);
 	$table->add_column(
@@ -165,6 +165,7 @@ function _wnd_fin_stats_posts_tpl($query) {
 		array(
 			'post_field' => 'post_status',
 			'title' => '状态',
+			'class' => 'is-narrow',
 		)
 	);
 	$table->build();
