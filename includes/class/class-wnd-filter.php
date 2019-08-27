@@ -339,9 +339,10 @@ class Wnd_Filter {
 	}
 
 	/**
-	 *@param array $args 需要筛选的类型数组
+	 *@param array 	$args 需要筛选的类型数组
+	 *@param bool 	$with_any_tab 是否包含全部选项
 	 */
-	public function add_post_type_filter($args = array()) {
+	public function add_post_type_filter($args = array(), $with_any_tab = false) {
 
 		/**
 		 *若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post
@@ -350,11 +351,11 @@ class Wnd_Filter {
 		 * 当前请求为包含post_type参数时，当前的主分类（category_taxonomy）无法在构造函数中无法完成定义，需在此处补充
 		 */
 		if (!$this->wp_query_args['post_type']) {
-			$this->wp_query_args['post_type'] = $args ? reset($args) : 'post';
+			$this->wp_query_args['post_type'] = $with_any_tab ? 'any' : ($args ? reset($args) : 'post');
 			$this->category_taxonomy = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
 		}
 
-		$tabs = $this->build_post_type_filter($args);
+		$tabs = $this->build_post_type_filter($args, $with_any_tab);
 		$this->tabs .= $tabs;
 
 		return $tabs;
@@ -537,8 +538,10 @@ class Wnd_Filter {
 	 *@param array $args 需要筛选的类型数组
 	 *
 	 *$args = array('post','page')
+	 *
+	 *@param bool 	$with_any_tab 是否包含全部选项
 	 */
-	protected function build_post_type_filter($args = array()) {
+	protected function build_post_type_filter($args = array(), $with_any_tab = false) {
 
 		/**
 		 *@since 2019.08.06
@@ -549,6 +552,12 @@ class Wnd_Filter {
 		// 若筛选项少于2个，即无需筛选post type：隐藏tabs
 		$tabs = '<div class="tabs is-boxed post-type-tabs ' . (count($args) < 2 ? 'is-hidden' : '') . '">';
 		$tabs .= '<ul class="tab">';
+		if ($with_any_tab) {
+			$class = ('any' == $this->wp_query_args['post_type']) ? ' is-active' : '';
+			$tabs .= '<li class="all' . $class . '">';
+			$tabs .= '<a data-key="type" data-value="any" href="' . add_query_arg('type', 'any', $uri) . '">全部</a>';
+			$tabs .= '</li>';
+		}
 
 		// 输出tabs
 		foreach ($args as $post_type) {
@@ -584,7 +593,7 @@ class Wnd_Filter {
 
 		// 输出容器
 		$tabs = '<div class="columns is-marginless is-vcentered post-status-tabs ' . (count($args) < 2 ? 'is-hidden' : '') . '">';
-		$tabs .= '<div class="column is-narrow">' . get_post_type_object($this->wp_query_args['post_type'])->label . '状态：</div>';
+		$tabs .= '<div class="column is-narrow">状态：</div>';
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<div class="tabs">';
 		$tabs .= '<ul class="tab">';
