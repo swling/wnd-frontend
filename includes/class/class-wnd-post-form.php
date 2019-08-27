@@ -139,16 +139,17 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 
 	public function add_post_tags($taxonomy, $placeholder = '标签', $required = false) {
 		$taxonomy_object = get_taxonomy($taxonomy);
+		$terms = get_the_terms($this->post_id, $taxonomy);
+		if (is_wp_error($terms)) {
+			return;
+		}
 
 		$term_list = '';
-		$terms = get_the_terms($this->post_id, $taxonomy);
-		if (!empty($terms)) {
-			foreach ($terms as $term) {
-				$term_list .= $term->name . ',';
-			}unset($term);
-			// 移除末尾的逗号
-			$term_list = rtrim($term_list, ",");
-		}
+		foreach ($terms as $term) {
+			$term_list .= $term->name . ',';
+		}unset($term);
+		// 移除末尾的逗号
+		$term_list = rtrim($term_list, ",");
 
 		$this->add_text(
 			array(
@@ -287,8 +288,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 				'name' => '_wpmeta_price',
 				'value' => get_post_meta($this->post_id, 'price', true),
 				'label' => $this->build_label($label, $required),
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-yen-sign"></i>',
+				'icon_left' => '<i class="fas fa-yen-sign"></i>',
 				'placeholder' => $placeholder,
 				'required' => $required,
 			)

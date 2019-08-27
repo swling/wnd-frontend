@@ -100,8 +100,7 @@ class Wnd_WP_Form extends Wnd_Form {
 			$this->add_text(
 				array(
 					'name' => 'phone',
-					'has_icons' => 'left',
-					'icon' => '<i class="fa fa-phone-square"></i>',
+					'icon_left' => '<i class="fa fa-phone-square"></i>',
 					'required' => 'required',
 					'label' => '',
 					'placeholder' => '手机号码',
@@ -112,12 +111,11 @@ class Wnd_WP_Form extends Wnd_Form {
 		$this->add_text(
 			array(
 				'name' => 'auth_code',
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-comment-alt"></i>',
+				'icon_left' => '<i class="fas fa-comment-alt"></i>',
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '短信验证码',
-				'addon' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-is_email="0">获取验证码</button>',
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-is_email="0">获取验证码</button>',
 			)
 		);
 
@@ -138,8 +136,7 @@ class Wnd_WP_Form extends Wnd_Form {
 			$this->add_email(
 				array(
 					'name' => '_user_user_email',
-					'has_icons' => 'left',
-					'icon' => '<i class="fa fa-at"></i>',
+					'icon_left' => '<i class="fa fa-at"></i>',
 					'required' => 'required',
 					'placeholder' => '电子邮箱',
 				)
@@ -149,12 +146,11 @@ class Wnd_WP_Form extends Wnd_Form {
 		$this->add_text(
 			array(
 				'name' => 'auth_code',
-				'has_icons' => 'left',
-				'icon' => '<i class="fa fa-key"></i>',
+				'icon_left' => '<i class="fa fa-key"></i>',
 				'required' => 'required',
 				'label' => '',
 				'placeholder' => '邮箱验证码',
-				'addon' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-is_email="email">获取验证码</button>',
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-is_email="email">获取验证码</button>',
 			)
 		);
 

@@ -7,7 +7,7 @@
 $form = new Wnd_Form;
 $form->add_text(
 	array(
-		'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
+		'addon_right' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
 		'name' => 'test',
 	)
 );
@@ -40,21 +40,24 @@ $form->add_text(
 		'value' => '',
 		'placeholder' => 'user name',
 		'label' => 'User name<span class="required">*</span> ',
-		'has_icons' => 'left', //icon position "left" orf "right"
-		'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+		'icon_right' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+		'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 		'autofocus' => 'autofocus',
 		'required' => true,
 		'readonly' => false,
 	)
 );
 
-// has addon and disabled
+// has addon and icon
 $form->add_text(
 	array(
-		'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
+		'icon_right' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+		'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+		'addon_right' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
+		'addon_left' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
 		'name' => 'test',
-		'label' => 'Input with addons',
-		'disabled' => true,
+		// 'label' => 'Input with addons',
+		// 'disabled' => true,
 	)
 );
 
@@ -65,8 +68,7 @@ $form->add_number(
 		'value' => '',
 		'placeholder' => 'number',
 		'label' => 'Number<span class="required">*</span> ',
-		'has_icons' => 'left', //icon position "left" orf "right"
-		'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+		'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 		'autofocus' => 'autofocus',
 		'required' => true,
 	)
@@ -79,8 +81,7 @@ $form->add_email(
 		'value' => '',
 		'placeholder' => 'email',
 		'label' => 'Email <span class="required">*</span>',
-		'has_icons' => 'left',
-		'icon' => '<i class="fas fa-envelope"></i>',
+		'icon_left' => '<i class="fas fa-envelope"></i>',
 		'required' => false,
 	)
 );
@@ -92,8 +93,7 @@ $form->add_password(
 		'value' => '',
 		'label' => 'Password <span class="required">*</span>',
 		'placeholder' => 'password',
-		'has_icons' => 'left',
-		'icon' => '<i class="fas fa-unlock-alt"></i>',
+		'icon_left' => '<i class="fas fa-unlock-alt"></i>',
 		'required' => false,
 	)
 );

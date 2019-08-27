@@ -31,6 +31,8 @@ class Wnd_Form {
 	public $html;
 
 	protected static $defaults = array(
+		'id' => null,
+		'class' => null,
 		'name' => '',
 		'value' => '',
 		'label' => null,
@@ -49,11 +51,11 @@ class Wnd_Form {
 		'step' => '',
 		'pattern' => '',
 
-		'id' => null,
-		'class' => null,
-		'has_icons' => null, //left or right
-		'icon' => null,
-		'addon' => null,
+		// icon and addon
+		'icon_left' => null,
+		'icon_right' => null,
+		'addon_left' => null,
+		'addon_right' => null,
 	);
 
 	// 初始化构建
@@ -401,26 +403,33 @@ class Wnd_Form {
 	}
 
 	protected function build_input($input_value, $input_key) {
-		$html = $input_value['addon'] ? '<div class="field has-addons">' : '<div class="field">';
+		$html = ($input_value['addon_left'] or $input_value['addon_right']) ? '<div class="field has-addons">' : '<div class="field">';
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $input_value['label'] . '</label>';
 		}
 
-		// input icon
-		if ($input_value['has_icons']) {
-			$html .= $input_value['addon'] ? '<div class="control is-expanded has-icons-' . $input_value['has_icons'] . '">' : '<div class="control has-icons-' . $input_value['has_icons'] . '">';
-			$html .= '<input' . $this->get_the_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_the_attr($input_value) . '>';
-			$html .= '<span class="icon is-' . $input_value['has_icons'] . '">' . $input_value['icon'] . '</span>';
-			$html .= '</div>';
+		// class
+		$class = '';
+		$class .= ($input_value['addon_left'] or $input_value['addon_right']) ? ' is-expanded' : '';
+		$class .= $input_value['icon_left'] ? ' has-icons-left' : '';
+		$class .= $input_value['icon_right'] ? ' has-icons-right' : '';
 
-		} else {
-			$html .= $input_value['addon'] ? '<div class="control is-expanded">' : '<div class="control">';
-			$html .= '<input' . $this->get_the_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_the_attr($input_value) . '>';
-			$html .= '</div>';
+		// addon left
+		if ($input_value['addon_left']) {
+			$html .= '<div class="control">' . $input_value['addon_left'] . '</div>';
 		}
 
-		if ($input_value['addon']) {
-			$html .= '<div class="control">' . $input_value['addon'] . '</div>';
+		// input and icon
+		$html .= '<div class="control' . $class . '">';
+		$html .= '<input' . $this->get_the_id($input_value) . ' class="input' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_the_attr($input_value) . '>';
+
+		$html .= $input_value['icon_left'] ? '<span class="icon is-left">' . $input_value['icon_left'] . '</span>' : '';
+		$html .= $input_value['icon_right'] ? '<span class="icon is-right">' . $input_value['icon_right'] . '</span>' : '';
+		$html .= '</div>';
+
+		// addon right
+		if ($input_value['addon_right']) {
+			$html .= '<div class="control">' . $input_value['addon_right'] . '</div>';
 		}
 
 		$html .= '</div>';

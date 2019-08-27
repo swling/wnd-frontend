@@ -25,8 +25,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 				'value' => '',
 				'placeholder' => $placeholder,
 				'label' => $this->build_label($label, $required),
-				'has_icons' => 'left', //icon position "left" orf "right"
-				'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+				'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 				'autofocus' => 'autofocus',
 				'required' => $required,
 			)
@@ -39,8 +38,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 				'name' => '_user_user_email',
 				'value' => $this->user->user_email,
 				'label' => $this->build_label($label, $required),
-				'has_icons' => 'left',
-				'icon' => '<i class="fa fa-at"></i>',
+				'icon_left' => '<i class="fa fa-at"></i>',
 				'required' => $required,
 				'placeholder' => $placeholder,
 			)
@@ -54,8 +52,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 				'value' => $this->user->display_name,
 				'label' => $this->build_label($label, $required),
 				'placeholder' => $placeholder,
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-user"></i>',
+				'icon_left' => '<i class="fas fa-user"></i>',
 				'required' => $required,
 			)
 		);
@@ -68,8 +65,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 				'value' => '',
 				'label' => $this->build_label($label, $required),
 				'placeholder' => $placeholder,
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-unlock-alt"></i>',
+				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
 				'required' => $required,
 			)
 		);
@@ -82,8 +78,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 				'value' => '',
 				'label' => $this->build_label($label, $required),
 				'placeholder' => $placeholder,
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-unlock-alt"></i>',
+				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
 				'required' => $required,
 			)
 		);
@@ -96,8 +91,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 				'value' => '',
 				'label' => $this->build_label($label, $required),
 				'placeholder' => $placeholder,
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-unlock-alt"></i>',
+				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
 				'required' => $required,
 			)
 		);
@@ -110,8 +104,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 				'value' => '',
 				'label' => $this->build_label($label, $required),
 				'placeholder' => $placeholder,
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-unlock-alt"></i>',
+				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
 				'required' => $required,
 			)
 		);
@@ -124,8 +117,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 				'value' => $this->user->user_url,
 				'label' => $this->build_label($label, $required),
 				'placeholder' => $placeholder,
-				'has_icons' => 'left',
-				'icon' => '<i class="fas fa-link"></i>',
+				'icon_left' => '<i class="fas fa-link"></i>',
 				'required' => $required,
 			)
 		);

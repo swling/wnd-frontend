@@ -14,7 +14,7 @@ $form = new Wnd_WP_Form($is_ajax_submit = true);
 
 $form->add_text(
 	array(
-		'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
+		'addon_right' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
 		'name' => 'test',
 	)
 );
@@ -46,6 +46,8 @@ function wnd_filer_form_filter($input_values) {
 
 }
 
+_wnd_demo_form();
+
 /**
  *@since 2019.03.10 ajax表单demo
  */
@@ -64,20 +66,24 @@ function _wnd_demo_form() {
 			'value' => '',
 			'placeholder' => 'user name',
 			'label' => 'User name<span class="required">*</span> ',
-			'has_icons' => 'left', //icon position "left" orf "right"
-			'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+			'icon_right' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+			'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 			'autofocus' => 'autofocus',
 			'required' => true,
 			'readonly' => false,
 		)
 	);
 
-	// has addon and disabled
+	// has addon and icon
 	$form->add_text(
 		array(
-			'addon' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
+			'icon_right' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+			'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+			'addon_right' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
+			'addon_left' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
 			'name' => 'test',
-			'disabled' => true,
+			// 'label' => 'Input with addons',
+			// 'disabled' => true,
 		)
 	);
 
@@ -88,8 +94,7 @@ function _wnd_demo_form() {
 			'value' => '',
 			'placeholder' => 'number',
 			'label' => 'Number<span class="required">*</span> ',
-			'has_icons' => 'left', //icon position "left" orf "right"
-			'icon' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+			'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 			'autofocus' => 'autofocus',
 			'required' => true,
 		)
@@ -102,8 +107,7 @@ function _wnd_demo_form() {
 			'value' => '',
 			'placeholder' => 'email',
 			'label' => 'Email <span class="required">*</span>',
-			'has_icons' => 'left',
-			'icon' => '<i class="fas fa-envelope"></i>',
+			'icon_left' => '<i class="fas fa-envelope"></i>',
 			'required' => false,
 		)
 	);
@@ -115,8 +119,7 @@ function _wnd_demo_form() {
 			'value' => '',
 			'label' => 'Password <span class="required">*</span>',
 			'placeholder' => 'password',
-			'has_icons' => 'left',
-			'icon' => '<i class="fas fa-unlock-alt"></i>',
+			'icon_left' => '<i class="fas fa-unlock-alt"></i>',
 			'required' => false,
 		)
 	);
