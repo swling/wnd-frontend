@@ -15,7 +15,7 @@ $form = new Wnd_WP_Form($is_ajax_submit = true);
 $form->add_text(
 	array(
 		'addon_right' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
-		'name' => 'test',
+		'name'        => 'test',
 	)
 );
 echo $form->get_input_fields();
@@ -34,10 +34,10 @@ function wnd_filer_form_filter($input_values) {
 	$temp_form = new Wnd_WP_Form;
 	$temp_form->add_textarea(
 		array(
-			'name' => 'content',
-			'label' => 'content',
+			'name'        => 'content',
+			'label'       => 'content',
 			'placeholder' => 'placeholder content add by filter',
-			'required' => true,
+			'required'    => true,
 		)
 	);
 
@@ -61,27 +61,27 @@ function _wnd_demo_form() {
 	// input
 	$form->add_text(
 		array(
-			'id' => 'demo' . uniqid(),
-			'name' => 'user_name',
-			'value' => '',
+			'id'          => 'demo' . uniqid(),
+			'name'        => 'user_name',
+			'value'       => '',
 			'placeholder' => 'user name',
-			'label' => 'User name<span class="required">*</span> ',
-			'icon_right' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
-			'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
-			'autofocus' => 'autofocus',
-			'required' => true,
-			'readonly' => false,
+			'label'       => 'User name<span class="required">*</span> ',
+			'icon_right'  => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+			'icon_left'   => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+			'autofocus'   => 'autofocus',
+			'required'    => true,
+			'readonly'    => false,
 		)
 	);
 
 	// has addon and icon
 	$form->add_text(
 		array(
-			'icon_right' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
-			'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+			'icon_right'  => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+			'icon_left'   => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 			'addon_right' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
-			'addon_left' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
-			'name' => 'test',
+			'addon_left'  => '<button type="button" class="send-code button is-primary">获取验证码</button>',
+			'name'        => 'test',
 			// 'label' => 'Input with addons',
 			// 'disabled' => true,
 		)
@@ -90,37 +90,37 @@ function _wnd_demo_form() {
 	// input
 	$form->add_number(
 		array(
-			'name' => 'number',
-			'value' => '',
+			'name'        => 'number',
+			'value'       => '',
 			'placeholder' => 'number',
-			'label' => 'Number<span class="required">*</span> ',
-			'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
-			'autofocus' => 'autofocus',
-			'required' => true,
+			'label'       => 'Number<span class="required">*</span> ',
+			'icon_left'   => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+			'autofocus'   => 'autofocus',
+			'required'    => true,
 		)
 	);
 
 	// input
 	$form->add_email(
 		array(
-			'name' => 'email',
-			'value' => '',
+			'name'        => 'email',
+			'value'       => '',
 			'placeholder' => 'email',
-			'label' => 'Email <span class="required">*</span>',
-			'icon_left' => '<i class="fas fa-envelope"></i>',
-			'required' => false,
+			'label'       => 'Email <span class="required">*</span>',
+			'icon_left'   => '<i class="fas fa-envelope"></i>',
+			'required'    => false,
 		)
 	);
 
 	// password
 	$form->add_password(
 		array(
-			'name' => 'password',
-			'value' => '',
-			'label' => 'Password <span class="required">*</span>',
+			'name'        => 'password',
+			'value'       => '',
+			'label'       => 'Password <span class="required">*</span>',
 			'placeholder' => 'password',
-			'icon_left' => '<i class="fas fa-unlock-alt"></i>',
-			'required' => false,
+			'icon_left'   => '<i class="fas fa-unlock-alt"></i>',
+			'required'    => false,
 		)
 	);
 
@@ -130,22 +130,22 @@ function _wnd_demo_form() {
 	// select
 	$form->add_select(
 		array(
-			'name' => 'select1',
-			'options' => array('select1' => 'value1', 'select2' => 'value2'),
-			'label' => 'Dropdown1',
+			'name'     => 'select1',
+			'options'  => array('select1' => 'value1', 'select2' => 'value2'),
+			'label'    => 'Dropdown1',
 			'required' => false,
-			'checked' => 'value2', //default checked value
+			'checked'  => 'value2', //default checked value
 		)
 	);
 
 	// select
 	$form->add_select(
 		array(
-			'name' => 'select2',
-			'options' => array('select1' => 'value1', 'select2' => 'value2'),
-			'label' => 'Dropdown2',
+			'name'     => 'select2',
+			'options'  => array('select1' => 'value1', 'select2' => 'value2'),
+			'label'    => 'Dropdown2',
 			'required' => false,
-			'checked' => 'value2', //default checked value
+			'checked'  => 'value2', //default checked value
 		)
 	);
 
@@ -154,20 +154,20 @@ function _wnd_demo_form() {
 	// radio
 	$form->add_radio(
 		array(
-			'name' => 'radio',
-			'options' => array('key1' => 'value1', 'key2' => 'value2'),
-			'label' => 'SEX',
+			'name'     => 'radio',
+			'options'  => array('key1' => 'value1', 'key2' => 'value2'),
+			'label'    => 'SEX',
 			'required' => false,
-			'checked' => 'woman', //default checked value
+			'checked'  => 'woman', //default checked value
 		)
 	);
 
 	// checkbox
 	$form->add_checkbox(
 		array(
-			'name' => 'checkbox',
-			'value' => 1,
-			'label' => 'checkbox',
+			'name'    => 'checkbox',
+			'value'   => 1,
+			'label'   => 'checkbox',
 			'checked' => 1, //default checked
 		)
 	);
@@ -178,11 +178,11 @@ function _wnd_demo_form() {
 	 */
 	$form->add_radio(
 		array(
-			'name' => 'total_amount',
-			'options' => array('0.01' => '0.01', '10' => '10'),
+			'name'     => 'total_amount',
+			'options'  => array('0.01' => '0.01', '10' => '10'),
 			'required' => 'required',
-			'checked' => '0.01', //default checked value
-			'class' => 'is-checkradio is-danger',
+			'checked'  => '0.01', //default checked value
+			'class'    => 'is-checkradio is-danger',
 		)
 	);
 
@@ -192,11 +192,11 @@ function _wnd_demo_form() {
 	 */
 	$form->add_checkbox(
 		array(
-			'name' => 'checkbox',
-			'value' => 1,
-			'label' => 'checkbox',
+			'name'    => 'checkbox',
+			'value'   => 1,
+			'label'   => 'checkbox',
 			'checked' => true, //default checked
-			'class' => "switch is-danger",
+			'class'   => "switch is-danger",
 		)
 	);
 
@@ -204,21 +204,21 @@ function _wnd_demo_form() {
 	$form->add_image_upload(
 		array(
 			// 'id' => 'image-upload', //container id
-			'name' => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
-			'file_id' => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户id综合查询
-			'label' => 'Image upload',
-			'thumbnail' => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
+			'name'           => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
+			'file_id'        => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户id综合查询
+			'label'          => 'Image upload',
+			'thumbnail'      => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
 			'thumbnail_size' => array('width' => 100, 'height' => 100), //thumbnail image size
-			'data' => array( // some data on file input, maybe useful in ajax upload
-				'meta_key' => 'avatar',
-				'save_width' => '0', //图片文件存储最大宽度 0 为不限制
+			'data'           => array( // some data on file input, maybe useful in ajax upload
+				'meta_key'    => 'avatar',
+				'save_width'  => '0', //图片文件存储最大宽度 0 为不限制
 				'save_height' => '0', //图片文件存储最大过度 0 为不限制
 				'post_parent' => 0, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
-				'user_id' => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
+				'user_id'     => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
 			),
-			'delete_button' => true,
-			'disabled' => false,
-			'required' => 'required',
+			'delete_button'  => true,
+			'disabled'       => false,
+			'required'       => 'required',
 		)
 	);
 
@@ -226,17 +226,17 @@ function _wnd_demo_form() {
 	$form->add_file_upload(
 		array(
 			// 'id' => 'file-upload', //container id
-			'name' => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
-			'file_id' => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户id综合查询
-			'label' => 'File upland',
-			'data' => array( // some data on file input, maybe useful in ajax upload
-				'meta_key' => 'file',
+			'name'          => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
+			'file_id'       => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户id综合查询
+			'label'         => 'File upland',
+			'data'          => array( // some data on file input, maybe useful in ajax upload
+				'meta_key'    => 'file',
 				'post_parent' => 0, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
-				'user_id' => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
+				'user_id'     => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
 			),
 			'delete_button' => true,
-			'disabled' => false,
-			'required' => 'required',
+			'disabled'      => false,
+			'required'      => 'required',
 		)
 	);
 
@@ -245,12 +245,12 @@ function _wnd_demo_form() {
 	 */
 	$form->add_gallery_upload(
 		array(
-			'label' => '产品相册',
+			'label'          => '产品相册',
 			'thumbnail_size' => array('height' => '160', 'width' => '120'),
-			'data' => array(
+			'data'           => array(
 				'post_parent' => 1, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
-				'user_id' => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
-				'save_width' => 0, //图片文件存储最大宽度 0 为不限制
+				'user_id'     => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
+				'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
 				'save_height' => 0, //图片文件存储最大过度 0 为不限制
 			),
 		)
@@ -267,10 +267,10 @@ function _wnd_demo_form() {
 	// textarea
 	$form->add_textarea(
 		array(
-			'name' => 'content',
-			'label' => 'content',
+			'name'        => 'content',
+			'label'       => 'content',
 			'placeholder' => 'placeholder content',
-			'required' => true,
+			'required'    => true,
 		)
 	);
 
@@ -296,7 +296,7 @@ function _wnd_demo_form() {
 	 **/
 	$form->add_color(
 		array(
-			'name' => 'color',
+			'name'  => 'color',
 			'value' => '#990000',
 		)
 	);
@@ -304,16 +304,16 @@ function _wnd_demo_form() {
 	$form->add_date(
 		array(
 			'name' => 'date',
-			'min' => '2019-08-23',
-			'max' => '3019-08-31',
+			'min'  => '2019-08-23',
+			'max'  => '3019-08-31',
 		)
 	);
 
 	$form->add_range(
 		array(
 			'name' => 'range',
-			'min' => '0',
-			'max' => '10',
+			'min'  => '0',
+			'max'  => '10',
 			'step' => '0.1',
 		)
 	);
@@ -327,8 +327,8 @@ function _wnd_demo_form() {
 	// 138-5200-1900
 	$form->add_tel(
 		array(
-			'name' => 'tel',
-			'label' => '格式：xxx-xxxx-xxxx',
+			'name'    => 'tel',
+			'label'   => '格式：xxx-xxxx-xxxx',
 			'pattern' => '[0-9]{3}-[0-9]{4}-[0-9]{4}',
 		)
 	);

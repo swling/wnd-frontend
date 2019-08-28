@@ -31,30 +31,30 @@ class Wnd_Form {
 	public $html;
 
 	protected static $defaults = array(
-		'id' => null,
-		'class' => null,
-		'name' => '',
-		'value' => '',
-		'label' => null,
-		'options' => array(), //value of select/radio. Example: array(label=>value)
-		'checked' => null, // checked value of select/radio; bool of checkbox
+		'id'          => null,
+		'class'       => null,
+		'name'        => '',
+		'value'       => '',
+		'label'       => null,
+		'options'     => array(), //value of select/radio. Example: array(label=>value)
+		'checked'     => null, // checked value of select/radio; bool of checkbox
 
-		'required' => false,
-		'disabled' => false,
-		'autofocus' => false,
-		'readonly' => false,
+		'required'    => false,
+		'disabled'    => false,
+		'autofocus'   => false,
+		'readonly'    => false,
 		'placeholder' => '',
-		'size' => '',
-		'maxlength' => '',
-		'min' => '',
-		'max' => '',
-		'step' => '',
-		'pattern' => '',
+		'size'        => '',
+		'maxlength'   => '',
+		'min'         => '',
+		'max'         => '',
+		'step'        => '',
+		'pattern'     => '',
 
 		// icon and addon
-		'icon_left' => null,
-		'icon_right' => null,
-		'addon_left' => null,
+		'icon_left'   => null,
+		'icon_right'  => null,
+		'addon_left'  => null,
 		'addon_right' => null,
 	);
 
@@ -76,7 +76,7 @@ class Wnd_Form {
 
 	// Submit
 	public function set_submit_button($submit_text, $submit_class = '') {
-		$this->submit_text = $submit_text;
+		$this->submit_text  = $submit_text;
 		$this->submit_class = $submit_class;
 	}
 
@@ -96,45 +96,45 @@ class Wnd_Form {
 	 */
 	// text
 	public function add_text($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'text';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'text';
 		$this->input_values[] = $args;
 	}
 
 	// number
 	public function add_number($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'number';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'number';
 		$this->input_values[] = $args;
 	}
 
 	// hidden
 	public function add_hidden($name, $value) {
 		$this->input_values[] = array(
-			'type' => 'hidden',
-			'name' => $name,
+			'type'  => 'hidden',
+			'name'  => $name,
 			'value' => $value,
 		);
 	}
 
 	// textarea
 	public function add_textarea($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'textarea';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'textarea';
 		$this->input_values[] = $args;
 	}
 
 	// email
 	public function add_email($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'email';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'email';
 		$this->input_values[] = $args;
 	}
 
 	// password
 	public function add_password($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'password';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'password';
 		$this->input_values[] = $args;
 	}
 
@@ -144,88 +144,88 @@ class Wnd_Form {
 	 */
 	// URL
 	public function add_url($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'url';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'url';
 		$this->input_values[] = $args;
 	}
 
 	// color
 	public function add_color($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'color';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'color';
 		$this->input_values[] = $args;
 	}
 
 	// date
 	public function add_date($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'date';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'date';
 		$this->input_values[] = $args;
 	}
 
 	// range
 	public function add_range($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'range';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'range';
 		$this->input_values[] = $args;
 	}
 
 	// tel
 	public function add_tel($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'tel';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'tel';
 		$this->input_values[] = $args;
 	}
 
 	// select
 	public function add_select($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'select';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'select';
 		$this->input_values[] = $args;
 	}
 
 	// radio
 	public function add_radio($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'radio';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'radio';
 		$this->input_values[] = $args;
 	}
 
 	// checkbox
 	public function add_checkbox($args) {
-		$args = array_merge(self::$defaults, $args);
-		$args['type'] = 'checkbox';
+		$args                 = array_merge(self::$defaults, $args);
+		$args['type']         = 'checkbox';
 		$this->input_values[] = $args;
 	}
 
 	// Image upload
 	public function add_image_upload($args) {
 		$defaults = array(
-			'id' => 'image-upload-' . $this->id,
-			'name' => 'file',
-			'label' => 'Image upland',
-			'thumbnail' => '',
+			'id'             => 'image-upload-' . $this->id,
+			'name'           => 'file',
+			'label'          => 'Image upland',
+			'thumbnail'      => '',
 			'thumbnail_size' => array('height' => '100', 'width' => '100'),
-			'required' => null,
-			'file_id' => 0,
-			'data' => array(),
-			'delete_button' => true,
-			'disabled' => false,
+			'required'       => null,
+			'file_id'        => 0,
+			'data'           => array(),
+			'delete_button'  => true,
+			'disabled'       => false,
 		);
 		$args = array_merge($defaults, $args);
 
 		$this->input_values[] = array(
-			'id' => $args['id'],
-			'type' => 'image_upload',
-			'name' => $args['name'],
-			'label' => $args['label'],
-			'thumbnail' => $args['thumbnail'],
+			'id'             => $args['id'],
+			'type'           => 'image_upload',
+			'name'           => $args['name'],
+			'label'          => $args['label'],
+			'thumbnail'      => $args['thumbnail'],
 			'thumbnail_size' => $args['thumbnail_size'],
-			'required' => $args['required'],
-			'file_id' => $args['file_id'],
-			'data' => $args['data'],
-			'delete_button' => $args['delete_button'],
-			'disabled' => $args['disabled'],
+			'required'       => $args['required'],
+			'file_id'        => $args['file_id'],
+			'data'           => $args['data'],
+			'delete_button'  => $args['delete_button'],
+			'disabled'       => $args['disabled'],
 		);
 
 		if (!$this->with_upload) {
@@ -236,29 +236,29 @@ class Wnd_Form {
 	// File upload
 	public function add_file_upload($args) {
 		$defaults = array(
-			'id' => 'file-upload-' . $this->id,
-			'name' => 'file',
-			'label' => 'File upload',
-			'file_name' => 'file name',
-			'file_id' => 0,
-			'data' => array(),
-			'required' => null,
+			'id'            => 'file-upload-' . $this->id,
+			'name'          => 'file',
+			'label'         => 'File upload',
+			'file_name'     => 'file name',
+			'file_id'       => 0,
+			'data'          => array(),
+			'required'      => null,
 			'delete_button' => true,
-			'disabled' => false,
+			'disabled'      => false,
 		);
 		$args = array_merge($defaults, $args);
 
 		$this->input_values[] = array(
-			'id' => $args['id'],
-			'type' => 'file_upload',
-			'name' => $args['name'],
-			'label' => $args['label'],
-			'file_name' => $args['file_name'],
-			'file_id' => $args['file_id'],
-			'data' => $args['data'],
-			'required' => $args['required'],
+			'id'            => $args['id'],
+			'type'          => 'file_upload',
+			'name'          => $args['name'],
+			'label'         => $args['label'],
+			'file_name'     => $args['file_name'],
+			'file_id'       => $args['file_id'],
+			'data'          => $args['data'],
+			'required'      => $args['required'],
 			'delete_button' => $args['delete_button'],
-			'disabled' => $args['disabled'],
+			'disabled'      => $args['disabled'],
 		);
 
 		if (!$this->with_upload) {
@@ -271,7 +271,7 @@ class Wnd_Form {
 	 */
 	public function add_html($html) {
 		$this->input_values[] = array(
-			'type' => 'html',
+			'type'  => 'html',
 			'value' => $html,
 		);
 	}
@@ -440,7 +440,7 @@ class Wnd_Form {
 	}
 
 	protected function build_checkbox($input_value, $input_key) {
-		$id = $input_value['id'] ?: $this->id . '-' . $input_key;
+		$id   = $input_value['id'] ?: $this->id . '-' . $input_key;
 		$html = '<div class="field">';
 		$html .= '<input id="' . $id . '" type="checkbox" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_the_attr($input_value);
 		$html .= $input_value['checked'] ? ' checked="checked" >' : ' >';
@@ -589,9 +589,9 @@ class Wnd_Form {
 	 *不含：id、class、value
 	 */
 	protected function get_the_attr($input_value) {
-		$bool_attrs = array('readonly', 'disabled', 'autofocus', 'required');
+		$bool_attrs   = array('readonly', 'disabled', 'autofocus', 'required');
 		$normal_attrs = array('placeholder', 'size', 'maxlength', 'min', 'max', 'step', 'pattern');
-		$attr = '';
+		$attr         = '';
 
 		foreach ($input_value as $key => $value) {
 			if (!$value and !is_numeric($value)) {

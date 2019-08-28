@@ -21,10 +21,10 @@ function wnd_user_has_paid($user_id, $object_id) {
 	if (false === $user_has_paid) {
 		$args = array(
 			'posts_per_page' => 1,
-			'post_type' => 'order',
-			'post_parent' => $object_id,
-			'author' => $user_id,
-			'post_status' => 'success',
+			'post_type'      => 'order',
+			'post_parent'    => $object_id,
+			'author'         => $user_id,
+			'post_status'    => 'success',
 		);
 
 		// 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
@@ -46,13 +46,13 @@ function wnd_get_order_count($object_id) {
 	// 删除15分钟前未完成的订单，并扣除订单统计
 	$args = array(
 		'posts_per_page' => -1,
-		'post_type' => 'order',
-		'post_parent' => $object_id,
-		'post_status' => 'pending',
-		'date_query' => array(
+		'post_type'      => 'order',
+		'post_parent'    => $object_id,
+		'post_status'    => 'pending',
+		'date_query'     => array(
 			array(
-				'column' => 'post_date',
-				'before' => date('Y-m-d H:i:s', current_time('timestamp', $gmt = 0) - 900),
+				'column'    => 'post_date',
+				'before'    => date('Y-m-d H:i:s', current_time('timestamp', $gmt = 0) - 900),
 				'inclusive' => true,
 			),
 		),
@@ -156,8 +156,8 @@ function wnd_get_post_price($post_id) {
  */
 function wnd_get_post_commission($post_id) {
 	$commission_rate = is_numeric(wnd_get_option('wnd', 'wnd_commission_rate')) ? wnd_get_option('wnd', 'wnd_commission_rate') : 0;
-	$commission = wnd_get_post_price($post_id) * $commission_rate;
-	$commission = number_format($commission, 2, '.', '');
+	$commission      = wnd_get_post_price($post_id) * $commission_rate;
+	$commission      = number_format($commission, 2, '.', '');
 	return apply_filters('wnd_get_post_commission', $commission, $post_id);
 }
 
@@ -225,10 +225,10 @@ function wnd_update_fin_stats($money = 0) {
 		$post_type = 'stats-ex';
 	}
 
-	$year = date('Y', time());
+	$year  = date('Y', time());
 	$month = date('m', time());
 
-	$slug = $year . '-' . $month . '-' . $post_type;
+	$slug       = $year . '-' . $month . '-' . $post_type;
 	$post_title = $post_type == 'stats-re' ? $year . '-' . $month . ' - 充值统计' : $year . '-' . $month . ' - 消费统计';
 
 	$stats_post = wnd_get_post_by_slug($slug, $post_type, 'private');
@@ -244,12 +244,12 @@ function wnd_update_fin_stats($money = 0) {
 		// 新增统计
 	} else {
 		$post_arr = array(
-			'post_author' => 1,
-			'post_type' => $post_type,
-			'post_title' => $post_title,
+			'post_author'  => 1,
+			'post_type'    => $post_type,
+			'post_title'   => $post_title,
 			'post_content' => abs($money),
-			'post_status' => 'private',
-			'post_name' => $slug,
+			'post_status'  => 'private',
+			'post_name'    => $slug,
 		);
 		wp_insert_post($post_arr);
 	}

@@ -26,7 +26,7 @@ function wnd_action_set_object_terms($object_id, $terms, $tt_ids, $taxonomy, $ap
 		return;
 	}
 
-	$post_type = get_post_type($object_id);
+	$post_type    = get_post_type($object_id);
 	$cat_taxonomy = ($post_type == 'post') ? 'category' : $post_type . '_cat';
 	$tag_taxonomy = $post_type . '_tag';
 
@@ -114,7 +114,7 @@ function wnd_update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc = t
 
 	// 更新
 	if ($result) {
-		$ID = $result->ID;
+		$ID    = $result->ID;
 		$count = $inc ? $result->count + 1 : $result->count - 1;
 
 		// count为0，删除记录 返回
@@ -156,7 +156,7 @@ function wnd_action_delete_tag_under_category($object_id) {
 		return;
 	}
 
-	$post_type = get_post_type($object_id);
+	$post_type    = get_post_type($object_id);
 	$cat_taxonomy = ($post_type == 'post') ? 'category' : $post_type . '_cat';
 	$tag_taxonomy = $post_type . '_tag';
 

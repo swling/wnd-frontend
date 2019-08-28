@@ -109,18 +109,18 @@ class Wnd_Order {
 
 		// 定义变量
 		$this->total_amount = $this->total_amount ?: wnd_get_post_price($this->object_id);
-		$status = $is_success ? 'success' : 'pending';
-		$this->subject = $this->subject ?: get_the_title($this->object_id);
+		$status             = $is_success ? 'success' : 'pending';
+		$this->subject      = $this->subject ?: get_the_title($this->object_id);
 
 		/**
 		 *@since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
 		 */
 		$old_orders = get_posts(
 			array(
-				'author' => $this->user_id,
-				'post_parent' => $this->object_id,
-				'post_status' => 'pending',
-				'post_type' => 'order',
+				'author'         => $this->user_id,
+				'post_parent'    => $this->object_id,
+				'post_status'    => 'pending',
+				'post_type'      => 'order',
 				'posts_per_page' => 1,
 			)
 		);
@@ -137,14 +137,14 @@ class Wnd_Order {
 		}
 
 		$post_arr = array(
-			'ID' => $this->ID ?: 0,
-			'post_author' => $this->user_id,
-			'post_parent' => $this->object_id,
+			'ID'           => $this->ID ?: 0,
+			'post_author'  => $this->user_id,
+			'post_parent'  => $this->object_id,
 			'post_content' => $this->total_amount ?: '免费',
-			'post_status' => $status,
-			'post_title' => $this->subject,
-			'post_type' => 'order',
-			'post_name' => uniqid(),
+			'post_status'  => $status,
+			'post_title'   => $this->subject,
+			'post_type'    => 'order',
+			'post_name'    => uniqid(),
 		);
 		$ID = wp_insert_post($post_arr);
 		if (is_wp_error($ID) or !$ID) {
@@ -191,12 +191,12 @@ class Wnd_Order {
 		}
 
 		$before_status = $post->post_status;
-		$total_amount = $post->post_content;
+		$total_amount  = $post->post_content;
 
 		$post_arr = array(
-			'ID' => $this->ID,
+			'ID'          => $this->ID,
 			'post_status' => 'success',
-			'post_title' => $this->subject ?: $post->post_title,
+			'post_title'  => $this->subject ?: $post->post_title,
 		);
 		$ID = wp_update_post($post_arr);
 		if (is_wp_error($ID) or !$ID) {

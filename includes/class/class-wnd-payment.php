@@ -135,8 +135,8 @@ class Wnd_Payment {
 			$order->set_object_id($this->object_id);
 			$order->create();
 
-			$this->ID = $order->get_ID();
-			$this->subject = $order->get_subject();
+			$this->ID           = $order->get_ID();
+			$this->subject      = $order->get_subject();
 			$this->total_amount = $order->get_total_amount();
 
 		} else {
@@ -144,8 +144,8 @@ class Wnd_Payment {
 			$recharge->set_total_amount($this->total_amount);
 			$recharge->create();
 
-			$this->ID = $recharge->get_ID();
-			$this->subject = $recharge->get_subject();
+			$this->ID           = $recharge->get_ID();
+			$this->subject      = $recharge->get_subject();
 			$this->total_amount = $recharge->get_total_amount();
 		}
 	}
@@ -160,7 +160,7 @@ class Wnd_Payment {
 	 *@param float  			$this->total_money		required
 	 */
 	public function verify() {
-		$type = !empty($_POST) ? '异步' : '同步';
+		$type     = !empty($_POST) ? '异步' : '同步';
 		$this->ID = $this->ID ?: $this->parse_out_trade_no($this->out_trade_no);
 
 		// 校验
@@ -173,8 +173,8 @@ class Wnd_Payment {
 		}
 
 		// 定义变量
-		$this->ID = $post->ID;
-		$this->subject = $post->post_title . '(' . $type . ')';
+		$this->ID        = $post->ID;
+		$this->subject   = $post->post_title . '(' . $type . ')';
 		$this->object_id = $post->post_parent;
 
 		// 订单支付状态检查

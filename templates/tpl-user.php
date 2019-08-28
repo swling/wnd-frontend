@@ -19,8 +19,8 @@ if (!defined('ABSPATH')) {
  */
 function _wnd_user_center($args = array()) {
 	$defaults = array(
-		'do' => 'register',
-		'tab' => 'profile',
+		'do'   => 'register',
+		'tab'  => 'profile',
 		'type' => wnd_get_option('wnd', 'wnd_enable_sms') == 1 ? 'phone' : 'email',
 	);
 	$args = wp_parse_args($args, $defaults);
@@ -29,8 +29,8 @@ function _wnd_user_center($args = array()) {
 	 *@see 2019.08.17
 	 *在非ajax环境中，约定了GET参数，实现切换模块切换，故此，需要确保GET参数优先级
 	 **/
-	$do = $_GET['do'] ?? $args['do'];
-	$tab = $_GET['tab'] ?? $args['tab'];
+	$do   = $_GET['do'] ?? $args['do'];
+	$tab  = $_GET['tab'] ?? $args['tab'];
 	$type = $_GET['type'] ?? $args['type'];
 	// ajax请求类型
 	$ajax_type = $_GET['ajax_type'] ?? 'modal';
@@ -195,9 +195,9 @@ function _wnd_login_form() {
 	$form->add_user_password();
 	$form->add_checkbox(
 		array(
-			'name' => 'remember',
-			'value' => 1,
-			'label' => '保持登录',
+			'name'    => 'remember',
+			'value'   => 1,
+			'label'   => '保持登录',
 			'checked' => '1', //default checked value
 		)
 	);
@@ -252,10 +252,10 @@ function _wnd_reg_form($type = 'email') {
 	if (wnd_get_option('wnd', 'wnd_agreement_url') or 1) {
 		$form->add_checkbox(
 			array(
-				'name' => 'agreement',
-				'value' => 1,
-				'checked' => 1,
-				'label' => '我已阅读并同意注册协议<a href="' . wnd_get_option('wnd', 'wnd_agreement_url') . '" target="_blank">《注册协议》</a>',
+				'name'     => 'agreement',
+				'value'    => 1,
+				'checked'  => 1,
+				'label'    => '我已阅读并同意注册协议<a href="' . wnd_get_option('wnd', 'wnd_agreement_url') . '" target="_blank">《注册协议》</a>',
 				'required' => 'required',
 			)
 		);

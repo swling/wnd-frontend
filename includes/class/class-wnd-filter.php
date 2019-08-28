@@ -43,23 +43,23 @@ class Wnd_Filter {
 	 *参数中包含自定义的非wp_query参数以"wnd"前缀区分
 	 */
 	protected $wp_query_args = array(
-		'orderby' => 'date',
-		'order' => 'DESC',
-		'meta_query' => array(),
-		'tax_query' => array(),
-		'date_query' => array(),
-		'meta_key' => '',
-		'meta_value' => '',
-		'post_type' => '',
-		'post_status' => 'publish',
-		'no_found_rows' => true,
-		'paged' => 1,
+		'orderby'            => 'date',
+		'order'              => 'DESC',
+		'meta_query'         => array(),
+		'tax_query'          => array(),
+		'date_query'         => array(),
+		'meta_key'           => '',
+		'meta_value'         => '',
+		'post_type'          => '',
+		'post_status'        => 'publish',
+		'no_found_rows'      => true,
+		'paged'              => 1,
 
 		// 自定义
 		'wnd_ajax_container' => '',
-		'wnd_post_tpl' => '',
-		'wnd_posts_tpl' => '',
-		'wnd_uniqid' => '',
+		'wnd_post_tpl'       => '',
+		'wnd_posts_tpl'      => '',
+		'wnd_uniqid'         => '',
 	);
 
 	/**
@@ -86,7 +86,7 @@ class Wnd_Filter {
 	 * @param bool $is_ajax 是否为ajax查询
 	 */
 	public function __construct(bool $is_ajax = false, string $uniqid = '') {
-		self::$is_ajax = $is_ajax;
+		self::$is_ajax    = $is_ajax;
 		self::$doing_ajax = wnd_doing_ajax();
 		$this->class .= self::$is_ajax ? 'ajax-filter' : '';
 
@@ -143,7 +143,7 @@ class Wnd_Filter {
 
 		$query_vars = array(
 			'meta_query' => array(),
-			'tax_query' => array(),
+			'tax_query'  => array(),
 			'date_query' => array(),
 		);
 
@@ -172,11 +172,11 @@ class Wnd_Filter {
 			 *?_meta_price=exists 则查询 存在price的文章
 			 */
 			if (strpos($key, '_meta_') === 0) {
-				$key = str_replace('_meta_', '', $key);
-				$compare = $value == 'exists' ? 'exists' : '=';
+				$key        = str_replace('_meta_', '', $key);
+				$compare    = $value == 'exists' ? 'exists' : '=';
 				$meta_query = array(
-					'key' => $key,
-					'value' => $value,
+					'key'     => $key,
+					'value'   => $value,
 					'compare' => $compare,
 				);
 
@@ -198,8 +198,8 @@ class Wnd_Filter {
 			if (strpos($key, '_term_') === 0) {
 				$term_query = array(
 					'taxonomy' => str_replace('_term_', '', $key),
-					'field' => 'term_id',
-					'terms' => $value,
+					'field'    => 'term_id',
+					'terms'    => $value,
 				);
 				$query_vars['tax_query'][] = $term_query;
 				continue;
@@ -352,7 +352,7 @@ class Wnd_Filter {
 		 */
 		if (!$this->wp_query_args['post_type']) {
 			$this->wp_query_args['post_type'] = $with_any_tab ? 'any' : ($args ? reset($args) : 'post');
-			$this->category_taxonomy = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
+			$this->category_taxonomy          = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
 		}
 
 		$tabs = $this->build_post_type_filter($args, $with_any_tab);
@@ -386,7 +386,7 @@ class Wnd_Filter {
 	 */
 	public function add_taxonomy_filter(array $args) {
 		$args['parent'] = $args['parent'] ?? 0;
-		$taxonomy = $args['taxonomy'] ?? null;
+		$taxonomy       = $args['taxonomy'] ?? null;
 		if (!$taxonomy) {
 			return;
 		}
@@ -635,7 +635,7 @@ class Wnd_Filter {
 		}
 
 		$taxonomy = $args['taxonomy'];
-		$parent = $args['parent'] ?? 0;
+		$parent   = $args['parent'] ?? 0;
 
 		/**
 		 *@since 2019.07.30
@@ -785,9 +785,9 @@ class Wnd_Filter {
 		} else {
 			$tags = get_terms($taxonomy, array(
 				'hide_empty' => false,
-				'orderby' => 'count',
-				'order' => 'DESC',
-				'number' => $limit,
+				'orderby'    => 'count',
+				'order'      => 'DESC',
+				'number'     => $limit,
 			));
 		}
 
@@ -994,7 +994,7 @@ class Wnd_Filter {
 			}
 
 			// data-key="orderby" data-value="' . http_build_query($query_arg) . '"
-			$query_arg = is_array($orderby) ? $orderby : array('orderby' => $orderby);
+			$query_arg    = is_array($orderby) ? $orderby : array('orderby' => $orderby);
 			$orderby_link = self::$doing_ajax ? '' : add_query_arg($query_arg, remove_query_arg($remove_query_args));
 			$tabs .= '<li ' . $class . '><a data-key="orderby" data-value="' . http_build_query($query_arg) . '" href="' . $orderby_link . '">' . $key . '</a></li>';
 		}
@@ -1029,7 +1029,7 @@ class Wnd_Filter {
 
 		// 是否已设置order参数
 		$all_class = isset($this->wp_query_args['orderby']) ? '' : 'class="is-active"';
-		$all_link = self::$doing_ajax ? '' : remove_query_arg('order', remove_query_arg($this->remove_query_args));
+		$all_link  = self::$doing_ajax ? '' : remove_query_arg('order', remove_query_arg($this->remove_query_args));
 		$tabs .= '<li ' . $all_class . '><a data-key="order" data-value="" href="' . $all_link . '">默认</a></li>';
 
 		// 输出tabs
@@ -1141,7 +1141,7 @@ class Wnd_Filter {
 		 */
 		if (!$this->wp_query->max_num_pages) {
 			$previous_link = self::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
-			$next_link = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
+			$next_link     = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
 
 			$html = '<nav id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			$html .= '<ul class="pagination-list">';
@@ -1161,10 +1161,10 @@ class Wnd_Filter {
 			 *常规分页，需要查询文章总数
 			 *据称，在数据量较大的站点，查询文章总数会较为费时
 			 */
-			$first_link = self::$doing_ajax ? '' : remove_query_arg('page');
+			$first_link    = self::$doing_ajax ? '' : remove_query_arg('page');
 			$previous_link = self::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
-			$next_link = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
-			$last_link = self::$doing_ajax ? '' : add_query_arg('page', $this->wp_query->max_num_pages);
+			$next_link     = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
+			$last_link     = self::$doing_ajax ? '' : add_query_arg('page', $this->wp_query->max_num_pages);
 
 			$html = '<div id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			if ($paged > 1) {
@@ -1228,10 +1228,10 @@ class Wnd_Filter {
 
 			// 递归查询当前分类的父级分类
 			$parents[$tax_query['taxonomy']] = array();
-			$parent = get_term($tax_query['terms'])->parent;
+			$parent                          = get_term($tax_query['terms'])->parent;
 			while ($parent) {
 				$parents[$tax_query['taxonomy']][] = $parent;
-				$parent = get_term($parent)->parent;
+				$parent                            = get_term($parent)->parent;
 			}
 
 			// 排序
@@ -1269,7 +1269,7 @@ class Wnd_Filter {
 	 */
 	public function get_category_tabs($args = array()) {
 		$args['taxonomy'] = $this->category_taxonomy;
-		$args['parent'] = $args['parent'] ?? 0;
+		$args['parent']   = $args['parent'] ?? 0;
 		return $this->build_taxonomy_filter($args);
 	}
 
@@ -1314,11 +1314,11 @@ class Wnd_Filter {
 
 			// 查询当前分类的所有上级分类的子分类
 			$sub_tabs = '';
-			$parents = $this->get_tax_query_patents()[$tax_query['taxonomy']];
+			$parents  = $this->get_tax_query_patents()[$tax_query['taxonomy']];
 			foreach ($parents as $parent) {
 				$args = array(
 					'taxonomy' => $tax_query['taxonomy'],
-					'parent' => $parent,
+					'parent'   => $parent,
 				);
 				$sub_tabs .= $this->build_taxonomy_filter($args, 'sub-tabs');
 			}
@@ -1327,7 +1327,7 @@ class Wnd_Filter {
 			// 当前分类的子类
 			$args = array(
 				'taxonomy' => $tax_query['taxonomy'],
-				'parent' => $tax_query['terms'],
+				'parent'   => $tax_query['terms'],
 			);
 			$sub_tabs .= $this->build_taxonomy_filter($args, 'sub-tabs');
 

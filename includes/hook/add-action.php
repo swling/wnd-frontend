@@ -34,7 +34,7 @@ function wnd_action_upload_file($attachment_id, $post_parent, $meta_key) {
 
 		//储存在用户字段
 	} else {
-		$user_id = get_current_user_id();
+		$user_id       = get_current_user_id();
 		$old_user_meta = wnd_get_user_meta($user_id, $meta_key);
 		if ($old_user_meta) {
 			wp_delete_attachment($old_user_meta, true);
@@ -211,9 +211,9 @@ function wnd_action_deleted_post($post_id) {
 	 */
 	$args = array(
 		'posts_per_page' => -1,
-		'post_type' => get_post_types(), //此处需要删除所有子文章，如果设置为 any，自定义类型中设置public为false的仍然无法包含，故获取全部注册类型
-		'post_status' => 'any',
-		'post_parent' => $post_id,
+		'post_type'      => get_post_types(), //此处需要删除所有子文章，如果设置为 any，自定义类型中设置public为false的仍然无法包含，故获取全部注册类型
+		'post_status'    => 'any',
+		'post_parent'    => $post_id,
 	);
 
 	// 获取并删除

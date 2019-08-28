@@ -5,7 +5,7 @@
  *@since 2018
  */
 function _wnd_list_categories_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $limit = 10, $show_count = false, $hide_empty = 1) {
-	$args = array('hide_empty' => $hide_empty, 'orderby' => 'count', 'order' => 'DESC');
+	$args  = array('hide_empty' => $hide_empty, 'orderby' => 'count', 'order' => 'DESC');
 	$terms = get_terms($cat_taxonomy, $args);
 	if (empty($terms) || is_wp_error($terms)) {
 		return;
@@ -17,10 +17,10 @@ function _wnd_list_categories_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $l
 		$html .= '<div id="category-' . $term->term_id . '" class="category-with-tags">' . PHP_EOL;
 		$html .= '<h3><a href="' . get_term_link($term) . '">' . $term->name . '</a></h3>' . PHP_EOL;
 		$tag_list = '<ul class="list-tags-under-' . $term->term_id . ' list-tags-under-category menu-list">' . PHP_EOL;
-		$tags = wnd_get_tags_under_category($term->term_id, $tag_taxonomy, $limit);
+		$tags     = wnd_get_tags_under_category($term->term_id, $tag_taxonomy, $limit);
 		foreach ($tags as $tag) {
-			$tag_id = $tag->tag_id;
-			$tag_id = (int) $tag_id;
+			$tag_id       = $tag->tag_id;
+			$tag_id       = (int) $tag_id;
 			$tag_taxonomy = $tag->tag_taxonomy;
 
 			$tag = get_term($tag_id);
@@ -64,7 +64,7 @@ function _wnd_terms_checkbox($taxonomy, $value = 'slug', $name = '', $require = 
 		$name = $taxonomy;
 	}
 
-	$args = array('hide_empty' => 0);
+	$args  = array('hide_empty' => 0);
 	$terms = get_terms($taxonomy, $args);
 
 	if (!empty($terms) && !is_wp_error($terms)) {
@@ -85,15 +85,15 @@ function _wnd_terms_checkbox($taxonomy, $value = 'slug', $name = '', $require = 
  **/
 function _wnd_terms_list($args) {
 	$defaults = array(
-		'taxonomy' => 'post_tag',
-		'number' => 50,
+		'taxonomy'     => 'post_tag',
+		'number'       => 50,
 		'hidden_empty' => true,
-		'orderby' => 'count',
-		'order' => 'DESC',
+		'orderby'      => 'count',
+		'order'        => 'DESC',
 	);
 	$args = wp_parse_args($args, $defaults);
 
-	$html = '<div class="columns has-text-centered is-multiline is-mobile">';
+	$html  = '<div class="columns has-text-centered is-multiline is-mobile">';
 	$terms = get_terms($args);
 	foreach ($terms as $term) {
 

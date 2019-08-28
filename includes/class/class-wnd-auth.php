@@ -31,8 +31,8 @@ class Wnd_Auth {
 	 *构造函数
 	 **/
 	public function __construct() {
-		$this->auth_code = wnd_random_code(6);
-		$this->template = wnd_get_option('wnd', 'wnd_sms_template');
+		$this->auth_code    = wnd_random_code(6);
+		$this->template     = wnd_get_option('wnd', 'wnd_sms_template');
 		$this->current_user = wp_get_current_user();
 	}
 
@@ -41,7 +41,7 @@ class Wnd_Auth {
 	 */
 	public function set_email_or_phone($email_or_phone) {
 		$this->email_or_phone = $email_or_phone;
-		$this->is_email = is_email($this->email_or_phone);
+		$this->is_email       = is_email($this->email_or_phone);
 	}
 
 	/**
@@ -126,7 +126,7 @@ class Wnd_Auth {
 
 		// 上次发送短信的时间，防止攻击
 		global $wpdb;
-		$field = $this->is_email ? 'email' : 'phone';
+		$field     = $this->is_email ? 'email' : 'phone';
 		$send_time = $wpdb->get_var($wpdb->prepare("SELECT time FROM {$wpdb->wnd_users} WHERE {$field} = %s;", $this->email_or_phone));
 		$send_time = $send_time ?: 0;
 		if ($send_time and (time() - $send_time < 90)) {
@@ -195,7 +195,7 @@ class Wnd_Auth {
 		}
 
 		$message = '邮箱验证秘钥【' . $this->auth_code . '】（不含括号），关键凭证，请勿泄露！';
-		$action = wp_mail($this->email_or_phone, '验证邮箱', $message);
+		$action  = wp_mail($this->email_or_phone, '验证邮箱', $message);
 		if ($action) {
 			return true;
 		} else {
@@ -241,7 +241,7 @@ class Wnd_Auth {
 	public function verify(bool $delete_after_verified = false) {
 		global $wpdb;
 		$field = $this->is_email ? 'email' : 'phone';
-		$text = $this->is_email ? '邮箱' : '手机';
+		$text  = $this->is_email ? '邮箱' : '手机';
 
 		if (empty($this->auth_code)) {
 			throw new Exception('校验失败：请填写验证码！');
@@ -269,7 +269,7 @@ class Wnd_Auth {
 
 		// 过期时间设置
 		$intervals = $field == 'phone' ? 600 : 3600;
-		$data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE {$field} = %s;", $this->email_or_phone));
+		$data      = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE {$field} = %s;", $this->email_or_phone));
 		if (!$data) {
 			throw new Exception('校验失败：请先获取验证码！');
 		}
@@ -301,7 +301,7 @@ class Wnd_Auth {
 	protected function insert() {
 		global $wpdb;
 		$field = $this->is_email ? 'email' : 'phone';
-		$code = $this->auth_code;
+		$code  = $this->auth_code;
 		if (!$this->email_or_phone) {
 			throw new Exception('未指定邮箱或手机！');
 		}

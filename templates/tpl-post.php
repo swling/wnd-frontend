@@ -16,21 +16,21 @@ if (!defined('ABSPATH')) {
  */
 function _wnd_post_form($args = array()) {
 	$defaults = array(
-		'post_id' => 0,
-		'post_type' => 'post',
-		'post_parent' => 0,
-		'is_free' => 1,
-		'with_file' => 0,
-		'with_excerpt' => 0,
-		'with_thumbnail' => 0, //0 无缩略图，1、存储在wnd_meta _thumbnail_id字段: _wnd_the_post_thumbnail($width = 0, $height = 0)
-		'thumbnail_size' => array('width' => 160, 'height' => 120),
-		'with_gallery' => 0, //相册
-		'gallery_label' => '', //相册默认提示信息
+		'post_id'           => 0,
+		'post_type'         => 'post',
+		'post_parent'       => 0,
+		'is_free'           => 1,
+		'with_file'         => 0,
+		'with_excerpt'      => 0,
+		'with_thumbnail'    => 0, //0 无缩略图，1、存储在wnd_meta _thumbnail_id字段: _wnd_the_post_thumbnail($width = 0, $height = 0)
+		'thumbnail_size'    => array('width' => 160, 'height' => 120),
+		'with_gallery'      => 0, //相册
+		'gallery_label'     => '', //相册默认提示信息
 		'rich_media_editor' => 1,
 	);
-	$args = wp_parse_args($args, $defaults);
-	$post_id = $args['post_id'];
-	$post_type = $args['post_id'] ? get_post_type($args['post_id']) : $args['post_type'];
+	$args        = wp_parse_args($args, $defaults);
+	$post_id     = $args['post_id'];
+	$post_type   = $args['post_id'] ? get_post_type($args['post_id']) : $args['post_type'];
 	$post_parent = $args['post_parent'];
 
 	/**
@@ -48,7 +48,7 @@ function _wnd_post_form($args = array()) {
 	 */
 	$cat_taxonomies = array();
 	$tag_taxonomies = array();
-	$taxonomies = get_object_taxonomies($post_type, $output = 'object');
+	$taxonomies     = get_object_taxonomies($post_type, $output = 'object');
 	if ($taxonomies) {
 		foreach ($taxonomies as $taxonomy) {
 			// 私有taxonomy 排除
@@ -129,7 +129,7 @@ function _wnd_post_form($args = array()) {
 
 	$form->add_checkbox(
 		array(
-			'name' => '_post_post_status',
+			'name'  => '_post_post_status',
 			'value' => 'draft',
 			'label' => '存为草稿',
 			'class' => 'switch is-' . Wnd_Post_Form::$second_color,
@@ -151,7 +151,7 @@ function _wnd_post_form($args = array()) {
  */
 function _wnd_post_info($args) {
 	$defaults = array('post_id' => 0, 'color' => 'is-primay');
-	$args = wp_parse_args($args, $defaults);
+	$args     = wp_parse_args($args, $defaults);
 
 	$post = get_post($args['post_id']);
 	if (!$post) {
@@ -215,8 +215,8 @@ function _wnd_post_status_form($post_id) {
 	$form->add_html('<script>wnd_ajax_msg(\'当前： ' . $status_text . '\', \'is-danger\', \'#post-status\')</script>');
 	$form->add_radio(
 		array(
-			'name' => 'post_status',
-			'options' => array(
+			'name'     => 'post_status',
+			'options'  => array(
 				'发布' => 'publish',
 				'待审' => 'pending',
 				'关闭' => 'close',
@@ -224,8 +224,8 @@ function _wnd_post_status_form($post_id) {
 				'删除' => 'delete',
 			),
 			'required' => 'required',
-			'checked' => $post->post_status,
-			'class' => 'is-checkradio is-danger',
+			'checked'  => $post->post_status,
+			'class'    => 'is-checkradio is-danger',
 		)
 	);
 	$form->add_html('</div>');
@@ -237,13 +237,13 @@ function _wnd_post_status_form($post_id) {
 			$form->add_html('<div class="field is-grouped is-grouped-centered">');
 			$form->add_radio(
 				array(
-					'name' => 'stick_post',
+					'name'    => 'stick_post',
 					'options' => array(
 						'置顶' => 'stick',
 						'取消' => 'unstick',
 					),
 					'checked' => (array_search($post->ID, wnd_get_sticky_posts($post->post_type)) === false) ? '' : 'stick',
-					'class' => 'is-checkradio is-danger',
+					'class'   => 'is-checkradio is-danger',
 				)
 			);
 			$form->add_html('</div>');
@@ -251,7 +251,7 @@ function _wnd_post_status_form($post_id) {
 
 		$form->add_textarea(
 			array(
-				'name' => 'remarks',
+				'name'        => 'remarks',
 				'placeholder' => '备注（可选）',
 			)
 		);
@@ -318,13 +318,13 @@ function _wnd_post_thumbnail($post_id, $width, $height) {
 function _wnd_attachment_form($args) {
 	$defaults = array(
 		'attachment_id' => 0,
-		'post_parent' => 0,
-		'meta_key' => null,
+		'post_parent'   => 0,
+		'meta_key'      => null,
 	);
 	$args = wp_parse_args($args, $defaults);
 
 	$attachment_id = $args['attachment_id'];
-	$post_parent = $attachment_id ? get_post($attachment_id)->post_parent : $args['post_parent'];
+	$post_parent   = $attachment_id ? get_post($attachment_id)->post_parent : $args['post_parent'];
 
 	/**
 	 * 构建父级表单字段，以供文件ajax上传归属到父级post
@@ -335,17 +335,17 @@ function _wnd_attachment_form($args) {
 	$parent_post_form->add_hidden('wnd_file', '');
 	$parent_post_form->add_file_upload(
 		array(
-			'label' => '附件上传',
+			'label'    => '附件上传',
 			'disabled' => $attachment_id ? 'disabled' : false,
-			'file_id' => $attachment_id,
+			'file_id'  => $attachment_id,
 
 			/**
 			 *如果设置了meta_key及post parent, 则上传的附件id将保留在对应的wnd_post_meta
 			 *若仅设置了meta_key否则保留为 wnd_user_meta
 			 *若未设置meta_key、则不在meta中保留附件信息，仅能通过指定id方式查询
 			 */
-			'data' => array(
-				'meta_key' => $args['meta_key'],
+			'data'     => array(
+				'meta_key'    => $args['meta_key'],
 				'post_parent' => $post_parent,
 			),
 		)
@@ -364,9 +364,9 @@ function _wnd_attachment_form($args) {
 	$attachment_post_form->add_post_menu_order('排序', "输入排序");
 	$attachment_post_form->add_text(
 		array(
-			'label' => '文件ID',
-			'name' => '_post_ID',
-			'value' => $attachment_id,
+			'label'    => '文件ID',
+			'name'     => '_post_ID',
+			'value'    => $attachment_id,
 			'disabled' => true,
 		)
 	);

@@ -71,7 +71,7 @@ class Wnd_Recharge {
 		}
 
 		$this->object_id = $object_id;
-		$this->subject = '收益：' . $post->post_title;
+		$this->subject   = '收益：' . $post->post_title;
 	}
 
 	/**
@@ -121,7 +121,7 @@ class Wnd_Recharge {
 		}
 
 		// 定义变量
-		$status = $is_success ? 'success' : 'pending';
+		$status        = $is_success ? 'success' : 'pending';
 		$this->subject = $this->subject ?: '充值：' . $this->total_amount;
 
 		/**
@@ -129,10 +129,10 @@ class Wnd_Recharge {
 		 */
 		$old_recharges = get_posts(
 			array(
-				'author' => $this->user_id,
-				'post_parent' => $this->object_id,
-				'post_status' => 'pending',
-				'post_type' => 'recharge',
+				'author'         => $this->user_id,
+				'post_parent'    => $this->object_id,
+				'post_status'    => 'pending',
+				'post_type'      => 'recharge',
 				'posts_per_page' => 1,
 			)
 		);
@@ -141,14 +141,14 @@ class Wnd_Recharge {
 		}
 
 		$post_arr = array(
-			'ID' => $this->ID ?: 0,
-			'post_author' => $this->user_id,
-			'post_parent' => $this->object_id,
+			'ID'           => $this->ID ?: 0,
+			'post_author'  => $this->user_id,
+			'post_parent'  => $this->object_id,
 			'post_content' => $this->total_amount,
-			'post_status' => $status ?: 'pending',
-			'post_title' => $this->subject,
-			'post_type' => 'recharge',
-			'post_name' => uniqid(),
+			'post_status'  => $status ?: 'pending',
+			'post_title'   => $this->subject,
+			'post_type'    => 'recharge',
+			'post_name'    => uniqid(),
 		);
 		$ID = wp_insert_post($post_arr);
 		if (is_wp_error($ID) or !$ID) {
@@ -189,12 +189,12 @@ class Wnd_Recharge {
 		}
 
 		$before_status = $post->post_status;
-		$total_amount = $post->post_content;
+		$total_amount  = $post->post_content;
 
 		$post_arr = array(
-			'ID' => $this->ID,
+			'ID'          => $this->ID,
 			'post_status' => 'success',
-			'post_title' => $this->subject ?: $post->post_title,
+			'post_title'  => $this->subject ?: $post->post_title,
 		);
 		$ID = wp_update_post($post_arr);
 

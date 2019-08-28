@@ -21,7 +21,7 @@ function wnd_filter_can_reg($can_array) {
 	}
 
 	// 验证:手机或邮箱 验证码
-	$auth_code = $_POST['auth_code'];
+	$auth_code      = $_POST['auth_code'];
 	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'] ?? '';
 	try {
 		$auth = new Wnd_Auth;
@@ -41,9 +41,9 @@ function wnd_filter_can_reg($can_array) {
  */
 add_filter('wnd_can_update_account', 'wnd_filter_can_update_account', 10, 1);
 function wnd_filter_can_update_account($can_array) {
-	$auth_code = $_POST['auth_code'];
-	$user = wp_get_current_user();
-	$user_id = $user->ID;
+	$auth_code      = $_POST['auth_code'];
+	$user           = wp_get_current_user();
+	$user_id        = $user->ID;
 	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'] ?? '';
 
 	try {
@@ -93,7 +93,7 @@ function wnd_filter_limit_upload($file) {
 
 	// 上传体积限制
 	$image_size = $file['size'] / 1024;
-	$limit = wnd_get_option('wnd', 'wnd_max_upload_size') ?: 2048;
+	$limit      = wnd_get_option('wnd', 'wnd_max_upload_size') ?: 2048;
 
 	if ($image_size > $limit) {
 		$file['error'] = '上传文件不得超过' . $limit . 'KB';
@@ -102,7 +102,7 @@ function wnd_filter_limit_upload($file) {
 
 	// 文件信息
 	$info = pathinfo($file['name']);
-	$ext = isset($info['extension']) ? '.' . $info['extension'] : null;
+	$ext  = isset($info['extension']) ? '.' . $info['extension'] : null;
 	if (!$ext) {
 		$file['error'] = '未能获取到文件拓展名';
 		return $file;
@@ -160,7 +160,7 @@ function wnd_filter_wp_insert_attachment_data($data, $postarr) {
 		return $data;
 	}
 
-	$menu_order = wnd_get_post_meta($data['post_parent'], 'attachment_records') ?: 0;
+	$menu_order         = wnd_get_post_meta($data['post_parent'], 'attachment_records') ?: 0;
 	$data['menu_order'] = ++$menu_order;
 
 	return $data;
@@ -179,12 +179,12 @@ function wnd_filter_the_content($content) {
 		return;
 	}
 
-	$user_id = get_current_user_id();
-	$price = wnd_get_post_price($post->ID);
-	$user_money = wnd_get_user_money($user_id);
+	$user_id       = get_current_user_id();
+	$price         = wnd_get_post_price($post->ID);
+	$user_money    = wnd_get_user_money($user_id);
 	$user_has_paid = wnd_user_has_paid($user_id, $post->ID);
 	$primary_color = 'is-' . wnd_get_option('wnd', 'wnd_primary_color');
-	$second_color = 'is-' . wnd_get_option('wnd', 'wnd_second_color');
+	$second_color  = 'is-' . wnd_get_option('wnd', 'wnd_second_color');
 
 	$file = wnd_get_post_meta($post->ID, 'file');
 	// 价格为空且没有文件，免费文章
@@ -201,7 +201,7 @@ function wnd_filter_the_content($content) {
 		if (!$user_id) {
 			$content .= $price ? '<div class="message ' . $second_color . '"><div class="message-body">付费下载：¥' . $price . '</div></div>' : '';
 			$button_text = '请登录后下载';
-			$button = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\')">' . $button_text . '</button></div>';
+			$button      = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\')">' . $button_text . '</button></div>';
 			$content .= $button;
 			return $content;
 		}
@@ -344,7 +344,7 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 		$user_id = (int) $id_or_email->user_id ?? 0;
 		// 邮箱获取
 	} else {
-		$user = get_user_by('email', $id_or_email);
+		$user    = get_user_by('email', $id_or_email);
 		$user_id = $user ? $user->ID : 0;
 	}
 	$user_id = $user_id ?? 0;
@@ -352,7 +352,7 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 	//已登录用户调用字段头像
 	if ($user_id) {
 		if (wnd_get_user_meta($user_id, 'avatar')) {
-			$avatar_id = wnd_get_user_meta($user_id, 'avatar');
+			$avatar_id  = wnd_get_user_meta($user_id, 'avatar');
 			$avatar_url = wp_get_attachment_url($avatar_id) ?: $avatar_url;
 			/**
 			 *@since 2019.07.23
@@ -373,7 +373,7 @@ function wnd_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 	//注册用户，添加链接
 	if ($user_id and !is_admin()) {
 		$author_url = get_author_posts_url($user_id);
-		$avatar = sprintf(
+		$avatar     = sprintf(
 			'<a href="%s" rel="external nofollow" class="url">%s</a>',
 			$author_url,
 			$avatar

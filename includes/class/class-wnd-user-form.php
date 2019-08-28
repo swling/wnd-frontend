@@ -21,13 +21,13 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	public function add_user_login($label = '用户名', $placeholder = '用户名、手机、邮箱', $required = true) {
 		$this->add_text(
 			array(
-				'name' => '_user_user_login',
-				'value' => '',
+				'name'        => '_user_user_login',
+				'value'       => '',
 				'placeholder' => $placeholder,
-				'label' => $label,
-				'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
-				'autofocus' => 'autofocus',
-				'required' => $required,
+				'label'       => $label,
+				'icon_left'   => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+				'autofocus'   => 'autofocus',
+				'required'    => $required,
 			)
 		);
 	}
@@ -35,11 +35,11 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	public function add_user_email($label = '邮箱', $placeholder = '邮箱', $required = true) {
 		$this->add_email(
 			array(
-				'name' => '_user_user_email',
-				'value' => $this->user->user_email,
-				'label' => $label,
-				'icon_left' => '<i class="fa fa-at"></i>',
-				'required' => $required,
+				'name'        => '_user_user_email',
+				'value'       => $this->user->user_email,
+				'label'       => $label,
+				'icon_left'   => '<i class="fa fa-at"></i>',
+				'required'    => $required,
 				'placeholder' => $placeholder,
 			)
 		);
@@ -48,12 +48,12 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	public function add_user_display_name($label = '名称', $placeholder = '名称', $required = true) {
 		$this->add_text(
 			array(
-				'name' => '_user_display_name',
-				'value' => $this->user->display_name,
-				'label' => $label,
+				'name'        => '_user_display_name',
+				'value'       => $this->user->display_name,
+				'label'       => $label,
 				'placeholder' => $placeholder,
-				'icon_left' => '<i class="fas fa-user"></i>',
-				'required' => $required,
+				'icon_left'   => '<i class="fas fa-user"></i>',
+				'required'    => $required,
 			)
 		);
 	}
@@ -61,12 +61,12 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	public function add_user_password($label = '密码', $placeholder = '密码', $required = true) {
 		$this->add_password(
 			array(
-				'name' => '_user_user_pass',
-				'value' => '',
-				'label' => $label,
+				'name'        => '_user_user_pass',
+				'value'       => '',
+				'label'       => $label,
 				'placeholder' => $placeholder,
-				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
-				'required' => $required,
+				'icon_left'   => '<i class="fas fa-unlock-alt"></i>',
+				'required'    => $required,
 			)
 		);
 	}
@@ -74,12 +74,12 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	public function add_user_password_repeat($label = '确认密码', $placeholder = '密码', $required = true) {
 		$this->add_password(
 			array(
-				'name' => '_user_user_pass_repeat',
-				'value' => '',
-				'label' => $label,
+				'name'        => '_user_user_pass_repeat',
+				'value'       => '',
+				'label'       => $label,
 				'placeholder' => $placeholder,
-				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
-				'required' => $required,
+				'icon_left'   => '<i class="fas fa-unlock-alt"></i>',
+				'required'    => $required,
 			)
 		);
 	}
@@ -87,12 +87,12 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	public function add_user_new_password($label = '新密码', $placeholder = '新密码', $required = false) {
 		$this->add_password(
 			array(
-				'name' => '_user_new_pass',
-				'value' => '',
-				'label' => $label,
+				'name'        => '_user_new_pass',
+				'value'       => '',
+				'label'       => $label,
 				'placeholder' => $placeholder,
-				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
-				'required' => $required,
+				'icon_left'   => '<i class="fas fa-unlock-alt"></i>',
+				'required'    => $required,
 			)
 		);
 	}
@@ -100,12 +100,12 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	public function add_user_new_password_repeat($label = '确认新密码', $placeholder = '确认新密码', $required = false) {
 		$this->add_password(
 			array(
-				'name' => '_user_new_pass_repeat',
-				'value' => '',
-				'label' => $label,
+				'name'        => '_user_new_pass_repeat',
+				'value'       => '',
+				'label'       => $label,
 				'placeholder' => $placeholder,
-				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
-				'required' => $required,
+				'icon_left'   => '<i class="fas fa-unlock-alt"></i>',
+				'required'    => $required,
 			)
 		);
 	}
@@ -113,12 +113,12 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	public function add_user_url($label = '网站', $placeholder = '网站链接', $required = false) {
 		$this->add_text(
 			array(
-				'name' => '_user_user_url',
-				'value' => $this->user->user_url,
-				'label' => $label,
+				'name'        => '_user_user_url',
+				'value'       => $this->user->user_url,
+				'label'       => $label,
 				'placeholder' => $placeholder,
-				'icon_left' => '<i class="fas fa-link"></i>',
-				'required' => $required,
+				'icon_left'   => '<i class="fas fa-link"></i>',
+				'required'    => $required,
 			)
 		);
 	}
@@ -126,11 +126,11 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	public function add_user_description($label = '简介', $placeholder = '资料简介', $required = false) {
 		$this->add_textarea(
 			array(
-				'name' => '_wpusermeta_description',
-				'label' => $label,
+				'name'        => '_wpusermeta_description',
+				'label'       => $label,
 				'placeholder' => $placeholder,
-				'value' => $this->user->description,
-				'required' => $required,
+				'value'       => $this->user->description,
+				'required'    => $required,
 			)
 		);
 	}
@@ -142,15 +142,15 @@ class Wnd_User_Form extends Wnd_WP_Form {
 		}
 
 		$args = array(
-			'label' => '',
+			'label'          => '',
 			'thumbnail_size' => array('width' => $thumbnail_size, 'height' => $thumbnail_size),
-			'thumbnail' => wnd_get_user_meta($this->user->ID, 'avatar_url') ?: WND_URL . 'static/images/default.jpg',
-			'data' => array(
-				'meta_key' => 'avatar',
-				'save_width' => $save_size,
+			'thumbnail'      => wnd_get_user_meta($this->user->ID, 'avatar_url') ?: WND_URL . 'static/images/default.jpg',
+			'data'           => array(
+				'meta_key'    => 'avatar',
+				'save_width'  => $save_size,
 				'save_height' => $save_size,
 			),
-			'delete_button' => false,
+			'delete_button'  => false,
 		);
 		$this->add_image_upload($args);
 	}
@@ -166,16 +166,16 @@ class Wnd_User_Form extends Wnd_WP_Form {
 		}
 
 		$args = array(
-			'label' => $label,
+			'label'          => $label,
 			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
-			'thumbnail' => WND_URL . 'static/images/default.jpg',
-			'data' => array(
-				'user_id' => $this->user->ID,
-				'meta_key' => $meta_key,
-				'save_width' => $size['width'],
+			'thumbnail'      => WND_URL . 'static/images/default.jpg',
+			'data'           => array(
+				'user_id'     => $this->user->ID,
+				'meta_key'    => $meta_key,
+				'save_width'  => $size['width'],
 				'save_height' => $size['height'],
 			),
-			'delete_button' => false,
+			'delete_button'  => false,
 		);
 		$this->add_image_upload($args);
 	}
@@ -189,9 +189,9 @@ class Wnd_User_Form extends Wnd_WP_Form {
 		$this->add_file_upload(
 			array(
 				'label' => $label,
-				'data' => array( // some hidden input,maybe useful in ajax upload
+				'data'  => array( // some hidden input,maybe useful in ajax upload
 					'meta_key' => $meta_key,
-					'user_id' => $this->user->ID, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+					'user_id'  => $this->user->ID, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
 				),
 			)
 		);

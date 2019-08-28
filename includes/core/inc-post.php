@@ -98,7 +98,7 @@ function wnd_is_title_duplicated($title, $exclude_id = 0, $post_type = 'post') {
 function wnd_get_post_by_slug($post_name, $post_type = 'post', $post_status = 'publish') {
 	global $wpdb;
 	$post_name = urlencode($post_name);
-	$post = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND post_status = %s LIMIT 1", $post_name, $post_type, $post_status));
+	$post      = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND post_status = %s LIMIT 1", $post_name, $post_type, $post_status));
 	if ($post) {
 		return $post[0];
 	}
@@ -118,12 +118,12 @@ function wnd_stick_post($post_id) {
 		return;
 	}
 
-	$max = wnd_get_option('wnd', 'wnd_max_stick_posts') ?: 10;
+	$max              = wnd_get_option('wnd', 'wnd_max_stick_posts') ?: 10;
 	$old_sticky_posts = wnd_get_option('wnd_sticky_posts', $post_type);
 	$old_sticky_posts = is_array($old_sticky_posts) ? $old_sticky_posts : array();
 
 	// 创建以post+id作为键名，id作为键值的数组，并合并入数组（注意顺序）
-	$sticky_post = array('post' . $post_id => $post_id);
+	$sticky_post      = array('post' . $post_id => $post_id);
 	$new_sticky_posts = array_merge($sticky_post, $old_sticky_posts);
 
 	// 仅保留指定个数元素（按最新）

@@ -10,8 +10,8 @@ if (!defined('ABSPATH')) {
  *@param $args 		array or string 	传递给被调用模板函数的参数
  */
 function _wnd_ajax_embed($template, $args = '') {
-	$div_id = 'wnd-embed-' . uniqid();
-	$args = wp_parse_args($args);
+	$div_id    = 'wnd-embed-' . uniqid();
+	$args      = wp_parse_args($args);
 	$ajax_args = http_build_query($args);
 
 	echo '<div id="' . $div_id . '">';
@@ -27,9 +27,9 @@ function _wnd_ajax_embed($template, $args = '') {
  *@param $_POST['phone'] or $_POST['email']		手机或邮件
  */
 function wnd_ajax_send_code() {
-	$type = $_POST['type'] ?? '';
-	$is_email = $_POST['is_email'] ?: false;
-	$template = $_POST['template'] ?: wnd_get_option('wnd', 'wnd_sms_template');
+	$type           = $_POST['type'] ?? '';
+	$is_email       = $_POST['is_email'] ?: false;
+	$template       = $_POST['template'] ?: wnd_get_option('wnd', 'wnd_sms_template');
 	$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? null;
 
 	try {
@@ -57,9 +57,9 @@ function wnd_ajax_send_code() {
  *@param $_POST['post_type']
  */
 function _wnd_ajax_is_title_duplicated() {
-	$title = $_POST['post_title'];
+	$title      = $_POST['post_title'];
 	$exclude_id = $_POST['post_id'];
-	$post_type = $_POST['post_type'];
+	$post_type  = $_POST['post_type'];
 
 	if (wnd_is_title_duplicated($title, $exclude_id, $post_type)) {
 		return array('status' => 1, 'msg' => '标题重复！');
@@ -81,8 +81,8 @@ function wnd_ajax_admin_recharge() {
 	}
 
 	$user_field = $_POST['user_field'];
-	$money = $_POST['total_amount'];
-	$remarks = $_POST['remarks'] ?: '管理员充值';
+	$money      = $_POST['total_amount'];
+	$remarks    = $_POST['remarks'] ?: '管理员充值';
 
 	return wnd_admin_recharge($user_field, $money, $remarks);
 }
@@ -97,7 +97,7 @@ function _wnd_ajax_update_views() {
 	if (!$post_id) {
 		return;
 	}
-	$useragent = $_GET['useragent'];
+	$useragent    = $_GET['useragent'];
 	$should_count = true;
 
 	// 根据 useragent 排除搜索引擎
@@ -164,7 +164,7 @@ function _wnd_ajax_update_views() {
 function wnd_ajax_test() {
 	return array(
 		'status' => 0,
-		'msg' => '测试函数触发成功!',
-		'data' => $_REQUEST,
+		'msg'    => '测试函数触发成功!',
+		'data'   => $_REQUEST,
 	);
 }

@@ -41,7 +41,7 @@ function wnd_get_user_by($email_or_phone_or_login) {
 
 	} elseif (wnd_is_phone($email_or_phone_or_login)) {
 		$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE phone = %s;", $email_or_phone_or_login));
-		$user = !$user_id ? false : get_user_by('ID', $user_id);
+		$user    = !$user_id ? false : get_user_by('ID', $user_id);
 
 	} else {
 		$user = get_user_by('login', $email_or_phone_or_login);
@@ -190,7 +190,7 @@ function wnd_social_login($open_id, $display_name = '', $avatar_url = '') {
 	//当前用户已登录，同步信息
 	if (is_user_logged_in()) {
 
-		$this_user = wp_get_current_user();
+		$this_user   = wp_get_current_user();
 		$may_be_user = wnd_get_user_by_openid($open_id);
 		if ($may_be_user and $may_be_user->ID != $this_user->ID) {
 			exit('第三方账户已被占用！');
@@ -212,9 +212,9 @@ function wnd_social_login($open_id, $display_name = '', $avatar_url = '') {
 
 		// 自定义随机用户名
 		$user_login = 'user_' . uniqid();
-		$user_pass = wp_generate_password();
+		$user_pass  = wp_generate_password();
 		$user_array = array('user_login' => $user_login, 'user_pass' => $user_pass, 'display_name' => $display_name);
-		$user_id = wp_insert_user($user_array);
+		$user_id    = wp_insert_user($user_array);
 
 		// 注册失败
 		if (is_wp_error($user_id)) {
@@ -289,12 +289,12 @@ function wnd_mail($to, $subject, $message) {
 	}
 
 	$postarr = array(
-		'post_type' => 'mail',
-		'post_author' => $to,
-		'post_title' => $subject,
+		'post_type'    => 'mail',
+		'post_author'  => $to,
+		'post_title'   => $subject,
 		'post_content' => $message,
-		'post_status' => 'pending',
-		'post_name' => uniqid(),
+		'post_status'  => 'pending',
+		'post_name'    => uniqid(),
 	);
 
 	$mail_id = wp_insert_post($postarr);
@@ -313,15 +313,15 @@ function wnd_mail($to, $subject, $message) {
  *@return 	int 	用户未读邮件
  */
 function wnd_get_mail_count() {
-	$user_id = get_current_user_id();
+	$user_id         = get_current_user_id();
 	$user_mail_count = wp_cache_get($user_id, 'wnd_mail_count');
 
 	if (false === $user_mail_count) {
 		$args = array(
 			'posts_per_page' => 11,
-			'author' => $user_id,
-			'post_type' => 'mail',
-			'post_status' => 'pending',
+			'author'         => $user_id,
+			'post_type'      => 'mail',
+			'post_status'    => 'pending',
 		);
 
 		$user_mail_count = count(get_posts($args));

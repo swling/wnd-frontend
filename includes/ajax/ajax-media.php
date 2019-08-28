@@ -36,13 +36,13 @@ function wnd_ajax_upload_file() {
 		return array('status' => 0, 'msg' => '获取上传文件失败！');
 	}
 
-	$save_width = $_POST["save_width"] ?? 0;
-	$save_height = $_POST["save_height"] ?? 0;
+	$save_width       = $_POST["save_width"] ?? 0;
+	$save_height      = $_POST["save_height"] ?? 0;
 	$thumbnail_height = $_POST["thumbnail_height"] ?? 0;
-	$thumbnail_width = $_POST["thumbnail_width"] ?? 0;
-	$meta_key = $_POST['meta_key'] ?? null;
-	$post_parent = $_POST['post_parent'] ?? 0;
-	$user_id = get_current_user_id();
+	$thumbnail_width  = $_POST["thumbnail_width"] ?? 0;
+	$meta_key         = $_POST['meta_key'] ?? null;
+	$post_parent      = $_POST['post_parent'] ?? 0;
+	$user_id          = get_current_user_id();
 
 	// 上传信息校验
 	if (!$user_id and !$post_parent) {
@@ -86,17 +86,17 @@ function wnd_ajax_upload_file() {
 	 *遍历文件上传
 	 */
 	$return_array = array(); // 定义图片信息返回数组
-	$files = $_FILES['wnd_file']; //暂存原始上传信息，后续将重写$_FILES全局变量以适配WordPress上传方式
+	$files        = $_FILES['wnd_file']; //暂存原始上传信息，后续将重写$_FILES全局变量以适配WordPress上传方式
 
 	foreach ($files['name'] as $key => $value) {
 
 		// 将多文件上传数据遍历循环后，重写为适配 media_handle_upload 的单文件模式
 		$file = array(
-			'name' => $files['name'][$key],
-			'type' => $files['type'][$key],
+			'name'     => $files['name'][$key],
+			'type'     => $files['type'][$key],
 			'tmp_name' => $files['tmp_name'][$key],
-			'error' => $files['error'][$key],
-			'size' => $files['size'][$key],
+			'error'    => $files['error'][$key],
+			'size'     => $files['size'][$key],
 		);
 		$_FILES = array('temp_key' => $file);
 
@@ -124,7 +124,7 @@ function wnd_ajax_upload_file() {
 			if ($save_width or $save_height) {
 				//获取文件服务器路径
 				$image_file = get_attached_file($file_id);
-				$image = wp_get_image_editor($image_file);
+				$image      = wp_get_image_editor($image_file);
 				if (!is_wp_error($image)) {
 					$image->resize($save_width, $save_height, array('center', 'center'));
 					$image->save($image_file);
@@ -138,13 +138,13 @@ function wnd_ajax_upload_file() {
 		// 将当前上传的图片信息写入数组
 		$temp_array = array(
 			'status' => 1,
-			'data' => array(
-				'url' => $url,
+			'data'   => array(
+				'url'       => $url,
 				'thumbnail' => $thumbnail ?? 0,
-				'id' => $file_id,
-				'post' => get_post($file_id),
+				'id'        => $file_id,
+				'post'      => get_post($file_id),
 			),
-			'msg' => '上传成功！',
+			'msg'    => '上传成功！',
 		);
 		$return_array[] = $temp_array;
 
@@ -179,9 +179,9 @@ function wnd_ajax_upload_file() {
  *@param $_POST["file_id"];
  */
 function wnd_ajax_delete_file() {
-	$meta_key = $_POST['meta_key'];
+	$meta_key    = $_POST['meta_key'];
 	$post_parent = $_POST["post_parent"];
-	$file_id = $_POST["file_id"];
+	$file_id     = $_POST["file_id"];
 
 	if (!$file_id) {
 		return array('status' => 0, 'msg' => '文件不存在！');
@@ -208,7 +208,7 @@ function wnd_ajax_delete_file() {
  */
 function wnd_ajax_paid_download() {
 	$post_id = (int) $_REQUEST['post_id'];
-	$price = get_post_meta($post_id, 'price', 1);
+	$price   = get_post_meta($post_id, 'price', 1);
 	$file_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
 
 	$file = get_attached_file($file_id, $unfiltered = false);

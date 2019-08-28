@@ -6,7 +6,7 @@
  **/
 
 $is_ajax = is_user_logged_in() ? true : false;
-$filter = new Wnd_Filter($is_ajax);
+$filter  = new Wnd_Filter($is_ajax);
 
 $filter->add_post_type_filter(array('company', 'resource', 'post'));
 
@@ -42,8 +42,8 @@ $filter->add_related_tags_filter($limit = 10);
 
 $filter->add_meta_filter(
 	array(
-		'label' => '文章价格',
-		'key' => 'price',
+		'label'   => '文章价格',
+		'key'     => 'price',
 		'options' => array(
 			'包含' => 'exists',
 		),
@@ -53,11 +53,11 @@ $filter->add_meta_filter(
 
 $filter->add_orderby_filter(
 	array(
-		'label' => '排序',
+		'label'   => '排序',
 		'options' => array(
 			'发布时间' => 'date', //常规排序 date title等
-			'浏览量' => array( // 需要多个参数的排序
-				'orderby' => 'meta_value_num',
+			'浏览量'  => array( // 需要多个参数的排序
+				'orderby'  => 'meta_value_num',
 				'meta_key' => 'views',
 			),
 		),
@@ -93,8 +93,8 @@ $tax_query = array(
 	'relation' => 'AND',
 	array(
 		'taxonomy' => 'category',
-		'field' => 'term_id',
-		'terms' => 1,
+		'field'    => 'term_id',
+		'terms'    => 1,
 	),
 );
 $filter->add_query(array('tax_query' => $tax_query));

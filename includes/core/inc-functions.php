@@ -92,8 +92,8 @@ function wnd_is_robot() {
  */
 function wnd_random($length) {
 	$chars = '123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ';
-	$hash = '';
-	$max = strlen($chars) - 1;
+	$hash  = '';
+	$max   = strlen($chars) - 1;
 	for ($i = 0; $i < $length; $i++) {
 		$hash .= $chars[mt_rand(0, $max)];
 	}
@@ -121,7 +121,7 @@ function wnd_random_code($length = 6) {
  */
 function wnd_generate_order_NO() {
 	$today = date("Ymd");
-	$rand = substr(hash('sha256', uniqid(rand(), TRUE)), 0, 10);
+	$rand  = substr(hash('sha256', uniqid(rand(), TRUE)), 0, 10);
 	return $today . $rand;
 }
 

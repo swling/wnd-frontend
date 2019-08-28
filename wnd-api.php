@@ -13,7 +13,7 @@ function wnd_action_rest_register_route() {
 		'wnd',
 		'rest-api',
 		array(
-			'methods' => WP_REST_Server::ALLMETHODS,
+			'methods'  => WP_REST_Server::ALLMETHODS,
 			'callback' => 'wnd_rest_api_callback',
 		)
 	);
@@ -22,7 +22,7 @@ function wnd_action_rest_register_route() {
 		'wnd',
 		'filter',
 		array(
-			'methods' => 'GET',
+			'methods'  => 'GET',
 			'callback' => 'wnd_filter_api_callback',
 		)
 	);
@@ -107,8 +107,8 @@ function wnd_filter_api_callback() {
 
 	return array(
 		'status' => 1,
-		'data' => array(
-			'posts' => $filter->get_posts(),
+		'data'   => array(
+			'posts'             => $filter->get_posts(),
 
 			/**
 			 *@since 2019.08.10
@@ -117,17 +117,17 @@ function wnd_filter_api_callback() {
 			 *动态插入主分类的情况，通常用在用于一些封装的用户面板：如果用户内容管理面板
 			 *常规筛选页面中，应通过add_taxonomy_filter方法添加
 			 */
-			'category_tabs' => $filter->get_category_tabs(),
+			'category_tabs'     => $filter->get_category_tabs(),
 			'sub_taxonomy_tabs' => $filter->get_sub_taxonomy_tabs(),
 			'related_tags_tabs' => $filter->get_related_tags_tabs(),
-			'pagination' => $filter->get_pagination(),
-			'post_count' => $filter->wp_query->post_count,
+			'pagination'        => $filter->get_pagination(),
+			'post_count'        => $filter->wp_query->post_count,
 
 			/**
 			 *当前post type支持的taxonomy
 			 *前端可据此修改页面行为
 			 */
-			'taxonomies' => get_object_taxonomies($filter->wp_query->query_vars['post_type'], 'names'),
+			'taxonomies'        => get_object_taxonomies($filter->wp_query->query_vars['post_type'], 'names'),
 
 			/**
 			 *@since 2019.08.10
@@ -139,7 +139,7 @@ function wnd_filter_api_callback() {
 			/**
 			 *在debug模式下，返回当前WP_Query查询参数
 			 **/
-			'query_vars' => WP_DEBUG ? $filter->wp_query->query_vars : '请开启Debug',
+			'query_vars'        => WP_DEBUG ? $filter->wp_query->query_vars : '请开启Debug',
 		),
 	);
 }

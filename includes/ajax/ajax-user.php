@@ -28,23 +28,23 @@ function wnd_ajax_reg() {
 		return array('status' => 0, 'msg' => '注册信息为空');
 	}
 
-	$user_login = $_POST['_user_user_login'] ?? $_POST['phone'] ?? null;
-	$user_login = sanitize_user($user_login, true); //移除特殊字符
-	$user_pass = $_POST['_user_user_pass'] ?? null;
+	$user_login       = $_POST['_user_user_login'] ?? $_POST['phone'] ?? null;
+	$user_login       = sanitize_user($user_login, true); //移除特殊字符
+	$user_pass        = $_POST['_user_user_pass'] ?? null;
 	$user_pass_repeat = $_POST['_user_user_pass_repeat'] ?? ($_POST['_user_user_pass'] ?? null);
-	$user_email = $_POST['_user_user_email'] ?? null;
-	$display_name = $_POST['_user_display_name'] ?? null;
-	$description = $_POST['_wpusermeta_description'] ?? null;
-	$role = get_option('default_role');
+	$user_email       = $_POST['_user_user_email'] ?? null;
+	$display_name     = $_POST['_user_display_name'] ?? null;
+	$description      = $_POST['_wpusermeta_description'] ?? null;
+	$role             = get_option('default_role');
 
 	/*处于安全考虑，form自动组合函数屏蔽了用户敏感字段，此处不可通过 form自动组合，应该手动控制用户数据*/
 	$userdata = array(
-		'user_login' => $user_login,
-		'user_email' => $user_email,
-		'user_pass' => $user_pass,
+		'user_login'   => $user_login,
+		'user_email'   => $user_email,
+		'user_pass'    => $user_pass,
 		'display_name' => $display_name,
-		'description' => $description,
-		'role' => $role,
+		'description'  => $description,
+		'role'         => $role,
 	);
 
 	// 2、数据正确性检测
@@ -106,7 +106,7 @@ function wnd_ajax_reg() {
 		wp_set_current_user($user_id, $user->user_login);
 		wp_set_auth_cookie($user_id, 1);
 		// 注册后跳转地址
-		$redirect_to = $_REQUEST['redirect_to'] ?? wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url();
+		$redirect_to  = $_REQUEST['redirect_to'] ?? wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url();
 		$return_array = apply_filters(
 			'wnd_reg_return',
 			array('status' => 3, 'msg' => '注册成功！', 'data' => array('redirect_to' => $redirect_to, 'user_id' => $user_id)),
@@ -129,10 +129,10 @@ function wnd_ajax_reg() {
  *@param $redirect_to = $_REQUEST['redirect_to'] ?? home_url();
  */
 function wnd_ajax_login() {
-	$username = trim($_POST['_user_user_login']);
-	$password = $_POST['_user_user_pass'];
-	$remember = $_POST['remember'] ?? 0;
-	$remember = $remember == 1 ? true : false;
+	$username    = trim($_POST['_user_user_login']);
+	$password    = $_POST['_user_user_pass'];
+	$remember    = $_POST['remember'] ?? 0;
+	$remember    = $remember == 1 ? true : false;
 	$redirect_to = $_REQUEST['redirect_to'] ?? home_url();
 
 	// 登录过滤挂钩
@@ -185,12 +185,12 @@ function wnd_ajax_update_profile() {
 	} catch (Exception $e) {
 		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-	$user_array = $form_data->get_user_array();
-	$user_meta_array = $form_data->get_user_meta_array();
+	$user_array         = $form_data->get_user_array();
+	$user_meta_array    = $form_data->get_user_meta_array();
 	$wp_user_meta_array = $form_data->get_wp_user_meta_array();
 
 	// ################### 组成用户数据
-	$user = wp_get_current_user();
+	$user    = wp_get_current_user();
 	$user_id = $user->ID;
 	if (!$user_id) {
 		return array('status' => 0, 'msg' => '获取用户ID失败！');
@@ -242,17 +242,17 @@ function wnd_ajax_update_profile() {
  *@param $_POST['_user_user_email']
  */
 function wnd_ajax_update_account() {
-	$user = wp_get_current_user();
+	$user    = wp_get_current_user();
 	$user_id = $user->ID;
 	if (!$user_id) {
 		return array('status' => 0, 'msg' => '获取用户ID失败！');
 	}
 
-	$user_array = array('ID' => $user_id);
-	$user_pass = $_POST['_user_user_pass'] ?? null;
-	$new_password = $_POST['_user_new_pass'] ?? null;
+	$user_array          = array('ID' => $user_id);
+	$user_pass           = $_POST['_user_user_pass'] ?? null;
+	$new_password        = $_POST['_user_new_pass'] ?? null;
 	$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? null;
-	$new_email = $_POST['_user_user_email'] ?? null;
+	$new_email           = $_POST['_user_user_email'] ?? null;
 
 	// 修改密码
 	if (!empty($new_password_repeat)) {
@@ -308,10 +308,10 @@ function wnd_ajax_update_account() {
  *@param $_POST['_user_new_pass_repeat']
  */
 function wnd_ajax_reset_password() {
-	$email_or_phone = $_POST['_user_user_email'] ?? $_POST['phone'] ?? null;
-	$new_password = $_POST['_user_new_pass'] ?? null;
+	$email_or_phone      = $_POST['_user_user_email'] ?? $_POST['phone'] ?? null;
+	$new_password        = $_POST['_user_new_pass'] ?? null;
 	$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? null;
-	$auth_code = $_POST['auth_code'];
+	$auth_code           = $_POST['auth_code'];
 
 	// 验证密码正确性
 	if (strlen($new_password) < 6) {
@@ -348,7 +348,7 @@ function wnd_ajax_reset_password() {
  *@param $_POST['auth_code']
  */
 function wnd_ajax_bind_email() {
-	$email = $_POST['_user_user_email'] ?? null;
+	$email     = $_POST['_user_user_email'] ?? null;
 	$auth_code = $_POST['auth_code'] ?? null;
 
 	// 核对验证码
@@ -381,7 +381,7 @@ function wnd_ajax_bind_email() {
  *@param $_POST['auth_code']
  */
 function wnd_ajax_bind_phone() {
-	$phone = $_POST['phone'] ?? null;
+	$phone     = $_POST['phone'] ?? null;
 	$auth_code = $_POST['auth_code'] ?? null;
 
 	// 核对验证码

@@ -53,7 +53,7 @@ function wnd_ajax_create_order() {
  */
 function wnd_ajax_pay_for_reading() {
 	$post_id = (int) $_POST['post_id'];
-	$post = get_post($post_id);
+	$post    = get_post($post_id);
 	$user_id = get_current_user_id();
 
 	//查找是否有more标签，否则免费部分为空（全文付费）
@@ -104,7 +104,7 @@ function wnd_ajax_pay_for_download() {
 
 	// 获取文章
 	$post_id = (int) $_POST['post_id'];
-	$post = get_post($post_id);
+	$post    = get_post($post_id);
 	$user_id = get_current_user_id();
 
 	if (!$post) {
@@ -114,7 +114,7 @@ function wnd_ajax_pay_for_download() {
 
 	// 获取文章附件
 	$attachment_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
-	$file = get_attached_file($attachment_id, $unfiltered = true);
+	$file          = get_attached_file($attachment_id, $unfiltered = true);
 	if (!$file) {
 		return array('status' => 0, 'msg' => '获取文件失败！');
 	}
@@ -125,8 +125,8 @@ function wnd_ajax_pay_for_download() {
 	 *前端接收后跳转至该网址（status == 6 是专为下载类ajax请求设置的代码前端响应），以实现ajax下载
 	 */
 	$download_args = array(
-		'action' => 'wnd_ajax_paid_download',
-		'post_id' => $post_id,
+		'action'   => 'wnd_ajax_paid_download',
+		'post_id'  => $post_id,
 		'_wpnonce' => wnd_create_nonce('wnd_ajax_paid_download'),
 	);
 	$download_url = add_query_arg($download_args, wnd_get_do_url());

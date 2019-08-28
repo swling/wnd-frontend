@@ -52,7 +52,7 @@ require WND_PATH . 'templates/tpl-gallery.php'; //橱窗相册
  */
 function wnd_class_loader($class) {
 	$file_name = 'class-' . str_replace('_', '-', strtolower($class));
-	$file = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'class' . DIRECTORY_SEPARATOR . $file_name . '.php';
+	$file      = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'class' . DIRECTORY_SEPARATOR . $file_name . '.php';
 	if (file_exists($file)) {
 		require $file;
 	}

@@ -12,7 +12,7 @@ function _wnd_user_fin_panel(int $posts_per_page = 0) {
 	if (!is_user_logged_in()) {
 		return;
 	}
-	$user_id = get_current_user_id();
+	$user_id        = get_current_user_id();
 	$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 
 	$html = '<div id="user-fin">';
@@ -80,28 +80,28 @@ function _wnd_user_fin_posts_tpl($query) {
 	$table->add_column(
 		array(
 			'post_field' => 'post_date',
-			'title' => '日期',
-			'class' => 'is-narrow is-hidden-mobile',
+			'title'      => '日期',
+			'class'      => 'is-narrow is-hidden-mobile',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'post_content',
-			'title' => '金额',
-			'class' => 'is-narrow',
+			'title'      => '金额',
+			'class'      => 'is-narrow',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'order' == $query->query_vars['post_type'] ? 'post_parent_with_link' : 'post_title',
-			'title' => '详情',
+			'title'      => '详情',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'post_status',
-			'title' => '状态',
-			'class' => 'is-narrow',
+			'title'      => '状态',
+			'class'      => 'is-narrow',
 		)
 	);
 	$table->build();
@@ -137,35 +137,35 @@ function _wnd_fin_stats_posts_tpl($query) {
 	$table->add_column(
 		array(
 			'post_field' => 'post_date',
-			'title' => '日期',
-			'class' => 'is-narrow is-hidden-mobile',
+			'title'      => '日期',
+			'class'      => 'is-narrow is-hidden-mobile',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'post_author',
-			'title' => '用户',
-			'class' => 'is-narrow',
+			'title'      => '用户',
+			'class'      => 'is-narrow',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'post_content',
-			'title' => '金额',
+			'title'      => '金额',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'post_title_with_link',
-			'title' => '详情',
-			'class' => 'is-hidden-mobile',
+			'title'      => '详情',
+			'class'      => 'is-hidden-mobile',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'post_status',
-			'title' => '状态',
-			'class' => 'is-narrow',
+			'title'      => '状态',
+			'class'      => 'is-narrow',
 		)
 	);
 	$table->build();
@@ -193,11 +193,11 @@ function _wnd_recharge_form() {
 	$form->add_html('<div class="has-text-centered">');
 	$form->add_radio(
 		array(
-			'name' => 'total_amount',
-			'options' => array('0.01' => '0.01', '10' => '10', '100' => '100', '200' => '200', '500' => '500'),
+			'name'     => 'total_amount',
+			'options'  => array('0.01' => '0.01', '10' => '10', '100' => '100', '200' => '200', '500' => '500'),
 			'required' => 'required',
-			'checked' => '0.01', //default checked value
-			'class' => 'is-checkradio is-danger',
+			'checked'  => '0.01', //default checked value
+			'class'    => 'is-checkradio is-danger',
 		)
 	);
 	$form->add_html('<img src="https://t.alipayobjects.com/images/T1HHFgXXVeXXXXXXXX.png">');
@@ -222,17 +222,17 @@ function _wnd_admin_recharge_form() {
 	$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 	$form->add_text(
 		array(
-			'label' => '用户<span class="required">*</span>',
-			'name' => 'user_field',
-			'required' => 'required',
+			'label'       => '用户<span class="required">*</span>',
+			'name'        => 'user_field',
+			'required'    => 'required',
 			'placeholder' => '用户名、邮箱、注册手机',
 		)
 	);
 	$form->add_text(
 		array(
-			'label' => '金额<span class="required">*</span>',
-			'name' => 'total_amount',
-			'required' => 'required',
+			'label'       => '金额<span class="required">*</span>',
+			'name'        => 'total_amount',
+			'required'    => 'required',
 			'placeholder' => '充值金额（负数可扣款）',
 		)
 	);
@@ -240,7 +240,7 @@ function _wnd_admin_recharge_form() {
 
 	$form->add_text(
 		array(
-			'name' => 'remarks',
+			'name'        => 'remarks',
 			'placeholder' => '备注（可选）',
 		)
 	);

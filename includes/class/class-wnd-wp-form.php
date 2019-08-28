@@ -11,9 +11,9 @@
  */
 class Wnd_WP_Form extends Wnd_Form {
 
-	protected $filter = null;
+	protected $filter     = null;
 	protected $form_names = array();
-	protected $message = null;
+	protected $message    = null;
 	protected $is_ajax_submit;
 
 	public static $primary_color;
@@ -29,7 +29,7 @@ class Wnd_WP_Form extends Wnd_Form {
 
 		// 色调
 		self::$primary_color = wnd_get_option('wnd', 'wnd_primary_color');
-		self::$second_color = wnd_get_option('wnd', 'wnd_second_color');
+		self::$second_color  = wnd_get_option('wnd', 'wnd_second_color');
 
 		// 继承基础变量
 		parent::__construct();
@@ -99,10 +99,10 @@ class Wnd_WP_Form extends Wnd_Form {
 		if (!wnd_get_user_phone(get_current_user_id()) or 'bind' == $type) {
 			$this->add_text(
 				array(
-					'name' => 'phone',
-					'icon_left' => '<i class="fa fa-phone-square"></i>',
-					'required' => 'required',
-					'label' => '',
+					'name'        => 'phone',
+					'icon_left'   => '<i class="fa fa-phone-square"></i>',
+					'required'    => 'required',
+					'label'       => '',
 					'placeholder' => '手机号码',
 				)
 			);
@@ -110,10 +110,10 @@ class Wnd_WP_Form extends Wnd_Form {
 
 		$this->add_text(
 			array(
-				'name' => 'auth_code',
-				'icon_left' => '<i class="fas fa-comment-alt"></i>',
-				'required' => 'required',
-				'label' => '',
+				'name'        => 'auth_code',
+				'icon_left'   => '<i class="fas fa-comment-alt"></i>',
+				'required'    => 'required',
+				'label'       => '',
 				'placeholder' => '短信验证码',
 				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-is_email="0">获取验证码</button>',
 			)
@@ -135,9 +135,9 @@ class Wnd_WP_Form extends Wnd_Form {
 		if (!wp_get_current_user()->user_email or 'bind' == $type) {
 			$this->add_email(
 				array(
-					'name' => '_user_user_email',
-					'icon_left' => '<i class="fa fa-at"></i>',
-					'required' => 'required',
+					'name'        => '_user_user_email',
+					'icon_left'   => '<i class="fa fa-at"></i>',
+					'required'    => 'required',
 					'placeholder' => '电子邮箱',
 				)
 			);
@@ -145,10 +145,10 @@ class Wnd_WP_Form extends Wnd_Form {
 
 		$this->add_text(
 			array(
-				'name' => 'auth_code',
-				'icon_left' => '<i class="fa fa-key"></i>',
-				'required' => 'required',
-				'label' => '',
+				'name'        => 'auth_code',
+				'icon_left'   => '<i class="fa fa-key"></i>',
+				'required'    => 'required',
+				'label'       => '',
 				'placeholder' => '邮箱验证码',
 				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-is_email="email">获取验证码</button>',
 			)
@@ -160,35 +160,35 @@ class Wnd_WP_Form extends Wnd_Form {
 	// Image upload
 	public function add_image_upload($args) {
 		$defaults = array(
-			'label' => 'Image upland',
-			'name' => 'wnd_file',
-			'file_id' => 0,
-			'thumbnail' => WND_URL . 'static/images/default.jpg', //默认缩略图
+			'label'          => 'Image upland',
+			'name'           => 'wnd_file',
+			'file_id'        => 0,
+			'thumbnail'      => WND_URL . 'static/images/default.jpg', //默认缩略图
 			'thumbnail_size' => array('height' => '100', 'width' => '100'),
-			'data' => array(),
-			'delete_button' => true,
+			'data'           => array(),
+			'delete_button'  => true,
 		);
 		$args = array_merge($defaults, $args);
 
 		// 合并$data
 		$defaults_data = array(
 			'post_parent' => 0,
-			'user_id' => get_current_user_id(),
-			'meta_key' => 0,
-			'save_width' => 0, //图片文件存储最大宽度 0 为不限制
+			'user_id'     => get_current_user_id(),
+			'meta_key'    => 0,
+			'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
 			'save_height' => 0, //图片文件存储最大过度 0 为不限制
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
 		// 固定data
-		$args['data']['is_image'] = '1';
-		$args['data']['upload_nonce'] = wnd_create_nonce('wnd_ajax_upload_file');
-		$args['data']['delete_nonce'] = wnd_create_nonce('wnd_ajax_delete_file');
-		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
-		$args['data']['thumbnail'] = $args['thumbnail'];
-		$args['data']['thumbnail_width'] = $args['thumbnail_size']['width'];
+		$args['data']['is_image']         = '1';
+		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_ajax_upload_file');
+		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_ajax_delete_file');
+		$args['data']['meta_key_nonce']   = wnd_create_nonce($args['data']['meta_key']);
+		$args['data']['thumbnail']        = $args['thumbnail'];
+		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
-		$args['data']['method'] = $this->is_ajax_submit ? 'ajax' : $this->method;
+		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据user type 查找目标文件
 		if (!$args['file_id']) {
@@ -208,7 +208,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		}
 
 		$args['thumbnail'] = $file_url ?: $args['thumbnail'];
-		$args['file_id'] = $file_id ?: 0;
+		$args['file_id']   = $file_id ?: 0;
 
 		parent::add_image_upload($args);
 	}
@@ -216,26 +216,26 @@ class Wnd_WP_Form extends Wnd_Form {
 	// File upload
 	public function add_file_upload($args) {
 		$defaults = array(
-			'label' => 'File upload',
-			'name' => 'wnd_file',
-			'file_id' => 0,
-			'data' => array(),
+			'label'         => 'File upload',
+			'name'          => 'wnd_file',
+			'file_id'       => 0,
+			'data'          => array(),
 			'delete_button' => true,
 		);
 		$args = array_merge($defaults, $args);
 
 		$defaults_data = array(
 			'post_parent' => 0,
-			'user_id' => get_current_user_id(),
-			'meta_key' => 0,
+			'user_id'     => get_current_user_id(),
+			'meta_key'    => 0,
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
 		// 固定data
-		$args['data']['upload_nonce'] = wnd_create_nonce('wnd_ajax_upload_file');
-		$args['data']['delete_nonce'] = wnd_create_nonce('wnd_ajax_delete_file');
+		$args['data']['upload_nonce']   = wnd_create_nonce('wnd_ajax_upload_file');
+		$args['data']['delete_nonce']   = wnd_create_nonce('wnd_ajax_delete_file');
 		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
-		$args['data']['method'] = $this->is_ajax_submit ? 'ajax' : $this->method;
+		$args['data']['method']         = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据meta key 查找目标文件
 		if (!$args['file_id']) {
@@ -254,7 +254,7 @@ class Wnd_WP_Form extends Wnd_Form {
 			}
 		}
 
-		$args['file_id'] = $file_id ?: 0;
+		$args['file_id']   = $file_id ?: 0;
 		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">查看文件</a>' : '……';
 
 		parent::add_file_upload($args);
@@ -268,17 +268,17 @@ class Wnd_WP_Form extends Wnd_Form {
 	 */
 	public function add_gallery_upload($args) {
 		$defaults = array(
-			'label' => 'Gallery',
+			'label'          => 'Gallery',
 			'thumbnail_size' => array('width' => '160', 'height' => '120'),
-			'data' => array(),
+			'data'           => array(),
 		);
 		$args = array_merge($defaults, $args);
 
 		// 合并$data
 		$defaults_data = array(
 			'post_parent' => 0,
-			'user_id' => get_current_user_id(),
-			'save_width' => 0, //图片文件存储最大宽度 0 为不限制
+			'user_id'     => get_current_user_id(),
+			'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
 			'save_height' => 0, //图片文件存储最大过度 0 为不限制
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
@@ -373,18 +373,18 @@ class Wnd_WP_Form extends Wnd_Form {
 	// 构建相册上传
 	protected function build_gallery_upload($args) {
 		// 固定data
-		$args['data']['meta_key'] = 'gallery';
-		$args['data']['upload_nonce'] = wnd_create_nonce('wnd_ajax_upload_file');
-		$args['data']['delete_nonce'] = wnd_create_nonce('wnd_ajax_delete_file');
-		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
-		$args['data']['thumbnail_width'] = $args['thumbnail_size']['width'];
+		$args['data']['meta_key']         = 'gallery';
+		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_ajax_upload_file');
+		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_ajax_delete_file');
+		$args['data']['meta_key_nonce']   = wnd_create_nonce($args['data']['meta_key']);
+		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
-		$args['data']['method'] = $this->is_ajax_submit ? 'ajax' : $this->method;
+		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 定义一些本方法需要重复使用的变量
-		$post_parent = $args['data']['post_parent'];
-		$meta_key = $args['data']['meta_key'];
-		$thumbnail_width = $args['thumbnail_size']['width'];
+		$post_parent      = $args['data']['post_parent'];
+		$meta_key         = $args['data']['meta_key'];
+		$thumbnail_width  = $args['thumbnail_size']['width'];
 		$thumbnail_height = $args['thumbnail_size']['height'];
 
 		// 根据user type 查找目标文件
@@ -394,7 +394,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		/**
 		 *@since 2019.05.06 构建 html
 		 */
-		$id = 'gallery-' . $this->id;
+		$id   = 'gallery-' . $this->id;
 		$data = ' data-id="' . $id . '"';
 		foreach ($args['data'] as $key => $value) {
 			$data .= ' data-' . $key . '="' . $value . '" ';
@@ -422,7 +422,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		}
 		foreach ($images as $key => $attachment_id) {
 			$attachment_url = wp_get_attachment_url($attachment_id);
-			$thumbnail_url = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
+			$thumbnail_url  = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
 			if (!$attachment_url) {
 				unset($images[$key]); // 在字段数据中取消已经被删除的图片
 				continue;

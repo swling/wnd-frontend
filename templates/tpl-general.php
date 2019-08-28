@@ -136,11 +136,11 @@ function _wnd_dropdown_colors($name, $selected) {
  **/
 function _wnd_ajax_link($args) {
 	$defaults = array(
-		'text' => '',
+		'text'   => '',
 		'action' => '',
 		'cancel' => '',
-		'param' => '',
-		'class' => '',
+		'param'  => '',
+		'class'  => '',
 	);
 	$args = wp_parse_args($args, $defaults);
 

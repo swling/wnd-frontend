@@ -79,14 +79,14 @@ function _wnd_mail_posts_tpl($query) {
 	$table->add_column(
 		array(
 			'post_field' => 'post_date',
-			'title' => '日期',
-			'class' => 'is-narrow is-hidden-mobile',
+			'title'      => '日期',
+			'class'      => 'is-narrow is-hidden-mobile',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'post_title_with_link',
-			'title' => '标题',
+			'title'      => '标题',
 		)
 	);
 	$table->build();
@@ -105,21 +105,21 @@ function _wnd_posts_tpl($query) {
 	$table->add_column(
 		array(
 			'post_field' => 'post_date',
-			'title' => '日期',
-			'class' => 'is-narrow is-hidden-mobile',
+			'title'      => '日期',
+			'class'      => 'is-narrow is-hidden-mobile',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'post_title_with_link',
-			'title' => '标题',
+			'title'      => '标题',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'post_status',
-			'title' => '状态',
-			'class' => 'is-narrow',
+			'title'      => '状态',
+			'class'      => 'is-narrow',
 		)
 	);
 	$table->build();

@@ -16,7 +16,7 @@ function _wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120)
 	$html = '<div class="gallery columns is-vcentered is-multiline has-text-centered">';
 	foreach ($images as $key => $attachment_id) {
 		$attachment_url = wp_get_attachment_url($attachment_id);
-		$thumbnail_url = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
+		$thumbnail_url  = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
 		if (!$attachment_url) {
 			unset($images[$key]); // 在字段数据中取消已经被删除的图片
 			continue;

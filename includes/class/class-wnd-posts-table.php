@@ -13,9 +13,9 @@ class Wnd_Posts_Table {
 	protected $show_edit;
 	protected static $defaults = array(
 		'post_field' => '',
-		'title' => null,
-		'content' => null,
-		'class' => null,
+		'title'      => null,
+		'content'    => null,
+		'class'      => null,
 	);
 	public $html;
 
@@ -23,9 +23,9 @@ class Wnd_Posts_Table {
 	 *构造函数
 	 */
 	public function __construct($query, bool $show_edit = false, bool $show_preview = false) {
-		$this->query = $query;
+		$this->query        = $query;
 		$this->show_preview = $show_preview;
-		$this->show_edit = $show_edit;
+		$this->show_edit    = $show_edit;
 	}
 
 	/**
@@ -33,7 +33,7 @@ class Wnd_Posts_Table {
 	 *
 	 */
 	public function add_column($column = array()) {
-		$column = array_merge(self::$defaults, $column);
+		$column          = array_merge(self::$defaults, $column);
 		$this->columns[] = $column;
 	}
 
@@ -92,7 +92,7 @@ class Wnd_Posts_Table {
 				if ('post_parent_with_link' == $column['post_field']) {
 					if ($post->post_parent) {
 						$parent_post = get_post($post->post_parent);
-						$content = '<a href="' . get_permalink($post->post_parent) . '" target="_blank">' . $parent_post->post_title . '</a>';
+						$content     = '<a href="' . get_permalink($post->post_parent) . '" target="_blank">' . $parent_post->post_title . '</a>';
 					} else {
 						$content = 'post_parent为空';
 					}

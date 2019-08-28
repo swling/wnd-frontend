@@ -26,18 +26,18 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 
 	// 实例化当前提交的表单数据
 	try {
-		$form_data = new Wnd_Form_Data($verify_form_nonce);
-		$post_array = $form_data->get_post_array();
-		$meta_array = $form_data->get_post_meta_array();
+		$form_data     = new Wnd_Form_Data($verify_form_nonce);
+		$post_array    = $form_data->get_post_array();
+		$meta_array    = $form_data->get_post_meta_array();
 		$wp_meta_array = $form_data->get_wp_post_meta_array();
-		$term_array = $form_data->get_term_array();
+		$term_array    = $form_data->get_term_array();
 	} catch (Exception $e) {
 		return array('status' => 0, 'msg' => $e->getMessage());
 	}
 
 	// 定义数据
-	$update_id = $post_array['ID'] ?? 0;
-	$post_type = $post_array['post_type'] ?? 'post';
+	$update_id               = $post_array['ID'] ?? 0;
+	$post_type               = $post_array['post_type'] ?? 'post';
 	$post_array['post_name'] = $post_array['post_name'] ?? uniqid();
 
 	// 基础检测
@@ -88,7 +88,7 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 
 	// 不可被表单POST数据修改的固有字段：post_type / post_status 合并入post data
 	$_post_array = array(
-		'post_type' => $post_type,
+		'post_type'   => $post_type,
 		'post_status' => $post_status,
 	);
 	$post_array = array_merge($post_array, $_post_array);
@@ -108,33 +108,33 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 
 	// 完成返回
 	$redirect_to = $_REQUEST['redirect_to'] ?? null;
-	$permalink = get_permalink($post_id);
+	$permalink   = get_permalink($post_id);
 	if ($redirect_to) {
 		$return_array = array(
 			'status' => 3,
-			'msg' => '发布成功！',
-			'data' => array(
-				'id' => $post_id,
-				'url' => $permalink,
+			'msg'    => '发布成功！',
+			'data'   => array(
+				'id'          => $post_id,
+				'url'         => $permalink,
 				'redirect_to' => $redirect_to,
 			),
 		);
 	} elseif ($update_id) {
 		$return_array = array(
 			'status' => 2,
-			'msg' => '发布成功！',
-			'data' => array(
-				'id' => $post_id,
+			'msg'    => '发布成功！',
+			'data'   => array(
+				'id'  => $post_id,
 				'url' => $permalink,
 			),
 		);
 	} else {
 		$return_array = array(
 			'status' => 3,
-			'msg' => '发布成功！',
-			'data' => array(
-				'id' => $post_id,
-				'url' => $permalink,
+			'msg'    => '发布成功！',
+			'data'   => array(
+				'id'          => $post_id,
+				'url'         => $permalink,
 				'redirect_to' => $permalink,
 			),
 		);
@@ -162,7 +162,7 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 function wnd_ajax_update_post($post_id = 0) {
 
 	// 获取被编辑post
-	$post_id = $post_id ?: (int) $_POST['_post_ID'];
+	$post_id   = $post_id ?: (int) $_POST['_post_ID'];
 	$edit_post = get_post($post_id);
 	if (!$edit_post) {
 		return array('status' => 0, 'msg' => '获取内容ID失败！');
@@ -183,7 +183,7 @@ function wnd_ajax_update_post($post_id = 0) {
 function wnd_ajax_update_post_status() {
 
 	// 获取数据
-	$post_id = (int) $_POST['post_id'];
+	$post_id     = (int) $_POST['post_id'];
 	$before_post = get_post($post_id);
 	if (!$before_post) {
 		return array('status' => 0, 'msg' => '获取内容失败！');
@@ -197,7 +197,7 @@ function wnd_ajax_update_post_status() {
 	}
 
 	// 权限检测
-	$can_array = array('status' => current_user_can('edit_post', $post_id) ? 1 : 0, 'msg' => '权限错误！');
+	$can_array              = array('status' => current_user_can('edit_post', $post_id) ? 1 : 0, 'msg' => '权限错误！');
 	$can_update_post_status = apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_status);
 	if ($can_update_post_status['status'] === 0) {
 		return $can_update_post_status;
@@ -216,7 +216,7 @@ function wnd_ajax_update_post_status() {
 
 	//执行更新
 	$post_data = array(
-		'ID' => $post_id,
+		'ID'          => $post_id,
 		'post_status' => $after_status,
 	);
 	$update = wp_update_post($post_data);
