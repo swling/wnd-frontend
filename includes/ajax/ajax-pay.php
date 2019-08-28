@@ -25,8 +25,7 @@ function wnd_ajax_create_order() {
 	}
 
 	// 余额判断
-	$money = wnd_get_post_price($post_id);
-	if ($money > wnd_get_user_money($user_id)) {
+	if (wnd_get_post_price($post_id) > wnd_get_user_money($user_id)) {
 		if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
 			return array('status' => 0, 'msg' => '余额不足！<a href="' . _wnd_order_link($post_id) . '">在线支付</a> | <a onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</a>');
 		} else {

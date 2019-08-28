@@ -283,7 +283,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	}
 
 	public function add_post_price($label = '', $placeholder = '价格', $required = false) {
-		$this->add_text(
+		$this->add_number(
 			array(
 				'name' => '_wpmeta_price',
 				'value' => get_post_meta($this->post_id, 'price', true),
@@ -291,6 +291,8 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 				'icon_left' => '<i class="fas fa-yen-sign"></i>',
 				'placeholder' => $placeholder,
 				'required' => $required,
+				'step' => '0.01',
+				'min' => '0',
 			)
 		);
 	}

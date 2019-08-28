@@ -33,7 +33,6 @@ function wnd_filter_can_reg($can_array) {
 	} catch (Exception $e) {
 		return array('status' => 0, 'msg' => $e->getMessage());
 	}
-
 }
 
 /**
@@ -113,7 +112,6 @@ function wnd_filter_limit_upload($file) {
 	$file['name'] = uniqid('file') . $ext;
 
 	return $file;
-
 }
 
 /**
@@ -121,7 +119,6 @@ function wnd_filter_limit_upload($file) {
  */
 add_filter('get_edit_post_link', 'wnd_filter_edit_post_link', 10, 3);
 function wnd_filter_edit_post_link($link, $post_id, $context) {
-
 	if (is_admin()) {
 		return $link;
 	}
@@ -131,7 +128,6 @@ function wnd_filter_edit_post_link($link, $post_id, $context) {
 		return get_permalink($edit_page) . '?post_id=' . $post_id;
 	}
 	return $link;
-
 }
 
 /**
@@ -141,7 +137,6 @@ function wnd_filter_edit_post_link($link, $post_id, $context) {
  */
 add_filter('wp_insert_post_data', 'wnd_filter_wp_insert_post_data', 10, 1);
 function wnd_filter_wp_insert_post_data($data) {
-
 	if (empty($data['post_name'])) {
 		$data['post_name'] = uniqid();
 	}
@@ -169,7 +164,6 @@ function wnd_filter_wp_insert_attachment_data($data, $postarr) {
 	$data['menu_order'] = ++$menu_order;
 
 	return $data;
-
 }
 
 /**
@@ -180,100 +174,134 @@ function wnd_filter_wp_insert_attachment_data($data, $postarr) {
  */
 add_filter('the_content', 'wnd_filter_the_content', 10, 1);
 function wnd_filter_the_content($content) {
-
 	global $post;
 	if (!$post) {
 		return;
 	}
 
+	$user_id = get_current_user_id();
 	$price = wnd_get_post_price($post->ID);
-	$file = wnd_get_post_meta($post->ID, 'file');
+	$user_money = wnd_get_user_money($user_id);
+	$user_has_paid = wnd_user_has_paid($user_id, $post->ID);
+	$primary_color = 'is-' . wnd_get_option('wnd', 'wnd_primary_color');
+	$second_color = 'is-' . wnd_get_option('wnd', 'wnd_second_color');
 
+	$file = wnd_get_post_meta($post->ID, 'file');
 	// 价格为空且没有文件，免费文章
 	if (!$price and !$file) {
 		return $content;
 	}
 
-	$user_id = get_current_user_id();
-
-	// 付费下载
+	/**
+	 *付费下载
+	 */
 	if ($file) {
 
 		// 未登录用户
 		if (!$user_id) {
-			$content .= $price ? '<div class="message is-warning"><div class="message-body">付费下载：¥' . $price . '</div></div>' : '';
+			$content .= $price ? '<div class="message ' . $second_color . '"><div class="message-body">付费下载：¥' . $price . '</div></div>' : '';
 			$button_text = '请登录后下载';
 			$button = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\')">' . $button_text . '</button></div>';
 			$content .= $button;
 			return $content;
 		}
 
-		if (wnd_user_has_paid($user_id, $post->ID)) {
-
+		if ($user_has_paid) {
 			$button_text = '您已购买点击下载';
 
-		} elseif (get_current_user_id() == $post->post_author) {
-
+		} elseif ($user_id == $post->post_author) {
 			$button_text = '您发布的下载文件';
 
 		} elseif ($price > 0) {
-
 			$button_text = '付费下载 ¥' . $price;
 
 		} else {
 			$button_text = '免费下载';
 		}
 
-		$form = new Wnd_WP_Form;
-		$form->add_hidden('post_id', $post->ID);
-		$form->set_action('wnd_ajax_pay_for_download');
-		$form->set_submit_button($button_text);
-		$form->build();
+		// 判断支付
+		if ($price > $user_money and !$user_has_paid) {
+			$msg = '<div class="message ' . $second_color . ' has-text-centered"><div class="message-body">';
+			$msg .= '<p>¥ ' . $price . ' （可用余额：¥ ' . $user_money . '）</p>';
+			if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
+				$msg .= '<a class="button ' . $primary_color . '" href="' . _wnd_order_link($post->ID) . '">在线支付</a>';
+				$msg .= '&nbsp;&nbsp;';
+				$msg .= '<a class="button ' . $primary_color . ' is-outlined" onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</a>';
+			} else {
+				$msg .= '余额不足！';
+			}
+			$msg .= '</div></div>';
 
-		$content .= $form->html;
+			$content .= $msg;
 
-		//付费阅读
-	} else {
-
-		//查找是否有more标签，否则免费部分为空（全文付费）
-		$content_array = explode('<!--more-->', $post->post_content, 2);
-		if (count($content_array) == 1) {
-			$content_array = array('', $post->post_content);
-		}
-		list($free_content, $paid_content) = $content_array;
-
-		// 未登录用户
-		if (!$user_id) {
-			$content = '<div class="free-content">' . $free_content . '</div>';
-			$content .= '<div class="paid-content"><div class="message is-warning"><div class="message-body">付费内容：¥' . $price . '</div></div></div>';
-			$button = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\')">请登录</button></div>';
-			$content .= $button;
-			return $content;
-		}
-
-		// 已支付
-		if (wnd_user_has_paid($user_id, $post->ID)) {
-
-			$content = '<div class="free-content">' . $free_content . '</div>';
-			$content .= '<div class="paid-content">' . $paid_content . '</div>';
-			$button_text = '您已付费';
-
-			// 作者本人
-		} elseif ($post->post_author == get_current_user_id()) {
-
-			$content = '<div class="free-content">' . $free_content . '</div>';
-			$content .= '<div class="paid-content">' . $paid_content . '</div>';
-			$button_text = '您的付费文章';
-
-			// 已登录未支付
+			// 无论是否已支付，均需要提交下载请求，是否扣费将在wnd_ajax_pay_for_download内部判断
 		} else {
+			$form = new Wnd_WP_Form;
+			$form->add_hidden('post_id', $post->ID);
+			$form->set_action('wnd_ajax_pay_for_download');
+			$form->set_submit_button($button_text);
+			$form->build();
 
-			$content = '<div class="free-content">' . $free_content . '</div>';
-			$content .= '<div class="paid-content"><p class="ajax-message">以下为付费内容</p></div>';
-			$button_text = '付费阅读： ¥' . wnd_get_post_price($post->ID);
-
+			$content .= $form->html;
 		}
 
+		return $content;
+	}
+
+	/**
+	 *付费阅读
+	 */
+	//查找是否有more标签，否则免费部分为空（全文付费）
+	$content_array = explode('<!--more-->', $post->post_content, 2);
+	if (count($content_array) == 1) {
+		$content_array = array('', $post->post_content);
+	}
+	list($free_content, $paid_content) = $content_array;
+
+	// 未登录用户
+	if (!$user_id) {
+		$content = '<div class="free-content">' . $free_content . '</div>';
+		$content .= '<div class="paid-content"><div class="message ' . $second_color . '"><div class="message-body">付费内容：¥' . $price . '</div></div></div>';
+		$button = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'_wnd_user_center\',\'action=login\')">请登录</button></div>';
+		$content .= $button;
+		return $content;
+	}
+
+	// 已支付
+	if ($user_has_paid) {
+		$content = '<div class="free-content">' . $free_content . '</div>';
+		$content .= '<div class="paid-content">' . $paid_content . '</div>';
+		$content .= '<div class="message ' . $second_color . '"><div class="message-body">您已付费：¥' . $price . '</div></div>';
+		return $content;
+	}
+
+	// 作者本人
+	if ($user_id == $post->post_author) {
+		$content = '<div class="free-content">' . $free_content . '</div>';
+		$content .= '<div class="paid-content">' . $paid_content . '</div>';
+		$content .= '<div class="message ' . $second_color . '"><div class="message-body">您的付费文章：¥' . $price . '</div></div>';
+		return $content;
+	}
+
+	// 已登录未支付
+	$content = '<div class="free-content">' . $free_content . '</div>';
+	$content .= '<div class="paid-content"><p class="ajax-message">以下为付费内容</p></div>';
+	$button_text = '付费阅读： ¥' . wnd_get_post_price($post->ID);
+
+	if ($price > $user_money) {
+		$msg = '<div class="message ' . $second_color . ' has-text-centered"><div class="message-body">';
+		$msg .= '<p>¥ ' . $price . ' （可用余额：¥ ' . $user_money . '）</p>';
+		if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
+			$msg .= '<a class="button ' . $primary_color . '" href="' . _wnd_order_link($post->ID) . '">在线支付</a>';
+			$msg .= '&nbsp;&nbsp;';
+			$msg .= '<a class="button ' . $primary_color . ' is-outlined" onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</a>';
+		} else {
+			$msg .= '余额不足！';
+		}
+		$msg .= '</div></div>';
+
+		$content .= $msg;
+	} else {
 		$form = new Wnd_WP_Form;
 		$form->add_hidden('post_id', $post->ID);
 		$form->set_action('wnd_ajax_pay_for_reading');
@@ -281,11 +309,9 @@ function wnd_filter_the_content($content) {
 		$form->build();
 
 		$content .= $form->html;
-
 	}
 
 	return $content;
-
 }
 
 /**
