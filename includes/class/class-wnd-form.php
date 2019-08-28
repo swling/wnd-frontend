@@ -403,14 +403,17 @@ class Wnd_Form {
 	}
 
 	protected function build_input($input_value, $input_key) {
-		$html = ($input_value['addon_left'] or $input_value['addon_right']) ? '<div class="field has-addons">' : '<div class="field">';
-		if (!empty($input_value['label'])) {
+		$has_addons = ($input_value['addon_left'] or $input_value['addon_right']) ? true : false;
+
+		$html = $has_addons ? '<label class="label">' . $this->build_label($input_value) . '</label>' : '';
+		$html .= $has_addons ? '<div class="field has-addons">' : '<div class="field">';
+		if (!empty($input_value['label']) and !$has_addons) {
 			$html .= '<label class="label">' . $this->build_label($input_value) . '</label>';
 		}
 
 		// class
 		$class = '';
-		$class .= ($input_value['addon_left'] or $input_value['addon_right']) ? ' is-expanded' : '';
+		$class .= $has_addons ? ' is-expanded' : '';
 		$class .= $input_value['icon_left'] ? ' has-icons-left' : '';
 		$class .= $input_value['icon_right'] ? ' has-icons-right' : '';
 
