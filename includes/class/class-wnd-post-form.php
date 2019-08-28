@@ -157,7 +157,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 				'name' => '_term_' . $taxonomy,
 				'value' => $term_list,
 				'placeholder' => $placeholder,
-				'label' => $taxonomy_object->labels->name,
+				// 'label' => $taxonomy_object->labels->name,
 				'required' => $required,
 			)
 		);
