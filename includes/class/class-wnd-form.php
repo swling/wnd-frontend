@@ -367,7 +367,7 @@ class Wnd_Form {
 	protected function build_select($input_value, $input_key) {
 		$html = '<div class="field">';
 		if (!empty($input_value['label'])) {
-			$html .= '<label class="label">' . $input_value['label'] . '</label>';
+			$html .= '<label class="label">' . $this->build_label($input_value) . '</label>';
 		}
 		$html .= '<div class="control">';
 		$html .= '<div' . $this->get_the_id($input_value) . ' class="select"' . $this->get_class($input_value) . '>';
@@ -405,7 +405,7 @@ class Wnd_Form {
 	protected function build_input($input_value, $input_key) {
 		$html = ($input_value['addon_left'] or $input_value['addon_right']) ? '<div class="field has-addons">' : '<div class="field">';
 		if (!empty($input_value['label'])) {
-			$html .= '<label class="label">' . $input_value['label'] . '</label>';
+			$html .= '<label class="label">' . $this->build_label($input_value) . '</label>';
 		}
 
 		// class
@@ -441,7 +441,7 @@ class Wnd_Form {
 		$html = '<div class="field">';
 		$html .= '<input id="' . $id . '" type="checkbox" class="' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '" value="' . $this->get_value($input_value) . '"' . $this->get_the_attr($input_value);
 		$html .= $input_value['checked'] ? ' checked="checked" >' : ' >';
-		$html .= '<label  for="' . $id . '" class="checkbox">' . $input_value['label'] . '</label>';
+		$html .= '<label  for="' . $id . '" class="checkbox">' . $this->build_label($input_value) . '</label>';
 		$html .= '</div>';
 		return $html;
 	}
@@ -456,7 +456,7 @@ class Wnd_Form {
 
 		$html = '<div id="' . $id . '" class="field upload-field">';
 		if ($input_value['label']) {
-			$html .= '<label class="label">' . $input_value['label'] . '</label>';
+			$html .= '<label class="label">' . $this->build_label($input_value) . '</label>';
 		}
 		$html .= '<div class="field"><div class="ajax-message"></div></div>';
 
@@ -500,7 +500,7 @@ class Wnd_Form {
 		$html .= '<input type="file" class="file-input" name="' . $input_value['name'] . '[]' . '"' . $data . $this->get_the_attr($input_value) . '>';
 		$html .= '<span class="file-cta">';
 		$html .= '<span class="file-icon"><i class="fa fa-upload"></i></span>';
-		$html .= '<span class="file-label">' . $input_value['label'] . '</span>';
+		$html .= '<span class="file-label">' . $this->build_label($input_value) . '</span>';
 		$html .= '</span>';
 		$html .= '<span class="file-name">' . $input_value['file_name'] . '</span>';
 		$html .= '</label>';
@@ -525,7 +525,7 @@ class Wnd_Form {
 	protected function build_textarea($input_value, $input_key) {
 		$html = '<div class="field">';
 		if (!empty($input_value['label'])) {
-			$html .= '<label class="label">' . $input_value['label'] . '</label>';
+			$html .= '<label class="label">' . $this->build_label($input_value) . '</label>';
 		}
 		$html .= '<textarea' . $this->get_the_id($input_value) . ' class="textarea' . $this->get_class($input_value) . '" name="' . $input_value['name'] . '"' . $this->get_the_attr($input_value) . '>' . $this->get_value($input_value) . '</textarea>';
 		$html .= '</div>';
@@ -543,6 +543,21 @@ class Wnd_Form {
 
 	protected function build_form_footer() {
 		$this->html .= '</form>';
+	}
+
+	/**
+	 *@since 2019.08.25
+	 *构建label HTML
+	 *
+	 *@var string 	$label
+	 *@var string 	$required
+	 */
+	protected function build_label($input_value) {
+		if (empty($input_value['label'])) {
+			return '';
+		}
+
+		return $input_value['required'] ? $input_value['label'] . ' <span class="required">*</span>' : $input_value['label'];
 	}
 
 	/**

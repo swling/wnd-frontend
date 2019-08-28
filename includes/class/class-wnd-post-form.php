@@ -87,7 +87,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 				'name' => '_post_post_title',
 				'value' => $this->post->post_title == 'Auto-draft' ? '' : $this->post->post_title,
 				'placeholder' => 'ID:' . $this->post_id . ' ' . $placeholder,
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'autofocus' => 'autofocus',
 				'required' => $required,
 			)
@@ -100,7 +100,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 				'name' => '_post_post_excerpt',
 				'value' => $this->post->post_excerpt,
 				'placeholder' => $placeholder,
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'required' => $required,
 			)
 		);
@@ -130,7 +130,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			array(
 				'name' => '_term_' . $taxonomy,
 				'options' => $options,
-				// 'label' => $taxonomy_object->labels->name . '<span class="required">*</span>',
+				// 'label' => $taxonomy_object->labels->name,
 				'required' => $required,
 				'checked' => $current_term_id, //default checked value
 			)
@@ -157,7 +157,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 				'name' => '_term_' . $taxonomy,
 				'value' => $term_list,
 				'placeholder' => $placeholder,
-				'label' => $this->build_label($taxonomy_object->labels->name, $required),
+				'label' => $taxonomy_object->labels->name,
 				'required' => $required,
 			)
 		);
@@ -223,7 +223,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			array(
 				'name' => $name,
 				'value' => $value,
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'placeholder' => $placeholder,
 				'required' => $required,
 			)
@@ -240,7 +240,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			array(
 				'name' => $name,
 				'value' => $value,
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'placeholder' => $placeholder,
 				'required' => $required,
 			)
@@ -258,7 +258,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 				'name' => '_post_menu_order',
 				'value' => $this->post->menu_order ?: '',
 				'placeholder' => $placeholder,
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'autofocus' => 'autofocus',
 				'required' => $required,
 			)
@@ -275,7 +275,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 				'name' => '_post_post_name',
 				'value' => $this->post->post_name ?: '',
 				'placeholder' => $placeholder,
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'autofocus' => 'autofocus',
 				'required' => $required,
 			)
@@ -287,7 +287,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			array(
 				'name' => '_wpmeta_price',
 				'value' => get_post_meta($this->post_id, 'price', true),
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'icon_left' => '<i class="fas fa-yen-sign"></i>',
 				'placeholder' => $placeholder,
 				'required' => $required,
@@ -506,5 +506,13 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			)
 		);
 		return is_wp_error($post_id) ? 0 : $post_id;
+	}
+
+	/**
+	 *@since 2019.08.28
+	 *获取Post ID
+	 **/
+	public function get_post_id() {
+		return $this->post_id;
 	}
 }

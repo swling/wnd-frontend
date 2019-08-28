@@ -24,7 +24,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 				'name' => '_user_user_login',
 				'value' => '',
 				'placeholder' => $placeholder,
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'icon_left' => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 				'autofocus' => 'autofocus',
 				'required' => $required,
@@ -37,7 +37,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			array(
 				'name' => '_user_user_email',
 				'value' => $this->user->user_email,
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'icon_left' => '<i class="fa fa-at"></i>',
 				'required' => $required,
 				'placeholder' => $placeholder,
@@ -50,7 +50,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			array(
 				'name' => '_user_display_name',
 				'value' => $this->user->display_name,
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'placeholder' => $placeholder,
 				'icon_left' => '<i class="fas fa-user"></i>',
 				'required' => $required,
@@ -63,7 +63,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			array(
 				'name' => '_user_user_pass',
 				'value' => '',
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'placeholder' => $placeholder,
 				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
 				'required' => $required,
@@ -76,7 +76,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			array(
 				'name' => '_user_user_pass_repeat',
 				'value' => '',
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'placeholder' => $placeholder,
 				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
 				'required' => $required,
@@ -89,7 +89,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			array(
 				'name' => '_user_new_pass',
 				'value' => '',
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'placeholder' => $placeholder,
 				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
 				'required' => $required,
@@ -102,7 +102,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			array(
 				'name' => '_user_new_pass_repeat',
 				'value' => '',
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'placeholder' => $placeholder,
 				'icon_left' => '<i class="fas fa-unlock-alt"></i>',
 				'required' => $required,
@@ -115,7 +115,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 			array(
 				'name' => '_user_user_url',
 				'value' => $this->user->user_url,
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'placeholder' => $placeholder,
 				'icon_left' => '<i class="fas fa-link"></i>',
 				'required' => $required,
@@ -127,7 +127,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 		$this->add_textarea(
 			array(
 				'name' => '_wpusermeta_description',
-				'label' => $this->build_label($label, $required),
+				'label' => $label,
 				'placeholder' => $placeholder,
 				'value' => $this->user->description,
 				'required' => $required,
