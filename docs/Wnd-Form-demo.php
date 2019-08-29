@@ -29,7 +29,7 @@ $form->get_input_values();
  *@since 2019.03.10
  */
 $form = new Wnd_Form();
-
+$form->add_form_attr('data-test', 'test-value');
 $form->set_form_title('标题');
 
 // input
@@ -250,7 +250,6 @@ $form->add_tel(
 );
 
 $form->set_action('post', 'https://www.baidu.com');
-$form->set_form_attr('data-test="test-value"');
 $form->set_submit_button('Submit', 'is-primary');
 
 $form->build();

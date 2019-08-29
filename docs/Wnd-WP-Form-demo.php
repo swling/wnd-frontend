@@ -73,7 +73,7 @@ function _wnd_demo_form() {
 
 	$form = new Wnd_WP_Form($is_ajax_submit = true);
 
-	$form->set_form_attr('data-test="test-value"');
+	$form->add_form_attr('data-test', 'test-value');
 	$form->set_form_title('标题');
 
 	// input

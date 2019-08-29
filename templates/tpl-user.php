@@ -189,8 +189,8 @@ function _wnd_login_form() {
 	}
 
 	$form = new Wnd_User_Form();
-	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>登录');
-	$form->set_form_attr('class="user-form"');
+	$form->add_form_attr('class', 'user-form');
+	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>登录', true);
 	$form->add_user_login();
 	$form->add_user_password();
 	$form->add_checkbox(
@@ -238,8 +238,8 @@ function _wnd_reg_form($type = 'email') {
 	}
 
 	$form = new Wnd_User_Form();
-	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>注册');
-	$form->set_form_attr('class="user-form"');
+	$form->add_form_attr('class', 'user-form');
+	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>注册', true);
 	$form->add_user_login();
 	$form->add_user_password();
 
@@ -283,17 +283,12 @@ function _wnd_lostpassword_form($type = 'email') {
 	}
 
 	$form = new Wnd_User_Form();
+	$form->add_form_attr('class', 'user-form');
 	if ($type == 'phone') {
-		$form->set_form_title('<span class="icon"><i class="fa fa-phone-square"></i></span>手机验证');
-	} else {
-		$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>邮箱验证</h3>');
-	}
-
-	$form->set_form_attr('class="user-form"');
-
-	if ($type == 'phone') {
+		$form->set_form_title('<span class="icon"><i class="fa fa-phone-square"></i></span>手机验证', true);
 		$form->add_sms_verify($verify_type = 'reset_password', wnd_get_option('wnd', 'wnd_sms_template_v'));
 	} else {
+		$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>邮箱验证</h3>', true);
 		$form->add_email_verify($verify_type = 'reset_password', $template = '');
 	}
 
@@ -320,7 +315,8 @@ function _wnd_profile_form() {
 
 	$form = new Wnd_User_Form();
 	// profile表单可能有较为复杂的编辑界面，阻止回车提交
-	$form->set_form_attr('onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}"');
+	$form->add_form_attr('onsubmit', 'return false');
+	$form->add_form_attr('onkeydown', 'if(event.keyCode==13){return false;}');
 
 	/*头像上传*/
 	$form->add_user_avatar();
@@ -349,8 +345,8 @@ function _wnd_account_form() {
 	}
 
 	$form = new Wnd_User_Form();
-	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>账户安全');
-	$form->set_form_attr('class="user-form"');
+	$form->add_form_attr('class', 'user-form');
+	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>账户安全', true);
 	$form->add_user_password('当前密码');
 	$form->add_user_new_password();
 	$form->add_user_new_password_repeat();
@@ -377,10 +373,9 @@ function _wnd_bind_email_form() {
 	}
 
 	$form = new Wnd_User_Form();
-	$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>绑定邮箱');
-	$form->set_form_attr('class="user-form"');
+	$form->add_form_attr('class', 'user-form');
+	$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>绑定邮箱', true);
 	$form->add_email_verify('bind', $template = '');
-
 	$form->set_action('wnd_ajax_bind_email');
 	$form->set_submit_button('保存');
 	$form->build();
@@ -397,10 +392,9 @@ function _wnd_bind_phone_form() {
 	}
 
 	$form = new Wnd_User_Form();
-	$form->set_form_title('<span class="icon"><i class="fa fa-phone"></i></span>绑定手机');
-	$form->set_form_attr('class="user-form"');
+	$form->add_form_attr('class', 'user-form');
+	$form->set_form_title('<span class="icon"><i class="fa fa-phone"></i></span>绑定手机', true);
 	$form->add_sms_verify('bind', $template = '');
-
 	$form->set_action('wnd_ajax_bind_phone');
 	$form->set_submit_button('保存');
 	$form->build();

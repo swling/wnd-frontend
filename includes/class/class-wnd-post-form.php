@@ -363,28 +363,8 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 
 	// 文章表头，屏蔽回车提交
 	protected function build_form_header() {
-		$html = '<form id="form-' . $this->id . '" action="" method="POST" class="ajax-submit"';
-		$html .= ' onsubmit="return false" onkeydown="if(event.keyCode==13){return false;}"';
-
-		if ($this->with_upload) {
-			$html .= ' enctype="multipart/form-data"';
-		}
-
-		if ($this->form_attr) {
-			$html .= ' ' . $this->form_attr;
-		}
-
-		$html .= '>';
-
-		if ($this->form_title) {
-			$html .= '<div class="content">';
-			$html .= '<h5>' . $this->form_title . '</h5>';
-			$html .= '</div>';
-		}
-
-		$html .= '<div class="ajax-message">' . $this->message . '</div>';
-
-		$this->html = $html;
+		$this->add_form_attr('onkeydown', 'if(event.keyCode==13){return false;}');
+		parent::build_form_header();
 	}
 
 	/**

@@ -343,32 +343,16 @@ class Wnd_WP_Form extends Wnd_Form {
 	protected function build_form_header() {
 
 		/**
-		 *@since 2019.07.17 常规非ajax表单
+		 *@since 2019.07.17 ajax表单
 		 */
-		if (!$this->is_ajax_submit) {
-			parent::build_form_header();
-			return;
+		if ($this->is_ajax_submit) {
+			$this->add_form_attr('action', '');
+			$this->add_form_attr('method', 'POST');
+			$this->add_form_attr('onsubmit', 'return false');
 		}
+		parent::build_form_header();
 
-		$html = '<form id="form-' . $this->id . '" action="" method="POST" onsubmit="return false"';
-		if ($this->with_upload) {
-			$html .= ' enctype="multipart/form-data"';
-		}
-
-		if ($this->form_attr) {
-			$html .= ' ' . $this->form_attr;
-		}
-		$html .= '>';
-
-		if ($this->form_title) {
-			$html .= '<div class="field has-text-centered content">';
-			$html .= '<h3>' . $this->form_title . '</h3>';
-			$html .= '</div>';
-		}
-
-		$html .= '<div class="ajax-message">' . $this->message . '</div>';
-
-		$this->html = $html;
+		$this->html .= '<div class="ajax-message">' . $this->message . '</div>';
 	}
 
 	// 构建相册上传
