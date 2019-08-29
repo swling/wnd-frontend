@@ -5,13 +5,6 @@
  *@since 2019.03.10
  */
 $form = new Wnd_WP_Form($is_ajax_submit = true);
-/**
- *@since 2019.07.17
- *添加选项：$this->is_ajax_submit 设置表单提交方式
- *若为false，则生成的表单为常规表单、需要设置表单接收地址，及Methods等、文件上传也需要自行处理
- *
- */
-
 $form->add_text(
 	array(
 		'addon_right' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
@@ -19,6 +12,31 @@ $form->add_text(
 	)
 );
 echo $form->get_input_fields();
+
+/**
+ *@since 2019.08.29
+ *常规非ajax表单提交
+ *
+ *@since 2019.07.17
+ *添加选项：$this->is_ajax_submit 设置表单提交方式
+ *若为false，则生成的表单为常规表单、需要设置表单接收地址，及Methods等、文件上传也需要自行处理
+ *
+ *
+ **/
+$temp_form = new Wnd_WP_Form(false);
+$temp_form->add_text(
+	array(
+		'name'        => 'wd',
+		'label'       => 'content',
+		'placeholder' => '搜索关键词',
+		'required'    => true,
+	)
+);
+$temp_form->set_submit_button('提交');
+$temp_form->set_action('https://www.baidu.com/s', 'GET');
+$temp_form->build();
+
+echo $temp_form->html;
 
 /**
  *@since 2019.03.10 表单filter举例

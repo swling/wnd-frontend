@@ -347,6 +347,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		 */
 		if (!$this->is_ajax_submit) {
 			parent::build_form_header();
+			return;
 		}
 
 		$html = '<form id="form-' . $this->id . '" action="" method="POST" onsubmit="return false"';
