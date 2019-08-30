@@ -152,13 +152,16 @@ function wnd_action_do_action() {
 
 	//@since 2019.05.12 默认：校验nonce后执行action对应函数
 	default:
+		// UI请求
+		if (strpos($action, '_wnd') === 0) {
+			$param = $_GET['param'] ?? '';
+			return function_exists($action) ? $action($param) : '未定义的action！';
+		}
+
 		if (wnd_verify_nonce($_GET['_wpnonce'] ?? '', $action)) {
 			return function_exists($action) ? $action() : '未定义的action！';
-		} else {
-			return;
 		}
 		break;
-
 	}
 }
 
