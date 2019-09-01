@@ -1019,7 +1019,7 @@ class Wnd_Filter {
 	 *
 	 *@param string $label 选项名称
 	 */
-	public function build_order_filter($args, $label) {
+	protected function build_order_filter($args, $label) {
 
 		// 输出容器
 		$tabs = '<div class="columns is-marginless is-vcentered order-tabs">';
