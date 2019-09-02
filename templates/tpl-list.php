@@ -89,6 +89,13 @@ function _wnd_user_fin_posts_tpl($query) {
 	);
 	$table->add_column(
 		array(
+			'post_field' => 'post_author',
+			'title'      => '用户',
+			'class'      => 'is-narrow is-hidden-mobile',
+		)
+	);
+	$table->add_column(
+		array(
 			'post_field' => 'post_content',
 			'title'      => '金额',
 			'class'      => 'is-narrow',
