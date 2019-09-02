@@ -490,9 +490,9 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 
 	/**
 	 *@since 2019.08.28
-	 *获取Post ID
+	 *获取Post
 	 **/
-	public function get_post_id() {
-		return $this->post_id;
+	public function get_post() {
+		return $this->post;
 	}
 }
