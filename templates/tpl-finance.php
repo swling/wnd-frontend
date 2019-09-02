@@ -72,43 +72,6 @@ function _wnd_user_fin_panel(int $posts_per_page = 0) {
 }
 
 /**
- *@since 2019.03.14
- *以表格形式输出用户充值及消费记录
- */
-function _wnd_user_fin_posts_tpl($query) {
-	$table = new Wnd_Posts_Table($query, true, true);
-	$table->add_column(
-		array(
-			'post_field' => 'post_date',
-			'title'      => '日期',
-			'class'      => 'is-narrow is-hidden-mobile',
-		)
-	);
-	$table->add_column(
-		array(
-			'post_field' => 'post_content',
-			'title'      => '金额',
-			'class'      => 'is-narrow',
-		)
-	);
-	$table->add_column(
-		array(
-			'post_field' => 'order' == $query->query_vars['post_type'] ? 'post_parent_with_link' : 'post_title',
-			'title'      => '详情',
-		)
-	);
-	$table->add_column(
-		array(
-			'post_field' => 'post_status',
-			'title'      => '状态',
-			'class'      => 'is-narrow',
-		)
-	);
-	$table->build();
-	return $table->html;
-}
-
-/**
  *@since 2019.03.14 财务统计中心
  *@param $posts_per_page 每页列表数目
  */
@@ -121,48 +84,11 @@ function _wnd_admin_fin_panel(int $posts_per_page = 0) {
 	$filter = new Wnd_Filter(true);
 	$filter->add_post_type_filter(array('stats-ex', 'stats-re', 'order', 'recharge'));
 	$filter->add_post_status_filter(array('全部' => 'any', '已完成' => 'success', '进行中' => 'pending'));
-	$filter->set_posts_template('_wnd_fin_stats_posts_tpl');
+	$filter->set_posts_template('_wnd_user_fin_posts_tpl');
 	$filter->set_posts_per_page($posts_per_page);
 	$filter->set_ajax_container('#admin-fin-panel');
 	$filter->query();
 	return $filter->get_tabs() . '<div id="admin-fin-panel">' . $filter->get_results() . '</div>';
-}
-
-/**
- *@since 2019.03.14
- *以表格形式输出按月统计
- */
-function _wnd_fin_stats_posts_tpl($query) {
-	$table = new Wnd_Posts_Table($query, true, true);
-	$table->add_column(
-		array(
-			'post_field' => 'post_date',
-			'title'      => '日期',
-			'class'      => 'is-narrow is-hidden-mobile',
-		)
-	);
-	$table->add_column(
-		array(
-			'post_field' => 'post_content',
-			'title'      => '金额',
-		)
-	);
-	$table->add_column(
-		array(
-			'post_field' => 'post_title',
-			'title'      => '详情',
-			'class'      => 'is-hidden-mobile',
-		)
-	);
-	$table->add_column(
-		array(
-			'post_field' => 'post_status',
-			'title'      => '状态',
-			'class'      => 'is-narrow',
-		)
-	);
-	$table->build();
-	return $table->html;
 }
 
 /**

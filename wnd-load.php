@@ -37,6 +37,7 @@ require WND_PATH . 'includes/hook/remove.php'; //移除
 require WND_PATH . 'templates/tpl-general.php'; //通用模板
 require WND_PATH . 'templates/tpl-user.php'; //user模板
 require WND_PATH . 'templates/tpl-post.php'; //post模板
+require WND_PATH . 'templates/tpl-list.php'; //post list模板
 require WND_PATH . 'templates/tpl-term.php'; //term模板
 require WND_PATH . 'templates/tpl-finance.php'; //财务模板
 require WND_PATH . 'templates/tpl-panel.php'; //前端管理面板
