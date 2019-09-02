@@ -143,20 +143,13 @@ function _wnd_fin_stats_posts_tpl($query) {
 	);
 	$table->add_column(
 		array(
-			'post_field' => 'post_author',
-			'title'      => '用户',
-			'class'      => 'is-narrow',
-		)
-	);
-	$table->add_column(
-		array(
 			'post_field' => 'post_content',
 			'title'      => '金额',
 		)
 	);
 	$table->add_column(
 		array(
-			'post_field' => 'post_title_with_link',
+			'post_field' => 'post_title',
 			'title'      => '详情',
 			'class'      => 'is-hidden-mobile',
 		)
@@ -196,7 +189,7 @@ function _wnd_recharge_form() {
 			'name'     => 'total_amount',
 			'options'  => array('0.01' => '0.01', '10' => '10', '100' => '100', '200' => '200', '500' => '500'),
 			'required' => 'required',
-			'checked'  => '0.01', //default checked value
+			// 'checked'  => '0.01',
 			'class'    => 'is-checkradio is-danger',
 		)
 	);
@@ -222,7 +215,7 @@ function _wnd_admin_recharge_form() {
 	$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 	$form->add_text(
 		array(
-			'label'       => '用户<span class="required">*</span>',
+			'label'       => '用户',
 			'name'        => 'user_field',
 			'required'    => 'required',
 			'placeholder' => '用户名、邮箱、注册手机',
@@ -230,21 +223,19 @@ function _wnd_admin_recharge_form() {
 	);
 	$form->add_text(
 		array(
-			'label'       => '金额<span class="required">*</span>',
+			'label'       => '金额',
 			'name'        => 'total_amount',
 			'required'    => 'required',
 			'placeholder' => '充值金额（负数可扣款）',
 		)
 	);
 	$form->add_html('</div></div>');
-
 	$form->add_text(
 		array(
 			'name'        => 'remarks',
 			'placeholder' => '备注（可选）',
 		)
 	);
-
 	$form->set_action('wnd_ajax_admin_recharge');
 	$form->set_submit_button('确认充值');
 	$form->build();

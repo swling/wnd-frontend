@@ -80,11 +80,11 @@ function wnd_ajax_admin_recharge() {
 		return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作！');
 	}
 
-	$user_field = $_POST['user_field'];
-	$money      = $_POST['total_amount'];
-	$remarks    = $_POST['remarks'] ?: '管理员充值';
+	$user_field   = $_POST['user_field'];
+	$total_amount = $_POST['total_amount'];
+	$remarks      = $_POST['remarks'] ?: '人工充值';
 
-	return wnd_admin_recharge($user_field, $money, $remarks);
+	return wnd_admin_recharge($user_field, $total_amount, $remarks);
 }
 
 /**
