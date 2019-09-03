@@ -119,7 +119,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 
 		// 获取taxonomy下的term
 		$terms   = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false)) ?: array();
-		$options = array('— ' . $taxonomy_object->labels->name . ' —' => -1);
+		$options = array('- ' . $taxonomy_object->labels->name . ' -' => -1);
 		foreach ($terms as $term) {
 			$options[$term->name] = $term->term_id;
 		}
