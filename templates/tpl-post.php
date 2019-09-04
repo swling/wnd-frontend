@@ -73,16 +73,10 @@ function _wnd_post_form($args = array()) {
  *@since 2019.02.15
  *ajax请求获取文章信息
  */
-function _wnd_post_info($args) {
-	$defaults = array(
-		'post_id' => 0,
-		'color'   => 'is-primay',
-	);
-	$args = wp_parse_args($args, $defaults);
-
-	$post = get_post($args['post_id']);
+function _wnd_post_info($post_id) {
+	$post = get_post($post_id);
 	if (!$post) {
-		return '<script>wnd_alert_msg("ID无效！")</script>';
+		return 'ID无效！';
 	}
 
 	// 站内信阅读后，更新为已读 @since 2019.02.25
@@ -90,7 +84,7 @@ function _wnd_post_info($args) {
 		wp_update_post(array('ID' => $post->ID, 'post_status' => 'private'));
 	}
 
-	$html = '<article class="message ' . $args['color'] . '">';
+	$html = '<article class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '">';
 	$html .= '<div class="message-body">';
 
 	if (!wnd_get_post_price($post->ID)) {

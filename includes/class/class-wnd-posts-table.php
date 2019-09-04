@@ -114,7 +114,7 @@ class Wnd_Posts_Table {
 			// 编辑管理
 			if ($this->show_edit or $this->show_preview) {
 				$this->html .= '<td class="is-narrow has-text-centered">';
-				$this->html .= $this->show_preview ? '<a onclick="wnd_ajax_modal(\'_wnd_post_info\',\'post_id=' . get_the_ID() . '&amp;color=primary\')"> <i class="fas fa-info-circle"></i> </a>' : '';
+				$this->html .= $this->show_preview ? '<a onclick="wnd_ajax_modal(\'_wnd_post_info\',\'' . get_the_ID() . '\')"> <i class="fas fa-info-circle"></i> </a>' : '';
 				$this->html .= $this->show_edit ? '<a onclick="wnd_ajax_modal(\'_wnd_post_status_form\',\'' . get_the_ID() . '\')"> <i class="fas fa-cog"></i> </a>' : '';
 				$this->html .= '</td>';
 			}
