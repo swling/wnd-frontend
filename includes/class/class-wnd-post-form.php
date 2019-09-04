@@ -9,11 +9,17 @@
  */
 class Wnd_Post_Form extends Wnd_WP_Form {
 
-	protected $user_id;
+	protected $post_author;
 
 	protected $post_id;
 
 	protected $post_type;
+
+	protected $post_parent;
+
+	protected $thumbnail_width;
+
+	protected $thumbnail_height;
 
 	protected $post;
 
@@ -49,8 +55,11 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		// 继承基础变量
 		parent::__construct();
 
-		// 当前用户ID
-		$this->user_id = get_current_user_id();
+		// 初始化属性
+		$this->post_author      = get_current_user_id();
+		$this->post_parent      = 0;
+		$this->thumbnail_width  = 200;
+		$this->thumbnail_height = 200;
 
 		// 未指定ID，创建新草稿
 		$post_id = $post_id ?: $this->get_draft_post($post_type);
@@ -79,6 +88,26 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			$this->add_hidden('_post_post_type', $this->post_type);
 			$this->set_action('wnd_ajax_insert_post');
 		}
+	}
+
+	/**
+	 *设置表单缩略图尺寸
+	 *@param int 	$width
+	 *@param int 	$height
+	 */
+	public function set_post_thumbnail_size($width, $height) {
+		$this->thumbnail_width  = $width;
+		$this->thumbnail_height = $height;
+	}
+
+	/**
+	 *@since 2019.09.04
+	 *设置post parent
+	 *@param int 	$post_parent
+	 **/
+	public function set_post_parent($post_parent) {
+		$this->post_parent = $post_parent;
+		$this->add_hidden('_post_post_parent', $post_parent);
 	}
 
 	public function add_post_title($label = '', $placeholder = "请输入标题", $required = true) {
@@ -165,8 +194,13 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		$this->add_html(_wnd_tags_editor_script(3, 20, $placeholder, $taxonomy));
 	}
 
-	public function add_post_thumbnail($width = 200, $height = 200, $label = '') {
-		$this->add_post_image_upload('_thumbnail_id', $width, $height, $label);
+	/**
+	 *@param int $save_width 	缩略图保存宽度
+	 *@param int $save_height 	缩略图保存高度
+	 *@param int $label
+	 **/
+	public function add_post_thumbnail($save_width = 200, $save_height = 200, $label = '') {
+		$this->add_post_image_upload('_thumbnail_id', $save_width, $save_height, $label);
 	}
 
 	public function add_post_content($rich_media_editor = true, $placeholder = '详情', $required = false) {
@@ -298,10 +332,37 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	}
 
 	/**
+	 *@since 2019.09.04
+	 *上传付费文件
+	 */
+	public function add_post_paid_file_upload($label = '', $placeholder = '价格', $required = false) {
+		$this->add_post_file_upload('file', '文件上传');
+		$this->add_post_price($label, $placeholder, $required);
+	}
+
+	/**
+	 *@since 2019.09.04
+	 *设置文章状态
+	 **/
+	public function add_post_status_select() {
+		$this->add_checkbox(
+			array(
+				'name'  => '_post_post_status',
+				'value' => 'draft',
+				'label' => '存为草稿',
+				'class' => 'switch is-' . self::$second_color,
+			)
+		);
+	}
+
+	/**
 	 *@since 2019.04.28 上传字段简易封装
 	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_WP_Form
+	 *@param string $meta_key 		meta key
+	 *@param int 	$save_width 	保存图片宽度
+	 *@param int 	$save_height 	保存图片高度
 	 */
-	public function add_post_image_upload($meta_key, $width = 200, $height = 200, $label = '') {
+	public function add_post_image_upload($meta_key, $save_width = 0, $save_height = 0, $label = '') {
 		if (!$this->post_id) {
 			$this->add_html('<div class="notification">获取post ID失败，无法设置图像上传！</div>');
 			return;
@@ -309,13 +370,13 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 
 		$args = array(
 			'label'          => $label,
-			'thumbnail_size' => array('width' => $width, 'height' => $height),
+			'thumbnail_size' => array('width' => $this->thumbnail_width, 'height' => $this->thumbnail_height),
 			'thumbnail'      => WND_URL . 'static/images/default.jpg',
 			'data'           => array(
 				'post_parent' => $this->post_id,
 				'meta_key'    => $meta_key,
-				'save_width'  => $width,
-				'save_height' => $height,
+				'save_width'  => $save_width,
+				'save_height' => $save_height,
 			),
 			'delete_button'  => false,
 		);
@@ -342,7 +403,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	/**
 	 *@since 2019.05.08 上传图片集
 	 */
-	public function add_post_gallery_upload($thumbnail_width = 160, $thumbnail_height = 120, $label = '') {
+	public function add_post_gallery_upload($save_width = 0, $save_height = 0, $label = '') {
 		if (!$this->post_id) {
 			$this->add_html('<div class="notification">获取post ID失败，无法设置相册上传！</div>');
 			return;
@@ -350,11 +411,11 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 
 		$args = array(
 			'label'          => $label,
-			'thumbnail_size' => array('width' => $thumbnail_width, 'height' => $thumbnail_height),
+			'thumbnail_size' => array('width' => $this->thumbnail_width, 'height' => $this->thumbnail_height),
 			'data'           => array(
 				'post_parent' => $this->post_id,
-				'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
-				'save_height' => 0, //图片文件存储最大过度 0 为不限制
+				'save_width'  => $save_width, //图片文件存储最大宽度 0 为不限制
+				'save_height' => $save_height, //图片文件存储最大过度 0 为不限制
 			),
 		);
 
@@ -381,7 +442,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	 *
 	 */
 	protected function get_draft_post($post_type) {
-		if (!$this->user_id) {
+		if (!$this->post_author) {
 			return 0;
 		}
 
@@ -404,7 +465,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		$query_array = array(
 			'post_status'    => 'auto-draft',
 			'post_type'      => $post_type,
-			'author'         => $this->user_id,
+			'author'         => $this->post_author,
 			'orderby'        => 'ID',
 			'order'          => 'ASC',
 			'cache_results'  => false,
@@ -422,7 +483,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 					'ID'          => $post_id,
 					'post_status' => 'auto-draft',
 					'post_title'  => 'Auto-draft',
-					'post_author' => $this->user_id,
+					'post_author' => $this->post_author,
 				)
 			);
 
@@ -455,7 +516,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 					'ID'          => $post_id,
 					'post_status' => 'auto-draft',
 					'post_title'  => 'Auto-draft',
-					'post_author' => $this->user_id,
+					'post_author' => $this->post_author,
 				)
 			);
 
@@ -481,7 +542,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 				'post_title'  => 'Auto-draft',
 				'post_name'   => uniqid(),
 				'post_type'   => $post_type,
-				'post_author' => $this->user_id,
+				'post_author' => $this->post_author,
 				'post_status' => 'auto-draft',
 			)
 		);

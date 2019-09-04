@@ -35,15 +35,11 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 		return array('status' => 0, 'msg' => $e->getMessage());
 	}
 
-	// 定义数据
-	$update_id               = $post_array['ID'] ?? 0;
-	$post_type               = $post_array['post_type'] ?? 'post';
-	$post_array['post_name'] = $post_array['post_name'] ?? uniqid();
-
-	// 基础检测
+	// 更新
+	$update_id = $post_array['ID'] ?? 0;
 	if ($update_id) {
-		$post_type = get_post_type($update_id);
-		if (!$post_type) {
+		$update_post = get_post($update_id);
+		if (!$update_post) {
 			return array('status' => 0, 'msg' => 'ID无效！');
 		}
 
@@ -52,12 +48,22 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 			return array('status' => 0, 'msg' => '权限错误！');
 		}
 
+		// 更新文章时post type 及 post name需特殊处理
+		$post_type               = $update_post->post_type;
+		$post_array['post_name'] = $post_array['post_name'] ?? $update_post->post_name;
+
+		// 新增
+	} else {
 		/**
 		 *@since 2019.07.17
 		 *attachment仅允许更新，而不能直接写入（写入应在文件上传时完成）
 		 */
-	} elseif ('attachment' == $post_type) {
-		return array('status' => 0, 'msg' => '未指定文件！');
+		if ('attachment' == $post_type) {
+			return array('status' => 0, 'msg' => '未指定文件！');
+		}
+
+		$post_type               = $post_array['post_type'] ?? 'post';
+		$post_array['post_name'] = $post_array['post_name'] ?? uniqid();
 	}
 
 	/**

@@ -16,130 +16,54 @@ if (!defined('ABSPATH')) {
  */
 function _wnd_post_form($args = array()) {
 	$defaults = array(
-		'post_id'           => 0,
-		'post_type'         => 'post',
-		'post_parent'       => 0,
-		'is_free'           => 1,
-		'with_file'         => 0,
-		'with_excerpt'      => 0,
-		'with_thumbnail'    => 0, //0 无缩略图，1、存储在wnd_meta _thumbnail_id字段: _wnd_the_post_thumbnail($width = 0, $height = 0)
-		'thumbnail_size'    => array('width' => 160, 'height' => 120),
-		'with_gallery'      => 0, //相册
-		'gallery_label'     => '', //相册默认提示信息
-		'rich_media_editor' => 1,
+		'post_id'     => 0,
+		'post_parent' => 0,
+		'is_free'     => false,
 	);
-	$args        = wp_parse_args($args, $defaults);
-	$post_id     = $args['post_id'];
-	$post_type   = $args['post_id'] ? get_post_type($args['post_id']) : $args['post_type'];
-	$post_parent = $args['post_parent'];
+	$args = wp_parse_args($args, $defaults);
 
-	/**
-	 *@since 2019.02.13 表单标题
-	 **/
-	if (!isset($args['form_title'])) {
-		$args['form_title'] = $post_id ? 'ID: ' . $post_id : '';
-	} elseif (!empty($args['form_title'])) {
-		$args['form_title'] = '' . $args['form_title'];
-	}
-
-	/**
-	 *@since 2019.02.01
-	 *获取指定 post type的所有注册taxonomy
-	 */
-	$cat_taxonomies = array();
-	$tag_taxonomies = array();
-	$taxonomies     = get_object_taxonomies($post_type, $output = 'object');
-	if ($taxonomies) {
-		foreach ($taxonomies as $taxonomy) {
-			// 私有taxonomy 排除
-			if (!$taxonomy->public) {
-				continue;
-			}
-
-			if ($taxonomy->hierarchical) {
-				$cat_taxonomies[] = $taxonomy->name;
-			} else {
-				$tag_taxonomies[] = $taxonomy->name;
-			}
-		}
-		unset($taxonomy);
-	}
+	$post_id     = (int) $args['post_id'];
+	$post_parent = (int) $args['post_parent'];
+	$is_free     = (bool) $args['is_free'];
 
 	/**
 	 *@since 2019.03.11 表单类
 	 */
-	$form = new Wnd_Post_Form($post_type, $post_id);
-	$form->set_form_title($args['form_title']);
+	$form = new Wnd_Post_Form('post', $post_id);
+	$form->set_post_parent($post_parent);
+
 	$form->add_post_title();
+	$form->add_post_name();
+	$form->add_post_excerpt();
 
-	if ($args['with_excerpt']) {
-		$form->add_post_excerpt();
-	}
+	// 分类
+	$form->add_post_category_select('category');
 
-	// 遍历分类
-	if ($cat_taxonomies) {
-		$form->add_html('<div class="field is-horizontal"><div class="field-body">');
-		foreach ($cat_taxonomies as $cat_taxonomy) {
-			$form->add_post_category_select($cat_taxonomy);
-		}
-		unset($cat_taxonomy);
-		$form->add_html('</div></div>');
-	}
-
-	// 遍历标签
-	if ($tag_taxonomies) {
-		foreach ($tag_taxonomies as $tag_taxonomy) {
-			// 排除WordPress原生 文章格式类型
-			if ($tag_taxonomy == 'post_format') {
-				continue;
-			}
-			$form->add_post_tags($tag_taxonomy, '请用回车键区分多个标签');
-			$form->add_html('<div class="message is-warning"><div class="message-body">请用回车键区分多个标签</div></div>');
-
-		}
-		unset($tag_taxonomy);
-	}
+	// 标签
+	$form->add_post_tags('post_tag', '请用回车键区分多个标签');
+	$form->add_html('<div class="message is-warning"><div class="message-body">请用回车键区分多个标签</div></div>');
 
 	// 缩略图
-	if ($args['with_thumbnail']) {
-		$form->add_post_thumbnail($args['thumbnail_size']['width'], $args['thumbnail_size']['height']);
-	}
+	$form->set_post_thumbnail_size(150, 150);
+	$form->add_post_thumbnail(200, 200);
 
 	// 相册
-	if ($args['with_gallery']) {
-		$form->add_post_gallery_upload($args['thumbnail_size']['width'], $args['thumbnail_size']['height'], $args['gallery_label']);
-	}
+	$form->set_post_thumbnail_size(100, 100);
+	$form->add_post_gallery_upload(0, 0, '相册图集');
 
-	if ($args['with_file'] or !$args['is_free']) {
-		$form->add_post_file_upload($meta_key = 'file');
-	}
-
-	if (!$args['is_free']) {
-		$form->add_post_price();
+	if (!$is_free) {
+		$form->add_post_paid_file_upload();
 	}
 
 	/**
 	 *@since 2019.04 富媒体编辑器仅在非ajax请求中有效
 	 */
-	if ($args['rich_media_editor']) {
-		$form->add_post_content(true);
-	} else {
-		$form->add_post_content(false);
-	}
-
-	$form->add_checkbox(
-		array(
-			'name'  => '_post_post_status',
-			'value' => 'draft',
-			'label' => '存为草稿',
-			'class' => 'switch is-' . Wnd_Post_Form::$second_color,
-		)
-	);
-
-	$form->add_hidden('_post_post_parent', $post_parent);
+	$form->add_post_content(true);
+	$form->add_post_status_select();
 	$form->set_submit_button('保存');
+
 	// 以当前函数名设置filter hook
-	$form->set_filter(__FUNCTION__ . '_' . $post_type);
+	$form->set_filter(__FUNCTION__);
 	$form->build();
 
 	return $form->html;
@@ -150,8 +74,11 @@ function _wnd_post_form($args = array()) {
  *ajax请求获取文章信息
  */
 function _wnd_post_info($args) {
-	$defaults = array('post_id' => 0, 'color' => 'is-primay');
-	$args     = wp_parse_args($args, $defaults);
+	$defaults = array(
+		'post_id' => 0,
+		'color'   => 'is-primay',
+	);
+	$args = wp_parse_args($args, $defaults);
 
 	$post = get_post($args['post_id']);
 	if (!$post) {
