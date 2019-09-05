@@ -192,6 +192,9 @@ function _wnd_post_status_form($post_id) {
 
 /**
  *@since 2019.02.27 获取WndWP文章缩略图
+ *@param int $post_id 	文章ID
+ *@param int $width 	缩略图宽度
+ *@param int $height 	缩略图高度
  */
 function _wnd_post_thumbnail($post_id, $width, $height) {
 	$post_id = $post_id ?: get_the_ID();
@@ -199,15 +202,10 @@ function _wnd_post_thumbnail($post_id, $width, $height) {
 		$image_id = wnd_get_post_meta($post_id, '_thumbnail_id');
 	}
 
-	if ($image_id) {
-		if ($width and $height) {
-			return '<img class="thumbnail" src="' . wnd_get_thumbnail_url($image_id, $width, $height) . '" width="' . $width . '" height="' . $height . '">';
-		} else {
-			return '<img class="thumbnail" src="' . wp_get_attachment_url($image_id) . '">';
-		}
-	}
+	$url  = $image_id ? wnd_get_thumbnail_url($image_id, $width, $height) : WND_URL . '/static/images/default.jpg';
+	$html = '<img class="thumbnail" src="' . $url . '" width="' . $width . '" height="' . $height . '">';
 
-	return false;
+	return apply_filters('_wnd_post_thumbnail', $html, $post_id, $width, $height);
 }
 
 /**

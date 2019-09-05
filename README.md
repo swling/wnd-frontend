@@ -185,7 +185,7 @@ apply_filters('wnd_can_create_order', array('status'=>1,'msg'=>'默认通过'), 
 /**
 *@since 2019.02.12 付费内容，作者收益提成，默认为文章价格* 后台比例设置
 */
-apply_filters( 'wnd_get_post_commission', $commission, $post_id )
+apply_filters('wnd_get_post_commission', $commission, $post_id);
 
 /**
 *@since 2019.02.13 post价格
@@ -196,22 +196,26 @@ apply_filters('wnd_get_post_price', $price, $post_id);
 ## 表单
 ```php
 ##注册表单@since 2019.03.10
-apply_filters( '_wnd_login_form', $input_values )
+apply_filters('_wnd_login_form', $input_values);
 
 ##登录表单@since 2019.03.10
-apply_filters( '_wnd_reg_form', $input_values )
+apply_filters('_wnd_reg_form', $input_values);
 
 ##用户资料表单@since 2019.03.10
-apply_filters( '_wnd_profile_form', $input_values )
+apply_filters('_wnd_profile_form', $input_values);
 
 ##文章发布编辑表单 @since 2019.03.11
-apply_filters( '_wnd_post_form_{$post_type}', $input_values )
+apply_filters('_wnd_post_form_{$post_type}', $input_values);
 ```
 ## 面包屑
 ```php
-apply_filters('_wnd_breadcrumb_right', $breadcrumb_right)
+apply_filters('_wnd_breadcrumb_right', $breadcrumb_right);
 ```
 
+## 缩略图
+```php
+apply_filters('_wnd_post_thumbnail', $html, $post_id, $width, $height);
+```
 # action
 ```php
 ##单上传文件后
@@ -375,4 +379,4 @@ switch (response.status) {
 		wnd_ajax_msg(response.msg, style, "#" + form_id);
 		break;
 }
-```			
+```
