@@ -49,12 +49,12 @@ try {
 // 校验通过，跳转
 if ($object_id) {
 	$link = get_permalink($object_id) ?: wnd_get_option('wnd', 'wnd_pay_return_url') ?: home_url();
-	header("Location:" . $link);
+	header('Location:' . $link . '?from=payment_successful');
 	exit;
 
 // 充值
 } else {
 	$link = wnd_get_option('wnd', 'wnd_pay_return_url') ?: home_url();
-	header("Location:" . $link);
+	header('Location:' . $link . '?from=payment_successful');
 	exit;
 }

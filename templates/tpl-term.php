@@ -118,7 +118,7 @@ function _wnd_terms_text($taxonomy, $number) {
 			}
 
 			// 移除末尾的逗号
-			return rtrim($terms_list, ",");
+			return rtrim($terms_list, ',');
 		}
 	}
 }

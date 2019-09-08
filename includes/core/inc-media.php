@@ -19,8 +19,8 @@ function wnd_download_file($the_file, $rename = 'download') {
 	$ext = '.' . pathinfo($the_file)['extension'];
 
 	// Force download
-	header("Content-type: application/x-file-to-save");
-	header("Content-Disposition: attachment; filename=" . get_option('blogname') . '-' . $rename . $ext);
+	header('Content-type: application/x-file-to-save');
+	header('Content-Disposition: attachment; filename=' . get_option('blogname') . '-' . $rename . $ext);
 	ob_end_clean();
 	readfile($the_file);
 	exit;

@@ -178,7 +178,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 			$term_list .= $term->name . ',';
 		}unset($term);
 		// 移除末尾的逗号
-		$term_list = rtrim($term_list, ",");
+		$term_list = rtrim($term_list, ',');
 
 		$this->add_text(
 			array(
