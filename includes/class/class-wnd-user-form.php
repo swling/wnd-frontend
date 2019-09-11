@@ -111,7 +111,7 @@ class Wnd_User_Form extends Wnd_WP_Form {
 	}
 
 	public function add_user_url($label = '网站', $placeholder = '网站链接', $required = false) {
-		$this->add_text(
+		$this->add_url(
 			array(
 				'name'        => '_user_user_url',
 				'value'       => $this->user->user_url,
