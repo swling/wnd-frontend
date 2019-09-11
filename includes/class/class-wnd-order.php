@@ -95,7 +95,7 @@ class Wnd_Order {
 	 *用户本站消费数据(含余额消费，或直接第三方支付消费)
 	 *
 	 *@param int 		$this->user_id  	required
-	 *@param int 		$this->object_id  	required
+	 *@param int 		$this->object_id  	option
 	 *@param string 	$this->subject 		option
 	 *@param bool 	 	$is_success 		option 	是否直接写入，无需支付平台校验
 	 */
@@ -103,8 +103,8 @@ class Wnd_Order {
 		if (!$this->user_id) {
 			throw new Exception('请登录！');
 		}
-		if (!$this->object_id or !get_post($this->object_id)) {
-			throw new Exception('订单未指定产品，或产品无效！');
+		if ($this->object_id and !get_post($this->object_id)) {
+			throw new Exception('指定产品无效！');
 		}
 
 		// 定义变量
@@ -126,7 +126,7 @@ class Wnd_Order {
 		);
 		if ($old_orders) {
 			$this->ID = $old_orders[0]->ID;
-		} else {
+		} elseif ($this->object_id) {
 			/**
 			 *@since 2019.06.04
 			 *新增订单统计
@@ -170,7 +170,9 @@ class Wnd_Order {
 		 *@since 2019.06.04
 		 *删除对象缓存
 		 **/
-		wp_cache_delete($this->user_id . $this->object_id, 'user_has_paid');
+		if ($this->object_id) {
+			wp_cache_delete($this->user_id . $this->object_id, 'user_has_paid');
+		}
 
 		$this->ID = $ID;
 		return $ID;

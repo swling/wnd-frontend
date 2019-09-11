@@ -52,6 +52,12 @@ $order->set_total_amount($price);
 $order->set_object_id($post_id);
 $order->create();
 
+// 创建无产品的订单
+$order = new Wnd_Order();
+$order->set_total_amount($price);
+$order->set_subject($subject);
+$order->create($is_success = true);
+
 ###########################################################
 /**
  *@since 2019.8.12
