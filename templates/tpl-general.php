@@ -12,7 +12,7 @@ function _wnd_breadcrumb() {
 	/**
 	 *columns
 	 **/
-	$html = '<div class="columns is-mobile">';
+	$html = '<div class="breadcrumb-wrap columns is-mobile">';
 
 	/**
 	 *左侧导航
