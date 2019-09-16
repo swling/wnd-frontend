@@ -11,10 +11,10 @@ if (!defined('ABSPATH')) {
  *@since 2019.01.20
  *ajax文件上传
  *@param $_FILES
- *@param $_POST["save_width"]
- *@param $_POST["save_height"]
- *@param $_POST["thumbnail_width"]
- *@param $_POST["thumbnail_height"]
+ *@param $_POST['save_width']
+ *@param $_POST['save_height']
+ *@param $_POST['thumbnail_width']
+ *@param $_POST['thumbnail_height']
  *@param $_POST['meta_key']
  *@param $_POST['meta_key_nonce']
  *@param $_POST['post_parent']
@@ -36,10 +36,10 @@ function wnd_ajax_upload_file() {
 		return array('status' => 0, 'msg' => '获取上传文件失败！');
 	}
 
-	$save_width       = $_POST["save_width"] ?? 0;
-	$save_height      = $_POST["save_height"] ?? 0;
-	$thumbnail_height = $_POST["thumbnail_height"] ?? 0;
-	$thumbnail_width  = $_POST["thumbnail_width"] ?? 0;
+	$save_width       = $_POST['save_width'] ?? 0;
+	$save_height      = $_POST['save_height'] ?? 0;
+	$thumbnail_height = $_POST['thumbnail_height'] ?? 0;
+	$thumbnail_width  = $_POST['thumbnail_width'] ?? 0;
 	$meta_key         = $_POST['meta_key'] ?? null;
 	$post_parent      = $_POST['post_parent'] ?? 0;
 	$user_id          = get_current_user_id();
@@ -175,13 +175,13 @@ function wnd_ajax_upload_file() {
  *删除附件
  *@since 2019.01.23
  *@param $_POST['meta_key'];
- *@param $_POST["post_parent"];
- *@param $_POST["file_id"];
+ *@param $_POST['post_parent'];
+ *@param $_POST['file_id'];
  */
 function wnd_ajax_delete_file() {
 	$meta_key    = $_POST['meta_key'];
-	$post_parent = $_POST["post_parent"];
-	$file_id     = $_POST["file_id"];
+	$post_parent = $_POST['post_parent'];
+	$file_id     = $_POST['file_id'];
 
 	if (!$file_id) {
 		return array('status' => 0, 'msg' => '文件不存在！');
