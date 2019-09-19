@@ -367,8 +367,8 @@ function _wnd_account_form() {
 	 *绑定邮箱或手机
 	 */
 	$html = '<div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
-	$html .= '<a onclick="wnd_ajax_modal(\'_wnd_bind_email_form\')">更换邮箱</a> | ';
-	$html .= 1 == wnd_get_option('wnd', 'wnd_enable_sms') ? '<a onclick="wnd_ajax_modal(\'_wnd_bind_phone_form\')">更换手机</a> | ' : '';
+	$html .= '<a onclick="wnd_ajax_modal(\'_wnd_bind_email_form\')">绑定邮箱</a> | ';
+	$html .= 1 == wnd_get_option('wnd', 'wnd_enable_sms') ? '<a onclick="wnd_ajax_modal(\'_wnd_bind_phone_form\')">绑定手机</a> | ' : '';
 	$html .= '<a onclick="wnd_ajax_modal(\'_wnd_lostpassword_form\')">重置密码</a>';
 	$html .= '</div></div>';
 
