@@ -70,13 +70,8 @@ $auth = new Wnd_Auth;
 $auth->set_type('verify');
 $auth->send_to_current_user($is_email = true);
 
-# 验证
-$email_or_phone = wp_get_current_user()->user_email;
-// or
-$email_or_phone = wnd_get_user_phone(get_current_user_id());
-
 $auth = new Wnd_Auth;
 $auth->set_type('verify');
 $auth->set_auth_code($auth_code);
-$auth->set_email_or_phone($email_or_phone);
+// $auth->set_email_or_phone($email_or_phone);
 $auth->verify();
