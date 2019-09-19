@@ -357,19 +357,22 @@ function _wnd_account_form() {
 	$form->add_user_password('当前密码');
 	$form->add_user_new_password();
 	$form->add_user_new_password_repeat();
-
-	if (wnd_get_option('wnd', 'wnd_enable_sms') == 1) {
-		$form->add_sms_verify('bind', wnd_get_option('wnd', 'wnd_sms_template_v'));
-	} else {
-		$form->add_email_verify('bind', $template = '');
-	}
-
 	$form->set_action('wnd_ajax_update_account');
 	$form->set_submit_button('保存');
 	$form->set_filter(__FUNCTION__);
 	$form->build();
 
-	return $form->html;
+	/**
+	 *@since 2019.09.19
+	 *绑定邮箱或手机
+	 */
+	$html = '<div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
+	$html .= '<a onclick="wnd_ajax_modal(\'_wnd_bind_email_form\')">更换邮箱</a> | ';
+	$html .= 1 == wnd_get_option('wnd', 'wnd_enable_sms') ? '<a onclick="wnd_ajax_modal(\'_wnd_bind_phone_form\')">更换手机</a> | ' : '';
+	$html .= '<a onclick="wnd_ajax_modal(\'_wnd_lostpassword_form\')">重置密码</a>';
+	$html .= '</div></div>';
+
+	return $form->html . $html;
 }
 
 /**
@@ -383,6 +386,7 @@ function _wnd_bind_email_form() {
 	$form = new Wnd_User_Form();
 	$form->add_form_attr('class', 'user-form');
 	$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>绑定邮箱', true);
+	$form->add_user_password('当前密码');
 	$form->add_email_verify('bind', $template = '');
 	$form->set_action('wnd_ajax_bind_email');
 	$form->set_submit_button('保存');
@@ -402,6 +406,7 @@ function _wnd_bind_phone_form() {
 	$form = new Wnd_User_Form();
 	$form->add_form_attr('class', 'user-form');
 	$form->set_form_title('<span class="icon"><i class="fa fa-phone"></i></span>绑定手机', true);
+	$form->add_user_password('当前密码');
 	$form->add_sms_verify('bind', $template = '');
 	$form->set_action('wnd_ajax_bind_phone');
 	$form->set_submit_button('保存');

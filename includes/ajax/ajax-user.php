@@ -312,6 +312,7 @@ function wnd_ajax_reset_password() {
 	$new_password        = $_POST['_user_new_pass'] ?? null;
 	$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? null;
 	$auth_code           = $_POST['auth_code'];
+	$is_user_logged_in   = is_user_logged_in();
 
 	// 验证密码正确性
 	if (strlen($new_password) < 6) {
@@ -322,7 +323,7 @@ function wnd_ajax_reset_password() {
 	}
 
 	//获取用户
-	$user = wnd_get_user_by($email_or_phone);
+	$user = $is_user_logged_in ? wp_get_current_user() : wnd_get_user_by($email_or_phone);
 	if (!$user) {
 		return array('status' => 0, 'msg' => '账户未注册！');
 	}
@@ -336,7 +337,10 @@ function wnd_ajax_reset_password() {
 		$auth->verify();
 
 		reset_password($user, $new_password);
-		return array('status' => 1, 'msg' => '密码修改成功！<a onclick="wnd_ajax_modal(\'_wnd_login_form\');">登录</a>');
+		return array(
+			'status' => $is_user_logged_in ? 4 : 1,
+			'msg'    => '密码修改成功！<a onclick="wnd_ajax_modal(\'_wnd_login_form\');">登录</a>',
+		);
 	} catch (Exception $e) {
 		return array('status' => 0, 'msg' => $e->getMessage());
 	}
@@ -350,6 +354,12 @@ function wnd_ajax_reset_password() {
 function wnd_ajax_bind_email() {
 	$email     = $_POST['_user_user_email'] ?? null;
 	$auth_code = $_POST['auth_code'] ?? null;
+	$password  = $_POST['_user_user_pass'] ?? null;
+	$user      = wp_get_current_user();
+
+	if (!wp_check_password($password, $user->data->user_pass, $user->ID)) {
+		return array('status' => 0, 'msg' => '当前密码错误！');
+	}
 
 	// 核对验证码
 	try {
@@ -383,6 +393,12 @@ function wnd_ajax_bind_email() {
 function wnd_ajax_bind_phone() {
 	$phone     = $_POST['phone'] ?? null;
 	$auth_code = $_POST['auth_code'] ?? null;
+	$password  = $_POST['_user_user_pass'] ?? null;
+	$user      = wp_get_current_user();
+
+	if (!wp_check_password($password, $user->data->user_pass, $user->ID)) {
+		return array('status' => 0, 'msg' => '当前密码错误！');
+	}
 
 	// 核对验证码
 	try {

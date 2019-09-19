@@ -34,8 +34,11 @@ function wnd_get_user_phone($user_id) {
  *@return 	object|false	WordPress user object on success
  */
 function wnd_get_user_by($email_or_phone_or_login) {
-	global $wpdb;
+	if (!$email_or_phone_or_login) {
+		return false;
+	}
 
+	global $wpdb;
 	if (is_email($email_or_phone_or_login)) {
 		$user = get_user_by('email', $email_or_phone_or_login);
 

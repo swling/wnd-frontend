@@ -228,11 +228,16 @@ class Wnd_Auth {
 	}
 
 	/**
-	 *校验短信验证
+	 *校验验证码
+	 *
+	 *若已指定 $this->email_or_phone 则依据邮箱或手机校验
+	 *若未指定邮箱及手机且当前用户已登录，则依据用户ID校验
+	 *
 	 *@since 初始化
 	 *
 	 *@param bool 		$$delete_after_verified 	验证成功后是否删除本条记录(对应记录必须没有绑定用户)
 	 *@param string 	$this->email_or_phone 		邮箱或手机
+	 *@param object 	$this->current_user 		当前用户
 	 *@param string 	$this->type 				验证类型
 	 *@param string 	$this->auth_code	 		验证码
 	 *
@@ -246,7 +251,7 @@ class Wnd_Auth {
 		if (empty($this->auth_code)) {
 			throw new Exception('校验失败：请填写验证码！');
 		}
-		if (empty($this->email_or_phone)) {
+		if (empty($this->email_or_phone) and !$this->current_user->ID) {
 			throw new Exception('校验失败：请填写' . $text . '！');
 		}
 
@@ -263,13 +268,18 @@ class Wnd_Auth {
 				throw new Exception($text . '已注册过！');
 			}
 			// 找回密码
-		} elseif ($this->type == 'reset_password' and !$temp_user) {
+		} elseif ($this->type == 'reset_password' and !$temp_user and !$this->current_user->ID) {
 			throw new Exception($text . '尚未注册！');
 		}
 
 		// 过期时间设置
 		$intervals = $field == 'phone' ? 600 : 3600;
-		$data      = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE {$field} = %s;", $this->email_or_phone));
+		if ($this->email_or_phone) {
+			$data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE {$field} = %s;", $this->email_or_phone));
+		} else {
+			$data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE user_id = %d;", $this->current_user->ID));
+		}
+
 		if (!$data) {
 			throw new Exception('校验失败：请先获取验证码！');
 		}
