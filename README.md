@@ -205,7 +205,13 @@ apply_filters('_wnd_reg_form', $input_values);
 apply_filters('_wnd_profile_form', $input_values);
 
 ##文章发布编辑表单 @since 2019.03.11
-apply_filters('_wnd_post_form_{$post_type}', $input_values);
+apply_filters('_wnd_post_form', $input_values);
+
+##找回密码表单
+apply_filters('_wnd_lostpassword_form', $input_values);
+
+##账户表单
+apply_filters('_wnd_account_form', $input_values);
 ```
 ## 面包屑
 ```php

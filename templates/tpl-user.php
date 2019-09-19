@@ -296,6 +296,7 @@ function _wnd_lostpassword_form($type = 'email') {
 	$form->add_user_new_password_repeat('确认新密码', '确认新密码', true);
 	$form->set_action('wnd_ajax_reset_password');
 	$form->set_submit_button('重置密码');
+	$form->set_filter(__FUNCTION__);
 	$form->build();
 
 	return $form->html;
@@ -343,6 +344,12 @@ function _wnd_account_form() {
 	if (!is_user_logged_in()) {
 		return '<script>wnd_alert_msg(\'请登录\')</script>';
 	}
+	if (!wp_get_current_user()->user_email) {
+		$html = '<div class="has-text-centered content">';
+		$html .= '<button class="button is-' . wnd_get_option('wnd', 'wnd_primary_color') . '" onclick="wnd_ajax_modal(\'_wnd_bind_email_form\')">请绑定邮箱</button>';
+		$html .= '</div>';
+		return $html;
+	}
 
 	$form = new Wnd_User_Form();
 	$form->add_form_attr('class', 'user-form');
@@ -359,6 +366,7 @@ function _wnd_account_form() {
 
 	$form->set_action('wnd_ajax_update_account');
 	$form->set_submit_button('保存');
+	$form->set_filter(__FUNCTION__);
 	$form->build();
 
 	return $form->html;
