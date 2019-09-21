@@ -355,11 +355,6 @@ function _wnd_account_form() {
 	$form->add_user_password('当前密码');
 	$form->add_user_new_password();
 	$form->add_user_new_password_repeat();
-	if (1 == wnd_get_option('wnd', 'wnd_enable_sms')) {
-		$form->add_sms_verify('verify', wnd_get_option('wnd', 'wnd_sms_template_v'));
-	} else {
-		$form->add_email_verify('verify');
-	}
 	$form->set_action('wnd_ajax_update_account');
 	$form->set_submit_button('保存');
 	$form->set_filter(__FUNCTION__);

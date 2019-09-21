@@ -36,29 +36,6 @@ function wnd_filter_can_reg($can_array) {
 }
 
 /**
- * 用户更新账户权限
- *@since 2019.01.22
- */
-add_filter('wnd_can_update_account', 'wnd_filter_can_update_account', 10, 1);
-function wnd_filter_can_update_account($can_array) {
-	$auth_code      = $_POST['auth_code'];
-	$user           = wp_get_current_user();
-	$user_id        = $user->ID;
-	$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'] ?? '';
-
-	try {
-		$auth = new Wnd_Auth;
-		$auth->set_type('verify');
-		$auth->set_auth_code($auth_code);
-		$auth->set_email_or_phone($email_or_phone);
-		$auth->verify();
-		return $can_array;
-	} catch (Exception $e) {
-		return array('status' => 0, 'msg' => $e->getMessage());
-	}
-}
-
-/**
  *@since 2019.02.13
  *文章状态过滤，允许前端表单设置为草稿状态（执行顺序10，因而会被其他顺序晚于10的filter覆盖）
  *如果 $update_id 为0 表示为新发布文章，否则为更新文章

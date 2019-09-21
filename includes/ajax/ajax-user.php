@@ -295,8 +295,8 @@ function wnd_ajax_update_account() {
 		return array('status' => 0, 'msg' => $user_id->get_error_message());
 	}
 
-	// 用户更新成功
-	$return_array = apply_filters('wnd_update_account_return', array('status' => 1, 'msg' => '更新成功'), $user_id);
+	// 用户更新成功：更新账户会导致当前账户的wp nonce失效，需刷新页面
+	$return_array = apply_filters('wnd_update_account_return', array('status' => 4, 'msg' => '更新成功'), $user_id);
 	return $return_array;
 }
 
