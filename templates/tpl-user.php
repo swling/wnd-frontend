@@ -244,10 +244,9 @@ function _wnd_reg_form($type = 'email') {
 	$form->add_user_password();
 
 	if ($type == 'phone') {
-		// $form->add_user_email($placeholder = '邮箱');
-		$form->add_sms_verify($verify_type = 'register', wnd_get_option('wnd', 'wnd_sms_template_r'));
+		$form->add_sms_verify('register', wnd_get_option('wnd', 'wnd_sms_template_r'));
 	} else {
-		$form->add_email_verify($verify_type = 'register', $template = '');
+		$form->add_email_verify('register');
 	}
 	if (wnd_get_option('wnd', 'wnd_agreement_url') or 1) {
 		$form->add_checkbox(
@@ -286,10 +285,10 @@ function _wnd_lostpassword_form($type = 'email') {
 	$form->add_form_attr('class', 'user-form');
 	if ($type == 'phone') {
 		$form->set_form_title('<span class="icon"><i class="fa fa-phone-square"></i></span>手机验证', true);
-		$form->add_sms_verify($verify_type = 'reset_password', wnd_get_option('wnd', 'wnd_sms_template_v'));
+		$form->add_sms_verify('reset_password', wnd_get_option('wnd', 'wnd_sms_template_v'));
 	} else {
 		$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>邮箱验证</h3>', true);
-		$form->add_email_verify($verify_type = 'reset_password', $template = '');
+		$form->add_email_verify('reset_password');
 	}
 
 	$form->add_user_new_password('新密码', '新密码', true);
@@ -344,7 +343,7 @@ function _wnd_account_form() {
 	if (!is_user_logged_in()) {
 		return '<script>wnd_alert_msg(\'请登录\')</script>';
 	}
-	if (!wp_get_current_user()->user_email) {
+	if (!wp_get_current_user()->data->user_email) {
 		$html = '<div class="has-text-centered content">';
 		$html .= '<button class="button is-' . wnd_get_option('wnd', 'wnd_primary_color') . '" onclick="wnd_ajax_modal(\'_wnd_bind_email_form\')">请绑定邮箱</button>';
 		$html .= '</div>';
@@ -353,10 +352,14 @@ function _wnd_account_form() {
 
 	$form = new Wnd_User_Form();
 	$form->add_form_attr('class', 'user-form');
-	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>账户安全', true);
 	$form->add_user_password('当前密码');
 	$form->add_user_new_password();
 	$form->add_user_new_password_repeat();
+	if (1 == wnd_get_option('wnd', 'wnd_enable_sms')) {
+		$form->add_sms_verify('verify', wnd_get_option('wnd', 'wnd_sms_template_v'));
+	} else {
+		$form->add_email_verify('verify');
+	}
 	$form->set_action('wnd_ajax_update_account');
 	$form->set_submit_button('保存');
 	$form->set_filter(__FUNCTION__);
@@ -366,9 +369,9 @@ function _wnd_account_form() {
 	 *@since 2019.09.19
 	 *绑定邮箱或手机
 	 */
-	$html = '<div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
-	$html .= '<a onclick="wnd_ajax_modal(\'_wnd_bind_email_form\')">绑定邮箱</a> | ';
-	$html .= 1 == wnd_get_option('wnd', 'wnd_enable_sms') ? '<a onclick="wnd_ajax_modal(\'_wnd_bind_phone_form\')">绑定手机</a> | ' : '';
+	$html = '<div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body has-text-centered">';
+	$html .= '<a onclick="wnd_ajax_modal(\'_wnd_bind_email_form\')">邮箱设置</a> | ';
+	$html .= 1 == wnd_get_option('wnd', 'wnd_enable_sms') ? '<a onclick="wnd_ajax_modal(\'_wnd_bind_phone_form\')">手机设置</a> | ' : '';
 	$html .= '<a onclick="wnd_ajax_modal(\'_wnd_lostpassword_form\')">重置密码</a>';
 	$html .= '</div></div>';
 
@@ -386,8 +389,13 @@ function _wnd_bind_email_form() {
 	$form = new Wnd_User_Form();
 	$form->add_form_attr('class', 'user-form');
 	$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>绑定邮箱', true);
-	$form->add_user_password('当前密码');
-	$form->add_email_verify('bind', $template = '');
+
+	// 如果当前用户更改邮箱，则需要验证密码，首次绑定不需要
+	if (wp_get_current_user()->data->user_email) {
+		$form->add_user_password('当前密码');
+	}
+
+	$form->add_email_verify('bind');
 	$form->set_action('wnd_ajax_bind_email');
 	$form->set_submit_button('保存');
 	$form->build();
@@ -406,8 +414,13 @@ function _wnd_bind_phone_form() {
 	$form = new Wnd_User_Form();
 	$form->add_form_attr('class', 'user-form');
 	$form->set_form_title('<span class="icon"><i class="fa fa-phone"></i></span>绑定手机', true);
-	$form->add_user_password('当前密码');
-	$form->add_sms_verify('bind', $template = '');
+
+	// 如果当前用户更改手机号，需要验证密码，首次绑定不需要
+	if (wnd_get_user_phone(get_current_user_id())) {
+		$form->add_user_password('当前密码');
+	}
+
+	$form->add_sms_verify('bind', wnd_get_option('wnd', 'wnd_sms_template_v'));
 	$form->set_action('wnd_ajax_bind_phone');
 	$form->set_submit_button('保存');
 	$form->build();

@@ -268,7 +268,7 @@ function wnd_ajax_update_account() {
 	}
 
 	// 修改邮箱
-	if ($new_email != $user->user_email) {
+	if ($new_email and $new_email != $user->user_email) {
 		if (!is_email($new_email)) {
 			return array('status' => 0, 'msg' => '邮件格式错误！');
 		} else {
@@ -357,7 +357,8 @@ function wnd_ajax_bind_email() {
 	$password  = $_POST['_user_user_pass'] ?? null;
 	$user      = wp_get_current_user();
 
-	if (!wp_check_password($password, $user->data->user_pass, $user->ID)) {
+	// 更改邮箱需要验证当前密码、首次绑定不需要
+	if (wp_get_current_user()->data->user_email and !wp_check_password($password, $user->data->user_pass, $user->ID)) {
 		return array('status' => 0, 'msg' => '当前密码错误！');
 	}
 
@@ -396,7 +397,8 @@ function wnd_ajax_bind_phone() {
 	$password  = $_POST['_user_user_pass'] ?? null;
 	$user      = wp_get_current_user();
 
-	if (!wp_check_password($password, $user->data->user_pass, $user->ID)) {
+	// 更改手机需要验证当前密码、首次绑定不需要
+	if (wnd_get_user_phone(get_current_user_id()) and !wp_check_password($password, $user->data->user_pass, $user->ID)) {
 		return array('status' => 0, 'msg' => '当前密码错误！');
 	}
 

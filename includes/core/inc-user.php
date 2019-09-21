@@ -22,6 +22,7 @@ function wnd_get_user_phone($user_id) {
 	global $wpdb;
 	$phone = $wpdb->get_var($wpdb->prepare("SELECT phone FROM $wpdb->wnd_users WHERE user_id = %d;", $user_id));
 	if ($phone) {
+		wnd_update_user_meta($user_id, 'phone', $phone);
 		return $phone;
 	} else {
 		return false;
