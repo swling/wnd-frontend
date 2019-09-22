@@ -10,34 +10,20 @@ if (!defined('ABSPATH')) {
  */
 function wnd_ajax_create_order() {
 	$post_id = (int) $_POST['post_id'];
-	$user_id = get_current_user_id();
 	if (!$post_id) {
 		return array('status' => 0, 'msg' => 'ID无效！');
 	}
 
-	// 权限判断
-	if (!$user_id) {
-		return array('status' => 0, 'msg' => '请登录后操作！');
-	}
 	$wnd_can_create_order = apply_filters('wnd_can_create_order', array('status' => 1, 'msg' => '默认通过'), $post_id);
 	if ($wnd_can_create_order['status'] === 0) {
 		return $wnd_can_create_order;
-	}
-
-	// 余额判断
-	if (wnd_get_post_price($post_id) > wnd_get_user_money($user_id)) {
-		if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
-			return array('status' => 0, 'msg' => '余额不足！<a href="' . _wnd_order_link($post_id) . '">在线支付</a> | <a onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</a>');
-		} else {
-			return array('status' => 0, 'msg' => '余额不足！');
-		}
 	}
 
 	// 写入消费数据
 	try {
 		$order = new Wnd_Order();
 		$order->set_object_id($post_id);
-		$order->set_subject(get_the_title($post_id) . '(余额支付)');
+		$order->set_subject(get_the_title($post_id));
 		$order->create($is_success = true);
 	} catch (Exception $e) {
 		return array('status' => 0, 'msg' => $e->getMessage());
