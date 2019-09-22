@@ -14,6 +14,11 @@ function wnd_ajax_create_order() {
 		return array('status' => 0, 'msg' => 'ID无效！');
 	}
 
+	$user_id = get_current_user_id();
+	if (!$user_id) {
+		return array('status' => 0, 'msg' => '请登录！');
+	}
+
 	$wnd_can_create_order = apply_filters('wnd_can_create_order', array('status' => 1, 'msg' => '默认通过'), $post_id);
 	if ($wnd_can_create_order['status'] === 0) {
 		return $wnd_can_create_order;
