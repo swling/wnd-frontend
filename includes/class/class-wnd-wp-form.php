@@ -11,6 +11,7 @@
  */
 class Wnd_WP_Form extends Wnd_Form {
 
+	protected $user;
 	protected $filter     = null;
 	protected $form_names = array();
 	protected $message    = null;
@@ -20,6 +21,7 @@ class Wnd_WP_Form extends Wnd_Form {
 	public static $second_color;
 
 	public function __construct($is_ajax_submit = true) {
+		$this->user = wp_get_current_user();
 
 		/**
 		 *@since 2019.07.17
@@ -96,7 +98,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		$this->add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
 
 		// 当前用户为绑定手机或更换绑定手机
-		if (!wnd_get_user_phone(get_current_user_id()) or 'bind' == $type) {
+		if (!wnd_get_user_phone($this->user->ID) or 'bind' == $type) {
 			$this->add_text(
 				array(
 					'name'        => 'phone',
@@ -132,7 +134,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		$this->add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
 
 		// 当前用户为绑定邮箱或更换绑定邮箱
-		if (!wp_get_current_user()->data->user_email or 'bind' == $type) {
+		if ($this->user->ID and !$this->user->data->user_email or 'bind' == $type) {
 			$this->add_email(
 				array(
 					'name'        => '_user_user_email',
@@ -173,7 +175,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		// 合并$data
 		$defaults_data = array(
 			'post_parent' => 0,
-			'user_id'     => get_current_user_id(),
+			'user_id'     => $this->user->ID,
 			'meta_key'    => 0,
 			'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
 			'save_height' => 0, //图片文件存储最大过度 0 为不限制
@@ -226,7 +228,7 @@ class Wnd_WP_Form extends Wnd_Form {
 
 		$defaults_data = array(
 			'post_parent' => 0,
-			'user_id'     => get_current_user_id(),
+			'user_id'     => $this->user->ID,
 			'meta_key'    => 0,
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
@@ -277,7 +279,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		// 合并$data
 		$defaults_data = array(
 			'post_parent' => 0,
-			'user_id'     => get_current_user_id(),
+			'user_id'     => $this->user->ID,
 			'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
 			'save_height' => 0, //图片文件存储最大过度 0 为不限制
 		);

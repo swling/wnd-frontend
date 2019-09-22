@@ -6,16 +6,10 @@
  */
 class Wnd_User_Form extends Wnd_WP_Form {
 
-	protected $user;
-
 	// 初始化构建
 	public function __construct() {
-
-		// 继承基础变量
+		// 继承
 		parent::__construct();
-
-		// 新增拓展变量
-		$this->user = wp_get_current_user();
 	}
 
 	public function add_user_login($label = '用户名', $placeholder = '用户名、手机、邮箱', $required = true) {

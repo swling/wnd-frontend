@@ -9,8 +9,6 @@
  */
 class Wnd_Post_Form extends Wnd_WP_Form {
 
-	protected $post_author;
-
 	protected $post_id;
 
 	protected $post_type;
@@ -56,7 +54,6 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		parent::__construct();
 
 		// 初始化属性
-		$this->post_author      = get_current_user_id();
 		$this->post_parent      = 0;
 		$this->thumbnail_width  = 200;
 		$this->thumbnail_height = 200;
@@ -442,7 +439,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 	 *
 	 */
 	protected function get_draft_post($post_type) {
-		if (!$this->post_author) {
+		if (!$this->user->ID) {
 			return 0;
 		}
 
@@ -465,7 +462,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 		$query_array = array(
 			'post_status'    => 'auto-draft',
 			'post_type'      => $post_type,
-			'author'         => $this->post_author,
+			'author'         => $this->user->ID,
 			'orderby'        => 'ID',
 			'order'          => 'ASC',
 			'cache_results'  => false,
@@ -483,7 +480,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 					'ID'          => $post_id,
 					'post_status' => 'auto-draft',
 					'post_title'  => 'Auto-draft',
-					'post_author' => $this->post_author,
+					'post_author' => $this->user->ID,
 				)
 			);
 
@@ -516,7 +513,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 					'ID'          => $post_id,
 					'post_status' => 'auto-draft',
 					'post_title'  => 'Auto-draft',
-					'post_author' => $this->post_author,
+					'post_author' => $this->user->ID,
 				)
 			);
 
@@ -542,7 +539,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 				'post_title'  => 'Auto-draft',
 				'post_name'   => uniqid(),
 				'post_type'   => $post_type,
-				'post_author' => $this->post_author,
+				'post_author' => $this->user->ID,
 				'post_status' => 'auto-draft',
 			)
 		);
