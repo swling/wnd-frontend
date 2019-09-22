@@ -114,12 +114,11 @@ class Wnd_Order {
 
 		// 余额不足
 		if ($this->total_amount > wnd_get_user_money($this->user_id)) {
+			$msg = '余额不足：';
 			if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
-				$msg = '余额不足！<a href="' . _wnd_order_link($this->object_id) . '">在线支付</a> | ';
-				$msg .= '<a onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</a>';
-			} else {
-				$msg = '余额不足！<a onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</a>';
+				$msg .= '<a href="' . _wnd_order_link($this->object_id) . '">在线支付</a> | ';
 			}
+			$msg .= '<a onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</a>';
 
 			throw new Exception($msg);
 		}
@@ -210,7 +209,7 @@ class Wnd_Order {
 		$post_arr = array(
 			'ID'          => $this->ID,
 			'post_status' => 'success',
-			'post_title'  => $this->subject ?: $post->post_title,
+			'post_title'  => $this->subject ?: $post->post_title . '(在线支付)',
 		);
 		$ID = wp_update_post($post_arr);
 		if (is_wp_error($ID) or !$ID) {
