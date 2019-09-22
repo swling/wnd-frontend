@@ -19,6 +19,17 @@ function wnd_ajax_create_order() {
 		return $wnd_can_create_order;
 	}
 
+	// 余额不足
+	if (wnd_get_post_price($post_id) > wnd_get_user_money($user_id)) {
+		$msg = '余额不足：';
+		if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
+			$msg .= '<a href="' . _wnd_order_link($post_id) . '">在线支付</a> | ';
+		}
+		$msg .= '<a onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</a>';
+
+		return array('status' => 0, 'msg' => $msg);
+	}
+
 	// 写入消费数据
 	try {
 		$order = new Wnd_Order();

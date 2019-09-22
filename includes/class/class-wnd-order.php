@@ -112,17 +112,6 @@ class Wnd_Order {
 		$status             = $is_success ? 'success' : 'pending';
 		$this->subject      = $this->subject ?: get_the_title($this->object_id);
 
-		// 余额不足
-		if ($this->total_amount > wnd_get_user_money($this->user_id)) {
-			$msg = '余额不足：';
-			if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
-				$msg .= '<a href="' . _wnd_order_link($this->object_id) . '">在线支付</a> | ';
-			}
-			$msg .= '<a onclick="wnd_ajax_modal(\'_wnd_recharge_form\')">余额充值</a>';
-
-			throw new Exception($msg);
-		}
-
 		/**
 		 *@since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
 		 */
