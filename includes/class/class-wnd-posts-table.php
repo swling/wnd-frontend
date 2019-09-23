@@ -1,5 +1,4 @@
 <?php
-
 /**
  *@since 2019.03.13
  *@param object		$query 				WP_Query实例化结果
