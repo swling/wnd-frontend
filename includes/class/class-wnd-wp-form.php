@@ -134,7 +134,7 @@ class Wnd_WP_Form extends Wnd_Form {
 		$this->add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
 
 		// 当前用户为绑定邮箱或更换绑定邮箱
-		if ($this->user->ID and !$this->user->data->user_email or 'bind' == $type) {
+		if (!$this->user->ID or !$this->user->data->user_email or 'bind' == $type) {
 			$this->add_email(
 				array(
 					'name'        => '_user_user_email',
