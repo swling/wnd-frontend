@@ -54,6 +54,9 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 
 		// 新增
 	} else {
+		$post_type               = $post_array['post_type'] ?? 'post';
+		$post_array['post_name'] = $post_array['post_name'] ?? uniqid();
+
 		/**
 		 *@since 2019.07.17
 		 *attachment仅允许更新，而不能直接写入（写入应在文件上传时完成）
@@ -61,9 +64,6 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 		if ('attachment' == $post_type) {
 			return array('status' => 0, 'msg' => '未指定文件！');
 		}
-
-		$post_type               = $post_array['post_type'] ?? 'post';
-		$post_array['post_name'] = $post_array['post_name'] ?? uniqid();
 	}
 
 	/**
@@ -93,11 +93,7 @@ function wnd_ajax_insert_post($verify_form_nonce = true) {
 	$post_status = apply_filters('wnd_insert_post_status', 'pending', $post_type, $update_id);
 
 	// 不可被表单POST数据修改的固有字段：post_type / post_status 合并入post data
-	$_post_array = array(
-		'post_type'   => $post_type,
-		'post_status' => $post_status,
-	);
-	$post_array = array_merge($post_array, $_post_array);
+	$post_array = array_merge($post_array, array('post_type' => $post_type, 'post_status' => $post_status));
 
 	// 写入或更新文章
 	if (!$update_id) {
