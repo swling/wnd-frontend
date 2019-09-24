@@ -4,7 +4,7 @@
  *订单模块
  *
  *	# 自定义文章类型
- *	post_type recharge 为私有属性('public' => false)，因此在WordPress后台无法查看到
+ *	post_type属性('public' => false)，因此在WordPress后台无法查看到
  *	订单：order
  *
  *	# 状态：
@@ -18,76 +18,14 @@
  *	类型：post_type：order
  *
  */
-class Wnd_Order {
-
-	// order Post ID
-	protected $ID;
-
-	// 站点用户ID
-	protected $user_id;
-
-	// 产品ID 对应WordPress产品类型Post ID
-	protected $object_id;
-
-	// 金额
-	protected $total_amount;
-
-	// 支付标题：产品标题 / 充值标题 / 其他自定义
-	protected $subject;
+class Wnd_Order extends Wnd_VAS {
 
 	/**
 	 *@since 2019.08.11
 	 *构造函数
 	 */
 	public function __construct() {
-		$this->user_id = get_current_user_id();
-	}
-
-	/**
-	 *@since 2019.08.12
-	 *指定Post ID
-	 **/
-	public function set_ID(int $ID) {
-		$this->ID = $ID;
-	}
-
-	/**
-	 *@since 2019.08.12
-	 *设定金额
-	 **/
-	public function set_total_amount($total_amount) {
-		$this->total_amount = $total_amount;
-	}
-
-	/**
-	 *@since 2019.08.11
-	 **/
-	public function set_object_id(int $object_id) {
-		$post = get_post($object_id);
-		if (!$object_id or !$post) {
-			throw new Exception('设置object ID无效！');
-		}
-
-		$this->object_id = $object_id;
-	}
-
-	/**
-	 *@since 2019.08.11
-	 **/
-	public function set_user_id(int $user_id) {
-		if (!get_user_by('ID', $user_id)) {
-			throw new Exception('用户ID无效！');
-		}
-
-		$this->user_id = $user_id;
-	}
-
-	/**
-	 *@since 2019.08.12
-	 *设定订单标题
-	 **/
-	public function set_subject(string $subject) {
-		$this->subject = $subject;
+		parent::__construct();
 	}
 
 	/**
@@ -227,27 +165,5 @@ class Wnd_Order {
 		wp_cache_delete($post->post_author . $post->post_parent, 'user_has_paid');
 
 		return $ID;
-	}
-
-	/**
-	 *获取WordPress order post ID
-	 */
-	public function get_ID() {
-		return $this->ID;
-	}
-
-	/**
-	 *获取支付订单标题
-	 */
-	public function get_subject() {
-		return $this->subject;
-	}
-
-	/**
-	 *@since 2019.08.12
-	 *获取支付金额
-	 **/
-	public function get_total_amount() {
-		return $this->total_amount;
 	}
 }

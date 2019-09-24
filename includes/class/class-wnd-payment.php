@@ -20,22 +20,7 @@
  *	类型：post_type：recharge / order
  *
  */
-class Wnd_Payment {
-
-	// 商户订单号，对应WordPress 写入 recharge/order 后产生的 Post ID
-	protected $ID;
-
-	// 站点用户ID
-	protected $user_id;
-
-	// 产品ID 对应WordPress产品类型Post ID
-	protected $object_id;
-
-	// 支付标题：产品标题 / 充值标题 / 其他自定义
-	protected $subject;
-
-	// 金额
-	protected $total_amount;
+class Wnd_Payment extends Wnd_VAS {
 
 	// 基于$this->ID生成，发送至第三方平台的订单号
 	protected $out_trade_no;
@@ -48,7 +33,7 @@ class Wnd_Payment {
 	 *构造函数
 	 */
 	public function __construct() {
-		$this->user_id = get_current_user_id();
+		parent::__construct();
 
 		/**
 		 *构建包含当前站点标识的订单号码作为发送至三方支付平台的订单号
@@ -63,29 +48,6 @@ class Wnd_Payment {
 		 *
 		 */
 		self::$site_prefix = strtoupper(substr(md5(home_url()), 0, 4));
-	}
-
-	/**
-	 *@since 2019.08.12
-	 *指定Post ID
-	 **/
-	public function set_ID(int $ID) {
-		$this->ID = $ID;
-	}
-
-	/**
-	 *@since 2019.08.12
-	 *设定金额
-	 **/
-	public function set_total_amount($total_amount) {
-		$this->total_amount = $total_amount;
-	}
-
-	/**
-	 *@since 2019.08.11
-	 **/
-	public function set_object_id(int $object_id) {
-		$this->object_id = $object_id;
 	}
 
 	/**
@@ -212,28 +174,5 @@ class Wnd_Payment {
 	 */
 	public function get_out_trade_no() {
 		return self::$site_prefix . '-' . $this->ID;
-	}
-
-	/**
-	 *获取支付订单标题
-	 */
-	public function get_subject() {
-		return $this->subject;
-	}
-
-	/**
-	 *@since 2019.08.12
-	 *获取支付金额
-	 **/
-	public function get_total_amount() {
-		return $this->total_amount;
-	}
-
-	/**
-	 *@since 2019.08.12
-	 *获取支付款项关联Post ID
-	 **/
-	public function get_object_id() {
-		return $this->object_id;
 	}
 }
