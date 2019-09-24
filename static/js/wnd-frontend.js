@@ -263,6 +263,9 @@ function wnd_ajax_submit(form_id) {
 	// 提交按钮
 	var submit_button = $("#" + form_id + " [type='submit']");
 
+	// 是否在弹窗中操作
+	var is_in_modal = $("#" + form_id).parents(".modal.is-active").length ? true : false;
+
 	// 带有required属性的字段不能为空
 	var input_value = true;
 	$("#" + form_id + " input").each(function() {
@@ -388,9 +391,13 @@ function wnd_ajax_submit(form_id) {
 					$(window.location).prop("href", response.data.redirect_to);
 					break;
 
-					//默认展示提示信息
+					// 默认
 				default:
-					wnd_ajax_msg(response.msg, style, "#" + form_id);
+					if (is_in_modal) {
+						wnd_ajax_msg(response.msg, style, "#" + form_id);
+					} else {
+						wnd_alert_modal('<div class="message ' + style + '"><div class="message-body">' + response.msg + '</div></div>');
+					}
 					break;
 			}
 		},
