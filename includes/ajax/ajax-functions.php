@@ -31,6 +31,7 @@ function wnd_ajax_send_code() {
 	$is_email       = $_POST['is_email'] ?: false;
 	$template       = $_POST['template'] ?: wnd_get_option('wnd', 'wnd_sms_template');
 	$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? null;
+	$current_user   = wp_get_current_user();
 
 	try {
 		$auth = new Wnd_Auth;
@@ -38,8 +39,21 @@ function wnd_ajax_send_code() {
 		$auth->set_email_or_phone($email_or_phone);
 		$auth->set_template($template);
 
+		/**
+		 *已登录用户，且账户已绑定邮箱/手机，且验证类型不为bind（切换绑定邮箱）
+		 *发送验证码给当前账户
+		 */
 		if (is_user_logged_in() and $type != 'bind') {
-			$auth->send_to_current_user($is_email);
+			if ($is_email and $current_user->user_email) {
+				$auth->send_to_current_user($is_email);
+
+			} elseif (!$is_email and wnd_get_user_phone($current_user->ID)) {
+				$auth->send_to_current_user($is_email);
+
+			} else {
+				$auth->send();
+			}
+
 		} else {
 			$auth->send();
 		}
