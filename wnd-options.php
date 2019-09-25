@@ -284,7 +284,7 @@ function wnd_options()
 						<input type="radio" name="wnd_sms_sp" value="ali" <?php if ('ali' == wnd_get_option('wnd', 'wnd_sms_sp')) echo 'checked'; ?>>
 						腾讯云
 						<input type="radio" name="wnd_sms_sp" value="tx" <?php if ('tx' == wnd_get_option('wnd', 'wnd_sms_sp')) echo 'checked'; ?>>
-						<p><i>是否开启短信验证功能</i></p>
+						<p><i>选择短信服务商</i></p>
 					</td>
 				</tr>
 				<tr>
