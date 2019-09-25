@@ -240,7 +240,14 @@ function _wnd_reg_form($type = 'email') {
 	$form = new Wnd_User_Form();
 	$form->add_form_attr('class', 'user-form');
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>注册', true);
-	$form->add_user_login('用户名', '登录用户名', true);
+
+	/**
+	 *注册用户通常为手机验证，或邮箱验证，为简化注册流程，可选择禁用用户名字段
+	 *后端将随机生成用户名，用户可通过邮箱或手机号登录
+	 */
+	if (wnd_get_option('wnd', 'wnd_disable_user_login') != 1) {
+		$form->add_user_login('用户名', '登录用户名', true);
+	}
 	$form->add_user_password();
 
 	if ($type == 'phone') {

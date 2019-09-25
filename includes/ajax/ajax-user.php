@@ -28,10 +28,10 @@ function wnd_ajax_reg() {
 		return array('status' => 0, 'msg' => '注册信息为空');
 	}
 
-	$user_login       = $_POST['_user_user_login'] ?? $_POST['phone'] ?? null;
+	$user_login       = $_POST['_user_user_login'] ?? wnd_generate_login();
 	$user_login       = sanitize_user($user_login, true); //移除特殊字符
 	$user_pass        = $_POST['_user_user_pass'] ?? null;
-	$user_pass_repeat = $_POST['_user_user_pass_repeat'] ?? ($_POST['_user_user_pass'] ?? null);
+	$user_pass_repeat = $_POST['_user_user_pass_repeat'] ?? null;
 	$user_email       = $_POST['_user_user_email'] ?? null;
 	$display_name     = $_POST['_user_display_name'] ?? null;
 	$description      = $_POST['_wpusermeta_description'] ?? null;

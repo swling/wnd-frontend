@@ -84,6 +84,7 @@ function wnd_install() {
 
 			'wnd_enable_terms'         => 1,
 			'wnd_disable_email_reg'    => 0,
+			'wnd_disable_user_login'   => 0,
 
 			'wnd_enable_sms'           => '腾讯短信appid',
 			'wnd_sms_appid'            => '腾讯短信appid',

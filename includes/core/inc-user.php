@@ -5,6 +5,15 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ *@since 2019.09.25
+ *随机生成用户名
+ *@return string
+ */
+function wnd_generate_login() {
+	return 'user_' . uniqid();
+}
+
+/**
  *@since 2019.01.26 根据用户id获取号码
  *@param 	int 			$user_id
  *@return 	string|false 	用户手机号或false
@@ -39,19 +48,39 @@ function wnd_get_user_by($email_or_phone_or_login) {
 		return false;
 	}
 
-	global $wpdb;
+	/**
+	 *邮箱
+	 */
 	if (is_email($email_or_phone_or_login)) {
-		$user = get_user_by('email', $email_or_phone_or_login);
+		return get_user_by('email', $email_or_phone_or_login);
 
-	} elseif (wnd_is_phone($email_or_phone_or_login)) {
-		$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE phone = %s;", $email_or_phone_or_login));
-		$user    = !$user_id ? false : get_user_by('ID', $user_id);
-
-	} else {
-		$user = get_user_by('login', $email_or_phone_or_login);
 	}
 
-	return $user;
+	/**
+	 *手机或登录名
+	 *
+	 *若当前字符匹配手机号码格式，则优先使用手机号查询
+	 *若查询到用户即返回
+	 *最后返回用户名查询结果
+	 *
+	 *注意：
+	 *强烈建议禁止用户使用纯数字作为用户名
+	 *否则可能出现手机号码与用户名的混乱，造成同一个登录名，对应过个账户信息的问题
+	 *
+	 *本插件已禁用纯数字用户名：@see wnd_ajax_reg()
+	 */
+	if (wnd_is_phone($email_or_phone_or_login)) {
+		global $wpdb;
+		$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE phone = %s;", $email_or_phone_or_login));
+		$user    = $user_id ? get_user_by('ID', $user_id) : false;
+		if ($user) {
+			return $user;
+		}
+
+	} else {
+		return get_user_by('login', $email_or_phone_or_login);
+	}
+
 }
 
 /**
@@ -215,7 +244,7 @@ function wnd_social_login($open_id, $display_name = '', $avatar_url = '') {
 	if (!$user) {
 
 		// 自定义随机用户名
-		$user_login = 'user_' . uniqid();
+		$user_login = wnd_generate_login();
 		$user_pass  = wp_generate_password();
 		$user_array = array('user_login' => $user_login, 'user_pass' => $user_pass, 'display_name' => $display_name);
 		$user_id    = wp_insert_user($user_array);
