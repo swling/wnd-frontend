@@ -240,7 +240,7 @@ function _wnd_reg_form($type = 'email') {
 	$form = new Wnd_User_Form();
 	$form->add_form_attr('class', 'user-form');
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>注册', true);
-	$form->add_user_login();
+	$form->add_user_login('用户名', '登录用户名', true);
 	$form->add_user_password();
 
 	if ($type == 'phone') {
