@@ -235,7 +235,7 @@ function wnd_options()
 					</th>
 				</tr>
 				<tr>
-					<td valign="top">是否启用</td>
+					<td valign="top">分类关联标签</td>
 					<td>
 						开启<input type="radio" name="wnd_enable_terms" value="1" <?php if (wnd_get_option('wnd', 'wnd_enable_terms') == 1) echo 'checked'; ?>>
 						关闭<input type="radio" name="wnd_enable_terms" value="0" <?php if (wnd_get_option('wnd', 'wnd_enable_terms') != 1) echo 'checked'; ?>>
@@ -252,16 +252,20 @@ function wnd_options()
 				<tr>
 					<td valign="top">禁止邮箱注册</td>
 					<td>
-						禁止<input type="radio" name="wnd_disable_email_reg" value="1" <?php if (wnd_get_option('wnd', 'wnd_disable_email_reg') == 1) echo 'checked'; ?> />
-						允许<input type="radio" name="wnd_disable_email_reg" value="0" <?php if (wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) echo 'checked'; ?> />
+						禁止邮箱注册
+						<input type="radio" name="wnd_disable_email_reg" value="1" <?php if (wnd_get_option('wnd', 'wnd_disable_email_reg') == 1) echo 'checked'; ?> />
+						允许邮箱注册
+						<input type="radio" name="wnd_disable_email_reg" value="0" <?php if (wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) echo 'checked'; ?> />
 						<p><i>禁止邮箱注册则强制手机注册。请确保手机验证可用，否则用户无法注册！</i></p>
 					</td>
 				</tr>
 				<tr>
 					<td valign="top">禁用用户名</td>
 					<td>
-						禁用<input type="radio" name="wnd_disable_user_login" value="1" <?php if (wnd_get_option('wnd', 'wnd_disable_user_login') == 1) echo 'checked'; ?> />
-						启用<input type="radio" name="wnd_disable_user_login" value="0" <?php if (wnd_get_option('wnd', 'wnd_disable_user_login') != 1) echo 'checked'; ?> />
+						禁用用户名
+						<input type="radio" name="wnd_disable_user_login" value="1" <?php if (wnd_get_option('wnd', 'wnd_disable_user_login') == 1) echo 'checked'; ?> />
+						启用用户名
+						<input type="radio" name="wnd_disable_user_login" value="0" <?php if (wnd_get_option('wnd', 'wnd_disable_user_login') != 1) echo 'checked'; ?> />
 						<p><i>为简化注册流程，可禁注册表单用户名字段，系统将随机生成用户名。用户将只能通过邮箱或手机登录。</i></p>
 					</td>
 				</tr>
