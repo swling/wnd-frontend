@@ -18,12 +18,12 @@ function wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $t
 	}
 
 	// 设置wnd post meta
-	if (!empty($meta_array) && is_array($meta_array)) {
+	if (!empty($meta_array) and is_array($meta_array)) {
 		wnd_update_post_meta_array($post_id, $meta_array);
 	}
 
 	// 设置原生 post meta
-	if (!empty($wp_meta_array) && is_array($wp_meta_array)) {
+	if (!empty($wp_meta_array) and is_array($wp_meta_array)) {
 		foreach ($wp_meta_array as $key => $value) {
 			// 空值，如设置了表单，但无数据的情况，过滤
 			if ('' == $value) {
@@ -37,7 +37,7 @@ function wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $t
 	}
 
 	//  设置 term
-	if (!empty($term_array) && is_array($term_array)) {
+	if (!empty($term_array) and is_array($term_array)) {
 		foreach ($term_array as $taxonomy => $term) {
 			if ($term != '-1') {
 				//排除下拉菜单为选择的默认值

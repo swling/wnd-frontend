@@ -113,7 +113,7 @@ add_action('wnd_do_action', 'wnd_action_do_action', 10, 1);
 function wnd_action_do_action() {
 
 	//1.0 支付宝异步校验 支付宝发起post请求 匿名
-	if (isset($_POST['app_id']) && $_POST['app_id'] == wnd_get_option('wnd', 'wnd_alipay_appid')) {
+	if (isset($_POST['app_id']) and $_POST['app_id'] == wnd_get_option('wnd', 'wnd_alipay_appid')) {
 		// WordPress 始终开启了魔法引号，因此需要对post 数据做还原处理
 		$_POST = stripslashes_deep($_POST);
 		require WND_PATH . 'components/alipay/url-notify.php';
@@ -121,7 +121,7 @@ function wnd_action_do_action() {
 	}
 
 	//1.1 支付宝支付跳转返回
-	if (isset($_GET['app_id']) && $_GET['app_id'] == wnd_get_option('wnd', 'wnd_alipay_appid')) {
+	if (isset($_GET['app_id']) and $_GET['app_id'] == wnd_get_option('wnd', 'wnd_alipay_appid')) {
 		// WordPress 始终开启了魔法引号，因此需要对post 数据做还原处理
 		$_GET = stripslashes_deep($_GET);
 		require WND_PATH . 'components/alipay/url-return.php';

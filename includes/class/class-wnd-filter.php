@@ -1179,7 +1179,7 @@ class Wnd_Filter {
 			$html .= '<ul class="pagination-list">';
 			$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . $first_link . '" >首页</a></li>';
 			for ($i = $paged - 1; $i <= $paged + $show_page; $i++) {
-				if ($i > 0 && $i <= $this->wp_query->max_num_pages) {
+				if ($i > 0 and $i <= $this->wp_query->max_num_pages) {
 					$page_link = self::$doing_ajax ? '' : add_query_arg('page', $i);
 					if ($i == $paged) {
 						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link is-current" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';

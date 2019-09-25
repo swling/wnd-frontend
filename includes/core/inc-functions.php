@@ -79,7 +79,7 @@ function wnd_get_user_ip($hidden = false) {
  */
 function wnd_is_robot() {
 	return (
-		isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/bot|crawl|slurp|spider|mediapartners/i', $_SERVER['HTTP_USER_AGENT'])
+		isset($_SERVER['HTTP_USER_AGENT']) and preg_match('/bot|crawl|slurp|spider|mediapartners/i', $_SERVER['HTTP_USER_AGENT'])
 	);
 }
 
@@ -132,7 +132,7 @@ function wnd_generate_order_NO() {
  *@return 	bool 	是否为合法的手机号码格式
  */
 function wnd_is_phone($phone) {
-	if ((empty($phone) || !preg_match("/^(((13[0-9]{1})|(15[0-9]{1})|(17[0-9]{1})|(18[0-9]{1}))+\d{8})$/", $phone))) {
+	if ((empty($phone) or !preg_match("/^(((13[0-9]{1})|(15[0-9]{1})|(17[0-9]{1})|(18[0-9]{1})|(19[0-9]{1}))+\d{8})$/", $phone))) {
 		return false;
 	} else {
 		return true;
@@ -148,7 +148,7 @@ function wnd_is_phone($phone) {
 function wnd_copy_taxonomy($old_taxonomy, $new_taxonomy) {
 	$terms = get_terms($old_taxonomy, 'hide_empty=0');
 
-	if (!empty($terms) && !is_wp_error($terms)) {
+	if (!empty($terms) and !is_wp_error($terms)) {
 		foreach ($terms as $term) {
 			wp_insert_term($term->name, $new_taxonomy);
 		}

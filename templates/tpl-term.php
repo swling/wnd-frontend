@@ -6,7 +6,7 @@
 function _wnd_list_categories_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $limit = 10, $show_count = false, $hide_empty = 1) {
 	$args  = array('hide_empty' => $hide_empty, 'orderby' => 'count', 'order' => 'DESC');
 	$terms = get_terms($cat_taxonomy, $args);
-	if (empty($terms) || is_wp_error($terms)) {
+	if (empty($terms) or is_wp_error($terms)) {
 		return;
 	}
 
@@ -65,7 +65,7 @@ function _wnd_terms_checkbox($taxonomy, $value = 'slug', $name = '', $require = 
 	$args  = array('hide_empty' => 0);
 	$terms = get_terms($taxonomy, $args);
 
-	if (!empty($terms) && !is_wp_error($terms)) {
+	if (!empty($terms) and !is_wp_error($terms)) {
 		foreach ($terms as $term) {
 			if ($value == 'slug') {
 				echo '<input name="' . $name . '[]" type="checkbox" value="' . $term->slug . '"/>' . $term->name . PHP_EOL;

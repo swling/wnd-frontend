@@ -122,7 +122,7 @@ class AlipayPagePayBuilder {
 		$stringToBeSigned = "";
 		$i = 0;
 		foreach ($params as $k => $v) {
-			if (false === $this->checkEmpty($v) && "@" != substr($v, 0, 1)) {
+			if (false === $this->checkEmpty($v) and "@" != substr($v, 0, 1)) {
 				// 转换成目标字符集
 				$v = $this->characet($v, $this->charset);
 				if ($i == 0) {

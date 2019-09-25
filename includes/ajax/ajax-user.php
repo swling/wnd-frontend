@@ -57,7 +57,7 @@ function wnd_ajax_reg() {
 	if (strlen($user_pass) < 6) {
 		return $value = array('status' => 0, 'msg' => '密码不能低于6位！');
 	}
-	if (!empty($user_pass_repeat) && $user_pass_repeat !== $user_pass_repeat) {
+	if (!empty($user_pass_repeat) and $user_pass_repeat !== $user_pass_repeat) {
 		return $value = array('status' => 0, 'msg' => '两次输入的密码不匹配！');
 	}
 

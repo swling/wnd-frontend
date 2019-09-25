@@ -15,7 +15,7 @@ add_action('admin_menu', 'wnd_menu');
 /*设置选项*/
 function wnd_options()
 {
-	if ($_POST && current_user_can('administrator')) {
+	if ($_POST and current_user_can('administrator')) {
 		check_admin_referer('wnd_update');
 		$option_array = array();
 		foreach ($_POST as $key => $value) {

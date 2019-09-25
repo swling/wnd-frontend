@@ -147,7 +147,7 @@ function _wnd_ajax_update_views() {
 	);
 
 	foreach ($bots as $name => $lookfor) {
-		if (!empty($useragent) && (stristr($useragent, $lookfor) !== false)) {
+		if (!empty($useragent) and (stristr($useragent, $lookfor) !== false)) {
 			$should_count = false;
 			break;
 		}

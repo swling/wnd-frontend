@@ -84,7 +84,7 @@ class Wnd_Auth {
 	 *@return true|exception
 	 */
 	protected function check() {
-		if (empty($this->email_or_phone) && !$this->current_user->ID) {
+		if (empty($this->email_or_phone) and !$this->current_user->ID) {
 			throw new Exception('发送地址为空！');
 		}
 
