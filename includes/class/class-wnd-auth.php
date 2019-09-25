@@ -26,14 +26,25 @@ class Wnd_Auth {
 	// object 当前用户
 	protected $current_user;
 
+	// 短信服务商
+	protected $sms_sp;
+
 	/**
 	 *@since 2019.08.13
 	 *构造函数
 	 **/
 	public function __construct() {
+		$this->sms_sp       = wnd_get_option('wnd', 'wnd_sms_sp');
 		$this->auth_code    = wnd_random_code(6);
 		$this->template     = wnd_get_option('wnd', 'wnd_sms_template');
 		$this->current_user = wp_get_current_user();
+	}
+
+	/**
+	 *设置短信服务商
+	 */
+	public function set_sms_sp($sms_sp) {
+		$this->sms_sp = $sms_sp;
 	}
 
 	/**
@@ -212,19 +223,23 @@ class Wnd_Auth {
 	 *@return true|exception
 	 */
 	protected function send_sms_code() {
-		require WND_PATH . 'components/tencent-sms/sendSms.php'; //腾讯云短信
-
 		// 写入手机记录
 		if (!$this->insert()) {
 			throw new Exception('数据库写入失败！');
 		}
 
-		$send_status = wnd_send_sms($this->email_or_phone, $this->auth_code, $this->template);
-		if (0 == $send_status->result) {
-			return true;
+		if ('tx' == $this->sms_sp) {
+			$sms = new Wnd_Sms_TX();
+		} elseif ('ali' == $this->sms_sp) {
+			$sms = new Wnd_Sms_Ali();
 		} else {
-			throw new Exception('系统错误，请联系客服处理！');
+			throw new Exception('未指定短信服务商！');
 		}
+
+		$sms->set_phone($this->email_or_phone);
+		$sms->set_code($this->auth_code);
+		$sms->set_template($this->template);
+		$sms->send();
 	}
 
 	/**

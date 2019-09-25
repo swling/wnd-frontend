@@ -86,9 +86,10 @@ function wnd_install() {
 			'wnd_disable_email_reg'    => 0,
 			'wnd_disable_user_login'   => 0,
 
-			'wnd_enable_sms'           => '腾讯短信appid',
-			'wnd_sms_appid'            => '腾讯短信appid',
-			'wnd_sms_appkey'           => '腾讯短信appkey',
+			'wnd_sms_sp'               => 'tx',
+			'wnd_enable_sms'           => '短信接口appid',
+			'wnd_sms_appid'            => '短信接口appid',
+			'wnd_sms_appkey'           => '短信接口appkey',
 			'wnd_sms_sign'             => get_option('blogname'),
 			'wnd_sms_template'         => '通用短信模板ID',
 			'wnd_sms_template_r'       => '注册短信模板ID',

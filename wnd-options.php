@@ -250,14 +250,6 @@ function wnd_options()
 					</th>
 				</tr>
 				<tr>
-					<td valign="top">启用短信功能</td>
-					<td>
-						开启<input type="radio" name="wnd_enable_sms" value="1" <?php if (wnd_get_option('wnd', 'wnd_enable_sms') == 1) echo 'checked'; ?>>
-						关闭<input type="radio" name="wnd_enable_sms" value="0" <?php if (wnd_get_option('wnd', 'wnd_enable_sms') != 1) echo 'checked'; ?>>
-						<p><i>是否开启短信验证功能</i></p>
-					</td>
-				</tr>
-				<tr>
 					<td valign="top">禁止邮箱注册</td>
 					<td>
 						禁止<input type="radio" name="wnd_disable_email_reg" value="1" <?php if (wnd_get_option('wnd', 'wnd_disable_email_reg') == 1) echo 'checked'; ?> />
@@ -274,22 +266,40 @@ function wnd_options()
 					</td>
 				</tr>
 				<tr>
-					<td valign="top">腾讯云短信APP ID</td>
+					<td valign="top">启用短信功能</td>
+					<td>
+						开启<input type="radio" name="wnd_enable_sms" value="1" <?php if (wnd_get_option('wnd', 'wnd_enable_sms') == 1) echo 'checked'; ?>>
+						关闭<input type="radio" name="wnd_enable_sms" value="0" <?php if (wnd_get_option('wnd', 'wnd_enable_sms') != 1) echo 'checked'; ?>>
+						<p><i>是否开启短信验证功能</i></p>
+					</td>
+				</tr>
+				<tr>
+					<td valign="top">短信服务商</td>
+					<td>
+						阿里云
+						<input type="radio" name="wnd_sms_sp" value="ali" <?php if ('ali' == wnd_get_option('wnd', 'wnd_sms_sp')) echo 'checked'; ?>>
+						腾讯云
+						<input type="radio" name="wnd_sms_sp" value="tx" <?php if ('tx' == wnd_get_option('wnd', 'wnd_sms_sp')) echo 'checked'; ?>>
+						<p><i>是否开启短信验证功能</i></p>
+					</td>
+				</tr>
+				<tr>
+					<td valign="top">短信APP ID</td>
 					<td>
 						<input type="text" name="wnd_sms_appid" value="<?php echo wnd_get_option('wnd', 'wnd_sms_appid'); ?>" class="regular-text">
 					</td>
 				</tr>
 				<tr>
-					<td valign="top">腾讯云短信APP Key</td>
+					<td valign="top">短信APP Key</td>
 					<td>
 						<input type="text" name="wnd_sms_appkey" value="<?php echo wnd_get_option('wnd', 'wnd_sms_appkey'); ?>" class="regular-text" />
 					</td>
 				</tr>
 				<tr>
-					<td valign="top">腾讯云短信签名</td>
+					<td valign="top">短信签名</td>
 					<td>
 						<input type="text" name="wnd_sms_sign" value="<?php echo wnd_get_option('wnd', 'wnd_sms_sign'); ?>" class="regular-text">
-						*请注意：签名需要先在腾讯云后台提交审核
+						*请注意：签名需要先在短信平台提交审核
 					</td>
 				</tr>
 				<tr>

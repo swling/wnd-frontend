@@ -348,6 +348,16 @@ wp_cache_set($object_id, $meta_value, 'views');
 post_id(GET/POST)：	如果设置了post_id 则表示该支付为订单类型，即为特定post付费，对应支付价格通过 wnd_get_post_price($post_id) 获取
 money(GET/POST)：	如果未设置post_id 则表示该支付为充值类型，对应支付金额，即为表单提交数据
 
+# 短信
+## 腾讯短信格式
+需要包含两个变量依次为：验证码、有效时间，如：
+*验证码：{1}，{2}分钟内有效！*
+
+## 阿里短信格式
+包含一个{code}变量，实际短信将替换为验证码，如：
+*验证码：{code}，十分钟有效！*
+
+
 # ajax表单响应代码表
 ```JavaScript
 // 根据后端响应处理 form_id 为当前表单ID
