@@ -80,6 +80,15 @@ function wnd_alert_modal(html, is_gallery = false) {
 	$(".modal-entry").html(html);
 }
 
+// 弹出警告信息
+function wnd_alert_warning(msg) {
+	wnd_alert_modal(
+		'<div class="content has-text-danger">' +
+		'<span class="icon"><i class="fa fa-exclamation-triangle"></i></span>' + msg +
+		'</div>'
+	);
+}
+
 // 直接弹出消息
 var ajax_alert_time_out;
 
@@ -307,7 +316,12 @@ function wnd_ajax_submit(form_id) {
 	});
 
 	if (input_value === false || option_value === false || textarea_value === false) {
-		wnd_ajax_msg('<span class="required">*</span>星标为必填项目！', "is-danger", "#" + form_id);
+		if (is_in_modal) {
+			wnd_ajax_msg('<span class="required">*</span>星标为必填项目！', "is-danger", "#" + form_id);
+		} else {
+			wnd_alert_warning('<span class="required">*</span>星标为必填项目！');
+		}
+
 		submit_button.text("必填项不能为空");
 		return false;
 	}
@@ -396,7 +410,7 @@ function wnd_ajax_submit(form_id) {
 					if (is_in_modal) {
 						wnd_ajax_msg(response.msg, style, "#" + form_id);
 					} else {
-						wnd_alert_modal('<div class="message ' + style + '"><div class="message-body">' + response.msg + '</div></div>');
+						wnd_alert_msg('<div class="message ' + style + '"><div class="message-body">' + response.msg + '</div></div>');
 					}
 					break;
 			}
