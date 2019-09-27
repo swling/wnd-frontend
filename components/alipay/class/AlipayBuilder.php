@@ -1,5 +1,4 @@
 <?php
-
 /**
  *@since 2019.03.02 支付宝PC支创建类
  */
@@ -38,19 +37,19 @@ class AlipayPagePayBuilder {
 			'out_trade_no' => $this->out_trade_no,
 			'product_code' => $this->product_code,
 			'total_amount' => $this->total_amount, //单位 元
-			'subject' => $this->subject, //订单标题
+			'subject'      => $this->subject, //订单标题
 		);
 		$commonConfigs = array(
 			//公共参数
-			'app_id' => $this->app_id,
-			'method' => $this->method, //接口名称
-			'format' => 'JSON',
-			'return_url' => $this->return_url,
-			'charset' => $this->charset,
-			'sign_type' => 'RSA2',
-			'timestamp' => date('Y-m-d H:i:s'),
-			'version' => '1.0',
-			'notify_url' => $this->notify_url,
+			'app_id'      => $this->app_id,
+			'method'      => $this->method, //接口名称
+			'format'      => 'JSON',
+			'return_url'  => $this->return_url,
+			'charset'     => $this->charset,
+			'sign_type'   => 'RSA2',
+			'timestamp'   => date('Y-m-d H:i:s'),
+			'version'     => '1.0',
+			'notify_url'  => $this->notify_url,
 			'biz_content' => json_encode($requestConfigs),
 		);
 		$commonConfigs["sign"] = $this->generateSign($commonConfigs, $commonConfigs['sign_type']);
@@ -83,7 +82,7 @@ class AlipayPagePayBuilder {
 
 	protected function sign($data, $signType = "RSA") {
 		$priKey = $this->private_key;
-		$res = "-----BEGIN RSA PRIVATE KEY-----\n" .
+		$res    = "-----BEGIN RSA PRIVATE KEY-----\n" .
 		wordwrap($priKey, 64, "\n", true) .
 			"\n-----END RSA PRIVATE KEY-----";
 		($res) or die('您使用的私钥格式错误，请检查RSA私钥配置');
@@ -120,7 +119,7 @@ class AlipayPagePayBuilder {
 	public function getSignContent($params) {
 		ksort($params);
 		$stringToBeSigned = "";
-		$i = 0;
+		$i                = 0;
 		foreach ($params as $k => $v) {
 			if (false === $this->checkEmpty($v) and "@" != substr($v, 0, 1)) {
 				// 转换成目标字符集

@@ -1,5 +1,4 @@
 <?php
-
 /**
  *@since 2019.03.02 支付宝验签
  */
@@ -12,7 +11,7 @@ class AlipayService {
 	protected $charset;
 
 	public function __construct($alipayPublicKey) {
-		$this->charset = 'utf-8';
+		$this->charset         = 'utf-8';
 		$this->alipayPublicKey = $alipayPublicKey;
 	}
 
@@ -20,7 +19,7 @@ class AlipayService {
 	 * 验证签名
 	 **/
 	public function rsaCheck($params) {
-		$sign = $params['sign'];
+		$sign     = $params['sign'];
 		$signType = $params['sign_type'];
 		unset($params['sign_type']);
 		unset($params['sign']);
@@ -29,7 +28,7 @@ class AlipayService {
 
 	public function verify($data, $sign, $signType = 'RSA') {
 		$pubKey = $this->alipayPublicKey;
-		$res = "-----BEGIN PUBLIC KEY-----\n" .
+		$res    = "-----BEGIN PUBLIC KEY-----\n" .
 		wordwrap($pubKey, 64, "\n", true) .
 			"\n-----END PUBLIC KEY-----";
 		($res) or die('支付宝RSA公钥错误。请检查公钥文件格式是否正确');
@@ -71,7 +70,7 @@ class AlipayService {
 	public function getSignContent($params) {
 		ksort($params);
 		$stringToBeSigned = "";
-		$i = 0;
+		$i                = 0;
 		foreach ($params as $k => $v) {
 			if (false === $this->checkEmpty($v) and "@" != substr($v, 0, 1)) {
 				// 转换成目标字符集
