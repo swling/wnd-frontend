@@ -780,7 +780,7 @@ class Wnd_Filter {
 		 *@since 2019.03.25
 		 */
 		if (isset($category_id)) {
-			$tags = wnd_get_tags_under_category($category_id, $taxonomy, $limit);
+			$tags = Wnd_Tag_Under_Category::get_tags($category_id, $taxonomy, $limit);
 		} else {
 			$tags = get_terms($taxonomy, array(
 				'hide_empty' => false,

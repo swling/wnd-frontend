@@ -16,7 +16,7 @@ function _wnd_list_categories_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $l
 		$html .= '<div id="category-' . $term->term_id . '" class="category-with-tags">' . PHP_EOL;
 		$html .= '<h3><a href="' . get_term_link($term) . '">' . $term->name . '</a></h3>' . PHP_EOL;
 		$tag_list = '<ul class="list-tags-under-' . $term->term_id . ' list-tags-under-category">' . PHP_EOL;
-		$tags     = wnd_get_tags_under_category($term->term_id, $tag_taxonomy, $limit);
+		$tags     = Wnd_Tag_Under_Category::get_tags($term->term_id, $tag_taxonomy, $limit);
 		foreach ($tags as $tag) {
 			$tag_id       = $tag->tag_id;
 			$tag_id       = (int) $tag_id;

@@ -1,7 +1,20 @@
 <?php
 /**
- *加载php文件
+ *@since 2019.07.31
+ *自动加载类文件
+ *
+ *实例
+ *类名: Wnd_Form
+ *路径: /includes/class/class-wnd-form.php
  */
+function wnd_class_loader($class) {
+	$file_name = 'class-' . str_replace('_', '-', strtolower($class));
+	$file      = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'class' . DIRECTORY_SEPARATOR . $file_name . '.php';
+	if (file_exists($file)) {
+		require $file;
+	}
+}
+spl_autoload_register('wnd_class_loader');
 
 // basic
 require WND_PATH . 'wnd-options.php'; //配置选项
@@ -13,7 +26,6 @@ require WND_PATH . 'includes/core/inc-post.php'; //post相关自定义函数
 require WND_PATH . 'includes/core/inc-user.php'; //user相关自定义函数
 require WND_PATH . 'includes/core/inc-media.php'; //媒体文件处理函数
 require WND_PATH . 'includes/core/inc-meta.php'; //数组形式储存 meta、option
-require WND_PATH . 'includes/core/inc-term.php'; //分类、标签
 
 require WND_PATH . 'includes/core/inc-database.php'; //数据库
 require WND_PATH . 'includes/core/inc-admin.php'; //管理函数
@@ -43,18 +55,8 @@ require WND_PATH . 'templates/tpl-panel.php'; //前端管理面板
 require WND_PATH . 'templates/tpl-gallery.php'; //橱窗相册
 
 /**
- *@since 2019.07.31
- *自动加载类文件
- *
- *实例
- *类名: 	Wnd_Form
- *路径: 	/includes/class/class-wnd-form.php
+ *分类关联标签
  */
-function wnd_class_loader($class) {
-	$file_name = 'class-' . str_replace('_', '-', strtolower($class));
-	$file      = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'class' . DIRECTORY_SEPARATOR . $file_name . '.php';
-	if (file_exists($file)) {
-		require $file;
-	}
+if (wnd_get_option('wnd', 'wnd_enable_terms') == 1) {
+	new Wnd_Tag_Under_Category();
 }
-spl_autoload_register('wnd_class_loader');
