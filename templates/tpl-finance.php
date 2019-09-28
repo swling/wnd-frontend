@@ -138,11 +138,12 @@ function _wnd_admin_recharge_form() {
 			'placeholder' => '用户名、邮箱、注册手机',
 		)
 	);
-	$form->add_text(
+	$form->add_number(
 		array(
 			'label'       => '金额',
 			'name'        => 'total_amount',
 			'required'    => 'required',
+			'step'        => 0.1,
 			'placeholder' => '充值金额（负数可扣款）',
 		)
 	);
