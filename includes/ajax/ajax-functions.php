@@ -39,6 +39,13 @@ function wnd_ajax_send_code() {
 		return array('status' => 0, 'msg' => '验证设备类型校验失败！');
 	}
 
+	// 检测对应手机或邮箱格式：防止在邮箱绑定中输入手机号，反之亦然
+	if ($is_email and !is_email($email_or_phone)) {
+		return array('status' => 0, 'msg' => '邮箱地址无效！');
+	} elseif (!wnd_is_phone($email_or_phone)) {
+		return array('status' => 0, 'msg' => '手机号码无效！');
+	}
+
 	/**
 	 *已登录用户，且账户已绑定邮箱/手机，且验证类型不为bind（切换绑定邮箱）
 	 *发送验证码给当前账户
