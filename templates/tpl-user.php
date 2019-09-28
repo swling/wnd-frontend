@@ -180,7 +180,7 @@ function _wnd_user_center($args = array()) {
 
 /**
  *@since 2019.01.13 登录框
- *@since 2019.03.10 Wnd_WP_Form
+ *@since 2019.03.10 Wnd_Form_WP
  */
 function _wnd_login_form() {
 	// 已登录
@@ -188,7 +188,7 @@ function _wnd_login_form() {
 		return '<script>wnd_alert_msg("已登录！")</script>';
 	}
 
-	$form = new Wnd_User_Form();
+	$form = new Wnd_Form_User();
 	$form->add_form_attr('class', 'user-form');
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>登录', true);
 	$form->add_user_login();
@@ -237,7 +237,7 @@ function _wnd_reg_form($type = 'email') {
 
 	}
 
-	$form = new Wnd_User_Form();
+	$form = new Wnd_Form_User();
 	$form->add_form_attr('class', 'user-form');
 	$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>注册', true);
 
@@ -288,7 +288,7 @@ function _wnd_lostpassword_form($type = 'email') {
 		}
 	}
 
-	$form = new Wnd_User_Form();
+	$form = new Wnd_Form_User();
 	$form->add_form_attr('class', 'user-form');
 	if ($type == 'phone') {
 		$form->set_form_title('<span class="icon"><i class="fa fa-phone-square"></i></span>手机验证', true);
@@ -320,7 +320,7 @@ function _wnd_profile_form() {
 		return '<script>wnd_alert_msg(\'请登录\')</script>';
 	}
 
-	$form = new Wnd_User_Form();
+	$form = new Wnd_Form_User();
 	// profile表单可能有较为复杂的编辑界面，阻止回车提交
 	$form->add_form_attr('onsubmit', 'return false');
 	$form->add_form_attr('onkeydown', 'if(event.keyCode==13){return false;}');
@@ -357,7 +357,7 @@ function _wnd_account_form() {
 		return $html;
 	}
 
-	$form = new Wnd_User_Form();
+	$form = new Wnd_Form_User();
 	$form->add_form_attr('class', 'user-form');
 	$form->add_user_password('当前密码');
 	$form->add_user_new_password();
@@ -388,7 +388,7 @@ function _wnd_bind_email_form() {
 		return '<script>wnd_alert_msg(\'请登录\')</script>';
 	}
 
-	$form = new Wnd_User_Form();
+	$form = new Wnd_Form_User();
 	$form->add_form_attr('class', 'user-form');
 	$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>绑定邮箱', true);
 
@@ -413,7 +413,7 @@ function _wnd_bind_phone_form() {
 		return '<script>wnd_alert_msg(\'请登录\')</script>';
 	}
 
-	$form = new Wnd_User_Form();
+	$form = new Wnd_Form_User();
 	$form->add_form_attr('class', 'user-form');
 	$form->set_form_title('<span class="icon"><i class="fa fa-phone"></i></span>绑定手机', true);
 

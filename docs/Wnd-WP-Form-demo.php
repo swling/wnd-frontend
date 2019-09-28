@@ -4,7 +4,7 @@
  *仅仅输出表单字段
  *@since 2019.03.10
  */
-$form = new Wnd_WP_Form($is_ajax_submit = true);
+$form = new Wnd_Form_WP($is_ajax_submit = true);
 $form->add_text(
 	array(
 		'addon_right' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
@@ -23,7 +23,7 @@ echo $form->get_input_fields();
  *
  *
  **/
-$temp_form = new Wnd_WP_Form(false);
+$temp_form = new Wnd_Form_WP(false);
 $temp_form->add_text(
 	array(
 		'name'        => 'wd',
@@ -49,7 +49,7 @@ function wnd_filer_form_filter($input_values) {
 	unset($input_values[0]);
 
 	// 新增一个字段
-	$temp_form = new Wnd_WP_Form;
+	$temp_form = new Wnd_Form_WP();
 	$temp_form->add_textarea(
 		array(
 			'name'        => 'content',
@@ -71,7 +71,7 @@ _wnd_demo_form();
  */
 function _wnd_demo_form() {
 
-	$form = new Wnd_WP_Form($is_ajax_submit = true);
+	$form = new Wnd_Form_WP($is_ajax_submit = true);
 
 	$form->add_form_attr('data-test', 'test-value');
 	$form->set_form_title('标题');

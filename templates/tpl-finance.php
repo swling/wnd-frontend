@@ -126,7 +126,7 @@ function _wnd_recharge_form() {
  *管理员手动增加用户余额
  */
 function _wnd_admin_recharge_form() {
-	$form = new Wnd_WP_Form();
+	$form = new Wnd_Form_WP();
 	$form->add_form_attr('id', 'admin-recharge-form');
 
 	$form->add_html('<div class="field is-horizontal"><div class="field-body">');

@@ -8,7 +8,7 @@
  *
  *@param bool $is_ajax_submit 是否ajax提交
  */
-class Wnd_WP_Form extends Wnd_Form {
+class Wnd_Form_WP extends Wnd_Form {
 
 	protected $user;
 	protected $filter     = null;

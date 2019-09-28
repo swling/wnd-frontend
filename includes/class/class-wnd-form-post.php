@@ -6,7 +6,7 @@
  *@param $post_id 				int 	option 		ID
  *@param $input_fields_only 	bool 	option 		是否只生成表单字段（不添加post form 属性字段）
  */
-class Wnd_Post_Form extends Wnd_WP_Form {
+class Wnd_Form_Post extends Wnd_Form_WP {
 
 	protected $post_id;
 
@@ -353,7 +353,7 @@ class Wnd_Post_Form extends Wnd_WP_Form {
 
 	/**
 	 *@since 2019.04.28 上传字段简易封装
-	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_WP_Form
+	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Form_WP
 	 *@param string $meta_key 		meta key
 	 *@param int 	$save_width 	保存图片宽度
 	 *@param int 	$save_height 	保存图片高度

@@ -29,7 +29,7 @@ function _wnd_post_form($args = array()) {
 	/**
 	 *@since 2019.03.11 表单类
 	 */
-	$form = new Wnd_Post_Form('post', $post_id);
+	$form = new Wnd_Form_Post('post', $post_id);
 	$form->set_post_parent($post_parent);
 
 	$form->add_post_title();
@@ -131,7 +131,7 @@ function _wnd_post_status_form($post_id) {
 		break;
 	}
 
-	$form = new Wnd_WP_Form();
+	$form = new Wnd_Form_WP();
 	$form->add_html('<div class="field is-grouped is-grouped-centered">');
 	$form->add_html('<script>wnd_ajax_msg(\'当前： ' . $status_text . '\', \'is-danger\', \'#post-status\')</script>');
 	$form->add_radio(
@@ -248,7 +248,7 @@ function _wnd_attachment_form($args) {
 	/**
 	 * 构建父级表单字段，以供文件ajax上传归属到父级post
 	 */
-	$parent_post_form = new Wnd_WP_Form();
+	$parent_post_form = new Wnd_Form_WP();
 
 	// 文件上传字段可能被前端设置disabled属性，导致无法通过表单一致性校验，故此设置同名固定隐藏字段
 	$parent_post_form->add_hidden('wnd_file', '');
@@ -274,9 +274,9 @@ function _wnd_attachment_form($args) {
 	 *上传媒体信息表单字段。attachment 无法也不应创建草稿
 	 *此处的attachment post_ID将根据上传文件后，ajax返回值获取
 	 */
-	$attachment_post_form = new Wnd_Post_Form('attachment', $attachment_id, false);
+	$attachment_post_form = new Wnd_Form_Post('attachment', $attachment_id, false);
 	if ($attachment_id) {
-		$attachment_post_form->set_message('<div class="message is-' . Wnd_WP_Form::$second_color . '"><div class="message-body">如需更改文件，请先删除后重新选择文件！</div></div>');
+		$attachment_post_form->set_message('<div class="message is-' . Wnd_Form_WP::$second_color . '"><div class="message-body">如需更改文件，请先删除后重新选择文件！</div></div>');
 	}
 	$attachment_post_form->add_post_title('文件名称');
 	$attachment_post_form->add_html('<div class="field is-horizontal"><div class="field-body">');

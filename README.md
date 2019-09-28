@@ -20,7 +20,7 @@
 4、支付，短信模块
 5、前端文件、图片上传
 6、数组形式合并存储多个user_meta、post_meta、option
-7、基于bulma的表单生成类：Wnd_Form、Wnd_WP_Form、Wnd_Post_Form、Wnd_User_Form。可快速生成各类表单
+7、基于bulma的表单生成类：Wnd_Form、Wnd_Form_WP、Wnd_Form_Post、Wnd_Form_User。可快速生成各类表单
 
 # 注意事项
 ## 用户角色
@@ -87,7 +87,7 @@ wnd_meta：gallery (用户相册)
  *
  *提交的数据中必须包含，$_POST['action'] = $action_name 通过该值，将当前数据交由对应的后端 $action_name() 处理
  *提交的数据中，必须包含$_POST['_ajax_nonce'] = $wp_nonce nonce生成方式：$wp_nonce = wnd_create_nonce($action_name )
- *@see Wnd_WP_Form->set_action
+ *@see Wnd_Form_WP->set_action
  *
  *以"_wnd"为前缀的函数，定义为UI响应函数，无需安全校验
  *后端函数接收$_POST数据并处理后，返回数组值：array('status'=>'状态值','msg'=>'消息');通过统一将结果转为json格式，输出交付前端处理
