@@ -751,7 +751,6 @@ jQuery(document).ready(function($) {
 		var form_id = _this.parents("form").attr("id");
 
 		var data = $(this).data();
-		data._ajax_nonce = $(this).data("nonce");
 		data.action = "wnd_ajax_send_code";
 		data.phone = $("#" + form_id + " input[name='phone']").val();
 		data.email = $("#" + form_id + " input[name='_user_user_email']").val();

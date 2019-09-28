@@ -29,35 +29,33 @@ function _wnd_ajax_embed($template, $args = '') {
 function wnd_ajax_send_code() {
 	$type           = $_POST['type'] ?? '';
 	$is_email       = $_POST['is_email'] ?: false;
+	$text           = $is_email ? '邮箱' : '手机';
 	$template       = $_POST['template'] ?: wnd_get_option('wnd', 'wnd_sms_template');
 	$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? null;
 	$current_user   = wp_get_current_user();
+
+	// 此处需要严格区分邮箱和手机：因此需要对一致性做校验
+	if (!wnd_verify_nonce($_POST['type_nonce'], $is_email ? 'email' : 'sms')) {
+		return array('status' => 0, 'msg' => '验证设备类型校验失败！');
+	}
+
+	/**
+	 *已登录用户，且账户已绑定邮箱/手机，且验证类型不为bind（切换绑定邮箱）
+	 *发送验证码给当前账户
+	 */
+	if ($current_user->ID and $type != 'bind') {
+		$email_or_phone = $is_email ? $current_user->user_email : wnd_get_user_phone($current_user->ID);
+		if (!$email_or_phone) {
+			return array('status' => 0, 'msg' => '当前账户未绑定' . $text);
+		}
+	}
 
 	try {
 		$auth = new Wnd_Auth;
 		$auth->set_type($type);
 		$auth->set_email_or_phone($email_or_phone);
 		$auth->set_template($template);
-
-		/**
-		 *已登录用户，且账户已绑定邮箱/手机，且验证类型不为bind（切换绑定邮箱）
-		 *发送验证码给当前账户
-		 */
-		if (is_user_logged_in() and $type != 'bind') {
-			if ($is_email and $current_user->user_email) {
-				$auth->send_to_current_user($is_email);
-
-			} elseif (!$is_email and wnd_get_user_phone($current_user->ID)) {
-				$auth->send_to_current_user($is_email);
-
-			} else {
-				$auth->send();
-			}
-
-		} else {
-			$auth->send();
-		}
-
+		$auth->send();
 		return array('status' => 1, 'msg' => '发送成功，请注意查收！');
 	} catch (Exception $e) {
 		return array('status' => 0, 'msg' => $e->getMessage());

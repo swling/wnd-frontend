@@ -384,7 +384,8 @@ function _wnd_account_form() {
  *@since 2019.07.23 用户设置邮箱表单
  */
 function _wnd_bind_email_form() {
-	if (!is_user_logged_in()) {
+	$current_user = wp_get_current_user();
+	if (!$current_user->ID) {
 		return '<script>wnd_alert_msg(\'请登录\')</script>';
 	}
 
@@ -393,7 +394,14 @@ function _wnd_bind_email_form() {
 	$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>绑定邮箱', true);
 
 	// 如果当前用户更改邮箱，则需要验证密码，首次绑定不需要
-	if (wp_get_current_user()->data->user_email) {
+	if ($current_user->data->user_email) {
+		$form->add_text(
+			array(
+				'label'    => '当前邮箱',
+				'value'    => $current_user->data->user_email,
+				'disabled' => true,
+			)
+		);
 		$form->add_user_password('当前密码');
 	}
 
@@ -409,16 +417,25 @@ function _wnd_bind_email_form() {
  *@since 2019.07.23 用户设置手机表单
  */
 function _wnd_bind_phone_form() {
-	if (!is_user_logged_in()) {
+	$current_user = wp_get_current_user();
+	if (!$current_user->ID) {
 		return '<script>wnd_alert_msg(\'请登录\')</script>';
 	}
+	$current_user_phone = wnd_get_user_phone($current_user->ID);
 
 	$form = new Wnd_Form_User();
 	$form->add_form_attr('class', 'user-form');
 	$form->set_form_title('<span class="icon"><i class="fa fa-phone"></i></span>绑定手机', true);
 
 	// 如果当前用户更改手机号，需要验证密码，首次绑定不需要
-	if (wnd_get_user_phone(get_current_user_id())) {
+	if ($current_user_phone) {
+		$form->add_text(
+			array(
+				'label'    => '当前号码',
+				'value'    => $current_user_phone,
+				'disabled' => true,
+			)
+		);
 		$form->add_user_password('当前密码');
 	}
 
