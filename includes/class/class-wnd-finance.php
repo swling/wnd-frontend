@@ -4,7 +4,7 @@
  *定义站内订单、充值、支付公共部分的抽象类
  *
  */
-abstract class Wnd_VAS {
+abstract class Wnd_Finance {
 
 	// order / recharge Post ID
 	protected $ID;

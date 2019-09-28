@@ -18,7 +18,7 @@
  *	类型：post_type：recharge
  *
  */
-class Wnd_Recharge extends Wnd_VAS {
+class Wnd_Recharge extends Wnd_Finance {
 
 	/**
 	 *@since 2019.08.11
