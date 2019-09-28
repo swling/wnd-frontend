@@ -162,44 +162,6 @@ function wnd_get_post_commission($post_id) {
 }
 
 /**
- *@since 2019.02.22
- *管理员手动新增用户金额
- *
- *@param 	string 		$user_field 	查询用户字段：login/emial/phone
- *@param 	float 		$total_amount 	充值金额
- *@param 	string 		$remarks 		备注
- */
-function wnd_admin_recharge($user_field, $total_amount, $remarks = '') {
-	if (!is_super_admin()) {
-		return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作！');
-	}
-
-	if (!is_numeric($total_amount)) {
-		return array('status' => 0, 'msg' => '请输入一个有效的充值金额！');
-	}
-
-	// 根据邮箱，手机，或用户名查询用户
-	$user = wnd_get_user_by($user_field);
-
-	if (!$user) {
-		return array('status' => 0, 'msg' => '用户不存在！');
-	}
-
-	// 写入充值记录
-	try {
-		$recharge = new Wnd_Recharge();
-		$recharge->set_user_id($user->ID);
-		$recharge->set_total_amount($total_amount);
-		$recharge->set_subject($remarks);
-		$recharge->create(true); // 直接写入余额
-	} catch (Exception $e) {
-		return array('status' => 0, 'msg' => $e->getMessage());
-	}
-
-	return array('status' => 1, 'msg' => $user->display_name . ' 充值：¥' . $total_amount);
-}
-
-/**
  *@since 初始化
  *统计整站财务数据，当用户发生充值或消费行为时触发
  *按月统计，每月生成两条post数据
