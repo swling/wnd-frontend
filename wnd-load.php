@@ -21,16 +21,16 @@ require WND_PATH . 'wnd-options.php'; //配置选项
 require WND_PATH . 'wnd-api.php'; // API
 
 // core
-require WND_PATH . 'includes/core/inc-functions.php'; //通用函数定义
-require WND_PATH . 'includes/core/inc-post.php'; //post相关自定义函数
-require WND_PATH . 'includes/core/inc-user.php'; //user相关自定义函数
-require WND_PATH . 'includes/core/inc-media.php'; //媒体文件处理函数
-require WND_PATH . 'includes/core/inc-meta.php'; //数组形式储存 meta、option
+require WND_PATH . 'includes/functions/inc-general.php'; //通用函数定义
+require WND_PATH . 'includes/functions/inc-post.php'; //post相关自定义函数
+require WND_PATH . 'includes/functions/inc-user.php'; //user相关自定义函数
+require WND_PATH . 'includes/functions/inc-media.php'; //媒体文件处理函数
+require WND_PATH . 'includes/functions/inc-meta.php'; //数组形式储存 meta、option
 
-require WND_PATH . 'includes/core/inc-database.php'; //数据库
-require WND_PATH . 'includes/core/inc-admin.php'; //管理函数
-require WND_PATH . 'includes/core/inc-finance.php'; //财务
-require WND_PATH . 'includes/core/inc-post-type-status.php'; //自定义文章类型及状态
+require WND_PATH . 'includes/functions/inc-database.php'; //数据库
+require WND_PATH . 'includes/functions/inc-admin.php'; //管理函数
+require WND_PATH . 'includes/functions/inc-finance.php'; //财务
+require WND_PATH . 'includes/functions/inc-post-type-status.php'; //自定义文章类型及状态
 
 // ajax
 require WND_PATH . 'includes/ajax/ajax-post.php'; //ajax 文章发布编辑
