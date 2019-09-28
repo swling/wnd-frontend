@@ -130,31 +130,6 @@ function _wnd_dropdown_colors($name, $selected) {
 }
 
 /**
- *@since 2019.07.02
- *封装一个按钮，发送ajax请求到后端
- **/
-function _wnd_ajax_link($args) {
-	$defaults = array(
-		'text'   => '',
-		'action' => '',
-		'cancel' => '',
-		'param'  => '',
-		'class'  => '',
-	);
-	$args = wp_parse_args($args, $defaults);
-
-	// 解析传参
-	$param = (is_array($args['param']) or is_object($args['param'])) ? http_build_query($args['param']) : $args['param'];
-
-	$html = '<a	class="ajax-link ' . $args['class'] . '" data-is-cancel="0" data-disabled="0"
-	data-action="' . $args['action'] . '" data-cancel="' . $args['cancel'] . '" data-param="' . $args['param'] . '"
-	data-action-nonce="' . wnd_create_nonce($args['action']) . '" data-cancel-nonce="' . wnd_create_nonce($args['cancel']) . '"
-	>' . $args['text'] . '</a>';
-
-	return $html;
-}
-
-/**
  *@since 2019.07.16
  *创建订单链接
  *@param int $post_id 产品/文章ID
