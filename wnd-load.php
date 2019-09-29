@@ -36,7 +36,7 @@ require WND_PATH . 'includes/functions/inc-post-type-status.php'; //自定义文
 require WND_PATH . 'includes/ajax/ajax-post.php'; //ajax 文章发布编辑
 require WND_PATH . 'includes/ajax/ajax-media.php'; //ajax 媒体处理
 require WND_PATH . 'includes/ajax/ajax-user.php'; //ajax 用户
-require WND_PATH . 'includes/ajax/ajax-functions.php'; //其他ajax操作
+require WND_PATH . 'includes/ajax/ajax-actions.php'; //其他ajax操作
 require WND_PATH . 'includes/ajax/ajax-pay.php'; //ajax付费服务
 
 // hook
