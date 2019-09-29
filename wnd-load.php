@@ -2,19 +2,25 @@
 /**
  *@since 2019.07.31
  *自动加载类文件
- *
- *实例
- *类名: Wnd_Form
- *路径: /includes/class/class-wnd-form.php
  */
-function wnd_class_loader($class) {
+function wnd_view_class_loader($class) {
 	$file_name = 'class-' . str_replace('_', '-', strtolower($class));
-	$file      = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'class' . DIRECTORY_SEPARATOR . $file_name . '.php';
+	$file      = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $file_name . '.php';
 	if (file_exists($file)) {
 		require $file;
 	}
 }
-spl_autoload_register('wnd_class_loader');
+
+function wnd_model_class_loader($class) {
+	$file_name = 'class-' . str_replace('_', '-', strtolower($class));
+	$file      = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . $file_name . '.php';
+	if (file_exists($file)) {
+		require $file;
+	}
+}
+
+spl_autoload_register('wnd_view_class_loader');
+spl_autoload_register('wnd_model_class_loader');
 
 // basic
 require WND_PATH . 'wnd-database.php'; //数据库
@@ -32,12 +38,12 @@ require WND_PATH . 'includes/functions/inc-admin.php'; //管理函数
 require WND_PATH . 'includes/functions/inc-finance.php'; //财务
 require WND_PATH . 'includes/functions/inc-post-type-status.php'; //自定义文章类型及状态
 
-// ajax
-require WND_PATH . 'includes/ajax/ajax-post.php'; //ajax 文章发布编辑
-require WND_PATH . 'includes/ajax/ajax-media.php'; //ajax 媒体处理
-require WND_PATH . 'includes/ajax/ajax-user.php'; //ajax 用户
-require WND_PATH . 'includes/ajax/ajax-actions.php'; //其他ajax操作
-require WND_PATH . 'includes/ajax/ajax-pay.php'; //ajax付费服务
+// controller
+require WND_PATH . 'includes/controller/ajax-post.php'; //ajax 文章发布编辑
+require WND_PATH . 'includes/controller/ajax-media.php'; //ajax 媒体处理
+require WND_PATH . 'includes/controller/ajax-user.php'; //ajax 用户
+require WND_PATH . 'includes/controller/ajax-actions.php'; //其他ajax操作
+require WND_PATH . 'includes/controller/ajax-pay.php'; //ajax付费服务
 
 // hook
 require WND_PATH . 'includes/hook/add-action.php'; //添加动作
