@@ -42,7 +42,7 @@ function wnd_ajax_send_code() {
 	// 检测对应手机或邮箱格式：防止在邮箱绑定中输入手机号，反之亦然
 	if ($is_email and !is_email($email_or_phone)) {
 		return array('status' => 0, 'msg' => '邮箱地址无效！');
-	} elseif (!wnd_is_phone($email_or_phone)) {
+	} elseif (!$is_email and !wnd_is_phone($email_or_phone)) {
 		return array('status' => 0, 'msg' => '手机号码无效！');
 	}
 
