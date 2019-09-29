@@ -204,7 +204,7 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 function wnd_ajax_modal(template, param = 0) {
 	$.ajax({
 		type: "GET",
-		url: wnd.root_url + wnd.rest_api,
+		url: wnd.root_url + wnd.view_api,
 		data: {
 			"action": template,
 			"param": param,
@@ -238,7 +238,7 @@ function wnd_ajax_modal(template, param = 0) {
 function wnd_ajax_embed(container, template, param = 0) {
 	$.ajax({
 		type: "GET",
-		url: wnd.root_url + wnd.rest_api,
+		url: wnd.root_url + wnd.view_api,
 		data: {
 			"action": template,
 			"param": param,

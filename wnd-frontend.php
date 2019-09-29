@@ -141,6 +141,7 @@ function wnd_scripts() {
 
 	$wnd_data = array(
 		'api_nonce'  => wp_create_nonce('wp_rest'),
+		'view_api'   => '/wp-json/wnd/view',
 		'rest_api'   => '/wp-json/wnd/rest-api',
 		'filter_api' => '/wp-json/wnd/filter',
 		'root_url'   => site_url(''),
