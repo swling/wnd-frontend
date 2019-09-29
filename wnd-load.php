@@ -5,7 +5,7 @@
  */
 function wnd_view_class_loader($class) {
 	$file_name = 'class-' . str_replace('_', '-', strtolower($class));
-	$file      = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $file_name . '.php';
+	$file      = WND_PATH . 'includes' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $file_name . '.php';
 	if (file_exists($file)) {
 		require $file;
 	}
@@ -13,7 +13,7 @@ function wnd_view_class_loader($class) {
 
 function wnd_model_class_loader($class) {
 	$file_name = 'class-' . str_replace('_', '-', strtolower($class));
-	$file      = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . $file_name . '.php';
+	$file      = WND_PATH . 'includes' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . $file_name . '.php';
 	if (file_exists($file)) {
 		require $file;
 	}
