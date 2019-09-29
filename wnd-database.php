@@ -10,15 +10,11 @@ $wpdb->wnd_users = $wpdb->prefix . 'wnd_users';
 // 标签关联分类
 $wpdb->wnd_terms = $wpdb->prefix . 'wnd_terms';
 
-// 通用数据（支付，充值，订单，管理等）
-$wpdb->wnd_objects = $wpdb->prefix . 'wnd_objects';
-
 /**
  *@since 2019.01.24
  *创建插件数据表
  */
 function wnd_create_table() {
-
 	global $wpdb;
 	$charset_collate = $wpdb->get_charset_collate();
 	require ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -55,5 +51,4 @@ function wnd_create_table() {
 
         ) $charset_collate;";
 	dbDelta($create_terms_sql);
-
 }
