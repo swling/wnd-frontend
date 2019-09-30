@@ -1,4 +1,7 @@
 <?php
+namespace Wnd\Model;
+use \Exception;
+
 /**
  *@since 2019.09.24
  *定义站内订单、充值、支付公共部分的抽象类

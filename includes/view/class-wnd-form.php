@@ -1,4 +1,6 @@
 <?php
+namespace Wnd\View;
+
 /**
  * Class for creating dynamic Bulma forms.
  *@since 2019.03

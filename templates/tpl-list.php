@@ -1,4 +1,6 @@
 <?php
+use Wnd\View\Wnd_Posts_Table;
+
 /**
  *@since 2019.09.02
  *列表模板

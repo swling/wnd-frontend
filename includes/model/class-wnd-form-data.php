@@ -1,4 +1,7 @@
 <?php
+namespace Wnd\Model;
+use \Exception;
+
 /**
  *根据表单name提取标题数据
  *@since 2019.03.04

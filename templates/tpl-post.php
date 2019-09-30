@@ -1,4 +1,7 @@
 <?php
+use Wnd\View\Wnd_Form_Post;
+use Wnd\View\Wnd_Form_WP;
+
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
 	exit;

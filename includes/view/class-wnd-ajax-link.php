@@ -1,4 +1,6 @@
 <?php
+namespace Wnd\View;
+
 /**
  *ajax请求链接构造类
  *@since 2019.09.28

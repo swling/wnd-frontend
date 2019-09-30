@@ -1,4 +1,7 @@
 <?php
+namespace Wnd\Model;
+use \Exception;
+
 /**
  *@since 2019.08.11
  *支付模块

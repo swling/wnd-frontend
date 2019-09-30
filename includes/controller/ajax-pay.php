@@ -4,6 +4,9 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
+use Wnd\Model\Wnd_Order;
+use Wnd\Model\Wnd_Recharge;
+
 /**
  *@since 2019.01.30 创建订单
  *@param $_POST['post_id']

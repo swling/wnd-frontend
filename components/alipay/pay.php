@@ -1,4 +1,6 @@
 <?php
+use Wnd\Model\Wnd_Payment;
+
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
 	exit;

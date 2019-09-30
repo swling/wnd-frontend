@@ -4,6 +4,9 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
+use Wnd\Model\Wnd_Auth;
+use Wnd\Model\Wnd_Recharge;
+
 /**
  *@since 2019.02.19 在当前位置自动生成一个容器，以供ajax嵌入模板
  *@param $template 	string  			被调用函数(必须以 _wnd为前缀)

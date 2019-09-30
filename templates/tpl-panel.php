@@ -1,4 +1,6 @@
 <?php
+use Wnd\View\Wnd_Filter;
+
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
 	exit;

@@ -1,4 +1,5 @@
 <?php
+use Wnd\Model\Wnd_Payment;
 
 /**
  *@since 2019.03.02 支付宝支付同步跳转

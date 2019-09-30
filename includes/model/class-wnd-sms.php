@@ -1,4 +1,7 @@
 <?php
+namespace Wnd\Model;
+use \Exception;
+
 /**
  *@since 2019.09.25
  *短信抽象类

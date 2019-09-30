@@ -396,3 +396,15 @@ switch (response.status) {
 		break;
 }
 ```
+## 命名空间
+自动加载机制已统一转为小写，故命名空间不区分大小写 
+```php
+// 模型类
+namespace Wnd\Model;
+
+// 视图类
+namespace Wnd\View;
+
+// 控制类
+namespace Wnd\controller;
+```

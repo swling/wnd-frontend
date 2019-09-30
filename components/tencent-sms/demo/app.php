@@ -156,7 +156,7 @@ try {
     $filepath = "path/to/example.mp3";
     $fileContent = file_get_contents($filepath);
     if ($fileContent == false) {
-        throw new \Exception("can not read file " . $filepath);
+        throw new Exception("can not read file " . $filepath);
     }
 
     $contentType = VoiceFileUploader::MP3;

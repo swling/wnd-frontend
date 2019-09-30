@@ -1,8 +1,5 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
+use Wnd\View\Wnd_Form_User;
 
 /**
  *@see

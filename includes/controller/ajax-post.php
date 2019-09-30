@@ -3,6 +3,7 @@
 if (!defined('ABSPATH')) {
 	exit;
 }
+use Wnd\Model\Wnd_Form_Data;
 
 /**
  *@see README.md

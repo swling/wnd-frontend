@@ -1,4 +1,6 @@
 <?php
+use Wnd\Model\Wnd_Payment;
+
 // header('Content-type:text/html; Charset=utf-8');
 require dirname(__FILE__) . '/config.php';
 require dirname(__FILE__) . '/class/AlipayService.php';

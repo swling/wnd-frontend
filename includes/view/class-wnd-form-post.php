@@ -1,4 +1,6 @@
 <?php
+namespace Wnd\View;
+
 /**
  *适配本插件的ajax Post表单类
  *@since 2019.03.11

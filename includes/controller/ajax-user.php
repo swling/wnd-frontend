@@ -4,6 +4,9 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
+use Wnd\Model\Wnd_Form_Data;
+use Wnd\Model\Wnd_Auth;
+
 /**
  *@see README.md
  *ajax user POST name规则：

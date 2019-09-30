@@ -3,24 +3,23 @@
  *@since 2019.07.31
  *自动加载类文件
  */
-function wnd_view_class_loader($class) {
-	$file_name = 'class-' . str_replace('_', '-', strtolower($class));
-	$file      = WND_PATH . 'includes' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . $file_name . '.php';
+function classLoader($class) {
+	$class = strtolower($class);
+	if (strpos($class, 'wnd\\') !== 0) {
+		return;
+	}
+
+	$path = str_replace('_', '-', $class);
+	$path = str_replace('wnd\\', '', strtolower($path));
+	$path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
+	$path = str_replace('wnd-', 'class-wnd-', $path);
+
+	$file = WND_PATH . 'includes' . DIRECTORY_SEPARATOR . $path . '.php';
 	if (file_exists($file)) {
 		require $file;
 	}
 }
-
-function wnd_model_class_loader($class) {
-	$file_name = 'class-' . str_replace('_', '-', strtolower($class));
-	$file      = WND_PATH . 'includes' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . $file_name . '.php';
-	if (file_exists($file)) {
-		require $file;
-	}
-}
-
-spl_autoload_register('wnd_view_class_loader');
-spl_autoload_register('wnd_model_class_loader');
+spl_autoload_register('classLoader');
 
 // basic
 require WND_PATH . 'wnd-database.php'; //数据库
@@ -63,6 +62,8 @@ require WND_PATH . 'templates/tpl-gallery.php'; //橱窗相册
 /**
  *分类关联标签
  */
+
+use Wnd\Model\Wnd_Tag_Under_Category;
 if (wnd_get_option('wnd', 'wnd_enable_terms') == 1) {
 	new Wnd_Tag_Under_Category();
 }
