@@ -26,7 +26,7 @@ if (!defined('ABSPATH')) {
  */
 
 // 版本
-define('WND_VER', '0.35');
+define('WND_VER', '0.36');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -140,11 +140,11 @@ function wnd_scripts() {
 	}
 
 	$wnd_data = array(
-		'api_nonce'  => wp_create_nonce('wp_rest'),
-		'view_api'   => '/wp-json/wnd/view',
-		'rest_api'   => '/wp-json/wnd/rest-api',
-		'filter_api' => '/wp-json/wnd/filter',
-		'root_url'   => site_url(''),
+		'api_nonce'     => wp_create_nonce('wp_rest'),
+		'interface_api' => '/wp-json/wnd/interface',
+		'rest_api'      => '/wp-json/wnd/rest-api',
+		'filter_api'    => '/wp-json/wnd/filter',
+		'root_url'      => site_url(''),
 	);
 	wp_localize_script('wnd-frontend', 'wnd', $wnd_data);
 }

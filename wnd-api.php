@@ -32,10 +32,10 @@ function wnd_action_rest_register_route() {
 	// UI响应
 	register_rest_route(
 		'wnd',
-		'view',
+		'interface',
 		array(
 			'methods'  => 'GET',
-			'callback' => 'wnd_view_api_callback',
+			'callback' => 'wnd_interface_api_callback',
 		)
 	);
 }
@@ -46,7 +46,7 @@ function wnd_action_rest_register_route() {
  *@param $_GET['action'] 	string	后端响应函数
  *@param $_GET['param']		string	模板响应函数传参
  */
-function wnd_view_api_callback($request) {
+function wnd_interface_api_callback($request) {
 	if (!isset($_GET['action'])) {
 		return array('status' => 0, 'msg' => '未定义UI响应！');
 	}
