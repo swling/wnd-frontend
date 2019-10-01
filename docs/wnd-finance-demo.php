@@ -1,4 +1,7 @@
 <?php
+use Wnd\Model\Wnd_Order;
+use Wnd\Model\Wnd_Payment;
+use Wnd\Model\Wnd_Recharge;
 
 ###########################################################
 /**

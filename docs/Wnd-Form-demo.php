@@ -1,4 +1,5 @@
 <?php
+use Wnd\View\Wnd_Form;
 
 /**
  *仅仅输出表单字段

@@ -1,4 +1,5 @@
 <?php
+use Wnd\View\Wnd_Posts_Table;
 
 $query = new WP_Query(array('author' => 1, 'posts_per_page' => 5));
 

@@ -1,4 +1,5 @@
 <?php
+use Wnd\View\Wnd_Filter;
 
 /**
  *@since 2019.01.10

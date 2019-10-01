@@ -1,4 +1,6 @@
 <?php
+use Wnd\View\Wnd_Ajax_Link;
+
 /**
  *ajax请求示例代码：
  *ajax添加收藏，取消收藏

@@ -1,4 +1,6 @@
 <?php
+use Wnd\Model\Wnd_Login_QQ;
+
 /**
  *QQ社交登录
  */
