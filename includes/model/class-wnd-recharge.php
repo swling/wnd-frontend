@@ -1,5 +1,6 @@
 <?php
 namespace Wnd\Model;
+
 use \Exception;
 
 /**
