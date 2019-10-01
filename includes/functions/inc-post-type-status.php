@@ -1,9 +1,4 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
-
 /**
  *@since 2019.02.28 如不注册类型，直接创建pending状态post时，会有notice级别的错误
  *@see wp-includes/post.php @3509

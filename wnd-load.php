@@ -2,24 +2,38 @@
 /**
  *@since 2019.07.31
  *自动加载类文件
+ *
+ * new Wnd\Model\Wnd_Auth;
+ * 对应文件路径
+ * includes/model/class-wnd-auth.php
+ *
  */
-function classLoader($class) {
+spl_autoload_register(function ($class) {
+
+	// 命名空间前缀
+	$prefix = 'wnd\\';
+
+	// 命名空间对应的根目录
+	$base_dir = WND_PATH . 'includes';
+
+	// 统一大小写，并检测传入类是否为当前命名空间
+	$len   = strlen($prefix);
 	$class = strtolower($class);
-	if (strpos($class, 'wnd\\') !== 0) {
+	if (strncmp($prefix, $class, $len) !== 0) {
 		return;
 	}
 
-	$path = str_replace('_', '-', $class);
-	$path = str_replace('wnd\\', '', strtolower($path));
+	// 获取实际文件路径
+	$path = substr($class, $len);
+	$path = str_replace('_', '-', $path);
 	$path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
 	$path = str_replace('wnd-', 'class-wnd-', $path);
 
-	$file = WND_PATH . 'includes' . DIRECTORY_SEPARATOR . $path . '.php';
+	$file = $base_dir . DIRECTORY_SEPARATOR . $path . '.php';
 	if (file_exists($file)) {
 		require $file;
 	}
-}
-spl_autoload_register('classLoader');
+});
 
 // basic
 require WND_PATH . 'wnd-database.php'; //数据库

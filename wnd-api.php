@@ -1,8 +1,6 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
+use Wnd\View\Wnd_Filter;
+use \Exception;
 
 /**
  *@since 2019.04.07 API改造
@@ -126,7 +124,6 @@ function wnd_rest_api_callback($request) {
  * $wp_query_args[$key] = $value;
  *
  **/
-use Wnd\View\Wnd_Filter;
 function wnd_filter_api_callback() {
 
 	// 根据请求GET参数，获取wp_query查询参数

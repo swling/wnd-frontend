@@ -1,9 +1,4 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
-
 /**
  *通过WordPress action 添加一些额外内容
  *@since 2018.09.07

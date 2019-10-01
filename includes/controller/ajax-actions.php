@@ -1,9 +1,4 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
-
 use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Recharge;
 

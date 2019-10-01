@@ -1,9 +1,4 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
-
 /**
  *@since 初始化
  *批量设置文章 meta 及 term

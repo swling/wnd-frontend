@@ -2,8 +2,8 @@
 /**
  *@since 2019.01.24 WndWP所需独立数据表
  */
-
 global $wpdb;
+
 // 用户数据
 $wpdb->wnd_users = $wpdb->prefix . 'wnd_users';
 

@@ -1,9 +1,4 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
-
 /**
  *增强版nonce校验，在nonce校验中加入秘钥
  *@since 2019.05.12

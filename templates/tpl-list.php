@@ -2,11 +2,6 @@
 use Wnd\View\Wnd_Posts_Table;
 
 /**
- *@since 2019.09.02
- *列表模板
- */
-
-/**
  *@since 2019.08.16
  *用户邮件列表
  *@param 	object 	$query 	WP_Query 实例化结果

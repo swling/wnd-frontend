@@ -1,9 +1,4 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
-
 /**
  *Plugin Name: Wnd-Frontend
  *Plugin URI: https://wndwp.com
@@ -32,7 +27,7 @@ define('WND_VER', '0.36');
 define('WND_URL', plugin_dir_url(__FILE__));
 
 // 定义插件文件路径
-define('WND_PATH', plugin_dir_path(__FILE__));
+define('WND_PATH', __DIR__ . DIRECTORY_SEPARATOR);
 
 // 加载核心文件
 require WND_PATH . 'wnd-load.php';

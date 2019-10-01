@@ -1,11 +1,6 @@
 <?php
 use Wnd\View\Wnd_Filter;
 
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
-
 /**
  *@since 2019.02.18 封装用户财务中心
  *@param $posts_per_page 每页列表数目

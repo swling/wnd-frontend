@@ -1,9 +1,4 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
-
 /**
  *@see wndwp/READEME.md
  * ############################################################################ 以下为WndWP插件过滤钩子

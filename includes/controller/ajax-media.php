@@ -1,8 +1,4 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
 /**
  *媒体处理
  */

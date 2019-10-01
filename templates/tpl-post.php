@@ -2,11 +2,6 @@
 use Wnd\View\Wnd_Form_Post;
 use Wnd\View\Wnd_Form_WP;
 
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
-
 /**
  *@see
  *自定义一些标准模块以便在页面或ajax请求中快速调用

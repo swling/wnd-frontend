@@ -1,9 +1,4 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
-
 /**
  *@since 2019.02.11 查询是否已经支付
  *@param int 	$user_id 	用户ID

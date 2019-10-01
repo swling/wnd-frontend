@@ -1,8 +1,4 @@
 <?php
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-	exit;
-}
 
 //############################################################################ 用户字段增量函数
 function wnd_inc_user_meta($user_id, $meta_key, $val = 1, $min_zero = false) {
