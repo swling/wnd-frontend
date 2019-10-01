@@ -1,6 +1,5 @@
 <?php
 use Wnd\View\Wnd_Filter;
-use \Exception;
 
 /**
  *@since 2019.04.07 API改造
