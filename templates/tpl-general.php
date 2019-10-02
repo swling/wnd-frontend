@@ -85,7 +85,7 @@ function _wnd_breadcrumb() {
 	if (is_single()) {
 		if (current_user_can('edit_post', $queried_object->ID)) {
 			$breadcrumb_right .= '<a href="' . get_edit_post_link($queried_object->ID) . '">[编辑]</a>';
-			$breadcrumb_right .= '&nbsp;<a onclick="wnd_ajax_modal(\'_wnd_post_status_form\',\'' . $queried_object->ID . '\')">[管理]</a>';
+			$breadcrumb_right .= '&nbsp;<a onclick="wnd_ajax_modal(\'Wnd_Post_Status_Form\',\'' . $queried_object->ID . '\')">[管理]</a>';
 		}
 	}
 	$html .= apply_filters('_wnd_breadcrumb_right', $breadcrumb_right);
@@ -136,4 +136,85 @@ function _wnd_dropdown_colors($name, $selected) {
  */
 function _wnd_order_link($post_id) {
 	return wnd_get_do_url() . '?action=payment&post_id=' . $post_id . '&_wpnonce=' . wnd_create_nonce('payment');
+}
+
+/**
+ *@since 2019.05.05
+ *gallery 相册展示
+ *@param $post_id 			int 		相册所附属的文章ID，若为0，则查询当前用户字段
+ *@param $thumbnail_width 	number 		缩略图宽度
+ *@param $thumbnail_height 	number 		缩略图高度
+ **/
+function _wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120) {
+	$images = $post_id ? wnd_get_post_meta($post_id, 'gallery') : wnd_get_user_meta(get_current_user_id(), 'gallery');
+	if (!$images) {
+		return false;
+	}
+
+	// 遍历输出图片集
+	$html = '<div class="gallery columns is-vcentered is-multiline has-text-centered">';
+	foreach ($images as $key => $attachment_id) {
+		$attachment_url = wp_get_attachment_url($attachment_id);
+		$thumbnail_url  = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
+		if (!$attachment_url) {
+			unset($images[$key]); // 在字段数据中取消已经被删除的图片
+			continue;
+		}
+
+		$html .= '<div class="attachment-' . $attachment_id . '" class="column is-narrow">';
+		$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '"height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
+		$html .= '</div>';
+	}
+	unset($key, $attachment_id);
+	wnd_update_post_meta($post_id, 'gallery', $images); // 若字段中存在被删除的图片数据，此处更新
+	$html .= '</div>';
+
+	return $html;
+}
+
+/**
+ *@since 2019.02.15
+ *ajax请求获取文章信息
+ */
+function _wnd_post_info($post_id) {
+	$post = get_post($post_id);
+	if (!$post) {
+		return 'ID无效！';
+	}
+
+	// 站内信阅读后，更新为已读 @since 2019.02.25
+	if ($post->post_type == 'mail' and $post->post_type !== 'private') {
+		wp_update_post(array('ID' => $post->ID, 'post_status' => 'private'));
+	}
+
+	$html = '<article class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '">';
+	$html .= '<div class="message-body">';
+
+	if (!wnd_get_post_price($post->ID)) {
+		$html .= $post->post_content;
+	} else {
+		$html .= "付费文章不支持预览！";
+	}
+	$html .= '</div>';
+	$html .= '</article>';
+
+	return $html;
+}
+
+/**
+ *@since 2019.02.27 获取WndWP文章缩略图
+ *@param int $post_id 	文章ID
+ *@param int $width 	缩略图宽度
+ *@param int $height 	缩略图高度
+ */
+function _wnd_post_thumbnail($post_id, $width, $height) {
+	$post_id = $post_id ?: get_the_ID();
+	if ($post_id) {
+		$image_id = wnd_get_post_meta($post_id, '_thumbnail_id');
+	}
+
+	$url  = $image_id ? wnd_get_thumbnail_url($image_id, $width, $height) : WND_URL . '/static/images/default.jpg';
+	$html = '<img class="thumbnail" src="' . $url . '" width="' . $width . '" height="' . $height . '">';
+
+	return apply_filters('_wnd_post_thumbnail', $html, $post_id, $width, $height);
 }

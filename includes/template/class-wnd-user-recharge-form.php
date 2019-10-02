@@ -1,0 +1,37 @@
+<?php
+namespace Wnd\Template;
+
+use Wnd\View\Wnd_Form;
+
+/**
+ *@since 2019.01.21 充值表单
+ */
+class Wnd_User_Recharge_Form extends Wnd_Template {
+
+	public static function build() {
+		if (!wnd_get_option('wnd', 'wnd_alipay_appid')) {
+			return '未设置支付接口';
+		}
+
+		$form = new Wnd_Form;
+		$form->add_html('<div class="has-text-centered">');
+		$form->add_radio(
+			array(
+				'name'     => 'total_amount',
+				'options'  => array('0.01' => '0.01', '10' => '10', '100' => '100', '200' => '200', '500' => '500'),
+				'required' => 'required',
+				// 'checked'  => '0.01',
+				'class'    => 'is-checkradio is-danger',
+			)
+		);
+		$form->add_html('<img src="https://t.alipayobjects.com/images/T1HHFgXXVeXXXXXXXX.png">');
+		$form->add_html('</div>');
+		$form->set_action(wnd_get_do_url(), 'GET');
+		$form->add_hidden('_wpnonce', wnd_create_nonce('payment'));
+		$form->add_hidden('action', 'payment');
+		$form->set_submit_button('充值', 'is-' . wnd_get_option('wnd', 'wnd_primary_color'));
+		$form->build();
+
+		return $form->html;
+	}
+}

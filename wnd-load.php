@@ -35,9 +35,13 @@ spl_autoload_register(function ($class) {
 	}
 });
 
+// 配置选项
+if (is_admin()) {
+	require WND_PATH . 'wnd-options.php'; //配置选项
+}
+
 // basic
 require WND_PATH . 'wnd-database.php'; //数据库
-require WND_PATH . 'wnd-options.php'; //配置选项
 require WND_PATH . 'wnd-api.php'; // API
 
 // function
@@ -47,7 +51,7 @@ require WND_PATH . 'includes/functions/inc-post.php'; //post相关自定义函�
 require WND_PATH . 'includes/functions/inc-user.php'; //user相关自定义函数
 require WND_PATH . 'includes/functions/inc-media.php'; //媒体文件处理函数
 
-require WND_PATH . 'includes/functions/inc-admin.php'; //管理函数
+// require WND_PATH . 'includes/functions/inc-admin.php'; //管理函数
 require WND_PATH . 'includes/functions/inc-finance.php'; //财务
 require WND_PATH . 'includes/functions/inc-post-type-status.php'; //自定义文章类型及状态
 
@@ -65,13 +69,13 @@ require WND_PATH . 'includes/hook/remove.php'; //移除
 
 // template
 require WND_PATH . 'templates/tpl-general.php'; //通用模板
-require WND_PATH . 'templates/tpl-user.php'; //user模板
-require WND_PATH . 'templates/tpl-post.php'; //post模板
+// require WND_PATH . 'templates/tpl-user.php'; //user模板
+// require WND_PATH . 'templates/tpl-post.php'; //post模板
 require WND_PATH . 'templates/tpl-list.php'; //post list模板
 require WND_PATH . 'templates/tpl-term.php'; //term模板
-require WND_PATH . 'templates/tpl-finance.php'; //财务模板
-require WND_PATH . 'templates/tpl-panel.php'; //前端管理面板
-require WND_PATH . 'templates/tpl-gallery.php'; //橱窗相册
+// require WND_PATH . 'templates/tpl-finance.php'; //财务模板
+// require WND_PATH . 'templates/tpl-panel.php'; //前端管理面板
+// require WND_PATH . 'templates/tpl-gallery.php'; //橱窗相册
 
 /**
  *分类关联标签

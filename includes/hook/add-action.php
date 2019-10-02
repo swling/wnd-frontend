@@ -302,4 +302,4 @@ if (wnd_get_option('wnd', 'wnd_disable_admin_panel') == 1) {
  *@since 2019.04.16
  *访问后台时候，触发执行清理动作
  */
-add_action('admin_init', 'wnd_clean_up');
+add_action('admin_init', 'Wnd\model\Wnd_Admin::clean_up');
