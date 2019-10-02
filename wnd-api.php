@@ -1,6 +1,5 @@
 <?php
 use Wnd\View\Wnd_Filter;
-use \Exception;
 
 /**
  *@since 2019.04.07 API改造
@@ -106,7 +105,7 @@ function wnd_rest_api_callback($request) {
 	 *函数可能同时接收超全局变量和指定参数变量
 	 *为避免混乱在ajax请求中，不接受指定传参，统一使用超全局变量传参
 	 */
-	if (strpos($action, 'wnd ') === 0 and function_exists($action)) {
+	if (strpos($action, 'wnd') === 0 and function_exists($action)) {
 		return $action();
 	}
 
