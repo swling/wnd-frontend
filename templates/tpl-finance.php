@@ -1,5 +1,7 @@
 <?php
 use Wnd\View\Wnd_Filter;
+use Wnd\View\Wnd_Form;
+use Wnd\View\Wnd_Form_WP;
 
 /**
  *@since 2019.02.18 封装用户财务中心
@@ -151,7 +153,7 @@ function _wnd_admin_recharge_form() {
 			'placeholder' => '备注（可选）',
 		)
 	);
-	$form->set_action('wnd_ajax_admin_recharge');
+	$form->set_action('wnd_admin_recharge');
 	$form->set_submit_button('确认充值');
 	$form->build();
 

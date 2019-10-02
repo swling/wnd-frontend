@@ -1,4 +1,7 @@
 <?php
+use Wnd\Model\Wnd_Auth;
+use Wnd\view\Wnd_Form_WP;
+
 /**
  *@see wndwp/READEME.md
  * ############################################################################ 以下为WndWP插件过滤钩子
@@ -210,7 +213,7 @@ function wnd_filter_the_content($content) {
 		} else {
 			$form = new Wnd_Form_WP();
 			$form->add_hidden('post_id', $post->ID);
-			$form->set_action('wnd_ajax_pay_for_download');
+			$form->set_action('wnd_pay_for_download');
 			$form->set_submit_button($button_text);
 			$form->build();
 
@@ -276,7 +279,7 @@ function wnd_filter_the_content($content) {
 	} else {
 		$form = new Wnd_Form_WP();
 		$form->add_hidden('post_id', $post->ID);
-		$form->set_action('wnd_ajax_pay_for_reading');
+		$form->set_action('wnd_pay_for_reading');
 		$form->set_submit_button($button_text);
 		$form->build();
 

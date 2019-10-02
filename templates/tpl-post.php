@@ -181,7 +181,7 @@ function _wnd_post_status_form($post_id) {
 	}
 
 	$form->add_hidden('post_id', $post_id);
-	$form->set_action('wnd_ajax_update_post_status');
+	$form->set_action('wnd_update_post_status');
 	$form->add_form_attr('id', 'post-status');
 	$form->set_submit_button('提交');
 	$form->build();

@@ -1,5 +1,6 @@
 <?php
 use Wnd\View\Wnd_Filter;
+use \Exception;
 
 /**
  *@since 2019.04.07 API改造
@@ -42,17 +43,17 @@ function wnd_action_rest_register_route() {
  *UI响应
  *@param $_GET['action'] 	string	后端响应函数
  *@param $_GET['param']		string	模板响应函数传参
+ *
+ *在存在自动加载的环境中 function_exists() 效率远高于 class_exists()
+ *因此优先检测 '_wnd'前缀的模板函数，其次查询模板类
+ *
  */
 function wnd_interface_api_callback($request) {
 	if (!isset($_GET['action'])) {
 		return array('status' => 0, 'msg' => '未定义UI响应！');
 	}
 	$action = trim($_GET['action']);
-
-	// 请求的函数不存在
-	if (!function_exists($action)) {
-		return array('status' => 0, 'msg' => '无效的UI请求！');
-	}
+	$param  = $_GET['param'] ?? '';
 
 	/**
 	 *1、以_wnd 开头的函数为无需进行安全校验的模板函数，
@@ -60,10 +61,23 @@ function wnd_interface_api_callback($request) {
 	 *若模板函数需要传递多个参数，请整合为数组形式纳入$_GET['param']实现
 	 *不在ajax请求中使用的模板函数则不受此规则约束
 	 */
-	if (strpos($action, '_wnd') === 0) {
-		return $action($_GET['param']);
+	if (strpos($action, '_wnd') === 0 and function_exists($action)) {
+		return $action($param);
+	}
+
+	/**
+	 *@since 2019.10.01
+	 *为实现惰性加载，本插件使用模板类
+	 */
+	$class = 'Wnd\\Template\\' . $action;
+	if (class_exists($class)) {
+		try {
+			return $class::build($param);
+		} catch (Exception $e) {
+			return array('status' => 0, 'msg' => $e->getMessage());
+		}
 	} else {
-		return array('status' => 0, 'msg' => 'UI请求不合规！');
+		return array('status' => 0, 'msg' => '无效的UI请求！');
 	}
 }
 
@@ -72,6 +86,9 @@ function wnd_interface_api_callback($request) {
  *数据处理
  *@param $_REQUEST['_ajax_nonce'] 	string 	wp nonce校验
  *@param $_REQUEST['action']	 	string 	后端响应函数
+ *
+ *在存在自动加载的环境中 function_exists() 效率远高于 class_exists()
+ *因此优先检测 'wnd'前缀的函数，其次查询控制类
  */
 function wnd_rest_api_callback($request) {
 	if (!isset($_REQUEST['action'])) {
@@ -79,9 +96,9 @@ function wnd_rest_api_callback($request) {
 	}
 	$action = trim($_REQUEST['action']);
 
-	// 请求的函数不存在
-	if (!function_exists($action)) {
-		return array('status' => 0, 'msg' => '无效的API请求！');
+	// nonce校验
+	if (!wnd_verify_nonce($_POST['_ajax_nonce'] ?? '', $action)) {
+		return array('status' => 0, 'msg' => '安全校验失败！');
 	}
 
 	/**
@@ -89,12 +106,21 @@ function wnd_rest_api_callback($request) {
 	 *函数可能同时接收超全局变量和指定参数变量
 	 *为避免混乱在ajax请求中，不接受指定传参，统一使用超全局变量传参
 	 */
-	if (strpos($action, 'wnd') === 0) {
-		if (!wnd_verify_nonce($_POST['_ajax_nonce'] ?? '', $action)) {
-			return array('status' => 0, 'msg' => '安全校验失败！');
-		}
-
+	if (strpos($action, 'wnd ') === 0 and function_exists($action)) {
 		return $action();
+	}
+
+	/**
+	 *@since 2019.10.01
+	 *为实现惰性加载，本插件使用控制类
+	 */
+	$class = 'Wnd\\Controller\\' . $action;
+	if (class_exists($class)) {
+		try {
+			return $class::execute();
+		} catch (Exception $e) {
+			return array('status' => 0, 'msg' => $e->getMessage());
+		}
 	} else {
 		return array('status' => 0, 'msg' => 'API请求不合规！');
 	}

@@ -42,9 +42,13 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->filter = $filter;
 	}
 
-	// ajax提交只需要设置 action 但常规表单action包含提交地址和提交方式，在类中，必须保持参数个数一致
+	/**
+	 *设置提交信息：非ajax环境中，$method将作为辅助参数提交，而非表单提交方法，
+	 *具体用途可在响应接口处自行定义处理 - 2019.10.02 新增
+	 */
 	public function set_action($action, $method = 'POST') {
 		if ($this->is_ajax_submit) {
+			$this->add_hidden('method', $method);
 			$this->add_hidden('action', $action);
 			$this->add_hidden('_ajax_nonce', wnd_create_nonce($action));
 		} else {
@@ -118,7 +122,7 @@ class Wnd_Form_WP extends Wnd_Form {
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => '短信验证码',
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-type_nonce="' . wnd_create_nonce('sms') . '" data-is_email="0">获取验证码</button>',
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('sms' . $type) . '" data-is_email="0">获取验证码</button>',
 			)
 		);
 
@@ -153,7 +157,7 @@ class Wnd_Form_WP extends Wnd_Form {
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => '邮箱验证码',
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_ajax_send_code') . '" data-type_nonce="' . wnd_create_nonce('email') . '" data-is_email="1">获取验证码</button>',
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('email' . $type) . '" data-is_email="1">获取验证码</button>',
 			)
 		);
 
@@ -185,8 +189,8 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// 固定data
 		$args['data']['is_image']         = '1';
-		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_ajax_upload_file');
-		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_ajax_delete_file');
+		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_upload_file');
+		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_delete_file');
 		$args['data']['meta_key_nonce']   = wnd_create_nonce($args['data']['meta_key']);
 		$args['data']['thumbnail']        = $args['thumbnail'];
 		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
@@ -235,8 +239,8 @@ class Wnd_Form_WP extends Wnd_Form {
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
 		// 固定data
-		$args['data']['upload_nonce']   = wnd_create_nonce('wnd_ajax_upload_file');
-		$args['data']['delete_nonce']   = wnd_create_nonce('wnd_ajax_delete_file');
+		$args['data']['upload_nonce']   = wnd_create_nonce('wnd_upload_file');
+		$args['data']['delete_nonce']   = wnd_create_nonce('wnd_delete_file');
 		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
 		$args['data']['method']         = $this->is_ajax_submit ? 'ajax' : $this->method;
 

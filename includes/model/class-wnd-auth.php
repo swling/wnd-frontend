@@ -24,6 +24,9 @@ class Wnd_Auth {
 	// string 验证码
 	protected $auth_code;
 
+	// int 直接指定需要验证的用户
+	protected $verify_user_id;
+
 	// bool 是否为邮件
 	protected $is_email;
 
@@ -76,6 +79,13 @@ class Wnd_Auth {
 	 */
 	public function set_auth_code($auth_code) {
 		$this->auth_code = $auth_code;
+	}
+
+	/**
+	 *在明确需要验证的用户，但不确定当前验证邮箱或手机的情况下使用
+	 */
+	public function set_verify_user_id($user_id) {
+		$this->verify_user_id = $user_id;
 	}
 
 	/**
@@ -247,7 +257,7 @@ class Wnd_Auth {
 	 *
 	 *@param bool 		$$delete_after_verified 	验证成功后是否删除本条记录(对应记录必须没有绑定用户)
 	 *@param string 	$this->email_or_phone 		邮箱或手机
-	 *@param object 	$this->current_user 		当前用户
+	 *@param int 		$this->verify_user_id 		当前用户
 	 *@param string 	$this->type 				验证类型
 	 *@param string 	$this->auth_code	 		验证码
 	 *
@@ -257,12 +267,17 @@ class Wnd_Auth {
 		if (empty($this->auth_code)) {
 			throw new Exception('校验失败：请填写验证码！');
 		}
-		if (empty($this->email_or_phone) and !$this->current_user->ID) {
+		if (empty($this->email_or_phone) and !$this->verify_user_id) {
 			throw new Exception('校验失败：请填写' . $this->text . '！');
 		}
 
-		// 类型检测
-		$this->type_check();
+		/**
+		 *@since 2019.10.02
+		 *若直接指定了验证用户ID，表示已确定需要验证的用户信息，绕过类型检测
+		 */
+		if (!$this->verify_user_id) {
+			$this->type_check();
+		}
 
 		// 过期时间设置
 		global $wpdb;
@@ -270,7 +285,7 @@ class Wnd_Auth {
 		if ($this->email_or_phone) {
 			$data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE {$this->db_field} = %s;", $this->email_or_phone));
 		} else {
-			$data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE user_id = %d;", $this->current_user->ID));
+			$data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE user_id = %d;", $this->verify_user_id));
 		}
 
 		if (!$data) {

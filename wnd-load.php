@@ -52,11 +52,11 @@ require WND_PATH . 'includes/functions/inc-finance.php'; //财务
 require WND_PATH . 'includes/functions/inc-post-type-status.php'; //自定义文章类型及状态
 
 // controller
-require WND_PATH . 'includes/controller/ajax-post.php'; //ajax 文章发布编辑
-require WND_PATH . 'includes/controller/ajax-media.php'; //ajax 媒体处理
-require WND_PATH . 'includes/controller/ajax-user.php'; //ajax 用户
-require WND_PATH . 'includes/controller/ajax-actions.php'; //其他ajax操作
-require WND_PATH . 'includes/controller/ajax-pay.php'; //ajax付费服务
+// require WND_PATH . 'includes/controller/ajax-post.php'; //ajax 文章发布编辑
+// require WND_PATH . 'includes/controller/ajax-media.php'; //ajax 媒体处理
+// require WND_PATH . 'includes/controller/ajax-user.php'; //ajax 用户
+// require WND_PATH . 'includes/controller/ajax-actions.php'; //其他ajax操作
+// require WND_PATH . 'includes/controller/ajax-pay.php'; //ajax付费服务
 
 // hook
 require WND_PATH . 'includes/hook/add-action.php'; //添加动作

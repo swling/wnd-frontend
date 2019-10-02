@@ -4,7 +4,7 @@ use Wnd\Model\Wnd_Auth;
 ###########################################################
 # 发送
 $auth = new Wnd_Auth;
-// 类型：register / reset_password / verify
+// 类型：register / reset_password / verify / bind
 $auth->set_type('register');
 // 号码或邮箱
 $auth->set_email_or_phone('xxx');
@@ -66,13 +66,14 @@ $auth->verify($delete_after_verified = true);
 
 ###########################################################
 
-# 验证当前用户操作
+# 验证已知用户操作
 $auth = new Wnd_Auth;
-$auth->set_type('verify');
-$auth->send_to_current_user($is_email = true);
+$auth->set_type('reset_password');
+$auth->set_email_or_phone('xxx');
 
-$auth = new Wnd_Auth;
-$auth->set_type('verify');
+$user_id = wnd_get_user_by('email_or_phone');
+$auth    = new Wnd_Auth;
+$auth->set_type('reset_password');
 $auth->set_auth_code($auth_code);
-// $auth->set_email_or_phone($email_or_phone);
+$auth->set_verify_user_id($user_id);
 $auth->verify();

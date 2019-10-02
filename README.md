@@ -92,6 +92,10 @@ wnd_meta：gallery (用户相册)
  *以"_wnd"为前缀的函数，定义为UI响应函数，无需安全校验
  *后端函数接收$_POST数据并处理后，返回数组值：array('status'=>'状态值','msg'=>'消息');通过统一将结果转为json格式，输出交付前端处理
  *权限控制中通过WordPress add_filters 实现
+ *
+ *@since 2019.10.02
+ *$action_name优先检测对应函数名（任意以wnd 或 _wnd为前缀的函数），其次检测对应的模板类或控制类
+ *@see /wnd-api.php
 */
 
 // 预先在需要权限校验的地方，设置filter,若status 为 0，表示权限校验不通过，当前钩子所在函数操作会中断，将权限校验数组结果返回
@@ -397,14 +401,17 @@ switch (response.status) {
 }
 ```
 ## 命名空间
-自动加载机制已统一转为小写，故命名空间不区分大小写 
+自动加载机制已统一转为小写，故命名空间不区分大小写
 ```php
 // 模型类
 namespace Wnd\Model;
 
+// 控制类
+namespace Wnd\controller;
+
 // 视图类
 namespace Wnd\View;
 
-// 控制类
-namespace Wnd\controller;
+// 模板类：基于视图类的一些封装模块
+namespace Wnd\Template;
 ```

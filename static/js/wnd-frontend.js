@@ -530,7 +530,7 @@ jQuery(document).ready(function($) {
 
 		// ajax api请求函数及其nonce
 		form_data.set("_ajax_nonce", $(this).data("upload_nonce"));
-		form_data.set("action", "wnd_ajax_upload_file");
+		form_data.set("action", "wnd_upload_file");
 
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
@@ -676,7 +676,7 @@ jQuery(document).ready(function($) {
 
 		// ajax api请求函数及其nonce
 		form_data.set("_ajax_nonce", file_data["delete_nonce"]);
-		form_data.set("action", "wnd_ajax_delete_file");
+		form_data.set("action", "wnd_delete_file");
 
 		$.ajax({
 			url: wnd.root_url + wnd.rest_api,
@@ -751,7 +751,7 @@ jQuery(document).ready(function($) {
 		var form_id = _this.parents("form").attr("id");
 
 		var data = $(this).data();
-		data.action = "wnd_ajax_send_code";
+		data.action = "wnd_send_code";
 		data.phone = $("#" + form_id + " input[name='phone']").val();
 		data.email = $("#" + form_id + " input[name='_user_user_email']").val();
 		if (data.email == "" || data.phone == "") {
