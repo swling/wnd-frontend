@@ -2,6 +2,7 @@
 namespace Wnd\Controller;
 
 use Wnd\Model\Wnd_Form_Data;
+use \Exception;
 
 class Wnd_Insert_Post extends Wnd_Controller {
 
