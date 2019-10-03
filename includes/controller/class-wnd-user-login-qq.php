@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\Controller;
 
 use \Exception;
 
@@ -7,7 +7,7 @@ use \Exception;
  *@since 2019.09.27
  *QQ登录
  */
-class Wnd_Login_QQ extends Wnd_Login {
+class Wnd_User_Login_QQ extends Wnd_User_Login_Social {
 
 	/**
 	 *创建授权地址

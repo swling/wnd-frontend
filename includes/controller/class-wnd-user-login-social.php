@@ -1,11 +1,11 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\Controller;
 
 /**
  *@since 2019.09.27
  *社交登录抽象类
  */
-abstract class Wnd_Login {
+abstract class Wnd_User_Login_Social {
 
 	protected $user_id;
 	protected $app_id;
