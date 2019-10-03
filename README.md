@@ -83,18 +83,37 @@ wnd_meta：gallery (用户相册)
 后端返回json属性：status,msg,data
 ```php
 /**
- *自定义api：wp-json/wnd/rest-api Allow: GET, POST, PUT, PATCH, DELETE
+ *自定义rest api：		wp-json/wnd/rest-api 		Allow: GET, POST, PUT, PATCH, DELETE
+ *自定义interface api：	wp-json/wnd/interface-api 	Allow: GET
  *
- *提交的数据中必须包含，$_POST['action'] = $action_name 通过该值，将当前数据交由对应的后端 $action_name() 处理
- *提交的数据中，必须包含$_POST['_ajax_nonce'] = $wp_nonce nonce生成方式：$wp_nonce = wnd_create_nonce($action_name )
+ * ### rest api
+ *提交的数据中必须包含：
+ *$_REQUEST['action'] = $class
+ *$_REQUEST['namespace'] = $namespace
+ *通过该值，将当前数据交由对应的后端 $namespace . $class类处理
+ *
+ *提交的数据中，必须包含：
+ *$_REQUEST['_ajax_nonce']
+ *nonce生成方式：wnd_create_nonce($action_name . $namespace )
  *@see Wnd_Form_WP->set_action
  *
- *以"_wnd"为前缀的函数，定义为UI响应函数，无需安全校验
- *后端函数接收$_POST数据并处理后，返回数组值：array('status'=>'状态值','msg'=>'消息');通过统一将结果转为json格式，输出交付前端处理
+ *后端函数接收提交数据并处理后，返回数组值：
+ *array('status'=>'状态值','msg'=>'消息','data'=>'数据');
+ *API统一将结果转为json格式，输出交付前端处理
+ *
  *权限控制中通过WordPress add_filters 实现
  *
- *@since 2019.10.02
- *$action_name优先检测对应函数名（任意以wnd 或 _wnd为前缀的函数），其次检测对应的模板类或控制类
+ *### interface api
+ *UI请求无需nonce校验需要包含如下参数
+ *$_GET['action'] = $class
+ *$_GET['namespace'] = $namespace
+ *$_GET['param'] = $param
+ *
+ *指定的命名空间需要提前加入到允许的命名空间数组中
+ *默认已支持本插件的模板命名空间和控制命名空间
+ *@see aapply_filters('wnd_interface_namespaces', array('Wnd\\Template\\'));
+ *@see apply_filters('wnd_rest_namespaces', array('Wnd\\Controller\\'));
+ *
  *@see /wnd-api.php
 */
 
@@ -108,6 +127,17 @@ function wnd_can_insert_post($default_return, $post_type, $update_id) {
 ```
 
 # filter
+
+## api 类命名空间
+当api请求action为类名称时，可指定类的命名空间。指定的命名空间必须在允许的数组中。
+新增命名空间可通过下列filter实现
+```php
+// interface api请求允许的命名空间
+$namespaces = apply_filters('wnd_interface_namespaces', array('Wnd\\Template\\'));
+
+// rest api请求允许的命名空间
+$namespaces = apply_filters('wnd_rest_namespaces', array('Wnd\\Controller\\'));
+```
 
 ## ajax表单数据
 ```php

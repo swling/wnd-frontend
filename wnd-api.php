@@ -40,35 +40,30 @@ function wnd_action_rest_register_route() {
 /**
  *@since 2019.04.07
  *UI响应
- *@param $_GET['action'] 	string	后端响应函数
- *@param $_GET['param']		string	模板响应函数传参
- *
- *在存在自动加载的环境中 function_exists() 效率远高于 class_exists()
- *因此优先检测 '_wnd'前缀的模板函数，其次查询模板类
+ *@param $_GET['action'] 	string	后端响应UI类名称
+ *@param $_GET['namespace']	string 	类的命名空间，默认为：'Wnd\\Template'
+ *@param $_GET['param']		string	模板类传参
  *
  */
 function wnd_interface_api_callback($request) {
 	if (!isset($_GET['action'])) {
 		return array('status' => 0, 'msg' => '未定义UI响应！');
 	}
-	$action = trim($_GET['action']);
-	$param  = $_GET['param'] ?? '';
+	$action    = trim($_GET['action']);
+	$namespace = $_GET['namespace'] ? stripslashes_deep($_GET['namespace']) : 'Wnd\\Template';
+	$param     = $_GET['param'] ?? '';
 
-	/**
-	 *以_wnd 开头的函数为无需进行安全校验的模板函数，
-	 *为统一ajax请求规则，ajax类模板函数统一使用唯一的超全局变量$_GET['param']传参
-	 *若模板函数需要传递多个参数，请整合为数组形式纳入$_GET['param']实现
-	 *不在ajax请求中使用的模板函数则不受此规则约束
-	 */
-	if (strpos($action, '_wnd') === 0 and function_exists($action)) {
-		return $action($param);
+	// 允许的命名空间
+	$namespaces = apply_filters('wnd_interface_namespaces', array('Wnd\\Template'));
+	if (!in_array($namespace, $namespaces)) {
+		return array('status' => 0, 'msg' => '未经允许的命名空间！');
 	}
 
 	/**
 	 *@since 2019.10.01
 	 *为实现惰性加载，本插件使用模板类
 	 */
-	$class = 'Wnd\\Template\\' . $action;
+	$class = $namespace . '\\' . $action;
 	if (class_exists($class) and is_callable(array($class, 'build'))) {
 		try {
 			return $class::build($param);
@@ -84,36 +79,33 @@ function wnd_interface_api_callback($request) {
  *@since 2019.04.07
  *数据处理
  *@param $_REQUEST['_ajax_nonce'] 	string 	wp nonce校验
- *@param $_REQUEST['action']	 	string 	后端响应函数
+ *@param $_REQUEST['action']	 	string 	后端响应类
+ *@param $_REQUEST['namespace']	 	string 	类的命名空间，默认为：'Wnd\\Controller'
  *
- *在存在自动加载的环境中 function_exists() 效率远高于 class_exists()
- *因此优先检测 'wnd'前缀的函数，其次查询控制类
  */
 function wnd_rest_api_callback($request) {
 	if (!isset($_REQUEST['action'])) {
 		return array('status' => 0, 'msg' => '未指定API响应！');
 	}
-	$action = trim($_REQUEST['action']);
+	$action    = trim($_REQUEST['action']);
+	$namespace = $_REQUEST['namespace'] ? stripslashes_deep($_REQUEST['namespace']) : 'Wnd\\Controller';
 
-	// nonce校验
-	if (!wnd_verify_nonce($_POST['_ajax_nonce'] ?? '', $action)) {
-		return array('status' => 0, 'msg' => '安全校验失败！');
+	// 允许的命名空间
+	$namespaces = apply_filters('wnd_rest_namespaces', array('Wnd\\Controller'));
+	if (!in_array($namespace, $namespaces)) {
+		return array('status' => 0, 'msg' => '未经允许的命名空间！');
 	}
 
-	/**
-	 *常规wnd前缀函数操作 需要安全校验
-	 *函数可能同时接收超全局变量和指定参数变量
-	 *为避免混乱在ajax请求中，不接受指定传参，统一使用超全局变量传参
-	 */
-	if (strpos($action, 'wnd') === 0 and function_exists($action)) {
-		return $action();
+	// nonce校验：action与namespace
+	if (!wnd_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $action . $namespace)) {
+		return array('status' => 0, 'msg' => '安全校验失败！');
 	}
 
 	/**
 	 *@since 2019.10.01
 	 *为实现惰性加载，本插件使用控制类
 	 */
-	$class = 'Wnd\\Controller\\' . $action;
+	$class = $namespace . '\\' . $action;
 	if (class_exists($class) and is_callable(array($class, 'execute'))) {
 		try {
 			return $class::execute();
