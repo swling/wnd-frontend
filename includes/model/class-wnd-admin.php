@@ -7,6 +7,92 @@ namespace Wnd\Model;
  */
 class Wnd_Admin {
 
+	public static function install() {
+		// 数据表
+		wnd_create_table();
+
+		// 升级
+		if (get_option('wnd_var') != WND_VER) {
+			// wnd_upgrade_02();
+		}
+
+		// 默认option数据
+		if (!get_option('wnd')) {
+			$default_option = array(
+				'wnd_secret_key'           => wnd_random('16'),
+				'wnd_enable_form_verify'   => 1,
+
+				'wnd_enable_default_style' => 1,
+				'wnd_edit_page'            => '',
+				'wnd_agreement_url'        => '',
+				'wnd_reg_redirect_url'     => '',
+				'wnd_default_avatar_url'   => WND_URL . 'static/images/avatar.jpg',
+
+				'wnd_max_upload_size'      => '2048',
+				'wnd_max_stick_posts'      => '10',
+
+				'wnd_disable_locale'       => '',
+				'wnd_disable_admin_panel'  => 1,
+				'wnd_unset_user_meta'      => 1,
+
+				'wnd_primary_color'        => '',
+				'wnd_second_color'         => '',
+				'wnd_commission_rate'      => '',
+
+				'wnd_pay_return_url'       => get_option('home'),
+				'wnd_alipay_appid'         => '',
+				'wnd_alipay_private_key'   => '',
+				'wnd_alipay_public_key'    => '',
+
+				'wnd_enable_terms'         => 1,
+				'wnd_disable_email_reg'    => 0,
+				'wnd_disable_user_login'   => 0,
+
+				'wnd_sms_sp'               => 'tx',
+				'wnd_enable_sms'           => '短信接口appid',
+				'wnd_sms_appid'            => '短信接口appid',
+				'wnd_sms_appkey'           => '短信接口appkey',
+				'wnd_sms_sign'             => get_option('blogname'),
+				'wnd_sms_template'         => '通用短信模板ID',
+				'wnd_sms_template_r'       => '注册短信模板ID',
+				'wnd_sms_template_v'       => '身份验证短信模板ID',
+			);
+
+			update_option('wnd', $default_option);
+		}
+
+		// 版本
+		update_option('wnd_ver', WND_VER);
+
+		/**
+		 * @since 2019.06.17
+		 *关闭WordPress缩略图裁剪
+		 */
+		update_option('medium_large_size_w', 0);
+		update_option('medium_large_size_h', 0);
+
+		update_option('thumbnail_size_w', 0);
+		update_option('thumbnail_size_h', 0);
+
+		update_option('medium_size_w', 0);
+		update_option('medium_size_h', 0);
+
+		update_option('large_size_w', 0);
+		update_option('large_size_h', 0);
+	}
+
+	/**
+	 *@since 初始化
+	 *卸载插件
+	 */
+	public static function uninstall() {
+		// delete_option('wnd');
+		return;
+	}
+
+	/**
+	 *清理数据
+	 **/
 	public static function clean_up() {
 		if (!is_super_admin()) {
 			return;
