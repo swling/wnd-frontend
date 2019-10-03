@@ -55,7 +55,7 @@ function wnd_interface_api_callback($request) {
 	$param  = $_GET['param'] ?? '';
 
 	/**
-	 *1、以_wnd 开头的函数为无需进行安全校验的模板函数，
+	 *以_wnd 开头的函数为无需进行安全校验的模板函数，
 	 *为统一ajax请求规则，ajax类模板函数统一使用唯一的超全局变量$_GET['param']传参
 	 *若模板函数需要传递多个参数，请整合为数组形式纳入$_GET['param']实现
 	 *不在ajax请求中使用的模板函数则不受此规则约束
@@ -69,7 +69,7 @@ function wnd_interface_api_callback($request) {
 	 *为实现惰性加载，本插件使用模板类
 	 */
 	$class = 'Wnd\\Template\\' . $action;
-	if (class_exists($class)) {
+	if (class_exists($class) and is_callable(array($class, 'build'))) {
 		try {
 			return $class::build($param);
 		} catch (Exception $e) {
@@ -101,7 +101,7 @@ function wnd_rest_api_callback($request) {
 	}
 
 	/**
-	 *常规函数操作 需要安全校验
+	 *常规wnd前缀函数操作 需要安全校验
 	 *函数可能同时接收超全局变量和指定参数变量
 	 *为避免混乱在ajax请求中，不接受指定传参，统一使用超全局变量传参
 	 */
@@ -114,7 +114,7 @@ function wnd_rest_api_callback($request) {
 	 *为实现惰性加载，本插件使用控制类
 	 */
 	$class = 'Wnd\\Controller\\' . $action;
-	if (class_exists($class)) {
+	if (class_exists($class) and is_callable(array($class, 'execute'))) {
 		try {
 			return $class::execute();
 		} catch (Exception $e) {
