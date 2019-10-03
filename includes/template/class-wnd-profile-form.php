@@ -31,7 +31,7 @@ class Wnd_Profile_Form extends Wnd_Template {
 		$form->set_action('wnd_user_update_profile');
 		$form->set_submit_button('保存');
 
-		$form->set_filter(__FUNCTION__);
+		$form->set_filter(__CLASS__);
 		$form->build();
 
 		return $form->html;

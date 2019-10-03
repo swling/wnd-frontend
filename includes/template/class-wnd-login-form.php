@@ -33,7 +33,7 @@ class Wnd_Login_Form extends Wnd_Template {
 		$form->set_action('wnd_user_login');
 		$form->set_submit_button('登录');
 		// 以当前函数名设置filter hook
-		$form->set_filter(__FUNCTION__);
+		$form->set_filter(__CLASS__);
 		// 构造表单
 		$form->build();
 

@@ -199,23 +199,28 @@ apply_filters('wnd_get_post_price', $price, $post_id);
 ```
 ## 表单
 ```php
+/**
+*@since 2019.10.03
+*表单模板以全面实现oop，filter为对应的类名
+*注意区分大小写
+**/
 ##注册表单@since 2019.03.10
-apply_filters('_wnd_login_form', $input_values);
+apply_filters('Wnd\Template\Wnd_Login_Form', $input_values);
 
 ##登录表单@since 2019.03.10
-apply_filters('_wnd_reg_form', $input_values);
+apply_filters('Wnd\Template\Wnd_Reg_Form', $input_values);
 
 ##用户资料表单@since 2019.03.10
-apply_filters('_wnd_profile_form', $input_values);
+apply_filters('Wnd\Template\Wnd_Profile_Form', $input_values);
 
 ##文章发布编辑表单 @since 2019.03.11
-apply_filters('_wnd_post_form', $input_values);
+apply_filters('Wnd\Template\Wnd_Post_Form', $input_values);
 
 ##找回密码表单
-apply_filters('_wnd_lostpassword_form', $input_values);
+apply_filters('Wnd\Template\Wnd_Reset_Pass_Form', $input_values);
 
 ##账户表单
-apply_filters('_wnd_account_form', $input_values);
+apply_filters('Wnd\Template\Wnd_Account_Form', $input_values);
 ```
 ## 面包屑
 ```php
@@ -242,9 +247,6 @@ do_action( 'wnd_update_profile', $user_id);
 
 ##@since 2019.03.14 站点清理
 do_action('wnd_clean_up');
-
-##充值表单 @since 2019.01.21
-do_action('_wnd_recharge_form')
 
 // 完成统计时附加动作
 do_action('wnd_ajax_update_views', $post_id);

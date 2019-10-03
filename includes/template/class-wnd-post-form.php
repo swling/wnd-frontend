@@ -57,7 +57,7 @@ class Wnd_Post_Form extends Wnd_Template {
 		$form->set_submit_button('保存');
 
 		// 以当前函数名设置filter hook
-		$form->set_filter(__FUNCTION__);
+		$form->set_filter(__CLASS__);
 		$form->build();
 
 		return $form->html;

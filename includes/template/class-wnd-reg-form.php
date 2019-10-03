@@ -61,7 +61,7 @@ class Wnd_Reg_Form extends Wnd_Template {
 		$form->set_action('wnd_user_reg');
 		$form->set_submit_button('注册');
 		// 以当前函数名设置filter hook
-		$form->set_filter(__FUNCTION__);
+		$form->set_filter(__CLASS__);
 		$form->build();
 
 		return $form->html;
