@@ -11,7 +11,7 @@ use \Exception;
  *@param $_POST['template']						信息模板
  *@param $_POST['phone'] or $_POST['email']		手机或邮件
  */
-class Wnd_Send_Code extends Wnd_Controller {
+class Wnd_Send_Code extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 		$type           = $_POST['type'] ?? '';

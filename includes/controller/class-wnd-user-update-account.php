@@ -9,7 +9,7 @@ namespace Wnd\Controller;
  *@param $_POST['_user_new_pass_repeat']
  *@param $_POST['_user_user_email']
  */
-class Wnd_User_Update_Account extends Wnd_Controller {
+class Wnd_User_Update_Account extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 		$user    = wp_get_current_user();

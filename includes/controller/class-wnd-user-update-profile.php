@@ -17,7 +17,7 @@ use \Exception;
  *_wpusermeta_{key} （*WordPress原生字段）
  *
  */
-class Wnd_User_Update_Profile extends Wnd_Controller {
+class Wnd_User_Update_Profile extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 		if (empty($_POST)) {

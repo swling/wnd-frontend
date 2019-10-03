@@ -11,7 +11,7 @@ use \Exception;
  *@param $_POST['total_amount']
  *@param $_POST['remarks']
  */
-class Wnd_Admin_Recharge extends Wnd_Controller {
+class Wnd_Admin_Recharge extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 		if (!is_super_admin()) {

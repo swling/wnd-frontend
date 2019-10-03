@@ -5,7 +5,7 @@ namespace Wnd\Controller;
  *@since 2019.02.12 文件校验下载
  *@param $_REQUEST['post_id']
  */
-class Wnd_Paid_Download extends Wnd_Controller {
+class Wnd_Paid_Download extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 		$post_id = (int) $_REQUEST['post_id'];

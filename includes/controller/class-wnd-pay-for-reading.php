@@ -8,7 +8,7 @@ use \Exception;
 /**
  *付费阅读类
  */
-class Wnd_Pay_For_Reading extends Wnd_Controller {
+class Wnd_Pay_For_Reading extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 		$post_id = (int) $_POST['post_id'];

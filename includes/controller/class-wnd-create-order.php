@@ -8,7 +8,7 @@ use \Exception;
  *@since 2019.10.02
  * 订单穿件类
  */
-class Wnd_Create_Order extends Wnd_Controller {
+class Wnd_Create_Order extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 		$post_id = (int) $_POST['post_id'];

@@ -9,7 +9,7 @@ namespace Wnd\Controller;
  *@param $remember = $_POST['remember'] ?? 0;
  *@param $redirect_to = $_REQUEST['redirect_to'] ?? home_url();
  */
-class Wnd_User_Login extends Wnd_Controller {
+class Wnd_User_Login extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 		$username    = trim($_POST['_user_user_login']);

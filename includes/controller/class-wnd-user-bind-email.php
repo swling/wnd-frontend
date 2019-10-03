@@ -9,7 +9,7 @@ use \Exception;
  *@param $_POST['_user_user_email'];
  *@param $_POST['auth_code']
  */
-class Wnd_User_Bind_Email extends Wnd_Controller {
+class Wnd_User_Bind_Email extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 		$email     = $_POST['_user_user_email'] ?? null;

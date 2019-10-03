@@ -4,7 +4,7 @@ namespace Wnd\Controller;
 use Wnd\Controller\Wnd_Form_Handler;
 use \Exception;
 
-class Wnd_Insert_Post extends Wnd_Controller {
+class Wnd_Insert_Post extends Wnd_Ajax_Controller {
 
 	/**
 	 *@see README.md

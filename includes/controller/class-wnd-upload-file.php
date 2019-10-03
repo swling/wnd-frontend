@@ -23,7 +23,7 @@ namespace Wnd\Controller;
  *	);
  *
  */
-class Wnd_Upload_File extends Wnd_Controller {
+class Wnd_Upload_File extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 
