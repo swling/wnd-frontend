@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Controller;
 
-use Wnd\Model\Wnd_Form_Handler;
+use Wnd\Controller\Wnd_Form_Handler;
 use \Exception;
 
 /**

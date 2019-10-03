@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\Controller;
 
 use \Exception;
 
