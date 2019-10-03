@@ -8,7 +8,7 @@ use \Exception;
  *@since 2019.03.04
  *@param $verify_form_nonce 	bool 	是否校验表单字段由Wnd_Form_WP表单类生成
  */
-class Wnd_Form_Data {
+class Wnd_Form_Handler {
 
 	static $enable_form_verify;
 	public $form_data;
@@ -18,7 +18,7 @@ class Wnd_Form_Data {
 
 		/**
 		 *@since 2019.05.10
-		 *apply_filters('wnd_form_data', $_POST) 操作可能会直接修改$_POST
+		 *apply_filters('wnd_form_handler', $_POST) 操作可能会直接修改$_POST
 		 *因而校验表单操作应该在filter应用之前执行
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
@@ -27,7 +27,7 @@ class Wnd_Form_Data {
 		}
 
 		// 允许修改表单提交数据
-		$this->form_data = apply_filters('wnd_form_data', $_POST);
+		$this->form_data = apply_filters('wnd_form_handler', $_POST);
 	}
 
 	/**
@@ -150,7 +150,7 @@ class Wnd_Form_Data {
 	 *@since 2019.07.17
 	 *获取表单数据
 	 *返回表单提交数据
-	 *与原$_POST相比，此时获取的表单提交数据，执行了wnd_form_data filter，并通过了表单一致性校验
+	 *与原$_POST相比，此时获取的表单提交数据，执行了wnd_form_handler filter，并通过了表单一致性校验
 	 */
 	public function get_form_data() {
 		return $this->form_data;

@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Controller;
 
-use Wnd\Model\Wnd_Form_Data;
+use Wnd\Model\Wnd_Form_Handler;
 use \Exception;
 
 /**
@@ -26,7 +26,7 @@ class Wnd_User_Update_Profile extends Wnd_Controller {
 
 		// 实例化WndWP表单数据处理对象
 		try {
-			$form_data = new Wnd_Form_Data();
+			$form_data = new Wnd_Form_Handler();
 		} catch (Exception $e) {
 			return array('status' => 0, 'msg' => $e->getMessage());
 		}

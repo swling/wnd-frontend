@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Controller;
 
-use Wnd\Model\Wnd_Form_Data;
+use Wnd\Model\Wnd_Form_Handler;
 use \Exception;
 
 class Wnd_Insert_Post extends Wnd_Controller {
@@ -28,7 +28,7 @@ class Wnd_Insert_Post extends Wnd_Controller {
 
 		// 实例化当前提交的表单数据
 		try {
-			$form_data     = new Wnd_Form_Data($verify_form_nonce);
+			$form_data     = new Wnd_Form_Handler($verify_form_nonce);
 			$post_array    = $form_data->get_post_array();
 			$meta_array    = $form_data->get_post_meta_array();
 			$wp_meta_array = $form_data->get_wp_post_meta_array();

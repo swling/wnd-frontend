@@ -468,7 +468,7 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 		$.ajax({
 			type: "GET",
 			datatype: "json",
-			url: wnd.root_url + wnd.rest_api,
+			url: wnd.root_url + wnd.interface_api,
 			data: {
 				"param": post_id,
 				"useragent": navigator.userAgent,
