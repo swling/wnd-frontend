@@ -7,7 +7,7 @@ use Wnd\View\Wnd_Filter;
  *@since 2019.02.19 封装前端当前用户内容管理面板
  *@param $posts_per_page 每页列表数目
  */
-class Wnd_User_Posts_Panel {
+class Wnd_User_Posts_Panel extends Wnd_Template {
 
 	public static function build(int $posts_per_page = 0) {
 		if (!is_user_logged_in()) {

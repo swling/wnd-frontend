@@ -7,7 +7,7 @@ namespace Wnd\Template;
  *do => register / login / reset_password, tab => string :profile / account, type => email / phone
  *@return $html .= el
  */
-class Wnd_User_Center {
+class Wnd_User_Center extends Wnd_Template {
 
 	public static function build($args = array()) {
 		$defaults = array(

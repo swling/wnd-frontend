@@ -7,7 +7,7 @@ use Wnd\View\Wnd_Filter;
  *@since 2019.02.19 封装前端管理员内容审核平台
  *@param $posts_per_page 每页列表数目
  */
-class wnd_admin_posts_panel {
+class wnd_admin_posts_panel extends Wnd_Template {
 
 	public static function build(int $posts_per_page = 0) {
 		if (!is_user_logged_in()) {
