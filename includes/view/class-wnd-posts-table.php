@@ -85,7 +85,7 @@ class Wnd_Posts_Table {
 				}
 
 				if ('post_author' == $column['post_field']) {
-					$content = '<a href="' . get_author_posts_url($post->post_author) . '">' . get_usermeta($post->post_author, 'display_name') . '</a>';
+					$content = '<a href="' . get_author_posts_url($post->post_author) . '">' . get_userdata($post->post_author)->display_name . '</a>';
 					$this->html .= '<td' . $this->get_the_class($column) . '>' . $content . '</td>';
 					continue;
 				}

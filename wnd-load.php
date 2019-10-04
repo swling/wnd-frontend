@@ -53,15 +53,14 @@ require WND_PATH . 'includes/functions/inc-media.php'; //媒体文件处理函�
 require WND_PATH . 'includes/functions/inc-finance.php'; //财务
 require WND_PATH . 'includes/functions/inc-post-type-status.php'; //自定义文章类型及状态
 
+require WND_PATH . 'includes/functions/tpl-general.php'; //通用模板
+require WND_PATH . 'includes/functions/tpl-list.php'; //post list模板
+require WND_PATH . 'includes/functions/tpl-term.php'; //term模板
+
 // hook
 require WND_PATH . 'includes/hook/add-action.php'; //添加动作
 require WND_PATH . 'includes/hook/add-filter.php'; //添加钩子
 require WND_PATH . 'includes/hook/remove.php'; //移除
-
-// template
-require WND_PATH . 'templates/tpl-general.php'; //通用模板
-require WND_PATH . 'templates/tpl-list.php'; //post list模板
-require WND_PATH . 'templates/tpl-term.php'; //term模板
 
 /**
  *分类关联标签

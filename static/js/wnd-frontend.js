@@ -197,19 +197,17 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 		Array ( [post_id] => 1 [user_id] =>2)
 
 *典型用途：	击弹出登录框、点击弹出建议发布文章框
-*@param 	template 	string 		template 必须以 "_wnd" 为前缀
+*@param 	template 	string 		template类
 *@param 	param 		srting 		传参
-*@param 	namespace 	string 		模板类的命名空间
 */
 // ajax 从后端请求内容，并以弹窗形式展现
-function wnd_ajax_modal(template, param = 0, namespace = "") {
+function wnd_ajax_modal(template, param = 0) {
 	$.ajax({
 		type: "GET",
 		url: wnd.root_url + wnd.interface_api,
 		data: {
 			"action": template,
 			"param": param,
-			"namespace": namespace,
 			"ajax_type": "modal",
 		},
 		//后台返回数据前
@@ -237,18 +235,16 @@ function wnd_ajax_modal(template, param = 0, namespace = "") {
  *@since 2019.1.10  从后端请求ajax内容并填充到指定DOM
  *原理同 wnd_ajax_modal()，区别为，响应方式为嵌入
  *@param 	container 	srting 		指定嵌入的容器选择器
- *@param 	template 	string 		template 必须以 "_wnd" 为前缀
+ *@param 	template 	string 		template类名称
  *@param 	param 		srting 		传参
- *@param 	namespace 	string 		模板类的命名空间
  **/
-function wnd_ajax_embed(container, template, param = 0, namespace = "") {
+function wnd_ajax_embed(container, template, param = 0) {
 	$.ajax({
 		type: "GET",
 		url: wnd.root_url + wnd.interface_api,
 		data: {
 			"action": template,
 			"param": param,
-			"namespace": namespace,
 			"ajax_type": "embed",
 		},
 		//后台返回数据前

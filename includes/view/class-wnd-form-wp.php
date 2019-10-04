@@ -44,17 +44,15 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	/**
 	 *设置提交信息
-	 *@param $action 				string 		ajax中为后端处理本次提交的类名，非ajax环境中为表单接收地址
-	 *@param $method_or_namespace 	string 		ajax中为后端处理类的命名空间，非ajax环境中为表单提交方法：POST/GET
-	 *
+	 *@param $action 	string 		ajax中为后端处理本次提交的类名，非ajax环境中为表单接收地址
+	 *@param $method 	string 		非ajax环境中为表单提交方法：POST/GET
 	 */
-	public function set_action($action, $method_or_namespace = 'Wnd\\Controller') {
+	public function set_action($action, $method = 'POST') {
 		if ($this->is_ajax_submit) {
-			$this->add_hidden('namespace', $method_or_namespace);
 			$this->add_hidden('action', $action);
-			$this->add_hidden('_ajax_nonce', wnd_create_nonce($action . $method_or_namespace));
+			$this->add_hidden('_ajax_nonce', wnd_create_nonce($action));
 		} else {
-			parent::set_action($action, $method_or_namespace);
+			parent::set_action($action, $method);
 		}
 	}
 
