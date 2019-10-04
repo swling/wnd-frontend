@@ -1,49 +1,5 @@
 <?php
 /**
- *@since 初始化
- *批量设置文章 meta 及 term
- *@param int 	$post_id
- *@param array 	$meta_array 	wnd meta array
- *@param array 	$wp_meta_array  wp meta array
- *@param array 	$term_array  	term_array
- */
-function wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $term_array) {
-	if (!get_post($post_id)) {
-		return false;
-	}
-
-	// 设置wnd post meta
-	if (!empty($meta_array) and is_array($meta_array)) {
-		wnd_update_post_meta_array($post_id, $meta_array);
-	}
-
-	// 设置原生 post meta
-	if (!empty($wp_meta_array) and is_array($wp_meta_array)) {
-		foreach ($wp_meta_array as $key => $value) {
-			// 空值，如设置了表单，但无数据的情况，过滤
-			if ('' == $value) {
-				delete_post_meta($post_id, $key);
-			} else {
-				update_post_meta($post_id, $key, $value);
-			}
-
-		}
-		unset($key, $value);
-	}
-
-	//  设置 term
-	if (!empty($term_array) and is_array($term_array)) {
-		foreach ($term_array as $taxonomy => $term) {
-			if ($term != '-1') {
-				//排除下拉菜单为选择的默认值
-				wp_set_post_terms($post_id, $term, $taxonomy, 0);
-			}
-		}
-		unset($taxonomy, $term);
-	}
-}
-
-/**
  *@since 2019.02.19
  *当前用户可以写入或管理的文章类型
  *@return array : post type name数组

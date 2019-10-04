@@ -2,6 +2,7 @@
 namespace Wnd\Controller;
 
 use Wnd\Controller\Wnd_Form_Handler;
+use Wnd\Model\Wnd_Post;
 use \Exception;
 
 class Wnd_Insert_Post extends Wnd_Ajax_Controller {
@@ -108,7 +109,7 @@ class Wnd_Insert_Post extends Wnd_Ajax_Controller {
 		}
 
 		// 更新字段，分类，及标签
-		wnd_update_post_meta_and_term($post_id, $meta_array, $wp_meta_array, $term_array);
+		Wnd_Post::update_meta_and_term($post_id, $meta_array, $wp_meta_array, $term_array);
 
 		// 完成返回
 		$redirect_to = $_REQUEST['redirect_to'] ?? null;
