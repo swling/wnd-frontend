@@ -68,7 +68,7 @@ class Wnd_Update_Post_Status extends Wnd_Ajax_Controller {
 
 		// 完成更新
 		if ($update) {
-			return array('status' => 5, 'msg' => '更新成功！');
+			return array('status' => 4, 'msg' => '更新成功！');
 
 			//更新失败
 		} else {
