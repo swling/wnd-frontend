@@ -81,42 +81,42 @@ wnd_meta：gallery (用户相册)
 
 # ajax交互概述：
 后端返回json属性：status,msg,data
-```php
-/**
- *自定义rest api：		wp-json/wnd/rest-api 		Allow: GET, POST, PUT, PATCH, DELETE
- *自定义interface api：	wp-json/wnd/interface-api 	Allow: GET
- *
- * ### rest api
- *提交的数据中必须包含：
- *$_REQUEST['action'] = $class
- *$_REQUEST['namespace'] = $namespace
- *通过该值，将当前数据交由对应的后端 $namespace . $class类处理
- *
- *提交的数据中，必须包含：
- *$_REQUEST['_ajax_nonce']
- *nonce生成方式：wnd_create_nonce($action_name . $namespace )
- *@see Wnd_Form_WP->set_action
- *
- *后端函数接收提交数据并处理后，返回数组值：
- *array('status'=>'状态值','msg'=>'消息','data'=>'数据');
- *API统一将结果转为json格式，输出交付前端处理
- *
- *权限控制中通过WordPress add_filters 实现
- *
- *### interface api
- *UI请求无需nonce校验需要包含如下参数
- *$_GET['action'] = $class
- *$_GET['namespace'] = $namespace
- *$_GET['param'] = $param
- *
- *指定的命名空间需要提前加入到允许的命名空间数组中
- *默认已支持本插件的模板命名空间和控制命名空间
- *@see aapply_filters('wnd_interface_namespaces', array('Wnd\\Template\\'));
- *@see apply_filters('wnd_rest_namespaces', array('Wnd\\Controller\\'));
- *
- *@see /wnd-api.php
-*/
 
+自定义rest api：		wp-json/wnd/rest-api 		Allow: GET, POST, PUT, PATCH, DELETE
+自定义interface api：	wp-json/wnd/interface-api 	Allow: GET
+
+### rest api
+提交的数据中必须包含：
+$_REQUEST['action']：该值为处理当前请求的控制类名称（不含命名空间）
+$_REQUEST['_ajax_nonce']
+nonce生成方式：wnd_create_nonce($_REQUEST['action'])
+
+#### @see Wnd_Form_WP->set_action
+
+后端控制类接收数据并选择模型处理后，返回数组值：
+array('status'=>'状态值','msg'=>'消息','data'=>'数据');
+API统一将结果转为json格式，输出交付前端处理
+
+#### 拓展控制类
+如需在第三方插件或主题拓展控制器处理请定义类并遵循以下规则：
+- 类名称必须以wndt为前缀
+- 命名空间必须为：Wndt\Controller
+
+### interface api
+UI请求无需nonce校验需要包含如下参数
+- $_GET['action']：该值为响应当前UI的类名称（不含命名空间）
+- $_GET['param']传递给UI类的参数(可选)
+UI类将返回字符串（通常为HTML字符串）交付前端
+
+
+### 拓展UI类
+如需在第三方插件或主题拓展UI响应请定义类并遵循以下规则：
+- 类名称必须以wndt为前缀
+- 命名空间必须为：Wndt\Template
+
+## @see /wnd-api.php
+
+```php
 // 预先在需要权限校验的地方，设置filter,若status 为 0，表示权限校验不通过，当前钩子所在函数操作会中断，将权限校验数组结果返回
 add_filter('wnd_can_insert_post', 'wnd_can_insert_post', 10, 3);
 function wnd_can_insert_post($default_return, $post_type, $update_id) {
@@ -127,17 +127,6 @@ function wnd_can_insert_post($default_return, $post_type, $update_id) {
 ```
 
 # filter
-
-## api 类命名空间
-当api请求action为类名称时，可指定类的命名空间。指定的命名空间必须在允许的数组中。
-新增命名空间可通过下列filter实现
-```php
-// interface api请求允许的命名空间
-$namespaces = apply_filters('wnd_interface_namespaces', array('Wnd\\Template\\'));
-
-// rest api请求允许的命名空间
-$namespaces = apply_filters('wnd_rest_namespaces', array('Wnd\\Controller\\'));
-```
 
 ## ajax表单数据
 ```php
@@ -446,4 +435,17 @@ namespace Wnd\View;
 
 // 模板类：基于视图类的一些封装模块
 namespace Wnd\Template;
+```
+### 用户自定义拓展UI响应
+- 类名称以'Wndt' 为前缀(不区分大小写)
+- 命名空间为：
+```php
+namespace Wndt\Template;
+```
+
+### 用户自定义拓展API响应
+- 类名称以'Wndt' 为前缀(不区分大小写)
+- 命名空间为：
+```php
+namespace Wndt\Controller;
 ```
