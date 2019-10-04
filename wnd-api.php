@@ -40,14 +40,13 @@ function wnd_action_rest_register_route() {
 /**
  *@since 2019.04.07
  *UI响应
- *@param $_GET['action'] 	string	后端响应UI类名称(需包含命名空间)
+ *@param $_GET['action'] 	string	后端响应UI类名称
  *@param $_GET['param']		string	模板类传参
  *
  *@since 2019.10.04
  *如需在第三方插件或主题拓展UI响应请定义类并遵循以下规则：
  *1、类名称必须以wndt为前缀
- *2、命名空间必须为：Wndt\\Template
- *
+ *2、命名空间必须为：Wndt\Template
  */
 function wnd_interface_api_callback($request) {
 	if (!isset($_GET['action'])) {
@@ -78,12 +77,12 @@ function wnd_interface_api_callback($request) {
  *@since 2019.04.07
  *数据处理
  *@param $_REQUEST['_ajax_nonce'] 	string 	wp nonce校验
- *@param $_REQUEST['action']	 	string 	后端响应类(需包含命名空间)
+ *@param $_REQUEST['action']	 	string 	后端响应类
  *
  *@since 2019.10.04
  *如需在第三方插件或主题拓展控制器处理请定义类并遵循以下规则：
  *1、类名称必须以wndt为前缀
- *2、命名空间必须为：Wndt\\Controller
+ *2、命名空间必须为：Wndt\Controller
  */
 function wnd_rest_api_callback($request) {
 	if (!isset($_REQUEST['action'])) {
