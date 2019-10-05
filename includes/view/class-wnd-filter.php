@@ -3,6 +3,7 @@ namespace Wnd\View;
 
 use Wnd\Model\Wnd_Tag_Under_Category;
 use \Exception;
+use \WP_Query;
 
 /**
  * @since 2019.07.30
@@ -1212,7 +1213,7 @@ class Wnd_Filter {
 	 *执行查询
 	 */
 	public function query() {
-		$this->wp_query = new \WP_Query($this->wp_query_args);
+		$this->wp_query = new WP_Query($this->wp_query_args);
 	}
 
 	/**
