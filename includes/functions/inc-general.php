@@ -179,7 +179,7 @@ function wnd_get_queried_type() {
  *@param $template 	string  			被调用函数(必须以 _wnd为前缀)
  *@param $args 		array or string 	传递给被调用模板函数的参数
  */
-function _wnd_ajax_embed($template, $args = '') {
+function wnd_ajax_embed($template, $args = '') {
 	$div_id    = 'wnd-embed-' . uniqid();
 	$args      = wp_parse_args($args);
 	$ajax_args = http_build_query($args);
@@ -195,7 +195,7 @@ function _wnd_ajax_embed($template, $args = '') {
  *@param $_POST['post_id']
  *@param $_POST['post_type']
  */
-function _wnd_ajax_is_title_duplicated() {
+function wnd_ajax_is_title_duplicated() {
 	$title      = $_POST['post_title'];
 	$exclude_id = $_POST['post_id'];
 	$post_type  = $_POST['post_type'];
@@ -212,7 +212,7 @@ function _wnd_ajax_is_title_duplicated() {
  *@param $_GET['post_id']
  *@param $_GET['useragent']
  */
-function _wnd_ajax_update_views() {
+function wnd_ajax_update_views() {
 	$post_id = (int) $_GET['param'];
 	if (!$post_id) {
 		return;

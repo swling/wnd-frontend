@@ -191,7 +191,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			)
 		);
 
-		$this->add_html(_wnd_tags_editor_script(3, 20, $placeholder, $taxonomy));
+		$this->add_html(wnd_tags_editor_script(3, 20, $placeholder, $taxonomy));
 	}
 
 	/**

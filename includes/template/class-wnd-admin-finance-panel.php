@@ -18,7 +18,7 @@ class Wnd_Admin_Finance_Panel extends Wnd_Template {
 		$filter = new Wnd_Filter(true);
 		$filter->add_post_type_filter(array('stats-ex', 'stats-re', 'order', 'recharge'));
 		$filter->add_post_status_filter(array('全部' => 'any', '已完成' => 'success', '进行中' => 'pending'));
-		$filter->set_posts_template('_wnd_user_fin_posts_tpl');
+		$filter->set_posts_template('wnd_user_finance_posts_tpl');
 		$filter->set_posts_per_page($posts_per_page);
 		$filter->set_ajax_container('#admin-fin-panel');
 		$filter->query();

@@ -30,7 +30,7 @@ class Wnd_Create_Order extends Wnd_Ajax_Controller {
 		if (wnd_get_post_price($post_id) > wnd_get_user_money($user_id)) {
 			$msg = '余额不足：';
 			if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
-				$msg .= '<a href="' . _wnd_order_link($post_id) . '">在线支付</a> | ';
+				$msg .= '<a href="' . wnd_order_link($post_id) . '">在线支付</a> | ';
 			}
 			$msg .= '<a onclick="wnd_ajax_modal(\'Wnd_User_Recharge_Form\')">余额充值</a>';
 

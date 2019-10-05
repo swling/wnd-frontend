@@ -43,7 +43,7 @@ echo $temp_form->html;
  *@since 2019.03.10 表单filter举例
  *
  */
-add_filter('_wnd_demo_form', 'wnd_filer_form_filter', 10, 1);
+add_filter('wnd_demo_form', 'wnd_filer_form_filter', 10, 1);
 function wnd_filer_form_filter($input_values) {
 
 	// 去掉一个现有字段（按表单顺序 0、1、2……）
@@ -65,12 +65,12 @@ function wnd_filer_form_filter($input_values) {
 
 }
 
-_wnd_demo_form();
+wnd_demo_form();
 
 /**
  *@since 2019.03.10 ajax表单demo
  */
-function _wnd_demo_form() {
+function wnd_demo_form() {
 
 	$form = new Wnd_Form_WP($is_ajax_submit = true);
 

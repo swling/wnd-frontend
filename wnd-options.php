@@ -170,14 +170,14 @@ function wnd_options()
 				<tr>
 					<td valign="top">主色调</td>
 					<td>
-						<?php echo _wnd_dropdown_colors('wnd_primary_color', wnd_get_option('wnd', 'wnd_primary_color')); ?>
+						<?php echo wnd_dropdown_colors('wnd_primary_color', wnd_get_option('wnd', 'wnd_primary_color')); ?>
 					</td>
 				</tr>
 
 				<tr>
 					<td valign="top">辅色调</td>
 					<td>
-						<?php echo _wnd_dropdown_colors('wnd_second_color', wnd_get_option('wnd', 'wnd_second_color')); ?>
+						<?php echo wnd_dropdown_colors('wnd_second_color', wnd_get_option('wnd', 'wnd_second_color')); ?>
 					</td>
 				</tr>
 

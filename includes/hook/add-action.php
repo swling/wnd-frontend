@@ -262,7 +262,7 @@ function wnd_action_add_attachment($post_ID) {
 	 *
 	 *典型场景：
 	 *删除某个特定附件后，需要新上传附件，并恢复原有排序。此时要求新附件menu_order与删除的附件一致
-	 *通过_wnd_attachment_form()上传文件，并编辑menu_order即可达到上述要求
+	 *通过wnd_attachment_form()上传文件，并编辑menu_order即可达到上述要求
 	 */
 	if ($post->post_parent) {
 		wnd_inc_wnd_post_meta($post->post_parent, 'attachment_records');

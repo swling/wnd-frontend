@@ -3,7 +3,7 @@
  *@since 2019.05.23
  *面包屑导航
  **/
-function _wnd_breadcrumb() {
+function wnd_breadcrumb() {
 	if (is_home() or is_author()) {
 		return;
 	}
@@ -65,7 +65,7 @@ function _wnd_breadcrumb() {
 		//其他归档页
 	} elseif (is_archive()) {
 		$args = http_build_query(array('taxonomy' => $queried_object->taxonomy, 'orderby' => 'name'));
-		$html .= '<li><a onclick="wnd_ajax_modal(\'_wnd_terms_list\',\'' . $args . '\')">' . get_taxonomy($queried_object->taxonomy)->label . '</a></li>';
+		$html .= '<li><a onclick="wnd_ajax_modal(\'wnd_terms_list\',\'' . $args . '\')">' . get_taxonomy($queried_object->taxonomy)->label . '</a></li>';
 		$html .= '<li class="is-active"><a>' . $queried_object->name . '</a></li>';
 
 	} else {
@@ -88,7 +88,7 @@ function _wnd_breadcrumb() {
 			$breadcrumb_right .= '&nbsp;<a onclick="wnd_ajax_modal(\'Wnd_Post_Status_Form\',\'' . $queried_object->ID . '\')">[管理]</a>';
 		}
 	}
-	$html .= apply_filters('_wnd_breadcrumb_right', $breadcrumb_right);
+	$html .= apply_filters('wnd_breadcrumb_right', $breadcrumb_right);
 	$html .= '</div>';
 
 	/**
@@ -102,7 +102,7 @@ function _wnd_breadcrumb() {
 /**
  *@since 2019.05.26 bulma 颜色下拉选择
  */
-function _wnd_dropdown_colors($name, $selected) {
+function wnd_dropdown_colors($name, $selected) {
 	$colors = array(
 		'primary',
 		'success',
@@ -134,7 +134,7 @@ function _wnd_dropdown_colors($name, $selected) {
  *创建订单链接
  *@param int $post_id 产品/文章ID
  */
-function _wnd_order_link($post_id) {
+function wnd_order_link($post_id) {
 	return wnd_get_do_url() . '?action=payment&post_id=' . $post_id . '&_wpnonce=' . wnd_create_nonce('payment');
 }
 
@@ -145,7 +145,7 @@ function _wnd_order_link($post_id) {
  *@param $thumbnail_width 	number 		缩略图宽度
  *@param $thumbnail_height 	number 		缩略图高度
  **/
-function _wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120) {
+function wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120) {
 	$images = $post_id ? wnd_get_post_meta($post_id, 'gallery') : wnd_get_user_meta(get_current_user_id(), 'gallery');
 	if (!$images) {
 		return false;
@@ -178,7 +178,7 @@ function _wnd_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120)
  *@param int $width 	缩略图宽度
  *@param int $height 	缩略图高度
  */
-function _wnd_post_thumbnail($post_id, $width, $height) {
+function wnd_post_thumbnail($post_id, $width, $height) {
 	$post_id = $post_id ?: get_the_ID();
 	if ($post_id) {
 		$image_id = wnd_get_post_meta($post_id, '_thumbnail_id');
@@ -187,5 +187,5 @@ function _wnd_post_thumbnail($post_id, $width, $height) {
 	$url  = $image_id ? wnd_get_thumbnail_url($image_id, $width, $height) : WND_URL . '/static/images/default.jpg';
 	$html = '<img class="thumbnail" src="' . $url . '" width="' . $width . '" height="' . $height . '">';
 
-	return apply_filters('_wnd_post_thumbnail', $html, $post_id, $width, $height);
+	return apply_filters('wnd_post_thumbnail', $html, $post_id, $width, $height);
 }

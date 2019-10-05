@@ -7,7 +7,7 @@ use Wnd\View\Wnd_Posts_Table;
  *@param 	object 	$query 	WP_Query 实例化结果
  *@return 	string 	$html 	输出表单
  **/
-function _wnd_mail_posts_tpl($query) {
+function wnd_mail_posts_tpl($query) {
 	$table = new Wnd_Posts_Table($query, true, true);
 	$table->add_column(
 		array(
@@ -33,7 +33,7 @@ function _wnd_mail_posts_tpl($query) {
  *@param 	object 	$query 	WP_Query 实例化结果
  *@return 	string 	$html 	输出表单
  **/
-function _wnd_posts_tpl($query) {
+function wnd_posts_tpl($query) {
 	$table = new Wnd_Posts_Table($query, true, true);
 	$table->add_column(
 		array(
@@ -66,7 +66,7 @@ function _wnd_posts_tpl($query) {
  *@param 	object 	$post 	post 对象
  *@return 	string 	$html 	输出表单
  **/
-function _wnd_post_tpl($post) {
+function wnd_post_tpl($post) {
 	$html = '<li><a href="' . get_permalink($post->ID) . '" target="_blank">' . $post->post_title . '</a></li>';
 	return $html;
 }
@@ -75,7 +75,7 @@ function _wnd_post_tpl($post) {
  *@since 2019.03.14
  *以表格形式输出用户充值及消费记录
  */
-function _wnd_user_fin_posts_tpl($query) {
+function wnd_user_finance_posts_tpl($query) {
 	$table = new Wnd_Posts_Table($query, true, true);
 	$table->add_column(
 		array(

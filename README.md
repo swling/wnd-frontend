@@ -243,12 +243,12 @@ apply_filters('Wnd\Template\Wnd_Account_Form', $input_values);
 ```
 ## 面包屑
 ```php
-apply_filters('_wnd_breadcrumb_right', $breadcrumb_right);
+apply_filters('wnd_breadcrumb_right', $breadcrumb_right);
 ```
 
 ## 缩略图
 ```php
-apply_filters('_wnd_post_thumbnail', $html, $post_id, $width, $height);
+apply_filters('wnd_post_thumbnail', $html, $post_id, $width, $height);
 ```
 # action
 ```php

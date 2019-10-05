@@ -19,7 +19,7 @@ class Wnd_User_Mail_Panel extends Wnd_Template {
 		$filter->add_post_type_filter(array('mail'));
 		$filter->add_post_status_filter(array('全部' => 'any', '未读' => 'pending', '已读' => 'private'));
 		$filter->add_query(array('author' => get_current_user_id()));
-		$filter->set_posts_template('_wnd_mail_posts_tpl');
+		$filter->set_posts_template('wnd_mail_posts_tpl');
 		$filter->set_posts_per_page($posts_per_page);
 		$filter->set_ajax_container('#user-mail-panel');
 		$filter->query();
