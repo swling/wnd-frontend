@@ -475,7 +475,7 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 			data: {
 				"param": post_id,
 				"useragent": navigator.userAgent,
-				"action": "_wnd_ajax_update_views",
+				"action": "wnd_ajax_update_views",
 			},
 			// 提交中
 			beforeSend: function(xhr) {
