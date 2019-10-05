@@ -30,7 +30,7 @@ use Wnd\View\Wnd_Form_WP;
  *本质上，替换文件，是删除后的新建，是全新的attachment post
  *
  */
-class Wnd_Post_Form extends Wnd_Template {
+class Wnd_Attachment_Form extends Wnd_Template {
 
 	public static function build($args) {
 		$defaults = array(
