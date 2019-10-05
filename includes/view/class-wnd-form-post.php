@@ -86,7 +86,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		if (!$input_fields_only) {
 			$this->add_hidden('_post_ID', $this->post_id);
 			$this->add_hidden('_post_post_type', $this->post_type);
-			$this->set_action('Wnd_Insert_Post');
+			$this->set_action('wnd_insert_post');
 		}
 	}
 

@@ -11,7 +11,6 @@ use Wnd\view\Wnd_Form_WP;
  *@since 2019.01.22
  *检测当前信息是否可以注册新用户
  */
-// apply_filters('wnd_can_reg', array('status'=>1,'msg'=>'默认通过'));
 add_filter('wnd_can_reg', 'wnd_filter_can_reg', 10, 1);
 function wnd_filter_can_reg($can_array) {
 	if (!get_option('users_can_register')) {
@@ -176,7 +175,7 @@ function wnd_filter_the_content($content) {
 		if (!$user_id) {
 			$content .= $price ? '<div class="message ' . $second_color . '"><div class="message-body">付费下载：¥' . $price . '</div></div>' : '';
 			$button_text = '请登录后下载';
-			$button      = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'Wnd_User_Center\',\'do=login\')">' . $button_text . '</button></div>';
+			$button      = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\')">' . $button_text . '</button></div>';
 			$content .= $button;
 			return $content;
 		}
@@ -213,7 +212,7 @@ function wnd_filter_the_content($content) {
 		} else {
 			$form = new Wnd_Form_WP();
 			$form->add_hidden('post_id', $post->ID);
-			$form->set_action('Wnd_Pay_For_Download');
+			$form->set_action('wnd_pay_for_fownload');
 			$form->set_submit_button($button_text);
 			$form->build();
 
@@ -237,7 +236,7 @@ function wnd_filter_the_content($content) {
 	if (!$user_id) {
 		$content = '<div class="free-content">' . $free_content . '</div>';
 		$content .= '<div class="paid-content"><div class="message ' . $second_color . '"><div class="message-body">付费内容：¥' . $price . '</div></div></div>';
-		$button = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'Wnd_User_Center\',\'do=login\')">请登录</button></div>';
+		$button = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\')">请登录</button></div>';
 		$content .= $button;
 		return $content;
 	}
@@ -279,7 +278,7 @@ function wnd_filter_the_content($content) {
 	} else {
 		$form = new Wnd_Form_WP();
 		$form->add_hidden('post_id', $post->ID);
-		$form->set_action('Wnd_Pay_For_Reading');
+		$form->set_action('wnd_pay_for_reading');
 		$form->set_submit_button($button_text);
 		$form->build();
 
