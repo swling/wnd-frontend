@@ -20,7 +20,7 @@ class Wnd_User_Login_QQ extends Wnd_User_Login_Social {
 		$query = http_build_query(
 			array(
 				'client_id'     => $this->app_id,
-				'state'         => wp_create_nonce('qq_login'),
+				'state'         => wnd_create_nonce('qq_login'),
 				'response_type' => 'code',
 				'redirect_uri'  => $return_url ?: home_url(),
 			)
@@ -39,7 +39,7 @@ class Wnd_User_Login_QQ extends Wnd_User_Login_Social {
 
 		$code  = $_GET['code'];
 		$nonce = $_GET['state'];
-		if (!wp_verify_nonce($nonce, 'qq_login')) {
+		if (!wnd_verify_nonce($nonce, 'qq_login')) {
 			throw new Exception('验证失败，请返回页面并刷新重试');
 		}
 

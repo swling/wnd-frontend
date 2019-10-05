@@ -268,7 +268,7 @@ do_action( 'wnd_update_profile', $user_id);
 do_action('wnd_clean_up');
 
 // 完成统计时附加动作
-do_action('wnd_ajax_update_views', $post_id);
+do_action('wnd_update_views', $post_id);
 
 /**
  * @since 2019.06.30

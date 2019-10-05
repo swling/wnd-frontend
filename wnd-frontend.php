@@ -52,11 +52,12 @@ function wnd_scripts() {
 	}
 
 	$wnd_data = array(
-		'api_nonce'     => wp_create_nonce('wp_rest'),
+		'root_url'      => site_url(),
+		'rest_nonce'    => wp_create_nonce('wp_rest'),
+		'ajax_nonce'    => wnd_create_nonce('wnd_ajax_action'),
 		'interface_api' => '/wp-json/wnd/interface',
 		'rest_api'      => '/wp-json/wnd/rest-api',
 		'filter_api'    => '/wp-json/wnd/filter',
-		'root_url'      => site_url(''),
 	);
 	wp_localize_script('wnd-frontend', 'wnd', $wnd_data);
 }

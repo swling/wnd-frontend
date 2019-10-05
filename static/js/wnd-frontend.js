@@ -112,13 +112,6 @@ var ajax_msg_time_out;
 
 function wnd_ajax_msg(msg, style = "is-danger", parent = "body", wait = 0) {
 	$(parent + " .ajax-message:first").html('<div class="message ' + style + '"><div class="message-body">' + msg + '</div></div>');
-	// 非对话框，返回表单顶部以展示提示信息
-	// if (!$(".modal").hasClass("is-active")) {
-	// 	var target = $(parent).get(0);
-	// 	target.scrollIntoView({
-	// 		behavior: "smooth"
-	// 	});
-	// }
 	// 定时清空
 	if (wait > 0) {
 		ajax_msg_time_out = setTimeout(function() {
@@ -179,19 +172,20 @@ function wnd_confirm_form_submit(form_id, msg = "") {
  * @since 2019.1
 *######################## ajax动态内容请求
 *使用本函数主要用以返回更复杂的结果如：表单，页面以弹窗或嵌入指定DOM的形式呈现，以供用户操作。表单提交则通常返回较为简单的结果
-	允许携带一个参数，默认为0
+	允许携带一个参数
 
 	@since 2019.01.26
 	若需要传递参数值超过一个，可将参数定义为GET参数形式如："post_id=1&user_id=2"，后端采用:wp_parse_args() 解析参数
 
 	实例：
 		前端
-		wnd_ajax_modal("_wndxxx","post_id=1&user_id=2");
+		wnd_ajax_modal("wnd_xxx","post_id=1&user_id=2");
 
 		后端
-		function _wndxxx($args){
+		namespace Wnd\Template;
+		class wnd_xxx($args){
 			$args = wp_parse_args($args)
-			print_r($args);
+			return($args);
 		}
 		弹窗将输出
 		Array ( [post_id] => 1 [user_id] =>2)
@@ -201,7 +195,7 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 *@param 	param 		srting 		传参
 */
 // ajax 从后端请求内容，并以弹窗形式展现
-function wnd_ajax_modal(template, param = 0) {
+function wnd_ajax_modal(template, param = '') {
 	$.ajax({
 		type: "GET",
 		url: wnd.root_url + wnd.interface_api,
@@ -212,7 +206,7 @@ function wnd_ajax_modal(template, param = 0) {
 		},
 		//后台返回数据前
 		beforeSend: function(xhr) {
-			xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			wnd_alert_msg("……");
 		},
 		//成功后
@@ -249,7 +243,7 @@ function wnd_ajax_embed(container, template, param = 0) {
 		},
 		//后台返回数据前
 		beforeSend: function(xhr) {
-			xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			// wnd_alert_msg("……")
 		},
 		//成功后
@@ -357,7 +351,7 @@ function wnd_ajax_submit(form_id) {
 
 		// 提交中
 		beforeSend: function(xhr) {
-			xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			submit_button.addClass("is-loading");
 		},
 
@@ -433,6 +427,10 @@ function wnd_ajax_submit(form_id) {
  * 流量统计
  */
 function wnd_ajax_update_views(post_id, interval = 3600) {
+	if (wnd_is_spider()) {
+		return;
+	}
+
 	var timestamp = Date.parse(new Date()) / 1000;
 	var wnd_views = localStorage.getItem("wnd_views") ? JSON.parse(localStorage.getItem("wnd_views")) : [];
 	var max_length = 10;
@@ -471,15 +469,16 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 		$.ajax({
 			type: "GET",
 			datatype: "json",
-			url: wnd.root_url + wnd.interface_api,
+			url: wnd.root_url + wnd.rest_api,
 			data: {
 				"param": post_id,
-				"useragent": navigator.userAgent,
-				"action": "wnd_ajax_update_views",
+				"action": "wnd_ajax_action",
+				"method": "update_views",
+				"_ajax_nonce": wnd.ajax_nonce,
 			},
 			// 提交中
 			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			},
 			success: function(response) {
 				if (response.status === 1) {
@@ -547,7 +546,7 @@ jQuery(document).ready(function($) {
 			type: "POST",
 			//后台返回数据前
 			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 				wnd_ajax_msg("正在处理，请勿关闭页面！", "is-warning", "#" + id);
 			},
 			// 提交成功
@@ -691,7 +690,7 @@ jQuery(document).ready(function($) {
 			type: "post",
 			//后台返回数据前
 			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 				wnd_ajax_msg("删除中……", "is-warning", "#" + id);
 			},
 			// 上传成功
@@ -758,7 +757,7 @@ jQuery(document).ready(function($) {
 		data.phone = $("#" + form_id + " input[name='phone']").val();
 		data.email = $("#" + form_id + " input[name='_user_user_email']").val();
 		if (data.email == "" || data.phone == "") {
-			wnd_ajax_msg("不知道发送到给谁……", "is-danger", "#" + form_id);
+			wnd_ajax_msg("发送地址为空！", "is-danger", "#" + form_id);
 			return false;
 		}
 
@@ -768,7 +767,7 @@ jQuery(document).ready(function($) {
 			url: wnd.root_url + wnd.rest_api,
 			data: data,
 			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 				_this.addClass("is-loading");
 			},
 			success: function(response) {
@@ -831,7 +830,7 @@ jQuery(document).ready(function($) {
 			},
 			//后台返回数据前
 			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			},
 			//成功后
 			success: function(response) {
@@ -961,7 +960,7 @@ jQuery(document).ready(function($) {
 			type: "GET",
 			data: filter_param,
 			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.api_nonce);
+				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			},
 			success: function(response) {
 				// 切换post type时，隐藏所有taxonomy 再根据当前post type支持的taxonomy选择性显示，以达到ajax切换的效果
@@ -1007,7 +1006,7 @@ jQuery(document).ready(function($) {
 				}
 			},
 			error: function() {
-				wnd_alert_msg("请求失败");
+				wnd_alert_msg("请求失败！");
 				_this.parent("li").removeClass("is-active");
 			}
 		});
@@ -1023,7 +1022,6 @@ jQuery(document).ready(function($) {
 		var submit_button = $(this).find("[type='submit']");
 		submit_button.prop("disabled", false);
 		submit_button.text(submit_button.data("text"));
-		// $(this).find(".ajax-message").empty();
 	});
 
 	/**
@@ -1059,7 +1057,7 @@ jQuery(document).ready(function($) {
 		if (form_id) {
 			wnd_ajax_submit(form_id);
 		} else {
-			wnd_alert_msg("未找到指定表单", 1);
+			wnd_alert_msg("未找到指定表单！", 1);
 		}
 	});
 
