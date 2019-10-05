@@ -93,11 +93,6 @@ function wnd_rest_api_callback($request) {
 	$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\\Controller' : 'Wnd\\Controller';
 	$class      = $namespace . '\\' . $class_name;
 
-	// nonce校验：action
-	if (!wnd_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $_REQUEST['action'])) {
-		return array('status' => 0, 'msg' => '安全校验失败！');
-	}
-
 	/**
 	 *@since 2019.10.01
 	 *为实现惰性加载，使用控制类
