@@ -14,7 +14,7 @@ class Wnd_Account_Form extends Wnd_Template {
 		}
 		if (!wp_get_current_user()->data->user_email) {
 			$html = '<div class="has-text-centered content">';
-			$html .= '<button class="button is-' . wnd_get_option('wnd', 'wnd_primary_color') . '" onclick="wnd_ajax_modal(\'Wnd_Bind_Email_Form\')">请绑定邮箱</button>';
+			$html .= '<button class="button is-' . wnd_get_option('wnd', 'wnd_primary_color') . '" onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">请绑定邮箱</button>';
 			$html .= '</div>';
 			return $html;
 		}
@@ -34,9 +34,9 @@ class Wnd_Account_Form extends Wnd_Template {
 		 *绑定邮箱或手机
 		 */
 		$html = '<div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body has-text-centered">';
-		$html .= '<a onclick="wnd_ajax_modal(\'Wnd_Bind_Email_Form\')">邮箱设置</a> | ';
-		$html .= 1 == wnd_get_option('wnd', 'wnd_enable_sms') ? '<a onclick="wnd_ajax_modal(\'Wnd_Bind_Phone_Form\')">手机设置</a> | ' : '';
-		$html .= '<a onclick="wnd_ajax_modal(\'Wnd_Reset_Pass_Form\')">重置密码</a>';
+		$html .= '<a onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">邮箱设置</a> | ';
+		$html .= 1 == wnd_get_option('wnd', 'wnd_enable_sms') ? '<a onclick="wnd_ajax_modal(\'wnd_bind_phone_form\')">手机设置</a> | ' : '';
+		$html .= '<a onclick="wnd_ajax_modal(\'wnd_reset_pass_form\')">重置密码</a>';
 		$html .= '</div></div>';
 
 		return $form->html . $html;

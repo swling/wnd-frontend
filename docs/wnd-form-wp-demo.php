@@ -353,7 +353,7 @@ function wnd_demo_form() {
 	);
 
 	// 与该表单数据匹配的后端处理类及类的命名空间
-	$form->set_action($class = 'Wnd_Inset_Post', $namespace = 'Wnd\\Controller');
+	$form->set_action('wnd_inset_post');
 	$form->set_submit_button('Submit', 'is-primary');
 
 	/**

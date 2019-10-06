@@ -200,7 +200,7 @@ function wnd_filter_the_content($content) {
 			if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
 				$msg .= '<a class="button ' . $primary_color . '" href="' . wnd_order_link($post->ID) . '">在线支付</a>';
 				$msg .= '&nbsp;&nbsp;';
-				$msg .= '<a class="button ' . $primary_color . ' is-outlined" onclick="wnd_ajax_modal(\'Wnd_User_Recharge_Form\')">余额充值</a>';
+				$msg .= '<a class="button ' . $primary_color . ' is-outlined" onclick="wnd_ajax_modal(\'wnd_user_recharge_form\')">余额充值</a>';
 			} else {
 				$msg .= '余额不足！';
 			}
@@ -268,7 +268,7 @@ function wnd_filter_the_content($content) {
 		if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
 			$msg .= '<a class="button ' . $primary_color . '" href="' . wnd_order_link($post->ID) . '">在线支付</a>';
 			$msg .= '&nbsp;&nbsp;';
-			$msg .= '<a class="button ' . $primary_color . ' is-outlined" onclick="wnd_ajax_modal(\'Wnd_User_Recharge_Form\')">余额充值</a>';
+			$msg .= '<a class="button ' . $primary_color . ' is-outlined" onclick="wnd_ajax_modal(\'wnd_user_recharge_form\')">余额充值</a>';
 		} else {
 			$msg .= '余额不足！';
 		}

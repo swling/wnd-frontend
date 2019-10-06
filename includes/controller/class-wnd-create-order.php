@@ -32,7 +32,7 @@ class Wnd_Create_Order extends Wnd_Ajax_Controller {
 			if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
 				$msg .= '<a href="' . wnd_order_link($post_id) . '">在线支付</a> | ';
 			}
-			$msg .= '<a onclick="wnd_ajax_modal(\'Wnd_User_Recharge_Form\')">余额充值</a>';
+			$msg .= '<a onclick="wnd_ajax_modal(\'wnd_user_recharge_form\')">余额充值</a>';
 
 			return array('status' => 0, 'msg' => $msg);
 		}
