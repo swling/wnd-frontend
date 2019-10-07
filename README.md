@@ -236,7 +236,7 @@ apply_filters('Wnd\Template\Wnd_Profile_Form', $input_values);
 apply_filters('Wnd\Template\Wnd_Post_Form', $input_values);
 
 ##找回密码表单
-apply_filters('Wnd\Template\Wnd_Reset_Pass_Form', $input_values);
+apply_filters('Wnd\Template\Wnd_Reset_Password_Form', $input_values);
 
 ##账户表单
 apply_filters('Wnd\Template\Wnd_Account_Form', $input_values);

@@ -89,7 +89,7 @@ class Wnd_User_Center extends Wnd_Template {
 				break;
 
 			case 'reset_password':
-				$html .= Wnd_Reset_Pass_Form::build($type);
+				$html .= Wnd_Reset_Password_Form::build($type);
 				$html .= '<div class="user-form"><div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body">';
 				if (wnd_doing_ajax()) {
 					if ($ajax_type == 'modal') {

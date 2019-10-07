@@ -36,7 +36,7 @@ class Wnd_Account_Form extends Wnd_Template {
 		$html = '<div class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '"><div class="message-body has-text-centered">';
 		$html .= '<a onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">邮箱设置</a> | ';
 		$html .= 1 == wnd_get_option('wnd', 'wnd_enable_sms') ? '<a onclick="wnd_ajax_modal(\'wnd_bind_phone_form\')">手机设置</a> | ' : '';
-		$html .= '<a onclick="wnd_ajax_modal(\'wnd_reset_pass_form\')">重置密码</a>';
+		$html .= '<a onclick="wnd_ajax_modal(\'wnd_reset_password_form\')">重置密码</a>';
 		$html .= '</div></div>';
 
 		return $form->html . $html;

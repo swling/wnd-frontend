@@ -7,7 +7,7 @@ use Wnd\View\Wnd_User_Form;
  *@since 2019.01.28 找回密码
  *@param $type 	string	email/phone
  */
-class Wnd_Reset_Pass_Form extends Wnd_Template {
+class Wnd_Reset_Password_Form extends Wnd_Template {
 
 	public static function build($type = 'email') {
 		if ($type == 'phone') {
