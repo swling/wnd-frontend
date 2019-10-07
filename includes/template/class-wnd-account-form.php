@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Template;
 
-use Wnd\View\Wnd_Form_User;
+use Wnd\View\Wnd_User_Form;
 
 /**
  *@since 2019.01.23 用户更新账户表单
@@ -19,7 +19,7 @@ class Wnd_Account_Form extends Wnd_Template {
 			return $html;
 		}
 
-		$form = new Wnd_Form_User();
+		$form = new Wnd_User_Form();
 		$form->add_form_attr('class', 'user-form');
 		$form->add_user_password('当前密码');
 		$form->add_user_new_password();

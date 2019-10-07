@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Template;
 
-use Wnd\View\Wnd_Form_User;
+use Wnd\View\Wnd_User_Form;
 
 /**
  *@since 2019.01.28 找回密码
@@ -17,7 +17,7 @@ class Wnd_Reset_Pass_Form extends Wnd_Template {
 			}
 		}
 
-		$form = new Wnd_Form_User();
+		$form = new Wnd_User_Form();
 		$form->add_form_attr('class', 'user-form');
 		if ($type == 'phone') {
 			$form->set_form_title('<span class="icon"><i class="fa fa-phone-square"></i></span>手机验证', true);

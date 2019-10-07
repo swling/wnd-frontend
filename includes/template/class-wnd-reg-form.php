@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Template;
 
-use Wnd\View\Wnd_Form_User;
+use Wnd\View\Wnd_User_Form;
 
 /**
  *@since 2019.01.21 注册表单
@@ -28,7 +28,7 @@ class Wnd_Reg_Form extends Wnd_Template {
 
 		}
 
-		$form = new Wnd_Form_User();
+		$form = new Wnd_User_Form();
 		$form->add_form_attr('class', 'user-form');
 		$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>注册', true);
 

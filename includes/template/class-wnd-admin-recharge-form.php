@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Template;
 
-use Wnd\View\Wnd_Form_WP;
+use Wnd\View\Wnd_WP_Form;
 
 /**
  *@since 2019.02.22
@@ -10,7 +10,7 @@ use Wnd\View\Wnd_Form_WP;
 class Wnd_Admin_Recharge_Form extends Wnd_Template {
 
 	public static function build() {
-		$form = new Wnd_Form_WP();
+		$form = new Wnd_WP_Form();
 		$form->add_form_attr('id', 'admin-recharge-form');
 
 		$form->add_html('<div class="field is-horizontal"><div class="field-body">');

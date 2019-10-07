@@ -1,6 +1,6 @@
 <?php
 use Wnd\Model\Wnd_Auth;
-use Wnd\view\Wnd_Form_WP;
+use Wnd\view\Wnd_WP_Form;
 
 /**
  *@see wndwp/READEME.md
@@ -210,7 +210,7 @@ function wnd_filter_the_content($content) {
 
 			// 无论是否已支付，均需要提交下载请求，是否扣费将在wnd_ajax_pay_for_download内部判断
 		} else {
-			$form = new Wnd_Form_WP();
+			$form = new Wnd_WP_Form();
 			$form->add_hidden('post_id', $post->ID);
 			$form->set_action('wnd_pay_for_fownload');
 			$form->set_submit_button($button_text);
@@ -276,7 +276,7 @@ function wnd_filter_the_content($content) {
 
 		$content .= $msg;
 	} else {
-		$form = new Wnd_Form_WP();
+		$form = new Wnd_WP_Form();
 		$form->add_hidden('post_id', $post->ID);
 		$form->set_action('wnd_pay_for_reading');
 		$form->set_submit_button($button_text);

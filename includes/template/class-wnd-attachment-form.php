@@ -1,8 +1,8 @@
 <?php
 namespace Wnd\Template;
 
-use Wnd\View\Wnd_Form_Post;
-use Wnd\View\Wnd_Form_WP;
+use Wnd\View\Wnd_Post_Form;
+use Wnd\View\Wnd_WP_Form;
 
 /**
  *@since 2019.07.16
@@ -46,7 +46,7 @@ class Wnd_Attachment_Form extends Wnd_Template {
 		/**
 		 * 构建父级表单字段，以供文件ajax上传归属到父级post
 		 */
-		$parent_post_form = new Wnd_Form_WP();
+		$parent_post_form = new Wnd_WP_Form();
 
 		// 文件上传字段可能被前端设置disabled属性，导致无法通过表单一致性校验，故此设置同名固定隐藏字段
 		$parent_post_form->add_hidden('wnd_file', '');
@@ -72,9 +72,9 @@ class Wnd_Attachment_Form extends Wnd_Template {
 		 *上传媒体信息表单字段。attachment 无法也不应创建草稿
 		 *此处的attachment post_ID将根据上传文件后，ajax返回值获取
 		 */
-		$attachment_post_form = new Wnd_Form_Post('attachment', $attachment_id, false);
+		$attachment_post_form = new Wnd_Post_Form('attachment', $attachment_id, false);
 		if ($attachment_id) {
-			$attachment_post_form->set_message('<div class="message is-' . Wnd_Form_WP::$second_color . '"><div class="message-body">如需更改文件，请先删除后重新选择文件！</div></div>');
+			$attachment_post_form->set_message('<div class="message is-' . Wnd_WP_Form::$second_color . '"><div class="message-body">如需更改文件，请先删除后重新选择文件！</div></div>');
 		}
 		$attachment_post_form->add_post_title('文件名称');
 		$attachment_post_form->add_html('<div class="field is-horizontal"><div class="field-body">');
