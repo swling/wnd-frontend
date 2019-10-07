@@ -11,7 +11,7 @@ use \Exception;
  *@param $_POST['_user_new_pass']
  *@param $_POST['_user_new_pass_repeat']
  */
-class Wnd_User_Reset_Password extends Wnd_Ajax_Controller {
+class Wnd_Reset_Password extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 		$email_or_phone      = $_POST['_user_user_email'] ?? $_POST['phone'] ?? null;

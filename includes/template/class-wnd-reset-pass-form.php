@@ -29,7 +29,7 @@ class Wnd_Reset_Pass_Form extends Wnd_Template {
 
 		$form->add_user_new_password('新密码', '新密码', true);
 		$form->add_user_new_password_repeat('确认新密码', '确认新密码', true);
-		$form->set_action('wnd_user_reset_password');
+		$form->set_action('wnd_reset_password');
 		$form->set_submit_button('重置密码');
 		$form->set_filter(__CLASS__);
 		$form->build();

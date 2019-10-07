@@ -21,7 +21,7 @@ use \Exception;
  *@param $_POST['_user_display_name']
  *@param $_POST['_wpusermeta_description']
  */
-class Wnd_User_Reg extends Wnd_Ajax_Controller {
+class Wnd_Reg extends Wnd_Ajax_Controller {
 
 	public static function execute() {
 		// 1、数据组成

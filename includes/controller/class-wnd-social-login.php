@@ -5,7 +5,7 @@ namespace Wnd\Controller;
  *@since 2019.09.27
  *社交登录抽象类
  */
-abstract class Wnd_User_Login_Social {
+abstract class Wnd_Social_Login {
 
 	protected $user_id;
 	protected $app_id;

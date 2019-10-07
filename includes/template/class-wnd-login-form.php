@@ -30,7 +30,7 @@ class Wnd_Login_Form extends Wnd_Template {
 		);
 		$form->add_hidden('redirect_to', $_SERVER['HTTP_REFERER'] ?? home_url());
 		// 与该表单数据匹配的后端处理函数
-		$form->set_action('wnd_user_login');
+		$form->set_action('wnd_login');
 		$form->set_submit_button('登录');
 		// 以当前函数名设置filter hook
 		$form->set_filter(__CLASS__);

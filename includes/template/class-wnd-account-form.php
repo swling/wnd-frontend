@@ -24,7 +24,7 @@ class Wnd_Account_Form extends Wnd_Template {
 		$form->add_user_password('当前密码');
 		$form->add_user_new_password();
 		$form->add_user_new_password_repeat();
-		$form->set_action('wnd_user_update_account');
+		$form->set_action('wnd_update_account');
 		$form->set_submit_button('保存');
 		$form->set_filter(__CLASS__);
 		$form->build();
