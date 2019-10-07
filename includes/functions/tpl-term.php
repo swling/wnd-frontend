@@ -79,33 +79,6 @@ function wnd_terms_checkbox($taxonomy, $value = 'slug', $name = '', $require = f
 	}
 }
 
-/**
- *@since 2019.05.16
- *列出term链接列表
- **/
-function wnd_terms_list($args) {
-	$defaults = array(
-		'taxonomy'     => 'post_tag',
-		'number'       => 50,
-		'hidden_empty' => true,
-		'orderby'      => 'count',
-		'order'        => 'DESC',
-	);
-	$args = wp_parse_args($args, $defaults);
-
-	$html  = '<div class="columns has-text-centered is-multiline is-mobile">';
-	$terms = get_terms($args);
-	foreach ($terms as $term) {
-
-		$html .= '<div class="column is-half"><a href="' . get_term_link($term->term_id) . '">' . $term->name . '</a></div>';
-
-	}
-	unset($term);
-	$html .= '</div>';
-
-	return $html;
-}
-
 //###################################################################################
 // 以文本方式列出热门标签，分类名称 用于标签编辑器，自动提示文字： 'tag1', 'tag2', 'tag3'
 function wnd_terms_text($taxonomy, $number) {
