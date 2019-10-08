@@ -59,6 +59,12 @@ function wnd_filter_post_status($post_status, $post_type, $update_id) {
  */
 
 /**
+ *@since 2019.10.08
+ *禁用xmlrpc
+ */
+add_filter('xmlrpc_enabled', '__return_false');
+
+/**
  *@since 2019.01.16
  * 限制wp editor上传附件
  */
