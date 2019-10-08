@@ -1,12 +1,12 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 use Wnd\View\Wnd_Form;
 
 /**
  *@since 2019.01.21 充值表单
  */
-class Wnd_User_Recharge_Form extends Wnd_Template {
+class Wnd_User_Recharge_Form extends Wnd_Module {
 
 	public static function build() {
 		if (!wnd_get_option('wnd', 'wnd_alipay_appid')) {

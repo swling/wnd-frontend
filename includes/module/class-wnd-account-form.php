@@ -1,12 +1,12 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 use Wnd\View\Wnd_User_Form;
 
 /**
  *@since 2019.01.23 用户更新账户表单
  */
-class Wnd_Account_Form extends Wnd_Template {
+class Wnd_Account_Form extends Wnd_Module {
 
 	public static function build() {
 		if (!is_user_logged_in()) {

@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 use Wnd\View\Wnd_User_Form;
 
@@ -7,7 +7,7 @@ use Wnd\View\Wnd_User_Form;
  *@since 2019.01.29
  *用户常规资料表单
  */
-class Wnd_Profile_Form extends Wnd_Template {
+class Wnd_Profile_Form extends Wnd_Module {
 
 	public static function build() {
 		if (!is_user_logged_in()) {

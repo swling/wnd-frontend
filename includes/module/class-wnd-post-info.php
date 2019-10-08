@@ -1,11 +1,11 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 /**
  *@since 2019.02.15
  *获取文章信息
  */
-class Wnd_Post_Info extends Wnd_Template {
+class Wnd_Post_Info extends Wnd_Module {
 
 	public static function build($post_id = 0) {
 		$post = $post_id ? get_post($post_id) : false;

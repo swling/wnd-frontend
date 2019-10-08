@@ -112,7 +112,7 @@ UI类将返回字符串（通常为HTML字符串）交付前端
 ### 拓展UI类
 如需在第三方插件或主题拓展UI响应请定义类并遵循以下规则：
 - 类名称必须以wndt为前缀
-- 命名空间必须为：Wndt\Template
+- 命名空间必须为：Wndt\Module
 
 ## @see /wnd-api.php
 
@@ -224,22 +224,22 @@ apply_filters('wnd_get_post_price', $price, $post_id);
 *注意区分大小写
 **/
 ##注册表单@since 2019.03.10
-apply_filters('Wnd\Template\Wnd_Login_Form', $input_values);
+apply_filters('Wnd\Module\Wnd_Login_Form', $input_values);
 
 ##登录表单@since 2019.03.10
-apply_filters('Wnd\Template\Wnd_Reg_Form', $input_values);
+apply_filters('Wnd\Module\Wnd_Reg_Form', $input_values);
 
 ##用户资料表单@since 2019.03.10
-apply_filters('Wnd\Template\Wnd_Profile_Form', $input_values);
+apply_filters('Wnd\Module\Wnd_Profile_Form', $input_values);
 
 ##文章发布编辑表单 @since 2019.03.11
-apply_filters('Wnd\Template\Wnd_Post_Form', $input_values);
+apply_filters('Wnd\Module\Wnd_Post_Form', $input_values);
 
 ##找回密码表单
-apply_filters('Wnd\Template\Wnd_Reset_Password_Form', $input_values);
+apply_filters('Wnd\Module\Wnd_Reset_Password_Form', $input_values);
 
 ##账户表单
-apply_filters('Wnd\Template\Wnd_Account_Form', $input_values);
+apply_filters('Wnd\Module\Wnd_Account_Form', $input_values);
 ```
 ## 面包屑
 ```php
@@ -434,13 +434,13 @@ namespace Wnd\controller;
 namespace Wnd\View;
 
 // 模板类：基于视图类的一些封装模块
-namespace Wnd\Template;
+namespace Wnd\Module;
 ```
 ### 用户自定义拓展UI响应
 - 类名称以'Wndt' 为前缀(不区分大小写)
 - 命名空间为：
 ```php
-namespace Wndt\Template;
+namespace Wndt\Module;
 ```
 
 ### 用户自定义拓展API响应

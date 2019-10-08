@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 use Wnd\View\Wnd_WP_Form;
 
@@ -7,7 +7,7 @@ use Wnd\View\Wnd_WP_Form;
  *@since 2019.01.20
  *快速编辑文章状态表单
  */
-class Wnd_Post_Status_Form extends Wnd_Template {
+class Wnd_Post_Status_Form extends Wnd_Module {
 
 	public static function build($post_id = 0) {
 		$post = get_post($post_id);

@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 use Wnd\View\Wnd_WP_Form;
 
@@ -7,7 +7,7 @@ use Wnd\View\Wnd_WP_Form;
  *@since 2019.02.22
  *管理员手动增加用户余额
  */
-class Wnd_Admin_Recharge_Form extends Wnd_Template {
+class Wnd_Admin_Recharge_Form extends Wnd_Module {
 
 	public static function build() {
 		$form = new Wnd_WP_Form();

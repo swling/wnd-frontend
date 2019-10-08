@@ -1,11 +1,11 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 /**
  *@since 2019.05.16
  *列出term链接列表
  **/
-class Wnd_Terms_List extends Wnd_Template {
+class Wnd_Terms_List extends Wnd_Module {
 
 	public static function build($args = array()) {
 		$defaults = array(

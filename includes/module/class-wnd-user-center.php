@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 /**
  *@since 2019.02.16 封装：用户中心
@@ -7,7 +7,7 @@ namespace Wnd\Template;
  *do => register / login / reset_password, tab => string :profile / account, type => email / phone
  *@return $html .= el
  */
-class Wnd_User_Center extends Wnd_Template {
+class Wnd_User_Center extends Wnd_Module {
 
 	public static function build($args = array()) {
 		$defaults = array(

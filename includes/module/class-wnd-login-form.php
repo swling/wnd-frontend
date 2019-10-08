@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 use Wnd\View\Wnd_User_Form;
 
@@ -7,7 +7,7 @@ use Wnd\View\Wnd_User_Form;
  *@since 2019.01.13 登录框
  *@since 2019.03.10 Wnd_WP_Form
  */
-class Wnd_Login_Form extends Wnd_Template {
+class Wnd_Login_Form extends Wnd_Module {
 
 	public static function build() {
 		// 已登录

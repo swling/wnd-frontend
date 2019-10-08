@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 use Wnd\View\Wnd_Filter;
 
@@ -7,7 +7,7 @@ use Wnd\View\Wnd_Filter;
  *@since 2019.02.18 封装用户财务中心
  *@param $posts_per_page 每页列表数目
  */
-class Wnd_User_Finance_Panel extends Wnd_Template {
+class Wnd_User_Finance_Panel extends Wnd_Module {
 
 	public static function build(int $posts_per_page = 0) {
 		if (!is_user_logged_in()) {

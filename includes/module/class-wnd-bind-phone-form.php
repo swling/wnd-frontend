@@ -1,12 +1,12 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 use Wnd\View\Wnd_User_Form;
 
 /**
  *@since 2019.07.23 用户设置邮箱表单
  */
-class Wnd_Bind_Phone_Form extends Wnd_Template {
+class Wnd_Bind_Phone_Form extends Wnd_Module {
 
 	public static function build() {
 		$current_user = wp_get_current_user();

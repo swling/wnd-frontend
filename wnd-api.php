@@ -44,7 +44,7 @@ function wnd_action_rest_register_route() {
  *@since 2019.10.04
  *如需在第三方插件或主题拓展UI响应请定义类并遵循以下规则：
  *1、类名称必须以wndt为前缀
- *2、命名空间必须为：Wndt\Template
+ *2、命名空间必须为：Wndt\Module
  */
 function wnd_interface_api_callback($request) {
 	if (!isset($_GET['action'])) {
@@ -52,7 +52,7 @@ function wnd_interface_api_callback($request) {
 	}
 
 	$class_name = stripslashes_deep($_GET['action']);
-	$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\\Template' : 'Wnd\\Template';
+	$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\\Module' : 'Wnd\\Module';
 	$class      = $namespace . '\\' . $class_name;
 	$param      = $_GET['param'] ?? '';
 

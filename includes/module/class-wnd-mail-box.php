@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 use Wnd\View\Wnd_Filter;
 
@@ -7,7 +7,7 @@ use Wnd\View\Wnd_Filter;
  *@since 2019.02.19 封装前端当前用户站内信
  *@param $posts_per_page 每页列表数目
  */
-class Wnd_Mail_Box extends Wnd_Template {
+class Wnd_Mail_Box extends Wnd_Module {
 
 	public static function build(int $posts_per_page = 0) {
 		if (!is_user_logged_in()) {

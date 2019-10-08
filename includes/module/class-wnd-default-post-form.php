@@ -1,12 +1,12 @@
 <?php
-namespace Wnd\Template;
+namespace Wnd\Module;
 
 use Wnd\View\Wnd_Post_Form;
 
 /**
  *@since 2019.01.31 发布/编辑文章通用模板
  */
-class Wnd_Default_Post_Form extends Wnd_Template {
+class Wnd_Default_Post_Form extends Wnd_Module {
 
 	public static function build($args = array()) {
 		$defaults = array(
