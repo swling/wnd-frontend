@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\View\Wnd_User_Form;
+use Wnd\View\Wnd_Form_User;
 
 /**
  *@since 2019.07.23 用户设置邮箱表单
@@ -15,7 +15,7 @@ class Wnd_Bind_Phone_Form extends Wnd_Module {
 		}
 		$current_user_phone = wnd_get_user_phone($current_user->ID);
 
-		$form = new Wnd_User_Form();
+		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
 		$form->set_form_title('<span class="icon"><i class="fa fa-phone"></i></span>绑定手机', true);
 

@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\View\Wnd_User_Form;
+use Wnd\View\Wnd_Form_User;
 
 /**
  *@since 2019.01.29
@@ -14,7 +14,7 @@ class Wnd_Profile_Form extends Wnd_Module {
 			return '<script>wnd_alert_msg(\'请登录\')</script>';
 		}
 
-		$form = new Wnd_User_Form();
+		$form = new Wnd_Form_User();
 		// profile表单可能有较为复杂的编辑界面，阻止回车提交
 		$form->add_form_attr('onsubmit', 'return false');
 		$form->add_form_attr('onkeydown', 'if(event.keyCode==13){return false;}');

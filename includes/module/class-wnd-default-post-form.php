@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\View\Wnd_Post_Form;
+use Wnd\View\Wnd_Form_Post;
 
 /**
  *@since 2019.01.31 发布/编辑文章通用模板
@@ -23,7 +23,7 @@ class Wnd_Default_Post_Form extends Wnd_Module {
 		/**
 		 *@since 2019.03.11 表单类
 		 */
-		$form = new Wnd_Post_Form('post', $post_id);
+		$form = new Wnd_Form_Post('post', $post_id);
 		$form->set_post_parent($post_parent);
 
 		$form->add_post_title();

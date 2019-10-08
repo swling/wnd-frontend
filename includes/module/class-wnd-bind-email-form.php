@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\View\Wnd_User_Form;
+use Wnd\View\Wnd_Form_User;
 
 /**
  *@since 2019.07.23 用户设置邮箱表单
@@ -14,7 +14,7 @@ class Wnd_Bind_Email_Form extends Wnd_Module {
 			return '<script>wnd_alert_msg(\'请登录\')</script>';
 		}
 
-		$form = new Wnd_User_Form();
+		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
 		$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>绑定邮箱', true);
 

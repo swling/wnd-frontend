@@ -1,11 +1,11 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\View\Wnd_User_Form;
+use Wnd\View\Wnd_Form_User;
 
 /**
  *@since 2019.01.13 登录框
- *@since 2019.03.10 Wnd_WP_Form
+ *@since 2019.03.10 Wnd_Form_WP
  */
 class Wnd_Login_Form extends Wnd_Module {
 
@@ -15,7 +15,7 @@ class Wnd_Login_Form extends Wnd_Module {
 			return '<script>wnd_alert_msg("已登录！")</script>';
 		}
 
-		$form = new Wnd_User_Form();
+		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
 		$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>登录', true);
 		$form->add_user_login();

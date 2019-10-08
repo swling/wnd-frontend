@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\View\Wnd_WP_Form;
+use Wnd\View\Wnd_Form_WP;
 
 /**
  *@since 2019.01.20
@@ -38,7 +38,7 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 			break;
 		}
 
-		$form = new Wnd_WP_Form();
+		$form = new Wnd_Form_WP();
 		$form->add_html('<div class="field is-grouped is-grouped-centered">');
 		$form->add_html('<script>wnd_ajax_msg(\'当前： ' . $status_text . '\', \'is-danger\', \'#post-status\')</script>');
 		$form->add_radio(
