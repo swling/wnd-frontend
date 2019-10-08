@@ -61,8 +61,26 @@ function wnd_filter_post_status($post_status, $post_type, $update_id) {
 /**
  *@since 2019.10.08
  *禁用xmlrpc
+ *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
  */
 add_filter('xmlrpc_enabled', '__return_false');
+
+/**
+ *移除WordPress默认的API
+ *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
+ *
+ *@link https://stackoverflow.com/questions/42757726/disable-default-routes-of-wp-rest-api
+ *@link https://wpreset.com/remove-default-wordpress-rest-api-routes-endpoints/
+ */
+add_filter('rest_endpoints', function ($endpoints) {
+	foreach ($endpoints as $route => $endpoint) {
+		if (0 === stripos($route, '/wp/') or 0 === stripos($route, '/oembed/')) {
+			unset($endpoints[$route]);
+		}
+	}
+
+	return $endpoints;
+});
 
 /**
  *@since 2019.01.16
