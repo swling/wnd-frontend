@@ -152,29 +152,6 @@ function wnd_copy_taxonomy($old_taxonomy, $new_taxonomy) {
 }
 
 /**
- * @since 2019.06.12
- * 获取当前页面查询类型基本信息
- * 通常用于在ajax请求中传递请求页面信息以供后端判断请求来源
- * */
-function wnd_get_queried_type() {
-	if (is_single()) {
-		return array('type' => 'single', 'ID' => get_queried_object()->ID);
-
-	} elseif (is_page()) {
-		return array('type' => 'page', 'ID' => get_queried_object()->ID);
-
-	} elseif (is_tax()) {
-		return array('type' => 'tax', 'ID' => get_queried_object()->term_id);
-
-	} elseif (is_home()) {
-		return array('type' => 'home');
-
-	} else {
-		return array('type' => 'ajax');
-	}
-}
-
-/**
  *@since 2019.02.19 在当前位置自动生成一个容器，以供ajax嵌入模板
  *@param $template 	string  			被调用函数(必须以 _wnd为前缀)
  *@param $args 		array or string 	传递给被调用模板函数的参数
@@ -187,35 +164,6 @@ function wnd_ajax_embed($template, $args = '') {
 	echo '<div id="' . $div_id . '">';
 	echo '<script>wnd_ajax_embed(\'#' . $div_id . '\',\'' . $template . '\',\'' . $ajax_args . '\')</script>';
 	echo '</div>';
-}
-
-/**
- *@since 初始化 ajax标题去重
- *@param $_POST['post_title']
- *@param $_POST['post_id']
- *@param $_POST['post_type']
- */
-function wnd_ajax_is_title_duplicated() {
-	$title      = $_POST['post_title'];
-	$exclude_id = $_POST['post_id'];
-	$post_type  = $_POST['post_type'];
-
-	if (wnd_is_title_duplicated($title, $exclude_id, $post_type)) {
-		return array('status' => 1, 'msg' => '标题重复！');
-	} else {
-		return array('status' => 0, 'msg' => '标题唯一！');
-	}
-}
-
-/**
- *@since 2019.05.09  测试函数
- */
-function wnd_ajax_test() {
-	return array(
-		'status' => 0,
-		'msg'    => '测试函数触发成功!',
-		'data'   => $_REQUEST,
-	);
 }
 
 /**
