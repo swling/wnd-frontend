@@ -46,11 +46,23 @@ register_deactivation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::uninstall');
  */
 function wnd_scripts() {
 	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.min.js', array('jquery'), WND_VER);
-	if (wnd_get_option('wnd', 'wnd_enable_default_style') != 0) {
+
+	// bulma框架及fontawesome图标
+	$static_host = wnd_get_option('wnd', 'wnd_static_host');
+	if ('local' == $static_host) {
+		wp_enqueue_style('bulma', WND_URL . 'static/css/bulma.min.css', array(), null);
+		wp_enqueue_style('font-awesome', WND_URL . 'static/css/font-awesome-all.min.css', array(), null);
+
+	} elseif ('jsdeliver' == $static_host) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.7.5/css/bulma.min.css', array(), null);
 		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.7.2/css/all.min.css', array(), null);
+
+	} elseif ('bootcdn' == $static_host) {
+		wp_enqueue_style('bulma', '//cdn.bootcss.com/bulma/0.7.5/css/bulma.min.css', array(), null);
+		wp_enqueue_style('font-awesome', '//cdn.bootcss.com/font-awesome/5.10.2/css/all.min.css', array(), null);
 	}
 
+	// api
 	$wnd_data = array(
 		'root_url'      => site_url(),
 		'rest_nonce'    => wp_create_nonce('wp_rest'),

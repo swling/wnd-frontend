@@ -74,11 +74,17 @@ function wnd_options()
 				</tr>
 
 				<tr>
-					<td valign="top">默认样式</td>
+					<td valign="top">静态资源</td>
 					<td>
-						开启<input type="radio" required="required" name="wnd_enable_default_style" value="1" <?php if (wnd_get_option('wnd', 'wnd_enable_default_style') == 1) echo 'checked' ?> />
-						关闭<input type="radio" required="required" name="wnd_enable_default_style" value="0" <?php if (wnd_get_option('wnd', 'wnd_enable_default_style') != 1) echo 'checked' ?> />
-						<p><i>是否启用默认样式，默认采用bulma css框架font-awesome图标，关闭后需要自行设置前端效果</i></p>
+						本地
+						<input type="radio" required="required" name="wnd_static_host" value="local" <?php if (wnd_get_option('wnd', 'wnd_static_host') == 'local') echo 'checked' ?> />
+						jsDelivr
+						<input type="radio" required="required" name="wnd_static_host" value="jsdeliver" <?php if (wnd_get_option('wnd', 'wnd_static_host') == 'jsdeliver') echo 'checked' ?> />
+						BootCDN
+						<input type="radio" required="required" name="wnd_static_host" value="bootcdn" <?php if (wnd_get_option('wnd', 'wnd_static_host') == 'bootcdn') echo 'checked' ?> />
+						关闭
+						<input type="radio" required="required" name="wnd_static_host" value="close" <?php if (wnd_get_option('wnd', 'wnd_static_host') == 'close') echo 'checked' ?> />
+						<p><i>插件前端依赖bulma css框架font-awesome图标，请选择今天资源引入方式，若选择关闭，需要自行设置前端效果</i></p>
 					</td>
 				</tr>
 
@@ -145,15 +151,6 @@ function wnd_options()
 						开启优化<input type="radio" required="required" name="wnd_unset_user_meta" value="1" <?php if (wnd_get_option('wnd', 'wnd_unset_user_meta') == 1) echo 'checked'; ?> />
 						禁用优化<input type="radio" required="required" name="wnd_unset_user_meta" value="0" <?php if (wnd_get_option('wnd', 'wnd_unset_user_meta') != 1) echo 'checked'; ?> />
 						<p><i>注册用户不需要登录到WordPress后台时可开启</i></p>
-					</td>
-				</tr>
-
-				<tr>
-					<td valign="top">禁止WP后台</td>
-					<td>
-						禁止<input type="radio" required="required" name="wnd_disable_admin_panel" value="1" <?php if (wnd_get_option('wnd', 'wnd_disable_admin_panel') == 1) echo 'checked'; ?> />
-						允许<input type="radio" required="required" name="wnd_disable_admin_panel" value="0" <?php if (wnd_get_option('wnd', 'wnd_disable_admin_panel') != 1) echo 'checked'; ?> />
-						<p><i>是否禁止普通用户访问WordPress管理后台</i></p>
 					</td>
 				</tr>
 

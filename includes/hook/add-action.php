@@ -270,32 +270,30 @@ function wnd_action_add_attachment($post_ID) {
 }
 
 /**
- * 禁止WordPress原生登录和注册
+ * 禁止WordPress原生登录
  *@since 2019.03.01
  */
-if (wnd_get_option('wnd', 'wnd_disable_admin_panel') == 1) {
+add_action('admin_init', 'wnd_action_redirect_non_admin_users');
+function wnd_action_redirect_non_admin_users() {
+	if (!is_super_admin() and false === strpos($_SERVER['PHP_SELF'], 'admin-ajax.php')) {
+		wp_redirect(home_url('?from=wp-admin'));
+		exit;
+	}
+}
 
-	// 禁止非管理员登录后台
-	add_action('admin_init', 'wnd_action_redirect_non_admin_users');
-	function wnd_action_redirect_non_admin_users() {
-		if (!is_super_admin() and false === strpos($_SERVER['PHP_SELF'], 'admin-ajax.php')) {
-			wp_redirect(home_url('?from=wp-admin'));
-			exit;
-		}
+/**
+ * 禁止WordPress原生注册
+ *@since 2019.03.01
+ */
+add_action('login_init', 'wnd_action_redirect_login_form_register');
+function wnd_action_redirect_login_form_register() {
+	$action = $_REQUEST['action'] ?? '';
+	if ('logout' == $action) {
+		return;
 	}
 
-	// 移除原生登录注册
-	add_action('login_init', 'wnd_action_redirect_login_form_register');
-	function wnd_action_redirect_login_form_register() {
-
-		$action = $_REQUEST['action'] ?? '';
-		if ('logout' == $action) {
-			return;
-		}
-
-		wp_redirect(home_url('?from=wp-login.php'));
-		exit(); // always call `exit()` after `wp_redirect`
-	}
+	wp_redirect(home_url('?from=wp-login.php'));
+	exit(); // always call `exit()` after `wp_redirect`
 }
 
 /**

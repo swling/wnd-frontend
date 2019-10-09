@@ -422,11 +422,7 @@ if (wnd_get_option('wnd', 'wnd_unset_user_meta') == 1) {
  * 禁止WordPress admin bar
  *@since 2019.03.01
  */
-if (wnd_get_option('wnd', 'wnd_disable_admin_panel') == 1) {
-
-	//禁用前台工具栏
-	add_filter('show_admin_bar', '__return_false');
-}
+add_filter('show_admin_bar', '__return_false');
 
 /**
  * 修改通知系统邮件发件人名称“WordPress”为博客名称
