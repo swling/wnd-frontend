@@ -145,16 +145,12 @@ function wnd_action_do_action() {
 		}
 		break;
 
-	//@since 2019.05.12 默认：校验nonce后执行action对应函数
+	//@since 2019.05.12 默认：校验nonce后执行action对应的控制类
 	default:
-		// UI请求
-		if (strpos($action, '_wnd') === 0) {
-			$param = $_GET['param'] ?? '';
-			return function_exists($action) ? $action($param) : '未定义的action！';
-		}
-
 		if (wnd_verify_nonce($_GET['_wpnonce'] ?? '', $action)) {
-			return function_exists($action) ? $action() : '未定义的action！';
+			$namespace = (stripos($action, 'Wndt') === 0) ? 'Wndt\\Controller' : 'Wnd\\Controller';
+			$class     = $namespace . '\\' . $action;
+			return is_callable(array($class, 'execute')) ? $class::execute() : exit('未定义控制类' . $class);
 		}
 		break;
 	}

@@ -236,7 +236,7 @@ function wnd_filter_the_content($content) {
 		} else {
 			$form = new Wnd_Form_WP();
 			$form->add_hidden('post_id', $post->ID);
-			$form->set_action('wnd_pay_for_fownload');
+			$form->set_action('wnd_pay_for_download');
 			$form->set_submit_button($button_text);
 			$form->build();
 
