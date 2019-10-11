@@ -60,7 +60,7 @@ function wnd_interface_api_callback($request) {
 	 *@since 2019.10.01
 	 *为实现惰性加载，废弃函数支持，改用类
 	 */
-	if (class_exists($class) and is_callable(array($class, 'build'))) {
+	if (is_callable(array($class, 'build'))) {
 		try {
 			return $class::build($param);
 		} catch (Exception $e) {
@@ -100,7 +100,7 @@ function wnd_rest_api_callback($request) {
 	 *@since 2019.10.01
 	 *为实现惰性加载，使用控制类
 	 */
-	if (class_exists($class) and is_callable(array($class, 'execute'))) {
+	if (is_callable(array($class, 'execute'))) {
 		try {
 			return $class::execute();
 		} catch (Exception $e) {

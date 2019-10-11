@@ -125,6 +125,10 @@ function wnd_action_do_action() {
 
 	//2.0其他自定义action
 	$action = $_GET['action'] ?? '';
+	if (!$action) {
+		return;
+	}
+
 	switch ($action) {
 
 	//创建支付
