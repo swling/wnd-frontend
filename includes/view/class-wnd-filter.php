@@ -1233,7 +1233,7 @@ class Wnd_Filter {
 
 			// 递归查询当前分类的父级分类
 			$parents[$tax_query['taxonomy']] = array();
-			$parent                          = get_term($tax_query['terms'])->parent;
+			$parent                          = get_term($tax_query['terms'])->parent ?? 0;
 			while ($parent) {
 				$parents[$tax_query['taxonomy']][] = $parent;
 				$parent                            = get_term($parent)->parent;
