@@ -10,22 +10,30 @@ use Wnd\View\Wnd_Form_User;
 class Wnd_Reg_Form extends Wnd_Module {
 
 	public static function build($type = 'email') {
+		// 设定默认值
+		$type = $type ?: (wnd_get_option('wnd', 'wnd_enable_sms') ? 'phone' : 'email');
+
 		// 已登录
 		if (is_user_logged_in()) {
 			return '<script>wnd_alert_msg("已登录！")</script>';
 
-			//已关闭注册
-		} elseif (!get_option('users_can_register')) {
+		}
+
+		//已关闭注册
+		if (!get_option('users_can_register')) {
 			return '<script>wnd_alert_msg("站点已关闭注册！")</script>';
 
-			// 关闭了邮箱注册（强制手机验证）
-		} elseif ($type == 'email' and wnd_get_option('wnd', 'wnd_disable_email_reg') == 1) {
-			return "<script>wnd_alert_msg('当前设置禁止邮箱注册！')</script>";
+		}
 
-			//为开启手机验证
-		} elseif ($type == 'phone' and wnd_get_option('wnd', 'wnd_enable_sms') != 1) {
+		//未开启手机验证
+		if ('phone' == $type and wnd_get_option('wnd', 'wnd_enable_sms') != 1) {
 			return "<script>wnd_alert_msg('当前未配置短信验证！')</script>";
 
+		}
+
+		// 关闭了邮箱注册（强制手机验证）
+		if ('email' == $type and 1 == wnd_get_option('wnd', 'wnd_disable_email_reg')) {
+			return "<script>wnd_alert_msg('当前设置禁止邮箱注册！')</script>";
 		}
 
 		$form = new Wnd_Form_User();
