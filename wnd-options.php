@@ -56,15 +56,6 @@ function wnd_options()
 						<p><i>前端操作权限校验秘钥，请设置一个较为复杂的秘钥，避免在流量高峰期修改</i></p>
 					</td>
 				</tr>
-				<tr>
-					<td valign="top">表单校验</td>
-					<td>
-						开启校验<input type="radio" required="required" name="wnd_enable_form_verify" value="1" <?php if (wnd_get_option('wnd', 'wnd_enable_form_verify') == 1) echo 'checked' ?> />
-						关闭校验<input type="radio" required="required" name="wnd_enable_form_verify" value="0" <?php if (wnd_get_option('wnd', 'wnd_enable_form_verify') != 1) echo 'checked' ?> />
-						<p><i>作用：表单提交数据时，是否校验表单字段名（防止用户通过浏览器开发模式篡改表单结构）<br />
-								警告：仅在开发测试中关闭过滤，否则可能引发安全问题</i></p>
-					</td>
-				</tr>
 
 				<!--优化选项-->
 				<tr>
@@ -145,15 +136,6 @@ function wnd_options()
 					</td>
 				</tr>
 
-				<tr>
-					<td valign="top">优化用户字段</td>
-					<td>
-						开启优化<input type="radio" required="required" name="wnd_unset_user_meta" value="1" <?php if (wnd_get_option('wnd', 'wnd_unset_user_meta') == 1) echo 'checked'; ?> />
-						禁用优化<input type="radio" required="required" name="wnd_unset_user_meta" value="0" <?php if (wnd_get_option('wnd', 'wnd_unset_user_meta') != 1) echo 'checked'; ?> />
-						<p><i>注册用户不需要登录到WordPress后台时可开启</i></p>
-					</td>
-				</tr>
-
 				<!--优化选项-->
 				<tr>
 					<th valign="top">
@@ -222,21 +204,6 @@ function wnd_options()
 					<td valign="top">支付宝公钥</td>
 					<td>
 						<textarea class="code" name="wnd_alipay_public_key" cols="40" rows="8" style="min-width: 50%;" placeholder="支付宝公钥，开发者生成公钥后上传至支付宝，再由支付宝生成"><?php echo wnd_get_option('wnd', 'wnd_alipay_public_key'); ?></textarea>
-					</td>
-				</tr>
-
-				<!--term设置-->
-				<tr>
-					<th valign="top">
-						分类关联标签
-					</th>
-				</tr>
-				<tr>
-					<td valign="top">分类关联标签</td>
-					<td>
-						开启<input type="radio" name="wnd_enable_terms" value="1" <?php if (wnd_get_option('wnd', 'wnd_enable_terms') == 1) echo 'checked'; ?>>
-						关闭<input type="radio" name="wnd_enable_terms" value="0" <?php if (wnd_get_option('wnd', 'wnd_enable_terms') != 1) echo 'checked'; ?>>
-						<p><i>是否开启分类关联标签功能</i></p>
 					</td>
 				</tr>
 

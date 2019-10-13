@@ -10,19 +10,16 @@ use \Exception;
  */
 class Wnd_Form_Handler {
 
-	static $enable_form_verify;
 	public $form_data;
 
 	public function __construct($verify_form_nonce = true) {
-		self::$enable_form_verify = wnd_get_option('wnd', 'wnd_enable_form_verify');
-
 		/**
 		 *@since 2019.05.10
 		 *apply_filters('wnd_form_handler', $_POST) 操作可能会直接修改$_POST
 		 *因而校验表单操作应该在filter应用之前执行
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
-		if ($verify_form_nonce and self::$enable_form_verify and !$this->verify_form_nonce()) {
+		if ($verify_form_nonce and !$this->verify_form_nonce()) {
 			throw new Exception('表单已被篡改！');
 		}
 

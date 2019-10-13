@@ -20,7 +20,6 @@ class Wnd_Admin {
 		if (!get_option('wnd')) {
 			$default_option = array(
 				'wnd_secret_key'         => wnd_random('16'),
-				'wnd_enable_form_verify' => 1,
 
 				'wnd_static_host'        => 'local',
 				'wnd_edit_page'          => '',
@@ -32,7 +31,6 @@ class Wnd_Admin {
 				'wnd_max_stick_posts'    => '10',
 
 				'wnd_disable_locale'     => '',
-				'wnd_unset_user_meta'    => 1,
 
 				'wnd_primary_color'      => '',
 				'wnd_second_color'       => '',
@@ -43,7 +41,6 @@ class Wnd_Admin {
 				'wnd_alipay_private_key' => '',
 				'wnd_alipay_public_key'  => '',
 
-				'wnd_enable_terms'       => 1,
 				'wnd_disable_email_reg'  => 0,
 				'wnd_disable_user_login' => 0,
 

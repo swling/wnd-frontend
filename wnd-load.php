@@ -65,7 +65,4 @@ require WND_PATH . 'includes/hook/remove.php'; //移除
 /**
  *分类关联标签
  */
-use Wnd\Model\Wnd_Tag_Under_Category;
-if (wnd_get_option('wnd', 'wnd_enable_terms') == 1) {
-	new Wnd_Tag_Under_Category();
-}
+new Wnd\Model\Wnd_Tag_Under_Category();
