@@ -24,8 +24,11 @@
 
 # 注意事项
 ## 用户角色
-普通注册用户的角色：author
-editor及以上角色定义为管理员 wnd_is_manager()
+- 普通注册用户的角色：author
+- editor及以上角色定义为管理员 wnd_is_manager()
+- 启用插件后，会禁用WordPress原生注册及登录功能，普通用户无法WordPress后台，同时删除了普通注册用户一些不必要的user meta
+- 启用插件后，会禁止WordPress原生的rest api
+- 启用插件后，会定期清理:XXX_tag类型的标签
 
 ## 分类与标签关联
 默认已支持WordPress原生post分类和标签关联。如需要支持自定义taxonomy，请遵循以下规则：

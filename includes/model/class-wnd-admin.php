@@ -91,7 +91,7 @@ class Wnd_Admin {
 	 **/
 	public static function clean_up() {
 		if (!is_super_admin()) {
-			return;
+			return false;
 		}
 		global $wpdb;
 
@@ -118,7 +118,15 @@ class Wnd_Admin {
 			wp_delete_post($delete, true);
 		}
 
+		// 删除空的标签 @since 2019.10.14
+		$empty_tags = $wpdb->get_results(
+			"SELECT * FROM $wpdb->term_taxonomy WHERE taxonomy LIKE '%_tag' AND count = 0"
+		);
+		foreach ((array) $empty_tags as $term) {
+			wp_delete_term($term->term_id, $term->taxonomy);
+		}
+
 		do_action('wnd_clean_up');
-		return array('status' => 1, 'msg' => '清理完成');
+		return true;
 	}
 }
