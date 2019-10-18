@@ -173,8 +173,8 @@ function wnd_action_user_register($user_id) {
 		return;
 	}
 
-	# 充值验证码并绑定邮箱或手机
-	$auth = new Wnd_Auth;
+	// 绑定邮箱或手机
+	$auth = new Wnd\Model\Wnd_Auth;
 	$auth->set_email_or_phone($email_or_phone);
 	$auth->reset_code($user_id);
 
