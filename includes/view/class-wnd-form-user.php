@@ -31,7 +31,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 		$this->add_email(
 			array(
 				'name'        => '_user_user_email',
-				'value'       => $this->user->user_email,
+				'value'       => $this->user->data->user_email,
 				'label'       => $label,
 				'icon_left'   => '<i class="fa fa-at"></i>',
 				'required'    => $required,
@@ -44,7 +44,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 		$this->add_text(
 			array(
 				'name'        => '_user_display_name',
-				'value'       => $this->user->display_name,
+				'value'       => $this->user->data->display_name,
 				'label'       => $label,
 				'placeholder' => $placeholder,
 				'icon_left'   => '<i class="fas fa-user"></i>',
@@ -109,7 +109,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 		$this->add_url(
 			array(
 				'name'        => '_user_user_url',
-				'value'       => $this->user->user_url,
+				'value'       => $this->user->data->user_url,
 				'label'       => $label,
 				'placeholder' => $placeholder,
 				'icon_left'   => '<i class="fas fa-link"></i>',

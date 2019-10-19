@@ -47,7 +47,7 @@ class Wnd_Reg_Form extends Wnd_Module {
 		if (wnd_get_option('wnd', 'wnd_disable_user_login') != 1) {
 			$form->add_user_login('用户名', '登录用户名', true);
 		}
-		$form->add_user_password();
+		$form->add_user_password('密码', '设置登录密码');
 
 		if ($type == 'phone') {
 			$form->add_sms_verify('register', wnd_get_option('wnd', 'wnd_sms_template_r'));

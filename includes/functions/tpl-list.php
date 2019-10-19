@@ -88,7 +88,7 @@ function wnd_user_finance_posts_tpl($query) {
 		array(
 			'post_field' => 'post_author',
 			'title'      => '用户',
-			'class'      => 'is-narrow is-hidden-mobile',
+			'class'      => 'is-narrow',
 		)
 	);
 	$table->add_column(
@@ -102,13 +102,14 @@ function wnd_user_finance_posts_tpl($query) {
 		array(
 			'post_field' => 'order' == $query->query_vars['post_type'] ? 'post_parent_with_link' : 'post_title',
 			'title'      => '详情',
+			'class'      => 'is-narrow',
 		)
 	);
 	$table->add_column(
 		array(
 			'post_field' => 'post_status',
 			'title'      => '状态',
-			'class'      => 'is-narrow',
+			'class'      => 'is-narrow is-hidden-mobile',
 		)
 	);
 	$table->build();
