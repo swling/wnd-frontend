@@ -199,9 +199,12 @@ function wnd_action_delete_user($user_id) {
 /**
  *@since 2019.03.28
  *删除文章时附件操作
+ *
+ *@since 2019.10.20
+ *需要删除文章对应的子文章，需要定义在：before_delete_post，仅此时尚保留对应关系
  */
-add_action('deleted_post', 'wnd_action_deleted_post', 10, 1);
-function wnd_action_deleted_post($post_id) {
+add_action('before_delete_post', 'wnd_action_before_delete_post', 10, 1);
+function wnd_action_before_delete_post($post_id) {
 	$delete_post = get_post($post_id);
 
 	/**
