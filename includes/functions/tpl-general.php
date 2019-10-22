@@ -3,7 +3,7 @@
  *@since 2019.05.23
  *面包屑导航
  **/
-function wnd_breadcrumb() {
+function wnd_breadcrumb($font_size = 'is-small') {
 	if (is_home() or is_author()) {
 		return;
 	}
@@ -17,7 +17,7 @@ function wnd_breadcrumb() {
 	 *左侧导航
 	 **/
 	$html .= '<div class="column">';
-	$html .= '<nav class="breadcrumb is-small" aria-label="breadcrumbs">';
+	$html .= '<nav class="breadcrumb ' . $font_size . '" aria-label="breadcrumbs">';
 	$html .= '<ul>';
 	$html .= '<li><a href="' . home_url() . '">首页</a></li>';
 	$queried_object = get_queried_object();
