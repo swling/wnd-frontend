@@ -1,8 +1,8 @@
 <?php
 namespace Wnd\Controller;
 
+use Exception;
 use Wnd\View\Wnd_Filter;
-use \Exception;
 
 /**
  *@since 2019.07.31

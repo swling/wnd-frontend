@@ -1,9 +1,9 @@
 <?php
 namespace Wnd\Controller;
 
+use Exception;
 use Wnd\Controller\Wnd_Form_Handler;
 use Wnd\Model\Wnd_Post;
-use \Exception;
 
 class Wnd_Insert_Post extends Wnd_Ajax_Controller {
 

@@ -1,8 +1,8 @@
 <?php
 namespace Wnd\Controller;
 
+use Exception;
 use Wnd\Model\Wnd_Auth;
-use \Exception;
 
 /**
  *@since 2019.02.10 用户找回密码

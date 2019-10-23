@@ -1,9 +1,9 @@
 <?php
 namespace Wnd\View;
 
+use Exception;
 use Wnd\Model\Wnd_Tag_Under_Category;
-use \Exception;
-use \WP_Query;
+use WP_Query;
 
 /**
  * @since 2019.07.30

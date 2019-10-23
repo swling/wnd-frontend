@@ -1,9 +1,9 @@
 <?php
 namespace Wnd\Controller;
 
+use Exception;
 use Wnd\Controller\Wnd_Create_Order;
 use Wnd\Model\Wnd_Recharge;
-use \Exception;
 
 /**
  *付费阅读类

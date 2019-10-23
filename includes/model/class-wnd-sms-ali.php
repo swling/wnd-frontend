@@ -2,7 +2,7 @@
 namespace Wnd\Model;
 
 use Aliyun\DySDKLite\SignatureHelper;
-use \Exception;
+use Exception;
 
 /**
  *@since 2019.09.25

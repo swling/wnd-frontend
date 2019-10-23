@@ -1,8 +1,8 @@
 <?php
 namespace Wnd\Controller;
 
+use Exception;
 use Wnd\Model\Wnd_Auth;
-use \Exception;
 
 /**
  *@since 2019.01.28 ajax 发送手机或邮箱验证码

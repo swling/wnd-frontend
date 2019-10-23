@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Controller;
 
-use \Exception;
+use Exception;
 
 /**
  *@since 2019.09.27

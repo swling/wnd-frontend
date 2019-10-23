@@ -1,8 +1,8 @@
 <?php
 namespace Wnd\Controller;
 
+use Exception;
 use Wnd\Model\Wnd_Auth;
-use \Exception;
 
 /**
  *@since 2019.07.23 已登录用户设置邮箱

@@ -1,8 +1,8 @@
 <?php
 namespace Wnd\Model;
 
+use Exception;
 use Qcloud\Sms\SmsSingleSender;
-use \Exception;
 
 /**
  *@since 2019.09.25

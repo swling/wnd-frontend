@@ -1,8 +1,8 @@
 <?php
 namespace Wnd\Controller;
 
+use Exception;
 use Wnd\Controller\Wnd_Form_Handler;
-use \Exception;
 
 /**
  *@see README.md

@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Controller;
 
-use \Exception;
+use Exception;
 
 /**
  *根据表单name提取标题数据

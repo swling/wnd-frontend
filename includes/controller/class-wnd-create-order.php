@@ -1,8 +1,8 @@
 <?php
 namespace Wnd\Controller;
 
+use Exception;
 use Wnd\Model\Wnd_Order;
-use \Exception;
 
 /**
  *@since 2019.10.02
