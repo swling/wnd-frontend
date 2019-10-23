@@ -331,7 +331,7 @@ class Wnd_Filter {
 			}
 
 			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
-			if (isset($this->wp_query_args[$key]) and is_array($this->wp_query_args[$key])) {
+			if (is_array($this->wp_query_args[$key] ?? false) and is_array($value)) {
 				$this->wp_query_args[$key] = array_merge($this->wp_query_args[$key], $value);
 			} else {
 				$this->wp_query_args[$key] = $value;
