@@ -130,5 +130,16 @@ function wnd_unstick_post($post_id) {
  **/
 function wnd_get_sticky_posts($post_type) {
 	$sticky_posts = wnd_get_option('wnd_sticky_posts', $post_type);
-	return is_array($sticky_posts) ? $sticky_posts : array();
+	$sticky_posts = is_array($sticky_posts) ? $sticky_posts : array();
+
+	// 检测post是否有效
+	foreach ($sticky_posts as $key => $sticky_post) {
+		if (!get_post($sticky_post)) {
+			unset($sticky_posts[$key]);
+		}
+	}
+	unset($key, $sticky_post);
+	wnd_update_option('wnd_sticky_posts', $post_type, $sticky_posts);
+
+	return $sticky_posts;
 }
