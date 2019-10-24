@@ -110,7 +110,7 @@ class Wnd_Filter {
 		}
 
 		// 非管理员，仅可查询当前用户自己的非公开post
-		if ($this->wp_query_args['post_status'] != 'publish' and !is_super_admin()) {
+		if (!in_array($this->wp_query_args['post_status'], array('publish', 'close')) and !is_super_admin()) {
 			if (!is_user_logged_in()) {
 				throw new Exception('未登录用户，仅可查询公开信息！');
 			}
@@ -376,7 +376,7 @@ class Wnd_Filter {
 		 *若当前请求未指定post_status，设置第一个post_status为默认值；若筛选项也为空，最后默认publish
 		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
 		 */
-		$default_status = $this->wp_query_args['status'] ?? ($args ? reset($args) : 'publish');
+		$default_status = $this->wp_query_args['post_status'] ?? ($args ? reset($args) : 'publish');
 		$this->add_query(array('post_status' => $default_status));
 
 		$tabs = $this->build_post_status_filter($args);
