@@ -56,7 +56,7 @@ class Wnd_Filter {
 		'meta_key'           => '',
 		'meta_value'         => '',
 		'post_type'          => '',
-		'post_status'        => 'publish',
+		'post_status'        => '',
 		'no_found_rows'      => true,
 		'paged'              => 1,
 
@@ -376,7 +376,7 @@ class Wnd_Filter {
 		 *若当前请求未指定post_status，设置第一个post_status为默认值；若筛选项也为空，最后默认publish
 		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
 		 */
-		$default_status = $this->wp_query_args['post_status'] ?? ($args ? reset($args) : 'publish');
+		$default_status = $this->wp_query_args['post_status'] ?: ($args ? reset($args) : 'publish');
 		$this->add_query(array('post_status' => $default_status));
 
 		$tabs = $this->build_post_status_filter($args);
