@@ -109,12 +109,31 @@ class Wnd_Filter {
 			$this->category_taxonomy = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
 		}
 
-		// 非管理员，仅可查询当前用户自己的非公开post
-		if (!in_array($this->wp_query_args['post_status'] ?: 'publish', array('publish', 'close')) and !is_super_admin()) {
+		// 非管理员，仅可查询publish及close状态(作者本身除外)
+		if (is_super_admin()) {
+			return;
+		}
+
+		// 数组查询，如果包含publish及close之外的状态，指定作者为当前用户
+		if (is_array($this->wp_query_args['post_status'])) {
+			foreach ($this->wp_query_args['post_status'] as $key => $post_status) {
+				if (!in_array($post_status, array('publish', 'close'))) {
+					if (!is_user_logged_in()) {
+						throw new Exception('未登录用户，仅可查询公开信息！');
+					} else {
+						$this->wp_query_args['author'] = get_current_user_id();
+					}
+					break;
+				}
+			}unset($key, $post_status);
+
+			// 单个查询
+		} elseif (!in_array($this->wp_query_args['post_status'] ?: 'publish', array('publish', 'close'))) {
 			if (!is_user_logged_in()) {
 				throw new Exception('未登录用户，仅可查询公开信息！');
+			} else {
+				$this->wp_query_args['author'] = get_current_user_id();
 			}
-			$this->wp_query_args['author'] = get_current_user_id();
 		}
 	}
 
@@ -264,8 +283,8 @@ class Wnd_Filter {
 				continue;
 			}
 
-			// 其他、按键名自动匹配、排除指定作者的参数
-			$query_vars[$key] = $value;
+			// 其他：按键名自动匹配
+			$query_vars[$key] = (false !== strpos($value, '=')) ? wp_parse_args($value) : $value;
 			continue;
 		}
 		unset($key, $value);
@@ -326,7 +345,8 @@ class Wnd_Filter {
 	public function add_query($query = array()) {
 		foreach ($query as $key => $value) {
 			// $_GET参数优先，无法重新设置
-			if (in_array($key, array_keys($_GET))) {
+			$url_query_keys = array_filter(self::parse_query_vars());
+			if (in_array($key, array_keys($url_query_keys))) {
 				continue;
 			}
 
@@ -356,13 +376,19 @@ class Wnd_Filter {
 		 * 当前请求为包含post_type参数时，当前的主分类（category_taxonomy）无法在构造函数中无法完成定义，需在此处补充
 		 */
 		if (!$this->wp_query_args['post_type']) {
-			$this->wp_query_args['post_type'] = $with_any_tab ? 'any' : ($args ? reset($args) : 'post');
-			$this->category_taxonomy          = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
+			$default_type = $with_any_tab ? 'any' : ($args ? reset($args) : 'post');
+			$this->add_query(array('post_type' => $default_type));
+			$this->category_taxonomy = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
 		}
 
+		/**
+		 *仅筛选项大于2时，构建HTML
+		 */
+		if (count($args) < 2) {
+			return;
+		}
 		$tabs = $this->build_post_type_filter($args, $with_any_tab);
 		$this->tabs .= $tabs;
-
 		return $tabs;
 	}
 
@@ -379,6 +405,12 @@ class Wnd_Filter {
 		$default_status = $this->wp_query_args['post_status'] ?: ($args ? reset($args) : 'publish');
 		$this->add_query(array('post_status' => $default_status));
 
+		/**
+		 *仅筛选项大于2时，构建HTML
+		 */
+		if (count($args) < 2) {
+			return;
+		}
 		$tabs = $this->build_post_status_filter($args);
 		$this->tabs .= $tabs;
 		return $tabs;
@@ -555,7 +587,7 @@ class Wnd_Filter {
 		$uri = strtok($_SERVER['REQUEST_URI'], '?');
 
 		// 若筛选项少于2个，即无需筛选post type：隐藏tabs
-		$tabs = '<div class="tabs is-boxed post-type-tabs ' . (count($args) < 2 ? 'is-hidden' : '') . '">';
+		$tabs = '<div class="tabs is-boxed post-type-tabs">';
 		$tabs .= '<ul class="tab">';
 		if ($with_any_tab) {
 			$class = ('any' == $this->wp_query_args['post_type']) ? ' is-active' : '';
@@ -597,7 +629,7 @@ class Wnd_Filter {
 	protected function build_post_status_filter($args = array()) {
 
 		// 输出容器
-		$tabs = '<div class="columns is-marginless is-vcentered post-status-tabs ' . (count($args) < 2 ? 'is-hidden' : '') . '">';
+		$tabs = '<div class="columns is-marginless is-vcentered post-status-tabs">';
 		$tabs .= '<div class="column is-narrow">状态：</div>';
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<div class="tabs">';
@@ -1221,7 +1253,7 @@ class Wnd_Filter {
 	 *获取当前tax_query的所有父级term_id
 	 *@return array $parents 当前分类查询的所有父级：$parents[$taxonomy] = array($term_id_1, $term_id_2);
 	 */
-	public function get_tax_query_patents() {
+	protected function get_tax_query_patents() {
 		$parents = array();
 
 		// 遍历当前tax query是否包含子类
