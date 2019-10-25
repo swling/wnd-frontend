@@ -22,7 +22,7 @@ use Exception;
  *	类型：post_type：recharge
  *
  */
-class Wnd_Recharge extends Wnd_Finance {
+class Wnd_Recharge extends Wnd_Transaction {
 
 	/**
 	 *@since 2019.08.11

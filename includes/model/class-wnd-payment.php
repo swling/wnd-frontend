@@ -24,7 +24,7 @@ use Exception;
  *	类型：post_type：recharge / order
  *
  */
-class Wnd_Payment extends Wnd_Finance {
+class Wnd_Payment extends Wnd_Transaction {
 
 	// 基于$this->ID生成，发送至第三方平台的订单号
 	protected $out_trade_no;

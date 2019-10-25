@@ -22,7 +22,7 @@ use Exception;
  *	类型：post_type：order
  *
  */
-class Wnd_Order extends Wnd_Finance {
+class Wnd_Order extends Wnd_Transaction {
 
 	/**
 	 *@since 2019.08.11
