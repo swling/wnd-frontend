@@ -32,9 +32,9 @@ use Wnd\View\Wnd_Filter;
  * $wp_query_args[$key] = $value;
  *
  **/
-class Wnd_Ajax_Filter {
+class Wnd_Ajax_Filter extends Wnd_Ajax_Controller {
 
-	public static function filter() {
+	public static function execute(): array{
 
 		// 根据请求GET参数，获取wp_query查询参数
 		try {

@@ -20,7 +20,7 @@ function wnd_action_rest_register_route() {
 		'filter',
 		array(
 			'methods'  => 'GET',
-			'callback' => 'Wnd\\Controller\\Wnd_Ajax_Filter::filter',
+			'callback' => 'Wnd\\Controller\\Wnd_Ajax_Filter::execute',
 		)
 	);
 
