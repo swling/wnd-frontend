@@ -1,4 +1,6 @@
 <?php
+use Wnd\Model\Wnd_User;
+
 /**
  *@since 2019.09.25
  *随机生成用户名
@@ -14,23 +16,7 @@ function wnd_generate_login() {
  *@return 	string|false 	用户手机号或false
  */
 function wnd_get_user_phone($user_id) {
-	if (!$user_id) {
-		return false;
-	}
-
-	$phone = wnd_get_user_meta(get_current_user_id(), 'phone');
-	if ($phone) {
-		return $phone;
-	}
-
-	global $wpdb;
-	$phone = $wpdb->get_var($wpdb->prepare("SELECT phone FROM $wpdb->wnd_users WHERE user_id = %d;", $user_id));
-	if ($phone) {
-		wnd_update_user_meta($user_id, 'phone', $phone);
-		return $phone;
-	} else {
-		return false;
-	}
+	return Wnd_User::get_user_phone($user_id);
 }
 
 /**
@@ -39,43 +25,7 @@ function wnd_get_user_phone($user_id) {
  *@return 	object|false	WordPress user object on success
  */
 function wnd_get_user_by($email_or_phone_or_login) {
-	if (!$email_or_phone_or_login) {
-		return false;
-	}
-
-	/**
-	 *邮箱
-	 */
-	if (is_email($email_or_phone_or_login)) {
-		return get_user_by('email', $email_or_phone_or_login);
-
-	}
-
-	/**
-	 *手机或登录名
-	 *
-	 *若当前字符匹配手机号码格式，则优先使用手机号查询
-	 *若查询到用户即返回
-	 *最后返回用户名查询结果
-	 *
-	 *注意：
-	 *强烈建议禁止用户使用纯数字作为用户名
-	 *否则可能出现手机号码与用户名的混乱，造成同一个登录名，对应过个账户信息的问题
-	 *
-	 *本插件已禁用纯数字用户名：@see wnd_ajax_reg()
-	 */
-	if (wnd_is_phone($email_or_phone_or_login)) {
-		global $wpdb;
-		$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE phone = %s;", $email_or_phone_or_login));
-		$user    = $user_id ? get_user_by('ID', $user_id) : false;
-		if ($user) {
-			return $user;
-		}
-
-	} else {
-		return get_user_by('login', $email_or_phone_or_login);
-	}
-
+	return Wnd_User::get_user_by($email_or_phone_or_login);
 }
 
 /**
@@ -85,10 +35,7 @@ function wnd_get_user_by($email_or_phone_or_login) {
  *@return 	object|false 	（WordPress：get_user_by）
  */
 function wnd_get_user_by_openid($openid) {
-	global $wpdb;
-
-	$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE open_id = %s;", $openid));
-	return !$user_id ? false : get_user_by('ID', $user_id);
+	return Wnd_User::get_user_by_openid($openid);
 }
 
 /**
@@ -99,31 +46,7 @@ function wnd_get_user_by_openid($openid) {
  *@return 	int 	$wpdb->insert
  */
 function wnd_update_user_openid($user_id, $openid) {
-	global $wpdb;
-
-	// 查询
-	$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->wnd_users} WHERE user_id = %d LIMIT 1", $user_id));
-
-	// 更新
-	if ($ID) {
-		$db = $wpdb->update(
-			$wpdb->wnd_users,
-			array('open_id' => $openid, 'time' => time()),
-			array('ID' => $ID),
-			array('%s', '%d'),
-			array('%d')
-		);
-
-		// 写入
-	} else {
-		$db = $wpdb->insert(
-			$wpdb->wnd_users,
-			array('user_id' => $user_id, 'open_id' => $openid, 'time' => time()),
-			array('%d', '%s', '%d')
-		);
-	}
-
-	return $db;
+	return Wnd_User::update_user_openid($user_id, $openid);
 }
 
 /**
@@ -134,36 +57,7 @@ function wnd_update_user_openid($user_id, $openid) {
  *@return 	int 	$wpdb->insert
  */
 function wnd_update_user_email($user_id, $email) {
-	global $wpdb;
-
-	// 查询
-	$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->wnd_users} WHERE user_id = %d LIMIT 1", $user_id));
-
-	// 更新
-	if ($ID) {
-		$db = $wpdb->update(
-			$wpdb->wnd_users,
-			array('email' => $email, 'time' => time()),
-			array('ID' => $ID),
-			array('%s', '%d'),
-			array('%d')
-		);
-
-		// 写入
-	} else {
-		$db = $wpdb->insert(
-			$wpdb->wnd_users,
-			array('user_id' => $user_id, 'email' => $email, 'time' => time()),
-			array('%d', '%s', '%d')
-		);
-	}
-
-	// 更新WordPress账户email
-	if ($db) {
-		wp_update_user(array('ID' => $user_id, 'user_email' => $email));
-	}
-
-	return $db;
+	return Wnd_User::update_user_email($user_id, $email);
 }
 
 /**
@@ -174,36 +68,7 @@ function wnd_update_user_email($user_id, $email) {
  *@return 	int 	$wpdb->insert
  */
 function wnd_update_user_phone($user_id, $phone) {
-	global $wpdb;
-
-	// 查询
-	$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->wnd_users} WHERE user_id = %d LIMIT 1", $user_id));
-
-	// 更新
-	if ($ID) {
-		$db = $wpdb->update(
-			$wpdb->wnd_users,
-			array('phone' => $phone, 'time' => time()),
-			array('ID' => $ID),
-			array('%s', '%d'),
-			array('%d')
-		);
-
-		// 写入
-	} else {
-		$db = $wpdb->insert(
-			$wpdb->wnd_users,
-			array('user_id' => $user_id, 'phone' => $phone, 'time' => time()),
-			array('%d', '%s', '%d')
-		);
-	}
-
-	// 更新字段
-	if ($db) {
-		wnd_update_user_meta($user_id, 'phone', $phone);
-	}
-
-	return $db;
+	return Wnd_User::update_user_phone($user_id, $phone);
 }
 
 /**
@@ -213,14 +78,7 @@ function wnd_update_user_phone($user_id, $phone) {
  *用户角色为：管理员或编辑 返回 true
  */
 function wnd_is_manager($user_id = 0) {
-	$user = $user_id ? get_user_by('id', $user_id) : wp_get_current_user();
-
-	$user_role = $user->roles[0] ?? false;
-	if ($user_role == 'administrator' or $user_role == 'editor') {
-		return true;
-	} else {
-		return false;
-	}
+	return Wnd_User::is_manager($user_id);
 }
 
 /**
@@ -231,19 +89,7 @@ function wnd_is_manager($user_id = 0) {
  *@return 	int|false
  */
 function wnd_is_name_duplicated($display_name, $exclude_id = 0) {
-	// 名称为空
-	if (empty($display_name)) {
-		return false;
-	}
-
-	global $wpdb;
-	$results = $wpdb->get_var($wpdb->prepare(
-		"SELECT ID FROM $wpdb->users WHERE display_name = %s AND  ID != %d  limit 1",
-		$display_name,
-		$exclude_id
-	));
-
-	return $results ?: false;
+	return Wnd_User::is_name_duplicated($display_name, $exclude_id);
 }
 
 /**
@@ -255,27 +101,7 @@ function wnd_is_name_duplicated($display_name, $exclude_id = 0) {
  *@return 	bool 	true on success
  */
 function wnd_mail($to, $subject, $message) {
-	if (!get_user_by('id', $to)) {
-		return array('status' => 0, 'msg' => '用户不存在！');
-	}
-
-	$postarr = array(
-		'post_type'    => 'mail',
-		'post_author'  => $to,
-		'post_title'   => $subject,
-		'post_content' => $message,
-		'post_status'  => 'pending',
-		'post_name'    => uniqid(),
-	);
-
-	$mail_id = wp_insert_post($postarr);
-
-	if (is_wp_error($mail_id)) {
-		return false;
-	} else {
-		wp_cache_delete($to, 'wnd_mail_count');
-		return true;
-	}
+	return Wnd_User::mail($to, $subject, $message);
 }
 
 /**
@@ -284,23 +110,7 @@ function wnd_mail($to, $subject, $message) {
  *@return 	int 	用户未读邮件
  */
 function wnd_get_mail_count() {
-	$user_id         = get_current_user_id();
-	$user_mail_count = wp_cache_get($user_id, 'wnd_mail_count');
-
-	if (false === $user_mail_count) {
-		$args = array(
-			'posts_per_page' => 11,
-			'author'         => $user_id,
-			'post_type'      => 'mail',
-			'post_status'    => 'pending',
-		);
-
-		$user_mail_count = count(get_posts($args));
-		$user_mail_count = ($user_mail_count > 10) ? '10+' : $user_mail_count;
-		wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
-	}
-
-	return $user_mail_count ?: 0;
+	return Wnd_User::get_mail_count();
 }
 
 /**
@@ -309,8 +119,5 @@ function wnd_get_mail_count() {
  *@return array 	文章类型数组
  */
 function wnd_get_user_panel_post_types() {
-	$post_types = get_post_types(array('public' => true), 'names', 'and');
-	// 排除页面/附件/站内信
-	unset($post_types['page'], $post_types['attachment'], $post_types['mail']);
-	return apply_filters('wnd_user_panel_post_types', $post_types);
+	return Wnd_User::get_user_panel_post_types();
 }

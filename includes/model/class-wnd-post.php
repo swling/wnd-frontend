@@ -168,4 +168,80 @@ class Wnd_Post {
 			unset($taxonomy, $term);
 		}
 	}
+
+	/**
+	 *@since 初始化
+	 *标题去重
+	 *
+	 *@param string 	$title
+	 *@param int 	$exclude_id
+	 *@param string 	$post_type
+	 *
+	 *@return int|false
+	 */
+	public static function is_title_duplicated($title, $exclude_id = 0, $post_type = 'post') {
+		if (empty($title)) {
+			return false;
+		}
+
+		global $wpdb;
+		$results = $wpdb->get_var($wpdb->prepare(
+			"SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = %s AND  ID != %d  limit 1",
+			$title,
+			$post_type,
+			$exclude_id
+		));
+
+		return $results ?: false;
+	}
+
+	/**
+	 *@since 2019.02.17 根据post name 获取post
+	 *
+	 *@param string $post_name
+	 *@param string $post_type
+	 *@param string $post_status
+	 *
+	 *@return object|null
+	 */
+	public static function get_post_by_slug($post_name, $post_type = 'post', $post_status = 'publish') {
+		global $wpdb;
+		$post_name = urlencode($post_name);
+
+		if ('any' == $post_status) {
+			$post = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s LIMIT 1",
+					$post_name,
+					$post_type
+				)
+			);
+		} else {
+			$post = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND post_status = %s LIMIT 1",
+					$post_name,
+					$post_type,
+					$post_status
+				)
+			);
+		}
+
+		if ($post) {
+			return $post[0];
+		}
+		return false;
+	}
+
+	/**
+	 *@since 2019.02.19
+	 *当前用户可以写入或管理的文章类型
+	 *@return array : post type name数组
+	 */
+	public static function get_allowed_post_types() {
+		$post_types = get_post_types(array('public' => true), 'names', 'and');
+		// 排除页面/站内信
+		unset($post_types['page'], $post_types['mail']);
+		return apply_filters('wnd_allowed_post_types', $post_types);
+	}
 }
