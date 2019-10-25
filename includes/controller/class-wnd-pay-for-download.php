@@ -10,7 +10,7 @@ use Wnd\Model\Wnd_Recharge;
  */
 class Wnd_Pay_For_Download extends Wnd_Ajax_Controller {
 
-	public static function execute() {
+	public static function execute(): array{
 		// 获取文章
 		$post_id = (int) $_POST['post_id'];
 		$post    = get_post($post_id);

@@ -19,7 +19,7 @@ use Wnd\Controller\Wnd_Form_Handler;
  */
 class Wnd_Update_Profile extends Wnd_Ajax_Controller {
 
-	public static function execute() {
+	public static function execute(): array{
 		if (empty($_POST)) {
 			return array('status' => 0, 'msg' => '获取用户数据失败！');
 		}

@@ -23,7 +23,7 @@ use Wnd\Controller\Wnd_Form_Handler;
  */
 class Wnd_Reg extends Wnd_Ajax_Controller {
 
-	public static function execute() {
+	public static function execute(): array{
 		// 1、数据组成
 		if (empty($_POST)) {
 			return array('status' => 0, 'msg' => '注册信息为空');

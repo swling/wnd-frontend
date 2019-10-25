@@ -13,7 +13,7 @@ use Wnd\Model\Wnd_Auth;
  */
 class Wnd_Send_Code extends Wnd_Ajax_Controller {
 
-	public static function execute() {
+	public static function execute(): array{
 		$type           = $_POST['type'] ?? '';
 		$is_email       = $_POST['is_email'] ?: false;
 		$text           = $is_email ? '邮箱' : '手机';

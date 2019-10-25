@@ -11,7 +11,7 @@ class Wnd_Update_Post extends Wnd_Ajax_Controller {
 	 *@return 	array
 	 *更新文章
 	 */
-	public static function execute($post_id = 0) {
+	public static function execute($post_id = 0): array{
 
 		// 获取被编辑post
 		$post_id   = $post_id ?: (int) $_POST['_post_ID'];

@@ -11,7 +11,7 @@ namespace Wnd\Controller;
  */
 class Wnd_Update_Account extends Wnd_Ajax_Controller {
 
-	public static function execute() {
+	public static function execute(): array{
 		$user    = wp_get_current_user();
 		$user_id = $user->ID;
 		if (!$user_id) {

@@ -22,7 +22,7 @@ class Wnd_Insert_Post extends Wnd_Ajax_Controller {
 	 *@param 	bool 	$verify_form_nonce  是否校验表单数据来源
 	 *@return 	array 						操作结果
 	 **/
-	public static function execute($verify_form_nonce = true) {
+	public static function execute($verify_form_nonce = true): array{
 		if (empty($_POST)) {
 			return array('status' => 0, 'msg' => '数据为空');
 		}

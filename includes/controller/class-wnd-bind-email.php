@@ -11,7 +11,7 @@ use Wnd\Model\Wnd_Auth;
  */
 class Wnd_Bind_Email extends Wnd_Ajax_Controller {
 
-	public static function execute() {
+	public static function execute(): array{
 		$email     = $_POST['_user_user_email'] ?? null;
 		$auth_code = $_POST['auth_code'] ?? null;
 		$password  = $_POST['_user_user_pass'] ?? null;

@@ -13,7 +13,7 @@ use Wnd\Model\Wnd_Recharge;
  */
 class Wnd_Admin_Recharge extends Wnd_Ajax_Controller {
 
-	public static function execute() {
+	public static function execute(): array{
 		if (!is_super_admin()) {
 			return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作！');
 		}

@@ -11,7 +11,7 @@ namespace Wnd\Controller;
  */
 class Wnd_Login extends Wnd_Ajax_Controller {
 
-	public static function execute() {
+	public static function execute(): array{
 		$username    = trim($_POST['_user_user_login']);
 		$password    = $_POST['_user_user_pass'];
 		$remember    = $_POST['remember'] ?? 0;

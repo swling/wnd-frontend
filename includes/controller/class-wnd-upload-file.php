@@ -25,7 +25,7 @@ namespace Wnd\Controller;
  */
 class Wnd_Upload_File extends Wnd_Ajax_Controller {
 
-	public static function execute() {
+	public static function execute(): array{
 
 		//$_FILES['wnd_file']需要与input name 值匹配
 		if (empty($_FILES['wnd_file'])) {

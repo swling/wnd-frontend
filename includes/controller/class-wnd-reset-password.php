@@ -13,7 +13,7 @@ use Wnd\Model\Wnd_Auth;
  */
 class Wnd_Reset_Password extends Wnd_Ajax_Controller {
 
-	public static function execute() {
+	public static function execute(): array{
 		$email_or_phone      = $_POST['_user_user_email'] ?? $_POST['phone'] ?? null;
 		$new_password        = $_POST['_user_new_pass'] ?? null;
 		$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? null;

@@ -14,7 +14,7 @@ namespace Wnd\Controller;
 class Wnd_Ajax_Action extends Wnd_Ajax_Controller {
 
 	// 根据method参数选择处理方法
-	public static function execute() {
+	public static function execute(): array{
 		$method = $_REQUEST['method'] ?? false;
 		if (!$method) {
 			return array('status' => 0, 'msg' => '未指定方法！');

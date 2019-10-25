@@ -10,7 +10,7 @@ use Wnd\Model\Wnd_Order;
  */
 class Wnd_Create_Order extends Wnd_Ajax_Controller {
 
-	public static function execute() {
+	public static function execute(): array{
 		$post_id = (int) $_POST['post_id'];
 		if (!$post_id) {
 			return array('status' => 0, 'msg' => 'ID无效！');

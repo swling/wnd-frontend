@@ -11,7 +11,7 @@ class Wnd_Update_Post_Status extends Wnd_Ajax_Controller {
 	 *前端快速更改文章状态
 	 *依赖：wp_update_post、wp_delete_post
 	 */
-	public static function execute() {
+	public static function execute(): array{
 
 		// 获取数据
 		$post_id     = (int) $_POST['post_id'];
