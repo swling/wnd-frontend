@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Model\Wnd_DB;
+
 /**
  *@since 2019.3.14
  *清理站点内容
@@ -9,7 +11,7 @@ class Wnd_Admin {
 
 	public static function install() {
 		// 数据表
-		wnd_create_table();
+		Wnd_DB::create_table();
 
 		// 升级
 		if (get_option('wnd_var') != WND_VER) {

@@ -40,9 +40,8 @@ if (is_admin()) {
 	require WND_PATH . 'wnd-options.php'; //配置选项
 }
 
-// basic
-require WND_PATH . 'wnd-database.php'; //数据库
-require WND_PATH . 'wnd-api.php'; // API
+// 初始化
+new Wnd\Model\Wnd_Init();
 
 // function
 require WND_PATH . 'includes/functions/inc-meta.php'; //数组形式储存 meta、option
@@ -51,7 +50,6 @@ require WND_PATH . 'includes/functions/inc-post.php'; //post相关自定义函�
 require WND_PATH . 'includes/functions/inc-user.php'; //user相关自定义函数
 require WND_PATH . 'includes/functions/inc-media.php'; //媒体文件处理函数
 require WND_PATH . 'includes/functions/inc-finance.php'; //财务
-require WND_PATH . 'includes/functions/inc-post-type-status.php'; //自定义文章类型及状态
 
 require WND_PATH . 'includes/functions/tpl-general.php'; //通用模板
 require WND_PATH . 'includes/functions/tpl-list.php'; //post list模板
@@ -61,8 +59,3 @@ require WND_PATH . 'includes/functions/tpl-term.php'; //term模板
 require WND_PATH . 'includes/hook/add-action.php'; //添加动作
 require WND_PATH . 'includes/hook/add-filter.php'; //添加钩子
 require WND_PATH . 'includes/hook/remove.php'; //移除
-
-/**
- *分类关联标签
- */
-new Wnd\Model\Wnd_Tag_Under_Category();
