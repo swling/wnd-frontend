@@ -7,7 +7,7 @@ use Exception;
  *@since 2019.09.27
  *QQ登录
  */
-class Wnd_Social_Login_QQ extends Wnd_Social_Login {
+class Wnd_Login_QQ extends Wnd_Login_Social {
 
 	/**
 	 *创建授权地址
