@@ -20,6 +20,12 @@ class Wnd_Filter {
 	// bool 是否正处于ajax环境中
 	protected static $doing_ajax;
 
+	/**
+	 *@since 2019.10.26
+	 *URL请求参数
+	 */
+	protected static $http_query;
+
 	// string 当前筛选器唯一标识
 	protected $uniqid;
 
@@ -93,10 +99,11 @@ class Wnd_Filter {
 	public function __construct(bool $is_ajax = false, string $uniqid = '') {
 		self::$is_ajax    = $is_ajax;
 		self::$doing_ajax = wnd_doing_ajax();
-		$this->class .= self::$is_ajax ? 'ajax-filter' : '';
+		self::$http_query = self::parse_query_vars();
+		$this->class      = self::$is_ajax ? 'ajax-filter' : 'filter';
 
 		// 解析GET参数为wp_query参数并与默认参数合并，以防止出现参数未定义的警告信息
-		$this->wp_query_args = array_merge($this->wp_query_args, self::parse_query_vars());
+		$this->wp_query_args = array_merge($this->wp_query_args, self::$http_query);
 
 		// 初始化时生成uniqid，并加入query参数，以便在ajax生成的新请求中保持一致
 		$this->uniqid = $uniqid ?: $this->wp_query_args['wnd_uniqid'] ?: uniqid();
@@ -289,6 +296,15 @@ class Wnd_Filter {
 		}
 		unset($key, $value);
 
+		/**
+		 *定义如何过滤HTTP请求
+		 *此处定义：过滤空值，但保留0
+		 *@since 2019.10.26
+		 **/
+		$query_vars = array_filter($query_vars, function ($value) {
+			return $value or $value == 0;
+		});
+
 		return $query_vars;
 	}
 
@@ -346,16 +362,11 @@ class Wnd_Filter {
 		foreach ($query as $key => $value) {
 			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
 			if (is_array($this->wp_query_args[$key] ?? false) and is_array($value)) {
-				$this->wp_query_args[$key] = array_merge($this->wp_query_args[$key], $value);
+				$this->wp_query_args[$key] = array_merge($this->wp_query_args[$key], $value, self::$http_query);
 
 			} else {
 				// $_GET参数优先，无法重新设置
-				$url_query_vars = array_filter(self::parse_query_vars());
-				if (in_array($key, array_keys($url_query_vars))) {
-					continue;
-				}
-
-				$this->wp_query_args[$key] = $value;
+				$this->wp_query_args[$key] = (self::$http_query[$key] ?? false) ?: $value;
 			}
 
 			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
