@@ -1,6 +1,6 @@
 <?php
 use Wnd\Model\Wnd_Post;
-use Wnd\Model\Wnd_Post_Sticky;
+use Wnd\Model\Wnd_Sticky;
 
 /**
  *@since 2019.02.19
@@ -46,7 +46,7 @@ function wnd_get_post_by_slug($post_name, $post_type = 'post', $post_status = 'p
  *@param $post_id
  **/
 function wnd_stick_post($post_id) {
-	return Wnd_Post_Sticky::stick_post($post_id);
+	return Wnd_Sticky::stick_post($post_id);
 }
 
 /**
@@ -55,7 +55,7 @@ function wnd_stick_post($post_id) {
  *@param $post_id
  **/
 function wnd_unstick_post($post_id) {
-	return Wnd_Post_Sticky::unstick_post($post_id);
+	return Wnd_Sticky::unstick_post($post_id);
 }
 
 /**
@@ -65,5 +65,5 @@ function wnd_unstick_post($post_id) {
  *@return 	array or false 	文章id数组
  **/
 function wnd_get_sticky_posts($post_type) {
-	return Wnd_Post_Sticky::get_sticky_posts($post_type);
+	return Wnd_Sticky::get_sticky_posts($post_type);
 }

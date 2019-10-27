@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Model;
 
-class Wnd_Post_Sticky {
+class Wnd_Sticky {
 
 	/**
 	 *@since 2019.06.11
