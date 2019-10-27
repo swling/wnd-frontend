@@ -2,6 +2,7 @@
 namespace Wnd\Controller;
 
 use Exception;
+use Wnd\Model\Wnd_Nonce;
 
 /**
  *根据表单name提取标题数据
@@ -19,30 +20,12 @@ class Wnd_Form_Handler {
 		 *因而校验表单操作应该在filter应用之前执行
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
-		if ($verify_form_nonce and !$this->verify_form_nonce()) {
+		if ($verify_form_nonce and !Wnd_Nonce::verify_form_nonce()) {
 			throw new Exception('表单已被篡改！');
 		}
 
 		// 允许修改表单提交数据
 		$this->form_data = apply_filters('wnd_form_handler', $_POST);
-	}
-
-	/**
-	 *@since 2019.05.09 校验表单字段是否被篡改
-	 *@see Wnd_Form_WP -> build_form_nonce()
-	 */
-	protected function verify_form_nonce() {
-		if (!isset($_POST['_wnd_form_nonce'])) {
-			return false;
-		}
-
-		// 提取POST $_FILES数组键值，去重并排序
-		$form_names = array_merge(array_keys($_POST), array_keys($_FILES));
-		$form_names = array_unique($form_names);
-		sort($form_names);
-
-		// 校验数组键值是否一直
-		return wnd_verify_nonce($_POST['_wnd_form_nonce'], md5(implode('', $form_names)));
 	}
 
 	// 0、获取WordPress user数据数组

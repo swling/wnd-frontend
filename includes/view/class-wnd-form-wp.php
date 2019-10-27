@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\View;
 
+use Wnd\Model\Wnd_Nonce;
+
 /**
  *适配本插件的ajax表单类
  *@since 2019.03.08
@@ -319,8 +321,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
 	 */
 	protected function build_form_nonce() {
-		// 提取表单字段names 去重，排序
-		$this->form_names[] = '_wnd_form_nonce'; // nonce自身字段也需要包含在内
+		// 提取表单字段names
 		foreach ($this->get_input_values() as $input_value) {
 			if (!isset($input_value['name'])) {
 				continue;
@@ -334,14 +335,9 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 		unset($input_value);
 
-		$this->form_names = array_unique($this->form_names); //针对如 radio checkbox等，存在多个同名字段，但发送到后的只有一个
-		sort($this->form_names);
-
-		// 根据表单字段，和表单验证秘钥生成wp nonce
-		$nonce = wnd_create_nonce(md5(implode('', $this->form_names)));
-
-		// 将nonce字段添加到表单
-		$this->add_hidden('_wnd_form_nonce', $nonce);
+		// 根据表单字段生成wp nonce并加入表单字段
+		$nonce_field = Wnd_nonce::form_nonce_field($this->form_names);
+		$this->add_html($nonce_field);
 	}
 
 	/**

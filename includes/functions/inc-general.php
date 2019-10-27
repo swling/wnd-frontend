@@ -6,8 +6,7 @@
  *@return 	string 	nonce
  **/
 function wnd_create_nonce($action) {
-	$secret_key = wnd_get_option('wnd', 'wnd_secret_key');
-	return wp_create_nonce(md5($action . $secret_key));
+	return Wnd\Model\Wnd_Nonce::create_nonce($action);
 }
 
 /**
@@ -20,8 +19,7 @@ function wnd_create_nonce($action) {
  *@return 	bool
  **/
 function wnd_verify_nonce($nonce, $action) {
-	$secret_key = wnd_get_option('wnd', 'wnd_secret_key');
-	return wp_verify_nonce($nonce, md5($action . $secret_key));
+	return Wnd\Model\Wnd_Nonce::verify_nonce($nonce, $action);
 }
 
 /**
