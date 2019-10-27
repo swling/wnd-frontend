@@ -11,7 +11,7 @@ namespace Wnd\Controller;
  *@param $_REQUEST['action'] string 固定值：'wnd_ajax_action'
  *@param $_REQUEST['method'] string 指定本类中的方法
  */
-class Wnd_Ajax_Action extends Wnd_Ajax_Controller {
+class Wnd_Ajax_Action extends Wnd_Controller_Ajax {
 
 	// 根据method参数选择处理方法
 	public static function execute(): array{

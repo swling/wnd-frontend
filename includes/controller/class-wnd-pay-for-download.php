@@ -8,7 +8,7 @@ use Wnd\Model\Wnd_Recharge;
 /**
  *付费阅读下载类
  */
-class Wnd_Pay_For_Download extends Wnd_Ajax_Controller {
+class Wnd_Pay_For_Download extends Wnd_Controller_Ajax {
 
 	public static function execute(): array{
 		// 获取文章

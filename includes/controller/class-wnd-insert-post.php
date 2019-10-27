@@ -5,7 +5,7 @@ use Exception;
 use Wnd\Controller\Wnd_Form_Handler;
 use Wnd\Model\Wnd_Post;
 
-class Wnd_Insert_Post extends Wnd_Ajax_Controller {
+class Wnd_Insert_Post extends Wnd_Controller_Ajax {
 
 	/**
 	 *@see README.md

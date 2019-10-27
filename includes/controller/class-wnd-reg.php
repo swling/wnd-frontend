@@ -21,7 +21,7 @@ use Wnd\Controller\Wnd_Form_Handler;
  *@param $_POST['_user_display_name']
  *@param $_POST['_wpusermeta_description']
  */
-class Wnd_Reg extends Wnd_Ajax_Controller {
+class Wnd_Reg extends Wnd_Controller_Ajax {
 
 	public static function execute(): array{
 		// 1、数据组成

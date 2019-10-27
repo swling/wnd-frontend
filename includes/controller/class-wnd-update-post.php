@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Controller;
 
-class Wnd_Update_Post extends Wnd_Ajax_Controller {
+class Wnd_Update_Post extends Wnd_Controller_Ajax {
 
 	/**
 	 *

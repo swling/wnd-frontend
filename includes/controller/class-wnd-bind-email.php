@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_Auth;
  *@param $_POST['_user_user_email'];
  *@param $_POST['auth_code']
  */
-class Wnd_Bind_Email extends Wnd_Ajax_Controller {
+class Wnd_Bind_Email extends Wnd_Controller_Ajax {
 
 	public static function execute(): array{
 		$email     = $_POST['_user_user_email'] ?? null;

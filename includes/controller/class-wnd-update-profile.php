@@ -17,7 +17,7 @@ use Wnd\Controller\Wnd_Form_Handler;
  *_wpusermeta_{key} （*WordPress原生字段）
  *
  */
-class Wnd_Update_Profile extends Wnd_Ajax_Controller {
+class Wnd_Update_Profile extends Wnd_Controller_Ajax {
 
 	public static function execute(): array{
 		if (empty($_POST)) {

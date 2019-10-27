@@ -8,7 +8,7 @@ namespace Wnd\Controller;
  *@param $_POST['post_parent'];
  *@param $_POST['file_id'];
  */
-class Wnd_Delete_File extends Wnd_Ajax_Controller {
+class Wnd_Delete_File extends Wnd_Controller_Ajax {
 
 	public static function execute(): array{
 		$meta_key    = $_POST['meta_key'];

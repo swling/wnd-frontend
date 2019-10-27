@@ -8,7 +8,7 @@ use Wnd\Model\Wnd_Order;
  *@since 2019.10.02
  * 订单穿件类
  */
-class Wnd_Create_Order extends Wnd_Ajax_Controller {
+class Wnd_Create_Order extends Wnd_Controller_Ajax {
 
 	public static function execute(): array{
 		$post_id = (int) $_POST['post_id'];

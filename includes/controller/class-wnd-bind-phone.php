@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_Auth;
  *@param $_POST['phone'];
  *@param $_POST['auth_code']
  */
-class Wnd_Bind_Phone extends Wnd_Ajax_Controller {
+class Wnd_Bind_Phone extends Wnd_Controller_Ajax {
 
 	public static function execute(): array{
 		$phone     = $_POST['phone'] ?? null;
