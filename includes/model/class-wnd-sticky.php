@@ -53,10 +53,11 @@ class Wnd_Sticky {
 	/**
 	 *@since 2019.06.11
 	 *获取精选置顶文章
-	 *@param 	$post_type 		文章类型
-	 *@return 	array or false 	文章id数组
+	 *@param 	$post_type 	文章类型
+	 *@param 	$number 	文章数量
+	 *@return 	array 		文章id数组
 	 **/
-	public static function get_sticky_posts($post_type): array{
+	public static function get_sticky_posts($post_type, $number = -1): array{
 		$sticky_posts = wnd_get_option('wnd_sticky_posts', $post_type);
 		$sticky_posts = is_array($sticky_posts) ? $sticky_posts : array();
 
@@ -69,6 +70,6 @@ class Wnd_Sticky {
 		unset($key, $sticky_post);
 		wnd_update_option('wnd_sticky_posts', $post_type, $sticky_posts);
 
-		return $sticky_posts;
+		return (-1 == $number) ? $sticky_posts : array_slice($sticky_posts, 0, $number);
 	}
 }

@@ -61,9 +61,10 @@ function wnd_unstick_post($post_id) {
 /**
  *@since 2019.06.11
  *获取精选置顶文章
- *@param 	$post_type 		文章类型
- *@return 	array or false 	文章id数组
+ *@param 	$post_type	文章类型
+ *@param 	$number 	文章数量
+ *@return 	array 	 	文章id数组
  **/
-function wnd_get_sticky_posts($post_type) {
-	return Wnd_Sticky::get_sticky_posts($post_type);
+function wnd_get_sticky_posts($post_type, $number = -1) {
+	return Wnd_Sticky::get_sticky_posts($post_type, $number);
 }
