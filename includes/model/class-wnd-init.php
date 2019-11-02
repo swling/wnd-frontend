@@ -10,7 +10,9 @@ use Wnd\Model\Wnd_Tag_Under_Category;
  */
 class Wnd_Init {
 
-	public function __construct() {
+	private static $instance;
+
+	private function __construct() {
 		// 数据库
 		new Wnd_DB;
 
@@ -22,6 +24,17 @@ class Wnd_Init {
 
 		add_action('init', array($this, 'register_post_type'));
 		add_action('init', array($this, 'register_post_status'));
+	}
+
+	/**
+	 *单例模式
+	 */
+	public static function init() {
+		if (!self::$instance) {
+			self::$instance = new Wnd_Init();
+		}
+
+		return self::$instance;
 	}
 
 	/**

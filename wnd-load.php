@@ -41,7 +41,7 @@ if (is_admin()) {
 }
 
 // 初始化
-new Wnd\Model\Wnd_Init();
+Wnd\Model\Wnd_Init::init();
 
 // function
 require WND_PATH . 'includes/functions/inc-meta.php'; //数组形式储存 meta、option
