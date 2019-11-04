@@ -161,7 +161,7 @@ function wnd_action_do_action() {
 			$namespace = (stripos($action, 'Wndt') === 0) ? 'Wndt\\Module' : 'Wnd\\Module';
 			$class     = $namespace . '\\' . $action;
 			$param     = $_GET['param'] ?? '';
-			return is_callable(array($class, 'build')) ? $class::build($param) : exit('未定义处理方法' . $class);
+			return is_callable(array($class, 'build')) ? $class::build($param) : '';
 		}
 		break;
 	}
