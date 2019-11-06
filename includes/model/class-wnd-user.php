@@ -144,10 +144,17 @@ class Wnd_User {
 	 *@return 	object|false 	（WordPress：get_user_by）
 	 */
 	public static function get_user_by_openid($openid) {
-		global $wpdb;
+		// 查询对象缓存
+		$user_id = wp_cache_get($openid, 'wnd_openid');
+		if (false === $user_id) {
+			global $wpdb;
+			$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE open_id = %s;", $openid));
+			if ($user_id) {
+				wp_cache_set($openid, $user_id, 'wnd_openid');
+			}
+		}
 
-		$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE open_id = %s;", $openid));
-		return !$user_id ? false : get_user_by('ID', $user_id);
+		return $user_id ? get_user_by('ID', $user_id) : false;
 	}
 
 	/**

@@ -368,6 +368,9 @@ wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
 // 存储手机与用户id的对应关系
 wp_cache_set($phone, $user_id, 'wnd_phone');
 
+// 存储openID与用户id的对应关系
+wp_cache_set($openid, $user_id, 'wnd_openid');
+
 // 将文章流量统计：views字段缓存在对象缓存中，降低数据库读写（满10次，写入一次数据库）
 wp_cache_set($object_id, $meta_value, 'wnd_views');
 ```
