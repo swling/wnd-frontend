@@ -20,6 +20,15 @@ function wnd_get_user_phone($user_id) {
 }
 
 /**
+ *@since 2019.01.26 根据用户id获取openid
+ *@param 	int 			$user_id
+ *@return 	string|false 	用户openid或false
+ */
+function wnd_get_user_openid($user_id) {
+	return Wnd_User::get_user_openid($user_id);
+}
+
+/**
  *@since 2019.01.28 根据邮箱，手机，或用户名查询用户
  *@param 	string 			$email_or_phone_or_login
  *@return 	object|false	WordPress user object on success

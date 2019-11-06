@@ -87,6 +87,21 @@ class Wnd_User {
 	}
 
 	/**
+	 *@since 2019.11.06	根据用户id获取openid
+	 *@param 	int 			$user_id
+	 *@return 	string|false 	用户openid或false
+	 */
+	public static function get_user_openid($user_id) {
+		if (!$user_id) {
+			return false;
+		}
+
+		global $wpdb;
+		$openid = $wpdb->get_var($wpdb->prepare("SELECT open_id FROM $wpdb->wnd_users WHERE user_id = %d;", $user_id));
+		return $openid;
+	}
+
+	/**
 	 *@since 2019.01.28 根据邮箱，手机，或用户名查询用户
 	 *@param 	string 			$email_or_phone_or_login
 	 *@return 	object|false	WordPress user object on success
@@ -165,6 +180,9 @@ class Wnd_User {
 	 *@return 	int 	$wpdb->insert
 	 */
 	public static function update_user_openid($user_id, $openid) {
+		// 更新缓存
+		wp_cache_delete(wnd_get_user_openid($user_id), 'wnd_openid');
+
 		global $wpdb;
 
 		// 查询
@@ -240,6 +258,9 @@ class Wnd_User {
 	 *@return 	int 	$wpdb->insert
 	 */
 	public static function update_user_phone($user_id, $phone) {
+		// 更新缓存
+		wp_cache_delete(wnd_get_user_phone($user_id), 'wnd_phone');
+
 		global $wpdb;
 
 		// 查询
