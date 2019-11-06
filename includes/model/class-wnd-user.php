@@ -101,7 +101,6 @@ class Wnd_User {
 		 */
 		if (is_email($email_or_phone_or_login)) {
 			return get_user_by('email', $email_or_phone_or_login);
-
 		}
 
 		/**
@@ -128,7 +127,6 @@ class Wnd_User {
 		} else {
 			return get_user_by('login', $email_or_phone_or_login);
 		}
-
 	}
 
 	/**

@@ -3,11 +3,10 @@ namespace Wnd\Controller;
 
 /**
  *@since 初始化
- *用户账户更新：修改密码，邮箱
+ *用户账户更新：修改密码
  *@param $_POST['_user_user_pass']
  *@param $_POST['_user_new_pass']
  *@param $_POST['_user_new_pass_repeat']
- *@param $_POST['_user_user_email']
  */
 class Wnd_Update_Account extends Wnd_Controller_Ajax {
 
@@ -34,15 +33,6 @@ class Wnd_Update_Account extends Wnd_Controller_Ajax {
 
 			} else {
 				$user_array['user_pass'] = $new_password;
-			}
-		}
-
-		// 修改邮箱
-		if ($new_email and $new_email != $user->user_email) {
-			if (!is_email($new_email)) {
-				return array('status' => 0, 'msg' => '邮件格式错误！');
-			} else {
-				$user_array['user_email'] = $new_email;
 			}
 		}
 
