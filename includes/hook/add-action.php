@@ -197,9 +197,9 @@ function wnd_action_user_register($user_id) {
  */
 add_action('deleted_user', 'wnd_action_delete_user', 10, 1);
 function wnd_action_delete_user($user_id) {
-	// 删除对象缓存
-	wp_cache_delete(wnd_get_user_phone($user_id), 'wnd_phone');
-	wp_cache_delete(wnd_get_user_openid($user_id), 'wnd_openid');
+	// 删除Wnd_User对象缓存
+	$wnd_user = Wnd\Model\Wnd_User::get_wnd_user($user_id);
+	Wnd\Model\Wnd_User::clean_wnd_user_caches($wnd_user);
 
 	// 删除自定义用户数据
 	global $wpdb;

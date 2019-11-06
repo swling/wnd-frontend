@@ -8,6 +8,26 @@ namespace Wnd\Model;
 class Wnd_User {
 
 	/**
+	 *@since 2019.11.06
+	 *获取自定义用户对象
+	 *
+	 *主要数据：user_id、email、phone、open_id
+	 */
+	public static function get_wnd_user($user_id) {
+		$user = wp_cache_get($user_id, 'wnd_users');
+		if ($user) {
+			return $user;
+		}
+
+		global $wpdb;
+		$user = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE user_id = %d LIMIT 1", $user_id));
+		if ($user) {
+			self::update_wnd_user_caches($user);
+		}
+		return $user;
+	}
+
+	/**
 	 *@since 2019.07.23
 	 *根据第三方网站获取的用户信息，注册或者登录到WordPress站点
 	 *@param string $open_id 		第三方账号openID
@@ -71,19 +91,7 @@ class Wnd_User {
 			return false;
 		}
 
-		$phone = wnd_get_user_meta($user_id, 'phone');
-		if ($phone) {
-			return $phone;
-		}
-
-		global $wpdb;
-		$phone = $wpdb->get_var($wpdb->prepare("SELECT phone FROM $wpdb->wnd_users WHERE user_id = %d;", $user_id));
-		if ($phone) {
-			wnd_update_user_meta($user_id, 'phone', $phone);
-			return $phone;
-		} else {
-			return false;
-		}
+		return self::get_wnd_user($user_id)->phone ?? false;
 	}
 
 	/**
@@ -96,19 +104,8 @@ class Wnd_User {
 			return false;
 		}
 
-		$open_id = wnd_get_user_meta($user_id, 'open_id');
-		if ($open_id) {
-			return $open_id;
-		}
+		return self::get_wnd_user($user_id)->open_id ?? false;
 
-		global $wpdb;
-		$open_id = $wpdb->get_var($wpdb->prepare("SELECT open_id FROM $wpdb->wnd_users WHERE user_id = %d;", $user_id));
-		if ($open_id) {
-			wnd_update_user_meta($user_id, 'open_id', $open_id);
-			return $open_id;
-		} else {
-			return false;
-		}
 	}
 
 	/**
@@ -190,20 +187,17 @@ class Wnd_User {
 	 *@return 	int 	$wpdb->insert
 	 */
 	public static function update_user_openid($user_id, $openid) {
-		// 更新缓存
-		wp_cache_delete(wnd_get_user_openid($user_id), 'wnd_openid');
-
 		global $wpdb;
 
 		// 查询
-		$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->wnd_users} WHERE user_id = %d LIMIT 1", $user_id));
+		$user = self::get_wnd_user($user_id);
 
 		// 更新
-		if ($ID) {
+		if ($user) {
 			$db = $wpdb->update(
 				$wpdb->wnd_users,
 				array('open_id' => $openid, 'time' => time()),
-				array('ID' => $ID),
+				array('ID' => $user->ID),
 				array('%s', '%d'),
 				array('%d')
 			);
@@ -217,9 +211,9 @@ class Wnd_User {
 			);
 		}
 
-		// 更新字段
+		// 更新用户缓存
 		if ($db) {
-			wnd_update_user_meta($user_id, 'open_id', $openid);
+			self::clean_wnd_user_caches($user);
 		}
 
 		return $db;
@@ -236,14 +230,14 @@ class Wnd_User {
 		global $wpdb;
 
 		// 查询
-		$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->wnd_users} WHERE user_id = %d LIMIT 1", $user_id));
+		$user = self::get_wnd_user($user_id);
 
 		// 更新
-		if ($ID) {
+		if ($user) {
 			$db = $wpdb->update(
 				$wpdb->wnd_users,
 				array('email' => $email, 'time' => time()),
-				array('ID' => $ID),
+				array('ID' => $user->ID),
 				array('%s', '%d'),
 				array('%d')
 			);
@@ -260,6 +254,8 @@ class Wnd_User {
 		// 更新WordPress账户email
 		if ($db) {
 			wp_update_user(array('ID' => $user_id, 'user_email' => $email));
+
+			self::clean_wnd_user_caches($user);
 		}
 
 		return $db;
@@ -273,20 +269,17 @@ class Wnd_User {
 	 *@return 	int 	$wpdb->insert
 	 */
 	public static function update_user_phone($user_id, $phone) {
-		// 更新缓存
-		wp_cache_delete(wnd_get_user_phone($user_id), 'wnd_phone');
-
 		global $wpdb;
 
 		// 查询
-		$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->wnd_users} WHERE user_id = %d LIMIT 1", $user_id));
+		$user = self::get_wnd_user($user_id);
 
 		// 更新
-		if ($ID) {
+		if ($user) {
 			$db = $wpdb->update(
 				$wpdb->wnd_users,
 				array('phone' => $phone, 'time' => time()),
-				array('ID' => $ID),
+				array('ID' => $user->ID),
 				array('%s', '%d'),
 				array('%d')
 			);
@@ -302,10 +295,36 @@ class Wnd_User {
 
 		// 更新字段
 		if ($db) {
-			wnd_update_user_meta($user_id, 'phone', $phone);
+			self::clean_wnd_user_caches($user);
 		}
 
 		return $db;
+	}
+
+	/**
+	 *@since 2019.11.06
+	 *更新缓存
+	 *@param object $user Wnd_user表对象
+	 */
+	public static function update_wnd_user_caches($user) {
+		if ($user->user_id ?? false) {
+			wp_cache_set($user->open_id, $user->user_id, 'wnd_openid');
+			wp_cache_set($user->phone, $user->user_id, 'wnd_phone');
+			wp_cache_set($user->user_id, $user, 'wnd_users');
+		}
+	}
+
+	/**
+	 *@since 2019.11.06
+	 *删除缓存
+	 *@param object $user Wnd_user表对象
+	 */
+	public static function clean_wnd_user_caches($user) {
+		if ($user->user_id ?? false) {
+			wp_cache_delete($user->open_id, 'wnd_openid');
+			wp_cache_delete($user->phone, 'wnd_phone');
+			wp_cache_delete($user->user_id, 'wnd_users');
+		}
 	}
 
 	/**

@@ -79,8 +79,8 @@ wnd_meta: expense：消费
 wnd_meta: commission：佣金
 wnd_meta: avatar：头像文件id
 wnd_meta: avatar_url：头像外链
-wnd_meta: phone：用户手机号码
-wnd_meta: open_id：用户第三方openid
+<!-- wnd_meta: phone：用户手机号码 -->
+<!-- wnd_meta: open_id：用户第三方openid -->
 wnd_meta：gallery (用户相册)
 
 # ajax交互概述：
@@ -366,6 +366,9 @@ wp_cache_set($user_id . $object_id, $user_has_paid, 'wnd_has_paid');
 wp_cache_set($cat_id . $tag_taxonomy . $limit, $tags, 'wnd_tags_under_category', 86400);
 
 wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
+
+// 存储wnd_user数据表对象
+wp_cache_set($user_id, $user, 'wnd_users');
 
 // 存储手机与用户id的对应关系
 wp_cache_set($phone, $user_id, 'wnd_phone');
