@@ -359,7 +359,7 @@ post_status => 未读：pengding 已读: private
 # object cache
 
 ```php
-wp_cache_set($user_id . $object_id, $user_has_paid, 'user_has_paid');
+wp_cache_set($user_id . $object_id, $user_has_paid, 'wnd_has_paid');
 
 wp_cache_set($cat_id . $tag_taxonomy . $limit, $tags, 'wnd_tags_under_category', 86400);
 

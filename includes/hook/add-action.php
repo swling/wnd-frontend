@@ -238,7 +238,7 @@ function wnd_action_before_delete_post($post_id) {
 	 */
 	if ($delete_post->post_type == 'order') {
 		wnd_inc_wnd_post_meta($delete_post->post_parent, 'order_count', -1, true);
-		wp_cache_delete($delete_post->post_author . $delete_post->post_parent, 'user_has_paid');
+		wp_cache_delete($delete_post->post_author . $delete_post->post_parent, 'wnd_has_paid');
 	}
 }
 

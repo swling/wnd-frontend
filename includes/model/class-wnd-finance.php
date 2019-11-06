@@ -50,7 +50,7 @@ class Wnd_Finance {
 			return false;
 		}
 
-		$user_has_paid = wp_cache_get($user_id . $object_id, 'user_has_paid');
+		$user_has_paid = wp_cache_get($user_id . $object_id, 'wnd_has_paid');
 
 		if (false === $user_has_paid) {
 			$args = array(
@@ -63,7 +63,7 @@ class Wnd_Finance {
 
 			// 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
 			$user_has_paid = empty(get_posts($args)) ? 0 : 1;
-			wp_cache_set($user_id . $object_id, $user_has_paid, 'user_has_paid');
+			wp_cache_set($user_id . $object_id, $user_has_paid, 'wnd_has_paid');
 		}
 
 		return ($user_has_paid === 1 ? true : false);
