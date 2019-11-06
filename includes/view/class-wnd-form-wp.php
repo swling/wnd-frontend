@@ -102,17 +102,29 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
 	public function add_sms_verify($type = 'verify', $template = '') {
-		$this->add_html('<div class="field"><label class="label">手机<span class="required">*</span></label>');
+		$user_phone = wnd_get_user_phone($this->user->ID);
+		$this->add_html('<div class="field">');
 
-		// 当前用户为绑定手机或更换绑定手机
-		if (!wnd_get_user_phone($this->user->ID) or 'bind' == $type) {
+		// 当前用户未绑定手机或更换绑定手机
+		if (!$user_phone or 'bind' == $type) {
 			$this->add_text(
 				array(
 					'name'        => 'phone',
 					'icon_left'   => '<i class="fa fa-phone-square"></i>',
-					'required'    => 'required',
-					'label'       => '',
+					'required'    => true,
+					'label'       => '手机',
 					'placeholder' => '手机号码',
+				)
+			);
+
+			// 验证当前账户手机
+		} elseif ($user_phone) {
+			$this->add_text(
+				array(
+					'label'    => '手机',
+					'value'    => $this->user->data->user_email,
+					'disabled' => true,
+					'required' => true,
 				)
 			);
 		}
@@ -138,16 +150,28 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *找回密码时若当前邮箱未注册，则无法发送验证码
 	 **/
 	public function add_email_verify($type = 'verify', $template = '') {
-		$this->add_html('<div class="field"><label class="label">邮箱<span class="required">*</span></label>');
+		$this->add_html('<div class="field">');
 
-		// 当前用户为绑定邮箱或更换绑定邮箱
+		// 当前用户未绑定邮箱或更换绑定邮箱
 		if (!$this->user->ID or !$this->user->data->user_email or 'bind' == $type) {
 			$this->add_email(
 				array(
 					'name'        => '_user_user_email',
 					'icon_left'   => '<i class="fa fa-at"></i>',
-					'required'    => 'required',
+					'required'    => true,
+					'label'       => '邮箱',
 					'placeholder' => '电子邮箱',
+				)
+			);
+
+			// 验证当前账户邮箱
+		} elseif ($this->user->data->user_email) {
+			$this->add_email(
+				array(
+					'label'    => '邮箱',
+					'value'    => $this->user->data->user_email,
+					'disabled' => true,
+					'required' => true,
 				)
 			);
 		}
