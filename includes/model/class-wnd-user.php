@@ -71,7 +71,7 @@ class Wnd_User {
 			return false;
 		}
 
-		$phone = wnd_get_user_meta(get_current_user_id(), 'phone');
+		$phone = wnd_get_user_meta($user_id, 'phone');
 		if ($phone) {
 			return $phone;
 		}
@@ -96,9 +96,19 @@ class Wnd_User {
 			return false;
 		}
 
+		$open_id = wnd_get_user_meta($user_id, 'open_id');
+		if ($open_id) {
+			return $open_id;
+		}
+
 		global $wpdb;
-		$openid = $wpdb->get_var($wpdb->prepare("SELECT open_id FROM $wpdb->wnd_users WHERE user_id = %d;", $user_id));
-		return $openid;
+		$open_id = $wpdb->get_var($wpdb->prepare("SELECT open_id FROM $wpdb->wnd_users WHERE user_id = %d;", $user_id));
+		if ($open_id) {
+			wnd_update_user_meta($user_id, 'open_id', $open_id);
+			return $open_id;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -205,6 +215,11 @@ class Wnd_User {
 				array('user_id' => $user_id, 'open_id' => $openid, 'time' => time()),
 				array('%d', '%s', '%d')
 			);
+		}
+
+		// 更新字段
+		if ($db) {
+			wnd_update_user_meta($user_id, 'open_id', $openid);
 		}
 
 		return $db;
