@@ -86,8 +86,9 @@ wnd_meta：gallery (用户相册)
 # ajax交互概述：
 后端返回json属性：status,msg,data
 
-自定义rest api：		wp-json/wnd/rest-api 		Allow: GET, POST, PUT, PATCH, DELETE
-自定义interface api：	wp-json/wnd/interface-api 	Allow: GET
+自定义rest api：		wp-json/wnd/rest-api 	Allow: GET, POST, PUT, PATCH, DELETE
+自定义interface api：	wp-json/wnd/interface	Allow: GET
+自定义filter api：		wp-json/wnd/filter	 	Allow: GET
 
 ### rest api
 提交的数据中必须包含：
