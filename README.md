@@ -365,6 +365,8 @@ wp_cache_set($cat_id . $tag_taxonomy . $limit, $tags, 'wnd_tags_under_category',
 
 wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
 
+wp_cache_set($email_or_phone_or_login, $user_id, 'wnd_phone');
+
 // 将文章流量统计：views字段缓存在对象缓存中，降低数据库读写（满10次，写入一次数据库）
 wp_cache_set($object_id, $meta_value, 'views');
 ```

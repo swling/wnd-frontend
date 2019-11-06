@@ -197,10 +197,12 @@ function wnd_action_user_register($user_id) {
  */
 add_action('deleted_user', 'wnd_action_delete_user', 10, 1);
 function wnd_action_delete_user($user_id) {
-	// 删除手机注册记录
+	// 删除对象缓存
+	wp_cache_delete(wnd_get_user_phone($user_id), 'wnd_phone');
+
+	// 删除自定义用户数据
 	global $wpdb;
 	$wpdb->delete($wpdb->wnd_users, array('user_id' => $user_id));
-
 }
 
 /**

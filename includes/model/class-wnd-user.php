@@ -117,10 +117,18 @@ class Wnd_User {
 		 *本插件已禁用纯数字用户名：@see wnd_ajax_reg()
 		 */
 		if (wnd_is_phone($email_or_phone_or_login)) {
+			// 查询对象缓存
+			$user_id = wp_cache_get($email_or_phone_or_login, 'wnd_phone');
+			if ($user_id) {
+				return get_user_by('id', $user_id);
+			}
+
 			global $wpdb;
 			$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE phone = %s;", $email_or_phone_or_login));
 			$user    = $user_id ? get_user_by('ID', $user_id) : false;
 			if ($user) {
+				// 设置对象缓存并返回用户
+				wp_cache_set($email_or_phone_or_login, $user_id, 'wnd_phone');
 				return $user;
 			}
 
