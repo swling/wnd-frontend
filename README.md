@@ -365,10 +365,11 @@ wp_cache_set($cat_id . $tag_taxonomy . $limit, $tags, 'wnd_tags_under_category',
 
 wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
 
-wp_cache_set($email_or_phone_or_login, $user_id, 'wnd_phone');
+// 存储手机与用户id的对应关系
+wp_cache_set($phone, $user_id, 'wnd_phone');
 
 // 将文章流量统计：views字段缓存在对象缓存中，降低数据库读写（满10次，写入一次数据库）
-wp_cache_set($object_id, $meta_value, 'views');
+wp_cache_set($object_id, $meta_value, 'wnd_views');
 ```
 # 创建支付
 创建地址：

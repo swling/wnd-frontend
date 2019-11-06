@@ -456,7 +456,7 @@ function wnd_filter_update_post_metadata($check, $object_id, $meta_key, $meta_va
 	}
 
 	if ($meta_key == 'views') {
-		wp_cache_set($object_id, $meta_value, 'views');
+		wp_cache_set($object_id, $meta_value, 'wnd_views');
 		$cached_post_views = 10;
 		if ($meta_value % $cached_post_views == 0 or $meta_value == 1) {
 			//每增加 10 次浏览 或首次 写入数据库中去
@@ -479,7 +479,7 @@ function wnd_filter_get_post_metadata($check, $object_id, $meta_key, $single) {
 	}
 
 	if ($single and $meta_key == 'views') {
-		$views = wp_cache_get($object_id, 'views'); //显示的时候直接从内存中获取
+		$views = wp_cache_get($object_id, 'wnd_views'); //显示的时候直接从内存中获取
 		if ($views === false) {
 			return $check;
 		} else {
