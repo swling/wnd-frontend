@@ -1,9 +1,11 @@
 <?php
 namespace Wnd\View;
 
+use WP_Query;
+
 /**
  *@since 2019.03.13
- *@param object		$query 				WP_Query实例化结果
+ *@param object		$query 				WP_Query对象
  *@param bool 		$show_edit 			是否显示编辑链接
  *@param bool 		$show_preview 		是否显示编辑链接
  */
@@ -23,7 +25,7 @@ class Wnd_Posts_Table {
 	/**
 	 *构造函数
 	 */
-	public function __construct($query, bool $show_edit = false, bool $show_preview = false) {
+	public function __construct(WP_Query $query, bool $show_edit = false, bool $show_preview = false) {
 		$this->query        = $query;
 		$this->show_preview = $show_preview;
 		$this->show_edit    = $show_edit;
