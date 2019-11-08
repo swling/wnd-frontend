@@ -57,14 +57,11 @@ class Wnd_User {
 		//当前用户未登录，注册或者登录 检测是否已注册
 		$user = self::get_user_by_openid($open_id);
 		if (!$user) {
-
-			// 自定义随机用户名
 			$user_login = wnd_generate_login();
 			$user_pass  = wp_generate_password();
 			$user_array = array('user_login' => $user_login, 'user_pass' => $user_pass, 'display_name' => $display_name);
 			$user_id    = wp_insert_user($user_array);
 
-			// 注册
 			if (is_wp_error($user_id)) {
 				wp_die($user_id->get_error_message(), get_option('blogname'));
 			} else {
@@ -72,9 +69,8 @@ class Wnd_User {
 			}
 		}
 
-		// 获取用户id
+		// 同步头像并登录
 		$user_id = $user ? $user->ID : $user_id;
-
 		wnd_update_user_meta($user_id, "avatar_url", $avatar_url);
 		wp_set_auth_cookie($user_id, true);
 		wp_redirect(wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url());
@@ -105,7 +101,6 @@ class Wnd_User {
 		}
 
 		return self::get_wnd_user($user_id)->open_id ?? false;
-
 	}
 
 	/**
