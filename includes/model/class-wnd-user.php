@@ -39,7 +39,7 @@ class Wnd_User {
 		//当前用户已登录，同步信息
 		if (is_user_logged_in()) {
 			$this_user   = wp_get_current_user();
-			$may_be_user = wnd_get_user_by_openid($open_id);
+			$may_be_user = self::get_user_by_openid($open_id);
 			if ($may_be_user and $may_be_user->ID != $this_user->ID) {
 				exit('OpenID已被其他账户占用！');
 			}
@@ -48,14 +48,14 @@ class Wnd_User {
 				wnd_update_user_meta($this_user->ID, "avatar_url", $avatar_url);
 			}
 			if ($open_id) {
-				wnd_update_user_openid($this_user->ID, $open_id);
+				self::update_user_openid($this_user->ID, $open_id);
 			}
 			wp_redirect(wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url());
 			exit;
 		}
 
 		//当前用户未登录，注册或者登录 检测是否已注册
-		$user = wnd_get_user_by_openid($open_id);
+		$user = self::get_user_by_openid($open_id);
 		if (!$user) {
 
 			// 自定义随机用户名
@@ -68,7 +68,7 @@ class Wnd_User {
 			if (is_wp_error($user_id)) {
 				wp_die($user_id->get_error_message(), get_option('blogname'));
 			} else {
-				wnd_update_user_openid($user_id, $open_id);
+				self::update_user_openid($user_id, $open_id);
 			}
 		}
 
