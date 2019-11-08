@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Model;
 
 use Exception;
 use Wnd\Model\Wnd_Nonce;
@@ -9,14 +9,14 @@ use Wnd\Model\Wnd_Nonce;
  *@since 2019.03.04
  *@param $verify_form_nonce 	bool 	是否校验表单字段由Wnd_Form_WP表单类生成
  */
-class Wnd_Form_Handler {
+class Wnd_Form_Data {
 
 	public $form_data;
 
 	public function __construct($verify_form_nonce = true) {
 		/**
 		 *@since 2019.05.10
-		 *apply_filters('wnd_form_handler', $_POST) 操作可能会直接修改$_POST
+		 *apply_filters('wnd_form_data', $_POST) 操作可能会直接修改$_POST
 		 *因而校验表单操作应该在filter应用之前执行
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
@@ -25,7 +25,7 @@ class Wnd_Form_Handler {
 		}
 
 		// 允许修改表单提交数据
-		$this->form_data = apply_filters('wnd_form_handler', $_POST);
+		$this->form_data = apply_filters('wnd_form_data', $_POST);
 	}
 
 	// 0、获取WordPress user数据数组

@@ -2,7 +2,7 @@
 namespace Wnd\Controller;
 
 use Exception;
-use Wnd\Controller\Wnd_Form_Handler;
+use Wnd\Model\Wnd_Form_Data;
 
 /**
  *@see README.md
@@ -78,7 +78,7 @@ class Wnd_Reg extends Wnd_Controller_Ajax {
 
 		// 实例化WndWP表单数据处理对象
 		try {
-			$form_data = new Wnd_Form_Handler();
+			$form_data = new Wnd_Form_Data();
 		} catch (Exception $e) {
 			return array('status' => 0, 'msg' => $e->getMessage());
 		}

@@ -136,11 +136,11 @@ function wnd_can_insert_post($default_return, $post_type, $update_id) {
 ## ajax表单数据
 ```php
 /**
-*@since 2019.03.16 Wnd_Form_Handler
+*@since 2019.03.16 Wnd_Form_Data
 *过滤前端表单提交的数据，改操作在verify_form_nonce()校验通过后执行
-*$this->form_data = apply_filters('wnd_form_handler', $_POST);
+*$this->form_data = apply_filters('wnd_form_data', $_POST);
 */
-apply_filters('wnd_form_handler', $_POST)
+apply_filters('wnd_form_data', $_POST)
 ```
 
 ## 文章
