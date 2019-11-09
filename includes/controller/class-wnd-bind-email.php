@@ -6,8 +6,9 @@ use Wnd\Model\Wnd_Auth;
 
 /**
  *@since 2019.07.23 已登录用户设置邮箱
- *@param $_POST['_user_user_email'];
- *@param $_POST['auth_code']
+ *@param $_POST['_user_user_email']; 	邮箱地址
+ *@param $_POST['auth_code'] 		 	验证码
+ *@param $_POST['_user_user_pass'] 		当前密码
  */
 class Wnd_Bind_Email extends Wnd_Controller_Ajax {
 

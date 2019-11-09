@@ -6,8 +6,9 @@ use Wnd\Model\Wnd_Auth;
 
 /**
  *@since 2019.02.10 已登录用户设置手机
- *@param $_POST['phone'];
- *@param $_POST['auth_code']
+ *@param $_POST['phone'];			手机号码
+ *@param $_POST['auth_code'] 		验证码
+ *@param $_POST['_user_user_pass'] 	当前密码
  */
 class Wnd_Bind_Phone extends Wnd_Controller_Ajax {
 

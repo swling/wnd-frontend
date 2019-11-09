@@ -7,6 +7,7 @@ use Wnd\Model\Wnd_Recharge;
 
 /**
  *付费阅读下载类
+ *@param $_POST['post_id']  Post ID
  */
 class Wnd_Pay_For_Download extends Wnd_Controller_Ajax {
 

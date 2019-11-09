@@ -6,7 +6,8 @@ use Wnd\Model\Wnd_Order;
 
 /**
  *@since 2019.10.02
- * 订单穿件类
+ *创建订单
+ *@param $_POST['post_id']  Post ID
  */
 class Wnd_Create_Order extends Wnd_Controller_Ajax {
 
