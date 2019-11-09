@@ -38,7 +38,7 @@ class Wnd_Nonce {
 	 *
 	 *@since 2019.10.27
 	 */
-	public static function form_nonce_field(array $form_names) {
+	public static function build_form_nonce_field(array $form_names) {
 		// nonce自身字段也需要包含在内
 		$form_names[] = '_wnd_form_nonce';
 

@@ -116,7 +116,7 @@ class Wnd_Auth {
 	/**
 	 *验证类型权限检测
 	 */
-	protected function type_check() {
+	protected function check_type() {
 		if (empty($this->email_or_phone)) {
 			throw new Exception('发送地址为空！');
 		}
@@ -162,8 +162,8 @@ class Wnd_Auth {
 	 *
 	 *@return true|exception
 	 */
-	protected function send_check() {
-		$this->type_check();
+	protected function check_send() {
+		$this->check_type();
 
 		// 短信发送必须指定模板
 		if (!$this->is_email and !$this->template) {
@@ -189,7 +189,7 @@ class Wnd_Auth {
 	 */
 	public function send() {
 		// 权限检测
-		$this->send_check();
+		$this->check_send();
 
 		// 发送
 		if ($this->is_email) {
@@ -276,7 +276,7 @@ class Wnd_Auth {
 		 *若直接指定了验证用户ID，表示已确定需要验证的用户信息，绕过类型检测
 		 */
 		if (!$this->verify_user_id) {
-			$this->type_check();
+			$this->check_type();
 		}
 
 		// 过期时间设置

@@ -360,7 +360,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		unset($input_value);
 
 		// 根据表单字段生成wp nonce并加入表单字段
-		$nonce_field = Wnd_nonce::form_nonce_field($this->form_names);
+		$nonce_field = Wnd_nonce::build_form_nonce_field($this->form_names);
 		$this->add_html($nonce_field);
 	}
 
