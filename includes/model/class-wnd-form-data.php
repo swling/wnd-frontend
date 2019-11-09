@@ -5,9 +5,28 @@ use Exception;
 use Wnd\Model\Wnd_Nonce;
 
 /**
- *根据表单name提取标题数据
+ *根据表单name提取数据
  *@since 2019.03.04
- *@param $verify_form_nonce 	bool 	是否校验表单字段由Wnd_Form_WP表单类生成
+ *
+ *@param $verify_form_nonce 	bool 	是否校验表单字段经由Wnd_Form_WP表单类生成
+ *@param $_POST 				array 	表单数据
+ *
+ *
+ * 前端表单遵循以下规则定义的name，后台获取后自动提取，并更新到数据库
+ *	文章：_post_{$field}
+ *
+ * 	文章字段：
+ *	_meta_{$key} (*自定义数组字段)
+ *	_wpmeta_{$key} (*WordPress原生字段)
+ *
+ * 	Term:
+ *	_term_{$taxonomy}(*taxonomy)
+ *
+ *	用户：_user_{$field}
+ *	用户字段：
+ *	_usermeta_{$key} (*自定义数组字段)
+ *	_wpusermeta_{$key} (*WordPress原生字段)
+ *
  */
 class Wnd_Form_Data {
 
