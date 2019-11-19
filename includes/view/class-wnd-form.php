@@ -2,7 +2,7 @@
 namespace Wnd\View;
 
 /**
- * Class for creating dynamic Bulma forms.
+ *Class for creating dynamic Bulma forms.
  *@since 2019.03
  *Base on form-builder @link https://github.com/swling/form-builder
  *@link https://wndwp.com

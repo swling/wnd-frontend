@@ -39,9 +39,7 @@ class Wnd_Filter {
 	 */
 	protected $add_query = array();
 
-	/**
-	 *meta 查询参数需要供current filter查询使用
-	 **/
+	// meta 查询参数需要供current filter查询使用
 	protected $meta_filter_args;
 
 	// 默认切换筛选项时需要移除的参数
@@ -50,7 +48,6 @@ class Wnd_Filter {
 	/**
 	 *根据配置设定的wp_query查询参数
 	 *默认值将随用户设定而改变
-	 *
 	 *参数中包含自定义的非wp_query参数以"wnd"前缀区分
 	 */
 	protected $wp_query_args = array(
@@ -92,9 +89,10 @@ class Wnd_Filter {
 	protected $pagination = '';
 
 	/**
-	 * Constructor.
+	 *Constructor.
 	 *
-	 * @param bool $is_ajax 是否为ajax查询
+	 *@param bool 		$is_ajax 是否为ajax查询
+	 *@param string 	$uniqid当前筛选器唯一标识
 	 */
 	public function __construct(bool $is_ajax = false, string $uniqid = '') {
 		self::$is_ajax    = $is_ajax;
@@ -179,7 +177,6 @@ class Wnd_Filter {
 		);
 
 		foreach ($_GET as $key => $value) {
-
 			/**
 			 *post type tabs生成的GET参数为：type={$post_type}
 			 *直接用 post_type 作为参数会触发WordPress原生请求导致错误
@@ -352,7 +349,6 @@ class Wnd_Filter {
 	 *
 	 *@param array $query array(key=>value)
 	 *
-	 *
 	 *在非ajax环境中，直接将写入$wp_query_args[key]=value
 	 *
 	 *在ajax环境中，将对应生成html data属性：data-{key}="{value}" 通过JavaScript获取后将转化为 ajax url请求参数 ?{key}={value}，
@@ -380,7 +376,6 @@ class Wnd_Filter {
 	 *@param bool 	$with_any_tab 是否包含全部选项
 	 */
 	public function add_post_type_filter($args = array(), $with_any_tab = false) {
-
 		/**
 		 *若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post
 		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
@@ -409,7 +404,6 @@ class Wnd_Filter {
 	 *@param array $args 需要筛选的文章状态数组
 	 */
 	public function add_post_status_filter($args = array()) {
-
 		/**
 		 *若当前请求未指定post_status，设置第一个post_status为默认值；若筛选项也为空，最后默认publish
 		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
@@ -487,8 +481,7 @@ class Wnd_Filter {
 
 	/**
 	 *@since 2019.04.18 meta query
-	 *@param 自定义： array args meta字段筛选:
-	 *		暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
+	 *@param 自定义： array args meta字段筛选。暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
 	 *
 	 *	$args = array(
 	 *		'label' => '文章价格',
@@ -568,7 +561,6 @@ class Wnd_Filter {
 	}
 
 	/**
-	 *
 	 *@since 2019.08.02
 	 *构造HTML data属性
 	 *获取新增查询，并转化为html data属性，供前端读取后在ajax请求中发送到api
@@ -584,14 +576,11 @@ class Wnd_Filter {
 	}
 
 	/**
-	 *@param array $args 需要筛选的类型数组
-	 *
-	 *$args = array('post','page')
-	 *
+	 *类型筛选
+	 *@param array $args 需要筛选的类型数组 $args = array('post','page')
 	 *@param bool 	$with_any_tab 是否包含全部选项
 	 */
 	protected function build_post_type_filter($args = array(), $with_any_tab = false) {
-
 		/**
 		 *@since 2019.08.06
 		 *post type切换时，表示完全新的筛选，故此移除所有GET参数
@@ -639,7 +628,6 @@ class Wnd_Filter {
 	 *	)
 	 */
 	protected function build_post_status_filter($args = array()) {
-
 		// 输出容器
 		$tabs = '<div class="columns is-marginless is-vcentered post-status-tabs">';
 		$tabs .= '<div class="column is-narrow">状态：</div>';
@@ -788,10 +776,8 @@ class Wnd_Filter {
 	/**
 	 *@since 2019.08.09
 	 *构建分类关联标签的HTML
-	 *
 	 */
 	protected function build_related_tags_filter($limit = 10) {
-
 		// 标签taxonomy
 		$taxonomy = $this->wp_query_args['post_type'] . '_tag';
 		if (!taxonomy_exists($taxonomy)) {
@@ -887,8 +873,7 @@ class Wnd_Filter {
 
 	/**
 	 *@since 2019.04.18 meta query
-	 *@param 自定义： array args meta字段筛选:
-	 *		暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
+	 *@param 自定义： array args meta字段筛选。暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
 	 *
 	 *	$args = array(
 	 *		'label' => '文章价格',
@@ -912,7 +897,6 @@ class Wnd_Filter {
 	 *
 	 */
 	protected function build_meta_filter($args) {
-
 		/**
 		 *查找在当前的meta_query查询参数中，当前meta key的键名，如果设置则取消取消全部选项is-active
 		 *(数组默认键值从0开始， 当首元素即匹配则array_search返回 0，此处需要严格区分 0 和 false)
@@ -991,7 +975,6 @@ class Wnd_Filter {
 	 *
 	 */
 	protected function build_orderby_filter($args) {
-
 		// 移除选项
 		$remove_query_args = array_merge(array('orderby', 'order', 'meta_key'), $this->remove_query_args);
 
@@ -1069,7 +1052,6 @@ class Wnd_Filter {
 	 *@param string $label 选项名称
 	 */
 	protected function build_order_filter($args, $label) {
-
 		// 输出容器
 		$tabs = '<div class="columns is-marginless is-vcentered order-tabs">';
 		$tabs .= '<div class="column is-narrow">' . $label . '：</div>';
@@ -1142,7 +1124,6 @@ class Wnd_Filter {
 		 *2、meta_query
 		 */
 		foreach ($this->wp_query_args['meta_query'] as $meta_query) {
-
 			// 通过wp meta query中的value值，反向查询自定义 key
 			if ($meta_query['compare'] != 'exists') {
 				$key = array_search($meta_query['value'], $this->meta_filter_args['options']);
@@ -1176,7 +1157,6 @@ class Wnd_Filter {
 	 *翻页参数键名page 不能设置为 paged 会与原生WordPress翻页机制产生冲突
 	 */
 	protected function build_pagination($show_page = 5) {
-
 		/**
 		 *$this->wp_query->query_vars :
 		 *WP_Query实际执行的查询参数 new WP_query($args) $args 经过WP_Query解析后

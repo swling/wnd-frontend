@@ -321,7 +321,6 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	// 构造表单，可设置WordPress filter 过滤表单的input_values
 	public function build() {
-
 		/**
 		 *设置表单过滤filter
 		 **/
@@ -368,7 +367,6 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *构建表单头部
 	 */
 	protected function build_form_header() {
-
 		/**
 		 *@since 2019.07.17 ajax表单
 		 */

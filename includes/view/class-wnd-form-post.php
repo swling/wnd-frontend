@@ -204,7 +204,6 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	public function add_post_content($rich_media_editor = true, $placeholder = '详情', $required = false) {
-
 		/**
 		 *@since 2019.3.11 调用外部页面变量，后续更改为当前编辑的post，否则，wp_editor上传的文件将归属到页面，而非当前编辑的文章
 		 */
