@@ -17,7 +17,7 @@ class Wnd_Form {
 
 	protected $form_title;
 
-	protected $form_title_centered = false;
+	protected $is_title_centered = false;
 
 	protected $input_values = array();
 
@@ -69,9 +69,9 @@ class Wnd_Form {
 	/**
 	 *@since 2019.03.10 设置表单属性
 	 */
-	public function set_form_title($form_title, $form_title_centered = false) {
-		$this->form_title          = $form_title;
-		$this->form_title_centered = $form_title_centered;
+	public function set_form_title($form_title, $is_title_centered = false) {
+		$this->form_title        = $form_title;
+		$this->is_title_centered = $is_title_centered;
 	}
 
 	// Submit
@@ -313,7 +313,7 @@ class Wnd_Form {
 		$html = '<form' . $this->build_form_attr() . '>';
 
 		if ($this->form_title) {
-			$html .= $this->form_title_centered ? '<div class="field content has-text-centered">' : '<div class="field content">';
+			$html .= $this->is_title_centered ? '<div class="field content has-text-centered">' : '<div class="field content">';
 			$html .= '<h3>' . $this->form_title . '</h3>';
 			$html .= '</div>';
 		}
