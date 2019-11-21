@@ -1,4 +1,5 @@
 <?php
+use Wnd\Component\Alipay\AlipayService;
 use Wnd\Model\Wnd_Payment;
 
 /**
@@ -7,7 +8,6 @@ use Wnd\Model\Wnd_Payment;
  */
 header('Content-type:text/html; Charset=utf-8');
 require dirname(__FILE__) . '/config.php';
-require dirname(__FILE__) . '/class/AlipayService.php';
 
 //支付宝公钥，账户中心->密钥管理->开放平台密钥，找到添加了支付功能的应用，根据你的加密类型，查看支付宝公钥
 $aliPay = new AlipayService($config['alipay_public_key']);

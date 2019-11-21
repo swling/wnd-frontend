@@ -7,12 +7,9 @@
  * 2017/11/30
  */
 
-namespace Aliyun\DySDKLite\Sms;
+namespace Wnd\Component\Aliyun\Sms;
 
-require_once dirname(__DIR__) . "/SignatureHelper.php";
-
-use Aliyun\DySDKLite\SignatureHelper;
-
+use Wnd\Component\Aliyun\Sms\SignatureHelper;
 
 /**
  * 发送短信

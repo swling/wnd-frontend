@@ -2,14 +2,12 @@
 namespace Wnd\Model;
 
 use Exception;
-use Qcloud\Sms\SmsSingleSender;
+use Wnd\Component\Qcloud\Sms\SmsSingleSender;
 
 /**
  *@since 2019.09.25
  *短信
  */
-require WND_PATH . 'components/tencent-sms/src/index.php'; //腾讯短信
-
 class Wnd_Sms_TX extends Wnd_sms {
 
 	/**

@@ -1,8 +1,8 @@
 <?php
 
-namespace Qcloud\Sms;
+namespace Wnd\Component\Qcloud\Sms;
 
-use Qcloud\Sms\SmsSenderUtil;
+use Wnd\Component\Qcloud\Sms\SmsSenderUtil;
 
 /**
  * 单发短信类

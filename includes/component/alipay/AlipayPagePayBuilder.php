@@ -1,6 +1,8 @@
 <?php
+namespace Wnd\Component\Alipay;
+
 /**
- *@since 2019.03.02 支付宝PC支创建类
+ *@since 2019.03.02 支付宝网页支创建类
  */
 class AlipayPagePayBuilder {
 

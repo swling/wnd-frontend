@@ -1,4 +1,5 @@
 <?php
+use Wnd\Component\Alipay\AlipayPagePayBuilder;
 use Wnd\Model\Wnd_Payment;
 
 // Exit if accessed directly
@@ -38,7 +39,6 @@ try {
 
 // 引入支付基础配置信息
 require dirname(__FILE__) . '/config.php';
-require dirname(__FILE__) . '/class/AlipayBuilder.php';
 $aliPay = new AlipayPagePayBuilder();
 
 // 订单属性

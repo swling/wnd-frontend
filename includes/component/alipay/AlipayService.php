@@ -1,4 +1,6 @@
 <?php
+namespace Wnd\Component\Alipay;
+
 /**
  *@since 2019.03.02 支付宝验签
  */

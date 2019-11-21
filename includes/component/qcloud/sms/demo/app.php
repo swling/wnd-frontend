@@ -1,17 +1,15 @@
 <?php
 
-require __DIR__ . "/../../src/index.php";
+use Wnd\Component\Qcloud\Sms\SmsSingleSender;
+use Wnd\Component\Qcloud\Sms\SmsMultiSender;
+use Wnd\Component\Qcloud\Sms\SmsVoiceVerifyCodeSender;
+use Wnd\Component\Qcloud\Sms\SmsVoicePromptSender;
+use Wnd\Component\Qcloud\Sms\SmsStatusPuller;
+use Wnd\Component\Qcloud\Sms\SmsMobileStatusPuller;
 
-use Qcloud\Sms\SmsSingleSender;
-use Qcloud\Sms\SmsMultiSender;
-use Qcloud\Sms\SmsVoiceVerifyCodeSender;
-use Qcloud\Sms\SmsVoicePromptSender;
-use Qcloud\Sms\SmsStatusPuller;
-use Qcloud\Sms\SmsMobileStatusPuller;
-
-use Qcloud\Sms\VoiceFileUploader;
-use Qcloud\Sms\FileVoiceSender;
-use Qcloud\Sms\TtsVoiceSender;
+use Wnd\Component\Qcloud\Sms\VoiceFileUploader;
+use Wnd\Component\Qcloud\Sms\FileVoiceSender;
+use Wnd\Component\Qcloud\Sms\TtsVoiceSender;
 
 
 // 短信应用SDK AppID

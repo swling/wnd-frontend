@@ -1,16 +1,13 @@
 <?php
 namespace Wnd\Model;
 
-use Aliyun\DySDKLite\SignatureHelper;
 use Exception;
+use Wnd\Component\Aliyun\Sms\SignatureHelper;
 
 /**
  *@since 2019.09.25
  *短信
  */
-
-require WND_PATH . 'components/aliyun-sms/SignatureHelper.php'; //阿里云短信
-
 class Wnd_Sms_Ali extends Wnd_sms {
 	/**
 	 * 发送短信
