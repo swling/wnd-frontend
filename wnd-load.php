@@ -10,7 +10,8 @@
  *
  * 第三方组件：
  * new Wnd\Component\Aliyun\Sms\SignatureHelper;
- * includes/component/aliyun/sms/SignatureHelper.php
+ * includes/component/Aliyun/Sms/SignatureHelper.php
+ * (注意：第三方组件文件及文件目录需要区分大小写)
  */
 spl_autoload_register(function ($class) {
 	// 命名空间前缀及对应目录
@@ -61,16 +62,16 @@ if (is_admin()) {
 Wnd\Model\Wnd_Init::init();
 
 // function
-require WND_PATH . 'includes/functions/inc-meta.php'; //数组形式储存 meta、option
-require WND_PATH . 'includes/functions/inc-general.php'; //通用函数定义
-require WND_PATH . 'includes/functions/inc-post.php'; //post相关自定义函数
-require WND_PATH . 'includes/functions/inc-user.php'; //user相关自定义函数
-require WND_PATH . 'includes/functions/inc-media.php'; //媒体文件处理函数
-require WND_PATH . 'includes/functions/inc-finance.php'; //财务
+require WND_PATH . 'includes/function/inc-meta.php'; //数组形式储存 meta、option
+require WND_PATH . 'includes/function/inc-general.php'; //通用函数定义
+require WND_PATH . 'includes/function/inc-post.php'; //post相关自定义函数
+require WND_PATH . 'includes/function/inc-user.php'; //user相关自定义函数
+require WND_PATH . 'includes/function/inc-media.php'; //媒体文件处理函数
+require WND_PATH . 'includes/function/inc-finance.php'; //财务
 
-require WND_PATH . 'includes/functions/tpl-general.php'; //通用模板
-require WND_PATH . 'includes/functions/tpl-list.php'; //post list模板
-require WND_PATH . 'includes/functions/tpl-term.php'; //term模板
+require WND_PATH . 'includes/function/tpl-general.php'; //通用模板
+require WND_PATH . 'includes/function/tpl-list.php'; //post list模板
+require WND_PATH . 'includes/function/tpl-term.php'; //term模板
 
 // hook
 require WND_PATH . 'includes/hook/add-action.php'; //添加动作
