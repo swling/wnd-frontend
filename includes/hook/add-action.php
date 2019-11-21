@@ -111,7 +111,7 @@ function wnd_action_do_action() {
 	if (isset($_POST['app_id']) and $_POST['app_id'] == wnd_get_option('wnd', 'wnd_alipay_appid')) {
 		// WordPress 始终开启了魔法引号，因此需要对post 数据做还原处理
 		$_POST = stripslashes_deep($_POST);
-		require WND_PATH . 'includes/component/Alipay/url-notify.php';
+		Wnd\Component\Alipay\AlipayNotify::verify();
 		return;
 	}
 
@@ -119,7 +119,7 @@ function wnd_action_do_action() {
 	if (isset($_GET['app_id']) and $_GET['app_id'] == wnd_get_option('wnd', 'wnd_alipay_appid')) {
 		// WordPress 始终开启了魔法引号，因此需要对post 数据做还原处理
 		$_GET = stripslashes_deep($_GET);
-		require WND_PATH . 'includes/component/Alipay/url-return.php';
+		Wnd\Component\Alipay\AlipayReturn::verify();
 		return;
 	}
 
@@ -135,7 +135,7 @@ function wnd_action_do_action() {
 	case 'payment':
 		if (is_user_logged_in()) {
 			if (wnd_verify_nonce($_GET['_wpnonce'] ?? '', 'payment')) {
-				require WND_PATH . 'includes/component/Alipay/pay.php';
+				Wnd\Component\Alipay\AlipayPagePay::pay();
 			}
 		} else {
 			wp_die('请登录！', bloginfo('name'));
