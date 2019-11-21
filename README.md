@@ -277,16 +277,22 @@ do_action('wnd_update_views', $post_id);
 
 /**
  * @since 2019.06.30
- *成功完成付款后*
- *$post:支付订单post object
+ *成功完成付款后
+ *$order_or_recherche_id 订单或充值记录ID
  */
-do_action('wnd_payment_verified', $post);
+do_action('wnd_payment_verified', $order_or_recherche_id);
 
 /**
  * @since 2019.07.14
  *订单完成
  */
 do_action('wnd_order_completed', $order_id);
+
+/**
+ *@since 2019.08.12
+ *充值完成
+ */
+do_action('wnd_recharge_completed', $recharge_id);
 
 ```
 # 前端Form name规则
