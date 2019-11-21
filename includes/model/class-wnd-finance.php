@@ -112,17 +112,14 @@ class Wnd_Finance {
 	 *
 	 */
 	public static function inc_user_money($user_id, $money) {
-		$new_money = wnd_get_user_money($user_id) + $money;
+		$new_money = self::get_user_money($user_id) + $money;
 		$new_money = number_format($new_money, 2, '.', '');
 		wnd_update_user_meta($user_id, 'money', $new_money);
 
-		// $money 为负数 更新消费金额记录
-		if ($money < 0) {
-			wnd_inc_wnd_user_meta($user_id, 'expense', number_format($money, 2, '.', '') * -1);
-		}
-
 		// 整站按月统计充值和消费
-		wnd_update_fin_stats($money);
+		if ($money > 0) {
+			self::update_fin_stats($money);
+		}
 	}
 
 	/**
@@ -134,6 +131,24 @@ class Wnd_Finance {
 		$money = wnd_get_user_meta($user_id, 'money');
 		$money = is_numeric($money) ? $money : 0;
 		return number_format($money, 2, '.', '');
+	}
+
+	/**
+	 *新增用户消费记录
+	 *
+	 *@param 	int 	$user_id 	用户ID
+	 *@param 	float 	$money 		金额
+	 *
+	 */
+	public static function inc_user_expense($user_id, $money) {
+		$new_money = self::get_user_expense($user_id) + $money;
+		$new_money = number_format($new_money, 2, '.', '');
+		wnd_update_user_meta($user_id, 'expense', $new_money);
+
+		// 整站按月统计充值和消费
+		if ($money > 0) {
+			self::update_fin_stats($money * -1);
+		}
 	}
 
 	/**
@@ -210,7 +225,7 @@ class Wnd_Finance {
 	 *@param 	float 	$money 		变动金额
 	 *
 	 **/
-	public static function update_fin_stats($money = 0) {
+	protected static function update_fin_stats($money = 0) {
 		if (!$money) {
 			return;
 		}

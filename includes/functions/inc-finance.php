@@ -43,6 +43,17 @@ function wnd_get_user_money($user_id) {
 }
 
 /**
+ *新增用户消费记录
+ *
+ *@param 	int 	$user_id 	用户ID
+ *@param 	float 	$money 		金额
+ *
+ */
+function wnd_inc_user_expense($user_id, $money) {
+	return Wnd_Finance::inc_user_expense($user_id, $money);
+}
+
+/**
  *获取用户消费
  *@param 	int 	$user_id 	用户ID
  *@return 	float 	用户消费
@@ -90,23 +101,4 @@ function wnd_get_post_price($post_id) {
  */
 function wnd_get_post_commission($post_id) {
 	return Wnd_Finance::get_post_commission($post_id);
-}
-
-/**
- *@since 初始化
- *统计整站财务数据，当用户发生充值或消费行为时触发
- *按月统计，每月生成两条post数据
- *
- *用户充值post_type:stats-re
- *用户消费post_type:stats-ex
- *根据用户金额变动>0 或者 <0 判断类型
- *用户金额记录：post_content，记录值均为正数
- *
- *写入前，按post type 和时间查询，如果存在记录则更新记录，否则写入一条记录
- *
- *@param 	float 	$money 		变动金额
- *
- **/
-function wnd_update_fin_stats($money = 0) {
-	return Wnd_Finance::update_fin_stats($money);
 }
