@@ -17,12 +17,12 @@ class Wnd_Tag_Under_Category {
 	public function __construct() {
 		// hook
 		add_action('set_object_terms', array($this, 'monitor_object_terms_changes'), 10, 6);
-		add_action('before_delete_post', array($this, 'delete_tag_under_category'), 10, 1);
+		add_action('before_delete_post', array($this, 'update_tag_under_category_when_post_delete'), 10, 1);
 		add_action('pre_delete_term', array($this, 'delete_term'), 10, 2);
 	}
 
 	/**
-	 *通过WordPress动作捕捉文章分类及标签设置
+	 *监听文章分类及标签更新
 	 */
 	public function monitor_object_terms_changes($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids) {
 		$post_type    = get_post_type($object_id);
@@ -99,60 +99,9 @@ class Wnd_Tag_Under_Category {
 	}
 
 	/**
-	 *写入标签和分类数据库
+	 *删除文章时：更新tag under category数据
 	 */
-	protected function update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc = true) {
-		global $wpdb;
-
-		// 删除对象缓存
-		wp_cache_delete($cat_id . $tag_taxonomy, 'wnd_tags_under_category');
-
-		$result = $wpdb->get_row($wpdb->prepare(
-			"SELECT * FROM $wpdb->wnd_terms WHERE cat_id = %d AND tag_id = %d ",
-			$cat_id,
-			$tag_id
-		));
-
-		// 更新
-		if ($result) {
-			$ID    = $result->ID;
-			$count = $inc ? $result->count + 1 : $result->count - 1;
-
-			// count为0，删除记录 返回
-			if (!$count) {
-				$wpdb->delete($wpdb->wnd_terms, array('ID' => $ID));
-				return true;
-			}
-
-			$do_sql = $wpdb->update(
-				$wpdb->wnd_terms, //table
-				array('count' => $count), // data
-				array('ID' => $ID), // where
-				array('%d'), //data format
-				array('%d') //where format
-			);
-
-			//没有记录，且操作为新增，写入数据
-		} elseif ($inc) {
-			$do_sql = $wpdb->insert(
-				$wpdb->wnd_terms,
-				array('cat_id' => $cat_id, 'tag_id' => $tag_id, 'tag_taxonomy' => $tag_taxonomy, 'count' => 1), //data
-				array('%d', '%d', '%s', '%d') // data format
-			);
-
-			//没有记录无需操作
-		} else {
-			return false;
-		}
-
-		// 返回数据操作结果
-		return $do_sql;
-	}
-
-	/**
-	 *删除文章时，更新 tag under category数据
-	 */
-	public function delete_tag_under_category($object_id) {
+	public function update_tag_under_category_when_post_delete($object_id) {
 		$post_type    = get_post_type($object_id);
 		$cat_taxonomy = ($post_type == 'post') ? 'category' : $post_type . '_cat';
 		$tag_taxonomy = $post_type . '_tag';
@@ -226,6 +175,57 @@ class Wnd_Tag_Under_Category {
 			// 删除记录
 			$wpdb->delete($wpdb->wnd_terms, array('cat_id' => $term_id));
 		}
+	}
+
+	/**
+	 *写入标签和分类数据库
+	 */
+	protected function update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc = true) {
+		global $wpdb;
+
+		// 删除对象缓存
+		wp_cache_delete($cat_id . $tag_taxonomy, 'wnd_tags_under_category');
+
+		$result = $wpdb->get_row($wpdb->prepare(
+			"SELECT * FROM $wpdb->wnd_terms WHERE cat_id = %d AND tag_id = %d ",
+			$cat_id,
+			$tag_id
+		));
+
+		// 更新
+		if ($result) {
+			$ID    = $result->ID;
+			$count = $inc ? $result->count + 1 : $result->count - 1;
+
+			// count为0，删除记录 返回
+			if (!$count) {
+				$wpdb->delete($wpdb->wnd_terms, array('ID' => $ID));
+				return true;
+			}
+
+			$do_sql = $wpdb->update(
+				$wpdb->wnd_terms, //table
+				array('count' => $count), // data
+				array('ID' => $ID), // where
+				array('%d'), //data format
+				array('%d') //where format
+			);
+
+			//没有记录，且操作为新增，写入数据
+		} elseif ($inc) {
+			$do_sql = $wpdb->insert(
+				$wpdb->wnd_terms,
+				array('cat_id' => $cat_id, 'tag_id' => $tag_id, 'tag_taxonomy' => $tag_taxonomy, 'count' => 1), //data
+				array('%d', '%d', '%s', '%d') // data format
+			);
+
+			//没有记录无需操作
+		} else {
+			return false;
+		}
+
+		// 返回数据操作结果
+		return $do_sql;
 	}
 
 	/**
