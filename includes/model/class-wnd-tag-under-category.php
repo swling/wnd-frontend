@@ -183,11 +183,47 @@ class Wnd_Tag_Under_Category {
 	/**
 	 *删除term时，更新 tag under category数据
 	 */
-	public function delete_term($term_id, $taxonmy) {
+	public static function delete_term($term_id, $taxonomy) {
 		global $wpdb;
-		if (strpos($taxonmy, '_tag')) {
+
+		/**
+		 *删除标签
+		 */
+		if (strpos($taxonomy, '_tag')) {
+			// 删除对象缓存
+			$cat_ids = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT DISTINCT cat_id FROM $wpdb->wnd_terms WHERE tag_id = %d",
+					$term_id
+				)
+			);
+			if ($cat_ids) {
+				foreach ($cat_ids as $cat_id) {
+					wp_cache_delete($cat_id . $taxonomy, 'wnd_tags_under_category');
+				}unset($cat_ids, $cat_id);
+			}
+
+			// 删除记录
 			$wpdb->delete($wpdb->wnd_terms, array('tag_id' => $term_id));
+
+			/**
+			 *删除分类
+			 */
 		} else {
+			// 删除对象缓存
+			$tag_taxonomies = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT DISTINCT tag_taxonomy FROM $wpdb->wnd_terms WHERE cat_id = %d",
+					$term_id
+				)
+			);
+			if ($tag_taxonomies) {
+				foreach ($tag_taxonomies as $tag_taxonomy) {
+					wp_cache_delete($term_id . $tag_taxonomy, 'wnd_tags_under_category');
+				}unset($tag_taxonomies, $tag_taxonomy);
+			}
+
+			// 删除记录
 			$wpdb->delete($wpdb->wnd_terms, array('cat_id' => $term_id));
 		}
 	}
@@ -200,26 +236,36 @@ class Wnd_Tag_Under_Category {
 	 */
 	public static function get_tags($cat_id, $tag_taxonomy, $limit = 50) {
 		// 获取缓存
-		$tags = wp_cache_get($cat_id . $tag_taxonomy . $limit, 'wnd_tags_under_category');
+		$tags = wp_cache_get($cat_id . $tag_taxonomy, 'wnd_tags_under_category');
+		$max  = 500;
 
 		// 缓存无效
-		if ($tags === false) {
+		if (false === $tags) {
 			global $wpdb;
 			// 一个分类下可能对应多个tag类型此处区分
-			if ($tag_taxonomy == 'any') {
+			if ('any' == $tag_taxonomy) {
 				$tags = $wpdb->get_results(
-					$wpdb->prepare("SELECT * FROM $wpdb->wnd_terms WHERE cat_id = %d ORDER BY count DESC LIMIT %d", $cat_id, $limit)
+					$wpdb->prepare(
+						"SELECT * FROM $wpdb->wnd_terms WHERE cat_id = %d ORDER BY count DESC LIMIT %d",
+						$cat_id,
+						$max
+					)
 				);
 			} else {
 				$tags = $wpdb->get_results(
-					$wpdb->prepare("SELECT * FROM $wpdb->wnd_terms WHERE cat_id = %d AND tag_taxonomy = %s ORDER BY count DESC LIMIT %d", $cat_id, $tag_taxonomy, $limit)
+					$wpdb->prepare(
+						"SELECT * FROM $wpdb->wnd_terms WHERE cat_id = %d AND tag_taxonomy = %s ORDER BY count DESC LIMIT %d",
+						$cat_id,
+						$tag_taxonomy,
+						$max
+					)
 				);
 			}
 
 			// 缓存查询结果
-			wp_cache_set($cat_id . $tag_taxonomy . $limit, $tags, 'wnd_tags_under_category', 86400);
+			wp_cache_set($cat_id . $tag_taxonomy, $tags, 'wnd_tags_under_category', 86400);
 		}
 
-		return $tags;
+		return array_slice($tags, 0, $limit);
 	}
 }

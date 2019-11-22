@@ -20,11 +20,14 @@ function wnd_list_categories_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $li
 		$tag_list = '<ul class="list-tags-under-' . $term->term_id . ' list-tags-under-category">' . PHP_EOL;
 		$tags     = Wnd_Tag_Under_Category::get_tags($term->term_id, $tag_taxonomy, $limit);
 		foreach ($tags as $tag) {
-			$tag_id       = $tag->tag_id;
-			$tag_id       = (int) $tag_id;
+			$tag_id       = (int) $tag->tag_id;
 			$tag_taxonomy = $tag->tag_taxonomy;
+			$tag          = get_term($tag_id);
+			if (!$tag or is_wp_error($tag)) {
+				Wnd_Tag_Under_Category::delete_term($tag_id, $tag_taxonomy);
+				continue;
+			}
 
-			$tag = get_term($tag_id);
 			//输出常规链接
 			if ($show_count) {
 				$tag_list .= '<li><a href="' . get_term_link($tag_id) . '" >' . $tag->name . '</a>（' . $tag->count . '）</li>' . PHP_EOL;
