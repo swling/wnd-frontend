@@ -59,7 +59,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 		}
 
 		// 定义变量
-		$status        = $is_success ? 'success' : 'pending';
+		$this->status  = $is_success ? 'success' : 'pending';
 		$this->subject = $this->subject ?: '充值：' . $this->total_amount;
 
 		/**
@@ -83,7 +83,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 			'post_author'  => $this->user_id,
 			'post_parent'  => $this->object_id,
 			'post_content' => $this->total_amount,
-			'post_status'  => $status ?: 'pending',
+			'post_status'  => $this->status,
 			'post_title'   => $this->subject,
 			'post_type'    => 'recharge',
 			'post_name'    => uniqid(),
@@ -94,7 +94,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 		}
 
 		// 当充值包含关联object 如post，表示收入来自站内佣金收入
-		if ('success' == $status) {
+		if ('success' == $this->status) {
 			if ($this->object_id) {
 				wnd_inc_user_commission($this->user_id, $this->total_amount);
 			} else {

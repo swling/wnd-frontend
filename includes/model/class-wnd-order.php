@@ -51,7 +51,7 @@ class Wnd_Order extends Wnd_Transaction {
 
 		// 定义变量
 		$this->total_amount = $this->total_amount ?: wnd_get_post_price($this->object_id);
-		$status             = $is_success ? 'success' : 'pending';
+		$this->status       = $is_success ? 'success' : 'pending';
 		$this->subject      = $this->subject ?: get_the_title($this->object_id);
 
 		/**
@@ -83,7 +83,7 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_author'  => $this->user_id,
 			'post_parent'  => $this->object_id,
 			'post_content' => $this->total_amount ?: '免费',
-			'post_status'  => $status,
+			'post_status'  => $this->status,
 			'post_title'   => $this->subject,
 			'post_type'    => 'order',
 			'post_name'    => uniqid(),
@@ -98,7 +98,7 @@ class Wnd_Order extends Wnd_Transaction {
 		 *success表示直接余额消费，更新用户余额
 		 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see self::verify();
 		 */
-		if ('success' == $status) {
+		if ('success' == $this->status) {
 			wnd_inc_user_expense($this->user_id, $this->total_amount);
 
 			/**

@@ -25,6 +25,9 @@ abstract class Wnd_Transaction {
 	// 支付标题：产品标题 / 充值标题 / 其他自定义
 	protected $subject;
 
+	// 状态
+	protected $status;
+
 	/**
 	 *@since 2019.08.11
 	 *构造函数
