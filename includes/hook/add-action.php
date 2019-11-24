@@ -281,36 +281,3 @@ function wnd_action_add_attachment($post_ID) {
 		wnd_inc_wnd_post_meta($post->post_parent, 'attachment_records');
 	}
 }
-
-/**
- * 禁止WordPress原生登录
- *@since 2019.03.01
- */
-add_action('admin_init', 'wnd_action_redirect_non_admin_users');
-function wnd_action_redirect_non_admin_users() {
-	if (!is_super_admin() and false === strpos($_SERVER['PHP_SELF'], 'admin-ajax.php')) {
-		wp_redirect(home_url('?from=wp-admin'));
-		exit;
-	}
-}
-
-/**
- * 禁止WordPress原生注册
- *@since 2019.03.01
- */
-add_action('login_init', 'wnd_action_redirect_login_form_register');
-function wnd_action_redirect_login_form_register() {
-	$action = $_REQUEST['action'] ?? '';
-	if ('logout' == $action) {
-		return;
-	}
-
-	wp_redirect(home_url('?from=wp-login.php'));
-	exit(); // always call `exit()` after `wp_redirect`
-}
-
-/**
- *@since 2019.04.16
- *访问后台时候，触发执行清理动作
- */
-add_action('admin_init', 'Wnd\model\Wnd_Admin::clean_up');
