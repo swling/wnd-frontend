@@ -117,9 +117,7 @@ class Wnd_Finance {
 		wnd_update_user_meta($user_id, 'money', $new_money);
 
 		// 整站按月统计充值和消费
-		if ($money > 0) {
-			self::update_fin_stats($money);
-		}
+		self::update_fin_stats($money, 'recharge');
 	}
 
 	/**
@@ -146,9 +144,7 @@ class Wnd_Finance {
 		wnd_update_user_meta($user_id, 'expense', $new_money);
 
 		// 整站按月统计充值和消费
-		if ($money > 0) {
-			self::update_fin_stats($money * -1);
-		}
+		self::update_fin_stats($money, 'expense');
 	}
 
 	/**
@@ -217,38 +213,48 @@ class Wnd_Finance {
 	 *
 	 *用户充值post_type:stats-re
 	 *用户消费post_type:stats-ex
-	 *根据用户金额变动>0 或者 <0 判断类型
-	 *用户金额记录：post_content，记录值均为正数
 	 *
 	 *写入前，按post type 和时间查询，如果存在记录则更新记录，否则写入一条记录
 	 *
-	 *@param 	float 	$money 		变动金额
+	 *@param float 	$money 	变动金额
+	 *@param string $type 	数据类型：recharge/expense
 	 *
 	 **/
-	protected static function update_fin_stats($money = 0) {
-		if (!$money) {
+	protected static function update_fin_stats($money, $type) {
+		switch ($type) {
+		// 充值
+		case 'recharge':
+			$post_type  = 'stats-re';
+			$post_title = '充值统计';
+			break;
+
+		// 消费
+		case 'expense':
+			$post_type  = 'stats-ex';
+			$post_title = '消费统计';
+			break;
+
+		// 默认
+		default:
+			$post_type  = '';
+			$post_title = '';
+			break;
+		}
+
+		if (!$money or !$type) {
 			return;
 		}
 
-		if ($money > 0) {
-			$post_type = 'stats-re';
-		} else {
-			$post_type = 'stats-ex';
-		}
-
-		$year  = date('Y', time());
-		$month = date('m', time());
-
+		$year       = date('Y', time());
+		$month      = date('m', time());
 		$slug       = $year . '-' . $month . '-' . $post_type;
-		$post_title = $post_type == 'stats-re' ? $year . '-' . $month . ' - 充值统计' : $year . '-' . $month . ' - 消费统计';
-
+		$post_title = $year . '-' . $month . ' - ' . $post_title;
 		$stats_post = wnd_get_post_by_slug($slug, $post_type, 'private');
 
 		// 更新统计
 		if ($stats_post) {
-
 			$old_money = $stats_post->post_content;
-			$new_money = $old_money + abs($money);
+			$new_money = $old_money + $money;
 			$new_money = number_format($new_money, 2, '.', '');
 			wp_update_post(array('ID' => $stats_post->ID, 'post_content' => $new_money));
 
@@ -258,7 +264,7 @@ class Wnd_Finance {
 				'post_author'  => 1,
 				'post_type'    => $post_type,
 				'post_title'   => $post_title,
-				'post_content' => abs($money),
+				'post_content' => $money,
 				'post_status'  => 'private',
 				'post_name'    => $slug,
 			);
