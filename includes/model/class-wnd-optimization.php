@@ -8,7 +8,7 @@ class Wnd_Optimization {
 
 	public function __construct() {
 		// 用户注册时，移除部分冗余wp user meta
-		add_filter('insert_user_meta', 'wnd_filter_unset_user_meta', 10, 2);
+		add_filter('insert_user_meta', array($this, 'wnd_filter_unset_user_meta'), 10, 2);
 
 		/**
 		 * 禁止WordPress admin bar
