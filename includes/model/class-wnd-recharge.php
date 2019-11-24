@@ -126,8 +126,10 @@ class Wnd_Recharge extends Wnd_Transaction {
 			throw new Exception('当前充值订单ID无效！');
 		}
 
-		$before_status = $post->post_status;
-		$total_amount  = $post->post_content;
+		// 订单支付状态检查
+		if ($post->post_status != 'pending') {
+			throw new Exception('充值订单状态无效！');
+		}
 
 		$post_arr = array(
 			'ID'          => $this->ID,
@@ -135,17 +137,18 @@ class Wnd_Recharge extends Wnd_Transaction {
 			'post_title'  => $this->subject ?: $post->post_title,
 		);
 		$ID = wp_update_post($post_arr);
-
-		// 当充值订单，从pending更新到 success，表示充值完成，更新用户余额
-		if ($ID and 'pending' == $before_status) {
-			wnd_inc_user_money($post->post_author, $total_amount);
-
-			/**
-			 *@since 2019.08.12
-			 *充值完成
-			 */
-			do_action('wnd_recharge_completed', $ID);
+		if (!$ID or is_wp_error($ID)) {
+			throw new Exception('更新充值订单失败！');
 		}
+
+		// 充值完成，更新用户余额
+		wnd_inc_user_money($post->post_author, $post->post_content);
+
+		/**
+		 *@since 2019.08.12
+		 *充值完成
+		 */
+		do_action('wnd_recharge_completed', $ID);
 
 		return $ID;
 	}

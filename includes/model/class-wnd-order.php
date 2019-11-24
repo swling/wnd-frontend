@@ -100,6 +100,7 @@ class Wnd_Order extends Wnd_Transaction {
 		 */
 		if ('success' == $this->status) {
 			wnd_inc_user_expense($this->user_id, $this->total_amount);
+			wnd_inc_user_money($this->user_id, $this->total_amount * -1);
 
 			/**
 			 * @since 2019.07.14
@@ -122,7 +123,7 @@ class Wnd_Order extends Wnd_Transaction {
 
 	/**
 	 *@since 2019.02.11
-	 *确认消费订单
+	 *确认在线消费订单
 	 *@return int or false
 	 *
 	 *@param int 		$this->ID  			required
@@ -134,8 +135,10 @@ class Wnd_Order extends Wnd_Transaction {
 			throw new Exception('当前订单ID无效！');
 		}
 
-		$before_status = $post->post_status;
-		$total_amount  = $post->post_content;
+		// 订单支付状态检查
+		if ($post->post_status != 'pending') {
+			throw new Exception('订单状态无效！');
+		}
 
 		$post_arr = array(
 			'ID'          => $this->ID,
@@ -143,23 +146,21 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_title'  => $this->subject ?: $post->post_title . '(在线支付)',
 		);
 		$ID = wp_update_post($post_arr);
-		if (is_wp_error($ID) or !$ID) {
+		if (!$ID or is_wp_error($ID)) {
 			throw new Exception('更新订单失败！');
 		}
 
 		/**
 		 *@since 2019.02.17
-		 *当消费订单，从pending更新到 success，表示该消费订单是通过在线支付，而非余额支付，无需扣除用户余额
+		 *订单完成：在线消费不影响当前余额，仅记录站内消费
 		 */
-		if ('pending' == $before_status) {
-			wnd_inc_user_expense($post->post_author, $total_amount);
+		wnd_inc_user_expense($post->post_author, $post->post_content);
 
-			/**
-			 * @since 2019.07.14
-			 *订单完成
-			 */
-			do_action('wnd_order_completed', $ID);
-		}
+		/**
+		 * @since 2019.07.14
+		 *订单完成
+		 */
+		do_action('wnd_order_completed', $ID);
 
 		/**
 		 *@since 2019.06.04
