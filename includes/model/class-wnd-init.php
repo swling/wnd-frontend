@@ -185,7 +185,7 @@ class Wnd_Init {
 		 *@since 2019.04.16
 		 *访问后台时候，触发执行清理动作
 		 */
-		add_action('admin_init', 'Wnd\model\Wnd_Admin::clean_up');
+		add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
 
 		/**
 		 *@since 2019.10.08
