@@ -8,7 +8,7 @@ use Wnd\Component\Qcloud\Sms\SmsSingleSender;
  *@since 2019.09.25
  *短信
  */
-class Wnd_Sms_TX extends Wnd_sms {
+class Wnd_Sms_TX extends Wnd_Sms {
 
 	/**
 	 *@since 2019.02.11 发送短信

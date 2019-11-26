@@ -8,7 +8,7 @@ use Wnd\Component\Aliyun\Sms\SignatureHelper;
  *@since 2019.09.25
  *短信
  */
-class Wnd_Sms_Ali extends Wnd_sms {
+class Wnd_Sms_Ali extends Wnd_Sms {
 	/**
 	 * 发送短信
 	 */
