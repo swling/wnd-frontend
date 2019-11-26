@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Controller;
 
+use Wnd\Controller\Wnd_Insert_Post;
+
 class Wnd_Update_Post extends Wnd_Controller_Ajax {
 
 	/**
@@ -12,7 +14,6 @@ class Wnd_Update_Post extends Wnd_Controller_Ajax {
 	 *更新文章
 	 */
 	public static function execute($post_id = 0): array{
-
 		// 获取被编辑post
 		$post_id   = $post_id ?: (int) $_POST['_post_ID'];
 		$edit_post = get_post($post_id);
@@ -20,7 +21,6 @@ class Wnd_Update_Post extends Wnd_Controller_Ajax {
 			return array('status' => 0, 'msg' => '获取内容ID失败！');
 		}
 
-		$_POST['_post_ID'] = $post_id;
 		return Wnd_Insert_Post::execute();
 	}
 }

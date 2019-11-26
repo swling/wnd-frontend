@@ -26,7 +26,6 @@ namespace Wnd\Controller;
 class Wnd_Upload_File extends Wnd_Controller_Ajax {
 
 	public static function execute(): array{
-
 		//$_FILES['wnd_file']需要与input name 值匹配
 		if (empty($_FILES['wnd_file'])) {
 			return array('status' => 0, 'msg' => '获取上传文件失败！');
@@ -85,7 +84,6 @@ class Wnd_Upload_File extends Wnd_Controller_Ajax {
 		$files        = $_FILES['wnd_file']; //暂存原始上传信息，后续将重写$_FILES全局变量以适配WordPress上传方式
 
 		foreach ($files['name'] as $key => $value) {
-
 			// 将多文件上传数据遍历循环后，重写为适配 media_handle_upload 的单文件模式
 			$file = array(
 				'name'     => $files['name'][$key],
@@ -115,7 +113,6 @@ class Wnd_Upload_File extends Wnd_Controller_Ajax {
 
 			// 判断是否为图片
 			if (strrpos($file['type'], 'image') !== false) {
-
 				//根据尺寸进行图片裁剪
 				if ($save_width or $save_height) {
 					//获取文件服务器路径

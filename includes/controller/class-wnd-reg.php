@@ -70,8 +70,6 @@ class Wnd_Reg extends Wnd_Controller_Ajax {
 
 		//3、注册新用户
 		$user_id = wp_insert_user($userdata);
-
-		//注册账户失败
 		if (is_wp_error($user_id)) {
 			return array('status' => 0, 'msg' => $user_id->get_error_message());
 		}
@@ -102,22 +100,15 @@ class Wnd_Reg extends Wnd_Controller_Ajax {
 		}
 
 		// 用户注册完成，自动登录
-		$user = get_user_by('id', $user_id);
-		if ($user) {
-			wp_set_current_user($user_id, $user->user_login);
-			wp_set_auth_cookie($user_id, 1);
-			// 注册后跳转地址
-			$redirect_to  = $_REQUEST['redirect_to'] ?? wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url();
-			$return_array = apply_filters(
-				'wnd_reg_return',
-				array('status' => 3, 'msg' => '注册成功！', 'data' => array('redirect_to' => $redirect_to, 'user_id' => $user_id)),
-				$user_id
-			);
-			return $return_array;
+		wp_set_current_user($user_id);
+		wp_set_auth_cookie($user_id, true);
 
-			//注册失败
-		} else {
-			return array('status' => 0, 'msg' => '注册失败！');
-		}
+		$redirect_to  = $_REQUEST['redirect_to'] ?? wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url();
+		$return_array = apply_filters(
+			'wnd_reg_return',
+			array('status' => 3, 'msg' => '注册成功！', 'data' => array('redirect_to' => $redirect_to, 'user_id' => $user_id)),
+			$user_id
+		);
+		return $return_array;
 	}
 }

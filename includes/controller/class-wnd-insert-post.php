@@ -78,7 +78,6 @@ class Wnd_Insert_Post extends Wnd_Controller_Ajax {
 		 *
 		 *post_status filter
 		 *
-		 *
 		 */
 
 		// 限制ajax可以创建的post类型，避免功能型post被意外创建，功能型post应通常具有更复杂的权限控制，并wp_insert_post创建

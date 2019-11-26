@@ -21,7 +21,6 @@ class Wnd_Update_Account extends Wnd_Controller_Ajax {
 		$user_pass           = $_POST['_user_user_pass'] ?? null;
 		$new_password        = $_POST['_user_new_pass'] ?? null;
 		$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? null;
-		$new_email           = $_POST['_user_user_email'] ?? null;
 
 		// 修改密码
 		if (!empty($new_password_repeat)) {
@@ -49,14 +48,11 @@ class Wnd_Update_Account extends Wnd_Controller_Ajax {
 
 		// 更新用户
 		$user_id = wp_update_user($user_array);
-
-		// 更新失败，返回错误信息
 		if (is_wp_error($user_id)) {
 			return array('status' => 0, 'msg' => $user_id->get_error_message());
 		}
 
 		// 用户更新成功：更新账户会导致当前账户的wp nonce失效，需刷新页面
-		$return_array = apply_filters('wnd_update_account_return', array('status' => 4, 'msg' => '更新成功'), $user_id);
-		return $return_array;
+		return apply_filters('wnd_update_account_return', array('status' => 4, 'msg' => '更新成功'), $user_id);
 	}
 }

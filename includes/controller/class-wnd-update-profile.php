@@ -20,8 +20,10 @@ use Wnd\Model\Wnd_Form_Data;
 class Wnd_Update_Profile extends Wnd_Controller_Ajax {
 
 	public static function execute(): array{
-		if (empty($_POST)) {
-			return array('status' => 0, 'msg' => '获取用户数据失败！');
+		$user    = wp_get_current_user();
+		$user_id = $user->ID;
+		if (!$user_id) {
+			return array('status' => 0, 'msg' => '获取用户ID失败！');
 		}
 
 		// 实例化WndWP表单数据处理对象
@@ -31,16 +33,9 @@ class Wnd_Update_Profile extends Wnd_Controller_Ajax {
 			return array('status' => 0, 'msg' => $e->getMessage());
 		}
 		$user_array         = $form_data->get_user_array();
+		$user_array['ID']   = $user_id;
 		$user_meta_array    = $form_data->get_user_meta_array();
 		$wp_user_meta_array = $form_data->get_wp_user_meta_array();
-
-		// ################### 组成用户数据
-		$user    = wp_get_current_user();
-		$user_id = $user->ID;
-		if (!$user_id) {
-			return array('status' => 0, 'msg' => '获取用户ID失败！');
-		}
-		$user_array = array('ID' => $user_id, 'display_name' => $user_array['display_name'], 'user_url' => $user_array['user_url']);
 
 		// 更新权限过滤挂钩
 		$user_can_update_profile = apply_filters('wnd_can_update_profile', array('status' => 1, 'msg' => '默认通过'));
@@ -48,14 +43,14 @@ class Wnd_Update_Profile extends Wnd_Controller_Ajax {
 			return $user_can_update_profile;
 		}
 
-		//################### 没有错误 更新用户
+		// 更新用户
 		$user_id = wp_update_user($user_array);
 		if (is_wp_error($user_id)) {
 			$msg = $user_id->get_error_message();
 			return array('status' => 0, 'msg' => $msg);
 		}
 
-		//################### 用户更新成功，写入meta 及profile数据
+		// 更新meta
 		if (!empty($user_meta_array)) {
 			wnd_update_user_meta_array($user_id, $user_meta_array);
 		}
@@ -73,8 +68,6 @@ class Wnd_Update_Profile extends Wnd_Controller_Ajax {
 		do_action('wnd_update_profile', $user_id);
 
 		// 返回值过滤
-		$return_array = apply_filters('wnd_update_profile_return', array('status' => 1, 'msg' => '更新成功！'), $user_id);
-		return $return_array;
-
+		return apply_filters('wnd_update_profile_return', array('status' => 1, 'msg' => '更新成功！'), $user_id);
 	}
 }

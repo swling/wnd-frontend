@@ -26,12 +26,13 @@ class Wnd_Login extends Wnd_Controller_Ajax {
 
 		// 可根据邮箱，手机，或用户名查询用户
 		$user = wnd_get_user_by($username);
-
 		if (!$user) {
-			return array('status' => 0, 'msg' => '用户不存在');
+			return array('status' => 0, 'msg' => '用户不存在！');
+		}
 
-		} elseif (wp_check_password($password, $user->data->user_pass, $user->ID)) {
-			wp_set_current_user($user->ID, $user->user_login);
+		// 校验密码并登录
+		if (wp_check_password($password, $user->data->user_pass, $user->ID)) {
+			wp_set_current_user($user->ID);
 			wp_set_auth_cookie($user->ID, $remember);
 			if ($redirect_to) {
 				return array('status' => 3, 'msg' => '登录成功！', 'data' => array('redirect_to' => $redirect_to, 'user_id' => $user->ID));

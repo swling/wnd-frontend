@@ -15,12 +15,11 @@ class Wnd_Pay_For_Download extends Wnd_Controller_Ajax {
 		// 获取文章
 		$post_id = (int) $_POST['post_id'];
 		$post    = get_post($post_id);
+		$price   = get_post_meta($post_id, 'price', true);
 		$user_id = get_current_user_id();
-
 		if (!$post) {
 			return array('status' => 0, 'msg' => 'ID无效！');
 		}
-		$price = get_post_meta($post_id, 'price', 1);
 
 		// 获取文章附件
 		$attachment_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');

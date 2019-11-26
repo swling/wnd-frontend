@@ -12,15 +12,13 @@ class Wnd_Update_Post_Status extends Wnd_Controller_Ajax {
 	 *依赖：wp_update_post、wp_delete_post
 	 */
 	public static function execute(): array{
-
 		// 获取数据
-		$post_id     = (int) $_POST['post_id'];
-		$before_post = get_post($post_id);
+		$post_id      = (int) $_POST['post_id'];
+		$before_post  = get_post($post_id);
+		$after_status = $_POST['post_status'];
 		if (!$before_post) {
 			return array('status' => 0, 'msg' => '获取内容失败！');
 		}
-
-		$after_status = $_POST['post_status'];
 
 		// 在现有注册的post status基础上新增 delete，该状态表示直接删除文章 @since 2019.03.03
 		if (!in_array($after_status, array_merge(get_post_stati(), array('delete')))) {
@@ -70,7 +68,6 @@ class Wnd_Update_Post_Status extends Wnd_Controller_Ajax {
 		if ($update) {
 			return array('status' => 4, 'msg' => '更新成功！');
 
-			//更新失败
 		} else {
 			return array('status' => 0, 'msg' => '更新数据失败！');
 		}

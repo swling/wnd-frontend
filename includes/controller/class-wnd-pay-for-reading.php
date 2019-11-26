@@ -18,11 +18,10 @@ class Wnd_Pay_For_Reading extends Wnd_Controller_Ajax {
 
 		//查找是否有more标签，否则免费部分为空（全文付费）
 		$content_array = explode('<!--more-->', $post->post_content, 2);
-		if (count($content_array) == 1) {
+		if (1 == count($content_array)) {
 			$content_array = array('', $post->post_content);
 		}
 		list($free_content, $paid_content) = $content_array;
-
 		if (!$paid_content) {
 			return array('status' => 0, 'msg' => '获取付费内容出错！');
 		}
