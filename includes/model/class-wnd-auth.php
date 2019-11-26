@@ -13,7 +13,7 @@ use Exception;
 class Wnd_Auth {
 
 	// object 当前用户
-	protected $current_user;
+	protected $user;
 
 	// string 电子邮件
 	protected $email_or_phone;
@@ -47,10 +47,10 @@ class Wnd_Auth {
 	 *构造函数
 	 **/
 	public function __construct() {
-		$this->sms_sp       = wnd_get_option('wnd', 'wnd_sms_sp');
-		$this->auth_code    = wnd_random_code(6);
-		$this->template     = wnd_get_option('wnd', 'wnd_sms_template');
-		$this->current_user = wp_get_current_user();
+		$this->sms_sp    = wnd_get_option('wnd', 'wnd_sms_sp');
+		$this->auth_code = wnd_random_code(6);
+		$this->template  = wnd_get_option('wnd', 'wnd_sms_template');
+		$this->user      = wp_get_current_user();
 	}
 
 	/**
@@ -134,7 +134,7 @@ class Wnd_Auth {
 
 		// 绑定
 		if ($this->type == 'bind') {
-			if (!$this->current_user->ID) {
+			if (!$this->user->ID) {
 				throw new Exception('请未登录后再绑定！');
 			}
 			if ($temp_user) {
@@ -387,5 +387,4 @@ class Wnd_Auth {
 			array('%s')
 		);
 	}
-
 }

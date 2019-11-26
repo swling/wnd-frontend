@@ -10,15 +10,15 @@ use Wnd\Model\Wnd_Auth;
  */
 class Wnd_User_Bind {
 
-	protected $current_user;
+	protected $user;
 	protected $password;
 	protected $auth_code;
 	protected $email_or_phone;
 	protected $bind_type;
 
 	public function __construct() {
-		$this->current_user = wp_get_current_user();
-		if (!$this->current_user->ID) {
+		$this->user = wp_get_current_user();
+		if (!$this->user->ID) {
 			throw new Exception('请登录！');
 		}
 	}
@@ -50,8 +50,8 @@ class Wnd_User_Bind {
 	 */
 	public function bind() {
 		// 更改邮箱或手机需要验证当前密码、首次绑定不需要
-		$old_bind = ('email' == $this->bind_type) ? $this->current_user->data->user_email : wnd_get_user_phone($this->current_user->ID);
-		if ($old_bind and !wp_check_password($this->password, $this->current_user->data->user_pass, $this->current_user->ID)) {
+		$old_bind = ('email' == $this->bind_type) ? $this->user->data->user_email : wnd_get_user_phone($this->user->ID);
+		if ($old_bind and !wp_check_password($this->password, $this->user->data->user_pass, $this->user->ID)) {
 			throw new Exception('当前密码错误！');
 		}
 
@@ -70,9 +70,9 @@ class Wnd_User_Bind {
 			$auth->verify(true);
 
 			if ('email' == $this->bind_type) {
-				$bind = wnd_update_user_email($this->current_user->ID, $this->email_or_phone);
+				$bind = wnd_update_user_email($this->user->ID, $this->email_or_phone);
 			} else {
-				$bind = wnd_update_user_phone($this->current_user->ID, $this->email_or_phone);
+				$bind = wnd_update_user_phone($this->user->ID, $this->email_or_phone);
 			}
 
 			if (!$bind) {
