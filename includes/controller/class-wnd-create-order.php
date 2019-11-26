@@ -2,6 +2,7 @@
 namespace Wnd\Controller;
 
 use Exception;
+use Wnd\Controller\Wnd_Create_Order_Trait;
 use Wnd\Model\Wnd_Order;
 
 /**
@@ -13,30 +14,15 @@ class Wnd_Create_Order extends Wnd_Controller_Ajax {
 
 	public static function execute(): array{
 		$post_id = (int) $_POST['post_id'];
-		if (!$post_id) {
-			return array('status' => 0, 'msg' => 'ID无效！');
-		}
-
 		$user_id = get_current_user_id();
-		if (!$user_id) {
-			return array('status' => 0, 'msg' => '请登录！');
-		}
 
 		$wnd_can_create_order = apply_filters('wnd_can_create_order', array('status' => 1, 'msg' => '默认通过'), $post_id);
 		if ($wnd_can_create_order['status'] === 0) {
 			return $wnd_can_create_order;
 		}
 
-		// 余额不足
-		if (wnd_get_post_price($post_id) > wnd_get_user_money($user_id)) {
-			$msg = '余额不足：';
-			if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
-				$msg .= '<a href="' . wnd_order_link($post_id) . '">在线支付</a> | ';
-			}
-			$msg .= '<a onclick="wnd_ajax_modal(\'wnd_user_recharge_form\')">余额充值</a>';
-
-			return array('status' => 0, 'msg' => $msg);
-		}
+		// 权限检测
+		Wnd_Create_Order_Trait::check_create($post_id, $user_id);
 
 		// 写入消费数据
 		try {
