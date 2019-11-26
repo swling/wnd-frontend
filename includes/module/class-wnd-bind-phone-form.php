@@ -32,7 +32,7 @@ class Wnd_Bind_Phone_Form extends Wnd_Module {
 		}
 
 		$form->add_sms_verify('bind', wnd_get_option('wnd', 'wnd_sms_template_v'));
-		$form->set_action('wnd_bind_phone');
+		$form->set_action('wnd_bind_account');
 		$form->set_submit_button('保存');
 		$form->build();
 

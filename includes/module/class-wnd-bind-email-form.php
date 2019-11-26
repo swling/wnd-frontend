@@ -31,7 +31,7 @@ class Wnd_Bind_Email_Form extends Wnd_Module {
 		}
 
 		$form->add_email_verify('bind');
-		$form->set_action('wnd_bind_email');
+		$form->set_action('wnd_bind_account');
 		$form->set_submit_button('保存');
 		$form->build();
 
