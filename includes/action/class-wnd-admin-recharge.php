@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_Recharge;
@@ -11,7 +11,7 @@ use Wnd\Model\Wnd_Recharge;
  *@param $_POST['total_amount']
  *@param $_POST['remarks']
  */
-class Wnd_Admin_Recharge extends Wnd_Controller_Ajax {
+class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		if (!is_super_admin()) {

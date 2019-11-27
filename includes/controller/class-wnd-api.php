@@ -52,7 +52,7 @@ class Wnd_API {
 	/**
 	 *@since 2019.04.07
 	 *UI响应
-	 *@param $_GET['action'] 	string	后端响应UI类名称
+	 *@param $_GET['module'] 	string	后端响应模块类
 	 *@param $_GET['param']		string	模板类传参
 	 *
 	 *@since 2019.10.04
@@ -61,11 +61,11 @@ class Wnd_API {
 	 *2、命名空间必须为：Wndt\Module
 	 */
 	public static function interface () {
-		if (!isset($_GET['action'])) {
+		if (!isset($_GET['module'])) {
 			return array('status' => 0, 'msg' => '未定义UI响应！');
 		}
 
-		$class_name = stripslashes_deep($_GET['action']);
+		$class_name = stripslashes_deep($_GET['module']);
 		$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\\Module' : 'Wnd\\Module';
 		$class      = $namespace . '\\' . $class_name;
 		$param      = $_GET['param'] ?? '';
@@ -102,7 +102,7 @@ class Wnd_API {
 		}
 
 		$class_name = stripslashes_deep($_REQUEST['action']);
-		$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\\Controller' : 'Wnd\\Controller';
+		$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\\Action' : 'Wnd\\Action';
 		$class      = $namespace . '\\' . $class_name;
 
 		// nonce校验：action

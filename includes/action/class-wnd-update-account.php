@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 /**
  *@since 初始化
@@ -8,7 +8,7 @@ namespace Wnd\Controller;
  *@param $_POST['_user_new_pass']
  *@param $_POST['_user_new_pass_repeat']
  */
-class Wnd_Update_Account extends Wnd_Controller_Ajax {
+class Wnd_Update_Account extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		$user    = wp_get_current_user();

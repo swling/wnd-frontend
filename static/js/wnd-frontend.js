@@ -200,7 +200,7 @@ function wnd_ajax_modal(module, param = '') {
 		type: "GET",
 		url: wnd.root_url + wnd.interface_api,
 		data: {
-			"action": module,
+			"module": module,
 			"param": param,
 			"ajax_type": "modal",
 		},
@@ -237,7 +237,7 @@ function wnd_ajax_embed(container, module, param = 0) {
 		type: "GET",
 		url: wnd.root_url + wnd.interface_api,
 		data: {
-			"action": module,
+			"module": module,
 			"param": param,
 			"ajax_type": "embed",
 		},
@@ -472,7 +472,7 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 			url: wnd.root_url + wnd.rest_api,
 			data: {
 				"param": post_id,
-				"action": "wnd_ajax_action",
+				"action": "wnd_safe_action",
 				"method": "update_views",
 				"_ajax_nonce": wnd.ajax_nonce,
 			},

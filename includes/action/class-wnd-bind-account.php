@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_User_Bind;
@@ -11,7 +11,7 @@ use Wnd\Model\Wnd_User_Bind;
  *@param $_POST['auth_code'] 		 	验证码
  *@param $_POST['_user_user_pass'] 		当前密码
  */
-class Wnd_Bind_Account extends Wnd_Controller_Ajax {
+class Wnd_Bind_Account extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		$email_or_phone = $_POST['_user_user_email'] ?? ($_POST['phone'] ?? null);

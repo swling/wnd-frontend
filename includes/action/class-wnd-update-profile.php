@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_Form_Data;
@@ -17,7 +17,7 @@ use Wnd\Model\Wnd_Form_Data;
  *_wpusermeta_{key} （*WordPress原生字段）
  *
  */
-class Wnd_Update_Profile extends Wnd_Controller_Ajax {
+class Wnd_Update_Profile extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		$user    = wp_get_current_user();

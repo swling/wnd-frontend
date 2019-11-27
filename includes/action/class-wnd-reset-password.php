@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_Auth;
@@ -11,7 +11,7 @@ use Wnd\Model\Wnd_Auth;
  *@param $_POST['_user_new_pass']
  *@param $_POST['_user_new_pass_repeat']
  */
-class Wnd_Reset_Password extends Wnd_Controller_Ajax {
+class Wnd_Reset_Password extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		$email_or_phone      = $_POST['_user_user_email'] ?? $_POST['phone'] ?? null;

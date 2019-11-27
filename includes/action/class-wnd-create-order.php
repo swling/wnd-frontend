@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 use Exception;
 use Wnd\Controller\Wnd_Create_Order_Trait;
@@ -10,7 +10,7 @@ use Wnd\Model\Wnd_Order;
  *创建订单
  *@param $_POST['post_id']  Post ID
  */
-class Wnd_Create_Order extends Wnd_Controller_Ajax {
+class Wnd_Create_Order extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		$post_id = (int) $_POST['post_id'];

@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 /**
  *删除附件
@@ -8,7 +8,7 @@ namespace Wnd\Controller;
  *@param $_POST['post_parent'];
  *@param $_POST['file_id'];
  */
-class Wnd_Delete_File extends Wnd_Controller_Ajax {
+class Wnd_Delete_File extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		$meta_key    = $_POST['meta_key'];

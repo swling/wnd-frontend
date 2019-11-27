@@ -1,17 +1,17 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 /**
  *@since 2019.10.05
  *封装一些无关数据安全的常规操作
  *由于rest操作需要验证action nonce，因此在前端无法直接发起一个操作请求
- *本操作对应的nonce：wnd_create_nonce('wnd_ajax_action') 已提前生成，因此前端可以直接获取，从而调用本控制类
+ *本操作对应的nonce：wnd_create_nonce('wnd_safe_action') 已提前生成，因此前端可以直接获取，从而调用本控制类
  *
  *请求必须包含以下参数：
- *@param $_REQUEST['action'] string 固定值：'wnd_ajax_action'
+ *@param $_REQUEST['action'] string 固定值：'wnd_safe_action'
  *@param $_REQUEST['method'] string 指定本类中的方法
  */
-class Wnd_Ajax_Action extends Wnd_Controller_Ajax {
+class Wnd_Safe_Action extends Wnd_Action_Ajax {
 
 	// 根据method参数选择处理方法
 	public static function execute(): array{

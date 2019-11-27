@@ -1,7 +1,7 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
-class Wnd_Update_Post_Status extends Wnd_Controller_Ajax {
+class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 
 	/**
 	 *@since 2019.01.21

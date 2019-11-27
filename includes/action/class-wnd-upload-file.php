@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 /**
  *@since 2019.01.20
@@ -23,7 +23,7 @@ namespace Wnd\Controller;
  *	);
  *
  */
-class Wnd_Upload_File extends Wnd_Controller_Ajax {
+class Wnd_Upload_File extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		//$_FILES['wnd_file']需要与input name 值匹配

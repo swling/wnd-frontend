@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 use Exception;
 use Wnd\Controller\Wnd_Create_Order;
@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_Recharge;
  *付费阅读类
  *@param $_POST['post_id']  Post ID
  */
-class Wnd_Pay_For_Reading extends Wnd_Controller_Ajax {
+class Wnd_Pay_For_Reading extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		$post_id = (int) $_POST['post_id'];

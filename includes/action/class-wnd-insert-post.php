@@ -1,11 +1,11 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_Form_Data;
 use Wnd\Model\Wnd_Post;
 
-class Wnd_Insert_Post extends Wnd_Controller_Ajax {
+class Wnd_Insert_Post extends Wnd_Action_Ajax {
 
 	/**
 	 *@see README.md

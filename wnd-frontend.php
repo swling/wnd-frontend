@@ -21,7 +21,7 @@
  */
 
 // 版本
-define('WND_VER', '0.50');
+define('WND_VER', '0.60');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -66,7 +66,7 @@ function wnd_scripts() {
 	$wnd_data = array(
 		'root_url'      => site_url(),
 		'rest_nonce'    => wp_create_nonce('wp_rest'),
-		'ajax_nonce'    => wnd_create_nonce('wnd_ajax_action'),
+		'ajax_nonce'    => wnd_create_nonce('wnd_safe_action'),
 		'interface_api' => '/wp-json/wnd/interface',
 		'rest_api'      => '/wp-json/wnd/rest-api',
 		'filter_api'    => '/wp-json/wnd/filter',

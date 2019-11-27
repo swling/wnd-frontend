@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_Form_Data;
@@ -21,7 +21,7 @@ use Wnd\Model\Wnd_Form_Data;
  *@param $_POST['_user_display_name']
  *@param $_POST['_wpusermeta_description']
  */
-class Wnd_Reg extends Wnd_Controller_Ajax {
+class Wnd_Reg extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		// 1、数据组成

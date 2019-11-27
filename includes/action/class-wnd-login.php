@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Controller;
+namespace Wnd\Action;
 
 /**
  *@since 2019.1.13 用户登录
@@ -9,7 +9,7 @@ namespace Wnd\Controller;
  *@param $remember = $_POST['remember'] ?? 0;
  *@param $redirect_to = $_REQUEST['redirect_to'] ?? home_url();
  */
-class Wnd_Login extends Wnd_Controller_Ajax {
+class Wnd_Login extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		$username    = trim($_POST['_user_user_login']);
