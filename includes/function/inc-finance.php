@@ -23,6 +23,16 @@ function wnd_get_order_count($object_id) {
 }
 
 /**
+ *@since 2019.11.27 增加订单统计
+ *
+ *@param 	int 	$object_id 	商品ID
+ *@param 	int 	$number 	增加的数目，可为负
+ **/
+function wnd_inc_order_count($object_id, $number) {
+	return Wnd_Finance::inc_order_count($object_id, $number);
+}
+
+/**
  * 充值成功 写入用户 字段
  *
  *@param 	int 	$user_id 	用户ID

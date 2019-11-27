@@ -105,6 +105,16 @@ class Wnd_Finance {
 	}
 
 	/**
+	 *@since 2019.03.29 增加订单统计
+	 *
+	 *@param 	int 	$object_id 	商品ID
+	 *@param 	int 	$number 	增加的数目，可为负
+	 **/
+	public static function inc_order_count($object_id, $number) {
+		return wnd_inc_wnd_post_meta($object_id, 'order_count', $number);
+	}
+
+	/**
 	 * 充值成功 写入用户 字段
 	 *
 	 *@param 	int 	$user_id 	用户ID

@@ -66,6 +66,7 @@ class Wnd_Order extends Wnd_Transaction {
 				'posts_per_page' => 1,
 			)
 		);
+
 		if ($old_orders) {
 			$this->ID = $old_orders[0]->ID;
 		} elseif ($this->object_id) {
@@ -75,7 +76,7 @@ class Wnd_Order extends Wnd_Transaction {
 			 *插入订单时，无论订单状态均新增订单统计，以实现某些场景下需要限定订单总数时，锁定数据，预留支付时间
 			 *获取订单统计时，删除超时未完成的订单，并减去对应订单统计 @see wnd_get_order_count($object_id)
 			 */
-			wnd_inc_wnd_post_meta($this->object_id, 'order_count', 1);
+			wnd_inc_order_count($this->object_id, 1);
 		}
 
 		$post_arr = array(
