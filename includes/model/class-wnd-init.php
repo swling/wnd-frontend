@@ -30,24 +30,24 @@ class Wnd_Init {
 		new Wnd_Optimization();
 
 		// function
-		require WND_PATH . 'includes/function/inc-meta.php'; //数组形式储存 meta、option
-		require WND_PATH . 'includes/function/inc-general.php'; //通用函数定义
-		require WND_PATH . 'includes/function/inc-post.php'; //post相关自定义函数
-		require WND_PATH . 'includes/function/inc-user.php'; //user相关自定义函数
-		require WND_PATH . 'includes/function/inc-media.php'; //媒体文件处理函数
-		require WND_PATH . 'includes/function/inc-finance.php'; //财务
+		require WND_PATH . '/includes/function/inc-meta.php'; //数组形式储存 meta、option
+		require WND_PATH . '/includes/function/inc-general.php'; //通用函数定义
+		require WND_PATH . '/includes/function/inc-post.php'; //post相关自定义函数
+		require WND_PATH . '/includes/function/inc-user.php'; //user相关自定义函数
+		require WND_PATH . '/includes/function/inc-media.php'; //媒体文件处理函数
+		require WND_PATH . '/includes/function/inc-finance.php'; //财务
 
-		require WND_PATH . 'includes/function/tpl-general.php'; //通用模板
-		require WND_PATH . 'includes/function/tpl-list.php'; //post list模板
-		require WND_PATH . 'includes/function/tpl-term.php'; //term模板
+		require WND_PATH . '/includes/function/tpl-general.php'; //通用模板
+		require WND_PATH . '/includes/function/tpl-list.php'; //post list模板
+		require WND_PATH . '/includes/function/tpl-term.php'; //term模板
 
 		// hook
-		require WND_PATH . 'includes/hook/add-action.php'; //添加动作
-		require WND_PATH . 'includes/hook/add-filter.php'; //添加钩子
+		require WND_PATH . '/includes/hook/add-action.php'; //添加动作
+		require WND_PATH . '/includes/hook/add-filter.php'; //添加钩子
 
 		// 管理后台配置选项
 		if (is_admin()) {
-			require WND_PATH . 'wnd-options.php';
+			require WND_PATH . '/wnd-options.php';
 		}
 	}
 

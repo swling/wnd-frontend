@@ -17,8 +17,8 @@ spl_autoload_register(function ($class) {
 	// 命名空间前缀及对应目录
 	$base_prefix      = 'Wnd\\';
 	$component_prefix = 'Wnd\\Component';
-	$base_dir         = WND_PATH . 'includes';
-	$component_dir    = WND_PATH . 'includes' . DIRECTORY_SEPARATOR . 'component';
+	$base_dir         = WND_PATH . DIRECTORY_SEPARATOR . 'includes';
+	$component_dir    = WND_PATH . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'component';
 
 	/**
 	 *本插件集成的第三方组件，按通用驼峰命名规则

@@ -27,10 +27,10 @@ define('WND_VER', '0.60');
 define('WND_URL', plugin_dir_url(__FILE__));
 
 // 定义插件文件路径
-define('WND_PATH', __DIR__ . DIRECTORY_SEPARATOR);
+define('WND_PATH', __DIR__);
 
 // 加载核心文件
-require WND_PATH . 'wnd-load.php';
+require WND_PATH . DIRECTORY_SEPARATOR . 'wnd-load.php';
 
 /**
  *@since 初始化
