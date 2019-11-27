@@ -94,7 +94,7 @@ class Wnd_API {
 	 *@since 2019.10.04
 	 *如需在第三方插件或主题拓展控制器处理请定义类并遵循以下规则：
 	 *1、类名称必须以wndt为前缀
-	 *2、命名空间必须为：Wndt\Controller
+	 *2、命名空间必须为：Wndt\Action
 	 */
 	public static function rest_api(): array{
 		if (!isset($_REQUEST['action'])) {

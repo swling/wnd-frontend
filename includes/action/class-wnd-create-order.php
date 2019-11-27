@@ -2,7 +2,7 @@
 namespace Wnd\Action;
 
 use Exception;
-use Wnd\Controller\Wnd_Create_Order_Trait;
+use Wnd\Action\Wnd_Create_Order_Trait;
 use Wnd\Model\Wnd_Order;
 
 /**

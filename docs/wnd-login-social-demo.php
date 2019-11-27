@@ -1,5 +1,5 @@
 <?php
-use Wnd\Controller\Wnd_Login_QQ;
+use Wnd\Action\Wnd_Login_QQ;
 
 /**
  *QQ社交登录

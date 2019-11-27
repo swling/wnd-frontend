@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Action;
 
-use Wnd\Controller\Wnd_Insert_Post;
+use Wnd\Action\Wnd_Insert_Post;
 
 class Wnd_Update_Post extends Wnd_Action_Ajax {
 

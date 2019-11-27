@@ -2,7 +2,7 @@
 namespace Wnd\Action;
 
 use Exception;
-use Wnd\Controller\Wnd_Create_Order;
+use Wnd\Action\Wnd_Create_Order;
 use Wnd\Model\Wnd_Recharge;
 
 /**

@@ -102,10 +102,10 @@ nonce生成方式：wnd_create_nonce($_REQUEST['action'])
 array('status'=>'状态值','msg'=>'消息','data'=>'数据');
 API统一将结果转为json格式，输出交付前端处理
 
-#### 拓展控制类
+#### 拓展操作（action）类
 如需在第三方插件或主题拓展控制器处理请定义类并遵循以下规则：
 - 类名称必须以wndt为前缀
-- 命名空间必须为：Wndt\Controller
+- 命名空间必须为：Wndt\Action
 
 ### interface api
 UI请求无需nonce校验需要包含如下参数
@@ -448,12 +448,12 @@ switch (response.status) {
 namespace Wnd\Model;
 
 // 控制类
-namespace Wnd\controller;
+namespace Wnd\Action;
 
 // 视图类
 namespace Wnd\View;
 
-// 模板类：基于视图类的一些封装模块
+// 模块类：基于视图类的一些封装模块
 namespace Wnd\Module;
 ```
 ### 用户自定义拓展UI响应
@@ -467,5 +467,5 @@ namespace Wndt\Module;
 - 类名称以'Wndt' 为前缀(不区分大小写)
 - 命名空间为：
 ```php
-namespace Wndt\Controller;
+namespace Wndt\Action;
 ```
