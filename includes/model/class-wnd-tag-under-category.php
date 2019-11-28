@@ -14,17 +14,19 @@ namespace Wnd\Model;
  */
 class Wnd_Tag_Under_Category {
 
-	public function __construct() {
-		// hook
-		add_action('set_object_terms', array($this, 'monitor_object_terms_changes'), 10, 6);
-		add_action('before_delete_post', array($this, 'update_tag_under_category_when_post_delete'), 10, 1);
-		add_action('pre_delete_term', array($this, 'delete_term'), 10, 2);
+	/**
+	 *Hook
+	 */
+	public static function add_hook() {
+		add_action('set_object_terms', array(__CLASS__, 'monitor_object_terms_changes'), 10, 6);
+		add_action('before_delete_post', array(__CLASS__, 'update_tag_under_category_when_post_delete'), 10, 1);
+		add_action('pre_delete_term', array(__CLASS__, 'delete_term'), 10, 2);
 	}
 
 	/**
 	 *监听文章分类及标签更新
 	 */
-	public function monitor_object_terms_changes($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids) {
+	public static function monitor_object_terms_changes($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids) {
 		$post_type    = get_post_type($object_id);
 		$cat_taxonomy = ($post_type == 'post') ? 'category' : $post_type . '_cat';
 		$tag_taxonomy = $post_type . '_tag';
@@ -49,7 +51,7 @@ class Wnd_Tag_Under_Category {
 				$delete_tt_ids = array_diff($old_tt_ids, $tt_ids);
 				if ($delete_tt_ids) {
 					foreach ($delete_tt_ids as $cat_id) {
-						$this->update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc = 0);
+						self::update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, false);
 					}
 					unset($cat_id);
 				}
@@ -58,7 +60,7 @@ class Wnd_Tag_Under_Category {
 				$add_tt_ids = array_diff($tt_ids, $old_tt_ids);
 				if ($add_tt_ids) {
 					foreach ($add_tt_ids as $cat_id) {
-						$this->update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc = 1);
+						self::update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, true);
 					}
 					unset($cat_id);
 				}
@@ -80,7 +82,7 @@ class Wnd_Tag_Under_Category {
 				$delete_tt_ids = array_diff($old_tt_ids, $tt_ids);
 				if ($delete_tt_ids) {
 					foreach ($delete_tt_ids as $tag_id) {
-						$this->update_tag_under_category($cat_id, $tag_id, $taxonomy, $inc = 0);
+						self::update_tag_under_category($cat_id, $tag_id, $taxonomy, false);
 					}
 					unset($tag_id);
 				}
@@ -89,7 +91,7 @@ class Wnd_Tag_Under_Category {
 				$add_tt_ids = array_diff($tt_ids, $old_tt_ids);
 				if ($add_tt_ids) {
 					foreach ($add_tt_ids as $tag_id) {
-						$this->update_tag_under_category($cat_id, $tag_id, $taxonomy, $inc = 1);
+						self::update_tag_under_category($cat_id, $tag_id, $taxonomy, true);
 					}
 					unset($tag_id);
 				}
@@ -101,7 +103,7 @@ class Wnd_Tag_Under_Category {
 	/**
 	 *删除文章时：更新tag under category数据
 	 */
-	public function update_tag_under_category_when_post_delete($object_id) {
+	public static function update_tag_under_category_when_post_delete($object_id) {
 		$post_type    = get_post_type($object_id);
 		$cat_taxonomy = ($post_type == 'post') ? 'category' : $post_type . '_cat';
 		$tag_taxonomy = $post_type . '_tag';
@@ -121,7 +123,7 @@ class Wnd_Tag_Under_Category {
 			if ($cat_id) {
 				foreach ($tags as $tag) {
 					$tag_id = $tag->term_id;
-					$this->update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc = 0);
+					self::update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, false);
 				}
 				unset($tag);
 			}
@@ -180,7 +182,7 @@ class Wnd_Tag_Under_Category {
 	/**
 	 *写入标签和分类数据库
 	 */
-	protected function update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc = true) {
+	protected static function update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc) {
 		global $wpdb;
 
 		// 删除对象缓存

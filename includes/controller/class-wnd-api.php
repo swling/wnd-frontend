@@ -10,21 +10,34 @@ use WP_REST_Server;
  */
 class Wnd_API {
 
-	public function __construct() {
-		add_action('rest_api_init', array($this, 'register_route'));
+	private static $instance;
+
+	private function __construct() {
+		add_action('rest_api_init', array(__CLASS__, 'register_route'));
+	}
+
+	/**
+	 *单例模式
+	 */
+	public static function instance() {
+		if (!self::$instance) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
 	}
 
 	/**
 	 *注册API
 	 */
-	public function register_route() {
+	public static function register_route() {
 		// 数据处理
 		register_rest_route(
 			'wnd',
 			'rest-api',
 			array(
 				'methods'  => WP_REST_Server::ALLMETHODS,
-				'callback' => __CLASS__ . '::rest_api',
+				'callback' => __CLASS__ . '::handle_rest_api',
 			)
 		);
 
@@ -34,7 +47,7 @@ class Wnd_API {
 			'filter',
 			array(
 				'methods'  => 'GET',
-				'callback' => __CLASS__ . '::filter',
+				'callback' => __CLASS__ . '::handle_filter',
 			)
 		);
 
@@ -44,7 +57,7 @@ class Wnd_API {
 			'interface',
 			array(
 				'methods'  => 'GET',
-				'callback' => __CLASS__ . '::interface',
+				'callback' => __CLASS__ . '::handle_interface',
 			)
 		);
 	}
@@ -60,13 +73,13 @@ class Wnd_API {
 	 *1、类名称必须以wndt为前缀
 	 *2、命名空间必须为：Wndt\Module
 	 */
-	public static function interface () {
+	public static function handle_interface() {
 		if (!isset($_GET['module'])) {
 			return array('status' => 0, 'msg' => '未定义UI响应！');
 		}
 
 		$class_name = stripslashes_deep($_GET['module']);
-		$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\\Module' : 'Wnd\\Module';
+		$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\Module' : 'Wnd\Module';
 		$class      = $namespace . '\\' . $class_name;
 		$param      = $_GET['param'] ?? '';
 
@@ -96,13 +109,13 @@ class Wnd_API {
 	 *1、类名称必须以wndt为前缀
 	 *2、命名空间必须为：Wndt\Action
 	 */
-	public static function rest_api(): array{
+	public static function handle_rest_api(): array{
 		if (!isset($_REQUEST['action'])) {
 			return array('status' => 0, 'msg' => '未指定API响应！');
 		}
 
 		$class_name = stripslashes_deep($_REQUEST['action']);
-		$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\\Action' : 'Wnd\\Action';
+		$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\Action' : 'Wnd\Action';
 		$class      = $namespace . '\\' . $class_name;
 
 		// nonce校验：action
@@ -153,7 +166,7 @@ class Wnd_API {
 	 * $wp_query_args[$key] = $value;
 	 *
 	 **/
-	public static function filter(): array{
+	public static function handle_filter(): array{
 
 		// 根据请求GET参数，获取wp_query查询参数
 		try {

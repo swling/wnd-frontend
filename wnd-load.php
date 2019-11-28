@@ -16,7 +16,7 @@
 spl_autoload_register(function ($class) {
 	// 命名空间前缀及对应目录
 	$base_prefix      = 'Wnd\\';
-	$component_prefix = 'Wnd\\Component';
+	$component_prefix = 'Wnd\Component\\';
 	$base_dir         = WND_PATH . DIRECTORY_SEPARATOR . 'includes';
 	$component_dir    = WND_PATH . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'component';
 
@@ -54,4 +54,4 @@ spl_autoload_register(function ($class) {
 });
 
 // 初始化
-Wnd\Model\Wnd_Init::init();
+Wnd\Model\Wnd_Init::instance();

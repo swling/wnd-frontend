@@ -2,9 +2,9 @@
 namespace Wnd\Model;
 
 use Wnd\Controller\Wnd_API;
+use Wnd\hook\Wnd_Hook;
 use Wnd\Model\Wnd_DB;
 use Wnd\Model\Wnd_Optimization;
-use Wnd\Model\Wnd_Tag_Under_Category;
 
 /**
  *初始化 单例模式
@@ -14,20 +14,20 @@ class Wnd_Init {
 	private static $instance;
 
 	private function __construct() {
+		// Init
+		self::init();
+
 		// 默认Hook
-		$this->hook_init();
+		Wnd_Hook::instance();
 
 		// 数据库
-		new Wnd_DB();
+		Wnd_DB::instance();
 
 		// API
-		new Wnd_API();
-
-		// 分类关联标签
-		new Wnd_Tag_Under_Category();
+		Wnd_API::instance();
 
 		// 优化
-		new Wnd_Optimization();
+		Wnd_Optimization::instance();
 
 		// function
 		require WND_PATH . '/includes/function/inc-meta.php'; //数组形式储存 meta、option
@@ -41,10 +41,6 @@ class Wnd_Init {
 		require WND_PATH . '/includes/function/tpl-list.php'; //post list模板
 		require WND_PATH . '/includes/function/tpl-term.php'; //term模板
 
-		// hook
-		require WND_PATH . '/includes/hook/add-action.php'; //添加动作
-		require WND_PATH . '/includes/hook/add-filter.php'; //添加钩子
-
 		// 管理后台配置选项
 		if (is_admin()) {
 			require WND_PATH . '/wnd-options.php';
@@ -54,19 +50,56 @@ class Wnd_Init {
 	/**
 	 *单例模式
 	 */
-	public static function init() {
+	public static function instance() {
 		if (!self::$instance) {
-			self::$instance = new Wnd_Init();
+			self::$instance = new self();
 		}
 
 		return self::$instance;
+	}
+
+	// Init
+	private static function init() {
+		// 自定义文章类型及状态
+		add_action('init', array(__CLASS__, 'register_post_type'));
+		add_action('init', array(__CLASS__, 'register_post_status'));
+
+		/**
+		 *@since 2019.04.16
+		 *访问后台时候，触发执行清理动作
+		 */
+		add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
+
+		/**
+		 *@since 2019.10.08
+		 *禁用xmlrpc
+		 *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
+		 */
+		add_filter('xmlrpc_enabled', '__return_false');
+
+		/**
+		 *移除WordPress默认的API
+		 *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
+		 *
+		 *@link https://stackoverflow.com/questions/42757726/disable-default-routes-of-wp-rest-api
+		 *@link https://wpreset.com/remove-default-wordpress-rest-api-routes-endpoints/
+		 */
+		add_filter('rest_endpoints', function ($endpoints) {
+			foreach ($endpoints as $route => $endpoint) {
+				if (0 === stripos($route, '/wp/') or 0 === stripos($route, '/oembed/')) {
+					unset($endpoints[$route]);
+				}
+			}
+
+			return $endpoints;
+		});
 	}
 
 	/**
 	 *@since 2019.02.28 如不注册类型，直接创建pending状态post时，会有notice级别的错误
 	 *@see wp-includes/post.php @3509
 	 */
-	public function register_post_type() {
+	public static function register_post_type() {
 
 		/*充值记录*/
 		$labels = array(
@@ -147,7 +180,7 @@ class Wnd_Init {
 	/**
 	 *注册自定义post status
 	 **/
-	public function register_post_status() {
+	public static function register_post_status() {
 
 		/**
 		 *@since 2019.03.01 注册自定义状态：success 用于功能型post
@@ -173,42 +206,5 @@ class Wnd_Init {
 			'show_in_admin_all_list'    => false,
 			'show_in_admin_status_list' => false,
 		));
-	}
-
-	// 默认Hook
-	public function hook_init() {
-		// 自定义文章类型及状态
-		add_action('init', array($this, 'register_post_type'));
-		add_action('init', array($this, 'register_post_status'));
-
-		/**
-		 *@since 2019.04.16
-		 *访问后台时候，触发执行清理动作
-		 */
-		add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
-
-		/**
-		 *@since 2019.10.08
-		 *禁用xmlrpc
-		 *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
-		 */
-		add_filter('xmlrpc_enabled', '__return_false');
-
-		/**
-		 *移除WordPress默认的API
-		 *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
-		 *
-		 *@link https://stackoverflow.com/questions/42757726/disable-default-routes-of-wp-rest-api
-		 *@link https://wpreset.com/remove-default-wordpress-rest-api-routes-endpoints/
-		 */
-		add_filter('rest_endpoints', function ($endpoints) {
-			foreach ($endpoints as $route => $endpoint) {
-				if (0 === stripos($route, '/wp/') or 0 === stripos($route, '/oembed/')) {
-					unset($endpoints[$route]);
-				}
-			}
-
-			return $endpoints;
-		});
 	}
 }

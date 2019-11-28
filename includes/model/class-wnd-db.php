@@ -6,7 +6,9 @@ namespace Wnd\Model;
  */
 class Wnd_DB {
 
-	public function __construct() {
+	private static $instance;
+
+	private function __construct() {
 		global $wpdb;
 
 		// 用户数据
@@ -14,6 +16,17 @@ class Wnd_DB {
 
 		// 标签关联分类
 		$wpdb->wnd_terms = $wpdb->prefix . 'wnd_terms';
+	}
+
+	/**
+	 *单例模式
+	 */
+	public static function instance() {
+		if (!self::$instance) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
 	}
 
 	/**
