@@ -15,25 +15,22 @@ class Wnd_Reg_Form extends Wnd_Module {
 
 		// 已登录
 		if (is_user_logged_in()) {
-			return '<script>wnd_alert_msg("已登录！")</script>';
-
+			return self::build_error_massage('已登录');
 		}
 
 		//已关闭注册
 		if (!get_option('users_can_register')) {
-			return '<script>wnd_alert_msg("站点已关闭注册！")</script>';
-
+			return self::build_error_massage('站点已关闭注册');
 		}
 
 		//未开启手机验证
 		if ('phone' == $type and wnd_get_option('wnd', 'wnd_enable_sms') != 1) {
-			return "<script>wnd_alert_msg('当前未配置短信验证！')</script>";
-
+			return self::build_error_massage('当前未配置短信验证');
 		}
 
 		// 关闭了邮箱注册（强制手机验证）
 		if ('email' == $type and 1 == wnd_get_option('wnd', 'wnd_disable_email_reg')) {
-			return "<script>wnd_alert_msg('当前设置禁止邮箱注册！')</script>";
+			return self::build_error_massage('当前设置禁止邮箱注册');
 		}
 
 		$form = new Wnd_Form_User();

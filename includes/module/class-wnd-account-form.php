@@ -10,7 +10,7 @@ class Wnd_Account_Form extends Wnd_Module {
 
 	public static function build() {
 		if (!is_user_logged_in()) {
-			return '<script>wnd_alert_msg(\'请登录\')</script>';
+			return self::build_error_massage('请登录');
 		}
 		if (!wp_get_current_user()->data->user_email) {
 			$html = '<div class="has-text-centered content">';

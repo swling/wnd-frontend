@@ -10,11 +10,8 @@ use Wnd\View\Wnd_Form_User;
 class Wnd_Reset_Password_Form extends Wnd_Module {
 
 	public static function build($type = 'email') {
-		if ($type == 'phone') {
-			//1、验证短信重置密码
-			if (wnd_get_option('wnd', 'wnd_enable_sms') != 1) {
-				return '<script type="text/javascript">wnd_alert_msg(\'短信验证功能未启用！\')</script>';
-			}
+		if ($type == 'phone' and wnd_get_option('wnd', 'wnd_enable_sms') != 1) {
+			return self::build_error_massage('短信验证功能未启用');
 		}
 
 		$form = new Wnd_Form_User();
