@@ -122,7 +122,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			$this->add_text(
 				array(
 					'label'    => '手机',
-					'value'    => $this->user->data->user_email,
+					'value'    => $user_phone,
 					'disabled' => true,
 					'required' => true,
 				)

@@ -25,7 +25,7 @@ class Wnd_Bind_Account extends Wnd_Action_Ajax {
 			$bind->set_auth_code($auth_code);
 			$bind->set_email_or_phone($email_or_phone);
 			$bind->bind();
-			return array('status' => 1, 'msg' => '绑定成功！');
+			return array('status' => 4, 'msg' => '绑定成功！');
 		} catch (Exception $e) {
 			return array('status' => 0, 'msg' => $e->getMessage());
 		}

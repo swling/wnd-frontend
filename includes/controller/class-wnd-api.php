@@ -89,7 +89,7 @@ class Wnd_API {
 		 */
 		if (is_callable(array($class, 'build'))) {
 			try {
-				return $class::build($param);
+				return $param ? $class::build($param) : $class::build();
 			} catch (Exception $e) {
 				return array('status' => 0, 'msg' => $e->getMessage());
 			}
