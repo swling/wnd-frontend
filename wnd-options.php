@@ -71,8 +71,6 @@ function wnd_options()
 						<input type="radio" required="required" name="wnd_static_host" value="local" <?php if (wnd_get_option('wnd', 'wnd_static_host') == 'local') echo 'checked' ?> />
 						jsDelivr
 						<input type="radio" required="required" name="wnd_static_host" value="jsdeliver" <?php if (wnd_get_option('wnd', 'wnd_static_host') == 'jsdeliver') echo 'checked' ?> />
-						BootCDN
-						<input type="radio" required="required" name="wnd_static_host" value="bootcdn" <?php if (wnd_get_option('wnd', 'wnd_static_host') == 'bootcdn') echo 'checked' ?> />
 						关闭
 						<input type="radio" required="required" name="wnd_static_host" value="close" <?php if (wnd_get_option('wnd', 'wnd_static_host') == 'close') echo 'checked' ?> />
 						<p><i>插件前端依赖bulma css框架font-awesome图标，请选择今天资源引入方式，若选择关闭，需要自行设置前端效果</i></p>
