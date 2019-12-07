@@ -13,7 +13,7 @@ class Wnd_Profile_Form extends Wnd_Module {
 		$current_user = wp_get_current_user();
 
 		if (!$current_user->ID) {
-			return self::build_error_massage('请登录');
+			return self::build_error_message('请登录');
 		}
 
 		$form = new Wnd_Form_User();

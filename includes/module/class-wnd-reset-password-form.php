@@ -11,7 +11,7 @@ class Wnd_Reset_Password_Form extends Wnd_Module {
 
 	public static function build($type = 'email') {
 		if ($type == 'phone' and wnd_get_option('wnd', 'wnd_enable_sms') != 1) {
-			return self::build_error_massage('短信验证功能未启用');
+			return self::build_error_message('短信验证功能未启用');
 		}
 
 		$form = new Wnd_Form_User();

@@ -11,7 +11,7 @@ class wnd_admin_posts_panel extends Wnd_Module {
 
 	public static function build(int $posts_per_page = 0) {
 		if (!is_user_logged_in()) {
-			return self::build_error_massage('请登录');
+			return self::build_error_message('请登录');
 		}
 		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 
