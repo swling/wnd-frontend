@@ -11,20 +11,22 @@ class Wnd_Sticky {
 	 *@param $post_id
 	 **/
 	public static function stick_post($post_id) {
+		if (!$post_id) {
+			return;
+		}
+
 		$post_type = get_post_type($post_id);
 		if (!$post_type) {
 			return;
 		}
 
+		// 历史数据及最大限制
 		$max              = wnd_get_option('wnd', 'wnd_max_stick_posts') ?: 10;
-		$old_sticky_posts = wnd_get_option('wnd_sticky_posts', $post_type);
-		$old_sticky_posts = is_array($old_sticky_posts) ? $old_sticky_posts : array();
+		$old_sticky_posts = self::get_sticky_posts($post_type);
 
 		// 创建以post+id作为键名，id作为键值的数组，并合并入数组（注意顺序）
 		$sticky_post      = array('post' . $post_id => $post_id);
 		$new_sticky_posts = array_merge($sticky_post, $old_sticky_posts);
-
-		// 仅保留指定个数元素（按最新）
 		$new_sticky_posts = array_slice($new_sticky_posts, 0, $max);
 
 		return wnd_update_option('wnd_sticky_posts', $post_type, $new_sticky_posts);
@@ -41,10 +43,8 @@ class Wnd_Sticky {
 			return;
 		}
 
-		$sticky_posts = wnd_get_option('wnd_sticky_posts', $post_type);
-		$sticky_posts = is_array($sticky_posts) ? $sticky_posts : array();
-
 		// 移除指定post id
+		$sticky_posts = self::get_sticky_posts($post_type);
 		unset($sticky_posts['post' . $post_id]);
 
 		return wnd_update_option('wnd_sticky_posts', $post_type, $sticky_posts);

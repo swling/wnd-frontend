@@ -25,14 +25,6 @@ use Exception;
 class Wnd_Order extends Wnd_Transaction {
 
 	/**
-	 *@since 2019.08.11
-	 *构造函数
-	 */
-	public function __construct() {
-		parent::__construct();
-	}
-
-	/**
 	 *@since 2019.02.11
 	 *用户本站消费数据(含余额消费，或直接第三方支付消费)
 	 *

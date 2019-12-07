@@ -8,36 +8,6 @@ namespace Wnd\Model;
  */
 class Wnd_Finance {
 
-	// 站点用户ID
-	protected $user_id;
-
-	// 产品ID
-	protected $object_id;
-
-	/**
-	 *@since 2019.08.11
-	 *构造函数
-	 */
-	public function __construct($user_id = 0) {
-		$this->user_id = $user_id ?: get_current_user_id();
-	}
-
-	/**
-	 *@since 2019.10.25
-	 *指定用户
-	 */
-	public function set_user_id($user_id) {
-		$this->user_id = $user_id;
-	}
-
-	/**
-	 *@since 2019.10.25
-	 *指定产品：通常为Post ID
-	 */
-	public function set_object_id($object_id) {
-		$this->object_id = $object_id;
-	}
-
 	/**
 	 *@since 2019.02.11 查询是否已经支付
 	 *@param int 	$user_id 	用户ID

@@ -25,14 +25,6 @@ use Exception;
 class Wnd_Recharge extends Wnd_Transaction {
 
 	/**
-	 *@since 2019.08.11
-	 *构造函数
-	 */
-	public function __construct() {
-		parent::__construct();
-	}
-
-	/**
 	 *@since 2019.01.30
 	 *金额：post_content
 	 *关联：post_parent
