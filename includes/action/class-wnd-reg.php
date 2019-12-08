@@ -50,16 +50,16 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 
 		// 2、数据正确性检测
 		if (strlen($user_login) < 3) {
-			return $value = array('status' => 0, 'msg' => '用户名不能低于3位！');
+			return $value = array('status' => 0, 'msg' => '用户名不能低于3位');
 		}
 		if (is_numeric($user_login)) {
-			return $value = array('status' => 0, 'msg' => '用户名不能是纯数字！');
+			return $value = array('status' => 0, 'msg' => '用户名不能是纯数字');
 		}
 		if (strlen($user_pass) < 6) {
-			return $value = array('status' => 0, 'msg' => '密码不能低于6位！');
+			return $value = array('status' => 0, 'msg' => '密码不能低于6位');
 		}
 		if (!empty($user_pass_repeat) and $user_pass_repeat !== $user_pass_repeat) {
-			return $value = array('status' => 0, 'msg' => '两次输入的密码不匹配！');
+			return $value = array('status' => 0, 'msg' => '两次输入的密码不匹配');
 		}
 
 		// 注册权限过滤挂钩
@@ -106,7 +106,7 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 		$redirect_to  = $_REQUEST['redirect_to'] ?? wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url();
 		$return_array = apply_filters(
 			'wnd_reg_return',
-			array('status' => 3, 'msg' => '注册成功！', 'data' => array('redirect_to' => $redirect_to, 'user_id' => $user_id)),
+			array('status' => 3, 'msg' => '注册成功', 'data' => array('redirect_to' => $redirect_to, 'user_id' => $user_id)),
 			$user_id
 		);
 		return $return_array;

@@ -15,7 +15,7 @@ class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		if (!is_super_admin()) {
-			return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作！');
+			return array('status' => 0, 'msg' => '仅超级管理员可执行当前操作');
 		}
 
 		$user_field   = $_POST['user_field'];
@@ -25,11 +25,11 @@ class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
 		// 根据邮箱，手机，或用户名查询用户
 		$user = wnd_get_user_by($user_field);
 		if (!$user) {
-			return array('status' => 0, 'msg' => '用户不存在！');
+			return array('status' => 0, 'msg' => '用户不存在');
 		}
 
 		if (!is_numeric($total_amount)) {
-			return array('status' => 0, 'msg' => '请输入一个有效的充值金额！');
+			return array('status' => 0, 'msg' => '请输入一个有效的充值金额');
 		}
 
 		// 写入充值记录

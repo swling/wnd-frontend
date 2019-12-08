@@ -70,7 +70,7 @@ class Wnd_Auth {
 			$this->db_field = 'phone';
 
 		} else {
-			throw new Exception('格式不正确！');
+			throw new Exception('格式不正确');
 		}
 	}
 
@@ -118,33 +118,33 @@ class Wnd_Auth {
 	 */
 	protected function check_type() {
 		if (empty($this->email_or_phone)) {
-			throw new Exception('发送地址为空！');
+			throw new Exception('发送地址为空');
 		}
 
 		// 必须指定类型
 		if (!$this->type) {
-			throw new Exception('未指定验证类型！');
+			throw new Exception('未指定验证类型');
 		}
 
 		// 注册
 		$temp_user = wnd_get_user_by($this->email_or_phone);
 		if ($this->type == 'register' and $temp_user) {
-			throw new Exception($this->text . '已注册！');
+			throw new Exception($this->text . '已注册');
 		}
 
 		// 绑定
 		if ($this->type == 'bind') {
 			if (!$this->user->ID) {
-				throw new Exception('请未登录后再绑定！');
+				throw new Exception('请未登录后再绑定');
 			}
 			if ($temp_user) {
-				throw new Exception($this->text . '已注册！');
+				throw new Exception($this->text . '已注册');
 			}
 		}
 
 		// 找回密码
 		if ($this->type == 'reset_password' and !$temp_user) {
-			throw new Exception($this->text . '尚未注册！');
+			throw new Exception($this->text . '尚未注册');
 		}
 	}
 
@@ -167,7 +167,7 @@ class Wnd_Auth {
 
 		// 短信发送必须指定模板
 		if (!$this->is_email and !$this->template) {
-			throw new Exception('未指定短信模板！');
+			throw new Exception('未指定短信模板');
 		}
 
 		// 上次发送短信的时间，防止攻击
@@ -175,7 +175,7 @@ class Wnd_Auth {
 		$send_time = $wpdb->get_var($wpdb->prepare("SELECT time FROM {$wpdb->wnd_users} WHERE {$this->db_field} = %s;", $this->email_or_phone));
 		$send_time = $send_time ?: 0;
 		if ($send_time and (time() - $send_time < 90)) {
-			throw new Exception('操作太频繁，请' . (90 - (time() - $send_time)) . '秒后重试！');
+			throw new Exception('操作太频繁，请' . (90 - (time() - $send_time)) . '秒后重试');
 		}
 
 		return true;
@@ -207,15 +207,15 @@ class Wnd_Auth {
 	 */
 	protected function send_mail_code() {
 		if (!$this->insert()) {
-			throw new Exception('写入数据库失败！');
+			throw new Exception('写入数据库失败');
 		}
 
-		$message = '邮箱验证秘钥【' . $this->auth_code . '】（不含括号），关键凭证，请勿泄露！';
+		$message = '邮箱验证秘钥【' . $this->auth_code . '】（不含括号），关键凭证，请勿泄露';
 		$action  = wp_mail($this->email_or_phone, '验证邮箱', $message);
 		if ($action) {
 			return true;
 		} else {
-			throw new Exception('发送失败，请稍后重试！');
+			throw new Exception('发送失败，请稍后重试');
 		}
 	}
 
@@ -230,7 +230,7 @@ class Wnd_Auth {
 	protected function send_sms_code() {
 		// 写入手机记录
 		if (!$this->insert()) {
-			throw new Exception('数据库写入失败！');
+			throw new Exception('数据库写入失败');
 		}
 
 		if ('tx' == $this->sms_sp) {
@@ -238,7 +238,7 @@ class Wnd_Auth {
 		} elseif ('ali' == $this->sms_sp) {
 			$sms = new Wnd_Sms_Ali();
 		} else {
-			throw new Exception('未指定短信服务商！');
+			throw new Exception('未指定短信服务商');
 		}
 
 		$sms->set_phone($this->email_or_phone);
@@ -265,10 +265,10 @@ class Wnd_Auth {
 	 */
 	public function verify(bool $delete_after_verified = false) {
 		if (empty($this->auth_code)) {
-			throw new Exception('校验失败：请填写验证码！');
+			throw new Exception('校验失败：请填写验证码');
 		}
 		if (empty($this->email_or_phone) and !$this->verify_user_id) {
-			throw new Exception('校验失败：请填写' . $this->text . '！');
+			throw new Exception('校验失败：请填写' . $this->text . '');
 		}
 
 		/**
@@ -289,13 +289,13 @@ class Wnd_Auth {
 		}
 
 		if (!$data) {
-			throw new Exception('校验失败：请先获取验证码！');
+			throw new Exception('校验失败：请先获取验证码');
 		}
 		if (time() - $data->time > $intervals) {
-			throw new Exception('验证码已失效请重新获取！');
+			throw new Exception('验证码已失效请重新获取');
 		}
 		if ($this->auth_code != $data->code) {
-			throw new Exception('校验失败：验证码不正确！');
+			throw new Exception('校验失败：验证码不正确');
 		}
 
 		/**
@@ -319,7 +319,7 @@ class Wnd_Auth {
 	protected function insert() {
 		global $wpdb;
 		if (!$this->email_or_phone) {
-			throw new Exception('未指定邮箱或手机！');
+			throw new Exception('未指定邮箱或手机');
 		}
 
 		$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->wnd_users} WHERE {$this->db_field} = %s", $this->email_or_phone));

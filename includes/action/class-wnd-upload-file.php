@@ -18,7 +18,7 @@ namespace Wnd\Action;
  *		array(
  *			'status' => 1,
  *			'data' => array('url' => $url, 'thumbnail' => $thumbnail ?? 0, 'id' => $file_id),
- *			'msg' => '上传成功！',
+ *			'msg' => '上传成功',
  *		),
  *	);
  *
@@ -28,7 +28,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 	public static function execute(): array{
 		//$_FILES['wnd_file']需要与input name 值匹配
 		if (empty($_FILES['wnd_file'])) {
-			return array('status' => 0, 'msg' => '获取上传文件失败！');
+			return array('status' => 0, 'msg' => '获取上传文件失败');
 		}
 
 		$save_width       = $_POST['save_width'] ?? 0;
@@ -41,7 +41,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 
 		// 上传信息校验
 		if (!$user_id and !$post_parent) {
-			return array('status' => 0, 'msg' => '错误：user ID及post ID均为空！');
+			return array('status' => 0, 'msg' => '错误：user ID及post ID均为空');
 		}
 
 		/**
@@ -49,15 +49,15 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 		 *meta_key 及 post_parent同时为空时，上传文件将成为孤立的的文件，在前端上传附件应该具有明确的用途，应避免这种情况
 		 */
 		if (!$meta_key and !$post_parent) {
-			return array('status' => 0, 'msg' => '错误：meta_key 与 post_parent 同时为空！');
+			return array('status' => 0, 'msg' => '错误：meta_key 与 post_parent 同时为空');
 		}
 
 		if (!wnd_verify_nonce($_POST['meta_key_nonce'], $meta_key)) {
-			return array('status' => 0, 'msg' => '错误：未经允许的meta_key！');
+			return array('status' => 0, 'msg' => '错误：未经允许的meta_key');
 		}
 
 		if ($post_parent and !get_post($post_parent)) {
-			return array('status' => 0, 'msg' => 'post_parent无效！');
+			return array('status' => 0, 'msg' => 'post_parent无效');
 		}
 
 		/**
@@ -137,7 +137,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 					'id'        => $file_id,
 					'post'      => get_post($file_id),
 				),
-				'msg'    => '上传成功！',
+				'msg'    => '上传成功',
 			);
 			$return_array[] = $temp_array;
 

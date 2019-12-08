@@ -124,7 +124,7 @@ class Wnd_Filter {
 			foreach ($this->wp_query_args['post_status'] as $key => $post_status) {
 				if (!in_array($post_status, array('publish', 'close'))) {
 					if (!is_user_logged_in()) {
-						throw new Exception('未登录用户，仅可查询公开信息！');
+						throw new Exception('未登录用户，仅可查询公开信息');
 					} else {
 						$this->wp_query_args['author'] = get_current_user_id();
 					}
@@ -135,7 +135,7 @@ class Wnd_Filter {
 			// 单个查询
 		} elseif (!in_array($this->wp_query_args['post_status'] ?: 'publish', array('publish', 'close'))) {
 			if (!is_user_logged_in()) {
-				throw new Exception('未登录用户，仅可查询公开信息！');
+				throw new Exception('未登录用户，仅可查询公开信息');
 			} else {
 				$this->wp_query_args['author'] = get_current_user_id();
 			}

@@ -23,12 +23,12 @@ class Wnd_Pay_For_Reading extends Wnd_Action_Ajax {
 		}
 		list($free_content, $paid_content) = $content_array;
 		if (!$paid_content) {
-			return array('status' => 0, 'msg' => '获取付费内容出错！');
+			return array('status' => 0, 'msg' => '获取付费内容出错');
 		}
 
 		//1、已付费
 		if (wnd_user_has_paid($user_id, $post_id)) {
-			return array('status' => 0, 'msg' => '请勿重复购买！');
+			return array('status' => 0, 'msg' => '请勿重复购买');
 		}
 
 		// 2、支付失败

@@ -12,11 +12,11 @@ trait Wnd_Create_Order_Trait {
 
 	public static function check_create($post_id, $user_id) {
 		if (!$post_id) {
-			throw new Exception('ID无效！');
+			throw new Exception('ID无效');
 		}
 
 		if (!$user_id) {
-			throw new Exception('用户无效！');
+			throw new Exception('用户无效');
 		}
 
 		$post_price = wnd_get_post_price($post_id);

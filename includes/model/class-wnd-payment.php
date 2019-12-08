@@ -92,7 +92,7 @@ class Wnd_Payment extends Wnd_Transaction {
 	 */
 	public function create() {
 		if (!$this->user_id) {
-			throw new Exception('请登录！');
+			throw new Exception('请登录');
 		}
 
 		// 在线订单 / 充值
@@ -135,7 +135,7 @@ class Wnd_Payment extends Wnd_Transaction {
 			throw new Exception('ID无效：' . $this->ID);
 		}
 		if ($post->post_content != $this->total_amount) {
-			throw new Exception('金额不匹配！');
+			throw new Exception('金额不匹配');
 		}
 
 		// 定义变量
@@ -148,7 +148,7 @@ class Wnd_Payment extends Wnd_Transaction {
 			return $this->ID;
 		}
 		if ($post->post_status != 'pending') {
-			throw new Exception('订单状态无效！');
+			throw new Exception('订单状态无效');
 		}
 
 		// 更新 订单/充值

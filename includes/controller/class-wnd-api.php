@@ -75,7 +75,7 @@ class Wnd_API {
 	 */
 	public static function handle_interface() {
 		if (!isset($_GET['module'])) {
-			return array('status' => 0, 'msg' => '未定义UI响应！');
+			return array('status' => 0, 'msg' => '未定义UI响应');
 		}
 
 		$class_name = stripslashes_deep($_GET['module']);
@@ -94,7 +94,7 @@ class Wnd_API {
 				return array('status' => 0, 'msg' => $e->getMessage());
 			}
 		} else {
-			return array('status' => 0, 'msg' => '无效的UI请求！');
+			return array('status' => 0, 'msg' => '无效的UI请求');
 		}
 	}
 
@@ -111,7 +111,7 @@ class Wnd_API {
 	 */
 	public static function handle_rest_api(): array{
 		if (!isset($_REQUEST['action'])) {
-			return array('status' => 0, 'msg' => '未指定API响应！');
+			return array('status' => 0, 'msg' => '未指定API响应');
 		}
 
 		$class_name = stripslashes_deep($_REQUEST['action']);
@@ -120,7 +120,7 @@ class Wnd_API {
 
 		// nonce校验：action
 		if (!wnd_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $_REQUEST['action'])) {
-			return array('status' => 0, 'msg' => '安全校验失败！');
+			return array('status' => 0, 'msg' => '安全校验失败');
 		}
 
 		/**
@@ -134,7 +134,7 @@ class Wnd_API {
 				return array('status' => 0, 'msg' => $e->getMessage());
 			}
 		} else {
-			return array('status' => 0, 'msg' => 'API请求不合规！');
+			return array('status' => 0, 'msg' => 'API请求不合规');
 		}
 	}
 

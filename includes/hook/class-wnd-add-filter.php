@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Hook;
 
+use Exception;
 use Wnd\Model\Wnd_Auth;
 
 /**
@@ -32,7 +33,7 @@ class Wnd_Add_Filter {
 	 */
 	public static function filter_can_reg($can_array) {
 		if (!get_option('users_can_register')) {
-			return array('status' => 0, 'msg' => '站点已关闭注册！');
+			return array('status' => 0, 'msg' => '站点已关闭注册');
 		}
 
 		// 验证:手机或邮箱 验证码

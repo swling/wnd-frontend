@@ -191,7 +191,7 @@ apply_filters('wnd_can_login', array('status'=>1,'msg'=>'默认通过'));
 ###用户更新资料
 apply_filters('wnd_can_update_profile', array('status'=>1,'msg'=>'默认通过'));
 ####返回值过滤
-apply_filters('wnd_update_profile_return', array('status' => 1, 'msg' => '更新成功！'), $user_id);
+apply_filters('wnd_update_profile_return', array('status' => 1, 'msg' => '更新成功'), $user_id);
 
 ##用户更新账户：邮箱，密码
 apply_filters('wnd_can_update_account', array('status'=>1,'msg'=>'默认通过'));

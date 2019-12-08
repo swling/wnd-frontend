@@ -47,7 +47,7 @@ class Wnd_Sms_Ali extends Wnd_Sms {
 
 		// 返回结果
 		if (!$request) {
-			throw new Exception('短信请求发送失败！');
+			throw new Exception('短信请求发送失败');
 
 		} elseif ($request->Code != 'OK') {
 			throw new Exception('错误：' . $request->Code);

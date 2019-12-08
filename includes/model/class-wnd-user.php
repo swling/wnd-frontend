@@ -41,7 +41,7 @@ class Wnd_User {
 			$this_user   = wp_get_current_user();
 			$may_be_user = self::get_user_by_openid($open_id);
 			if ($may_be_user and $may_be_user->ID != $this_user->ID) {
-				exit('OpenID已被其他账户占用！');
+				exit('OpenID已被其他账户占用');
 			}
 
 			if ($avatar_url) {
@@ -372,7 +372,7 @@ class Wnd_User {
 	 */
 	public static function mail($to, $subject, $message) {
 		if (!get_user_by('id', $to)) {
-			return array('status' => 0, 'msg' => '用户不存在！');
+			return array('status' => 0, 'msg' => '用户不存在');
 		}
 
 		$postarr = array(

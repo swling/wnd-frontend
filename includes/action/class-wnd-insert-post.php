@@ -43,12 +43,12 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		if ($update_id) {
 			$update_post = get_post($update_id);
 			if (!$update_post) {
-				return array('status' => 0, 'msg' => 'ID无效！');
+				return array('status' => 0, 'msg' => 'ID无效');
 			}
 
 			// 更新权限过滤
 			if (!current_user_can('edit_post', $update_id)) {
-				return array('status' => 0, 'msg' => '权限错误！');
+				return array('status' => 0, 'msg' => '权限错误');
 			}
 
 			// 更新文章时post type 及 post name需特殊处理
@@ -65,7 +65,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 			 *attachment仅允许更新，而不能直接写入（写入应在文件上传时完成）
 			 */
 			if ('attachment' == $post_type) {
-				return array('status' => 0, 'msg' => '未指定文件！');
+				return array('status' => 0, 'msg' => '未指定文件');
 			}
 		}
 
@@ -82,7 +82,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 
 		// 限制ajax可以创建的post类型，避免功能型post被意外创建，功能型post应通常具有更复杂的权限控制，并wp_insert_post创建
 		if (!in_array($post_type, wnd_get_allowed_post_types())) {
-			return array('status' => 0, 'msg' => '类型无效！');
+			return array('status' => 0, 'msg' => '类型无效');
 		}
 
 		// 写入及更新权限过滤
@@ -116,7 +116,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		if ($redirect_to) {
 			$return_array = array(
 				'status' => 3,
-				'msg'    => '发布成功！',
+				'msg'    => '发布成功',
 				'data'   => array(
 					'id'          => $post_id,
 					'url'         => $permalink,
@@ -126,7 +126,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		} elseif ($update_id) {
 			$return_array = array(
 				'status' => 2,
-				'msg'    => '发布成功！',
+				'msg'    => '发布成功',
 				'data'   => array(
 					'id'  => $post_id,
 					'url' => $permalink,
@@ -135,7 +135,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		} else {
 			$return_array = array(
 				'status' => 3,
-				'msg'    => '发布成功！',
+				'msg'    => '发布成功',
 				'data'   => array(
 					'id'          => $post_id,
 					'url'         => $permalink,

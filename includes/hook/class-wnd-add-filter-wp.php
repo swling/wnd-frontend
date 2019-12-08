@@ -168,7 +168,7 @@ class Wnd_Add_Filter_WP {
 					$msg .= '&nbsp;&nbsp;';
 					$msg .= '<a class="button ' . $primary_color . ' is-outlined" onclick="wnd_ajax_modal(\'wnd_user_recharge_form\')">余额充值</a>';
 				} else {
-					$msg .= '余额不足！';
+					$msg .= '余额不足';
 				}
 				$msg .= '</div></div>';
 
@@ -236,7 +236,7 @@ class Wnd_Add_Filter_WP {
 				$msg .= '&nbsp;&nbsp;';
 				$msg .= '<a class="button ' . $primary_color . ' is-outlined" onclick="wnd_ajax_modal(\'wnd_user_recharge_form\')">余额充值</a>';
 			} else {
-				$msg .= '余额不足！';
+				$msg .= '余额不足';
 			}
 			$msg .= '</div></div>';
 

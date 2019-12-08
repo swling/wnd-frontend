@@ -37,10 +37,10 @@ function wndt_ajax_add_favorite() {
 		return array(
 			'status' => 2,
 			'data'   => '<span class="icon"><i class="fas fa-heart" title="取消收藏"></i></span>',
-			'msg'    => '收藏成功！',
+			'msg'    => '收藏成功',
 		);
 	} else {
-		return array('status' => 0, 'msg' => '操作失败！');
+		return array('status' => 0, 'msg' => '操作失败');
 	}
 }
 
@@ -80,12 +80,12 @@ function wndt_ajax_remove_favorite() {
 		return array(
 			'status' => 2,
 			'data'   => '<span class="icon"><i class="far fa-heart" title="添加收藏"></i></span>',
-			'msg'    => '取消收藏！',
+			'msg'    => '取消收藏',
 		);
 	} else {
 		return array(
 			'status' => 0,
-			'msg'    => '操作失败！',
+			'msg'    => '操作失败',
 		);
 	}
 }

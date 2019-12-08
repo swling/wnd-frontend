@@ -12,7 +12,7 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 	public static function build($post_id = 0) {
 		$post = get_post($post_id);
 		if (!$post) {
-			return 'ID无效！';
+			return 'ID无效';
 		}
 
 		switch ($post->post_status) {

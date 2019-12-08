@@ -23,7 +23,7 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 		$user    = wp_get_current_user();
 		$user_id = $user->ID;
 		if (!$user_id) {
-			return array('status' => 0, 'msg' => '获取用户ID失败！');
+			return array('status' => 0, 'msg' => '获取用户ID失败');
 		}
 
 		// 实例化WndWP表单数据处理对象
@@ -68,6 +68,6 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 		do_action('wnd_update_profile', $user_id);
 
 		// 返回值过滤
-		return apply_filters('wnd_update_profile_return', array('status' => 1, 'msg' => '更新成功！'), $user_id);
+		return apply_filters('wnd_update_profile_return', array('status' => 1, 'msg' => '更新成功'), $user_id);
 	}
 }

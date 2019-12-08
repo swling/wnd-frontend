@@ -35,6 +35,6 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		}
 
 		// 支付成功
-		return array('status' => 1, 'msg' => '支付成功！');
+		return array('status' => 1, 'msg' => '支付成功');
 	}
 }

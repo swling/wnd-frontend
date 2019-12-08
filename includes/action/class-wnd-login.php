@@ -27,7 +27,7 @@ class Wnd_Login extends Wnd_Action_Ajax {
 		// 可根据邮箱，手机，或用户名查询用户
 		$user = wnd_get_user_by($username);
 		if (!$user) {
-			return array('status' => 0, 'msg' => '用户不存在！');
+			return array('status' => 0, 'msg' => '用户不存在');
 		}
 
 		// 校验密码并登录
@@ -35,13 +35,13 @@ class Wnd_Login extends Wnd_Action_Ajax {
 			wp_set_current_user($user->ID);
 			wp_set_auth_cookie($user->ID, $remember);
 			if ($redirect_to) {
-				return array('status' => 3, 'msg' => '登录成功！', 'data' => array('redirect_to' => $redirect_to, 'user_id' => $user->ID));
+				return array('status' => 3, 'msg' => '登录成功', 'data' => array('redirect_to' => $redirect_to, 'user_id' => $user->ID));
 			} else {
-				return array('status' => 1, 'msg' => '登录成功！');
+				return array('status' => 1, 'msg' => '登录成功');
 			}
 
 		} else {
-			return array('status' => 0, 'msg' => '账户密码不匹配！');
+			return array('status' => 0, 'msg' => '账户密码不匹配');
 		}
 	}
 }

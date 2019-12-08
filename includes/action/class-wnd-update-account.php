@@ -14,7 +14,7 @@ class Wnd_Update_Account extends Wnd_Action_Ajax {
 		$user    = wp_get_current_user();
 		$user_id = $user->ID;
 		if (!$user_id) {
-			return array('status' => 0, 'msg' => '获取用户ID失败！');
+			return array('status' => 0, 'msg' => '获取用户ID失败');
 		}
 
 		$user_array          = array('ID' => $user_id);
@@ -25,10 +25,10 @@ class Wnd_Update_Account extends Wnd_Action_Ajax {
 		// 修改密码
 		if (!empty($new_password_repeat)) {
 			if (strlen($new_password) < 6) {
-				return array('status' => 0, 'msg' => '新密码不能低于6位！');
+				return array('status' => 0, 'msg' => '新密码不能低于6位');
 
 			} elseif ($new_password_repeat != $new_password) {
-				return array('status' => 0, 'msg' => '两次输入的新密码不匹配！');
+				return array('status' => 0, 'msg' => '两次输入的新密码不匹配');
 
 			} else {
 				$user_array['user_pass'] = $new_password;
@@ -37,7 +37,7 @@ class Wnd_Update_Account extends Wnd_Action_Ajax {
 
 		// 原始密码校验
 		if (!wp_check_password($user_pass, $user->data->user_pass, $user->ID)) {
-			return array('status' => 0, 'msg' => '初始密码错误！');
+			return array('status' => 0, 'msg' => '初始密码错误');
 		}
 
 		// 更新权限过滤挂钩

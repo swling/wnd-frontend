@@ -157,7 +157,7 @@ class Wnd_Add_Action {
 					AlipayPagePay::pay();
 				}
 			} else {
-				wp_die('请登录！', bloginfo('name'));
+				wp_die('请登录', bloginfo('name'));
 			}
 			break;
 

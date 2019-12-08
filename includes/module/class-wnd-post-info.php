@@ -10,7 +10,7 @@ class Wnd_Post_Info extends Wnd_Module {
 	public static function build($post_id = 0) {
 		$post = $post_id ? get_post($post_id) : false;
 		if (!$post) {
-			return 'ID无效！';
+			return 'ID无效';
 		}
 
 		// 站内信阅读后，更新为已读 @since 2019.02.25

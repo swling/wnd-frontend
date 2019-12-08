@@ -19,7 +19,7 @@ class Wnd_User_Bind {
 	public function __construct() {
 		$this->user = wp_get_current_user();
 		if (!$this->user->ID) {
-			throw new Exception('请登录！');
+			throw new Exception('请登录');
 		}
 	}
 
@@ -52,7 +52,7 @@ class Wnd_User_Bind {
 		// 更改邮箱或手机需要验证当前密码、首次绑定不需要
 		$old_bind = ('email' == $this->bind_type) ? $this->user->data->user_email : wnd_get_user_phone($this->user->ID);
 		if ($old_bind and !wp_check_password($this->password, $this->user->data->user_pass, $this->user->ID)) {
-			throw new Exception('当前密码错误！');
+			throw new Exception('当前密码错误');
 		}
 
 		// 核对验证码并绑定
@@ -76,7 +76,7 @@ class Wnd_User_Bind {
 			}
 
 			if (!$bind) {
-				throw new Exception('未知错误！');
+				throw new Exception('未知错误');
 			}
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());

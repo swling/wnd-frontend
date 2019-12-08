@@ -35,10 +35,10 @@ class Wnd_Order extends Wnd_Transaction {
 	 */
 	public function create(bool $is_success = false) {
 		if (!$this->user_id) {
-			throw new Exception('请登录！');
+			throw new Exception('请登录');
 		}
 		if ($this->object_id and !get_post($this->object_id)) {
-			throw new Exception('指定产品无效！');
+			throw new Exception('指定产品无效');
 		}
 
 		// 定义变量
@@ -83,7 +83,7 @@ class Wnd_Order extends Wnd_Transaction {
 		);
 		$ID = wp_insert_post($post_arr);
 		if (is_wp_error($ID) or !$ID) {
-			throw new Exception('创建订单失败！');
+			throw new Exception('创建订单失败');
 		}
 
 		/**
@@ -125,12 +125,12 @@ class Wnd_Order extends Wnd_Transaction {
 	public function verify() {
 		$post = get_post($this->ID);
 		if (!$this->ID or $post->post_type != 'order') {
-			throw new Exception('当前订单ID无效！');
+			throw new Exception('当前订单ID无效');
 		}
 
 		// 订单支付状态检查
 		if ($post->post_status != 'pending') {
-			throw new Exception('订单状态无效！');
+			throw new Exception('订单状态无效');
 		}
 
 		$post_arr = array(
@@ -140,7 +140,7 @@ class Wnd_Order extends Wnd_Transaction {
 		);
 		$ID = wp_update_post($post_arr);
 		if (!$ID or is_wp_error($ID)) {
-			throw new Exception('更新订单失败！');
+			throw new Exception('更新订单失败');
 		}
 
 		/**
