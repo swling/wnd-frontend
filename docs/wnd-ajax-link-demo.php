@@ -1,4 +1,5 @@
 <?php
+use Wnd\Action\Wnd_Action_Ajax;
 use Wnd\View\Wnd_Ajax_Link;
 
 /**
@@ -15,10 +16,10 @@ use Wnd\View\Wnd_Ajax_Link;
  */
 function _wndt_add_favorite($post_id) {
 	$html = new Wnd_Ajax_Link();
-	$html->set_action('wndt_ajax_add_favorite');
+	$html->set_action('wndt_add_favorite');
 	$html->set_text('<span class="icon"><i class="far fa-heart" title="添加收藏"></i></span>');
 	$html->set_param($post_id);
-	$html->set_cancel_action('wndt_ajax_remove_favorite');
+	$html->set_cancel_action('wndt_remove_favorite');
 	$html->set_class('is-small is-danger');
 	return $html->get_html();
 }
@@ -30,17 +31,19 @@ function _wndt_add_favorite($post_id) {
  *操作成功后，再次点击，将执行cancel action
  *函数命名对应：$html->set_action('wndt_ajax_add_favorite');
  */
-function wndt_ajax_add_favorite() {
-	$post_id = $_POST['param'] ?? 0;
+class Wndt_Add_Favorite extends Wnd_Action_Ajax {
+	public static function execute(): array{
+		$post_id = $_POST['param'] ?? 0;
 
-	if (wndt_add_favorite($post_id)) {
-		return array(
-			'status' => 2,
-			'data'   => '<span class="icon"><i class="fas fa-heart" title="取消收藏"></i></span>',
-			'msg'    => '收藏成功',
-		);
-	} else {
-		return array('status' => 0, 'msg' => '操作失败');
+		if (wndt_add_favorite($post_id)) {
+			return array(
+				'status' => 2,
+				'data'   => '<span class="icon"><i class="fas fa-heart" title="取消收藏"></i></span>',
+				'msg'    => '收藏成功',
+			);
+		} else {
+			return array('status' => 0, 'msg' => '操作失败');
+		}
 	}
 }
 
@@ -60,10 +63,10 @@ function wndt_add_favorite($post_id) {
  */
 function _wndt_remove_favorite($post_id) {
 	$html = new Wnd_Ajax_Link();
-	$html->set_action('wndt_ajax_remove_favorite');
+	$html->set_action('wndt_remove_favorite');
 	$html->set_text('<span class="icon"><i class="fas fa-heart" title="取消收藏"></i></span>');
 	$html->set_param($post_id);
-	$html->set_cancel_action('wndt_ajax_add_favorite');
+	$html->set_cancel_action('wndt_add_favorite');
 	$html->set_class('is-small is-danger');
 	return $html->get_html();
 }
@@ -73,20 +76,22 @@ function _wndt_remove_favorite($post_id) {
  *ajax移除收藏
  *控制层
  */
-function wndt_ajax_remove_favorite() {
-	$post_id = $_POST['param'] ?? 0;
+class Wndt_Remove_Favorite extends Wnd_Action_Ajax {
+	public static function execute(): array{
+		$post_id = $_POST['param'] ?? 0;
 
-	if (wndt_remove_favorite($post_id)) {
-		return array(
-			'status' => 2,
-			'data'   => '<span class="icon"><i class="far fa-heart" title="添加收藏"></i></span>',
-			'msg'    => '取消收藏',
-		);
-	} else {
-		return array(
-			'status' => 0,
-			'msg'    => '操作失败',
-		);
+		if (wndt_remove_favorite($post_id)) {
+			return array(
+				'status' => 2,
+				'data'   => '<span class="icon"><i class="far fa-heart" title="添加收藏"></i></span>',
+				'msg'    => '取消收藏',
+			);
+		} else {
+			return array(
+				'status' => 0,
+				'msg'    => '操作失败',
+			);
+		}
 	}
 }
 

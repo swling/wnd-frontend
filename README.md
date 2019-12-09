@@ -109,7 +109,7 @@ API统一将结果转为json格式，输出交付前端处理
 
 ### interface api
 UI请求无需nonce校验需要包含如下参数
-- $_GET['action']：该值为响应当前UI的类名称（不含命名空间）
+- $_GET['module']：该值为响应当前UI的类名称（不含命名空间）
 - $_GET['param']传递给UI类的参数(可选)
 UI类将返回字符串（通常为HTML字符串）交付前端
 
