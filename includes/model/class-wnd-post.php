@@ -162,7 +162,7 @@ class Wnd_Post {
 			foreach ($term_array as $taxonomy => $term) {
 				if ($term != '-1') {
 					//排除下拉菜单为选择的默认值
-					wp_set_post_terms($post_id, $term, $taxonomy, 0);
+					wp_set_post_terms($post_id, $term, $taxonomy, false);
 				}
 			}
 			unset($taxonomy, $term);

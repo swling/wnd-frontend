@@ -142,9 +142,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}
 
 		// 获取当前文章已选择分类id
-		$current_term    = get_the_terms($this->post_id, $taxonomy);
-		$current_term    = $current_term ? reset($current_term) : 0;
-		$current_term_id = $current_term ? $current_term->term_id : 0;
+		$current_terms   = get_the_terms($this->post_id, $taxonomy);
+		$current_terms   = $current_terms ? reset($current_terms) : 0;
+		$current_term_id = $current_terms ? $current_terms->term_id : 0;
 
 		// 获取taxonomy下的term
 		$terms   = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false)) ?: array();
@@ -159,11 +159,40 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			array(
 				'name'     => '_term_' . $taxonomy,
 				'options'  => $options,
-				// 'label' => $taxonomy_object->labels->name,
 				'required' => $required,
 				'checked'  => $current_term_id, //default checked value
 			)
 		);
+	}
+
+	/**
+	 *分类复选框
+	 *
+	 */
+	public function add_post_category_checkbox($taxonomy) {
+		$taxonomy_object = get_taxonomy($taxonomy);
+		if (!$taxonomy_object) {
+			return;
+		}
+
+		// 获取当前文章已选择分类ids
+		$current_terms = get_the_terms($this->post_id, $taxonomy);
+		foreach ($current_terms as $current_term) {
+			$current_term_ids[] = $current_term->term_id;
+		}unset($current_terms, $current_term);
+
+		// 获取taxonomy下的term
+		$terms = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false)) ?: array();
+		$this->add_hidden('_term_' . $taxonomy, '');
+		foreach ($terms as $term) {
+			$html = '<div class="field">';
+			$html .= '<input id="' . $term->term_id . '" type="checkbox" name="_term_' . $taxonomy . '[]" value="' . $term->term_id . '"';
+			$html .= in_array($term->term_id, $current_term_ids) ? ' checked="checked">' : ' >';
+			$html .= '<label  for="' . $term->term_id . '" class="checkbox">' . $term->name . '</label>';
+			$html .= '</div>';
+			$this->add_html($html);
+		}
+		unset($term);
 	}
 
 	public function add_post_tags($taxonomy, $placeholder = '标签', $required = false) {
