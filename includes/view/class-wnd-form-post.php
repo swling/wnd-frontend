@@ -176,7 +176,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}
 
 		// 获取当前文章已选择分类ids
-		$current_terms = get_the_terms($this->post_id, $taxonomy);
+		$current_terms    = get_the_terms($this->post_id, $taxonomy) ?: [];
+		$current_term_ids = [];
 		foreach ($current_terms as $current_term) {
 			$current_term_ids[] = $current_term->term_id;
 		}unset($current_terms, $current_term);
