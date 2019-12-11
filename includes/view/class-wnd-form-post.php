@@ -135,7 +135,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		);
 	}
 
-	public function add_post_category_select($taxonomy, $required = true) {
+	public function add_post_category_select($taxonomy, $label = '', $required = true) {
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
@@ -161,7 +161,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'options'  => $options,
 				'required' => $required,
 				'checked'  => $current_term_id, //default checked value
-				'label'    => $taxonomy_object->label,
+				'label'    => $label,
 			)
 		);
 	}
@@ -170,7 +170,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *分类复选框
 	 *
 	 */
-	public function add_post_category_checkbox($taxonomy, $label = '', $required = false) {
+	public function add_post_category_checkbox($taxonomy, $label = '') {
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
@@ -193,11 +193,10 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 		$this->add_checkbox(
 			array(
-				'name'     => '_term_' . $taxonomy . '[]',
-				'options'  => $options,
-				'checked'  => $current_term_ids,
-				'label'    => $label,
-				'required' => $required,
+				'name'    => '_term_' . $taxonomy . '[]',
+				'options' => $options,
+				'checked' => $current_term_ids,
+				'label'   => $label,
 			)
 		);
 	}
