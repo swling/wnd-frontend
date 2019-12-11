@@ -13,7 +13,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 		parent::__construct();
 	}
 
-	public function add_user_login($label = '用户名', $placeholder = '用户名、手机、邮箱', $required = true) {
+	public function add_user_login($label = '账号', $placeholder = '用户名、手机、邮箱', $required = true) {
 		$this->add_text(
 			array(
 				'name'        => '_user_user_login',

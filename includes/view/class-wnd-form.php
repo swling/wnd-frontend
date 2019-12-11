@@ -642,7 +642,7 @@ class Wnd_Form {
 			return '';
 		}
 
-		return $input_value['required'] ? $input_value['label'] . ' <span class="required">*</span>' : $input_value['label'];
+		return $input_value['required'] ? $input_value['label'] . '<span class="required">*</span>' : $input_value['label'];
 	}
 
 	/**
