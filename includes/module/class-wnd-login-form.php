@@ -10,7 +10,6 @@ use Wnd\View\Wnd_Form_User;
 class Wnd_Login_Form extends Wnd_Module {
 
 	public static function build() {
-		// 已登录
 		if (is_user_logged_in()) {
 			return self::build_error_message('已登录');
 		}
@@ -23,21 +22,16 @@ class Wnd_Login_Form extends Wnd_Module {
 		$form->add_checkbox(
 			array(
 				'name'    => 'remember',
-				'value'   => 1,
-				'label'   => '保持登录',
-				'checked' => '1', //default checked value
+				'options' => array('保持登录' => '1'),
+				'checked' => '1',
 			)
 		);
 		$form->add_hidden('redirect_to', $_SERVER['HTTP_REFERER'] ?? home_url());
-		// 与该表单数据匹配的后端处理函数
 		$form->set_action('wnd_login');
 		$form->set_submit_button('登录');
-		// 以当前函数名设置filter hook
 		$form->set_filter(__CLASS__);
-		// 构造表单
 		$form->build();
 
-		// 输出表单
 		return $form->html;
 	}
 }

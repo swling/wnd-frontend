@@ -161,6 +161,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'options'  => $options,
 				'required' => $required,
 				'checked'  => $current_term_id, //default checked value
+				'label'    => $taxonomy_object->label,
 			)
 		);
 	}
@@ -169,7 +170,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *分类复选框
 	 *
 	 */
-	public function add_post_category_checkbox($taxonomy) {
+	public function add_post_category_checkbox($taxonomy, $label = '', $required = false) {
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
@@ -183,17 +184,22 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}unset($current_terms, $current_term);
 
 		// 获取taxonomy下的term
-		$terms = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false)) ?: array();
-		$this->add_hidden('_term_' . $taxonomy, '');
+		$terms   = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false)) ?: array();
+		$options = [];
 		foreach ($terms as $term) {
-			$html = '<div class="field">';
-			$html .= '<input id="' . $term->term_id . '" type="checkbox" name="_term_' . $taxonomy . '[]" value="' . $term->term_id . '"';
-			$html .= in_array($term->term_id, $current_term_ids) ? ' checked="checked">' : ' >';
-			$html .= '<label  for="' . $term->term_id . '" class="checkbox">' . $term->name . '</label>';
-			$html .= '</div>';
-			$this->add_html($html);
+			$options[$term->name] = $term->term_id;
 		}
 		unset($term);
+
+		$this->add_checkbox(
+			array(
+				'name'     => '_term_' . $taxonomy . '[]',
+				'options'  => $options,
+				'checked'  => $current_term_ids,
+				'label'    => $label,
+				'required' => $required,
+			)
+		);
 	}
 
 	public function add_post_tags($taxonomy, $placeholder = '标签', $required = false) {
@@ -376,10 +382,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	public function add_post_status_select() {
 		$this->add_checkbox(
 			array(
-				'name'  => '_post_post_status',
-				'value' => 'draft',
-				'label' => '存为草稿',
-				'class' => 'switch is-' . self::$second_color,
+				'name'    => '_post_post_status',
+				'options' => array('存为草稿' => 'draft'),
+				'class'   => 'switch is-' . self::$second_color,
 			)
 		);
 	}

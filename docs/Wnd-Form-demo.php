@@ -127,10 +127,10 @@ $form->add_select(
 // checkbox
 $form->add_checkbox(
 	array(
-		'name'    => 'checkbox',
-		'value'   => 1,
+		'name'    => 'checkbox[]',
+		'options' => array('小' => '0.01', '中' => '10', '大' => '100'),
 		'label'   => 'checkbox',
-		'checked' => 1, //default checked
+		'checked' => array('0.01', '100'), // checked
 	)
 );
 
@@ -156,11 +156,11 @@ $form->add_radio(
  */
 $form->add_checkbox(
 	array(
-		'name'    => 'checkbox',
-		'value'   => 1,
-		'label'   => 'checkbox',
-		'checked' => true, //default checked
-		'class'   => "switch is-danger",
+		'name'    => '_usermeta_auto_play',
+		'options' => array('首页自动播放' => '1'),
+		'checked' => wnd_get_user_meta(get_current_user_id(), 'auto_play') ? 1 : 0, //default checked
+		'id'      => 'auto_play',
+		'class'   => 'switch is-danger',
 	)
 );
 

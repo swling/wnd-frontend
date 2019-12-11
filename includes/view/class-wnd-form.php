@@ -403,6 +403,25 @@ class Wnd_Form {
 		return $html;
 	}
 
+	protected function build_checkbox($input_value, $input_key) {
+		$html = '<div' . $this->build_input_id($input_value) . ' class="field">';
+		$html .= '<label class="label">' . $this->build_label($input_value) . '</label>';
+		foreach ($input_value['options'] as $key => $value) {
+			$input_id = md5($key . $input_key);
+			$html .= '<input type="checkbox" id="' . $input_id . '" class="' . $this->get_class($input_value) . '" value="' . $value . '"' . $this->build_input_attr($input_value);
+			if (is_array($input_value['checked'])) {
+				$html .= in_array($value, $input_value['checked']) ? ' checked="checked">' : '>';
+			} else {
+				$html .= ($input_value['checked'] == $value) ? ' checked="checked">' : '>';
+			}
+
+			$html .= '<label for="' . $input_id . '" class="checkbox">' . $key . '</label>';
+		}unset($key, $value);
+		$html .= '</div>';
+
+		return $html;
+	}
+
 	protected function build_hidden($input_value, $input_key) {
 		$html = '<input type="hidden" value="' . $this->get_value($input_value) . '"' . $this->build_input_attr($input_value) . '>';
 		return $html;
@@ -441,16 +460,6 @@ class Wnd_Form {
 			$html .= '<div class="control">' . $input_value['addon_right'] . '</div>';
 		}
 
-		$html .= '</div>';
-		return $html;
-	}
-
-	protected function build_checkbox($input_value, $input_key) {
-		$id   = $input_value['id'] ?: $this->id . '-' . $input_key;
-		$html = '<div class="field">';
-		$html .= '<input id="' . $id . '" type="checkbox" class="' . $this->get_class($input_value) . '" value="' . $this->get_value($input_value) . '"' . $this->build_input_attr($input_value);
-		$html .= $input_value['checked'] ? ' checked="checked">' : ' >';
-		$html .= '<label  for="' . $id . '" class="checkbox">' . $this->build_label($input_value) . '</label>';
 		$html .= '</div>';
 		return $html;
 	}

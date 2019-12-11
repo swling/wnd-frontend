@@ -354,7 +354,8 @@ class Wnd_Form_WP extends Wnd_Form {
 				continue;
 			}
 
-			$this->form_names[] = $input_value['name'];
+			// 可能为多选字段：需要移除'[]'
+			$this->form_names[] = str_replace('[]', '', $input_value['name']);
 		}
 		unset($input_value);
 

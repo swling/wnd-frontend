@@ -52,12 +52,12 @@ class Wnd_Reg_Form extends Wnd_Module {
 			$form->add_email_verify('register');
 		}
 		if (wnd_get_option('wnd', 'wnd_agreement_url') or 1) {
+			$text = '已阅读并同意<a href="' . wnd_get_option('wnd', 'wnd_agreement_url') . '" target="_blank">《注册协议》</a>';
 			$form->add_checkbox(
 				array(
 					'name'     => 'agreement',
-					'value'    => 1,
+					'options'  => array($text => 1),
 					'checked'  => 1,
-					'label'    => '我已阅读并同意注册协议<a href="' . wnd_get_option('wnd', 'wnd_agreement_url') . '" target="_blank">《注册协议》</a>',
 					'required' => 'required',
 				)
 			);
