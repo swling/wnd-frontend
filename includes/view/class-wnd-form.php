@@ -376,7 +376,7 @@ class Wnd_Form {
 			$html .= '<label class="label">' . $this->build_label($input_value) . '</label>';
 		}
 		$html .= '<div class="control">';
-		$html .= '<div' . $this->build_input_id($input_value) . ' class="select"' . $this->get_class($input_value) . '>';
+		$html .= '<div' . $this->build_input_id($input_value) . ' class="select"' . $this->get_class($input_value, true) . '>';
 		$html .= '<select' . $this->build_input_attr($input_value) . '>';
 		foreach ($input_value['options'] as $key => $value) {
 			$checked = ($input_value['checked'] == $value) ? ' selected="selected"' : '';
@@ -449,7 +449,7 @@ class Wnd_Form {
 
 		// input and icon
 		$html .= '<div class="control' . $class . '">';
-		$html .= '<input' . $this->build_input_id($input_value) . ' class="input' . $this->get_class($input_value) . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->build_input_attr($input_value) . '>';
+		$html .= '<input' . $this->build_input_id($input_value) . ' class="input' . $this->get_class($input_value, true) . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->build_input_attr($input_value) . '>';
 
 		$html .= $input_value['icon_left'] ? '<span class="icon is-left">' . $input_value['icon_left'] . '</span>' : '';
 		$html .= $input_value['icon_right'] ? '<span class="icon is-right">' . $input_value['icon_right'] . '</span>' : '';
@@ -545,7 +545,7 @@ class Wnd_Form {
 		if (!empty($input_value['label'])) {
 			$html .= '<label class="label">' . $this->build_label($input_value) . '</label>';
 		}
-		$html .= '<textarea' . $this->build_input_id($input_value) . ' class="textarea' . $this->get_class($input_value) . '"' . $this->build_input_attr($input_value) . '>' . $this->get_value($input_value) . '</textarea>';
+		$html .= '<textarea' . $this->build_input_id($input_value) . ' class="textarea' . $this->get_class($input_value, true) . '"' . $this->build_input_attr($input_value) . '>' . $this->get_value($input_value) . '</textarea>';
 		$html .= '</div>';
 		return $html;
 	}
@@ -555,7 +555,7 @@ class Wnd_Form {
 			return;
 		}
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="button' . $this->get_submit_class() . '">' . $this->submit_text . '</button>';
+		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="button' . $this->get_submit_class(true) . '">' . $this->submit_text . '</button>';
 		$this->html .= '</div>';
 	}
 
@@ -652,15 +652,15 @@ class Wnd_Form {
 		return $input_value['value'] ?? '';
 	}
 
-	protected function get_class($input_value) {
+	protected function get_class($input_value, $space = false) {
 		if ($input_value['class'] ?? false) {
-			return ' ' . $input_value['class'];
+			return $space ? ' ' . $input_value['class'] : $input_value['class'];
 		}
 	}
 
-	protected function get_submit_class() {
+	protected function get_submit_class($space = false) {
 		if ($this->submit_class) {
-			return ' ' . $this->submit_class;
+			return $space ? ' ' . $this->submit_class : $this->submit_class;
 		}
 		return '';
 	}
