@@ -13,14 +13,14 @@ use Wnd\View\Wnd_Form_WP;
  *基于 post parent创建文件上传字段，ajax上传附件并附属到指定post parent
  *attachment post在上传文件后，由WordPress创建
  *后端将附件文件attachment post信息返回
- *@see php: wnd_ajax_upload_file()
+ *@see php: Wnd\Action\Wnd_Upload_File
  *
  *创建父级文件上传字段的同时，创建空白的attachment post form（实际表单是通过这两个表单的字段重新形成）
  *利用JavaScript捕获上传文件后返回的attachment post信息
  *JavaScript捕获新上传的attachment post信息后，首先判断当前表单对应字段是否已有信息，若有值，则不作修改。ID除外。
  *完成对表单字段信息的动态替换后，自动提交一次
  *若需修改信息，则编辑对应字段，手动提交一次
- *@see JavaScript: wnd_ajax_upload_file()
+ *@see JavaScript: $("body").on("change", "[type='file']", function() {});
  *
  *文件替换：
  *指定attachment_id，并调用本函数，为防止上传附件后忘记删除原有文件（操作直观上，这是一次替换），此时文件字段为禁用状态

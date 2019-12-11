@@ -603,18 +603,6 @@ class Wnd_Form {
 				continue;
 			}
 
-			/**
-			 *@since 2019.08.29
-			 *文件上传字段name值添加:[] 以支持多文件上传
-			 */
-			if (
-				in_array($input_value['type'], array('image_upload', 'file_upload')) and
-				'name' == $key
-			) {
-				$attr .= ' ' . $key . '="' . $value . '[]"';
-				continue;
-			}
-
 			if (in_array($key, $bool_attrs)) {
 				$attr .= ' ' . $key . '="' . $key . '"';
 				continue;

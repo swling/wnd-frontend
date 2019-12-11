@@ -385,8 +385,8 @@ class Wnd_Form_WP extends Wnd_Form {
 	protected function build_gallery_upload($args) {
 		// 固定data
 		$args['data']['meta_key']         = 'gallery';
-		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_ajax_upload_file');
-		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_ajax_delete_file');
+		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_upload_file');
+		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_delete_file');
 		$args['data']['meta_key_nonce']   = wnd_create_nonce($args['data']['meta_key']);
 		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
