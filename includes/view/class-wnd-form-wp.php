@@ -65,10 +65,10 @@ class Wnd_Form_WP extends Wnd_Form {
 	/**
 	 *@since 2019.05.26 表单按钮默认配色
 	 */
-	public function set_submit_button($submit_text, $submit_class = '') {
-		$submit_class = $submit_class ?: 'is-' . self::$primary_color;
-		$submit_class .= $this->is_ajax_submit ? ' ajax-submit' : '';
-		parent::set_submit_button($submit_text, $submit_class);
+	public function set_submit_button($text, $class = '', $disabled = false) {
+		$class = $class ?: 'is-' . self::$primary_color;
+		$class .= $this->is_ajax_submit ? ' ajax-submit' : '';
+		parent::set_submit_button($text, $class, $disabled);
 	}
 
 	/**

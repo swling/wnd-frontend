@@ -27,6 +27,8 @@ class Wnd_Form {
 
 	protected $submit_class;
 
+	protected $submit_disabled;
+
 	protected $action;
 
 	protected $method;
@@ -75,9 +77,10 @@ class Wnd_Form {
 	}
 
 	// Submit
-	public function set_submit_button($submit_text, $submit_class = '') {
-		$this->submit_text  = $submit_text;
-		$this->submit_class = $submit_class;
+	public function set_submit_button($text, $class = '', $disabled = false) {
+		$this->submit_text     = $text;
+		$this->submit_class    = $class;
+		$this->submit_disabled = $disabled;
 	}
 
 	// action
@@ -555,7 +558,7 @@ class Wnd_Form {
 			return;
 		}
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="button' . $this->get_submit_class(true) . '">' . $this->submit_text . '</button>';
+		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="button' . $this->get_submit_class(true) . '"' . ($this->submit_disabled ? ' disabled="disabled"' : '') . '>' . $this->submit_text . '</button>';
 		$this->html .= '</div>';
 	}
 

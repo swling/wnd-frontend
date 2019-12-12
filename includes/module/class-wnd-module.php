@@ -13,6 +13,13 @@ abstract class Wnd_Module {
 	abstract public static function build();
 
 	/**
+	 *构建提示信息
+	 */
+	public static function build_message($message) {
+		return '<div class="message is-primary"><div class="message-body has-text-centered">' . $message . '</div></div>';
+	}
+
+	/**
 	 *构建错误提示信息
 	 */
 	public static function build_error_message($message) {
