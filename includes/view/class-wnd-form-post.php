@@ -18,10 +18,6 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 	protected $post_parent;
 
-	protected $thumbnail_width;
-
-	protected $thumbnail_height;
-
 	protected $post;
 
 	static protected $default_post = array(
@@ -88,16 +84,6 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			$this->add_hidden('_post_post_type', $this->post_type);
 			$this->set_action('wnd_insert_post');
 		}
-	}
-
-	/**
-	 *设置表单缩略图尺寸
-	 *@param int 	$width
-	 *@param int 	$height
-	 */
-	public function set_post_thumbnail_size($width, $height) {
-		$this->thumbnail_width  = $width;
-		$this->thumbnail_height = $height;
 	}
 
 	/**
@@ -455,7 +441,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_gallery_upload($args);
 	}
 
-	// 文章表头，屏蔽回车提交
+	/**
+	 *文章表头，屏蔽回车提交
+	 */
 	protected function build_form_header() {
 		$this->add_form_attr('onkeydown', 'if(event.keyCode==13){return false;}');
 		parent::build_form_header();

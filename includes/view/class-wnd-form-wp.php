@@ -196,8 +196,8 @@ class Wnd_Form_WP extends Wnd_Form {
 			'label'          => 'Image upland',
 			'name'           => 'wnd_file',
 			'file_id'        => 0,
-			'thumbnail'      => WND_URL . 'static/images/default.jpg', //默认缩略图
-			'thumbnail_size' => array('height' => '100', 'width' => '100'),
+			'thumbnail'      => WND_URL . 'static/images/default.jpg',
+			'thumbnail_size' => array('width' => $this->thumbnail_width, 'height' => $this->thumbnail_height),
 			'data'           => array(),
 			'delete_button'  => true,
 		);
@@ -213,11 +213,18 @@ class Wnd_Form_WP extends Wnd_Form {
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
+		/**
+		 *@since 2019.12.13
+		 *
+		 *将$args['data']数组拓展为变量
+		 */
+		extract($args['data']);
+
 		// 固定data
 		$args['data']['is_image']         = '1';
 		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_upload_file');
 		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_delete_file');
-		$args['data']['meta_key_nonce']   = wnd_create_nonce($args['data']['meta_key']);
+		$args['data']['meta_key_nonce']   = wnd_create_nonce($meta_key);
 		$args['data']['thumbnail']        = $args['thumbnail'];
 		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
@@ -225,7 +232,7 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// 根据user type 查找目标文件
 		if (!$args['file_id']) {
-			$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
+			$file_id = $post_parent ? wnd_get_post_meta($post_parent, $meta_key) : wnd_get_user_meta($user_id, $meta_key);
 		} else {
 			$file_id = $args['file_id'];
 		}
@@ -233,10 +240,10 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
 		if ($file_id and !$file_url) {
-			if ($args['data']['post_parent']) {
-				wnd_delete_post_meta($args['data']['post_parent'], $args['data']['meta_key']);
+			if ($post_parent) {
+				wnd_delete_post_meta($post_parent, $meta_key);
 			} else {
-				wnd_delete_user_meta($args['data']['user_id'], $args['data']['meta_key']);
+				wnd_delete_user_meta($user_id, $meta_key);
 			}
 		}
 
@@ -264,15 +271,22 @@ class Wnd_Form_WP extends Wnd_Form {
 		);
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
+		/**
+		 *@since 2019.12.13
+		 *
+		 *将$args['data']数组拓展为变量
+		 */
+		extract($args['data']);
+
 		// 固定data
 		$args['data']['upload_nonce']   = wnd_create_nonce('wnd_upload_file');
 		$args['data']['delete_nonce']   = wnd_create_nonce('wnd_delete_file');
-		$args['data']['meta_key_nonce'] = wnd_create_nonce($args['data']['meta_key']);
+		$args['data']['meta_key_nonce'] = wnd_create_nonce($meta_key);
 		$args['data']['method']         = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据meta key 查找目标文件
 		if (!$args['file_id']) {
-			$file_id = $args['data']['post_parent'] ? wnd_get_post_meta($args['data']['post_parent'], $args['data']['meta_key']) : wnd_get_user_meta($args['data']['user_id'], $args['data']['meta_key']);
+			$file_id = $post_parent ? wnd_get_post_meta($post_parent, $meta_key) : wnd_get_user_meta($user_id, $meta_key);
 		} else {
 			$file_id = $args['file_id'];
 		}
@@ -280,10 +294,10 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
 		if ($file_id and !$file_url) {
-			if ($args['data']['post_parent']) {
-				wnd_delete_post_meta($args['data']['post_parent'], $args['data']['meta_key']);
+			if ($post_parent) {
+				wnd_delete_post_meta($post_parent, $meta_key);
 			} else {
-				wnd_delete_user_meta($args['data']['user_id'], $args['data']['meta_key']);
+				wnd_delete_user_meta($user_id, $meta_key);
 			}
 		}
 
@@ -302,7 +316,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	public function add_gallery_upload($args) {
 		$defaults = array(
 			'label'          => 'Gallery',
-			'thumbnail_size' => array('width' => '160', 'height' => '120'),
+			'thumbnail_size' => array('width' => $this->thumbnail_width, 'height' => $this->thumbnail_height),
 			'data'           => array(),
 		);
 		$args = array_merge($defaults, $args);
@@ -392,11 +406,12 @@ class Wnd_Form_WP extends Wnd_Form {
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
 		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;
 
-		// 定义一些本方法需要重复使用的变量
-		$post_parent      = $args['data']['post_parent'];
-		$meta_key         = $args['data']['meta_key'];
-		$thumbnail_width  = $args['thumbnail_size']['width'];
-		$thumbnail_height = $args['thumbnail_size']['height'];
+		/**
+		 *@since 2019.12.13
+		 *
+		 *将$args['data']数组拓展为变量
+		 */
+		extract($args['data']);
 
 		// 根据user type 查找目标文件
 		$images = $post_parent ? wnd_get_post_meta($post_parent, $meta_key) : wnd_get_user_meta($args['data']['user_id'], $meta_key);

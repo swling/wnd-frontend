@@ -164,6 +164,15 @@ $form->add_checkbox(
 	)
 );
 
+/**
+ * @since 2019.12.13
+ * 设置表单默认缩略图尺寸：非保存尺寸
+ * 该尺寸可被具体图片上传字段中：$args['thumbnail_size']参数覆盖
+ *
+ * 如果表单中不同图片上传需要设置不同的缩略图，则重复调用该方法即可覆盖之前的设定
+ */
+$form->set_thumbnail_size(100, 100);
+
 // upload image
 $form->add_image_upload(
 	array(

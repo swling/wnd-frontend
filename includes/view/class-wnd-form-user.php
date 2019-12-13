@@ -7,12 +7,6 @@ namespace Wnd\View;
  */
 class Wnd_Form_User extends Wnd_Form_WP {
 
-	// 初始化构建
-	public function __construct() {
-		// 继承
-		parent::__construct();
-	}
-
 	public function add_user_login($label = '账号', $placeholder = '用户名、手机、邮箱', $required = true) {
 		$this->add_text(
 			array(
@@ -20,7 +14,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 				'value'       => '',
 				'placeholder' => $placeholder,
 				'label'       => $label,
-				'icon_left'   => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
+				'icon_left'   => '<i class="fas fa-user"></i>',
 				'autofocus'   => 'autofocus',
 				'required'    => $required,
 			)
@@ -154,23 +148,22 @@ class Wnd_Form_User extends Wnd_Form_WP {
 	 *@since 2019.04.28 上传字段简易封装
 	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Form_WP
 	 */
-	public function add_user_image_upload($meta_key, $size = array('width' => 200, 'height' => 200), $label = '') {
+	public function add_user_image_upload($meta_key, $save_width = 0, $save_height = 0, $label = '') {
 		if (!$this->user->ID) {
 			$this->add_html('<div class="notification">获取用户ID失败，无法设置图像上传！</div>');
 			return;
 		}
 
 		$args = array(
-			'label'          => $label,
-			'thumbnail_size' => array('width' => $size['width'], 'height' => $size['height']),
-			'thumbnail'      => WND_URL . 'static/images/default.jpg',
-			'data'           => array(
+			'label'         => $label,
+			'thumbnail'     => WND_URL . 'static/images/default.jpg',
+			'data'          => array(
 				'user_id'     => $this->user->ID,
 				'meta_key'    => $meta_key,
-				'save_width'  => $size['width'],
-				'save_height' => $size['height'],
+				'save_width'  => $save_width,
+				'save_height' => $save_height,
 			),
-			'delete_button'  => false,
+			'delete_button' => false,
 		);
 		$this->add_image_upload($args);
 	}
@@ -184,9 +177,9 @@ class Wnd_Form_User extends Wnd_Form_WP {
 		$this->add_file_upload(
 			array(
 				'label' => $label,
-				'data'  => array( // some hidden input,maybe useful in ajax upload
+				'data'  => array(
 					'meta_key' => $meta_key,
-					'user_id'  => $this->user->ID, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+					'user_id'  => $this->user->ID,
 				),
 			)
 		);

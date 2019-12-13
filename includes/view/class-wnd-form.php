@@ -33,6 +33,10 @@ class Wnd_Form {
 
 	protected $method;
 
+	protected $thumbnail_width = 100;
+
+	protected $thumbnail_height = 100;
+
 	public $html;
 
 	protected static $defaults = array(
@@ -74,6 +78,16 @@ class Wnd_Form {
 	public function set_form_title($form_title, $is_title_centered = false) {
 		$this->form_title        = $form_title;
 		$this->is_title_centered = $is_title_centered;
+	}
+
+	/**
+	 *设置表单缩略图尺寸
+	 *@param int 	$width
+	 *@param int 	$height
+	 */
+	public function set_thumbnail_size($width, $height) {
+		$this->thumbnail_width  = $width;
+		$this->thumbnail_height = $height;
 	}
 
 	// Submit
@@ -216,7 +230,7 @@ class Wnd_Form {
 			'name'           => 'file',
 			'label'          => 'Image upland',
 			'thumbnail'      => '',
-			'thumbnail_size' => array('height' => '100', 'width' => '100'),
+			'thumbnail_size' => array('width' => $this->thumbnail_width, 'height' => $this->thumbnail_height),
 			'required'       => null,
 			'file_id'        => 0,
 			'data'           => array(),
@@ -482,7 +496,7 @@ class Wnd_Form {
 		$html .= '<div class="field"><div class="ajax-message"></div></div>';
 
 		$html .= '<div class="field">';
-		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['height'] . '"></a>';
+		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['width'] . '"></a>';
 		$html .= $input_value['delete_button'] ? '<a class="delete" data-id="' . $id . '" data-file_id="' . $input_value['file_id'] . '"></a>' : '';
 		$html .= '<div class="file">';
 		$html .= '<input type="file" class="file-input"' . $data . 'accept="image/*"' . $this->build_input_attr($input_value) . '>';
