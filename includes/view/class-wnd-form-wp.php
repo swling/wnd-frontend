@@ -217,6 +217,10 @@ class Wnd_Form_WP extends Wnd_Form {
 		 *@since 2019.12.13
 		 *
 		 *将$args['data']数组拓展为变量
+		 *$post_parent
+		 *$user_id
+		 *$meta_key
+		 *……
 		 */
 		extract($args['data']);
 
@@ -275,6 +279,11 @@ class Wnd_Form_WP extends Wnd_Form {
 		 *@since 2019.12.13
 		 *
 		 *将$args['data']数组拓展为变量
+		 *
+		 *$post_parent
+		 *$user_id
+		 *$meta_key
+		 *……
 		 */
 		extract($args['data']);
 
@@ -321,10 +330,14 @@ class Wnd_Form_WP extends Wnd_Form {
 		);
 		$args = array_merge($defaults, $args);
 
+		// 相册的meta key为固定值，不接受参数修改
+		unset($args['data']['meta_key']);
+
 		// 合并$data
 		$defaults_data = array(
 			'post_parent' => 0,
 			'user_id'     => $this->user->ID,
+			'meta_key'    => 'gallery',
 			'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
 			'save_height' => 0, //图片文件存储最大过度 0 为不限制
 		);
@@ -397,24 +410,28 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	// 构建相册上传
 	protected function build_gallery_upload($args) {
-		// 固定data
-		$args['data']['meta_key']         = 'gallery';
-		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_upload_file');
-		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_delete_file');
-		$args['data']['meta_key_nonce']   = wnd_create_nonce($args['data']['meta_key']);
-		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
-		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
-		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;
-
 		/**
 		 *@since 2019.12.13
 		 *
 		 *将$args['data']数组拓展为变量
+		 *
+		 *$post_parent
+		 *$user_id
+		 *$meta_key
+		 *……
 		 */
 		extract($args['data']);
 
+		// 固定data
+		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_upload_file');
+		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_delete_file');
+		$args['data']['meta_key_nonce']   = wnd_create_nonce($meta_key);
+		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
+		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
+		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;
+
 		// 根据user type 查找目标文件
-		$images = $post_parent ? wnd_get_post_meta($post_parent, $meta_key) : wnd_get_user_meta($args['data']['user_id'], $meta_key);
+		$images = $post_parent ? wnd_get_post_meta($post_parent, $meta_key) : wnd_get_user_meta($user_id, $meta_key);
 		$images = is_array($images) ? $images : [];
 
 		/**
@@ -448,14 +465,14 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 		foreach ($images as $key => $attachment_id) {
 			$attachment_url = wp_get_attachment_url($attachment_id);
-			$thumbnail_url  = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
+			$thumbnail_url  = wnd_get_thumbnail_url($attachment_url, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']);
 			if (!$attachment_url) {
 				unset($images[$key]); // 在字段数据中取消已经被删除的图片
 				continue;
 			}
 
 			$html .= '<div class="attachment-' . $attachment_id . ' column is-narrow">';
-			$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '"height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
+			$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '"height="' . $args['thumbnail_size']['height'] . '" width="' . $args['thumbnail_size']['width'] . '"></a>';
 			$html .= '<a class="delete" data-id="' . $id . '" data-file_id="' . $attachment_id . '"></a>';
 			$html .= '</div>';
 		}
