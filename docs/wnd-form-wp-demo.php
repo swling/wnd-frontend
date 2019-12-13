@@ -150,7 +150,7 @@ function wnd_demo_form() {
 	$form->add_select(
 		array(
 			'name'     => 'select1',
-			'options'  => array('select1' => 'value1', 'select2' => 'value2'),
+			'options'  => ['select1' => 'value1', 'select2' => 'value2'],
 			'label'    => 'Dropdown1',
 			'required' => false,
 			'checked'  => 'value2', //default checked value
@@ -161,7 +161,7 @@ function wnd_demo_form() {
 	$form->add_select(
 		array(
 			'name'     => 'select2',
-			'options'  => array('select1' => 'value1', 'select2' => 'value2'),
+			'options'  => ['select1' => 'value1', 'select2' => 'value2'],
 			'label'    => 'Dropdown2',
 			'required' => false,
 			'checked'  => 'value2', //default checked value
@@ -174,7 +174,7 @@ function wnd_demo_form() {
 	$form->add_radio(
 		array(
 			'name'     => 'radio',
-			'options'  => array('key1' => 'value1', 'key2' => 'value2'),
+			'options'  => ['key1' => 'value1', 'key2' => 'value2'],
 			'label'    => 'SEX',
 			'required' => false,
 			'checked'  => 'woman', //default checked value
@@ -185,9 +185,9 @@ function wnd_demo_form() {
 	$form->add_checkbox(
 		array(
 			'name'    => 'checkbox[]',
-			'options' => array('小' => '0.01', '中' => '10', '大' => '100'),
+			'options' => ['小' => '0.01', '中' => '10', '大' => '100'],
 			'label'   => 'checkbox',
-			'checked' => array('0.01', '100'), // checked
+			'checked' => ['0.01', '100'], // checked
 		)
 	);
 
@@ -198,7 +198,7 @@ function wnd_demo_form() {
 	$form->add_radio(
 		array(
 			'name'     => 'total_amount',
-			'options'  => array('0.01' => '0.01', '10' => '10'),
+			'options'  => ['0.01' => '0.01', '10' => '10'],
 			'required' => 'required',
 			'checked'  => '0.01', //default checked value
 			'class'    => 'is-checkradio is-danger',
@@ -212,7 +212,7 @@ function wnd_demo_form() {
 	$form->add_checkbox(
 		array(
 			'name'    => '_usermeta_auto_play',
-			'options' => array('首页自动播放' => '1'),
+			'options' => ['首页自动播放' => '1'],
 			'checked' => wnd_get_user_meta(get_current_user_id(), 'auto_play') ? 1 : 0, //default checked
 			'id'      => 'auto_play',
 			'class'   => 'switch is-danger',
@@ -236,7 +236,7 @@ function wnd_demo_form() {
 			'file_id'        => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户id综合查询
 			'label'          => 'Image upload',
 			'thumbnail'      => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
-			'thumbnail_size' => array('width' => 100, 'height' => 100), //thumbnail image size
+			'thumbnail_size' => ['width' => 100, 'height' => 100], //thumbnail image size
 			'data'           => array( // some data on file input, maybe useful in ajax upload
 				'meta_key'    => 'avatar',
 				'save_width'  => '0', //图片文件存储最大宽度 0 为不限制
@@ -274,7 +274,7 @@ function wnd_demo_form() {
 	$form->add_gallery_upload(
 		array(
 			'label'          => '产品相册',
-			'thumbnail_size' => array('height' => '160', 'width' => '120'),
+			'thumbnail_size' => ['height' => '160', 'width' => '120'],
 			'data'           => array(
 				'post_parent' => 1, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
 				'user_id'     => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta

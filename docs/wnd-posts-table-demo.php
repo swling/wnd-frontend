@@ -1,7 +1,7 @@
 <?php
 use Wnd\View\Wnd_Posts_Table;
 
-$query = new WP_Query(array('author' => 1, 'posts_per_page' => 5));
+$query = new WP_Query(['author' => 1, 'posts_per_page' => 5]);
 
 $table = new Wnd_Posts_Table($query, $show_edit = true, $show_preview = true);
 $table->add_column(

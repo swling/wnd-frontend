@@ -15,7 +15,7 @@ class Wnd_Post_Info extends Wnd_Module {
 
 		// 站内信阅读后，更新为已读 @since 2019.02.25
 		if ($post->post_type == 'mail' and $post->post_type !== 'private') {
-			wp_update_post(array('ID' => $post->ID, 'post_status' => 'private'));
+			wp_update_post(['ID' => $post->ID, 'post_status' => 'private']);
 		}
 
 		$html = '<article class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '">';

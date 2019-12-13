@@ -13,10 +13,10 @@ class Wnd_Add_Action {
 	private static $instance;
 
 	private function __construct() {
-		add_action('wnd_upload_file', array(__CLASS__, 'action_on_upload_file'), 10, 3);
-		add_action('wnd_upload_gallery', array(__CLASS__, 'action_on_upload_gallery'), 10, 2);
-		add_action('wnd_delete_file', array(__CLASS__, 'action_on_delete_file'), 10, 3);
-		add_action('wnd_do_action', array(__CLASS__, 'action_on_do_action'), 10);
+		add_action('wnd_upload_file', [__CLASS__, 'action_on_upload_file'], 10, 3);
+		add_action('wnd_upload_gallery', [__CLASS__, 'action_on_upload_gallery'], 10, 2);
+		add_action('wnd_delete_file', [__CLASS__, 'action_on_delete_file'], 10, 3);
+		add_action('wnd_do_action', [__CLASS__, 'action_on_do_action'], 10);
 	}
 
 	/**
@@ -173,14 +173,14 @@ class Wnd_Add_Action {
 			if (($_GET['_wpnonce'] ?? false) and wnd_verify_nonce($_GET['_wpnonce'], $action)) {
 				$namespace = (stripos($action, 'Wndt') === 0) ? 'Wndt\Action' : 'Wnd\Action';
 				$class     = $namespace . '\\' . $action;
-				return is_callable(array($class, 'execute')) ? $class::execute() : exit('未定义控制类' . $class);
+				return is_callable([$class, 'execute']) ? $class::execute() : exit('未定义控制类' . $class);
 
 				//未包含nonce：执行action对应的模块类
 			} else {
 				$namespace = (stripos($action, 'Wndt') === 0) ? 'Wndt\Module' : 'Wnd\Module';
 				$class     = $namespace . '\\' . $action;
 				$param     = $_GET['param'] ?? '';
-				return is_callable(array($class, 'build')) ? $class::build($param) : '';
+				return is_callable([$class, 'build']) ? $class::build($param) : '';
 			}
 			break;
 		}

@@ -61,8 +61,8 @@ class Wnd_Init {
 	// Init
 	private static function init() {
 		// 自定义文章类型及状态
-		add_action('init', array(__CLASS__, 'register_post_type'));
-		add_action('init', array(__CLASS__, 'register_post_status'));
+		add_action('init', [__CLASS__, 'register_post_type']);
+		add_action('init', [__CLASS__, 'register_post_status']);
 
 		/**
 		 *@since 2019.04.16
@@ -116,7 +116,7 @@ class Wnd_Init {
 			 *@see wp-admin/includes/user.php @370
 			 *@since 2019.05.05
 			 */
-			'supports'    => array('title', 'author', 'editor'),
+			'supports'    => ['title', 'author', 'editor'],
 		);
 		register_post_type('recharge', $args);
 
@@ -130,7 +130,7 @@ class Wnd_Init {
 			'public'      => false,
 			'has_archive' => false,
 			'query_var'   => false, //order 为wp_query的排序参数，如果查询参数中包含order排序，会导致冲突，此处需要注销
-			'supports'    => array('title', 'author', 'editor'),
+			'supports'    => ['title', 'author', 'editor'],
 		);
 		register_post_type('order', $args);
 
@@ -144,8 +144,8 @@ class Wnd_Init {
 			'public'      => true,
 			'has_archive' => false,
 			'show_ui'     => false,
-			'supports'    => array('title', 'author', 'editor', 'thumbnail', 'excerpt', 'comments', 'custom-fields'),
-			'rewrite'     => array('slug' => 'mail', 'with_front' => false),
+			'supports'    => ['title', 'author', 'editor', 'thumbnail', 'excerpt', 'comments', 'custom-fields'],
+			'rewrite'     => ['slug' => 'mail', 'with_front' => false],
 		);
 		register_post_type('mail', $args);
 
@@ -158,7 +158,7 @@ class Wnd_Init {
 			'description' => '充值统计',
 			'public'      => false,
 			'has_archive' => false,
-			'supports'    => array('title', 'author', 'editor'),
+			'supports'    => ['title', 'author', 'editor'],
 		);
 		register_post_type('stats-re', $args);
 
@@ -171,7 +171,7 @@ class Wnd_Init {
 			'description' => '消费统计',
 			'public'      => false,
 			'has_archive' => false,
-			'supports'    => array('title', 'author', 'editor'),
+			'supports'    => ['title', 'author', 'editor'],
 		);
 		register_post_type('stats-ex', $args);
 

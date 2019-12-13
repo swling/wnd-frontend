@@ -236,7 +236,7 @@ class Wnd_Finance {
 			$old_money = $stats_post->post_content;
 			$new_money = $old_money + $money;
 			$new_money = number_format($new_money, 2, '.', '');
-			wp_update_post(array('ID' => $stats_post->ID, 'post_content' => $new_money));
+			wp_update_post(['ID' => $stats_post->ID, 'post_content' => $new_money]);
 
 			// 新增统计
 		} else {

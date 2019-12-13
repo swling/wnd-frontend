@@ -10,7 +10,7 @@ class Wnd_Optimization {
 
 	public function __construct() {
 		// 用户注册时，移除部分冗余wp user meta
-		add_filter('insert_user_meta', array(__CLASS__, 'unset_user_meta'), 10, 2);
+		add_filter('insert_user_meta', [__CLASS__, 'unset_user_meta'], 10, 2);
 
 		/**
 		 * 禁止WordPress admin bar
@@ -19,18 +19,18 @@ class Wnd_Optimization {
 		add_filter('show_admin_bar', '__return_false');
 
 		// 邮件名称
-		add_filter('wp_mail_from_name', array(__CLASS__, 'filter_mail_from_name'));
+		add_filter('wp_mail_from_name', [__CLASS__, 'filter_mail_from_name']);
 
 		// 404 SEO
-		add_filter('redirect_canonical', array(__CLASS__, 'filter_redirect_canonical'));
+		add_filter('redirect_canonical', [__CLASS__, 'filter_redirect_canonical']);
 
 		// 对象缓存views字段
-		add_filter('update_post_metadata', array(__CLASS__, 'filter_update_post_metadata'), 10, 5);
-		add_filter('get_post_metadata', array(__CLASS__, 'filter_get_post_metadata'), 10, 4);
+		add_filter('update_post_metadata', [__CLASS__, 'filter_update_post_metadata'], 10, 5);
+		add_filter('get_post_metadata', [__CLASS__, 'filter_get_post_metadata'], 10, 4);
 
 		// 禁用WP默认注册登录
-		add_action('admin_init', array(__CLASS__, 'redirect_non_admin_users'));
-		add_action('login_init', array(__CLASS__, 'redirect_login_form_register'));
+		add_action('admin_init', [__CLASS__, 'redirect_non_admin_users']);
+		add_action('login_init', [__CLASS__, 'redirect_login_form_register']);
 
 		/**
 		 *@since 2019.07.09 移除WordPress定时自动删除“自动草稿”
@@ -41,7 +41,7 @@ class Wnd_Optimization {
 		/**
 		 *@since 2019.01.26 语言包
 		 */
-		add_filter('locale', array(__CLASS__, 'filter_locale'));
+		add_filter('locale', [__CLASS__, 'filter_locale']);
 	}
 
 	/**

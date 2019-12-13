@@ -25,7 +25,7 @@ class Wnd_Sticky {
 		$old_sticky_posts = self::get_sticky_posts($post_type);
 
 		// 创建以post+id作为键名，id作为键值的数组，并合并入数组（注意顺序）
-		$sticky_post      = array('post' . $post_id => $post_id);
+		$sticky_post      = ['post' . $post_id => $post_id];
 		$new_sticky_posts = array_merge($sticky_post, $old_sticky_posts);
 		$new_sticky_posts = array_slice($new_sticky_posts, 0, $max);
 

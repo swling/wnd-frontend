@@ -26,7 +26,7 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 	public static function execute(): array{
 		// 1、数据组成
 		if (empty($_POST)) {
-			return array('status' => 0, 'msg' => '注册信息为空');
+			return ['status' => 0, 'msg' => '注册信息为空'];
 		}
 
 		$user_login       = $_POST['_user_user_login'] ?? wnd_generate_login();
@@ -50,20 +50,20 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 
 		// 2、数据正确性检测
 		if (strlen($user_login) < 3) {
-			return $value = array('status' => 0, 'msg' => '用户名不能低于3位');
+			return $value = ['status' => 0, 'msg' => '用户名不能低于3位'];
 		}
 		if (is_numeric($user_login)) {
-			return $value = array('status' => 0, 'msg' => '用户名不能是纯数字');
+			return $value = ['status' => 0, 'msg' => '用户名不能是纯数字'];
 		}
 		if (strlen($user_pass) < 6) {
-			return $value = array('status' => 0, 'msg' => '密码不能低于6位');
+			return $value = ['status' => 0, 'msg' => '密码不能低于6位'];
 		}
 		if (!empty($user_pass_repeat) and $user_pass_repeat !== $user_pass_repeat) {
-			return $value = array('status' => 0, 'msg' => '两次输入的密码不匹配');
+			return $value = ['status' => 0, 'msg' => '两次输入的密码不匹配'];
 		}
 
 		// 注册权限过滤挂钩
-		$user_can_reg = apply_filters('wnd_can_reg', array('status' => 1, 'msg' => '默认通过'));
+		$user_can_reg = apply_filters('wnd_can_reg', ['status' => 1, 'msg' => '默认通过']);
 		if ($user_can_reg['status'] === 0) {
 			return $user_can_reg;
 		}
@@ -71,14 +71,14 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 		//3、注册新用户
 		$user_id = wp_insert_user($userdata);
 		if (is_wp_error($user_id)) {
-			return array('status' => 0, 'msg' => $user_id->get_error_message());
+			return ['status' => 0, 'msg' => $user_id->get_error_message()];
 		}
 
 		// 实例化WndWP表单数据处理对象
 		try {
 			$form_data = new Wnd_Form_Data();
 		} catch (Exception $e) {
-			return array('status' => 0, 'msg' => $e->getMessage());
+			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 
 		// 写入用户自定义数组meta
@@ -106,7 +106,7 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 		$redirect_to  = $_REQUEST['redirect_to'] ?? wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url();
 		$return_array = apply_filters(
 			'wnd_reg_return',
-			array('status' => 3, 'msg' => '注册成功', 'data' => array('redirect_to' => $redirect_to, 'user_id' => $user_id)),
+			['status' => 3, 'msg' => '注册成功', 'data' => ['redirect_to' => $redirect_to, 'user_id' => $user_id]],
 			$user_id
 		);
 		return $return_array;

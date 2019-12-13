@@ -104,7 +104,7 @@ class Wnd_Posts_Table {
 					continue;
 				}
 
-				if (in_array($post->post_type, array('order', 'recharge', 'stats-re', 'stats-ex')) and 'post_content' == $column['post_field']) {
+				if (in_array($post->post_type, ['order', 'recharge', 'stats-re', 'stats-ex']) and 'post_content' == $column['post_field']) {
 					$this->html .= '<td' . $this->get_the_class($column) . '>' . number_format((float) $post->post_content, 2) . '</td>';
 					continue;
 				}

@@ -80,7 +80,7 @@ function wnd_update_user_meta($user_id, $array_key, $array_value) {
 		return true;
 	}
 
-	$update_array = array($array_key => $array_value);
+	$update_array = [$array_key => $array_value];
 	$old_array    = get_user_meta($user_id, 'wnd_meta', 1);
 	$old_array    = $old_array ? $old_array : [];
 	if (!is_array($old_array)) {
@@ -146,7 +146,7 @@ function wnd_update_post_meta($post_id, $array_key, $array_value) {
 		return true;
 	}
 
-	$update_array = array($array_key => $array_value);
+	$update_array = [$array_key => $array_value];
 	$old_array    = get_post_meta($post_id, 'wnd_meta', 1);
 	$old_array    = $old_array ? $old_array : [];
 	if (!is_array($old_array)) {
@@ -212,7 +212,7 @@ function wnd_update_option($option_name, $array_key, $array_value) {
 		return true;
 	}
 
-	$update_array = array($array_key => $array_value);
+	$update_array = [$array_key => $array_value];
 	$old_array    = get_option($option_name);
 	$old_array    = $old_array ? $old_array : [];
 	if (!is_array($old_array)) {

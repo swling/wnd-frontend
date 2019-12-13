@@ -92,7 +92,7 @@ class Wnd_Auth {
 	 *设置验证类型
 	 */
 	public function set_type($type) {
-		if (!in_array($type, array('register', 'reset_password', 'verify', 'bind'))) {
+		if (!in_array($type, ['register', 'reset_password', 'verify', 'bind'])) {
 			throw new Exception('设定类型无效，请选择：register / reset_password / verify / bind');
 		}
 
@@ -304,7 +304,7 @@ class Wnd_Auth {
 		 *删除的记录必须没有绑定用户
 		 */
 		if ($delete_after_verified) {
-			$wpdb->delete($wpdb->wnd_users, array('ID' => $data->ID, 'user_id' => 0), array('%d'));
+			$wpdb->delete($wpdb->wnd_users, ['ID' => $data->ID, 'user_id' => 0], ['%d']);
 		}
 
 		return true;
@@ -326,16 +326,16 @@ class Wnd_Auth {
 		if ($ID) {
 			$db = $wpdb->update(
 				$wpdb->wnd_users,
-				array('code' => $this->auth_code, 'time' => time()),
-				array($this->db_field => $this->email_or_phone),
-				array('%s', '%d'),
-				array('%s')
+				['code' => $this->auth_code, 'time' => time()],
+				[$this->db_field => $this->email_or_phone],
+				['%s', '%d'],
+				['%s']
 			);
 		} else {
 			$db = $wpdb->insert(
 				$wpdb->wnd_users,
-				array($this->db_field => $this->email_or_phone, 'code' => $this->auth_code, 'time' => time()),
-				array('%s', '%s', '%d')
+				[$this->db_field => $this->email_or_phone, 'code' => $this->auth_code, 'time' => time()],
+				['%s', '%s', '%d']
 			);
 		}
 
@@ -357,19 +357,19 @@ class Wnd_Auth {
 		if ($reg_user_id) {
 			$wpdb->update(
 				$wpdb->wnd_users,
-				array('code' => '', 'time' => time(), 'user_id' => $reg_user_id),
-				array($this->db_field => $this->email_or_phone),
-				array('%s', '%d', '%d'),
-				array('%s')
+				['code' => '', 'time' => time(), 'user_id' => $reg_user_id],
+				[$this->db_field => $this->email_or_phone],
+				['%s', '%d', '%d'],
+				['%s']
 			);
 			//其他操作
 		} else {
 			$wpdb->update(
 				$wpdb->wnd_users,
-				array('code' => '', 'time' => time()),
-				array($this->db_field => $this->email_or_phone),
-				array('%s', '%d'),
-				array('%s')
+				['code' => '', 'time' => time()],
+				[$this->db_field => $this->email_or_phone],
+				['%s', '%d'],
+				['%s']
 			);
 		}
 	}
@@ -383,8 +383,8 @@ class Wnd_Auth {
 		global $wpdb;
 		return $wpdb->delete(
 			$wpdb->wnd_users,
-			array($this->db_field => $this->email_or_phone),
-			array('%s')
+			[$this->db_field => $this->email_or_phone],
+			['%s']
 		);
 	}
 }

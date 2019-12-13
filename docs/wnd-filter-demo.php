@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Filter;
 $is_ajax = is_user_logged_in() ? true : false;
 $filter  = new Wnd_Filter($is_ajax);
 
-$filter->add_post_type_filter(array('company', 'resource', 'post'));
+$filter->add_post_type_filter(['company', 'resource', 'post']);
 
 $filter->add_post_status_filter(
 	array(
@@ -19,23 +19,23 @@ $filter->add_post_status_filter(
 );
 
 // 快速新增主分类查询
-$filter->add_taxonomy_filter(array('taxonomy' => $filter->category_taxonomy));
+$filter->add_taxonomy_filter(['taxonomy' => $filter->category_taxonomy]);
 
 // 分别查询
 $filter->add_taxonomy_filter(
-	array('taxonomy' => 'category')
+	['taxonomy' => 'category']
 );
 
 $filter->add_taxonomy_filter(
-	array('taxonomy' => 'company_cat')
+	['taxonomy' => 'company_cat']
 );
 
 $filter->add_taxonomy_filter(
-	array('taxonomy' => 'resource_cat')
+	['taxonomy' => 'resource_cat']
 );
 
 $filter->add_taxonomy_filter(
-	array('taxonomy' => 'region')
+	['taxonomy' => 'region']
 );
 
 // 相关性标签
@@ -89,7 +89,7 @@ $filter->set_post_template('wnd_post_tpl');
 $filter->set_posts_template('wnd_posts_tpl');
 
 // 新增查询参数：单个或数组
-$filter->add_query($query = array('test_key' => 'test_value'));
+$filter->add_query($query = ['test_key' => 'test_value']);
 $tax_query = array(
 	'relation' => 'AND',
 	array(
@@ -98,7 +98,7 @@ $tax_query = array(
 		'terms'    => 1,
 	),
 );
-$filter->add_query(array('tax_query' => $tax_query));
+$filter->add_query(['tax_query' => $tax_query]);
 
 echo $filter->get_tabs();
 

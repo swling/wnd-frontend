@@ -18,9 +18,9 @@ class Wnd_Tag_Under_Category {
 	 *Hook
 	 */
 	public static function add_hook() {
-		add_action('set_object_terms', array(__CLASS__, 'monitor_object_terms_changes'), 10, 6);
-		add_action('before_delete_post', array(__CLASS__, 'update_tag_under_category_when_post_delete'), 10, 1);
-		add_action('pre_delete_term', array(__CLASS__, 'delete_term'), 10, 2);
+		add_action('set_object_terms', [__CLASS__, 'monitor_object_terms_changes'], 10, 6);
+		add_action('before_delete_post', [__CLASS__, 'update_tag_under_category_when_post_delete'], 10, 1);
+		add_action('pre_delete_term', [__CLASS__, 'delete_term'], 10, 2);
 	}
 
 	/**
@@ -155,7 +155,7 @@ class Wnd_Tag_Under_Category {
 			}
 
 			// 删除记录
-			$wpdb->delete($wpdb->wnd_terms, array('tag_id' => $term_id));
+			$wpdb->delete($wpdb->wnd_terms, ['tag_id' => $term_id]);
 
 			/**
 			 *删除分类
@@ -175,7 +175,7 @@ class Wnd_Tag_Under_Category {
 			}
 
 			// 删除记录
-			$wpdb->delete($wpdb->wnd_terms, array('cat_id' => $term_id));
+			$wpdb->delete($wpdb->wnd_terms, ['cat_id' => $term_id]);
 		}
 	}
 
@@ -201,24 +201,24 @@ class Wnd_Tag_Under_Category {
 
 			// count为0，删除记录 返回
 			if (!$count) {
-				$wpdb->delete($wpdb->wnd_terms, array('ID' => $ID));
+				$wpdb->delete($wpdb->wnd_terms, ['ID' => $ID]);
 				return true;
 			}
 
 			$do_sql = $wpdb->update(
 				$wpdb->wnd_terms, //table
-				array('count' => $count), // data
-				array('ID' => $ID), // where
-				array('%d'), //data format
-				array('%d') //where format
+				['count' => $count], // data
+				['ID' => $ID], // where
+				['%d'], //data format
+				['%d'] //where format
 			);
 
 			//没有记录，且操作为新增，写入数据
 		} elseif ($inc) {
 			$do_sql = $wpdb->insert(
 				$wpdb->wnd_terms,
-				array('cat_id' => $cat_id, 'tag_id' => $tag_id, 'tag_taxonomy' => $tag_taxonomy, 'count' => 1), //data
-				array('%d', '%d', '%s', '%d') // data format
+				['cat_id' => $cat_id, 'tag_id' => $tag_id, 'tag_taxonomy' => $tag_taxonomy, 'count' => 1], //data
+				['%d', '%d', '%s', '%d'] // data format
 			);
 
 			//没有记录无需操作

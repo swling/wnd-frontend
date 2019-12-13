@@ -55,7 +55,7 @@ function sendBatchSms() {
     );
 
     // todo 可选: 上行短信扩展码, 扩展码字段控制在7位或以下，无特殊需求用户请忽略此字段
-    // $params["SmsUpExtendCodeJson"] = json_encode(array("90997","90998"));
+    // $params["SmsUpExtendCodeJson"] = json_encode(["90997","90998"]);
 
 
     // *** 需用户填写部分结束, 以下代码若无必要无需更改 ***

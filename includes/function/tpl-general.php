@@ -64,7 +64,7 @@ function wnd_breadcrumb($font_size = 'is-small') {
 
 		//其他归档页
 	} elseif (is_archive()) {
-		$args = http_build_query(array('taxonomy' => $queried_object->taxonomy, 'orderby' => 'name'));
+		$args = http_build_query(['taxonomy' => $queried_object->taxonomy, 'orderby' => 'name']);
 		$html .= '<li><a onclick="wnd_ajax_modal(\'wnd_terms_list\',\'' . $args . '\')">' . get_taxonomy($queried_object->taxonomy)->label . '</a></li>';
 		$html .= '<li class="is-active"><a>' . $queried_object->name . '</a></li>';
 

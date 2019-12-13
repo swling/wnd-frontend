@@ -61,7 +61,7 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 		// 管理员权限
 		if (wnd_is_manager()) {
 			// 公开的post type可设置置顶
-			if (in_array($post->post_type, get_post_types(array('public' => true)))) {
+			if (in_array($post->post_type, get_post_types(['public' => true]))) {
 				$form->add_html('<div class="field is-grouped is-grouped-centered">');
 				$form->add_radio(
 					array(

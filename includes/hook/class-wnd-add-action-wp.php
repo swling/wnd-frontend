@@ -13,11 +13,11 @@ class Wnd_Add_Action_WP {
 	private static $instance;
 
 	private function __construct() {
-		add_action('user_register', array(__CLASS__, 'action_on_user_register'), 10, 1);
-		add_action('deleted_user', array(__CLASS__, 'action_on_delete_user'), 10, 1);
-		add_action('before_delete_post', array(__CLASS__, 'action_on_before_delete_post'), 10, 1);
-		add_action('post_updated', array(__CLASS__, 'action_on_post_updated'), 10, 3);
-		add_action('add_attachment', array(__CLASS__, 'action_on_add_attachment'), 10, 1);
+		add_action('user_register', [__CLASS__, 'action_on_user_register'], 10, 1);
+		add_action('deleted_user', [__CLASS__, 'action_on_delete_user'], 10, 1);
+		add_action('before_delete_post', [__CLASS__, 'action_on_before_delete_post'], 10, 1);
+		add_action('post_updated', [__CLASS__, 'action_on_post_updated'], 10, 3);
+		add_action('add_attachment', [__CLASS__, 'action_on_add_attachment'], 10, 1);
 
 		/**
 		 *分类关联标签
@@ -68,7 +68,7 @@ class Wnd_Add_Action_WP {
 
 		// 删除自定义用户数据
 		global $wpdb;
-		$wpdb->delete($wpdb->wnd_users, array('user_id' => $user_id));
+		$wpdb->delete($wpdb->wnd_users, ['user_id' => $user_id]);
 	}
 
 	/**

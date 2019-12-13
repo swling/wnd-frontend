@@ -12,8 +12,8 @@ class Wnd_Add_Filter {
 	private static $instance;
 
 	private function __construct() {
-		add_filter('wnd_can_reg', array(__CLASS__, 'filter_can_reg'), 10, 1);
-		add_filter('wnd_insert_post_status', array(__CLASS__, 'filter_post_status'), 10, 3);
+		add_filter('wnd_can_reg', [__CLASS__, 'filter_can_reg'], 10, 1);
+		add_filter('wnd_insert_post_status', [__CLASS__, 'filter_post_status'], 10, 3);
 	}
 
 	/**
@@ -33,7 +33,7 @@ class Wnd_Add_Filter {
 	 */
 	public static function filter_can_reg($can_array) {
 		if (!get_option('users_can_register')) {
-			return array('status' => 0, 'msg' => '站点已关闭注册');
+			return ['status' => 0, 'msg' => '站点已关闭注册'];
 		}
 
 		// 验证:手机或邮箱 验证码
@@ -47,7 +47,7 @@ class Wnd_Add_Filter {
 			$auth->verify();
 			return $can_array;
 		} catch (Exception $e) {
-			return array('status' => 0, 'msg' => $e->getMessage());
+			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 	}
 

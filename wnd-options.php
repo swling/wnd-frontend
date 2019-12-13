@@ -26,7 +26,7 @@ function wnd_options()
 				// 替换空格和中文逗号
 				$value = str_replace(' ', '', $value);
 				$value = str_replace('，', ',', $value);
-				$option_array = array_merge($option_array, array($key => $value));
+				$option_array = array_merge($option_array, [$key => $value]);
 			}
 		}
 		unset($key, $value);

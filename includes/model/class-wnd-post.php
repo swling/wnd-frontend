@@ -78,7 +78,7 @@ class Wnd_Post {
 				'before' => date('Y-m-d H:i', time() - 86400),
 			),
 		);
-		$query_array = array_merge($query_array, array('date_query' => $date_query));
+		$query_array = array_merge($query_array, ['date_query' => $date_query]);
 		unset($query_array['author']);
 		$draft_post_array = get_posts($query_array);
 
@@ -98,7 +98,7 @@ class Wnd_Post {
 
 			//清空之前的附件
 			if ($post_id) {
-				$attachments = get_children(array('post_type' => 'attachment', 'post_parent' => $post_id));
+				$attachments = get_children(['post_type' => 'attachment', 'post_parent' => $post_id]);
 				foreach ($attachments as $attachment) {
 					wp_delete_attachment($attachment->ID, true);
 				}
@@ -239,7 +239,7 @@ class Wnd_Post {
 	 *@return array : post type name数组
 	 */
 	public static function get_allowed_post_types() {
-		$post_types = get_post_types(array('public' => true), 'names', 'and');
+		$post_types = get_post_types(['public' => true], 'names', 'and');
 		// 排除页面/站内信
 		unset($post_types['page'], $post_types['mail']);
 		return apply_filters('wnd_allowed_post_types', $post_types);

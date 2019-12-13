@@ -103,7 +103,7 @@ $form->add_password(
 $form->add_radio(
 	array(
 		'name'     => 'radio',
-		'options'  => array('key1' => 'value1', 'key2' => 'value2'),
+		'options'  => ['key1' => 'value1', 'key2' => 'value2'],
 		'label'    => 'SEX',
 		'required' => false,
 		'checked'  => 'woman', //default checked value
@@ -117,7 +117,7 @@ $form->add_html('<div class="field is-horizontal"><div class="field-body">');
 $form->add_select(
 	array(
 		'name'     => 'select',
-		'options'  => array('select1' => 'value1', 'select2' => 'value2'),
+		'options'  => ['select1' => 'value1', 'select2' => 'value2'],
 		'label'    => 'Dropdown',
 		'required' => false,
 		'checked'  => 'value2', //default checked value
@@ -128,9 +128,9 @@ $form->add_select(
 $form->add_checkbox(
 	array(
 		'name'    => 'checkbox[]',
-		'options' => array('小' => '0.01', '中' => '10', '大' => '100'),
+		'options' => ['小' => '0.01', '中' => '10', '大' => '100'],
 		'label'   => 'checkbox',
-		'checked' => array('0.01', '100'), // checked
+		'checked' => ['0.01', '100'], // checked
 	)
 );
 
@@ -143,7 +143,7 @@ $form->add_html('</div></div>');
 $form->add_radio(
 	array(
 		'name'     => 'total_amount',
-		'options'  => array('0.01' => '0.01', '10' => '10'),
+		'options'  => ['0.01' => '0.01', '10' => '10'],
 		'required' => 'required',
 		'checked'  => '0.01', //default checked value
 		'class'    => 'is-checkradio is-danger',
@@ -157,7 +157,7 @@ $form->add_radio(
 $form->add_checkbox(
 	array(
 		'name'    => '_usermeta_auto_play',
-		'options' => array('首页自动播放' => '1'),
+		'options' => ['首页自动播放' => '1'],
 		'checked' => wnd_get_user_meta(get_current_user_id(), 'auto_play') ? 1 : 0, //default checked
 		'id'      => 'auto_play',
 		'class'   => 'switch is-danger',
@@ -180,7 +180,7 @@ $form->add_image_upload(
 		'name'           => 'file', // file input field name
 		'label'          => 'Image upload',
 		'thumbnail'      => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
-		'thumbnail_size' => array('width' => 100, 'height' => 100), //thumbnail image size
+		'thumbnail_size' => ['width' => 100, 'height' => 100], //thumbnail image size
 		'file_id'        => 10, //data-file-id on delete button，in some situation, you want delete the file
 		'data'           => array( // some data on file input, maybe useful in ajax upload
 			'meta_key'    => 'avatar',
@@ -200,7 +200,7 @@ $form->add_file_upload(
 		'label'         => 'File upland',
 		'file_name'     => 'file name',
 		'file_id'       => 0, //data-file-id on delete button，in some situation, you want delete the file
-		'data'          => array('meta_key' => 'file'), // some data on file input, maybe useful in ajax upload
+		'data'          => ['meta_key' => 'file'], // some data on file input, maybe useful in ajax upload
 		'delete_button' => true,
 		'required'      => 'required',
 	)

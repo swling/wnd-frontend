@@ -6,7 +6,7 @@ use Wnd\Model\Wnd_Tag_Under_Category;
  *@since 2018
  */
 function wnd_list_categories_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $limit = 10, $show_count = false, $hide_empty = 1) {
-	$args  = array('hide_empty' => $hide_empty, 'orderby' => 'count', 'order' => 'DESC');
+	$args  = ['hide_empty' => $hide_empty, 'orderby' => 'count', 'order' => 'DESC'];
 	$terms = get_terms($cat_taxonomy, $args);
 	if (empty($terms) or is_wp_error($terms)) {
 		return;
@@ -67,7 +67,7 @@ function wnd_terms_checkbox($taxonomy, $value = 'slug', $name = '', $require = f
 		$name = $taxonomy;
 	}
 
-	$args  = array('hide_empty' => 0);
+	$args  = ['hide_empty' => 0];
 	$terms = get_terms($taxonomy, $args);
 
 	if (!empty($terms) and !is_wp_error($terms)) {

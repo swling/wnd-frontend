@@ -22,7 +22,7 @@ class Wnd_Login_Form extends Wnd_Module {
 		$form->add_checkbox(
 			array(
 				'name'    => 'remember',
-				'options' => array('保持登录' => '1'),
+				'options' => ['保持登录' => '1'],
 				'checked' => '1',
 			)
 		);

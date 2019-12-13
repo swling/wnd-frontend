@@ -42,7 +42,7 @@ class Wndt_Add_Favorite extends Wnd_Action_Ajax {
 				'msg'    => '收藏成功',
 			);
 		} else {
-			return array('status' => 0, 'msg' => '操作失败');
+			return ['status' => 0, 'msg' => '操作失败'];
 		}
 	}
 }

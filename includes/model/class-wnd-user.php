@@ -59,7 +59,7 @@ class Wnd_User {
 		if (!$user) {
 			$user_login = wnd_generate_login();
 			$user_pass  = wp_generate_password();
-			$user_array = array('user_login' => $user_login, 'user_pass' => $user_pass, 'display_name' => $display_name);
+			$user_array = ['user_login' => $user_login, 'user_pass' => $user_pass, 'display_name' => $display_name];
 			$user_id    = wp_insert_user($user_array);
 
 			if (is_wp_error($user_id)) {
@@ -191,18 +191,18 @@ class Wnd_User {
 		if ($user) {
 			$db = $wpdb->update(
 				$wpdb->wnd_users,
-				array('open_id' => $openid, 'time' => time()),
-				array('ID' => $user->ID),
-				array('%s', '%d'),
-				array('%d')
+				['open_id' => $openid, 'time' => time()],
+				['ID' => $user->ID],
+				['%s', '%d'],
+				['%d']
 			);
 
 			// 写入
 		} else {
 			$db = $wpdb->insert(
 				$wpdb->wnd_users,
-				array('user_id' => $user_id, 'open_id' => $openid, 'time' => time()),
-				array('%d', '%s', '%d')
+				['user_id' => $user_id, 'open_id' => $openid, 'time' => time()],
+				['%d', '%s', '%d']
 			);
 		}
 
@@ -231,24 +231,24 @@ class Wnd_User {
 		if ($user) {
 			$db = $wpdb->update(
 				$wpdb->wnd_users,
-				array('email' => $email, 'time' => time()),
-				array('ID' => $user->ID),
-				array('%s', '%d'),
-				array('%d')
+				['email' => $email, 'time' => time()],
+				['ID' => $user->ID],
+				['%s', '%d'],
+				['%d']
 			);
 
 			// 写入
 		} else {
 			$db = $wpdb->insert(
 				$wpdb->wnd_users,
-				array('user_id' => $user_id, 'email' => $email, 'time' => time()),
-				array('%d', '%s', '%d')
+				['user_id' => $user_id, 'email' => $email, 'time' => time()],
+				['%d', '%s', '%d']
 			);
 		}
 
 		// 更新WordPress账户email
 		if ($db) {
-			wp_update_user(array('ID' => $user_id, 'user_email' => $email));
+			wp_update_user(['ID' => $user_id, 'user_email' => $email]);
 
 			self::clean_wnd_user_caches($user);
 		}
@@ -273,18 +273,18 @@ class Wnd_User {
 		if ($user) {
 			$db = $wpdb->update(
 				$wpdb->wnd_users,
-				array('phone' => $phone, 'time' => time()),
-				array('ID' => $user->ID),
-				array('%s', '%d'),
-				array('%d')
+				['phone' => $phone, 'time' => time()],
+				['ID' => $user->ID],
+				['%s', '%d'],
+				['%d']
 			);
 
 			// 写入
 		} else {
 			$db = $wpdb->insert(
 				$wpdb->wnd_users,
-				array('user_id' => $user_id, 'phone' => $phone, 'time' => time()),
-				array('%d', '%s', '%d')
+				['user_id' => $user_id, 'phone' => $phone, 'time' => time()],
+				['%d', '%s', '%d']
 			);
 		}
 
@@ -372,7 +372,7 @@ class Wnd_User {
 	 */
 	public static function mail($to, $subject, $message) {
 		if (!get_user_by('id', $to)) {
-			return array('status' => 0, 'msg' => '用户不存在');
+			return ['status' => 0, 'msg' => '用户不存在'];
 		}
 
 		$postarr = array(
@@ -425,7 +425,7 @@ class Wnd_User {
 	 *@return array 	文章类型数组
 	 */
 	public static function get_user_panel_post_types() {
-		$post_types = get_post_types(array('public' => true), 'names', 'and');
+		$post_types = get_post_types(['public' => true], 'names', 'and');
 		// 排除页面/附件/站内信
 		unset($post_types['page'], $post_types['attachment'], $post_types['mail']);
 		return apply_filters('wnd_user_panel_post_types', $post_types);

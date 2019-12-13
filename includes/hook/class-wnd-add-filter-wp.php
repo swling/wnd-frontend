@@ -11,13 +11,13 @@ class Wnd_Add_Filter_WP {
 	private static $instance;
 
 	private function __construct() {
-		add_filter('wp_handle_upload_prefilter', array(__CLASS__, 'filter_limit_upload'));
-		add_filter('get_edit_post_link', array(__CLASS__, 'filter_edit_post_link'), 10, 3);
-		add_filter('wp_insert_post_data', array(__CLASS__, 'filter_wp_insert_post_data'), 10, 1);
-		add_filter('wp_insert_attachment_data', array(__CLASS__, 'filter_wp_insert_attachment_data'), 10, 2);
-		add_filter('the_content', array(__CLASS__, 'filter_the_content'), 10, 1);
-		add_filter('get_comment_author_url', array(__CLASS__, 'filter_comment_author_url'), 1, 3);
-		add_filter('get_avatar', array(__CLASS__, 'filter_avatar'), 1, 5);
+		add_filter('wp_handle_upload_prefilter', [__CLASS__, 'filter_limit_upload']);
+		add_filter('get_edit_post_link', [__CLASS__, 'filter_edit_post_link'], 10, 3);
+		add_filter('wp_insert_post_data', [__CLASS__, 'filter_wp_insert_post_data'], 10, 1);
+		add_filter('wp_insert_attachment_data', [__CLASS__, 'filter_wp_insert_attachment_data'], 10, 2);
+		add_filter('the_content', [__CLASS__, 'filter_the_content'], 10, 1);
+		add_filter('get_comment_author_url', [__CLASS__, 'filter_comment_author_url'], 1, 3);
+		add_filter('get_avatar', [__CLASS__, 'filter_avatar'], 1, 5);
 	}
 
 	/**
@@ -194,7 +194,7 @@ class Wnd_Add_Filter_WP {
 		//查找是否有more标签，否则免费部分为空（全文付费）
 		$content_array = explode('<!--more-->', $post->post_content, 2);
 		if (count($content_array) == 1) {
-			$content_array = array('', $post->post_content);
+			$content_array = ['', $post->post_content];
 		}
 		list($free_content, $paid_content) = $content_array;
 

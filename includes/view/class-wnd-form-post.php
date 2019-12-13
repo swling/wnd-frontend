@@ -133,8 +133,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$current_term_id = $current_terms ? $current_terms->term_id : 0;
 
 		// 获取taxonomy下的term
-		$terms   = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false)) ?: [];
-		$options = array('- ' . $taxonomy_object->labels->name . ' -' => -1);
+		$terms   = get_terms($args = ['taxonomy' => $taxonomy, 'hide_empty' => false]) ?: [];
+		$options = ['- ' . $taxonomy_object->labels->name . ' -' => -1];
 		foreach ($terms as $term) {
 			$options[$term->name] = $term->term_id;
 		}
@@ -170,7 +170,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}unset($current_terms, $current_term);
 
 		// 获取taxonomy下的term
-		$terms   = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false)) ?: [];
+		$terms   = get_terms($args = ['taxonomy' => $taxonomy, 'hide_empty' => false]) ?: [];
 		$options = [];
 		foreach ($terms as $term) {
 			$options[$term->name] = $term->term_id;
@@ -368,7 +368,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_checkbox(
 			array(
 				'name'    => '_post_post_status',
-				'options' => array('存为草稿' => 'draft'),
+				'options' => ['存为草稿' => 'draft'],
 				'class'   => 'switch is-' . self::$second_color,
 			)
 		);
@@ -389,7 +389,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 		$args = array(
 			'label'          => $label,
-			'thumbnail_size' => array('width' => $this->thumbnail_width, 'height' => $this->thumbnail_height),
+			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
 			'thumbnail'      => WND_URL . 'static/images/default.jpg',
 			'data'           => array(
 				'post_parent' => $this->post_id,
@@ -430,7 +430,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 		$args = array(
 			'label'          => $label,
-			'thumbnail_size' => array('width' => $this->thumbnail_width, 'height' => $this->thumbnail_height),
+			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
 			'data'           => array(
 				'post_parent' => $this->post_id,
 				'save_width'  => $save_width, //图片文件存储最大宽度 0 为不限制

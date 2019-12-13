@@ -45,7 +45,7 @@ register_deactivation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::uninstall');
  *加载静态资源
  */
 add_action('wp_enqueue_scripts', function () {
-	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.min.js', array('jquery'), WND_VER);
+	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.min.js', ['jquery'], WND_VER);
 
 	// bulma框架及fontawesome图标
 	$static_host = wnd_get_option('wnd', 'wnd_static_host');

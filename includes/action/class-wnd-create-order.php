@@ -16,7 +16,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		$post_id = (int) $_POST['post_id'];
 		$user_id = get_current_user_id();
 
-		$wnd_can_create_order = apply_filters('wnd_can_create_order', array('status' => 1, 'msg' => '默认通过'), $post_id);
+		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => '默认通过'], $post_id);
 		if ($wnd_can_create_order['status'] === 0) {
 			return $wnd_can_create_order;
 		}
@@ -31,10 +31,10 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			$order->set_subject(get_the_title($post_id));
 			$order->create($is_success = true);
 		} catch (Exception $e) {
-			return array('status' => 0, 'msg' => $e->getMessage());
+			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 
 		// 支付成功
-		return array('status' => 1, 'msg' => '支付成功');
+		return ['status' => 1, 'msg' => '支付成功'];
 	}
 }

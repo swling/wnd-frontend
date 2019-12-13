@@ -23,7 +23,7 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 
 		// 防止前端篡改表单：校验验证码类型及接受设备
 		if (!wnd_verify_nonce($_POST['type_nonce'], $is_email ? 'email' . $type : 'sms' . $type)) {
-			return array('status' => 0, 'msg' => '验证设备类型校验失败');
+			return ['status' => 0, 'msg' => '验证设备类型校验失败'];
 		}
 
 		/**
@@ -33,15 +33,15 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 		if ($current_user->ID and $type != 'bind') {
 			$email_or_phone = $is_email ? $current_user->user_email : wnd_get_user_phone($current_user->ID);
 			if (!$email_or_phone) {
-				return array('status' => 0, 'msg' => '当前账户未绑定' . $text);
+				return ['status' => 0, 'msg' => '当前账户未绑定' . $text];
 			}
 		}
 
 		// 检测对应手机或邮箱格式：防止在邮箱绑定中输入手机号，反之亦然
 		if ($is_email and !is_email($email_or_phone)) {
-			return array('status' => 0, 'msg' => '邮箱地址无效');
+			return ['status' => 0, 'msg' => '邮箱地址无效'];
 		} elseif (!$is_email and !wnd_is_phone($email_or_phone)) {
-			return array('status' => 0, 'msg' => '手机号码无效');
+			return ['status' => 0, 'msg' => '手机号码无效'];
 		}
 
 		try {
@@ -50,9 +50,9 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 			$auth->set_email_or_phone($email_or_phone);
 			$auth->set_template($template);
 			$auth->send();
-			return array('status' => 1, 'msg' => '发送成功，请注意查收');
+			return ['status' => 1, 'msg' => '发送成功，请注意查收'];
 		} catch (Exception $e) {
-			return array('status' => 0, 'msg' => $e->getMessage());
+			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 	}
 }

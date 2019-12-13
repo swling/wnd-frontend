@@ -84,7 +84,7 @@ class SmsSenderUtil
      */
     public function calculateSigForTempl($appkey, $random, $curTime, $phoneNumber)
     {
-        $phoneNumbers = array($phoneNumber);
+        $phoneNumbers = [$phoneNumber];
 
         return $this->calculateSigForTemplAndPhoneNumbers($appkey, $random,
             $curTime, $phoneNumbers);

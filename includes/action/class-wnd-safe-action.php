@@ -17,11 +17,11 @@ class Wnd_Safe_Action extends Wnd_Action_Ajax {
 	public static function execute(): array{
 		$method = $_REQUEST['method'] ?? false;
 		if (!$method) {
-			return array('status' => 0, 'msg' => '未指定方法');
+			return ['status' => 0, 'msg' => '未指定方法'];
 		}
 
 		if (!method_exists(__CLASS__, $method)) {
-			return array('status' => 0, 'msg' => '指定方法不可用');
+			return ['status' => 0, 'msg' => '指定方法不可用'];
 		}
 
 		return self::$method();
@@ -40,12 +40,12 @@ class Wnd_Safe_Action extends Wnd_Action_Ajax {
 		// 更新字段信息
 		if (wnd_inc_post_meta($post_id, 'views', 1)) {
 			do_action('wnd_update_views', $post_id);
-			return array('status' => 1, 'msg' => time());
+			return ['status' => 1, 'msg' => time()];
 
 			//字段写入失败，清除对象缓存
 		} else {
 			wp_cache_delete($post_id, 'post_meta');
-			return array('status' => 0, 'msg' => time());
+			return ['status' => 0, 'msg' => time()];
 		}
 	}
 }

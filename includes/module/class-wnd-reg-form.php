@@ -56,7 +56,7 @@ class Wnd_Reg_Form extends Wnd_Module {
 			$form->add_checkbox(
 				array(
 					'name'     => 'agreement',
-					'options'  => array($text => 1),
+					'options'  => [$text => 1],
 					'checked'  => 1,
 					'required' => 'required',
 				)

@@ -13,7 +13,7 @@ class Wnd_API {
 	private static $instance;
 
 	private function __construct() {
-		add_action('rest_api_init', array(__CLASS__, 'register_route'));
+		add_action('rest_api_init', [__CLASS__, 'register_route']);
 	}
 
 	/**
@@ -75,7 +75,7 @@ class Wnd_API {
 	 */
 	public static function handle_interface() {
 		if (!isset($_GET['module'])) {
-			return array('status' => 0, 'msg' => '未定义UI响应');
+			return ['status' => 0, 'msg' => '未定义UI响应'];
 		}
 
 		$class_name = stripslashes_deep($_GET['module']);
@@ -87,14 +87,14 @@ class Wnd_API {
 		 *@since 2019.10.01
 		 *为实现惰性加载，废弃函数支持，改用类
 		 */
-		if (is_callable(array($class, 'build'))) {
+		if (is_callable([$class, 'build'])) {
 			try {
 				return $param ? $class::build($param) : $class::build();
 			} catch (Exception $e) {
-				return array('status' => 0, 'msg' => $e->getMessage());
+				return ['status' => 0, 'msg' => $e->getMessage()];
 			}
 		} else {
-			return array('status' => 0, 'msg' => '无效的UI请求');
+			return ['status' => 0, 'msg' => '无效的UI请求'];
 		}
 	}
 
@@ -111,7 +111,7 @@ class Wnd_API {
 	 */
 	public static function handle_rest_api(): array{
 		if (!isset($_REQUEST['action'])) {
-			return array('status' => 0, 'msg' => '未指定API响应');
+			return ['status' => 0, 'msg' => '未指定API响应'];
 		}
 
 		$class_name = stripslashes_deep($_REQUEST['action']);
@@ -120,21 +120,21 @@ class Wnd_API {
 
 		// nonce校验：action
 		if (!wnd_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $_REQUEST['action'])) {
-			return array('status' => 0, 'msg' => '安全校验失败');
+			return ['status' => 0, 'msg' => '安全校验失败'];
 		}
 
 		/**
 		 *@since 2019.10.01
 		 *为实现惰性加载，使用控制类
 		 */
-		if (is_callable(array($class, 'execute'))) {
+		if (is_callable([$class, 'execute'])) {
 			try {
 				return $class::execute();
 			} catch (Exception $e) {
-				return array('status' => 0, 'msg' => $e->getMessage());
+				return ['status' => 0, 'msg' => $e->getMessage()];
 			}
 		} else {
-			return array('status' => 0, 'msg' => 'API请求不合规');
+			return ['status' => 0, 'msg' => 'API请求不合规'];
 		}
 	}
 
@@ -172,7 +172,7 @@ class Wnd_API {
 		try {
 			$filter = new Wnd_Filter(true);
 		} catch (Exception $e) {
-			return array('status' => 0, 'msg' => $e->getMessage());
+			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 
 		// 执行查询

@@ -18,14 +18,14 @@ class Wnd_Pay_For_Download extends Wnd_Action_Ajax {
 		$price   = get_post_meta($post_id, 'price', true);
 		$user_id = get_current_user_id();
 		if (!$post) {
-			return array('status' => 0, 'msg' => 'ID无效');
+			return ['status' => 0, 'msg' => 'ID无效'];
 		}
 
 		// 获取文章附件
 		$attachment_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
 		$file          = get_attached_file($attachment_id, $unfiltered = true);
 		if (!$file) {
-			return array('status' => 0, 'msg' => '获取文件失败');
+			return ['status' => 0, 'msg' => '获取文件失败'];
 		}
 
 		/**
@@ -42,12 +42,12 @@ class Wnd_Pay_For_Download extends Wnd_Action_Ajax {
 
 		//1、免费，或者已付费
 		if (!$price or wnd_user_has_paid($user_id, $post_id)) {
-			return array('status' => 6, 'msg' => 'ok', 'data' => array('redirect_to' => $download_url));
+			return ['status' => 6, 'msg' => 'ok', 'data' => ['redirect_to' => $download_url]];
 		}
 
 		//2、 作者直接下载
 		if ($post->post_author == get_current_user_id()) {
-			return array('status' => 6, 'msg' => 'ok', 'data' => array('redirect_to' => $download_url));
+			return ['status' => 6, 'msg' => 'ok', 'data' => ['redirect_to' => $download_url]];
 		}
 
 		//3、 付费下载
@@ -66,10 +66,10 @@ class Wnd_Pay_For_Download extends Wnd_Action_Ajax {
 				$recharge->set_total_amount($commission);
 				$recharge->create(true); // 直接写入余额
 			} catch (Exception $e) {
-				return array('status' => 0, 'msg' => $e->getMessage());
+				return ['status' => 0, 'msg' => $e->getMessage()];
 			}
 		}
 
-		return array('status' => 6, 'msg' => 'ok', 'data' => array('redirect_to' => $download_url));
+		return ['status' => 6, 'msg' => 'ok', 'data' => ['redirect_to' => $download_url]];
 	}
 }

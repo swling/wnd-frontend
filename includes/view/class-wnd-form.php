@@ -45,7 +45,7 @@ class Wnd_Form {
 		'name'        => '',
 		'value'       => '',
 		'label'       => null,
-		'options'     => [], //value of select/radio. Example: array(label=>value)
+		'options'     => [], //value of select/radio. Example: [label=>value]
 		'checked'     => null, // checked value of select/radio; bool of checkbox
 
 		'required'    => false,
@@ -230,7 +230,7 @@ class Wnd_Form {
 			'name'           => 'file',
 			'label'          => 'Image upland',
 			'thumbnail'      => '',
-			'thumbnail_size' => array('width' => $this->thumbnail_width, 'height' => $this->thumbnail_height),
+			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
 			'required'       => null,
 			'file_id'        => 0,
 			'data'           => [],
@@ -611,8 +611,8 @@ class Wnd_Form {
 	 *不含：id、class、value
 	 */
 	protected function build_input_attr($input_value) {
-		$bool_attrs   = array('readonly', 'disabled', 'autofocus', 'required');
-		$normal_attrs = array('name', 'placeholder', 'size', 'maxlength', 'min', 'max', 'step', 'pattern');
+		$bool_attrs   = ['readonly', 'disabled', 'autofocus', 'required'];
+		$normal_attrs = ['name', 'placeholder', 'size', 'maxlength', 'min', 'max', 'step', 'pattern'];
 		$attr         = '';
 
 		foreach ($input_value as $key => $value) {
