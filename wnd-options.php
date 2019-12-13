@@ -17,7 +17,7 @@ function wnd_options()
 {
 	if ($_POST and current_user_can('administrator')) {
 		check_admin_referer('wnd_update_options');
-		$option_array = array();
+		$option_array = [];
 		foreach ($_POST as $key => $value) {
 			// 按前缀筛选数组,过滤掉非指定数据
 			if (strpos($key, 'wnd_') === false) {

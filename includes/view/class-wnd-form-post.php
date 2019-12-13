@@ -133,7 +133,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$current_term_id = $current_terms ? $current_terms->term_id : 0;
 
 		// 获取taxonomy下的term
-		$terms   = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false)) ?: array();
+		$terms   = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false)) ?: [];
 		$options = array('- ' . $taxonomy_object->labels->name . ' -' => -1);
 		foreach ($terms as $term) {
 			$options[$term->name] = $term->term_id;
@@ -170,7 +170,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}unset($current_terms, $current_term);
 
 		// 获取taxonomy下的term
-		$terms   = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false)) ?: array();
+		$terms   = get_terms($args = array('taxonomy' => $taxonomy, 'hide_empty' => false)) ?: [];
 		$options = [];
 		foreach ($terms as $term) {
 			$options[$term->name] = $term->term_id;
@@ -189,7 +189,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 	public function add_post_tags($taxonomy, $placeholder = '标签', $required = false) {
 		$taxonomy_object = get_taxonomy($taxonomy);
-		$terms           = get_the_terms($this->post_id, $taxonomy) ?: array();
+		$terms           = get_the_terms($this->post_id, $taxonomy) ?: [];
 		if (is_wp_error($terms)) {
 			return;
 		}

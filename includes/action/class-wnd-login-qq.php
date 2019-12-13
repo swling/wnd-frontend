@@ -53,7 +53,7 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 
 		//解析报文，获取token
 		$response = $response['body'];
-		$params   = array();
+		$params   = [];
 		parse_str($response, $params);
 		$this->token = $params['access_token'] ?? false;
 		if (!$this->token) {

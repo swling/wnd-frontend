@@ -49,7 +49,7 @@ class Wnd_Form_Data {
 
 	// 0、获取WordPress user数据数组
 	public function get_user_array() {
-		$user_array = array();
+		$user_array = [];
 
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_user_') === 0) {
@@ -63,7 +63,7 @@ class Wnd_Form_Data {
 
 	// 1、获取WordPress原生use meta数据数组
 	public function get_wp_user_meta_array() {
-		$wp_user_meta_array = array();
+		$wp_user_meta_array = [];
 
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_wpusermeta_') === 0) {
@@ -77,7 +77,7 @@ class Wnd_Form_Data {
 
 	// 2、获取自定义WndWP user meta数据数组
 	public function get_user_meta_array() {
-		$user_meta_array = array();
+		$user_meta_array = [];
 
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_usermeta_') === 0) {
@@ -91,7 +91,7 @@ class Wnd_Form_Data {
 
 	// 3、获取WordPress原生post meta数据数组
 	public function get_post_array() {
-		$post_array = array();
+		$post_array = [];
 
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_post_') === 0) {
@@ -105,7 +105,7 @@ class Wnd_Form_Data {
 
 	// 4、获取WordPress原生post meta数据数组
 	public function get_wp_post_meta_array() {
-		$wp_post_meta_array = array();
+		$wp_post_meta_array = [];
 
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_wpmeta_') === 0) {
@@ -119,7 +119,7 @@ class Wnd_Form_Data {
 
 	// 5、获取WndWP post meta数据数组
 	public function get_post_meta_array() {
-		$post_meta_array = array();
+		$post_meta_array = [];
 
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_meta_') === 0) {
@@ -133,7 +133,7 @@ class Wnd_Form_Data {
 
 	// 6、获取WordPress分类：term数组
 	public function get_term_array() {
-		$term_array = array();
+		$term_array = [];
 
 		foreach ($this->form_data as $key => $value) {
 			if (strpos($key, '_term_') === 0) {

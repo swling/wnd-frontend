@@ -80,7 +80,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 		 *@since 2019.05.06 改写
 		 *遍历文件上传
 		 */
-		$return_array = array(); // 定义图片信息返回数组
+		$return_array = []; // 定义图片信息返回数组
 		$files        = $_FILES['wnd_file']; //暂存原始上传信息，后续将重写$_FILES全局变量以适配WordPress上传方式
 
 		foreach ($files['name'] as $key => $value) {

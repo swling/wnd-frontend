@@ -10,7 +10,7 @@ use WP_Query;
  *@param bool 		$show_preview 		是否显示编辑链接
  */
 class Wnd_Posts_Table {
-	protected $columns = array();
+	protected $columns = [];
 	protected $query;
 	protected $show_preview;
 	protected $show_edit;

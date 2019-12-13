@@ -62,7 +62,7 @@ class SmsSenderUtil
     public function phoneNumbersToArray($nationCode, $phoneNumbers)
     {
         $i = 0;
-        $tel = array();
+        $tel = [];
         do {
             $telElement = new \stdClass();
             $telElement->nationcode = $nationCode;

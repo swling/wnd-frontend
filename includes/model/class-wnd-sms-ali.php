@@ -13,7 +13,7 @@ class Wnd_Sms_Ali extends Wnd_Sms {
 	 * 发送短信
 	 */
 	public function send() {
-		$params                 = array();
+		$params                 = [];
 		$params['PhoneNumbers'] = $this->phone;
 		$params['SignName']     = $this->sign_name;
 		$params['TemplateCode'] = $this->template;

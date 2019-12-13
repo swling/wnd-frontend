@@ -16,7 +16,7 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	protected $user;
 	protected $filter     = null;
-	protected $form_names = array();
+	protected $form_names = [];
 	protected $message    = null;
 	protected $is_ajax_submit;
 
@@ -415,7 +415,7 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// 根据user type 查找目标文件
 		$images = $post_parent ? wnd_get_post_meta($post_parent, $meta_key) : wnd_get_user_meta($args['data']['user_id'], $meta_key);
-		$images = is_array($images) ? $images : array();
+		$images = is_array($images) ? $images : [];
 
 		/**
 		 *@since 2019.05.06 构建 html

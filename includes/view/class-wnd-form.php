@@ -13,13 +13,13 @@ class Wnd_Form {
 
 	protected $id;
 
-	protected $form_attr = array();
+	protected $form_attr = [];
 
 	protected $form_title;
 
 	protected $is_title_centered = false;
 
-	protected $input_values = array();
+	protected $input_values = [];
 
 	protected $with_upload;
 

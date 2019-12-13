@@ -59,7 +59,7 @@ class Wnd_Sticky {
 	 **/
 	public static function get_sticky_posts($post_type, $number = -1): array{
 		$sticky_posts = wnd_get_option('wnd_sticky_posts', $post_type);
-		$sticky_posts = is_array($sticky_posts) ? $sticky_posts : array();
+		$sticky_posts = is_array($sticky_posts) ? $sticky_posts : [];
 
 		// 检测post是否有效
 		foreach ($sticky_posts as $key => $sticky_post) {

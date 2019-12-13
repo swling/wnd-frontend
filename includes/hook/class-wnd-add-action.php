@@ -71,7 +71,7 @@ class Wnd_Add_Action {
 			return;
 		}
 
-		$images = array();
+		$images = [];
 		foreach ($image_array as $image_info) {
 			// 上传失败的图片跳出
 			if ($image_info['status'] === 0) {
@@ -84,7 +84,7 @@ class Wnd_Add_Action {
 		unset($image_array, $image_info);
 
 		$old_images = wnd_get_post_meta($post_parent, 'gallery');
-		$old_images = is_array($old_images) ? $old_images : array();
+		$old_images = is_array($old_images) ? $old_images : [];
 
 		// 合并数组，注意新旧数据顺序 array_merge($images, $old_images) 表示将旧数据合并到新数据，因而新上传的在顶部，反之在尾部
 		$new_images = array_merge($images, $old_images);
@@ -106,7 +106,7 @@ class Wnd_Add_Action {
 		if ($meta_key == 'gallery' and $post_parent) {
 			// 从相册数组中删除当前图片
 			$images = wnd_get_post_meta($post_parent, 'gallery');
-			$images = is_array($images) ? $images : array();
+			$images = is_array($images) ? $images : [];
 			unset($images['img' . $attach_id]);
 			wnd_update_post_meta($post_parent, 'gallery', $images);
 			return;

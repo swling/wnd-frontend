@@ -37,7 +37,7 @@ class Wnd_Filter {
 	 * 将在筛选容器，及分页容器上出现，以绑定点击事件，发送到api接口
 	 * 以data-{key}="{value}"形式出现，ajax请求中，将转化为 url请求参数 ?{key}={value}
 	 */
-	protected $add_query = array();
+	protected $add_query = [];
 
 	// meta 查询参数需要供current filter查询使用
 	protected $meta_filter_args;
@@ -167,7 +167,7 @@ class Wnd_Filter {
 	 **/
 	public static function parse_query_vars() {
 		if (empty($_GET)) {
-			return array();
+			return [];
 		}
 
 		$query_vars = array(
@@ -748,7 +748,7 @@ class Wnd_Filter {
 				/**
 				 *如果当前tax_query参数中包含当前分类，或者当前分类的子类，则添加is-active
 				 */
-				$parents = $this->get_tax_query_patents()[$taxonomy] ?? array();
+				$parents = $this->get_tax_query_patents()[$taxonomy] ?? [];
 				if ($tax_query['terms'] == $term->term_id or in_array($term->term_id, $parents)) {
 					$class .= ' is-active';
 					break;
@@ -1246,7 +1246,7 @@ class Wnd_Filter {
 	 *@return array $parents 当前分类查询的所有父级：$parents[$taxonomy] = array($term_id_1, $term_id_2);
 	 */
 	protected function get_tax_query_patents() {
-		$parents = array();
+		$parents = [];
 
 		// 遍历当前tax query是否包含子类
 		foreach ($this->wp_query_args['tax_query'] as $tax_query) {
@@ -1256,7 +1256,7 @@ class Wnd_Filter {
 			}
 
 			// 递归查询当前分类的父级分类
-			$parents[$tax_query['taxonomy']] = array();
+			$parents[$tax_query['taxonomy']] = [];
 			$parent                          = get_term($tax_query['terms'])->parent ?? 0;
 			while ($parent) {
 				$parents[$tax_query['taxonomy']][] = $parent;
@@ -1332,7 +1332,7 @@ class Wnd_Filter {
 	 *$sub_tabs_array[$taxonomy] = (html) tabs;
 	 */
 	public function get_sub_taxonomy_tabs() {
-		$sub_tabs_array = array();
+		$sub_tabs_array = [];
 
 		// 遍历当前tax query是否包含子类
 		foreach ($this->wp_query_args['tax_query'] as $tax_query) {
