@@ -198,7 +198,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			'file_id'        => 0,
 			'thumbnail'      => WND_URL . 'static/images/default.jpg',
 			'thumbnail_size' => array('width' => $this->thumbnail_width, 'height' => $this->thumbnail_height),
-			'data'           => array(),
+			'data'           => [],
 			'delete_button'  => true,
 		);
 		$args = array_merge($defaults, $args);
@@ -263,7 +263,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			'label'         => 'File upload',
 			'name'          => 'wnd_file',
 			'file_id'       => 0,
-			'data'          => array(),
+			'data'          => [],
 			'delete_button' => true,
 		);
 		$args = array_merge($defaults, $args);
@@ -326,7 +326,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$defaults = array(
 			'label'          => 'Gallery',
 			'thumbnail_size' => array('width' => $this->thumbnail_width, 'height' => $this->thumbnail_height),
-			'data'           => array(),
+			'data'           => [],
 		);
 		$args = array_merge($defaults, $args);
 

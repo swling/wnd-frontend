@@ -53,9 +53,9 @@ class Wnd_Filter {
 	protected $wp_query_args = array(
 		'orderby'            => 'date',
 		'order'              => 'DESC',
-		'meta_query'         => array(),
-		'tax_query'          => array(),
-		'date_query'         => array(),
+		'meta_query'         => [],
+		'tax_query'          => [],
+		'date_query'         => [],
 		'meta_key'           => '',
 		'meta_value'         => '',
 		'post_type'          => '',
@@ -171,9 +171,9 @@ class Wnd_Filter {
 		}
 
 		$query_vars = array(
-			'meta_query' => array(),
-			'tax_query'  => array(),
-			'date_query' => array(),
+			'meta_query' => [],
+			'tax_query'  => [],
+			'date_query' => [],
 		);
 
 		foreach ($_GET as $key => $value) {
@@ -354,11 +354,11 @@ class Wnd_Filter {
 	 *在ajax环境中，将对应生成html data属性：data-{key}="{value}" 通过JavaScript获取后将转化为 ajax url请求参数 ?{key}={value}，
 	 *ajax发送到api接口，再通过parse_query_vars() 解析后，写入$wp_query_args[key]=value
 	 **/
-	public function add_query($query = array()) {
+	public function add_query($query = []) {
 		foreach ($query as $key => $value) {
 			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
 			if (is_array($this->wp_query_args[$key] ?? false) and is_array($value)) {
-				$this->wp_query_args[$key] = array_merge($this->wp_query_args[$key], $value, self::$http_query[$key] ?? array());
+				$this->wp_query_args[$key] = array_merge($this->wp_query_args[$key], $value, self::$http_query[$key] ?? []);
 
 			} else {
 				// $_GET参数优先，无法重新设置
@@ -375,7 +375,7 @@ class Wnd_Filter {
 	 *@param array 	$args 需要筛选的类型数组
 	 *@param bool 	$with_any_tab 是否包含全部选项
 	 */
-	public function add_post_type_filter($args = array(), $with_any_tab = false) {
+	public function add_post_type_filter($args = [], $with_any_tab = false) {
 		/**
 		 *若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post
 		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
@@ -403,7 +403,7 @@ class Wnd_Filter {
 	 *状态筛选
 	 *@param array $args 需要筛选的文章状态数组
 	 */
-	public function add_post_status_filter($args = array()) {
+	public function add_post_status_filter($args = []) {
 		/**
 		 *若当前请求未指定post_status，设置第一个post_status为默认值；若筛选项也为空，最后默认publish
 		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
@@ -580,7 +580,7 @@ class Wnd_Filter {
 	 *@param array $args 需要筛选的类型数组 $args = array('post','page')
 	 *@param bool 	$with_any_tab 是否包含全部选项
 	 */
-	protected function build_post_type_filter($args = array(), $with_any_tab = false) {
+	protected function build_post_type_filter($args = [], $with_any_tab = false) {
 		/**
 		 *@since 2019.08.06
 		 *post type切换时，表示完全新的筛选，故此移除所有GET参数
@@ -627,7 +627,7 @@ class Wnd_Filter {
 	 *		'草稿'=>draft'
 	 *	)
 	 */
-	protected function build_post_status_filter($args = array()) {
+	protected function build_post_status_filter($args = []) {
 		// 输出容器
 		$tabs = '<div class="columns is-marginless is-vcentered post-status-tabs">';
 		$tabs .= '<div class="column is-narrow">状态：</div>';
@@ -1296,7 +1296,7 @@ class Wnd_Filter {
 	 *
 	 *@see wnd_filter_api_callback()
 	 */
-	public function get_category_tabs($args = array()) {
+	public function get_category_tabs($args = []) {
 		$args['taxonomy'] = $this->category_taxonomy;
 		$args['parent']   = $args['parent'] ?? 0;
 		return $this->build_taxonomy_filter($args);

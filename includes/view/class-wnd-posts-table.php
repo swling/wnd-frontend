@@ -35,7 +35,7 @@ class Wnd_Posts_Table {
 	 *新增表单列
 	 *
 	 */
-	public function add_column($column = array()) {
+	public function add_column($column = []) {
 		$column          = array_merge(self::$defaults, $column);
 		$this->columns[] = $column;
 	}

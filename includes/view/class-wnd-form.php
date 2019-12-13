@@ -45,7 +45,7 @@ class Wnd_Form {
 		'name'        => '',
 		'value'       => '',
 		'label'       => null,
-		'options'     => array(), //value of select/radio. Example: array(label=>value)
+		'options'     => [], //value of select/radio. Example: array(label=>value)
 		'checked'     => null, // checked value of select/radio; bool of checkbox
 
 		'required'    => false,
@@ -233,7 +233,7 @@ class Wnd_Form {
 			'thumbnail_size' => array('width' => $this->thumbnail_width, 'height' => $this->thumbnail_height),
 			'required'       => null,
 			'file_id'        => 0,
-			'data'           => array(),
+			'data'           => [],
 			'delete_button'  => true,
 			'disabled'       => false,
 		);
@@ -266,7 +266,7 @@ class Wnd_Form {
 			'label'         => 'File upload',
 			'file_name'     => 'file name',
 			'file_id'       => 0,
-			'data'          => array(),
+			'data'          => [],
 			'required'      => null,
 			'delete_button' => true,
 			'disabled'      => false,

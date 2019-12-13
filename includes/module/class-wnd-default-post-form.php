@@ -8,7 +8,7 @@ use Wnd\View\Wnd_Form_Post;
  */
 class Wnd_Default_Post_Form extends Wnd_Module {
 
-	public static function build($args = array()) {
+	public static function build($args = []) {
 		$defaults = array(
 			'post_id'     => 0,
 			'post_parent' => 0,
@@ -38,11 +38,11 @@ class Wnd_Default_Post_Form extends Wnd_Module {
 		$form->add_html('<div class="message is-warning"><div class="message-body">请用回车键区分多个标签</div></div>');
 
 		// 缩略图
-		$form->set_post_thumbnail_size(150, 150);
+		$form->set_thumbnail_size(150, 150);
 		$form->add_post_thumbnail(200, 200);
 
 		// 相册
-		$form->set_post_thumbnail_size(100, 100);
+		$form->set_thumbnail_size(100, 100);
 		$form->add_post_gallery_upload(0, 0, '相册图集');
 
 		if (!$is_free) {

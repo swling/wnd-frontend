@@ -9,7 +9,7 @@ namespace Wnd\Module;
  */
 class Wnd_User_Center extends Wnd_Module {
 
-	public static function build($args = array()) {
+	public static function build($args = []) {
 		$ajax_type         = $_GET['ajax_type'] ?? 'modal';
 		$enable_sms        = (wnd_get_option('wnd', 'wnd_enable_sms') == 1) ? true : false;
 		$color             = wnd_get_option('wnd', 'wnd_second_color');
