@@ -21,11 +21,10 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			return $wnd_can_create_order;
 		}
 
-		// 权限检测
-		Wnd_Create_Order_Trait::check_create($post_id, $user_id);
-
 		// 写入消费数据
 		try {
+			Wnd_Create_Order_Trait::check_create($post_id, $user_id);
+
 			$order = new Wnd_Order();
 			$order->set_object_id($post_id);
 			$order->set_subject(get_the_title($post_id));
