@@ -39,6 +39,10 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 			if (is_numeric($user_data['user_login'])) {
 				return $value = ['status' => 0, 'msg' => '用户名不能是纯数字'];
 			}
+
+			// 未指定用户名：创建随机用户名
+		} else {
+			$user_data['user_login'] = wnd_generate_login();
 		}
 
 		if (strlen($user_data['user_pass']) < 6) {
