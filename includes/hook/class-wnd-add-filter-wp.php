@@ -96,8 +96,8 @@ class Wnd_Add_Filter_WP {
 	 *@see wnd_action_add_attachment
 	 */
 	public static function filter_wp_insert_attachment_data($data, $postarr) {
-		// 如果已经指定了menu order
-		if ($data['menu_order']) {
+		// 如果已经指定了menu order或者附件并未附属到post
+		if ($data['menu_order'] or !$data['post_parent']) {
 			return $data;
 		}
 
