@@ -73,10 +73,10 @@ class Wnd_Post {
 		 *@see wp_update_post
 		 */
 		$date_query = [
-			array(
+			[
 				'column' => 'post_date',
 				'before' => date('Y-m-d H:i', time() - 86400),
-			),
+			],
 		];
 		$query_array = array_merge($query_array, ['date_query' => $date_query]);
 		unset($query_array['author']);

@@ -45,9 +45,9 @@ $filter->add_meta_filter(
 	[
 		'label'   => '文章价格',
 		'key'     => 'price',
-		'options' => array(
+		'options' => [
 			'包含' => 'exists',
-		),
+		],
 		'compare' => 'exists',
 	]
 );

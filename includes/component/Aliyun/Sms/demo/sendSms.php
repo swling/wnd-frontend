@@ -36,10 +36,10 @@ function sendSms() {
 	$params["TemplateCode"] = "SMS_0000001";
 
 	// fixme 可选: 设置模板参数, 假如模板中存在变量需要替换则为必填项
-	$params['TemplateParam'] = Array(
+	$params['TemplateParam'] = [
 		"code"    => "12345",
 		"product" => "阿里通信",
-	);
+	];
 
 	// fixme 可选: 设置发送短信流水号
 	$params['OutId'] = "12345";

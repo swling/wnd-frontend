@@ -15,12 +15,12 @@ namespace Wnd\Action;
  *
  *@return $return_array array 二维数组
  *	[
- *		array(
+ *		[
  *			'status' => 1,
  *			'data' => ['url' => $url, 'thumbnail' => $thumbnail ?? 0, 'id' => $file_id],
  *			'msg' => '上传成功',
  *		],
- *	);
+ *	];
  *
  */
 class Wnd_Upload_File extends Wnd_Action_Ajax {

@@ -486,22 +486,22 @@ class Wnd_Filter {
 	 *	$args = [
 	 *		'label' => '文章价格',
 	 *		'key' => 'price',
-	 *		'options' => array(
+	 *		'options' => [
 	 *			'10' => '10',
 	 *			'0.1' => '0.1',
 	 *		],
 	 *		'compare' => '=',
-	 *	);
+	 *	];
 	 *
 	 *	查询一个字段是否存在：options只需要设置一个：其作用为key值显示为选项文章，value不参与查询，可设置为任意值
 	 *	$args = [
 	 *		'label' => '文章价格',
 	 *		'key' => 'price',
-	 *		'options' => array(
+	 *		'options' => [
 	 *			'包含' => 'exists',
 	 *		],
 	 *		'compare' => 'exists',
-	 *	);
+	 *	];
 	 *
 	 */
 	public function add_meta_filter($args) {
@@ -516,15 +516,15 @@ class Wnd_Filter {
 	 *
 	 *	$args = [
 	 *		'label' => '排序',
-	 *		'options' => array(
+	 *		'options' => [
 	 *			'发布时间' => 'date', //常规排序 date title等
-	 *			'浏览量' => array( // 需要多个参数的排序
+	 *			'浏览量' => [ // 需要多个参数的排序
 	 *				'orderby'=>'meta_value_num',
 	 *				'meta_key'   => 'views',
 	 *			],
-	 *		),
+	 *		],
 	 *		'order' => 'DESC',
-	 *	);
+	 *	];
 	 *
 	 */
 	public function add_orderby_filter($args) {
@@ -878,22 +878,22 @@ class Wnd_Filter {
 	 *	$args = [
 	 *		'label' => '文章价格',
 	 *		'key' => 'price',
-	 *		'options' => array(
+	 *		'options' => [
 	 *			'10' => '10',
 	 *			'0.1' => '0.1',
 	 *		],
 	 *		'compare' => '=',
-	 *	);
+	 *	];
 	 *
 	 *	查询一个字段是否存在：options只需要设置一个：其作用为key值显示为选项文章，value不参与查询，可设置为任意值
 	 *	$args = [
 	 *		'label' => '文章价格',
 	 *		'key' => 'price',
-	 *		'options' => array(
+	 *		'options' => [
 	 *			'包含' => 'exists',
 	 *		],
 	 *		'compare' => 'exists',
-	 *	);
+	 *	];
 	 *
 	 */
 	protected function build_meta_filter($args) {
@@ -964,14 +964,14 @@ class Wnd_Filter {
 	 *
 	 *	$args = [
 	 *		'label' => '排序',
-	 *		'options' => array(
+	 *		'options' => [
 	 *			'发布时间' => 'date', //常规排序 date title等
-	 *			'浏览量' => array( // 需要多个参数的排序
+	 *			'浏览量' => [ // 需要多个参数的排序
 	 *				'orderby'=>'meta_value_num',
 	 *				'meta_key'   => 'views',
 	 *			],
-	 *		),
-	 *	);
+	 *		],
+	 *	];
 	 *
 	 */
 	protected function build_orderby_filter($args) {
