@@ -33,6 +33,10 @@ class Wnd_Form_Data {
 	public $form_data;
 
 	public function __construct($verify_form_nonce = true) {
+		if (empty($_POST)) {
+			throw new Exception('表单数据为空');
+		}
+
 		/**
 		 *@since 2019.05.10
 		 *apply_filters('wnd_form_data', $_POST) 操作可能会直接修改$_POST

@@ -28,10 +28,6 @@ class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => '用户不存在'];
 		}
 
-		if (!is_numeric($total_amount)) {
-			return ['status' => 0, 'msg' => '请输入一个有效的充值金额'];
-		}
-
 		// 写入充值记录
 		try {
 			$recharge = new Wnd_Recharge();

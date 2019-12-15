@@ -23,10 +23,6 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 	 *@return 	array 						操作结果
 	 **/
 	public static function execute($verify_form_nonce = true): array{
-		if (empty($_POST)) {
-			return ['status' => 0, 'msg' => '数据为空'];
-		}
-
 		// 实例化当前提交的表单数据
 		try {
 			$form_data     = new Wnd_Form_Data($verify_form_nonce);

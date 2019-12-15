@@ -24,42 +24,31 @@ use Wnd\Model\Wnd_Form_Data;
 class Wnd_Reg extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		// 1、数据组成
-		if (empty($_POST)) {
-			return ['status' => 0, 'msg' => '注册信息为空'];
+		try {
+			$form_data = new Wnd_Form_Data();
+		} catch (Exception $e) {
+			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 
-		$user_login       = $_POST['_user_user_login'] ?? wnd_generate_login();
-		$user_login       = sanitize_user($user_login, true); //移除特殊字符
-		$user_pass        = $_POST['_user_user_pass'] ?? null;
-		$user_pass_repeat = $_POST['_user_user_pass_repeat'] ?? null;
-		$user_email       = $_POST['_user_user_email'] ?? null;
-		$display_name     = $_POST['_user_display_name'] ?? null;
-		$description      = $_POST['_wpusermeta_description'] ?? null;
-		$role             = get_option('default_role');
-
-		/*处于安全考虑，form自动组合函数屏蔽了用户敏感字段，此处不可通过 form自动组合，应该手动控制用户数据*/
-		$userdata = array(
-			'user_login'   => $user_login,
-			'user_email'   => $user_email,
-			'user_pass'    => $user_pass,
-			'display_name' => $display_name,
-			'description'  => $description,
-			'role'         => $role,
-		);
-
-		// 2、数据正确性检测
-		if (strlen($user_login) < 3) {
-			return $value = ['status' => 0, 'msg' => '用户名不能低于3位'];
+		// User Data
+		$user_data = $form_data->get_user_array();
+		if (isset($user_data['user_login'])) {
+			if (strlen($user_data['user_login']) < 3) {
+				return $value = ['status' => 0, 'msg' => '用户名不能低于3位'];
+			}
+			if (is_numeric($user_data['user_login'])) {
+				return $value = ['status' => 0, 'msg' => '用户名不能是纯数字'];
+			}
 		}
-		if (is_numeric($user_login)) {
-			return $value = ['status' => 0, 'msg' => '用户名不能是纯数字'];
-		}
-		if (strlen($user_pass) < 6) {
+
+		if (strlen($user_data['user_pass']) < 6) {
 			return $value = ['status' => 0, 'msg' => '密码不能低于6位'];
 		}
-		if (!empty($user_pass_repeat) and $user_pass_repeat !== $user_pass_repeat) {
-			return $value = ['status' => 0, 'msg' => '两次输入的密码不匹配'];
+
+		if (isset($user_data['user_pass_repeat'])) {
+			if ($user_data['user_pass_repeat'] !== $user_data['user_pass']) {
+				return $value = ['status' => 0, 'msg' => '两次输入的密码不匹配'];
+			}
 		}
 
 		// 注册权限过滤挂钩
@@ -68,17 +57,10 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 			return $user_can_reg;
 		}
 
-		//3、注册新用户
-		$user_id = wp_insert_user($userdata);
+		// 写入新用户
+		$user_id = wp_insert_user($user_data);
 		if (is_wp_error($user_id)) {
 			return ['status' => 0, 'msg' => $user_id->get_error_message()];
-		}
-
-		// 实例化WndWP表单数据处理对象
-		try {
-			$form_data = new Wnd_Form_Data();
-		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 
 		// 写入用户自定义数组meta
@@ -102,7 +84,6 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 		// 用户注册完成，自动登录
 		wp_set_current_user($user_id);
 		wp_set_auth_cookie($user_id, true);
-
 		$redirect_to  = $_REQUEST['redirect_to'] ?? wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url();
 		$return_array = apply_filters(
 			'wnd_reg_return',
