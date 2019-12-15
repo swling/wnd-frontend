@@ -36,11 +36,11 @@ class Wndt_Add_Favorite extends Wnd_Action_Ajax {
 		$post_id = $_POST['param'] ?? 0;
 
 		if (wndt_add_favorite($post_id)) {
-			return array(
+			return [
 				'status' => 2,
 				'data'   => '<span class="icon"><i class="fas fa-heart" title="取消收藏"></i></span>',
 				'msg'    => '收藏成功',
-			);
+			];
 		} else {
 			return ['status' => 0, 'msg' => '操作失败'];
 		}
@@ -81,16 +81,16 @@ class Wndt_Remove_Favorite extends Wnd_Action_Ajax {
 		$post_id = $_POST['param'] ?? 0;
 
 		if (wndt_remove_favorite($post_id)) {
-			return array(
+			return [
 				'status' => 2,
 				'data'   => '<span class="icon"><i class="far fa-heart" title="添加收藏"></i></span>',
 				'msg'    => '取消收藏',
-			);
+			];
 		} else {
-			return array(
+			return [
 				'status' => 0,
 				'msg'    => '操作失败',
-			);
+			];
 		}
 	}
 }

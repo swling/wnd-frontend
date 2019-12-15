@@ -14,12 +14,12 @@ class Wnd_Posts_Table {
 	protected $query;
 	protected $show_preview;
 	protected $show_edit;
-	protected static $defaults = array(
+	protected static $defaults = [
 		'post_field' => '',
 		'title'      => null,
 		'content'    => null,
 		'class'      => null,
-	);
+	];
 	public $html;
 
 	/**

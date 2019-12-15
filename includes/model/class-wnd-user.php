@@ -375,14 +375,14 @@ class Wnd_User {
 			return ['status' => 0, 'msg' => '用户不存在'];
 		}
 
-		$postarr = array(
+		$postarr = [
 			'post_type'    => 'mail',
 			'post_author'  => $to,
 			'post_title'   => $subject,
 			'post_content' => $message,
 			'post_status'  => 'pending',
 			'post_name'    => uniqid(),
-		);
+		];
 
 		$mail_id = wp_insert_post($postarr);
 
@@ -404,12 +404,12 @@ class Wnd_User {
 		$user_mail_count = wp_cache_get($user_id, 'wnd_mail_count');
 
 		if (false === $user_mail_count) {
-			$args = array(
+			$args = [
 				'posts_per_page' => 11,
 				'author'         => $user_id,
 				'post_type'      => 'mail',
 				'post_status'    => 'pending',
-			);
+			];
 
 			$user_mail_count = count(get_posts($args));
 			$user_mail_count = ($user_mail_count > 10) ? '10+' : $user_mail_count;

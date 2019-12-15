@@ -10,17 +10,17 @@ use Wnd\View\Wnd_Posts_Table;
 function wnd_mail_posts_tpl($query) {
 	$table = new Wnd_Posts_Table($query, true, true);
 	$table->add_column(
-		array(
+		[
 			'post_field' => 'post_date',
 			'title'      => '日期',
 			'class'      => 'is-narrow is-hidden-mobile',
-		)
+		]
 	);
 	$table->add_column(
-		array(
+		[
 			'post_field' => 'post_title_with_link',
 			'title'      => '标题',
-		)
+		]
 	);
 	$table->build();
 	$html = $table->html;
@@ -36,24 +36,24 @@ function wnd_mail_posts_tpl($query) {
 function wnd_posts_tpl($query) {
 	$table = new Wnd_Posts_Table($query, true, true);
 	$table->add_column(
-		array(
+		[
 			'post_field' => 'post_date',
 			'title'      => '日期',
 			'class'      => 'is-narrow is-hidden-mobile',
-		)
+		]
 	);
 	$table->add_column(
-		array(
+		[
 			'post_field' => 'post_title_with_link',
 			'title'      => '标题',
-		)
+		]
 	);
 	$table->add_column(
-		array(
+		[
 			'post_field' => 'post_status',
 			'title'      => '状态',
 			'class'      => 'is-narrow',
-		)
+		]
 	);
 	$table->build();
 	$html = $table->html;
@@ -78,39 +78,39 @@ function wnd_post_tpl($post) {
 function wnd_user_finance_posts_tpl($query) {
 	$table = new Wnd_Posts_Table($query, true, true);
 	$table->add_column(
-		array(
+		[
 			'post_field' => 'post_date',
 			'title'      => '日期',
 			'class'      => 'is-narrow is-hidden-mobile',
-		)
+		]
 	);
 	$table->add_column(
-		array(
+		[
 			'post_field' => 'post_author',
 			'title'      => '用户',
 			'class'      => 'is-narrow',
-		)
+		]
 	);
 	$table->add_column(
-		array(
+		[
 			'post_field' => 'post_content',
 			'title'      => '金额',
 			'class'      => 'is-narrow',
-		)
+		]
 	);
 	$table->add_column(
-		array(
+		[
 			'post_field' => 'order' == $query->query_vars['post_type'] ? 'post_parent_with_link' : 'post_title',
 			'title'      => '详情',
 			'class'      => 'is-narrow',
-		)
+		]
 	);
 	$table->add_column(
-		array(
+		[
 			'post_field' => 'post_status',
 			'title'      => '状态',
 			'class'      => 'is-narrow is-hidden-mobile',
-		)
+		]
 	);
 	$table->build();
 	return $table->html;

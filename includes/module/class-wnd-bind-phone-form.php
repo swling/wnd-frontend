@@ -22,11 +22,11 @@ class Wnd_Bind_Phone_Form extends Wnd_Module {
 		// 如果当前用户更改手机号，需要验证密码，首次绑定不需要
 		if ($current_user_phone) {
 			$form->add_text(
-				array(
+				[
 					'label'    => '当前号码',
 					'value'    => $current_user_phone,
 					'disabled' => true,
-				)
+				]
 			);
 			$form->add_user_password('当前密码');
 		}

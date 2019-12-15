@@ -16,11 +16,11 @@ class Wnd_User_Center extends Wnd_Module {
 		$is_user_logged_in = is_user_logged_in();
 
 		// 默认参数
-		$defaults = array(
+		$defaults = [
 			'do'   => 'register',
 			'tab'  => 'profile',
 			'type' => $enable_sms ? 'phone' : 'email',
-		);
+		];
 		$args = wp_parse_args($args, $defaults);
 
 		/**

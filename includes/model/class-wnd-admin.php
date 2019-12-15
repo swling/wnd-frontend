@@ -20,7 +20,7 @@ class Wnd_Admin {
 
 		// 默认option数据
 		if (!get_option('wnd')) {
-			$default_option = array(
+			$default_option = [
 				'wnd_secret_key'         => wnd_random('16'),
 
 				'wnd_static_host'        => 'local',
@@ -54,7 +54,7 @@ class Wnd_Admin {
 				'wnd_sms_template'       => '通用短信模板ID',
 				'wnd_sms_template_r'     => '注册短信模板ID',
 				'wnd_sms_template_v'     => '身份验证短信模板ID',
-			);
+			];
 
 			update_option('wnd', $default_option);
 		}

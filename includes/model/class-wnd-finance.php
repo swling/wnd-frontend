@@ -23,13 +23,13 @@ class Wnd_Finance {
 		$user_has_paid = wp_cache_get($user_id . $object_id, 'wnd_has_paid');
 
 		if (false === $user_has_paid) {
-			$args = array(
+			$args = [
 				'posts_per_page' => 1,
 				'post_type'      => 'order',
 				'post_parent'    => $object_id,
 				'author'         => $user_id,
 				'post_status'    => 'success',
-			);
+			];
 
 			// 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
 			$user_has_paid = empty(get_posts($args)) ? 0 : 1;
@@ -48,19 +48,19 @@ class Wnd_Finance {
 	public static function get_order_count($object_id) {
 
 		// 删除15分钟前未完成的订单，并扣除订单统计
-		$args = array(
+		$args = [
 			'posts_per_page' => -1,
 			'post_type'      => 'order',
 			'post_parent'    => $object_id,
 			'post_status'    => 'pending',
-			'date_query'     => array(
-				array(
+			'date_query'     => [
+				[
 					'column'    => 'post_date',
 					'before'    => date('Y-m-d H:i:s', current_time('timestamp', $gmt = 0) - 900),
 					'inclusive' => true,
-				),
-			),
-		);
+				],
+			],
+		];
 		foreach (get_posts($args) as $post) {
 			/**
 			 * 此处不直接修正order_count，而是在删除订单时，通过action修正order_count @see wnd_action_deleted_post
@@ -240,14 +240,14 @@ class Wnd_Finance {
 
 			// 新增统计
 		} else {
-			$post_arr = array(
+			$post_arr = [
 				'post_author'  => 1,
 				'post_type'    => $post_type,
 				'post_title'   => $post_title,
 				'post_content' => $money,
 				'post_status'  => 'private',
 				'post_name'    => $slug,
-			);
+			];
 			wp_insert_post($post_arr);
 		}
 	}

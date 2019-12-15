@@ -50,7 +50,7 @@ class Wnd_Filter {
 	 *默认值将随用户设定而改变
 	 *参数中包含自定义的非wp_query参数以"wnd"前缀区分
 	 */
-	protected $wp_query_args = array(
+	protected $wp_query_args = [
 		'orderby'            => 'date',
 		'order'              => 'DESC',
 		'meta_query'         => [],
@@ -68,7 +68,7 @@ class Wnd_Filter {
 		'wnd_post_tpl'       => '',
 		'wnd_posts_tpl'      => '',
 		'wnd_uniqid'         => '',
-	);
+	];
 
 	/**
 	 *WP_Query 查询结果：
@@ -170,11 +170,11 @@ class Wnd_Filter {
 			return [];
 		}
 
-		$query_vars = array(
+		$query_vars = [
 			'meta_query' => [],
 			'tax_query'  => [],
 			'date_query' => [],
-		);
+		];
 
 		foreach ($_GET as $key => $value) {
 			/**
@@ -202,11 +202,11 @@ class Wnd_Filter {
 			if (strpos($key, '_meta_') === 0) {
 				$key        = str_replace('_meta_', '', $key);
 				$compare    = $value == 'exists' ? 'exists' : '=';
-				$meta_query = array(
+				$meta_query = [
 					'key'     => $key,
 					'value'   => $value,
 					'compare' => $compare,
-				);
+				];
 
 				/**
 				 *@since 2019.04.21 当meta_query compare == exists 不能设置value
@@ -224,11 +224,11 @@ class Wnd_Filter {
 			 *直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
 			if (strpos($key, '_term_') === 0) {
-				$term_query = array(
+				$term_query = [
 					'taxonomy' => str_replace('_term_', '', $key),
 					'field'    => 'term_id',
 					'terms'    => $value,
-				);
+				];
 				$query_vars['tax_query'][] = $term_query;
 				continue;
 			}
@@ -483,23 +483,23 @@ class Wnd_Filter {
 	 *@since 2019.04.18 meta query
 	 *@param 自定义： array args meta字段筛选。暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
 	 *
-	 *	$args = array(
+	 *	$args = [
 	 *		'label' => '文章价格',
 	 *		'key' => 'price',
 	 *		'options' => array(
 	 *			'10' => '10',
 	 *			'0.1' => '0.1',
-	 *		),
+	 *		],
 	 *		'compare' => '=',
 	 *	);
 	 *
 	 *	查询一个字段是否存在：options只需要设置一个：其作用为key值显示为选项文章，value不参与查询，可设置为任意值
-	 *	$args = array(
+	 *	$args = [
 	 *		'label' => '文章价格',
 	 *		'key' => 'price',
 	 *		'options' => array(
 	 *			'包含' => 'exists',
-	 *		),
+	 *		],
 	 *		'compare' => 'exists',
 	 *	);
 	 *
@@ -514,14 +514,14 @@ class Wnd_Filter {
 	 *@since 2019.04.21 排序
 	 *@param 自定义： array args
 	 *
-	 *	$args = array(
+	 *	$args = [
 	 *		'label' => '排序',
 	 *		'options' => array(
 	 *			'发布时间' => 'date', //常规排序 date title等
 	 *			'浏览量' => array( // 需要多个参数的排序
 	 *				'orderby'=>'meta_value_num',
 	 *				'meta_key'   => 'views',
-	 *			),
+	 *			],
 	 *		),
 	 *		'order' => 'DESC',
 	 *	);
@@ -537,10 +537,10 @@ class Wnd_Filter {
 	 *@since 2019.08.10 排序方式
 	 *@param 自定义： array args
 	 *
-	 *	$args = array(
+	 *	$args = [
 	 *		'降序' => 'DESC',
 	 *		'升序' =>'ASC'
-	 *	);
+	 *	];
 	 *
 	 *@param string $label 选项名称
 	 */
@@ -622,10 +622,10 @@ class Wnd_Filter {
 	 *状态筛选
 	 *@param array $args 需要筛选的文章状态数组
 	 *
-	 *	$args = array(
+	 *	$args = [
 	 *		'公开'=>publish',
 	 *		'草稿'=>draft'
-	 *	)
+	 *	]
 	 */
 	protected function build_post_status_filter($args = []) {
 		// 输出容器
@@ -818,12 +818,12 @@ class Wnd_Filter {
 		if (isset($category_id)) {
 			$tags = Wnd_Tag_Under_Category::get_tags($category_id, $taxonomy, $limit);
 		} else {
-			$tags = get_terms($taxonomy, array(
+			$tags = get_terms($taxonomy, [
 				'hide_empty' => false,
 				'orderby'    => 'count',
 				'order'      => 'DESC',
 				'number'     => $limit,
-			));
+			]);
 		}
 
 		// 输出容器
@@ -875,23 +875,23 @@ class Wnd_Filter {
 	 *@since 2019.04.18 meta query
 	 *@param 自定义： array args meta字段筛选。暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
 	 *
-	 *	$args = array(
+	 *	$args = [
 	 *		'label' => '文章价格',
 	 *		'key' => 'price',
 	 *		'options' => array(
 	 *			'10' => '10',
 	 *			'0.1' => '0.1',
-	 *		),
+	 *		],
 	 *		'compare' => '=',
 	 *	);
 	 *
 	 *	查询一个字段是否存在：options只需要设置一个：其作用为key值显示为选项文章，value不参与查询，可设置为任意值
-	 *	$args = array(
+	 *	$args = [
 	 *		'label' => '文章价格',
 	 *		'key' => 'price',
 	 *		'options' => array(
 	 *			'包含' => 'exists',
-	 *		),
+	 *		],
 	 *		'compare' => 'exists',
 	 *	);
 	 *
@@ -962,14 +962,14 @@ class Wnd_Filter {
 	 *@since 2019.04.21 排序
 	 *@param 自定义： array args
 	 *
-	 *	$args = array(
+	 *	$args = [
 	 *		'label' => '排序',
 	 *		'options' => array(
 	 *			'发布时间' => 'date', //常规排序 date title等
 	 *			'浏览量' => array( // 需要多个参数的排序
 	 *				'orderby'=>'meta_value_num',
 	 *				'meta_key'   => 'views',
-	 *			),
+	 *			],
 	 *		),
 	 *	);
 	 *
@@ -1005,11 +1005,11 @@ class Wnd_Filter {
 			if (isset($this->wp_query_args['orderby'])) {
 				/**
 				 *	post meta排序
-				 *	$args = array(
+				 *	$args = [
 				 *		'post_type' => 'product',
 				 *		'orderby'   => 'meta_value_num',
 				 *		'meta_key'  => 'price',
-				 *	);
+				 *	];
 				 *	$query = new WP_Query( $args );
 				 */
 				if (is_array($orderby) and ($this->wp_query_args['orderby'] == 'meta_value_num' or $this->wp_query_args['orderby'] == 'meta_value')) {
@@ -1044,10 +1044,10 @@ class Wnd_Filter {
 	 *@since 2019.08.10 构建排序方式
 	 *@param 自定义： array args
 	 *
-	 *	$args = array(
+	 *	$args = [
 	 *		'降序' => 'DESC',
 	 *		'升序' =>'ASC'
-	 *	);
+	 *	];
 	 *
 	 *@param string $label 选项名称
 	 */
@@ -1345,19 +1345,19 @@ class Wnd_Filter {
 			$sub_tabs = '';
 			$parents  = $this->get_tax_query_patents()[$tax_query['taxonomy']];
 			foreach ($parents as $parent) {
-				$args = array(
+				$args = [
 					'taxonomy' => $tax_query['taxonomy'],
 					'parent'   => $parent,
-				);
+				];
 				$sub_tabs .= $this->build_taxonomy_filter($args, 'sub-tabs');
 			}
 			unset($parent);
 
 			// 当前分类的子类
-			$args = array(
+			$args = [
 				'taxonomy' => $tax_query['taxonomy'],
 				'parent'   => $tax_query['terms'],
-			);
+			];
 			$sub_tabs .= $this->build_taxonomy_filter($args, 'sub-tabs');
 
 			// 构造子类查询

@@ -21,11 +21,11 @@ class Wnd_Bind_Email_Form extends Wnd_Module {
 		// 如果当前用户更改邮箱，则需要验证密码，首次绑定不需要
 		if ($current_user->data->user_email) {
 			$form->add_text(
-				array(
+				[
 					'label'    => '当前邮箱',
 					'value'    => $current_user->data->user_email,
 					'disabled' => true,
-				)
+				]
 			);
 			$form->add_user_password('当前密码');
 		}

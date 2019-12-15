@@ -39,7 +39,7 @@ class Wnd_Form {
 
 	public $html;
 
-	protected static $defaults = array(
+	protected static $defaults = [
 		'id'          => null,
 		'class'       => null,
 		'name'        => '',
@@ -65,7 +65,7 @@ class Wnd_Form {
 		'icon_right'  => null,
 		'addon_left'  => null,
 		'addon_right' => null,
-	);
+	];
 
 	// 初始化构建
 	public function __construct() {
@@ -135,11 +135,11 @@ class Wnd_Form {
 
 	// hidden
 	public function add_hidden($name, $value) {
-		$this->input_values[] = array(
+		$this->input_values[] = [
 			'type'  => 'hidden',
 			'name'  => $name,
 			'value' => $value,
-		);
+		];
 	}
 
 	// textarea
@@ -225,7 +225,7 @@ class Wnd_Form {
 
 	// Image upload
 	public function add_image_upload($args) {
-		$defaults = array(
+		$defaults = [
 			'id'             => 'image-upload-' . $this->id,
 			'name'           => 'file',
 			'label'          => 'Image upland',
@@ -236,10 +236,10 @@ class Wnd_Form {
 			'data'           => [],
 			'delete_button'  => true,
 			'disabled'       => false,
-		);
+		];
 		$args = array_merge($defaults, $args);
 
-		$this->input_values[] = array(
+		$this->input_values[] = [
 			'id'             => $args['id'],
 			'type'           => 'image_upload',
 			'name'           => $args['name'],
@@ -251,7 +251,7 @@ class Wnd_Form {
 			'data'           => $args['data'],
 			'delete_button'  => $args['delete_button'],
 			'disabled'       => $args['disabled'],
-		);
+		];
 
 		if (!$this->with_upload) {
 			$this->with_upload = true;
@@ -260,7 +260,7 @@ class Wnd_Form {
 
 	// File upload
 	public function add_file_upload($args) {
-		$defaults = array(
+		$defaults = [
 			'id'            => 'file-upload-' . $this->id,
 			'name'          => 'file',
 			'label'         => 'File upload',
@@ -270,10 +270,10 @@ class Wnd_Form {
 			'required'      => null,
 			'delete_button' => true,
 			'disabled'      => false,
-		);
+		];
 		$args = array_merge($defaults, $args);
 
-		$this->input_values[] = array(
+		$this->input_values[] = [
 			'id'            => $args['id'],
 			'type'          => 'file_upload',
 			'name'          => $args['name'],
@@ -284,7 +284,7 @@ class Wnd_Form {
 			'required'      => $args['required'],
 			'delete_button' => $args['delete_button'],
 			'disabled'      => $args['disabled'],
-		);
+		];
 
 		if (!$this->with_upload) {
 			$this->with_upload = true;
@@ -295,10 +295,10 @@ class Wnd_Form {
 	 *@since 2019.03.06 在表单当前位置插入指定html代码以补充现有方法无法实现的效果
 	 */
 	public function add_html($html) {
-		$this->input_values[] = array(
+		$this->input_values[] = [
 			'type'  => 'html',
 			'value' => $html,
-		);
+		];
 	}
 
 	/**

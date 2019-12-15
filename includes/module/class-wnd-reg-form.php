@@ -54,12 +54,12 @@ class Wnd_Reg_Form extends Wnd_Module {
 		if (wnd_get_option('wnd', 'wnd_agreement_url') or 1) {
 			$text = '已阅读并同意<a href="' . wnd_get_option('wnd', 'wnd_agreement_url') . '" target="_blank">《注册协议》</a>';
 			$form->add_checkbox(
-				array(
+				[
 					'name'     => 'agreement',
 					'options'  => [$text => 1],
 					'checked'  => 1,
 					'required' => 'required',
-				)
+				]
 			);
 		}
 

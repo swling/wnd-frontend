@@ -12,10 +12,10 @@ $filter  = new Wnd_Filter($is_ajax);
 $filter->add_post_type_filter(['company', 'resource', 'post']);
 
 $filter->add_post_status_filter(
-	array(
+	[
 		'发布' => 'publish',
 		'草稿' => 'draft',
-	)
+	]
 );
 
 // 快速新增主分类查询
@@ -42,34 +42,34 @@ $filter->add_taxonomy_filter(
 $filter->add_related_tags_filter($limit = 10);
 
 $filter->add_meta_filter(
-	array(
+	[
 		'label'   => '文章价格',
 		'key'     => 'price',
 		'options' => array(
 			'包含' => 'exists',
 		),
 		'compare' => 'exists',
-	)
+	]
 );
 
 $filter->add_orderby_filter(
-	array(
+	[
 		'label'   => '排序',
-		'options' => array(
+		'options' => [
 			'发布时间' => 'date', //常规排序 date title等
-			'浏览量'  => array( // 需要多个参数的排序
+			'浏览量'  => [ // 需要多个参数的排序
 				'orderby'  => 'meta_value_num',
 				'meta_key' => 'views',
-			),
-		),
-	)
+			],
+		],
+	]
 );
 
 $filter->add_order_filter(
-	$args = array(
+	$args = [
 		'降序' => 'DESC',
 		'升序' => 'ASC',
-	),
+	],
 	$label = '排序'
 );
 
@@ -90,14 +90,14 @@ $filter->set_posts_template('wnd_posts_tpl');
 
 // 新增查询参数：单个或数组
 $filter->add_query($query = ['test_key' => 'test_value']);
-$tax_query = array(
+$tax_query = [
 	'relation' => 'AND',
-	array(
+	[
 		'taxonomy' => 'category',
 		'field'    => 'term_id',
 		'terms'    => 1,
-	),
-);
+	],
+];
 $filter->add_query(['tax_query' => $tax_query]);
 
 echo $filter->get_tabs();

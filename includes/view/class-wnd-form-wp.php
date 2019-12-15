@@ -108,36 +108,36 @@ class Wnd_Form_WP extends Wnd_Form {
 		// 当前用户未绑定手机或更换绑定手机
 		if (!$user_phone or 'bind' == $type) {
 			$this->add_text(
-				array(
+				[
 					'name'        => 'phone',
 					'icon_left'   => '<i class="fa fa-phone-square"></i>',
 					'required'    => true,
 					'label'       => '手机',
 					'placeholder' => '手机号码',
-				)
+				]
 			);
 
 			// 验证当前账户手机
 		} elseif ($user_phone) {
 			$this->add_text(
-				array(
+				[
 					'label'    => '手机',
 					'value'    => $user_phone,
 					'disabled' => true,
 					'required' => true,
-				)
+				]
 			);
 		}
 
 		$this->add_text(
-			array(
+			[
 				'name'        => 'auth_code',
 				'icon_left'   => '<i class="fas fa-comment-alt"></i>',
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => '短信验证码',
 				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('sms' . $type) . '" data-is_email="0">获取验证码</button>',
-			)
+			]
 		);
 
 		$this->add_html('</div>');
@@ -155,36 +155,36 @@ class Wnd_Form_WP extends Wnd_Form {
 		// 当前用户未绑定邮箱或更换绑定邮箱
 		if (!$this->user->ID or !$this->user->data->user_email or 'bind' == $type) {
 			$this->add_email(
-				array(
+				[
 					'name'        => '_user_user_email',
 					'icon_left'   => '<i class="fa fa-at"></i>',
 					'required'    => true,
 					'label'       => '邮箱',
 					'placeholder' => '电子邮箱',
-				)
+				]
 			);
 
 			// 验证当前账户邮箱
 		} elseif ($this->user->data->user_email) {
 			$this->add_email(
-				array(
+				[
 					'label'    => '邮箱',
 					'value'    => $this->user->data->user_email,
 					'disabled' => true,
 					'required' => true,
-				)
+				]
 			);
 		}
 
 		$this->add_text(
-			array(
+			[
 				'name'        => 'auth_code',
 				'icon_left'   => '<i class="fa fa-key"></i>',
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => '邮箱验证码',
 				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('email' . $type) . '" data-is_email="1">获取验证码</button>',
-			)
+			]
 		);
 
 		$this->add_html('</div>');
@@ -192,7 +192,7 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	// Image upload
 	public function add_image_upload($args) {
-		$defaults = array(
+		$defaults = [
 			'label'          => 'Image upland',
 			'name'           => 'wnd_file',
 			'file_id'        => 0,
@@ -200,17 +200,17 @@ class Wnd_Form_WP extends Wnd_Form {
 			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
 			'data'           => [],
 			'delete_button'  => true,
-		);
+		];
 		$args = array_merge($defaults, $args);
 
 		// 合并$data
-		$defaults_data = array(
+		$defaults_data = [
 			'post_parent' => 0,
 			'user_id'     => $this->user->ID,
 			'meta_key'    => 0,
 			'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
 			'save_height' => 0, //图片文件存储最大过度 0 为不限制
-		);
+		];
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
 		/**
@@ -259,20 +259,20 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	// File upload
 	public function add_file_upload($args) {
-		$defaults = array(
+		$defaults = [
 			'label'         => 'File upload',
 			'name'          => 'wnd_file',
 			'file_id'       => 0,
 			'data'          => [],
 			'delete_button' => true,
-		);
+		];
 		$args = array_merge($defaults, $args);
 
-		$defaults_data = array(
+		$defaults_data = [
 			'post_parent' => 0,
 			'user_id'     => $this->user->ID,
 			'meta_key'    => 0,
-		);
+		];
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
 		/**
@@ -323,24 +323,24 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *meta_key: 	gallery
 	 */
 	public function add_gallery_upload($args) {
-		$defaults = array(
+		$defaults = [
 			'label'          => 'Gallery',
 			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
 			'data'           => [],
-		);
+		];
 		$args = array_merge($defaults, $args);
 
 		// 相册的meta key为固定值，不接受参数修改
 		unset($args['data']['meta_key']);
 
 		// 合并$data
-		$defaults_data = array(
+		$defaults_data = [
 			'post_parent' => 0,
 			'user_id'     => $this->user->ID,
 			'meta_key'    => 'gallery',
 			'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
 			'save_height' => 0, //图片文件存储最大过度 0 为不限制
-		);
+		];
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
 		$this->build_gallery_upload($args);

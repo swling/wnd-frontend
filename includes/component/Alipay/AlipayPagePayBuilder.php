@@ -35,13 +35,13 @@ class AlipayPagePayBuilder {
 	 */
 	public function doPay() {
 		//请求参数
-		$requestConfigs = array(
+		$requestConfigs = [
 			'out_trade_no' => $this->out_trade_no,
 			'product_code' => $this->product_code,
 			'total_amount' => $this->total_amount, //单位 元
 			'subject'      => $this->subject, //订单标题
-		);
-		$commonConfigs = array(
+		];
+		$commonConfigs = [
 			//公共参数
 			'app_id'      => $this->app_id,
 			'method'      => $this->method, //接口名称
@@ -53,7 +53,7 @@ class AlipayPagePayBuilder {
 			'version'     => '1.0',
 			'notify_url'  => $this->notify_url,
 			'biz_content' => json_encode($requestConfigs),
-		);
+		];
 		$commonConfigs["sign"] = $this->generateSign($commonConfigs, $commonConfigs['sign_type']);
 		return $this->buildRequestForm($commonConfigs);
 	}

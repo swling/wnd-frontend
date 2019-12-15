@@ -19,14 +19,14 @@ class SignatureHelper {
 	 * @return bool|\stdClass 返回API接口调用结果，当发生错误时返回false
 	 */
 	public function request($accessKeyId, $accessKeySecret, $domain, $params, $security = false) {
-		$apiParams = array_merge(array(
+		$apiParams = array_merge([
 			"SignatureMethod"  => "HMAC-SHA1",
 			"SignatureNonce"   => uniqid(mt_rand(0, 0xffff), true),
 			"SignatureVersion" => "1.0",
 			"AccessKeyId"      => $accessKeyId,
 			"Timestamp"        => gmdate("Y-m-d\TH:i:s\Z"),
 			"Format"           => "JSON",
-		), $params);
+		], $params);
 		ksort($apiParams);
 
 		$sortedQueryStringTmp = "";
@@ -60,9 +60,9 @@ class SignatureHelper {
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		curl_setopt($ch, CURLOPT_HTTPHEADER, [
 			"x-sdk-client" => "php/2.0.0",
-		));
+		]);
 
 		if (substr($url, 0, 5) == 'https') {
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

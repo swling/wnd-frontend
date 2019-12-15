@@ -20,7 +20,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 	protected $post;
 
-	static protected $default_post = array(
+	static protected $default_post = [
 		'ID'                    => 0,
 		'post_author'           => 0,
 		'post_date'             => null,
@@ -44,7 +44,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		'post_type'             => null,
 		'post_mime_type'        => null,
 		'comment_count'         => 0,
-	);
+	];
 
 	// 初始化构建
 	public function __construct($post_type = 'post', $post_id = 0, $input_fields_only = false) {
@@ -98,26 +98,26 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 	public function add_post_title($label = '', $placeholder = "请输入标题", $required = true) {
 		$this->add_text(
-			array(
+			[
 				'name'        => '_post_post_title',
 				'value'       => $this->post->post_title == 'Auto-draft' ? '' : $this->post->post_title,
 				'placeholder' => 'ID:' . $this->post_id . ' ' . $placeholder,
 				'label'       => $label,
 				'autofocus'   => 'autofocus',
 				'required'    => $required,
-			)
+			]
 		);
 	}
 
 	public function add_post_excerpt($label = '', $placeholder = '内容摘要', $required = false) {
 		$this->add_textarea(
-			array(
+			[
 				'name'        => '_post_post_excerpt',
 				'value'       => $this->post->post_excerpt,
 				'placeholder' => $placeholder,
 				'label'       => $label,
 				'required'    => $required,
-			)
+			]
 		);
 	}
 
@@ -142,13 +142,13 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 		// 新增表单字段
 		$this->add_select(
-			array(
+			[
 				'name'     => '_term_' . $taxonomy,
 				'options'  => $options,
 				'required' => $required,
 				'checked'  => $current_term_id, //default checked value
 				'label'    => $label,
-			)
+			]
 		);
 	}
 
@@ -178,12 +178,12 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		unset($term);
 
 		$this->add_checkbox(
-			array(
+			[
 				'name'    => '_term_' . $taxonomy . '[]',
 				'options' => $options,
 				'checked' => $current_term_ids,
 				'label'   => $label,
-			)
+			]
 		);
 	}
 
@@ -202,14 +202,14 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$term_list = rtrim($term_list, ',');
 
 		$this->add_text(
-			array(
+			[
 				'id'          => 'tags',
 				'name'        => '_term_' . $taxonomy,
 				'value'       => $term_list,
 				'placeholder' => $placeholder,
 				// 'label' => $taxonomy_object->labels->name,
 				'required'    => $required,
-			)
+			]
 		);
 
 		$this->add_html(wnd_tags_editor_script(3, 20, $placeholder, $taxonomy));
@@ -254,12 +254,12 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 		} else {
 			$this->add_textarea(
-				array(
+				[
 					'name'        => '_post_post_content',
 					'value'       => $post->post_content ?? '',
 					'placeholder' => $placeholder,
 					'required'    => $required,
-				)
+				]
 			);
 		}
 
@@ -274,13 +274,13 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$name  = '_meta_' . $meta_key;
 		$value = wnd_get_post_meta($this->post_id, $meta_key);
 		$this->add_text(
-			array(
+			[
 				'name'        => $name,
 				'value'       => $value,
 				'label'       => $label,
 				'placeholder' => $placeholder,
 				'required'    => $required,
-			)
+			]
 		);
 	}
 
@@ -291,13 +291,13 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$name  = '_wpmeta_' . $meta_key;
 		$value = get_post_meta($this->post_id, $meta_key, true);
 		$this->add_text(
-			array(
+			[
 				'name'        => $name,
 				'value'       => $value,
 				'label'       => $label,
 				'placeholder' => $placeholder,
 				'required'    => $required,
-			)
+			]
 		);
 	}
 
@@ -308,14 +308,14 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 **/
 	public function add_post_menu_order($label = '排序', $placeholder = "输入排序", $required = false) {
 		$this->add_number(
-			array(
+			[
 				'name'        => '_post_menu_order',
 				'value'       => $this->post->menu_order ?: '',
 				'placeholder' => $placeholder,
 				'label'       => $label,
 				'autofocus'   => 'autofocus',
 				'required'    => $required,
-			)
+			]
 		);
 	}
 
@@ -325,20 +325,20 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 **/
 	public function add_post_name($label = '别名', $placeholder = "文章固定连接别名", $required = false) {
 		$this->add_text(
-			array(
+			[
 				'name'        => '_post_post_name',
 				'value'       => $this->post->post_name ?: '',
 				'placeholder' => $placeholder,
 				'label'       => $label,
 				'autofocus'   => 'autofocus',
 				'required'    => $required,
-			)
+			]
 		);
 	}
 
 	public function add_post_price($label = '', $placeholder = '价格', $required = false) {
 		$this->add_number(
-			array(
+			[
 				'name'        => '_wpmeta_price',
 				'value'       => get_post_meta($this->post_id, 'price', true),
 				'label'       => $label,
@@ -347,7 +347,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'required'    => $required,
 				'step'        => '0.01',
 				'min'         => '0',
-			)
+			]
 		);
 	}
 
@@ -366,11 +366,11 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 **/
 	public function add_post_status_select() {
 		$this->add_checkbox(
-			array(
+			[
 				'name'    => '_post_post_status',
 				'options' => ['存为草稿' => 'draft'],
 				'class'   => 'switch is-' . self::$second_color,
-			)
+			]
 		);
 	}
 
@@ -387,18 +387,18 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			return;
 		}
 
-		$args = array(
+		$args = [
 			'label'          => $label,
 			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
 			'thumbnail'      => WND_URL . 'static/images/default.jpg',
-			'data'           => array(
+			'data'           => [
 				'post_parent' => $this->post_id,
 				'meta_key'    => $meta_key,
 				'save_width'  => $save_width,
 				'save_height' => $save_height,
-			),
+			],
 			'delete_button'  => false,
-		);
+		];
 		$this->add_image_upload($args);
 	}
 
@@ -409,13 +409,13 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}
 
 		$this->add_file_upload(
-			array(
+			[
 				'label' => $label,
-				'data'  => array( // some hidden input,maybe useful in ajax upload
+				'data'  => [ // some hidden input,maybe useful in ajax upload
 					'meta_key'    => $meta_key,
 					'post_parent' => $this->post_id, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
-				),
-			)
+				],
+			]
 		);
 	}
 
@@ -428,15 +428,15 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			return;
 		}
 
-		$args = array(
+		$args = [
 			'label'          => $label,
 			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
-			'data'           => array(
+			'data'           => [
 				'post_parent' => $this->post_id,
 				'save_width'  => $save_width, //图片文件存储最大宽度 0 为不限制
 				'save_height' => $save_height, //图片文件存储最大过度 0 为不限制
-			),
-		);
+			],
+		];
 
 		$this->add_gallery_upload($args);
 	}

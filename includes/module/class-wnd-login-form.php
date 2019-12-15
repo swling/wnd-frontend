@@ -20,11 +20,11 @@ class Wnd_Login_Form extends Wnd_Module {
 		$form->add_user_login();
 		$form->add_user_password();
 		$form->add_checkbox(
-			array(
+			[
 				'name'    => 'remember',
 				'options' => ['保持登录' => '1'],
 				'checked' => '1',
-			)
+			]
 		);
 		$form->add_hidden('redirect_to', $_SERVER['HTTP_REFERER'] ?? home_url());
 		$form->set_action('wnd_login');

@@ -35,30 +35,30 @@ class Wnd_API {
 		register_rest_route(
 			'wnd',
 			'rest-api',
-			array(
+			[
 				'methods'  => WP_REST_Server::ALLMETHODS,
 				'callback' => __CLASS__ . '::handle_rest_api',
-			)
+			]
 		);
 
 		// 多重筛选
 		register_rest_route(
 			'wnd',
 			'filter',
-			array(
+			[
 				'methods'  => 'GET',
 				'callback' => __CLASS__ . '::handle_filter',
-			)
+			]
 		);
 
 		// UI响应
 		register_rest_route(
 			'wnd',
 			'interface',
-			array(
+			[
 				'methods'  => 'GET',
 				'callback' => __CLASS__ . '::handle_interface',
-			)
+			]
 		);
 	}
 
@@ -178,9 +178,9 @@ class Wnd_API {
 		// 执行查询
 		$filter->query();
 
-		return array(
+		return [
 			'status' => 1,
-			'data'   => array(
+			'data'   => [
 				'posts'             => $filter->get_posts(),
 
 				/**
@@ -213,7 +213,7 @@ class Wnd_API {
 				 *在debug模式下，返回当前WP_Query查询参数
 				 **/
 				'query_vars'        => WP_DEBUG ? $filter->wp_query->query_vars : '请开启Debug',
-			),
-		);
+			],
+		];
 	}
 }

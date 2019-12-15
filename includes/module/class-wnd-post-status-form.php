@@ -42,19 +42,19 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 		$form->add_html('<div class="field is-grouped is-grouped-centered">');
 		$form->add_html('<script>wnd_ajax_msg(\'当前： ' . $status_text . '\', \'is-danger\', \'#post-status\')</script>');
 		$form->add_radio(
-			array(
+			[
 				'name'     => 'post_status',
-				'options'  => array(
+				'options'  => [
 					'发布' => 'publish',
 					'待审' => 'pending',
 					'关闭' => 'close',
 					'草稿' => 'draft',
 					'删除' => 'delete',
-				),
+				],
 				'required' => 'required',
 				'checked'  => $post->post_status,
 				'class'    => 'is-checkradio is-danger',
-			)
+			]
 		);
 		$form->add_html('</div>');
 
@@ -64,24 +64,24 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 			if (in_array($post->post_type, get_post_types(['public' => true]))) {
 				$form->add_html('<div class="field is-grouped is-grouped-centered">');
 				$form->add_radio(
-					array(
+					[
 						'name'    => 'stick_post',
-						'options' => array(
+						'options' => [
 							'置顶' => 'stick',
 							'取消' => 'unstick',
-						),
+						],
 						'checked' => (array_search($post->ID, wnd_get_sticky_posts($post->post_type)) === false) ? '' : 'stick',
 						'class'   => 'is-checkradio is-danger',
-					)
+					]
 				);
 				$form->add_html('</div>');
 			}
 
 			$form->add_textarea(
-				array(
+				[
 					'name'        => 'remarks',
 					'placeholder' => '备注（可选）',
-				)
+				]
 			);
 		}
 

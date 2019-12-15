@@ -9,11 +9,11 @@ use Wnd\View\Wnd_Form_Post;
 class Wnd_Default_Post_Form extends Wnd_Module {
 
 	public static function build($args = []) {
-		$defaults = array(
+		$defaults = [
 			'post_id'     => 0,
 			'post_parent' => 0,
 			'is_free'     => false,
-		);
+		];
 		$args = wp_parse_args($args, $defaults);
 
 		$post_id     = (int) $args['post_id'];

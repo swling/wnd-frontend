@@ -44,10 +44,10 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 		}
 
 		//执行更新
-		$post_data = array(
+		$post_data = [
 			'ID'          => $post_id,
 			'post_status' => $after_status,
-		);
+		];
 		$update = wp_update_post($post_data);
 
 		/**

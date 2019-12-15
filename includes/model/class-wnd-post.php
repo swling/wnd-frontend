@@ -38,7 +38,7 @@ class Wnd_Post {
 		 *@see get_posts()
 		 *@see wp_update_post
 		 */
-		$query_array = array(
+		$query_array = [
 			'post_status'    => 'auto-draft',
 			'post_type'      => $post_type,
 			'author'         => $user_id,
@@ -46,7 +46,7 @@ class Wnd_Post {
 			'order'          => 'ASC',
 			'cache_results'  => false,
 			'posts_per_page' => 1,
-		);
+		];
 		$draft_post_array = get_posts($query_array);
 
 		// 有草稿：返回第一篇草稿ID
@@ -55,12 +55,12 @@ class Wnd_Post {
 
 			// 更新草稿状态
 			$post_id = wp_update_post(
-				array(
+				[
 					'ID'          => $post_id,
 					'post_status' => 'auto-draft',
 					'post_title'  => 'Auto-draft',
 					'post_author' => $user_id,
-				)
+				]
 			);
 
 			return is_wp_error($post_id) ? 0 : $post_id;
@@ -72,12 +72,12 @@ class Wnd_Post {
 		 *@see get_posts()
 		 *@see wp_update_post
 		 */
-		$date_query = array(
+		$date_query = [
 			array(
 				'column' => 'post_date',
 				'before' => date('Y-m-d H:i', time() - 86400),
 			),
-		);
+		];
 		$query_array = array_merge($query_array, ['date_query' => $date_query]);
 		unset($query_array['author']);
 		$draft_post_array = get_posts($query_array);
@@ -88,12 +88,12 @@ class Wnd_Post {
 
 			// 更新草稿状态
 			$post_id = wp_update_post(
-				array(
+				[
 					'ID'          => $post_id,
 					'post_status' => 'auto-draft',
 					'post_title'  => 'Auto-draft',
 					'post_author' => $user_id,
-				)
+				]
 			);
 
 			//清空之前的附件
@@ -114,13 +114,13 @@ class Wnd_Post {
 		 *@see wp_insert_post()
 		 */
 		$post_id = wp_insert_post(
-			array(
+			[
 				'post_title'  => 'Auto-draft',
 				'post_name'   => uniqid(),
 				'post_type'   => $post_type,
 				'post_author' => $user_id,
 				'post_status' => 'auto-draft',
-			)
+			]
 		);
 		return is_wp_error($post_id) ? 0 : $post_id;
 	}

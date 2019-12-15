@@ -110,34 +110,34 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		$redirect_to = $_REQUEST['redirect_to'] ?? null;
 		$permalink   = get_permalink($post_id);
 		if ($redirect_to) {
-			$return_array = array(
+			$return_array = [
 				'status' => 3,
 				'msg'    => '发布成功',
-				'data'   => array(
+				'data'   => [
 					'id'          => $post_id,
 					'url'         => $permalink,
 					'redirect_to' => $redirect_to,
-				),
-			);
+				],
+			];
 		} elseif ($update_id) {
-			$return_array = array(
+			$return_array = [
 				'status' => 2,
 				'msg'    => '发布成功',
-				'data'   => array(
+				'data'   => [
 					'id'  => $post_id,
 					'url' => $permalink,
-				),
-			);
+				],
+			];
 		} else {
-			$return_array = array(
+			$return_array = [
 				'status' => 3,
 				'msg'    => '发布成功',
-				'data'   => array(
+				'data'   => [
 					'id'          => $post_id,
 					'url'         => $permalink,
 					'redirect_to' => $permalink,
-				),
-			);
+				],
+			];
 		}
 
 		// 返回值过滤

@@ -33,11 +33,11 @@ use Wnd\View\Wnd_Form_WP;
 class Wnd_Attachment_Form extends Wnd_Module {
 
 	public static function build($args = []) {
-		$defaults = array(
+		$defaults = [
 			'attachment_id' => 0,
 			'post_parent'   => 0,
 			'meta_key'      => null,
-		);
+		];
 		$args = wp_parse_args($args, $defaults);
 
 		$attachment_id = $args['attachment_id'];
@@ -51,7 +51,7 @@ class Wnd_Attachment_Form extends Wnd_Module {
 		// 文件上传字段可能被前端设置disabled属性，导致无法通过表单一致性校验，故此设置同名固定隐藏字段
 		$parent_post_form->add_hidden('wnd_file', '');
 		$parent_post_form->add_file_upload(
-			array(
+			[
 				'label'    => '附件上传',
 				'disabled' => $attachment_id ? 'disabled' : false,
 				'file_id'  => $attachment_id,
@@ -61,11 +61,11 @@ class Wnd_Attachment_Form extends Wnd_Module {
 				 *若仅设置了meta_key否则保留为 wnd_user_meta
 				 *若未设置meta_key、则不在meta中保留附件信息，仅能通过指定id方式查询
 				 */
-				'data'     => array(
+				'data'     => [
 					'meta_key'    => $args['meta_key'],
 					'post_parent' => $post_parent,
-				),
-			)
+				],
+			]
 		);
 
 		/**
@@ -80,12 +80,12 @@ class Wnd_Attachment_Form extends Wnd_Module {
 		$attachment_post_form->add_html('<div class="field is-horizontal"><div class="field-body">');
 		$attachment_post_form->add_post_menu_order('排序', '输入排序');
 		$attachment_post_form->add_text(
-			array(
+			[
 				'label'    => '文件ID',
 				'name'     => '_post_ID',
 				'value'    => $attachment_id,
 				'disabled' => true,
-			)
+			]
 		);
 		$attachment_post_form->add_html('</div></div>');
 		$attachment_post_form->add_post_name('链接别名', '附件的固定链接别名');

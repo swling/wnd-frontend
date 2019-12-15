@@ -8,13 +8,13 @@ namespace Wnd\Module;
 class Wnd_Terms_List extends Wnd_Module {
 
 	public static function build($args = []) {
-		$defaults = array(
+		$defaults = [
 			'taxonomy'     => 'post_tag',
 			'number'       => 50,
 			'hidden_empty' => true,
 			'orderby'      => 'count',
 			'order'        => 'DESC',
-		);
+		];
 		$args = wp_parse_args($args, $defaults);
 
 		$html  = '<div class="columns has-text-centered is-multiline is-mobile">';

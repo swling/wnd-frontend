@@ -11,7 +11,7 @@ class AlipayConfig {
 		 *@since 2019.03.02 请根据注释说明，修改支付宝配置信息，
 		 *示例代码中采用的是函数调用，为WndWP插件专用务必修改后才能用于其他网站
 		 */
-		$config = array(
+		$config = [
 			//应用ID,您的APPID。
 			'app_id'               => wnd_get_option('wnd', 'wnd_alipay_appid'),
 
@@ -41,7 +41,7 @@ class AlipayConfig {
 
 			//支付宝网关
 			'gateway_url'          => "https://openapi.alipay.com/gateway.do",
-		);
+		];
 
 		return $config;
 	}

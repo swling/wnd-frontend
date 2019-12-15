@@ -43,10 +43,10 @@ class Wnd_Reset_Password extends Wnd_Action_Ajax {
 			$auth->verify();
 
 			reset_password($user, $new_password);
-			return array(
+			return [
 				'status' => $is_user_logged_in ? 4 : 1,
 				'msg'    => '密码修改成功！<a onclick="wnd_ajax_modal(\'wnd_login_form\');">登录</a>',
-			);
+			];
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}

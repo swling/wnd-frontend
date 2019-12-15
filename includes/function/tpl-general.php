@@ -103,7 +103,7 @@ function wnd_breadcrumb($font_size = 'is-small') {
  *@since 2019.05.26 bulma 颜色下拉选择
  */
 function wnd_dropdown_colors($name, $selected) {
-	$colors = array(
+	$colors = [
 		'primary',
 		'success',
 		'info',
@@ -113,7 +113,7 @@ function wnd_dropdown_colors($name, $selected) {
 		'dark',
 		'black',
 		'light',
-	);
+	];
 
 	$html = '<select name="' . $name . '">';
 	foreach ($colors as $color) {

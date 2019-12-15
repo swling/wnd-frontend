@@ -7,10 +7,10 @@ use Wnd\View\Wnd_Form_WP;
  */
 $form = new Wnd_Form_WP($is_ajax_submit = true);
 $form->add_text(
-	array(
+	[
 		'addon_right' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
 		'name'        => 'test',
-	)
+	]
 );
 echo $form->get_input_fields();
 
@@ -26,12 +26,12 @@ echo $form->get_input_fields();
  **/
 $temp_form = new Wnd_Form_WP(false);
 $temp_form->add_text(
-	array(
+	[
 		'name'        => 'wd',
 		'label'       => 'content',
 		'placeholder' => '搜索关键词',
 		'required'    => true,
-	)
+	]
 );
 $temp_form->set_submit_button('提交');
 $temp_form->set_action('https://www.baidu.com/s', 'GET');
@@ -52,12 +52,12 @@ function wnd_filer_form_filter($input_values) {
 	// 新增一个字段
 	$temp_form = new Wnd_Form_WP();
 	$temp_form->add_textarea(
-		array(
+		[
 			'name'        => 'content',
 			'label'       => 'content',
 			'placeholder' => 'placeholder content add by filter',
 			'required'    => true,
-		)
+		]
 	);
 
 	// 将新增的字段数组数据合并写入并返回
@@ -79,7 +79,7 @@ function wnd_demo_form() {
 
 	// input
 	$form->add_text(
-		array(
+		[
 			'id'          => 'demo' . uniqid(),
 			'name'        => 'user_name',
 			'value'       => '',
@@ -90,12 +90,12 @@ function wnd_demo_form() {
 			'autofocus'   => 'autofocus',
 			'required'    => true,
 			'readonly'    => false,
-		)
+		]
 	);
 
 	// has addon and icon
 	$form->add_text(
-		array(
+		[
 			'icon_right'  => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 			'icon_left'   => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 			'addon_right' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
@@ -103,12 +103,12 @@ function wnd_demo_form() {
 			'name'        => 'test',
 			// 'label' => 'Input with addons',
 			// 'disabled' => true,
-		)
+		]
 	);
 
 	// input
 	$form->add_number(
-		array(
+		[
 			'name'        => 'number',
 			'value'       => '',
 			'placeholder' => 'number',
@@ -116,31 +116,31 @@ function wnd_demo_form() {
 			'icon_left'   => '<i class="fas fa-user"></i>', // icon html @link https://fontawesome.com/
 			'autofocus'   => 'autofocus',
 			'required'    => true,
-		)
+		]
 	);
 
 	// input
 	$form->add_email(
-		array(
+		[
 			'name'        => 'email',
 			'value'       => '',
 			'placeholder' => 'email',
 			'label'       => 'Email <span class="required">*</span>',
 			'icon_left'   => '<i class="fas fa-envelope"></i>',
 			'required'    => false,
-		)
+		]
 	);
 
 	// password
 	$form->add_password(
-		array(
+		[
 			'name'        => 'password',
 			'value'       => '',
 			'label'       => 'Password <span class="required">*</span>',
 			'placeholder' => 'password',
 			'icon_left'   => '<i class="fas fa-unlock-alt"></i>',
 			'required'    => false,
-		)
+		]
 	);
 
 	// html
@@ -148,47 +148,47 @@ function wnd_demo_form() {
 
 	// select
 	$form->add_select(
-		array(
+		[
 			'name'     => 'select1',
 			'options'  => ['select1' => 'value1', 'select2' => 'value2'],
 			'label'    => 'Dropdown1',
 			'required' => false,
 			'checked'  => 'value2', //default checked value
-		)
+		]
 	);
 
 	// select
 	$form->add_select(
-		array(
+		[
 			'name'     => 'select2',
 			'options'  => ['select1' => 'value1', 'select2' => 'value2'],
 			'label'    => 'Dropdown2',
 			'required' => false,
 			'checked'  => 'value2', //default checked value
-		)
+		]
 	);
 
 	$form->add_html('</div></div>');
 
 	// radio
 	$form->add_radio(
-		array(
+		[
 			'name'     => 'radio',
 			'options'  => ['key1' => 'value1', 'key2' => 'value2'],
 			'label'    => 'SEX',
 			'required' => false,
 			'checked'  => 'woman', //default checked value
-		)
+		]
 	);
 
 	// checkbox
 	$form->add_checkbox(
-		array(
+		[
 			'name'    => 'checkbox[]',
 			'options' => ['小' => '0.01', '中' => '10', '大' => '100'],
 			'label'   => 'checkbox',
 			'checked' => ['0.01', '100'], // checked
-		)
+		]
 	);
 
 	/**
@@ -196,13 +196,13 @@ function wnd_demo_form() {
 	 *https://wikiki.github.io/form/checkradio/
 	 */
 	$form->add_radio(
-		array(
+		[
 			'name'     => 'total_amount',
 			'options'  => ['0.01' => '0.01', '10' => '10'],
 			'required' => 'required',
 			'checked'  => '0.01', //default checked value
 			'class'    => 'is-checkradio is-danger',
-		)
+		]
 	);
 
 	/**
@@ -210,13 +210,13 @@ function wnd_demo_form() {
 	 *@link https://wikiki.github.io/form/switch/
 	 */
 	$form->add_checkbox(
-		array(
+		[
 			'name'    => '_usermeta_auto_play',
 			'options' => ['首页自动播放' => '1'],
 			'checked' => wnd_get_user_meta(get_current_user_id(), 'auto_play') ? 1 : 0, //default checked
 			'id'      => 'auto_play',
 			'class'   => 'switch is-danger',
-		)
+		]
 	);
 
 	/**
@@ -230,58 +230,58 @@ function wnd_demo_form() {
 
 	// upload image
 	$form->add_image_upload(
-		array(
+		[
 			// 'id' => 'image-upload', //container id
 			'name'           => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
 			'file_id'        => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户id综合查询
 			'label'          => 'Image upload',
 			'thumbnail'      => 'https://www.baidu.com/img/baidu_jgylogo3.gif', // default thumbnail image url, maybe replace this after ajax uploaded
 			'thumbnail_size' => ['width' => 100, 'height' => 100], //thumbnail image size
-			'data'           => array( // some data on file input, maybe useful in ajax upload
+			'data'           => [ // some data on file input, maybe useful in ajax upload
 				'meta_key'    => 'avatar',
 				'save_width'  => '0', //图片文件存储最大宽度 0 为不限制
 				'save_height' => '0', //图片文件存储最大过度 0 为不限制
 				'post_parent' => 0, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
 				'user_id'     => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
-			),
+			],
 			'delete_button'  => true,
 			'disabled'       => false,
 			'required'       => 'required',
-		)
+		]
 	);
 
 	// upload file
 	$form->add_file_upload(
-		array(
+		[
 			// 'id' => 'file-upload', //container id
 			'name'          => 'demo', //由于采用了ajax上传，$_FILES['name']取决于js脚本定义，此处不会直接传向后端（可省略）
 			'file_id'       => 0, //指定上传文件id，用于编辑；若未指定id，则根据 meta_key 与 post_parent 及当前用户id综合查询
 			'label'         => 'File upland',
-			'data'          => array( // some data on file input, maybe useful in ajax upload
+			'data'          => [ // some data on file input, maybe useful in ajax upload
 				'meta_key'    => 'file',
 				'post_parent' => 0, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
 				'user_id'     => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
-			),
+			],
 			'delete_button' => true,
 			'disabled'      => false,
 			'required'      => 'required',
-		)
+		]
 	);
 
 	/**
 	 *@since 2019.05.07 产品相册
 	 */
 	$form->add_gallery_upload(
-		array(
+		[
 			'label'          => '产品相册',
 			'thumbnail_size' => ['height' => '160', 'width' => '120'],
-			'data'           => array(
+			'data'           => [
 				'post_parent' => 1, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
 				'user_id'     => get_current_user_id(), //如果未设置了post parent, 保留为指定用户的 wnd_user_meta
 				'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
 				'save_height' => 0, //图片文件存储最大过度 0 为不限制
-			),
-		)
+			],
+		]
 	);
 
 	/**
@@ -294,12 +294,12 @@ function wnd_demo_form() {
 
 	// textarea
 	$form->add_textarea(
-		array(
+		[
 			'name'        => 'content',
 			'label'       => 'content',
 			'placeholder' => 'placeholder content',
 			'required'    => true,
-		)
+		]
 	);
 
 	/**
@@ -323,42 +323,42 @@ function wnd_demo_form() {
 	 *新增HTML5 字段
 	 **/
 	$form->add_color(
-		array(
+		[
 			'name'  => 'color',
 			'value' => '#990000',
-		)
+		]
 	);
 
 	$form->add_date(
-		array(
+		[
 			'name' => 'date',
 			'min'  => '2019-08-23',
 			'max'  => '3019-08-31',
-		)
+		]
 	);
 
 	$form->add_range(
-		array(
+		[
 			'name' => 'range',
 			'min'  => '0',
 			'max'  => '10',
 			'step' => '0.1',
-		)
+		]
 	);
 
 	$form->add_url(
-		array(
+		[
 			'name' => 'url',
-		)
+		]
 	);
 
 	// 138-5200-1900
 	$form->add_tel(
-		array(
+		[
 			'name'    => 'tel',
 			'label'   => '格式：xxx-xxxx-xxxx',
 			'pattern' => '[0-9]{3}-[0-9]{4}-[0-9]{4}',
-		)
+		]
 	);
 
 	// 与该表单数据匹配的后端处理类及类的命名空间

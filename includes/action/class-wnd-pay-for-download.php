@@ -33,11 +33,11 @@ class Wnd_Pay_For_Download extends Wnd_Action_Ajax {
 		 *组合ajax验证下载参数:该url地址并非文件实际下载地址，而是一个调用参数的请求
 		 *前端接收后跳转至该网址（status == 6 是专为下载类ajax请求设置的代码前端响应），以实现ajax下载
 		 */
-		$download_args = array(
+		$download_args = [
 			'action'   => 'wnd_paid_download',
 			'post_id'  => $post_id,
 			'_wpnonce' => wnd_create_nonce('wnd_paid_download'),
-		);
+		];
 		$download_url = add_query_arg($download_args, wnd_get_do_url());
 
 		//1、免费，或者已付费

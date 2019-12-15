@@ -14,12 +14,12 @@ namespace Wnd\Action;
  *@param $_POST['post_parent']
  *
  *@return $return_array array 二维数组
- *	array(
+ *	[
  *		array(
  *			'status' => 1,
  *			'data' => ['url' => $url, 'thumbnail' => $thumbnail ?? 0, 'id' => $file_id],
  *			'msg' => '上传成功',
- *		),
+ *		],
  *	);
  *
  */
@@ -85,13 +85,13 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 
 		foreach ($files['name'] as $key => $value) {
 			// 将多文件上传数据遍历循环后，重写为适配 media_handle_upload 的单文件模式
-			$file = array(
+			$file = [
 				'name'     => $files['name'][$key],
 				'type'     => $files['type'][$key],
 				'tmp_name' => $files['tmp_name'][$key],
 				'error'    => $files['error'][$key],
 				'size'     => $files['size'][$key],
-			);
+			];
 			$_FILES = ['temp_key' => $file];
 
 			// 单文件错误检测
@@ -129,16 +129,16 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 			}
 
 			// 将当前上传的图片信息写入数组
-			$temp_array = array(
+			$temp_array = [
 				'status' => 1,
-				'data'   => array(
+				'data'   => [
 					'url'       => $url,
 					'thumbnail' => $thumbnail ?? 0,
 					'id'        => $file_id,
 					'post'      => get_post($file_id),
-				),
+				],
 				'msg'    => '上传成功',
-			);
+			];
 			$return_array[] = $temp_array;
 
 			/**

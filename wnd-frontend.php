@@ -60,13 +60,13 @@ add_action('wp_enqueue_scripts', function () {
 	}
 
 	// api
-	$wnd_data = array(
+	$wnd_data = [
 		'root_url'      => site_url(),
 		'rest_nonce'    => wp_create_nonce('wp_rest'),
 		'ajax_nonce'    => wnd_create_nonce('wnd_safe_action'),
 		'interface_api' => '/wp-json/wnd/interface',
 		'rest_api'      => '/wp-json/wnd/rest-api',
 		'filter_api'    => '/wp-json/wnd/filter',
-	);
+	];
 	wp_localize_script('wnd-frontend', 'wnd', $wnd_data);
 });

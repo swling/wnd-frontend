@@ -50,13 +50,13 @@ class Wnd_Order extends Wnd_Transaction {
 		 *@since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
 		 */
 		$old_orders = get_posts(
-			array(
+			[
 				'author'         => $this->user_id,
 				'post_parent'    => $this->object_id,
 				'post_status'    => 'pending',
 				'post_type'      => 'order',
 				'posts_per_page' => 1,
-			)
+			]
 		);
 
 		if ($old_orders) {
@@ -71,7 +71,7 @@ class Wnd_Order extends Wnd_Transaction {
 			wnd_inc_order_count($this->object_id, 1);
 		}
 
-		$post_arr = array(
+		$post_arr = [
 			'ID'           => $this->ID ?: 0,
 			'post_author'  => $this->user_id,
 			'post_parent'  => $this->object_id,
@@ -80,7 +80,7 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_title'   => $this->subject,
 			'post_type'    => 'order',
 			'post_name'    => uniqid(),
-		);
+		];
 		$ID = wp_insert_post($post_arr);
 		if (is_wp_error($ID) or !$ID) {
 			throw new Exception('创建订单失败');
@@ -133,11 +133,11 @@ class Wnd_Order extends Wnd_Transaction {
 			throw new Exception('订单状态无效');
 		}
 
-		$post_arr = array(
+		$post_arr = [
 			'ID'          => $this->ID,
 			'post_status' => 'success',
 			'post_title'  => $this->subject ?: $post->post_title . '(在线支付)',
-		);
+		];
 		$ID = wp_update_post($post_arr);
 		if (!$ID or is_wp_error($ID)) {
 			throw new Exception('更新订单失败');

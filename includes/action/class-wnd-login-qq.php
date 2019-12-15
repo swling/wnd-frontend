@@ -18,12 +18,12 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 		}
 
 		$query = http_build_query(
-			array(
+			[
 				'client_id'     => $this->app_id,
 				'state'         => wnd_create_nonce('qq_login'),
 				'response_type' => 'code',
 				'redirect_uri'  => $return_url ?: home_url(),
-			)
+			]
 		);
 
 		return 'https://graph.qq.com/oauth2.0/authorize?' . $query;
