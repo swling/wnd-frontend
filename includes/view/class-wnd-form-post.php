@@ -57,8 +57,19 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->thumbnail_width  = 200;
 		$this->thumbnail_height = 200;
 
-		// 未指定ID，创建新草稿
-		$post_id = $post_id ?: Wnd_Post::get_draft($post_type);
+		/**
+		 *@since 2019.12.16 若传参false，表示表单不需要创建草稿
+		 *用于不需要文件上传的表单以降低数据库操作
+		 *
+		 *
+		 *其余情况未指定ID，创建新草稿
+		 *
+		 */
+		if (false === $post_id) {
+			$post_id = 0;
+		} else {
+			$post_id = $post_id ?: Wnd_Post::get_draft($post_type);
+		}
 
 		/**
 		 *@see WordPress get_post()
