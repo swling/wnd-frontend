@@ -65,12 +65,6 @@ class Wnd_Init {
 		add_action('init', [__CLASS__, 'register_post_status']);
 
 		/**
-		 *@since 2019.04.16
-		 *访问后台时候，触发执行清理动作
-		 */
-		add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
-
-		/**
 		 *@since 2019.10.08
 		 *禁用xmlrpc
 		 *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
