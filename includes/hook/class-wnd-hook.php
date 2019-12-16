@@ -1,10 +1,10 @@
 <?php
 namespace Wnd\Hook;
 
-use Wnd\hook\Wnd_Add_Action;
-use Wnd\hook\Wnd_Add_Action_WP;
-use Wnd\hook\Wnd_Add_Filter;
-use Wnd\hook\Wnd_Add_Filter_WP;
+use Wnd\Hook\Wnd_Add_Action;
+use Wnd\Hook\Wnd_Add_Action_WP;
+use Wnd\Hook\Wnd_Add_Filter;
+use Wnd\Hook\Wnd_Add_Filter_WP;
 
 /**
  *Wnd Default Hook

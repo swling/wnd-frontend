@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Hook;
 
-use Wnd\view\Wnd_Form_WP;
+use Wnd\View\Wnd_Form_WP;
 
 /**
  *WP Filter
