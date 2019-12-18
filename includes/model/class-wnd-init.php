@@ -80,10 +80,15 @@ class Wnd_Init {
 		 */
 		add_filter('rest_endpoints', function ($endpoints) {
 			foreach ($endpoints as $route => $endpoint) {
-				if (0 === stripos($route, '/wp/') or 0 === stripos($route, '/oembed/')) {
+				if (0 === stripos($route, '/wp/v2/users/me')) {
+					continue;
+				}
+
+				if (0 === stripos($route, '/wp/v2/posts') or 0 === stripos($route, '/wp/v2/users')) {
 					unset($endpoints[$route]);
 				}
 			}
+			unset($route, $endpoint);
 
 			return $endpoints;
 		});
