@@ -2,7 +2,7 @@
 namespace Wnd\View;
 
 use Wnd\Model\Wnd_Post;
-use Wnd\Module\Wnd_Term_Tpl;
+use Wnd\Template\Wnd_Term_Tpl;
 
 /**
  *适配本插件的ajax Post表单类

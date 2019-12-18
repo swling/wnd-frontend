@@ -1,10 +1,10 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Template;
 
 use Wnd\Model\Wnd_Tag_Under_Category;
 
 /**
- * Term模块
+ *Term模板
  */
 class Wnd_Term_Tpl {
 

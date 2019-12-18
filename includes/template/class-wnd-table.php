@@ -1,24 +1,24 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Template;
 
 use Wnd\View\Wnd_Posts_Table;
 
 /**
- *列表
+ *表格
  *
  *@since 2019.12.18
  */
-class Wnd_Table_Tpl {
+class Wnd_Table {
 
 	/**
 	 *构建表单
 	 */
-	public static function build_table(\WP_Query $query) {
-		$method = $query->query_vars['post_type'] . '_table';
+	public static function build(\WP_Query $query) {
+		$method = 'build_' . $query->query_vars['post_type'] . '_table';
 		if (method_exists(__CLASS__, $method)) {
 			return self::$method($query);
 		} else {
-			return self::post_table($query);
+			return self::build_post_table($query);
 		}
 	}
 
@@ -28,7 +28,7 @@ class Wnd_Table_Tpl {
 	 *@param 	object 	$query 	WP_Query 实例化结果
 	 *@return 	string 	$html 	输出表单
 	 **/
-	protected static function post_table($query) {
+	protected static function build_post_table($query) {
 		$table = new Wnd_Posts_Table($query, true, true);
 		$table->add_column(
 			[
@@ -61,7 +61,7 @@ class Wnd_Table_Tpl {
 	 *@param 	object 	$query 	WP_Query 实例化结果
 	 *@return 	string 	$html 	输出表单
 	 **/
-	protected static function mail_table($query) {
+	protected static function build_mail_table($query) {
 		$table = new Wnd_Posts_Table($query, true, true);
 		$table->add_column(
 			[
@@ -88,7 +88,7 @@ class Wnd_Table_Tpl {
 	 *@param 	object 	$query 	WP_Query 实例化结果
 	 *@return 	string 	$html 	输出表单
 	 */
-	protected static function recharge_table($query) {
+	protected static function build_recharge_table($query) {
 		$table = new Wnd_Posts_Table($query, true, true);
 		$table->add_column(
 			[
@@ -136,7 +136,7 @@ class Wnd_Table_Tpl {
 	 *@param 	object 	$query 	WP_Query 实例化结果
 	 *@return 	string 	$html 	输出表单
 	 */
-	protected static function order_table($query) {
+	protected static function build_order_table($query) {
 		$table = new Wnd_Posts_Table($query, true, true);
 		$table->add_column(
 			[
