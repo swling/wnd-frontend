@@ -2,7 +2,7 @@
 namespace Wnd\View;
 
 use Wnd\Model\Wnd_Post;
-use Wnd\Module\Wnd_Term;
+use Wnd\Module\Wnd_Term_Tpl;
 
 /**
  *适配本插件的ajax Post表单类
@@ -224,7 +224,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			]
 		);
 
-		$this->add_html(Wnd_Term::tags_editor_script(3, 20, $placeholder, $taxonomy));
+		$this->add_html(Wnd_Term_Tpl::tags_editor_script(3, 20, $placeholder, $taxonomy));
 	}
 
 	/**

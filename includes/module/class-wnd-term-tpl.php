@@ -6,7 +6,7 @@ use Wnd\Model\Wnd_Tag_Under_Category;
 /**
  * Term模块
  */
-class Wnd_Term {
+class Wnd_Term_Tpl {
 
 	/**
 	 *获取指定taxonomy的分类列表并附带下属标签
