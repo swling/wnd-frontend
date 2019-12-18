@@ -20,7 +20,7 @@ class Wnd_User_Posts_Panel extends Wnd_Module {
 		$filter->add_post_status_filter(['全部' => 'any', '发布' => 'publish', '待审' => 'pending', '关闭' => 'close', '草稿' => 'draft']);
 		$filter->add_taxonomy_filter(['taxonomy' => $filter->category_taxonomy]);
 		$filter->add_query(['author' => get_current_user_id()]);
-		$filter->set_posts_template('wnd_posts_tpl');
+		$filter->set_posts_template('\Wnd\Module\Wnd_List::posts_table_tpl');
 		$filter->set_posts_per_page($posts_per_page);
 		$filter->set_ajax_container('#user-posts-panel');
 		$filter->query();

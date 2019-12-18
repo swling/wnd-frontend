@@ -63,7 +63,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 		$filter->add_post_type_filter(['order', 'recharge']);
 		$filter->add_post_status_filter(['any']);
 		$filter->add_query(['author' => get_current_user_id()]);
-		$filter->set_posts_template('wnd_user_finance_posts_tpl');
+		$filter->set_posts_template('\Wnd\Module\Wnd_List::finance_table_tpl');
 		$filter->set_posts_per_page($posts_per_page);
 		$filter->set_ajax_container('#admin-fin-panel');
 		$filter->query();

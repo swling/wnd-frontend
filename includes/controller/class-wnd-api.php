@@ -167,6 +167,12 @@ class Wnd_API {
 	 *
 	 **/
 	public static function handle_filter(): array{
+		/**
+		 *Post模板函数可能包含反斜杠（如命名空间）故需移除WP自带的转义
+		 *@since 2019.12.18
+		 *
+		 */
+		$_GET = stripslashes_deep($_GET);
 
 		// 根据请求GET参数，获取wp_query查询参数
 		try {

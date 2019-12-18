@@ -38,7 +38,6 @@ class Wnd_Init {
 		require WND_PATH . '/includes/function/inc-finance.php'; //财务
 
 		require WND_PATH . '/includes/function/tpl-general.php'; //通用模板
-		require WND_PATH . '/includes/function/tpl-list.php'; //post list模板
 		require WND_PATH . '/includes/function/tpl-term.php'; //term模板
 
 		// 管理后台配置选项
