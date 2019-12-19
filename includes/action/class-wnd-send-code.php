@@ -45,9 +45,8 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 		}
 
 		try {
-			$auth = new Wnd_Auth;
+			$auth = Wnd_Auth::get_instance($email_or_phone);
 			$auth->set_type($type);
-			$auth->set_email_or_phone($email_or_phone);
 			$auth->set_template($template);
 			$auth->send();
 			return ['status' => 1, 'msg' => '发送成功，请注意查收'];

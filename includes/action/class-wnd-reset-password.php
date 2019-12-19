@@ -34,12 +34,19 @@ class Wnd_Reset_Password extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => '账户未注册'];
 		}
 
-		// 核对验证码
+		/**
+		 *此处不可用：Wnd_Auth::get_instance($email_or_phone)
+		 *原因是，已登录用户也可通过邮箱手机重设密码，而此时表单不包含邮箱或手机字段，而是从数据库中读取当前账户邮箱或手机
+		 *因此此处需要根据用户校验
+		 *
+		 *获取用户的方法：
+		 *已登录用户则为当前用户
+		 *未登录用户通过邮箱或手机获取
+		 */
 		try {
-			$auth = new Wnd_Auth;
+			$auth = Wnd_Auth::get_instance($user);
 			$auth->set_type('reset_password');
 			$auth->set_auth_code($auth_code);
-			$auth->set_verify_user_id($user->ID);
 			$auth->verify();
 
 			reset_password($user, $new_password);

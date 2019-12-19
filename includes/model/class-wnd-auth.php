@@ -10,13 +10,13 @@ use Exception;
  *邮件验证码
  *短信验证码
  */
-class Wnd_Auth {
+abstract class Wnd_Auth {
 
 	// object 当前用户
 	protected $user;
 
 	// string 电子邮件
-	protected $email_or_phone;
+	protected $auth_object;
 
 	// string 验证类型 register / reset_password / verify / bind
 	protected $type;
@@ -24,54 +24,50 @@ class Wnd_Auth {
 	// string 验证码
 	protected $auth_code;
 
-	// int 直接指定需要验证的用户
-	protected $verify_user_id;
-
-	// bool 是否为邮件
-	protected $is_email;
-
-	// string 短信模板
-	protected $template;
-
-	// 短信服务商
-	protected $sms_sp;
-
-	// 数据库字段：Email or Phone
+	// $auth_object 数据库字段：Email or Phone or user_id
 	protected $db_field;
+
+	// $auth_object 数据库字段对应的值：$Email or $Phone or $user_id
+	protected $db_field_value;
 
 	// 提示文字：邮箱 or 手机
 	protected $text;
+
+	// string 信息模板
+	protected $template;
+
+	// 验证码有效时间（秒）
+	protected $valid_time = 600;
+
+	// 同一地址两次发送时间的最短间隔（秒）
+	protected $intervals = 90;
 
 	/**
 	 *@since 2019.08.13
 	 *构造函数
 	 **/
 	public function __construct() {
-		$this->sms_sp    = wnd_get_option('wnd', 'wnd_sms_sp');
 		$this->auth_code = wnd_random_code(6);
-		$this->template  = wnd_get_option('wnd', 'wnd_sms_template');
 		$this->user      = wp_get_current_user();
 	}
 
 	/**
-	 *设置邮件或手机号码
+	 *设置：邮件、手机号码、WP_User object
 	 */
-	public function set_email_or_phone($email_or_phone) {
-		$this->email_or_phone = $email_or_phone;
-
-		// 检测发送地址
-		if (is_email($this->email_or_phone)) {
-			$this->is_email = true;
-			$this->text     = '邮箱';
-			$this->db_field = 'email';
-
-		} elseif (wnd_is_phone($this->email_or_phone)) {
-			$this->text     = '手机';
-			$this->db_field = 'phone';
-
-		} else {
-			throw new Exception('格式不正确');
+	public static function get_instance($auth_object) {
+		if (is_object($auth_object)) {
+			return new Wnd_Auth_User($auth_object);
 		}
+
+		if (is_email($auth_object)) {
+			return new Wnd_Auth_Email($auth_object);
+		}
+
+		if (wnd_is_phone($auth_object)) {
+			return new Wnd_Auth_Phone($auth_object);
+		}
+
+		throw new Exception('格式不正确');
 	}
 
 	/**
@@ -79,13 +75,6 @@ class Wnd_Auth {
 	 */
 	public function set_auth_code($auth_code) {
 		$this->auth_code = $auth_code;
-	}
-
-	/**
-	 *在明确需要验证的用户，但不确定当前验证邮箱或手机的情况下使用
-	 */
-	public function set_verify_user_id($user_id) {
-		$this->verify_user_id = $user_id;
 	}
 
 	/**
@@ -100,24 +89,24 @@ class Wnd_Auth {
 	}
 
 	/**
-	 *设置短信模板
+	 *设置信息模板
 	 */
 	public function set_template($template) {
 		$this->template = $template;
 	}
 
 	/**
-	 *设置短信服务商
-	 */
-	public function set_sms_sp($sms_sp) {
-		$this->sms_sp = $sms_sp;
-	}
-
-	/**
-	 *验证类型权限检测
+	 *@since 2019.02.10 类型权限检测
+	 *
+	 *@param string $this->auth_object 	邮箱或手机
+	 *@param string $this->type 		验证类型
+	 *
+	 *register / reset_password / verify / bind
+	 *register / bind 	：注册、绑定	当前邮箱或手机已注册、则不可发送
+	 *reset_password 	：找回密码 		当前邮箱或手机未注册、则不可发送
 	 */
 	protected function check_type() {
-		if (empty($this->email_or_phone)) {
+		if (empty($this->auth_object)) {
 			throw new Exception('发送地址为空');
 		}
 
@@ -127,7 +116,7 @@ class Wnd_Auth {
 		}
 
 		// 注册
-		$temp_user = wnd_get_user_by($this->email_or_phone);
+		$temp_user = is_object($this->auth_object) ? $this->auth_object : wnd_get_user_by($this->auth_object);
 		if ($this->type == 'register' and $temp_user) {
 			throw new Exception($this->text . '已注册');
 		}
@@ -149,33 +138,19 @@ class Wnd_Auth {
 	}
 
 	/**
-	 *@since 2019.02.10 权限检测
-	 *此处的权限校验仅作为前端是否可以发送验证验证码的初级校验，较容易被绕过
-	 *在对验证码正确性进行校验时，应该再次进行类型权限校验
+	 *@since 2019.02.10 信息发送权限检测
 	 *
-	 *@param string $this->email_or_phone 	邮箱或手机
-	 *@param string $this->type 			验证类型
-	 *
-	 *register / reset_password / verify / bind
-	 *register / bind 	：注册、绑定	当前邮箱或手机已注册、则不可发送
-	 *reset_password 	：找回密码 		当前邮箱或手机未注册、则不可发送
+	 *在类型检测的基础上，添加发送频次控制
 	 *
 	 *@return true|exception
 	 */
 	protected function check_send() {
 		$this->check_type();
 
-		// 短信发送必须指定模板
-		if (!$this->is_email and !$this->template) {
-			throw new Exception('未指定短信模板');
-		}
-
 		// 上次发送短信的时间，防止攻击
-		global $wpdb;
-		$send_time = $wpdb->get_var($wpdb->prepare("SELECT time FROM {$wpdb->wnd_users} WHERE {$this->db_field} = %s;", $this->email_or_phone));
-		$send_time = $send_time ?: 0;
-		if ($send_time and (time() - $send_time < 90)) {
-			throw new Exception('操作太频繁，请' . (90 - (time() - $send_time)) . '秒后重试');
+		$send_time = $this->get_db_record()->time ?? 0;
+		if ($send_time and (time() - $send_time < $this->intervals)) {
+			throw new Exception('操作太频繁，请' . ($this->intervals - (time() - $send_time)) . '秒后重试');
 		}
 
 		return true;
@@ -183,80 +158,22 @@ class Wnd_Auth {
 
 	/**
 	 *@since 2019.02.21 发送验证码给匿名用户
-	 *@param string $this->email_or_phone 	邮箱或手机
+	 *@param string $this->auth_object 	邮箱或手机
 	 *@param string $this->auth_code  		验证码
 	 *@param string $this->type 			验证类型
 	 */
-	public function send() {
-		// 权限检测
-		$this->check_send();
-
-		// 发送
-		if ($this->is_email) {
-			return $this->send_mail_code();
-		} else {
-			return $this->send_sms_code();
-		}
-	}
-
-	/**
-	 *@since 2019.01.28 发送邮箱验证码
-	 *@param string $this->email_or_phone 	邮箱或手机
-	 *@param string $this->auth_code  		验证码
-	 *@return true|exception
-	 */
-	protected function send_mail_code() {
-		if (!$this->insert()) {
-			throw new Exception('写入数据库失败');
-		}
-
-		$message = '邮箱验证秘钥【' . $this->auth_code . '】（不含括号），关键凭证，请勿泄露';
-		$action  = wp_mail($this->email_or_phone, '验证邮箱', $message);
-		if ($action) {
-			return true;
-		} else {
-			throw new Exception('发送失败，请稍后重试');
-		}
-	}
-
-	/**
-	 *@since 初始化
-	 *通过ajax发送短信
-	 *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
-	 *@param string $this->email_or_phone 	邮箱或手机
-	 *@param string $this->auth_code 		验证码
-	 *@return true|exception
-	 */
-	protected function send_sms_code() {
-		// 写入手机记录
-		if (!$this->insert()) {
-			throw new Exception('数据库写入失败');
-		}
-
-		if ('tx' == $this->sms_sp) {
-			$sms = new Wnd_Sms_TX();
-		} elseif ('ali' == $this->sms_sp) {
-			$sms = new Wnd_Sms_Ali();
-		} else {
-			throw new Exception('未指定短信服务商');
-		}
-
-		$sms->set_phone($this->email_or_phone);
-		$sms->set_code($this->auth_code);
-		$sms->set_template($this->template);
-		$sms->send();
-	}
+	abstract function send();
 
 	/**
 	 *校验验证码
 	 *
-	 *若已指定 $this->email_or_phone 则依据邮箱或手机校验
+	 *若已指定 $this->auth_object 则依据邮箱或手机校验
 	 *若未指定邮箱及手机且当前用户已登录，则依据用户ID校验
 	 *
 	 *@since 初始化
 	 *
 	 *@param bool 		$$delete_after_verified 	验证成功后是否删除本条记录(对应记录必须没有绑定用户)
-	 *@param string 	$this->email_or_phone 		邮箱或手机
+	 *@param string 	$this->auth_object 		邮箱或手机
 	 *@param int 		$this->verify_user_id 		当前用户
 	 *@param string 	$this->type 				验证类型
 	 *@param string 	$this->auth_code	 		验证码
@@ -267,31 +184,22 @@ class Wnd_Auth {
 		if (empty($this->auth_code)) {
 			throw new Exception('校验失败：请填写验证码');
 		}
-		if (empty($this->email_or_phone) and !$this->verify_user_id) {
+		if (empty($this->auth_object)) {
 			throw new Exception('校验失败：请填写' . $this->text . '');
 		}
 
 		/**
 		 *@since 2019.10.02
-		 *若直接指定了验证用户ID，表示已确定需要验证的用户信息，绕过类型检测
+		 *类型检测
 		 */
-		if (!$this->verify_user_id) {
-			$this->check_type();
-		}
+		$this->check_type();
 
-		// 过期时间设置
-		global $wpdb;
-		$intervals = $this->is_email ? 3600 : 600;
-		if ($this->email_or_phone) {
-			$data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE {$this->db_field} = %s;", $this->email_or_phone));
-		} else {
-			$data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE user_id = %d;", $this->verify_user_id));
-		}
-
+		// 有效性校验
+		$data = $this->get_db_record();
 		if (!$data) {
 			throw new Exception('校验失败：请先获取验证码');
 		}
-		if (time() - $data->time > $intervals) {
+		if (time() - $data->time > $this->valid_time) {
 			throw new Exception('验证码已失效请重新获取');
 		}
 		if ($this->auth_code != $data->code) {
@@ -304,6 +212,7 @@ class Wnd_Auth {
 		 *删除的记录必须没有绑定用户
 		 */
 		if ($delete_after_verified) {
+			global $wpdb;
 			$wpdb->delete($wpdb->wnd_users, ['ID' => $data->ID, 'user_id' => 0], ['%d']);
 		}
 
@@ -312,29 +221,29 @@ class Wnd_Auth {
 
 	/**
 	 *@since 2019.02.09 手机及邮箱验证模块
-	 *@param string $this->email_or_phone 	邮箱或手机
+	 *@param string $this->auth_object 	邮箱或手机
 	 *@param string $this->auth_code 		验证码
 	 *@return int|exception
 	 */
 	protected function insert() {
 		global $wpdb;
-		if (!$this->email_or_phone) {
+		if (!$this->auth_object) {
 			throw new Exception('未指定邮箱或手机');
 		}
 
-		$ID = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->wnd_users} WHERE {$this->db_field} = %s", $this->email_or_phone));
+		$ID = $this->get_db_record()->ID ?? 0;
 		if ($ID) {
 			$db = $wpdb->update(
 				$wpdb->wnd_users,
 				['code' => $this->auth_code, 'time' => time()],
-				[$this->db_field => $this->email_or_phone],
+				[$this->db_field => $this->db_field_value],
 				['%s', '%d'],
 				['%s']
 			);
 		} else {
 			$db = $wpdb->insert(
 				$wpdb->wnd_users,
-				[$this->db_field => $this->email_or_phone, 'code' => $this->auth_code, 'time' => time()],
+				[$this->db_field => $this->db_field_value, 'code' => $this->auth_code, 'time' => time()],
 				['%s', '%s', '%d']
 			);
 		}
@@ -343,13 +252,13 @@ class Wnd_Auth {
 	}
 
 	/**
-	 *@param int 	$reg_user_id  			注册用户ID
-	 *@param string $this->email_or_phone 	邮箱或手机
+	 *@param int 	$reg_user_id  		注册用户ID
+	 *@param string $this->auth_object 	邮箱或手机
 	 *重置验证码
 	 */
 	public function reset_code($reg_user_id = 0) {
 		global $wpdb;
-		if (!$this->email_or_phone) {
+		if (!$this->auth_object or is_object($this->auth_object)) {
 			throw new Exception('未指定邮箱或手机！ ');
 		}
 
@@ -358,7 +267,7 @@ class Wnd_Auth {
 			$wpdb->update(
 				$wpdb->wnd_users,
 				['code' => '', 'time' => time(), 'user_id' => $reg_user_id],
-				[$this->db_field => $this->email_or_phone],
+				[$this->db_field => $this->db_field_value],
 				['%s', '%d', '%d'],
 				['%s']
 			);
@@ -367,7 +276,7 @@ class Wnd_Auth {
 			$wpdb->update(
 				$wpdb->wnd_users,
 				['code' => '', 'time' => time()],
-				[$this->db_field => $this->email_or_phone],
+				[$this->db_field => $this->db_field_value],
 				['%s', '%d'],
 				['%s']
 			);
@@ -377,14 +286,32 @@ class Wnd_Auth {
 	/**
 	 *@since 2019.07.23
 	 *验证完成后是否删除
-	 *@param string $this->email_or_phone 邮箱或手机
+	 *@param string $this->auth_object 邮箱或手机
 	 */
 	public function delete() {
 		global $wpdb;
 		return $wpdb->delete(
 			$wpdb->wnd_users,
-			[$this->db_field => $this->email_or_phone],
+			[$this->db_field => $this->db_field_value],
 			['%s']
 		);
+	}
+
+	/**
+	 *根据auth_object查询数据库记录
+	 *
+	 *@since 2019.12.19
+	 *
+	 */
+	protected function get_db_record() {
+		global $wpdb;
+		$data = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM $wpdb->wnd_users WHERE {$this->db_field} = %s;",
+				$this->db_field_value
+			)
+		);
+
+		return $data;
 	}
 }

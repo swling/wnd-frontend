@@ -47,8 +47,7 @@ class Wnd_Add_Action_WP {
 		}
 
 		// 绑定邮箱或手机
-		$auth = new Wnd_Auth;
-		$auth->set_email_or_phone($email_or_phone);
+		$auth = Wnd_Auth::get_instance($email_or_phone);
 		$auth->reset_code($user_id);
 
 		// 手机注册，写入用户meta

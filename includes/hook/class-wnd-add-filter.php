@@ -40,10 +40,9 @@ class Wnd_Add_Filter {
 		$auth_code      = $_POST['auth_code'];
 		$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'] ?? '';
 		try {
-			$auth = new Wnd_Auth;
+			$auth = Wnd_Auth::get_instance($email_or_phone);
 			$auth->set_type('register');
 			$auth->set_auth_code($auth_code);
-			$auth->set_email_or_phone($email_or_phone);
 			$auth->verify();
 			return $can_array;
 		} catch (Exception $e) {
