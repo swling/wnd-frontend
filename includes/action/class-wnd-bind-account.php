@@ -2,7 +2,7 @@
 namespace Wnd\Action;
 
 use Exception;
-use Wnd\Model\Wnd_User_Bind;
+use Wnd\Model\Wnd_Binder;
 
 /**
  *@since 2019.07.23 已登录用户绑定邮箱或手机
@@ -20,10 +20,9 @@ class Wnd_Bind_Account extends Wnd_Action_Ajax {
 
 		// 绑定
 		try {
-			$bind = new Wnd_User_Bind;
+			$bind = Wnd_Binder::get_instance($email_or_phone);
 			$bind->set_password($password);
 			$bind->set_auth_code($auth_code);
-			$bind->set_email_or_phone($email_or_phone);
 			$bind->bind();
 			return ['status' => 4, 'msg' => '绑定成功'];
 		} catch (Exception $e) {
