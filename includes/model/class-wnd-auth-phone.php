@@ -24,12 +24,10 @@ class Wnd_Auth_phone extends Wnd_Auth {
 	protected $valid_time = 600;
 
 	public function __construct($auth_object) {
-		parent::__construct();
+		parent::__construct($auth_object);
 
-		$this->auth_object    = $auth_object;
-		$this->db_field_value = $auth_object;
-		$this->sms_sp         = wnd_get_option('wnd', 'wnd_sms_sp');
-		$this->template       = wnd_get_option('wnd', 'wnd_sms_template');
+		$this->sms_sp   = wnd_get_option('wnd', 'wnd_sms_sp');
+		$this->template = wnd_get_option('wnd', 'wnd_sms_template');
 	}
 
 	/**

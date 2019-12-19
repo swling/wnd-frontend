@@ -15,7 +15,7 @@ abstract class Wnd_Auth {
 	// object 当前用户
 	protected $user;
 
-	// string 电子邮件
+	// string|object 电子邮件/手机号/WP_User object
 	protected $auth_object;
 
 	// string 验证类型 register / reset_password / verify / bind
@@ -46,9 +46,11 @@ abstract class Wnd_Auth {
 	 *@since 2019.08.13
 	 *构造函数
 	 **/
-	public function __construct() {
-		$this->auth_code = wnd_random_code(6);
-		$this->user      = wp_get_current_user();
+	public function __construct($auth_object) {
+		$this->auth_object    = $auth_object;
+		$this->db_field_value = $auth_object;
+		$this->auth_code      = wnd_random_code(6);
+		$this->user           = wp_get_current_user();
 	}
 
 	/**
@@ -107,7 +109,7 @@ abstract class Wnd_Auth {
 	 */
 	protected function check_type() {
 		if (empty($this->auth_object)) {
-			throw new Exception('发送地址为空');
+			throw new Exception('请填写' . $this->text);
 		}
 
 		// 必须指定类型
@@ -140,12 +142,16 @@ abstract class Wnd_Auth {
 	/**
 	 *@since 2019.02.10 信息发送权限检测
 	 *
-	 *在类型检测的基础上，添加发送频次控制
+	 *在类型检测的基础上，新增校验码及发送频次检测
 	 *
 	 *@return true|exception
 	 */
 	protected function check_send() {
 		$this->check_type();
+
+		if (empty($this->auth_code)) {
+			throw new Exception('校验码为空');
+		}
 
 		// 上次发送短信的时间，防止攻击
 		$send_time = $this->get_db_record()->time ?? 0;
@@ -162,7 +168,7 @@ abstract class Wnd_Auth {
 	 *@param string $this->auth_code  		验证码
 	 *@param string $this->type 			验证类型
 	 */
-	abstract function send();
+	abstract public function send();
 
 	/**
 	 *校验验证码
@@ -173,8 +179,7 @@ abstract class Wnd_Auth {
 	 *@since 初始化
 	 *
 	 *@param bool 		$$delete_after_verified 	验证成功后是否删除本条记录(对应记录必须没有绑定用户)
-	 *@param string 	$this->auth_object 		邮箱或手机
-	 *@param int 		$this->verify_user_id 		当前用户
+	 *@param string 	$this->auth_object 			邮箱/手机/用户
 	 *@param string 	$this->type 				验证类型
 	 *@param string 	$this->auth_code	 		验证码
 	 *
@@ -185,7 +190,7 @@ abstract class Wnd_Auth {
 			throw new Exception('校验失败：请填写验证码');
 		}
 		if (empty($this->auth_object)) {
-			throw new Exception('校验失败：请填写' . $this->text . '');
+			throw new Exception('校验失败：请填写' . $this->text);
 		}
 
 		/**
@@ -196,7 +201,7 @@ abstract class Wnd_Auth {
 
 		// 有效性校验
 		$data = $this->get_db_record();
-		if (!$data) {
+		if (!$data or !$data->code) {
 			throw new Exception('校验失败：请先获取验证码');
 		}
 		if (time() - $data->time > $this->valid_time) {
@@ -221,16 +226,17 @@ abstract class Wnd_Auth {
 
 	/**
 	 *@since 2019.02.09 手机及邮箱验证模块
-	 *@param string $this->auth_object 	邮箱或手机
+	 *@param string $this->db_field 		邮箱或手机数据库字段名
+	 *@param string $this->db_field_value 	邮箱或手机
 	 *@param string $this->auth_code 		验证码
 	 *@return int|exception
 	 */
 	protected function insert() {
-		global $wpdb;
-		if (!$this->auth_object) {
-			throw new Exception('未指定邮箱或手机');
+		if (!$this->db_field or !$this->db_field_value) {
+			throw new Exception('未定义数据库写入字段名或对应值');
 		}
 
+		global $wpdb;
 		$ID = $this->get_db_record()->ID ?? 0;
 		if ($ID) {
 			$db = $wpdb->update(
@@ -252,17 +258,17 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *@param int 	$reg_user_id  		注册用户ID
-	 *@param string $this->auth_object 	邮箱或手机
+	 *@param int 	$reg_user_id  			注册用户ID
+	 *@param string $this->db_field 		邮箱或手机数据库字段名
+	 *@param string $this->db_field_value 	邮箱或手机
 	 *重置验证码
 	 */
 	public function reset_code($reg_user_id = 0) {
-		global $wpdb;
-		if (!$this->auth_object or is_object($this->auth_object)) {
-			throw new Exception('未指定邮箱或手机！ ');
+		if (!$this->db_field or !$this->db_field_value) {
+			throw new Exception('未定义数据库查询字段名或对应值');
 		}
 
-		// 手机注册用户
+		global $wpdb;
 		if ($reg_user_id) {
 			$wpdb->update(
 				$wpdb->wnd_users,
@@ -271,7 +277,7 @@ abstract class Wnd_Auth {
 				['%s', '%d', '%d'],
 				['%s']
 			);
-			//其他操作
+
 		} else {
 			$wpdb->update(
 				$wpdb->wnd_users,
@@ -285,8 +291,9 @@ abstract class Wnd_Auth {
 
 	/**
 	 *@since 2019.07.23
-	 *验证完成后是否删除
-	 *@param string $this->auth_object 邮箱或手机
+	 *删除
+	 *@param string $this->db_field 		据库字查询段名
+	 *@param string $this->db_field_value 	数据库查询字段值
 	 */
 	public function delete() {
 		global $wpdb;
@@ -298,7 +305,8 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *根据auth_object查询数据库记录
+	 *@param string $this->db_field 		据库字查询段名
+	 *@param string $this->db_field_value 	数据库查询字段值
 	 *
 	 *@since 2019.12.19
 	 *

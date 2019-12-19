@@ -20,13 +20,6 @@ class Wnd_Auth_Email extends Wnd_Auth {
 	// 验证码有效时间（秒）
 	protected $valid_time = 3600;
 
-	public function __construct($auth_object) {
-		parent::__construct();
-
-		$this->auth_object    = $auth_object;
-		$this->db_field_value = $auth_object;
-	}
-
 	/**
 	 *@since 2019.01.28 发送邮箱验证码
 	 *@param string $this->auth_object 	邮箱或手机

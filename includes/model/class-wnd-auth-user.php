@@ -18,9 +18,12 @@ class Wnd_Auth_User extends Wnd_Auth {
 	protected $text = '用户';
 
 	public function __construct($auth_object) {
-		parent::__construct();
+		parent::__construct($auth_object);
 
-		$this->auth_object    = $auth_object;
+		/**
+		 *验证指定用户时，数据库字段值不是用户对象，而是用户对象的ID属性
+		 *
+		 */
 		$this->db_field_value = $auth_object->ID ?? 0;
 		if (!$this->db_field_value) {
 			throw new Exception('指定用户无效');
