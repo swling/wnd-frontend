@@ -177,6 +177,10 @@ class Wnd_Payment extends Wnd_Transaction {
 	 *构建包含当前站点标识的订单号码作为发送至三方支付平台的订单号
 	 */
 	public function get_out_trade_no() {
+		if (!$this->ID) {
+			throw new Exception('站内支付数据尚未写入，无法生成订单号');
+		}
+
 		return self::$site_prefix . '-' . $this->ID;
 	}
 }
