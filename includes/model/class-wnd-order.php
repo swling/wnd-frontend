@@ -44,7 +44,7 @@ class Wnd_Order extends Wnd_Transaction {
 		// 定义变量
 		$this->total_amount = $this->total_amount ?: wnd_get_post_price($this->object_id);
 		$this->status       = $is_success ? 'success' : 'pending';
-		$this->subject      = $this->subject ?: get_the_title($this->object_id);
+		$this->subject      = $this->subject ?: '订单：' . get_the_title($this->object_id);
 
 		/**
 		 *@since 2019.03.31 查询符合当前条件，但尚未完成的付款订单

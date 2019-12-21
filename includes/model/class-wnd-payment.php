@@ -32,6 +32,9 @@ class Wnd_Payment extends Wnd_Transaction {
 	// 站点前缀，用于区分订单号
 	protected static $site_prefix;
 
+	// 站点名
+	protected static $site_name;
+
 	/**
 	 *@since 2019.08.11
 	 *构造函数
@@ -52,6 +55,14 @@ class Wnd_Payment extends Wnd_Transaction {
 		 *
 		 */
 		self::$site_prefix = strtoupper(substr(md5(home_url()), 0, 4));
+
+		/**
+		 *站点名称
+		 *跳转至第三方平台时，在站内订单或充值标题前加上站点名以便用户识别
+		 *@since 2019.12.21
+		 *
+		 */
+		self::$site_name = get_bloginfo('name');
 	}
 
 	/**
@@ -182,5 +193,14 @@ class Wnd_Payment extends Wnd_Transaction {
 		}
 
 		return self::$site_prefix . '-' . $this->ID;
+	}
+
+	/**
+	 *@since 2019.12.21
+	 *在站内标题基础上加上站点名称，便于用户在第三方支付平台识别
+	 *
+	 */
+	public function get_subject() {
+		return self::$site_name . ' - ' . $this->subject;
 	}
 }
