@@ -126,14 +126,13 @@ class Wnd_Post {
 	}
 
 	/**
-	 *@since 初始化
-	 *批量设置文章 meta 及 term
+	 *@since 2019.12.22
+	 *批量设置文章meta
 	 *@param int 	$post_id
 	 *@param array 	$meta_array 	wnd meta array
 	 *@param array 	$wp_meta_array  wp meta array
-	 *@param array 	$term_array  	term_array
 	 */
-	public static function update_meta_and_term($post_id, $meta_array, $wp_meta_array, $term_array) {
+	public static function set_meta($post_id, $meta_array, $wp_meta_array) {
 		if (!get_post($post_id)) {
 			return false;
 		}
@@ -156,10 +155,22 @@ class Wnd_Post {
 			}
 			unset($key, $value);
 		}
+	}
+
+	/**
+	 *@since 2019.12.22
+	 *批量设置文章terms
+	 *@param int 	$post_id
+	 *@param array 	$terms_array  	terms_array
+	 */
+	public static function set_terms($post_id, $terms_array) {
+		if (!get_post($post_id)) {
+			return false;
+		}
 
 		//  设置 term
-		if (!empty($term_array) and is_array($term_array)) {
-			foreach ($term_array as $taxonomy => $term) {
+		if (!empty($terms_array) and is_array($terms_array)) {
+			foreach ($terms_array as $taxonomy => $term) {
 				if ($term != '-1') {
 					//排除下拉菜单为选择的默认值
 					wp_set_post_terms($post_id, $term, $taxonomy, false);

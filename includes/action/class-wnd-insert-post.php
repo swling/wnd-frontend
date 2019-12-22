@@ -32,7 +32,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 			$post_array    = $form_data->get_post_array();
 			$meta_array    = $form_data->get_post_meta_array();
 			$wp_meta_array = $form_data->get_wp_post_meta_array();
-			$term_array    = $form_data->get_term_array();
+			$terms_array   = $form_data->get_terms_array();
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
@@ -70,7 +70,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		 *3.filter：post status
 		 */
 		$post_array['post_type']   = $update_id ? $update_post->post_type : ($post_array['post_type'] ?? 'post');
-		$post_array['post_name']   = $post_array['post_name'] ?? ($update_id ? $update_post->post_name : uniqid());
+		$post_array['post_name']   = ($post_array['post_name'] ?? false) ?: ($update_id ? $update_post->post_name : uniqid());
 		$post_array['post_status'] = apply_filters('wnd_insert_post_status', 'pending', $post_array['post_type'], $update_id);
 
 		/**
@@ -101,8 +101,17 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => $post_id->get_error_message()];
 		}
 
-		// 更新字段，分类，及标签
-		Wnd_Post::update_meta_and_term($post_id, $meta_array, $wp_meta_array, $term_array);
+		/**
+		 *设置Meta
+		 *
+		 */
+		Wnd_Post::set_meta($post_id, $meta_array, $wp_meta_array);
+
+		/**
+		 *设置Terms
+		 *
+		 */
+		Wnd_Post::set_terms($post_id, $terms_array);
 
 		// 完成返回
 		$permalink    = get_permalink($post_id);

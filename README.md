@@ -141,6 +141,13 @@ function wnd_can_insert_post($default_return, $post_type, $update_id) {
 *$this->form_data = apply_filters('wnd_form_data', $_POST);
 */
 apply_filters('wnd_form_data', $_POST)
+
+/**
+*@since 2019.12.22
+*根据表单数据控制该表单是否可以提交
+*注意：$form_data = apply_filters('wnd_form_data', $_POST);
+*/
+apply_filters('wnd_can_submit_form', ['status' => 1], $form_data);
 ```
 
 ## 文章

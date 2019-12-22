@@ -49,6 +49,16 @@ class Wnd_Form_Data {
 
 		// 允许修改表单提交数据
 		$this->form_data = apply_filters('wnd_form_data', $_POST);
+
+		/**
+		 *根据表单数据控制表单提交
+		 *@since 2019.12.22
+		 *
+		 */
+		$can_array = apply_filters('wnd_can_submit_form', ['status' => 1], $this->form_data);
+		if (0 === $can_array['status']) {
+			throw new Exception($can_array['msg']);
+		}
 	}
 
 	// 0、获取WordPress user数据数组
@@ -136,7 +146,7 @@ class Wnd_Form_Data {
 	}
 
 	// 6、获取WordPress分类：term数组
-	public function get_term_array() {
+	public function get_terms_array() {
 		$term_array = [];
 
 		foreach ($this->form_data as $key => $value) {
