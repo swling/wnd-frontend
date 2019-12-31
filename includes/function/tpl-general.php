@@ -1,4 +1,16 @@
 <?php
+
+/**
+ *@since 2019.12.31
+ *
+ *Post List 表格列表
+ *
+ *@param WP_Query 实例化
+ */
+function wnd_list_table(WP_Query $query) {
+	return Wnd\Template\Wnd_List_Table::build($query);
+}
+
 /**
  *@since 2019.05.23
  *面包屑导航
