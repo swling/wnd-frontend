@@ -70,17 +70,17 @@ class Wnd_Term_Tpl {
 	 */
 	public static function terms_text($taxonomy, $number) {
 		$terms = get_terms($taxonomy, 'orderby=count&order=DESC&hide_empty=0&number=' . $number);
-		if (!empty($terms)) {
-			if (!is_wp_error($terms)) {
-				$terms_list = '';
-				foreach ($terms as $term) {
-					$terms_list .= '\'' . $term->name . '\',';
-				}
-
-				// 移除末尾的逗号
-				return rtrim($terms_list, ',');
-			}
+		if (!$terms or is_wp_error($terms)) {
+			return null;
 		}
+
+		$terms_names = [];
+		foreach ($terms as $term) {
+			$terms_names[] = '\'' . $term->name . '\'';
+		}
+		unset($terms, $term);
+
+		return implode(',', $terms_names);
 	}
 
 	/**
