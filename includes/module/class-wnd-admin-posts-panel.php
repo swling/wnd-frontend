@@ -18,7 +18,7 @@ class wnd_admin_posts_panel extends Wnd_Module {
 		$filter = new Wnd_Filter(true);
 		$filter->add_post_type_filter(wnd_get_user_panel_post_types(), true);
 		$filter->add_post_status_filter(['待审' => 'pending']);
-		$filter->set_posts_template('\Wnd\Template\Wnd_Table::build');
+		$filter->set_posts_template('\Wnd\Template\Wnd_List::build');
 		$filter->set_posts_per_page($posts_per_page);
 		$filter->set_ajax_container('#admin-posts-panel');
 		$filter->query();

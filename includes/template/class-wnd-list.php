@@ -8,7 +8,7 @@ use Wnd\View\Wnd_Posts_Table;
  *
  *@since 2019.12.18
  */
-class Wnd_Table {
+class Wnd_List {
 
 	/**
 	 *构建表单
