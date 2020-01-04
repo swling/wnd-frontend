@@ -59,8 +59,8 @@ class Wnd_User {
 		if (!$user) {
 			$user_login = wnd_generate_login();
 			$user_pass  = wp_generate_password();
-			$user_array = ['user_login' => $user_login, 'user_pass' => $user_pass, 'display_name' => $display_name];
-			$user_id    = wp_insert_user($user_array);
+			$user_data  = ['user_login' => $user_login, 'user_pass' => $user_pass, 'display_name' => $display_name];
+			$user_id    = wp_insert_user($user_data);
 
 			if (is_wp_error($user_id)) {
 				wp_die($user_id->get_error_message(), get_option('blogname'));

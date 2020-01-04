@@ -16,7 +16,7 @@ class Wnd_Post {
 	 *@return int 		$post_id|0 		成功获取草稿返回ID，否则返回0
 	 *
 	 */
-	public static function get_draft($post_type) {
+	public static function get_draft(string $post_type): int{
 		$user_id = get_current_user_id();
 		if (!$user_id) {
 			return 0;
@@ -129,22 +129,22 @@ class Wnd_Post {
 	 *@since 2019.12.22
 	 *批量设置文章meta
 	 *@param int 	$post_id
-	 *@param array 	$meta_array 	wnd meta array
-	 *@param array 	$wp_meta_array  wp meta array
+	 *@param array 	$meta_data 	wnd meta array
+	 *@param array 	$wp_meta_data  wp meta array
 	 */
-	public static function set_meta($post_id, $meta_array, $wp_meta_array) {
+	public static function set_meta(int $post_id, array $meta_data, array $wp_meta_data) {
 		if (!get_post($post_id)) {
 			return false;
 		}
 
 		// 设置wnd post meta
-		if (!empty($meta_array) and is_array($meta_array)) {
-			wnd_update_post_meta_array($post_id, $meta_array);
+		if ($meta_data) {
+			wnd_update_post_meta_array($post_id, $meta_data);
 		}
 
 		// 设置原生 post meta
-		if (!empty($wp_meta_array) and is_array($wp_meta_array)) {
-			foreach ($wp_meta_array as $key => $value) {
+		if ($wp_meta_data) {
+			foreach ($wp_meta_data as $key => $value) {
 				// 空值，如设置了表单，但无数据的情况，过滤
 				if ('' == $value) {
 					delete_post_meta($post_id, $key);
@@ -161,16 +161,16 @@ class Wnd_Post {
 	 *@since 2019.12.22
 	 *批量设置文章terms
 	 *@param int 	$post_id
-	 *@param array 	$terms_array  	terms_array
+	 *@param array 	$terms_data  	terms_array
 	 */
-	public static function set_terms($post_id, $terms_array) {
+	public static function set_terms(int $post_id, array $terms_data) {
 		if (!get_post($post_id)) {
 			return false;
 		}
 
 		//  设置 term
-		if (!empty($terms_array) and is_array($terms_array)) {
-			foreach ($terms_array as $taxonomy => $term) {
+		if ($terms_data) {
+			foreach ($terms_data as $taxonomy => $term) {
 				if ($term != '-1') {
 					//排除下拉菜单为选择的默认值
 					wp_set_post_terms($post_id, $term, $taxonomy, false);
@@ -249,7 +249,7 @@ class Wnd_Post {
 	 *当前用户可以写入或管理的文章类型
 	 *@return array : post type name数组
 	 */
-	public static function get_allowed_post_types() {
+	public static function get_allowed_post_types(): array{
 		$post_types = get_post_types(['public' => true], 'names', 'and');
 		// 排除页面/站内信
 		unset($post_types['page'], $post_types['mail']);

@@ -31,7 +31,7 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 		}
 
 		// User Data
-		$user_data = $form_data->get_user_array();
+		$user_data = $form_data->get_user_data();
 		if (isset($user_data['user_login'])) {
 			if (strlen($user_data['user_login']) < 3) {
 				return $value = ['status' => 0, 'msg' => '用户名不能低于3位'];
@@ -68,15 +68,15 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 		}
 
 		// 写入用户自定义数组meta
-		$user_meta_array = $form_data->get_user_meta_array();
-		if (!empty($user_meta_array)) {
-			wnd_update_user_meta_array($user_id, $user_meta_array);
+		$user_meta_data = $form_data->get_user_meta_data();
+		if (!empty($user_meta_data)) {
+			wnd_update_user_meta_array($user_id, $user_meta_data);
 		}
 
 		// 写入WordPress原生用户字段
-		$wp_user_meta_array = $form_data->get_wp_user_meta_array();
-		if (!empty($wp_user_meta_array)) {
-			foreach ($wp_user_meta_array as $key => $value) {
+		$wp_user_meta_data = $form_data->get_wp_user_meta_data();
+		if (!empty($wp_user_meta_data)) {
+			foreach ($wp_user_meta_data as $key => $value) {
 				// 下拉菜单默认未选择时，值为 -1 。过滤
 				if ($value !== '-1') {
 					update_user_meta($user_id, $key, $value);

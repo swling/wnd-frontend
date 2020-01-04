@@ -28,17 +28,17 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 	public static function execute($verify_form_nonce = true): array{
 		// 实例化当前提交的表单数据
 		try {
-			$form_data     = new Wnd_Form_Data($verify_form_nonce);
-			$post_array    = $form_data->get_post_array();
-			$meta_array    = $form_data->get_post_meta_array();
-			$wp_meta_array = $form_data->get_wp_post_meta_array();
-			$terms_array   = $form_data->get_terms_array();
+			$form_data    = new Wnd_Form_Data($verify_form_nonce);
+			$post_data    = $form_data->get_post_data();
+			$meta_data    = $form_data->get_post_meta_data();
+			$wp_meta_data = $form_data->get_wp_post_meta_data();
+			$terms_data   = $form_data->get_terms_data();
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 
 		// 指定ID则为更新
-		$update_id = $post_array['ID'] ?? 0;
+		$update_id = $post_data['ID'] ?? 0;
 
 		// 更新权限判断
 		if ($update_id) {
@@ -56,7 +56,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		 *@since 2019.07.17
 		 *attachment仅允许更新，而不能直接写入（写入应在文件上传时完成）
 		 */
-		if ('attachment' == $post_array['post_type']) {
+		if ('attachment' == $post_data['post_type']) {
 			return ['status' => 0, 'msg' => '未指定文件'];
 		}
 
@@ -69,30 +69,30 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		 *
 		 *3.filter：post status
 		 */
-		$post_array['post_type']   = $update_id ? $update_post->post_type : ($post_array['post_type'] ?? 'post');
-		$post_array['post_name']   = ($post_array['post_name'] ?? false) ?: ($update_id ? $update_post->post_name : uniqid());
-		$post_array['post_status'] = apply_filters('wnd_insert_post_status', 'pending', $post_array['post_type'], $update_id);
+		$post_data['post_type']   = $update_id ? $update_post->post_type : ($post_data['post_type'] ?? 'post');
+		$post_data['post_name']   = ($post_data['post_name'] ?? false) ?: ($update_id ? $update_post->post_name : uniqid());
+		$post_data['post_status'] = apply_filters('wnd_insert_post_status', 'pending', $post_data['post_type'], $update_id);
 
 		/**
 		 *限制ajax可以创建的post类型，避免功能型post被意外创建
 		 *功能型post应通常具有更复杂的权限控制，并wp_insert_post创建
 		 *
 		 */
-		if (!in_array($post_array['post_type'], Wnd_Post::get_allowed_post_types())) {
+		if (!in_array($post_data['post_type'], Wnd_Post::get_allowed_post_types())) {
 			return ['status' => 0, 'msg' => '类型无效'];
 		}
 
 		// 写入及更新权限过滤
-		$can_insert_post = apply_filters('wnd_can_insert_post', ['status' => 1, 'msg' => '默认通过'], $post_array['post_type'], $update_id);
+		$can_insert_post = apply_filters('wnd_can_insert_post', ['status' => 1, 'msg' => '默认通过'], $post_data['post_type'], $update_id);
 		if ($can_insert_post['status'] === 0) {
 			return $can_insert_post;
 		}
 
 		// 写入或更新文章
 		if (!$update_id) {
-			$post_id = wp_insert_post($post_array);
+			$post_id = wp_insert_post($post_data);
 		} else {
-			$post_id = wp_update_post($post_array);
+			$post_id = wp_update_post($post_data);
 		}
 		if (!$post_id) {
 			return ['status' => 0, 'msg' => '写入数据失败'];
@@ -105,13 +105,13 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		 *设置Meta
 		 *
 		 */
-		Wnd_Post::set_meta($post_id, $meta_array, $wp_meta_array);
+		Wnd_Post::set_meta($post_id, $meta_data, $wp_meta_data);
 
 		/**
 		 *设置Terms
 		 *
 		 */
-		Wnd_Post::set_terms($post_id, $terms_array);
+		Wnd_Post::set_terms($post_id, $terms_data);
 
 		// 完成返回
 		$permalink    = get_permalink($post_id);
@@ -127,6 +127,6 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 			],
 		];
 
-		return apply_filters('wnd_insert_post_return', $return_array, $post_array['post_type'], $post_id);
+		return apply_filters('wnd_insert_post_return', $return_array, $post_data['post_type'], $post_id);
 	}
 }

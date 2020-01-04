@@ -17,7 +17,7 @@ class Wnd_Update_Account extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => '获取用户ID失败'];
 		}
 
-		$user_array          = ['ID' => $user_id];
+		$user_data           = ['ID' => $user_id];
 		$user_pass           = $_POST['_user_user_pass'] ?? null;
 		$new_password        = $_POST['_user_new_pass'] ?? null;
 		$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? null;
@@ -31,7 +31,7 @@ class Wnd_Update_Account extends Wnd_Action_Ajax {
 				return ['status' => 0, 'msg' => '两次输入的新密码不匹配'];
 
 			} else {
-				$user_array['user_pass'] = $new_password;
+				$user_data['user_pass'] = $new_password;
 			}
 		}
 
@@ -47,7 +47,7 @@ class Wnd_Update_Account extends Wnd_Action_Ajax {
 		}
 
 		// 更新用户
-		$user_id = wp_update_user($user_array);
+		$user_id = wp_update_user($user_data);
 		if (is_wp_error($user_id)) {
 			return ['status' => 0, 'msg' => $user_id->get_error_message()];
 		}

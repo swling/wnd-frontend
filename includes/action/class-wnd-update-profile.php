@@ -32,10 +32,10 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
-		$user_array         = $form_data->get_user_array();
-		$user_array['ID']   = $user_id;
-		$user_meta_array    = $form_data->get_user_meta_array();
-		$wp_user_meta_array = $form_data->get_wp_user_meta_array();
+		$user_data         = $form_data->get_user_data();
+		$user_data['ID']   = $user_id;
+		$user_meta_data    = $form_data->get_user_meta_data();
+		$wp_user_meta_data = $form_data->get_wp_user_meta_data();
 
 		// 更新权限过滤挂钩
 		$user_can_update_profile = apply_filters('wnd_can_update_profile', ['status' => 1, 'msg' => '默认通过']);
@@ -44,19 +44,19 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 		}
 
 		// 更新用户
-		$user_id = wp_update_user($user_array);
+		$user_id = wp_update_user($user_data);
 		if (is_wp_error($user_id)) {
 			$msg = $user_id->get_error_message();
 			return ['status' => 0, 'msg' => $msg];
 		}
 
 		// 更新meta
-		if (!empty($user_meta_array)) {
-			wnd_update_user_meta_array($user_id, $user_meta_array);
+		if (!empty($user_meta_data)) {
+			wnd_update_user_meta_array($user_id, $user_meta_data);
 		}
 
-		if (!empty($wp_user_meta_array)) {
-			foreach ($wp_user_meta_array as $key => $value) {
+		if (!empty($wp_user_meta_data)) {
+			foreach ($wp_user_meta_data as $key => $value) {
 				// 下拉菜单默认未选择时，值为 -1 。过滤
 				if ($value !== '-1') {
 					update_user_meta($user_id, $key, $value);
