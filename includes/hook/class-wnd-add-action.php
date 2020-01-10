@@ -163,9 +163,7 @@ class Wnd_Add_Action {
 
 		//@since 2019.03.04 刷新所有缓存（主要用于刷新对象缓存，静态缓存通常通过缓存插件本身删除）
 		case 'wp_cache_flush':
-			if (is_super_admin()) {
-				wp_cache_flush();
-			}
+			wp_cache_flush();
 			break;
 
 		//@since 2019.05.12 默认：校验nonce后执行action对应的控制类
