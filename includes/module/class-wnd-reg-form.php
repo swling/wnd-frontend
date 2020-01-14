@@ -64,7 +64,7 @@ class Wnd_Reg_Form extends Wnd_Module {
 		}
 
 		$form->set_action('wnd_reg');
-		$form->set_submit_button('注册');
+		$form->set_submit_button(__('注册', 'wnd-frontend'));
 		// 以当前函数名设置filter hook
 		$form->set_filter(__CLASS__);
 		$form->build();
