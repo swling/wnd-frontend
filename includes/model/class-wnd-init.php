@@ -4,6 +4,7 @@ namespace Wnd\Model;
 use Wnd\Controller\Wnd_API;
 use Wnd\Hook\Wnd_Hook;
 use Wnd\Model\Wnd_DB;
+use Wnd\Model\Wnd_language;
 use Wnd\Model\Wnd_Optimization;
 
 /**
@@ -28,6 +29,9 @@ class Wnd_Init {
 
 		// 优化
 		Wnd_Optimization::instance();
+
+		// 语言
+		Wnd_language::instance();
 
 		// function
 		require WND_PATH . '/includes/function/inc-meta.php'; //数组形式储存 meta、option

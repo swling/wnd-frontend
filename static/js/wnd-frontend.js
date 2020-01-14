@@ -2,6 +2,27 @@
  *#################### 初始化
  */
 var $ = jQuery.noConflict();
+
+/**
+*为所有ajax请求统一添加lang语言参数
+*
+*/
+$.ajaxSetup({
+	data: {
+		"lang": get_query_param("lang")
+	}
+});
+
+/**
+ *@since 2020.01.14
+ *
+ *从当前url中获取指定GET参数
+ */
+function get_query_param(Param) {
+	let searchParams = new URLSearchParams(window.location.search)
+	return searchParams.get(Param);
+}
+
 // js 获取cookie
 function getCookie(c_name) {
 	if (document.cookie.length > 0) {

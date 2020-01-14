@@ -476,3 +476,13 @@ namespace Wndt\Module;
 ```php
 namespace Wndt\Action;
 ```
+
+## 多语言设置
+```php
+/**
+*@since 2020.01.14
+*在当前任意链接中新增 ?lang=xx 参数即可切换至对应语言
+*注意：需要对应语言包支持；暂只支持中英双语
+*/
+$_GET['lang']
+```
