@@ -13,7 +13,7 @@ class Wnd_language {
 
 	private function __construct() {
 		// 加载语言包
-		add_action('plugins_loaded', [__CLASS__, 'enable_languages']);
+		add_action('plugins_loaded', [__CLASS__, 'load_languages']);
 
 		// 根据$_GET['lang']切换语言
 		add_filter('locale', [__CLASS__, 'filter_locale']);
@@ -24,6 +24,8 @@ class Wnd_language {
 		add_filter('post_type_archive_link', [__CLASS__, 'filter_link'], 99);
 		add_filter('post_type_link', [__CLASS__, 'filter_link'], 99);
 		add_filter('post_link', [__CLASS__, 'filter_link'], 99);
+		add_filter('author_link', [__CLASS__, 'filter_link'], 99);
+		add_filter('get_edit_post_link', [__CLASS__, 'filter_link'], 99);
 	}
 
 	/**
@@ -42,7 +44,7 @@ class Wnd_language {
 	 *
 	 *@since 2020.01.14
 	 */
-	public static function enable_languages() {
+	public static function load_languages() {
 		load_plugin_textdomain('wnd-frontend', false, 'wnd-frontend' . DIRECTORY_SEPARATOR . 'languages');
 	}
 
