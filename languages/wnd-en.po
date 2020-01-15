@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
-"POT-Creation-Date: 2020-01-15 16:26+0800\n"
-"PO-Revision-Date: 2020-01-15 16:44+0800\n"
+"POT-Creation-Date: 2020-01-15 16:57+0800\n"
+"PO-Revision-Date: 2020-01-15 17:03+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -66,6 +66,7 @@ msgid "用户"
 msgstr "User"
 
 #: includes/model/class-wnd-auth.php:66 includes/view/class-wnd-form-wp.php:162
+#: includes/view/class-wnd-form-wp.php:171
 msgid "邮箱"
 msgstr "Email"
 
@@ -316,8 +317,8 @@ msgid "请绑定邮箱"
 msgstr ""
 
 #: includes/module/class-wnd-account-form.php:24
-#: includes/module/class-wnd-bind-email-form.php:30
-#: includes/module/class-wnd-bind-phone-form.php:31
+#: includes/module/class-wnd-bind-email-form.php:29
+#: includes/module/class-wnd-bind-phone-form.php:30
 #: includes/module/class-wnd-login-form.php:21
 #: includes/module/class-wnd-reg-form.php:47
 msgid "密码"
@@ -339,8 +340,8 @@ msgstr "Confirm New Password"
 
 #: includes/module/class-wnd-account-form.php:28
 #: includes/module/class-wnd-attachment-form.php:97
-#: includes/module/class-wnd-bind-email-form.php:35
-#: includes/module/class-wnd-bind-phone-form.php:36
+#: includes/module/class-wnd-bind-email-form.php:34
+#: includes/module/class-wnd-bind-phone-form.php:35
 #: includes/module/class-wnd-default-post-form.php:57
 #: includes/module/class-wnd-profile-form.php:33
 msgid "保存"
@@ -355,6 +356,8 @@ msgid "手机设置"
 msgstr "Configure Phone"
 
 #: includes/module/class-wnd-account-form.php:39
+#: includes/module/class-wnd-reset-password-form.php:20
+#: includes/module/class-wnd-reset-password-form.php:23
 #: includes/module/class-wnd-reset-password-form.php:30
 msgid "重置密码"
 msgstr "Reset Password"
@@ -437,12 +440,6 @@ msgstr "About"
 msgid "绑定邮箱"
 msgstr "Bind Email"
 
-#: includes/module/class-wnd-bind-email-form.php:25
-#: includes/module/class-wnd-bind-phone-form.php:26
-#: includes/module/class-wnd-post-status-form.php:43
-msgid "当前"
-msgstr "Current"
-
 #: includes/module/class-wnd-bind-phone-form.php:20
 msgid "绑定手机"
 msgstr "Bind Phone"
@@ -519,6 +516,10 @@ msgstr ""
 msgid "已删除"
 msgstr ""
 
+#: includes/module/class-wnd-post-status-form.php:43
+msgid "当前"
+msgstr "Current"
+
 #: includes/module/class-wnd-post-status-form.php:48
 #: includes/module/class-wnd-user-posts-panel.php:20
 msgid "发布"
@@ -567,17 +568,11 @@ msgstr ""
 #: includes/module/class-wnd-reg-form.php:38
 #: includes/module/class-wnd-reg-form.php:67
 msgid "注册"
-msgstr "Registration"
+msgstr "Sign Up"
 
 #: includes/module/class-wnd-reg-form.php:45
-#, fuzzy
-#| msgid "用户"
 msgid "用户名"
 msgstr "User"
-
-#: includes/module/class-wnd-reg-form.php:47
-msgid "登录密码"
-msgstr "Password"
 
 #: includes/module/class-wnd-reg-form.php:55
 msgid "已阅读并同意"
@@ -589,14 +584,6 @@ msgstr ""
 
 #: includes/module/class-wnd-reset-password-form.php:14
 msgid "短信验证未启用"
-msgstr ""
-
-#: includes/module/class-wnd-reset-password-form.php:20
-msgid "手机验证"
-msgstr ""
-
-#: includes/module/class-wnd-reset-password-form.php:23
-msgid "邮箱验证"
 msgstr ""
 
 #: includes/module/class-wnd-user-center.php:44
@@ -627,7 +614,7 @@ msgstr "Sign Up With Email"
 #: includes/module/class-wnd-user-center.php:129
 #: includes/module/class-wnd-user-center.php:133
 msgid "立即注册"
-msgstr "Sign UP"
+msgstr "Sign Up"
 
 #: includes/module/class-wnd-user-center.php:127
 #: includes/module/class-wnd-user-center.php:130

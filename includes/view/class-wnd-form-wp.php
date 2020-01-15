@@ -168,7 +168,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		} elseif ($this->user->data->user_email) {
 			$this->add_email(
 				[
-					'label'    => '邮箱',
+					'label'    => __('邮箱', 'wnd'),
 					'value'    => $this->user->data->user_email,
 					'disabled' => true,
 					'required' => true,
