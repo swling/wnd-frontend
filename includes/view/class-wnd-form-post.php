@@ -108,7 +108,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_hidden('_post_post_parent', $post_parent);
 	}
 
-	public function add_post_title($label = '', $placeholder = "请输入标题", $required = true) {
+	public function add_post_title($label = '', $placeholder = '请输入标题', $required = true) {
 		$this->add_text(
 			[
 				'name'        => '_post_post_title',
@@ -318,7 +318,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *设置post menu_order
 	 *常用菜单、附件等排序
 	 **/
-	public function add_post_menu_order($label = '排序', $placeholder = "输入排序", $required = false) {
+	public function add_post_menu_order($label = '排序', $placeholder = '输入排序', $required = false) {
 		$this->add_number(
 			[
 				'name'        => '_post_menu_order',
@@ -335,7 +335,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *@since 2019.07.18
 	 *设置post_name 固定链接别名
 	 **/
-	public function add_post_name($label = '别名', $placeholder = "文章固定连接别名", $required = false) {
+	public function add_post_name($label = '别名', $placeholder = '文章固定连接别名', $required = false) {
 		$this->add_text(
 			[
 				'name'        => '_post_post_name',
@@ -368,7 +368,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *上传付费文件
 	 */
 	public function add_post_paid_file_upload($label = '', $placeholder = '价格', $required = false) {
-		$this->add_post_file_upload('file', '文件上传');
+		$this->add_post_file_upload('file', __('文件上传', 'wnd'));
 		$this->add_post_price($label, $placeholder, $required);
 	}
 
@@ -380,7 +380,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_checkbox(
 			[
 				'name'    => '_post_post_status',
-				'options' => ['存为草稿' => 'draft'],
+				'options' => [__('存为草稿', 'wnd') => 'draft'],
 				'class'   => 'switch is-' . self::$second_color,
 			]
 		);
@@ -395,7 +395,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 */
 	public function add_post_image_upload($meta_key, $save_width = 0, $save_height = 0, $label = '') {
 		if (!$this->post_id) {
-			$this->add_html('<div class="notification">获取post ID失败，无法设置图像上传！</div>');
+			$this->add_html('<div class="notification">' . __('创建post失败，无法上传文件', 'wnd') . '</div>');
 			return;
 		}
 
@@ -416,7 +416,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 	public function add_post_file_upload($meta_key, $label = '文件上传') {
 		if (!$this->post_id) {
-			$this->add_html('<div class="notification">获取post ID失败，无法设置文件上传！</div>');
+			$this->add_html('<div class="notification">' . __('创建post失败，无法上传文件', 'wnd') . '</div>');
 			return;
 		}
 
@@ -436,7 +436,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 */
 	public function add_post_gallery_upload($save_width = 0, $save_height = 0, $label = '') {
 		if (!$this->post_id) {
-			$this->add_html('<div class="notification">获取post ID失败，无法设置相册上传！</div>');
+			$this->add_html('<div class="notification">' . __('创建post失败，无法上传文件', 'wnd') . '</div>');
 			return;
 		}
 

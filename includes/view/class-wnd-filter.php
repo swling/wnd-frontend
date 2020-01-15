@@ -124,7 +124,7 @@ class Wnd_Filter {
 			foreach ($this->wp_query_args['post_status'] as $key => $post_status) {
 				if (!in_array($post_status, ['publish', 'close'])) {
 					if (!is_user_logged_in()) {
-						throw new Exception('未登录用户，仅可查询公开信息');
+						throw new Exception(__('未登录用户，仅可查询公开信息', 'wnd'));
 					} else {
 						$this->wp_query_args['author'] = get_current_user_id();
 					}
@@ -135,7 +135,7 @@ class Wnd_Filter {
 			// 单个查询
 		} elseif (!in_array($this->wp_query_args['post_status'] ?: 'publish', ['publish', 'close'])) {
 			if (!is_user_logged_in()) {
-				throw new Exception('未登录用户，仅可查询公开信息');
+				throw new Exception(__('未登录用户，仅可查询公开信息', 'wnd'));
 			} else {
 				$this->wp_query_args['author'] = get_current_user_id();
 			}
@@ -544,7 +544,7 @@ class Wnd_Filter {
 	 *
 	 *@param string $label 选项名称
 	 */
-	public function add_order_filter($args, $label = '排序') {
+	public function add_order_filter($args, $label) {
 		$tabs = $this->build_order_filter($args, $label);
 		$this->tabs .= $tabs;
 		return $tabs;
@@ -593,7 +593,7 @@ class Wnd_Filter {
 		if ($with_any_tab) {
 			$class = ('any' == $this->wp_query_args['post_type']) ? ' is-active' : '';
 			$tabs .= '<li class="all' . $class . '">';
-			$tabs .= '<a data-key="type" data-value="any" href="' . add_query_arg('type', 'any', $uri) . '">全部</a>';
+			$tabs .= '<a data-key="type" data-value="any" href="' . add_query_arg('type', 'any', $uri) . '">' . __('全部', 'wnd') . '</a>';
 			$tabs .= '</li>';
 		}
 
@@ -630,7 +630,7 @@ class Wnd_Filter {
 	protected function build_post_status_filter($args = []) {
 		// 输出容器
 		$tabs = '<div class="columns is-marginless is-vcentered post-status-tabs">';
-		$tabs .= '<div class="column is-narrow">状态：</div>';
+		$tabs .= '<div class="column is-narrow">' . __('状态：', 'wnd') . '</div>';
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<div class="tabs">';
 		$tabs .= '<ul class="tab">';
@@ -731,7 +731,7 @@ class Wnd_Filter {
 		 */
 		if (!$parent) {
 			$all_link = self::$doing_ajax ? '' : remove_query_arg('_term_' . $taxonomy, remove_query_arg($remove_query_args));
-			$tabs .= '<li ' . $all_class . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . $all_link . '">全部</a></li>';
+			$tabs .= '<li ' . $all_class . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . $all_link . '">' . __('全部', 'wnd') . '</a></li>';
 		}
 
 		// 输出tabs
@@ -834,7 +834,7 @@ class Wnd_Filter {
 
 		// 全部选项链接
 		$all_link = self::$doing_ajax ? '' : remove_query_arg('_term_' . $taxonomy, remove_query_arg($this->remove_query_args));
-		$tabs .= '<li ' . $all_class . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . $all_link . '">全部</a></li>';
+		$tabs .= '<li ' . $all_class . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . $all_link . '">' . __('全部', 'wnd') . '</a></li>';
 
 		// 输出tabs
 		foreach ($tags as $tag) {
@@ -923,7 +923,7 @@ class Wnd_Filter {
 		 * @since 2019.03.07（copy）
 		 */
 		$all_link = self::$doing_ajax ? '' : remove_query_arg('_meta_' . $args['key'], remove_query_arg($this->remove_query_args));
-		$tabs .= '<li ' . $all_class . '><a data-key="_meta_' . $args['key'] . '" data-value="" href="' . $all_link . '">全部</a></li>';
+		$tabs .= '<li ' . $all_class . '><a data-key="_meta_' . $args['key'] . '" data-value="" href="' . $all_link . '">' . __('全部', 'wnd') . '</a></li>';
 
 		// 输出tabs
 		foreach ($args['options'] as $key => $value) {
@@ -1061,7 +1061,7 @@ class Wnd_Filter {
 		// 是否已设置order参数
 		$all_class = isset($this->wp_query_args['orderby']) ? '' : 'class="is-active"';
 		$all_link  = self::$doing_ajax ? '' : remove_query_arg('order', remove_query_arg($this->remove_query_args));
-		$tabs .= '<li ' . $all_class . '><a data-key="order" data-value="" href="' . $all_link . '">默认</a></li>';
+		$tabs .= '<li ' . $all_class . '><a data-key="order" data-value="" href="' . $all_link . '">' . __('默认', 'wnd') . '</a></li>';
 
 		// 输出tabs
 		foreach ($args as $key => $value) {
@@ -1099,7 +1099,7 @@ class Wnd_Filter {
 
 		// 输出容器
 		$tabs = '<div class="columns is-marginless is-vcentered current-tabs">';
-		$tabs .= '<div class="column is-narrow">当前条件：</div>';
+		$tabs .= '<div class="column is-narrow">' . __('当前：', 'wnd') . '</div>';
 		$tabs .= '<div class="column">';
 
 		// 1、tax_query
@@ -1175,10 +1175,10 @@ class Wnd_Filter {
 			$html = '<nav id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			$html .= '<ul class="pagination-list">';
 			if ($paged >= 2) {
-				$html .= '<li><a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">上一页</a>';
+				$html .= '<li><a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
 			}
 			if ($this->wp_query->post_count >= $this->wp_query->query_vars['posts_per_page']) {
-				$html .= '<li><a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . $next_link . '">下一页</a>';
+				$html .= '<li><a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . $next_link . '">' . __('下一页', 'wnd') . '</a>';
 			}
 			$html .= '</ul>';
 			$html .= '</nav>';
@@ -1197,17 +1197,17 @@ class Wnd_Filter {
 
 			$html = '<div id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			if ($paged > 1) {
-				$html .= '<a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">上一页</a>';
+				$html .= '<a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
 			} else {
-				$html .= '<a class="pagination-previous" disabled="disabled">第一页</a>';
+				$html .= '<a class="pagination-previous" disabled="disabled">' . __('首页', 'wnd') . '</a>';
 			}
 
 			if ($paged < $this->wp_query->max_num_pages) {
-				$html .= '<a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . $next_link . '">下一页</a>';
+				$html .= '<a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . $next_link . '">' . __('下一页', 'wnd') . '</a>';
 			}
 
 			$html .= '<ul class="pagination-list">';
-			$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . $first_link . '" >首页</a></li>';
+			$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . $first_link . '" >' . __('首页', 'wnd') . '</a></li>';
 			for ($i = $paged - 1; $i <= $paged + $show_page; $i++) {
 				if ($i > 0 and $i <= $this->wp_query->max_num_pages) {
 					$page_link = self::$doing_ajax ? '' : add_query_arg('page', $i);
@@ -1222,7 +1222,7 @@ class Wnd_Filter {
 				$html .= '<li><span class="pagination-ellipsis">&hellip;</span></li>';
 			}
 
-			$html .= '<li><a data-key="page" data-value="' . $this->wp_query->max_num_pages . '" class="pagination-link" href="' . $last_link . '">尾页</a></li>';
+			$html .= '<li><a data-key="page" data-value="' . $this->wp_query->max_num_pages . '" class="pagination-link" href="' . $last_link . '">' . __('尾页', 'wnd') . '</a></li>';
 			$html .= '</ul>';
 
 			$html .= '</div>';
@@ -1374,14 +1374,14 @@ class Wnd_Filter {
 	 */
 	public function get_posts() {
 		if (!$this->wp_query) {
-			return '未执行WP_Query';
+			return __('未执行WP_Query', 'wnd');
 		}
 
 		// Posts list
 		if ($this->wp_query_args['wnd_posts_tpl']) {
 			$template = $this->wp_query_args['wnd_posts_tpl'];
 			if (!$template) {
-				return '未定义输出模板';
+				return __('未定义输出模板', 'wnd');
 			}
 			$this->posts = $template($this->wp_query);
 
@@ -1389,7 +1389,7 @@ class Wnd_Filter {
 		} else {
 			$template = $this->wp_query_args['wnd_post_tpl'];
 			if (!$template) {
-				return '未定义输出模板';
+				return __('未定义输出模板', 'wnd');
 			}
 			if ($this->wp_query->have_posts()) {
 				while ($this->wp_query->have_posts()): $this->wp_query->the_post();
@@ -1409,7 +1409,7 @@ class Wnd_Filter {
 	 */
 	public function get_pagination($show_page = 5) {
 		if (!$this->wp_query and !self::$is_ajax) {
-			return '未执行WP_Query';
+			return __('未执行WP_Query', 'wnd');
 		}
 
 		$this->pagination = $this->build_pagination($show_page);

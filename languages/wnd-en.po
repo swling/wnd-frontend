@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
-"POT-Creation-Date: 2020-01-15 14:47+0800\n"
-"PO-Revision-Date: 2020-01-15 14:48+0800\n"
+"POT-Creation-Date: 2020-01-15 15:49+0800\n"
+"PO-Revision-Date: 2020-01-15 15:49+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -63,15 +63,16 @@ msgstr ""
 #: includes/model/class-wnd-auth.php:61
 #: includes/module/class-wnd-admin-recharge-form.php:19
 msgid "用户"
-msgstr ""
+msgstr "User"
 
-#: includes/model/class-wnd-auth.php:66
+#: includes/model/class-wnd-auth.php:66 includes/view/class-wnd-form-wp.php:162
 msgid "邮箱"
-msgstr ""
+msgstr "Email"
 
-#: includes/model/class-wnd-auth.php:71
+#: includes/model/class-wnd-auth.php:71 includes/view/class-wnd-form-wp.php:115
+#: includes/view/class-wnd-form-wp.php:124
 msgid "手机"
-msgstr ""
+msgstr "Phone"
 
 #: includes/model/class-wnd-auth.php:75
 msgid "格式不正确"
@@ -90,8 +91,6 @@ msgid "未指定验证类型"
 msgstr ""
 
 #: includes/model/class-wnd-auth.php:126 includes/model/class-wnd-auth.php:135
-#, fuzzy
-#| msgid "注册"
 msgid "已注册"
 msgstr "Registration"
 
@@ -106,8 +105,9 @@ msgstr "Registration"
 #: includes/module/class-wnd-mail-box.php:14
 #: includes/module/class-wnd-profile-form.php:15
 #: includes/module/class-wnd-user-posts-panel.php:14
-#, fuzzy
-#| msgid "登录"
+#: includes/view/class-wnd-form-user.php:129
+#: includes/view/class-wnd-form-user.php:153
+#: includes/view/class-wnd-form-user.php:173
 msgid "请登录"
 msgstr "Login"
 
@@ -140,7 +140,7 @@ msgid "校验失败：请先获取验证码"
 msgstr ""
 
 #: includes/model/class-wnd-auth.php:211
-msgid "验证码已失效请重新获取"
+msgid "校验失败：验证码已过期"
 msgstr ""
 
 #: includes/model/class-wnd-auth.php:214
@@ -157,10 +157,8 @@ msgstr ""
 
 #: includes/model/class-wnd-binder-email.php:25
 #: includes/model/class-wnd-binder-phone.php:25
-#, fuzzy
-#| msgid "当前密码"
 msgid "当前密码错误"
-msgstr "current password"
+msgstr ""
 
 #: includes/model/class-wnd-binder-email.php:34
 #: includes/model/class-wnd-binder-phone.php:34
@@ -348,6 +346,10 @@ msgstr "Reset Password"
 #: includes/module/class-wnd-admin-finance-panel.php:20
 #: includes/module/class-wnd-mail-box.php:20
 #: includes/module/class-wnd-user-posts-panel.php:20
+#: includes/view/class-wnd-filter.php:596
+#: includes/view/class-wnd-filter.php:734
+#: includes/view/class-wnd-filter.php:837
+#: includes/view/class-wnd-filter.php:926
 msgid "全部"
 msgstr "All"
 
@@ -437,8 +439,6 @@ msgstr ""
 
 #: includes/module/class-wnd-login-form.php:14
 #: includes/module/class-wnd-reg-form.php:18
-#, fuzzy
-#| msgid "登录"
 msgid "已登录"
 msgstr "Login"
 
@@ -453,9 +453,22 @@ msgstr "Login"
 msgid "登录"
 msgstr "Login"
 
+#: includes/module/class-wnd-login-form.php:20
+msgid "账号"
+msgstr "Accounts"
+
+#: includes/module/class-wnd-login-form.php:20
+msgid "用户名、手机、邮箱"
+msgstr "User name, email, phone"
+
+#: includes/module/class-wnd-login-form.php:21
+#: includes/module/class-wnd-reg-form.php:47
+msgid "密码"
+msgstr "Password"
+
 #: includes/module/class-wnd-login-form.php:25
 msgid "记住我"
-msgstr "Remember me."
+msgstr "Remember me"
 
 #: includes/module/class-wnd-mail-box.php:20
 msgid "未读"
@@ -537,10 +550,6 @@ msgstr ""
 #: includes/module/class-wnd-reg-form.php:67
 msgid "注册"
 msgstr "Registration"
-
-#: includes/module/class-wnd-reg-form.php:47
-msgid "密码"
-msgstr ""
 
 #: includes/module/class-wnd-reg-form.php:47
 msgid "登录密码"
@@ -661,4 +670,86 @@ msgstr ""
 
 #: includes/module/class-wnd-user-recharge-form.php:13
 msgid "未设置支付接口"
+msgstr ""
+
+#: includes/view/class-wnd-filter.php:127
+#: includes/view/class-wnd-filter.php:138
+msgid "未登录用户，仅可查询公开信息"
+msgstr ""
+
+#: includes/view/class-wnd-filter.php:633
+msgid "状态："
+msgstr ""
+
+#: includes/view/class-wnd-filter.php:1064
+msgid "默认"
+msgstr ""
+
+#: includes/view/class-wnd-filter.php:1102
+msgid "当前："
+msgstr ""
+
+#: includes/view/class-wnd-filter.php:1178
+#: includes/view/class-wnd-filter.php:1200
+msgid "上一页"
+msgstr ""
+
+#: includes/view/class-wnd-filter.php:1181
+#: includes/view/class-wnd-filter.php:1206
+msgid "下一页"
+msgstr "Next"
+
+#: includes/view/class-wnd-filter.php:1202
+#: includes/view/class-wnd-filter.php:1210
+msgid "首页"
+msgstr "Home"
+
+#: includes/view/class-wnd-filter.php:1225
+msgid "尾页"
+msgstr ""
+
+#: includes/view/class-wnd-filter.php:1377
+#: includes/view/class-wnd-filter.php:1412
+msgid "未执行WP_Query"
+msgstr ""
+
+#: includes/view/class-wnd-filter.php:1384
+#: includes/view/class-wnd-filter.php:1392
+msgid "未定义输出模板"
+msgstr ""
+
+#: includes/view/class-wnd-form-post.php:371
+msgid "文件上传"
+msgstr ""
+
+#: includes/view/class-wnd-form-post.php:383
+msgid "存为草稿"
+msgstr ""
+
+#: includes/view/class-wnd-form-post.php:398
+#: includes/view/class-wnd-form-post.php:419
+#: includes/view/class-wnd-form-post.php:439
+msgid "创建post失败，无法上传文件"
+msgstr ""
+
+#: includes/view/class-wnd-form-wp.php:116
+msgid "手机号码"
+msgstr "Phone"
+
+#: includes/view/class-wnd-form-wp.php:138
+#: includes/view/class-wnd-form-wp.php:185
+msgid "验证码"
+msgstr "Auth Code"
+
+#: includes/view/class-wnd-form-wp.php:139
+#: includes/view/class-wnd-form-wp.php:186
+msgid "获取验证码"
+msgstr "Send code"
+
+#: includes/view/class-wnd-form-wp.php:163
+msgid "电子邮箱"
+msgstr "Email"
+
+#: includes/view/class-wnd-form-wp.php:314
+msgid "查看文件"
 msgstr ""

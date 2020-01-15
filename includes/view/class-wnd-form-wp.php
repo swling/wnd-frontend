@@ -112,8 +112,8 @@ class Wnd_Form_WP extends Wnd_Form {
 					'name'        => 'phone',
 					'icon_left'   => '<i class="fa fa-phone-square"></i>',
 					'required'    => true,
-					'label'       => '手机',
-					'placeholder' => '手机号码',
+					'label'       => __('手机', 'wnd'),
+					'placeholder' => __('手机号码', 'wnd'),
 				]
 			);
 
@@ -121,7 +121,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		} elseif ($user_phone) {
 			$this->add_text(
 				[
-					'label'    => '手机',
+					'label'    => __('手机', 'wnd'),
 					'value'    => $user_phone,
 					'disabled' => true,
 					'required' => true,
@@ -135,8 +135,8 @@ class Wnd_Form_WP extends Wnd_Form {
 				'icon_left'   => '<i class="fas fa-comment-alt"></i>',
 				'required'    => 'required',
 				'label'       => '',
-				'placeholder' => '短信验证码',
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('sms' . $type) . '" data-is_email="0">获取验证码</button>',
+				'placeholder' => __('验证码', 'wnd'),
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('sms' . $type) . '" data-is_email="0">' . __('获取验证码', 'wnd') . '</button>',
 			]
 		);
 
@@ -159,8 +159,8 @@ class Wnd_Form_WP extends Wnd_Form {
 					'name'        => '_user_user_email',
 					'icon_left'   => '<i class="fa fa-at"></i>',
 					'required'    => true,
-					'label'       => '邮箱',
-					'placeholder' => '电子邮箱',
+					'label'       => __('邮箱', 'wnd'),
+					'placeholder' => __('电子邮箱', 'wnd'),
 				]
 			);
 
@@ -182,8 +182,8 @@ class Wnd_Form_WP extends Wnd_Form {
 				'icon_left'   => '<i class="fa fa-key"></i>',
 				'required'    => 'required',
 				'label'       => '',
-				'placeholder' => '邮箱验证码',
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('email' . $type) . '" data-is_email="1">获取验证码</button>',
+				'placeholder' => __('验证码', 'wnd'),
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('email' . $type) . '" data-is_email="1">' . __('获取验证码', 'wnd') . '</button>',
 			]
 		);
 
@@ -311,7 +311,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 
 		$args['file_id']   = $file_id ?: 0;
-		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">查看文件</a>' : '……';
+		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">' . __('查看文件', 'wnd') . '</a>' : '……';
 
 		parent::add_file_upload($args);
 	}
