@@ -11,28 +11,28 @@ class Wnd_Bind_Email_Form extends Wnd_Module {
 	public static function build() {
 		$current_user = wp_get_current_user();
 		if (!$current_user->ID) {
-			return self::build_error_message('请登录');
+			return self::build_error_message(__('请登录', 'wnd'));
 		}
 
 		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
-		$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>绑定邮箱', true);
+		$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>' . __('绑定邮箱', 'wnd'), true);
 
 		// 如果当前用户更改邮箱，则需要验证密码，首次绑定不需要
 		if ($current_user->data->user_email) {
 			$form->add_text(
 				[
-					'label'    => '当前邮箱',
+					'label'    => __('当前邮箱', 'wnd'),
 					'value'    => $current_user->data->user_email,
 					'disabled' => true,
 				]
 			);
-			$form->add_user_password('当前密码');
+			$form->add_user_password(__('当前密码', 'wnd'));
 		}
 
 		$form->add_email_verify('bind');
 		$form->set_action('wnd_bind_account');
-		$form->set_submit_button('保存');
+		$form->set_submit_button(__('保存', 'wnd'));
 		$form->build();
 
 		return $form->html;

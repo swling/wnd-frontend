@@ -52,7 +52,7 @@ class Wnd_Attachment_Form extends Wnd_Module {
 		$parent_post_form->add_hidden('wnd_file', '');
 		$parent_post_form->add_file_upload(
 			[
-				'label'    => '附件上传',
+				'label'    => __('附件上传', 'wnd'),
 				'disabled' => $attachment_id ? 'disabled' : false,
 				'file_id'  => $attachment_id,
 
@@ -74,11 +74,15 @@ class Wnd_Attachment_Form extends Wnd_Module {
 		 */
 		$attachment_post_form = new Wnd_Form_Post('attachment', $attachment_id, false);
 		if ($attachment_id) {
-			$attachment_post_form->set_message('<div class="message is-' . Wnd_Form_WP::$second_color . '"><div class="message-body">如需更改文件，请先删除后重新选择文件！</div></div>');
+			$attachment_post_form->set_message(
+				'<div class="message is-' . Wnd_Form_WP::$second_color . '">
+				<div class="message-body">' . __('如需更改文件，请先删除后重新选择文件', 'wnd') . '</div>
+				</div>'
+			);
 		}
-		$attachment_post_form->add_post_title('文件名称');
+		$attachment_post_form->add_post_title(__('文件名称', 'wnd'));
 		$attachment_post_form->add_html('<div class="field is-horizontal"><div class="field-body">');
-		$attachment_post_form->add_post_menu_order('排序', '输入排序');
+		$attachment_post_form->add_post_menu_order(__('排序', 'wnd'), __('输入排序', 'wnd'));
 		$attachment_post_form->add_text(
 			[
 				'label'    => '文件ID',
@@ -88,9 +92,9 @@ class Wnd_Attachment_Form extends Wnd_Module {
 			]
 		);
 		$attachment_post_form->add_html('</div></div>');
-		$attachment_post_form->add_post_name('链接别名', '附件的固定链接别名');
-		$attachment_post_form->add_post_content(true, '简介', true);
-		$attachment_post_form->set_submit_button('保存');
+		$attachment_post_form->add_post_name(__('链接别名', 'wnd'), __('附件的固定链接别名', 'wnd'));
+		$attachment_post_form->add_post_content(true, __('简介', 'wnd'), true);
+		$attachment_post_form->set_submit_button(__('保存', 'wnd'));
 
 		// 将上述两个表单字段，合并组成一个表单字段
 		$input_values = array_merge($parent_post_form->get_input_values(), $attachment_post_form->get_input_values());

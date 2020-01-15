@@ -11,7 +11,7 @@ class Wnd_Bind_Phone_Form extends Wnd_Module {
 	public static function build() {
 		$current_user = wp_get_current_user();
 		if (!$current_user->ID) {
-			return self::build_error_message('请登录');
+			return self::build_error_message(__('请登录', 'wnd'));
 		}
 		$current_user_phone = wnd_get_user_phone($current_user->ID);
 
@@ -23,17 +23,17 @@ class Wnd_Bind_Phone_Form extends Wnd_Module {
 		if ($current_user_phone) {
 			$form->add_text(
 				[
-					'label'    => '当前号码',
+					'label'    => __('当前号码', 'wnd'),
 					'value'    => $current_user_phone,
 					'disabled' => true,
 				]
 			);
-			$form->add_user_password('当前密码');
+			$form->add_user_password(__('当前密码', 'wnd'));
 		}
 
 		$form->add_sms_verify('bind', wnd_get_option('wnd', 'wnd_sms_template_v'));
 		$form->set_action('wnd_bind_account');
-		$form->set_submit_button('保存');
+		$form->set_submit_button(__('保存', 'wnd'));
 		$form->build();
 
 		return $form->html;

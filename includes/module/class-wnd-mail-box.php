@@ -11,13 +11,13 @@ class Wnd_Mail_Box extends Wnd_Module {
 
 	public static function build(int $posts_per_page = 0) {
 		if (!is_user_logged_in()) {
-			return self::build_error_message('请登录');
+			return self::build_error_message(__('请登录', 'wnd'));
 		}
 		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 
 		$filter = new Wnd_Filter(true);
 		$filter->add_post_type_filter(['mail']);
-		$filter->add_post_status_filter(['全部' => 'any', '未读' => 'pending', '已读' => 'private']);
+		$filter->add_post_status_filter([__('全部', 'wnd') => 'any', __('未读', 'wnd') => 'pending', __('已读', 'wnd') => 'private']);
 		$filter->add_query(['author' => get_current_user_id()]);
 		$filter->set_posts_template('wnd_list_table');
 		$filter->set_posts_per_page($posts_per_page);

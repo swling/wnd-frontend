@@ -45,7 +45,7 @@ class Wnd_language {
 	 *@since 2020.01.14
 	 */
 	public static function load_languages() {
-		load_plugin_textdomain('wnd-frontend', false, 'wnd-frontend' . DIRECTORY_SEPARATOR . 'languages');
+		load_plugin_textdomain('wnd', false, 'wnd-frontend' . DIRECTORY_SEPARATOR . 'languages');
 	}
 
 	/**

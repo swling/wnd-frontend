@@ -41,33 +41,33 @@ class Wnd_User_Center extends Wnd_Module {
 			if (wnd_doing_ajax()) {
 				if ($ajax_type == 'modal') {
 					if ($type == 'email' and $enable_sms) {
-						$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=reset_password&type=phone\');">手机验证找回</a>';
+						$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=reset_password&type=phone\');">' . __('手机验证找回', 'wnd') . '</a>';
 					} elseif ($type == 'phone') {
-						$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=reset_password&type=email\');">邮箱验证找回</a>';
+						$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=reset_password&type=email\');">' . __('邮箱验证找回', 'wnd') . '</a>';
 					}
 					if (!$is_user_logged_in) {
-						$html .= ' | <a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\');">登录</a>';
+						$html .= ' | <a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\');">' . __('登录', 'wnd') . '</a>';
 					}
 
 				} else {
 					if ($type == 'email' and $enable_sms) {
-						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=reset_password&type=phone\');">手机验证找回</a>';
+						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=reset_password&type=phone\');">' . __('手机验证找回', 'wnd') . '</a>';
 					} elseif ($type == 'phone') {
-						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=reset_password&type=email\');">邮箱验证找回</a>';
+						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=reset_password&type=email\');">' . __('邮箱验证找回', 'wnd') . '</a>';
 					}
 					if (!$is_user_logged_in) {
-						$html .= ' | <a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=login\');">登录</a>';
+						$html .= ' | <a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=login\');">' . __('登录', 'wnd') . '</a>';
 					}
 				}
 
 			} else {
 				if ($type == 'email' and $enable_sms) {
-					$html .= '<a href="' . add_query_arg('type', 'phone') . '">手机验证找回</a>';
+					$html .= '<a href="' . add_query_arg('type', 'phone') . '"' . __('手机验证找回', 'wnd') . '</a>';
 				} elseif ($type == 'phone') {
-					$html .= '<a href="' . add_query_arg('type', 'email') . '">邮箱验证找回</a>';
+					$html .= '<a href="' . add_query_arg('type', 'email') . '"' . __('邮箱验证找回', 'wnd') . '</a>';
 				}
 				if (!$is_user_logged_in) {
-					$html .= ' | <a href="' . add_query_arg('do', 'login') . '">登录</a>';
+					$html .= ' | <a href="' . add_query_arg('do', 'login') . '"' . __('登录', 'wnd') . '</a>';
 				}
 			}
 			$html .= '</div></div></div>';
@@ -89,29 +89,29 @@ class Wnd_User_Center extends Wnd_Module {
 					//是否在ajax中
 					if ($ajax_type == 'modal') {
 						if ($type == 'email' and $enable_sms) {
-							$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=register&type=phone\');">手机注册</a> | ';
+							$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=register&type=phone\');">' . __('手机注册', 'wnd') . '</a> | ';
 						} elseif ($type == 'phone' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
-							$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=register&type=email\');">邮箱注册</a> | ';
+							$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=register&type=email\');">' . __('邮箱注册', 'wnd') . '</a> | ';
 						}
-						$html .= '已有账户？<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\');">登录</a>';
+						$html .= __('已有账户？', 'wnd') . '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\');">' . __('登录', 'wnd') . '</a>';
 
 					} else {
 						if ($type == 'email' and $enable_sms) {
-							$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=register&type=phone\');">手机注册</a> | ';
+							$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=register&type=phone\');">' . __('手机注册', 'wnd') . '</a> | ';
 						} elseif ($type == 'phone' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
-							$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=register&type=email\');">邮箱注册</a> | ';
+							$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=register&type=email\');">' . __('邮箱注册', 'wnd') . '</a> | ';
 						}
-						$html .= '已有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=login\');">登录</a>';
+						$html .= __('已有账户？', 'wnd') . '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=login\');">' . __('登录', 'wnd') . '</a>';
 
 					}
 
 				} else {
 					if ($type == 'email' and $enable_sms) {
-						$html .= '<a href="' . add_query_arg('type', 'phone') . '">手机注册</a> | ';
+						$html .= '<a href="' . add_query_arg('type', 'phone') . '"' . __('手机注册', 'wnd') . '</a> | ';
 					} elseif ($type == 'phone' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
-						$html .= '<a href="' . add_query_arg('type', 'email') . '">邮箱注册</a> | ';
+						$html .= '<a href="' . add_query_arg('type', 'email') . '"' . __('邮箱注册', 'wnd') . '</a> | ';
 					}
-					$html .= '已有账户？<a href="' . add_query_arg('do', 'login') . '">登录</a>';
+					$html .= __('已有账户？', 'wnd') . '<a href="' . add_query_arg('do', 'login') . '"' . __('登录', 'wnd') . '</a>';
 
 				}
 				$html .= '</div></div></div>';
@@ -123,15 +123,15 @@ class Wnd_User_Center extends Wnd_Module {
 				$html .= '<div class="user-form"><div class="message is-' . $color . '"><div class="message-body">';
 				if (wnd_doing_ajax()) {
 					if ($ajax_type == 'modal') {
-						$html .= '没有账户？<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=register\');">立即注册</a> | ';
-						$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=reset_password\');">忘记密码？</a>';
+						$html .= __('没有账户？', 'wnd') . '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=register\');">' . __('立即注册', 'wnd') . '</a> | ';
+						$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=reset_password\');">' . __('忘记密码？', 'wnd') . '</a>';
 					} else {
-						$html .= '没有账户？<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=register\');">立即注册</a> | ';
+						$html .= __('没有账户？', 'wnd') . '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=register\');">' . __('立即注册', 'wnd') . '</a> | ';
 						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=reset_password\');">忘记密码</a>';
 					}
 				} else {
-					$html .= '没有账户？<a href="' . add_query_arg('do', 'register') . '">立即注册</a> | ';
-					$html .= '<a href="' . add_query_arg('do', 'reset_password') . '">忘记密码？</a>';
+					$html .= __('没有账户？', 'wnd') . '<a href="' . add_query_arg('do', 'register') . '"' . __('立即注册', 'wnd') . '</a> | ';
+					$html .= '<a href="' . add_query_arg('do', 'reset_password') . '"' . __('忘记密码？', 'wnd') . '</a>';
 				}
 				$html .= '</div></div></div>';
 				break;
@@ -144,15 +144,15 @@ class Wnd_User_Center extends Wnd_Module {
 				$html .= '<div class="tabs is-boxed"><ul class="tab">';
 				if (wnd_doing_ajax()) {
 					if ($ajax_type == 'modal') {
-						$html .= '<li class="is-active"><a onclick="wnd_ajax_modal(\'wnd_user_center\',\'tab=profile\');">资料</a></li>';
-						$html .= '<li><a onclick="wnd_ajax_modal(\'wnd_user_center\',\'tab=account\');">账户</a></li>';
+						$html .= '<li class="is-active"><a onclick="wnd_ajax_modal(\'wnd_user_center\',\'tab=profile\');">' . __('资料', 'wnd') . '</a></li>';
+						$html .= '<li><a onclick="wnd_ajax_modal(\'wnd_user_center\',\'tab=account\');">' . __('账户', 'wnd') . '</a></li>';
 					} else {
-						$html .= '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'tab=profile\');">资料</a></li>';
-						$html .= '<li><a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'tab=account\');">账户</a></li>';
+						$html .= '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'tab=profile\');">' . __('资料', 'wnd') . '</a></li>';
+						$html .= '<li><a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'tab=account\');">' . __('账户', 'wnd') . '</a></li>';
 					}
 				} else {
-					$html .= '<li class="is-active"><a href="' . add_query_arg('tab', 'profile') . '">资料</a></li>';
-					$html .= '<li><a href="' . add_query_arg('tab', 'account') . '">账户</a></li>';
+					$html .= '<li class="is-active"><a href="' . add_query_arg('tab', 'profile') . '"' . __('资料', 'wnd') . '</a></li>';
+					$html .= '<li><a href="' . add_query_arg('tab', 'account') . '"' . __('账户', 'wnd') . '</a></li>';
 				}
 				$html .= '</ul></div>';
 				$html .= Wnd_Profile_Form::build();
@@ -162,15 +162,15 @@ class Wnd_User_Center extends Wnd_Module {
 				$html .= '<div class="tabs is-boxed"><ul class="tab">';
 				if (wnd_doing_ajax()) {
 					if ($ajax_type == 'modal') {
-						$html .= '<li><a onclick="wnd_ajax_modal(\'wnd_user_center\',\'tab=profile\');">资料</a></li>';
-						$html .= '<li class="is-active"><a onclick="wnd_ajax_modal(\'wnd_user_center\',\'tab=account\');">账户</a></li>';
+						$html .= '<li><a onclick="wnd_ajax_modal(\'wnd_user_center\',\'tab=profile\');">' . __('资料', 'wnd') . '</a></li>';
+						$html .= '<li class="is-active"><a onclick="wnd_ajax_modal(\'wnd_user_center\',\'tab=account\');">' . __('账户', 'wnd') . '</a></li>';
 					} else {
-						$html .= '<li><a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'tab=profile\');">资料</a></li>';
-						$html .= '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'tab=account\');">账户</a></li>';
+						$html .= '<li><a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'tab=profile\');">' . __('资料', 'wnd') . '</a></li>';
+						$html .= '<li class="is-active"><a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'tab=account\');">' . __('账户', 'wnd') . '</a></li>';
 					}
 				} else {
-					$html .= '<li><a href="' . add_query_arg('tab', 'profile') . '">资料</a></li>';
-					$html .= '<li class="is-active"><a href="' . add_query_arg('tab', 'account') . '">账户</a></li>';
+					$html .= '<li><a href="' . add_query_arg('tab', 'profile') . '"' . __('资料', 'wnd') . '</a></li>';
+					$html .= '<li class="is-active"><a href="' . add_query_arg('tab', 'account') . '"' . __('账户', 'wnd') . '</a></li>';
 				}
 				$html .= '</ul></div>';
 				$html .= Wnd_Account_Form::build();
