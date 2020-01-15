@@ -22,12 +22,11 @@ class Wnd_Bind_Email_Form extends Wnd_Module {
 		if ($current_user->data->user_email) {
 			$form->add_text(
 				[
-					'label'    => __('当前邮箱', 'wnd'),
 					'value'    => $current_user->data->user_email,
 					'disabled' => true,
 				]
 			);
-			$form->add_user_password(__('当前密码', 'wnd'));
+			$form->add_user_password(__('密码', 'wnd'), __('密码', 'wnd'));
 		}
 
 		$form->add_email_verify('bind');

@@ -17,18 +17,17 @@ class Wnd_Bind_Phone_Form extends Wnd_Module {
 
 		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
-		$form->set_form_title('<span class="icon"><i class="fa fa-phone"></i></span>绑定手机', true);
+		$form->set_form_title('<span class="icon"><i class="fa fa-phone"></i></span>' . __('绑定手机', 'wnd'), true);
 
 		// 如果当前用户更改手机号，需要验证密码，首次绑定不需要
 		if ($current_user_phone) {
 			$form->add_text(
 				[
-					'label'    => __('当前号码', 'wnd'),
 					'value'    => $current_user_phone,
 					'disabled' => true,
 				]
 			);
-			$form->add_user_password(__('当前密码', 'wnd'));
+			$form->add_user_password(__('密码', 'wnd'), __('密码', 'wnd'));
 		}
 
 		$form->add_sms_verify('bind', wnd_get_option('wnd', 'wnd_sms_template_v'));
