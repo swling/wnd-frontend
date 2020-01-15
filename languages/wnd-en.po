@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
-"POT-Creation-Date: 2020-01-15 13:27+0800\n"
-"PO-Revision-Date: 2020-01-15 13:28+0800\n"
+"POT-Creation-Date: 2020-01-15 14:47+0800\n"
+"PO-Revision-Date: 2020-01-15 14:48+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -16,6 +16,89 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-SearchPath-0: .\n"
 
+#: includes/model/class-wnd-auth-email.php:31
+msgid "写入数据库失败"
+msgstr ""
+
+#: includes/model/class-wnd-auth-email.php:34
+msgid "邮箱验证秘钥"
+msgstr ""
+
+#: includes/model/class-wnd-auth-email.php:34
+msgid "（不含括号），关键凭证，请勿泄露"
+msgstr ""
+
+#: includes/model/class-wnd-auth-email.php:35
+msgid "验证邮箱"
+msgstr ""
+
+#: includes/model/class-wnd-auth-email.php:39
+msgid "发送失败，请稍后重试"
+msgstr ""
+
+#: includes/model/class-wnd-auth-phone.php:47
+msgid "未指定短信模板"
+msgstr ""
+
+#: includes/model/class-wnd-auth-phone.php:51
+msgid "未指定短信服务商"
+msgstr ""
+
+#: includes/model/class-wnd-auth-phone.php:69
+msgid "数据库写入失败"
+msgstr ""
+
+#: includes/model/class-wnd-auth-phone.php:78
+msgid "指定短信服务商未完成配置"
+msgstr ""
+
+#: includes/model/class-wnd-auth-user.php:26
+msgid "指定用户无效"
+msgstr ""
+
+#: includes/model/class-wnd-auth-user.php:35
+msgid "仅做验证，不支持发送wnd"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:61
+#: includes/module/class-wnd-admin-recharge-form.php:19
+msgid "用户"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:66
+msgid "邮箱"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:71
+msgid "手机"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:75
+msgid "格式不正确"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:90
+msgid "类型无效，请选择：register / reset_password / verify / bind"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:115
+msgid "请填写"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:120
+msgid "未指定验证类型"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:126 includes/model/class-wnd-auth.php:135
+#, fuzzy
+#| msgid "注册"
+msgid "已注册"
+msgstr "Registration"
+
+#: includes/model/class-wnd-auth.php:132 includes/model/class-wnd-binder.php:21
+#: includes/model/class-wnd-order.php:38
+#: includes/model/class-wnd-payment.php:106
+#: includes/model/class-wnd-recharge.php:47
 #: includes/module/class-wnd-account-form.php:13
 #: includes/module/class-wnd-admin-posts-panel.php:14
 #: includes/module/class-wnd-bind-email-form.php:14
@@ -27,6 +110,208 @@ msgstr ""
 #| msgid "登录"
 msgid "请登录"
 msgstr "Login"
+
+#: includes/model/class-wnd-auth.php:141
+msgid "尚未注册"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:156
+msgid "验证码为空"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:162
+msgid "操作太频繁，请等待"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:162
+msgid "秒"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:193
+msgid "校验失败：请填写验证码"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:196
+msgid "不可为空"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:208
+msgid "校验失败：请先获取验证码"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:211
+msgid "验证码已失效请重新获取"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:214
+msgid "校验失败：验证码不正确"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:239
+msgid "未定义数据库写入字段名或对应值"
+msgstr ""
+
+#: includes/model/class-wnd-auth.php:271
+msgid "未定义数据库查询字段名或对应值"
+msgstr ""
+
+#: includes/model/class-wnd-binder-email.php:25
+#: includes/model/class-wnd-binder-phone.php:25
+#, fuzzy
+#| msgid "当前密码"
+msgid "当前密码错误"
+msgstr "current password"
+
+#: includes/model/class-wnd-binder-email.php:34
+#: includes/model/class-wnd-binder-phone.php:34
+msgid "未知错误"
+msgstr ""
+
+#: includes/model/class-wnd-form-data.php:37
+msgid "表单数据为空"
+msgstr ""
+
+#: includes/model/class-wnd-form-data.php:47
+msgid "表单已被篡改"
+msgstr ""
+
+#: includes/model/class-wnd-init.php:107
+msgid "充值记录"
+msgstr ""
+
+#: includes/model/class-wnd-init.php:111
+#: includes/module/class-wnd-user-recharge-form.php:31
+msgid "充值"
+msgstr ""
+
+#: includes/model/class-wnd-init.php:126
+msgid "订单记录"
+msgstr ""
+
+#: includes/model/class-wnd-init.php:130
+msgid "订单"
+msgstr ""
+
+#: includes/model/class-wnd-init.php:140 includes/model/class-wnd-init.php:144
+msgid "站内信"
+msgstr ""
+
+#: includes/model/class-wnd-init.php:155 includes/model/class-wnd-init.php:159
+msgid "充值统计"
+msgstr "Recharge stats"
+
+#: includes/model/class-wnd-init.php:168 includes/model/class-wnd-init.php:172
+msgid "消费统计"
+msgstr "Expense stats"
+
+#: includes/model/class-wnd-init.php:204
+#: includes/module/class-wnd-post-status-form.php:50
+#: includes/module/class-wnd-user-posts-panel.php:20
+msgid "关闭"
+msgstr ""
+
+#: includes/model/class-wnd-order.php:41
+msgid "指定商品无效"
+msgstr ""
+
+#: includes/model/class-wnd-order.php:47
+msgid "订单："
+msgstr ""
+
+#: includes/model/class-wnd-order.php:78
+msgid "免费"
+msgstr ""
+
+#: includes/model/class-wnd-order.php:86
+msgid "创建订单失败"
+msgstr ""
+
+#: includes/model/class-wnd-order.php:128
+msgid "订单ID无效"
+msgstr ""
+
+#: includes/model/class-wnd-order.php:133
+#: includes/model/class-wnd-payment.php:162
+msgid "订单状态无效"
+msgstr ""
+
+#: includes/model/class-wnd-order.php:139
+msgid "(在线支付)"
+msgstr ""
+
+#: includes/model/class-wnd-order.php:143
+#: includes/model/class-wnd-recharge.php:133
+msgid "数据更新失败"
+msgstr ""
+
+#: includes/model/class-wnd-payment.php:140
+msgid "异步"
+msgstr ""
+
+#: includes/model/class-wnd-payment.php:140
+msgid "同步"
+msgstr ""
+
+#: includes/model/class-wnd-payment.php:146
+msgid "支付ID无效："
+msgstr ""
+
+#: includes/model/class-wnd-payment.php:149
+msgid "金额不匹配"
+msgstr ""
+
+#: includes/model/class-wnd-payment.php:192
+msgid "站内支付数据尚未写入，无法生成订单号"
+msgstr ""
+
+#: includes/model/class-wnd-recharge.php:50
+msgid "获取充值金额失败"
+msgstr ""
+
+#: includes/model/class-wnd-recharge.php:55
+msgid "充值："
+msgstr ""
+
+#: includes/model/class-wnd-recharge.php:85
+msgid "创建充值订单失败"
+msgstr ""
+
+#: includes/model/class-wnd-recharge.php:118
+msgid "充值ID无效"
+msgstr ""
+
+#: includes/model/class-wnd-recharge.php:123
+msgid "充值订单状态无效"
+msgstr ""
+
+#: includes/model/class-wnd-sms-ali.php:50
+msgid "短信请求发送失败"
+msgstr ""
+
+#: includes/model/class-wnd-sms-ali.php:53
+#: includes/model/class-wnd-sms-tx.php:43
+msgid "系统错误："
+msgstr ""
+
+#: includes/model/class-wnd-transaction.php:53
+msgid "金额无效"
+msgstr ""
+
+#: includes/model/class-wnd-transaction.php:66
+msgid "商品ID无效"
+msgstr ""
+
+#: includes/model/class-wnd-transaction.php:78
+msgid "用户ID无效"
+msgstr ""
+
+#: includes/model/class-wnd-user.php:44
+msgid "OpenID已被其他账户占用"
+msgstr ""
+
+#: includes/model/class-wnd-user.php:375
+msgid "用户不存在"
+msgstr ""
 
 #: includes/module/class-wnd-account-form.php:17
 msgid "请绑定邮箱"
@@ -78,10 +363,6 @@ msgstr "In progress"
 #: includes/module/class-wnd-post-status-form.php:49
 #: includes/module/class-wnd-user-posts-panel.php:20
 msgid "待审"
-msgstr ""
-
-#: includes/module/class-wnd-admin-recharge-form.php:19
-msgid "用户"
 msgstr ""
 
 #: includes/module/class-wnd-admin-recharge-form.php:22
@@ -218,11 +499,6 @@ msgstr ""
 #: includes/module/class-wnd-post-status-form.php:48
 #: includes/module/class-wnd-user-posts-panel.php:20
 msgid "发布"
-msgstr ""
-
-#: includes/module/class-wnd-post-status-form.php:50
-#: includes/module/class-wnd-user-posts-panel.php:20
-msgid "关闭"
 msgstr ""
 
 #: includes/module/class-wnd-post-status-form.php:52
@@ -385,8 +661,4 @@ msgstr ""
 
 #: includes/module/class-wnd-user-recharge-form.php:13
 msgid "未设置支付接口"
-msgstr ""
-
-#: includes/module/class-wnd-user-recharge-form.php:31
-msgid "充值"
 msgstr ""

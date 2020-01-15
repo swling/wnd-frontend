@@ -44,15 +44,15 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 */
 	public function create(bool $is_success = false) {
 		if (!$this->user_id) {
-			throw new Exception('请登录');
+			throw new Exception(__('请登录', 'wnd'));
 		}
 		if (!$this->total_amount) {
-			throw new Exception('获取充值金额失败');
+			throw new Exception(__('获取充值金额失败', 'wnd'));
 		}
 
 		// 定义变量
 		$this->status  = $is_success ? 'success' : 'pending';
-		$this->subject = $this->subject ?: '充值：' . $this->total_amount;
+		$this->subject = $this->subject ?: __('充值：', 'wnd') . $this->total_amount;
 
 		/**
 		 *@since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
@@ -82,7 +82,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 		];
 		$ID = wp_insert_post($post_arr);
 		if (is_wp_error($ID) or !$ID) {
-			throw new Exception('创建充值订单失败');
+			throw new Exception(__('创建充值订单失败', 'wnd'));
 		}
 
 		// 当充值包含关联object 如post，表示收入来自站内佣金收入
@@ -115,12 +115,12 @@ class Wnd_Recharge extends Wnd_Transaction {
 	public function verify() {
 		$post = get_post($this->ID);
 		if (!$this->ID or $post->post_type != 'recharge') {
-			throw new Exception('当前充值订单ID无效');
+			throw new Exception(__('充值ID无效', 'wnd'));
 		}
 
 		// 订单支付状态检查
 		if ($post->post_status != 'pending') {
-			throw new Exception('充值订单状态无效');
+			throw new Exception(__('充值订单状态无效', 'wnd'));
 		}
 
 		$post_arr = [
@@ -130,7 +130,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 		];
 		$ID = wp_update_post($post_arr);
 		if (!$ID or is_wp_error($ID)) {
-			throw new Exception('更新充值订单失败');
+			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 
 		// 充值完成，更新用户余额

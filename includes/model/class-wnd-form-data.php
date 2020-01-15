@@ -34,7 +34,7 @@ class Wnd_Form_Data {
 
 	public function __construct($verify_form_nonce = true) {
 		if (empty($_POST)) {
-			throw new Exception('表单数据为空');
+			throw new Exception(__('表单数据为空', 'wnd'));
 		}
 
 		/**
@@ -44,7 +44,7 @@ class Wnd_Form_Data {
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
 		if ($verify_form_nonce and !Wnd_Nonce::verify_form_nonce()) {
-			throw new Exception('表单已被篡改');
+			throw new Exception(__('表单已被篡改', 'wnd'));
 		}
 
 		// 允许修改表单提交数据

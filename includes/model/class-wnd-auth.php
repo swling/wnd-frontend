@@ -31,7 +31,7 @@ abstract class Wnd_Auth {
 	protected $db_field_value;
 
 	// 提示文字：邮箱 or 手机
-	protected $text;
+	protected static $text;
 
 	// string 信息模板
 	protected $template;
@@ -58,18 +58,21 @@ abstract class Wnd_Auth {
 	 */
 	public static function get_instance($auth_object) {
 		if (is_object($auth_object)) {
+			self::$text = __('用户', 'wnd');
 			return new Wnd_Auth_User($auth_object);
 		}
 
 		if (is_email($auth_object)) {
+			self::$text = __('邮箱', 'wnd');
 			return new Wnd_Auth_Email($auth_object);
 		}
 
 		if (wnd_is_phone($auth_object)) {
+			self::$text = __('手机', 'wnd');
 			return new Wnd_Auth_Phone($auth_object);
 		}
 
-		throw new Exception('格式不正确');
+		throw new Exception(__('格式不正确', 'wnd'));
 	}
 
 	/**
@@ -84,7 +87,7 @@ abstract class Wnd_Auth {
 	 */
 	public function set_type($type) {
 		if (!in_array($type, ['register', 'reset_password', 'verify', 'bind'])) {
-			throw new Exception('设定类型无效，请选择：register / reset_password / verify / bind');
+			throw new Exception(__('类型无效，请选择：register / reset_password / verify / bind', 'wnd'));
 		}
 
 		$this->type = $type;
@@ -109,33 +112,33 @@ abstract class Wnd_Auth {
 	 */
 	protected function check_type() {
 		if (empty($this->auth_object)) {
-			throw new Exception('请填写' . $this->text);
+			throw new Exception(__('请填写', 'wnd') . self::$text);
 		}
 
 		// 必须指定类型
 		if (!$this->type) {
-			throw new Exception('未指定验证类型');
+			throw new Exception(__('未指定验证类型', 'wnd'));
 		}
 
 		// 注册
 		$temp_user = is_object($this->auth_object) ? $this->auth_object : wnd_get_user_by($this->auth_object);
 		if ($this->type == 'register' and $temp_user) {
-			throw new Exception($this->text . '已注册');
+			throw new Exception(self::$text . __('已注册', 'wnd'));
 		}
 
 		// 绑定
 		if ($this->type == 'bind') {
 			if (!$this->user->ID) {
-				throw new Exception('请未登录后再绑定');
+				throw new Exception(__('请登录', 'wnd'));
 			}
 			if ($temp_user) {
-				throw new Exception($this->text . '已注册');
+				throw new Exception(self::$text . __('已注册', 'wnd'));
 			}
 		}
 
 		// 找回密码
 		if ($this->type == 'reset_password' and !$temp_user) {
-			throw new Exception($this->text . '尚未注册');
+			throw new Exception(self::$text . __('尚未注册', 'wnd'));
 		}
 	}
 
@@ -150,13 +153,13 @@ abstract class Wnd_Auth {
 		$this->check_type();
 
 		if (empty($this->auth_code)) {
-			throw new Exception('校验码为空');
+			throw new Exception(__('验证码为空', 'wnd'));
 		}
 
 		// 上次发送短信的时间，防止攻击
 		$send_time = $this->get_db_record()->time ?? 0;
 		if ($send_time and (time() - $send_time < $this->intervals)) {
-			throw new Exception('操作太频繁，请' . ($this->intervals - (time() - $send_time)) . '秒后重试');
+			throw new Exception(__('操作太频繁，请等待', 'wnd') . ($this->intervals - (time() - $send_time)) . __('秒', 'wnd'));
 		}
 
 		return true;
@@ -187,10 +190,10 @@ abstract class Wnd_Auth {
 	 */
 	public function verify(bool $delete_after_verified = false) {
 		if (empty($this->auth_code)) {
-			throw new Exception('校验失败：请填写验证码');
+			throw new Exception(__('校验失败：请填写验证码', 'wnd'));
 		}
 		if (empty($this->auth_object)) {
-			throw new Exception('校验失败：请填写' . $this->text);
+			throw new Exception(self::$text . __('不可为空', 'wnd'));
 		}
 
 		/**
@@ -202,13 +205,13 @@ abstract class Wnd_Auth {
 		// 有效性校验
 		$data = $this->get_db_record();
 		if (!$data or !$data->code) {
-			throw new Exception('校验失败：请先获取验证码');
+			throw new Exception(__('校验失败：请先获取验证码', 'wnd'));
 		}
 		if (time() - $data->time > $this->valid_time) {
-			throw new Exception('验证码已失效请重新获取');
+			throw new Exception(__('校验失败：验证码已过期', 'wnd'));
 		}
 		if ($this->auth_code != $data->code) {
-			throw new Exception('校验失败：验证码不正确');
+			throw new Exception(__('校验失败：验证码不正确', 'wnd'));
 		}
 
 		/**
@@ -233,7 +236,7 @@ abstract class Wnd_Auth {
 	 */
 	protected function insert() {
 		if (!$this->db_field or !$this->db_field_value) {
-			throw new Exception('未定义数据库写入字段名或对应值');
+			throw new Exception(__('未定义数据库写入字段名或对应值', 'wnd'));
 		}
 
 		global $wpdb;
@@ -265,7 +268,7 @@ abstract class Wnd_Auth {
 	 */
 	public function reset_code($reg_user_id = 0) {
 		if (!$this->db_field or !$this->db_field_value) {
-			throw new Exception('未定义数据库查询字段名或对应值');
+			throw new Exception(__('未定义数据库查询字段名或对应值', 'wnd'));
 		}
 
 		global $wpdb;

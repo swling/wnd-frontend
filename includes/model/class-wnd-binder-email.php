@@ -22,7 +22,7 @@ class Wnd_Binder_Email extends Wnd_Binder {
 		// 更改邮箱或手机需要验证当前密码、首次绑定不需要
 		$old_bind = $this->user->data->user_email;
 		if ($old_bind and !wp_check_password($this->password, $this->user->data->user_pass, $this->user->ID)) {
-			throw new Exception('当前密码错误');
+			throw new Exception(__('当前密码错误', 'wnd'));
 		}
 
 		// 核对验证码并绑定
@@ -31,7 +31,7 @@ class Wnd_Binder_Email extends Wnd_Binder {
 
 			$bind = wnd_update_user_email($this->user->ID, $this->bound_object);
 			if (!$bind) {
-				throw new Exception('未知错误');
+				throw new Exception(__('未知错误', 'wnd'));
 			}
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());

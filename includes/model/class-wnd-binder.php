@@ -18,7 +18,7 @@ abstract class Wnd_Binder {
 	public function __construct() {
 		$this->user = wp_get_current_user();
 		if (!$this->user->ID) {
-			throw new Exception('请登录');
+			throw new Exception(__('请登录', 'wnd'));
 		}
 	}
 

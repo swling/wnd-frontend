@@ -104,11 +104,11 @@ class Wnd_Init {
 
 		/*充值记录*/
 		$labels = [
-			'name' => '充值记录',
+			'name' => __('充值记录', 'wnd'),
 		];
 		$args = [
 			'labels'      => $labels,
-			'description' => '充值',
+			'description' => __('充值', 'wnd'),
 			'public'      => false,
 			'has_archive' => false,
 			'query_var'   => false,
@@ -123,11 +123,11 @@ class Wnd_Init {
 
 		/*订单记录*/
 		$labels = [
-			'name' => '订单记录',
+			'name' => __('订单记录', 'wnd'),
 		];
 		$args = [
 			'labels'      => $labels,
-			'description' => '订单',
+			'description' => __('订单', 'wnd'),
 			'public'      => false,
 			'has_archive' => false,
 			'query_var'   => false, //order 为wp_query的排序参数，如果查询参数中包含order排序，会导致冲突，此处需要注销
@@ -137,11 +137,11 @@ class Wnd_Init {
 
 		/*站内信*/
 		$labels = [
-			'name' => '站内信',
+			'name' => __('站内信', 'wnd'),
 		];
 		$args = [
 			'labels'      => $labels,
-			'description' => '站内信',
+			'description' => __('站内信', 'wnd'),
 			'public'      => true,
 			'has_archive' => false,
 			'show_ui'     => false,
@@ -152,11 +152,11 @@ class Wnd_Init {
 
 		/*整站充值统计*/
 		$labels = [
-			'name' => '充值统计',
+			'name' => __('充值统计', 'wnd'),
 		];
 		$args = [
 			'labels'      => $labels,
-			'description' => '充值统计',
+			'description' => __('充值统计', 'wnd'),
 			'public'      => false,
 			'has_archive' => false,
 			'supports'    => ['title', 'author', 'editor'],
@@ -165,11 +165,11 @@ class Wnd_Init {
 
 		/*整站消费统计*/
 		$labels = [
-			'name' => '消费统计',
+			'name' => __('消费统计', 'wnd'),
 		];
 		$args = [
 			'labels'      => $labels,
-			'description' => '消费统计',
+			'description' => __('消费统计', 'wnd'),
 			'public'      => false,
 			'has_archive' => false,
 			'supports'    => ['title', 'author', 'editor'],
@@ -201,7 +201,7 @@ class Wnd_Init {
 		 *未经注册的post_status无法通过wp_query进行筛选，故此注册
 		 **/
 		register_post_status('close', [
-			'label'                     => '关闭',
+			'label'                     => __('关闭', 'wnd'),
 			'public'                    => true,
 			'exclude_from_search'       => false,
 			'show_in_admin_all_list'    => false,

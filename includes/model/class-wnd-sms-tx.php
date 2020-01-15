@@ -40,7 +40,7 @@ class Wnd_Sms_TX extends Wnd_Sms {
 		 *@link https://cloud.tencent.com/document/product/382/7756
 		 */
 		if ($rsp->result != 0) {
-			throw new Exception('错误代码：' . $rsp->result);
+			throw new Exception(__('系统错误：', 'wnd') . $rsp->result);
 		}
 		return true;
 	}
