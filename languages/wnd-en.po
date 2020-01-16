@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
-"POT-Creation-Date: 2020-01-16 11:37+0800\n"
-"PO-Revision-Date: 2020-01-16 11:41+0800\n"
+"POT-Creation-Date: 2020-01-16 14:56+0800\n"
+"PO-Revision-Date: 2020-01-16 14:56+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -39,7 +39,7 @@ msgstr ""
 
 #: includes/action/class-wnd-bind-account.php:27
 msgid "绑定成功"
-msgstr ""
+msgstr "Binding successful"
 
 #: includes/action/class-wnd-create-order-trait.php:15
 #: includes/action/class-wnd-insert-post.php:47
@@ -48,11 +48,11 @@ msgstr ""
 #: includes/module/class-wnd-post-info.php:13
 #: includes/module/class-wnd-post-status-form.php:15
 msgid "ID无效"
-msgstr ""
+msgstr "ID is not valid"
 
 #: includes/action/class-wnd-create-order-trait.php:19
 msgid "用户无效"
-msgstr ""
+msgstr "User is invalid"
 
 #: includes/action/class-wnd-create-order-trait.php:27
 msgid "当前余额：¥"
@@ -81,11 +81,11 @@ msgstr "File does not exists"
 
 #: includes/action/class-wnd-delete-file.php:33
 msgid "删除失败"
-msgstr ""
+msgstr "Delete Failed"
 
 #: includes/action/class-wnd-insert-post.php:60
 msgid "未指定文件"
-msgstr ""
+msgstr "File not specified"
 
 #: includes/action/class-wnd-insert-post.php:82
 msgid "类型无效"
@@ -94,7 +94,7 @@ msgstr "Type is not valid"
 #: includes/action/class-wnd-insert-post.php:98
 #: includes/action/class-wnd-update-post-status.php:72
 msgid "写入数据失败"
-msgstr ""
+msgstr "Failed to write data"
 
 #: includes/action/class-wnd-insert-post.php:122
 msgid "发布成功"
@@ -103,12 +103,12 @@ msgstr "Published successfully"
 #: includes/action/class-wnd-login.php:38
 #: includes/action/class-wnd-login.php:40
 msgid "登录成功"
-msgstr ""
+msgstr "Login success"
 
 #: includes/action/class-wnd-login.php:44
 #: includes/action/class-wnd-update-account.php:40
 msgid "密码错误"
-msgstr ""
+msgstr "Invalid password"
 
 #: includes/action/class-wnd-paid-download.php:17
 #: includes/action/class-wnd-pay-for-download.php:28
@@ -125,25 +125,25 @@ msgstr ""
 
 #: includes/action/class-wnd-reg.php:37
 msgid "用户名不能低于3位"
-msgstr ""
+msgstr "User name cannot be less than 3 letters"
 
 #: includes/action/class-wnd-reg.php:40
 msgid "用户名不能是纯数字"
-msgstr ""
+msgstr "The username cannot be a pure number"
 
 #: includes/action/class-wnd-reg.php:49
 #: includes/action/class-wnd-reset-password.php:25
 #: includes/action/class-wnd-update-account.php:28
 msgid "密码不能低于6位"
-msgstr ""
+msgstr "Password cannot be lower than 6 Letters"
 
 #: includes/action/class-wnd-reg.php:54
 msgid "两次输入的密码不匹配"
-msgstr ""
+msgstr "Two passwords entered do not match"
 
 #: includes/action/class-wnd-reg.php:94
 msgid "注册成功"
-msgstr ""
+msgstr "Registration Success"
 
 #: includes/action/class-wnd-reset-password.php:28
 #: includes/action/class-wnd-update-account.php:31
@@ -152,11 +152,11 @@ msgstr ""
 
 #: includes/action/class-wnd-reset-password.php:34
 msgid "账户未注册"
-msgstr ""
+msgstr "Account is not registered"
 
 #: includes/action/class-wnd-reset-password.php:55
 msgid "密码修改成功"
-msgstr ""
+msgstr "Password modification successfully"
 
 #: includes/action/class-wnd-reset-password.php:55
 #: includes/module/class-wnd-login-form.php:19
@@ -191,6 +191,7 @@ msgid "手机"
 msgstr "Phone"
 
 #: includes/action/class-wnd-send-code.php:26
+#: includes/controller/class-wnd-api.php:123
 msgid "Nonce校验失败"
 msgstr ""
 
@@ -203,10 +204,8 @@ msgid "邮箱地址无效"
 msgstr ""
 
 #: includes/action/class-wnd-send-code.php:44
-#, fuzzy
-#| msgid "手机号码"
 msgid "手机号码无效"
-msgstr "Phone"
+msgstr "Phone is not valid"
 
 #: includes/action/class-wnd-send-code.php:52
 msgid "发送成功，请注意查收"
@@ -235,7 +234,7 @@ msgstr "Log In"
 #: includes/action/class-wnd-update-post-status.php:69
 #: includes/action/class-wnd-update-profile.php:71
 msgid "更新成功"
-msgstr ""
+msgstr "Update Success"
 
 #: includes/action/class-wnd-update-post-status.php:20
 msgid "无效的Post"
@@ -246,7 +245,7 @@ msgid "无效的Post状态"
 msgstr ""
 
 #: includes/action/class-wnd-update-post-status.php:40
-#: includes/module/class-wnd-post-status-form.php:33
+#: includes/module/class-wnd-post-status-form.php:33 wnd-frontend.php:83
 msgid "已删除"
 msgstr ""
 
@@ -274,9 +273,25 @@ msgstr ""
 msgid "post_parent无效"
 msgstr ""
 
-#: includes/action/class-wnd-upload-file.php:140
+#: includes/action/class-wnd-upload-file.php:140 wnd-frontend.php:76
 msgid "上传成功"
-msgstr ""
+msgstr "Upload successful"
+
+#: includes/controller/class-wnd-api.php:78
+msgid "未指定UI"
+msgstr "UI not specified"
+
+#: includes/controller/class-wnd-api.php:97
+msgid "无效的UI"
+msgstr "Invalid UI"
+
+#: includes/controller/class-wnd-api.php:114
+msgid "未指定Action"
+msgstr "Action not specified"
+
+#: includes/controller/class-wnd-api.php:137
+msgid "无效的Action"
+msgstr "Invalid Action"
 
 #: includes/model/class-wnd-auth-email.php:31
 msgid "写入数据库失败"
@@ -284,19 +299,19 @@ msgstr ""
 
 #: includes/model/class-wnd-auth-email.php:34
 msgid "邮箱验证秘钥"
-msgstr ""
+msgstr "Mailbox verification key"
 
 #: includes/model/class-wnd-auth-email.php:34
 msgid "（不含括号），关键凭证，请勿泄露"
-msgstr ""
+msgstr "(without brackets), key credentials, do not disclose"
 
 #: includes/model/class-wnd-auth-email.php:35
 msgid "验证邮箱"
-msgstr ""
+msgstr "Verify the mailbox"
 
 #: includes/model/class-wnd-auth-email.php:39
 msgid "发送失败，请稍后重试"
-msgstr ""
+msgstr "Failed to send, please try again later"
 
 #: includes/model/class-wnd-auth-phone.php:47
 msgid "未指定短信模板"
@@ -345,7 +360,7 @@ msgstr ""
 
 #: includes/model/class-wnd-auth.php:126 includes/model/class-wnd-auth.php:135
 msgid "已注册"
-msgstr "Registered"
+msgstr "has been registered"
 
 #: includes/model/class-wnd-auth.php:141
 msgid "尚未注册"
@@ -381,7 +396,7 @@ msgstr ""
 
 #: includes/model/class-wnd-auth.php:214
 msgid "校验失败：验证码不正确"
-msgstr ""
+msgstr "Incorrect verification code"
 
 #: includes/model/class-wnd-auth.php:239
 msgid "未定义数据库写入字段名或对应值"
@@ -853,7 +868,7 @@ msgstr "Account"
 
 #: includes/module/class-wnd-user-finance-panel.php:24
 msgid "余额"
-msgstr ""
+msgstr "Balance"
 
 #: includes/module/class-wnd-user-finance-panel.php:32
 msgid "消费"
@@ -861,32 +876,32 @@ msgstr ""
 
 #: includes/module/class-wnd-user-finance-panel.php:41
 msgid "佣金"
-msgstr ""
+msgstr "Commission"
 
 #: includes/module/class-wnd-user-finance-panel.php:57
 msgid "管理员充值"
-msgstr ""
+msgstr "Administrator Recharge"
 
 #: includes/module/class-wnd-user-recharge-form.php:13
 msgid "未设置支付接口"
-msgstr ""
+msgstr "Payment interface not set up"
 
 #: includes/view/class-wnd-filter.php:127
 #: includes/view/class-wnd-filter.php:138
 msgid "未登录用户，仅可查询公开信息"
-msgstr ""
+msgstr "Users who are not logged in can only query public information"
 
 #: includes/view/class-wnd-filter.php:633
 msgid "状态："
-msgstr ""
+msgstr "State:"
 
 #: includes/view/class-wnd-filter.php:1064
 msgid "默认"
-msgstr ""
+msgstr "Default"
 
 #: includes/view/class-wnd-filter.php:1102
 msgid "当前："
-msgstr ""
+msgstr "Current:"
 
 #: includes/view/class-wnd-filter.php:1178
 #: includes/view/class-wnd-filter.php:1200
@@ -951,4 +966,54 @@ msgstr "Email"
 
 #: includes/view/class-wnd-form-wp.php:314
 msgid "查看文件"
+msgstr "Check The File"
+
+#: wnd-frontend.php:71
+msgid "必填项为空"
+msgstr "Required fields are empty"
+
+#: wnd-frontend.php:73
+msgid "提交成功"
+msgstr ""
+
+#: wnd-frontend.php:74
+msgid "提交失败"
+msgstr ""
+
+#: wnd-frontend.php:77
+msgid "上传失败"
+msgstr ""
+
+#: wnd-frontend.php:79
+msgid "发送成功"
+msgstr ""
+
+#: wnd-frontend.php:80
+msgid "发送失败"
+msgstr ""
+
+#: wnd-frontend.php:82
+msgid "确定"
+msgstr ""
+
+#: wnd-frontend.php:84
+msgid "系统错误"
+msgstr ""
+
+#: wnd-frontend.php:85
+msgid "请稍后"
+msgstr ""
+
+#: wnd-frontend.php:86
+msgid "下载中"
+msgstr ""
+
+#: wnd-frontend.php:87
+msgid "再试一次"
+msgstr ""
+
+#: wnd-frontend.php:88
+#, fuzzy
+#| msgid "查看文件"
+msgid "查看"
 msgstr "Check The File"

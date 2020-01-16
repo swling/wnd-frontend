@@ -54,7 +54,7 @@ class Wnd_language {
 	 *@since 2020.01.14
 	 */
 	public static function filter_locale($locale) {
-		return $_GET['lang'] ?? $locale;
+		return ($_GET['lang'] ?? false) ?: $locale;
 	}
 
 	/**

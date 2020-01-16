@@ -59,7 +59,7 @@ add_action('wp_enqueue_scripts', function () {
 		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.7.2/css/all.min.css', [], null);
 	}
 
-	// api
+	// api及语言本地化
 	$wnd_data = [
 		'root_url'      => site_url(),
 		'rest_nonce'    => wp_create_nonce('wp_rest'),
@@ -67,6 +67,26 @@ add_action('wp_enqueue_scripts', function () {
 		'interface_api' => '/wp-json/wnd/interface',
 		'rest_api'      => '/wp-json/wnd/rest-api',
 		'filter_api'    => '/wp-json/wnd/filter',
+		'msg'           => [
+			'required'            => __('必填项为空', 'wnd'),
+
+			'submit_successfully' => __('提交成功', 'wnd'),
+			'submit_failed'       => __('提交失败', 'wnd'),
+
+			'upload_successfully' => __('上传成功', 'wnd'),
+			'upload_failed'       => __('上传失败', 'wnd'),
+
+			'sent_successfully'   => __('发送成功', 'wnd'),
+			'sent_failed'         => __('发送失败', 'wnd'),
+
+			'confirm'             => __('确定'),
+			'deleted'             => __('已删除', 'wnd'),
+			'system_error'        => __('系统错误', 'wnd'),
+			'waiting'             => __('请稍后', 'wnd'),
+			'downloading'         => __('下载中', 'wnd'),
+			'try_again'           => __('再试一次', 'wnd'),
+			'view'                => __('查看', 'wnd'),
+		],
 	];
 	wp_localize_script('wnd-frontend', 'wnd', $wnd_data);
 });
