@@ -76,8 +76,8 @@ add_action('wp_enqueue_scripts', function () {
 			'upload_successfully' => __('上传成功', 'wnd'),
 			'upload_failed'       => __('上传失败', 'wnd'),
 
-			'sent_successfully'   => __('发送成功', 'wnd'),
-			'sent_failed'         => __('发送失败', 'wnd'),
+			'send_successfully'   => __('发送成功', 'wnd'),
+			'send_failed'         => __('发送失败', 'wnd'),
 
 			'confirm'             => __('确定'),
 			'deleted'             => __('已删除', 'wnd'),

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
-"POT-Creation-Date: 2020-01-16 14:56+0800\n"
-"PO-Revision-Date: 2020-01-16 14:56+0800\n"
+"POT-Creation-Date: 2020-01-16 15:08+0800\n"
+"PO-Revision-Date: 2020-01-16 15:08+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -323,7 +323,7 @@ msgstr ""
 
 #: includes/model/class-wnd-auth-phone.php:69
 msgid "数据库写入失败"
-msgstr ""
+msgstr "Failed to write data"
 
 #: includes/model/class-wnd-auth-phone.php:78
 msgid "指定短信服务商未完成配置"
@@ -974,15 +974,15 @@ msgstr "Required fields are empty"
 
 #: wnd-frontend.php:73
 msgid "提交成功"
-msgstr ""
+msgstr "Submitted successfully"
 
 #: wnd-frontend.php:74
 msgid "提交失败"
-msgstr ""
+msgstr "Submission failed"
 
 #: wnd-frontend.php:77
 msgid "上传失败"
-msgstr ""
+msgstr "Upload failed"
 
 #: wnd-frontend.php:79
 msgid "发送成功"
@@ -1002,7 +1002,7 @@ msgstr ""
 
 #: wnd-frontend.php:85
 msgid "请稍后"
-msgstr ""
+msgstr "Please wait"
 
 #: wnd-frontend.php:86
 msgid "下载中"
