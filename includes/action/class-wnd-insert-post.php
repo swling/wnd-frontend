@@ -44,11 +44,11 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		if ($update_id) {
 			$update_post = get_post($update_id);
 			if (!$update_post) {
-				return ['status' => 0, 'msg' => 'ID无效'];
+				return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 			}
 
 			if (!current_user_can('edit_post', $update_id)) {
-				return ['status' => 0, 'msg' => '权限错误'];
+				return ['status' => 0, 'msg' => __('权限错误', 'wnd')];
 			}
 		}
 
@@ -57,7 +57,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		 *attachment仅允许更新，而不能直接写入（写入应在文件上传时完成）
 		 */
 		if ('attachment' == $post_data['post_type']) {
-			return ['status' => 0, 'msg' => '未指定文件'];
+			return ['status' => 0, 'msg' => __('未指定文件', 'wnd')];
 		}
 
 		/**
@@ -79,11 +79,11 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		 *
 		 */
 		if (!in_array($post_data['post_type'], Wnd_Post::get_allowed_post_types())) {
-			return ['status' => 0, 'msg' => '类型无效'];
+			return ['status' => 0, 'msg' => __('类型无效', 'wnd')];
 		}
 
 		// 写入及更新权限过滤
-		$can_insert_post = apply_filters('wnd_can_insert_post', ['status' => 1, 'msg' => '默认通过'], $post_data['post_type'], $update_id);
+		$can_insert_post = apply_filters('wnd_can_insert_post', ['status' => 1, 'msg' => ''], $post_data['post_type'], $update_id);
 		if ($can_insert_post['status'] === 0) {
 			return $can_insert_post;
 		}
@@ -95,7 +95,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 			$post_id = wp_update_post($post_data);
 		}
 		if (!$post_id) {
-			return ['status' => 0, 'msg' => '写入数据失败'];
+			return ['status' => 0, 'msg' => __('写入数据失败', 'wnd')];
 		}
 		if (is_wp_error($post_id)) {
 			return ['status' => 0, 'msg' => $post_id->get_error_message()];
@@ -119,7 +119,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 		$status       = $redirect_to ? 3 : 2;
 		$return_array = [
 			'status' => $status,
-			'msg'    => '发布成功',
+			'msg'    => __('发布成功', 'wnd'),
 			'data'   => [
 				'id'          => $post_id,
 				'url'         => $permalink,

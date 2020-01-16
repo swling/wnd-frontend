@@ -18,14 +18,14 @@ class Wnd_Pay_For_Download extends Wnd_Action_Ajax {
 		$price   = get_post_meta($post_id, 'price', true);
 		$user_id = get_current_user_id();
 		if (!$post) {
-			return ['status' => 0, 'msg' => 'ID无效'];
+			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}
 
 		// 获取文章附件
 		$attachment_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
 		$file          = get_attached_file($attachment_id, $unfiltered = true);
 		if (!$file) {
-			return ['status' => 0, 'msg' => '获取文件失败'];
+			return ['status' => 0, 'msg' => __('获取文件失败', 'wnd')];
 		}
 
 		/**

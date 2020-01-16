@@ -23,7 +23,7 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 		$user    = wp_get_current_user();
 		$user_id = $user->ID;
 		if (!$user_id) {
-			return ['status' => 0, 'msg' => '获取用户ID失败'];
+			return ['status' => 0, 'msg' => __('请登录', 'wnd')];
 		}
 
 		// 实例化WndWP表单数据处理对象
@@ -38,7 +38,7 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 		$wp_user_meta_data = $form_data->get_wp_user_meta_data();
 
 		// 更新权限过滤挂钩
-		$user_can_update_profile = apply_filters('wnd_can_update_profile', ['status' => 1, 'msg' => '默认通过']);
+		$user_can_update_profile = apply_filters('wnd_can_update_profile', ['status' => 1, 'msg' => '']);
 		if ($user_can_update_profile['status'] === 0) {
 			return $user_can_update_profile;
 		}
@@ -68,6 +68,6 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 		do_action('wnd_update_profile', $user_id);
 
 		// 返回值过滤
-		return apply_filters('wnd_update_profile_return', ['status' => 1, 'msg' => '更新成功'], $user_id);
+		return apply_filters('wnd_update_profile_return', ['status' => 1, 'msg' => __('更新成功', 'wnd')], $user_id);
 	}
 }

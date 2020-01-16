@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
-"POT-Creation-Date: 2020-01-15 16:57+0800\n"
-"PO-Revision-Date: 2020-01-15 17:03+0800\n"
+"POT-Creation-Date: 2020-01-16 11:37+0800\n"
+"PO-Revision-Date: 2020-01-16 11:41+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -15,6 +15,268 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-SearchPath-0: .\n"
+
+#: includes/action/class-wnd-admin-recharge.php:18
+#: includes/action/class-wnd-delete-file.php:23
+#: includes/action/class-wnd-insert-post.php:51
+#: includes/action/class-wnd-paid-download.php:32
+#: includes/action/class-wnd-update-post-status.php:29
+msgid "权限错误"
+msgstr "Permission Denied"
+
+#: includes/action/class-wnd-admin-recharge.php:23
+msgid "人工充值"
+msgstr ""
+
+#: includes/action/class-wnd-admin-recharge.php:28
+#: includes/action/class-wnd-login.php:30 includes/model/class-wnd-user.php:375
+msgid "用户不存在"
+msgstr "User does not exist"
+
+#: includes/action/class-wnd-admin-recharge.php:42
+msgid "充值：¥"
+msgstr ""
+
+#: includes/action/class-wnd-bind-account.php:27
+msgid "绑定成功"
+msgstr ""
+
+#: includes/action/class-wnd-create-order-trait.php:15
+#: includes/action/class-wnd-insert-post.php:47
+#: includes/action/class-wnd-pay-for-download.php:21
+#: includes/action/class-wnd-update-post.php:20
+#: includes/module/class-wnd-post-info.php:13
+#: includes/module/class-wnd-post-status-form.php:15
+msgid "ID无效"
+msgstr ""
+
+#: includes/action/class-wnd-create-order-trait.php:19
+msgid "用户无效"
+msgstr ""
+
+#: includes/action/class-wnd-create-order-trait.php:27
+msgid "当前余额：¥"
+msgstr ""
+
+#: includes/action/class-wnd-create-order-trait.php:27
+msgid "本次消费：¥"
+msgstr ""
+
+#: includes/action/class-wnd-create-order-trait.php:29
+msgid "在线支付"
+msgstr ""
+
+#: includes/action/class-wnd-create-order-trait.php:31
+#: includes/module/class-wnd-user-finance-panel.php:51
+msgid "余额充值"
+msgstr ""
+
+#: includes/action/class-wnd-create-order.php:37
+msgid "支付成功"
+msgstr "Payment was made successfully"
+
+#: includes/action/class-wnd-delete-file.php:19
+msgid "文件不存在"
+msgstr "File does not exists"
+
+#: includes/action/class-wnd-delete-file.php:33
+msgid "删除失败"
+msgstr ""
+
+#: includes/action/class-wnd-insert-post.php:60
+msgid "未指定文件"
+msgstr ""
+
+#: includes/action/class-wnd-insert-post.php:82
+msgid "类型无效"
+msgstr "Type is not valid"
+
+#: includes/action/class-wnd-insert-post.php:98
+#: includes/action/class-wnd-update-post-status.php:72
+msgid "写入数据失败"
+msgstr ""
+
+#: includes/action/class-wnd-insert-post.php:122
+msgid "发布成功"
+msgstr "Published successfully"
+
+#: includes/action/class-wnd-login.php:38
+#: includes/action/class-wnd-login.php:40
+msgid "登录成功"
+msgstr ""
+
+#: includes/action/class-wnd-login.php:44
+#: includes/action/class-wnd-update-account.php:40
+msgid "密码错误"
+msgstr ""
+
+#: includes/action/class-wnd-paid-download.php:17
+#: includes/action/class-wnd-pay-for-download.php:28
+msgid "获取文件失败"
+msgstr ""
+
+#: includes/action/class-wnd-pay-for-reading.php:26
+msgid "获取付费内容出错"
+msgstr ""
+
+#: includes/action/class-wnd-pay-for-reading.php:31
+msgid "请勿重复操作"
+msgstr ""
+
+#: includes/action/class-wnd-reg.php:37
+msgid "用户名不能低于3位"
+msgstr ""
+
+#: includes/action/class-wnd-reg.php:40
+msgid "用户名不能是纯数字"
+msgstr ""
+
+#: includes/action/class-wnd-reg.php:49
+#: includes/action/class-wnd-reset-password.php:25
+#: includes/action/class-wnd-update-account.php:28
+msgid "密码不能低于6位"
+msgstr ""
+
+#: includes/action/class-wnd-reg.php:54
+msgid "两次输入的密码不匹配"
+msgstr ""
+
+#: includes/action/class-wnd-reg.php:94
+msgid "注册成功"
+msgstr ""
+
+#: includes/action/class-wnd-reset-password.php:28
+#: includes/action/class-wnd-update-account.php:31
+msgid "两次输入的新密码不匹配"
+msgstr ""
+
+#: includes/action/class-wnd-reset-password.php:34
+msgid "账户未注册"
+msgstr ""
+
+#: includes/action/class-wnd-reset-password.php:55
+msgid "密码修改成功"
+msgstr ""
+
+#: includes/action/class-wnd-reset-password.php:55
+#: includes/module/class-wnd-login-form.php:19
+#: includes/module/class-wnd-login-form.php:31
+#: includes/module/class-wnd-user-center.php:49
+#: includes/module/class-wnd-user-center.php:59
+#: includes/module/class-wnd-user-center.php:70
+#: includes/module/class-wnd-user-center.php:96
+#: includes/module/class-wnd-user-center.php:104
+#: includes/module/class-wnd-user-center.php:114
+msgid "登录"
+msgstr "Log In"
+
+#: includes/action/class-wnd-safe-action.php:20
+msgid "未指定方法"
+msgstr ""
+
+#: includes/action/class-wnd-safe-action.php:24
+msgid "指定方法不可用"
+msgstr ""
+
+#: includes/action/class-wnd-send-code.php:19
+#: includes/model/class-wnd-auth.php:66 includes/view/class-wnd-form-wp.php:162
+#: includes/view/class-wnd-form-wp.php:171
+msgid "邮箱"
+msgstr "Email"
+
+#: includes/action/class-wnd-send-code.php:19
+#: includes/model/class-wnd-auth.php:71 includes/view/class-wnd-form-wp.php:115
+#: includes/view/class-wnd-form-wp.php:124
+msgid "手机"
+msgstr "Phone"
+
+#: includes/action/class-wnd-send-code.php:26
+msgid "Nonce校验失败"
+msgstr ""
+
+#: includes/action/class-wnd-send-code.php:36
+msgid "当前账户未绑定"
+msgstr ""
+
+#: includes/action/class-wnd-send-code.php:42
+msgid "邮箱地址无效"
+msgstr ""
+
+#: includes/action/class-wnd-send-code.php:44
+#, fuzzy
+#| msgid "手机号码"
+msgid "手机号码无效"
+msgstr "Phone"
+
+#: includes/action/class-wnd-send-code.php:52
+msgid "发送成功，请注意查收"
+msgstr ""
+
+#: includes/action/class-wnd-update-account.php:17
+#: includes/action/class-wnd-update-profile.php:26
+#: includes/model/class-wnd-auth.php:132 includes/model/class-wnd-binder.php:21
+#: includes/model/class-wnd-order.php:38
+#: includes/model/class-wnd-payment.php:106
+#: includes/model/class-wnd-recharge.php:47
+#: includes/module/class-wnd-account-form.php:13
+#: includes/module/class-wnd-admin-posts-panel.php:14
+#: includes/module/class-wnd-bind-email-form.php:14
+#: includes/module/class-wnd-bind-phone-form.php:14
+#: includes/module/class-wnd-mail-box.php:14
+#: includes/module/class-wnd-profile-form.php:15
+#: includes/module/class-wnd-user-posts-panel.php:14
+#: includes/view/class-wnd-form-user.php:129
+#: includes/view/class-wnd-form-user.php:153
+#: includes/view/class-wnd-form-user.php:173
+msgid "请登录"
+msgstr "Log In"
+
+#: includes/action/class-wnd-update-account.php:56
+#: includes/action/class-wnd-update-post-status.php:69
+#: includes/action/class-wnd-update-profile.php:71
+msgid "更新成功"
+msgstr ""
+
+#: includes/action/class-wnd-update-post-status.php:20
+msgid "无效的Post"
+msgstr ""
+
+#: includes/action/class-wnd-update-post-status.php:25
+msgid "无效的Post状态"
+msgstr ""
+
+#: includes/action/class-wnd-update-post-status.php:40
+#: includes/module/class-wnd-post-status-form.php:33
+msgid "已删除"
+msgstr ""
+
+#: includes/action/class-wnd-update-post-status.php:42
+msgid "操作失败"
+msgstr ""
+
+#: includes/action/class-wnd-upload-file.php:31
+msgid "上传文件为空"
+msgstr ""
+
+#: includes/action/class-wnd-upload-file.php:44
+msgid "User ID及Post ID不可同时为空"
+msgstr ""
+
+#: includes/action/class-wnd-upload-file.php:52
+msgid "Meta_key与Post_parent不可同时为空"
+msgstr ""
+
+#: includes/action/class-wnd-upload-file.php:56
+msgid "meta_key不合法"
+msgstr ""
+
+#: includes/action/class-wnd-upload-file.php:60
+msgid "post_parent无效"
+msgstr ""
+
+#: includes/action/class-wnd-upload-file.php:140
+msgid "上传成功"
+msgstr ""
 
 #: includes/model/class-wnd-auth-email.php:31
 msgid "写入数据库失败"
@@ -65,16 +327,6 @@ msgstr ""
 msgid "用户"
 msgstr "User"
 
-#: includes/model/class-wnd-auth.php:66 includes/view/class-wnd-form-wp.php:162
-#: includes/view/class-wnd-form-wp.php:171
-msgid "邮箱"
-msgstr "Email"
-
-#: includes/model/class-wnd-auth.php:71 includes/view/class-wnd-form-wp.php:115
-#: includes/view/class-wnd-form-wp.php:124
-msgid "手机"
-msgstr "Phone"
-
 #: includes/model/class-wnd-auth.php:75
 msgid "格式不正确"
 msgstr ""
@@ -94,23 +346,6 @@ msgstr ""
 #: includes/model/class-wnd-auth.php:126 includes/model/class-wnd-auth.php:135
 msgid "已注册"
 msgstr "Registered"
-
-#: includes/model/class-wnd-auth.php:132 includes/model/class-wnd-binder.php:21
-#: includes/model/class-wnd-order.php:38
-#: includes/model/class-wnd-payment.php:106
-#: includes/model/class-wnd-recharge.php:47
-#: includes/module/class-wnd-account-form.php:13
-#: includes/module/class-wnd-admin-posts-panel.php:14
-#: includes/module/class-wnd-bind-email-form.php:14
-#: includes/module/class-wnd-bind-phone-form.php:14
-#: includes/module/class-wnd-mail-box.php:14
-#: includes/module/class-wnd-profile-form.php:15
-#: includes/module/class-wnd-user-posts-panel.php:14
-#: includes/view/class-wnd-form-user.php:129
-#: includes/view/class-wnd-form-user.php:153
-#: includes/view/class-wnd-form-user.php:173
-msgid "请登录"
-msgstr "Log In"
 
 #: includes/model/class-wnd-auth.php:141
 msgid "尚未注册"
@@ -308,10 +543,6 @@ msgstr ""
 msgid "OpenID已被其他账户占用"
 msgstr ""
 
-#: includes/model/class-wnd-user.php:375
-msgid "用户不存在"
-msgstr ""
-
 #: includes/module/class-wnd-account-form.php:17
 msgid "请绑定邮箱"
 msgstr ""
@@ -378,7 +609,7 @@ msgstr "Completed"
 
 #: includes/module/class-wnd-admin-finance-panel.php:20
 msgid "进行中"
-msgstr "In Progress"
+msgstr "Processing"
 
 #: includes/module/class-wnd-admin-posts-panel.php:20
 #: includes/module/class-wnd-post-status-form.php:49
@@ -458,17 +689,6 @@ msgstr ""
 msgid "已登录"
 msgstr "Logged"
 
-#: includes/module/class-wnd-login-form.php:19
-#: includes/module/class-wnd-login-form.php:31
-#: includes/module/class-wnd-user-center.php:49
-#: includes/module/class-wnd-user-center.php:59
-#: includes/module/class-wnd-user-center.php:70
-#: includes/module/class-wnd-user-center.php:96
-#: includes/module/class-wnd-user-center.php:104
-#: includes/module/class-wnd-user-center.php:114
-msgid "登录"
-msgstr "Log In"
-
 #: includes/module/class-wnd-login-form.php:20
 msgid "账号"
 msgstr "Account"
@@ -489,11 +709,6 @@ msgstr ""
 msgid "已读"
 msgstr ""
 
-#: includes/module/class-wnd-post-info.php:13
-#: includes/module/class-wnd-post-status-form.php:15
-msgid "ID无效"
-msgstr ""
-
 #: includes/module/class-wnd-post-info.php:27
 msgid "付费文章不支持预览"
 msgstr ""
@@ -510,10 +725,6 @@ msgstr ""
 #: includes/module/class-wnd-post-status-form.php:51
 #: includes/module/class-wnd-user-posts-panel.php:20
 msgid "草稿"
-msgstr ""
-
-#: includes/module/class-wnd-post-status-form.php:33
-msgid "已删除"
 msgstr ""
 
 #: includes/module/class-wnd-post-status-form.php:43
@@ -638,7 +849,7 @@ msgstr "Profile"
 #: includes/module/class-wnd-user-center.php:169
 #: includes/module/class-wnd-user-center.php:173
 msgid "账户"
-msgstr "Accounts"
+msgstr "Account"
 
 #: includes/module/class-wnd-user-finance-panel.php:24
 msgid "余额"
@@ -650,10 +861,6 @@ msgstr ""
 
 #: includes/module/class-wnd-user-finance-panel.php:41
 msgid "佣金"
-msgstr ""
-
-#: includes/module/class-wnd-user-finance-panel.php:51
-msgid "余额充值"
 msgstr ""
 
 #: includes/module/class-wnd-user-finance-panel.php:57

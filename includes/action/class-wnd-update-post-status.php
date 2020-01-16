@@ -17,16 +17,16 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 		$before_post  = get_post($post_id);
 		$after_status = $_POST['post_status'];
 		if (!$before_post) {
-			return ['status' => 0, 'msg' => '获取内容失败'];
+			return ['status' => 0, 'msg' => __('无效的Post', 'wnd')];
 		}
 
 		// 在现有注册的post status基础上新增 delete，该状态表示直接删除文章 @since 2019.03.03
 		if (!in_array($after_status, array_merge(get_post_stati(), ['delete']))) {
-			return ['status' => 0, 'msg' => '未注册的状态'];
+			return ['status' => 0, 'msg' => __('无效的Post状态', 'wnd')];
 		}
 
 		// 权限检测
-		$can_array              = ['status' => current_user_can('edit_post', $post_id) ? 1 : 0, 'msg' => '权限错误'];
+		$can_array              = ['status' => current_user_can('edit_post', $post_id) ? 1 : 0, 'msg' => __('权限错误', 'wnd')];
 		$can_update_post_status = apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_status);
 		if ($can_update_post_status['status'] === 0) {
 			return $can_update_post_status;
@@ -37,9 +37,9 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 			// 无论是否设置了$force_delete 自定义类型的文章都会直接被删除
 			$delete = wp_delete_post($post_id, true);
 			if ($delete) {
-				return ['status' => 5, 'msg' => '已删除'];
+				return ['status' => 5, 'msg' => __('已删除', 'wnd')];
 			} else {
-				return ['status' => 0, 'msg' => '操作失败，请检查'];
+				return ['status' => 0, 'msg' => __('操作失败', 'wnd')];
 			}
 		}
 
@@ -66,10 +66,10 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 
 		// 完成更新
 		if ($update) {
-			return ['status' => 4, 'msg' => '更新成功'];
+			return ['status' => 4, 'msg' => __('更新成功', 'wnd')];
 
 		} else {
-			return ['status' => 0, 'msg' => '更新数据失败'];
+			return ['status' => 0, 'msg' => __('写入数据失败', 'wnd')];
 		}
 	}
 }

@@ -16,11 +16,11 @@ class Wnd_Delete_File extends Wnd_Action_Ajax {
 		$file_id     = $_POST['file_id'];
 
 		if (!$file_id) {
-			return ['status' => 0, 'msg' => '文件不存在'];
+			return ['status' => 0, 'msg' => __('文件不存在', 'wnd')];
 		}
 
 		if (!current_user_can('edit_post', $file_id)) {
-			return ['status' => 0, 'msg' => '权限错误或文件不存在'];
+			return ['status' => 0, 'msg' => __('权限错误', 'wnd')];
 		}
 
 		// 执行删除
@@ -30,7 +30,7 @@ class Wnd_Delete_File extends Wnd_Action_Ajax {
 
 			//删除失败
 		} else {
-			return ['status' => 0, 'msg' => '权限错误'];
+			return ['status' => 0, 'msg' => __('删除失败', 'wnd')];
 		}
 	}
 }

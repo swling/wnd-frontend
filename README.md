@@ -153,7 +153,7 @@ apply_filters('wnd_can_submit_form', ['status' => 1], $form_data);
 ## 文章
 ```php
 ### 文章写入(默认直接通过，当$update_id有效，默认根据WordPress判断当前用户是否可以编辑)
-apply_filters('wnd_can_insert_post', ['status'=>1,'msg'=>'默认通过'], $post_type, $update_id);
+apply_filters('wnd_can_insert_post', ['status'=>1,'msg'=>''], $post_type, $update_id);
 ####返回值过滤
 apply_filters('wnd_insert_post_return', $return_array, $post_type, $post_id);
 
@@ -182,26 +182,26 @@ apply_filters('wnd_filter_tabs', $this->tabs, $this->wp_query_args);
 ## 文件上传
 ```php
 ###文件上传权限控制
-apply_filters('wnd_can_upload_file', ['status' => 1, 'msg' => '默认通过'], $post_parent, $meta_key);
+apply_filters('wnd_can_upload_file', ['status' => 1, 'msg' => ''], $post_parent, $meta_key);
 ```
 
 ## 用户
 ```php
 ###用户注册(默认通过)
-apply_filters('wnd_can_reg', ['status'=>1,'msg'=>'默认通过']);
+apply_filters('wnd_can_reg', ['status'=>1,'msg'=>'']);
 ###返回值过滤
 apply_filters('wnd_reg_return',  ['status' => 3, 'msg' => $redirect_to], $user_id);
 
 ##用户登录 @since 2019.01.21
-apply_filters('wnd_can_login', ['status'=>1,'msg'=>'默认通过']);
+apply_filters('wnd_can_login', ['status'=>1,'msg'=>'']);
 
 ###用户更新资料
-apply_filters('wnd_can_update_profile', ['status'=>1,'msg'=>'默认通过']);
+apply_filters('wnd_can_update_profile', ['status'=>1,'msg'=>'']);
 ####返回值过滤
 apply_filters('wnd_update_profile_return', ['status' => 1, 'msg' => '更新成功'], $user_id);
 
 ##用户更新账户：邮箱，密码
-apply_filters('wnd_can_update_account', ['status'=>1,'msg'=>'默认通过']);
+apply_filters('wnd_can_update_account', ['status'=>1,'msg'=>'']);
 ####用户更新返回值
 apply_filters('wnd_update_account_return', ['status' => 1, 'msg' => '更新成功'], $user_id);
 
@@ -215,7 +215,7 @@ apply_filters('wnd_user_panel_post_types', $post_types);
 ## 订单
 ```php
 // 用户订单权限
-apply_filters('wnd_can_create_order', ['status'=>1,'msg'=>'默认通过'], $post_id);
+apply_filters('wnd_can_create_order', ['status'=>1,'msg'=>''], $post_id);
 
 /**
 *@since 2019.02.12 付费内容，作者收益提成，默认为文章价格* 后台比例设置

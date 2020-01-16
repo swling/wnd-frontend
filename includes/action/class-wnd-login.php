@@ -19,7 +19,7 @@ class Wnd_Login extends Wnd_Action_Ajax {
 		$redirect_to = $_REQUEST['redirect_to'] ?? home_url();
 
 		// 登录过滤挂钩
-		$wnd_can_login = apply_filters('wnd_can_login', ['status' => 1, 'msg' => '默认通过']);
+		$wnd_can_login = apply_filters('wnd_can_login', ['status' => 1, 'msg' => '']);
 		if ($wnd_can_login['status'] === 0) {
 			return $wnd_can_login;
 		}
@@ -27,7 +27,7 @@ class Wnd_Login extends Wnd_Action_Ajax {
 		// 可根据邮箱，手机，或用户名查询用户
 		$user = wnd_get_user_by($username);
 		if (!$user) {
-			return ['status' => 0, 'msg' => '用户不存在'];
+			return ['status' => 0, 'msg' => __('用户不存在', 'wnd')];
 		}
 
 		// 校验密码并登录
@@ -35,13 +35,13 @@ class Wnd_Login extends Wnd_Action_Ajax {
 			wp_set_current_user($user->ID);
 			wp_set_auth_cookie($user->ID, $remember);
 			if ($redirect_to) {
-				return ['status' => 3, 'msg' => '登录成功', 'data' => ['redirect_to' => $redirect_to, 'user_id' => $user->ID]];
+				return ['status' => 3, 'msg' => __('登录成功', 'wnd'), 'data' => ['redirect_to' => $redirect_to, 'user_id' => $user->ID]];
 			} else {
-				return ['status' => 1, 'msg' => '登录成功'];
+				return ['status' => 1, 'msg' => __('登录成功', 'wnd')];
 			}
 
 		} else {
-			return ['status' => 0, 'msg' => '账户密码不匹配'];
+			return ['status' => 0, 'msg' => __('密码错误', 'wnd')];
 		}
 	}
 }

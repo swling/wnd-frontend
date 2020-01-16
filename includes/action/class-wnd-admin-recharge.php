@@ -15,17 +15,17 @@ class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		if (!is_super_admin()) {
-			return ['status' => 0, 'msg' => '仅超级管理员可执行当前操作'];
+			return ['status' => 0, 'msg' => __('权限错误', 'wnd')];
 		}
 
 		$user_field   = $_POST['user_field'];
 		$total_amount = $_POST['total_amount'];
-		$remarks      = $_POST['remarks'] ?: '人工充值';
+		$remarks      = $_POST['remarks'] ?: __('人工充值', 'wnd');
 
 		// 根据邮箱，手机，或用户名查询用户
 		$user = wnd_get_user_by($user_field);
 		if (!$user) {
-			return ['status' => 0, 'msg' => '用户不存在'];
+			return ['status' => 0, 'msg' => __('用户不存在', 'wnd')];
 		}
 
 		// 写入充值记录
@@ -39,6 +39,6 @@ class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 
-		return ['status' => 1, 'msg' => $user->display_name . ' 充值：¥' . $total_amount];
+		return ['status' => 1, 'msg' => $user->display_name . '&nbsp;' . __('充值：¥', 'wnd') . $total_amount];
 	}
 }
