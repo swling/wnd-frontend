@@ -343,8 +343,6 @@ function wnd_ajax_submit(form_id) {
 		} else {
 			wnd_alert_warning(wnd.msg.required);
 		}
-
-		submit_button.text(wnd.msg.required);
 		return false;
 	}
 
@@ -383,10 +381,10 @@ function wnd_ajax_submit(form_id) {
 		// 返回结果
 		success: function(response) {
 			submit_button.removeClass("is-loading");
-			if (response.status != 2 && response.status != 0) {
+			if (response.status != 0) {
 				submit_button.prop("disabled", true);
 			}
-			var submit_text = response.msg.length <= 10 ? response.msg : (response.status > 0 ? wnd.msg.submit_successfully : wnd.msg.submit_failed);
+			var submit_text = (response.status > 0) ? wnd.msg.submit_successfully : wnd.msg.submit_failed;
 			submit_button.text(submit_text);
 
 			var style = response.status > 0 ? "is-success" : "is-danger";
