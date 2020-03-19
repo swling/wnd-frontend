@@ -22,7 +22,7 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 		$current_user   = wp_get_current_user();
 
 		// 防止前端篡改表单：校验验证码类型及接受设备
-		if (!wnd_verify_nonce($_POST['type_nonce'], $is_email ? 'email' . $type : 'sms' . $type)) {
+		if (!wp_verify_nonce($_POST['type_nonce'], $is_email ? 'email' . $type : 'sms' . $type)) {
 			return ['status' => 0, 'msg' => __('Nonce校验失败', 'wnd')];
 		}
 

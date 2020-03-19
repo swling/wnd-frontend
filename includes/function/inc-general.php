@@ -5,7 +5,7 @@
  *@param 	string 	$action
  *@return 	string 	nonce
  **/
-function wnd_create_nonce($action) {
+function wp_create_nonce($action) {
 	return Wnd\Model\Wnd_Nonce::create_nonce($action);
 }
 
@@ -18,7 +18,7 @@ function wnd_create_nonce($action) {
  *
  *@return 	bool
  **/
-function wnd_verify_nonce($nonce, $action) {
+function wp_verify_nonce($nonce, $action) {
 	return Wnd\Model\Wnd_Nonce::verify_nonce($nonce, $action);
 }
 

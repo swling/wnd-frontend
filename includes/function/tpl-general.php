@@ -147,7 +147,7 @@ function wnd_dropdown_colors($name, $selected) {
  *@param int $post_id 产品/文章ID
  */
 function wnd_order_link($post_id) {
-	return wnd_get_do_url() . '?action=payment&post_id=' . $post_id . '&_wpnonce=' . wnd_create_nonce('payment');
+	return wnd_get_do_url() . '?action=payment&post_id=' . $post_id . '&_wpnonce=' . wp_create_nonce('payment');
 }
 
 /**

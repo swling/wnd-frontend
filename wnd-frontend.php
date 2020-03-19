@@ -63,7 +63,7 @@ add_action('wp_enqueue_scripts', function () {
 	$wnd_data = [
 		'root_url'      => site_url(),
 		'rest_nonce'    => wp_create_nonce('wp_rest'),
-		'ajax_nonce'    => wnd_create_nonce('wnd_safe_action'),
+		'ajax_nonce'    => wp_create_nonce('wnd_safe_action'),
 		'interface_api' => '/wp-json/wnd/interface',
 		'rest_api'      => '/wp-json/wnd/rest-api',
 		'filter_api'    => '/wp-json/wnd/filter',

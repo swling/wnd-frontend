@@ -52,7 +52,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	public function set_action($action, $method = 'POST') {
 		if ($this->is_ajax_submit) {
 			$this->add_hidden('action', $action);
-			$this->add_hidden('_ajax_nonce', wnd_create_nonce($action));
+			$this->add_hidden('_ajax_nonce', wp_create_nonce($action));
 		} else {
 			parent::set_action($action, $method);
 		}
@@ -136,7 +136,7 @@ class Wnd_Form_WP extends Wnd_Form {
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => __('验证码', 'wnd'),
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('sms' . $type) . '" data-is_email="0">' . __('获取验证码', 'wnd') . '</button>',
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '" data-type_nonce="' . wp_create_nonce('sms' . $type) . '" data-is_email="0">' . __('获取验证码', 'wnd') . '</button>',
 			]
 		);
 
@@ -183,7 +183,7 @@ class Wnd_Form_WP extends Wnd_Form {
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => __('验证码', 'wnd'),
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('email' . $type) . '" data-is_email="1">' . __('获取验证码', 'wnd') . '</button>',
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '" data-type_nonce="' . wp_create_nonce('email' . $type) . '" data-is_email="1">' . __('获取验证码', 'wnd') . '</button>',
 			]
 		);
 
@@ -226,9 +226,9 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// 固定data
 		$args['data']['is_image']         = '1';
-		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_upload_file');
-		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_delete_file');
-		$args['data']['meta_key_nonce']   = wnd_create_nonce($meta_key);
+		$args['data']['upload_nonce']     = wp_create_nonce('wnd_upload_file');
+		$args['data']['delete_nonce']     = wp_create_nonce('wnd_delete_file');
+		$args['data']['meta_key_nonce']   = wp_create_nonce($meta_key);
 		$args['data']['thumbnail']        = $args['thumbnail'];
 		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
@@ -288,9 +288,9 @@ class Wnd_Form_WP extends Wnd_Form {
 		extract($args['data']);
 
 		// 固定data
-		$args['data']['upload_nonce']   = wnd_create_nonce('wnd_upload_file');
-		$args['data']['delete_nonce']   = wnd_create_nonce('wnd_delete_file');
-		$args['data']['meta_key_nonce'] = wnd_create_nonce($meta_key);
+		$args['data']['upload_nonce']   = wp_create_nonce('wnd_upload_file');
+		$args['data']['delete_nonce']   = wp_create_nonce('wnd_delete_file');
+		$args['data']['meta_key_nonce'] = wp_create_nonce($meta_key);
 		$args['data']['method']         = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据meta key 查找目标文件
@@ -423,9 +423,9 @@ class Wnd_Form_WP extends Wnd_Form {
 		extract($args['data']);
 
 		// 固定data
-		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_upload_file');
-		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_delete_file');
-		$args['data']['meta_key_nonce']   = wnd_create_nonce($meta_key);
+		$args['data']['upload_nonce']     = wp_create_nonce('wnd_upload_file');
+		$args['data']['delete_nonce']     = wp_create_nonce('wnd_delete_file');
+		$args['data']['meta_key_nonce']   = wp_create_nonce($meta_key);
 		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
 		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;

@@ -51,8 +51,8 @@ class Wnd_Ajax_Link {
 		$this->html = '<a class="ajax-link ' . $this->class . '" data-is-cancel="0" data-disabled="0"';
 		$this->html .= ' data-action="' . $this->action . '"';
 		$this->html .= ' data-cancel="' . $this->cancel_action . '" data-param="' . $this->param . '"';
-		$this->html .= ' data-action-nonce="' . wnd_create_nonce($this->action) . '"';
-		$this->html .= ' data-cancel-nonce="' . wnd_create_nonce($this->cancel_action) . '"';
+		$this->html .= ' data-action-nonce="' . wp_create_nonce($this->action) . '"';
+		$this->html .= ' data-cancel-nonce="' . wp_create_nonce($this->cancel_action) . '"';
 		$this->html .= '>';
 		$this->html .= $this->text . '</a>';
 

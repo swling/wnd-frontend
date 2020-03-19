@@ -52,7 +52,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => __('Meta_key与Post_parent不可同时为空', 'wnd')];
 		}
 
-		if (!wnd_verify_nonce($_POST['meta_key_nonce'], $meta_key)) {
+		if (!wp_verify_nonce($_POST['meta_key_nonce'], $meta_key)) {
 			return ['status' => 0, 'msg' => __('meta_key不合法', 'wnd')];
 		}
 

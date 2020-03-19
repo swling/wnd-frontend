@@ -119,7 +119,7 @@ class Wnd_API {
 		$class      = $namespace . '\\' . $class_name;
 
 		// nonce校验：action
-		if (!wnd_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $_REQUEST['action'])) {
+		if (!wp_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $_REQUEST['action'])) {
 			return ['status' => 0, 'msg' => __('Nonce校验失败', 'wnd')];
 		}
 
