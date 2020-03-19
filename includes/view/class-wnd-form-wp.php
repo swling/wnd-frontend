@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\View;
 
-use Wnd\Model\Wnd_Nonce;
+use Wnd\Model\Wnd_Form_Nonce;
 
 /**
  *适配本插件的ajax表单类
@@ -52,7 +52,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	public function set_action($action, $method = 'POST') {
 		if ($this->is_ajax_submit) {
 			$this->add_hidden('action', $action);
-			$this->add_hidden('_ajax_nonce', wnd_create_nonce($action));
+			$this->add_hidden('_ajax_nonce', wp_create_nonce($action));
 		} else {
 			parent::set_action($action, $method);
 		}
@@ -136,7 +136,7 @@ class Wnd_Form_WP extends Wnd_Form {
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => '短信验证码',
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('sms' . $type) . '" data-is_email="0">获取验证码</button>',
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '" data-type_nonce="' . wp_create_nonce('sms' . $type) . '" data-is_email="0">获取验证码</button>',
 			]
 		);
 
@@ -183,7 +183,7 @@ class Wnd_Form_WP extends Wnd_Form {
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => '邮箱验证码',
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wnd_create_nonce('wnd_send_code') . '" data-type_nonce="' . wnd_create_nonce('email' . $type) . '" data-is_email="1">获取验证码</button>',
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '" data-type_nonce="' . wp_create_nonce('email' . $type) . '" data-is_email="1">获取验证码</button>',
 			]
 		);
 
@@ -226,9 +226,9 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// 固定data
 		$args['data']['is_image']         = '1';
-		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_upload_file');
-		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_delete_file');
-		$args['data']['meta_key_nonce']   = wnd_create_nonce($meta_key);
+		$args['data']['upload_nonce']     = wp_create_nonce('wnd_upload_file');
+		$args['data']['delete_nonce']     = wp_create_nonce('wnd_delete_file');
+		$args['data']['meta_key_nonce']   = wp_create_nonce($meta_key);
 		$args['data']['thumbnail']        = $args['thumbnail'];
 		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
@@ -288,9 +288,9 @@ class Wnd_Form_WP extends Wnd_Form {
 		extract($args['data']);
 
 		// 固定data
-		$args['data']['upload_nonce']   = wnd_create_nonce('wnd_upload_file');
-		$args['data']['delete_nonce']   = wnd_create_nonce('wnd_delete_file');
-		$args['data']['meta_key_nonce'] = wnd_create_nonce($meta_key);
+		$args['data']['upload_nonce']   = wp_create_nonce('wnd_upload_file');
+		$args['data']['delete_nonce']   = wp_create_nonce('wnd_delete_file');
+		$args['data']['meta_key_nonce'] = wp_create_nonce($meta_key);
 		$args['data']['method']         = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据meta key 查找目标文件
@@ -368,7 +368,7 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	/**
 	 *@since 2019.05.09
-	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
+	 *根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
 	 */
 	protected function build_form_nonce() {
 		// 提取表单字段names
@@ -387,8 +387,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		unset($input_value);
 
 		// 根据表单字段生成wp nonce并加入表单字段
-		$nonce_field = Wnd_nonce::build_form_nonce_field($this->form_names);
-		$this->add_html($nonce_field);
+		$this->add_hidden('_wnd_form_nonce', Wnd_Form_Nonce::create($this->form_names));
 	}
 
 	/**
@@ -423,9 +422,9 @@ class Wnd_Form_WP extends Wnd_Form {
 		extract($args['data']);
 
 		// 固定data
-		$args['data']['upload_nonce']     = wnd_create_nonce('wnd_upload_file');
-		$args['data']['delete_nonce']     = wnd_create_nonce('wnd_delete_file');
-		$args['data']['meta_key_nonce']   = wnd_create_nonce($meta_key);
+		$args['data']['upload_nonce']     = wp_create_nonce('wnd_upload_file');
+		$args['data']['delete_nonce']     = wp_create_nonce('wnd_delete_file');
+		$args['data']['meta_key_nonce']   = wp_create_nonce($meta_key);
 		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
 		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;

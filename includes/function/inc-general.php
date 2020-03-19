@@ -1,26 +1,4 @@
 <?php
-/**
- *增强版nonce校验，在nonce校验中加入秘钥
- *@since 2019.05.12
- *@param 	string 	$action
- *@return 	string 	nonce
- **/
-function wnd_create_nonce($action) {
-	return Wnd\Model\Wnd_Nonce::create_nonce($action);
-}
-
-/**
- *校验nonce
- *@since 2019.05.12
- *
- *@param 	string 	$anone
- *@param 	string 	$action
- *
- *@return 	bool
- **/
-function wnd_verify_nonce($nonce, $action) {
-	return Wnd\Model\Wnd_Nonce::verify_nonce($nonce, $action);
-}
 
 /**
  *@since 2019.01.21 获取do page地址

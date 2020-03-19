@@ -153,7 +153,7 @@ class Wnd_Add_Action {
 		//创建支付
 		case 'payment':
 			if (is_user_logged_in()) {
-				if (wnd_verify_nonce($_GET['_wpnonce'] ?? '', 'payment')) {
+				if (wp_verify_nonce($_GET['_wpnonce'] ?? '', 'payment')) {
 					AlipayPagePay::pay();
 				}
 			} else {
@@ -168,7 +168,7 @@ class Wnd_Add_Action {
 
 		//@since 2019.05.12 默认：校验nonce后执行action对应的控制类
 		default:
-			if (($_GET['_wpnonce'] ?? false) and wnd_verify_nonce($_GET['_wpnonce'], $action)) {
+			if (($_GET['_wpnonce'] ?? false) and wp_verify_nonce($_GET['_wpnonce'], $action)) {
 				$namespace = (stripos($action, 'Wndt') === 0) ? 'Wndt\Action' : 'Wnd\Action';
 				$class     = $namespace . '\\' . $action;
 				return is_callable([$class, 'execute']) ? $class::execute() : exit('未定义控制类' . $class);

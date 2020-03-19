@@ -36,7 +36,7 @@ class Wnd_Pay_For_Download extends Wnd_Action_Ajax {
 		$download_args = [
 			'action'   => 'wnd_paid_download',
 			'post_id'  => $post_id,
-			'_wpnonce' => wnd_create_nonce('wnd_paid_download'),
+			'_wpnonce' => wp_create_nonce('wnd_paid_download'),
 		];
 		$download_url = add_query_arg($download_args, wnd_get_do_url());
 

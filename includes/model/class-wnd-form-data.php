@@ -2,7 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\Model\Wnd_Nonce;
+use Wnd\Model\Wnd_Form_Nonce;
 
 /**
  *根据表单name提取数据
@@ -43,7 +43,7 @@ class Wnd_Form_Data {
 		 *因而校验表单操作应该在filter应用之前执行
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
-		if ($verify_form_nonce and !Wnd_Nonce::verify_form_nonce()) {
+		if ($verify_form_nonce and !Wnd_Form_Nonce::verify()) {
 			throw new Exception('表单已被篡改');
 		}
 

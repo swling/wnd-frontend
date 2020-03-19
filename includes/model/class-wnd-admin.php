@@ -21,8 +21,6 @@ class Wnd_Admin {
 		// 默认option数据
 		if (!get_option('wnd')) {
 			$default_option = [
-				'wnd_secret_key'         => wnd_random('16'),
-
 				'wnd_static_host'        => 'local',
 				'wnd_edit_page'          => '',
 				'wnd_agreement_url'      => '',

@@ -36,11 +36,6 @@
 $post_type.'_cat';//分类taxonomy
 $post_type.'_tag';//标签taxonomy
 ```
-## nonce校验
-在本插件中，nonce校验作为重要的权限检测方式，不仅作为防止跨站攻击的方式，也作为当前用户执行对应操作的权限判断依据
-为增强安全性，在WordPress原生wp_nonce的基础上加入了秘钥混淆
-详见：inc-function.php wnd_create_nonce / wnd_verify_nonce
-
 # add_filter / add_action priority: 10
 10 为WordPress默认值，该值越大，表示越靠后执行
 ## 对于filter：
@@ -94,7 +89,7 @@ wnd_meta：gallery (用户相册)
 提交的数据中必须包含：
 $_REQUEST['action']：该值为处理当前请求的控制类名称（不含命名空间）
 $_REQUEST['_ajax_nonce']
-nonce生成方式：wnd_create_nonce($_REQUEST['action'])
+nonce生成方式：wp_create_nonce($_REQUEST['action'])
 
 #### @see Wnd_Form_WP->set_action
 
@@ -394,7 +389,7 @@ wp_cache_set($object_id, $meta_value, 'wnd_views');
 ```
 # 创建支付
 创建地址：
-*do.php?action=payment&_wpnonce=wnd_create_nonce('payment')*
+*do.php?action=payment&_wpnonce=wp_create_nonce('payment')*
 
 表单字段：
 post_id(GET/POST)：	如果设置了post_id 则表示该支付为订单类型，即为特定post付费，对应支付价格通过 wnd_get_post_price($post_id) 获取
