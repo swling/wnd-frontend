@@ -14,7 +14,7 @@ class Wnd_Paid_Download extends Wnd_Action {
 		$file_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
 		$file    = get_attached_file($file_id, $unfiltered = false);
 		if (!$file) {
-			wp_die('获取文件失败', get_option('blogname'));
+			wp_die(__('获取文件失败', 'wnd'), get_option('blogname'));
 		}
 
 		//1、免费，或者已付费
@@ -29,6 +29,6 @@ class Wnd_Paid_Download extends Wnd_Action {
 		}
 
 		// 校验失败
-		wp_die('下载权限校验失败', get_option('blogname'));
+		wp_die(__('权限错误', 'wnd'), get_option('blogname'));
 	}
 }

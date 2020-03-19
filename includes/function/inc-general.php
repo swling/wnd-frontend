@@ -143,6 +143,15 @@ function wnd_ajax_embed($template, $args = '') {
 }
 
 /**
+ *@since 2020.01.14
+ *
+ *获取当前页面URL
+ */
+function wnd_get_current_url() {
+	return ((isset($_SERVER['HTTPS']) and 'on' == $_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+}
+
+/**
  *@since 2019.07.17
  *设置默认的异常处理函数
  */

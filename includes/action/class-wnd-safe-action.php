@@ -17,11 +17,11 @@ class Wnd_Safe_Action extends Wnd_Action_Ajax {
 	public static function execute(): array{
 		$method = $_REQUEST['method'] ?? false;
 		if (!$method) {
-			return ['status' => 0, 'msg' => '未指定方法'];
+			return ['status' => 0, 'msg' => __('未指定方法', 'wnd')];
 		}
 
 		if (!method_exists(__CLASS__, $method)) {
-			return ['status' => 0, 'msg' => '指定方法不可用'];
+			return ['status' => 0, 'msg' => __('指定方法不可用', 'wnd')];
 		}
 
 		return self::$method();

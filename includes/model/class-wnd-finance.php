@@ -204,20 +204,18 @@ class Wnd_Finance {
 		switch ($type) {
 		// 充值
 		case 'recharge':
-			$post_type  = 'stats-re';
-			$post_title = '充值统计';
+			$post_type = 'stats-re';
 			break;
 
 		// 消费
 		case 'expense':
-			$post_type  = 'stats-ex';
-			$post_title = '消费统计';
+			$post_type = 'stats-ex';
+
 			break;
 
 		// 默认
 		default:
-			$post_type  = '';
-			$post_title = '';
+			$post_type = '';
 			break;
 		}
 
@@ -227,8 +225,8 @@ class Wnd_Finance {
 
 		$year       = date('Y', time());
 		$month      = date('m', time());
-		$slug       = $year . '-' . $month . '-' . $post_type;
-		$post_title = $year . '-' . $month . ' - ' . $post_title;
+		$post_title = $year . '-' . $month . '-' . $post_type;
+		$slug       = $post_title;
 		$stats_post = wnd_get_post_by_slug($slug, $post_type, 'private');
 
 		// 更新统计

@@ -34,8 +34,8 @@ class Wnd_Default_Post_Form extends Wnd_Module {
 		$form->add_post_category_select('category');
 
 		// 标签
-		$form->add_post_tags('post_tag', '请用回车键区分多个标签');
-		$form->add_html('<div class="message is-warning"><div class="message-body">请用回车键区分多个标签</div></div>');
+		$form->add_post_tags('post_tag', __('请用回车键区分多个标签', 'wnd'));
+		$form->add_html('<div class="message is-warning"><div class="message-body">' . __('请用回车键区分多个标签', 'wnd') . '</div></div>');
 
 		// 缩略图
 		$form->set_thumbnail_size(150, 150);
@@ -43,7 +43,7 @@ class Wnd_Default_Post_Form extends Wnd_Module {
 
 		// 相册
 		$form->set_thumbnail_size(100, 100);
-		$form->add_post_gallery_upload(0, 0, '相册图集');
+		$form->add_post_gallery_upload(0, 0, __('相册图集', 'wnd'));
 
 		if (!$is_free) {
 			$form->add_post_paid_file_upload();
@@ -54,7 +54,7 @@ class Wnd_Default_Post_Form extends Wnd_Module {
 		 */
 		$form->add_post_content(true);
 		$form->add_post_status_select();
-		$form->set_submit_button('保存');
+		$form->set_submit_button(__('保存', 'wnd'));
 
 		// 以当前函数名设置filter hook
 		$form->set_filter(__CLASS__);

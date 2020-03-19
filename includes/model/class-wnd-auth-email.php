@@ -14,9 +14,6 @@ class Wnd_Auth_Email extends Wnd_Auth {
 	// 数据库字段：Email
 	protected $db_field = 'email';
 
-	// 提示文字：邮箱
-	protected $text = '邮箱';
-
 	// 验证码有效时间（秒）
 	protected $valid_time = 3600;
 
@@ -31,15 +28,15 @@ class Wnd_Auth_Email extends Wnd_Auth {
 		$this->check_send();
 
 		if (!$this->insert()) {
-			throw new Exception('写入数据库失败');
+			throw new Exception(__('写入数据库失败', 'wnd'));
 		}
 
-		$message = '邮箱验证秘钥【' . $this->auth_code . '】（不含括号），关键凭证，请勿泄露';
-		$action  = wp_mail($this->auth_object, '验证邮箱', $message);
+		$message = __('邮箱验证秘钥') . '【' . $this->auth_code . '】' . __('（不含括号），关键凭证，请勿泄露', 'wnd');
+		$action  = wp_mail($this->auth_object, __('验证邮箱', 'wnd'), $message);
 		if ($action) {
 			return true;
 		} else {
-			throw new Exception('发送失败，请稍后重试');
+			throw new Exception(__('发送失败，请稍后重试', 'wnd'));
 		}
 	}
 }

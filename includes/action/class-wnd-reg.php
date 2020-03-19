@@ -34,10 +34,10 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 		$user_data = $form_data->get_user_data();
 		if (isset($user_data['user_login'])) {
 			if (strlen($user_data['user_login']) < 3) {
-				return $value = ['status' => 0, 'msg' => '用户名不能低于3位'];
+				return $value = ['status' => 0, 'msg' => __('用户名不能低于3位', 'wnd')];
 			}
 			if (is_numeric($user_data['user_login'])) {
-				return $value = ['status' => 0, 'msg' => '用户名不能是纯数字'];
+				return $value = ['status' => 0, 'msg' => __('用户名不能是纯数字', 'wnd')];
 			}
 
 			// 未指定用户名：创建随机用户名
@@ -46,17 +46,17 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 		}
 
 		if (strlen($user_data['user_pass']) < 6) {
-			return $value = ['status' => 0, 'msg' => '密码不能低于6位'];
+			return $value = ['status' => 0, 'msg' => __('密码不能低于6位', 'wnd')];
 		}
 
 		if (isset($user_data['user_pass_repeat'])) {
 			if ($user_data['user_pass_repeat'] !== $user_data['user_pass']) {
-				return $value = ['status' => 0, 'msg' => '两次输入的密码不匹配'];
+				return $value = ['status' => 0, 'msg' => __('两次输入的密码不匹配', 'wnd')];
 			}
 		}
 
 		// 注册权限过滤挂钩
-		$user_can_reg = apply_filters('wnd_can_reg', ['status' => 1, 'msg' => '默认通过']);
+		$user_can_reg = apply_filters('wnd_can_reg', ['status' => 1, 'msg' => '']);
 		if ($user_can_reg['status'] === 0) {
 			return $user_can_reg;
 		}
@@ -91,7 +91,7 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 		$redirect_to  = $_REQUEST['redirect_to'] ?? wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url();
 		$return_array = apply_filters(
 			'wnd_reg_return',
-			['status' => 3, 'msg' => '注册成功', 'data' => ['redirect_to' => $redirect_to, 'user_id' => $user_id]],
+			['status' => 3, 'msg' => __('注册成功', 'wnd'), 'data' => ['redirect_to' => $redirect_to, 'user_id' => $user_id]],
 			$user_id
 		);
 		return $return_array;

@@ -103,7 +103,7 @@ class Wnd_Payment extends Wnd_Transaction {
 	 */
 	public function create() {
 		if (!$this->user_id) {
-			throw new Exception('请登录');
+			throw new Exception(__('请登录', 'wnd'));
 		}
 
 		// 在线订单 / 充值
@@ -137,16 +137,16 @@ class Wnd_Payment extends Wnd_Transaction {
 	 *@param float  			$this->total_money		required
 	 */
 	public function verify() {
-		$type     = !empty($_POST) ? '异步' : '同步';
+		$type     = !empty($_POST) ? __('异步', 'wnd') : __('同步', 'wnd');
 		$this->ID = $this->ID ?: $this->parse_out_trade_no($this->out_trade_no);
 
 		// 校验
 		$post = get_post($this->ID);
 		if (!$this->ID or !$post) {
-			throw new Exception('ID无效：' . $this->ID);
+			throw new Exception(__('支付ID无效：', 'wnd') . $this->ID);
 		}
 		if ($post->post_content != $this->total_amount) {
-			throw new Exception('金额不匹配');
+			throw new Exception(__('金额不匹配', 'wnd'));
 		}
 
 		// 定义变量
@@ -159,7 +159,7 @@ class Wnd_Payment extends Wnd_Transaction {
 			return $this->ID;
 		}
 		if ($post->post_status != 'pending') {
-			throw new Exception('订单状态无效');
+			throw new Exception(__('订单状态无效', 'wnd'));
 		}
 
 		// 更新 订单/充值
@@ -189,7 +189,7 @@ class Wnd_Payment extends Wnd_Transaction {
 	 */
 	public function get_out_trade_no() {
 		if (!$this->ID) {
-			throw new Exception('站内支付数据尚未写入，无法生成订单号');
+			throw new Exception(__('站内支付数据尚未写入，无法生成订单号', 'wnd'));
 		}
 
 		return self::$site_prefix . '-' . $this->ID;

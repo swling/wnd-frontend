@@ -35,16 +35,16 @@ class Wnd_Order extends Wnd_Transaction {
 	 */
 	public function create(bool $is_success = false) {
 		if (!$this->user_id) {
-			throw new Exception('请登录');
+			throw new Exception(__('请登录', 'wnd'));
 		}
 		if ($this->object_id and !get_post($this->object_id)) {
-			throw new Exception('指定产品无效');
+			throw new Exception(__('指定商品无效', 'wnd'));
 		}
 
 		// 定义变量
 		$this->total_amount = $this->total_amount ?: wnd_get_post_price($this->object_id);
 		$this->status       = $is_success ? 'success' : 'pending';
-		$this->subject      = $this->subject ?: '订单：' . get_the_title($this->object_id);
+		$this->subject      = $this->subject ?: __('订单：', 'wnd') . get_the_title($this->object_id);
 
 		/**
 		 *@since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
@@ -75,7 +75,7 @@ class Wnd_Order extends Wnd_Transaction {
 			'ID'           => $this->ID ?: 0,
 			'post_author'  => $this->user_id,
 			'post_parent'  => $this->object_id,
-			'post_content' => $this->total_amount ?: '免费',
+			'post_content' => $this->total_amount ?: __('免费', 'wnd'),
 			'post_status'  => $this->status,
 			'post_title'   => $this->subject,
 			'post_type'    => 'order',
@@ -83,7 +83,7 @@ class Wnd_Order extends Wnd_Transaction {
 		];
 		$ID = wp_insert_post($post_arr);
 		if (is_wp_error($ID) or !$ID) {
-			throw new Exception('创建订单失败');
+			throw new Exception(__('创建订单失败', 'wnd'));
 		}
 
 		/**
@@ -125,22 +125,22 @@ class Wnd_Order extends Wnd_Transaction {
 	public function verify() {
 		$post = get_post($this->ID);
 		if (!$this->ID or $post->post_type != 'order') {
-			throw new Exception('当前订单ID无效');
+			throw new Exception(__('订单ID无效', 'wnd'));
 		}
 
 		// 订单支付状态检查
 		if ($post->post_status != 'pending') {
-			throw new Exception('订单状态无效');
+			throw new Exception(__('订单状态无效', 'wnd'));
 		}
 
 		$post_arr = [
 			'ID'          => $this->ID,
 			'post_status' => 'success',
-			'post_title'  => $this->subject ?: $post->post_title . '(在线支付)',
+			'post_title'  => $this->subject ?: $post->post_title . __('(在线支付)', 'wnd'),
 		];
 		$ID = wp_update_post($post_arr);
 		if (!$ID or is_wp_error($ID)) {
-			throw new Exception('更新订单失败');
+			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 
 		/**

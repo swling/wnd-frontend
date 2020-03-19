@@ -24,7 +24,7 @@ class Wnd_Bind_Account extends Wnd_Action_Ajax {
 			$bind->set_password($password);
 			$bind->set_auth_code($auth_code);
 			$bind->bind();
-			return ['status' => 4, 'msg' => '绑定成功'];
+			return ['status' => 4, 'msg' => __('绑定成功', 'wnd')];
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}

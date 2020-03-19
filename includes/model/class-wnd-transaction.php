@@ -50,7 +50,7 @@ abstract class Wnd_Transaction {
 	 **/
 	public function set_total_amount($total_amount) {
 		if (!is_numeric($total_amount)) {
-			throw new Exception('金额无效');
+			throw new Exception(__('金额无效', 'wnd'));
 		}
 
 		$this->total_amount = $total_amount;
@@ -63,7 +63,7 @@ abstract class Wnd_Transaction {
 	public function set_object_id(int $object_id) {
 		$post = $object_id ? get_post($object_id) : false;
 		if ($object_id and !$post) {
-			throw new Exception('设置object ID无效');
+			throw new Exception(__('商品ID无效', 'wnd'));
 		}
 
 		$this->object_id = $object_id;
@@ -75,7 +75,7 @@ abstract class Wnd_Transaction {
 	 **/
 	public function set_user_id(int $user_id) {
 		if (!get_user_by('ID', $user_id)) {
-			throw new Exception('用户ID无效');
+			throw new Exception(__('用户ID无效', 'wnd'));
 		}
 
 		$this->user_id = $user_id;

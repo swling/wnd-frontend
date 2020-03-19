@@ -22,16 +22,16 @@ class Wnd_Reset_Password extends Wnd_Action_Ajax {
 
 		// 验证密码正确性
 		if (strlen($new_password) < 6) {
-			return ['status' => 0, 'msg' => '新密码不能低于6位'];
+			return ['status' => 0, 'msg' => __('密码不能低于6位', 'wnd')];
 
 		} elseif ($new_password_repeat != $new_password) {
-			return ['status' => 0, 'msg' => '两次输入的新密码不匹配'];
+			return ['status' => 0, 'msg' => __('两次输入的新密码不匹配', 'wnd')];
 		}
 
 		//获取用户
 		$user = $is_user_logged_in ? wp_get_current_user() : wnd_get_user_by($email_or_phone);
 		if (!$user) {
-			return ['status' => 0, 'msg' => '账户未注册'];
+			return ['status' => 0, 'msg' => __('账户未注册', 'wnd')];
 		}
 
 		/**
@@ -52,7 +52,7 @@ class Wnd_Reset_Password extends Wnd_Action_Ajax {
 			reset_password($user, $new_password);
 			return [
 				'status' => $is_user_logged_in ? 4 : 1,
-				'msg'    => '密码修改成功！<a onclick="wnd_ajax_modal(\'wnd_login_form\');">登录</a>',
+				'msg'    => __('密码修改成功', 'wnd') . '&nbsp;<a onclick="wnd_ajax_modal(\'wnd_login_form\');">' . __('登录', 'wnd') . '</a>',
 			];
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];

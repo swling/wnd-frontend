@@ -12,25 +12,25 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 	public static function build($post_id = 0) {
 		$post = get_post($post_id);
 		if (!$post) {
-			return 'ID无效';
+			return __('ID无效', 'wnd');
 		}
 
 		switch ($post->post_status) {
 
 		case 'publish':
-			$status_text = '已发布';
+			$status_text = __('已发布', 'wnd');
 			break;
 
 		case 'pending':
-			$status_text = '待审核';
+			$status_text = __('待审核', 'wnd');
 			break;
 
 		case 'draft':
-			$status_text = '草稿';
+			$status_text = __('草稿', 'wnd');
 			break;
 
 		case false:
-			$status_text = '已删除';
+			$status_text = __('已删除', 'wnd');
 			break;
 
 		default:
@@ -40,16 +40,16 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 
 		$form = new Wnd_Form_WP();
 		$form->add_html('<div class="field is-grouped is-grouped-centered">');
-		$form->add_html('<script>wnd_ajax_msg(\'当前： ' . $status_text . '\', \'is-danger\', \'#post-status\')</script>');
+		$form->add_html('<script>wnd_ajax_msg(\'' . __('当前', 'wnd') . '： ' . $status_text . '\', \'is-danger\', \'#post-status\')</script>');
 		$form->add_radio(
 			[
 				'name'     => 'post_status',
 				'options'  => [
-					'发布' => 'publish',
-					'待审' => 'pending',
-					'关闭' => 'close',
-					'草稿' => 'draft',
-					'删除' => 'delete',
+					__('发布', 'wnd') => 'publish',
+					__('待审', 'wnd') => 'pending',
+					__('关闭', 'wnd') => 'close',
+					__('草稿', 'wnd') => 'draft',
+					__('删除', 'wnd') => 'delete',
 				],
 				'required' => 'required',
 				'checked'  => $post->post_status,
@@ -67,8 +67,8 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 					[
 						'name'    => 'stick_post',
 						'options' => [
-							'置顶' => 'stick',
-							'取消' => 'unstick',
+							__('置顶', 'wnd') => 'stick',
+							__('取消', 'wnd') => 'unstick',
 						],
 						'checked' => (array_search($post->ID, wnd_get_sticky_posts($post->post_type)) === false) ? '' : 'stick',
 						'class'   => 'is-checkradio is-danger',
@@ -80,19 +80,19 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 			$form->add_textarea(
 				[
 					'name'        => 'remarks',
-					'placeholder' => '备注（可选）',
+					'placeholder' => __('备注（可选）', 'wnd'),
 				]
 			);
 		}
 
 		if ($post->post_type == 'order') {
-			$form->add_html('<div class="message is-danger"><div class="message-body">删除订单记录，不可退款，请谨慎操作！</div></div>');
+			$form->add_html('<div class="message is-danger"><div class="message-body">' . __('删除订单记录，不可退款，请谨慎操作', 'wnd') . '</div></div>');
 		}
 
 		$form->add_hidden('post_id', $post_id);
 		$form->set_action('wnd_update_post_status');
 		$form->add_form_attr('id', 'post-status');
-		$form->set_submit_button('提交');
+		$form->set_submit_button(__('提交', 'wnd'));
 		$form->build();
 		return $form->html;
 	}

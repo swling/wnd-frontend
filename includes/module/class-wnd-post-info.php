@@ -10,7 +10,7 @@ class Wnd_Post_Info extends Wnd_Module {
 	public static function build($post_id = 0) {
 		$post = $post_id ? get_post($post_id) : false;
 		if (!$post) {
-			return 'ID无效';
+			return __('ID无效', 'wnd');
 		}
 
 		// 站内信阅读后，更新为已读 @since 2019.02.25
@@ -24,7 +24,7 @@ class Wnd_Post_Info extends Wnd_Module {
 		if (!wnd_get_post_price($post->ID)) {
 			$html .= $post->post_content;
 		} else {
-			$html .= "付费文章不支持预览！";
+			$html .= __('付费文章不支持预览', 'wnd');
 		}
 		$html .= '</div>';
 		$html .= '</article>';

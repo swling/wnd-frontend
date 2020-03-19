@@ -126,7 +126,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 
 	public function add_user_avatar($thumbnail_size = 100, $save_size = 200) {
 		if (!$this->user->ID) {
-			$this->add_html('<div class="notification">获取用户ID失败，无法上传头像！</div>');
+			$this->add_html('<div class="notification">' . __('请登录', 'wnd') . '</div>');
 			return;
 		}
 
@@ -150,7 +150,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 	 */
 	public function add_user_image_upload($meta_key, $save_width = 0, $save_height = 0, $label = '') {
 		if (!$this->user->ID) {
-			$this->add_html('<div class="notification">获取用户ID失败，无法设置图像上传！</div>');
+			$this->add_html('<div class="notification">' . __('请登录', 'wnd') . '</div>');
 			return;
 		}
 
@@ -170,7 +170,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 
 	public function add_user_file_upload($meta_key, $label = '文件上传') {
 		if (!$this->user->ID) {
-			$this->add_html('<div class="notification">获取用户ID失败，无法设置文件上传！</div>');
+			$this->add_html('<div class="notification">' . __('请登录', 'wnd') . '</div>');
 			return;
 		}
 

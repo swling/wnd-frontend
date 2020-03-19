@@ -14,9 +14,6 @@ class Wnd_Auth_phone extends Wnd_Auth {
 	// 数据库字段：phone
 	protected $db_field = 'phone';
 
-	// 提示文字：手机
-	protected $text = '手机';
-
 	// 短信服务商
 	protected $sms_sp;
 
@@ -47,11 +44,11 @@ class Wnd_Auth_phone extends Wnd_Auth {
 
 		// 短信发送必须指定模板
 		if (!$this->template) {
-			throw new Exception('未指定短信模板');
+			throw new Exception(__('未指定短信模板', 'wnd'));
 		}
 
 		if (!$this->sms_sp) {
-			throw new Exception('未指定短信服务商');
+			throw new Exception(__('未指定短信服务商', 'wnd'));
 		}
 	}
 
@@ -69,7 +66,7 @@ class Wnd_Auth_phone extends Wnd_Auth {
 
 		// 写入手机记录
 		if (!$this->insert()) {
-			throw new Exception('数据库写入失败');
+			throw new Exception(__('数据库写入失败', 'wnd'));
 		}
 
 		// 发送短信
@@ -78,7 +75,7 @@ class Wnd_Auth_phone extends Wnd_Auth {
 		} elseif ('ali' == $this->sms_sp) {
 			$sms = new Wnd_Sms_Ali();
 		} else {
-			throw new Exception('指定短信服务商未完成配置');
+			throw new Exception(__('指定短信服务商未完成配置', 'wnd'));
 		}
 		$sms->set_phone($this->auth_object);
 		$sms->set_code($this->auth_code);

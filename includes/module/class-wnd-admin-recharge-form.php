@@ -16,10 +16,10 @@ class Wnd_Admin_Recharge_Form extends Wnd_Module {
 		$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 		$form->add_text(
 			[
-				'label'       => '用户',
+				'label'       => __('用户', 'wnd'),
 				'name'        => 'user_field',
 				'required'    => 'required',
-				'placeholder' => '用户名、邮箱、注册手机',
+				'placeholder' => __('用户名、邮箱、注册手机', 'wnd'),
 			]
 		);
 		$form->add_number(
@@ -28,18 +28,18 @@ class Wnd_Admin_Recharge_Form extends Wnd_Module {
 				'name'        => 'total_amount',
 				'required'    => 'required',
 				'step'        => 0.1,
-				'placeholder' => '充值金额（负数可扣款）',
+				'placeholder' => __('充值金额（负数可扣款）', 'wnd'),
 			]
 		);
 		$form->add_html('</div></div>');
 		$form->add_text(
 			[
 				'name'        => 'remarks',
-				'placeholder' => '备注（可选）',
+				'placeholder' => __('备注（可选）', 'wnd'),
 			]
 		);
 		$form->set_action('wnd_admin_recharge');
-		$form->set_submit_button('确认充值');
+		$form->set_submit_button(__('确认充值', 'wnd'));
 		$form->build();
 
 		return $form->html;

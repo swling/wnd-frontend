@@ -21,7 +21,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 		$html .= '
 		<div class="level-item has-text-centered">
 			<div>
-				<p class="heading">余额</p>
+				<p class="heading">' . __('余额', 'wnd') . '</p>
 				<p class="title">' . wnd_get_user_money($user_id) . '</p>
 			</div>
 		</div>';
@@ -29,7 +29,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 		$html .= '
 		<div class="level-item has-text-centered">
 			<div>
-				<p class="heading">消费</p>
+				<p class="heading">' . __('消费', 'wnd') . '</p>
 				<p class="title">' . wnd_get_user_expense($user_id) . '</p>
 			</div>
 		</div>';
@@ -38,7 +38,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 			$html .= '
 		<div class="level-item has-text-centered">
 			<div>
-				<p class="heading">佣金</p>
+				<p class="heading">' . __('佣金', 'wnd') . '</p>
 				<p class="title">' . wnd_get_user_commission($user_id) . '</p>
 			</div>
 		</div>';
@@ -48,13 +48,13 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 		$html .= '<div class="level">';
 		$html .= '
 		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal(\'wnd_user_recharge_form\')">余额充值</button>
+			<button class="button" onclick="wnd_ajax_modal(\'wnd_user_recharge_form\')">' . __('余额充值', 'wnd') . '</button>
 		</div>';
 
 		if (is_super_admin()) {
 			$html .= '
 		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal(\'wnd_admin_recharge_form\')">管理员充值</button>
+			<button class="button" onclick="wnd_ajax_modal(\'wnd_admin_recharge_form\')">' . __('管理员充值', 'wnd') . '</button>
 		</div>';
 		}
 		$html .= '</div>';

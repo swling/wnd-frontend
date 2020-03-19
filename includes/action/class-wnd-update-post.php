@@ -17,7 +17,7 @@ class Wnd_Update_Post extends Wnd_Action_Ajax {
 		// 获取被编辑Post ID
 		$_POST['_post_ID'] = $post_id ?: $_POST['_post_ID'];
 		if ($_POST['_post_ID']) {
-			return ['status' => 0, 'msg' => 'ID无效'];
+			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}
 
 		return Wnd_Insert_Post::execute();
