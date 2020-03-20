@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
-"POT-Creation-Date: 2020-01-16 15:08+0800\n"
-"PO-Revision-Date: 2020-01-16 15:08+0800\n"
+"POT-Creation-Date: 2020-03-19 13:29+0800\n"
+"PO-Revision-Date: 2020-03-19 13:30+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -925,7 +925,7 @@ msgstr "Last"
 #: includes/view/class-wnd-filter.php:1377
 #: includes/view/class-wnd-filter.php:1412
 msgid "未执行WP_Query"
-msgstr ""
+msgstr "WP_Query not executed"
 
 #: includes/view/class-wnd-filter.php:1384
 #: includes/view/class-wnd-filter.php:1392
@@ -998,7 +998,7 @@ msgstr ""
 
 #: wnd-frontend.php:84
 msgid "系统错误"
-msgstr ""
+msgstr "System Error"
 
 #: wnd-frontend.php:85
 msgid "请稍后"
@@ -1006,11 +1006,11 @@ msgstr "Please wait"
 
 #: wnd-frontend.php:86
 msgid "下载中"
-msgstr ""
+msgstr "Downloading"
 
 #: wnd-frontend.php:87
 msgid "再试一次"
-msgstr ""
+msgstr "Try again"
 
 #: wnd-frontend.php:88
 #, fuzzy

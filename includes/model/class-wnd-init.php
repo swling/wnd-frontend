@@ -135,18 +135,26 @@ class Wnd_Init {
 		];
 		register_post_type('order', $args);
 
-		/*站内信*/
+		/**
+		 *站内信
+		 *
+		 *@date 2020.03.20
+		 *参数解释：
+		 *'public'              => true, 需要设置为公开，站内信才能使用固定连接打开
+		 *'exclude_from_search' => true, 从搜索中排除，防止当指定查询post_type为any时，查询出站内信
+		 */
 		$labels = [
 			'name' => __('站内信', 'wnd'),
 		];
 		$args = [
-			'labels'      => $labels,
-			'description' => __('站内信', 'wnd'),
-			'public'      => true,
-			'has_archive' => false,
-			'show_ui'     => false,
-			'supports'    => ['title', 'author', 'editor', 'thumbnail', 'excerpt', 'comments', 'custom-fields'],
-			'rewrite'     => ['slug' => 'mail', 'with_front' => false],
+			'labels'              => $labels,
+			'description'         => __('站内信', 'wnd'),
+			'public'              => true,
+			'exclude_from_search' => true,
+			'has_archive'         => false,
+			'show_ui'             => false,
+			'supports'            => ['title', 'author', 'editor', 'thumbnail', 'excerpt', 'comments', 'custom-fields'],
+			'rewrite'             => ['slug' => 'mail', 'with_front' => false],
 		];
 		register_post_type('mail', $args);
 
