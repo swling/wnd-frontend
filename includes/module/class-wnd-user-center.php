@@ -46,7 +46,8 @@ class Wnd_User_Center extends Wnd_Module {
 						$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=reset_password&type=email\');">' . __('邮箱验证找回', 'wnd') . '</a>';
 					}
 					if (!$is_user_logged_in) {
-						$html .= ' | <a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\');">' . __('登录', 'wnd') . '</a>';
+						$html .= $enable_sms ? ' | ' : '';
+						$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\');">' . __('登录', 'wnd') . '</a>';
 					}
 
 				} else {
@@ -56,7 +57,8 @@ class Wnd_User_Center extends Wnd_Module {
 						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=reset_password&type=email\');">' . __('邮箱验证找回', 'wnd') . '</a>';
 					}
 					if (!$is_user_logged_in) {
-						$html .= ' | <a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=login\');">' . __('登录', 'wnd') . '</a>';
+						$html .= $enable_sms ? ' | ' : '';
+						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=login\');">' . __('登录', 'wnd') . '</a>';
 					}
 				}
 
@@ -67,7 +69,8 @@ class Wnd_User_Center extends Wnd_Module {
 					$html .= '<a href="' . add_query_arg('type', 'email') . '"' . __('邮箱验证找回', 'wnd') . '</a>';
 				}
 				if (!$is_user_logged_in) {
-					$html .= ' | <a href="' . add_query_arg('do', 'login') . '"' . __('登录', 'wnd') . '</a>';
+					$html .= $enable_sms ? ' | ' : '';
+					$html .= '<a href="' . add_query_arg('do', 'login') . '"' . __('登录', 'wnd') . '</a>';
 				}
 			}
 			$html .= '</div></div></div>';
