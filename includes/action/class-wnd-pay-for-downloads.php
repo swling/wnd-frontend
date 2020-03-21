@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_Recharge;
  *付费阅读下载类
  *@param $_POST['post_id']  Post ID
  */
-class Wnd_Pay_For_Download extends Wnd_Action_Ajax {
+class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		// 获取文章
@@ -51,7 +51,7 @@ class Wnd_Pay_For_Download extends Wnd_Action_Ajax {
 		}
 
 		//3、 付费下载
-		$order = Wnd_Create_Order::execute();
+		$order = Wnd_Create_Order::execute($post_id);
 		if ($order['status'] === 0) {
 			return $order;
 		}

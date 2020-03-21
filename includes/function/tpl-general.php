@@ -201,3 +201,21 @@ function wnd_post_thumbnail($post_id, $width, $height) {
 
 	return apply_filters('wnd_post_thumbnail', $html, $post_id, $width, $height);
 }
+
+/**
+ *@since 2020.03.21
+ *
+ *付费阅读按钮
+ */
+function wnd_paid_reading_button($post_id) {
+	return Wnd\Template\Wnd_Button::build_paid_reading_button($post_id);
+}
+
+/**
+ *@since 2020.03.21
+ *
+ *付费下载按钮
+ */
+function wnd_paid_download_button($post_id) {
+	return Wnd\Template\Wnd_Button::build_paid_download_button($post_id);
+}

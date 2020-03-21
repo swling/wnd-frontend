@@ -15,24 +15,17 @@ class Wnd_Pay_For_Reading extends Wnd_Action_Ajax {
 		$post_id = (int) $_POST['post_id'];
 		$post    = get_post($post_id);
 		$user_id = get_current_user_id();
-
-		//查找是否有more标签，否则免费部分为空（全文付费）
-		$content_array = explode('<!--more-->', $post->post_content, 2);
-		if (1 == count($content_array)) {
-			$content_array = ['', $post->post_content];
-		}
-		list($free_content, $paid_content) = $content_array;
-		if (!$paid_content) {
-			return ['status' => 0, 'msg' => __('获取付费内容出错', 'wnd')];
+		if (!$post) {
+			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}
 
-		//1、已付费
+		// 1、已付费
 		if (wnd_user_has_paid($user_id, $post_id)) {
 			return ['status' => 0, 'msg' => __('请勿重复操作', 'wnd')];
 		}
 
 		// 2、支付失败
-		$order = Wnd_Create_Order::execute();
+		$order = Wnd_Create_Order::execute($post_id);
 		if ($order['status'] === 0) {
 			return $order;
 		}
@@ -51,6 +44,7 @@ class Wnd_Pay_For_Reading extends Wnd_Action_Ajax {
 			}
 		}
 
-		return ['status' => 1, 'msg' => $paid_content];
+		// 付费后刷新页面
+		return ['status' => 4, 'msg' => __('请稍后', 'wnd')];
 	}
 }
