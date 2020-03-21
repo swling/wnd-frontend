@@ -208,7 +208,7 @@ function wnd_post_thumbnail($post_id, $width, $height) {
  *付费阅读按钮
  */
 function wnd_paid_reading_button($post_id) {
-	return Wnd\Template\Wnd_Button::build_paid_reading_button($post_id);
+	return Wnd\Template\Wnd_Pay_Button::build_paid_reading_button($post_id);
 }
 
 /**
@@ -217,5 +217,5 @@ function wnd_paid_reading_button($post_id) {
  *付费下载按钮
  */
 function wnd_paid_download_button($post_id) {
-	return Wnd\Template\Wnd_Button::build_paid_download_button($post_id);
+	return Wnd\Template\Wnd_Pay_Button::build_paid_download_button($post_id);
 }

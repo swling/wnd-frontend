@@ -108,7 +108,7 @@ function wnd_alert_modal(html, is_gallery = false) {
 // 弹出警告信息
 function wnd_alert_warning(msg) {
 	wnd_alert_modal(
-		'<div class="content has-text-danger">' +
+		'<div class="has-text-danger">' +
 		'<span class="icon"><i class="fa fa-exclamation-triangle"></i></span>' + msg +
 		'</div>'
 	);
@@ -122,7 +122,7 @@ function wnd_alert_msg(msg, wait = 0) {
 	wnd_reset_modal();
 	$(".modal").addClass("is-active");
 	$(".modal-entry").removeClass("box");
-	$(".modal-entry").html('<div class="alert-message content has-text-white has-text-centered">' + msg + '</div>');
+	$(".modal-entry").html('<div class="alert-message has-text-white has-text-centered">' + msg + '</div>');
 	// 定时关闭
 	if (wait > 0) {
 		ajax_alert_time_out = setTimeout(function() {
@@ -161,7 +161,7 @@ function wnd_reset_modal() {
 			'<div id="modal" class="modal">' +
 			'<div class="modal-background"></div>' +
 			'<div class="modal-content">' +
-			'<div class="modal-entry"></div>' +
+			'<div class="modal-entry content"></div>' +
 			'</div>' +
 			'<button class="modal-close is-large" aria-label="close"></button>' +
 			'</div>'
