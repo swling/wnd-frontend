@@ -42,17 +42,18 @@ class Wnd_Button {
 	public static function build_paid_download_button($post_id) {
 		extract(self::get_payment_var($post_id));
 
-		$button = '';
-		$file   = wnd_get_post_meta($post_id, 'file');
-		// 价格为空且没有文件
+		$file = wnd_get_post_meta($post_id, 'file');
+		// 没有文件
 		if (!$file) {
 			return;
 		}
 
+		$button = '';
+
 		// 未登录用户
 		if (!$user_id) {
 			$button_text = '请登录后下载';
-			$button .= $price ? '<div class="message ' . $second_color . '"><div class="message-body">付费下载：¥' . $price . '</div></div>' : '';
+			$button .= $price ? '<div class="message ' . $second_color . '"><div class="message-body has-text-centered">付费下载：¥' . $price . '</div></div>' : '';
 			$button .= '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\')">' . $button_text . '</button></div>';
 			return $button;
 		}
@@ -61,7 +62,7 @@ class Wnd_Button {
 			$button_text = '您已购买点击下载';
 
 		} elseif ($user_id == $post->post_author) {
-			$button_text = '您发布的下载文件';
+			$button_text = '下载文件';
 
 		} elseif ($price > 0) {
 			$button_text = '付费下载 ¥' . $price;
@@ -104,24 +105,29 @@ class Wnd_Button {
 	public static function build_paid_reading_button($post_id) {
 		extract(self::get_payment_var($post_id));
 
+		// 免费文章
+		if (!$price) {
+			return;
+		}
+
 		$button = '';
 
 		// 未登录用户
 		if (!$user_id) {
-			$button .= '<div class="paid-content"><div class="message ' . $second_color . '"><div class="message-body">付费内容：¥' . $price . '</div></div></div>';
-			$button = '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\')">请登录</button></div>';
+			$button .= '<div class="message ' . $second_color . '"><div class="message-body has-text-centered">付费内容：¥' . $price . '</div></div>';
+			$button .= '<div class="field is-grouped is-grouped-centered"><button class="button is-warning" onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\')">请登录</button></div>';
 			return $button;
 		}
 
 		// 已支付
 		if ($user_has_paid) {
-			$button .= '<div class="message ' . $second_color . '"><div class="message-body">您已付费：¥' . $price . '</div></div>';
+			$button .= '<div class="message ' . $second_color . '"><div class="message-body has-text-centered">您已付费：¥' . $price . '</div></div>';
 			return $button;
 		}
 
 		// 作者本人
 		if ($user_id == $post->post_author) {
-			$button .= '<div class="message ' . $second_color . '"><div class="message-body">您的付费文章：¥' . $price . '</div></div>';
+			$button .= '<div class="message ' . $second_color . '"><div class="message-body has-text-centered">您的付费文章：¥' . $price . '</div></div>';
 			return $button;
 		}
 
