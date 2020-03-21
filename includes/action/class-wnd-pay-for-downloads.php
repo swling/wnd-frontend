@@ -1,9 +1,7 @@
 <?php
 namespace Wnd\Action;
 
-use Exception;
 use Wnd\Action\Wnd_Create_Order;
-use Wnd\Model\Wnd_Recharge;
 
 /**
  *付费阅读下载类
@@ -54,20 +52,6 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 		$order = Wnd_Create_Order::execute($post_id);
 		if ($order['status'] === 0) {
 			return $order;
-		}
-
-		// 文章作者新增资金
-		$commission = wnd_get_post_commission($post_id);
-		if ($commission) {
-			try {
-				$recharge = new Wnd_Recharge();
-				$recharge->set_object_id($post->ID); // 设置充值来源
-				$recharge->set_user_id($post->post_author);
-				$recharge->set_total_amount($commission);
-				$recharge->create(true); // 直接写入余额
-			} catch (Exception $e) {
-				return ['status' => 0, 'msg' => $e->getMessage()];
-			}
 		}
 
 		return ['status' => 6, 'msg' => 'ok', 'data' => ['redirect_to' => $download_url]];

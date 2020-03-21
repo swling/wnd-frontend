@@ -136,7 +136,7 @@ class Wnd_List_table {
 		);
 		$table->add_column(
 			[
-				'post_field' => ('order' == $query->query_vars['post_type']) ? 'post_parent_with_link' : 'post_title',
+				'post_field' => 'post_parent_with_link',
 				'title'      => '详情',
 				'class'      => 'is-narrow',
 			]
