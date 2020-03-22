@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Model\Wnd_Sms;
 
 /**
  *@since 2019.12.19
@@ -70,13 +71,7 @@ class Wnd_Auth_phone extends Wnd_Auth {
 		}
 
 		// 发送短信
-		if ('tx' == $this->sms_sp) {
-			$sms = new Wnd_Sms_TX();
-		} elseif ('ali' == $this->sms_sp) {
-			$sms = new Wnd_Sms_Ali();
-		} else {
-			throw new Exception(__('指定短信服务商未完成配置', 'wnd'));
-		}
+		$sms = Wnd_Sms::get_instance();
 		$sms->set_phone($this->auth_object);
 		$sms->set_code($this->auth_code);
 		$sms->set_template($this->template);
