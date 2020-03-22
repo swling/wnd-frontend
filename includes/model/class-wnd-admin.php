@@ -49,7 +49,6 @@ class Wnd_Admin {
 				'wnd_sms_appid'          => '短信接口appid',
 				'wnd_sms_appkey'         => '短信接口appkey',
 				'wnd_sms_sign'           => get_option('blogname'),
-				'wnd_sms_template'       => '通用短信模板ID',
 				'wnd_sms_template_r'     => '注册短信模板ID',
 				'wnd_sms_template_v'     => '身份验证短信模板ID',
 			];

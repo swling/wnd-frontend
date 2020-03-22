@@ -252,13 +252,6 @@ function wnd_options()
 					</td>
 				</tr>
 				<tr>
-					<td valign="top">默认短信模板</td>
-					<td>
-						<input type="text" name="wnd_sms_template" value="<?php echo wnd_get_option('wnd', 'wnd_sms_template'); ?>" class="regular-text">
-						*默认短信模板，短信表单未指定短信模板时，最后调用本模板
-					</td>
-				</tr>
-				<tr>
 					<td valign="top">注册短信模板</td>
 					<td>
 						<input type="text" name="wnd_sms_template_r" value="<?php echo wnd_get_option('wnd', 'wnd_sms_template_r'); ?>" class="regular-text">
