@@ -71,8 +71,11 @@ class Wnd_Pay_Button {
 			$button_text = '免费下载';
 		}
 
-		// 判断支付
-		if (!$user_has_paid) {
+		// 非作者，判断余额支付情况
+		if ($user_id == $post->post_author) {
+			$button .= self::build_message('您的付费下载：¥ ' . $post_price, $second_color);
+
+		} elseif (!$user_has_paid) {
 			try {
 				// 创建订单权限检测
 				Wnd_Create_Order_Trait::check_create($post_id, $user_id);
