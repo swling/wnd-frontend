@@ -19,9 +19,7 @@ class Wnd_Sms_Ali extends Wnd_Sms {
 		$params['TemplateCode'] = $this->template;
 
 		// fixme 可选: 设置模板参数, 假如模板中存在变量需要替换则为必填项
-		$params['TemplateParam'] = [
-			'code' => $this->code,
-		];
+		$params['TemplateParam'] = $this->code ? ['code' => $this->code] : [];
 
 		// *** 需用户填写部分结束, 以下代码若无必要无需更改 ***
 		if (!empty($params['TemplateParam']) and is_array($params['TemplateParam'])) {

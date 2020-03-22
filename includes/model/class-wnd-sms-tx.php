@@ -28,7 +28,7 @@ class Wnd_Sms_TX extends Wnd_Sms {
 		 *即数组具体的元素，与信息模板中的变量一一对应
 		 *
 		 */
-		$params = [$this->code, '10'];
+		$params = $this->code ? [$this->code, '10'] : [];
 
 		// 指定模板ID单发短信
 		$ssender = new SmsSingleSender($this->app_id, $this->app_key);
