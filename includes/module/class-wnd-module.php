@@ -20,7 +20,7 @@ abstract class Wnd_Module {
 			return;
 		}
 
-		return '<div class="message is-primary"><div class="message-body has-text-centered">' . $message . '</div></div>';
+		return wnd_message($message, 'is-primary', true);
 	}
 
 	/**
@@ -31,6 +31,6 @@ abstract class Wnd_Module {
 			return;
 		}
 
-		return '<div class="message is-warning"><div class="message-body has-text-centered">' . $message . '</div></div>';
+		return wnd_message($message, 'is-warning', true);
 	}
 }

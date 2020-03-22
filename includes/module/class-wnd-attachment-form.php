@@ -74,11 +74,7 @@ class Wnd_Attachment_Form extends Wnd_Module {
 		 */
 		$attachment_post_form = new Wnd_Form_Post('attachment', $attachment_id, false);
 		if ($attachment_id) {
-			$attachment_post_form->set_message(
-				'<div class="message is-' . Wnd_Form_WP::$second_color . '">
-				<div class="message-body">' . __('如需更改文件，请先删除后重新选择文件', 'wnd') . '</div>
-				</div>'
-			);
+			$attachment_post_form->set_message(wnd_message(__('如需更改文件，请先删除后重新选择文件', 'wnd'), Wnd_Form_WP::$second_color));
 		}
 		$attachment_post_form->add_post_title(__('文件名称', 'wnd'));
 		$attachment_post_form->add_html('<div class="field is-horizontal"><div class="field-body">');

@@ -86,7 +86,7 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 		}
 
 		if ($post->post_type == 'order') {
-			$form->add_html('<div class="message is-danger"><div class="message-body">' . __('删除订单记录，不可退款，请谨慎操作', 'wnd') . '</div></div>');
+			$form->add_html(wnd_message(__('删除订单记录，不可退款，请谨慎操作', 'wnd'), 'is-danger'));
 		}
 
 		$form->add_hidden('post_id', $post_id);

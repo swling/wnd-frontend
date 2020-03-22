@@ -153,7 +153,7 @@ class Wnd_Pay_Button {
 	 *
 	 */
 	protected static function build_message($message, $color) {
-		return '<div class="message ' . $color . ' has-text-centered"><div class="message-body">' . $message . '</div></div>';
+		return wnd_message($message, $color, true);
 	}
 
 	/**

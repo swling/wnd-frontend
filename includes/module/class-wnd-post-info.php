@@ -14,21 +14,17 @@ class Wnd_Post_Info extends Wnd_Module {
 		}
 
 		// 站内信阅读后，更新为已读 @since 2019.02.25
-		if ($post->post_type == 'mail' and $post->post_type !== 'private') {
+		if ('mail' == $post->post_type and $post->post_type != 'private') {
 			wp_update_post(['ID' => $post->ID, 'post_status' => 'private']);
 		}
 
-		$html = '<article class="message is-' . wnd_get_option('wnd', 'wnd_second_color') . '">';
-		$html .= '<div class="message-body">';
-
-		if (!wnd_get_post_price($post->ID)) {
-			$html .= $post->post_content;
-		} else {
-			$html .= __('付费文章不支持预览', 'wnd');
+		if (wnd_get_post_price($post->ID)) {
+			return wnd_message(__('付费文章不支持预览', 'wnd'), 'is-' . wnd_get_option('wnd', 'wnd_second_color'));
 		}
-		$html .= '</div>';
-		$html .= '</article>';
 
+		$html = '<article>';
+		$html .= $post->post_content;
+		$html .= '</article>';
 		return $html;
 	}
 }

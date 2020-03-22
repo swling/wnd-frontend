@@ -219,3 +219,15 @@ function wnd_paid_reading_button($post_id) {
 function wnd_paid_download_button($post_id) {
 	return Wnd\Template\Wnd_Pay_Button::build_paid_download_button($post_id);
 }
+
+/**
+ *构建消息
+ *@since 2020.03.22
+ */
+function wnd_message($message, $color = '', $centered = false) {
+	$class = 'message';
+	$class .= $color ? ' ' . $color : '';
+	$class .= $centered ? ' has-text-centered' : '';
+
+	return '<div class="' . $class . '"><div class="message-body">' . $message . '</div></div>';
+}
