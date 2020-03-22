@@ -15,8 +15,11 @@ abstract class Wnd_Sms {
 
 	// 短信实例属性
 	protected $phone;
-	protected $code;
 	protected $template;
+
+	// 验证码属性
+	protected $code;
+	protected $valid_time;
 
 	public function __construct() {
 		$this->app_id    = wnd_get_option('wnd', 'wnd_sms_appid');
@@ -42,12 +45,24 @@ abstract class Wnd_Sms {
 		$this->phone = $phone;
 	}
 
+	public function set_template($template) {
+		$this->template = $template;
+	}
+
+	/**
+	 *验证码
+	 *需请配合短信模板使用
+	 */
 	public function set_code($code) {
 		$this->code = $code;
 	}
 
-	public function set_template($template) {
-		$this->template = $template;
+	/**
+	 *验证码有效时间
+	 *需请配合短信模板使用
+	 */
+	public function set_valid_time($valid_time) {
+		$this->valid_time = $valid_time;
 	}
 
 	/**

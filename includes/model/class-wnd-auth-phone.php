@@ -15,24 +15,13 @@ class Wnd_Auth_phone extends Wnd_Auth {
 	// 数据库字段：phone
 	protected $db_field = 'phone';
 
-	// 短信服务商
-	protected $sms_sp;
-
 	// 验证码有效时间（秒）
 	protected $valid_time = 600;
 
 	public function __construct($auth_object) {
 		parent::__construct($auth_object);
 
-		$this->sms_sp   = wnd_get_option('wnd', 'wnd_sms_sp');
 		$this->template = wnd_get_option('wnd', 'wnd_sms_template');
-	}
-
-	/**
-	 *设置短信服务商
-	 */
-	public function set_sms_sp($sms_sp) {
-		$this->sms_sp = $sms_sp;
 	}
 
 	/**
@@ -46,10 +35,6 @@ class Wnd_Auth_phone extends Wnd_Auth {
 		// 短信发送必须指定模板
 		if (!$this->template) {
 			throw new Exception(__('未指定短信模板', 'wnd'));
-		}
-
-		if (!$this->sms_sp) {
-			throw new Exception(__('未指定短信服务商', 'wnd'));
 		}
 	}
 
@@ -74,6 +59,7 @@ class Wnd_Auth_phone extends Wnd_Auth {
 		$sms = Wnd_Sms::get_instance();
 		$sms->set_phone($this->auth_object);
 		$sms->set_code($this->auth_code);
+		$sms->set_valid_time($this->valid_time / 60);
 		$sms->set_template($this->template);
 		$sms->send();
 	}
