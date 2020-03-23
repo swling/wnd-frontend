@@ -10,13 +10,9 @@ use Wnd\View\Wnd_Form_User;
 class Wnd_Reset_Password_Form extends Wnd_Module {
 
 	public static function build($type = 'email') {
-		if ($type == 'phone' and wnd_get_option('wnd', 'wnd_enable_sms') != 1) {
-			return self::build_error_message(__('短信验证未启用', 'wnd'));
-		}
-
 		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
-		if ($type == 'phone') {
+		if ('phone' == $type) {
 			$form->set_form_title('<span class="icon"><i class="fa fa-phone-square"></i></span>' . __('重置密码', 'wnd'), true);
 			$form->add_sms_verify('reset_password', wnd_get_option('wnd', 'wnd_sms_template_v'));
 		} else {
