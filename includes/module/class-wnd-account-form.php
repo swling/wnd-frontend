@@ -9,14 +9,17 @@ use Wnd\View\Wnd_Form_User;
 class Wnd_Account_Form extends Wnd_Module {
 
 	public static function build() {
-		if (!is_user_logged_in()) {
+		$user = wp_get_current_user();
+		if (!$user->data->ID) {
 			return self::build_error_message(__('请登录', 'wnd'));
 		}
-		if (!wp_get_current_user()->data->user_email) {
-			$html = '<div class="has-text-centered content">';
-			$html .= '<button class="button is-' . wnd_get_option('wnd', 'wnd_primary_color') . '" onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">' . __('请绑定邮箱') . '</button>';
-			$html .= '</div>';
-			return $html;
+
+		/**
+		 *如果当前账户为社交登录，账户设置前必须绑定邮箱
+		 */
+		if (!$user->data->user_email and !wnd_get_user_phone($user->data->ID)) {
+			$message = '<button class="button is-' . wnd_get_option('wnd', 'wnd_primary_color') . '" onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">' . __('请绑定邮箱') . '</button>';
+			return self::build_error_message(__($message, 'wnd'));
 		}
 
 		$form = new Wnd_Form_User();
