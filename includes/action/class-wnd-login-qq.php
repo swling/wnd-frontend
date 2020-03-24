@@ -12,9 +12,12 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 	/**
 	 *创建授权地址
 	 */
-	public function build_oauth_url($return_url) {
+	public function build_oauth_url() {
 		if (!$this->app_id) {
 			throw new Exception('未配置APP ID');
+		}
+		if (!$this->redirect_url) {
+			throw new Exception('未配置回调网址：redirect_url');
 		}
 
 		$query = http_build_query(
@@ -22,7 +25,7 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 				'client_id'     => $this->app_id,
 				'state'         => wp_create_nonce('qq_login'),
 				'response_type' => 'code',
-				'redirect_uri'  => $return_url ?: home_url(),
+				'redirect_uri'  => $this->redirect_url,
 			]
 		);
 
@@ -33,6 +36,10 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 	 *根据授权码请求token
 	 */
 	protected function get_token() {
+		if (!$this->app_key) {
+			throw new Exception('未配置APP Key');
+		}
+
 		if (!isset($_GET['state']) or !isset($_GET['code'])) {
 			return;
 		}
@@ -43,7 +50,7 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 			throw new Exception('验证失败，请返回页面并刷新重试');
 		}
 
-		$token_url = 'https://graph.qq.com/oauth2.0/token?client_id=' . $this->app_id . '&client_secret=' . wnd_get_option('wndt', 'wndt_qq_appkey') . '&grant_type=authorization_code&redirect_uri=' . urlencode(home_url('ucenter?type=qq')) . '&code=' . $code;
+		$token_url = 'https://graph.qq.com/oauth2.0/token?client_id=' . $this->app_id . '&client_secret=' . $this->app_key . '&grant_type=authorization_code&redirect_uri=' . urlencode($this->redirect_url) . '&code=' . $code;
 
 		//获取响应报文
 		$response = wp_remote_get($token_url);

@@ -18,6 +18,8 @@ abstract class Wnd_Login_Social {
 	protected $display_name;
 	protected $avatar_url;
 
+	protected $redirect_url;
+
 	public function __construct() {
 		$this->user_id = get_current_user_id();
 	}
@@ -37,9 +39,16 @@ abstract class Wnd_Login_Social {
 	}
 
 	/**
+	 *设置第三方平台登录后返回网址
+	 */
+	public function set_redirect_url($redirect_url) {
+		$this->redirect_url = $redirect_url;
+	}
+
+	/**
 	 *创建授权地址
 	 */
-	abstract public function build_oauth_url($return_url);
+	abstract public function build_oauth_url();
 
 	/**
 	 *根据用户授权码获取token
