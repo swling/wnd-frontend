@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Model;
 
 use Wnd\Model\Wnd_User;
 
