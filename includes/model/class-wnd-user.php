@@ -45,7 +45,7 @@ class Wnd_User {
 			}
 
 			if ($avatar_url) {
-				wnd_update_user_meta($this_user->ID, "avatar_url", $avatar_url);
+				wnd_update_user_meta($this_user->ID, 'avatar_url', $avatar_url);
 			}
 			if ($open_id) {
 				self::update_user_openid($this_user->ID, $open_id);
@@ -71,7 +71,7 @@ class Wnd_User {
 
 		// 同步头像并登录
 		$user_id = $user ? $user->ID : $user_id;
-		wnd_update_user_meta($user_id, "avatar_url", $avatar_url);
+		wnd_update_user_meta($user_id, 'avatar_url', $avatar_url);
 		wp_set_auth_cookie($user_id, true);
 		wp_redirect(wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url());
 		exit();
