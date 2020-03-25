@@ -9,16 +9,24 @@ use Wnd\View\Wnd_Form_User;
 class Wnd_Account_Form extends Wnd_Module {
 
 	public static function build() {
-		$user = wp_get_current_user();
+		$user          = wp_get_current_user();
+		$primary_color = wnd_get_option('wnd', 'wnd_primary_color');
+		$second_color  = wnd_get_option('wnd', 'wnd_second_color');
+		$enable_sms    = wnd_get_option('wnd', 'wnd_enable_sms');
 		if (!$user->data->ID) {
 			return self::build_error_message(__('请登录', 'wnd'));
 		}
 
 		/**
-		 *如果当前账户为社交登录，账户设置前必须绑定邮箱
+		 *如果当前账户为社交登录，账户设置前必须绑定邮箱或手机
 		 */
 		if (!$user->data->user_email and !wnd_get_user_phone($user->data->ID)) {
-			$message = '<button class="button is-' . wnd_get_option('wnd', 'wnd_primary_color') . '" onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">' . __('请绑定邮箱') . '</button>';
+			$message = '<p>' . __('出于安全考虑，请绑定邮箱或手机') . '</p>';
+			$message .= '<button class="button is-outlined is-' . $primary_color . '" onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">' . __('绑定邮箱') . '</button>';
+
+			if ($enable_sms) {
+				$message .= '&nbsp;&nbsp;<button class="button is-outlined is-' . $primary_color . '" onclick="wnd_ajax_modal(\'wnd_bind_phone_form\')">' . __('绑定手机') . '</button>';
+			}
 			return self::build_error_message(__($message, 'wnd'));
 		}
 
@@ -37,9 +45,9 @@ class Wnd_Account_Form extends Wnd_Module {
 		 *绑定邮箱或手机
 		 */
 		$html = '<a onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">' . __('邮箱设置', 'wnd') . '</a> | ';
-		$html .= wnd_get_option('wnd', 'wnd_enable_sms') ? '<a onclick="wnd_ajax_modal(\'wnd_bind_phone_form\')">' . __('手机设置', 'wnd') . '</a> | ' : '';
+		$html .= $enable_sms ? '<a onclick="wnd_ajax_modal(\'wnd_bind_phone_form\')">' . __('手机设置', 'wnd') . '</a> | ' : '';
 		$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=reset_password\')">' . __('重置密码', 'wnd') . '</a>';
 
-		return $form->html . wnd_message($html, 'is-' . wnd_get_option('wnd', 'wnd_second_color'), true);
+		return $form->html . wnd_message($html, 'is-' . $second_color, true);
 	}
 }

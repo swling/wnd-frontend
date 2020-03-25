@@ -225,7 +225,7 @@ function wnd_paid_download_button($post_id) {
  *@since 2020.03.22
  */
 function wnd_message($message, $color = '', $centered = false) {
-	$class = 'message';
+	$class = 'message content';
 	$class .= $color ? ' ' . $color : '';
 	$class .= $centered ? ' has-text-centered' : '';
 
