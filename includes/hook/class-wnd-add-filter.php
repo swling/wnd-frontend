@@ -13,6 +13,7 @@ class Wnd_Add_Filter {
 
 	private function __construct() {
 		add_filter('wnd_can_reg', [__CLASS__, 'filter_can_reg'], 10, 1);
+		add_filter('wnd_can_update_profile', [__CLASS__, 'filter_can_update_profile'], 10, 1);
 		add_filter('wnd_insert_post_status', [__CLASS__, 'filter_post_status'], 10, 3);
 	}
 
@@ -33,7 +34,7 @@ class Wnd_Add_Filter {
 	 */
 	public static function filter_can_reg($can_array) {
 		if (!get_option('users_can_register')) {
-			return ['status' => 0, 'msg' => '站点已关闭注册'];
+			return ['status' => 0, 'msg' => __('站点已关闭注册', 'wnd')];
 		}
 
 		// 验证:手机或邮箱 验证码
@@ -48,6 +49,21 @@ class Wnd_Add_Filter {
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
+	}
+
+	/**
+	 *@since  2020.03.26
+	 *
+	 *用户显示昵称不得与登录名重复
+	 */
+	public static function filter_can_update_profile($can_array) {
+		$display_name = $_POST['_user_display_name'] ?? '';
+		$user_login   = wp_get_current_user()->data->user_login ?? '';
+		if ($display_name == $user_login) {
+			$can_array = ['status' => 0, 'msg' => __('名称不得与登录名一致', 'wnd')];
+		}
+
+		return $can_array;
 	}
 
 	/**

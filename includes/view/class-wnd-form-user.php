@@ -34,11 +34,16 @@ class Wnd_Form_User extends Wnd_Form_WP {
 		);
 	}
 
+	/**
+	 *
+	 *注意：
+	 *当用户注册时未设置昵称，WP将自动根据用户名生成昵称。在实际应用中，我们应该避免用户昵称与自动用户名相同
+	 */
 	public function add_user_display_name($label = '名称', $placeholder = '名称', $required = true) {
 		$this->add_text(
 			[
 				'name'        => '_user_display_name',
-				'value'       => $this->user->data->display_name,
+				'value'       => ($this->user->data->display_name != $this->user->data->user_login) ? $this->user->data->display_name : '',
 				'label'       => $label,
 				'placeholder' => $placeholder,
 				'icon_left'   => '<i class="fas fa-user"></i>',
