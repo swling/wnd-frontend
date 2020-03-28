@@ -169,13 +169,6 @@ function wnd_reset_modal() {
 	}
 }
 
-// 关闭对话框
-jQuery(document).ready(function($) {
-	$("body").off("click").on("click", ".modal-background,.modal-close", function() {
-		wnd_reset_modal();
-	});
-});
-
 // 点击触发，点击A 元素 触发 B元素点击事件 用于部分UI优化操作
 function wnd_click(target_element) {
 	$(target_element).trigger("click");
@@ -1048,31 +1041,6 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
-	 *@since 2019.02.18 点击菜单 新增active
-	 */
-	$("body").on("click", ".menu a", function() {
-		$(this).parents(".menu").find("a").removeClass("is-active");
-		$(this).addClass("is-active");
-	});
-
-	/**
-	 *@since 2019.02.18 点击Tabs 新增active
-	 */
-	$("body").on("click", ".tabs a", function() {
-		$(this).parent("li").addClass("is-active");
-		$(this).parent("li").siblings().removeClass("is-active");
-	});
-
-	/**
-	 *@since 2019.07.11 从主题中移植
-	 *移动导航点击展开效果
-	 */
-	$("body").on("click", ".navbar-burger", function() {
-		$(this).parents(".navbar").find(".navbar-menu").toggleClass("is-active");
-		$(this).toggleClass("is-active");
-	});
-
-	/**
 	 *@since 2019.03.10 ajax提交表单
 	 */
 	$("body").on("click", "[type='submit'].ajax-submit", function() {
@@ -1095,5 +1063,9 @@ jQuery(document).ready(function($) {
 		 */
 		var element = '<img src="' + $(this).data("url") + '" />';
 		wnd_alert_modal(element, true);
+	});
+
+	$("body").off("click").on("click", ".modal-background,.modal-close", function() {
+		wnd_reset_modal();
 	});
 });
