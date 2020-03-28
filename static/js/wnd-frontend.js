@@ -1065,7 +1065,11 @@ jQuery(document).ready(function($) {
 		wnd_alert_modal(element, true);
 	});
 
-	$("body").off("click").on("click", ".modal-background,.modal-close", function() {
+	/**
+	 *@since 2020.03.28
+	 *关闭弹窗
+	 */
+	$("body").on("click", ".modal-background,.modal-close", function() {
 		wnd_reset_modal();
 	});
 });
