@@ -400,9 +400,12 @@ class Wnd_User {
 	 *@return 	int 	用户未读邮件
 	 */
 	public static function get_mail_count() {
-		$user_id         = get_current_user_id();
-		$user_mail_count = wp_cache_get($user_id, 'wnd_mail_count');
+		$user_id = get_current_user_id();
+		if (!$user_id) {
+			return 0;
+		}
 
+		$user_mail_count = wp_cache_get($user_id, 'wnd_mail_count');
 		if (false === $user_mail_count) {
 			$args = [
 				'posts_per_page' => 11,
