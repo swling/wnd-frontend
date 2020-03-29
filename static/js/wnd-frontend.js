@@ -224,7 +224,7 @@ function wnd_ajax_modal(module, param = '') {
 		//后台返回数据前
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-			// wnd_alert_msg("……");
+			wnd_alert_msg("……");
 		},
 		//成功后
 		success: function(response) {
