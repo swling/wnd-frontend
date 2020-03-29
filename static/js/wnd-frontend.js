@@ -118,7 +118,6 @@ function wnd_alert_warning(msg) {
 var ajax_alert_time_out;
 
 function wnd_alert_msg(msg, wait = 0) {
-
 	wnd_reset_modal();
 	$(".modal").addClass("is-active");
 	$(".modal-entry").removeClass("box");
@@ -153,9 +152,9 @@ function wnd_reset_modal() {
 	clearTimeout(send_countdown);
 
 	if ($("#modal").length) {
-		$(".modal").removeClass("is-active wnd-gallery");
-		$(".modal-entry").removeClass("box");
-		$(".modal-entry").empty();
+		$("#modal").removeClass("is-active wnd-gallery");
+		$("#modal .modal-entry").removeClass("box");
+		$("#modal .modal-entry").empty();
 	} else {
 		$("body").append(
 			'<div id="modal" class="modal">' +
@@ -225,7 +224,7 @@ function wnd_ajax_modal(module, param = '') {
 		//后台返回数据前
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-			wnd_alert_msg("……");
+			// wnd_alert_msg("……");
 		},
 		//成功后
 		success: function(response) {
@@ -1069,7 +1068,7 @@ jQuery(document).ready(function($) {
 	 *@since 2020.03.28
 	 *关闭弹窗
 	 */
-	$("body").on("click", ".modal-background,.modal-close", function() {
+	$("body").on("click", "#modal .modal-background,#modal .modal-close", function() {
 		wnd_reset_modal();
 	});
 });
