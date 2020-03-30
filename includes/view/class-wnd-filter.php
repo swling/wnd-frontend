@@ -587,8 +587,10 @@ class Wnd_Filter {
 		 */
 		$uri = strtok($_SERVER['REQUEST_URI'], '?');
 
-		// 若筛选项少于2个，即无需筛选post type：隐藏tabs
-		$tabs = '<div class="tabs is-boxed post-type-tabs">';
+		// 输出容器
+		$tabs = '<div class="columns is-marginless is-vcentered post-type-tabs">';
+		$tabs .= '<div class="column is-narrow">' . __('类型：', 'wnd') . '</div>';
+		$tabs .= '<div class="tabs column">';
 		$tabs .= '<ul class="tab">';
 		if ($with_any_tab) {
 			$class = ('any' == $this->wp_query_args['post_type']) ? ' is-active' : '';
@@ -615,6 +617,7 @@ class Wnd_Filter {
 		// 输出结束
 		$tabs .= '</ul>';
 		$tabs .= '</div>';
+		$tabs .= '</div>';
 		return $tabs;
 	}
 
@@ -632,7 +635,6 @@ class Wnd_Filter {
 		$tabs = '<div class="columns is-marginless is-vcentered post-status-tabs">';
 		$tabs .= '<div class="column is-narrow">' . __('状态：', 'wnd') . '</div>';
 		$tabs .= '<div class="tabs column">';
-		$tabs .= '<div class="tabs">';
 		$tabs .= '<ul class="tab">';
 
 		// 输出tabs
@@ -649,7 +651,6 @@ class Wnd_Filter {
 
 		// 输出结束
 		$tabs .= '</ul>';
-		$tabs .= '</div>';
 		$tabs .= '</div>';
 		$tabs .= '</div>';
 

@@ -16,8 +16,8 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 		$user_id        = get_current_user_id();
 		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 
-		$html = '<div id="user-fin">';
-		$html .= '<nav class="level">';
+		$html = '<div id="user-finance-panel">';
+		$html .= '<nav class="level is-mobile">';
 		$html .= '
 		<div class="level-item has-text-centered">
 			<div>
@@ -45,7 +45,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 		}
 		$html .= '</nav>';
 
-		$html .= '<div class="level">';
+		$html .= '<div class="level is-mobile">';
 		$html .= '
 		<div class="level-item">
 			<button class="button" onclick="wnd_ajax_modal(\'wnd_user_recharge_form\')">' . __('余额充值', 'wnd') . '</button>
