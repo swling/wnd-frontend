@@ -54,7 +54,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 		if (is_super_admin()) {
 			$html .= '
 		<div class="level-item">
-			<button class="button" onclick="wnd_ajax_modal(\'wnd_admin_recharge_form\')">' . __('管理员充值', 'wnd') . '</button>
+			<button class="button" onclick="wnd_ajax_modal(\'wnd_admin_recharge_form\')">' . __('人工充值', 'wnd') . '</button>
 		</div>';
 		}
 		$html .= '</div>';
