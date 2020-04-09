@@ -31,7 +31,7 @@ function wnd_breadcrumb($font_size = 'is-small') {
 	$html .= '<div class="column">';
 	$html .= '<nav class="breadcrumb ' . $font_size . '" aria-label="breadcrumbs">';
 	$html .= '<ul>';
-	$html .= '<li><a href="' . home_url() . '">首页</a></li>';
+	$html .= '<li><a href="' . home_url() . '">' . __('首页', 'wnd') . '</a></li>';
 	$queried_object = get_queried_object();
 
 	// 内容页
@@ -57,8 +57,6 @@ function wnd_breadcrumb($font_size = 'is-small') {
 		if ($queried_object->post_parent) {
 			$html .= '<li><a href="' . get_permalink($queried_object->post_parent) . '">' . get_the_title($queried_object->post_parent) . '</a></li>';
 		}
-
-		$html .= '<li class="is-active"><a>详情</a></li>';
 
 		//页面
 	} elseif (is_page()) {
@@ -96,8 +94,8 @@ function wnd_breadcrumb($font_size = 'is-small') {
 	// 内页编辑
 	if (is_single()) {
 		if (current_user_can('edit_post', $queried_object->ID)) {
-			$breadcrumb_right .= '<a href="' . get_edit_post_link($queried_object->ID) . '">[编辑]</a>';
-			$breadcrumb_right .= '&nbsp;<a onclick="wnd_ajax_modal(\'wnd_post_status_form\',\'' . $queried_object->ID . '\')">[管理]</a>';
+			$breadcrumb_right .= '<a href="' . get_edit_post_link($queried_object->ID) . '">[' . __('编辑', 'wnd') . ']</a>';
+			$breadcrumb_right .= '&nbsp;<a onclick="wnd_ajax_modal(\'wnd_post_status_form\',\'' . $queried_object->ID . '\')">[' . __('状态', 'wnd') . ']</a>';
 		}
 	}
 	$html .= apply_filters('wnd_breadcrumb_right', $breadcrumb_right);

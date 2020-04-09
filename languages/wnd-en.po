@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
-"POT-Creation-Date: 2020-04-09 13:12+0800\n"
-"PO-Revision-Date: 2020-04-09 13:13+0800\n"
+"POT-Creation-Date: 2020-04-09 15:33+0800\n"
+"PO-Revision-Date: 2020-04-09 15:34+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -297,6 +297,19 @@ msgstr "Action not specified"
 #: includes/controller/class-wnd-api.php:137
 msgid "无效的Action"
 msgstr "Invalid Action"
+
+#: includes/function/tpl-general.php:34 includes/view/class-wnd-filter.php:1203
+#: includes/view/class-wnd-filter.php:1211
+msgid "首页"
+msgstr "Home"
+
+#: includes/function/tpl-general.php:97
+msgid "编辑"
+msgstr "Edit"
+
+#: includes/function/tpl-general.php:98
+msgid "状态"
+msgstr "State"
 
 #: includes/hook/class-wnd-add-filter.php:37
 #: includes/module/class-wnd-reg-form.php:23
@@ -928,11 +941,6 @@ msgstr "Previous"
 #: includes/view/class-wnd-filter.php:1207
 msgid "下一页"
 msgstr "Next"
-
-#: includes/view/class-wnd-filter.php:1203
-#: includes/view/class-wnd-filter.php:1211
-msgid "首页"
-msgstr "Home"
 
 #: includes/view/class-wnd-filter.php:1226
 msgid "尾页"
