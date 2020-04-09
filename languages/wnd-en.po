@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
-"POT-Creation-Date: 2020-03-31 09:43+0800\n"
-"PO-Revision-Date: 2020-03-31 09:45+0800\n"
+"POT-Creation-Date: 2020-04-09 13:12+0800\n"
+"PO-Revision-Date: 2020-04-09 13:13+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -252,7 +252,7 @@ msgstr ""
 #: includes/action/class-wnd-update-post-status.php:40
 #: includes/module/class-wnd-post-status-form.php:33 wnd-frontend.php:83
 msgid "已删除"
-msgstr ""
+msgstr "Delete Failed"
 
 #: includes/action/class-wnd-update-post-status.php:42
 msgid "操作失败"
@@ -309,7 +309,7 @@ msgstr ""
 
 #: includes/model/class-wnd-auth-email.php:31
 msgid "写入数据库失败"
-msgstr ""
+msgstr "Failed to write data"
 
 #: includes/model/class-wnd-auth-email.php:34
 msgid "邮箱验证秘钥"
@@ -337,7 +337,7 @@ msgstr "Failed to write data"
 
 #: includes/model/class-wnd-auth-user.php:26
 msgid "指定用户无效"
-msgstr ""
+msgstr "User is invalid"
 
 #: includes/model/class-wnd-auth-user.php:35
 msgid "仅做验证，不支持发送wnd"

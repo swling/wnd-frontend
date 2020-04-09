@@ -66,7 +66,7 @@ class Wnd_Add_Filter_WP {
 
 		$edit_page = (int) wnd_get_option('wnd', 'wnd_edit_page');
 		if ($edit_page) {
-			return get_permalink($edit_page) . '?post_id=' . $post_id;
+			return add_query_arg('post_id', $post_id, get_permalink($edit_page));
 		}
 		return $link;
 	}
