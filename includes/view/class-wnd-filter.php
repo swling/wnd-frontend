@@ -584,8 +584,12 @@ class Wnd_Filter {
 		/**
 		 *@since 2019.08.06
 		 *post type切换时，表示完全新的筛选，故此移除所有GET参数
+		 *
+		 *@since 2020.04.10
+		 *新增多语言支持，切换类型时需要保留语言参数
 		 */
 		$uri = strtok($_SERVER['REQUEST_URI'], '?');
+		$uri = isset($_GET['lang']) ? add_query_arg('lang', $_GET['lang']) : $uri;
 
 		// 输出容器
 		$tabs = '<div class="columns is-marginless is-vcentered post-type-tabs">';

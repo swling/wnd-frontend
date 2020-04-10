@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
 "POT-Creation-Date: 2020-04-09 15:33+0800\n"
-"PO-Revision-Date: 2020-04-09 15:34+0800\n"
+"PO-Revision-Date: 2020-04-10 15:29+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -918,7 +918,7 @@ msgstr "Users who are not logged in can only query public information"
 
 #: includes/view/class-wnd-filter.php:592
 msgid "类型："
-msgstr "State:"
+msgstr "Type:"
 
 #: includes/view/class-wnd-filter.php:636
 msgid "状态："
