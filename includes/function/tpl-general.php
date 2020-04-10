@@ -66,7 +66,7 @@ function wnd_breadcrumb($font_size = 'is-small') {
 			$html .= '<li><a href="' . get_permalink($queried_object->post_parent) . '">' . get_the_title($queried_object->post_parent) . '</a></li>';
 		}
 
-		$html .= '<li class="is-active"><a>' . $queried_object->post_title . '</a></li>';
+		$html .= '<li class="is-active"><a>' . get_the_title() . '</a></li>';
 
 		//post类型归档
 	} elseif (is_post_type_archive()) {
