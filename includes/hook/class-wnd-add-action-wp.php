@@ -49,11 +49,6 @@ class Wnd_Add_Action_WP {
 		// 绑定邮箱或手机
 		$auth = Wnd_Auth::get_instance($email_or_phone);
 		$auth->reset_code($user_id);
-
-		// 手机注册，写入用户meta
-		if (isset($_POST['phone'])) {
-			wnd_update_user_meta($user_id, 'phone', $_POST['phone']);
-		}
 	}
 
 	/**
