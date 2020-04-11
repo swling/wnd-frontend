@@ -37,7 +37,7 @@ class Wnd_Login extends Wnd_Action_Ajax {
 			if ($redirect_to) {
 				return ['status' => 3, 'msg' => __('登录成功', 'wnd'), 'data' => ['redirect_to' => $redirect_to, 'user_id' => $user->ID]];
 			} else {
-				return ['status' => 1, 'msg' => __('登录成功', 'wnd')];
+				return ['status' => 4, 'msg' => __('登录成功', 'wnd'), 'data' => ['user_id' => $user->ID]];
 			}
 
 		} else {
