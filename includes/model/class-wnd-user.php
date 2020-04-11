@@ -189,6 +189,10 @@ class Wnd_User {
 
 		// 更新
 		if ($user) {
+			if ($openid == $user->open_id) {
+				return;
+			}
+
 			$db = $wpdb->update(
 				$wpdb->wnd_users,
 				['open_id' => $openid, 'time' => time()],
