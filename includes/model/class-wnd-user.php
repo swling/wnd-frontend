@@ -447,4 +447,15 @@ class Wnd_User {
 	public static function get_reg_redirect_url() {
 		return Wnd_Config::get('reg_redirect_url') ?: home_url();
 	}
+
+	/**
+	 *@since 2020.04.11
+	 *获取用户语言
+	 *
+	 *该语言不同于WP原生的get_user_locale
+	 *WP原生存储与wp user meta；本插件存储与wnd user meta：目的是减少一行数据库记录
+	 */
+	public static function get_user_locale($user_id) {
+		return wnd_get_user_meta($user_id, 'locale') ?: get_locale();
+	}
 }

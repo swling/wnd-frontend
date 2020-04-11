@@ -130,3 +130,13 @@ function wnd_get_mail_count() {
 function wnd_get_user_panel_post_types() {
 	return Wnd_User::get_user_panel_post_types();
 }
+
+/**
+ *@since 2020.04.11
+ *
+ *@param int     user id
+ *@return string 用户语言字段值，若无效用户或未设置语言，则返回当前站点语言
+ */
+function wnd_get_user_locale($user_id) {
+	return Wnd_User::get_user_locale($user_id);
+}
