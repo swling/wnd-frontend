@@ -130,3 +130,11 @@ function wnd_get_mail_count() {
 function wnd_get_user_panel_post_types() {
 	return Wnd_User::get_user_panel_post_types();
 }
+
+/**
+ *@since 2020.04.11
+ *获取注册后跳转地址
+ */
+function wnd_get_reg_redirect_url() {
+	return Wnd_User::get_reg_redirect_url()();
+}

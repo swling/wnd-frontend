@@ -206,6 +206,12 @@ apply_filters('wnd_update_account_return', ['status' => 1, 'msg' => '更新成�
  */
 apply_filters('wnd_user_panel_post_types', $post_types);
 
+/**
+*@since 2020.04.11
+*注册后跳转地址
+*/
+apply_filters('wnd_reg_redirect_url', $redirect_url);
+
 ```
 ## 订单
 ```php

@@ -50,7 +50,7 @@ class Wnd_User {
 			if ($open_id) {
 				self::update_user_openid($this_user->ID, $open_id);
 			}
-			wp_redirect(wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url());
+			wp_redirect(self::get_reg_redirect_url());
 			exit;
 		}
 
@@ -73,7 +73,7 @@ class Wnd_User {
 		$user_id = $user ? $user->ID : $user_id;
 		wnd_update_user_meta($user_id, 'avatar_url', $avatar_url);
 		wp_set_auth_cookie($user_id, true);
-		wp_redirect(wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url());
+		wp_redirect(self::get_reg_redirect_url());
 		exit();
 	}
 
@@ -436,5 +436,14 @@ class Wnd_User {
 		// 排除页面/附件/站内信
 		unset($post_types['page'], $post_types['attachment'], $post_types['mail']);
 		return apply_filters('wnd_user_panel_post_types', $post_types);
+	}
+
+	/**
+	 *@since 2020.04.11
+	 *获取注册后跳转地址
+	 */
+	public static function get_reg_redirect_url() {
+		$redirect_url = wnd_get_option('wnd', 'wnd_reg_redirect_url') ?: home_url();
+		return apply_filters('wnd_reg_redirect_url', $redirect_url);
 	}
 }
