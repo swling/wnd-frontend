@@ -28,7 +28,7 @@ class Wnd_language {
 		add_filter('get_edit_post_link', [__CLASS__, 'filter_link'], 99);
 
 		// Wnd Filter
-		add_filter('wnd_reg_redirect_url', [__CLASS__, 'filter_link'], 99);
+		add_filter('wnd_reg_redirect_url', [__CLASS__, 'filter_reg_redirect_link'], 99);
 		add_filter('wnd_pay_return_url', [__CLASS__, 'filter_return_link'], 99);
 
 		// 在用户完成注册时，将当前站点语言记录到用户字段
@@ -69,7 +69,34 @@ class Wnd_language {
 	 *
 	 */
 	public static function filter_link($link) {
-		$lang = $_GET['lang'] ?? '';
+		$lang = $_GET['lang'] ?? false;
+		return $lang ? add_query_arg('lang', $lang, $link) : $link;
+	}
+
+	/**
+	 *根据语言参数或社交登录回调参数，获取注册页面语言，并添加到跳转url
+	 *
+	 *@since 2020.04.11
+	 */
+	public static function filter_reg_redirect_link($link) {
+		// 本地语言参数优先
+		$lang = $_GET['lang'] ?? false;
+		if ($lang) {
+			return add_query_arg('lang', $lang, $link);
+		}
+
+		// 社交登录回调语言检测
+		$state = $_GET['state'] ?? false;
+		if (!$state) {
+			return $link;
+		}
+
+		// 解析自定义state。本插件规范：第三方登录自定义state="{$nonce}|{$lang}"
+		$lang = explode('|', $_GET['state'])[1] ?? false;
+		if (get_locale() == $lang) {
+			return $link;
+		}
+
 		return $lang ? add_query_arg('lang', $lang, $link) : $link;
 	}
 

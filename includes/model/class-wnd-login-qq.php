@@ -23,7 +23,7 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 		$query = http_build_query(
 			[
 				'client_id'     => $this->app_id,
-				'state'         => wp_create_nonce('qq_login'),
+				'state'         => wp_create_nonce('qq_login') . '|' . get_locale(),
 				'response_type' => 'code',
 				'redirect_uri'  => $this->redirect_url,
 			]
@@ -40,12 +40,17 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 			throw new Exception('未配置APP Key');
 		}
 
-		if (!isset($_GET['state']) or !isset($_GET['code'])) {
-			return;
+		if (!isset($_GET['state'])) {
+			throw new Exception('state is empty');
 		}
 
+		if (!isset($_GET['code'])) {
+			throw new Exception('code is empty');
+		}
+
+		// 解析自定义state
+		$nonce = explode('|', $_GET['state'])[0];
 		$code  = $_GET['code'];
-		$nonce = $_GET['state'];
 		if (!wp_verify_nonce($nonce, 'qq_login')) {
 			throw new Exception('验证失败，请返回页面并刷新重试');
 		}
