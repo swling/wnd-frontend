@@ -50,7 +50,17 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 			throw new Exception('验证失败，请返回页面并刷新重试');
 		}
 
-		$token_url = 'https://graph.qq.com/oauth2.0/token?client_id=' . $this->app_id . '&client_secret=' . $this->app_key . '&grant_type=authorization_code&redirect_uri=' . urlencode($this->redirect_url) . '&code=' . $code;
+		$query = http_build_query(
+			[
+				'client_id'     => $this->app_id,
+				'client_secret' => $this->app_key,
+				'code'          => $code,
+				'grant_type'    => 'authorization_code',
+				'redirect_uri'  => $this->redirect_url,
+			]
+		);
+
+		$token_url = 'https://graph.qq.com/oauth2.0/token?' . $query;
 
 		//获取响应报文
 		$response = wp_remote_get($token_url);
@@ -71,7 +81,7 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 	/**
 	 *根据token 获取用户QQ open id
 	 */
-	protected function get_open_id() {
+	private function get_open_id() {
 		if (!$this->token) {
 			throw new Exception('获取token失败');
 		}
@@ -100,12 +110,21 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 	 *根据token 和 open id获取用户信息
 	 */
 	protected function get_user_info() {
+		$this->get_open_id();
+
 		if (!$this->token or !$this->open_id) {
 			throw new Exception('Token 或 open ID为空');
 		}
 
-		$get_user_info = 'https://graph.qq.com/user/get_user_info?' . 'access_token=' . $this->token . '&oauth_consumer_key=' . $this->app_id . '&openid=' . $this->open_id . '&format=json';
-		$user_info     = wp_remote_get($get_user_info);
+		$query = http_build_query([
+			'access_token'       => $this->token,
+			'oauth_consumer_key' => $this->app_id,
+			'openid'             => $this->open_id,
+			'format'             => 'json',
+		]);
+
+		$get_info_link = 'https://graph.qq.com/user/get_user_info?' . $query;
+		$user_info     = wp_remote_get($get_info_link);
 		$user_info     = $user_info['body'];
 		$user_info     = json_decode($user_info, true);
 

@@ -56,11 +56,6 @@ abstract class Wnd_Login_Social {
 	abstract protected function get_token();
 
 	/**
-	 *获取第三方平台授权open id
-	 */
-	abstract protected function get_open_id();
-
-	/**
 	 *根据token和open id获取用户信息
 	 */
 	abstract protected function get_user_info();
@@ -70,7 +65,6 @@ abstract class Wnd_Login_Social {
 	 */
 	public function login() {
 		$this->get_token();
-		$this->get_open_id();
 		$this->get_user_info();
 
 		// 根据open id创建或登录账户
