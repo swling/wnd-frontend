@@ -125,6 +125,11 @@ class Wnd_Admin {
 			wp_delete_term($term->term_id, $term->taxonomy);
 		}
 
+		// 删除七天以前未注册的验证码记录
+		$old_users = $wpdb->query(
+			"DELETE FROM $wpdb->wnd_users WHERE user_id = 0 AND DATE_SUB(NOW(), INTERVAL 7 DAY) > FROM_UNIXTIME(time)"
+		);
+
 		do_action('wnd_clean_up');
 		return true;
 	}
