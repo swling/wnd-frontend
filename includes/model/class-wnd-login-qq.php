@@ -49,8 +49,7 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 		}
 
 		// 校验自定义state nonce
-		$state = $_GET['state'];
-		self::check_state_nonce($state);
+		self::check_state_nonce($_GET['state']);
 
 		$query = http_build_query(
 			[

@@ -56,8 +56,7 @@ class Wnd_Login_Google extends Wnd_Login_Social {
 		}
 
 		// 校验自定义state nonce
-		$state = $_GET['state'];
-		self::check_state_nonce($state);
+		self::check_state_nonce($_GET['state']);
 
 		//用户允许授权后，将会重定向到redirect_uri的网址上，并且带上code参数
 		$data = [
