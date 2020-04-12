@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Model\Wnd_Config;
 
 /**
  *@since 2019.08.11
@@ -202,5 +203,27 @@ class Wnd_Payment extends Wnd_Transaction {
 	 */
 	public function get_subject() {
 		return self::$site_name . ' - ' . $this->subject;
+	}
+
+	/**
+	 *@since 2020.04.12
+	 *支付成功后返回链接
+	 *@param int $object_id 支付产品ID；为空则为充值
+	 */
+	public static function get_return_url($object_id = 0) {
+		// 订单
+		if ($object_id) {
+			$url = get_permalink($object_id) ?: (Wnd_Config::get('pay_return_url') ?: home_url());
+
+			// 充值
+		} else {
+			$url = Wnd_Config::get('pay_return_url') ?: home_url();
+		}
+
+		/**
+		 *@since 2020.04.12
+		 *新增filter
+		 */
+		return apply_filters('wnd_pay_return_url', $url);
 	}
 }

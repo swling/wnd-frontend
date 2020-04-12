@@ -4,7 +4,6 @@ namespace Wnd\Component\Alipay;
 use Exception;
 use Wnd\Component\Alipay\AlipayConfig;
 use Wnd\Component\Alipay\AlipayService;
-use Wnd\Model\Wnd_Config;
 use Wnd\Model\Wnd_Payment;
 
 /**
@@ -43,17 +42,9 @@ class AlipayReturn {
 			exit($e->getMessage());
 		}
 
-		// 订单
-		if ($object_id) {
-			$link = get_permalink($object_id) ?: Wnd_Config::get('pay_return_url') ?: home_url();
-
-			// 充值
-		} else {
-			$link = Wnd_Config::get('pay_return_url') ?: home_url();
-		}
-
-		// 跳转
-		header('Location:' . add_query_arg('from', 'payment_successful', $link));
+		// 跳转链接
+		$url = Wnd_Payment::get_return_url($object_id);
+		header('Location:' . add_query_arg('from', 'payment_successful', $url));
 		exit;
 	}
 }
