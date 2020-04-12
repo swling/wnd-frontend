@@ -23,7 +23,7 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 		$query = http_build_query(
 			[
 				'client_id'     => $this->app_id,
-				'state'         => wp_create_nonce('qq_login') . '|' . get_locale(),
+				'state'         => self::build_state('QQ'),
 				'response_type' => 'code',
 				'redirect_uri'  => $this->redirect_url,
 			]
@@ -48,18 +48,15 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 			throw new Exception('code is empty');
 		}
 
-		// 解析自定义state
-		$nonce = explode('|', $_GET['state'])[0];
-		$code  = $_GET['code'];
-		if (!wp_verify_nonce($nonce, 'qq_login')) {
-			throw new Exception('验证失败，请返回页面并刷新重试');
-		}
+		// 校验自定义state nonce
+		$state = $_GET['state'];
+		self::check_state_nonce($state);
 
 		$query = http_build_query(
 			[
 				'client_id'     => $this->app_id,
 				'client_secret' => $this->app_key,
-				'code'          => $code,
+				'code'          => $_GET['code'],
 				'grant_type'    => 'authorization_code',
 				'redirect_uri'  => $this->redirect_url,
 			]

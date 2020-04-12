@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Model\Wnd_Login_Social;
+
 /**
  *多语言
  *
@@ -91,8 +93,8 @@ class Wnd_language {
 			return $link;
 		}
 
-		// 解析自定义state。本插件规范：第三方登录自定义state="{$nonce}|{$lang}"
-		$lang = explode('|', $_GET['state'])[1] ?? false;
+		// 解析自定义state
+		$lang = Wnd_Login_Social::parse_state($state)['lang'] ?? false;
 		if (get_locale() == $lang) {
 			return $link;
 		}

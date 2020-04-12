@@ -27,7 +27,7 @@ class Wnd_Login_Google extends Wnd_Login_Social {
 		$query = http_build_query(
 			[
 				'client_id'       => $this->app_id,
-				'state'           => wp_create_nonce('google_login') . '|' . get_locale(),
+				'state'           => self::build_state('Google'),
 				'response_type'   => 'code',
 				'redirect_uri'    => $this->redirect_url,
 				'access_type'     => 'offline',
@@ -55,16 +55,13 @@ class Wnd_Login_Google extends Wnd_Login_Social {
 			throw new Exception('code is empty');
 		}
 
-		// 解析自定义state
-		$nonce = explode('|', $_GET['state'])[0];
-		$code  = $_GET['code'];
-		if (!wp_verify_nonce($nonce, 'google_login')) {
-			throw new Exception('验证失败，请返回页面并刷新重试');
-		}
+		// 校验自定义state nonce
+		$state = $_GET['state'];
+		self::check_state_nonce($state);
 
 		//用户允许授权后，将会重定向到redirect_uri的网址上，并且带上code参数
 		$data = [
-			'code'          => $code,
+			'code'          => $_GET['code'],
 			'client_id'     => $this->app_id,
 			'client_secret' => $this->app_key,
 			'redirect_uri'  => $this->redirect_url,

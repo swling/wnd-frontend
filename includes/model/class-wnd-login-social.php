@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Model;
 
+use Exception;
 use Wnd\Model\Wnd_User;
 
 /**
@@ -22,6 +23,18 @@ abstract class Wnd_Login_Social {
 
 	public function __construct() {
 		$this->user_id = get_current_user_id();
+	}
+
+	/**
+	 *根据$domain自动选择子类
+	 */
+	public static function get_instance($domain) {
+		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Login_' . $domain;
+		if (class_exists($class_name)) {
+			return new $class_name();
+		} else {
+			throw new Exception(__('指定社交登录类未定义', 'wnd'));
+		}
 	}
 
 	/**
@@ -49,6 +62,35 @@ abstract class Wnd_Login_Social {
 	 *创建授权地址
 	 */
 	abstract public function build_oauth_url();
+
+	/**
+	 *创建自定义state
+	 */
+	public static function build_state($domain) {
+		return $domain . '|' . wp_create_nonce('social_login') . '|' . get_locale();
+	}
+
+	/**
+	 *解析自定义state
+	 */
+	public static function parse_state($state) {
+		$state_array = explode('|', $state);
+		return [
+			'domain' => $state_array[0] ?? false,
+			'nonce'  => $state_array[1] ?? false,
+			'lang'   => $state_array[2] ?? false,
+		];
+	}
+
+	/**
+	 *校验自定义state nonce
+	 */
+	public static function check_state_nonce($state) {
+		$nonce = self::parse_state($state)['nonce'];
+		if (!wp_verify_nonce($nonce, 'social_login')) {
+			throw new Exception(__('验证失败，请返回页面并刷新重试', 'wnd'));
+		}
+	}
 
 	/**
 	 *根据用户授权码获取token
