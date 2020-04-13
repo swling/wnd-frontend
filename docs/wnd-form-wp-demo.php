@@ -228,7 +228,14 @@ function wnd_demo_form() {
 	 */
 	$form->set_thumbnail_size(100, 100);
 
-	// upload image
+	/**
+	 *图像上传
+	 *
+	 *@since 2020.04.13 支持上传附件存储至option
+	 *_option_{$meta_key}则存储至option
+	 *
+	 *如果设置了data['post_parent'], 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+	 */
 	$form->add_image_upload(
 		[
 			// 'id' => 'image-upload', //container id
@@ -250,7 +257,14 @@ function wnd_demo_form() {
 		]
 	);
 
-	// upload file
+	/**
+	 *文件上传
+	 *
+	 *@since 2020.04.13 支持上传附件存储至option
+	 *_option_{$meta_key}则存储至option
+	 *
+	 *如果设置了data['post_parent'], 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+	 */
 	$form->add_file_upload(
 		[
 			// 'id' => 'file-upload', //container id

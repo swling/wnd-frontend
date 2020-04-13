@@ -39,12 +39,31 @@ class Wnd_Add_Action {
 			return;
 		}
 
-		//WordPress原生缩略图
-		if ($meta_key == '_wpthumbnail_id') {
-			set_post_thumbnail($post_parent, $attachment_id);
+		// 存储在option中
+		if (0 === stripos($meta_key, '_option_')) {
+			$option     = str_replace('_option_', '', $meta_key);
+			$old_option = get_option($option);
 
-			// 储存在文章字段
-		} elseif ($post_parent) {
+			if ($old_option) {
+				wp_delete_attachment($old_option, true);
+			}
+			update_option($option, $attachment_id, false);
+			return;
+		}
+
+		// WordPress原生缩略图
+		if ($meta_key == '_wpthumbnail_id') {
+			$old_meta = get_post_meta($post_parent, '_thumbnail_id', true);
+			if ($old_meta) {
+				wp_delete_attachment($old_meta, true);
+			}
+
+			set_post_thumbnail($post_parent, $attachment_id);
+			return;
+		}
+
+		// 储存在文章字段
+		if ($post_parent) {
 			$old_meta = wnd_get_post_meta($post_parent, $meta_key);
 			if ($old_meta) {
 				wp_delete_attachment($old_meta, true);
@@ -95,7 +114,7 @@ class Wnd_Add_Action {
 	 *ajax删除附件时
 	 *@since 2018
 	 */
-	public static function action_on_delete_file($attach_id, $post_parent, $meta_key) {
+	public static function action_on_delete_file($attachment_id, $post_parent, $meta_key) {
 		if (!$meta_key) {
 			return;
 		}
@@ -107,8 +126,15 @@ class Wnd_Add_Action {
 			// 从相册数组中删除当前图片
 			$images = wnd_get_post_meta($post_parent, 'gallery');
 			$images = is_array($images) ? $images : [];
-			unset($images['img' . $attach_id]);
+			unset($images['img' . $attachment_id]);
 			wnd_update_post_meta($post_parent, 'gallery', $images);
+			return;
+		}
+
+		// 删除在 option
+		if (0 === stripos($meta_key, '_option_')) {
+			$option = str_replace('_option_', '', $meta_key);
+			delete_option($option);
 			return;
 		}
 

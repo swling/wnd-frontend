@@ -234,22 +234,10 @@ class Wnd_Form_WP extends Wnd_Form {
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
 		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;
 
-		// 根据user type 查找目标文件
-		if (!$args['file_id']) {
-			$file_id = $post_parent ? wnd_get_post_meta($post_parent, $meta_key) : wnd_get_user_meta($user_id, $meta_key);
-		} else {
-			$file_id = $args['file_id'];
-		}
-		$file_url = $file_id ? wnd_get_thumbnail_url($file_id, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']) : '';
-
-		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
-		if ($file_id and !$file_url) {
-			if ($post_parent) {
-				wnd_delete_post_meta($post_parent, $meta_key);
-			} else {
-				wnd_delete_user_meta($user_id, $meta_key);
-			}
-		}
+		// 根据 meta_key 查找目标文件
+		$file_id  = $args['file_id'] ?: static::get_attachment_id($meta_key, $post_parent, $user_id);
+		$file_url = static::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
+		$file_url = $file_url ? wnd_get_thumbnail_url($file_url, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']) : '';
 
 		$args['thumbnail'] = $file_url ?: $args['thumbnail'];
 		$args['file_id']   = $file_id ?: 0;
@@ -293,22 +281,9 @@ class Wnd_Form_WP extends Wnd_Form {
 		$args['data']['meta_key_nonce'] = wp_create_nonce($meta_key);
 		$args['data']['method']         = $this->is_ajax_submit ? 'ajax' : $this->method;
 
-		// 根据meta key 查找目标文件
-		if (!$args['file_id']) {
-			$file_id = $post_parent ? wnd_get_post_meta($post_parent, $meta_key) : wnd_get_user_meta($user_id, $meta_key);
-		} else {
-			$file_id = $args['file_id'];
-		}
-		$file_url = $file_id ? wp_get_attachment_url($file_id) : '';
-
-		// 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta key
-		if ($file_id and !$file_url) {
-			if ($post_parent) {
-				wnd_delete_post_meta($post_parent, $meta_key);
-			} else {
-				wnd_delete_user_meta($user_id, $meta_key);
-			}
-		}
+		// 根据 meta_key 查找目标文件
+		$file_id  = $args['file_id'] ?: static::get_attachment_id($meta_key, $post_parent, $user_id);
+		$file_url = static::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
 
 		$args['file_id']   = $file_id ?: 0;
 		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">' . __('查看文件', 'wnd') . '</a>' : '……';
@@ -481,5 +456,49 @@ class Wnd_Form_WP extends Wnd_Form {
 		$html .= '</div>';
 
 		$this->add_html($html);
+	}
+
+	/**
+	 *@since 2020.04.13
+	 *
+	 *根据meta key获取附件ID
+	 */
+	protected static function get_attachment_id($meta_key, $post_parent, $user_id) {
+		// option
+		if (0 === stripos($meta_key, '_option_')) {
+			$option = str_replace('_option_', '', $meta_key);
+			return get_option($option);
+		}
+
+		// post meta
+		if ($post_parent) {
+			return wnd_get_post_meta($post_parent, $meta_key);
+		}
+
+		// user meta
+		return wnd_get_user_meta($user_id, $meta_key);
+	}
+
+	/**
+	 *@since 2020.04.13
+	 *
+	 *获取附件URL
+	 *如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta_key or option
+	 */
+	protected static function get_attachment_url($attachment_id, $meta_key, $post_parent, $user_id) {
+		$attachment_url = $attachment_id ? wp_get_attachment_url($attachment_id) : false;
+
+		if ($attachment_id and !$attachment_url) {
+			if (0 === stripos($meta_key, '_option_')) {
+				$option = str_replace('_option_', '', $meta_key);
+				delete_option($option);
+			} elseif ($post_parent) {
+				wnd_delete_post_meta($post_parent, $meta_key);
+			} else {
+				wnd_delete_user_meta($user_id, $meta_key);
+			}
+		}
+
+		return $attachment_url;
 	}
 }
