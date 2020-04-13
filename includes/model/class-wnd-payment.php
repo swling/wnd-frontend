@@ -2,7 +2,6 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\Model\Wnd_Config;
 
 /**
  *@since 2019.08.11
@@ -213,11 +212,11 @@ class Wnd_Payment extends Wnd_Transaction {
 	public static function get_return_url($object_id = 0) {
 		// 订单
 		if ($object_id) {
-			$url = get_permalink($object_id) ?: (Wnd_Config::get('pay_return_url') ?: home_url());
+			$url = get_permalink($object_id) ?: (wnd_get_config('pay_return_url') ?: home_url());
 
 			// 充值
 		} else {
-			$url = Wnd_Config::get('pay_return_url') ?: home_url();
+			$url = wnd_get_config('pay_return_url') ?: home_url();
 		}
 
 		/**

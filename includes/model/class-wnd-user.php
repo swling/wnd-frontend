@@ -1,8 +1,6 @@
 <?php
 namespace Wnd\Model;
 
-use Wnd\Model\Wnd_Config;
-
 /**
  *@since 2019.10.25
  *用户
@@ -445,7 +443,7 @@ class Wnd_User {
 	 *获取注册后跳转地址
 	 */
 	public static function get_reg_redirect_url() {
-		return Wnd_Config::get('reg_redirect_url') ?: home_url();
+		return wnd_get_config('reg_redirect_url') ?: home_url();
 	}
 
 	/**
