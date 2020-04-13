@@ -15,8 +15,8 @@ function wnd_get_do_url() {
  *@since 2020.4.13
  *获取配置选项
  */
-function wnd_get_config($option) {
-	return Wnd_Config::get($option);
+function wnd_get_config($config_key) {
+	return Wnd_Config::get($config_key);
 }
 
 /**
