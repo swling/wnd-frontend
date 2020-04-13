@@ -454,6 +454,6 @@ class Wnd_User {
 	 *WP原生存储与wp user meta；本插件存储与wnd user meta：目的是减少一行数据库记录
 	 */
 	public static function get_user_locale($user_id) {
-		return wnd_get_user_meta($user_id, 'locale') ?: get_locale();
+		return wnd_get_user_meta($user_id, 'locale') ?: 'default';
 	}
 }

@@ -108,7 +108,7 @@ class Wnd_language {
 	 */
 	public static function filter_return_link($link) {
 		$user_locale = wnd_get_user_locale(get_current_user_id());
-		if (get_locale() == $user_locale) {
+		if ('default' == $user_locale or get_locale() == $user_locale) {
 			return $link;
 		}
 
