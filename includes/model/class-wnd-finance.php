@@ -180,7 +180,7 @@ class Wnd_Finance {
 	 *@return 	float 	佣金分成
 	 */
 	public static function get_post_commission($post_id) {
-		$commission_rate = is_numeric(wnd_get_option('wnd', 'wnd_commission_rate')) ? wnd_get_option('wnd', 'wnd_commission_rate') : 0;
+		$commission_rate = is_numeric(wnd_get_config('commission_rate')) ? wnd_get_config('commission_rate') : 0;
 		$commission      = wnd_get_post_price($post_id) * $commission_rate;
 		$commission      = number_format($commission, 2, '.', '');
 		return apply_filters('wnd_get_post_commission', $commission, $post_id);

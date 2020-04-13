@@ -34,7 +34,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 			</div>
 		</div>';
 
-		if (wnd_get_option('wnd', 'wnd_commission_rate')) {
+		if (wnd_get_config('commission_rate')) {
 			$html .= '
 		<div class="level-item has-text-centered">
 			<div>

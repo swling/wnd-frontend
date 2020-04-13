@@ -11,8 +11,8 @@ class Wnd_User_Center extends Wnd_Module {
 
 	public static function build($args = []) {
 		$ajax_type         = $_GET['ajax_type'] ?? 'modal';
-		$enable_sms        = (wnd_get_option('wnd', 'wnd_enable_sms') == 1) ? true : false;
-		$color             = wnd_get_option('wnd', 'wnd_second_color');
+		$enable_sms        = (wnd_get_config('enable_sms') == 1) ? true : false;
+		$color             = wnd_get_config('second_color');
 		$is_user_logged_in = is_user_logged_in();
 
 		// 默认参数
@@ -93,7 +93,7 @@ class Wnd_User_Center extends Wnd_Module {
 					if ($ajax_type == 'modal') {
 						if ($type == 'email' and $enable_sms) {
 							$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=register&type=phone\');">' . __('手机注册', 'wnd') . '</a> | ';
-						} elseif ($type == 'phone' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
+						} elseif ($type == 'phone' and wnd_get_config('disable_email_reg') != 1) {
 							$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=register&type=email\');">' . __('邮箱注册', 'wnd') . '</a> | ';
 						}
 						$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\');">' . __('登录', 'wnd') . '</a>';
@@ -101,7 +101,7 @@ class Wnd_User_Center extends Wnd_Module {
 					} else {
 						if ($type == 'email' and $enable_sms) {
 							$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=register&type=phone\');">' . __('手机注册', 'wnd') . '</a> | ';
-						} elseif ($type == 'phone' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
+						} elseif ($type == 'phone' and wnd_get_config('disable_email_reg') != 1) {
 							$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=register&type=email\');">' . __('邮箱注册', 'wnd') . '</a> | ';
 						}
 						$html .= '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'do=login\');">' . __('登录', 'wnd') . '</a>';
@@ -111,7 +111,7 @@ class Wnd_User_Center extends Wnd_Module {
 				} else {
 					if ($type == 'email' and $enable_sms) {
 						$html .= '<a href="' . add_query_arg('type', 'phone') . '">' . __('手机注册', 'wnd') . '</a> | ';
-					} elseif ($type == 'phone' and wnd_get_option('wnd', 'wnd_disable_email_reg') != 1) {
+					} elseif ($type == 'phone' and wnd_get_config('disable_email_reg') != 1) {
 						$html .= '<a href="' . add_query_arg('type', 'email') . '">' . __('邮箱注册', 'wnd') . '</a> | ';
 					}
 					$html .= '<a href="' . add_query_arg('do', 'login') . '">' . __('登录', 'wnd') . '</a>';

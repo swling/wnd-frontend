@@ -33,8 +33,8 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->is_ajax_submit = $is_ajax_submit;
 
 		// 色调
-		self::$primary_color = wnd_get_option('wnd', 'wnd_primary_color');
-		self::$second_color  = wnd_get_option('wnd', 'wnd_second_color');
+		self::$primary_color = wnd_get_config('primary_color');
+		self::$second_color  = wnd_get_config('second_color');
 
 		// 继承基础变量
 		parent::__construct();

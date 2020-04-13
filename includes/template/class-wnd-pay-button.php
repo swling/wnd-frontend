@@ -26,8 +26,8 @@ class Wnd_Pay_Button {
 		$post_price    = wnd_get_post_price($post_id);
 		$user_money    = wnd_get_user_money($user_id);
 		$user_has_paid = wnd_user_has_paid($user_id, $post_id);
-		$primary_color = 'is-' . wnd_get_option('wnd', 'wnd_primary_color');
-		$second_color  = 'is-' . wnd_get_option('wnd', 'wnd_second_color');
+		$primary_color = 'is-' . wnd_get_config('primary_color');
+		$second_color  = 'is-' . wnd_get_config('second_color');
 
 		return compact('post', 'user_id', 'post_price', 'user_money', 'user_has_paid', 'primary_color', 'second_color');
 	}

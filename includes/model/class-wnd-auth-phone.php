@@ -21,7 +21,7 @@ class Wnd_Auth_phone extends Wnd_Auth {
 	public function __construct($auth_object) {
 		parent::__construct($auth_object);
 
-		$this->template = wnd_get_option('wnd', 'wnd_sms_template_v');
+		$this->template = wnd_get_config('sms_template_v');
 	}
 
 	/**

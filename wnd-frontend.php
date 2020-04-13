@@ -48,7 +48,7 @@ add_action('wp_enqueue_scripts', function () {
 	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.min.js', ['jquery'], WND_VER);
 
 	// bulma框架及fontawesome图标
-	$static_host = wnd_get_option('wnd', 'wnd_static_host');
+	$static_host = wnd_get_config('static_host');
 	if ('local' == $static_host) {
 		wp_enqueue_style('bulma', WND_URL . 'static/css/bulma.min.css', [], null);
 		wp_enqueue_style('bulma-extensions', WND_URL . 'static/css/bulma-extensions.min.css', [], null);

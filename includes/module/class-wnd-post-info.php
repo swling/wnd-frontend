@@ -19,7 +19,7 @@ class Wnd_Post_Info extends Wnd_Module {
 		}
 
 		if (wnd_get_post_price($post->ID)) {
-			return wnd_message(__('付费文章不支持预览', 'wnd'), 'is-' . wnd_get_option('wnd', 'wnd_second_color'));
+			return wnd_message(__('付费文章不支持预览', 'wnd'), 'is-' . wnd_get_config('second_color'));
 		}
 
 		$html = '<article>';

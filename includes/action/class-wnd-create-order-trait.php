@@ -21,13 +21,13 @@ trait Wnd_Create_Order_Trait {
 
 		$post_price    = wnd_get_post_price($post_id);
 		$user_money    = wnd_get_user_money($user_id);
-		$primary_color = 'is-' . wnd_get_option('wnd', 'wnd_primary_color');
-		$second_color  = 'is-' . wnd_get_option('wnd', 'wnd_second_color');
+		$primary_color = 'is-' . wnd_get_config('primary_color');
+		$second_color  = 'is-' . wnd_get_config('second_color');
 
 		// 余额不足
 		if ($post_price > $user_money) {
 			$msg = '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . $user_money . '</b>&nbsp;&nbsp;' . __('本次消费：¥ ', 'wnd') . '<b>' . $post_price . '</b></p>';
-			if (wnd_get_option('wnd', 'wnd_alipay_appid')) {
+			if (wnd_get_config('alipay_appid')) {
 				$msg .= '<a class="button ' . $primary_color . '" href="' . wnd_order_link($post_id) . '">' . __('在线支付') . '</a>';
 				$msg .= '&nbsp;&nbsp;';
 			}

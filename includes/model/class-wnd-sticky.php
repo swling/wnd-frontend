@@ -21,7 +21,7 @@ class Wnd_Sticky {
 		}
 
 		// 历史数据及最大限制
-		$max              = wnd_get_option('wnd', 'wnd_max_stick_posts') ?: 10;
+		$max              = wnd_get_config('max_stick_posts') ?: 10;
 		$old_sticky_posts = self::get_sticky_posts($post_type);
 
 		// 创建以post+id作为键名，id作为键值的数组，并合并入数组（注意顺序）

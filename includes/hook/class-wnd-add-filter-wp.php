@@ -35,7 +35,7 @@ class Wnd_Add_Filter_WP {
 	public static function filter_limit_upload($file) {
 		// 上传体积限制
 		$image_size = $file['size'] / 1024;
-		$limit      = wnd_get_option('wnd', 'wnd_max_upload_size') ?: 2048;
+		$limit      = wnd_get_config('max_upload_size') ?: 2048;
 
 		if ($image_size > $limit) {
 			$file['error'] = '上传文件不得超过' . $limit . 'KB';
@@ -64,7 +64,7 @@ class Wnd_Add_Filter_WP {
 			return $link;
 		}
 
-		$edit_page = (int) wnd_get_option('wnd', 'wnd_edit_page');
+		$edit_page = (int) wnd_get_config('edit_page');
 		if ($edit_page) {
 			return add_query_arg('post_id', $post_id, get_permalink($edit_page));
 		}
@@ -122,7 +122,7 @@ class Wnd_Add_Filter_WP {
 	public static function filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 
 		// 默认头像
-		$avatar_url = wnd_get_option('wnd', 'wnd_default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
+		$avatar_url = wnd_get_config('default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
 
 		// 获取用户 ID
 		if (is_numeric($id_or_email)) {

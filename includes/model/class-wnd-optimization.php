@@ -177,7 +177,7 @@ class Wnd_Optimization {
 	 *@since 2019.01.26 前端禁用语言包
 	 */
 	public static function filter_locale($locale) {
-		if (!is_admin() and wnd_get_option('wnd', 'wnd_disable_locale')) {
+		if (!is_admin() and wnd_get_config('disable_locale')) {
 			$locale = 'en_US';
 		}
 

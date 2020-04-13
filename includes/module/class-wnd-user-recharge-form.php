@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form;
 class Wnd_User_Recharge_Form extends Wnd_Module {
 
 	public static function build() {
-		if (!wnd_get_option('wnd', 'wnd_alipay_appid')) {
+		if (!wnd_get_config('alipay_appid')) {
 			return __('未设置支付接口', 'wnd');
 		}
 
@@ -28,7 +28,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module {
 		$form->set_action(wnd_get_do_url(), 'GET');
 		$form->add_hidden('_wpnonce', wp_create_nonce('payment'));
 		$form->add_hidden('action', 'payment');
-		$form->set_submit_button(__('充值', 'wnd'), 'is-' . wnd_get_option('wnd', 'wnd_primary_color'));
+		$form->set_submit_button(__('充值', 'wnd'), 'is-' . wnd_get_config('primary_color'));
 		$form->build();
 
 		return $form->html;
