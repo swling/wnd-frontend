@@ -107,7 +107,7 @@ class Wnd_Order extends Wnd_Transaction {
 		 *删除对象缓存
 		 **/
 		if ($this->object_id) {
-			wp_cache_delete($this->user_id . $this->object_id, 'wnd_has_paid');
+			wp_cache_delete($this->user_id . '-' . $this->object_id, 'wnd_has_paid');
 		}
 
 		$this->ID = $ID;
@@ -159,7 +159,7 @@ class Wnd_Order extends Wnd_Transaction {
 		 *@since 2019.06.04
 		 *删除对象缓存
 		 **/
-		wp_cache_delete($post->post_author . $post->post_parent, 'wnd_has_paid');
+		wp_cache_delete($post->post_author . '-' . $post->post_parent, 'wnd_has_paid');
 
 		return $ID;
 	}
