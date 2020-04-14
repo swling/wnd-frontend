@@ -9,11 +9,11 @@ class Wnd_Terms_List extends Wnd_Module {
 
 	public static function build($args = []) {
 		$defaults = [
-			'taxonomy'     => 'post_tag',
-			'number'       => 50,
-			'hidden_empty' => true,
-			'orderby'      => 'count',
-			'order'        => 'DESC',
+			'taxonomy'   => 'post_tag',
+			'number'     => 50,
+			'hide_empty' => true,
+			'orderby'    => 'count',
+			'order'      => 'DESC',
 		];
 		$args = wp_parse_args($args, $defaults);
 
