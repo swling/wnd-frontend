@@ -393,8 +393,8 @@ class Wnd_Form {
 			$html .= '<label class="label">' . $this->build_label($input_value) . '</label>';
 		}
 		$html .= '<div class="control">';
-		$html .= '<div' . $this->build_input_id($input_value) . ' class="select' . $this->get_class($input_value, true) . '">';
-		$html .= '<select' . $this->build_input_attr($input_value) . '>';
+		$html .= '<div class="select">';
+		$html .= '<select' . $this->build_input_id($input_value) . ' class="' . $this->get_class($input_value) . '"' . $this->build_input_attr($input_value) . '>';
 		foreach ($input_value['options'] as $key => $value) {
 			$checked = ($input_value['checked'] == $value) ? ' selected="selected"' : '';
 			$html .= '<option value="' . $value . '"' . $checked . '>' . $key . '</option>';
@@ -410,7 +410,7 @@ class Wnd_Form {
 		$html = '<div' . $this->build_input_id($input_value) . ' class="field">';
 		foreach ($input_value['options'] as $key => $value) {
 			$input_id = md5($key . $input_key);
-			$html .= '<input type="radio" id="' . $input_id . '" class="' . $this->get_class($input_value) . '" value="' . $value . '"' . $this->build_input_attr($input_value);
+			$html .= '<input id="' . $input_id . '" class="' . $this->get_class($input_value) . '" value="' . $value . '"' . $this->build_input_attr($input_value);
 			$html .= ($input_value['checked'] == $value) ? ' checked="checked">' : '>';
 
 			$html .= '<label for="' . $input_id . '" class="radio">' . $key . '</label>';
@@ -425,7 +425,7 @@ class Wnd_Form {
 		$html .= '<label class="label">' . $this->build_label($input_value) . '</label>';
 		foreach ($input_value['options'] as $key => $value) {
 			$input_id = md5($key . $input_key);
-			$html .= '<input type="checkbox" id="' . $input_id . '" class="' . $this->get_class($input_value) . '" value="' . $value . '"' . $this->build_input_attr($input_value);
+			$html .= '<input id="' . $input_id . '" class="' . $this->get_class($input_value) . '" value="' . $value . '"' . $this->build_input_attr($input_value);
 			if (is_array($input_value['checked'])) {
 				$html .= in_array($value, $input_value['checked']) ? ' checked="checked">' : '>';
 			} else {
@@ -440,7 +440,7 @@ class Wnd_Form {
 	}
 
 	protected function build_hidden($input_value, $input_key) {
-		$html = '<input type="hidden" value="' . $this->get_value($input_value) . '"' . $this->build_input_attr($input_value) . '>';
+		$html = '<input value="' . $this->get_value($input_value) . '"' . $this->build_input_attr($input_value) . '>';
 		return $html;
 	}
 
@@ -466,7 +466,7 @@ class Wnd_Form {
 
 		// input and icon
 		$html .= '<div class="control' . $class . '">';
-		$html .= '<input' . $this->build_input_id($input_value) . ' class="input' . $this->get_class($input_value, true) . '" type="' . $input_value['type'] . '" value="' . $this->get_value($input_value) . '"' . $this->build_input_attr($input_value) . '>';
+		$html .= '<input' . $this->build_input_id($input_value) . ' class="input' . $this->get_class($input_value, true) . '" value="' . $this->get_value($input_value) . '"' . $this->build_input_attr($input_value) . '>';
 
 		$html .= $input_value['icon_left'] ? '<span class="icon is-left">' . $input_value['icon_left'] . '</span>' : '';
 		$html .= $input_value['icon_right'] ? '<span class="icon is-right">' . $input_value['icon_right'] . '</span>' : '';
@@ -604,7 +604,7 @@ class Wnd_Form {
 	 */
 	protected function build_input_attr($input_value) {
 		$bool_attrs   = ['readonly', 'disabled', 'autofocus', 'required'];
-		$normal_attrs = ['name', 'placeholder', 'size', 'maxlength', 'min', 'max', 'step', 'pattern'];
+		$normal_attrs = ['type', 'name', 'placeholder', 'size', 'maxlength', 'min', 'max', 'step', 'pattern'];
 		$attr         = '';
 
 		foreach ($input_value as $key => $value) {
