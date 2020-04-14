@@ -482,12 +482,8 @@ class Wnd_Form {
 	}
 
 	protected function build_image_upload($input_value, $input_key) {
-		$id = $input_value['id'] . '-' . $input_key;
-
-		$data = ' data-id="' . $id . '"';
-		foreach ($input_value['data'] as $key => $value) {
-			$data .= ' data-' . $key . '="' . $value . '" ';
-		}unset($key, $value);
+		$id                        = $input_value['id'] . '-' . $input_key;
+		$input_value['data']['id'] = $id;
 
 		$html = '<div id="' . $id . '" class="field upload-field">';
 		if ($input_value['label']) {
@@ -499,7 +495,7 @@ class Wnd_Form {
 		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['width'] . '"></a>';
 		$html .= $input_value['delete_button'] ? '<a class="delete" data-id="' . $id . '" data-file_id="' . $input_value['file_id'] . '"></a>' : '';
 		$html .= '<div class="file">';
-		$html .= '<input type="file" class="file-input"' . $data . 'accept="image/*"' . $this->build_input_attr($input_value) . '>';
+		$html .= '<input type="file" class="file-input" accept="image/*"' . $this->build_input_attr($input_value) . '>';
 		$html .= '</div>';
 		$html .= '</div>';
 
@@ -517,12 +513,8 @@ class Wnd_Form {
 	}
 
 	protected function build_file_upload($input_value, $input_key) {
-		$id = $input_value['id'] . '-' . $input_key;
-
-		$data = ' data-id="' . $id . '"';
-		foreach ($input_value['data'] as $key => $value) {
-			$data .= ' data-' . $key . '="' . $value . '" ';
-		}unset($key, $value);
+		$id                        = $input_value['id'] . '-' . $input_key;
+		$input_value['data']['id'] = $id;
 
 		$html = '<div id="' . $id . '" class="field upload-field">';
 
@@ -532,7 +524,7 @@ class Wnd_Form {
 		$html .= '<div class="column">';
 		$html .= '<div class="file has-name is-fullwidth">';
 		$html .= '<label class="file-label">';
-		$html .= '<input type="file" class="file-input"' . $data . $this->build_input_attr($input_value) . '>';
+		$html .= '<input type="file" class="file-input"' . $this->build_input_attr($input_value) . '>';
 		$html .= '<span class="file-cta">';
 		$html .= '<span class="file-icon"><i class="fa fa-upload"></i></span>';
 		$html .= '<span class="file-label">' . $this->build_label($input_value) . '</span>';
@@ -617,6 +609,17 @@ class Wnd_Form {
 
 		foreach ($input_value as $key => $value) {
 			if (!$value and !is_numeric($value)) {
+				continue;
+			}
+
+			/**
+			 *构建Data数据
+			 *@since 2020.04.14
+			 */
+			if ('data' == $key) {
+				foreach ($value as $data_key => $data_value) {
+					$attr .= ' data-' . $data_key . '="' . $data_value . '" ';
+				}unset($data_key, $data_value);
 				continue;
 			}
 
