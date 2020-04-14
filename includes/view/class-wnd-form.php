@@ -393,7 +393,7 @@ class Wnd_Form {
 			$html .= '<label class="label">' . $this->build_label($input_value) . '</label>';
 		}
 		$html .= '<div class="control">';
-		$html .= '<div' . $this->build_input_id($input_value) . ' class="select"' . $this->get_class($input_value, true) . '>';
+		$html .= '<div' . $this->build_input_id($input_value) . ' class="select' . $this->get_class($input_value, true) . '">';
 		$html .= '<select' . $this->build_input_attr($input_value) . '>';
 		foreach ($input_value['options'] as $key => $value) {
 			$checked = ($input_value['checked'] == $value) ? ' selected="selected"' : '';
