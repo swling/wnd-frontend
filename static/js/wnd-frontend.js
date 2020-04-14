@@ -1031,6 +1031,45 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
+	 *@since 2020.04.14
+	 *分类ajax分级联动下拉
+	 */
+	$("body").on("change", "select.dynamic-sub", function() {
+		var taxonomy = $(this).prop("name");
+		var taxonomy = taxonomy.split("_term_")[1];
+		var taxonomy = taxonomy.split("[]")[0];
+		var term_id = $(this).val();
+		var child_level = $(this).data("child_level") ? $(this).data("child_level") : 0;
+		var required = $(this).prop("required");
+
+		var child_selector = "." + taxonomy + "-child-" + (child_level + 1);
+		var tips = $(child_selector).data("tips");
+
+		if (term_id != -1) {
+			$.ajax({
+				type: "get",
+				url: wnd_interface_api,
+				data: {
+					"module": "wnd_sub_terms_select",
+					"param": {
+						"parent": term_id,
+						"taxonomy": taxonomy,
+						"child_level": child_level,
+						"required": required,
+						"tips": tips,
+					},
+				},
+
+				success: function(html) {
+					$("." + taxonomy + "-child-" + (child_level + 1)).html(html);
+				}
+			});
+		} else {
+			$("." + taxonomy + "-child-" + (child_level + 1)).html('<select class="select"><option value="">--</option></select>');
+		}
+	});
+
+	/**
 	 *@since 2019.03.28 表单改变时，移除提交按钮禁止状态,恢复提交文字
 	 */
 	$("body").on("change", "form", function() {

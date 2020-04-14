@@ -133,33 +133,55 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		);
 	}
 
-	public function add_post_category_select($taxonomy, $label = '', $required = true) {
+	public function add_post_category_select($taxonomy, $label = '', $required = true, $dynamic_sub = false) {
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
 		}
 
 		// 获取当前文章已选择分类id
-		$current_terms   = get_the_terms($this->post_id, $taxonomy);
-		$current_terms   = $current_terms ? reset($current_terms) : 0;
-		$current_term_id = $current_terms ? $current_terms->term_id : 0;
+		$current_term_ids = static::get_post_current_term_ids($this->post_id, $taxonomy);
+		$current_term_id  = $current_term_ids ? reset($current_term_ids) : 0;
 
-		// 获取taxonomy下的term
-		$terms   = get_terms($args = ['taxonomy' => $taxonomy, 'hide_empty' => false]) ?: [];
-		$options = ['- ' . $taxonomy_object->labels->name . ' -' => -1];
-		foreach ($terms as $term) {
-			$options[$term->name] = $term->term_id;
-		}
-		unset($term);
+		// 获取taxonomy下的 term 键值对
+		$option_data = static::get_taxonomy_option_data($taxonomy, $dynamic_sub);
+		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => -1], $option_data);
 
 		// 新增表单字段
 		$this->add_select(
 			[
-				'name'     => '_term_' . $taxonomy,
-				'options'  => $options,
+				'name'     => '_term_' . $taxonomy . ($dynamic_sub ? '[]' : ''),
+				'options'  => $option_data,
 				'required' => $required,
 				'checked'  => $current_term_id, //default checked value
 				'label'    => $label,
+				'class'    => $dynamic_sub ? 'dynamic-sub' : false,
+			]
+		);
+	}
+
+	/**
+	 *动态子类下拉菜单
+	 *其具体筛选项，将跟随上一级动态菜单而定
+	 *@since 2020.04.14
+	 **/
+	public function add_dynamic_sub_post_category_select(string $taxonomy, int $child_level = 1, string $label = '', $tips = '') {
+		$option_data = ['- ' . $tips . ' -' => -1];
+
+		// 获取当前文章已选择分类id
+		$current_term_ids = static::get_post_current_term_ids($this->post_id, $taxonomy);
+		$current_term_id  = $current_term_ids ? reset($current_term_ids) : 0;
+
+		// 新增表单字段
+		$this->add_select(
+			[
+				'name'     => '_term_' . $taxonomy . '[]',
+				'options'  => $option_data,
+				'required' => false,
+				'checked'  => $current_term_id, //default checked value
+				'label'    => $label,
+				'class'    => 'dynamic-sub ' . $taxonomy . '-child-' . $child_level,
+				'data'     => ['child_level' => $child_level, 'tips' => $tips],
 			]
 		);
 	}
@@ -175,24 +197,15 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}
 
 		// 获取当前文章已选择分类ids
-		$current_terms    = get_the_terms($this->post_id, $taxonomy) ?: [];
-		$current_term_ids = [];
-		foreach ($current_terms as $current_term) {
-			$current_term_ids[] = $current_term->term_id;
-		}unset($current_terms, $current_term);
+		$current_term_ids = static::get_post_current_term_ids($this->post_id, $taxonomy);
 
-		// 获取taxonomy下的term
-		$terms   = get_terms($args = ['taxonomy' => $taxonomy, 'hide_empty' => false]) ?: [];
-		$options = [];
-		foreach ($terms as $term) {
-			$options[$term->name] = $term->term_id;
-		}
-		unset($term);
+		// 获取taxonomy下的 term 键值对
+		$option_data = static::get_taxonomy_option_data($taxonomy);
 
 		$this->add_checkbox(
 			[
 				'name'    => '_term_' . $taxonomy . '[]',
-				'options' => $options,
+				'options' => $option_data,
 				'checked' => $current_term_ids,
 				'label'   => $label,
 			]
@@ -467,5 +480,38 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 **/
 	public function get_post() {
 		return $this->post;
+	}
+
+	/**
+	 *获取当前文章已选择term ids
+	 */
+	public static function get_post_current_term_ids($post_id, $taxonomy): array{
+		$current_terms    = get_the_terms($post_id, $taxonomy) ?: [];
+		$current_term_ids = [];
+		foreach ($current_terms as $current_term) {
+			$current_term_ids[] = $current_term->term_id;
+		}
+		unset($current_terms, $current_term);
+
+		return $current_term_ids;
+	}
+
+	/**
+	 *获取指定taxonomy下的term数组键值对：[$term->name] => $term->term_id
+	 */
+	public static function get_taxonomy_option_data($taxonomy, $top_level = false): array{
+		$args = ['taxonomy' => $taxonomy, 'hide_empty' => false];
+		if ($top_level) {
+			$args['parent'] = 0;
+		}
+
+		$terms       = get_terms($args) ?: [];
+		$option_data = [];
+		foreach ($terms as $term) {
+			$option_data[$term->name] = $term->term_id;
+		}
+		unset($term);
+
+		return $option_data;
 	}
 }
