@@ -1039,33 +1039,40 @@ jQuery(document).ready(function($) {
 		var taxonomy = taxonomy.split("_term_")[1];
 		var taxonomy = taxonomy.split("[]")[0];
 		var term_id = $(this).val();
-		var child_level = $(this).data("child_level") ? $(this).data("child_level") : 0;
+		var child_level = $(this).data("child_level");
 		var required = $(this).prop("required");
 
 		var child_selector = "." + taxonomy + "-child-" + (child_level + 1);
-		var tips = $(child_selector).data("tips");
+		var tips = $(child_selector).data("tips") || "";
+
+		// 一级分类变动，则重置所有子类
+		if (0 == child_level) {
+			$(".dynamic-sub-" + taxonomy).each(function() {
+				$(this).html('<option value="-1">- ' + $(this).data("tips") + ' -</option>');
+				$(this).removeClass("is-active");
+			});;
+		}
 
 		if (term_id != -1) {
 			$.ajax({
 				type: "get",
 				url: wnd_interface_api,
 				data: {
-					"module": "wnd_sub_terms_select",
+					"module": "wnd_sub_terms_options",
 					"param": {
 						"parent": term_id,
 						"taxonomy": taxonomy,
-						"child_level": child_level,
-						"required": required,
 						"tips": tips,
 					},
 				},
 
 				success: function(html) {
-					$("." + taxonomy + "-child-" + (child_level + 1)).html(html);
+					$(child_selector).html(html);
+					$(child_selector).addClass("is-active");
 				}
 			});
 		} else {
-			$("." + taxonomy + "-child-" + (child_level + 1)).html('<select class="select"><option value="">--</option></select>');
+			$(child_selector).html('<option value="-1">- ' + $(child_selector).data("tips") + ' -</option>');
 		}
 	});
 

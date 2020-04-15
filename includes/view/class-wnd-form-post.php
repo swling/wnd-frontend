@@ -156,6 +156,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'checked'  => $current_term_id, //default checked value
 				'label'    => $label,
 				'class'    => $dynamic_sub ? 'dynamic-sub' : false,
+				'data'     => ['child_level' => 0],
 			]
 		);
 	}
@@ -165,7 +166,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *其具体筛选项，将跟随上一级动态菜单而定
 	 *@since 2020.04.14
 	 **/
-	public function add_dynamic_sub_post_category_select(string $taxonomy, int $child_level = 1, string $label = '', $tips = '') {
+	public function add_dynamic_sub_post_category_select($taxonomy, $child_level = 1, $label = '', $tips = '') {
 		$option_data = ['- ' . $tips . ' -' => -1];
 
 		// 获取当前文章已选择分类id
@@ -180,7 +181,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'required' => false,
 				'checked'  => $current_term_id, //default checked value
 				'label'    => $label,
-				'class'    => 'dynamic-sub ' . $taxonomy . '-child-' . $child_level,
+				'class'    => 'dynamic-sub ' . 'dynamic-sub-' . $taxonomy . ' ' . $taxonomy . '-child-' . $child_level,
 				'data'     => ['child_level' => $child_level, 'tips' => $tips],
 			]
 		);
