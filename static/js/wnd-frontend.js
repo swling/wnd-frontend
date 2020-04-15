@@ -1042,8 +1042,8 @@ jQuery(document).ready(function($) {
 		var child_level = $(this).data("child_level");
 		var required = $(this).prop("required");
 
-		var child_selector = "." + taxonomy + "-child-" + (child_level + 1);
-		var tips = $(child_selector).data("tips") || "";
+		var child_selector = $("." + taxonomy + "-child-" + (child_level + 1));
+		var tips = child_selector.data("tips") || "";
 
 		// 一级分类变动，则重置所有子类
 		if (0 == child_level) {
@@ -1067,12 +1067,12 @@ jQuery(document).ready(function($) {
 				},
 
 				success: function(html) {
-					$(child_selector).html(html);
-					$(child_selector).addClass("is-active");
+					child_selector.html(html);
+					child_selector.addClass("is-active");
 				}
 			});
 		} else {
-			$(child_selector).html('<option value="-1">- ' + $(child_selector).data("tips") + ' -</option>');
+			child_selector.html('<option value="-1">- ' + child_selector.data("tips") + ' -</option>');
 		}
 	});
 
