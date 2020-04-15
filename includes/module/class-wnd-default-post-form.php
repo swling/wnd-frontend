@@ -31,7 +31,7 @@ class Wnd_Default_Post_Form extends Wnd_Module {
 		$form->add_post_excerpt();
 
 		// 分类
-		$form->add_post_category_select('category');
+		$form->add_post_term_select('category');
 
 		// 标签
 		$form->add_post_tags('post_tag', __('请用回车键区分多个标签', 'wnd'));

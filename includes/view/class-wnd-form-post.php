@@ -133,18 +133,18 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		);
 	}
 
-	public function add_post_category_select($taxonomy, $label = '', $required = true, $dynamic_sub = false) {
+	public function add_post_term_select($taxonomy, $label = '', $required = true, $dynamic_sub = false) {
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
 		}
 
 		// 获取当前文章已选择分类id
-		$current_term_ids = static::get_post_current_term_ids($this->post_id, $taxonomy);
+		$current_term_ids = static::get_post_current_terms($this->post_id, $taxonomy);
 		$current_term_id  = $current_term_ids ? reset($current_term_ids) : 0;
 
 		// 获取taxonomy下的 term 键值对
-		$option_data = static::get_taxonomy_option_data($taxonomy, $dynamic_sub);
+		$option_data = static::get_terms_option_data($taxonomy, $dynamic_sub);
 		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => -1], $option_data);
 
 		// 新增表单字段
@@ -166,11 +166,11 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *其具体筛选项，将跟随上一级动态菜单而定
 	 *@since 2020.04.14
 	 **/
-	public function add_dynamic_sub_post_category_select($taxonomy, $child_level = 1, $label = '', $tips = '') {
+	public function add_dynamic_sub_category_select($taxonomy, $child_level = 1, $label = '', $tips = '') {
 		$option_data = ['- ' . $tips . ' -' => -1];
 
 		// 获取当前文章已选择分类id
-		$current_term_ids = static::get_post_current_term_ids($this->post_id, $taxonomy);
+		$current_term_ids = static::get_post_current_terms($this->post_id, $taxonomy);
 		$current_term_id  = $current_term_ids ? reset($current_term_ids) : 0;
 
 		// 新增表单字段
@@ -191,17 +191,17 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *分类复选框
 	 *
 	 */
-	public function add_post_category_checkbox($taxonomy, $label = '') {
+	public function add_post_term_checkbox($taxonomy, $label = '') {
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
 		}
 
 		// 获取当前文章已选择分类ids
-		$current_term_ids = static::get_post_current_term_ids($this->post_id, $taxonomy);
+		$current_term_ids = static::get_post_current_terms($this->post_id, $taxonomy);
 
 		// 获取taxonomy下的 term 键值对
-		$option_data = static::get_taxonomy_option_data($taxonomy);
+		$option_data = static::get_terms_option_data($taxonomy);
 
 		$this->add_checkbox(
 			[
@@ -484,23 +484,27 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *获取当前文章已选择term ids
+	 *获取当前文章已选择terms数组
+	 *分类：返回ID数组
+	 *标签：返回slug数组
 	 */
-	public static function get_post_current_term_ids($post_id, $taxonomy): array{
-		$current_terms    = get_the_terms($post_id, $taxonomy) ?: [];
-		$current_term_ids = [];
+	public static function get_post_current_terms($post_id, $taxonomy): array{
+		$current_terms      = get_the_terms($post_id, $taxonomy) ?: [];
+		$current_terms_data = [];
 		foreach ($current_terms as $current_term) {
-			$current_term_ids[] = $current_term->term_id;
+			$current_terms_data[] = is_taxonomy_hierarchical($taxonomy) ? $current_term->term_id : $current_term->slug;
 		}
 		unset($current_terms, $current_term);
 
-		return $current_term_ids;
+		return $current_terms_data;
 	}
 
 	/**
-	 *获取指定taxonomy下的term数组键值对：[$term->name] => $term->term_id
+	 *获取指定taxonomy下的terms数组键值对：
+	 *分类：[$term->name] => $term->term_id
+	 *标签：[$term->name] => $term->slug
 	 */
-	public static function get_taxonomy_option_data($taxonomy, $top_level = false): array{
+	public static function get_terms_option_data($taxonomy, $top_level = false): array{
 		$args = ['taxonomy' => $taxonomy, 'hide_empty' => false];
 		if ($top_level) {
 			$args['parent'] = 0;
@@ -509,7 +513,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$terms       = get_terms($args) ?: [];
 		$option_data = [];
 		foreach ($terms as $term) {
-			$option_data[$term->name] = $term->term_id;
+			// 如果分类名称为整数，则需要转换，否则数组会出错
+			$name               = is_numeric($term->name) ? '(' . $term->name . ')' : $term->name;
+			$option_data[$name] = is_taxonomy_hierarchical($taxonomy) ? $term->term_id : $term->slug;
 		}
 		unset($term);
 
