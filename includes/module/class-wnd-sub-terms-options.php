@@ -17,6 +17,9 @@ class Wnd_Sub_Terms_Options extends Wnd_Module {
 		];
 		$args  = wp_parse_args($args, $defaults);
 		$terms = get_terms($args);
+		if (!$terms) {
+			return '';
+		}
 
 		$tips = $args['tips'];
 		$html = '';

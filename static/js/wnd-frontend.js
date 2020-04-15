@@ -1051,6 +1051,8 @@ jQuery(document).ready(function($) {
 				$(this).html('<option value="-1">- ' + $(this).data("tips") + ' -</option>');
 				$(this).removeClass("is-active");
 			});;
+
+			$(".dynamic-sub-" + taxonomy).prop("disabled", false);
 		}
 
 		if (term_id != -1) {
@@ -1067,8 +1069,22 @@ jQuery(document).ready(function($) {
 				},
 
 				success: function(html) {
-					child_selector.html(html);
-					child_selector.addClass("is-active");
+					/**
+					 *如果子类可选，则添加父类required属性; 反之，无论父类是否必选，子类必须移除required
+					 *如果子级分类不可用，则子级及往后其他子类设置为disabled
+					 */
+					if (html) {
+						child_selector.html(html);
+						child_selector.prop("required", required);
+						child_selector.addClass("is-active");
+					} else {
+						child_selector.prop("required", false);
+						$(".dynamic-sub-" + taxonomy).each(function() {
+							if ($(this).data("child_level") > child_level) {
+								$(this).prop("disabled", true);
+							}
+						});;
+					}
 				}
 			});
 		} else {
