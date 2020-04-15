@@ -396,9 +396,9 @@ class Wnd_Form {
 		$html .= '<div class="select">';
 		$html .= '<select' . $this->build_input_id($input_value) . ' class="' . $this->get_class($input_value) . '"' . $this->build_input_attr($input_value) . '>';
 		foreach ($input_value['options'] as $key => $value) {
-			$checked = ($input_value['checked'] == $value) ? ' selected="selected"' : '';
+			$checked = ($input_value['checked'] === $value) ? ' selected="selected"' : '';
 			$html .= '<option value="' . $value . '"' . $checked . '>' . $key . '</option>';
-		}
+		}unset($key, $value);
 		$html .= '</select>';
 		$html .= '</div>';
 		$html .= '</div>';
@@ -411,7 +411,7 @@ class Wnd_Form {
 		foreach ($input_value['options'] as $key => $value) {
 			$input_id = md5($key . $input_key);
 			$html .= '<input id="' . $input_id . '" class="' . $this->get_class($input_value) . '" value="' . $value . '"' . $this->build_input_attr($input_value);
-			$html .= ($input_value['checked'] == $value) ? ' checked="checked">' : '>';
+			$html .= ($input_value['checked'] === $value) ? ' checked="checked">' : '>';
 
 			$html .= '<label for="' . $input_id . '" class="radio">' . $key . '</label>';
 		}unset($key, $value);
@@ -429,7 +429,7 @@ class Wnd_Form {
 			if (is_array($input_value['checked'])) {
 				$html .= in_array($value, $input_value['checked']) ? ' checked="checked">' : '>';
 			} else {
-				$html .= ($input_value['checked'] == $value) ? ' checked="checked">' : '>';
+				$html .= ($input_value['checked'] === $value) ? ' checked="checked">' : '>';
 			}
 
 			$html .= '<label for="' . $input_id . '" class="checkbox">' . $key . '</label>';
