@@ -139,9 +139,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			return;
 		}
 
-		// 获取当前文章已选择分类id
-		$current_term_ids = static::get_post_current_terms($this->post_id, $taxonomy);
-		$current_term_id  = $current_term_ids ? reset($current_term_ids) : 0;
+		// 获取当前文章已选择分类id或标签slug数组
+		$current_terms   = static::get_post_current_terms($this->post_id, $taxonomy);
+		$current_term_id = $current_terms ? reset($current_terms) : 0;
 
 		// 获取taxonomy下的 term 键值对
 		$option_data = static::get_terms_option_data($taxonomy, $dynamic_sub);
@@ -169,9 +169,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	public function add_dynamic_sub_category_select($taxonomy, $child_level = 1, $label = '', $tips = '') {
 		$option_data = ['- ' . $tips . ' -' => -1];
 
-		// 获取当前文章已选择分类id
-		$current_term_ids = static::get_post_current_terms($this->post_id, $taxonomy);
-		$current_term_id  = $current_term_ids ? reset($current_term_ids) : 0;
+		// 获取当前文章已选择分类id或标签slug数组
+		$current_terms   = static::get_post_current_terms($this->post_id, $taxonomy);
+		$current_term_id = $current_terms ? reset($current_terms) : 0;
 
 		// 新增表单字段
 		$this->add_select(
@@ -197,8 +197,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			return;
 		}
 
-		// 获取当前文章已选择分类ids
-		$current_term_ids = static::get_post_current_terms($this->post_id, $taxonomy);
+		// 获取当前文章已选择分类id或标签slug数组
+		$current_terms = static::get_post_current_terms($this->post_id, $taxonomy);
 
 		// 获取taxonomy下的 term 键值对
 		$option_data = static::get_terms_option_data($taxonomy);
@@ -207,7 +207,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			[
 				'name'    => '_term_' . $taxonomy . '[]',
 				'options' => $option_data,
-				'checked' => $current_term_ids,
+				'checked' => $current_terms,
 				'label'   => $label,
 			]
 		);
