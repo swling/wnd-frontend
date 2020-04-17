@@ -193,6 +193,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	// Image upload
 	public function add_image_upload($args) {
 		$defaults = [
+			'class'          => 'upload-field',
 			'label'          => 'Image upland',
 			'name'           => 'wnd_file',
 			'file_id'        => 0,
@@ -248,6 +249,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	// File upload
 	public function add_file_upload($args) {
 		$defaults = [
+			'class'         => 'upload-field',
 			'label'         => 'File upload',
 			'name'          => 'wnd_file',
 			'file_id'       => 0,
@@ -446,7 +448,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			}
 
 			$html .= '<div class="attachment-' . $attachment_id . ' column is-narrow">';
-			$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '"height="' . $args['thumbnail_size']['height'] . '" width="' . $args['thumbnail_size']['width'] . '"></a>';
+			$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '" height="' . $args['thumbnail_size']['height'] . '" width="' . $args['thumbnail_size']['width'] . '"></a>';
 			$html .= '<a class="delete" data-id="' . $id . '" data-file_id="' . $attachment_id . '"></a>';
 			$html .= '</div>';
 		}
