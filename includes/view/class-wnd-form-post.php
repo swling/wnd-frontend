@@ -133,7 +133,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		);
 	}
 
-	public function add_post_term_select($taxonomy, $label = '', $required = true, $dynamic_sub = false) {
+	public function add_post_term_select($args, $label = '', $required = true, $dynamic_sub = false) {
+		$taxonomy        = $args['taxonomy'] ?? false;
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
@@ -144,7 +145,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$current_term  = $current_terms ? reset($current_terms) : 0;
 
 		// 获取taxonomy下的 term 键值对
-		$option_data = static::get_terms_option_data($taxonomy, $dynamic_sub);
+		$option_data = static::get_terms_data($args);
 		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => -1], $option_data);
 
 		// 新增表单字段
@@ -164,6 +165,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	/**
 	 *动态子类下拉菜单
 	 *其具体筛选项，将跟随上一级动态菜单而定
+	 *@see Wnd\Module\Wnd_Sub_Terms_Options::build()
+	 *
 	 *@since 2020.04.14
 	 **/
 	public function add_dynamic_sub_term_select($taxonomy, $child_level = 1, $label = '', $tips = '') {
@@ -191,7 +194,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *分类复选框
 	 *
 	 */
-	public function add_post_term_checkbox($taxonomy, $label = '') {
+	public function add_post_term_checkbox($args, $label = '') {
+		$taxonomy        = $args['taxonomy'] ?? false;
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
@@ -201,7 +205,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$current_terms = static::get_post_current_terms($this->post_id, $taxonomy);
 
 		// 获取taxonomy下的 term 键值对
-		$option_data = static::get_terms_option_data($taxonomy);
+		$option_data = static::get_terms_data($args);
 
 		$this->add_checkbox(
 			[
@@ -505,18 +509,20 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *分类：[$term->name] => $term->term_id
 	 *标签：[$term->name] => $term->slug
 	 */
-	public static function get_terms_option_data($taxonomy, $top_level = false): array{
-		$args = ['taxonomy' => $taxonomy, 'hide_empty' => false];
-		if ($top_level) {
-			$args['parent'] = 0;
-		}
+	public static function get_terms_data($args): array{
+		$defaults = [
+			'taxonomy'   => 'category',
+			'hide_empty' => false,
+			'parent'     => 0,
+		];
 
+		$args        = wp_parse_args($args, $defaults);
 		$terms       = get_terms($args) ?: [];
 		$option_data = [];
 		foreach ($terms as $term) {
 			// 如果分类名称为整数，则需要转换，否则数组会出错
 			$name               = is_numeric($term->name) ? '(' . $term->name . ')' : $term->name;
-			$option_data[$name] = is_taxonomy_hierarchical($taxonomy) ? $term->term_id : $term->slug;
+			$option_data[$name] = is_taxonomy_hierarchical($args['taxonomy']) ? $term->term_id : $term->slug;
 		}
 		unset($term);
 
