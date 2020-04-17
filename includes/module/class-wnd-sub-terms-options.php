@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Module;
 
+use Wnd\View\Wnd_Form_post;
+
 /**
  *@since 2020.04.14
  *列出term下拉选项
@@ -16,7 +18,7 @@ class Wnd_Sub_Terms_Options extends Wnd_Module {
 			'order'      => 'DESC',
 		];
 		$args  = wp_parse_args($args, $defaults);
-		$terms = get_terms($args);
+		$terms = Wnd_Form_post::get_terms_data($args);
 		if (!$terms) {
 			return '';
 		}
@@ -25,8 +27,8 @@ class Wnd_Sub_Terms_Options extends Wnd_Module {
 		$html = '';
 
 		$html .= '<option value="-1">- ' . $args['tips'] . ' -</option>';
-		foreach ($terms as $term) {
-			$html .= '<option value="' . $term->term_id . '">' . $term->name . '</option>';
+		foreach ($terms as $key => $value) {
+			$html .= '<option value="' . $value . '">' . $key . '</option>';
 		}
 		unset($term);
 
