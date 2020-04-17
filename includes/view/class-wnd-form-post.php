@@ -151,7 +151,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		// 新增表单字段
 		$this->add_select(
 			[
-				'name'     => '_term_' . $taxonomy . ($dynamic_sub ? '[]' : ''),
+				'name'     => '_term_' . $taxonomy . '[]',
 				'options'  => $option_data,
 				'required' => $required,
 				'checked'  => $current_term, //default checked value
