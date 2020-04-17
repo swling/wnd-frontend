@@ -389,7 +389,7 @@ class Wnd_Form {
 		$html .= static::build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
 			$input_id = md5($key . $input_key);
-			$html .= '<input id="' . $input_id . '"' . static::build_input_attr($input_value);
+			$html .= '<input id="' . $input_id . '" value="' . $value . '"' . static::build_input_attr($input_value);
 			$html .= ($input_value['checked'] === $value) ? ' checked="checked">' : '>';
 
 			$html .= '<label for="' . $input_id . '" class="radio">' . $key . '</label>';
@@ -404,7 +404,7 @@ class Wnd_Form {
 		$html .= static::build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
 			$input_id = md5($key . $input_key);
-			$html .= '<input id="' . $input_id . '"' . static::build_input_attr($input_value);
+			$html .= '<input id="' . $input_id . '" value="' . $value . '"' . static::build_input_attr($input_value);
 			if (is_array($input_value['checked'])) {
 				$html .= in_array($value, $input_value['checked']) ? ' checked="checked">' : '>';
 			} else {
