@@ -153,7 +153,7 @@ function wnd_demo_form() {
 			'options'  => ['select1' => 'value1', 'select2' => 'value2'],
 			'label'    => 'Dropdown1',
 			'required' => false,
-			'checked'  => 'value2', //default checked value
+			'selected' => 'value2', //default selected value
 		]
 	);
 
@@ -164,7 +164,7 @@ function wnd_demo_form() {
 			'options'  => ['select1' => 'value1', 'select2' => 'value2'],
 			'label'    => 'Dropdown2',
 			'required' => false,
-			'checked'  => 'value2', //default checked value
+			'selected' => 'value2', //default selected value
 		]
 	);
 

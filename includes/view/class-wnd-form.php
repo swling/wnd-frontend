@@ -47,7 +47,7 @@ class Wnd_Form {
 		'label'       => null,
 		'options'     => [], //value of select/radio. Example: [label=>value]
 		'checked'     => null, // checked value of select/radio; bool of checkbox
-
+		'selected'    => null, // selected value if select
 		'required'    => false,
 		'disabled'    => false,
 		'autofocus'   => false,
@@ -59,6 +59,7 @@ class Wnd_Form {
 		'max'         => '',
 		'step'        => '',
 		'pattern'     => '',
+		'multiple'    => '',
 
 		// icon and addon
 		'icon_left'   => null,
@@ -374,7 +375,12 @@ class Wnd_Form {
 		$html .= '<div class="select">';
 		$html .= '<select' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
 		foreach ($input_value['options'] as $key => $value) {
-			$checked = ($input_value['checked'] === $value) ? ' selected="selected"' : '';
+			if (is_array($input_value['selected'])) {
+				$checked = in_array($value, $input_value['selected']) ? ' selected="selected"' : '';
+			} else {
+				$checked = ($input_value['selected'] === $value) ? ' selected="selected"' : '';
+			}
+
 			$html .= '<option value="' . $value . '"' . $checked . '>' . $key . '</option>';
 		}unset($key, $value);
 		$html .= '</select>';
@@ -581,7 +587,7 @@ class Wnd_Form {
 	 *不含：Textarea value属性
 	 */
 	protected static function build_input_attr($input_value) {
-		$bool_attrs   = ['readonly', 'disabled', 'autofocus', 'required'];
+		$bool_attrs   = ['readonly', 'disabled', 'autofocus', 'required', 'multiple'];
 		$normal_attrs = ['class', 'value', 'type', 'name', 'placeholder', 'size', 'maxlength', 'min', 'max', 'step', 'pattern'];
 		$attr         = '';
 

@@ -120,7 +120,7 @@ $form->add_select(
 		'options'  => ['select1' => 'value1', 'select2' => 'value2'],
 		'label'    => 'Dropdown',
 		'required' => false,
-		'checked'  => 'value2', //default checked value
+		'selected' => 'value2', //default selected value
 	]
 );
 
