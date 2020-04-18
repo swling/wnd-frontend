@@ -15,7 +15,7 @@ function wnd_list_table(WP_Query $query) {
  *@since 2019.05.23
  *面包屑导航
  **/
-function wnd_breadcrumb($font_size = 'is-small') {
+function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 	if (is_home() or is_author()) {
 		return;
 	}
@@ -44,7 +44,7 @@ function wnd_breadcrumb($font_size = 'is-small') {
 			$post_id = $queried_object->post_parent ?: $queried_object->ID;
 
 			foreach ($taxonomies as $taxonomy) {
-				if (!is_taxonomy_hierarchical($taxonomy->name) or !$taxonomy->public) {
+				if ($hierarchical and !is_taxonomy_hierarchical($taxonomy->name) or !$taxonomy->public) {
 					continue;
 				}
 
