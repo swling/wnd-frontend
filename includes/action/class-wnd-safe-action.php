@@ -20,32 +20,10 @@ class Wnd_Safe_Action extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => __('未指定方法', 'wnd')];
 		}
 
-		if (!method_exists(__CLASS__, $method)) {
-			return ['status' => 0, 'msg' => __('指定方法不可用', 'wnd')];
-		}
-
-		return self::$method();
-	}
-
-	/**
-	 *@since 2019.01.16
-	 *@param $_REQUEST['post_id']
-	 */
-	public static function update_views() {
-		$post_id = (int) $_REQUEST['param'];
-		if (!$post_id) {
-			return;
-		}
-
-		// 更新字段信息
-		if (wnd_inc_post_meta($post_id, 'views', 1)) {
-			do_action('wnd_update_views', $post_id);
-			return ['status' => 1, 'msg' => time()];
-
-			//字段写入失败，清除对象缓存
-		} else {
-			wp_cache_delete($post_id, 'post_meta');
-			return ['status' => 0, 'msg' => time()];
-		}
+		/**
+		 *执行Action
+		 *
+		 */
+		return apply_filters('wnd_safe_action_return', ['status' => 0, 'msg' => __('默认安全 safe action 响应消息')]);
 	}
 }

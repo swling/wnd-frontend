@@ -280,6 +280,20 @@ apply_filters('wnd_breadcrumb_right', $breadcrumb_right);
 ```php
 apply_filters('wnd_post_thumbnail', $html, $post_id, $width, $height);
 ```
+## wnd_safe_action
+```php
+/**
+*Wnd_Safe_Action
+*前端可直接向rest api发起：wnd_safe_action操作，以执行一些请求或非敏感类操作
+*由于do_action 没有返回值，无法对响应的操作返回消息给前端，故此用filter替代操作
+*WP中filter与action的底层实质相同
+*
+*@since 2020.04.18
+*@see Wnd\Action\Wnd_Safe_Action
+*/
+apply_filters('wnd_safe_action_return');
+```
+
 # action
 ```php
 ##单上传文件后
@@ -503,4 +517,11 @@ namespace Wndt\Action;
 *注意：需要对应语言包支持；暂只支持中英双语
 */
 $_GET['lang']
+```
+
+## 统计浏览量
+```JavaScript
+<JavaScript>
+wnd_ajax_update_views(post_id, interval = 3600);
+</JavaScript>
 ```
