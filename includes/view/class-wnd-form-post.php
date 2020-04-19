@@ -108,7 +108,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		 *获取当前post 已选term数据
 		 */
 		$this->taxonomies    = get_object_taxonomies($this->post_type, 'names');
-		$this->current_terms = static::get_current_terms();
+		$this->current_terms = $this->taxonomies ? static::get_current_terms() : [];
 
 		// 文章表单固有字段
 		if (!$input_fields_only) {
@@ -197,12 +197,12 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}unset($current_term);
 
 		// 根据已选择的一级 term 获取对应层级的子类 ids 并构建下拉数组对
+		$option_data         = ['- ' . $tips . ' -' => -1];
 		$this_level_term_ids = Wnd_Term::get_term_children_by_level($top_level_term_id, $taxonomy, $child_level);
 		foreach ($this_level_term_ids as $term_id) {
 			$term                     = get_term($term_id);
 			$option_data[$term->name] = $term_id;
 		}unset($this_level_term_ids, $term_id);
-		$option_data = array_merge(['- ' . $tips . ' -' => -1], $option_data);
 
 		// 新增表单字段
 		$this->add_select(
