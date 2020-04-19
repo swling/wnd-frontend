@@ -31,7 +31,11 @@ class Wnd_Default_Post_Form extends Wnd_Module {
 		$form->add_post_excerpt();
 
 		// 分类
-		$form->add_post_term_select(['taxonomy' => 'category']);
+		$form->add_html('<div class="field is-horizontal"><div class="field-body">');
+		$form->add_post_term_select(['taxonomy' => 'category'], '', true, true);
+		$form->add_dynamic_sub_term_select('category', 1, '', __('二级分类', 'wnd'));
+		$form->add_dynamic_sub_term_select('category', 2, '', __('三级分类', 'wnd'));
+		$form->add_html('</div></div>');
 
 		// 标签
 		$form->add_post_tags('post_tag', __('请用回车键区分多个标签', 'wnd'));

@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\View\Wnd_Form_post;
+use Wnd\Model\Wnd_Term;
 
 /**
  *@since 2020.04.14
@@ -18,7 +18,7 @@ class Wnd_Sub_Terms_Options extends Wnd_Module {
 			'order'      => 'DESC',
 		];
 		$args  = wp_parse_args($args, $defaults);
-		$terms = Wnd_Form_post::get_terms_data($args);
+		$terms = Wnd_Term::get_terms_data($args);
 		if (!$terms) {
 			return '';
 		}

@@ -2,6 +2,7 @@
 namespace Wnd\View;
 
 use Wnd\Model\Wnd_Post;
+use Wnd\Model\Wnd_Term;
 use Wnd\Template\Wnd_Term_Tpl;
 
 /**
@@ -20,6 +21,17 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	protected $post_parent;
 
 	protected $post;
+
+	/**
+	 * 当post已选的Terms
+	 * [
+	 *	${taxonomy}=>[term_id1,term_id2]
+	 * ]
+	 */
+	protected $current_terms = [];
+
+	// 当前post 支持的 taxonomy
+	protected $taxonomies = [];
 
 	static protected $default_post = [
 		'ID'                    => 0,
@@ -90,6 +102,14 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		 **/
 		$this->post_type = $this->post_id ? $this->post->post_type : $post_type;
 
+		/**
+		 *@since 2020.04.19
+		 *获取当前Post_type 的所有 Taxonomy
+		 *获取当前post 已选term数据
+		 */
+		$this->taxonomies    = get_object_taxonomies($this->post_type, 'names');
+		$this->current_terms = static::get_current_terms();
+
 		// 文章表单固有字段
 		if (!$input_fields_only) {
 			$this->add_hidden('_post_ID', $this->post_id);
@@ -133,6 +153,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		);
 	}
 
+	// Term 分类单选下拉：本方法不支持复选
 	public function add_post_term_select($args_or_taxonomy, $label = '', $required = true, $dynamic_sub = false) {
 		$taxonomy        = is_array($args_or_taxonomy) ? $args_or_taxonomy['taxonomy'] : $args_or_taxonomy;
 		$taxonomy_object = get_taxonomy($taxonomy);
@@ -140,11 +161,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			return;
 		}
 
-		// 获取当前文章已选择分类id或标签slug数组
-		$current_terms = static::get_post_current_terms($this->post_id, $taxonomy);
-
 		// 获取taxonomy下的 term 键值对
-		$option_data = static::get_terms_data($args_or_taxonomy);
+		$option_data = Wnd_Term::get_terms_data($args_or_taxonomy);
 		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => -1], $option_data);
 
 		// 新增表单字段
@@ -153,7 +171,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'name'     => '_term_' . $taxonomy . '[]',
 				'options'  => $option_data,
 				'required' => $required,
-				'selected' => $current_terms, //default checked value
+				'selected' => $this->current_terms[$taxonomy], //default checked value
 				'label'    => $label,
 				'class'    => $taxonomy . ($dynamic_sub ? ' dynamic-sub' : false),
 				'data'     => ['child_level' => 0],
@@ -162,17 +180,29 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *动态子类下拉菜单
+	 *动态子类下拉菜单，不支持复选
 	 *其具体筛选项，将跟随上一级动态菜单而定
 	 *@see Wnd\Module\Wnd_Sub_Terms_Options::build()
 	 *
 	 *@since 2020.04.14
 	 **/
 	public function add_dynamic_sub_term_select($taxonomy, $child_level = 1, $label = '', $tips = '') {
-		$option_data = ['- ' . $tips . ' -' => -1];
+		// 获取当前 post 已选择的 taxonomy 一级 term
+		$top_level_term_id = 0;
+		foreach ($this->current_terms[$taxonomy] as $current_term) {
+			if (1 == Wnd_Term::get_term_level($current_term, $taxonomy)) {
+				$top_level_term_id = $current_term;
+				break;
+			}
+		}unset($current_term);
 
-		// 获取当前文章已选择分类id或标签slug数组
-		$current_terms = static::get_post_current_terms($this->post_id, $taxonomy);
+		// 根据已选择的一级 term 获取对应层级的子类 ids 并构建下拉数组对
+		$this_level_term_ids = Wnd_Term::get_term_children_by_level($top_level_term_id, $taxonomy, $child_level);
+		foreach ($this_level_term_ids as $term_id) {
+			$term                     = get_term($term_id);
+			$option_data[$term->name] = $term_id;
+		}unset($this_level_term_ids, $term_id);
+		$option_data = array_merge(['- ' . $tips . ' -' => -1], $option_data);
 
 		// 新增表单字段
 		$this->add_select(
@@ -180,7 +210,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'name'     => '_term_' . $taxonomy . '[]',
 				'options'  => $option_data,
 				'required' => false,
-				'selected' => $current_terms, //default checked value
+				'selected' => $this->current_terms[$taxonomy], //default checked value
 				'label'    => $label,
 				'class'    => 'dynamic-sub ' . 'dynamic-sub-' . $taxonomy . ' ' . $taxonomy . '-child-' . $child_level,
 				'data'     => ['child_level' => $child_level, 'tips' => $tips],
@@ -192,26 +222,24 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *分类复选框
 	 *
 	 */
-	public function add_post_term_checkbox($args_or_taxonomy, $label = '') {
+	public function add_post_term_checkbox($args_or_taxonomy, $label = '', $required = true) {
 		$taxonomy        = is_array($args_or_taxonomy) ? $args_or_taxonomy['taxonomy'] : $args_or_taxonomy;
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
 		}
 
-		// 获取当前文章已选择分类id或标签slug数组
-		$current_terms = static::get_post_current_terms($this->post_id, $taxonomy);
-
 		// 获取taxonomy下的 term 键值对
-		$option_data = static::get_terms_data($args_or_taxonomy);
+		$option_data = Wnd_Term::get_terms_data($args_or_taxonomy);
 
 		$this->add_checkbox(
 			[
-				'name'    => '_term_' . $taxonomy . '[]',
-				'options' => $option_data,
-				'checked' => $current_terms,
-				'label'   => $label,
-				'class'   => $taxonomy,
+				'name'     => '_term_' . $taxonomy . '[]',
+				'options'  => $option_data,
+				'checked'  => $this->current_terms[$taxonomy],
+				'label'    => $label,
+				'class'    => $taxonomy,
+				'required' => $required,
 			]
 		);
 	}
@@ -220,26 +248,24 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *分类单选框
 	 *@since 2020.04.17
 	 */
-	public function add_post_term_radio($args_or_taxonomy, $label = '') {
+	public function add_post_term_radio($args_or_taxonomy, $label = '', $required = true) {
 		$taxonomy        = is_array($args_or_taxonomy) ? $args_or_taxonomy['taxonomy'] : $args_or_taxonomy;
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
 		}
 
-		// 获取当前文章已选择分类id或标签slug数组
-		$current_terms = static::get_post_current_terms($this->post_id, $taxonomy);
-
 		// 获取taxonomy下的 term 键值对
-		$option_data = static::get_terms_data($args_or_taxonomy);
+		$option_data = Wnd_Term::get_terms_data($args_or_taxonomy);
 
 		$this->add_radio(
 			[
-				'name'    => '_term_' . $taxonomy . '[]',
-				'options' => $option_data,
-				'checked' => $current_terms,
-				'label'   => $label,
-				'class'   => $taxonomy,
+				'name'     => '_term_' . $taxonomy . '[]',
+				'options'  => $option_data,
+				'checked'  => $this->current_terms[$taxonomy][0] ?? false,
+				'label'    => $label,
+				'class'    => $taxonomy,
+				'required' => $required,
 			]
 		);
 	}
@@ -515,44 +541,14 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *获取当前文章已选择terms数组
-	 *分类：返回ID数组
-	 *标签：返回slug数组
+	 *
+	 *获取当前 Post 全部 所选 term 分类
 	 */
-	public static function get_post_current_terms($post_id, $taxonomy): array{
-		$current_terms      = get_the_terms($post_id, $taxonomy) ?: [];
-		$current_terms_data = [];
-		foreach ($current_terms as $current_term) {
-			$current_terms_data[] = is_taxonomy_hierarchical($taxonomy) ? $current_term->term_id : $current_term->slug;
+	public function get_current_terms() {
+		foreach ($this->taxonomies as $taxonomy) {
+			$current_terms[$taxonomy] = Wnd_Term::get_current_terms_by_taxonomy($this->post_id, $taxonomy);
 		}
-		unset($current_terms, $current_term);
 
-		return $current_terms_data;
-	}
-
-	/**
-	 *获取指定taxonomy下的terms数组键值对：
-	 *分类：[$term->name] => $term->term_id
-	 *标签：[$term->name] => $term->slug
-	 */
-	public static function get_terms_data($args_or_taxonomy): array{
-		$defaults = [
-			'taxonomy'   => 'category',
-			'hide_empty' => false,
-			'parent'     => 0,
-		];
-
-		$args        = is_array($args_or_taxonomy) ? $args_or_taxonomy : ['taxonomy' => $args_or_taxonomy];
-		$args        = wp_parse_args($args, $defaults);
-		$terms       = get_terms($args) ?: [];
-		$option_data = [];
-		foreach ($terms as $term) {
-			// 如果分类名称为整数，则需要转换，否则数组会出错
-			$name               = is_numeric($term->name) ? '(' . $term->name . ')' : $term->name;
-			$option_data[$name] = is_taxonomy_hierarchical($args['taxonomy']) ? $term->term_id : $term->slug;
-		}
-		unset($term);
-
-		return $option_data;
+		return $current_terms;
 	}
 }
