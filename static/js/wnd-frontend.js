@@ -489,7 +489,7 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 				"param": post_id,
 				"action": "wnd_safe_action",
 				"method": "update_views",
-				"_ajax_nonce": wnd.ajax_nonce,
+				"_ajax_nonce": wnd.safe_action_nonce,
 			},
 			// 提交中
 			beforeSend: function(xhr) {

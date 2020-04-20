@@ -21,7 +21,7 @@
  */
 
 // 版本
-define('WND_VER', '0.68');
+define('WND_VER', '0.69');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -61,13 +61,13 @@ add_action('wp_enqueue_scripts', function () {
 
 	// api及语言本地化
 	$wnd_data = [
-		'root_url'      => site_url(),
-		'rest_nonce'    => wp_create_nonce('wp_rest'),
-		'ajax_nonce'    => wp_create_nonce('wnd_safe_action'),
-		'interface_api' => '/wp-json/wnd/interface',
-		'rest_api'      => '/wp-json/wnd/rest-api',
-		'filter_api'    => '/wp-json/wnd/filter',
-		'msg'           => [
+		'root_url'          => site_url(),
+		'rest_nonce'        => wp_create_nonce('wp_rest'),
+		'safe_action_nonce' => wp_create_nonce('wnd_safe_action'),
+		'interface_api'     => '/wp-json/wnd/interface',
+		'rest_api'          => '/wp-json/wnd/rest-api',
+		'filter_api'        => '/wp-json/wnd/filter',
+		'msg'               => [
 			'required'            => __('必填项为空', 'wnd'),
 
 			'submit_successfully' => __('提交成功', 'wnd'),
