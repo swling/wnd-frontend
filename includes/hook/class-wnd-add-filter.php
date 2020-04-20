@@ -103,14 +103,14 @@ class Wnd_Add_Filter {
 	 *return apply_filters('wnd_safe_action_return', ['status' => 0, 'msg' => __('默认安全 safe action 响应消息')]);
 	 *
 	 */
-	public static function filter_safe_action_return() {
+	public static function filter_safe_action_return($default_msg): array{
 		if ('update_views' != $_REQUEST['method']) {
-			return;
+			return $default_msg;
 		}
 
 		$post_id = (int) $_REQUEST['param'];
 		if (!$post_id) {
-			return;
+			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}
 
 		// 更新字段信息
