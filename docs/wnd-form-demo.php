@@ -49,6 +49,18 @@ $form->add_text(
 	]
 );
 
+/**
+ *@since 2020.04.20
+ *当前字段可复制追加（需要对应前端js支持）
+ *
+ */
+$form->add_text(
+	[
+		'addon_right' => '<button type="button" class="button add-row">+</button>',
+		'name'        => 'test[]',
+	]
+);
+
 // has addon and icon
 $form->add_text(
 	[

@@ -287,7 +287,7 @@ function wnd_ajax_submit(form_id) {
 	var submit_button = $("#" + form_id + " [type='submit']");
 
 	// 是否在弹窗中操作
-	var is_in_modal = $("#" + form_id).parents(".modal.is-active").length ? true : false;
+	var is_in_modal = $("#" + form_id).closest(".modal.is-active").length ? true : false;
 
 	// 带有required属性的字段不能为空
 	var input_value = true;
@@ -618,7 +618,7 @@ jQuery(document).ready(function($) {
 					 *
 					 *ajax上传时，后端会自动根据post_parent和meta_key做常规处理，此处额外发送，供开发中其他特殊情况使用
 					 */
-					var parent_form = _this.parents("form");
+					var parent_form = _this.closest("form");
 					if (parent_form.length > 0 && parent_form.find("input[name='_post_post_type']").val() == "attachment") {
 						parent_form.find("input[name='_post_ID']").val(response[i].data.id);
 
@@ -765,7 +765,7 @@ jQuery(document).ready(function($) {
 
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
-		var form_id = _this.parents("form").attr("id");
+		var form_id = _this.closest("form").attr("id");
 
 		var data = $(this).data();
 		data.action = "wnd_send_code";
@@ -812,7 +812,7 @@ jQuery(document).ready(function($) {
 	$("body").on("click", ".ajax-link", function() {
 
 		// 是否在弹窗中操作
-		var is_in_modal = $(this).parents(".modal.is-active").length ? true : false;
+		var is_in_modal = $(this).closest(".modal.is-active").length ? true : false;
 
 		// 点击频率控制
 		if (!can_click_ajax_link) {
@@ -917,7 +917,7 @@ jQuery(document).ready(function($) {
 	$("body").on("click", ".ajax-filter a", function() {
 
 		// 获取容器
-		var filter_parent = $(this).parents(".ajax-filter");
+		var filter_parent = $(this).closest(".ajax-filter");
 		var filter_id = filter_parent.attr("ID").split("-")[1];
 
 		// 提取data，并合并入参数
@@ -925,7 +925,7 @@ jQuery(document).ready(function($) {
 		filter_param = Object.assign(filter_param, html_data);
 
 		// 非分页情况，删除page请求参数
-		var is_pagination = $(this).parents(".pagination-list").length > 0 ? true : false;
+		var is_pagination = $(this).closest(".pagination-list").length > 0 ? true : false;
 		if (!is_pagination) {
 			delete filter_param.page;
 		}
@@ -1099,6 +1099,35 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
+	 *@since 2020.04.20
+	 *动态追加字段
+	 */
+	// add row
+	$("body").on("click", "form .add-row", function() {
+		var parent = $(this).closest(".field");
+
+		// 临时改变属性，以便复制给即将创建的字段
+		$(this).removeClass("add-row");
+		$(this).addClass("remove-row");
+		$(this).text("-");
+
+		// 获取改变后的Html
+		var html = parent[0].outerHTML;
+
+		// 还原当前字段
+		$(this).addClass("add-row");
+		$(this).removeClass("remove-row");
+		$(this).text("+");
+
+		// 创建新字段
+		parent.after(html);
+	});
+	// remov row
+	$("body").on("click", "form .remove-row", function() {
+		$(this).closest(".field").remove();
+	});
+
+	/**
 	 *@since 2019.03.28 表单改变时，移除提交按钮禁止状态,恢复提交文字
 	 */
 	$("body").on("change", "form", function() {
@@ -1111,7 +1140,7 @@ jQuery(document).ready(function($) {
 	 *@since 2019.03.10 ajax提交表单
 	 */
 	$("body").on("click", "[type='submit'].ajax-submit", function() {
-		var form_id = $(this).parents("form").attr("id");
+		var form_id = $(this).closest("form").attr("id");
 		if (form_id) {
 			wnd_ajax_submit(form_id);
 		} else {
@@ -1123,7 +1152,7 @@ jQuery(document).ready(function($) {
 	 *@since 2019.05.07 相册放大
 	 */
 	$("body").on("click", ".gallery img", function() {
-		var images = $(this).parents(".gallery").find("img");
+		var images = $(this).closest(".gallery").find("img");
 
 		/**
 		 *@link http://www.w3school.com.cn/jquery/traversing_each.asp

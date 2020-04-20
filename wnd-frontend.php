@@ -21,7 +21,7 @@
  */
 
 // 版本
-define('WND_VER', '0.67');
+define('WND_VER', '0.68');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
