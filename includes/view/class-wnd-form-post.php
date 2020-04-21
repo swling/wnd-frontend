@@ -222,7 +222,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *分类复选框
 	 *
 	 */
-	public function add_post_term_checkbox($args_or_taxonomy, $label = '', $required = true) {
+	public function add_post_term_checkbox($args_or_taxonomy, $label = '') {
 		$taxonomy        = is_array($args_or_taxonomy) ? $args_or_taxonomy['taxonomy'] : $args_or_taxonomy;
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
@@ -239,7 +239,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'checked'  => $this->current_terms[$taxonomy],
 				'label'    => $label,
 				'class'    => $taxonomy,
-				'required' => $required,
+				'required' => false,
 			]
 		);
 	}
