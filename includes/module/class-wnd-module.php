@@ -33,4 +33,26 @@ abstract class Wnd_Module {
 
 		return wnd_message($message, 'is-warning', true);
 	}
+
+	/**
+	 *构建系统通知
+	 */
+	public static function build_notification($notification) {
+		if (!$notification) {
+			return;
+		}
+
+		return wnd_notification($notification, 'is-primary', true);
+	}
+
+	/**
+	 *构建系统错误通知
+	 */
+	public static function build_error_notification($notification) {
+		if (!$notification) {
+			return;
+		}
+
+		return wnd_notification($notification, 'is-danger', false);
+	}
 }

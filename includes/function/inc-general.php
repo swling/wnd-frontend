@@ -146,9 +146,11 @@ function wnd_ajax_embed($template, $args = '') {
 	$args      = wp_parse_args($args);
 	$ajax_args = http_build_query($args);
 
-	echo '<div id="' . $div_id . '">';
-	echo '<script>wnd_ajax_embed(\'#' . $div_id . '\',\'' . $template . '\',\'' . $ajax_args . '\')</script>';
-	echo '</div>';
+	$html = '<div id="' . $div_id . '">';
+	$html .= '<script>wnd_ajax_embed(\'#' . $div_id . '\',\'' . $template . '\',\'' . $ajax_args . '\')</script>';
+	$html .= '</div>';
+
+	return $html;
 }
 
 /**

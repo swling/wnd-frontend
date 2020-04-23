@@ -44,10 +44,12 @@ class Wnd_Account_Form extends Wnd_Module {
 		 *@since 2019.09.19
 		 *绑定邮箱或手机
 		 */
-		$html = '<a onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">' . __('邮箱设置', 'wnd') . '</a> | ';
+		$html = '<div class="has-text-centered">';
+		$html .= '<a onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">' . __('邮箱设置', 'wnd') . '</a> | ';
 		$html .= $enable_sms ? '<a onclick="wnd_ajax_modal(\'wnd_bind_phone_form\')">' . __('手机设置', 'wnd') . '</a> | ' : '';
 		$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=reset_password\')">' . __('重置密码', 'wnd') . '</a>';
+		$html .= '</div>';
 
-		return $form->html . wnd_message($html, 'is-' . $second_color, true);
+		return $form->html . $html;
 	}
 }
