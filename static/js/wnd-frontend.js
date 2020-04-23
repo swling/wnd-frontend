@@ -27,6 +27,31 @@ function wnd_get_query_param(Param) {
 	return searchParams.get(Param);
 }
 
+/**
+ * 判断元素是否在可视范围
+ * alert($('.container').inView('topOnly'));
+ * alert($('.container').inView('bottomOnly'));
+ * alert($('.container').inView('both'));
+ */
+function wnd_in_view(element, inViewType) {
+	var viewport = {};
+	viewport.top = $(window).scrollTop();
+	viewport.bottom = viewport.top + $(window).height();
+	var bounds = {};
+	bounds.top = $($(element)).offset().top;
+	bounds.bottom = bounds.top + $($(element)).outerHeight();
+	switch (inViewType) {
+		case "bottom":
+			return ((bounds.bottom <= viewport.bottom) && (bounds.bottom >= viewport.top));
+		case "top":
+			return ((bounds.top <= viewport.bottom) && (bounds.top >= viewport.top));
+		case "both":
+			return ((bounds.top >= viewport.top) && (bounds.bottom <= viewport.bottom));
+		default:
+			return ((bounds.top >= viewport.top) && (bounds.bottom <= viewport.bottom));
+	}
+};
+
 // js 获取cookie
 function getCookie(c_name) {
 	if (document.cookie.length > 0) {
@@ -103,15 +128,6 @@ function wnd_alert_modal(html, is_gallery = false) {
 		$(".modal-entry").addClass("box");
 	}
 	$(".modal-entry").html(html);
-}
-
-// 弹出警告信息
-function wnd_alert_warning(msg) {
-	wnd_alert_modal(
-		'<div class="has-text-danger">' +
-		'<span class="icon"><i class="fa fa-exclamation-triangle"></i></span>' + msg +
-		'</div>'
-	);
 }
 
 // 直接弹出消息
@@ -281,13 +297,29 @@ function wnd_ajax_embed(container, module, param = 0) {
 	});
 }
 
+/**
+ * 根据当前表单可视状态，展示操作响应消息
+ * @since 2020.04.23
+ */
+function wnd_ajax_form_msg(form_id, msg, style) {
+	// 获取element
+	var ajax_msg_element = $("#" + form_id + " .ajax-message:first");
+
+	// 是否在弹窗中操作
+	var is_in_modal = $("#" + form_id).closest(".modal.is-active").length ? true : false;
+
+	if (is_in_modal || wnd_in_view(ajax_msg_element, "bottom")) {
+		wnd_ajax_msg(msg, style, "#" + form_id);
+	} else {
+		wnd_alert_msg('<div class="message ' + style + '"><div class="message-body">' + msg + '</div></div>');
+	}
+}
+
 //############################### 根据表单id自动提交表单 并根据返回代码执行对应操作
 function wnd_ajax_submit(form_id) {
 	// 提交按钮
 	var submit_button = $("#" + form_id + " [type='submit']");
 
-	// 是否在弹窗中操作
-	var is_in_modal = $("#" + form_id).closest(".modal.is-active").length ? true : false;
 
 	// 带有required属性的字段不能为空
 	var input_value = true;
@@ -330,11 +362,7 @@ function wnd_ajax_submit(form_id) {
 	});
 
 	if (input_value === false || option_value === false || textarea_value === false) {
-		if (is_in_modal) {
-			wnd_ajax_msg(wnd.msg.required, "is-danger", "#" + form_id);
-		} else {
-			wnd_alert_warning(wnd.msg.required);
-		}
+		wnd_ajax_form_msg(form_id, wnd.msg.required, "is-warning");
 		return false;
 	}
 
@@ -386,17 +414,18 @@ function wnd_ajax_submit(form_id) {
 
 				// 常规类，展示后端提示信息
 				case 1:
-					wnd_ajax_msg(response.msg, style, "#" + form_id);
+					wnd_ajax_form_msg(form_id, response.msg, style);
 					break;
 
 					//更新类
 				case 2:
-					wnd_ajax_msg(wnd.msg.submit_successfully + '<a href="' + response.data.url + '" target="_blank">&nbsp;' + wnd.msg.view + '</a>', style, "#" + form_id);
+					var msg = wnd.msg.submit_successfully + '<a href="' + response.data.url + '" target="_blank">&nbsp;' + wnd.msg.view + '</a>';
+					wnd_ajax_form_msg(form_id, msg, style);
 					break;
 
 					// 跳转类
 				case 3:
-					wnd_ajax_msg(wnd.msg.waiting, style, "#" + form_id);
+					wnd_ajax_form_msg(form_id, wnd.msg.waiting, style);
 					$(window.location).prop("href", response.data.redirect_to);
 					break;
 
@@ -413,24 +442,20 @@ function wnd_ajax_submit(form_id) {
 
 					// 下载类
 				case 6:
-					wnd_ajax_msg(wnd.msg.downloading, style, "#" + form_id, 5);
+					wnd_ajax_form_msg(form_id, wnd.msg.downloading, style);
 					$(window.location).prop("href", response.data.redirect_to);
 					break;
 
 					// 默认
 				default:
-					if (is_in_modal) {
-						wnd_ajax_msg(response.msg, style, "#" + form_id);
-					} else {
-						wnd_alert_msg('<div class="message ' + style + '"><div class="message-body">' + response.msg + '</div></div>');
-					}
+					wnd_ajax_form_msg(form_id, response.msg, style);
 					break;
 			}
 		},
 
 		// 提交错误
 		error: function() {
-			wnd_ajax_msg(wnd.msg.system_error, "is-danger", "#" + form_id);
+			wnd_ajax_form_msg(form_id, wnd.msg.system_error, "is-danger")
 			submit_button.removeClass("is-loading");
 			submit_button.text(wnd.msg.system_error);
 			submit_button.prop("disabled", true);
@@ -772,7 +797,7 @@ jQuery(document).ready(function($) {
 		data.phone = $("#" + form_id + " input[name='phone']").val();
 		data.email = $("#" + form_id + " input[name='_user_user_email']").val();
 		if (data.email == "" || data.phone == "") {
-			wnd_ajax_msg(wnd.msg.required, "is-danger", "#" + form_id);
+			wnd_ajax_msg(wnd.msg.required, "is-warning", "#" + form_id);
 			return false;
 		}
 
@@ -1167,5 +1192,13 @@ jQuery(document).ready(function($) {
 	 */
 	$("body").on("click", "#modal .modal-background,#modal .modal-close", function() {
 		wnd_reset_modal();
+	});
+
+	/**
+	 *@since 2020.04.23
+	 *关闭通知
+	 */
+	$("body").on("click", ".notification .delete", function() {
+		$(this).closest(".notification").slideUp();
 	});
 });

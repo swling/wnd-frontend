@@ -35,9 +35,9 @@ class Wnd_User_Center extends Wnd_Module {
 		 *重置密码面板：同时允许已登录及未登录用户
 		 */
 		if ('reset_password' == $do) {
-			$html = '<div id="user-center">';
+			$html = '<div id="user-center" class="content">';
 			$html .= Wnd_Reset_Password_Form::build($type);
-			$html .= '<div class="user-form"><div class="message is-' . $color . '"><div class="message-body">';
+			$html .= '<div class="has-text-centered">';
 			if (wnd_doing_ajax()) {
 				if ($ajax_type == 'modal') {
 					if ($type == 'email' and $enable_sms) {
@@ -73,7 +73,7 @@ class Wnd_User_Center extends Wnd_Module {
 					$html .= '<a href="' . add_query_arg('do', 'login') . '">' . __('登录', 'wnd') . '</a>';
 				}
 			}
-			$html .= '</div></div></div>';
+			$html .= '</div>';
 			$html .= '</div>';
 			return $html;
 		}
@@ -81,13 +81,13 @@ class Wnd_User_Center extends Wnd_Module {
 		/**
 		 *其他面板
 		 */
-		$html = '<div id="user-center">';
+		$html = '<div id="user-center" class="content">';
 		if (!$is_user_logged_in) {
 			switch ($do) {
 			case 'register':
 				// 关闭邮箱注册强制短信注册
 				$html .= Wnd_Reg_Form::build($type);
-				$html .= '<div class="user-form"><div class="message is-' . $color . '"><div class="message-body">';
+				$html .= '<div class="has-text-centered">';
 				if (wnd_doing_ajax()) {
 					//是否在ajax中
 					if ($ajax_type == 'modal') {
@@ -117,13 +117,13 @@ class Wnd_User_Center extends Wnd_Module {
 					$html .= '<a href="' . add_query_arg('do', 'login') . '">' . __('登录', 'wnd') . '</a>';
 
 				}
-				$html .= '</div></div></div>';
+				$html .= '</div>';
 				break;
 
 			default:
 			case 'login':
 				$html .= Wnd_Login_Form::build();
-				$html .= '<div class="user-form"><div class="message is-' . $color . '"><div class="message-body">';
+				$html .= '<div class="has-text-centered">';
 				if (wnd_doing_ajax()) {
 					if ($ajax_type == 'modal') {
 						$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=register\');">' . __('立即注册', 'wnd') . '</a> | ';
@@ -136,7 +136,7 @@ class Wnd_User_Center extends Wnd_Module {
 					$html .= '<a href="' . add_query_arg('do', 'register') . '">' . __('立即注册', 'wnd') . '</a> | ';
 					$html .= '<a href="' . add_query_arg('do', 'reset_password') . '">' . __('忘记密码', 'wnd') . '</a>';
 				}
-				$html .= '</div></div></div>';
+				$html .= '</div>';
 				break;
 			}
 

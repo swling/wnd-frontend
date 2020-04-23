@@ -229,3 +229,19 @@ function wnd_message($message, $color = '', $centered = false) {
 
 	return '<div class="' . $class . '"><div class="message-body">' . $message . '</div></div>';
 }
+
+/**
+ *构建系统通知
+ *@since 2020.04.23
+ */
+function wnd_notification($notification, $add_class = '', $delete = false) {
+	$class = 'notification is-light';
+	$class .= $add_class ? ' ' . $add_class : '';
+
+	$html = '<div class="' . $class . '">';
+	$html .= $delete ? '<button class="delete"></button>' : '';
+	$html .= $notification;
+	$html .= '</div>';
+
+	return $html;
+}
