@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\JsonGet;
 
 use Wnd\Model\Wnd_Term;
 
@@ -7,9 +7,9 @@ use Wnd\Model\Wnd_Term;
  *@since 2020.04.14
  *列出term下拉选项
  **/
-class Wnd_Sub_Terms_Options extends Wnd_Module {
+class Wnd_Sub_Terms extends Wnd_Json {
 
-	public static function build($args = []) {
+	public static function get($args = []) {
 		$defaults = [
 			'taxonomy'   => 'category',
 			'parent'     => 0,

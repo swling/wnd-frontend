@@ -3,7 +3,6 @@ namespace Wnd\Controller;
 
 use Exception;
 use Wnd\View\Wnd_Filter;
-use WP_REST_Server;
 
 /**
  *@since 2019.04.07 API改造
@@ -34,10 +33,10 @@ class Wnd_API {
 		// 数据处理
 		register_rest_route(
 			'wnd',
-			'rest-api',
+			'handler',
 			[
-				'methods'  => WP_REST_Server::ALLMETHODS,
-				'callback' => __CLASS__ . '::handle_rest_api',
+				'methods'  => 'POST',
+				'callback' => __CLASS__ . '::handle_action',
 			]
 		);
 
@@ -60,6 +59,16 @@ class Wnd_API {
 				'callback' => __CLASS__ . '::handle_interface',
 			]
 		);
+
+		// Json数据输出
+		register_rest_route(
+			'wnd',
+			'jsonget',
+			[
+				'methods'  => 'GET',
+				'callback' => __CLASS__ . '::handle_jsonget',
+			]
+		);
 	}
 
 	/**
@@ -78,10 +87,10 @@ class Wnd_API {
 			return ['status' => 0, 'msg' => __('未指定UI', 'wnd')];
 		}
 
-		$class_name = stripslashes_deep($_GET['module']);
-		$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\Module' : 'Wnd\Module';
-		$class      = $namespace . '\\' . $class_name;
-		$param      = $_GET['param'] ?? '';
+		$module    = stripslashes_deep($_GET['module']);
+		$namespace = (0 === stripos($module, 'Wndt')) ? 'Wndt\Module' : 'Wnd\Module';
+		$class     = $namespace . '\\' . $module;
+		$param     = $_GET['param'] ?? '';
 
 		/**
 		 *@since 2019.10.01
@@ -99,6 +108,38 @@ class Wnd_API {
 	}
 
 	/**
+	 *@since 2020.04.24
+	 *获取json data
+	 *@param $_GET['data'] 	string	后端响应
+	 *@param $_GET['param']	string	传参
+	 *
+	 *@since 2019.10.04
+	 *如需在第三方插件或主题拓展响应请定义类并遵循以下规则：
+	 *1、类名称必须以wndt为前缀
+	 *2、命名空间必须为：Wndt\JsonGet
+	 */
+	public static function handle_jsonget() {
+		if (!isset($_GET['data'])) {
+			return ['status' => 0, 'msg' => __('未指定Data', 'wnd')];
+		}
+
+		$module    = stripslashes_deep($_GET['data']);
+		$namespace = (0 === stripos($module, 'Wndt')) ? 'Wndt\JsonGet' : 'Wnd\JsonGet';
+		$class     = $namespace . '\\' . $module;
+		$param     = $_GET['param'] ?? '';
+
+		if (is_callable([$class, 'get'])) {
+			try {
+				return $param ? $class::get($param) : $class::get();
+			} catch (Exception $e) {
+				return ['status' => 0, 'msg' => $e->getMessage()];
+			}
+		} else {
+			return ['status' => 0, 'msg' => __('无效的Json Data', 'wnd')];
+		}
+	}
+
+	/**
 	 *@since 2019.04.07
 	 *数据处理
 	 *@param $_REQUEST['_ajax_nonce'] 	string 	wp nonce校验
@@ -109,14 +150,14 @@ class Wnd_API {
 	 *1、类名称必须以wndt为前缀
 	 *2、命名空间必须为：Wndt\Action
 	 */
-	public static function handle_rest_api(): array{
+	public static function handle_action(): array{
 		if (!isset($_REQUEST['action'])) {
 			return ['status' => 0, 'msg' => __('未指定Action', 'wnd')];
 		}
 
-		$class_name = stripslashes_deep($_REQUEST['action']);
-		$namespace  = (stripos($class_name, 'Wndt') === 0) ? 'Wndt\Action' : 'Wnd\Action';
-		$class      = $namespace . '\\' . $class_name;
+		$action    = stripslashes_deep($_REQUEST['action']);
+		$namespace = (0 === stripos($action, 'Wndt')) ? 'Wndt\Action' : 'Wnd\Action';
+		$class     = $namespace . '\\' . $action;
 
 		// nonce校验：action
 		if (!wp_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $_REQUEST['action'])) {

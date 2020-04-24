@@ -14,8 +14,9 @@ var lang = wnd_get_query_param("lang");
  *
  */
 var wnd_interface_api = wnd.root_url + wnd.interface_api + (lang ? '?lang=' + lang : '');
-var wnd_rest_api = wnd.root_url + wnd.rest_api + (lang ? '?lang=' + lang : '');
+var wnd_action_api = wnd.root_url + wnd.action_api + (lang ? '?lang=' + lang : '');
 var wnd_filter_api = wnd.root_url + wnd.filter_api + (lang ? '?lang=' + lang : '');
+var wnd_jsonget_api = wnd.root_url + wnd.jsonget_api + (lang ? '?lang=' + lang : '');
 
 /**
  *@since 2020.01.14
@@ -384,7 +385,7 @@ function wnd_ajax_submit(form_id) {
 	var form_data = new FormData($("#" + form_id).get(0));
 
 	$.ajax({
-		url: wnd_rest_api,
+		url: wnd_action_api,
 		dataType: "json",
 		cache: false,
 		contentType: false,
@@ -509,7 +510,7 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 		$.ajax({
 			type: "GET",
 			datatype: "json",
-			url: wnd_rest_api,
+			url: wnd_action_api,
 			data: {
 				"param": post_id,
 				"action": "wnd_safe_action",
@@ -577,7 +578,7 @@ jQuery(document).ready(function($) {
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
 		$.ajax({
-			url: wnd_rest_api,
+			url: wnd_action_api,
 			dataType: "json",
 			cache: false,
 			contentType: false,
@@ -721,7 +722,7 @@ jQuery(document).ready(function($) {
 		form_data.set("action", "wnd_delete_file");
 
 		$.ajax({
-			url: wnd_rest_api,
+			url: wnd_action_api,
 			dataType: "json",
 			cache: false,
 			contentType: false,
@@ -804,7 +805,7 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			type: "post",
 			dataType: "json",
-			url: wnd_rest_api,
+			url: wnd_action_api,
 			data: data,
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
@@ -862,7 +863,7 @@ jQuery(document).ready(function($) {
 		var _this = $(this);
 		$.ajax({
 			type: "POST",
-			url: wnd_rest_api,
+			url: wnd_action_api,
 			data: {
 				"action": action,
 				"param": $(this).data("param"),
@@ -1061,8 +1062,9 @@ jQuery(document).ready(function($) {
 	 */
 	$("body").on("change", "select.dynamic-sub", function() {
 		var taxonomy = $(this).prop("name");
-		var taxonomy = taxonomy.split("_term_")[1];
-		var taxonomy = taxonomy.split("[]")[0];
+		taxonomy = taxonomy.split("_term_")[1];
+		taxonomy = taxonomy.split("[]")[0];
+
 		var term_id = $(this).val();
 		var child_level = $(this).data("child_level");
 		var required = $(this).prop("required");
@@ -1083,9 +1085,9 @@ jQuery(document).ready(function($) {
 		if (term_id != -1) {
 			$.ajax({
 				type: "get",
-				url: wnd_interface_api,
+				url: wnd_jsonget_api,
 				data: {
-					"module": "wnd_sub_terms_options",
+					"data": "wnd_sub_terms",
 					"param": {
 						"parent": term_id,
 						"taxonomy": taxonomy,
