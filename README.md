@@ -82,11 +82,12 @@ wnd_meta：gallery (用户相册)
 # ajax交互概述：
 后端返回json属性：status,msg,data
 
-自定义rest api：		wp-json/wnd/rest-api 	Allow: GET, POST, PUT, PATCH, DELETE
+自定义action api：		wp-json/wnd/handler 	Allow: POST
 自定义interface api：	wp-json/wnd/interface	Allow: GET
 自定义filter api：		wp-json/wnd/filter	 	Allow: GET
+自定义jsonget api：		wp-json/wnd/jsonget	 	Allow: GET
 
-### rest api
+### action api
 提交的数据中必须包含：
 $_REQUEST['action']：该值为处理当前请求的控制类名称（不含命名空间）
 $_REQUEST['_ajax_nonce']
@@ -106,7 +107,7 @@ API统一将结果转为json格式，输出交付前端处理
 ### interface api
 UI请求无需nonce校验需要包含如下参数
 - $_GET['module']：该值为响应当前UI的类名称（不含命名空间）
-- $_GET['param']传递给UI类的参数(可选)
+- $_GET['param']：传递给UI类的参数(可选)
 UI类将返回字符串（通常为HTML字符串）交付前端
 
 
@@ -115,7 +116,21 @@ UI类将返回字符串（通常为HTML字符串）交付前端
 - 类名称必须以wndt为前缀
 - 命名空间必须为：Wndt\Module
 
-## @see /wnd-api.php
+### jsonGet api
+json获取请求无需nonce校验需要包含如下参数
+- $_GET['data']：该值为需要获取的数据处理类名称（不含命名空间）
+- $_GET['param']：传递给数据类的参数(可选)
+返回为json数据
+
+
+### 拓展jsonGet类
+如需在第三方插件或主题拓展JsonGet请定义类并遵循以下规则：
+- 类名称必须以wndt为前缀
+- 命名空间必须为：Wndt\JsonGet
+
+## @see /includes/controller/class-wnd-api.php
+
+# filter
 
 ```php
 // 预先在需要权限校验的地方，设置filter,若status 为 0，表示权限校验不通过，当前钩子所在函数操作会中断，将权限校验数组结果返回
@@ -126,9 +141,6 @@ function wnd_can_insert_post($default_return, $post_type, $update_id) {
 	}
 }
 ```
-
-# filter
-
 ## ajax表单数据
 ```php
 /**
