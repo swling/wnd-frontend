@@ -1,12 +1,14 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Utility\Wnd_Singleton_Trait;
+
 /**
  *@since 2019.01.24 WndWP所需独立数据表
  */
 class Wnd_DB {
 
-	private static $instance;
+	use Wnd_Singleton_Trait;
 
 	private function __construct() {
 		global $wpdb;
@@ -16,17 +18,6 @@ class Wnd_DB {
 
 		// 标签关联分类
 		$wpdb->wnd_terms = $wpdb->prefix . 'wnd_terms';
-	}
-
-	/**
-	 *单例模式
-	 */
-	public static function instance() {
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
 	}
 
 	/**

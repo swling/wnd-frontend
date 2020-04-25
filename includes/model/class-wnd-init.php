@@ -6,13 +6,14 @@ use Wnd\Hook\Wnd_Hook;
 use Wnd\Model\Wnd_DB;
 use Wnd\Model\Wnd_language;
 use Wnd\Model\Wnd_Optimization;
+use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
  *初始化 单例模式
  */
 class Wnd_Init {
 
-	private static $instance;
+	use Wnd_Singleton_Trait;
 
 	private function __construct() {
 		// Init
@@ -47,17 +48,6 @@ class Wnd_Init {
 		if (is_admin()) {
 			require WND_PATH . '/wnd-options.php';
 		}
-	}
-
-	/**
-	 *单例模式
-	 */
-	public static function instance() {
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
 	}
 
 	// Init

@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Wnd\Model\Wnd_Login_Social;
+use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
  *多语言
@@ -11,7 +12,7 @@ use Wnd\Model\Wnd_Login_Social;
  */
 class Wnd_language {
 
-	private static $instance;
+	use Wnd_Singleton_Trait;
 
 	private function __construct() {
 		// 加载语言包
@@ -35,17 +36,6 @@ class Wnd_language {
 
 		// 在用户完成注册时，将当前站点语言记录到用户字段
 		add_action('user_register', [__CLASS__, 'action_on_user_register'], 99, 1);
-	}
-
-	/**
-	 *单例模式
-	 */
-	public static function instance() {
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
 	}
 
 	/**

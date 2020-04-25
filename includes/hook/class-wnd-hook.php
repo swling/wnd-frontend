@@ -5,13 +5,14 @@ use Wnd\Hook\Wnd_Add_Action;
 use Wnd\Hook\Wnd_Add_Action_WP;
 use Wnd\Hook\Wnd_Add_Filter;
 use Wnd\Hook\Wnd_Add_Filter_WP;
+use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
  *Wnd Default Hook
  */
 class Wnd_Hook {
 
-	private static $instance;
+	use Wnd_Singleton_Trait;
 
 	private function __construct() {
 		// Wnd Action Hook
@@ -25,16 +26,5 @@ class Wnd_Hook {
 
 		// WP Action Hook
 		Wnd_Add_Filter_WP::instance();
-	}
-
-	/**
-	 *单例模式
-	 */
-	public static function instance() {
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
 	}
 }

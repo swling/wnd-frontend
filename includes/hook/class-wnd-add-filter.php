@@ -3,30 +3,20 @@ namespace Wnd\Hook;
 
 use Exception;
 use Wnd\Model\Wnd_Auth;
+use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
  *Wnd Filter
  */
 class Wnd_Add_Filter {
 
-	private static $instance;
+	use Wnd_Singleton_Trait;
 
 	private function __construct() {
 		add_filter('wnd_can_reg', [__CLASS__, 'filter_can_reg'], 10, 1);
 		add_filter('wnd_can_update_profile', [__CLASS__, 'filter_can_update_profile'], 10, 1);
 		add_filter('wnd_insert_post_status', [__CLASS__, 'filter_post_status'], 10, 3);
 		add_filter('wnd_safe_action_return', [__CLASS__, 'filter_safe_action_return'], 10, 1);
-	}
-
-	/**
-	 *单例模式
-	 */
-	public static function instance() {
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
 	}
 
 	/**

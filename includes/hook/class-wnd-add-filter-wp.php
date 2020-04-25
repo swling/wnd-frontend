@@ -1,12 +1,14 @@
 <?php
 namespace Wnd\Hook;
 
+use Wnd\Utility\Wnd_Singleton_Trait;
+
 /**
  *WP Filter
  */
 class Wnd_Add_Filter_WP {
 
-	private static $instance;
+	use Wnd_Singleton_Trait;
 
 	private function __construct() {
 		add_filter('wp_handle_upload_prefilter', [__CLASS__, 'filter_limit_upload']);
@@ -15,17 +17,6 @@ class Wnd_Add_Filter_WP {
 		add_filter('wp_insert_attachment_data', [__CLASS__, 'filter_wp_insert_attachment_data'], 10, 2);
 		add_filter('get_comment_author_url', [__CLASS__, 'filter_comment_author_url'], 1, 3);
 		add_filter('get_avatar', [__CLASS__, 'filter_avatar'], 1, 5);
-	}
-
-	/**
-	 *单例模式
-	 */
-	public static function instance() {
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
 	}
 
 	/**

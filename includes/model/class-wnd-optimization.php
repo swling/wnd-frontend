@@ -1,12 +1,14 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Utility\Wnd_Singleton_Trait;
+
 /**
  *初始化 优化
  */
 class Wnd_Optimization {
 
-	private static $instance;
+	use Wnd_Singleton_Trait;
 
 	public function __construct() {
 		// 用户注册时，移除部分冗余wp user meta
@@ -48,17 +50,6 @@ class Wnd_Optimization {
 		 *访问后台时候，触发执行清理动作
 		 */
 		add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
-	}
-
-	/**
-	 *单例模式
-	 */
-	public static function instance() {
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
 	}
 
 	/**

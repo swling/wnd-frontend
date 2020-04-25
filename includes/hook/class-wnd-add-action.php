@@ -4,30 +4,20 @@ namespace Wnd\Hook;
 use Wnd\Component\Alipay\AlipayNotify;
 use Wnd\Component\Alipay\AlipayPagePay;
 use Wnd\Component\Alipay\AlipayReturn;
+use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
  *Wnd Action
  */
 class Wnd_Add_Action {
 
-	private static $instance;
+	use Wnd_Singleton_Trait;
 
 	private function __construct() {
 		add_action('wnd_upload_file', [__CLASS__, 'action_on_upload_file'], 10, 3);
 		add_action('wnd_upload_gallery', [__CLASS__, 'action_on_upload_gallery'], 10, 2);
 		add_action('wnd_delete_file', [__CLASS__, 'action_on_delete_file'], 10, 3);
 		add_action('wnd_do_action', [__CLASS__, 'action_on_do_action'], 10);
-	}
-
-	/**
-	 *单例模式
-	 */
-	public static function instance() {
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
 	}
 
 	/**

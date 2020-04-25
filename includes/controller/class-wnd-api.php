@@ -3,27 +3,17 @@ namespace Wnd\Controller;
 
 use Exception;
 use Wnd\View\Wnd_Filter;
+use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
  *@since 2019.04.07 API改造
  */
 class Wnd_API {
 
-	private static $instance;
+	use Wnd_Singleton_Trait;
 
 	private function __construct() {
 		add_action('rest_api_init', [__CLASS__, 'register_route']);
-	}
-
-	/**
-	 *单例模式
-	 */
-	public static function instance() {
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
 	}
 
 	/**

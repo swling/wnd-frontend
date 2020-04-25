@@ -4,13 +4,14 @@ namespace Wnd\Hook;
 use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\Model\Wnd_User;
+use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
  *WP Action
  */
 class Wnd_Add_Action_WP {
 
-	private static $instance;
+	use Wnd_Singleton_Trait;
 
 	private function __construct() {
 		add_action('user_register', [__CLASS__, 'action_on_user_register'], 10, 1);
@@ -23,17 +24,6 @@ class Wnd_Add_Action_WP {
 		 *分类关联标签
 		 */
 		Wnd_Tag_Under_Category::add_hook();
-	}
-
-	/**
-	 *单例模式
-	 */
-	public static function instance() {
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
 	}
 
 	/**
