@@ -508,7 +508,7 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 	// 更新服务器数据
 	if (is_new) {
 		$.ajax({
-			type: "GET",
+			type: "POST",
 			datatype: "json",
 			url: wnd_action_api,
 			data: {
