@@ -96,13 +96,18 @@ class Wnd_Post {
 				]
 			);
 
-			//清空之前的附件
+			//清空之前的附件及 post_meta
 			if ($post_id) {
 				$attachments = get_children(['post_type' => 'attachment', 'post_parent' => $post_id]);
 				foreach ($attachments as $attachment) {
 					wp_delete_attachment($attachment->ID, true);
 				}
 				unset($attachment);
+
+				foreach (array_keys(get_post_meta($post_id)) as $meta_key) {
+					delete_post_meta($post_id, $meta_key);
+				}
+				unset($meta_key);
 			}
 
 			// 返回值
