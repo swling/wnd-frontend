@@ -220,16 +220,6 @@ apply_filters('wnd_update_account_return', ['status' => 1, 'msg' => '更新成�
 apply_filters('wnd_user_panel_post_types', $post_types);
 
 ```
-## 支付
-```php
-/**
-*@since 2020.04.12
-*支付成功后跳转链接（包含订单或充值）
-*与配置选项中支付后跳转选项，共用重名filter
-*@see Wnd\Model\Wnd_Payment::get_return_url($object_id)
-*/
-apply_filters('wnd_pay_return_url', $redirect_url);
-```
 
 ## 配置Wnd Config
 所有的配置选项如果通过 Wnd\Model\Wnd_Config::get($option)获取，均自动加载一个与其$option名称对应的filter
@@ -240,6 +230,12 @@ apply_filters('wnd_pay_return_url', $redirect_url);
 *注册后跳转地址
 */
 apply_filters('wnd_reg_redirect_url', $redirect_url);
+
+/**
+*@since 2020.04.12
+*支付成功后跳转链接（包含订单或充值）
+*/
+apply_filters('wnd_pay_return_url', $return_url);
 
 ```
 ## 订单

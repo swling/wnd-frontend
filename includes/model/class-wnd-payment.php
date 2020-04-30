@@ -219,10 +219,6 @@ class Wnd_Payment extends Wnd_Transaction {
 			$url = wnd_get_config('pay_return_url') ?: home_url();
 		}
 
-		/**
-		 *@since 2020.04.12
-		 *新增filter
-		 */
-		return apply_filters('wnd_pay_return_url', $url);
+		return $url;
 	}
 }
