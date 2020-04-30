@@ -94,6 +94,12 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 		$form->add_form_attr('id', 'post-status');
 		$form->set_submit_button(__('提交', 'wnd'));
 		$form->build();
+
+		// 封禁用户/ 删除用户
+		if (wnd_is_manager()) {
+			return $form->html . Wnd_Ban_User_Form::build($post->post_author) . Wnd_Delete_User_Form::build($post->post_author);
+		}
+
 		return $form->html;
 	}
 }

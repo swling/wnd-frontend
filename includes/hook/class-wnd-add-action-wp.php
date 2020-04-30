@@ -14,6 +14,7 @@ class Wnd_Add_Action_WP {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
+		add_action('wp_loaded', [__CLASS__, 'action_on_wp_loaded'], 10);
 		add_action('user_register', [__CLASS__, 'action_on_user_register'], 10, 1);
 		add_action('deleted_user', [__CLASS__, 'action_on_delete_user'], 10, 1);
 		add_action('before_delete_post', [__CLASS__, 'action_on_before_delete_post'], 10, 1);
@@ -24,6 +25,18 @@ class Wnd_Add_Action_WP {
 		 *分类关联标签
 		 */
 		Wnd_Tag_Under_Category::add_hook();
+	}
+
+	/**
+	 *@since 2020.04.30
+	 *This action hook is fired once WordPress, all plugins, and the theme are fully loaded and instantiated.
+	 *@link https://codex.wordpress.org/Plugin_API/Action_Reference/wp_loaded
+	 */
+	public static function action_on_wp_loaded() {
+		if (wnd_has_been_banned()) {
+			wp_logout();
+			wp_die('账户已被封禁', get_option('blogname'));
+		}
 	}
 
 	/**

@@ -75,6 +75,7 @@ wnd_meta: commission：佣金
 wnd_meta: avatar：头像文件id
 wnd_meta: avatar_url：头像外链
 wnd_meta: locale：用户语言
+wnd_meta: status：用户状态['ok'，'banned']
 <!-- wnd_meta: phone：用户手机号码 -->
 <!-- wnd_meta: open_id：用户第三方openid -->
 wnd_meta：gallery (用户相册)

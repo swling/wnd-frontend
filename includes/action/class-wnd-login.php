@@ -30,6 +30,11 @@ class Wnd_Login extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => __('用户不存在', 'wnd')];
 		}
 
+		// 账户已封禁
+		if (wnd_has_been_banned($user->ID)) {
+			return ['status' => 0, 'msg' => __('账户已被封禁', 'wnd')];
+		}
+
 		// 校验密码并登录
 		if (wp_check_password($password, $user->data->user_pass, $user->ID)) {
 			wp_set_current_user($user->ID);

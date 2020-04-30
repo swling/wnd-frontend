@@ -91,6 +91,15 @@ function wnd_is_manager($user_id = 0) {
 }
 
 /**
+ *@since 2020.04.30 判断当前用户是否已被锁定
+ *@param 	int 	$user_id
+ *@return 	bool
+ */
+function wnd_has_been_banned($user_id = 0) {
+	return Wnd_User::has_been_banned($user_id);
+}
+
+/**
  *@since 初始化
  *用户display name去重
  *@param 	string 		$display_name
