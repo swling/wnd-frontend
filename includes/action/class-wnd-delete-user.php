@@ -14,6 +14,9 @@ class Wnd_Delete_User extends Wnd_Action_Ajax {
 		if (!$user_id) {
 			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}
+		if (is_super_admin($user_id)) {
+			return ['status' => 0, 'msg' => __('无法删除超级管理员', 'wnd')];
+		}
 		if (!$confirm) {
 			return ['status' => 0, 'msg' => __('请确认操作', 'wnd')];
 		}
