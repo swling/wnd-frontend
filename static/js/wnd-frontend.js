@@ -4,35 +4,20 @@
 var $ = jQuery.noConflict();
 
 /**
- *根据url定义当前页面语言
- *
- */
-var lang = wnd_get_query_param("lang");
-
-/**
  *定义API接口，添加语言参数
  *
  */
-var wnd_interface_api = wnd.root_url + wnd.interface_api + (lang ? '?lang=' + lang : '');
-var wnd_action_api = wnd.root_url + wnd.action_api + (lang ? '?lang=' + lang : '');
-var wnd_filter_api = wnd.root_url + wnd.filter_api + (lang ? '?lang=' + lang : '');
-var wnd_jsonget_api = wnd.root_url + wnd.jsonget_api + (lang ? '?lang=' + lang : '');
+var lang_query = wnd.lang ? '?lang=' + wnd.lang : '';
+var wnd_interface_api = wnd.root_url + wnd.interface_api + lang_query;
+var wnd_action_api = wnd.root_url + wnd.action_api + lang_query;
+var wnd_posts_api = wnd.root_url + wnd.posts_api + lang_query;
+var wnd_users_api = wnd.root_url + wnd.users_api + lang_query;
+var wnd_jsonget_api = wnd.root_url + wnd.jsonget_api + lang_query;
 
 /**
- *@since 2020.01.14
- *
- *从当前url中获取指定GET参数
- */
-function wnd_get_query_param(Param) {
-	let searchParams = new URLSearchParams(window.location.search)
-	return searchParams.get(Param);
-}
-
-/**
- * 判断元素是否在可视范围
- * alert($('.container').inView('topOnly'));
- * alert($('.container').inView('bottomOnly'));
- * alert($('.container').inView('both'));
+ *判断元素是否在可视范围
+ *@param element jQuery选择器
+ *@param inViewType 可视类型：bottom / top / both
  */
 function wnd_in_view(element, inViewType) {
 	var viewport = {};
@@ -997,7 +982,7 @@ jQuery(document).ready(function($) {
 
 		var _this = $(this);
 		$.ajax({
-			url: wnd_filter_api,
+			url: wnd_posts_api,
 			type: "GET",
 			data: filter_param,
 			beforeSend: function(xhr) {

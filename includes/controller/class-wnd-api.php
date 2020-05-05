@@ -2,8 +2,9 @@
 namespace Wnd\Controller;
 
 use Exception;
-use Wnd\View\Wnd_Filter;
 use Wnd\Utility\Wnd_Singleton_Trait;
+use Wnd\View\Wnd_Filter;
+use Wnd\View\Wnd_Filter_User;
 
 /**
  *@since 2019.04.07 API改造
@@ -30,13 +31,23 @@ class Wnd_API {
 			]
 		);
 
-		// 多重筛选
+		// Post 多重筛选
 		register_rest_route(
 			'wnd',
-			'filter',
+			'posts',
 			[
 				'methods'  => 'GET',
-				'callback' => __CLASS__ . '::handle_filter',
+				'callback' => __CLASS__ . '::handle_posts',
+			]
+		);
+
+		// User 筛选
+		register_rest_route(
+			'wnd',
+			'users',
+			[
+				'methods'  => 'GET',
+				'callback' => __CLASS__ . '::handle_users',
 			]
 		);
 
@@ -197,7 +208,7 @@ class Wnd_API {
 	 * $wp_query_args[$key] = $value;
 	 *
 	 **/
-	public static function handle_filter(): array{
+	public static function handle_posts(): array{
 		/**
 		 *Post模板函数可能包含反斜杠（如命名空间）故需移除WP自带的转义
 		 *@since 2019.12.18
@@ -250,6 +261,38 @@ class Wnd_API {
 				 *在debug模式下，返回当前WP_Query查询参数
 				 **/
 				'query_vars'        => WP_DEBUG ? $filter->wp_query->query_vars : '请开启Debug',
+			],
+		];
+	}
+
+	/**
+	 *@since 2020.05.05
+	 *User筛选API
+	 *
+	 */
+	public static function handle_users(): array{
+		/**
+		 *模板函数可能包含反斜杠（如命名空间）故需移除WP自带的转义
+		 *@since 2019.12.18
+		 *
+		 */
+		$_GET = stripslashes_deep($_GET);
+
+		// 根据请求GET参数，获取wp_query查询参数
+		try {
+			$filter = new Wnd_Filter_User(true);
+		} catch (Exception $e) {
+			return ['status' => 0, 'msg' => $e->getMessage()];
+		}
+
+		// 执行查询
+		$filter->query();
+
+		return [
+			'status' => 1,
+			'data'   => [
+				'users'      => $filter->get_users(),
+				'pagination' => $filter->get_pagination(),
 			],
 		];
 	}
