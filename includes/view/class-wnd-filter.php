@@ -1413,7 +1413,7 @@ class Wnd_Filter {
 	 *分页导航
 	 */
 	public function get_pagination($show_page = 5) {
-		if (!$this->wp_query and !self::$is_ajax) {
+		if (!$this->wp_query) {
 			return __('未执行WP_Query', 'wnd');
 		}
 
