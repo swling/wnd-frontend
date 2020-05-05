@@ -9,6 +9,7 @@ use WP_Query;
  * @since 2019.07.30
  * 多重筛选类
  * 样式基于bulma css
+ *
  * @param bool 		$is_ajax 	是否为ajax筛选（需要对应的前端支持）
  * @param string 	$uniqid 	HTML容器识别ID。默认值 uniqid() @see build_pagination() / get_tabs()
  */
@@ -597,8 +598,9 @@ class Wnd_Filter {
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<ul class="tab">';
 		if ($with_any_tab) {
-			$class = ('any' == $this->wp_query_args['post_type']) ? ' is-active' : '';
-			$tabs .= '<li class="all' . $class . '">';
+			$class = 'all';
+			$class .= ('any' == $this->wp_query_args['post_type']) ? ' is-active' : '';
+			$tabs .= '<li class="' . $class . '">';
 			$tabs .= '<a data-key="type" data-value="any" href="' . add_query_arg('type', 'any', $uri) . '">' . __('全部', 'wnd') . '</a>';
 			$tabs .= '</li>';
 		}
@@ -678,6 +680,7 @@ class Wnd_Filter {
 
 		$taxonomy = $args['taxonomy'];
 		$parent   = $args['parent'] ?? 0;
+		$class    = $class ? ' ' . $class : '';
 
 		/**
 		 *@since 2019.07.30
@@ -725,7 +728,7 @@ class Wnd_Filter {
 			$remove_query_args = $this->remove_query_args;
 		}
 
-		$tabs = '<div class="columns is-marginless is-vcentered taxonomy-tabs ' . $taxonomy . '-tabs ' . $class . '">';
+		$tabs = '<div class="columns is-marginless is-vcentered taxonomy-tabs ' . $taxonomy . '-tabs' . $class . '">';
 		$tabs .= '<div class="column is-narrow ' . $taxonomy . '-label">' . get_taxonomy($taxonomy)->label . '：</div>';
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<ul class="tab">';
@@ -1413,7 +1416,7 @@ class Wnd_Filter {
 	 *分页导航
 	 */
 	public function get_pagination($show_page = 5) {
-		if (!$this->wp_query and !self::$is_ajax) {
+		if (!$this->wp_query) {
 			return __('未执行WP_Query', 'wnd');
 		}
 
