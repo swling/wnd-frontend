@@ -389,25 +389,16 @@ class Wnd_Filter_User {
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<ul class="tab">';
 
-		/**
-		 * 全部选项
-		 * @since 2019.03.07（copy）
-		 */
-		// $all_link = self::$doing_ajax ? '' : remove_query_arg($remove_query_args);
-		// $tabs .= '<li ' . $all_class . '><a data-key="orderby" data-value="" href="' . $all_link . '">默认</a></li>';
-
 		// 输出tabs
 		foreach ($args['options'] as $key => $orderby) {
-
 			// 查询当前orderby是否匹配当前tab
 			$class = '';
 			if (isset($this->query_args['orderby'])) {
 				/**
-				 *	post meta排序
+				 *	user meta排序
 				 *	$args = [
-				 *		'post_type' => 'product',
 				 *		'orderby'   => 'meta_value_num',
-				 *		'meta_key'  => 'price',
+				 *		'meta_key'  => 'rating',
 				 *	];
 				 *	$query = new wp_user_query( $args );
 				 */
@@ -464,7 +455,6 @@ class Wnd_Filter_User {
 
 		// 输出tabs
 		foreach ($args as $key => $value) {
-
 			// 遍历当前meta query查询是否匹配当前tab
 			$class = '';
 			if (isset($this->wp_query_args['order']) and $this->wp_query_args['order'] == $value) {
@@ -585,12 +575,12 @@ class Wnd_Filter_User {
 		// 表头
 		$table .= '<thead>';
 		$table .= '<tr>';
-		$table .= '<th>名称</th>';
-		$table .= '<th>角色</th>';
-		$table .= '<th>注册时间</th>';
+		$table .= '<th>' . __('名称', 'wnd') . '</th>';
+		$table .= '<th>' . __('角色', 'wnd') . '</th>';
+		$table .= '<th>' . __('注册时间', 'wnd') . '</th>';
 
 		$table .= '<td class="is-narrow">';
-		$table .= '操作';
+		$table .= __('操作', 'wnd');
 		$table .= '</td>';
 		$table .= '</tr>';
 		$table .= '</thead>';
@@ -599,8 +589,8 @@ class Wnd_Filter_User {
 		$table .= '<tbody>';
 		foreach ($users as $user) {
 			$table .= '<tr>';
-			$table .= '<td>' . $user->display_name . '</td>';
-			$table .= '<td>' . $user->role . '</td>';
+			$table .= '<td><a href="' . get_author_posts_url($user->ID) . '" target="_blank">' . $user->display_name . '</a></td>';
+			$table .= '<td>' . $user->roles[0] . '</td>';
 			$table .= '<td>' . $user->user_registered . '</td>';
 
 			// 编辑管理
