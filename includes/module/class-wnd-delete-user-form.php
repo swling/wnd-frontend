@@ -18,7 +18,7 @@ class Wnd_Delete_User_Form extends Wnd_Module {
 		}
 
 		$form = new Wnd_Form_WP();
-		$form->set_form_title(__('删除用户', 'wnd'), true);
+		$form->set_form_title(__('删除用户', 'wnd') . ' : ' . get_userdata($user_id)->display_name, true);
 		$form->add_html('<div class="field is-grouped is-grouped-centered">');
 		$form->add_checkbox(
 			[

@@ -18,7 +18,7 @@ class Wnd_Ban_User_Form extends Wnd_Module {
 		}
 
 		$form = new Wnd_Form_WP();
-		$form->set_form_title(__('封禁用户', 'wnd'), true);
+		$form->set_form_title(__('封禁用户', 'wnd') . ' : ' . get_userdata($user_id)->display_name, true);
 		$form->set_message(
 			self::build_notification('当前状态：' . (wnd_get_user_meta($user_id, 'status') ?: 'ok'))
 		);

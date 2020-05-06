@@ -42,9 +42,6 @@ class Wnd_Filter_User {
 	 */
 	protected $add_query = [];
 
-	// meta 查询参数需要供current filter查询使用
-	protected $meta_filter_args;
-
 	// 默认切换筛选项时需要移除的参数
 	protected $remove_query_args = ['paged', 'page'];
 
@@ -92,7 +89,7 @@ class Wnd_Filter_User {
 		self::$is_ajax    = $is_ajax;
 		self::$doing_ajax = wnd_doing_ajax();
 		self::$http_query = self::parse_query_vars();
-		$this->class      = self::$is_ajax ? 'ajax-filter' : 'filter';
+		$this->class      = self::$is_ajax ? 'ajax-filter-user' : 'filter-user';
 
 		// 解析GET参数为wp_user_query参数并与默认参数合并，以防止出现参数未定义的警告信息
 		$this->query_args = array_merge($this->query_args, self::$http_query);
@@ -291,6 +288,61 @@ class Wnd_Filter_User {
 	}
 
 	/**
+	 *@since 2019.08.01
+	 *执行查询
+	 */
+	public function query() {
+		$this->wp_user_query = new WP_User_Query($this->query_args);
+	}
+
+	/**
+	 *执行查询
+	 *
+	 */
+	public function get_users() {
+		if (!$this->wp_user_query) {
+			return __('未执行WP_User_Query', 'wnd');
+		}
+
+		$this->users = $this->build_user_table();
+		return $this->users;
+	}
+
+	/**
+	 *@since 2019.02.15
+	 *分页导航
+	 */
+	public function get_pagination($show_page = 5) {
+		if (!$this->wp_user_query) {
+			return __('未执行wp_user_query', 'wnd');
+		}
+
+		$this->pagination = $this->build_pagination($show_page);
+		return $this->pagination;
+	}
+
+	/**
+	 *@since 2019.07.31
+	 *获取筛选项HTML
+	 *
+	 *tabs筛选项由于参数繁杂，无法通过api动态生成，因此不包含在api请求响应中
+	 *但已生成的相关筛选项会根据wp_query->query_var参数做动态修改
+	 *
+	 *@see wnd_filter_api_callback()
+	 */
+	public function get_tabs() {
+		return '<div id="tabs-' . $this->uniqid . '" class="wnd-filter-tabs ' . $this->class . '" ' . $this->build_html_data() . '>' . $this->tabs . '</div>';
+	}
+
+	/**
+	 *@since 2019.07.31
+	 *合并返回：user列表及分页导航
+	 */
+	public function get_results() {
+		return $this->get_users() . $this->get_pagination();
+	}
+
+	/**
 	 *@since 2019.08.02
 	 *构造HTML data属性
 	 *获取新增查询，并转化为html data属性，供前端读取后在ajax请求中发送到api
@@ -436,73 +488,6 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *@since 2019.08.01
-	 *执行查询
-	 */
-	public function query() {
-		$this->wp_user_query = new WP_User_Query($this->query_args);
-	}
-
-	/**
-	 *执行查询
-	 *
-	 */
-	public function get_users() {
-		if (!$this->wp_user_query) {
-			return __('未执行WP_User_Query', 'wnd');
-		}
-
-		$users = $this->wp_user_query->get_results();
-		if (empty($users)) {
-			$this->users .= 'No users found';
-			return $this->users;
-		}
-
-		$this->users .= '<ul>';
-		foreach ($users as $user) {
-			$this->users .= '<li>' . $user->user_email . '</li>';
-		}
-		$this->users .= '</ul>';
-
-		return $this->users;
-	}
-
-	/**
-	 *@since 2019.02.15
-	 *分页导航
-	 */
-	public function get_pagination($show_page = 5) {
-		if (!$this->wp_user_query) {
-			return __('未执行wp_user_query', 'wnd');
-		}
-
-		$this->pagination = $this->build_pagination($show_page);
-		return $this->pagination;
-	}
-
-	/**
-	 *@since 2019.07.31
-	 *获取筛选项HTML
-	 *
-	 *tabs筛选项由于参数繁杂，无法通过api动态生成，因此不包含在api请求响应中
-	 *但已生成的相关筛选项会根据wp_query->query_var参数做动态修改
-	 *
-	 *@see wnd_filter_api_callback()
-	 */
-	public function get_tabs() {
-		$tabs = apply_filters('wnd_filter_tabs', $this->tabs, $this->wp_query_args);
-		return '<div id="tabs-' . $this->uniqid . '" class="wnd-filter-tabs ' . $this->class . '" ' . $this->build_html_data() . '>' . $tabs . '</div>';
-	}
-
-	/**
-	 *@since 2019.07.31
-	 *合并返回：user列表及分页导航
-	 */
-	public function get_results() {
-		return $this->get_users() . $this->get_pagination();
-	}
-
-	/**
 	 *@since 2019.02.15 简单分页导航
 	 *不查询总数的情况下，简单实现下一页翻页
 	 *翻页参数键名page 不能设置为 paged 会与原生WordPress翻页机制产生冲突
@@ -513,13 +498,14 @@ class Wnd_Filter_User {
 		 *wp_user_query实际执行的查询参数 new wp_user_query($args) $args 经过wp_user_query解析后
 		 *@see Class wp_user_query
 		 */
-		$paged = $this->wp_user_query->query_vars['paged'] ?: 1;
+		$paged         = $this->wp_user_query->query_vars['paged'] ?: 1;
+		$max_num_pages = intval($this->wp_user_query->get_total() / $this->wp_user_query->query_vars['number']) + 1;
 
 		/**
 		 *未查询user总数，以上一页下一页的形式翻页(在数据较多的情况下，可以提升查询性能)
 		 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
 		 */
-		if (!$this->wp_user_query->max_num_pages) {
+		if (!$this->wp_user_query->get_total()) {
 			$previous_link = self::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
 			$next_link     = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
 
@@ -528,9 +514,9 @@ class Wnd_Filter_User {
 			if ($paged >= 2) {
 				$html .= '<li><a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
 			}
-			if ($this->wp_user_query->post_count >= $this->wp_user_query->query_vars['number']) {
-				$html .= '<li><a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . $next_link . '">' . __('下一页', 'wnd') . '</a>';
-			}
+			// if ($this->wp_user_query->post_count >= $this->wp_user_query->query_vars['number']) {
+			$html .= '<li><a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . $next_link . '">' . __('下一页', 'wnd') . '</a>';
+			// }
 			$html .= '</ul>';
 			$html .= '</nav>';
 
@@ -544,7 +530,7 @@ class Wnd_Filter_User {
 			$first_link    = self::$doing_ajax ? '' : remove_query_arg('page');
 			$previous_link = self::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
 			$next_link     = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
-			$last_link     = self::$doing_ajax ? '' : add_query_arg('page', $this->wp_user_query->max_num_pages);
+			$last_link     = self::$doing_ajax ? '' : add_query_arg('page', $max_num_pages);
 
 			$html = '<div id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			if ($paged > 1) {
@@ -553,14 +539,14 @@ class Wnd_Filter_User {
 				$html .= '<a class="pagination-previous" disabled="disabled">' . __('首页', 'wnd') . '</a>';
 			}
 
-			if ($paged < $this->wp_user_query->max_num_pages) {
+			if ($paged < $max_num_pages) {
 				$html .= '<a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . $next_link . '">' . __('下一页', 'wnd') . '</a>';
 			}
 
 			$html .= '<ul class="pagination-list">';
 			$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . $first_link . '" >' . __('首页', 'wnd') . '</a></li>';
 			for ($i = $paged - 1; $i <= $paged + $show_page; $i++) {
-				if ($i > 0 and $i <= $this->wp_user_query->max_num_pages) {
+				if ($i > 0 and $i <= $max_num_pages) {
 					$page_link = self::$doing_ajax ? '' : add_query_arg('page', $i);
 					if ($i == $paged) {
 						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link is-current" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
@@ -569,11 +555,11 @@ class Wnd_Filter_User {
 					}
 				}
 			}
-			if ($paged < $this->wp_user_query->max_num_pages - 3) {
+			if ($paged < $max_num_pages - 3) {
 				$html .= '<li><span class="pagination-ellipsis">&hellip;</span></li>';
 			}
 
-			$html .= '<li><a data-key="page" data-value="' . $this->wp_user_query->max_num_pages . '" class="pagination-link" href="' . $last_link . '">' . __('尾页', 'wnd') . '</a></li>';
+			$html .= '<li><a data-key="page" data-value="' . $max_num_pages . '" class="pagination-link" href="' . $last_link . '">' . __('尾页', 'wnd') . '</a></li>';
 			$html .= '</ul>';
 
 			$html .= '</div>';
@@ -581,5 +567,54 @@ class Wnd_Filter_User {
 			$this->pagination = $html;
 			return $this->pagination;
 		}
+	}
+
+	/**
+	 *
+	 *构造表单列表
+	 */
+	protected function build_user_table() {
+		$users = $this->wp_user_query->get_results();
+		if (empty($users)) {
+			return 'No users found';
+		}
+
+		// 表单开始
+		$table = '<table class="table is-fullwidth is-hoverable is-striped">';
+
+		// 表头
+		$table .= '<thead>';
+		$table .= '<tr>';
+		$table .= '<th>名称</th>';
+		$table .= '<th>角色</th>';
+		$table .= '<th>注册时间</th>';
+
+		$table .= '<td class="is-narrow">';
+		$table .= '操作';
+		$table .= '</td>';
+		$table .= '</tr>';
+		$table .= '</thead>';
+
+		// 列表
+		$table .= '<tbody>';
+		foreach ($users as $user) {
+			$table .= '<tr>';
+			$table .= '<td>' . $user->display_name . '</td>';
+			$table .= '<td>' . $user->role . '</td>';
+			$table .= '<td>' . $user->user_registered . '</td>';
+
+			// 编辑管理
+			$table .= '<td class="is-narrow has-text-centered">';
+			$table .= '<a onclick="wnd_ajax_modal(\'wnd_delete_user_form\',\'' . $user->ID . '\')"> <i class="fas fa-trash-alt"></i> </a>';
+			$table .= '<a onclick="wnd_ajax_modal(\'wnd_ban_user_form\',\'' . $user->ID . '\')"> <i class="fas fa-cog"></i> </a>';
+			$table .= '</td>';
+			$table .= '</tr>';
+		}
+		$table .= '</tbody>';
+
+		// 表单结束
+		$table .= '</table>';
+
+		return $table;
 	}
 }

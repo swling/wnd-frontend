@@ -1042,6 +1042,57 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
+	 *@since 2020.05.06 Wnd_User_Filter筛选
+	 *点击链接，获取对应data值，组合参数并发送ajax请求
+	 */
+	var filter_user_param = {};
+	$("body").on("click", ".ajax-filter-user a", function() {
+		// 获取容器
+		var filter_parent = $(this).closest(".ajax-filter-user");
+		var filter_id = filter_parent.attr("ID").split("-")[1];
+
+		// 提取data，并合并入参数
+		var html_data = filter_parent.data();
+		filter_user_param = Object.assign(filter_user_param, html_data);
+
+		// 非分页情况，删除page请求参数
+		var is_pagination = $(this).closest(".pagination-list").length > 0 ? true : false;
+		if (!is_pagination) {
+			delete filter_user_param.page;
+		}
+
+		var key = $(this).data("key");
+		var value = $(this).data("value");
+		filter_user_param[key] = value;
+
+		// 值为空删除
+		if (!value && typeof filter_user_param[key] != "undefined") {
+			delete filter_user_param[key];
+		}
+
+		var _this = $(this);
+		$.ajax({
+			url: wnd_users_api,
+			type: "GET",
+			data: filter_user_param,
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
+			},
+			success: function(response) {
+				// 嵌入查询结果
+				$(filter_user_param.wnd_ajax_container).html(response.data.users + response.data.pagination);
+			},
+			error: function() {
+				wnd_alert_msg(wnd.msg.system_error);
+				_this.parent("li").removeClass("is-active");
+			}
+		});
+
+		// 阻止链接跳转
+		return false;
+	});
+
+	/**
 	 *@since 2020.04.14
 	 *分类ajax分级联动下拉
 	 */
