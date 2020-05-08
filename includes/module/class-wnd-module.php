@@ -3,7 +3,7 @@ namespace Wnd\Module;
 
 /**
  *@since 2019.10.02
- *模板基类
+ *UI模块基类
  */
 abstract class Wnd_Module {
 
@@ -42,7 +42,7 @@ abstract class Wnd_Module {
 			return;
 		}
 
-		return wnd_notification($notification, 'is-primary', true);
+		return wnd_notification($notification, 'is-primary', false);
 	}
 
 	/**
