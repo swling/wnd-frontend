@@ -11,7 +11,7 @@ class Wnd_Mail_Box extends Wnd_Module {
 
 	public static function build(int $posts_per_page = 0) {
 		if (!is_user_logged_in()) {
-			return self::build_error_message(__('请登录', 'wnd'));
+			return static::build_error_message(__('请登录', 'wnd'));
 		}
 		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 

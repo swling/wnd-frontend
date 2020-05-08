@@ -29,7 +29,7 @@ class Wnd_Post {
 		 *attachment为附件类型，前端可能会允许编辑更新attachment post信息，但此种类型应该是上传文件后由WordPress自动创建
 		 *@see media_handle_upload()
 		 */
-		if (!in_array($post_type, self::get_allowed_post_types()) or $post_type == 'attachment') {
+		if (!in_array($post_type, static::get_allowed_post_types()) or $post_type == 'attachment') {
 			return 0;
 		}
 

@@ -17,7 +17,7 @@ class Wnd_Init {
 
 	private function __construct() {
 		// Init
-		self::init();
+		static::init();
 
 		// 默认Hook
 		Wnd_Hook::instance();

@@ -138,14 +138,14 @@ class Wnd_Form {
 	 */
 	// text
 	public function add_text($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'text';
 		$this->input_values[] = $args;
 	}
 
 	// number
 	public function add_number($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'number';
 		$this->input_values[] = $args;
 	}
@@ -161,21 +161,21 @@ class Wnd_Form {
 
 	// textarea
 	public function add_textarea($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'textarea';
 		$this->input_values[] = $args;
 	}
 
 	// email
 	public function add_email($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'email';
 		$this->input_values[] = $args;
 	}
 
 	// password
 	public function add_password($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'password';
 		$this->input_values[] = $args;
 	}
@@ -186,56 +186,56 @@ class Wnd_Form {
 	 */
 	// URL
 	public function add_url($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'url';
 		$this->input_values[] = $args;
 	}
 
 	// color
 	public function add_color($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'color';
 		$this->input_values[] = $args;
 	}
 
 	// date
 	public function add_date($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'date';
 		$this->input_values[] = $args;
 	}
 
 	// range
 	public function add_range($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'range';
 		$this->input_values[] = $args;
 	}
 
 	// tel
 	public function add_tel($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'tel';
 		$this->input_values[] = $args;
 	}
 
 	// select
 	public function add_select($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'select';
 		$this->input_values[] = $args;
 	}
 
 	// radio
 	public function add_radio($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'radio';
 		$this->input_values[] = $args;
 	}
 
 	// checkbox
 	public function add_checkbox($args) {
-		$args                 = array_merge(self::$defaults, $args);
+		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'checkbox';
 		$this->input_values[] = $args;
 	}
@@ -250,7 +250,7 @@ class Wnd_Form {
 			'data'           => [],
 			'delete_button'  => true,
 		];
-		$args                 = array_merge(self::$defaults, $defaults, $args);
+		$args                 = array_merge(static::$defaults, $defaults, $args);
 		$args['type']         = 'image_upload';
 		$this->input_values[] = $args;
 
@@ -268,7 +268,7 @@ class Wnd_Form {
 			'data'          => [],
 			'delete_button' => true,
 		];
-		$args                 = array_merge(self::$defaults, $defaults, $args);
+		$args                 = array_merge(static::$defaults, $defaults, $args);
 		$args['type']         = 'file_upload';
 		$this->input_values[] = $args;
 
@@ -328,7 +328,7 @@ class Wnd_Form {
 		$html = '';
 		foreach ($this->input_values as $input_key => $input_value) {
 			// input
-			if (in_array($input_value['type'], self::$input_types)) {
+			if (in_array($input_value['type'], static::$input_types)) {
 				$html .= $this->build_input($input_value, $input_key);
 				continue;
 			}
@@ -370,10 +370,10 @@ class Wnd_Form {
 
 	protected function build_select($input_value, $input_key) {
 		$html = '<div class="field">';
-		$html .= self::build_label($input_value);
+		$html .= static::build_label($input_value);
 		$html .= '<div class="control">';
 		$html .= '<div class="select">';
-		$html .= '<select' . self::build_input_id($input_value) . self::build_input_attr($input_value) . '>';
+		$html .= '<select' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
 		foreach ($input_value['options'] as $key => $value) {
 			if (is_array($input_value['selected'])) {
 				$checked = in_array($value, $input_value['selected']) ? ' selected="selected"' : '';
@@ -391,11 +391,11 @@ class Wnd_Form {
 	}
 
 	protected function build_radio($input_value, $input_key) {
-		$html = '<div' . self::build_input_id($input_value) . ' class="field' . self::get_class($input_value, true) . '">';
-		$html .= self::build_label($input_value);
+		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
+		$html .= static::build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
 			$input_id = md5($key . $input_key);
-			$html .= '<input id="' . $input_id . '" value="' . $value . '"' . self::build_input_attr($input_value);
+			$html .= '<input id="' . $input_id . '" value="' . $value . '"' . static::build_input_attr($input_value);
 			$html .= ($input_value['checked'] === $value) ? ' checked="checked">' : '>';
 
 			$html .= '<label for="' . $input_id . '" class="radio">' . $key . '</label>';
@@ -406,11 +406,11 @@ class Wnd_Form {
 	}
 
 	protected function build_checkbox($input_value, $input_key) {
-		$html = '<div' . self::build_input_id($input_value) . ' class="field' . self::get_class($input_value, true) . '">';
-		$html .= self::build_label($input_value);
+		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
+		$html .= static::build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
 			$input_id = md5($key . $input_key);
-			$html .= '<input id="' . $input_id . '" value="' . $value . '"' . self::build_input_attr($input_value);
+			$html .= '<input id="' . $input_id . '" value="' . $value . '"' . static::build_input_attr($input_value);
 			if (is_array($input_value['checked'])) {
 				$html .= in_array($value, $input_value['checked']) ? ' checked="checked">' : '>';
 			} else {
@@ -425,7 +425,7 @@ class Wnd_Form {
 	}
 
 	protected function build_hidden($input_value, $input_key) {
-		$html = '<input' . self::build_input_id($input_value) . self::build_input_attr($input_value) . '>';
+		$html = '<input' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
 		return $html;
 	}
 
@@ -433,11 +433,11 @@ class Wnd_Form {
 		$has_addons = ($input_value['addon_left'] or $input_value['addon_right']) ? true : false;
 
 		if ($has_addons) {
-			$html = self::build_label($input_value);
+			$html = static::build_label($input_value);
 			$html .= '<div class="field has-addons">';
 		} else {
 			$html = '<div class="field">';
-			$html .= self::build_label($input_value);
+			$html .= static::build_label($input_value);
 		}
 
 		// class
@@ -453,7 +453,7 @@ class Wnd_Form {
 
 		// input and icon
 		$html .= '<div class="control' . $class . '">';
-		$html .= '<input' . self::build_input_id($input_value) . self::build_input_attr($input_value) . '>';
+		$html .= '<input' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
 		$html .= $input_value['icon_left'] ? '<span class="icon is-left">' . $input_value['icon_left'] . '</span>' : '';
 		$html .= $input_value['icon_right'] ? '<span class="icon is-right">' . $input_value['icon_right'] . '</span>' : '';
 		$html .= '</div>';
@@ -471,15 +471,15 @@ class Wnd_Form {
 		$id                        = $input_value['id'] . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
-		$html = '<div id="' . $id . '" class="field' . self::get_class($input_value, true) . '">';
-		$html .= self::build_label($input_value);
+		$html = '<div id="' . $id . '" class="field' . static::get_class($input_value, true) . '">';
+		$html .= static::build_label($input_value);
 		$html .= '<div class="field"><div class="ajax-message"></div></div>';
 
 		$html .= '<div class="field">';
 		$html .= '<a><img class="thumbnail" src="' . $input_value['thumbnail'] . '" height="' . $input_value['thumbnail_size']['height'] . '" width="' . $input_value['thumbnail_size']['width'] . '"></a>';
 		$html .= $input_value['delete_button'] ? '<a class="delete" data-id="' . $id . '" data-file_id="' . $input_value['file_id'] . '"></a>' : '';
 		$html .= '<div class="file">';
-		$html .= '<input accept="image/*"' . self::build_input_attr($input_value) . '>';
+		$html .= '<input accept="image/*"' . static::build_input_attr($input_value) . '>';
 		$html .= '</div>';
 		$html .= '</div>';
 
@@ -500,14 +500,14 @@ class Wnd_Form {
 		$id                        = $input_value['id'] . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
-		$html = '<div id="' . $id . '" class="field' . self::get_class($input_value, true) . '">';
+		$html = '<div id="' . $id . '" class="field' . static::get_class($input_value, true) . '">';
 		$html .= '<div class="field"><div class="ajax-message"></div></div>';
 		$html .= '<div class="columns is-mobile is-vcentered">';
 
 		$html .= '<div class="column">';
 		$html .= '<div class="file has-name is-fullwidth">';
 		$html .= '<label class="file-label">';
-		$html .= '<input' . self::build_input_attr($input_value) . '>';
+		$html .= '<input' . static::build_input_attr($input_value) . '>';
 		$html .= '<span class="file-cta">';
 		$html .= '<span class="file-icon"><i class="fa fa-upload"></i></span>';
 		$html .= '<span class="file-label">' . $input_value['label'] . '</span>';
@@ -534,8 +534,8 @@ class Wnd_Form {
 
 	protected function build_textarea($input_value, $input_key) {
 		$html = '<div class="field">';
-		$html .= self::build_label($input_value);
-		$html .= '<textarea' . self::build_input_id($input_value) . self::build_input_attr($input_value) . '>' . $input_value['value'] . '</textarea>';
+		$html .= static::build_label($input_value);
+		$html .= '<textarea' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>' . $input_value['value'] . '</textarea>';
 		$html .= '</div>';
 		return $html;
 	}
@@ -606,7 +606,7 @@ class Wnd_Form {
 		foreach ($input_value as $key => $value) {
 			// 读取class传参，并根据type设置添加默认class
 			if ('class' == $key) {
-				if (in_array($input_value['type'], self::$input_types)) {
+				if (in_array($input_value['type'], static::$input_types)) {
 					$value = 'input ' . $value;
 				} else {
 					$value = $input_value['type'] . ' ' . $value;

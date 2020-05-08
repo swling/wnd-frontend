@@ -33,8 +33,8 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->is_ajax_submit = $is_ajax_submit;
 
 		// 色调
-		self::$primary_color = wnd_get_config('primary_color');
-		self::$second_color  = wnd_get_config('second_color');
+		static::$primary_color = wnd_get_config('primary_color');
+		static::$second_color  = wnd_get_config('second_color');
 
 		// 继承基础变量
 		parent::__construct();
@@ -66,7 +66,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *@since 2019.05.26 表单按钮默认配色
 	 */
 	public function set_submit_button($text, $class = '', $disabled = false) {
-		$class = $class ?: 'is-' . self::$primary_color;
+		$class = $class ?: 'is-' . static::$primary_color;
 		$class .= $this->is_ajax_submit ? ' ajax-submit' : '';
 		parent::set_submit_button($text, $class, $disabled);
 	}
@@ -136,7 +136,7 @@ class Wnd_Form_WP extends Wnd_Form {
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => __('验证码', 'wnd'),
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '" data-type_nonce="' . wp_create_nonce('sms' . $type) . '" data-is_email="0">' . __('获取验证码', 'wnd') . '</button>',
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . static::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '" data-type_nonce="' . wp_create_nonce('sms' . $type) . '" data-is_email="0">' . __('获取验证码', 'wnd') . '</button>',
 			]
 		);
 
@@ -183,7 +183,7 @@ class Wnd_Form_WP extends Wnd_Form {
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => __('验证码', 'wnd'),
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . self::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '" data-type_nonce="' . wp_create_nonce('email' . $type) . '" data-is_email="1">' . __('获取验证码', 'wnd') . '</button>',
+				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . static::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '" data-type_nonce="' . wp_create_nonce('email' . $type) . '" data-is_email="1">' . __('获取验证码', 'wnd') . '</button>',
 			]
 		);
 
@@ -236,8 +236,8 @@ class Wnd_Form_WP extends Wnd_Form {
 		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据 meta_key 查找目标文件
-		$file_id  = $args['file_id'] ?: self::get_attachment_id($meta_key, $post_parent, $user_id);
-		$file_url = self::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
+		$file_id  = $args['file_id'] ?: static::get_attachment_id($meta_key, $post_parent, $user_id);
+		$file_url = static::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
 		$file_url = $file_url ? wnd_get_thumbnail_url($file_url, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']) : '';
 
 		$args['thumbnail'] = $file_url ?: $args['thumbnail'];
@@ -284,8 +284,8 @@ class Wnd_Form_WP extends Wnd_Form {
 		$args['data']['method']         = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据 meta_key 查找目标文件
-		$file_id  = $args['file_id'] ?: self::get_attachment_id($meta_key, $post_parent, $user_id);
-		$file_url = self::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
+		$file_id  = $args['file_id'] ?: static::get_attachment_id($meta_key, $post_parent, $user_id);
+		$file_url = static::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
 
 		$args['file_id']   = $file_id ?: 0;
 		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">' . __('查看文件', 'wnd') . '</a>' : '……';

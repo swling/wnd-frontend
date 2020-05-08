@@ -14,7 +14,7 @@ class Wnd_Account_Form extends Wnd_Module {
 		$second_color  = wnd_get_config('second_color');
 		$enable_sms    = wnd_get_config('enable_sms');
 		if (!$user->data->ID) {
-			return self::build_error_message(__('请登录', 'wnd'));
+			return static::build_error_message(__('请登录', 'wnd'));
 		}
 
 		/**
@@ -27,7 +27,7 @@ class Wnd_Account_Form extends Wnd_Module {
 			if ($enable_sms) {
 				$message .= '&nbsp;&nbsp;<button class="button is-outlined is-' . $primary_color . '" onclick="wnd_ajax_modal(\'wnd_bind_phone_form\')">' . __('绑定手机') . '</button>';
 			}
-			return self::build_error_message(__($message, 'wnd'));
+			return static::build_error_message(__($message, 'wnd'));
 		}
 
 		$form = new Wnd_Form_User();

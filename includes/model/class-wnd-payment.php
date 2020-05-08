@@ -54,7 +54,7 @@ class Wnd_Payment extends Wnd_Transaction {
 		 *@since 2019.03.04
 		 *
 		 */
-		self::$site_prefix = strtoupper(substr(md5(home_url()), 0, 4));
+		static::$site_prefix = strtoupper(substr(md5(home_url()), 0, 4));
 
 		/**
 		 *站点名称
@@ -62,7 +62,7 @@ class Wnd_Payment extends Wnd_Transaction {
 		 *@since 2019.12.21
 		 *
 		 */
-		self::$site_name = get_bloginfo('name');
+		static::$site_name = get_bloginfo('name');
 	}
 
 	/**
@@ -80,12 +80,12 @@ class Wnd_Payment extends Wnd_Transaction {
 	 *@return 	int|0 	order|recharge Post ID
 	 */
 	protected function parse_out_trade_no($out_trade_no) {
-		if (false === strpos($out_trade_no, self::$site_prefix . '-')) {
+		if (false === strpos($out_trade_no, static::$site_prefix . '-')) {
 			return 0;
 		}
 
 		list($prefix, $ID) = explode('-', $out_trade_no, 2);
-		if ($prefix != self::$site_prefix) {
+		if ($prefix != static::$site_prefix) {
 			return 0;
 		}
 		return (int) $ID;
@@ -192,7 +192,7 @@ class Wnd_Payment extends Wnd_Transaction {
 			throw new Exception(__('站内支付数据尚未写入，无法生成订单号', 'wnd'));
 		}
 
-		return self::$site_prefix . '-' . $this->ID;
+		return static::$site_prefix . '-' . $this->ID;
 	}
 
 	/**
@@ -201,7 +201,7 @@ class Wnd_Payment extends Wnd_Transaction {
 	 *
 	 */
 	public function get_subject() {
-		return self::$site_name . ' - ' . $this->subject;
+		return static::$site_name . ' - ' . $this->subject;
 	}
 
 	/**

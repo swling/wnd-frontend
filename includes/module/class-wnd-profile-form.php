@@ -12,7 +12,7 @@ class Wnd_Profile_Form extends Wnd_Module {
 	public static function build() {
 		$current_user = wp_get_current_user();
 		if (!$current_user->ID) {
-			return self::build_error_message(__('请登录', 'wnd'));
+			return static::build_error_message(__('请登录', 'wnd'));
 		}
 
 		$form = new Wnd_Form_User();

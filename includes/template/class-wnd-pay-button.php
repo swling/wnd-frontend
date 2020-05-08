@@ -41,7 +41,7 @@ class Wnd_Pay_Button {
 	 *
 	 */
 	public static function build_paid_download_button($post_id) {
-		extract(self::get_payment_var($post_id));
+		extract(static::get_payment_var($post_id));
 
 		$file = wnd_get_post_meta($post_id, 'file');
 		// 没有文件
@@ -53,7 +53,7 @@ class Wnd_Pay_Button {
 
 		// 未登录用户
 		if (!$user_id) {
-			$button .= self::build_message('付费下载：¥ ' . $post_price, $second_color);
+			$button .= static::build_message('付费下载：¥ ' . $post_price, $second_color);
 			$button .= '<div class="field is-grouped is-grouped-centered"><button class="button ' . $primary_color . '" onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\')">请登录</button></div>';
 			return $button;
 		}
@@ -73,7 +73,7 @@ class Wnd_Pay_Button {
 
 		// 非作者，判断余额支付情况
 		if ($user_id == $post->post_author) {
-			$button .= self::build_message('您的付费下载：¥ ' . $post_price, $second_color);
+			$button .= static::build_message('您的付费下载：¥ ' . $post_price, $second_color);
 
 		} elseif (!$user_has_paid) {
 			try {
@@ -81,9 +81,9 @@ class Wnd_Pay_Button {
 				Wnd_Create_Order_Trait::check_create($post_id, $user_id);
 
 				// 消费提示
-				$button .= self::build_reminder($user_money, $post_price, $second_color);
+				$button .= static::build_reminder($user_money, $post_price, $second_color);
 			} catch (Exception $e) {
-				$button .= self::build_message($e->getMessage(), $second_color);
+				$button .= static::build_message($e->getMessage(), $second_color);
 			}
 		}
 
@@ -102,7 +102,7 @@ class Wnd_Pay_Button {
 	 *付费阅读
 	 */
 	public static function build_paid_reading_button($post_id) {
-		extract(self::get_payment_var($post_id));
+		extract(static::get_payment_var($post_id));
 
 		// 免费文章
 		if (!$post_price) {
@@ -113,20 +113,20 @@ class Wnd_Pay_Button {
 
 		// 未登录用户
 		if (!$user_id) {
-			$button .= self::build_message('付费内容：¥ ' . $post_price, $second_color);
+			$button .= static::build_message('付费内容：¥ ' . $post_price, $second_color);
 			$button .= '<div class="field is-grouped is-grouped-centered"><button class="button ' . $primary_color . '" onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\')">请登录</button></div>';
 			return $button;
 		}
 
 		// 已支付
 		if ($user_has_paid) {
-			$button .= self::build_message('您已付费：¥ ' . $post_price, $second_color);
+			$button .= static::build_message('您已付费：¥ ' . $post_price, $second_color);
 			return $button;
 		}
 
 		// 作者本人
 		if ($user_id == $post->post_author) {
-			$button .= self::build_message('您的付费文章：¥ ' . $post_price, $second_color);
+			$button .= static::build_message('您的付费文章：¥ ' . $post_price, $second_color);
 			return $button;
 		}
 
@@ -142,10 +142,10 @@ class Wnd_Pay_Button {
 			$form->build();
 
 			// 消费提示及提交按钮
-			$button .= self::build_reminder($user_money, $post_price, $second_color);
+			$button .= static::build_reminder($user_money, $post_price, $second_color);
 			$button .= $form->html;
 		} catch (Exception $e) {
-			$button .= self::build_message($e->getMessage(), $second_color);
+			$button .= static::build_message($e->getMessage(), $second_color);
 		}
 
 		return $button;
@@ -165,6 +165,6 @@ class Wnd_Pay_Button {
 	 */
 	protected static function build_reminder($user_money, $post_price, $color) {
 		$message = __('当前余额：¥ ', 'wnd') . '<b>' . $user_money . '</b>&nbsp;&nbsp;' . __('本次消费：¥ ', 'wnd') . '<b>' . $post_price . '</b>';
-		return self::build_message($message, $color);
+		return static::build_message($message, $color);
 	}
 }

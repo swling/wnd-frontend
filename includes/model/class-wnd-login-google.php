@@ -27,7 +27,7 @@ class Wnd_Login_Google extends Wnd_Login_Social {
 		$query = http_build_query(
 			[
 				'client_id'       => $this->app_id,
-				'state'           => self::build_state('Google'),
+				'state'           => static::build_state('Google'),
 				'response_type'   => 'code',
 				'redirect_uri'    => $this->redirect_url,
 				'access_type'     => 'offline',
@@ -56,7 +56,7 @@ class Wnd_Login_Google extends Wnd_Login_Social {
 		}
 
 		// 校验自定义state nonce
-		self::check_state_nonce($_GET['state']);
+		static::check_state_nonce($_GET['state']);
 
 		//用户允许授权后，将会重定向到redirect_uri的网址上，并且带上code参数
 		$data = [

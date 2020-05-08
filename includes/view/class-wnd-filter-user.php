@@ -86,13 +86,13 @@ class Wnd_Filter_User {
 	 *@param string 	$uniqid当前筛选器唯一标识
 	 */
 	public function __construct(bool $is_ajax = false, string $uniqid = '') {
-		self::$is_ajax    = $is_ajax;
-		self::$doing_ajax = wnd_doing_ajax();
-		self::$http_query = self::parse_query_vars();
-		$this->class      = self::$is_ajax ? 'ajax-filter-user' : 'filter-user';
+		static::$is_ajax    = $is_ajax;
+		static::$doing_ajax = wnd_doing_ajax();
+		static::$http_query = static::parse_query_vars();
+		$this->class      = static::$is_ajax ? 'ajax-filter-user' : 'filter-user';
 
 		// 解析GET参数为wp_user_query参数并与默认参数合并，以防止出现参数未定义的警告信息
-		$this->query_args = array_merge($this->query_args, self::$http_query);
+		$this->query_args = array_merge($this->query_args, static::$http_query);
 
 		// 初始化时生成uniqid，并加入query参数，以便在ajax生成的新请求中保持一致
 		$this->uniqid = $uniqid ?: $this->query_args['wnd_uniqid'] ?: uniqid();
@@ -159,7 +159,7 @@ class Wnd_Filter_User {
 			 *ajax Orderby tabs链接请求中，orderby将发送HTTP query形式的信息，需要解析后并入查询参数
 			 *
 			 */
-			if ('orderby' == $key and self::$is_ajax) {
+			if ('orderby' == $key and static::$is_ajax) {
 				/**
 				 * @see 	build_orderby_filter
 				 * @since 	2019.08.18
@@ -234,11 +234,11 @@ class Wnd_Filter_User {
 		foreach ($query as $key => $value) {
 			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
 			if (is_array($this->query_args[$key] ?? false) and is_array($value)) {
-				$this->query_args[$key] = array_merge($this->query_args[$key], $value, self::$http_query[$key] ?? []);
+				$this->query_args[$key] = array_merge($this->query_args[$key], $value, static::$http_query[$key] ?? []);
 
 			} else {
 				// $_GET参数优先，无法重新设置
-				$this->query_args[$key] = (self::$http_query[$key] ?? false) ?: $value;
+				$this->query_args[$key] = (static::$http_query[$key] ?? false) ?: $value;
 			}
 
 			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
@@ -417,7 +417,7 @@ class Wnd_Filter_User {
 
 			// data-key="orderby" data-value="' . http_build_query($query_arg) . '"
 			$query_arg    = is_array($orderby) ? $orderby : ['orderby' => $orderby];
-			$orderby_link = self::$doing_ajax ? '' : add_query_arg($query_arg, remove_query_arg($remove_query_args));
+			$orderby_link = static::$doing_ajax ? '' : add_query_arg($query_arg, remove_query_arg($remove_query_args));
 			$tabs .= '<li ' . $class . '><a data-key="orderby" data-value="' . http_build_query($query_arg) . '" href="' . $orderby_link . '">' . $key . '</a></li>';
 		}
 		unset($key, $orderby);
@@ -450,7 +450,7 @@ class Wnd_Filter_User {
 
 		// 是否已设置order参数
 		$all_class = isset($this->wp_query_args['orderby']) ? '' : 'class="is-active"';
-		$all_link  = self::$doing_ajax ? '' : remove_query_arg('order', remove_query_arg($this->remove_query_args));
+		$all_link  = static::$doing_ajax ? '' : remove_query_arg('order', remove_query_arg($this->remove_query_args));
 		$tabs .= '<li ' . $all_class . '><a data-key="order" data-value="" href="' . $all_link . '">' . __('默认', 'wnd') . '</a></li>';
 
 		// 输出tabs
@@ -464,7 +464,7 @@ class Wnd_Filter_User {
 			/**
 			 *meta_query GET参数为：_meta_{key}?=
 			 */
-			$order_link = self::$doing_ajax ? '' : add_query_arg('order', $value, remove_query_arg($this->remove_query_args));
+			$order_link = static::$doing_ajax ? '' : add_query_arg('order', $value, remove_query_arg($this->remove_query_args));
 			$tabs .= '<li ' . $class . '><a data-key="order" data-value="' . $value . '" href="' . $order_link . '">' . $key . '</a></li>';
 		}
 		unset($key, $value);
@@ -496,8 +496,8 @@ class Wnd_Filter_User {
 		 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
 		 */
 		if (!$this->wp_user_query->get_total()) {
-			$previous_link = self::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
-			$next_link     = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
+			$previous_link = static::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
+			$next_link     = static::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
 
 			$html = '<nav id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			$html .= '<ul class="pagination-list">';
@@ -517,10 +517,10 @@ class Wnd_Filter_User {
 			 *常规分页，需要查询user总数
 			 *据称，在数据量较大的站点，查询user总数会较为费时
 			 */
-			$first_link    = self::$doing_ajax ? '' : remove_query_arg('page');
-			$previous_link = self::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
-			$next_link     = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
-			$last_link     = self::$doing_ajax ? '' : add_query_arg('page', $max_num_pages);
+			$first_link    = static::$doing_ajax ? '' : remove_query_arg('page');
+			$previous_link = static::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
+			$next_link     = static::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
+			$last_link     = static::$doing_ajax ? '' : add_query_arg('page', $max_num_pages);
 
 			$html = '<div id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			if ($paged > 1) {
@@ -537,7 +537,7 @@ class Wnd_Filter_User {
 			$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . $first_link . '" >' . __('首页', 'wnd') . '</a></li>';
 			for ($i = $paged - 1; $i <= $paged + $show_page; $i++) {
 				if ($i > 0 and $i <= $max_num_pages) {
-					$page_link = self::$doing_ajax ? '' : add_query_arg('page', $i);
+					$page_link = static::$doing_ajax ? '' : add_query_arg('page', $i);
 					if ($i == $paged) {
 						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link is-current" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
 					} else {

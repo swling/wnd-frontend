@@ -86,7 +86,7 @@ abstract class Wnd_Login_Social {
 	 *校验自定义state nonce
 	 */
 	public static function check_state_nonce($state) {
-		$nonce = self::parse_state($state)['nonce'];
+		$nonce = static::parse_state($state)['nonce'];
 		if (!wp_verify_nonce($nonce, 'social_login')) {
 			throw new Exception(__('验证失败，请返回页面并刷新重试', 'wnd'));
 		}

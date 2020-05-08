@@ -22,7 +22,7 @@ class Wnd_User {
 		global $wpdb;
 		$user = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE user_id = %d LIMIT 1", $user_id));
 		if ($user) {
-			self::update_wnd_user_caches($user);
+			static::update_wnd_user_caches($user);
 		}
 		return $user;
 	}
@@ -39,7 +39,7 @@ class Wnd_User {
 		//当前用户已登录，同步信息
 		if (is_user_logged_in()) {
 			$this_user   = wp_get_current_user();
-			$may_be_user = self::get_user_by_openid($open_id);
+			$may_be_user = static::get_user_by_openid($open_id);
 			if ($may_be_user and $may_be_user->ID != $this_user->ID) {
 				exit(__('OpenID已被其他账户占用', 'wnd'));
 			}
@@ -48,14 +48,14 @@ class Wnd_User {
 				wnd_update_user_meta($this_user->ID, 'avatar_url', $avatar_url);
 			}
 			if ($open_id) {
-				self::update_user_openid($this_user->ID, $open_id);
+				static::update_user_openid($this_user->ID, $open_id);
 			}
-			wp_redirect(self::get_reg_redirect_url());
+			wp_redirect(static::get_reg_redirect_url());
 			exit;
 		}
 
 		//当前用户未登录，注册或者登录 检测是否已注册
-		$user = self::get_user_by_openid($open_id);
+		$user = static::get_user_by_openid($open_id);
 		if (!$user) {
 			$user_login = wnd_generate_login();
 			$user_pass  = wp_generate_password();
@@ -65,7 +65,7 @@ class Wnd_User {
 			if (is_wp_error($user_id)) {
 				wp_die($user_id->get_error_message(), get_option('blogname'));
 			} else {
-				self::update_user_openid($user_id, $open_id);
+				static::update_user_openid($user_id, $open_id);
 			}
 		}
 
@@ -73,7 +73,7 @@ class Wnd_User {
 		$user_id = $user ? $user->ID : $user_id;
 		wnd_update_user_meta($user_id, 'avatar_url', $avatar_url);
 		wp_set_auth_cookie($user_id, true);
-		wp_redirect(self::get_reg_redirect_url());
+		wp_redirect(static::get_reg_redirect_url());
 		exit();
 	}
 
@@ -87,7 +87,7 @@ class Wnd_User {
 			return false;
 		}
 
-		return self::get_wnd_user($user_id)->phone ?? false;
+		return static::get_wnd_user($user_id)->phone ?? false;
 	}
 
 	/**
@@ -100,7 +100,7 @@ class Wnd_User {
 			return false;
 		}
 
-		return self::get_wnd_user($user_id)->open_id ?? false;
+		return static::get_wnd_user($user_id)->open_id ?? false;
 	}
 
 	/**
@@ -185,7 +185,7 @@ class Wnd_User {
 		global $wpdb;
 
 		// 查询
-		$user = self::get_wnd_user($user_id);
+		$user = static::get_wnd_user($user_id);
 
 		// 更新
 		if ($user) {
@@ -212,7 +212,7 @@ class Wnd_User {
 
 		// 更新用户缓存
 		if ($db) {
-			self::clean_wnd_user_caches($user);
+			static::clean_wnd_user_caches($user);
 		}
 
 		return $db;
@@ -229,7 +229,7 @@ class Wnd_User {
 		global $wpdb;
 
 		// 查询
-		$user = self::get_wnd_user($user_id);
+		$user = static::get_wnd_user($user_id);
 
 		// 更新
 		if ($user) {
@@ -254,7 +254,7 @@ class Wnd_User {
 		if ($db) {
 			wp_update_user(['ID' => $user_id, 'user_email' => $email]);
 
-			self::clean_wnd_user_caches($user);
+			static::clean_wnd_user_caches($user);
 		}
 
 		return $db;
@@ -271,7 +271,7 @@ class Wnd_User {
 		global $wpdb;
 
 		// 查询
-		$user = self::get_wnd_user($user_id);
+		$user = static::get_wnd_user($user_id);
 
 		// 更新
 		if ($user) {
@@ -294,7 +294,7 @@ class Wnd_User {
 
 		// 更新字段
 		if ($db) {
-			self::clean_wnd_user_caches($user);
+			static::clean_wnd_user_caches($user);
 		}
 
 		return $db;

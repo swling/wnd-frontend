@@ -23,7 +23,7 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 		$query = http_build_query(
 			[
 				'client_id'     => $this->app_id,
-				'state'         => self::build_state('QQ'),
+				'state'         => static::build_state('QQ'),
 				'response_type' => 'code',
 				'redirect_uri'  => $this->redirect_url,
 			]
@@ -49,7 +49,7 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 		}
 
 		// 校验自定义state nonce
-		self::check_state_nonce($_GET['state']);
+		static::check_state_nonce($_GET['state']);
 
 		$query = http_build_query(
 			[

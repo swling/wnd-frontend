@@ -51,7 +51,7 @@ class Wnd_Tag_Under_Category {
 				$delete_tt_ids = array_diff($old_tt_ids, $tt_ids);
 				if ($delete_tt_ids) {
 					foreach ($delete_tt_ids as $cat_id) {
-						self::update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, false);
+						static::update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, false);
 					}
 					unset($cat_id);
 				}
@@ -60,7 +60,7 @@ class Wnd_Tag_Under_Category {
 				$add_tt_ids = array_diff($tt_ids, $old_tt_ids);
 				if ($add_tt_ids) {
 					foreach ($add_tt_ids as $cat_id) {
-						self::update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, true);
+						static::update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, true);
 					}
 					unset($cat_id);
 				}
@@ -82,7 +82,7 @@ class Wnd_Tag_Under_Category {
 				$delete_tt_ids = array_diff($old_tt_ids, $tt_ids);
 				if ($delete_tt_ids) {
 					foreach ($delete_tt_ids as $tag_id) {
-						self::update_tag_under_category($cat_id, $tag_id, $taxonomy, false);
+						static::update_tag_under_category($cat_id, $tag_id, $taxonomy, false);
 					}
 					unset($tag_id);
 				}
@@ -91,7 +91,7 @@ class Wnd_Tag_Under_Category {
 				$add_tt_ids = array_diff($tt_ids, $old_tt_ids);
 				if ($add_tt_ids) {
 					foreach ($add_tt_ids as $tag_id) {
-						self::update_tag_under_category($cat_id, $tag_id, $taxonomy, true);
+						static::update_tag_under_category($cat_id, $tag_id, $taxonomy, true);
 					}
 					unset($tag_id);
 				}
@@ -123,7 +123,7 @@ class Wnd_Tag_Under_Category {
 			if ($cat_id) {
 				foreach ($tags as $tag) {
 					$tag_id = $tag->term_id;
-					self::update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, false);
+					static::update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, false);
 				}
 				unset($tag);
 			}

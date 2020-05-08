@@ -89,7 +89,7 @@ class Wnd_Order extends Wnd_Transaction {
 		/**
 		 *@since 2019.02.17
 		 *success表示直接余额消费，更新用户余额
-		 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see self::verify();
+		 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see static::verify();
 		 */
 		if ('success' == $this->status) {
 			wnd_inc_user_expense($this->user_id, $this->total_amount);

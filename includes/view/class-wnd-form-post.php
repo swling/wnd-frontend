@@ -91,8 +91,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		 *上述两种情况均初始化一个空白的对象
 		 *2019.07.16
 		 */
-		$this->post    = $post_id ? get_post($post_id) : (object) self::$default_post;
-		$this->post    = $this->post ?: (object) self::$default_post;
+		$this->post    = $post_id ? get_post($post_id) : (object) static::$default_post;
+		$this->post    = $this->post ?: (object) static::$default_post;
 		$this->post_id = $this->post->ID;
 
 		/**
@@ -108,7 +108,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		 *获取当前post 已选term数据
 		 */
 		$this->taxonomies    = get_object_taxonomies($this->post_type, 'names');
-		$this->current_terms = $this->taxonomies ? self::get_current_terms() : [];
+		$this->current_terms = $this->taxonomies ? static::get_current_terms() : [];
 
 		// 文章表单固有字段
 		if (!$input_fields_only) {
@@ -452,7 +452,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			[
 				'name'    => '_post_post_status',
 				'options' => [__('存为草稿', 'wnd') => 'draft'],
-				'class'   => 'switch is-' . self::$second_color,
+				'class'   => 'switch is-' . static::$second_color,
 			]
 		);
 	}

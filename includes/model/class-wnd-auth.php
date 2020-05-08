@@ -58,17 +58,17 @@ abstract class Wnd_Auth {
 	 */
 	public static function get_instance($auth_object) {
 		if (is_object($auth_object)) {
-			self::$text = __('用户', 'wnd');
+			static::$text = __('用户', 'wnd');
 			return new Wnd_Auth_User($auth_object);
 		}
 
 		if (is_email($auth_object)) {
-			self::$text = __('邮箱', 'wnd');
+			static::$text = __('邮箱', 'wnd');
 			return new Wnd_Auth_Email($auth_object);
 		}
 
 		if (wnd_is_phone($auth_object)) {
-			self::$text = __('手机', 'wnd');
+			static::$text = __('手机', 'wnd');
 			return new Wnd_Auth_Phone($auth_object);
 		}
 
@@ -112,7 +112,7 @@ abstract class Wnd_Auth {
 	 */
 	protected function check_type() {
 		if (empty($this->auth_object)) {
-			throw new Exception(__('请填写', 'wnd') . '&nbsp;' . self::$text);
+			throw new Exception(__('请填写', 'wnd') . '&nbsp;' . static::$text);
 		}
 
 		// 必须指定类型
@@ -123,7 +123,7 @@ abstract class Wnd_Auth {
 		// 注册
 		$temp_user = is_object($this->auth_object) ? $this->auth_object : wnd_get_user_by($this->auth_object);
 		if ($this->type == 'register' and $temp_user) {
-			throw new Exception(self::$text . '&nbsp;' . __('已注册', 'wnd'));
+			throw new Exception(static::$text . '&nbsp;' . __('已注册', 'wnd'));
 		}
 
 		// 绑定
@@ -132,13 +132,13 @@ abstract class Wnd_Auth {
 				throw new Exception(__('请登录', 'wnd'));
 			}
 			if ($temp_user) {
-				throw new Exception(self::$text . '&nbsp;' . __('已注册', 'wnd'));
+				throw new Exception(static::$text . '&nbsp;' . __('已注册', 'wnd'));
 			}
 		}
 
 		// 找回密码
 		if ($this->type == 'reset_password' and !$temp_user) {
-			throw new Exception(self::$text . '&nbsp;' . __('尚未注册', 'wnd'));
+			throw new Exception(static::$text . '&nbsp;' . __('尚未注册', 'wnd'));
 		}
 	}
 
@@ -193,7 +193,7 @@ abstract class Wnd_Auth {
 			throw new Exception(__('校验失败：请填写验证码', 'wnd'));
 		}
 		if (empty($this->auth_object)) {
-			throw new Exception(self::$text . '&nbsp;' . __('不可为空', 'wnd'));
+			throw new Exception(static::$text . '&nbsp;' . __('不可为空', 'wnd'));
 		}
 
 		/**

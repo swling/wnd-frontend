@@ -92,12 +92,12 @@ class Wnd_Finance {
 	 *
 	 */
 	public static function inc_user_money($user_id, $money) {
-		$new_money = self::get_user_money($user_id) + $money;
+		$new_money = static::get_user_money($user_id) + $money;
 		$new_money = number_format($new_money, 2, '.', '');
 		wnd_update_user_meta($user_id, 'money', $new_money);
 
 		// 整站按月统计充值和消费
-		self::update_fin_stats($money, 'recharge');
+		static::update_fin_stats($money, 'recharge');
 	}
 
 	/**
@@ -119,12 +119,12 @@ class Wnd_Finance {
 	 *
 	 */
 	public static function inc_user_expense($user_id, $money) {
-		$new_money = self::get_user_expense($user_id) + $money;
+		$new_money = static::get_user_expense($user_id) + $money;
 		$new_money = number_format($new_money, 2, '.', '');
 		wnd_update_user_meta($user_id, 'expense', $new_money);
 
 		// 整站按月统计充值和消费
-		self::update_fin_stats($money, 'expense');
+		static::update_fin_stats($money, 'expense');
 	}
 
 	/**

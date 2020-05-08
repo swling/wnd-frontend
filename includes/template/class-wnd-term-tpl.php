@@ -102,7 +102,7 @@ class Wnd_Term_Tpl {
 					position: {
 						collision: "flip"
 					},
-					source: [' . self::terms_text($taxonomy, 50) . ']
+					source: [' . static::terms_text($taxonomy, 50) . ']
 				},
 				forceLowercase: false,
 				placeholder: "' . $placeholder . '",

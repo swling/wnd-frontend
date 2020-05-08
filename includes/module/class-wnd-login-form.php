@@ -11,7 +11,7 @@ class Wnd_Login_Form extends Wnd_Module {
 
 	public static function build() {
 		if (is_user_logged_in()) {
-			return self::build_error_message(__('已登录', 'wnd'));
+			return static::build_error_message(__('已登录', 'wnd'));
 		}
 
 		$form = new Wnd_Form_User();

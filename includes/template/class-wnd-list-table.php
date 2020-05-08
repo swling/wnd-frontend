@@ -17,9 +17,9 @@ class Wnd_List_table {
 		$method = 'build_' . $query->query_vars['post_type'] . '_table';
 		$method = str_replace('-', '_', $method);
 		if (method_exists(__CLASS__, $method)) {
-			return self::$method($query);
+			return static::$method($query);
 		} else {
-			return self::build_post_table($query);
+			return static::build_post_table($query);
 		}
 	}
 
@@ -90,7 +90,7 @@ class Wnd_List_table {
 	 *@return 	string 	$html 	输出表单
 	 */
 	protected static function build_recharge_table($query) {
-		return self::build_finance_table($query);
+		return static::build_finance_table($query);
 	}
 
 	/**
@@ -101,7 +101,7 @@ class Wnd_List_table {
 	 *@return 	string 	$html 	输出表单
 	 */
 	protected static function build_order_table($query) {
-		return self::build_finance_table($query);
+		return static::build_finance_table($query);
 	}
 
 	/**
@@ -161,7 +161,7 @@ class Wnd_List_table {
 	 *@return 	string 	$html 	输出表单
 	 **/
 	protected static function build_stats_ex_table($query) {
-		return self::build_finance_stats_table($query);
+		return static::build_finance_stats_table($query);
 	}
 
 	/**
@@ -173,7 +173,7 @@ class Wnd_List_table {
 	 *@return 	string 	$html 	输出表单
 	 **/
 	protected static function build_stats_re_table($query) {
-		return self::build_finance_stats_table($query);
+		return static::build_finance_stats_table($query);
 	}
 
 	/**

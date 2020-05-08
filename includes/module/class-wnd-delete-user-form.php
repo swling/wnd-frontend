@@ -10,11 +10,11 @@ class Wnd_Delete_User_Form extends Wnd_Module {
 
 	public static function build($user_id = 0) {
 		if (!$user_id) {
-			return self::build_error_message(__('ID无效', 'wnd'));
+			return static::build_error_message(__('ID无效', 'wnd'));
 		}
 
 		if (!wnd_is_manager()) {
-			return self::build_error_message(__('权限不足', 'wnd'));
+			return static::build_error_message(__('权限不足', 'wnd'));
 		}
 
 		$form = new Wnd_Form_WP();

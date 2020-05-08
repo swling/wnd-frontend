@@ -96,13 +96,13 @@ class Wnd_Filter {
 	 *@param string 	$uniqid当前筛选器唯一标识
 	 */
 	public function __construct(bool $is_ajax = false, string $uniqid = '') {
-		self::$is_ajax    = $is_ajax;
-		self::$doing_ajax = wnd_doing_ajax();
-		self::$http_query = self::parse_query_vars();
-		$this->class      = self::$is_ajax ? 'ajax-filter' : 'filter';
+		static::$is_ajax    = $is_ajax;
+		static::$doing_ajax = wnd_doing_ajax();
+		static::$http_query = static::parse_query_vars();
+		$this->class      = static::$is_ajax ? 'ajax-filter' : 'filter';
 
 		// 解析GET参数为wp_query参数并与默认参数合并，以防止出现参数未定义的警告信息
-		$this->wp_query_args = array_merge($this->wp_query_args, self::$http_query);
+		$this->wp_query_args = array_merge($this->wp_query_args, static::$http_query);
 
 		// 初始化时生成uniqid，并加入query参数，以便在ajax生成的新请求中保持一致
 		$this->uniqid = $uniqid ?: $this->wp_query_args['wnd_uniqid'] ?: uniqid();
@@ -256,7 +256,7 @@ class Wnd_Filter {
 			 *ajax Orderby tabs链接请求中，orderby将发送HTTP query形式的信息，需要解析后并入查询参数
 			 *
 			 */
-			if ('orderby' == $key and self::$is_ajax) {
+			if ('orderby' == $key and static::$is_ajax) {
 				/**
 				 * @see 	build_orderby_filter
 				 * @since 	2019.08.18
@@ -283,7 +283,7 @@ class Wnd_Filter {
 			 *@since 2019.08.17
 			 *ajax请求中，数组类型查询参数，需要解析后并入查询参数
 			 */
-			if (in_array($key, ['tax_query', 'meta_query', 'date_query']) and self::$is_ajax) {
+			if (in_array($key, ['tax_query', 'meta_query', 'date_query']) and static::$is_ajax) {
 				$query_vars[$key] = wp_parse_args($value, $query_vars[$key]);
 				continue;
 			}
@@ -359,11 +359,11 @@ class Wnd_Filter {
 		foreach ($query as $key => $value) {
 			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
 			if (is_array($this->wp_query_args[$key] ?? false) and is_array($value)) {
-				$this->wp_query_args[$key] = array_merge($this->wp_query_args[$key], $value, self::$http_query[$key] ?? []);
+				$this->wp_query_args[$key] = array_merge($this->wp_query_args[$key], $value, static::$http_query[$key] ?? []);
 
 			} else {
 				// $_GET参数优先，无法重新设置
-				$this->wp_query_args[$key] = (self::$http_query[$key] ?? false) ?: $value;
+				$this->wp_query_args[$key] = (static::$http_query[$key] ?? false) ?: $value;
 			}
 
 			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
@@ -612,7 +612,7 @@ class Wnd_Filter {
 
 			$class = 'post-type-' . $post_type->name;
 			$class .= ($this->wp_query_args['post_type'] == $post_type->name) ? ' is-active' : '';
-			$post_type_link = self::$doing_ajax ? '' : add_query_arg('type', $post_type->name, $uri);
+			$post_type_link = static::$doing_ajax ? '' : add_query_arg('type', $post_type->name, $uri);
 
 			$tabs .= '<li class="' . $class . '">';
 			$tabs .= '<a data-key="type" data-value="' . $post_type->name . '" href="' . $post_type_link . '">' . $post_type->label . '</a>';
@@ -647,7 +647,7 @@ class Wnd_Filter {
 		foreach ($args as $label => $post_status) {
 			$class = 'post-status-' . $post_status;
 			$class .= (isset($this->wp_query_args['post_status']) and $this->wp_query_args['post_status'] == $post_status) ? ' is-active' : '';
-			$status_link = self::$doing_ajax ? '' : add_query_arg('status', $post_status, remove_query_arg($this->remove_query_args));
+			$status_link = static::$doing_ajax ? '' : add_query_arg('status', $post_status, remove_query_arg($this->remove_query_args));
 
 			$tabs .= '<li class="' . $class . '">';
 			$tabs .= '<a data-key="status" data-value="' . $post_status . '" href="' . $status_link . '">' . $label . '</a>';
@@ -688,7 +688,7 @@ class Wnd_Filter {
 		 */
 		$current_post_type_taxonomies = get_object_taxonomies($this->wp_query_args['post_type'], $output = 'names');
 		if (!in_array($taxonomy, $current_post_type_taxonomies)) {
-			if (!self::$is_ajax) {
+			if (!static::$is_ajax) {
 				return;
 			} else {
 				$class .= ' is-hidden';
@@ -738,7 +738,7 @@ class Wnd_Filter {
 		 * @since 2019.03.07
 		 */
 		if (!$parent) {
-			$all_link = self::$doing_ajax ? '' : remove_query_arg('_term_' . $taxonomy, remove_query_arg($remove_query_args));
+			$all_link = static::$doing_ajax ? '' : remove_query_arg('_term_' . $taxonomy, remove_query_arg($remove_query_args));
 			$tabs .= '<li ' . $all_class . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . $all_link . '">' . __('全部', 'wnd') . '</a></li>';
 		}
 
@@ -767,7 +767,7 @@ class Wnd_Filter {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$term_link = self::$doing_ajax ? '' : add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($remove_query_args));
+			$term_link = static::$doing_ajax ? '' : add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($remove_query_args));
 			$tabs .= '<li class="' . $class . '"><a data-key="_term_' . $taxonomy . '" data-value="' . $term->term_id . '" href="' . $term_link . '">' . $term->name . '</a></li>';
 
 		}
@@ -841,7 +841,7 @@ class Wnd_Filter {
 		$tabs .= '<ul class="tab">';
 
 		// 全部选项链接
-		$all_link = self::$doing_ajax ? '' : remove_query_arg('_term_' . $taxonomy, remove_query_arg($this->remove_query_args));
+		$all_link = static::$doing_ajax ? '' : remove_query_arg('_term_' . $taxonomy, remove_query_arg($this->remove_query_args));
 		$tabs .= '<li ' . $all_class . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . $all_link . '">' . __('全部', 'wnd') . '</a></li>';
 
 		// 输出tabs
@@ -865,7 +865,7 @@ class Wnd_Filter {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$term_link = self::$doing_ajax ? '' : add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($this->remove_query_args));
+			$term_link = static::$doing_ajax ? '' : add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($this->remove_query_args));
 			$tabs .= '<li class="' . $class . '"><a data-key="_term_' . $taxonomy . '" data-value="' . $term->term_id . '" href="' . $term_link . '">' . $term->name . '</a></li>';
 
 		}
@@ -930,7 +930,7 @@ class Wnd_Filter {
 		 * 全部选项
 		 * @since 2019.03.07（copy）
 		 */
-		$all_link = self::$doing_ajax ? '' : remove_query_arg('_meta_' . $args['key'], remove_query_arg($this->remove_query_args));
+		$all_link = static::$doing_ajax ? '' : remove_query_arg('_meta_' . $args['key'], remove_query_arg($this->remove_query_args));
 		$tabs .= '<li ' . $all_class . '><a data-key="_meta_' . $args['key'] . '" data-value="" href="' . $all_link . '">' . __('全部', 'wnd') . '</a></li>';
 
 		// 输出tabs
@@ -953,7 +953,7 @@ class Wnd_Filter {
 			/**
 			 *meta_query GET参数为：_meta_{key}?=
 			 */
-			$meta_link = self::$doing_ajax ? '' : add_query_arg('_meta_' . $args['key'], $value, remove_query_arg($this->remove_query_args));
+			$meta_link = static::$doing_ajax ? '' : add_query_arg('_meta_' . $args['key'], $value, remove_query_arg($this->remove_query_args));
 			$tabs .= '<li ' . $class . '><a data-key="_meta_' . $args['key'] . '" data-value="' . $value . '" href="' . $meta_link . '">' . $key . '</a></li>';
 		}
 		unset($key, $value);
@@ -1002,7 +1002,7 @@ class Wnd_Filter {
 		 * 全部选项
 		 * @since 2019.03.07（copy）
 		 */
-		// $all_link = self::$doing_ajax ? '' : remove_query_arg($remove_query_args);
+		// $all_link = static::$doing_ajax ? '' : remove_query_arg($remove_query_args);
 		// $tabs .= '<li ' . $all_class . '><a data-key="orderby" data-value="" href="' . $all_link . '">默认</a></li>';
 
 		// 输出tabs
@@ -1035,7 +1035,7 @@ class Wnd_Filter {
 
 			// data-key="orderby" data-value="' . http_build_query($query_arg) . '"
 			$query_arg    = is_array($orderby) ? $orderby : ['orderby' => $orderby];
-			$orderby_link = self::$doing_ajax ? '' : add_query_arg($query_arg, remove_query_arg($remove_query_args));
+			$orderby_link = static::$doing_ajax ? '' : add_query_arg($query_arg, remove_query_arg($remove_query_args));
 			$tabs .= '<li ' . $class . '><a data-key="orderby" data-value="' . http_build_query($query_arg) . '" href="' . $orderby_link . '">' . $key . '</a></li>';
 		}
 		unset($key, $orderby);
@@ -1068,7 +1068,7 @@ class Wnd_Filter {
 
 		// 是否已设置order参数
 		$all_class = isset($this->wp_query_args['orderby']) ? '' : 'class="is-active"';
-		$all_link  = self::$doing_ajax ? '' : remove_query_arg('order', remove_query_arg($this->remove_query_args));
+		$all_link  = static::$doing_ajax ? '' : remove_query_arg('order', remove_query_arg($this->remove_query_args));
 		$tabs .= '<li ' . $all_class . '><a data-key="order" data-value="" href="' . $all_link . '">' . __('默认', 'wnd') . '</a></li>';
 
 		// 输出tabs
@@ -1083,7 +1083,7 @@ class Wnd_Filter {
 			/**
 			 *meta_query GET参数为：_meta_{key}?=
 			 */
-			$order_link = self::$doing_ajax ? '' : add_query_arg('order', $value, remove_query_arg($this->remove_query_args));
+			$order_link = static::$doing_ajax ? '' : add_query_arg('order', $value, remove_query_arg($this->remove_query_args));
 			$tabs .= '<li ' . $class . '><a data-key="order" data-value="' . $value . '" href="' . $order_link . '">' . $key . '</a></li>';
 		}
 		unset($key, $value);
@@ -1122,7 +1122,7 @@ class Wnd_Filter {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$cancel_link = self::$doing_ajax ? '' : remove_query_arg('_term_' . $term->taxonomy, remove_query_arg($this->remove_query_args));
+			$cancel_link = static::$doing_ajax ? '' : remove_query_arg('_term_' . $term->taxonomy, remove_query_arg($this->remove_query_args));
 			$tabs .= '<span class="tag">' . $term->name . '<a data-key="_term_' . $term->taxonomy . '" data-value="" class="delete is-small" href="' . $cancel_link . '"></a></span>&nbsp;&nbsp;';
 		}
 		unset($key, $tax_query);
@@ -1147,7 +1147,7 @@ class Wnd_Filter {
 			/**
 			 *meta_query GET参数为：meta_{key}?=
 			 */
-			$cancel_link = self::$doing_ajax ? '' : remove_query_arg('_meta_' . $this->meta_filter_args['key'], remove_query_arg($this->remove_query_args));
+			$cancel_link = static::$doing_ajax ? '' : remove_query_arg('_meta_' . $this->meta_filter_args['key'], remove_query_arg($this->remove_query_args));
 			$tabs .= '<span class="tag">' . $key . '<a data-key="_meta_' . $this->meta_filter_args['key'] . '" data-value="" class="delete is-small" href="' . $cancel_link . '"></a></span>&nbsp;&nbsp;';
 		}
 		unset($key, $meta_query);
@@ -1177,8 +1177,8 @@ class Wnd_Filter {
 		 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
 		 */
 		if (!$this->wp_query->max_num_pages) {
-			$previous_link = self::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
-			$next_link     = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
+			$previous_link = static::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
+			$next_link     = static::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
 
 			$html = '<nav id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			$html .= '<ul class="pagination-list">';
@@ -1198,10 +1198,10 @@ class Wnd_Filter {
 			 *常规分页，需要查询文章总数
 			 *据称，在数据量较大的站点，查询文章总数会较为费时
 			 */
-			$first_link    = self::$doing_ajax ? '' : remove_query_arg('page');
-			$previous_link = self::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
-			$next_link     = self::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
-			$last_link     = self::$doing_ajax ? '' : add_query_arg('page', $this->wp_query->max_num_pages);
+			$first_link    = static::$doing_ajax ? '' : remove_query_arg('page');
+			$previous_link = static::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
+			$next_link     = static::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
+			$last_link     = static::$doing_ajax ? '' : add_query_arg('page', $this->wp_query->max_num_pages);
 
 			$html = '<div id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
 			if ($paged > 1) {
@@ -1218,7 +1218,7 @@ class Wnd_Filter {
 			$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . $first_link . '" >' . __('首页', 'wnd') . '</a></li>';
 			for ($i = $paged - 1; $i <= $paged + $show_page; $i++) {
 				if ($i > 0 and $i <= $this->wp_query->max_num_pages) {
-					$page_link = self::$doing_ajax ? '' : add_query_arg('page', $i);
+					$page_link = static::$doing_ajax ? '' : add_query_arg('page', $i);
 					if ($i == $paged) {
 						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link is-current" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
 					} else {
