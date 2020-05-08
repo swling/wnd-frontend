@@ -77,11 +77,11 @@ class Wnd_Term {
 	 */
 	public static function get_term_children_by_level($term_id, $taxonomy, $child_level) {
 		$children    = get_term_children($term_id, $taxonomy);
-		$child_level = static::get_term_level($term_id, $taxonomy) + $child_level;
+		$child_level = self::get_term_level($term_id, $taxonomy) + $child_level;
 
 		$this_level = [];
 		foreach ($children as $child_term_id) {
-			if ($child_level == static::get_term_level($child_term_id, $taxonomy)) {
+			if ($child_level == self::get_term_level($child_term_id, $taxonomy)) {
 				$this_level[] = $child_term_id;
 			}
 		}

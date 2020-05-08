@@ -236,8 +236,8 @@ class Wnd_Form_WP extends Wnd_Form {
 		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据 meta_key 查找目标文件
-		$file_id  = $args['file_id'] ?: static::get_attachment_id($meta_key, $post_parent, $user_id);
-		$file_url = static::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
+		$file_id  = $args['file_id'] ?: self::get_attachment_id($meta_key, $post_parent, $user_id);
+		$file_url = self::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
 		$file_url = $file_url ? wnd_get_thumbnail_url($file_url, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']) : '';
 
 		$args['thumbnail'] = $file_url ?: $args['thumbnail'];
@@ -284,8 +284,8 @@ class Wnd_Form_WP extends Wnd_Form {
 		$args['data']['method']         = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据 meta_key 查找目标文件
-		$file_id  = $args['file_id'] ?: static::get_attachment_id($meta_key, $post_parent, $user_id);
-		$file_url = static::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
+		$file_id  = $args['file_id'] ?: self::get_attachment_id($meta_key, $post_parent, $user_id);
+		$file_url = self::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
 
 		$args['file_id']   = $file_id ?: 0;
 		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">' . __('查看文件', 'wnd') . '</a>' : '……';

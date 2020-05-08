@@ -41,14 +41,14 @@ class Wnd_User_Center extends Wnd_Module {
 
 			if (wnd_doing_ajax()) {
 				if ('email' == $type and $enable_sms) {
-					$html .= static::build_module_link('do=reset_password&type=phone', __('手机验证找回', 'wnd'), $ajax_type);
+					$html .= self::build_module_link('do=reset_password&type=phone', __('手机验证找回', 'wnd'), $ajax_type);
 				} elseif ($type == 'phone') {
-					$html .= static::build_module_link('do=reset_password&type=email', __('邮箱验证找回', 'wnd'), $ajax_type);
+					$html .= self::build_module_link('do=reset_password&type=email', __('邮箱验证找回', 'wnd'), $ajax_type);
 				}
 
 				if (!$is_user_logged_in) {
 					$html .= $enable_sms ? ' | ' : '';
-					$html .= static::build_module_link('do=login', __('登录', 'wnd'), $ajax_type);
+					$html .= self::build_module_link('do=login', __('登录', 'wnd'), $ajax_type);
 				}
 
 			} else {
@@ -80,12 +80,12 @@ class Wnd_User_Center extends Wnd_Module {
 				$html .= '<div class="has-text-centered">';
 				if (wnd_doing_ajax()) {
 					if ('email' == $type and $enable_sms) {
-						$html .= static::build_module_link('do=register&type=phone', __('手机注册', 'wnd'), $ajax_type) . ' | ';
+						$html .= self::build_module_link('do=register&type=phone', __('手机注册', 'wnd'), $ajax_type) . ' | ';
 					} elseif ($type == 'phone' and !$disable_email_reg) {
-						$html .= static::build_module_link('do=register&type=email', __('邮箱注册', 'wnd'), $ajax_type) . '|';
+						$html .= self::build_module_link('do=register&type=email', __('邮箱注册', 'wnd'), $ajax_type) . '|';
 					}
 
-					$html .= static::build_module_link('do=login', __('登录', 'wnd'), $ajax_type);
+					$html .= self::build_module_link('do=login', __('登录', 'wnd'), $ajax_type);
 
 				} else {
 					if ('email' == $type and $enable_sms) {
@@ -104,8 +104,8 @@ class Wnd_User_Center extends Wnd_Module {
 				$html .= Wnd_Login_Form::build();
 				$html .= '<div class="has-text-centered">';
 				if (wnd_doing_ajax()) {
-					$html .= static::build_module_link('do=register', __('立即注册', 'wnd'), $ajax_type) . ' | ';
-					$html .= static::build_module_link('do=reset_password', __('忘记密码', 'wnd'), $ajax_type);
+					$html .= self::build_module_link('do=register', __('立即注册', 'wnd'), $ajax_type) . ' | ';
+					$html .= self::build_module_link('do=reset_password', __('忘记密码', 'wnd'), $ajax_type);
 				} else {
 					$html .= '<a href="' . add_query_arg('do', 'register') . '">' . __('立即注册', 'wnd') . '</a> | ';
 					$html .= '<a href="' . add_query_arg('do', 'reset_password') . '">' . __('忘记密码', 'wnd') . '</a>';
@@ -120,8 +120,8 @@ class Wnd_User_Center extends Wnd_Module {
 			case 'profile':
 				$html .= '<div class="tabs is-boxed is-centered"><ul class="tab">';
 				if (wnd_doing_ajax()) {
-					$html .= '<li class="is-active">' . static::build_module_link('tab=profile', __('资料', 'wnd'), $ajax_type) . '</li>';
-					$html .= '<li>' . static::build_module_link('tab=account', __('账户', 'wnd'), $ajax_type) . '</li>';
+					$html .= '<li class="is-active">' . self::build_module_link('tab=profile', __('资料', 'wnd'), $ajax_type) . '</li>';
+					$html .= '<li>' . self::build_module_link('tab=account', __('账户', 'wnd'), $ajax_type) . '</li>';
 				} else {
 					$html .= '<li class="is-active"><a href="' . add_query_arg('tab', 'profile') . '">' . __('资料', 'wnd') . '</a></li>';
 					$html .= '<li><a href="' . add_query_arg('tab', 'account') . '">' . __('账户', 'wnd') . '</a></li>';
@@ -133,8 +133,8 @@ class Wnd_User_Center extends Wnd_Module {
 			case 'account':
 				$html .= '<div class="tabs is-boxed is-centered"><ul class="tab">';
 				if (wnd_doing_ajax()) {
-					$html .= '<li>' . static::build_module_link('tab=profile', __('资料', 'wnd'), $ajax_type) . '</li>';
-					$html .= '<li class="is-active">' . static::build_module_link('tab=account', __('账户', 'wnd'), $ajax_type) . '</li>';
+					$html .= '<li>' . self::build_module_link('tab=profile', __('资料', 'wnd'), $ajax_type) . '</li>';
+					$html .= '<li class="is-active">' . self::build_module_link('tab=account', __('账户', 'wnd'), $ajax_type) . '</li>';
 				} else {
 					$html .= '<li><a href="' . add_query_arg('tab', 'profile') . '">' . __('资料', 'wnd') . '</a></li>';
 					$html .= '<li class="is-active"><a href="' . add_query_arg('tab', 'account') . '">' . __('账户', 'wnd') . '</a></li>';

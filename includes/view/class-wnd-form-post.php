@@ -108,7 +108,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		 *获取当前post 已选term数据
 		 */
 		$this->taxonomies    = get_object_taxonomies($this->post_type, 'names');
-		$this->current_terms = $this->taxonomies ? static::get_current_terms() : [];
+		$this->current_terms = $this->taxonomies ? self::get_current_terms() : [];
 
 		// 文章表单固有字段
 		if (!$input_fields_only) {

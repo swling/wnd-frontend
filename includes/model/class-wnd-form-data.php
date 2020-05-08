@@ -44,7 +44,7 @@ class Wnd_Form_Data {
 		 *因而校验表单操作应该在filter应用之前执行
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
-		if ($verify_form_nonce and !static::verify_form_nonce()) {
+		if ($verify_form_nonce and !self::verify_form_nonce()) {
 			throw new Exception(__('表单已被篡改', 'wnd'));
 		}
 
@@ -131,8 +131,8 @@ class Wnd_Form_Data {
 	 *@param array 	$form_names 表单所有字段name数组
 	 */
 	public static function build_form_nonce_field($form_names): string{
-		$nonce = static::create_form_nonce($form_names);
-		return '<input type="hidden" name="' . static::$form_nonce_name . '" value="' . $nonce . '">';
+		$nonce = self::create_form_nonce($form_names);
+		return '<input type="hidden" name="' . self::$form_nonce_name . '" value="' . $nonce . '">';
 	}
 
 	/**
@@ -144,7 +144,7 @@ class Wnd_Form_Data {
 	 */
 	protected static function create_form_nonce(array $form_names): string{
 		// nonce自身字段也需要包含在内
-		$form_names[] = static::$form_nonce_name;
+		$form_names[] = self::$form_nonce_name;
 
 		// 去重排序后生成nonce
 		$form_names = array_unique($form_names);
@@ -155,10 +155,10 @@ class Wnd_Form_Data {
 	/**
 	 *@since 2019.05.09 校验表单字段是否被篡改
 	 *
-	 *@see static::create_form_nonce
+	 *@see self::create_form_nonce
 	 */
 	protected static function verify_form_nonce(): bool {
-		if (!isset($_POST[static::$form_nonce_name])) {
+		if (!isset($_POST[self::$form_nonce_name])) {
 			return false;
 		}
 
@@ -168,6 +168,6 @@ class Wnd_Form_Data {
 		sort($form_names);
 
 		// 校验数组键值是否一直
-		return wp_verify_nonce($_POST[static::$form_nonce_name], md5(implode('', $form_names)));
+		return wp_verify_nonce($_POST[self::$form_nonce_name], md5(implode('', $form_names)));
 	}
 }
