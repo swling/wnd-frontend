@@ -89,7 +89,7 @@ class Wnd_Filter_User {
 		static::$is_ajax    = $is_ajax;
 		static::$doing_ajax = wnd_doing_ajax();
 		static::$http_query = static::parse_query_vars();
-		$this->class      = static::$is_ajax ? 'ajax-filter-user' : 'filter-user';
+		$this->class        = static::$is_ajax ? 'ajax-filter-user' : 'filter-user';
 
 		// 解析GET参数为wp_user_query参数并与默认参数合并，以防止出现参数未定义的警告信息
 		$this->query_args = array_merge($this->query_args, static::$http_query);
@@ -576,8 +576,8 @@ class Wnd_Filter_User {
 		$table .= '<thead>';
 		$table .= '<tr>';
 		$table .= '<th>' . __('名称', 'wnd') . '</th>';
-		$table .= '<th>' . __('角色', 'wnd') . '</th>';
-		$table .= '<th>' . __('注册时间', 'wnd') . '</th>';
+		$table .= '<th class="is-hidden-mobile">' . __('角色', 'wnd') . '</th>';
+		$table .= '<th class="is-hidden-mobile">' . __('注册时间', 'wnd') . '</th>';
 
 		$table .= '<td class="is-narrow">';
 		$table .= __('操作', 'wnd');
@@ -590,8 +590,8 @@ class Wnd_Filter_User {
 		foreach ($users as $user) {
 			$table .= '<tr>';
 			$table .= '<td><a href="' . get_author_posts_url($user->ID) . '" target="_blank">' . $user->display_name . '</a></td>';
-			$table .= '<td>' . $user->roles[0] . '</td>';
-			$table .= '<td>' . $user->user_registered . '</td>';
+			$table .= '<td class="is-hidden-mobile">' . $user->roles[0] . '</td>';
+			$table .= '<td class="is-hidden-mobile">' . get_date_from_gmt($user->user_registered, 'Y-m-d H:i:s') . '</td>';
 
 			// 编辑管理
 			$table .= '<td class="is-narrow has-text-centered">';

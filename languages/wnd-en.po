@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
-"POT-Creation-Date: 2020-04-25 13:35+0800\n"
-"PO-Revision-Date: 2020-04-25 13:35+0800\n"
+"POT-Creation-Date: 2020-05-09 16:54+0800\n"
+"PO-Revision-Date: 2020-05-09 16:55+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -30,7 +30,7 @@ msgid "人工充值"
 msgstr "Manual recharge"
 
 #: includes/action/class-wnd-admin-recharge.php:28
-#: includes/action/class-wnd-login.php:30 includes/model/class-wnd-user.php:379
+#: includes/action/class-wnd-login.php:30 includes/model/class-wnd-user.php:391
 msgid "用户不存在"
 msgstr "User does not exist"
 
@@ -38,21 +38,46 @@ msgstr "User does not exist"
 msgid "充值：¥"
 msgstr ""
 
-#: includes/action/class-wnd-bind-account.php:27
-msgid "绑定成功"
-msgstr "Binding successful"
-
+#: includes/action/class-wnd-ban-user.php:16
 #: includes/action/class-wnd-create-order-trait.php:15
 #: includes/action/class-wnd-create-order.php:21
+#: includes/action/class-wnd-delete-user.php:15
 #: includes/action/class-wnd-insert-post.php:47
 #: includes/action/class-wnd-pay-for-downloads.php:19
 #: includes/action/class-wnd-pay-for-reading.php:17
 #: includes/action/class-wnd-update-post.php:20
-#: includes/hook/class-wnd-add-filter.php:113
+#: includes/hook/class-wnd-add-filter.php:103
+#: includes/module/class-wnd-ban-user-form.php:13
+#: includes/module/class-wnd-delete-user-form.php:13
 #: includes/module/class-wnd-post-info.php:13
 #: includes/module/class-wnd-post-status-form.php:15
 msgid "ID无效"
 msgstr "ID is not valid"
+
+#: includes/action/class-wnd-ban-user.php:20
+#: includes/action/class-wnd-delete-user.php:25
+#: includes/module/class-wnd-ban-user-form.php:17
+#: includes/module/class-wnd-delete-user-form.php:17
+msgid "权限不足"
+msgstr ""
+
+#: includes/action/class-wnd-ban-user.php:26
+#: includes/action/class-wnd-login.php:35
+msgid "账户已被封禁"
+msgstr ""
+
+#: includes/action/class-wnd-ban-user.php:26
+msgid "账户已解封"
+msgstr ""
+
+#: includes/action/class-wnd-ban-user.php:28
+#: includes/action/class-wnd-update-post-status.php:42
+msgid "操作失败"
+msgstr ""
+
+#: includes/action/class-wnd-bind-account.php:27
+msgid "绑定成功"
+msgstr "Binding successful"
 
 #: includes/action/class-wnd-create-order-trait.php:19
 msgid "用户无效"
@@ -86,8 +111,21 @@ msgid "文件不存在"
 msgstr "File does not exists"
 
 #: includes/action/class-wnd-delete-file.php:33
+#: includes/action/class-wnd-delete-user.php:33
 msgid "删除失败"
 msgstr "Delete Failed"
+
+#: includes/action/class-wnd-delete-user.php:18
+msgid "无法删除超级管理员"
+msgstr ""
+
+#: includes/action/class-wnd-delete-user.php:21
+msgid "请确认操作"
+msgstr ""
+
+#: includes/action/class-wnd-delete-user.php:31
+msgid "删除成功"
+msgstr ""
 
 #: includes/action/class-wnd-insert-post.php:60
 msgid "未指定文件"
@@ -106,12 +144,12 @@ msgstr "Failed to write data"
 msgid "发布成功"
 msgstr "Published successfully"
 
-#: includes/action/class-wnd-login.php:38
-#: includes/action/class-wnd-login.php:40
+#: includes/action/class-wnd-login.php:43
+#: includes/action/class-wnd-login.php:45
 msgid "登录成功"
 msgstr "Login success"
 
-#: includes/action/class-wnd-login.php:44
+#: includes/action/class-wnd-login.php:49
 #: includes/action/class-wnd-update-account.php:40
 msgid "密码错误"
 msgstr "Invalid password"
@@ -125,7 +163,7 @@ msgstr "Failed to get file"
 msgid "请勿重复操作"
 msgstr ""
 
-#: includes/action/class-wnd-pay-for-reading.php:32 wnd-frontend.php:86
+#: includes/action/class-wnd-pay-for-reading.php:32 wnd-frontend.php:88
 msgid "请稍后"
 msgstr "Please wait"
 
@@ -195,7 +233,7 @@ msgid "手机"
 msgstr "Phone"
 
 #: includes/action/class-wnd-send-code.php:26
-#: includes/controller/class-wnd-api.php:164
+#: includes/controller/class-wnd-api.php:165
 msgid "Nonce校验失败"
 msgstr ""
 
@@ -249,13 +287,9 @@ msgid "无效的Post状态"
 msgstr ""
 
 #: includes/action/class-wnd-update-post-status.php:40
-#: includes/module/class-wnd-post-status-form.php:33 wnd-frontend.php:84
+#: includes/module/class-wnd-post-status-form.php:33 wnd-frontend.php:86
 msgid "已删除"
 msgstr "Delete Failed"
-
-#: includes/action/class-wnd-update-post-status.php:42
-msgid "操作失败"
-msgstr ""
 
 #: includes/action/class-wnd-upload-file.php:31
 msgid "上传文件为空"
@@ -277,36 +311,39 @@ msgstr ""
 msgid "post_parent无效"
 msgstr ""
 
-#: includes/action/class-wnd-upload-file.php:140 wnd-frontend.php:77
+#: includes/action/class-wnd-upload-file.php:140 wnd-frontend.php:79
 msgid "上传成功"
 msgstr "Upload successful"
 
-#: includes/controller/class-wnd-api.php:87
+#: includes/controller/class-wnd-api.php:88
 msgid "未指定UI"
 msgstr "UI not specified"
 
-#: includes/controller/class-wnd-api.php:106
+#: includes/controller/class-wnd-api.php:107
 msgid "无效的UI"
 msgstr "Invalid UI"
 
-#: includes/controller/class-wnd-api.php:123
+#: includes/controller/class-wnd-api.php:124
 msgid "未指定Data"
 msgstr ""
 
-#: includes/controller/class-wnd-api.php:138
+#: includes/controller/class-wnd-api.php:139
 msgid "无效的Json Data"
 msgstr ""
 
-#: includes/controller/class-wnd-api.php:155
+#: includes/controller/class-wnd-api.php:156
 msgid "未指定Action"
 msgstr "Action not specified"
 
-#: includes/controller/class-wnd-api.php:178
+#: includes/controller/class-wnd-api.php:179
 msgid "无效的Action"
 msgstr "Invalid Action"
 
-#: includes/function/tpl-general.php:34 includes/view/class-wnd-filter.php:1207
-#: includes/view/class-wnd-filter.php:1215
+#: includes/function/tpl-general.php:34
+#: includes/view/class-wnd-filter-user.php:529
+#: includes/view/class-wnd-filter-user.php:537
+#: includes/view/class-wnd-filter.php:1210
+#: includes/view/class-wnd-filter.php:1218
 msgid "首页"
 msgstr "Home"
 
@@ -318,12 +355,12 @@ msgstr "Edit"
 msgid "状态"
 msgstr "State"
 
-#: includes/hook/class-wnd-add-filter.php:38
+#: includes/hook/class-wnd-add-filter.php:28
 #: includes/module/class-wnd-reg-form.php:23
 msgid "站点已关闭注册"
 msgstr ""
 
-#: includes/hook/class-wnd-add-filter.php:64
+#: includes/hook/class-wnd-add-filter.php:54
 msgid "名称不得与登录名一致"
 msgstr ""
 
@@ -442,44 +479,44 @@ msgstr ""
 msgid "未知错误"
 msgstr ""
 
-#: includes/model/class-wnd-form-data.php:37
+#: includes/model/class-wnd-form-data.php:38
 msgid "表单数据为空"
 msgstr ""
 
-#: includes/model/class-wnd-form-data.php:47
+#: includes/model/class-wnd-form-data.php:48
 msgid "表单已被篡改"
 msgstr ""
 
-#: includes/model/class-wnd-init.php:107
+#: includes/model/class-wnd-init.php:97
 msgid "充值记录"
 msgstr ""
 
-#: includes/model/class-wnd-init.php:111
+#: includes/model/class-wnd-init.php:101
 #: includes/module/class-wnd-user-recharge-form.php:31
 msgid "充值"
 msgstr ""
 
-#: includes/model/class-wnd-init.php:126
+#: includes/model/class-wnd-init.php:116
 msgid "订单记录"
 msgstr ""
 
-#: includes/model/class-wnd-init.php:130
+#: includes/model/class-wnd-init.php:120
 msgid "订单"
 msgstr ""
 
-#: includes/model/class-wnd-init.php:147 includes/model/class-wnd-init.php:151
+#: includes/model/class-wnd-init.php:137 includes/model/class-wnd-init.php:141
 msgid "站内信"
 msgstr ""
 
-#: includes/model/class-wnd-init.php:163 includes/model/class-wnd-init.php:167
+#: includes/model/class-wnd-init.php:153 includes/model/class-wnd-init.php:157
 msgid "充值统计"
 msgstr "Recharge Stats"
 
-#: includes/model/class-wnd-init.php:176 includes/model/class-wnd-init.php:180
+#: includes/model/class-wnd-init.php:166 includes/model/class-wnd-init.php:170
 msgid "消费统计"
 msgstr "Expense Stats"
 
-#: includes/model/class-wnd-init.php:212
+#: includes/model/class-wnd-init.php:202
 #: includes/module/class-wnd-post-status-form.php:50
 #: includes/module/class-wnd-user-posts-panel.php:20
 msgid "关闭"
@@ -665,10 +702,10 @@ msgstr "Reset Password"
 #: includes/module/class-wnd-admin-finance-panel.php:20
 #: includes/module/class-wnd-mail-box.php:20
 #: includes/module/class-wnd-user-posts-panel.php:20
-#: includes/view/class-wnd-filter.php:602
-#: includes/view/class-wnd-filter.php:739
-#: includes/view/class-wnd-filter.php:842
-#: includes/view/class-wnd-filter.php:931
+#: includes/view/class-wnd-filter.php:604
+#: includes/view/class-wnd-filter.php:742
+#: includes/view/class-wnd-filter.php:845
+#: includes/view/class-wnd-filter.php:934
 msgid "全部"
 msgstr "All"
 
@@ -736,6 +773,22 @@ msgstr ""
 msgid "简介"
 msgstr "About"
 
+#: includes/module/class-wnd-ban-user-form.php:21
+#: includes/module/class-wnd-ban-user-form.php:30
+msgid "封禁用户"
+msgstr ""
+
+#: includes/module/class-wnd-ban-user-form.php:31
+msgid "取消封禁"
+msgstr ""
+
+#: includes/module/class-wnd-ban-user-form.php:40
+#: includes/module/class-wnd-delete-user-form.php:27
+#, fuzzy
+#| msgid "确认充值"
+msgid "确认"
+msgstr "Confirm Recharge"
+
 #: includes/module/class-wnd-default-post-form.php:36
 msgid "二级分类"
 msgstr ""
@@ -751,6 +804,14 @@ msgstr ""
 
 #: includes/module/class-wnd-default-post-form.php:50
 msgid "相册图集"
+msgstr ""
+
+#: includes/module/class-wnd-delete-user-form.php:21
+msgid "删除用户"
+msgstr ""
+
+#: includes/module/class-wnd-delete-user-form.php:36
+msgid "确认删除"
 msgstr ""
 
 #: includes/module/class-wnd-login-form.php:14
@@ -826,6 +887,7 @@ msgid "提交"
 msgstr ""
 
 #: includes/module/class-wnd-profile-form.php:27
+#: includes/view/class-wnd-filter-user.php:578
 msgid "名称"
 msgstr "Name"
 
@@ -914,6 +976,15 @@ msgstr ""
 msgid "佣金"
 msgstr "Commission"
 
+#: includes/module/class-wnd-user-list-table.php:16
+#: includes/view/class-wnd-filter-user.php:580
+msgid "注册时间"
+msgstr ""
+
+#: includes/module/class-wnd-user-list-table.php:17
+msgid "文章数量"
+msgstr ""
+
 #: includes/module/class-wnd-user-recharge-form.php:13
 msgid "未设置支付接口"
 msgstr "Payment interface not set up"
@@ -924,48 +995,74 @@ msgstr "Payment interface not set up"
 msgid "Post ID无效"
 msgstr "ID is not valid"
 
-#: includes/view/class-wnd-filter.php:127
-#: includes/view/class-wnd-filter.php:138
-msgid "未登录用户，仅可查询公开信息"
-msgstr "Users who are not logged in can only query public information"
+#: includes/view/class-wnd-filter-user.php:304
+#, fuzzy
+#| msgid "未执行WP_Query"
+msgid "未执行WP_User_Query"
+msgstr "WP_Query not executed"
 
-#: includes/view/class-wnd-filter.php:596
-msgid "类型："
-msgstr "Type:"
+#: includes/view/class-wnd-filter-user.php:317
+#, fuzzy
+#| msgid "未执行WP_Query"
+msgid "未执行wp_user_query"
+msgstr "WP_Query not executed"
 
-#: includes/view/class-wnd-filter.php:640
-msgid "状态："
-msgstr "State:"
-
-#: includes/view/class-wnd-filter.php:1069
+#: includes/view/class-wnd-filter-user.php:454
+#: includes/view/class-wnd-filter.php:1072
 msgid "默认"
 msgstr "Default"
 
-#: includes/view/class-wnd-filter.php:1107
-msgid "当前："
-msgstr "Current:"
-
-#: includes/view/class-wnd-filter.php:1183
-#: includes/view/class-wnd-filter.php:1205
+#: includes/view/class-wnd-filter-user.php:505
+#: includes/view/class-wnd-filter-user.php:527
+#: includes/view/class-wnd-filter.php:1186
+#: includes/view/class-wnd-filter.php:1208
 msgid "上一页"
 msgstr "Previous"
 
-#: includes/view/class-wnd-filter.php:1186
-#: includes/view/class-wnd-filter.php:1211
+#: includes/view/class-wnd-filter-user.php:508
+#: includes/view/class-wnd-filter-user.php:533
+#: includes/view/class-wnd-filter.php:1189
+#: includes/view/class-wnd-filter.php:1214
 msgid "下一页"
 msgstr "Next"
 
-#: includes/view/class-wnd-filter.php:1230
+#: includes/view/class-wnd-filter-user.php:552
+#: includes/view/class-wnd-filter.php:1233
 msgid "尾页"
 msgstr "Last"
 
-#: includes/view/class-wnd-filter.php:1382
-#: includes/view/class-wnd-filter.php:1417
+#: includes/view/class-wnd-filter-user.php:579
+msgid "角色"
+msgstr ""
+
+#: includes/view/class-wnd-filter-user.php:583
+msgid "操作"
+msgstr ""
+
+#: includes/view/class-wnd-filter.php:128
+#: includes/view/class-wnd-filter.php:139
+msgid "未登录用户，仅可查询公开信息"
+msgstr "Users who are not logged in can only query public information"
+
+#: includes/view/class-wnd-filter.php:597
+msgid "类型："
+msgstr "Type:"
+
+#: includes/view/class-wnd-filter.php:642
+msgid "状态："
+msgstr "State:"
+
+#: includes/view/class-wnd-filter.php:1110
+msgid "当前："
+msgstr "Current:"
+
+#: includes/view/class-wnd-filter.php:1385
+#: includes/view/class-wnd-filter.php:1420
 msgid "未执行WP_Query"
 msgstr "WP_Query not executed"
 
-#: includes/view/class-wnd-filter.php:1389
-#: includes/view/class-wnd-filter.php:1397
+#: includes/view/class-wnd-filter.php:1392
+#: includes/view/class-wnd-filter.php:1400
 msgid "未定义输出模板"
 msgstr ""
 
@@ -1005,47 +1102,47 @@ msgstr "Email"
 msgid "查看文件"
 msgstr "Check The File"
 
-#: wnd-frontend.php:72
+#: wnd-frontend.php:74
 msgid "必填项为空"
 msgstr "Required fields are empty"
 
-#: wnd-frontend.php:74
+#: wnd-frontend.php:76
 msgid "提交成功"
 msgstr "Submitted successfully"
 
-#: wnd-frontend.php:75
+#: wnd-frontend.php:77
 msgid "提交失败"
 msgstr "Submission failed"
 
-#: wnd-frontend.php:78
+#: wnd-frontend.php:80
 msgid "上传失败"
 msgstr "Upload failed"
 
-#: wnd-frontend.php:80
+#: wnd-frontend.php:82
 msgid "发送成功"
 msgstr ""
 
-#: wnd-frontend.php:81
+#: wnd-frontend.php:83
 msgid "发送失败"
 msgstr ""
 
-#: wnd-frontend.php:83
+#: wnd-frontend.php:85
 msgid "确定"
 msgstr ""
 
-#: wnd-frontend.php:85
+#: wnd-frontend.php:87
 msgid "系统错误"
 msgstr "System Error"
 
-#: wnd-frontend.php:87
+#: wnd-frontend.php:89
 msgid "下载中"
 msgstr "Downloading"
 
-#: wnd-frontend.php:88
+#: wnd-frontend.php:90
 msgid "再试一次"
 msgstr "Try again"
 
-#: wnd-frontend.php:89
+#: wnd-frontend.php:91
 #, fuzzy
 #| msgid "查看文件"
 msgid "查看"
