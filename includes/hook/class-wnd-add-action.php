@@ -168,12 +168,10 @@ class Wnd_Add_Action {
 		switch ($action) {
 		//创建支付
 		case 'payment':
-			if (is_user_logged_in()) {
-				if (wp_verify_nonce($_GET['_wpnonce'] ?? '', 'payment')) {
-					AlipayPagePay::pay();
-				}
+			if (wp_verify_nonce($_GET['_wpnonce'] ?? '', 'payment')) {
+				AlipayPagePay::pay();
 			} else {
-				wp_die('请登录', bloginfo('name'));
+				wp_die(__('Nonce 校验失败', 'wnd'), bloginfo('name'));
 			}
 			break;
 
@@ -187,7 +185,7 @@ class Wnd_Add_Action {
 			if (($_GET['_wpnonce'] ?? false) and wp_verify_nonce($_GET['_wpnonce'], $action)) {
 				$namespace = (stripos($action, 'Wndt') === 0) ? 'Wndt\Action' : 'Wnd\Action';
 				$class     = $namespace . '\\' . $action;
-				return is_callable([$class, 'execute']) ? $class::execute() : exit('未定义控制类' . $class);
+				return is_callable([$class, 'execute']) ? $class::execute() : exit(__('未定义的Action', 'wnd') . $class);
 
 				//未包含nonce：执行action对应的模块类
 			} else {

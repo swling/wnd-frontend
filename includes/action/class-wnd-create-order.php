@@ -42,8 +42,8 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		}
 
 		// 文章作者新增资金
-		$commission = wnd_get_post_commission($post_id);
-		if ($commission) {
+		$commission = (float) wnd_get_post_commission($post_id);
+		if ($commission > 0) {
 			try {
 				$recharge = new Wnd_Recharge();
 				$recharge->set_object_id($post->ID); // 设置佣金来源
