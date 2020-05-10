@@ -14,15 +14,17 @@ class Wnd_Delete_User extends Wnd_Action_Ajax {
 		if (!$user_id) {
 			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}
+
+		if (!is_super_admin()) {
+			return ['status' => 0, 'msg' => __('权限不足', 'wnd')];
+		}
+
 		if (is_super_admin($user_id)) {
 			return ['status' => 0, 'msg' => __('无法删除超级管理员', 'wnd')];
 		}
+
 		if (!$confirm) {
 			return ['status' => 0, 'msg' => __('请确认操作', 'wnd')];
-		}
-
-		if (!wnd_is_manager()) {
-			return ['status' => 0, 'msg' => __('权限不足', 'wnd')];
 		}
 
 		require_once ABSPATH . 'wp-admin/includes/user.php';

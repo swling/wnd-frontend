@@ -2,7 +2,6 @@
 namespace Wnd\Action;
 
 use Exception;
-use Wnd\Action\Wnd_Create_Order_Trait;
 use Wnd\Model\Wnd_Order;
 use Wnd\Model\Wnd_Recharge;
 
@@ -17,6 +16,10 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		$post_id = $post_id ?: ($_POST['post_id'] ?? 0);
 		$post    = $post_id ? get_post($post_id) : false;
 		$user_id = get_current_user_id();
+		if (!$user_id) {
+			return ['status' => 0, 'msg' => __('请登录', 'wnd')];
+		}
+
 		if (!$post) {
 			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}
@@ -28,7 +31,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 
 		// 写入消费数据
 		try {
-			Wnd_Create_Order_Trait::check_create($post_id, $user_id);
+			static::check_create($post_id, $user_id);
 
 			$order = new Wnd_Order();
 			$order->set_object_id($post_id);
@@ -54,5 +57,35 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 
 		// 支付成功
 		return ['status' => 1, 'msg' => __('支付成功', 'wnd')];
+	}
+
+	/**
+	 *检测下单权限
+	 */
+	public static function check_create($post_id, $user_id) {
+		if (!$post_id) {
+			throw new Exception(__('ID无效', 'wnd'));
+		}
+
+		if (!$user_id) {
+			throw new Exception(__('用户无效', 'wnd'));
+		}
+
+		$post_price    = wnd_get_post_price($post_id);
+		$user_money    = wnd_get_user_money($user_id);
+		$primary_color = 'is-' . wnd_get_config('primary_color');
+		$second_color  = 'is-' . wnd_get_config('second_color');
+
+		// 余额不足
+		if ($post_price > $user_money) {
+			$msg = '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . $user_money . '</b>&nbsp;&nbsp;' . __('本次消费：¥ ', 'wnd') . '<b>' . $post_price . '</b></p>';
+			if (wnd_get_config('alipay_appid')) {
+				$msg .= '<a class="button ' . $primary_color . '" href="' . wnd_order_link($post_id) . '">' . __('在线支付') . '</a>';
+				$msg .= '&nbsp;&nbsp;';
+			}
+			$msg .= '<a class="button ' . $primary_color . ' is-outlined" onclick="wnd_ajax_modal(\'wnd_user_recharge_form\')">' . __('余额充值', 'wnd') . '</a>';
+
+			throw new Exception($msg);
+		}
 	}
 }

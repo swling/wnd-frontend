@@ -17,6 +17,9 @@ class Wnd_Bind_Account extends Wnd_Action_Ajax {
 		$email_or_phone = $_POST['_user_user_email'] ?? ($_POST['phone'] ?? null);
 		$auth_code      = $_POST['auth_code'] ?? null;
 		$password       = $_POST['_user_user_pass'] ?? null;
+		if (!is_user_logged_in()) {
+			return ['status' => 0, 'msg' => __('请登录', 'wnd')];
+		}
 
 		// 绑定
 		try {

@@ -17,6 +17,10 @@ class Wnd_Pay_For_Reading extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}
 
+		if (!$user_id) {
+			return ['status' => 0, 'msg' => __('请登录', 'wnd')];
+		}
+
 		// 1、已付费
 		if (wnd_user_has_paid($user_id, $post_id)) {
 			return ['status' => 0, 'msg' => __('请勿重复操作', 'wnd')];

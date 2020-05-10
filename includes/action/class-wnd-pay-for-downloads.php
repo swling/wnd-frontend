@@ -19,6 +19,10 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}
 
+		if (!$user_id) {
+			return ['status' => 0, 'msg' => __('请登录', 'wnd')];
+		}
+
 		// 获取文章附件
 		$attachment_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
 		$file          = get_attached_file($attachment_id, $unfiltered = true);
