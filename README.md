@@ -2,7 +2,8 @@
 ## 授权声明
 使用本插件需遵循：署名-非商业性使用-相同方式共享 2.5。
 以下情况中使用本插件需支付授权费用：①用户主体为商业公司，盈利性组织。②个人用户基于本插件二次开发，且以付费形式出售的产品。情节严重者，保留追究法律责任的权利。
-### 联系方式：QQ：245484493  网站：https://wndwp.com
+## 联系方式
+QQ：245484493  网站：https://wndwp.com
 
 ## 核心原理：
 1、通过前端表单name前缀自动归类提交的数据对应到WordPress文章，文章字段，用户字段等，从而实现可拓展的前端表单提交
@@ -22,7 +23,7 @@
 6、数组形式合并存储多个user_meta、post_meta、option
 7、基于bulma的表单生成类：Wnd_Form、Wnd_Form_WP、Wnd_Form_Post、Wnd_Form_User。可快速生成各类表单
 
-# 更多详情文档参见 /docs
+## 更多详情文档参见 /docs
 
 # 注意事项
 ## 用户角色
@@ -38,19 +39,17 @@
 $post_type.'_cat';//分类taxonomy
 $post_type.'_tag';//标签taxonomy
 ```
-# add_filter / add_action priority: 10
-10 为WordPress默认值，该值越大，表示越靠后执行
-## 对于filter：
-可理解为值越大，当前add_filter的权重越高
-## 对于action：
-越早执行可能通常理解为权重更高
+# add_filter / add_action 
+- priority: 10 为WordPress默认值，该值越大，表示越靠后执行
+- 对于filter：可理解为值越大，当前add_filter的权重越高
+- 对于action：越早执行可能通常理解为权重更高
 
 # 自定义文章类型
 *以下 post_type 并未均为私有属性('public' => false)，因此在WordPress后台无法查看到*
-## 充值：recharge
-## 消费、订单：order
-## 站内信：mail
-## 整站月度财务统计：stats-re(充值)、stats-ex(消费)
+- 充值：recharge
+- 消费、订单：order
+- 站内信：mail
+- 整站月度财务统计：stats-re(充值)、stats-ex(消费)
 
 # 自定义文章状态
 ## success
@@ -102,9 +101,9 @@ post_type => mail
 post_status => 未读：pengding 已读: private
 
 # wp_options
-## 插件配置：wnd
-## 自定义置顶文章：wnd_sticky_posts
-置顶文章数据格式：二维数组 wnd_sticky_posts[$post_type]['post'.$post_id]
+- 插件配置：wnd
+- 自定义置顶文章：wnd_sticky_posts
+- 置顶文章数据格式：二维数组 wnd_sticky_posts[$post_type]['post'.$post_id]
 
 # 多语言设置
 ```php
