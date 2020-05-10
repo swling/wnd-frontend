@@ -13,9 +13,9 @@ class Wnd_User_Posts_Panel extends Wnd_Module {
 		if (!is_user_logged_in()) {
 			return static::build_error_message(__('请登录', 'wnd'));
 		}
-		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 
-		$filter = new Wnd_Filter(true);
+		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
+		$filter         = new Wnd_Filter(true);
 		$filter->add_post_type_filter(wnd_get_user_panel_post_types());
 		$filter->add_post_status_filter([__('全部', 'wnd') => 'any', __('发布', 'wnd') => 'publish', __('待审', 'wnd') => 'pending', __('关闭', 'wnd') => 'close', __('草稿', 'wnd') => 'draft']);
 		$filter->add_taxonomy_filter(['taxonomy' => $filter->category_taxonomy]);

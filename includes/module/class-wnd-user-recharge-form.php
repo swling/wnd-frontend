@@ -10,7 +10,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module {
 
 	public static function build() {
 		if (!wnd_get_config('alipay_appid')) {
-			return __('未设置支付接口', 'wnd');
+			static::build_error_message(__('未设置支付接口', 'wnd'));
 		}
 
 		$form = new Wnd_Form;

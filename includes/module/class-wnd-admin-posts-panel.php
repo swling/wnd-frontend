@@ -10,12 +10,12 @@ use Wnd\View\Wnd_Filter;
 class Wnd_Admin_Posts_Panel extends Wnd_Module {
 
 	public static function build(int $posts_per_page = 0) {
-		if (!is_user_logged_in()) {
-			return static::build_error_message(__('请登录', 'wnd'));
+		if (!wnd_is_manager()) {
+			return static::build_error_message(__('权限不足', 'wnd'));
 		}
-		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 
-		$filter = new Wnd_Filter(true);
+		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
+		$filter         = new Wnd_Filter(true);
 		$filter->add_post_type_filter(wnd_get_user_panel_post_types(), true);
 		$filter->add_post_status_filter([__('待审', 'wnd') => 'pending']);
 		$filter->set_posts_template('wnd_list_table');

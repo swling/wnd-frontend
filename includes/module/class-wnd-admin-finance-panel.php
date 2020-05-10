@@ -11,7 +11,7 @@ class Wnd_Admin_Finance_Panel extends Wnd_Module {
 
 	public static function build(int $posts_per_page = 0) {
 		if (!is_super_admin()) {
-			return;
+			return static::build_error_message(__('权限不足', 'wnd'));
 		}
 		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 

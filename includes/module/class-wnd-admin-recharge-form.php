@@ -10,9 +10,12 @@ use Wnd\View\Wnd_Form_WP;
 class Wnd_Admin_Recharge_Form extends Wnd_Module {
 
 	public static function build() {
+		if (!is_super_admin()) {
+			return static::build_error_message(__('权限不足', 'wnd'));
+		}
+
 		$form = new Wnd_Form_WP();
 		$form->add_form_attr('id', 'admin-recharge-form');
-
 		$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 		$form->add_text(
 			[

@@ -13,7 +13,7 @@ class Wnd_Delete_User_Form extends Wnd_Module {
 			return static::build_error_message(__('ID无效', 'wnd'));
 		}
 
-		if (!wnd_is_manager()) {
+		if (!is_super_admin()) {
 			return static::build_error_message(__('权限不足', 'wnd'));
 		}
 
