@@ -58,6 +58,7 @@ class Wnd_Filter_User {
 		'no_found_rows'      => true,
 		'paged'              => 1,
 		'number'             => 20,
+		'search_columns'     => [],
 
 		// 自定义
 		'wnd_ajax_container' => '',
@@ -183,7 +184,11 @@ class Wnd_Filter_User {
 			}
 
 			// 其他：按键名自动匹配
-			$query_vars[$key] = (false !== strpos($value, '=')) ? wp_parse_args($value) : $value;
+			if (is_array($value)) {
+				$query_vars[$key] = $value;
+			} else {
+				$query_vars[$key] = (false !== strpos($value, '=')) ? wp_parse_args($value) : $value;
+			}
 			continue;
 		}
 		unset($key, $value);
@@ -245,6 +250,39 @@ class Wnd_Filter_User {
 			$this->add_query[$key] = $value;
 		}
 		unset($key, $value);
+	}
+
+	public function add_search_form($button = 'Search', $placeholder = '') {
+		if (static::$is_ajax) {
+			$html = '<form class="wnd-filter-user-search" method="POST" action="" "onsubmit"="return false">';
+		} else {
+			$html = '<form class="wnd-filter-user-search" method="GET" action="">';
+		}
+		$html .= '<div class="field has-addons">';
+
+		$html .= '<div class="control">';
+		$html .= '<span class="select">';
+		$html .= '<select name="search_columns[]">';
+		$html .= ' <option value=""> - Field - </option>';
+		$html .= ' <option value="display_name"> - Name - </option>';
+		$html .= ' <option value="user_login"> - Login - </option>';
+		$html .= ' <option value="user_email"> - Email - </option>';
+		$html .= '</select>';
+		$html .= '</span>';
+		$html .= '</div>';
+
+		$html .= '<div class="control is-expanded">';
+		$html .= '<input class="input" type="text" name="search" placeholder="' . $placeholder . '" required="required">';
+		$html .= '</div>';
+
+		$html .= '<div class="control">';
+		$html .= '<button type="submit" class="button is-danger">' . $button . '</button>';
+		$html .= '</div>';
+
+		$html .= '</div>';
+		$html .= '</form>';
+
+		$this->tabs .= $html;
 	}
 
 	/**

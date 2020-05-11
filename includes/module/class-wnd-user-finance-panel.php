@@ -59,7 +59,8 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 		}
 		$html .= '</div>';
 
-		$filter = new Wnd_Filter(true);
+		$filter = new Wnd_Filter(wnd_doing_ajax());
+		$filter->add_search_form();
 		$filter->add_post_type_filter(['order', 'recharge']);
 		$filter->add_post_status_filter(['any']);
 		$filter->add_query(['author' => get_current_user_id()]);

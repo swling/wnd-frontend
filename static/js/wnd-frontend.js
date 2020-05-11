@@ -925,11 +925,15 @@ jQuery(document).ready(function($) {
 	 *点击链接，获取对应data值，组合参数并发送ajax请求
 	 */
 	var filter_param = {};
-	$("body").on("click", ".ajax-filter a", function() {
+	$("body").on("click", ".ajax-filter a,.ajax-filter form button", function() {
 
 		// 获取容器
 		var filter_parent = $(this).closest(".ajax-filter");
 		var filter_id = filter_parent.attr("ID").split("-")[1];
+
+		// 定义 key、value
+		var key = "";
+		var value = "";
 
 		// 提取data，并合并入参数
 		var html_data = filter_parent.data();
@@ -941,9 +945,17 @@ jQuery(document).ready(function($) {
 			delete filter_param.page;
 		}
 
-		var key = $(this).data("key");
-		var value = $(this).data("value");
-		filter_param[key] = value;
+		if ("BUTTON" == $(this).get(0).tagName) {
+			var search_form = $(this).closest("form");
+			var form_data = search_form.serializeArray();
+			$.each(form_data, function() {
+				filter_param[this.name] = this.value;
+			});
+		} else {
+			key = $(this).data("key");
+			value = $(this).data("value");
+			filter_param[key] = value;
+		}
 
 		// 值为空删除
 		if (!value && typeof filter_param[key] != "undefined") {
@@ -1046,10 +1058,14 @@ jQuery(document).ready(function($) {
 	 *点击链接，获取对应data值，组合参数并发送ajax请求
 	 */
 	var filter_user_param = {};
-	$("body").on("click", ".ajax-filter-user a", function() {
+	$("body").on("click", ".ajax-filter-user a,.ajax-filter-user form button", function() {
 		// 获取容器
 		var filter_parent = $(this).closest(".ajax-filter-user");
 		var filter_id = filter_parent.attr("ID").split("-")[1];
+
+		// 定义 key、value
+		var key = "";
+		var value = "";
 
 		// 提取data，并合并入参数
 		var html_data = filter_parent.data();
@@ -1061,9 +1077,17 @@ jQuery(document).ready(function($) {
 			delete filter_user_param.page;
 		}
 
-		var key = $(this).data("key");
-		var value = $(this).data("value");
-		filter_user_param[key] = value;
+		if ("BUTTON" == $(this).get(0).tagName) {
+			var search_form = $(this).closest("form");
+			var form_data = search_form.serializeArray();
+			$.each(form_data, function() {
+				filter_user_param[this.name] = this.value;
+			});
+		} else {
+			key = $(this).data("key");
+			value = $(this).data("value");
+			filter_user_param[key] = value;
+		}
 
 		// 值为空删除
 		if (!value && typeof filter_user_param[key] != "undefined") {

@@ -99,7 +99,7 @@ class Wnd_Filter {
 		static::$is_ajax    = $is_ajax;
 		static::$doing_ajax = wnd_doing_ajax();
 		static::$http_query = static::parse_query_vars();
-		$this->class      = static::$is_ajax ? 'ajax-filter' : 'filter';
+		$this->class        = static::$is_ajax ? 'ajax-filter' : 'filter';
 
 		// 解析GET参数为wp_query参数并与默认参数合并，以防止出现参数未定义的警告信息
 		$this->wp_query_args = array_merge($this->wp_query_args, static::$http_query);
@@ -192,6 +192,17 @@ class Wnd_Filter {
 			 */
 			if ('status' === $key) {
 				$query_vars['post_status'] = $value;
+				continue;
+			}
+
+			/**
+			 *@since 2020.05.11
+			 *
+			 *添加搜索框支持
+			 *直接使用s作为GET参数，会与WordPress原生请求冲突
+			 */
+			if ('search' === $key) {
+				$query_vars['s'] = $value;
 				continue;
 			}
 
@@ -289,7 +300,11 @@ class Wnd_Filter {
 			}
 
 			// 其他：按键名自动匹配
-			$query_vars[$key] = (false !== strpos($value, '=')) ? wp_parse_args($value) : $value;
+			if (is_array($value)) {
+				$query_vars[$key] = $value;
+			} else {
+				$query_vars[$key] = (false !== strpos($value, '=')) ? wp_parse_args($value) : $value;
+			}
 			continue;
 		}
 		unset($key, $value);
@@ -370,6 +385,33 @@ class Wnd_Filter {
 			$this->add_query[$key] = $value;
 		}
 		unset($key, $value);
+	}
+
+	/**
+	 *@since 2020.05.11
+	 *搜索框
+	 */
+	public function add_search_form($button = 'Search', $placeholder = '') {
+		if (static::$is_ajax) {
+			$html = '<form class="wnd-filter-search" method="POST" action="" "onsubmit"="return false">';
+		} else {
+			$html = '<form class="wnd-filter-search" method="GET" action="">';
+		}
+		$html .= '<div class="field has-addons">';
+
+		$html .= '<div class="control is-expanded">';
+		$html .= '<input class="input" type="text" name="search" placeholder="' . $placeholder . '" required="required">';
+		$html .= '</div>';
+		$html .= '<div class="control">';
+		$html .= '<button type="submit" class="button is-danger">' . $button . '</button>';
+		$html .= '</div>';
+
+		$html .= '</div>';
+		// 作用：在非ajax状态中，支持在指定post_type下搜索
+		$html .= '<input type="hidden" name="type" value="' . ($_GET['type'] ?? '') . '">';
+		$html .= '</form>';
+
+		$this->tabs .= $html;
 	}
 
 	/**
