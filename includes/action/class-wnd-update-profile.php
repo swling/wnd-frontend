@@ -6,7 +6,7 @@ use Wnd\Model\Wnd_Form_Data;
 
 /**
  *@since 初始化
- *用户资料修改：昵称，简介，字段等 修改账户密码、邮箱，请使用：wnd_wpdate_account
+ *用户资料修改：昵称，简介，字段等 修改账户密码请使用：wnd_wpdate_account
  *@param $_POST 	用户资料表单数据
  *
  *@see README.md

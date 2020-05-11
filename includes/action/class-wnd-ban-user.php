@@ -23,6 +23,12 @@ class Wnd_Ban_User extends Wnd_Action_Ajax {
 		// 封禁用户
 		$action = wnd_update_user_meta($user_id, 'status', $status);
 		if ($action) {
+			/**
+			 *封禁用户为本插件自定义功能，需要额外添加一个action以便后期拓展功能
+			 *@since 2020.05.11
+			 */
+			do_action('wnd_ban_user', $user_id);
+
 			return ['status' => 1, 'msg' => 'banned' == $status ? __('账户已被封禁', 'wnd') : __('账户已解封', 'wnd')];
 		} else {
 			return ['status' => 0, 'msg' => __('操作失败', 'wnd')];
