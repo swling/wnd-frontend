@@ -4,9 +4,9 @@ namespace Wnd\Module;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 2020.04.30 封禁账户操作表单
+ *@since 2020.04.30 账户状态操作表单
  */
-class Wnd_Ban_User_Form extends Wnd_Module {
+class Wnd_User_Status_Form extends Wnd_Module {
 
 	public static function build($user_id = 0) {
 		if (!$user_id) {
@@ -17,10 +17,11 @@ class Wnd_Ban_User_Form extends Wnd_Module {
 			return static::build_error_message(__('权限不足', 'wnd'));
 		}
 
-		$form = new Wnd_Form_WP();
+		$current_status = wnd_get_user_meta($user_id, 'status') ?: 'ok';
+		$form           = new Wnd_Form_WP();
 		$form->set_form_title(__('封禁用户', 'wnd') . ' : ' . get_userdata($user_id)->display_name, true);
 		$form->set_message(
-			static::build_notification('当前状态：' . (wnd_get_user_meta($user_id, 'status') ?: 'ok'))
+			static::build_notification(__('当前状态：', 'wnd') . $current_status)
 		);
 		$form->add_html('<div class="field is-grouped is-grouped-centered">');
 		$form->add_radio(
@@ -31,12 +32,13 @@ class Wnd_Ban_User_Form extends Wnd_Module {
 					__('取消封禁', 'wnd') => 'ok',
 				],
 				'required' => true,
+				'checked'  => $current_status,
 				'class'    => 'is-checkradio is-danger',
 			]
 		);
 		$form->add_html('</div>');
 		$form->add_hidden('user_id', $user_id);
-		$form->set_action('wnd_ban_user');
+		$form->set_action('wnd_update_user_status');
 		$form->set_submit_button(__('确认', 'wnd'));
 		$form->build();
 

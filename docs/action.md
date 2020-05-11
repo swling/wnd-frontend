@@ -22,6 +22,9 @@ do_action('wnd_update_profile', $user_id);
 
 ##管理员封禁用户后执行
 do_action('wnd_ban_user', $user_id);
+
+##已封禁账户恢复正常
+do_action('wnd_restore_user', $user_id);
 ```
 
 ## 支付

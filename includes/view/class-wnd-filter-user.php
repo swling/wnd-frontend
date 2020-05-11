@@ -596,7 +596,7 @@ class Wnd_Filter_User {
 			// 编辑管理
 			$table .= '<td class="is-narrow has-text-centered">';
 			$table .= '<a onclick="wnd_ajax_modal(\'wnd_delete_user_form\',\'' . $user->ID . '\')"> <i class="fas fa-trash-alt"></i> </a>';
-			$table .= '<a onclick="wnd_ajax_modal(\'wnd_ban_user_form\',\'' . $user->ID . '\')"> <i class="fas fa-cog"></i> </a>';
+			$table .= '<a onclick="wnd_ajax_modal(\'wnd_user_status_form\',\'' . $user->ID . '\')"> <i class="fas fa-cog"></i> </a>';
 			$table .= '</td>';
 			$table .= '</tr>';
 		}
