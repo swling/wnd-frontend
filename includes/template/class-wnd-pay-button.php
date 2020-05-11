@@ -2,7 +2,7 @@
 namespace Wnd\Template;
 
 use Exception;
-use Wnd\Action\Wnd_Create_Order_Trait;
+use Wnd\Action\Wnd_Create_Order;
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -78,7 +78,7 @@ class Wnd_Pay_Button {
 		} elseif (!$user_has_paid) {
 			try {
 				// 创建订单权限检测
-				Wnd_Create_Order_Trait::check_create($post_id, $user_id);
+				Wnd_Create_Order::check_create($post_id, $user_id);
 
 				// 消费提示
 				$button .= static::build_reminder($user_money, $post_price, $second_color);
@@ -133,7 +133,7 @@ class Wnd_Pay_Button {
 		// 已登录未支付
 		try {
 			// 创建订单权限检测
-			Wnd_Create_Order_Trait::check_create($post_id, $user_id);
+			Wnd_Create_Order::check_create($post_id, $user_id);
 
 			$form = new Wnd_Form_WP();
 			$form->add_hidden('post_id', $post_id);
