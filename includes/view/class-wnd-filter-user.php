@@ -59,6 +59,7 @@ class Wnd_Filter_User {
 		'paged'              => 1,
 		'number'             => 20,
 		'search_columns'     => [],
+		'search'             => '',
 
 		// 自定义
 		'wnd_ajax_container' => '',
@@ -121,6 +122,16 @@ class Wnd_Filter_User {
 		}
 
 		foreach ($_GET as $key => $value) {
+			/**
+			 *用户搜索关键词默认不支持模糊搜索
+			 *添加星标以支持模糊搜索
+			 *@since 2020.05.11
+			 */
+			if ('search' == $key) {
+				$query_vars['search'] = '*' . $value . '*';
+				continue;
+			}
+
 			/**
 			 *@since 2019.3.07 自动匹配meta query
 			 *?_meta_price=1 则查询 price = 1的user
