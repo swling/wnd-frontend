@@ -6,11 +6,11 @@ namespace Wnd\Action;
  *@since 2020.04.30
  *@param $_POST['user_id'];
  *
- *封禁用户为本插件自定义功能，故添加两个do_action以便后期拓展功能：
- *do_action('wnd_ban_user', $user_id);
- *do_action('wnd_restore_user', $user_id);
+ *账户状态为本插件自定义功能，故添加两个do_action以便后期拓展功能：
+ *do_action('wnd_ban_account', $user_id);
+ *do_action('wnd_restore_account', $user_id);
  */
-class Wnd_Update_User_Status extends Wnd_Action_Ajax {
+class Wnd_Update_Account_Status extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		$user_id       = $_POST['user_id'] ?? 0;
@@ -38,13 +38,13 @@ class Wnd_Update_User_Status extends Wnd_Action_Ajax {
 
 		// 封禁账户Action
 		if ('banned' == $status) {
-			do_action('wnd_ban_user', $user_id);
+			do_action('wnd_ban_account', $user_id);
 			return ['status' => 1, 'msg' => __('账户已被封禁', 'wnd')];
 		}
 
 		// 恢复账户Action
 		if ('ok' == $status and 'banned' == $before_status) {
-			do_action('wnd_restore_user', $user_id);
+			do_action('wnd_restore_account', $user_id);
 			return ['status' => 1, 'msg' => __('账户已解封', 'wnd')];
 		}
 	}
