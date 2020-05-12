@@ -3,7 +3,6 @@ namespace Wnd\View;
 
 use Wnd\Model\Wnd_Post;
 use Wnd\Model\Wnd_Term;
-use Wnd\Template\Wnd_Term_Tpl;
 
 /**
  *适配本插件的ajax Post表单类
@@ -270,6 +269,11 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		);
 	}
 
+	/**
+	 *自定义标签编辑器
+	 *@since 2020.05.12
+	 *@link https://github.com/swling/tags-input
+	 */
 	public function add_post_tags($taxonomy, $placeholder = '标签', $required = false) {
 		$taxonomy_object = get_taxonomy($taxonomy);
 		$terms           = get_the_terms($this->post_id, $taxonomy) ?: [];
@@ -277,25 +281,31 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			return;
 		}
 
+		// exists tags
 		$term_list = '';
 		foreach ($terms as $term) {
-			$term_list .= $term->name . ',';
+			$term_list .= '<span class="tag"><span class="text" _value="' . $term->name . '">' . $term->name . '</span><span class="close">&times;</span></span>';
+
 		}unset($term);
-		// 移除末尾的逗号
-		$term_list = rtrim($term_list, ',');
 
-		$this->add_text(
-			[
-				'id'          => 'tags',
-				'name'        => '_term_' . $taxonomy,
-				'value'       => $term_list,
-				'placeholder' => $placeholder,
-				// 'label' => $taxonomy_object->labels->name,
-				'required'    => $required,
-			]
-		);
+		// input attr
+		$attr = 'name="_term_' . $taxonomy . '"';
+		$attr .= $required ? ' required="required"' : '';
 
-		$this->add_html(Wnd_Term_Tpl::tags_editor_script(3, 20, $placeholder, $taxonomy));
+		// build tags input html
+		$input = '<div class="tags-input" id="post-tags-input">';
+		$input .= '<span class="data">' . $term_list . '</span>';
+		$input .= '<div class="autocomplete">';
+		$input .= '<input type="text" ' . $attr . '>';
+		$input .= '<div class="autocomplete-items"></div>';
+		$input .= '</div>';
+		$input .= '</div>';
+
+		// add
+		$this->add_html($input);
+
+		// 采用自定义HTML方式添加的表单字段，需要补充input name以通过form nonce校验
+		$this->add_input_name('_term_' . $taxonomy);
 	}
 
 	/**

@@ -82,37 +82,4 @@ class Wnd_Term_Tpl {
 
 		return implode(',', $terms_names);
 	}
-
-	/**
-	 *@since ≈2018.07
-	 *表单设置：标签编辑器
-	 */
-	public static function tags_editor_script($maxTags = 3, $maxLength = 10, $placeholder = '标签', $taxonomy = '') {
-		$html = '<script src="https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.12.1/jquery-ui.min.js"></script>';
-		$html .= '<script src="' . WND_URL . 'static/js/jquery.tag-editor.min.js"></script>';
-		$html .= '<script src="' . WND_URL . 'static/js/jquery.caret.min.js"></script>';
-		$html .= '<link rel="stylesheet" href="' . WND_URL . 'static/css/jquery.tag-editor.min.css">';
-		$html .=
-		'<script>
-		jQuery(document).ready(function($) {
-			$("#tags").tagEditor({
-				//自动提示
-				autocomplete: {
-					delay: 0,
-					position: {
-						collision: "flip"
-					},
-					source: [' . static::terms_text($taxonomy, 50) . ']
-				},
-				forceLowercase: false,
-				placeholder: "' . $placeholder . '",
-				maxTags: "' . $maxTags . '", //最多标签个数
-				maxLength: "' . $maxLength . '", //单个标签最长字数
-				onChange: function(field, editor, tags) {},
-			});
-		});
-		</script>';
-
-		return $html;
-	}
 }

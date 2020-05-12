@@ -47,6 +47,13 @@ register_deactivation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::uninstall');
 add_action('wp_enqueue_scripts', function () {
 	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.min.js', ['jquery'], WND_VER);
 
+	// 前端自定义标签编辑器 Add @ 2020.05.12
+	if (is_page(wnd_get_config('wnd_edit_page'))) {
+		wp_enqueue_script('wnd-tags', WND_URL . 'static/js/tags.js', ['jquery'], WND_VER, true);
+		wp_enqueue_script('wnd-tags-edit', WND_URL . 'static/js/tags-edit.js', ['jquery', 'wnd-tags'], WND_VER, true);
+		wp_enqueue_style('wnd-tags', WND_URL . 'static/css/tags.css', [], WND_VER);
+	}
+
 	// bulma框架及fontawesome图标
 	$static_host = wnd_get_config('static_host');
 	if ('local' == $static_host) {
