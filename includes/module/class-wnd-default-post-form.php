@@ -38,8 +38,8 @@ class Wnd_Default_Post_Form extends Wnd_Module {
 		$form->add_html('</div></div>');
 
 		// 标签
-		$form->add_post_tags('post_tag', __('请用回车键区分多个标签', 'wnd'));
-		$form->add_html(wnd_message(__('请用回车键区分多个标签', 'wnd'), 'is-warning'));
+		$form->add_post_tags('post_tag', __('标签', 'wnd'));
+		$form->add_html(wnd_notification(__('请用回车键区分多个标签', 'wnd'), 'is-primary'));
 
 		// 缩略图
 		$form->set_thumbnail_size(150, 150);

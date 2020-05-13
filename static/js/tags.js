@@ -1,88 +1,186 @@
 let _tag_input_suggestions_data = null;
+let _tags_values = null;
+var _max_tag_num = ("undefined" != typeof _max_tag_num) ? _max_tag_num : 3;
 
 /*
 create a chainnable method for the script to
 */
-$.fn.tagsValues = function (method /*, args*/) {
+$.fn.tagsValues = function(method /*, args*/ ) {
     //loop through all tags getting the attribute value
-    var data=[];
-    $(this).find(".data .tag .text").each(function (key,value) {
-        let v=$(value).attr('_value');
+    let data = [];
+    $(this).find(".data .tag").each(function(key, value) {
+        let v = $(value).text();
         data.push(v);
     })
 
     return data;
 };
 
-
-/*
-Handle click of the input area
- */
-$('.tags-input').click(function () {
-    $(this).find('input').focus();
-});
-
-/*
-handle the click of close button on the tags
- */
-
-$(document).on("click", ".tags-input .data .tag .close", function() {
-    // whatever you do to delete this row
-    $(this).parent().remove()
-
-})
-
-/*
-Handle the click of one suggestion
-*/
-
-$(document).on("click", ".tags-input .autocomplete-items div", function() {
-    let index=$(this).index()
-    let data=_tag_input_suggestions_data[index];
-    let data_holder = $(this).parents().eq(4).find('.data')
-    _add_input_tag(data_holder,data.id,data.name)
-    $('.tags-input .autocomplete-items').html('');
-
-})
-
-/*
-detect enter on the input
- */
-$(".tags-input input").on( "keydown", function(event) {
-    if(event.which == 13){
-        let data = $(this).val()
-        if(data!="")_add_input_tag(this,data,data)
+// add input tag
+function _add_input_tag(el, data) {
+    // data  already exists
+    if ("-1" != _tags_values.indexOf(data)) {
+        return;
     }
 
+    //  limit max tags
+    if (_tags_values.length >= _max_tag_num) {
+        console.log("_max_tag_num：" + _max_tag_num);
+        return false;
+    }
 
-});
+    let template = "<span class=\"tag is-medium is-danger is-light\">" + data + "<span class=\"delete\"></span></span>\n";
+    $(el).parents(".tags-input").find(".data").append(template);
+    $(el).parents(".tags-input").find("input").val("")
 
-
-$(".tags-input input").on( "focusout", function(event) {
-    $(this).val("")
-    var that = this;
-    setTimeout(function(){ $(that).parents().eq(2).find('.autocomplete .autocomplete-items').html(""); }, 500);
-});
-
-
-function _add_input_tag(el,data,text){
-    let template="<span class=\"tag\"><span class=\"text\" _value='"+data+"'>"+text+"</span><span class=\"close\">&times;</span></span>\n";
-    $(el).parents().eq(2).find('.data').append(template);
-    $(el).val('')
+    // 同步 values
+    _synchronize_values(el);
 }
 
-$(".tags-input input").on( "keyup", function(event) {
-    var query=$(this).val()
+// _synchronize_values
+function _synchronize_values(el) {
+    let tags_input = $(el).closest(".tags-input");
+    _tags_values = tags_input.tagsValues();
+    console.log(_tags_values);
 
-    if(event.which == 8) {
-        if(query==""){
-            console.log("Clearing suggestions");
-            $('.tags-input .autocomplete-items').html('');
-            return;
-        }
+    // set values to the hidden input field so we can submit the form
+    $(tags_input).find("input[type=hidden]").val(_tags_values);
+
+    // limit max tags
+    if (_tags_values.length >= _max_tag_num) {
+        tags_input.find("input").prop("readonly", true);
+        tags_input.find(".autocomplete-items").html("");
+        return false;
+    } else {
+        tags_input.find("input").prop("readonly", false);
+        return false;
+    }
+}
+
+/**
+ *using ajax to populate suggestions
+ *Modify this function to suit your actual application scenario
+ */
+function _run_suggestions(el, query) {
+    if (!query) {
+        return [];
     }
 
-    $('.tags-input .autocomplete-items').html('');
-    runSuggestions($(this),query)
+    let data = {
+        "data": "wnd_term_searcher",
+        "param": {
+            "search": query,
+            "taxonomy": $(el).data("taxonomy")
+        }
+    };
 
+    let sug_area = $(el).parents().find(".autocomplete .autocomplete-items");
+    $.ajax({
+        type: "GET",
+        url: wnd_jsonget_api,
+        data: data,
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
+        },
+
+        //  data format array ['tag1','tag2','tag3']
+        success: function(data) {
+            _tag_input_suggestions_data = data;
+            $.each(data, function(key, value) {
+                if ("-1" == value.indexOf(query)) {
+                    return true;
+                }
+
+                let template = $('<li class="suggest-items">' + value + '</li>').hide();
+                sug_area.append(template);
+                template.show();
+            })
+        }
+    });
+}
+
+jQuery(document).ready(function($) {
+    // _synchronize_values on document loaded
+    _synchronize_values(".tags-input");
+
+    /*
+    Handle click of the input area
+     */
+    $(document).on("click", ".tags-input", function() {
+        $(this).find("input").focus();
+    });
+
+    /*
+    handle the click of close button on the tags
+     */
+
+    $(document).on("click", ".tags-input .data .tag .delete", function() {
+        let tags_input = $(this).closest(".tags-input");
+
+        // whatever you do to delete this row
+        $(this).parent().remove()
+
+        _synchronize_values(tags_input);
+    })
+
+    /*
+    Handle the click of one suggestion
+    */
+
+    $(document).on("click", ".tags-input .autocomplete-items li", function() {
+        let tags_input = $(this).closest(".tags-input");
+        let data = $(this).text();
+        let data_holder = tags_input.find('.data');
+        _add_input_tag(data_holder, data, data);
+
+        // 同步value
+        _synchronize_values($(this));
+
+        tags_input.find(".autocomplete-items").html("");
+    })
+
+    /*
+    detect enter on the input
+     */
+    $(document).on("keydown", ".tags-input input", function(event) {
+        if (
+            event.which == 13 ||
+            event.which == 188 ||
+            ("-1" != $(this).val().indexOf("，"))
+        ) {
+            let data = $(this).val();
+            data = $(this).val().replace("，", "");
+            data = data.replace(",", "");
+            $(this).val(data);
+
+            if (data != "") {
+                _add_input_tag(this, data);
+            }
+        }
+
+    });
+
+    // handle input key up：query suggestion tags
+    $(document).on("keyup", ".tags-input input", function(event) {
+        if ($(this).prop("readonly")) {
+            return false;
+        }
+
+        let autocomplete_items = $(this).closest(".tags-input").find(".autocomplete-items");
+        let query = $(this).val()
+
+        if (event.which == 8) {
+            if (query == "") {
+                console.log("Clearing suggestions");
+                autocomplete_items.html("");
+                return;
+            }
+        }
+
+        autocomplete_items.html("");
+
+        if ("function" == typeof _run_suggestions) {
+            _run_suggestions(this, query);
+        }
+    });
 });

@@ -274,7 +274,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *@since 2020.05.12
 	 *@link https://github.com/swling/tags-input
 	 */
-	public function add_post_tags($taxonomy, $placeholder = '标签', $required = false) {
+	public function add_post_tags($taxonomy, $label = 'Tags', $required = false) {
 		$taxonomy_object = get_taxonomy($taxonomy);
 		$terms           = get_the_terms($this->post_id, $taxonomy) ?: [];
 		if (is_wp_error($terms)) {
@@ -284,7 +284,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		// exists tags
 		$term_list = '';
 		foreach ($terms as $term) {
-			$term_list .= '<span class="tag"><span class="text" _value="' . $term->name . '">' . $term->name . '</span><span class="close">&times;</span></span>';
+			$term_list .= '<span class="tag is-medium is-light is-danger">' . $term->name . '<span class="delete"></span></span>';
 
 		}unset($term);
 
@@ -293,11 +293,15 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$attr .= $required ? ' required="required"' : '';
 
 		// build tags input html
-		$input = '<div class="tags-input" id="post-tags-input">';
+		$input = '<div class="field">';
+		$input .= '<label class="label">' . $label . '</label>';
+		$input .= '<div class="tags-input">';
 		$input .= '<span class="data">' . $term_list . '</span>';
 		$input .= '<div class="autocomplete">';
-		$input .= '<input type="text" ' . $attr . '>';
-		$input .= '<div class="autocomplete-items"></div>';
+		$input .= '<input type="text" data-taxonomy="' . $taxonomy . '" />';
+		$input .= '<input type="hidden" ' . $attr . ' />';
+		$input .= '<ul class="autocomplete-items"></ul>';
+		$input .= '</div>';
 		$input .= '</div>';
 		$input .= '</div>';
 

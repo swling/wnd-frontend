@@ -64,7 +64,7 @@ function wnd_options()
 					<td valign="top">编辑页面</td>
 					<td>
 						<?php wp_dropdown_pages('show_option_none=—选择—&name=wnd_edit_page&selected=' . wnd_get_config('edit_page')); ?>
-						<p><i>前端编辑页面（设置后将覆盖WordPress前端编辑链接）</i></p>
+						<p><i>前端编辑页面（设置后将覆盖WordPress前端编辑链接，并添加参数：?action=edit&post_id={$post_id}）</i></p>
 					</td>
 				</tr>
 

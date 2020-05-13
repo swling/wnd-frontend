@@ -25,8 +25,8 @@ class Wnd_Term {
 
 	/**
 	 *获取指定taxonomy下的terms数组键值对：通常用于前端构造html
-	 *分类：[$term->name] => $term->term_id
-	 *标签：[$term->name] => $term->slug
+	 *分类：[$term->name => $term->term_id,...]
+	 *标签：[$term->name => $term->name,...]
 	 */
 	public static function get_terms_data($args_or_taxonomy): array{
 		$defaults = [
@@ -42,7 +42,7 @@ class Wnd_Term {
 		foreach ($terms as $term) {
 			// 如果分类名称为整数，则需要转换，否则数组会出错
 			$name               = is_numeric($term->name) ? '(' . $term->name . ')' : $term->name;
-			$option_data[$name] = is_taxonomy_hierarchical($args['taxonomy']) ? $term->term_id : $term->slug;
+			$option_data[$name] = is_taxonomy_hierarchical($args['taxonomy']) ? $term->term_id : $term->name;
 		}
 		unset($term);
 

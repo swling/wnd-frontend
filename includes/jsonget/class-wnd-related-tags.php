@@ -7,7 +7,7 @@ use Wnd\Model\Wnd_Tag_Under_Category;
  *@since 2020.04.14
  *列出term下拉选项
  **/
-class Wnd_Related_Tags extends Wnd_Json {
+class Wnd_Related_Tags extends Wnd_JsonGet {
 
 	public static function get($args = []) {
 		$defaults = [

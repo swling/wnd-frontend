@@ -7,7 +7,7 @@ use Wnd\Model\Wnd_Term;
  *@since 2020.04.14
  *列出term下拉选项
  **/
-class Wnd_Sub_Terms extends Wnd_Json {
+class Wnd_Sub_Terms extends Wnd_JsonGet {
 
 	public static function get($args = []) {
 		$defaults = [

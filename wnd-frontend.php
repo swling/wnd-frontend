@@ -21,7 +21,7 @@
  */
 
 // 版本
-define('WND_VER', 0.75);
+define('WND_VER', 0.76);
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -49,9 +49,8 @@ add_action('wp_enqueue_scripts', function () {
 
 	// 前端自定义标签编辑器 Add @ 2020.05.12
 	if (is_page(wnd_get_config('wnd_edit_page'))) {
-		wp_enqueue_script('wnd-tags', WND_URL . 'static/js/tags.js', ['jquery'], WND_VER, true);
-		wp_enqueue_script('wnd-tags-edit', WND_URL . 'static/js/tags-edit.js', ['jquery', 'wnd-tags'], WND_VER, true);
-		wp_enqueue_style('wnd-tags', WND_URL . 'static/css/tags.css', [], WND_VER);
+		wp_enqueue_script('wnd-tags', WND_URL . 'static/js/tags.min.js', ['jquery'], WND_VER, true);
+		wp_enqueue_style('wnd-tags', WND_URL . 'static/css/tags.min.css', [], WND_VER);
 	}
 
 	// bulma框架及fontawesome图标
