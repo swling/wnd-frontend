@@ -1,6 +1,11 @@
-let _tag_input_suggestions_data = null;
+// all tags value 
 let _tags_values = null;
+
+// max tags limit
 var _max_tag_num = ("undefined" != typeof _max_tag_num) ? _max_tag_num : 3;
+
+// current input tag value
+let _current_input_value = null;
 
 /*
 create a chainnable method for the script to
@@ -30,8 +35,9 @@ function _add_input_tag(el, data) {
     }
 
     let template = "<span class=\"tag is-medium is-danger is-light\">" + data + "<span class=\"delete\"></span></span>\n";
-    $(el).parents(".tags-input").find(".data").append(template);
-    $(el).parents(".tags-input").find("input").val("")
+    let tags_input = $(el).closest(".tags-input");
+    $(tags_input).find(".data").append(template);
+    $(tags_input).find("input[type=text]").val("")
 
     // 同步 values
     _synchronize_values(el);
@@ -62,6 +68,9 @@ function _synchronize_values(el) {
  *Modify this function to suit your actual application scenario
  */
 function _run_suggestions(el, query) {
+    let sug_area = $(el).closest(".tags-input").find(".autocomplete-items");
+    sug_area.html(""); // empty suggestion
+
     if (!query) {
         return [];
     }
@@ -74,7 +83,6 @@ function _run_suggestions(el, query) {
         }
     };
 
-    let sug_area = $(el).parents().find(".autocomplete .autocomplete-items");
     $.ajax({
         type: "GET",
         url: wnd_jsonget_api,
@@ -85,7 +93,6 @@ function _run_suggestions(el, query) {
 
         //  data format array ['tag1','tag2','tag3']
         success: function(data) {
-            _tag_input_suggestions_data = data;
             $.each(data, function(key, value) {
                 if ("-1" == value.indexOf(query)) {
                     return true;
@@ -130,7 +137,7 @@ jQuery(document).ready(function($) {
     $(document).on("click", ".tags-input .autocomplete-items li", function() {
         let tags_input = $(this).closest(".tags-input");
         let data = $(this).text();
-        let data_holder = tags_input.find('.data');
+        let data_holder = tags_input.find(".data");
         _add_input_tag(data_holder, data, data);
 
         // 同步value
@@ -143,6 +150,7 @@ jQuery(document).ready(function($) {
     detect enter on the input
      */
     $(document).on("keydown", ".tags-input input", function(event) {
+        // 监听键盘：回车，中英文逗号
         if (
             event.which == 13 ||
             event.which == 188 ||
@@ -166,21 +174,15 @@ jQuery(document).ready(function($) {
             return false;
         }
 
-        let autocomplete_items = $(this).closest(".tags-input").find(".autocomplete-items");
-        let query = $(this).val()
-
-        if (event.which == 8) {
-            if (query == "") {
-                console.log("Clearing suggestions");
-                autocomplete_items.html("");
-                return;
-            }
+        // 检测input值是否有改变
+        if (_current_input_value == $(this).val()) {
+            return false;
+        } else {
+            _current_input_value = $(this).val()
         }
 
-        autocomplete_items.html("");
-
         if ("function" == typeof _run_suggestions) {
-            _run_suggestions(this, query);
+            _run_suggestions(this, _current_input_value);
         }
     });
 });
