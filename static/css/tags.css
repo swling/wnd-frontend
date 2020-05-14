@@ -5,7 +5,10 @@
 
 .tags-input input {
     border: none;
-    min-height: 3rem;
+    width: 100%;
+    font-size: 1rem;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
 }
 
 .tags-input input:focus {

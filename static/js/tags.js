@@ -23,9 +23,12 @@ $.fn.tagsValues = function(method /*, args*/ ) {
 
 // add input tag
 function _add_input_tag(el, data) {
+    let tags_input = $(el).closest(".tags-input");
+
     // data  already exists
     if ("-1" != _tags_values.indexOf(data)) {
-        return;
+        $(tags_input).find("input[type=text]").val("");
+        return false;
     }
 
     //  limit max tags
@@ -35,9 +38,8 @@ function _add_input_tag(el, data) {
     }
 
     let template = "<span class=\"tag is-medium is-danger is-light\">" + data + "<span class=\"delete\"></span></span>\n";
-    let tags_input = $(el).closest(".tags-input");
     $(tags_input).find(".data").append(template);
-    $(tags_input).find("input[type=text]").val("")
+    $(tags_input).find("input[type=text]").val("");
 
     // 同步 values
     _synchronize_values(el);
@@ -125,7 +127,7 @@ jQuery(document).ready(function($) {
         let tags_input = $(this).closest(".tags-input");
 
         // whatever you do to delete this row
-        $(this).parent().remove()
+        $(this).parent().remove();
 
         _synchronize_values(tags_input);
     })
@@ -178,7 +180,7 @@ jQuery(document).ready(function($) {
         if (_current_input_value == $(this).val()) {
             return false;
         } else {
-            _current_input_value = $(this).val()
+            _current_input_value = $(this).val();
         }
 
         if ("function" == typeof _run_suggestions) {

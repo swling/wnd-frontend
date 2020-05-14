@@ -21,7 +21,7 @@ class Wnd_Term_Searcher extends Wnd_JsonGet {
 			'orderby'    => 'count',
 			'order'      => 'DESC',
 			'search'     => '',
-			'number'     => 50,
+			'number'     => 20,
 		];
 		$args = wp_parse_args($args, $defaults);
 

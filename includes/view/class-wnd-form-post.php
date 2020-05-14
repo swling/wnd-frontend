@@ -292,12 +292,17 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$attr = 'name="_term_' . $taxonomy . '"';
 		$attr .= $required ? ' required="required"' : '';
 
+		// load the script and style
+		$input = '';
+		$input .= '<link rel="stylesheet" href="' . WND_URL . 'static/css/tags.min.css?ver=' . WND_VER . '" type="text/css" media="all" />';
+		$input .= '<script>$.ajaxSetup({cache: true});$.getScript("' . WND_URL . 'static/js/tags.min.js?ver=' . WND_VER . '");</script>';
+
 		// build tags input html
-		$input = '<div class="field">';
+		$input .= '<div class="field">';
 		$input .= '<label class="label">' . $label . '</label>';
-		$input .= '<div class="tags-input">';
-		$input .= '<span class="data">' . $term_list . '</span>';
-		$input .= '<div class="autocomplete">';
+		$input .= '<div class="tags-input columns is-marginless">';
+		$input .= '<div class="column is-marginless is-paddingless is-narrow"><span class="data">' . $term_list . '</span></div>';
+		$input .= '<div class="autocomplete column is-marginless">';
 		$input .= '<input type="text" data-taxonomy="' . $taxonomy . '" />';
 		$input .= '<input type="hidden" ' . $attr . ' />';
 		$input .= '<ul class="autocomplete-items"></ul>';
