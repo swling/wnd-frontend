@@ -274,17 +274,20 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *@since 2020.05.12
 	 *@link https://github.com/swling/tags-input
 	 */
-	public function add_post_tags($taxonomy, $label = 'Tags', $required = false) {
+	public function add_post_tags($taxonomy, $label = '', $required = false) {
 		$taxonomy_object = get_taxonomy($taxonomy);
-		$terms           = get_the_terms($this->post_id, $taxonomy) ?: [];
-		if (is_wp_error($terms)) {
+		if (!$taxonomy_object) {
 			return;
 		}
 
+		// label
+		$label = $label ?: $taxonomy_object->labels->name;
+
 		// exists tags
+		$terms     = $this->current_terms[$taxonomy] ?: [];
 		$term_list = '';
 		foreach ($terms as $term) {
-			$term_list .= '<span class="tag is-medium is-light is-danger">' . $term->name . '<span class="delete"></span></span>';
+			$term_list .= '<span class="tag is-medium is-light is-danger">' . $term . '<span class="delete"></span></span>';
 
 		}unset($term);
 

@@ -16,7 +16,7 @@ class Wnd_Term {
 		$current_terms      = get_the_terms($post_id, $taxonomy) ?: [];
 		$current_terms_data = [];
 		foreach ($current_terms as $current_term) {
-			$current_terms_data[] = is_taxonomy_hierarchical($taxonomy) ? $current_term->term_id : $current_term->slug;
+			$current_terms_data[] = is_taxonomy_hierarchical($taxonomy) ? $current_term->term_id : $current_term->name;
 		}
 		unset($current_terms, $current_term);
 
