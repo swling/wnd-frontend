@@ -37,11 +37,6 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 			}
 		}
 
-		// 绑定账户必须登录
-		if (!$current_user->ID and 'bind' == $type) {
-			throw new Exception(__('请登录', 'wnd'));
-		}
-
 		// 检测对应手机或邮箱格式：防止在邮箱绑定中输入手机号，反之亦然
 		if ($is_email and !is_email($email_or_phone)) {
 			return ['status' => 0, 'msg' => __('邮箱地址无效', 'wnd')];
