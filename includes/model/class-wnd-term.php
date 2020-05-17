@@ -9,14 +9,14 @@ class Wnd_Term {
 
 	/**
 	 *获取当前文章已选择terms数组
-	 *分类：返回ID数组
-	 *标签：返回slug数组
+	 *分类：返回{[{$slug}=>${term_id}]数组
+	 *标签：返回[{$slug}=>{$name}]数组
 	 */
 	public static function get_post_current_terms($post_id, $taxonomy): array{
 		$current_terms      = get_the_terms($post_id, $taxonomy) ?: [];
 		$current_terms_data = [];
 		foreach ($current_terms as $current_term) {
-			$current_terms_data[] = is_taxonomy_hierarchical($taxonomy) ? $current_term->term_id : $current_term->name;
+			$current_terms_data[$current_term->slug] = is_taxonomy_hierarchical($taxonomy) ? $current_term->term_id : $current_term->name;
 		}
 		unset($current_terms, $current_term);
 
@@ -27,6 +27,9 @@ class Wnd_Term {
 	 *获取指定taxonomy下的terms数组键值对：通常用于前端构造html
 	 *分类：[$term->name => $term->term_id,...]
 	 *标签：[$term->name => $term->name,...]
+	 *
+	 *@see	注意：根据上述数据结构，我们得知，如果同一个taxonomy中存在多个同名分类，将仅返回一个数据。
+	 *		因此，为避免这种意外，请确保同一个taxonomy下，各个分类名称唯一。
 	 */
 	public static function get_terms_data($args_or_taxonomy): array{
 		$defaults = [

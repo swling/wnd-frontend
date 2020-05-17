@@ -39,6 +39,10 @@ QQ：245484493  网站：https://wndwp.com
 $post_type.'_cat';//分类taxonomy
 $post_type.'_tag';//标签taxonomy
 ```
+## 分类名
+在本插件中，如果同一个分类法（taxonomy）中存在多个同名分类，通过本插件内置的Wnd_Form_Post构造文章表单分类选项，将仅呈现最后一个分类。
+为避免这种情况，请确保同一个分类法中，各个分类名称唯一。
+
 # add_filter / add_action 
 - priority: 10 为WordPress默认值，该值越大，表示越靠后执行
 - 对于filter：可理解为值越大，当前add_filter的权重越高
