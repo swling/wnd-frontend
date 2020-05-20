@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Model\Wnd_Term;
+
 class Wnd_Post {
 
 	/**
@@ -313,6 +315,9 @@ class Wnd_Post {
 	/**
 	 *将当前post更改为指定 revision
 	 *该revision不同于WordPress原生revision
+	 *
+	 *将恢复 post 及 post_meta、terms
+	 *
 	 *@param int    $revision_id 将要恢复的版本ID
 	 *@param string $post_stauts 新的状态
 	 *
@@ -329,6 +334,9 @@ class Wnd_Post {
 			return false;
 		}
 
+		// 移除revision别名
+		unset($update['post_name']);
+
 		$update['ID']          = $revision['post_parent'];
 		$update['post_status'] = $post_status;
 		$update                = wp_slash($update); // Since data is from DB.
@@ -336,6 +344,24 @@ class Wnd_Post {
 		if (!$post_id || is_wp_error($post_id)) {
 			return $post_id;
 		}
+
+		// restore post meta
+		foreach (get_post_meta($revision_id) as $key => $value) {
+			if (static::get_revision_meta_key() == $key) {
+				continue;
+			}
+
+			update_post_meta($revision['post_parent'], $key, maybe_unserialize($value[0]));
+		}
+		unset($key, $value);
+
+		// restore terms
+		foreach (get_object_taxonomies($revision['post_type'], 'names') as $taxonomy) {
+			$terms = Wnd_Term::get_post_current_terms($revision_id, $taxonomy);
+			if ($terms) {
+				wp_set_post_terms($revision['post_parent'], $terms, $taxonomy);
+			}
+		}unset($taxonomy);
 
 		// 永久删除revision
 		wp_delete_post($revision_id, true);
