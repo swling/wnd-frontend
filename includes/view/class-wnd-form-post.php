@@ -115,6 +115,12 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			$this->add_hidden('_post_post_type', $this->post_type);
 			$this->set_action('wnd_insert_post');
 		}
+
+		// revision
+		$revision_id = Wnd_Post::get_revision_id($post_id);
+		if ($revision_id) {
+			$this->set_message(wnd_notification('<a href="' . get_edit_post_link($revision_id) . '">' . __('编辑版本', 'wnd') . '</a>', 'is-danger'));
+		}
 	}
 
 	/**

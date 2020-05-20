@@ -260,4 +260,86 @@ class Wnd_Post {
 		unset($post_types['page'], $post_types['mail']);
 		return apply_filters('wnd_allowed_post_types', $post_types);
 	}
+
+	/**
+	 *@since 2020.05.20
+	 *获取revision ID
+	 *普通用户已公开发布的信息，如再次修改，将创建一个child post，并设置post meta。此revision不同于wp官方revision。
+	 */
+	public static function get_revision_id($post_id): int {
+		if (!$post_id) {
+			return 0;
+		}
+
+		$args = array(
+			'order'       => 'DESC',
+			'orderby'     => 'date ID',
+			'post_parent' => $post_id,
+			'post_type'   => get_post_type($post_id),
+			'post_status' => 'any',
+			'meta_key'    => static::get_revision_meta_key(),
+			'meta_value'  => 'true',
+		);
+
+		$revisions = get_posts($args);
+		if (!$revisions) {
+			return 0;
+		}
+
+		return $revisions[0]->ID;
+	}
+
+	/**
+	 *@since 2020.05.20
+	 *当前post 是否为自定义 revision
+	 *此revision不同于wp官方revision。
+	 */
+	public static function is_revision($post_id): bool {
+		if ('true' == get_post_meta($post_id, static::get_revision_meta_key(), true)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 *定义revision meta key
+	 *@since 2020.05.20
+	 */
+	public static function get_revision_meta_key(): string {
+		return '_wnd_revision';
+	}
+
+	/**
+	 *将当前post更改为指定 revision
+	 *该revision不同于WordPress原生revision
+	 *@param int    $revision_id 将要恢复的版本ID
+	 *@param string $post_stauts 新的状态
+	 *
+	 *@since 2020.05.20
+	 */
+	public static function restore_post_revision($revision_id, $post_status) {
+		$revision = get_post($revision_id, ARRAY_A);
+		if (!$revision) {
+			return $revision;
+		}
+
+		$update = $revision;
+		if (!$update) {
+			return false;
+		}
+
+		$update['ID']          = $revision['post_parent'];
+		$update['post_status'] = $post_status;
+		$update                = wp_slash($update); // Since data is from DB.
+		$post_id               = wp_update_post($update);
+		if (!$post_id || is_wp_error($post_id)) {
+			return $post_id;
+		}
+
+		// 永久删除revision
+		wp_delete_post($revision_id, true);
+
+		return $post_id;
+	}
 }

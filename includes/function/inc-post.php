@@ -68,3 +68,20 @@ function wnd_unstick_post($post_id) {
 function wnd_get_sticky_posts($post_type, $number = -1) {
 	return Wnd_Sticky::get_sticky_posts($post_type, $number);
 }
+
+/**
+ *判断当前post是否为自定义revision
+ *@since 2020.05.20
+ */
+function wnd_is_revision($post_id): bool {
+	return Wnd_post::is_revision($post_id);
+}
+
+/**
+ *@since 2020.05.20
+ *获取revision ID
+ *普通用户已公开发布的信息，如再次修改，将创建一个child post，并设置post meta。此revision不同于wp官方revision。
+ */
+function wnd_get_revision_id($post_id): int {
+	return Wnd_post::get_revision_id($post_id);
+}

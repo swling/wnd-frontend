@@ -40,7 +40,6 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 
 		$form = new Wnd_Form_WP();
 		$form->add_html('<div class="field is-grouped is-grouped-centered">');
-		$form->add_html('<script>wnd_ajax_msg(\'' . __('当前', 'wnd') . '： ' . $status_text . '\', \'is-danger\', \'#post-status\')</script>');
 		$form->add_radio(
 			[
 				'name'     => 'post_status',

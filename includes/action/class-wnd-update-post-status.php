@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Action;
 
+use Wnd\Model\Wnd_Post;
+
 class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 
 	/**
@@ -43,12 +45,12 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 			}
 		}
 
-		//执行更新
-		$post_data = [
-			'ID'          => $post_id,
-			'post_status' => $after_status,
-		];
-		$update = wp_update_post($post_data);
+		//执行更新：如果当前
+		if ('publish' == $after_status and Wnd_Post::is_revision($post_id)) {
+			$update = Wnd_Post::restore_post_revision($post_id, $after_status);
+		} else {
+			$update = wp_update_post(['ID' => $post_id, 'post_status' => $after_status]);
+		}
 
 		/**
 		 *@since 2019.06.11 置顶操作
@@ -67,7 +69,6 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 		// 完成更新
 		if ($update) {
 			return ['status' => 4, 'msg' => __('更新成功', 'wnd')];
-
 		} else {
 			return ['status' => 0, 'msg' => __('写入数据失败', 'wnd')];
 		}

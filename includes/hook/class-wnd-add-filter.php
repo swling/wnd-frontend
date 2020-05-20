@@ -73,8 +73,7 @@ class Wnd_Add_Filter {
 			return 'publish';
 		}
 
-		// 已公开发布过的内容，再次编辑无需审核
-		return (get_post_status($update_id) == 'publish') ? 'publish' : $post_status;
+		return $post_status;
 	}
 
 	/**
