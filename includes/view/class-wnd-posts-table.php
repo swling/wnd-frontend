@@ -74,7 +74,7 @@ class Wnd_Posts_Table {
 			// 读取并构建列
 			foreach ($this->columns as $column) {
 				if ('post_title_with_link' == $column['post_field']) {
-					$content = '<a href="' . get_permalink() . '" target="_blank">' . $post->post_title . '</a>';
+					$content = '<a href="' . get_permalink() . '" target="_blank">' . $post->post_title . (wnd_is_revision($post->ID) ? '[revision]' : '') . '</a>';
 					$this->html .= '<td' . $this->get_the_class($column) . '>' . $content . '</td>';
 					continue;
 
