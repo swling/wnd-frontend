@@ -21,10 +21,11 @@ class Wnd_Account_Form extends Wnd_Module {
 		 */
 		if (!$user->data->user_email and !wnd_get_user_phone($user->data->ID)) {
 			$message = '<p>' . __('出于安全考虑，请绑定邮箱或手机') . '</p>';
-			$message .= '<button class="button is-outlined is-' . $primary_color . '" onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">' . __('绑定邮箱') . '</button>';
+			$message .= wnd_modal_button(__('绑定邮箱'), 'wnd_bind_email_form');
 
 			if ($enable_sms) {
-				$message .= '&nbsp;&nbsp;<button class="button is-outlined is-' . $primary_color . '" onclick="wnd_ajax_modal(\'wnd_bind_phone_form\')">' . __('绑定手机') . '</button>';
+				$message .= '&nbsp;&nbsp;';
+				$message .= wnd_modal_button(__('绑定手机'), 'wnd_bind_phone_form');
 			}
 			return static::build_error_message(__($message, 'wnd'));
 		}

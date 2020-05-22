@@ -54,7 +54,9 @@ class Wnd_Pay_Button {
 		// 未登录用户
 		if (!$user_id) {
 			$button .= static::build_message('付费下载：¥ ' . $post_price, $second_color);
-			$button .= '<div class="field is-grouped is-grouped-centered"><button class="button ' . $primary_color . '" onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\')">请登录</button></div>';
+			$button .= '<div class="field is-grouped is-grouped-centered">';
+			$button .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login');
+			$button .= '</div>';
 			return $button;
 		}
 
@@ -114,7 +116,9 @@ class Wnd_Pay_Button {
 		// 未登录用户
 		if (!$user_id) {
 			$button .= static::build_message('付费内容：¥ ' . $post_price, $second_color);
-			$button .= '<div class="field is-grouped is-grouped-centered"><button class="button ' . $primary_color . '" onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=login\')">请登录</button></div>';
+			$button .= '<div class="field is-grouped is-grouped-centered">';
+			$button .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login');
+			$button .= '</div>';
 			return $button;
 		}
 

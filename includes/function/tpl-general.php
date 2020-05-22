@@ -245,3 +245,22 @@ function wnd_notification($notification, $add_class = '', $delete = false) {
 
 	return $html;
 }
+
+/**
+ *呼出弹窗按钮
+ *@since 2020.04.23
+ *@param $text 		按钮文字
+ *@param $event 	点击弹窗
+ *@param $param  	传输参数
+ *@param $add_calss class
+ */
+function wnd_modal_button($text, $event = '', $param = '', $add_class = '') {
+	$class = 'button';
+	$class .= $add_class ? ' ' . $add_class : '';
+
+	$html = '<button class="' . $class . '"';
+	$html .= $event ? ' onclick="wnd_ajax_modal(\'' . $event . '\',\'' . $param . '\')"' : '';
+	$html .= '>' . $text . '</button>';
+
+	return $html;
+}
