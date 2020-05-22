@@ -82,7 +82,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 				$msg .= '<a class="button ' . $primary_color . '" href="' . wnd_order_link($post_id) . '">' . __('在线支付') . '</a>';
 				$msg .= '&nbsp;&nbsp;';
 			}
-			$msg .= '<a class="button ' . $primary_color . ' is-outlined" onclick="wnd_ajax_modal(\'wnd_user_recharge_form\')">' . __('余额充值', 'wnd') . '</a>';
+			$msg .= wnd_modal_button(__('余额充值', 'wnd'), 'wnd_user_recharge_form', '', $primary_color . ' is-outlined');
 
 			throw new Exception($msg);
 		}
