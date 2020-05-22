@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\View\Wnd_Form;
+use Wnd\View\Wnd_Form_WP;
 
 /**
  *@since 2019.01.21 充值表单
@@ -13,7 +13,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module {
 			static::build_error_message(__('未设置支付接口', 'wnd'));
 		}
 
-		$form = new Wnd_Form;
+		$form = new Wnd_Form_WP(false);
 		$form->add_html('<div class="has-text-centered">');
 		$form->add_radio(
 			[
