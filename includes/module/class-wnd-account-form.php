@@ -11,7 +11,6 @@ class Wnd_Account_Form extends Wnd_Module {
 	public static function build() {
 		$user          = wp_get_current_user();
 		$primary_color = wnd_get_config('primary_color');
-		$second_color  = wnd_get_config('second_color');
 		$enable_sms    = wnd_get_config('enable_sms');
 		if (!$user->data->ID) {
 			return static::build_error_message(__('请登录', 'wnd'));

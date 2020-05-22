@@ -28,7 +28,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module {
 		$form->set_action(wnd_get_do_url(), 'GET');
 		$form->add_hidden('_wpnonce', wp_create_nonce('payment'));
 		$form->add_hidden('action', 'payment');
-		$form->set_submit_button(__('充值', 'wnd'), 'is-' . wnd_get_config('primary_color'));
+		$form->set_submit_button(__('充值', 'wnd'));
 		$form->build();
 
 		return $form->html;

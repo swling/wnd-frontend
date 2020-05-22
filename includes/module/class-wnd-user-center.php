@@ -12,7 +12,6 @@ class Wnd_User_Center extends Wnd_Module {
 	public static function build($args = []) {
 		$ajax_type         = $_GET['ajax_type'] ?? 'modal';
 		$enable_sms        = (1 == wnd_get_config('enable_sms')) ? true : false;
-		$color             = wnd_get_config('second_color');
 		$disable_email_reg = (1 == wnd_get_config('disable_email_reg')) ? true : false;
 		$is_user_logged_in = is_user_logged_in();
 
