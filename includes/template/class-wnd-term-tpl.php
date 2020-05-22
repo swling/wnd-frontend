@@ -62,24 +62,4 @@ class Wnd_Term_Tpl {
 	 *@param $title 					string 		标题label
 	 */
 	// public static function term_select_query_arg() {}
-
-	/**
-	 *
-	 *以文本方式列出热门标签，分类名称 用于标签编辑器，自动提示文字： 'tag1', 'tag2', 'tag3'
-	 *
-	 */
-	public static function terms_text($taxonomy, $number) {
-		$terms = get_terms($taxonomy, 'orderby=count&order=DESC&hide_empty=0&number=' . $number);
-		if (!$terms or is_wp_error($terms)) {
-			return null;
-		}
-
-		$terms_names = [];
-		foreach ($terms as $term) {
-			$terms_names[] = '\'' . $term->name . '\'';
-		}
-		unset($terms, $term);
-
-		return implode(',', $terms_names);
-	}
 }
