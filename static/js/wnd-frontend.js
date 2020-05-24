@@ -1000,10 +1000,10 @@ jQuery(document).ready(function($) {
 			data: filter_param,
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-				$(container).addClass("is-loading");
+				$(filter_param.wnd_ajax_container).addClass("is-loading");
 			},
 			success: function(response) {
-				$(container).removeClass("is-loading");
+				$(filter_param.wnd_ajax_container).removeClass("is-loading");
 
 				// 切换post type时，隐藏所有taxonomy 再根据当前post type支持的taxonomy选择性显示，以达到ajax切换的效果
 				if ("type" == key) {
@@ -1105,10 +1105,10 @@ jQuery(document).ready(function($) {
 			data: filter_user_param,
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-				$(container).addClass("is-loading");
+				$(filter_user_param.wnd_ajax_container).addClass("is-loading");
 			},
 			success: function(response) {
-				$(container).removeClass("is-loading");
+				$(filter_user_param.wnd_ajax_container).removeClass("is-loading");
 
 				// 嵌入查询结果
 				$(filter_user_param.wnd_ajax_container).html(response.data.users + response.data.pagination);
