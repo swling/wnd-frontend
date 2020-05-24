@@ -127,7 +127,7 @@ function wnd_alert_msg(msg, wait = 0) {
 	// 定时关闭
 	if (wait > 0) {
 		ajax_alert_time_out = setTimeout(function() {
-			wnd_reset_modal()
+			wnd_close_modal()
 		}, wait * 1000);
 	}
 
@@ -153,21 +153,22 @@ function wnd_reset_modal() {
 	clearTimeout(ajax_alert_time_out);
 	clearTimeout(send_countdown);
 
-	if ($("#modal").length) {
-		$("#modal").removeClass("is-active wnd-gallery");
-		$("#modal .modal-entry").removeClass("box");
-		$("#modal .modal-entry").empty();
-	} else {
-		$("body").append(
-			'<div id="modal" class="modal">' +
-			'<div class="modal-background"></div>' +
-			'<div class="modal-content">' +
-			'<div class="modal-entry content"></div>' +
-			'</div>' +
-			'<button class="modal-close is-large" aria-label="close"></button>' +
-			'</div>'
-		);
-	}
+	wnd_close_modal();
+
+	$("body").append(
+		'<div id="modal" class="modal">' +
+		'<div class="modal-background"></div>' +
+		'<div class="modal-content">' +
+		'<div class="modal-entry content"></div>' +
+		'</div>' +
+		'<button class="modal-close is-large" aria-label="close"></button>' +
+		'</div>'
+	);
+}
+
+// 关闭弹窗
+function wnd_close_modal() {
+	$("#modal").remove();
 }
 
 // 点击触发，点击A 元素 触发 B元素点击事件 用于部分UI优化操作
@@ -230,7 +231,7 @@ function wnd_ajax_modal(module, param = '') {
 		},
 		//成功后
 		success: function(response) {
-			wnd_reset_modal();
+			wnd_close_modal();
 			if (typeof response == "object") {
 				wnd_alert_msg(response.msg);
 			} else {
@@ -263,12 +264,12 @@ function wnd_ajax_embed(container, module, param = 0) {
 		//后台返回数据前
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-			// wnd_alert_msg("……")
+			$(container).addClass("is-loading");
 		},
 		//成功后
 		success: function(response) {
 			// 清除加载中效果
-			wnd_reset_modal();
+			$(container).removeClass("is-loading");
 
 			if (typeof response == "object") {
 				wnd_alert_msg(response.msg);
@@ -417,7 +418,7 @@ function wnd_ajax_submit(form_id) {
 
 					// 刷新当前页面
 				case 4:
-					wnd_reset_modal();
+					wnd_close_modal();
 					window.location.reload(true);
 					break;
 
@@ -900,7 +901,7 @@ jQuery(document).ready(function($) {
 
 						// 刷新当前页面
 					case 4:
-						wnd_reset_modal();
+						wnd_close_modal();
 						window.location.reload(true);
 						break;
 
@@ -999,8 +1000,11 @@ jQuery(document).ready(function($) {
 			data: filter_param,
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
+				$(container).addClass("is-loading");
 			},
 			success: function(response) {
+				$(container).removeClass("is-loading");
+
 				// 切换post type时，隐藏所有taxonomy 再根据当前post type支持的taxonomy选择性显示，以达到ajax切换的效果
 				if ("type" == key) {
 					filter_parent.find(".taxonomy-tabs").addClass("is-hidden");
@@ -1101,8 +1105,11 @@ jQuery(document).ready(function($) {
 			data: filter_user_param,
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
+				$(container).addClass("is-loading");
 			},
 			success: function(response) {
+				$(container).removeClass("is-loading");
+
 				// 嵌入查询结果
 				$(filter_user_param.wnd_ajax_container).html(response.data.users + response.data.pagination);
 			},
@@ -1253,7 +1260,7 @@ jQuery(document).ready(function($) {
 	 *关闭弹窗
 	 */
 	$("body").on("click", "#modal .modal-background,#modal .modal-close", function() {
-		wnd_reset_modal();
+		$(this).closest("#modal").remove();
 	});
 
 	/**
