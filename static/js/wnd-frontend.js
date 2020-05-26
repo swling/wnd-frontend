@@ -127,7 +127,7 @@ function wnd_alert_msg(msg, wait = 0) {
 	// 定时关闭
 	if (wait > 0) {
 		ajax_alert_time_out = setTimeout(function() {
-			wnd_close_modal()
+			wnd_reset_modal()
 		}, wait * 1000);
 	}
 
@@ -153,22 +153,21 @@ function wnd_reset_modal() {
 	clearTimeout(ajax_alert_time_out);
 	clearTimeout(send_countdown);
 
-	wnd_close_modal();
-
-	$("body").append(
-		'<div id="modal" class="modal">' +
-		'<div class="modal-background"></div>' +
-		'<div class="modal-content">' +
-		'<div class="modal-entry content"></div>' +
-		'</div>' +
-		'<button class="modal-close is-large" aria-label="close"></button>' +
-		'</div>'
-	);
-}
-
-// 关闭弹窗
-function wnd_close_modal() {
-	$("#modal").remove();
+	if ($("#modal").length) {
+		$("#modal").removeClass("is-active wnd-gallery");
+		$("#modal .modal-entry").removeClass("box");
+		$("#modal .modal-entry").empty();
+	} else {
+		$("body").append(
+			'<div id="modal" class="modal">' +
+			'<div class="modal-background"></div>' +
+			'<div class="modal-content">' +
+			'<div class="modal-entry content"></div>' +
+			'</div>' +
+			'<button class="modal-close is-large" aria-label="close"></button>' +
+			'</div>'
+		);
+	}
 }
 
 // 点击触发，点击A 元素 触发 B元素点击事件 用于部分UI优化操作
@@ -231,7 +230,7 @@ function wnd_ajax_modal(module, param = '') {
 		},
 		//成功后
 		success: function(response) {
-			wnd_close_modal();
+			wnd_reset_modal();
 			if (typeof response == "object") {
 				wnd_alert_msg(response.msg);
 			} else {
@@ -418,7 +417,7 @@ function wnd_ajax_submit(form_id) {
 
 					// 刷新当前页面
 				case 4:
-					wnd_close_modal();
+					wnd_reset_modal();
 					window.location.reload(true);
 					break;
 
@@ -901,7 +900,7 @@ jQuery(document).ready(function($) {
 
 						// 刷新当前页面
 					case 4:
-						wnd_close_modal();
+						wnd_reset_modal();
 						window.location.reload(true);
 						break;
 

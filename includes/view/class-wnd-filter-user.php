@@ -490,7 +490,7 @@ class Wnd_Filter_User {
 		$tabs .= '<ul class="tab">';
 
 		// 是否已设置order参数
-		$all_class = isset($this->wp_query_args['orderby']) ? '' : 'class="is-active"';
+		$all_class = isset($this->query_args['orderby']) ? '' : 'class="is-active"';
 		$all_link  = static::$doing_ajax ? '' : remove_query_arg('order', remove_query_arg($this->remove_query_args));
 		$tabs .= '<li ' . $all_class . '><a data-key="order" data-value="" href="' . $all_link . '">' . __('默认', 'wnd') . '</a></li>';
 
@@ -498,7 +498,7 @@ class Wnd_Filter_User {
 		foreach ($args as $key => $value) {
 			// 遍历当前meta query查询是否匹配当前tab
 			$class = '';
-			if (isset($this->wp_query_args['order']) and $this->wp_query_args['order'] == $value) {
+			if (isset($this->query_args['order']) and $this->query_args['order'] == $value) {
 				$class = 'class="is-active"';
 			}
 
@@ -536,7 +536,7 @@ class Wnd_Filter_User {
 
 		// 是否已设置status参数
 		$all_class = '';
-		if ('status' != $this->wp_query_args['meta_key']) {
+		if ('status' != $this->query_args['meta_key']) {
 			$all_class = 'class="is-active"';
 		}
 		$all_link = static::$doing_ajax ? '' : remove_query_arg('_meta_status', remove_query_arg($this->remove_query_args));
@@ -546,7 +546,7 @@ class Wnd_Filter_User {
 		foreach ($args as $key => $value) {
 			// 遍历当前meta query查询是否匹配当前tab
 			$class = '';
-			if ('status' == $this->wp_query_args['meta_key'] and $value == $this->wp_query_args['meta_value']) {
+			if ('status' == $this->query_args['meta_key'] and $value == $this->query_args['meta_value']) {
 				$class = 'class="is-active"';
 			}
 
