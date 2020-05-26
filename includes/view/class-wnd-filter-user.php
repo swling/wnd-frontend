@@ -52,7 +52,7 @@ class Wnd_Filter_User {
 	 */
 	protected $query_args = [
 		'order'              => 'DESC',
-		'orderby'            => 'user_registered',
+		'orderby'            => 'registered',
 		'meta_key'           => '',
 		'meta_value'         => '',
 		'no_found_rows'      => true,
@@ -313,7 +313,7 @@ class Wnd_Filter_User {
 	 *	];
 	 *
 	 */
-	public function add_orderby_filter($args) {
+	public function add_orderby_filter(array $args) {
 		$tabs = $this->build_orderby_filter($args);
 		$this->tabs .= $tabs;
 		return $tabs;
@@ -330,8 +330,17 @@ class Wnd_Filter_User {
 	 *
 	 *@param string $label 选项名称
 	 */
-	public function add_order_filter($args, $label) {
+	public function add_order_filter(array $args, $label) {
 		$tabs = $this->build_order_filter($args, $label);
+		$this->tabs .= $tabs;
+		return $tabs;
+	}
+
+	/**
+	 *@param string $label 选项名称
+	 */
+	public function add_status_filter($label) {
+		$tabs = $this->build_status_filter($label);
 		$this->tabs .= $tabs;
 		return $tabs;
 	}
@@ -422,15 +431,9 @@ class Wnd_Filter_User {
 	 *	];
 	 *
 	 */
-	protected function build_orderby_filter($args) {
+	protected function build_orderby_filter(array $args) {
 		// 移除选项
 		$remove_query_args = array_merge(['orderby', 'order', 'meta_key'], $this->remove_query_args);
-
-		// 全部
-		$all_class = 'class="is-active"';
-		if (isset($this->query_args['orderby']) and $this->query_args['orderby'] != 'post_date') {
-			$all_class = '';
-		}
 
 		// 输出容器
 		$tabs = '<div class="columns is-marginless is-vcentered orderby-tabs">';
@@ -442,26 +445,15 @@ class Wnd_Filter_User {
 		foreach ($args['options'] as $key => $orderby) {
 			// 查询当前orderby是否匹配当前tab
 			$class = '';
-			if (isset($this->query_args['orderby'])) {
-				/**
-				 *	user meta排序
-				 *	$args = [
-				 *		'orderby'   => 'meta_value_num',
-				 *		'meta_key'  => 'rating',
-				 *	];
-				 *	$query = new wp_user_query( $args );
-				 */
-				if (is_array($orderby) and ($this->query_args['orderby'] == 'meta_value_num' or $this->query_args['orderby'] == 'meta_value')) {
-					if ($orderby['meta_key'] == $this->query_args['meta_key']) {
-						$class = 'class="is-active"';
-					}
-					// 常规排序
-				} else {
-					if ($orderby == $this->query_args['orderby']) {
-						$class = 'class="is-active"';
-					}
+			if (is_array($orderby) and ($this->query_args['orderby'] == 'meta_value_num' or $this->query_args['orderby'] == 'meta_value')) {
+				if ($orderby['meta_key'] == $this->query_args['meta_key']) {
+					$class = 'class="is-active"';
 				}
-
+				// 常规排序
+			} else {
+				if ($orderby == $this->query_args['orderby']) {
+					$class = 'class="is-active"';
+				}
 			}
 
 			// data-key="orderby" data-value="' . http_build_query($query_arg) . '"
@@ -490,7 +482,7 @@ class Wnd_Filter_User {
 	 *
 	 *@param string $label 选项名称
 	 */
-	protected function build_order_filter($args, $label) {
+	protected function build_order_filter(array $args, $label) {
 		// 输出容器
 		$tabs = '<div class="columns is-marginless is-vcentered order-tabs">';
 		$tabs .= '<div class="column is-narrow">' . $label . '：</div>';
@@ -515,6 +507,54 @@ class Wnd_Filter_User {
 			 */
 			$order_link = static::$doing_ajax ? '' : add_query_arg('order', $value, remove_query_arg($this->remove_query_args));
 			$tabs .= '<li ' . $class . '><a data-key="order" data-value="' . $value . '" href="' . $order_link . '">' . $key . '</a></li>';
+		}
+		unset($key, $value);
+
+		// 输出结束
+		$tabs .= '</ul>';
+		$tabs .= '</div>';
+		$tabs .= '</div>';
+
+		return $tabs;
+	}
+
+	/**
+	 *@param string $label 选项名称
+	 *
+	 */
+	protected function build_status_filter($label) {
+		/**
+		 *本插件自定义了用户状态：已封禁的用户设置wp user meta：status = banned
+		 */
+		$args = [__('已封禁', 'wnd') => 'banned'];
+
+		// 输出容器
+		$tabs = '<div class="columns is-marginless is-vcentered order-tabs">';
+		$tabs .= '<div class="column is-narrow">' . $label . '：</div>';
+		$tabs .= '<div class="tabs column">';
+		$tabs .= '<ul class="tab">';
+
+		// 是否已设置status参数
+		$all_class = '';
+		if ('status' != $this->wp_query_args['meta_key']) {
+			$all_class = 'class="is-active"';
+		}
+		$all_link = static::$doing_ajax ? '' : remove_query_arg('_meta_status', remove_query_arg($this->remove_query_args));
+		$tabs .= '<li ' . $all_class . '><a data-key="_meta_status" data-value="" href="' . $all_link . '">' . __('全部', 'wnd') . '</a></li>';
+
+		// 输出tabs
+		foreach ($args as $key => $value) {
+			// 遍历当前meta query查询是否匹配当前tab
+			$class = '';
+			if ('status' == $this->wp_query_args['meta_key'] and $value == $this->wp_query_args['meta_value']) {
+				$class = 'class="is-active"';
+			}
+
+			/**
+			 *meta_query GET参数为：_meta_{key}?=
+			 */
+			$filter_link = static::$doing_ajax ? '' : add_query_arg('_meta_status', $value, remove_query_arg($this->remove_query_args));
+			$tabs .= '<li ' . $class . '><a data-key="_meta_status" data-value="' . $value . '" href="' . $filter_link . '">' . $key . '</a></li>';
 		}
 		unset($key, $value);
 

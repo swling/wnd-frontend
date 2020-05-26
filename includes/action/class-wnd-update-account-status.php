@@ -15,7 +15,7 @@ class Wnd_Update_Account_Status extends Wnd_Action_Ajax {
 	public static function execute(): array{
 		$user_id       = $_POST['user_id'] ?? 0;
 		$status        = $_POST['status'] ?? false;
-		$before_status = wnd_get_user_meta($user_id, 'status') ?: 'ok';
+		$before_status = get_user_meta($user_id, 'status', true) ?: 'ok';
 
 		if (!$user_id) {
 			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
@@ -31,7 +31,7 @@ class Wnd_Update_Account_Status extends Wnd_Action_Ajax {
 		}
 
 		// 更新状态
-		$action = wnd_update_user_meta($user_id, 'status', $status);
+		$action = update_user_meta($user_id, 'status', $status);
 		if (!$action) {
 			return ['status' => 0, 'msg' => __('操作失败', 'wnd')];
 		}

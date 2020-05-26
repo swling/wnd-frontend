@@ -344,14 +344,14 @@ class Wnd_User {
 	}
 
 	/**
-	 *@since 2020.04.30 判断当前用户是否已被锁定：wnd user meta：status
+	 *@since 2020.04.30 判断当前用户是否已被锁定：wp user meta：status
 	 *@param 	int 	$user_id
 	 *@return 	bool
 	 */
 	public static function has_been_banned($user_id = 0) {
 		$user_id = $user_id ?: get_current_user_id();
+		$status  = get_user_meta($user_id, 'status', true);
 
-		$status = wnd_get_user_meta($user_id, 'status');
 		return 'banned' == $status ? true : false;
 	}
 
