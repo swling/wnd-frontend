@@ -6,7 +6,7 @@
  * 本插件：
  * new Wnd\Model\Wnd_Auth;
  * 对应文件路径
- * includes/model/class-wnd-auth.php
+ * includes/model/wnd-auth.php
  *
  * 第三方组件：
  * new Wnd\Component\Aliyun\Sms\SignatureHelper;
@@ -44,7 +44,6 @@ spl_autoload_register(function ($class) {
 		$path  = substr($class, strlen($base_prefix));
 		$path  = str_replace('_', '-', $path);
 		$path  = str_replace('\\', DIRECTORY_SEPARATOR, $path);
-		$path  = str_replace('wnd-', 'class-wnd-', $path);
 
 		$file = $base_dir . DIRECTORY_SEPARATOR . $path . '.php';
 		if (file_exists($file)) {
