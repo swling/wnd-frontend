@@ -68,9 +68,11 @@ class Wnd_Pay_Button {
 	protected static function build_html() {
 		// 未登录用户
 		if (!static::$user_id) {
+			static::$html = '<div class="wnd-pay-button box">';
 			static::$html .= wnd_message(static::$message, static::$second_color, true);
 			static::$html .= '<div class="field is-grouped is-grouped-centered">';
 			static::$html .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login');
+			static::$html .= '</div>';
 			static::$html .= '</div>';
 			return static::$html;
 		}
@@ -89,7 +91,8 @@ class Wnd_Pay_Button {
 		}
 
 		// 构建消息提示
-		static::$html = wnd_message(static::$message, static::$second_color, true);
+		static::$html = '<div class="wnd-pay-button box">';
+		static::$html .= wnd_message(static::$message, static::$second_color, true);
 
 		// 当包含文件时，无论是否已支付，均需要提交下载请求，是否扣费将在Wnd\Action\Wnd_Pay_For_Downloads判断
 		if (!static::$user_has_paid or static::$file_id) {
@@ -102,6 +105,7 @@ class Wnd_Pay_Button {
 			static::$html .= $form->html;
 		}
 
+		static::$html .= '</div>';
 		return static::$html;
 	}
 
@@ -182,7 +186,7 @@ class Wnd_Pay_Button {
 			static::$button_text = __('下载', 'wnd');
 		} else {
 			static::$action      = 'wnd_pay_for_reading';
-			static::$button_text = __('付费购买', 'wnd');
+			static::$button_text = __('立即付费', 'wnd');
 		}
 
 		// 已支付
