@@ -203,19 +203,10 @@ function wnd_post_thumbnail($post_id, $width, $height) {
 /**
  *@since 2020.03.21
  *
- *付费阅读按钮
+ *付费按钮
  */
-function wnd_paid_reading_button($post_id) {
-	return Wnd\Template\Wnd_Pay_Button::build_paid_reading_button($post_id);
-}
-
-/**
- *@since 2020.03.21
- *
- *付费下载按钮
- */
-function wnd_paid_download_button($post_id) {
-	return Wnd\Template\Wnd_Pay_Button::build_paid_download_button($post_id);
+function wnd_pay_button($post_id, $with_paid_content) {
+	return Wnd\Template\Wnd_Pay_Button::build($post_id, $with_paid_content);
 }
 
 /**

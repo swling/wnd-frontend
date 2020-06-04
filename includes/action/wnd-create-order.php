@@ -24,6 +24,10 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}
 
+		if ($post->post_author == $user_id) {
+			return ['status' => 0, 'msg' => __('禁止下单', 'wnd')];
+		}
+
 		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id);
 		if ($wnd_can_create_order['status'] === 0) {
 			return $wnd_can_create_order;

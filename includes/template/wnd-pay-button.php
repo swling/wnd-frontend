@@ -9,27 +9,100 @@ use Wnd\View\Wnd_Form_WP;
  *@since 2020.03.21
  *
  *付费按钮
+ *
+ *接收传参，区分是否为付费阅读
+ *将根据price 及 file 自动检测是否包含付费文件
+ *支持同时设置付费阅读及付费下载
+ *
+ *付费阅读将刷新当前页面
+ *
+ *@see Wnd\Action\Wnd_Pay_For_Reading
+ *@see Wnd\Action\Wnd_Pay_For_Downloads
  */
 class Wnd_Pay_Button {
 
-	/**
-	 *定义付费相关公共变量
-	 */
-	protected static function get_payment_var($post_id): array{
-		$post_id = $post_id;
-		$post    = $post_id ? get_post($post_id) : false;
-		if (!$post) {
+	protected static $post_id;
+	protected static $post;
+	protected static $post_price;
+	protected static $file_id;
+
+	protected static $user_id;
+	protected static $user_money;
+	protected static $user_has_paid;
+
+	protected static $second_color;
+
+	protected static $action;
+	protected static $message;
+	protected static $button_text;
+	protected static $html;
+
+	public static function build(int $post_id, bool $with_paid_content): string {
+		static::$post_id = $post_id;
+		static::$post    = static::$post_id ? get_post(static::$post_id) : false;
+		if (!static::$post) {
 			throw new Exception(__('Post ID无效', 'wnd'));
 		}
 
-		$user_id       = get_current_user_id();
-		$post_price    = wnd_get_post_price($post_id);
-		$user_money    = wnd_get_user_money($user_id);
-		$user_has_paid = wnd_user_has_paid($user_id, $post_id);
-		$primary_color = 'is-' . wnd_get_config('primary_color');
-		$second_color  = 'is-' . wnd_get_config('second_color');
+		static::$user_id       = get_current_user_id();
+		static::$post_price    = wnd_get_post_price(static::$post_id);
+		static::$user_money    = wnd_get_user_money(static::$user_id);
+		static::$user_has_paid = wnd_user_has_paid(static::$user_id, static::$post_id);
+		static::$file_id       = wnd_get_post_meta(static::$post_id, 'file');
+		static::$second_color  = 'is-' . wnd_get_config('second_color');
 
-		return compact('post', 'user_id', 'post_price', 'user_money', 'user_has_paid', 'primary_color', 'second_color');
+		// 根据付费内容形式，构建对应变量
+		if ($with_paid_content and static::$file_id) {
+			static::build_pay_button_var();
+		} elseif (static::$file_id) {
+			static::build_paid_download_button_var();
+		} elseif ($with_paid_content) {
+			static::build_paid_reading_button_var();
+		} else {
+			return '';
+		}
+
+		return static::build_html();
+	}
+
+	protected static function build_html() {
+		// 未登录用户
+		if (!static::$user_id) {
+			static::$html .= wnd_message(static::$message, static::$second_color, true);
+			static::$html .= '<div class="field is-grouped is-grouped-centered">';
+			static::$html .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login');
+			static::$html .= '</div>';
+			return static::$html;
+		}
+
+		// 消费提示
+		if (static::$user_id != static::$post->post_author and !static::$user_has_paid) {
+			static::$message .= '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . static::$user_money . '</b>&nbsp;&nbsp;' .
+			__('本次消费：¥ ', 'wnd') . '<b>' . static::$post_price . '</b></p>';
+
+			// 订单权限检测
+			try {
+				Wnd_Create_Order::check_create(static::$post_id, static::$user_id);
+			} catch (Exception $e) {
+				static::$message .= $e->getMessage();
+			}
+		}
+
+		// 构建消息提示
+		static::$html = wnd_message(static::$message, static::$second_color, true);
+
+		// 当包含文件时，无论是否已支付，均需要提交下载请求，是否扣费将在Wnd\Action\Wnd_Pay_For_Downloads判断
+		if (!static::$user_has_paid or static::$file_id) {
+			$form = new Wnd_Form_WP();
+			$form->add_hidden('post_id', static::$post_id);
+			$form->set_action(static::$action);
+			$form->set_submit_button(static::$button_text);
+			$form->build();
+
+			static::$html .= $form->html;
+		}
+
+		return static::$html;
 	}
 
 	/**
@@ -40,135 +113,91 @@ class Wnd_Pay_Button {
 	 *文件：wnd post meta 	-> file
 	 *
 	 */
-	public static function build_paid_download_button($post_id) {
-		extract(static::get_payment_var($post_id));
+	protected static function build_paid_download_button_var() {
+		static::$action = 'wnd_pay_for_downloads';
 
-		$file = wnd_get_post_meta($post_id, 'file');
 		// 没有文件
-		if (!$file) {
+		if (!static::$file_id) {
 			return;
 		}
 
-		$button = '';
-
-		// 未登录用户
-		if (!$user_id) {
-			$button .= static::build_message('付费下载：¥ ' . $post_price, $second_color);
-			$button .= '<div class="field is-grouped is-grouped-centered">';
-			$button .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login');
-			$button .= '</div>';
-			return $button;
+		// 已购买
+		if (static::$user_has_paid) {
+			static::$message     = '<p>' . __('您已付费：¥ ', 'wnd') . static::$post_price . '</p>';
+			static::$button_text = __('下载', 'wnd');
+			return;
 		}
 
-		if ($user_has_paid) {
-			$button_text = '您已购买点击下载';
+		// 作者
+		if (static::$user_id == static::$post->post_author) {
+			static::$message     = '<p>' . __('您发布的付费下载：¥ ', 'wnd') . static::$post_price . '</p>';
+			static::$button_text = __('下载', 'wnd');
+			return;
 
-		} elseif ($user_id == $post->post_author) {
-			$button_text = '下载文件';
+		}
 
-		} elseif ($post_price > 0) {
-			$button_text = '付费下载 ¥ ' . $post_price;
-
+		// 其他情况
+		static::$message .= '<p>' . __('文件需付费下载', 'wnd') . '</p>';
+		if (static::$post_price > 0) {
+			static::$button_text = __('付费下载', 'wnd');
 		} else {
-			$button_text = '免费下载';
+			static::$button_text = __('免费下载', 'wnd');
 		}
-
-		// 非作者，判断余额支付情况
-		if ($user_id == $post->post_author) {
-			$button .= static::build_message('您的付费下载：¥ ' . $post_price, $second_color);
-
-		} elseif (!$user_has_paid) {
-			try {
-				// 创建订单权限检测
-				Wnd_Create_Order::check_create($post_id, $user_id);
-
-				// 消费提示
-				$button .= static::build_reminder($user_money, $post_price, $second_color);
-			} catch (Exception $e) {
-				$button .= static::build_message($e->getMessage(), $second_color);
-			}
-		}
-
-		// 无论是否已支付，均需要提交下载请求，是否扣费将在Wnd\Action\Wnd_Pay_For_Downloads判断
-		$form = new Wnd_Form_WP();
-		$form->add_hidden('post_id', $post_id);
-		$form->set_action('wnd_pay_for_downloads');
-		$form->set_submit_button($button_text);
-		$form->build();
-
-		$button .= $form->html;
-		return $button;
 	}
 
 	/**
 	 *付费阅读
 	 */
-	public static function build_paid_reading_button($post_id) {
-		extract(static::get_payment_var($post_id));
+	protected static function build_paid_reading_button_var() {
+		static::$action = 'wnd_pay_for_reading';
 
-		// 免费文章
-		if (!$post_price) {
+		// 已支付
+		if (static::$user_has_paid) {
+			static::$message = '<p>' . __('您已付费：¥ ', 'wnd') . static::$post_price . '</p>';
 			return;
 		}
 
-		$button = '';
+		// 作者本人
+		if (static::$user_id == static::$post->post_author) {
+			static::$message = '<p>' . __('您的付费文章：¥ ', 'wnd') . static::$post_price . '</p>';
+			return;
+		}
 
-		// 未登录用户
-		if (!$user_id) {
-			$button .= static::build_message('付费内容：¥ ' . $post_price, $second_color);
-			$button .= '<div class="field is-grouped is-grouped-centered">';
-			$button .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login');
-			$button .= '</div>';
-			return $button;
+		// 其他情况
+		static::$button_text = __('付费阅读', 'wnd');
+		static::$message .= '<p>' . __('以下内容需付费阅读', 'wnd') . static::$post_price . '</p>';
+	}
+
+	/**
+	 *@since 2020.06.04
+	 *同时包含付费阅读及付费下载
+	 */
+	protected static function build_pay_button_var() {
+		/**
+		 *未支付前，采用付费阅读提交支付并刷新页面
+		 *支付后，采用付费下载方法，下载文件（下载文件时，不会重复扣费）@see Wnd\Action\Wnd_Pay_For_Downloads
+		 */
+		if (static::$user_has_paid or static::$user_id == static::$post->post_author) {
+			static::$action      = 'wnd_pay_for_downloads';
+			static::$button_text = __('下载', 'wnd');
+		} else {
+			static::$action      = 'wnd_pay_for_reading';
+			static::$button_text = __('付费购买', 'wnd');
 		}
 
 		// 已支付
-		if ($user_has_paid) {
-			$button .= static::build_message('您已付费：¥ ' . $post_price, $second_color);
-			return $button;
+		if (static::$user_has_paid) {
+			static::$message = '<p>' . __('您已付费：¥ ', 'wnd') . static::$post_price . '</p>';
+			return;
 		}
 
 		// 作者本人
-		if ($user_id == $post->post_author) {
-			$button .= static::build_message('您的付费文章：¥ ' . $post_price, $second_color);
-			return $button;
+		if (static::$user_id == static::$post->post_author) {
+			static::$message = '<p>' . __('您的付费内容：¥ ', 'wnd') . static::$post_price . '</p>';
+			return;
 		}
 
-		// 已登录未支付
-		try {
-			// 创建订单权限检测
-			Wnd_Create_Order::check_create($post_id, $user_id);
-
-			$form = new Wnd_Form_WP();
-			$form->add_hidden('post_id', $post_id);
-			$form->set_action('wnd_pay_for_reading');
-			$form->set_submit_button('付费阅读： ¥ ' . wnd_get_post_price($post_id));
-			$form->build();
-
-			// 消费提示及提交按钮
-			$button .= static::build_reminder($user_money, $post_price, $second_color);
-			$button .= $form->html;
-		} catch (Exception $e) {
-			$button .= static::build_message($e->getMessage(), $second_color);
-		}
-
-		return $button;
-	}
-
-	/**
-	 *构建消息
-	 *
-	 */
-	protected static function build_message($message, $color) {
-		return wnd_message($message, $color, true);
-	}
-
-	/**
-	 *构建信息提醒
-	 *
-	 */
-	protected static function build_reminder($user_money, $post_price, $color) {
-		$message = __('当前余额：¥ ', 'wnd') . '<b>' . $user_money . '</b>&nbsp;&nbsp;' . __('本次消费：¥ ', 'wnd') . '<b>' . $post_price . '</b>';
-		return static::build_message($message, $color);
+		// 其他情况
+		static::$message .= '<p>' . __('以下内容及文件需付费购买', 'wnd') . static::$post_price . '</p>';
 	}
 }
