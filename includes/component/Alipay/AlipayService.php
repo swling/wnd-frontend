@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Component\Alipay;
 
+use Wnd\Component\Alipay\AlipayConfig;
+
 /**
  *@since 2019.03.02
  *支付宝签名及验签
@@ -8,17 +10,29 @@ namespace Wnd\Component\Alipay;
 class AlipayService {
 
 	// 支付宝公钥（验签时使用）
-	protected $alipayPublicKey;
+	protected $public_key;
 
 	// 支付宝私钥（签名时使用）
 	protected $private_key;
 
-	// 字符编码
+	protected $gateway_url;
+
+	protected $app_id;
+
+	protected $return_url;
+
+	protected $notify_url;
+
+	protected $sign_type;
+
 	protected $charset;
 
-	public function __construct($alipayPublicKey) {
-		$this->charset         = 'utf-8';
-		$this->alipayPublicKey = $alipayPublicKey;
+	public function __construct() {
+		$config = AlipayConfig::getConfig();
+		foreach ($config as $key => $value) {
+			$this->$key = $value;
+		}
+		unset($key, $value);
 	}
 
 	/**
@@ -58,7 +72,7 @@ class AlipayService {
 	}
 
 	public function verify($data, $sign, $signType = 'RSA') {
-		$pubKey = $this->alipayPublicKey;
+		$pubKey = $this->public_key;
 		$res    = "-----BEGIN PUBLIC KEY-----\n" .
 		wordwrap($pubKey, 64, "\n", true) .
 			"\n-----END PUBLIC KEY-----";
@@ -70,7 +84,7 @@ class AlipayService {
 		} else {
 			$result = (bool) openssl_verify($data, base64_decode($sign), $res);
 		}
-		// if (!$this->checkEmpty($this->alipayPublicKey)) {
+		// if (!$this->checkEmpty($this->public_key)) {
 		// 	//释放资源仅在读取文件时
 		// 	openssl_free_key($res);
 		// }

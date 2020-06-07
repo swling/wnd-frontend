@@ -2,7 +2,6 @@
 namespace Wnd\Component\Alipay;
 
 use Exception;
-use Wnd\Component\Alipay\AlipayConfig;
 use Wnd\Component\Alipay\AlipayService;
 use Wnd\Model\Wnd_Payment;
 
@@ -14,10 +13,7 @@ use Wnd\Model\Wnd_Payment;
 class AlipayNotify {
 
 	public static function verify() {
-		$config = AlipayConfig::getConfig();
-
-		//支付宝公钥，账户中心->密钥管理->开放平台密钥，找到添加了支付功能的应用，根据你的加密类型，查看支付宝公钥
-		$aliPay = new AlipayService($config['alipay_public_key']);
+		$aliPay = new AlipayService();
 		$result = $aliPay->rsaCheck($_POST);
 		if ($result !== true) {
 			exit('error');

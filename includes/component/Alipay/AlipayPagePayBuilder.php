@@ -8,11 +8,6 @@ use Wnd\Component\Alipay\AlipayService;
  */
 class AlipayPagePayBuilder extends AlipayService {
 
-	protected $gateway_url;
-	protected $app_id;
-	protected $return_url;
-	protected $notify_url;
-
 	protected $method;
 	protected $product_code;
 
@@ -20,13 +15,37 @@ class AlipayPagePayBuilder extends AlipayService {
 	protected $out_trade_no;
 	protected $subject;
 
+	/**
+	 *PC支付和wap支付中：product_code 、method 参数有所不同，详情查阅如下
+	 *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay
+	 *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.wap.pay
+	 */
 	public function __construct() {
-		$this->charset = 'utf-8';
+		parent::__construct();
+
+		$this->product_code = wp_is_mobile() ? 'QUICK_WAP_WAY' : 'FAST_INSTANT_TRADE_PAY';
+		$this->method       = wp_is_mobile() ? 'alipay.trade.wap.pay' : 'alipay.trade.page.pay';
 	}
 
-	// 通过外部配置修改内部受保护的类属性
-	public function __set($var, $val) {
-		$this->$var = $val;
+	/**
+	 *总金额
+	 */
+	public function set_total_amount($total_amount) {
+		$this->total_amount = $total_amount;
+	}
+
+	/**
+	 *交易订单号
+	 */
+	public function set_out_trade_no($out_trade_no) {
+		$this->out_trade_no = $out_trade_no;
+	}
+
+	/**
+	 *订单主题
+	 */
+	public function set_subject($subject) {
+		$this->subject = $subject;
 	}
 
 	/**
@@ -48,7 +67,7 @@ class AlipayPagePayBuilder extends AlipayService {
 			'format'      => 'JSON',
 			'return_url'  => $this->return_url,
 			'charset'     => $this->charset,
-			'sign_type'   => 'RSA2',
+			'sign_type'   => $this->sign_type,
 			'timestamp'   => date('Y-m-d H:i:s'),
 			'version'     => '1.0',
 			'notify_url'  => $this->notify_url,
@@ -64,7 +83,6 @@ class AlipayPagePayBuilder extends AlipayService {
 	 * @return 提交表单HTML文本
 	 */
 	protected function buildRequestForm($para_temp) {
-
 		$sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='" . $this->gateway_url . "?charset=" . $this->charset . "' method='POST'>";
 		foreach ($para_temp as $key => $val) {
 			if (false === $this->checkEmpty($val)) {

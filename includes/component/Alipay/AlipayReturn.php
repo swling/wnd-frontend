@@ -2,7 +2,6 @@
 namespace Wnd\Component\Alipay;
 
 use Exception;
-use Wnd\Component\Alipay\AlipayConfig;
 use Wnd\Component\Alipay\AlipayService;
 use Wnd\Model\Wnd_Payment;
 
@@ -21,8 +20,7 @@ class AlipayReturn {
 		 *同步回调一般不处理业务逻辑，显示一个付款成功的页面，或者跳转到用户的财务记录页面即可。
 		 */
 		// header('Content-type:text/html; Charset=utf-8');
-		$config = AlipayConfig::getConfig();
-		$aliPay = new AlipayService($config['alipay_public_key']);
+		$aliPay = new AlipayService();
 		$result = $aliPay->rsaCheck($_GET);
 		if ($result !== true) {
 			exit('校验失败');
