@@ -1,20 +1,20 @@
 <?php
 namespace Wnd\Component\Alipay;
 
+use Wnd\Component\Alipay\AlipayService;
+
 /**
  *@since 2019.03.02 支付宝网页支创建类
  */
-class AlipayPagePayBuilder {
+class AlipayPagePayBuilder extends AlipayService {
 
 	protected $gateway_url;
 	protected $app_id;
 	protected $return_url;
 	protected $notify_url;
-	protected $charset;
 
 	protected $method;
 	protected $product_code;
-	protected $private_key;
 
 	protected $total_amount;
 	protected $out_trade_no;
@@ -76,83 +76,5 @@ class AlipayPagePayBuilder {
 		$sHtml = $sHtml . "<input type='submit' value='ok' style='display:none;'></form>";
 		$sHtml = $sHtml . "<script>document.forms['alipaysubmit'].submit();</script>";
 		return $sHtml;
-	}
-
-	public function generateSign($params, $signType = "RSA") {
-		return $this->sign($this->getSignContent($params), $signType);
-	}
-
-	protected function sign($data, $signType = "RSA") {
-		$priKey = $this->private_key;
-		$res    = "-----BEGIN RSA PRIVATE KEY-----\n" .
-		wordwrap($priKey, 64, "\n", true) .
-			"\n-----END RSA PRIVATE KEY-----";
-		($res) or die('您使用的私钥格式错误，请检查RSA私钥配置');
-		if ("RSA2" == $signType) {
-			openssl_sign($data, $sign, $res, OPENSSL_ALGO_SHA256); //OPENSSL_ALGO_SHA256是php5.4.8以上版本才支持
-		} else {
-			openssl_sign($data, $sign, $res);
-		}
-		$sign = base64_encode($sign);
-		return $sign;
-	}
-
-	/**
-	 * 校验$value是否非空
-	 * if not set ,return true;
-	 * if is null , return true;
-	 **/
-	protected function checkEmpty($value) {
-		if (!isset($value)) {
-			return true;
-		}
-
-		if ($value === null) {
-			return true;
-		}
-
-		if (trim($value) === "") {
-			return true;
-		}
-
-		return false;
-	}
-
-	public function getSignContent($params) {
-		ksort($params);
-		$stringToBeSigned = "";
-		$i                = 0;
-		foreach ($params as $k => $v) {
-			if (false === $this->checkEmpty($v) and "@" != substr($v, 0, 1)) {
-				// 转换成目标字符集
-				$v = $this->characet($v, $this->charset);
-				if ($i == 0) {
-					$stringToBeSigned .= "$k" . "=" . "$v";
-				} else {
-					$stringToBeSigned .= "&" . "$k" . "=" . "$v";
-				}
-				$i++;
-			}
-		}
-
-		unset($k, $v);
-		return $stringToBeSigned;
-	}
-
-	/**
-	 * 转换字符集编码
-	 * @param $data
-	 * @param $targetCharset
-	 * @return string
-	 */
-	protected function characet($data, $targetCharset) {
-		if (!empty($data)) {
-			$fileType = $this->charset;
-			if (strcasecmp($fileType, $targetCharset) != 0) {
-				$data = mb_convert_encoding($data, $targetCharset, $fileType);
-				//$data = iconv($fileType, $targetCharset.'//IGNORE', $data);
-			}
-		}
-		return $data;
 	}
 }

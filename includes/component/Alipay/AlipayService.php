@@ -2,12 +2,16 @@
 namespace Wnd\Component\Alipay;
 
 /**
- *@since 2019.03.02 支付宝验签
+ *@since 2019.03.02
+ *支付宝签名及验签
  */
 class AlipayService {
 
-	// 支付宝公钥
+	// 支付宝公钥（验签时使用）
 	protected $alipayPublicKey;
+
+	// 支付宝私钥（签名时使用）
+	protected $private_key;
 
 	// 字符编码
 	protected $charset;
@@ -15,6 +19,31 @@ class AlipayService {
 	public function __construct($alipayPublicKey) {
 		$this->charset         = 'utf-8';
 		$this->alipayPublicKey = $alipayPublicKey;
+	}
+
+	/**
+	 * 读取配置参数并生成支付宝sign
+	 */
+	public function generateSign($params, $signType = 'RSA') {
+		return $this->sign($this->getSignContent($params), $signType);
+	}
+
+	/**
+	 * 生成sign
+	 */
+	protected function sign($data, $signType = 'RSA') {
+		$priKey = $this->private_key;
+		$res    = "-----BEGIN RSA PRIVATE KEY-----\n" .
+		wordwrap($priKey, 64, "\n", true) .
+			"\n-----END RSA PRIVATE KEY-----";
+		($res) or die('您使用的私钥格式错误，请检查RSA私钥配置');
+		if ('RSA2' == $signType) {
+			openssl_sign($data, $sign, $res, OPENSSL_ALGO_SHA256); //OPENSSL_ALGO_SHA256是php5.4.8以上版本才支持
+		} else {
+			openssl_sign($data, $sign, $res);
+		}
+		$sign = base64_encode($sign);
+		return $sign;
 	}
 
 	/**
@@ -71,7 +100,7 @@ class AlipayService {
 
 	public function getSignContent($params) {
 		ksort($params);
-		$stringToBeSigned = "";
+		$stringToBeSigned = '';
 		$i                = 0;
 		foreach ($params as $k => $v) {
 			if (false === $this->checkEmpty($v) and "@" != substr($v, 0, 1)) {
