@@ -17,7 +17,7 @@ class Wnd_Account_Status_Form extends Wnd_Module {
 			return static::build_error_message(__('权限不足', 'wnd'));
 		}
 
-		$current_status = wnd_get_user_meta($user_id, 'status') ?: 'ok';
+		$current_status = get_user_meta($user_id, 'status', true) ?: 'ok';
 		$form           = new Wnd_Form_WP();
 		$form->set_form_title(__('封禁用户', 'wnd') . ' : ' . get_userdata($user_id)->display_name, true);
 		$form->set_message(
