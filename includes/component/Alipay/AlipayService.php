@@ -10,10 +10,10 @@ use Wnd\Component\Alipay\AlipayConfig;
 class AlipayService {
 
 	// 支付宝公钥（验签时使用）
-	protected $public_key;
+	protected $alipay_public_key;
 
-	// 支付宝私钥（签名时使用）
-	protected $private_key;
+	// 应用私钥（签名时使用）
+	protected $app_private_key;
 
 	protected $gateway_url;
 
@@ -46,7 +46,7 @@ class AlipayService {
 	 * 生成sign
 	 */
 	protected function sign($data, $signType = 'RSA') {
-		$priKey = $this->private_key;
+		$priKey = $this->app_private_key;
 		$res    = "-----BEGIN RSA PRIVATE KEY-----\n" .
 		wordwrap($priKey, 64, "\n", true) .
 			"\n-----END RSA PRIVATE KEY-----";
@@ -72,7 +72,7 @@ class AlipayService {
 	}
 
 	public function verify($data, $sign, $signType = 'RSA') {
-		$pubKey = $this->public_key;
+		$pubKey = $this->alipay_public_key;
 		$res    = "-----BEGIN PUBLIC KEY-----\n" .
 		wordwrap($pubKey, 64, "\n", true) .
 			"\n-----END PUBLIC KEY-----";
@@ -84,10 +84,12 @@ class AlipayService {
 		} else {
 			$result = (bool) openssl_verify($data, base64_decode($sign), $res);
 		}
-		// if (!$this->checkEmpty($this->public_key)) {
-		// 	//释放资源仅在读取文件时
-		// 	openssl_free_key($res);
-		// }
+
+		//释放资源
+		if (!$this->checkEmpty($this->alipay_public_key)) {
+			openssl_free_key($res);
+		}
+
 		return $result;
 	}
 

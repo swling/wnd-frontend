@@ -23,8 +23,13 @@ class AlipayPagePayBuilder extends AlipayService {
 	public function __construct() {
 		parent::__construct();
 
-		$this->product_code = wp_is_mobile() ? 'QUICK_WAP_WAY' : 'FAST_INSTANT_TRADE_PAY';
-		$this->method       = wp_is_mobile() ? 'alipay.trade.wap.pay' : 'alipay.trade.page.pay';
+		if (wp_is_mobile()) {
+			$this->product_code = 'QUICK_WAP_WAY';
+			$this->method       = 'alipay.trade.wap.pay';
+		} else {
+			$this->product_code = 'FAST_INSTANT_TRADE_PAY';
+			$this->method       = 'alipay.trade.page.pay';
+		}
 	}
 
 	/**

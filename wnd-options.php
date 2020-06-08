@@ -175,9 +175,9 @@ function wnd_options()
 				</tr>
 
 				<tr>
-					<td valign="top">支付宝私钥</td>
+					<td valign="top">应用私钥</td>
 					<td>
-						<textarea class="code" name="wnd_alipay_private_key" cols="40" rows="8" style="min-width: 50%;" placeholder="开发者私钥，由开发者自己生成"><?php echo wnd_get_config('alipay_private_key'); ?></textarea>
+						<textarea class="code" name="wnd_app_private_key" cols="40" rows="8" style="min-width: 50%;" placeholder="应用私钥，由开发者自己生成"><?php echo wnd_get_config('app_private_key'); ?></textarea>
 					</td>
 				</tr>
 
