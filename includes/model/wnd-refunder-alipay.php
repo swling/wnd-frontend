@@ -32,9 +32,9 @@ class Wnd_Refunder_Alipay extends Wnd_Refunder {
 
 			// 判断退款结果
 			$code        = $this->response['code'];
-			$fund_change = $this->response['fund_change'];
+			$fund_change = $this->response['fund_change'] ?? '';
 			if (10000 != $code or 'N' == $fund_change) {
-				throw new Exception(__('退款失败', 'wnd'));
+				throw new Exception($this->response['sub_msg'] ?? __('退款失败', 'wnd'));
 			}
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
