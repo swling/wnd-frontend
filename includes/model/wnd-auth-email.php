@@ -23,14 +23,7 @@ class Wnd_Auth_Email extends Wnd_Auth {
 	 *@param string $this->auth_code  	验证码
 	 *@return true|exception
 	 */
-	public function send() {
-		// 权限检测
-		$this->check_send();
-
-		if (!$this->insert()) {
-			throw new Exception(__('写入数据库失败', 'wnd'));
-		}
-
+	protected function send_code() {
 		$message = __('邮箱验证秘钥') . '【' . $this->auth_code . '】' . __('（不含括号），关键凭证，请勿泄露', 'wnd');
 		$action  = wp_mail($this->auth_object, __('验证邮箱', 'wnd'), $message);
 		if ($action) {

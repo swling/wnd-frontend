@@ -143,35 +143,44 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *@since 2019.02.10 信息发送权限检测
+	 *@since 2019.02.10
 	 *
-	 *在类型检测的基础上，新增校验码及发送频次检测
+	 *信息发送权限检测
 	 *
-	 *@return true|exception
 	 */
 	protected function check_send() {
-		$this->check_type();
-
-		if (empty($this->auth_code)) {
-			throw new Exception(__('验证码为空', 'wnd'));
-		}
-
-		// 上次发送短信的时间，防止攻击
 		$send_time = $this->get_db_record()->time ?? 0;
 		if ($send_time and (time() - $send_time < $this->intervals)) {
 			throw new Exception(__('操作太频繁，请等待', 'wnd') . ($this->intervals - (time() - $send_time)) . __('秒', 'wnd'));
 		}
-
-		return true;
 	}
 
 	/**
-	 *@since 2019.02.21 发送验证码给匿名用户
+	 *@since 初始化
+	 *检测权限，写入记录，并发送短信或邮箱
+	 *
 	 *@param string $this->auth_object 	邮箱或手机
-	 *@param string $this->auth_code  		验证码
-	 *@param string $this->type 			验证类型
+	 *@param string $this->auth_code 		验证码
 	 */
-	abstract public function send();
+	public function send() {
+		// 类型检测
+		$this->check_type();
+
+		// 权限检测
+		$this->check_send();
+
+		// 写入数据记录
+		$this->insert();
+
+		// 发送短信或邮件
+		$this->send_code();
+	}
+
+	/**
+	 *@since 2019.02.21
+	 *发送验证码
+	 */
+	abstract protected function send_code();
 
 	/**
 	 *校验验证码
@@ -239,6 +248,10 @@ abstract class Wnd_Auth {
 			throw new Exception(__('未定义数据库写入字段名或对应值', 'wnd'));
 		}
 
+		if (empty($this->auth_code)) {
+			throw new Exception(__('验证码为空', 'wnd'));
+		}
+
 		global $wpdb;
 		$ID = $this->get_db_record()->ID ?? 0;
 		if ($ID) {
@@ -257,7 +270,9 @@ abstract class Wnd_Auth {
 			);
 		}
 
-		return $db;
+		if (!$db) {
+			throw new Exception(__('数据库写入失败', 'wnd'));
+		}
 	}
 
 	/**
@@ -312,7 +327,6 @@ abstract class Wnd_Auth {
 	 *@param string $this->db_field_value 	数据库查询字段值
 	 *
 	 *@since 2019.12.19
-	 *
 	 */
 	protected function get_db_record() {
 		global $wpdb;

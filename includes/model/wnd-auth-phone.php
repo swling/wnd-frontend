@@ -25,20 +25,6 @@ class Wnd_Auth_phone extends Wnd_Auth {
 	}
 
 	/**
-	 *@since 2019.02.10 权限检测
-	 *
-	 *@return true|exception
-	 */
-	protected function check_send() {
-		parent::check_type();
-
-		// 短信发送必须指定模板
-		if (!$this->template) {
-			throw new Exception(__('未指定短信模板', 'wnd'));
-		}
-	}
-
-	/**
 	 *@since 初始化
 	 *通过ajax发送短信
 	 *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
@@ -46,16 +32,7 @@ class Wnd_Auth_phone extends Wnd_Auth {
 	 *@param string $this->auth_code 		验证码
 	 *@return true|exception
 	 */
-	public function send() {
-		// 权限检测
-		$this->check_send();
-
-		// 写入手机记录
-		if (!$this->insert()) {
-			throw new Exception(__('数据库写入失败', 'wnd'));
-		}
-
-		// 发送短信
+	protected function send_code() {
 		$sms = Wnd_Sms::get_instance();
 		$sms->set_phone($this->auth_object);
 		$sms->set_code($this->auth_code);
