@@ -27,7 +27,7 @@ class Wnd_Refund extends Wnd_Action_Ajax {
 				'msg'    => $e->getMessage(),
 
 				// 判断是否完成实例化
-				'data'   => ($refunder instanceOf Wnd_Refunder) ? $refunder->get_response() : [],
+				'data'   => isset($refunder) ? $refunder->get_response() : [],
 			];
 		}
 
@@ -36,7 +36,7 @@ class Wnd_Refund extends Wnd_Action_Ajax {
 			'msg'    => __('退款成功', 'wnd'),
 
 			// 判断是否完成实例化
-			'data'   => ($refunder instanceOf Wnd_Refunder) ? $refunder->get_response() : [],
+			'data'   => isset($refunder) ? $refunder->get_response() : [],
 		];
 	}
 }
