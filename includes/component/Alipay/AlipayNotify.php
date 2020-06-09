@@ -54,7 +54,7 @@ class AlipayNotify {
 				$payment = new Wnd_Payment();
 				$payment->set_total_amount($_POST['total_amount']);
 				$payment->set_out_trade_no($_POST['out_trade_no']);
-				$payment->verify();
+				$payment->verify('alipay');
 			} catch (Exception $e) {
 				exit($e->getMessage());
 			}

@@ -59,14 +59,15 @@ class AlipayPagePayBuilder extends AlipayService {
 	 */
 	public function doPay() {
 		//请求参数
-		$requestConfigs = [
+		$request_configs = [
 			'out_trade_no' => $this->out_trade_no,
 			'product_code' => $this->product_code,
 			'total_amount' => $this->total_amount, //单位 元
 			'subject'      => $this->subject, //订单标题
 		];
-		$commonConfigs = [
-			//公共参数
+
+		//公共参数
+		$common_configs = [
 			'app_id'      => $this->app_id,
 			'method'      => $this->method, //接口名称
 			'format'      => 'JSON',
@@ -76,10 +77,11 @@ class AlipayPagePayBuilder extends AlipayService {
 			'timestamp'   => date('Y-m-d H:i:s'),
 			'version'     => '1.0',
 			'notify_url'  => $this->notify_url,
-			'biz_content' => json_encode($requestConfigs),
+			'biz_content' => json_encode($request_configs),
 		];
-		$commonConfigs["sign"] = $this->generateSign($commonConfigs, $commonConfigs['sign_type']);
-		return $this->buildRequestForm($commonConfigs);
+		$common_configs["sign"] = $this->generateSign($common_configs, $common_configs['sign_type']);
+
+		return $this->buildRequestForm($common_configs);
 	}
 
 	/**

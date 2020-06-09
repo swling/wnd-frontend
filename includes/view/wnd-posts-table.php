@@ -57,7 +57,7 @@ class Wnd_Posts_Table {
 		unset($column);
 
 		if ($this->show_edit or $this->show_preview) {
-			$this->html .= '<td class="is-narrow">';
+			$this->html .= '<td class="is-narrow has-text-centered">';
 			$this->html .= '操作';
 			$this->html .= '</td>';
 		}
@@ -114,8 +114,17 @@ class Wnd_Posts_Table {
 			}
 			unset($column);
 
-			// 编辑管理
-			if ($this->show_edit or $this->show_preview) {
+			// 财务类管理
+			if (in_array($post->post_type, ['order', 'recharge'])) {
+				$this->html .= '<td class="is-narrow has-text-centered">';
+				$this->html .= $this->show_preview ? '<a onclick="wnd_ajax_modal(\'wnd_post_info\',\'' . get_the_ID() . '\')"> <i class="fas fa-info-circle"></i> </a>' : '';
+				$this->html .= $this->show_edit ? '<a onclick="wnd_ajax_modal(\'wnd_refund_form\',\'' . get_the_ID() . '\')"> <i class="fas fa-coins"></i> </a>' : '';
+				$this->html .= $this->show_edit ? '<a onclick="wnd_ajax_modal(\'wnd_post_status_form\',\'' . get_the_ID() . '\')"> <i class="fas fa-cog"></i> </a>' : '';
+				$this->html .= '</td>';
+				$this->html .= '</td>';
+
+				// 内容类管理
+			} else if ($this->show_edit or $this->show_preview) {
 				$this->html .= '<td class="is-narrow has-text-centered">';
 				$this->html .= $this->show_preview ? '<a onclick="wnd_ajax_modal(\'wnd_post_info\',\'' . get_the_ID() . '\')"> <i class="fas fa-info-circle"></i> </a>' : '';
 				$this->html .= $this->show_edit ? '<a onclick="wnd_ajax_modal(\'wnd_post_status_form\',\'' . get_the_ID() . '\')"> <i class="fas fa-cog"></i> </a>' : '';

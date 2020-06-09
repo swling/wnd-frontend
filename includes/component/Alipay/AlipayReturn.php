@@ -33,7 +33,7 @@ class AlipayReturn {
 			$payment = new Wnd_Payment();
 			$payment->set_total_amount($_GET['total_amount']);
 			$payment->set_out_trade_no($_GET['out_trade_no']);
-			$payment->verify();
+			$payment->verify('alipay');
 
 			$object_id = $payment->get_object_id();
 		} catch (Exception $e) {

@@ -99,8 +99,9 @@ abstract class Wnd_Transaction {
 	 *@since 2019.02.11
 	 *校验：具体实现在子类中定义
 	 *通常校验用于需要跳转第三方支付平台的交易
+	 *@param $payment_method（记录支付平台如：alipay、wepay）
 	 */
-	abstract public function verify();
+	abstract public function verify($payment_method);
 
 	/**
 	 *获取WordPress order/recharge post ID

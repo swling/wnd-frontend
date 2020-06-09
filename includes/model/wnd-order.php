@@ -119,10 +119,11 @@ class Wnd_Order extends Wnd_Transaction {
 	 *确认在线消费订单
 	 *@return int or false
 	 *
+	 *@param string 	$payment_method		required 	支付平台标识
 	 *@param int 		$this->ID  			required
 	 *@param string 	$this->subject 		option
 	 */
-	public function verify() {
+	public function verify($payment_method) {
 		$post = get_post($this->ID);
 		if (!$this->ID or $post->post_type != 'order') {
 			throw new Exception(__('订单ID无效', 'wnd'));
@@ -133,10 +134,17 @@ class Wnd_Order extends Wnd_Transaction {
 			throw new Exception(__('订单状态无效', 'wnd'));
 		}
 
+		/**
+		 *在线支付的订单，设置如下参数，以区分站内订单。用于订单标识，及订单退款
+		 *
+		 *post_excerpt = $payment_method（记录支付平台如：alipay、wepay）
+		 *post_title = $post->post_title . __('(在线支付)', 'wnd')
+		 */
 		$post_arr = [
-			'ID'          => $this->ID,
-			'post_status' => 'success',
-			'post_title'  => $this->subject ?: $post->post_title . __('(在线支付)', 'wnd'),
+			'ID'           => $this->ID,
+			'post_status'  => 'success',
+			'post_excerpt' => $payment_method,
+			'post_title'   => $this->subject ?: $post->post_title . __('(在线支付)', 'wnd'),
 		];
 		$ID = wp_update_post($post_arr);
 		if (!$ID or is_wp_error($ID)) {

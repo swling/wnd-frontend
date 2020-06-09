@@ -112,6 +112,22 @@ wp_meta: status：用户状态['ok'，'banned']
 标题：post_title
 状态：post_status: pengding / success
 类型：post_type：recharge / order
+在线支付平台：post_excerpt (如 alipay 、wepay)
+
+## 退款
+wnd_meta : refund_count 	（分批）退款次数
+
+wnd_meta : refund_records 	退款操作记录 
+```php 
+// 退款操作记录数据格式
+ [
+ 	[
+	'user_id'       => get_current_user_id(),
+	'refund_amount' => $refund_amount,
+	'time'          => time(),
+	]
+];
+```
 
 # 数据库
 

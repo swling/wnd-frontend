@@ -22,6 +22,24 @@ class Wnd_Post_Info extends Wnd_Module {
 			return static::build_message(__('付费文章不支持预览', 'wnd'));
 		}
 
+		// order recharge
+		if (in_array($post->post_type, ['order', 'recharge'])) {
+			$html = '<article>';
+			$html .= '<h5>Total Amount:' . $post->post_content . '</h5>';
+			$html .= '<h5>Refund Count:' . (wnd_get_post_meta($post_id, 'refund_count') ?: 0) . '</h5>';
+			$html .= '<h5>payment method:' . $post->post_excerpt . '</h5>';
+
+			$refund_records = wnd_get_post_meta($post_id, 'refund_records');
+			$refund_records = is_array($refund_records) ? $refund_records : [];
+			foreach ($refund_records as $record) {
+				$html .= '<li>' . $record['refund_amount'] . '-' . $record['time'] . '-' . $record['user_id'] . '</li>';
+			}
+			$html .= '</ul>';
+			$html .= '</article>';
+			return $html;
+		}
+
+		// content
 		$html = '<article>';
 		$html .= $post->post_content;
 		$html .= '</article>';

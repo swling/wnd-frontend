@@ -132,11 +132,12 @@ class Wnd_Payment extends Wnd_Transaction {
 	 *充值付款校验
 	 *@return int|Exception 	order ID|recharge ID if success
 	 *
-	 *@param int 				$this->ID  				required if !$this->out_trade_no
-	 *@param string 			$this->out_trade_no	  	required if !$this->ID
-	 *@param float  			$this->total_money		required
+	 *@param string 	$payment_method			required 	支付平台标识
+	 *@param int 		$this->ID  				required if !$this->out_trade_no
+	 *@param string 	$this->out_trade_no	  	required if !$this->ID
+	 *@param float  	$this->total_money		required
 	 */
-	public function verify() {
+	public function verify($payment_method) {
 		$type     = !empty($_POST) ? __('异步', 'wnd') : __('同步', 'wnd');
 		$this->ID = $this->ID ?: $this->parse_out_trade_no($this->out_trade_no);
 
@@ -167,13 +168,13 @@ class Wnd_Payment extends Wnd_Transaction {
 			$order = new Wnd_Order();
 			$order->set_ID($this->ID);
 			$order->set_subject($this->subject);
-			$order->verify();
+			$order->verify($payment_method);
 
 		} else {
 			$recharge = new Wnd_Recharge();
 			$recharge->set_ID($this->ID);
 			$recharge->set_subject($this->subject);
-			$recharge->verify();
+			$recharge->verify($payment_method);
 		}
 
 		/**
@@ -193,6 +194,17 @@ class Wnd_Payment extends Wnd_Transaction {
 		}
 
 		return static::$site_prefix . '-' . $this->ID;
+	}
+
+	/**
+	 *获取订单金额
+	 */
+	public function get_total_amount() {
+		if (!$this->ID) {
+			throw new Exception(__('站内支付数据尚未写入，无法生成订单号', 'wnd'));
+		}
+
+		return $this->total_amount ?: (get_post($this->ID)->post_content ?? 0.00);
 	}
 
 	/**

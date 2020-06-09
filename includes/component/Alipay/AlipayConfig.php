@@ -34,13 +34,13 @@ class AlipayConfig {
 			'return_url'        => wnd_get_do_url(),
 
 			//编码格式
-			'charset'           => "UTF-8",
+			'charset'           => 'utf-8',
 
 			//签名方式
-			'sign_type'         => "RSA2",
+			'sign_type'         => 'RSA2',
 
 			//支付宝网关
-			'gateway_url'       => "https://openapi.alipay.com/gateway.do",
+			'gateway_url'       => 'https://openapi.alipay.com/gateway.do',
 		];
 
 		return $config;

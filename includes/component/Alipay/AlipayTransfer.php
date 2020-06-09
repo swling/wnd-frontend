@@ -91,14 +91,15 @@ class AlipayTransfer extends AlipayService {
 	 */
 	public function doPay() {
 		//请求参数
-		$requestConfigs = [
+		$request_configs = [
 			'out_biz_no'   => $this->out_biz_no,
 			'product_code' => $this->product_code,
 			'trans_amount' => $this->trans_amount, //单位 元
 			'order_title'  => $this->order_title, //订单标题
 		];
-		$commonConfigs = [
-			//公共参数
+
+		//公共参数
+		$common_configs = [
 			'app_id'              => $this->app_id,
 			'method'              => $this->method, //接口名称
 			'format'              => 'JSON',
@@ -108,14 +109,15 @@ class AlipayTransfer extends AlipayService {
 			'timestamp'           => date('Y-m-d H:i:s'),
 			'version'             => '1.0',
 			'notify_url'          => $this->notify_url,
-			'biz_content'         => json_encode($requestConfigs),
+			'biz_content'         => json_encode($request_configs),
 
 			// 证书加签方式特有参数
 			'alipay_root_cert_sn' => $this->getRootCertSN(), //支付宝根证书SN（alipay_root_cert_sn）
 			'app_cert_sn'         => $this->getCertSN(), //应用公钥证书SN（app_cert_sn）
 		];
-		$commonConfigs["sign"] = $this->generateSign($commonConfigs, $commonConfigs['sign_type']);
-		return $this->buildRequestForm($commonConfigs);
+		$common_configs["sign"] = $this->generateSign($common_configs, $common_configs['sign_type']);
+
+		return $this->buildRequestForm($common_configs);
 	}
 
 	/**
