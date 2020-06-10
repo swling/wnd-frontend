@@ -13,6 +13,9 @@ abstract class Wnd_Transaction {
 	// order / recharge Post ID
 	protected $ID;
 
+	// order / recharge WP Post object
+	protected $post;
+
 	// 站点用户ID
 	protected $user_id;
 
@@ -41,7 +44,11 @@ abstract class Wnd_Transaction {
 	 *指定Post ID (order/recharge/payment)
 	 **/
 	public function set_ID(int $ID) {
-		$this->ID = $ID;
+		$this->ID   = $ID;
+		$this->post = get_post($this->ID);
+		if (!$this->ID or !$this->post) {
+			throw new Exception(__('交易ID无效', 'wnd'));
+		}
 	}
 
 	/**

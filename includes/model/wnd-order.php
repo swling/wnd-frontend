@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Model\Wnd_Recharge;
 
 /**
  *@since 2019.08.11
@@ -81,37 +82,21 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_type'    => 'order',
 			'post_name'    => uniqid(),
 		];
-		$ID = wp_insert_post($post_arr);
-		if (is_wp_error($ID) or !$ID) {
+		$this->ID = wp_insert_post($post_arr);
+		if (is_wp_error($this->ID) or !$this->ID) {
 			throw new Exception(__('创建订单失败', 'wnd'));
 		}
 
 		/**
 		 *@since 2019.02.17
-		 *success表示直接余额消费，更新用户余额
+		 *success表示直接余额消费
 		 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see static::verify();
 		 */
 		if ('success' == $this->status) {
-			wnd_inc_user_expense($this->user_id, $this->total_amount);
-			wnd_inc_user_money($this->user_id, $this->total_amount * -1);
-
-			/**
-			 * @since 2019.07.14
-			 *订单完成
-			 */
-			do_action('wnd_order_completed', $ID);
+			$this->complete(false);
 		}
 
-		/**
-		 *@since 2019.06.04
-		 *删除对象缓存
-		 **/
-		if ($this->object_id) {
-			wp_cache_delete($this->user_id . '-' . $this->object_id, 'wnd_has_paid');
-		}
-
-		$this->ID = $ID;
-		return $ID;
+		return $this->ID;
 	}
 
 	/**
@@ -124,13 +109,12 @@ class Wnd_Order extends Wnd_Transaction {
 	 *@param string 	$this->subject 		option
 	 */
 	public function verify($payment_method) {
-		$post = get_post($this->ID);
-		if (!$this->ID or $post->post_type != 'order') {
+		if ($this->post->post_type != 'order') {
 			throw new Exception(__('订单ID无效', 'wnd'));
 		}
 
 		// 订单支付状态检查
-		if ($post->post_status != 'pending') {
+		if ($this->post->post_status != 'pending') {
 			throw new Exception(__('订单状态无效', 'wnd'));
 		}
 
@@ -144,31 +128,68 @@ class Wnd_Order extends Wnd_Transaction {
 			'ID'           => $this->ID,
 			'post_status'  => 'success',
 			'post_excerpt' => $payment_method,
-			'post_title'   => $this->subject ?: $post->post_title . __('(在线支付)', 'wnd'),
+			'post_title'   => $this->subject ?: $this->post->post_title . __('(在线支付)', 'wnd'),
 		];
 		$ID = wp_update_post($post_arr);
 		if (!$ID or is_wp_error($ID)) {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 
-		/**
-		 *@since 2019.02.17
-		 *订单完成：在线消费不影响当前余额，仅记录站内消费
-		 */
-		wnd_inc_user_expense($post->post_author, $post->post_content);
+		// 订单完成
+		$this->complete(true);
 
-		/**
-		 * @since 2019.07.14
-		 *订单完成
-		 */
-		do_action('wnd_order_completed', $ID);
+		return $ID;
+	}
+
+	/**
+	 *订单成功后，执行的统一操作
+	 *@since 2020.06.10
+	 *
+	 *@param bool $online_payments 是否为在线支付订单
+	 */
+	protected function complete(bool $online_payments) {
+		// 在线订单异步校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
+		if ($online_payments) {
+			$this->user_id      = $this->post->post_author;
+			$this->total_amount = $this->post->post_content;
+			$this->object_id    = $this->post->post_parent;
+		}
+
+		// 写入消费记录
+		wnd_inc_user_expense($this->user_id, $this->total_amount);
+
+		// 站内消费，记录扣除账户余额、在线支付则不影响当前余额
+		if (!$online_payments) {
+			wnd_inc_user_money($this->user_id, $this->total_amount * -1);
+		}
 
 		/**
 		 *@since 2019.06.04
-		 *删除对象缓存
-		 **/
-		wp_cache_delete($post->post_author . '-' . $post->post_parent, 'wnd_has_paid');
+		 *产品订单：更新总销售额、删除订单支付判断对象缓存、设置原作者佣金
+		 */
+		if ($this->object_id) {
+			wnd_inc_post_total_sales($this->object_id, $this->total_amount);
 
-		return $ID;
+			wp_cache_delete($this->user_id . '-' . $this->object_id, 'wnd_has_paid');
+
+			// 文章作者新增资金
+			$commission = (float) wnd_get_post_commission($this->object_id);
+			if ($commission <= 0) {
+				return;
+			}
+
+			$object = get_post($this->object_id);
+			try {
+				$recharge = new Wnd_Recharge();
+				$recharge->set_object_id($this->object_id); // 设置佣金来源
+				$recharge->set_user_id($object->post_author);
+				$recharge->set_total_amount($commission);
+				$recharge->create(true); // 直接写入余额
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
+		}
+
+		do_action('wnd_order_completed', $this->ID);
 	}
 }

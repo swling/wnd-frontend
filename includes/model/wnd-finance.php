@@ -146,7 +146,7 @@ class Wnd_Finance {
 	 *@param 	float 	$money 		金额
 	 */
 	public static function inc_user_commission($user_id, $money) {
-		wnd_inc_wnd_user_meta($user_id, 'commission', number_format($money, 2, '.', ''));
+		return wnd_inc_wnd_user_meta($user_id, 'commission', number_format($money, 2, '.', ''));
 	}
 
 	/**
@@ -168,7 +168,7 @@ class Wnd_Finance {
 	 *@return  	float 	两位数的价格信息 或者 0
 	 */
 	public static function get_post_price($post_id) {
-		$price = wnd_get_post_meta($post_id, 'price') ?: get_post_meta($post_id, 'price', 1) ?: false;
+		$price = get_post_meta($post_id, 'price', 1) ?: false;
 		$price = is_numeric($price) ? number_format($price, 2, '.', '') : 0;
 		return apply_filters('wnd_get_post_price', $price, $post_id);
 	}
@@ -184,6 +184,52 @@ class Wnd_Finance {
 		$commission      = wnd_get_post_price($post_id) * $commission_rate;
 		$commission      = number_format($commission, 2, '.', '');
 		return apply_filters('wnd_get_post_commission', $commission, $post_id);
+	}
+
+	/**
+	 *@since 2020.06.10
+	 *新增本篇付费内容作者佣金总额
+	 *
+	 *@param 	int 	$post_id 	Post ID
+	 *@param 	float 	$money 		金额
+	 */
+	public static function inc_post_total_commission($post_id, $money) {
+		return wnd_inc_wnd_post_meta($post_id, 'total_commission', number_format($money, 2, '.', ''));
+	}
+
+	/**
+	 *@since 2020.06.10
+	 *获取付费内容作者获得的佣金
+	 *
+	 *@param 	int 	$post_id  Post ID
+	 *@return 	float 	用户佣金
+	 */
+	public static function get_post_total_commission($post_id) {
+		$total_commission = wnd_get_post_meta($post_id, 'total_commission');
+		$total_commission = is_numeric($total_commission) ? $total_commission : 0;
+		return number_format($total_commission, 2, '.', '');
+	}
+
+	/**
+	 *@since 2020.06.10
+	 *新增商品总销售额
+	 *@param 	int 	$post_id 	Post ID
+	 *@param 	float 	$money 		金额
+	 */
+	public static function inc_post_total_sales($post_id, $money) {
+		wnd_inc_wnd_post_meta($post_id, 'total_sales', number_format($money, 2, '.', ''));
+	}
+
+	/**
+	 *@since 2020.06.10
+	 *获取商品总销售额
+	 *@param 	int 	$user_id 	用户ID
+	 *@return 	float 	用户佣金
+	 */
+	public static function get_post_total_sales($post_id) {
+		$total_sales = wnd_get_post_meta($post_id, 'total_sales');
+		$total_sales = is_numeric($total_sales) ? $total_sales : 0;
+		return number_format($total_sales, 2, '.', '');
 	}
 
 	/**

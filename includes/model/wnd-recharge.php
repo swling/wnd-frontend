@@ -85,19 +85,9 @@ class Wnd_Recharge extends Wnd_Transaction {
 			throw new Exception(__('创建充值订单失败', 'wnd'));
 		}
 
-		// 当充值包含关联object 如post，表示收入来自站内佣金收入
+		// 完成充值
 		if ('success' == $this->status) {
-			if ($this->object_id) {
-				wnd_inc_user_commission($this->user_id, $this->total_amount);
-			} else {
-				wnd_inc_user_money($this->user_id, $this->total_amount);
-			}
-
-			/**
-			 *@since 2019.08.12
-			 *充值完成
-			 */
-			do_action('wnd_recharge_completed', $ID);
+			$this->complete(false);
 		}
 
 		$this->ID = $ID;
@@ -114,13 +104,12 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *@param string 	$this->subject 		option
 	 */
 	public function verify($payment_method) {
-		$post = get_post($this->ID);
-		if (!$this->ID or $post->post_type != 'recharge') {
+		if ($this->post->post_type != 'recharge') {
 			throw new Exception(__('充值ID无效', 'wnd'));
 		}
 
 		// 订单支付状态检查
-		if ($post->post_status != 'pending') {
+		if ($this->post->post_status != 'pending') {
 			throw new Exception(__('充值订单状态无效', 'wnd'));
 		}
 
@@ -133,22 +122,44 @@ class Wnd_Recharge extends Wnd_Transaction {
 			'ID'           => $this->ID,
 			'post_status'  => 'success',
 			'post_excerpt' => $payment_method,
-			'post_title'   => $this->subject ?: $post->post_title,
+			'post_title'   => $this->subject ?: $this->post->post_title,
 		];
 		$ID = wp_update_post($post_arr);
 		if (!$ID or is_wp_error($ID)) {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 
-		// 充值完成，更新用户余额
-		wnd_inc_user_money($post->post_author, $post->post_content);
+		// 完成充值
+		$this->complete(true);
+
+		return $ID;
+	}
+
+	/**
+	 *完成
+	 */
+	protected function complete(bool $online_payments) {
+		// 在线订单异步校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
+		if ($online_payments) {
+			$this->user_id      = $this->post->post_author;
+			$this->total_amount = $this->post->post_content;
+			$this->object_id    = $this->post->post_parent;
+		}
+
+		// 当充值包含关联object_id，表示收入来自站内佣金收入：更新用户佣金及产品总佣金统计
+		if ($this->object_id) {
+			wnd_inc_user_commission($this->user_id, $this->total_amount);
+			wnd_inc_post_total_commission($this->object_id, $this->total_amount);
+
+			// 在线余额充值
+		} else {
+			wnd_inc_user_money($this->user_id, $this->total_amount);
+		}
 
 		/**
 		 *@since 2019.08.12
 		 *充值完成
 		 */
-		do_action('wnd_recharge_completed', $ID);
-
-		return $ID;
+		do_action('wnd_recharge_completed', $this->ID);
 	}
 }

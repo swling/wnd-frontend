@@ -3,7 +3,6 @@ namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_Order;
-use Wnd\Model\Wnd_Recharge;
 
 /**
  *@since 2019.10.02
@@ -43,20 +42,6 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			$order->create($is_success = true);
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
-		}
-
-		// 文章作者新增资金
-		$commission = (float) wnd_get_post_commission($post_id);
-		if ($commission > 0) {
-			try {
-				$recharge = new Wnd_Recharge();
-				$recharge->set_object_id($post->ID); // 设置佣金来源
-				$recharge->set_user_id($post->post_author);
-				$recharge->set_total_amount($commission);
-				$recharge->create(true); // 直接写入余额
-			} catch (Exception $e) {
-				return ['status' => 1, 'msg' => $e->getMessage()];
-			}
 		}
 
 		// 支付成功

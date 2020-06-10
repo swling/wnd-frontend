@@ -131,5 +131,8 @@ abstract class Wnd_Refunder {
 			'time'          => time(),
 		];
 		wnd_update_post_meta($this->payment_id, 'refund_records', $refund_records);
+
+		// 扣除总销售额
+		wnd_inc_post_total_sales(static::$post->ID, $this->refund_amount * -1);
 	}
 }

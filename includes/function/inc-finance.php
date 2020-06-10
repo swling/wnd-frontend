@@ -112,3 +112,45 @@ function wnd_get_post_price($post_id) {
 function wnd_get_post_commission($post_id) {
 	return Wnd_Finance::get_post_commission($post_id);
 }
+
+/**
+ *@since 2020.06.10
+ *新增本篇付费内容作者佣金总额
+ *
+ *@param 	int 	$post_id 	Post ID
+ *@param 	float 	$money 		金额
+ */
+function wnd_inc_post_total_commission($post_id, $money) {
+	return Wnd_Finance::inc_post_total_commission($post_id, $money);
+}
+
+/**
+ *@since 2020.06.10
+ *获取付费内容作者获得的佣金
+ *
+ *@param 	int 	$post_id  Post ID
+ *@return 	float 	用户佣金
+ */
+function wnd_get_post_total_commission($post_id) {
+	return Wnd_Finance::get_post_total_commission($post_id);
+}
+
+/**
+ *@since 2020.06.10
+ *新增商品总销售额
+ *@param 	int 	$post_id 	Post ID
+ *@param 	float 	$money 		金额
+ */
+function wnd_inc_post_total_sales($post_id, $money) {
+	return Wnd_Finance::inc_post_total_sales($post_id, $money);
+}
+
+/**
+ *@since 2020.06.10
+ *获取商品总销售额
+ *@param 	int 	$user_id 	用户ID
+ *@return 	float 	用户佣金
+ */
+function wnd_get_post_total_sales($post_id) {
+	return Wnd_Finance::get_post_total_sales($post_id);
+}
