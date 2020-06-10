@@ -172,7 +172,7 @@ class Wnd_Order extends Wnd_Transaction {
 
 			wp_cache_delete($this->user_id . '-' . $this->object_id, 'wnd_has_paid');
 
-			// 文章作者新增资金
+			// 文章作者新增佣金
 			$commission = (float) wnd_get_post_commission($this->object_id);
 			if ($commission <= 0) {
 				return;
@@ -181,7 +181,7 @@ class Wnd_Order extends Wnd_Transaction {
 			$object = get_post($this->object_id);
 			try {
 				$recharge = new Wnd_Recharge();
-				$recharge->set_object_id($this->object_id); // 设置佣金来源
+				$recharge->set_object_id($object->ID); // 设置佣金来源
 				$recharge->set_user_id($object->post_author);
 				$recharge->set_total_amount($commission);
 				$recharge->create(true); // 直接写入余额

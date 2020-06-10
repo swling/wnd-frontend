@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Model\Wnd_Recharge;
 
 /**
  *@since 2020.06.09
@@ -29,6 +30,9 @@ abstract class Wnd_Refunder {
 	// 支付订单WP Post
 	protected static $post;
 
+	// 订单关联的产品 ID
+	protected static $object_id;
+
 	public function __construct($payment_id) {
 		if (!wnd_is_manager()) {
 			throw new Exception(__('权限不足', 'wnd'));
@@ -55,6 +59,9 @@ abstract class Wnd_Refunder {
 		if (!static::$post) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
+
+		// 订单关联的产品
+		static::$object_id = static::$post->post_parent;
 
 		// 判断是否为在线交易，此处判断不涉及资金安全，订单号提交至支付平台后，支付平台会校验订单号是否存在
 		$payment_method = static::$post->post_excerpt;
@@ -85,6 +92,8 @@ abstract class Wnd_Refunder {
 		$this->do_refund();
 
 		$this->add_refund_records();
+
+		$this->deduction();
 
 		// 关闭支付订单并设置标题
 		$post_arr = [
@@ -131,8 +140,35 @@ abstract class Wnd_Refunder {
 			'time'          => time(),
 		];
 		wnd_update_post_meta($this->payment_id, 'refund_records', $refund_records);
+	}
 
-		// 扣除总销售额
-		wnd_inc_post_total_sales(static::$post->ID, $this->refund_amount * -1);
+	/**
+	 *
+	 *产品订单：退款后扣除总销售额，扣除作者佣金
+	 */
+	protected function deduction() {
+		if (!static::$object_id) {
+			return;
+		}
+
+		// 扣除销售额
+		wnd_inc_post_total_sales(static::$object_id, $this->refund_amount * -1);
+
+		// 扣除作者佣金
+		$commission = wnd_get_post_commission(static::$object_id);
+		if (!$commission) {
+			return;
+		}
+
+		$object = get_post(static::$object_id);
+		try {
+			$recharge = new Wnd_Recharge();
+			$recharge->set_object_id($object->ID);
+			$recharge->set_user_id($object->post_author);
+			$recharge->set_total_amount($commission * -1);
+			$recharge->create(true);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 	}
 }

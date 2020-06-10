@@ -136,7 +136,11 @@ class Wnd_Recharge extends Wnd_Transaction {
 	}
 
 	/**
-	 *完成
+	 *完成充值
+	 *
+	 *在线充值：直接新增用户余额
+	 *
+	 *当充值包含关联object_id，表示收入来自站内佣金收入：更新用户佣金及产品总佣金统计
 	 */
 	protected function complete(bool $online_payments) {
 		// 在线订单异步校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
