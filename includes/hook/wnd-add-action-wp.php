@@ -112,8 +112,17 @@ class Wnd_Add_Action_WP {
 		/**
 		 * @since 2019.06.05 邮件状态改变时删除邮件查询对象缓存
 		 */
-		if ($post_after->post_type == 'mail') {
+		if ('mail' == $post_after->post_type) {
 			wp_cache_delete($post_after->post_author, 'wnd_mail_count');
+			return;
+		}
+
+		/**
+		 * @since 2020.06.11 订单更新，删除订单缓存
+		 */
+		if ('order' == $post_after->post_type) {
+			wp_cache_delete($post_after->post_author . '-' . $post_after->post_parent, 'wnd_has_paid');
+			return;
 		}
 	}
 

@@ -199,12 +199,13 @@ class Wnd_Payment extends Wnd_Transaction {
 	/**
 	 *获取订单金额
 	 */
-	public function get_total_amount() {
+	public function get_total_amount(): float {
 		if (!$this->ID) {
 			throw new Exception(__('站内支付数据尚未写入，无法生成订单号', 'wnd'));
 		}
 
-		return $this->total_amount ?: (get_post($this->ID)->post_content ?? 0.00);
+		$total_amount = $this->total_amount ?: (get_post($this->ID)->post_content ?? 0.00);
+		return number_format($total_amount, 2, '.', '');
 	}
 
 	/**

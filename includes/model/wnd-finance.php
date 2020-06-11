@@ -80,7 +80,7 @@ class Wnd_Finance {
 	 *@param 	int 	$object_id 	商品ID
 	 *@param 	int 	$number 	增加的数目，可为负
 	 **/
-	public static function inc_order_count($object_id, $number) {
+	public static function inc_order_count($object_id, $number): bool {
 		return wnd_inc_wnd_post_meta($object_id, 'order_count', $number);
 	}
 
@@ -91,13 +91,15 @@ class Wnd_Finance {
 	 *@param 	float 	$money 		金额
 	 *
 	 */
-	public static function inc_user_money($user_id, $money) {
+	public static function inc_user_money($user_id, $money): bool{
 		$new_money = static::get_user_money($user_id) + $money;
 		$new_money = number_format($new_money, 2, '.', '');
-		wnd_update_user_meta($user_id, 'money', $new_money);
+		$action    = wnd_update_user_meta($user_id, 'money', $new_money);
 
 		// 整站按月统计充值和消费
 		static::update_fin_stats($money, 'recharge');
+
+		return $action;
 	}
 
 	/**
@@ -118,13 +120,15 @@ class Wnd_Finance {
 	 *@param 	float 	$money 		金额
 	 *
 	 */
-	public static function inc_user_expense($user_id, $money) {
+	public static function inc_user_expense($user_id, $money): bool{
 		$new_money = static::get_user_expense($user_id) + $money;
 		$new_money = number_format($new_money, 2, '.', '');
-		wnd_update_user_meta($user_id, 'expense', $new_money);
+		$action    = wnd_update_user_meta($user_id, 'expense', $new_money);
 
 		// 整站按月统计充值和消费
 		static::update_fin_stats($money, 'expense');
+
+		return $action;
 	}
 
 	/**
@@ -193,7 +197,7 @@ class Wnd_Finance {
 	 *@param 	int 	$post_id 	Post ID
 	 *@param 	float 	$money 		金额
 	 */
-	public static function inc_post_total_commission($post_id, $money) {
+	public static function inc_post_total_commission($post_id, $money): bool {
 		return wnd_inc_wnd_post_meta($post_id, 'total_commission', number_format($money, 2, '.', ''));
 	}
 
@@ -216,8 +220,8 @@ class Wnd_Finance {
 	 *@param 	int 	$post_id 	Post ID
 	 *@param 	float 	$money 		金额
 	 */
-	public static function inc_post_total_sales($post_id, $money) {
-		wnd_inc_wnd_post_meta($post_id, 'total_sales', number_format($money, 2, '.', ''));
+	public static function inc_post_total_sales($post_id, $money): bool {
+		return wnd_inc_wnd_post_meta($post_id, 'total_sales', number_format($money, 2, '.', ''));
 	}
 
 	/**

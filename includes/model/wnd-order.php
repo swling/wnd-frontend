@@ -165,12 +165,13 @@ class Wnd_Order extends Wnd_Transaction {
 
 		/**
 		 *@since 2019.06.04
-		 *产品订单：更新总销售额、删除订单支付判断对象缓存、设置原作者佣金
+		 *产品订单：更新总销售额、设置原作者佣金
 		 */
 		if ($this->object_id) {
 			wnd_inc_post_total_sales($this->object_id, $this->total_amount);
 
-			wp_cache_delete($this->user_id . '-' . $this->object_id, 'wnd_has_paid');
+			// @since 2020.06.11 废弃缓存删除，该功能已通过 WP Action post_updated HOOK实现
+			// wp_cache_delete($this->user_id . '-' . $this->object_id, 'wnd_has_paid');
 
 			// 文章作者新增佣金
 			$commission = (float) wnd_get_post_commission($this->object_id);

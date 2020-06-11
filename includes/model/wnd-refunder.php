@@ -27,12 +27,22 @@ abstract class Wnd_Refunder {
 	// 支付平台响应数据：支付失败时用于查询信息及调试
 	protected $response = [];
 
-	// 支付订单WP Post
-	protected static $post;
-
 	// 订单关联的产品 ID
 	protected static $object_id;
 
+	// 交易类型：order / recharge
+	protected static $transaction_type;
+
+	// 订单创建用户
+	protected static $user_id;
+
+	// 订单支付方式
+	protected static $payment_method;
+
+	/**
+	 *构造函数
+	 *读取订单基本信息
+	 */
 	public function __construct($payment_id) {
 		if (!wnd_is_manager()) {
 			throw new Exception(__('权限不足', 'wnd'));
@@ -54,26 +64,35 @@ abstract class Wnd_Refunder {
 	/**
 	 *根据payment_id读取支付平台信息，并自动选择子类处理当前业务
 	 */
-	public static function get_instance($payment_id): Wnd_Refunder {
-		static::$post = $payment_id ? get_post($payment_id) : false;
-		if (!static::$post) {
+	public static function get_instance($payment_id): Wnd_Refunder{
+		$post = $payment_id ? get_post($payment_id) : false;
+		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		// 订单关联的产品
-		static::$object_id = static::$post->post_parent;
+		static::$object_id = $post->post_parent;
 
-		// 判断是否为在线交易，此处判断不涉及资金安全，订单号提交至支付平台后，支付平台会校验订单号是否存在
-		$payment_method = static::$post->post_excerpt;
-		if (!$payment_method) {
-			throw new Exception(__('本笔业务为站内交易，不支持在线退款', 'wnd'));
-		}
+		// 交易类型
+		static::$transaction_type = $post->post_type;
 
-		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Refunder_' . $payment_method;
+		// 订单创建者
+		static::$user_id = $post->post_author;
+
+		// 订单支付方式
+		static::$payment_method = $post->post_excerpt ?: 'Internal';
+
+		/**
+		 *根据交易类型选择退款方式
+		 *在线支付交易：@see Wnd_Payment->verify($payment_method)
+		 *
+		 *站内交易为缺省状态，设置为：'Internal' 对应站内退款方法
+		 */
+		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Refunder_' . static::$payment_method;
 		if (class_exists($class_name)) {
 			return new $class_name($payment_id);
 		} else {
-			throw new Exception(__('未定义支付方式：', 'wnd') . $payment_method);
+			throw new Exception(__('未定义支付方式：', 'wnd') . static::$payment_method);
 		}
 	}
 
@@ -81,7 +100,7 @@ abstract class Wnd_Refunder {
 	 *设置退款金额
 	 *如未设置退款金额，则全额退款
 	 */
-	public function set_refund_amount($refund_amount) {
+	public function set_refund_amount(float $refund_amount) {
 		$this->refund_amount = $refund_amount ?: $this->total_amount;
 	}
 
@@ -89,21 +108,32 @@ abstract class Wnd_Refunder {
 	 *退款并纪录
 	 */
 	public function refund() {
+		// 订单已全额退款
+		if (!$this->total_amount) {
+			throw new Exception(__('订单无可退余额', 'wnd'));
+		}
+
+		// 退款金额不合法
+		$balance = number_format($this->total_amount - $this->refund_amount, 2, '.', '');
+		if ($balance < 0) {
+			throw new Exception(__('退款金额不得大于订单总额', 'wnd'));
+		}
+
 		$this->do_refund();
 
 		$this->add_refund_records();
 
 		$this->deduction();
 
-		// 关闭支付订单并设置标题
+		// 关闭支付订单，扣除订单余额，设置标题备注
 		$post_arr = [
-			'ID'          => $this->payment_id,
-			'post_status' => 'close',
-			'post_title'  => static::$post->post_title . __('*已退款*', 'wnd'),
+			'ID'           => $this->payment_id,
+			'post_status'  => 'close',
+			'post_content' => $balance,
 		];
 		$ID = wp_update_post($post_arr);
 		if (!$ID or is_wp_error($ID)) {
-			throw new Exception(__('数据更新失败', 'wnd'));
+			throw new Exception(__('更新订单失败', 'wnd'));
 		}
 	}
 
@@ -143,18 +173,33 @@ abstract class Wnd_Refunder {
 	}
 
 	/**
+	 *充值订单：扣除用户余额（站内佣金暂不支持退款）
 	 *
-	 *产品订单：退款后扣除总销售额，扣除作者佣金
+	 *产品订单：扣除总销售额，扣除作者佣金
 	 */
 	protected function deduction() {
-		if (!static::$object_id) {
-			return;
+		/**
+		 *充值退款
+		 *
+		 * - 站内佣金不支持退款
+		 * - 扣除账户余额
+		 */
+		if ('recharge' == static::$transaction_type) {
+			if (static::$object_id) {
+				throw new Exception(__('当前交易不支持退款', 'wnd'));
+			}
+
+			return wnd_inc_user_money(static::$user_id, $this->refund_amount * -1);
 		}
 
-		// 扣除销售额
+		/**
+		 *订单退款
+		 *
+		 * - 扣除销售额
+		 * - 扣除作者佣金
+		 */
 		wnd_inc_post_total_sales(static::$object_id, $this->refund_amount * -1);
 
-		// 扣除作者佣金
 		$commission = wnd_get_post_commission(static::$object_id);
 		if (!$commission) {
 			return;
