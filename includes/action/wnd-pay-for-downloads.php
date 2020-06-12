@@ -13,7 +13,7 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 		// 获取文章
 		$post_id = (int) $_POST['post_id'];
 		$post    = get_post($post_id);
-		$price   = get_post_meta($post_id, 'price', true);
+		$price   = wnd_get_post_price($post_id);
 		$user_id = get_current_user_id();
 		if (!$post) {
 			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];

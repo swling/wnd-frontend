@@ -25,7 +25,7 @@ class AlipayRefunder extends AlipayService {
 	/**
 	 *退款金额
 	 */
-	public function set_refund_amount($refund_amount) {
+	public function set_refund_amount(float $refund_amount) {
 		$this->refund_amount = $refund_amount;
 	}
 

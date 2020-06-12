@@ -13,8 +13,8 @@ namespace Wnd\Action;
 class Wnd_Update_Account_Status extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		$user_id       = $_POST['user_id'] ?? 0;
-		$status        = $_POST['status'] ?? false;
+		$user_id       = (int) $_POST['user_id'];
+		$status        = $_POST['status'] ?? '';
 		$before_status = get_user_meta($user_id, 'status', true) ?: 'ok';
 
 		if (!$user_id) {

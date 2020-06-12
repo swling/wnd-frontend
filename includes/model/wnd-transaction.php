@@ -55,7 +55,7 @@ abstract class Wnd_Transaction {
 	 *@since 2019.08.12
 	 *设定金额
 	 **/
-	public function set_total_amount($total_amount) {
+	public function set_total_amount(float $total_amount) {
 		if (!is_numeric($total_amount)) {
 			throw new Exception(__('金额无效', 'wnd'));
 		}

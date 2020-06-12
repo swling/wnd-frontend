@@ -12,8 +12,8 @@ class Wnd_Delete_File extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		$meta_key    = $_POST['meta_key'];
-		$post_parent = $_POST['post_parent'];
-		$file_id     = $_POST['file_id'];
+		$post_parent = (int) $_POST['post_parent'];
+		$file_id     = (int) $_POST['file_id'];
 
 		if (!$file_id) {
 			return ['status' => 0, 'msg' => __('文件不存在', 'wnd')];

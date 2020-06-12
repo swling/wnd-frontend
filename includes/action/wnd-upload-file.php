@@ -35,7 +35,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 		$save_height      = $_POST['save_height'] ?? 0;
 		$thumbnail_height = $_POST['thumbnail_height'] ?? 0;
 		$thumbnail_width  = $_POST['thumbnail_width'] ?? 0;
-		$meta_key         = $_POST['meta_key'] ?? null;
+		$meta_key         = $_POST['meta_key'] ?? '';
 		$post_parent      = $_POST['post_parent'] ?? 0;
 		$user_id          = get_current_user_id();
 

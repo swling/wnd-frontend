@@ -9,7 +9,7 @@ namespace Wnd\Action;
 class Wnd_Delete_User extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		$user_id = $_POST['user_id'] ?? 0;
+		$user_id = (int) $_POST['user_id'];
 		$confirm = $_POST['confirm'] ?? false;
 		if (!$user_id) {
 			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];

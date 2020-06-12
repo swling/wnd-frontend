@@ -60,7 +60,7 @@ class AlipayTransfer extends AlipayService {
 	/**
 	 *总金额
 	 */
-	public function set_trans_amount($trans_amount) {
+	public function set_trans_amount(float $trans_amount) {
 		$this->trans_amount = $trans_amount;
 	}
 

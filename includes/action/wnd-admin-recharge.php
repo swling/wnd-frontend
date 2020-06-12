@@ -19,7 +19,7 @@ class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
 		}
 
 		$user_field   = $_POST['user_field'];
-		$total_amount = $_POST['total_amount'];
+		$total_amount = (float) $_POST['total_amount'];
 		$remarks      = $_POST['remarks'] ?: __('人工充值', 'wnd');
 
 		// 根据邮箱，手机，或用户名查询用户

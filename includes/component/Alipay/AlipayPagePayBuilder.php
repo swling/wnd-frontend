@@ -35,7 +35,7 @@ class AlipayPagePayBuilder extends AlipayService {
 	/**
 	 *总金额
 	 */
-	public function set_total_amount($total_amount) {
+	public function set_total_amount(float $total_amount) {
 		$this->total_amount = $total_amount;
 	}
 

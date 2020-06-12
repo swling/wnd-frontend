@@ -8,9 +8,9 @@ namespace Wnd\Action;
 class Wnd_Paid_Download extends Wnd_Action {
 
 	public static function execute() {
-		$post_id = (int) $_REQUEST['post_id'];
+		$post_id = (int) $_POST['post_id'];
 		$user_id = get_current_user_id();
-		$price   = get_post_meta($post_id, 'price', 1);
+		$price   = wnd_get_post_price($post_id);
 		$file_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
 		$file    = get_attached_file($file_id, $unfiltered = false);
 		if (!$file) {
