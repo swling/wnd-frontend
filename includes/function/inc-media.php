@@ -97,3 +97,80 @@ function wnd_get_thumbnail_url($id_or_url, $width = 160, $height = 120) {
 
 	return $url . '?x-oss-process=image/resize,m_fill,w_' . $width . ',h_' . $height;
 }
+
+/**
+ * Downloads an file from the specified URL and attaches it to a post.
+ *
+ *@see 相较于Wp函数，更新了多前端调用的默认支持，更新了对图像外文件下载的支持
+ *
+ * @since 2.6.0
+ * @since 4.2.0 Introduced the `$return` parameter.
+ * @since 4.8.0 Introduced the 'id' option within the `$return` parameter.
+ * @since 5.3.0 The `$post_id` parameter was made optional.
+ * @since 5.4.0 The original URL of the attachment is stored in the `_source_url`
+ *              post meta value.
+ *
+ * @param string $file    The URL of the image to download.
+ * @param int    $post_id Optional. The post ID the media is to be associated with.
+ * @param string $desc    Optional. Description of the image.
+ * @param string $return  Optional. Accepts 'html' (image tag html) or 'src' (URL),
+ *                        or 'id' (attachment ID). Default 'html'.
+ * @return string|WP_Error Populated HTML img tag on success, WP_Error object otherwise.
+ */
+function wnd_media_sideload($file, $post_id, $desc = null, $return = 'id') {
+	if (!function_exists('media_handle_sideload')) {
+		require ABSPATH . 'wp-admin/includes/media.php';
+		require ABSPATH . 'wp-admin/includes/file.php';
+		require ABSPATH . 'wp-admin/includes/image.php';
+	}
+
+	if (!empty($file)) {
+		$file_array         = array();
+		$file_array['name'] = wp_basename($file);
+
+		// Download file to temp location.
+		$file_array['tmp_name'] = download_url($file);
+
+		// If error storing temporarily, return the error.
+		if (is_wp_error($file_array['tmp_name'])) {
+			return $file_array['tmp_name'];
+		}
+
+		// Do the validation and storage stuff.
+		$id = media_handle_sideload($file_array, $post_id, $desc);
+
+		// If error storing permanently, unlink.
+		if (is_wp_error($id)) {
+			@unlink($file_array['tmp_name']);
+			return $id;
+		}
+
+		// Store the original attachment source in meta.
+		// add_post_meta($id, '_source_url', $file);
+
+		// If attachment id was requested, return it.
+		if ('id' === $return) {
+			return $id;
+		}
+
+		$src = wp_get_attachment_url($id);
+	}
+
+	// Finally, check to make sure the file has been saved, then return the HTML.
+	if (!empty($src)) {
+		if ('src' === $return) {
+			return $src;
+		}
+
+		if ('id' === $return) {
+			return $id;
+		}
+
+		$alt  = isset($desc) ? esc_attr($desc) : '';
+		$html = "<img src='$src' alt='$alt' />";
+
+		return $html;
+	} else {
+		return new WP_Error('image_sideload_failed');
+	}
+}
