@@ -96,7 +96,7 @@ function wnd_get_thumbnail_url($id_or_url, $width = 160, $height = 120) {
 /**
  * Downloads an file from the specified URL and attaches it to a post.
  *
- *@see 相较于Wp函数，更新了多前端调用的默认支持，更新了对图像外文件下载的支持
+ *@see 相较于Wp函数，更新了多前端调用的默认支持，更新了对图像外文件下载的支持，并自动将文件随机重命名
  *
  * @since 2.6.0
  * @since 4.2.0 Introduced the `$return` parameter.
@@ -120,8 +120,19 @@ function wnd_media_sideload($file, $post_id, $desc = null, $return = 'id') {
 	}
 
 	if (!empty($file)) {
-		$file_array         = array();
-		$file_array['name'] = wp_basename($file);
+		$file_array = [];
+		// $file_array['name'] = wp_basename($file);
+
+		/**
+		 *@since 2020.06.15
+		 *将远程文件随机重命名
+		 */
+		$info = pathinfo($file);
+		$ext  = isset($info['extension']) ? '.' . $info['extension'] : null;
+		if (!$ext) {
+			return new WP_Error('image_sideload_failed');
+		}
+		$file_array['name'] = 'sync' . uniqid() . $ext;
 
 		// Download file to temp location.
 		$file_array['tmp_name'] = download_url($file);
