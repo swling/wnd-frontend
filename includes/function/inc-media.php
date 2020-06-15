@@ -70,12 +70,7 @@ function wnd_download_remote_images($content, $upload_dir, $post_id) {
  *@return string|WP_Error Populated HTML img tag on success, WP_Error object otherwise.
  */
 function wnd_download_remote_image($url, $post_parent, $title, $return = 'src') {
-	if (!function_exists('media_sideload_image')) {
-		require ABSPATH . 'wp-admin/includes/media.php';
-		require ABSPATH . 'wp-admin/includes/file.php';
-		require ABSPATH . 'wp-admin/includes/image.php';
-	}
-	return media_sideload_image($url, $post_parent, $title, $return);
+	return wnd_media_sideload($url, $post_parent, $title, $return);
 }
 
 /**
