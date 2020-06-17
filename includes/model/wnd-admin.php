@@ -117,14 +117,6 @@ class Wnd_Admin {
 			wp_delete_post($delete, true);
 		}
 
-		// 删除空的标签 @since 2019.10.14
-		$empty_tags = $wpdb->get_results(
-			"SELECT * FROM $wpdb->term_taxonomy WHERE taxonomy LIKE '%_tag' AND count = 0"
-		);
-		foreach ((array) $empty_tags as $term) {
-			wp_delete_term($term->term_id, $term->taxonomy);
-		}
-
 		// 删除七天以前未注册的验证码记录
 		$old_users = $wpdb->query(
 			"DELETE FROM $wpdb->wnd_users WHERE user_id = 0 AND DATE_SUB(NOW(), INTERVAL 7 DAY) > FROM_UNIXTIME(time)"
