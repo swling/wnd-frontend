@@ -169,7 +169,7 @@ class Wnd_Pay_Button {
 
 		// 其他情况
 		static::$button_text = __('付费阅读', 'wnd');
-		static::$message .= '<p>' . __('以下内容需付费阅读', 'wnd') . static::$post_price . '</p>';
+		static::$message .= '<p>' . __('以下内容需付费阅读：¥ ', 'wnd') . static::$post_price . '</p>';
 	}
 
 	/**
@@ -202,6 +202,6 @@ class Wnd_Pay_Button {
 		}
 
 		// 其他情况
-		static::$message .= '<p>' . __('以下内容及文件需付费购买', 'wnd') . static::$post_price . '</p>';
+		static::$message .= '<p>' . __('以下内容及文件需付费购买：¥ ', 'wnd') . static::$post_price . '</p>';
 	}
 }

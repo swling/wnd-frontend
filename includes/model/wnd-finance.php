@@ -93,7 +93,7 @@ class Wnd_Finance {
 	 */
 	public static function inc_user_money($user_id, $money): bool{
 		$new_money = static::get_user_money($user_id) + $money;
-		$new_money = number_format($new_money, 2, '.', '');
+		$new_money = number_format($new_money, 2);
 		$action    = wnd_update_user_meta($user_id, 'money', $new_money);
 
 		// 整站按月统计充值和消费
@@ -107,10 +107,10 @@ class Wnd_Finance {
 	 *@param 	int 	$user_id 	用户ID
 	 *@return 	float 	用户余额
 	 */
-	public static function get_user_money($user_id): float{
+	public static function get_user_money($user_id) {
 		$money = wnd_get_user_meta($user_id, 'money');
-		$money = is_numeric($money) ? $money : 0;
-		return number_format($money, 2, '.', '');
+		$money = is_numeric($money) ? $money : 0.00;
+		return number_format($money, 2);
 	}
 
 	/**
@@ -122,7 +122,7 @@ class Wnd_Finance {
 	 */
 	public static function inc_user_expense($user_id, $money): bool{
 		$new_money = static::get_user_expense($user_id) + $money;
-		$new_money = number_format($new_money, 2, '.', '');
+		$new_money = number_format($new_money, 2);
 		$action    = wnd_update_user_meta($user_id, 'expense', $new_money);
 
 		// 整站按月统计充值和消费
@@ -137,10 +137,10 @@ class Wnd_Finance {
 	 *@return 	float 	用户消费
 	 *
 	 */
-	public static function get_user_expense($user_id): float{
+	public static function get_user_expense($user_id) {
 		$expense = wnd_get_user_meta($user_id, 'expense');
-		$expense = is_numeric($expense) ? $expense : 0;
-		return number_format($expense, 2, '.', '');
+		$expense = is_numeric($expense) ? $expense : 0.00;
+		return number_format($expense, 2);
 	}
 
 	/**
@@ -150,7 +150,7 @@ class Wnd_Finance {
 	 *@param 	float 	$money 		金额
 	 */
 	public static function inc_user_commission($user_id, $money): bool {
-		return wnd_inc_wnd_user_meta($user_id, 'commission', number_format($money, 2, '.', ''));
+		return wnd_inc_wnd_user_meta($user_id, 'commission', number_format($money, 2));
 	}
 
 	/**
@@ -159,10 +159,10 @@ class Wnd_Finance {
 	 *
 	 *@return 	float 	用户佣金
 	 */
-	public static function get_user_commission($user_id): float{
+	public static function get_user_commission($user_id) {
 		$commission = wnd_get_user_meta($user_id, 'commission');
-		$commission = is_numeric($commission) ? $commission : 0;
-		return number_format($commission, 2, '.', '');
+		$commission = is_numeric($commission) ? $commission : 0.00;
+		return number_format($commission, 2);
 	}
 
 	/**
@@ -171,9 +171,9 @@ class Wnd_Finance {
 	 *@param 	int 	$user_id 	用户ID
 	 *@return  	float 	两位数的价格信息 或者 0
 	 */
-	public static function get_post_price($post_id): float{
+	public static function get_post_price($post_id) {
 		$price = get_post_meta($post_id, 'price', 1) ?: false;
-		$price = is_numeric($price) ? number_format($price, 2, '.', '') : 0;
+		$price = is_numeric($price) ? number_format($price, 2) : 0.00;
 		return apply_filters('wnd_get_post_price', $price, $post_id);
 	}
 
@@ -183,10 +183,10 @@ class Wnd_Finance {
 	 *@param 	int 	$post_id
 	 *@return 	float 	佣金分成
 	 */
-	public static function get_post_commission($post_id): float{
-		$commission_rate = is_numeric(wnd_get_config('commission_rate')) ? wnd_get_config('commission_rate') : 0;
+	public static function get_post_commission($post_id) {
+		$commission_rate = is_numeric(wnd_get_config('commission_rate')) ? wnd_get_config('commission_rate') : 0.00;
 		$commission      = wnd_get_post_price($post_id) * $commission_rate;
-		$commission      = number_format($commission, 2, '.', '');
+		$commission      = number_format($commission, 2);
 		return apply_filters('wnd_get_post_commission', $commission, $post_id);
 	}
 
@@ -198,7 +198,7 @@ class Wnd_Finance {
 	 *@param 	float 	$money 		金额
 	 */
 	public static function inc_post_total_commission($post_id, $money): bool {
-		return wnd_inc_wnd_post_meta($post_id, 'total_commission', number_format($money, 2, '.', ''));
+		return wnd_inc_wnd_post_meta($post_id, 'total_commission', number_format($money));
 	}
 
 	/**
@@ -208,10 +208,10 @@ class Wnd_Finance {
 	 *@param 	int 	$post_id  Post ID
 	 *@return 	float 	用户佣金
 	 */
-	public static function get_post_total_commission($post_id): float{
+	public static function get_post_total_commission($post_id) {
 		$total_commission = wnd_get_post_meta($post_id, 'total_commission');
-		$total_commission = is_numeric($total_commission) ? $total_commission : 0;
-		return number_format($total_commission, 2, '.', '');
+		$total_commission = is_numeric($total_commission) ? $total_commission : 0.00;
+		return number_format($total_commission, 2);
 	}
 
 	/**
@@ -221,7 +221,7 @@ class Wnd_Finance {
 	 *@param 	float 	$money 		金额
 	 */
 	public static function inc_post_total_sales($post_id, $money): bool {
-		return wnd_inc_wnd_post_meta($post_id, 'total_sales', number_format($money, 2, '.', ''));
+		return wnd_inc_wnd_post_meta($post_id, 'total_sales', number_format($money, 2));
 	}
 
 	/**
@@ -230,10 +230,10 @@ class Wnd_Finance {
 	 *@param 	int 	$user_id 	用户ID
 	 *@return 	float 	用户佣金
 	 */
-	public static function get_post_total_sales($post_id): float{
+	public static function get_post_total_sales($post_id) {
 		$total_sales = wnd_get_post_meta($post_id, 'total_sales');
-		$total_sales = is_numeric($total_sales) ? $total_sales : 0;
-		return number_format($total_sales, 2, '.', '');
+		$total_sales = is_numeric($total_sales) ? $total_sales : 0.00;
+		return number_format($total_sales, 2);
 	}
 
 	/**
@@ -283,7 +283,7 @@ class Wnd_Finance {
 		if ($stats_post) {
 			$old_money = $stats_post->post_content;
 			$new_money = $old_money + $money;
-			$new_money = number_format($new_money, 2, '.', '');
+			$new_money = number_format($new_money, 2);
 			wp_update_post(['ID' => $stats_post->ID, 'post_content' => $new_money]);
 
 			// 新增统计
