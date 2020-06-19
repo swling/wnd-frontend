@@ -37,6 +37,13 @@ class Wnd_Pay_Button {
 	protected static $button_text;
 	protected static $html;
 
+	// 禁止按钮
+	protected static $disabled = false;
+
+	/**
+	 *构建Html
+	 *
+	 */
 	public static function build(int $post_id, bool $with_paid_content): string {
 		static::$post_id = $post_id;
 		static::$post    = static::$post_id ? get_post(static::$post_id) : false;
@@ -51,7 +58,7 @@ class Wnd_Pay_Button {
 		static::$file_id       = wnd_get_post_meta(static::$post_id, 'file');
 		static::$second_color  = 'is-' . wnd_get_config('second_color');
 
-		// 根据付费内容形式，构建对应变量
+		// 根据付费内容形式，构建对应变量：$message and $button_text
 		if ($with_paid_content and static::$file_id) {
 			static::build_pay_button_var();
 		} elseif (static::$file_id) {
@@ -67,7 +74,7 @@ class Wnd_Pay_Button {
 
 	protected static function build_html() {
 		// 未登录用户
-		if (!static::$user_id) {
+		if (!static::$user_id and !wnd_get_config('enable_anon_order')) {
 			static::$html = '<div class="wnd-pay-button box">';
 			static::$html .= wnd_message(static::$message, static::$second_color, true);
 			static::$html .= '<div class="field is-grouped is-grouped-centered">';
@@ -79,14 +86,14 @@ class Wnd_Pay_Button {
 
 		// 消费提示
 		if (static::$user_id != static::$post->post_author and !static::$user_has_paid) {
-			static::$message .= '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . static::$user_money . '</b>&nbsp;&nbsp;' .
-			__('本次消费：¥ ', 'wnd') . '<b>' . static::$post_price . '</b></p>';
-
 			// 订单权限检测
 			try {
 				Wnd_Create_Order::check_create(static::$post_id, static::$user_id);
+				static::$message .= '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . static::$user_money . '</b>&nbsp;&nbsp;' .
+				__('本次消费：¥ ', 'wnd') . '<b>' . static::$post_price . '</b></p>';
 			} catch (Exception $e) {
 				static::$message .= $e->getMessage();
+				static::$disabled = true;
 			}
 		}
 
@@ -95,7 +102,7 @@ class Wnd_Pay_Button {
 		static::$html .= wnd_message(static::$message, static::$second_color, true);
 
 		// 当包含文件时，无论是否已支付，均需要提交下载请求，是否扣费将在Wnd\Action\Wnd_Pay_For_Downloads判断
-		if (!static::$user_has_paid or static::$file_id) {
+		if (!static::$disabled and (!static::$user_has_paid or static::$file_id)) {
 			$form = new Wnd_Form_WP();
 			$form->add_hidden('post_id', static::$post_id);
 			$form->set_action(static::$action);

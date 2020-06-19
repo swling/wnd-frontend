@@ -16,14 +16,48 @@ use Wnd\Model\Wnd_Recharge;
  *	pending / success
  *
  *	# 消费post data
- *	金额：post_content
- *	关联：post_parent
- *	标题：post_title
- *	状态：post_status: pengding / success
- *	类型：post_type：order
+ *	金额：		post_content
+ *	关联：		post_parent
+ *	标题：		post_title
+ *	状态：		post_status: pengding / success
+ *	类型：		post_type：order
+ * 	匿名cookie：post_name
  *
  */
 class Wnd_Order extends Wnd_Transaction {
+
+	// 是否启用匿名订单
+	protected $enable_anon_order;
+
+	// 定义匿名支付cookie名称
+	public static $anon_cookie_name_prefix = 'anon_order';
+
+	// 匿名用户临时支付cookie
+	protected $anon_cookie;
+
+	/**
+	 *@since 2019.08.11
+	 *构造函数
+	 */
+	public function __construct() {
+		parent::__construct();
+
+		$this->enable_anon_order = wnd_get_config('enable_anon_order');
+	}
+
+	/**
+	 *匿名支付订单cookie name
+	 */
+	public static function get_anon_cookie_name($object_id) {
+		return static::$anon_cookie_name_prefix . '_' . $object_id;
+	}
+
+	/**
+	 *创建匿名支付随机码
+	 */
+	protected function generate_anon_cookie() {
+		return md5(uniqid($this->object_id));
+	}
 
 	/**
 	 *@since 2019.02.11
@@ -35,9 +69,20 @@ class Wnd_Order extends Wnd_Transaction {
 	 *@param bool 	 	$is_success 		option 	是否直接写入，无需支付平台校验
 	 */
 	public function create(bool $is_success = false) {
+		/**
+		 *匿名支付Cookie：
+		 *cookie_name = static::$anon_cookie_name . '-' . $this->object_id
+		 *@since 2020.06.18
+		 */
 		if (!$this->user_id) {
-			throw new Exception(__('请登录', 'wnd'));
+			if (!$this->enable_anon_order) {
+				throw new Exception(__('请登录', 'wnd'));
+			}
+
+			$this->anon_cookie = $this->generate_anon_cookie();
+			setcookie(static::get_anon_cookie_name($this->object_id), $this->anon_cookie, time() + 3600 * 24, '/');
 		}
+
 		if ($this->object_id and !get_post($this->object_id)) {
 			throw new Exception(__('指定商品无效', 'wnd'));
 		}
@@ -80,7 +125,7 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_status'  => $this->status,
 			'post_title'   => $this->subject,
 			'post_type'    => 'order',
-			'post_name'    => uniqid(),
+			'post_name'    => $this->anon_cookie,
 		];
 		$this->ID = wp_insert_post($post_arr);
 		if (is_wp_error($this->ID) or !$this->ID) {

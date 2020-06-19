@@ -13,19 +13,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 
 	public static function execute(int $post_id = 0): array{
 		$post_id = $post_id ?: (int) $_POST['post_id'];
-		$post    = $post_id ? get_post($post_id) : false;
 		$user_id = get_current_user_id();
-		if (!$user_id) {
-			return ['status' => 0, 'msg' => __('请登录', 'wnd')];
-		}
-
-		if (!$post) {
-			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
-		}
-
-		if ($post->post_author == $user_id) {
-			return ['status' => 0, 'msg' => __('禁止下单', 'wnd')];
-		}
 
 		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id);
 		if ($wnd_can_create_order['status'] === 0) {
@@ -51,13 +39,18 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 	/**
 	 *检测下单权限
 	 */
-	public static function check_create($post_id, $user_id) {
-		if (!$post_id) {
-			throw new Exception(__('ID无效', 'wnd'));
+	public static function check_create(int $post_id, int $user_id) {
+		$post = $post_id ? get_post($post_id) : false;
+		if (!$post) {
+			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}
 
-		if (!$user_id) {
-			throw new Exception(__('用户无效', 'wnd'));
+		if ($post->post_author == $user_id) {
+			return ['status' => 0, 'msg' => __('禁止下单', 'wnd')];
+		}
+
+		if (!$user_id and !wnd_get_config('enable_anon_order')) {
+			throw new Exception(__('请登录', 'wnd'));
 		}
 
 		$post_price    = wnd_get_post_price($post_id);

@@ -152,6 +152,15 @@ function wnd_options()
 					</td>
 				</tr>
 
+				<tr>
+					<th valign="top">匿名订单</th>
+					<td>
+						开启<input type="radio" name="wnd_enable_anon_order" value="1" <?php if (wnd_get_config('enable_anon_order') == 1) echo 'checked'; ?>>
+						关闭<input type="radio" name="wnd_enable_anon_order" value="0" <?php if (wnd_get_config('enable_anon_order') != 1) echo 'checked'; ?>>
+						<p><i>是否开启匿名用户订单功能（将以Cookie作为校验标识，订单有效期24小时）</i></p>
+					</td>
+				</tr>
+
 				<!--支付设置-->
 				<tr>
 					<th valign="top">

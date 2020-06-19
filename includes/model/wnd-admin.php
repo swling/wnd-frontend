@@ -34,7 +34,9 @@ class Wnd_Admin {
 
 				'wnd_primary_color'      => '',
 				'wnd_second_color'       => '',
+
 				'wnd_commission_rate'    => '',
+				'wnd_enable_anon_order'  => 0,
 
 				'wnd_pay_return_url'     => get_option('home'),
 				'wnd_alipay_appid'       => '',

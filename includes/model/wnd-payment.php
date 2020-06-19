@@ -102,10 +102,6 @@ class Wnd_Payment extends Wnd_Transaction {
 	 *@param string 	$this->subject 		option
 	 */
 	public function create() {
-		if (!$this->user_id) {
-			throw new Exception(__('请登录', 'wnd'));
-		}
-
 		// 在线订单 / 充值
 		if ($this->object_id) {
 			$order = new Wnd_Order();
@@ -138,7 +134,7 @@ class Wnd_Payment extends Wnd_Transaction {
 	 *@param float  	$this->total_money		required
 	 */
 	public function verify($payment_method) {
-		$type     = !empty($_POST) ? __('异步', 'wnd') : __('同步', 'wnd');
+		$type     = ('POST' == $_SERVER['REQUEST_METHOD']) ? __('异步', 'wnd') : __('同步', 'wnd');
 		$this->ID = $this->ID ?: $this->parse_out_trade_no($this->out_trade_no);
 
 		// 校验

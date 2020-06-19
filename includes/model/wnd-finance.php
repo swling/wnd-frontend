@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Model\Wnd_Order;
+
 /**
  *@since 2019.10.25
  *站内财务信息
@@ -16,8 +18,24 @@ class Wnd_Finance {
 	 *@return bool 	是否已支付
 	 **/
 	public static function user_has_paid($user_id, $object_id): bool {
-		if (!$user_id or !$object_id) {
+		if (!$object_id) {
 			return false;
+		}
+
+		// 匿名支付订单查询
+		if (!$user_id) {
+			$cookie_name = Wnd_Order::get_anon_cookie_name($object_id);
+			$anon_cookie = $_COOKIE[$cookie_name] ?? '';
+			$order       = wnd_get_post_by_slug($anon_cookie, 'order', 'success');
+			if (!$order) {
+				return false;
+			}
+
+			if (time() - strtotime($order->post_date_gmt) < 3600 * 24) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		$user_has_paid = wp_cache_get($user_id . '-' . $object_id, 'wnd_has_paid');
