@@ -23,6 +23,15 @@ class Wnd_User_Recharge_Form extends Wnd_Module {
 				'class'    => 'is-checkradio is-danger',
 			]
 		);
+		$form->add_radio(
+			[
+				'name'     => 'payment_gateway',
+				'options'  => ['支付宝' => 'Alipay'],
+				'required' => 'required',
+				'checked'  => 'Alipay',
+				'class'    => 'is-checkradio is-danger',
+			]
+		);
 		$form->add_html('<img src="https://t.alipayobjects.com/images/T1HHFgXXVeXXXXXXXX.png">');
 		$form->add_html('</div>');
 		$form->set_action(wnd_get_do_url(), 'GET');

@@ -20,7 +20,7 @@ class Wnd_Refunder_Internal extends Wnd_Refunder {
 		}
 
 		if (!wnd_inc_user_money(static::$user_id, $this->refund_amount)) {
-			throw new Exception(__('退款失败', 'wnd') . ':' . static::$payment_method);
+			throw new Exception(__('退款失败', 'wnd') . ':' . static::$payment_gateway);
 		}
 	}
 }

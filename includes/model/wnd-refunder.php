@@ -37,7 +37,7 @@ abstract class Wnd_Refunder {
 	protected static $user_id;
 
 	// 订单支付方式
-	protected static $payment_method;
+	protected static $payment_gateway;
 
 	/**
 	 *构造函数
@@ -51,14 +51,13 @@ abstract class Wnd_Refunder {
 		$this->payment_id = $payment_id;
 
 		// 获取订单的支付信息
-		$payment = new Wnd_Payment;
+		$payment = Wnd_Payment::get_instance(static::$payment_gateway);
 		$payment->set_ID($this->payment_id);
 		$this->total_amount = $payment->get_total_amount();
 		$this->out_trade_no = $payment->get_out_trade_no();
 
 		// 部分退款：以退款次数作为标识
-		$refund_count         = wnd_get_post_meta($this->payment_id, 'refund_count') ?: 0;
-		$this->out_request_no = $refund_count;
+		$this->out_request_no = wnd_get_post_meta($this->payment_id, 'refund_count') ?: 1;
 	}
 
 	/**
@@ -80,19 +79,19 @@ abstract class Wnd_Refunder {
 		static::$user_id = $post->post_author;
 
 		// 订单支付方式
-		static::$payment_method = $post->post_excerpt ?: 'Internal';
+		static::$payment_gateway = Wnd_Payment::get_payment_gateway($payment_id) ?: 'Internal';
 
 		/**
 		 *根据交易类型选择退款方式
-		 *在线支付交易：@see Wnd_Payment->verify($payment_method)
+		 *在线支付交易：@see Wnd_Payment->verify($payment_gateway)
 		 *
 		 *站内交易为缺省状态，设置为：'Internal' 对应站内退款方法
 		 */
-		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Refunder_' . static::$payment_method;
+		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Refunder_' . static::$payment_gateway;
 		if (class_exists($class_name)) {
 			return new $class_name($payment_id);
 		} else {
-			throw new Exception(__('未定义支付方式：', 'wnd') . static::$payment_method);
+			throw new Exception(__('未定义支付方式：', 'wnd') . static::$payment_gateway);
 		}
 	}
 

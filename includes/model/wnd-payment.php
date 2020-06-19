@@ -22,9 +22,9 @@ use Exception;
  *	标题：post_title
  *	状态：post_status: pengding / success
  *	类型：post_type：recharge / order
- *
+ *	接口：post_excerpt：（支付平台标识如：Alipay / Wepay）
  */
-class Wnd_Payment extends Wnd_Transaction {
+abstract class Wnd_Payment extends Wnd_Transaction {
 
 	// 基于$this->ID生成，发送至第三方平台的订单号
 	protected $out_trade_no;
@@ -36,33 +36,19 @@ class Wnd_Payment extends Wnd_Transaction {
 	protected static $site_name;
 
 	/**
-	 *@since 2019.08.11
-	 *构造函数
+	 *根据支付平台，并自动选择子类处理当前业务
 	 */
-	public function __construct() {
-		parent::__construct();
+	public static function get_instance($payment_gateway): Wnd_Payment {
+		static::$site_name       = get_bloginfo('name');
+		static::$site_prefix     = static::build_site_prefix();
+		static::$payment_gateway = $payment_gateway;
 
-		/**
-		 *构建包含当前站点标识的订单号码作为发送至三方支付平台的订单号
-		 *
-		 *为防止多站点公用一个支付应用id，或测试环境与正式环境中产生重复的支付订单id，在充值id的前缀前，添加了基于该站点home_url()的前缀字符
-		 *@since 2019.03.04
-		 *
-		 *不采用别名做订单的原因：在WordPress中，不同类型的post type别名可以是重复的值，会在一定程度上导致不确定性，同时根据别名查询post的语句也更复杂
-		 *该前缀对唯一性要求不高，仅用于区分上述情况下的冲突
-		 *build_site_prefix基于md5，组成为：数字字母，post_id为整数，因而分割字符需要回避数字和字母
-		 *@since 2019.03.04
-		 *
-		 */
-		static::$site_prefix = strtoupper(substr(md5(home_url()), 0, 4));
-
-		/**
-		 *站点名称
-		 *跳转至第三方平台时，在站内订单或充值标题前加上站点名以便用户识别
-		 *@since 2019.12.21
-		 *
-		 */
-		static::$site_name = get_bloginfo('name');
+		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Payment_' . static::$payment_gateway;
+		if (class_exists($class_name)) {
+			return new $class_name();
+		} else {
+			throw new Exception(__('未定义支付方式', 'wnd') . ':' . $class_name);
+		}
 	}
 
 	/**
@@ -79,33 +65,82 @@ class Wnd_Payment extends Wnd_Transaction {
 	 *@param 	string 	$out_trade_no 	支付平台订单号
 	 *@return 	int|0 	order|recharge Post ID
 	 */
-	protected function parse_out_trade_no($out_trade_no) {
-		if (false === strpos($out_trade_no, static::$site_prefix . '-')) {
+	public static function parse_out_trade_no($out_trade_no): int{
+		$site_prefix = static::$site_prefix ?: static::build_site_prefix();
+
+		if (false === strpos($out_trade_no, $site_prefix . '-')) {
 			return 0;
 		}
 
 		list($prefix, $ID) = explode('-', $out_trade_no, 2);
-		if ($prefix != static::$site_prefix) {
+		if ($prefix != $site_prefix) {
 			return 0;
 		}
+
 		return (int) $ID;
 	}
+
+	/**
+	 *创建支付
+	 *
+	 */
+	public function create() {
+		$this->insert_record();
+		$this->do_pay();
+	}
+
+	/**
+	 *验证支付并执行相关站内业务
+	 */
+	public function verify() {
+		/**
+		 *支付平台回调验签
+		 *
+		 *WordPress 始终开启了魔法引号，因此需要对post 数据做还原处理
+		 *@link https://developer.wordpress.org/reference/functions/stripslashes_deep/
+		 */
+		if ('POST' == $_SERVER['REQUEST_METHOD']) {
+			$_POST = stripslashes_deep($_POST);
+
+			$this->do_notify();
+		} else {
+			$_GET = stripslashes_deep($_GET);
+
+			$this->do_return();
+		}
+	}
+
+	/**
+	 *第三方平台支付方法，交付对应子类实现
+	 */
+	abstract protected function do_pay();
+
+	/**
+	 *第三方平台支付验签，交付对应子类实现
+	 */
+	abstract protected function do_notify();
+
+	/**
+	 *第三方平台支付验签，交付对应子类实现
+	 */
+	abstract protected function do_return();
 
 	/**
 	 *@since 2019.02.17 创建在线支付信息 订单 / 充值
 	 *
 	 *若设置了object_id 调用：insert_order 否则调用: insert_recharge
 	 *
-	 *@param int 		$this->user_id  	required
-	 *@param float  	$this->total_money	required when !$object_id
-	 *@param int 		$this->object_id  	option
-	 *@param string 	$this->subject 		option
+	 *@param string		static::$payment_gateway  	required
+	 *@param float  	$this->total_money			required when !$object_id
+	 *@param int 		$this->object_id  			option
+	 *@param string 	$this->subject 				option
 	 */
-	public function create() {
+	protected function insert_record() {
 		// 在线订单 / 充值
 		if ($this->object_id) {
 			$order = new Wnd_Order();
 			$order->set_object_id($this->object_id);
+			$order->set_payment_gateway(static::$payment_gateway);
 			$order->create();
 
 			$this->ID           = $order->get_ID();
@@ -115,6 +150,7 @@ class Wnd_Payment extends Wnd_Transaction {
 		} else {
 			$recharge = new Wnd_Recharge();
 			$recharge->set_total_amount($this->total_amount);
+			$recharge->set_payment_gateway(static::$payment_gateway);
 			$recharge->create();
 
 			$this->ID           = $recharge->get_ID();
@@ -128,12 +164,11 @@ class Wnd_Payment extends Wnd_Transaction {
 	 *充值付款校验
 	 *@return int|Exception 	order ID|recharge ID if success
 	 *
-	 *@param string 	$payment_method			required 	支付平台标识
 	 *@param int 		$this->ID  				required if !$this->out_trade_no
 	 *@param string 	$this->out_trade_no	  	required if !$this->ID
 	 *@param float  	$this->total_money		required
 	 */
-	public function verify($payment_method) {
+	protected function complete(bool $online_payments) {
 		$type     = ('POST' == $_SERVER['REQUEST_METHOD']) ? __('异步', 'wnd') : __('同步', 'wnd');
 		$this->ID = $this->ID ?: $this->parse_out_trade_no($this->out_trade_no);
 
@@ -164,13 +199,13 @@ class Wnd_Payment extends Wnd_Transaction {
 			$order = new Wnd_Order();
 			$order->set_ID($this->ID);
 			$order->set_subject($this->subject);
-			$order->verify($payment_method);
+			$order->verify();
 
 		} else {
 			$recharge = new Wnd_Recharge();
 			$recharge->set_ID($this->ID);
 			$recharge->set_subject($this->subject);
-			$recharge->verify($payment_method);
+			$recharge->verify();
 		}
 
 		/**
@@ -186,7 +221,7 @@ class Wnd_Payment extends Wnd_Transaction {
 	 */
 	public function get_out_trade_no() {
 		if (!$this->ID) {
-			throw new Exception(__('站内支付数据尚未写入，无法生成订单号', 'wnd'));
+			throw new Exception(__('站内支付数据尚未写入', 'wnd'));
 		}
 
 		return static::$site_prefix . '-' . $this->ID;
@@ -197,7 +232,7 @@ class Wnd_Payment extends Wnd_Transaction {
 	 */
 	public function get_total_amount(): float {
 		if (!$this->ID) {
-			throw new Exception(__('站内支付数据尚未写入，无法生成订单号', 'wnd'));
+			throw new Exception(__('站内支付数据尚未写入', 'wnd'));
 		}
 
 		$total_amount = $this->total_amount ?: (get_post($this->ID)->post_content ?? 0.00);
@@ -211,6 +246,34 @@ class Wnd_Payment extends Wnd_Transaction {
 	 */
 	public function get_subject() {
 		return static::$site_name . ' - ' . $this->subject;
+	}
+
+	/**
+	 *根据支付订单ID获取第三方支付平台接口标识
+	 */
+	public static function get_payment_gateway(int $payment_id): string{
+		$payment = $payment_id ? get_post($payment_id) : false;
+		if (!$payment) {
+			return '';
+		}
+
+		return $payment->post_excerpt;
+	}
+
+	/**
+	 *构建包含当前站点标识的订单号码作为发送至三方支付平台的订单号
+	 *
+	 *为防止多站点公用一个支付应用id，或测试环境与正式环境中产生重复的支付订单id，在充值id的前缀前，添加了基于该站点home_url()的前缀字符
+	 *@since 2019.03.04
+	 *
+	 *不采用别名做订单的原因：在WordPress中，不同类型的post type别名可以是重复的值，会在一定程度上导致不确定性，同时根据别名查询post的语句也更复杂
+	 *该前缀对唯一性要求不高，仅用于区分上述情况下的冲突
+	 *build_site_prefix基于md5，组成为：数字字母，post_id为整数，因而分割字符需要回避数字和字母
+	 *@since 2019.03.04
+	 *
+	 */
+	public static function build_site_prefix(): string {
+		return strtoupper(substr(md5(home_url()), 0, 4));
 	}
 
 	/**
@@ -229,5 +292,14 @@ class Wnd_Payment extends Wnd_Transaction {
 		}
 
 		return $url;
+	}
+
+	/**
+	 *同步回调跳转链接
+	 */
+	protected function return () {
+		$url = static::get_return_url($this->object_id);
+		header('Location:' . add_query_arg('from', 'payment_successful', $url));
+		exit;
 	}
 }

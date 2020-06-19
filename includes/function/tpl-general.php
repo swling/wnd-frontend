@@ -144,8 +144,16 @@ function wnd_dropdown_colors($name, $selected) {
  *创建订单链接
  *@param int $post_id 产品/文章ID
  */
-function wnd_order_link($post_id) {
-	return wnd_get_do_url() . '?action=payment&post_id=' . $post_id . '&_wpnonce=' . wp_create_nonce('payment');
+function wnd_order_link($post_id, $payment_gateway = 'Alipay') {
+	return add_query_arg(
+		[
+			'action'          => 'payment',
+			'post_id'         => $post_id,
+			'payment_gateway' => $payment_gateway,
+			'_wpnonce'        => wp_create_nonce('payment'),
+		],
+		wnd_get_do_url()
+	);
 }
 
 /**

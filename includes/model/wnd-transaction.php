@@ -22,6 +22,9 @@ abstract class Wnd_Transaction {
 	// 产品ID 对应WordPress产品类型Post ID
 	protected $object_id;
 
+	// 第三方支付接口
+	protected static $payment_gateway;
+
 	// 金额
 	protected $total_amount;
 
@@ -49,6 +52,14 @@ abstract class Wnd_Transaction {
 		if (!$this->ID or !$this->post) {
 			throw new Exception(__('交易ID无效', 'wnd'));
 		}
+	}
+
+	/**
+	 *@since 2020.06.19
+	 *设置支付网关如（支付宝，微信支付等）
+	 */
+	public function set_payment_gateway($payment_gateway) {
+		static::$payment_gateway = $payment_gateway;
 	}
 
 	/**
@@ -106,9 +117,17 @@ abstract class Wnd_Transaction {
 	 *@since 2019.02.11
 	 *校验：具体实现在子类中定义
 	 *通常校验用于需要跳转第三方支付平台的交易
-	 *@param $payment_method（记录支付平台如：alipay、wepay）
+	 *@param $payment_gateway（记录支付平台如：alipay、wepay）
 	 */
-	abstract public function verify($payment_method);
+	abstract public function verify();
+
+	/**
+	 *订单成功后，执行的统一操作
+	 *@since 2020.06.10
+	 *
+	 *@param bool $online_payments 是否为在线支付订单
+	 */
+	abstract protected function complete(bool $online_payments);
 
 	/**
 	 *获取WordPress order/recharge post ID

@@ -1,23 +1,68 @@
 <?php
-namespace Wnd\Component\Alipay;
+namespace Wnd\Model;
 
-use Exception;
+use Wnd\Component\Alipay\AlipayPagePayBuilder;
 use Wnd\Component\Alipay\AlipayService;
-use Wnd\Model\Wnd_Payment;
 
 /**
- *支付宝异步通知
+ *@since 2020.06.19
+ *支付宝支付
  *
- *@link https://docs.open.alipay.com/204/105301/
+ *PC支付和wap支付中：product_code 、method 参数有所不同，详情查阅如下
+ *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay
+ *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.wap.pay
+ *
  */
-class AlipayNotify {
+class Wnd_Payment_Alipay extends Wnd_Payment {
 
-	public static function verify() {
+	/**
+	 *发起支付
+	 *
+	 */
+	protected function do_pay() {
+		$aliPay = new AlipayPagePayBuilder();
+		$aliPay->set_total_amount($this->get_total_amount());
+		$aliPay->set_out_trade_no($this->get_out_trade_no());
+		$aliPay->set_subject($this->get_subject());
+
+		// 生成数据表单并提交
+		echo $aliPay->doPay();
+	}
+
+	/**
+	 *回调验签
+	 */
+	protected function check($params) {
 		$aliPay = new AlipayService();
-		$result = $aliPay->rsaCheck($_POST);
-		if ($result !== true) {
+		$result = $aliPay->rsaCheck($params);
+		if (true !== $result) {
 			exit('error');
 		}
+	}
+
+	/**
+	 *同步回调通知
+	 *
+	 */
+	protected function do_return() {
+		/**
+		 *验签
+		 */
+		$this->check($_GET);
+
+		$this->complete(true);
+		$this->return();
+	}
+
+	/**
+	 *异步回调通知
+	 *
+	 */
+	protected function do_notify() {
+		/**
+		 *验签
+		 */
+		$this->check($_POST);
 
 		/**
 		 *请在这里加上商户的业务逻辑程序代
@@ -50,14 +95,7 @@ class AlipayNotify {
 			/**
 			 *@since 2019.08.12 异步校验
 			 */
-			try {
-				$payment = new Wnd_Payment();
-				$payment->set_total_amount($_POST['total_amount']);
-				$payment->set_out_trade_no($_POST['out_trade_no']);
-				$payment->verify('alipay');
-			} catch (Exception $e) {
-				exit($e->getMessage());
-			}
+			$this->complete(true);
 
 			// 校验通过
 			exit('success');

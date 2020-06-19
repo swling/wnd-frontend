@@ -20,6 +20,7 @@ use Exception;
  *	标题：post_title
  *	状态：post_status: pengding / success
  *	类型：post_type：recharge
+ *	接口：post_excerpt：（支付平台标识如：Alipay / Wepay）
  *
  */
 class Wnd_Recharge extends Wnd_Transaction {
@@ -75,6 +76,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 			'post_author'  => $this->user_id,
 			'post_parent'  => $this->object_id,
 			'post_content' => $this->total_amount,
+			'post_excerpt' => static::$payment_gateway,
 			'post_status'  => $this->status,
 			'post_title'   => $this->subject,
 			'post_type'    => 'recharge',
@@ -99,11 +101,11 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *更新支付订单状态
 	 *@return int or Exception
 	 *
-	 *@param string 	$payment_method		required 	支付平台标识
+	 *@param string 	$payment_gateway		required 	支付平台标识
 	 *@param int 		$this->ID  			required
 	 *@param string 	$this->subject 		option
 	 */
-	public function verify($payment_method) {
+	public function verify() {
 		if ($this->post->post_type != 'recharge') {
 			throw new Exception(__('充值ID无效', 'wnd'));
 		}
@@ -116,13 +118,12 @@ class Wnd_Recharge extends Wnd_Transaction {
 		/**
 		 *在线支付充值，设置如下参数，以区分站内充值。用于充值标识，及退款
 		 *
-		 *post_excerpt = $payment_method（记录支付平台如：alipay、wepay）
+		 *post_excerpt = $payment_gateway（记录支付平台如：alipay、wepay）
 		 */
 		$post_arr = [
-			'ID'           => $this->ID,
-			'post_status'  => 'success',
-			'post_excerpt' => $payment_method,
-			'post_title'   => $this->subject ?: $this->post->post_title,
+			'ID'          => $this->ID,
+			'post_status' => 'success',
+			'post_title'  => $this->subject ?: $this->post->post_title,
 		];
 		$ID = wp_update_post($post_arr);
 		if (!$ID or is_wp_error($ID)) {

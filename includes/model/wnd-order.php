@@ -22,6 +22,7 @@ use Wnd\Model\Wnd_Recharge;
  *	状态：		post_status: pengding / success
  *	类型：		post_type：order
  * 	匿名cookie：post_name
+ *	接口：post_excerpt：（支付平台标识如：Alipay / Wepay）
  *
  */
 class Wnd_Order extends Wnd_Transaction {
@@ -122,6 +123,7 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_author'  => $this->user_id,
 			'post_parent'  => $this->object_id,
 			'post_content' => $this->total_amount ?: __('免费', 'wnd'),
+			'post_excerpt' => static::$payment_gateway,
 			'post_status'  => $this->status,
 			'post_title'   => $this->subject,
 			'post_type'    => 'order',
@@ -149,11 +151,11 @@ class Wnd_Order extends Wnd_Transaction {
 	 *确认在线消费订单
 	 *@return int or false
 	 *
-	 *@param string 	$payment_method		required 	支付平台标识
+	 *@param string 	$payment_gateway		required 	支付平台标识
 	 *@param int 		$this->ID  			required
 	 *@param string 	$this->subject 		option
 	 */
-	public function verify($payment_method) {
+	public function verify() {
 		if ($this->post->post_type != 'order') {
 			throw new Exception(__('订单ID无效', 'wnd'));
 		}
@@ -166,14 +168,13 @@ class Wnd_Order extends Wnd_Transaction {
 		/**
 		 *在线支付的订单，设置如下参数，以区分站内订单。用于订单标识，及订单退款
 		 *
-		 *post_excerpt = $payment_method（记录支付平台如：alipay、wepay）
+		 *post_excerpt = $payment_gateway（记录支付平台如：alipay、wepay）
 		 *post_title = $post->post_title . __('(在线支付)', 'wnd')
 		 */
 		$post_arr = [
-			'ID'           => $this->ID,
-			'post_status'  => 'success',
-			'post_excerpt' => $payment_method,
-			'post_title'   => $this->subject ?: $this->post->post_title . __('(在线支付)', 'wnd'),
+			'ID'          => $this->ID,
+			'post_status' => 'success',
+			'post_title'  => $this->subject ?: $this->post->post_title . __('(在线支付)', 'wnd'),
 		];
 		$ID = wp_update_post($post_arr);
 		if (!$ID or is_wp_error($ID)) {

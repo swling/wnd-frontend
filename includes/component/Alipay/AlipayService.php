@@ -85,10 +85,10 @@ class AlipayService {
 			$result = (bool) openssl_verify($data, base64_decode($sign), $res);
 		}
 
-		//释放资源
-		if (!$this->checkEmpty($this->alipay_public_key)) {
-			openssl_free_key($res);
-		}
+		//释放资源：仅在读取证书文件时
+		// if (!$this->checkEmpty($this->alipay_public_key)) {
+		// 	openssl_free_key($res);
+		// }
 
 		return $result;
 	}

@@ -1,9 +1,8 @@
 <?php
 namespace Wnd\Hook;
 
-use Wnd\Component\Alipay\AlipayNotify;
-use Wnd\Component\Alipay\AlipayPagePay;
-use Wnd\Component\Alipay\AlipayReturn;
+use Wnd\Action\Wnd_Do_Pay;
+use Wnd\Action\Wnd_Verify_Pay;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
@@ -143,33 +142,18 @@ class Wnd_Add_Action {
 	 *@since 2018.9.25
 	 */
 	public static function action_on_do_action() {
-		//1.0 支付宝异步校验 支付宝发起post请求 匿名
-		if (isset($_POST['app_id']) and $_POST['app_id'] == wnd_get_config('alipay_appid')) {
-			// WordPress 始终开启了魔法引号，因此需要对post 数据做还原处理
-			$_POST = stripslashes_deep($_POST);
-			AlipayNotify::verify();
-			return;
-		}
-
-		//1.1 支付宝支付跳转返回
-		if (isset($_GET['app_id']) and $_GET['app_id'] == wnd_get_config('alipay_appid')) {
-			// WordPress 始终开启了魔法引号，因此需要对post 数据做还原处理
-			$_GET = stripslashes_deep($_GET);
-			AlipayReturn::verify();
-			return;
+		//1.0 支付请求
+		$action = $_GET['action'] ?? '';
+		if (!$action and (!empty($_GET) or !empty($_POST))) {
+			Wnd_Verify_Pay::execute();
 		}
 
 		//2.0其他自定义action
-		$action = $_GET['action'] ?? '';
-		if (!$action) {
-			return;
-		}
-
 		switch ($action) {
 		//创建支付
 		case 'payment':
 			if (wp_verify_nonce($_GET['_wpnonce'] ?? '', 'payment')) {
-				AlipayPagePay::pay();
+				Wnd_Do_Pay::execute();
 			} else {
 				wp_die(__('Nonce 校验失败', 'wnd'), bloginfo('name'));
 			}
