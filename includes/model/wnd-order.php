@@ -22,7 +22,7 @@ use Wnd\Model\Wnd_Recharge;
  *	状态：		post_status: pengding / success
  *	类型：		post_type：order
  * 	匿名cookie：post_name
- *	接口：post_excerpt：（支付平台标识如：Alipay / Wepay）
+ *	接口：		post_excerpt：（支付平台标识如：Alipay / Wepay）
  *
  */
 class Wnd_Order extends Wnd_Transaction {
@@ -64,10 +64,11 @@ class Wnd_Order extends Wnd_Transaction {
 	 *@since 2019.02.11
 	 *用户本站消费数据(含余额消费，或直接第三方支付消费)
 	 *
-	 *@param int 		$this->user_id  	required
-	 *@param int 		$this->object_id  	option
-	 *@param string 	$this->subject 		option
-	 *@param bool 	 	$is_success 		option 	是否直接写入，无需支付平台校验
+	 *@param int 		$this->user_id  		required
+	 *@param int 		$this->object_id  		option
+	 *@param string 	$this->subject 			option
+	 *@param string 	$this->payment_gateway	option 	支付平台标识
+	 *@param bool 	 	$is_success 			option 	是否直接写入，无需支付平台校验
 	 */
 	public function create(bool $is_success = false) {
 		/**
@@ -140,7 +141,7 @@ class Wnd_Order extends Wnd_Transaction {
 		 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see static::verify();
 		 */
 		if ('success' == $this->status) {
-			$this->complete(false);
+			$this->complete();
 		}
 
 		return $this->ID;
@@ -151,7 +152,7 @@ class Wnd_Order extends Wnd_Transaction {
 	 *确认在线消费订单
 	 *@return int or false
 	 *
-	 *@param string 	$payment_gateway		required 	支付平台标识
+	 *@param object 	$this->post			required 	订单记录Post
 	 *@param int 		$this->ID  			required
 	 *@param string 	$this->subject 		option
 	 */
@@ -181,8 +182,11 @@ class Wnd_Order extends Wnd_Transaction {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 
-		// 订单完成
-		$this->complete(true);
+		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
+		$this->user_id      = $this->post->post_author;
+		$this->total_amount = $this->post->post_content;
+		$this->object_id    = $this->post->post_parent;
+		$this->complete();
 
 		return $ID;
 	}
@@ -191,21 +195,13 @@ class Wnd_Order extends Wnd_Transaction {
 	 *订单成功后，执行的统一操作
 	 *@since 2020.06.10
 	 *
-	 *@param bool $online_payments 是否为在线支付订单
 	 */
-	protected function complete(bool $online_payments) {
-		// 在线订单异步校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
-		if ($online_payments) {
-			$this->user_id      = $this->post->post_author;
-			$this->total_amount = $this->post->post_content;
-			$this->object_id    = $this->post->post_parent;
-		}
-
+	protected function complete() {
 		// 写入消费记录
 		wnd_inc_user_expense($this->user_id, $this->total_amount);
 
-		// 站内消费，记录扣除账户余额、在线支付则不影响当前余额
-		if (!$online_payments) {
+		// 站内直接消费，无需支付平台支付校验，记录扣除账户余额、在线支付则不影响当前余额
+		if ('success' == $this->status) {
 			wnd_inc_user_money($this->user_id, $this->total_amount * -1);
 		}
 

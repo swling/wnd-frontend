@@ -30,8 +30,7 @@ $payment->create();
 $out_trade_no    = $_REQUEST['out_trade_no'] ?? '';
 $total_amount    = $_REQUEST['total_amount'] ?? 0;
 $payment_id      = Wnd_Payment::parse_out_trade_no($out_trade_no);
-$payment         = $payment_id ? get_post($payment_id) : false;
-$payment_gateway = $payment->post_excerpt;
+$payment_gateway = Wnd_Payment::get_payment_gateway($payment_id);
 
 $payment = Wnd_Payment::get_instance($payment_gateway);
 $payment->set_total_amount($_POST['total_amount']);

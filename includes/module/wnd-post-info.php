@@ -25,6 +25,7 @@ class Wnd_Post_Info extends Wnd_Module {
 		// order recharge
 		if (in_array($post->post_type, ['order', 'recharge'])) {
 			$html = '<article>';
+			$html .= '<h5>Title:' . $post->post_title . '</h5>';
 			$html .= '<h5>Total Amount:' . $post->post_content . '</h5>';
 			$html .= '<h5>Refund Count:' . (wnd_get_post_meta($post_id, 'refund_count') ?: 0) . '</h5>';
 			$html .= '<h5>payment method:' . $post->post_excerpt . '</h5>';

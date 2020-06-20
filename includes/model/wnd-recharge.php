@@ -22,24 +22,22 @@ use Exception;
  *	类型：post_type：recharge
  *	接口：post_excerpt：（支付平台标识如：Alipay / Wepay）
  *
+ *在线支付充值，设置如下参数，以区分站内充值。用于充值标识，及退款
+ *post_excerpt = $payment_gateway（记录支付平台如：alipay、wepay）
  */
 class Wnd_Recharge extends Wnd_Transaction {
 
 	/**
 	 *@since 2019.01.30
-	 *金额：post_content
-	 *关联：post_parent
-	 *状态：post_status
-	 *类型：post_type recharge
-	 *用户通过第三方金融平台充值付款到本站
-	 *创建时：post_status=>pending，验证成功后：post_status=>success
+	 *
 	 *写入post时需要设置别名，否则更新时会自动根据标题设置别名，而充值类标题一致，会导致WordPress持续循环查询并设置 -2、-3这类自增标题，产生大量查询
 	 *
-	 *@param int 		$this->user_id  	required
-	 *@param float  	$this->total_money	required
-	 *@param string 	$this->subject 		option
-	 *@param int 		$this->object_id  	option
-	 *@param bool 	 	$is_success 		option 	是否直接写入，无需支付平台校验
+	 *@param int 		$this->user_id  		required
+	 *@param float  	$this->total_money		required
+	 *@param string 	$this->subject 			option
+	 *@param int 		$this->object_id  		option
+	 *@param string 	$this->payment_gateway	option 	支付平台标识
+	 *@param bool 	 	$is_success 			option 	是否直接写入，无需支付平台校验
 	 *
 	 *@return int object ID
 	 */
@@ -89,7 +87,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 
 		// 完成充值
 		if ('success' == $this->status) {
-			$this->complete(false);
+			$this->complete();
 		}
 
 		$this->ID = $ID;
@@ -101,7 +99,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *更新支付订单状态
 	 *@return int or Exception
 	 *
-	 *@param string 	$payment_gateway		required 	支付平台标识
+	 *@param object 	$this->post			required 	订单记录Post
 	 *@param int 		$this->ID  			required
 	 *@param string 	$this->subject 		option
 	 */
@@ -115,11 +113,6 @@ class Wnd_Recharge extends Wnd_Transaction {
 			throw new Exception(__('充值订单状态无效', 'wnd'));
 		}
 
-		/**
-		 *在线支付充值，设置如下参数，以区分站内充值。用于充值标识，及退款
-		 *
-		 *post_excerpt = $payment_gateway（记录支付平台如：alipay、wepay）
-		 */
 		$post_arr = [
 			'ID'          => $this->ID,
 			'post_status' => 'success',
@@ -130,8 +123,11 @@ class Wnd_Recharge extends Wnd_Transaction {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 
-		// 完成充值
-		$this->complete(true);
+		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
+		$this->user_id      = $this->post->post_author;
+		$this->total_amount = $this->post->post_content;
+		$this->object_id    = $this->post->post_parent;
+		$this->complete();
 
 		return $ID;
 	}
@@ -143,14 +139,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *
 	 *当充值包含关联object_id，表示收入来自站内佣金收入：更新用户佣金及产品总佣金统计
 	 */
-	protected function complete(bool $online_payments) {
-		// 在线订单异步校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
-		if ($online_payments) {
-			$this->user_id      = $this->post->post_author;
-			$this->total_amount = $this->post->post_content;
-			$this->object_id    = $this->post->post_parent;
-		}
-
+	protected function complete() {
 		// 当充值包含关联object_id，表示收入来自站内佣金收入：更新用户佣金及产品总佣金统计
 		if ($this->object_id) {
 			wnd_inc_user_commission($this->user_id, $this->total_amount);

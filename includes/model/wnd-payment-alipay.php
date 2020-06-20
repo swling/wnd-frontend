@@ -50,7 +50,7 @@ class Wnd_Payment_Alipay extends Wnd_Payment {
 		 */
 		$this->check($_GET);
 
-		$this->complete(true);
+		$this->complete();
 		$this->return();
 	}
 
@@ -95,7 +95,7 @@ class Wnd_Payment_Alipay extends Wnd_Payment {
 			/**
 			 *@since 2019.08.12 异步校验
 			 */
-			$this->complete(true);
+			$this->complete();
 
 			// 校验通过
 			exit('success');

@@ -168,7 +168,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *@param string 	$this->out_trade_no	  	required if !$this->ID
 	 *@param float  	$this->total_money		required
 	 */
-	protected function complete(bool $online_payments) {
+	protected function complete() {
 		$type     = ('POST' == $_SERVER['REQUEST_METHOD']) ? __('异步', 'wnd') : __('同步', 'wnd');
 		$this->ID = $this->ID ?: $this->parse_out_trade_no($this->out_trade_no);
 

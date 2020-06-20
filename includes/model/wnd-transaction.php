@@ -127,7 +127,7 @@ abstract class Wnd_Transaction {
 	 *
 	 *@param bool $online_payments 是否为在线支付订单
 	 */
-	abstract protected function complete(bool $online_payments);
+	abstract protected function complete();
 
 	/**
 	 *获取WordPress order/recharge post ID
