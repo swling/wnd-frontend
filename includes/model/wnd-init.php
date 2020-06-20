@@ -64,26 +64,30 @@ class Wnd_Init {
 		add_filter('xmlrpc_enabled', '__return_false');
 
 		/**
-		 *移除WordPress默认的API
+		 *前端移除WordPress默认的API
 		 *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
+		 *
+		 *在本插件环境中，仅超级管理员可能访问后台，故后台不做处理。以此保持WP相关功能正常，如古腾堡编辑器等
 		 *
 		 *@link https://stackoverflow.com/questions/42757726/disable-default-routes-of-wp-rest-api
 		 *@link https://wpreset.com/remove-default-wordpress-rest-api-routes-endpoints/
 		 */
-		add_filter('rest_endpoints', function ($endpoints) {
-			foreach ($endpoints as $route => $endpoint) {
-				if (0 === stripos($route, '/wp/v2/users/me')) {
-					continue;
-				}
+		if (!is_admin()) {
+			add_filter('rest_endpoints', function ($endpoints) {
+				foreach ($endpoints as $route => $endpoint) {
+					if (0 === stripos($route, '/wp/v2/users/me')) {
+						continue;
+					}
 
-				if (0 === stripos($route, '/wp/v2/posts') or 0 === stripos($route, '/wp/v2/users')) {
-					unset($endpoints[$route]);
+					if (0 === stripos($route, '/wp/v2/posts') or 0 === stripos($route, '/wp/v2/users')) {
+						unset($endpoints[$route]);
+					}
 				}
-			}
-			unset($route, $endpoint);
+				unset($route, $endpoint);
 
-			return $endpoints;
-		});
+				return $endpoints;
+			});
+		}
 	}
 
 	/**

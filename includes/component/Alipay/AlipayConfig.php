@@ -2,7 +2,15 @@
 namespace Wnd\Component\Alipay;
 
 /**
- * 支付宝配置信息
+ *支付宝配置
+ *
+ *支付宝公钥 @link https://openhome.alipay.com/platform/keyManage.htm
+ *对应APPID下的支付宝公钥。用工具生成应用公钥后，上传到支付宝，再由支付宝生成
+ *
+ *生成秘钥 @link https://opendocs.alipay.com/open/291/105971
+ *
+ *相关问题 @link https://opensupport.alipay.com/support/knowledge/20069/201602048372#
+ *
  */
 class AlipayConfig {
 
@@ -15,16 +23,10 @@ class AlipayConfig {
 			//应用ID,您的APPID。
 			'app_id'            => wnd_get_config('alipay_appid'),
 
-			/**
-			 *@link https://docs.open.alipay.com/58/103242
-			 *商户私钥 用工具生成的应用私钥
-			 **/
+			// RSA2 商户私钥 用工具生成的应用私钥
 			'app_private_key'   => wnd_get_config('app_private_key'),
 
-			/**
-			 *支付宝公钥 @link https://openhome.alipay.com/platform/keyManage.htm
-			 *对应APPID下的支付宝公钥。用工具生成应用公钥后，上传到支付宝，再由支付宝生成
-			 */
+			// RSA2 应用支付宝公钥
 			'alipay_public_key' => wnd_get_config('alipay_public_key'),
 
 			//异步通知地址 *不能带参数否则校验不过 （插件执行页面地址）
