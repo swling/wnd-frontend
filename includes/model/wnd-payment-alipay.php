@@ -12,6 +12,9 @@ use Wnd\Component\Alipay\AlipayService;
  *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay
  *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.wap.pay
  *
+ *问题排查：
+ * - @link https://opendocs.alipay.com/open/common/fr9vsk
+ * - @link https://opensupport.alipay.com/support/tools/cloudparse
  */
 class Wnd_Payment_Alipay extends Wnd_Payment {
 
@@ -36,7 +39,7 @@ class Wnd_Payment_Alipay extends Wnd_Payment {
 		$aliPay = new AlipayService();
 		$result = $aliPay->rsaCheck($params);
 		if (true !== $result) {
-			exit('error');
+			exit('fail');
 		}
 	}
 

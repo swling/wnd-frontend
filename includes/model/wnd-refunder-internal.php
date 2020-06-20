@@ -15,11 +15,11 @@ class Wnd_Refunder_Internal extends Wnd_Refunder {
 	 *站内充值退款：无需额外操作。 @see Wnd_Refunder->deduction();
 	 */
 	protected function do_refund() {
-		if ('order' !== static::$transaction_type) {
+		if ('order' != $this->transaction_type) {
 			return;
 		}
 
-		if (!wnd_inc_user_money(static::$user_id, $this->refund_amount)) {
+		if (!wnd_inc_user_money($this->user_id, $this->refund_amount)) {
 			throw new Exception(__('退款失败', 'wnd') . ':' . static::$payment_gateway);
 		}
 	}

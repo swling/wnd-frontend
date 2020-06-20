@@ -34,6 +34,9 @@ abstract class Wnd_Transaction {
 	// 状态
 	protected $status;
 
+	// 类型
+	protected $type;
+
 	/**
 	 *@since 2019.08.11
 	 *构造函数
@@ -140,7 +143,7 @@ abstract class Wnd_Transaction {
 	 *获取支付订单标题
 	 */
 	public function get_subject() {
-		return $this->subject;
+		return $this->subject ?: $this->post->post_title;
 	}
 
 	/**
@@ -148,7 +151,7 @@ abstract class Wnd_Transaction {
 	 *获取关联产品/服务Post ID
 	 **/
 	public function get_object_id() {
-		return $this->object_id;
+		return $this->object_id ?: $this->post->post_parent;
 	}
 
 	/**
@@ -156,6 +159,24 @@ abstract class Wnd_Transaction {
 	 *获取消费金额
 	 **/
 	public function get_total_amount() {
-		return $this->total_amount;
+		return $this->total_amount ?: $this->post->post_content;
+	}
+
+	/**
+	 *@since 2020.06.20
+	 *获取用户ID
+	 *
+	 */
+	public function get_user_id() {
+		return $this->user_id ?: $this->post->post_author;
+	}
+
+	/**
+	 *@since 2020.06.20
+	 *获取交易记录类型
+	 *
+	 */
+	public function get_type() {
+		return $this->type ?: $this->post->post_type;
 	}
 }

@@ -28,15 +28,15 @@ abstract class Wnd_Refunder {
 	protected $response = [];
 
 	// 订单关联的产品 ID
-	protected static $object_id;
+	protected $object_id;
 
 	// 交易类型：order / recharge
-	protected static $transaction_type;
+	protected $transaction_type;
 
 	// 订单创建用户
-	protected static $user_id;
+	protected $user_id;
 
-	// 订单支付方式
+	// 订单支付接口
 	protected static $payment_gateway;
 
 	/**
@@ -53,31 +53,20 @@ abstract class Wnd_Refunder {
 		// 获取订单的支付信息
 		$payment = Wnd_Payment::get_instance(static::$payment_gateway);
 		$payment->set_ID($this->payment_id);
-		$this->total_amount = $payment->get_total_amount();
-		$this->out_trade_no = $payment->get_out_trade_no();
+		$this->total_amount     = $payment->get_total_amount();
+		$this->out_trade_no     = $payment->get_out_trade_no();
+		$this->object_id        = $payment->get_object_id();
+		$this->transaction_type = $payment->get_type();
+		$this->user_id          = $payment->get_user_id();
 
-		// 部分退款：以退款次数作为标识
+		// 分批次退款时需要设置子订单编号（支付宝）
 		$this->out_request_no = wnd_get_post_meta($this->payment_id, 'refund_count') ?: 1;
 	}
 
 	/**
 	 *根据payment_id读取支付平台信息，并自动选择子类处理当前业务
 	 */
-	public static function get_instance($payment_id): Wnd_Refunder{
-		$post = $payment_id ? get_post($payment_id) : false;
-		if (!$post) {
-			throw new Exception(__('ID无效', 'wnd'));
-		}
-
-		// 订单关联的产品
-		static::$object_id = $post->post_parent;
-
-		// 交易类型
-		static::$transaction_type = $post->post_type;
-
-		// 订单创建者
-		static::$user_id = $post->post_author;
-
+	public static function get_instance($payment_id): Wnd_Refunder {
 		// 订单支付方式
 		static::$payment_gateway = Wnd_Payment::get_payment_gateway($payment_id) ?: 'Internal';
 
@@ -183,12 +172,12 @@ abstract class Wnd_Refunder {
 		 * - 站内佣金不支持退款
 		 * - 扣除账户余额
 		 */
-		if ('recharge' == static::$transaction_type) {
-			if (static::$object_id) {
+		if ('recharge' == $this->transaction_type) {
+			if ($this->object_id) {
 				throw new Exception(__('当前交易不支持退款', 'wnd'));
 			}
 
-			return wnd_inc_user_money(static::$user_id, $this->refund_amount * -1);
+			return wnd_inc_user_money($this->user_id, $this->refund_amount * -1);
 		}
 
 		/**
@@ -197,14 +186,14 @@ abstract class Wnd_Refunder {
 		 * - 扣除销售额
 		 * - 扣除作者佣金
 		 */
-		wnd_inc_post_total_sales(static::$object_id, $this->refund_amount * -1);
+		wnd_inc_post_total_sales($this->object_id, $this->refund_amount * -1);
 
-		$commission = wnd_get_post_commission(static::$object_id);
+		$commission = wnd_get_post_commission($this->object_id);
 		if (!$commission) {
 			return;
 		}
 
-		$object = get_post(static::$object_id);
+		$object = get_post($this->object_id);
 		try {
 			$recharge = new Wnd_Recharge();
 			$recharge->set_object_id($object->ID);
