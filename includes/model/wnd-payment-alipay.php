@@ -17,7 +17,6 @@ use Wnd\Component\Alipay\AlipayService;
  * - @link https://opensupport.alipay.com/support/tools/cloudparse
  */
 class Wnd_Payment_Alipay extends Wnd_Payment {
-
 	/**
 	 *发起支付
 	 *
@@ -34,74 +33,78 @@ class Wnd_Payment_Alipay extends Wnd_Payment {
 
 	/**
 	 *回调验签
+	 *
 	 */
-	protected function check($params) {
+	protected function check($params): bool{
 		$aliPay = new AlipayService();
-		$result = $aliPay->rsaCheck($params);
-		if (true !== $result) {
-			exit('fail');
-		}
+		return $aliPay->rsaCheck($params);
 	}
 
 	/**
 	 *同步回调通知
 	 *
 	 */
-	protected function do_return() {
+	protected function check_return(): bool {
 		/**
 		 *验签
 		 */
-		$this->check($_GET);
-
-		$this->complete();
-		$this->return();
+		return $this->check($_GET);
 	}
 
 	/**
 	 *异步回调通知
 	 *
+	 *@link https://opendocs.alipay.com/open/203/105286/#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E9%A1%B5%E9%9D%A2%E7%89%B9%E6%80%A7
 	 */
-	protected function do_notify() {
+	protected function check_notify(): bool {
 		/**
 		 *验签
 		 */
-		$this->check($_POST);
+		if (true !== $this->check($_POST)) {
+			echo ('fail');
+			return false;
+		}
 
 		/**
 		 *请在这里加上商户的业务逻辑程序代
 		 *获取支付宝的通知返回参数，可参考技术文档中服务器异步通知参数列表
 		 *
 		 *如果校验成功必须输出 'success'，页面源码不得包含其他及HTML字符
+		 *
+		 *# 状态TRADE_SUCCESS：
+		 * - 通知触发条件是商户签约的产品支持退款功能的前提下，买家付款成功
+		 *
+		 *# 交易状态TRADE_FINISHED：
+		 * - 通知触发条件是商户签约的产品不支持退款功能的前提下，买家付款成功；或者，商户签约的产品支持退款功能的前提下，交易已经成功并且已经超过可退款期限。
+		 *
+		 *业务处理：
+		 * - 判断该笔订单是否在商户网站中已经做过处理
+		 * - 如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
+		 * - 请务必判断请求时的total_amount与通知时获取的total_fee为一致的
+		 * - 如果有做过处理，不执行商户的业务程序
 		 */
 		if ('TRADE_FINISHED' == $_POST['trade_status']) {
-			//判断该笔订单是否在商户网站中已经做过处理
-			//如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
-			//请务必判断请求时的total_amount与通知时获取的total_fee为一致的
-			//如果有做过处理，不执行商户的业务程序
-
-			//注意：
-			//退款日期超过可退款期限后（如三个月可退款），支付宝系统发送该交易状态通知
-
-			exit('success'); //由于是即时到账不可退款服务，因此直接返回成功
+			echo ('success');
+			return true;
 		}
 
 		if ('TRADE_SUCCESS' == $_POST['trade_status']) {
-			//判断该笔订单是否在商户网站中已经做过处理
-			//如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
-			//请务必判断请求时的total_amount与通知时获取的total_fee为一致的
-			//如果有做过处理，不执行商户的业务程序
-			//注意：
-			//付款完成后，支付宝系统发送该交易状态通知
-			// app_id
-			// $app_id = $_POST['app_id'];
-
-			/**
-			 *@since 2019.08.12 异步校验
-			 */
-			$this->complete();
-
-			// 校验通过
-			exit('success');
+			echo ('success');
+			return true;
 		}
+
+		/**
+		 *交易关闭
+		 *
+		 */
+		if ('TRADE_CLOSED' == $_POST['trade_status']) {
+			echo ('success');
+			return false;
+		}
+
+		/**
+		 *其他未知
+		 */
+		return false;
 	}
 }

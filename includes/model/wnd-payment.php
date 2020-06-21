@@ -58,6 +58,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 */
 	public function set_out_trade_no($out_trade_no) {
 		$this->out_trade_no = $out_trade_no;
+		$this->ID           = static::parse_out_trade_no($out_trade_no);
 	}
 
 	/**
@@ -101,29 +102,32 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		 */
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$_POST = stripslashes_deep($_POST);
-
-			$this->do_notify();
+			if ($this->check_notify()) {
+				$this->complete();
+			}
 		} else {
 			$_GET = stripslashes_deep($_GET);
-
-			$this->do_return();
+			if ($this->check_return()) {
+				$this->complete();
+				$this->return();
+			}
 		}
 	}
 
 	/**
-	 *第三方平台支付方法，交付对应子类实现
+	 *发起第三方平台支付方法，交付对应子类实现
 	 */
 	abstract protected function do_pay();
 
 	/**
-	 *第三方平台支付验签，交付对应子类实现
+	 *第三方平台异步验签，交付对应子类实现
 	 */
-	abstract protected function do_notify();
+	abstract protected function check_notify(): bool;
 
 	/**
-	 *第三方平台支付验签，交付对应子类实现
+	 *第三方平台同步验签，交付对应子类实现
 	 */
-	abstract protected function do_return();
+	abstract protected function check_return(): bool;
 
 	/**
 	 *@since 2019.02.17 创建在线支付信息 订单 / 充值
@@ -165,18 +169,17 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *@return int|Exception 	order ID|recharge ID if success
 	 *
 	 *@param int 		$this->ID  				required if !$this->out_trade_no
-	 *@param string 	$this->out_trade_no	  	required if !$this->ID
 	 *@param float  	$this->total_money		required
 	 */
-	protected function complete() {
-		$type     = ('POST' == $_SERVER['REQUEST_METHOD']) ? __('异步', 'wnd') : __('同步', 'wnd');
-		$this->ID = $this->ID ?: $this->parse_out_trade_no($this->out_trade_no);
+	protected function complete(): int{
+		$type = ('POST' == $_SERVER['REQUEST_METHOD']) ? __('异步', 'wnd') : __('同步', 'wnd');
 
 		// 校验
 		$post = get_post($this->ID);
 		if (!$this->ID or !$post) {
 			throw new Exception(__('支付ID无效：', 'wnd') . $this->ID);
 		}
+
 		if ($post->post_content != $this->total_amount) {
 			throw new Exception(__('金额不匹配', 'wnd'));
 		}
@@ -186,10 +189,17 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		$this->subject   = $post->post_title . '(' . $type . ')';
 		$this->object_id = $post->post_parent;
 
-		// 订单支付状态检查
+		/**
+		 *订单支付状态检查
+		 *
+		 * - 已经完成的订单：返回订单ID，中止操作
+		 * - 其他不合法状态：抛出异常
+		 *
+		 */
 		if ('success' == $post->post_status) {
 			return $this->ID;
 		}
+
 		if ($post->post_status != 'pending') {
 			throw new Exception(__('订单状态无效', 'wnd'));
 		}
@@ -200,7 +210,6 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 			$order->set_ID($this->ID);
 			$order->set_subject($this->subject);
 			$order->verify();
-
 		} else {
 			$recharge = new Wnd_Recharge();
 			$recharge->set_ID($this->ID);
