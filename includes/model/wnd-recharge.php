@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use WP_Post;
 
 /**
  *@since 2019.08.11
@@ -39,9 +40,9 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *@param string 	$this->payment_gateway	option 	支付平台标识
 	 *@param bool 	 	$is_success 			option 	是否直接写入，无需支付平台校验
 	 *
-	 *@return int object ID
+	 *@return object WP Post Object
 	 */
-	public function create(bool $is_success = false): int {
+	public function create(bool $is_success = false): WP_Post {
 		if (!$this->user_id) {
 			throw new Exception(__('请登录', 'wnd'));
 		}
@@ -66,11 +67,11 @@ class Wnd_Recharge extends Wnd_Transaction {
 			]
 		);
 		if ($old_recharges) {
-			$this->ID = $old_recharges[0]->ID;
+			$ID = $old_recharges[0]->ID;
 		}
 
 		$post_arr = [
-			'ID'           => $this->ID ?: 0,
+			'ID'           => $ID ?? 0,
 			'post_author'  => $this->user_id,
 			'post_parent'  => $this->object_id,
 			'post_content' => $this->total_amount,
@@ -80,17 +81,20 @@ class Wnd_Recharge extends Wnd_Transaction {
 			'post_type'    => 'recharge',
 			'post_name'    => uniqid(),
 		];
-		$this->ID = wp_insert_post($post_arr);
-		if (is_wp_error($this->ID) or !$this->ID) {
+		$ID = wp_insert_post($post_arr);
+		if (is_wp_error($ID) or !$ID) {
 			throw new Exception(__('创建充值订单失败', 'wnd'));
 		}
+
+		// 构建Post
+		$this->post = get_post($ID);
 
 		// 完成充值
 		if ('success' == $this->status) {
 			$this->complete();
 		}
 
-		return $this->ID;
+		return $this->post;
 	}
 
 	/**
@@ -99,7 +103,6 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *@return int or Exception
 	 *
 	 *@param object 	$this->post			required 	订单记录Post
-	 *@param int 		$this->ID  			required
 	 *@param string 	$this->subject 		option
 	 */
 	public function verify() {
@@ -113,22 +116,17 @@ class Wnd_Recharge extends Wnd_Transaction {
 		}
 
 		$post_arr = [
-			'ID'          => $this->ID,
+			'ID'          => $this->get_ID(),
 			'post_status' => 'success',
 			'post_title'  => $this->subject ?: $this->get_subject(),
 		];
-		$this->ID = wp_update_post($post_arr);
-		if (!$this->ID or is_wp_error($this->ID)) {
+		$ID = wp_update_post($post_arr);
+		if (!$ID or is_wp_error($ID)) {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 
-		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
-		$this->user_id      = $this->get_user_id();
-		$this->total_amount = $this->get_total_amount();
-		$this->object_id    = $this->get_object_id();
+		// 完成本笔业务
 		$this->complete();
-
-		return $this->ID;
 	}
 
 	/**
@@ -137,22 +135,31 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *在线充值：直接新增用户余额
 	 *
 	 *当充值包含关联object_id，表示收入来自站内佣金收入：更新用户佣金及产品总佣金统计
+	 *@param object 	$this->post			required 	订单记录Post
 	 */
-	protected function complete() {
+	protected function complete(): int{
+		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
+		$ID           = $this->get_ID();
+		$user_id      = $this->get_user_id();
+		$total_amount = $this->get_total_amount();
+		$object_id    = $this->get_object_id();
+
 		// 当充值包含关联object_id，表示收入来自站内佣金收入：更新用户佣金及产品总佣金统计
-		if ($this->object_id) {
-			wnd_inc_user_commission($this->user_id, $this->total_amount);
-			wnd_inc_post_total_commission($this->object_id, $this->total_amount);
+		if ($object_id) {
+			wnd_inc_user_commission($user_id, $total_amount);
+			wnd_inc_post_total_commission($object_id, $total_amount);
 
 			// 在线余额充值
 		} else {
-			wnd_inc_user_money($this->user_id, $this->total_amount);
+			wnd_inc_user_money($user_id, $total_amount);
 		}
 
 		/**
 		 *@since 2019.08.12
 		 *充值完成
 		 */
-		do_action('wnd_recharge_completed', $this->ID);
+		do_action('wnd_recharge_completed', $ID);
+
+		return $ID;
 	}
 }

@@ -23,7 +23,7 @@ class Wnd_Do_Pay {
 			$payment = Wnd_Payment::get_instance($payment_gateway);
 			$payment->set_object_id($post_id);
 			$payment->set_total_amount($total_amount);
-			$payment->create();
+			$payment->pay();
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}

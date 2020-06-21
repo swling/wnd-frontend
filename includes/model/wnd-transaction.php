@@ -2,6 +2,8 @@
 namespace Wnd\Model;
 
 use Exception;
+use WP_Post;
+use WP_User;
 
 /**
  *@since 2019.09.24
@@ -53,13 +55,16 @@ abstract class Wnd_Transaction {
 	/**
 	 *@since 2019.08.12
 	 *指定Post ID (order/recharge/payment)
-	 **/
-	public function set_ID(int $ID) {
-		$this->ID   = $ID;
-		$this->post = get_post($this->ID);
-		if (!$this->ID or !$this->post) {
+	 *
+	 *@return object 	WP Post Object
+	 */
+	public function set_ID(int $ID): WP_Post{
+		$this->post = get_post($ID);
+		if (!$ID or !$this->post) {
 			throw new Exception(__('交易ID无效', 'wnd'));
 		}
+
+		return $this->post;
 	}
 
 	/**
@@ -99,12 +104,14 @@ abstract class Wnd_Transaction {
 	 *@since 2019.08.11
 	 *指定用户，默认为当前用户
 	 **/
-	public function set_user_id(int $user_id) {
-		if (!get_user_by('ID', $user_id)) {
+	public function set_user_id(int $user_id): WP_User{
+		$user = get_user_by('ID', $user_id);
+		if (!$user) {
 			throw new Exception(__('用户ID无效', 'wnd'));
 		}
 
 		$this->user_id = $user_id;
+		return $user;
 	}
 
 	/**
@@ -118,9 +125,9 @@ abstract class Wnd_Transaction {
 	/**
 	 *@since 2019.02.11
 	 *创建：具体实现在子类中定义
-	 *@return int Post ID
+	 *@return object WP Post Object
 	 */
-	abstract public function create(): int;
+	abstract public function create(): WP_Post;
 
 	/**
 	 *@since 2019.02.11
@@ -135,13 +142,13 @@ abstract class Wnd_Transaction {
 	 *@since 2020.06.10
 	 *
 	 */
-	abstract protected function complete();
+	abstract protected function complete(): int;
 
 	/**
 	 *获取WordPress order/recharge post ID
 	 */
 	public function get_ID() {
-		return $this->ID;
+		return $this->post->ID;
 	}
 
 	/**

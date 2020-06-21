@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use WP_Post;
 
 /**
  *@since 2019.08.11
@@ -26,7 +27,7 @@ use Exception;
  */
 abstract class Wnd_Payment extends Wnd_Transaction {
 
-	// 基于$this->ID生成，发送至第三方平台的订单号
+	// 基于Post ID生成，发送至第三方平台的订单号
 	protected $out_trade_no;
 
 	// 站点前缀，用于区分订单号
@@ -55,9 +56,19 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *设置支付平台的支付订单号
 	 *@since 2019.08.11
 	 *@param string 	$out_trade_no 	支付平台订单号
+	 *
+	 *构建：$this->post
+	 *
+	 *@return object WP Post Object
 	 */
-	public function set_out_trade_no($out_trade_no) {
-		$this->out_trade_no = $out_trade_no;
+	public function set_out_trade_no($out_trade_no): WP_Post{
+		$ID         = static::parse_out_trade_no($out_trade_no);
+		$this->post = get_post($ID);
+		if (!$ID or !$this->post) {
+			throw new Exception(__('支付ID无效：', 'wnd') . $ID);
+		}
+
+		return $this->post;
 	}
 
 	/**
@@ -85,12 +96,15 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *
 	 *@param float  	$this->total_money			required when !$object_id
 	 *@param int 		$this->object_id  			option
+	 *
+	 *@return object WP Post Object
 	 */
-	public function create(): int{
-		$this->insert_record();
-		$this->do_pay();
+	public function pay() {
+		// 写入站内数据记录
+		$this->create();
 
-		return $this->ID;
+		// 发起支付
+		$this->do_pay();
 	}
 
 	/**
@@ -100,12 +114,6 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *@param $this->total_amount
 	 */
 	public function verify() {
-		$this->ID   = static::parse_out_trade_no($this->out_trade_no);
-		$this->post = get_post($this->ID);
-		if (!$this->ID or !$this->post) {
-			throw new Exception(__('支付ID无效：', 'wnd') . $this->ID);
-		}
-
 		if ($this->total_amount != $this->get_total_amount()) {
 			throw new Exception(__('金额不匹配', 'wnd'));
 		}
@@ -153,15 +161,15 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *@param float  	$this->total_money			required when !$object_id
 	 *@param int 		$this->object_id  			option
 	 */
-	protected function insert_record() {
+	public function create(): WP_Post{
 		$payment = $this->object_id ? new Wnd_Order() : new Wnd_Recharge();
 		$payment->set_object_id($this->object_id);
 		$payment->set_total_amount($this->total_amount);
 		$payment->set_payment_gateway(static::$payment_gateway);
 
 		// 写入数据库后构建ID及Post属性，供外部调用属性向支付平台发起请求
-		$this->ID   = $payment->create();
-		$this->post = get_post($this->ID);
+		$this->post = $payment->create();
+		return $this->post;
 	}
 
 	/**
@@ -175,9 +183,10 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		$type = ('POST' == $_SERVER['REQUEST_METHOD']) ? __('异步', 'wnd') : __('同步', 'wnd');
 
 		// 定义变量 本类中，标题方法添加了站点名称，用于支付平台。故此调用父类方法用于站内记录
-		$this->subject   = parent::get_subject() . '(' . $type . ')';
-		$this->object_id = $this->get_object_id();
-		$this->status    = $this->get_status();
+		$ID        = $this->get_ID();
+		$subject   = parent::get_subject() . '(' . $type . ')';
+		$object_id = $this->get_object_id();
+		$status    = $this->get_status();
 
 		/**
 		 *订单支付状态检查
@@ -186,37 +195,38 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		 * - 其他不合法状态：抛出异常
 		 *
 		 */
-		if ('success' == $this->status) {
-			return $this->ID;
+		if ('success' == $status) {
+			return $ID;
 		}
 
-		if ('pending' != $this->status) {
+		if ('pending' != $status) {
 			throw new Exception(__('订单状态无效', 'wnd'));
 		}
 
 		// 更新 订单/充值
-		$payment = $this->object_id ? new Wnd_Order() : new Wnd_Recharge();
-		$payment->set_ID($this->ID);
-		$payment->set_subject($this->subject);
+		$payment = $object_id ? new Wnd_Order() : new Wnd_Recharge();
+		$payment->set_ID($ID);
+		$payment->set_subject($subject);
 		$payment->verify();
 
 		/**
 		 * @since 2019.06.30
 		 *成功完成付款后
 		 */
-		do_action('wnd_payment_verified', $this->ID);
-		return $this->ID;
+		do_action('wnd_payment_verified', $ID);
+		return $ID;
 	}
 
 	/**
 	 *构建包含当前站点标识的订单号码作为发送至三方支付平台的订单号
 	 */
 	public function get_out_trade_no() {
-		if (!$this->ID) {
+		$ID = $this->get_ID();
+		if (!$ID) {
 			throw new Exception(__('站内支付数据尚未写入', 'wnd'));
 		}
 
-		return static::$site_prefix . '-' . $this->ID;
+		return static::$site_prefix . '-' . $ID;
 	}
 
 	/**

@@ -20,7 +20,7 @@ $payment->set_total_amount(10);
 // or 设置object id之后，充值金额将设定为对应的产品价格
 $payment->set_object_id(616);
 
-$payment->create();
+$payment->pay();
 
 /**
  *获取支付平台返回数据，并完成支付。根据第三方支付订单，获取站内订单，并对比充值金额

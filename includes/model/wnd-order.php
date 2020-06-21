@@ -2,7 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\Model\Wnd_Recharge;
+use WP_Post;
 
 /**
  *@since 2019.08.11
@@ -69,8 +69,10 @@ class Wnd_Order extends Wnd_Transaction {
 	 *@param string 	$this->subject 			option
 	 *@param string 	$this->payment_gateway	option 	支付平台标识
 	 *@param bool 	 	$is_success 			option 	是否直接写入，无需支付平台校验
+	 *
+	 *@return object WP Post Object
 	 */
-	public function create(bool $is_success = false): int {
+	public function create(bool $is_success = false): WP_Post {
 		/**
 		 *匿名支付Cookie：
 		 *cookie_name = static::$anon_cookie_name . '-' . $this->object_id
@@ -104,7 +106,7 @@ class Wnd_Order extends Wnd_Transaction {
 		);
 
 		if ($old_orders) {
-			$this->ID = $old_orders[0]->ID;
+			$ID = $old_orders[0]->ID;
 		} elseif ($this->object_id) {
 			/**
 			 *@since 2019.06.04
@@ -116,7 +118,7 @@ class Wnd_Order extends Wnd_Transaction {
 		}
 
 		$post_arr = [
-			'ID'           => $this->ID ?: 0,
+			'ID'           => $ID ?? 0,
 			'post_author'  => $this->user_id,
 			'post_parent'  => $this->object_id,
 			'post_content' => $this->total_amount ?: __('免费', 'wnd'),
@@ -126,10 +128,13 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_type'    => 'order',
 			'post_name'    => $this->anon_cookie,
 		];
-		$this->ID = wp_insert_post($post_arr);
-		if (is_wp_error($this->ID) or !$this->ID) {
+		$ID = wp_insert_post($post_arr);
+		if (is_wp_error($ID) or !$ID) {
 			throw new Exception(__('创建订单失败', 'wnd'));
 		}
+
+		// 构建Post
+		$this->post = get_post($ID);
 
 		/**
 		 *@since 2019.02.17
@@ -140,7 +145,7 @@ class Wnd_Order extends Wnd_Transaction {
 			$this->complete();
 		}
 
-		return $this->ID;
+		return $this->post;
 	}
 
 	/**
@@ -149,7 +154,6 @@ class Wnd_Order extends Wnd_Transaction {
 	 *@return int or false
 	 *
 	 *@param object 	$this->post			required 	订单记录Post
-	 *@param int 		$this->ID  			required
 	 *@param string 	$this->subject 		option
 	 */
 	public function verify() {
@@ -163,70 +167,77 @@ class Wnd_Order extends Wnd_Transaction {
 		}
 
 		$post_arr = [
-			'ID'          => $this->ID,
+			'ID'          => $this->get_ID(),
 			'post_status' => 'success',
 			'post_title'  => $this->subject ?: $this->get_subject() . __('(在线支付)', 'wnd'),
 		];
-		$this->ID = wp_update_post($post_arr);
-		if (!$this->ID or is_wp_error($this->ID)) {
+		$ID = wp_update_post($post_arr);
+		if (!$ID or is_wp_error($ID)) {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 
-		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
-		$this->user_id      = $this->get_user_id();
-		$this->total_amount = $this->get_total_amount();
-		$this->object_id    = $this->get_object_id();
+		// 完成本笔业务
 		$this->complete();
-
-		return $this->ID;
 	}
 
 	/**
 	 *订单成功后，执行的统一操作
 	 *@since 2020.06.10
 	 *
-	 *@param $this->ID
-	 *@param $this->user_id
-	 *@param $this->total_amount
-	 *@param $this->object_id
+	 *@param $this->post
+	 *@param object 	$this->post		required 	订单记录Post
 	 */
-	protected function complete() {
+	protected function complete(): int{
+		/**
+		 *本方法可能在站内直接支付，或者站外验证支付中调用。
+		 *在线订单校验时，由支付平台发起请求，仅指定订单ID，需根据订单ID设置对应变量。
+		 *故不可直接读取相关属性
+		 */
+		$ID           = $this->get_ID();
+		$user_id      = $this->get_user_id();
+		$total_amount = $this->get_total_amount();
+		$object_id    = $this->get_object_id();
+
 		// 写入消费记录
-		wnd_inc_user_expense($this->user_id, $this->total_amount);
+		wnd_inc_user_expense($user_id, $total_amount);
 
 		// 站内直接消费，无需支付平台支付校验，记录扣除账户余额、在线支付则不影响当前余额
-		if (!static::get_payment_gateway($this->ID)) {
-			wnd_inc_user_money($this->user_id, $this->total_amount * -1);
+		if (!static::get_payment_gateway($ID)) {
+			wnd_inc_user_money($user_id, $total_amount * -1);
 		}
 
 		/**
 		 *@since 2019.06.04
 		 *产品订单：更新总销售额、设置原作者佣金
 		 */
-		if ($this->object_id) {
-			wnd_inc_post_total_sales($this->object_id, $this->total_amount);
+		if ($object_id) {
+			wnd_inc_post_total_sales($object_id, $total_amount);
 
 			// @since 2020.06.11 废弃缓存删除，该功能已通过 WP Action post_updated HOOK实现
 			// wp_cache_delete($this->user_id . '-' . $this->object_id, 'wnd_has_paid');
 
 			// 文章作者新增佣金
-			$commission = (float) wnd_get_post_commission($this->object_id);
-			if ($commission <= 0) {
-				return;
-			}
-
-			$object = get_post($this->object_id);
-			try {
-				$recharge = new Wnd_Recharge();
-				$recharge->set_object_id($object->ID); // 设置佣金来源
-				$recharge->set_user_id($object->post_author);
-				$recharge->set_total_amount($commission);
-				$recharge->create(true); // 直接写入余额
-			} catch (Exception $e) {
-				throw new Exception($e->getMessage());
+			$commission = (float) wnd_get_post_commission($object_id);
+			if ($commission > 0) {
+				$object = get_post($object_id);
+				try {
+					$recharge = new Wnd_Recharge();
+					$recharge->set_object_id($object->ID); // 设置佣金来源
+					$recharge->set_user_id($object->post_author);
+					$recharge->set_total_amount($commission);
+					$recharge->create(true); // 直接写入余额
+				} catch (Exception $e) {
+					throw new Exception($e->getMessage());
+				}
 			}
 		}
 
-		do_action('wnd_order_completed', $this->ID);
+		/**
+		 *@since 2019.08.12
+		 *充值完成
+		 */
+		do_action('wnd_order_completed', $ID);
+
+		return $ID;
 	}
 }
