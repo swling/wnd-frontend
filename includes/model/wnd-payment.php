@@ -58,7 +58,6 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 */
 	public function set_out_trade_no($out_trade_no) {
 		$this->out_trade_no = $out_trade_no;
-		$this->ID           = static::parse_out_trade_no($out_trade_no);
 	}
 
 	/**
@@ -84,16 +83,33 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	/**
 	 *创建支付
 	 *
+	 *@param float  	$this->total_money			required when !$object_id
+	 *@param int 		$this->object_id  			option
 	 */
-	public function create() {
+	public function create(): int{
 		$this->insert_record();
 		$this->do_pay();
+
+		return $this->ID;
 	}
 
 	/**
 	 *验证支付并执行相关站内业务
+	 *
+	 *@param $this->out_trade_no
+	 *@param $this->total_amount
 	 */
 	public function verify() {
+		$this->ID   = static::parse_out_trade_no($this->out_trade_no);
+		$this->post = get_post($this->ID);
+		if (!$this->ID or !$this->post) {
+			throw new Exception(__('支付ID无效：', 'wnd') . $this->ID);
+		}
+
+		if ($this->total_amount != $this->get_total_amount()) {
+			throw new Exception(__('金额不匹配', 'wnd'));
+		}
+
 		/**
 		 *支付平台回调验签
 		 *
@@ -132,62 +148,36 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	/**
 	 *@since 2019.02.17 创建在线支付信息 订单 / 充值
 	 *
-	 *若设置了object_id 调用：insert_order 否则调用: insert_recharge
+	 *若设置了object_id 调用：Wnd_Order 否则调用: Wnd_Recharge
 	 *
-	 *@param string		static::$payment_gateway  	required
 	 *@param float  	$this->total_money			required when !$object_id
 	 *@param int 		$this->object_id  			option
-	 *@param string 	$this->subject 				option
 	 */
 	protected function insert_record() {
-		// 在线订单 / 充值
-		if ($this->object_id) {
-			$order = new Wnd_Order();
-			$order->set_object_id($this->object_id);
-			$order->set_payment_gateway(static::$payment_gateway);
-			$order->create();
+		$payment = $this->object_id ? new Wnd_Order() : new Wnd_Recharge();
+		$payment->set_object_id($this->object_id);
+		$payment->set_total_amount($this->total_amount);
+		$payment->set_payment_gateway(static::$payment_gateway);
 
-			$this->ID           = $order->get_ID();
-			$this->subject      = $order->get_subject();
-			$this->total_amount = $order->get_total_amount();
-
-		} else {
-			$recharge = new Wnd_Recharge();
-			$recharge->set_total_amount($this->total_amount);
-			$recharge->set_payment_gateway(static::$payment_gateway);
-			$recharge->create();
-
-			$this->ID           = $recharge->get_ID();
-			$this->subject      = $recharge->get_subject();
-			$this->total_amount = $recharge->get_total_amount();
-		}
+		// 写入数据库后构建ID及Post属性，供外部调用属性向支付平台发起请求
+		$this->ID   = $payment->create();
+		$this->post = get_post($this->ID);
 	}
 
 	/**
 	 *@since 2019.02.11
 	 *充值付款校验
-	 *@return int|Exception 	order ID|recharge ID if success
+	 *@return int 		WP Post ID
 	 *
-	 *@param int 		$this->ID  				required if !$this->out_trade_no
-	 *@param float  	$this->total_money		required
+	 *@param object		$this->post 	required 	WP Post Object
 	 */
 	protected function complete(): int{
 		$type = ('POST' == $_SERVER['REQUEST_METHOD']) ? __('异步', 'wnd') : __('同步', 'wnd');
 
-		// 校验
-		$post = get_post($this->ID);
-		if (!$this->ID or !$post) {
-			throw new Exception(__('支付ID无效：', 'wnd') . $this->ID);
-		}
-
-		if ($post->post_content != $this->total_amount) {
-			throw new Exception(__('金额不匹配', 'wnd'));
-		}
-
-		// 定义变量
-		$this->ID        = $post->ID;
-		$this->subject   = $post->post_title . '(' . $type . ')';
-		$this->object_id = $post->post_parent;
+		// 定义变量 本类中，标题方法添加了站点名称，用于支付平台。故此调用父类方法用于站内记录
+		$this->subject   = parent::get_subject() . '(' . $type . ')';
+		$this->object_id = $this->get_object_id();
+		$this->status    = $this->get_status();
 
 		/**
 		 *订单支付状态检查
@@ -196,26 +186,19 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		 * - 其他不合法状态：抛出异常
 		 *
 		 */
-		if ('success' == $post->post_status) {
+		if ('success' == $this->status) {
 			return $this->ID;
 		}
 
-		if ($post->post_status != 'pending') {
+		if ('pending' != $this->status) {
 			throw new Exception(__('订单状态无效', 'wnd'));
 		}
 
 		// 更新 订单/充值
-		if ($post->post_parent) {
-			$order = new Wnd_Order();
-			$order->set_ID($this->ID);
-			$order->set_subject($this->subject);
-			$order->verify();
-		} else {
-			$recharge = new Wnd_Recharge();
-			$recharge->set_ID($this->ID);
-			$recharge->set_subject($this->subject);
-			$recharge->verify();
-		}
+		$payment = $this->object_id ? new Wnd_Order() : new Wnd_Recharge();
+		$payment->set_ID($this->ID);
+		$payment->set_subject($this->subject);
+		$payment->verify();
 
 		/**
 		 * @since 2019.06.30
@@ -237,36 +220,12 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	}
 
 	/**
-	 *获取订单金额
-	 */
-	public function get_total_amount(): float {
-		if (!$this->ID) {
-			throw new Exception(__('站内支付数据尚未写入', 'wnd'));
-		}
-
-		$total_amount = $this->total_amount ?: (get_post($this->ID)->post_content ?? 0.00);
-		return number_format($total_amount, 2, '.', '');
-	}
-
-	/**
 	 *@since 2019.12.21
 	 *在站内标题基础上加上站点名称，便于用户在第三方支付平台识别
 	 *
 	 */
 	public function get_subject() {
-		return static::$site_name . ' - ' . $this->subject;
-	}
-
-	/**
-	 *根据支付订单ID获取第三方支付平台接口标识
-	 */
-	public static function get_payment_gateway(int $payment_id): string{
-		$payment = $payment_id ? get_post($payment_id) : false;
-		if (!$payment) {
-			return '';
-		}
-
-		return $payment->post_excerpt;
+		return static::$site_name . ' - ' . parent::get_subject();
 	}
 
 	/**
@@ -307,7 +266,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *同步回调跳转链接
 	 */
 	protected function return () {
-		$url = static::get_return_url($this->object_id);
+		$url = static::get_return_url($this->get_object_id());
 		header('Location:' . add_query_arg('from', 'payment_successful', $url));
 		exit;
 	}

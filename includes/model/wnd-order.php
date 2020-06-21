@@ -70,7 +70,7 @@ class Wnd_Order extends Wnd_Transaction {
 	 *@param string 	$this->payment_gateway	option 	支付平台标识
 	 *@param bool 	 	$is_success 			option 	是否直接写入，无需支付平台校验
 	 */
-	public function create(bool $is_success = false) {
+	public function create(bool $is_success = false): int {
 		/**
 		 *匿名支付Cookie：
 		 *cookie_name = static::$anon_cookie_name . '-' . $this->object_id
@@ -85,14 +85,10 @@ class Wnd_Order extends Wnd_Transaction {
 			setcookie(static::get_anon_cookie_name($this->object_id), $this->anon_cookie, time() + 3600 * 24, '/');
 		}
 
-		if ($this->object_id and !get_post($this->object_id)) {
-			throw new Exception(__('指定商品无效', 'wnd'));
-		}
-
 		// 定义变量
-		$this->total_amount = $this->total_amount ?: wnd_get_post_price($this->object_id);
+		$this->total_amount = wnd_get_post_price($this->object_id);
 		$this->status       = $is_success ? 'success' : 'pending';
-		$this->subject      = $this->subject ?: __('订单：', 'wnd') . get_the_title($this->object_id);
+		$this->subject      = $this->subject ?: (__('订单：', 'wnd') . get_the_title($this->object_id));
 
 		/**
 		 *@since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
@@ -157,51 +153,49 @@ class Wnd_Order extends Wnd_Transaction {
 	 *@param string 	$this->subject 		option
 	 */
 	public function verify() {
-		if ($this->post->post_type != 'order') {
+		if ('order' != $this->get_type()) {
 			throw new Exception(__('订单ID无效', 'wnd'));
 		}
 
 		// 订单支付状态检查
-		if ($this->post->post_status != 'pending') {
+		if ('pending' != $this->get_status()) {
 			throw new Exception(__('订单状态无效', 'wnd'));
 		}
 
-		/**
-		 *在线支付的订单，设置如下参数，以区分站内订单。用于订单标识，及订单退款
-		 *
-		 *post_excerpt = $payment_gateway（记录支付平台如：alipay、wepay）
-		 *post_title = $post->post_title . __('(在线支付)', 'wnd')
-		 */
 		$post_arr = [
 			'ID'          => $this->ID,
 			'post_status' => 'success',
-			'post_title'  => $this->subject ?: $this->post->post_title . __('(在线支付)', 'wnd'),
+			'post_title'  => $this->subject ?: $this->get_subject() . __('(在线支付)', 'wnd'),
 		];
-		$ID = wp_update_post($post_arr);
-		if (!$ID or is_wp_error($ID)) {
+		$this->ID = wp_update_post($post_arr);
+		if (!$this->ID or is_wp_error($this->ID)) {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 
 		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
-		$this->user_id      = $this->post->post_author;
-		$this->total_amount = $this->post->post_content;
-		$this->object_id    = $this->post->post_parent;
+		$this->user_id      = $this->get_user_id();
+		$this->total_amount = $this->get_total_amount();
+		$this->object_id    = $this->get_object_id();
 		$this->complete();
 
-		return $ID;
+		return $this->ID;
 	}
 
 	/**
 	 *订单成功后，执行的统一操作
 	 *@since 2020.06.10
 	 *
+	 *@param $this->ID
+	 *@param $this->user_id
+	 *@param $this->total_amount
+	 *@param $this->object_id
 	 */
 	protected function complete() {
 		// 写入消费记录
 		wnd_inc_user_expense($this->user_id, $this->total_amount);
 
 		// 站内直接消费，无需支付平台支付校验，记录扣除账户余额、在线支付则不影响当前余额
-		if ('success' == $this->status) {
+		if (!static::get_payment_gateway($this->ID)) {
 			wnd_inc_user_money($this->user_id, $this->total_amount * -1);
 		}
 

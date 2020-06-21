@@ -22,9 +22,6 @@ abstract class Wnd_Transaction {
 	// 产品ID 对应WordPress产品类型Post ID
 	protected $object_id;
 
-	// 第三方支付接口
-	protected static $payment_gateway;
-
 	// 金额
 	protected $total_amount;
 
@@ -36,6 +33,9 @@ abstract class Wnd_Transaction {
 
 	// 类型
 	protected $type;
+
+	// 第三方支付接口
+	protected static $payment_gateway;
 
 	/**
 	 *@since 2019.08.11
@@ -113,8 +113,9 @@ abstract class Wnd_Transaction {
 	/**
 	 *@since 2019.02.11
 	 *创建：具体实现在子类中定义
+	 *@return int Post ID
 	 */
-	abstract public function create();
+	abstract public function create(): int;
 
 	/**
 	 *@since 2019.02.11
@@ -128,7 +129,6 @@ abstract class Wnd_Transaction {
 	 *订单成功后，执行的统一操作
 	 *@since 2020.06.10
 	 *
-	 *@param bool $online_payments 是否为在线支付订单
 	 */
 	abstract protected function complete();
 
@@ -143,7 +143,7 @@ abstract class Wnd_Transaction {
 	 *获取支付订单标题
 	 */
 	public function get_subject() {
-		return $this->subject ?: $this->post->post_title;
+		return $this->post->post_title;
 	}
 
 	/**
@@ -151,15 +151,15 @@ abstract class Wnd_Transaction {
 	 *获取关联产品/服务Post ID
 	 **/
 	public function get_object_id() {
-		return $this->object_id ?: $this->post->post_parent;
+		return $this->post->post_parent;
 	}
 
 	/**
 	 *@since 2019.08.12
 	 *获取消费金额
 	 **/
-	public function get_total_amount() {
-		return $this->total_amount ?: $this->post->post_content;
+	public function get_total_amount(): float {
+		return number_format($this->post->post_content, 2, '.', '');
 	}
 
 	/**
@@ -168,7 +168,16 @@ abstract class Wnd_Transaction {
 	 *
 	 */
 	public function get_user_id() {
-		return $this->user_id ?: $this->post->post_author;
+		return $this->post->post_author;
+	}
+
+	/**
+	 *@since 2020.06.21
+	 *获取交易记录状态
+	 *
+	 */
+	public function get_status() {
+		return $this->post->post_status;
 	}
 
 	/**
@@ -177,6 +186,19 @@ abstract class Wnd_Transaction {
 	 *
 	 */
 	public function get_type() {
-		return $this->type ?: $this->post->post_type;
+		return $this->post->post_type;
+	}
+
+	/**
+	 *根据支付订单ID获取第三方支付平台接口标识
+	 *
+	 */
+	public static function get_payment_gateway(int $payment_id): string{
+		$payment = $payment_id ? get_post($payment_id) : false;
+		if (!$payment) {
+			return '';
+		}
+
+		return $payment->post_excerpt;
 	}
 }

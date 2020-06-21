@@ -41,7 +41,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *
 	 *@return int object ID
 	 */
-	public function create(bool $is_success = false) {
+	public function create(bool $is_success = false): int {
 		if (!$this->user_id) {
 			throw new Exception(__('请登录', 'wnd'));
 		}
@@ -51,7 +51,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 
 		// 定义变量
 		$this->status  = $is_success ? 'success' : 'pending';
-		$this->subject = $this->subject ?: ($this->object_id ? __('佣金：¥', 'wnd') : __('充值：¥', 'wnd')) . $this->total_amount;
+		$this->subject = $this->subject ?: (($this->object_id ? __('佣金：¥', 'wnd') : __('充值：¥', 'wnd')) . $this->total_amount);
 
 		/**
 		 *@since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
@@ -80,8 +80,8 @@ class Wnd_Recharge extends Wnd_Transaction {
 			'post_type'    => 'recharge',
 			'post_name'    => uniqid(),
 		];
-		$ID = wp_insert_post($post_arr);
-		if (is_wp_error($ID) or !$ID) {
+		$this->ID = wp_insert_post($post_arr);
+		if (is_wp_error($this->ID) or !$this->ID) {
 			throw new Exception(__('创建充值订单失败', 'wnd'));
 		}
 
@@ -90,8 +90,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 			$this->complete();
 		}
 
-		$this->ID = $ID;
-		return $ID;
+		return $this->ID;
 	}
 
 	/**
@@ -104,32 +103,32 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *@param string 	$this->subject 		option
 	 */
 	public function verify() {
-		if ($this->post->post_type != 'recharge') {
+		if ('recharge' != $this->get_type()) {
 			throw new Exception(__('充值ID无效', 'wnd'));
 		}
 
 		// 订单支付状态检查
-		if ($this->post->post_status != 'pending') {
+		if ('pending' != $this->get_status()) {
 			throw new Exception(__('充值订单状态无效', 'wnd'));
 		}
 
 		$post_arr = [
 			'ID'          => $this->ID,
 			'post_status' => 'success',
-			'post_title'  => $this->subject ?: $this->post->post_title,
+			'post_title'  => $this->subject ?: $this->get_subject(),
 		];
-		$ID = wp_update_post($post_arr);
-		if (!$ID or is_wp_error($ID)) {
+		$this->ID = wp_update_post($post_arr);
+		if (!$this->ID or is_wp_error($this->ID)) {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 
 		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
-		$this->user_id      = $this->post->post_author;
-		$this->total_amount = $this->post->post_content;
-		$this->object_id    = $this->post->post_parent;
+		$this->user_id      = $this->get_user_id();
+		$this->total_amount = $this->get_total_amount();
+		$this->object_id    = $this->get_object_id();
 		$this->complete();
 
-		return $ID;
+		return $this->ID;
 	}
 
 	/**

@@ -87,7 +87,11 @@ class Wnd_Posts_Table {
 				}
 
 				if ('post_author' == $column['post_field']) {
-					$content = '<a href="' . get_author_posts_url($post->post_author) . '">' . get_userdata($post->post_author)->display_name . '</a>';
+					if ($post->post_author) {
+						$content = '<a href="' . get_author_posts_url($post->post_author) . '">' . get_userdata($post->post_author)->display_name . '</a>';
+					} else {
+						$content = __('匿名用户', 'wnd');
+					}
 					$this->html .= '<td' . $this->get_the_class($column) . '>' . $content . '</td>';
 					continue;
 				}
@@ -105,7 +109,7 @@ class Wnd_Posts_Table {
 				}
 
 				if (in_array($post->post_type, ['order', 'recharge', 'stats-re', 'stats-ex']) and 'post_content' == $column['post_field']) {
-					$this->html .= '<td' . $this->get_the_class($column) . '>' . number_format((float) $post->post_content, 2) . '</td>';
+					$this->html .= '<td' . $this->get_the_class($column) . '>' . number_format((float) $post->post_content, 2, '.', '') . '</td>';
 					continue;
 				}
 
