@@ -21,15 +21,15 @@ class Wnd_Payment_Internal extends Wnd_Payment {
 	 *同步回调通知
 	 *
 	 */
-	protected function do_return() {
-		return;
+	protected function check_return(): bool {
+		return true;
 	}
 
 	/**
 	 *异步回调通知
 	 *
 	 */
-	protected function do_notify() {
-		return;
+	protected function check_notify(): bool {
+		return true;
 	}
 }

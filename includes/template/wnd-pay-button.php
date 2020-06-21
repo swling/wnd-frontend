@@ -57,6 +57,7 @@ class Wnd_Pay_Button {
 		static::$user_has_paid = wnd_user_has_paid(static::$user_id, static::$post_id);
 		static::$file_id       = wnd_get_post_meta(static::$post_id, 'file');
 		static::$second_color  = 'is-' . wnd_get_config('second_color');
+		static::$message       = '<span class="icon is-size-5"><i class="fa ' . (static::$user_has_paid ? 'fa-unlock' : 'fa-lock') . '"></i></span>';
 
 		// 根据付费内容形式，构建对应变量：$message and $button_text
 		if ($with_paid_content and static::$file_id) {
@@ -75,8 +76,8 @@ class Wnd_Pay_Button {
 	protected static function build_html() {
 		// 未登录用户
 		if (!static::$user_id and !wnd_get_config('enable_anon_order')) {
-			static::$html = '<div class="wnd-pay-button box">';
-			static::$html .= wnd_message(static::$message, static::$second_color, true);
+			static::$html = '<div class="wnd-pay-button box has-text-centered">';
+			static::$html .= '<div class="pay-notification">' . static::$message . '</div>';
 			static::$html .= '<div class="field is-grouped is-grouped-centered">';
 			static::$html .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login');
 			static::$html .= '</div>';
@@ -98,8 +99,8 @@ class Wnd_Pay_Button {
 		}
 
 		// 构建消息提示
-		static::$html = '<div class="wnd-pay-button box">';
-		static::$html .= wnd_message(static::$message, static::$second_color, true);
+		static::$html = '<div class="wnd-pay-button box has-text-centered">';
+		static::$html .= '<div class="pay-notification">' . static::$message . '</div>';
 
 		// 当包含文件时，无论是否已支付，均需要提交下载请求，是否扣费将在Wnd\Action\Wnd_Pay_For_Downloads判断
 		if (!static::$disabled and (!static::$user_has_paid or static::$file_id)) {
@@ -134,14 +135,14 @@ class Wnd_Pay_Button {
 
 		// 已购买
 		if (static::$user_has_paid) {
-			static::$message     = '<p>' . __('您已付费：¥ ', 'wnd') . static::$post_price . '</p>';
+			static::$message .= '<p>' . __('您已付费：¥ ', 'wnd') . static::$post_price . '</p>';
 			static::$button_text = __('下载', 'wnd');
 			return;
 		}
 
 		// 作者
 		if (static::$user_id == static::$post->post_author) {
-			static::$message     = '<p>' . __('您发布的付费下载：¥ ', 'wnd') . static::$post_price . '</p>';
+			static::$message .= '<p>' . __('您发布的付费下载：¥ ', 'wnd') . static::$post_price . '</p>';
 			static::$button_text = __('下载', 'wnd');
 			return;
 
@@ -164,13 +165,13 @@ class Wnd_Pay_Button {
 
 		// 已支付
 		if (static::$user_has_paid) {
-			static::$message = '<p>' . __('您已付费：¥ ', 'wnd') . static::$post_price . '</p>';
+			static::$message .= '<p>' . __('您已付费：¥ ', 'wnd') . static::$post_price . '</p>';
 			return;
 		}
 
 		// 作者本人
 		if (static::$user_id == static::$post->post_author) {
-			static::$message = '<p>' . __('您的付费文章：¥ ', 'wnd') . static::$post_price . '</p>';
+			static::$message .= '<p>' . __('您的付费文章：¥ ', 'wnd') . static::$post_price . '</p>';
 			return;
 		}
 
@@ -198,13 +199,13 @@ class Wnd_Pay_Button {
 
 		// 已支付
 		if (static::$user_has_paid) {
-			static::$message = '<p>' . __('您已付费：¥ ', 'wnd') . static::$post_price . '</p>';
+			static::$message .= '<p>' . __('您已付费：¥ ', 'wnd') . static::$post_price . '</p>';
 			return;
 		}
 
 		// 作者本人
 		if (static::$user_id == static::$post->post_author) {
-			static::$message = '<p>' . __('您的付费内容：¥ ', 'wnd') . static::$post_price . '</p>';
+			static::$message .= '<p>' . __('您的付费内容：¥ ', 'wnd') . static::$post_price . '</p>';
 			return;
 		}
 

@@ -34,8 +34,17 @@ abstract class Wnd_Transaction {
 	// 类型
 	protected $type;
 
-	// 第三方支付接口
-	protected static $payment_gateway;
+	/**
+	 *第三方支付接口
+	 *
+	 *@since 2020.06.21
+	 *	存在一个很奇怪的问题，如果此处不做默认定义，即为NLL，则管理员手动充值（Wnd\Action\Wnd_Admin_Recharge）会报错提示。
+	 *	报错内容为：post_excerpt 不能为 null
+	 *	奇怪点在于：
+	 *	- 直接使用 wp_insert_post 并定义 post_excerpt = null 不会报错
+	 *	- 直接使用 Wnd_Admin_Recharge 中的 Wnd_Recharge 代码片段在其他同等情况下也不会报错
+	 */
+	protected static $payment_gateway = '';
 
 	/**
 	 *@since 2019.08.11
