@@ -2,8 +2,8 @@
 namespace Wnd\Action;
 
 use Exception;
-use Wnd\Model\Wnd_Form_Data;
 use Wnd\Model\Wnd_Post;
+use Wnd\Utility\Wnd_Form_Data;
 
 class Wnd_Insert_Post extends Wnd_Action_Ajax {
 

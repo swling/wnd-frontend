@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\View;
 
-use Wnd\Model\Wnd_Form_Data;
+use Wnd\Utility\Wnd_Form_Data;
 
 /**
  *适配本插件的ajax表单类

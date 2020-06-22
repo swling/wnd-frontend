@@ -2,7 +2,7 @@
 namespace Wnd\Action;
 
 use Exception;
-use Wnd\Model\Wnd_Form_Data;
+use Wnd\Utility\Wnd_Form_Data;
 
 /**
  *@see README.md
