@@ -21,7 +21,7 @@
  */
 
 // 版本
-define('WND_VER', '0.8.2');
+define('WND_VER', '0.8.3');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -54,7 +54,7 @@ add_action('wp_enqueue_scripts', function () {
 		wp_enqueue_style('bulma-extensions', WND_URL . 'static/css/bulma-extensions.min.css', [], WND_VER);
 		wp_enqueue_style('font-awesome', WND_URL . 'static/css/font-awesome-all.min.css', [], WND_VER);
 	} elseif ('jsdeliver' == $static_host) {
-		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css', [], null);
+		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css', [], null);
 		wp_enqueue_style('bulma-extensions', '//cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/css/bulma-extensions.min.css', [], null);
 		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css', [], null);
 	}
