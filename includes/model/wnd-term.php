@@ -12,7 +12,7 @@ class Wnd_Term {
 	 *分类：返回{[{$slug}=>${term_id}]数组
 	 *标签：返回[{$slug}=>{$name}]数组
 	 */
-	public static function get_post_current_terms($post_id, $taxonomy): array{
+	public static function get_post_terms($post_id, $taxonomy): array{
 		$current_terms      = get_the_terms($post_id, $taxonomy) ?: [];
 		$current_terms_data = [];
 		foreach ($current_terms as $current_term) {

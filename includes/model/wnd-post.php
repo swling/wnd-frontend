@@ -357,7 +357,7 @@ class Wnd_Post {
 
 		// restore terms
 		foreach (get_object_taxonomies($revision['post_type'], 'names') as $taxonomy) {
-			$terms = Wnd_Term::get_post_current_terms($revision_id, $taxonomy);
+			$terms = Wnd_Term::get_post_terms($revision_id, $taxonomy);
 			if ($terms) {
 				wp_set_post_terms($revision['post_parent'], $terms, $taxonomy);
 			}

@@ -574,7 +574,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 */
 	public function get_current_terms() {
 		foreach ($this->taxonomies as $taxonomy) {
-			$current_terms[$taxonomy] = Wnd_Term::get_post_current_terms($this->post_id, $taxonomy);
+			$current_terms[$taxonomy] = Wnd_Term::get_post_terms($this->post_id, $taxonomy);
 		}
 
 		return $current_terms;
