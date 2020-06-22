@@ -59,6 +59,7 @@ abstract class Wnd_Transaction {
 	 *@return object 	WP Post Object
 	 */
 	public function set_ID(int $ID): WP_Post{
+		$this->ID   = $ID;
 		$this->post = get_post($ID);
 		if (!$ID or !$this->post) {
 			throw new Exception(__('交易ID无效', 'wnd'));
