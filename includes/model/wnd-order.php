@@ -85,6 +85,19 @@ class Wnd_Order extends Wnd_Transaction {
 
 			$this->anon_cookie = $this->generate_anon_cookie();
 			setcookie(static::get_anon_cookie_name($this->object_id), $this->anon_cookie, time() + 3600 * 24, '/');
+
+			/**
+			 *匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
+			 *更新自动草稿时候，modified 不会变需要查询 post_date
+			 *@see get_posts()
+			 *@see wp_update_post
+			 */
+			$date_query = [
+				[
+					'column' => 'post_date',
+					'before' => date('Y-m-d H:i', current_time('timestamp') - 86400),
+				],
+			];
 		}
 
 		// 定义变量
@@ -102,6 +115,7 @@ class Wnd_Order extends Wnd_Transaction {
 				'post_status'    => 'pending',
 				'post_type'      => 'order',
 				'posts_per_page' => 1,
+				'date_query'     => !$this->user_id ? $date_query : [],
 			]
 		);
 

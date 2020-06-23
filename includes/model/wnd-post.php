@@ -77,7 +77,7 @@ class Wnd_Post {
 		$date_query = [
 			[
 				'column' => 'post_date',
-				'before' => date('Y-m-d H:i', time() - 86400),
+				'before' => date('Y-m-d H:i', current_time('timestamp') - 86400),
 			],
 		];
 		$query_array = array_merge($query_array, ['date_query' => $date_query]);
