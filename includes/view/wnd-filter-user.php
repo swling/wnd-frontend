@@ -23,6 +23,9 @@ class Wnd_Filter_User {
 	// bool 是否正处于ajax环境中
 	protected static $doing_ajax;
 
+	// 主色调
+	protected static $primary_color;
+
 	/**
 	 *@since 2019.10.26
 	 *URL请求参数
@@ -88,10 +91,11 @@ class Wnd_Filter_User {
 	 *@param string 	$uniqid当前筛选器唯一标识
 	 */
 	public function __construct(bool $is_ajax = false, string $uniqid = '') {
-		static::$is_ajax    = $is_ajax;
-		static::$doing_ajax = wnd_doing_ajax();
-		static::$http_query = static::parse_query_vars();
-		$this->class        = static::$is_ajax ? 'ajax-filter-user' : 'filter-user';
+		static::$is_ajax       = $is_ajax;
+		static::$doing_ajax    = wnd_doing_ajax();
+		static::$http_query    = static::parse_query_vars();
+		static::$primary_color = wnd_get_config('primary_color');
+		$this->class           = static::$is_ajax ? 'ajax-filter-user' : 'filter-user';
 
 		// 解析GET参数为wp_user_query参数并与默认参数合并，以防止出现参数未定义的警告信息
 		$this->query_args = array_merge($this->query_args, static::$http_query);
@@ -287,7 +291,7 @@ class Wnd_Filter_User {
 		$html .= '</div>';
 
 		$html .= '<div class="control">';
-		$html .= '<button type="submit" class="button is-danger">' . $button . '</button>';
+		$html .= '<button type="submit" class="button is-' . static::$primary_color . '">' . $button . '</button>';
 		$html .= '</div>';
 
 		$html .= '</div>';
