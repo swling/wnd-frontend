@@ -66,8 +66,8 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		$this->out_trade_no = $out_trade_no;
 		$this->ID           = static::parse_out_trade_no($out_trade_no);
 		$this->post         = get_post($this->ID);
-		if (!$ID or !$this->post) {
-			throw new Exception(__('支付ID无效：', 'wnd') . $ID);
+		if (!$this->ID or !$this->post) {
+			throw new Exception(__('支付ID无效：', 'wnd') . $this->ID);
 		}
 
 		return $this->post;
