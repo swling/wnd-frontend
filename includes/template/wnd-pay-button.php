@@ -77,7 +77,7 @@ class Wnd_Pay_Button {
 		// 未登录用户
 		if (!static::$user_id and !wnd_get_config('enable_anon_order')) {
 			static::$html = '<div class="wnd-pay-button box has-text-centered">';
-			static::$html .= '<div class="pay-notification">' . static::$message . '</div>';
+			static::$html .= '<div class="pay-notification field">' . static::$message . '</div>';
 			static::$html .= '<div class="field is-grouped is-grouped-centered">';
 			static::$html .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login');
 			static::$html .= '</div>';
@@ -100,7 +100,7 @@ class Wnd_Pay_Button {
 
 		// 构建消息提示
 		static::$html = '<div class="wnd-pay-button box has-text-centered">';
-		static::$html .= '<div class="pay-notification">' . static::$message . '</div>';
+		static::$html .= '<div class="pay-notification field">' . static::$message . '</div>';
 
 		// 当包含文件时，无论是否已支付，均需要提交下载请求，是否扣费将在Wnd\Action\Wnd_Pay_For_Downloads判断
 		if (!static::$disabled and (!static::$user_has_paid or static::$file_id)) {
