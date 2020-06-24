@@ -33,6 +33,10 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 *@param $append 		是否已附加数据的方式更新（表单中不含的字段，将继续保留），默认将以本表单数据完全替换之前的数据
 	 */
 	public function __construct(string $option_name, bool $append = false) {
+		if (!is_super_admin()) {
+			throw new Exception(__('权限不足', 'wnd'));
+		}
+
 		if (false !== stripos($option_name, '_')) {
 			throw new Exception(__('$option_name 不得包含下划线', 'wnd'));
 		}
@@ -231,7 +235,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 		// 可能为多选字段：需要移除'[]'
 		$option_key = rtrim($option_key, '[]');
 
-		return wnd_get_option($option_name, $option_key);
+		return esc_html(stripslashes(wnd_get_option($option_name, $option_key)));
 	}
 
 	/**
