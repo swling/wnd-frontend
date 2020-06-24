@@ -54,7 +54,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 				continue;
 			}
 
-			$ignore = ['option_name', 'action', '_ajax_nonce', Wnd_Form_Data::$form_nonce_name];
+			$ignore = ['option_name', 'append', 'action', '_ajax_nonce', Wnd_Form_Data::$form_nonce_name];
 			if (in_array($input_values[$key]['name'], $ignore)) {
 				continue;
 			}
