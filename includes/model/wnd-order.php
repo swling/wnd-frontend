@@ -227,8 +227,8 @@ class Wnd_Order extends Wnd_Transaction {
 		if ($object_id) {
 			wnd_inc_post_total_sales($object_id, $total_amount);
 
-			// @since 2020.06.11 废弃缓存删除，该功能已通过 WP Action post_updated HOOK实现
-			// wp_cache_delete($this->user_id . '-' . $this->object_id, 'wnd_has_paid');
+			// 删除对象缓存
+			wp_cache_delete($this->user_id . '-' . $this->object_id, 'wnd_has_paid');
 
 			// 文章作者新增佣金
 			$commission = (float) wnd_get_post_commission($object_id);
