@@ -468,7 +468,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	protected static function get_attachment_id($meta_key, $post_parent, $user_id): int {
 		// option
 		if (0 === stripos($meta_key, '_option_')) {
-			return Wnd_Form_Option::get_option_value_by_form_name($meta_key);
+			return (int) Wnd_Form_Option::get_option_value_by_form_name($meta_key);
 		}
 
 		// post meta

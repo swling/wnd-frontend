@@ -2,6 +2,8 @@
 namespace Wnd\View;
 
 use Exception;
+use Wnd\Model\Wnd_Term;
+use Wnd\Utility\Wnd_Form_Data;
 
 /**
  *适配本插件的 ajax User Option 类
@@ -26,10 +28,101 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 		// 继承基础变量
 		parent::__construct();
 
-		// 本类设置
+		// 设置Filter
+		$this->filter = __CLASS__;
+		add_filter($this->filter, [$this, 'filter'], 10, 1);
+
+		// 本类定义
 		$this->option_name = $option_name;
 		$this->add_hidden('option_name', $option_name);
 		$this->set_action('wnd_update_option');
+	}
+
+	/**
+	 *统一设置表单字段名前缀
+	 *根据表单字段名自动读取option value
+	 *
+	 *@see $this->build_form_name
+	 */
+	public function filter(array $input_values): array{
+		foreach ($input_values as $key => $input) {
+			if (!isset($input_values[$key]['name'])) {
+				continue;
+			}
+
+			$ignore = ['option_name', 'action', '_ajax_nonce', Wnd_Form_Data::$form_nonce_name];
+			if (in_array($input_values[$key]['name'], $ignore)) {
+				continue;
+			}
+
+			$input_values[$key]['name']     = $this->build_form_name($input['name']);
+			$input_values[$key]['value']    = static::get_option_value_by_form_name($input_values[$key]['name']);
+			$input_values[$key]['selected'] = static::get_option_value_by_form_name($input_values[$key]['name']);
+		}unset($key, $input);
+
+		return $input_values;
+	}
+
+	/**
+	 *页面下拉
+	 */
+	public function add_page_select($option_key, $label = '', $required = false) {
+		$args = array(
+			'depth'                 => 0,
+			'child_of'              => 0,
+			'selected'              => 0,
+			'echo'                  => 1,
+			'name'                  => 'page_id',
+			'id'                    => '',
+			'class'                 => '',
+			'show_option_none'      => '',
+			'show_option_no_change' => '',
+			'option_none_value'     => '',
+			'value_field'           => 'ID',
+		);
+		$pages = get_pages($args);
+
+		$options = [];
+		foreach ($pages as $page) {
+			$options[$page->post_title] = $page->ID;
+		}
+
+		// select
+		$this->add_select(
+			[
+				'name'     => $option_key,
+				'options'  => $options,
+				'label'    => $label,
+				'required' => $required,
+				'selected' => '',
+			]
+		);
+	}
+
+	// Term 分类单选下拉：本方法不支持复选
+	public function add_term_select($option_key, $args_or_taxonomy, $label = '', $required = true, $dynamic_sub = false) {
+		$taxonomy        = is_array($args_or_taxonomy) ? $args_or_taxonomy['taxonomy'] : $args_or_taxonomy;
+		$taxonomy_object = get_taxonomy($taxonomy);
+		if (!$taxonomy_object) {
+			return;
+		}
+
+		// 获取taxonomy下的 term 键值对
+		$option_data = Wnd_Term::get_terms_data($args_or_taxonomy);
+		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => -1], $option_data);
+
+		// 新增表单字段
+		$this->add_select(
+			[
+				'name'     => $option_key,
+				'options'  => $option_data,
+				'required' => $required,
+				'selected' => '',
+				'label'    => $label,
+				'class'    => $taxonomy . ($dynamic_sub ? ' dynamic-sub' : false),
+				'data'     => ['child_level' => 0],
+			]
+		);
 	}
 
 	/**
@@ -41,7 +134,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 			'label'         => $label,
 			'thumbnail'     => WND_URL . 'static/images/default.jpg',
 			'data'          => [
-				'meta_key'    => $this->build_from_name($option_key),
+				'meta_key'    => $this->build_form_name($option_key),
 				'save_width'  => $save_width,
 				'save_height' => $save_height,
 			],
@@ -50,12 +143,15 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 		parent::add_image_upload($args);
 	}
 
+	/**
+	 *文件上传
+	 */
 	public function add_file_upload($option_key, $label = '文件上传') {
 		parent::add_file_upload(
 			[
 				'label' => $label,
 				'data'  => [
-					'meta_key' => $this->build_from_name($option_key),
+					'meta_key' => $this->build_form_name($option_key),
 				],
 			]
 		);
@@ -64,7 +160,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	/**
 	 *根据规则统一构造表单name值
 	 */
-	protected function build_from_name($option_key): string {
+	protected function build_form_name($option_key): string {
 		return '_option_' . $this->option_name . '_' . $option_key;
 	}
 
@@ -73,7 +169,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 *为准确匹配本规则，要求 option_name 不得包含下划线
 	 */
 	protected static function parse_form_name($form_name): array{
-		$arr = explode('_', $form_name);
+		$arr = explode('_', $form_name, 4);
 
 		$data                = [];
 		$data['option_name'] = $arr[2] ?? '';

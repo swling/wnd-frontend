@@ -26,6 +26,9 @@ use Exception;
  *	_usermeta_{$key} (*自定义数组字段)
  *	_wpusermeta_{$key} (*WordPress原生字段)
  *
+ * option：
+ * 存储在 Wnd option中 : _option_{$option_name}_{$option_key}
+ *
  */
 class Wnd_Form_Data {
 
@@ -113,6 +116,11 @@ class Wnd_Form_Data {
 	// 获取WordPress分类：term数组
 	public function get_terms_data(): array{
 		return $this->get_data_by_prefix('_term_');
+	}
+
+	// 获取指定 option_name 数组数据
+	public function get_option_data($option_name): array{
+		return $this->get_data_by_prefix('_option_' . $option_name . '_');
 	}
 
 	/**
