@@ -19,8 +19,11 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 * - 存储数据：get_option['wnd'][logo]
 	 *
 	 *为准确匹配本规则，要求option name不得包含下划线
+	 *
+	 *@param $option_name 	option 名称
+	 *@param $append 		是否已附加数据的方式更新（表单中不含的字段，将继续保留），默认将以本表单数据完全替换之前的数据
 	 */
-	public function __construct($option_name) {
+	public function __construct(string $option_name, bool $append = false) {
 		if (false !== stripos($option_name, '_')) {
 			throw new Exception(__('$option_name 不得包含下划线', 'wnd'));
 		}
@@ -34,6 +37,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 
 		// 本类定义
 		$this->option_name = $option_name;
+		$this->add_hidden('append', $append ? '1' : '0');
 		$this->add_hidden('option_name', $option_name);
 		$this->set_action('wnd_update_option');
 	}
@@ -55,9 +59,14 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 				continue;
 			}
 
-			$input_values[$key]['name']     = $this->build_form_name($input['name']);
-			$input_values[$key]['value']    = static::get_option_value_by_form_name($input_values[$key]['name']);
-			$input_values[$key]['selected'] = static::get_option_value_by_form_name($input_values[$key]['name']);
+			// 表单字段名自动添加统一前缀
+			$input_values[$key]['name'] = $this->build_form_name($input['name']);
+
+			// 根据表单字段名读取数据
+			$value                          = static::get_option_value_by_form_name($input_values[$key]['name']);
+			$input_values[$key]['value']    = !is_array($value) ? $value : '';
+			$input_values[$key]['selected'] = $value;
+			$input_values[$key]['checked']  = $value;
 		}unset($key, $input);
 
 		return $input_values;
@@ -204,6 +213,9 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 */
 	public static function get_option_value_by_form_name($form_name) {
 		extract(static::parse_form_name($form_name));
+
+		// 可能为多选字段：需要移除'[]'
+		$option_key = rtrim($option_key, '[]');
 
 		return wnd_get_option($option_name, $option_key);
 	}
