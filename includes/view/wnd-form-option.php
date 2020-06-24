@@ -8,18 +8,27 @@ use Wnd\Utility\Wnd_Form_Data;
 /**
  *适配本插件的 ajax User Option 类
  *@since 2020.06.24
+ *
+ *存储在 Wnd option中 : _option_{$option_name}_{$option_key}
+ * - 表单name：_option_wnd_logo
+ * - 存储数据：get_option['wnd'][logo]
+ *
+ *为准确匹配本规则，要求option name不得包含下划线
+ *
+ *@see:
+ *之所以设置如此的表单规则，主要原因在于文件上传，为区分上传至 post meta 及 user meta，上传至option的文件字段名需命名为：_option_{$option_name}_{$option_key}
+ *由此带来一些列相关问题：
+ * - 如何根据表单name，快速获取、更新、删除对应option值
+ *为解决上述文件，引入了本Class中相关静态方法
+ * - 在此基础上，索性使用表单filter，将所有表单字段悉数添加前缀。至此，便可利用 Wnd\Utility\Wnd_Form_Data 自动提取对应数据
+ * - 新增方法：Wnd\Utility\Wnd_Form_Data->get_option_data($option_name);
+ *
  */
 class Wnd_Form_Option extends Wnd_Form_WP {
 
 	protected $option_name;
 
 	/**
-	 *存储在 Wnd option中 : _option_{$option_name}_{$option_key}
-	 * - 表单name：_option_wnd_logo
-	 * - 存储数据：get_option['wnd'][logo]
-	 *
-	 *为准确匹配本规则，要求option name不得包含下划线
-	 *
 	 *@param $option_name 	option 名称
 	 *@param $append 		是否已附加数据的方式更新（表单中不含的字段，将继续保留），默认将以本表单数据完全替换之前的数据
 	 */
