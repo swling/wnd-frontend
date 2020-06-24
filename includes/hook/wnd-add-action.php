@@ -4,6 +4,7 @@ namespace Wnd\Hook;
 use Wnd\Action\Wnd_Do_Pay;
 use Wnd\Action\Wnd_Verify_Pay;
 use Wnd\Utility\Wnd_Singleton_Trait;
+use Wnd\View\Wnd_Form_Option;
 
 /**
  *Wnd Action
@@ -28,15 +29,14 @@ class Wnd_Add_Action {
 			return;
 		}
 
-		// 存储在option中
+		// 存储在 Wnd option中 : _option_{$option_name}_{$option_key}
 		if (0 === stripos($meta_key, '_option_')) {
-			$option     = str_replace('_option_', '', $meta_key);
-			$old_option = get_option($option);
-
+			$old_option = Wnd_Form_Option::get_option_value_by_form_name($meta_key);
 			if ($old_option) {
 				wp_delete_attachment($old_option, true);
 			}
-			update_option($option, $attachment_id, false);
+
+			Wnd_Form_Option::update_option_by_form_name($meta_key, $attachment_id);
 			return;
 		}
 
@@ -111,20 +111,25 @@ class Wnd_Add_Action {
 		/**
 		 *@since 2019.05.06 相册编辑
 		 */
-		if ($meta_key == 'gallery' and $post_parent) {
+		if ($meta_key == 'gallery') {
 			// 从相册数组中删除当前图片
-			$images = wnd_get_post_meta($post_parent, 'gallery');
-			$images = is_array($images) ? $images : [];
+			$user_id = get_current_user_id();
+			$images  = $post_parent ? wnd_get_post_meta($post_parent, 'gallery') : wnd_get_user_meta($user_id, 'gallery');
+			$images  = is_array($images) ? $images : [];
 			unset($images['img' . $attachment_id]);
-			wnd_update_post_meta($post_parent, 'gallery', $images);
+
+			if ($post_parent) {
+				wnd_update_post_meta($post_parent, 'gallery', $images);
+			} else {
+				wnd_update_user_meta($user_id, 'gallery', $images);
+			}
+
 			return;
 		}
 
 		// 删除在 option
 		if (0 === stripos($meta_key, '_option_')) {
-			$option = str_replace('_option_', '', $meta_key);
-			delete_option($option);
-			return;
+			Wnd_Form_Option::delete_option_by_form_name($meta_key);
 		}
 
 		// 删除文章字段

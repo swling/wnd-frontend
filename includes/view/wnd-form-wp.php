@@ -465,11 +465,10 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *
 	 *根据meta key获取附件ID
 	 */
-	protected static function get_attachment_id($meta_key, $post_parent, $user_id) {
+	protected static function get_attachment_id($meta_key, $post_parent, $user_id): int {
 		// option
 		if (0 === stripos($meta_key, '_option_')) {
-			$option = str_replace('_option_', '', $meta_key);
-			return get_option($option);
+			return Wnd_Form_Option::get_option_value_by_form_name($meta_key);
 		}
 
 		// post meta
@@ -492,8 +491,7 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		if ($attachment_id and !$attachment_url) {
 			if (0 === stripos($meta_key, '_option_')) {
-				$option = str_replace('_option_', '', $meta_key);
-				delete_option($option);
+				Wnd_Form_Option::delete_option_by_form_name($meta_key);
 			} elseif ($post_parent) {
 				wnd_delete_post_meta($post_parent, $meta_key);
 			} else {
