@@ -50,12 +50,17 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 */
 	public function filter(array $input_values): array{
 		foreach ($input_values as $key => $input) {
-			if (!isset($input_values[$key]['name'])) {
+			if (!isset($input['name'])) {
 				continue;
 			}
 
-			$ignore = ['option_name', 'append', 'action', '_ajax_nonce', Wnd_Form_Data::$form_nonce_name];
-			if (in_array($input_values[$key]['name'], $ignore)) {
+			$ignore_types = ['html', 'image_upload', 'file_upload'];
+			if (in_array($input['type'], $ignore_types)) {
+				continue;
+			}
+
+			$ignore_names = ['option_name', 'append', 'action', '_ajax_nonce', Wnd_Form_Data::$form_nonce_name];
+			if (in_array($input['name'], $ignore_names)) {
 				continue;
 			}
 
