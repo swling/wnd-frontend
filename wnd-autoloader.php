@@ -82,6 +82,3 @@ spl_autoload_register(function ($class) {
 		require $file;
 	}
 });
-
-// 初始化
-Wnd\Model\Wnd_Init::instance();

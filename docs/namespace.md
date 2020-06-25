@@ -20,22 +20,42 @@ namespace Wnd\JsonGet;
 namespace Wnd\Component;
 ```
 ## 用户自定义拓展UI响应
-- 类名称以'Wndt' 为前缀(不区分大小写)
 - 命名空间为：
 ```php
+
+// 主题
 namespace Wndt\Module;
+
+// 插件：PluginName需为插件实际名称，且插件名称与插件文件目录需符合自动加载规则，下同
+namespace Wndp\PluginName\Module;
 ```
 
 ## 用户自定义拓展Action响应
-- 类名称以'Wndt' 为前缀(不区分大小写)
 - 命名空间为：
 ```php
+// 主题
 namespace Wndt\Action;
+
+// 插件
+namespace Wndp\PluginName\Action;
 ```
 
 ## 用户自定义拓展JsonGet响应
-- 类名称以'Wndt' 为前缀(不区分大小写)
 - 命名空间为：
 ```php
+// 主题
 namespace Wndt\JsonGet;
+
+// 插件
+namespace Wndp\PluginName\JsonGet;
 ```
+以此类推……
+
+## 拓展类命名规则
+主题类名称以'Wndt'，插件类名称以'wndp'为前缀(不区分大小写)
+
+## 更多关于拓展类的详情参考
+- api.md
+
+## 关于自动加载规则参考
+- autoloader.md

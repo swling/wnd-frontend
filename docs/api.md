@@ -6,8 +6,11 @@
 自定义filter api：		wp-json/wnd/filter	 	Allow: GET
 自定义jsonget api：		wp-json/wnd/jsonget	 	Allow: GET
 
-## @see /includes/controller/class-wnd-api.php
-## @see /wnd-load.php
+## Wnd_API 定义 
+@see /includes/controller/class-wnd-api.php
+
+## 自动加载规则 
+@see autoloader.md
 
 ### action api
 提交的数据中必须包含：
