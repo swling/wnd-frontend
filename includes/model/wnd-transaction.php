@@ -42,7 +42,7 @@ abstract class Wnd_Transaction {
 	 *@since 2020.06.21
 	 *支付接口保存在 post_excerpt 如果此处不做默认定义，即为NLL，会报错提示：post_excerpt 不能为 null
 	 */
-	protected static $payment_gateway = '';
+	protected $payment_gateway = '';
 
 	/**
 	 *@since 2019.08.11
@@ -73,7 +73,7 @@ abstract class Wnd_Transaction {
 	 *设置支付网关如（支付宝，微信支付等）
 	 */
 	public function set_payment_gateway($payment_gateway) {
-		static::$payment_gateway = $payment_gateway;
+		$this->payment_gateway = $payment_gateway;
 	}
 
 	/**

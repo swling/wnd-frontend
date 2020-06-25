@@ -40,16 +40,24 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *根据支付平台，并自动选择子类处理当前业务
 	 */
 	public static function get_instance($payment_gateway): Wnd_Payment {
-		static::$site_name       = get_bloginfo('name');
-		static::$site_prefix     = static::build_site_prefix();
-		static::$payment_gateway = $payment_gateway;
+		static::$site_name   = get_bloginfo('name');
+		static::$site_prefix = static::build_site_prefix();
 
-		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Payment_' . static::$payment_gateway;
+		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Payment_' . $payment_gateway;
 		if (class_exists($class_name)) {
-			return new $class_name();
+			return new $class_name($payment_gateway);
 		} else {
 			throw new Exception(__('未定义支付方式', 'wnd') . ':' . $class_name);
 		}
+	}
+
+	/**
+	 *构造函数
+	 */
+	public function __construct($payment_gateway) {
+		parent::__construct();
+
+		$this->payment_gateway = $payment_gateway;
 	}
 
 	/**
@@ -167,7 +175,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		$payment = $this->object_id ? new Wnd_Order() : new Wnd_Recharge();
 		$payment->set_object_id($this->object_id);
 		$payment->set_total_amount($this->total_amount);
-		$payment->set_payment_gateway(static::$payment_gateway);
+		$payment->set_payment_gateway($this->payment_gateway);
 
 		// 写入数据库后构建ID及Post属性，供外部调用属性向支付平台发起请求
 		$this->post = $payment->create();

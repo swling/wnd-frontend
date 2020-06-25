@@ -29,16 +29,6 @@ use WP_Post;
 class Wnd_Recharge extends Wnd_Transaction {
 
 	/**
-	 *第三方支付接口
-	 *
-	 *@since 2020.06.24
-	 *正常情况下，父类中已经定义的属性，在不需要复写的情况下，子类中无需重复定义。
-	 *但奇怪的是，在线订单生完成后，产生的站内佣金充值订单，会自动包含在线订单的支付接口信息。代码查看：@see Wnd_Order->complete();
-	 *添加此定义后，则解决该问题，但未能明白其中缘由。
-	 */
-	protected static $payment_gateway = '';
-
-	/**
 	 *@since 2019.01.30
 	 *
 	 *写入post时需要设置别名，否则更新时会自动根据标题设置别名，而充值类标题一致，会导致WordPress持续循环查询并设置 -2、-3这类自增标题，产生大量查询
@@ -85,7 +75,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 			'post_author'  => $this->user_id,
 			'post_parent'  => $this->object_id,
 			'post_content' => $this->total_amount,
-			'post_excerpt' => static::$payment_gateway,
+			'post_excerpt' => $this->payment_gateway,
 			'post_status'  => $this->status,
 			'post_title'   => $this->subject,
 			'post_type'    => 'recharge',
