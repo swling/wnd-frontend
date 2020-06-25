@@ -73,6 +73,54 @@ class Wnd_API {
 	}
 
 	/**
+	 *解析前端发送的类标识，返回包含完整命名空间的真实类名
+	 *
+	 *因拓展插件不具唯一性，因此加载插件中的拓展类需要添加插件名称
+	 *parse_class('Wndp_File_Import\\Wndp_Demo', 'Module') 	=> Wndp\Wndp_File_Import\Module\Wndp_Demo;
+	 *parse_class('Wnd_Demo', 'Module') 					=> Wnd\Module\Wnd_Demo;
+	 *parse_class('Wndt_Demo', 'Module') 					=> Wndt\Module\Wndt_Demo;
+	 *
+	 *其他api请求以此类推
+	 *
+	 *@see 自动加载机制 wnd-load.php
+	 *
+	 *@return string 包含完整命名空间的类名称
+	 */
+	public static function parse_class(string $class, string $api): string{
+		// 移除WP自动转义(必须，WordPress不管$ _magic_quotes_gpc（）返回什么，都会在$ _POST / $ _ GET / $ _ REQUEST / $ _ COOKIE中添加斜杠)
+		$class = stripslashes_deep($class);
+
+		/**
+		 *拓展插件类请求格式：Wndp_File_Import\Wndp_Demo
+		 *判断是否为拓展插件类，若是，则提取插件名称
+		 */
+		$class_info = explode('\\', $class, 2);
+		if (isset($class_info[1])) {
+			$plugin     = $class_info[0];
+			$class_name = $class_info[1];
+		} else {
+			$plugin     = '';
+			$class_name = $class_info[0];
+		}
+
+		/**
+		 *解析类名称：
+		 * - 提取类名称前缀作为命名空间前缀
+		 * - 添加插件名称（如果存在）
+		 * - 添加API接口
+		 * - 最终拼接成具有完整命名空间的实际类名称
+		 */
+		$prefix = explode('_', $class, 2)[0];
+		if ($plugin) {
+			$real_class = $prefix . '\\' . $plugin . '\\' . $api . '\\' . $class_name;
+		} else {
+			$real_class = $prefix . '\\' . $api . '\\' . $class_name;
+		}
+
+		return $real_class;
+	}
+
+	/**
 	 *@since 2019.04.07
 	 *UI响应
 	 *@param $_GET['module'] 	string	后端响应模块类
@@ -88,10 +136,9 @@ class Wnd_API {
 			return ['status' => 0, 'msg' => __('未指定UI', 'wnd')];
 		}
 
-		$module    = stripslashes_deep($_GET['module']);
-		$namespace = (0 === stripos($module, 'Wndt')) ? 'Wndt\Module' : 'Wnd\Module';
-		$class     = $namespace . '\\' . $module;
-		$param     = $_GET['param'] ?? '';
+		// 解析实际类名称及参数
+		$class = static::parse_class($_GET['module'], 'Module');
+		$param = $_GET['param'] ?? '';
 
 		/**
 		 *@since 2019.10.01
@@ -99,12 +146,12 @@ class Wnd_API {
 		 */
 		if (is_callable([$class, 'build'])) {
 			try {
-				return $param ? $class::build($param) : $class::build();
+				return $class::build($param);
 			} catch (Exception $e) {
 				return ['status' => 0, 'msg' => $e->getMessage()];
 			}
 		} else {
-			return ['status' => 0, 'msg' => __('无效的UI', 'wnd')];
+			return ['status' => 0, 'msg' => __('无效的UI', 'wnd') . ':' . $class];
 		}
 	}
 
@@ -124,19 +171,18 @@ class Wnd_API {
 			return ['status' => 0, 'msg' => __('未指定Data', 'wnd')];
 		}
 
-		$module    = stripslashes_deep($_GET['data']);
-		$namespace = (0 === stripos($module, 'Wndt')) ? 'Wndt\JsonGet' : 'Wnd\JsonGet';
-		$class     = $namespace . '\\' . $module;
-		$param     = $_GET['param'] ?? '';
+		// 解析实际类名称及参数
+		$class = static::parse_class($_GET['data'], 'JsonGet');
+		$param = $_GET['param'] ?? '';
 
 		if (is_callable([$class, 'get'])) {
 			try {
-				return $param ? $class::get($param) : $class::get();
+				return $class::get($param);
 			} catch (Exception $e) {
 				return ['status' => 0, 'msg' => $e->getMessage()];
 			}
 		} else {
-			return ['status' => 0, 'msg' => __('无效的Json Data', 'wnd')];
+			return ['status' => 0, 'msg' => __('无效的Json Data', 'wnd') . ':' . $class];
 		}
 	}
 
@@ -152,16 +198,15 @@ class Wnd_API {
 	 *2、命名空间必须为：Wndt\Action
 	 */
 	public static function handle_action(): array{
-		if (!isset($_REQUEST['action'])) {
+		if (!isset($_POST['action'])) {
 			return ['status' => 0, 'msg' => __('未指定Action', 'wnd')];
 		}
 
-		$action    = stripslashes_deep($_REQUEST['action']);
-		$namespace = (0 === stripos($action, 'Wndt')) ? 'Wndt\Action' : 'Wnd\Action';
-		$class     = $namespace . '\\' . $action;
+		// 解析实际类名称
+		$class = static::parse_class($_POST['action'], 'Action');
 
 		// nonce校验：action
-		if (!wp_verify_nonce($_REQUEST['_ajax_nonce'] ?? '', $_REQUEST['action'])) {
+		if (!wp_verify_nonce($_POST['_ajax_nonce'] ?? '', $_POST['action'])) {
 			return ['status' => 0, 'msg' => __('Nonce校验失败', 'wnd')];
 		}
 

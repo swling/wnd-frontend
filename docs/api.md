@@ -6,11 +6,14 @@
 自定义filter api：		wp-json/wnd/filter	 	Allow: GET
 自定义jsonget api：		wp-json/wnd/jsonget	 	Allow: GET
 
+## @see /includes/controller/class-wnd-api.php
+## @see /wnd-load.php
+
 ### action api
 提交的数据中必须包含：
-$_REQUEST['action']：该值为处理当前请求的控制类名称（不含命名空间）
-$_REQUEST['_ajax_nonce']
-nonce生成方式：wp_create_nonce($_REQUEST['action'])
+$_POST['action']：该值为处理当前请求的控制类名称（不含命名空间）
+$_POST['_ajax_nonce']
+nonce生成方式：wp_create_nonce($_POST['action'])
 
 #### @see Wnd_Form_WP->set_action
 
@@ -18,21 +21,12 @@ nonce生成方式：wp_create_nonce($_REQUEST['action'])
 ['status'=>'状态值','msg'=>'消息','data'=>'数据'];
 API统一将结果转为json格式，输出交付前端处理
 
-#### 拓展操作（action）类
-如需在第三方插件或主题拓展控制器处理请定义类并遵循以下规则：
-- 类名称必须以wndt为前缀
-- 命名空间必须为：Wndt\Action
-
 ### interface api
 UI请求无需nonce校验需要包含如下参数
 - $_GET['module']：该值为响应当前UI的类名称（不含命名空间）
 - $_GET['param']：传递给UI类的参数(可选)
 UI类将返回字符串（通常为HTML字符串）交付前端
 
-### 拓展UI类
-如需在第三方插件或主题拓展UI响应请定义类并遵循以下规则：
-- 类名称必须以wndt为前缀
-- 命名空间必须为：Wndt\Module
 
 ### jsonGet api
 json获取请求无需nonce校验需要包含如下参数
@@ -40,9 +34,68 @@ json获取请求无需nonce校验需要包含如下参数
 - $_GET['param']：传递给数据类的参数(可选)
 返回为json数据
 
-### 拓展jsonGet类
-如需在第三方插件或主题拓展JsonGet请定义类并遵循以下规则：
-- 类名称必须以wndt为前缀
-- 命名空间必须为：Wndt\JsonGet
+### 前端请求举例（以Module为例）
+```JavaScript
+wnd_ajax_modal("wnd_user_center", param = "xxx");
+```
+实际类名称：
+```php
+Wnd\Module\Wnd_User_Center::build('xxx');
+```
 
-## @see /includes/controller/class-wnd-api.php
+
+## 拓展APIs
+
+### 主题拓展
+如需在主题中拓展API遵循以下规则（以Module为例，其他API以此类推）：
+- 类名称必须以wndt为前缀
+- 命名空间必须为：Wndt\Module
+- 文件夹路径：{TEMPLATEPATH}/includes/module
+实例：
+```php
+// 实例化
+new Wndt\Module\Wndt_Bid_Form;
+
+// 自动加载路径
+require TEMPLATEPATH . '/includes/module/wndt-bid-form.php';
+```
+前端请求举例（以Module为例）
+```JavaScript
+wnd_ajax_modal("Wndt_Bid_Form", param = "xxx"); 
+```
+实际类名称：
+```php
+Wndt\Module\Wndt_Bid_Form::build('xxx');
+```
+
+### 插件拓展
+如需在插件中拓展API类需遵循以下规则（以Module为例，其他API以此类推）:
+- 类名称必须以wndp为前缀
+- 命名空间必须为：Wndp\$plugin_name\module
+- 文件路径：{WP_PLUGIN_DIR}/$plugin_name/includes/module
+- *注意插件文件夹不得使用下划线，插件文件夹与插件命名空间需要符合自动加载规则：（名称对应，类名称下划线对应文件夹间隔符）*
+实例：
+```php
+// 实例化
+ new Wndp\Wndp_File_Import\Module\Wndp_Demo;
+
+// 自动加载路径
+ require WP_PLUGIN_DIR . '/wndp-file-import/module/wndt-demo.php';
+```
+#### 插件特有属性
+前端ajax请求插件API拓展，需要额外提供插件名称。
+本插件及主题拓展的文件路径具有唯一性，而第三方拓展插件具有多样性，因此需要额外提供插件名，以确定具体加载路径。
+拓展插件类请求格式：$plugin_name\\$class_name
+$class_name 不含命名空间（api将根据类名称前缀自动解析补全）
+
+假定插件：Wndp_File_Import 具有一个 Wndp_Demo UI模块，前端请求实例如下：
+```JavaScript
+wnd_ajax_embed("#user-center .ajax-container", "Wndp_File_Import\\Wndp_Demo");
+```
+实际类名称：
+```php
+Wndp\Wndp_File_Import\Module\Wndp_Demo::build();
+```
+### 拓展中添加第三方组件
+{plugin_or_theme_dir}/includes/component文件夹存储第三方组件，按通用驼峰命名规则
+(注意：第三方组件文件及文件目录需要区分大小写)
