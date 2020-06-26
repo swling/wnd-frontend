@@ -76,7 +76,7 @@ class Wnd_API {
 	 *解析前端发送的类标识，返回包含完整命名空间的真实类名
 	 *
 	 *因拓展插件不具唯一性，因此加载插件中的拓展类需要添加插件名称
-	 *parse_class('Wndt_File_Import\\Wndt_Demo', 'Module') 	=> WndPlugin\Wndt_File_Import\Module\Wndt_Demo;
+	 *parse_class('Wndt_File_Import\\Wndt_Demo', 'Module') 	=> Wnd_Plugin\Wndt_File_Import\Module\Wndt_Demo;
 	 *parse_class('Wnd_Demo', 'Module') 					=> Wnd\Module\Wnd_Demo;
 	 *parse_class('Wndt_Demo', 'Module') 					=> Wndt\Module\Wndt_Demo;
 	 *
@@ -107,7 +107,7 @@ class Wnd_API {
 		 *解析类名称
 		 *
 		 * 插件：
-		 * - 添加插件固定命名空间前缀：WndPlugin
+		 * - 添加插件固定命名空间前缀：Wnd_Plugin
 		 * - 添加插件名称
 		 *
 		 *本插件及主题：
@@ -119,7 +119,7 @@ class Wnd_API {
 		 *最终拼接成具有完整命名空间的实际类名称
 		 */
 		if ($plugin) {
-			$real_class = 'WndPlugin' . '\\' . $plugin . '\\' . $api . '\\' . $class_name;
+			$real_class = 'Wnd_Plugin' . '\\' . $plugin . '\\' . $api . '\\' . $class_name;
 		} else {
 			$prefix     = explode('_', $class, 2)[0];
 			$real_class = $prefix . '\\' . $api . '\\' . $class_name;

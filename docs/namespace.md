@@ -11,7 +11,7 @@
 
 ### 插件
 假设插件文件夹为 plugin-name
-- 基本命名空间：WndPlugin\Plugin_Name
+- 基本命名空间：Wnd_Plugin\Plugin_Name
 - 对应WordPress插件 WP_PLUGIN_DIR/plugin-name
 
 ## 本插件实例
@@ -43,7 +43,7 @@ namespace Wnd\Component;
 namespace Wndt\Module;
 
 // 插件：PluginName需为插件实际名称，且插件名称与插件文件目录需符合自动加载规则，下同
-namespace WndPlugin\PluginName\Module;
+namespace Wnd_Plugin\PluginName\Module;
 ```
 
 ## 用户自定义拓展Action响应
@@ -53,7 +53,7 @@ namespace WndPlugin\PluginName\Module;
 namespace Wndt\Action;
 
 // 插件
-namespace WndPlugin\PluginName\Action;
+namespace Wnd_Plugin\PluginName\Action;
 ```
 
 ## 用户自定义拓展JsonGet响应
@@ -63,7 +63,7 @@ namespace WndPlugin\PluginName\Action;
 namespace Wndt\JsonGet;
 
 // 插件
-namespace WndPlugin\PluginName\JsonGet;
+namespace Wnd_Plugin\PluginName\JsonGet;
 ```
 以此类推……
 

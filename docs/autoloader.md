@@ -46,11 +46,11 @@ require TEMPLATEPATH . '/includes/component/AjaxComment.php';
 ```
 
 ### 其他插件
- - 基本命名空间必须为：WndPlugin
+ - 基本命名空间必须为：Wnd_Plugin
  - 插件具体类名称可自行定义，但需要与所在文件路径对应，以符合自动加载规则
  ```php
 // 实例化
- new WndPlugin\Wndt_Demo\Wndt_Demo;
+ new Wnd_Plugin\Wndt_Demo\Wndt_Demo;
 
 //  实际加载文件
  require WP_PLUGIN_DIR . '/wndt-demo/wndt-demo.php';
@@ -58,6 +58,6 @@ require TEMPLATEPATH . '/includes/component/AjaxComment.php';
 
 ### 集成第三方组件
 ```php
-new WndPlugin\Wndt_Demo\Component\AjaxComment;
+new Wnd_Plugin\Wndt_Demo\Component\AjaxComment;
 require WP_PLUGIN_DIR . '/wndt-demo/component/AjaxComment.php';
 ```

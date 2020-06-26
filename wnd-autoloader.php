@@ -25,11 +25,11 @@
  * (注意：第三方组件文件及文件目录需要区分大小写)
  *
  * @see 基于被插件的其他插件拓展类
- * new WndPlugin\Wndt_Demo\Wndt_Demo
+ * new Wnd_Plugin\Wndt_Demo\Wndt_Demo
  * /wp-content/plugins/wndt-demo/wndt-demo.php
  *
  *	component文件夹存储第三方组件，按通用驼峰命名规则
- * 	new WndPlugin\Wndt_Demo\Component\AjaxComment;
+ * 	new Wnd_Plugin\Wndt_Demo\Component\AjaxComment;
  * 	/wp-content/plugins/wndt-demo/component/AjaxComment.php
  * 	(注意：第三方组件文件及文件目录需要区分大小写)
  */
@@ -42,7 +42,7 @@ spl_autoload_register(function ($class) {
 
 	/**
 	 *解析class
-	 *要判断第三方插件 component 目录，至少需要切割四组元素：WndPlugin\Wndt_Demo\Component\AjaxComment;
+	 *要判断第三方插件 component 目录，至少需要切割四组元素：Wnd_Plugin\Wndt_Demo\Component\AjaxComment;
 	 */
 	$class_info = explode('\\', $class, 4);
 	$domain     = strtolower($class_info[0]);
@@ -62,8 +62,8 @@ spl_autoload_register(function ($class) {
 		$base_dir = TEMPLATEPATH . DIRECTORY_SEPARATOR . 'includes';
 		break;
 
-	// 其他插件拓展类：设定插件目录，从数组中剔除固定命名空间前缀 WndPlugin，以匹配后续算法
-	case 'wndplugin':
+	// 其他插件拓展类：设定插件目录，从数组中剔除固定命名空间前缀 Wnd_Plugin，以匹配后续算法
+	case 'wnd_plugin':
 		$base_dir = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $class_info[1];
 		array_shift($class_info);
 		break;

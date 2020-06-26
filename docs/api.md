@@ -74,15 +74,15 @@ Wndt\Module\Wndt_Bid_Form::build('xxx');
 
 ### 插件拓展
 如需在插件中拓展API类需遵循以下规则（以Module为例，其他API以此类推）:
-- 基本命名空间必须为：WndPlugin\$plugin_name;
-- Module 命名空间必须为：WndPlugin\$plugin_name\module
+- 基本命名空间必须为：Wnd_Plugin\$plugin_name;
+- Module 命名空间必须为：Wnd_Plugin\$plugin_name\module
 - 插件具体类名称可自行定义，但需要与所在文件路径对应，以符合自动加载规则 
 - 文件路径：{WP_PLUGIN_DIR}/$plugin_name/includes/module
 - *注意插件文件夹不得使用下划线，插件文件夹与插件命名空间需要符合自动加载规则：（名称对应，类名称下划线对应文件夹间隔符）*
 实例：
 ```php
 // 实例化
- new WndPlugin\Wndt_File_Import\Module\Wndt_Demo;
+ new Wnd_Plugin\Wndt_File_Import\Module\Wndt_Demo;
 
 // 自动加载路径
  require WP_PLUGIN_DIR . '/wndt-file-import/module/wndt-demo.php';
@@ -100,7 +100,7 @@ wnd_ajax_modal("Wndt_File_Import\\Wndt_Demo",  param = "xxx");
 ```
 实际类名称：
 ```php
-WndPlugin\Wndt_File_Import\Module\Wndt_Demo::build('xxx');
+Wnd_Plugin\Wndt_File_Import\Module\Wndt_Demo::build('xxx');
 ```
 ### 拓展中添加第三方组件
 {plugin_or_theme_dir}/includes/component文件夹存储第三方组件，按通用驼峰命名规则
