@@ -26,11 +26,11 @@
  * (注意：第三方组件文件及文件目录需要区分大小写)
  *
  * @see 基于被插件的其他插件拓展类
- * Wndp\Wndt_Demo\Wndt_Demo
+ * new WndPlugin\Wndt_Demo\Wndt_Demo
  * /wp-content/plugins/wndt-demo/wndt-demo.php
  *
  *	component文件夹存储第三方组件，按通用驼峰命名规则
- * 	new Wndp/Wndt_Demo\Component\AjaxComment;
+ * 	new WndPlugin/Wndt_Demo\Component\AjaxComment;
  * 	/wp-content/plugins/wndt-demo/component/AjaxComment.php
  * 	(注意：第三方组件文件及文件目录需要区分大小写)
  */
@@ -63,7 +63,7 @@ spl_autoload_register(function ($class) {
 		break;
 
 	// 其他插件拓展类
-	case 'wndp':
+	case 'wndplugin':
 		$base_dir = WP_PLUGIN_DIR;
 		break;
 

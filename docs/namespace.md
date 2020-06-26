@@ -1,5 +1,21 @@
 # 命名空间
 自动加载机制已统一转为小写，故命名空间不区分大小写
+
+### 本插件
+- 基本命名空间：Wnd,
+- 对应本插件目录 /includes
+
+### 主题
+- 基本命名空间：Wndt
+- 对应主题目录 TEMPLATEPATH/includes
+
+### 插件
+假设插件文件夹为 plugin-name
+- 基本命名空间：WndPlugin\Plugin_Name
+- 对应WordPress插件 WP_PLUGIN_DIR/plugin-name
+
+## 本插件实例
+
 ```php
 // 模型类
 namespace Wnd\Model;
@@ -20,39 +36,40 @@ namespace Wnd\JsonGet;
 namespace Wnd\Component;
 ```
 ## 用户自定义拓展UI响应
-- 命名空间为：
+命名空间为：
 ```php
 
 // 主题
 namespace Wndt\Module;
 
 // 插件：PluginName需为插件实际名称，且插件名称与插件文件目录需符合自动加载规则，下同
-namespace Wndp\PluginName\Module;
+namespace WndPlugin\PluginName\Module;
 ```
 
 ## 用户自定义拓展Action响应
-- 命名空间为：
+命名空间为：
 ```php
 // 主题
 namespace Wndt\Action;
 
 // 插件
-namespace Wndp\PluginName\Action;
+namespace WndPlugin\PluginName\Action;
 ```
 
 ## 用户自定义拓展JsonGet响应
-- 命名空间为：
+命名空间为：
 ```php
 // 主题
 namespace Wndt\JsonGet;
 
 // 插件
-namespace Wndp\PluginName\JsonGet;
+namespace WndPlugin\PluginName\JsonGet;
 ```
 以此类推……
 
 ## 拓展类命名规则
-主题类名称以'Wndt'，插件类名称以'wndp'为前缀(不区分大小写)
+- 主题类名称以'Wndt'
+- 插件类名称无特殊要求，但需要与所在路径对应，以符合自动加载规则
 
 ## 更多关于拓展类的详情参考
 - api.md
