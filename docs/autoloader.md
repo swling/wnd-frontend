@@ -45,7 +45,7 @@ new Wndt\Component\AjaxComment;
 require TEMPLATEPATH . '/includes/component/AjaxComment.php';
 ```
 
- ### 其他插件
+### 其他插件
  - 基本命名空间必须为：WndPlugin
  - 插件具体类名称可自行定义，但需要与所在文件路径对应，以符合自动加载规则
  ```php
