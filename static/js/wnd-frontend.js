@@ -306,7 +306,6 @@ function wnd_ajax_submit(form_id) {
 	// 提交按钮
 	var submit_button = $("#" + form_id + " [type='submit']");
 
-
 	// 带有required属性的字段不能为空
 	var input_value = true;
 	$("#" + form_id + " input").each(function() {
@@ -390,8 +389,8 @@ function wnd_ajax_submit(form_id) {
 			if (response.status != 0) {
 				submit_button.prop("disabled", true);
 			}
-			var submit_text = (response.status > 0) ? wnd.msg.submit_successfully : wnd.msg.submit_failed;
-			submit_button.text(submit_text);
+			// var submit_text = (response.status > 0) ? wnd.msg.submit_successfully : wnd.msg.submit_failed;
+			// submit_button.text(submit_text);
 
 			var style = response.status > 0 ? "is-success" : "is-danger";
 

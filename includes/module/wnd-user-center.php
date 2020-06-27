@@ -10,7 +10,7 @@ namespace Wnd\Module;
 class Wnd_User_Center extends Wnd_Module {
 
 	public static function build($args = []) {
-		$ajax_type         = $_GET['ajax_type'] ?? 'modal';
+		$ajax_type         = $_GET['ajax_type'] ?? '';
 		$enable_sms        = (1 == wnd_get_config('enable_sms')) ? true : false;
 		$disable_email_reg = (1 == wnd_get_config('disable_email_reg')) ? true : false;
 		$is_user_logged_in = is_user_logged_in();
@@ -70,6 +70,9 @@ class Wnd_User_Center extends Wnd_Module {
 
 		/**
 		 *其他面板
+		 *
+		 *$wrap作用：在ajax嵌入环境中，首次调用时wrap容器已经存在。
+		 *切换选项时，再次请求此模块，后端响应直接嵌入这个容器，需要剥离外部容器
 		 */
 		$html = $wrap ? '<div id="user-center">' : '';
 		if (!$is_user_logged_in) {
@@ -81,7 +84,7 @@ class Wnd_User_Center extends Wnd_Module {
 					if ('email' == $type and $enable_sms) {
 						$html .= static::build_module_link('do=register&type=phone', __('手机注册', 'wnd'), $ajax_type) . ' | ';
 					} elseif ($type == 'phone' and !$disable_email_reg) {
-						$html .= static::build_module_link('do=register&type=email', __('邮箱注册', 'wnd'), $ajax_type) . '|';
+						$html .= static::build_module_link('do=register&type=email', __('邮箱注册', 'wnd'), $ajax_type) . ' | ';
 					}
 
 					$html .= static::build_module_link('do=login', __('登录', 'wnd'), $ajax_type);
@@ -151,10 +154,14 @@ class Wnd_User_Center extends Wnd_Module {
 	/**
 	 *构建用户中心模块切换链接
 	 *@since 2020.04.23
+	 *
+	 *$wrap作用：在ajax嵌入环境中，首次调用时wrap容器已经存在。
+	 *切换选项时，再次请求此模块，后端响应直接嵌入这个容器，需要剥离外部容器
 	 */
 	public static function build_module_link($args, $text, $ajax_type) {
-		$defaults['wrap'] = '0';
-		$args             = http_build_query(wp_parse_args($args, $defaults));
+		$args = http_build_query(
+			wp_parse_args($args, ['wrap' => ('embed' == $ajax_type) ? '0' : '1'])
+		);
 
 		if ('embed' == $ajax_type) {
 			return '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'' . $args . '\');">' . $text . '</a>';
