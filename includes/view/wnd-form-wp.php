@@ -433,7 +433,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$html .= '</div>';
 
 		// 遍历输出图片集
-		$html .= '<div class="gallery columns is-vcentered has-text-centered is-multiline">';
+		$html .= '<div class="gallery columns is-vcentered has-text-centered is-multiline is-marginless">';
 		if (!$images) {
 			$html .= '<div class="column default-message">';
 			$html .= '<p>' . $args['label'] . '</p>';
