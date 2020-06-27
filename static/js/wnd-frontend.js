@@ -263,12 +263,11 @@ function wnd_ajax_embed(container, module, param = 0) {
 		//后台返回数据前
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-			$(container).addClass("is-loading");
+			wnd_loading(container, true);
 		},
 		//成功后
 		success: function(response) {
-			// 清除加载中效果
-			$(container).removeClass("is-loading");
+			wnd_loading(container, false);
 
 			if (typeof response == "object") {
 				wnd_alert_msg(response.msg);
@@ -298,6 +297,28 @@ function wnd_ajax_form_msg(form_id, msg, style) {
 		wnd_ajax_msg(msg, style, "#" + form_id);
 	} else {
 		wnd_alert_msg('<div class="message ' + style + '"><div class="message-body">' + msg + '</div></div>');
+	}
+}
+
+/**
+ *@since 2020.06.27
+ *给指定容器加载中效果
+ */
+function wnd_loading(container, add) {
+	if (add) {
+		$(container).css({
+			"position": "relative"
+		});
+
+		$(container).append(
+			'<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:999;background:#FFF;opacity:0.7"></div>'
+		);
+	} else {
+		$(container + " .wnd-loading").remove();
+
+		$(container).css({
+			"position": "initial"
+		});
 	}
 }
 
@@ -998,10 +1019,10 @@ jQuery(document).ready(function($) {
 			data: filter_param,
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-				$(filter_param.wnd_ajax_container).addClass("is-loading");
+				wnd_loading(filter_param.wnd_ajax_container, true);
 			},
 			success: function(response) {
-				$(filter_param.wnd_ajax_container).removeClass("is-loading");
+				wnd_loading(filter_param.wnd_ajax_container, false);
 
 				// 切换post type时，隐藏所有taxonomy 再根据当前post type支持的taxonomy选择性显示，以达到ajax切换的效果
 				if ("type" == key) {
@@ -1103,10 +1124,10 @@ jQuery(document).ready(function($) {
 			data: filter_user_param,
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-				$(filter_user_param.wnd_ajax_container).addClass("is-loading");
+				wnd_loading(filter_user_param.wnd_ajax_container, true);
 			},
 			success: function(response) {
-				$(filter_user_param.wnd_ajax_container).removeClass("is-loading");
+				wnd_loading(filter_user_param.wnd_ajax_container, false);
 
 				// 嵌入查询结果
 				$(filter_user_param.wnd_ajax_container).html(response.data.users + response.data.pagination);
