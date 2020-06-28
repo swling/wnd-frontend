@@ -102,6 +102,13 @@ class Wnd_Add_Action_WP {
 			wnd_inc_wnd_post_meta($delete_post->post_parent, 'order_count', -1, true);
 			wp_cache_delete($delete_post->post_author . '-' . $delete_post->post_parent, 'wnd_has_paid');
 		}
+
+		/**
+		 * @since 2020.06.28 删除邮件时删除邮件查询对象缓存
+		 */
+		if ('mail' == $delete_post->post_type) {
+			wp_cache_delete($delete_post->post_author, 'wnd_mail_count');
+		}
 	}
 
 	/**

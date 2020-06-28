@@ -172,7 +172,7 @@ abstract class Wnd_Transaction {
 	 *获取消费金额
 	 **/
 	public function get_total_amount(): float {
-		return number_format($this->post->post_content, 2, '.', '');
+		return number_format(floatval($this->post->post_content), 2, '.', '');
 	}
 
 	/**
