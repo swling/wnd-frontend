@@ -126,8 +126,7 @@ class Wnd_Finance {
 	 *@return 	float 	用户余额
 	 */
 	public static function get_user_money($user_id) {
-		$money = wnd_get_user_meta($user_id, 'money');
-		$money = is_numeric($money) ? $money : 0.00;
+		$money = floatval(wnd_get_user_meta($user_id, 'money'));
 		return number_format($money, 2, '.', '');
 	}
 
@@ -156,8 +155,7 @@ class Wnd_Finance {
 	 *
 	 */
 	public static function get_user_expense($user_id) {
-		$expense = wnd_get_user_meta($user_id, 'expense');
-		$expense = is_numeric($expense) ? $expense : 0.00;
+		$expense = floatval(wnd_get_user_meta($user_id, 'expense'));
 		return number_format($expense, 2, '.', '');
 	}
 
@@ -178,8 +176,7 @@ class Wnd_Finance {
 	 *@return 	float 	用户佣金
 	 */
 	public static function get_user_commission($user_id) {
-		$commission = wnd_get_user_meta($user_id, 'commission');
-		$commission = is_numeric($commission) ? $commission : 0.00;
+		$commission = floatval(wnd_get_user_meta($user_id, 'commission'));
 		return number_format($commission, 2, '.', '');
 	}
 
@@ -190,8 +187,7 @@ class Wnd_Finance {
 	 *@return  	float 	两位数的价格信息 或者 0
 	 */
 	public static function get_post_price($post_id) {
-		$price = get_post_meta($post_id, 'price', 1) ?: false;
-		$price = is_numeric($price) ? number_format($price, 2, '.', '') : 0.00;
+		$price = floatval(get_post_meta($post_id, 'price', 1) ?: 0);
 		return apply_filters('wnd_get_post_price', $price, $post_id);
 	}
 
@@ -202,7 +198,7 @@ class Wnd_Finance {
 	 *@return 	float 	佣金分成
 	 */
 	public static function get_post_commission($post_id) {
-		$commission_rate = is_numeric(wnd_get_config('commission_rate')) ? wnd_get_config('commission_rate') : 0.00;
+		$commission_rate = floatval(wnd_get_config('commission_rate'));
 		$commission      = wnd_get_post_price($post_id) * $commission_rate;
 		$commission      = number_format($commission, 2, '.', '');
 		return apply_filters('wnd_get_post_commission', $commission, $post_id);
@@ -227,8 +223,7 @@ class Wnd_Finance {
 	 *@return 	float 	用户佣金
 	 */
 	public static function get_post_total_commission($post_id) {
-		$total_commission = wnd_get_post_meta($post_id, 'total_commission');
-		$total_commission = is_numeric($total_commission) ? $total_commission : 0.00;
+		$total_commission = floatval(wnd_get_post_meta($post_id, 'total_commission'));
 		return number_format($total_commission, 2, '.', '');
 	}
 
@@ -249,8 +244,7 @@ class Wnd_Finance {
 	 *@return 	float 	用户佣金
 	 */
 	public static function get_post_total_sales($post_id) {
-		$total_sales = wnd_get_post_meta($post_id, 'total_sales');
-		$total_sales = is_numeric($total_sales) ? $total_sales : 0.00;
+		$total_sales = floatval(wnd_get_post_meta($post_id, 'total_sales'));
 		return number_format($total_sales, 2, '.', '');
 	}
 
