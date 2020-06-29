@@ -90,7 +90,7 @@ apply_filters('wnd_user_panel_post_types', $post_types);
 ```
 
 ## 配置Wnd Config
-所有的配置选项如果通过 Wnd\Model\Wnd_Config::get($option)获取，均自动加载一个与其$option名称对应的filter
+所有的配置选项如果通过 Wnd\Utility\Wnd_Config::get($option)获取，均自动加载一个与其$option名称对应的filter
 *注意：$option可以省略wnd_前缀，但filter不会改变，以下代码为其中一个配置的实例*
 ```php
 /**

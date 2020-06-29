@@ -1,5 +1,4 @@
 <?php
-use Wnd\Model\Wnd_Config;
 
 /**
  *@since 2019.01.21 获取do page地址
@@ -16,7 +15,7 @@ function wnd_get_do_url() {
  *获取配置选项
  */
 function wnd_get_config($config_key) {
-	return Wnd_Config::get($config_key);
+	return Wnd\Utility\Wnd_Config::get($config_key);
 }
 
 /**

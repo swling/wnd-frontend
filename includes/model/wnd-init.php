@@ -4,7 +4,7 @@ namespace Wnd\Model;
 use Wnd\Controller\Wnd_API;
 use Wnd\Hook\Wnd_Hook;
 use Wnd\Model\Wnd_DB;
-use Wnd\Model\Wnd_language;
+use Wnd\Utility\Wnd_language;
 use Wnd\Utility\Wnd_Optimization;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
