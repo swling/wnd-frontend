@@ -22,7 +22,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 		<div class="level-item has-text-centered">
 			<div>
 				<p class="heading">' . __('余额', 'wnd') . '</p>
-				<p class="title">' . wnd_get_user_money($user_id) . '</p>
+				<p class="title">' . wnd_get_user_money($user_id, true) . '</p>
 			</div>
 		</div>';
 
@@ -30,7 +30,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 		<div class="level-item has-text-centered">
 			<div>
 				<p class="heading">' . __('消费', 'wnd') . '</p>
-				<p class="title">' . wnd_get_user_expense($user_id) . '</p>
+				<p class="title">' . wnd_get_user_expense($user_id, true) . '</p>
 			</div>
 		</div>';
 
@@ -39,7 +39,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module {
 		<div class="level-item has-text-centered">
 			<div>
 				<p class="heading">' . __('佣金', 'wnd') . '</p>
-				<p class="title">' . wnd_get_user_commission($user_id) . '</p>
+				<p class="title">' . wnd_get_user_commission($user_id, true) . '</p>
 			</div>
 		</div>';
 		}
