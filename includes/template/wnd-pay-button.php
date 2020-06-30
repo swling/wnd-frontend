@@ -52,8 +52,8 @@ class Wnd_Pay_Button {
 		}
 
 		static::$user_id       = get_current_user_id();
-		static::$post_price    = wnd_get_post_price(static::$post_id);
-		static::$user_money    = wnd_get_user_money(static::$user_id);
+		static::$post_price    = wnd_get_post_price(static::$post_id, true);
+		static::$user_money    = wnd_get_user_money(static::$user_id, true);
 		static::$user_has_paid = wnd_user_has_paid(static::$user_id, static::$post_id);
 		static::$file_id       = wnd_get_post_meta(static::$post_id, 'file');
 		static::$second_color  = 'is-' . wnd_get_config('second_color');
@@ -160,7 +160,7 @@ class Wnd_Pay_Button {
 
 		// 其他情况
 		static::$message .= '<p>' . __('文件需付费下载', 'wnd') . '</p>';
-		if (static::$post_price > 0) {
+		if (floatval(static::$post_price) > 0) {
 			static::$button_text = __('付费下载', 'wnd');
 		} else {
 			static::$button_text = __('免费下载', 'wnd');
