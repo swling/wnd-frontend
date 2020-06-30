@@ -105,6 +105,16 @@ class Wnd_Pay_Button {
 		// 当包含文件时，无论是否已支付，均需要提交下载请求，是否扣费将在Wnd\Action\Wnd_Pay_For_Downloads判断
 		if (!static::$disabled and (!static::$user_has_paid or static::$file_id)) {
 			$form = new Wnd_Form_WP();
+			if (!static::$user_has_paid) {
+				$form->add_checkbox(
+					[
+						'name'     => 'agreement',
+						'options'  => [__('已同意站内交易协议') => 1],
+						'checked'  => false,
+						'required' => 'required',
+					]
+				);
+			}
 			$form->add_hidden('post_id', static::$post_id);
 			$form->set_action(static::$action);
 			$form->set_submit_button(static::$button_text);

@@ -221,10 +221,10 @@ function wnd_pay_button($post_id, $with_paid_content) {
  *构建消息
  *@since 2020.03.22
  */
-function wnd_message($message, $color = '', $centered = false) {
+function wnd_message($message, $color = '', $is_centered = false) {
 	$class = 'message content wnd-message';
 	$class .= $color ? ' ' . $color : '';
-	$class .= $centered ? ' has-text-centered' : '';
+	$class .= $is_centered ? ' has-text-centered' : '';
 
 	return '<div class="' . $class . '"><div class="message-body">' . $message . '</div></div>';
 }

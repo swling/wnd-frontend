@@ -188,6 +188,7 @@ class Wnd_Finance {
 	 */
 	public static function get_post_price($post_id) {
 		$price = floatval(get_post_meta($post_id, 'price', 1) ?: 0);
+		$price = number_format($price, 2, '.', '');
 		return apply_filters('wnd_get_post_price', $price, $post_id);
 	}
 

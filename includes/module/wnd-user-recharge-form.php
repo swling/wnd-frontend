@@ -18,7 +18,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module {
 		$form->add_radio(
 			[
 				'name'     => 'total_amount',
-				'options'  => ['0.01' => '0.01', '10' => '10', '100' => '100', '200' => '200', '500' => '500'],
+				'options'  => ['0.01' => '0.01', '10.00' => '10.00', '50.00' => '50.00', '100.00' => '100.00', '500.00' => '500.00'],
 				'required' => 'required',
 				'class'    => 'is-checkradio is-danger',
 			]

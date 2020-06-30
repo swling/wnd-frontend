@@ -37,22 +37,24 @@ abstract class Wnd_Module {
 	/**
 	 *构建系统通知
 	 */
-	public static function build_notification($notification) {
+	public static function build_notification($notification, $is_centered = false) {
 		if (!$notification) {
 			return;
 		}
 
-		return wnd_notification($notification, 'is-primary', false);
+		$class = $is_centered ? 'is-primary has-text-centered' : 'is-primary';
+		return wnd_notification($notification, $class, false);
 	}
 
 	/**
 	 *构建系统错误通知
 	 */
-	public static function build_error_notification($notification) {
+	public static function build_error_notification($notification, $is_centered = false) {
 		if (!$notification) {
 			return;
 		}
 
+		$class = $is_centered ? 'is-danger has-text-centered' : 'is-primary';
 		return wnd_notification($notification, 'is-danger', false);
 	}
 }

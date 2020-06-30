@@ -56,15 +56,16 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		$post_price    = wnd_get_post_price($post_id);
 		$user_money    = wnd_get_user_money($user_id);
 		$primary_color = 'is-' . wnd_get_config('primary_color');
+		$second_color  = 'is-' . wnd_get_config('second_color');
 
 		// 余额不足
 		if ($post_price > $user_money) {
 			$msg = '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . $user_money . '</b>&nbsp;&nbsp;' . __('本次消费：¥ ', 'wnd') . '<b>' . $post_price . '</b></p>';
 			if (wnd_get_config('alipay_appid')) {
-				$msg .= '<a rel="nofollow" class="button ' . $primary_color . '" href="' . wnd_order_link($post_id) . '">' . __('在线支付') . '</a>';
+				$msg .= wnd_modal_button(__('在线支付', 'wnd'), 'wnd_order_form', $post_id, $primary_color);
 				$msg .= '&nbsp;&nbsp;';
 			}
-			$msg .= wnd_modal_button(__('余额充值', 'wnd'), 'wnd_user_recharge_form', '', $primary_color . ' is-outlined');
+			$msg .= wnd_modal_button(__('余额充值', 'wnd'), 'wnd_user_recharge_form', '', $second_color . ' is-outlined');
 
 			throw new Exception($msg);
 		}
