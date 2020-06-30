@@ -48,8 +48,8 @@ function wnd_inc_user_money($user_id, $money) {
  *@param 	int 	$user_id 	用户ID
  *@return 	float 	用户余额
  */
-function wnd_get_user_money($user_id) {
-	return Wnd_Finance::get_user_money($user_id);
+function wnd_get_user_money($user_id, $format = false) {
+	return Wnd_Finance::get_user_money($user_id, $format);
 }
 
 /**
@@ -69,8 +69,8 @@ function wnd_inc_user_expense($user_id, $money) {
  *@return 	float 	用户消费
  *
  */
-function wnd_get_user_expense($user_id) {
-	return Wnd_Finance::get_user_expense($user_id);
+function wnd_get_user_expense($user_id, $format = false) {
+	return Wnd_Finance::get_user_expense($user_id, $format);
 }
 
 /**
@@ -89,8 +89,8 @@ function wnd_inc_user_commission($user_id, $money) {
  *
  *@return 	float 	用户佣金
  */
-function wnd_get_user_commission($user_id) {
-	return Wnd_Finance::get_user_commission($user_id);
+function wnd_get_user_commission($user_id, $format = false) {
+	return Wnd_Finance::get_user_commission($user_id, $format);
 }
 
 /**
@@ -99,8 +99,8 @@ function wnd_get_user_commission($user_id) {
  *@param 	int 	$user_id 	用户ID
  *@return  	float 	两位数的价格信息 或者 0
  */
-function wnd_get_post_price($post_id) {
-	return Wnd_Finance::get_post_price($post_id);
+function wnd_get_post_price($post_id, $format = false) {
+	return Wnd_Finance::get_post_price($post_id, $format);
 }
 
 /**
@@ -109,8 +109,8 @@ function wnd_get_post_price($post_id) {
  *@param 	int 	$post_id
  *@return 	float 	佣金分成
  */
-function wnd_get_post_commission($post_id) {
-	return Wnd_Finance::get_post_commission($post_id);
+function wnd_get_post_commission($post_id, $format = false) {
+	return Wnd_Finance::get_post_commission($post_id, $format);
 }
 
 /**
@@ -131,8 +131,8 @@ function wnd_inc_post_total_commission($post_id, $money) {
  *@param 	int 	$post_id  Post ID
  *@return 	float 	用户佣金
  */
-function wnd_get_post_total_commission($post_id) {
-	return Wnd_Finance::get_post_total_commission($post_id);
+function wnd_get_post_total_commission($post_id, $format = false) {
+	return Wnd_Finance::get_post_total_commission($post_id, $format);
 }
 
 /**
@@ -151,6 +151,6 @@ function wnd_inc_post_total_sales($post_id, $money) {
  *@param 	int 	$user_id 	用户ID
  *@return 	float 	用户佣金
  */
-function wnd_get_post_total_sales($post_id) {
-	return Wnd_Finance::get_post_total_sales($post_id);
+function wnd_get_post_total_sales($post_id, $format = false) {
+	return Wnd_Finance::get_post_total_sales($post_id, $format);
 }

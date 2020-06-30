@@ -125,9 +125,9 @@ class Wnd_Finance {
 	 *@param 	int 	$user_id 	用户ID
 	 *@return 	float 	用户余额
 	 */
-	public static function get_user_money($user_id) {
+	public static function get_user_money($user_id, $format = false) {
 		$money = floatval(wnd_get_user_meta($user_id, 'money'));
-		return number_format($money, 2, '.', '');
+		return $format ? number_format($money, 2, '.', '') : $money;
 	}
 
 	/**
@@ -154,9 +154,9 @@ class Wnd_Finance {
 	 *@return 	float 	用户消费
 	 *
 	 */
-	public static function get_user_expense($user_id) {
+	public static function get_user_expense($user_id, $format = false) {
 		$expense = floatval(wnd_get_user_meta($user_id, 'expense'));
-		return number_format($expense, 2, '.', '');
+		return $format ? number_format($expense, 2, '.', '') : $expense;
 	}
 
 	/**
@@ -175,9 +175,9 @@ class Wnd_Finance {
 	 *
 	 *@return 	float 	用户佣金
 	 */
-	public static function get_user_commission($user_id) {
+	public static function get_user_commission($user_id, $format = false) {
 		$commission = floatval(wnd_get_user_meta($user_id, 'commission'));
-		return number_format($commission, 2, '.', '');
+		return $format ? number_format($commission, 2, '.', '') : $commission;
 	}
 
 	/**
@@ -186,10 +186,10 @@ class Wnd_Finance {
 	 *@param 	int 	$user_id 	用户ID
 	 *@return  	float 	两位数的价格信息 或者 0
 	 */
-	public static function get_post_price($post_id) {
+	public static function get_post_price($post_id, $format = false) {
 		$price = floatval(get_post_meta($post_id, 'price', 1) ?: 0);
-		$price = number_format($price, 2, '.', '');
-		return apply_filters('wnd_get_post_price', $price, $post_id);
+		$price = apply_filters('wnd_get_post_price', $price, $post_id);
+		return $format ? number_format($price, 2, '.', '') : $price;
 	}
 
 	/**
@@ -198,11 +198,11 @@ class Wnd_Finance {
 	 *@param 	int 	$post_id
 	 *@return 	float 	佣金分成
 	 */
-	public static function get_post_commission($post_id) {
+	public static function get_post_commission($post_id, $format = false) {
 		$commission_rate = floatval(wnd_get_config('commission_rate'));
 		$commission      = wnd_get_post_price($post_id) * $commission_rate;
-		$commission      = number_format($commission, 2, '.', '');
-		return apply_filters('wnd_get_post_commission', $commission, $post_id);
+		$commission      = apply_filters('wnd_get_post_commission', $commission, $post_id);
+		return $format ? number_format($commission, 2, '.', '') : $commission;
 	}
 
 	/**
@@ -223,9 +223,9 @@ class Wnd_Finance {
 	 *@param 	int 	$post_id  Post ID
 	 *@return 	float 	用户佣金
 	 */
-	public static function get_post_total_commission($post_id) {
+	public static function get_post_total_commission($post_id, $format = false) {
 		$total_commission = floatval(wnd_get_post_meta($post_id, 'total_commission'));
-		return number_format($total_commission, 2, '.', '');
+		return $format ? number_format($total_commission, 2, '.', '') : $total_commission;
 	}
 
 	/**
@@ -244,9 +244,9 @@ class Wnd_Finance {
 	 *@param 	int 	$user_id 	用户ID
 	 *@return 	float 	用户佣金
 	 */
-	public static function get_post_total_sales($post_id) {
+	public static function get_post_total_sales($post_id, $format = false) {
 		$total_sales = floatval(wnd_get_post_meta($post_id, 'total_sales'));
-		return number_format($total_sales, 2, '.', '');
+		return $format ? number_format($total_sales, 2, '.', '') : $total_sales;
 	}
 
 	/**
