@@ -36,7 +36,7 @@ class Wnd_Attachment_Form extends Wnd_Module {
 		$defaults = [
 			'attachment_id' => 0,
 			'post_parent'   => 0,
-			'meta_key'      => null,
+			'meta_key'      => '',
 		];
 		$args = wp_parse_args($args, $defaults);
 

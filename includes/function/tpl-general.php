@@ -90,7 +90,7 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 	 *左侧导航
 	 **/
 	$html .= '<div class="column is-narrow is-size-7 breadcrumb-right">';
-	$breadcrumb_right = null;
+	$breadcrumb_right = '';
 	// 内页编辑
 	if (is_single()) {
 		if (current_user_can('edit_post', $queried_object->ID)) {

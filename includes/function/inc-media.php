@@ -112,7 +112,7 @@ function wnd_get_thumbnail_url($id_or_url, $width = 160, $height = 120) {
  *                        or 'id' (attachment ID). Default 'html'.
  * @return string|WP_Error Populated HTML img tag on success, WP_Error object otherwise.
  */
-function wnd_media_sideload($file, $post_id, $desc = null, $return = 'id') {
+function wnd_media_sideload($file, $post_id, $desc = '', $return = 'id') {
 	if (!function_exists('media_handle_sideload')) {
 		require ABSPATH . 'wp-admin/includes/media.php';
 		require ABSPATH . 'wp-admin/includes/file.php';
@@ -128,7 +128,7 @@ function wnd_media_sideload($file, $post_id, $desc = null, $return = 'id') {
 		 *将远程文件随机重命名
 		 */
 		$info = pathinfo($file);
-		$ext  = isset($info['extension']) ? '.' . $info['extension'] : null;
+		$ext  = isset($info['extension']) ? '.' . $info['extension'] : '';
 		if (!$ext) {
 			return new WP_Error('image_sideload_failed');
 		}

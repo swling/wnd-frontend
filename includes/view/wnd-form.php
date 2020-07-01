@@ -40,14 +40,14 @@ class Wnd_Form {
 	public $html;
 
 	protected static $defaults = [
-		'id'          => null,
-		'class'       => null,
+		'id'          => '',
+		'class'       => '',
 		'name'        => '',
 		'value'       => '',
-		'label'       => null,
+		'label'       => '',
 		'options'     => [], //value of select/radio. Example: [label=>value]
-		'checked'     => null, // checked value of select/radio; bool of checkbox
-		'selected'    => null, // selected value if select
+		'checked'     => '', // checked value of select/radio; bool of checkbox
+		'selected'    => '', // selected value if select
 		'required'    => false,
 		'disabled'    => false,
 		'autofocus'   => false,
@@ -62,10 +62,10 @@ class Wnd_Form {
 		'multiple'    => '',
 
 		// icon and addon
-		'icon_left'   => null,
-		'icon_right'  => null,
-		'addon_left'  => null,
-		'addon_right' => null,
+		'icon_left'   => '',
+		'icon_right'  => '',
+		'addon_left'  => '',
+		'addon_right' => '',
 	];
 
 	/**

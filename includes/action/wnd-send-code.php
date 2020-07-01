@@ -18,7 +18,7 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 		$is_email       = $_POST['is_email'] ?: false;
 		$text           = $is_email ? __('邮箱', 'wnd') : __('手机', 'wnd');
 		$template       = $_POST['template'] ?: wnd_get_config('sms_template_v');
-		$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? null;
+		$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? '';
 		$current_user   = wp_get_current_user();
 
 		// 防止前端篡改表单：校验验证码类型及接受设备

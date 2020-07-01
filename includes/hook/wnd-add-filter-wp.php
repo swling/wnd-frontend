@@ -35,7 +35,7 @@ class Wnd_Add_Filter_WP {
 
 		// 文件信息
 		$info = pathinfo($file['name']);
-		$ext  = isset($info['extension']) ? '.' . $info['extension'] : null;
+		$ext  = isset($info['extension']) ? '.' . $info['extension'] : '';
 		if (!$ext) {
 			$file['error'] = '未能获取到文件拓展名';
 			return $file;

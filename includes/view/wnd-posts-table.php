@@ -16,9 +16,9 @@ class Wnd_Posts_Table {
 	protected $show_edit;
 	protected static $defaults = [
 		'post_field' => '',
-		'title'      => null,
-		'content'    => null,
-		'class'      => null,
+		'title'      => '',
+		'content'    => '',
+		'class'      => '',
 	];
 	public $html;
 

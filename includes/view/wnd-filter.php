@@ -476,7 +476,7 @@ class Wnd_Filter {
 	 */
 	public function add_taxonomy_filter(array $args) {
 		$args['parent'] = $args['parent'] ?? 0;
-		$taxonomy       = $args['taxonomy'] ?? null;
+		$taxonomy       = $args['taxonomy'] ?? '';
 		if (!$taxonomy) {
 			return;
 		}

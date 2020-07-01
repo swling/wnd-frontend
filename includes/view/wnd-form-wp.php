@@ -15,9 +15,9 @@ use Wnd\Utility\Wnd_Form_Data;
 class Wnd_Form_WP extends Wnd_Form {
 
 	protected $user;
-	protected $filter     = null;
+	protected $filter     = '';
 	protected $form_names = [];
-	protected $message    = null;
+	protected $message    = '';
 	protected $is_ajax_submit;
 
 	public static $primary_color;
