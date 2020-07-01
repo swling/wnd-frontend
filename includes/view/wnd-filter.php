@@ -109,7 +109,7 @@ class Wnd_Filter {
 		$this->wp_query_args = array_merge($this->wp_query_args, static::$http_query);
 
 		// 初始化时生成uniqid，并加入query参数，以便在ajax生成的新请求中保持一致
-		$this->uniqid = $uniqid ?: $this->wp_query_args['wnd_uniqid'] ?: uniqid();
+		$this->uniqid = $uniqid ?: ($this->wp_query_args['wnd_uniqid'] ?: uniqid());
 		$this->add_query(['wnd_uniqid' => $this->uniqid]);
 
 		/**
