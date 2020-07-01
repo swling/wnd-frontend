@@ -12,7 +12,7 @@ use Wnd\Model\Wnd_Payment;
  *			故此，相关异常应使用 exit 中止并输出。不得直接抛出异常
  *
  */
-class Wnd_Verify_Pay {
+class Wnd_Verify_Pay extends Wnd_Action {
 
 	public static function execute() {
 		/**

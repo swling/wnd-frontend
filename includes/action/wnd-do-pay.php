@@ -8,7 +8,7 @@ use Wnd\Model\Wnd_Payment;
  *创建支付
  *@since 2020.06.19
  */
-class Wnd_Do_Pay {
+class Wnd_Do_Pay extends Wnd_Action {
 
 	public static function execute() {
 		$post_id         = $_REQUEST['post_id'] ?? 0;
