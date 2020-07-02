@@ -27,6 +27,7 @@ class Wnd_Pay_Button {
 	protected static $file_id;
 
 	protected static $user_id;
+	protected static $is_author;
 	protected static $user_money;
 	protected static $user_has_paid;
 
@@ -52,6 +53,7 @@ class Wnd_Pay_Button {
 		}
 
 		static::$user_id       = get_current_user_id();
+		static::$is_author     = static::$user_id == static::$post->post_author ? true : false;
 		static::$post_price    = wnd_get_post_price(static::$post_id, true);
 		static::$user_money    = wnd_get_user_money(static::$user_id, true);
 		static::$user_has_paid = wnd_user_has_paid(static::$user_id, static::$post_id);
@@ -105,11 +107,11 @@ class Wnd_Pay_Button {
 		// 当包含文件时，无论是否已支付，均需要提交下载请求，是否扣费将在Wnd\Action\Wnd_Pay_For_Downloads判断
 		if (!static::$disabled and (!static::$user_has_paid or static::$file_id)) {
 			$form = new Wnd_Form_WP();
-			if (!static::$user_has_paid) {
+			if (!static::$user_has_paid and !static::$is_author) {
 				$form->add_checkbox(
 					[
 						'name'     => 'agreement',
-						'options'  => [__('已同意站内交易协议') => 1],
+						'options'  => [__('已阅读并同意交易协议') => 1],
 						'checked'  => false,
 						'required' => 'required',
 					]
@@ -151,7 +153,7 @@ class Wnd_Pay_Button {
 		}
 
 		// 作者
-		if (static::$user_id == static::$post->post_author) {
+		if (static::$is_author) {
 			static::$message .= '<p>' . __('您发布的付费下载：¥ ', 'wnd') . static::$post_price . '</p>';
 			static::$button_text = __('下载', 'wnd');
 			return;
@@ -180,7 +182,7 @@ class Wnd_Pay_Button {
 		}
 
 		// 作者本人
-		if (static::$user_id == static::$post->post_author) {
+		if (static::$is_author) {
 			static::$message .= '<p>' . __('您的付费文章：¥ ', 'wnd') . static::$post_price . '</p>';
 			return;
 		}
@@ -214,7 +216,7 @@ class Wnd_Pay_Button {
 		}
 
 		// 作者本人
-		if (static::$user_id == static::$post->post_author) {
+		if (static::$is_author) {
 			static::$message .= '<p>' . __('您的付费内容：¥ ', 'wnd') . static::$post_price . '</p>';
 			return;
 		}
