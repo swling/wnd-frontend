@@ -27,7 +27,7 @@ class Wnd_User_Center extends Wnd_Module {
 		 *@see 2019.08.17
 		 *在非ajax环境中，约定了GET参数，实现切换模块切换，故此，需要确保GET参数优先级
 		 **/
-		$args = wp_parse_args($args, $defaults, $_GET);
+		$args = array_merge(wp_parse_args($args, $defaults), $_GET);
 		extract($args);
 
 		/**
