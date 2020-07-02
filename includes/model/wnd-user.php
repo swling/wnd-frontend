@@ -133,7 +133,7 @@ class Wnd_User {
 		 *
 		 *本插件已禁用纯数字用户名：@see wnd_ajax_reg()
 		 */
-		if (wnd_is_phone($email_or_phone_or_login)) {
+		if (wnd_is_mobile($email_or_phone_or_login)) {
 			// 查询对象缓存
 			$user_id = wp_cache_get($email_or_phone_or_login, 'wnd_phone');
 			if ($user_id) {

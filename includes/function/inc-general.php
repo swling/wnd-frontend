@@ -110,7 +110,7 @@ function wnd_generate_order_NO() {
  *@param 	string 	$phone 	需要验证的手机号
  *@return 	bool 	是否为合法的手机号码格式
  */
-function wnd_is_phone($phone) {
+function wnd_is_mobile($phone) {
 	if ((empty($phone) or !preg_match("/^(((13[0-9]{1})|(15[0-9]{1})|(17[0-9]{1})|(18[0-9]{1})|(19[0-9]{1}))+\d{8})$/", $phone))) {
 		return false;
 	} else {

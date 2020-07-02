@@ -25,7 +25,7 @@ abstract class Wnd_Binder {
 	public static function get_instance($bound_object) {
 		if (is_email($bound_object)) {
 			return new Wnd_Binder_Email($bound_object);
-		} elseif (wnd_is_phone($bound_object)) {
+		} elseif (wnd_is_mobile($bound_object)) {
 			return new Wnd_Binder_Phone($bound_object);
 		}
 	}

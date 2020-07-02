@@ -67,7 +67,7 @@ abstract class Wnd_Auth {
 			return new Wnd_Auth_Email($auth_object);
 		}
 
-		if (wnd_is_phone($auth_object)) {
+		if (wnd_is_mobile($auth_object)) {
 			static::$text = __('手机', 'wnd');
 			return new Wnd_Auth_Phone($auth_object);
 		}

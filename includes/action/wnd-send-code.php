@@ -40,7 +40,7 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 		// 检测对应手机或邮箱格式：防止在邮箱绑定中输入手机号，反之亦然
 		if ($is_email and !is_email($email_or_phone)) {
 			return ['status' => 0, 'msg' => __('邮箱地址无效', 'wnd')];
-		} elseif (!$is_email and !wnd_is_phone($email_or_phone)) {
+		} elseif (!$is_email and !wnd_is_mobile($email_or_phone)) {
 			return ['status' => 0, 'msg' => __('手机号码无效', 'wnd')];
 		}
 
