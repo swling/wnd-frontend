@@ -14,6 +14,12 @@ class Wnd_Login_Form extends Wnd_Module {
 			return static::build_error_message(__('已登录', 'wnd'));
 		}
 
+		/**
+		 *移除本插件用户中心相关调用参数
+		 *@since 2020.07.03
+		 */
+		$redirect_to = remove_query_arg(['do', 'type', 'tab', 'wrap'], $_SERVER['HTTP_REFERER'] ?? false);
+
 		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
 		$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>' . __('登录', 'wnd'), true);
@@ -26,7 +32,7 @@ class Wnd_Login_Form extends Wnd_Module {
 				'checked' => '1',
 			]
 		);
-		$form->add_hidden('redirect_to', $_SERVER['HTTP_REFERER'] ?? home_url());
+		$form->add_hidden('redirect_to', $redirect_to);
 		$form->set_action('wnd_login');
 		$form->set_submit_button(__('登录', 'wnd'));
 		$form->set_filter(__CLASS__);

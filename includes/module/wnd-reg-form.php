@@ -46,7 +46,7 @@ class Wnd_Reg_Form extends Wnd_Module {
 		}
 		$form->add_user_password(__('密码', 'wnd'), __('密码', 'wnd'));
 
-		if ($type == 'phone') {
+		if ('phone' == $type) {
 			$form->add_sms_verify('register', wnd_get_config('sms_template_r'));
 		} else {
 			$form->add_email_verify('register');
