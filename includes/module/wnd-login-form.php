@@ -18,7 +18,7 @@ class Wnd_Login_Form extends Wnd_Module {
 		 *移除本插件用户中心相关调用参数
 		 *@since 2020.07.03
 		 */
-		$redirect_to = remove_query_arg(['do', 'type', 'tab', 'wrap'], $_SERVER['HTTP_REFERER'] ?? false);
+		$redirect_to = wnd_doing_ajax() ? false : remove_query_arg(['do', 'type', 'tab', 'wrap'], $_SERVER['HTTP_REFERER'] ?? false);
 
 		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
