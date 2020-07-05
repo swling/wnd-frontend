@@ -24,6 +24,11 @@ class Wnd_Add_Filter_WP {
 	 * 限制wp editor上传附件
 	 */
 	public static function filter_limit_upload($file) {
+		// 排除后台
+		if (is_admin()) {
+			return $file;
+		}
+
 		// 上传体积限制
 		$image_size = $file['size'] / 1024;
 		$limit      = wnd_get_config('max_upload_size') ?: 2048;
