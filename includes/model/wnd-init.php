@@ -7,6 +7,7 @@ use Wnd\Model\Wnd_DB;
 use Wnd\Utility\Wnd_language;
 use Wnd\Utility\Wnd_Optimization;
 use Wnd\Utility\Wnd_Singleton_Trait;
+use Wnd\Utility\Wnd_Upgrader_Plugin_This;
 
 /**
  *初始化 单例模式
@@ -44,9 +45,13 @@ class Wnd_Init {
 
 		require WND_PATH . '/includes/function/tpl-general.php'; //通用模板
 
-		// 管理后台配置选项
+		// 管理后台
 		if (is_admin()) {
+			// 配置选项
 			require WND_PATH . '/wnd-options.php';
+
+			// 检查更新
+			new Wnd_Upgrader_Plugin_This;
 		}
 	}
 
@@ -75,11 +80,7 @@ class Wnd_Init {
 		if (!is_admin()) {
 			add_filter('rest_endpoints', function ($endpoints) {
 				foreach ($endpoints as $route => $endpoint) {
-					if (0 === stripos($route, '/wp/v2/users/me')) {
-						continue;
-					}
-
-					if (0 === stripos($route, '/wp/v2/posts') or 0 === stripos($route, '/wp/v2/users')) {
+					if (0 === stripos($route, '/wp/')) {
 						unset($endpoints[$route]);
 					}
 				}
