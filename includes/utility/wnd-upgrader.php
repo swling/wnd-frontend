@@ -15,8 +15,14 @@ abstract class Wnd_Upgrader {
 	// 插件入口文件或者主题文件夹，WP将以此作为更新识别
 	protected $plugin_file_or_theme_slug;
 
+	// 本地版本
+	protected $local_version;
+
 	// 瞬态类型，插件：pre_set_site_transient_update_plugins / 主题：pre_set_site_transient_update_themes
-	protected $update_transient;
+	protected $update_transient_name;
+
+	// API 瞬态缓存 key
+	protected $api_transient_name;
 
 	// 更新包信息
 	protected $upgrade_info = [
@@ -28,17 +34,17 @@ abstract class Wnd_Upgrader {
 		'package'     => '', //下载地址
 	];
 
-	// 远程版本
-	protected $remote_version;
-
-	// 本地版本
-	protected $local_version;
-
 	/**
 	 * Method called from the init hook to initiate the updater
 	 */
 	public function __construct() {
-		add_filter($this->update_transient, [$this, 'check_for_update'], 10, 1);
+		// 读取本地主题或插件信息
+		$this->get_local_info();
+		$this->upgrade_info['slug']   = $this->directory_name;
+		$this->upgrade_info['plugin'] = $this->directory_name;
+		$this->upgrade_info['theme']  = $this->directory_name;
+
+		add_filter($this->update_transient_name, [$this, 'check_for_update'], 10, 1);
 		add_filter('upgrader_source_selection', [$this, 'fix_directory_name'], 10, 4);
 	}
 
@@ -46,12 +52,22 @@ abstract class Wnd_Upgrader {
 	 *检测更新信息
 	 **/
 	public function check_for_update($transient): object{
-		// 构造升级包信息
-		$this->get_upgrade_info();
+		/**
+		 *自定义 API 本身是对WP瞬态的过滤器
+		 *故此，单独重新定义一个瞬态缓存当前插件或主题的远程 API 信息
+		 */
+		$upgrade_info = get_transient($this->api_transient_name);
+		if (false == $upgrade_info) {
+			$this->get_remote_info();
+			set_transient($this->api_transient_name, $this->upgrade_info, 43200); // 12 hours cache
+		} else {
+			$this->upgrade_info = $upgrade_info;
+		}
 
 		// 版本检测
-		if (!version_compare($this->remote_version, $this->local_version, '>')) {
-			return (object) $transient;
+		if (version_compare($this->upgrade_info['new_version'], $this->local_version, '<=')) {
+			unset($transient->response[$this->plugin_file_or_theme_slug]);
+			return $transient;
 		}
 
 		/**
@@ -59,10 +75,10 @@ abstract class Wnd_Upgrader {
 		 *插件需要返回对象型数据
 		 *主题则需返回数组型数据
 		 */
-		if ('pre_set_site_transient_update_plugins' == $this->update_transient) {
+		if ('pre_set_site_transient_update_plugins' == $this->update_transient_name) {
 			$transient->response[$this->plugin_file_or_theme_slug] = (object) $this->upgrade_info;
 
-		} elseif ('pre_set_site_transient_update_themes' == $this->update_transient) {
+		} elseif ('pre_set_site_transient_update_themes' == $this->update_transient_name) {
 			$transient->response[$this->plugin_file_or_theme_slug] = (array) $this->upgrade_info;
 		}
 
@@ -70,9 +86,23 @@ abstract class Wnd_Upgrader {
 	}
 
 	/**
-	 *获取更新包详细信息
+	 *获取本地主题或插件的基本信息，需要完成对如下信息的构造
+	 *
+	 *	$this->directory_name
+	 *	$this->local_version
+	 *	$this->plugin_file_or_theme_slug
+	 *	$this->api_transient_name
 	 */
-	abstract protected function get_upgrade_info();
+	abstract protected function get_local_info();
+
+	/**
+	 *获取更新包详细信息，至少需要完成如下下信息构造：
+	 *
+	 *	$this->upgrade_info['url'];
+	 *	$this->upgrade_info['package'];
+	 *	$this->upgrade_info['new_version'];
+	 */
+	abstract protected function get_remote_info();
 
 	/* -------------------------------------------------------------------
 		 * Fix directory name when installing updates

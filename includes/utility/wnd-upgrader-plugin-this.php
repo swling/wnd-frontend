@@ -12,17 +12,13 @@ class Wnd_Upgrader_Plugin_This extends Wnd_Upgrader_Plugin {
 	protected $plugin_file_or_theme_slug = 'wnd-frontend/wnd-frontend.php';
 
 	/**
-	 *获取更新包详细信息：集成子类需要在本方法中，完成如下信息完成构建
-	 *
-	 *	$this->remote_version;
+	 *获取更新包详细信息，至少需要完成如下下信息构造：
 	 *
 	 *	$this->upgrade_info['url'];
 	 *	$this->upgrade_info['package'];
-	 *	$this->upgrade_info['slug'];
-	 *	$this->upgrade_info['plugin'];
 	 *	$this->upgrade_info['new_version'];
 	 */
-	protected function get_upgrade_info() {
+	protected function get_remote_info() {
 		// $url      = 'https://api.github.com/repos/swling/wnd-frontend/releases';
 		// $response = wp_remote_get($url, ['headers' => ['Authorization' => 'token 2211ea551d8dc314ce715bae0b3ee5cd1de8d6b7']]);
 		// if (is_wp_error($response)) {
@@ -38,14 +34,9 @@ class Wnd_Upgrader_Plugin_This extends Wnd_Upgrader_Plugin {
 		$response['html_url']    = 'http://127.0.0.1/wordpress';
 		$response['zipball_url'] = 'http://127.0.0.1/wordpress.zip';
 
-		// 读取GitHub tag name
-		$this->remote_version = $response['tag_name'];
-
 		// 构造安装包信息
 		$this->upgrade_info['url']         = $response['html_url'];
 		$this->upgrade_info['package']     = $response['zipball_url'];
-		$this->upgrade_info['slug']        = $this->directory_name;
-		$this->upgrade_info['plugin']      = $this->directory_name;
-		$this->upgrade_info['new_version'] = $this->remote_version;
+		$this->upgrade_info['new_version'] = $response['tag_name'];
 	}
 }
