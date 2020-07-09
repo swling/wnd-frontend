@@ -6,22 +6,22 @@
 QQ：245484493  网站：https://wndwp.com
 
 ## 核心原理：
-1、通过前端表单name前缀自动归类提交的数据对应到WordPress文章，文章字段，用户字段等，从而实现可拓展的前端表单提交
-2、通过生成表单的同时，根据表单字段name值生成wp nonce，以防止表单字段被前端篡改
-3、前端上传图片，并按meta_key做存储在用户字段，或文章字段(以对应meta_key生成wp nonce，以实现meta_key校验)
-4、用户即文章的增删改最终底层实现均采用WordPress原生函数，因此对应操作中WordPress原生的action 及filter均有效
-5、相关ajax操作中，设置array filter以实现权限控制
+- 1、通过前端表单name前缀自动归类提交的数据对应到WordPress文章，文章字段，用户字段等，从而实现可拓展的前端表单提交
+- 2、通过生成表单的同时，根据表单字段name值生成wp nonce，以防止表单字段被前端篡改
+- 3、前端上传图片，并按meta_key做存储在用户字段，或文章字段(以对应meta_key生成wp nonce，以实现meta_key校验)
+- 4、用户即文章的增删改最终底层实现均采用WordPress原生函数，因此对应操作中WordPress原生的action 及filter均有效
+- 5、相关ajax操作中，设置array filter以实现权限控制
 *如未特别说明，字段均指WndWP自定义数组字段，而非wp原生字段*
 
 ## 功能列表
-0、基于bulma框架，ajax表单提交，ajax弹窗模块，ajax嵌入
-1、WordPress前端文章增删改 (含权限控制filter)
-2、WordPress前端注册用户增删改(含权限控制filter)
-3、WordPress订单系统，预设文章付费阅读，付费下载(含权限控制filter)
-4、支付，短信模块
-5、前端文件、图片上传
-6、数组形式合并存储多个user_meta、post_meta、option
-7、基于bulma的表单生成类：Wnd_Form、Wnd_Form_WP、Wnd_Form_Post、Wnd_Form_User。可快速生成各类表单
+- 0、基于bulma框架，ajax表单提交，ajax弹窗模块，ajax嵌入
+- 1、WordPress前端文章增删改 (含权限控制filter)
+- 2、WordPress前端注册用户增删改(含权限控制filter)
+- 3、WordPress订单系统，预设文章付费阅读，付费下载(含权限控制filter)
+- 4、支付，短信模块
+- 5、前端文件、图片上传
+- 6、数组形式合并存储多个user_meta、post_meta、option
+- 7、基于bulma的表单生成类：Wnd_Form、Wnd_Form_WP、Wnd_Form_Post、Wnd_Form_User。可快速生成各类表单
 
 ## 更多详情文档参见 /docs
 
@@ -29,9 +29,10 @@ QQ：245484493  网站：https://wndwp.com
 ## 用户角色
 - 普通注册用户的角色：author
 - editor及以上角色定义为管理员 wnd_is_manager()
+
+## 默认行为影响
 - 启用插件后，会禁用WordPress原生注册及登录功能，普通用户无法WordPress后台，同时删除了普通注册用户一些不必要的user meta
 - 启用插件后，会禁止WordPress原生的rest api
-- 启用插件后，会定期清理:XXX_tag类型的标签
 
 ## 分类与标签关联
 默认已支持WordPress原生post分类和标签关联。如需要支持自定义taxonomy，请遵循以下规则：
