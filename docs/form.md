@@ -14,6 +14,12 @@
 	_usermeta_{key} (*自定义数组字段)
 	_wpusermeta_{key} (*WordPress原生字段)
 
+## Option Form 规则
+option表单将整个表单字段作为数组存储在一个特定 wp option 记录中，表单字段 name 规则如下：
+```php
+"_option_$option_name_$option_key"
+```
+
 ## 手机验证表单：
 	phone
 	auth_code

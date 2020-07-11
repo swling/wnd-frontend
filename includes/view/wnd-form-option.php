@@ -23,6 +23,10 @@ use Wnd\Utility\Wnd_Form_Data;
  * - 在此基础上，索性使用表单filter，将所有表单字段悉数添加前缀。至此，便可利用 Wnd\Utility\Wnd_Form_Data 自动提取对应数据
  * - 新增方法：Wnd\Utility\Wnd_Form_Data->get_option_data($option_name);
  *
+ *字段：
+ *除Wnd_Form常规字段之外，新增了如下字段：
+ * - 页面下拉 add_page_select('ucenter', '用户中心页面', true);
+ * - Term下拉 add_term_select($option_key, $args_or_taxonomy, $label = '', $required = true, $dynamic_sub = false);
  */
 class Wnd_Form_Option extends Wnd_Form_WP {
 
