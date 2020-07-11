@@ -31,7 +31,7 @@ class Wnd_Pay_Button {
 	protected static $user_money;
 	protected static $user_has_paid;
 
-	protected static $second_color;
+	protected static $primary_color;
 
 	protected static $action;
 	protected static $message;
@@ -58,7 +58,7 @@ class Wnd_Pay_Button {
 		static::$user_money    = wnd_get_user_money(static::$user_id, true);
 		static::$user_has_paid = wnd_user_has_paid(static::$user_id, static::$post_id);
 		static::$file_id       = wnd_get_post_meta(static::$post_id, 'file');
-		static::$second_color  = 'is-' . wnd_get_config('second_color');
+		static::$primary_color = 'is-' . wnd_get_config('primary_color');
 		static::$message       = '<span class="icon is-size-5"><i class="fa ' . (static::$user_has_paid ? 'fa-unlock' : 'fa-lock') . '"></i></span>';
 
 		// 根据付费内容形式，构建对应变量：$message and $button_text
@@ -81,7 +81,7 @@ class Wnd_Pay_Button {
 			static::$html = '<div class="wnd-pay-button box has-text-centered">';
 			static::$html .= '<div class="pay-notification field">' . static::$message . '</div>';
 			static::$html .= '<div class="field is-grouped is-grouped-centered">';
-			static::$html .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login');
+			static::$html .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login', static::$primary_color);
 			static::$html .= '</div>';
 			static::$html .= '</div>';
 			return static::$html;
@@ -111,7 +111,7 @@ class Wnd_Pay_Button {
 				$form->add_checkbox(
 					[
 						'name'     => 'agreement',
-						'options'  => [__('已阅读并同意交易协议') => 1],
+						'options'  => ['<i class="is-size-7">' . __('已阅读并同意交易协议及产品使用协议') . '</i>' => 1],
 						'checked'  => false,
 						'required' => 'required',
 					]
@@ -154,17 +154,18 @@ class Wnd_Pay_Button {
 
 		// 作者
 		if (static::$is_author) {
-			static::$message .= '<p>' . __('您发布的付费下载：¥ ', 'wnd') . static::$post_price . '</p>';
+			static::$message .= '<p>' . __('您发布的文件：¥ ', 'wnd') . static::$post_price . '</p>';
 			static::$button_text = __('下载', 'wnd');
 			return;
 
 		}
 
 		// 其他情况
-		static::$message .= '<p>' . __('文件需付费下载', 'wnd') . '</p>';
 		if (floatval(static::$post_price) > 0) {
+			static::$message .= '<p>' . __('文件需付费下载：¥', 'wnd') . static::$post_price . '</p>';
 			static::$button_text = __('付费下载', 'wnd');
 		} else {
+			static::$message .= !static::$user_id ? '<p>' . __('文件需登录后下载', 'wnd') . '</p>' : '';
 			static::$button_text = __('免费下载', 'wnd');
 		}
 	}
