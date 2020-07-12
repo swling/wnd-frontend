@@ -43,7 +43,12 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		static::$site_name   = get_bloginfo('name');
 		static::$site_prefix = static::build_site_prefix();
 
+		/**
+		 *@since 2020.07.12
+		 *新增 filter 以实现通过插件对支付接口的拓展
+		 */
 		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Payment_' . $payment_gateway;
+		$class_name = apply_filters('wnd_payment_handler', $class_name, $payment_gateway);
 		if (class_exists($class_name)) {
 			return new $class_name($payment_gateway);
 		} else {

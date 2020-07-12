@@ -122,6 +122,15 @@ apply_filters('wnd_get_post_commission', $commission, $post_id);
 apply_filters('wnd_get_post_price', $price, $post_id);
 
 ```
+## 支付接口
+@time 2020.07.12
+如需通过插件，拓展或重写支付接口，可以通过 wnd_payment_handler 过滤器，返回一个完整的可执行的类名称（若存在，需包含命名空间）
+通常来讲，该类应该是继承 Wnd\Model\Wnd_Payment 的子类，否则您需要在该类中以同样的方法名，完整实现相关业务逻辑
+实现代码可参考本插件已内置的支付宝接口：Wnd\Model\Wnd_Payment_Alipay
+```php
+$class_name = apply_filters('wnd_payment_handler', $class_name, $payment_gateway);
+```
+
 ## 表单
 ```php
 /**
