@@ -9,7 +9,7 @@ namespace Wnd\Utility;
 class Wnd_Upgrader_Plugin_This extends Wnd_Upgrader_Plugin {
 
 	// 插件入口文件：WP将以此作为插件识别表示
-	protected $plugin_file_or_theme_slug = 'wnd-frontend/wnd-frontend.php';
+	protected $plugin_file_or_theme_slug = WND_DIR_NAME . '/wnd-frontend.php';
 
 	/**
 	 *获取更新包详细信息，至少需要完成如下下信息构造：

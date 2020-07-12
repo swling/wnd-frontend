@@ -29,6 +29,9 @@ define('WND_URL', plugin_dir_url(__FILE__));
 // 定义插件文件路径
 define('WND_PATH', __DIR__);
 
+// 定义插件文件夹名称
+define('WND_DIR_NAME', basename(__DIR__));
+
 // 自动加载器
 require WND_PATH . DIRECTORY_SEPARATOR . 'wnd-autoloader.php';
 
