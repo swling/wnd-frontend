@@ -123,12 +123,33 @@ apply_filters('wnd_get_post_price', $price, $post_id);
 
 ```
 ## 支付接口
-@time 2020.07.12
-如需通过插件，拓展或重写支付接口，可以通过 wnd_payment_handler 过滤器，返回一个完整的可执行的类名称（若存在，需包含命名空间）
+### UI端拓展支付接口
+将新增的支付接口以数组形式['接口名称'=>'接口标识']写入
+```php
+$payment_gateway = apply_filters('wnd_payment_gateway', [__('支付宝', 'wnd') => 'Alipay']);
+
+// 实例：新增微信支付UI
+add_filter('wnd_payment_gateway', function ($data) {
+	return array_merge($data, ['微信支付' => 'Tenpay']);
+});
+```
+### 接口后端拓展支付接口
+接上，可以通过 wnd_payment_handler 过滤器，返回一个完整的可执行的类名称（若存在，需包含命名空间）来实现对微信支付的接口拓展
 通常来讲，该类应该是继承 Wnd\Model\Wnd_Payment 的子类，否则您需要在该类中以同样的方法名，完整实现相关业务逻辑
 实现代码可参考本插件已内置的支付宝接口：Wnd\Model\Wnd_Payment_Alipay
 ```php
 $class_name = apply_filters('wnd_payment_handler', $class_name, $payment_gateway);
+
+// 实例，通过插件的方式添加微信支付处理类
+// apply_filters('wnd_payment_handler', $class_name, $payment_gateway)
+add_filter('wnd_payment_handler', function ($class_name, $payment_gateway) {
+	if ('Tenpay' != $payment_gateway) {
+		return $class_name;
+	}
+
+	return 'Wnd_plugin\\Wndt_Payment_Gateway\\Wndt_Payment_Tenpay';
+}, $priority = 10, $accepted_args = 2);
+
 ```
 
 ## 表单

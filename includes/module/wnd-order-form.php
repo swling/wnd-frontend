@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Wnd\Model\Wnd_Payment;
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -20,7 +21,7 @@ class Wnd_Order_Form extends Wnd_Module {
 		$form->add_radio(
 			[
 				'name'     => 'payment_gateway',
-				'options'  => ['支付宝' => 'Alipay'],
+				'options'  => Wnd_Payment::get_gateway_data(),
 				'required' => 'required',
 				'checked'  => 'Alipay',
 				'class'    => 'is-checkradio is-danger',

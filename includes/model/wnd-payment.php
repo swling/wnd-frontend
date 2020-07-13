@@ -52,7 +52,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		if (class_exists($class_name)) {
 			return new $class_name($payment_gateway);
 		} else {
-			throw new Exception(__('未定义支付方式', 'wnd') . ':' . $class_name);
+			throw new Exception(__('未定义支付接口处理类', 'wnd') . ':' . $class_name);
 		}
 	}
 
@@ -294,5 +294,13 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		$url = static::get_return_url($this->get_object_id());
 		header('Location:' . add_query_arg('from', 'payment_successful', $url));
 		exit;
+	}
+
+	/**
+	 *构建支付接口名称及标识
+	 *
+	 */
+	public static function get_gateway_data(): array{
+		return apply_filters('wnd_payment_gateway', [__('支付宝', 'wnd') => 'Alipay']);
 	}
 }
