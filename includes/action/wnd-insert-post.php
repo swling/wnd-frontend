@@ -179,6 +179,11 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 	 *@since 2020.05.20
 	 */
 	protected static function should_be_update_reversion(): bool {
+		// 非更新
+		if (!static::$update_post) {
+			return false;
+		}
+
 		// 当前编辑即为revision无需新建
 		if (Wnd_Post::is_revision(static::$post_id)) {
 			return false;
