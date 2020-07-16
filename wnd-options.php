@@ -5,16 +5,14 @@ if (!defined('ABSPATH')) exit;
 /**
  *@since 2019.01.16 注册设置页面
  */
-function wnd_menu()
-{
+function wnd_menu() {
 	add_options_page('Wnd Frontend Setting', 'Wnd Frontend', 'administrator', 'wndwp_options', 'wnd_options');
 }
 add_action('admin_menu', 'wnd_menu');
 
 
 /*设置选项*/
-function wnd_options()
-{
+function wnd_options() {
 	if ($_POST and current_user_can('administrator')) {
 		check_admin_referer('wnd_update_options');
 		$option_array = [];
@@ -167,6 +165,14 @@ function wnd_options()
 						支付宝设置
 					</th>
 					<td><i>加签方式：RSA(SHA256)密钥</i> <a href="https://openclub.alipay.com/read.php?tid=2217&fid=69" target="_blank"><i>支付宝帮助文档</i></a></td>
+				</tr>
+				<tr>
+					<th valign="top">当面付</th>
+					<td>
+						是<input type="radio" name="wnd_alipay_qrcode" value="1" <?php if (wnd_get_config('alipay_qrcode') == 1) echo 'checked'; ?>>
+						否<input type="radio" name="wnd_alipay_qrcode" value="0" <?php if (wnd_get_config('alipay_qrcode') != 1) echo 'checked'; ?>>
+						<p><i>是否为当面付（非企业用户申请当面付可实现支付宝接入）</i></p>
+					</td>
 				</tr>
 				<tr>
 					<td valign="top">充值后返回</td>

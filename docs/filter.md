@@ -132,6 +132,9 @@ $payment_gateway = apply_filters('wnd_payment_gateway', [__('支付宝', 'wnd') 
 add_filter('wnd_payment_gateway', function ($data) {
 	return array_merge($data, ['微信支付' => 'Tenpay']);
 });
+
+// 默认支付网关
+apply_filters('wnd_default_payment_gateway', $default_gateway);
 ```
 ### 接口后端拓展支付接口
 接上，可以通过 wnd_payment_handler 过滤器，返回一个完整的可执行的类名称（若存在，需包含命名空间）来实现对微信支付的接口拓展

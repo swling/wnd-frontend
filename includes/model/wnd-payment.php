@@ -112,14 +112,14 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *@param float  	$this->total_money			required when !$object_id
 	 *@param int 		$this->object_id  			option
 	 *
-	 *@return object WP Post Object
+	 *@return null | array 此处可能为表单后跳转，或 Ajax 提交。Ajax 提交时需有返回值
 	 */
 	public function pay() {
 		// 写入站内数据记录
 		$this->create();
 
 		// 发起支付
-		$this->do_pay();
+		return $this->do_pay();
 	}
 
 	/**
@@ -301,6 +301,19 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *
 	 */
 	public static function get_gateway_data(): array{
-		return apply_filters('wnd_payment_gateway', [__('支付宝', 'wnd') => 'Alipay']);
+		$gateway_data = [
+			__('支付宝', 'wnd') => wnd_get_config('alipay_qrcode') ? 'Alipay_QRCode' : 'Alipay',
+		];
+
+		return apply_filters('wnd_payment_gateway', $gateway_data);
+	}
+
+	/**
+	 *默认支付网关
+	 *
+	 */
+	public static function get_default_gateway(): string{
+		$default_gateway = wnd_get_config('alipay_qrcode') ? 'Alipay_QRCode' : 'Alipay';
+		return apply_filters('wnd_default_payment_gateway', $default_gateway);
 	}
 }

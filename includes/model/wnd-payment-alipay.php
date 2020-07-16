@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Model;
 
-use Wnd\Component\Alipay\AlipayPagePayBuilder;
+use Wnd\Component\Alipay\AlipayPagePay;
 use Wnd\Component\Alipay\AlipayService;
 
 /**
@@ -22,13 +22,13 @@ class Wnd_Payment_Alipay extends Wnd_Payment {
 	 *
 	 */
 	protected function do_pay() {
-		$aliPay = new AlipayPagePayBuilder();
+		$aliPay = new AlipayPagePay();
 		$aliPay->set_total_amount($this->get_total_amount());
 		$aliPay->set_out_trade_no($this->get_out_trade_no());
 		$aliPay->set_subject($this->get_subject());
 
 		// 生成数据表单并提交
-		echo $aliPay->doPay();
+		$aliPay->pay();
 	}
 
 	/**

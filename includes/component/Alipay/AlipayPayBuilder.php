@@ -2,40 +2,30 @@
 namespace Wnd\Component\Alipay;
 
 use Wnd\Component\Alipay\AlipayService;
+use Wnd\Component\Utility\PaymentBuilder;
 
 /**
- *@since 2019.03.02 支付宝网页支创建类
+ *@since 2020.07.16
+ *
+ *支付宝支付创建基类
  */
-class AlipayPagePayBuilder extends AlipayService {
-
+abstract class AlipayPayBuilder extends AlipayService implements PaymentBuilder {
+	// 支付宝接口
 	protected $product_code;
 	protected $method;
 
+	// 订单基本参数
 	protected $total_amount;
 	protected $out_trade_no;
 	protected $subject;
 
-	/**
-	 *PC支付和wap支付中：product_code 、method 参数有所不同，详情查阅如下
-	 *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay
-	 *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.wap.pay
-	 */
-	public function __construct() {
-		parent::__construct();
-
-		if (wp_is_mobile()) {
-			$this->product_code = 'QUICK_WAP_WAY';
-			$this->method       = 'alipay.trade.wap.pay';
-		} else {
-			$this->product_code = 'FAST_INSTANT_TRADE_PAY';
-			$this->method       = 'alipay.trade.page.pay';
-		}
-	}
+	// 公共请求参数
+	protected $common_configs;
 
 	/**
 	 *总金额
 	 */
-	public function set_total_amount(float $total_amount) {
+	public function set_total_amount($total_amount) {
 		$this->total_amount = $total_amount;
 	}
 
@@ -54,10 +44,26 @@ class AlipayPagePayBuilder extends AlipayService {
 	}
 
 	/**
-	 * 发起订单
+	 * 构建支付参数，并发起订单
+	 * 订单请求通常为表单提交并跳转至支付宝，也可能是Ajax提交获取响应，因此需要返回 do_pay()的值
+	 *
+	 * @return null|array
+	 */
+	public function pay() {
+		$this->generate_common_configs();
+		return $this->do_pay();
+	}
+
+	/**
+	 *发起客户端支付请求
+	 */
+	abstract protected function do_pay();
+
+	/**
+	 * 签名并构造完整的请求参数
 	 * @return string
 	 */
-	public function doPay() {
+	protected function generate_common_configs() {
 		//请求参数
 		$request_configs = [
 			'out_trade_no' => $this->out_trade_no,
@@ -81,7 +87,8 @@ class AlipayPagePayBuilder extends AlipayService {
 		];
 		$common_configs["sign"] = $this->generateSign($common_configs, $common_configs['sign_type']);
 
-		return $this->buildRequestForm($common_configs);
+		$this->common_configs = $common_configs;
+		return $common_configs;
 	}
 
 	/**

@@ -23,7 +23,7 @@ class Wnd_Order_Form extends Wnd_Module {
 				'name'     => 'payment_gateway',
 				'options'  => Wnd_Payment::get_gateway_data(),
 				'required' => 'required',
-				'checked'  => 'Alipay',
+				'checked'  => Wnd_Payment::get_default_gateway(),
 				'class'    => 'is-checkradio is-danger',
 			]
 		);
