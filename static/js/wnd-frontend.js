@@ -441,9 +441,9 @@ function wnd_ajax_submit(form_id) {
 					window.location.reload(true);
 					break;
 
-					// 弹出信息并自动消失
+					// 弹出信息
 				case 5:
-					wnd_alert_msg(response.msg, 1);
+					wnd_alert_msg(response.msg);
 					break;
 
 					// 下载类

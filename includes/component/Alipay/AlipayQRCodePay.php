@@ -1,32 +1,29 @@
 <?php
+
 namespace Wnd\Component\Alipay;
 
 use Exception;
 use Wnd\Component\Alipay\AlipayService;
 
 /**
- *支付宝退款
- *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.refund
+ *@since 2020.07.16 支付宝当面付支创建类
+ *
+ *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.precreate
  */
-class AlipayRefunder extends AlipayService {
+class AlipayQRCodePay extends AlipayService {
 
-	protected $method = 'alipay.trade.refund';
-	// protected $product_code;
+	protected $product_code = 'FACE_TO_FACE_PAYMENT';
+	protected $method       = 'alipay.trade.precreate';
 
-	// 退款金额
-	protected $refund_amount;
-
-	// 订单号
+	protected $total_amount;
 	protected $out_trade_no;
-
-	// 标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
-	protected $out_request_no;
+	protected $subject;
 
 	/**
-	 *退款金额
+	 *总金额
 	 */
-	public function set_refund_amount(float $refund_amount) {
-		$this->refund_amount = $refund_amount;
+	public function set_total_amount(float $total_amount) {
+		$this->total_amount = $total_amount;
 	}
 
 	/**
@@ -39,20 +36,21 @@ class AlipayRefunder extends AlipayService {
 	/**
 	 *订单主题
 	 */
-	public function set_out_request_no($out_request_no) {
-		$this->out_request_no = $out_request_no;
+	public function set_subject($subject) {
+		$this->subject = $subject;
 	}
 
 	/**
 	 * 发起订单
 	 * @return array
 	 */
-	public function do_refund(): array{
+	public function doPay() {
 		//请求参数
 		$request_configs = [
-			'out_trade_no'   => $this->out_trade_no,
-			'refund_amount'  => $this->refund_amount,
-			'out_request_no' => $this->out_request_no,
+			'out_trade_no' => $this->out_trade_no,
+			'product_code' => $this->product_code,
+			'total_amount' => $this->total_amount, //单位 元
+			'subject'      => $this->subject, //订单标题
 		];
 
 		//公共参数
@@ -60,10 +58,12 @@ class AlipayRefunder extends AlipayService {
 			'app_id'      => $this->app_id,
 			'method'      => $this->method, //接口名称
 			'format'      => 'JSON',
+			'return_url'  => $this->return_url,
 			'charset'     => $this->charset,
 			'sign_type'   => $this->sign_type,
 			'timestamp'   => date('Y-m-d H:i:s'),
 			'version'     => '1.0',
+			'notify_url'  => $this->notify_url,
 			'biz_content' => json_encode($request_configs),
 		];
 		$common_configs["sign"] = $this->generateSign($common_configs, $common_configs['sign_type']);

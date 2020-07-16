@@ -8,8 +8,8 @@ use Wnd\Component\Alipay\AlipayService;
  */
 class AlipayPagePayBuilder extends AlipayService {
 
-	protected $method;
 	protected $product_code;
+	protected $method;
 
 	protected $total_amount;
 	protected $out_trade_no;
@@ -55,7 +55,7 @@ class AlipayPagePayBuilder extends AlipayService {
 
 	/**
 	 * 发起订单
-	 * @return array
+	 * @return string
 	 */
 	public function doPay() {
 		//请求参数

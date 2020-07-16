@@ -47,9 +47,9 @@ switch (response.status) {
 		wnd_reset_modal();
 		window.location.reload(true);
 		break;
-		// 弹出信息并自动消失
+		// 弹出信息
 	case 5:
-		wnd_alert_msg(response.msg, 1);
+		wnd_alert_msg(response.msg);
 		break;
 		// 下载类
 	case 6:
