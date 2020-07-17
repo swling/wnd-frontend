@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Hook;
 
-use Wnd\Action\Wnd_Do_Pay;
 use Wnd\Action\Wnd_Verify_Pay;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Form_Option;
@@ -147,43 +146,36 @@ class Wnd_Add_Action {
 	 *@since 2018.9.25
 	 */
 	public static function action_on_do_action() {
-		//1.0 支付请求
 		$action = $_GET['action'] ?? '';
-		if (!$action and (!empty($_GET) or !empty($_POST))) {
-			Wnd_Verify_Pay::execute();
+		$module = $_GET['module'] ?? '';
+
+		// Action
+		if ($action) {
+			//@since 2019.03.04 刷新所有缓存（主要用于刷新对象缓存，静态缓存通常通过缓存插件本身删除）
+			if ('wp_cache_flush' == $action) {
+				wp_cache_flush();
+				return;
+			}
+
+			//@since 2019.05.12 默认：校验nonce后执行action对应的控制类
+			if (($_GET['_wpnonce'] ?? false) and wp_verify_nonce($_GET['_wpnonce'], $action)) {
+				$class = \Wnd\Controller\Wnd_API::parse_class($module, 'Action');
+				return is_callable([$class, 'execute']) ? $class::execute() : __('未定义的Action', 'wnd') . $class;
+			} else {
+				return __('Nonce校验失败', 'wnd');
+			}
 		}
 
-		//2.0其他自定义action
-		switch ($action) {
-		//创建支付
-		case 'payment':
-			if (wp_verify_nonce($_GET['_wpnonce'] ?? '', 'payment')) {
-				Wnd_Do_Pay::execute();
-			} else {
-				wp_die(__('Nonce 校验失败', 'wnd'), bloginfo('name'));
-			}
-			break;
+		// Module
+		if ($module) {
+			$class = \Wnd\Controller\Wnd_API::parse_class($module, 'Module');
+			$param = $_GET['param'] ?? '';
+			return is_callable([$class, 'build']) ? $class::build($param) : __('未定义的Module', 'wnd') . $class;
+		}
 
-		//@since 2019.03.04 刷新所有缓存（主要用于刷新对象缓存，静态缓存通常通过缓存插件本身删除）
-		case 'wp_cache_flush':
-			wp_cache_flush();
-			break;
-
-		//@since 2019.05.12 默认：校验nonce后执行action对应的控制类
-		default:
-			if (($_GET['_wpnonce'] ?? false) and wp_verify_nonce($_GET['_wpnonce'], $action)) {
-				$namespace = (stripos($action, 'Wndt') === 0) ? 'Wndt\Action' : 'Wnd\Action';
-				$class     = $namespace . '\\' . $action;
-				return is_callable([$class, 'execute']) ? $class::execute() : exit(__('未定义的Action', 'wnd') . $class);
-
-				//未包含nonce：执行action对应的模块类
-			} else {
-				$namespace = (stripos($action, 'Wndt') === 0) ? 'Wndt\Module' : 'Wnd\Module';
-				$class     = $namespace . '\\' . $action;
-				$param     = $_GET['param'] ?? '';
-				return is_callable([$class, 'build']) ? $class::build($param) : '';
-			}
-			break;
+		// 支付异步通知
+		if (!empty($_GET) or !empty($_POST)) {
+			Wnd_Verify_Pay::execute();
 		}
 	}
 }

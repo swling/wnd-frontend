@@ -14,7 +14,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module {
 			static::build_error_message(__('未设置支付接口', 'wnd'));
 		}
 
-		$form = new Wnd_Form_WP(false);
+		$form = new Wnd_Form_WP();
 		$form->add_html('<div class="has-text-centered field">');
 		$form->add_radio(
 			[
@@ -35,9 +35,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module {
 		);
 		// $form->add_html('<img src="https://t.alipayobjects.com/images/T1HHFgXXVeXXXXXXXX.png">');
 		$form->add_html('</div>');
-		$form->set_action(wnd_get_do_url(), 'GET');
-		$form->add_hidden('_wpnonce', wp_create_nonce('payment'));
-		$form->add_hidden('action', 'payment');
+		$form->set_action('wnd_do_pay');
 		$form->set_submit_button(__('充值', 'wnd'));
 		$form->build();
 

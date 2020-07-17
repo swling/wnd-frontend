@@ -21,14 +21,14 @@ class Wnd_Payment_Alipay extends Wnd_Payment {
 	 *发起支付
 	 *
 	 */
-	protected function do_pay() {
+	protected function do_pay(): string{
 		$aliPay = new AlipayPagePay();
-		$aliPay->set_total_amount($this->get_total_amount());
-		$aliPay->set_out_trade_no($this->get_out_trade_no());
-		$aliPay->set_subject($this->get_subject());
+		$aliPay->setTotalAmount($this->get_total_amount());
+		$aliPay->setOutTradeNo($this->get_out_trade_no());
+		$aliPay->setSubject($this->get_subject());
 
-		// 生成数据表单并提交
-		$aliPay->pay();
+		// 生成表单
+		return $aliPay->pay();
 	}
 
 	/**

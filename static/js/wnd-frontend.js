@@ -452,6 +452,10 @@ function wnd_ajax_submit(form_id) {
 					$(window.location).prop("href", response.data.redirect_to);
 					break;
 
+					// 以响应数据替换当前表单
+				case 7:
+					$("#" + form_id).replaceWith(response.data);
+
 					// 默认
 				default:
 					wnd_ajax_form_msg(form_id, response.msg, style);

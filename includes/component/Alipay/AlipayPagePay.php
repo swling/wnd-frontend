@@ -29,7 +29,7 @@ class AlipayPagePay extends AlipayPayBuilder {
 	 * 发起订单
 	 * @return string
 	 */
-	public function do_pay() {
-		echo $this->buildRequestForm($this->common_configs);
+	public function doPay(): string {
+		return $this->buildRequestForm($this->common_configs);
 	}
 }

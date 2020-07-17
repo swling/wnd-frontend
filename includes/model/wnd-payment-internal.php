@@ -13,8 +13,8 @@ class Wnd_Payment_Internal extends Wnd_Payment {
 	 *发起支付
 	 *
 	 */
-	protected function do_pay() {
-		return;
+	protected function do_pay(): string {
+		return __CLASS__;
 	}
 
 	/**

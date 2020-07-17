@@ -126,10 +126,10 @@ apply_filters('wnd_get_post_price', $price, $post_id);
 ### UI端拓展支付接口
 将新增的支付接口以数组形式['接口名称'=>'接口标识']写入
 ```php
-$payment_gateway = apply_filters('wnd_payment_gateway', [__('支付宝', 'wnd') => 'Alipay']);
+$payment_gateway = apply_filters('wnd_payment_gateways', [__('支付宝', 'wnd') => 'Alipay']);
 
 // 实例：新增微信支付UI
-add_filter('wnd_payment_gateway', function ($data) {
+add_filter('wnd_payment_gateways', function ($data) {
 	return array_merge($data, ['微信支付' => 'Tenpay']);
 });
 

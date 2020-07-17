@@ -5,17 +5,16 @@ use Exception;
 use Wnd\Model\Wnd_Payment;
 
 /**
- *创建支付
+ *Ajax创建支付
  *@since 2020.06.19
  *
- *为适应不同支付接口方式，本 Action 同时接收 GET 类提交或 POST 提交
  */
-class Wnd_Do_Pay extends Wnd_Action {
+class Wnd_Do_Pay extends Wnd_Action_Ajax {
 
-	public static function execute() {
-		$post_id         = $_REQUEST['post_id'] ?? 0;
-		$total_amount    = $_REQUEST['total_amount'] ?? 0;
-		$payment_gateway = $_REQUEST['payment_gateway'] ?? '';
+	public static function execute(): array{
+		$post_id         = $_POST['post_id'] ?? 0;
+		$total_amount    = $_POST['total_amount'] ?? 0;
+		$payment_gateway = $_POST['payment_gateway'] ?? '';
 
 		if (!$payment_gateway) {
 			throw new Exception(__('未定义支付方式', 'wnd'));
@@ -26,8 +25,9 @@ class Wnd_Do_Pay extends Wnd_Action {
 			$payment->set_object_id($post_id);
 			$payment->set_total_amount($total_amount);
 
-			// 此处可能为跳转提交，或 Ajax 提交，Ajax 提交时，需将提交响应返回
-			return $payment->pay();
+			// Ajax 提交时，需将提交响应返回，并替换用户UI界面，故需设置 ['status' => 7];
+			$response = $payment->pay();
+			return ['status' => 7, 'data' => '<div class="has-text-centered">' . $response . '</div>'];
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}

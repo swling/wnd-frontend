@@ -26,13 +26,13 @@ class Wnd_Refunder_Alipay extends Wnd_Refunder {
 			 * - 获取支付宝响应
 			 */
 			$alipay = new AlipayRefunder();
-			$alipay->set_out_trade_no($this->out_trade_no);
+			$alipay->setOutTradeNo($this->out_trade_no);
 			if ($this->refund_amount != $this->total_amount) {
-				$alipay->set_out_request_no($this->out_request_no);
+				$alipay->setOutRequestNo($this->out_request_no);
 			}
-			$alipay->set_refund_amount($this->refund_amount);
+			$alipay->setRefundAmount($this->refund_amount);
 
-			$response       = $alipay->do_refund();
+			$response       = $alipay->doRefund();
 			$this->response = $response['alipay_trade_refund_response'];
 
 			// 判断退款结果

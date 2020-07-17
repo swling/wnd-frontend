@@ -25,45 +25,47 @@ abstract class AlipayPayBuilder extends AlipayService implements PaymentBuilder 
 	/**
 	 *总金额
 	 */
-	public function set_total_amount($total_amount) {
+	public function setTotalAmount(float $total_amount) {
 		$this->total_amount = $total_amount;
 	}
 
 	/**
 	 *交易订单号
 	 */
-	public function set_out_trade_no($out_trade_no) {
+	public function setOutTradeNo(string $out_trade_no) {
 		$this->out_trade_no = $out_trade_no;
 	}
 
 	/**
 	 *订单主题
 	 */
-	public function set_subject($subject) {
+	public function setSubject(string $subject) {
 		$this->subject = $subject;
 	}
 
 	/**
 	 * 构建支付参数，并发起订单
-	 * 订单请求通常为表单提交并跳转至支付宝，也可能是Ajax提交获取响应，因此需要返回 do_pay()的值
+	 * 订单请求通常为表单提交并跳转至支付宝，也可能是Ajax提交获取响应，因此需要返回 doPay()的值
 	 *
-	 * @return null|array
+	 *@return string 返回构造支付请求的Html，如自动提交的表单或支付二维码
 	 */
-	public function pay() {
-		$this->generate_common_configs();
-		return $this->do_pay();
+	public function pay(): string{
+		$this->generateCommonConfigs();
+		return $this->doPay();
 	}
 
 	/**
 	 *发起客户端支付请求
+	 *
+	 *@return string 返回构造支付请求的Html，如自动提交的表单或支付二维码
 	 */
-	abstract protected function do_pay();
+	abstract protected function doPay(): string;
 
 	/**
 	 * 签名并构造完整的请求参数
 	 * @return string
 	 */
-	protected function generate_common_configs() {
+	protected function generateCommonConfigs() {
 		//请求参数
 		$request_configs = [
 			'out_trade_no' => $this->out_trade_no,
@@ -98,6 +100,7 @@ abstract class AlipayPayBuilder extends AlipayService implements PaymentBuilder 
 	 */
 	protected function buildRequestForm($para_temp) {
 		$sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='" . $this->gateway_url . "?charset=" . $this->charset . "' method='POST'>";
+		$sHtml .= '<h3>即将跳转到第三方支付平台……</h3>';
 		foreach ($para_temp as $key => $val) {
 			if (false === $this->checkEmpty($val)) {
 				$val = str_replace("'", "&apos;", $val);

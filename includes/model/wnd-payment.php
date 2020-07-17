@@ -112,9 +112,9 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *@param float  	$this->total_money			required when !$object_id
 	 *@param int 		$this->object_id  			option
 	 *
-	 *@return null | array 此处可能为表单后跳转，或 Ajax 提交。Ajax 提交时需有返回值
+	 *@return array 	返回构造支付请求的 Html 源码，如自动提交的表单或支付二维码图片
 	 */
-	public function pay() {
+	public function pay(): string{
 		// 写入站内数据记录
 		$this->create();
 
@@ -294,26 +294,5 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		$url = static::get_return_url($this->get_object_id());
 		header('Location:' . add_query_arg('from', 'payment_successful', $url));
 		exit;
-	}
-
-	/**
-	 *构建支付接口名称及标识
-	 *
-	 */
-	public static function get_gateway_data(): array{
-		$gateway_data = [
-			__('支付宝', 'wnd') => wnd_get_config('alipay_qrcode') ? 'Alipay_QRCode' : 'Alipay',
-		];
-
-		return apply_filters('wnd_payment_gateway', $gateway_data);
-	}
-
-	/**
-	 *默认支付网关
-	 *
-	 */
-	public static function get_default_gateway(): string{
-		$default_gateway = wnd_get_config('alipay_qrcode') ? 'Alipay_QRCode' : 'Alipay';
-		return apply_filters('wnd_default_payment_gateway', $default_gateway);
 	}
 }

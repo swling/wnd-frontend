@@ -60,28 +60,28 @@ class AlipayTransfer extends AlipayService {
 	/**
 	 *总金额
 	 */
-	public function set_trans_amount(float $trans_amount) {
+	public function setTransAmount(float $trans_amount) {
 		$this->trans_amount = $trans_amount;
 	}
 
 	/**
 	 *交易订单号
 	 */
-	public function set_out_biz_no($out_biz_no) {
+	public function setOutBizNo($out_biz_no) {
 		$this->out_biz_no = $out_biz_no;
 	}
 
 	/**
 	 *订单主题
 	 */
-	public function set_order_title($order_title) {
+	public function setOrderTitle($order_title) {
 		$this->order_title = $order_title;
 	}
 
 	/**
 	 *设置收款账户
 	 */
-	public function set_identity($identity) {
+	public function setIdentity($identity) {
 		$this->identity = $identity;
 	}
 

@@ -214,4 +214,25 @@ abstract class Wnd_Transaction {
 
 		return $payment->post_excerpt;
 	}
+
+	/**
+	 *构建支付接口名称及标识
+	 *
+	 */
+	public static function get_gateway_data(): array{
+		$gateway_data = [
+			__('支付宝', 'wnd') => wnd_get_config('alipay_qrcode') ? 'Alipay_QRCode' : 'Alipay',
+		];
+
+		return apply_filters('wnd_payment_gateways', $gateway_data);
+	}
+
+	/**
+	 *默认支付网关
+	 *
+	 */
+	public static function get_default_gateway(): string{
+		$default_gateway = wnd_get_config('alipay_qrcode') ? 'Alipay_QRCode' : 'Alipay';
+		return apply_filters('wnd_default_payment_gateway', $default_gateway);
+	}
 }

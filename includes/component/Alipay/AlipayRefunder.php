@@ -25,21 +25,21 @@ class AlipayRefunder extends AlipayService {
 	/**
 	 *退款金额
 	 */
-	public function set_refund_amount(float $refund_amount) {
+	public function setRefundAmount(float $refund_amount) {
 		$this->refund_amount = $refund_amount;
 	}
 
 	/**
 	 *交易订单号
 	 */
-	public function set_out_trade_no($out_trade_no) {
+	public function setOutTradeNo($out_trade_no) {
 		$this->out_trade_no = $out_trade_no;
 	}
 
 	/**
 	 *订单主题
 	 */
-	public function set_out_request_no($out_request_no) {
+	public function setOutRequestNo($out_request_no) {
 		$this->out_request_no = $out_request_no;
 	}
 
@@ -47,7 +47,7 @@ class AlipayRefunder extends AlipayService {
 	 * 发起订单
 	 * @return array
 	 */
-	public function do_refund(): array{
+	public function doRefund(): array{
 		//请求参数
 		$request_configs = [
 			'out_trade_no'   => $this->out_trade_no,

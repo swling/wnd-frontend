@@ -162,6 +162,16 @@ function wnd_get_current_url() {
 }
 
 /**
+ *生成二维码图像
+ *@param string 需要转换的字符信息
+ *
+ *@return string 二维码图像地址
+ */
+function wnd_generate_qrcode(string $string): string {
+	return wnd_get_do_url() . '?module=wnd_qrcode&param=' . $string;
+}
+
+/**
  *@since 2019.07.17
  *设置默认的异常处理函数
  */

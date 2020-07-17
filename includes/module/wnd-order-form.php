@@ -11,7 +11,7 @@ class Wnd_Order_Form extends Wnd_Module {
 
 	public static function build($post_id = 0) {
 
-		$form = new Wnd_Form_WP(false);
+		$form = new Wnd_Form_WP();
 		$form->set_form_title(get_the_title($post_id), true);
 		if (!is_user_logged_in()) {
 			$form->add_html(static::build_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！'), true));
@@ -28,10 +28,8 @@ class Wnd_Order_Form extends Wnd_Module {
 			]
 		);
 		$form->add_html('</div>');
-		$form->set_action(wnd_get_do_url(), 'GET');
+		$form->set_action('wnd_do_pay');
 		$form->add_hidden('post_id', $post_id);
-		$form->add_hidden('_wpnonce', wp_create_nonce('payment'));
-		$form->add_hidden('action', 'payment');
 		$form->set_submit_button(__('确定', 'wnd'));
 		$form->build();
 
