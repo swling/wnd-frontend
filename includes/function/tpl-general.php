@@ -140,23 +140,6 @@ function wnd_dropdown_colors($name, $selected) {
 }
 
 /**
- *@since 2019.07.16
- *创建订单链接
- *@param int $post_id 产品/文章ID
- */
-function wnd_order_link($post_id, $payment_gateway = 'Alipay') {
-	return add_query_arg(
-		[
-			'action'          => 'payment',
-			'post_id'         => $post_id,
-			'payment_gateway' => $payment_gateway,
-			'_wpnonce'        => wp_create_nonce('payment'),
-		],
-		wnd_get_do_url()
-	);
-}
-
-/**
  *@since 2019.05.05
  *Post gallery 相册展示
  *@param $post_id 			int 		相册所附属的文章ID
