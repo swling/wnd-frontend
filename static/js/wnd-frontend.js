@@ -330,6 +330,11 @@ function wnd_ajax_submit(form_id) {
 	// 带有required属性的字段不能为空
 	var input_value = true;
 	$("#" + form_id + " input").each(function() {
+		//This is same as 'continue'
+		if ($(this).prop("disabled")) {
+			return true;
+		}
+
 		if ($(this).prop("required")) {
 			if ($(this).val() == "") {
 				input_value = false;
@@ -346,7 +351,7 @@ function wnd_ajax_submit(form_id) {
 
 	// 下拉必选，默认未选择 value = -1
 	var option_value = true;
-	$("#" + form_id + " select option:selected").each(function() {
+	$("#" + form_id + " select:not(\":disabled\") option:selected").each(function() {
 		// 查看当前下拉option的父元素select是否具有required属性
 		option_value = $(this).val();
 		if ($(this).parent().prop("required") && option_value == "-1") {
@@ -359,6 +364,11 @@ function wnd_ajax_submit(form_id) {
 	// 文本框
 	var textarea_value = true;
 	$("#" + form_id + " textarea").each(function() {
+		//This is same as 'continue'
+		if ($(this).prop("disabled")) {
+			return true;
+		}
+
 		if ($(this).prop("required")) {
 			if ($(this).val() == "") {
 				textarea_value = false;
@@ -1157,7 +1167,6 @@ jQuery(document).ready(function($) {
 
 		var term_id = $(this).val();
 		var child_level = $(this).data("child_level");
-		var required = $(this).prop("required");
 
 		var child_selector = $("." + taxonomy + "-child-" + (child_level + 1));
 		var tips = child_selector.data("tips") || "";
@@ -1187,13 +1196,11 @@ jQuery(document).ready(function($) {
 
 				success: function(html) {
 					/**
-					 *如果子类可选，则添加父类required属性; 反之，无论父类是否必选，子类必须移除required
 					 *如果子级分类可用，则子级及往后其他子类移除可能存在的disabled属性
 					 *如果子级分类不可用，则子级及往后其他子类设置为disabled
 					 */
 					if (html) {
 						child_selector.html(html);
-						child_selector.prop("required", required);
 						child_selector.addClass("is-active");
 						$(".dynamic-sub-" + taxonomy).each(function() {
 							if ($(this).data("child_level") > child_level) {
@@ -1201,7 +1208,6 @@ jQuery(document).ready(function($) {
 							}
 						});
 					} else {
-						child_selector.prop("required", false);
 						$(".dynamic-sub-" + taxonomy).each(function() {
 							if ($(this).data("child_level") > child_level) {
 								$(this).prop("disabled", true);

@@ -191,7 +191,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *
 	 *@since 2020.04.14
 	 **/
-	public function add_dynamic_sub_term_select($taxonomy, $child_level = 1, $label = '', $tips = '') {
+	public function add_dynamic_sub_term_select($taxonomy, $child_level = 1, $label = '', $required = false, $tips = '') {
 		// 获取当前 post 已选择的 taxonomy 一级 term
 		$top_level_term_id = 0;
 		foreach ($this->current_terms[$taxonomy] as $current_term) {
@@ -214,7 +214,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			[
 				'name'     => '_term_' . $taxonomy . '[]',
 				'options'  => $option_data,
-				'required' => false,
+				'required' => $required,
+				'disabled' => count($option_data) <= 1, // 当可选项小于等于1，表明当前条件下子类不可用，设置disabled属性
 				'selected' => $this->current_terms[$taxonomy], //default checked value
 				'label'    => $label,
 				'class'    => 'dynamic-sub ' . 'dynamic-sub-' . $taxonomy . ' ' . $taxonomy . '-child-' . $child_level,

@@ -14,8 +14,8 @@ class Wnd_Refund extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 
-		$payment_id    = (int) $_POST['payment_id'] ?? 0;
-		$refund_amount = (float) $_POST['refund_amount'] ?? 0.00;
+		$payment_id    = (int) ($_POST['payment_id'] ?? 0);
+		$refund_amount = (float) ($_POST['refund_amount'] ?? 0);
 
 		try {
 			$refunder = Wnd_Refunder::get_instance($payment_id);

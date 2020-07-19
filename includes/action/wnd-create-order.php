@@ -12,7 +12,7 @@ use Wnd\Model\Wnd_Order;
 class Wnd_Create_Order extends Wnd_Action_Ajax {
 
 	public static function execute(int $post_id = 0): array{
-		$post_id = $post_id ?: (int) $_POST['post_id'];
+		$post_id = (int) ($post_id ?: $_POST['post_id']);
 		$user_id = get_current_user_id();
 
 		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id);

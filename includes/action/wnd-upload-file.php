@@ -31,12 +31,12 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => __('上传文件为空', 'wnd')];
 		}
 
-		$save_width       = $_POST['save_width'] ?? 0;
-		$save_height      = $_POST['save_height'] ?? 0;
-		$thumbnail_height = $_POST['thumbnail_height'] ?? 0;
-		$thumbnail_width  = $_POST['thumbnail_width'] ?? 0;
+		$save_width       = (int) ($_POST['save_width'] ?? 0);
+		$save_height      = (int) ($_POST['save_height'] ?? 0);
+		$thumbnail_height = (int) ($_POST['thumbnail_height'] ?? 0);
+		$thumbnail_width  = (int) ($_POST['thumbnail_width'] ?? 0);
 		$meta_key         = $_POST['meta_key'] ?? '';
-		$post_parent      = $_POST['post_parent'] ?? 0;
+		$post_parent      = (int) ($_POST['post_parent'] ?? 0);
 		$user_id          = get_current_user_id();
 
 		// 上传信息校验
