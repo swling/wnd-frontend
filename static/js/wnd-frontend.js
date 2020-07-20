@@ -980,8 +980,8 @@ jQuery(document).ready(function($) {
 		}
 
 		if ("BUTTON" == $(this).get(0).tagName) {
-			var search_form = $(this).closest("form");
-			var form_data = search_form.serializeArray();
+			var form = $(this).closest("form");
+			var form_data = form.serializeArray();
 			$.each(form_data, function() {
 				filter_param[this.name] = this.value;
 			});
@@ -1115,8 +1115,8 @@ jQuery(document).ready(function($) {
 		}
 
 		if ("BUTTON" == $(this).get(0).tagName) {
-			var search_form = $(this).closest("form");
-			var form_data = search_form.serializeArray();
+			var form = $(this).closest("form");
+			var form_data = form.serializeArray();
 			$.each(form_data, function() {
 				filter_user_param[this.name] = this.value;
 			});

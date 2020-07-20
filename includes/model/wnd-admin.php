@@ -103,8 +103,15 @@ class Wnd_Admin {
 			wp_delete_post($delete, true);
 		}
 
-		// 一年前的充值记录及非产品订单
-		$old_posts = $wpdb->get_col("SELECT ID FROM $wpdb->posts WHERE post_type IN ('order','recharge') AND post_parent = 0 AND DATE_SUB(NOW(), INTERVAL 365 DAY) > post_date");
+		// 一年前的非产品订单
+		$old_posts = $wpdb->get_col("SELECT ID FROM $wpdb->posts WHERE post_type = 'order' AND post_parent = 0 AND DATE_SUB(NOW(), INTERVAL 365 DAY) > post_date");
+		foreach ((array) $old_posts as $delete) {
+			// Force delete.
+			wp_delete_post($delete, true);
+		}
+
+		// 一年前的充值记录
+		$old_posts = $wpdb->get_col("SELECT ID FROM $wpdb->posts WHERE post_type = 'recharge' AND DATE_SUB(NOW(), INTERVAL 365 DAY) > post_date");
 		foreach ((array) $old_posts as $delete) {
 			// Force delete.
 			wp_delete_post($delete, true);
