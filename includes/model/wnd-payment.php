@@ -295,4 +295,25 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		header('Location:' . add_query_arg('from', 'payment_successful', $url));
 		exit;
 	}
+
+	/**
+	 *ajax轮询订单状态：支付成功则刷新当前页面
+	 *
+	 */
+	protected static function build_ajax_check_element($payment_id) {
+		return '
+<script>
+// 定时查询指定订单状态，如完成，则刷新当前页面
+var payment_checker = setInterval(function(post_id){ wnd_get_json("wnd_get_post", "wnd_check_payment", post_id) }, 3000,' . $payment_id . ');
+function wnd_check_payment(response) {
+	if("success"==response.data.post_status){
+		window.location.reload(true);
+	}
+}
+// 关闭弹窗时，清除定时器
+$("body").on("click", "#modal .modal-background,#modal .modal-close", function() {
+	clearInterval(payment_checker);
+});
+</script>';
+	}
 }

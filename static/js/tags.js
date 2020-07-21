@@ -94,8 +94,12 @@ function _run_suggestions(el, query) {
         },
 
         //  data format array ['tag1','tag2','tag3']
-        success: function(data) {
-            $.each(data, function(key, value) {
+        success: function(response) {
+            if (response.status <= 0) {
+                return false;
+            }
+
+            $.each(response.data, function(key, value) {
                 if ("-1" == value.indexOf(query)) {
                     return true;
                 }

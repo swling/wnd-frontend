@@ -185,7 +185,7 @@ class Wnd_API {
 
 		if (is_callable([$class, 'get'])) {
 			try {
-				return $class::get($param);
+				return ['status' => 1, 'msg' => '', 'data' => $class::get($param)];
 			} catch (Exception $e) {
 				return ['status' => 0, 'msg' => $e->getMessage()];
 			}

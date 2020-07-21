@@ -283,6 +283,40 @@ function wnd_ajax_embed(container, module, param = 0) {
 }
 
 /**
+ *@since 2020.07.21
+ *ajax 获取 json数据
+ *@param data 		对应 JsonGet 类名称
+ *@param callback 	回调函数
+ *@param param 		对应传参
+ */
+function wnd_get_json(data, callback, param = '') {
+	$.ajax({
+		type: "GET",
+		url: wnd_jsonget_api,
+		data: {
+			"data": data,
+			"param": param,
+		},
+		//后台返回数据前
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
+		},
+		//成功后
+		success: function(response) {
+			window[callback](response);
+		},
+		// 错误
+		error: function() {
+			return {
+				"status": 0,
+				"msg": "Error",
+				"data": ""
+			}
+		}
+	});
+}
+
+/**
  * 根据当前表单可视状态，展示操作响应消息
  * @since 2020.04.23
  */
@@ -451,9 +485,9 @@ function wnd_ajax_submit(form_id) {
 					window.location.reload(true);
 					break;
 
-					// 弹出信息
+					// 弹出信息并自动消失
 				case 5:
-					wnd_alert_msg(response.msg);
+					wnd_alert_msg(response.msg, 1);
 					break;
 
 					// 下载类
@@ -465,6 +499,7 @@ function wnd_ajax_submit(form_id) {
 					// 以响应数据替换当前表单
 				case 7:
 					$("#" + form_id).replaceWith(response.data);
+					break;
 
 					// 默认
 				default:
@@ -1194,13 +1229,13 @@ jQuery(document).ready(function($) {
 					},
 				},
 
-				success: function(html) {
+				success: function(response) {
 					/**
 					 *如果子级分类可用，则子级及往后其他子类移除可能存在的disabled属性
 					 *如果子级分类不可用，则子级及往后其他子类设置为disabled
 					 */
-					if (html) {
-						child_selector.html(html);
+					if (response.status > 0) {
+						child_selector.html(response.data);
 						child_selector.addClass("is-active");
 						$(".dynamic-sub-" + taxonomy).each(function() {
 							if ($(this).data("child_level") > child_level) {

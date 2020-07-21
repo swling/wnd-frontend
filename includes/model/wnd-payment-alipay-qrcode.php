@@ -24,7 +24,10 @@ class Wnd_Payment_Alipay_QRCode extends Wnd_Payment_Alipay {
 		$aliPay->setOutTradeNo($this->get_out_trade_no());
 		$aliPay->setSubject($this->get_subject());
 
-		// QRCode 支付非跳转，而是采用 Ajax 提交，获取响应提取支付链接信息，用于二维码生成
-		return $aliPay->pay();
+		/**
+		 * 获取响应提取支付链接信息，生成二维码
+		 * Ajax定期查询订单是否已经完成支付，以便下一步操作
+		 */
+		return $aliPay->pay() . static::build_ajax_check_element($this->get_ID());
 	}
 }
