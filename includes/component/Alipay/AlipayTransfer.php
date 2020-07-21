@@ -6,7 +6,7 @@ use Wnd\Component\Alipay\AlipayService;
 /**
  *@since 2020.06.08
  *支付宝单笔转账
- *（测试支付宝证书工具生成证书，未成功，本文件代码尚未测试 @2020.06.08）
+ *@date 2020.07.21 本地代码测试通过，转账成功，但尚未整合到本插件
  *
  *加签模式：使用（资金支出类接口）必须使用【公钥证书】加签
  *@link https://opendocs.alipay.com/open/291/105971
@@ -22,14 +22,14 @@ class AlipayTransfer extends AlipayService {
 	protected $method       = 'alipay.fund.trans.uni.transfer';
 	protected $product_code = 'TRANS_ACCOUNT_NO_PWD';
 
-	//应用公钥证书地址
-	protected $public_key_path;
+	// 应用公钥证书服务器文件路径
+	protected $app_public_key_path;
 
-	//支付宝根证书地址
+	// 应用RSA私钥。注意：此处为是CSR私钥而非RSA私钥。是生成证书步骤中，产生的包含对应域名的私钥
+	protected $app_private_key;
+
+	// 支付宝根证书服务器文件路径
 	protected $alipay_root_cert_path;
-
-	//支付宝公钥证书地址（验签时使用）
-	protected $alipay_public_key_path;
 
 	// 转账金额
 	protected $trans_amount;
@@ -40,21 +40,17 @@ class AlipayTransfer extends AlipayService {
 	// 交易订单标题
 	protected $order_title;
 
-	// 收款方标识类型：ALIPAY_LOGON_ID：支付宝登录号，支持邮箱和手机号格式
-	protected $identity_type = 'ALIPAY_LOGON_ID';
-
-	// 收款方账户：支付宝登录号，支持邮箱和手机号格式
-	protected $identity;
-
-	// 收款方信息 ['identity_type'=>'ALIPAY_LOGON_ID','identity'=>'xxx@xx.com']
+	// 收款方信息 ['identity_type'=>'ALIPAY_LOGON_ID', 'identity'=>'xxx@xx.com', 'name'=>'xxx']
 	protected $payee_info = [];
+
+	// 备注
+	protected $remark;
 
 	/**
 	 *Construct
 	 */
 	public function __construct() {
 		parent::__construct();
-
 	}
 
 	/**
@@ -80,22 +76,32 @@ class AlipayTransfer extends AlipayService {
 
 	/**
 	 *设置收款账户
+	 *
+	 *@param string $identity 	收款方支付宝账号
+	 *@param string $name 		收款方真实姓名
 	 */
-	public function setIdentity($identity) {
-		$this->identity = $identity;
+	public function setPayeeInfo($identity, $name) {
+		$this->payee_info = [
+			'identity'      => $identity,
+			'identity_type' => 'ALIPAY_LOGON_ID',
+			'name'          => $name,
+		];
 	}
 
 	/**
 	 * 发起订单
 	 * @return array
 	 */
-	public function doPay() {
+	public function doTransfer() {
 		//请求参数
 		$request_configs = [
 			'out_biz_no'   => $this->out_biz_no,
 			'product_code' => $this->product_code,
 			'trans_amount' => $this->trans_amount, //单位 元
 			'order_title'  => $this->order_title, //订单标题
+			'payee_info'   => $this->payee_info,
+			'remark'       => $this->remark, //转账备注（选填）
+			'biz_scene'    => 'DIRECT_TRANSFER',
 		];
 
 		//公共参数
@@ -103,12 +109,10 @@ class AlipayTransfer extends AlipayService {
 			'app_id'              => $this->app_id,
 			'method'              => $this->method, //接口名称
 			'format'              => 'JSON',
-			'return_url'          => $this->return_url,
 			'charset'             => $this->charset,
 			'sign_type'           => $this->sign_type,
 			'timestamp'           => date('Y-m-d H:i:s'),
 			'version'             => '1.0',
-			'notify_url'          => $this->notify_url,
 			'biz_content'         => json_encode($request_configs),
 
 			// 证书加签方式特有参数
@@ -126,7 +130,7 @@ class AlipayTransfer extends AlipayService {
 	 * @return string
 	 */
 	public function getCertSN() {
-		$cert = file_get_contents($this->public_key_path);
+		$cert = file_get_contents($this->app_public_key_path);
 		$ssl  = openssl_x509_parse($cert);
 		$SN   = md5($this->array2string(array_reverse($ssl['issuer'])) . $ssl['serialNumber']);
 		return $SN;
