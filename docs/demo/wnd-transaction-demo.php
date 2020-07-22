@@ -19,8 +19,10 @@ $payment = Wnd_Payment::get_instance($payment_gateway);
 $payment->set_total_amount(10);
 // or 设置object id之后，充值金额将设定为对应的产品价格
 $payment->set_object_id(616);
-
-$payment->pay();
+// 写站内数据
+$payment->create();
+// 构造第三方支付接口：表单提交或二维码等
+echo $payment->build_interface();
 
 /**
  *获取支付平台返回数据，并完成支付。根据第三方支付订单，获取站内订单，并对比充值金额

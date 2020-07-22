@@ -22,8 +22,8 @@ interface PaymentBuilder {
 	public function setSubject(string $subject);
 
 	/**
-	 * 发起订单
-	 *@return string 返回构造支付请求的Html，如自动提交的表单或支付二维码
+	 *构造支付请求接口，如自动提交的表单或支付二维码
+	 *@return string
 	 */
-	public function Pay(): string;
+	public function build(): string;
 }

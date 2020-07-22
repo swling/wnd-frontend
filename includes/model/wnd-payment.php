@@ -107,20 +107,38 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	}
 
 	/**
-	 *创建支付
+	 *@since 2019.02.17 创建在线支付信息 订单 / 充值
+	 *
+	 *若设置了object_id 调用：Wnd_Order 否则调用: Wnd_Recharge
 	 *
 	 *@param float  	$this->total_money			required when !$object_id
 	 *@param int 		$this->object_id  			option
-	 *
-	 *@return array 	返回构造支付请求的 Html 源码，如自动提交的表单或支付二维码图片
 	 */
-	public function pay(): string{
-		// 写入站内数据记录
-		$this->create();
+	public function create(): WP_Post{
+		$payment = $this->object_id ? new Wnd_Order() : new Wnd_Recharge();
+		$payment->set_object_id($this->object_id);
+		$payment->set_total_amount($this->total_amount);
+		$payment->set_payment_gateway($this->payment_gateway);
 
-		// 发起支付
-		return $this->do_pay();
+		// 写入数据库后构建ID及Post属性，供外部调用属性向支付平台发起请求
+		$this->post = $payment->create();
+		return $this->post;
 	}
+
+	/**
+	 *构建第三方平台支付接口，如支付表单，支付二维码等。交付对应子类实现。
+	 */
+	abstract public function build_interface(): string;
+
+	/**
+	 *第三方平台异步验签，交付对应子类实现
+	 */
+	abstract protected function check_notify(): bool;
+
+	/**
+	 *第三方平台同步验签，交付对应子类实现
+	 */
+	abstract protected function check_return(): bool;
 
 	/**
 	 *验证支付并执行相关站内业务
@@ -151,40 +169,6 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 				$this->return();
 			}
 		}
-	}
-
-	/**
-	 *发起第三方平台支付方法，交付对应子类实现
-	 */
-	abstract protected function do_pay();
-
-	/**
-	 *第三方平台异步验签，交付对应子类实现
-	 */
-	abstract protected function check_notify(): bool;
-
-	/**
-	 *第三方平台同步验签，交付对应子类实现
-	 */
-	abstract protected function check_return(): bool;
-
-	/**
-	 *@since 2019.02.17 创建在线支付信息 订单 / 充值
-	 *
-	 *若设置了object_id 调用：Wnd_Order 否则调用: Wnd_Recharge
-	 *
-	 *@param float  	$this->total_money			required when !$object_id
-	 *@param int 		$this->object_id  			option
-	 */
-	public function create(): WP_Post{
-		$payment = $this->object_id ? new Wnd_Order() : new Wnd_Recharge();
-		$payment->set_object_id($this->object_id);
-		$payment->set_total_amount($this->total_amount);
-		$payment->set_payment_gateway($this->payment_gateway);
-
-		// 写入数据库后构建ID及Post属性，供外部调用属性向支付平台发起请求
-		$this->post = $payment->create();
-		return $this->post;
 	}
 
 	/**
@@ -300,7 +284,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *ajax轮询订单状态：支付成功则刷新当前页面
 	 *
 	 */
-	protected static function build_ajax_check_element($payment_id) {
+	protected static function build_ajax_check_script($payment_id) {
 		return '
 <script>
 // 定时查询指定订单状态，如完成，则刷新当前页面

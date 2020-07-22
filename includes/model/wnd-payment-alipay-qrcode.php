@@ -18,7 +18,7 @@ class Wnd_Payment_Alipay_QRCode extends Wnd_Payment_Alipay {
 	 *发起支付
 	 *
 	 */
-	protected function do_pay(): string{
+	public function build_interface(): string{
 		$aliPay = new AlipayQRCodePay;
 		$aliPay->setTotalAmount($this->get_total_amount());
 		$aliPay->setOutTradeNo($this->get_out_trade_no());
@@ -28,6 +28,6 @@ class Wnd_Payment_Alipay_QRCode extends Wnd_Payment_Alipay {
 		 * 获取响应提取支付链接信息，生成二维码
 		 * Ajax定期查询订单是否已经完成支付，以便下一步操作
 		 */
-		return $aliPay->pay() . static::build_ajax_check_element($this->get_ID());
+		return $aliPay->build() . static::build_ajax_check_script($this->get_ID());
 	}
 }

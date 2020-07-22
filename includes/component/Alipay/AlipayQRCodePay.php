@@ -15,10 +15,10 @@ class AlipayQRCodePay extends AlipayPayBuilder {
 	protected $method       = 'alipay.trade.precreate';
 
 	/**
-	 * 发起订单
+	 * 发起请求并生产二维码
 	 * @return array
 	 */
-	protected function doPay(): string{
+	protected function buildInterface(): string{
 		/**
 		 *采用WordPress内置函数发送Post请求
 		 */
@@ -39,22 +39,22 @@ class AlipayQRCodePay extends AlipayPayBuilder {
 		 */
 		if (is_wp_error($response)) {
 			throw new Exception($response->get_error_message());
-		} else {
-			$result = json_decode($response['body'], true);
-			$result = $result['alipay_trade_precreate_response'];
+		}
 
-			if ('10000' == $result['code']) {
-				if (wp_is_mobile()) {
-					$alipay_app_link = 'alipayqr://platformapi/startapp?saId=10000007&qrcode=' . urldecode($result['qr_code']);
-					return '<script>window.location.href="' . $alipay_app_link . '"</script><a href="' . $alipay_app_link . '" class="button">打开支付宝支付</a>';
-				} else {
-					$imgUrl   = wnd_generate_qrcode($result['qr_code']);
-					$mobilejs = 'alipayqr://platformapi/startapp?saId=10000007&qrcode=' . urldecode($result['qr_code']);
-					return '<img src="' . $imgUrl . '"><h3>支付宝扫码支付</h3>';
-				}
-			} else {
-				throw new Exception($result['code'] . ' - ' . $result['msg'] . ' - ' . $result['sub_msg']);
-			}
+		$result = json_decode($response['body'], true);
+		$result = $result['alipay_trade_precreate_response'];
+
+		if ('10000' != $result['code']) {
+			throw new Exception($result['code'] . ' - ' . $result['msg'] . ' - ' . $result['sub_msg']);
+		}
+
+		if (wp_is_mobile()) {
+			$alipay_app_link = 'alipayqr://platformapi/startapp?saId=10000007&qrcode=' . urldecode($result['qr_code']);
+			return '<script>window.location.href="' . $alipay_app_link . '"</script><a href="' . $alipay_app_link . '" class="button">打开支付宝支付</a>';
+		} else {
+			$imgUrl   = wnd_generate_qrcode($result['qr_code']);
+			$mobilejs = 'alipayqr://platformapi/startapp?saId=10000007&qrcode=' . urldecode($result['qr_code']);
+			return '<img src="' . $imgUrl . '"><h3>支付宝扫码支付</h3>';
 		}
 	}
 }

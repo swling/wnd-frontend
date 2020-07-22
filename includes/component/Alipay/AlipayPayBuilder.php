@@ -49,9 +49,9 @@ abstract class AlipayPayBuilder extends AlipayService implements PaymentBuilder 
 	 *
 	 *@return string 返回构造支付请求的Html，如自动提交的表单或支付二维码
 	 */
-	public function pay(): string{
+	public function build(): string{
 		$this->generateCommonConfigs();
-		return $this->doPay();
+		return $this->buildInterface();
 	}
 
 	/**
@@ -59,13 +59,13 @@ abstract class AlipayPayBuilder extends AlipayService implements PaymentBuilder 
 	 *
 	 *@return string 返回构造支付请求的Html，如自动提交的表单或支付二维码
 	 */
-	abstract protected function doPay(): string;
+	abstract protected function buildInterface(): string;
 
 	/**
 	 * 签名并构造完整的请求参数
 	 * @return string
 	 */
-	protected function generateCommonConfigs() {
+	protected function generateCommonConfigs(): array{
 		//请求参数
 		$request_configs = [
 			'out_trade_no' => $this->out_trade_no,
@@ -95,13 +95,12 @@ abstract class AlipayPayBuilder extends AlipayService implements PaymentBuilder 
 
 	/**
 	 * 建立请求，以表单HTML形式构造（默认）
-	 * @param $para_temp 请求参数数组
 	 * @return 提交表单HTML文本
 	 */
-	protected function buildRequestForm($para_temp) {
+	protected function buildRequestForm(): string{
 		$sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='" . $this->gateway_url . "?charset=" . $this->charset . "' method='POST'>";
 		$sHtml .= '<h3>即将跳转到第三方支付平台……</h3>';
-		foreach ($para_temp as $key => $val) {
+		foreach ($this->common_configs as $key => $val) {
 			if (false === $this->checkEmpty($val)) {
 				$val = str_replace("'", "&apos;", $val);
 				$sHtml .= "<input type='hidden' name='" . $key . "' value='" . $val . "'>";

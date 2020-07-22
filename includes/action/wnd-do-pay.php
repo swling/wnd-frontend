@@ -24,10 +24,11 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 			$payment = Wnd_Payment::get_instance($payment_gateway);
 			$payment->set_object_id($post_id);
 			$payment->set_total_amount($total_amount);
+			$payment->create();
 
 			// Ajax 提交时，需将提交响应返回，并替换用户UI界面，故需设置 ['status' => 7];
-			$response = $payment->pay();
-			return ['status' => 7, 'data' => '<div class="has-text-centered">' . $response . '</div>'];
+			$interface = $payment->build_interface();
+			return ['status' => 7, 'data' => '<div class="has-text-centered">' . $interface . '</div>'];
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
