@@ -153,7 +153,7 @@ function wnd_post_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 
 	}
 
 	// 遍历输出图片集
-	$html = '<div class="gallery columns is-vcentered is-multiline has-text-centered is-marginless">';
+	$html = '<div class="gallery columns is-vcentered is-multiline has-text-centered is-marginless is-mobile">';
 	foreach ($images as $key => $attachment_id) {
 		$attachment_url = wp_get_attachment_url($attachment_id);
 		$thumbnail_url  = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
@@ -187,7 +187,7 @@ function wnd_user_gallery($user_id, $thumbnail_width = 160, $thumbnail_height = 
 	}
 
 	// 遍历输出图片集
-	$html = '<div class="gallery columns is-vcentered is-multiline has-text-centered is-marginless">';
+	$html = '<div class="gallery columns is-vcentered is-multiline has-text-centered is-marginless is-mobile">';
 	foreach ($images as $key => $attachment_id) {
 		$attachment_url = wp_get_attachment_url($attachment_id);
 		$thumbnail_url  = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
