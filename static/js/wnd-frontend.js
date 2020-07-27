@@ -450,7 +450,9 @@ function wnd_ajax_submit(form_id) {
 
 		// 返回结果
 		success: function(response) {
-			submit_button.removeClass("is-loading");
+			if (response.status != 3 && response.status != 4) {
+				submit_button.removeClass("is-loading");
+			}
 			if (response.status != 0) {
 				submit_button.prop("disabled", true);
 			}
