@@ -1,8 +1,6 @@
 <?php
 namespace Wnd\JsonGet;
 
-use Exception;
-
 /**
  *@since 2020.07.21
  *获取Post Json
@@ -15,10 +13,12 @@ class Wnd_Get_Post extends Wnd_JsonGet {
 		$post    = get_post($post_id, ARRAY_A);
 
 		/**
-		 *非公开post仅返回基本状态（Order 除外）
+		 *非公开post仅返回基本状态
 		 */
-		if ('order' != $post['post_type'] and 'publish' != $post['post_status'] and !current_user_can('edit_post', $post_id)) {
-			throw new Exception(__('权限不足', 'wnd'));
+		if ('publish' != $post['post_status'] and !current_user_can('edit_post', $post_id)) {
+			return [
+				'post_status' => $post['post_status'],
+			];
 		}
 
 		return $post;
