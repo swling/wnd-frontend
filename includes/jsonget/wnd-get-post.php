@@ -15,9 +15,9 @@ class Wnd_Get_Post extends Wnd_JsonGet {
 		$post    = get_post($post_id, ARRAY_A);
 
 		/**
-		 *非公开post仅返回基本状态
+		 *非公开post仅返回基本状态（Order 除外）
 		 */
-		if ('publish' != $post['post_status'] and !current_user_can('edit_post', $post_id)) {
+		if ('order' != $post['post_type'] and 'publish' != $post['post_status'] and !current_user_can('edit_post', $post_id)) {
 			throw new Exception(__('权限不足', 'wnd'));
 		}
 
