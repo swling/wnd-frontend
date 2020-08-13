@@ -54,7 +54,7 @@ function wnd_options() {
 						<input type="radio" required="required" name="wnd_static_host" value="jsdeliver" <?php if (wnd_get_config('static_host') == 'jsdeliver') echo 'checked' ?> />
 						关闭
 						<input type="radio" required="required" name="wnd_static_host" value="close" <?php if (wnd_get_config('static_host') == 'close') echo 'checked' ?> />
-						<p><i>插件前端依赖bulma css框架font-awesome图标，请选择今天资源引入方式，若选择关闭，需要自行设置前端效果</i></p>
+						<p><i>插件前端依赖bulma css框架font-awesome图标，请选择静态资源引入方式，若选择关闭，需要自行设置前端效果</i></p>
 					</td>
 				</tr>
 
@@ -286,6 +286,55 @@ function wnd_options() {
 					<td>
 						<input type="text" name="wnd_sms_template_v" value="<?php echo wnd_get_config('sms_template_v'); ?>" class="regular-text">
 						信息变更验证码代码（如修改密码等，可选）
+					</td>
+				</tr>
+
+				<!-- 验证码 -->
+				<tr>
+					<th valign="top">验证码</th>
+				</tr>
+
+				<tr>
+					<td valign="top">验证码类型</td>
+					<td>
+						关闭
+						<input type="radio" name="wnd_captcha_service" value="close" <?php if (!wnd_get_config('captcha_service') or 'close' == wnd_get_config('captcha_service')) echo 'checked'; ?>>
+						腾讯云
+						<input type="radio" name="wnd_captcha_service" value="tencent" <?php if ('tencent' == wnd_get_config('captcha_service')) echo 'checked'; ?>>
+						<p><i>设置是否开启验证码，及选择验证码服务商</i></p>
+					</td>
+				</tr>
+
+				<tr>
+					<td valign="top">AppID / SiteKey</td>
+					<td>
+						<input type="text" name="wnd_captcha_appid" value="<?php echo wnd_get_config('captcha_appid'); ?>" class="regular-text">
+					</td>
+				</tr>
+
+				<tr>
+					<td valign="top">AppKey / SiteSecret</td>
+					<td>
+						<input type="text" name="wnd_captcha_appkey" value="<?php echo wnd_get_config('captcha_appkey'); ?>" class="regular-text">
+					</td>
+				</tr>
+
+				<!-- 腾讯云 API -->
+				<tr>
+					<th valign="top">腾讯 API</th>
+					<td valign="top">使用腾讯相关云产品时可能需要配置此参数</td>
+				</tr>
+				<tr>
+					<td valign="top">腾讯Secret ID</td>
+					<td>
+						<input type="text" name="wnd_tencent_secretid" value="<?php echo wnd_get_config('tencent_secretid'); ?>" class="regular-text">
+					</td>
+				</tr>
+
+				<tr>
+					<td valign="top">腾讯Secret Key</td>
+					<td>
+						<input type="text" name="wnd_tencent_secretkey" value="<?php echo wnd_get_config('tencent_secretkey'); ?>" class="regular-text">
 					</td>
 				</tr>
 

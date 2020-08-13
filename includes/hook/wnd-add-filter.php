@@ -3,6 +3,7 @@ namespace Wnd\Hook;
 
 use Exception;
 use Wnd\Model\Wnd_Auth;
+use Wnd\Utility\Wnd_Captcha;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
@@ -17,6 +18,7 @@ class Wnd_Add_Filter {
 		add_filter('wnd_can_update_profile', [__CLASS__, 'filter_can_update_profile'], 10, 1);
 		add_filter('wnd_insert_post_status', [__CLASS__, 'filter_post_status'], 10, 3);
 		add_filter('wnd_safe_action_return', [__CLASS__, 'filter_safe_action_return'], 10, 1);
+		add_filter('wnd_can_send_code', [__CLASS__, 'filter_can_send_code'], 10, 3);
 	}
 
 	/**
@@ -111,6 +113,25 @@ class Wnd_Add_Filter {
 		} else {
 			wp_cache_delete($post_id, 'post_meta');
 			return ['status' => 0, 'msg' => time()];
+		}
+	}
+
+	/**
+	 *@since 2020.08.13
+	 *发送短信或邮件验证码时，进行人机验证
+	 */
+	public static function filter_can_send_code($can_array, $email_or_phone, $captcha) {
+		if ('close' == wnd_get_config('captcha_service')) {
+			return $can_array;
+		}
+
+		try {
+			$auth = Wnd_Captcha::get_instance();
+			$auth->set_captcha($captcha);
+			$auth->validate();
+			return $can_array;
+		} catch (Exception $e) {
+			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 	}
 }

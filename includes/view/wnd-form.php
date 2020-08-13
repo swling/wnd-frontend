@@ -115,7 +115,7 @@ class Wnd_Form {
 	}
 
 	// action
-	public function set_action($action, $method) {
+	public function set_action($action, $method = 'POST') {
 		$this->method = $method;
 		$this->action = $action;
 	}

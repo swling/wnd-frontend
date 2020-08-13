@@ -202,3 +202,8 @@ apply_filters('wnd_post_thumbnail', $html, $post_id, $width, $height);
 */
 apply_filters('wnd_safe_action_return');
 ```
+
+## 发送短信或邮件验证码权限
+```php
+$can_send_code = apply_filters('wnd_can_send_code', ['status' => 1, 'msg' => ''], $email_or_phone, $token);
+```

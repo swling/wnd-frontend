@@ -586,6 +586,54 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 	}
 }
 
+/**
+ *@since 2019.02.09 发送手机或邮箱验证码
+ *@param object button jquery object
+ */
+function wnd_send_code(button) {
+	// 清除定时器
+	clearTimeout(send_countdown);
+	wait = 90;
+
+	var form_id = button.closest("form").attr("id");
+	var data = button.data();
+	data.action = "wnd_send_code";
+	data.phone = $("#" + form_id + " input[name='phone']").val();
+	data.email = $("#" + form_id + " input[name='_user_user_email']").val();
+	if (data.email == "" || data.phone == "") {
+		wnd_ajax_msg(wnd.msg.required, "is-warning", "#" + form_id);
+		return false;
+	}
+
+	$.ajax({
+		type: "post",
+		dataType: "json",
+		url: wnd_action_api,
+		data: data,
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
+			button.addClass("is-loading");
+		},
+		success: function(response) {
+			if (response.status <= 0) {
+				var style = "is-danger";
+			} else {
+				var style = "is-success";
+				button.prop("disabled", true);
+				button.text(wnd.msg.send_successfully);
+				wnd_send_countdown();
+			}
+			wnd_ajax_msg(response.msg, style, "#" + form_id);
+			button.removeClass("is-loading");
+		},
+		// 错误
+		error: function() {
+			wnd_ajax_msg(wnd.msg.send_failed, "is-danger", "#" + form_id);
+			button.removeClass("is-loading");
+		}
+	});
+};
+
 //####################### 文档加载完成后才能执行的功能
 jQuery(document).ready(function($) {
 
@@ -833,56 +881,6 @@ jQuery(document).ready(function($) {
 			// 错误
 			error: function() {
 				wnd_ajax_msg(wnd.msg.system_error, "is-danger", "#" + id);
-			}
-		});
-	});
-
-	/**
-	 *@since 2019.02.09 发送手机或邮箱验证码
-	 */
-	$("body").on("click", ".send-code", function() {
-		// 清除定时器
-		clearTimeout(send_countdown);
-		wait = 90;
-
-		// ajax中无法直接使用jQuery $(this)，需要提前定义
-		var _this = $(this);
-		var form_id = _this.closest("form").attr("id");
-
-		var data = $(this).data();
-		data.action = "wnd_send_code";
-		data.phone = $("#" + form_id + " input[name='phone']").val();
-		data.email = $("#" + form_id + " input[name='_user_user_email']").val();
-		if (data.email == "" || data.phone == "") {
-			wnd_ajax_msg(wnd.msg.required, "is-warning", "#" + form_id);
-			return false;
-		}
-
-		$.ajax({
-			type: "post",
-			dataType: "json",
-			url: wnd_action_api,
-			data: data,
-			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-				_this.addClass("is-loading");
-			},
-			success: function(response) {
-				if (response.status <= 0) {
-					var style = "is-danger";
-				} else {
-					var style = "is-success";
-					_this.prop("disabled", true);
-					_this.text(wnd.msg.send_successfully);
-					wnd_send_countdown();
-				}
-				wnd_ajax_msg(response.msg, style, "#" + form_id);
-				_this.removeClass("is-loading");
-			},
-			// 错误
-			error: function() {
-				wnd_ajax_msg(wnd.msg.send_failed, "is-danger", "#" + form_id);
-				_this.removeClass("is-loading");
 			}
 		});
 	});

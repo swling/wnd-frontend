@@ -19,6 +19,7 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 		$text           = $is_email ? __('邮箱', 'wnd') : __('手机', 'wnd');
 		$template       = $_POST['template'] ?: wnd_get_config('sms_template_v');
 		$email_or_phone = $_POST['email'] ?? $_POST['phone'] ?? '';
+		$captcha        = $_POST['captcha'] ?? '';
 		$current_user   = wp_get_current_user();
 
 		// 防止前端篡改表单：校验验证码类型及接受设备
@@ -42,6 +43,12 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 			return ['status' => 0, 'msg' => __('邮箱地址无效', 'wnd')];
 		} elseif (!$is_email and !wnd_is_mobile($email_or_phone)) {
 			return ['status' => 0, 'msg' => __('手机号码无效', 'wnd')];
+		}
+
+		// 发送权限过滤
+		$can_send_code = apply_filters('wnd_can_send_code', ['status' => 1, 'msg' => ''], $email_or_phone, $captcha);
+		if (0 === $can_send_code['status']) {
+			return $can_send_code;
 		}
 
 		try {

@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\View;
 
+use Wnd\Utility\Wnd_Captcha;
 use Wnd\Utility\Wnd_Form_Data;
 
 /**
@@ -140,7 +141,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			]
 		);
 
-		$this->add_html('</div>');
+		$this->add_html('</div>' . $this->render_send_code_script());
 	}
 
 	/**
@@ -187,7 +188,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			]
 		);
 
-		$this->add_html('</div>');
+		$this->add_html('</div>' . $this->render_send_code_script());
 	}
 
 	// Image upload
@@ -500,5 +501,17 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 
 		return $attachment_url;
+	}
+
+	/**
+	 *验证码脚本
+	 */
+	protected function render_send_code_script() {
+		// 禁用验证码：直接发送
+		if ('close' == wnd_get_config('captcha_service')) {
+			return '<script>$("body").on("click", ".send-code", function() {wnd_send_code($(this));});</script>';
+		}
+
+		return Wnd_Captcha::get_instance()->render_script();
 	}
 }

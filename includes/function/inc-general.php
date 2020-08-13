@@ -83,12 +83,13 @@ function wnd_random($length) {
  *@since 初始化
  *生成N位随机数字
  *@param 	int 	$length 	随机字符串长度
+ *@param 	false 	$positive 	是否为正数
  *@return 	string 	随机字符
  */
-function wnd_random_code($length = 6) {
+function wnd_random_code($length = 6, $positive = false) {
 	$No = '';
 	for ($i = 0; $i < $length; $i++) {
-		$No .= mt_rand(0, 9);
+		$No .= (0 == $i and $positive) ? mt_rand(1, 9) : mt_rand(0, 9);
 	}
 	return $No;
 }
