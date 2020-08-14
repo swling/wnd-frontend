@@ -40,7 +40,7 @@ abstract class Wnd_Auth {
 	protected $valid_time = 600;
 
 	// 同一地址两次发送时间的最短间隔（秒）
-	protected $intervals = 90;
+	protected $intervals;
 
 	/**
 	 *@since 2019.08.13
@@ -51,6 +51,7 @@ abstract class Wnd_Auth {
 		$this->db_field_value = $auth_object;
 		$this->auth_code      = wnd_random_code(6);
 		$this->user           = wp_get_current_user();
+		$this->intervals      = wnd_get_config('min_verification_interval');
 	}
 
 	/**

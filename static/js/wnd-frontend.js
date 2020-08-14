@@ -599,10 +599,10 @@ function wnd_send_code(button) {
 				button.text(wnd.msg.send_successfully);
 
 				// 定时器
-				var time = 60;
+				var time = data.interval;
 				var timer = null;
 				timer = setInterval(function() {
-					if (time == 1) {
+					if (time <= 1) {
 						clearInterval(timer);
 						$(button).text(wnd.msg.try_again);
 						$(button).prop("disabled", false);

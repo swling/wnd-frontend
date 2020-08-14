@@ -256,6 +256,13 @@ function wnd_options() {
 					</td>
 				</tr>
 				<tr>
+					<td valign="top">发送间隔时间</td>
+					<td>
+						<input type="number" name="wnd_min_verification_interval" value="<?php echo wnd_get_config('min_verification_interval'); ?>" class="text" max="3600" min="0" step="1">
+						<p><i>验证码发送间隔频率控制，单位：秒</i></p>
+					</td>
+				</tr>
+				<tr>
 					<td valign="top">短信APP ID</td>
 					<td>
 						<input type="text" name="wnd_sms_appid" value="<?php echo wnd_get_config('sms_appid'); ?>" class="regular-text">
@@ -321,18 +328,18 @@ function wnd_options() {
 
 				<!-- 腾讯云 API -->
 				<tr>
-					<th valign="top">腾讯 API</th>
-					<td valign="top">使用腾讯相关云产品时可能需要配置此参数</td>
+					<th valign="top">腾讯 API 密钥</th>
+					<td valign="top">腾讯相关云产品需要配置此参数 <a target="_blank" href="https://console.cloud.tencent.com/cam/capi">点击查看</a></td>
 				</tr>
 				<tr>
-					<td valign="top">腾讯Secret ID</td>
+					<td valign="top">Secret ID</td>
 					<td>
 						<input type="text" name="wnd_tencent_secretid" value="<?php echo wnd_get_config('tencent_secretid'); ?>" class="regular-text">
 					</td>
 				</tr>
 
 				<tr>
-					<td valign="top">腾讯Secret Key</td>
+					<td valign="top">Secret Key</td>
 					<td>
 						<input type="text" name="wnd_tencent_secretkey" value="<?php echo wnd_get_config('tencent_secretkey'); ?>" class="regular-text">
 					</td>

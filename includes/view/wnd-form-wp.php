@@ -127,6 +127,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$button .= ' data-type_nonce="' . wp_create_nonce($device_type . $type) . '"';
 		$button .= ' data-device_type="' . $device_type . '"';
 		$button .= ' data-device_name="' . $name . '"';
+		$button .= ' data-interval="' . wnd_get_config('min_verification_interval') . '"';
 		$button .= '>' . __('获取验证码', 'wnd') . '</button>';
 
 		$this->add_html('<div class="field validate-field-wrap">');
