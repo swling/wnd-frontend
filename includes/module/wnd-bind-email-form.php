@@ -29,7 +29,7 @@ class Wnd_Bind_Email_Form extends Wnd_Module {
 			$form->add_user_password(__('密码', 'wnd'), __('密码', 'wnd'));
 		}
 
-		$form->add_email_verify('bind');
+		$form->add_email_verification('bind');
 		$form->set_action('wnd_bind_account');
 		$form->set_submit_button(__('保存', 'wnd'));
 		$form->build();

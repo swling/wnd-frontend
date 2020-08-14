@@ -96,35 +96,36 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 	 */
 	public function render_script(): string{
 		$script = '
-<script>
-function wndt_tencent_captcha(_this){
-	var captcha = new TencentCaptcha(
-		"2020091377",
-		function(res, bizState) {
-			if(0 === res.ret){
-				_this.data("captcha",res.ticket);
-				_this.data("randstr",res.randstr);
-				wnd_send_code(_this);
-			}
-		},{
-			"bizState": _this
+		<script>
+		function wndt_tencent_captcha(_this){
+			var captcha = new TencentCaptcha(
+				"2020091377",
+				function(res, bizState) {
+					if(0 === res.ret){
+						_this.data("captcha", res.ticket);
+						_this.data("randstr", res.randstr);
+						wnd_send_code(_this);
+					}
+				},{
+					"bizState": _this
+				}
+			)
+			captcha.show();
 		}
-	)
-	captcha.show();
-}
-// 绑定点击事件
-$("body").on("click", ".send-code", function() {
-	var _this = $(this);
-	if (typeof TencentCaptcha == "undefined") {
-		$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
-			wndt_tencent_captcha(_this);
+		// 绑定点击事件
+		$(function() {
+			$(".send-code").click(function() {
+				var _this = $(this);
+				if (typeof TencentCaptcha == "undefined") {
+					$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
+						wndt_tencent_captcha(_this);
+					});
+				}else{
+					wndt_tencent_captcha(_this);
+				}
+			});
 		});
-	}else{
-		wndt_tencent_captcha(_this);
-	}
-});
-</script>
-';
+		</script>';
 		return $script;
 	}
 }

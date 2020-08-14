@@ -120,8 +120,9 @@ class Wnd_Add_Filter {
 	 *@since 2020.08.13
 	 *发送短信或邮件验证码时，进行人机验证
 	 */
-	public static function filter_can_send_code($can_array, $email_or_phone, $captcha) {
-		if ('close' == wnd_get_config('captcha_service')) {
+	public static function filter_can_send_code($can_array, $device, $captcha) {
+		// 禁用人机校验
+		if (in_array(wnd_get_config('captcha_service'), ['close', ''])) {
 			return $can_array;
 		}
 

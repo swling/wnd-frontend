@@ -85,21 +85,6 @@ function wnd_is_spider() {
 	}
 }
 
-//发送按钮倒计时
-var wait = 90; // 获取验证码短信时间间隔 按钮不能恢复 可检查号码
-var send_countdown;
-
-function wnd_send_countdown() {
-	if (wait > 0) {
-		$(".send-code").text(wait);
-		wait--;
-		send_countdown = setTimeout(wnd_send_countdown, 1000);
-	} else {
-		$(".send-code").text(wnd.msg.try_again).prop("disabled", false).fadeTo("slow", 1);
-		wait = 90;
-	}
-}
-
 /**
  *@since 2019.1 bulma重构
  */
@@ -117,42 +102,36 @@ function wnd_alert_modal(html, is_gallery = false) {
 }
 
 // 直接弹出消息
-var ajax_alert_time_out;
-
-function wnd_alert_msg(msg, wait = 0) {
+function wnd_alert_msg(msg, time = 0) {
 	wnd_reset_modal();
 	$(".modal").addClass("is-active");
 	$(".modal-entry").removeClass("box");
 	$(".modal-entry").html('<div class="alert-message has-text-white has-text-centered">' + msg + '</div>');
 	// 定时关闭
-	if (wait > 0) {
-		ajax_alert_time_out = setTimeout(function() {
-			wnd_reset_modal()
-		}, wait * 1000);
+	if (time > 0) {
+		var timer = null;
+		timer = setInterval(function() {
+			clearInterval(timer);
+			wnd_reset_modal();
+		}, time * 1000);
 	}
-
 }
 
 // 在表单提交时反馈信息
-var ajax_msg_time_out;
-
-function wnd_ajax_msg(msg, style = "is-danger", parent = "body", wait = 0) {
+function wnd_ajax_msg(msg, style = "is-danger", parent = "body", time = 0) {
 	$(parent + " .ajax-message:first").html('<div class="message ' + style + '"><div class="message-body">' + msg + '</div></div>');
-	// 定时清空
-	if (wait > 0) {
-		ajax_msg_time_out = setTimeout(function() {
+	// 定时关闭
+	if (time > 0) {
+		var timer = null;
+		timer = setInterval(function() {
+			clearInterval(timer);
 			$(parent + " .ajax-message:first").empty();
-		}, wait * 1000);
+		}, time * 1000);
 	}
 }
 
 // 初始化对话框
 function wnd_reset_modal() {
-	// 清空定时器
-	clearTimeout(ajax_msg_time_out);
-	clearTimeout(ajax_alert_time_out);
-	clearTimeout(send_countdown);
-
 	if ($("#modal").length) {
 		$("#modal").removeClass("is-active wnd-gallery");
 		$("#modal .modal-entry").removeClass("box");
@@ -591,16 +570,13 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
  *@param object button jquery object
  */
 function wnd_send_code(button) {
-	// 清除定时器
-	clearTimeout(send_countdown);
-	wait = 90;
-
 	var form_id = button.closest("form").attr("id");
 	var data = button.data();
 	data.action = "wnd_send_code";
-	data.phone = $("#" + form_id + " input[name='phone']").val();
-	data.email = $("#" + form_id + " input[name='_user_user_email']").val();
-	if (data.email == "" || data.phone == "") {
+	var phone = button.closest(".validate-field-wrap").find("input[name='phone']").val();
+	var email = button.closest(".validate-field-wrap").find("input[name='_user_user_email']").val();
+	data.device = email ? email : phone;
+	if (!data.device) {
 		wnd_ajax_msg(wnd.msg.required, "is-warning", "#" + form_id);
 		return false;
 	}
@@ -621,8 +597,22 @@ function wnd_send_code(button) {
 				var style = "is-success";
 				button.prop("disabled", true);
 				button.text(wnd.msg.send_successfully);
-				wnd_send_countdown();
+
+				// 定时器
+				var time = 60;
+				var timer = null;
+				timer = setInterval(function() {
+					if (time == 1) {
+						clearInterval(timer);
+						$(button).text(wnd.msg.try_again);
+						$(button).prop("disabled", false);
+					} else {
+						time--;
+						$(button).text(time).fadeTo("slow", 1);
+					}
+				}, 1000);
 			}
+
 			wnd_ajax_msg(response.msg, style, "#" + form_id);
 			button.removeClass("is-loading");
 		},

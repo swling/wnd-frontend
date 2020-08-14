@@ -298,7 +298,7 @@ function wnd_options() {
 					<td valign="top">验证码类型</td>
 					<td>
 						关闭
-						<input type="radio" name="wnd_captcha_service" value="close" <?php if (!wnd_get_config('captcha_service') or 'close' == wnd_get_config('captcha_service')) echo 'checked'; ?>>
+						<input type="radio" name="wnd_captcha_service" value="close" <?php if (in_array(wnd_get_config('captcha_service'), ['close', ''])) echo 'checked'; ?>>
 						腾讯云
 						<input type="radio" name="wnd_captcha_service" value="tencent" <?php if ('tencent' == wnd_get_config('captcha_service')) echo 'checked'; ?>>
 						<p><i>设置是否开启验证码，及选择验证码服务商</i></p>

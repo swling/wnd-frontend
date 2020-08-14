@@ -96,34 +96,58 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *短信校验
+	 *构建验证码字段
 	 *@param string 	$type 		  	register / reset_password / bind / verify
 	 *@param string 	$template 		短信模板
 	 *注册时若当前手机已注册，则无法发送验证码
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
-	public function add_sms_verify($type = 'verify', $template = '') {
-		$user_phone = wnd_get_user_phone($this->user->ID);
-		$this->add_html('<div class="field">');
+	protected function add_verification_field($device_type, $type = 'verify', $template = '') {
+		// 配置手机或邮箱验证码基础信息
+		if ('email' == $device_type) {
+			$device      = $this->user->data->user_email ?? '';
+			$name        = '_user_user_email';
+			$label       = __('邮箱', 'wnd');
+			$placeholder = __('电子邮箱', 'wnd');
+			$icon        = '<i class="fa fa-at"></i>';
+		} elseif ('phone' == $device_type) {
+			$device      = wnd_get_user_phone($this->user->ID);
+			$name        = 'phone';
+			$label       = __('手机', 'wnd');
+			$placeholder = __('手机号码', 'wnd');
+			$icon        = '<i class="fa fa-phone-square"></i>';
+		}
 
+		// 构建发送按钮
+		$button = '<button type="button"';
+		$button .= ' class="send-code button is-outlined is-' . static::$primary_color . '"';
+		$button .= ' data-type="' . $type . '"';
+		$button .= ' data-template="' . $template . '"';
+		$button .= ' data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '"';
+		$button .= ' data-type_nonce="' . wp_create_nonce($device_type . $type) . '"';
+		$button .= ' data-device_type="' . $device_type . '"';
+		$button .= ' data-device_name="' . $name . '"';
+		$button .= '>' . __('获取验证码', 'wnd') . '</button>';
+
+		$this->add_html('<div class="field validate-field-wrap">');
 		// 当前用户未绑定手机或更换绑定手机
-		if (!$user_phone or 'bind' == $type) {
+		if (!$device or 'bind' == $type) {
 			$this->add_text(
 				[
-					'name'        => 'phone',
-					'icon_left'   => '<i class="fa fa-phone-square"></i>',
+					'name'        => $name,
+					'icon_left'   => $icon,
 					'required'    => true,
-					'label'       => __('手机', 'wnd'),
-					'placeholder' => __('手机号码', 'wnd'),
+					'label'       => $label,
+					'placeholder' => $placeholder,
 				]
 			);
 
-			// 验证当前账户手机
-		} elseif ($user_phone) {
+			// 验证当前账户设备
+		} elseif ($device) {
 			$this->add_text(
 				[
-					'label'    => __('手机', 'wnd'),
-					'value'    => $user_phone,
+					'label'    => $label,
+					'value'    => $device,
 					'disabled' => true,
 					'required' => true,
 				]
@@ -137,11 +161,22 @@ class Wnd_Form_WP extends Wnd_Form {
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => __('验证码', 'wnd'),
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . static::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '" data-type_nonce="' . wp_create_nonce('sms' . $type) . '" data-is_email="0">' . __('获取验证码', 'wnd') . '</button>',
+				'addon_right' => $button,
 			]
 		);
 
-		$this->add_html('</div>' . $this->render_send_code_script());
+		$this->add_html('</div>' . $this->render_verification_script());
+	}
+
+	/**
+	 *短信校验
+	 *@param string 	$type 		  	register / reset_password / bind / verify
+	 *@param string 	$template 		短信模板
+	 *注册时若当前手机已注册，则无法发送验证码
+	 *找回密码时若当前手机未注册，则无法发送验证码
+	 **/
+	public function add_phone_verification($type = 'verify', $template = '') {
+		$this->add_verification_field('phone', $type, $template);
 	}
 
 	/**
@@ -150,45 +185,8 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *注册时若当前邮箱已注册，则无法发送验证码
 	 *找回密码时若当前邮箱未注册，则无法发送验证码
 	 **/
-	public function add_email_verify($type = 'verify', $template = '') {
-		$this->add_html('<div class="field">');
-
-		// 当前用户未绑定邮箱或更换绑定邮箱
-		if (!$this->user->ID or !$this->user->data->user_email or 'bind' == $type) {
-			$this->add_email(
-				[
-					'name'        => '_user_user_email',
-					'icon_left'   => '<i class="fa fa-at"></i>',
-					'required'    => true,
-					'label'       => __('邮箱', 'wnd'),
-					'placeholder' => __('电子邮箱', 'wnd'),
-				]
-			);
-
-			// 验证当前账户邮箱
-		} elseif ($this->user->data->user_email) {
-			$this->add_email(
-				[
-					'label'    => __('邮箱', 'wnd'),
-					'value'    => $this->user->data->user_email,
-					'disabled' => true,
-					'required' => true,
-				]
-			);
-		}
-
-		$this->add_text(
-			[
-				'name'        => 'auth_code',
-				'icon_left'   => '<i class="fa fa-key"></i>',
-				'required'    => 'required',
-				'label'       => '',
-				'placeholder' => __('验证码', 'wnd'),
-				'addon_right' => '<button type="button" class="send-code button is-outlined is-' . static::$primary_color . '" data-type="' . $type . '" data-template="' . $template . '" data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '" data-type_nonce="' . wp_create_nonce('email' . $type) . '" data-is_email="1">' . __('获取验证码', 'wnd') . '</button>',
-			]
-		);
-
-		$this->add_html('</div>' . $this->render_send_code_script());
+	public function add_email_verification($type = 'verify', $template = '') {
+		$this->add_verification_field('email', $type, $template);
 	}
 
 	// Image upload
@@ -506,10 +504,17 @@ class Wnd_Form_WP extends Wnd_Form {
 	/**
 	 *验证码脚本
 	 */
-	protected function render_send_code_script() {
+	protected function render_verification_script() {
 		// 禁用验证码：直接发送
-		if ('close' == wnd_get_config('captcha_service')) {
-			return '<script>$("body").on("click", ".send-code", function() {wnd_send_code($(this));});</script>';
+		if (in_array(wnd_get_config('captcha_service'), ['close', ''])) {
+			return '
+			<script>
+			$(function() {
+				$(".send-code").click(function() {
+					wnd_send_code($(this));
+				});
+			});
+			</script>';
 		}
 
 		return Wnd_Captcha::get_instance()->render_script();
