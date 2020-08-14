@@ -99,7 +99,7 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 		<script>
 		function wndt_tencent_captcha(_this){
 			var captcha = new TencentCaptcha(
-				"2020091377",
+				"' . $this->appid . '",
 				function(res, bizState) {
 					if(0 === res.ret){
 						_this.data("captcha", res.ticket);
@@ -116,6 +116,14 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 		$(function() {
 			$(".send-code").click(function() {
 				var _this = $(this);
+				var form_id = _this.closest("form").attr("id");
+				var email = _this.closest(".validate-field-wrap").find("input[name=\'_user_user_email\']").val();
+				var phone = _this.closest(".validate-field-wrap").find("input[name=\'phone\']").val();
+				if (!email && !phone) {
+					wnd_ajax_msg(wnd.msg.required, "is-warning", "#" + form_id);
+					return false;
+				}
+
 				if (typeof TencentCaptcha == "undefined") {
 					$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
 						wndt_tencent_captcha(_this);
