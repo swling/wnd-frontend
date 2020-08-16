@@ -109,9 +109,12 @@ class Wnd_Add_Filter_WP {
 	/**
 	 *@since 2019.01.16
 	 *注册用户的评论链接到作者页面
+	 *
+	 *@time 2020.08.16
+	 *新增检测用户是否存在，避免已删除用户的评论产生无效链接
 	 */
 	public static function filter_comment_author_url($url, $id, $comment) {
-		if ($comment->user_id) {
+		if ($comment->user_id and get_user_by('id', $comment->user_id)) {
 			return get_author_posts_url($comment->user_id);
 		}
 		return $url;
@@ -127,6 +130,7 @@ class Wnd_Add_Filter_WP {
 		$avatar_url = wnd_get_config('default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
 
 		// 获取用户 ID
+		$user_id = 0;
 		if (is_numeric($id_or_email)) {
 			$user_id = (int) $id_or_email;
 			//评论获取
@@ -137,7 +141,7 @@ class Wnd_Add_Filter_WP {
 			$user    = get_user_by('email', $id_or_email);
 			$user_id = $user ? $user->ID : 0;
 		}
-		$user_id = $user_id ?? 0;
+		$user_id = ($user_id and get_user_by('id', $user_id)) ? $user_id : 0;
 
 		//已登录用户调用字段头像
 		if ($user_id) {
@@ -149,12 +153,9 @@ class Wnd_Add_Filter_WP {
 				 * 统一按阿里云oss裁剪缩略图
 				 */
 				$avatar_url = wnd_get_thumbnail_url($avatar_url, $size, $size);
-
 			} elseif (wnd_get_user_meta($user_id, 'avatar_url')) {
 				$avatar_url = wnd_get_user_meta($user_id, 'avatar_url') ?: $avatar_url;
-
 			}
-
 		}
 
 		//头像
