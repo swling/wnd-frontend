@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Action;
 
-use Exception;
 use Wnd\Model\Wnd_Auth;
 
 /**
@@ -49,14 +48,10 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 			return $can_send_code;
 		}
 
-		try {
-			$auth = Wnd_Auth::get_instance($device);
-			$auth->set_type($type);
-			$auth->set_template($template);
-			$auth->send();
-			return ['status' => 1, 'msg' => __('发送成功，请注意查收', 'wnd')];
-		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
-		}
+		$auth = Wnd_Auth::get_instance($device);
+		$auth->set_type($type);
+		$auth->set_template($template);
+		$auth->send();
+		return ['status' => 1, 'msg' => __('发送成功，请注意查收', 'wnd')];
 	}
 }

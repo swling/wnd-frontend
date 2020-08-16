@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Action;
 
-use Exception;
 use Wnd\Utility\Wnd_Form_Data;
 
 /**
@@ -19,12 +18,8 @@ class Wnd_Update_Option extends Wnd_Action_Ajax {
 		$append      = (bool) $_POST['append'];
 
 		// 实例化当前提交的表单数据
-		try {
-			$form_data   = new Wnd_Form_Data();
-			$option_data = $form_data->get_option_data($option_name);
-		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
-		}
+		$form_data   = new Wnd_Form_Data();
+		$option_data = $form_data->get_option_data($option_name);
 
 		// 更新方式：附加数据，将本次提交数据和数据库数据合并
 		if ($append) {

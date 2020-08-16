@@ -20,17 +20,13 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 			throw new Exception(__('未定义支付方式', 'wnd'));
 		}
 
-		try {
-			$payment = Wnd_Payment::get_instance($payment_gateway);
-			$payment->set_object_id($post_id);
-			$payment->set_total_amount($total_amount);
-			$payment->create();
+		$payment = Wnd_Payment::get_instance($payment_gateway);
+		$payment->set_object_id($post_id);
+		$payment->set_total_amount($total_amount);
+		$payment->create();
 
-			// Ajax 提交时，需将提交响应返回，并替换用户UI界面，故需设置 ['status' => 7];
-			$interface = $payment->build_interface();
-			return ['status' => 7, 'data' => '<div class="has-text-centered">' . $interface . '</div>'];
-		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
-		}
+		// Ajax 提交时，需将提交响应返回，并替换用户UI界面，故需设置 ['status' => 7];
+		$interface = $payment->build_interface();
+		return ['status' => 7, 'data' => '<div class="has-text-centered">' . $interface . '</div>'];
 	}
 }

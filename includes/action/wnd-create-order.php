@@ -21,16 +21,11 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		}
 
 		// 写入消费数据
-		try {
-			static::check_create($post_id, $user_id);
-
-			$order = new Wnd_Order();
-			$order->set_object_id($post_id);
-			$order->set_subject(get_the_title($post_id));
-			$order->create($is_success = true);
-		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
-		}
+		static::check_create($post_id, $user_id);
+		$order = new Wnd_Order();
+		$order->set_object_id($post_id);
+		$order->set_subject(get_the_title($post_id));
+		$order->create($is_success = true);
 
 		// 支付成功
 		return ['status' => 1, 'msg' => __('支付成功', 'wnd')];

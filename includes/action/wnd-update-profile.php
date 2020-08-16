@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Action;
 
-use Exception;
 use Wnd\Utility\Wnd_Form_Data;
 
 /**
@@ -27,11 +26,7 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 		}
 
 		// 实例化WndWP表单数据处理对象
-		try {
-			$form_data = new Wnd_Form_Data();
-		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
-		}
+		$form_data         = new Wnd_Form_Data();
 		$user_data         = $form_data->get_user_data();
 		$user_data['ID']   = $user_id;
 		$user_meta_data    = $form_data->get_user_meta_data();

@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Action;
 
-use Exception;
 use Wnd\Model\Wnd_Binder;
 
 /**
@@ -22,14 +21,10 @@ class Wnd_Bind_Account extends Wnd_Action_Ajax {
 		}
 
 		// 绑定
-		try {
-			$bind = Wnd_Binder::get_instance($email_or_phone);
-			$bind->set_password($password);
-			$bind->set_auth_code($auth_code);
-			$bind->bind();
-			return ['status' => 4, 'msg' => __('绑定成功', 'wnd')];
-		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
-		}
+		$bind = Wnd_Binder::get_instance($email_or_phone);
+		$bind->set_password($password);
+		$bind->set_auth_code($auth_code);
+		$bind->bind();
+		return ['status' => 4, 'msg' => __('绑定成功', 'wnd')];
 	}
 }

@@ -38,13 +38,9 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 	 *
 	 */
 	public static function execute($verify_form_nonce = true): array{
-		try {
-			static::parse_data($verify_form_nonce);
-			static::check();
-			static::insert();
-		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
-		}
+		static::parse_data($verify_form_nonce);
+		static::check();
+		static::insert();
 
 		// 完成返回
 		$permalink    = get_permalink(static::$post_id);
@@ -68,15 +64,11 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 	 */
 	protected static function parse_data($verify_form_nonce) {
 		// 实例化当前提交的表单数据
-		try {
-			$form_data            = new Wnd_Form_Data($verify_form_nonce);
-			static::$post_data    = $form_data->get_post_data();
-			static::$meta_data    = $form_data->get_post_meta_data();
-			static::$wp_meta_data = $form_data->get_wp_post_meta_data();
-			static::$terms_data   = $form_data->get_terms_data();
-		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
-		}
+		$form_data            = new Wnd_Form_Data($verify_form_nonce);
+		static::$post_data    = $form_data->get_post_data();
+		static::$meta_data    = $form_data->get_post_meta_data();
+		static::$wp_meta_data = $form_data->get_wp_post_meta_data();
+		static::$terms_data   = $form_data->get_terms_data();
 
 		// 指定ID则为更新
 		static::$post_id     = static::$post_data['ID'] ?? 0;

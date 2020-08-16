@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Action;
 
-use Exception;
 use Wnd\Model\Wnd_Recharge;
 
 /**
@@ -29,15 +28,11 @@ class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
 		}
 
 		// 写入充值记录
-		try {
-			$recharge = new Wnd_Recharge();
-			$recharge->set_user_id($user->ID);
-			$recharge->set_total_amount($total_amount);
-			$recharge->set_subject($remarks);
-			$recharge->create(true); // 直接写入余额
-		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
-		}
+		$recharge = new Wnd_Recharge();
+		$recharge->set_user_id($user->ID);
+		$recharge->set_total_amount($total_amount);
+		$recharge->set_subject($remarks);
+		$recharge->create(true); // 直接写入余额
 
 		return ['status' => 1, 'msg' => $user->display_name . '&nbsp;' . __('充值：¥', 'wnd') . $total_amount];
 	}

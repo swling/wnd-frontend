@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Action;
 
-use Exception;
 use Wnd\Model\Wnd_Auth;
 
 /**
@@ -43,19 +42,15 @@ class Wnd_Reset_Password extends Wnd_Action_Ajax {
 		 *已登录用户则为当前用户
 		 *未登录用户通过邮箱或手机获取
 		 */
-		try {
-			$auth = Wnd_Auth::get_instance($user);
-			$auth->set_type('reset_password');
-			$auth->set_auth_code($auth_code);
-			$auth->verify();
+		$auth = Wnd_Auth::get_instance($user);
+		$auth->set_type('reset_password');
+		$auth->set_auth_code($auth_code);
+		$auth->verify();
 
-			reset_password($user, $new_password);
-			return [
-				'status' => $is_user_logged_in ? 4 : 1,
-				'msg'    => __('密码修改成功', 'wnd') . '&nbsp;<a onclick="wnd_ajax_modal(\'wnd_login_form\');">' . __('登录', 'wnd') . '</a>',
-			];
-		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
-		}
+		reset_password($user, $new_password);
+		return [
+			'status' => $is_user_logged_in ? 4 : 1,
+			'msg'    => __('密码修改成功', 'wnd') . '&nbsp;<a onclick="wnd_ajax_modal(\'wnd_login_form\');">' . __('登录', 'wnd') . '</a>',
+		];
 	}
 }

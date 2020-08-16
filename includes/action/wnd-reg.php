@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Action;
 
-use Exception;
 use Wnd\Utility\Wnd_Form_Data;
 
 /**
@@ -24,11 +23,7 @@ use Wnd\Utility\Wnd_Form_Data;
 class Wnd_Reg extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		try {
-			$form_data = new Wnd_Form_Data();
-		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
-		}
+		$form_data = new Wnd_Form_Data();
 
 		// User Data
 		$user_data = $form_data->get_user_data();
