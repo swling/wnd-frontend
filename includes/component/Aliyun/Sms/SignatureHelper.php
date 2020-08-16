@@ -64,14 +64,14 @@ class SignatureHelper {
 			"x-sdk-client" => "php/2.0.0",
 		]);
 
-		if (substr($url, 0, 5) == 'https') {
+		if ('https' == substr($url, 0, 5)) {
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 		}
 
 		$rtn = curl_exec($ch);
 
-		if ($rtn === false) {
+		if (false === $rtn) {
 			trigger_error("[CURL_" . curl_errno($ch) . "]: " . curl_error($ch), E_USER_ERROR);
 		}
 		curl_close($ch);

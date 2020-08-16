@@ -28,7 +28,7 @@ class Wnd_Tag_Under_Category {
 	 */
 	public static function monitor_object_terms_changes($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids) {
 		$post_type    = get_post_type($object_id);
-		$cat_taxonomy = ($post_type == 'post') ? 'category' : $post_type . '_cat';
+		$cat_taxonomy = ('post' == $post_type) ? 'category' : $post_type . '_cat';
 		$tag_taxonomy = $post_type . '_tag';
 
 		// taxonomy合法性检测
@@ -105,7 +105,7 @@ class Wnd_Tag_Under_Category {
 	 */
 	public static function update_tag_under_category_when_post_delete($object_id) {
 		$post_type    = get_post_type($object_id);
-		$cat_taxonomy = ($post_type == 'post') ? 'category' : $post_type . '_cat';
+		$cat_taxonomy = ('post' == $post_type) ? 'category' : $post_type . '_cat';
 		$tag_taxonomy = $post_type . '_tag';
 
 		$cats = get_the_terms($object_id, $cat_taxonomy);
@@ -210,7 +210,7 @@ class Wnd_Tag_Under_Category {
 				['count' => $count], // data
 				['ID' => $ID], // where
 				['%d'], //data format
-				['%d'] //where format
+				['%d']//where format
 			);
 
 			//没有记录，且操作为新增，写入数据
@@ -218,7 +218,7 @@ class Wnd_Tag_Under_Category {
 			$do_sql = $wpdb->insert(
 				$wpdb->wnd_terms,
 				['cat_id' => $cat_id, 'tag_id' => $tag_id, 'tag_taxonomy' => $tag_taxonomy, 'count' => 1], //data
-				['%d', '%d', '%s', '%d'] // data format
+				['%d', '%d', '%s', '%d']// data format
 			);
 
 			//没有记录无需操作

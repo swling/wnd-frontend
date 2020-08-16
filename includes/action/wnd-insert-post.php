@@ -129,7 +129,7 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 
 		// 写入及更新权限过滤
 		$can_insert_post = apply_filters('wnd_can_insert_post', ['status' => 1, 'msg' => ''], static::$post_data['post_type'], static::$post_id);
-		if ($can_insert_post['status'] === 0) {
+		if (0 === $can_insert_post['status']) {
 			throw new Exception($can_insert_post['msg']);
 		}
 	}

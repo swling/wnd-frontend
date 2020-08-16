@@ -69,7 +69,7 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 							__('置顶', 'wnd') => 'stick',
 							__('取消', 'wnd') => 'unstick',
 						],
-						'checked' => (array_search($post->ID, wnd_get_sticky_posts($post->post_type)) === false) ? '' : 'stick',
+						'checked' => (false === array_search($post->ID, wnd_get_sticky_posts($post->post_type))) ? '' : 'stick',
 						'class'   => 'is-checkradio is-danger',
 					]
 				);
@@ -84,7 +84,7 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 			);
 		}
 
-		if ($post->post_type == 'order') {
+		if ('order' == $post->post_type) {
 			$form->add_html(wnd_message(__('删除订单记录，不可退款，请谨慎操作', 'wnd'), 'is-danger'));
 		}
 

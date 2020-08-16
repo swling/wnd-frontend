@@ -54,7 +54,7 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 
 		//3、 付费下载
 		$order = Wnd_Create_Order::execute($post_id);
-		if ($order['status'] === 0) {
+		if (0 === $order['status']) {
 			return $order;
 		}
 

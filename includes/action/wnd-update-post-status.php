@@ -39,7 +39,7 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 		// 权限检测
 		$can_array              = ['status' => current_user_can('edit_post', static::$post_id) ? 1 : 0, 'msg' => __('权限错误', 'wnd')];
 		$can_update_post_status = apply_filters('wnd_can_update_post_status', $can_array, static::$before_post, static::$after_status);
-		if ($can_update_post_status['status'] === 0) {
+		if (0 === $can_update_post_status['status']) {
 			return $can_update_post_status;
 		}
 

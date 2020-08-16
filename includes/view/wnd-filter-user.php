@@ -141,9 +141,9 @@ class Wnd_Filter_User {
 			 *?_meta_price=1 则查询 price = 1的user
 			 *?_meta_price=exists 则查询 存在price的user
 			 */
-			if (strpos($key, '_meta_') === 0) {
+			if (0 === strpos($key, '_meta_')) {
 				$key        = str_replace('_meta_', '', $key);
-				$compare    = $value == 'exists' ? 'exists' : '=';
+				$compare    = 'exists' == $value ? 'exists' : '=';
 				$meta_query = [
 					'key'     => $key,
 					'value'   => $value,
@@ -214,7 +214,7 @@ class Wnd_Filter_User {
 		 *@since 2019.10.26
 		 **/
 		$query_vars = array_filter($query_vars, function ($value) {
-			return $value or $value == 0;
+			return $value or 0 == $value;
 		});
 
 		return $query_vars;
@@ -449,7 +449,7 @@ class Wnd_Filter_User {
 		foreach ($args['options'] as $key => $orderby) {
 			// 查询当前orderby是否匹配当前tab
 			$class = '';
-			if (is_array($orderby) and ($this->query_args['orderby'] == 'meta_value_num' or $this->query_args['orderby'] == 'meta_value')) {
+			if (is_array($orderby) and ('meta_value_num' == $this->query_args['orderby'] or 'meta_value' == $this->query_args['orderby'])) {
 				if ($orderby['meta_key'] == $this->query_args['meta_key']) {
 					$class = 'class="is-active"';
 				}

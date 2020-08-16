@@ -336,7 +336,7 @@ class Wnd_User {
 		$user = $user_id ? get_user_by('id', $user_id) : wp_get_current_user();
 
 		$user_role = $user->roles[0] ?? false;
-		if ($user_role == 'administrator' or $user_role == 'editor') {
+		if ('administrator' == $user_role or 'editor' == $user_role) {
 			return true;
 		} else {
 			return false;

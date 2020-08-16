@@ -18,7 +18,7 @@ function wnd_options() {
 		$option_array = [];
 		foreach ($_POST as $key => $value) {
 			// 按前缀筛选数组,过滤掉非指定数据
-			if (strpos($key, 'wnd_') === false) {
+			if (false === strpos($key, 'wnd_')) {
 				unset($_POST[$key]);
 			} else {
 				// 替换空格和中文逗号
@@ -49,11 +49,11 @@ function wnd_options() {
 					<td valign="top">静态资源</td>
 					<td>
 						本地
-						<input type="radio" required="required" name="wnd_static_host" value="local" <?php if (wnd_get_config('static_host') == 'local') echo 'checked' ?> />
+						<input type="radio" required="required" name="wnd_static_host" value="local" <?php if ('local' == wnd_get_config('static_host')) echo 'checked' ?> />
 						jsDelivr
-						<input type="radio" required="required" name="wnd_static_host" value="jsdeliver" <?php if (wnd_get_config('static_host') == 'jsdeliver') echo 'checked' ?> />
+						<input type="radio" required="required" name="wnd_static_host" value="jsdeliver" <?php if ('jsdeliver' == wnd_get_config('static_host')) echo 'checked' ?> />
 						关闭
-						<input type="radio" required="required" name="wnd_static_host" value="close" <?php if (wnd_get_config('static_host') == 'close') echo 'checked' ?> />
+						<input type="radio" required="required" name="wnd_static_host" value="close" <?php if ('close' == wnd_get_config('static_host')) echo 'checked' ?> />
 						<p><i>插件前端依赖bulma css框架font-awesome图标，请选择静态资源引入方式，若选择关闭，需要自行设置前端效果</i></p>
 					</td>
 				</tr>
@@ -109,8 +109,8 @@ function wnd_options() {
 				<tr>
 					<td valign="top">前台禁用语言包</td>
 					<td>
-						禁用语言包<input type="radio" required="required" name="wnd_disable_locale" value="1" <?php if (wnd_get_config('disable_locale') == 1) echo 'checked'; ?> />
-						启用语言包<input type="radio" required="required" name="wnd_disable_locale" value="0" <?php if (wnd_get_config('disable_locale') != 1) echo 'checked'; ?> />
+						禁用语言包<input type="radio" required="required" name="wnd_disable_locale" value="1" <?php if (1 == wnd_get_config('disable_locale')) echo 'checked'; ?> />
+						启用语言包<input type="radio" required="required" name="wnd_disable_locale" value="0" <?php if (1 != wnd_get_config('disable_locale')) echo 'checked'; ?> />
 						<p><i>前端禁用语言包，有效节省内存和生成时间，但某些情况下可能会出现英文信息，请先行测试</i></p>
 					</td>
 				</tr>
@@ -153,8 +153,8 @@ function wnd_options() {
 				<tr>
 					<th valign="top">匿名订单</th>
 					<td>
-						开启<input type="radio" name="wnd_enable_anon_order" value="1" <?php if (wnd_get_config('enable_anon_order') == 1) echo 'checked'; ?>>
-						关闭<input type="radio" name="wnd_enable_anon_order" value="0" <?php if (wnd_get_config('enable_anon_order') != 1) echo 'checked'; ?>>
+						开启<input type="radio" name="wnd_enable_anon_order" value="1" <?php if (1 == wnd_get_config('enable_anon_order')) echo 'checked'; ?>>
+						关闭<input type="radio" name="wnd_enable_anon_order" value="0" <?php if (1 != wnd_get_config('enable_anon_order')) echo 'checked'; ?>>
 						<p><i>是否开启匿名用户订单功能（将以Cookie作为校验标识，订单有效期24小时）</i></p>
 					</td>
 				</tr>
@@ -169,16 +169,16 @@ function wnd_options() {
 				<tr>
 					<td valign="top">基础配置</td>
 					<td>
-						常规支付<input type="radio" name="wnd_alipay_qrcode" value="0" <?php if (wnd_get_config('alipay_qrcode') != 1) echo 'checked'; ?>>
-						当面支付<input type="radio" name="wnd_alipay_qrcode" value="1" <?php if (wnd_get_config('alipay_qrcode') == 1) echo 'checked'; ?>>
+						常规支付<input type="radio" name="wnd_alipay_qrcode" value="0" <?php if (1 != wnd_get_config('alipay_qrcode')) echo 'checked'; ?>>
+						当面支付<input type="radio" name="wnd_alipay_qrcode" value="1" <?php if (1 == wnd_get_config('alipay_qrcode')) echo 'checked'; ?>>
 						<p><i>非企业用户申请【当面付】可实现支付宝接入</i></p>
 					</td>
 				</tr>
 				<tr>
 					<td valign="top">沙箱调试</td>
 					<td>
-						生产环境<input type="radio" name="wnd_alipay_sandbox" value="0" <?php if (wnd_get_config('alipay_sandbox') != 1) echo 'checked'; ?>>
-						沙箱调试<input type="radio" name="wnd_alipay_sandbox" value="1" <?php if (wnd_get_config('alipay_sandbox') == 1) echo 'checked'; ?>>
+						生产环境<input type="radio" name="wnd_alipay_sandbox" value="0" <?php if (1 != wnd_get_config('alipay_sandbox')) echo 'checked'; ?>>
+						沙箱调试<input type="radio" name="wnd_alipay_sandbox" value="1" <?php if (1 == wnd_get_config('alipay_sandbox')) echo 'checked'; ?>>
 						<p><i>用于开发者沙箱调试（对应App ID及秘钥均需修改为沙箱应用相关值）</i></p>
 					</td>
 				</tr>
@@ -221,9 +221,9 @@ function wnd_options() {
 					<td valign="top">禁止邮箱注册</td>
 					<td>
 						禁止邮箱注册
-						<input type="radio" name="wnd_disable_email_reg" value="1" <?php if (wnd_get_config('disable_email_reg') == 1) echo 'checked'; ?> />
+						<input type="radio" name="wnd_disable_email_reg" value="1" <?php if (1 == wnd_get_config('disable_email_reg')) echo 'checked'; ?> />
 						允许邮箱注册
-						<input type="radio" name="wnd_disable_email_reg" value="0" <?php if (wnd_get_config('disable_email_reg') != 1) echo 'checked'; ?> />
+						<input type="radio" name="wnd_disable_email_reg" value="0" <?php if (1 != wnd_get_config('disable_email_reg')) echo 'checked'; ?> />
 						<p><i>禁止邮箱注册则强制手机注册。请确保手机验证可用，否则用户无法注册！</i></p>
 					</td>
 				</tr>
@@ -231,17 +231,17 @@ function wnd_options() {
 					<td valign="top">禁用用户名</td>
 					<td>
 						禁用用户名
-						<input type="radio" name="wnd_disable_user_login" value="1" <?php if (wnd_get_config('disable_user_login') == 1) echo 'checked'; ?> />
+						<input type="radio" name="wnd_disable_user_login" value="1" <?php if (1 == wnd_get_config('disable_user_login')) echo 'checked'; ?> />
 						启用用户名
-						<input type="radio" name="wnd_disable_user_login" value="0" <?php if (wnd_get_config('disable_user_login') != 1) echo 'checked'; ?> />
+						<input type="radio" name="wnd_disable_user_login" value="0" <?php if (1 != wnd_get_config('disable_user_login')) echo 'checked'; ?> />
 						<p><i>为简化注册流程，可禁注册表单用户名字段，系统将随机生成用户名。用户将只能通过邮箱或手机登录。</i></p>
 					</td>
 				</tr>
 				<tr>
 					<td valign="top">启用短信功能</td>
 					<td>
-						开启<input type="radio" name="wnd_enable_sms" value="1" <?php if (wnd_get_config('enable_sms') == 1) echo 'checked'; ?>>
-						关闭<input type="radio" name="wnd_enable_sms" value="0" <?php if (wnd_get_config('enable_sms') != 1) echo 'checked'; ?>>
+						开启<input type="radio" name="wnd_enable_sms" value="1" <?php if (1 == wnd_get_config('enable_sms')) echo 'checked'; ?>>
+						关闭<input type="radio" name="wnd_enable_sms" value="0" <?php if (1 != wnd_get_config('enable_sms')) echo 'checked'; ?>>
 						<p><i>是否开启短信验证功能</i></p>
 					</td>
 				</tr>

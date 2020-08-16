@@ -65,7 +65,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 		 *上传权限过滤
 		 */
 		$can_upload_file = apply_filters('wnd_can_upload_file', ['status' => 1, 'msg' => ''], $post_parent, $meta_key);
-		if ($can_upload_file['status'] === 0) {
+		if (0 === $can_upload_file['status']) {
 			return $can_upload_file;
 		}
 
@@ -145,7 +145,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 			 *@since 2019.02.13 当存在meta key时，表明上传文件为特定用途存储，仅允许上传单个文件
 			 *@since 2019.05.05 当meta key == gallery 表示为上传图集相册 允许上传多个文件
 			 */
-			if ($meta_key != 'gallery') {
+			if ('gallery' != $meta_key) {
 				//处理完成根据用途做下一步处理
 				do_action('wnd_upload_file', $file_id, $post_parent, $meta_key);
 				break;
@@ -156,7 +156,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 		/**
 		 *@since 2019.05.05 当meta key == gallery 表示为上传图集相册 允许上传多个文件
 		 */
-		if ($meta_key == 'gallery') {
+		if ('gallery' == $meta_key) {
 			do_action('wnd_upload_gallery', $return_array, $post_parent);
 		}
 

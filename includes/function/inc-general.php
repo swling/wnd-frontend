@@ -22,7 +22,7 @@ function wnd_get_config($config_key) {
  *@since 2019.04.07
  */
 function wnd_doing_ajax() {
-	if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
+	if ('XMLHttpRequest' == ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? false)) {
 		return true;
 	} else {
 		return false;

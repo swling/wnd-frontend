@@ -41,7 +41,7 @@ class Wnd_User_Center extends Wnd_Module {
 			if (wnd_doing_ajax()) {
 				if ('email' == $type and $enable_sms) {
 					$html .= static::build_module_link('do=reset_password&type=phone', __('手机验证找回', 'wnd'), $ajax_type);
-				} elseif ($type == 'phone') {
+				} elseif ('phone' == $type) {
 					$html .= static::build_module_link('do=reset_password&type=email', __('邮箱验证找回', 'wnd'), $ajax_type);
 				}
 
@@ -53,7 +53,7 @@ class Wnd_User_Center extends Wnd_Module {
 			} else {
 				if ('email' == $type and $enable_sms) {
 					$html .= '<a href="' . add_query_arg('type', 'phone') . '">' . __('手机验证找回', 'wnd') . '</a>';
-				} elseif ($type == 'phone') {
+				} elseif ('phone' == $type) {
 					$html .= '<a href="' . add_query_arg('type', 'email') . '">' . __('邮箱验证找回', 'wnd') . '</a>';
 				}
 
@@ -83,7 +83,7 @@ class Wnd_User_Center extends Wnd_Module {
 				if (wnd_doing_ajax()) {
 					if ('email' == $type and $enable_sms) {
 						$html .= static::build_module_link('do=register&type=phone', __('手机注册', 'wnd'), $ajax_type) . ' | ';
-					} elseif ($type == 'phone' and !$disable_email_reg) {
+					} elseif ('phone' == $type and !$disable_email_reg) {
 						$html .= static::build_module_link('do=register&type=email', __('邮箱注册', 'wnd'), $ajax_type) . ' | ';
 					}
 
@@ -92,7 +92,7 @@ class Wnd_User_Center extends Wnd_Module {
 				} else {
 					if ('email' == $type and $enable_sms) {
 						$html .= '<a href="' . add_query_arg('type', 'phone') . '">' . __('手机注册', 'wnd') . '</a> | ';
-					} elseif ($type == 'phone' and !$disable_email_reg) {
+					} elseif ('phone' == $type and !$disable_email_reg) {
 						$html .= '<a href="' . add_query_arg('type', 'email') . '">' . __('邮箱注册', 'wnd') . '</a> | ';
 					}
 					$html .= '<a href="' . add_query_arg('do', 'login') . '">' . __('登录', 'wnd') . '</a>';

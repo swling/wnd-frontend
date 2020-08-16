@@ -39,7 +39,7 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 
 		// 更新权限过滤挂钩
 		$user_can_update_profile = apply_filters('wnd_can_update_profile', ['status' => 1, 'msg' => '']);
-		if ($user_can_update_profile['status'] === 0) {
+		if (0 === $user_can_update_profile['status']) {
 			return $user_can_update_profile;
 		}
 
@@ -58,7 +58,7 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 		if (!empty($wp_user_meta_data)) {
 			foreach ($wp_user_meta_data as $key => $value) {
 				// 下拉菜单默认未选择时，值为 -1 。过滤
-				if ($value !== '-1') {
+				if ('-1' != $value) {
 					update_user_meta($user_id, $key, $value);
 				}
 			}

@@ -54,7 +54,7 @@ class Wnd_Finance {
 			wp_cache_set($user_id . '-' . $object_id, $user_has_paid, 'wnd_has_paid');
 		}
 
-		return ($user_has_paid === 1 ? true : false);
+		return (1 === $user_has_paid ? true : false);
 	}
 
 	/**

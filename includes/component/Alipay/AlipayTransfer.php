@@ -147,7 +147,7 @@ class AlipayTransfer extends AlipayService {
 		$SN    = null;
 		for ($i = 0; $i < count($array) - 1; $i++) {
 			$ssl[$i] = openssl_x509_parse($array[$i] . "-----END CERTIFICATE-----");
-			if (strpos($ssl[$i]['serialNumber'], '0x') === 0) {
+			if (0 === strpos($ssl[$i]['serialNumber'], '0x')) {
 				$ssl[$i]['serialNumber'] = $this->hex2dec($ssl[$i]['serialNumber']);
 			}
 			if ($ssl[$i]['signatureTypeLN'] == "sha1WithRSAEncryption" || $ssl[$i]['signatureTypeLN'] == "sha256WithRSAEncryption") {

@@ -15,12 +15,12 @@ class Wnd_Login extends Wnd_Action_Ajax {
 		$username    = trim($_POST['_user_user_login']);
 		$password    = $_POST['_user_user_pass'];
 		$remember    = $_POST['remember'] ?? 0;
-		$remember    = $remember == 1 ? true : false;
+		$remember    = 1 == $remember ? true : false;
 		$redirect_to = $_REQUEST['redirect_to'] ?? home_url();
 
 		// 登录过滤挂钩
 		$wnd_can_login = apply_filters('wnd_can_login', ['status' => 1, 'msg' => '']);
-		if ($wnd_can_login['status'] === 0) {
+		if (0 === $wnd_can_login['status']) {
 			return $wnd_can_login;
 		}
 

@@ -122,7 +122,7 @@ class AlipayService {
 			if (false === $this->checkEmpty($v) and "@" != substr($v, 0, 1)) {
 				// 转换成目标字符集
 				$v = $this->characet($v, $this->charset);
-				if ($i == 0) {
+				if (0 == $i) {
 					$stringToBeSigned .= "$k" . "=" . "$v";
 				} else {
 					$stringToBeSigned .= "&" . "$k" . "=" . "$v";

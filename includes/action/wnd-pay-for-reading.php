@@ -28,7 +28,7 @@ class Wnd_Pay_For_Reading extends Wnd_Action_Ajax {
 
 		// 2、支付失败
 		$order = Wnd_Create_Order::execute($post_id);
-		if ($order['status'] === 0) {
+		if (0 === $order['status']) {
 			return $order;
 		}
 

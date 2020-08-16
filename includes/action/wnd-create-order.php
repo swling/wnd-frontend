@@ -16,7 +16,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		$user_id = get_current_user_id();
 
 		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id);
-		if ($wnd_can_create_order['status'] === 0) {
+		if (0 === $wnd_can_create_order['status']) {
 			return $wnd_can_create_order;
 		}
 

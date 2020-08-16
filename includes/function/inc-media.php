@@ -44,7 +44,7 @@ function wnd_download_remote_images($content, $upload_dir, $post_id) {
 			}
 
 			$pos = strpos($image_url, $upload_dir); // 判断图片链接是否为外链
-			if ($pos === false) {
+			if (false === $pos) {
 				$local_url = wnd_download_remote_image($image_url, $post_id, time() . '-' . $i);
 				if (!is_wp_error($local_url)) {
 					$content = str_replace($image_url, $local_url, $content);

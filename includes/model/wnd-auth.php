@@ -123,12 +123,12 @@ abstract class Wnd_Auth {
 
 		// 注册
 		$temp_user = is_object($this->auth_object) ? $this->auth_object : wnd_get_user_by($this->auth_object);
-		if ($this->type == 'register' and $temp_user) {
+		if ('register' == $this->type and $temp_user) {
 			throw new Exception(static::$text . '&nbsp;' . __('已注册', 'wnd'));
 		}
 
 		// 绑定
-		if ($this->type == 'bind') {
+		if ('bind' == $this->type) {
 			if (!$this->user->ID) {
 				throw new Exception(__('请登录', 'wnd'));
 			}
@@ -138,7 +138,7 @@ abstract class Wnd_Auth {
 		}
 
 		// 找回密码
-		if ($this->type == 'reset_password' and !$temp_user) {
+		if ('reset_password' == $this->type and !$temp_user) {
 			throw new Exception(static::$text . '&nbsp;' . __('尚未注册', 'wnd'));
 		}
 	}

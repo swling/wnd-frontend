@@ -66,7 +66,7 @@ class Wnd_Add_Filter {
 	 */
 	public static function filter_post_status($post_status, $post_type, $update_id) {
 		// 允许用户设置为草稿
-		if (isset($_POST['_post_post_status']) and $_POST['_post_post_status'] == 'draft') {
+		if ('draft' == ($_POST['_post_post_status'] ?? false)) {
 			return 'draft';
 		}
 

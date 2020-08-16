@@ -116,7 +116,7 @@ class Wnd_Filter {
 		 *定义当前post type的主分类：$category_taxonomy
 		 */
 		if ($this->wp_query_args['post_type']) {
-			$this->category_taxonomy = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
+			$this->category_taxonomy = ('post' == $this->wp_query_args['post_type']) ? 'category' : $this->wp_query_args['post_type'] . '_cat';
 		}
 
 		// 非管理员，仅可查询publish及close状态(作者本身除外)
@@ -215,9 +215,9 @@ class Wnd_Filter {
 			 *?_meta_price=1 则查询 price = 1的文章
 			 *?_meta_price=exists 则查询 存在price的文章
 			 */
-			if (strpos($key, '_meta_') === 0) {
+			if (0 === strpos($key, '_meta_')) {
 				$key        = str_replace('_meta_', '', $key);
-				$compare    = $value == 'exists' ? 'exists' : '=';
+				$compare    = 'exists' == $value ? 'exists' : '=';
 				$meta_query = [
 					'key'     => $key,
 					'value'   => $value,
@@ -239,7 +239,7 @@ class Wnd_Filter {
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，
 			 *直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			if (strpos($key, '_term_') === 0) {
+			if (0 === strpos($key, '_term_')) {
 				$term_query = [
 					'taxonomy' => str_replace('_term_', '', $key),
 					'field'    => 'term_id',
@@ -252,7 +252,7 @@ class Wnd_Filter {
 			/**
 			 *@since 2019.05.31 post field查询
 			 */
-			if (strpos($key, '_post_') === 0) {
+			if (0 === strpos($key, '_post_')) {
 				$query_vars[str_replace('_post_', '', $key)] = $value;
 				continue;
 			}
@@ -319,7 +319,7 @@ class Wnd_Filter {
 		 *@since 2019.10.26
 		 **/
 		$query_vars = array_filter($query_vars, function ($value) {
-			return $value or $value == 0;
+			return $value or 0 == $value;
 		});
 
 		return $query_vars;
@@ -432,7 +432,7 @@ class Wnd_Filter {
 		if (!$this->wp_query_args['post_type']) {
 			$default_type = $with_any_tab ? 'any' : ($args ? reset($args) : 'post');
 			$this->add_query(['post_type' => $default_type]);
-			$this->category_taxonomy = ($this->wp_query_args['post_type'] == 'post') ? 'category' : $this->wp_query_args['post_type'] . '_cat';
+			$this->category_taxonomy = ('post' == $this->wp_query_args['post_type']) ? 'category' : $this->wp_query_args['post_type'] . '_cat';
 		}
 
 		/**
@@ -1066,7 +1066,7 @@ class Wnd_Filter {
 				 *	];
 				 *	$query = new WP_Query( $args );
 				 */
-				if (is_array($orderby) and ($this->wp_query_args['orderby'] == 'meta_value_num' or $this->wp_query_args['orderby'] == 'meta_value')) {
+				if (is_array($orderby) and ('meta_value_num' == $this->wp_query_args['orderby'] or 'meta_value' == $this->wp_query_args['orderby'])) {
 					if ($orderby['meta_key'] == $this->wp_query_args['meta_key']) {
 						$class = 'class="is-active"';
 					}

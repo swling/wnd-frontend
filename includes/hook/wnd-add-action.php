@@ -40,7 +40,7 @@ class Wnd_Add_Action {
 		}
 
 		// WordPress原生缩略图
-		if ($meta_key == '_wpthumbnail_id') {
+		if ('_wpthumbnail_id' == $meta_key) {
 			$old_meta = get_post_meta($post_parent, '_thumbnail_id', true);
 			if ($old_meta) {
 				wp_delete_attachment($old_meta, true);
@@ -81,7 +81,7 @@ class Wnd_Add_Action {
 		$images = [];
 		foreach ($image_array as $image_info) {
 			// 上传失败的图片跳出
-			if ($image_info['status'] === 0) {
+			if (0 === $image_info['status']) {
 				continue;
 			}
 
@@ -110,7 +110,7 @@ class Wnd_Add_Action {
 		/**
 		 *@since 2019.05.06 相册编辑
 		 */
-		if ($meta_key == 'gallery') {
+		if ('gallery' == $meta_key) {
 			// 从相册数组中删除当前图片
 			$user_id = get_current_user_id();
 			$images  = $post_parent ? wnd_get_post_meta($post_parent, 'gallery') : wnd_get_user_meta($user_id, 'gallery');

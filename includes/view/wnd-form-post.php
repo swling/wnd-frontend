@@ -137,7 +137,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_text(
 			[
 				'name'        => '_post_post_title',
-				'value'       => $this->post->post_title == 'Auto-draft' ? '' : $this->post->post_title,
+				'value'       => 'Auto-draft' == $this->post->post_title ? '' : $this->post->post_title,
 				'placeholder' => 'ID:' . $this->post_id . ' ' . $placeholder,
 				'label'       => $label,
 				'autofocus'   => 'autofocus',

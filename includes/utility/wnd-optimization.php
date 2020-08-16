@@ -105,10 +105,10 @@ class Wnd_Optimization {
 			return $check;
 		}
 
-		if ($meta_key == 'views') {
+		if ('views' == $meta_key) {
 			wp_cache_set($object_id, $meta_value, 'wnd_views');
 			$cached_post_views = 10;
-			if ($meta_value % $cached_post_views == 0 or $meta_value == 1) {
+			if (0 == $meta_value % $cached_post_views or 1 == $meta_value) {
 				//每增加 10 次浏览 或首次 写入数据库中去
 				return $check;
 			} else {
@@ -127,9 +127,9 @@ class Wnd_Optimization {
 			return $check;
 		}
 
-		if ($single and $meta_key == 'views') {
+		if ($single and 'views' == $meta_key) {
 			$views = wp_cache_get($object_id, 'wnd_views'); //显示的时候直接从内存中获取
-			if ($views === false) {
+			if (false === $views) {
 				return $check;
 			} else {
 				return $views;
