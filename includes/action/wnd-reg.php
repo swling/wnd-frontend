@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
 use Wnd\Utility\Wnd_Form_Data;
 
 /**
@@ -23,32 +24,12 @@ use Wnd\Utility\Wnd_Form_Data;
 class Wnd_Reg extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		$form_data = new Wnd_Form_Data();
+		$form_data               = new Wnd_Form_Data();
+		$user_data               = $form_data->get_user_data();
+		$user_data['user_login'] = $user_data['user_login'] ?? wnd_generate_login();
 
-		// User Data
-		$user_data = $form_data->get_user_data();
-		if (isset($user_data['user_login'])) {
-			if (strlen($user_data['user_login']) < 3) {
-				return $value = ['status' => 0, 'msg' => __('用户名不能低于3位', 'wnd')];
-			}
-			if (is_numeric($user_data['user_login'])) {
-				return $value = ['status' => 0, 'msg' => __('用户名不能是纯数字', 'wnd')];
-			}
-
-			// 未指定用户名：创建随机用户名
-		} else {
-			$user_data['user_login'] = wnd_generate_login();
-		}
-
-		if (strlen($user_data['user_pass']) < 6) {
-			return $value = ['status' => 0, 'msg' => __('密码不能低于6位', 'wnd')];
-		}
-
-		if (isset($user_data['user_pass_repeat'])) {
-			if ($user_data['user_pass_repeat'] !== $user_data['user_pass']) {
-				return $value = ['status' => 0, 'msg' => __('两次输入的密码不匹配', 'wnd')];
-			}
-		}
+		// 检查表单数据
+		static::check_data($user_data);
 
 		// 注册权限过滤挂钩
 		$user_can_reg = apply_filters('wnd_can_reg', ['status' => 1, 'msg' => '']);
@@ -90,5 +71,30 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 			$user_id
 		);
 		return $return_array;
+	}
+
+	/**
+	 *检查数据
+	 */
+	protected static function check_data(array $user_data) {
+		if (isset($user_data['user_login'])) {
+			if (strlen($user_data['user_login']) < 3) {
+				throw new Exception(__('用户名不能低于3位', 'wnd'));
+			}
+
+			if (is_numeric($user_data['user_login'])) {
+				throw new Exception(__('用户名不能是纯数字', 'wnd'));
+			}
+		}
+
+		if (strlen($user_data['user_pass']) < 6) {
+			throw new Exception(__('密码不能低于6位', 'wnd'));
+		}
+
+		if (isset($user_data['user_pass_repeat'])) {
+			if ($user_data['user_pass_repeat'] !== $user_data['user_pass']) {
+				throw new Exception(__('两次输入的密码不匹配', 'wnd'));
+			}
+		}
 	}
 }

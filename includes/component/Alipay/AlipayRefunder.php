@@ -3,12 +3,13 @@ namespace Wnd\Component\Alipay;
 
 use Exception;
 use Wnd\Component\Alipay\AlipayService;
+use Wnd\Component\Utility\Refunder;
 
 /**
  *支付宝退款
  *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.refund
  */
-class AlipayRefunder extends AlipayService {
+class AlipayRefunder extends AlipayService implements Refunder {
 
 	protected $method = 'alipay.trade.refund';
 	// protected $product_code;
@@ -32,14 +33,14 @@ class AlipayRefunder extends AlipayService {
 	/**
 	 *交易订单号
 	 */
-	public function setOutTradeNo($out_trade_no) {
+	public function setOutTradeNo(string $out_trade_no) {
 		$this->out_trade_no = $out_trade_no;
 	}
 
 	/**
-	 *订单主题
+	 *部分退款：退款请求号
 	 */
-	public function setOutRequestNo($out_request_no) {
+	public function setOutRequestNo(string $out_request_no) {
 		$this->out_request_no = $out_request_no;
 	}
 
