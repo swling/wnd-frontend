@@ -40,6 +40,13 @@ class Wnd_List_table {
 		);
 		$table->add_column(
 			[
+				'post_field' => 'post_author',
+				'title'      => '用户',
+				'class'      => 'is-narrow',
+			]
+		);
+		$table->add_column(
+			[
 				'post_field' => 'post_title_with_link',
 				'title'      => '标题',
 			]
