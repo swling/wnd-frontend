@@ -985,17 +985,16 @@ jQuery(document).ready(function($) {
 	 */
 	var filter_param = {};
 	$("body").on("click", ".ajax-filter a,.ajax-filter form button", function() {
-
 		// 获取容器
-		var filter_parent = $(this).closest(".ajax-filter");
-		var filter_id = filter_parent.attr("ID").split("-")[1];
+		var filter_id = $(this).closest(".ajax-filter").attr("ID").split("-")[1];
+		var filter_tabs = $("#tabs-" + filter_id);
 
 		// 定义 key、value
 		var key = "";
 		var value = "";
 
 		// 提取data，并合并入参数
-		var html_data = filter_parent.data();
+		var html_data = filter_tabs.data();
 		filter_param = Object.assign(filter_param, html_data);
 
 		// 非分页情况，删除page请求参数
@@ -1035,11 +1034,11 @@ jQuery(document).ready(function($) {
 			/**
 			 *清空参数的同时同步清空：is-active
 			 **/
-			filter_parent.find("ul.tab li").removeClass("is-active");
-			filter_parent.find("ul.tab li:first-child").addClass("is-active");
+			filter_tabs.find("ul.tab li").removeClass("is-active");
+			filter_tabs.find("ul.tab li:first-child").addClass("is-active");
 
 		} else {
-			filter_param['type'] = $("#tabs-" + filter_id).find(".post-type-tabs .is-active a").data("value");
+			filter_param['type'] = filter_tabs.find(".post-type-tabs .is-active a").data("value");
 		}
 
 		// 主分类切换时删除标签查询
@@ -1065,9 +1064,9 @@ jQuery(document).ready(function($) {
 
 				// 切换post type时，隐藏所有taxonomy 再根据当前post type支持的taxonomy选择性显示，以达到ajax切换的效果
 				if ("type" == key) {
-					filter_parent.find(".taxonomy-tabs").addClass("is-hidden");
+					filter_tabs.find(".taxonomy-tabs").addClass("is-hidden");
 					for (var i = 0; i < response.data.taxonomies.length; i++) {
-						filter_parent.find("." + response.data.taxonomies[i] + "-tabs").removeClass("is-hidden");
+						filter_tabs.find("." + response.data.taxonomies[i] + "-tabs").removeClass("is-hidden");
 					}
 				}
 
@@ -1080,18 +1079,18 @@ jQuery(document).ready(function($) {
 				 *动态插入主分类的情况，通常用在用于一些封装的用户面板：如果用户内容管理面板
 				 *常规filter应该通过 Wnd_Filter->add_taxonomy_filter() 方法静态输出
 				 */
-				var category_tabs = $(filter_parent).children(".main-category-tabs");
+				var category_tabs = filter_tabs.children(".main-category-tabs");
 				if (
 					category_tabs &&
 					response.data.category_tabs &&
-					$(filter_parent).find("." + response.data.category_taxonomy + "-tabs").length == 0
+					filter_tabs.find("." + response.data.category_taxonomy + "-tabs").length == 0
 				) {
 					category_tabs.last().after(response.data.category_tabs);
 					category_tabs.remove();
 				}
 
 				// 分类关联标签tabs
-				var related_tags_tabs = $(filter_parent).children(".related-tags");
+				var related_tags_tabs = filter_tabs.children(".related-tags");
 				if (related_tags_tabs && response.data.related_tags_tabs) {
 					related_tags_tabs.after(response.data.related_tags_tabs);
 					related_tags_tabs.remove();
@@ -1100,9 +1099,9 @@ jQuery(document).ready(function($) {
 				}
 
 				// 子类筛选tabs
-				$(filter_parent).children(".sub-tabs").remove();
+				filter_tabs.children(".sub-tabs").remove();
 				for (taxonomy in response.data.sub_taxonomy_tabs) {
-					$(filter_parent).children("." + taxonomy + "-tabs:last").after(response.data.sub_taxonomy_tabs[taxonomy]);
+					filter_tabs.children("." + taxonomy + "-tabs:last").after(response.data.sub_taxonomy_tabs[taxonomy]);
 				}
 			},
 			error: function() {
@@ -1122,15 +1121,15 @@ jQuery(document).ready(function($) {
 	var filter_user_param = {};
 	$("body").on("click", ".ajax-filter-user a,.ajax-filter-user form button", function() {
 		// 获取容器
-		var filter_parent = $(this).closest(".ajax-filter-user");
-		var filter_id = filter_parent.attr("ID").split("-")[1];
+		var filter_id = $(this).closest(".ajax-filter-user").attr("ID").split("-")[1];
+		var filter_tabs = $("#tabs-" + filter_id);
 
 		// 定义 key、value
 		var key = "";
 		var value = "";
 
 		// 提取data，并合并入参数
-		var html_data = filter_parent.data();
+		var html_data = filter_tabs.data();
 		filter_user_param = Object.assign(filter_user_param, html_data);
 
 		// 非分页情况，删除page请求参数

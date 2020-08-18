@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\View;
 
+use Wnd\View\Wnd_Pagination;
 use WP_User_Query;
 
 /**
@@ -79,10 +80,15 @@ class Wnd_Filter_User {
 	protected $pagination = '';
 
 	/**
-	 *wp_user_query 查询结果：
+	 *wp_user_query 实例化
 	 *@see $this->query();
 	 */
 	public $wp_user_query;
+
+	/**
+	 *用户结果集
+	 */
+	protected $results = [];
 
 	/**
 	 *Constructor.
@@ -355,6 +361,7 @@ class Wnd_Filter_User {
 	 */
 	public function query() {
 		$this->wp_user_query = new WP_User_Query($this->query_args);
+		$this->results       = $this->wp_user_query->get_results();
 	}
 
 	/**
@@ -393,7 +400,7 @@ class Wnd_Filter_User {
 	 *@see wnd_filter_api_callback()
 	 */
 	public function get_tabs() {
-		return '<div id="tabs-' . $this->uniqid . '" class="wnd-filter-tabs ' . $this->class . '" ' . $this->build_html_data() . '>' . $this->tabs . '</div>';
+		return '<div id="tabs-' . $this->uniqid . '" class="wnd-filter-tabs ' . $this->class . '"' . $this->build_data_attr() . '>' . $this->tabs . '</div>';
 	}
 
 	/**
@@ -409,8 +416,12 @@ class Wnd_Filter_User {
 	 *构造HTML data属性
 	 *获取新增查询，并转化为html data属性，供前端读取后在ajax请求中发送到api
 	 */
-	protected function build_html_data() {
-		$data = '';
+	protected function build_data_attr(): string {
+		if (!$this->add_query) {
+			return '';
+		}
+
+		$data = ' ';
 		foreach ($this->add_query as $key => $value) {
 			$value = is_array($value) ? http_build_query($value) : $value;
 			$data .= 'data-' . $key . '="' . $value . '" ';
@@ -571,85 +582,24 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *@since 2019.02.15 简单分页导航
-	 *不查询总数的情况下，简单实现下一页翻页
-	 *翻页参数键名page 不能设置为 paged 会与原生WordPress翻页机制产生冲突
+	 *@since 2019.02.15
+	 *分页导航
 	 */
 	protected function build_pagination($show_page = 5) {
-		/**
-		 *$this->wp_user_query->query_vars :
-		 *wp_user_query实际执行的查询参数 new wp_user_query($args) $args 经过wp_user_query解析后
-		 *@see Class wp_user_query
-		 */
 		$paged         = $this->wp_user_query->query_vars['paged'] ?: 1;
-		$max_num_pages = intval($this->wp_user_query->get_total() / $this->wp_user_query->query_vars['number']) + 1;
+		$total         = $this->wp_user_query->get_total();
+		$number        = $this->wp_user_query->query_vars['number'];
+		$max_num_pages = $total ? ($total / $number + 1) : 0;
 
-		/**
-		 *未查询user总数，以上一页下一页的形式翻页(在数据较多的情况下，可以提升查询性能)
-		 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
-		 */
-		if (!$this->wp_user_query->get_total()) {
-			$previous_link = static::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
-			$next_link     = static::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
-
-			$html = '<nav id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
-			$html .= '<ul class="pagination-list">';
-			if ($paged >= 2) {
-				$html .= '<li><a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
-			}
-			// if ($this->wp_user_query->post_count >= $this->wp_user_query->query_vars['number']) {
-			$html .= '<li><a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . $next_link . '">' . __('下一页', 'wnd') . '</a>';
-			// }
-			$html .= '</ul>';
-			$html .= '</nav>';
-
-			return $html;
-
-		} else {
-			/**
-			 *常规分页，需要查询user总数
-			 *据称，在数据量较大的站点，查询user总数会较为费时
-			 */
-			$first_link    = static::$doing_ajax ? '' : remove_query_arg('page');
-			$previous_link = static::$doing_ajax ? '' : add_query_arg('page', $paged - 1);
-			$next_link     = static::$doing_ajax ? '' : add_query_arg('page', $paged + 1);
-			$last_link     = static::$doing_ajax ? '' : add_query_arg('page', $max_num_pages);
-
-			$html = '<div id="nav-' . $this->uniqid . '" class="pagination is-centered ' . $this->class . '" ' . $this->build_html_data() . '>';
-			if ($paged > 1) {
-				$html .= '<a data-key="page" data-value="' . ($paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
-			} else {
-				$html .= '<a class="pagination-previous" disabled="disabled">' . __('首页', 'wnd') . '</a>';
-			}
-
-			if ($paged < $max_num_pages) {
-				$html .= '<a data-key="page" data-value="' . ($paged + 1) . '" class="pagination-next" href="' . $next_link . '">' . __('下一页', 'wnd') . '</a>';
-			}
-
-			$html .= '<ul class="pagination-list">';
-			$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . $first_link . '" >' . __('首页', 'wnd') . '</a></li>';
-			for ($i = $paged - 1; $i <= $paged + $show_page; $i++) {
-				if ($i > 0 and $i <= $max_num_pages) {
-					$page_link = static::$doing_ajax ? '' : add_query_arg('page', $i);
-					if ($i == $paged) {
-						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link is-current" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
-					} else {
-						$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
-					}
-				}
-			}
-			if ($paged < $max_num_pages - 3) {
-				$html .= '<li><span class="pagination-ellipsis">&hellip;</span></li>';
-			}
-
-			$html .= '<li><a data-key="page" data-value="' . $max_num_pages . '" class="pagination-link" href="' . $last_link . '">' . __('尾页', 'wnd') . '</a></li>';
-			$html .= '</ul>';
-
-			$html .= '</div>';
-
-			$this->pagination = $html;
-			return $this->pagination;
-		}
+		$nav = new Wnd_Pagination(static::$is_ajax, $this->uniqid);
+		$nav->set_paged($paged);
+		$nav->set_max_num_pages($max_num_pages);
+		$nav->set_items_per_page($number);
+		$nav->set_current_item_count(count($this->results));
+		$nav->set_show_pages($show_page);
+		$nav->set_data($this->add_query);
+		$nav->add_class($this->class);
+		return $nav->build();
 	}
 
 	/**
@@ -657,7 +607,7 @@ class Wnd_Filter_User {
 	 *构造表单列表
 	 */
 	protected function build_user_table() {
-		$users = $this->wp_user_query->get_results();
+		$users = $this->results;
 		if (empty($users)) {
 			return 'No users found';
 		}
