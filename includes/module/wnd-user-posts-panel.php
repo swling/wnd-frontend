@@ -18,7 +18,7 @@ class Wnd_User_Posts_Panel extends Wnd_Module {
 		$filter         = new Wnd_Filter(wnd_doing_ajax());
 		$filter->add_search_form();
 		$filter->add_post_type_filter(wnd_get_user_panel_post_types());
-		$filter->add_post_status_filter([__('全部', 'wnd') => 'any', __('发布', 'wnd') => 'publish', __('待审', 'wnd') => 'pending', __('关闭', 'wnd') => 'close', __('草稿', 'wnd') => 'draft']);
+		$filter->add_post_status_filter([__('全部', 'wnd') => 'any', __('发布', 'wnd') => 'publish', __('待审', 'wnd') => 'pending', __('关闭', 'wnd') => 'wnd-closed', __('草稿', 'wnd') => 'draft']);
 		$filter->add_taxonomy_filter(['taxonomy' => $filter->category_taxonomy]);
 		$filter->add_query(['author' => get_current_user_id()]);
 		$filter->set_posts_template('wnd_list_table');

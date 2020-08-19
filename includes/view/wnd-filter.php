@@ -128,7 +128,7 @@ class Wnd_Filter {
 		// 数组查询，如果包含publish及close之外的状态，指定作者为当前用户
 		if (is_array($this->wp_query_args['post_status'])) {
 			foreach ($this->wp_query_args['post_status'] as $key => $post_status) {
-				if (!in_array($post_status, ['publish', 'close'])) {
+				if (!in_array($post_status, ['publish', 'wnd-closed'])) {
 					if (!is_user_logged_in()) {
 						throw new Exception(__('未登录用户，仅可查询公开信息', 'wnd'));
 					} else {
@@ -139,7 +139,7 @@ class Wnd_Filter {
 			}unset($key, $post_status);
 
 			// 单个查询
-		} elseif (!in_array($this->wp_query_args['post_status'] ?: 'publish', ['publish', 'close'])) {
+		} elseif (!in_array($this->wp_query_args['post_status'] ?: 'publish', ['publish', 'wnd-closed'])) {
 			if (!is_user_logged_in()) {
 				throw new Exception(__('未登录用户，仅可查询公开信息', 'wnd'));
 			} else {

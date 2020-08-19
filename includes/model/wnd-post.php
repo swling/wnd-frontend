@@ -218,7 +218,7 @@ class Wnd_Post {
 	 *
 	 *@param string $post_name
 	 *@param string $post_type
-	 *@param string $post_status
+	 *@param string || array $post_status
 	 *
 	 *@return object|null
 	 */
@@ -226,7 +226,15 @@ class Wnd_Post {
 		global $wpdb;
 		$post_name = urlencode($post_name);
 
-		if ('any' == $post_status) {
+		if (is_array($post_status)) {
+			$post = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND post_status in ('" . implode("','", $post_status) . "') LIMIT 1",
+					$post_name,
+					$post_type
+				)
+			);
+		} elseif ('any' == $post_status) {
 			$post = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s LIMIT 1",

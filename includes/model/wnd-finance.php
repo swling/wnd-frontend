@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Wnd\Model\Wnd_Order;
+use Wnd\Model\Wnd_Transaction;
 
 /**
  *@since 2019.10.25
@@ -22,11 +23,13 @@ class Wnd_Finance {
 			return false;
 		}
 
+		$order_status = Wnd_Transaction::$completed_status;
+
 		// 匿名支付订单查询
 		if (!$user_id) {
 			$cookie_name = Wnd_Order::get_anon_cookie_name($object_id);
 			$anon_cookie = $_COOKIE[$cookie_name] ?? '';
-			$order       = wnd_get_post_by_slug($anon_cookie, 'order', 'success');
+			$order       = wnd_get_post_by_slug($anon_cookie, 'order', $order_status);
 			if (!$order) {
 				return false;
 			}
@@ -46,7 +49,7 @@ class Wnd_Finance {
 				'post_type'      => 'order',
 				'post_parent'    => $object_id,
 				'author'         => $user_id,
-				'post_status'    => 'success',
+				'post_status'    => $order_status,
 			];
 
 			// 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
@@ -70,7 +73,7 @@ class Wnd_Finance {
 			'posts_per_page' => -1,
 			'post_type'      => 'order',
 			'post_parent'    => $object_id,
-			'post_status'    => 'pending',
+			'post_status'    => Wnd_Transaction::$processing_status,
 			'date_query'     => [
 				[
 					'column'    => 'post_date',

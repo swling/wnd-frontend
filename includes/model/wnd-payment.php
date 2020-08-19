@@ -14,14 +14,10 @@ use WP_Post;
  *	充值：recharge
  *	消费、订单：order
  *
- *	# 状态：
- *	pending / success
- *
  *	# 充值、消费post data
  *	金额：post_content
  *	关联：post_parent
  *	标题：post_title
- *	状态：post_status: pengding / success
  *	类型：post_type：recharge / order
  *	接口：post_excerpt：（支付平台标识如：Alipay / Wepay）
  */
@@ -194,11 +190,11 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		 * - 其他不合法状态：抛出异常
 		 *
 		 */
-		if ('success' == $status) {
+		if (static::$completed_status == $status) {
 			return $ID;
 		}
 
-		if ('pending' != $status) {
+		if (static::$processing_status != $status) {
 			throw new Exception(__('订单状态无效', 'wnd'));
 		}
 

@@ -3,6 +3,7 @@ namespace Wnd\Model;
 
 use Exception;
 use Wnd\Model\Wnd_Recharge;
+use Wnd\Model\Wnd_Transaction;
 
 /**
  *@since 2020.06.09
@@ -116,7 +117,7 @@ abstract class Wnd_Refunder {
 		// 关闭支付订单，扣除订单余额，设置标题备注
 		$post_arr = [
 			'ID'           => $this->payment_id,
-			'post_status'  => 'close',
+			'post_status'  => Wnd_Transaction::$refunded_status,
 			'post_content' => $balance,
 		];
 		$ID = wp_update_post($post_arr);

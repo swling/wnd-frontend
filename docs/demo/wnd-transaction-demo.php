@@ -59,7 +59,7 @@ $order->verify();
 // 创建并完成订单
 $order = new Wnd_Order();
 $order->set_object_id($post_id);
-$order->create($is_success = true);
+$order->create($is_completed = true);
 
 // 手动指定价格，并创建支付订单
 $order = new Wnd_Order();
@@ -71,7 +71,7 @@ $order->create();
 $order = new Wnd_Order();
 $order->set_total_amount($price);
 $order->set_subject($subject);
-$order->create($is_success = true);
+$order->create($is_completed = true);
 
 ###########################################################
 /**

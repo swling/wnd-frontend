@@ -185,30 +185,42 @@ class Wnd_Init {
 	 *注册自定义post status
 	 **/
 	public static function register_post_status() {
-
-		/**
-		 *@since 2019.03.01 注册自定义状态：success 用于功能型post
-		 *wp_insert_post可直接写入未经注册的post_status
-		 *未经注册的post_status无法通过wp_query进行筛选，故此注册
-		 **/
-		register_post_status('success', [
+		// 订单功能类 Post Status公共属性
+		$transaction_common_args = [
 			'public'                    => false,
 			'exclude_from_search'       => false,
 			'show_in_admin_all_list'    => false,
 			'show_in_admin_status_list' => false,
-		]);
+		];
 
-		/**
-		 *@since 2019.05.31 注册自定义状态：close 用于关闭文章条目，但前端可以正常浏览
-		 *wp_insert_post可直接写入未经注册的post_status
-		 *未经注册的post_status无法通过wp_query进行筛选，故此注册
-		 **/
-		register_post_status('close', [
-			'label'                     => __('关闭', 'wnd'),
-			'public'                    => true,
-			'exclude_from_search'       => false,
-			'show_in_admin_all_list'    => false,
-			'show_in_admin_status_list' => false,
-		]);
+		$post_statuses = [
+			/**
+			 *@since 2019.03.01 注册自定义状态，用于功能型post
+			 *wp_insert_post可直接写入未经注册的post_status
+			 *未经注册的post_status无法通过wp_query进行筛选，故此注册
+			 **/
+			'wnd-processing' => $transaction_common_args,
+			'wnd-pending'    => $transaction_common_args,
+			'wnd-completed'  => $transaction_common_args,
+			'wnd-refunded'   => $transaction_common_args,
+			'wnd-cancelled'  => $transaction_common_args,
+
+			/**
+			 *@since 2019.05.31 注册自定义状态：closed 用于关闭文章条目，但前端可以正常浏览
+			 *wp_insert_post可直接写入未经注册的post_status
+			 *未经注册的post_status无法通过wp_query进行筛选，故此注册
+			 **/
+			'wnd-closed'     => [
+				'label'                     => __('关闭', 'wnd'),
+				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => false,
+				'show_in_admin_status_list' => false,
+			],
+		];
+
+		foreach ($post_statuses as $post_status => $values) {
+			register_post_status($post_status, $values);
+		}
 	}
 }

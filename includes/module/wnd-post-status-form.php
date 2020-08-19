@@ -46,7 +46,7 @@ class Wnd_Post_Status_Form extends Wnd_Module {
 				'options'  => [
 					__('发布', 'wnd') => 'publish',
 					__('待审', 'wnd') => 'pending',
-					__('关闭', 'wnd') => 'close',
+					__('关闭', 'wnd') => 'wnd-closed',
 					__('草稿', 'wnd') => 'draft',
 					__('删除', 'wnd') => 'delete',
 				],

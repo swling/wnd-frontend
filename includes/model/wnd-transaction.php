@@ -36,6 +36,21 @@ abstract class Wnd_Transaction {
 	// 类型
 	protected $type;
 
+	// 付款进行中
+	public static $processing_status = 'wnd-processing';
+
+	// 付款完成、交易等待（实体商品交易中：待收货 / 待确认）
+	public static $pending_status = 'wnd-pending';
+
+	// 交易完成
+	public static $completed_status = 'wnd-completed';
+
+	// 交易退款
+	public static $refunded_status = 'wnd-refunded';
+
+	// 交易关闭（取消订单 \ 无效订单）
+	public static $cancelled_status = 'wnd-cancelled';
+
 	/**
 	 *第三方支付接口
 	 *

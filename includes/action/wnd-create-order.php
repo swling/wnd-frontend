@@ -25,7 +25,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		$order = new Wnd_Order();
 		$order->set_object_id($post_id);
 		$order->set_subject(get_the_title($post_id));
-		$order->create($is_success = true);
+		$order->create(true);
 
 		// 支付成功
 		return ['status' => 1, 'msg' => __('支付成功', 'wnd')];

@@ -71,14 +71,9 @@ class Wnd_Add_Filter_WP {
 	 *@since 2019.04.03
 	 *apply_filters( 'wp_insert_post_data', $data, $postarr )
 	 *
-	 * - WP默认禁止没有公开发布文章权限的用户设置pending状态下的post name。但匿名支付中，需要用到post name保存cookie故此绕开并重设
 	 * - 防止插入相同标题文章时（功能型post），反复查询post name，故此设置为随机值
 	 */
 	public static function filter_wp_insert_post_data($data, $postarr) {
-		if ('order' == $data['post_type'] and 'pending' == $data['post_status']) {
-			$data['post_name'] = $postarr['post_name'];
-		}
-
 		if (empty($data['post_name'])) {
 			$data['post_name'] = uniqid();
 		}

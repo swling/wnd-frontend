@@ -12,14 +12,10 @@ use WP_Post;
  *	post_type属性('public' => false)，因此在WordPress后台无法查看到
  *	订单：order
  *
- *	# 状态：
- *	pending / success
- *
  *	# 消费post data
  *	金额：		post_content
  *	关联：		post_parent
  *	标题：		post_title
- *	状态：		post_status: pengding / success
  *	类型：		post_type：order
  * 	匿名cookie：post_name
  *	接口：		post_excerpt：（支付平台标识如：Alipay / Wepay）
@@ -68,11 +64,11 @@ class Wnd_Order extends Wnd_Transaction {
 	 *@param int 		$this->object_id  		option
 	 *@param string 	$this->subject 			option
 	 *@param string 	$this->payment_gateway	option 	支付平台标识
-	 *@param bool 	 	$is_success 			option 	是否直接写入，无需支付平台校验
+	 *@param bool 	 	$is_completed 			option 	是否直接写入，无需支付平台校验
 	 *
 	 *@return object WP Post Object
 	 */
-	public function create(bool $is_success = false): WP_Post {
+	public function create(bool $is_completed = false): WP_Post {
 		/**
 		 *匿名支付Cookie：
 		 *cookie_name = static::$anon_cookie_name . '-' . $this->object_id
@@ -102,7 +98,7 @@ class Wnd_Order extends Wnd_Transaction {
 
 		// 定义变量
 		$this->total_amount = wnd_get_post_price($this->object_id);
-		$this->status       = $is_success ? 'success' : 'pending';
+		$this->status       = $is_completed ? static::$completed_status : static::$processing_status;
 		$this->subject      = $this->subject ?: (__('订单：', 'wnd') . get_the_title($this->object_id));
 
 		/**
@@ -112,7 +108,7 @@ class Wnd_Order extends Wnd_Transaction {
 			[
 				'author'         => $this->user_id,
 				'post_parent'    => $this->object_id,
-				'post_status'    => 'pending',
+				'post_status'    => static::$processing_status,
 				'post_type'      => 'order',
 				'posts_per_page' => 1,
 				'date_query'     => !$this->user_id ? $date_query : [],
@@ -155,7 +151,7 @@ class Wnd_Order extends Wnd_Transaction {
 		 *success表示直接余额消费
 		 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see static::verify();
 		 */
-		if ('success' == $this->status) {
+		if (static::$completed_status == $this->status) {
 			$this->complete();
 		}
 
@@ -176,13 +172,13 @@ class Wnd_Order extends Wnd_Transaction {
 		}
 
 		// 订单支付状态检查
-		if ('pending' != $this->get_status()) {
+		if (static::$processing_status != $this->get_status()) {
 			throw new Exception(__('订单状态无效', 'wnd'));
 		}
 
 		$post_arr = [
 			'ID'          => $this->get_ID(),
-			'post_status' => 'success',
+			'post_status' => static::$completed_status,
 			'post_title'  => $this->subject ?: $this->get_subject() . __('(在线支付)', 'wnd'),
 		];
 		$ID = wp_update_post($post_arr);

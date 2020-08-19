@@ -1223,7 +1223,7 @@ jQuery(document).ready(function($) {
 					 *如果子级分类可用，则子级及往后其他子类移除可能存在的disabled属性
 					 *如果子级分类不可用，则子级及往后其他子类设置为disabled
 					 */
-					if (response.status > 0) {
+					if (response.data) {
 						child_selector.html(response.data);
 						child_selector.addClass("is-active");
 						$(".dynamic-sub-" + taxonomy).each(function() {

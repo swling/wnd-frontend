@@ -13,11 +13,6 @@ class Wnd_Admin {
 		// 数据表
 		Wnd_DB::create_table();
 
-		// 升级
-		if (get_option('wnd_var') != WND_VER) {
-			// wnd_upgrade_02();
-		}
-
 		// 默认option数据
 		if (!get_option('wnd')) {
 			$default_option = [
@@ -120,7 +115,7 @@ class Wnd_Admin {
 
 		// 超期七天未完成的充值消费订单
 		$old_posts = $wpdb->get_col(
-			"SELECT ID FROM $wpdb->posts WHERE post_type IN ('order','recharge') AND post_status = 'pending' AND DATE_SUB(NOW(), INTERVAL 7 DAY) > post_date"
+			"SELECT ID FROM $wpdb->posts WHERE post_type IN ('order','recharge') AND post_status = 'wnd-processing' AND DATE_SUB(NOW(), INTERVAL 7 DAY) > post_date"
 		);
 		foreach ((array) $old_posts as $delete) {
 			// Force delete.
@@ -134,5 +129,32 @@ class Wnd_Admin {
 
 		do_action('wnd_clean_up');
 		return true;
+	}
+
+	/**
+	 *@since 2020.08.19
+	 *升级
+	 */
+	public static function upgrade() {
+		global $wpdb;
+		// 升级 0.8.61
+		if (version_compare(get_option('wnd_var'), '0.8.61', '<')) {
+			$posts = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_status IN ( 'success', 'close')");
+			foreach ((array) $posts as $post) {
+				$update = $wpdb->update(
+					$wpdb->posts,
+					['post_status' => 'success' == $post->post_status ? 'wnd-completed' : 'wnd-closed'],
+					['ID' => $post->ID],
+					['%s', '%s'],
+					['%d']
+				);
+			}unset($posts, $post);
+
+			if ($update ?? false) {
+				update_option('wnd_ver', WND_VER);
+
+				wp_cache_flush();
+			}
+		}
 	}
 }
