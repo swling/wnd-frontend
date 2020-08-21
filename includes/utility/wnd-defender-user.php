@@ -98,7 +98,7 @@ class Wnd_Defender_User {
 		// 锁定时间范围内:
 		$time = static::$lock_time - (time() - $this->user_log['failure_time']);
 		if ($time > 0) {
-			throw new Exception(sprintf(__('错误次数太多， %s 分钟后重试', 'wnd'), ceil($time / 60)));
+			throw new Exception(sprintf(__('错误次数太多请 %s 分钟后重试，或立即重置密码', 'wnd'), ceil($time / 60)));
 		}
 	}
 }

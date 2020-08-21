@@ -4,6 +4,7 @@ namespace Wnd\Hook;
 use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\Model\Wnd_User;
+use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
@@ -16,6 +17,7 @@ class Wnd_Add_Action_WP {
 	private function __construct() {
 		add_action('wp_loaded', [__CLASS__, 'action_on_wp_loaded'], 10);
 		add_action('user_register', [__CLASS__, 'action_on_user_register'], 10, 1);
+		add_action('after_password_reset', [__CLASS__, 'action_on_password_reset'], 10, 1);
 		add_action('deleted_user', [__CLASS__, 'action_on_delete_user'], 10, 1);
 		add_action('before_delete_post', [__CLASS__, 'action_on_before_delete_post'], 10, 1);
 		add_action('post_updated', [__CLASS__, 'action_on_post_updated'], 10, 3);
@@ -52,6 +54,16 @@ class Wnd_Add_Action_WP {
 		// 绑定邮箱或手机
 		$auth = Wnd_Auth::get_instance($email_or_phone);
 		$auth->reset_code($user_id);
+	}
+
+	/**
+	 *重设密码后
+	 *@since 0.8.62
+	 */
+	public static function action_on_password_reset($user) {
+		// Defender：重设密码后清空登录失败日志
+		$defender = new Wnd_Defender_User($user->ID);
+		$defender->reset_log();
 	}
 
 	/**
