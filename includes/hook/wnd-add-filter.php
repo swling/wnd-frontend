@@ -2,9 +2,9 @@
 namespace Wnd\Hook;
 
 use Exception;
-use Wnd\Model\Wnd_Auth;
-use Wnd\Utility\Wnd_Captcha;
+use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
+use Wnd\Utility\Wnd_Validator;
 
 /**
  *Wnd Filter
@@ -15,10 +15,11 @@ class Wnd_Add_Filter {
 
 	private function __construct() {
 		add_filter('wnd_can_reg', [__CLASS__, 'filter_can_reg'], 10, 1);
+		add_filter('wnd_can_login', [__CLASS__, 'filter_can_login'], 10, 2);
 		add_filter('wnd_can_update_profile', [__CLASS__, 'filter_can_update_profile'], 10, 1);
 		add_filter('wnd_insert_post_status', [__CLASS__, 'filter_post_status'], 10, 3);
 		add_filter('wnd_safe_action_return', [__CLASS__, 'filter_safe_action_return'], 10, 1);
-		add_filter('wnd_can_send_code', [__CLASS__, 'filter_can_send_code'], 10, 3);
+		add_filter('wnd_can_send_code', [__CLASS__, 'validate_captcha'], 10, 1);
 	}
 
 	/**
@@ -31,13 +32,29 @@ class Wnd_Add_Filter {
 		}
 
 		// 验证:手机或邮箱 验证码
-		$auth_code      = $_POST['auth_code'];
-		$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'] ?? '';
 		try {
-			$auth = Wnd_Auth::get_instance($email_or_phone);
-			$auth->set_type('register');
-			$auth->set_auth_code($auth_code);
-			$auth->verify();
+			Wnd_Validator::validate_verification_code('register');
+			return $can_array;
+		} catch (Exception $e) {
+			return ['status' => 0, 'msg' => $e->getMessage()];
+		}
+	}
+
+	/**
+	 *@since 0.8.61
+	 *登录权限
+	 */
+	public static function filter_can_login($can_array, $user) {
+		// 账户已封禁
+		if (wnd_has_been_banned($user->ID)) {
+			return ['status' => 0, 'msg' => __('账户已被封禁', 'wnd')];
+		}
+
+		// Defender
+		try {
+			$defender = new Wnd_Defender_User($user->ID);
+			$defender->check_login();
+
 			return $can_array;
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
@@ -120,16 +137,9 @@ class Wnd_Add_Filter {
 	 *@since 2020.08.13
 	 *发送短信或邮件验证码时，进行人机验证
 	 */
-	public static function filter_can_send_code($can_array, $device, $captcha) {
-		// 禁用人机校验
-		if (in_array(wnd_get_config('captcha_service'), ['close', ''])) {
-			return $can_array;
-		}
-
+	public static function validate_captcha($can_array) {
 		try {
-			$auth = Wnd_Captcha::get_instance();
-			$auth->set_captcha($captcha);
-			$auth->validate();
+			Wnd_Validator::validate_captcha();
 			return $can_array;
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];

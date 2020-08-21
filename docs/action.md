@@ -25,6 +25,20 @@ do_action('wnd_ban_account', $user_id);
 
 ##已封禁账户恢复正常
 do_action('wnd_restore_account', $user_id);
+
+/**
+ *@since 0.8.61
+ *登录失败（密码错误）
+ *@param object WP_User
+*/
+do_action('wnd_login_failed', $user);
+
+/**
+ *@since 0.8.61
+ *登录成功
+ *@param object WP_User
+ */
+do_action('wnd_login', $user);
 ```
 
 ## 支付

@@ -2,6 +2,7 @@
 namespace Wnd\Hook;
 
 use Wnd\Action\Wnd_Verify_Pay;
+use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Form_Option;
 
@@ -13,10 +14,32 @@ class Wnd_Add_Action {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
+		add_action('wnd_login', [__CLASS__, 'action_on_login'], 10);
+		add_action('wnd_login_failed', [__CLASS__, 'action_on_login_failed'], 10);
 		add_action('wnd_upload_file', [__CLASS__, 'action_on_upload_file'], 10, 3);
 		add_action('wnd_upload_gallery', [__CLASS__, 'action_on_upload_gallery'], 10, 2);
 		add_action('wnd_delete_file', [__CLASS__, 'action_on_delete_file'], 10, 3);
 		add_action('wnd_do_action', [__CLASS__, 'action_on_do_action'], 10);
+	}
+
+	/**
+	 *@since 0.8.61
+	 *登录成功
+	 */
+	public static function action_on_login($user) {
+		// Defender：清空登录失败日志
+		$defender = new Wnd_Defender_User($user->ID);
+		$defender->reset_log();
+	}
+
+	/**
+	 *@since 0.8.61
+	 *登录失败
+	 */
+	public static function action_on_login_failed($user) {
+		// Defender：写入登录失败日志
+		$defender = new Wnd_Defender_User($user->ID);
+		$defender->write_failure_log();
 	}
 
 	/**

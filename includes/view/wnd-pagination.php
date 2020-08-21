@@ -110,8 +110,13 @@ class Wnd_Pagination {
 	 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
 	 */
 	protected function build_next_pagination() {
-		$previous_link = static::$doing_ajax ? '' : add_query_arg('page', $this->paged - 1);
-		$next_link     = static::$doing_ajax ? '' : add_query_arg('page', $this->paged + 1);
+		if (static::$doing_ajax) {
+			$previous_link = '';
+			$next_link     = '';
+		} else {
+			$previous_link = add_query_arg('page', $this->paged - 1);
+			$next_link     = add_query_arg('page', $this->paged + 1);
+		}
 
 		$html = '<nav id="nav-' . $this->id . '" class="pagination is-centered ' . $this->class . '">';
 		$html .= '<ul class="pagination-list">';
@@ -132,16 +137,21 @@ class Wnd_Pagination {
 	 *据称，在数据量较大的站点，查询文章总数会较为费时
 	 */
 	protected function build_general_pagination() {
-		$first_link    = static::$doing_ajax ? '' : remove_query_arg('page');
-		$previous_link = static::$doing_ajax ? '' : add_query_arg('page', $this->paged - 1);
-		$next_link     = static::$doing_ajax ? '' : add_query_arg('page', $this->paged + 1);
-		$last_link     = static::$doing_ajax ? '' : add_query_arg('page', $this->max_num_pages);
+		if (static::$doing_ajax) {
+			$first_link    = '';
+			$previous_link = '';
+			$next_link     = '';
+			$last_link     = '';
+		} else {
+			$first_link    = remove_query_arg('page');
+			$previous_link = add_query_arg('page', $this->paged - 1);
+			$next_link     = add_query_arg('page', $this->paged + 1);
+			$last_link     = add_query_arg('page', $this->max_num_pages);
+		}
 
 		$html = '<nav id="nav-' . $this->id . '" class="pagination is-centered ' . $this->class . '"' . $this->build_html_data_attr($this->data) . '>';
 		if ($this->paged > 1) {
 			$html .= '<a data-key="page" data-value="' . ($this->paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
-		} else {
-			// $html .= '<a class="pagination-previous" disabled="disabled">' . __('首页', 'wnd') . '</a>';
 		}
 
 		if ($this->paged < $this->max_num_pages) {
@@ -163,10 +173,8 @@ class Wnd_Pagination {
 		if ($this->paged < $this->max_num_pages - 3) {
 			$html .= '<li><span class="pagination-ellipsis">&hellip;</span></li>';
 		}
-
 		$html .= '<li><a data-key="page" data-value="' . $this->max_num_pages . '" class="pagination-link" href="' . $last_link . '">' . __('尾页', 'wnd') . '</a></li>';
 		$html .= '</ul>';
-
 		$html .= '</nav>';
 
 		return $html;

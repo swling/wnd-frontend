@@ -69,7 +69,7 @@ apply_filters('wnd_can_reg', ['status'=>1,'msg'=>'']);
 apply_filters('wnd_reg_return',  ['status' => 3, 'msg' => $redirect_to], $user_id);
 
 ##用户登录 @since 2019.01.21
-apply_filters('wnd_can_login', ['status'=>1,'msg'=>'']);
+apply_filters('wnd_can_login', ['status'=>1,'msg'=>''], $user);
 
 ###用户更新资料
 apply_filters('wnd_can_update_profile', ['status'=>1,'msg'=>'']);
@@ -205,5 +205,5 @@ apply_filters('wnd_safe_action_return');
 
 ## 发送短信或邮件验证码权限
 ```php
-$can_send_code = apply_filters('wnd_can_send_code', ['status' => 1, 'msg' => ''], $email_or_phone, $token);
+$can_send_code = apply_filters('wnd_can_send_code', ['status' => 1, 'msg' => '']);
 ```
