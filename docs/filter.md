@@ -122,14 +122,14 @@ apply_filters('wnd_get_post_commission', $commission, $post_id);
 apply_filters('wnd_get_post_price', $price, $post_id);
 
 ```
-## 支付接口
+## 支付
 ### UI端拓展支付接口
 将新增的支付接口以数组形式['接口名称'=>'接口标识']写入
 ```php
-$payment_gateway = apply_filters('wnd_payment_gateways', [__('支付宝', 'wnd') => 'Alipay']);
+$payment_gateway = apply_filters('wnd_payment_gateway_options', [__('支付宝', 'wnd') => 'Alipay']);
 
 // 实例：新增微信支付UI
-add_filter('wnd_payment_gateways', function ($data) {
+add_filter('wnd_payment_gateway_options', function ($data) {
 	return array_merge($data, ['微信支付' => 'Tenpay']);
 });
 
@@ -153,6 +153,19 @@ add_filter('wnd_payment_handler', function ($class_name, $payment_gateway) {
 	return 'Wnd_plugin\\Wndt_Payment_Gateway\\Wndt_Payment_Tenpay';
 }, $priority = 10, $accepted_args = 2);
 
+```
+
+### 充值表单金额选项
+```php
+/**
+*@param array $defaults
+*/
+apply_filters('wnd_recharge_amount_options', $defaults);
+
+// 实例
+add_filter('wnd_recharge_amount_options', function(){
+	return ['一毛' => 0.1];
+}, 12, 1);
 ```
 
 ## 表单

@@ -21,7 +21,7 @@ class Wnd_Order_Form extends Wnd_Module {
 		$form->add_radio(
 			[
 				'name'     => 'payment_gateway',
-				'options'  => Wnd_Payment::get_gateway_data(),
+				'options'  => Wnd_Payment::get_gateway_options(),
 				'required' => 'required',
 				'checked'  => Wnd_Payment::get_default_gateway(),
 				'class'    => 'is-checkradio is-danger',

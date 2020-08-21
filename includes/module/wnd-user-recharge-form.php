@@ -19,7 +19,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module {
 		$form->add_radio(
 			[
 				'name'     => 'total_amount',
-				'options'  => ['0.01' => '0.01', '10.00' => '10.00', '50.00' => '50.00', '100.00' => '100.00', '500.00' => '500.00'],
+				'options'  => Wnd_payment::get_recharge_amount_options(),
 				'required' => 'required',
 				'class'    => 'is-checkradio is-danger',
 			]
@@ -27,7 +27,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module {
 		$form->add_radio(
 			[
 				'name'     => 'payment_gateway',
-				'options'  => Wnd_Payment::get_gateway_data(),
+				'options'  => Wnd_Payment::get_gateway_options(),
 				'required' => 'required',
 				'checked'  => Wnd_Payment::get_default_gateway(),
 				'class'    => 'is-checkradio is-danger',
