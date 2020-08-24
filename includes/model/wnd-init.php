@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Admin\Wnd_Admin_Menus;
 use Wnd\Controller\Wnd_API;
 use Wnd\Hook\Wnd_Hook;
 use Wnd\Model\Wnd_DB;
@@ -47,8 +48,8 @@ class Wnd_Init {
 
 		// 管理后台
 		if (is_admin()) {
-			// 配置选项
-			require WND_PATH . '/wnd-options.php';
+			// 配置菜单
+			new Wnd_Admin_Menus;
 
 			// 检查更新
 			new Wnd_Upgrader_Plugin_This;

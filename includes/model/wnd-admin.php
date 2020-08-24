@@ -156,5 +156,22 @@ class Wnd_Admin {
 				wp_cache_flush();
 			}
 		}
+
+		// 升级 0.8.62
+		if (version_compare(get_option('wnd_var'), '0.8.62', '<')) {
+			foreach (get_option('wnd') as $key => $value) {
+				if ('wnd_app_private_key' == $key) {
+					$key = 'alipay_app_private_key';
+				} elseif (0 === stripos($key, 'wnd_')) {
+					$key = substr($key, 4);
+				}
+				$option[$key] = $value;
+			}
+			update_option('wnd', $option);
+
+			update_option('wnd_ver', WND_VER);
+
+			wp_cache_flush();
+		}
 	}
 }

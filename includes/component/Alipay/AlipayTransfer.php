@@ -26,7 +26,7 @@ class AlipayTransfer extends AlipayService {
 	protected $app_public_key_path;
 
 	// 应用RSA私钥。注意：此处为是CSR私钥而非RSA私钥。是生成证书步骤中，产生的包含对应域名的私钥
-	protected $app_private_key;
+	protected $alipay_app_private_key;
 
 	// 支付宝根证书服务器文件路径
 	protected $alipay_root_cert_path;

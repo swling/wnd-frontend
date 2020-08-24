@@ -21,28 +21,28 @@ class AlipayConfig {
 		 */
 		$config = [
 			//应用ID,您的APPID。
-			'app_id'            => wnd_get_config('alipay_appid'),
+			'app_id'                 => wnd_get_config('alipay_appid'),
 
 			// RSA2 商户私钥 用工具生成的应用私钥
-			'app_private_key'   => wnd_get_config('app_private_key'),
+			'alipay_app_private_key' => wnd_get_config('alipay_app_private_key'),
 
 			// RSA2 应用支付宝公钥
-			'alipay_public_key' => wnd_get_config('alipay_public_key'),
+			'alipay_public_key'      => wnd_get_config('alipay_public_key'),
 
 			//异步通知地址 *不能带参数否则校验不过 （插件执行页面地址）
-			'notify_url'        => wnd_get_do_url(),
+			'notify_url'             => wnd_get_do_url(),
 
 			//同步跳转 *不能带参数否则校验不过 （插件执行页面地址）
-			'return_url'        => wnd_get_do_url(),
+			'return_url'             => wnd_get_do_url(),
 
 			//编码格式
-			'charset'           => 'utf-8',
+			'charset'                => 'utf-8',
 
 			//签名方式
-			'sign_type'         => 'RSA2',
+			'sign_type'              => 'RSA2',
 
 			//支付宝网关
-			'gateway_url'       => wnd_get_config('alipay_sandbox') ? 'https://openapi.alipaydev.com/gateway.do' : 'https://openapi.alipay.com/gateway.do',
+			'gateway_url'            => wnd_get_config('alipay_sandbox') ? 'https://openapi.alipaydev.com/gateway.do' : 'https://openapi.alipay.com/gateway.do',
 		];
 
 		return $config;

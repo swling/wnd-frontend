@@ -13,7 +13,7 @@ class AlipayService {
 	protected $alipay_public_key;
 
 	// 应用私钥（签名时使用）
-	protected $app_private_key;
+	protected $alipay_app_private_key;
 
 	protected $gateway_url;
 
@@ -46,7 +46,7 @@ class AlipayService {
 	 * 生成sign
 	 */
 	protected function sign($data, $signType = 'RSA') {
-		$priKey = $this->app_private_key;
+		$priKey = $this->alipay_app_private_key;
 		$res    = "-----BEGIN RSA PRIVATE KEY-----\n" .
 		wordwrap($priKey, 64, "\n", true) .
 			"\n-----END RSA PRIVATE KEY-----";

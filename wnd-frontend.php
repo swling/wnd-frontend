@@ -41,7 +41,6 @@ Wnd\Model\Wnd_Init::instance();
 /**
  *@since 初始化
  *插件安装卸载选项
- *
  */
 register_activation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::install');
 register_deactivation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::uninstall');
@@ -62,7 +61,12 @@ add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
  *@since 初始化
  *加载静态资源
  */
-add_action('wp_enqueue_scripts', function () {
+add_action('wp_enqueue_scripts', 'wnd_enqueue_scripts');
+
+/**
+ *加载静态资源
+ */
+function wnd_enqueue_scripts($hook_suffix = '') {
 	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.min.js', ['jquery'], WND_VER);
 
 	// bulma框架及fontawesome图标
@@ -110,4 +114,4 @@ add_action('wp_enqueue_scripts', function () {
 		],
 	];
 	wp_localize_script('wnd-frontend', 'wnd', $wnd_data);
-});
+}
