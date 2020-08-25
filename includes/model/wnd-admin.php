@@ -138,7 +138,7 @@ class Wnd_Admin {
 	public static function upgrade() {
 		global $wpdb;
 		// 升级 0.8.61
-		if (version_compare(get_option('wnd_var'), '0.8.61', '<')) {
+		if (version_compare(get_option('wnd_ver'), '0.8.61', '<')) {
 			$posts = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_status IN ( 'success', 'close')");
 			foreach ((array) $posts as $post) {
 				$update = $wpdb->update(
@@ -151,14 +151,14 @@ class Wnd_Admin {
 			}unset($posts, $post);
 
 			if ($update ?? false) {
-				update_option('wnd_ver', WND_VER);
+				update_option('wnd_ver', '0.8.61');
 
 				wp_cache_flush();
 			}
 		}
 
 		// 升级 0.8.62
-		if (version_compare(get_option('wnd_var'), '0.8.62', '<')) {
+		if (version_compare(get_option('wnd_ver'), '0.8.62', '<')) {
 			foreach (get_option('wnd') as $key => $value) {
 				if ('wnd_app_private_key' == $key) {
 					$key = 'alipay_app_private_key';
@@ -169,7 +169,7 @@ class Wnd_Admin {
 			}
 			update_option('wnd', $option);
 
-			update_option('wnd_ver', WND_VER);
+			update_option('wnd_ver', '0.8.62');
 
 			wp_cache_flush();
 		}
