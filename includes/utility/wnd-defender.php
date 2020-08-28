@@ -25,14 +25,29 @@ class Wnd_Defender {
 	public $ip;
 
 	/**
-	 *内存缓存Key
+	 *IP段
+	 */
+	public $ip_base;
+
+	/**
+	 *单个IP内存缓存Key
 	 */
 	public $key;
+
+	/**
+	 *IP段内存缓存Key
+	 */
+	public $base_key;
 
 	/**
 	 *访问次数统计
 	 */
 	public $count;
+
+	/**
+	 *IP段拦截统计
+	 */
+	public $base_count;
 
 	/**
 	 *拦截计数时间段
@@ -61,21 +76,32 @@ class Wnd_Defender {
 		}
 
 		$this->period          = $period;
-		$this->max_connections = $max_connections;
+		$this->max_connections = ('POST' == $_SERVER['REQUEST_METHOD']) ? $max_connections / 2 : $max_connections;
 		$this->blocked_time    = $blocked_time;
 		$this->ip              = static::get_real_ip();
-		$this->key             = 'wnd_' . $this->ip;
+		$this->ip_base         = preg_replace('/(\d+)\.(\d+)\.(\d+)\.(\d+)/is', "$1.$2.$3", $this->ip);
+		$this->key             = $this->build_key($this->ip);
+		$this->base_key        = $this->build_key($this->ip_base);
 
 		$this->defend();
 	}
 
 	/**
 	 *核查防护
+	 *单个IP规定时间内返回超限拦截，并记录ip端
+	 *IP段累积拦截超限，拦截整个IP段（为避免误杀，IP段拦截时间为IP检测时间段，而非IP拦截时间）
 	 */
 	protected function defend() {
 		$m = new Memcached();
 		$m->addServer('localhost', 11211);
-		$this->count = $m->get($this->key);
+		$this->count      = $m->get($this->key);
+		$this->base_count = $m->get($this->base_key);
+
+		// IP段拦截
+		if ($this->base_count > $this->max_connections) {
+			header('HTTP/1.1 403 Forbidden');
+			exit('Blocked By IP Base : ' . $this->base_count . '-' . $this->ip);
+		}
 
 		// 首次访问
 		if (!$this->count) {
@@ -86,12 +112,29 @@ class Wnd_Defender {
 		// 拦截检测时间范围内再次访问
 		$m->increment($this->key, 1);
 
-		// 符合拦截条件
-		if ($this->count >= $this->max_connections) {
-			$m->set($this->key, $this->max_connections, $this->blocked_time);
-			header('HTTP/1.1 403 Forbidden');
-			exit('Blocked');
+		// 如果当前访问首次被拦截，统计IP段拦截次数
+		if ($this->count == $this->max_connections) {
+			if ($this->base_count) {
+				$m->increment($this->base_key, 1);
+			} else {
+				$m->set($this->base_key, 1, $this->period);
+			}
 		}
+
+		// 符合拦截条件：屏蔽当前IP，并新增记录
+		if ($this->count >= $this->max_connections) {
+			$m->set($this->key, $this->count + 1, $this->blocked_time);
+
+			header('HTTP/1.1 403 Forbidden');
+			exit('Blocked By IP : ' . $this->count . ' - ' . $this->ip);
+		}
+	}
+
+	/**
+	 *生成识别 key
+	 */
+	protected function build_key($key): string {
+		return 'wnd_' . $key;
 	}
 
 	//获取客户端真实ip地址
