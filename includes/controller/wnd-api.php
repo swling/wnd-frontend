@@ -26,8 +26,9 @@ class Wnd_API {
 			'wnd',
 			'handler',
 			[
-				'methods'  => 'POST',
-				'callback' => __CLASS__ . '::handle_action',
+				'methods'             => 'POST',
+				'callback'            => __CLASS__ . '::handle_action',
+				'permission_callback' => '__return_true',
 			]
 		);
 
@@ -36,8 +37,9 @@ class Wnd_API {
 			'wnd',
 			'posts',
 			[
-				'methods'  => 'GET',
-				'callback' => __CLASS__ . '::handle_posts',
+				'methods'             => 'GET',
+				'callback'            => __CLASS__ . '::handle_posts',
+				'permission_callback' => '__return_true',
 			]
 		);
 
@@ -46,8 +48,9 @@ class Wnd_API {
 			'wnd',
 			'users',
 			[
-				'methods'  => 'GET',
-				'callback' => __CLASS__ . '::handle_users',
+				'methods'             => 'GET',
+				'callback'            => __CLASS__ . '::handle_users',
+				'permission_callback' => '__return_true',
 			]
 		);
 
@@ -56,8 +59,9 @@ class Wnd_API {
 			'wnd',
 			'interface',
 			[
-				'methods'  => 'GET',
-				'callback' => __CLASS__ . '::handle_interface',
+				'methods'             => 'GET',
+				'callback'            => __CLASS__ . '::handle_interface',
+				'permission_callback' => '__return_true',
 			]
 		);
 
@@ -66,8 +70,9 @@ class Wnd_API {
 			'wnd',
 			'jsonget',
 			[
-				'methods'  => 'GET',
-				'callback' => __CLASS__ . '::handle_jsonget',
+				'methods'             => 'GET',
+				'callback'            => __CLASS__ . '::handle_jsonget',
+				'permission_callback' => '__return_true',
 			]
 		);
 	}
