@@ -103,7 +103,11 @@ class Wnd_Defender {
 	 *@param int $blocked_time 		符合拦截条件的ip锁定时间
 	 */
 	protected function __construct(int $period, int $max_connections, int $blocked_time) {
-		$this->cache_init();
+		try {
+			$this->cache_init();
+		} catch (Exception $e) {
+			return $e;
+		}
 
 		$this->period          = $period;
 		$this->max_connections = ('POST' == $_SERVER['REQUEST_METHOD']) ? $max_connections / 2 : $max_connections;
