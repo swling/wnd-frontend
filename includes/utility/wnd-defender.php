@@ -88,7 +88,7 @@ class Wnd_Defender {
 	/**
 	 *单例模式
 	 */
-	public static function instance(int $period, int $max_connections, int $blocked_time) {
+	public static function get_instance(int $period, int $max_connections, int $blocked_time) {
 		if (!(self::$instance instanceof self)) {
 			static::$instance = new self($period, $max_connections, $blocked_time);
 		}

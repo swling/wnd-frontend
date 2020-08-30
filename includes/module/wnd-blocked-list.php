@@ -11,7 +11,7 @@ use Wnd\Utility\Wnd_Defender;
 class Wnd_Blocked_List extends Wnd_Module {
 
 	public static function build() {
-		$defender = Wnd_Defender::instance(0, 0, 0);
+		$defender = Wnd_Defender::get_instance(0, 0, 0);
 		$logs     = $defender->get_block_logs();
 
 		$html = '<ul>';

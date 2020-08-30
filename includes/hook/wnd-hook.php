@@ -16,15 +16,15 @@ class Wnd_Hook {
 
 	private function __construct() {
 		// Wnd Action Hook
-		Wnd_Add_Action::instance();
+		Wnd_Add_Action::get_instance();
 
 		// WP Action Hook
-		Wnd_Add_Action_WP::instance();
+		Wnd_Add_Action_WP::get_instance();
 
 		// Wnd Action Hook
-		Wnd_Add_Filter::instance();
+		Wnd_Add_Filter::get_instance();
 
 		// WP Action Hook
-		Wnd_Add_Filter_WP::instance();
+		Wnd_Add_Filter_WP::get_instance();
 	}
 }

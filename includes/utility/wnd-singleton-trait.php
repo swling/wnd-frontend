@@ -10,7 +10,7 @@ trait Wnd_Singleton_Trait {
 
 	private static $instance;
 
-	public static function instance() {
+	public static function get_instance() {
 		if (!static::$instance) {
 			static::$instance = new self();
 		}

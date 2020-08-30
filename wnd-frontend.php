@@ -36,7 +36,7 @@ define('WND_DIR_NAME', basename(__DIR__));
 require WND_PATH . DIRECTORY_SEPARATOR . 'wnd-autoloader.php';
 
 // 初始化
-Wnd\Model\Wnd_Init::instance();
+Wnd\Model\Wnd_Init::get_instance();
 
 /**
  *@since 初始化

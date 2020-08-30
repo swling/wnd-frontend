@@ -22,19 +22,19 @@ class Wnd_Init {
 		static::init();
 
 		// 默认Hook
-		Wnd_Hook::instance();
+		Wnd_Hook::get_instance();
 
 		// 数据库
-		Wnd_DB::instance();
+		Wnd_DB::get_instance();
 
 		// API
-		Wnd_API::instance();
+		Wnd_API::get_instance();
 
 		// 优化
-		Wnd_Optimization::instance();
+		Wnd_Optimization::get_instance();
 
 		// 语言
-		Wnd_language::instance();
+		Wnd_language::get_instance();
 
 		// function
 		require WND_PATH . '/includes/function/inc-meta.php'; //数组形式储存 meta、option
