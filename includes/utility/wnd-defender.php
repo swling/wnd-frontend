@@ -184,8 +184,9 @@ class Wnd_Defender {
 	 */
 	protected function write_block_logs() {
 		// 新增当前IP拦截日志时间及累计拦截次数
-		$_REQUEST['wnd_time']  = date('m-d H:i:s');
-		$_REQUEST['wnd_count'] = $this->count + 1;
+		$_REQUEST['wnd_time']   = date('m-d H:i:s');
+		$_REQUEST['wnd_count']  = $this->count + 1;
+		$_REQUEST['wnd_server'] = $_SERVER;
 
 		$block_logs = array_merge(array_reverse($this->get_block_logs()), [$this->ip => $_REQUEST]);
 		$block_logs = array_reverse($block_logs);
