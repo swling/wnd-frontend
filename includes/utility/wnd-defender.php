@@ -109,13 +109,20 @@ class Wnd_Defender {
 			return $e;
 		}
 
+		// 拦截配置
 		$this->period          = $period;
 		$this->max_connections = ('POST' == $_SERVER['REQUEST_METHOD']) ? $max_connections / 2 : $max_connections;
 		$this->blocked_time    = $blocked_time;
-		$this->ip              = static::get_real_ip();
-		$this->ip_base         = preg_replace('/(\d+)\.(\d+)\.(\d+)\.(\d+)/is', "$1.$2.$3", $this->ip);
-		$this->key             = $this->build_key($this->ip);
-		$this->base_key        = $this->build_key($this->ip_base);
+
+		// IP 属性
+		$this->ip       = static::get_real_ip();
+		$this->ip_base  = preg_replace('/(\d+)\.(\d+)\.(\d+)\.(\d+)/is', "$1.$2.$3", $this->ip);
+		$this->key      = $this->build_key($this->ip);
+		$this->base_key = $this->build_key($this->ip_base);
+
+		// IP 缓存数据
+		$this->count      = $this->cache_get($this->key);
+		$this->base_count = $this->cache_get($this->base_key);
 
 		$this->defend();
 	}
@@ -126,9 +133,6 @@ class Wnd_Defender {
 	 *IP段累积拦截超限，拦截整个IP段（为避免误杀，IP段拦截时间为IP检测时间段，而非IP拦截时间）
 	 */
 	protected function defend() {
-		$this->count      = $this->cache_get($this->key);
-		$this->base_count = $this->cache_get($this->base_key);
-
 		// IP段拦截
 		if ($this->base_count > $this->max_connections) {
 			// 将当前 IP 写入屏蔽分析日志
@@ -151,14 +155,20 @@ class Wnd_Defender {
 			} else {
 				$this->cache_set($this->base_key, 1, $this->period);
 			}
+		}
+
+		/**
+		 *符合拦截条件：
+		 * - 更新当前 IP 记录
+		 * - 更新当前 IP 拦截日志时间
+		 * - 中断当前 IP 连接
+		 *
+		 */
+		if ($this->count >= $this->max_connections) {
+			$this->cache_set($this->key, $this->count + 1, $this->blocked_time);
 
 			// 将当前 IP 写入屏蔽分析日志
 			$this->write_block_logs();
-		}
-
-		// 符合拦截条件：屏蔽当前IP，并新增记录
-		if ($this->count >= $this->max_connections) {
-			$this->cache_set($this->key, $this->count + 1, $this->blocked_time);
 
 			header('HTTP/1.1 403 Forbidden');
 			exit('Blocked By IP : ' . $this->count . ' - ' . $this->ip);
@@ -173,6 +183,10 @@ class Wnd_Defender {
 	 *
 	 */
 	protected function write_block_logs() {
+		// 新增当前IP拦截日志时间及累计拦截次数
+		$_REQUEST['wnd_time']  = date('m-d H:i:s');
+		$_REQUEST['wnd_count'] = $this->count + 1;
+
 		$block_logs = array_merge(array_reverse($this->get_block_logs()), [$this->ip => $_REQUEST]);
 		$block_logs = array_reverse($block_logs);
 		$block_logs = array_slice($block_logs, 0, $this->block_logs_limit);
