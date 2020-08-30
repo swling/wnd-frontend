@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Utility;
 
+use Exception;
 use Memcached;
 
 /**
@@ -50,19 +51,50 @@ class Wnd_Defender {
 	public $base_count;
 
 	/**
-	 *拦截计数时间段
+	 *屏蔽日志内存缓存 Key
 	 */
-	protected $period = 60;
+	public static $block_logs_key = 'wnd_block_logs';
+
+	/**
+	 *屏蔽记录数
+	 */
+	protected $block_logs_limit = 50;
+
+	/**
+	 *拦截计数时间段（秒）
+	 */
+	protected $period;
 
 	/**
 	 *在规定时间段最多错误次数
 	 */
-	protected $max_connections = 10;
+	protected $max_connections;
 
 	/**
-	 *锁定时间
+	 *锁定时间（秒）
 	 */
-	protected $blocked_time = 1800;
+	protected $blocked_time;
+
+	/**
+	 *内存缓存
+	 */
+	protected $cache;
+
+	/**
+	 *单例实例
+	 */
+	private static $instance;
+
+	/**
+	 *单例模式
+	 */
+	public static function instance(int $period, int $max_connections, int $blocked_time) {
+		if (!(self::$instance instanceof self)) {
+			static::$instance = new self($period, $max_connections, $blocked_time);
+		}
+
+		return static::$instance;
+	}
 
 	/**
 	 *构造拦截器
@@ -70,10 +102,8 @@ class Wnd_Defender {
 	 *@param int $max_connections 	拦截时间范围内，单ip允许的最大连接数
 	 *@param int $blocked_time 		符合拦截条件的ip锁定时间
 	 */
-	public function __construct(int $period, int $max_connections, int $blocked_time) {
-		if (!class_exists('Memcached')) {
-			return;
-		}
+	protected function __construct(int $period, int $max_connections, int $blocked_time) {
+		$this->cache_init();
 
 		$this->period          = $period;
 		$this->max_connections = ('POST' == $_SERVER['REQUEST_METHOD']) ? $max_connections / 2 : $max_connections;
@@ -92,42 +122,68 @@ class Wnd_Defender {
 	 *IP段累积拦截超限，拦截整个IP段（为避免误杀，IP段拦截时间为IP检测时间段，而非IP拦截时间）
 	 */
 	protected function defend() {
-		$m = new Memcached();
-		$m->addServer('localhost', 11211);
-		$this->count      = $m->get($this->key);
-		$this->base_count = $m->get($this->base_key);
+		$this->count      = $this->cache_get($this->key);
+		$this->base_count = $this->cache_get($this->base_key);
 
 		// IP段拦截
 		if ($this->base_count > $this->max_connections) {
+			// 将当前 IP 写入屏蔽分析日志
+			$this->write_block_logs();
+
 			header('HTTP/1.1 403 Forbidden');
 			exit('Blocked By IP Base : ' . $this->base_count . '-' . $this->ip);
 		}
 
 		// 首次访问
 		if (!$this->count) {
-			$m->set($this->key, 1, $this->period);
+			$this->cache_set($this->key, 1, $this->period);
 			return;
 		}
 
-		// 拦截检测时间范围内再次访问
-		$m->increment($this->key, 1);
-
-		// 如果当前访问首次被拦截，统计IP段拦截次数
+		// 如果当前访问首次被拦截，统计IP段拦截次数，
 		if ($this->count == $this->max_connections) {
 			if ($this->base_count) {
-				$m->increment($this->base_key, 1);
+				$this->cache_inc($this->base_key, 1);
 			} else {
-				$m->set($this->base_key, 1, $this->period);
+				$this->cache_set($this->base_key, 1, $this->period);
 			}
+
+			// 将当前 IP 写入屏蔽分析日志
+			$this->write_block_logs();
 		}
 
 		// 符合拦截条件：屏蔽当前IP，并新增记录
 		if ($this->count >= $this->max_connections) {
-			$m->set($this->key, $this->count + 1, $this->blocked_time);
+			$this->cache_set($this->key, $this->count + 1, $this->blocked_time);
 
 			header('HTTP/1.1 403 Forbidden');
 			exit('Blocked By IP : ' . $this->count . ' - ' . $this->ip);
 		}
+
+		// 非首次访问，但尚未达到拦截条件：累计访问次数
+		$this->cache_inc($this->key, 1);
+	}
+
+	/**
+	 *记录屏蔽ip的请求信息，以供分析
+	 *
+	 */
+	protected function write_block_logs() {
+		$block_logs = array_merge(array_reverse($this->get_block_logs()), [$this->ip => $_REQUEST]);
+		$block_logs = array_reverse($block_logs);
+		$block_logs = array_slice($block_logs, 0, $this->block_logs_limit);
+
+		$this->cache_set(static::$block_logs_key, $block_logs, 3600 * 24);
+	}
+
+	/**
+	 *记录屏蔽ip的请求信息，以供分析
+	 *
+	 */
+	public function get_block_logs(): array{
+		$logs = $this->cache_get(static::$block_logs_key);
+
+		return is_array($logs) ? $logs : [];
 	}
 
 	/**
@@ -135,6 +191,42 @@ class Wnd_Defender {
 	 */
 	protected function build_key($key): string {
 		return 'wnd_' . $key;
+	}
+
+	/**
+	 *实例化内存缓存
+	 */
+	protected function cache_init() {
+		if (!class_exists('Memcached')) {
+			throw new Exception('Memcached is not installed yet');
+		}
+
+		$this->cache = new Memcached();
+		$this->cache->addServer('localhost', 11211);
+	}
+
+	/**
+	 *封装内存缓存读取方法，以便重写以适配其他内存缓存如 redis
+	 *
+	 */
+	protected function cache_get($key) {
+		return $this->cache->get($key);
+	}
+
+	/**
+	 *封装内存缓存设置方法，以便重写以适配其他内存缓存如 redis
+	 *
+	 */
+	protected function cache_set($key, $value, $expiration) {
+		return $this->cache->set($key, $value, $expiration);
+	}
+
+	/**
+	 *封装内存缓存增加方法，以便重写以适配其他内存缓存如 redis
+	 *
+	 */
+	protected function cache_inc($key, $offset) {
+		return $this->cache->increment($key, $offset);
 	}
 
 	//获取客户端真实ip地址
