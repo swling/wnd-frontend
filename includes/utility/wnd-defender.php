@@ -12,7 +12,7 @@ use Memcached;
  *启用拦截应该在加载WP之前，如在 wp-config.php 中手动引入本文件
  *
  * require dirname(__FILE__) . '/wp-content/plugins/wnd-frontend/includes/utility/wnd-defender.php';
- * new Wnd\Utility\Wnd_Defender(60, 5, 1800);
+ * Wnd\Utility\Wnd_Defender::get_instance(60, 5, 1800);
  *
  * 防护依赖 Memcached 缓存、暂未支持 Redis
  *
