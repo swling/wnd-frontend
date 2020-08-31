@@ -21,6 +21,21 @@ use Memcached;
 class Wnd_Defender {
 
 	/**
+	 *拦截计数时间段（秒）
+	 */
+	protected $period;
+
+	/**
+	 *在规定时间段最多错误次数
+	 */
+	protected $max_connections;
+
+	/**
+	 *锁定时间（秒）
+	 */
+	protected $blocked_time;
+
+	/**
 	 *客户端ip
 	 */
 	public $ip;
@@ -61,19 +76,29 @@ class Wnd_Defender {
 	protected $block_logs_limit = 50;
 
 	/**
-	 *拦截计数时间段（秒）
+	 *当前操作
 	 */
-	protected $period;
+	protected $action;
 
 	/**
-	 *在规定时间段最多错误次数
+	 *安全操作
 	 */
-	protected $max_connections;
+	protected $safe_actions = ['wnd_safe_action'];
 
 	/**
-	 *锁定时间（秒）
+	 *高危操作
 	 */
-	protected $blocked_time;
+	protected $risky_actions = ['wnd_send_code', 'wnd_login', 'wnd_reset_password'];
+
+	/**
+	 *高危操作数据内存缓存 Key
+	 */
+	protected $insight_key;
+
+	/**
+	 *高危操作检测时间范围内允许更改的请求次数
+	 */
+	protected $max_request_changes = 5;
 
 	/**
 	 *内存缓存
@@ -110,19 +135,31 @@ class Wnd_Defender {
 		}
 
 		// 拦截配置
+		$this->action          = $_REQUEST['action'] ?? '';
 		$this->period          = $period;
-		$this->max_connections = ('POST' == $_SERVER['REQUEST_METHOD']) ? $max_connections / 2 : $max_connections;
+		$this->max_connections = $max_connections;
 		$this->blocked_time    = $blocked_time;
 
 		// IP 属性
-		$this->ip       = static::get_real_ip();
-		$this->ip_base  = preg_replace('/(\d+)\.(\d+)\.(\d+)\.(\d+)/is', "$1.$2.$3", $this->ip);
-		$this->key      = $this->build_key($this->ip);
-		$this->base_key = $this->build_key($this->ip_base);
+		$this->ip          = static::get_real_ip();
+		$this->ip_base     = preg_replace('/(\d+)\.(\d+)\.(\d+)\.(\d+)/is', "$1.$2.$3", $this->ip);
+		$this->key         = $this->build_key($this->ip);
+		$this->base_key    = $this->build_key($this->ip_base);
+		$this->insight_key = 'wnd_insight_' . $this->ip;
 
 		// IP 缓存数据
 		$this->count      = $this->cache_get($this->key);
 		$this->base_count = $this->cache_get($this->base_key);
+
+		// 排除在外的安全操作
+		if (in_array($this->action, $this->safe_actions)) {
+			return;
+		}
+
+		// 高风险操作探知
+		if (in_array($this->action, $this->risky_actions)) {
+			$this->insight();
+		}
 
 		$this->defend();
 	}
@@ -179,6 +216,36 @@ class Wnd_Defender {
 	}
 
 	/**
+	 *智能高危分析，统计同 ip 针对同一个操作接口发起的请求数据变化次数（伪造请求通常会随机生成请求数据）
+	 * - 同 IP 发送验证码，持续更换手机号，邮箱号
+	 * - 同 IP 登录，持续更换用户名或密码
+	 */
+	protected function insight() {
+		$request       = md5(json_encode($_REQUEST));
+		$cache         = $this->cache->get($this->insight_key);
+		$cache         = is_array($cache) ? $cache : [];
+		$cache_request = $cache[$this->action]['request'] ?? '';
+		$cache_changes = $cache[$this->action]['changes'] ?? '';
+
+		// 当前请求数据已更改，更新更改次数、写入缓存
+		if ($request != $cache_request) {
+			$cache_changes++;
+
+			$cache[$this->action] = ['request' => $request, 'changes' => $cache_changes];
+			$this->cache->set($this->insight_key, $cache, $this->period);
+		}
+
+		/**
+		 *指定时间范围里，请求数据更改次数超过规定值，立即拦截
+		 *
+		 * - 检测 $this->count 原因：本缓存数据较为复杂，只能使用 set 更新，导致其过期时间将随之更新。因此数据可能产生累积，导致无法确保有效检测时间范围
+		 */
+		if ($this->count >= $this->max_request_changes and $cache_changes >= $this->max_request_changes) {
+			$this->max_connections = 0;
+		}
+	}
+
+	/**
 	 *记录屏蔽ip的请求信息，以供分析
 	 *
 	 */
@@ -213,7 +280,7 @@ class Wnd_Defender {
 	}
 
 	/**
-	 *实例化内存缓存
+	 *封装实例化内存缓存初始化，以便重写以适配其他内存缓存如 redis
 	 */
 	protected function cache_init() {
 		if (!class_exists('Memcached')) {
