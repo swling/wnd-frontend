@@ -84,11 +84,19 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 			// 表单字段名自动添加统一前缀
 			$input_values[$key]['name'] = $this->build_form_name($input['name']);
 
-			// 根据表单字段名读取数据
-			$value                          = static::get_option_value_by_form_name($input_values[$key]['name']);
-			$input_values[$key]['value']    = !is_array($value) ? $value : '';
-			$input_values[$key]['selected'] = $value;
-			$input_values[$key]['checked']  = $value;
+			/**
+			 * 根据表单字段名读取数据
+			 *
+			 * 当设置字段 Options 属性时，表示该字段为"同名多值"字段如：radio、checkbox、select等
+			 * 此时不应修改选项 value（选项 value 为预设值），而应设置选中项：selected、checked
+			 */
+			$value = static::get_option_value_by_form_name($input_values[$key]['name']);
+			if ($input_values[$key]['options'] ?? false) {
+				$input_values[$key]['selected'] = $value;
+				$input_values[$key]['checked']  = $value;
+			} else {
+				$input_values[$key]['value'] = !is_array($value) ? $value : '';
+			}
 		}unset($key, $input);
 
 		return $input_values;

@@ -17,7 +17,7 @@ class Wnd_Admin_Menu_Transaction extends Wnd_Admin_Menus {
 	/**
 	 *构造表单
 	 */
-	public function build_page() {
+	public function build_form() {
 		$form = new Wnd_Form_Option($this->option_name, $this->append);
 
 		$form->add_number(
@@ -51,6 +51,6 @@ class Wnd_Admin_Menu_Transaction extends Wnd_Admin_Menus {
 		$form->set_submit_button('保存', 'is-danger');
 		$form->build();
 
-		echo $form->html;
+		return $form->html;
 	}
 }

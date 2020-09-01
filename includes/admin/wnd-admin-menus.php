@@ -83,9 +83,16 @@ class Wnd_Admin_Menus {
 	}
 
 	/**
-	 *构造选项表单
+	 *构建选项页面
 	 */
 	public function build_page() {
+		echo '<div class="wrap">' . $this->build_form() . '</div>';
+	}
+
+	/**
+	 *构造选项表单
+	 */
+	public function build_form() {
 		$form = new Wnd_Form_Option($this->option_name, $this->append);
 
 		$form->add_radio(
@@ -197,6 +204,6 @@ class Wnd_Admin_Menus {
 		$form->set_submit_button('保存', 'is-danger');
 		$form->build();
 
-		echo $form->html;
+		return $form->html;
 	}
 }
