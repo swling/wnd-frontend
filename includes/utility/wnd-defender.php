@@ -175,8 +175,8 @@ class Wnd_Defender {
 			// 将当前 IP 写入屏蔽分析日志
 			$this->write_block_logs();
 
-			header('HTTP/1.1 403 Forbidden');
-			exit('Blocked By IP Base : ' . $this->base_count . '-' . $this->ip);
+			header('HTTP/1.1 429 Too Many Requests');
+			exit('Too Many Requests. Blocked By IP Base : ' . $this->base_count . '-' . $this->ip);
 		}
 
 		// 首次访问
@@ -207,8 +207,8 @@ class Wnd_Defender {
 			// 将当前 IP 写入屏蔽分析日志
 			$this->write_block_logs();
 
-			header('HTTP/1.1 403 Forbidden');
-			exit('Blocked By IP : ' . $this->count . ' - ' . $this->ip);
+			header('HTTP/1.1 429 Too Many Requests');
+			exit('Too Many Requests. Blocked By IP : ' . $this->count . ' - ' . $this->ip);
 		}
 
 		// 非首次访问，但尚未达到拦截条件：累计访问次数
