@@ -432,7 +432,7 @@ function wnd_ajax_submit(form_id) {
 			if (response.status != 3 && response.status != 4) {
 				submit_button.removeClass("is-loading");
 			}
-			if (response.status != 0) {
+			if (8 == response.status) {
 				submit_button.prop("disabled", true);
 			}
 			// var submit_text = (response.status > 0) ? wnd.msg.submit_successfully : wnd.msg.submit_failed;
@@ -443,8 +443,9 @@ function wnd_ajax_submit(form_id) {
 			// 根据后端响应处理
 			switch (response.status) {
 
-				// 常规类，展示后端提示信息
+				// 常规类，展示后端提示信息，状态 8 表示禁用提交按钮 
 				case 1:
+				case 8:
 					wnd_ajax_form_msg(form_id, response.msg, style);
 					break;
 
