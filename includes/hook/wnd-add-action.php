@@ -175,7 +175,7 @@ class Wnd_Add_Action {
 		// Action
 		if ($action) {
 			//@since 2019.03.04 刷新所有缓存（主要用于刷新对象缓存，静态缓存通常通过缓存插件本身删除）
-			if ('wp_cache_flush' == $action) {
+			if ('wp_cache_flush' == $action and is_super_admin()) {
 				wp_cache_flush();
 				return;
 			}
