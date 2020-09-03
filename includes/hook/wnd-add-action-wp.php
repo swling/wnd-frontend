@@ -6,6 +6,7 @@ use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\Model\Wnd_User;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
+use Wnd\View\Wnd_Filter;
 
 /**
  *WP Action
@@ -22,6 +23,7 @@ class Wnd_Add_Action_WP {
 		add_action('before_delete_post', [__CLASS__, 'action_on_before_delete_post'], 10, 1);
 		add_action('post_updated', [__CLASS__, 'action_on_post_updated'], 10, 3);
 		add_action('add_attachment', [__CLASS__, 'action_on_add_attachment'], 10, 1);
+		add_action('pre_get_posts', [__CLASS__, 'action_on_pre_get_posts'], 10, 1);
 
 		/**
 		 *分类关联标签
@@ -166,5 +168,43 @@ class Wnd_Add_Action_WP {
 		if ($post->post_parent) {
 			wnd_inc_wnd_post_meta($post->post_parent, 'attachment_records');
 		}
+	}
+
+	/**
+	 *多重筛选：解析 $_GET 获取 WP_Query 参数，写入查询
+	 *@since 0.8.64
+	 */
+	public static function action_on_pre_get_posts($query) {
+		if (is_admin()) {
+			return $query;
+		}
+
+		/**
+		 *解析 $_GET 获取 WP_Query 参数
+		 */
+		$query_vars = Wnd_Filter::parse_query_vars();
+		if (!$query_vars) {
+			return $query;
+		}
+
+		/**
+		 *依次将 $_GET 解析参数写入
+		 */
+		foreach ($query_vars as $key => $value) {
+			/**
+			 * tax_query 需要额外处理：
+			 * 当在 taxonomy 归档页添加其他分类多重查询时，会导致归档类型判断错乱。
+			 * 为保证归档页类型不变，需要提前获取默认 tax_query 查询参数，并保证默认查询为查询数组首元素（WP 以第一条 taxonomy 为标准）。
+			 * @see WP_Query->get_queried_object();
+			 */
+			if ('tax_query' == $key) {
+				$default_tax_query = $query->tax_query->queries;
+				$query->set($key, array_merge($default_tax_query, $value));
+			} else {
+				$query->set($key, $value);
+			}
+		}unset($key, $value);
+
+		return $query;
 	}
 }

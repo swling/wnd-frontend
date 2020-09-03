@@ -81,6 +81,12 @@ class Wnd_Filter {
 	 */
 	public $wp_query;
 
+	/**
+	 *@since 0.8.64
+	 *是否为独立的、不依赖当前页面的 WP_Query
+	 */
+	public $independent;
+
 	// 当前post type的主分类taxonomy 约定：post(category) / 自定义类型 （$post_type . '_cat'）
 	public $category_taxonomy;
 
@@ -96,15 +102,17 @@ class Wnd_Filter {
 	/**
 	 *Constructor.
 	 *
-	 *@param bool 		$is_ajax 是否为ajax查询
-	 *@param string 	$uniqid当前筛选器唯一标识
+	 *@param bool 		$is_ajax  		是否为ajax查询
+	 *@param bool 		$independent 	是否覆盖全局查询
+	 *@param string 	$uniqid   		当前筛选器唯一标识
 	 */
-	public function __construct(bool $is_ajax = false, string $uniqid = '') {
+	public function __construct(bool $is_ajax = false, bool $independent = true, string $uniqid = '') {
 		static::$is_ajax       = $is_ajax;
 		static::$doing_ajax    = wnd_doing_ajax();
 		static::$http_query    = static::parse_query_vars();
 		static::$primary_color = wnd_get_config('primary_color');
 		$this->class           = static::$is_ajax ? 'ajax-filter' : 'filter';
+		$this->independent     = $independent;
 
 		// 解析GET参数为wp_query参数并与默认参数合并，以防止出现参数未定义的警告信息
 		$this->wp_query_args = array_merge($this->wp_query_args, static::$http_query);
@@ -1231,9 +1239,15 @@ class Wnd_Filter {
 	/**
 	 *@since 2019.08.01
 	 *执行查询
+	 *
+	 *@since 0.8.64
+	 *当设置为非独立查询（依赖当前页面查询）时，查询结果将通过 'pre_get_posts' Action 实现修改
+	 *@see Wnd_Add_Action_WP::action_on_pre_get_posts();
+	 *在ajax环境中，则必须为独立 WP_Query 查询
 	 */
 	public function query() {
-		$this->wp_query = new WP_Query($this->wp_query_args);
+		global $wp_query;
+		$this->wp_query = ($this->independent or static::$doing_ajax) ? new WP_Query($this->wp_query_args) : $wp_query;
 	}
 
 	/**
