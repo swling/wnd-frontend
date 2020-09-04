@@ -1462,7 +1462,7 @@ class Wnd_Filter {
 		 *解析 $_GET 获取 WP_Query 参数
 		 * - 排除分页：pre_get_posts 仅适用于非独立 wp query，此种情况下分页已在 URL 中确定
 		 */
-		$query_vars = Wnd_Filter::parse_query_vars();
+		$query_vars = static::parse_query_vars();
 		if (!$query_vars) {
 			return $query;
 		}
