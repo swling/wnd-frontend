@@ -22,14 +22,14 @@
 ### 移除
 ```php
 // 完全移除
-remove_action('pre_get_posts', ['Wnd\Hook\Wnd_Add_Action_WP', 'action_on_pre_get_posts']);
+remove_action('pre_get_posts', ['Wnd\View\Wnd_Filter', 'action_on_pre_get_posts']);
 
 // 选择性移除示例：当请求参数中包含 action 时移除
 if(isset($_GET['action'])){
-	remove_action('pre_get_posts', ['Wnd\Hook\Wnd_Add_Action_WP', 'action_on_pre_get_posts']);
+	remove_action('pre_get_posts', ['Wnd\View\Wnd_Filter', 'action_on_pre_get_posts']);
 }
 ```
 
 ### 参考
 @see Wnd\View\Wnd_filter::parse_query_vars();
-@see Wnd_Add_Action_WP::action_on_pre_get_posts(); 
+@see Wnd\View\Wnd_Filter::action_on_pre_get_posts(); 

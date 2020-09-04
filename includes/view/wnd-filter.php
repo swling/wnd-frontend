@@ -1442,4 +1442,50 @@ class Wnd_Filter {
 	public function get_results() {
 		return $this->get_posts() . $this->get_pagination();
 	}
+
+	/**
+	 *@since 0.8.64
+	 *
+	 *多重筛选：解析 $_GET 获取 WP_Query 参数，写入查询
+	 * - 排除后台
+	 * - 排除 Ajax 请求
+	 * - 排除内页
+	 *
+	 * 在内页或 Ajax 请求中，应且只能执行独立的 WP Query
+	 */
+	public static function action_on_pre_get_posts($query) {
+		if (is_admin() or wnd_doing_ajax() or $query->is_singular()) {
+			return $query;
+		}
+
+		/**
+		 *解析 $_GET 获取 WP_Query 参数
+		 * - 排除分页：pre_get_posts 仅适用于非独立 wp query，此种情况下分页已在 URL 中确定
+		 */
+		$query_vars = Wnd_Filter::parse_query_vars();
+		if (!$query_vars) {
+			return $query;
+		}
+		unset($query_vars['paged']);
+
+		/**
+		 *依次将 $_GET 解析参数写入
+		 */
+		foreach ($query_vars as $key => $value) {
+			/**
+			 * tax_query 需要额外处理：
+			 * 当在 taxonomy 归档页添加其他分类多重查询时，会导致归档类型判断错乱。
+			 * 为保证归档页类型不变，需要提前获取默认 tax_query 查询参数，并保证默认查询为查询数组首元素（WP 以第一条 taxonomy 为标准）。
+			 * @see WP_Query->get_queried_object();
+			 */
+			if ('tax_query' == $key) {
+				$default_tax_query = $query->tax_query->queries ?? [];
+				$query->set($key, array_merge($default_tax_query, $value));
+			} else {
+				$query->set($key, $value);
+			}
+		}unset($key, $value);
+
+		return $query;
+	}
 }
