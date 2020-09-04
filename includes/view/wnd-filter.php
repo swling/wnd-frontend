@@ -482,6 +482,8 @@ class Wnd_Filter {
 	 *@param array $args 需要筛选的文章状态数组
 	 */
 	public function add_post_status_filter($args = []) {
+		$this->add_query(['post_status' => $args]);
+
 		/**
 		 *仅筛选项大于2时，构建HTML
 		 */
