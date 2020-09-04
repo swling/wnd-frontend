@@ -249,14 +249,14 @@ function wnd_ajax_embed(container, module, param = 0) {
 			wnd_loading(container, false);
 
 			if (typeof response == "object") {
-				wnd_alert_msg(response.msg);
+				$(container).html(response.msg);
 			} else {
 				$(container).html(response);
 			}
 		},
 		// 错误
 		error: function() {
-			wnd_alert_msg(wnd.msg.system_error);
+			$(container).html(wnd.msg.system_error);
 		}
 	});
 }
