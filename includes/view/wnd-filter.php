@@ -483,13 +483,6 @@ class Wnd_Filter {
 	 */
 	public function add_post_status_filter($args = []) {
 		/**
-		 *若当前请求未指定post_status，设置第一个post_status为默认值；若筛选项也为空，最后默认publish
-		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
-		 */
-		$default_status = $this->wp_query_args['post_status'] ?: ($args ? reset($args) : 'publish');
-		$this->add_query(['post_status' => $default_status]);
-
-		/**
 		 *仅筛选项大于2时，构建HTML
 		 */
 		if (count($args) < 2) {
@@ -679,8 +672,7 @@ class Wnd_Filter {
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<ul class="tab">';
 		if ($with_any_tab) {
-			$class = 'all';
-			$class .= ('any' == $this->wp_query_args['post_type']) ? ' is-active' : '';
+			$class = ('any' == $this->wp_query_args['post_type']) ? ' is-active' : '';
 			$tabs .= '<li class="' . $class . '">';
 			$tabs .= '<a data-key="type" data-value="any" href="' . add_query_arg('type', 'any', $uri) . '">' . __('全部', 'wnd') . '</a>';
 			$tabs .= '</li>';
@@ -725,6 +717,11 @@ class Wnd_Filter {
 		$tabs .= '<ul class="tab">';
 
 		// 输出tabs
+		$class = (!$this->wp_query_args['post_status'] or is_array($this->wp_query_args['post_status'])) ? ' is-active' : '';
+		$tabs .= '<li class="' . $class . '">';
+		$tabs .= '<a data-key="status" data-value="" href="' . remove_query_arg('status') . '">' . __('默认', 'wnd') . '</a>';
+		$tabs .= '</li>';
+
 		foreach ($args as $label => $post_status) {
 			$class = 'post-status-' . $post_status;
 			$class .= (isset($this->wp_query_args['post_status']) and $this->wp_query_args['post_status'] == $post_status) ? ' is-active' : '';
