@@ -47,8 +47,8 @@ class Wnd_Filter {
 	// meta 查询参数需要供current filter查询使用
 	protected $meta_filter_args;
 
-	// 默认切换筛选项时需要移除的参数
-	protected $remove_query_args = ['paged', 'page'];
+	// 当前请求基本 URL
+	protected $base_url;
 
 	/**
 	 *根据配置设定的wp_query查询参数
@@ -113,6 +113,12 @@ class Wnd_Filter {
 		static::$primary_color = wnd_get_config('primary_color');
 		$this->class           = static::$is_ajax ? 'ajax-filter' : 'filter';
 		$this->independent     = $independent;
+		$this->base_url        = get_pagenum_link(1);
+
+		// 独立的非 WP Query 分页需要自定义处理
+		if ($this->independent) {
+			$this->base_url = remove_query_arg(['paged', 'page', 'pages'], $this->base_url);
+		}
 
 		// 解析GET参数为wp_query参数并与默认参数合并，以防止出现参数未定义的警告信息
 		$this->wp_query_args = array_merge($this->wp_query_args, static::$http_query);
@@ -270,7 +276,7 @@ class Wnd_Filter {
 			 *@since 2019.07.30
 			 *分页
 			 */
-			if ('page' == $key) {
+			if ('pages' == $key) {
 				$query_vars['paged'] = $value ?: 1;
 				continue;
 			}
@@ -706,7 +712,7 @@ class Wnd_Filter {
 		foreach ($args as $label => $post_status) {
 			$class = 'post-status-' . $post_status;
 			$class .= (isset($this->wp_query_args['post_status']) and $this->wp_query_args['post_status'] == $post_status) ? ' is-active' : '';
-			$status_link = static::$doing_ajax ? '' : add_query_arg('status', $post_status, remove_query_arg($this->remove_query_args));
+			$status_link = static::$doing_ajax ? '' : add_query_arg('status', $post_status, $this->base_url);
 
 			$tabs .= '<li class="' . $class . '">';
 			$tabs .= '<a data-key="status" data-value="' . $post_status . '" href="' . $status_link . '">' . $label . '</a>';
@@ -782,9 +788,9 @@ class Wnd_Filter {
 		 * @since 2019.07.30
 		 */
 		if ($taxonomy == $this->category_taxonomy) {
-			$remove_query_args = array_merge(['_term_' . $this->wp_query_args['post_type'] . '_tag'], $this->remove_query_args);
+			$remove_query_args = ['_term_' . $this->wp_query_args['post_type'] . '_tag'];
 		} else {
-			$remove_query_args = $this->remove_query_args;
+			$remove_query_args = [];
 		}
 
 		$tabs = '<div class="columns is-marginless is-vcentered taxonomy-tabs ' . $taxonomy . '-tabs' . $class . '">';
@@ -797,7 +803,7 @@ class Wnd_Filter {
 		 * @since 2019.03.07
 		 */
 		if (!$parent) {
-			$all_link = static::$doing_ajax ? '' : remove_query_arg('_term_' . $taxonomy, remove_query_arg($remove_query_args));
+			$all_link = static::$doing_ajax ? '' : remove_query_arg('_term_' . $taxonomy, remove_query_arg($remove_query_args, $this->base_url));
 			$tabs .= '<li ' . $all_class . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . $all_link . '">' . __('全部', 'wnd') . '</a></li>';
 		}
 
@@ -826,7 +832,7 @@ class Wnd_Filter {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$term_link = static::$doing_ajax ? '' : add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($remove_query_args));
+			$term_link = static::$doing_ajax ? '' : add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($remove_query_args, $this->base_url));
 			$tabs .= '<li class="' . $class . '"><a data-key="_term_' . $taxonomy . '" data-value="' . $term->term_id . '" href="' . $term_link . '">' . $term->name . '</a></li>';
 
 		}
@@ -900,7 +906,7 @@ class Wnd_Filter {
 		$tabs .= '<ul class="tab">';
 
 		// 全部选项链接
-		$all_link = static::$doing_ajax ? '' : remove_query_arg('_term_' . $taxonomy, remove_query_arg($this->remove_query_args));
+		$all_link = static::$doing_ajax ? '' : remove_query_arg('_term_' . $taxonomy, $this->base_url);
 		$tabs .= '<li ' . $all_class . '><a data-key="_term_' . $taxonomy . '" data-value="" href="' . $all_link . '">' . __('全部', 'wnd') . '</a></li>';
 
 		// 输出tabs
@@ -924,7 +930,7 @@ class Wnd_Filter {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$term_link = static::$doing_ajax ? '' : add_query_arg('_term_' . $taxonomy, $term->term_id, remove_query_arg($this->remove_query_args));
+			$term_link = static::$doing_ajax ? '' : add_query_arg('_term_' . $taxonomy, $term->term_id, $this->base_url);
 			$tabs .= '<li class="' . $class . '"><a data-key="_term_' . $taxonomy . '" data-value="' . $term->term_id . '" href="' . $term_link . '">' . $term->name . '</a></li>';
 
 		}
@@ -989,7 +995,7 @@ class Wnd_Filter {
 		 * 全部选项
 		 * @since 2019.03.07（copy）
 		 */
-		$all_link = static::$doing_ajax ? '' : remove_query_arg('_meta_' . $args['key'], remove_query_arg($this->remove_query_args));
+		$all_link = static::$doing_ajax ? '' : remove_query_arg('_meta_' . $args['key'], $this->base_url);
 		$tabs .= '<li ' . $all_class . '><a data-key="_meta_' . $args['key'] . '" data-value="" href="' . $all_link . '">' . __('全部', 'wnd') . '</a></li>';
 
 		// 输出tabs
@@ -1012,7 +1018,7 @@ class Wnd_Filter {
 			/**
 			 *meta_query GET参数为：_meta_{key}?=
 			 */
-			$meta_link = static::$doing_ajax ? '' : add_query_arg('_meta_' . $args['key'], $value, remove_query_arg($this->remove_query_args));
+			$meta_link = static::$doing_ajax ? '' : add_query_arg('_meta_' . $args['key'], $value, $this->base_url);
 			$tabs .= '<li ' . $class . '><a data-key="_meta_' . $args['key'] . '" data-value="' . $value . '" href="' . $meta_link . '">' . $key . '</a></li>';
 		}
 		unset($key, $value);
@@ -1043,7 +1049,7 @@ class Wnd_Filter {
 	 */
 	protected function build_orderby_filter($args) {
 		// 移除选项
-		$remove_query_args = array_merge(['orderby', 'order', 'meta_key'], $this->remove_query_args);
+		$remove_query_args = ['orderby', 'order', 'meta_key'];
 
 		// 全部
 		$all_class = 'class="is-active"';
@@ -1061,7 +1067,7 @@ class Wnd_Filter {
 		 * 全部选项
 		 * @since 2019.03.07（copy）
 		 */
-		// $all_link = static::$doing_ajax ? '' : remove_query_arg($remove_query_args);
+		// $all_link = static::$doing_ajax ? '' : remove_query_arg($remove_query_args, $this->base_url);
 		// $tabs .= '<li ' . $all_class . '><a data-key="orderby" data-value="" href="' . $all_link . '">默认</a></li>';
 
 		// 输出tabs
@@ -1094,7 +1100,7 @@ class Wnd_Filter {
 
 			// data-key="orderby" data-value="' . http_build_query($query_arg) . '"
 			$query_arg    = is_array($orderby) ? $orderby : ['orderby' => $orderby];
-			$orderby_link = static::$doing_ajax ? '' : add_query_arg($query_arg, remove_query_arg($remove_query_args));
+			$orderby_link = static::$doing_ajax ? '' : add_query_arg($query_arg, remove_query_arg($remove_query_args, $this->base_url));
 			$tabs .= '<li ' . $class . '><a data-key="orderby" data-value="' . http_build_query($query_arg) . '" href="' . $orderby_link . '">' . $key . '</a></li>';
 		}
 		unset($key, $orderby);
@@ -1127,7 +1133,7 @@ class Wnd_Filter {
 
 		// 是否已设置order参数
 		$all_class = isset($this->wp_query_args['orderby']) ? '' : 'class="is-active"';
-		$all_link  = static::$doing_ajax ? '' : remove_query_arg('order', remove_query_arg($this->remove_query_args));
+		$all_link  = static::$doing_ajax ? '' : remove_query_arg('order', $this->base_url);
 		$tabs .= '<li ' . $all_class . '><a data-key="order" data-value="" href="' . $all_link . '">' . __('默认', 'wnd') . '</a></li>';
 
 		// 输出tabs
@@ -1142,7 +1148,7 @@ class Wnd_Filter {
 			/**
 			 *meta_query GET参数为：_meta_{key}?=
 			 */
-			$order_link = static::$doing_ajax ? '' : add_query_arg('order', $value, remove_query_arg($this->remove_query_args));
+			$order_link = static::$doing_ajax ? '' : add_query_arg('order', $value, $this->base_url);
 			$tabs .= '<li ' . $class . '><a data-key="order" data-value="' . $value . '" href="' . $order_link . '">' . $key . '</a></li>';
 		}
 		unset($key, $value);
@@ -1181,7 +1187,7 @@ class Wnd_Filter {
 			/**
 			 *categories tabs生成的GET参数为：'_term_' . $taxonomy，如果直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
 			 */
-			$cancel_link = static::$doing_ajax ? '' : remove_query_arg('_term_' . $term->taxonomy, remove_query_arg($this->remove_query_args));
+			$cancel_link = static::$doing_ajax ? '' : remove_query_arg('_term_' . $term->taxonomy, $this->base_url);
 			$tabs .= '<span class="tag">' . $term->name . '<a data-key="_term_' . $term->taxonomy . '" data-value="" class="delete is-small" href="' . $cancel_link . '"></a></span>&nbsp;&nbsp;';
 		}
 		unset($key, $tax_query);
@@ -1206,7 +1212,7 @@ class Wnd_Filter {
 			/**
 			 *meta_query GET参数为：meta_{key}?=
 			 */
-			$cancel_link = static::$doing_ajax ? '' : remove_query_arg('_meta_' . $this->meta_filter_args['key'], remove_query_arg($this->remove_query_args));
+			$cancel_link = static::$doing_ajax ? '' : remove_query_arg('_meta_' . $this->meta_filter_args['key'], $this->base_url);
 			$tabs .= '<span class="tag">' . $key . '<a data-key="_meta_' . $this->meta_filter_args['key'] . '" data-value="" class="delete is-small" href="' . $cancel_link . '"></a></span>&nbsp;&nbsp;';
 		}
 		unset($key, $meta_query);
@@ -1223,7 +1229,7 @@ class Wnd_Filter {
 	 *分页导航
 	 */
 	protected function build_pagination($show_page = 5) {
-		$nav = new Wnd_Pagination(static::$is_ajax, $this->uniqid);
+		$nav = new Wnd_Pagination(static::$is_ajax, $this->uniqid, $this->independent);
 
 		$nav->set_paged($this->wp_query->query_vars['paged'] ?: 1);
 		$nav->set_max_num_pages($this->wp_query->max_num_pages);

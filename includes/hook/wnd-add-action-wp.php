@@ -181,11 +181,13 @@ class Wnd_Add_Action_WP {
 
 		/**
 		 *解析 $_GET 获取 WP_Query 参数
+		 * - 排除分页：pre_get_posts 仅适用于非独立 wp query，此种情况下分页已在 URL 中确定
 		 */
 		$query_vars = Wnd_Filter::parse_query_vars();
 		if (!$query_vars) {
 			return $query;
 		}
+		unset($query_vars['paged']);
 
 		/**
 		 *依次将 $_GET 解析参数写入
@@ -198,7 +200,7 @@ class Wnd_Add_Action_WP {
 			 * @see WP_Query->get_queried_object();
 			 */
 			if ('tax_query' == $key) {
-				$default_tax_query = $query->tax_query->queries;
+				$default_tax_query = $query->tax_query->queries ?? [];
 				$query->set($key, array_merge($default_tax_query, $value));
 			} else {
 				$query->set($key, $value);

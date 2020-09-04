@@ -31,16 +31,20 @@ class Wnd_Pagination {
 	// 容器 class
 	protected $class;
 
+	// 分页是否为非 WP 原生分页的独立查询
+	protected $independent;
+
 	/**
 	 *Constructor.
 	 *
 	 *@param bool 		$is_ajax 是否为ajax查询
 	 *@param string 	$uniqid当前筛选器唯一标识
 	 */
-	public function __construct(bool $is_ajax = false, string $id = '') {
+	public function __construct(bool $is_ajax = false, string $id = '', $independent = true) {
 		static::$is_ajax    = $is_ajax;
 		static::$doing_ajax = wnd_doing_ajax();
 		$this->id           = $id;
+		$this->independent  = $independent;
 	}
 
 	/**
@@ -113,9 +117,12 @@ class Wnd_Pagination {
 		if (static::$doing_ajax) {
 			$previous_link = '';
 			$next_link     = '';
+		} elseif ($this->independent) {
+			$previous_link = add_query_arg('pages', $this->paged - 1);
+			$next_link     = add_query_arg('pages', $this->paged + 1);
 		} else {
-			$previous_link = add_query_arg('page', $this->paged - 1);
-			$next_link     = add_query_arg('page', $this->paged + 1);
+			$previous_link = get_pagenum_link($this->paged - 1);
+			$next_link     = get_pagenum_link($this->paged + 1);
 		}
 
 		$html = '<nav id="nav-' . $this->id . '" class="pagination is-centered ' . $this->class . '">';
@@ -142,14 +149,19 @@ class Wnd_Pagination {
 			$previous_link = '';
 			$next_link     = '';
 			$last_link     = '';
+		} elseif ($this->independent) {
+			$first_link    = remove_query_arg('pages');
+			$previous_link = add_query_arg('pages', $this->paged - 1);
+			$next_link     = add_query_arg('pages', $this->paged + 1);
+			$last_link     = add_query_arg('pages', $this->max_num_pages);
 		} else {
-			$first_link    = remove_query_arg('page');
-			$previous_link = add_query_arg('page', $this->paged - 1);
-			$next_link     = add_query_arg('page', $this->paged + 1);
-			$last_link     = add_query_arg('page', $this->max_num_pages);
+			$first_link    = get_pagenum_link(1);
+			$previous_link = get_pagenum_link($this->paged - 1);
+			$next_link     = get_pagenum_link($this->paged + 1);
+			$last_link     = get_pagenum_link($this->max_num_pages);
 		}
 
-		$html = '<nav id="nav-' . $this->id . '" class="pagination is-centered ' . $this->class . '"' . $this->build_html_data_attr($this->data) . '>';
+		$html = '<nav id="nav-' . $this->id . '" class="pagination is-centered ' . $this->class . '"' . $this->build_data_attr($this->data) . '>';
 		if ($this->paged > 1) {
 			$html .= '<a data-key="page" data-value="' . ($this->paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
 		}
@@ -162,7 +174,7 @@ class Wnd_Pagination {
 		$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . $first_link . '" >' . __('首页', 'wnd') . '</a></li>';
 		for ($i = $this->paged - 1; $i <= $this->paged + $this->show_pages; $i++) {
 			if ($i > 0 and $i <= $this->max_num_pages) {
-				$page_link = static::$doing_ajax ? '' : add_query_arg('page', $i);
+				$page_link = static::$doing_ajax ? '' : ($this->independent ? add_query_arg('pages', $i) : get_pagenum_link($i));
 				if ($i == $this->paged) {
 					$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link is-current" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
 				} else {
@@ -178,5 +190,22 @@ class Wnd_Pagination {
 		$html .= '</nav>';
 
 		return $html;
+	}
+
+	/**
+	 *构造HTML data属性
+	 */
+	protected function build_data_attr($data_array): string {
+		if (!$data_array) {
+			return '';
+		}
+
+		$data = ' ';
+		foreach ($data_array as $key => $value) {
+			$value = is_array($value) ? http_build_query($value) : $value;
+			$data .= 'data-' . $key . '="' . $value . '" ';
+		}
+
+		return $data;
 	}
 }
