@@ -118,8 +118,8 @@ class Wnd_Pagination {
 			$previous_link = '';
 			$next_link     = '';
 		} elseif ($this->independent) {
-			$previous_link = add_query_arg('pages', $this->paged - 1);
-			$next_link     = add_query_arg('pages', $this->paged + 1);
+			$previous_link = add_query_arg('page', $this->paged - 1);
+			$next_link     = add_query_arg('page', $this->paged + 1);
 		} else {
 			$previous_link = get_pagenum_link($this->paged - 1);
 			$next_link     = get_pagenum_link($this->paged + 1);
@@ -150,10 +150,10 @@ class Wnd_Pagination {
 			$next_link     = '';
 			$last_link     = '';
 		} elseif ($this->independent) {
-			$first_link    = remove_query_arg('pages');
-			$previous_link = add_query_arg('pages', $this->paged - 1);
-			$next_link     = add_query_arg('pages', $this->paged + 1);
-			$last_link     = add_query_arg('pages', $this->max_num_pages);
+			$first_link    = remove_query_arg('page');
+			$previous_link = add_query_arg('page', $this->paged - 1);
+			$next_link     = add_query_arg('page', $this->paged + 1);
+			$last_link     = add_query_arg('page', $this->max_num_pages);
 		} else {
 			$first_link    = get_pagenum_link(1);
 			$previous_link = get_pagenum_link($this->paged - 1);
@@ -174,7 +174,7 @@ class Wnd_Pagination {
 		$html .= '<li><a data-key="paged" data-value="" class="pagination-link" href="' . $first_link . '" >' . __('首页', 'wnd') . '</a></li>';
 		for ($i = $this->paged - 1; $i <= $this->paged + $this->show_pages; $i++) {
 			if ($i > 0 and $i <= $this->max_num_pages) {
-				$page_link = static::$doing_ajax ? '' : ($this->independent ? add_query_arg('pages', $i) : get_pagenum_link($i));
+				$page_link = static::$doing_ajax ? '' : ($this->independent ? add_query_arg('page', $i) : get_pagenum_link($i));
 				if ($i == $this->paged) {
 					$html .= '<li><a data-key="paged" data-value="' . $i . '" class="pagination-link is-current" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
 				} else {

@@ -115,9 +115,22 @@ class Wnd_Filter {
 		$this->independent     = $independent;
 		$this->base_url        = get_pagenum_link(1, false);
 
-		// 独立的非 WP Query 分页需要自定义处理
+		/**
+		 *@since 0.8.64
+		 *
+		 *- 独立型 WP Query：分页需要自定义处理
+		 *- 依赖型 WP Query：获取全局 $wp_query，并读取全局查询参数赋值到当前筛选环境，以供构建与之匹配的 tabs
+		 */
 		if ($this->independent) {
-			$this->base_url = remove_query_arg(['paged', 'page', 'pages'], $this->base_url);
+			$this->base_url = remove_query_arg('page', $this->base_url);
+		} else {
+			global $wp_query;
+			if (!$wp_query->query_vars) {
+				throw new Exception(__('当前环境需执行独立 WP Query', 'wnd'));
+			}
+
+			$this->wp_query      = $wp_query;
+			$this->wp_query_args = array_merge($this->wp_query_args, $wp_query->query_vars);
 		}
 
 		// 解析GET参数为wp_query参数并与默认参数合并，以防止出现参数未定义的警告信息
@@ -139,7 +152,7 @@ class Wnd_Filter {
 			return;
 		}
 
-		// 数组查询，如果包含publish及close之外的状态，指定作者为当前用户
+		// 数组查询，如果包含publish及closed之外的状态，指定作者为当前用户
 		if (is_array($this->wp_query_args['post_status'])) {
 			foreach ($this->wp_query_args['post_status'] as $key => $post_status) {
 				if (!in_array($post_status, ['publish', 'wnd-closed'])) {
@@ -276,7 +289,7 @@ class Wnd_Filter {
 			 *@since 2019.07.30
 			 *分页
 			 */
-			if ('pages' == $key) {
+			if ('page' == $key) {
 				$query_vars['paged'] = $value ?: 1;
 				continue;
 			}
@@ -1250,13 +1263,14 @@ class Wnd_Filter {
 	 *执行查询
 	 *
 	 *@since 0.8.64
-	 *当设置为非独立查询（依赖当前页面查询）时，查询结果将通过 'pre_get_posts' Action 实现修改
-	 *@see Wnd_Add_Action_WP::action_on_pre_get_posts();
-	 *在ajax环境中，则必须为独立 WP_Query 查询
+	 *- 执行独立 WP Query
+	 *- 当设置为非独立查询（依赖当前页面查询）时，查询参数将通过 'pre_get_posts' 实现修改，无需执行 WP Query @see static::action_on_pre_get_posts();
+	 *  当下场景中 $this->wp_query 为 global $wp_query; @see __construct();
 	 */
 	public function query() {
-		global $wp_query;
-		$this->wp_query = ($this->independent or static::$doing_ajax) ? new WP_Query($this->wp_query_args) : $wp_query;
+		if ($this->independent) {
+			$this->wp_query = new WP_Query($this->wp_query_args);
+		}
 	}
 
 	/**
