@@ -128,10 +128,10 @@ class Wnd_Pagination {
 		$html = '<nav id="nav-' . $this->id . '" class="pagination is-centered ' . $this->class . '">';
 		$html .= '<ul class="pagination-list">';
 		if ($this->paged >= 2) {
-			$html .= '<li><a data-key="page" data-value="' . ($this->paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
+			$html .= '<li><a data-key="paged" data-value="' . ($this->paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
 		}
 		if ($this->current_item_count >= $this->items_per_page) {
-			$html .= '<li><a data-key="page" data-value="' . ($this->paged + 1) . '" class="pagination-next" href="' . $next_link . '">' . __('下一页', 'wnd') . '</a>';
+			$html .= '<li><a data-key="paged" data-value="' . ($this->paged + 1) . '" class="pagination-next" href="' . $next_link . '">' . __('下一页', 'wnd') . '</a>';
 		}
 		$html .= '</ul>';
 		$html .= '</nav>';
@@ -141,7 +141,7 @@ class Wnd_Pagination {
 
 	/**
 	 *常规分页，需要查询文章总数
-	 *据称，在数据量较大的站点，查询文章总数会较为费时
+	 *在数据量较大的站点，查询文章总数会较为费时
 	 */
 	protected function build_general_pagination() {
 		if (static::$doing_ajax) {
@@ -163,29 +163,29 @@ class Wnd_Pagination {
 
 		$html = '<nav id="nav-' . $this->id . '" class="pagination is-centered ' . $this->class . '"' . $this->build_data_attr($this->data) . '>';
 		if ($this->paged > 1) {
-			$html .= '<a data-key="page" data-value="' . ($this->paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
+			$html .= '<a data-key="paged" data-value="' . ($this->paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
 		}
 
 		if ($this->paged < $this->max_num_pages) {
-			$html .= '<a data-key="page" data-value="' . ($this->paged + 1) . '" class="pagination-next" href="' . $next_link . '">' . __('下一页', 'wnd') . '</a>';
+			$html .= '<a data-key="paged" data-value="' . ($this->paged + 1) . '" class="pagination-next" href="' . $next_link . '">' . __('下一页', 'wnd') . '</a>';
 		}
 
 		$html .= '<ul class="pagination-list">';
-		$html .= '<li><a data-key="page" data-value="" class="pagination-link" href="' . $first_link . '" >' . __('首页', 'wnd') . '</a></li>';
+		$html .= '<li><a data-key="paged" data-value="" class="pagination-link" href="' . $first_link . '" >' . __('首页', 'wnd') . '</a></li>';
 		for ($i = $this->paged - 1; $i <= $this->paged + $this->show_pages; $i++) {
 			if ($i > 0 and $i <= $this->max_num_pages) {
 				$page_link = static::$doing_ajax ? '' : ($this->independent ? add_query_arg('pages', $i) : get_pagenum_link($i));
 				if ($i == $this->paged) {
-					$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link is-current" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
+					$html .= '<li><a data-key="paged" data-value="' . $i . '" class="pagination-link is-current" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
 				} else {
-					$html .= '<li><a data-key="page" data-value="' . $i . '" class="pagination-link" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
+					$html .= '<li><a data-key="paged" data-value="' . $i . '" class="pagination-link" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
 				}
 			}
 		}
 		if ($this->paged < $this->max_num_pages - 3) {
 			$html .= '<li><span class="pagination-ellipsis">&hellip;</span></li>';
 		}
-		$html .= '<li><a data-key="page" data-value="' . $this->max_num_pages . '" class="pagination-link" href="' . $last_link . '">' . __('尾页', 'wnd') . '</a></li>';
+		$html .= '<li><a data-key="paged" data-value="' . $this->max_num_pages . '" class="pagination-link" href="' . $last_link . '">' . __('尾页', 'wnd') . '</a></li>';
 		$html .= '</ul>';
 		$html .= '</nav>';
 

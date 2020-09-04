@@ -103,7 +103,7 @@ class Wnd_Filter {
 	 *Constructor.
 	 *
 	 *@param bool 		$is_ajax  		是否为ajax查询
-	 *@param bool 		$independent 	是否覆盖全局查询
+	 *@param bool 		$independent 	是否为独立 WP Query
 	 *@param string 	$uniqid   		当前筛选器唯一标识
 	 */
 	public function __construct(bool $is_ajax = false, bool $independent = true, string $uniqid = '') {
@@ -113,7 +113,7 @@ class Wnd_Filter {
 		static::$primary_color = wnd_get_config('primary_color');
 		$this->class           = static::$is_ajax ? 'ajax-filter' : 'filter';
 		$this->independent     = $independent;
-		$this->base_url        = get_pagenum_link(1);
+		$this->base_url        = get_pagenum_link(1, false);
 
 		// 独立的非 WP Query 分页需要自定义处理
 		if ($this->independent) {
@@ -388,7 +388,10 @@ class Wnd_Filter {
 	 *
 	 *在ajax环境中，将对应生成html data属性：data-{key}="{value}" 通过JavaScript获取后将转化为 ajax url请求参数 ?{key}={value}，
 	 *ajax发送到api接口，再通过parse_query_vars() 解析后，写入$wp_query_args[key]=value
-	 **/
+	 *
+	 *@since 0.8.64
+	 *仅在独立 WP Query （true == $this->independent）时，可在外部直接调用
+	 */
 	public function add_query($query = []) {
 		foreach ($query as $key => $value) {
 			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
@@ -1210,7 +1213,7 @@ class Wnd_Filter {
 			}
 
 			/**
-			 *meta_query GET参数为：meta_{key}?=
+			 *meta_query GET参数为：_meta_{key}?=
 			 */
 			$cancel_link = static::$doing_ajax ? '' : remove_query_arg('_meta_' . $this->meta_filter_args['key'], $this->base_url);
 			$tabs .= '<span class="tag">' . $key . '<a data-key="_meta_' . $this->meta_filter_args['key'] . '" data-value="" class="delete is-small" href="' . $cancel_link . '"></a></span>&nbsp;&nbsp;';

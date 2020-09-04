@@ -171,11 +171,17 @@ class Wnd_Add_Action_WP {
 	}
 
 	/**
-	 *多重筛选：解析 $_GET 获取 WP_Query 参数，写入查询
 	 *@since 0.8.64
+	 *
+	 *多重筛选：解析 $_GET 获取 WP_Query 参数，写入查询
+	 * - 排除后台
+	 * - 排除 Ajax 请求
+	 * - 排除内页
+	 *
+	 * 在内页或 Ajax 请求中，应且只能执行独立的 WP Query
 	 */
 	public static function action_on_pre_get_posts($query) {
-		if (is_admin()) {
+		if (is_admin() or wnd_doing_ajax() or $query->is_singular()) {
 			return $query;
 		}
 
