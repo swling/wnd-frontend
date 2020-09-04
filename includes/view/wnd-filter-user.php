@@ -59,7 +59,7 @@ class Wnd_Filter_User {
 		'orderby'            => 'registered',
 		'meta_key'           => '',
 		'meta_value'         => '',
-		'no_found_rows'      => true,
+		'count_total'        => false,
 		'paged'              => 1,
 		'number'             => 20,
 		'search_columns'     => [],

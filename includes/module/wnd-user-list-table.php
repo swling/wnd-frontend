@@ -21,7 +21,6 @@ class Wnd_User_List_Table extends Wnd_Module {
 
 		$filter = new Wnd_Filter_User(wnd_doing_ajax());
 		$filter->set_number($number ?: 20);
-		$filter->add_query(['count_total' => false]);
 		$filter->add_search_form();
 		$filter->add_orderby_filter($orderby_args);
 		$filter->add_status_filter(__('状态', 'wnd'));
