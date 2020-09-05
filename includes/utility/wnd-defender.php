@@ -161,6 +161,10 @@ class Wnd_Defender {
 			$this->insight();
 		}
 
+		// xmlrpc
+		$this->defend_xmlrpc();
+
+		// Defender
 		$this->defend();
 	}
 
@@ -243,6 +247,18 @@ class Wnd_Defender {
 		if ($this->count >= $this->max_request_changes and $cache_changes >= $this->max_request_changes) {
 			$this->max_connections = 0;
 		}
+	}
+
+	/**
+	 *防护 xmlrpc 端口
+	 *@since 0.8.64
+	 */
+	protected function defend_xmlrpc() {
+		if (false === strpos($_SERVER['REQUEST_URI'], '/xmlrpc.php')) {
+			return;
+		}
+
+		$this->max_connections = 5;
 	}
 
 	/**
