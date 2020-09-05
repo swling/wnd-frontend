@@ -5,7 +5,7 @@
 - ?type			类型查询
 - ?status	  	状态查询
 - ?search  		搜索
-- ?pages  		分页
+- ?page  		分页
 - ?orderby  	排序
 - ?order  		排序
 - ?tax_query  	tax query
