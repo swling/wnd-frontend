@@ -5,7 +5,7 @@ namespace Wnd\Utility;
 use Wnd\Utility\Wnd_Upgrader;
 
 /**
- *@since 2020.04.13
+ *@since 2020.07.06
  *自定义主题升级API
  */
 abstract class Wnd_Upgrader_Theme extends Wnd_Upgrader {
