@@ -29,7 +29,7 @@ class Wnd_Validator {
 	 */
 	public static function validate_captcha() {
 		// 禁用人机校验
-		if (in_array(wnd_get_config('captcha_service'), ['close', ''])) {
+		if (!wnd_get_config('captcha_service')) {
 			return true;
 		}
 

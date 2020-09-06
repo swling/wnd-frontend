@@ -507,7 +507,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 */
 	protected function render_verification_script() {
 		// 禁用验证码：直接发送
-		if (in_array(wnd_get_config('captcha_service'), ['close', ''])) {
+		if (!wnd_get_config('captcha_service')) {
 			return '
 			<script>
 			$(function() {
