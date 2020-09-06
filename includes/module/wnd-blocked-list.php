@@ -11,7 +11,7 @@ use Wnd\Utility\Wnd_Defender;
 class Wnd_Blocked_List extends Wnd_Module {
 
 	public static function build() {
-		if (is_super_admin()) {
+		if (!is_super_admin()) {
 			return static::build_error_message(__('权限不足', 'wnd'));
 		}
 
