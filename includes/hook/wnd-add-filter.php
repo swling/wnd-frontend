@@ -17,6 +17,7 @@ class Wnd_Add_Filter {
 		add_filter('wnd_can_reg', [__CLASS__, 'filter_can_reg'], 10, 1);
 		add_filter('wnd_can_login', [__CLASS__, 'filter_can_login'], 10, 2);
 		add_filter('wnd_can_update_profile', [__CLASS__, 'filter_can_update_profile'], 10, 1);
+		add_filter('wnd_can_delete_user', [__CLASS__, 'filter_can_delete_user'], 10, 2);
 		add_filter('wnd_insert_post_status', [__CLASS__, 'filter_post_status'], 10, 3);
 		add_filter('wnd_safe_action_return', [__CLASS__, 'filter_safe_action_return'], 10, 1);
 		add_filter('wnd_can_send_code', [__CLASS__, 'validate_captcha'], 10, 1);
@@ -71,6 +72,19 @@ class Wnd_Add_Filter {
 		$user_login   = wp_get_current_user()->data->user_login ?? '';
 		if ($display_name == $user_login) {
 			$can_array = ['status' => 0, 'msg' => __('名称不得与登录名一致', 'wnd')];
+		}
+
+		return $can_array;
+	}
+
+	/**
+	 *@since 0.8.64
+	 *
+	 *删除用户权限检测
+	 */
+	public static function filter_can_delete_user($can_array, $user_id) {
+		if (0 != wnd_get_user_money($user_id)) {
+			$can_array = ['status' => 0, 'msg' => __('当前账户余额不为零', 'wnd')];
 		}
 
 		return $can_array;
