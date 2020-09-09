@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
+
 /**
  *@since 2019.1.13 用户登录
  *@param $username = trim($_POST['_user_user_login']);
@@ -21,7 +23,7 @@ class Wnd_Login extends Wnd_Action_Ajax {
 		// 可根据邮箱，手机，或用户名查询用户
 		$user = wnd_get_user_by($username);
 		if (!$user) {
-			return ['status' => 0, 'msg' => __('用户不存在', 'wnd')];
+			throw new Exception(__('用户不存在', 'wnd'));
 		}
 
 		// 登录过滤挂钩
@@ -45,7 +47,7 @@ class Wnd_Login extends Wnd_Action_Ajax {
 			 */
 			do_action('wnd_login_failed', $user);
 
-			return ['status' => 0, 'msg' => __('密码错误', 'wnd')];
+			throw new Exception(__('密码错误', 'wnd'));
 		}
 
 		wp_set_current_user($user->ID);

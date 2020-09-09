@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
 use Wnd\Utility\Wnd_Form_Data;
 
 /**
@@ -22,7 +23,7 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 		$user    = wp_get_current_user();
 		$user_id = $user->ID;
 		if (!$user_id) {
-			return ['status' => 0, 'msg' => __('请登录', 'wnd')];
+			throw new Exception(__('请登录', 'wnd'));
 		}
 
 		// 实例化WndWP表单数据处理对象
@@ -42,7 +43,7 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 		$user_id = wp_update_user($user_data);
 		if (is_wp_error($user_id)) {
 			$msg = $user_id->get_error_message();
-			return ['status' => 0, 'msg' => $msg];
+			throw new Exception($msg);
 		}
 
 		// 更新meta

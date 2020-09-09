@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
 use Wnd\Model\Wnd_Binder;
 
 /**
@@ -17,7 +18,7 @@ class Wnd_Bind_Account extends Wnd_Action_Ajax {
 		$auth_code      = $_POST['auth_code'] ?? '';
 		$password       = $_POST['_user_user_pass'] ?? '';
 		if (!is_user_logged_in()) {
-			return ['status' => 0, 'msg' => __('请登录', 'wnd')];
+			throw new Exception(__('请登录', 'wnd'));
 		}
 
 		// 绑定

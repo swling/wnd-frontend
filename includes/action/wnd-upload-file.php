@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
+
 /**
  *@since 2019.01.20
  *ajax文件上传
@@ -28,7 +30,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 	public static function execute(): array{
 		//$_FILES['wnd_file']需要与input name 值匹配
 		if (empty($_FILES['wnd_file'])) {
-			return ['status' => 0, 'msg' => __('上传文件为空', 'wnd')];
+			throw new Exception(__('上传文件为空', 'wnd'));
 		}
 
 		$save_width       = (int) ($_POST['save_width'] ?? 0);
@@ -41,7 +43,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 
 		// 上传信息校验
 		if (!$user_id and !$post_parent) {
-			return ['status' => 0, 'msg' => __('User ID及Post ID不可同时为空', 'wnd')];
+			throw new Exception(__('User ID及Post ID不可同时为空', 'wnd'));
 		}
 
 		/**
@@ -49,15 +51,15 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 		 *meta_key 及 post_parent同时为空时，上传文件将成为孤立的的文件，在前端上传附件应该具有明确的用途，应避免这种情况
 		 */
 		if (!$meta_key and !$post_parent) {
-			return ['status' => 0, 'msg' => __('Meta_key与Post_parent不可同时为空', 'wnd')];
+			throw new Exception(__('Meta_key与Post_parent不可同时为空', 'wnd'));
 		}
 
 		if (!wp_verify_nonce($_POST['meta_key_nonce'], $meta_key)) {
-			return ['status' => 0, 'msg' => __('meta_key不合法', 'wnd')];
+			throw new Exception(__('meta_key不合法', 'wnd'));
 		}
 
 		if ($post_parent and !get_post($post_parent)) {
-			return ['status' => 0, 'msg' => __('post_parent无效', 'wnd')];
+			throw new Exception(__('post_parent无效', 'wnd'));
 		}
 
 		/**

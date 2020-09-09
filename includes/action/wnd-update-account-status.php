@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
+
 /**
  *账户状态
  *@since 2020.04.30
@@ -18,22 +20,22 @@ class Wnd_Update_Account_Status extends Wnd_Action_Ajax {
 		$before_status = get_user_meta($user_id, 'status', true) ?: 'ok';
 
 		if (!$user_id) {
-			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		if (!wnd_is_manager()) {
-			return ['status' => 0, 'msg' => __('权限不足', 'wnd')];
+			throw new Exception(__('权限不足', 'wnd'));
 		}
 
 		// 未发生改变
 		if ($status == $before_status) {
-			return ['status' => 0, 'msg' => __('未发生改变', 'wnd')];
+			throw new Exception(__('未发生改变', 'wnd'));
 		}
 
 		// 更新状态
 		$action = update_user_meta($user_id, 'status', $status);
 		if (!$action) {
-			return ['status' => 0, 'msg' => __('操作失败', 'wnd')];
+			throw new Exception(__('操作失败', 'wnd'));
 		}
 
 		// 封禁账户Action

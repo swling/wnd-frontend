@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
 use Wnd\Action\Wnd_Create_Order;
 
 /**
@@ -14,16 +15,16 @@ class Wnd_Pay_For_Reading extends Wnd_Action_Ajax {
 		$post    = get_post($post_id);
 		$user_id = get_current_user_id();
 		if (!$post) {
-			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		// if (!$user_id) {
-		// 	return ['status' => 0, 'msg' => __('请登录', 'wnd')];
+		// 	throw new Exception(__('请登录', 'wnd'));
 		// }
 
 		// 1、已付费
 		if (wnd_user_has_paid($user_id, $post_id)) {
-			return ['status' => 0, 'msg' => __('请勿重复操作', 'wnd')];
+			throw new Exception(__('请勿重复操作', 'wnd'));
 		}
 
 		// 2、支付失败

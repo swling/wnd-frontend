@@ -40,7 +40,7 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 		// 写入新用户
 		$user_id = wp_insert_user($user_data);
 		if (is_wp_error($user_id)) {
-			return ['status' => 0, 'msg' => $user_id->get_error_message()];
+			throw new Exception($user_id->get_error_message());
 		}
 
 		// 写入用户自定义数组meta

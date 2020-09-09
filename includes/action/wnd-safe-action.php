@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
+
 /**
  *@since 2019.10.05
  *封装一些无关数据安全的常规操作
@@ -17,7 +19,7 @@ class Wnd_Safe_Action extends Wnd_Action_Ajax {
 	public static function execute(): array{
 		$method = $_REQUEST['method'] ?? false;
 		if (!$method) {
-			return ['status' => 0, 'msg' => __('未指定方法', 'wnd')];
+			throw new Exception(__('未指定方法', 'wnd'));
 		}
 
 		/**

@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
+
 /**
  *删除附件
  *@since 2019.01.23
@@ -16,11 +18,11 @@ class Wnd_Delete_File extends Wnd_Action_Ajax {
 		$file_id     = (int) $_POST['file_id'];
 
 		if (!$file_id) {
-			return ['status' => 0, 'msg' => __('文件不存在', 'wnd')];
+			throw new Exception(__('文件不存在', 'wnd'));
 		}
 
 		if (!current_user_can('edit_post', $file_id)) {
-			return ['status' => 0, 'msg' => __('权限错误', 'wnd')];
+			throw new Exception(__('权限错误', 'wnd'));
 		}
 
 		// 执行删除
@@ -30,7 +32,7 @@ class Wnd_Delete_File extends Wnd_Action_Ajax {
 
 			//删除失败
 		} else {
-			return ['status' => 0, 'msg' => __('删除失败', 'wnd')];
+			throw new Exception(__('删除失败', 'wnd'));
 		}
 	}
 }

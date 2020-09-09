@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
+
 /**
  *删除用户
  *@since 2020.04.30
@@ -12,19 +14,19 @@ class Wnd_Delete_User extends Wnd_Action_Ajax {
 		$user_id = (int) $_POST['user_id'];
 		$confirm = $_POST['confirm'] ?? false;
 		if (!$user_id) {
-			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		if (!is_super_admin()) {
-			return ['status' => 0, 'msg' => __('权限不足', 'wnd')];
+			throw new Exception(__('权限不足', 'wnd'));
 		}
 
 		if (is_super_admin($user_id)) {
-			return ['status' => 0, 'msg' => __('无法删除超级管理员', 'wnd')];
+			throw new Exception(__('无法删除超级管理员', 'wnd'));
 		}
 
 		if (!$confirm) {
-			return ['status' => 0, 'msg' => __('请确认操作', 'wnd')];
+			throw new Exception(__('请确认操作', 'wnd'));
 		}
 
 		require_once ABSPATH . 'wp-admin/includes/user.php';

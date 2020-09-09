@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
 use Wnd\Utility\Wnd_Form_Data;
 
 /**
@@ -11,7 +12,7 @@ class Wnd_Update_Option extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		if (!is_super_admin()) {
-			return ['status' => 0, 'msg' => __('权限错误', 'wnd')];
+			throw new Exception(__('权限错误', 'wnd'));
 		}
 
 		$option_name = $_POST['option_name'];
@@ -31,7 +32,7 @@ class Wnd_Update_Option extends Wnd_Action_Ajax {
 		if (update_option($option_name, $option_data, false)) {
 			return ['status' => 1, 'msg' => __('更新成功', 'wnd')];
 		} else {
-			return ['status' => 0, 'msg' => __('更新失败', 'wnd')];
+			throw new Exception(__('更新失败', 'wnd'));
 		}
 	}
 }

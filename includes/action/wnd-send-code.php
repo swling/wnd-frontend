@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
 use Wnd\Model\Wnd_Auth;
 
 /**
@@ -20,7 +21,7 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 
 		// 防止前端篡改表单：校验验证码类型及接受设备
 		if (!wp_verify_nonce($_POST['type_nonce'], $device_type . $type)) {
-			return ['status' => 0, 'msg' => __('Nonce校验失败', 'wnd')];
+			throw new Exception(__('Nonce校验失败', 'wnd'));
 		}
 
 		/**
@@ -30,16 +31,16 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 		if ($current_user->ID and $type != 'bind') {
 			$device = ('email' == $device_type) ? $current_user->user_email : wnd_get_user_phone($current_user->ID);
 			if (!$device) {
-				return ['status' => 0, 'msg' => __('当前账户未绑定', 'wnd') . $device_name];
+				throw new Exception(__('当前账户未绑定', 'wnd') . $device_name);
 			}
 		}
 
 		// 检测对应手机或邮箱格式：防止在邮箱绑定中输入手机号，反之亦然
 		if (('email' == $device_type) and !is_email($device)) {
-			return ['status' => 0, 'msg' => __('邮箱地址无效', 'wnd')];
+			throw new Exception(__('邮箱地址无效', 'wnd'));
 		}
 		if (('phone' == $device_type) and !wnd_is_mobile($device)) {
-			return ['status' => 0, 'msg' => __('手机号码无效', 'wnd')];
+			throw new Exception(__('手机号码无效', 'wnd'));
 		}
 
 		// 发送权限过滤

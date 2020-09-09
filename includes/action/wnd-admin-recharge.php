@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
 use Wnd\Model\Wnd_Recharge;
 
 /**
@@ -14,7 +15,7 @@ class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		if (!is_super_admin()) {
-			return ['status' => 0, 'msg' => __('权限错误', 'wnd')];
+			throw new Exception(__('权限错误', 'wnd'));
 		}
 
 		$user_field   = $_POST['user_field'];
@@ -24,7 +25,7 @@ class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
 		// 根据邮箱，手机，或用户名查询用户
 		$user = wnd_get_user_by($user_field);
 		if (!$user) {
-			return ['status' => 0, 'msg' => __('用户不存在', 'wnd')];
+			throw new Exception(__('用户不存在', 'wnd'));
 		}
 
 		// 写入充值记录

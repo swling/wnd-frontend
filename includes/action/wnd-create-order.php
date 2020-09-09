@@ -37,11 +37,11 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 	public static function check_create(int $post_id, int $user_id) {
 		$post = $post_id ? get_post($post_id) : false;
 		if (!$post) {
-			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		if ($post->post_author == $user_id) {
-			return ['status' => 0, 'msg' => __('禁止下单', 'wnd')];
+			throw new Exception(__('禁止下单', 'wnd'));
 		}
 
 		if (!$user_id and !wnd_get_config('enable_anon_order')) {

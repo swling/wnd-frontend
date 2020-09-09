@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
 use Wnd\Action\Wnd_Insert_Post;
 
 class Wnd_Update_Post extends Wnd_Action_Ajax {
@@ -17,7 +18,7 @@ class Wnd_Update_Post extends Wnd_Action_Ajax {
 		// 获取被编辑Post ID
 		$_POST['_post_ID'] = (int) ($post_id ?: $_POST['_post_ID']);
 		if ($_POST['_post_ID']) {
-			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		return Wnd_Insert_Post::execute();

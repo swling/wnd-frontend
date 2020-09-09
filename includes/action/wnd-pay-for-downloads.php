@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Action;
 
+use Exception;
 use Wnd\Action\Wnd_Create_Order;
 
 /**
@@ -16,18 +17,18 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 		$price   = wnd_get_post_price($post_id);
 		$user_id = get_current_user_id();
 		if (!$post) {
-			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		// if (!$user_id) {
-		// 	return ['status' => 0, 'msg' => __('请登录', 'wnd')];
+		// 	throw new Exception(__('请登录', 'wnd'));
 		// }
 
 		// 获取文章附件
 		$attachment_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
 		$file          = get_attached_file($attachment_id, $unfiltered = true);
 		if (!$file) {
-			return ['status' => 0, 'msg' => __('获取文件失败', 'wnd')];
+			throw new Exception(__('获取文件失败', 'wnd'));
 		}
 
 		/**
