@@ -19,7 +19,7 @@ abstract class Wnd_Action_Ajax {
 	 *
 	 *所有表单提交均通过 Wnd_Form_Data 统一处理
 	 */
-	protected static function get_form_data() {
+	protected static function get_form_data(): array{
 		return Wnd_Form_Data::get_form_data(true);
 	}
 }
