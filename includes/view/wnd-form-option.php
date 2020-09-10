@@ -76,7 +76,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 				continue;
 			}
 
-			$ignore_names = ['option_name', 'append', 'action', '_ajax_nonce', Wnd_Form_Data::$form_nonce_name];
+			$ignore_names = ['option_name', 'append', 'action', '_ajax_nonce', Wnd_Form_Data::$form_sign_name];
 			if (in_array($input['name'], $ignore_names)) {
 				continue;
 			}

@@ -33,7 +33,7 @@ class Wnd_Form_Data {
 
 	public $form_data;
 
-	public static $form_nonce_name = '_wnd_sign';
+	public static $form_sign_name = '_wnd_sign';
 
 	/**
 	 *Construct
@@ -154,7 +154,7 @@ class Wnd_Form_Data {
 	 */
 	public static function build_sign_field($form_names): string{
 		$nonce = static::sign($form_names);
-		return '<input type="hidden" name="' . static::$form_nonce_name . '" value="' . $nonce . '">';
+		return '<input type="hidden" name="' . static::$form_sign_name . '" value="' . $nonce . '">';
 	}
 
 	/**
@@ -166,7 +166,7 @@ class Wnd_Form_Data {
 	 */
 	public static function sign(array $form_names): string{
 		// nonce自身字段也需要包含在内
-		$form_names[] = static::$form_nonce_name;
+		$form_names[] = static::$form_sign_name;
 
 		// 去重排序后生成nonce
 		$form_names = array_unique($form_names);
@@ -180,7 +180,7 @@ class Wnd_Form_Data {
 	 *@see static::sign
 	 */
 	public static function verify_sign(): bool {
-		if (!isset($_POST[static::$form_nonce_name])) {
+		if (!isset($_POST[static::$form_sign_name])) {
 			return false;
 		}
 
@@ -190,6 +190,6 @@ class Wnd_Form_Data {
 		sort($form_names);
 
 		// 校验数组键值是否一直
-		return wp_verify_nonce($_POST[static::$form_nonce_name], md5(implode('', $form_names)));
+		return wp_verify_nonce($_POST[static::$form_sign_name], md5(implode('', $form_names)));
 	}
 }
