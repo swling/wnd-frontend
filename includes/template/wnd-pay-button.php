@@ -60,6 +60,7 @@ class Wnd_Pay_Button {
 		static::$file_id       = wnd_get_post_meta(static::$post_id, 'file');
 		static::$primary_color = 'is-' . wnd_get_config('primary_color');
 		static::$message       = '<span class="icon is-size-5"><i class="fa ' . (static::$user_has_paid ? 'fa-unlock' : 'fa-lock') . '"></i></span>';
+		static::$button_text   = '';
 
 		// 根据付费内容形式，构建对应变量：$message and $button_text
 		if ($with_paid_content and static::$file_id) {
