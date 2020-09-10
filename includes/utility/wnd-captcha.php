@@ -31,7 +31,11 @@ abstract class Wnd_Captcha {
 	 *自动选择子类处理当前业务
 	 */
 	public static function get_instance(): Wnd_Captcha{
-		$service    = wnd_get_config('captcha_service') ?: 'Tencent';
+		$service = wnd_get_config('captcha_service') ?: '';
+		if (!$service) {
+			throw new Exception(__('未配置 Captcha Service', 'wnd'));
+		}
+
 		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Captcha_' . $service;
 		if (class_exists($class_name)) {
 			return new $class_name();

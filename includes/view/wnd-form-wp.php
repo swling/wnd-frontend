@@ -26,6 +26,8 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	protected $enable_captcha;
 
+	protected $captcha_service;
+
 	public static $primary_color;
 
 	public static $second_color;
@@ -43,6 +45,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->user            = wp_get_current_user();
 		$this->is_ajax_submit  = $is_ajax_submit;
 		$this->enable_captcha  = $enable_captcha;
+		$this->captcha_service = wnd_get_config('captcha_service');
 		static::$primary_color = wnd_get_config('primary_color');
 		static::$second_color  = wnd_get_config('second_color');
 
@@ -528,10 +531,11 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	/**
 	 *发送验证码脚本
+	 *发送短信及邮箱验证码属于高危操作，不受表单提交人机验证选项的影响，若配置人机验证，则默认开启
 	 */
 	protected function render_send_code_script() {
 		// 禁用人机校验：直接发送
-		if (!wnd_get_config('captcha_service')) {
+		if (!$this->captcha_service) {
 			return '
 			<script>
 			$(function() {
@@ -551,7 +555,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 */
 	protected function render_submit_form_script() {
 		// 禁用人机校验：直接发送
-		if (!wnd_get_config('captcha_service') or !$this->enable_captcha) {
+		if (!$this->captcha_service or !$this->enable_captcha) {
 			return '
 			<script>
 			$(function() {
