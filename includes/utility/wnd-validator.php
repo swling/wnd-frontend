@@ -35,6 +35,7 @@ class Wnd_Validator {
 
 		$auth = Wnd_Captcha::get_instance();
 		$auth->set_captcha($_POST['captcha'] ?? '');
+		$auth->set_captcha_nonce($_POST['captcha_nonce'] ?? '');
 		$auth->validate();
 	}
 }

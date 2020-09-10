@@ -1285,18 +1285,6 @@ jQuery(document).ready(function($) {
 	});
 
 	/**
-	 *@since 2019.03.10 ajax提交表单
-	 */
-	$("body").on("click", "[type='submit'].ajax-submit", function() {
-		var form_id = $(this).closest("form").attr("id");
-		if (form_id) {
-			wnd_ajax_submit(form_id);
-		} else {
-			wnd_alert_msg(wnd.msg.system_error, 1);
-		}
-	});
-
-	/**
 	 *@since 2019.05.07 相册放大
 	 */
 	$("body").on("click", ".gallery img", function() {

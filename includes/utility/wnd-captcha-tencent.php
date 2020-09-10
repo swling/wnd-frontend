@@ -17,14 +17,10 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 	// 腾讯云API Secret Key
 	protected $secret_key;
 
-	// 前端随机码
-	protected $randstr;
-
 	public function __construct() {
 		$this->url        = 'https://captcha.tencentcloudapi.com';
 		$this->secret_id  = wnd_get_config('tencent_secretid');
 		$this->secret_key = wnd_get_config('tencent_secretkey');
-		$this->randstr    = $_POST['randstr'] ?? '';
 
 		parent::__construct();
 	}
@@ -51,7 +47,7 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 			'CaptchaAppId' => $this->appid,
 			'AppSecretKey' => $this->appkey,
 			'Ticket'       => $this->captcha,
-			'Randstr'      => $this->randstr,
+			'Randstr'      => $this->captcha_nonce,
 			'UserIp'       => $this->user_ip,
 		];
 
@@ -92,26 +88,25 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 	}
 
 	/**
-	 *验证码脚本
+	 *验证码人机验证脚本
 	 */
-	public function render_script(): string{
+	public function render_send_code_script(): string{
 		$script = '
 		<script>
-		function wndt_tencent_captcha(_this){
+		function wnd_send_code_via_captcha(_this){
 			var captcha = new TencentCaptcha(
 				"' . $this->appid . '",
-				function(res, bizState) {
+				function(res) {
 					if(0 === res.ret){
 						_this.data("captcha", res.ticket);
-						_this.data("randstr", res.randstr);
+						_this.data("captcha_nonce", res.randstr);
 						wnd_send_code(_this);
 					}
-				},{
-					"bizState": _this
 				}
 			)
 			captcha.show();
 		}
+
 		// 绑定点击事件
 		$(function() {
 			$(".send-code").click(function() {
@@ -126,10 +121,48 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 
 				if (typeof TencentCaptcha == "undefined") {
 					$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
-						wndt_tencent_captcha(_this);
+						wnd_send_code_via_captcha(_this);
 					});
 				}else{
-					wndt_tencent_captcha(_this);
+					wnd_send_code_via_captcha(_this);
+				}
+			});
+		});
+		</script>';
+		return $script;
+	}
+
+	/**
+	 *表单提交人机验证
+	 *@since 0.8.64
+	 */
+	public function render_submit_form_script(): string{
+		$script = '
+		<script>
+		function wnd_submit_form_via_captcha(form_id){
+			var captcha = new TencentCaptcha(
+				"' . $this->appid . '",
+				function(res) {
+					if(0 === res.ret){
+						$("#" + form_id + " [name=\'captcha\']").val(res.ticket);
+						$("#" + form_id + " [name=\'captcha_nonce\']").val(res.randstr);
+						wnd_ajax_submit(form_id);
+					}
+				}
+			)
+			captcha.show();
+		}
+
+		// 绑定点击事件
+		$(function() {
+			$("[type=\'submit\'].ajax-submit").click(function() {
+				var form_id = $(this).closest("form").attr("id");
+				if (typeof TencentCaptcha == "undefined") {
+					$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
+						wnd_submit_form_via_captcha(form_id);
+					});
+				}else{
+					wnd_submit_form_via_captcha(form_id);
 				}
 			});
 		});

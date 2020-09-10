@@ -11,36 +11,60 @@ use Wnd\Utility\Wnd_Form_Data;
  *在本环境中，为实现字段name nonce校验，未选中的字段也会发送一个空值到后台（通过 hidden字段实现），在相关数据处理上需要注意
  *为保障表单不被前端篡改，会提取所有字段的name值，结合算法生成校验码，后端通过同样的方式提取$_POST数据，并做校验
  *
- *@param bool $is_ajax_submit 是否ajax提交
  */
 class Wnd_Form_WP extends Wnd_Form {
 
 	protected $user;
-	protected $filter     = '';
+
+	protected $filter = '';
+
 	protected $form_names = [];
-	protected $message    = '';
+
+	protected $message = '';
+
 	protected $is_ajax_submit;
 
+	protected $enable_captcha;
+
 	public static $primary_color;
+
 	public static $second_color;
 
-	public function __construct($is_ajax_submit = true) {
-		$this->user = wp_get_current_user();
+	/**
+	 *@since 2019.07.17
+	 *
+	 *@param bool $is_ajax_submit 	是否ajax提交
+	 *@param bool $enable_captcha 	提交时是否进行人机校验
+	 */
+	public function __construct($is_ajax_submit = true, $enable_captcha = true) {
+		// 继承基础变量
+		parent::__construct();
 
-		/**
-		 *@since 2019.07.17
-		 *添加是否为ajax提交选项
-		 */
-		$this->is_ajax_submit = $is_ajax_submit;
-
-		// 色调
+		$this->user            = wp_get_current_user();
+		$this->is_ajax_submit  = $is_ajax_submit;
+		$this->enable_captcha  = $enable_captcha;
 		static::$primary_color = wnd_get_config('primary_color');
 		static::$second_color  = wnd_get_config('second_color');
 
-		// 继承基础变量
-		parent::__construct();
+		/**
+		 *@since 0.8.64
+		 *ajax 提交脚本
+		 */
+		$this->add_html($this->render_submit_form_script());
+
+		/**
+		 *@since 0.8.64
+		 *开启验证码字段
+		 */
+		if ($this->enable_captcha) {
+			$this->add_hidden('captcha', '');
+			$this->add_hidden('captcha_nonce', '');
+		}
 	}
 
+	/**
+	 *设置表单字段数据 filter
+	 */
 	public function set_filter($filter) {
 		$this->filter = $filter;
 	}
@@ -130,7 +154,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$button .= ' data-interval="' . wnd_get_config('min_verification_interval') . '"';
 		$button .= '>' . __('获取验证码', 'wnd') . '</button>';
 
-		$this->add_html('<div class="field validate-field-wrap">');
+		$this->add_html('<div class="field validate-field-wrap">' . $this->render_send_code_script());
 		// 当前用户未绑定手机或更换绑定手机
 		if (!$device or 'bind' == $type) {
 			$this->add_text(
@@ -166,7 +190,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			]
 		);
 
-		$this->add_html('</div>' . $this->render_verification_script());
+		$this->add_html('</div>');
 	}
 
 	/**
@@ -503,10 +527,10 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *验证码脚本
+	 *发送验证码脚本
 	 */
-	protected function render_verification_script() {
-		// 禁用验证码：直接发送
+	protected function render_send_code_script() {
+		// 禁用人机校验：直接发送
 		if (!wnd_get_config('captcha_service')) {
 			return '
 			<script>
@@ -518,6 +542,31 @@ class Wnd_Form_WP extends Wnd_Form {
 			</script>';
 		}
 
-		return Wnd_Captcha::get_instance()->render_script();
+		return Wnd_Captcha::get_instance()->render_send_code_script();
+	}
+
+	/**
+	 *提交表单脚本
+	 *@since 0.8.64
+	 */
+	protected function render_submit_form_script() {
+		// 禁用人机校验：直接发送
+		if (!wnd_get_config('captcha_service') or !$this->enable_captcha) {
+			return '
+			<script>
+			$(function() {
+				$("[type=\'submit\'].ajax-submit").click(function() {
+					var form_id = $(this).closest("form").attr("id");
+					if (form_id) {
+						wnd_ajax_submit(form_id);
+					} else {
+						wnd_alert_msg(wnd.msg.system_error, 1);
+					}
+				});
+			});
+			</script>';
+		}
+
+		return Wnd_Captcha::get_instance()->render_submit_form_script();
 	}
 }

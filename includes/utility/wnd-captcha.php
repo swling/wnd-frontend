@@ -17,6 +17,8 @@ abstract class Wnd_Captcha {
 
 	protected $captcha;
 
+	protected $captcha_nonce;
+
 	protected $user_ip;
 
 	public function __construct() {
@@ -46,12 +48,26 @@ abstract class Wnd_Captcha {
 	}
 
 	/**
+	 *设置captcha nonce
+	 */
+	public function set_captcha_nonce($captcha_nonce) {
+		$this->captcha_nonce = $captcha_nonce;
+	}
+
+	/**
 	 * 请求服务器验证
 	 */
 	abstract public function validate();
 
 	/**
 	 *JavaScript
+	 *构建手机及邮箱类发送人机校验脚本
 	 */
-	abstract public function render_script(): string;
+	abstract public function render_send_code_script(): string;
+
+	/**
+	 *@since 0.8.64
+	 *构建表单提交人机校验脚本
+	 */
+	abstract public function render_submit_form_script(): string;
 }
