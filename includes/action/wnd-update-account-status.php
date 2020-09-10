@@ -15,8 +15,9 @@ use Exception;
 class Wnd_Update_Account_Status extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		$user_id       = (int) $_POST['user_id'];
-		$status        = $_POST['status'] ?? '';
+		$form_data     = static::get_form_data();
+		$user_id       = (int) $form_data['user_id'];
+		$status        = $form_data['status'] ?? '';
 		$before_status = get_user_meta($user_id, 'status', true) ?: 'ok';
 
 		if (!$user_id) {

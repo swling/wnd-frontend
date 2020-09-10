@@ -13,9 +13,9 @@ use Wnd\Model\Wnd_Refunder;
 class Wnd_Refund extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-
-		$payment_id    = (int) ($_POST['payment_id'] ?? 0);
-		$refund_amount = (float) ($_POST['refund_amount'] ?? 0);
+		$form_data     = static::get_form_data();
+		$payment_id    = (int) ($form_data['payment_id'] ?? 0);
+		$refund_amount = (float) ($form_data['refund_amount'] ?? 0);
 
 		try {
 			$refunder = Wnd_Refunder::get_instance($payment_id);

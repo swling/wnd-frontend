@@ -12,9 +12,10 @@ use Wnd\Model\Wnd_Payment;
 class Wnd_Do_Pay extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		$post_id         = (int) ($_POST['post_id'] ?? 0);
-		$total_amount    = (float) ($_POST['total_amount'] ?? 0);
-		$payment_gateway = $_POST['payment_gateway'] ?? '';
+		$form_data       = static::get_form_data();
+		$post_id         = (int) ($form_data['post_id'] ?? 0);
+		$total_amount    = (float) ($form_data['total_amount'] ?? 0);
+		$payment_gateway = $form_data['payment_gateway'] ?? '';
 
 		if (!$payment_gateway) {
 			throw new Exception(__('未定义支付方式', 'wnd'));

@@ -11,9 +11,10 @@ use Wnd\Action\Wnd_Create_Order;
 class Wnd_Pay_For_Reading extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		$post_id = (int) $_POST['post_id'];
-		$post    = get_post($post_id);
-		$user_id = get_current_user_id();
+		$form_data = static::get_form_data();
+		$post_id   = (int) $form_data['post_id'];
+		$post      = get_post($post_id);
+		$user_id   = get_current_user_id();
 		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}

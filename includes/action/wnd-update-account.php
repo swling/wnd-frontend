@@ -20,9 +20,10 @@ class Wnd_Update_Account extends Wnd_Action_Ajax {
 		}
 
 		$user_data           = ['ID' => $user_id];
-		$user_pass           = $_POST['_user_user_pass'] ?? '';
-		$new_password        = $_POST['_user_new_pass'] ?? '';
-		$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? '';
+		$form_data           = static::get_form_data();
+		$user_pass           = $form_data['_user_user_pass'] ?? '';
+		$new_password        = $form_data['_user_new_pass'] ?? '';
+		$new_password_repeat = $form_data['_user_new_pass_repeat'] ?? '';
 
 		// 修改密码
 		if (!empty($new_password_repeat)) {

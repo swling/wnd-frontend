@@ -14,18 +14,19 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 
 	/**
 	 *@since 2019.01.21
-	 *@param  $_POST['post_id']
-	 *@param  $_POST['post_status']
+	 *@param  $form_data['post_id']
+	 *@param  $form_data['post_status']
 	 *@return array
 	 *前端快速更改文章状态
 	 *依赖：wp_update_post、wp_delete_post
 	 */
 	public static function execute(): array{
 		// 获取数据
-		static::$post_id      = (int) $_POST['post_id'];
-		static::$after_status = $_POST['post_status'];
-		static::$remarks      = $_POST['remarks'] ?? '';
-		static::$stick_post   = $_POST['stick_post'] ?? '';
+		$form_data            = static::get_form_data();
+		static::$post_id      = (int) $form_data['post_id'];
+		static::$after_status = $form_data['post_status'];
+		static::$remarks      = $form_data['remarks'] ?? '';
+		static::$stick_post   = $form_data['stick_post'] ?? '';
 		static::$before_post  = get_post(static::$post_id);
 
 		if (!static::$before_post) {

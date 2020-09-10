@@ -5,18 +5,19 @@ use Exception;
 
 /**
  *@since 2019.1.13 用户登录
- *@param $username = trim($_POST['_user_user_login']);
- *@param $password = $_POST['_user_user_pass'];
  *
- *@param $remember = $_POST['remember'] ?? 0;
- *@param $redirect_to = $_REQUEST['redirect_to'] ?? home_url();
+ *@param $_POST['_user_user_login']
+ *@param $_POST['_user_user_pass'];
+ *@param $_POST['remember'];
+ *@param $_REQUEST['redirect_to'];
  */
 class Wnd_Login extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		$username    = trim($_POST['_user_user_login']);
-		$password    = $_POST['_user_user_pass'];
-		$remember    = $_POST['remember'] ?? 0;
+		$form_data   = static::get_form_data(true);
+		$username    = trim($form_data['_user_user_login']);
+		$password    = $form_data['_user_user_pass'];
+		$remember    = $form_data['remember'] ?? 0;
 		$remember    = 1 == $remember ? true : false;
 		$redirect_to = $_REQUEST['redirect_to'] ?? home_url();
 

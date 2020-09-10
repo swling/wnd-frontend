@@ -12,10 +12,11 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
 		// 获取文章
-		$post_id = (int) $_POST['post_id'];
-		$post    = get_post($post_id);
-		$price   = wnd_get_post_price($post_id);
-		$user_id = get_current_user_id();
+		$form_data = static::get_form_data();
+		$post_id   = (int) $form_data['post_id'];
+		$post      = get_post($post_id);
+		$price     = wnd_get_post_price($post_id);
+		$user_id   = get_current_user_id();
 		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}

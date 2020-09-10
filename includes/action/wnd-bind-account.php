@@ -14,9 +14,10 @@ use Wnd\Model\Wnd_Binder;
 class Wnd_Bind_Account extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		$email_or_phone = $_POST['_user_user_email'] ?? ($_POST['phone'] ?? '');
-		$auth_code      = $_POST['auth_code'] ?? '';
-		$password       = $_POST['_user_user_pass'] ?? '';
+		$form_data      = static::get_form_data();
+		$email_or_phone = $form_data['_user_user_email'] ?? ($form_data['phone'] ?? '');
+		$auth_code      = $form_data['auth_code'] ?? '';
+		$password       = $form_data['_user_user_pass'] ?? '';
 		if (!is_user_logged_in()) {
 			throw new Exception(__('请登录', 'wnd'));
 		}

@@ -11,8 +11,9 @@ use Exception;
 class Wnd_Delete_User extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		$user_id = (int) $_POST['user_id'];
-		$confirm = $_POST['confirm'] ?? false;
+		$form_data = static::get_form_data();
+		$user_id   = (int) $form_data['user_id'];
+		$confirm   = $form_data['confirm'] ?? false;
 		if (!$user_id) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}

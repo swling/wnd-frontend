@@ -18,9 +18,10 @@ class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
 			throw new Exception(__('权限错误', 'wnd'));
 		}
 
-		$user_field   = $_POST['user_field'];
-		$total_amount = (float) $_POST['total_amount'];
-		$remarks      = $_POST['remarks'] ?: __('人工充值', 'wnd');
+		$form_data    = static::get_form_data();
+		$user_field   = $form_data['user_field'];
+		$total_amount = (float) $form_data['total_amount'];
+		$remarks      = $form_data['remarks'] ?: __('人工充值', 'wnd');
 
 		// 根据邮箱，手机，或用户名查询用户
 		$user = wnd_get_user_by($user_field);

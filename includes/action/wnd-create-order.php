@@ -7,12 +7,16 @@ use Wnd\Model\Wnd_Order;
 /**
  *@since 2019.10.02
  *创建订单
- *@param $_POST['post_id']  Post ID
+ *@param $post_id  Post ID
  */
 class Wnd_Create_Order extends Wnd_Action_Ajax {
 
 	public static function execute(int $post_id = 0): array{
-		$post_id = (int) ($post_id ?: $_POST['post_id']);
+		if (!$post_id) {
+			$form_data = static::get_form_data();
+			$post_id   = $form_data['post_id'] ?? 0;
+		}
+
 		$user_id = get_current_user_id();
 
 		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id);

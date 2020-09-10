@@ -14,10 +14,11 @@ use Wnd\Model\Wnd_Auth;
 class Wnd_Reset_Password extends Wnd_Action_Ajax {
 
 	public static function execute(): array{
-		$email_or_phone      = $_POST['_user_user_email'] ?? $_POST['phone'] ?? '';
-		$new_password        = $_POST['_user_new_pass'] ?? '';
-		$new_password_repeat = $_POST['_user_new_pass_repeat'] ?? '';
-		$auth_code           = $_POST['auth_code'];
+		$form_data           = static::get_form_data();
+		$email_or_phone      = $form_data['_user_user_email'] ?? $form_data['phone'] ?? '';
+		$new_password        = $form_data['_user_new_pass'] ?? '';
+		$new_password_repeat = $form_data['_user_new_pass_repeat'] ?? '';
+		$auth_code           = $form_data['auth_code'];
 		$is_user_logged_in   = is_user_logged_in();
 
 		// 验证密码正确性
