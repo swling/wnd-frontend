@@ -903,6 +903,7 @@ jQuery(document).ready(function($) {
 		var is_cancel = $(this).data("is-cancel");
 		var action = is_cancel ? $(this).data("cancel") : $(this).data("action");
 		var nonce = is_cancel ? $(this).data("cancel-nonce") : $(this).data("action-nonce");
+		var wnd_sign = $(this).data("sign");
 
 		// $(this) 在ajax 中无效，故此需要单独定义变量
 		var _this = $(this);
@@ -913,6 +914,7 @@ jQuery(document).ready(function($) {
 				"action": action,
 				"param": $(this).data("param"),
 				"_ajax_nonce": nonce,
+				"_wnd_sign": wnd_sign,
 			},
 			//后台返回数据前
 			beforeSend: function(xhr) {

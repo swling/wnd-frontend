@@ -32,13 +32,13 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 	 *
 	 *保存提交数据
 	 *@param 	array	$_POST 				全局表单数据
-	 *@param 	bool 	$verify_form_nonce  是否校验表单数据来源
+	 *@param 	bool 	$verify_sign  是否校验表单数据来源
 	 *
 	 *@return 	array 						操作结果
 	 *
 	 */
-	public static function execute($verify_form_nonce = true): array{
-		static::parse_data($verify_form_nonce);
+	public static function execute($verify_sign = true): array{
+		static::parse_data($verify_sign);
 		static::check();
 		static::insert();
 
@@ -62,9 +62,9 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 	/**
 	 *解析提交数据
 	 */
-	protected static function parse_data($verify_form_nonce) {
+	protected static function parse_data($verify_sign) {
 		// 实例化当前提交的表单数据
-		$form_data            = new Wnd_Form_Data($verify_form_nonce);
+		$form_data            = new Wnd_Form_Data($verify_sign);
 		static::$post_data    = $form_data->get_post_data();
 		static::$meta_data    = $form_data->get_post_meta_data();
 		static::$wp_meta_data = $form_data->get_wp_post_meta_data();
