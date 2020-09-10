@@ -51,12 +51,6 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		/**
 		 *@since 0.8.64
-		 *ajax 提交脚本
-		 */
-		$this->add_html($this->render_submit_form_script());
-
-		/**
-		 *@since 0.8.64
 		 *开启验证码字段
 		 */
 		if ($this->enable_captcha) {
@@ -157,7 +151,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$button .= ' data-interval="' . wnd_get_config('min_verification_interval') . '"';
 		$button .= '>' . __('获取验证码', 'wnd') . '</button>';
 
-		$this->add_html('<div class="field validate-field-wrap">' . $this->render_send_code_script());
+		$this->add_html('<div class="field validate-field-wrap">');
 		// 当前用户未绑定手机或更换绑定手机
 		if (!$device or 'bind' == $type) {
 			$this->add_text(
@@ -530,34 +524,26 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *发送验证码脚本
-	 *发送短信及邮箱验证码属于高危操作，不受表单提交人机验证选项的影响，若配置人机验证，则默认开启
+	 *表单脚本：将在表单结束成后加载
+	 *@since 0.8.64
 	 */
-	protected function render_send_code_script() {
-		// 禁用人机校验：直接发送
-		if (!$this->captcha_service) {
-			return '
-			<script>
+	protected function render_script(): string{
+		$captcha = $this->captcha_service ? Wnd_Captcha::get_instance() : false;
+
+		// 短信、邮件
+		$send_code_script = '
+		<script>
 			$(function() {
 				$(".send-code").click(function() {
 					wnd_send_code($(this));
 				});
 			});
-			</script>';
-		}
+		</script>';
+		$send_code_script = $captcha ? $captcha->render_send_code_script() : $send_code_script;
 
-		return Wnd_Captcha::get_instance()->render_send_code_script();
-	}
-
-	/**
-	 *提交表单脚本
-	 *@since 0.8.64
-	 */
-	protected function render_submit_form_script() {
-		// 禁用人机校验：直接发送
-		if (!$this->captcha_service or !$this->enable_captcha) {
-			return '
-			<script>
+		// 表单提交
+		$submit_script = '
+		<script>
 			$(function() {
 				$("[type=\'submit\'].ajax-submit").click(function() {
 					var form_id = $(this).closest("form").attr("id");
@@ -568,9 +554,10 @@ class Wnd_Form_WP extends Wnd_Form {
 					}
 				});
 			});
-			</script>';
-		}
+		</script>';
+		$submit_script = ($captcha and $this->enable_captcha) ? $captcha->render_submit_form_script() : $submit_script;
 
-		return Wnd_Captcha::get_instance()->render_submit_form_script();
+		// 构造完整脚本
+		return $send_code_script . $submit_script;
 	}
 }

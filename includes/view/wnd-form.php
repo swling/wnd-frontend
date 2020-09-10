@@ -37,7 +37,7 @@ class Wnd_Form {
 
 	protected $thumbnail_height = 100;
 
-	public $html;
+	public $html = '';
 
 	protected static $defaults = [
 		'id'          => '',
@@ -321,7 +321,7 @@ class Wnd_Form {
 			$html .= '</div>';
 		}
 
-		$this->html = $html;
+		$this->html .= $html;
 	}
 
 	protected function build_input_values() {
@@ -549,8 +549,20 @@ class Wnd_Form {
 		$this->html .= '</div>';
 	}
 
+	/**
+	 *@since 0.8.65
+	 *闭合表单并渲染 Ajax 表单提交脚本
+	 */
 	protected function build_form_footer() {
-		$this->html .= '</form>';
+		$this->html .= '</form>' . $this->render_script();
+	}
+
+	/**
+	 *表单脚本：将在表单结束成后加载
+	 *@since 0.8.65
+	 */
+	protected function render_script(): string {
+		return '';
 	}
 
 	/**
