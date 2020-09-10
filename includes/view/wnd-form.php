@@ -92,7 +92,7 @@ class Wnd_Form {
 	/**
 	 *@since 2019.03.10 设置表单属性
 	 */
-	public function set_form_title($form_title, $is_title_centered = false) {
+	public function set_form_title(string $form_title, bool $is_title_centered = false) {
 		$this->form_title        = $form_title;
 		$this->is_title_centered = $is_title_centered;
 	}
@@ -102,26 +102,26 @@ class Wnd_Form {
 	 *@param int 	$width
 	 *@param int 	$height
 	 */
-	public function set_thumbnail_size($width, $height) {
+	public function set_thumbnail_size(int $width, int $height) {
 		$this->thumbnail_width  = $width;
 		$this->thumbnail_height = $height;
 	}
 
 	// Submit
-	public function set_submit_button($text, $class = '', $disabled = false) {
+	public function set_submit_button(string $text, string $class = '', bool $disabled = false) {
 		$this->submit_text     = $text;
 		$this->submit_class    = $class;
 		$this->submit_disabled = $disabled;
 	}
 
 	// action
-	public function set_action($action, $method = 'POST') {
+	public function set_action(string $action, string $method = 'POST') {
 		$this->method = $method;
 		$this->action = $action;
 	}
 
 	// 直接设置当前表单的组成数组（通常用于配合 filter 过滤）
-	public function set_input_values($input_values) {
+	public function set_input_values(array $input_values) {
 		$this->input_values = $input_values;
 	}
 
@@ -129,7 +129,7 @@ class Wnd_Form {
 	 *@since 2019.08.29
 	 *设置表单属性
 	 **/
-	public function add_form_attr($key, $value) {
+	public function add_form_attr(string $key, string $value) {
 		$this->form_attr[$key] = $value;
 	}
 
@@ -137,21 +137,21 @@ class Wnd_Form {
 	 *@since 2019.03.10 设置常规input 字段
 	 */
 	// text
-	public function add_text($args) {
+	public function add_text(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'text';
 		$this->input_values[] = $args;
 	}
 
 	// number
-	public function add_number($args) {
+	public function add_number(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'number';
 		$this->input_values[] = $args;
 	}
 
 	// hidden
-	public function add_hidden($name, $value) {
+	public function add_hidden(string $name, string $value) {
 		$this->input_values[] = [
 			'type'  => 'hidden',
 			'name'  => $name,
@@ -160,21 +160,21 @@ class Wnd_Form {
 	}
 
 	// textarea
-	public function add_textarea($args) {
+	public function add_textarea(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'textarea';
 		$this->input_values[] = $args;
 	}
 
 	// email
-	public function add_email($args) {
+	public function add_email(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'email';
 		$this->input_values[] = $args;
 	}
 
 	// password
-	public function add_password($args) {
+	public function add_password(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'password';
 		$this->input_values[] = $args;
@@ -185,63 +185,63 @@ class Wnd_Form {
 	 *新增HTML5 字段
 	 */
 	// URL
-	public function add_url($args) {
+	public function add_url(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'url';
 		$this->input_values[] = $args;
 	}
 
 	// color
-	public function add_color($args) {
+	public function add_color(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'color';
 		$this->input_values[] = $args;
 	}
 
 	// date
-	public function add_date($args) {
+	public function add_date(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'date';
 		$this->input_values[] = $args;
 	}
 
 	// range
-	public function add_range($args) {
+	public function add_range(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'range';
 		$this->input_values[] = $args;
 	}
 
 	// tel
-	public function add_tel($args) {
+	public function add_tel(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'tel';
 		$this->input_values[] = $args;
 	}
 
 	// select
-	public function add_select($args) {
+	public function add_select(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'select';
 		$this->input_values[] = $args;
 	}
 
 	// radio
-	public function add_radio($args) {
+	public function add_radio(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'radio';
 		$this->input_values[] = $args;
 	}
 
 	// checkbox
-	public function add_checkbox($args) {
+	public function add_checkbox(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'checkbox';
 		$this->input_values[] = $args;
 	}
 
 	// Image upload
-	public function add_image_upload($args) {
+	public function add_image_upload(array $args) {
 		$defaults = [
 			'id'             => 'image-upload-' . $this->id,
 			'thumbnail'      => '',
@@ -260,7 +260,7 @@ class Wnd_Form {
 	}
 
 	// File upload
-	public function add_file_upload($args) {
+	public function add_file_upload(array $args) {
 		$defaults = [
 			'id'            => 'file-upload-' . $this->id,
 			'file_name'     => 'file name',
@@ -280,7 +280,7 @@ class Wnd_Form {
 	/**
 	 *@since 2019.03.06 在表单当前位置插入指定html代码以补充现有方法无法实现的效果
 	 */
-	public function add_html($html) {
+	public function add_html(string $html) {
 		$this->input_values[] = [
 			'type'  => 'html',
 			'value' => $html,
@@ -365,10 +365,9 @@ class Wnd_Form {
 		unset($input_value);
 
 		$this->html .= $html;
-		return $html;
 	}
 
-	protected function build_select($input_value, $input_key) {
+	protected function build_select(array $input_value, string $input_key): string{
 		$html = '<div class="field">';
 		$html .= static::build_label($input_value);
 		$html .= '<div class="control">';
@@ -390,7 +389,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	protected function build_radio($input_value, $input_key) {
+	protected function build_radio(array $input_value, string $input_key): string{
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
 		$html .= static::build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
@@ -405,7 +404,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	protected function build_checkbox($input_value, $input_key) {
+	protected function build_checkbox(array $input_value, string $input_key): string{
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
 		$html .= static::build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
@@ -424,7 +423,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	protected function build_hidden($input_value, $input_key) {
+	protected function build_hidden(array $input_value, string $input_key): string{
 		$html = '<input' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
 		return $html;
 	}
@@ -467,7 +466,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	protected function build_image_upload($input_value, $input_key) {
+	protected function build_image_upload(array $input_value, string $input_key): string{
 		$id                        = $input_value['id'] . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
@@ -496,7 +495,7 @@ class Wnd_Form {
 		return $html;
 	}
 
-	protected function build_file_upload($input_value, $input_key) {
+	protected function build_file_upload(array $input_value, string $input_key): string{
 		$id                        = $input_value['id'] . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
@@ -528,11 +527,11 @@ class Wnd_Form {
 		return $html;
 	}
 
-	protected function build_html($input_value, $input_key) {
+	protected function build_html(array $input_value, string $input_key): string {
 		return $input_value['value'];
 	}
 
-	protected function build_textarea($input_value, $input_key) {
+	protected function build_textarea(array $input_value, string $input_key): string{
 		$html = '<div class="field">';
 		$html .= static::build_label($input_value);
 		$html .= '<textarea' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>' . $input_value['value'] . '</textarea>';
@@ -569,7 +568,7 @@ class Wnd_Form {
 	 *@since 2019.08.29
 	 *构造表单属性
 	 */
-	protected function build_form_attr() {
+	protected function build_form_attr(): string{
 		$attr = '';
 		foreach ($this->form_attr as $key => $value) {
 			if (!$value and !is_numeric($value)) {
@@ -583,7 +582,7 @@ class Wnd_Form {
 		return $attr;
 	}
 
-	protected static function build_input_id($input_value) {
+	protected static function build_input_id(array $input_value): string {
 		if ($input_value['id'] ?? false) {
 			return ' id="' . $input_value['id'] . '"';
 		}
@@ -598,7 +597,7 @@ class Wnd_Form {
 	 *不含：单选、复选checked属性
 	 *不含：Textarea value属性
 	 */
-	protected static function build_input_attr($input_value) {
+	protected static function build_input_attr(array $input_value): string{
 		$bool_attrs   = ['readonly', 'disabled', 'autofocus', 'required', 'multiple'];
 		$normal_attrs = ['class', 'value', 'type', 'name', 'placeholder', 'size', 'maxlength', 'min', 'max', 'step', 'pattern'];
 		$attr         = '';
@@ -673,7 +672,7 @@ class Wnd_Form {
 	 *@var string 	$label
 	 *@var string 	$required
 	 */
-	protected static function build_label($input_value) {
+	protected static function build_label(array $input_value): string {
 		if (empty($input_value['label'])) {
 			return '';
 		}
@@ -685,14 +684,14 @@ class Wnd_Form {
 	/**
 	 *辅助函数
 	 */
-	protected static function get_class($input_value, $space = false) {
+	protected static function get_class(array $input_value, bool $space = false): string {
 		if ($input_value['class'] ?? false) {
 			return $space ? ' ' . $input_value['class'] : $input_value['class'];
 		}
 		return '';
 	}
 
-	protected function get_submit_class($space = false) {
+	protected function get_submit_class(bool $space = false): string {
 		if ($this->submit_class) {
 			return $space ? ' ' . $this->submit_class : $this->submit_class;
 		}
@@ -703,12 +702,12 @@ class Wnd_Form {
 	 *获取表单字段HTML
 	 *@since 2019.04.28
 	 */
-	public function get_input_fields() {
+	public function get_input_fields(): string {
 		return $this->build_input_values();
 	}
 
 	// 获取当前表单的组成数据数组（通常用于配合 filter 过滤）
-	public function get_input_values() {
+	public function get_input_values(): array{
 		return $this->input_values;
 	}
 }

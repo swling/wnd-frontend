@@ -38,7 +38,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *@param bool $is_ajax_submit 	是否ajax提交
 	 *@param bool $enable_captcha 	提交时是否进行人机校验
 	 */
-	public function __construct($is_ajax_submit = true, $enable_captcha = false) {
+	public function __construct(bool $is_ajax_submit = true, bool $enable_captcha = false) {
 		// 继承基础变量
 		parent::__construct();
 
@@ -62,7 +62,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	/**
 	 *设置表单字段数据 filter
 	 */
-	public function set_filter($filter) {
+	public function set_filter(string $filter) {
 		$this->filter = $filter;
 	}
 
@@ -71,7 +71,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *@param $action 	string 		ajax中为后端处理本次提交的类名，非ajax环境中为表单接收地址
 	 *@param $method 	string 		非ajax环境中为表单提交方法：POST/GET
 	 */
-	public function set_action($action, $method = 'POST') {
+	public function set_action(string $action, string $method = 'POST') {
 		if ($this->is_ajax_submit) {
 			$this->add_hidden('action', $action);
 			$this->add_hidden('_ajax_nonce', wp_create_nonce($action));
@@ -80,14 +80,14 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 	}
 
-	public function set_message($message) {
+	public function set_message(string $message) {
 		$this->message = $message;
 	}
 
 	/**
 	 *@since 2019.05.26 表单按钮默认配色
 	 */
-	public function set_submit_button($text, $class = '', $disabled = false) {
+	public function set_submit_button(string $text, string $class = '', bool $disabled = false) {
 		$class = $class ?: 'is-' . static::$primary_color;
 		$class .= $this->is_ajax_submit ? ' ajax-submit' : '';
 		parent::set_submit_button($text, $class, $disabled);
@@ -98,7 +98,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *直接新增表单names数组元素
 	 *用于nonce校验，如直接通过html方式新增的表单字段，无法被提取，需要通过这种方式新增name，以通过nonce校验
 	 **/
-	public function add_input_name($name) {
+	public function add_input_name(string $name) {
 		$this->form_names[] = $name;
 	}
 
@@ -106,12 +106,12 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *@since 2019.05.09
 	 *未被选中的radio 与checkbox将不会发送到后端，会导致wnd_form_nonce 校验失败，此处通过设置hidden字段修改
 	 */
-	public function add_radio($args) {
+	public function add_radio(array $args) {
 		$this->add_hidden($args['name'], '');
 		parent::add_radio($args);
 	}
 
-	public function add_checkbox($args) {
+	public function add_checkbox(array $args) {
 		$this->add_hidden($args['name'], '');
 		parent::add_checkbox($args);
 	}
@@ -123,7 +123,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *注册时若当前手机已注册，则无法发送验证码
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
-	protected function add_verification_field($device_type, $type = 'verify', $template = '') {
+	protected function add_verification_field(string $device_type, string $type = 'verify', string $template = '') {
 		// 配置手机或邮箱验证码基础信息
 		if ('email' == $device_type) {
 			$device      = $this->user->data->user_email ?? '';
@@ -197,7 +197,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *注册时若当前手机已注册，则无法发送验证码
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
-	public function add_phone_verification($type = 'verify', $template = '') {
+	public function add_phone_verification(string $type = 'verify', string $template = '') {
 		$this->add_verification_field('phone', $type, $template);
 	}
 
@@ -207,12 +207,12 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *注册时若当前邮箱已注册，则无法发送验证码
 	 *找回密码时若当前邮箱未注册，则无法发送验证码
 	 **/
-	public function add_email_verification($type = 'verify', $template = '') {
+	public function add_email_verification(string $type = 'verify', string $template = '') {
 		$this->add_verification_field('email', $type, $template);
 	}
 
 	// Image upload
-	public function add_image_upload($args) {
+	public function add_image_upload(array $args) {
 		$defaults = [
 			'class'          => 'upload-field',
 			'label'          => 'Image upland',
@@ -268,7 +268,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	// File upload
-	public function add_file_upload($args) {
+	public function add_file_upload(array $args) {
 		$defaults = [
 			'class'         => 'upload-field',
 			'label'         => 'File upload',
@@ -320,7 +320,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
 	 *meta_key: 	gallery
 	 */
-	public function add_gallery_upload($args) {
+	public function add_gallery_upload(array $args) {
 		$defaults = [
 			'label'          => 'Gallery',
 			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
@@ -406,7 +406,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	// 构建相册上传
-	protected function build_gallery_upload($args) {
+	protected function build_gallery_upload(array $args) {
 		/**
 		 *@since 2019.12.13
 		 *
@@ -486,7 +486,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *
 	 *根据meta key获取附件ID
 	 */
-	protected static function get_attachment_id($meta_key, $post_parent, $user_id): int {
+	protected static function get_attachment_id(string $meta_key, int $post_parent, int $user_id): int {
 		// option
 		if (0 === stripos($meta_key, '_option_')) {
 			return (int) Wnd_Form_Option::get_option_value_by_form_name($meta_key);
@@ -507,7 +507,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *获取附件URL
 	 *如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta_key or option
 	 */
-	protected static function get_attachment_url($attachment_id, $meta_key, $post_parent, $user_id) {
+	protected static function get_attachment_url(int $attachment_id, string $meta_key, int $post_parent, int $user_id): string{
 		$attachment_url = $attachment_id ? wp_get_attachment_url($attachment_id) : false;
 
 		if ($attachment_id and !$attachment_url) {
