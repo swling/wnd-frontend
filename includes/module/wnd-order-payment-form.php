@@ -5,15 +5,17 @@ use Wnd\Model\Wnd_Payment;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 2020.06.30 订单确认表单
+ *@since 2020.06.30
+ *在线支付订单表单
+ *匿名支付订单默认启用人机验证
  */
-class Wnd_Order_Form extends Wnd_Module {
+class Wnd_Order_Payment_Form extends Wnd_Module {
 
 	public static function build($post_id = 0) {
-
-		$form = new Wnd_Form_WP();
+		$use_id = get_current_user_id();
+		$form   = new Wnd_Form_WP(true, !$use_id);
 		$form->set_form_title(get_the_title($post_id), true);
-		if (!is_user_logged_in()) {
+		if (!$use_id) {
 			$form->add_html(static::build_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd'), true));
 		}
 		$form->add_html('<div class="has-text-centered field">');
