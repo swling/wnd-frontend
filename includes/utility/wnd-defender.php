@@ -271,6 +271,9 @@ class Wnd_Defender {
 		$_REQUEST['wnd_count']  = $this->count + 1;
 		$_REQUEST['wnd_server'] = $_SERVER;
 
+		// 移除用户密码，防止意外泄露
+		unset($_SERVER['_user_user_pass']);
+
 		$block_logs = array_merge(array_reverse($this->get_block_logs()), [$this->ip => $_REQUEST]);
 		$block_logs = array_reverse($block_logs);
 		$block_logs = array_slice($block_logs, 0, $this->block_logs_limit);
