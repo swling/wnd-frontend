@@ -165,13 +165,11 @@ class Wnd_Form_Data {
 	 *@param array 	$form_names 表单所有字段name数组
 	 */
 	public static function sign(array $form_names): string{
-		// nonce自身字段也需要包含在内
+		// nonce 自身字段也需要包含在内，生成表单标识
 		$form_names[] = static::$form_sign_name;
+		$identifier   = static::generate_form_identifier($form_names);
 
-		// 去重排序后生成nonce
-		$form_names = array_unique($form_names);
-		sort($form_names);
-		return wp_create_nonce(md5(implode('', $form_names)));
+		return wp_create_nonce($identifier);
 	}
 
 	/**
@@ -184,12 +182,25 @@ class Wnd_Form_Data {
 			return false;
 		}
 
-		// 提取POST $_FILES数组键值，去重并排序
+		// 提取 $_POST $_FILES 数组键值，生成表单标识
 		$form_names = array_merge(array_keys($_POST), array_keys($_FILES));
+		$identifier = static::generate_form_identifier($form_names);
+
+		// 校验数组键值签名
+		return wp_verify_nonce($_POST[static::$form_sign_name], $identifier);
+	}
+
+	/**
+	 *构建表单签名标识符
+	 *@since 0.8.66
+	 *
+	 *@param array 	$form_names 	表单字段数组
+	 *@param string 表单字段去重排序转为字符串后与结合 AUTH_KEY 生成表单标识码
+	 */
+	protected static function generate_form_identifier(array $form_names): string{
 		$form_names = array_unique($form_names);
 		sort($form_names);
 
-		// 校验数组键值是否一直
-		return wp_verify_nonce($_POST[static::$form_sign_name], md5(implode('', $form_names)));
+		return md5(implode('', $form_names) . AUTH_KEY);
 	}
 }
