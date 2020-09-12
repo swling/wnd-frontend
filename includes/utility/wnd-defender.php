@@ -16,7 +16,7 @@ use Memcached;
  *
  * 防护依赖 Memcached 缓存、暂未支持 Redis
  *
- * 备注：本类应仅依赖 PHP 及 Memcached，不得依赖 WP 环境
+ * 备注：本类仅依赖 PHP 及 Memcached，不依赖 WP 环境
  */
 class Wnd_Defender {
 
@@ -254,6 +254,10 @@ class Wnd_Defender {
 	 *@since 0.8.64
 	 */
 	protected function defend_xmlrpc() {
+		if ('POST' != $_SERVER['REQUEST_METHOD']) {
+			return;
+		}
+
 		if (false === strpos($_SERVER['REQUEST_URI'], '/xmlrpc.php')) {
 			return;
 		}
@@ -334,7 +338,10 @@ class Wnd_Defender {
 		return $this->cache->increment($key, $offset);
 	}
 
-	//获取客户端真实ip地址
+	/**
+	 *获取客户端 ip 地址
+	 *
+	 */
 	protected static function get_real_ip(): string {
 		static $realip;
 		if (isset($_SERVER)) {
