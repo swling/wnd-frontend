@@ -15,11 +15,15 @@ abstract class Wnd_Captcha {
 
 	protected $appkey;
 
+	protected $user_ip;
+
 	protected $captcha;
 
 	protected $captcha_nonce;
 
-	protected $user_ip;
+	public static $captcha_name = 'captcha';
+
+	public static $captcha_nonce_name = 'captcha_nonce';
 
 	public function __construct() {
 		$this->user_ip = wnd_get_user_ip();

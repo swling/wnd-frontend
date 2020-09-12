@@ -144,8 +144,8 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 				"' . $this->appid . '",
 				function(res) {
 					if(0 === res.ret){
-						$("#" + form_id + " [name=\'captcha\']").val(res.ticket);
-						$("#" + form_id + " [name=\'captcha_nonce\']").val(res.randstr);
+						$("#" + form_id + " [name=\'' . static::$captcha_name . '\']").val(res.ticket);
+						$("#" + form_id + " [name=\'' . static::$captcha_nonce_name . '\']").val(res.randstr);
 						wnd_ajax_submit(form_id);
 					}
 				}

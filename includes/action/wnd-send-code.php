@@ -16,7 +16,6 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 		$device_type  = $_POST['device_type'] ?? '';
 		$device_name  = $_POST['device_name'] ?? '';
 		$template     = $_POST['template'] ?: wnd_get_config('sms_template_v');
-		$captcha      = $_POST['captcha'] ?? '';
 		$current_user = wp_get_current_user();
 
 		// 防止前端篡改表单：校验验证码类型及接受设备

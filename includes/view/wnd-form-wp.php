@@ -54,8 +54,8 @@ class Wnd_Form_WP extends Wnd_Form {
 		 *开启验证码字段
 		 */
 		if ($this->enable_captcha) {
-			$this->add_hidden('captcha', '');
-			$this->add_hidden('captcha_nonce', '');
+			$this->add_hidden(Wnd_Captcha::$captcha_name, '');
+			$this->add_hidden(Wnd_Captcha::$captcha_nonce_name, '');
 		}
 	}
 
