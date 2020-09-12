@@ -258,7 +258,7 @@ class Wnd_Defender {
 			return;
 		}
 
-		$this->max_connections = 5;
+		$this->max_connections = 0;
 	}
 
 	/**
