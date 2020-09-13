@@ -236,7 +236,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	/**
 	 *构建包含当前站点标识的订单号码作为发送至三方支付平台的订单号
 	 *
-	 *为防止多站点公用一个支付应用id，或测试环境与正式环境中产生重复的支付订单id，在充值id的前缀前，添加了基于该站点home_url()的前缀字符
+	 *为防止多站点公用一个支付应用id，或测试环境与正式环境中产生重复的支付订单id，在充值id的前缀前，添加了基于该站点 site_url() 的前缀字符
 	 *@since 2019.03.04
 	 *
 	 *不采用别名做订单的原因：在WordPress中，不同类型的post type别名可以是重复的值，会在一定程度上导致不确定性，同时根据别名查询post的语句也更复杂
@@ -246,7 +246,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *
 	 */
 	public static function build_site_prefix(): string {
-		return strtoupper(substr(md5(home_url()), 0, 4));
+		return strtoupper(substr(md5(site_url()), 0, 4));
 	}
 
 	/**
