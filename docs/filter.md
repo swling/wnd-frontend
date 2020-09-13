@@ -96,20 +96,21 @@ apply_filters('wnd_user_panel_post_types', $post_types);
 ```
 
 ## 配置Wnd Config
-所有的配置选项如果通过 Wnd\Utility\Wnd_Config::get($option)获取，均自动加载一个与其$option名称对应的filter
-*注意：$option可以省略wnd_前缀，但filter不会改变，以下代码为其中一个配置的实例*
+所有的配置选项如果通过 Wnd\Utility\Wnd_Config::get($config_key)获取，均自动加载一个与其 $config_key 名称对应的 filter 匹配形式如下
 ```php
+$filter_name = 'wnd_option_' . $config_key;
+
 /**
 *@since 2020.04.11
 *注册后跳转地址
 */
-apply_filters('wnd_reg_redirect_url', $redirect_url);
+apply_filters('wnd_option_reg_redirect_url', $redirect_url);
 
 /**
 *@since 2020.04.12
 *支付成功后跳转链接（包含订单或充值）
 */
-apply_filters('wnd_pay_return_url', $return_url);
+apply_filters('wnd_option_pay_return_url', $return_url);
 
 ```
 ## 订单

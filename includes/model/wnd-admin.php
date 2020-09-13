@@ -16,39 +16,39 @@ class Wnd_Admin {
 		// 默认option数据
 		if (!get_option('wnd')) {
 			$default_option = [
-				'wnd_static_host'               => 'local',
-				'wnd_edit_page'                 => '',
-				'wnd_agreement_url'             => '',
-				'wnd_reg_redirect_url'          => '',
-				'wnd_default_avatar_url'        => WND_URL . 'static/images/avatar.jpg',
+				'static_host'               => 'local',
+				'edit_page'                 => '',
+				'agreement_url'             => '',
+				'reg_redirect_url'          => '',
+				'default_avatar_url'        => WND_URL . 'static/images/avatar.jpg',
 
-				'wnd_max_upload_size'           => '2048',
-				'wnd_max_stick_posts'           => '10',
+				'max_upload_size'           => '2048',
+				'max_stick_posts'           => '10',
 
-				'wnd_disable_locale'            => '',
+				'disable_locale'            => '',
 
-				'wnd_primary_color'             => '',
-				'wnd_second_color'              => '',
+				'primary_color'             => '',
+				'second_color'              => '',
 
-				'wnd_commission_rate'           => '',
-				'wnd_enable_anon_order'         => 0,
+				'commission_rate'           => '',
+				'enable_anon_order'         => 0,
 
-				'wnd_pay_return_url'            => get_option('home'),
-				'wnd_alipay_appid'              => '',
-				'wnd_alipay_private_key'        => '',
-				'wnd_alipay_public_key'         => '',
+				'pay_return_url'            => get_option('home'),
+				'alipay_appid'              => '',
+				'alipay_private_key'        => '',
+				'alipay_public_key'         => '',
 
-				'wnd_disable_email_reg'         => 0,
-				'wnd_disable_user_login'        => 0,
+				'disable_email_reg'         => 0,
+				'disable_user_login'        => 0,
 
-				'wnd_min_verification_interval' => '60',
-				'wnd_sms_sp'                    => 'tx',
-				'wnd_enable_sms'                => '短信接口appid',
-				'wnd_sms_appid'                 => '短信接口appid',
-				'wnd_sms_appkey'                => '短信接口appkey',
-				'wnd_sms_sign'                  => get_option('blogname'),
-				'wnd_sms_template_r'            => '注册短信模板ID',
-				'wnd_sms_template_v'            => '身份验证短信模板ID',
+				'min_verification_interval' => '60',
+				'sms_sp'                    => 'tx',
+				'enable_sms'                => '短信接口appid',
+				'sms_appid'                 => '短信接口appid',
+				'sms_appkey'                => '短信接口appkey',
+				'sms_sign'                  => get_option('blogname'),
+				'sms_template_r'            => '注册短信模板ID',
+				'sms_template_v'            => '身份验证短信模板ID',
 			];
 
 			update_option('wnd', $default_option);

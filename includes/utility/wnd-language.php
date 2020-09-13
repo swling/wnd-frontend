@@ -31,8 +31,8 @@ class Wnd_language {
 		add_filter('get_edit_post_link', [__CLASS__, 'filter_link'], 99);
 
 		// Wnd Filter
-		add_filter('wnd_reg_redirect_url', [__CLASS__, 'filter_reg_redirect_link'], 99);
-		add_filter('wnd_pay_return_url', [__CLASS__, 'filter_return_link'], 99);
+		add_filter('wnd_option_reg_redirect_url', [__CLASS__, 'filter_reg_redirect_link'], 99);
+		add_filter('wnd_option_pay_return_url', [__CLASS__, 'filter_return_link'], 99);
 
 		// 在用户完成注册时，将当前站点语言记录到用户字段
 		add_action('user_register', [__CLASS__, 'action_on_user_register'], 99, 1);
