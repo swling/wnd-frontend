@@ -25,7 +25,7 @@ abstract class Wnd_Module {
 	/**
 	 *构建
 	 */
-	abstract protected static function build();
+	abstract protected static function build(): string;
 
 	/**
 	 *构建提示信息

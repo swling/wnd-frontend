@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Profile_Form extends Wnd_Module {
 
-	protected static function build() {
+	protected static function build(): string{
 		$current_user = wp_get_current_user();
 		if (!$current_user->ID) {
 			return static::build_error_message(__('请登录', 'wnd'));

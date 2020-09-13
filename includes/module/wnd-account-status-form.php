@@ -8,7 +8,7 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Account_Status_Form extends Wnd_Module {
 
-	protected static function build($user_id = 0) {
+	protected static function build($user_id = 0): string {
 		if (!$user_id) {
 			return static::build_error_message(__('ID无效', 'wnd'));
 		}

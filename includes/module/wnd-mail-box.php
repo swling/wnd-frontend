@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Filter;
  */
 class Wnd_Mail_Box extends Wnd_Module {
 
-	protected static function build(int $posts_per_page = 0) {
+	protected static function build(int $posts_per_page = 0): string {
 		if (!is_user_logged_in()) {
 			return static::build_error_message(__('请登录', 'wnd'));
 		}

@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Reg_Form extends Wnd_Module {
 
-	protected static function build($type = 'email') {
+	protected static function build($type = 'email'): string{
 		// 设定默认值
 		$type = $type ?: (wnd_get_config('enable_sms') ? 'phone' : 'email');
 

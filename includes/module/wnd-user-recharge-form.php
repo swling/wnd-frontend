@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_User_Recharge_Form extends Wnd_Module {
 
-	protected static function build() {
+	protected static function build(): string {
 		if (!wnd_get_config('alipay_appid')) {
 			static::build_error_message(__('未设置支付接口', 'wnd'));
 		}

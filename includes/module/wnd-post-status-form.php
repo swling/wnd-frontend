@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Post_Status_Form extends Wnd_Module {
 
-	protected static function build($post_id = 0) {
+	protected static function build($post_id = 0): string{
 		$post = get_post($post_id);
 		if (!$post) {
 			return __('ID无效', 'wnd');

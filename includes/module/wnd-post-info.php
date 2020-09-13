@@ -7,7 +7,7 @@ namespace Wnd\Module;
  */
 class Wnd_Post_Info extends Wnd_Module {
 
-	protected static function build($post_id = 0) {
+	protected static function build($post_id = 0): string{
 		$post = $post_id ? get_post($post_id) : false;
 		if (!$post) {
 			return __('ID无效', 'wnd');

@@ -8,7 +8,7 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Account_Form extends Wnd_Module {
 
-	protected static function build() {
+	protected static function build(): string{
 		$user       = wp_get_current_user();
 		$enable_sms = wnd_get_config('enable_sms');
 		if (!$user->data->ID) {

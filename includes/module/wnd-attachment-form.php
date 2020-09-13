@@ -32,7 +32,7 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Attachment_Form extends Wnd_Module {
 
-	protected static function build($args = []) {
+	protected static function build($args = []): string{
 		$defaults = [
 			'attachment_id' => 0,
 			'post_parent'   => 0,

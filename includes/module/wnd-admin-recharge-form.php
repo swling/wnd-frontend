@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Admin_Recharge_Form extends Wnd_Module {
 
-	protected static function build() {
+	protected static function build(): string {
 		if (!is_super_admin()) {
 			return static::build_error_message(__('权限不足', 'wnd'));
 		}

@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Filter_User;
  */
 class Wnd_User_List_Table extends Wnd_Module {
 
-	protected static function build(int $number = 0) {
+	protected static function build(int $number = 0): string{
 		$orderby_args = [
 			'label'   => '排序',
 			'options' => [

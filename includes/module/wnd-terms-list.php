@@ -7,7 +7,7 @@ namespace Wnd\Module;
  **/
 class Wnd_Terms_List extends Wnd_Module {
 
-	protected static function build($args = []) {
+	protected static function build($args = []): string{
 		$defaults = [
 			'taxonomy'   => 'post_tag',
 			'number'     => 50,

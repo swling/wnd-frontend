@@ -200,7 +200,7 @@ class Wnd_Add_Action {
 			$class = \Wnd\Controller\Wnd_API::parse_class($module, 'Module');
 			$param = $_GET['param'] ?? '';
 
-			if (!is_callable([$class, 'build'])) {
+			if (!is_callable([$class, 'render'])) {
 				return __('未定义的Module', 'wnd') . $class;
 			}
 
