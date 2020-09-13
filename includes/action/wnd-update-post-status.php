@@ -6,71 +6,69 @@ use Wnd\Model\Wnd_Post;
 
 class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 
-	static $post_id;
-	static $after_status;
-	static $remarks;
-	static $stick_post;
-	static $before_post;
+	protected $post_id;
+	protected $after_status;
+	protected $remarks;
+	protected $stick_post;
+	protected $before_post;
 
 	/**
 	 *@since 2019.01.21
-	 *@param  $form_data['post_id']
-	 *@param  $form_data['post_status']
+	 *
 	 *@return array
 	 *前端快速更改文章状态
 	 *依赖：wp_update_post、wp_delete_post
 	 */
-	public static function execute(): array{
+	public function execute(): array{
 		// 获取数据
-		$form_data            = static::get_form_data();
-		static::$post_id      = (int) $form_data['post_id'];
-		static::$after_status = $form_data['post_status'];
-		static::$remarks      = $form_data['remarks'] ?? '';
-		static::$stick_post   = $form_data['stick_post'] ?? '';
-		static::$before_post  = get_post(static::$post_id);
+		$this->post_id      = (int) $this->data['post_id'];
+		$this->after_status = $this->data['post_status'];
+		$this->remarks      = $this->data['remarks'] ?? '';
+		$this->stick_post   = $this->data['stick_post'] ?? '';
+		$this->before_post  = get_post($this->post_id);
 
-		if (!static::$before_post) {
+		if (!$this->before_post) {
 			throw new Exception(__('无效的Post', 'wnd'));
 		}
 
 		// 在现有注册的post status基础上新增 delete，该状态表示直接删除文章 @since 2019.03.03
-		if (!in_array(static::$after_status, array_merge(get_post_stati(), ['delete']))) {
+		if (!in_array($this->after_status, array_merge(get_post_stati(), ['delete']))) {
 			throw new Exception(__('无效的Post状态', 'wnd'));
 		}
 
 		// 权限检测
-		$can_array              = ['status' => current_user_can('edit_post', static::$post_id) ? 1 : 0, 'msg' => __('权限错误', 'wnd')];
-		$can_update_post_status = apply_filters('wnd_can_update_post_status', $can_array, static::$before_post, static::$after_status);
+		$can_array              = ['status' => current_user_can('edit_post', $this->post_id) ? 1 : 0, 'msg' => __('权限错误', 'wnd')];
+		$can_update_post_status = apply_filters('wnd_can_update_post_status', $can_array, $this->before_post, $this->after_status);
 		if (0 === $can_update_post_status['status']) {
 			return $can_update_post_status;
 		}
 
 		// 更新Post
-		if ('delete' == static::$after_status) {
-			return static::delete_post();
+		if ('delete' == $this->after_status) {
+			return $this->delete_post();
 		} else {
-			return static::update_status();
+			return $this->update_status();
 		}
 	}
 
 	/**
 	 *更新状态
 	 */
-	protected static function update_status() {
+	protected function update_status() {
 		//执行更新：如果当前post为自定义版本，将版本数据更新到原post
-		if ('publish' == static::$after_status and Wnd_Post::is_revision(static::$post_id)) {
-			$update = Wnd_Post::restore_post_revision(static::$post_id, static::$after_status);
+		if ('publish' == $this->after_status and Wnd_Post::is_revision($this->post_id)) {
+			$update = Wnd_Post::restore_post_revision($this->post_id, $this->after_status);
 		} else {
-			$update = wp_update_post(['ID' => static::$post_id, 'post_status' => static::$after_status]);
+			$update = wp_update_post(['ID' => $this->post_id, 'post_status' => $this->after_status]);
 		}
 
 		/**
 		 *@since 2019.06.11 置顶操作
 		 */
-		static::stick_post();
+		$this->stick_post();
 
 		// 站内信
-		static::send_mail();
+		$this->send_mail();
 
 		// 完成更新
 		if ($update) {
@@ -83,10 +81,10 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 	/**
 	 *删除文章 无论是否设置了$force_delete 自定义类型的文章都会直接被删除
 	 */
-	protected static function delete_post() {
-		$delete = wp_delete_post(static::$post_id, true);
+	protected function delete_post() {
+		$delete = wp_delete_post($this->post_id, true);
 		if ($delete) {
-			static::send_mail();
+			$this->send_mail();
 
 			return ['status' => 5, 'msg' => __('已删除', 'wnd')];
 		} else {
@@ -97,16 +95,16 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 	/**
 	 *@since 2019.06.11 置顶操作
 	 */
-	protected static function stick_post() {
+	protected function stick_post() {
 		if (wnd_is_manager()) {
 			return;
 		}
 
-		if ('stick' == static::$stick_post and 'publish' == static::$after_status) {
-			wnd_stick_post(static::$post_id);
+		if ('stick' == $this->stick_post and 'publish' == $this->after_status) {
+			wnd_stick_post($this->post_id);
 
-		} elseif ('unstick' == static::$stick_post) {
-			wnd_unstick_post(static::$post_id);
+		} elseif ('unstick' == $this->stick_post) {
+			wnd_unstick_post($this->post_id);
 		}
 	}
 
@@ -114,21 +112,21 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 	 *@since 2020.05.23
 	 *站内信
 	 */
-	protected static function send_mail() {
-		if (get_current_user_id() == static::$before_post->post_author) {
+	protected function send_mail() {
+		if (get_current_user_id() == $this->before_post->post_author) {
 			return false;
 		}
 
-		if ('pending' == static::$before_post->post_status and 'draft' == static::$after_status) {
-			$subject = __('内容审核失败', 'wnd') . '[ID' . static::$post_id . ']';
-			$content = wnd_message(static::$remarks . '<p><a href="' . get_permalink(static::$post_id) . '" target="_blank">查看</a></p>', 'is-danger');
-		} elseif ('delete' == static::$after_status) {
-			$subject = __('内容已被删除', 'wnd') . '[ID' . static::$post_id . ']';
-			$content = wnd_message('<p>Title:《' . static::$before_post->post_title . '》</p>' . static::$remarks, 'is-danger');
+		if ('pending' == $this->before_post->post_status and 'draft' == $this->after_status) {
+			$subject = __('内容审核失败', 'wnd') . '[ID' . $this->post_id . ']';
+			$content = wnd_message($this->remarks . '<p><a href="' . get_permalink($this->post_id) . '" target="_blank">查看</a></p>', 'is-danger');
+		} elseif ('delete' == $this->after_status) {
+			$subject = __('内容已被删除', 'wnd') . '[ID' . $this->post_id . ']';
+			$content = wnd_message('<p>Title:《' . $this->before_post->post_title . '》</p>' . $this->remarks, 'is-danger');
 		} else {
 			return false;
 		}
 
-		return wnd_mail(static::$before_post->post_author, $subject, $content);
+		return wnd_mail($this->before_post->post_author, $subject, $content);
 	}
 }

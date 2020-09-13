@@ -14,13 +14,14 @@ class Wnd_Update_Post extends Wnd_Action_Ajax {
 	 *@return 	array
 	 *更新文章
 	 */
-	public static function execute($post_id = 0): array{
+	public function execute($post_id = 0): array{
 		// 获取被编辑Post ID
 		$_POST['_post_ID'] = (int) ($post_id ?: $_POST['_post_ID']);
 		if ($_POST['_post_ID']) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
-		return Wnd_Insert_Post::execute();
+		$action = new Wnd_Insert_Post();
+		return $action->execute();
 	}
 }

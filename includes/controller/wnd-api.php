@@ -229,7 +229,8 @@ class Wnd_API {
 		 */
 		if (is_callable([$class, 'execute'])) {
 			try {
-				return $class::execute();
+				$action = new $class();
+				return $action->execute();
 			} catch (Exception $e) {
 				return ['status' => 0, 'msg' => $e->getMessage()];
 			}

@@ -7,7 +7,7 @@ namespace Wnd\Action;
  */
 class Wnd_Paid_Download extends Wnd_Action {
 
-	public static function execute() {
+	public function execute() {
 		$post_id = (int) $_REQUEST['post_id'];
 		$user_id = get_current_user_id();
 		$price   = wnd_get_post_price($post_id);

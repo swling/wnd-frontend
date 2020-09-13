@@ -10,13 +10,12 @@ use Wnd\Action\Wnd_Create_Order;
  */
 class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 
-	public static function execute(): array{
+	public function execute(): array{
 		// 获取文章
-		$form_data = static::get_form_data();
-		$post_id   = (int) $form_data['post_id'];
-		$post      = get_post($post_id);
-		$price     = wnd_get_post_price($post_id);
-		$user_id   = get_current_user_id();
+		$post_id = (int) $this->data['post_id'];
+		$post    = get_post($post_id);
+		$price   = wnd_get_post_price($post_id);
+		$user_id = get_current_user_id();
 		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
@@ -55,10 +54,8 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 		}
 
 		//3、 付费下载
-		$order = Wnd_Create_Order::execute($post_id);
-		if (0 === $order['status']) {
-			return $order;
-		}
+		$order = new Wnd_Create_Order();
+		$order->execute($post_id);
 
 		return ['status' => 6, 'msg' => 'ok', 'data' => ['redirect_to' => $download_url]];
 	}

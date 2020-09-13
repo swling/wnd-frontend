@@ -10,9 +10,14 @@ use Exception;
  *@param $_POST['post_parent'];
  *@param $_POST['file_id'];
  */
-class Wnd_Delete_File extends Wnd_Action_Ajax {
+class Wnd_Delete_File extends Wnd_Action_Ajax_User {
 
-	public static function execute(): array{
+	/**
+	 *本操作非标准表单请求，无需解析表单数据
+	 */
+	protected $parse_data = false;
+
+	public function execute(): array{
 		$meta_key    = $_POST['meta_key'];
 		$post_parent = (int) $_POST['post_parent'];
 		$file_id     = (int) $_POST['file_id'];

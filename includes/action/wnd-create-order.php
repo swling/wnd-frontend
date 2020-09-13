@@ -11,10 +11,9 @@ use Wnd\Model\Wnd_Order;
  */
 class Wnd_Create_Order extends Wnd_Action_Ajax {
 
-	public static function execute(int $post_id = 0): array{
+	public function execute(int $post_id = 0): array{
 		if (!$post_id) {
-			$form_data = static::get_form_data();
-			$post_id   = $form_data['post_id'] ?? 0;
+			$post_id = $this->data['post_id'] ?? 0;
 		}
 
 		$user_id = get_current_user_id();

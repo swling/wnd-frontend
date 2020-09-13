@@ -10,7 +10,12 @@ use Wnd\Model\Wnd_Auth;
  */
 class Wnd_Send_Code extends Wnd_Action_Ajax {
 
-	public static function execute(): array{
+	/**
+	 *本操作非标准表单请求，无需解析表单数据
+	 */
+	protected $parse_data = false;
+
+	public function execute(): array{
 		$type         = $_POST['type'] ?? '';
 		$device       = $_POST['device'] ?? '';
 		$device_type  = $_POST['device_type'] ?? '';

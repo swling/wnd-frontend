@@ -12,20 +12,15 @@ use Exception;
  *do_action('wnd_ban_account', $user_id);
  *do_action('wnd_restore_account', $user_id);
  */
-class Wnd_Update_Account_Status extends Wnd_Action_Ajax {
+class Wnd_Update_Account_Status extends Wnd_Action_Ajax_Admin {
 
-	public static function execute(): array{
-		$form_data     = static::get_form_data();
-		$user_id       = (int) $form_data['user_id'];
-		$status        = $form_data['status'] ?? '';
+	public function execute(): array{
+		$user_id       = (int) $this->data['user_id'];
+		$status        = $this->data['status'] ?? '';
 		$before_status = get_user_meta($user_id, 'status', true) ?: 'ok';
 
 		if (!$user_id) {
 			throw new Exception(__('ID无效', 'wnd'));
-		}
-
-		if (!wnd_is_manager()) {
-			throw new Exception(__('权限不足', 'wnd'));
 		}
 
 		// 未发生改变

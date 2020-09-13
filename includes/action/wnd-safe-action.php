@@ -16,7 +16,7 @@ use Exception;
 class Wnd_Safe_Action extends Wnd_Action_Ajax {
 
 	// 根据method参数选择处理方法
-	public static function execute(): array{
+	public function execute(): array{
 		$method = $_REQUEST['method'] ?? false;
 		if (!$method) {
 			throw new Exception(__('未指定方法', 'wnd'));

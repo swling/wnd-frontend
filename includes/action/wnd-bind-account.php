@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Action;
 
-use Exception;
 use Wnd\Model\Wnd_Binder;
 
 /**
@@ -11,16 +10,12 @@ use Wnd\Model\Wnd_Binder;
  *@param $_POST['auth_code'] 		 	验证码
  *@param $_POST['_user_user_pass'] 		当前密码
  */
-class Wnd_Bind_Account extends Wnd_Action_Ajax {
+class Wnd_Bind_Account extends Wnd_Action_Ajax_User {
 
-	public static function execute(): array{
-		$form_data      = static::get_form_data();
-		$email_or_phone = $form_data['_user_user_email'] ?? ($form_data['phone'] ?? '');
-		$auth_code      = $form_data['auth_code'] ?? '';
-		$password       = $form_data['_user_user_pass'] ?? '';
-		if (!is_user_logged_in()) {
-			throw new Exception(__('请登录', 'wnd'));
-		}
+	public function execute(): array{
+		$email_or_phone = $this->data['_user_user_email'] ?? ($this->data['phone'] ?? '');
+		$auth_code      = $this->data['auth_code'] ?? '';
+		$password       = $this->data['_user_user_pass'] ?? '';
 
 		// 绑定
 		$bind = Wnd_Binder::get_instance($email_or_phone);

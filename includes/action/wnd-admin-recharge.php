@@ -11,17 +11,12 @@ use Wnd\Model\Wnd_Recharge;
  *@param $_POST['total_amount']
  *@param $_POST['remarks']
  */
-class Wnd_Admin_Recharge extends Wnd_Action_Ajax {
+class Wnd_Admin_Recharge extends Wnd_Action_Ajax_Admin {
 
-	public static function execute(): array{
-		if (!is_super_admin()) {
-			throw new Exception(__('权限错误', 'wnd'));
-		}
-
-		$form_data    = static::get_form_data();
-		$user_field   = $form_data['user_field'];
-		$total_amount = (float) $form_data['total_amount'];
-		$remarks      = $form_data['remarks'] ?: __('人工充值', 'wnd');
+	public function execute(): array{
+		$user_field   = $this->data['user_field'];
+		$total_amount = (float) $this->data['total_amount'];
+		$remarks      = $this->data['remarks'] ?: __('人工充值', 'wnd');
 
 		// 根据邮箱，手机，或用户名查询用户
 		$user = wnd_get_user_by($user_field);

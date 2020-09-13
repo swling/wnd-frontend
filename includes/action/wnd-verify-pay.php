@@ -14,7 +14,7 @@ use Wnd\Model\Wnd_Payment;
  */
 class Wnd_Verify_Pay extends Wnd_Action {
 
-	public static function execute() {
+	public function execute() {
 		/**
 		 *根据交易订单解析站内交易ID，并查询记录
 		 */

@@ -52,7 +52,7 @@ class Wnd_Form_Data {
 	 */
 	public static function get_form_data(bool $verify_sign): array{
 		if (empty($_POST)) {
-			throw new Exception(__('表单数据为空', 'wnd'));
+			return [];
 		}
 
 		/**

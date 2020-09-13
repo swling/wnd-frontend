@@ -13,11 +13,10 @@ use Exception;
  */
 class Wnd_Login extends Wnd_Action_Ajax {
 
-	public static function execute(): array{
-		$form_data   = static::get_form_data(true);
-		$username    = trim($form_data['_user_user_login']);
-		$password    = $form_data['_user_user_pass'];
-		$remember    = $form_data['remember'] ?? 0;
+	public function execute(): array{
+		$username    = trim($this->data['_user_user_login']);
+		$password    = $this->data['_user_user_pass'];
+		$remember    = $this->data['remember'] ?? 0;
 		$remember    = 1 == $remember ? true : false;
 		$redirect_to = $_REQUEST['redirect_to'] ?? home_url();
 

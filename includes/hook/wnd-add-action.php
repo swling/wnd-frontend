@@ -171,6 +171,7 @@ class Wnd_Add_Action {
 	public static function action_on_do_action() {
 		$action = $_GET['action'] ?? '';
 		$module = $_GET['module'] ?? '';
+		$nonce  = $_GET['_wpnonce'] ?? '';
 
 		// Action
 		if ($action) {
@@ -181,24 +182,41 @@ class Wnd_Add_Action {
 			}
 
 			//@since 2019.05.12 默认：校验nonce后执行action对应的控制类
-			if (($_GET['_wpnonce'] ?? false) and wp_verify_nonce($_GET['_wpnonce'], $action)) {
-				$class = \Wnd\Controller\Wnd_API::parse_class($action, 'Action');
-				return is_callable([$class, 'execute']) ? $class::execute() : __('未定义的Action', 'wnd') . $class;
-			} else {
+			if (!$nonce or !wp_verify_nonce($nonce, $action)) {
 				return __('Nonce校验失败', 'wnd');
 			}
+
+			$class = \Wnd\Controller\Wnd_API::parse_class($action, 'Action');
+			if (is_callable([$class, 'execute'])) {
+				return __('未定义的Action', 'wnd') . $class;
+			}
+
+			$action = new $class();
+			return $action->execute();
 		}
 
 		// Module
 		if ($module) {
 			$class = \Wnd\Controller\Wnd_API::parse_class($module, 'Module');
 			$param = $_GET['param'] ?? '';
-			return is_callable([$class, 'build']) ? $class::build($param) : __('未定义的Module', 'wnd') . $class;
+
+			if (!is_callable([$class, 'build'])) {
+				return __('未定义的Module', 'wnd') . $class;
+			}
+
+			if ($_GET['echo'] ?? false) {
+				wp_head();
+				echo $class::build($param);
+				return;
+			} else {
+				return $class::build($param);
+			}
 		}
 
 		// 支付异步通知
 		if (!empty($_GET) or !empty($_POST)) {
-			Wnd_Verify_Pay::execute();
+			$verify = new Wnd_Verify_Pay;
+			$verify->execute();
 		}
 	}
 }

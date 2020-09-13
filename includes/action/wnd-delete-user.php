@@ -8,18 +8,13 @@ use Exception;
  *@since 2020.04.30
  *@param $_POST['user_id'];
  */
-class Wnd_Delete_User extends Wnd_Action_Ajax {
+class Wnd_Delete_User extends Wnd_Action_Ajax_Root {
 
-	public static function execute(): array{
-		$form_data = static::get_form_data();
-		$user_id   = (int) $form_data['user_id'];
-		$confirm   = $form_data['confirm'] ?? false;
+	public function execute(): array{
+		$user_id = (int) $this->data['user_id'];
+		$confirm = $this->data['confirm'] ?? false;
 		if (!$user_id) {
 			throw new Exception(__('ID无效', 'wnd'));
-		}
-
-		if (!is_super_admin()) {
-			throw new Exception(__('权限不足', 'wnd'));
 		}
 
 		if (is_super_admin($user_id)) {

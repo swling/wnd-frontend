@@ -23,7 +23,12 @@ use Wnd\Utility\Wnd_Form_Data;
  */
 class Wnd_Reg extends Wnd_Action_Ajax {
 
-	public static function execute(): array{
+	/**
+	 *本操作需要分类解析表单数据，故移除通用表单解析数据
+	 */
+	protected $parse_data = false;
+
+	public function execute(): array{
 		$form_data               = new Wnd_Form_Data();
 		$user_data               = $form_data->get_user_data();
 		$user_data['user_login'] = $user_data['user_login'] ?? wnd_generate_login();

@@ -27,7 +27,12 @@ use Exception;
  */
 class Wnd_Upload_File extends Wnd_Action_Ajax {
 
-	public static function execute(): array{
+	/**
+	 *本操作非标准表单请求，无需解析表单数据
+	 */
+	protected $parse_data = false;
+
+	public function execute(): array{
 		//$_FILES['wnd_file']需要与input name 值匹配
 		if (empty($_FILES['wnd_file'])) {
 			throw new Exception(__('上传文件为空', 'wnd'));

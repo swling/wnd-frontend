@@ -17,14 +17,16 @@ use Wnd\Utility\Wnd_Form_Data;
  *_wpusermeta_{key} （*WordPress原生字段）
  *
  */
-class Wnd_Update_Profile extends Wnd_Action_Ajax {
+class Wnd_Update_Profile extends Wnd_Action_Ajax_User {
 
-	public static function execute(): array{
+	/**
+	 *本操作需要分类解析表单数据，故移除通用表单解析数据
+	 */
+	protected $parse_data = false;
+
+	public function execute(): array{
 		$user    = wp_get_current_user();
 		$user_id = $user->ID;
-		if (!$user_id) {
-			throw new Exception(__('请登录', 'wnd'));
-		}
 
 		// 实例化WndWP表单数据处理对象
 		$form_data         = new Wnd_Form_Data();

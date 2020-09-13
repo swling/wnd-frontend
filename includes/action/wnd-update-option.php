@@ -8,13 +8,14 @@ use Wnd\Utility\Wnd_Form_Data;
  *@since 2020.06.24
  *更新options
  */
-class Wnd_Update_Option extends Wnd_Action_Ajax {
+class Wnd_Update_Option extends Wnd_Action_Ajax_Root {
 
-	public static function execute(): array{
-		if (!is_super_admin()) {
-			throw new Exception(__('权限错误', 'wnd'));
-		}
+	/**
+	 *本操作需要分类解析表单数据，故移除通用表单解析数据
+	 */
+	protected $parse_data = false;
 
+	public function execute(): array{
 		$option_name = $_POST['option_name'];
 		$append      = (bool) $_POST['append'];
 

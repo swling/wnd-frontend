@@ -10,20 +10,16 @@ use Exception;
  *@param $_POST['_user_new_pass']
  *@param $_POST['_user_new_pass_repeat']
  */
-class Wnd_Update_Account extends Wnd_Action_Ajax {
+class Wnd_Update_Account extends Wnd_Action_Ajax_User {
 
-	public static function execute(): array{
+	public function execute(): array{
 		$user    = wp_get_current_user();
 		$user_id = $user->ID;
-		if (!$user_id) {
-			throw new Exception(__('请登录', 'wnd'));
-		}
 
 		$user_data           = ['ID' => $user_id];
-		$form_data           = static::get_form_data();
-		$user_pass           = $form_data['_user_user_pass'] ?? '';
-		$new_password        = $form_data['_user_new_pass'] ?? '';
-		$new_password_repeat = $form_data['_user_new_pass_repeat'] ?? '';
+		$user_pass           = $this->data['_user_user_pass'] ?? '';
+		$new_password        = $this->data['_user_new_pass'] ?? '';
+		$new_password_repeat = $this->data['_user_new_pass_repeat'] ?? '';
 
 		// 修改密码
 		if (!empty($new_password_repeat)) {
