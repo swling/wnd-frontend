@@ -8,7 +8,7 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Bind_Phone_Form extends Wnd_Module {
 
-	public static function build() {
+	protected static function build() {
 		$current_user = wp_get_current_user();
 		if (!$current_user->ID) {
 			return static::build_error_message(__('请登录', 'wnd'));

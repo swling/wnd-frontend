@@ -11,7 +11,7 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Order_Payment_Form extends Wnd_Module {
 
-	public static function build($post_id = 0) {
+	protected static function build($post_id = 0) {
 		$use_id = get_current_user_id();
 		$form   = new Wnd_Form_WP(true, !$use_id);
 		$form->set_form_title(get_the_title($post_id), true);

@@ -187,7 +187,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	/**
 	 *动态子类下拉菜单，不支持复选
 	 *其具体筛选项，将跟随上一级动态菜单而定
-	 *@see Wnd\Module\Wnd_Sub_Terms_Options::build()
+	 *@see Wnd\Module\Wnd_Sub_Terms_Options::render()
 	 *
 	 *@since 2020.04.14
 	 **/

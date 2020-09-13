@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Filter;
  */
 class Wnd_Admin_Posts_Panel extends Wnd_Module {
 
-	public static function build(int $posts_per_page = 0) {
+	protected static function build(int $posts_per_page = 0) {
 		if (!wnd_is_manager()) {
 			return static::build_error_message(__('权限不足', 'wnd'));
 		}

@@ -43,7 +43,7 @@ wnd_ajax_modal("wnd_user_center", param = "xxx");
 ```
 实际类名称：
 ```php
-Wnd\Module\Wnd_User_Center::build('xxx');
+Wnd\Module\Wnd_User_Center::render('xxx');
 ```
 
 
@@ -69,7 +69,7 @@ wnd_ajax_modal("Wndt_Bid_Form", param = "xxx");
 ```
 实际类名称：
 ```php
-Wndt\Module\Wndt_Bid_Form::build('xxx');
+Wndt\Module\Wndt_Bid_Form::render('xxx');
 ```
 
 ### 插件拓展
@@ -100,7 +100,7 @@ wnd_ajax_modal("Wndt_File_Import\\Wndt_Demo",  param = "xxx");
 ```
 实际类名称：
 ```php
-Wnd_Plugin\Wndt_File_Import\Module\Wndt_Demo::build('xxx');
+Wnd_Plugin\Wndt_File_Import\Module\Wndt_Demo::render('xxx');
 ```
 ### 拓展中添加第三方组件
 {plugin_or_theme_dir}/includes/component文件夹存储第三方组件，按通用驼峰命名规则

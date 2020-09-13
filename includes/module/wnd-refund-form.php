@@ -8,7 +8,7 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Refund_Form extends Wnd_Module {
 
-	public static function build($payment_id = 0) {
+	protected static function build($payment_id = 0) {
 		if (!$payment_id) {
 			return static::build_error_message(__('ID无效', 'wnd'));
 		}

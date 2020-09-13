@@ -45,7 +45,7 @@ class Wnd_Pay_Button {
 	 *构建Html
 	 *
 	 */
-	public static function build(int $post_id, bool $with_paid_content): string {
+	public static function render(int $post_id, bool $with_paid_content): string {
 		static::$post_id = $post_id;
 		static::$post    = static::$post_id ? get_post(static::$post_id) : false;
 		if (!static::$post) {

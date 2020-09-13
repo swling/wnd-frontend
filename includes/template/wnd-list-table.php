@@ -13,7 +13,7 @@ class Wnd_List_table {
 	/**
 	 *构建表单
 	 */
-	public static function build(\WP_Query $query) {
+	public static function render(\WP_Query $query) {
 		$method = 'build_' . $query->query_vars['post_type'] . '_table';
 		$method = str_replace('-', '_', $method);
 		if (method_exists(__CLASS__, $method)) {

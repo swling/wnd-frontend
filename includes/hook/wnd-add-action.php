@@ -209,10 +209,10 @@ class Wnd_Add_Action {
 				echo '<head>';
 				wp_head();
 				echo '</head>';
-				echo '<body>' . $class::build($param) . '</body>';
+				echo '<body>' . $class::render($param) . '</body>';
 				return;
 			} else {
-				return $class::build($param);
+				return $class::render($param);
 			}
 		}
 

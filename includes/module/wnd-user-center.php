@@ -9,7 +9,7 @@ namespace Wnd\Module;
  */
 class Wnd_User_Center extends Wnd_Module {
 
-	public static function build($args = []) {
+	protected static function build($args = []) {
 		$ajax_type         = $_GET['ajax_type'] ?? '';
 		$enable_sms        = (1 == wnd_get_config('enable_sms')) ? true : false;
 		$disable_email_reg = (1 == wnd_get_config('disable_email_reg')) ? true : false;
@@ -35,7 +35,7 @@ class Wnd_User_Center extends Wnd_Module {
 		 */
 		if ('reset_password' == $do) {
 			$html = $wrap ? '<div id="user-center">' : '';
-			$html .= Wnd_Reset_Password_Form::build($type);
+			$html .= Wnd_Reset_Password_Form::render($type);
 			$html .= '<div class="has-text-centered">';
 
 			if (wnd_doing_ajax()) {
@@ -78,7 +78,7 @@ class Wnd_User_Center extends Wnd_Module {
 		if (!$is_user_logged_in) {
 			switch ($do) {
 			case 'register':
-				$html .= Wnd_Reg_Form::build($type);
+				$html .= Wnd_Reg_Form::render($type);
 				$html .= '<div class="has-text-centered">';
 				if (wnd_doing_ajax()) {
 					if ('email' == $type and $enable_sms) {
@@ -103,7 +103,7 @@ class Wnd_User_Center extends Wnd_Module {
 
 			default:
 			case 'login':
-				$html .= Wnd_Login_Form::build();
+				$html .= Wnd_Login_Form::render();
 				$html .= '<div class="has-text-centered">';
 				if (wnd_doing_ajax()) {
 					$html .= static::build_module_link('do=register', __('立即注册', 'wnd'), $ajax_type) . ' | ';
@@ -129,7 +129,7 @@ class Wnd_User_Center extends Wnd_Module {
 					$html .= '<li><a href="' . add_query_arg('tab', 'account') . '">' . __('账户', 'wnd') . '</a></li>';
 				}
 				$html .= '</ul></div>';
-				$html .= Wnd_Profile_Form::build();
+				$html .= Wnd_Profile_Form::render();
 				break;
 
 			case 'account':
@@ -142,7 +142,7 @@ class Wnd_User_Center extends Wnd_Module {
 					$html .= '<li class="is-active"><a href="' . add_query_arg('tab', 'account') . '">' . __('账户', 'wnd') . '</a></li>';
 				}
 				$html .= '</ul></div>';
-				$html .= Wnd_Account_Form::build();
+				$html .= Wnd_Account_Form::render();
 				break;
 			}
 		}

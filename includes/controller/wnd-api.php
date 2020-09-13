@@ -157,14 +157,14 @@ class Wnd_API {
 		 *@since 2019.10.01
 		 *为实现惰性加载，废弃函数支持，改用类
 		 */
-		if (is_callable([$class, 'build'])) {
-			try {
-				return $class::build($param);
-			} catch (Exception $e) {
-				return ['status' => 0, 'msg' => $e->getMessage()];
-			}
-		} else {
+		if (!is_callable([$class, 'render'])) {
 			return ['status' => 0, 'msg' => __('无效的UI', 'wnd') . ':' . $class];
+		}
+
+		try {
+			return $class::render($param);
+		} catch (Exception $e) {
+			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 	}
 
@@ -188,14 +188,14 @@ class Wnd_API {
 		$class = static::parse_class($_GET['data'], 'JsonGet');
 		$param = $_GET['param'] ?? '';
 
-		if (is_callable([$class, 'get'])) {
-			try {
-				return ['status' => 1, 'msg' => '', 'data' => $class::get($param)];
-			} catch (Exception $e) {
-				return ['status' => 0, 'msg' => $e->getMessage()];
-			}
-		} else {
+		if (!is_callable([$class, 'get'])) {
 			return ['status' => 0, 'msg' => __('无效的Json Data', 'wnd') . ':' . $class];
+		}
+
+		try {
+			return ['status' => 1, 'msg' => '', 'data' => $class::get($param)];
+		} catch (Exception $e) {
+			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 	}
 
@@ -227,15 +227,15 @@ class Wnd_API {
 		 *@since 2019.10.01
 		 *为实现惰性加载，使用控制类
 		 */
-		if (is_callable([$class, 'execute'])) {
-			try {
-				$action = new $class();
-				return $action->execute();
-			} catch (Exception $e) {
-				return ['status' => 0, 'msg' => $e->getMessage()];
-			}
-		} else {
+		if (!is_callable([$class, 'execute'])) {
 			return ['status' => 0, 'msg' => __('无效的Action', 'wnd')];
+		}
+
+		try {
+			$action = new $class();
+			return $action->execute();
+		} catch (Exception $e) {
+			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 	}
 

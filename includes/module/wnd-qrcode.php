@@ -7,7 +7,7 @@ namespace Wnd\Module;
  */
 class Wnd_Qrcode extends Wnd_Module {
 
-	public static function build($string = '') {
+	protected static function build($string = '') {
 		if (!$string) {
 			return '';
 		}

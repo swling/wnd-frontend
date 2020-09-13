@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Filter;
  */
 class Wnd_User_Finance_Panel extends Wnd_Module {
 
-	public static function build(int $posts_per_page = 0) {
+	protected static function build(int $posts_per_page = 0) {
 		$user_id        = get_current_user_id();
 		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 		if (!$user_id) {

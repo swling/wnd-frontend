@@ -8,7 +8,7 @@
  *@param WP_Query 实例化
  */
 function wnd_list_table(WP_Query $query) {
-	return Wnd\Template\Wnd_List_Table::build($query);
+	return Wnd\Template\Wnd_List_Table::render($query);
 }
 
 /**
@@ -231,7 +231,7 @@ function wnd_post_thumbnail($post_id, $width, $height) {
  *付费按钮
  */
 function wnd_pay_button($post_id, $with_paid_content) {
-	return Wnd\Template\Wnd_Pay_Button::build($post_id, $with_paid_content);
+	return Wnd\Template\Wnd_Pay_Button::render($post_id, $with_paid_content);
 }
 
 /**

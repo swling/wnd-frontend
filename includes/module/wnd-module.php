@@ -8,9 +8,24 @@ namespace Wnd\Module;
 abstract class Wnd_Module {
 
 	/**
-	 *构建Html
+	 *渲染
 	 */
-	abstract public static function build();
+	public static function render($param = '') {
+		static::check();
+		return static::build($param);
+	}
+
+	/**
+	 *权限核查
+	 */
+	protected static function check() {
+		return;
+	}
+
+	/**
+	 *构建
+	 */
+	abstract protected static function build();
 
 	/**
 	 *构建提示信息
