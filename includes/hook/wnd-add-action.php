@@ -205,8 +205,11 @@ class Wnd_Add_Action {
 			}
 
 			if ($_GET['echo'] ?? false) {
+				echo '<!DOCTYPE html>';
+				echo '<head>';
 				wp_head();
-				echo $class::build($param);
+				echo '</head>';
+				echo '<body>' . $class::build($param) . '</body>';
 				return;
 			} else {
 				return $class::build($param);
