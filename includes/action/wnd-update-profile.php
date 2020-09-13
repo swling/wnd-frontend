@@ -39,13 +39,6 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 			return $user_can_update_profile;
 		}
 
-		// 更新用户
-		$user_id = wp_update_user($user_data);
-		if (is_wp_error($user_id)) {
-			$msg = $user_id->get_error_message();
-			throw new Exception($msg);
-		}
-
 		// 更新meta
 		if (!empty($user_meta_data)) {
 			wnd_update_user_meta_array($user_id, $user_meta_data);
@@ -61,7 +54,12 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax {
 			unset($key, $value);
 		}
 
-		do_action('wnd_update_profile', $user_id);
+		// 更新用户
+		$user_id = wp_update_user($user_data);
+		if (is_wp_error($user_id)) {
+			$msg = $user_id->get_error_message();
+			throw new Exception($msg);
+		}
 
 		// 返回值过滤
 		return apply_filters('wnd_update_profile_return', ['status' => 1, 'msg' => __('更新成功', 'wnd')], $user_id);

@@ -17,8 +17,9 @@ do_action('wnd_delete_file', $attachment_id, $post_parent, $meta_key);
 
 ## 用户
 ```php
-##更新用户资料后
-do_action('wnd_update_profile', $user_id);
+##更新用户资料后 
+// 已废弃 请采用 WordPress官方 Hook : do_action( 'profile_update', $user_id, $old_user_data );
+// do_action('wnd_update_profile', $user_id);
 
 ##管理员封禁账户后执行
 do_action('wnd_ban_account', $user_id);
