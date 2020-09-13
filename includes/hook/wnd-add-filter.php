@@ -83,8 +83,9 @@ class Wnd_Add_Filter {
 	 *删除用户权限检测
 	 */
 	public static function filter_can_delete_user($can_array, $user_id) {
-		if (0 != wnd_get_user_money($user_id)) {
-			$can_array = ['status' => 0, 'msg' => __('当前账户余额不为零', 'wnd')];
+		$money = wnd_get_user_money($user_id);
+		if (0 != $money) {
+			$can_array = ['status' => 0, 'msg' => __('当前账户余额不为零：¥' . $money, 'wnd')];
 		}
 
 		return $can_array;
