@@ -113,7 +113,7 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 	 *站内信
 	 */
 	protected function send_mail() {
-		if (get_current_user_id() == $this->before_post->post_author) {
+		if ($this->user_id == $this->before_post->post_author) {
 			return false;
 		}
 

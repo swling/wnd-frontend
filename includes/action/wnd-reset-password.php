@@ -18,7 +18,6 @@ class Wnd_Reset_Password extends Wnd_Action_Ajax {
 		$new_password        = $this->data['_user_new_pass'] ?? '';
 		$new_password_repeat = $this->data['_user_new_pass_repeat'] ?? '';
 		$auth_code           = $this->data['auth_code'];
-		$is_user_logged_in   = is_user_logged_in();
 
 		// 验证密码正确性
 		if (strlen($new_password) < 6) {
@@ -29,7 +28,7 @@ class Wnd_Reset_Password extends Wnd_Action_Ajax {
 		}
 
 		//获取用户
-		$user = $is_user_logged_in ? wp_get_current_user() : wnd_get_user_by($email_or_phone);
+		$user = $this->user_id ? $this->user : wnd_get_user_by($email_or_phone);
 		if (!$user) {
 			throw new Exception(__('账户未注册', 'wnd'));
 		}
@@ -50,7 +49,7 @@ class Wnd_Reset_Password extends Wnd_Action_Ajax {
 
 		reset_password($user, $new_password);
 		return [
-			'status' => $is_user_logged_in ? 4 : 1,
+			'status' => $this->user_id ? 4 : 1,
 			'msg'    => __('密码修改成功', 'wnd') . '&nbsp;<a onclick="wnd_ajax_modal(\'wnd_login_form\');">' . __('登录', 'wnd') . '</a>',
 		];
 	}

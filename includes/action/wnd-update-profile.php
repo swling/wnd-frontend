@@ -25,13 +25,10 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax_User {
 	protected $parse_data = false;
 
 	public function execute(): array{
-		$user    = wp_get_current_user();
-		$user_id = $user->ID;
-
 		// 实例化WndWP表单数据处理对象
 		$form_data         = new Wnd_Form_Data();
 		$user_data         = $form_data->get_user_data();
-		$user_data['ID']   = $user_id;
+		$user_data['ID']   = $this->user_id;
 		$user_meta_data    = $form_data->get_user_meta_data();
 		$wp_user_meta_data = $form_data->get_wp_user_meta_data();
 
@@ -43,27 +40,26 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax_User {
 
 		// 更新meta
 		if (!empty($user_meta_data)) {
-			wnd_update_user_meta_array($user_id, $user_meta_data);
+			wnd_update_user_meta_array($this->user_id, $user_meta_data);
 		}
 
 		if (!empty($wp_user_meta_data)) {
 			foreach ($wp_user_meta_data as $key => $value) {
 				// 下拉菜单默认未选择时，值为 -1 。过滤
 				if ('-1' != $value) {
-					update_user_meta($user_id, $key, $value);
+					update_user_meta($this->user_id, $key, $value);
 				}
 			}
 			unset($key, $value);
 		}
 
 		// 更新用户
-		$user_id = wp_update_user($user_data);
-		if (is_wp_error($user_id)) {
-			$msg = $user_id->get_error_message();
-			throw new Exception($msg);
+		$action = wp_update_user($user_data);
+		if (is_wp_error($action)) {
+			throw new Exception($action->get_error_message());
 		}
 
 		// 返回值过滤
-		return apply_filters('wnd_update_profile_return', ['status' => 1, 'msg' => __('更新成功', 'wnd')], $user_id);
+		return apply_filters('wnd_update_profile_return', ['status' => 1, 'msg' => __('更新成功', 'wnd')], $this->user_id);
 	}
 }

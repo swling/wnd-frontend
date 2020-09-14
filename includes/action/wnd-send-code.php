@@ -16,12 +16,11 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 	protected $parse_data = false;
 
 	public function execute(): array{
-		$type         = $_POST['type'] ?? '';
-		$device       = $_POST['device'] ?? '';
-		$device_type  = $_POST['device_type'] ?? '';
-		$device_name  = $_POST['device_name'] ?? '';
-		$template     = $_POST['template'] ?: wnd_get_config('sms_template_v');
-		$current_user = wp_get_current_user();
+		$type        = $_POST['type'] ?? '';
+		$device      = $_POST['device'] ?? '';
+		$device_type = $_POST['device_type'] ?? '';
+		$device_name = $_POST['device_name'] ?? '';
+		$template    = $_POST['template'] ?: wnd_get_config('sms_template_v');
 
 		// 防止前端篡改表单：校验验证码类型及接受设备
 		if (!wp_verify_nonce($_POST['type_nonce'], $device_type . $type)) {
@@ -32,8 +31,8 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 		 *已登录用户，且账户已绑定邮箱/手机，且验证类型不为bind（切换绑定邮箱）
 		 *发送验证码给当前账户
 		 */
-		if ($current_user->ID and $type != 'bind') {
-			$device = ('email' == $device_type) ? $current_user->user_email : wnd_get_user_phone($current_user->ID);
+		if ($this->user->ID and $type != 'bind') {
+			$device = ('email' == $device_type) ? $this->user->user_email : wnd_get_user_phone($this->user->ID);
 			if (!$device) {
 				throw new Exception(__('当前账户未绑定', 'wnd') . $device_name);
 			}

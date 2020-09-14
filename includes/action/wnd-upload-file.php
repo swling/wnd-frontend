@@ -44,10 +44,9 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 		$thumbnail_width  = (int) ($_POST['thumbnail_width'] ?? 0);
 		$meta_key         = $_POST['meta_key'] ?? '';
 		$post_parent      = (int) ($_POST['post_parent'] ?? 0);
-		$user_id          = get_current_user_id();
 
 		// 上传信息校验
-		if (!$user_id and !$post_parent) {
+		if (!$this->user_id and !$post_parent) {
 			throw new Exception(__('User ID及Post ID不可同时为空', 'wnd'));
 		}
 

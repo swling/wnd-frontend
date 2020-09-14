@@ -13,10 +13,7 @@ use Exception;
 class Wnd_Update_Account extends Wnd_Action_Ajax_User {
 
 	public function execute(): array{
-		$user    = wp_get_current_user();
-		$user_id = $user->ID;
-
-		$user_data           = ['ID' => $user_id];
+		$user_data           = ['ID' => $this->user_id];
 		$user_pass           = $this->data['_user_user_pass'] ?? '';
 		$new_password        = $this->data['_user_new_pass'] ?? '';
 		$new_password_repeat = $this->data['_user_new_pass_repeat'] ?? '';
@@ -35,7 +32,7 @@ class Wnd_Update_Account extends Wnd_Action_Ajax_User {
 		}
 
 		// 原始密码校验
-		if (!wp_check_password($user_pass, $user->data->user_pass, $user->ID)) {
+		if (!wp_check_password($user_pass, $this->user->data->user_pass, $this->user->ID)) {
 			throw new Exception(__('密码错误', 'wnd'));
 		}
 

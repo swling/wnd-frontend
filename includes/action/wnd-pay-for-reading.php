@@ -13,17 +13,16 @@ class Wnd_Pay_For_Reading extends Wnd_Action_Ajax {
 	public function execute(): array{
 		$post_id = (int) $this->data['post_id'];
 		$post    = get_post($post_id);
-		$user_id = get_current_user_id();
 		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
-		// if (!$user_id) {
+		// if (!$this->user_id) {
 		// 	throw new Exception(__('请登录', 'wnd'));
 		// }
 
 		// 1、已付费
-		if (wnd_user_has_paid($user_id, $post_id)) {
+		if (wnd_user_has_paid($this->user_id, $post_id)) {
 			throw new Exception(__('请勿重复操作', 'wnd'));
 		}
 

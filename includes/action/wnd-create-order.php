@@ -16,15 +16,13 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			$post_id = $this->data['post_id'] ?? 0;
 		}
 
-		$user_id = get_current_user_id();
-
 		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id);
 		if (0 === $wnd_can_create_order['status']) {
 			return $wnd_can_create_order;
 		}
 
 		// 写入消费数据
-		static::check_create($post_id, $user_id);
+		static::check_create($post_id, $this->user_id);
 		$order = new Wnd_Order();
 		$order->set_object_id($post_id);
 		$order->set_subject(get_the_title($post_id));

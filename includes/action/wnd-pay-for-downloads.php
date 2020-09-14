@@ -15,12 +15,11 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 		$post_id = (int) $this->data['post_id'];
 		$post    = get_post($post_id);
 		$price   = wnd_get_post_price($post_id);
-		$user_id = get_current_user_id();
 		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
-		// if (!$user_id) {
+		// if (!$this->user_id) {
 		// 	throw new Exception(__('请登录', 'wnd'));
 		// }
 
@@ -44,12 +43,12 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 		$download_url = add_query_arg($download_args, wnd_get_do_url());
 
 		//1、免费，或者已付费
-		if (!$price or wnd_user_has_paid($user_id, $post_id)) {
+		if (!$price or wnd_user_has_paid($this->user_id, $post_id)) {
 			return ['status' => 6, 'msg' => 'ok', 'data' => ['redirect_to' => $download_url]];
 		}
 
 		//2、 作者直接下载
-		if ($post->post_author == get_current_user_id()) {
+		if ($post->post_author == $this->user_id) {
 			return ['status' => 6, 'msg' => 'ok', 'data' => ['redirect_to' => $download_url]];
 		}
 
