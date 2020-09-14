@@ -7,14 +7,9 @@ use Wnd\View\Wnd_Form_User;
  *@since 2019.01.29
  *用户常规资料表单
  */
-class Wnd_Profile_Form extends Wnd_Module {
+class Wnd_Profile_Form extends Wnd_Module_User {
 
 	protected static function build(): string{
-		$current_user = wp_get_current_user();
-		if (!$current_user->ID) {
-			return static::build_error_message(__('请登录', 'wnd'));
-		}
-
 		$form = new Wnd_Form_User();
 		// profile表单可能有较为复杂的编辑界面，阻止回车提交
 		$form->add_form_attr('onsubmit', 'return false');

@@ -69,7 +69,7 @@ abstract class Wnd_Module {
 			return;
 		}
 
-		$class = $is_centered ? 'is-danger has-text-centered' : 'is-primary';
-		return wnd_notification($notification, 'is-danger', false);
+		$class = $is_centered ? 'is-danger has-text-centered' : 'is-danger';
+		return wnd_notification($notification, $class, false);
 	}
 }

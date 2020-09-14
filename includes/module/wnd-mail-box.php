@@ -7,12 +7,9 @@ use Wnd\View\Wnd_Filter;
  *@since 2019.02.19 封装前端当前用户站内信
  *@param $posts_per_page 每页列表数目
  */
-class Wnd_Mail_Box extends Wnd_Module {
+class Wnd_Mail_Box extends Wnd_Module_User {
 
-	protected static function build(int $posts_per_page = 0): string {
-		if (!is_user_logged_in()) {
-			return static::build_error_message(__('请登录', 'wnd'));
-		}
+	protected static function build(int $posts_per_page = 0): string{
 		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 
 		$filter = new Wnd_Filter(wnd_doing_ajax());

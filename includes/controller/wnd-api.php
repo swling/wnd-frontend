@@ -144,7 +144,7 @@ class Wnd_API {
 	 *1、类名称必须以wndt为前缀
 	 *2、命名空间必须为：Wndt\Module
 	 */
-	public static function handle_interface() {
+	public static function handle_interface(): array{
 		if (!isset($_GET['module'])) {
 			return ['status' => 0, 'msg' => __('未指定UI', 'wnd')];
 		}
@@ -162,7 +162,7 @@ class Wnd_API {
 		}
 
 		try {
-			return $class::render($param);
+			return ['status' => 1, 'data' => $class::render($param)];
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
@@ -179,7 +179,7 @@ class Wnd_API {
 	 *1、类名称必须以wndt为前缀
 	 *2、命名空间必须为：Wndt\JsonGet
 	 */
-	public static function handle_jsonget() {
+	public static function handle_jsonget(): array{
 		if (!isset($_GET['data'])) {
 			return ['status' => 0, 'msg' => __('未指定Data', 'wnd')];
 		}

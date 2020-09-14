@@ -7,13 +7,9 @@ use Wnd\View\Wnd_Filter;
  *@since 2019.02.19 封装前端管理员内容审核平台
  *@param $posts_per_page 每页列表数目
  */
-class Wnd_Admin_Posts_Panel extends Wnd_Module {
+class Wnd_Admin_Posts_Panel extends Wnd_Module_Admin {
 
-	protected static function build(int $posts_per_page = 0): string {
-		if (!wnd_is_manager()) {
-			return static::build_error_message(__('权限不足', 'wnd'));
-		}
-
+	protected static function build(int $posts_per_page = 0): string{
 		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 		$filter         = new Wnd_Filter(wnd_doing_ajax());
 		$filter->add_search_form();

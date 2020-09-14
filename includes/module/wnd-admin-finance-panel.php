@@ -7,12 +7,9 @@ use Wnd\View\Wnd_Filter;
  *@since 2019.03.14 财务统计中心
  *@param $posts_per_page 每页列表数目
  */
-class Wnd_Admin_Finance_Panel extends Wnd_Module {
+class Wnd_Admin_Finance_Panel extends Wnd_Module_Root {
 
-	protected static function build(int $posts_per_page = 0): string {
-		if (!is_super_admin()) {
-			return static::build_error_message(__('权限不足', 'wnd'));
-		}
+	protected static function build(int $posts_per_page = 0): string{
 		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
 
 		$filter = new Wnd_Filter(wnd_doing_ajax());

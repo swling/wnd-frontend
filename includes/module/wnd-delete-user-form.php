@@ -6,15 +6,11 @@ use Wnd\View\Wnd_Form_WP;
 /**
  *@since 2020.04.30 删除账户
  */
-class Wnd_Delete_User_Form extends Wnd_Module {
+class Wnd_Delete_User_Form extends Wnd_Module_Root {
 
 	protected static function build($user_id = 0): string {
 		if (!$user_id) {
 			return static::build_error_message(__('ID无效', 'wnd'));
-		}
-
-		if (!is_super_admin()) {
-			return static::build_error_message(__('权限不足', 'wnd'));
 		}
 
 		$form = new Wnd_Form_WP();

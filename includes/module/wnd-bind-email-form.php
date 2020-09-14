@@ -6,13 +6,10 @@ use Wnd\View\Wnd_Form_User;
 /**
  *@since 2019.07.23 用户设置邮箱表单
  */
-class Wnd_Bind_Email_Form extends Wnd_Module {
+class Wnd_Bind_Email_Form extends Wnd_Module_User {
 
 	protected static function build(): string{
 		$current_user = wp_get_current_user();
-		if (!$current_user->ID) {
-			return static::build_error_message(__('请登录', 'wnd'));
-		}
 
 		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');

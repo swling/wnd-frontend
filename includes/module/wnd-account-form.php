@@ -6,14 +6,11 @@ use Wnd\View\Wnd_Form_User;
 /**
  *@since 2019.01.23 用户更新账户表单
  */
-class Wnd_Account_Form extends Wnd_Module {
+class Wnd_Account_Form extends Wnd_Module_User {
 
 	protected static function build(): string{
 		$user       = wp_get_current_user();
 		$enable_sms = wnd_get_config('enable_sms');
-		if (!$user->data->ID) {
-			return static::build_error_message(__('请登录', 'wnd'));
-		}
 
 		/**
 		 *如果当前账户为社交登录，账户设置前必须绑定邮箱或手机

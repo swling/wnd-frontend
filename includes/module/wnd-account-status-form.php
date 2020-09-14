@@ -6,15 +6,11 @@ use Wnd\View\Wnd_Form_WP;
 /**
  *@since 2020.04.30 账户状态操作表单
  */
-class Wnd_Account_Status_Form extends Wnd_Module {
+class Wnd_Account_Status_Form extends Wnd_Module_Admin {
 
 	protected static function build($user_id = 0): string {
 		if (!$user_id) {
 			return static::build_error_message(__('ID无效', 'wnd'));
-		}
-
-		if (!wnd_is_manager()) {
-			return static::build_error_message(__('权限不足', 'wnd'));
 		}
 
 		$current_status = get_user_meta($user_id, 'status', true) ?: 'ok';

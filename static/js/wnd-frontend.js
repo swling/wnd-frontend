@@ -210,10 +210,10 @@ function wnd_ajax_modal(module, param = '') {
 		//成功后
 		success: function(response) {
 			wnd_reset_modal();
-			if (typeof response == "object") {
-				wnd_alert_msg(response.msg);
+			if (0 != response.status) {
+				wnd_alert_modal(response.data);
 			} else {
-				wnd_alert_modal(response);
+				wnd_alert_modal(response.msg);
 			}
 		},
 		// 错误
@@ -248,10 +248,10 @@ function wnd_ajax_embed(container, module, param = 0) {
 		success: function(response) {
 			wnd_loading(container, false);
 
-			if (typeof response == "object") {
-				$(container).html(response.msg);
+			if (0 != response.status) {
+				$(container).html(response.data);
 			} else {
-				$(container).html(response);
+				$(container).html(response.msg);
 			}
 		},
 		// 错误

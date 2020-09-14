@@ -6,15 +6,11 @@ use Wnd\View\Wnd_Form_WP;
 /**
  *@since 2020.06.09 退款表单
  */
-class Wnd_Refund_Form extends Wnd_Module {
+class Wnd_Refund_Form extends Wnd_Module_Admin {
 
 	protected static function build($payment_id = 0): string {
 		if (!$payment_id) {
 			return static::build_error_message(__('ID无效', 'wnd'));
-		}
-
-		if (!wnd_is_manager()) {
-			return static::build_error_message(__('权限不足', 'wnd'));
 		}
 
 		$form = new Wnd_Form_WP();

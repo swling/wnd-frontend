@@ -7,13 +7,9 @@ use Wnd\View\Wnd_Form_WP;
 /**
  *@since 2019.01.21 充值表单
  */
-class Wnd_User_Recharge_Form extends Wnd_Module {
+class Wnd_User_Recharge_Form extends Wnd_Module_User {
 
-	protected static function build(): string {
-		if (!wnd_get_config('alipay_appid')) {
-			static::build_error_message(__('未设置支付接口', 'wnd'));
-		}
-
+	protected static function build(): string{
 		$form = new Wnd_Form_WP();
 		$form->add_html('<div class="has-text-centered field">');
 		$form->add_radio(

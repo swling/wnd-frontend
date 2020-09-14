@@ -7,13 +7,9 @@ use Wnd\View\Wnd_Form_WP;
  *@since 2019.02.22
  *管理员手动增加用户余额
  */
-class Wnd_Admin_Recharge_Form extends Wnd_Module {
+class Wnd_Admin_Recharge_Form extends Wnd_Module_Root {
 
-	protected static function build(): string {
-		if (!is_super_admin()) {
-			return static::build_error_message(__('权限不足', 'wnd'));
-		}
-
+	protected static function build(): string{
 		$form = new Wnd_Form_WP();
 		$form->add_form_attr('id', 'admin-recharge-form');
 		$form->add_html('<div class="field is-horizontal"><div class="field-body">');

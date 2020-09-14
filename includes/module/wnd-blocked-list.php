@@ -8,13 +8,9 @@ use Wnd\Utility\Wnd_Defender;
  *列出对象缓存IP屏蔽信息
  *
  */
-class Wnd_Blocked_List extends Wnd_Module {
+class Wnd_Blocked_List extends Wnd_Module_Root {
 
-	protected static function build(): string {
-		if (!is_super_admin()) {
-			return static::build_error_message(__('权限不足', 'wnd'));
-		}
-
+	protected static function build(): string{
 		$defender = Wnd_Defender::get_instance(0, 0, 0);
 		$logs     = $defender->get_block_logs();
 

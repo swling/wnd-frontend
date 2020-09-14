@@ -7,7 +7,7 @@ use Wnd\View\Wnd_Form_WP;
  *@since 2019.01.20
  *快速编辑文章状态表单
  */
-class Wnd_Post_Status_Form extends Wnd_Module {
+class Wnd_Post_Status_Form extends Wnd_Module_User {
 
 	protected static function build($post_id = 0): string{
 		$post = get_post($post_id);

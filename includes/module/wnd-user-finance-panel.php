@@ -7,14 +7,11 @@ use Wnd\View\Wnd_Filter;
  *@since 2019.02.18 封装用户财务中心
  *@param $posts_per_page 每页列表数目
  */
-class Wnd_User_Finance_Panel extends Wnd_Module {
+class Wnd_User_Finance_Panel extends Wnd_Module_User {
 
 	protected static function build(int $posts_per_page = 0): string{
 		$user_id        = get_current_user_id();
 		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
-		if (!$user_id) {
-			return static::build_error_message(__('请登录', 'wnd'));
-		}
 
 		$html = '<div id="user-finance-panel">';
 		$html .= '<nav class="level is-mobile">';
