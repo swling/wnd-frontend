@@ -183,12 +183,12 @@ class Wnd_Add_Action {
 
 			//@since 2019.05.12 默认：校验nonce后执行action对应的控制类
 			if (!$nonce or !wp_verify_nonce($nonce, $action)) {
-				return __('Nonce校验失败', 'wnd');
+				exit(__('Nonce 校验失败', 'wnd'));
 			}
 
 			$class = \Wnd\Controller\Wnd_API::parse_class($action, 'Action');
-			if (is_callable([$class, 'execute'])) {
-				return __('未定义的Action', 'wnd') . $class;
+			if (!is_callable([$class, 'execute'])) {
+				exit(__('未定义的 Action ', 'wnd') . $class);
 			}
 
 			$action = new $class();
@@ -201,7 +201,7 @@ class Wnd_Add_Action {
 			$param = $_GET['param'] ?? '';
 
 			if (!is_callable([$class, 'render'])) {
-				return __('未定义的Module', 'wnd') . $class;
+				exit(__('未定义的 Module ', 'wnd') . $class);
 			}
 
 			if ($_GET['echo'] ?? false) {
@@ -210,7 +210,7 @@ class Wnd_Add_Action {
 				wp_head();
 				echo '</head>';
 				echo '<body>' . $class::render($param) . '</body>';
-				return;
+				return '';
 			} else {
 				return $class::render($param);
 			}
