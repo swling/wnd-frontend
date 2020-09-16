@@ -177,8 +177,14 @@ class Wnd_Add_Action {
 		if ($action) {
 			//@since 2019.03.04 刷新所有缓存（主要用于刷新对象缓存，静态缓存通常通过缓存插件本身删除）
 			if ('wp_cache_flush' == $action and is_super_admin()) {
-				wp_cache_flush();
-				return;
+				return wp_cache_flush();
+			}
+
+			/**
+			 *@since 0.8.66 清理失败的 WP 更新锁定
+			 */
+			if ('core_updater.lock' == $action and is_super_admin()) {
+				return delete_option('core_updater.lock');
 			}
 
 			//@since 2019.05.12 默认：校验nonce后执行action对应的控制类
