@@ -44,11 +44,16 @@ class Wnd_Payment_Alipay extends Wnd_Payment {
 	 *同步回调通知
 	 *
 	 */
-	protected function check_return(): bool {
+	protected function check_return(): bool{
 		/**
 		 *验签
 		 */
-		return $this->check($_GET);
+		$check = $this->check($_GET);
+		if (true !== $check) {
+			echo ('fail');
+		}
+
+		return $check;
 	}
 
 	/**
