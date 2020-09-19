@@ -26,7 +26,7 @@ class Wnd_Admin_Recharge_Form extends Wnd_Module_Root {
 				'label'       => '金额',
 				'name'        => 'total_amount',
 				'required'    => 'required',
-				'step'        => 0.1,
+				'step'        => 0.01,
 				'placeholder' => __('充值金额（负数可扣款）', 'wnd'),
 			]
 		);
