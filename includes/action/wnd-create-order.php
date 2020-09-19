@@ -41,10 +41,6 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
-		if ($post->post_author == $user_id) {
-			throw new Exception(__('禁止下单', 'wnd'));
-		}
-
 		if (!$user_id and !wnd_get_config('enable_anon_order')) {
 			throw new Exception(__('请登录', 'wnd'));
 		}
