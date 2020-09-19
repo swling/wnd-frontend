@@ -123,45 +123,7 @@ function _wndt_set_favorite($post_id) {
 	}
 }
 
-/************************************* JavaScript前端响应规则 *********************************************/
 /**
- *
- *	switch (response.status) {
- *		// 常规类，展示后端提示信息
- *		case 1:
- *			_this.html(response.data);
- *			break;
- *
- *			// 弹出消息
- *		case 2:
- *			if (response.data) {
- *				_this.html(response.data);
- *			}
- *			if (!is_in_modal) {
- *				wnd_alert_msg(response.msg, 1);
- *			}
- *			break;
- *
- *			// 跳转类
- *		case 3:
- *			wnd_alert_msg("请稍后……");
- *			$(window.location).prop("href", response.data.redirect_to);
- *			break;
- *
- *			// 刷新当前页面
- *		case 4:
- *			wnd_reset_modal();
- *			window.location.reload(true);
- *			break;
- *
- *			//默认展示提示信息
- *		default:
- *			_this.html(response.data);
- *			if (!is_in_modal) {
- *				wnd_alert_msg(response.msg, 1);
- *			}
- *			break;
- *	}
- *
- *
+ ************************************** JavaScript前端响应规则 *********************************************
+ *@see form.md
  */
