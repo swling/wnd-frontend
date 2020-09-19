@@ -465,16 +465,16 @@ function wnd_ajax_submit(form_id) {
 					// 刷新当前页面
 				case 4:
 					wnd_ajax_form_msg(form_id, response.msg, style);
-					var timer = null;
-					var time = response.data.waiting || 0;
-
-					if (!time) {
+					if ("undefined" == typeof response.data || "undefined" == typeof response.data.waiting) {
 						wnd_reset_modal();
 						window.location.reload(true);
 						return;
 					}
 
 					// 延迟刷新
+					var timer = null;
+					var time = response.data.waiting;
+
 					submit_button.removeClass("is-loading");
 					submit_button.text(wnd.msg.waiting + " " + time);
 					timer = setInterval(function() {
