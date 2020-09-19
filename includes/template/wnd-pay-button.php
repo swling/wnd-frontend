@@ -35,6 +35,8 @@ class Wnd_Pay_Button {
 	protected $button_text;
 	protected $html;
 
+	protected $primary_color;
+
 	// 禁止按钮
 	protected $disabled = false;
 
@@ -56,6 +58,7 @@ class Wnd_Pay_Button {
 		$this->file_id       = wnd_get_post_meta($this->post_id, 'file');
 		$this->message       = '<span class="icon is-size-5"><i class="fa ' . ($this->user_has_paid ? 'fa-unlock' : 'fa-lock') . '"></i></span>';
 		$this->button_text   = '';
+		$this->primary_color = 'is-' . wnd_get_config('primary_color');
 
 		// 根据付费内容形式，构建对应变量：$message and $button_text
 		if ($with_paid_content and $this->file_id) {
@@ -79,7 +82,7 @@ class Wnd_Pay_Button {
 			$this->html = '<div class="wnd-pay-button box has-text-centered">';
 			$this->html .= '<div class="pay-notification field">' . $this->message . '</div>';
 			$this->html .= '<div class="field is-grouped is-grouped-centered">';
-			$this->html .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login');
+			$this->html .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login', $this->primary_color);
 			$this->html .= '</div>';
 			$this->html .= '</div>';
 			return $this->html;
@@ -100,7 +103,7 @@ class Wnd_Pay_Button {
 		 * - 当包含文件时，无论是否已支付，均需要提交下载请求，是否扣费将在 Wnd\Action\Wnd_Pay_For_Downloads 判断
 		 */
 		if (!$this->user_has_paid and !$this->is_author) {
-			$this->html .= wnd_modal_button($this->button_text, 'wnd_order_payment_form', $this->post_id);
+			$this->html .= wnd_modal_button($this->button_text, 'wnd_order_payment_form', $this->post_id, $this->primary_color);
 		} elseif (!$this->disabled and $this->file_id) {
 			$form = new Wnd_Form_WP();
 			$form->add_hidden('post_id', $this->post_id);

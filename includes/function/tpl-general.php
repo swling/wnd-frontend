@@ -272,8 +272,8 @@ function wnd_notification($notification, $add_class = '', $delete = false) {
  *@param $add_calss class
  */
 function wnd_modal_button($text, $event = '', $param = '', $add_class = '') {
-	$class = 'button ';
-	$class .= $add_class ?: 'is-' . wnd_get_config('primary_color');
+	$class = 'button';
+	$class .= $add_class ? ' ' . $add_class : '';
 
 	$html = '<button class="' . $class . '"';
 	$html .= $event ? ' onclick="wnd_ajax_modal(\'' . $event . '\',\'' . $param . '\')"' : '';
