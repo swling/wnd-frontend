@@ -125,5 +125,5 @@ function _wndt_set_favorite($post_id) {
 
 /**
  ************************************** JavaScript前端响应规则 *********************************************
- *@see form.md
+ *@see static/js/wnd-frontend.js wnd_ajax_submit()
  */

@@ -29,7 +29,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		$order->create(true);
 
 		// 支付成功
-		return ['status' => 4, 'msg' => __('支付成功', 'wnd')];
+		return ['status' => 4, 'msg' => __('支付成功', 'wnd'), 'data' => ['waiting' => 5]];
 	}
 
 	/**

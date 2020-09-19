@@ -429,7 +429,7 @@ function wnd_ajax_submit(form_id) {
 
 		// 返回结果
 		success: function(response) {
-			if (response.status != 3) {
+			if (response.status != 3 && response.status != 4) {
 				submit_button.removeClass("is-loading");
 			}
 
@@ -464,12 +464,19 @@ function wnd_ajax_submit(form_id) {
 
 					// 刷新当前页面
 				case 4:
-					var timer = null;
-					var time = 5;
 					wnd_ajax_form_msg(form_id, response.msg, style);
-					submit_button.text(wnd.msg.waiting + " " + time);
+					var timer = null;
+					var time = response.data.waiting || 0;
+
+					if (!time) {
+						wnd_reset_modal();
+						window.location.reload(true);
+						return;
+					}
 
 					// 延迟刷新
+					submit_button.removeClass("is-loading");
+					submit_button.text(wnd.msg.waiting + " " + time);
 					timer = setInterval(function() {
 						if (time <= 0) {
 							clearInterval(timer);
