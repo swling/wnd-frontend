@@ -12,25 +12,48 @@ use Wnd\View\Wnd_Form_WP;
 class Wnd_Order_Payment_Form extends Wnd_Module {
 
 	protected static function build($post_id = 0): string{
-		$use_id = get_current_user_id();
-		$form   = new Wnd_Form_WP(true, !$use_id);
+		$user_id         = get_current_user_id();
+		$gateway_options = Wnd_Payment::get_gateway_options();
+		$user_money      = wnd_get_user_money($user_id);
+		$post_price      = wnd_get_post_price($post_id);
+
+		// 消费提示
+		$message = $user_id ? __('当前余额：¥ ', 'wnd') . '<b>' . number_format($user_money, 2, '.', '') . '</b>&nbsp;&nbsp;' .
+		__('本次消费：¥ ', 'wnd') . '<b>' . number_format($post_price, 2, '.', '') . '</b>' : '';
+
+		/**
+		 *如果余额足够，提供站内支付结算方式
+		 */
+		if ($user_money >= $post_price) {
+			$gateway_options = array_merge([__('余额支付', 'wnd') => 'internal'], $gateway_options);
+		}
+
+		$form = new Wnd_Form_WP(true, !$user_id);
 		$form->set_form_title(get_the_title($post_id), true);
-		if (!$use_id) {
+		if (!$user_id) {
 			$form->add_html(static::build_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd'), true));
 		}
 		$form->add_html('<div class="has-text-centered field">');
-		$form->add_html('<p>' . __('本次消费：¥ ', 'wnd') . '<b>' . wnd_get_post_price($post_id) . '</b></p>');
+		$form->add_html('<p>' . $message . '</p>');
 		$form->add_radio(
 			[
 				'name'     => 'payment_gateway',
-				'options'  => Wnd_Payment::get_gateway_options(),
+				'options'  => $gateway_options,
 				'required' => 'required',
-				'checked'  => Wnd_Payment::get_default_gateway(),
+				'checked'  => $user_money >= $post_price ? 'internal' : Wnd_Payment::get_default_gateway(),
 				'class'    => 'is-checkradio is-danger',
 			]
 		);
+		$form->add_checkbox(
+			[
+				'name'     => 'agreement',
+				'options'  => ['<i class="is-size-7">' . __('已阅读并同意交易协议及产品使用协议') . '</i>' => 1],
+				'checked'  => true,
+				'required' => 'required',
+			]
+		);
 		$form->add_html('</div>');
-		$form->set_action('wnd_do_pay');
+		$form->set_action('wnd_pay_for_order');
 		$form->add_hidden('post_id', $post_id);
 		$form->set_submit_button(__('确定', 'wnd'));
 		$form->build();

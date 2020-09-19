@@ -429,10 +429,11 @@ function wnd_ajax_submit(form_id) {
 
 		// 返回结果
 		success: function(response) {
-			if (response.status != 3 && response.status != 4) {
+			if (response.status != 3) {
 				submit_button.removeClass("is-loading");
 			}
-			if (8 == response.status) {
+
+			if (3 == response.status || 4 == response.status || 8 == response.status) {
 				submit_button.prop("disabled", true);
 			}
 			// var submit_text = (response.status > 0) ? wnd.msg.submit_successfully : wnd.msg.submit_failed;
@@ -463,8 +464,22 @@ function wnd_ajax_submit(form_id) {
 
 					// 刷新当前页面
 				case 4:
-					wnd_reset_modal();
-					window.location.reload(true);
+					var timer = null;
+					var time = 5;
+					wnd_ajax_form_msg(form_id, response.msg, style);
+					submit_button.text(wnd.msg.waiting + " " + time);
+
+					// 延迟刷新
+					timer = setInterval(function() {
+						if (time <= 0) {
+							clearInterval(timer);
+							wnd_reset_modal();
+							window.location.reload(true);
+						} else {
+							submit_button.text(wnd.msg.waiting + " " + time);
+							time--;
+						}
+					}, 1000);
 					break;
 
 					// 弹出信息并自动消失

@@ -231,7 +231,8 @@ function wnd_post_thumbnail($post_id, $width, $height) {
  *付费按钮
  */
 function wnd_pay_button($post_id, $with_paid_content) {
-	return Wnd\Template\Wnd_Pay_Button::render($post_id, $with_paid_content);
+	$button = new Wnd\Template\Wnd_Pay_Button($post_id, $with_paid_content);
+	return $button->render();
 }
 
 /**
@@ -271,8 +272,8 @@ function wnd_notification($notification, $add_class = '', $delete = false) {
  *@param $add_calss class
  */
 function wnd_modal_button($text, $event = '', $param = '', $add_class = '') {
-	$class = 'button';
-	$class .= $add_class ? ' ' . $add_class : '';
+	$class = 'button ';
+	$class .= $add_class ?: 'is-' . wnd_get_config('primary_color');
 
 	$html = '<button class="' . $class . '"';
 	$html .= $event ? ' onclick="wnd_ajax_modal(\'' . $event . '\',\'' . $param . '\')"' : '';

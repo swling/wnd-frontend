@@ -6,7 +6,7 @@ use Wnd\Model\Wnd_Order;
 
 /**
  *@since 2019.10.02
- *创建订单
+ *创建站内订单
  *@param $post_id  Post ID
  */
 class Wnd_Create_Order extends Wnd_Action_Ajax {
@@ -29,7 +29,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		$order->create(true);
 
 		// 支付成功
-		return ['status' => 1, 'msg' => __('支付成功', 'wnd')];
+		return ['status' => 4, 'msg' => __('支付成功', 'wnd')];
 	}
 
 	/**
