@@ -45,10 +45,8 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			throw new Exception(__('请登录', 'wnd'));
 		}
 
-		$post_price    = wnd_get_post_price($post_id);
-		$user_money    = wnd_get_user_money($user_id);
-		$primary_color = 'is-' . wnd_get_config('primary_color');
-		$second_color  = 'is-' . wnd_get_config('second_color');
+		$post_price = wnd_get_post_price($post_id);
+		$user_money = wnd_get_user_money($user_id);
 
 		// 余额不足
 		if ($post_price > $user_money) {

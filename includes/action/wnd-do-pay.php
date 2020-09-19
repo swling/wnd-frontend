@@ -20,6 +20,17 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 			throw new Exception(__('未定义支付方式', 'wnd'));
 		}
 
+		/**
+		 *@since 0.8.69
+		 *当设置 $post_id 表征改支付为在线支付订单，需同步设置权限检测
+		 */
+		if ($post_id) {
+			$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id);
+			if (0 === $wnd_can_create_order['status']) {
+				return $wnd_can_create_order;
+			}
+		}
+
 		$payment = Wnd_Payment::get_instance($payment_gateway);
 		$payment->set_object_id($post_id);
 		$payment->set_total_amount($total_amount);
