@@ -876,16 +876,19 @@ class Wnd_Filter {
 		/**
 		 *@since 0.8.70
 		 *在依赖型多重筛选中，分类及标签归档页默认不再包含 tax_query 查询参数
-		 *因此，首先判断当前查询是否为分类归档页查询：分类归档页查询参数包含 $taxonomy => $slug
+		 *因此，首先判断当前查询是否为分类归档页查询：
+		 * - Post 分类归档页查询参数包含 	'category_name' => $slug
+		 * - 自定义分类归档页查询参数包含 	{$taxonomy}		=> $slug
 		 *
 		 *@since 2019.03.07
 		 *查找在当前的tax_query查询参数中，当前taxonomy的键名，如果没有则加入
 		 *tax_query是一个无键名的数组，无法根据键名合并，因此需要准确定位
 		 *(数组默认键值从0开始， 当首元素即匹配则array_search返回 0，此处需要严格区分 0 和 false)
 		 */
-		$all_class = 'class="is-active"';
-		if (isset($this->wp_query_args[$this->category_taxonomy])) {
-			$category    = get_term_by('slug', $this->wp_query_args[$this->category_taxonomy], $this->category_taxonomy);
+		$all_class    = 'class="is-active"';
+		$category_key = 'post' == 0 ? 'category_name' : $this->category_taxonomy;
+		if (isset($this->wp_query_args[$category_key])) {
+			$category    = get_term_by('slug', $this->wp_query_args[$category_key], $this->category_taxonomy);
 			$category_id = $category ? $category->term_id : 0;
 
 			// 当前标签在 tax query 中的键名 若存在则移除 “全部”选项
