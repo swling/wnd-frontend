@@ -886,7 +886,7 @@ class Wnd_Filter {
 		 *(数组默认键值从0开始， 当首元素即匹配则array_search返回 0，此处需要严格区分 0 和 false)
 		 */
 		$all_class    = 'class="is-active"';
-		$category_key = 'post' == 0 ? 'category_name' : $this->category_taxonomy;
+		$category_key = ('category' == $this->category_taxonomy) ? 'category_name' : $this->category_taxonomy;
 		if (isset($this->wp_query_args[$category_key])) {
 			$category    = get_term_by('slug', $this->wp_query_args[$category_key], $this->category_taxonomy);
 			$category_id = $category ? $category->term_id : 0;
