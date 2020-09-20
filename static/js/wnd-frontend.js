@@ -466,7 +466,6 @@ function wnd_ajax_submit(form_id) {
 				case 4:
 					wnd_ajax_form_msg(form_id, response.msg, style);
 					if ("undefined" == typeof response.data || "undefined" == typeof response.data.waiting) {
-						wnd_reset_modal();
 						window.location.reload(true);
 						return;
 					}
