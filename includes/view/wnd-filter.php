@@ -11,8 +11,9 @@ use WP_Query;
  * 多重筛选类
  * 样式基于bulma css
  *
- * @param bool 		$is_ajax 	是否为ajax筛选（需要对应的前端支持）
- * @param string 	$uniqid 	HTML容器识别ID。默认值 uniqid() @see build_pagination() / get_tabs()
+ * @param bool 		$is_ajax 		是否为ajax筛选（需要对应的前端支持）
+ * @param bool 		$independent 	是否为独立 WP Query
+ * @param string 	$uniqid 		HTML容器识别ID。默认值 uniqid() @see build_pagination() / get_tabs()
  */
 class Wnd_Filter {
 
@@ -873,31 +874,51 @@ class Wnd_Filter {
 		}
 
 		/**
+		 *@since 0.8.70
+		 *在依赖型多重筛选中，分类及标签归档页默认不再包含 tax_query 查询参数
+		 *因此，首先判断当前查询是否为分类归档页查询：分类归档页查询参数包含 $taxonomy => $slug
+		 *
+		 *@since 2019.03.07
 		 *查找在当前的tax_query查询参数中，当前taxonomy的键名，如果没有则加入
 		 *tax_query是一个无键名的数组，无法根据键名合并，因此需要准确定位
 		 *(数组默认键值从0开始， 当首元素即匹配则array_search返回 0，此处需要严格区分 0 和 false)
-		 *@since 2019.03.07
 		 */
 		$all_class = 'class="is-active"';
-		foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
-			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-			if (!isset($tax_query['terms'])) {
-				continue;
-			}
+		if (isset($this->wp_query_args[$this->category_taxonomy])) {
+			$category    = get_term_by('slug', $this->wp_query_args[$this->category_taxonomy], $this->category_taxonomy);
+			$category_id = $category ? $category->term_id : 0;
 
-			//遍历当前tax query 获取post type的主分类
-			if (array_search($this->category_taxonomy, $tax_query) !== false) {
-				$category_id = $tax_query['terms'];
-				continue;
+			// 当前标签在 tax query 中的键名 若存在则移除 “全部”选项
+			foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
+				if (array_search($taxonomy, $tax_query) !== false) {
+					$all_class = '';
+					break;
+				}
 			}
+			unset($key, $tax_query);
+		} else {
+			foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
+				// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
+				if (!isset($tax_query['terms'])) {
+					continue;
+				}
 
-			// 当前标签在tax query中的键名
-			if (array_search($taxonomy, $tax_query) !== false) {
-				$all_class = '';
-				continue;
+				//遍历当前tax query 获取post type的主分类
+				if (array_search($this->category_taxonomy, $tax_query) !== false) {
+					$term        = is_array($tax_query['terms']) ? reset($tax_query['terms']) : $tax_query['terms'];
+					$category    = get_term_by($tax_query['field'], $term, $this->category_taxonomy);
+					$category_id = $category ? $category->term_id : 0;
+					continue;
+				}
+
+				// 当前标签在 tax query 中的键名 若存在则移除 “全部”选项
+				if (array_search($taxonomy, $tax_query) !== false) {
+					$all_class = '';
+					continue;
+				}
 			}
+			unset($key, $tax_query);
 		}
-		unset($key, $tax_query);
 
 		/**
 		 *指定category_id时查询关联标签，否则调用热门标签
