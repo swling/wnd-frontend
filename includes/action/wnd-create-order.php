@@ -26,10 +26,14 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		$order = new Wnd_Order();
 		$order->set_object_id($post_id);
 		$order->set_subject(get_the_title($post_id));
-		$order->create(true);
+		$order_post = $order->create(true);
 
-		// 支付成功
-		return ['status' => 4, 'msg' => __('支付成功', 'wnd'), 'data' => ['waiting' => 5]];
+		/**
+		 *订单创建成功返回信息
+		 *@since 0.8.71 新增 apply_filters('wnd_create_order_return', $return_array, $post_id);
+		 */
+		$return_array = ['status' => 4, 'msg' => __('支付成功', 'wnd'), 'data' => ['waiting' => 5]];
+		return apply_filters('wnd_create_order_return', $return_array, $order_post);
 	}
 
 	/**

@@ -119,6 +119,13 @@ apply_filters('wnd_option_pay_return_url', $return_url);
 apply_filters('wnd_can_create_order', ['status'=>1,'msg'=>''], $post_id);
 
 /**
+ *订单创建成功返回信息
+ *@since 0.8.71
+ */
+$return_array = ['status' => 4, 'msg' => __('支付成功', 'wnd'), 'data' => ['waiting' => 5]];
+return apply_filters('wnd_create_order_return', $return_array, $order_post);
+
+/**
 *@since 2019.02.12 付费内容，作者收益提成，默认为文章价格* 后台比例设置
 */
 apply_filters('wnd_get_post_commission', $commission, $post_id);
