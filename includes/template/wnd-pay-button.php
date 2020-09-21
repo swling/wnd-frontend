@@ -43,13 +43,9 @@ class Wnd_Pay_Button {
 	/**
 	 *Construct
 	 */
-	public function __construct(int $post_id, bool $with_paid_content) {
-		$this->post_id = $post_id;
-		$this->post    = $this->post_id ? get_post($this->post_id) : false;
-		if (!$this->post) {
-			throw new Exception(__('Post ID无效', 'wnd'));
-		}
-
+	public function __construct(\WP_Post $post, bool $with_paid_content) {
+		$this->post_id       = $post->ID;
+		$this->post          = $post;
 		$this->user_id       = get_current_user_id();
 		$this->is_author     = $this->user_id == $this->post->post_author ? true : false;
 		$this->post_price    = wnd_get_post_price($this->post_id, true);
@@ -68,7 +64,7 @@ class Wnd_Pay_Button {
 		} elseif ($with_paid_content) {
 			$this->build_paid_reading_button_var();
 		} else {
-			return '';
+			throw new Exception(__('免费且不含文件', 'wnd'));
 		}
 	}
 
@@ -90,7 +86,7 @@ class Wnd_Pay_Button {
 
 		$this->html = '<div class="wnd-pay-button box has-text-centered">';
 		// 消费提示
-		if ($this->user_id != $this->post->post_author and !$this->user_has_paid) {
+		if ($this->user_id != $this->post->post_author and !$this->user_has_paid and $this->post_price) {
 			$this->message .= '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . $this->user_money . '</b>&nbsp;&nbsp;' .
 			__('本次消费：¥ ', 'wnd') . '<b>' . $this->post_price . '</b></p>';
 		}

@@ -230,9 +230,13 @@ function wnd_post_thumbnail($post_id, $width, $height) {
  *
  *付费按钮
  */
-function wnd_pay_button($post_id, $with_paid_content) {
-	$button = new Wnd\Template\Wnd_Pay_Button($post_id, $with_paid_content);
-	return $button->render();
+function wnd_pay_button(WP_post $post, bool $with_paid_content): string {
+	try {
+		$button = new Wnd\Template\Wnd_Pay_Button($post, $with_paid_content);
+		return $button->render();
+	} catch (Exception $e) {
+		return '<!-- ' . $e->getMessage() . ' -->';
+	}
 }
 
 /**
