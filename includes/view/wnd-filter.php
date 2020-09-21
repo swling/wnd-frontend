@@ -1488,11 +1488,20 @@ class Wnd_Filter {
 	 * - 排除 Ajax 请求
 	 * - 排除内页
 	 *
+	 *@since 0.8.72
+	 * - 排除 WP 内置功能型 Post Type 查询
+	 *
 	 * 在内页或 Ajax 请求中，应且只能执行独立的 WP Query
 	 */
 	public static function action_on_pre_get_posts($query) {
 		if (is_admin() or wnd_doing_ajax() or $query->is_singular()) {
 			return $query;
+		}
+
+		if (isset($query->query_vars['post_type'])) {
+			if (get_post_type_object($query->query_vars['post_type'])->_builtin and !in_array($query->query_vars['post_type'], ['post', 'page', 'attachment'])) {
+				return $query;
+			}
 		}
 
 		/**
