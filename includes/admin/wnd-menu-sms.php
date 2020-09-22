@@ -7,7 +7,7 @@ use Wnd\View\Wnd_Form_Option;
  * 短信配置表单
  * @since 0.8.62
  */
-class Wnd_Admin_Menu_Sms extends Wnd_Admin_Menus {
+class Wnd_Menu_Sms extends Wnd_Menus {
 
 	// 子菜单基本属性
 	protected $page_title = '短信配置';
@@ -69,18 +69,9 @@ class Wnd_Admin_Menu_Sms extends Wnd_Admin_Menus {
 		$form->add_text(
 			[
 				'name'        => 'sms_appid',
-				'label'       => '短信APP ID',
+				'label'       => '短信APP ID（仅腾讯云）',
 				'required'    => false,
-				'placeholder' => '短信APP ID',
-			]
-		);
-
-		$form->add_text(
-			[
-				'name'        => 'sms_appkey',
-				'label'       => '短信APP Key',
-				'required'    => false,
-				'placeholder' => '短信APP Key',
+				'placeholder' => '短信APP ID（仅腾讯云）',
 			]
 		);
 

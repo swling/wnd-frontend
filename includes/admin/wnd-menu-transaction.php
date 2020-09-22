@@ -7,7 +7,7 @@ use Wnd\View\Wnd_Form_Option;
  * 短信配置表单
  * @since 0.8.62
  */
-class Wnd_Admin_Menu_Transaction extends Wnd_Admin_Menus {
+class Wnd_Menu_Transaction extends Wnd_Menus {
 
 	// 子菜单基本属性
 	protected $page_title = '支付及订单设置';

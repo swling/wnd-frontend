@@ -7,7 +7,7 @@ use Wnd\View\Wnd_Form_Option;
  * @since 0.8.62
  * WP后台选项配置菜单
  */
-class Wnd_Admin_Menus {
+class Wnd_Menus {
 	// 菜单基本属性
 	protected $page_title = 'Wnd Frontend Setting';
 	protected $menu_title = 'Wnd Frontend';
@@ -30,7 +30,7 @@ class Wnd_Admin_Menus {
 	 *定义子菜单
 	 * - 将依次循环拼接类名：Wnd_Admin_Menu_ {$slug} 并实例化
 	 */
-	protected $sub_menus = ['Transaction', 'Alipay', 'Sms', 'Captcha'];
+	protected $sub_menus = ['Accesskey', 'Transaction', 'Alipay', 'Sms', 'Captcha'];
 
 	/**
 	 *构造
@@ -40,7 +40,7 @@ class Wnd_Admin_Menus {
 		/**
 		 *判断当前实例是否为继承本类的子类
 		 */
-		$this->is_submenu = is_subclass_of($this, __NAMESPACE__ . '\\' . 'Wnd_Admin_Menus');
+		$this->is_submenu = is_subclass_of($this, __NAMESPACE__ . '\\' . 'Wnd_Menus');
 
 		/**
 		 * - 注册菜单
@@ -54,7 +54,7 @@ class Wnd_Admin_Menus {
 		 */
 		if (!$this->is_submenu) {
 			foreach ($this->sub_menus as $slug) {
-				$class_name = __NAMESPACE__ . '\\' . 'Wnd_Admin_Menu_' . $slug;
+				$class_name = __NAMESPACE__ . '\\' . 'Wnd_Menu_' . $slug;
 				new $class_name();
 			}
 		}

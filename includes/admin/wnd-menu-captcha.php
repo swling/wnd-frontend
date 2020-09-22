@@ -7,7 +7,7 @@ use Wnd\View\Wnd_Form_Option;
  * 短信配置表单
  * @since 0.8.62
  */
-class Wnd_Admin_Menu_Captcha extends Wnd_Admin_Menus {
+class Wnd_Menu_Captcha extends Wnd_Menus {
 
 	// 子菜单基本属性
 	protected $page_title = '验证码配置';
@@ -44,24 +44,6 @@ class Wnd_Admin_Menu_Captcha extends Wnd_Admin_Menus {
 				'label'       => 'AppKey / SiteSecret',
 				'required'    => false,
 				'placeholder' => 'AppKey / SiteSecret',
-			]
-		);
-
-		$form->add_text(
-			[
-				'name'        => 'tencent_secretid',
-				'label'       => '腾讯云 Secret ID',
-				'required'    => false,
-				'placeholder' => '腾讯云 Secret ID',
-			]
-		);
-
-		$form->add_text(
-			[
-				'name'        => 'tencent_secretkey',
-				'label'       => '腾讯云 Secret Key',
-				'required'    => false,
-				'placeholder' => '腾讯云 Secret Key',
 			]
 		);
 
