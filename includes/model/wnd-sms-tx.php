@@ -1,8 +1,7 @@
 <?php
 namespace Wnd\Model;
 
-use Exception;
-use Wnd\Component\Qcloud\Sms\SmsSingleSender;
+use Wnd\Component\Qcloud\Sms\SmsSender;
 
 /**
  *@since 2019.09.25
@@ -17,6 +16,9 @@ class Wnd_Sms_TX extends Wnd_Sms {
 	 *@param $phone     string 短信模板ID
 	 */
 	public function send() {
+		$secret_id  = wnd_get_config('tencent_secretid');
+		$secret_key = wnd_get_config('tencent_secretkey');
+
 		/**
 		 *模板参数:
 		 *
@@ -31,17 +33,7 @@ class Wnd_Sms_TX extends Wnd_Sms {
 		$params = ($this->code and $this->valid_time) ? [$this->code, $this->valid_time] : [];
 
 		// 指定模板ID单发短信
-		$ssender = new SmsSingleSender($this->app_id, $this->app_key);
-		$result  = $ssender->sendWithParam('86', $this->phone, $this->template, $params, $this->sign_name, '', '');
-		$rsp     = json_decode($result);
-
-		/**
-		 *发送失败返回腾讯错误信息
-		 *@link https://cloud.tencent.com/document/product/382/7756
-		 */
-		if ($rsp->result != 0) {
-			throw new Exception(__('系统错误：', 'wnd') . $rsp->result);
-		}
-		return true;
+		$ssender = new SmsSender($secret_id, $secret_key, $this->app_id, $this->app_key);
+		$ssender->sendWithParam('86', [$this->phone], $this->template, $params, $this->sign_name);
 	}
 }
