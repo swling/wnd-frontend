@@ -7,12 +7,19 @@ use Wnd\Component\Aliyun\Sms\SignatureHelper;
 /**
  *@since 2019.09.25
  *短信
+ *
+ *参数配置
+ * - 公共参数 @link https://help.aliyun.com/document_detail/101341.html
+ * - 发送短信 @link https://help.aliyun.com/document_detail/101414.html
  */
 class Wnd_Sms_Ali extends Wnd_Sms {
 	/**
 	 * 发送短信
 	 */
 	public function send() {
+		$secret_id  = wnd_get_config('aliyun_secretid');
+		$secret_key = wnd_get_config('aliyun_secretkey');
+
 		$params                 = [];
 		$params['PhoneNumbers'] = $this->phone;
 		$params['SignName']     = $this->sign_name;
@@ -31,8 +38,8 @@ class Wnd_Sms_Ali extends Wnd_Sms {
 
 		// 此处可能会抛出异常，注意catch
 		$request = $helper->request(
-			$this->app_id,
-			$this->app_key,
+			$secret_id,
+			$secret_key,
 			'dysmsapi.aliyuncs.com',
 			array_merge($params, [
 				'RegionId' => 'cn-hangzhou',

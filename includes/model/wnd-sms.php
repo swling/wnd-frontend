@@ -8,12 +8,8 @@ use Exception;
  *短信抽象类
  */
 abstract class Wnd_Sms {
-	// api属性
-	protected $app_id;
-	protected $app_key;
-	protected $sign_name;
-
 	// 短信实例属性
+	protected $sign_name;
 	protected $phone;
 	protected $template;
 
@@ -21,9 +17,10 @@ abstract class Wnd_Sms {
 	protected $code;
 	protected $valid_time;
 
+	/**
+	 *Construct
+	 */
 	public function __construct() {
-		$this->app_id    = wnd_get_config('sms_appid');
-		$this->app_key   = wnd_get_config('sms_appkey');
 		$this->sign_name = wnd_get_config('sms_sign');
 	}
 

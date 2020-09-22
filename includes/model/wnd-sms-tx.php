@@ -18,6 +18,7 @@ class Wnd_Sms_TX extends Wnd_Sms {
 	public function send() {
 		$secret_id  = wnd_get_config('tencent_secretid');
 		$secret_key = wnd_get_config('tencent_secretkey');
+		$app_id     = wnd_get_config('sms_appid');
 
 		/**
 		 *模板参数:
@@ -33,7 +34,7 @@ class Wnd_Sms_TX extends Wnd_Sms {
 		$params = ($this->code and $this->valid_time) ? [$this->code, $this->valid_time] : [];
 
 		// 指定模板ID单发短信
-		$ssender = new SmsSender($secret_id, $secret_key, $this->app_id, $this->app_key);
+		$ssender = new SmsSender($secret_id, $secret_key, $app_id);
 		$ssender->sendWithParam('86', [$this->phone], $this->template, $params, $this->sign_name);
 	}
 }

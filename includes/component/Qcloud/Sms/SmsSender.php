@@ -6,8 +6,9 @@ use Exception;
 use Wnd\Component\Qcloud\SignatureTrait;
 
 /**
- * 单发短信类
- *
+ * 发送短信
+ * @link https://cloud.tencent.com/document/product/382/38778
+ * 使用签名方法 v1
  */
 class SmsSender {
 
