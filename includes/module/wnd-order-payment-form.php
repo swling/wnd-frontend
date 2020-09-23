@@ -18,8 +18,8 @@ class Wnd_Order_Payment_Form extends Wnd_Module {
 		$post_price      = wnd_get_post_price($post_id);
 
 		// 消费提示
-		$message = $user_id ? __('当前余额：¥ ', 'wnd') . '<b>' . number_format($user_money, 2, '.', '') . '</b>&nbsp;&nbsp;' .
-		__('本次消费：¥ ', 'wnd') . '<b>' . number_format($post_price, 2, '.', '') . '</b>' : '';
+		$message = $user_id ? __('当前余额：¥ ', 'wnd') . '<b>' . number_format($user_money, 2, '.', '') . '</b>&nbsp;&nbsp;' : '';
+		$message .= __('本次消费：¥ ', 'wnd') . '<b>' . number_format($post_price, 2, '.', '') . '</b>';
 
 		/**
 		 *如果余额足够，提供站内支付结算方式
