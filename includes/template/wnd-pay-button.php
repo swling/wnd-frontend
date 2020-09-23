@@ -52,9 +52,14 @@ class Wnd_Pay_Button {
 		$this->user_money    = wnd_get_user_money($this->user_id, true);
 		$this->user_has_paid = wnd_user_has_paid($this->user_id, $this->post_id);
 		$this->file_id       = wnd_get_post_meta($this->post_id, 'file');
-		$this->message       = '<span class="icon is-size-5"><i class="fa ' . ($this->user_has_paid ? 'fa-unlock' : 'fa-lock') . '"></i></span>';
 		$this->button_text   = '';
 		$this->primary_color = 'is-' . wnd_get_config('primary_color');
+
+		if (floatval($this->post_price) <= 0 or $this->user_has_paid) {
+			$this->message = '<span class="icon is-size-5"><i class="fa fa-unlock"></i></span>';
+		} else {
+			$this->message = '<span class="icon is-size-5"><i class="fa fa-lock"></i></span>';
+		}
 
 		// 根据付费内容形式，构建对应变量：$message and $button_text
 		if ($with_paid_content and $this->file_id) {
@@ -86,7 +91,7 @@ class Wnd_Pay_Button {
 
 		$this->html = '<div class="wnd-pay-button box has-text-centered">';
 		// 消费提示
-		if ($this->user_id != $this->post->post_author and !$this->user_has_paid and $this->post_price) {
+		if ($this->user_id != $this->post->post_author and !$this->user_has_paid and floatval($this->post_price) > 0) {
 			$this->message .= '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . $this->user_money . '</b>&nbsp;&nbsp;' .
 			__('本次消费：¥ ', 'wnd') . '<b>' . $this->post_price . '</b></p>';
 		}
@@ -98,7 +103,7 @@ class Wnd_Pay_Button {
 		 * - 唤起支付对话框
 		 * - 当包含文件时，无论是否已支付，均需要提交下载请求，是否扣费将在 Wnd\Action\Wnd_Pay_For_Downloads 判断
 		 */
-		if (!$this->user_has_paid and !$this->is_author) {
+		if (floatval($this->post_price) > 0 and !$this->user_has_paid and !$this->is_author) {
 			$this->html .= wnd_modal_button($this->button_text, 'wnd_order_payment_form', $this->post_id, $this->primary_color);
 		} elseif (!$this->disabled and $this->file_id) {
 			$form = new Wnd_Form_WP();
@@ -149,7 +154,6 @@ class Wnd_Pay_Button {
 			$this->message .= '<p>' . __('文件需付费下载：¥', 'wnd') . $this->post_price . '</p>';
 			$this->button_text = __('付费下载', 'wnd');
 		} else {
-			$this->message .= !$this->user_id ? '<p>' . __('文件需登录后下载', 'wnd') . '</p>' : '';
 			$this->button_text = __('免费下载', 'wnd');
 		}
 	}
