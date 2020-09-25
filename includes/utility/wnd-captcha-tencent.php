@@ -69,8 +69,8 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 				"' . $this->appid . '",
 				function(res) {
 					if(0 === res.ret){
-						_this.data("captcha", res.ticket);
-						_this.data("captcha_nonce", res.randstr);
+						_this.data("' . static::$captcha_name . '", res.ticket);
+						_this.data("' . static::$captcha_nonce_name . '", res.randstr);
 						wnd_send_code(_this);
 					}
 				}
