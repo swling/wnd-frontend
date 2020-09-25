@@ -31,26 +31,45 @@ use Wnd\Utility\Wnd_Validator;
  */
 class Wnd_Form_Data {
 
-	public $form_data;
+	/**
+	 *请求数据
+	 */
+	protected $data;
 
+	/**
+	 *签名请求 name
+	 */
 	public static $form_sign_name = '_wnd_sign';
+
+	/**
+	 *解析表单数据时，是否验证表单签名
+	 */
+	protected $verify_sign = true;
+
+	/**
+	 *解析表单数据时，是否进行人机验证（如果存在）
+	 */
+	protected $validate_captcha = true;
 
 	/**
 	 *Construct
 	 */
-	public function __construct($verify_sign = true) {
-		$this->form_data = static::get_form_data($verify_sign);
+	public function __construct(bool $verify_sign = true, bool $validate_captcha = true) {
+		$this->verify_sign      = $verify_sign;
+		$this->validate_captcha = $validate_captcha;
+
+		$this->parse_data();
 	}
 
 	/**
 	 *@since 0.8.64
-	 *获取经过基本校验解析的表单数据
+	 *解析表单数据
 	 *
-	 *@param array 返回解析后的表单提交数据
+	 *@return array 返回解析后的表单提交数据
 	 *			   与原$_POST相比，此时获取的表单提交数据，执行了 wnd_form_data filter，并通过了表单一致性校验、人机验证（根据表单设置）
 	 *			   请勿重复调用本方法
 	 */
-	public static function get_form_data(bool $verify_sign): array{
+	protected function parse_data(): array{
 		if (empty($_POST)) {
 			return [];
 		}
@@ -61,7 +80,7 @@ class Wnd_Form_Data {
 		 *因而校验表单操作应该在filter应用之前执行
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
-		if ($verify_sign and !static::verify_sign()) {
+		if ($this->verify_sign and !static::verify_sign()) {
 			throw new Exception(__('数据已被篡改', 'wnd'));
 		}
 
@@ -69,24 +88,36 @@ class Wnd_Form_Data {
 		 *@since 0.8.64
 		 *人机验证：由于表单字段设置了字段名称一致性校验，前端无法更改字段，因此可用是否设置了 captcha 字段来判断当前表单是否需要人机验证
 		 */
-		if (isset($_POST['captcha'])) {
+		if ($this->validate_captcha and isset($_POST['captcha'])) {
 			Wnd_Validator::validate_captcha();
 		}
 
 		// 允许修改表单提交数据
-		$form_data = apply_filters('wnd_form_data', $_POST);
+		$data = apply_filters('wnd_form_data', $_POST);
 
 		/**
 		 *根据表单数据控制表单提交
 		 *@since 2019.12.22
 		 *
 		 */
-		$can_array = apply_filters('wnd_can_submit_form', ['status' => 1], $form_data);
+		$can_array = apply_filters('wnd_can_submit_form', ['status' => 1], $data);
 		if (0 === $can_array['status']) {
 			throw new Exception($can_array['msg']);
 		}
 
-		return $form_data;
+		$this->data = $data;
+
+		return $this->data;
+	}
+
+	/**
+	 *
+	 *获取表单数据
+	 *
+	 *@since 0.8.73
+	 */
+	public function get_data(): array{
+		return $this->data ?: $this->parse_data();
 	}
 
 	/**
@@ -97,7 +128,7 @@ class Wnd_Form_Data {
 	 */
 	protected function get_data_by_prefix($prefix): array{
 		$data = [];
-		foreach ($this->form_data as $key => $value) {
+		foreach ($this->data as $key => $value) {
 			if (0 === strpos($key, $prefix)) {
 				$key        = str_replace($prefix, '', $key);
 				$data[$key] = $value;

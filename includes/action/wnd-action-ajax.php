@@ -26,14 +26,19 @@ abstract class Wnd_Action_Ajax {
 	protected $user_id;
 
 	/**
-	 *是否自动解析表单数据
-	 */
-	protected $parse_data = true;
-
-	/**
 	 *解析表单数据时，是否验证表单签名
 	 */
 	protected $verify_sign = true;
+
+	/**
+	 *解析表单数据时，是否进行人机验证（如果存在）
+	 */
+	protected $validate_captcha = true;
+
+	/**
+	 * Instance of Wnd_Form_Data
+	 */
+	protected $form_data;
 
 	/**
 	 *构造
@@ -42,13 +47,12 @@ abstract class Wnd_Action_Ajax {
 	 * - 校验请求数据
 	 * - 核查权限许可
 	 *
-	 *@param bool $verify_sign 是否验证表单签名
 	 */
-	public function __construct(bool $verify_sign = true) {
-		$this->verify_sign = $verify_sign;
-		$this->data        = $this->parse_data ? Wnd_Form_Data::get_form_data($this->verify_sign) : $this->data;
-		$this->user        = wp_get_current_user();
-		$this->user_id     = $this->user->ID ?? 0;
+	public function __construct() {
+		$this->form_data = new Wnd_Form_Data($this->verify_sign, $this->validate_captcha);
+		$this->data      = $this->form_data->get_data();
+		$this->user      = wp_get_current_user();
+		$this->user_id   = $this->user->ID ?? 0;
 
 		$this->check();
 	}
