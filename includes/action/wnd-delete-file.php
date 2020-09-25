@@ -13,14 +13,14 @@ use Exception;
 class Wnd_Delete_File extends Wnd_Action_Ajax_User {
 
 	/**
-	 *本操作非标准表单请求，无需解析表单数据
+	 *本操作非标准表单请求，无需校验数据签名
 	 */
-	protected $parse_data = false;
+	protected $verify_sign = false;
 
 	public function execute(): array{
-		$meta_key    = $_POST['meta_key'];
-		$post_parent = (int) $_POST['post_parent'];
-		$file_id     = (int) $_POST['file_id'];
+		$meta_key    = $this->data['meta_key'];
+		$post_parent = (int) $this->data['post_parent'];
+		$file_id     = (int) $this->data['file_id'];
 
 		if (!$file_id) {
 			throw new Exception(__('文件不存在', 'wnd'));

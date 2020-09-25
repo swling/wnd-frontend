@@ -2,7 +2,6 @@
 namespace Wnd\Action;
 
 use Exception;
-use Wnd\Utility\Wnd_Form_Data;
 
 /**
  *@since 初始化
@@ -19,18 +18,12 @@ use Wnd\Utility\Wnd_Form_Data;
  */
 class Wnd_Update_Profile extends Wnd_Action_Ajax_User {
 
-	/**
-	 *本操作需要分类解析表单数据，故移除通用表单解析数据
-	 */
-	protected $parse_data = false;
-
 	public function execute(): array{
 		// 实例化WndWP表单数据处理对象
-		$form_data         = new Wnd_Form_Data();
-		$user_data         = $form_data->get_user_data();
+		$user_data         = $this->form_data->get_user_data();
 		$user_data['ID']   = $this->user_id;
-		$user_meta_data    = $form_data->get_user_meta_data();
-		$wp_user_meta_data = $form_data->get_wp_user_meta_data();
+		$user_meta_data    = $this->form_data->get_user_meta_data();
+		$wp_user_meta_data = $this->form_data->get_wp_user_meta_data();
 
 		// 更新权限过滤挂钩
 		$user_can_update_profile = apply_filters('wnd_can_update_profile', ['status' => 1, 'msg' => '']);

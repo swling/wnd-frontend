@@ -20,7 +20,6 @@ class Wnd_Add_Filter {
 		add_filter('wnd_can_delete_user', [__CLASS__, 'filter_can_delete_user'], 10, 2);
 		add_filter('wnd_insert_post_status', [__CLASS__, 'filter_post_status'], 10, 3);
 		add_filter('wnd_safe_action_return', [__CLASS__, 'filter_safe_action_return'], 10, 1);
-		add_filter('wnd_can_send_code', [__CLASS__, 'validate_captcha'], 10, 1);
 	}
 
 	/**
@@ -145,19 +144,6 @@ class Wnd_Add_Filter {
 		} else {
 			wp_cache_delete($post_id, 'post_meta');
 			return ['status' => 0, 'msg' => time()];
-		}
-	}
-
-	/**
-	 *@since 2020.08.13
-	 *发送短信或邮件验证码时，进行人机验证
-	 */
-	public static function validate_captcha($can_array) {
-		try {
-			Wnd_Validator::validate_captcha();
-			return $can_array;
-		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
 	}
 }

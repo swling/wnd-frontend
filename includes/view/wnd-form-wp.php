@@ -139,6 +139,23 @@ class Wnd_Form_WP extends Wnd_Form {
 			$icon        = '<i class="fa fa-phone-square"></i>';
 		}
 
+		// Action 层需要验证表单字段签名(需要完整包含 button data 属性名及固定值 action、device、人机验证字段 )
+		$sign = Wnd_Form_Data::sign(
+			[
+				'action',
+				Wnd_Captcha::$captcha_name,
+				Wnd_Captcha::$captcha_nonce_name,
+				'type',
+				'template',
+				'_ajax_nonce',
+				'type_nonce',
+				'device_type',
+				'device_name',
+				'device',
+				'interval',
+			]
+		);
+
 		// 构建发送按钮
 		$button = '<button type="button"';
 		$button .= ' class="send-code button is-outlined is-' . static::$primary_color . '"';
@@ -149,6 +166,9 @@ class Wnd_Form_WP extends Wnd_Form {
 		$button .= ' data-device_type="' . $device_type . '"';
 		$button .= ' data-device_name="' . $name . '"';
 		$button .= ' data-interval="' . wnd_get_config('min_verification_interval') . '"';
+		$button .= ' data-' . Wnd_Captcha::$captcha_name . '=""';
+		$button .= ' data-' . Wnd_Captcha::$captcha_nonce_name . '=""';
+		$button .= ' data-' . Wnd_Form_Data::$form_sign_name . '="' . $sign . '"';
 		$button .= '>' . __('获取验证码', 'wnd') . '</button>';
 
 		$this->add_html('<div class="field validate-field-wrap">');

@@ -2,7 +2,6 @@
 namespace Wnd\Action;
 
 use Exception;
-use Wnd\Utility\Wnd_Form_Data;
 
 /**
  *@see README.md
@@ -23,14 +22,8 @@ use Wnd\Utility\Wnd_Form_Data;
  */
 class Wnd_Reg extends Wnd_Action_Ajax {
 
-	/**
-	 *本操作需要分类解析表单数据，故移除通用表单解析数据
-	 */
-	protected $parse_data = false;
-
 	public function execute(): array{
-		$form_data               = new Wnd_Form_Data();
-		$user_data               = $form_data->get_user_data();
+		$user_data               = $this->form_data->get_user_data();
 		$user_data['user_login'] = $user_data['user_login'] ?? wnd_generate_login();
 
 		// 检查表单数据
@@ -49,13 +42,13 @@ class Wnd_Reg extends Wnd_Action_Ajax {
 		}
 
 		// 写入用户自定义数组meta
-		$user_meta_data = $form_data->get_user_meta_data();
+		$user_meta_data = $this->form_data->get_user_meta_data();
 		if (!empty($user_meta_data)) {
 			wnd_update_user_meta_array($user_id, $user_meta_data);
 		}
 
 		// 写入WordPress原生用户字段
-		$wp_user_meta_data = $form_data->get_wp_user_meta_data();
+		$wp_user_meta_data = $this->form_data->get_wp_user_meta_data();
 		if (!empty($wp_user_meta_data)) {
 			foreach ($wp_user_meta_data as $key => $value) {
 				// 下拉菜单默认未选择时，值为 -1 。过滤

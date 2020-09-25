@@ -10,20 +10,15 @@ use Wnd\Model\Wnd_Auth;
  */
 class Wnd_Send_Code extends Wnd_Action_Ajax {
 
-	/**
-	 *本操作非标准表单请求，无需解析表单数据
-	 */
-	protected $parse_data = false;
-
 	public function execute(): array{
-		$type        = $_POST['type'] ?? '';
-		$device      = $_POST['device'] ?? '';
-		$device_type = $_POST['device_type'] ?? '';
-		$device_name = $_POST['device_name'] ?? '';
-		$template    = $_POST['template'] ?: wnd_get_config('sms_template_v');
+		$type        = $this->data['type'] ?? '';
+		$device      = $this->data['device'] ?? '';
+		$device_type = $this->data['device_type'] ?? '';
+		$device_name = $this->data['device_name'] ?? '';
+		$template    = $this->data['template'] ?: wnd_get_config('sms_template_v');
 
 		// 防止前端篡改表单：校验验证码类型及接受设备
-		if (!wp_verify_nonce($_POST['type_nonce'], $device_type . $type)) {
+		if (!wp_verify_nonce($this->data['type_nonce'], $device_type . $type)) {
 			throw new Exception(__('Nonce校验失败', 'wnd'));
 		}
 

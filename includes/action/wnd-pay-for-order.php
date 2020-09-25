@@ -10,14 +10,19 @@ namespace Wnd\Action;
 class Wnd_Pay_For_Order extends Wnd_Action_Ajax {
 
 	/**
-	 *本 Action 为中转操作，无需解析数据。且，如果包含人机验证，重复解析数据会导致重复验证，引发操作失败
+	 *本 Action 为中转操作，无需校验人机验证，否则会导致重复验证
 	 *
 	 */
-	protected $parse_data = false;
+	protected $validate_captcha = false;
+
+	/**
+	 *子类操作会验证签名，此处无需验证签名
+	 */
+	protected $verify_sign = false;
 
 	public function execute(): array{
 		// 余额支付
-		if ('internal' == $_POST['payment_gateway']) {
+		if ('internal' == $this->data['payment_gateway']) {
 			$order = new Wnd_Create_Order();
 			return $order->execute();
 		}

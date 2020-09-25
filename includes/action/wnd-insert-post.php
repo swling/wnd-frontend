@@ -3,14 +3,8 @@ namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_Post;
-use Wnd\Utility\Wnd_Form_Data;
 
 class Wnd_Insert_Post extends Wnd_Action_Ajax {
-
-	/**
-	 *本操作需要分类解析表单数据，故移除通用表单解析数据
-	 */
-	protected $parse_data = false;
 
 	protected $post_data;
 
@@ -65,12 +59,10 @@ class Wnd_Insert_Post extends Wnd_Action_Ajax {
 	 *解析提交数据
 	 */
 	protected function parse_data() {
-		// 实例化当前提交的表单数据
-		$form_data          = new Wnd_Form_Data($this->verify_sign);
-		$this->post_data    = $form_data->get_post_data();
-		$this->meta_data    = $form_data->get_post_meta_data();
-		$this->wp_meta_data = $form_data->get_wp_post_meta_data();
-		$this->terms_data   = $form_data->get_terms_data();
+		$this->post_data    = $this->form_data->get_post_data();
+		$this->meta_data    = $this->form_data->get_post_meta_data();
+		$this->wp_meta_data = $this->form_data->get_wp_post_meta_data();
+		$this->terms_data   = $this->form_data->get_terms_data();
 
 		// 指定ID则为更新
 		$this->post_id     = $this->post_data['ID'] ?? 0;

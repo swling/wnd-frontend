@@ -28,9 +28,9 @@ use Exception;
 class Wnd_Upload_File extends Wnd_Action_Ajax {
 
 	/**
-	 *本操作非标准表单请求，无需解析表单数据
+	 *本操作非标准表单请求，无需验证签名
 	 */
-	protected $parse_data = false;
+	protected $verify_sign = false;
 
 	public function execute(): array{
 		//$_FILES['wnd_file']需要与input name 值匹配
@@ -38,12 +38,12 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 			throw new Exception(__('上传文件为空', 'wnd'));
 		}
 
-		$save_width       = (int) ($_POST['save_width'] ?? 0);
-		$save_height      = (int) ($_POST['save_height'] ?? 0);
-		$thumbnail_height = (int) ($_POST['thumbnail_height'] ?? 0);
-		$thumbnail_width  = (int) ($_POST['thumbnail_width'] ?? 0);
-		$meta_key         = $_POST['meta_key'] ?? '';
-		$post_parent      = (int) ($_POST['post_parent'] ?? 0);
+		$save_width       = (int) ($this->data['save_width'] ?? 0);
+		$save_height      = (int) ($this->data['save_height'] ?? 0);
+		$thumbnail_height = (int) ($this->data['thumbnail_height'] ?? 0);
+		$thumbnail_width  = (int) ($this->data['thumbnail_width'] ?? 0);
+		$meta_key         = $this->data['meta_key'] ?? '';
+		$post_parent      = (int) ($this->data['post_parent'] ?? 0);
 
 		// 上传信息校验
 		if (!$this->user_id and !$post_parent) {
@@ -58,7 +58,7 @@ class Wnd_Upload_File extends Wnd_Action_Ajax {
 			throw new Exception(__('Meta_key与Post_parent不可同时为空', 'wnd'));
 		}
 
-		if (!wp_verify_nonce($_POST['meta_key_nonce'], $meta_key)) {
+		if (!wp_verify_nonce($this->data['meta_key_nonce'], $meta_key)) {
 			throw new Exception(__('meta_key不合法', 'wnd'));
 		}
 
