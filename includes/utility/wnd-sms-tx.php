@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\Utility;
 
 use Wnd\Component\Qcloud\Sms\SmsSender;
 

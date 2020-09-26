@@ -1,7 +1,7 @@
 <?php
 
 use Exception;
-use Wnd\Model\Wnd_Sms;
+use Wnd\Utility\Wnd_Sms;
 
 /**
  *发送短信

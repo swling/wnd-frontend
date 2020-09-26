@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\Utility;
 
 use Exception;
 use Wnd\Component\Aliyun\Sms\SignatureHelper;
