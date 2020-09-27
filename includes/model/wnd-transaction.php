@@ -13,7 +13,7 @@ use WP_User;
 abstract class Wnd_Transaction {
 
 	// order / recharge Post ID
-	protected $ID;
+	protected $transaction_id;
 
 	// order / recharge WP Post object
 	protected $transaction;
@@ -74,8 +74,8 @@ abstract class Wnd_Transaction {
 	 *@return object 	WP Post Object
 	 */
 	public function set_transaction_id(int $ID): WP_Post{
-		$this->ID          = $ID;
-		$this->transaction = get_post($ID);
+		$this->transaction_id = $ID;
+		$this->transaction    = get_post($ID);
 		if (!$ID or !$this->transaction) {
 			throw new Exception(__('交易ID无效', 'wnd'));
 		}

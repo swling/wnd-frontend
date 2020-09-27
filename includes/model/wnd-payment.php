@@ -66,17 +66,17 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *@since 2019.08.11
 	 *@param string 	$out_trade_no 	支付平台订单号
 	 *
-	 *构建：$this->ID
+	 *构建：$this->transaction_id
 	 *构建：$this->transaction
 	 *
 	 *@return object WP Post Object
 	 */
 	public function set_out_trade_no($out_trade_no): WP_Post{
-		$this->out_trade_no = $out_trade_no;
-		$this->ID           = static::parse_out_trade_no($out_trade_no);
-		$this->transaction  = get_post($this->ID);
-		if (!$this->ID or !$this->transaction) {
-			throw new Exception(__('支付ID无效：', 'wnd') . $this->ID);
+		$this->out_trade_no   = $out_trade_no;
+		$this->transaction_id = static::parse_out_trade_no($out_trade_no);
+		$this->transaction    = get_post($this->transaction_id);
+		if (!$this->transaction_id or !$this->transaction) {
+			throw new Exception(__('支付ID无效：', 'wnd') . $this->transaction_id);
 		}
 
 		return $this->transaction;
