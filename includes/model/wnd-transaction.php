@@ -73,7 +73,7 @@ abstract class Wnd_Transaction {
 	 *
 	 *@return object 	WP Post Object
 	 */
-	public function set_ID(int $ID): WP_Post{
+	public function set_transaction_id(int $ID): WP_Post{
 		$this->ID          = $ID;
 		$this->transaction = get_post($ID);
 		if (!$ID or !$this->transaction) {

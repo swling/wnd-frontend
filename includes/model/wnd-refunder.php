@@ -53,7 +53,7 @@ abstract class Wnd_Refunder {
 
 		// 获取订单的支付信息
 		$payment = Wnd_Payment::get_instance(static::$payment_gateway);
-		$payment->set_ID($this->payment_id);
+		$payment->set_transaction_id($this->payment_id);
 		$this->total_amount     = $payment->get_total_amount();
 		$this->out_trade_no     = $payment->get_out_trade_no();
 		$this->object_id        = $payment->get_object_id();

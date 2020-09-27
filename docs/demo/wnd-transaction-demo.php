@@ -53,7 +53,7 @@ $order->create();
 
 // 订单完成
 $order = new Wnd_Order();
-$order->set_ID($post_id);
+$order->set_transaction_id($post_id);
 $order->verify();
 
 // 创建并完成订单
@@ -91,5 +91,5 @@ $recharge->create(true); // 直接写入余额
 
 // 完成充值
 $recharge = new Wnd_Recharge();
-$recharge->set_ID($post_id);
+$recharge->set_transaction_id($post_id);
 $recharge->verify();

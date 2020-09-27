@@ -200,7 +200,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 
 		// 更新 订单/充值
 		$payment = $object_id ? new Wnd_Order() : new Wnd_Recharge();
-		$payment->set_ID($ID);
+		$payment->set_transaction_id($ID);
 		$payment->set_subject($subject);
 		$payment->verify();
 
