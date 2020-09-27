@@ -1,12 +1,14 @@
 <?php
 namespace Wnd\Hook;
 
+use Exception;
 use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\Model\Wnd_User;
+use Wnd\Utility\Wnd_Captcha;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
-use Wnd\View\Wnd_Filter;
+use Wnd\Utility\Wnd_Validator;
 
 /**
  *WP Action
@@ -24,6 +26,16 @@ class Wnd_Add_Action_WP {
 		add_action('post_updated', [__CLASS__, 'action_on_post_updated'], 10, 3);
 		add_action('add_attachment', [__CLASS__, 'action_on_add_attachment'], 10, 1);
 		add_action('pre_get_posts', ['Wnd\View\Wnd_Filter', 'action_on_pre_get_posts'], 10, 1);
+
+		/**
+		 *@since 0.8.73
+		 *匿名用户评论验证码，基于 WordPress 原生评论表单及 wp_handle_comment_submission 评论提交
+		 *
+		 * - 前端表单：@see comment_form(
+		 * - 提交验证：@see wp_handle_comment_submission
+		 */
+		add_action('comment_form', [__CLASS__, 'action_on_comment_form'], 10, 1);
+		add_action('pre_comment_on_post', [__CLASS__, 'action_on_pre_comment_on_post'], 10, 1);
 
 		/**
 		 *分类关联标签
@@ -167,6 +179,41 @@ class Wnd_Add_Action_WP {
 		 */
 		if ($post->post_parent) {
 			wnd_inc_wnd_post_meta($post->post_parent, 'attachment_records');
+		}
+	}
+
+	/**
+	 *@since 0.8.73
+	 *匿名用户提交评论验证码前端交互
+	 */
+	public static function action_on_comment_form($post_ID) {
+		if (is_user_logged_in() or !wnd_get_config('captcha_service')) {
+			return;
+		}
+
+		try {
+			$captcha = Wnd_Captcha::get_instance();
+			echo '<input type="hidden" name="' . Wnd_Captcha::$captcha_name . '">' . PHP_EOL;
+			echo '<input type="hidden" name="' . Wnd_Captcha::$captcha_nonce_name . '">' . PHP_EOL;
+			echo $captcha->render_submit_form_script();
+		} catch (Exception $e) {
+			echo '<!-- ' . $e->getMessage() . ' -->';
+		}
+	}
+
+	/**
+	 *@since 0.8.73
+	 *匿名用户提交评论验证码后端校验
+	 */
+	public static function action_on_pre_comment_on_post($post_ID) {
+		if (is_user_logged_in() or !wnd_get_config('captcha_service')) {
+			return;
+		}
+
+		try {
+			$captcha = Wnd_Validator::validate_captcha();
+		} catch (Exception $e) {
+			exit($e->getMessage());
 		}
 	}
 }
