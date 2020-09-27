@@ -67,19 +67,19 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *@param string 	$out_trade_no 	支付平台订单号
 	 *
 	 *构建：$this->ID
-	 *构建：$this->post
+	 *构建：$this->transaction
 	 *
 	 *@return object WP Post Object
 	 */
 	public function set_out_trade_no($out_trade_no): WP_Post{
 		$this->out_trade_no = $out_trade_no;
 		$this->ID           = static::parse_out_trade_no($out_trade_no);
-		$this->post         = get_post($this->ID);
-		if (!$this->ID or !$this->post) {
+		$this->transaction  = get_post($this->ID);
+		if (!$this->ID or !$this->transaction) {
 			throw new Exception(__('支付ID无效：', 'wnd') . $this->ID);
 		}
 
-		return $this->post;
+		return $this->transaction;
 	}
 
 	/**
@@ -117,8 +117,8 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		$payment->set_payment_gateway($this->payment_gateway);
 
 		// 写入数据库后构建ID及Post属性，供外部调用属性向支付平台发起请求
-		$this->post = $payment->create();
-		return $this->post;
+		$this->transaction = $payment->create();
+		return $this->transaction;
 	}
 
 	/**
@@ -172,7 +172,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *充值付款校验
 	 *@return int 		WP Post ID
 	 *
-	 *@param object		$this->post 	required 	WP Post Object
+	 *@param object		$this->transaction 	required 	WP Post Object
 	 */
 	protected function complete(): int{
 		$type = ('POST' == $_SERVER['REQUEST_METHOD']) ? __('异步', 'wnd') : __('同步', 'wnd');

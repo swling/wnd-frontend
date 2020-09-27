@@ -16,7 +16,7 @@ abstract class Wnd_Transaction {
 	protected $ID;
 
 	// order / recharge WP Post object
-	protected $post;
+	protected $transaction;
 
 	// 站点用户ID
 	protected $user_id;
@@ -74,13 +74,13 @@ abstract class Wnd_Transaction {
 	 *@return object 	WP Post Object
 	 */
 	public function set_ID(int $ID): WP_Post{
-		$this->ID   = $ID;
-		$this->post = get_post($ID);
-		if (!$ID or !$this->post) {
+		$this->ID          = $ID;
+		$this->transaction = get_post($ID);
+		if (!$ID or !$this->transaction) {
 			throw new Exception(__('交易ID无效', 'wnd'));
 		}
 
-		return $this->post;
+		return $this->transaction;
 	}
 
 	/**
@@ -164,14 +164,14 @@ abstract class Wnd_Transaction {
 	 *获取WordPress order/recharge post ID
 	 */
 	public function get_ID() {
-		return $this->post->ID;
+		return $this->transaction->ID;
 	}
 
 	/**
 	 *获取支付订单标题
 	 */
 	public function get_subject() {
-		return $this->post->post_title;
+		return $this->transaction->post_title;
 	}
 
 	/**
@@ -179,7 +179,7 @@ abstract class Wnd_Transaction {
 	 *获取关联产品/服务Post ID
 	 **/
 	public function get_object_id() {
-		return $this->post->post_parent;
+		return $this->transaction->post_parent;
 	}
 
 	/**
@@ -187,7 +187,7 @@ abstract class Wnd_Transaction {
 	 *获取消费金额
 	 **/
 	public function get_total_amount(): float {
-		return number_format(floatval($this->post->post_content), 2, '.', '');
+		return number_format(floatval($this->transaction->post_content), 2, '.', '');
 	}
 
 	/**
@@ -196,7 +196,7 @@ abstract class Wnd_Transaction {
 	 *
 	 */
 	public function get_user_id() {
-		return $this->post->post_author;
+		return $this->transaction->post_author;
 	}
 
 	/**
@@ -205,7 +205,7 @@ abstract class Wnd_Transaction {
 	 *
 	 */
 	public function get_status() {
-		return $this->post->post_status;
+		return $this->transaction->post_status;
 	}
 
 	/**
@@ -214,7 +214,7 @@ abstract class Wnd_Transaction {
 	 *
 	 */
 	public function get_type() {
-		return $this->post->post_type;
+		return $this->transaction->post_type;
 	}
 
 	/**

@@ -83,14 +83,14 @@ class Wnd_Recharge extends Wnd_Transaction {
 		}
 
 		// 构建Post
-		$this->post = get_post($ID);
+		$this->transaction = get_post($ID);
 
 		// 完成充值
 		if (static::$completed_status == $this->status) {
 			$this->complete();
 		}
 
-		return $this->post;
+		return $this->transaction;
 	}
 
 	/**
@@ -98,7 +98,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *更新支付订单状态
 	 *@return int or Exception
 	 *
-	 *@param object 	$this->post			required 	订单记录Post
+	 *@param object 	$this->transaction			required 	订单记录Post
 	 *@param string 	$this->subject 		option
 	 */
 	public function verify() {
@@ -131,7 +131,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *在线充值：直接新增用户余额
 	 *
 	 *当充值包含关联object_id，表示收入来自站内佣金收入：更新用户佣金及产品总佣金统计
-	 *@param object 	$this->post			required 	订单记录Post
+	 *@param object 	$this->transaction			required 	订单记录Post
 	 */
 	protected function complete(): int{
 		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量

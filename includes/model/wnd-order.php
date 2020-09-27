@@ -144,7 +144,7 @@ class Wnd_Order extends Wnd_Transaction {
 		}
 
 		// 构建Post
-		$this->post = get_post($ID);
+		$this->transaction = get_post($ID);
 
 		/**
 		 *@since 2019.02.17
@@ -155,7 +155,7 @@ class Wnd_Order extends Wnd_Transaction {
 			$this->complete();
 		}
 
-		return $this->post;
+		return $this->transaction;
 	}
 
 	/**
@@ -163,7 +163,7 @@ class Wnd_Order extends Wnd_Transaction {
 	 *确认在线消费订单
 	 *@return int or false
 	 *
-	 *@param object 	$this->post			required 	订单记录Post
+	 *@param object 	$this->transaction			required 	订单记录Post
 	 *@param string 	$this->subject 		option
 	 */
 	public function verify() {
@@ -194,8 +194,8 @@ class Wnd_Order extends Wnd_Transaction {
 	 *订单成功后，执行的统一操作
 	 *@since 2020.06.10
 	 *
-	 *@param $this->post
-	 *@param object 	$this->post		required 	订单记录Post
+	 *@param $this->transaction
+	 *@param object 	$this->transaction		required 	订单记录Post
 	 */
 	protected function complete(): int{
 		/**
