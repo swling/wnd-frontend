@@ -112,7 +112,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 		}
 
 		$post_arr = [
-			'ID'          => $this->get_ID(),
+			'ID'          => $this->get_transaction_id(),
 			'post_status' => static::$completed_status,
 			'post_title'  => $this->subject ?: $this->get_subject(),
 		];
@@ -135,7 +135,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 */
 	protected function complete(): int{
 		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
-		$ID           = $this->get_ID();
+		$ID           = $this->get_transaction_id();
 		$user_id      = $this->get_user_id();
 		$total_amount = $this->get_total_amount();
 		$object_id    = $this->get_object_id();

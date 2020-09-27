@@ -178,7 +178,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		$type = ('POST' == $_SERVER['REQUEST_METHOD']) ? __('异步', 'wnd') : __('同步', 'wnd');
 
 		// 定义变量 本类中，标题方法添加了站点名称，用于支付平台。故此调用父类方法用于站内记录
-		$ID        = $this->get_ID();
+		$ID        = $this->get_transaction_id();
 		$subject   = parent::get_subject() . '(' . $type . ')';
 		$object_id = $this->get_object_id();
 		$status    = $this->get_status();
@@ -216,7 +216,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *构建包含当前站点标识的订单号码作为发送至三方支付平台的订单号
 	 */
 	public function get_out_trade_no() {
-		$ID = $this->get_ID();
+		$ID = $this->get_transaction_id();
 		if (!$ID) {
 			throw new Exception(__('站内支付数据尚未写入', 'wnd'));
 		}

@@ -28,6 +28,6 @@ class Wnd_Payment_Alipay_QRCode extends Wnd_Payment_Alipay {
 		 * 获取响应提取支付链接信息，生成二维码
 		 * Ajax定期查询订单是否已经完成支付，以便下一步操作
 		 */
-		return $aliPay->build() . static::build_ajax_check_script($this->get_ID());
+		return $aliPay->build() . static::build_ajax_check_script($this->get_transaction_id());
 	}
 }

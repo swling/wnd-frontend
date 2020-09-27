@@ -163,7 +163,7 @@ abstract class Wnd_Transaction {
 	/**
 	 *获取WordPress order/recharge post ID
 	 */
-	public function get_ID() {
+	public function get_transaction_id() {
 		return $this->transaction->ID;
 	}
 
