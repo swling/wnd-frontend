@@ -110,7 +110,7 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 	public function render_submit_form_script(): string{
 		$script = '
 		<script>
-		function wnd_submit_form_via_captcha(form_id, is_wnd_form){
+		function wnd_submit_form_via_captcha(form_id, ajax_submit){
 			var captcha = new TencentCaptcha(
 				"' . $this->appid . '",
 				function(res) {
@@ -121,7 +121,7 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 					$("#" + form_id + " [name=\'' . static::$captcha_name . '\']").val(res.ticket);
 					$("#" + form_id + " [name=\'' . static::$captcha_nonce_name . '\']").val(res.randstr);
 
-					if (is_wnd_form){
+					if (ajax_submit){
 						wnd_ajax_submit(form_id);
 					} else {
 						$("#" + form_id).submit();
@@ -138,14 +138,14 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 				// 当 button 的 id 或 name 为 "submit" 时，JavaScript submit() 将无法提交表单
 				$(this).prop("id","");
 				var form_id = $(this).closest("form").attr("id");
-				var is_wnd_form = (-1 != $(this).prop("class").indexOf(".ajax-submit"));
+				var ajax_submit = (-1 != $(this).prop("class").indexOf("ajax-submit"));
 
 				if ("undefined" == typeof TencentCaptcha) {
 					$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
-						wnd_submit_form_via_captcha(form_id, is_wnd_form);
+						wnd_submit_form_via_captcha(form_id, ajax_submit);
 					});
 				}else{
-					wnd_submit_form_via_captcha(form_id, is_wnd_form);
+					wnd_submit_form_via_captcha(form_id, ajax_submit);
 				}
 
 				return false;
