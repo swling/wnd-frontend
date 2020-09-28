@@ -71,7 +71,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 
 	// bulma框架及fontawesome图标
 	$static_host = wnd_get_config('static_host');
-	if ('local' == $static_host) {
+	if (!$static_host or 'local' == $static_host) {
 		wp_enqueue_style('bulma', WND_URL . 'static/css/bulma.min.css', [], WND_VER);
 		wp_enqueue_style('bulma-extensions', WND_URL . 'static/css/bulma-extensions.min.css', [], WND_VER);
 		wp_enqueue_style('font-awesome', WND_URL . 'static/css/font-awesome-all.min.css', [], WND_VER);
