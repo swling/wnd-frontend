@@ -43,7 +43,7 @@ class Wnd_Pay_Button {
 	/**
 	 *Construct
 	 */
-	public function __construct(\WP_Post $post, bool $with_paid_content) {
+	public function __construct(\WP_Post $post, bool $with_paid_content, string $button_text = '') {
 		$this->post_id       = $post->ID;
 		$this->post          = $post;
 		$this->user_id       = get_current_user_id();
@@ -52,7 +52,6 @@ class Wnd_Pay_Button {
 		$this->user_money    = wnd_get_user_money($this->user_id, true);
 		$this->user_has_paid = wnd_user_has_paid($this->user_id, $this->post_id);
 		$this->file_id       = wnd_get_post_meta($this->post_id, 'file');
-		$this->button_text   = '';
 		$this->primary_color = 'is-' . wnd_get_config('primary_color');
 
 		if (floatval($this->post_price) <= 0 or $this->user_has_paid) {
@@ -71,6 +70,12 @@ class Wnd_Pay_Button {
 		} else {
 			throw new Exception(__('免费且不含文件', 'wnd'));
 		}
+
+		/**
+		 *@since 0.8.73
+		 *如果外部传参按钮文字，则覆盖
+		 */
+		$this->button_text = $button_text ?: $this->button_text;
 	}
 
 	/**
@@ -195,7 +200,7 @@ class Wnd_Pay_Button {
 			$this->button_text = __('下载', 'wnd');
 		} else {
 			$this->action      = 'wnd_pay_for_reading';
-			$this->button_text = __('立即付费', 'wnd');
+			$this->button_text = __('立即购买', 'wnd');
 		}
 
 		// 已支付
