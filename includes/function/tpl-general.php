@@ -278,6 +278,7 @@ function wnd_notification($notification, $add_class = '', $delete = false) {
 function wnd_modal_button($text, $event = '', $param = '', $add_class = '') {
 	$class = 'button';
 	$class .= $add_class ? ' ' . $add_class : '';
+	$param = is_array($param) ? http_build_query($param) : $param;
 
 	$html = '<button class="' . $class . '"';
 	$html .= $event ? ' onclick="wnd_ajax_modal(\'' . $event . '\',\'' . $param . '\')"' : '';
