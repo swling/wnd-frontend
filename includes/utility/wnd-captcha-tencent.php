@@ -106,6 +106,9 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 	/**
 	 *表单提交人机验证
 	 *@since 0.8.64
+	 *
+	 *@since 0.8.73
+	 *必须指定 form[captcha='1'] 选择器，否则页面请求一次后JavaScript已在当前页面生效，会影响其他表单
 	 */
 	public function render_submit_form_script(): string{
 		$script = '
@@ -134,7 +137,7 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 
 		// 绑定点击事件
 		$(function() {
-			$("form[captcha=\'1\'] [type=\'submit\']").click(function() {
+			$("form[captcha=\'1\'] [type=\'submit\'], form#commentform [type=\'submit\']").click(function() {
 				// 当 button 的 id 或 name 为 "submit" 时，JavaScript submit() 将无法提交表单
 				$(this).prop("id","");
 				var form_id = $(this).closest("form").attr("id");
