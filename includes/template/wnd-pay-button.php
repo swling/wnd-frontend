@@ -109,7 +109,7 @@ class Wnd_Pay_Button {
 		 * - 当包含文件时，无论是否已支付，均需要提交下载请求，是否扣费将在 Wnd\Action\Wnd_Pay_For_Downloads 判断
 		 */
 		if (floatval($this->post_price) > 0 and !$this->user_has_paid and !$this->is_author) {
-			$this->html .= wnd_modal_button($this->button_text, 'wnd_order_payment_form', $this->post_id, $this->primary_color);
+			$this->html .= wnd_modal_button($this->button_text, 'wnd_payment_form', $this->post_id, $this->primary_color);
 		} elseif (!$this->disabled and $this->file_id) {
 			$form = new Wnd_Form_WP();
 			$form->add_hidden('post_id', $this->post_id);

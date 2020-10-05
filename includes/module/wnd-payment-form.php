@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form_WP;
  *在线支付订单表单
  *匿名支付订单默认启用人机验证
  */
-class Wnd_Order_Payment_Form extends Wnd_Module {
+class Wnd_Payment_Form extends Wnd_Module {
 
 	protected static function build($args = []): string{
 		$defaults = [
