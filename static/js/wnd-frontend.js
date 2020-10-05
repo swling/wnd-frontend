@@ -337,6 +337,9 @@ function wnd_loading(container, add) {
 
 //############################### 根据表单id自动提交表单 并根据返回代码执行对应操作
 function wnd_ajax_submit(form_id) {
+	var method = $("#" + form_id).prop('method');
+	var url = ("post" == method) ? wnd_action_api : wnd_interface_api;
+
 	// 提交按钮
 	var submit_button = $("#" + form_id + " [type='submit']");
 
@@ -410,16 +413,16 @@ function wnd_ajax_submit(form_id) {
 	}
 
 	// 生成表单数据
-	var form_data = new FormData($("#" + form_id).get(0));
+	var form_data = ("post" == method) ? new FormData($("#" + form_id).get(0)) : $("#" + form_id).serialize();
 
 	$.ajax({
-		url: wnd_action_api,
+		url: url,
 		dataType: "json",
 		cache: false,
 		contentType: false,
 		processData: false,
 		data: form_data,
-		type: "POST",
+		type: method,
 
 		// 提交中
 		beforeSend: function(xhr) {
@@ -429,6 +432,16 @@ function wnd_ajax_submit(form_id) {
 
 		// 返回结果
 		success: function(response) {
+			/**
+			 *@since 0.8.73
+			 *GET 提交弹出 UI 模块
+			 */
+			if (("get" == method)) {
+				wnd_alert_modal(response.data);
+				submit_button.removeClass("is-loading");
+				return;
+			}
+
 			if (response.status != 3 && response.status != 4) {
 				submit_button.removeClass("is-loading");
 			}

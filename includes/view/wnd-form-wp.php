@@ -54,6 +54,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		 *开启验证码字段
 		 */
 		if ($this->enable_captcha) {
+			$this->add_form_attr('captcha', 1);
 			$this->add_hidden(Wnd_Captcha::$captcha_name, '');
 			$this->add_hidden(Wnd_Captcha::$captcha_nonce_name, '');
 		}
@@ -73,6 +74,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 */
 	public function set_action(string $action, string $method = 'POST') {
 		if ($this->is_ajax_submit) {
+			$this->method = $method;
 			$this->add_hidden('action', $action);
 			$this->add_hidden('_ajax_nonce', wp_create_nonce($action));
 		} else {
@@ -416,8 +418,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		 *@since 2019.07.17 ajax表单
 		 */
 		if ($this->is_ajax_submit) {
-			$this->add_form_attr('action', '');
-			$this->add_form_attr('method', 'POST');
 			$this->add_form_attr('onsubmit', 'return false');
 		}
 		parent::build_form_header();
