@@ -54,7 +54,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		 *开启验证码字段
 		 */
 		if ($this->enable_captcha) {
-			$this->add_form_attr('captcha', 1);
 			$this->add_hidden(Wnd_Captcha::$captcha_name, '');
 			$this->add_hidden(Wnd_Captcha::$captcha_nonce_name, '');
 		}
@@ -92,6 +91,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	public function set_submit_button(string $text, string $class = '', bool $disabled = false) {
 		$class = $class ?: 'is-' . static::$primary_color;
 		$class .= $this->is_ajax_submit ? ' ajax-submit' : '';
+		$class .= $this->enable_captcha ? ' captcha' : '';
 		parent::set_submit_button($text, $class, $disabled);
 	}
 
