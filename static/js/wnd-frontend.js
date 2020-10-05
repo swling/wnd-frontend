@@ -437,7 +437,11 @@ function wnd_ajax_submit(form_id) {
 			 *GET 提交弹出 UI 模块
 			 */
 			if (("get" == method)) {
-				wnd_alert_modal(response.data);
+				if (response.status >= 1) {
+					wnd_alert_modal(response.data);
+				} else {
+					wnd_alert_modal(response.msg);
+				}
 				submit_button.removeClass("is-loading");
 				return;
 			}
