@@ -11,7 +11,18 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Order_Payment_Form extends Wnd_Module {
 
-	protected static function build($post_id = 0): string{
+	protected static function build($args = []): string{
+		$defaults = [
+			'post_id'  => 0,
+			'quantity' => 1,
+			'kit'      => '',
+			'color'    => '',
+			'size'     => '',
+		];
+
+		$args = wp_parse_args($args, $defaults);
+		extract($args);
+
 		$user_id         = get_current_user_id();
 		$gateway_options = Wnd_Payment::get_gateway_options();
 		$user_money      = wnd_get_user_money($user_id);
