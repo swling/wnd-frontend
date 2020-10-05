@@ -35,7 +35,15 @@ class Wnd_User {
 	 *@param string $avatar_url 	用户外链头像
 	 *
 	 **/
-	public static function social_login($open_id, $display_name = '', $avatar_url = '') {
+	public static function social_login($open_id, $display_name, $avatar_url) {
+		/**
+		 *@since 0.8.73
+		 *社交登录必须获取用户昵称
+		 */
+		if (!$display_name) {
+			exit(__('昵称无效', 'wnd'));
+		}
+
 		//当前用户已登录，同步信息
 		if (is_user_logged_in()) {
 			$this_user   = wp_get_current_user();
