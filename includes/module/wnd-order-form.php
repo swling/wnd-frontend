@@ -5,7 +5,8 @@ use Wnd\View\Wnd_Form_WP;
 
 /**
  *@since 0.8.73
- *单个产品购买表单
+ *
+ *商品购买表单
  */
 class Wnd_Order_Form extends Wnd_Module {
 
@@ -19,8 +20,17 @@ class Wnd_Order_Form extends Wnd_Module {
 		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
+		/**
+		 *套餐单选项
+		 */
 		// Demo data
-		$kit = ['kit_1' => '套餐1', 'kit_2' => '套餐2'];
+		$kit = [
+			'kit_1' => ['title' => '套餐1', 'price' => '0.1'],
+			'kit_2' => ['title' => '套餐2', 'price' => '0.2'],
+		];
+		foreach ($kit as $key => $value) {
+			$options[$value['title']] = $key;
+		}
 
 		$post = get_post($post_id);
 		if (!$post) {
@@ -33,7 +43,7 @@ class Wnd_Order_Form extends Wnd_Module {
 		$form->add_radio(
 			[
 				'name'     => 'kit',
-				'options'  => array_flip($kit),
+				'options'  => $options,
 				'required' => 'required',
 				'checked'  => $post->post_status,
 				'class'    => 'is-checkradio is-danger',
