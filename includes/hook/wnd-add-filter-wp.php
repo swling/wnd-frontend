@@ -60,9 +60,9 @@ class Wnd_Add_Filter_WP {
 			return $link;
 		}
 
-		$edit_page = (int) wnd_get_config('edit_page');
-		if ($edit_page) {
-			return add_query_arg(['action' => 'edit', 'post_id' => $post_id], get_permalink($edit_page));
+		$ucenter_page = (int) wnd_get_config('ucenter_page');
+		if ($ucenter_page) {
+			return add_query_arg(['action' => 'edit', 'post_id' => $post_id], get_permalink($ucenter_page));
 		}
 		return $link;
 	}

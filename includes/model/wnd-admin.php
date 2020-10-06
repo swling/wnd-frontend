@@ -17,7 +17,7 @@ class Wnd_Admin {
 		if (!get_option('wnd')) {
 			$default_option = [
 				'static_host'               => 'local',
-				'edit_page'                 => '',
+				'ucenter_page'              => '',
 				'agreement_url'             => '',
 				'reg_redirect_url'          => '',
 				'default_avatar_url'        => WND_URL . 'static/images/avatar.jpg',
@@ -170,6 +170,21 @@ class Wnd_Admin {
 			update_option('wnd', $option);
 
 			update_option('wnd_ver', '0.8.62');
+
+			wp_cache_flush();
+		}
+
+		// 升级 0.8.73
+		if (version_compare(get_option('wnd_ver'), '0.8.73', '<')) {
+			foreach (get_option('wnd') as $key => $value) {
+				if ('edit_page' == $key) {
+					$key = 'ucenter_page';
+				}
+				$option[$key] = $value;
+			}
+			update_option('wnd', $option);
+
+			update_option('wnd_ver', '0.8.73');
 
 			wp_cache_flush();
 		}

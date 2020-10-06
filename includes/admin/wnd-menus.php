@@ -105,7 +105,7 @@ class Wnd_Menus {
 			]
 		);
 
-		$form->add_page_select('edit_page', '前端编辑页面', true);
+		$form->add_page_select('ucenter_page', '用户中心页面', true);
 
 		$form->add_text(
 			[
