@@ -151,7 +151,7 @@ class Wnd_API {
 
 		// 解析实际类名称及参数
 		$class = static::parse_class($_GET['module'], 'Module');
-		$param = $_GET['param'] ?? $_GET;
+		$param = $_GET['param'] ?? '';
 
 		/**
 		 *@since 2019.10.01
@@ -186,7 +186,7 @@ class Wnd_API {
 
 		// 解析实际类名称及参数
 		$class = static::parse_class($_GET['data'], 'JsonGet');
-		$param = $_GET['param'] ?? $_GET;
+		$param = $_GET['param'] ?? '';
 
 		if (!is_callable([$class, 'get'])) {
 			return ['status' => 0, 'msg' => __('无效的Json Data', 'wnd') . ':' . $class];

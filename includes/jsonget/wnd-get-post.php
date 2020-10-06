@@ -4,12 +4,13 @@ namespace Wnd\JsonGet;
 /**
  *@since 2020.07.21
  *获取Post Json
- *@param $_POST['post_id']  Post ID
+ *
+ *@param int $post_id  Post ID
  */
 class Wnd_Get_Post extends Wnd_JsonGet {
 
 	public static function get(int $post_id = 0): array{
-		$post_id = (int) ($post_id ?: $_POST['post_id']);
+		$post_id = (int) ($post_id ?: $_GET['post_id']);
 		$post    = get_post($post_id, ARRAY_A);
 
 		/**

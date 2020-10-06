@@ -12,7 +12,8 @@ abstract class Wnd_Module {
 	 */
 	public static function render($param = '') {
 		static::check();
-		return static::build($param);
+
+		return static::build($param ?: $_GET);
 	}
 
 	/**
