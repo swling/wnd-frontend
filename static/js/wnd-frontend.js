@@ -193,7 +193,7 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 *@param 	param 		srting 		传参
 */
 // ajax 从后端请求内容，并以弹窗形式展现
-function wnd_ajax_modal(module, param = '') {
+function wnd_ajax_modal(module, param = 0) {
 	$.ajax({
 		type: "GET",
 		url: wnd_interface_api,
@@ -268,7 +268,7 @@ function wnd_ajax_embed(container, module, param = 0) {
  *@param callback 	回调函数
  *@param param 		对应传参
  */
-function wnd_get_json(data, callback, param = '') {
+function wnd_get_json(data, callback, param = 0) {
 	$.ajax({
 		type: "GET",
 		url: wnd_jsonget_api,
