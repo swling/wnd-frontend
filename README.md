@@ -95,6 +95,7 @@ wnd_meta: total_sales：付费内容总销售额
 wnd_meta: total_commission：作者获得的总佣金
 wnd_meta: attachment_records (累积上传到当前文章的附件总次数，含已删除，用于给附件自动设置 menu_order)
 wnd_meta：gallery (文章相册，数组形式存放附件id)
+wnd_meta: kit（套餐，数组数据）
 
 # 用户自定义字段
 wnd_meta: money：余额
