@@ -39,11 +39,11 @@ json获取请求无需nonce校验需要包含如下参数
 
 ### 前端请求举例（以Module为例）
 ```JavaScript
-wnd_ajax_modal("wnd_user_center", param = "xxx");
+wnd_ajax_modal("wnd_user_center", {"x": "xxx"});
 ```
 实际类名称：
 ```php
-Wnd\Module\Wnd_User_Center::render('xxx');
+Wnd\Module\Wnd_User_Center::render(['x' => 'xxx']);
 ```
 
 
@@ -65,11 +65,11 @@ require TEMPLATEPATH . '/includes/module/wndt-bid-form.php';
 ```
 前端请求举例（以Module为例）
 ```JavaScript
-wnd_ajax_modal("Wndt_Bid_Form", param = "xxx"); 
+wnd_ajax_modal("Wndt_Bid_Form", {"x": "xxx"}); 
 ```
 实际类名称：
 ```php
-Wndt\Module\Wndt_Bid_Form::render('xxx');
+Wndt\Module\Wndt_Bid_Form::render(['x' => 'xxx']);
 ```
 
 ### 插件拓展
@@ -96,11 +96,11 @@ $class_name 不含命名空间（api将根据类名称前缀自动解析补全�
 
 假定插件：Wndt_File_Import 具有一个 Wndt_Demo UI模块，前端请求实例如下：
 ```JavaScript
-wnd_ajax_modal("Wndt_File_Import\\Wndt_Demo",  param = "xxx");
+wnd_ajax_modal("Wndt_File_Import\\Wndt_Demo",  {"x": "xxx"});
 ```
 实际类名称：
 ```php
-Wnd_Plugin\Wndt_File_Import\Module\Wndt_Demo::render('xxx');
+Wnd_Plugin\Wndt_File_Import\Module\Wndt_Demo::render(['x' => 'xxx']);
 ```
 ### 拓展中添加第三方组件
 {plugin_or_theme_dir}/includes/component文件夹存储第三方组件，按通用驼峰命名规则

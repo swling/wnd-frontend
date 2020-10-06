@@ -5,13 +5,12 @@ use Wnd\View\Wnd_Filter;
 
 /**
  *@since 2019.02.18 封装用户财务中心
- *@param $posts_per_page 每页列表数目
  */
 class Wnd_User_Finance_Panel extends Wnd_Module_User {
 
-	protected static function build(int $posts_per_page = 0): string{
-		$user_id        = get_current_user_id();
-		$posts_per_page = $posts_per_page ?: get_option('posts_per_page');
+	protected static function build(): string{
+		$user_id                        = get_current_user_id();
+		static::$args['posts_per_page'] = static::$args['posts_per_page'] ?? get_option('posts_per_page');
 
 		$html = '<div id="user-finance-panel">';
 		$html .= '<nav class="level is-mobile">';
@@ -56,7 +55,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module_User {
 		$filter->add_post_status_filter(['any']);
 		$filter->add_query(['author' => get_current_user_id()]);
 		$filter->set_posts_template('wnd_list_table');
-		$filter->set_posts_per_page($posts_per_page);
+		$filter->set_posts_per_page(static::$args['posts_per_page']);
 		$filter->set_ajax_container('#admin-fin-panel');
 		$filter->query();
 		$filter_html = $filter->get_tabs() . '<div id="admin-fin-panel">' . $filter->get_results() . '</div>';

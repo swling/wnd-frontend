@@ -638,8 +638,8 @@ class Wnd_Filter_User {
 
 			// 编辑管理
 			$table .= '<td class="is-narrow has-text-centered">';
-			$table .= '<a onclick="wnd_ajax_modal(\'wnd_delete_user_form\',\'' . $user->ID . '\')"> <i class="fas fa-trash-alt"></i> </a>';
-			$table .= '<a onclick="wnd_ajax_modal(\'wnd_account_status_form\',\'' . $user->ID . '\')"> <i class="fas fa-cog"></i> </a>';
+			$table .= wnd_modal_link('<i class="fas fa-trash-alt"></i>', 'wnd_delete_user_form', ['user_id' => $user->ID]);
+			$table .= wnd_modal_link('<i class="fas fa-cog"></i>', 'wnd_account_status_form', ['user_id' => $user->ID]);
 			$table .= '</td>';
 			$table .= '</tr>';
 		}

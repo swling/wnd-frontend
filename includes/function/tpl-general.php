@@ -74,8 +74,8 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 
 		//其他归档页
 	} elseif (is_archive()) {
-		$args = http_build_query(['taxonomy' => $queried_object->taxonomy, 'orderby' => 'name']);
-		$html .= '<li><a onclick="wnd_ajax_modal(\'wnd_terms_list\',\'' . $args . '\')">' . get_taxonomy($queried_object->taxonomy)->label . '</a></li>';
+		$args = ['taxonomy' => $queried_object->taxonomy, 'orderby' => 'name'];
+		$html .= '<li>' . wnd_modal_link(get_taxonomy($queried_object->taxonomy)->label, 'wnd_terms_list', $args) . '</li>';
 		$html .= '<li class="is-active"><a>' . $queried_object->name . '</a></li>';
 
 	} else {
@@ -95,7 +95,7 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 	if (is_single()) {
 		if (current_user_can('edit_post', $queried_object->ID)) {
 			$breadcrumb_right .= '<a href="' . get_edit_post_link($queried_object->ID) . '">[' . __('编辑', 'wnd') . ']</a>';
-			$breadcrumb_right .= '&nbsp;<a onclick="wnd_ajax_modal(\'wnd_post_status_form\',\'' . $queried_object->ID . '\')">[' . __('状态', 'wnd') . ']</a>';
+			$breadcrumb_right .= '&nbsp;' . wnd_modal_link('[' . __('状态', 'wnd') . ']', 'wnd_post_status_form', ['post_id' => $queried_object->ID]);
 		}
 	}
 	$html .= apply_filters('wnd_breadcrumb_right', $breadcrumb_right);
@@ -268,21 +268,61 @@ function wnd_notification($notification, $add_class = '', $delete = false) {
 }
 
 /**
- *呼出弹窗按钮
+ *唤起 Modal
  *@since 2020.04.23
  *@param $text 		按钮文字
- *@param $event 	点击弹窗
+ *@param $module 	点击弹窗
  *@param $param  	传输参数
  *@param $add_calss class
  */
-function wnd_modal_button($text, $event = '', $param = '', $add_class = '') {
+function wnd_modal_button($text, $module, $param = [], $add_class = '') {
 	$class = 'button';
 	$class .= $add_class ? ' ' . $add_class : '';
-	$param = is_array($param) ? http_build_query($param) : $param;
+	$param = json_encode(wp_parse_args($param));
 
 	$html = '<button class="' . $class . '"';
-	$html .= $event ? ' onclick="wnd_ajax_modal(\'' . $event . '\',\'' . $param . '\')"' : '';
+	$html .= $module ? ' onclick=\'wnd_ajax_modal("' . $module . '", ' . $param . ')\'' : '';
 	$html .= '>' . $text . '</button>';
+
+	return $html;
+}
+
+/**
+ *唤起 Modal
+ *@since 0.8.73
+ *@param $text 		按钮文字
+ *@param $module 	点击弹窗
+ *@param $param  	传输参数
+ *@param $add_calss class
+ */
+function wnd_modal_link($text, $module, $param = [], $add_class = '') {
+	$class = '';
+	$class .= $add_class ? ' ' . $add_class : '';
+	$param = json_encode(wp_parse_args($param));
+
+	$html = '<a class="' . $class . '"';
+	$html .= $module ? ' onclick=\'wnd_ajax_modal("' . $module . '", ' . $param . ')\'' : '';
+	$html .= '>' . $text . '</a>';
+
+	return $html;
+}
+
+/**
+ *嵌入 Module
+ *@since 0.8.73
+ *@param $text 		按钮文字
+ *@param $module 	点击弹窗
+ *@param $param  	传输参数
+ *@param $add_calss class
+ */
+function wnd_embed_link($container, $text, $module, $param = [], $add_class = '') {
+	$class = '';
+	$class .= $add_class ? ' ' . $add_class : '';
+	$param = json_encode(wp_parse_args($param));
+
+	$html = '<a class="' . $class . '"';
+	$html .= $module ? ' onclick=\'wnd_ajax_embed("' . $container . '", "' . $module . '", ' . $param . ')\'' : '';
+	$html .= '>' . $text . '</a>';
 
 	return $html;
 }

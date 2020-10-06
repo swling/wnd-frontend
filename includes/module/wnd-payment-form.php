@@ -20,8 +20,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 			'size'     => '',
 		];
 
-		$args = $args ?: $_GET;
-		$args = wp_parse_args($args, $defaults);
+		$args = wp_parse_args(static::$args, $defaults);
 		extract($args);
 
 		$user_id         = get_current_user_id();

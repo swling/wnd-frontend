@@ -88,7 +88,7 @@ class Wnd_Pay_Button {
 			$this->html = '<div class="wnd-pay-button box has-text-centered">';
 			$this->html .= '<div class="pay-notification field">' . $this->message . '</div>';
 			$this->html .= '<div class="field is-grouped is-grouped-centered">';
-			$this->html .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', 'do=login', $this->primary_color);
+			$this->html .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', ['do' => 'login'], $this->primary_color);
 			$this->html .= '</div>';
 			$this->html .= '</div>';
 			return $this->html;

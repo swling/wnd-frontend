@@ -5,11 +5,12 @@ use Wnd\View\Wnd_Form_User;
 
 /**
  *@since 2019.01.28 找回密码
- *@param $type 	string	email/phone
  */
 class Wnd_Reset_Password_Form extends Wnd_Module {
 
-	protected static function build($type = 'email'): string{
+	protected static function build(): string{
+		$type = static::$args['type'] ?? 'email';
+
 		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
 		if ('phone' == $type) {

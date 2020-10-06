@@ -190,18 +190,17 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 
 *典型用途：	击弹出登录框、点击弹出建议发布文章框
 *@param 	module 		string 		module类
-*@param 	param 		srting 		传参
+*@param 	param 		json 		传参
 */
 // ajax 从后端请求内容，并以弹窗形式展现
-function wnd_ajax_modal(module, param = 0) {
+function wnd_ajax_modal(module, param = {}) {
 	$.ajax({
 		type: "GET",
 		url: wnd_interface_api,
-		data: {
+		data: Object.assign({
 			"module": module,
-			"param": param,
-			"ajax_type": "modal",
-		},
+			"ajax_type": "modal"
+		}, param),
 		//后台返回数据前
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
@@ -228,17 +227,17 @@ function wnd_ajax_modal(module, param = 0) {
  *原理同 wnd_ajax_modal()，区别为，响应方式为嵌入
  *@param 	container 	srting 		指定嵌入的容器选择器
  *@param 	module 		string 		module类名称
- *@param 	param 		srting 		传参
+ *@param 	param 		json 		传参
  **/
-function wnd_ajax_embed(container, module, param = 0) {
+function wnd_ajax_embed(container, module, param = {}) {
 	$.ajax({
 		type: "GET",
 		url: wnd_interface_api,
-		data: {
+		data: Object.assign({
 			"module": module,
-			"param": param,
-			"ajax_type": "embed",
-		},
+			"ajax_type": "embed"
+		}, param),
+
 		//后台返回数据前
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);

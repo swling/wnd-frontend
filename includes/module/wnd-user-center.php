@@ -9,7 +9,7 @@ namespace Wnd\Module;
  */
 class Wnd_User_Center extends Wnd_Module {
 
-	protected static function build($args = []): string{
+	protected static function build(): string{
 		$ajax_type         = $_GET['ajax_type'] ?? '';
 		$enable_sms        = (1 == wnd_get_config('enable_sms')) ? true : false;
 		$disable_email_reg = (1 == wnd_get_config('disable_email_reg')) ? true : false;
@@ -27,7 +27,7 @@ class Wnd_User_Center extends Wnd_Module {
 		 *@see 2019.08.17
 		 *在非ajax环境中，约定了GET参数，实现切换模块切换，故此，需要确保GET参数优先级
 		 **/
-		$args = array_merge(wp_parse_args($args, $defaults), $_GET);
+		$args = wp_parse_args(static::$args, $defaults);
 		extract($args);
 
 		/**
@@ -35,7 +35,7 @@ class Wnd_User_Center extends Wnd_Module {
 		 */
 		if ('reset_password' == $do) {
 			$html = $wrap ? '<div id="user-center">' : '';
-			$html .= Wnd_Reset_Password_Form::render($type);
+			$html .= Wnd_Reset_Password_Form::render(['type' => $type]);
 			$html .= '<div class="has-text-centered">';
 
 			if (wnd_doing_ajax()) {
@@ -159,14 +159,12 @@ class Wnd_User_Center extends Wnd_Module {
 	 *切换选项时，再次请求此模块，后端响应直接嵌入这个容器，需要剥离外部容器
 	 */
 	public static function build_module_link($args, $text, $ajax_type) {
-		$args = http_build_query(
-			wp_parse_args($args, ['wrap' => ('embed' == $ajax_type) ? '0' : '1'])
-		);
+		$args = wp_parse_args($args, ['wrap' => ('embed' == $ajax_type) ? '0' : '1']);
 
 		if ('embed' == $ajax_type) {
-			return '<a onclick="wnd_ajax_embed(\'#user-center\',\'wnd_user_center\',\'' . $args . '\');">' . $text . '</a>';
+			return wnd_embed_link("#user-center", $text, 'wnd_user_center', $args);
 		} elseif ('modal' == $ajax_type) {
-			return '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'' . $args . '\');">' . $text . '</a>';
+			return wnd_modal_link($text, 'wnd_user_center', $args);
 		}
 	}
 }

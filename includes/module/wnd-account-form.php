@@ -41,9 +41,10 @@ class Wnd_Account_Form extends Wnd_Module_User {
 		 *绑定邮箱或手机
 		 */
 		$html = '<div class="has-text-centered">';
-		$html .= '<a onclick="wnd_ajax_modal(\'wnd_bind_email_form\')">' . __('邮箱设置', 'wnd') . '</a> | ';
-		$html .= $enable_sms ? '<a onclick="wnd_ajax_modal(\'wnd_bind_phone_form\')">' . __('手机设置', 'wnd') . '</a> | ' : '';
-		$html .= '<a onclick="wnd_ajax_modal(\'wnd_user_center\',\'do=reset_password\')">' . __('重置密码', 'wnd') . '</a>';
+		$html .= wnd_modal_link(__('邮箱设置', 'wnd'), 'wnd_bind_email_form') . ' | ';
+		$html .= $enable_sms ? (wnd_modal_link(__('手机设置', 'wnd'), 'wnd_bind_phone_form') . ' | ') : '';
+		$html .= wnd_modal_link(__('重置密码', 'wnd'), 'wnd_user_center', ['do' => 'reset_password']);
+
 		$html .= '</div>';
 
 		return $form->html . $html;

@@ -50,7 +50,7 @@ class Wnd_Reset_Password extends Wnd_Action_Ajax {
 		reset_password($user, $new_password);
 		return [
 			'status' => $this->user_id ? 4 : 1,
-			'msg'    => __('密码修改成功', 'wnd') . '&nbsp;<a onclick="wnd_ajax_modal(\'wnd_login_form\');">' . __('登录', 'wnd') . '</a>',
+			'msg'    => __('密码修改成功', 'wnd') . '&nbsp;' . wnd_modal_link(__('登录', 'wnd'), 'wnd_login_form'),
 		];
 	}
 }

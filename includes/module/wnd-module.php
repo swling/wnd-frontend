@@ -8,12 +8,29 @@ namespace Wnd\Module;
 abstract class Wnd_Module {
 
 	/**
-	 *渲染
+	 *@since 0.8.73
+	 *统一处理 GET 参数
 	 */
-	public static function render($param = '') {
+	protected static $args = [];
+
+	/**
+	 *渲染
+	 *
+	 *@param $args 	传参数组，对象，或http请求字符
+	 *@param $force 是否强制传参，忽略 GET 请求参数
+	 *@return string HTML 字符串
+	 */
+	public static function render($args = '', $force = false) {
+		/**
+		 *默认 $_GET 参数优先，若设置 $force = true 则忽略 $_GET
+		 */
+		static::$args = $force ? wp_parse_args($args) : wp_parse_args($_GET, $args);
+
+		// 权限检测
 		static::check();
 
-		return static::build($param);
+		// 生成 Html
+		return static::build($args);
 	}
 
 	/**
