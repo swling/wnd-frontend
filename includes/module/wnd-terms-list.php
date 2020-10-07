@@ -7,7 +7,7 @@ namespace Wnd\Module;
  **/
 class Wnd_Terms_List extends Wnd_Module {
 
-	protected static function build(): string{
+	protected static function build($args = []): string{
 		$defaults = [
 			'taxonomy'   => 'post_tag',
 			'number'     => 50,
@@ -15,7 +15,7 @@ class Wnd_Terms_List extends Wnd_Module {
 			'orderby'    => 'count',
 			'order'      => 'DESC',
 		];
-		$args = wp_parse_args(static::$args, $defaults);
+		$args = wp_parse_args($args, $defaults);
 
 		$html  = '<div class="columns has-text-centered is-multiline is-mobile">';
 		$terms = get_terms($args);

@@ -32,13 +32,13 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Attachment_Form extends Wnd_Module {
 
-	protected static function build(): string{
+	protected static function build($args = []): string{
 		$defaults = [
 			'attachment_id' => 0,
 			'post_parent'   => 0,
 			'meta_key'      => '',
 		];
-		$args = wp_parse_args(static::$args, $defaults);
+		$args = wp_parse_args($args, $defaults);
 
 		$attachment_id = $args['attachment_id'];
 		$post_parent   = $attachment_id ? get_post($attachment_id)->post_parent : $args['post_parent'];

@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Filter_User;
  */
 class Wnd_User_List_Table extends Wnd_Module_Admin {
 
-	protected static function build(): string{
+	protected static function build($args = []): string{
 		$orderby_args = [
 			'label'   => '排序',
 			'options' => [
@@ -20,7 +20,7 @@ class Wnd_User_List_Table extends Wnd_Module_Admin {
 		];
 
 		$filter = new Wnd_Filter_User(wnd_doing_ajax());
-		$filter->set_number(static::$args['number'] ?? 20);
+		$filter->set_number($args['number'] ?? 20);
 		$filter->add_search_form();
 		$filter->add_orderby_filter($orderby_args);
 		$filter->add_status_filter(__('状态', 'wnd'));

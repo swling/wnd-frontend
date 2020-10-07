@@ -10,13 +10,13 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Order_Form extends Wnd_Module {
 
-	protected static function build(): string{
+	protected static function build($args = []): string{
 		$defaults = [
 			'post_id' => 0,
 			'ajax'    => true,
 		];
 
-		$args = wp_parse_args(static::$args, $defaults);
+		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
 		/**

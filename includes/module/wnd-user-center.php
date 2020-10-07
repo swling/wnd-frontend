@@ -9,7 +9,7 @@ namespace Wnd\Module;
  */
 class Wnd_User_Center extends Wnd_Module {
 
-	protected static function build(): string{
+	protected static function build($args = []): string{
 		$ajax_type         = $_GET['ajax_type'] ?? '';
 		$enable_sms        = (1 == wnd_get_config('enable_sms')) ? true : false;
 		$disable_email_reg = (1 == wnd_get_config('disable_email_reg')) ? true : false;
@@ -27,7 +27,7 @@ class Wnd_User_Center extends Wnd_Module {
 		 *@see 2019.08.17
 		 *在非ajax环境中，约定了GET参数，实现切换模块切换，故此，需要确保GET参数优先级
 		 **/
-		$args = wp_parse_args(static::$args, $defaults);
+		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
 		/**

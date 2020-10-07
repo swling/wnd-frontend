@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_User_Recharge_Form extends Wnd_Module_User {
 
-	protected static function build(): string{
+	protected static function build($args = []): string{
 		$form = new Wnd_Form_WP();
 		$form->add_html('<div class="has-text-centered field">');
 		$form->add_radio(

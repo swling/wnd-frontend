@@ -8,12 +8,6 @@ namespace Wnd\Module;
 abstract class Wnd_Module {
 
 	/**
-	 *@since 0.8.73
-	 *统一处理 GET 参数
-	 */
-	protected static $args = [];
-
-	/**
 	 *渲染
 	 *
 	 *@param $args 	传参数组，对象，或http请求字符
@@ -24,13 +18,13 @@ abstract class Wnd_Module {
 		/**
 		 *默认 $_GET 参数优先，若设置 $force = true 则忽略 $_GET
 		 */
-		static::$args = $force ? wp_parse_args($args) : wp_parse_args($_GET, $args);
+		$args = $force ? wp_parse_args($args) : wp_parse_args($_GET, $args);
 
 		// 权限检测
 		static::check();
 
 		// 生成 Html
-		return static::build();
+		return static::build($args);
 	}
 
 	/**
@@ -42,8 +36,10 @@ abstract class Wnd_Module {
 
 	/**
 	 *构建
+	 *
+	 *此处不添加 $args 参数，子类可自行添加带默认值的传参
 	 */
-	abstract protected static function build(): string;
+	abstract protected static function build($args = []): string;
 
 	/**
 	 *构建提示信息

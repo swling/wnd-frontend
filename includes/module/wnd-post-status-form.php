@@ -9,8 +9,8 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Post_Status_Form extends Wnd_Module_User {
 
-	protected static function build(): string{
-		$post = get_post(static::$args['post_id']);
+	protected static function build($args = []): string{
+		$post = get_post($args['post_id']);
 		if (!$post) {
 			return __('ID无效', 'wnd');
 		}
@@ -88,7 +88,7 @@ class Wnd_Post_Status_Form extends Wnd_Module_User {
 			$form->add_html(wnd_message(__('删除订单记录，不可退款，请谨慎操作', 'wnd'), 'is-danger'));
 		}
 
-		$form->add_hidden('post_id', static::$args['post_id']);
+		$form->add_hidden('post_id', $args['post_id']);
 		$form->set_action('wnd_update_post_status');
 		$form->add_form_attr('id', 'post-status');
 		$form->set_submit_button(__('提交', 'wnd'));

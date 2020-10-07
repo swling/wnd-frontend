@@ -8,9 +8,9 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Reg_Form extends Wnd_Module {
 
-	protected static function build(): string {
+	protected static function build($args = []): string{
 		// 设定默认值
-		static::$args['type'] = static::$args['type'] ?? (wnd_get_config('enable_sms') ? 'phone' : 'email');
+		$args['type'] = $args['type'] ?? (wnd_get_config('enable_sms') ? 'phone' : 'email');
 
 		// 已登录
 		if (is_user_logged_in()) {
@@ -23,12 +23,12 @@ class Wnd_Reg_Form extends Wnd_Module {
 		}
 
 		//未开启手机验证
-		if ('phone' == static::$args['type'] and wnd_get_config('enable_sms') != 1) {
+		if ('phone' == $args['type'] and wnd_get_config('enable_sms') != 1) {
 			return static::build_error_message(__('当前未配置短信验证', 'wnd'));
 		}
 
 		// 关闭了邮箱注册（强制手机验证）
-		if ('email' == static::$args['type'] and 1 == wnd_get_config('disable_email_reg')) {
+		if ('email' == $args['type'] and 1 == wnd_get_config('disable_email_reg')) {
 			return static::build_error_message(__('当前设置禁止邮箱注册', 'wnd'));
 		}
 
@@ -45,7 +45,7 @@ class Wnd_Reg_Form extends Wnd_Module {
 		}
 		$form->add_user_password(__('密码', 'wnd'), __('密码', 'wnd'));
 
-		if ('phone' == static::$args['type']) {
+		if ('phone' == $args['type']) {
 			$form->add_phone_verification('register', wnd_get_config('sms_template_r'));
 		} else {
 			$form->add_email_verification('register');

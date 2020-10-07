@@ -8,8 +8,8 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Reset_Password_Form extends Wnd_Module {
 
-	protected static function build(): string{
-		$type = static::$args['type'] ?? 'email';
+	protected static function build($args = []): string{
+		$type = $args['type'] ?? 'email';
 
 		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
