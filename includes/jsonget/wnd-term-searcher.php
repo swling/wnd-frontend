@@ -15,7 +15,7 @@ use Wnd\Model\Wnd_Term;
  */
 class Wnd_Term_Searcher extends Wnd_JsonGet {
 
-	public static function get($args = []) {
+	protected static function query($args): array{
 		$defaults = [
 			'taxonomy'   => 'post_tag',
 			'parent'     => '',

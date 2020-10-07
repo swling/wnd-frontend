@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_Tag_Under_Category;
  **/
 class Wnd_Related_Tags extends Wnd_JsonGet {
 
-	public static function get($args = []) {
+	protected static function query($args): array{
 		$defaults = [
 			'term_id'  => 0,
 			'taxonomy' => '',

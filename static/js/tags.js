@@ -79,10 +79,8 @@ function _run_suggestions(el, query) {
 
     let data = {
         "data": "wnd_term_searcher",
-        "param": {
-            "search": query,
-            "taxonomy": $(el).data("taxonomy")
-        }
+        "search": query,
+        "taxonomy": $(el).data("taxonomy"),
     };
 
     $.ajax({

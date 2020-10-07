@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\JsonGet;
 
+use Exception;
+
 /**
  *@since 2020.07.21
  *获取Post Json
@@ -9,9 +11,13 @@ namespace Wnd\JsonGet;
  */
 class Wnd_Get_Post extends Wnd_JsonGet {
 
-	public static function get(int $post_id = 0): array{
-		$post_id = (int) ($post_id ?: $_GET['post_id']);
-		$post    = get_post($post_id, ARRAY_A);
+	protected static function query($args): array{
+		$post_id = (int) ($args['post_id'] ?? 0);
+		if (!$post_id) {
+			throw new Exception(__('ID 无效', 'wnd'));
+		}
+
+		$post = get_post($post_id, ARRAY_A);
 
 		/**
 		 *非公开post仅返回基本状态

@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_Term;
  **/
 class Wnd_Sub_Terms extends Wnd_JsonGet {
 
-	public static function get($args = []) {
+	protected static function query($args): string{
 		$defaults = [
 			'taxonomy'   => 'category',
 			'parent'     => 0,

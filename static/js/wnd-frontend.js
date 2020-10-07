@@ -271,10 +271,9 @@ function wnd_get_json(data, callback, param = 0) {
 	$.ajax({
 		type: "GET",
 		url: wnd_jsonget_api,
-		data: {
+		data: Object.assign({
 			"data": data,
-			"param": param,
-		},
+		}, param),
 		//后台返回数据前
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
