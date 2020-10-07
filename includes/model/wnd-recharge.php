@@ -147,7 +147,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 
 			// 在线余额充值
 		} else {
-			wnd_inc_user_money($user_id, $total_amount);
+			wnd_inc_user_money($user_id, $total_amount, true);
 		}
 
 		/**

@@ -110,15 +110,17 @@ class Wnd_Finance {
 	 *
 	 *@param 	int 	$user_id 	用户ID
 	 *@param 	float 	$money 		金额
-	 *
+	 *@param 	bool 	$recharge 	是否为充值，若是则将记录到当月充值记录中
 	 */
-	public static function inc_user_money($user_id, $money): bool{
+	public static function inc_user_money($user_id, $money, $recharge): bool{
 		$new_money = static::get_user_money($user_id) + $money;
 		$new_money = number_format($new_money, 2, '.', '');
 		$action    = wnd_update_user_meta($user_id, 'money', $new_money);
 
 		// 整站按月统计充值和消费
-		static::update_fin_stats($money, 'recharge');
+		if ($recharge) {
+			static::update_fin_stats($money, 'recharge');
+		}
 
 		return $action;
 	}

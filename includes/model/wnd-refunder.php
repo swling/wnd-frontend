@@ -162,7 +162,7 @@ abstract class Wnd_Refunder {
 	}
 
 	/**
-	 *充值订单：扣除用户余额（站内佣金暂不支持退款）
+	 *充值订单：扣除用户余额，扣除对应充值统计（站内佣金暂不支持退款）
 	 *
 	 *产品订单：扣除总销售额，扣除作者佣金
 	 */
@@ -178,7 +178,7 @@ abstract class Wnd_Refunder {
 				throw new Exception(__('当前交易不支持退款', 'wnd'));
 			}
 
-			return wnd_inc_user_money($this->user_id, $this->refund_amount * -1);
+			return wnd_inc_user_money($this->user_id, $this->refund_amount * -1, true);
 		}
 
 		/**

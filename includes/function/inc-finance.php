@@ -37,10 +37,11 @@ function wnd_inc_order_count($object_id, $number) {
  *
  *@param 	int 	$user_id 	用户ID
  *@param 	float 	$money 		金额
+ *@param 	bool 	$recharge 	是否为充值，若是则将记录到当月充值记录中
  *
  */
-function wnd_inc_user_money($user_id, $money) {
-	return Wnd_Finance::inc_user_money($user_id, $money);
+function wnd_inc_user_money($user_id, $money, $recharge) {
+	return Wnd_Finance::inc_user_money($user_id, $money, $recharge);
 }
 
 /**
