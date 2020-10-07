@@ -9,12 +9,12 @@ use Wnd\Model\Wnd_Tag_Under_Category;
  **/
 class Wnd_Related_Tags extends Wnd_JsonGet {
 
-	protected static function query(): array{
+	protected static function query($args = []): array{
 		$defaults = [
 			'term_id'  => 0,
 			'taxonomy' => '',
 		];
-		$args = wp_parse_args(static::$args, $defaults);
+		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
 		$tag_taxonomy = str_replace('_cat', '_tag', $taxonomy);
