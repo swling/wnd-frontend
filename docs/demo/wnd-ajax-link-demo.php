@@ -18,7 +18,7 @@ function _wndt_add_favorite($post_id) {
 	$html = new Wnd_Ajax_Link();
 	$html->set_action('wndt_add_favorite');
 	$html->set_text('<span class="icon"><i class="far fa-heart" title="添加收藏"></i></span>');
-	$html->set_param($post_id);
+	$html->set_args(['post_id' => $post_id]);
 	$html->set_cancel_action('wndt_remove_favorite');
 	$html->set_class('is-small is-danger');
 	return $html->get_html();
@@ -32,8 +32,8 @@ function _wndt_add_favorite($post_id) {
  *函数命名对应：$html->set_action('wndt_ajax_add_favorite');
  */
 class Wndt_Add_Favorite extends Wnd_Action_Ajax {
-	public static function execute(): array{
-		$post_id = $_POST['param'] ?? 0;
+	public function execute(): array{
+		$post_id = $this->data['post_id'] ?? 0;
 
 		if (wndt_add_favorite($post_id)) {
 			return [
@@ -65,7 +65,7 @@ function _wndt_remove_favorite($post_id) {
 	$html = new Wnd_Ajax_Link();
 	$html->set_action('wndt_remove_favorite');
 	$html->set_text('<span class="icon"><i class="fas fa-heart" title="取消收藏"></i></span>');
-	$html->set_param($post_id);
+	$html->set_args(['post_id' => $post_id]);
 	$html->set_cancel_action('wndt_add_favorite');
 	$html->set_class('is-small is-danger');
 	return $html->get_html();
@@ -77,8 +77,8 @@ function _wndt_remove_favorite($post_id) {
  *控制层
  */
 class Wndt_Remove_Favorite extends Wnd_Action_Ajax {
-	public static function execute(): array{
-		$post_id = $_POST['param'] ?? 0;
+	public function execute(): array{
+		$post_id = $this->data['post_id'] ?? 0;
 
 		if (wndt_remove_favorite($post_id)) {
 			return [

@@ -130,7 +130,7 @@ class Wnd_Add_Filter {
 			return $default_msg;
 		}
 
-		$post_id = (int) $_REQUEST['param'];
+		$post_id = (int) $_REQUEST['post_id'];
 		if (!$post_id) {
 			return ['status' => 0, 'msg' => __('ID无效', 'wnd')];
 		}

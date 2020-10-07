@@ -12,7 +12,7 @@ class Wnd_Ajax_Link {
 	protected $text;
 	protected $action;
 	protected $cancel_action;
-	protected $param;
+	protected $args;
 	protected $class;
 	protected $html;
 
@@ -28,8 +28,8 @@ class Wnd_Ajax_Link {
 		$this->cancel_action = $cancel_action;
 	}
 
-	public function set_param($param) {
-		$this->param = (is_array($param) or is_object($param)) ? http_build_query($param) : $param;
+	public function set_args(array $args) {
+		$this->args = $args;
 	}
 
 	public function set_class($class) {
@@ -51,11 +51,11 @@ class Wnd_Ajax_Link {
 	 **/
 	protected function build() {
 		// Action 层需要验证表单字段签名
-		$sign = Wnd_Form_Data::sign(['action', 'param', '_ajax_nonce']);
+		$sign = Wnd_Form_Data::sign(array_merge(['action', '_ajax_nonce'], array_keys($this->args)));
 
 		$this->html = '<a class="ajax-link ' . $this->class . '" data-is-cancel="0" data-disabled="0"';
 		$this->html .= ' data-action="' . $this->action . '"';
-		$this->html .= ' data-cancel="' . $this->cancel_action . '" data-param="' . $this->param . '"';
+		$this->html .= ' data-cancel="' . $this->cancel_action . '" data-args=\'' . json_encode($this->args) . '\'';
 		$this->html .= ' data-action-nonce="' . wp_create_nonce($this->action) . '"';
 		$this->html .= ' data-cancel-nonce="' . wp_create_nonce($this->cancel_action) . '"';
 		$this->html .= ' data-sign' . '="' . $sign . '"';

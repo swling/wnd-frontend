@@ -584,7 +584,7 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 			datatype: "json",
 			url: wnd_action_api,
 			data: {
-				"param": post_id,
+				"post_id": post_id,
 				"action": "wnd_safe_action",
 				"method": "update_views",
 				"_ajax_nonce": wnd.safe_action_nonce,
@@ -946,12 +946,12 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			type: "POST",
 			url: wnd_action_api,
-			data: {
+			data: Object.assign({
 				"action": action,
-				"param": $(this).data("param"),
 				"_ajax_nonce": nonce,
 				"_wnd_sign": wnd_sign,
-			},
+			}, $(this).data("args")),
+
 			//后台返回数据前
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
@@ -1250,11 +1250,9 @@ jQuery(document).ready(function($) {
 				url: wnd_jsonget_api,
 				data: {
 					"data": "wnd_sub_terms",
-					"param": {
-						"parent": term_id,
-						"taxonomy": taxonomy,
-						"tips": tips,
-					},
+					"parent": term_id,
+					"taxonomy": taxonomy,
+					"tips": tips,
 				},
 
 				success: function(response) {
