@@ -15,7 +15,7 @@ use Wnd\Model\Wnd_Term;
  */
 class Wnd_Term_Searcher extends Wnd_JsonGet {
 
-	protected static function query($args): array{
+	protected static function query(): array{
 		$defaults = [
 			'taxonomy'   => 'post_tag',
 			'parent'     => '',
@@ -25,7 +25,7 @@ class Wnd_Term_Searcher extends Wnd_JsonGet {
 			'search'     => '',
 			'number'     => 20,
 		];
-		$args = wp_parse_args($args, $defaults);
+		$args = wp_parse_args(static::$args, $defaults);
 
 		return Wnd_Term::get_terms_data($args);
 	}

@@ -30,7 +30,7 @@ abstract class Wnd_Module {
 		static::check();
 
 		// 生成 Html
-		return static::build($args);
+		return static::build();
 	}
 
 	/**

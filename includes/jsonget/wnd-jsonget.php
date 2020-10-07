@@ -8,6 +8,12 @@ namespace Wnd\JsonGet;
 abstract class Wnd_JsonGet {
 
 	/**
+	 *@since 0.8.73
+	 *统一处理 GET 参数
+	 */
+	protected static $args = [];
+
+	/**
 	 *获取Json Data
 	 *
 	 *@param $args 	传参数组，对象，或http请求字符
@@ -19,14 +25,14 @@ abstract class Wnd_JsonGet {
 		/**
 		 *默认 $_GET 参数优先，若设置 $force = true 则忽略 $_GET
 		 */
-		$args = $force ? wp_parse_args($args) : wp_parse_args($_GET, $args);
+		static::$args = $force ? wp_parse_args($args) : wp_parse_args($_GET, $args);
 
-		return static::query($args);
+		return static::query();
 	}
 
 	/**
 	 *@since 0.8.74
 	 *查询数据
 	 */
-	abstract protected static function query($args);
+	abstract protected static function query();
 }

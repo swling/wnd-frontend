@@ -11,8 +11,8 @@ use Exception;
  */
 class Wnd_Get_Post extends Wnd_JsonGet {
 
-	protected static function query($args): array{
-		$post_id = (int) ($args['post_id'] ?? 0);
+	protected static function query(): array{
+		$post_id = (int) (static::$args['post_id'] ?? 0);
 		if (!$post_id) {
 			throw new Exception(__('ID 无效', 'wnd'));
 		}

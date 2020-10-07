@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_Term;
  **/
 class Wnd_Sub_Terms extends Wnd_JsonGet {
 
-	protected static function query($args): string{
+	protected static function query(): string{
 		$defaults = [
 			'taxonomy'   => 'category',
 			'parent'     => 0,
@@ -17,7 +17,7 @@ class Wnd_Sub_Terms extends Wnd_JsonGet {
 			'orderby'    => 'count',
 			'order'      => 'DESC',
 		];
-		$args  = wp_parse_args($args, $defaults);
+		$args  = wp_parse_args(static::$args, $defaults);
 		$terms = Wnd_Term::get_terms_data($args);
 		if (!$terms) {
 			return '';
