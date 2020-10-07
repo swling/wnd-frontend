@@ -15,6 +15,11 @@ use Exception;
  */
 class Wnd_Safe_Action extends Wnd_Action_Ajax {
 
+	/**
+	 *本 Action 禁止表单签名验证
+	 */
+	protected $verify_sign = false;
+
 	// 根据method参数选择处理方法
 	public function execute(): array{
 		$method = $_REQUEST['method'] ?? false;
