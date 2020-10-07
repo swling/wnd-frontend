@@ -8,6 +8,10 @@ use Wnd\View\Wnd_Filter_User;
 
 /**
  *@since 2019.04.07 API改造
+ *
+ * # 主题或插件可拓展 Action、Module、Jsonget 详情参见：
+ * - @see docs/api.md
+ * - @see docs/autoloader.md
  */
 class Wnd_API {
 
@@ -85,7 +89,7 @@ class Wnd_API {
 	 *parse_class('Wnd_Demo', 'Module') 					=> Wnd\Module\Wnd_Demo;
 	 *parse_class('Wndt_Demo', 'Module') 					=> Wndt\Module\Wndt_Demo;
 	 *
-	 *其他api请求以此类推
+	 *其他 api 请求以此类推
 	 *
 	 *@see 自动加载机制 wnd-load.php
 	 *
@@ -135,14 +139,9 @@ class Wnd_API {
 
 	/**
 	 *@since 2019.04.07
-	 *UI响应
+	 *UI 响应
 	 *@param $_GET['module'] 	string	后端响应模块类
-	 *@param $_GET['param']		string	模板类传参
 	 *
-	 *@since 2019.10.04
-	 *如需在第三方插件或主题拓展UI响应请定义类并遵循以下规则：
-	 *1、类名称必须以wndt为前缀
-	 *2、命名空间必须为：Wndt\Module
 	 */
 	public static function handle_interface(): array{
 		if (!isset($_GET['module'])) {
@@ -169,14 +168,9 @@ class Wnd_API {
 
 	/**
 	 *@since 2020.04.24
-	 *获取json data
+	 *获取 json data
 	 *@param $_GET['data'] 	string	后端响应
-	 *@param $_GET['param']	string	传参
 	 *
-	 *@since 2019.10.04
-	 *如需在第三方插件或主题拓展响应请定义类并遵循以下规则：
-	 *1、类名称必须以wndt为前缀
-	 *2、命名空间必须为：Wndt\JsonGet
 	 */
 	public static function handle_jsonget(): array{
 		if (!isset($_GET['data'])) {
@@ -200,13 +194,9 @@ class Wnd_API {
 	/**
 	 *@since 2019.04.07
 	 *数据处理
-	 *@param $_REQUEST['_ajax_nonce'] 	string 	wp nonce校验
-	 *@param $_REQUEST['action']	 	string 	后端响应类
+	 *@param $_POST['_ajax_nonce'] 	string 	wp nonce校验
+	 *@param $_POST['action']	 	string 	后端响应类
 	 *
-	 *@since 2019.10.04
-	 *如需在第三方插件或主题拓展控制器处理请定义类并遵循以下规则：
-	 *1、类名称必须以wndt为前缀
-	 *2、命名空间必须为：Wndt\Action
 	 */
 	public static function handle_action(): array{
 		if (!isset($_POST['action'])) {
@@ -239,15 +229,15 @@ class Wnd_API {
 
 	/**
 	 *@since 2019.07.31
-	 *多重筛选API
+	 *多重筛选 API
 	 *
 	 *@since 2019.10.07 OOP改造
-	 *常规情况下，controller应将用户请求转为操作命令并调用model处理，但Wnd\View\Wnd_Filter是一个完全独立的功能类
-	 *Wnd\View\Wnd_Filter既包含了生成筛选链接的视图功能，也包含了根据请求参数执行对应WP_Query并返回查询结果的功能，且两者紧密相关不宜分割
-	 *可以理解为，Wnd\View\Wnd_Filter是通过生成一个筛选视图，发送用户请求，最终根据用户请求，生成新的视图的特殊类：
+	 *常规情况下，controller 应将用户请求转为操作命令并调用 model 处理，但 Wnd\View\Wnd_Filter 是一个完全独立的功能类
+	 *Wnd\View\Wnd_Filter 既包含了生成筛选链接的视图功能，也包含了根据请求参数执行对应 WP_Query 并返回查询结果的功能，且两者紧密相关不宜分割
+	 *可以理解为，Wnd\View\Wnd_Filter 是通过生成一个筛选视图，发送用户请求，最终根据用户请求，生成新的视图的特殊类：
 	 *视图<->控制<->视图
 	 *
-	 * @see Wnd_Filter: parse_url_to_wp_query() 解析$_GET规则：
+	 * @see Wnd_Filter: parse_url_to_wp_query() 解析 $_GET 规则：
 	 * type={post_type}
 	 * status={post_status}
 	 *
@@ -324,7 +314,7 @@ class Wnd_API {
 
 	/**
 	 *@since 2020.05.05
-	 *User筛选API
+	 *User 筛选 API
 	 *
 	 */
 	public static function handle_users(): array{

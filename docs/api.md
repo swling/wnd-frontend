@@ -3,11 +3,12 @@
 
 自定义action api：		wp-json/wnd/handler 	Allow: POST
 自定义interface api：	wp-json/wnd/interface	Allow: GET
-自定义filter api：		wp-json/wnd/filter	 	Allow: GET
+自定义posts api：		wp-json/wnd/posts	 	Allow: GET
+自定义users api：		wp-json/wnd/users	 	Allow: GET
 自定义jsonget api：		wp-json/wnd/jsonget	 	Allow: GET
 
 ## Wnd_API 定义 
-@see /includes/controller/class-wnd-api.php
+@see /includes/controller/wnd-api.php
 
 ## 自动加载规则 
 @see autoloader.md
@@ -27,14 +28,14 @@ API统一将结果转为json格式，输出交付前端处理
 ### interface api
 UI请求无需nonce校验需要包含如下参数
 - $_GET['module']：该值为响应当前UI的类名称（不含命名空间）
-- $_GET['param']：传递给UI类的参数(可选)
+- 传参请直接通过 $_GET
 UI类将返回字符串（通常为HTML字符串）交付前端
 
 
 ### jsonGet api
 json获取请求无需nonce校验需要包含如下参数
 - $_GET['data']：该值为需要获取的数据处理类名称（不含命名空间）
-- $_GET['param']：传递给数据类的参数(可选)
+- 传参请直接通过 $_GET
 返回为json数据
 
 ### 前端请求举例（以Module为例）
