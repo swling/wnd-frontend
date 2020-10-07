@@ -8,7 +8,7 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Bind_Email_Form extends Wnd_Module_User {
 
-	protected static function build($args = []): string{
+	protected static function build(): string{
 		$current_user = wp_get_current_user();
 
 		$form = new Wnd_Form_User();

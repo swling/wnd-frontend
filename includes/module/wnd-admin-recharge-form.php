@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Admin_Recharge_Form extends Wnd_Module_Root {
 
-	protected static function build($args = []): string{
+	protected static function build(): string{
 		$form = new Wnd_Form_WP();
 		$form->add_form_attr('id', 'admin-recharge-form');
 		$form->add_html('<div class="field is-horizontal"><div class="field-body">');

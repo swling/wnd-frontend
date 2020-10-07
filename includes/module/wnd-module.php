@@ -37,9 +37,9 @@ abstract class Wnd_Module {
 	/**
 	 *构建
 	 *
-	 *此处不添加 $args 参数，子类可自行添加带默认值的传参
+	 *此处不添加 $args 参数，子类可自行添加带默认值的传参如 $args = [] 即可接收传参
 	 */
-	abstract protected static function build($args = []): string;
+	abstract protected static function build(): string;
 
 	/**
 	 *构建提示信息

@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Login_Form extends Wnd_Module {
 
-	protected static function build($args = []): string {
+	protected static function build(): string {
 		if (is_user_logged_in()) {
 			return static::build_error_message(__('已登录', 'wnd'));
 		}

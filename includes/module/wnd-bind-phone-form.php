@@ -8,7 +8,7 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Bind_Phone_Form extends Wnd_Module_User {
 
-	protected static function build($args = []): string{
+	protected static function build(): string{
 		$current_user       = wp_get_current_user();
 		$current_user_phone = wnd_get_user_phone($current_user->ID);
 

@@ -7,13 +7,13 @@ namespace Wnd\Module;
  */
 class Wnd_Qrcode extends Wnd_Module {
 
-	protected static function build($string = ''): string {
-		if (!$string) {
+	protected static function build($args = []): string {
+		if (!isset($args['string'])) {
 			return '';
 		}
 
 		require WND_PATH . '/includes/utility/phpqrcode.php';
 		// $text, $outfile = false, $level = QR_ECLEVEL_L, $size = 3, $margin = 4, $saveandprint=false
-		return \QRcode::png($string, false, 'Q', 7, 2);
+		return \QRcode::png($args['string'], false, 'Q', 7, 2);
 	}
 }

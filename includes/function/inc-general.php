@@ -169,7 +169,7 @@ function wnd_get_current_url() {
  *@return string 二维码图像地址
  */
 function wnd_generate_qrcode(string $string): string {
-	return wnd_get_do_url() . '?module=wnd_qrcode&param=' . $string;
+	return wnd_get_do_url() . '?module=wnd_qrcode&string=' . $string;
 }
 
 /**

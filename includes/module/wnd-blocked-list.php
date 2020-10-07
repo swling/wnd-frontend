@@ -10,7 +10,7 @@ use Wnd\Utility\Wnd_Defender;
  */
 class Wnd_Blocked_List extends Wnd_Module_Root {
 
-	protected static function build($args = []): string{
+	protected static function build(): string{
 		$defender = Wnd_Defender::get_instance(0, 0, 0);
 		$logs     = $defender->get_block_logs();
 

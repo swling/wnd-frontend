@@ -204,8 +204,6 @@ class Wnd_Add_Action {
 		// Module
 		if ($module) {
 			$class = \Wnd\Controller\Wnd_API::parse_class($module, 'Module');
-			$param = $_GET['param'] ?? '';
-
 			if (!is_callable([$class, 'render'])) {
 				exit(__('未定义的 Module ', 'wnd') . $class);
 			}
@@ -215,10 +213,10 @@ class Wnd_Add_Action {
 				echo '<head>';
 				wp_head();
 				echo '</head>';
-				echo '<body>' . $class::render($param) . '</body>';
+				echo '<body>' . $class::render() . '</body>';
 				return '';
 			} else {
-				return $class::render($param);
+				return $class::render();
 			}
 		}
 
