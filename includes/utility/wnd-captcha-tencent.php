@@ -80,7 +80,7 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 
 		// 绑定点击事件
 		$(function() {
-			$(".send-code").click(function() {
+			$(".send-code").off("click").on("click", function() {
 				var _this = $(this);
 				var form_id = _this.closest("form").attr("id");
 				var email = _this.closest(".validate-field-wrap").find("input[name=\'_user_user_email\']").val();
@@ -137,7 +137,7 @@ class Wnd_Captcha_Tencent extends Wnd_Captcha {
 
 		// 绑定点击事件
 		$(function() {
-			$("form [type=\'submit\'].captcha, form#commentform [type=\'submit\']").click(function() {
+			$("form [type=\'submit\'].captcha, form#commentform [type=\'submit\']").off("click").on("click", function() {
 				// 当 button 的 id 或 name 为 "submit" 时，JavaScript submit() 将无法提交表单
 				$(this).prop("id","");
 				var form_id = $(this).closest("form").attr("id");

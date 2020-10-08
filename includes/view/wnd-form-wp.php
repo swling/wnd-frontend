@@ -565,7 +565,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$submit_script = '
 		<script>
 			$(function() {
-				$("[type=\'submit\'].ajax-submit").click(function() {
+				$("[type=\'submit\'].ajax-submit").off("click").on("click", function() {
 					var form_id = $(this).closest("form").attr("id");
 					if (form_id) {
 						wnd_ajax_submit(form_id);

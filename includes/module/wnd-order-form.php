@@ -34,7 +34,6 @@ class Wnd_Order_Form extends Wnd_Module {
 		}
 
 		$form = new Wnd_Form_WP($ajax);
-		$form->add_hidden('module', 'wnd_payment_form');
 		$form->add_html('<div class="field is-grouped is-grouped-centered">');
 		if ($sku_options) {
 			$form->add_radio(
@@ -48,16 +47,13 @@ class Wnd_Order_Form extends Wnd_Module {
 			);
 		}
 		$form->add_html('</div>');
+
 		$form->add_hidden('post_id', $post_id);
-
-		if (!$ajax) {
-			$form->set_action(get_permalink(wnd_get_config('ucenter_page')), 'GET');
-		}
-
-		$form->set_submit_button(__('立即购买', 'wnd'), 'is-danger');
+		$form->add_hidden('module', 'wnd_payment_form');
+		$form->set_action(get_permalink(wnd_get_config('ucenter_page')), 'GET');
 		$form->set_submit_button(__('加入购物车', 'wnd'), 'is-danger');
-		$form->build();
 
+		$form->build();
 		return $form->html;
 	}
 }

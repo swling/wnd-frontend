@@ -333,11 +333,16 @@ function wnd_loading(container, add) {
 	}
 }
 
-//############################### 根据表单id自动提交表单 并根据返回代码执行对应操作
+/**
+ * 根据表单 id 自动提交表单 并根据返回代码执行对应操作
+ *
+ * @since init
+ * Post 提交至 Action 层
+ *
+ * @since 0.8.76 
+ * 支持 GET 请求 Module
+ */
 function wnd_ajax_submit(form_id) {
-	var method = $("#" + form_id).prop('method');
-	var url = ("post" == method) ? wnd_action_api : wnd_interface_api;
-
 	// 提交按钮
 	var submit_button = $("#" + form_id + " [type='submit']");
 
@@ -410,8 +415,15 @@ function wnd_ajax_submit(form_id) {
 		$("#" + wp_editor_id).val(content);
 	}
 
-	// 生成表单数据
-	var form_data = ("post" == method) ? new FormData($("#" + form_id).get(0)) : $("#" + form_id).serialize();
+	// 提交表单
+	var method = $("#" + form_id).prop('method');
+	if ("post" == method) {
+		var url = wnd_action_api;
+		var form_data = new FormData($("#" + form_id).get(0));
+	} else {
+		var url = wnd_interface_api;
+		var form_data = $("#" + form_id).serialize();
+	}
 
 	$.ajax({
 		url: url,
@@ -1318,6 +1330,15 @@ jQuery(document).ready(function($) {
 		var submit_button = $(this).find("[type='submit']");
 		submit_button.prop("disabled", false);
 		submit_button.text(submit_button.data("text"));
+	});
+
+	/**
+	 *@since 0.8.76
+	 *非 Ajax 表单提交，按钮设置加载中效果
+	 *Ajax 提交 @see wnd_ajax_submit()
+	 */
+	$("body").on("click", "[type='submit']:not('.ajax-submit')", function() {
+		$(this).addClass("is-loading");
 	});
 
 	/**
