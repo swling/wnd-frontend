@@ -30,6 +30,9 @@ abstract class Wnd_Transaction {
 	// 支付标题：产品标题 / 充值标题 / 其他自定义
 	protected $subject;
 
+	// 产品 SKU 信息
+	protected $sku;
+
 	// 状态
 	protected $status;
 
@@ -139,24 +142,83 @@ abstract class Wnd_Transaction {
 	}
 
 	/**
+	 *@since 0.8.76
+	 *
+	 *设置订单产品属性
+	 */
+	public function set_sku(string $sku) {
+		$this->sku = $sku;
+	}
+
+	/**
 	 *@since 2019.02.11
-	 *创建：具体实现在子类中定义
+	 *创建交易
+	 * - 写入数据库
+	 * - 保存 SKU
+	 * - 交易完成，执行相关操作
+	 *
+	 *@param 	bool 	$is_completed 	是否直接完成订单
+	 */
+	public function create(bool $is_completed = false) {
+		// 写入数据
+		$this->transaction = $this->insert_record($is_completed);
+
+		// 保存 SKU
+		$this->save_sku();
+
+		// 完成
+		if ($is_completed) {
+			$this->complete();
+		}
+	}
+
+	/**
+	 *@since 2019.02.11
+	 *创建 WP Post 记录，具体实现在子类中定义
+	 *
+	 *@param 	bool 	$is_completed 	是否直接完成订单
+	 *
 	 *@return object WP Post Object
 	 */
-	abstract public function create(): WP_Post;
+	abstract protected function insert_record(bool $is_completed): WP_Post;
+
+	/**
+	 *@since 0.8.76
+	 *
+	 *保存订单 SKU 属性
+	 */
+	protected function save_sku(): bool {
+		if (!$this->sku or !$this->transaction->ID) {
+			return false;
+		}
+
+		return wnd_update_post_meta($this->transaction->ID, 'sku', $this->sku);
+	}
+
+	/**
+	 *@since 2019.02.11
+	 *通常校验用于需要跳转第三方支付平台的交易
+	 *
+	 * - 校验交易是否完成
+	 * - 交易完成，执行相关操作
+	 */
+	public function verify() {
+		$this->verify_transaction();
+
+		$this->complete();
+	}
 
 	/**
 	 *@since 2019.02.11
 	 *校验：具体实现在子类中定义
 	 *通常校验用于需要跳转第三方支付平台的交易
-	 *@param $payment_gateway（记录支付平台如：alipay、wepay）
 	 */
-	abstract public function verify();
+	abstract protected function verify_transaction();
 
 	/**
-	 *订单成功后，执行的统一操作
 	 *@since 2020.06.10
 	 *
+	 *交易完成，执行相关操作。具体方法在子类中实现
 	 */
 	abstract protected function complete(): int;
 
@@ -165,6 +227,15 @@ abstract class Wnd_Transaction {
 	 */
 	public function get_transaction_id() {
 		return $this->transaction->ID;
+	}
+
+	/**
+	 *@since 0.8.76
+	 *
+	 *获取订单 SKU 属性
+	 */
+	protected function get_sku(): array{
+		return wnd_get_post_meta($this->get_transaction_id(), 'sku');
 	}
 
 	/**

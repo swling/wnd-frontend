@@ -38,7 +38,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *
 	 *@return object WP Post Object
 	 */
-	public function create(bool $is_completed = false): WP_Post {
+	protected function insert_record(bool $is_completed): WP_Post {
 		if (!$this->user_id) {
 			throw new Exception(__('请登录', 'wnd'));
 		}
@@ -83,14 +83,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 		}
 
 		// 构建Post
-		$this->transaction = get_post($ID);
-
-		// 完成充值
-		if (static::$completed_status == $this->status) {
-			$this->complete();
-		}
-
-		return $this->transaction;
+		return get_post($ID);
 	}
 
 	/**
@@ -101,7 +94,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *@param object 	$this->transaction			required 	订单记录Post
 	 *@param string 	$this->subject 		option
 	 */
-	public function verify() {
+	protected function verify_transaction() {
 		if ('recharge' != $this->get_type()) {
 			throw new Exception(__('充值ID无效', 'wnd'));
 		}
@@ -120,9 +113,6 @@ class Wnd_Recharge extends Wnd_Transaction {
 		if (!$ID or is_wp_error($ID)) {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
-
-		// 完成本笔业务
-		$this->complete();
 	}
 
 	/**

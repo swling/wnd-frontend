@@ -68,7 +68,7 @@ class Wnd_Order extends Wnd_Transaction {
 	 *
 	 *@return object WP Post Object
 	 */
-	public function create(bool $is_completed = false): WP_Post {
+	protected function insert_record(bool $is_completed): WP_Post {
 		/**
 		 *匿名支付Cookie：
 		 *cookie_name = static::$anon_cookie_name . '-' . $this->object_id
@@ -144,18 +144,7 @@ class Wnd_Order extends Wnd_Transaction {
 		}
 
 		// 构建Post
-		$this->transaction = get_post($ID);
-
-		/**
-		 *@since 2019.02.17
-		 *success表示直接余额消费
-		 *pending 则表示通过在线直接支付订单，需要等待支付平台验证返回后更新支付 @see static::verify();
-		 */
-		if (static::$completed_status == $this->status) {
-			$this->complete();
-		}
-
-		return $this->transaction;
+		return get_post($ID);
 	}
 
 	/**
@@ -166,7 +155,7 @@ class Wnd_Order extends Wnd_Transaction {
 	 *@param object 	$this->transaction			required 	订单记录Post
 	 *@param string 	$this->subject 		option
 	 */
-	public function verify() {
+	protected function verify_transaction() {
 		if ('order' != $this->get_type()) {
 			throw new Exception(__('订单ID无效', 'wnd'));
 		}
@@ -185,9 +174,6 @@ class Wnd_Order extends Wnd_Transaction {
 		if (!$ID or is_wp_error($ID)) {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
-
-		// 完成本笔业务
-		$this->complete();
 	}
 
 	/**

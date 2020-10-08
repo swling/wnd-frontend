@@ -110,15 +110,14 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *@param float  	$this->total_money			required when !$object_id
 	 *@param int 		$this->object_id  			option
 	 */
-	public function create(): WP_Post{
+	protected function insert_record(bool $is_completed): WP_Post{
 		$payment = $this->object_id ? new Wnd_Order() : new Wnd_Recharge();
 		$payment->set_object_id($this->object_id);
 		$payment->set_total_amount($this->total_amount);
 		$payment->set_payment_gateway($this->payment_gateway);
 
 		// 写入数据库后构建ID及Post属性，供外部调用属性向支付平台发起请求
-		$this->transaction = $payment->create();
-		return $this->transaction;
+		return $payment->insert_record($is_completed);
 	}
 
 	/**
@@ -137,12 +136,12 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	abstract protected function check_return(): bool;
 
 	/**
-	 *验证支付并执行相关站内业务
+	 *验证支付
 	 *
 	 *@param $this->out_trade_no
 	 *@param $this->total_amount
 	 */
-	public function verify() {
+	protected function verify_transaction() {
 		if ($this->total_amount != $this->get_total_amount()) {
 			throw new Exception(__('金额不匹配', 'wnd'));
 		}
@@ -155,15 +154,16 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		 */
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$_POST = stripslashes_deep($_POST);
-			if ($this->check_notify()) {
-				$this->complete();
+			if (!$this->check_notify()) {
+				throw new Exception(__('异步验签失败', 'wnd'));
 			}
 		} else {
 			$_GET = stripslashes_deep($_GET);
-			if ($this->check_return()) {
-				$this->complete();
-				$this->return();
+			if (!$this->check_return()) {
+				throw new Exception(__('同步验签失败', 'wnd'));
 			}
+
+			$this->return();
 		}
 	}
 

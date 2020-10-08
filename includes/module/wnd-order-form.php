@@ -15,7 +15,6 @@ class Wnd_Order_Form extends Wnd_Module {
 			'post_id' => 0,
 			'ajax'    => true,
 		];
-
 		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
