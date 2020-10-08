@@ -92,7 +92,7 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 	$html .= '<div class="column is-narrow is-size-7 breadcrumb-right">';
 	$breadcrumb_right = '';
 	// 内页编辑
-	if (is_single()) {
+	if (is_singular()) {
 		if (current_user_can('edit_post', $queried_object->ID)) {
 			$breadcrumb_right .= '<a href="' . get_edit_post_link($queried_object->ID) . '">[' . __('编辑', 'wnd') . ']</a>';
 			$breadcrumb_right .= '&nbsp;' . wnd_modal_link('[' . __('状态', 'wnd') . ']', 'wnd_post_status_form', ['post_id' => $queried_object->ID]);

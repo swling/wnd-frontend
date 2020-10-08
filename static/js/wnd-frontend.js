@@ -267,7 +267,7 @@ function wnd_ajax_embed(container, module, param = {}) {
  *@param callback 	回调函数
  *@param param 		对应传参
  */
-function wnd_get_json(data, callback, param = 0) {
+function wnd_get_json(data, callback, param = {}) {
 	$.ajax({
 		type: "GET",
 		url: wnd_jsonget_api,

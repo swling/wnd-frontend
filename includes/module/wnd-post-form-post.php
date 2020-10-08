@@ -6,7 +6,7 @@ use Wnd\View\Wnd_Form_Post;
 /**
  *@since 2019.01.31 发布/编辑文章通用模板
  */
-class Wnd_Default_Post_Form extends Wnd_Module {
+class Wnd_Post_Form_Post extends Wnd_Module {
 
 	protected static function build($args = []): string{
 		$defaults = [
@@ -15,16 +15,13 @@ class Wnd_Default_Post_Form extends Wnd_Module {
 			'is_free'     => false,
 		];
 		$args = wp_parse_args($args, $defaults);
-
-		$post_id     = (int) $args['post_id'];
-		$post_parent = (int) $args['post_parent'];
-		$is_free     = (bool) $args['is_free'];
+		extract($args);
 
 		/**
 		 *@since 2019.03.11 表单类
 		 */
 		$form = new Wnd_Form_Post('post', $post_id);
-		$form->add_html('<div class="columns post-form-supply">');
+		$form->add_html('<div class="columns post-form-post">');
 
 		/**
 		 *左侧栏
