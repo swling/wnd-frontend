@@ -19,35 +19,34 @@ class Wnd_Order_Form extends Wnd_Module {
 		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
-		/**
-		 *套餐单选项
-		 */
-		// Demo data
-		$kit = [
-			'kit_1' => ['title' => '套餐1', 'price' => '0.1'],
-			'kit_2' => ['title' => '套餐2', 'price' => '0.2'],
-		];
-		foreach ($kit as $key => $value) {
-			$options[$value['title']] = $key;
-		}
-
 		$post = get_post($post_id);
 		if (!$post) {
 			return __('ID无效', 'wnd');
 		}
 
+		/**
+		 *SKU 选项
+		 */
+		$sku         = wnd_get_post_meta($post_id, 'sku') ?: [];
+		$sku_options = [];
+		foreach ($sku as $key => $value) {
+			$sku_options[$value['title']] = $key;
+		}
+
 		$form = new Wnd_Form_WP($ajax);
 		$form->add_hidden('module', 'wnd_payment_form');
 		$form->add_html('<div class="field is-grouped is-grouped-centered">');
-		$form->add_radio(
-			[
-				'name'     => 'kit',
-				'options'  => $options,
-				'required' => 'required',
-				'checked'  => $post->post_status,
-				'class'    => 'is-checkradio is-danger',
-			]
-		);
+		if ($sku_options) {
+			$form->add_radio(
+				[
+					'name'     => 'sku',
+					'options'  => $sku_options,
+					'required' => 'required',
+					'checked'  => $post->post_status,
+					'class'    => 'is-checkradio is-danger',
+				]
+			);
+		}
 		$form->add_html('</div>');
 		$form->add_hidden('post_id', $post_id);
 

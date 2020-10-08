@@ -15,7 +15,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		$defaults = [
 			'post_id'  => 0,
 			'quantity' => 1,
-			'kit'      => '',
+			'sku'      => '',
 			'color'    => '',
 			'size'     => '',
 		];
