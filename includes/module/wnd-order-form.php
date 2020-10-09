@@ -29,8 +29,8 @@ class Wnd_Order_Form extends Wnd_Module {
 		 *
 		 */
 		$form = new Wnd_Form_WP($ajax);
-		$form->add_hidden('post_id', $post_id);
 		$form->add_hidden('module', 'wnd_payment_form');
+		$form->add_hidden('post_id', $post_id);
 		$form->set_action(get_permalink(wnd_get_config('ucenter_page')), 'GET');
 
 		$props      = Wnd_Product::get_object_props($post_id);

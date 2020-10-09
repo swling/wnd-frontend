@@ -3,6 +3,7 @@ namespace Wnd\Module;
 
 use Wnd\Model\Wnd_Payment;
 use Wnd\Model\Wnd_Product;
+use Wnd\Utility\Wnd_Form_Data;
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -14,14 +15,17 @@ class Wnd_Payment_Form extends Wnd_Module {
 
 	protected static function build($args = []): string{
 		/**
-		 *订单基本信息 + 产品基本信息
-		 *
+		 *订单基本信息 + 产品属性等参数
+		 *移除表单签名参数
 		 */
 		$defaults = [
 			'post_id'  => 0,
 			'quantity' => 1,
 		];
+		unset($args[Wnd_Form_Data::$form_sign_name]);
 		$args = wp_parse_args($args, $defaults);
+
+		// 将数组元素依次定义为按键名命名的变量
 		extract($args);
 
 		/**

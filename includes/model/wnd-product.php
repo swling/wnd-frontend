@@ -100,8 +100,8 @@ class Wnd_Product {
 				continue;
 			}
 
-			// 过滤空值
-			$data[$key] = is_array($data[$key]) ? array_filter($data[$key]) : $data[$key];
+			// 数组数据：过滤空值并去重
+			$data[$key] = is_array($data[$key]) ? array_filter(array_unique($data[$key], SORT_REGULAR)) : $data[$key];
 		}unset($key, $value);
 
 		return $data;
