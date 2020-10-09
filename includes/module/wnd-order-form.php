@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Wnd\Model\Wnd_Product;
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -20,38 +21,48 @@ class Wnd_Order_Form extends Wnd_Module {
 
 		$post = get_post($post_id);
 		if (!$post) {
-			return __('ID无效', 'wnd');
+			return __('ID 无效', 'wnd');
 		}
 
 		/**
-		 *SKU 选项
+		 * 遍历产品属性，并生成表单字段
+		 *
 		 */
-		$sku         = wnd_get_post_meta($post_id, 'sku') ?: [];
-		$sku_options = [];
-		foreach ($sku as $key => $value) {
-			$sku_options[$value['title']] = $key;
-		}
-
 		$form = new Wnd_Form_WP($ajax);
-		$form->add_html('<div class="field is-grouped is-grouped-centered">');
-		if ($sku_options) {
+		$form->add_hidden('post_id', $post_id);
+		$form->add_hidden('module', 'wnd_payment_form');
+		$form->set_action(get_permalink(wnd_get_config('ucenter_page')), 'GET');
+
+		$props      = Wnd_Product::get_object_props($post_id);
+		$props_keys = Wnd_Product::get_props_keys();
+		foreach ($props as $key => $value) {
+			// 必须，否则会导致循环累积
+			$options = [];
+
+			//  SKU 为二维数组，需要额外处理
+			if (Wnd_Product::$sku_key == $key and is_array($value)) {
+				foreach ($value as $sku_key => $sku) {
+					$options[$sku['title']] = $sku_key;
+				}
+			} elseif ($value) {
+				foreach ($value as $prop_key => $prop_value) {
+					$options[$prop_value] = $prop_value;
+				}
+			}
+
 			$form->add_radio(
 				[
-					'name'     => 'sku',
-					'options'  => $sku_options,
+					'label'    => $props_keys[$key] ?? $key,
+					'name'     => $key,
+					'options'  => $options,
 					'required' => 'required',
 					'checked'  => $post->post_status,
 					'class'    => 'is-checkradio is-danger',
 				]
 			);
-		}
-		$form->add_html('</div>');
+		}unset($key, $value);
 
-		$form->add_hidden('post_id', $post_id);
-		$form->add_hidden('module', 'wnd_payment_form');
-		$form->set_action(get_permalink(wnd_get_config('ucenter_page')), 'GET');
 		$form->set_submit_button(__('加入购物车', 'wnd'), 'is-danger');
-
 		$form->build();
 		return $form->html;
 	}

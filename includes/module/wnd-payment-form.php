@@ -2,6 +2,7 @@
 namespace Wnd\Module;
 
 use Wnd\Model\Wnd_Payment;
+use Wnd\Model\Wnd_Product;
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -12,17 +13,27 @@ use Wnd\View\Wnd_Form_WP;
 class Wnd_Payment_Form extends Wnd_Module {
 
 	protected static function build($args = []): string{
+		/**
+		 *订单基本信息 + 产品基本信息
+		 *
+		 */
 		$defaults = [
 			'post_id'  => 0,
 			'quantity' => 1,
-			'sku'      => '',
-			'color'    => '',
-			'size'     => '',
 		];
-
 		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
+		/**
+		 *@since 0.8.76
+		 *产品属性
+		 */
+		$props = Wnd_Product::parse_props_data($args);
+		// print_r($props);
+
+		/**
+		 *基础信息
+		 */
 		$user_id         = get_current_user_id();
 		$gateway_options = Wnd_Payment::get_gateway_options();
 		$user_money      = wnd_get_user_money($user_id);
@@ -54,7 +65,14 @@ class Wnd_Payment_Form extends Wnd_Module {
 			);
 			$form->add_html('</div>');
 			$form->set_action('wnd_pay_for_order');
-			$form->add_hidden('post_id', $post_id);
+
+			/**
+			 *遍历参数信息并构建表单字段
+			 */
+			foreach ($args as $key => $value) {
+				$form->add_hidden($key, $value);
+			}
+
 			$form->add_hidden('payment_gateway', 'internal');
 			$form->set_submit_button(__('确定', 'wnd'));
 			$form->build();
@@ -97,7 +115,14 @@ class Wnd_Payment_Form extends Wnd_Module {
 		);
 		$form->add_html('</div>');
 		$form->set_action('wnd_pay_for_order');
-		$form->add_hidden('post_id', $post_id);
+
+		/**
+		 *遍历参数信息并构建表单字段
+		 */
+		foreach ($args as $key => $value) {
+			$form->add_hidden($key, $value);
+		}
+
 		$form->set_submit_button(__('确定', 'wnd'));
 		$form->build();
 

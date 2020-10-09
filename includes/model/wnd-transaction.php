@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Model\Wnd_Product;
 use WP_Post;
 use WP_User;
 
@@ -30,8 +31,8 @@ abstract class Wnd_Transaction {
 	// 支付标题：产品标题 / 充值标题 / 其他自定义
 	protected $subject;
 
-	// 产品 SKU 信息
-	protected $sku;
+	// 交易订单对应的产品或服务属性
+	protected $props;
 
 	// 状态
 	protected $status;
@@ -146,15 +147,15 @@ abstract class Wnd_Transaction {
 	 *
 	 *设置订单产品属性
 	 */
-	public function set_sku(string $sku) {
-		$this->sku = $sku;
+	public function set_props(array $props) {
+		$this->props = $props;
 	}
 
 	/**
 	 *@since 2019.02.11
 	 *创建交易
 	 * - 写入数据库
-	 * - 保存 SKU
+	 * - 保存产品属性
 	 * - 交易完成，执行相关操作
 	 *
 	 *@param 	bool 	$is_completed 	是否直接完成订单
@@ -163,8 +164,10 @@ abstract class Wnd_Transaction {
 		// 写入数据
 		$this->transaction = $this->insert_record($is_completed);
 
-		// 保存 SKU
-		$this->save_sku();
+		// 保存产品属性
+		if ($this->props and $this->transaction->ID) {
+			Wnd_Product::set_order_props($this->transaction->ID, $this->props);
+		}
 
 		// 完成
 		if ($is_completed) {
@@ -181,19 +184,6 @@ abstract class Wnd_Transaction {
 	 *@return object WP Post Object
 	 */
 	abstract protected function insert_record(bool $is_completed): WP_Post;
-
-	/**
-	 *@since 0.8.76
-	 *
-	 *保存订单 SKU 属性
-	 */
-	protected function save_sku(): bool {
-		if (!$this->sku or !$this->transaction->ID) {
-			return false;
-		}
-
-		return wnd_update_post_meta($this->transaction->ID, 'sku', $this->sku);
-	}
 
 	/**
 	 *@since 2019.02.11
@@ -227,15 +217,6 @@ abstract class Wnd_Transaction {
 	 */
 	public function get_transaction_id() {
 		return $this->transaction->ID;
-	}
-
-	/**
-	 *@since 0.8.76
-	 *
-	 *获取订单 SKU 属性
-	 */
-	protected function get_sku(): array{
-		return wnd_get_post_meta($this->get_transaction_id(), 'sku');
 	}
 
 	/**

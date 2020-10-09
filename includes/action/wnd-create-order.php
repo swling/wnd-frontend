@@ -26,7 +26,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		$order = new Wnd_Order();
 		$order->set_object_id($post_id);
 		$order->set_subject(get_the_title($post_id));
-		$order->set_sku($this->data['sku'] ?? '');
+		$order->set_props($this->data);
 		$order_post = $order->create(true);
 
 		/**

@@ -34,7 +34,7 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 		$payment = Wnd_Payment::get_instance($payment_gateway);
 		$payment->set_object_id($post_id);
 		$payment->set_total_amount($total_amount);
-		$payment->set_sku($this->data['sku'] ?? '');
+		$payment->set_props($this->data);
 		$payment->create(false);
 
 		// Ajax 提交时，需将提交响应返回，并替换用户UI界面，故需设置 ['status' => 7];
