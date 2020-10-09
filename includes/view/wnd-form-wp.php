@@ -72,7 +72,10 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *@param $method 	string 		非ajax环境中为表单提交方法：POST/GET
 	 */
 	public function set_action(string $action, string $method = 'POST') {
-		if ($this->is_ajax_submit) {
+		// 需要作为判断条件，故转为统一大写
+		$method = strtoupper($method);
+
+		if ($this->is_ajax_submit and 'GET' != $method) {
 			$this->method = $method;
 			$this->add_hidden('action', $action);
 			$this->add_hidden('_ajax_nonce', wp_create_nonce($action));
@@ -107,14 +110,21 @@ class Wnd_Form_WP extends Wnd_Form {
 	/**
 	 *@since 2019.05.09
 	 *未被选中的radio 与checkbox将不会发送到后端，会导致wnd_form_nonce 校验失败，此处通过设置hidden字段修改
+	 *
+	 *@since 0.8.76 GET 表单不设置。
+	 * - 注意：需要此设置生效，则必须在新增字段之前配置 set_action($action, 'GET')，以修改 $this->method 值
 	 */
 	public function add_radio(array $args) {
-		$this->add_hidden($args['name'], '');
+		if ('GET' != $this->method) {
+			$this->add_hidden($args['name'], '');
+		}
 		parent::add_radio($args);
 	}
 
 	public function add_checkbox(array $args) {
-		$this->add_hidden($args['name'], '');
+		if ('GET' != $this->method) {
+			$this->add_hidden($args['name'], '');
+		}
 		parent::add_checkbox($args);
 	}
 
@@ -377,7 +387,7 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		/**
 		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
-		 **/
+		 */
 		$this->build_sign_field();
 
 		/**
