@@ -48,7 +48,7 @@ class Wnd_Product {
 	 * ……
 	 *
 	 */
-	public static function set_object_props(int $object_id, array $data) {
+	public static function set_object_props(int $object_id, array $data): bool{
 		// SKU 为二维数组，需要特别解析保存
 		$sku_data = static::parse_sku_data($data);
 
@@ -59,7 +59,7 @@ class Wnd_Product {
 		$data[static::$sku_key] = $sku_data;
 
 		// 保存数据
-		wnd_update_post_meta_array($object_id, $data);
+		return wnd_update_post_meta_array($object_id, $data);
 	}
 
 	/**
@@ -135,9 +135,12 @@ class Wnd_Product {
 	 *
 	 *读取数据中和产品属性相关的数据，保存至订单 wnd meta
 	 */
-	public static function set_order_props(int $order_id, array $data) {
+	public static function set_order_props(int $order_id, array $data): bool{
 		$data = static::parse_props_data($data);
+		if (!$data) {
+			return false;
+		}
 
-		wnd_update_post_meta_array($order_id, $data);
+		return wnd_update_post_meta_array($order_id, $data);
 	}
 }

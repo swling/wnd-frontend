@@ -48,44 +48,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		$message .= __('本次消费：¥ ', 'wnd') . '<b>' . number_format($post_price, 2, '.', '') . '</b>';
 
 		/**
-		 *@since 0.8.73
-		 *免费订单
-		 */
-		if ($post_price <= 0) {
-			$form = new Wnd_Form_WP(true, !$user_id);
-			$form->set_form_title(get_the_title($post_id), true);
-			if (!$user_id) {
-				$form->add_html(static::build_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd'), true));
-			}
-			$form->add_html('<div class="has-text-centered field">');
-			$form->add_html('<p>' . $message . '</p>');
-			$form->add_checkbox(
-				[
-					'name'     => 'agreement',
-					'options'  => ['<i class="is-size-7">' . __('已阅读并同意交易协议及产品使用协议') . '</i>' => 1],
-					'checked'  => true,
-					'required' => 'required',
-				]
-			);
-			$form->add_html('</div>');
-			$form->set_action('wnd_pay_for_order');
-
-			/**
-			 *遍历参数信息并构建表单字段
-			 */
-			foreach ($args as $key => $value) {
-				$form->add_hidden($key, $value);
-			}
-
-			$form->add_hidden('payment_gateway', 'internal');
-			$form->set_submit_button(__('确定', 'wnd'));
-			$form->build();
-
-			return $form->html;
-		}
-
-		/**
-		 *常规订单支付
+		 *支付表单
 		 *
 		 * - 如果余额足够，提供站内支付结算方式
 		 */
@@ -100,15 +63,21 @@ class Wnd_Payment_Form extends Wnd_Module {
 		}
 		$form->add_html('<div class="has-text-centered field">');
 		$form->add_html('<p>' . $message . '</p>');
-		$form->add_radio(
-			[
-				'name'     => 'payment_gateway',
-				'options'  => $gateway_options,
-				'required' => 'required',
-				'checked'  => $user_money >= $post_price ? 'internal' : Wnd_Payment::get_default_gateway(),
-				'class'    => 'is-checkradio is-danger',
-			]
-		);
+
+		if ($post_price > 0) {
+			$form->add_radio(
+				[
+					'name'     => 'payment_gateway',
+					'options'  => $gateway_options,
+					'required' => 'required',
+					'checked'  => $user_money >= $post_price ? 'internal' : Wnd_Payment::get_default_gateway(),
+					'class'    => 'is-checkradio is-danger',
+				]
+			);
+		} else {
+			$form->add_hidden('payment_gateway', 'internal');
+		}
+
 		$form->add_checkbox(
 			[
 				'name'     => 'agreement',
