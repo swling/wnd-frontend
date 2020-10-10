@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Action;
 
+use Wnd\Model\Wnd_Product;
+
 /**
  *@since 2019.02.12 文件校验下载
  *@param $_REQUEST['post_id']
@@ -8,11 +10,17 @@ namespace Wnd\Action;
 class Wnd_Paid_Download extends Wnd_Action {
 
 	public function execute() {
+		/**
+		 *@since 0.8.76
+		 *新增 SKU ID
+		 */
+		$sku_id = $_REQUEST[Wnd_Product::$sku_key] ?? '';
+
 		$post_id = (int) $_REQUEST['post_id'];
 		$user_id = get_current_user_id();
-		$price   = wnd_get_post_price($post_id);
+		$price   = wnd_get_post_price($post_id, $sku_id);
 		$file_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
-		$file    = get_attached_file($file_id, $unfiltered = false);
+		$file    = get_attached_file($file_id, false);
 		if (!$file) {
 			wp_die(__('获取文件失败', 'wnd'), get_option('blogname'));
 		}

@@ -48,7 +48,7 @@ class Wnd_Pay_Button {
 		$this->post          = $post;
 		$this->user_id       = get_current_user_id();
 		$this->is_author     = $this->user_id == $this->post->post_author ? true : false;
-		$this->post_price    = wnd_get_post_price($this->post_id, true);
+		$this->post_price    = wnd_get_post_price($this->post_id, '', true);
 		$this->user_money    = wnd_get_user_money($this->user_id, true);
 		$this->user_has_paid = wnd_user_has_paid($this->user_id, $this->post_id);
 		$this->file_id       = wnd_get_post_meta($this->post_id, 'file');

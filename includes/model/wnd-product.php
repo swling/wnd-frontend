@@ -13,20 +13,20 @@ class Wnd_Product {
 	// SKU KEY
 	public static $sku_key = 'sku';
 
-	// SKU KEY
+	// Color KEY
 	public static $color_key = 'color';
 
-	// SKU KEY
+	// Size KEY
 	public static $size_key = 'size';
 
 	/**
-	 *产品属性数组
+	 *产品属性信息合集
 	 */
 	public static function get_props_keys(): array{
 		return [
-			'sku'   => __('SKU', 'wnd'),
-			'color' => __('颜色', 'wnd'),
-			'size'  => __('尺寸', 'wnd'),
+			static::$sku_key   => __('SKU', 'wnd'),
+			static::$color_key => __('颜色', 'wnd'),
+			static::$size_key  => __('尺寸', 'wnd'),
 		];
 	}
 
@@ -128,6 +128,20 @@ class Wnd_Product {
 	 */
 	public static function get_single_sku(int $object_id, string $sku_id): array{
 		return static::get_object_sku($object_id)[$sku_id] ?? [];
+	}
+
+	/**
+	 *获取指定单个 SKU 价格
+	 */
+	public static function get_single_sku_price(int $object_id, string $sku_id): float {
+		return static::get_object_sku($object_id)[$sku_id]['price'] ?? 0;
+	}
+
+	/**
+	 *获取指定单个 SKU 名称
+	 */
+	public static function get_single_sku_title(int $object_id, string $sku_id): string {
+		return static::get_object_sku($object_id)[$sku_id]['title'] ?? '';
 	}
 
 	/**

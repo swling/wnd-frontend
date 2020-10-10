@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Wnd\Model\Wnd_Order;
+use Wnd\Model\Wnd_Product;
 use Wnd\Model\Wnd_Transaction;
 
 /**
@@ -188,12 +189,23 @@ class Wnd_Finance {
 	/**
 	 *@since 2019.02.13
 	 *文章价格
-	 *@param 	int 	$user_id 	用户ID
+	 *@param 	int 	$user_id 	用户 ID
+	 *@param 	string 	$sku_id		产品 SKU ID
+	 *@param 	bool 	$format 	是否格式化输出
 	 *@return  	float 	两位数的价格信息 或者 0
+	 *
+	 *@since 0.8.76
+	 *新增产品 SKU
 	 */
-	public static function get_post_price($post_id, $format = false) {
-		$price = floatval(get_post_meta($post_id, 'price', 1) ?: 0);
-		$price = apply_filters('wnd_get_post_price', $price, $post_id);
+	public static function get_post_price($post_id, $sku_id = '', $format = false) {
+		if ($sku_id) {
+			$price = Wnd_Product::get_single_sku_price($post_id, $sku_id);
+			$price = floatval($price);
+		} else {
+			$price = floatval(get_post_meta($post_id, 'price', 1) ?: 0);
+		}
+
+		$price = apply_filters('wnd_get_post_price', $price, $post_id, $sku_id);
 		return $format ? number_format($price, 2, '.', '') : $price;
 	}
 

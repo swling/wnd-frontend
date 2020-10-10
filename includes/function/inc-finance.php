@@ -97,11 +97,13 @@ function wnd_get_user_commission($user_id, $format = false) {
 /**
  *@since 2019.02.13
  *文章价格
- *@param 	int 	$user_id 	用户ID
+ *@param 	int 	$user_id 	用户 ID
+ *@param 	string 	$sku_id		产品 SKU ID
+ *@param 	bool 	$format 	是否格式化输出
  *@return  	float 	两位数的价格信息 或者 0
  */
-function wnd_get_post_price($post_id, $format = false) {
-	return Wnd_Finance::get_post_price($post_id, $format);
+function wnd_get_post_price($post_id, $sku_id = '', $format = false) {
+	return Wnd_Finance::get_post_price($post_id, $sku_id, $format);
 }
 
 /**

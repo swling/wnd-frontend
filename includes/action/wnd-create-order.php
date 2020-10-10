@@ -3,6 +3,7 @@ namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_Order;
+use Wnd\Model\Wnd_Product;
 
 /**
  *@since 2019.10.02
@@ -16,13 +17,19 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			$post_id = $this->data['post_id'] ?? 0;
 		}
 
-		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id);
+		/**
+		 *@since 0.8.76
+		 *新增 SKU ID
+		 */
+		$sku_id = $this->data[Wnd_Product::$sku_key] ?? '';
+
+		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id, $sku_id);
 		if (0 === $wnd_can_create_order['status']) {
 			return $wnd_can_create_order;
 		}
 
 		// 写入消费数据
-		static::check_create($post_id, $this->user_id);
+		static::check_create($post_id, $sku_id, $this->user_id);
 		$order = new Wnd_Order();
 		$order->set_object_id($post_id);
 		$order->set_subject(get_the_title($post_id));
@@ -39,8 +46,11 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 
 	/**
 	 *检测下单权限
+	 *
+	 *@since 0.8.76
+	 *新增 SKU ID
 	 */
-	public static function check_create(int $post_id, int $user_id) {
+	protected static function check_create(int $post_id, string $sku_id, int $user_id) {
 		$post = $post_id ? get_post($post_id) : false;
 		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
@@ -50,7 +60,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			throw new Exception(__('请登录', 'wnd'));
 		}
 
-		$post_price = wnd_get_post_price($post_id);
+		$post_price = wnd_get_post_price($post_id, $sku_id);
 		$user_money = wnd_get_user_money($user_id);
 
 		// 余额不足

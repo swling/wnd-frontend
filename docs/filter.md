@@ -132,8 +132,11 @@ apply_filters('wnd_get_post_commission', $commission, $post_id);
 
 /**
 *@since 2019.02.13 post价格
+*
+*@since 0.8.76
+*新增 $sku_id
 */
-apply_filters('wnd_get_post_price', $price, $post_id);
+apply_filters('wnd_get_post_price', $price, $post_id, $sku_id);
 
 ```
 ## 支付

@@ -3,6 +3,7 @@ namespace Wnd\Action;
 
 use Exception;
 use Wnd\Action\Wnd_Create_Order;
+use Wnd\Model\Wnd_Product;
 
 /**
  *付费阅读下载类
@@ -14,7 +15,13 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 		// 获取文章
 		$post_id = (int) $this->data['post_id'];
 		$post    = get_post($post_id);
-		$price   = wnd_get_post_price($post_id);
+
+		/**
+		 *@since 0.8.76
+		 *新增 SKU ID
+		 */
+		$sku_id = $this->data[Wnd_Product::$sku_key] ?? '';
+		$price  = wnd_get_post_price($post_id, $sku_id);
 		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}

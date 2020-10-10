@@ -102,15 +102,14 @@ class Wnd_Order extends Wnd_Transaction {
 		 *@since 0.8.76
 		 *新增产品 SKU 信息：设置 SKU 后，对应订单价格及标题随之改变
 		 */
-		if ($this->sku) {
-			$single_sku         = Wnd_Product::get_single_sku($this->object_id, $this->sku);
-			$this->total_amount = $single_sku['price'] ?? 0;
-			$this->subject      = ($this->subject ?: (__('订单：', 'wnd') . get_the_title($this->object_id))) . $single_sku;
+		$sku_id = $this->props[Wnd_Product::$sku_key] ?? '';
+		if ($sku_id) {
+			$this->total_amount = Wnd_Product::get_single_sku_price($this->object_id, $sku_id);
 		} else {
 			$this->total_amount = wnd_get_post_price($this->object_id);
-			$this->subject      = $this->subject ?: (__('订单：', 'wnd') . get_the_title($this->object_id));
 		}
-		$this->status = $is_completed ? static::$completed_status : static::$processing_status;
+		$this->subject = $this->subject ?: (__('订单：', 'wnd') . get_the_title($this->object_id));
+		$this->status  = $is_completed ? static::$completed_status : static::$processing_status;
 
 		/**
 		 *@since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
