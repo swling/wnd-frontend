@@ -44,9 +44,9 @@ abstract class Wnd_Module {
 	/**
 	 *构建提示信息
 	 */
-	public static function build_message($message) {
+	public static function build_message($message): string {
 		if (!$message) {
-			return;
+			return '';
 		}
 
 		return wnd_message($message, 'is-primary', true);
@@ -55,9 +55,9 @@ abstract class Wnd_Module {
 	/**
 	 *构建错误提示信息
 	 */
-	public static function build_error_message($message) {
+	public static function build_error_message($message): string {
 		if (!$message) {
-			return;
+			return '';
 		}
 
 		return wnd_message($message, 'is-warning', true);
@@ -66,9 +66,9 @@ abstract class Wnd_Module {
 	/**
 	 *构建系统通知
 	 */
-	public static function build_notification($notification, $is_centered = false) {
+	public static function build_notification($notification, $is_centered = false): string {
 		if (!$notification) {
-			return;
+			return '';
 		}
 
 		$class = $is_centered ? 'is-primary has-text-centered' : 'is-primary';
@@ -78,9 +78,9 @@ abstract class Wnd_Module {
 	/**
 	 *构建系统错误通知
 	 */
-	public static function build_error_notification($notification, $is_centered = false) {
+	public static function build_error_notification($notification, $is_centered = false): string {
 		if (!$notification) {
-			return;
+			return '';
 		}
 
 		$class = $is_centered ? 'is-danger has-text-centered' : 'is-danger';
