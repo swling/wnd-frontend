@@ -107,13 +107,24 @@ function wnd_get_post_price($post_id, $sku_id = '', $format = false) {
 }
 
 /**
+ *@since 0.8.76
+ *订单实际支付金额
+ *
+ *@param 	int 	$order_id 	订单 ID
+ *@return 	float 	订单金额
+ */
+function wnd_get_order_amount($order_id, $format = false) {
+	return Wnd_Finance::get_order_amount($order_id, $format);
+}
+
+/**
  *@since 2019.02.12
- *用户佣金分成
- *@param 	int 	$post_id
+ *订单佣金分成
+ *@param 	int 	$order_id 	订单 ID
  *@return 	float 	佣金分成
  */
-function wnd_get_post_commission($post_id, $format = false) {
-	return Wnd_Finance::get_post_commission($post_id, $format);
+function wnd_get_order_commission($order_id, $format = false) {
+	return Wnd_Finance::get_order_commission($order_id, $format);
 }
 
 /**

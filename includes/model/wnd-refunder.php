@@ -189,7 +189,7 @@ abstract class Wnd_Refunder {
 		 */
 		wnd_inc_post_total_sales($this->object_id, $this->refund_amount * -1);
 
-		$commission = wnd_get_post_commission($this->object_id);
+		$commission = wnd_get_order_commission($this->payment_id);
 		if (!$commission) {
 			return;
 		}

@@ -223,7 +223,7 @@ class Wnd_Order extends Wnd_Transaction {
 			wp_cache_delete($this->user_id . '-' . $this->object_id, 'wnd_has_paid');
 
 			// 文章作者新增佣金
-			$commission = (float) wnd_get_post_commission($object_id);
+			$commission = (float) wnd_get_order_commission($ID);
 			if ($commission > 0) {
 				$object = get_post($object_id);
 				try {

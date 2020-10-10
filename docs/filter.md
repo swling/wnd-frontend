@@ -128,7 +128,7 @@ return apply_filters('wnd_create_order_return', $return_array, $order_post);
 /**
 *@since 2019.02.12 付费内容，作者收益提成，默认为文章价格* 后台比例设置
 */
-apply_filters('wnd_get_post_commission', $commission, $post_id);
+apply_filters('wnd_get_order_commission', $commission, $order_id);
 
 /**
 *@since 2019.02.13 post价格

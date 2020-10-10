@@ -210,15 +210,36 @@ class Wnd_Finance {
 	}
 
 	/**
+	 *@since 0.8.76
+	 *订单实际支付金额
+	 *
+	 *@param 	int 	$order_id 	订单 ID
+	 *@return 	float 	订单金额
+	 */
+	public static function get_order_amount($order_id, $format = false) {
+		try {
+			$order = new Wnd_Order;
+			$order->set_transaction_id($order_id);
+			$amount = $order->get_total_amount();
+			return $format ? number_format($amount, 2, '.', '') : $amount;
+		} catch (\Exception $e) {
+			return $format ? 0.00 : 0;
+		}
+	}
+
+	/**
 	 *@since 2019.02.12
-	 *用户佣金分成
-	 *@param 	int 	$post_id
+	 *订单佣金分成
+	 *@param 	int 	$order_id 产生佣金的订单
+	 *@param 	int 	$order_id 产生佣金的订单
 	 *@return 	float 	佣金分成
 	 */
-	public static function get_post_commission($post_id, $format = false) {
-		$commission_rate = floatval(wnd_get_config('commission_rate'));
-		$commission      = wnd_get_post_price($post_id) * $commission_rate;
-		$commission      = apply_filters('wnd_get_post_commission', $commission, $post_id);
+	public static function get_order_commission($order_id, $format = false) {
+		$rate       = floatval(wnd_get_config('commission_rate'));
+		$amount     = static::get_order_amount($order_id);
+		$commission = $amount * $rate;
+
+		$commission = apply_filters('wnd_get_order_commission', $commission, $order_id);
 		return $format ? number_format($commission, 2, '.', '') : $commission;
 	}
 
