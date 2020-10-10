@@ -280,7 +280,7 @@ function wnd_modal_button($text, $module, $param = [], $add_class = '') {
 	$class .= $add_class ? ' ' . $add_class : '';
 	$param = json_encode(wp_parse_args($param));
 
-	$html = '<button class="' . $class . '"';
+	$html = '<button class="' . $class . '" type="button"';
 	$html .= $module ? ' onclick=\'wnd_ajax_modal("' . $module . '", ' . $param . ')\'' : '';
 	$html .= '>' . $text . '</button>';
 
