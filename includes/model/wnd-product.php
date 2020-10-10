@@ -7,6 +7,11 @@ namespace Wnd\Model;
  *商品模块
  *
  *在本插件中，不单独对产品做定义。任何 singular 如 Post、Page 以及其他自定义 Post Type 均可为商品。一切皆可销售。
+ *
+ *注意：
+ *  产品配置将影响订单价格，因而不适用于付费阅读付费下载。
+ *  因为付费阅读、付费下载，目前尚不支持指定 SKU 信息查询，仅通过判断用户在当前 Post 下是否有已完成支付的订单，决定内容呈现。
+ *  简言之，付费阅读付费下载，应该设置唯一产品价格。
  */
 class Wnd_Product {
 
@@ -134,7 +139,7 @@ class Wnd_Product {
 	 *获取指定单个 SKU 价格
 	 */
 	public static function get_single_sku_price(int $object_id, string $sku_id): float {
-		return static::get_object_sku($object_id)[$sku_id]['price'] ?? 0;
+		return (float) static::get_object_sku($object_id)[$sku_id]['price'] ?? 0;
 	}
 
 	/**
@@ -156,5 +161,22 @@ class Wnd_Product {
 		}
 
 		return wnd_update_post_meta_array($order_id, $data);
+	}
+
+	/**
+	 *获取订单关联的产品属性
+	 *
+	 *	订单属性，即从产品属性提供的选项中依次确定某一项组成。数据存储键名与产品属性保持一致。因此可复用 static::get_object_props($order_id);
+	 *	与产品属性返回的数据格式不同，【产品属性值】通常为维数组甚至二维数组，而【订单属性值】通常为确定的字符串。
+	 */
+	public static function get_order_props(int $order_id): array{
+		return static::get_object_props($order_id);
+	}
+
+	/**
+	 *获取订单关联的产品 SKU ID
+	 */
+	public static function get_order_sku_id(int $order_id): string {
+		return static::get_order_props($order_id)[static::$sku_key] ?? '';
 	}
 }
