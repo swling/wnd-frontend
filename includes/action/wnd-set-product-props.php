@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_Product;
  *
  *设置产品属性
  */
-class Wnd_Set_Product_Props extends Wnd_Action_Ajax {
+class Wnd_Set_Product_Props extends Wnd_Action_Ajax_User {
 
 	public function execute(int $post_id = 0): array{
 		if (!$post_id) {
@@ -18,6 +18,10 @@ class Wnd_Set_Product_Props extends Wnd_Action_Ajax {
 
 		if (!$post_id) {
 			throw new Exception(__('ID 无效', 'wnd'));
+		}
+
+		if (!current_user_can('edit_post', $post_id)) {
+			throw new Exception(__('权限错误', 'wnd'));
 		}
 
 		Wnd_Product::set_object_props($post_id, $this->data);

@@ -44,7 +44,8 @@ class Wnd_Order_Form extends Wnd_Module {
 			//  SKU 为二维数组，需要额外处理
 			if (Wnd_Product::$sku_key == $key and is_array($value)) {
 				foreach ($value as $sku_key => $sku) {
-					$options[$sku['title']] = $sku_key;
+					$sku_label           = $sku['title'] . ': ¥ ' . number_format($sku['price'], 2, '.', '');
+					$options[$sku_label] = $sku_key;
 				}
 			} elseif ($value) {
 				foreach ($value as $prop_key => $prop_value) {
