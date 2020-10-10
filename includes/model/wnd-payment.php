@@ -115,6 +115,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		$payment->set_object_id($this->object_id);
 		$payment->set_total_amount($this->total_amount);
 		$payment->set_payment_gateway($this->payment_gateway);
+		$payment->set_props($this->props);
 
 		// 写入数据库后构建ID及Post属性，供外部调用属性向支付平台发起请求
 		return $payment->insert_record($is_completed);
