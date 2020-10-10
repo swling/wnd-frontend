@@ -55,19 +55,22 @@ class Wnd_Post_Form_Post extends Wnd_Module {
 		 *侧边栏
 		 */
 		$form->add_html('<div class="column is-3">');
+		// 产品属性
+		$form->add_html('<div class="field">' . wnd_modal_button(__('产品属性', 'wnd'), 'wnd_product_props_form', ['post_id' => $post_id]) . '</div>');
+
 		// 分类
 		$form->add_html('<div class="field">');
 		$form->add_post_term_select(['taxonomy' => 'category'], '', true, true);
 		$form->add_dynamic_sub_term_select('category', 1, '', false, __('二级分类', 'wnd'));
 		$form->add_dynamic_sub_term_select('category', 2, '', false, __('三级分类', 'wnd'));
 		$form->add_html('</div>');
+
 		// 缩略图
 		$form->set_thumbnail_size(150, 150);
 		$form->add_post_thumbnail(200, 200);
 		$form->add_html('</div>');
 
 		$form->add_html('</div>');
-
 		$form->set_post_parent($post_parent ?: $form->get_post()->post_parent);
 		$form->set_submit_button(__('保存', 'wnd'));
 
