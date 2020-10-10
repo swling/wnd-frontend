@@ -13,8 +13,10 @@ class Wnd_Order_Form extends Wnd_Module {
 
 	protected static function build($args = []): string{
 		$defaults = [
-			'post_id' => 0,
-			'ajax'    => true,
+			'post_id'       => 0,
+			'ajax'          => true,
+			'buy_text'      => __('立即购买'),
+			'add_cart_text' => __('立即购买'),
 		];
 		$args = wp_parse_args($args, $defaults);
 		extract($args);
@@ -62,7 +64,7 @@ class Wnd_Order_Form extends Wnd_Module {
 			);
 		}unset($key, $value);
 
-		$form->set_submit_button(__('加入购物车', 'wnd'), 'is-danger');
+		$form->set_submit_button($buy_text);
 		$form->build();
 		return $form->html;
 	}

@@ -32,11 +32,21 @@ class Wnd_Payment_Form extends Wnd_Module {
 		 *@since 0.8.76
 		 *产品属性
 		 */
-		$props     = Wnd_Product::parse_props_data($args);
-		$sku_id    = $props[Wnd_Product::$sku_key] ?? '';
-		$sku_title = Wnd_Product::get_single_sku_title($post_id, $sku_id);
-		$title     = $sku_title ? get_the_title($post_id) . '&nbsp;[' . $sku_title . ']' : get_the_title($post_id);
-		// print_r($props);
+		$props      = Wnd_Product::parse_props_data($args);
+		$sku_id     = $props[Wnd_Product::$sku_key] ?? '';
+		$sku_title  = Wnd_Product::get_single_sku_title($post_id, $sku_id);
+		$title      = $sku_title ? get_the_title($post_id) . '&nbsp;[' . $sku_title . ']' : get_the_title($post_id);
+		$post_price = wnd_get_post_price($post_id, $sku_id);
+
+		// 列出产品属性提示信息
+		$props_info = '';
+		unset($props[Wnd_Product::$sku_key]);
+		$props_keys = Wnd_Product::get_props_keys();
+		foreach ($props as $key => $value) {
+			$key = $props_keys[$key] ?? $key;
+			$props_info .= '[' . $key . ']:' . $value . '&nbsp;&nbsp;';
+		}
+		$props_info = static::build_notification($props_info);
 
 		/**
 		 *基础信息
@@ -44,7 +54,6 @@ class Wnd_Payment_Form extends Wnd_Module {
 		$user_id         = get_current_user_id();
 		$gateway_options = Wnd_Payment::get_gateway_options();
 		$user_money      = wnd_get_user_money($user_id);
-		$post_price      = wnd_get_post_price($post_id, $sku_id);
 
 		// 消费提示
 		$message = $user_id ? __('当前余额：¥ ', 'wnd') . '<b>' . number_format($user_money, 2, '.', '') . '</b>&nbsp;&nbsp;' : '';
@@ -64,6 +73,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		if (!$user_id) {
 			$form->add_html(static::build_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd'), true));
 		}
+		$form->add_html($props_info);
 		$form->add_html('<div class="has-text-centered field">');
 		$form->add_html('<p>' . $message . '</p>');
 
