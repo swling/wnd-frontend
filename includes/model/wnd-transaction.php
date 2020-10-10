@@ -160,7 +160,7 @@ abstract class Wnd_Transaction {
 	 *
 	 *@param 	bool 	$is_completed 	是否直接完成订单
 	 */
-	public function create(bool $is_completed = false) {
+	public function create(bool $is_completed = false): WP_Post{
 		// 写入数据
 		$this->transaction = $this->insert_record($is_completed);
 
@@ -173,6 +173,9 @@ abstract class Wnd_Transaction {
 		if ($is_completed) {
 			$this->complete();
 		}
+
+		// 返回创建的 WP Post Object
+		return $this->transaction;
 	}
 
 	/**
