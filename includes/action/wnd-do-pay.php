@@ -15,6 +15,7 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 		$post_id         = (int) ($this->data['post_id'] ?? 0);
 		$total_amount    = (float) ($this->data['total_amount'] ?? 0);
 		$payment_gateway = $this->data['payment_gateway'] ?? '';
+		$subject         = $this->data['subject'] ?? '';
 
 		if (!$payment_gateway) {
 			throw new Exception(__('未定义支付方式', 'wnd'));
@@ -35,6 +36,7 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 		$payment->set_object_id($post_id);
 		$payment->set_total_amount($total_amount);
 		$payment->set_props($this->data);
+		$payment->set_subject($subject);
 		$payment->create(false);
 
 		// Ajax 提交时，需将提交响应返回，并替换用户UI界面，故需设置 ['status' => 7];
