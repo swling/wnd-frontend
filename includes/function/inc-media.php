@@ -11,11 +11,12 @@
  */
 function wnd_download_file($the_file, $rename = 'download') {
 	// 获取文件后缀信息
-	$ext = '.' . pathinfo($the_file)['extension'];
+	$ext      = '.' . pathinfo($the_file)['extension'];
+	$filename = urlencode(get_option('blogname') . '-' . $rename . $ext);
 
 	// Force download
 	header('Content-type: application/x-file-to-save');
-	header('Content-Disposition: attachment; filename=' . get_option('blogname') . '-' . $rename . $ext);
+	header('Content-Disposition: attachment; filename*=utf8\'\'' . $filename);
 	ob_end_clean();
 	readfile($the_file);
 	exit;
