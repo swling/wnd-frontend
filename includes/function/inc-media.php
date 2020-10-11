@@ -16,7 +16,7 @@ function wnd_download_file($the_file, $rename = 'download') {
 
 	// Force download
 	header('Content-type: application/x-file-to-save');
-	header('Content-Disposition: attachment; filename*=utf8\'\'' . $filename);
+	header('Content-Disposition: attachment; filename*=UTF-8\'\'' . $filename);
 	ob_end_clean();
 	readfile($the_file);
 	exit;
