@@ -116,7 +116,7 @@ apply_filters('wnd_option_pay_return_url', $return_url);
 ## 订单
 ```php
 // 用户订单权限
-apply_filters('wnd_can_create_order', ['status'=>1,'msg'=>''], $post_id);
+apply_filters('wnd_can_create_order', ['status'=>1,'msg'=>''], $post_id, $sku_id, $quantity);
 
 /**
  *订单创建成功返回信息

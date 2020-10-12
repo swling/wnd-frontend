@@ -37,6 +37,9 @@ abstract class Wnd_Transaction {
 	// 状态
 	protected $status;
 
+	// 交易数目
+	protected $quantity = 1;
+
 	// 类型
 	protected $type;
 
@@ -118,6 +121,15 @@ abstract class Wnd_Transaction {
 		}
 
 		$this->object_id = $object_id;
+	}
+
+	/**
+	 *@since 0.8.76
+	 *
+	 *交易数目（同一商品）
+	 */
+	public function set_quantity(int $quantity) {
+		$this->quantity = $quantity;
 	}
 
 	/**

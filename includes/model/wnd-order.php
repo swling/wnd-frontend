@@ -45,7 +45,7 @@ class Wnd_Order extends Wnd_Transaction {
 	/**
 	 *匿名支付订单cookie name
 	 */
-	public static function get_anon_cookie_name($object_id) {
+	public static function get_anon_cookie_name(int $object_id) {
 		return static::$anon_cookie_name_prefix . '_' . $object_id;
 	}
 
@@ -104,11 +104,11 @@ class Wnd_Order extends Wnd_Transaction {
 		 */
 		$sku_id = $this->props[Wnd_Product::$sku_key] ?? '';
 		if ($sku_id) {
-			$this->total_amount = Wnd_Product::get_single_sku_price($this->object_id, $sku_id);
+			$this->total_amount = Wnd_Product::get_single_sku_price($this->object_id, $sku_id) * $this->quantity;
 		} else {
-			$this->total_amount = wnd_get_post_price($this->object_id);
+			$this->total_amount = wnd_get_post_price($this->object_id) * $this->quantity;
 		}
-		$this->subject = $this->subject ?: (__('订单：', 'wnd') . get_the_title($this->object_id));
+		$this->subject = $this->subject ?: (__('订单：', 'wnd') . get_the_title($this->object_id) . '[' . $this->quantity . ']');
 		$this->status  = $is_completed ? static::$completed_status : static::$processing_status;
 
 		/**

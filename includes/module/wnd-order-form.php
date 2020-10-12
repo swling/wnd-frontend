@@ -13,10 +13,11 @@ class Wnd_Order_Form extends Wnd_Module {
 
 	protected static function build($args = []): string{
 		$defaults = [
-			'post_id'       => 0,
-			'ajax'          => true,
-			'buy_text'      => __('立即购买'),
-			'add_cart_text' => __('立即购买'),
+			'post_id'          => 0,
+			'ajax'             => true,
+			'buy_text'         => __('立即购买'),
+			'add_cart_text'    => __('立即购买'),
+			'support_quantity' => true,
 		];
 		$args = wp_parse_args($args, $defaults);
 		extract($args);
@@ -53,9 +54,25 @@ class Wnd_Order_Form extends Wnd_Module {
 				'name'     => Wnd_Product::$sku_key,
 				'options'  => $options,
 				'required' => 'required',
-				'class'    => 'is-checkradio is-danger',
+				'class'    => 'is-checkradio is-' . wnd_get_config('primary_color'),
 			]
 		);
+
+		/**
+		 *支持批量购买商品
+		 */
+		if ($support_quantity) {
+			$form->add_number(
+				[
+					'name'     => Wnd_Product::$quantity_key,
+					'value'    => 1,
+					'step'     => 1,
+					'min'      => 1,
+					'required' => 'required',
+					'class'    => 'is-small',
+				]
+			);
+		}
 		$form->set_submit_button($buy_text);
 		$form->build();
 		return $form->html;

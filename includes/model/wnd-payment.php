@@ -113,6 +113,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	protected function insert_record(bool $is_completed): WP_Post{
 		$payment = $this->object_id ? new Wnd_Order() : new Wnd_Recharge();
 		$payment->set_object_id($this->object_id);
+		$payment->set_quantity($this->quantity);
 		$payment->set_total_amount($this->total_amount);
 		$payment->set_payment_gateway($this->payment_gateway);
 		$payment->set_props($this->props);

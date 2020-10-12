@@ -32,11 +32,13 @@ class Wnd_Payment_Form extends Wnd_Module {
 		 *@since 0.8.76
 		 *产品属性
 		 */
-		$sku_id     = $args[Wnd_Product::$sku_key] ?? '';
-		$sku        = Wnd_Product::get_single_sku($post_id, $sku_id);
-		$sku_name   = Wnd_Product::get_single_sku_name($post_id, $sku_id);
-		$title      = $sku_name ? get_the_title($post_id) . '&nbsp;[' . $sku_name . ']' : get_the_title($post_id);
-		$post_price = wnd_get_post_price($post_id, $sku_id);
+		$quantity     = $args[Wnd_Product::$quantity_key] ?? 1;
+		$sku_id       = $args[Wnd_Product::$sku_key] ?? '';
+		$sku          = Wnd_Product::get_single_sku($post_id, $sku_id);
+		$sku_name     = Wnd_Product::get_single_sku_name($post_id, $sku_id);
+		$title        = $sku_name ? get_the_title($post_id) . '&nbsp;[' . $sku_name . ' x ' . $quantity . ']' : get_the_title($post_id) . '&nbsp;[ x ' . $quantity . ']';
+		$post_price   = wnd_get_post_price($post_id, $sku_id);
+		$total_amount = $post_price * $quantity;
 
 		// 列出产品属性提示信息
 		$sku_info = '';
@@ -56,14 +58,14 @@ class Wnd_Payment_Form extends Wnd_Module {
 
 		// 消费提示
 		$message = $user_id ? __('当前余额：¥ ', 'wnd') . '<b>' . number_format($user_money, 2, '.', '') . '</b>&nbsp;&nbsp;' : '';
-		$message .= __('本次消费：¥ ', 'wnd') . '<b>' . number_format($post_price, 2, '.', '') . '</b>';
+		$message .= __('本次消费：¥ ', 'wnd') . '<b>' . number_format($total_amount, 2, '.', '') . '</b>';
 
 		/**
 		 *支付表单
 		 *
 		 * - 如果余额足够，提供站内支付结算方式
 		 */
-		if ($user_money >= $post_price) {
+		if ($user_money >= $total_amount) {
 			$gateway_options = array_merge([__('余额支付', 'wnd') => 'internal'], $gateway_options);
 		}
 
@@ -76,13 +78,13 @@ class Wnd_Payment_Form extends Wnd_Module {
 		$form->add_html('<div class="has-text-centered field">');
 		$form->add_html('<p>' . $message . '</p>');
 
-		if ($post_price > 0) {
+		if ($total_amount > 0) {
 			$form->add_radio(
 				[
 					'name'     => 'payment_gateway',
 					'options'  => $gateway_options,
 					'required' => 'required',
-					'checked'  => $user_money >= $post_price ? 'internal' : Wnd_Payment::get_default_gateway(),
+					'checked'  => $user_money >= $total_amount ? 'internal' : Wnd_Payment::get_default_gateway(),
 					'class'    => 'is-checkradio is-danger',
 				]
 			);

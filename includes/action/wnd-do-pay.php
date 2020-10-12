@@ -3,6 +3,7 @@ namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_Payment;
+use Wnd\Model\Wnd_Product;
 
 /**
  *Ajax创建支付
@@ -16,6 +17,8 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 		$total_amount    = (float) ($this->data['total_amount'] ?? 0);
 		$payment_gateway = $this->data['payment_gateway'] ?? '';
 		$subject         = $this->data['subject'] ?? '';
+		$sku_id          = $this->data[Wnd_Product::$sku_key] ?? '';
+		$quantity        = $this->data[Wnd_Product::$quantity_key] ?? 1;
 
 		if (!$payment_gateway) {
 			throw new Exception(__('未定义支付方式', 'wnd'));
@@ -26,7 +29,7 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 		 *当设置 $post_id 表征改支付为在线支付订单，需同步设置权限检测
 		 */
 		if ($post_id) {
-			$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id);
+			$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id, $sku_id, $quantity);
 			if (0 === $wnd_can_create_order['status']) {
 				return $wnd_can_create_order;
 			}
@@ -34,6 +37,7 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 
 		$payment = Wnd_Payment::get_instance($payment_gateway);
 		$payment->set_object_id($post_id);
+		$payment->set_quantity($quantity);
 		$payment->set_total_amount($total_amount);
 		$payment->set_props($this->data);
 		$payment->set_subject($subject);

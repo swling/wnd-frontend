@@ -18,12 +18,16 @@ class Wnd_Product {
 	// SKU KEY
 	public static $sku_key = 'sku';
 
+	// 购买商品数目
+	public static $quantity_key = 'quantity';
+
 	/**
 	 *产品属性信息合集
 	 */
 	public static function get_props_keys(): array{
 		return [
-			'sku' => __('SKU', 'wnd'),
+			'sku'      => __('SKU', 'wnd'),
+			'quantity' => __('数量', 'wnd'),
 		];
 	}
 
@@ -211,15 +215,22 @@ class Wnd_Product {
 	 *由于sku_id 对应的产品信息可能发生改变，因此必须保存订单产生时的产品完整属性，以备后续核查
 	 */
 	public static function set_order_props(int $order_id, array $data): bool{
+		$meta = [];
+
+		// SKU
 		$sku_id = $data[static::$sku_key] ?? '';
-		if (!$sku_id) {
-			return false;
+		if ($sku_id) {
+			$object_id  = get_post($order_id)->post_parent ?? 0;
+			$sku_detail = static::get_single_sku($object_id, $sku_id);
 		}
 
-		$object_id  = get_post($order_id)->post_parent ?? 0;
-		$sku_detail = static::get_single_sku($object_id, $sku_id);
+		// quantity
+		$quantity = $data[static::$quantity_key] ?? '';
 
-		return wnd_update_post_meta($order_id, static::$sku_key, $sku_detail);
+		// save data
+		$meta[static::$sku_key]      = $sku_detail;
+		$meta[static::$quantity_key] = $quantity;
+		return wnd_update_post_meta_array($order_id, $meta);
 	}
 
 	/**
