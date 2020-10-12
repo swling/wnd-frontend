@@ -177,7 +177,7 @@ abstract class Wnd_Transaction {
 		$this->transaction = $this->insert_record($is_completed);
 
 		// 保存产品属性
-		if ($this->props and $this->transaction->ID) {
+		if ($this->props and $this->get_object_id()) {
 			Wnd_Product::set_order_props($this->transaction->ID, $this->props);
 		}
 
