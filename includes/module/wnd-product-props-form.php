@@ -18,132 +18,72 @@ class Wnd_Product_Props_Form extends Wnd_Module {
 		}
 
 		/**
-		 *构建表单
+		 *根据配置定义默认空白 SKU 属性
+		 */
+		$sku_keys           = Wnd_Product::get_sku_keys();
+		$default_sku_detail = [];
+		foreach (array_keys($sku_keys) as $key) {
+			$default_sku_detail[$key] = '';
+		}
+
+		/**
 		 *
+		 *现有属性格式参考
+		 *	$sku = [
+		 *		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
+		 *		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
+		 *	];
+		 *
+		 * 获取现有属性并追加一个空白属性
+		 */
+		$sku   = Wnd_Product::get_object_sku($post_id);
+		$sku[] = $default_sku_detail;
+
+		/**
+		 *构建表单
 		 */
 		$form = new Wnd_Form_WP();
+		foreach ($sku as $sku_detail) {
+			// 将现有单个 SKU 信息与默认单个 SKU 信息合并，以确保属性字段完整性及后续新增字段呈现
+			$sku_detail = array_merge($default_sku_detail, $sku_detail);
 
-		// 现有
-		$props = Wnd_Product::get_object_props($post_id);
+			// 单个 SKU 容器
+			$form->add_html('<div class="field"><div class="box">');
 
-		// 所有产品字段
-		foreach (Wnd_Product::get_props_keys() as $key => $name) {
-			/**
-			 * SKU 为二维数组，需要额外处理
-			 */
-			if (Wnd_Product::$sku_key == $key) {
-				$sku_data = $props[Wnd_Product::$sku_key] ?? [];
-				$sku_data = is_array($sku_data) ? $sku_data : [];
-				static::add_sku_input($sku_data, $form);
-				continue;
+			// 构造 SKU 详情字段
+			$form->add_html('<div class="columns is-multiline">');
+			foreach ($sku_detail as $sku_detail_key => $sku_detail_value) {
+				$label = $sku_keys[$sku_detail_key] ?? $sku_detail_key;
+				$form->add_html('<div class="column is-4">');
+				$form->add_text(
+					[
+						'label'       => $label,
+						'name'        => '_' . Wnd_Product::$sku_key . '_' . $sku_detail_key . '[]',
+						'value'       => $sku_detail_value,
+						'placeholder' => $label,
+						'class'       => 'is-small',
+					]
+				);
+				$form->add_html('</div>');
+			}unset($sku_detail_key, $sku_detail_value);
+			$form->add_html('</div>');
+
+			// 按钮设置：现有数据设置移除按钮，空白数据设置新增按钮
+			if (array_filter($sku_detail)) {
+				$form->add_html('<div class="has-text-centered"><button type="button" class="button remove-row is-small" title="Remove">-</button></div>');
+			} else {
+				$form->add_html('<div class="has-text-centered"><button type="button" class="button add-row is-small" title="Add">+</button></div>');
 			}
 
-			/**
-			 * 其他常规属性
-			 * - 现有数据
-			 */
-			if (isset($props[$key]) and is_array($props[$key])) {
-				for ($i = 0; $i < count($props[$key]); $i++) {
-					$form->add_text(
-						[
-							'label'       => (0 == $i) ? $name : '',
-							'name'        => $key . '[]',
-							'value'       => $props[$key][$i],
-							'placeholder' => $name,
-							'class'       => 'is-small',
-							'addon_right' => '<button type="button" class="button remove-row is-small" title="Remove">-</button>',
-						]
-					);
-				}
-			}
-
-			// 新增
-			$form->add_text(
-				[
-					'label'       => isset($props[$key]) ? '' : $name,
-					'name'        => $key . '[]',
-					'value'       => '',
-					'placeholder' => $name,
-					'class'       => 'is-small',
-					'addon_right' => '<button type="button" class="button add-row is-small" title="Add">+</button>',
-				]
-			);
-		}
+			// 容器闭合
+			$form->add_html('</div></div>');
+		}unset($sku_detail);
 
 		$form->add_hidden('post_id', $post_id);
 		$form->set_action('wnd_set_product_props');
 		$form->set_submit_button(__('保存 SKU', 'wnd'));
 
-		// 合并常规字段与 SKU 字段
-		// $form->set_input_values(array_merge($sku_input_values ?? [], $form->get_input_values()));
 		$form->build();
-
 		return $form->html;
-
-	}
-
-	/**
-	 *构建 SKU 字段表单数组数据
-	 */
-	protected static function add_sku_input(array $sku_data, Wnd_Form_WP $form) {
-		/**
-		 *读取现有 SKU 数据。数据格式参考：
-		 *
-		 *	$sku = [
-		 *		'sku_0' => ['title' => '套餐1', 'price' => '0.1', 'stock' => 10],
-		 *		'sku_1' => ['title' => '套餐2', 'price' => '0.2', 'stock' => 5],
-		 *	];
-		 */
-		foreach ($sku_data as $sku) {
-			$form->add_number(
-				[
-					'addon_left'  => static::build_sku_addon_left($sku),
-					'name'        => 'sku_price[]',
-					'value'       => $sku['price'],
-					'placeholder' => __('SKU 价格', 'wnd'),
-					'step'        => 0.01,
-					'min'         => '0',
-					'class'       => 'is-small',
-					'addon_right' => '<button type="button" class="button remove-row is-small" title="Remove">-</button>',
-				]
-			);
-		}unset($sku);
-
-		/**
-		 *构建表单
-		 *
-		 */
-		$form->add_number(
-			[
-				'addon_left'  => static::build_sku_addon_left(),
-				'name'        => 'sku_price[]',
-				'placeholder' => __('SKU 价格', 'wnd'),
-				'step'        => 0.01,
-				'min'         => '0',
-				'class'       => 'is-small',
-				'addon_right' => '<button type="button" class="button add-row is-small" title="Add">+</button>',
-			]
-		);
-
-		/**
-		 * - Addon 中将添加 input 字段，需要新增字段名，以生成表单签名，两者需保持一致。
-		 */
-		$form->add_input_name('sku_title');
-		$form->add_input_name('sku_stock');
-	}
-
-	/**
-	 *构建 SKU 附加字段
-	 */
-	protected static function build_sku_addon_left(array $sku = []): string{
-		$title = $sku['title'] ?? '';
-		$stock = $sku['stock'] ?? '';
-
-		$addon = '<div class="field is-horizontal"><div class="field-body">';
-		$addon .= '<input class="input is-small" name="sku_title[]" value="' . $title . '"  type="text" placeholder="' . __('SKU 标题', 'wnd') . '">';
-		$addon .= '<input class="input is-small" name="sku_stock[]" value="' . $stock . '" type="number" step="1" min="0" placeholder="' . __('SKU 库存', 'wnd') . '">';
-		$addon .= '</div></div>';
-
-		return $addon;
 	}
 }
