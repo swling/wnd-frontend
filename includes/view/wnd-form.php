@@ -676,9 +676,15 @@ class Wnd_Form {
 		if (empty($input_value['label'])) {
 			return '';
 		}
+
+		/**
+		 * @data 2020.10.12
+		 * 同步设置 Class
+		 */
+		$class = $input_value['class'] ? 'label ' . $input_value['class'] : 'label';
 		$label = $input_value['required'] ? $input_value['label'] . '<span class="required">*</span>' : $input_value['label'];
 
-		return '<label class="label">' . $label . '</label>';
+		return '<label class="' . $class . '">' . $label . '</label>';
 	}
 
 	/**
