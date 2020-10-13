@@ -89,12 +89,13 @@ class Wnd_Recharge extends Wnd_Transaction {
 	/**
 	 *@since 2019.02.11
 	 *更新支付订单状态
-	 *@return int or Exception
 	 *
-	 *@param object 	$this->transaction			required 	订单记录Post
+	 *@param object 	$this->transaction	required 	订单记录Post
 	 *@param string 	$this->subject 		option
+	 *
+	 *@return true
 	 */
-	protected function verify_transaction() {
+	protected function verify_transaction(): bool {
 		if ('recharge' != $this->get_type()) {
 			throw new Exception(__('充值ID无效', 'wnd'));
 		}
@@ -113,6 +114,8 @@ class Wnd_Recharge extends Wnd_Transaction {
 		if (!$ID or is_wp_error($ID)) {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
+
+		return true;
 	}
 
 	/**

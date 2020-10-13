@@ -206,11 +206,13 @@ abstract class Wnd_Transaction {
 	 *
 	 * - 校验交易是否完成
 	 * - 交易完成，执行相关操作
+	 *
+	 *@return int 验证成功后返回 Transaction ID。其他情况抛出异常。
 	 */
 	public function verify() {
 		$this->verify_transaction();
 
-		$this->complete();
+		return $this->complete();
 	}
 
 	/**
@@ -218,7 +220,7 @@ abstract class Wnd_Transaction {
 	 *校验：具体实现在子类中定义
 	 *通常校验用于需要跳转第三方支付平台的交易
 	 */
-	abstract protected function verify_transaction();
+	abstract protected function verify_transaction(): bool;
 
 	/**
 	 *@since 2020.06.10

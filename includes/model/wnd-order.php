@@ -160,12 +160,12 @@ class Wnd_Order extends Wnd_Transaction {
 	/**
 	 *@since 2019.02.11
 	 *确认在线消费订单
-	 *@return int or false
+	 *@return true
 	 *
 	 *@param object 	$this->transaction			required 	订单记录Post
 	 *@param string 	$this->subject 		option
 	 */
-	protected function verify_transaction() {
+	protected function verify_transaction(): bool {
 		if ('order' != $this->get_type()) {
 			throw new Exception(__('订单ID无效', 'wnd'));
 		}
@@ -184,6 +184,8 @@ class Wnd_Order extends Wnd_Transaction {
 		if (!$ID or is_wp_error($ID)) {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
+
+		return true;
 	}
 
 	/**

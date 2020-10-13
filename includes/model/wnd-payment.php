@@ -143,8 +143,10 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *
 	 *@param $this->out_trade_no
 	 *@param $this->total_amount
+	 *
+	 *@return true
 	 */
-	protected function verify_transaction() {
+	protected function verify_transaction(): bool {
 		if ($this->total_amount != $this->get_total_amount()) {
 			throw new Exception(__('金额不匹配', 'wnd'));
 		}
@@ -165,9 +167,9 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 			if (!$this->check_return()) {
 				throw new Exception(__('同步验签失败', 'wnd'));
 			}
-
-			$this->return();
 		}
+
+		return true;
 	}
 
 	/**
@@ -248,16 +250,20 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *@since 2019.03.04
 	 *
 	 */
-	public static function build_site_prefix(): string {
+	protected static function build_site_prefix(): string {
 		return strtoupper(substr(md5(site_url()), 0, 4));
 	}
 
 	/**
-	 *@since 2020.04.12
-	 *支付成功后返回链接
-	 *@param int $object_id 支付产品ID；为空则为充值
+	 *同步回调跳转链接
 	 */
-	public static function get_return_url($object_id = 0) {
+	public function return () {
+		if ('GET' != $_SERVER['REQUEST_METHOD']) {
+			return false;
+		}
+
+		$object_id = $this->get_object_id();
+
 		// 订单
 		if ($object_id) {
 			$url = get_permalink($object_id) ?: (wnd_get_config('pay_return_url') ?: home_url());
@@ -267,14 +273,6 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 			$url = wnd_get_config('pay_return_url') ?: home_url();
 		}
 
-		return $url;
-	}
-
-	/**
-	 *同步回调跳转链接
-	 */
-	protected function return () {
-		$url = static::get_return_url($this->get_object_id());
 		header('Location:' . add_query_arg('from', 'payment_successful', $url));
 		exit;
 	}

@@ -34,6 +34,7 @@ class Wnd_Verify_Pay extends Wnd_Action {
 			$payment->set_out_trade_no($out_trade_no);
 			$payment->set_total_amount($total_amount);
 			$payment->verify();
+			$payment->return();
 		} catch (Exception $e) {
 			exit($e->getMessage());
 		}
