@@ -26,13 +26,12 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		$sku_id   = $this->data[Wnd_Product::$sku_key] ?? '';
 		$quantity = $this->data[Wnd_Product::$quantity_key] ?? 1;
 
-		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id, $sku_id, $quantity);
-		if (0 === $wnd_can_create_order['status']) {
-			return $wnd_can_create_order;
-		}
+		/**
+		 *权限检测
+		 */
+		static::check_create($post_id, $sku_id, $quantity);
 
 		// 写入消费数据
-		$this->check_create($post_id, $sku_id, $quantity);
 		$order = new Wnd_Order();
 		$order->set_object_id($post_id);
 		$order->set_quantity($quantity);
@@ -54,25 +53,31 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 	 *@since 0.8.76
 	 *新增 SKU ID
 	 */
-	protected function check_create(int $post_id, string $sku_id, int $quantity) {
-		$post = $post_id ? get_post($post_id) : false;
+	public static function check_create(int $post_id, string $sku_id, int $quantity) {
+		$post    = $post_id ? get_post($post_id) : false;
+		$user_id = get_current_user_id();
 		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
-		if (!$this->user_id and !wnd_get_config('enable_anon_order')) {
+		if (!$user_id and !wnd_get_config('enable_anon_order')) {
 			throw new Exception(__('请登录', 'wnd'));
 		}
 
+		// 余额检测
 		$post_price   = wnd_get_post_price($post_id, $sku_id);
 		$total_amount = $post_price * $quantity;
-		$user_money   = wnd_get_user_money($this->user_id);
-
-		// 余额不足
+		$user_money   = wnd_get_user_money($user_id);
 		if ($total_amount > $user_money) {
 			$msg = '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . number_format($user_money, 2, '.', '') . '</b>&nbsp;&nbsp;' . __('本次消费：¥ ', 'wnd') . '<b>' . number_format($total_amount, 2, '.', '') . '</b></p>';
 
 			throw new Exception($msg);
+		}
+
+		// Filter
+		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id, $sku_id, $quantity);
+		if (0 === $wnd_can_create_order['status']) {
+			throw new Exception($wnd_can_create_order['msg']);
 		}
 	}
 }

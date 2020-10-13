@@ -2,6 +2,7 @@
 namespace Wnd\Action;
 
 use Exception;
+use Wnd\Action\Wnd_Create_Order;
 use Wnd\Model\Wnd_Payment;
 use Wnd\Model\Wnd_Product;
 
@@ -29,10 +30,7 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 		 *当设置 $post_id 表征改支付为在线支付订单，需同步设置权限检测
 		 */
 		if ($post_id) {
-			$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id, $sku_id, $quantity);
-			if (0 === $wnd_can_create_order['status']) {
-				return $wnd_can_create_order;
-			}
+			Wnd_Create_Order::check_create($post_id, $sku_id, $quantity);
 		}
 
 		$payment = Wnd_Payment::get_instance($payment_gateway);
