@@ -21,6 +21,10 @@ class Wnd_Update_Option extends Wnd_Action_Ajax_Root {
 			$option_data = array_merge(get_option($option_name), $option_data);
 		}
 
+		// 剔除空值
+		$option_data = array_filter($option_data);
+
+		// Update
 		if (update_option($option_name, $option_data, false)) {
 			return ['status' => 1, 'msg' => __('更新成功', 'wnd')];
 		} else {
