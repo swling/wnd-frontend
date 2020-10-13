@@ -113,7 +113,7 @@ class Wnd_Pay_Button {
 		} elseif (!$this->disabled and $this->file_id) {
 			$form = new Wnd_Form_WP();
 			$form->add_hidden('post_id', $this->post_id);
-			$form->set_action($this->action);
+			$form->set_action('wnd_pay_for_downloads');
 			$form->set_submit_button($this->button_text);
 			$form->build();
 			$this->html .= $form->html;
@@ -132,8 +132,6 @@ class Wnd_Pay_Button {
 	 *
 	 */
 	protected function build_paid_download_button_var() {
-		$this->action = 'wnd_pay_for_downloads';
-
 		// 没有文件
 		if (!$this->file_id) {
 			return;
@@ -167,8 +165,6 @@ class Wnd_Pay_Button {
 	 *付费阅读
 	 */
 	protected function build_paid_reading_button_var() {
-		$this->action = 'wnd_pay_for_reading';
-
 		// 已支付
 		if ($this->user_has_paid) {
 			$this->message .= '<p>' . __('您已付费：¥ ', 'wnd') . $this->post_price . '</p>';
@@ -192,15 +188,12 @@ class Wnd_Pay_Button {
 	 */
 	protected function build_pay_button_var() {
 		/**
-		 *未支付前，采用付费阅读提交支付并刷新页面
 		 *支付后，采用付费下载方法，下载文件（下载文件时，不会重复扣费）@see Wnd\Action\Wnd_Pay_For_Downloads
 		 */
 		if ($this->user_has_paid or $this->user_id == $this->post->post_author) {
-			$this->action      = 'wnd_pay_for_downloads';
 			$this->button_text = __('下载', 'wnd');
 		} else {
-			$this->action      = 'wnd_pay_for_reading';
-			$this->button_text = __('立即购买', 'wnd');
+			$this->button_text = __('购买', 'wnd');
 		}
 
 		// 已支付

@@ -43,7 +43,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		 *订单创建成功返回信息
 		 *@since 0.8.71 新增 apply_filters('wnd_create_order_return', $return_array, $post_id);
 		 */
-		$return_array = ['status' => 4, 'msg' => __('支付成功', 'wnd'), 'data' => ['waiting' => 5]];
+		$return_array = ['status' => 3, 'msg' => __('支付成功', 'wnd'), 'data' => ['redirect_to' => get_permalink($post_id)]];
 		return apply_filters('wnd_create_order_return', $return_array, $order_post);
 	}
 

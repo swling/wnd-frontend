@@ -2,12 +2,10 @@
 namespace Wnd\Action;
 
 use Exception;
-use Wnd\Action\Wnd_Create_Order;
 use Wnd\Model\Wnd_Product;
 
 /**
  *付费阅读下载类
- *@param $_POST['post_id']  Post ID
  */
 class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 
@@ -26,9 +24,12 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
-		// if (!$this->user_id) {
-		// 	throw new Exception(__('请登录', 'wnd'));
-		// }
+		/**
+		 *权限检测
+		 */
+		if ($price and !wnd_user_has_paid($this->user_id, $post_id) and $post->post_author != $this->user_id) {
+			throw new Exception(__('尚未支付', 'wnd'));
+		}
 
 		// 获取文章附件
 		$attachment_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
@@ -48,20 +49,6 @@ class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
 			'_wpnonce' => wp_create_nonce('wnd_paid_download'),
 		];
 		$download_url = add_query_arg($download_args, wnd_get_do_url());
-
-		//1、免费，或者已付费
-		if (!$price or wnd_user_has_paid($this->user_id, $post_id)) {
-			return ['status' => 6, 'msg' => 'ok', 'data' => ['redirect_to' => $download_url]];
-		}
-
-		//2、 作者直接下载
-		if ($post->post_author == $this->user_id) {
-			return ['status' => 6, 'msg' => 'ok', 'data' => ['redirect_to' => $download_url]];
-		}
-
-		//3、 付费下载
-		$order = new Wnd_Create_Order();
-		$order->execute($post_id);
 
 		return ['status' => 6, 'msg' => 'ok', 'data' => ['redirect_to' => $download_url]];
 	}
