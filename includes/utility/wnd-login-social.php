@@ -38,27 +38,6 @@ abstract class Wnd_Login_Social {
 	}
 
 	/**
-	 *设置第三方平台接口ID
-	 */
-	public function set_app_id($app_id) {
-		$this->app_id = $app_id;
-	}
-
-	/**
-	 *设置第三方平台接口ID
-	 */
-	public function set_app_key($app_key) {
-		$this->app_key = $app_key;
-	}
-
-	/**
-	 *设置第三方平台登录后返回网址
-	 */
-	public function set_redirect_url($redirect_url) {
-		$this->redirect_url = $redirect_url;
-	}
-
-	/**
 	 *创建授权地址
 	 */
 	abstract public function build_oauth_url();

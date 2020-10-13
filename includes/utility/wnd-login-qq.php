@@ -9,6 +9,14 @@ use Exception;
  */
 class Wnd_Login_QQ extends Wnd_Login_Social {
 
+	public function __construct() {
+		parent::__construct();
+
+		$this->app_id       = wnd_get_config('qq_appid');
+		$this->app_key      = wnd_get_config('qq_appkey');
+		$this->redirect_url = add_query_arg(['type' => 'qq'], get_permalink(wnd_get_config('ucenter_page')));
+	}
+
 	/**
 	 *创建授权地址
 	 */

@@ -188,5 +188,16 @@ class Wnd_Admin {
 
 			wp_cache_flush();
 		}
+
+		// 升级 0.8.73
+		if (version_compare(get_option('wnd_ver'), '0.8.76', '<')) {
+			wnd_update_option('wnd', 'qq_appid', wndt_get_config('qq_appid'));
+			wnd_update_option('wnd', 'qq_appkey', wndt_get_config('qq_appkey'));
+
+			wnd_update_option('wnd', 'google_appid', wndt_get_config('google_appid'));
+			wnd_update_option('wnd', 'google_appkey', wndt_get_config('google_appkey'));
+
+			update_option('wnd_ver', '0.8.76');
+		}
 	}
 }
