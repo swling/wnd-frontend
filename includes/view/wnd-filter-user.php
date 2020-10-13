@@ -638,7 +638,7 @@ class Wnd_Filter_User {
 
 			// 编辑管理
 			$table .= '<td class="is-narrow has-text-centered">';
-			$table .= wnd_modal_link('<i class="fas fa-trash-alt"></i>', 'wnd_delete_user_form', ['user_id' => $user->ID]);
+			$table .= wnd_modal_link('<i class="fas fa-trash-alt"></i>&nbsp;', 'wnd_delete_user_form', ['user_id' => $user->ID]);
 			$table .= wnd_modal_link('<i class="fas fa-cog"></i>', 'wnd_account_status_form', ['user_id' => $user->ID]);
 			$table .= '</td>';
 			$table .= '</tr>';
