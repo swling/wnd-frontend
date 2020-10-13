@@ -29,7 +29,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		/**
 		 *权限检测
 		 */
-		static::check_create($post_id, $sku_id, $quantity);
+		static::check_create($post_id, $sku_id, $quantity, false);
 
 		// 写入消费数据
 		$order = new Wnd_Order();
@@ -52,8 +52,13 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 	 *
 	 *@since 0.8.76
 	 *新增 SKU ID
+	 *
+	 *@param int 	$post_id 		对应产品 ID
+	 *@param string $sku_id 		产品 SKU ID
+	 *@param int 	$quantity 		采购数量
+	 *@param bool 	$online_payment 是否为在线支付
 	 */
-	public static function check_create(int $post_id, string $sku_id, int $quantity) {
+	public static function check_create(int $post_id, string $sku_id, int $quantity, bool $online_payment) {
 		$post    = $post_id ? get_post($post_id) : false;
 		$user_id = get_current_user_id();
 		if (!$post) {
@@ -64,6 +69,17 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			throw new Exception(__('请登录', 'wnd'));
 		}
 
+		// Filter
+		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id, $sku_id, $quantity);
+		if (0 === $wnd_can_create_order['status']) {
+			throw new Exception($wnd_can_create_order['msg']);
+		}
+
+		// 在线支付无需检测余额
+		if ($online_payment) {
+			return true;
+		}
+
 		// 余额检测
 		$post_price   = wnd_get_post_price($post_id, $sku_id);
 		$total_amount = $post_price * $quantity;
@@ -72,12 +88,6 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			$msg = '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . number_format($user_money, 2, '.', '') . '</b>&nbsp;&nbsp;' . __('本次消费：¥ ', 'wnd') . '<b>' . number_format($total_amount, 2, '.', '') . '</b></p>';
 
 			throw new Exception($msg);
-		}
-
-		// Filter
-		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id, $sku_id, $quantity);
-		if (0 === $wnd_can_create_order['status']) {
-			throw new Exception($wnd_can_create_order['msg']);
 		}
 	}
 }

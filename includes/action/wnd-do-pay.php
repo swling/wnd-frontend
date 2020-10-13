@@ -30,7 +30,7 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 		 *当设置 $post_id 表征改支付为在线支付订单，需同步设置权限检测
 		 */
 		if ($post_id) {
-			Wnd_Create_Order::check_create($post_id, $sku_id, $quantity);
+			Wnd_Create_Order::check_create($post_id, $sku_id, $quantity, true);
 		}
 
 		$payment = Wnd_Payment::get_instance($payment_gateway);
