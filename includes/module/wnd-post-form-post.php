@@ -17,6 +17,11 @@ class Wnd_Post_Form_Post extends Wnd_Module {
 		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
+		// 权限检测
+		if ($post_id and !current_user_can('edit_post', $post_id)) {
+			return static::build_error_message(__('权限错误', 'wnd'));
+		}
+
 		/**
 		 *@since 2019.03.11 表单类
 		 */

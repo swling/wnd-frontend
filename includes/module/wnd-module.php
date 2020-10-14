@@ -21,7 +21,7 @@ abstract class Wnd_Module {
 		$args = $force ? wp_parse_args($args) : wp_parse_args($_GET, $args);
 
 		// 权限检测
-		static::check();
+		static::check($args);
 
 		// 生成 Html
 		return static::build($args);
@@ -30,7 +30,7 @@ abstract class Wnd_Module {
 	/**
 	 *权限核查
 	 */
-	protected static function check() {
+	protected static function check($args) {
 		return;
 	}
 

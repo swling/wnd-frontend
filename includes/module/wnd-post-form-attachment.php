@@ -43,6 +43,11 @@ class Wnd_Post_Form_Attachment extends Wnd_Module {
 		$attachment_id = $args['attachment_id'];
 		$post_parent   = $attachment_id ? get_post($attachment_id)->post_parent : $args['post_parent'];
 
+		// 权限检测
+		if ($attachment_id and !current_user_can('edit_post', $attachment_id)) {
+			return static::build_error_message(__('权限错误', 'wnd'));
+		}
+
 		/**
 		 * 构建父级表单字段，以供文件ajax上传归属到父级post
 		 */
