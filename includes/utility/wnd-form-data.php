@@ -2,6 +2,7 @@
 namespace Wnd\Utility;
 
 use Exception;
+use Wnd\Utility\Wnd_Captcha;
 use Wnd\Utility\Wnd_Validator;
 
 /**
@@ -88,7 +89,7 @@ class Wnd_Form_Data {
 		 *@since 0.8.64
 		 *人机验证：由于表单字段设置了字段名称一致性校验，前端无法更改字段，因此可用是否设置了 captcha 字段来判断当前表单是否需要人机验证
 		 */
-		if ($this->validate_captcha and isset($_POST['captcha'])) {
+		if ($this->validate_captcha and isset($_POST[Wnd_Captcha::$captcha_name])) {
 			Wnd_Validator::validate_captcha();
 		}
 

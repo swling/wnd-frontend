@@ -64,6 +64,12 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		// 继承基础变量
 		parent::__construct();
 
+		/**
+		 *@since 0.9.0
+		 *表单提交验证码
+		 */
+		$this->enable_captcha = apply_filters('enable_post_form_captcha', !is_user_logged_in(), $post_type, $post_id);
+
 		// 初始化属性
 		$this->post_parent      = 0;
 		$this->thumbnail_width  = 200;

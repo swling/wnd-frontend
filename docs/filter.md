@@ -237,3 +237,14 @@ apply_filters('wnd_safe_action_return');
 ```php
 $can_send_code = apply_filters('wnd_can_send_code', ['status' => 1, 'msg' => '']);
 ```
+
+## 人机校验
+```php
+/**
+ *@since 0.9.0
+ *
+ * Wnd\View\Wnd_Form_Post 内容表单提交是否启启用人机校验
+ * 默认匿名用户提交需验证
+ */
+apply_filters('enable_post_form_captcha', !is_user_logged_in(), $post_type, $post_id);
+```
