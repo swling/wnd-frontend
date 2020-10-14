@@ -438,6 +438,14 @@ class Wnd_Form_WP extends Wnd_Form {
 	// 构建相册上传
 	protected function build_gallery_upload(array $args) {
 		/**
+		 *@since 0.9.0
+		 *
+		 *相册字段为纯 HTML 构建，需要新增对应 input_name 以完成表单签名
+		 */
+		$input_name = 'wnd_file';
+		$this->add_input_name($input_name);
+
+		/**
 		 *@since 2019.12.13
 		 *
 		 *将$args['data']数组拓展为变量
@@ -477,7 +485,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$html .= '<div class="field">';
 		$html .= '<div class="file">';
 		$html .= '<label class="file-label">';
-		$html .= '<input type="file" multiple="multiple" class="file-input" name="wnd_file[]' . '"' . $data . 'accept="image/*" >';
+		$html .= '<input type="file" multiple="multiple" class="file-input" name="' . $input_name . '[]' . '"' . $data . 'accept="image/*" >';
 		$html .= ' <span class="file-cta"><span class="file-icon"><i class="fas fa-upload"></i></span><span class="file-label">选择图片</span></span>';
 		$html .= '</label>';
 		$html .= '</div>';
