@@ -20,7 +20,7 @@ class Wnd_Product_Props_Form extends Wnd_Module {
 		/**
 		 *根据配置定义默认空白 SKU 属性
 		 */
-		$sku_keys           = Wnd_Product::get_sku_keys();
+		$sku_keys           = Wnd_Product::get_sku_keys(get_post_type($post_id));
 		$default_sku_detail = [];
 		foreach (array_keys($sku_keys) as $key) {
 			$default_sku_detail[$key] = '';

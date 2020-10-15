@@ -16,7 +16,7 @@ class Wnd_Set_Product_Props extends Wnd_Action_Ajax_User {
 			$post_id = $this->data['post_id'] ?? 0;
 		}
 
-		if (!$post_id) {
+		if (!$post_id or !get_post($post_id)) {
 			throw new Exception(__('ID 无效', 'wnd'));
 		}
 

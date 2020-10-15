@@ -42,7 +42,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 
 		// 列出产品属性提示信息
 		$sku_info = '';
-		$sku_keys = Wnd_Product::get_sku_keys();
+		$sku_keys = Wnd_Product::get_sku_keys(get_post_type($post_id));
 		foreach ($sku as $key => $value) {
 			$key = $sku_keys[$key] ?? $key;
 			$sku_info .= '[ ' . $key . ' : ' . $value . ' ]&nbsp;';

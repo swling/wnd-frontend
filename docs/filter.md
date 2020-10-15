@@ -248,3 +248,11 @@ $can_send_code = apply_filters('wnd_can_send_code', ['status' => 1, 'msg' => '']
  */
 apply_filters('enable_post_form_captcha', !is_user_logged_in(), $post_type, $post_id);
 ```
+
+## 产品
+```php
+/**
+ *过滤产品 SKU 字段
+*/
+apply_filters('wnd_sku_keys', $sku_keys, $post_type);
+```

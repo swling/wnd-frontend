@@ -33,15 +33,18 @@ class Wnd_Product {
 
 	/**
 	 * SKU 属性信息合集
+	 * @param $post_type 产品类型 本插件不固定商品类型，因此可能不同类型的 post 需要不同的 SKU
 	 */
-	public static function get_sku_keys(): array{
-		return [
+	public static function get_sku_keys($post_type): array{
+		$sku_keys = [
 			'name'  => __('名称', 'wnd'),
 			'price' => __('价格', 'wnd'),
 			'stock' => __('库存', 'wnd'),
 			'color' => __('颜色', 'wnd'),
 			'size'  => __('尺寸', 'wnd'),
 		];
+
+		return apply_filters('wnd_sku_keys', $sku_keys, $post_type);
 	}
 
 	/**
@@ -56,7 +59,7 @@ class Wnd_Product {
 	 */
 	public static function set_object_props(int $object_id, array $data): bool{
 		// SKU 解析
-		$sku_data = static::parse_sku_data($data);
+		$sku_data = static::parse_sku_data($data, get_post_type($object_id));
 
 		// 解析其他产品属性数据
 		$data = static::parse_props_data($data);
@@ -94,7 +97,7 @@ class Wnd_Product {
 	 *		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
 	 *	];
 	 */
-	protected static function parse_sku_data(array $data): array{
+	protected static function parse_sku_data(array $data, string $post_type): array{
 		$prefix   = '_' . static::$sku_key . '_';
 		$sku_data = [];
 
@@ -122,7 +125,7 @@ class Wnd_Product {
 			}
 
 			$props_key = str_replace($prefix, '', $key);
-			if (!in_array($props_key, array_keys(static::get_sku_keys()))) {
+			if (!in_array($props_key, array_keys(static::get_sku_keys($post_type)))) {
 				continue;
 			}
 
