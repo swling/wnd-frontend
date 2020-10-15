@@ -19,6 +19,16 @@ function wnd_get_config($config_key) {
 }
 
 /**
+ *@since 0.9.0
+ *获取用户中心页面 URL
+ *@param bool $remove_language 是否移除语言参数
+ */
+function wnd_get_ucenter_url($remove_language = false): string{
+	$ucenter_page_url = get_permalink(wnd_get_config('ucenter_page'));
+	return $remove_language ? remove_query_arg('lang', $ucenter_page_url) : $ucenter_page_url;
+}
+
+/**
  *@since 2019.04.07
  */
 function wnd_doing_ajax() {
