@@ -32,8 +32,9 @@ class Wnd_User_Page extends Wnd_Module {
 
 		//监听社交登录 可能有跳转，因此需要在header之前
 		if ($args['state'] ?? '') {
-			$Wndt_Login_Social = \Wndt\Utility\Wndt_Login_Social::get_instance($args['state']);
-			$Wndt_Login_Social::login();
+			$domain       = \Wnd\Utility\Wnd_Login_Social::parse_state($args['state'])['domain'];
+			$Login_Social = \Wnd\Utility\Wnd_Login_Social::get_instance($domain);
+			$Login_Social->login();
 			return '';
 		}
 
