@@ -14,8 +14,8 @@ class Wnd_Post_Info extends Wnd_Module {
 		}
 
 		// 站内信阅读后，更新为已读 @since 2019.02.25
-		if ('mail' == $post->post_type and $post->post_type != 'read') {
-			wp_update_post(['ID' => $post->ID, 'post_status' => 'read']);
+		if ('mail' == $post->post_type and $post->post_type != 'wnd-read') {
+			wp_update_post(['ID' => $post->ID, 'post_status' => 'wnd-read']);
 		}
 
 		if (wnd_get_post_price($post->ID)) {

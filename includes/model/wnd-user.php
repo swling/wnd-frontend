@@ -404,7 +404,7 @@ class Wnd_User {
 			'post_author'  => $to,
 			'post_title'   => $subject,
 			'post_content' => $message,
-			'post_status'  => 'wnd_unread',
+			'post_status'  => 'wnd-unread',
 			'post_name'    => uniqid(),
 		];
 
@@ -435,7 +435,7 @@ class Wnd_User {
 				'posts_per_page' => 11,
 				'author'         => $user_id,
 				'post_type'      => 'mail',
-				'post_status'    => 'wnd_unread',
+				'post_status'    => 'wnd-unread',
 			];
 
 			$user_mail_count = count(get_posts($args));
