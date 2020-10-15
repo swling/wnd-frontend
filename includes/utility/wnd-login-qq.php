@@ -14,7 +14,7 @@ class Wnd_Login_QQ extends Wnd_Login_Social {
 
 		$this->app_id       = wnd_get_config('qq_appid');
 		$this->app_key      = wnd_get_config('qq_appkey');
-		$this->redirect_url = add_query_arg(['type' => 'qq'], get_permalink(wnd_get_config('ucenter_page')));
+		$this->redirect_url = add_query_arg(['login' => 'qq'], wnd_get_ucenter_url(true));
 	}
 
 	/**
