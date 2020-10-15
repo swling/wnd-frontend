@@ -199,5 +199,25 @@ class Wnd_Admin {
 
 			update_option('wnd_ver', '0.8.76');
 		}
+
+		// 升级 0.9.0：采用自定义站内信状态
+		if (version_compare(get_option('wnd_ver'), '0.9.0', '<')) {
+			$posts = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_type = 'mail' AND post_status IN ( 'pending', 'private')");
+			foreach ((array) $posts as $post) {
+				$update = $wpdb->update(
+					$wpdb->posts,
+					['post_status' => 'pending' == $post->post_status ? 'wnd-unread' : 'wnd-unread'],
+					['ID' => $post->ID],
+					['%s', '%s'],
+					['%d']
+				);
+			}unset($posts, $post);
+
+			if ($update ?? false) {
+				update_option('wnd_ver', '0.9.0');
+
+				wp_cache_flush();
+			}
+		}
 	}
 }

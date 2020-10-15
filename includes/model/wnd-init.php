@@ -208,12 +208,36 @@ class Wnd_Init {
 
 			/**
 			 *@since 2019.05.31 注册自定义状态：closed 用于关闭文章条目，但前端可以正常浏览
+			 *
 			 *wp_insert_post可直接写入未经注册的post_status
 			 *未经注册的post_status无法通过wp_query进行筛选，故此注册
-			 **/
+			 */
 			'wnd-closed'     => [
 				'label'                     => __('关闭', 'wnd'),
 				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => false,
+				'show_in_admin_status_list' => false,
+			],
+
+			/**
+			 *@since 0.9.0
+			 *
+			 *站内信状态
+			 * - 未读
+			 * - 已读
+			 */
+			'wnd-unread'     => [
+				'label'                     => __('未读', 'wnd'),
+				'public'                    => false,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => false,
+				'show_in_admin_status_list' => false,
+			],
+
+			'wnd-read'       => [
+				'label'                     => __('未读', 'wnd'),
+				'public'                    => false,
 				'exclude_from_search'       => false,
 				'show_in_admin_all_list'    => false,
 				'show_in_admin_status_list' => false,
