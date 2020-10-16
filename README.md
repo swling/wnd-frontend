@@ -133,6 +133,13 @@ wnd_meta : refund_records 	退款操作记录
 ];
 ```
 
+## 产品
+wnd_meta : sku 	(array) SKU 信息
+
+## 产品订单
+wnd_meta : sku 		(array)	订单对应的产品 SKU 信息
+wnd_meta : quantity (int) 	订单对应的产品数量
+
 # 数据库
 
 ## wp_users:

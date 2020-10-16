@@ -43,11 +43,9 @@ class Wnd_Order_Product {
 			$meta[Wnd_Product::$sku_key]     = $sku_detail;
 		}
 
-		// quantity：出于数据库冗余优化考虑：默认不记录采购单位为 1 的 quantity 属性
-		$quantity = $data[Wnd_Product::$quantity_key] ?? 1;
-		if ($quantity > 1) {
-			$meta[Wnd_Product::$quantity_key] = $quantity;
-		}
+		// quantity
+		$quantity                         = $data[Wnd_Product::$quantity_key] ?? 1;
+		$meta[Wnd_Product::$quantity_key] = $quantity;
 
 		// save data
 		if ($meta) {
