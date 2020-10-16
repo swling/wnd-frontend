@@ -1484,6 +1484,7 @@ class Wnd_Filter {
 	 *@since 0.8.64
 	 *
 	 *多重筛选：解析 $_GET 获取 WP_Query 参数，写入查询
+	 * - 排除无 $_GET 参数的查询
 	 * - 排除后台
 	 * - 排除 Ajax 请求
 	 * - 排除内页
@@ -1494,12 +1495,21 @@ class Wnd_Filter {
 	 * 在内页或 Ajax 请求中，应且只能执行独立的 WP Query
 	 */
 	public static function action_on_pre_get_posts($query) {
-		if (is_admin() or wnd_doing_ajax() or $query->is_singular()) {
+		if (empty($_GET) or is_admin() or wnd_doing_ajax() or $query->is_singular()) {
 			return $query;
 		}
 
-		if (isset($query->query_vars['post_type'])) {
-			if (get_post_type_object($query->query_vars['post_type'])->_builtin and !in_array($query->query_vars['post_type'], ['post', 'page', 'attachment'])) {
+		$post_type = $query->query_vars['post_type'] ?? false;
+		if ($post_type) {
+			if (is_array($post_type)) {
+				foreach ($post_type as $single_post_type) {
+					if (!in_array($single_post_type, static::get_supported_post_types())) {
+						return $query;
+					}
+				}unset($single_post_type);
+			}
+
+			if (!in_array($post_type, static::get_supported_post_types())) {
 				return $query;
 			}
 		}
@@ -1533,5 +1543,16 @@ class Wnd_Filter {
 		}unset($key, $value);
 
 		return $query;
+	}
+
+	/**
+	 *@since 0.9.0
+	 * 定义多重筛选支持的 Post Types
+	 * - 排除 WP 内置功能型 Post Type 查询
+	 *
+	 */
+	protected static function get_supported_post_types(): array{
+		$custom_post_types = get_post_types(['_builtin' => false]);
+		return array_merge($custom_post_types, ['post' => 'post', 'page' => 'page', 'attachment' => 'attachment']);
 	}
 }
