@@ -69,6 +69,16 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 			throw new Exception(__('请登录', 'wnd'));
 		}
 
+		/**
+		 *库存检测
+		 */
+		if ($sku_id) {
+			$single_sku_stock = Wnd_Product::get_single_sku_stock($post_id, $sku_id);
+			if (-1 != $single_sku_stock and $quantity > $single_sku_stock) {
+				throw new Exception(__('产品库存不足', 'wnd'));
+			}
+		}
+
 		// Filter
 		$wnd_can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $post_id, $sku_id, $quantity);
 		if (0 === $wnd_can_create_order['status']) {

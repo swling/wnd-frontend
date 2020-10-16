@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Model\Wnd_Product;
 use WP_Post;
 
 /**
@@ -135,6 +136,14 @@ class Wnd_Order extends Wnd_Transaction {
 			 *获取订单统计时，删除超时未完成的订单，并减去对应订单统计 @see wnd_get_order_count($object_id)
 			 */
 			wnd_inc_order_count($this->object_id, 1);
+
+			/**
+			 *@since 0.9.0
+			 *扣除库存
+			 *插入订单时，无论订单状态均新更新库存统计，以实现锁定数据，预留支付时间
+			 *获取库存时，会清空超时未支付的订单 @see Wnd_Product::get_object_props($object_id);
+			 */
+			Wnd_Product::reduce_single_sku_stock($this->object_id, $sku_id, $this->quantity);
 		}
 
 		$post_arr = [

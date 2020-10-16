@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Wnd\Model\Wnd_Order;
+use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Product;
 use Wnd\Model\Wnd_Transaction;
 
@@ -68,29 +69,8 @@ class Wnd_Finance {
 	 *@return 	int 	order count
 	 **/
 	public static function get_order_count($object_id): int{
-
-		// 删除15分钟前未完成的订单，并扣除订单统计
-		$args = [
-			'posts_per_page' => -1,
-			'post_type'      => 'order',
-			'post_parent'    => $object_id,
-			'post_status'    => Wnd_Transaction::$processing_status,
-			'date_query'     => [
-				[
-					'column'    => 'post_date',
-					'before'    => date('Y-m-d H:i:s', current_time('timestamp', $gmt = 0) - 900),
-					'inclusive' => true,
-				],
-			],
-		];
-		foreach (get_posts($args) as $post) {
-			/**
-			 * 此处不直接修正order_count，而是在删除订单时，通过action修正order_count @see wnd_action_deleted_post
-			 * 以此确保订单统计的准确性，如用户主动删除，或其他原因人为删除订单时亦能自动修正订单统计
-			 */
-			wp_delete_post($post->ID, $force_delete = true);
-		}
-		unset($post, $args);
+		// 释放未支付的订单
+		Wnd_Order_Product::release_pending_orders($object_id);
 
 		// 返回清理过期数据后的订单统计
 		return wnd_get_post_meta($object_id, 'order_count') ?: 0;

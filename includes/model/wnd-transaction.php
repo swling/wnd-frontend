@@ -2,7 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_Order_Product;
 use WP_Post;
 use WP_User;
 
@@ -178,7 +178,7 @@ abstract class Wnd_Transaction {
 
 		// 保存产品属性
 		if ($this->props and $this->get_object_id()) {
-			Wnd_Product::set_order_props($this->transaction->ID, $this->props);
+			Wnd_Order_Product::set_order_props($this->transaction->ID, $this->props);
 		}
 
 		// 完成

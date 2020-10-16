@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Model\Wnd_Order_Product;
+
 /**
  *@since 0.8.76
  *
@@ -76,9 +78,10 @@ class Wnd_Product {
 	 *
 	 */
 	protected static function parse_props_data(array $data): array{
+		$props_keys = array_keys(static::get_props_keys());
 		foreach ($data as $key => $value) {
 			// 移除非产品属性数据
-			if (!in_array($key, array_keys(static::get_props_keys()))) {
+			if (!in_array($key, $props_keys)) {
 				unset($data[$key]);
 				continue;
 			}
@@ -100,6 +103,7 @@ class Wnd_Product {
 	protected static function parse_sku_data(array $data, string $post_type): array{
 		$prefix   = '_' . static::$sku_key . '_';
 		$sku_data = [];
+		$sku_keys = array_keys(static::get_sku_keys($post_type));
 
 		/**
 		 * #第一步：
@@ -125,7 +129,7 @@ class Wnd_Product {
 			}
 
 			$props_key = str_replace($prefix, '', $key);
-			if (!in_array($props_key, array_keys(static::get_sku_keys($post_type)))) {
+			if (!in_array($props_key, $sku_keys)) {
 				continue;
 			}
 
@@ -172,7 +176,12 @@ class Wnd_Product {
 	/**
 	 *获取产品全部属性
 	 */
-	public static function get_object_props(int $object_id): array{
+	public static function get_object_props(int $object_id, bool $release_pending_orders = true): array{
+		// 释放规定时间未完成的订单，以确保库存数据正确性
+		if ($release_pending_orders) {
+			Wnd_Order_Product::release_pending_orders($object_id);
+		}
+
 		$meta = get_post_meta($object_id, 'wnd_meta', true) ?: [];
 
 		return static::parse_props_data($meta);
@@ -212,46 +221,47 @@ class Wnd_Product {
 	}
 
 	/**
-	 *设置订单关联的产品属性
+	 *获取指定单个 SKU 名称
 	 *
-	 *读取数据中和产品属性相关的数据，保存至订单 wnd meta
-	 *由于sku_id 对应的产品信息可能发生改变，因此必须保存订单产生时的产品完整属性，以备后续核查
+	 *若未设置库存，表示该商品为无限库存（如虚拟商品等），返回 -1
 	 */
-	public static function set_order_props(int $order_id, array $data): bool{
-		$meta      = [];
-		$object_id = get_post($order_id)->post_parent ?? 0;
-		if (!$object_id) {
-			return false;
-		}
-
-		// SKU
-		$sku_id = $data[static::$sku_key] ?? '';
-		if ($sku_id) {
-			$sku_detail             = static::get_single_sku($object_id, $sku_id);
-			$meta[static::$sku_key] = $sku_detail;
-		}
-
-		// quantity：出于数据库冗余优化考虑：默认不记录采购单位为 1 的 quantity 属性
-		$quantity = $data[static::$quantity_key] ?? 1;
-		if ($quantity > 1) {
-			$meta[static::$quantity_key] = $quantity;
-		}
-
-		// save data
-		if ($meta) {
-			return wnd_update_post_meta_array($order_id, $meta);
-		} else {
-			return true;
-		}
+	public static function get_single_sku_stock(int $object_id, string $sku_id): int {
+		return static::get_single_sku($object_id, $sku_id)['stock'] ?? -1;
 	}
 
 	/**
-	 *获取订单关联的产品属性
-	 *
-	 *	订单属性，即从产品属性提供的选项中依次确定某一项组成。数据存储键名与产品属性保持一致。因此可复用 static::get_object_props($order_id);
-	 *	与产品属性返回的数据格式不同，【产品属性值】通常为维数组甚至二维数组，而【订单属性值】通常为确定的字符串。
+	 *更新指定单个 SKU
 	 */
-	public static function get_order_props(int $order_id): array{
-		return static::get_object_props($order_id);
+	protected static function update_single_sku(int $object_id, string $sku_id, array $single_sku): bool{
+		// 移除不合规的 SKU 属性
+		$sku_keys = array_keys(static::get_sku_keys(get_post_type($object_id)));
+		foreach ($single_sku as $key => $value) {
+			if (!in_array($key, $sku_keys)) {
+				unset($single_sku[$key]);
+			}
+		}unset($key, $value);
+
+		// 合并现有 SKU 后写入
+		$sku          = static::get_object_sku($object_id);
+		$sku[$sku_id] = $single_sku;
+
+		return wnd_update_post_meta($object_id, static::$sku_key, $sku);
+	}
+
+	/**
+	 *扣除单个 SKU 库存
+	 *
+	 * - 若未设置库存：如虚拟商品，则无需操作库存
+	 *
+	 */
+	public static function reduce_single_sku_stock(int $object_id, string $sku_id, int $quantity): bool{
+		$single_sku = static::get_single_sku($object_id, $sku_id);
+		if (!isset($single_sku['stock'])) {
+			return false;
+		}
+
+		$single_sku['stock'] = $single_sku['stock'] - $quantity;
+
+		return static::update_single_sku($object_id, $sku_id, $single_sku);
 	}
 }
