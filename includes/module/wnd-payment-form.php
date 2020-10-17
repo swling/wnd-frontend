@@ -3,7 +3,7 @@ namespace Wnd\Module;
 
 use Wnd\Model\Wnd_Payment;
 use Wnd\Model\Wnd_Product;
-use Wnd\Utility\Wnd_Form_Data;
+use Wnd\Utility\Wnd_Request;
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -22,7 +22,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 			'post_id'  => 0,
 			'quantity' => 1,
 		];
-		unset($args[Wnd_Form_Data::$form_sign_name]);
+		unset($args[Wnd_Request::$sign_name]);
 		$args = wp_parse_args($args, $defaults);
 
 		// 将数组元素依次定义为按键名命名的变量

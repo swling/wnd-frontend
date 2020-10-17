@@ -12,18 +12,18 @@ function wnd_can_insert_post($default_return, $post_type, $update_id) {
 ## ajax表单数据
 ```php
 /**
-*@since 2019.03.16 Wnd_Form_Data
+*@since 2019.03.16 Wnd_Request
 *过滤前端表单提交的数据，改操作在verify_form_nonce()校验通过后执行
-*$this->form_data = apply_filters('wnd_form_data', $_POST);
+*$this->form_data = apply_filters('wnd_request', $_POST);
 */
-apply_filters('wnd_form_data', $_POST)
+apply_filters('wnd_request', $_POST)
 
 /**
 *@since 2019.12.22
 *根据表单数据控制该表单是否可以提交
-*注意：$form_data = apply_filters('wnd_form_data', $_POST);
+*注意：$form_data = apply_filters('wnd_request', $_POST);
 */
-apply_filters('wnd_can_submit_form', ['status' => 1], $form_data);
+apply_filters('wnd_request_controller', ['status' => 1], $form_data);
 ```
 
 ## 文章

@@ -2,7 +2,7 @@
 namespace Wnd\View;
 
 use Wnd\Utility\Wnd_Captcha;
-use Wnd\Utility\Wnd_Form_Data;
+use Wnd\Utility\Wnd_Request;
 
 /**
  *适配本插件的ajax表单类
@@ -152,7 +152,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 
 		// Action 层需要验证表单字段签名(需要完整包含 button data 属性名及固定值 action、device、人机验证字段 )
-		$sign = Wnd_Form_Data::sign(
+		$sign = Wnd_Request::sign(
 			[
 				'action',
 				Wnd_Captcha::$captcha_name,
@@ -180,7 +180,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$button .= ' data-interval="' . wnd_get_config('min_verification_interval') . '"';
 		$button .= ' data-' . Wnd_Captcha::$captcha_name . '=""';
 		$button .= ' data-' . Wnd_Captcha::$captcha_nonce_name . '=""';
-		$button .= ' data-' . Wnd_Form_Data::$form_sign_name . '="' . $sign . '"';
+		$button .= ' data-' . Wnd_Request::$sign_name . '="' . $sign . '"';
 		$button .= '>' . __('获取验证码', 'wnd') . '</button>';
 
 		$this->add_html('<div class="field validate-field-wrap">');
@@ -417,7 +417,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		unset($input_value);
 
 		// 根据表单字段生成wp nonce并加入表单字段
-		$this->add_html(Wnd_Form_Data::build_sign_field($this->form_names));
+		$this->add_html(Wnd_Request::build_sign_field($this->form_names));
 	}
 
 	/**

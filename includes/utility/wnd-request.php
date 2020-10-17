@@ -30,7 +30,7 @@ use Wnd\Utility\Wnd_Validator;
  * 存储在 Wnd option中 : _option_{$option_name}_{$option_key}
  *
  */
-class Wnd_Form_Data {
+class Wnd_Request {
 
 	/**
 	 *请求数据
@@ -40,7 +40,7 @@ class Wnd_Form_Data {
 	/**
 	 *签名请求 name
 	 */
-	public static $form_sign_name = '_wnd_sign';
+	public static $sign_name = '_wnd_sign';
 
 	/**
 	 *解析表单数据时，是否验证表单签名
@@ -67,7 +67,7 @@ class Wnd_Form_Data {
 	 *解析表单数据
 	 *
 	 *@return array 返回解析后的表单提交数据
-	 *			   与原$_POST相比，此时获取的表单提交数据，执行了 wnd_form_data filter，并通过了表单一致性校验、人机验证（根据表单设置）
+	 *			   与原$_POST相比，此时获取的表单提交数据，执行了 wnd_request filter，并通过了表单一致性校验、人机验证（根据表单设置）
 	 *			   请勿重复调用本方法
 	 */
 	protected function parse_data(): array{
@@ -77,7 +77,7 @@ class Wnd_Form_Data {
 
 		/**
 		 *@since 2019.05.10
-		 *apply_filters('wnd_form_data', $_POST) 操作可能会直接修改$_POST
+		 *apply_filters('wnd_request', $_POST) 操作可能会直接修改$_POST
 		 *因而校验表单操作应该在filter应用之前执行
 		 *通过filter添加的数据，自动视为被允许提交的数据
 		 */
@@ -94,14 +94,14 @@ class Wnd_Form_Data {
 		}
 
 		// 允许修改表单提交数据
-		$data = apply_filters('wnd_form_data', $_POST);
+		$data = apply_filters('wnd_request', $_POST);
 
 		/**
 		 *根据表单数据控制表单提交
 		 *@since 2019.12.22
 		 *
 		 */
-		$can_array = apply_filters('wnd_can_submit_form', ['status' => 1], $data);
+		$can_array = apply_filters('wnd_request_controller', ['status' => 1], $data);
 		if (0 === $can_array['status']) {
 			throw new Exception($can_array['msg']);
 		}
@@ -186,7 +186,7 @@ class Wnd_Form_Data {
 	 */
 	public static function build_sign_field($form_names): string{
 		$nonce = static::sign($form_names);
-		return '<input type="hidden" name="' . static::$form_sign_name . '" value="' . $nonce . '">';
+		return '<input type="hidden" name="' . static::$sign_name . '" value="' . $nonce . '">';
 	}
 
 	/**
@@ -198,7 +198,7 @@ class Wnd_Form_Data {
 	 */
 	public static function sign(array $form_names): string{
 		// nonce 自身字段也需要包含在内，生成表单标识
-		$form_names[] = static::$form_sign_name;
+		$form_names[] = static::$sign_name;
 		$identifier   = static::generate_form_identifier($form_names);
 
 		return wp_create_nonce($identifier);
@@ -210,7 +210,7 @@ class Wnd_Form_Data {
 	 *@see static::sign
 	 */
 	public static function verify_sign(): bool {
-		if (!isset($_POST[static::$form_sign_name])) {
+		if (!isset($_POST[static::$sign_name])) {
 			return false;
 		}
 
@@ -219,7 +219,7 @@ class Wnd_Form_Data {
 		$identifier = static::generate_form_identifier($form_names);
 
 		// 校验数组键值签名
-		return wp_verify_nonce($_POST[static::$form_sign_name], $identifier);
+		return wp_verify_nonce($_POST[static::$sign_name], $identifier);
 	}
 
 	/**

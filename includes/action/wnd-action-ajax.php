@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Action;
 
-use Wnd\Utility\Wnd_Form_Data;
+use Wnd\Utility\Wnd_Request;
 
 /**
  *@since 2019.10.02
@@ -36,7 +36,7 @@ abstract class Wnd_Action_Ajax {
 	protected $validate_captcha = true;
 
 	/**
-	 * Instance of Wnd_Form_Data
+	 * Instance of Wnd_Request
 	 */
 	protected $form_data;
 
@@ -49,7 +49,7 @@ abstract class Wnd_Action_Ajax {
 	 *
 	 */
 	public function __construct() {
-		$this->form_data = new Wnd_Form_Data($this->verify_sign, $this->validate_captcha);
+		$this->form_data = new Wnd_Request($this->verify_sign, $this->validate_captcha);
 		$this->data      = $this->form_data->get_data();
 		$this->user      = wp_get_current_user();
 		$this->user_id   = $this->user->ID ?? 0;

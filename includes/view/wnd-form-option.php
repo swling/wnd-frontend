@@ -3,7 +3,7 @@ namespace Wnd\View;
 
 use Exception;
 use Wnd\Model\Wnd_Term;
-use Wnd\Utility\Wnd_Form_Data;
+use Wnd\Utility\Wnd_Request;
 
 /**
  *适配本插件的 ajax User Option 类
@@ -20,8 +20,8 @@ use Wnd\Utility\Wnd_Form_Data;
  *由此带来一些列相关问题：
  * - 如何根据表单name，快速获取、更新、删除对应option值
  *为解决上述文件，引入了本Class中相关静态方法
- * - 在此基础上，索性使用表单filter，将所有表单字段悉数添加前缀。至此，便可利用 Wnd\Utility\Wnd_Form_Data 自动提取对应数据
- * - 新增方法：Wnd\Utility\Wnd_Form_Data->get_option_data($option_name);
+ * - 在此基础上，索性使用表单filter，将所有表单字段悉数添加前缀。至此，便可利用 Wnd\Utility\Wnd_Request 自动提取对应数据
+ * - 新增方法：Wnd\Utility\Wnd_Request->get_option_data($option_name);
  *
  *字段：
  *除Wnd_Form常规字段之外，新增了如下字段：
@@ -76,7 +76,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 				continue;
 			}
 
-			$ignore_names = ['option_name', 'append', 'action', '_ajax_nonce', Wnd_Form_Data::$form_sign_name];
+			$ignore_names = ['option_name', 'append', 'action', '_ajax_nonce', Wnd_Request::$sign_name];
 			if (in_array($input['name'], $ignore_names)) {
 				continue;
 			}

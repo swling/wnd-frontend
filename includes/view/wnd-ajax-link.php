@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\View;
 
-use Wnd\Utility\Wnd_Form_Data;
+use Wnd\Utility\Wnd_Request;
 
 /**
  *ajax请求链接构造类
@@ -51,7 +51,7 @@ class Wnd_Ajax_Link {
 	 **/
 	protected function build() {
 		// Action 层需要验证表单字段签名
-		$sign = Wnd_Form_Data::sign(array_merge(['action', '_ajax_nonce'], array_keys($this->args)));
+		$sign = Wnd_Request::sign(array_merge(['action', '_ajax_nonce'], array_keys($this->args)));
 
 		$this->html = '<a class="ajax-link ' . $this->class . '" data-is-cancel="0" data-disabled="0"';
 		$this->html .= ' data-action="' . $this->action . '"';
