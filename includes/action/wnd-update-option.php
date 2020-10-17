@@ -12,7 +12,7 @@ class Wnd_Update_Option extends Wnd_Action_Ajax_Root {
 	public function execute(): array{
 		$option_name = $this->data['option_name'];
 		$append      = (bool) $this->data['append'];
-		$option_data = $this->form_data->get_option_data($option_name);
+		$option_data = $this->request->get_option_data($option_name);
 
 		// 更新方式：附加数据，将本次提交数据和数据库数据合并
 		if ($append) {

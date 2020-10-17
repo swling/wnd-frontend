@@ -20,10 +20,10 @@ class Wnd_Update_Profile extends Wnd_Action_Ajax_User {
 
 	public function execute(): array{
 		// 实例化WndWP表单数据处理对象
-		$user_data         = $this->form_data->get_user_data();
+		$user_data         = $this->request->get_user_data();
 		$user_data['ID']   = $this->user_id;
-		$user_meta_data    = $this->form_data->get_user_meta_data();
-		$wp_user_meta_data = $this->form_data->get_wp_user_meta_data();
+		$user_meta_data    = $this->request->get_user_meta_data();
+		$wp_user_meta_data = $this->request->get_wp_user_meta_data();
 
 		// 更新权限过滤挂钩
 		$user_can_update_profile = apply_filters('wnd_can_update_profile', ['status' => 1, 'msg' => '']);

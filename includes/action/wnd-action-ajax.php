@@ -38,7 +38,7 @@ abstract class Wnd_Action_Ajax {
 	/**
 	 * Instance of Wnd_Request
 	 */
-	protected $form_data;
+	protected $request;
 
 	/**
 	 *构造
@@ -49,10 +49,10 @@ abstract class Wnd_Action_Ajax {
 	 *
 	 */
 	public function __construct() {
-		$this->form_data = new Wnd_Request($this->verify_sign, $this->validate_captcha);
-		$this->data      = $this->form_data->get_data();
-		$this->user      = wp_get_current_user();
-		$this->user_id   = $this->user->ID ?? 0;
+		$this->request = new Wnd_Request($this->verify_sign, $this->validate_captcha);
+		$this->data    = $this->request->get_request();
+		$this->user    = wp_get_current_user();
+		$this->user_id = $this->user->ID ?? 0;
 
 		$this->check();
 	}
