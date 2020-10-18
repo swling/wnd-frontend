@@ -24,7 +24,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		 *新增商品数目 quantity
 		 */
 		$sku_id   = $this->data[Wnd_Product::$sku_key] ?? '';
-		$quantity = $this->data[Wnd_Product::$quantity_key] ?? 1;
+		$quantity = abs($this->data[Wnd_Product::$quantity_key] ?? 1);
 
 		/**
 		 *权限检测
