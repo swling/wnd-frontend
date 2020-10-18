@@ -293,7 +293,7 @@ class Wnd_Form {
 	 **/
 	public function build() {
 		$this->build_form_header();
-		$this->build_input_values();
+		$this->build_input_fields();
 		$this->build_submit_button();
 		$this->build_form_footer();
 	}
@@ -324,47 +324,29 @@ class Wnd_Form {
 		$this->html .= $html;
 	}
 
-	protected function build_input_values() {
-		$html = '';
+	protected function build_input_fields(): string{
+		$input_fields = '';
 		foreach ($this->input_values as $input_key => $input_value) {
-			// input
+			// input 字段
 			if (in_array($input_value['type'], static::$input_types)) {
-				$html .= $this->build_input($input_value, $input_key);
+				$input_fields .= $this->build_input($input_value, $input_key);
 				continue;
 			}
 
-			switch ($input_value['type']) {
-			case 'hidden':
-				$html .= $this->build_hidden($input_value, $input_key);
-				break;
-			case 'radio':
-				$html .= $this->build_radio($input_value, $input_key);
-				break;
-			case 'checkbox':
-				$html .= $this->build_checkbox($input_value, $input_key);
-				break;
-			case 'select':
-				$html .= $this->build_select($input_value, $input_key);
-				break;
-			case 'image_upload':
-				$html .= $this->build_image_upload($input_value, $input_key);
-				break;
-			case 'file_upload':
-				$html .= $this->build_file_upload($input_value, $input_key);
-				break;
-			case 'textarea':
-				$html .= $this->build_textarea($input_value, $input_key);
-				break;
-			case 'html':
-				$html .= $this->build_html($input_value, $input_key);
-				break;
-			default:
-				break;
-			}
+			/**
+			 * @since 0.9.0
+			 * 其他字段
+			 *  - 根据字段类型组合构建字段方法
+			 *  - 执行字段构建方法
+			 */
+			$method = 'build_' . $input_value['type'];
+			$input_fields .= $this->$method($input_value, $input_key);
 		}
 		unset($input_value);
 
-		$this->html .= $html;
+		$this->html .= $input_fields;
+
+		return $input_fields;
 	}
 
 	protected function build_select(array $input_value, string $input_key): string{
@@ -709,7 +691,7 @@ class Wnd_Form {
 	 *@since 2019.04.28
 	 */
 	public function get_input_fields(): string {
-		return $this->build_input_values();
+		return $this->build_input_fields();
 	}
 
 	// 获取当前表单的组成数据数组（通常用于配合 filter 过滤）
