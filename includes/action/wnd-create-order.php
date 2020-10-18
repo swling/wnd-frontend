@@ -24,7 +24,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		 *新增商品数目 quantity
 		 */
 		$sku_id   = $this->data[Wnd_Product::$sku_key] ?? '';
-		$quantity = abs($this->data[Wnd_Product::$quantity_key] ?? 1);
+		$quantity = $this->data[Wnd_Product::$quantity_key] ?? 1;
 
 		/**
 		 *权限检测
@@ -59,6 +59,10 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 	 *@param bool 	$online_payment 是否为在线支付
 	 */
 	public static function check_create(int $post_id, string $sku_id, int $quantity, bool $online_payment) {
+		if ($quantity <= 0) {
+			throw new Exception(__('订单 Quantity 无效', 'wnd'));
+		}
+
 		$post    = $post_id ? get_post($post_id) : false;
 		$user_id = get_current_user_id();
 		if (!$post) {
