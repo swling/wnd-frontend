@@ -23,11 +23,11 @@ class Wnd_Post_Detail extends Wnd_Module {
 		$post      = get_post($post_id);
 		$post_type = $post->post_type ?? '';
 		if (!$post_type) {
-			throw new Exception($post_type . '未设指定Post Type');
+			return static::build_notification(__('ID 无效', 'wnd'));
 		}
 
 		$class = __NAMESPACE__ . '\Wnd_Post_Detail_' . $post_type;
-		if (method_exists($class, 'build')) {
+		if (class_exists($class)) {
 			return $class::build(['post_id' => $post_id, 'post' => $post]);
 		} else {
 			return static::build_post_detail($post);
