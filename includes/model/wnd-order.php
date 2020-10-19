@@ -155,7 +155,7 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_status'  => $this->status,
 			'post_title'   => $this->subject,
 			'post_type'    => 'order',
-			'post_name'    => $this->anon_cookie,
+			'post_name'    => $this->anon_cookie ?: uniqid(),
 		];
 		$ID = wp_insert_post($post_arr);
 		if (is_wp_error($ID) or !$ID) {
