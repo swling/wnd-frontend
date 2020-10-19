@@ -171,6 +171,7 @@ class Wnd_Add_Action {
 	public static function action_on_do_action() {
 		$action = $_GET['action'] ?? '';
 		$module = $_GET['module'] ?? '';
+		$api    = $_GET['api'] ?? '';
 		$nonce  = $_GET['_wpnonce'] ?? '';
 
 		// Action
@@ -220,7 +221,15 @@ class Wnd_Add_Action {
 			}
 		}
 
-		// 支付异步通知
+		/**
+		 *拓展 API，指定 $_GET 参数后，交付主题或其他插件处理
+		 *@since 0.9.0
+		 */
+		if ($api) {
+			return false;
+		}
+
+		// 支付校验
 		if (!empty($_GET) or !empty($_POST)) {
 			$verify = new Wnd_Verify_Pay;
 			$verify->execute();
