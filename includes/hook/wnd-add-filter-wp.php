@@ -13,10 +13,11 @@ class Wnd_Add_Filter_WP {
 	private function __construct() {
 		add_filter('wp_handle_upload_prefilter', [__CLASS__, 'filter_limit_upload']);
 		add_filter('get_edit_post_link', [__CLASS__, 'filter_edit_post_link'], 10, 3);
+		add_filter('post_type_link', [__CLASS__, 'filter_post_type_link'], 10, 2);
 		add_filter('wp_insert_post_data', [__CLASS__, 'filter_wp_insert_post_data'], 10, 2);
 		add_filter('wp_insert_attachment_data', [__CLASS__, 'filter_wp_insert_attachment_data'], 10, 2);
-		add_filter('get_comment_author_url', [__CLASS__, 'filter_comment_author_url'], 1, 3);
-		add_filter('get_avatar', [__CLASS__, 'filter_avatar'], 1, 5);
+		add_filter('get_comment_author_url', [__CLASS__, 'filter_comment_author_url'], 10, 3);
+		add_filter('get_avatar', [__CLASS__, 'filter_avatar'], 10, 5);
 	}
 
 	/**
@@ -64,6 +65,29 @@ class Wnd_Add_Filter_WP {
 		if ($ucenter_page) {
 			return add_query_arg(['action' => 'edit', 'post_id' => $post_id], get_permalink($ucenter_page));
 		}
+		return $link;
+	}
+
+	/**
+	 *@since 0.9.0
+	 * 重写插件定义的功能型非公开型 POST 链接，以通过 Module 展示相关详情
+	 */
+	public static function filter_post_type_link($link, $post) {
+		if (is_admin()) {
+			return $link;
+		}
+
+		if (get_post_type_object($post->post_type)->public) {
+			return $link;
+		}
+
+		$ucenter_page = (int) wnd_get_config('ucenter_page');
+		if ($ucenter_page) {
+			return add_query_arg(['module' => 'wnd_post_detail', 'post_id' => $post->ID], get_permalink($ucenter_page));
+		} else {
+			return add_query_arg(['module' => 'wnd_post_detail', 'post_id' => $post->ID, 'echo' => 1], wnd_get_do_url());
+		}
+
 		return $link;
 	}
 

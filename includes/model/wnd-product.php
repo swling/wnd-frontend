@@ -176,11 +176,9 @@ class Wnd_Product {
 	/**
 	 *获取产品全部属性
 	 */
-	public static function get_object_props(int $object_id, bool $release_pending_orders = true): array{
+	public static function get_object_props(int $object_id): array{
 		// 释放规定时间未完成的订单，以确保库存数据正确性
-		if ($release_pending_orders) {
-			Wnd_Order_Product::release_pending_orders($object_id);
-		}
+		Wnd_Order_Product::release_pending_orders($object_id);
 
 		$meta = get_post_meta($object_id, 'wnd_meta', true) ?: [];
 

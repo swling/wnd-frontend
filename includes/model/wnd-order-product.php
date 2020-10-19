@@ -64,7 +64,15 @@ class Wnd_Order_Product {
 	 *  获取订单属性，实质为借用获取产品属性方法。故无需设置产品属性特有的【释放超时订单】，以减少一条数据库查询
 	 */
 	public static function get_order_props(int $order_id): array{
-		return Wnd_Product::get_object_props($order_id, false);
+		return Wnd_Product::get_object_props($order_id);
+	}
+
+	/**
+	 *获取订单关联的产品 SKU 属性
+	 *
+	 */
+	public static function get_order_sku(int $order_id): array{
+		return static::get_order_props($order_id)[Wnd_Product::$sku_key] ?? [];
 	}
 
 	/**
