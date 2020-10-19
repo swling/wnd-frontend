@@ -83,14 +83,14 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 
 	// api及语言本地化
 	$wnd_data = [
-		'root_url'          => site_url(),
+		'root_url'          => get_rest_url(),
 		'rest_nonce'        => wp_create_nonce('wp_rest'),
 		'safe_action_nonce' => wp_create_nonce('wnd_safe_action'),
-		'interface_api'     => '/wp-json/wnd/interface',
-		'action_api'        => '/wp-json/wnd/handler',
-		'posts_api'         => '/wp-json/wnd/posts',
-		'users_api'         => '/wp-json/wnd/users',
-		'jsonget_api'       => '/wp-json/wnd/jsonget',
+		'interface_api'     => 'wnd/interface',
+		'action_api'        => 'wnd/handler',
+		'posts_api'         => 'wnd/posts',
+		'users_api'         => 'wnd/users',
+		'jsonget_api'       => 'wnd/jsonget',
 		'lang'              => $_GET['lang'] ?? false,
 		'msg'               => [
 			'required'            => __('必填项为空', 'wnd'),
