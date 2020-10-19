@@ -188,6 +188,16 @@ class Wnd_Add_Action {
 				return delete_option('core_updater.lock');
 			}
 
+			/**
+			 *@since 0.9.0
+			 *刷新固定连接缓存
+			 */
+			if ('flush_rules' == $action) {
+				global $wp_rewrite;
+				$wp_rewrite->flush_rules(false);
+				return true;
+			}
+
 			//@since 2019.05.12 默认：校验nonce后执行action对应的控制类
 			if (!$nonce or !wp_verify_nonce($nonce, $action)) {
 				exit(__('Nonce 校验失败', 'wnd'));
