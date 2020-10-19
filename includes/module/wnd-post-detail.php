@@ -27,7 +27,7 @@ class Wnd_Post_Detail extends Wnd_Module {
 		}
 
 		$class = __NAMESPACE__ . '\Wnd_Post_Detail_' . $post_type;
-		if (is_callable([$class, 'build'])) {
+		if (method_exists($class, 'build')) {
 			return $class::build(['post_id' => $post_id, 'post' => $post]);
 		} else {
 			return static::build_post_detail($post);

@@ -24,6 +24,16 @@ class Wnd_Post_Detail_Order extends Wnd_Module {
 		// 将数组元素依次定义为按键名命名的变量
 		extract($args);
 
+		$order = $post ?: get_post($post_id);
+
+		$orde_detail = '<div class="box content"><ul>';
+		$orde_detail .= '<li><h1>' . get_the_title($order->post_parent) . '<h1></li>';
+		$orde_detail .= '<li>' . $order->post_date . '</li>';
+		$orde_detail .= '<li>' . $order->post_title . '</li>';
+		$orde_detail .= '<li>' . $order->post_content . '</li>';
+		$orde_detail .= '<li>' . $order->post_name . '</li>';
+		$orde_detail .= '</ul></div>';
+
 		/**
 		 *@since 0.8.76
 		 *产品属性
@@ -38,6 +48,6 @@ class Wnd_Post_Detail_Order extends Wnd_Module {
 			$sku_info .= '[ ' . $key . ' : ' . $value . ' ]&nbsp;';
 		}
 
-		return static::build_notification($sku_info);
+		return $orde_detail . static::build_notification($sku_info);
 	}
 }
