@@ -208,7 +208,7 @@ class Wnd_Product {
 	 *获取指定单个 SKU 价格
 	 */
 	public static function get_single_sku_price(int $object_id, string $sku_id): float {
-		return (float) static::get_single_sku($object_id, $sku_id)['price'] ?? 0;
+		return (float) (static::get_single_sku($object_id, $sku_id)['price'] ?? 0);
 	}
 
 	/**

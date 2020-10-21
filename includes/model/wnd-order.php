@@ -104,7 +104,12 @@ class Wnd_Order extends Wnd_Transaction {
 		 *新增产品 SKU 信息：设置 SKU 后，对应订单价格及标题随之改变
 		 */
 		$sku_id = $this->props[Wnd_Product::$sku_key] ?? '';
-		if ($sku_id) {
+		$sku    = Wnd_Product::get_object_sku($this->object_id);
+		if ($sku) {
+			if (!$sku_id or !in_array($sku_id, array_keys($sku))) {
+				throw new Exception(__('SKU ID 无效', 'wnd'));
+			}
+
 			$this->total_amount = Wnd_Product::get_single_sku_price($this->object_id, $sku_id) * $this->quantity;
 		} else {
 			$this->total_amount = wnd_get_post_price($this->object_id) * $this->quantity;

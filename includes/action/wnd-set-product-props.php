@@ -16,6 +16,10 @@ class Wnd_Set_Product_Props extends Wnd_Action_Ajax_User {
 			$post_id = $this->data['post_id'] ?? 0;
 		}
 
+		if (wnd_get_post_price($post_id)) {
+			throw new Exception(__('当前商品已设置固定价格', 'wnd'));
+		}
+
 		if (!$post_id or !get_post($post_id)) {
 			throw new Exception(__('ID 无效', 'wnd'));
 		}
