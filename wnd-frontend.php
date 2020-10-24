@@ -3,7 +3,7 @@
  *Plugin Name: Wnd-Frontend
  *Plugin URI: https://github.com/swling/wnd-frontend
  *Description: 万能的WordPress是一套基于ajax交互逻辑的WordPress前端基础框架。使用本插件需遵循：署名-非商业性使用-相同方式共享 2.5。以下情况中使用本插件需支付授权费用：①用户主体为商业公司，盈利性组织。②个人用户基于本插件二次开发，且以付费形式出售的产品。
- *Version: 0.9.0
+ *Version: 0.9.1
  *Author: swling
  *Author URI: https://wndwp.com
  *
@@ -21,7 +21,7 @@
  */
 
 // 版本
-define('WND_VER', '0.9.0');
+define('WND_VER', '0.9.1');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -83,7 +83,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 
 	// api及语言本地化
 	$wnd_data = [
-		'root_url'          => strtok(get_rest_url(), '?') . '/',
+		'rest_url'          => rtrim(strtok(get_rest_url(), '?'), '/') . '/',
 		'rest_nonce'        => wp_create_nonce('wp_rest'),
 		'safe_action_nonce' => wp_create_nonce('wnd_safe_action'),
 		'interface_api'     => 'wnd/interface',

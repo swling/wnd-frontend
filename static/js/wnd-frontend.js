@@ -8,11 +8,11 @@ var $ = jQuery.noConflict();
  *
  */
 var lang_query = wnd.lang ? '?lang=' + wnd.lang : '';
-var wnd_interface_api = wnd.root_url + wnd.interface_api + lang_query;
-var wnd_action_api = wnd.root_url + wnd.action_api + lang_query;
-var wnd_posts_api = wnd.root_url + wnd.posts_api + lang_query;
-var wnd_users_api = wnd.root_url + wnd.users_api + lang_query;
-var wnd_jsonget_api = wnd.root_url + wnd.jsonget_api + lang_query;
+var wnd_interface_api = wnd.rest_url + wnd.interface_api + lang_query;
+var wnd_action_api = wnd.rest_url + wnd.action_api + lang_query;
+var wnd_posts_api = wnd.rest_url + wnd.posts_api + lang_query;
+var wnd_users_api = wnd.rest_url + wnd.users_api + lang_query;
+var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api + lang_query;
 
 /**
  *判断元素是否在可视范围
