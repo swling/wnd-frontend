@@ -506,16 +506,14 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}
 
 		$args = [
-			'label'          => $label,
-			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
-			'thumbnail'      => WND_URL . 'static/images/default.jpg',
-			'data'           => [
+			'label'         => $label,
+			'data'          => [
 				'post_parent' => $this->post_id,
 				'meta_key'    => $meta_key,
 				'save_width'  => $save_width,
 				'save_height' => $save_height,
 			],
-			'delete_button'  => false,
+			'delete_button' => false,
 		];
 		$this->add_image_upload($args);
 	}

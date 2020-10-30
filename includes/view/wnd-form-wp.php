@@ -250,7 +250,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			'label'          => 'Image upland',
 			'name'           => 'wnd_file',
 			'file_id'        => 0,
-			'thumbnail'      => WND_URL . 'static/images/default.jpg',
+			'thumbnail'      => apply_filters('wnd_default_thumbnail', WND_URL . 'static/images/default.jpg', $this),
 			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
 			'data'           => [],
 			'delete_button'  => true,

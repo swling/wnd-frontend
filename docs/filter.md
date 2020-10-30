@@ -218,6 +218,13 @@ apply_filters('wnd_breadcrumb_right', $breadcrumb_right);
 ## 缩略图
 ```php
 apply_filters('wnd_post_thumbnail', $html, $post_id, $width, $height);
+
+/**
+*@param string 		默认缩略图
+*@param Wnd_Form 	实例化表单对象
+*@since 0.9.1
+*/
+apply_filters('wnd_default_thumbnail', WND_URL . 'static/images/default.jpg', $this);
 ```
 ## wnd_safe_action
 ```php
