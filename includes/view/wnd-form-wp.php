@@ -3,6 +3,7 @@ namespace Wnd\View;
 
 use Wnd\Utility\Wnd_Captcha;
 use Wnd\Utility\Wnd_Request;
+use Wnd\View\Wnd_Gallery;
 
 /**
  *适配本插件的ajax表单类
@@ -353,15 +354,24 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *meta_key: 	gallery
 	 */
 	public function add_gallery_upload(array $args) {
+		/**
+		 *@since 0.9.0
+		 *
+		 *相册字段为纯 HTML 构建，需要新增对应 input_name 以完成表单签名
+		 */
+		$input_name = 'wnd_file';
+		$this->add_input_name($input_name);
+
 		$defaults = [
+			'id'             => $this->id,
 			'label'          => 'Gallery',
 			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
 			'data'           => [],
+			'ajax'           => $this->is_ajax_submit,
+			'method'         => $this->method,
+			'input_name'     => $input_name,
 		];
 		$args = array_merge($defaults, $args);
-
-		// 相册的meta key为固定值，不接受参数修改
-		unset($args['data']['meta_key']);
 
 		// 合并$data
 		$defaults_data = [
@@ -373,7 +383,8 @@ class Wnd_Form_WP extends Wnd_Form {
 		];
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
-		$this->build_gallery_upload($args);
+		// 构造 Html
+		$this->add_html(Wnd_Gallery::build_gallery_upload($args, false));
 	}
 
 	// 构造表单，可设置WordPress filter 过滤表单的input_values
@@ -433,90 +444,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		parent::build_form_header();
 
 		$this->html .= '<div class="ajax-message">' . $this->message . '</div>';
-	}
-
-	// 构建相册上传
-	protected function build_gallery_upload(array $args) {
-		/**
-		 *@since 0.9.0
-		 *
-		 *相册字段为纯 HTML 构建，需要新增对应 input_name 以完成表单签名
-		 */
-		$input_name = 'wnd_file';
-		$this->add_input_name($input_name);
-
-		/**
-		 *@since 2019.12.13
-		 *
-		 *将$args['data']数组拓展为变量
-		 *
-		 *$post_parent
-		 *$user_id
-		 *$meta_key
-		 *……
-		 */
-		extract($args['data']);
-
-		// 固定data
-		$args['data']['upload_nonce']     = wp_create_nonce('wnd_upload_file');
-		$args['data']['delete_nonce']     = wp_create_nonce('wnd_delete_file');
-		$args['data']['meta_key_nonce']   = wp_create_nonce($meta_key);
-		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
-		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
-		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;
-
-		// 根据user type 查找目标文件
-		$images = $post_parent ? wnd_get_post_meta($post_parent, $meta_key) : wnd_get_user_meta($user_id, $meta_key);
-		$images = is_array($images) ? $images : [];
-
-		/**
-		 *@since 2019.05.06 构建 html
-		 */
-		$id   = 'gallery-' . $this->id;
-		$data = ' data-id="' . $id . '"';
-		foreach ($args['data'] as $key => $value) {
-			$data .= ' data-' . $key . '="' . $value . '" ';
-		}unset($key, $value);
-
-		$html = '<div id="' . $id . '" class="field upload-field">';
-		$html .= '<div class="field"><div class="ajax-message"></div></div>';
-
-		// 上传区域
-		$html .= '<div class="field">';
-		$html .= '<div class="file">';
-		$html .= '<label class="file-label">';
-		$html .= '<input type="file" multiple="multiple" class="file-input" name="' . $input_name . '[]' . '"' . $data . 'accept="image/*" >';
-		$html .= ' <span class="file-cta"><span class="file-icon"><i class="fas fa-upload"></i></span><span class="file-label">选择图片</span></span>';
-		$html .= '</label>';
-		$html .= '</div>';
-		$html .= '</div>';
-
-		// 遍历输出图片集
-		$html .= '<div class="gallery columns is-vcentered has-text-centered is-multiline is-marginless is-mobile">';
-		if (!$images) {
-			$html .= '<div class="column default-message">';
-			$html .= '<p>' . $args['label'] . '</p>';
-			$html .= '</div>';
-		}
-		foreach ($images as $key => $attachment_id) {
-			$attachment_url = wp_get_attachment_url($attachment_id);
-			$thumbnail_url  = wnd_get_thumbnail_url($attachment_url, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']);
-			if (!$attachment_url) {
-				unset($images[$key]); // 在字段数据中取消已经被删除的图片
-				continue;
-			}
-
-			$html .= '<div class="attachment-' . $attachment_id . ' column is-narrow">';
-			$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '" height="' . $args['thumbnail_size']['height'] . '" width="' . $args['thumbnail_size']['width'] . '"></a>';
-			$html .= '<a class="delete" data-id="' . $id . '" data-file_id="' . $attachment_id . '"></a>';
-			$html .= '</div>';
-		}
-		unset($key, $attachment_id);
-		wnd_update_post_meta($post_parent, $meta_key, $images); // 若字段中存在被删除的图片数据，此处更新
-		$html .= '</div>';
-		$html .= '</div>';
-
-		$this->add_html($html);
 	}
 
 	/**
