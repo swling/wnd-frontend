@@ -931,7 +931,7 @@ class Wnd_Filter {
 			$tags = Wnd_Tag_Under_Category::get_tags($category_id, $taxonomy, $limit);
 		} else {
 			$tags = get_terms($taxonomy, [
-				'hide_empty' => false,
+				'hide_empty' => true,
 				'orderby'    => 'count',
 				'order'      => 'DESC',
 				'number'     => $limit,
