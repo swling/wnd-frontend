@@ -149,7 +149,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			$name        = 'phone';
 			$label       = __('手机', 'wnd');
 			$placeholder = __('手机号码', 'wnd');
-			$icon        = '<i class="fa fa-phone-square"></i>';
+			$icon        = '<i class="fas fa-mobile-alt"></i>';
 		}
 
 		// Action 层需要验证表单字段签名(需要完整包含 button data 属性名及固定值 action、device、人机验证字段 )
@@ -213,7 +213,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->add_text(
 			[
 				'name'        => 'auth_code',
-				'icon_left'   => '<i class="fas fa-comment-alt"></i>',
+				'icon_left'   => '<i class="fas fa-key"></i>',
 				'required'    => 'required',
 				'label'       => '',
 				'placeholder' => __('验证码', 'wnd'),

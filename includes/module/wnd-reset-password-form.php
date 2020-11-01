@@ -14,7 +14,7 @@ class Wnd_Reset_Password_Form extends Wnd_Module {
 		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
 		if ('phone' == $type) {
-			$form->set_form_title('<span class="icon"><i class="fa fa-phone-square"></i></span>&nbsp;' . __('重置密码', 'wnd'), true);
+			$form->set_form_title('<span class="icon"><i class="fas fa-mobile-alt"></i></span>&nbsp;' . __('重置密码', 'wnd'), true);
 			$form->add_phone_verification('reset_password', wnd_get_config('sms_template_v'));
 		} else {
 			$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>&nbsp;' . __('重置密码', 'wnd') . '</h3>', true);
