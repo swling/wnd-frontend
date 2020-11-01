@@ -151,13 +151,12 @@ function wnd_copy_taxonomy($old_taxonomy, $new_taxonomy) {
  *@param $template 	string  			被调用函数(必须以 _wnd为前缀)
  *@param $args 		array or string 	传递给被调用模板函数的参数
  */
-function wnd_ajax_embed($template, $args = '') {
+function wnd_ajax_embed($template, $args = []) {
 	$div_id    = 'wnd-embed-' . uniqid();
-	$args      = wp_parse_args($args);
-	$ajax_args = http_build_query($args);
+	$ajax_args = json_encode(wp_parse_args($args));
 
 	$html = '<div id="' . $div_id . '">';
-	$html .= '<script>wnd_ajax_embed(\'#' . $div_id . '\',\'' . $template . '\',\'' . $ajax_args . '\')</script>';
+	$html .= '<script>wnd_ajax_embed(\'#' . $div_id . '\',\'' . $template . '\',' . $ajax_args . ')</script>';
 	$html .= '</div>';
 
 	return $html;
