@@ -36,7 +36,7 @@ class Wnd_User_Center extends Wnd_Module {
 		if ('reset_password' == $do) {
 			$html = $wrap ? '<div id="user-center">' : '';
 			$html .= Wnd_Reset_Password_Form::render(['type' => $type]);
-			$html .= '<div class="has-text-centered">';
+			$html .= '<div class="has-text-centered mt-3">';
 
 			if (wnd_doing_ajax()) {
 				if ('email' == $type and $enable_sms) {
@@ -79,7 +79,7 @@ class Wnd_User_Center extends Wnd_Module {
 			switch ($do) {
 			case 'register':
 				$html .= Wnd_Reg_Form::render($type);
-				$html .= '<div class="has-text-centered">';
+				$html .= '<div class="has-text-centered mt-3">';
 				if (wnd_doing_ajax()) {
 					if ('email' == $type and $enable_sms) {
 						$html .= static::build_module_link('do=register&type=phone', __('手机注册', 'wnd'), $ajax_type) . ' | ';
@@ -104,7 +104,7 @@ class Wnd_User_Center extends Wnd_Module {
 			default:
 			case 'login':
 				$html .= Wnd_Login_Form::render();
-				$html .= '<div class="has-text-centered">';
+				$html .= '<div class="has-text-centered mt-3">';
 				if (wnd_doing_ajax()) {
 					$html .= static::build_module_link('do=register', __('立即注册', 'wnd'), $ajax_type) . ' | ';
 					$html .= static::build_module_link('do=reset_password', __('忘记密码', 'wnd'), $ajax_type);
@@ -120,7 +120,7 @@ class Wnd_User_Center extends Wnd_Module {
 			switch ($tab) {
 			default:
 			case 'profile':
-				$html .= '<div class="tabs is-boxed is-centered"><ul class="tab">';
+				$html .= '<div class="tabs"><ul class="tab">';
 				if (wnd_doing_ajax()) {
 					$html .= '<li class="is-active">' . static::build_module_link('tab=profile', __('资料', 'wnd'), $ajax_type) . '</li>';
 					$html .= '<li>' . static::build_module_link('tab=account', __('账户', 'wnd'), $ajax_type) . '</li>';
@@ -133,7 +133,7 @@ class Wnd_User_Center extends Wnd_Module {
 				break;
 
 			case 'account':
-				$html .= '<div class="tabs is-boxed is-centered"><ul class="tab">';
+				$html .= '<div class="tabs"><ul class="tab">';
 				if (wnd_doing_ajax()) {
 					$html .= '<li>' . static::build_module_link('tab=profile', __('资料', 'wnd'), $ajax_type) . '</li>';
 					$html .= '<li class="is-active">' . static::build_module_link('tab=account', __('账户', 'wnd'), $ajax_type) . '</li>';

@@ -34,7 +34,7 @@ class Wnd_Reg_Form extends Wnd_Module {
 
 		$form = new Wnd_Form_User();
 		$form->add_form_attr('class', 'user-form');
-		$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>' . __('注册', 'wnd'), true);
+		$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>&nbsp;' . __('注册', 'wnd'), true);
 
 		/**
 		 *注册用户通常为手机验证，或邮箱验证，为简化注册流程，可选择禁用用户名字段
