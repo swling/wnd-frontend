@@ -621,7 +621,6 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 function wnd_send_code(button) {
 	var form_id = button.closest("form").attr("id");
 	var data = button.data();
-	data.action = "wnd_send_code";
 	var phone = button.closest(".validate-field-wrap").find("input[name='phone']").val();
 	var email = button.closest(".validate-field-wrap").find("input[name='_user_user_email']").val();
 	data.device = email ? email : phone;

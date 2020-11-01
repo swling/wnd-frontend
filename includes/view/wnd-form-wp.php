@@ -172,6 +172,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		// 构建发送按钮
 		$button = '<button type="button"';
 		$button .= ' class="send-code button is-outlined is-' . static::$primary_color . '"';
+		$button .= ' data-action="wnd_send_code"';
 		$button .= ' data-type="' . $type . '"';
 		$button .= ' data-template="' . $template . '"';
 		$button .= ' data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '"';
