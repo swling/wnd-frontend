@@ -147,30 +147,7 @@ function wnd_dropdown_colors($name, $selected) {
  *@param $thumbnail_height 	number 		缩略图高度
  **/
 function wnd_post_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120) {
-	$images = wnd_get_post_meta($post_id, 'gallery');
-	if (!$images) {
-		return false;
-	}
-
-	// 遍历输出图片集
-	$html = '<div class="gallery columns is-vcentered is-multiline has-text-centered is-marginless is-mobile">';
-	foreach ($images as $key => $attachment_id) {
-		$attachment_url = wp_get_attachment_url($attachment_id);
-		$thumbnail_url  = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
-		if (!$attachment_url) {
-			unset($images[$key]); // 在字段数据中取消已经被删除的图片
-			continue;
-		}
-
-		$html .= '<div id="attachment-' . $attachment_id . '" class="column is-narrow">';
-		$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '" height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
-		$html .= '</div>';
-	}
-	unset($key, $attachment_id);
-	wnd_update_post_meta($post_id, 'gallery', $images); // 若字段中存在被删除的图片数据，此处更新
-	$html .= '</div>';
-
-	return $html;
+	return Wnd\View\Wnd_Gallery::build_post_gallery($post_id, $thumbnail_width, $thumbnail_height);
 }
 
 /**
@@ -181,30 +158,7 @@ function wnd_post_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 
  *@param $thumbnail_height 	number 		缩略图高度
  **/
 function wnd_user_gallery($user_id, $thumbnail_width = 160, $thumbnail_height = 120) {
-	$images = wnd_get_user_meta($user_id, 'gallery');
-	if (!$images) {
-		return false;
-	}
-
-	// 遍历输出图片集
-	$html = '<div class="gallery columns is-vcentered is-multiline has-text-centered is-marginless is-mobile">';
-	foreach ($images as $key => $attachment_id) {
-		$attachment_url = wp_get_attachment_url($attachment_id);
-		$thumbnail_url  = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
-		if (!$attachment_url) {
-			unset($images[$key]); // 在字段数据中取消已经被删除的图片
-			continue;
-		}
-
-		$html .= '<div id="attachment-' . $attachment_id . '" class="column is-narrow">';
-		$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '" height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
-		$html .= '</div>';
-	}
-	unset($key, $attachment_id);
-	wnd_update_user_meta($user_id, 'gallery', $images); // 若字段中存在被删除的图片数据，此处更新
-	$html .= '</div>';
-
-	return $html;
+	return Wnd\View\Wnd_Gallery::build_user_gallery($user_id, $thumbnail_width, $thumbnail_height);
 }
 
 /**

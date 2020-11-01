@@ -129,4 +129,72 @@ class Wnd_Gallery {
 
 		return $html;
 	}
+
+	/**
+	 *@since 2019.05.05
+	 *Post gallery 相册展示
+	 *@param $post_id 			int 		相册所附属的文章ID
+	 *@param $thumbnail_width 	number 		缩略图宽度
+	 *@param $thumbnail_height 	number 		缩略图高度
+	 **/
+	public static function build_post_gallery(int $post_id, int $thumbnail_width, int $thumbnail_height): string{
+		$images = wnd_get_post_meta($post_id, 'gallery');
+		if (!$images) {
+			return false;
+		}
+
+		$data = static::build_gallery($images, $thumbnail_width, $thumbnail_height);
+
+		// 若字段中存在被删除的图片数据，此处更新
+		wnd_update_post_meta($post_id, 'gallery', $data['images']);
+
+		return $data['html'];
+	}
+
+	/**
+	 *@since 2020.07.15
+	 *User gallery 相册展示
+	 *@param $user_id 			int 		相册所附属的用户ID
+	 *@param $thumbnail_width 	number 		缩略图宽度
+	 *@param $thumbnail_height 	number 		缩略图高度
+	 **/
+	public static function build_user_gallery(int $user_id, int $thumbnail_width, int $thumbnail_height): string{
+		$images = wnd_get_user_meta($user_id, 'gallery');
+		if (!$images) {
+			return false;
+		}
+
+		$data = static::build_gallery($images, $thumbnail_width, $thumbnail_height);
+
+		// 若字段中存在被删除的图片数据，此处更新
+		wnd_update_user_meta($user_id, 'gallery', $data['images']);
+
+		return $data['html'];
+	}
+
+	/**
+	 *@since 0.9.2
+	 *根据附件id构造相册，并对检测id有效性
+	 *返回构造完成的相册 html ，及剔除无效附件id的附件id数据
+	 */
+	protected static function build_gallery(array $images, int $thumbnail_width, int $thumbnail_height): array{
+		// 遍历输出图片集
+		$html = '<div class="gallery columns is-vcentered is-multiline has-text-centered is-marginless is-mobile">';
+		foreach ($images as $key => $attachment_id) {
+			$attachment_url = wp_get_attachment_url($attachment_id);
+			$thumbnail_url  = wnd_get_thumbnail_url($attachment_url, $thumbnail_width, $thumbnail_height);
+			if (!$attachment_url) {
+				unset($images[$key]); // 在字段数据中取消已经被删除的图片
+				continue;
+			}
+
+			$html .= '<div id="attachment-' . $attachment_id . '" class="column is-narrow">';
+			$html .= '<a><img class="thumbnail" src="' . $thumbnail_url . '" data-url="' . $attachment_url . '" height="' . $thumbnail_height . '" width="' . $thumbnail_width . '"></a>';
+			$html .= '</div>';
+		}
+		unset($key, $attachment_id);
+		$html .= '</div>';
+
+		return ['html' => $html, 'images' => $images];
+	}
 }
