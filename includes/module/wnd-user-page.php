@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Module;
 
+use Wnd\Module\Wnd_User_Center;
+
 /**
  *封装用户中心页面
  *@since 0.9.0
@@ -41,7 +43,7 @@ class Wnd_User_Page extends Wnd_Module {
 		get_header();
 		echo '<main id="user-page-container" class="column">';
 		echo '<div class="main box">';
-		echo static::build_page_module($args);
+		echo static::handle_module($args) ?: static::build_user_page();
 		echo '</div>';
 		echo '</main>';
 		get_footer();
@@ -57,7 +59,7 @@ class Wnd_User_Page extends Wnd_Module {
 	 * 主题可拓展或修改内容表单：\Wndt\Module\Wndt_Post_Form_{$post_type}
 	 * 主题可拓展或修改用户中心：\Wndt\Module\Wndt_User_Center;
 	 */
-	protected static function build_page_module($args) {
+	protected static function handle_module($args): string{
 		extract($args);
 
 		if ($module) {
@@ -79,7 +81,7 @@ class Wnd_User_Page extends Wnd_Module {
 				return $class::render();
 			}
 
-			// 未找到匹配表单
+			return static::build_error_notification(__('Post Type 未定义表单', 'wnd'), true);
 		}
 
 		// 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
@@ -111,13 +113,54 @@ class Wnd_User_Page extends Wnd_Module {
 					]
 				);
 			}
+
+			return static::build_error_notification(__('Post Type 未定义表单', 'wnd'), true);
 		}
 
-		// 默认用户中心：注册、登录、账户管理，内容管理，财务管理等
-		if (class_exists('\Wndt\Module\Wndt_User_Center')) {
-			return \Wndt\Module\Wndt_User_Center::render();
-		} else {
-			return \Wnd\Module\Wnd_User_Center::render();
+		return '';
+	}
+
+	// 常规用户面板
+	protected static function build_user_page(): string {
+		if (!is_user_logged_in()) {
+			return Wnd_User_Center::render();
 		}
+
+		/**
+		 *登录用户用户中心默认模块
+		 */
+		$user_page_default_module = apply_filters('wnd_user_page_default_module', 'wnd_user_overview');
+		$user_page_menus          = apply_filters('wnd_user_page_menus', Wnd_User_Menus::render());
+
+		$html = '<div id="user-center">';
+		$html .= $user_page_menus;
+		$html .= '<div class="ajax-container">';
+		$html .= '</div>';
+		$html .= '</div>';
+		$html .= '
+<script type="text/javascript">
+	function user_center_hash() {
+		var hash = location.hash;
+		if (!hash) {
+			wnd_ajax_embed("#user-center .ajax-container", "' . $user_page_default_module . '");
+			return;
+		}
+
+		var element = hash.replace("#", "")
+		$("#user-panel-tabs li").removeClass("is-active");
+		$("li." + element).addClass("is-active");
+		wnd_ajax_embed("#user-center .ajax-container", element);
+	}
+
+	// 用户中心Tabs
+	user_center_hash();
+	window.onhashchange = user_center_hash;
+</script>';
+
+		/**
+		 * 默认用户中心：注册、登录、账户管理，内容管理，财务管理等
+		 *
+		 */
+		return apply_filters('wnd_user_page', $html);
 	}
 }

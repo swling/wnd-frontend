@@ -263,3 +263,33 @@ apply_filters('enable_post_form_captcha', !is_user_logged_in(), $post_type, $pos
 */
 apply_filters('wnd_sku_keys', $sku_keys, $post_type);
 ```
+
+## 前端用户中心页面
+```php
+/**
+ *@since 0.9.2
+ *自定义用户中心页面菜单
+ *可根据不同情况如用户角色，设置不同的菜单
+ */
+add_filter('wnd_user_page_menus', function ($menus) {
+	return \Wndt\Module\Wndt_User_Menus::render();
+}, 12, 1);
+
+/**
+ *@since 0.9.2
+ *用户中心默认模块
+ *用户中心打开后，默认加载的 UI 模块
+ */
+add_filter('wnd_user_page_default_module', function ($module_name) {
+	return 'Wndt_User_Overview';
+}, 12, 1);
+
+/**
+ *@since 0.9.2
+ *自定义用户中心页面
+ *该 filter 将完全重写用户页面 
+ */
+add_filter('wnd_user_page', function ($html) {
+	return \Wnd\Module\Wnd_Bind_Phone_Form::render();
+}, 12, 1);
+```
