@@ -22,10 +22,11 @@ function wnd_get_user_phone($user_id) {
 /**
  *@since 2019.01.26 根据用户id获取openid
  *@param 	int 			$user_id
+ *@param 	string 			$type
  *@return 	string|false 	用户openid或false
  */
-function wnd_get_user_openid($user_id) {
-	return Wnd_User::get_user_openid($user_id);
+function wnd_get_user_openid($user_id, $type) {
+	return Wnd_User::get_user_openid($user_id, $type);
 }
 
 /**
@@ -40,22 +41,24 @@ function wnd_get_user_by($email_or_phone_or_login) {
 /**
  *@since 2019.07.11
  *根据openID获取WordPress用户，用于第三方账户登录
- *@param 	openID
+ *@param 	int 			openID
+ *@param 	string 			$type
  *@return 	object|false 	（WordPress：get_user_by）
  */
-function wnd_get_user_by_openid($openid) {
-	return Wnd_User::get_user_by_openid($openid);
+function wnd_get_user_by_openid($openid, $type) {
+	return Wnd_User::get_user_by_openid($openid, $type);
 }
 
 /**
  *@since 2019.07.11
  *写入用户open id
  *@param 	int 	$user_id
+ *@param 	string 	$type
  *@param 	string 	$open_id
  *@return 	int 	$wpdb->insert
  */
-function wnd_update_user_openid($user_id, $openid) {
-	return Wnd_User::update_user_openid($user_id, $openid);
+function wnd_update_user_openid($user_id, $type, $openid) {
+	return Wnd_User::update_user_openid($user_id, $type, $openid);
 }
 
 /**

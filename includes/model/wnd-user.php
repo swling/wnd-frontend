@@ -11,7 +11,7 @@ class Wnd_User {
 	 *@since 2019.11.06
 	 *获取自定义用户对象
 	 *
-	 *主要数据：user_id、email、phone、open_id
+	 *主要数据：user_id、email、phone……
 	 */
 	public static function get_wnd_user($user_id) {
 		$user = wp_cache_get($user_id, 'wnd_users');
@@ -19,23 +19,46 @@ class Wnd_User {
 			return $user;
 		}
 
+		/**
+		 *将用户所有绑定设备集合为一个对象
+		 */
 		global $wpdb;
-		$user = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->wnd_users WHERE user_id = %d LIMIT 1", $user_id));
-		if ($user) {
-			static::update_wnd_user_caches($user);
+		$user          = new \StdClass();
+		$user->user_id = $user_id;
+		$user_data     = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM $wpdb->wnd_auths WHERE user_id = %d",
+				$user_id
+			)
+		);
+
+		if ($user_data) {
+			foreach ($user_data as $data) {
+				if (!$data->type or !$data->identifier) {
+					continue;
+				}
+
+				$type        = $data->type;
+				$user->$type = $data->identifier;
+			}
+			unset($data);
 		}
+
+		static::update_wnd_user_caches($user);
+
 		return $user;
 	}
 
 	/**
 	 *@since 2019.07.23
 	 *根据第三方网站获取的用户信息，注册或者登录到WordPress站点
+	 *@param string $type 			第三方账号类型
 	 *@param string $open_id 		第三方账号openID
 	 *@param string $display_name 	用户名称
 	 *@param string $avatar_url 	用户外链头像
 	 *
 	 **/
-	public static function social_login($open_id, $display_name, $avatar_url) {
+	public static function social_login($type, $open_id, $display_name, $avatar_url) {
 		/**
 		 *@since 0.8.73
 		 *社交登录必须获取用户昵称
@@ -47,7 +70,7 @@ class Wnd_User {
 		//当前用户已登录，同步信息
 		if (is_user_logged_in()) {
 			$this_user   = wp_get_current_user();
-			$may_be_user = static::get_user_by_openid($open_id);
+			$may_be_user = static::get_user_by_openid($type, $open_id);
 			if ($may_be_user and $may_be_user->ID != $this_user->ID) {
 				exit(__('OpenID已被其他账户占用', 'wnd'));
 			}
@@ -56,14 +79,14 @@ class Wnd_User {
 				wnd_update_user_meta($this_user->ID, 'avatar_url', $avatar_url);
 			}
 			if ($open_id) {
-				static::update_user_openid($this_user->ID, $open_id);
+				static::update_user_openid($this_user->ID, $type, $open_id);
 			}
 			wp_redirect(static::get_reg_redirect_url());
 			exit;
 		}
 
 		//当前用户未登录，注册或者登录 检测是否已注册
-		$user = static::get_user_by_openid($open_id);
+		$user = static::get_user_by_openid($type, $open_id);
 		if (!$user) {
 			$user_login = wnd_generate_login();
 			$user_pass  = wp_generate_password();
@@ -73,7 +96,7 @@ class Wnd_User {
 			if (is_wp_error($user_id)) {
 				wp_die($user_id->get_error_message(), get_option('blogname'));
 			} else {
-				static::update_user_openid($user_id, $open_id);
+				static::update_user_openid($user_id, $type, $open_id);
 			}
 		}
 
@@ -103,12 +126,15 @@ class Wnd_User {
 	 *@param 	int 			$user_id
 	 *@return 	string|false 	用户openid或false
 	 */
-	public static function get_user_openid($user_id) {
+	public static function get_user_openid($user_id, $type) {
 		if (!$user_id) {
 			return false;
 		}
 
-		return static::get_wnd_user($user_id)->open_id ?? false;
+		// 统一小写类型
+		$type = strtolower($type);
+
+		return static::get_wnd_user($user_id)->$type ?? false;
 	}
 
 	/**
@@ -142,24 +168,10 @@ class Wnd_User {
 		 *本插件已禁用纯数字用户名：@see wnd_ajax_reg()
 		 */
 		if (wnd_is_mobile($email_or_phone_or_login)) {
-			// 查询对象缓存
-			$user_id = wp_cache_get($email_or_phone_or_login, 'wnd_phone');
-			if ($user_id) {
-				return get_user_by('id', $user_id);
-			}
-
-			global $wpdb;
-			$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE phone = %s;", $email_or_phone_or_login));
-			$user    = $user_id ? get_user_by('ID', $user_id) : false;
-			if ($user) {
-				// 设置对象缓存并返回用户
-				wp_cache_set($email_or_phone_or_login, $user_id, 'wnd_phone');
-				return $user;
-			}
-
-		} else {
-			return get_user_by('login', $email_or_phone_or_login);
+			return static::get_user_by_openid('phone', $email_or_phone_or_login);
 		}
+
+		return get_user_by('login', $email_or_phone_or_login);
 	}
 
 	/**
@@ -168,14 +180,22 @@ class Wnd_User {
 	 *@param 	openID
 	 *@return 	object|false 	（WordPress：get_user_by）
 	 */
-	public static function get_user_by_openid($openid) {
+	public static function get_user_by_openid($type, $open_id) {
+		$type        = strtolower($type);
+		$cache_group = static::get_auth_cache_group($type);
+
 		// 查询对象缓存
-		$user_id = wp_cache_get($openid, 'wnd_openid');
+		$user_id = wp_cache_get($open_id, $cache_group);
 		if (false === $user_id) {
 			global $wpdb;
-			$user_id = $wpdb->get_var($wpdb->prepare("SELECT user_id FROM {$wpdb->wnd_users} WHERE open_id = %s;", $openid));
+			$user_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT user_id FROM $wpdb->wnd_auths WHERE identifier = %s AND type = %s",
+					$open_id, $type
+				)
+			);
 			if ($user_id) {
-				wp_cache_set($openid, $user_id, 'wnd_openid');
+				wp_cache_set($open_id, $user_id, $cache_group);
 			}
 		}
 
@@ -189,32 +209,34 @@ class Wnd_User {
 	 *@param 	string 	$open_id
 	 *@return 	int 	$wpdb->insert
 	 */
-	public static function update_user_openid($user_id, $openid) {
+	public static function update_user_openid($user_id, $type, $open_id) {
 		global $wpdb;
+		$type = strtolower($type);
 
 		// 查询
-		$user = static::get_wnd_user($user_id);
+		$user        = static::get_wnd_user($user_id);
+		$old_open_id = $user->$type ?? '';
 
 		// 更新
-		if ($user) {
-			if ($openid == $user->open_id) {
+		if ($old_open_id) {
+			if ($open_id == $old_open_id) {
 				return;
 			}
 
 			$db = $wpdb->update(
-				$wpdb->wnd_users,
-				['open_id' => $openid, 'time' => time()],
-				['ID' => $user->ID],
+				$wpdb->wnd_auths,
+				['identifier' => $open_id, 'time' => time()],
+				['user_id' => $user_id, 'type' => $type],
 				['%s', '%d'],
-				['%d']
+				['%d', '%s']
 			);
 
 			// 写入
 		} else {
 			$db = $wpdb->insert(
-				$wpdb->wnd_users,
-				['user_id' => $user_id, 'open_id' => $openid, 'time' => time()],
-				['%d', '%s', '%d']
+				$wpdb->wnd_auths,
+				['user_id' => $user_id, 'identifier' => $open_id, 'type' => $type, 'time' => time()],
+				['%d', '%s', '%s', '%d']
 			);
 		}
 
@@ -223,7 +245,7 @@ class Wnd_User {
 			static::clean_wnd_user_caches($user);
 		}
 
-		return $db;
+		return $db ? $user_id : 0;
 	}
 
 	/**
@@ -234,35 +256,11 @@ class Wnd_User {
 	 *@return 	int 	$wpdb->insert
 	 */
 	public static function update_user_email($user_id, $email) {
-		global $wpdb;
-
-		// 查询
-		$user = static::get_wnd_user($user_id);
-
-		// 更新
-		if ($user) {
-			$db = $wpdb->update(
-				$wpdb->wnd_users,
-				['email' => $email, 'time' => time()],
-				['ID' => $user->ID],
-				['%s', '%d'],
-				['%d']
-			);
-
-			// 写入
-		} else {
-			$db = $wpdb->insert(
-				$wpdb->wnd_users,
-				['user_id' => $user_id, 'email' => $email, 'time' => time()],
-				['%d', '%s', '%d']
-			);
-		}
+		$db = static::update_user_openid($user_id, 'email', $email);
 
 		// 更新WordPress账户email
 		if ($db) {
-			wp_update_user(['ID' => $user_id, 'user_email' => $email]);
-
-			static::clean_wnd_user_caches($user);
+			$db = wp_update_user(['ID' => $user_id, 'user_email' => $email]);
 		}
 
 		return $db;
@@ -276,36 +274,7 @@ class Wnd_User {
 	 *@return 	int 	$wpdb->insert
 	 */
 	public static function update_user_phone($user_id, $phone) {
-		global $wpdb;
-
-		// 查询
-		$user = static::get_wnd_user($user_id);
-
-		// 更新
-		if ($user) {
-			$db = $wpdb->update(
-				$wpdb->wnd_users,
-				['phone' => $phone, 'time' => time()],
-				['ID' => $user->ID],
-				['%s', '%d'],
-				['%d']
-			);
-
-			// 写入
-		} else {
-			$db = $wpdb->insert(
-				$wpdb->wnd_users,
-				['user_id' => $user_id, 'phone' => $phone, 'time' => time()],
-				['%d', '%s', '%d']
-			);
-		}
-
-		// 更新字段
-		if ($db) {
-			static::clean_wnd_user_caches($user);
-		}
-
-		return $db;
+		return static::update_user_openid($user_id, 'phone', $phone);
 	}
 
 	/**
@@ -313,12 +282,22 @@ class Wnd_User {
 	 *更新缓存
 	 *@param object $user Wnd_user表对象
 	 */
-	public static function update_wnd_user_caches($user) {
-		if ($user->user_id ?? false) {
-			wp_cache_set($user->open_id, $user->user_id, 'wnd_openid');
-			wp_cache_set($user->phone, $user->user_id, 'wnd_phone');
-			wp_cache_set($user->user_id, $user, 'wnd_users');
+	public static function update_wnd_user_caches(object $user_data) {
+		$user_id = $user_data->user_id ?? 0;
+		if ($user_id) {
+			return false;
 		}
+
+		// 按 user id 缓存指定用户所有 auth 数据
+		wp_cache_set($user_id, $user_data, 'wnd_users');
+
+		// 变量用户 auth 数据（排除 user_id 属性），读取设备 id 并缓存对应 user id
+		$user_data = (array) $user_data;
+		unset($user_data['user_id']);
+		foreach ($user_data as $type => $identifier) {
+			wp_cache_set($identifier, $user_id, static::get_auth_cache_group($type));
+		}
+		unset($type, $identifier);
 	}
 
 	/**
@@ -326,12 +305,28 @@ class Wnd_User {
 	 *删除缓存
 	 *@param object $user Wnd_user表对象
 	 */
-	public static function clean_wnd_user_caches($user) {
-		if ($user->user_id ?? false) {
-			wp_cache_delete($user->open_id, 'wnd_openid');
-			wp_cache_delete($user->phone, 'wnd_phone');
-			wp_cache_delete($user->user_id, 'wnd_users');
+	public static function clean_wnd_user_caches(object $user_data) {
+		$user_id = $user_data->user_id ?? 0;
+		if ($user_id) {
+			return false;
 		}
+
+		// 按 user id 删除对象缓存
+		wp_cache_delete($user_id, 'wnd_users');
+
+		// 遍历用户 auth 数据，并按值删除对应对象缓存
+		$user_data = (array) $user_data;
+		foreach ($user_data as $type => $identifier) {
+			wp_cache_delete($identifier, static::get_auth_cache_group($type));
+		}
+		unset($type, $identifier);
+	}
+
+	/**
+	 *根据类型构造 AUTH 对象缓存组
+	 */
+	protected static function get_auth_cache_group(string $type): string {
+		return 'wnd_auth_' . $type;
 	}
 
 	/**

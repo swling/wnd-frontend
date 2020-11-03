@@ -9,6 +9,8 @@ use Exception;
  */
 class Wnd_Login_QQ extends Wnd_Login_Social {
 
+	protected $domain = 'qq';
+
 	public function __construct() {
 		parent::__construct();
 

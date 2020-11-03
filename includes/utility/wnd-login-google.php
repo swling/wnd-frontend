@@ -13,6 +13,8 @@ use Exception;
  */
 class Wnd_Login_Google extends Wnd_Login_Social {
 
+	protected $domain = 'google';
+
 	public function __construct() {
 		parent::__construct();
 

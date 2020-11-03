@@ -14,6 +14,7 @@ abstract class Wnd_Login_Social {
 	protected $app_id;
 	protected $app_key;
 
+	protected $domain;
 	protected $token;
 	protected $open_id;
 	protected $display_name;
@@ -89,6 +90,6 @@ abstract class Wnd_Login_Social {
 		$this->get_user_info();
 
 		// 根据open id创建或登录账户
-		Wnd_User::social_login($this->open_id, $this->display_name, $this->avatar_url);
+		Wnd_User::social_login($this->domain, $this->open_id, $this->display_name, $this->avatar_url);
 	}
 }
