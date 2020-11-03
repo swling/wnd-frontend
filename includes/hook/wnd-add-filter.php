@@ -33,7 +33,7 @@ class Wnd_Add_Filter {
 
 		// 验证:手机或邮箱 验证码
 		try {
-			Wnd_Validator::validate_verification_code('register');
+			Wnd_Validator::validate_auth_code('register');
 			return $can_array;
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];

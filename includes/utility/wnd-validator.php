@@ -13,7 +13,7 @@ class Wnd_Validator {
 	/**
 	 *封装手机或邮箱验证
 	 */
-	public static function validate_verification_code($type) {
+	public static function validate_auth_code($type) {
 		$auth_code      = $_POST['auth_code'] ?? '';
 		$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'] ?? '';
 
