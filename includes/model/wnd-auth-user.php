@@ -12,7 +12,7 @@ use Exception;
 class Wnd_Auth_User extends Wnd_Auth {
 
 	// 数据库字段
-	protected $db_field = 'user_id';
+	protected $user_id;
 
 	public function __construct($auth_object) {
 		parent::__construct($auth_object);
@@ -21,8 +21,8 @@ class Wnd_Auth_User extends Wnd_Auth {
 		 *验证指定用户时，数据库字段值不是用户对象，而是用户对象的ID属性
 		 *
 		 */
-		$this->db_field_value = $auth_object->ID ?? 0;
-		if (!$this->db_field_value) {
+		$this->user_id = $auth_object->ID ?? 0;
+		if (!$this->user_id) {
 			throw new Exception(__('指定用户无效', 'wnd'));
 		}
 	}
@@ -45,8 +45,8 @@ class Wnd_Auth_User extends Wnd_Auth {
 		global $wpdb;
 		$data = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM $wpdb->wnd_users WHERE {$this->db_field} = %d;",
-				$this->db_field_value
+				"SELECT * FROM $wpdb->wnd_auths WHERE user_id = %d",
+				$this->user_id
 			)
 		);
 

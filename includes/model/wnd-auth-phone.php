@@ -13,7 +13,7 @@ use Wnd\Utility\Wnd_Sms;
 class Wnd_Auth_phone extends Wnd_Auth {
 
 	// 数据库字段：phone
-	protected $db_field = 'phone';
+	protected $identity_type = 'phone';
 
 	// 验证码有效时间（秒）
 	protected $valid_time = 600;

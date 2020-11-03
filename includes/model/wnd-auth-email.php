@@ -12,7 +12,7 @@ use Exception;
 class Wnd_Auth_Email extends Wnd_Auth {
 
 	// 数据库字段：Email
-	protected $db_field = 'email';
+	protected $identity_type = 'email';
 
 	// 验证码有效时间（秒）
 	protected $valid_time = 3600;

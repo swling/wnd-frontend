@@ -9,6 +9,7 @@ use Exception;
  *
  *邮件验证码
  *短信验证码
+ *
  */
 abstract class Wnd_Auth {
 
@@ -24,11 +25,11 @@ abstract class Wnd_Auth {
 	// string 验证码
 	protected $auth_code;
 
-	// $auth_object 数据库字段：Email or Phone or user_id
-	protected $db_field;
+	// 验证设备类型
+	protected $identity_type;
 
-	// $auth_object 数据库字段对应的值：$Email or $Phone or $user_id
-	protected $db_field_value;
+	// 验证设备 ID 值
+	protected $identifier;
 
 	// 提示文字：邮箱 or 手机
 	protected static $text;
@@ -47,11 +48,11 @@ abstract class Wnd_Auth {
 	 *构造函数
 	 **/
 	public function __construct($auth_object) {
-		$this->auth_object    = $auth_object;
-		$this->db_field_value = $auth_object;
-		$this->auth_code      = wnd_random_code(6);
-		$this->user           = wp_get_current_user();
-		$this->intervals      = wnd_get_config('min_verification_interval');
+		$this->auth_object = $auth_object;
+		$this->identifier  = $auth_object;
+		$this->auth_code   = wnd_random_code(6);
+		$this->user        = wp_get_current_user();
+		$this->intervals   = wnd_get_config('min_verification_interval');
 	}
 
 	/**
@@ -161,7 +162,7 @@ abstract class Wnd_Auth {
 	 *检测权限，写入记录，并发送短信或邮箱
 	 *
 	 *@param string $this->auth_object 	邮箱或手机
-	 *@param string $this->auth_code 		验证码
+	 *@param string $this->auth_code 	验证码
 	 */
 	public function send() {
 		// 类型检测
@@ -214,13 +215,13 @@ abstract class Wnd_Auth {
 
 		// 有效性校验
 		$data = $this->get_db_record();
-		if (!$data or !$data->code) {
+		if (!$data or !$data->credential) {
 			throw new Exception(__('校验失败：请先获取验证码', 'wnd'));
 		}
 		if (time() - $data->time > $this->valid_time) {
 			throw new Exception(__('校验失败：验证码已过期', 'wnd'));
 		}
-		if ($this->auth_code != $data->code) {
+		if ($this->auth_code != $data->credential) {
 			throw new Exception(__('校验失败：验证码不正确', 'wnd'));
 		}
 
@@ -231,7 +232,7 @@ abstract class Wnd_Auth {
 		 */
 		if ($delete_after_verified) {
 			global $wpdb;
-			$wpdb->delete($wpdb->wnd_users, ['ID' => $data->ID, 'user_id' => 0], ['%d']);
+			$wpdb->delete($wpdb->wnd_auths, ['ID' => $data->ID, 'user_id' => 0], ['%d']);
 		}
 
 		return true;
@@ -239,13 +240,13 @@ abstract class Wnd_Auth {
 
 	/**
 	 *@since 2019.02.09 手机及邮箱验证模块
-	 *@param string $this->db_field 		邮箱或手机数据库字段名
-	 *@param string $this->db_field_value 	邮箱或手机
+	 *@param string $this->identity_type 	邮箱或手机数据库字段名
+	 *@param string $this->identifier 		邮箱或手机
 	 *@param string $this->auth_code 		验证码
 	 *@return int|exception
 	 */
 	protected function insert() {
-		if (!$this->db_field or !$this->db_field_value) {
+		if (!$this->identity_type or !$this->identifier) {
 			throw new Exception(__('未定义数据库写入字段名或对应值', 'wnd'));
 		}
 
@@ -257,17 +258,17 @@ abstract class Wnd_Auth {
 		$ID = $this->get_db_record()->ID ?? 0;
 		if ($ID) {
 			$db = $wpdb->update(
-				$wpdb->wnd_users,
-				['code' => $this->auth_code, 'time' => time()],
-				[$this->db_field => $this->db_field_value],
+				$wpdb->wnd_auths,
+				['credential' => $this->auth_code, 'time' => time()],
+				['identifier' => $this->identifier, 'type' => $this->identity_type],
 				['%s', '%d'],
 				['%s']
 			);
 		} else {
 			$db = $wpdb->insert(
-				$wpdb->wnd_users,
-				[$this->db_field => $this->db_field_value, 'code' => $this->auth_code, 'time' => time()],
-				['%s', '%s', '%d']
+				$wpdb->wnd_auths,
+				['identifier' => $this->identifier, 'type' => $this->identity_type, 'credential' => $this->auth_code, 'time' => time()],
+				['%s', '%s', '%s', '%d']
 			);
 		}
 
@@ -278,32 +279,32 @@ abstract class Wnd_Auth {
 
 	/**
 	 *@param int 	$reg_user_id  			注册用户ID
-	 *@param string $this->db_field 		邮箱或手机数据库字段名
-	 *@param string $this->db_field_value 	邮箱或手机
+	 *@param string $this->identity_type 	邮箱或手机数据库字段名
+	 *@param string $this->identifier 		邮箱或手机
 	 *重置验证码
 	 */
 	public function reset_code($reg_user_id = 0) {
-		if (!$this->db_field or !$this->db_field_value) {
+		if (!$this->identity_type or !$this->identifier) {
 			throw new Exception(__('未定义数据库查询字段名或对应值', 'wnd'));
 		}
 
 		global $wpdb;
 		if ($reg_user_id) {
 			$wpdb->update(
-				$wpdb->wnd_users,
-				['code' => '', 'time' => time(), 'user_id' => $reg_user_id],
-				[$this->db_field => $this->db_field_value],
+				$wpdb->wnd_auths,
+				['credential' => '', 'time' => time(), 'user_id' => $reg_user_id],
+				['identifier' => $this->identifier, 'type' => $this->identity_type],
 				['%s', '%d', '%d'],
-				['%s']
+				['%s', '%s']
 			);
 
 		} else {
 			$wpdb->update(
-				$wpdb->wnd_users,
-				['code' => '', 'time' => time()],
-				[$this->db_field => $this->db_field_value],
+				$wpdb->wnd_auths,
+				['credential' => '', 'time' => time()],
+				['identifier' => $this->identifier, 'type' => $this->identity_type],
 				['%s', '%d'],
-				['%s']
+				['%s', '%s']
 			);
 		}
 	}
@@ -311,21 +312,21 @@ abstract class Wnd_Auth {
 	/**
 	 *@since 2019.07.23
 	 *删除
-	 *@param string $this->db_field 		据库字查询段名
-	 *@param string $this->db_field_value 	数据库查询字段值
+	 *@param string $this->identity_type 	据库字查询段名
+	 *@param string $this->identifier 		数据库查询字段值
 	 */
 	public function delete() {
 		global $wpdb;
 		return $wpdb->delete(
-			$wpdb->wnd_users,
-			[$this->db_field => $this->db_field_value],
-			['%s']
+			$wpdb->wnd_auths,
+			['identifier' => $this->identifier, 'type' => $this->identity_type],
+			['%s', '%s']
 		);
 	}
 
 	/**
-	 *@param string $this->db_field 		据库字查询段名
-	 *@param string $this->db_field_value 	数据库查询字段值
+	 *@param string $this->identity_type 	据库字查询段名
+	 *@param string $this->identifier 		数据库查询字段值
 	 *
 	 *@since 2019.12.19
 	 */
@@ -333,8 +334,8 @@ abstract class Wnd_Auth {
 		global $wpdb;
 		$data = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM $wpdb->wnd_users WHERE {$this->db_field} = %s;",
-				$this->db_field_value
+				"SELECT * FROM $wpdb->wnd_auths WHERE identifier = %s AND type = %s",
+				$this->identifier, $this->identity_type
 			)
 		);
 
