@@ -228,7 +228,7 @@ abstract class Wnd_Auth {
 		 */
 		if ($delete_after_verified) {
 			global $wpdb;
-			$wpdb->delete($wpdb->wnd_auths, ['ID' => $data->ID, 'user_id' => 0], ['%d']);
+			$wpdb->delete($wpdb->wnd_auths, ['ID' => $data->ID, 'user_id' => 0], ['%d', '%d']);
 		}
 
 		return true;
@@ -258,7 +258,7 @@ abstract class Wnd_Auth {
 				['credential' => $this->auth_code, 'time' => time()],
 				['identifier' => $this->identifier, 'type' => $this->identity_type],
 				['%s', '%d'],
-				['%s']
+				['%s', '%s']
 			);
 		} else {
 			$db = $wpdb->insert(
