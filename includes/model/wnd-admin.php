@@ -124,7 +124,7 @@ class Wnd_Admin {
 
 		// 删除七天以前未注册的验证码记录
 		$old_users = $wpdb->query(
-			"DELETE FROM $wpdb->wnd_users WHERE user_id = 0 AND DATE_SUB(NOW(), INTERVAL 7 DAY) > FROM_UNIXTIME(time)"
+			"DELETE FROM $wpdb->wnd_auths WHERE user_id = 0 AND DATE_SUB(NOW(), INTERVAL 7 DAY) > FROM_UNIXTIME(time)"
 		);
 
 		do_action('wnd_clean_up');
@@ -218,6 +218,60 @@ class Wnd_Admin {
 
 				wp_cache_flush();
 			}
+		}
+
+		// 升级 0.9.2：重写用户验证数据表
+		if (version_compare(get_option('wnd_ver'), '0.9.2', '<')) {
+			ini_set('max_execution_time', 0); //秒为单位，自己根据需要定义
+
+			function insert_auths($user_id, $identifier, $type) {
+				global $wpdb;
+
+				// 已写入
+				$data = $wpdb->get_row(
+					$wpdb->prepare(
+						"SELECT * FROM $wpdb->wnd_auths WHERE identifier = %s AND type = %s",
+						$identifier, $type
+					)
+				);
+				if ($data) {
+					return false;
+				}
+
+				// 新记录
+				return $wpdb->insert(
+					$wpdb->wnd_auths,
+					['user_id' => $user_id, 'identifier' => $identifier, 'type' => $type, 'credential' => '', 'time' => time()],
+					['%d', '%s', '%s']
+				);
+			}
+
+			// 创建数据表
+			Wnd_DB::create_table();
+
+			global $wpdb;
+			$wpdb->wnd_users = $wpdb->prefix . 'wnd_users';
+			$wpdb->wnd_auths = $wpdb->prefix . 'wnd_auths';
+
+			$users = $wpdb->get_results("SELECT * FROM $wpdb->wnd_users WHERE id != 0;");
+			foreach ($users as $user) {
+				if ($user->email) {
+					$do = insert_auths($user->user_id, $user->email, 'email');
+				}
+
+				if ($user->phone) {
+					$do = insert_auths($user->user_id, $user->phone, 'phone');
+				}
+
+				if ($user->open_id) {
+					$type = (32 == strlen($user->open_id)) ? 'qq' : 'google';
+					$do   = insert_auths($user->user_id, $user->open_id, $type);
+				}
+			}unset($users, $user);
+
+			$wpdb->query("DROP TABLE IF EXISTS $wpdb->wnd_users");
+			update_option('wnd_ver', '0.9.2');
+			wp_cache_flush();
 		}
 	}
 }
