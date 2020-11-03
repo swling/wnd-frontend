@@ -104,17 +104,13 @@ abstract class Wnd_Auth {
 	 *reset_password 	：找回密码 		当前邮箱或手机未注册、则不可发送
 	 */
 	protected function check_type() {
-		if (empty($this->identifier)) {
-			throw new Exception(__('请填写', 'wnd') . '&nbsp;' . static::$text);
-		}
-
 		// 必须指定类型
 		if (!$this->type) {
 			throw new Exception(__('未指定验证类型', 'wnd'));
 		}
 
 		// 注册
-		$temp_user = is_object($this->identifier) ? $this->identifier : wnd_get_user_by($this->identifier);
+		$temp_user = wnd_get_user_by($this->identifier);
 		if ('register' == $this->type and $temp_user) {
 			throw new Exception(static::$text . '&nbsp;' . __('已注册', 'wnd'));
 		}
@@ -191,12 +187,7 @@ abstract class Wnd_Auth {
 	 *@return true|exception
 	 */
 	public function verify(bool $delete_after_verified = false) {
-		if (empty($this->auth_code)) {
-			throw new Exception(__('校验失败：请填写验证码', 'wnd'));
-		}
-		if (empty($this->identifier)) {
-			throw new Exception(static::$text . '&nbsp;' . __('不可为空', 'wnd'));
-		}
+		$this->check_auth_fields(true);
 
 		/**
 		 *@since 2019.10.02
@@ -237,13 +228,7 @@ abstract class Wnd_Auth {
 	 *@return int|exception
 	 */
 	protected function insert() {
-		if (!$this->identity_type or !$this->identifier) {
-			throw new Exception(__('未定义数据库写入字段名或对应值', 'wnd'));
-		}
-
-		if (empty($this->auth_code)) {
-			throw new Exception(__('验证码为空', 'wnd'));
-		}
+		$this->check_auth_fields(true);
 
 		global $wpdb;
 		$ID = $this->get_db_record()->ID ?? 0;
@@ -275,9 +260,7 @@ abstract class Wnd_Auth {
 	 *重置验证码
 	 */
 	public function reset_code($reg_user_id = 0) {
-		if (!$this->identity_type or !$this->identifier) {
-			throw new Exception(__('未定义数据库查询字段名或对应值', 'wnd'));
-		}
+		$this->check_auth_fields(false);
 
 		global $wpdb;
 		if ($reg_user_id) {
@@ -322,6 +305,8 @@ abstract class Wnd_Auth {
 	 *@since 2019.12.19
 	 */
 	protected function get_db_record() {
+		$this->check_auth_fields(false);
+
 		global $wpdb;
 		$data = $wpdb->get_row(
 			$wpdb->prepare(
@@ -331,5 +316,27 @@ abstract class Wnd_Auth {
 		);
 
 		return $data;
+	}
+
+	/**
+	 *检测验证数据库基本属性是否完整
+	 * - 检测 identity_type 字段：设备类型
+	 * - 检测 identifier 	字段：设备地址，如邮箱或手机号等
+	 * - 检测 auth_code 	字段：验证码
+	 *
+	 *@param bool $check_auth_code 是否检查验证码字段
+	 */
+	protected function check_auth_fields(bool $check_auth_code) {
+		if (!$this->identity_type) {
+			throw new Exception(__('未指定验证设备类型', 'wnd'));
+		}
+
+		if (!$this->identifier) {
+			throw new Exception(__('未指定验证设备', 'wnd') . '&nbsp;' . static::$text);
+		}
+
+		if ($check_auth_code and !empty($this->auth_code)) {
+			throw new Exception(__('验证码为空', 'wnd'));
+		}
 	}
 }
