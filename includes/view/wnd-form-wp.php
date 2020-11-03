@@ -202,6 +202,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		} elseif ($device) {
 			$this->add_text(
 				[
+					'name'     => $name,
 					'label'    => $label,
 					'value'    => $device,
 					'disabled' => true,
