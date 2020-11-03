@@ -24,12 +24,16 @@ class Wnd_Send_Code extends Wnd_Action_Ajax {
 
 		/**
 		 *已登录用户，且账户已绑定邮箱/手机，且验证类型不为bind（切换绑定邮箱）
-		 *发送验证码给当前账户
+		 *核查当前表单字段与用户已有数据是否一致（验证码核验需要指定手机或邮箱，故此不可省略手机或邮箱表单字段）
 		 */
 		if ($this->user->ID and $type != 'bind') {
-			$device = ('email' == $device_type) ? $this->user->user_email : wnd_get_user_phone($this->user->ID);
-			if (!$device) {
+			$user_device = ('email' == $device_type) ? $this->user->user_email : wnd_get_user_phone($this->user->ID);
+			if (!$user_device) {
 				throw new Exception(__('当前账户未绑定', 'wnd') . $device_name);
+			}
+
+			if ($device != $user_device) {
+				throw new Exception($device_name . __('与当前账户不匹配', 'wnd'));
 			}
 		}
 

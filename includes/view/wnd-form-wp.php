@@ -178,7 +178,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$button .= ' data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '"';
 		$button .= ' data-type_nonce="' . wp_create_nonce($device_type . $type) . '"';
 		$button .= ' data-device_type="' . $device_type . '"';
-		$button .= ' data-device_name="' . $name . '"';
+		$button .= ' data-device_name="' . $label . '"';
 		$button .= ' data-interval="' . wnd_get_config('min_verification_interval') . '"';
 		$button .= ' data-' . Wnd_Captcha::$captcha_name . '=""';
 		$button .= ' data-' . Wnd_Captcha::$captcha_nonce_name . '=""';
@@ -205,7 +205,7 @@ class Wnd_Form_WP extends Wnd_Form {
 					'name'     => $name,
 					'label'    => $label,
 					'value'    => $device,
-					'disabled' => true,
+					'readonly' => true,
 					'required' => true,
 				]
 			);

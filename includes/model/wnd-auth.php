@@ -55,11 +55,6 @@ abstract class Wnd_Auth {
 	 *设置：邮件、手机号码、WP_User object
 	 */
 	public static function get_instance($identifier) {
-		if ($identifier instanceof \WP_User) {
-			static::$text = __('用户', 'wnd');
-			return new Wnd_Auth_User($identifier);
-		}
-
 		if (is_email($identifier)) {
 			static::$text = __('邮箱', 'wnd');
 			return new Wnd_Auth_Email($identifier);
