@@ -335,7 +335,7 @@ abstract class Wnd_Auth {
 			throw new Exception(__('未指定验证设备', 'wnd') . '&nbsp;' . static::$text);
 		}
 
-		if ($check_auth_code and !empty($this->auth_code)) {
+		if ($check_auth_code and empty($this->auth_code)) {
 			throw new Exception(__('验证码为空', 'wnd'));
 		}
 	}
