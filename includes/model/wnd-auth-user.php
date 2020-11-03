@@ -14,14 +14,14 @@ class Wnd_Auth_User extends Wnd_Auth {
 	// 数据库字段
 	protected $user_id;
 
-	public function __construct($auth_object) {
-		parent::__construct($auth_object);
+	public function __construct($identifier) {
+		parent::__construct($identifier);
 
 		/**
 		 *验证指定用户时，数据库字段值不是用户对象，而是用户对象的ID属性
 		 *
 		 */
-		$this->user_id = $auth_object->ID ?? 0;
+		$this->user_id = $identifier->ID ?? 0;
 		if (!$this->user_id) {
 			throw new Exception(__('指定用户无效', 'wnd'));
 		}
@@ -36,7 +36,7 @@ class Wnd_Auth_User extends Wnd_Auth {
 	}
 
 	/**
-	 *根据auth_object查询数据库记录
+	 *根据identifier查询数据库记录
 	 *
 	 *@since 2019.12.19
 	 *

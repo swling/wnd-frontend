@@ -18,8 +18,8 @@ class Wnd_Auth_phone extends Wnd_Auth {
 	// 验证码有效时间（秒）
 	protected $valid_time = 600;
 
-	public function __construct($auth_object) {
-		parent::__construct($auth_object);
+	public function __construct($identifier) {
+		parent::__construct($identifier);
 
 		$this->template = wnd_get_config('sms_template_v');
 	}
@@ -28,13 +28,13 @@ class Wnd_Auth_phone extends Wnd_Auth {
 	 *@since 初始化
 	 *通过ajax发送短信
 	 *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
-	 *@param string $this->auth_object 	邮箱或手机
+	 *@param string $this->identifier 	邮箱或手机
 	 *@param string $this->auth_code 		验证码
 	 *@return true|exception
 	 */
 	protected function send_code() {
 		$sms = Wnd_Sms::get_instance();
-		$sms->set_phone($this->auth_object);
+		$sms->set_phone($this->identifier);
 		$sms->set_code($this->auth_code);
 		$sms->set_valid_time($this->valid_time / 60);
 		$sms->set_template($this->template);
