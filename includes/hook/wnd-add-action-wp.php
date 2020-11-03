@@ -211,7 +211,7 @@ class Wnd_Add_Action_WP {
 		}
 
 		try {
-			$captcha = Wnd_Validator::validate_captcha();
+			Wnd_Validator::validate_captcha();
 		} catch (Exception $e) {
 			exit($e->getMessage());
 		}
