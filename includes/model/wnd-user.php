@@ -124,6 +124,7 @@ class Wnd_User {
 	/**
 	 *@since 2019.11.06	根据用户id获取openid
 	 *@param 	int 			$user_id
+	 *@param 	string 			$type 第三方账号类型
 	 *@return 	string|false 	用户openid或false
 	 */
 	public static function get_user_openid($user_id, $type) {
@@ -177,8 +178,9 @@ class Wnd_User {
 	/**
 	 *@since 2019.07.11
 	 *根据openID获取WordPress用户，用于第三方账户登录
-	 *@param 	openID
-	 *@return 	object|false 	（WordPress：get_user_by）
+	 *@param string 	$type 			第三方账号类型
+	 *@param string		openID
+	 *@return WP_User 	object|false 	（WordPress：get_user_by）
 	 */
 	public static function get_user_by_openid($type, $open_id) {
 		$type        = strtolower($type);
@@ -206,6 +208,7 @@ class Wnd_User {
 	 *@since 2019.07.11
 	 *写入用户open id
 	 *@param 	int 	$user_id
+	 *@param 	string 	$type 			第三方账号类型
 	 *@param 	string 	$open_id
 	 *@return 	int 	$wpdb->insert
 	 */
