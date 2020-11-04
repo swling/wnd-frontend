@@ -27,22 +27,6 @@ class Wnd_Order_Form extends Wnd_Module {
 			return __('ID 无效', 'wnd');
 		}
 
-		/**
-		 * 遍历产品属性，并生成表单字段
-		 *
-		 *	$sku = [
-		 *		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
-		 *		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
-		 *	];
-		 */
-		$sku     = Wnd_Product::get_object_sku($post_id);
-		$options = [];
-		foreach ($sku as $sku_id => $sku_detail) {
-			$price              = (float) ($sku_detail['price'] ?? 0);
-			$sku_name           = $sku_detail['name'] . ': ¥ ' . number_format($price, 2, '.', '');
-			$options[$sku_name] = $sku_id;
-		}unset($key, $value);
-
 		// 构建表单
 		$form = new Wnd_Form_WP($ajax);
 		$form->add_hidden('module', 'wnd_payment_form');
@@ -52,7 +36,7 @@ class Wnd_Order_Form extends Wnd_Module {
 			[
 				'label'    => '',
 				'name'     => Wnd_Product::$sku_key,
-				'options'  => $options,
+				'options'  => static::get_sku_options($post_id),
 				'required' => 'required',
 				'class'    => 'is-checkradio is-' . wnd_get_config('primary_color'),
 			]
@@ -76,5 +60,26 @@ class Wnd_Order_Form extends Wnd_Module {
 		$form->set_submit_button($buy_text);
 		$form->build();
 		return $form->html;
+	}
+
+	/**
+	 * 遍历产品属性，并生成表单字段
+	 *
+	 *	$sku = [
+	 *		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
+	 *		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
+	 *	];
+	 */
+	protected static function get_sku_options(int $post_id): array{
+		$sku     = Wnd_Product::get_object_sku($post_id);
+		$options = [];
+		foreach ($sku as $sku_id => $sku_detail) {
+			$price              = (float) ($sku_detail['price'] ?? 0);
+			$sku_name           = $sku_detail['name'] . ': ¥ ' . number_format($price, 2, '.', '');
+			$options[$sku_name] = $sku_id;
+		}
+		unset($key, $value);
+
+		return $options;
 	}
 }

@@ -16,38 +16,11 @@ class Wnd_Payment_Form extends Wnd_Module {
 	protected static function build($args = []): string{
 		/**
 		 *订单基本信息 + 产品属性等参数
-		 *移除表单签名参数
+		 *
+		 *构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
+		 * 		$post_id, $sku_id, $quantity, $total_amount, $title，$sku_info
 		 */
-		$defaults = [
-			'post_id'  => 0,
-			'quantity' => 1,
-		];
-		unset($args[Wnd_Request::$sign_name]);
-		$args = wp_parse_args($args, $defaults);
-
-		// 将数组元素依次定义为按键名命名的变量
-		extract($args);
-
-		/**
-		 *@since 0.8.76
-		 *产品属性
-		 */
-		$quantity     = $args[Wnd_Product::$quantity_key] ?? 1;
-		$sku_id       = $args[Wnd_Product::$sku_key] ?? '';
-		$sku          = Wnd_Product::get_single_sku($post_id, $sku_id);
-		$sku_name     = Wnd_Product::get_single_sku_name($post_id, $sku_id);
-		$title        = $sku_name ? get_the_title($post_id) . '&nbsp;[' . $sku_name . ' x ' . $quantity . ']' : get_the_title($post_id) . '&nbsp;[ x ' . $quantity . ']';
-		$post_price   = wnd_get_post_price($post_id, $sku_id);
-		$total_amount = $post_price * $quantity;
-
-		// 列出产品属性提示信息
-		$sku_info = '';
-		$sku_keys = Wnd_Product::get_sku_keys(get_post_type($post_id));
-		foreach ($sku as $key => $value) {
-			$key = $sku_keys[$key] ?? $key;
-			$sku_info .= '[ ' . $key . ' : ' . $value . ' ]&nbsp;';
-		}
-		$sku_info = static::build_notification($sku_info);
+		extract(static::get_payment_props($args));
 
 		/**
 		 *基础信息
@@ -114,5 +87,42 @@ class Wnd_Payment_Form extends Wnd_Module {
 		$form->build();
 
 		return $form->html;
+	}
+
+	/**
+	 *@since 0.8.76
+	 *根据参数读取本次订单对应产品信息
+	 *构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
+	 */
+	protected static function get_payment_props(array $args): array{
+		// 将数组元素依次定义为按键名命名的变量
+		$defaults = [
+			'post_id'  => 0,
+			'quantity' => $args[Wnd_Product::$quantity_key] ?? 1,
+			'sku_id'   => $args[Wnd_Product::$sku_key] ?? '',
+		];
+		unset($args[Wnd_Request::$sign_name]);
+		$args = wp_parse_args($args, $defaults);
+		extract($args);
+
+		$sku          = Wnd_Product::get_single_sku($post_id, $sku_id);
+		$sku_name     = Wnd_Product::get_single_sku_name($post_id, $sku_id);
+		$title        = $sku_name ? get_the_title($post_id) . '&nbsp;[' . $sku_name . ' x ' . $quantity . ']' : get_the_title($post_id) . '&nbsp;[ x ' . $quantity . ']';
+		$post_price   = wnd_get_post_price($post_id, $sku_id);
+		$total_amount = $post_price * $quantity;
+
+		// 列出产品属性提示信息
+		$sku_info = '';
+		$sku_keys = Wnd_Product::get_sku_keys(get_post_type($post_id));
+		foreach ($sku as $key => $value) {
+			$key = $sku_keys[$key] ?? $key;
+			$sku_info .= '[ ' . $key . ' : ' . $value . ' ]&nbsp;';
+		}
+		$sku_info = static::build_notification($sku_info);
+
+		/**
+		 *构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
+		 */
+		return compact('post_id', 'sku_id', 'quantity', 'total_amount', 'title', 'sku_info');
 	}
 }
