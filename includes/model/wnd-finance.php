@@ -2,7 +2,6 @@
 namespace Wnd\Model;
 
 use Wnd\Model\Wnd_Order;
-use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Product;
 use Wnd\Model\Wnd_Transaction;
 
@@ -60,30 +59,6 @@ class Wnd_Finance {
 		}
 
 		return (1 === $user_has_paid ? true : false);
-	}
-
-	/**
-	 *@since 2019.03.29 查询订单统计
-	 *@param 	int 	$object_id 	商品ID
-	 *
-	 *@return 	int 	order count
-	 **/
-	public static function get_order_count($object_id): int{
-		// 释放未支付的订单
-		Wnd_Order_Product::release_pending_orders($object_id);
-
-		// 返回清理过期数据后的订单统计
-		return wnd_get_post_meta($object_id, 'order_count') ?: 0;
-	}
-
-	/**
-	 *@since 2019.03.29 增加订单统计
-	 *
-	 *@param 	int 	$object_id 	商品ID
-	 *@param 	int 	$number 	增加的数目，可为负
-	 **/
-	public static function inc_order_count($object_id, $number): bool {
-		return wnd_inc_wnd_post_meta($object_id, 'order_count', $number);
 	}
 
 	/**

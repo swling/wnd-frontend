@@ -1,5 +1,6 @@
 <?php
 use Wnd\Model\Wnd_Finance;
+use Wnd\Model\Wnd_Product;
 
 /**
  *@since 2019.02.11 查询是否已经支付
@@ -19,7 +20,7 @@ function wnd_user_has_paid($user_id, $object_id) {
  *@return 	int 	order count
  **/
 function wnd_get_order_count($object_id) {
-	return Wnd_Finance::get_order_count($object_id);
+	return Wnd_Product::get_order_count($object_id);
 }
 
 /**
@@ -29,7 +30,7 @@ function wnd_get_order_count($object_id) {
  *@param 	int 	$number 	增加的数目，可为负
  **/
 function wnd_inc_order_count($object_id, $number) {
-	return Wnd_Finance::inc_order_count($object_id, $number);
+	return Wnd_Product::inc_order_count($object_id, $number);
 }
 
 /**

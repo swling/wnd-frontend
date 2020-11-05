@@ -28,8 +28,9 @@ class Wnd_Product {
 	 */
 	public static function get_props_keys(): array{
 		return [
-			'sku'      => __('SKU', 'wnd'),
-			'quantity' => __('数量', 'wnd'),
+			'sku'         => __('SKU', 'wnd'),
+			'quantity'    => __('数量', 'wnd'),
+			'order_count' => __('销量', 'wnd'),
 		];
 	}
 
@@ -261,5 +262,27 @@ class Wnd_Product {
 		$single_sku['stock'] = $single_sku['stock'] - $quantity;
 
 		return static::update_single_sku($object_id, $sku_id, $single_sku);
+	}
+
+	/**
+	 *@since 0.9.0 查询订单统计
+	 *@param 	int 	$object_id 	商品ID
+	 *
+	 *@return 	int 	order count
+	 **/
+	public static function get_order_count($object_id): int {
+		return static::get_object_props($object_id)['order_count'] ?? 0;
+	}
+
+	/**
+	 *@since 0.9.0 增加订单统计
+	 *
+	 *@param 	int 	$object_id 	商品ID
+	 *@param 	int 	$number 	增加的数目，可为负
+	 **/
+	public static function inc_order_count(int $object_id, int $number): bool{
+		$order_count = static::get_order_count($object_id);
+		$order_count = $order_count + $number;
+		return wnd_update_post_meta($object_id, 'order_count', $order_count);
 	}
 }

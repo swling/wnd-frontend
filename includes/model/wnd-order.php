@@ -100,9 +100,9 @@ class Wnd_Order extends Wnd_Transaction {
 			 *@since 2019.06.04
 			 *新增订单统计
 			 *插入订单时，无论订单状态均新增订单统计，以实现某些场景下需要限定订单总数时，锁定数据，预留支付时间
-			 *获取订单统计时，删除超时未完成的订单，并减去对应订单统计 @see wnd_get_order_count($object_id)
+			 *获取订单统计时，删除超时未完成的订单，并减去对应订单统计 @see Wnd_Product::get_order_count($object_id)
 			 */
-			wnd_inc_order_count($this->object_id, 1);
+			Wnd_Product::inc_order_count($this->object_id, 1);
 
 			/**
 			 *@since 0.9.0
