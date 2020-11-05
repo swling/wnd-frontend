@@ -52,6 +52,28 @@ register_deactivation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::uninstall');
 add_action('admin_init', 'Wnd\Model\Wnd_Admin::upgrade');
 
 /**
+ *插件更新触发升级操作
+ *@since 0.9.2
+ */
+add_action('upgrader_process_complete', function ($upgrader_object, $options) {
+	if ($options['action'] != 'update') {
+		return false;
+	}
+
+	if ($options['type'] != 'plugin') {
+		return false;
+	}
+
+	$current_plugin_path_name = plugin_basename(__FILE__);
+	foreach ($options['plugins'] as $each_plugin) {
+		if ($each_plugin == $current_plugin_path_name) {
+			Wnd\Model\Wnd_Admin::upgrade();
+			break;
+		}
+	}
+}, 10, 2);
+
+/**
  *@since 2019.04.16
  *访问后台时候，触发执行清理动作
  */
