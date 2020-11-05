@@ -40,7 +40,7 @@ class Wnd_Menus {
 		/**
 		 *判断当前实例是否为继承本类的子类
 		 */
-		$this->is_submenu = is_subclass_of($this, __NAMESPACE__ . '\\' . 'Wnd_Menus');
+		$this->is_submenu = is_subclass_of($this, __CLASS__);
 
 		/**
 		 * - 注册菜单
