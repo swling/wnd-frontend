@@ -25,14 +25,17 @@ use WP_Post;
  */
 class Wnd_Order extends Wnd_Transaction {
 
-	// 是否启用匿名订单
-	protected $enable_anon_order;
+	// 用户同条件历史订单复用时间限制
+	protected $date_query = [];
+
+	// 订单记录 post name
+	protected $post_name;
+
+	// SKU ID
+	protected $sku_id;
 
 	// 定义匿名支付cookie名称
-	public static $anon_cookie_name_prefix = 'anon_order';
-
-	// 匿名用户临时支付cookie
-	protected $anon_cookie;
+	protected static $anon_cookie_name_prefix = 'anon_order';
 
 	/**
 	 *@since 2019.08.11
@@ -41,21 +44,9 @@ class Wnd_Order extends Wnd_Transaction {
 	public function __construct() {
 		parent::__construct();
 
-		$this->enable_anon_order = wnd_get_config('enable_anon_order');
-	}
-
-	/**
-	 *匿名支付订单cookie name
-	 */
-	public static function get_anon_cookie_name(int $object_id) {
-		return static::$anon_cookie_name_prefix . '_' . $object_id;
-	}
-
-	/**
-	 *创建匿名支付随机码
-	 */
-	protected function generate_anon_cookie() {
-		return md5(uniqid($this->object_id));
+		if (!$this->user_id and !wnd_get_config('enable_anon_order')) {
+			throw new Exception(__('请登录', 'wnd'));
+		}
 	}
 
 	/**
@@ -71,50 +62,20 @@ class Wnd_Order extends Wnd_Transaction {
 	 *@return object WP Post Object
 	 */
 	protected function insert_record(bool $is_completed): WP_Post {
-		/**
-		 *匿名支付Cookie：
-		 *cookie_name = static::$anon_cookie_name . '-' . $this->object_id
-		 *@since 2020.06.18
-		 */
+		// 处理匿名订单属性
 		if (!$this->user_id) {
-			if (!$this->enable_anon_order) {
-				throw new Exception(__('请登录', 'wnd'));
-			}
-
-			$this->anon_cookie = $this->generate_anon_cookie();
-			setcookie(static::get_anon_cookie_name($this->object_id), $this->anon_cookie, time() + 3600 * 24, '/');
-
-			/**
-			 *匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
-			 *更新自动草稿时候，modified 不会变需要查询 post_date
-			 *@see get_posts()
-			 *@see wp_update_post
-			 */
-			$date_query = [
-				[
-					'column' => 'post_date',
-					'before' => date('Y-m-d H:i', current_time('timestamp') - 86400),
-				],
-			];
+			$this->handle_anon_order_props();
 		}
 
 		/**
-		 *定义订单基础变量
-		 *
 		 *@since 0.8.76
-		 *新增产品 SKU 信息：设置 SKU 后，对应订单价格及标题随之改变
+		 *处理订单 SKU 属性
 		 */
-		$sku_id = $this->props[Wnd_Product::$sku_key] ?? '';
-		$sku    = Wnd_Product::get_object_sku($this->object_id);
-		if ($sku) {
-			if (!$sku_id or !in_array($sku_id, array_keys($sku))) {
-				throw new Exception(__('SKU ID 无效', 'wnd'));
-			}
+		$this->handle_order_sku_props();
 
-			$this->total_amount = Wnd_Product::get_single_sku_price($this->object_id, $sku_id) * $this->quantity;
-		} else {
-			$this->total_amount = wnd_get_post_price($this->object_id) * $this->quantity;
-		}
+		/**
+		 *订单状态及标题
+		 */
 		$this->subject = $this->subject ?: (__('订单：', 'wnd') . get_the_title($this->object_id) . '[' . $this->quantity . ']');
 		$this->status  = $is_completed ? static::$completed_status : static::$processing_status;
 
@@ -128,7 +89,7 @@ class Wnd_Order extends Wnd_Transaction {
 				'post_status'    => static::$processing_status,
 				'post_type'      => 'order',
 				'posts_per_page' => 1,
-				'date_query'     => !$this->user_id ? $date_query : [],
+				'date_query'     => $this->date_query,
 			]
 		);
 
@@ -149,7 +110,7 @@ class Wnd_Order extends Wnd_Transaction {
 			 *插入订单时，无论订单状态均新更新库存统计，以实现锁定数据，预留支付时间
 			 *获取库存时，会清空超时未支付的订单 @see Wnd_Product::get_object_props($object_id);
 			 */
-			Wnd_Product::reduce_single_sku_stock($this->object_id, $sku_id, $this->quantity);
+			Wnd_Product::reduce_single_sku_stock($this->object_id, $this->sku_id, $this->quantity);
 		}
 
 		$post_arr = [
@@ -161,7 +122,7 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_status'  => $this->status,
 			'post_title'   => $this->subject,
 			'post_type'    => 'order',
-			'post_name'    => $this->anon_cookie ?: uniqid(),
+			'post_name'    => $this->post_name ?: uniqid(),
 		];
 		$ID = wp_insert_post($post_arr);
 		if (is_wp_error($ID) or !$ID) {
@@ -170,6 +131,75 @@ class Wnd_Order extends Wnd_Transaction {
 
 		// 构建Post
 		return get_post($ID);
+	}
+
+	/**
+	 *匿名支付订单cookie name
+	 */
+	public static function get_anon_cookie_name(int $object_id) {
+		return static::$anon_cookie_name_prefix . '_' . $object_id;
+	}
+
+	/**
+	 *创建匿名支付随机码
+	 */
+	protected function generate_anon_cookie() {
+		return md5(uniqid($this->object_id));
+	}
+
+	/**
+	 *@since 0.9.2
+	 *构建匿名订单所需的订单属性：$this->post_name、$this->date_query
+	 *
+	 * - 设置匿名订单 cookie
+	 * - 将匿名订单 cookie 设置为订单 post name
+	 * - 设置订单复用日期条件
+	 */
+	protected function handle_anon_order_props() {
+		/**
+		 *设置 Cookie
+		 */
+		$anon_cookie = $this->generate_anon_cookie();
+		setcookie(static::get_anon_cookie_name($this->object_id), $anon_cookie, time() + 3600 * 24, '/');
+
+		/**
+		 *将 cookie 设置为订单 post name，以便后续通过 cookie 查询匿名用户订单
+		 */
+		$this->post_name = $anon_cookie;
+
+		/**
+		 *匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
+		 *更新自动草稿时候，modified 不会变需要查询 post_date
+		 *@see get_posts()
+		 *@see wp_update_post
+		 */
+		$this->date_query = [
+			[
+				'column' => 'post_date',
+				'before' => date('Y-m-d H:i', current_time('timestamp') - 86400),
+			],
+		];
+	}
+
+	/**
+	 *根据 SKU 变量定义本次订单属性：$this->sku_id、$this->total_amount
+	 *@since 0.8.76
+	 */
+	protected function handle_order_sku_props() {
+		$this->sku_id = $this->props[Wnd_Product::$sku_key] ?? '';
+		$object_sku   = Wnd_Product::get_object_sku($this->object_id);
+
+		if ($object_sku) {
+			if (!$this->sku_id or !in_array($this->sku_id, array_keys($object_sku))) {
+				throw new Exception(__('SKU ID 无效', 'wnd'));
+			}
+
+			$price = Wnd_Product::get_single_sku_price($this->object_id, $this->sku_id);
+		} else {
+			$price = wnd_get_post_price($this->object_id);
+		}
+
+		$this->total_amount = $price * $this->quantity;
 	}
 
 	/**
