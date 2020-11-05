@@ -38,18 +38,6 @@ class Wnd_Order extends Wnd_Transaction {
 	protected static $anon_cookie_name_prefix = 'anon_order';
 
 	/**
-	 *@since 2019.08.11
-	 *构造函数
-	 */
-	public function __construct() {
-		parent::__construct();
-
-		if (!$this->user_id and !wnd_get_config('enable_anon_order')) {
-			throw new Exception(__('请登录', 'wnd'));
-		}
-	}
-
-	/**
 	 *@since 2019.02.11
 	 *用户本站消费数据(含余额消费，或直接第三方支付消费)
 	 *
@@ -64,6 +52,10 @@ class Wnd_Order extends Wnd_Transaction {
 	protected function insert_record(bool $is_completed): WP_Post {
 		// 处理匿名订单属性
 		if (!$this->user_id) {
+			if (!wnd_get_config('enable_anon_order')) {
+				throw new Exception(__('请登录', 'wnd'));
+			}
+
 			$this->handle_anon_order_props();
 		}
 
