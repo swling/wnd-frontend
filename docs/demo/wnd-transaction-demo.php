@@ -1,6 +1,7 @@
 <?php
 use Wnd\Model\Wnd_Order;
 use Wnd\Model\Wnd_Payment;
+use Wnd\Model\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Recharge;
 
 ###########################################################
@@ -34,7 +35,7 @@ echo $payment->build_interface();
 $out_trade_no    = $_REQUEST['out_trade_no'] ?? '';
 $total_amount    = $_REQUEST['total_amount'] ?? 0;
 $payment_id      = Wnd_Payment::parse_out_trade_no($out_trade_no);
-$payment_gateway = Wnd_Payment::get_payment_gateway($payment_id);
+$payment_gateway = Wnd_Payment_Getway::get_payment_gateway($payment_id);
 
 $payment = Wnd_Payment::get_instance($payment_gateway);
 $payment->set_total_amount($_POST['total_amount']);

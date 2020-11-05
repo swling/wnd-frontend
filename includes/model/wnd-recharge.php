@@ -151,4 +151,13 @@ class Wnd_Recharge extends Wnd_Transaction {
 
 		return $ID;
 	}
+
+	/**
+	 *用户充值金额选项
+	 *@since 0.8.62
+	 */
+	public static function get_recharge_amount_options(): array{
+		$defaults = ['0.01' => '0.01', '10.00' => '10.00', '50.00' => '50.00', '100.00' => '100.00', '500.00' => '500.00'];
+		return apply_filters('wnd_recharge_amount_options', $defaults);
+	}
 }

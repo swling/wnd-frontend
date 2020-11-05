@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\Model\Wnd_Payment;
+use Wnd\Model\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Product;
 use Wnd\Utility\Wnd_Request;
 use Wnd\View\Wnd_Form_WP;
@@ -26,7 +26,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		 *基础信息
 		 */
 		$user_id         = get_current_user_id();
-		$gateway_options = Wnd_Payment::get_gateway_options();
+		$gateway_options = Wnd_Payment_Getway::get_gateway_options();
 		$user_money      = wnd_get_user_money($user_id);
 
 		// 消费提示
@@ -57,7 +57,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 					'name'     => 'payment_gateway',
 					'options'  => $gateway_options,
 					'required' => 'required',
-					'checked'  => $user_money >= $total_amount ? 'internal' : Wnd_Payment::get_default_gateway(),
+					'checked'  => $user_money >= $total_amount ? 'internal' : Wnd_Payment_Getway::get_default_gateway(),
 					'class'    => 'is-checkradio is-danger',
 				]
 			);

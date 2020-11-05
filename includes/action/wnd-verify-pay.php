@@ -3,6 +3,7 @@ namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_Payment;
+use Wnd\Model\Wnd_Payment_Getway;
 
 /**
  *支付校验
@@ -21,7 +22,7 @@ class Wnd_Verify_Pay extends Wnd_Action {
 		$out_trade_no    = $_REQUEST['out_trade_no'] ?? '';
 		$total_amount    = $_REQUEST['total_amount'] ?? 0;
 		$payment_id      = Wnd_Payment::parse_out_trade_no($out_trade_no);
-		$payment_gateway = Wnd_Payment::get_payment_gateway($payment_id);
+		$payment_gateway = Wnd_Payment_Getway::get_payment_gateway($payment_id);
 		if (!$payment_gateway) {
 			exit('error');
 		}
