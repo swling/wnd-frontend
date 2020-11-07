@@ -26,9 +26,7 @@ class Wnd_Refunder_Alipay extends Wnd_Refunder {
 		 */
 		$alipay = new AlipayRefunder();
 		$alipay->setOutTradeNo($this->out_trade_no);
-		if ($this->refund_amount != $this->total_amount) {
-			$alipay->setOutRequestNo($this->out_request_no);
-		}
+		$alipay->setOutRequestNo($this->out_request_no);
 		$alipay->setRefundAmount($this->refund_amount);
 
 		$response       = $alipay->doRefund();

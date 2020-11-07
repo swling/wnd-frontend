@@ -32,6 +32,7 @@ class Wnd_Post_Detail_Order extends Wnd_Module {
 		$orde_detail .= '<li>' . $order->post_title . '</li>';
 		$orde_detail .= '<li>' . $order->post_content . '</li>';
 		$orde_detail .= '<li>' . $order->post_name . '</li>';
+		$orde_detail .= '<li>Refund_Count : ' . wnd_get_post_meta($order->ID, 'refund_count') . '</li>';
 		$orde_detail .= '</ul></div>';
 
 		/**

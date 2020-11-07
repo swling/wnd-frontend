@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Action;
 
-use Exception;
 use Wnd\Model\Wnd_Refunder;
 
 /**
@@ -16,26 +15,14 @@ class Wnd_Refund extends Wnd_Action_Ajax_Admin {
 		$payment_id    = (int) ($this->data['payment_id'] ?? 0);
 		$refund_amount = (float) ($this->data['refund_amount'] ?? 0);
 
-		try {
-			$refunder = Wnd_Refunder::get_instance($payment_id);
-			$refunder->set_refund_amount($refund_amount);
-			$refunder->refund();
-		} catch (Exception $e) {
-			return [
-				'status' => 0,
-				'msg'    => $e->getMessage(),
-
-				// 判断是否完成实例化
-				'data'   => isset($refunder) ? $refunder->get_response() : [],
-			];
-		}
+		$refunder = Wnd_Refunder::get_instance($payment_id);
+		$refunder->set_refund_amount($refund_amount);
+		$refunder->refund();
 
 		return [
 			'status' => 1,
 			'msg'    => __('退款成功', 'wnd'),
-
-			// 判断是否完成实例化
-			'data'   => isset($refunder) ? $refunder->get_response() : [],
+			'data'   => $refunder->get_response(),
 		];
 	}
 }

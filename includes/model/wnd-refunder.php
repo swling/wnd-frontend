@@ -61,7 +61,8 @@ abstract class Wnd_Refunder {
 		$this->user_id          = $payment->get_user_id();
 
 		// 分批次退款时需要设置子订单编号（支付宝）
-		$this->out_request_no = wnd_get_post_meta($this->payment_id, 'refund_count') ?: 1;
+		$refund_count         = wnd_get_post_meta($this->payment_id, 'refund_count') ?: 0;
+		$this->out_request_no = $refund_count + 1;
 	}
 
 	/**
@@ -69,7 +70,7 @@ abstract class Wnd_Refunder {
 	 */
 	public static function get_instance($payment_id): Wnd_Refunder {
 		// 订单支付方式
-		static::$payment_gateway = Wnd_Payment::get_payment_gateway($payment_id) ?: 'Internal';
+		static::$payment_gateway = Wnd_Payment_Getway::get_payment_gateway($payment_id) ?: 'Internal';
 
 		/**
 		 *根据交易类型选择退款方式
@@ -194,15 +195,11 @@ abstract class Wnd_Refunder {
 			return;
 		}
 
-		$object = get_post($this->object_id);
-		try {
-			$recharge = new Wnd_Recharge();
-			$recharge->set_object_id($object->ID);
-			$recharge->set_user_id($object->post_author);
-			$recharge->set_total_amount($commission * -1);
-			$recharge->create(true);
-		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
-		}
+		$object   = get_post($this->object_id);
+		$recharge = new Wnd_Recharge();
+		$recharge->set_object_id($object->ID);
+		$recharge->set_user_id($object->post_author);
+		$recharge->set_total_amount($commission * -1);
+		$recharge->create(true);
 	}
 }
