@@ -17,7 +17,7 @@ use Wnd\Module\Wnd_User_Center;
  */
 class Wnd_User_Page extends Wnd_Module {
 
-	public static function build($args = []): string{
+	protected static function build($args = []): string{
 		$defaults = [
 			'module'    => '',
 			'action'    => '',
