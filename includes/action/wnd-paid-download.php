@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Action;
 
-use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_Order_Product;
 
 /**
  *@since 2019.02.12 文件校验下载
@@ -14,7 +14,7 @@ class Wnd_Paid_Download extends Wnd_Action {
 		 *@since 0.8.76
 		 *新增 SKU ID
 		 */
-		$sku_id = $_REQUEST[Wnd_Product::$sku_key] ?? '';
+		$sku_id = $_REQUEST[Wnd_Order_Product::$sku_id_key] ?? '';
 
 		$post_id = (int) $_REQUEST['post_id'];
 		$user_id = get_current_user_id();

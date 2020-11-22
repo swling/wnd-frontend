@@ -20,16 +20,12 @@ class Wnd_Product {
 	// SKU KEY
 	public static $sku_key = 'sku';
 
-	// 购买商品数目
-	public static $quantity_key = 'quantity';
-
 	/**
 	 *产品属性信息合集
 	 */
 	public static function get_props_keys(): array{
 		return [
 			'sku'         => __('SKU', 'wnd'),
-			'quantity'    => __('数量', 'wnd'),
 			'order_count' => __('销量', 'wnd'),
 		];
 	}

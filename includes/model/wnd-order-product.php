@@ -18,8 +18,14 @@ use Wnd\Model\Wnd_Transaction;
  */
 class Wnd_Order_Product {
 
-	// 在产品单条 SKU 信息之外新增保存 SKU ID
-	protected static $sku_id_key = 'sku_id';
+	// SKU KEY
+	protected static $sku_key = 'sku';
+
+	// SKU ID KEY
+	public static $sku_id_key = 'sku_id';
+
+	// 购买商品数目
+	public static $quantity_key = 'quantity';
 
 	/**
 	 *设置订单关联的产品属性
@@ -36,16 +42,16 @@ class Wnd_Order_Product {
 		}
 
 		// SKU
-		$sku_id = $data[Wnd_Product::$sku_key] ?? '';
+		$sku_id = $data[static::$sku_id_key] ?? '';
 		if ($sku_id) {
 			$sku_detail                      = Wnd_Product::get_single_sku($object_id, $sku_id);
 			$sku_detail[static::$sku_id_key] = $sku_id;
-			$meta[Wnd_Product::$sku_key]     = $sku_detail;
+			$meta[static::$sku_key]          = $sku_detail;
 		}
 
 		// quantity
-		$quantity                         = $data[Wnd_Product::$quantity_key] ?? 1;
-		$meta[Wnd_Product::$quantity_key] = $quantity;
+		$quantity                    = $data[static::$quantity_key] ?? 1;
+		$meta[static::$quantity_key] = $quantity;
 
 		// save data
 		if ($meta) {
@@ -61,10 +67,9 @@ class Wnd_Order_Product {
 	 *	订单属性，即从产品属性提供的选项中依次确定某一项组成。数据存储键名与产品属性保持一致。因此可复用 Wnd_Product::get_object_props($order_id);
 	 *	与产品属性返回的数据格式不同，【产品属性值】通常为维数组甚至二维数组，而【订单属性值】通常为确定的字符串。
 	 *
-	 *  获取订单属性，实质为借用获取产品属性方法。故无需设置产品属性特有的【释放超时订单】，以减少一条数据库查询
 	 */
 	public static function get_order_props(int $order_id): array{
-		return Wnd_Product::get_object_props($order_id);
+		return get_post_meta($order_id, 'wnd_meta', true) ?: [];
 	}
 
 	/**
@@ -72,7 +77,7 @@ class Wnd_Order_Product {
 	 *
 	 */
 	public static function get_order_sku(int $order_id): array{
-		return static::get_order_props($order_id)[Wnd_Product::$sku_key] ?? [];
+		return static::get_order_props($order_id)[static::$sku_key] ?? [];
 	}
 
 	/**
@@ -127,8 +132,8 @@ class Wnd_Order_Product {
 		 * Wnd_Product 相关方法在获取现有 SKU 信息时，会调用本类中的 static::release_pending_orders 从而产生死循环
 		 */
 		$props    = static::get_order_props($order->ID);
-		$sku_id   = $props[Wnd_Product::$sku_key][static::$sku_id_key] ?? '';
-		$quantity = $props[Wnd_Product::$quantity_key] ?? 1;
+		$sku_id   = $props[static::$sku_key][static::$sku_id_key] ?? '';
+		$quantity = $props[static::$quantity_key] ?? 1;
 
 		// 获取现有库存，若未设置库存，或库存为 -1 表示为虚拟产品或其他无限量库存产品，无需操作
 		$object_sku        = wnd_get_post_meta($object_id, Wnd_Product::$sku_key) ?? [];

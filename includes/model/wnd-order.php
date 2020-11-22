@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Product;
 use WP_Post;
@@ -178,7 +179,7 @@ class Wnd_Order extends Wnd_Transaction {
 	 *@since 0.8.76
 	 */
 	protected function handle_order_sku_props() {
-		$this->sku_id = $this->props[Wnd_Product::$sku_key] ?? '';
+		$this->sku_id = $this->props[Wnd_Order_Product::$sku_id_key] ?? '';
 		$object_sku   = Wnd_Product::get_object_sku($this->object_id);
 
 		if ($object_sku) {

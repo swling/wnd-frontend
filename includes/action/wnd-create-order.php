@@ -3,6 +3,7 @@ namespace Wnd\Action;
 
 use Exception;
 use Wnd\Model\Wnd_Order;
+use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Product;
 
 /**
@@ -23,8 +24,8 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		 *
 		 *新增商品数目 quantity
 		 */
-		$sku_id   = $this->data[Wnd_Product::$sku_key] ?? '';
-		$quantity = $this->data[Wnd_Product::$quantity_key] ?? 1;
+		$sku_id   = $this->data[Wnd_Order_Product::$sku_id_key] ?? '';
+		$quantity = $this->data[Wnd_Order_Product::$quantity_key] ?? 1;
 
 		/**
 		 *权限检测

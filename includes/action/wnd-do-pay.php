@@ -3,8 +3,8 @@ namespace Wnd\Action;
 
 use Exception;
 use Wnd\Action\Wnd_Create_Order;
+use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Payment;
-use Wnd\Model\Wnd_Product;
 
 /**
  *Ajax创建支付
@@ -18,8 +18,8 @@ class Wnd_Do_Pay extends Wnd_Action_Ajax {
 		$total_amount    = (float) ($this->data['total_amount'] ?? 0);
 		$payment_gateway = $this->data['payment_gateway'] ?? '';
 		$subject         = $this->data['subject'] ?? '';
-		$sku_id          = $this->data[Wnd_Product::$sku_key] ?? '';
-		$quantity        = $this->data[Wnd_Product::$quantity_key] ?? 1;
+		$sku_id          = $this->data[Wnd_Order_Product::$sku_id_key] ?? '';
+		$quantity        = $this->data[Wnd_Order_Product::$quantity_key] ?? 1;
 
 		if (!$payment_gateway) {
 			throw new Exception(__('未定义支付方式', 'wnd'));
