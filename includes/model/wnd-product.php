@@ -246,12 +246,16 @@ class Wnd_Product {
 	/**
 	 *扣除单个 SKU 库存
 	 *
-	 * - 若未设置库存：如虚拟商品，则无需操作库存
+	 * - 若未设置库存或库为 -1 ：则为无限库存产品，如虚拟商品，则无需操作库存
 	 *
 	 */
 	public static function reduce_single_sku_stock(int $object_id, string $sku_id, int $quantity): bool{
 		$single_sku = static::get_single_sku($object_id, $sku_id);
 		if (!isset($single_sku['stock'])) {
+			return false;
+		}
+
+		if (-1 == $single_sku['stock']) {
 			return false;
 		}
 
