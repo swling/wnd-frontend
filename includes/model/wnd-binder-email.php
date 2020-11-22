@@ -26,15 +26,11 @@ class Wnd_Binder_Email extends Wnd_Binder {
 		}
 
 		// 核对验证码并绑定
-		try {
-			$this->verify_auth_code();
+		$this->verify_auth_code();
 
-			$bind = wnd_update_user_email($this->user->ID, $this->bound_object);
-			if (!$bind) {
-				throw new Exception(__('未知错误', 'wnd'));
-			}
-		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
+		$bind = wnd_update_user_email($this->user->ID, $this->bound_object);
+		if (!$bind) {
+			throw new Exception(__('未知错误', 'wnd'));
 		}
 	}
 }

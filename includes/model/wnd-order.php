@@ -264,16 +264,12 @@ class Wnd_Order extends Wnd_Transaction {
 			// 文章作者新增佣金
 			$commission = (float) wnd_get_order_commission($ID);
 			if ($commission > 0) {
-				$object = get_post($object_id);
-				try {
-					$recharge = new Wnd_Recharge();
-					$recharge->set_object_id($object->ID); // 设置佣金来源
-					$recharge->set_user_id($object->post_author);
-					$recharge->set_total_amount($commission);
-					$recharge->create(true); // 直接写入余额
-				} catch (Exception $e) {
-					throw new Exception($e->getMessage());
-				}
+				$object   = get_post($object_id);
+				$recharge = new Wnd_Recharge();
+				$recharge->set_object_id($object->ID); // 设置佣金来源
+				$recharge->set_user_id($object->post_author);
+				$recharge->set_total_amount($commission);
+				$recharge->create(true); // 直接写入余额
 			}
 		}
 
