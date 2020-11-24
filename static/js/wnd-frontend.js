@@ -1336,8 +1336,9 @@ jQuery(document).ready(function($) {
 	 *非 Ajax 表单提交，按钮设置加载中效果
 	 *Ajax 提交 @see wnd_ajax_submit()
 	 */
-	$("body").on("click", "[type='submit']:not('.ajax-submit')", function() {
-		$(this).addClass("is-loading");
+
+	$("body").on("submit", "form", function() {
+		$(this).find("[type='submit']:not('.ajax-submit')").addClass("is-loading");
 	});
 
 	/**
