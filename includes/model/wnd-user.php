@@ -252,6 +252,35 @@ class Wnd_User {
 	}
 
 	/**
+	 *@since 0.9.4
+	 *删除用户 open id
+	 *@param 	int 	$user_id
+	 *@param 	string 	$type 			第三方账号类型
+	 *@return 	int 	$wpdb->delete
+	 */
+	public static function delete_user_openid($user_id, $type) {
+		global $wpdb;
+		$type = strtolower($type);
+
+		// 查询
+		$user = static::get_wnd_user($user_id);
+
+		// 删除
+		$db = $wpdb->delete(
+			$wpdb->wnd_auths,
+			['user_id' => $user_id, 'type' => $type],
+			['%d', '%s']
+		);
+
+		// 缓存
+		if ($db) {
+			static::clean_wnd_user_caches($user);
+		}
+
+		return $db ? $user_id : 0;
+	}
+
+	/**
 	 *@since 2019.07.11
 	 *更新用户电子邮箱 同时更新插件用户数据库email，及WordPress账户email
 	 *@param 	int 	$user_id
@@ -310,7 +339,7 @@ class Wnd_User {
 	 */
 	public static function clean_wnd_user_caches(object $user_data) {
 		$user_id = $user_data->user_id ?? 0;
-		if ($user_id) {
+		if (!$user_id) {
 			return false;
 		}
 
