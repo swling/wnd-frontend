@@ -43,7 +43,8 @@ class Wnd_Account_Form extends Wnd_Module_User {
 		$html = '<div class="has-text-centered mt-3">';
 		$html .= wnd_modal_link(__('邮箱设置', 'wnd'), 'wnd_bind_email_form') . ' | ';
 		$html .= $enable_sms ? (wnd_modal_link(__('手机设置', 'wnd'), 'wnd_bind_phone_form') . ' | ') : '';
-		$html .= wnd_modal_link(__('重置密码', 'wnd'), 'wnd_user_center', ['do' => 'reset_password']);
+		$html .= wnd_modal_link(__('重置密码', 'wnd'), 'wnd_user_center', ['do' => 'reset_password']) . ' | ';
+		$html .= wnd_modal_link(__('解除绑定', 'wnd'), 'wnd_unbind_openid_form');
 
 		$html .= '</div>';
 
