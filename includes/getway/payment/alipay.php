@@ -1,8 +1,9 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\Getway\Payment;
 
 use Wnd\Component\Alipay\AlipayPagePay;
 use Wnd\Component\Alipay\AlipayService;
+use Wnd\Model\Wnd_Payment;
 
 /**
  *@since 2020.06.19
@@ -16,7 +17,7 @@ use Wnd\Component\Alipay\AlipayService;
  * - @link https://opendocs.alipay.com/open/common/fr9vsk
  * - @link https://opensupport.alipay.com/support/tools/cloudparse
  */
-class Wnd_Payment_Alipay extends Wnd_Payment {
+class Alipay extends Wnd_Payment {
 	/**
 	 *发起支付
 	 *

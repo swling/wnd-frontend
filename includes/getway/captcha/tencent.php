@@ -1,8 +1,9 @@
 <?php
-namespace Wnd\Utility;
+namespace Wnd\Getway\Captcha;
 
 use Exception;
 use Wnd\Component\Qcloud\SignatureTrait;
+use Wnd\Utility\Wnd_Captcha;
 
 /**
  *@since 2020.08.11
@@ -11,7 +12,7 @@ use Wnd\Component\Qcloud\SignatureTrait;
  *@link captcha核验 https://cloud.tencent.com/document/product/1110/36926
  *@link 公共参数  https://cloud.tencent.com/document/api/1110/36920
  */
-class Wnd_Captcha_Tencent extends Wnd_Captcha {
+class Tencent extends Wnd_Captcha {
 
 	// 引入腾讯云 API 签名及请求特性
 	use SignatureTrait;

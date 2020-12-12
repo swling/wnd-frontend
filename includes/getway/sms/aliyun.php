@@ -1,8 +1,9 @@
 <?php
-namespace Wnd\Utility;
+namespace Wnd\Getway\Sms;
 
 use Exception;
 use Wnd\Component\Aliyun\Sms\SignatureHelper;
+use Wnd\Utility\Wnd_Sms;
 
 /**
  *@since 2019.09.25
@@ -12,7 +13,7 @@ use Wnd\Component\Aliyun\Sms\SignatureHelper;
  * - 公共参数 @link https://help.aliyun.com/document_detail/101341.html
  * - 发送短信 @link https://help.aliyun.com/document_detail/101414.html
  */
-class Wnd_Sms_Ali extends Wnd_Sms {
+class Aliyun extends Wnd_Sms {
 	/**
 	 * 发送短信
 	 */

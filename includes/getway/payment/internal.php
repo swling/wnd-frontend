@@ -1,5 +1,7 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\Getway\Payment;
+
+use Wnd\Model\Wnd_Payment;
 
 /**
  *@since 2020.06.20
@@ -7,7 +9,7 @@ namespace Wnd\Model;
  * - 站内交易无需执行相关支付操作
  * - 因 Wnd_Payment 为抽象类，无法直接实例化调用内部非静态方法，故设置此类，仅作为读取站内交易支付记录信息所用
  */
-class Wnd_Payment_Internal extends Wnd_Payment {
+class Internal extends Wnd_Payment {
 
 	/**
 	 *发起支付

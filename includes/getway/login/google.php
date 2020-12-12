@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Utility;
+namespace Wnd\Getway\Login;
 
 use Exception;
+use Wnd\Utility\Wnd_Login_Social;
 
 /**
  *@since 2020.04.11
@@ -11,7 +12,7 @@ use Exception;
  *@link https://developers.google.com/youtube/v3/live/guides/auth/server-side-web-apps#OAuth2_Revoking_a_Token
  *注意，上述链接属于YouTube产品api，但可参考其互获取code及token的流程
  */
-class Wnd_Login_Google extends Wnd_Login_Social {
+class Google extends Wnd_Login_Social {
 
 	protected $domain = 'google';
 

@@ -1,13 +1,14 @@
 <?php
-namespace Wnd\Utility;
+namespace Wnd\Getway\Sms;
 
 use Wnd\Component\Qcloud\Sms\SmsSender;
+use Wnd\Utility\Wnd_Sms;
 
 /**
  *@since 2019.09.25
  *短信
  */
-class Wnd_Sms_TX extends Wnd_Sms {
+class Tencent extends Wnd_Sms {
 
 	/**
 	 *@since 2019.02.11 发送短信

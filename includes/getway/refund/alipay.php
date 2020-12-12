@@ -1,15 +1,16 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\Getway\Refund;
 
 use Exception;
 use Wnd\Component\Alipay\AlipayRefunder;
+use Wnd\Model\Wnd_Refunder;
 
 /**
  *@since 2020.06.09
  *支付宝退款
  *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.refund
  */
-class Wnd_Refunder_Alipay extends Wnd_Refunder {
+class Alipay extends Wnd_Refunder {
 
 	/**
 	 *需要根据平台退款响应，设定退款状态，及平台响应数据包

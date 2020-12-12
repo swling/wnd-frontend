@@ -30,7 +30,7 @@ abstract class Wnd_Login_Social {
 	 *根据$domain自动选择子类
 	 */
 	public static function get_instance($domain) {
-		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Login_' . $domain;
+		$class_name = '\Wnd\Getway\Login\\' . $domain;
 		if (class_exists($class_name)) {
 			return new $class_name();
 		} else {

@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\Getway\Payment;
 
 use Wnd\Component\Alipay\AlipayQRCodePay;
+use Wnd\Getway\Payment\Alipay;
 
 /**
  *@since 2020.07.16
@@ -13,7 +14,7 @@ use Wnd\Component\Alipay\AlipayQRCodePay;
  * - @link https://opendocs.alipay.com/open/common/fr9vsk
  * - @link https://opensupport.alipay.com/support/tools/cloudparse
  */
-class Wnd_Payment_Alipay_QRCode extends Wnd_Payment_Alipay {
+class Alipay_QRCode extends Alipay {
 	/**
 	 *发起支付
 	 *

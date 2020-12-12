@@ -1,13 +1,14 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\Getway\Refund;
 
 use Exception;
+use Wnd\Model\Wnd_Refunder;
 
 /**
  *@since 2020.06.11
  *站内退款
  */
-class Wnd_Refunder_Internal extends Wnd_Refunder {
+class Internal extends Wnd_Refunder {
 
 	/**
 	 *站内订单退款：退款至用户余额 (站外则直接退款至用户相关支付账户)

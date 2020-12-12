@@ -40,7 +40,7 @@ abstract class Wnd_Captcha {
 			throw new Exception(__('未配置 Captcha Service', 'wnd'));
 		}
 
-		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Captcha_' . $service;
+		$class_name = '\Wnd\Getway\Captcha\\' . $service;
 		if (class_exists($class_name)) {
 			return new $class_name();
 		} else {

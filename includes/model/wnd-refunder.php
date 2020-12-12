@@ -78,7 +78,7 @@ abstract class Wnd_Refunder {
 		 *
 		 *站内交易为缺省状态，设置为：'Internal' 对应站内退款方法
 		 */
-		$class_name = __NAMESPACE__ . '\\' . 'Wnd_Refunder_' . static::$payment_gateway;
+		$class_name = '\Wnd\Getway\refund\\' . static::$payment_gateway;
 		if (class_exists($class_name)) {
 			return new $class_name($payment_id);
 		} else {

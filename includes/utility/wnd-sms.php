@@ -29,13 +29,12 @@ abstract class Wnd_Sms {
 		// 获取短信服务商
 		$sms_sp = wnd_get_config('sms_sp');
 
-		if ('tx' == $sms_sp) {
-			return new Wnd_Sms_TX();
-		} elseif ('ali' == $sms_sp) {
-			return new Wnd_Sms_Ali();
-		} else {
-			throw new Exception(__('指定短信服务商未完成配置', 'wnd'));
+		$class_name = '\Wnd\Getway\Sms\\' . $sms_sp;
+		if (class_exists($class_name)) {
+			return new $class_name();
 		}
+
+		throw new Exception(__('指定短信服务商未完成配置', 'wnd'));
 	}
 
 	public function set_phone($phone) {

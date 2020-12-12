@@ -50,7 +50,7 @@ class Wnd_Menu_Sms extends Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'    => 'sms_sp',
-				'options' => ['腾讯云' => 'tx', '阿里云' => 'ali'],
+				'options' => ['腾讯云' => 'tencent', '阿里云' => 'aliyun'],
 				'label'   => '选择短信服务商',
 				'class'   => 'is-checkradio is-danger',
 			]

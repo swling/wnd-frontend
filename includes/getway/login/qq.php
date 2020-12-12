@@ -1,13 +1,14 @@
 <?php
-namespace Wnd\Utility;
+namespace Wnd\Getway\Login;
 
 use Exception;
+use Wnd\Utility\Wnd_Login_Social;
 
 /**
  *@since 2019.09.27
  *QQ登录
  */
-class Wnd_Login_QQ extends Wnd_Login_Social {
+class QQ extends Wnd_Login_Social {
 
 	protected $domain = 'qq';
 
