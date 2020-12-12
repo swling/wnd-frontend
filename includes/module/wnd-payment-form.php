@@ -3,7 +3,7 @@ namespace Wnd\Module;
 
 use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Payment_Getway;
-use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_SKU;
 use Wnd\Utility\Wnd_Request;
 use Wnd\View\Wnd_Form_WP;
 
@@ -106,15 +106,15 @@ class Wnd_Payment_Form extends Wnd_Module {
 		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
-		$sku          = Wnd_Product::get_single_sku($post_id, $sku_id);
-		$sku_name     = Wnd_Product::get_single_sku_name($post_id, $sku_id);
+		$sku          = Wnd_SKU::get_single_sku($post_id, $sku_id);
+		$sku_name     = Wnd_SKU::get_single_sku_name($post_id, $sku_id);
 		$title        = $sku_name ? get_the_title($post_id) . '&nbsp;[' . $sku_name . ' x ' . $quantity . ']' : get_the_title($post_id) . '&nbsp;[ x ' . $quantity . ']';
 		$post_price   = wnd_get_post_price($post_id, $sku_id);
 		$total_amount = $post_price * $quantity;
 
 		// 列出产品属性提示信息
 		$sku_info = '';
-		$sku_keys = Wnd_Product::get_sku_keys(get_post_type($post_id));
+		$sku_keys = Wnd_SKU::get_sku_keys(get_post_type($post_id));
 		foreach ($sku as $key => $value) {
 			$key = $sku_keys[$key] ?? $key;
 			$sku_info .= '[ ' . $key . ' : ' . $value . ' ]&nbsp;';

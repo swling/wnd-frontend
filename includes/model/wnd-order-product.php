@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Model;
 
-use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_SKU;
 use Wnd\Model\Wnd_Transaction;
 
 /**
@@ -44,7 +44,7 @@ class Wnd_Order_Product {
 		// SKU
 		$sku_id = $data[static::$sku_id_key] ?? '';
 		if ($sku_id) {
-			$sku_detail                      = Wnd_Product::get_single_sku($object_id, $sku_id);
+			$sku_detail                      = Wnd_SKU::get_single_sku($object_id, $sku_id);
 			$sku_detail[static::$sku_id_key] = $sku_id;
 			$meta[static::$sku_key]          = $sku_detail;
 		}
@@ -128,7 +128,7 @@ class Wnd_Order_Product {
 		/**
 		 *  还原库存
 		 *
-		 * 此处不可调用 Wnd_Product::reduce_single_sku_stock 及 Wnd_Product 其他获取产品属性的方法
+		 * 此处不可调用 Wnd_SKU::reduce_single_sku_stock 及 Wnd_Product 其他获取产品属性的方法
 		 * Wnd_Product 相关方法在获取现有 SKU 信息时，会调用本类中的 static::release_pending_orders 从而产生死循环
 		 */
 		$props    = static::get_order_props($order->ID);
@@ -136,7 +136,7 @@ class Wnd_Order_Product {
 		$quantity = $props[static::$quantity_key] ?? 1;
 
 		// 获取现有库存，若未设置库存，或库存为 -1 表示为虚拟产品或其他无限量库存产品，无需操作
-		$object_sku        = wnd_get_post_meta($object_id, Wnd_Product::$sku_key) ?? [];
+		$object_sku        = wnd_get_post_meta($object_id, Wnd_SKU::$sku_key) ?? [];
 		$object_single_sku = $object_sku[$sku_id] ?? [];
 		if (!isset($object_single_sku['stock']) or -1 == $object_single_sku['stock']) {
 			return false;
@@ -145,6 +145,6 @@ class Wnd_Order_Product {
 
 		// update post meta
 		$object_sku[$sku_id] = $object_single_sku;
-		wnd_update_post_meta($object_id, Wnd_Product::$sku_key, $object_sku);
+		wnd_update_post_meta($object_id, Wnd_SKU::$sku_key, $object_sku);
 	}
 }

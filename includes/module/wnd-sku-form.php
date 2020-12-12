@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_SKU;
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form_WP;
  *
  *产品属性设置表单
  */
-class Wnd_Product_Props_Form extends Wnd_Module {
+class Wnd_SKU_Form extends Wnd_Module {
 
 	protected static function build($args = []): string{
 		$post_id = $args['post_id'] ?? 0;
@@ -20,7 +20,7 @@ class Wnd_Product_Props_Form extends Wnd_Module {
 		/**
 		 *根据配置定义默认空白 SKU 属性
 		 */
-		$sku_keys           = Wnd_Product::get_sku_keys(get_post_type($post_id));
+		$sku_keys           = Wnd_SKU::get_sku_keys(get_post_type($post_id));
 		$default_sku_detail = [];
 		foreach (array_keys($sku_keys) as $key) {
 			$default_sku_detail[$key] = '';
@@ -36,7 +36,7 @@ class Wnd_Product_Props_Form extends Wnd_Module {
 		 *
 		 * 获取现有属性并追加一个空白属性
 		 */
-		$sku   = Wnd_Product::get_object_sku($post_id);
+		$sku   = Wnd_SKU::get_object_sku($post_id);
 		$sku[] = $default_sku_detail;
 
 		/**
@@ -58,7 +58,7 @@ class Wnd_Product_Props_Form extends Wnd_Module {
 				$form->add_text(
 					[
 						'label'       => $label,
-						'name'        => '_' . Wnd_Product::$sku_key . '_' . $sku_detail_key . '[]',
+						'name'        => '_' . Wnd_SKU::$sku_key . '_' . $sku_detail_key . '[]',
 						'value'       => $sku_detail_value,
 						'placeholder' => $label,
 						'class'       => 'is-small',
@@ -80,7 +80,7 @@ class Wnd_Product_Props_Form extends Wnd_Module {
 		}unset($sku_detail);
 
 		$form->add_hidden('post_id', $post_id);
-		$form->set_action('wnd_set_product_props');
+		$form->set_action('wnd_set_sku');
 		$form->set_submit_button(__('保存 SKU', 'wnd'));
 
 		$form->build();

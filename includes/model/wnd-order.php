@@ -5,6 +5,7 @@ use Exception;
 use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_SKU;
 use WP_Post;
 
 /**
@@ -103,7 +104,7 @@ class Wnd_Order extends Wnd_Transaction {
 			 *插入订单时，无论订单状态均新更新库存统计，以实现锁定数据，预留支付时间
 			 *获取库存时，会清空超时未支付的订单 @see Wnd_Product::get_object_props($object_id);
 			 */
-			Wnd_Product::reduce_single_sku_stock($this->object_id, $this->sku_id, $this->quantity);
+			Wnd_SKU::reduce_single_sku_stock($this->object_id, $this->sku_id, $this->quantity);
 		}
 
 		$post_arr = [
@@ -180,14 +181,14 @@ class Wnd_Order extends Wnd_Transaction {
 	 */
 	protected function handle_order_sku_props() {
 		$this->sku_id = $this->props[Wnd_Order_Product::$sku_id_key] ?? '';
-		$object_sku   = Wnd_Product::get_object_sku($this->object_id);
+		$object_sku   = Wnd_SKU::get_object_sku($this->object_id);
 
 		if ($object_sku) {
 			if (!$this->sku_id or !in_array($this->sku_id, array_keys($object_sku))) {
 				throw new Exception(__('SKU ID 无效', 'wnd'));
 			}
 
-			$price = Wnd_Product::get_single_sku_price($this->object_id, $this->sku_id);
+			$price = Wnd_SKU::get_single_sku_price($this->object_id, $this->sku_id);
 		} else {
 			$price = wnd_get_post_price($this->object_id);
 		}

@@ -4,7 +4,7 @@ namespace Wnd\Action;
 use Exception;
 use Wnd\Model\Wnd_Order;
 use Wnd\Model\Wnd_Order_Product;
-use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_SKU;
 
 /**
  *@since 2019.10.02
@@ -78,7 +78,7 @@ class Wnd_Create_Order extends Wnd_Action_Ajax {
 		 *库存检测
 		 */
 		if ($sku_id) {
-			$single_sku_stock = Wnd_Product::get_single_sku_stock($post_id, $sku_id);
+			$single_sku_stock = Wnd_SKU::get_single_sku_stock($post_id, $sku_id);
 			if (-1 != $single_sku_stock and $quantity > $single_sku_stock) {
 				throw new Exception(__('产品库存不足', 'wnd'));
 			}

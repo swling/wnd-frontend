@@ -2,7 +2,7 @@
 namespace Wnd\Model;
 
 use Wnd\Model\Wnd_Order;
-use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_SKU;
 use Wnd\Model\Wnd_Transaction;
 
 /**
@@ -154,7 +154,7 @@ class Wnd_Finance {
 	 */
 	public static function get_post_price($post_id, $sku_id = '', $format = false) {
 		if ($sku_id) {
-			$price = Wnd_Product::get_single_sku_price($post_id, $sku_id);
+			$price = Wnd_SKU::get_single_sku_price($post_id, $sku_id);
 			$price = floatval($price);
 		} else {
 			$price = floatval(get_post_meta($post_id, 'price', 1) ?: 0);

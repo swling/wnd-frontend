@@ -2,7 +2,7 @@
 namespace Wnd\Module;
 
 use Wnd\Model\Wnd_Order_Product;
-use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_SKU;
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -72,7 +72,7 @@ class Wnd_Order_Form extends Wnd_Module {
 	 *	];
 	 */
 	protected static function get_sku_options(int $post_id): array{
-		$sku     = Wnd_Product::get_object_sku($post_id);
+		$sku     = Wnd_SKU::get_object_sku($post_id);
 		$options = [];
 		foreach ($sku as $sku_id => $sku_detail) {
 			$price              = (float) ($sku_detail['price'] ?? 0);

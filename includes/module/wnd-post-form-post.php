@@ -61,7 +61,7 @@ class Wnd_Post_Form_Post extends Wnd_Module {
 		 */
 		$form->add_html('<div class="column is-3">');
 		// 产品属性
-		$form->add_html('<div class="field">' . wnd_modal_button(__('产品属性', 'wnd'), 'wnd_product_props_form', ['post_id' => $form->get_post()->ID ?? 0]) . '</div>');
+		$form->add_html('<div class="field">' . wnd_modal_button(__('产品属性', 'wnd'), 'wnd_sku_form', ['post_id' => $form->get_post()->ID ?? 0]) . '</div>');
 
 		// 分类
 		$form->add_html('<div class="field">');

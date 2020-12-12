@@ -2,14 +2,14 @@
 namespace Wnd\Action;
 
 use Exception;
-use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_SKU;
 
 /**
  *@since 0.8.76
  *
  *设置产品属性
  */
-class Wnd_Set_Product_Props extends Wnd_Action_Ajax_User {
+class Wnd_Set_SKU extends Wnd_Action_Ajax_User {
 
 	public function execute(int $post_id = 0): array{
 		if (!$post_id) {
@@ -28,7 +28,7 @@ class Wnd_Set_Product_Props extends Wnd_Action_Ajax_User {
 			throw new Exception(__('权限错误', 'wnd'));
 		}
 
-		Wnd_Product::set_object_props($post_id, $this->data);
+		Wnd_SKU::set_object_sku($post_id, $this->data);
 
 		return ['status' => 1, 'msg' => __('设置成功', 'wnd')];
 	}

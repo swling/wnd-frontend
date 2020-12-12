@@ -2,7 +2,7 @@
 namespace Wnd\Module;
 
 use Wnd\Model\Wnd_Order_Product;
-use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_SKU;
 
 /**
  *@since 0.9.0
@@ -40,7 +40,7 @@ class Wnd_Post_Detail_Order extends Wnd_Module {
 		 *产品属性
 		 */
 		$sku      = Wnd_Order_Product::get_order_sku($post_id);
-		$sku_keys = Wnd_Product::get_sku_keys(get_post_type($post_id));
+		$sku_keys = Wnd_SKU::get_sku_keys(get_post_type($post_id));
 
 		// 列出产品属性提示信息
 		$sku_info = '';
