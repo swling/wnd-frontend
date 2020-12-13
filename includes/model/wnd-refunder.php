@@ -45,10 +45,6 @@ abstract class Wnd_Refunder {
 	 *读取订单基本信息
 	 */
 	public function __construct($payment_id) {
-		if (!wnd_is_manager()) {
-			throw new Exception(__('权限不足', 'wnd'));
-		}
-
 		$this->payment_id = $payment_id;
 
 		// 获取订单的支付信息
