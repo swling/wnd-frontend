@@ -397,6 +397,7 @@ function wnd_ajax_submit(form_id) {
 	});
 
 	if (input_value === false || option_value === false || textarea_value === false) {
+		submit_button.removeClass("is-loading");
 		wnd_ajax_form_msg(form_id, wnd.msg.required, "is-warning");
 		return false;
 	}

@@ -69,11 +69,14 @@ class Tencent extends Wnd_Captcha {
 			var captcha = new TencentCaptcha(
 				"' . $this->appid . '",
 				function(res) {
-					if(0 === res.ret){
-						_this.data("' . static::$captcha_name . '", res.ticket);
-						_this.data("' . static::$captcha_nonce_name . '", res.randstr);
-						wnd_send_code(_this);
+					if(0 !== res.ret){
+						_this.removeClass("is-loading");
+						return false;
 					}
+
+					_this.data("' . static::$captcha_name . '", res.ticket);
+					_this.data("' . static::$captcha_nonce_name . '", res.randstr);
+					wnd_send_code(_this);
 				}
 			)
 			captcha.show();
@@ -91,6 +94,7 @@ class Tencent extends Wnd_Captcha {
 					return false;
 				}
 
+				_this.addClass("is-loading");
 				if (typeof TencentCaptcha == "undefined") {
 					$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
 						wnd_send_code_via_captcha(_this);
@@ -114,11 +118,15 @@ class Tencent extends Wnd_Captcha {
 	public function render_submit_form_script(): string{
 		$script = '
 		<script>
-		function wnd_submit_form_via_captcha(form_id, ajax_submit){
+		function wnd_submit_form_via_captcha(_this){
+			var form_id = _this.closest("form").attr("id");
+			var ajax_submit = (-1 != _this.prop("class").indexOf("ajax-submit"));
+
 			var captcha = new TencentCaptcha(
 				"' . $this->appid . '",
 				function(res) {
 					if(0 !== res.ret){
+						_this.removeClass("is-loading");
 						return false;
 					}
 
@@ -139,17 +147,14 @@ class Tencent extends Wnd_Captcha {
 		// 绑定点击事件
 		$(function() {
 			$("form [type=\'submit\'].captcha, form#commentform [type=\'submit\']").off("click").on("click", function() {
-				// 当 button 的 id 或 name 为 "submit" 时，JavaScript submit() 将无法提交表单
-				$(this).prop("id","");
-				var form_id = $(this).closest("form").attr("id");
-				var ajax_submit = (-1 != $(this).prop("class").indexOf("ajax-submit"));
-
+				var _this = $(this);
+				_this.addClass("is-loading");
 				if ("undefined" == typeof TencentCaptcha) {
 					$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
-						wnd_submit_form_via_captcha(form_id, ajax_submit);
+						wnd_submit_form_via_captcha(_this);
 					});
 				}else{
-					wnd_submit_form_via_captcha(form_id, ajax_submit);
+					wnd_submit_form_via_captcha(_this);
 				}
 
 				return false;
