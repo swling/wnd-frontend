@@ -48,7 +48,7 @@ abstract class Wnd_Auth {
 		$this->identifier = $identifier;
 		$this->auth_code  = wnd_random_code(6);
 		$this->user       = wp_get_current_user();
-		$this->intervals  = wnd_get_config('min_verification_interval');
+		$this->intervals  = wnd_get_config('min_verification_interval') ?: 60;
 	}
 
 	/**
@@ -138,9 +138,23 @@ abstract class Wnd_Auth {
 	 *
 	 */
 	protected function check_send() {
-		$send_time = $this->get_db_record()->time ?? 0;
-		if ($send_time and (time() - $send_time < $this->intervals)) {
-			throw new Exception(__('操作太频繁，请等待', 'wnd') . ($this->intervals - (time() - $send_time)) . __('秒', 'wnd'));
+		$data = $this->get_db_record();
+		if (!$data) {
+			return;
+		}
+
+		// 计算当前时刻距离上次发送的间隔时间
+		$send_time    = $data->time ?? 0;
+		$elapsed_time = time() - $send_time;
+
+		// 频次控制
+		if ($elapsed_time < $this->intervals) {
+			throw new Exception(__('操作太频繁，请等待', 'wnd') . ($this->intervals - $elapsed_time) . __('秒', 'wnd'));
+		}
+
+		// 五分钟内，重复请求验证码，保持验证码不变。防止多次发送不同验证码造成混淆 @date 2020.12.14
+		if ($elapsed_time < 300) {
+			$this->auth_code = $data->credential ?: $this->auth_code;
 		}
 	}
 
