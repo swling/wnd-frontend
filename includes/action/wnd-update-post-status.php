@@ -117,11 +117,13 @@ class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
 			return false;
 		}
 
+		$post_type_name = get_post_type_object($this->before_post->post_type)->label;
+
 		if ('pending' == $this->before_post->post_status and 'draft' == $this->after_status) {
-			$subject = __('内容审核失败', 'wnd') . '[ID' . $this->post_id . ']';
+			$subject = $post_type_name . '[ID' . $this->post_id . ']' . __('审核失败', 'wnd');
 			$content = wnd_message($this->remarks . '<p><a href="' . get_permalink($this->post_id) . '" target="_blank">查看</a></p>', 'is-danger');
 		} elseif ('delete' == $this->after_status) {
-			$subject = __('内容已被删除', 'wnd') . '[ID' . $this->post_id . ']';
+			$subject = $post_type_name . '[ID' . $this->post_id . ']' . __('已被删除', 'wnd');
 			$content = wnd_message('<p>Title:《' . $this->before_post->post_title . '》</p>' . $this->remarks, 'is-danger');
 		} else {
 			return false;
