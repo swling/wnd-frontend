@@ -6,6 +6,7 @@
  *Version: 0.9.10
  *Author: swling
  *Author URI: https://wndwp.com
+ *Requires PHP: 7.3
  *
  *万能的WordPress前端开发基础框架
  *
@@ -13,11 +14,6 @@
  *
  *@since 2019.1.6 : git版本控制
  *@since 2019.1.8 ：GitHub开通免费私人仓库，正式托管于GitHub
- */
-
-/**
- *@since 初始化
- *插件基础配置
  */
 
 // 版本
