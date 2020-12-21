@@ -40,10 +40,13 @@ class Wnd_User_Page extends Wnd_Module {
 			return '';
 		}
 
+		$module = static::handle_module($args) ?: '';
+		$module = $module ? ('<div class="box">' . $module . '</div>') : '';
+
 		get_header();
 		echo '<main id="user-page-container" class="column">';
-		echo '<div class="main box">';
-		echo static::handle_module($args) ?: static::build_user_page();
+		echo '<div class="main">';
+		echo $module ?: static::build_user_page();
 		echo '</div>';
 		echo '</main>';
 		get_footer();
@@ -123,19 +126,20 @@ class Wnd_User_Page extends Wnd_Module {
 	// 常规用户面板
 	protected static function build_user_page(): string {
 		if (!is_user_logged_in()) {
-			return Wnd_User_Center::render();
+			$html = '<div id="user-center" class="columns">';
+			$html .= '<div class="column"><div class="box">' . Wnd_User_Center::render() . '</div></div>';
+			$html .= '</div>';
+			return $html;
 		}
 
 		/**
 		 *登录用户用户中心默认模块
 		 */
 		$user_page_default_module = apply_filters('wnd_user_page_default_module', 'wnd_user_overview');
-		$user_page_menus          = apply_filters('wnd_user_page_menus', Wnd_User_Menus::render());
 
-		$html = '<div id="user-center">';
-		$html .= $user_page_menus;
-		$html .= '<div class="ajax-container">';
-		$html .= '</div>';
+		$html = '<div id="user-center" class="columns">';
+		$html .= '<div class="column is-narrow"><div class="box">' . Wnd_Menus::render() . '</div></div>';
+		$html .= '<div class="column"><div class="ajax-container box"></div></div>';
 		$html .= '</div>';
 		$html .= '
 <script type="text/javascript">
@@ -147,8 +151,17 @@ class Wnd_User_Page extends Wnd_Module {
 		}
 
 		var element = hash.replace("#", "")
-		$("#user-panel-tabs li").removeClass("is-active");
-		$("li." + element).addClass("is-active");
+		var a = $("li." + element +" a");
+
+		// 激活当前菜单
+		a.addClass("is-active");
+		// 移除其他同级菜单的激活状态
+		a.parent("li").siblings().find("a").removeClass("is-active");
+		// 展开当前菜单（子菜单链接适用）
+		a.parents("ul").slideDown("fast");
+		// 收起其他一级菜单的子菜单
+		a.parents("li").siblings().find("ul").slideUp("fast");
+
 		wnd_ajax_embed("#user-center .ajax-container", element);
 	}
 

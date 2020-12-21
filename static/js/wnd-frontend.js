@@ -1370,4 +1370,21 @@ jQuery(document).ready(function($) {
 	$("body").on("click", ".notification .delete", function() {
 		$(this).closest(".notification").slideUp();
 	});
+
+	/**
+	 *@since 0.9.11
+	 *Jquery 侧栏伸缩菜单
+	 *此处违背了插件不设置 UI 效果的原则。
+	 *其必要性在于，插件规划可设置拓展组件。组件相关配置通常需要对应增加菜单（参考 WP 插件设置选项），故此有必要设置一个统一的菜单
+	 */
+	$('#wnd-menu .menu-list>li a').click(function() {
+		// 展开或收起当前子菜单，设置或取消当前链接激活状态
+		$(this).toggleClass("is-active");
+		$(this).next("ul").slideToggle("fast");
+
+		// 移除其他同级菜单的激活状态
+		$(this).parent("li").siblings().find("a").removeClass("is-active");
+		// 收起其他一级菜单的子菜单
+		$(this).parents("li").siblings().find("ul").slideUp("fast");
+	});
 });
