@@ -138,7 +138,7 @@ class Wnd_User_Page extends Wnd_Module {
 		$user_page_default_module = apply_filters('wnd_user_page_default_module', 'wnd_user_overview');
 
 		$html = '<div id="user-center" class="columns">';
-		$html .= '<div class="column is-narrow"><div class="box">' . Wnd_Menus::render() . '</div></div>';
+		$html .= '<div class="column is-narrow is-hidden-mobile"><div class="box">' . Wnd_Menus::render() . '</div></div>';
 		$html .= '<div class="column"><div class="ajax-container box"></div></div>';
 		$html .= '</div>';
 		$html .= '
