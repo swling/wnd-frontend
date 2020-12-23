@@ -13,10 +13,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 	 *@param bool $enable_captcha 	提交时是否进行人机校验
 	 */
 	public function __construct(bool $enable_captcha = false) {
-		/**
-		 *@since 0.9.0
-		 *已登录用户获取验证码默认无需人机校验
-		 */
+		// 已登录用户获取验证码默认无需人机校验
 		parent::__construct(true, $enable_captcha, !is_user_logged_in());
 	}
 
