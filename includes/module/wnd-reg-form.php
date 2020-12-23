@@ -33,7 +33,6 @@ class Wnd_Reg_Form extends Wnd_Module {
 		}
 
 		$form = new Wnd_Form_User();
-		$form->add_form_attr('class', 'user-form');
 		$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>&nbsp;' . __('注册', 'wnd'), true);
 
 		/**

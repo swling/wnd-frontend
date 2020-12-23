@@ -126,7 +126,7 @@ class Wnd_User_Page extends Wnd_Module {
 	// 常规用户面板
 	protected static function build_user_page(): string {
 		if (!is_user_logged_in()) {
-			$html = '<div id="user-center" class="columns">';
+			$html = '<div id="user-page" class="columns">';
 			$html .= '<div class="column"><div class="box">' . Wnd_User_Center::render() . '</div></div>';
 			$html .= '</div>';
 			return $html;
@@ -137,7 +137,7 @@ class Wnd_User_Page extends Wnd_Module {
 		 */
 		$user_page_default_module = apply_filters('wnd_user_page_default_module', 'wnd_user_overview');
 
-		$html = '<div id="user-center" class="columns">';
+		$html = '<div id="user-page" class="columns">';
 		$html .= '<div class="column is-narrow is-hidden-mobile"><div class="box">' . Wnd_Menus::render() . '</div></div>';
 		$html .= '<div class="column"><div class="ajax-container box"></div></div>';
 		$html .= '</div>';
@@ -146,7 +146,7 @@ class Wnd_User_Page extends Wnd_Module {
 	function user_center_hash() {
 		var hash = location.hash;
 		if (!hash) {
-			wnd_ajax_embed("#user-center .ajax-container", "' . $user_page_default_module . '");
+			wnd_ajax_embed("#user-page .ajax-container", "' . $user_page_default_module . '");
 			return;
 		}
 
@@ -162,7 +162,7 @@ class Wnd_User_Page extends Wnd_Module {
 		// 收起其他一级菜单的子菜单
 		a.parents("li").siblings().find("ul").slideUp("fast");
 
-		wnd_ajax_embed("#user-center .ajax-container", element);
+		wnd_ajax_embed("#user-page .ajax-container", element);
 	}
 
 	// 用户中心Tabs

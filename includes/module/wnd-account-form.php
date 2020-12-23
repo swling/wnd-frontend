@@ -27,7 +27,6 @@ class Wnd_Account_Form extends Wnd_Module_User {
 		}
 
 		$form = new Wnd_Form_User();
-		$form->add_form_attr('class', 'user-form');
 		$form->add_user_password(__('密码', 'wnd'), __('当前密码', 'wnd'));
 		$form->add_user_new_password(__('新密码', 'wnd'), __('新密码', 'wnd'));
 		$form->add_user_new_password_repeat(__('确认新密码', 'wnd'), __('确认新密码', 'wnd'));
