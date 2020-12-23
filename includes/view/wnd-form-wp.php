@@ -46,13 +46,18 @@ class Wnd_Form_WP extends Wnd_Form {
 		// 继承基础变量
 		parent::__construct();
 
+		/**
+		 *基础属性
+		 *
+		 *- 人机校验：若当前未配置人机校验服务，则忽略传参，统一取消表单相关属性
+		 */
 		$this->user                        = wp_get_current_user();
-		$this->is_ajax_submit              = $is_ajax_submit;
-		$this->enable_captcha              = $enable_captcha;
-		$this->enable_verification_captcha = $enable_verification_captcha;
 		$this->captcha_service             = wnd_get_config('captcha_service');
 		static::$primary_color             = wnd_get_config('primary_color');
 		static::$second_color              = wnd_get_config('second_color');
+		$this->is_ajax_submit              = $is_ajax_submit;
+		$this->enable_captcha              = $this->captcha_service ? $enable_captcha : false;
+		$this->enable_verification_captcha = $this->captcha_service ? $enable_verification_captcha : false;
 	}
 
 	/**
@@ -136,9 +141,9 @@ class Wnd_Form_WP extends Wnd_Form {
 	protected function add_verification_field(string $device_type, string $type, string $template = '') {
 		/**
 		 * @since 0.9.11
-		 * 同一表单，若设置了验证码且开启了验证码人机验证，则提交时无效再次进行人机验证
+		 * 同一表单，若设置了验证码（调用本方法），且开启了验证码人机验证，则提交时无效再次进行人机验证
 		 */
-		$this->enable_captcha = !$this->enable_verification_captcha;
+		$this->enable_captcha = $this->enable_verification_captcha ? false : $this->enable_captcha;
 
 		// 配置手机或邮箱验证码基础信息
 		if ('email' == $device_type) {
@@ -509,8 +514,10 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *表单脚本：将在表单结束成后加载
 	 *@since 0.8.64
 	 */
-	protected function render_script(): string{
-		$captcha = $this->captcha_service ? Wnd_Captcha::get_instance() : false;
+	protected function render_script(): string {
+		if ($this->enable_verification_captcha or $this->enable_captcha) {
+			$captcha = Wnd_Captcha::get_instance();
+		}
 
 		// 短信、邮件
 		$send_code_script = '
@@ -521,7 +528,7 @@ class Wnd_Form_WP extends Wnd_Form {
 				});
 			});
 		</script>';
-		$send_code_script = ($captcha and $this->enable_verification_captcha) ? $captcha->render_send_code_script() : $send_code_script;
+		$send_code_script = $this->enable_verification_captcha ? $captcha->render_send_code_script() : $send_code_script;
 
 		// 表单提交
 		$submit_script = '
@@ -537,7 +544,7 @@ class Wnd_Form_WP extends Wnd_Form {
 				});
 			});
 		</script>';
-		$submit_script = ($captcha and $this->enable_captcha) ? $captcha->render_submit_form_script() : $submit_script;
+		$submit_script = $this->enable_captcha ? $captcha->render_submit_form_script() : $submit_script;
 
 		// 构造完整脚本
 		return $send_code_script . $submit_script;
