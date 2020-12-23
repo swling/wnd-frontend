@@ -30,7 +30,6 @@ class Wnd_Unbind_Openid_Form extends Wnd_Module_User {
 
 		// 构建解绑操作提交表单
 		$form = new Wnd_Form_User();
-		$form->add_form_attr('class', 'user-form');
 		$form->set_form_title('<span class="icon"><i class="fas fa-minus-circle"></i></span>&nbsp' . __('解除绑定', 'wnd'), true);
 
 		$form->add_html('<div class="field is-grouped is-grouped-centered">');

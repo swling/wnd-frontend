@@ -13,7 +13,6 @@ class Wnd_Bind_Phone_Form extends Wnd_Module_User {
 		$current_user_phone = wnd_get_user_phone($current_user->ID);
 
 		$form = new Wnd_Form_User();
-		$form->add_form_attr('class', 'user-form');
 		$form->set_form_title('<span class="icon"><i class="fas fa-mobile-alt"></i></span>' . __('绑定手机', 'wnd'), true);
 
 		// 如果当前用户更改手机号，需要验证密码，首次绑定不需要

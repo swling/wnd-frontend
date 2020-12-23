@@ -12,7 +12,6 @@ class Wnd_Bind_Email_Form extends Wnd_Module_User {
 		$current_user = wp_get_current_user();
 
 		$form = new Wnd_Form_User();
-		$form->add_form_attr('class', 'user-form');
 		$form->set_form_title('<span class="icon"><i class="fa fa-at"></i></span>' . __('绑定邮箱', 'wnd'), true);
 
 		// 如果当前用户更改邮箱，则需要验证密码，首次绑定不需要
