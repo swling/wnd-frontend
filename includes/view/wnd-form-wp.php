@@ -27,6 +27,8 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	protected $enable_captcha;
 
+	protected $enable_verification_captcha;
+
 	protected $captcha_service;
 
 	public static $primary_color;
@@ -36,28 +38,21 @@ class Wnd_Form_WP extends Wnd_Form {
 	/**
 	 *@since 2019.07.17
 	 *
-	 *@param bool $is_ajax_submit 	是否ajax提交
-	 *@param bool $enable_captcha 	提交时是否进行人机校验
+	 *@param bool $is_ajax_submit 				是否ajax提交
+	 *@param bool $enable_captcha 				提交时是否进行人机校验
+	 *@param bool enable_verification_captcha 	获取验证码时是否进行人机校验
 	 */
-	public function __construct(bool $is_ajax_submit = true, bool $enable_captcha = false) {
+	public function __construct(bool $is_ajax_submit = true, bool $enable_captcha = false, bool $enable_verification_captcha = true) {
 		// 继承基础变量
 		parent::__construct();
 
-		$this->user            = wp_get_current_user();
-		$this->is_ajax_submit  = $is_ajax_submit;
-		$this->enable_captcha  = $enable_captcha;
-		$this->captcha_service = wnd_get_config('captcha_service');
-		static::$primary_color = wnd_get_config('primary_color');
-		static::$second_color  = wnd_get_config('second_color');
-
-		/**
-		 *@since 0.8.64
-		 *开启验证码字段
-		 */
-		if ($this->enable_captcha) {
-			$this->add_hidden(Wnd_Captcha::$captcha_name, '');
-			$this->add_hidden(Wnd_Captcha::$captcha_nonce_name, '');
-		}
+		$this->user                        = wp_get_current_user();
+		$this->is_ajax_submit              = $is_ajax_submit;
+		$this->enable_captcha              = $enable_captcha;
+		$this->enable_verification_captcha = $enable_verification_captcha;
+		$this->captcha_service             = wnd_get_config('captcha_service');
+		static::$primary_color             = wnd_get_config('primary_color');
+		static::$second_color              = wnd_get_config('second_color');
 	}
 
 	/**
@@ -131,12 +126,20 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	/**
 	 *构建验证码字段
+	 *@param string 	$device_type  	email / phone
 	 *@param string 	$type 		  	register / reset_password / bind / verify
 	 *@param string 	$template 		短信模板
+	 *
 	 *注册时若当前手机已注册，则无法发送验证码
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
-	protected function add_verification_field(string $device_type, string $type = 'verify', string $template = '') {
+	protected function add_verification_field(string $device_type, string $type, string $template = '') {
+		/**
+		 * @since 0.9.11
+		 * 同一表单，若设置了验证码且开启了验证码人机验证，则提交时无效再次进行人机验证
+		 */
+		$this->enable_captcha = !$this->enable_verification_captcha;
+
 		// 配置手机或邮箱验证码基础信息
 		if ('email' == $device_type) {
 			$device      = $this->user->data->user_email ?? '';
@@ -153,21 +156,22 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 
 		// Action 层需要验证表单字段签名(需要完整包含 button data 属性名及固定值 action、device、人机验证字段 )
-		$sign = Wnd_Request::sign(
-			[
-				'action',
-				Wnd_Captcha::$captcha_name,
-				Wnd_Captcha::$captcha_nonce_name,
-				'type',
-				'template',
-				'_ajax_nonce',
-				'type_nonce',
-				'device_type',
-				'device_name',
-				'device',
-				'interval',
-			]
-		);
+		$data_keys = [
+			'action',
+			'type',
+			'template',
+			'_ajax_nonce',
+			'type_nonce',
+			'device_type',
+			'device_name',
+			'device',
+			'interval',
+		];
+		if ($this->enable_verification_captcha) {
+			$data_keys[] = Wnd_Captcha::$captcha_name;
+			$data_keys[] = Wnd_Captcha::$captcha_nonce_name;
+		}
+		$sign = Wnd_Request::sign($data_keys);
 
 		// 构建发送按钮
 		$button = '<button type="button"';
@@ -180,8 +184,10 @@ class Wnd_Form_WP extends Wnd_Form {
 		$button .= ' data-device_type="' . $device_type . '"';
 		$button .= ' data-device_name="' . $label . '"';
 		$button .= ' data-interval="' . wnd_get_config('min_verification_interval') . '"';
-		$button .= ' data-' . Wnd_Captcha::$captcha_name . '=""';
-		$button .= ' data-' . Wnd_Captcha::$captcha_nonce_name . '=""';
+		if ($this->enable_verification_captcha) {
+			$button .= ' data-' . Wnd_Captcha::$captcha_name . '=""';
+			$button .= ' data-' . Wnd_Captcha::$captcha_nonce_name . '=""';
+		}
 		$button .= ' data-' . Wnd_Request::$sign_name . '="' . $sign . '"';
 		$button .= '>' . __('获取验证码', 'wnd') . '</button>';
 
@@ -399,6 +405,15 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 
 		/**
+		 *@since 0.8.64
+		 *开启验证码字段
+		 */
+		if ($this->enable_captcha) {
+			$this->add_hidden(Wnd_Captcha::$captcha_name, '');
+			$this->add_hidden(Wnd_Captcha::$captcha_nonce_name, '');
+		}
+
+		/**
 		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
 		 */
 		$this->build_sign_field();
@@ -506,7 +521,7 @@ class Wnd_Form_WP extends Wnd_Form {
 				});
 			});
 		</script>';
-		$send_code_script = $captcha ? $captcha->render_send_code_script() : $send_code_script;
+		$send_code_script = ($captcha and $this->enable_verification_captcha) ? $captcha->render_send_code_script() : $send_code_script;
 
 		// 表单提交
 		$submit_script = '
