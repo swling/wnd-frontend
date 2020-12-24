@@ -18,6 +18,7 @@ class Wnd_Add_Filter_WP {
 		add_filter('wp_insert_attachment_data', [__CLASS__, 'filter_wp_insert_attachment_data'], 10, 2);
 		add_filter('get_comment_author_url', [__CLASS__, 'filter_comment_author_url'], 10, 3);
 		add_filter('get_avatar', [__CLASS__, 'filter_avatar'], 10, 5);
+		add_filter('get_comment_author', [__CLASS__, 'filter_comment_author'], 10, 3);
 	}
 
 	/**
@@ -191,5 +192,19 @@ class Wnd_Add_Filter_WP {
 		}
 
 		return $avatar;
+	}
+
+	/**
+	 * 登录用户的评论名称同步显示为昵称
+	 * @since 0.9.11
+	 */
+	public static function filter_comment_author($author, $comment_ID, $comment) {
+		if (!$comment->user_id) {
+			return $author;
+		}
+
+		$user = get_userdata($comment->user_id);
+
+		return $user->display_name ?: $author;
 	}
 }
