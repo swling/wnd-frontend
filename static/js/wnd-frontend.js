@@ -15,6 +15,12 @@ var wnd_users_api = wnd.rest_url + wnd.users_api + lang_query;
 var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api + lang_query;
 
 /**
+ *侧边栏是否已加载
+ *@since 0.9.13
+ */
+var menus_side_loaded = false;
+
+/**
  *判断元素是否在可视范围
  *@param element jQuery选择器
  *@param inViewType 可视类型：bottom / top / both
@@ -93,20 +99,20 @@ function wnd_is_spider() {
 function wnd_alert_modal(html, is_gallery = false) {
 	wnd_reset_modal();
 	if (is_gallery) {
-		$(".modal").addClass("is-active wnd-gallery");
+		$("#modal.modal").addClass("is-active wnd-gallery");
 	} else {
-		$(".modal").addClass("is-active");
-		$(".modal-entry").addClass("box");
+		$("#modal.modal").addClass("is-active");
+		$("#modal .modal-entry").addClass("box");
 	}
-	$(".modal-entry").html(html);
+	$("#modal .modal-entry").html(html);
 }
 
 // 直接弹出消息
 function wnd_alert_msg(msg, time = 0) {
 	wnd_reset_modal();
-	$(".modal").addClass("is-active");
-	$(".modal-entry").removeClass("box");
-	$(".modal-entry").html('<div class="alert-message has-text-white has-text-centered">' + msg + '</div>');
+	$("#modal.modal").addClass("is-active");
+	$("#modal .modal-entry").removeClass("box");
+	$("#modal .modal-entry").html('<div class="alert-message has-text-white has-text-centered">' + msg + '</div>');
 	// 定时关闭
 	if (time > 0) {
 		var timer = null;
@@ -191,9 +197,10 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 *典型用途：	击弹出登录框、点击弹出建议发布文章框
 *@param 	module 		string 		module类
 *@param 	param 		json 		传参
+ *@param 	callback 	回调函数
 */
 // ajax 从后端请求内容，并以弹窗形式展现
-function wnd_ajax_modal(module, param = {}) {
+function wnd_ajax_modal(module, param = {}, callback = '') {
 	$.ajax({
 		type: "GET",
 		url: wnd_interface_api,
@@ -211,6 +218,9 @@ function wnd_ajax_modal(module, param = {}) {
 			wnd_reset_modal();
 			if (0 != response.status) {
 				wnd_alert_modal(response.data);
+				if (callback) {
+					window[callback](response);
+				}
 			} else {
 				wnd_alert_modal(response.msg);
 			}
@@ -228,8 +238,9 @@ function wnd_ajax_modal(module, param = {}) {
  *@param 	container 	srting 		指定嵌入的容器选择器
  *@param 	module 		string 		module类名称
  *@param 	param 		json 		传参
+ *@param callback 	回调函数
  **/
-function wnd_ajax_embed(container, module, param = {}) {
+function wnd_ajax_embed(container, module, param = {}, callback = '') {
 	$.ajax({
 		type: "GET",
 		url: wnd_interface_api,
@@ -249,6 +260,9 @@ function wnd_ajax_embed(container, module, param = {}) {
 
 			if (0 != response.status) {
 				$(container).html(response.data);
+				if (callback) {
+					window[callback](response);
+				}
 			} else {
 				$(container).html(response.msg);
 			}
@@ -672,6 +686,62 @@ function wnd_send_code(button) {
 		}
 	});
 };
+
+/**
+ *@since 0.9.13
+ *Ajax 加载侧边栏
+ */
+function wnd_load_menus_side() {
+	var container = "#wnd-side-container";
+	var module = "wnd_menus_side";
+
+	if ($("#wnd-side-background").length <= 0) {
+		$("body").append(
+			'<div id="wnd-side-container"></div>' +
+			'<div id="wnd-side-background" class="modal" style="z-index:31;">' +
+			'<div class="modal-background"></div>' +
+			'</div>'
+		);
+	}
+
+	if (menus_side_loaded) {
+		wnd_show_menus_side();
+	} else {
+		wnd_ajax_embed(container, module, {}, 'wnd_show_menus_side');
+	}
+}
+
+/**
+ *@since 0.9.13
+ *展开侧边栏
+ */
+function wnd_show_menus_side() {
+	menus_side_loaded = true;
+
+	$("#menus-side").css({
+		"left": $("#menus-side").width() * -1
+	});
+
+	$("#menus-side").animate({
+		left: "0"
+	});
+	$(".navbar-burger.wnd-side-burger").addClass("is-active");
+	$("#menus-side").addClass("is-active");
+	$("#wnd-side-background").addClass("is-active");
+}
+
+/**
+ *@since 0.9.13
+ *收起侧边栏
+ */
+function wnd_close_menus_side() {
+	$("#menus-side.is-active").animate({
+		left: '-' + $("#menus-side").width()
+	});
+	$(".navbar-burger.wnd-side-burger").removeClass("is-active");
+	$("#menus-side").removeClass("is-active");
+	$("#wnd-side-background").removeClass("is-active");
+}
 
 //####################### 文档加载完成后才能执行的功能
 jQuery(document).ready(function($) {
@@ -1377,7 +1447,7 @@ jQuery(document).ready(function($) {
 	 *此处违背了插件不设置 UI 效果的原则。
 	 *其必要性在于，插件规划可设置拓展组件。组件相关配置通常需要对应增加菜单（参考 WP 插件设置选项），故此有必要设置一个统一的菜单
 	 */
-	$('.wnd-menu .menu-list>li a').click(function() {
+	$("body").on("click", '.wnd-menu .menu-list>li a', function() {
 		// 展开或收起当前子菜单，设置或取消当前链接激活状态
 		$(this).toggleClass("is-active");
 		$(this).next("ul").slideToggle("fast");
@@ -1386,5 +1456,38 @@ jQuery(document).ready(function($) {
 		$(this).parent("li").siblings().find("a").removeClass("is-active");
 		// 收起其他一级菜单的子菜单
 		$(this).parents("li").siblings().find("ul").slideUp("fast");
+	});
+
+	/**
+	 *@since 0.9.13 从主题中移植
+	 *移动导航点击展开侧边栏
+	 */
+	$("body").on("click", ".navbar-burger.wnd-side-burger", function() {
+		if ($(this).hasClass("is-active")) {
+			wnd_close_menus_side();
+		} else {
+			wnd_load_menus_side();
+		}
+	});
+
+
+	/**
+	 *@since 0.9.13
+	 *点击背景收起展开的侧边栏
+	 */
+	$("body").on("click", "#wnd-side-background .modal-background", function() {
+		wnd_close_menus_side();
+	})
+
+	/**
+	 *@since 0.9.13
+	 *点击侧边栏有效菜单，收起侧边栏
+	 */
+	$("body").on("click", "#menus-side .menu a", function() {
+		$(this).parents(".menu").find("a").removeClass("is-active");
+		$(this).addClass("is-active");
+		if ($(this).attr("href") && $(this).attr("href") != "#") {
+			wnd_close_menus_side();
+		}
 	});
 });
