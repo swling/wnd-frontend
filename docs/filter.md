@@ -264,13 +264,19 @@ apply_filters('enable_post_form_captcha', !is_user_logged_in(), $post_type, $pos
 apply_filters('wnd_sku_keys', $sku_keys, $post_type);
 ```
 
-## 前端用户中心页面
+## 菜单
 ```php
+/**
+*@since 0.9.12
+*侧边栏菜单顶部
+*/
+apply_filters('wnd_menus_side_before', '');
+
 /**
  *@since 0.9.11
  *自定义用户中心页面菜单
  */
-add_filter('wnd_menus', function ($menus) {
+add_filter('wnd_menus', function ($menus, $args) {
 	$html = '<li>';
 	$html .= '<a>拓展菜单测试</a>';
 	
@@ -287,8 +293,17 @@ add_filter('wnd_menus', function ($menus) {
 	// 此为【替换】菜单
 	return $html;
 
-}, 12, 1);
+}, 12, 2);
 
+/**
+*@since 0.9.12
+*侧边栏菜单底部
+*/
+apply_filters('wnd_menus_side_after', '');
+```
+
+## 前端用户中心页面
+```php
 /**
  *@since 0.9.2
  *用户中心默认模块

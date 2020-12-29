@@ -9,13 +9,19 @@ namespace Wnd\Module;
 class Wnd_Menus extends Wnd_Module {
 
 	// 导航Tabs
-	protected static function build(): string{
-		$html = '<div id="wnd-menu" class="menu">';
+	protected static function build($args = []): string{
+		$defaults = [
+			'inside'               => false,
+			'expand_default_menus' => true,
+		];
+		$args = wp_parse_args($args, $defaults);
+
+		$html = '<div class="wnd-menu menu">';
 		$html .= '<ul class="menu-list">';
 
 		// 拓展菜单 API
-		$default_menus = wnd_is_manager() ? static::build_manager_menus() : static::build_user_menus();
-		$html .= apply_filters('wnd_menus', $default_menus);
+		$default_menus = wnd_is_manager() ? static::build_manager_menus($args['expand_default_menus']) : static::build_user_menus($args['expand_default_menus']);
+		$html .= apply_filters('wnd_menus', $default_menus, $args);
 
 		$html .= '</ul>';
 		$html .= '</div>';
@@ -24,11 +30,12 @@ class Wnd_Menus extends Wnd_Module {
 	}
 
 	// 导航Tabs
-	protected static function build_user_menus(): string{
+	protected static function build_user_menus($expand_default_menus): string{
 		$html = '<li>';
-		$html .= '<a href="#">' . __('用户中心', 'wnd') . '</a>';
-		$html .= '<ul>';
+		$html .= '<a>' . __('用户中心', 'wnd') . '&nbsp;<i class="fas fa-chevron-down"></i></a>';
+		$html .= $expand_default_menus ? '<ul>' : '<ul style="display:none">';
 
+		$html .= '<li><a href="' . static::get_front_page_url() . '#">概览</a></li>';
 		$html .= '<li class="wnd_user_posts_panel"><a href="' . static::get_front_page_url() . '#wnd_user_posts_panel">内容</a></li>';
 		$html .= '<li class="wnd_user_finance_panel"><a href="' . static::get_front_page_url() . '#wnd_user_finance_panel">财务</a></li>';
 		$html .= '<li class="wnd_profile_form"><a href="' . static::get_front_page_url() . '#wnd_profile_form">资料</a></li>';
@@ -42,12 +49,12 @@ class Wnd_Menus extends Wnd_Module {
 		return $html;
 	}
 
-	protected static function build_manager_menus() {
+	protected static function build_manager_menus($expand_default_menus) {
 		$html = '<li>';
-		$html .= '<a href="#">' . __('用户中心', 'wnd') . '</a>';
-		$html .= '<ul>';
+		$html .= '<a>' . __('用户中心', 'wnd') . '&nbsp;<i class="fas fa-chevron-down"></i></a>';
+		$html .= $expand_default_menus ? '<ul>' : '<ul style="display:none">';
 
-		$html .= '<li class="wnd_admin_posts_panel"><a href="' . static::get_front_page_url() . '#wnd_admin_posts_panel">审核</a></li>';
+		$html .= '<li><a href="' . static::get_front_page_url() . '#">概览</a></li>';
 		$html .= '<li class="wnd_admin_finance_panel"><a href="' . static::get_front_page_url() . '#wnd_admin_finance_panel">统计</a></li>';
 		$html .= '<li class="wnd_user_posts_panel"><a href="' . static::get_front_page_url() . '#wnd_user_posts_panel">内容</a></li>';
 		$html .= '<li class="wnd_user_finance_panel"><a href="' . static::get_front_page_url() . '#wnd_user_finance_panel">财务</a></li>';

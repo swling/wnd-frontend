@@ -1377,7 +1377,7 @@ jQuery(document).ready(function($) {
 	 *此处违背了插件不设置 UI 效果的原则。
 	 *其必要性在于，插件规划可设置拓展组件。组件相关配置通常需要对应增加菜单（参考 WP 插件设置选项），故此有必要设置一个统一的菜单
 	 */
-	$('#wnd-menu .menu-list>li a').click(function() {
+	$('.wnd-menu .menu-list>li a').click(function() {
 		// 展开或收起当前子菜单，设置或取消当前链接激活状态
 		$(this).toggleClass("is-active");
 		$(this).next("ul").slideToggle("fast");
