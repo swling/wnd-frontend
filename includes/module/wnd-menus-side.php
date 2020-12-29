@@ -13,12 +13,12 @@ use Wnd\Module\Wnd_Search_Form;
 class Wnd_Menus_Side extends Wnd_Module {
 
 	protected static function build($args = []): string{
-		$html = '<aside id="menus-side" style="position: fixed;top: 0;height: 100%;z-index: 32;background: #FFF;">';
+		$html = '<aside id="menus-side" style="position: fixed;top: 0;height: 100%;z-index: 32;background: #FFF;max-width:100%;min-width:200px;">';
 
-		$html .= '<div class="columns is-marginless">';
+		$html .= '<div class="columns is-marginless is-mobile">';
 		$html .= '<div class="column">' . Wnd_Search_Form::render() . '</div>';
-		$html .= '<div class="column is-narrow is-paddingless">';
-		$html .= '<div class="navbar-burger wnd-side-burger navbar-brand is-pulled-right is-active">';
+		$html .= '<div class="column is-narrow is-marginless is-paddingless">';
+		$html .= '<div class="navbar-burger wnd-side-burger navbar-brand is-active" style="display:block">';
 		$html .= '<span></span><span></span><span></span>';
 		$html .= '</div>';
 		$html .= '</div>';
