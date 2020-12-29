@@ -675,7 +675,7 @@ class Wnd_Filter {
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<ul class="tab">';
 		if ($with_any_tab) {
-			$class = ('any' == $this->wp_query_args['post_type']) ? ' is-active' : '';
+			$class = ('any' == $this->wp_query_args['post_type'] or !$this->wp_query_args['post_type']) ? ' is-active' : '';
 			$tabs .= '<li class="' . $class . '">';
 			$tabs .= '<a data-key="type" data-value="any" href="' . add_query_arg('type', 'any', $uri) . '">' . __('全部', 'wnd') . '</a>';
 			$tabs .= '</li>';
