@@ -204,6 +204,9 @@ class Wnd_Add_Filter_WP {
 		}
 
 		$user = get_userdata($comment->user_id);
+		if (!$user) {
+			return $author;
+		}
 
 		return $user->display_name ?: $author;
 	}
