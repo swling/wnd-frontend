@@ -25,7 +25,7 @@ class Wnd_Menus extends Wnd_Module {
 		} elseif (wnd_is_manager()) {
 			$default_menus = static::build_manager_menus($args['expand_default_menus']);
 		} else {
-			static::build_user_menus($args['expand_default_menus']);
+			$default_menus = static::build_user_menus($args['expand_default_menus']);
 		}
 
 		$html .= apply_filters('wnd_menus', $default_menus, $args);
