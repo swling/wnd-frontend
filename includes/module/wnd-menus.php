@@ -20,7 +20,14 @@ class Wnd_Menus extends Wnd_Module {
 		$html .= '<ul class="menu-list">';
 
 		// 拓展菜单 API
-		$default_menus = wnd_is_manager() ? static::build_manager_menus($args['expand_default_menus']) : static::build_user_menus($args['expand_default_menus']);
+		if (!is_user_logged_in()) {
+			$default_menus = '';
+		} elseif (wnd_is_manager()) {
+			$default_menus = static::build_manager_menus($args['expand_default_menus']);
+		} else {
+			static::build_user_menus($args['expand_default_menus']);
+		}
+
 		$html .= apply_filters('wnd_menus', $default_menus, $args);
 
 		$html .= '</ul>';

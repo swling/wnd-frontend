@@ -26,16 +26,16 @@ class Wnd_Menus_Side extends Wnd_Module {
 
 		//未登录用户
 		if (!is_user_logged_in()) {
-			$html .= '<div class="has-text-centered">';
+			$html .= '<div class="has-text-centered mb-3">';
 			$html .= wnd_modal_button('免费注册', 'wnd_user_center', [], 'is-black');
 			$html .= '&nbsp;';
 			$html .= wnd_modal_button('立即登录', 'wnd_user_center', ['do' => 'login'], 'is-danger is-outlined');
 			$html .= '</div>';
-		} else {
-			$html .= apply_filters('wnd_menus_side_before', '');
-			$html .= Wnd_Menus::render(['inside' => true, 'expand_default_menus' => false]);
-			$html .= apply_filters('wnd_menus_side_after', '');
 		}
+
+		$html .= apply_filters('wnd_menus_side_before', '');
+		$html .= Wnd_Menus::render(['inside' => true, 'expand_default_menus' => false]);
+		$html .= apply_filters('wnd_menus_side_after', '');
 
 		$html .= '</aside>';
 		return $html;
