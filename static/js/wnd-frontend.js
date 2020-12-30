@@ -1490,4 +1490,13 @@ jQuery(document).ready(function($) {
 			wnd_close_menus_side();
 		}
 	});
+
+	/**
+	 *@since 0.9.15 
+	 *从主题移植：点击Ajax 多重筛选 Tabs 新增active
+	 */
+	$("body").on("click", ".ajax-filter .tabs a", function() {
+		$(this).parent("li").addClass("is-active");
+		$(this).parent("li").siblings().removeClass("is-active");
+	});
 });
