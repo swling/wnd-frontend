@@ -5,13 +5,18 @@ use Exception;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Filter;
 use Wnd\View\Wnd_Filter_User;
+use WP_REST_Request;
 
 /**
  *@since 2019.04.07 API改造
- *
  * # 主题或插件可拓展 Action、Module、Jsonget 详情参见：
  * - @see docs/api.md
  * - @see docs/autoloader.md
+ *
+ * 注意：
+ *	通过回调函数传参的数据是未经处理的原始数据（不会添加反斜线）。
+ *	而 WordPress 环境中，默认的超全局变量 $_POST / $_GET / $_REQUEST 则是经过转义的数据（无论 PHP 配置）
+ *	@link https://make.wordpress.org/core/2016/04/06/rest-api-slashed-data-in-wordpress-4-4-and-4-5/
  */
 class Wnd_API {
 
@@ -96,9 +101,6 @@ class Wnd_API {
 	 *@return string 包含完整命名空间的类名称
 	 */
 	public static function parse_class(string $class, string $api): string{
-		// 移除WP自动转义(必须，WordPress不管$ _magic_quotes_gpc（）返回什么，都会在$ _POST / $ _ GET / $ _ REQUEST / $ _ COOKIE中添加斜杠)
-		$class = stripslashes_deep($class);
-
 		/**
 		 *拓展插件类请求格式：Wndt_File_Import\Wndt_Demo
 		 *判断是否为拓展插件类，若是，则提取插件名称
@@ -140,16 +142,16 @@ class Wnd_API {
 	/**
 	 *@since 2019.04.07
 	 *UI 响应
-	 *@param $_GET['module'] 	string	后端响应模块类
 	 *
+	 *@param $request  WP_REST_Request Object
 	 */
-	public static function handle_interface(): array{
-		if (!isset($_GET['module'])) {
+	public static function handle_interface(WP_REST_Request $request): array{
+		if (!isset($request['module'])) {
 			return ['status' => 0, 'msg' => __('未指定UI', 'wnd')];
 		}
 
 		// 解析实际类名称及参数
-		$class = static::parse_class($_GET['module'], 'Module');
+		$class = static::parse_class($request['module'], 'Module');
 
 		/**
 		 *@since 2019.10.01
@@ -169,16 +171,16 @@ class Wnd_API {
 	/**
 	 *@since 2020.04.24
 	 *获取 json data
-	 *@param $_GET['data'] 	string	后端响应
 	 *
+	 *@param $request  WP_REST_Request Object
 	 */
-	public static function handle_jsonget(): array{
-		if (!isset($_GET['data'])) {
+	public static function handle_jsonget(WP_REST_Request $request): array{
+		if (!isset($request['data'])) {
 			return ['status' => 0, 'msg' => __('未指定Data', 'wnd')];
 		}
 
 		// 解析实际类名称及参数
-		$class = static::parse_class($_GET['data'], 'JsonGet');
+		$class = static::parse_class($request['data'], 'JsonGet');
 
 		if (!is_callable([$class, 'get'])) {
 			return ['status' => 0, 'msg' => __('无效的Json Data', 'wnd') . ':' . $class];
@@ -194,20 +196,24 @@ class Wnd_API {
 	/**
 	 *@since 2019.04.07
 	 *数据处理
-	 *@param $_POST['_ajax_nonce'] 	string 	wp nonce校验
-	 *@param $_POST['action']	 	string 	后端响应类
 	 *
+	 *注意：
+	 *	WordPress Rest API 回调函数的传参 $request 数据为原始数据，如直接使用 $request 数据执行数据库操作需要做数据清理。
+	 *	因此在本插件，Action 层相关方法中，用户数据采用 Wnd\Utility\Wnd_Request 统一处理
+	 * 	@see Wnd\Utility\Wnd_Request; Wnd\Action\Wnd_Action_Ajax
+	 *
+	 *@param $request  WP_REST_Request Object
 	 */
-	public static function handle_action(): array{
-		if (!isset($_POST['action'])) {
+	public static function handle_action(WP_REST_Request $request): array{
+		if (!isset($request['action'])) {
 			return ['status' => 0, 'msg' => __('未指定Action', 'wnd')];
 		}
 
 		// 解析实际类名称
-		$class = static::parse_class($_POST['action'], 'Action');
+		$class = static::parse_class($request['action'], 'Action');
 
 		// nonce校验：action
-		if (!wp_verify_nonce($_POST['_ajax_nonce'] ?? '', $_POST['action'])) {
+		if (!wp_verify_nonce($request['_ajax_nonce'] ?? '', $request['action'])) {
 			return ['status' => 0, 'msg' => __('Nonce校验失败', 'wnd')];
 		}
 
@@ -237,7 +243,7 @@ class Wnd_API {
 	 *可以理解为，Wnd\View\Wnd_Filter 是通过生成一个筛选视图，发送用户请求，最终根据用户请求，生成新的视图的特殊类：
 	 *视图<->控制<->视图
 	 *
-	 * @see Wnd_Filter: parse_url_to_wp_query() 解析 $_GET 规则：
+	 * @see Wnd_Filter: parse_url_to_wp_query() 解析规则：
 	 * type={post_type}
 	 * status={post_status}
 	 *
@@ -254,16 +260,9 @@ class Wnd_API {
 	 * 其他查询（具体参考 wp_query）
 	 * $wp_query_args[$key] = $value;
 	 *
+	 *@param $request  WP_REST_Request Object
 	 **/
-	public static function handle_posts(): array{
-		/**
-		 *Post模板函数可能包含反斜杠（如命名空间）故需移除WP自带的转义
-		 *@since 2019.12.18
-		 *
-		 */
-		$_GET = stripslashes_deep($_GET);
-
-		// 根据请求GET参数，获取wp_query查询参数
+	public static function handle_posts(WP_REST_Request $request): array{
 		try {
 			$filter = new Wnd_Filter(true);
 		} catch (Exception $e) {
@@ -316,16 +315,9 @@ class Wnd_API {
 	 *@since 2020.05.05
 	 *User 筛选 API
 	 *
+	 *@param $request  WP_REST_Request Object
 	 */
-	public static function handle_users(): array{
-		/**
-		 *模板函数可能包含反斜杠（如命名空间）故需移除WP自带的转义
-		 *@since 2019.12.18
-		 *
-		 */
-		$_GET = stripslashes_deep($_GET);
-
-		// 根据请求GET参数，获取wp_query查询参数
+	public static function handle_users(WP_REST_Request $request): array{
 		try {
 			$filter = new Wnd_Filter_User(true);
 		} catch (Exception $e) {
