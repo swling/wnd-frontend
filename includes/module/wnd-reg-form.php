@@ -45,9 +45,9 @@ class Wnd_Reg_Form extends Wnd_Module {
 		$form->add_user_password(__('密码', 'wnd'), __('密码', 'wnd'));
 
 		if ('phone' == $args['type']) {
-			$form->add_phone_verification('register', wnd_get_config('sms_template_r'));
+			$form->add_phone_verification('register', wnd_get_config('sms_template_r'), true);
 		} else {
-			$form->add_email_verification('register');
+			$form->add_email_verification('register', '', true);
 		}
 		if (wnd_get_config('agreement_url') or 1) {
 			$text = __('已阅读并同意', 'wnd') . '<a href="' . wnd_get_config('agreement_url') . '" target="_blank">' . __('《注册协议》', 'wnd') . '</a>';

@@ -38,11 +38,10 @@ class Wnd_Form_WP extends Wnd_Form {
 	/**
 	 *@since 2019.07.17
 	 *
-	 *@param bool $is_ajax_submit 				是否ajax提交
-	 *@param bool $enable_captcha 				提交时是否进行人机校验
-	 *@param bool enable_verification_captcha 	获取验证码时是否进行人机校验
+	 *@param bool $is_ajax_submit 	是否ajax提交
+	 *@param bool $enable_captcha 	提交时是否进行人机校验
 	 */
-	public function __construct(bool $is_ajax_submit = true, bool $enable_captcha = false, bool $enable_verification_captcha = true) {
+	public function __construct(bool $is_ajax_submit = true, bool $enable_captcha = false) {
 		// 继承基础变量
 		parent::__construct();
 
@@ -51,13 +50,12 @@ class Wnd_Form_WP extends Wnd_Form {
 		 *
 		 *- 人机校验：若当前未配置人机校验服务，则忽略传参，统一取消表单相关属性
 		 */
-		$this->user                        = wp_get_current_user();
-		$this->captcha_service             = wnd_get_config('captcha_service');
-		static::$primary_color             = wnd_get_config('primary_color');
-		static::$second_color              = wnd_get_config('second_color');
-		$this->is_ajax_submit              = $is_ajax_submit;
-		$this->enable_captcha              = $this->captcha_service ? $enable_captcha : false;
-		$this->enable_verification_captcha = $this->captcha_service ? $enable_verification_captcha : false;
+		$this->user            = wp_get_current_user();
+		$this->captcha_service = wnd_get_config('captcha_service');
+		static::$primary_color = wnd_get_config('primary_color');
+		static::$second_color  = wnd_get_config('second_color');
+		$this->is_ajax_submit  = $is_ajax_submit;
+		$this->enable_captcha  = $this->captcha_service ? $enable_captcha : false;
 	}
 
 	/**
@@ -131,19 +129,21 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	/**
 	 *构建验证码字段
-	 *@param string 	$device_type  	email / phone
-	 *@param string 	$type 		  	register / reset_password / bind / verify
-	 *@param string 	$template 		短信模板
+	 *@param string 	$device_type  					email / phone
+	 *@param string 	$type 		  					register / reset_password / bind / verify
+	 *@param string 	$template 						短信模板
+	 *@param bool 		$enable_verification_captcha 	获取验证码时是否进行人机校验
 	 *
 	 *注册时若当前手机已注册，则无法发送验证码
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
-	protected function add_verification_field(string $device_type, string $type, string $template = '') {
+	protected function add_verification_field(string $device_type, string $type, string $template = '', bool $enable_verification_captcha = true) {
 		/**
 		 * @since 0.9.11
 		 * 同一表单，若设置了验证码（调用本方法），且开启了验证码人机验证，则提交时无效再次进行人机验证
 		 */
-		$this->enable_captcha = $this->enable_verification_captcha ? false : $this->enable_captcha;
+		$this->enable_verification_captcha = $enable_verification_captcha;
+		$this->enable_captcha              = $this->enable_verification_captcha ? false : $this->enable_captcha;
 
 		// 配置手机或邮箱验证码基础信息
 		if ('email' == $device_type) {
@@ -238,23 +238,26 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	/**
 	 *短信校验
-	 *@param string 	$type 		  	register / reset_password / bind / verify
-	 *@param string 	$template 		短信模板
+	 *@param string 	$type 		  					register / reset_password / bind / verify
+	 *@param string 	$template 						短信模板
+	 *@param bool 		$enable_verification_captcha 	获取验证码时是否进行人机校验
 	 *注册时若当前手机已注册，则无法发送验证码
 	 *找回密码时若当前手机未注册，则无法发送验证码
 	 **/
-	public function add_phone_verification(string $type = 'verify', string $template = '') {
-		$this->add_verification_field('phone', $type, $template);
+	public function add_phone_verification(string $type = 'verify', string $template = '', bool $enable_verification_captcha = true) {
+		$this->add_verification_field('phone', $type, $template, $enable_verification_captcha);
 	}
 
 	/**
 	 *邮箱校验
-	 *@param string 	$type 		  	register / reset_password / bind / verify
+	 *@param string 	$type 		  					register / reset_password / bind / verify
+	 *@param string 	$template 						邮件模板
+	 *@param bool 		$enable_verification_captcha 	获取验证码时是否进行人机校验
 	 *注册时若当前邮箱已注册，则无法发送验证码
 	 *找回密码时若当前邮箱未注册，则无法发送验证码
 	 **/
-	public function add_email_verification(string $type = 'verify', string $template = '') {
-		$this->add_verification_field('email', $type, $template);
+	public function add_email_verification(string $type = 'verify', string $template = '', bool $enable_verification_captcha = true) {
+		$this->add_verification_field('email', $type, $template, $enable_verification_captcha);
 	}
 
 	// Image upload

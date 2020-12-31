@@ -7,16 +7,6 @@ namespace Wnd\View;
  */
 class Wnd_Form_User extends Wnd_Form_WP {
 
-	/**
-	 *@since 0.9.11
-	 *
-	 *@param bool $enable_captcha 	提交时是否进行人机校验
-	 */
-	public function __construct(bool $enable_captcha = false) {
-		// 已登录用户获取验证码默认无需人机校验
-		parent::__construct(true, $enable_captcha, !is_user_logged_in());
-	}
-
 	public function add_user_login($label = '账号', $placeholder = '用户名、手机、邮箱', $required = true) {
 		$this->add_text(
 			[
