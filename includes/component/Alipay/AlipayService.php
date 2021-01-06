@@ -34,16 +34,14 @@ class AlipayService {
 		}
 		unset($key, $value);
 
-		// 构造支付宝公共请求参数，实际应用请根据接口文档添加或移除部分元素
+		// 构造支付宝公共请求参数，实际应用参数方法请根据接口文档添加或移除部分元素
 		$this->common_configs = [
-			'app_id'     => $this->app_id,
-			'format'     => 'JSON',
-			'charset'    => $this->charset,
-			'sign_type'  => $this->sign_type,
-			'timestamp'  => date('Y-m-d H:i:s'),
-			'version'    => '1.0',
-			'notify_url' => $this->notify_url,
-			'return_url' => $this->return_url,
+			'app_id'    => $this->app_id,
+			'format'    => 'JSON',
+			'charset'   => $this->charset,
+			'sign_type' => $this->sign_type,
+			'timestamp' => date('Y-m-d H:i:s'),
+			'version'   => '1.0',
 		];
 	}
 
@@ -168,8 +166,26 @@ class AlipayService {
 	 * @return array
 	 */
 	public function generatePaymentConfigs(string $method, array $biz_content): array{
-		$common_configs         = array_merge($this->common_configs, ['method' => $method, 'biz_content' => json_encode($biz_content)]);
-		$common_configs["sign"] = $this->generateSign($common_configs, $common_configs['sign_type']);
+		$common_configs                = $this->common_configs;
+		$common_configs['notify_url']  = $this->notify_url;
+		$common_configs['return_url']  = $this->return_url;
+		$common_configs['method']      = $method;
+		$common_configs['biz_content'] = json_encode($biz_content);
+		$common_configs['sign']        = $this->generateSign($common_configs, $common_configs['sign_type']);
+
+		return $common_configs;
+	}
+
+	/**
+	 * 签名并构造完整的退款请求参数
+	 * @return array
+	 */
+	public function generateRefundConfigs(string $method, array $biz_content): array{
+		$common_configs                = $this->common_configs;
+		$common_configs['method']      = $method;
+		$common_configs['biz_content'] = json_encode($biz_content);
+		$common_configs['sign']        = $this->generateSign($common_configs, $common_configs['sign_type']);
+
 		return $common_configs;
 	}
 }

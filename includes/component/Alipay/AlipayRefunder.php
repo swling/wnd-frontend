@@ -2,6 +2,7 @@
 namespace Wnd\Component\Alipay;
 
 use Exception;
+use Wnd\Component\Alipay\AlipayConfig;
 use Wnd\Component\Alipay\AlipayService;
 use Wnd\Component\Utility\Refunder;
 
@@ -9,7 +10,11 @@ use Wnd\Component\Utility\Refunder;
  *支付宝退款
  *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.refund
  */
-class AlipayRefunder extends AlipayService implements Refunder {
+class AlipayRefunder implements Refunder {
+
+	protected $gateway_url;
+
+	protected $charset;
 
 	protected $method = 'alipay.trade.refund';
 	// protected $product_code;
@@ -22,6 +27,15 @@ class AlipayRefunder extends AlipayService implements Refunder {
 
 	// 标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
 	protected $out_request_no;
+
+	/**
+	 *@since 0.9.17
+	 */
+	public function __construct() {
+		$AlipayConfig      = AlipayConfig::getConfig();
+		$this->charset     = $AlipayConfig['charset'];
+		$this->gateway_url = $AlipayConfig['gateway_url'];
+	}
 
 	/**
 	 *退款金额
@@ -50,24 +64,15 @@ class AlipayRefunder extends AlipayService implements Refunder {
 	 */
 	public function doRefund(): array{
 		//请求参数
-		$request_configs = [
+		$biz_content = [
 			'out_trade_no'   => $this->out_trade_no,
 			'refund_amount'  => $this->refund_amount,
 			'out_request_no' => $this->out_request_no,
 		];
 
 		//公共参数
-		$common_configs = [
-			'app_id'      => $this->app_id,
-			'method'      => $this->method, //接口名称
-			'format'      => 'JSON',
-			'charset'     => $this->charset,
-			'sign_type'   => $this->sign_type,
-			'timestamp'   => date('Y-m-d H:i:s'),
-			'version'     => '1.0',
-			'biz_content' => json_encode($request_configs),
-		];
-		$common_configs["sign"] = $this->generateSign($common_configs, $common_configs['sign_type']);
+		$alipayService  = new AlipayService();
+		$common_configs = $alipayService->generateRefundConfigs($this->method, $biz_content);
 
 		/**
 		 *采用WordPress内置函数发送Post请求
@@ -80,7 +85,7 @@ class AlipayRefunder extends AlipayService implements Refunder {
 				'body'        => $common_configs,
 
 				// 必须设置此项，否则无法解析支付宝的响应json
-				'headers'     => array("Content-type" => "application/x-www-form-urlencoded;charset=UTF-8"),
+				'headers'     => array("Content-type" => "application/x-www-form-urlencoded;charset=$this->charset"),
 			]
 		);
 
