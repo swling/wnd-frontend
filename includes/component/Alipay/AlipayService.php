@@ -71,7 +71,7 @@ class AlipayService {
 		return $this->verify($this->getSignContent($params), $sign, $signType);
 	}
 
-	public function verify($data, $sign, $signType = 'RSA') {
+	protected function verify($data, $sign, $signType = 'RSA') {
 		$pubKey = $this->alipay_public_key;
 		$res    = "-----BEGIN PUBLIC KEY-----\n" .
 		wordwrap($pubKey, 64, "\n", true) .
@@ -114,7 +114,7 @@ class AlipayService {
 		return false;
 	}
 
-	public function getSignContent($params) {
+	protected function getSignContent($params) {
 		ksort($params);
 		$stringToBeSigned = '';
 		$i                = 0;
