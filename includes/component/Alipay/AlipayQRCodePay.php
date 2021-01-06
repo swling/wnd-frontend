@@ -30,7 +30,7 @@ class AlipayQRCodePay extends AlipayPayBuilder {
 				'body'        => $this->common_configs,
 
 				// 必须设置此项，否则无法解析支付宝的响应json
-				'headers'     => array("Content-type" => "application/x-www-form-urlencoded;charset=UTF-8"),
+				'headers'     => array("Content-type" => "application/x-www-form-urlencoded;charset=$this->charset"),
 			]
 		);
 
@@ -52,9 +52,7 @@ class AlipayQRCodePay extends AlipayPayBuilder {
 			$alipay_app_link = 'alipayqr://platformapi/startapp?saId=10000007&qrcode=' . urldecode($result['qr_code']);
 			return '<script>window.location.href="' . $alipay_app_link . '"</script><a href="' . $alipay_app_link . '" class="button">打开支付宝支付</a>';
 		} else {
-			$imgUrl   = wnd_generate_qrcode($result['qr_code']);
-			$mobilejs = 'alipayqr://platformapi/startapp?saId=10000007&qrcode=' . urldecode($result['qr_code']);
-			return '<img src="' . $imgUrl . '"><h3>支付宝扫码支付</h3>';
+			return '<img src="' . wnd_generate_qrcode($result['qr_code']) . '"><h3>支付宝扫码支付</h3>';
 		}
 	}
 }
