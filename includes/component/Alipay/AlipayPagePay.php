@@ -26,10 +26,21 @@ class AlipayPagePay extends AlipayPayBuilder {
 	}
 
 	/**
-	 * 构造网页支付提交表单
-	 * @return string
+	 * 建立请求，以表单HTML形式构造（默认）
+	 * @return 提交表单HTML文本
 	 */
-	public function buildInterface(): string {
-		return $this->buildRequestForm();
+	protected function buildInterface(): string{
+		$sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='" . $this->gateway_url . "?charset=" . $this->charset . "' method='POST'>";
+		$sHtml .= '<h3>即将跳转到第三方支付平台……</h3>';
+		foreach ($this->common_configs as $key => $val) {
+			if (false === AlipayService::checkEmpty($val)) {
+				$val = str_replace("'", "&apos;", $val);
+				$sHtml .= "<input type='hidden' name='" . $key . "' value='" . $val . "'>";
+			}
+		}unset($key, $val);
+		//submit按钮控件请不要含有name属性
+		$sHtml = $sHtml . "<input type='submit' value='ok' style='display:none;'></form>";
+		$sHtml = $sHtml . "<script>document.forms['alipaysubmit'].submit();</script>";
+		return $sHtml;
 	}
 }
