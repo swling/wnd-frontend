@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Component\Alipay;
 
+use Wnd\Component\Alipay\AlipayConfig;
 use Wnd\Component\Alipay\AlipayService;
 use Wnd\Component\Utility\PaymentBuilder;
 
@@ -9,8 +10,10 @@ use Wnd\Component\Utility\PaymentBuilder;
  *
  *支付宝支付创建基类
  */
-abstract class AlipayPayBuilder extends AlipayService implements PaymentBuilder {
+abstract class AlipayPayBuilder implements PaymentBuilder {
 	// 支付宝接口
+	protected $gateway_url;
+	protected $charset;
 	protected $product_code;
 	protected $method;
 
@@ -21,6 +24,15 @@ abstract class AlipayPayBuilder extends AlipayService implements PaymentBuilder 
 
 	// 公共请求参数
 	protected $common_configs;
+
+	/**
+	 *@since 0.9.17
+	 */
+	public function __construct() {
+		$AlipayConfig      = AlipayConfig::getConfig();
+		$this->charset     = $AlipayConfig['charset'];
+		$this->gateway_url = $AlipayConfig['gateway_url'];
+	}
 
 	/**
 	 *总金额
@@ -65,32 +77,17 @@ abstract class AlipayPayBuilder extends AlipayService implements PaymentBuilder 
 	 * 签名并构造完整的请求参数
 	 * @return string
 	 */
-	protected function generateCommonConfigs(): array{
+	protected function generateCommonConfigs() {
 		//请求参数
-		$request_configs = [
+		$biz_content = [
 			'out_trade_no' => $this->out_trade_no,
 			'product_code' => $this->product_code,
 			'total_amount' => $this->total_amount, //单位 元
 			'subject'      => $this->subject, //订单标题
 		];
 
-		//公共参数
-		$common_configs = [
-			'app_id'      => $this->app_id,
-			'method'      => $this->method, //接口名称
-			'format'      => 'JSON',
-			'return_url'  => $this->return_url,
-			'charset'     => $this->charset,
-			'sign_type'   => $this->sign_type,
-			'timestamp'   => date('Y-m-d H:i:s'),
-			'version'     => '1.0',
-			'notify_url'  => $this->notify_url,
-			'biz_content' => json_encode($request_configs),
-		];
-		$common_configs["sign"] = $this->generateSign($common_configs, $common_configs['sign_type']);
-
-		$this->common_configs = $common_configs;
-		return $common_configs;
+		$alipayService        = new AlipayService;
+		$this->common_configs = $alipayService->generatePaymentConfigs($this->method, $biz_content);
 	}
 
 	/**
@@ -101,7 +98,7 @@ abstract class AlipayPayBuilder extends AlipayService implements PaymentBuilder 
 		$sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='" . $this->gateway_url . "?charset=" . $this->charset . "' method='POST'>";
 		$sHtml .= '<h3>即将跳转到第三方支付平台……</h3>';
 		foreach ($this->common_configs as $key => $val) {
-			if (false === $this->checkEmpty($val)) {
+			if (false === AlipayService::checkEmpty($val)) {
 				$val = str_replace("'", "&apos;", $val);
 				$sHtml .= "<input type='hidden' name='" . $key . "' value='" . $val . "'>";
 			}

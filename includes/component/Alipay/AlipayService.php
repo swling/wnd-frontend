@@ -33,6 +33,18 @@ class AlipayService {
 			$this->$key = $value;
 		}
 		unset($key, $value);
+
+		// 构造支付宝公共请求参数，实际应用请根据接口文档添加或移除部分元素
+		$this->common_configs = [
+			'app_id'     => $this->app_id,
+			'format'     => 'JSON',
+			'charset'    => $this->charset,
+			'sign_type'  => $this->sign_type,
+			'timestamp'  => date('Y-m-d H:i:s'),
+			'version'    => '1.0',
+			'notify_url' => $this->notify_url,
+			'return_url' => $this->return_url,
+		];
 	}
 
 	/**
@@ -98,7 +110,7 @@ class AlipayService {
 	 * if not set ,return true;
 	 * if is null , return true;
 	 **/
-	protected function checkEmpty($value) {
+	public static function checkEmpty($value) {
 		if (!isset($value)) {
 			return true;
 		}
@@ -119,7 +131,7 @@ class AlipayService {
 		$stringToBeSigned = '';
 		$i                = 0;
 		foreach ($params as $k => $v) {
-			if (false === $this->checkEmpty($v) and "@" != substr($v, 0, 1)) {
+			if (false === static::checkEmpty($v) and "@" != substr($v, 0, 1)) {
 				// 转换成目标字符集
 				$v = $this->characet($v, $this->charset);
 				if (0 == $i) {
@@ -149,5 +161,15 @@ class AlipayService {
 			}
 		}
 		return $data;
+	}
+
+	/**
+	 * 签名并构造完整的付款请求参数
+	 * @return array
+	 */
+	public function generatePaymentConfigs(string $method, array $biz_content): array{
+		$common_configs         = array_merge($this->common_configs, ['method' => $method, 'biz_content' => json_encode($biz_content)]);
+		$common_configs["sign"] = $this->generateSign($common_configs, $common_configs['sign_type']);
+		return $common_configs;
 	}
 }
