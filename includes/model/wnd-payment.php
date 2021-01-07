@@ -285,7 +285,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		return '
 <script>
 // 定时查询指定订单状态，如完成，则刷新当前页面
-var payment_checker = setInterval(function(post_id){ wnd_get_json("wnd_get_post", "wnd_check_payment", {"post_id": post_id}) }, 3000,' . $payment_id . ');
+var payment_checker = setInterval(function(post_id){ wnd_get_json("wnd_get_post", {"post_id": post_id}, "wnd_check_payment") }, 3000,' . $payment_id . ');
 function wnd_check_payment(response) {
 	if("' . static::$completed_status . '"==response.data.post_status){
 		window.location.reload(true);

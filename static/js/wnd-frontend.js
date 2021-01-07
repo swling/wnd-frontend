@@ -278,10 +278,10 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
  *@since 2020.07.21
  *ajax 获取 json数据
  *@param data 		对应 JsonGet 类名称
- *@param callback 	回调函数
  *@param param 		对应传参
+ *@param callback 	回调函数
  */
-function wnd_get_json(data, callback, param = {}) {
+function wnd_get_json(data, param, callback) {
 	$.ajax({
 		type: "GET",
 		url: wnd_jsonget_api,
