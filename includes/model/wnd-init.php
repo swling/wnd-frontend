@@ -3,6 +3,7 @@ namespace Wnd\Model;
 
 use Wnd\Admin\Wnd_Menus;
 use Wnd\Controller\Wnd_API;
+use Wnd\Controller\Wnd_Route;
 use Wnd\Hook\Wnd_Hook;
 use Wnd\Model\Wnd_DB;
 use Wnd\Utility\Wnd_language;
@@ -29,6 +30,9 @@ class Wnd_Init {
 
 		// API
 		Wnd_API::get_instance();
+
+		// Route
+		Wnd_Route::get_instance();
 
 		// 优化
 		Wnd_Optimization::get_instance();
