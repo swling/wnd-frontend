@@ -95,7 +95,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 
 	// api及语言本地化
 	$wnd_data = [
-		'rest_url'          => rtrim(strtok(get_rest_url(), '?'), '/') . '/',
+		'rest_url'          => get_rest_url(),
 		'rest_nonce'        => wp_create_nonce('wp_rest'),
 		'safe_action_nonce' => wp_create_nonce('wnd_safe_action'),
 		'interface_api'     => 'wnd/interface',
