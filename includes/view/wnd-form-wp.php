@@ -140,9 +140,11 @@ class Wnd_Form_WP extends Wnd_Form {
 	protected function add_verification_field(string $device_type, string $type, string $template = '', bool $enable_verification_captcha = true) {
 		/**
 		 * @since 0.9.11
-		 * 同一表单，若设置了验证码（调用本方法），且开启了验证码人机验证，则提交时无效再次进行人机验证
+		 *
+		 * - 人机校验：若当前未配置人机校验服务，则忽略传参，统一取消人机验证
+		 * - 同一表单，若设置了验证码（调用本方法），且开启了验证码人机验证，则提交时无效再次进行人机验证
 		 */
-		$this->enable_verification_captcha = $enable_verification_captcha;
+		$this->enable_verification_captcha = $this->captcha_service ? $enable_verification_captcha : false;
 		$this->enable_captcha              = $this->enable_verification_captcha ? false : $this->enable_captcha;
 
 		// 配置手机或邮箱验证码基础信息
