@@ -42,12 +42,6 @@ register_activation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::install');
 register_deactivation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::uninstall');
 
 /**
- *@since 2020.08.19
- *访问后台时候，触发升级
- */
-add_action('admin_init', 'Wnd\Model\Wnd_Admin::upgrade');
-
-/**
  *插件更新触发升级操作
  *@since 0.9.2
  */
