@@ -33,7 +33,7 @@ class Wnd_API {
 		// 数据处理
 		register_rest_route(
 			'wnd',
-			'handler',
+			'action',
 			[
 				'methods'             => 'POST',
 				'callback'            => __CLASS__ . '::handle_action',
