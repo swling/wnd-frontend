@@ -20,9 +20,11 @@ class Wnd_Route {
 
 	use Wnd_Singleton_Trait;
 
+	public static $prefix = 'wnd-route';
+
 	private function __construct() {
 		add_action('init', [__CLASS__, 'add_rewrite_rule']);
-		add_action('parse_query', [__CLASS__, 'handle_query']);
+		add_action('wp', [__CLASS__, 'handle_route']);
 		add_filter('query_vars', [__CLASS__, 'filter_query_vars']);
 	}
 
@@ -31,7 +33,7 @@ class Wnd_Route {
 	 *自定义伪静态地址，处理第三方平台交互
 	 */
 	public static function add_rewrite_rule() {
-		add_rewrite_rule('wnd-route/([0-9a-zA-Z_-]*)?$', 'index.php?route=wnd&endpoint=$matches[1]', 'top');
+		add_rewrite_rule(static::$prefix . '/([0-9a-zA-Z_-]*)?$', 'index.php?route=wnd&endpoint=$matches[1]', 'top');
 	}
 
 	/**
@@ -48,7 +50,7 @@ class Wnd_Route {
 	 *@since 0.9.17
 	 *根据查询参数判断是否为自定义伪静态接口，从而实现输出重写
 	 */
-	public static function handle_query($template) {
+	public static function handle_route() {
 		if ('wnd' != get_query_var('route')) {
 			return false;
 		}
@@ -59,7 +61,7 @@ class Wnd_Route {
 		}
 
 		// 解析实际类名称及参数
-		$class = Wnd_API::parse_class($endpoint, 'Endpoint');
+		$class = Wnd_API::parse_class($endpoint, 'Route');
 
 		// 执行 Endpoint 类
 		try {

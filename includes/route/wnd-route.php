@@ -1,7 +1,5 @@
 <?php
-namespace Wnd\Endpoint;
-
-use Wnd\Utility\Wnd_Request;
+namespace Wnd\Route;
 
 /**
  *@since 0.9.17
@@ -13,7 +11,7 @@ use Wnd\Utility\Wnd_Request;
  *
  *Endpoint 类相关响应应直接输出，而非返回值
  */
-abstract class Wnd_Endpoint {
+abstract class Wnd_Route {
 
 	/**
 	 *Request Data Array
@@ -21,29 +19,9 @@ abstract class Wnd_Endpoint {
 	protected $data = [];
 
 	/**
-	 *当前用户 Object
+	 *响应类型
 	 */
-	protected $user;
-
-	/**
-	 *当前用户 ID Int
-	 */
-	protected $user_id;
-
-	/**
-	 *解析表单数据时，是否验证表单签名
-	 */
-	protected $verify_sign = false;
-
-	/**
-	 *解析表单数据时，是否进行人机验证（如果存在）
-	 */
-	protected $validate_captcha = false;
-
-	/**
-	 * Instance of Wnd_Request
-	 */
-	protected $request;
+	protected $content_type;
 
 	/**
 	 *构造
@@ -53,12 +31,10 @@ abstract class Wnd_Endpoint {
 	 *
 	 */
 	public function __construct() {
-		$this->request = new Wnd_Request($this->verify_sign, $this->validate_captcha);
-		$this->data    = $this->request->get_request();
-		$this->user    = wp_get_current_user();
-		$this->user_id = $this->user->ID ?? 0;
+		$this->data = ('POST' == $_SERVER['REQUEST_METHOD']) ? $_POST : $_GET;
 
 		$this->check();
+		$this->set_content_type();
 		$this->do();
 	}
 
@@ -70,9 +46,6 @@ abstract class Wnd_Endpoint {
 	}
 
 	/**
-	 *执行操作
-	 *
-	 * - 响应数据应直接输出
 	 * - 不同格式的响应，应设置对应的 Content-type 如纯文本：header('Content-Type:text/plain; charset=UTF-8');
 	 *
 	 *	常见的媒体格式类型如下：
@@ -94,6 +67,33 @@ abstract class Wnd_Endpoint {
 	 *	- application/msword ： Word文档格式
 	 *	- application/octet-stream ： 二进制流数据（如常见的文件下载）
 	 *	- application/x-www-form-urlencoded ： <form encType=””>中默认的encType，form表单数据被编码为key/value格式发送到服务器（表单默认的提交数据的格式）
+	 */
+	protected function set_content_type() {
+		switch ($this->content_type) {
+		case 'html':
+			$content_type = 'text/html';
+			break;
+
+		case 'xml':
+			$content_type = 'application/xml';
+			break;
+
+		case 'json':
+			$content_type = 'application/json';
+			break;
+
+		default:
+			$content_type = 'text/plain';
+			break;
+		}
+
+		header('Content-Type:' . $content_type . ';charset=UTF-8');
+	}
+
+	/**
+	 *执行操作
+	 *
+	 * - 文本响应数据应直接输出；图像、文件等则应返回对应对象
 	 *
 	 */
 	abstract protected function do();

@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Route;
 
 use Exception;
 use Wnd\Model\Wnd_Payment;
@@ -9,13 +9,19 @@ use Wnd\Model\Wnd_Payment_Getway;
  *支付校验
  *@since 2020.06.19
  *
- *注意事项：在异步支付通知中，不得输出任何支付平台规定之外的字符或HTML代码
- *			故此，相关异常应使用 exit 中止并输出。不得直接抛出异常
- *
+ *注意事项：在异步支付通知中，不得输出任何支付平台规定之外的字符或HTML代码。
+ *			故此，调用本类时，相关异常应使用 exit 中止并输出
  */
-class Wnd_Verify_Pay extends Wnd_Action {
+class Wnd_Verify_Pay extends Wnd_Route {
+	/**
+	 *响应类型
+	 */
+	protected $content_type = 'txt';
 
-	public function execute() {
+	/**
+	 *响应操作
+	 */
+	protected function do() {
 		/**
 		 *根据交易订单解析站内交易ID，并查询记录
 		 */

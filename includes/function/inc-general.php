@@ -11,6 +11,15 @@ function wnd_get_do_url() {
 }
 
 /**
+ *@since 0.9.17 指定 Route 绝对 URL
+ *
+ *@return string 	url
+ */
+function wnd_get_route_url(string $endpoint): string {
+	return home_url(Wnd\Controller\Wnd_Route::$prefix . '/' . $endpoint);
+}
+
+/**
  *@since 2020.4.13
  *获取配置选项
  */
@@ -178,7 +187,7 @@ function wnd_get_current_url() {
  *@return string 二维码图像地址
  */
 function wnd_generate_qrcode(string $string): string {
-	return wnd_get_do_url() . '?module=wnd_qrcode&string=' . $string;
+	return wnd_get_endpoint_url('wnd_qrcode') . '?string=' . $string;
 }
 
 /**
