@@ -8,7 +8,7 @@ use Exception;
  *@since 2020.04.30
  *@param $_POST['user_id'];
  */
-class Wnd_Delete_User extends Wnd_Action_Ajax_Root {
+class Wnd_Delete_User extends Wnd_Action_Root {
 
 	public function execute(): array{
 		$user_id = (int) $this->data['user_id'];

@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_Refunder;
  *@param $_POST['payment_id'] 		required 	订单 ID
  *@param $_POST['refund_amount']	可选		退款金额
  */
-class Wnd_Refund extends Wnd_Action_Ajax_Admin {
+class Wnd_Refund extends Wnd_Action_Admin {
 
 	public function execute(): array{
 		$payment_id    = (int) ($this->data['payment_id'] ?? 0);

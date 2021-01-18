@@ -11,7 +11,7 @@ use Wnd\Model\Wnd_Auth;
  *@param $_POST['_user_new_pass']
  *@param $_POST['_user_new_pass_repeat']
  */
-class Wnd_Reset_Password extends Wnd_Action_Ajax {
+class Wnd_Reset_Password extends Wnd_Action {
 
 	public function execute(): array{
 		$email_or_phone      = $this->data['_user_user_email'] ?? $this->data['phone'] ?? '';

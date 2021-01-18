@@ -7,7 +7,7 @@ use Exception;
  *@since 2020.06.24
  *更新options
  */
-class Wnd_Update_Option extends Wnd_Action_Ajax_Root {
+class Wnd_Update_Option extends Wnd_Action_Root {
 
 	public function execute(): array{
 		$option_name = $this->data['option_name'];

@@ -20,7 +20,7 @@ use Exception;
  *@param $_POST['_user_display_name']
  *@param $_POST['_wpusermeta_description']
  */
-class Wnd_Reg extends Wnd_Action_Ajax {
+class Wnd_Reg extends Wnd_Action {
 
 	public function execute(): array{
 		$user_data               = $this->request->get_user_data();

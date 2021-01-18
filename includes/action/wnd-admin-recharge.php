@@ -11,7 +11,7 @@ use Wnd\Model\Wnd_Recharge;
  *@param $_POST['total_amount']
  *@param $_POST['remarks']
  */
-class Wnd_Admin_Recharge extends Wnd_Action_Ajax_Admin {
+class Wnd_Admin_Recharge extends Wnd_Action_Admin {
 
 	public function execute(): array{
 		$user_field   = $this->data['user_field'];

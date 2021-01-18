@@ -13,7 +13,7 @@ use Exception;
  *@param $_REQUEST['action'] string 固定值：'wnd_safe_action'
  *@param $_REQUEST['method'] string 指定本类中的方法
  */
-class Wnd_Safe_Action extends Wnd_Action_Ajax {
+class Wnd_Safe_Action extends Wnd_Action {
 
 	/**
 	 *本 Action 禁止表单签名验证

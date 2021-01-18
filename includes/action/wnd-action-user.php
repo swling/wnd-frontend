@@ -7,7 +7,7 @@ use Exception;
  *@since 0.8.66
  *注册用户 Ajax 操作基类
  */
-abstract class Wnd_Action_Ajax_User extends Wnd_Action_Ajax {
+abstract class Wnd_Action_User extends Wnd_Action {
 
 	/**
 	 *权限检测

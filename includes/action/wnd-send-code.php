@@ -8,7 +8,7 @@ use Wnd\Model\Wnd_Auth;
  *@since 2019.01.28
  *发送手机或邮箱验证码
  */
-class Wnd_Send_Code extends Wnd_Action_Ajax {
+class Wnd_Send_Code extends Wnd_Action {
 
 	public function execute(): array{
 		$type        = $this->data['type'] ?? '';

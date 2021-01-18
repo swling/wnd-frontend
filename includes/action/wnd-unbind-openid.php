@@ -8,7 +8,7 @@ use Wnd\Model\Wnd_User;
  *@since 0.9.4
  *解除账户绑定 QQ 等第三方社交登录账户（不含手机及邮箱）
  */
-class Wnd_Unbind_Openid extends Wnd_Action_Ajax_User {
+class Wnd_Unbind_Openid extends Wnd_Action_User {
 
 	public function execute(): array{
 		$type      = $this->data['type'] ?? '';

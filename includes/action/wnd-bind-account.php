@@ -10,7 +10,7 @@ use Wnd\Model\Wnd_Binder;
  *@param $_POST['auth_code'] 		 	验证码
  *@param $_POST['_user_user_pass'] 		当前密码
  */
-class Wnd_Bind_Account extends Wnd_Action_Ajax_User {
+class Wnd_Bind_Account extends Wnd_Action_User {
 
 	public function execute(): array{
 		$email_or_phone = $this->data['_user_user_email'] ?? ($this->data['phone'] ?? '');

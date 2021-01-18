@@ -11,7 +11,7 @@ use Exception;
  *@param $_POST['remember'];
  *@param $_REQUEST['redirect_to'];
  */
-class Wnd_Login extends Wnd_Action_Ajax {
+class Wnd_Login extends Wnd_Action {
 
 	public function execute(): array{
 		$username    = trim($this->data['_user_user_login']);

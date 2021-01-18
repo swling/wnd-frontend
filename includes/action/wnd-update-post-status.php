@@ -4,7 +4,7 @@ namespace Wnd\Action;
 use Exception;
 use Wnd\Model\Wnd_Post;
 
-class Wnd_Update_Post_Status extends Wnd_Action_Ajax {
+class Wnd_Update_Post_Status extends Wnd_Action {
 
 	protected $post_id;
 	protected $after_status;

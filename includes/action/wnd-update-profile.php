@@ -16,7 +16,7 @@ use Exception;
  *_wpusermeta_{key} （*WordPress原生字段）
  *
  */
-class Wnd_Update_Profile extends Wnd_Action_Ajax_User {
+class Wnd_Update_Profile extends Wnd_Action_User {
 
 	public function execute(): array{
 		// 实例化WndWP表单数据处理对象

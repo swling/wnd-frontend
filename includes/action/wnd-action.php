@@ -7,7 +7,7 @@ use Wnd\Utility\Wnd_Request;
  *@since 2019.10.02
  *Ajax 操作基类
  */
-abstract class Wnd_Action_Ajax {
+abstract class Wnd_Action {
 
 	/**
 	 *Post Data Array

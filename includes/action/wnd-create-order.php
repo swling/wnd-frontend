@@ -11,7 +11,7 @@ use Wnd\Model\Wnd_SKU;
  *创建站内订单
  *@param $post_id  Post ID
  */
-class Wnd_Create_Order extends Wnd_Action_Ajax {
+class Wnd_Create_Order extends Wnd_Action {
 
 	public function execute(int $post_id = 0): array{
 		if (!$post_id) {

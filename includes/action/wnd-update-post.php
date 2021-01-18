@@ -4,7 +4,7 @@ namespace Wnd\Action;
 use Exception;
 use Wnd\Action\Wnd_Insert_Post;
 
-class Wnd_Update_Post extends Wnd_Action_Ajax {
+class Wnd_Update_Post extends Wnd_Action {
 
 	/**
 	 *

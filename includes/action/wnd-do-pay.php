@@ -11,7 +11,7 @@ use Wnd\Model\Wnd_Payment;
  *@since 2020.06.19
  *
  */
-class Wnd_Do_Pay extends Wnd_Action_Ajax {
+class Wnd_Do_Pay extends Wnd_Action {
 
 	public function execute(): array{
 		$post_id         = (int) ($this->data['post_id'] ?? 0);

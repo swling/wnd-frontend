@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_SKU;
  *
  *设置产品属性
  */
-class Wnd_Set_SKU extends Wnd_Action_Ajax_User {
+class Wnd_Set_SKU extends Wnd_Action_User {
 
 	public function execute(int $post_id = 0): array{
 		if (!$post_id) {

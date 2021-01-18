@@ -7,7 +7,7 @@ use Wnd\Model\Wnd_Order_Product;
 /**
  *付费阅读下载类
  */
-class Wnd_Pay_For_Downloads extends Wnd_Action_Ajax {
+class Wnd_Pay_For_Downloads extends Wnd_Action {
 
 	public function execute(): array{
 		// 获取文章

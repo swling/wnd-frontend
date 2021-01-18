@@ -12,7 +12,7 @@ use Exception;
  *do_action('wnd_ban_account', $user_id);
  *do_action('wnd_restore_account', $user_id);
  */
-class Wnd_Update_Account_Status extends Wnd_Action_Ajax_Admin {
+class Wnd_Update_Account_Status extends Wnd_Action_Admin {
 
 	public function execute(): array{
 		$user_id       = (int) $this->data['user_id'];

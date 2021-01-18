@@ -25,7 +25,7 @@ use Exception;
  *	];
  *
  */
-class Wnd_Upload_File extends Wnd_Action_Ajax {
+class Wnd_Upload_File extends Wnd_Action {
 
 	/**
 	 *本操作非标准表单请求，无需验证签名

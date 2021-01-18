@@ -10,7 +10,7 @@ use Exception;
  *@param $_POST['post_parent'];
  *@param $_POST['file_id'];
  */
-class Wnd_Delete_File extends Wnd_Action_Ajax_User {
+class Wnd_Delete_File extends Wnd_Action_User {
 
 	/**
 	 *本操作非标准表单请求，无需校验数据签名

@@ -10,7 +10,7 @@ use Exception;
  *@param $_POST['_user_new_pass']
  *@param $_POST['_user_new_pass_repeat']
  */
-class Wnd_Update_Account extends Wnd_Action_Ajax_User {
+class Wnd_Update_Account extends Wnd_Action_User {
 
 	public function execute(): array{
 		$user_data           = ['ID' => $this->user_id];
