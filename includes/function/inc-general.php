@@ -7,7 +7,7 @@
  *@return string 	url
  */
 function wnd_get_do_url() {
-	return WND_URL . 'do.php';
+	return WND_URL . 'route.php';
 }
 
 /**
@@ -16,7 +16,7 @@ function wnd_get_do_url() {
  *@return string url
  */
 function wnd_get_route_url(string $endpoint): string {
-	return rest_url('wnd/route/' . $endpoint);
+	return Wnd\Controller\Wnd_Router::get_route_url($endpoint);
 }
 
 /**

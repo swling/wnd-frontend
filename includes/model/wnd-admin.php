@@ -72,6 +72,11 @@ class Wnd_Admin {
 
 		update_option('large_size_w', 0);
 		update_option('large_size_h', 0);
+
+		/**
+		 *@since 0.9.18
+		 */
+		flush_rewrite_rules();
 	}
 
 	/**
@@ -136,6 +141,11 @@ class Wnd_Admin {
 	 *升级
 	 */
 	public static function upgrade() {
+		/**
+		 *@since 0.9.18
+		 */
+		flush_rewrite_rules();
+
 		global $wpdb;
 		// 升级 0.8.61
 		if (version_compare(get_option('wnd_ver'), '0.8.61', '<')) {

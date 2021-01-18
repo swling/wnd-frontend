@@ -9,7 +9,7 @@
  * - nonce 校验执行 Action
  * - 渲染 Module
  *
- *将其他接口交互功能交付 Rest API：wp-json/wnd/route/{$endpoint} 处理
+ *将其他接口交互功能交付 Wnd\Controller\Wnd_Router 处理
  */
 require '../../../wp-load.php';
 

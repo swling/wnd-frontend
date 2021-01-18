@@ -7,65 +7,63 @@ use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
  *@since 0.9.17
- *自定义伪静态地址，处理外部响应如：支付回调通知、微信公众号通讯等
- *取代原有 do.php 文件的部分功能
+ *自定义伪静态路由地址，处理与外部的交互响应如：支付回调通知、微信公众号通讯等
  *
  *路径与对应类文件：
  * - /wnd-route/wnd_test  => Wnd\Endpoint\Wnd_Test
  * - /wnd-route/wndt_test => Wndt\Endpoint\Wndt_Test
- *
- *Endpoint 类相关响应应直接输出，而非返回值
- *
- *@date 2020.01.18
- *综合考虑，废弃本自定义伪静态方法，改为采用 Rest API
- *通过自定义 header Content-type 同样可实现非 Json 格式数据响应
- *@see Wnd\Controller\Wnd_API::handle_route_endpoint
- *（保留本文件及代码但不加载，以备后续之用）
+ *（Endpoint 类相关响应应直接输出，而非返回值）
  */
 class Wnd_Router {
 
 	use Wnd_Singleton_Trait;
 
-	public static $prefix = 'wnd-route';
+	public static $rule = [
+		'prefix' => 'wnd-route',
+		'rule'   => 'wnd-route/([0-9a-zA-Z_-]*)?$',
+		'query'  => 'index.php?router=wnd&endpoint=$matches[1]',
+	];
 
 	private function __construct() {
 		add_action('init', [__CLASS__, 'add_rewrite_rule']);
-		add_action('wp', [__CLASS__, 'handle_route']);
-		add_filter('query_vars', [__CLASS__, 'filter_query_vars']);
+		add_action('parse_request', [__CLASS__, 'handle_request']);
 	}
 
 	/**
 	 *@since 0.9.17
-	 *自定义伪静态地址，处理第三方平台交互
+	 *自定义伪静态地址，处理第三方平台交互、执行 Action、渲染 Module
+	 *
+	 *@link https://wordpress.stackexchange.com/questions/334641/add-rewrite-rule-to-point-to-a-file-on-the-server
 	 */
 	public static function add_rewrite_rule() {
-		add_rewrite_rule(static::$prefix . '/([0-9a-zA-Z_-]*)?$', 'index.php?router=wnd&endpoint=$matches[1]', 'top');
+		add_rewrite_rule(static::$rule['rule'], static::$rule['query'], 'top');
 	}
 
 	/**
-	 *@since 0.9.17
-	 *新增查询参数，与自定义伪静态地址参数对应
+	 *获取指定 Endpoint 绝对路由 URL
 	 */
-	public static function filter_query_vars($query_vars) {
-		$query_vars[] = 'router';
-		$query_vars[] = 'endpoint';
-		return $query_vars;
+	public static function get_route_url(string $endpoint): string {
+		return home_url(static::$rule['prefix'] . '/' . $endpoint);
+	}
+
+	/**
+	 *判断当前请求是否匹配本路由
+	 */
+	public static function handle_request(\WP $wp) {
+		if ($wp->matched_rule != static::$rule['rule']) {
+			return false;
+		}
+
+		$endpoint = explode(static::$rule['prefix'] . '/', $wp->request)[1] ?? '';
+		static::handle_endpoint($endpoint);
+		exit();
 	}
 
 	/**
 	 *@since 0.9.17
 	 *根据查询参数判断是否为自定义伪静态接口，从而实现输出重写
 	 */
-	public static function handle_route() {
-		if ('wnd' != get_query_var('router')) {
-			return false;
-		}
-
-		$endpoint = get_query_var('endpoint');
-		if (!$endpoint) {
-			exit(__('未指定 Endpoint', 'wnd'));
-		}
-
+	protected static function handle_endpoint(string $endpoint) {
 		// 解析实际类名称及参数
 		$class = Wnd_API::parse_class($endpoint, 'Endpoint');
 
@@ -76,15 +74,5 @@ class Wnd_Router {
 			header('Content-Type:text/plain; charset=UTF-8');
 			echo $e->getMessage();
 		}
-
-		// 结束请求
-		exit();
-	}
-
-	/**
-	 *获取指定 Endpoint 绝对路由 URL
-	 */
-	public static function get_route_url(string $endpoint): string {
-		return home_url(static::$prefix . '/' . $endpoint);
 	}
 }
