@@ -6,8 +6,8 @@ namespace Wnd\Endpoint;
  *自定义路由端点处理抽象基类
  *
  *路径与对应类文件：
- * - /wnd-route/wnd_test  => Wnd\Endpoint\Wnd_Test
- * - /wnd-route/wndt_test => Wndt\Endpoint\Wndt_Test
+ * - wp-json/wnd/route/wnd_test  => Wnd\Endpoint\Wnd_Test
+ * - wp-json/wnd/route/wndt_test => Wndt\Endpoint\Wndt_Test
  *
  *Endpoint 类相关响应应直接输出，而非返回值
  */
