@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Hook;
 
-use Wnd\Action\Wnd_Verify_Pay;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Form_Option;
@@ -19,7 +18,6 @@ class Wnd_Add_Action {
 		add_action('wnd_upload_file', [__CLASS__, 'action_on_upload_file'], 10, 3);
 		add_action('wnd_upload_gallery', [__CLASS__, 'action_on_upload_gallery'], 10, 2);
 		add_action('wnd_delete_file', [__CLASS__, 'action_on_delete_file'], 10, 3);
-		add_action('wnd_do_action', [__CLASS__, 'action_on_do_action'], 10);
 	}
 
 	/**
@@ -160,89 +158,6 @@ class Wnd_Add_Action {
 			//删除用户字段
 		} else {
 			wnd_delete_user_meta(get_current_user_id(), $meta_key);
-		}
-	}
-
-	/**
-	 *do action
-	 *在没有任何html输出的WordPress环境中执行的相关操作
-	 *@since 2018.9.25
-	 */
-	public static function action_on_do_action() {
-		$action = $_GET['action'] ?? '';
-		$module = $_GET['module'] ?? '';
-		$api    = $_GET['api'] ?? '';
-		$nonce  = $_GET['_wpnonce'] ?? '';
-
-		// Action
-		if ($action) {
-			//@since 2019.03.04 刷新所有缓存（主要用于刷新对象缓存，静态缓存通常通过缓存插件本身删除）
-			if ('wp_cache_flush' == $action and is_super_admin()) {
-				return wp_cache_flush();
-			}
-
-			/**
-			 *@since 0.8.66 清理失败的 WP 更新锁定
-			 */
-			if ('core_updater.lock' == $action and is_super_admin()) {
-				return delete_option('core_updater.lock');
-			}
-
-			/**
-			 *@since 0.9.0
-			 *刷新固定连接缓存
-			 */
-			if ('flush_rules' == $action) {
-				global $wp_rewrite;
-				$wp_rewrite->flush_rules(false);
-				return true;
-			}
-
-			//@since 2019.05.12 默认：校验nonce后执行action对应的控制类
-			if (!$nonce or !wp_verify_nonce($nonce, $action)) {
-				exit(__('Nonce 校验失败', 'wnd'));
-			}
-
-			$class = \Wnd\Controller\Wnd_API::parse_class($action, 'Action');
-			if (!is_callable([$class, 'execute'])) {
-				exit(__('未定义的 Action ', 'wnd') . $class);
-			}
-
-			$action = new $class();
-			return $action->execute();
-		}
-
-		// Module
-		if ($module) {
-			$class = \Wnd\Controller\Wnd_API::parse_class($module, 'Module');
-			if (!is_callable([$class, 'render'])) {
-				exit(__('未定义的 Module ', 'wnd') . $class);
-			}
-
-			if ($_GET['echo'] ?? false) {
-				echo '<!DOCTYPE html>';
-				echo '<head>';
-				wp_head();
-				echo '</head>';
-				echo '<body>' . $class::render() . '</body>';
-				return '';
-			} else {
-				return $class::render();
-			}
-		}
-
-		/**
-		 *拓展 API，指定 $_GET 参数后，交付主题或其他插件处理
-		 *@since 0.9.0
-		 */
-		if ($api) {
-			return false;
-		}
-
-		// 支付校验
-		if (!empty($_GET) or !empty($_POST)) {
-			$verify = new Wnd_Verify_Pay;
-			$verify->execute();
 		}
 	}
 }
