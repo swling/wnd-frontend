@@ -15,6 +15,12 @@ use Wnd\Utility\Wnd_Singleton_Trait;
  * - /wnd-route/wndt_test => Wndt\Endpoint\Wndt_Test
  *
  *Endpoint 类相关响应应直接输出，而非返回值
+ *
+ *@date 2020.01.18
+ *综合考虑，废弃本自定义伪静态方法，改为采用 Rest API
+ *通过自定义 header Content-type 同样可实现非 Json 格式数据响应
+ *@see Wnd\Controller\Wnd_API::handle_route_endpoint
+ *（保留本文件及代码但不加载，以备后续之用）
  */
 class Wnd_Router {
 
@@ -73,5 +79,12 @@ class Wnd_Router {
 
 		// 结束请求
 		exit();
+	}
+
+	/**
+	 *获取指定 Endpoint 绝对路由 URL
+	 */
+	public static function get_route_url(string $endpoint): string {
+		return home_url(static::$prefix . '/' . $endpoint);
 	}
 }
