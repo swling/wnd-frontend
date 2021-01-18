@@ -1,13 +1,16 @@
 <?php
-namespace Wnd\Route;
+namespace Wnd\Endpoint;
 
 /**
- *@since 2019.08.30
- *生成二维码图像
+ *@since 0.9.17
+ *测试专用
  */
-class Wnd_Test extends Wnd_Route {
+class Wnd_Test extends Wnd_Endpoint {
+
+	protected $content_type = 'html';
 
 	protected function do() {
 		echo 'Files:' . count(get_included_files()) . '- Queries:' . get_num_queries() . ' - ' . timer_stop() . '-' . number_format(memory_get_peak_usage() / 1024 / 1024, 2);
+		echo '</br>' . $GLOBALS['wp_query']->request;
 	}
 }

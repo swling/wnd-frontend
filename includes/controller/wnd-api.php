@@ -88,10 +88,10 @@ class Wnd_API {
 		// 自定义 Endpoint 响应第三方平台请求：响应数据格式不限于 json 格式
 		register_rest_route(
 			'wnd',
-			'route/(?P<route>[a-zA-Z0-9-_]+)',
+			'route/(?P<endpoint>[a-zA-Z0-9-_]+)',
 			[
 				'methods'             => ['GET', 'POST'],
-				'callback'            => __CLASS__ . '::handle_route',
+				'callback'            => __CLASS__ . '::handle_route_endpoint',
 				'permission_callback' => '__return_true',
 			]
 		);
@@ -246,15 +246,15 @@ class Wnd_API {
 
 	/**
 	 *@since 0.9.17
-	 *根据查询参数判断是否为自定义伪静态接口，从而实现输出重写
+	 *自定义 Endpoint 响应第三方平台请求：响应数据格式不限于 json 格式
 	 */
-	public static function handle_route(WP_REST_Request $request) {
-		if (!$request['route']) {
-			return ['status' => 0, 'msg' => __('未指定 Route', 'wnd')];
+	public static function handle_route_endpoint(WP_REST_Request $request) {
+		if (!$request['endpoint']) {
+			return ['status' => 0, 'msg' => __('未指定 Endpoint', 'wnd')];
 		}
 
 		// 解析实际类名称及参数
-		$class = Wnd_API::parse_class($request['route'], 'route');
+		$class = Wnd_API::parse_class($request['endpoint'], 'endpoint');
 
 		// 执行 Endpoint 类
 		try {

@@ -1,9 +1,9 @@
 <?php
-namespace Wnd\Route;
+namespace Wnd\Endpoint;
 
 /**
  *@since 0.9.17
- *自定义路由处理类
+ *自定义路由端点处理抽象基类
  *
  *路径与对应类文件：
  * - /wnd-route/wnd_test  => Wnd\Endpoint\Wnd_Test
@@ -11,7 +11,7 @@ namespace Wnd\Route;
  *
  *Endpoint 类相关响应应直接输出，而非返回值
  */
-abstract class Wnd_Route {
+abstract class Wnd_Endpoint {
 
 	/**
 	 *Request Data Array

@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Route;
+namespace Wnd\Endpoint;
 
 use Exception;
 
@@ -7,7 +7,7 @@ use Exception;
  *@since 2019.08.30
  *生成二维码图像
  */
-class Wnd_Qrcode extends Wnd_Route {
+class Wnd_Qrcode extends Wnd_Endpoint {
 
 	protected function do() {
 		$string = $this->data['string'] ?? '';
