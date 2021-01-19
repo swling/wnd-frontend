@@ -20,7 +20,7 @@ class Wnd_Router {
 
 	public static $rule = [
 		'prefix' => 'wnd-route',
-		'rule'   => 'wnd-route/([0-9a-zA-Z_-]*)?$',
+		'rule'   => '(.*)?',
 		'query'  => 'index.php?router=wnd&endpoint=$matches[1]',
 	];
 
@@ -36,7 +36,8 @@ class Wnd_Router {
 	 *@link https://wordpress.stackexchange.com/questions/334641/add-rewrite-rule-to-point-to-a-file-on-the-server
 	 */
 	public static function add_rewrite_rule() {
-		add_rewrite_rule(static::$rule['rule'], static::$rule['query'], 'top');
+		add_rewrite_rule(static::$rule['prefix'] . '/' . static::$rule['rule'], static::$rule['query'], 'top');
+		add_rewrite_rule(static::$rule['prefix'], 'index.php?router=wnd', 'top');
 	}
 
 	/**
@@ -50,11 +51,11 @@ class Wnd_Router {
 	 *判断当前请求是否匹配本路由
 	 */
 	public static function handle_request(\WP $wp) {
-		if ($wp->matched_rule != static::$rule['rule']) {
+		if ($wp->matched_rule != static::$rule['prefix'] . '/' . static::$rule['rule'] and $wp->matched_rule != static::$rule['prefix']) {
 			return false;
 		}
 
-		$endpoint = explode(static::$rule['prefix'] . '/', $wp->request)[1] ?? '';
+		$endpoint = explode(static::$rule['prefix'] . '/', $wp->request)[1] ?? 'Wnd_Default';
 		static::handle_endpoint($endpoint);
 		exit();
 	}
