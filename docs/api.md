@@ -92,12 +92,12 @@ Wndt\Module\Wndt_Bid_Form::render(['x' => 'xxx']);
 前端ajax请求插件API拓展，需要额外提供插件名称。
 本插件及主题拓展的文件路径具有唯一性，且分别强制要求以 'Wnd_'、'wndt_'为前缀，因此可自动根据前缀判定当前类归属
 第三方拓展插件具有多样性，因此需要额外提供插件名，以确定具体加载路径。
-拓展插件类请求格式：$plugin_name\\$class_name
+拓展插件类请求格式：$plugin_name/$class_name
 $class_name 不含命名空间（api将根据类名称前缀自动解析补全）
 
 假定插件：Wndt_File_Import 具有一个 Wndt_Demo UI模块，前端请求实例如下：
 ```JavaScript
-wnd_ajax_modal("Wndt_File_Import\\Wndt_Demo",  {"x": "xxx"});
+wnd_ajax_modal("Wndt_File_Import/Wndt_Demo",  {"x": "xxx"});
 ```
 实际类名称：
 ```php

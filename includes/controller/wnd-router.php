@@ -10,9 +10,10 @@ use Wnd\Utility\Wnd_Singleton_Trait;
  *自定义伪静态路由地址，处理与外部的交互响应如：支付回调通知、微信公众号通讯等
  *
  *路径与对应类文件：
- * - /wnd-route/wnd_test  => Wnd\Endpoint\Wnd_Test
- * - /wnd-route/wndt_test => Wndt\Endpoint\Wndt_Test
- *（Endpoint 类相关响应应直接输出，而非返回值）
+ * - 当前插件：	/wnd-route/wnd_test  				=> Wnd\Endpoint\Wnd_Test
+ * - 当前主题：	/wnd-route/wndt_test 				=> Wndt\Endpoint\Wndt_Test
+ * - 拓展插件：	/wnd-route/plugin_name/wndt_test 	=> Plugin_name\Endpoint\Wndt_Test
+ *上述类均已实现自动加载 详情 @see wnd-autoloader.php
  */
 class Wnd_Router {
 
