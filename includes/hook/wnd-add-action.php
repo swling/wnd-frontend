@@ -51,12 +51,12 @@ class Wnd_Add_Action {
 
 		// 存储在 Wnd option中 : _option_{$option_name}_{$option_key}
 		if (0 === stripos($meta_key, '_option_')) {
-			$old_option = Wnd_Form_Option::get_option_value_by_form_name($meta_key);
+			$old_option = Wnd_Form_Option::get_option_value_by_input_name($meta_key);
 			if ($old_option) {
 				wp_delete_attachment($old_option, true);
 			}
 
-			Wnd_Form_Option::update_option_by_form_name($meta_key, $attachment_id);
+			Wnd_Form_Option::update_option_by_input_name($meta_key, $attachment_id);
 			return;
 		}
 
@@ -149,7 +149,7 @@ class Wnd_Add_Action {
 
 		// 删除在 option
 		if (0 === stripos($meta_key, '_option_')) {
-			Wnd_Form_Option::delete_option_by_form_name($meta_key);
+			Wnd_Form_Option::delete_option_by_input_name($meta_key);
 		}
 
 		// 删除文章字段

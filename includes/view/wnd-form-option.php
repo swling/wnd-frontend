@@ -63,7 +63,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 *统一设置表单字段名前缀
 	 *根据表单字段名自动读取option value
 	 *
-	 *@see $this->build_form_name
+	 *@see $this->build_input_name
 	 */
 	public function filter(array $input_values): array{
 		foreach ($input_values as $key => $input) {
@@ -82,7 +82,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 			}
 
 			// 表单字段名自动添加统一前缀
-			$input_values[$key]['name'] = $this->build_form_name($input['name']);
+			$input_values[$key]['name'] = $this->build_input_name($input['name']);
 
 			/**
 			 * 根据表单字段名读取数据
@@ -90,7 +90,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 			 * 当设置字段 Options 属性时，表示该字段为"同名多值"字段如：radio、checkbox、select等
 			 * 此时不应修改选项 value（选项 value 为预设值），而应设置选中项：selected、checked
 			 */
-			$value = static::get_option_value_by_form_name($input_values[$key]['name']);
+			$value = static::get_option_value_by_input_name($input_values[$key]['name']);
 			if ($input_values[$key]['options'] ?? false) {
 				$input_values[$key]['selected'] = $value;
 				$input_values[$key]['checked']  = $value;
@@ -173,7 +173,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 			'label'         => $label,
 			'thumbnail'     => WND_URL . 'static/images/default.jpg',
 			'data'          => [
-				'meta_key'    => $this->build_form_name($option_key),
+				'meta_key'    => $this->build_input_name($option_key),
 				'save_width'  => $save_width,
 				'save_height' => $save_height,
 			],
@@ -190,7 +190,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 			[
 				'label' => $label,
 				'data'  => [
-					'meta_key' => $this->build_form_name($option_key),
+					'meta_key' => $this->build_input_name($option_key),
 				],
 			]
 		);
@@ -199,7 +199,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	/**
 	 *根据规则统一构造表单name值
 	 */
-	protected function build_form_name($option_key): string {
+	protected function build_input_name($option_key): string {
 		return '_option_' . $this->option_name . '_' . $option_key;
 	}
 
@@ -207,8 +207,8 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 *解析表单名，获取对应 option_name / option_key
 	 *为准确匹配本规则，要求 option_name 不得包含下划线
 	 */
-	protected static function parse_form_name($form_name): array{
-		$arr = explode('_', $form_name, 4);
+	protected static function parse_input_name($input_name): array{
+		$arr = explode('_', $input_name, 4);
 
 		$data                = [];
 		$data['option_name'] = $arr[2] ?? '';
@@ -220,8 +220,8 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 *_option_wnd_logo
 	 *返回：wnd
 	 */
-	public static function get_option_name_by_form_name($form_name) {
-		extract(static::parse_form_name($form_name));
+	public static function get_option_name_by_input_name($input_name) {
+		extract(static::parse_input_name($input_name));
 
 		return $option_name;
 	}
@@ -230,8 +230,8 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 *_option_wnd_logo
 	 *返回：logo
 	 */
-	public static function get_option_key_by_form_name($form_name) {
-		extract(static::parse_form_name($form_name));
+	public static function get_option_key_by_input_name($input_name) {
+		extract(static::parse_input_name($input_name));
 
 		return $option_key;
 	}
@@ -241,8 +241,8 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 *_option_wnd_logo
 	 *返回：wnd_get_option('wnd', 'logo')
 	 */
-	public static function get_option_value_by_form_name($form_name) {
-		extract(static::parse_form_name($form_name));
+	public static function get_option_value_by_input_name($input_name) {
+		extract(static::parse_input_name($input_name));
 
 		// 可能为多选字段：需要移除'[]'
 		$option_key = rtrim($option_key, '[]');
@@ -255,8 +255,8 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 *
 	 *更新：wnd_update_option('wnd', 'logo', $value)
 	 */
-	public static function update_option_by_form_name($form_name, $value) {
-		extract(static::parse_form_name($form_name));
+	public static function update_option_by_input_name($input_name, $value) {
+		extract(static::parse_input_name($input_name));
 
 		wnd_update_option($option_name, $option_key, $value);
 	}
@@ -266,8 +266,8 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 *
 	 *删除：wnd_delete_option('wnd', 'logo')
 	 */
-	public static function delete_option_by_form_name($form_name) {
-		extract(static::parse_form_name($form_name));
+	public static function delete_option_by_input_name($input_name) {
+		extract(static::parse_input_name($input_name));
 
 		wnd_delete_option($option_name, $option_key);
 	}
