@@ -5,47 +5,48 @@ namespace Wnd\Utility;
  * PHP JWT
  * @since 0.8.61
  *
+ * @link https://jwt.io/introduction/
+ * @link http://www.ruanyifeng.com/blog/2018/07/json_web_token-tutorial.html
  */
 class Wnd_JWT {
 
 	//头部
-	private static $header = array(
+	private static $header = [
 		'alg' => 'HS256', //生成signature的算法
 		'typ' => 'JWT', //类型
-	);
+	];
 
 	//使用HMAC生成信息摘要时所使用的密钥
 	private static $key = LOGGED_IN_KEY;
 
 	/**
-	 * 获取jwt token
-	 * @param array $payload jwt载荷   格式如下非必须
+	 * 获取 jwt token
+	 * @param array $payload JWT 载荷格式如下：
 	 *
-	 *iss (issuer)：签发人
-	 *exp (expiration time)：过期时间
-	 *sub (subject)：主题
-	 *aud (audience)：受众
-	 *nbf (Not Before)：生效时间
-	 *iat (Issued At)：签发时间
-	 *jti (JWT ID)：编号
+	 * - iss (issuer)：签发人
+	 * - exp (expiration time)：过期时间
+	 * - sub (subject)：主题
+	 * - aud (audience)：受众
+	 * - nbf (Not Before)：生效时间
+	 * - iat (Issued At)：签发时间
+	 * - jti (JWT ID)：编号
 	 *
-	 * @return bool|string
+	 * Payload 数据格式建议遵循约定，同时可根据实际应用场景自行添加或移除一项或多项
+	 *
+	 * @return string
 	 */
-	public static function getToken(array $payload): string {
-		if (!is_array($payload)) {
-			return '';
-		}
-
+	public static function getToken(array $payload): string{
 		$base64header  = self::base64UrlEncode(json_encode(self::$header, JSON_UNESCAPED_UNICODE));
 		$base64payload = self::base64UrlEncode(json_encode($payload, JSON_UNESCAPED_UNICODE));
-		$token         = $base64header . '.' . $base64payload . '.' . self::signature($base64header . '.' . $base64payload, self::$key, self::$header['alg']);
+		$Signature     = self::signature($base64header . '.' . $base64payload, self::$key, self::$header['alg']);
+		$token         = $base64header . '.' . $base64payload . '.' . $Signature;
 		return $token;
 	}
 
 	/**
 	 * 验证token是否有效,默认验证exp,nbf,iat时间
 	 * @param string $Token 需要验证的token
-	 * @return bool|string
+	 * @return bool|array
 	 */
 	public static function verifyToken(string $Token) {
 		$tokens = explode('.', $Token);
@@ -117,9 +118,9 @@ class Wnd_JWT {
 	 * @return mixed
 	 */
 	private static function signature(string $input, string $key, string $alg = 'HS256'): string{
-		$alg_config = array(
+		$alg_config = [
 			'HS256' => 'sha256',
-		);
+		];
 		return self::base64UrlEncode(hash_hmac($alg_config[$alg], $input, $key, true));
 	}
 }
