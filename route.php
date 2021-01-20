@@ -19,8 +19,8 @@ $request = ('POST' == $_SERVER['REQUEST_METHOD']) ? $_POST : $_GET;
 $endpoint = $_GET['endpoint'] ?? '';
 
 /**
- * Rest API Action
- * - 仅允许 POST
+ * Rest API
+ * - Action API 仅允许 POST
  */
 $action       = $_POST['action'] ?? '';
 $module       = $request['module'] ?? '';
