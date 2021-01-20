@@ -15,7 +15,7 @@ class Wnd_JWT {
 	);
 
 	//使用HMAC生成信息摘要时所使用的密钥
-	private static $key = '123456';
+	private static $key = LOGGED_IN_KEY;
 
 	/**
 	 * 获取jwt token
