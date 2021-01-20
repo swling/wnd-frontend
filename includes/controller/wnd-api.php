@@ -5,7 +5,6 @@ use Exception;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Filter;
 use Wnd\View\Wnd_Filter_User;
-use WP_REST_Request;
 
 /**
  *@since 2019.04.07 API改造
@@ -47,7 +46,7 @@ class Wnd_API {
 			'posts',
 			[
 				'methods'             => 'GET',
-				'callback'            => __CLASS__ . '::handle_posts',
+				'callback'            => __CLASS__ . '::filter_posts',
 				'permission_callback' => '__return_true',
 			]
 		);
@@ -58,7 +57,7 @@ class Wnd_API {
 			'users',
 			[
 				'methods'             => 'GET',
-				'callback'            => __CLASS__ . '::handle_users',
+				'callback'            => __CLASS__ . '::filter_users',
 				'permission_callback' => '__return_true',
 			]
 		);
@@ -66,10 +65,10 @@ class Wnd_API {
 		// UI响应
 		register_rest_route(
 			'wnd',
-			'interface',
+			'module',
 			[
 				'methods'             => 'GET',
-				'callback'            => __CLASS__ . '::handle_interface',
+				'callback'            => __CLASS__ . '::handle_module',
 				'permission_callback' => '__return_true',
 			]
 		);
@@ -143,9 +142,9 @@ class Wnd_API {
 	 *@since 2019.04.07
 	 *UI 响应
 	 *
-	 *@param $request  WP_REST_Request Object
+	 *@param $request
 	 */
-	public static function handle_interface(WP_REST_Request $request): array{
+	public static function handle_module($request): array{
 		if (!isset($request['module'])) {
 			return ['status' => 0, 'msg' => __('未指定UI', 'wnd')];
 		}
@@ -172,18 +171,18 @@ class Wnd_API {
 	 *@since 2020.04.24
 	 *获取 json data
 	 *
-	 *@param $request  WP_REST_Request Object
+	 *@param $request
 	 */
-	public static function handle_jsonget(WP_REST_Request $request): array{
-		if (!isset($request['data'])) {
+	public static function handle_jsonget($request): array{
+		if (!isset($request['jsonget'])) {
 			return ['status' => 0, 'msg' => __('未指定Data', 'wnd')];
 		}
 
 		// 解析实际类名称及参数
-		$class = static::parse_class($request['data'], 'JsonGet');
+		$class = static::parse_class($request['jsonget'], 'JsonGet');
 
 		if (!is_callable([$class, 'get'])) {
-			return ['status' => 0, 'msg' => __('无效的Json Data', 'wnd') . ':' . $class];
+			return ['status' => 0, 'msg' => __('无效的JsonGet', 'wnd') . ':' . $class];
 		}
 
 		try {
@@ -202,9 +201,9 @@ class Wnd_API {
 	 *	因此在本插件，Action 层相关方法中，用户数据采用 Wnd\Utility\Wnd_Request 统一处理
 	 * 	@see Wnd\Utility\Wnd_Request; Wnd\Action\Wnd_Action_Ajax
 	 *
-	 *@param $request  WP_REST_Request Object
+	 *@param $request
 	 */
-	public static function handle_action(WP_REST_Request $request): array{
+	public static function handle_action($request): array{
 		if (!isset($request['action'])) {
 			return ['status' => 0, 'msg' => __('未指定Action', 'wnd')];
 		}
@@ -242,9 +241,9 @@ class Wnd_API {
 	 *Wnd\View\Wnd_Filter 既包含了生成筛选链接的视图功能，也包含了根据请求参数执行对应 WP_Query 并返回查询结果的功能，且两者紧密相关不宜分割
 	 *可以理解为，Wnd\View\Wnd_Filter 是通过生成一个筛选视图，发送用户请求，最终根据用户请求，生成新的视图的特殊类：视图<->控制<->视图
 	 *
-	 *@param $request  WP_REST_Request Object
+	 *@param $request
 	 */
-	public static function handle_posts(WP_REST_Request $request): array{
+	public static function filter_posts($request): array{
 		try {
 			$filter = new Wnd_Filter(true);
 		} catch (Exception $e) {
@@ -297,9 +296,9 @@ class Wnd_API {
 	 *@since 2020.05.05
 	 *User 筛选 API
 	 *
-	 *@param $request  WP_REST_Request Object
+	 *@param $request
 	 */
-	public static function handle_users(WP_REST_Request $request): array{
+	public static function filter_users($request): array{
 		try {
 			$filter = new Wnd_Filter_User(true);
 		} catch (Exception $e) {

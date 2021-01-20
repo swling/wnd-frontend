@@ -65,16 +65,27 @@ class Wnd_Router {
 	 *@since 0.9.17
 	 *根据查询参数判断是否为自定义伪静态接口，从而实现输出重写
 	 */
-	protected static function handle_endpoint(string $endpoint) {
+	public static function handle_endpoint(string $endpoint) {
 		// 解析实际类名称及参数
 		$class = Wnd_API::parse_class($endpoint, 'Endpoint');
+		if (!class_exists($class)) {
+			static::send_text_msg(__('Endpoint 无效'));
+			return;
+		}
 
 		// 执行 Endpoint 类
 		try {
 			new $class();
 		} catch (Exception $e) {
-			header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
-			echo $e->getMessage();
+			static::send_text_msg($e->getMessage());
 		}
+	}
+
+	/**
+	 *输出错误信息
+	 */
+	protected static function send_text_msg(string $msg) {
+		header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
+		echo $msg;
 	}
 }

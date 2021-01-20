@@ -11,7 +11,7 @@ class Wnd_Default extends Wnd_Endpoint {
 
 	protected function do() {
 		echo 'Files: ' . count(get_included_files())
-		. '- Queries: ' . get_num_queries()
+		. ' - Queries: ' . get_num_queries()
 		. ' - Time: ' . timer_stop()
 		. ' - Memory: ' . number_format(memory_get_peak_usage() / 1024 / 1024, 2);
 		echo '</br>' . $GLOBALS['wp_query']->request;

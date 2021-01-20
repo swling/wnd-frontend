@@ -8,7 +8,7 @@ var $ = jQuery.noConflict();
  *
  */
 var lang_query = wnd.lang ? '?lang=' + wnd.lang : '';
-var wnd_interface_api = wnd.rest_url + wnd.interface_api + lang_query;
+var wnd_module_api = wnd.rest_url + wnd.module_api + lang_query;
 var wnd_action_api = wnd.rest_url + wnd.action_api + lang_query;
 var wnd_posts_api = wnd.rest_url + wnd.posts_api + lang_query;
 var wnd_users_api = wnd.rest_url + wnd.users_api + lang_query;
@@ -203,7 +203,7 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 function wnd_ajax_modal(module, param = {}, callback = '') {
 	$.ajax({
 		type: "GET",
-		url: wnd_interface_api,
+		url: wnd_module_api,
 		data: Object.assign({
 			"module": module,
 			"ajax_type": "modal"
@@ -243,7 +243,7 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
 function wnd_ajax_embed(container, module, param = {}, callback = '') {
 	$.ajax({
 		type: "GET",
-		url: wnd_interface_api,
+		url: wnd_module_api,
 		data: Object.assign({
 			"module": module,
 			"ajax_type": "embed"
@@ -277,16 +277,16 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 /**
  *@since 2020.07.21
  *ajax 获取 json数据
- *@param data 		对应 JsonGet 类名称
+ *@param jsonget	对应 JsonGet 类名称
  *@param param 		对应传参
  *@param callback 	回调函数
  */
-function wnd_get_json(data, param, callback) {
+function wnd_get_json(jsonget, param, callback) {
 	$.ajax({
 		type: "GET",
 		url: wnd_jsonget_api,
 		data: Object.assign({
-			"data": data,
+			"jsonget": jsonget,
 		}, param),
 		//后台返回数据前
 		beforeSend: function(xhr) {
@@ -436,7 +436,7 @@ function wnd_ajax_submit(form_id) {
 		var url = wnd_action_api;
 		var form_data = new FormData($("#" + form_id).get(0));
 	} else {
-		var url = wnd_interface_api;
+		var url = wnd_module_api;
 		var form_data = $("#" + form_id).serialize();
 	}
 
@@ -1331,7 +1331,7 @@ jQuery(document).ready(function($) {
 				type: "get",
 				url: wnd_jsonget_api,
 				data: {
-					"data": "wnd_sub_terms",
+					"jsonget": "wnd_sub_terms",
 					"parent": term_id,
 					"taxonomy": taxonomy,
 					"tips": tips,
