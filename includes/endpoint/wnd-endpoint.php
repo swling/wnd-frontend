@@ -87,7 +87,7 @@ abstract class Wnd_Endpoint {
 			break;
 		}
 
-		header('Content-Type:' . $content_type . ';charset=UTF-8');
+		header('Content-Type: ' . $content_type . '; charset=' . get_option('blog_charset'));
 	}
 
 	/**

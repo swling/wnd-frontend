@@ -73,7 +73,7 @@ class Wnd_Router {
 		try {
 			new $class();
 		} catch (Exception $e) {
-			header('Content-Type:text/plain; charset=UTF-8');
+			header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
 			echo $e->getMessage();
 		}
 	}

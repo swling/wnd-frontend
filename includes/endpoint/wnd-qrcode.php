@@ -19,7 +19,7 @@ class Wnd_Qrcode extends Wnd_Endpoint {
 		 *防止盗链 $_SERVER['HTTP_REFERER'];
 		 */
 
-		header('Content-Type:image/png');
+		header('Content-Type: image/png');
 		require WND_PATH . '/includes/utility/phpqrcode.php';
 		return \QRcode::png($string, false, 'Q', 7, 2);
 	}
