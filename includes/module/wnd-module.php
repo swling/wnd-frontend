@@ -36,8 +36,9 @@ abstract class Wnd_Module {
 
 	/**
 	 *构建
-	 *
-	 *此处不添加 $args 参数，子类可自行添加带默认值的传参如 $args = [] 即可接收传参
+	 * - 此处不添加 $args 参数，因为如果父类添加，则所有子类必须添加会导致大量无需传参的 Module 鼻血设置无需传参
+	 * - 接受传参子类可自行添加带默认值的传参 $args = [] 即可
+	 * - 如果设置传参，则必须设置参数的默认值，否则无法匹配本类方法一致性
 	 */
 	abstract protected static function build(): string;
 
