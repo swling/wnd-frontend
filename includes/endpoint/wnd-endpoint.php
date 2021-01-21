@@ -5,14 +5,13 @@ namespace Wnd\Endpoint;
  *@since 0.9.17
  *自定义路由端点处理抽象基类
  * - 转发控制器 @see Wnd\Controller\Wnd_Router
- * - Wnd\Endpoint 主要用于处理与外部第三方平台的交互响应如：支付回调通知、微信公众号通讯等
- * - 根据不同第三方平台的响应要求，每个 Endpoint 的响应数据格式将在具体 Endpoint 类中定义
+ * - Wnd\Endpoint 主要用于处理与外部第三方平台的交互响应如：支付回调通知、微信公众号通讯等，或系统内其他非 Json 数据交互
+ * - 响应数据格式将在具体 Endpoint 类中定义
+ * - Endpoint 类相关响应数据应直接输出，而非返回值
  *
  *路径与对应类文件：
  * - wp-json/wnd/route/wnd_test  => Wnd\Endpoint\Wnd_Test
  * - wp-json/wnd/route/wndt_test => Wndt\Endpoint\Wndt_Test
- *
- *Endpoint 类相关响应应直接输出，而非返回值
  */
 abstract class Wnd_Endpoint {
 

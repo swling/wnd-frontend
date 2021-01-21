@@ -7,8 +7,10 @@ use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
  *@since 0.9.17
- *自定义伪静态路由地址，处理与外部第三方平台的交互响应如：支付回调通知、微信公众号通讯等，响应数据格式将在具体 Endpoint 类中定义
- *内部 Json 数据交互 @see Wnd\Controller\Wnd_Controller;
+ *自定义伪静态路由地址
+ * - 主要用于处理非 Json 数据交互，如：支付回调通知、微信公众号通讯等
+ * - 响应数据格式将在具体 Endpoint 类中定义
+ * - 常规 Json 数据交互： @see Wnd\Controller\Wnd_Controller
  *
  *路径与对应类文件：
  * - 当前插件：	/wnd-route/wnd_test  				=> Wnd\Endpoint\Wnd_Test
