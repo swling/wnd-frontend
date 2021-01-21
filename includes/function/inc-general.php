@@ -8,7 +8,7 @@
  *@return string 	url
  */
 function wnd_get_router_url(): string {
-	return WND_URL . 'route.php';
+	return WND_URL . 'router.php';
 }
 
 /**
