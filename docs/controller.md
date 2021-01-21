@@ -7,8 +7,8 @@
 - 自定义users api：		wp-json/wnd/users	 	Allow: GET
 - 自定义jsonget api：	wp-json/wnd/jsonget	 	Allow: GET
 
-## Wnd_API 定义 
-@see /includes/controller/wnd-api.php
+## Wnd_Controller 定义 
+@see /includes/controller/wnd-controller.php
 
 ## 自动加载规则 
 @see autoloader.md

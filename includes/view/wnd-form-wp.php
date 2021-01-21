@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\View;
 
-use Wnd\Controller\Wnd_API;
+use Wnd\Controller\Wnd_Controller;
 use Wnd\Utility\Wnd_Captcha;
 use Wnd\Utility\Wnd_Request;
 use Wnd\View\Wnd_Gallery;
@@ -78,8 +78,8 @@ class Wnd_Form_WP extends Wnd_Form {
 			$this->add_hidden('_ajax_nonce', wp_create_nonce($endpoint));
 		}
 
-		$this->method = Wnd_API::$routes[$route]['methods'] ?? '';
-		$this->action = Wnd_API::get_route_url($route, $endpoint);
+		$this->method = Wnd_Controller::$routes[$route]['methods'] ?? '';
+		$this->action = Wnd_Controller::get_route_url($route, $endpoint);
 
 		parent::set_action($this->action, $this->method);
 	}

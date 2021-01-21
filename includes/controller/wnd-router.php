@@ -2,12 +2,13 @@
 namespace Wnd\Controller;
 
 use Exception;
-use Wnd\Controller\Wnd_API;
+use Wnd\Controller\Wnd_Controller;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
  *@since 0.9.17
- *自定义伪静态路由地址，处理与外部的交互响应如：支付回调通知、微信公众号通讯等
+ *自定义伪静态路由地址，处理与外部第三方平台的交互响应如：支付回调通知、微信公众号通讯等，响应数据格式将在具体 Endpoint 类中定义
+ *内部 Json 数据交互 @see Wnd\Controller\Wnd_Controller;
  *
  *路径与对应类文件：
  * - 当前插件：	/wnd-route/wnd_test  				=> Wnd\Endpoint\Wnd_Test
@@ -67,7 +68,7 @@ class Wnd_Router {
 	 */
 	public static function handle_endpoint(string $endpoint) {
 		// 解析实际类名称及参数
-		$class = Wnd_API::parse_class($endpoint, 'Endpoint');
+		$class = Wnd_Controller::parse_class($endpoint, 'Endpoint');
 		if (!class_exists($class)) {
 			static::send_text_msg(__('Endpoint 无效'));
 			return;

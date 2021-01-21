@@ -4,12 +4,12 @@
  *引入 WordPress 响应外部请求
  *
  *@since 0.9.17
- *整合 Wnd_API Json API 及 Wnd_Router 路由器
+ *整合 Wnd_Controller Json API 及 Wnd_Router 路由器
  *
  */
 require '../../../wp-load.php';
 
-use Wnd\Controller\Wnd_API;
+use Wnd\Controller\Wnd_Controller;
 use Wnd\Controller\Wnd_Router;
 
 $charset = get_option('blog_charset');
@@ -39,7 +39,7 @@ if ($endpoint) {
 
 // Module
 if ($module) {
-	$response = Wnd_API::handle_module($request);
+	$response = Wnd_Controller::handle_module($request);
 
 	// 返回
 	if (!isset($request['render'])) {
@@ -54,22 +54,22 @@ if ($module) {
 
 // Action
 if ($action) {
-	wp_send_json(Wnd_API::handle_action($request));
+	wp_send_json(Wnd_Controller::handle_action($request));
 }
 
 // JsonGet
 if ($jsonget) {
-	wp_send_json(Wnd_API::handle_jsonget($request));
+	wp_send_json(Wnd_Controller::handle_jsonget($request));
 }
 
 // JsonGet
 if ($filter_posts) {
-	wp_send_json(Wnd_API::filter_posts($request));
+	wp_send_json(Wnd_Controller::filter_posts($request));
 }
 
 // JsonGet
 if ($filter_users) {
-	wp_send_json(Wnd_API::filter_users($request));
+	wp_send_json(Wnd_Controller::filter_users($request));
 }
 
 // WP Action 应急操作

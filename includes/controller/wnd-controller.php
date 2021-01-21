@@ -8,8 +8,11 @@ use Wnd\View\Wnd_Filter_User;
 
 /**
  *@since 2019.04.07 API改造
+ *本类用于处理内部数据交互，返回数据统一为 Json 格式
+ *由于与第三方平台交互，数据格式不确定，因此定义自定义路由处理 @see Wnd\Controller\Wnd_Router;
+ *
  * # 主题或插件可拓展 Action、Module、Jsonget 详情参见：
- * - @see docs/api.md
+ * - @see docs/controller.md
  * - @see docs/autoloader.md
  *
  * 注意：
@@ -17,7 +20,7 @@ use Wnd\View\Wnd_Filter_User;
  *	而 WordPress 环境中，默认的超全局变量 $_POST / $_GET / $_REQUEST 则是经过转义的数据（无论 PHP 配置）
  *	@link https://make.wordpress.org/core/2016/04/06/rest-api-slashed-data-in-wordpress-4-4-and-4-5/
  */
-class Wnd_API {
+class Wnd_Controller {
 
 	use Wnd_Singleton_Trait;
 

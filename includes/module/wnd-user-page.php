@@ -66,7 +66,7 @@ class Wnd_User_Page extends Wnd_Module {
 		extract($args);
 
 		if ($module) {
-			$class = \Wnd\Controller\Wnd_API::parse_class($module, 'Module');
+			$class = \Wnd\Controller\Wnd_Controller::parse_class($module, 'Module');
 			return $class::render();
 		}
 
