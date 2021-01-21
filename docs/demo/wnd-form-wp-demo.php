@@ -16,7 +16,7 @@ echo $form->get_input_fields();
 
 /**
  *@since 2019.08.29
- *常规非ajax表单提交
+ *常规表单提交
  *
  *@since 2019.07.17
  *添加选项：$this->is_ajax_submit 设置表单提交方式
@@ -24,7 +24,7 @@ echo $form->get_input_fields();
  *
  *
  **/
-$temp_form = new Wnd_Form_WP(false);
+$temp_form = new Wnd_Form_WP($is_ajax_submit);
 $temp_form->add_text(
 	[
 		'name'        => 'wd',
@@ -69,6 +69,8 @@ wnd_demo_form();
 
 /**
  *@since 2019.03.10 ajax表单demo
+ *提交表单数据至本插件定义的 Rest Api
+ *主要区别： $form->set_action($url, $method) => $form->set_route($route, $endpoint);
  */
 function wnd_demo_form() {
 
@@ -387,8 +389,7 @@ function wnd_demo_form() {
 		]
 	);
 
-	// 与该表单数据匹配的后端处理类及类的命名空间
-	$form->set_action('wnd_inset_post');
+	$form->set_route('action', 'wnd_insert_post');
 	$form->set_submit_button('Submit', 'is-primary');
 
 	/**

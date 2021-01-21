@@ -271,7 +271,7 @@ $form->add_tel(
 	]
 );
 
-$form->set_action('post', 'https://www.baidu.com');
+$form->set_action('https://www.baidu.com', 'post');
 $form->set_submit_button('Submit', 'is-primary');
 
 $form->build();
