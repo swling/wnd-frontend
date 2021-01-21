@@ -89,7 +89,7 @@ class Wnd_Post_Status_Form extends Wnd_Module_User {
 		}
 
 		$form->add_hidden('post_id', $args['post_id']);
-		$form->set_ajax_action('action', 'wnd_update_post_status');
+		$form->set_route('action', 'wnd_update_post_status');
 		$form->add_form_attr('id', 'post-status');
 		$form->set_submit_button(__('提交', 'wnd'));
 		$form->build();

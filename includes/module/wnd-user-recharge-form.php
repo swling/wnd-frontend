@@ -31,7 +31,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module_User {
 			]
 		);
 		$form->add_html('</div>');
-		$form->set_ajax_action('action', 'wnd_do_pay');
+		$form->set_route('action', 'wnd_do_pay');
 		$form->set_submit_button(__('充值', 'wnd'));
 		$form->build();
 

@@ -67,7 +67,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$enable_captcha = apply_filters('enable_post_form_captcha', !is_user_logged_in(), $post_type, $post_id);
 
 		// 继承父类构造
-		parent::__construct(true, $enable_captcha, true);
+		parent::__construct(true, $enable_captcha);
 
 		// 初始化属性
 		$this->post_parent      = 0;

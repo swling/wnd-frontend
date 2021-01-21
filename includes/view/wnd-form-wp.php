@@ -68,18 +68,18 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	/**
 	 *@since 0.9.19
-	 *设置表单提交信息
+	 *设置表单提交至 Rest API
+	 *
 	 *@param $route 	string 		Rest API 路由
 	 *@param $endpoint 	string 		Rest API 路由对应的后端处理本次提交的类名
 	 */
-	public function set_ajax_action(string $route, string $endpoint) {
+	public function set_route(string $route, string $endpoint) {
 		if ('action' == $route) {
 			$this->add_hidden('_ajax_nonce', wp_create_nonce($endpoint));
 		}
 
-		$this->method         = Wnd_API::$routes[$route]['methods'] ?? '';
-		$this->action         = Wnd_API::get_route_url($route, $endpoint);
-		$this->is_ajax_submit = true;
+		$this->method = Wnd_API::$routes[$route]['methods'] ?? '';
+		$this->action = Wnd_API::get_route_url($route, $endpoint);
 
 		parent::set_action($this->action, $this->method);
 	}

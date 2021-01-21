@@ -34,7 +34,7 @@ class Wnd_Account_Status_Form extends Wnd_Module_Admin {
 		);
 		$form->add_html('</div>');
 		$form->add_hidden('user_id', $args['user_id']);
-		$form->set_ajax_action('action', 'wnd_update_account_status');
+		$form->set_route('action', 'wnd_update_account_status');
 		$form->set_submit_button(__('确认', 'wnd'));
 		$form->build();
 

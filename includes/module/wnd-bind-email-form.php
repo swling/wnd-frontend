@@ -26,7 +26,7 @@ class Wnd_Bind_Email_Form extends Wnd_Module_User {
 		}
 
 		$form->add_email_verification('bind', '', false);
-		$form->set_ajax_action('action', 'wnd_bind_account');
+		$form->set_route('action', 'wnd_bind_account');
 		$form->set_submit_button(__('保存', 'wnd'));
 		$form->build();
 

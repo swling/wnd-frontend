@@ -28,7 +28,7 @@ class Wnd_Delete_User_Form extends Wnd_Module_Root {
 		);
 		$form->add_html('</div>');
 		$form->add_hidden('user_id', $args['user_id']);
-		$form->set_ajax_action('action', 'wnd_delete_user');
+		$form->set_route('action', 'wnd_delete_user');
 		$form->set_submit_button(__('确认删除', 'wnd'));
 		$form->build();
 

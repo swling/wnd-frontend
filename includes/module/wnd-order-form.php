@@ -33,7 +33,7 @@ class Wnd_Order_Form extends Wnd_Module {
 		$form->add_hidden('post_id', $post_id);
 
 		if ($ajax) {
-			$form->set_ajax_action('module', 'wnd_payment_form');
+			$form->set_route('module', 'wnd_payment_form');
 		} else {
 			$form->set_action(get_permalink(wnd_get_config('ucenter_page')), 'GET');
 			$form->add_hidden('module', 'wnd_payment_form');
