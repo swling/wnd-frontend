@@ -62,9 +62,9 @@ class Wnd_Add_Filter_WP {
 			return $link;
 		}
 
-		$ucenter_page = (int) wnd_get_config('ucenter_page');
-		if ($ucenter_page) {
-			return add_query_arg(['action' => 'edit', 'post_id' => $post_id], get_permalink($ucenter_page));
+		$ucenter_page_url = wnd_get_ucenter_url();
+		if ($ucenter_page_url) {
+			return add_query_arg(['action' => 'edit', 'post_id' => $post_id], $ucenter_page_url);
 		}
 		return $link;
 	}
@@ -82,14 +82,8 @@ class Wnd_Add_Filter_WP {
 			return $link;
 		}
 
-		$ucenter_page = (int) wnd_get_config('ucenter_page');
-		if ($ucenter_page) {
-			return add_query_arg(['module' => 'wnd_post_detail', 'post_id' => $post->ID], get_permalink($ucenter_page));
-		} else {
-			return add_query_arg(['module' => 'wnd_post_detail', 'post_id' => $post->ID, 'echo' => 1], wnd_get_do_url());
-		}
-
-		return $link;
+		$url = wnd_get_ucenter_url() ?: wnd_get_router_url();
+		return add_query_arg(['module' => 'wnd_post_detail', 'post_id' => $post->ID], $url);
 	}
 
 	/**

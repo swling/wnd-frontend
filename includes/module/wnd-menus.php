@@ -8,7 +8,6 @@ namespace Wnd\Module;
  */
 class Wnd_Menus extends Wnd_Module {
 
-	// 导航Tabs
 	protected static function build($args = []): string{
 		$defaults = [
 			'inside'               => false,
@@ -36,7 +35,6 @@ class Wnd_Menus extends Wnd_Module {
 		return $html;
 	}
 
-	// 导航Tabs
 	protected static function build_user_menus($expand_default_menus): string{
 		$html = '<li>';
 		$html .= '<a>' . __('用户中心', 'wnd') . '&nbsp;<i class="fas fa-chevron-down"></i></a>';
@@ -77,8 +75,7 @@ class Wnd_Menus extends Wnd_Module {
 	/**
 	 *前端页面 URL
 	 */
-	protected static function get_front_page_url(): string{
-		$ucenter_page = (int) wnd_get_config('ucenter_page');
-		return $ucenter_page ? get_permalink($ucenter_page) : '';
+	protected static function get_front_page_url(): string {
+		return wnd_get_ucenter_url();
 	}
 }

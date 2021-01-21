@@ -103,7 +103,7 @@ class Wnd_Controller {
 	 *
 	 *@return string 包含完整命名空间的类名称
 	 */
-	public static function parse_class(string $class, string $api): string{
+	public static function parse_class(string $class, string $route_base): string{
 		/**
 		 *拓展插件类请求格式：Wndt_File_Import/Wndt_Demo
 		 *判断是否为拓展插件类，若是，则提取插件名称
@@ -133,10 +133,10 @@ class Wnd_Controller {
 		 *最终拼接成具有完整命名空间的实际类名称
 		 */
 		if ($plugin) {
-			$real_class = 'Wnd_Plugin' . '\\' . $plugin . '\\' . $api . '\\' . $class_name;
+			$real_class = 'Wnd_Plugin' . '\\' . $plugin . '\\' . $route_base . '\\' . $class_name;
 		} else {
 			$prefix     = explode('_', $class, 2)[0];
-			$real_class = $prefix . '\\' . $api . '\\' . $class_name;
+			$real_class = $prefix . '\\' . $route_base . '\\' . $class_name;
 		}
 
 		return $real_class;

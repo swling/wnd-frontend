@@ -4,6 +4,9 @@ namespace Wnd\Endpoint;
 /**
  *@since 0.9.17
  *自定义路由端点处理抽象基类
+ * - 转发控制器 @see Wnd\Controller\Wnd_Router
+ * - Wnd\Endpoint 主要用于处理与外部第三方平台的交互响应如：支付回调通知、微信公众号通讯等
+ * - 根据不同第三方平台的响应要求，每个 Endpoint 的响应数据格式将在具体 Endpoint 类中定义
  *
  *路径与对应类文件：
  * - wp-json/wnd/route/wnd_test  => Wnd\Endpoint\Wnd_Test
@@ -46,10 +49,9 @@ abstract class Wnd_Endpoint {
 	}
 
 	/**
-	 * - 不同格式的响应，应设置对应的 Content-type 如纯文本：header('Content-Type:text/plain; charset=UTF-8');
+	 *  不同格式的响应，应设置对应的 Content-type 如纯文本：header('Content-Type:text/plain; charset=UTF-8');
 	 *
 	 *	常见的媒体格式类型如下：
-	 *
 	 *	 - text/html ： HTML格式
 	 *	 - text/plain ：纯文本格式
 	 *	 - text/xml ： XML格式
@@ -58,7 +60,6 @@ abstract class Wnd_Endpoint {
 	 *	 - image/png：png图片格式
 	 *
 	 *	以application开头的媒体格式类型：
-	 *
 	 *	- application/xhtml+xml ：XHTML格式
 	 *	- application/xml： XML数据格式
 	 *	- application/atom+xml ：Atom XML聚合格式
@@ -92,9 +93,7 @@ abstract class Wnd_Endpoint {
 
 	/**
 	 *执行操作
-	 *
 	 * - 文本响应数据应直接输出；图像、文件等则应返回对应对象
-	 *
 	 */
 	abstract protected function do();
 }

@@ -1,17 +1,19 @@
 <?php
 
 /**
- *@since 2019.01.21 获取do page地址
- *一个没有空白的WordPress环境，接收或执行一些操作
+ *@since 2019.01.21
+ *获取 Router PHP 文件绝对网址，用于不支持伪静态或其他应急场景
+ * - 本路由地址整合了 Wnd_Controller Json API 及 Wnd_Router 路由器
  *
  *@return string 	url
  */
-function wnd_get_do_url() {
+function wnd_get_router_url(): string {
 	return WND_URL . 'route.php';
 }
 
 /**
- *@since 0.9.17 指定 Endpoint 绝对路由 URL
+ *@since 0.9.17
+ *Wnd Router 指定 Endpoint 绝对路由 URL，处理与第三方平台的通讯
  *
  *@return string url
  */
