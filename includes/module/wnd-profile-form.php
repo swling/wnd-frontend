@@ -24,7 +24,7 @@ class Wnd_Profile_Form extends Wnd_Module_User {
 		$form->add_html('</div></div>');
 
 		$form->add_user_description(__('简介', 'wnd'), __('简介', 'wnd'));
-		$form->set_action('wnd_update_profile');
+		$form->set_ajax_action('action', 'wnd_update_profile');
 		$form->set_submit_button(__('保存', 'wnd'));
 
 		$form->set_filter(__CLASS__);

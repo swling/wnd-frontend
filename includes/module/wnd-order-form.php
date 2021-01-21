@@ -30,9 +30,15 @@ class Wnd_Order_Form extends Wnd_Module {
 
 		// 构建表单
 		$form = new Wnd_Form_WP($ajax);
-		$form->add_hidden('module', 'wnd_payment_form');
 		$form->add_hidden('post_id', $post_id);
-		$form->set_action(get_permalink(wnd_get_config('ucenter_page')), 'GET');
+
+		if ($ajax) {
+			$form->set_ajax_action('module', 'wnd_payment_form');
+		} else {
+			$form->set_action(get_permalink(wnd_get_config('ucenter_page')), 'GET');
+			$form->add_hidden('module', 'wnd_payment_form');
+		}
+
 		$form->add_radio(
 			[
 				'label'    => '',

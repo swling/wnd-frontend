@@ -78,14 +78,13 @@ function _run_suggestions(el, query) {
     }
 
     let data = {
-        "jsonget": "wnd_term_searcher",
         "search": query,
         "taxonomy": $(el).data("taxonomy"),
     };
 
     $.ajax({
         type: "GET",
-        url: wnd_jsonget_api,
+        url: wnd_jsonget_api + "/wnd_term_searcher",
         data: data,
         beforeSend: function(xhr) {
             xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);

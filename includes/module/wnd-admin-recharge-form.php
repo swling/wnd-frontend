@@ -37,7 +37,7 @@ class Wnd_Admin_Recharge_Form extends Wnd_Module_Root {
 				'placeholder' => __('备注（可选）', 'wnd'),
 			]
 		);
-		$form->set_action('wnd_admin_recharge');
+		$form->set_ajax_action('action', 'wnd_admin_recharge');
 		$form->set_submit_button(__('确认充值', 'wnd'));
 		$form->build();
 

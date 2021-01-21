@@ -197,15 +197,14 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 *典型用途：	击弹出登录框、点击弹出建议发布文章框
 *@param 	module 		string 		module类
 *@param 	param 		json 		传参
- *@param 	callback 	回调函数
+*@param 	callback 	回调函数
 */
 // ajax 从后端请求内容，并以弹窗形式展现
 function wnd_ajax_modal(module, param = {}, callback = '') {
 	$.ajax({
 		type: "GET",
-		url: wnd_module_api,
+		url: wnd_module_api + "/" + module,
 		data: Object.assign({
-			"module": module,
 			"ajax_type": "modal"
 		}, param),
 		//后台返回数据前
@@ -243,9 +242,8 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
 function wnd_ajax_embed(container, module, param = {}, callback = '') {
 	$.ajax({
 		type: "GET",
-		url: wnd_module_api,
+		url: wnd_module_api + "/" + module,
 		data: Object.assign({
-			"module": module,
 			"ajax_type": "embed"
 		}, param),
 
@@ -284,10 +282,8 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 function wnd_get_json(jsonget, param, callback) {
 	$.ajax({
 		type: "GET",
-		url: wnd_jsonget_api,
-		data: Object.assign({
-			"jsonget": jsonget,
-		}, param),
+		url: wnd_jsonget_api + "/" + jsonget,
+		data: param,
 		//后台返回数据前
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
@@ -431,14 +427,9 @@ function wnd_ajax_submit(form_id) {
 	}
 
 	// 提交表单
-	var method = $("#" + form_id).prop('method');
-	if ("post" == method) {
-		var url = wnd_action_api;
-		var form_data = new FormData($("#" + form_id).get(0));
-	} else {
-		var url = wnd_module_api;
-		var form_data = $("#" + form_id).serialize();
-	}
+	var method = $("#" + form_id).prop("method");
+	var url = $("#" + form_id).prop("action");
+	var form_data = ("post" == method) ? new FormData($("#" + form_id).get(0)) : $("#" + form_id).serialize();
 
 	$.ajax({
 		url: url,
@@ -609,10 +600,9 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 		$.ajax({
 			type: "POST",
 			datatype: "json",
-			url: wnd_action_api,
+			url: wnd_action_api + "/wnd_safe_action",
 			data: {
 				"post_id": post_id,
-				"action": "wnd_safe_action",
 				"method": "update_views",
 				"_ajax_nonce": wnd.safe_action_nonce,
 			},
@@ -647,7 +637,7 @@ function wnd_send_code(button) {
 	$.ajax({
 		type: "post",
 		dataType: "json",
-		url: wnd_action_api,
+		url: wnd_action_api + "/" + data.action,
 		data: data,
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
@@ -786,12 +776,11 @@ jQuery(document).ready(function($) {
 
 		// ajax api请求函数及其nonce
 		form_data.set("_ajax_nonce", $(this).data("upload_nonce"));
-		form_data.set("action", "wnd_upload_file");
 
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
 		$.ajax({
-			url: wnd_action_api,
+			url: wnd_action_api + "/wnd_upload_file",
 			dataType: "json",
 			cache: false,
 			contentType: false,
@@ -932,10 +921,9 @@ jQuery(document).ready(function($) {
 
 		// ajax api请求函数及其nonce
 		form_data.set("_ajax_nonce", file_data["delete_nonce"]);
-		form_data.set("action", "wnd_delete_file");
 
 		$.ajax({
-			url: wnd_action_api,
+			url: wnd_action_api + "/wnd_delete_file",
 			dataType: "json",
 			cache: false,
 			contentType: false,
@@ -1027,9 +1015,8 @@ jQuery(document).ready(function($) {
 		var _this = $(this);
 		$.ajax({
 			type: "POST",
-			url: wnd_action_api,
+			url: wnd_action_api + "/" + action,
 			data: Object.assign({
-				"action": action,
 				"_ajax_nonce": nonce,
 				"_wnd_sign": wnd_sign,
 			}, $(this).data("args")),
@@ -1329,9 +1316,8 @@ jQuery(document).ready(function($) {
 		if (term_id != -1) {
 			$.ajax({
 				type: "get",
-				url: wnd_jsonget_api,
+				url: wnd_jsonget_api + "/wnd_sub_terms",
 				data: {
-					"jsonget": "wnd_sub_terms",
 					"parent": term_id,
 					"taxonomy": taxonomy,
 					"tips": tips,

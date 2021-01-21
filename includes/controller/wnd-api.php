@@ -21,6 +21,49 @@ class Wnd_API {
 
 	use Wnd_Singleton_Trait;
 
+	/**
+	 *路由命名空间
+	 */
+	public static $namespace = 'wnd';
+
+	/**
+	 *集中定义 API
+	 * - 为统一前端提交行为，本插件约定，所有 Route 仅支持单一 Method 请求方式
+	 * - 'route_rule' 为本插件自定义参数，用于设定对应路由的匹配规则
+	 */
+	public static $routes = [
+		'module'  => [
+			'methods'             => 'GET',
+			'callback'            => __CLASS__ . '::handle_module',
+			'permission_callback' => '__return_true',
+			'route_rule'          => '(?P<module>(.*))',
+		],
+		'action'  => [
+			'methods'             => 'POST',
+			'callback'            => __CLASS__ . '::handle_action',
+			'permission_callback' => '__return_true',
+			'route_rule'          => '(?P<action>(.*))',
+		],
+		'jsonget' => [
+			'methods'             => 'GET',
+			'callback'            => __CLASS__ . '::handle_jsonget',
+			'permission_callback' => '__return_true',
+			'route_rule'          => '(?P<jsonget>(.*))',
+		],
+		'posts'   => [
+			'methods'             => 'GET',
+			'callback'            => __CLASS__ . '::filter_posts',
+			'permission_callback' => '__return_true',
+			'route_rule'          => false,
+		],
+		'users'   => [
+			'methods'             => 'GET',
+			'callback'            => __CLASS__ . '::filter_users',
+			'permission_callback' => '__return_true',
+			'route_rule'          => false,
+		],
+	];
+
 	private function __construct() {
 		add_action('rest_api_init', [__CLASS__, 'register_route']);
 	}
@@ -29,60 +72,18 @@ class Wnd_API {
 	 *注册API
 	 */
 	public static function register_route() {
-		// 数据处理
-		register_rest_route(
-			'wnd',
-			'action',
-			[
-				'methods'             => 'POST',
-				'callback'            => __CLASS__ . '::handle_action',
-				'permission_callback' => '__return_true',
-			]
-		);
+		foreach (static::$routes as $route => $args) {
+			$route = $args['route_rule'] ? ($route . '/' . $args['route_rule']) : $route;
+			register_rest_route(static::$namespace, $route, $args);
+		}
+		unset($route, $args);
+	}
 
-		// Post 多重筛选
-		register_rest_route(
-			'wnd',
-			'posts',
-			[
-				'methods'             => 'GET',
-				'callback'            => __CLASS__ . '::filter_posts',
-				'permission_callback' => '__return_true',
-			]
-		);
-
-		// User 筛选
-		register_rest_route(
-			'wnd',
-			'users',
-			[
-				'methods'             => 'GET',
-				'callback'            => __CLASS__ . '::filter_users',
-				'permission_callback' => '__return_true',
-			]
-		);
-
-		// UI响应
-		register_rest_route(
-			'wnd',
-			'module',
-			[
-				'methods'             => 'GET',
-				'callback'            => __CLASS__ . '::handle_module',
-				'permission_callback' => '__return_true',
-			]
-		);
-
-		// Json数据输出
-		register_rest_route(
-			'wnd',
-			'jsonget',
-			[
-				'methods'             => 'GET',
-				'callback'            => __CLASS__ . '::handle_jsonget',
-				'permission_callback' => '__return_true',
-			]
-		);
+	/**
+	 *注册API
+	 */
+	public static function get_route_url(string $route, string $endpoint = ''): string {
+		return rest_url(static::$namespace . '/' . $route . ($endpoint ? ('/' . $endpoint) : ''));
 	}
 
 	/**

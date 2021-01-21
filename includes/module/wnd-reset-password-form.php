@@ -23,7 +23,7 @@ class Wnd_Reset_Password_Form extends Wnd_Module {
 
 		$form->add_user_new_password(__('新密码', 'wnd'), __('新密码', 'wnd'), true);
 		$form->add_user_new_password_repeat(__('确认新密码', 'wnd'), __('确认新密码', 'wnd'), true);
-		$form->set_action('wnd_reset_password');
+		$form->set_ajax_action('action', 'wnd_reset_password');
 		$form->set_submit_button(__('重置密码', 'wnd'));
 		$form->set_filter(__CLASS__);
 		$form->build();

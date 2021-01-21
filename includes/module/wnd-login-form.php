@@ -32,7 +32,7 @@ class Wnd_Login_Form extends Wnd_Module {
 			]
 		);
 		$form->add_hidden('redirect_to', $redirect_to);
-		$form->set_action('wnd_login');
+		$form->set_ajax_action('action', 'wnd_login');
 		$form->set_submit_button(__('登录', 'wnd'));
 		$form->set_filter(__CLASS__);
 		$form->build();

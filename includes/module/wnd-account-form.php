@@ -30,7 +30,7 @@ class Wnd_Account_Form extends Wnd_Module_User {
 		$form->add_user_password(__('密码', 'wnd'), __('当前密码', 'wnd'));
 		$form->add_user_new_password(__('新密码', 'wnd'), __('新密码', 'wnd'));
 		$form->add_user_new_password_repeat(__('确认新密码', 'wnd'), __('确认新密码', 'wnd'));
-		$form->set_action('wnd_update_account');
+		$form->set_ajax_action('action', 'wnd_update_account');
 		$form->set_submit_button(__('保存', 'wnd'));
 		$form->set_filter(__CLASS__);
 		$form->build();

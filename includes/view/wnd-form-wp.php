@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\View;
 
+use Wnd\Controller\Wnd_API;
 use Wnd\Utility\Wnd_Captcha;
 use Wnd\Utility\Wnd_Request;
 use Wnd\View\Wnd_Gallery;
@@ -66,21 +67,21 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *设置提交信息
-	 *@param $action 	string 		ajax中为后端处理本次提交的类名，非ajax环境中为表单接收地址
-	 *@param $method 	string 		非ajax环境中为表单提交方法：POST/GET
+	 *@since 0.9.19
+	 *设置表单提交信息
+	 *@param $route 	string 		Rest API 路由
+	 *@param $endpoint 	string 		Rest API 路由对应的后端处理本次提交的类名
 	 */
-	public function set_action(string $action, string $method = 'POST') {
-		// 需要作为判断条件，故转为统一大写
-		$method = strtoupper($method);
-
-		if ($this->is_ajax_submit and 'GET' != $method) {
-			$this->method = $method;
-			$this->add_hidden('action', $action);
-			$this->add_hidden('_ajax_nonce', wp_create_nonce($action));
-		} else {
-			parent::set_action($action, $method);
+	public function set_ajax_action(string $route, string $endpoint) {
+		if ('action' == $route) {
+			$this->add_hidden('_ajax_nonce', wp_create_nonce($endpoint));
 		}
+
+		$this->method         = Wnd_API::$routes[$route]['methods'] ?? '';
+		$this->action         = Wnd_API::get_route_url($route, $endpoint);
+		$this->is_ajax_submit = true;
+
+		parent::set_action($this->action, $this->method);
 	}
 
 	public function set_message(string $message) {
