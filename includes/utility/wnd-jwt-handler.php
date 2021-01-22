@@ -18,14 +18,18 @@ abstract class Wnd_JWT_Handler {
 
 	protected $exp;
 
+	// Token 验证后得到的用户 ID
+	protected $verified_user_id = null;
+
 	public function __construct() {
 		$this->Wnd_JWT = new Wnd_JWT;
 		$this->domain  = parse_url(home_url())['host'];
 		$this->exp     = time() + 3600 * 30;
 
 		add_action('wp_login', [$this, 'handle_login'], 10, 2);
-		add_action('init', [$this, 'verify_client_token'], 10);
+		add_action('init', [$this, 'set_current_user'], 10);
 		add_action('wp_logout', [$this, 'handle_logout'], 10);
+		add_filter('rest_authentication_errors', [$this, 'rest_token_check_errors'], 10, 1);
 	}
 
 	/**
@@ -59,28 +63,36 @@ abstract class Wnd_JWT_Handler {
 	}
 
 	/**
-	 *验证客户端 Token
+	 *处理用户登录
 	 */
-	public function verify_client_token() {
+	public function set_current_user() {
 		if (is_user_logged_in()) {
 			return;
 		}
 
+		$this->verified_user_id = (null === $this->verified_user_id) ? $this->verify_client_token() : $this->verified_user_id;
+		wp_set_current_user($this->verified_user_id);
+	}
+
+	/**
+	 *验证客户端 Token
+	 */
+	protected function verify_client_token(): int{
 		// 未能获取 Token
 		$token = $this->get_client_token();
 		if (!$token) {
-			return;
+			return 0;
 		}
 
 		// Token 失效
 		$getPayload = $this->Wnd_JWT::verifyToken($token);
 		if (!$getPayload) {
 			$this->clean_client_token();
-			return;
+			return 0;
 		}
 
 		// Token 认证成功，设定当前用户状态
-		wp_set_current_user($getPayload['sub']);
+		return (int) $getPayload['sub'];
 	}
 
 	/**
@@ -88,6 +100,44 @@ abstract class Wnd_JWT_Handler {
 	 */
 	public function handle_logout() {
 		$this->clean_client_token();
+	}
+
+	/**
+	 * Filters REST authentication errors.
+	 *
+	 * This is used to pass a WP_Error from an authentication method back to
+	 * the API.
+	 *
+	 * Authentication methods should check first if they're being used, as
+	 * multiple authentication methods can be enabled on a site (cookies,
+	 * HTTP basic auth, OAuth). If the authentication method hooked in is
+	 * not actually being attempted, null should be returned to indicate
+	 * another authentication method should check instead. Similarly,
+	 * callbacks should ensure the value is `null` before checking for
+	 * errors.
+	 *
+	 * A WP_Error instance can be returned if an error occurs, and this should
+	 * match the format used by API methods internally (that is, the `status`
+	 * data should be used). A callback can return `true` to indicate that
+	 * the authentication method was used, and it succeeded.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param WP_Error|null|true $errors WP_Error if authentication error, null if authentication
+	 *                                   method wasn't used, true if authentication succeeded.
+	 */
+	function rest_token_check_errors($result) {
+		if (!empty($result)) {
+			return $result;
+		}
+
+		$this->verified_user_id = (null === $this->verified_user_id) ? $this->verify_client_token() : $this->verified_user_id;
+		if (!$this->verified_user_id) {
+			wp_set_current_user(0);
+			return true;
+		}
+
+		return true;
 	}
 
 	/**
