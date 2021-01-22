@@ -47,8 +47,9 @@ class Wnd_Router {
 	/**
 	 *获取指定 Endpoint 绝对路由 URL
 	 */
-	public static function get_route_url(string $endpoint): string {
-		return home_url(static::$rule['prefix'] . '/' . $endpoint);
+	public static function get_route_url(string $endpoint = ''): string{
+		$route_base_url = home_url(static::$rule['prefix']);
+		return $endpoint ? ($route_base_url . '/' . $endpoint) : $route_base_url;
 	}
 
 	/**

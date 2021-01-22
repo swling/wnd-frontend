@@ -17,7 +17,7 @@ function wnd_get_router_url(): string {
  *
  *@return string url
  */
-function wnd_get_route_url(string $endpoint): string {
+function wnd_get_route_url(string $endpoint = ''): string {
 	return Wnd\Controller\Wnd_Router::get_route_url($endpoint);
 }
 

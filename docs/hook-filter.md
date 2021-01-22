@@ -226,19 +226,6 @@ apply_filters('wnd_post_thumbnail', $html, $post_id, $width, $height);
 */
 apply_filters('wnd_default_thumbnail', WND_URL . 'static/images/default.jpg', $this);
 ```
-## wnd_safe_action
-```php
-/**
-*Wnd_Safe_Action
-*前端可直接向rest api发起：wnd_safe_action操作，以执行一些请求或非敏感类操作
-*由于do_action 没有返回值，无法对响应的操作返回消息给前端，故此用filter替代操作
-*WP中filter与action的底层实质相同
-*
-*@since 2020.04.18
-*@see Wnd\Action\Wnd_Safe_Action
-*/
-apply_filters('wnd_safe_action_return');
-```
 
 ## 发送短信或邮件验证码权限
 ```php

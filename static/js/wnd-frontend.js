@@ -4,6 +4,15 @@
 var $ = jQuery.noConflict();
 
 /**
+ *所有 ajax 请求统一添加 WP Nonce
+ */
+$.ajaxSetup({
+	beforeSend: function(xhr) {
+		xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
+	}
+});
+
+/**
  *定义API接口，添加语言参数
  *
  */
@@ -209,7 +218,6 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
 		}, param),
 		//后台返回数据前
 		beforeSend: function(xhr) {
-			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			wnd_alert_msg("……");
 		},
 		//成功后
@@ -249,7 +257,6 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 
 		//后台返回数据前
 		beforeSend: function(xhr) {
-			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			wnd_loading(container, true);
 		},
 		//成功后
@@ -284,10 +291,6 @@ function wnd_get_json(jsonget, param, callback) {
 		type: "GET",
 		url: wnd_jsonget_api + "/" + jsonget,
 		data: param,
-		//后台返回数据前
-		beforeSend: function(xhr) {
-			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-		},
 		//成功后
 		success: function(response) {
 			window[callback](response);
@@ -442,7 +445,6 @@ function wnd_ajax_submit(form_id) {
 
 		// 提交中
 		beforeSend: function(xhr) {
-			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			submit_button.addClass("is-loading");
 		},
 
@@ -600,18 +602,12 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 		$.ajax({
 			type: "POST",
 			datatype: "json",
-			url: wnd_action_api + "/wnd_safe_action",
+			url: wnd.wnd_route + "/wnd_update_views",
 			data: {
-				"post_id": post_id,
-				"method": "update_views",
-				"_ajax_nonce": wnd.safe_action_nonce,
-			},
-			// 提交中
-			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
+				"post_id": post_id
 			},
 			success: function(response) {
-				if (response.status === 1) {
+				if (1 == response.status) {
 					localStorage.setItem("wnd_views", JSON.stringify(wnd_views));
 				}
 			}
@@ -640,7 +636,6 @@ function wnd_send_code(button) {
 		url: wnd_action_api + "/" + data.action,
 		data: data,
 		beforeSend: function(xhr) {
-			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			button.addClass("is-loading");
 		},
 		success: function(response) {
@@ -789,7 +784,6 @@ jQuery(document).ready(function($) {
 			type: "POST",
 			//后台返回数据前
 			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 				wnd_ajax_msg(wnd.msg.waiting, "is-warning", "#" + id);
 			},
 			// 提交成功
@@ -932,7 +926,6 @@ jQuery(document).ready(function($) {
 			type: "post",
 			//后台返回数据前
 			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 				wnd_ajax_msg(wnd.msg.waiting, "is-warning", "#" + id);
 			},
 			// 上传成功
@@ -1021,10 +1014,6 @@ jQuery(document).ready(function($) {
 				"_wnd_sign": wnd_sign,
 			}, $(this).data("args")),
 
-			//后台返回数据前
-			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-			},
 			//成功后
 			success: function(response) {
 
@@ -1164,7 +1153,6 @@ jQuery(document).ready(function($) {
 			type: "GET",
 			data: filter_param,
 			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 				wnd_loading(filter_param.wnd_ajax_container, true);
 			},
 			success: function(response) {
@@ -1269,7 +1257,6 @@ jQuery(document).ready(function($) {
 			type: "GET",
 			data: filter_user_param,
 			beforeSend: function(xhr) {
-				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 				wnd_loading(filter_user_param.wnd_ajax_container, true);
 			},
 			success: function(response) {
