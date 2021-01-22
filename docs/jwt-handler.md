@@ -1,6 +1,6 @@
 # JWT Token Hanlder
 将WordPress 账户体系与 JWT Token 绑定。<br/>
-本插件并未启用 HWT，如需启用 JWT，请在主题或插件中，继承 Wnd\Utility\Wnd_JWT_Handler; 创建子类并在 WP init Hook 中实例化。<br/>
+本插件并未启用 JWT，如需启用 JWT，请在主题或插件中，继承 Wnd\Utility\Wnd_JWT_Handler; 创建子类并在 WP init Hook 中实例化。<br/>
 子类需要完成客户端处理 Token 的具体方法，包含：存储、获取、删除。<br/>
 
 ## Cookie 存储 Token 实例
