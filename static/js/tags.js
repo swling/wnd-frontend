@@ -86,10 +86,6 @@ function _run_suggestions(el, query) {
         type: "GET",
         url: wnd_jsonget_api + "/wnd_term_searcher",
         data: data,
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
-        },
-
         //  data format array ['tag1','tag2','tag3']
         success: function(response) {
             if (response.status <= 0) {
