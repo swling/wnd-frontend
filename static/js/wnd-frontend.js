@@ -218,6 +218,7 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
 		}, param),
 		//后台返回数据前
 		beforeSend: function(xhr) {
+			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			wnd_alert_msg("……");
 		},
 		//成功后
@@ -257,6 +258,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 
 		//后台返回数据前
 		beforeSend: function(xhr) {
+			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			wnd_loading(container, true);
 		},
 		//成功后
@@ -445,6 +447,7 @@ function wnd_ajax_submit(form_id) {
 
 		// 提交中
 		beforeSend: function(xhr) {
+			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			submit_button.addClass("is-loading");
 		},
 
@@ -636,6 +639,7 @@ function wnd_send_code(button) {
 		url: wnd_action_api + "/" + data.action,
 		data: data,
 		beforeSend: function(xhr) {
+			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 			button.addClass("is-loading");
 		},
 		success: function(response) {
@@ -784,6 +788,7 @@ jQuery(document).ready(function($) {
 			type: "POST",
 			//后台返回数据前
 			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 				wnd_ajax_msg(wnd.msg.waiting, "is-warning", "#" + id);
 			},
 			// 提交成功
@@ -926,6 +931,7 @@ jQuery(document).ready(function($) {
 			type: "post",
 			//后台返回数据前
 			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 				wnd_ajax_msg(wnd.msg.waiting, "is-warning", "#" + id);
 			},
 			// 上传成功
@@ -1153,6 +1159,7 @@ jQuery(document).ready(function($) {
 			type: "GET",
 			data: filter_param,
 			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 				wnd_loading(filter_param.wnd_ajax_container, true);
 			},
 			success: function(response) {
@@ -1257,6 +1264,7 @@ jQuery(document).ready(function($) {
 			type: "GET",
 			data: filter_user_param,
 			beforeSend: function(xhr) {
+				xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
 				wnd_loading(filter_user_param.wnd_ajax_container, true);
 			},
 			success: function(response) {
