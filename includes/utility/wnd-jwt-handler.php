@@ -23,9 +23,9 @@ abstract class Wnd_JWT_Handler {
 		$this->domain  = parse_url(home_url())['host'];
 		$this->exp     = time() + 3600 * 30;
 
-		add_action('wp_login', [$this, 'handle_login'], 11, 2);
-		add_action('init', [$this, 'verify_client_token'], 11);
-		add_action('wp_logout', [$this, 'handle_logout'], 11);
+		add_action('wp_login', [$this, 'handle_login'], 10, 2);
+		add_action('init', [$this, 'verify_client_token'], 10);
+		add_action('wp_logout', [$this, 'handle_logout'], 10);
 	}
 
 	/**
@@ -66,16 +66,20 @@ abstract class Wnd_JWT_Handler {
 			return;
 		}
 
+		// 未能获取 Token
 		$token = $this->get_client_token();
 		if (!$token) {
 			return;
 		}
 
+		// Token 失效
 		$getPayload = $this->Wnd_JWT::verifyToken($token);
 		if (!$getPayload) {
 			$this->clean_client_token();
+			return;
 		}
 
+		// Token 认证成功，设定当前用户状态
 		wp_set_current_user($getPayload['sub']);
 	}
 
