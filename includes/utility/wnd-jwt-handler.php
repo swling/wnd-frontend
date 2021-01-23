@@ -12,8 +12,6 @@ use Wnd\Utility\Wnd_JWT;
  */
 abstract class Wnd_JWT_Handler {
 
-	protected $Wnd_JWT;
-
 	protected $domain;
 
 	protected $exp;
@@ -22,9 +20,8 @@ abstract class Wnd_JWT_Handler {
 	protected $verified_user_id = null;
 
 	public function __construct() {
-		$this->Wnd_JWT = new Wnd_JWT;
-		$this->domain  = parse_url(home_url())['host'];
-		$this->exp     = time() + 3600 * 30;
+		$this->domain = parse_url(home_url())['host'];
+		$this->exp    = time() + 3600 * 30;
 
 		add_action('wp_login', [$this, 'handle_login'], 10, 2);
 		add_action('init', [$this, 'set_current_user'], 10);
@@ -52,7 +49,7 @@ abstract class Wnd_JWT_Handler {
 			'sub' => $user_id,
 		];
 
-		return $this->Wnd_JWT::getToken($payload);
+		return Wnd_JWT::getToken($payload);
 	}
 
 	/**
@@ -70,8 +67,13 @@ abstract class Wnd_JWT_Handler {
 			return;
 		}
 
-		$this->verified_user_id = (null === $this->verified_user_id) ? $this->verify_client_token() : $this->verified_user_id;
+		$this->verified_user_id = $this->verify_client_token();
+		if (-1 === $this->verified_user_id) {
+			return;
+		}
+
 		wp_set_current_user($this->verified_user_id);
+		// wp_set_auth_cookie($this->verified_user_id, true);
 	}
 
 	/**
@@ -81,17 +83,17 @@ abstract class Wnd_JWT_Handler {
 		// 未能获取 Token
 		$token = $this->get_client_token();
 		if (!$token) {
-			return 0;
+			return -1;
 		}
 
 		// Token 失效
-		$getPayload = $this->Wnd_JWT::verifyToken($token);
+		$getPayload = Wnd_JWT::verifyToken($token);
 		if (!$getPayload) {
 			$this->clean_client_token();
 			return 0;
 		}
 
-		// Token 认证成功，设定当前用户状态
+		// Token 认证成功，返回用户 ID
 		return (int) $getPayload['sub'];
 	}
 
@@ -131,10 +133,14 @@ abstract class Wnd_JWT_Handler {
 			return $result;
 		}
 
-		$this->verified_user_id = (null === $this->verified_user_id) ? $this->verify_client_token() : $this->verified_user_id;
-		if (!$this->verified_user_id) {
+		// No Token
+		if (-1 === $this->verified_user_id) {
+			return $result;
+		}
+
+		// 无效 Token
+		if (0 === $this->verified_user_id) {
 			wp_set_current_user(0);
-			return true;
 		}
 
 		return true;
