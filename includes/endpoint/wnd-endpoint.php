@@ -33,6 +33,11 @@ abstract class Wnd_Endpoint {
 	 *
 	 */
 	public function __construct() {
+		/**
+		 * 重写 Rest API 输出
+		 */
+		add_filter('rest_pre_serve_request', '__return_true', 10);
+
 		$this->data = ('POST' == $_SERVER['REQUEST_METHOD']) ? $_POST : $_GET;
 
 		$this->check();

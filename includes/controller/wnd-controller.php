@@ -37,31 +37,37 @@ class Wnd_Controller {
 	 * - 'route_rule' 为本插件自定义参数，用于设定对应路由的匹配规则
 	 */
 	public static $routes = [
-		'module'  => [
+		'module'   => [
 			'methods'             => 'GET',
 			'callback'            => __CLASS__ . '::handle_module',
 			'permission_callback' => '__return_true',
 			'route_rule'          => '(?P<module>(.*))',
 		],
-		'action'  => [
+		'action'   => [
 			'methods'             => 'POST',
 			'callback'            => __CLASS__ . '::handle_action',
 			'permission_callback' => '__return_true',
 			'route_rule'          => '(?P<action>(.*))',
 		],
-		'jsonget' => [
+		'jsonget'  => [
 			'methods'             => 'GET',
 			'callback'            => __CLASS__ . '::handle_jsonget',
 			'permission_callback' => '__return_true',
 			'route_rule'          => '(?P<jsonget>(.*))',
 		],
-		'posts'   => [
+		'endpoint' => [
+			'methods'             => ['GET', 'POST'],
+			'callback'            => __CLASS__ . '::handle_endpoint',
+			'permission_callback' => '__return_true',
+			'route_rule'          => '(?P<endpoint>(.*))',
+		],
+		'posts'    => [
 			'methods'             => 'GET',
 			'callback'            => __CLASS__ . '::filter_posts',
 			'permission_callback' => '__return_true',
 			'route_rule'          => false,
 		],
-		'users'   => [
+		'users'    => [
 			'methods'             => 'GET',
 			'callback'            => __CLASS__ . '::filter_users',
 			'permission_callback' => '__return_true',
@@ -233,6 +239,25 @@ class Wnd_Controller {
 		try {
 			$action = new $class();
 			return $action->execute();
+		} catch (Exception $e) {
+			return ['status' => 0, 'msg' => $e->getMessage()];
+		}
+	}
+
+	/**
+	 *@since 0.9.17
+	 *根据查询参数判断是否为自定义伪静态接口，从而实现输出重写
+	 */
+	public static function handle_endpoint($request) {
+		// 解析实际类名称及参数
+		$class = Wnd_Controller::parse_class($request['endpoint'], 'Endpoint');
+		if (!class_exists($class)) {
+			return ['status' => 0, 'msg' => __('Endpoint 无效')];
+		}
+
+		// 执行 Endpoint 类
+		try {
+			$action = new $class();
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
