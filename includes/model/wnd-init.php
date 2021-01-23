@@ -82,18 +82,19 @@ class Wnd_Init {
 		 *@link https://stackoverflow.com/questions/42757726/disable-default-routes-of-wp-rest-api
 		 *@link https://wpreset.com/remove-default-wordpress-rest-api-routes-endpoints/
 		 */
-		if (!is_admin()) {
-			add_filter('rest_endpoints', function ($endpoints) {
-				foreach ($endpoints as $route => $endpoint) {
-					if (0 === stripos($route, '/wp/')) {
-						unset($endpoints[$route]);
-					}
-				}
-				unset($route, $endpoint);
+		// if (!is_admin()) {
+		// 	add_filter('rest_endpoints', function ($endpoints) {
+		// 		foreach ($endpoints as $route => $endpoint) {
+		// 			if (0 === stripos($route, '/wp/')) {
+		// 				unset($endpoints[$route]);
+		// 			}
+		// 		}
+		// 		unset($route, $endpoint);
 
-				return $endpoints;
-			});
-		}
+		// 		return $endpoints;
+		// 	});
+		// }
+		remove_action('rest_api_init', 'create_initial_rest_routes', 99);
 	}
 
 	/**
