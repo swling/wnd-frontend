@@ -12,16 +12,18 @@ use Wnd\Utility\Wnd_Singleton_Trait;
  */
 class Wnd_language {
 
+	public static $request_key = 'lang';
+
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
 		// 加载语言包
 		add_action('plugins_loaded', [__CLASS__, 'load_languages']);
 
-		// 根据$_GET['lang']切换语言
+		// 根据$_REQUEST['lang']切换语言
 		add_filter('locale', [__CLASS__, 'filter_locale']);
 
-		// 为链接添加$_GET['lang']参数
+		// 为链接添加$_REQUEST[static::$request_key]参数
 		add_filter('home_url', [__CLASS__, 'filter_home_link'], 99, 2);
 		add_filter('term_link', [__CLASS__, 'filter_link'], 99);
 		add_filter('post_type_archive_link', [__CLASS__, 'filter_link'], 99);
@@ -48,12 +50,12 @@ class Wnd_language {
 	}
 
 	/**
-	 *根据GET参数切换语言
+	 *根据参数切换语言
 	 *
 	 *@since 2020.01.14
 	 */
 	public static function filter_locale($locale) {
-		return ($_GET['lang'] ?? false) ?: $locale;
+		return ($_REQUEST[static::$request_key] ?? false) ?: $locale;
 	}
 
 	/**
@@ -61,8 +63,8 @@ class Wnd_language {
 	 *
 	 */
 	public static function filter_link($link) {
-		$lang = $_GET['lang'] ?? false;
-		return $lang ? add_query_arg('lang', $lang, $link) : $link;
+		$lang = $_REQUEST[static::$request_key] ?? false;
+		return $lang ? add_query_arg(static::$request_key, $lang, $link) : $link;
 	}
 
 	/**
@@ -85,24 +87,24 @@ class Wnd_language {
 	 */
 	public static function filter_reg_redirect_link($link) {
 		// 本地语言参数优先
-		$lang = $_GET['lang'] ?? false;
+		$lang = $_REQUEST[static::$request_key] ?? false;
 		if ($lang) {
-			return add_query_arg('lang', $lang, $link);
+			return add_query_arg(static::$request_key, $lang, $link);
 		}
 
 		// 社交登录回调语言检测
-		$state = $_GET['state'] ?? false;
+		$state = $_REQUEST['state'] ?? false;
 		if (!$state) {
 			return $link;
 		}
 
 		// 解析自定义state
-		$lang = Wnd_Login_Social::parse_state($state)['lang'] ?? false;
+		$lang = Wnd_Login_Social::parse_state($state)[static::$request_key] ?? false;
 		if (get_locale() == $lang) {
 			return $link;
 		}
 
-		return $lang ? add_query_arg('lang', $lang, $link) : $link;
+		return $lang ? add_query_arg(static::$request_key, $lang, $link) : $link;
 	}
 
 	/**
@@ -115,7 +117,7 @@ class Wnd_language {
 			return $link;
 		}
 
-		return add_query_arg('lang', $user_locale, $link);
+		return add_query_arg(static::$request_key, $user_locale, $link);
 	}
 
 	/**

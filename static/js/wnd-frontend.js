@@ -13,15 +13,16 @@ $.ajaxSetup({
 });
 
 /**
- *定义API接口，添加语言参数
+ *定义API接口
  *
  */
 var lang_query = wnd.lang ? '?lang=' + wnd.lang : '';
-var wnd_module_api = wnd.rest_url + wnd.module_api + lang_query;
-var wnd_action_api = wnd.rest_url + wnd.action_api + lang_query;
-var wnd_posts_api = wnd.rest_url + wnd.posts_api + lang_query;
-var wnd_users_api = wnd.rest_url + wnd.users_api + lang_query;
-var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api + lang_query;
+var wnd_module_api = wnd.rest_url + wnd.module_api;
+var wnd_action_api = wnd.rest_url + wnd.action_api;
+var wnd_posts_api = wnd.rest_url + wnd.posts_api;
+var wnd_users_api = wnd.rest_url + wnd.users_api;
+var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api;
+var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api;
 
 /**
  *侧边栏是否已加载
@@ -212,7 +213,7 @@ function wnd_confirm_form_submit(form_id, msg = "") {
 function wnd_ajax_modal(module, param = {}, callback = '') {
 	$.ajax({
 		type: "GET",
-		url: wnd_module_api + "/" + module,
+		url: wnd_module_api + "/" + module + lang_query,
 		data: Object.assign({
 			"ajax_type": "modal"
 		}, param),
@@ -251,7 +252,7 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
 function wnd_ajax_embed(container, module, param = {}, callback = '') {
 	$.ajax({
 		type: "GET",
-		url: wnd_module_api + "/" + module,
+		url: wnd_module_api + "/" + module + lang_query,
 		data: Object.assign({
 			"ajax_type": "embed"
 		}, param),
@@ -291,7 +292,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 function wnd_get_json(jsonget, param, callback) {
 	$.ajax({
 		type: "GET",
-		url: wnd_jsonget_api + "/" + jsonget,
+		url: wnd_jsonget_api + "/" + jsonget + lang_query,
 		data: param,
 		//成功后
 		success: function(response) {
@@ -433,7 +434,7 @@ function wnd_ajax_submit(form_id) {
 
 	// 提交表单
 	var method = $("#" + form_id).prop("method");
-	var url = $("#" + form_id).prop("action");
+	var url = $("#" + form_id).prop("action") + lang_query;
 	var form_data = ("post" == method) ? new FormData($("#" + form_id).get(0)) : $("#" + form_id).serialize();
 
 	$.ajax({
@@ -605,7 +606,7 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 		$.ajax({
 			type: "POST",
 			datatype: "json",
-			url: wnd.wnd_route + "/wnd_update_views",
+			url: wnd.wnd_endpoint + "/wnd_update_views",
 			data: {
 				"post_id": post_id
 			},
@@ -636,7 +637,7 @@ function wnd_send_code(button) {
 	$.ajax({
 		type: "post",
 		dataType: "json",
-		url: wnd_action_api + "/" + data.action,
+		url: wnd_action_api + "/" + data.action + lang_query,
 		data: data,
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader("X-WP-Nonce", wnd.rest_nonce);
@@ -779,7 +780,7 @@ jQuery(document).ready(function($) {
 		// ajax中无法直接使用jQuery $(this)，需要提前定义
 		var _this = $(this);
 		$.ajax({
-			url: wnd_action_api + "/wnd_upload_file",
+			url: wnd_action_api + "/wnd_upload_file" + lang_query,
 			dataType: "json",
 			cache: false,
 			contentType: false,
@@ -922,7 +923,7 @@ jQuery(document).ready(function($) {
 		form_data.set("_ajax_nonce", file_data["delete_nonce"]);
 
 		$.ajax({
-			url: wnd_action_api + "/wnd_delete_file",
+			url: wnd_action_api + "/wnd_delete_file" + lang_query,
 			dataType: "json",
 			cache: false,
 			contentType: false,
@@ -1014,7 +1015,7 @@ jQuery(document).ready(function($) {
 		var _this = $(this);
 		$.ajax({
 			type: "POST",
-			url: wnd_action_api + "/" + action,
+			url: wnd_action_api + "/" + action + lang_query,
 			data: Object.assign({
 				"_ajax_nonce": nonce,
 				"_wnd_sign": wnd_sign,
@@ -1155,7 +1156,7 @@ jQuery(document).ready(function($) {
 
 		var _this = $(this);
 		$.ajax({
-			url: wnd_posts_api,
+			url: wnd_posts_api + lang_query,
 			type: "GET",
 			data: filter_param,
 			beforeSend: function(xhr) {
@@ -1260,7 +1261,7 @@ jQuery(document).ready(function($) {
 
 		var _this = $(this);
 		$.ajax({
-			url: wnd_users_api,
+			url: wnd_users_api + lang_query,
 			type: "GET",
 			data: filter_user_param,
 			beforeSend: function(xhr) {
@@ -1311,7 +1312,7 @@ jQuery(document).ready(function($) {
 		if (term_id != -1) {
 			$.ajax({
 				type: "get",
-				url: wnd_jsonget_api + "/wnd_sub_terms",
+				url: wnd_jsonget_api + "/wnd_sub_terms" + lang_query,
 				data: {
 					"parent": term_id,
 					"taxonomy": taxonomy,
