@@ -4,19 +4,15 @@
  *引入 WordPress 响应外部请求
  *
  *@since 0.9.17
- *整合 Wnd_Controller Json API 及 Wnd_Router 路由器
+ *整合 Wnd_Controller 并提供相关应急操作
  *
  */
 require '../../../wp-load.php';
 
 use Wnd\Controller\Wnd_Controller;
-use Wnd\Controller\Wnd_Router;
 
 $charset = get_option('blog_charset');
 $request = ('POST' == $_SERVER['REQUEST_METHOD']) ? $_POST : $_GET;
-
-// Wnd Router Endpoint
-$endpoint = $_GET['endpoint'] ?? '';
 
 /**
  * Rest API
@@ -25,6 +21,7 @@ $endpoint = $_GET['endpoint'] ?? '';
 $action       = $_POST['action'] ?? '';
 $module       = $request['module'] ?? '';
 $jsonget      = $request['jsonget'] ?? '';
+$endpoint     = $request['endpoint'] ?? '';
 $filter_posts = $request['filter_posts'] ?? '';
 $filter_users = $request['filter_users'] ?? '';
 
@@ -33,7 +30,7 @@ $wp_action = $request['wp_action'] ?? '';
 
 // Endpoint
 if ($endpoint) {
-	Wnd_Router::handle_endpoint($endpoint);
+	Wnd_Controller::handle_endpoint($request);
 	return;
 }
 
@@ -62,12 +59,12 @@ if ($jsonget) {
 	wp_send_json(Wnd_Controller::handle_jsonget($request));
 }
 
-// JsonGet
+// filter posts
 if ($filter_posts) {
 	wp_send_json(Wnd_Controller::filter_posts($request));
 }
 
-// JsonGet
+// filter users
 if ($filter_users) {
 	wp_send_json(Wnd_Controller::filter_users($request));
 }

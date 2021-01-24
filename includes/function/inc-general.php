@@ -3,7 +3,7 @@
 /**
  *@since 2019.01.21
  *获取 Router PHP 文件绝对网址，用于不支持伪静态或其他应急场景
- * - 本路由地址整合了 Wnd_Controller Json API 及 Wnd_Router 路由器
+ * - 本路由地址整合了 Wnd_Controller Json API 并定义了部分应急操作
  *
  *@return string 	url
  */
