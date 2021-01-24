@@ -24,7 +24,6 @@ class Wnd_language {
 		add_filter('locale', [__CLASS__, 'filter_locale']);
 
 		// 为链接添加$_REQUEST[static::$request_key]参数
-		add_filter('home_url', [__CLASS__, 'filter_home_link'], 99, 2);
 		add_filter('term_link', [__CLASS__, 'filter_link'], 99);
 		add_filter('post_type_archive_link', [__CLASS__, 'filter_link'], 99);
 		add_filter('post_type_link', [__CLASS__, 'filter_link'], 99);
@@ -65,19 +64,6 @@ class Wnd_language {
 	public static function filter_link($link) {
 		$lang = $_REQUEST[static::$request_key] ?? false;
 		return $lang ? add_query_arg(static::$request_key, $lang, $link) : $link;
-	}
-
-	/**
-	 *根据当前语言参数，自动为首页添加语言参数
-	 *首页地址是众多攻击性 url 的基础，因此，当传递路径参数时，则取消语言参数
-	 *@since 0.9.17
-	 */
-	public static function filter_home_link($link, $path) {
-		if ($path) {
-			return $link;
-		}
-
-		return static::filter_link($link);
 	}
 
 	/**
