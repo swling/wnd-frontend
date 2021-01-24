@@ -65,36 +65,6 @@ class Wnd_Init {
 		// 自定义文章类型及状态
 		add_action('init', [__CLASS__, 'register_post_type']);
 		add_action('init', [__CLASS__, 'register_post_status']);
-
-		/**
-		 *@since 2019.10.08
-		 *禁用xmlrpc
-		 *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
-		 */
-		add_filter('xmlrpc_enabled', '__return_false');
-
-		/**
-		 *前端移除WordPress默认的API
-		 *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
-		 *
-		 *在本插件环境中，仅超级管理员可能访问后台，故后台不做处理。以此保持WP相关功能正常，如古腾堡编辑器等
-		 *
-		 *@link https://stackoverflow.com/questions/42757726/disable-default-routes-of-wp-rest-api
-		 *@link https://wpreset.com/remove-default-wordpress-rest-api-routes-endpoints/
-		 */
-		// if (!is_admin()) {
-		// 	add_filter('rest_endpoints', function ($endpoints) {
-		// 		foreach ($endpoints as $route => $endpoint) {
-		// 			if (0 === stripos($route, '/wp/')) {
-		// 				unset($endpoints[$route]);
-		// 			}
-		// 		}
-		// 		unset($route, $endpoint);
-
-		// 		return $endpoints;
-		// 	});
-		// }
-		remove_action('rest_api_init', 'create_initial_rest_routes', 99);
 	}
 
 	/**

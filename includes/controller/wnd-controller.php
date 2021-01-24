@@ -77,12 +77,51 @@ class Wnd_Controller {
 
 	private function __construct() {
 		add_action('rest_api_init', [__CLASS__, 'register_route']);
+
+		/**
+		 *前端移除 WordPress 默认的API
+		 * - 原因：
+		 *   本插件的网站，通常包含用户贡献内容（UGC）功能，如果网站设置了自定义的内容管理权限，必须禁止 WordPress 默认的管理接口
+		 *   例如：站点利用本插件的权限控制，设置了用户发布文章的总数，或特定情况的编辑权限。如果此时未禁用 WP 原生 API
+		 *   用户仍然可以利用 WP 原生 API 对内容进行控制，而 WP 原生的内容权限控制相对单一，并不能满足复杂 UGC 站点的应用场景，故此移除。
+		 *
+		 * - 影响：
+		 *   禁用 WP 原生 API 对网站前端几乎没有任何影响，主要影响在管理后台：
+		 *   -- 古腾堡编辑器将不可用
+		 *   -- 插件恢复了 WP_Site_Health（站点健康），及 WP_REST_Application_Passwords （应用密码) 两个实用且与本插件不冲突的原生 API @see $this->register_route();
+		 *
+		 * - 结论：
+		 *   本插件对 WP 有众多个性化定制，因此如果您最终决定采用本插件
+		 */
+		remove_action('rest_api_init', 'create_initial_rest_routes', 99);
+		remove_action('rest_api_init', 'wp_oembed_register_route');
+
+		/**
+		 *@since 2019.10.08
+		 *禁用xmlrpc
+		 *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
+		 */
+		add_filter('xmlrpc_enabled', '__return_false');
 	}
 
 	/**
 	 *注册API
 	 */
 	public static function register_route() {
+		/**
+		 *插件移除了所有 WP 默认的 Rest API
+		 *此处恢复 WP 默认的 Application Passwords API 可用于自定义 API 身份验证
+		 *
+		 */
+		$controller = new \WP_REST_Application_Passwords_Controller();
+		$controller->register_routes();
+
+		// Site Health.
+		$site_health = \WP_Site_Health::get_instance();
+		$controller  = new \WP_REST_Site_Health_Controller($site_health);
+		$controller->register_routes();
+
+		// Wnd Rest API
 		foreach (static::$routes as $route => $args) {
 			$route = $args['route_rule'] ? ($route . '/' . $args['route_rule']) : $route;
 			register_rest_route(static::$namespace, $route, $args);
