@@ -456,7 +456,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		unset($input_value);
 
 		// 根据表单字段生成wp nonce并加入表单字段
-		$this->add_html(Wnd_Request::build_sign_field($this->form_names));
+		$this->add_hidden(Wnd_Request::$sign_name, Wnd_Request::sign($this->form_names));
 	}
 
 	/**

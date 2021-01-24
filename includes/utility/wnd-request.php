@@ -180,17 +180,7 @@ class Wnd_Request {
 	}
 
 	/**
-	 *构造nonce请求字段
-	 *@since 2020.05.07
-	 *@param array 	$request_names 请求所有字段name数组
-	 */
-	public static function build_sign_field($request_names): string{
-		$nonce = static::sign($request_names);
-		return '<input type="hidden" name="' . static::$sign_name . '" value="' . $nonce . '">';
-	}
-
-	/**
-	 *构建请求字段
+	 *构建请求签名
 	 *
 	 *@since 2019.10.27
 	 *
