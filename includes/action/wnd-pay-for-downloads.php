@@ -2,6 +2,7 @@
 namespace Wnd\Action;
 
 use Exception;
+use Wnd\Endpoint\Wnd_Endpoint_Action;
 use Wnd\Model\Wnd_Order_Product;
 
 /**
@@ -43,11 +44,7 @@ class Wnd_Pay_For_Downloads extends Wnd_Action {
 		 *组合ajax验证下载参数:该url地址并非文件实际下载地址，而是一个调用参数的请求
 		 *前端接收后跳转至该网址（status == 6 是专为下载类ajax请求设置的代码前端响应），以实现ajax下载
 		 */
-		$download_args = [
-			'post_id'  => $post_id,
-			'_wpnonce' => wp_create_nonce('wnd_paid_download'),
-		];
-		$download_url = add_query_arg($download_args, wnd_get_route_url('wnd_paid_download'));
+		$download_url = Wnd_Endpoint_Action::build_request_url('wnd_paid_download', ['post_id' => $post_id]);
 
 		return ['status' => 6, 'msg' => 'ok', 'data' => ['redirect_to' => $download_url]];
 	}

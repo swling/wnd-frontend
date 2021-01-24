@@ -3,7 +3,6 @@ namespace Wnd\Model;
 
 use Wnd\Admin\Wnd_Menus;
 use Wnd\Controller\Wnd_Controller;
-use Wnd\Controller\Wnd_Router;
 use Wnd\Hook\Wnd_Hook;
 use Wnd\Model\Wnd_DB;
 use Wnd\Utility\Wnd_language;
@@ -30,9 +29,6 @@ class Wnd_Init {
 
 		// API
 		Wnd_Controller::get_instance();
-
-		// 自定义伪静态路由 处理 API 之外的类数据响应（通常为非 json 格式）
-		Wnd_Router::get_instance();
 
 		// 优化
 		Wnd_Optimization::get_instance();

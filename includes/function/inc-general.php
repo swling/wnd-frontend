@@ -12,13 +12,23 @@ function wnd_get_router_url(): string {
 }
 
 /**
- *@since 0.9.17
- *Wnd Router 指定 Endpoint 绝对路由 URL，处理与第三方平台的通讯
+ *@since 0.9.22
+ *绝对 Rest API 路由 URL
  *
  *@return string url
  */
-function wnd_get_route_url(string $endpoint = ''): string {
-	return Wnd\Controller\Wnd_Router::get_route_url($endpoint);
+function wnd_get_route_url(string $route, string $endpoint = ''): string {
+	return Wnd\Controller\Wnd_Controller::get_route_url($route, $endpoint);
+}
+
+/**
+ *@since 0.9.22
+ *获取指定 Endpoint 绝对路由 URL，处理与第三方平台的通讯
+ *
+ *@return string url
+ */
+function wnd_get_endpoint_url(string $endpoint = ''): string {
+	return Wnd\Controller\Wnd_Controller::get_route_url('endpoint', $endpoint);
 }
 
 /**

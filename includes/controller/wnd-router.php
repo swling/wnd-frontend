@@ -6,6 +6,9 @@ use Wnd\Controller\Wnd_Controller;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
+ *@since 0.9.22
+ *通过对 WP Rset API 进行 Header 重写已实现在 Rest API 中响应非 Json 数据，故此移除本路由器（保留文件已被后续）
+ *
  *@since 0.9.17
  *自定义伪静态路由地址
  * - 主要用于处理非 Json 数据交互，如：支付回调通知、微信公众号通讯等

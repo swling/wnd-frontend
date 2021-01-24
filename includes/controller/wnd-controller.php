@@ -9,9 +9,7 @@ use Wnd\View\Wnd_Filter_User;
 /**
  *@since 2019.04.07
  *
- * Controller API
- * - 本类用于处理常规数据交互，返回数据统一为 Json 格式
- * - 由于第三方平台交互数据格式不确定，因此定义自定义路由处理 @see Wnd\Controller\Wnd_Router
+ * Wnd Rest API
  *
  * # 主题或插件可拓展 Action、Module、Jsonget 详情参见：
  * - @see docs/controller.md

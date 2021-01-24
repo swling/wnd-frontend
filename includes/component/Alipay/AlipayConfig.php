@@ -30,10 +30,10 @@ class AlipayConfig {
 			'alipay_public_key'      => wnd_get_config('alipay_public_key'),
 
 			//异步通知地址 *不能带参数否则校验不过 （插件执行页面地址）
-			'notify_url'             => wnd_get_route_url('wnd_verify_pay'),
+			'notify_url'             => wnd_get_endpoint_url('wnd_verify_pay'),
 
 			//同步跳转 *不能带参数否则校验不过 （插件执行页面地址）
-			'return_url'             => wnd_get_route_url('wnd_verify_pay'),
+			'return_url'             => wnd_get_endpoint_url('wnd_verify_pay'),
 
 			//编码格式
 			'charset'                => 'utf-8',
