@@ -16,15 +16,15 @@ class Wnd_Ajax_Link {
 	protected $class;
 	protected $html;
 
-	public function set_text($text) {
+	public function set_text(string $text) {
 		$this->text = $text;
 	}
 
-	public function set_action($action) {
+	public function set_action(string $action) {
 		$this->action = $action;
 	}
 
-	public function set_cancel_action($cancel_action) {
+	public function set_cancel_action(string $cancel_action) {
 		$this->cancel_action = $cancel_action;
 	}
 
@@ -32,7 +32,7 @@ class Wnd_Ajax_Link {
 		$this->args = $args;
 	}
 
-	public function set_class($class) {
+	public function set_class(string $class) {
 		$this->class = $class;
 	}
 
@@ -51,7 +51,7 @@ class Wnd_Ajax_Link {
 	 **/
 	protected function build() {
 		// Action 层需要验证表单字段签名
-		$sign = Wnd_Request::sign(array_merge(['action', '_ajax_nonce'], array_keys($this->args)));
+		$sign = Wnd_Request::sign(array_merge(['_ajax_nonce'], array_keys($this->args)));
 
 		$this->html = '<a class="ajax-link ' . $this->class . '" data-is-cancel="0" data-disabled="0"';
 		$this->html .= ' data-action="' . $this->action . '"';
