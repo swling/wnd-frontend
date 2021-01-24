@@ -72,8 +72,12 @@ abstract class Wnd_JWT_Handler {
 			return;
 		}
 
+		if (!$this->verified_user_id) {
+			return;
+		}
+
 		wp_set_current_user($this->verified_user_id);
-		// wp_set_auth_cookie($this->verified_user_id, true);
+		wp_set_auth_cookie($this->verified_user_id, true);
 	}
 
 	/**
