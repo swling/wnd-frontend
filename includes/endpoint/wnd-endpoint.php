@@ -3,8 +3,7 @@ namespace Wnd\Endpoint;
 
 /**
  *@since 0.9.17
- *自定义路由端点处理抽象基类
- * - 转发控制器 @see Wnd\Controller\Wnd_Router
+ *非标准数据路由端点处理，抽象基类
  * - Wnd\Endpoint 主要用于处理与外部第三方平台的交互响应如：支付回调通知、微信公众号通讯等，或系统内其他非 Json 数据交互
  * - 响应数据格式将在具体 Endpoint 类中定义
  * - Endpoint 类相关响应数据应直接输出，而非返回值
