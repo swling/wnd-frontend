@@ -22,7 +22,7 @@ var wnd_action_api = wnd.rest_url + wnd.action_api;
 var wnd_posts_api = wnd.rest_url + wnd.posts_api;
 var wnd_users_api = wnd.rest_url + wnd.users_api;
 var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api;
-var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api;
+var wnd_endpoint_api = wnd.rest_url + wnd.endpoint_api;
 
 /**
  *侧边栏是否已加载
@@ -606,7 +606,7 @@ function wnd_ajax_update_views(post_id, interval = 3600) {
 		$.ajax({
 			type: "POST",
 			datatype: "json",
-			url: wnd.wnd_endpoint + "/wnd_update_views",
+			url: wnd_endpoint_api + "/wnd_update_views",
 			data: {
 				"post_id": post_id
 			},
