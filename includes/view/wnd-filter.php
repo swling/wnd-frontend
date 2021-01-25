@@ -1435,27 +1435,26 @@ class Wnd_Filter {
 
 		// Posts list
 		if ($this->wp_query_args['wnd_posts_tpl']) {
-			$template = $this->wp_query_args['wnd_posts_tpl'];
-			if (!$template) {
-				return __('未定义输出模板', 'wnd');
-			}
+			$template    = $this->wp_query_args['wnd_posts_tpl'];
 			$this->posts = $template($this->wp_query);
+			return $this->posts;
+		}
 
-			// post list
-		} else {
+		// post list
+		if ($this->wp_query_args['wnd_post_tpl']) {
 			$template = $this->wp_query_args['wnd_post_tpl'];
-			if (!$template) {
-				return __('未定义输出模板', 'wnd');
-			}
 			if ($this->wp_query->have_posts()) {
 				while ($this->wp_query->have_posts()): $this->wp_query->the_post();
-					global $post;
 					$this->posts .= $template($post);
 				endwhile;
 				wp_reset_postdata(); //重置查询
 			}
+
+			return $this->posts;
 		}
 
+		// 未设置输出模板，视为 API 请求，输出结果集（供前端可渲染具体 DOM）
+		$this->posts = $this->wp_query->posts;
 		return $this->posts;
 	}
 
