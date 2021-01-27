@@ -1445,6 +1445,7 @@ class Wnd_Filter {
 			$template = $this->wp_query_args['wnd_post_tpl'];
 			if ($this->wp_query->have_posts()) {
 				while ($this->wp_query->have_posts()): $this->wp_query->the_post();
+					global $post;
 					$this->posts .= $template($post);
 				endwhile;
 				wp_reset_postdata(); //重置查询
