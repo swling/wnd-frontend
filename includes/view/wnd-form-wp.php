@@ -22,8 +22,6 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	protected $form_names = [];
 
-	protected $message = '';
-
 	protected $is_ajax_submit;
 
 	protected $enable_captcha;
@@ -82,10 +80,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->action = Wnd_Controller::get_route_url($route, $endpoint);
 
 		parent::set_action($this->action, $this->method);
-	}
-
-	public function set_message(string $message) {
-		$this->message = $message;
 	}
 
 	/**
@@ -470,8 +464,6 @@ class Wnd_Form_WP extends Wnd_Form {
 			$this->add_form_attr('onsubmit', 'return false');
 		}
 		parent::build_form_header();
-
-		$this->html .= '<div class="ajax-message">' . $this->message . '</div>';
 	}
 
 	/**

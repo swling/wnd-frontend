@@ -210,7 +210,7 @@ class Wnd_Controller {
 		}
 
 		try {
-			return ['status' => 1, 'data' => $class::render()];
+			return ['status' => 1, 'data' => $class::render(), 'type' => $class::$type];
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}

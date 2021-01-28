@@ -79,7 +79,9 @@ add_action('wp_enqueue_scripts', 'wnd_enqueue_scripts');
  *加载静态资源
  */
 function wnd_enqueue_scripts($hook_suffix = '') {
-	wp_enqueue_script('wnd-frontend', WND_URL . 'static/js/wnd-frontend.min.js', ['jquery'], WND_VER);
+	wp_enqueue_script('wnd-vue', WND_URL . 'static/js/wnd-vue.js', [], WND_VER);
+	wp_enqueue_script('vue', WND_URL . 'static/js/lib/vue..minjs', [], WND_VER);
+	wp_enqueue_script('axios', WND_URL . 'static/js/lib/axios.minjs', [], WND_VER);
 
 	// bulma框架及fontawesome图标
 	$static_host = wnd_get_config('static_host');

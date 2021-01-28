@@ -19,6 +19,8 @@ class Wnd_Form {
 
 	protected $is_title_centered = false;
 
+	protected $message = '';
+
 	protected $input_values = [];
 
 	protected $with_upload;
@@ -86,7 +88,7 @@ class Wnd_Form {
 
 	// 初始化构建
 	public function __construct() {
-		$this->id = uniqid();
+		$this->id = 'wnd-form-' . uniqid();
 	}
 
 	/**
@@ -95,6 +97,13 @@ class Wnd_Form {
 	public function set_form_title(string $form_title, bool $is_title_centered = false) {
 		$this->form_title        = $form_title;
 		$this->is_title_centered = $is_title_centered;
+	}
+
+	/**
+	 *设置表单提示信息
+	 */
+	public function set_message(string $message) {
+		$this->message = $message;
 	}
 
 	/**
@@ -320,6 +329,8 @@ class Wnd_Form {
 			$html .= '<h3>' . $this->form_title . '</h3>';
 			$html .= '</div>';
 		}
+
+		$this->html .= '<div class="form-message">' . $this->message . '</div>';
 
 		$this->html .= $html;
 	}
@@ -697,5 +708,18 @@ class Wnd_Form {
 	// 获取当前表单的组成数据数组（通常用于配合 filter 过滤）
 	public function get_input_values(): array{
 		return $this->input_values;
+	}
+
+	/**
+	 *获取表单构造数组数据，可用于前端 JS 渲染
+	 */
+	public function get_form_structure(): array{
+		return [
+			'attrs'   => $this->form_attr,
+			'title'   => ['title' => $this->form_title, 'class' => ''],
+			'message' => $this->message,
+			'fields'  => $this->get_input_values(),
+			'submit'  => ['text' => $this->submit_text, 'is_disabled' => '', 'class' => ''],
+		];
 	}
 }
