@@ -79,23 +79,27 @@ add_action('wp_enqueue_scripts', 'wnd_enqueue_scripts');
  *加载静态资源
  */
 function wnd_enqueue_scripts($hook_suffix = '') {
-	wp_enqueue_script('wnd-vue', WND_URL . 'static/js/wnd-vue.js', [], WND_VER);
-	wp_enqueue_script('vue', WND_URL . 'static/js/lib/vue..minjs', [], WND_VER);
-	wp_enqueue_script('axios', WND_URL . 'static/js/lib/axios.minjs', [], WND_VER);
-
-	// bulma框架及fontawesome图标
+	// 公共脚本及样式库可选本地或 jsdeliver
 	$static_host = wnd_get_config('static_host');
 	if (!$static_host or 'local' == $static_host) {
 		wp_enqueue_style('bulma', WND_URL . 'static/css/bulma.min.css', [], WND_VER);
 		wp_enqueue_style('bulma-extensions', WND_URL . 'static/css/bulma-extensions.min.css', [], WND_VER);
 		wp_enqueue_style('font-awesome', WND_URL . 'static/css/font-awesome-all.min.css', [], WND_VER);
+
+		wp_enqueue_script('axios', WND_URL . 'static/js/lib/axios.min.js', [], WND_VER);
+		wp_enqueue_script('vue', WND_URL . 'static/js/lib/vue.min.js', [], WND_VER);
 	} elseif ('jsdeliver' == $static_host) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css', [], null);
 		wp_enqueue_style('bulma-extensions', '//cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/css/bulma-extensions.min.css', [], null);
 		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css', [], null);
+
+		wp_enqueue_script('axios', '//cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js', [], null);
+		wp_enqueue_script('vue', '//cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js', [], null);
 	}
 
-	// api及语言本地化
+	wp_enqueue_script('wnd-vue', WND_URL . 'static/js/wnd-vue.js', [], WND_VER);
+
+	// api 及语言本地化
 	$wnd_data = [
 		'rest_url'     => get_rest_url(),
 		'rest_nonce'   => wp_create_nonce('wp_rest'),
@@ -127,5 +131,5 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 			'view'                => __('查看', 'wnd'),
 		],
 	];
-	wp_localize_script('wnd-frontend', 'wnd', $wnd_data);
+	wp_localize_script('wnd-vue', 'wnd', $wnd_data);
 }

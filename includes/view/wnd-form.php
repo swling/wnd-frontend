@@ -21,13 +21,15 @@ class Wnd_Form {
 
 	protected $message = '';
 
+	protected $message_class = 'message';
+
 	protected $input_values = [];
 
 	protected $with_upload;
 
 	protected $submit_text = 'Submit';
 
-	protected $submit_class;
+	protected $submit_class = 'button';
 
 	protected $submit_disabled;
 
@@ -102,8 +104,9 @@ class Wnd_Form {
 	/**
 	 *设置表单提示信息
 	 */
-	public function set_message(string $message) {
-		$this->message = $message;
+	public function set_message(string $message, $class = '') {
+		$this->message       = $message;
+		$this->message_class = $this->message_class . ' ' . $class;
 	}
 
 	/**
@@ -119,7 +122,7 @@ class Wnd_Form {
 	// Submit
 	public function set_submit_button(string $text, string $class = '', bool $disabled = false) {
 		$this->submit_text     = $text;
-		$this->submit_class    = $class;
+		$this->submit_class    = $this->submit_class . ' ' . $class;
 		$this->submit_disabled = $disabled;
 	}
 
@@ -537,7 +540,7 @@ class Wnd_Form {
 			return;
 		}
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="button' . $this->get_submit_class(true) . '"' . ($this->submit_disabled ? ' disabled="disabled"' : '') . '>' . $this->submit_text . '</button>';
+		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="' . $this->get_submit_class(true) . '"' . ($this->submit_disabled ? ' disabled="disabled"' : '') . '>' . $this->submit_text . '</button>';
 		$this->html .= '</div>';
 	}
 
@@ -716,10 +719,22 @@ class Wnd_Form {
 	public function get_form_structure(): array{
 		return [
 			'attrs'   => $this->form_attr,
-			'title'   => ['title' => $this->form_title, 'class' => ''],
-			'message' => $this->message,
+			'title'   => [
+				'title' => $this->form_title,
+				'attrs' => ['class' => $this->is_title_centered ? 'has-text-centered' : ''],
+			],
+			'message' => [
+				'message' => $this->message,
+				'attrs'   => ['class' => $this->message_class],
+			],
 			'fields'  => $this->get_input_values(),
-			'submit'  => ['text' => $this->submit_text, 'is_disabled' => '', 'class' => ''],
+			'submit'  => [
+				'text'  => $this->submit_text,
+				'attrs' => [
+					'is_disabled' => $this->submit_disabled,
+					'class'       => $this->submit_class,
+				],
+			],
 		];
 	}
 }
