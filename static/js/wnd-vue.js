@@ -12,6 +12,43 @@ var wnd_endpoint_api = wnd.rest_url + wnd.endpoint_api;
 
 var loading_el = '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></div>';
 
+/**
+ *axios 拦截器 统一设置 WP Rest Nonce
+ *@link https://github.com/axios/axios#interceptors
+ */
+// Add a request interceptor
+axios.interceptors.request.use(function(config) {
+    // config.headers.Authorization = "Bearer " + token
+    config.headers['X-WP-Nonce'] = wnd.rest_nonce;
+    config.headers['X-Requested-With'] = 'XMLHttpRequest';
+    return config;
+}, function(error) {
+    // Do something with request error
+    return Promise.reject(error);
+});
+
+//判断是否为移动端
+function wnd_is_mobile() {
+    if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android|ios|App\/)/i)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ *@since 2019.02.14 搜索引擎爬虫
+ */
+function wnd_is_spider() {
+    var userAgent = navigator.userAgent;
+    // 蜘蛛判断
+    if (userAgent.match(/(Googlebot|Baiduspider|spider)/i)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // 根据节点选择器删除
 function wnd_remove(el) {
     // 拿到待删除节点:
@@ -52,21 +89,6 @@ function wnd_loading(el) {
     }
 }
 
-/**
- *axios 拦截器 统一设置 WP Rest Nonce
- *@link https://github.com/axios/axios#interceptors
- */
-// Add a request interceptor
-axios.interceptors.request.use(function(config) {
-    // config.headers.Authorization = "Bearer " + token
-    config.headers['X-WP-Nonce'] = wnd.rest_nonce;
-    config.headers['X-Requested-With'] = 'XMLHttpRequest';
-    return config;
-}, function(error) {
-    // Do something with request error
-    return Promise.reject(error);
-});
-
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_form(container, form_json) {
     if ('undefined' == typeof wnd_vue_form) {
@@ -93,7 +115,7 @@ function wnd_render_form(container, form_json) {
 function wnd_ajax_embed(container, module, param = {}, callback = '') {
     // 添加请求拦截器
     axios.interceptors.request.use(function(config) {
-        if ('get' == config.method && 'embed' == config.params.ajax_type) {
+        if ('get' == config.method && 'embed' == (config.params.ajax_type || false)) {
             wnd_loading(container);
         }
 
@@ -157,7 +179,7 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
     // 添加请求拦截器
     // 添加请求拦截器
     axios.interceptors.request.use(function(config) {
-        if ('get' == config.method && 'modal' == config.params.ajax_type) {
+        if ('get' == config.method && 'modal' == (config.params.ajax_type || false)) {
             wnd_alert_msg(loading_el);
         }
 
@@ -215,6 +237,15 @@ function wnd_alert_msg(msg, time = 0) {
     modal.classList.add('is-active');
     modal_entry.classList.remove('box');
     modal_entry.innerHTML = msg;
+
+    // 定时关闭
+    if (time > 0) {
+        var timer = null;
+        timer = setInterval(function() {
+            clearInterval(timer);
+            wnd_reset_modal();
+        }, time * 1000);
+    }
 }
 
 // 初始化对话框

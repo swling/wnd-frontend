@@ -85,15 +85,9 @@ function _wnd_render_form(container, form_json) {
         el: container,
         // 模板将替换挂载点内的内容
         template: form_template,
-        // 数据
+        // 数据 合并数据，并进行深拷贝，以保留原生传参 form_json 不随 data 变动
         data: {
-            form: Object.assign({
-                attrs: [],
-                title: [],
-                message: [],
-                fields: [],
-                submit: [],
-            }, form_json),
+            form: JSON.parse(JSON.stringify(form_json)),
         },
 
         // 事件处理
@@ -119,6 +113,7 @@ function _wnd_render_form(container, form_json) {
             },
 
             parse_input_attr: function(field) {
+                // 深拷贝 以免影响 data
                 let _field = JSON.parse(JSON.stringify(field));
 
                 Object.keys(_field).forEach(item => {
@@ -138,9 +133,7 @@ function _wnd_render_form(container, form_json) {
 
             // 提交
             submit: function() {
-                // 按钮
-                var submit_class = this.form.submit.attrs.class;
-                this.form.submit.attrs.class = submit_class + " is-loading";
+                // this.form.submit.attrs.class = form_json.submit.attrs.class + " is-loading";
 
                 // 表单检查
                 var can_submit = true;
@@ -165,12 +158,14 @@ function _wnd_render_form(container, form_json) {
                 axios.post(this.form.attrs.action, data)
                     .then(function(response) {
                         _this.form.message.message = response.data.msg;
-                        _this.form.message.attrs.class = (response.data.status <= 0) ? _this.form.message.attrs.class + ' is-danger' : _this.form.message.attrs.class;
-                        _this.form.submit.attrs.class = submit_class;
-
+                        _this.form.message.attrs.class = form_json.message.attrs.class + (response.data.status <= 0 ? ' is-danger' : ' is-success');
+                        _this.form.submit.attrs.class = form_json.submit.attrs.class;
                     })
                     .catch(function(error) { // 请求失败处理
                         console.log(error);
+                        _this.form.message.message = wnd.msg.system_error;
+                        _this.form.message.attrs.class = form_json.message.attrs.class + ' is-danger';
+                        _this.form.submit.attrs.class = form_json.submit.attrs.class;
                     });
             }
         },
