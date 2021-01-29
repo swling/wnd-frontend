@@ -55,9 +55,13 @@ function wnd_get_ucenter_url($remove_language = false): string{
 function wnd_doing_ajax() {
 	if ('XMLHttpRequest' == ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? false)) {
 		return true;
-	} else {
-		return false;
 	}
+
+	if (wp_doing_ajax()) {
+		return true;
+	}
+
+	return false;
 }
 
 /**

@@ -102,6 +102,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 	// api 及语言本地化
 	$wnd_data = [
 		'rest_url'     => get_rest_url(),
+		'plugin_url'   => WND_URL,
 		'rest_nonce'   => wp_create_nonce('wp_rest'),
 		'module_api'   => 'wnd/module',
 		'action_api'   => 'wnd/action',
@@ -110,6 +111,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 		'jsonget_api'  => 'wnd/jsonget',
 		'endpoint_api' => 'wnd/endpoint',
 		'lang'         => $_GET['lang'] ?? false,
+		'ver'          => WND_VER,
 		'msg'          => [
 			'required'            => __('必填项为空', 'wnd'),
 
