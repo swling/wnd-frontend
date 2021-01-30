@@ -10,7 +10,10 @@ var wnd_users_api = wnd.rest_url + wnd.users_api;
 var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api;
 var wnd_endpoint_api = wnd.rest_url + wnd.endpoint_api;
 
-var loading_el = '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></div>';
+// 加载中 Element
+if ('undefined' == typeof loading_el) {
+    var loading_el = '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></div>';
+}
 
 /**
  *axios 拦截器 统一设置 WP Rest Nonce
@@ -60,8 +63,8 @@ function wnd_remove(el) {
     removed === self; // true	
 }
 
-// 替换
-function wnd_replace(el, html) {
+// 嵌入 HTML
+function wnd_inner_html(el, html) {
     var self = document.querySelector(el);
     self.innerHTML = html;
 }
@@ -75,7 +78,7 @@ function wnd_append(el, html) {
 }
 
 // 指定容器设置加载中效果
-function wnd_loading(el) {
+function wnd_loading(el, remove = false) {
     /**  
      * 
      *beforebegin 在元素之前
@@ -84,8 +87,10 @@ function wnd_loading(el) {
      *afterend 在元素之后 
      */
     var el = document.querySelector(el);
-    if (el) {
+    if (el && !remove) {
         el.innerHTML = loading_el;
+    } else {
+        el.innerHTML = '';
     }
 }
 
@@ -135,9 +140,10 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
         })
         .then(function(response) {
             if ('form' == response.data.type) {
-                return wnd_render_form(container, response.data.data);
+                wnd_inner_html(container, '<div class="vue-app"></div>');
+                return wnd_render_form(container + ' .vue-app', response.data.data);
             } else {
-                wnd_replace(container, response.data.data);
+                wnd_inner_html(container, response.data.data);
             }
 
             if (callback) {
@@ -145,6 +151,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
             }
         })
         .catch(function(error) { // 请求失败处理
+            wnd_inner_html(container, '<div class="message is-danger"><div class="message-body">' + wnd.msg.system_error + '</div></div>');
             console.log(error);
         });
 }
@@ -211,7 +218,7 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
             }
         })
         .catch(function(error) { // 请求失败处理
-            console.log(error);
+            wnd_alert_modal(wnd.msg.system_error);
         });
 }
 
@@ -270,4 +277,23 @@ function wnd_reset_modal() {
             '</div>'
         );
     }
+}
+
+/**
+ *@since 0.9.25
+ *文档加载完成后执行
+ */
+window.onload = function() {
+    /**
+     *@since 0.8.76
+     *非 Ajax 表单提交，按钮设置加载中效果
+     *Ajax 提交 @see wnd_ajax_submit()
+     */
+    //    document.addEventListener('click', function(e) {
+    //        if (e.target && e.target.nodeName.toUpperCase() === 'LI') {
+    //            console.log(e.target.innerHTML)
+    //        }
+    //        console.log(e);
+    // })
+
 }
