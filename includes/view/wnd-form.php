@@ -90,7 +90,7 @@ class Wnd_Form {
 
 	// 初始化构建
 	public function __construct() {
-		$this->id = 'wnd-form-' . uniqid();
+		$this->id = 'wnd-' . uniqid();
 	}
 
 	/**
