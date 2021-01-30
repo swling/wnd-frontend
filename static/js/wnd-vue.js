@@ -92,8 +92,8 @@ function wnd_loading(el) {
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_form(container, form_json) {
     if ('undefined' == typeof wnd_vue_form) {
-        var script = document.createElement("script");
-        script.type = "text/javascript";
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
         script.src = wnd.plugin_url + '/static/js/wnd-vue-form.js?ver=' + wnd.ver;
         script.onload = function() {
             _wnd_render_form(container, form_json);
@@ -125,10 +125,13 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
         return Promise.reject(error);
     });
 
-    axios.get(wnd_module_api + "/" + module + lang_query, {
+    // GET request for remote image in node.js
+    axios({
+            method: 'get',
+            url: wnd_module_api + '/' + module + lang_query,
             params: Object.assign({
-                "ajax_type": "embed"
-            }, param)
+                'ajax_type': 'embed'
+            }, param),
         })
         .then(function(response) {
             if ('form' == response.data.type) {
@@ -154,11 +157,11 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 	允许携带一个参数
 
 	@since 2019.01.26
-	若需要传递参数值超过一个，可将参数定义为GET参数形式如："post_id=1&user_id=2"，后端采用:wp_parse_args() 解析参数
+	若需要传递参数值超过一个，可将参数定义为GET参数形式如：'post_id=1&user_id=2'，后端采用:wp_parse_args() 解析参数
 
 	实例：
 		前端
-		wnd_ajax_modal("wnd_xxx","post_id=1&user_id=2");
+		wnd_ajax_modal('wnd_xxx','post_id=1&user_id=2');
 
 		后端
 		namespace Wnd\Module;
@@ -177,7 +180,6 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 // ajax 从后端请求内容，并以弹窗形式展现
 function wnd_ajax_modal(module, param = {}, callback = '') {
     // 添加请求拦截器
-    // 添加请求拦截器
     axios.interceptors.request.use(function(config) {
         if ('get' == config.method && 'modal' == (config.params.ajax_type || false)) {
             wnd_alert_msg(loading_el);
@@ -189,17 +191,17 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
         return Promise.reject(error);
     });
 
-    axios.get(
-            wnd_module_api + "/" + module + lang_query, {
-                params: Object.assign({
-                    "ajax_type": "modal"
-                }, param)
-            }
-        )
+    axios({
+            method: 'get',
+            url: wnd_module_api + '/' + module + lang_query,
+            params: Object.assign({
+                'ajax_type': 'modal'
+            }, param),
+        })
         .then(function(response) {
             if ('form' == response.data.type) {
                 wnd_alert_modal('<div id="vue-app"></div>');
-                wnd_render_form("#vue-app", response.data.data);
+                wnd_render_form('#vue-app', response.data.data);
             } else {
                 wnd_alert_modal(response.data.data);
             }
@@ -251,12 +253,12 @@ function wnd_alert_msg(msg, time = 0) {
 // 初始化对话框
 function wnd_reset_modal() {
     var modal = document.querySelector('#modal');
-    var modal_entry = document.querySelector('#modal .modal-entry');
-
     if (modal) {
-        modal.classList.remove("is-active", "wnd-gallery");
-        modal_entry.classList.remove('box');
+        var modal_entry = modal.querySelector('#modal .modal-entry');
+
         modal_entry.innerHTML = '';
+        modal.classList.remove('is-active', 'wnd-gallery');
+        modal_entry.classList.remove('box');
     } else {
         wnd_append('body',
             '<div id="modal" class="modal">' +
