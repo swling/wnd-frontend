@@ -1,6 +1,5 @@
 var wnd_vue_form = true;
-
-var general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color', 'date', 'range', 'tel', 'hidden'];
+var general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color', 'date', 'range', 'tel'];
 
 /**
  *@since 0.9.25
@@ -21,21 +20,34 @@ function _wnd_render_form(container, form_json) {
         methods: {
             // 提交
             submit: function() {
-                this.form.submit.attrs.class = form_json.submit.attrs.class + " is-loading";
+                this.form.submit.attrs.class = form_json.submit.attrs.class + ' is-loading';
 
                 // 表单检查
                 var can_submit = true;
                 this.form.fields.forEach(function(field, index) {
-                    if (field.required && !field.value) {
-                        field.class = field.class + " is-danger";
-                        can_submit = false;
+                    // 组字段
+                    if ('group' == field.type) {
+                        field.fields.forEach(function(child_field, child_index) {
+                            if (child_field.required && !child_field.value && !child_field.selected && !child_field.checked) {
+                                child_field.class = form_json.fields[index].fields[child_index].class + ' is-danger';
+                                can_submit = false;
+                                return false; //此处为退出 forEach 循环，而非阻止提交
+                            }
+                        });
                     };
 
-                    return false;
+                    // 单个
+                    if (field.required && !field.value && !field.selected && !field.checked) {
+                        field.attrs.class = form_json.fields[index].attrs.class + ' is-danger';
+                        can_submit = false;
+                        return false; //此处为退出 forEach 循环，而非阻止提交
+                    };
                 });
 
                 if (!can_submit) {
                     this.form.submit.attrs.class = form_json.submit.attrs.class;
+                    this.form.message.message = wnd.msg.required;
+                    this.form.message.attrs.class = form_json.message.attrs.class + ' is-danger';
                     return false;
                 }
 
@@ -177,7 +189,7 @@ function get_form_template() {
 
     // 循环字段根据 get_field_component(field.type) 调用对应字段组件
     t += '<template v-for="(field, index) in form.fields" :key="index">';
-    t += '<component :is="get_field_component(field.type)" :field="field" :value.sync="field.value"/>'
+    t += '<component :is="get_field_component(field.type)" :field="field" :value.sync="field.value" :checked.sync="field.checked" :selected.sync="field.selected">'
     t += '</template>';
 
     // 提交按钮
@@ -265,7 +277,15 @@ var field_mixin = {
 
         input: function(value) {
             this.$emit('update:value', value);
-        }
+        },
+
+        checked: function(checked) {
+            this.$emit('update:checked', checked);
+        },
+
+        selected: function(selected) {
+            this.$emit('update:selected', selected);
+        },
     }
 }
 
@@ -274,7 +294,7 @@ Vue.component('wnd-text', {
     mixins: [field_mixin],
     props: ['field', 'value'],
     template: '<div :class="get_input_field_class(field)">' +
-        '<label class="label">{{field.label}}<span v-if="field.required && field.label" class="required">*</span></label>' +
+        '<label v-if="field.label" class="label">{{field.label}}<span v-if="field.required" class="required">*</span></label>' +
         '<div v-if="field.addon_left" class="control" v-html="field.addon_left"></div>' +
         '<div :class="get_input_control_class(field)">' +
         '<input v-bind="parse_input_attr(field)" v-model="value" @input="input(value)"/>' +
@@ -285,10 +305,17 @@ Vue.component('wnd-text', {
         '</div>',
 });
 
+// hidden 组件
+Vue.component('wnd-hidden', {
+    mixins: [field_mixin],
+    props: ['field', 'value'],
+    template: '<div><input v-bind="parse_input_attr(field)" v-model="value" /></div>',
+});
+
 // Html 组件
 Vue.component('wnd-html', {
     props: ['value'],
-    template: '<div class="vue-template-wrap" v-html="value"></div>',
+    template: '<div class="vue-html-wrap field" v-html="value"></div>',
 });
 
 // Radio / checkbox 组件
@@ -297,7 +324,7 @@ Vue.component('wnd-radio', {
     props: ['field'],
     template: '<div :class="get_input_field_class(field)">' +
         '<template v-for="(radio_value, radio_label) in field.options">' +
-        '<input :id="field.name + radio_value" v-bind="parse_input_attr(field)" :value="radio_value" :name="field.name" :checked="is_checked(field, radio_value)">' +
+        '<input :id="field.name + radio_value" v-bind="parse_input_attr(field)" :value="radio_value" :name="field.name" :checked="is_checked(field, radio_value)" @change="checked(radio_value)">' +
         '<label :for="field.name + radio_value">{{radio_label}}</label>' +
         '</template>' +
         '</div>',
@@ -309,10 +336,9 @@ Vue.component('wnd-group', {
     props: ['field'],
     template: '<div v-bind="field.attrs">' +
         '<template v-for="(child_field, index) in field.fields">' +
-        '<component :is="get_field_component(child_field.type)" :field="child_field" :value.sync="child_field.value" />' +
+        '<component :is="get_field_component(child_field.type)" :field="child_field" :value.sync="child_field.value" :checked.sync="child_field.checked" :selected.sync="child_field.selected">' +
         '</template>' +
         '</div>',
-    // template:'<div :class="get_input_field_class(field)">Group</div>',
 });
 
 // 文件上传字段
