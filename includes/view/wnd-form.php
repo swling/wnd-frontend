@@ -91,6 +91,7 @@ class Wnd_Form {
 	// 初始化构建
 	public function __construct() {
 		$this->id = 'wnd-' . uniqid();
+		$this->add_form_attr('id', $this->id);
 	}
 
 	/**
@@ -130,6 +131,9 @@ class Wnd_Form {
 	public function set_action(string $action, string $method = 'POST') {
 		$this->method = $method;
 		$this->action = $action;
+
+		$this->add_form_attr('method', $this->method);
+		$this->add_form_attr('action', $this->action);
 	}
 
 	// 直接设置当前表单的组成数组（通常用于配合 filter 过滤）
@@ -361,16 +365,6 @@ class Wnd_Form {
 	}
 
 	protected function build_form_header() {
-		$this->add_form_attr('id', $this->form_attr['id'] ?? $this->id);
-
-		if (!is_null($this->method)) {
-			$this->add_form_attr('method', $this->method);
-		}
-
-		if (!is_null($this->action)) {
-			$this->add_form_attr('action', $this->action);
-		}
-
 		if ($this->with_upload) {
 			$this->add_form_attr('enctype', 'multipart/form-data');
 		}

@@ -30,6 +30,12 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	protected $captcha_service;
 
+	/**
+	 *@since 09.25
+	 *是否已执行被插件特定构造
+	 */
+	protected $constructed = false;
+
 	public static $primary_color;
 
 	public static $second_color;
@@ -55,6 +61,13 @@ class Wnd_Form_WP extends Wnd_Form {
 		static::$second_color  = wnd_get_config('second_color');
 		$this->is_ajax_submit  = $is_ajax_submit;
 		$this->enable_captcha  = $this->captcha_service ? $enable_captcha : false;
+
+		/**
+		 *@since 2019.07.17 ajax表单
+		 */
+		if ($this->is_ajax_submit) {
+			$this->add_form_attr('onsubmit', 'return false');
+		}
 	}
 
 	/**
@@ -400,8 +413,18 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->add_html(Wnd_Gallery::build_gallery_upload($args, false));
 	}
 
-	// 构造表单，可设置WordPress filter 过滤表单的input_values
-	public function build() {
+	/**
+	 *@since 0.9.25
+	 *构建本插件特定的数据结构
+	 * - 本方法只应执行一次
+	 */
+	protected function wnd_structure() {
+		if ($this->constructed) {
+			return false;
+		} else {
+			$this->constructed = true;
+		}
+
 		/**
 		 *设置表单过滤filter
 		 **/
@@ -422,6 +445,12 @@ class Wnd_Form_WP extends Wnd_Form {
 		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
 		 */
 		$this->build_sign_field();
+	}
+
+	// 构造表单，可设置WordPress filter 过滤表单的input_values
+	public function build() {
+		// 本插件特定的数据结构
+		$this->wnd_structure();
 
 		/**
 		 *构建表单
@@ -436,16 +465,23 @@ class Wnd_Form_WP extends Wnd_Form {
 	protected function build_sign_field() {
 		// 提取表单字段names
 		foreach ($this->get_input_values() as $input_value) {
-			if (!isset($input_value['name'])) {
+			/**
+			 *@since 0.9.25
+			 *group 字段：提取全部子字段
+			 */
+			if ('group' == $input_value['type']) {
+				foreach ($input_value['fields'] as $child_field) {
+					$this->form_names[] = static::extract_form_name($child_field);
+				}
+				unset($child_field);
+
 				continue;
 			}
 
-			if (isset($input_value['disabled']) and $input_value['disabled']) {
-				continue;
-			}
-
-			// 可能为多选字段：需要移除'[]'
-			$this->form_names[] = rtrim($input_value['name'], '[]');
+			/**
+			 *常规单字段
+			 */
+			$this->form_names[] = static::extract_form_name($input_value);
 		}
 		unset($input_value);
 
@@ -454,16 +490,20 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *构建表单头部
+	 *@since 0.9.25
+	 *判断是否为有效的字段值（字段是否包含提交数据）
 	 */
-	protected function build_form_header() {
-		/**
-		 *@since 2019.07.17 ajax表单
-		 */
-		if ($this->is_ajax_submit) {
-			$this->add_form_attr('onsubmit', 'return false');
+	protected static function extract_form_name(array $input_value): string {
+		if (!isset($input_value['name'])) {
+			return '';
 		}
-		parent::build_form_header();
+
+		if (isset($input_value['disabled']) and $input_value['disabled']) {
+			return '';
+		}
+
+		// 可能为多选字段：需要移除'[]'
+		return rtrim($input_value['name'], '[]');
 	}
 
 	/**
@@ -546,5 +586,16 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// 构造完整脚本
 		return $send_code_script . $submit_script;
+	}
+
+	/**
+	 *获取表单构造数组数据，可用于前端 JS 渲染
+	 *@since 0.9.25
+	 */
+	public function get_form_structure(): array{
+		// 本插件特定的数据结构
+		$this->wnd_structure();
+
+		return parent::get_form_structure();
 	}
 }
