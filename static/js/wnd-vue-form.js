@@ -19,17 +19,6 @@ function _wnd_render_form(container, form_json) {
 
         // 事件处理
         methods: {
-            // 根据字段类型选择对应组件 @see get_form_template()
-            get_field_component: function(field_type) {
-                if (general_input_fields.includes(field_type)) {
-                    return 'wnd-text';
-                } else if (['radio', 'checkbox'].includes(field_type)) {
-                    return 'wnd-radio'
-                } else {
-                    return 'wnd-' + field_type;
-                }
-            },
-
             // 提交
             submit: function() {
                 this.form.submit.attrs.class = form_json.submit.attrs.class + " is-loading";
@@ -202,6 +191,17 @@ function get_form_template() {
     return t;
 }
 
+// 根据字段类型选择对应组件 @see get_form_template()
+function get_field_component(field_type) {
+    if (general_input_fields.includes(field_type)) {
+        return 'wnd-text';
+    } else if (['radio', 'checkbox'].includes(field_type)) {
+        return 'wnd-radio'
+    } else {
+        return 'wnd-' + field_type;
+    }
+}
+
 // 混入对象（有点类似 PHP Class 中的特性）
 var field_mixin = {
     methods: {
@@ -303,6 +303,18 @@ Vue.component('wnd-radio', {
         '</div>',
 });
 
+// Group 组字段组件
+Vue.component('wnd-group', {
+    mixins: [field_mixin],
+    props: ['field'],
+    template: '<div v-bind="field.attrs">' +
+        '<template v-for="(child_field, index) in field.fields">' +
+        '<component :is="get_field_component(child_field.type)" :field="child_field" :value.sync="child_field.value" />' +
+        '</template>' +
+        '</div>',
+    // template:'<div :class="get_input_field_class(field)">Group</div>',
+});
+
 // 文件上传字段
 Vue.component('wnd-file_upload', {
     mixins: [field_mixin],
@@ -363,8 +375,8 @@ Vue.component('wnd-file_upload', {
                     let complete = (progressEvent.loaded / progressEvent.total * 100 | 0) + '%'
                     console.log('上传 ' + complete)
                 }
-			}).then(function (res) {
-				console.log(res.data);
+            }).then(function(res) {
+                console.log(res.data);
             }).catch(err => {
                 console.log(err);
             })
