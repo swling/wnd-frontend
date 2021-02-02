@@ -67,27 +67,6 @@ function _wnd_render_form(container, form_json) {
                 return _field;
             },
 
-            is_checked: function(field, value) {
-                return field.checked == value ? true : false;
-            },
-
-            // 生成随机字符
-            // random: function() {
-            //     return Math.random().toString(36).substring(2);
-            // },
-
-            // input: function(value) {
-            //     this.$emit('update:value', value);
-            // },
-
-            // checked: function(checked) {
-            //     this.$emit('update:checked', checked);
-            // },
-
-            // selected: function(selected) {
-            //     this.$emit('update:selected', selected);
-            // },
-
             // 文件上传
             upload: function(e, field) {
                 let files = e.target.files;
@@ -348,40 +327,19 @@ function _wnd_render_form(container, form_json) {
     function build_radio(field) {
         return '<div :class="get_input_field_class(' + field + ')">' +
             '<template v-for="(radio_value, radio_label) in ' + field + '.options">' +
-            '<input :id="' + field + '.name + radio_value" v-bind="parse_input_attr(' + field + ')" v-model="radio_value" :name="' + field + '.name" :checked="is_checked(' + field + ', radio_value)">' +
+            '<input :id="' + field + '.name + radio_value" v-bind="parse_input_attr(' + field + ')" :value="radio_value" v-model="' + field + '.checked">' +
             '<label :for="' + field + '.name + radio_value">{{radio_label}}</label>' +
             '</template>' +
             '</div>';
     }
 
-    /* 
-    	$html = '<div class="field">';
-    	$html .= static::build_label($input_value);
-    	$html .= '<div class="control">';
-    	$html .= '<div class="select">';
-    	$html .= '<select' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
-    	foreach ($input_value['options'] as $key => $value) {
-    		if (is_array($input_value['selected'])) {
-    			$checked = in_array($value, $input_value['selected']) ? ' selected="selected"' : '';
-    		} else {
-    			$checked = ($input_value['selected'] == $value) ? ' selected="selected"' : '';
-    		}
-
-    		$html .= '<option value="' . $value . '"' . $checked . '>' . $key . '</option>';
-    	}unset($key, $value);
-    	$html .= '</select>';
-    	$html .= '</div>';
-    	$html .= '</div>';
-    	$html .= '</div>';
-    	return $html;
-    */
     // 下拉 Select 组件
     function build_select(field) {
         return '<div class="field">' +
             '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
             '<div class="select">' +
-			'<select v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.selected">' +
-            '<template v-for="(name, value) in ' + field + '.options">' +
+            '<select v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.selected">' +
+            '<template v-for="(value, name) in ' + field + '.options">' +
             '<option :value="value">{{name}}</option>' +
             '</template>' +
             '</select>' +
