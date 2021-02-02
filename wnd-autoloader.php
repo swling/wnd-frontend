@@ -64,7 +64,7 @@ spl_autoload_register(function ($class) {
 
 	// 其他插件拓展类：设定插件目录，从数组中剔除固定命名空间前缀 Wnd_Plugin，以匹配后续算法
 	case 'wnd_plugin':
-		$base_dir = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $class_info[1];
+		$base_dir = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . strtolower($class_info[1]);
 		array_shift($class_info);
 		break;
 
