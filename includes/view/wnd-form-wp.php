@@ -465,45 +465,21 @@ class Wnd_Form_WP extends Wnd_Form {
 	protected function build_sign_field() {
 		// 提取表单字段names
 		foreach ($this->get_input_values() as $input_value) {
-			/**
-			 *@since 0.9.25
-			 *group 字段：提取全部子字段
-			 */
-			if ('group' == $input_value['type']) {
-				foreach ($input_value['fields'] as $child_field) {
-					$this->form_names[] = static::extract_form_name($child_field);
-				}
-				unset($child_field);
-
+			if (!isset($input_value['name'])) {
 				continue;
 			}
 
-			/**
-			 *常规单字段
-			 */
-			$this->form_names[] = static::extract_form_name($input_value);
+			if (isset($input_value['disabled']) and $input_value['disabled']) {
+				continue;
+			}
+
+			// 可能为多选字段：需要移除'[]'
+			$this->form_names[] = rtrim($input_value['name'], '[]');
 		}
 		unset($input_value);
 
 		// 根据表单字段生成wp nonce并加入表单字段
 		$this->add_hidden(Wnd_Request::$sign_name, Wnd_Request::sign($this->form_names));
-	}
-
-	/**
-	 *@since 0.9.25
-	 *判断是否为有效的字段值（字段是否包含提交数据）
-	 */
-	protected static function extract_form_name(array $input_value): string {
-		if (!isset($input_value['name'])) {
-			return '';
-		}
-
-		if (isset($input_value['disabled']) and $input_value['disabled']) {
-			return '';
-		}
-
-		// 可能为多选字段：需要移除'[]'
-		return rtrim($input_value['name'], '[]');
 	}
 
 	/**

@@ -6,18 +6,141 @@ var general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color
  *Vue 根据 Json 动态渲染表单
  */
 function _wnd_render_form(container, form_json) {
+    // 数据 合并数据，并进行深拷贝，以保留原生传参 form_json 不随 data 变动
+    let form = JSON.parse(JSON.stringify(form_json));
 
     new Vue({
         el: container,
-        // 模板将替换挂载点内的内容
-        template: get_form_template(),
-        // 数据 合并数据，并进行深拷贝，以保留原生传参 form_json 不随 data 变动
+        template: get_form_template(form),
         data: {
-            form: JSON.parse(JSON.stringify(form_json)),
+            form: form,
         },
-
-        // 事件处理
         methods: {
+            has_input_addon: function(field) {
+                return (field.addon_left || field.addon_right);
+            },
+
+            has_input_icon: function(field) {
+                return (field.icon_left || field.icon_right);
+            },
+
+            get_input_field_class: function(field) {
+                return this.has_input_addon(field) ? 'field has-addons' : 'field';
+            },
+
+            get_input_control_class: function(field) {
+                var el_class = 'control';
+                el_class += this.has_input_addon(field) ? ' is-expanded' : '';
+                el_class += field.icon_left ? ' has-icons-left' : '';
+                el_class += field.icon_right ? ' has-icons-right' : '';
+                return el_class;
+            },
+
+            parse_input_attr: function(field) {
+                // 深拷贝 以免影响 data
+                let _field = JSON.parse(JSON.stringify(field));
+
+                Object.keys(_field).forEach(item => {
+                    if (!_field[item] || '' == _field[item]) {
+                        delete _field[item]
+                    };
+                });
+
+                _field["class"] = (general_input_fields.includes(field.type) ? 'input' : field.type) + ' ' + (_field["class"] || '');
+                delete _field['icon_left'];
+                delete _field['icon_right'];
+                delete _field['addon_left'];
+                delete _field['addon_right'];
+                delete _field['options'];
+                delete _field['label'];
+
+                delete _field['value'];
+                delete _field['field'];
+
+                if ('file_upload' == _field['type']) {
+                    _field['type'] = 'file';
+                }
+
+                // 自定义 data-* 属性应直接获取使用，无需渲染 DOM
+                delete _field['data'];
+
+                return _field;
+            },
+
+            is_checked: function(field, value) {
+                return field.checked == value ? true : false;
+            },
+
+            // 生成随机字符
+            // random: function() {
+            //     return Math.random().toString(36).substring(2);
+            // },
+
+            // input: function(value) {
+            //     this.$emit('update:value', value);
+            // },
+
+            // checked: function(checked) {
+            //     this.$emit('update:checked', checked);
+            // },
+
+            // selected: function(selected) {
+            //     this.$emit('update:selected', selected);
+            // },
+
+            // 文件上传
+            upload: function(e, field) {
+                let files = e.target.files;
+                let form_data = new FormData()
+
+                // 循环构造自定义 data-* 属性
+                if (field.data) {
+                    for (const key in field.data) {
+                        if (Object.hasOwnProperty.call(field.data, key)) {
+                            form_data.append(key, field.data[key]);
+                        }
+                    }
+                }
+
+                // 获取文件，支持多文件上传（文件数据 name 统一设置为 wnd_file[] 这是与后端处理程序的约定 ）
+                for (var i = 0; i < files.length; ++i) {
+                    form_data.set('wnd_file[' + i + ']', files[i]);
+                }
+
+                // WP Nonce
+                form_data.set('_ajax_nonce', field.data.upload_nonce);
+
+                // _this = this;
+                axios({
+                    url: wnd_action_api + "/wnd_upload_file" + lang_query,
+                    method: 'post',
+                    data: form_data,
+                    headers: {},
+                    //原生获取上传进度的事件
+                    onUploadProgress: function(progressEvent) {
+                        field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
+                    }
+                }).then(function(response) {
+                    console.log(response.data);
+                    for (var i = 0, n = response.data.length; i < n; i++) {
+                        // 单个图片
+                        if ('image_upload' == field.type) {
+                            field.thumbnail = response.data[i].data.thumbnail;
+
+                            // 单个文件
+                        } else if ('file_upload' == field.type) {
+
+                            // 图片相册
+                        } else if ('gallery' == field.type) {
+
+                        }
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+
             // 提交
             submit: function() {
                 this.form.submit.attrs.class = form_json.submit.attrs.class + ' is-loading';
@@ -25,18 +148,6 @@ function _wnd_render_form(container, form_json) {
                 // 表单检查
                 var can_submit = true;
                 this.form.fields.forEach(function(field, index) {
-                    // 组字段
-                    if ('group' == field.type) {
-                        field.fields.forEach(function(child_field, child_index) {
-                            if (child_field.required && !child_field.value && !child_field.selected && !child_field.checked) {
-                                child_field.class = form_json.fields[index].fields[child_index].class + ' is-danger';
-                                can_submit = false;
-                                return false; //此处为退出 forEach 循环，而非阻止提交
-                            }
-                        });
-                    };
-
-                    // 单个
                     if (field.required && !field.value && !field.selected && !field.checked) {
                         field.class = form_json.fields[index].class + ' is-danger';
                         can_submit = false;
@@ -169,279 +280,163 @@ function _wnd_render_form(container, form_json) {
         // 侦听器
         watch: {},
     });
-}
 
-// 定义 Form 输出模板
-function get_form_template() {
-    // 表单头
-    t = '<form v-bind="form.attrs">';
-    t += '<h3 v-bind="form.title.attrs" v-html="form.title.title"></h3>';
-    t += '<div v-bind="form.message.attrs" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>';
+    // 定义 Form 输出模板
+    function get_form_template(form_json) {
+        // 表单头
+        let t = '<form v-bind="form.attrs">';
+        t += '<h3 v-bind="form.title.attrs" v-html="form.title.title"></h3>';
+        t += '<div v-bind="form.message.attrs" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>';
 
-    // 循环字段数据，调用对应字段组件
-    t += get_fields_template('form.fields', 'field');
+        // 循环字段数据，调用对应字段组件
+        t += get_fields_template(form_json);
 
-    // 提交按钮
-    t += '<div class="field is-grouped is-grouped-centered">';
-    t += '<button v-bind="form.submit.attrs" @click="submit" v-text="form.submit.text"></button>';
-    t += '</div>';
+        // 提交按钮
+        t += '<div class="field is-grouped is-grouped-centered">';
+        t += '<button v-bind="form.submit.attrs" @click="submit" v-text="form.submit.text"></button>';
+        t += '</div>';
 
-    // 表尾
-    t += '</form>';
+        // 表尾
+        t += '</form>';
 
-    return t;
-}
+        return t;
+    }
 
-// 循环字段数据，调用对应字段组件 fileds_vn, field_vn 分别为字段数据合集及单个字段数据的变量名称，需要匹配对应模板中的定义
-function get_fields_template(fileds_vn, field_vn) {
-    t = '<template v-for="(' + field_vn + ', index) in ' + fileds_vn + '" :key="index">';
-    t += '<wnd-radio v-if="\'radio\' == ' + field_vn + '.type || \'checkbox\' == ' + field_vn + '.type" :field="' + field_vn + '" :checked.sync="' + field_vn + '.checked"></wnd-radio>'
-    t += '<wnd-file-upload v-else-if="\'file_upload\' == ' + field_vn + '.type" :field="' + field_vn + '"></wnd-file-upload>'
-    t += '<wnd-image-upload v-else-if="\'image_upload\' == ' + field_vn + '.type" :field="' + field_vn + '"></wnd-image-upload>'
-    t += '<wnd-select v-else-if="\'select\' == ' + field_vn + '.type" :field="' + field_vn + '" :selected.sync="' + field_vn + '.selected"></wnd-select>'
-    t += '<wnd-text v-else-if="general_input_fields.includes(' + field_vn + '.type)" :field="' + field_vn + '" :value.sync="' + field_vn + '.value"></wnd-text>'
-    t += '<component v-else :is="\'wnd-\'+' + field_vn + '.type" :field="' + field_vn + '" :value.sync="' + field_vn + '.value"></component>'
-    t += '</template>';
+    // 选择并构建字段模板
+    function get_fields_template(form_json) {
+        let t = '';
+        for (let index = 0; index < form_json.fields.length; index++) {
+            let field = form_json.fields[index];
+            let field_vn = 'form.fields[' + index + ']';
 
-    return t;
-}
-
-// 混入对象（有点类似 PHP Class 中的特性）
-var field_mixin = {
-    methods: {
-        has_input_addon: function(field) {
-            return (field.addon_left || field.addon_right);
-        },
-
-        has_input_icon: function(field) {
-            return (field.icon_left || field.icon_right);
-        },
-
-        get_input_field_class: function(field) {
-            return this.has_input_addon(field) ? 'field has-addons' : 'field';
-        },
-
-        get_input_control_class: function(field) {
-            var el_class = 'control';
-            el_class += this.has_input_addon(field) ? ' is-expanded' : '';
-            el_class += field.icon_left ? ' has-icons-left' : '';
-            el_class += field.icon_right ? ' has-icons-right' : '';
-            return el_class;
-        },
-
-        parse_input_attr: function(field) {
-            // 深拷贝 以免影响 data
-            let _field = JSON.parse(JSON.stringify(field));
-
-            Object.keys(_field).forEach(item => {
-                if (!_field[item] || '' == _field[item]) {
-                    delete _field[item]
-                };
-            });
-
-            _field["class"] = (general_input_fields.includes(field.type) ? 'input' : field.type) + ' ' + (_field["class"] || '');
-            delete _field['icon_left'];
-            delete _field['icon_right'];
-            delete _field['addon_left'];
-            delete _field['addon_right'];
-            delete _field['options'];
-            delete _field['label'];
-
-            delete _field['value'];
-            delete _field['field'];
-
-            if ('file_upload' == _field['type']) {
-                _field['type'] = 'file';
+            if ('html' == field.type) {
+                t += field.value;
+            } else if (general_input_fields.includes(field.type)) {
+                t += build_text(field_vn);
+            } else if ('radio' == field.type || 'checkbox' == field.type) {
+                t += build_radio(field_vn);
+            } else if ('hidden' == field.type) {
+                t += '<input v-bind="parse_input_attr(' + field_vn + ')" v-model="' + field_vn + '.value" />';
+            } else if ('textarea' == field.type) {
+                t += build_textarea(field_vn);
+            } else if ('image_upload' == field.type) {
+                t += build_image_upload(field_vn);
+            } else if ('file_upload' == field.type) {
+                t += build_file_upload(field_vn);
+            } else if ('select' == field.type) {
+                t += build_select(field_vn);
             }
+        }
+        return t;
+    }
 
-            // 自定义 data-* 属性应直接获取使用，无需渲染 DOM
-            delete _field['data'];
+    // 常规 input 组件
+    function build_text(field) {
+        return '<div :class="get_input_field_class(' + field + ')">' +
+            '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
+            '<div v-if="' + field + '.addon_left" class="control" v-html="' + field + '.addon_left"></div>' +
+            '<div :class="get_input_control_class(' + field + ')">' +
+            '<input v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.value" />' +
+            '<span v-if="' + field + '.icon_left" class="icon is-left"  v-html="' + field + '.icon_left"></span>' +
+            '<span v-if="' + field + '.icon_right"  class="icon is-right" v-html="' + field + '.icon_right"></span>' +
+            '</div>' +
+            '<div v-if="' + field + '.addon_right" class="control" v-html="' + field + '.addon_right"></div>' +
+            '</div>';
+    }
 
-            return _field;
-        },
+    // Radio / checkbox 组件
+    function build_radio(field) {
+        return '<div :class="get_input_field_class(' + field + ')">' +
+            '<template v-for="(radio_value, radio_label) in ' + field + '.options">' +
+            '<input :id="' + field + '.name + radio_value" v-bind="parse_input_attr(' + field + ')" v-model="radio_value" :name="' + field + '.name" :checked="is_checked(' + field + ', radio_value)">' +
+            '<label :for="' + field + '.name + radio_value">{{radio_label}}</label>' +
+            '</template>' +
+            '</div>';
+    }
 
-        is_checked: function(field, value) {
-            return field.checked == value ? true : false;
-        },
+    /* 
+    	$html = '<div class="field">';
+    	$html .= static::build_label($input_value);
+    	$html .= '<div class="control">';
+    	$html .= '<div class="select">';
+    	$html .= '<select' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
+    	foreach ($input_value['options'] as $key => $value) {
+    		if (is_array($input_value['selected'])) {
+    			$checked = in_array($value, $input_value['selected']) ? ' selected="selected"' : '';
+    		} else {
+    			$checked = ($input_value['selected'] == $value) ? ' selected="selected"' : '';
+    		}
 
-        // 生成随机字符
-        random: function() {
-            return Math.random().toString(36).substring(2);
-        },
+    		$html .= '<option value="' . $value . '"' . $checked . '>' . $key . '</option>';
+    	}unset($key, $value);
+    	$html .= '</select>';
+    	$html .= '</div>';
+    	$html .= '</div>';
+    	$html .= '</div>';
+    	return $html;
+    */
+    // 下拉 Select 组件
+    function build_select(field) {
+        return '<div class="field">' +
+            '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
+            '<div class="select">' +
+			'<select v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.selected">' +
+            '<template v-for="(name, value) in ' + field + '.options">' +
+            '<option :value="value">{{name}}</option>' +
+            '</template>' +
+            '</select>' +
+            '</div>' +
+            '</div>';
+    }
 
-        input: function(value) {
-            this.$emit('update:value', value);
-        },
+    // Textarea 组件
+    function build_textarea(field) {
+        return '<div :class="get_input_field_class(' + field + ')">' +
+            '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
+            '<textarea v-html="' + field + '.value" v-bind="parse_input_attr(' + field + ')"></textarea>' +
+            '</div>';
+    };
 
-        checked: function(checked) {
-            this.$emit('update:checked', checked);
-        },
+    // 文件上传字段
+    function build_file_upload(field) {
+        return '<div :id="' + field + '.id" :class="' + field + '.class">' +
+            '<div class="' + field + '"><div class="ajax-message"></div></div>' +
+            '<div class="columns is-mobile is-vcentered">' +
 
-        selected: function(selected) {
-            this.$emit('update:selected', selected);
-        },
+            '<div class="column">' +
+            '<div class="file has-name is-fullwidth">' +
+            '<label class="file-label">' +
+            '<input type="file" class="file file-input" :name="' + field + '.name" @change="upload">' +
+            '<span class="file-cta">' +
+            '<span class="file-icon"><i class="fa fa-upload"></i></span>' +
+            '<span class="file-label">{{' + field + '.label}}</span>' +
+            '</span>' +
+            '<span class="file-name" v-html="' + field + '.file_name"></span>' +
+            '</label>' +
+            '</div>' +
+            '</div>' +
+
+            '<div v-if="' + field + '.delete_button" class="column is-narrow">' +
+            '<a class="delete" :data-id="' + field + '.id" :data-file_id="' + field + '.file_id"></a>' +
+            '</div>' +
+
+            '</div>' +
+            '</div>';
+    }
+
+    // 单个图像上传字段
+    function build_image_upload(field) {
+        return '<div :id="' + field + '.id" :class="' + field + '.class">' +
+            '<div v-if="' + field + '.complete" class="' + field + '"><progress class="progress is-primary" :value="' + field + '.complete" max="100"></progress></div>' +
+
+            '<div class="' + field + '">' +
+            '<label class="label">' +
+            '<div>{{' + field + '.label}}<span v-if="' + field + '.required && ' + field + '.label" class="required">*</span></div>' +
+            '<a><img class="thumbnail" :src="' + field + '.thumbnail" :height="' + field + '.thumbnail_size.height" :width="' + field + '.thumbnail_size.width"></a>' +
+            '<div class="file"><input type="file" class="file-input" :name="' + field + '.name" @change="upload($event,' + field + ')"></div>' +
+            '</label>' +
+            '<a v-if="' + field + '.delete_button" class="delete" :data-id="' + field + '.id" :data-file_id="' + field + '.file_id"></a>' +
+            '</div>' +
+            '</div>';
     }
 }
-
-// 文件上传混入
-var upload_mixin = {
-    methods: {
-        upload: function(e) {
-            let files = e.target.files
-            let form_data = new FormData()
-
-            // 循环构造自定义 data-* 属性
-            if (this.field.data) {
-                for (const key in this.field.data) {
-                    if (Object.hasOwnProperty.call(this.field.data, key)) {
-                        form_data.append(key, this.field.data[key]);
-                    }
-                }
-            }
-
-            // 获取文件，支持多文件上传（文件数据 name 统一设置为 wnd_file[] 这是与后端处理程序的约定 ）
-            for (var i = 0; i < files.length; ++i) {
-                form_data.set('wnd_file[' + i + ']', files[i]);
-            }
-
-            // WP Nonce
-            form_data.set('_ajax_nonce', this.field.data.upload_nonce);
-
-            _this = this;
-            axios({
-                url: wnd_action_api + "/wnd_upload_file" + lang_query,
-                method: 'post',
-                data: form_data,
-                headers: {},
-                //原生获取上传进度的事件
-                onUploadProgress: function(progressEvent) {
-                    _this.field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
-                }
-            }).then(function(response) {
-                console.log(response.data);
-                for (var i = 0, n = response.data.length; i < n; i++) {
-                    // 单个图片
-                    if ('image_upload' == _this.field.type) {
-                        _this.field.thumbnail = response.data[i].data.thumbnail;
-
-                        // 单个文件
-                    } else if ('file_upload' == _this.field.type) {
-
-                        // 图片相册
-                    } else if ('gallery' == _this.field.type) {
-
-                    }
-                }
-
-            }).catch(err => {
-                console.log(err);
-            })
-        },
-    },
-}
-
-// 常规 input 组件
-Vue.component('wnd-text', {
-    mixins: [field_mixin],
-    props: ['field', 'value'],
-    template: '<div :class="get_input_field_class(field)">' +
-        '<label v-if="field.label" class="label">{{field.label}}<span v-if="field.required" class="required">*</span></label>' +
-        '<div v-if="field.addon_left" class="control" v-html="field.addon_left"></div>' +
-        '<div :class="get_input_control_class(field)">' +
-        '<input v-bind="parse_input_attr(field)" v-model="value" @input="input(value)"/>' +
-        '<span v-if="field.icon_left" class="icon is-left"  v-html="field.icon_left"></span>' +
-        '<span v-if="field.icon_right"  class="icon is-right" v-html="field.icon_right"></span>' +
-        '</div>' +
-        '<div v-if="field.addon_right" class="control" v-html="field.addon_right"></div>' +
-        '</div>',
-});
-
-// hidden 组件
-Vue.component('wnd-hidden', {
-    mixins: [field_mixin],
-    props: ['field', 'value'],
-    template: '<div><input v-bind="parse_input_attr(field)" v-model="value" /></div>',
-});
-
-// Html 组件
-Vue.component('wnd-html', {
-    props: ['value'],
-    template: '<div class="vue-html-wrap field" v-html="value"></div>',
-});
-
-// Radio / checkbox 组件
-Vue.component('wnd-radio', {
-    mixins: [field_mixin],
-    props: ['field'],
-    template: '<div :class="get_input_field_class(field)">' +
-        '<template v-for="(radio_value, radio_label) in field.options">' +
-        '<input :id="field.name + radio_value" v-bind="parse_input_attr(field)" :value="radio_value" :name="field.name" :checked="is_checked(field, radio_value)" @change="checked(radio_value)">' +
-        '<label :for="field.name + radio_value">{{radio_label}}</label>' +
-        '</template>' +
-        '</div>',
-});
-
-// Textarea 组件
-Vue.component('wnd-textarea', {
-    mixins: [field_mixin],
-    props: ['field', 'value'],
-    template: '<div :class="get_input_field_class(field)">' +
-        '<label v-if="field.label" class="label">{{field.label}}<span v-if="field.required" class="required">*</span></label>' +
-        '<textarea v-html="value" v-bind="parse_input_attr(field)"></textarea>' +
-        '</div>',
-});
-
-// Group 组字段组件
-Vue.component('wnd-group', {
-    mixins: [field_mixin],
-    props: ['field'],
-    template: '<div v-bind="field.attrs">' + get_fields_template('field.fields', 'child_field') + '</div>',
-});
-
-// 文件上传字段
-Vue.component('wnd-file-upload', {
-    mixins: [upload_mixin],
-    props: ['field'],
-    template: '<div :id="field.id" :class="field.class">' +
-        '<div class="field"><div class="ajax-message"></div></div>' +
-        '<div class="columns is-mobile is-vcentered">' +
-
-        '<div class="column">' +
-        '<div class="file has-name is-fullwidth">' +
-        '<label class="file-label">' +
-        '<input type="file" class="file file-input" :name="field.name" @change="upload">' +
-        '<span class="file-cta">' +
-        '<span class="file-icon"><i class="fa fa-upload"></i></span>' +
-        '<span class="file-label">{{field.label}}</span>' +
-        '</span>' +
-        '<span class="file-name" v-html="field.file_name"></span>' +
-        '</label>' +
-        '</div>' +
-        '</div>' +
-
-        '<div v-if="field.delete_button" class="column is-narrow">' +
-        '<a class="delete" :data-id="field.id" :data-file_id="field.file_id"></a>' +
-        '</div>' +
-
-        '</div>' +
-        '</div>',
-});
-
-// 单个图像上传字段
-Vue.component('wnd-image-upload', {
-    mixins: [upload_mixin],
-    props: ['field'],
-    template: '<div :id="field.id" :class="field.class">' +
-        '<div v-if="field.complete" class="field"><progress class="progress is-primary" :value="field.complete" max="100"></progress></div>' +
-
-        '<div class="field">' +
-        '<label class="label">' +
-        '<div>{{field.label}}<span v-if="field.required && field.label" class="required">*</span></div>' +
-        '<a><img class="thumbnail" :src="field.thumbnail" :height="field.thumbnail_size.height" :width="field.thumbnail_size.width"></a>' +
-        '<div class="file"><input type="file" class="file-input" :name="field.name" @change="upload"></div>' +
-        '</label>' +
-        '<a v-if="field.delete_button" class="delete" :data-id="field.id" :data-file_id="field.file_id"></a>' +
-        '</div>' +
-
-        '</div>',
-});

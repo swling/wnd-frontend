@@ -304,56 +304,6 @@ class Wnd_Form {
 	}
 
 	/**
-	 *@since 2021.01.31
-	 *添加一组被 DIV 包裹的字段
-	 *
-	 * 若使用 PHP 渲染，可直接两次调用 addd_html 即可将一组字段用任意 html 包裹，更为简洁直观
-	 * add_group 方法主要用于将一组字段构建成完整的数组数据，以便于转为 json 后供前端 JavaScript 渲染
-	 *
-	 *$form->add_group(
-	 *	[
-	 *		'attrs'  => ['class' => 'has-text-centered field'],
-	 *		'fields' => [
-	 *			[
-	 *				'type'     => 'radio',
-	 *				'name'     => 'total_amount',
-	 *				'options'  => Wnd\Model\Wnd_Recharge::get_recharge_amount_options(),
-	 *				'required' => 'required',
-	 *				'class'    => 'is-checkradio is-danger',
-	 *			],
-	 *			[
-	 *				'type'     => 'radio',
-	 *				'name'     => 'payment_gateway',
-	 *				'options'  => Wnd\Model\Wnd_Payment_Getway::get_gateway_options(),
-	 *				'required' => 'required',
-	 *				'checked'  => Wnd\Model\Wnd_Payment_Getway::get_default_gateway(),
-	 *				'class'    => 'is-checkradio is-danger',
-	 *			],
-	 *		],
-	 *	]
-	 *);
-	 *
-	 */
-	public function add_group(array $args) {
-		$defaults = [
-			'type'   => 'group',
-			'fields' => [],
-			'attrs'  => [
-				'class' => 'field',
-			],
-		];
-		$args = array_merge($defaults, $args);
-
-		// 将组内字段参数与默认参数合并，防止出现未定义
-		foreach ($args['fields'] as $key => $value) {
-			$args['fields'][$key] = array_merge(static::$defaults, $value);
-		}
-		unset($key, $value);
-
-		$this->input_values[] = $args;
-	}
-
-	/**
 	 *@since 2019.03.06
 	 *表单构造函数
 	 **/
@@ -576,34 +526,6 @@ class Wnd_Form {
 		$html .= static::build_label($input_value);
 		$html .= '<textarea' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>' . $input_value['value'] . '</textarea>';
 		$html .= '</div>';
-		return $html;
-	}
-
-	/**
-	 *@since 2021.01.31
-	 *构建一组字段
-	 *
-	 * 若使用 PHP 渲染，可直接两次调用 addd_html 即可将一组字段用任意 html 包裹，更为简洁直观
-	 * add_group 方法主要用于将一组字段构建成完整的数组数据，以便于转为 json 后供前端 JavaScript 渲染
-	 * build_group 以便于同一个表单可同时基于 php 渲染和 JavaScript 渲染
-	 *
-	 */
-	protected function build_group(array $input_value, string $input_key): string{
-		$html = '<div ';
-		foreach ($input_value['attrs'] as $attr => $attr_value) {
-			$html .= $attr . '="' . $attr_value . '" ';
-		}
-		unset($attr, $attr_value);
-		$html .= '>';
-
-		foreach ($input_value['fields'] as $key => $field) {
-			$field_method = 'build_' . $field['type'];
-			$html .= $this->$field_method($field, $input_key . $key);
-		}
-		unset($key, $field);
-
-		$html .= '</div>';
-
 		return $html;
 	}
 
