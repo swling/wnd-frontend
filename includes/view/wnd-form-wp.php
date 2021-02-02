@@ -568,10 +568,10 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *获取表单构造数组数据，可用于前端 JS 渲染
 	 *@since 0.9.25
 	 */
-	public function get_form_structure(): array{
+	public function get_structure(): array{
 		// 本插件特定的数据结构
 		$this->wnd_structure();
 
-		return parent::get_form_structure();
+		return parent::get_structure();
 	}
 }

@@ -710,7 +710,7 @@ class Wnd_Form {
 	/**
 	 *获取表单构造数组数据，可用于前端 JS 渲染
 	 */
-	public function get_form_structure(): array{
+	public function get_structure(): array{
 		return [
 			'attrs'   => $this->form_attr,
 			'title'   => [
