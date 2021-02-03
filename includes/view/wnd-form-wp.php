@@ -273,14 +273,14 @@ class Wnd_Form_WP extends Wnd_Form {
 	// Image upload
 	public function add_image_upload(array $args) {
 		$defaults = [
-			'class'          => 'upload-field',
-			'label'          => 'Image upland',
-			'name'           => 'wnd_file',
-			'file_id'        => 0,
-			'thumbnail'      => apply_filters('wnd_default_thumbnail', WND_URL . 'static/images/default.jpg', $this),
-			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
-			'data'           => [],
-			'delete_button'  => true,
+			'class'             => 'upload-field',
+			'label'             => 'Image upland',
+			'name'              => 'wnd_file',
+			'file_id'           => 0,
+			'default_thumbnail' => apply_filters('wnd_default_thumbnail', WND_URL . 'static/images/default.jpg', $this),
+			'thumbnail_size'    => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
+			'data'              => [],
+			'delete_button'     => true,
 		];
 		$args = array_merge($defaults, $args);
 
@@ -306,21 +306,18 @@ class Wnd_Form_WP extends Wnd_Form {
 		extract($args['data']);
 
 		// 固定data
-		$args['data']['is_image']         = '1';
 		$args['data']['upload_nonce']     = wp_create_nonce('wnd_upload_file');
 		$args['data']['delete_nonce']     = wp_create_nonce('wnd_delete_file');
 		$args['data']['meta_key_nonce']   = wp_create_nonce($meta_key);
-		$args['data']['thumbnail']        = $args['thumbnail'];
 		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
-		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据 meta_key 查找目标文件
 		$file_id  = $args['file_id'] ?: static::get_attachment_id($meta_key, $post_parent, $user_id);
 		$file_url = static::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
 		$file_url = $file_url ? wnd_get_thumbnail_url($file_url, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']) : '';
 
-		$args['thumbnail'] = $file_url ?: $args['thumbnail'];
+		$args['thumbnail'] = $file_url ?: $args['default_thumbnail'];
 		$args['file_id']   = $file_id ?: 0;
 
 		parent::add_image_upload($args);

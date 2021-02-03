@@ -70,6 +70,7 @@ class Wnd_Form {
 		'icon_right'  => '',
 		'addon_left'  => '',
 		'addon_right' => '',
+		'help'        => ['text' => '', 'class' => ''],
 	];
 
 	/**
@@ -259,7 +260,6 @@ class Wnd_Form {
 	// Image upload
 	public function add_image_upload(array $args) {
 		$defaults = [
-			'id'             => 'image-upload-' . $this->id,
 			'thumbnail'      => '',
 			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
 			'file_id'        => 0,
@@ -278,7 +278,6 @@ class Wnd_Form {
 	// File upload
 	public function add_file_upload(array $args) {
 		$defaults = [
-			'id'            => 'file-upload-' . $this->id,
 			'file_name'     => 'file name',
 			'file_id'       => 0,
 			'data'          => [],
@@ -361,7 +360,7 @@ class Wnd_Form {
 		$html = '<div class="field">';
 		$html .= static::build_label($input_value);
 		$html .= '<div class="control">';
-		$html .= '<div class="select">';
+		$html .= '<div class="select' . static::get_class($input_value, true) . '">';
 		$html .= '<select' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
 		foreach ($input_value['options'] as $key => $value) {
 			if (is_array($input_value['selected'])) {
@@ -375,20 +374,23 @@ class Wnd_Form {
 		$html .= '</select>';
 		$html .= '</div>';
 		$html .= '</div>';
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 		return $html;
 	}
 
 	protected function build_radio(array $input_value, string $input_key): string{
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
+		$html .= '<div class="control">';
 		$html .= static::build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
-			$input_id = md5($key . $input_key);
-			$html .= '<input id="' . $input_id . '" value="' . $value . '"' . static::build_input_attr($input_value);
+			$html .= '<label class="radio">';
+			$html .= '<input value="' . $value . '"' . static::build_input_attr($input_value);
 			$html .= ($input_value['checked'] == $value) ? ' checked="checked">' : '>';
-
-			$html .= '<label for="' . $input_id . '" class="radio">' . $key . '</label>';
+			$html .= $key . '</label>';
 		}unset($key, $value);
+		$html .= '</div>';
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 
 		return $html;
@@ -396,18 +398,20 @@ class Wnd_Form {
 
 	protected function build_checkbox(array $input_value, string $input_key): string{
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
+		$html .= '<div class="control">';
 		$html .= static::build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
-			$input_id = md5($key . $input_key);
-			$html .= '<input id="' . $input_id . '" value="' . $value . '"' . static::build_input_attr($input_value);
+			$html .= '<label class="checkbox">';
+			$html .= '<input value="' . $value . '"' . static::build_input_attr($input_value);
 			if (is_array($input_value['checked'])) {
 				$html .= in_array($value, $input_value['checked']) ? ' checked="checked">' : '>';
 			} else {
 				$html .= ($input_value['checked'] == $value) ? ' checked="checked">' : '>';
 			}
-
-			$html .= '<label for="' . $input_id . '" class="checkbox">' . $key . '</label>';
+			$html .= $key . '</label>';
 		}unset($key, $value);
+		$html .= '</div>';
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 
 		return $html;
@@ -422,8 +426,9 @@ class Wnd_Form {
 		$has_addons = ($input_value['addon_left'] or $input_value['addon_right']) ? true : false;
 
 		if ($has_addons) {
-			$html = static::build_label($input_value);
+			$html = '<div class="field">';
 			$html .= '<div class="field has-addons">';
+			$html .= static::build_label($input_value);
 		} else {
 			$html = '<div class="field">';
 			$html .= static::build_label($input_value);
@@ -452,12 +457,14 @@ class Wnd_Form {
 			$html .= '<div class="control">' . $input_value['addon_right'] . '</div>';
 		}
 
+		$html .= $has_addons ? '</div>' : '';
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 		return $html;
 	}
 
 	protected function build_image_upload(array $input_value, string $input_key): string{
-		$id                        = $input_value['id'] . '-' . $input_key;
+		$id                        = ($input_value['id'] ?: $this->id) . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
 		$html = '<div id="' . $id . '" class="field' . static::get_class($input_value, true) . '">';
@@ -481,12 +488,13 @@ class Wnd_Form {
 			};
 		</script>';
 
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 		return $html;
 	}
 
 	protected function build_file_upload(array $input_value, string $input_key): string{
-		$id                        = $input_value['id'] . '-' . $input_key;
+		$id                        = ($input_value['id'] ?: $this->id) . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
 		$html = '<div id="' . $id . '" class="field' . static::get_class($input_value, true) . '">';
@@ -525,6 +533,7 @@ class Wnd_Form {
 		$html = '<div class="field">';
 		$html .= static::build_label($input_value);
 		$html .= '<textarea' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>' . $input_value['value'] . '</textarea>';
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 		return $html;
 	}
@@ -675,6 +684,27 @@ class Wnd_Form {
 		$label = $input_value['required'] ? $input_value['label'] . '<span class="required">*</span>' : $input_value['label'];
 
 		return '<label class="' . $class . '">' . $label . '</label>';
+	}
+
+	/**
+	 *@since 2021.02.03
+	 *构建 Help HTML
+	 *
+	 *@var string 	帮助提示信息
+	 *@var string 	$required
+	 */
+	protected static function build_help(array $input_value): string {
+		if (empty($input_value['help'])) {
+			return '';
+		}
+
+		if ($input_value['help']['class']) {
+			$class = 'help ' . $input_value['help']['class'];
+		} else {
+			$class = 'help';
+		}
+
+		return '<p class="' . $class . '">' . $input_value['help']['text'] . '</p>';
 	}
 
 	/**

@@ -16,24 +16,28 @@ function _wnd_render_form(container, form_json) {
             form: form,
         },
         methods: {
-            has_input_addon: function(field) {
+            has_addon: function(field) {
                 return (field.addon_left || field.addon_right);
             },
 
-            has_input_icon: function(field) {
+            has_icon: function(field) {
                 return (field.icon_left || field.icon_right);
             },
 
-            get_input_field_class: function(field) {
-                return this.has_input_addon(field) ? 'field has-addons' : 'field';
+            get_field_class: function(field) {
+                return this.has_addon(field) ? 'field has-addons' : 'field';
             },
 
-            get_input_control_class: function(field) {
+            get_control_class: function(field) {
                 var el_class = 'control';
-                el_class += this.has_input_addon(field) ? ' is-expanded' : '';
+                el_class += this.has_addon(field) ? ' is-expanded' : '';
                 el_class += field.icon_left ? ' has-icons-left' : '';
                 el_class += field.icon_right ? ' has-icons-right' : '';
                 return el_class;
+            },
+
+            get_field_id: function(field, index) {
+                return field.id || (this.form.attrs.id + '-' + index);
             },
 
             parse_input_attr: function(field) {
@@ -65,6 +69,17 @@ function _wnd_render_form(container, form_json) {
                 delete _field['data'];
 
                 return _field;
+            },
+
+            click_target(selector) {
+                console.log(selector);
+                document.querySelector(selector).click();
+            },
+
+            change: function(field) {
+                field.class = field.class.replace('is-danger', '');
+                field.help.class = field.help.class.replace('is-danger', '');
+                field.help.text = field.help.text.replace(' ' + wnd.msg.required, '');
             },
 
             // 文件上传
@@ -100,11 +115,19 @@ function _wnd_render_form(container, form_json) {
                         field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
                     }
                 }).then(function(response) {
-                    console.log(response.data);
+                    if (response.data.status <= 0) {
+                        field.help.text = response.data.msg;
+                        field.help.class = 'is-danger';
+                        return false;
+                    }
+
                     for (var i = 0, n = response.data.length; i < n; i++) {
+                        field.thumbnail = response.data[i].data.thumbnail;
+                        field.file_id = response.data[i].data.id;
+                        field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + response.data[i].data.url + '" target="_blank">' + wnd.msg.view + '</a>';
+
                         // 单个图片
                         if ('image_upload' == field.type) {
-                            field.thumbnail = response.data[i].data.thumbnail;
 
                             // 单个文件
                         } else if ('file_upload' == field.type) {
@@ -113,6 +136,41 @@ function _wnd_render_form(container, form_json) {
                         } else if ('gallery' == field.type) {
 
                         }
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            // 删除文件
+            delete_file: function(field, index) {
+                if (!field.file_id) {
+                    field.file_name = 'Error';
+                    return false;
+                }
+
+                var data = new FormData();
+                data.append('file_id', field.file_id);
+                data.append('meta_key', field.data.meta_key);
+                data.append('_ajax_nonce', field.data.delete_nonce);
+                axios({
+                    url: wnd_action_api + "/wnd_delete_file" + lang_query,
+                    method: 'post',
+                    data: data,
+                }).then(function(response) {
+                    field.thumbnail = form_json.fields[index].default_thumbnail;
+                    field.file_name = wnd.msg.deleted;
+                    field.file_id = 0;
+
+                    // 单个图片
+                    if ('image_upload' == field.type) {
+
+                        // 单个文件
+                    } else if ('file_upload' == field.type) {
+
+                        // 图片相册
+                    } else if ('gallery' == field.type) {
+
                     }
 
                 }).catch(err => {
@@ -129,6 +187,8 @@ function _wnd_render_form(container, form_json) {
                 this.form.fields.forEach(function(field, index) {
                     if (field.required && !field.value && !field.selected && !field.checked) {
                         field.class = form_json.fields[index].class + ' is-danger';
+                        field.help.class = form_json.fields[index].help.class + ' is-danger';
+                        field.help.text = form_json.fields[index].help.text + ' ' + wnd.msg.required;
                         can_submit = false;
                         return false; //此处为退出 forEach 循环，而非阻止提交
                     };
@@ -136,8 +196,8 @@ function _wnd_render_form(container, form_json) {
 
                 if (!can_submit) {
                     this.form.submit.attrs.class = form_json.submit.attrs.class;
-                    this.form.message.message = wnd.msg.required;
-                    this.form.message.attrs.class = form_json.message.attrs.class + ' is-danger';
+                    // this.form.message.message = wnd.msg.required;
+                    // this.form.message.attrs.class = form_json.message.attrs.class + ' is-danger';
                     return false;
                 }
 
@@ -291,80 +351,89 @@ function _wnd_render_form(container, form_json) {
             if ('html' == field.type) {
                 t += field.value;
             } else if (general_input_fields.includes(field.type)) {
-                t += build_text(field_vn);
+                t += build_text(field_vn, index);
             } else if ('radio' == field.type || 'checkbox' == field.type) {
-                t += build_radio(field_vn);
+                t += build_radio(field_vn, index);
             } else if ('hidden' == field.type) {
                 t += '<input v-bind="parse_input_attr(' + field_vn + ')" v-model="' + field_vn + '.value" />';
             } else if ('textarea' == field.type) {
-                t += build_textarea(field_vn);
+                t += build_textarea(field_vn, index);
             } else if ('image_upload' == field.type) {
-                t += build_image_upload(field_vn);
+                t += build_image_upload(field_vn, index);
             } else if ('file_upload' == field.type) {
-                t += build_file_upload(field_vn);
+                t += build_file_upload(field_vn, index);
             } else if ('select' == field.type) {
-                t += build_select(field_vn);
+                t += build_select(field_vn, index);
             }
         }
         return t;
     }
 
     // 常规 input 组件
-    function build_text(field) {
-        return '<div :class="get_input_field_class(' + field + ')">' +
+    function build_text(field, index) {
+        return '<div :class="get_field_class(' + field + ')">' +
             '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
             '<div v-if="' + field + '.addon_left" class="control" v-html="' + field + '.addon_left"></div>' +
-            '<div :class="get_input_control_class(' + field + ')">' +
-            '<input v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.value" />' +
+            '<div :class="get_control_class(' + field + ')">' +
+            '<input v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.value" @change="change(' + field + ')"/>' +
             '<span v-if="' + field + '.icon_left" class="icon is-left"  v-html="' + field + '.icon_left"></span>' +
             '<span v-if="' + field + '.icon_right"  class="icon is-right" v-html="' + field + '.icon_right"></span>' +
             '</div>' +
             '<div v-if="' + field + '.addon_right" class="control" v-html="' + field + '.addon_right"></div>' +
+            '<p v-if="!has_addon(' + field + ')" v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
             '</div>';
     }
 
     // Radio / checkbox 组件
-    function build_radio(field) {
-        return '<div :class="get_input_field_class(' + field + ')">' +
+    function build_radio(field, index) {
+        return '<div :class="get_field_class(' + field + ')">' +
+            '<div :class="get_control_class(' + field + ')">' +
             '<template v-for="(radio_value, radio_label) in ' + field + '.options">' +
-            '<input :id="' + field + '.name + radio_value" v-bind="parse_input_attr(' + field + ')" :value="radio_value" v-model="' + field + '.checked">' +
-            '<label :for="' + field + '.name + radio_value">{{radio_label}}</label>' +
+            '<label :class="' + field + '.type">' +
+            '<input v-bind="parse_input_attr(' + field + ')" :value="radio_value" v-model="' + field + '.checked" @click="change(' + field + ')">' +
+            '{{radio_label}}</label>' +
             '</template>' +
+            '</div>' +
+            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
             '</div>';
     }
 
     // 下拉 Select 组件
-    function build_select(field) {
+    function build_select(field, index) {
         return '<div class="field">' +
             '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
-            '<div class="select">' +
+            '<div class="control">' +
+            '<div class="select" :class="' + field + '.class" @change="change(' + field + ')">' +
             '<select v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.selected">' +
             '<template v-for="(value, name) in ' + field + '.options">' +
             '<option :value="value">{{name}}</option>' +
             '</template>' +
             '</select>' +
             '</div>' +
+            '</div>' +
+            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
             '</div>';
     }
 
     // Textarea 组件
-    function build_textarea(field) {
-        return '<div :class="get_input_field_class(' + field + ')">' +
+    function build_textarea(field, index) {
+        return '<div :class="get_field_class(' + field + ')">' +
             '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
-            '<textarea v-html="' + field + '.value" v-bind="parse_input_attr(' + field + ')"></textarea>' +
+            '<textarea v-html="' + field + '.value" v-bind="parse_input_attr(' + field + ')" @change="change(' + field + ')"></textarea>' +
+            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
             '</div>';
     };
 
     // 文件上传字段
-    function build_file_upload(field) {
-        return '<div :id="' + field + '.id" :class="' + field + '.class">' +
-            '<div class="' + field + '"><div class="ajax-message"></div></div>' +
+    function build_file_upload(field, index) {
+        return '<div :id="get_field_id(' + field + ',' + index + ')" class="field" :class="' + field + '.class">' +
+            '<div class="field"><div class="ajax-message"></div></div>' +
             '<div class="columns is-mobile is-vcentered">' +
 
             '<div class="column">' +
             '<div class="file has-name is-fullwidth">' +
             '<label class="file-label">' +
-            '<input type="file" class="file file-input" :name="' + field + '.name" @change="upload">' +
+            '<input type="file" class="file file-input" :name="' + field + '.name" @change="upload($event,' + field + ')">' +
             '<span class="file-cta">' +
             '<span class="file-icon"><i class="fa fa-upload"></i></span>' +
             '<span class="file-label">{{' + field + '.label}}</span>' +
@@ -374,8 +443,8 @@ function _wnd_render_form(container, form_json) {
             '</div>' +
             '</div>' +
 
-            '<div v-if="' + field + '.delete_button" class="column is-narrow">' +
-            '<a class="delete" :data-id="' + field + '.id" :data-file_id="' + field + '.file_id"></a>' +
+            '<div v-show="' + field + '.delete_button && ' + field + '.file_id" class="column is-narrow">' +
+            '<a class="delete" @click="delete_file(' + field + ',' + index + ')"></a>' +
             '</div>' +
 
             '</div>' +
@@ -383,18 +452,19 @@ function _wnd_render_form(container, form_json) {
     }
 
     // 单个图像上传字段
-    function build_image_upload(field) {
-        return '<div :id="' + field + '.id" :class="' + field + '.class">' +
-            '<div v-if="' + field + '.complete" class="' + field + '"><progress class="progress is-primary" :value="' + field + '.complete" max="100"></progress></div>' +
-
-            '<div class="' + field + '">' +
-            '<label class="label">' +
-            '<div>{{' + field + '.label}}<span v-if="' + field + '.required && ' + field + '.label" class="required">*</span></div>' +
-            '<a><img class="thumbnail" :src="' + field + '.thumbnail" :height="' + field + '.thumbnail_size.height" :width="' + field + '.thumbnail_size.width"></a>' +
-            '<div class="file"><input type="file" class="file-input" :name="' + field + '.name" @change="upload($event,' + field + ')"></div>' +
-            '</label>' +
-            '<a v-if="' + field + '.delete_button" class="delete" :data-id="' + field + '.id" :data-file_id="' + field + '.file_id"></a>' +
+    function build_image_upload(field, index) {
+        return '<div :id="get_field_id(' + field + ',' + index + ')" class="field" :class="' + field + '.class">' +
+            '<div v-if="' + field + '.complete" class="' + field + '">' +
+            '<progress class="progress is-primary" :value="' + field + '.complete" max="100"></progress>' +
             '</div>' +
+
+            '<label class="label">{{' + field + '.label}}<span v-if="' + field + '.required && ' + field + '.label" class="required">*</span></label>' +
+            '<a @click="click_target(\'#\'+get_field_id(' + field + ',' + index + ') + \' input[type=file]\')">' +
+            '<img class="thumbnail" :src="' + field + '.thumbnail" :height="' + field + '.thumbnail_size.height" :width="' + field + '.thumbnail_size.width">' +
+            '</a>' +
+            '<a v-if="' + field + '.delete_button" class="delete" @click="delete_file(' + field + ',' + index + ')"></a>' +
+            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
+            '<div class="file"><input type="file" class="file file-input" accept="image/*" :name="' + field + '.name" @change="upload($event,' + field + ')"></div>' +
             '</div>';
     }
 }
