@@ -68,7 +68,7 @@ abstract class Wnd_Module {
 	/**
 	 *权限核查请复写本方法
 	 */
-	protected static function check($args = []) {
+	protected static function check($args) {
 		return;
 	}
 
