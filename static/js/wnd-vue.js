@@ -103,7 +103,7 @@ function wnd_render_form(container, form_json) {
         script.onload = function() {
             _wnd_render_form(container, form_json);
         };
-        document.body.appendChild(script);
+        document.head.appendChild(script);
     } else {
         _wnd_render_form(container, form_json);
     }

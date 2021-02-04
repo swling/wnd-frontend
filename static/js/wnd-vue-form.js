@@ -345,7 +345,10 @@ function _wnd_render_form(container, form_json) {
     function get_fields_template(form_json) {
         let t = '';
         for (let index = 0; index < form_json.fields.length; index++) {
+            // 需要与定义数据匹配
             let field = form_json.fields[index];
+
+            // 特别注意：此处定义的是 Vue 模板字符串，而非实际数据，Vue 将据此字符串渲染为具体值
             let field_vn = 'form.fields[' + index + ']';
 
             if ('html' == field.type) {
@@ -462,7 +465,7 @@ function _wnd_render_form(container, form_json) {
             '<a @click="click_target(\'#\'+get_field_id(' + field + ',' + index + ') + \' input[type=file]\')">' +
             '<img class="thumbnail" :src="' + field + '.thumbnail" :height="' + field + '.thumbnail_size.height" :width="' + field + '.thumbnail_size.width">' +
             '</a>' +
-            '<a v-if="' + field + '.delete_button" class="delete" @click="delete_file(' + field + ',' + index + ')"></a>' +
+            '<a v-show="' + field + '.delete_button && ' + field + '.file_id" class="delete" @click="delete_file(' + field + ',' + index + ')"></a>' +
             '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
             '<div class="file"><input type="file" class="file file-input" accept="image/*" :name="' + field + '.name" @change="upload($event,' + field + ')"></div>' +
             '</div>';
