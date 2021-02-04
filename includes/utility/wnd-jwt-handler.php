@@ -21,7 +21,7 @@ abstract class Wnd_JWT_Handler {
 
 	public function __construct() {
 		$this->domain = parse_url(home_url())['host'];
-		$this->exp    = time() + 3600 * 30;
+		$this->exp    = time() + 3600 * 24 * 90;
 
 		add_action('wp_login', [$this, 'handle_login'], 10, 2);
 		add_action('init', [$this, 'set_current_user'], 10);
