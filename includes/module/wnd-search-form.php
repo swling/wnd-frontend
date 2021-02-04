@@ -9,6 +9,8 @@ namespace Wnd\Module;
  */
 class Wnd_Search_Form extends Wnd_Module {
 
+	protected $type = 'html';
+
 	protected static function build(): string{
 		// 色调
 		$primary_color = wnd_get_config('primary_color');

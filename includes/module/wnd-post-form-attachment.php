@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Form_Post;
 use Wnd\View\Wnd_Form_WP;
 
@@ -32,7 +33,9 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Post_Form_Attachment extends Wnd_Module {
 
-	protected static function build($args = []): string{
+	protected $type = 'form';
+
+	protected function structure($args = []): array{
 		$defaults = [
 			'attachment_id' => 0,
 			'post_parent'   => 0,
@@ -45,7 +48,7 @@ class Wnd_Post_Form_Attachment extends Wnd_Module {
 
 		// 权限检测
 		if ($attachment_id and !current_user_can('edit_post', $attachment_id)) {
-			return static::build_error_message(__('权限错误', 'wnd'));
+			throw new Exception(__('权限错误', 'wnd'));
 		}
 
 		/**
@@ -100,8 +103,7 @@ class Wnd_Post_Form_Attachment extends Wnd_Module {
 		// 将上述两个表单字段，合并组成一个表单字段
 		$input_values = array_merge($parent_post_form->get_input_values(), $attachment_post_form->get_input_values());
 		$attachment_post_form->set_input_values($input_values);
-		$attachment_post_form->build();
 
-		return $attachment_post_form->html;
+		return $attachment_post_form->get_structure();
 	}
 }

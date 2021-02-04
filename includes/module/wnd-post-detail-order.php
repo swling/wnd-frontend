@@ -10,6 +10,8 @@ use Wnd\Model\Wnd_SKU;
  */
 class Wnd_Post_Detail_Order extends Wnd_Module {
 
+	protected $type = 'html';
+
 	protected static function build($args = []): string{
 		/**
 		 *订单基本信息 + 产品属性等参数
@@ -49,6 +51,6 @@ class Wnd_Post_Detail_Order extends Wnd_Module {
 			$sku_info .= '[ ' . $key . ' : ' . $value . ' ]&nbsp;';
 		}
 
-		return $orde_detail . static::build_notification($sku_info);
+		return $orde_detail . wnd_notification($sku_info);
 	}
 }

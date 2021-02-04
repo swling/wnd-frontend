@@ -205,12 +205,13 @@ class Wnd_Controller {
 		 *@since 2019.10.01
 		 *为实现惰性加载，废弃函数支持，改用类
 		 */
-		if (!is_callable([$class, 'render'])) {
+		if (!is_callable([$class, 'get_structure'])) {
 			return ['status' => 0, 'msg' => __('无效的UI', 'wnd') . ':' . $class];
 		}
 
 		try {
-			return ['status' => 1, 'data' => $class::render(), 'type' => $class::$type];
+			$module = new $class;
+			return ['status' => 1, 'data' => $module->get_structure()];
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}

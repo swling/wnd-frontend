@@ -9,6 +9,8 @@ namespace Wnd\Module;
  */
 class Wnd_User_Center extends Wnd_Module {
 
+	protected $type = 'html';
+
 	protected static function build($args = []): string{
 		$ajax_type         = $_GET['ajax_type'] ?? '';
 		$enable_sms        = (1 == wnd_get_config('enable_sms')) ? true : false;

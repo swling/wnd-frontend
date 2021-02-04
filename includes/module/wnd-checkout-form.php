@@ -8,7 +8,9 @@ namespace Wnd\Module;
  */
 class Wnd_Checkout_Form extends Wnd_Module {
 
-	protected static function build($args = []): string {
+	protected $type = 'form';
 
+	protected function structure(): array{
+		return [];
 	}
 }

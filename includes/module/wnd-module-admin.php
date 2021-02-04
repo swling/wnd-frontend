@@ -15,7 +15,7 @@ abstract class Wnd_Module_Admin extends Wnd_Module {
 	 */
 	protected static function check($args) {
 		if (!wnd_is_manager()) {
-			throw new Exception(static::build_error_notification(__('权限不足', 'wnd'), true));
+			throw new Exception(__('权限不足', 'wnd'));
 		}
 	}
 }

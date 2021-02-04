@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Form_User;
 
 /**
@@ -9,9 +10,11 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Login_Form extends Wnd_Module {
 
-	protected static function build(): string {
+	protected $type = 'form';
+
+	protected function structure(): array{
 		if (is_user_logged_in()) {
-			return static::build_error_message(__('已登录', 'wnd'));
+			throw new Exception(__('已登录', 'wnd'));
 		}
 
 		/**
@@ -35,8 +38,6 @@ class Wnd_Login_Form extends Wnd_Module {
 		$form->set_route('action', 'wnd_login');
 		$form->set_submit_button(__('登录', 'wnd'));
 		$form->set_filter(__CLASS__);
-		$form->build();
-
-		return $form->html;
+		return $form->get_structure();
 	}
 }

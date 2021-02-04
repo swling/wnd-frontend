@@ -10,6 +10,8 @@ use Wnd\Module\Wnd_Module;
  */
 class Wnd_User_Overview extends Wnd_Module {
 
+	protected $type = 'html';
+
 	protected static function build($args = []): string{
 		$user_id = get_current_user_id();
 		$html    = '';

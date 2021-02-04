@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -8,9 +9,11 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Refund_Form extends Wnd_Module_Admin {
 
-	protected static function build($args = []): string {
+	protected $type = 'form';
+
+	protected function structure($args = []): array{
 		if (!$args['payment_id']) {
-			return static::build_error_message(__('ID无效', 'wnd'));
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		$form = new Wnd_Form_WP();
@@ -40,8 +43,6 @@ class Wnd_Refund_Form extends Wnd_Module_Admin {
 		$form->add_hidden('payment_id', $args['payment_id']);
 		$form->set_route('action', 'wnd_refund');
 		$form->set_submit_button(__('确认退款', 'wnd'));
-		$form->build();
-
-		return $form->html;
+		return $form->get_structure();
 	}
 }

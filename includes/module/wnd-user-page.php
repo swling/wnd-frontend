@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\Module\Wnd_User_Center;
 
 /**
@@ -16,6 +17,8 @@ use Wnd\Module\Wnd_User_Center;
  * - 默认为用户中心：注册、登录、账户管理，内容管理，财务管理等
  */
 class Wnd_User_Page extends Wnd_Module {
+
+	protected $type = 'html';
 
 	protected static function build($args = []): string{
 		$defaults = [
@@ -84,14 +87,14 @@ class Wnd_User_Page extends Wnd_Module {
 				return $class::render();
 			}
 
-			return static::build_error_notification(__('Post Type 未定义表单', 'wnd'), true);
+			throw new Exception(__('Post Type 未定义表单', 'wnd'), true);
 		}
 
 		// 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
 		if ('edit' == $action) {
 			$edit_post = $post_id ? get_post($post_id) : false;
 			if (!$edit_post) {
-				return static::build_error_message(__('ID 无效', 'wnd'));
+				throw new Exception(__('ID 无效', 'wnd'));
 			}
 
 			// 主题定义的表单
@@ -117,7 +120,7 @@ class Wnd_User_Page extends Wnd_Module {
 				);
 			}
 
-			return static::build_error_notification(__('Post Type 未定义表单', 'wnd'), true);
+			throw new Exception(__('Post Type 未定义表单', 'wnd'), true);
 		}
 
 		return '';

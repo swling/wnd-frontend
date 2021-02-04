@@ -14,7 +14,9 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Payment_Form extends Wnd_Module {
 
-	protected static function build($args = []): string{
+	protected $type = 'form';
+
+	protected function structure($args = []): array{
 		/**
 		 *订单基本信息 + 产品属性等参数
 		 *
@@ -46,7 +48,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		$form = new Wnd_Form_WP(true, !$user_id);
 		$form->set_form_title($title, true);
 		if (!$user_id) {
-			$form->add_html(static::build_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd'), true));
+			$form->add_html(wnd_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd'), true));
 		}
 		$form->add_html($sku_info);
 		$form->add_html('<div class="has-text-centered field">');
@@ -85,9 +87,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		}
 
 		$form->set_submit_button(__('确定', 'wnd'));
-		$form->build();
-
-		return $form->html;
+		return $form->get_structure();
 	}
 
 	/**
@@ -119,7 +119,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 			$key = $sku_keys[$key] ?? $key;
 			$sku_info .= '[ ' . $key . ' : ' . $value . ' ]&nbsp;';
 		}
-		$sku_info = static::build_notification($sku_info);
+		$sku_info = wnd_notification($sku_info);
 
 		/**
 		 *构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息

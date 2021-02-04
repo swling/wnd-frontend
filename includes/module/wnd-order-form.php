@@ -12,7 +12,9 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Order_Form extends Wnd_Module {
 
-	protected static function build($args = []): string{
+	protected $type = 'form';
+
+	protected function structure($args = []): array{
 		$defaults = [
 			'post_id'          => 0,
 			'ajax'             => true,
@@ -65,8 +67,7 @@ class Wnd_Order_Form extends Wnd_Module {
 			);
 		}
 		$form->set_submit_button($buy_text);
-		$form->build();
-		return $form->html;
+		return $form->get_structure();
 	}
 
 	/**

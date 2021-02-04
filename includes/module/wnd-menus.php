@@ -8,6 +8,8 @@ namespace Wnd\Module;
  */
 class Wnd_Menus extends Wnd_Module {
 
+	protected $type = 'html';
+
 	protected static function build($args = []): string{
 		$defaults = [
 			'inside'               => false,

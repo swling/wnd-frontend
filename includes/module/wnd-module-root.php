@@ -15,7 +15,7 @@ abstract class Wnd_Module_Root extends Wnd_Module {
 	 */
 	protected static function check($args) {
 		if (!is_super_admin()) {
-			throw new Exception(static::build_error_notification(__('权限不足', 'wnd'), true));
+			throw new Exception(__('权限不足', 'wnd'));
 		}
 	}
 }

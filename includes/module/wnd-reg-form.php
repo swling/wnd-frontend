@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Form_User;
 
 /**
@@ -8,28 +9,30 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Reg_Form extends Wnd_Module {
 
-	protected static function build($args = []): string{
+	protected $type = 'form';
+
+	protected function structure($args = []): array{
 		// 设定默认值
 		$args['type'] = $args['type'] ?? (wnd_get_config('enable_sms') ? 'phone' : 'email');
 
 		// 已登录
 		if (is_user_logged_in()) {
-			return static::build_error_message(__('已登录', 'wnd'));
+			throw new Exception(__('已登录', 'wnd'));
 		}
 
 		//已关闭注册
 		if (!get_option('users_can_register')) {
-			return static::build_error_message(__('站点已关闭注册', 'wnd'));
+			throw new Exception(__('站点已关闭注册', 'wnd'));
 		}
 
 		//未开启手机验证
 		if ('phone' == $args['type'] and wnd_get_config('enable_sms') != 1) {
-			return static::build_error_message(__('当前未配置短信验证', 'wnd'));
+			throw new Exception(__('当前未配置短信验证', 'wnd'));
 		}
 
 		// 关闭了邮箱注册（强制手机验证）
 		if ('email' == $args['type'] and 1 == wnd_get_config('disable_email_reg')) {
-			return static::build_error_message(__('当前设置禁止邮箱注册', 'wnd'));
+			throw new Exception(__('当前设置禁止邮箱注册', 'wnd'));
 		}
 
 		$form = new Wnd_Form_User();
@@ -65,8 +68,6 @@ class Wnd_Reg_Form extends Wnd_Module {
 		$form->set_submit_button(__('注册', 'wnd', 'wnd'));
 		// 以当前函数名设置filter hook
 		$form->set_filter(__CLASS__);
-		$form->build();
-
-		return $form->html;
+		return $form->get_structure();
 	}
 }

@@ -8,6 +8,8 @@ use Wnd\View\Wnd_Filter;
  */
 class Wnd_User_Posts_Panel extends Wnd_Module_User {
 
+	protected $type = 'html';
+
 	protected static function build($args = []): string{
 		$args['posts_per_page'] = $args['posts_per_page'] ?? get_option('posts_per_page');
 

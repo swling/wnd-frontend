@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Form_User;
 
 /**
@@ -8,7 +9,9 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Account_Form extends Wnd_Module_User {
 
-	protected static function build(): string{
+	protected $type = 'form';
+
+	protected function structure(): array{
 		$user       = wp_get_current_user();
 		$enable_sms = wnd_get_config('enable_sms');
 
@@ -23,7 +26,8 @@ class Wnd_Account_Form extends Wnd_Module_User {
 				$message .= '&nbsp;&nbsp;';
 				$message .= wnd_modal_button(__('绑定手机'), 'wnd_bind_phone_form');
 			}
-			return static::build_error_message(__($message, 'wnd'));
+
+			throw new Exception(__($message, 'wnd'));
 		}
 
 		$form = new Wnd_Form_User();
@@ -33,7 +37,6 @@ class Wnd_Account_Form extends Wnd_Module_User {
 		$form->set_route('action', 'wnd_update_account');
 		$form->set_submit_button(__('保存', 'wnd'));
 		$form->set_filter(__CLASS__);
-		$form->build();
 
 		/**
 		 *@since 2019.09.19
@@ -47,6 +50,8 @@ class Wnd_Account_Form extends Wnd_Module_User {
 
 		$html .= '</div>';
 
-		return $form->html . $html;
+		$form->add_html($html);
+
+		return $form->get_structure();
 	}
 }

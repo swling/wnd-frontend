@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\Model\Wnd_User;
 use Wnd\View\Wnd_Form_User;
 
@@ -10,7 +11,9 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Unbind_Openid_Form extends Wnd_Module_User {
 
-	protected static function build(): string{
+	protected $type = 'form';
+
+	protected function structure(): array{
 		// 获取当前用户绑定账户数据
 		$current_user = wp_get_current_user();
 		$wnd_user     = (array) Wnd_User::get_wnd_user($current_user->ID);
@@ -25,7 +28,7 @@ class Wnd_Unbind_Openid_Form extends Wnd_Module_User {
 		}
 		unset($key, $value);
 		if (!$type_options) {
-			return static::build_error_notification(__('当前账户未绑定第三方账号', 'wnd'), true);
+			throw new Exception(__('当前账户未绑定第三方账号', 'wnd'), true);
 		}
 
 		// 构建解绑操作提交表单
@@ -47,8 +50,6 @@ class Wnd_Unbind_Openid_Form extends Wnd_Module_User {
 
 		$form->set_route('action', 'wnd_unbind_openid');
 		$form->set_submit_button(__('解除绑定', 'wnd'));
-		$form->build();
-
-		return $form->html;
+		return $form->get_structure();
 	}
 }

@@ -8,7 +8,9 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Reset_Password_Form extends Wnd_Module {
 
-	protected static function build($args = []): string{
+	protected $type = 'form';
+
+	protected function structure($args = []): array{
 		$type           = $args['type'] ?? 'email';
 		$enable_captcha = !is_user_logged_in();
 
@@ -26,8 +28,6 @@ class Wnd_Reset_Password_Form extends Wnd_Module {
 		$form->set_route('action', 'wnd_reset_password');
 		$form->set_submit_button(__('重置密码', 'wnd'));
 		$form->set_filter(__CLASS__);
-		$form->build();
-
-		return $form->html;
+		return $form->get_structure();
 	}
 }

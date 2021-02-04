@@ -9,6 +9,8 @@ use Wnd\View\Wnd_Filter_User;
  */
 class Wnd_User_List_Table extends Wnd_Module_Admin {
 
+	protected $type = 'html';
+
 	protected static function build($args = []): string{
 		$orderby_args = [
 			'label'   => '排序',

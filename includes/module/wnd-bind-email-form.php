@@ -8,7 +8,9 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Bind_Email_Form extends Wnd_Module_User {
 
-	protected static function build(): string{
+	protected $type = 'form';
+
+	protected function structure(): array{
 		$current_user = wp_get_current_user();
 
 		$form = new Wnd_Form_User();
@@ -28,8 +30,6 @@ class Wnd_Bind_Email_Form extends Wnd_Module_User {
 		$form->add_email_verification('bind', '', false);
 		$form->set_route('action', 'wnd_bind_account');
 		$form->set_submit_button(__('保存', 'wnd'));
-		$form->build();
-
-		return $form->html;
+		return $form->get_structure();
 	}
 }

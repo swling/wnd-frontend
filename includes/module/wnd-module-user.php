@@ -15,7 +15,7 @@ abstract class Wnd_Module_User extends Wnd_Module {
 	 */
 	protected static function check($args) {
 		if (!is_user_logged_in()) {
-			throw new Exception(static::build_error_notification(__('请登录', 'wnd'), true));
+			throw new Exception(__('请登录', 'wnd'));
 		}
 	}
 }

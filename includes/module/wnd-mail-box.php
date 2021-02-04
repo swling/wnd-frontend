@@ -9,6 +9,8 @@ use Wnd\View\Wnd_Filter;
  */
 class Wnd_Mail_Box extends Wnd_Module_User {
 
+	protected $type = 'html';
+
 	protected static function build($args = []): string{
 		$args['posts_per_page'] = $args['posts_per_page'] ?? get_option('posts_per_page');
 

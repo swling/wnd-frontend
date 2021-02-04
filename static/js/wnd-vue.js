@@ -139,11 +139,13 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
             }, param),
         })
         .then(function(response) {
-            if ('form' == response.data.type) {
+            if ('form' == response.data.data.type) {
+                // console.log(response.data.structure);
+
                 wnd_inner_html(container, '<div class="vue-app"></div>');
-                return wnd_render_form(container + ' .vue-app', response.data.data);
+                return wnd_render_form(container + ' .vue-app', response.data.data.structure);
             } else {
-                wnd_inner_html(container, response.data.data);
+                wnd_inner_html(container, response.data.data.structure);
             }
 
             if (callback) {
@@ -206,11 +208,11 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
             }, param),
         })
         .then(function(response) {
-            if ('form' == response.data.type) {
+            if ('form' == response.data.data.type) {
                 wnd_alert_modal('<div id="vue-app"></div>');
-                wnd_render_form('#vue-app', response.data.data);
+                wnd_render_form('#vue-app', response.data.data.structure);
             } else {
-                wnd_alert_modal(response.data.data);
+                wnd_alert_modal(response.data.data.structure);
             }
 
             if (callback) {

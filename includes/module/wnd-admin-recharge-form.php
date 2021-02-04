@@ -9,7 +9,9 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Admin_Recharge_Form extends Wnd_Module_Root {
 
-	protected static function build(): string{
+	protected $type = 'form';
+
+	protected function structure(): array{
 		$form = new Wnd_Form_WP();
 		$form->add_form_attr('id', 'admin-recharge-form');
 		$form->add_html('<div class="field is-horizontal"><div class="field-body">');
@@ -39,8 +41,6 @@ class Wnd_Admin_Recharge_Form extends Wnd_Module_Root {
 		);
 		$form->set_route('action', 'wnd_admin_recharge');
 		$form->set_submit_button(__('确认充值', 'wnd'));
-		$form->build();
-
-		return $form->html;
+		return $form->get_structure();
 	}
 }
