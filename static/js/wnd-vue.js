@@ -125,9 +125,6 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
         }
 
         return config;
-    }, function(error) {
-        // Do something with request error
-        return Promise.reject(error);
     });
 
     // GET request for remote image in node.js
@@ -139,11 +136,19 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
             }, param),
         })
         .then(function(response) {
-            if ('form' == response.data.data.type) {
-                // console.log(response.data.structure);
+            if ('undefined' == typeof response.data.status) {
+                console.log(response);
+                return false;
+            }
 
+            if (response.data.status <= 0) {
+                wnd_inner_html(container, '<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
+                return false;
+            }
+
+            if ('form' == response.data.data.type) {
                 wnd_inner_html(container, '<div class="vue-app"></div>');
-                return wnd_render_form(container + ' .vue-app', response.data.data.structure);
+                wnd_render_form(container + ' .vue-app', response.data.data.structure);
             } else {
                 wnd_inner_html(container, response.data.data.structure);
             }
@@ -153,7 +158,6 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
             }
         })
         .catch(function(error) { // 请求失败处理
-            wnd_inner_html(container, '<div class="message is-danger"><div class="message-body">' + wnd.msg.system_error + '</div></div>');
             console.log(error);
         });
 }
@@ -195,9 +199,6 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
         }
 
         return config;
-    }, function(error) {
-        // Do something with request error
-        return Promise.reject(error);
     });
 
     axios({
@@ -208,6 +209,16 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
             }, param),
         })
         .then(function(response) {
+            if ('undefined' == typeof response.data.status) {
+                console.log(response);
+                return false;
+            }
+
+            if (response.data.status <= 0) {
+                wnd_alert_modal('<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
+                return false;
+            }
+
             if ('form' == response.data.data.type) {
                 wnd_alert_modal('<div id="vue-app"></div>');
                 wnd_render_form('#vue-app', response.data.data.structure);
