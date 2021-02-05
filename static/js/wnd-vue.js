@@ -109,6 +109,21 @@ function wnd_render_form(container, form_json) {
     }
 }
 
+// 按需加载 wnd-vue-form.js 并渲染表达
+function wnd_render_filter(container, filter_json) {
+    if ('undefined' == typeof wnd_vue_filter) {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = wnd.plugin_url + '/static/js/wnd-vue-filter.js?ver=' + wnd.ver;
+        script.onload = function() {
+            _wnd_render_filter(container, filter_json);
+        };
+        document.head.appendChild(script);
+    } else {
+        _wnd_render_filter(container, filter_json);
+    }
+}
+
 /**
  *@since 2019.1.10  从后端请求ajax内容并填充到指定DOM
  *原理同 wnd_ajax_modal()，区别为，响应方式为嵌入
@@ -149,6 +164,9 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
             if ('form' == response.data.data.type) {
                 wnd_inner_html(container, '<div class="vue-app"></div>');
                 wnd_render_form(container + ' .vue-app', response.data.data.structure);
+            } else if ('filter' == response.data.data.type) {
+                wnd_inner_html(container, '<div class="vue-app"></div>');
+                wnd_render_filter(container + ' .vue-app', response.data.data.structure);
             } else {
                 wnd_inner_html(container, response.data.data.structure);
             }

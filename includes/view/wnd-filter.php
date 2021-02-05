@@ -474,7 +474,6 @@ class Wnd_Filter {
 			return;
 		}
 		$tabs = $this->build_post_type_filter($args, $with_any_tab);
-		$this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -492,7 +491,6 @@ class Wnd_Filter {
 			return;
 		}
 		$tabs = $this->build_post_status_filter($args);
-		$this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -529,15 +527,11 @@ class Wnd_Filter {
 		unset($key, $tax_query);
 
 		if (!$taxonomy_query) {
-			$this->tabs .= $tabs;
 			return $tabs;
 		}
 
 		// 获取当前taxonomy子类tabs
 		$sub_tabs = $this->get_sub_taxonomy_tabs()[$taxonomy];
-
-		$this->tabs .= $tabs . $sub_tabs;
-		return $tabs . $sub_tabs;
 	}
 
 	/**
@@ -549,7 +543,7 @@ class Wnd_Filter {
 	 */
 	public function add_related_tags_filter($limit = 10) {
 		$tabs = $this->build_related_tags_filter($limit);
-		$this->tabs .= $tabs;
+		// $this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -580,7 +574,7 @@ class Wnd_Filter {
 	 */
 	public function add_meta_filter($args) {
 		$tabs = $this->build_meta_filter($args);
-		$this->tabs .= $tabs;
+		// $this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -603,7 +597,7 @@ class Wnd_Filter {
 	 */
 	public function add_orderby_filter($args) {
 		$tabs = $this->build_orderby_filter($args);
-		$this->tabs .= $tabs;
+		// $this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -620,7 +614,7 @@ class Wnd_Filter {
 	 */
 	public function add_order_filter($args, $label) {
 		$tabs = $this->build_order_filter($args, $label);
-		$this->tabs .= $tabs;
+		// $this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -630,7 +624,7 @@ class Wnd_Filter {
 	 */
 	public function add_current_filter() {
 		$tabs = $this->build_current_filter();
-		$this->tabs .= $tabs;
+		// $this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -700,6 +694,8 @@ class Wnd_Filter {
 		$tabs .= '</ul>';
 		$tabs .= '</div>';
 		$tabs .= '</div>';
+
+		$this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -741,6 +737,7 @@ class Wnd_Filter {
 		$tabs .= '</div>';
 		$tabs .= '</div>';
 
+		$this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -859,6 +856,7 @@ class Wnd_Filter {
 		$tabs .= '</div>';
 		$tabs .= '</div>';
 
+		$this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -980,6 +978,7 @@ class Wnd_Filter {
 		$tabs .= '</div>';
 		$tabs .= '</div>';
 
+		$this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -1067,6 +1066,7 @@ class Wnd_Filter {
 		$tabs .= '</div>';
 		$tabs .= '</div>';
 
+		$this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -1149,6 +1149,7 @@ class Wnd_Filter {
 		$tabs .= '</div>';
 		$tabs .= '</div>';
 
+		$this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -1197,6 +1198,7 @@ class Wnd_Filter {
 		$tabs .= '</div>';
 		$tabs .= '</div>';
 
+		$this->tabs .= $tabs;
 		return $tabs;
 	}
 
@@ -1260,6 +1262,7 @@ class Wnd_Filter {
 		$tabs .= '</div>';
 		$tabs .= '</div>';
 
+		$this->tabs .= $tabs;
 		return $tabs;
 	}
 

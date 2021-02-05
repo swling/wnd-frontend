@@ -3,7 +3,7 @@ namespace Wnd\Controller;
 
 use Exception;
 use Wnd\Utility\Wnd_Singleton_Trait;
-use Wnd\View\Wnd_Filter;
+use Wnd\View\Wnd_Filter_Ajax;
 use Wnd\View\Wnd_Filter_User;
 
 /**
@@ -314,7 +314,7 @@ class Wnd_Controller {
 	 */
 	public static function filter_posts($request): array{
 		try {
-			$filter = new Wnd_Filter(true);
+			$filter = new Wnd_Filter_Ajax(true);
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
