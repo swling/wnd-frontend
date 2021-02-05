@@ -71,7 +71,6 @@ abstract class Wnd_JWT_Handler {
 
 		// 根据 Token 设置当前账户 ID （过期为 0）
 		wp_set_current_user($this->verified_user_id);
-		wp_set_auth_cookie($this->verified_user_id, true);
 	}
 
 	/**
