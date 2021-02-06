@@ -16,7 +16,17 @@ function _wnd_render_filter(container, filter_json) {
 
 	// 数据 合并数据，并进行深拷贝，以保留原生传参 form_json 不随 data 变动
 	let filter = JSON.parse(JSON.stringify(filter_json));
+
+	/** 
+	 *post_type 及 post_status 在常规 URL GET 参数中会触发 WordPress 默认路由
+	 *故此在本插件多重筛选中分布重命名为 type 及 status
+	 *虽然在 API 请求中 不存在上述问题，但未保持常规筛选及 Ajax 筛选一致性，故此也统一重命名
+	 */
 	let init_param = JSON.parse(JSON.stringify(filter_json.add_query_vars));
+	init_param.type = init_param.post_type;
+	init_param.status = init_param.post_status;
+	delete init_param.post_type;
+	delete init_param.post_status;
 	var param = JSON.parse(JSON.stringify(init_param));
 
 	new Vue({
@@ -26,9 +36,9 @@ function _wnd_render_filter(container, filter_json) {
 			filter: filter,
 		},
 		methods: {
-			tab_class: function(key, value) {
+			item_class: function(key, value) {
 				if ('type' == key) {
-					if (value == filter.query_vars.post_type) {
+					if (value == this.filter.query_vars.post_type) {
 						return 'is-active';
 					}
 
@@ -36,14 +46,14 @@ function _wnd_render_filter(container, filter_json) {
 				}
 
 				if ('status' == key) {
-					if (value == filter.query_vars.post_status) {
+					if (value == this.filter.query_vars.post_status) {
 						return 'is-active';
 					}
 					return '';
 				}
 
-				if (filter.query_vars.tax_query && key.includes('_term_')) {
-					for (const [index, term_query] of Object.entries(filter.query_vars.tax_query)) {
+				if (this.filter.query_vars.tax_query && key.includes('_term_')) {
+					for (const [index, term_query] of Object.entries(this.filter.query_vars.tax_query)) {
 						if (term_query.terms == value) {
 							return 'is-active';
 						}
@@ -51,14 +61,14 @@ function _wnd_render_filter(container, filter_json) {
 				}
 			},
 
-			show_tab: function(tab, key) {
-				if (key.includes('_term_')) {
+			show_tab: function(tab) {
+				if (tab.key.includes('_term_')) {
 
 					if (!this.filter.taxonomies) {
 						return true;
 					}
 
-					taxonomy = key.replace('_term_', '');
+					taxonomy = tab.key.replace('_term_', '');
 					if (this.filter.taxonomies.includes(taxonomy)) {
 						return true;
 					} else {
@@ -111,38 +121,37 @@ function _wnd_render_filter(container, filter_json) {
 		watch: {},
 	});
 
-	function build_filter_template() {
+	function build_filter_template(filter) {
 		let t = '<div class="filter">';
-
-		t += build_tabs_template();
-		t += build_posts_template();
-
+		t += build_tabs_template(filter);
+		t += build_posts_template(filter);
 		t += '</div>'
-
 		return t;
 	}
 
-	function build_tabs_template() {
+	function build_tabs_template(filter) {
 		let t = '<div class="wnd-filter-tabs">';
-		t += '<template v-for="(tab,key) in filter.tabs">'
-		t += '<div class="columns is-marginless is-vcentered" v-show="show_tab(tab, key)">'
-		t += '<div class="column is-narrow">{{tab.title}}</div>';
+		for (let index = 0; index < filter.tabs.length; index++) {
+			// 需要与定义数据匹配
+			let tab = filter.tabs[index];
 
-		t += '<div class="column tabs">';
-		t += '<ul class="tab">'
-		t += '<template v-for="(value,name) in tab.options">'
-		t += '<li :class="tab_class(key, value)"><a :data-key="key" :data-value="value" @click="update_filter(key,value)">{{name}}</a></li>'
-		t += '</template>'
-		t += '</ul>'
-		t += '</div>'
+			// 特别注意：此处定义的是 Vue 模板字符串，而非实际数据，Vue 将据此字符串渲染为具体值
+			if (is_category_tab(tab, filter)) {
+				var tab_vn = 'filter.category_tabs';
+			} else if (is_tag_tab(tab, filter)) {
+				var tab_vn = 'filter.related_tags_tabs';
+			} else {
+				var tab_vn = 'filter.tabs[' + index + ']';
+			}
 
-		t += '</div>'
-		t += '</template>'
+			t += build_tabs(tab_vn);
+		}
+
 		t += '</div>'
 		return t;
 	}
 
-	function build_posts_template() {
+	function build_posts_template(filter) {
 		let t = '';
 		t += '<div class="wnd-filter-posts">';
 		t += '<ul class="posts-list">'
@@ -153,5 +162,42 @@ function _wnd_render_filter(container, filter_json) {
 
 		t += '</div>'
 		return t;
+	}
+
+	function build_tabs(tabs) {
+		let t = '';
+		t += '<div class="columns is-marginless is-vcentered">'
+		t += '<div class="column is-narrow">{{' + tabs + '.title}}</div>';
+
+		t += '<div class="column tabs">';
+		t += '<ul class="tab">'
+		t += '<template v-for="(value,name) in ' + tabs + '.options">'
+		t += '<li :class="item_class(' + tabs + '.key, value)"><a :data-key="' + tabs + '.key" :data-value="value" @click="update_filter(' + tabs + '.key ,value)">{{name}}</a></li>'
+		t += '</template>'
+		t += '</ul>'
+		t += '</div>'
+
+		t += '</div>'
+		return t;
+	}
+
+	function is_category_tab(tab, filter) {
+		if (tab.key.includes('_term_')) {
+			taxonomy = tab.key.replace('_term_', '');
+			if (taxonomy == filter.category_taxonomy) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function is_tag_tab(tab, filter) {
+		if (tab.key.includes('_term_')) {
+			taxonomy = tab.key.replace('_term_', '');
+			if (taxonomy == (filter.query_vars.post_type + '_tag')) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

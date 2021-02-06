@@ -71,6 +71,12 @@ function wnd_inner_html(el, html) {
 
 // 追加
 function wnd_append(el, html) {
+    /**  
+     *beforebegin 在元素之前
+     *afterbegin 在元素的第一个子元素之后
+     *beforeend 在元素的最后一个子元素之后
+     *afterend 在元素之后 
+     */
     var self = document.querySelector(el);
     if (self) {
         self.insertAdjacentHTML('beforeend', html);
@@ -79,13 +85,6 @@ function wnd_append(el, html) {
 
 // 指定容器设置加载中效果
 function wnd_loading(el, remove = false) {
-    /**  
-     * 
-     *beforebegin 在元素之前
-     *afterbegin 在元素的第一个子元素之后
-     *beforeend 在元素的最后一个子元素之后
-     *afterend 在元素之后 
-     */
     var el = document.querySelector(el);
     if (el && !remove) {
         el.innerHTML = loading_el;

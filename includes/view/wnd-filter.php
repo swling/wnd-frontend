@@ -139,7 +139,7 @@ class Wnd_Filter {
 
 		// 初始化时生成uniqid，并加入query参数，以便在ajax生成的新请求中保持一致
 		$this->uniqid = $uniqid ?: ($this->wp_query_args['wnd_uniqid'] ?: uniqid());
-		$this->add_query(['wnd_uniqid' => $this->uniqid]);
+		// $this->add_query(['wnd_uniqid' => $this->uniqid]);
 
 		/**
 		 *定义当前post type的主分类：$category_taxonomy
