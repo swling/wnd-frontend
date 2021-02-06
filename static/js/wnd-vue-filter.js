@@ -62,6 +62,10 @@ function _wnd_render_filter(container, filter_json) {
 			},
 
 			show_tab: function(tab) {
+				if (!tab.options) {
+					return false;
+				}
+
 				if (tab.key.includes('_term_')) {
 
 					if (!this.filter.taxonomies) {
@@ -87,6 +91,14 @@ function _wnd_render_filter(container, filter_json) {
 				 */
 				if ('type' == key) {
 					param = JSON.parse(JSON.stringify(init_param));
+				}
+
+				/**
+				 *切换主分类
+				 *移除相关标签
+				 */
+				if ('_term_category' == key || key.indexOf('_cat') > 0) {
+					delete param['_term_' + this.filter.query_vars.post_type + '_tag'];
 				}
 
 				// 将当前 Tab 参数合并入请求参数
@@ -166,7 +178,7 @@ function _wnd_render_filter(container, filter_json) {
 
 	function build_tabs(tabs) {
 		let t = '';
-		t += '<div class="columns is-marginless is-vcentered">'
+		t += '<div v-show="show_tab(' + tabs + ')" class="columns is-marginless is-vcentered">'
 		t += '<div class="column is-narrow">{{' + tabs + '.title}}</div>';
 
 		t += '<div class="column tabs">';
