@@ -28,11 +28,9 @@ class Wnd_Filter {
 	protected $class;
 
 	/**
-	 * 现有方法之外，其他新增的查询参数
-	 * 将在筛选容器，及分页容器上出现，以绑定点击事件，发送到api接口
-	 * 以data-{key}="{value}"形式出现，ajax请求中，将转化为 url请求参数 ?{key}={value}
+	 * 筛选器初始化时设定的查询参数
 	 */
-	protected $add_query = [];
+	protected $add_query_vars = [];
 
 	// meta 查询参数需要供current filter查询使用
 	protected $meta_filter_args;
@@ -43,7 +41,6 @@ class Wnd_Filter {
 	/**
 	 *根据配置设定的wp_query查询参数
 	 *默认值将随用户设定而改变
-	 *参数中包含自定义的非wp_query参数以"wnd"前缀区分
 	 */
 	protected $wp_query_args = [
 		'orderby'       => 'date',
@@ -57,10 +54,6 @@ class Wnd_Filter {
 		'post_status'   => '',
 		'no_found_rows' => true,
 		'paged'         => 1,
-
-		// 自定义
-		'wnd_post_tpl'  => '',
-		'wnd_posts_tpl' => '',
 	];
 
 	/**
@@ -77,6 +70,10 @@ class Wnd_Filter {
 
 	// 当前post type的主分类taxonomy 约定：post(category) / 自定义类型 （$post_type . '_cat'）
 	public $category_taxonomy;
+
+	public $post_template;
+
+	public $posts_template;
 
 	// 筛选项HTML
 	protected $tabs = '';
@@ -310,7 +307,7 @@ class Wnd_Filter {
 	 *@param int $posts_per_page 每页post数目
 	 **/
 	public function set_posts_per_page($posts_per_page) {
-		$this->add_query(['posts_per_page' => $posts_per_page]);
+		$this->add_query_vars(['posts_per_page' => $posts_per_page]);
 	}
 
 	/**
@@ -319,7 +316,7 @@ class Wnd_Filter {
 	 *@param string $template post模板函数名
 	 **/
 	public function set_post_template($template) {
-		$this->add_query(['wnd_post_tpl' => $template]);
+		$this->post_template = $template;
 	}
 
 	/**
@@ -329,7 +326,7 @@ class Wnd_Filter {
 	 *@param string $template posts模板函数名
 	 **/
 	public function set_posts_template($template) {
-		$this->add_query(['wnd_posts_tpl' => $template]);
+		$this->posts_template = $template;
 	}
 
 	/**
@@ -347,7 +344,7 @@ class Wnd_Filter {
 	 *@since 0.8.64
 	 *仅在独立 WP Query （true == $this->independent）时，可在外部直接调用
 	 */
-	public function add_query($query = []) {
+	public function add_query_vars($query = []) {
 		foreach ($query as $key => $value) {
 			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
 			if (is_array($this->wp_query_args[$key] ?? false) and is_array($value)) {
@@ -359,7 +356,7 @@ class Wnd_Filter {
 			}
 
 			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
-			$this->add_query[$key] = $value;
+			$this->add_query_vars[$key] = $value;
 		}
 		unset($key, $value);
 	}
@@ -401,7 +398,7 @@ class Wnd_Filter {
 		 */
 		if (!$this->wp_query_args['post_type']) {
 			$default_type = $with_any_tab ? 'any' : ($args ? reset($args) : 'post');
-			$this->add_query(['post_type' => $default_type]);
+			$this->add_query_vars(['post_type' => $default_type]);
 			$this->category_taxonomy = ('post' == $this->wp_query_args['post_type']) ? 'category' : $this->wp_query_args['post_type'] . '_cat';
 		}
 
@@ -430,7 +427,7 @@ class Wnd_Filter {
 	 *@param array $args 需要筛选的文章状态数组
 	 */
 	public function add_post_status_filter($args = [], $with_any_tab = true) {
-		$this->add_query(['post_status' => $args]);
+		$this->add_query_vars(['post_status' => $args]);
 
 		/**
 		 *仅筛选项大于2时，构建HTML
@@ -954,15 +951,15 @@ class Wnd_Filter {
 		}
 
 		// Posts list
-		if ($this->wp_query_args['wnd_posts_tpl']) {
-			$template    = $this->wp_query_args['wnd_posts_tpl'];
+		if ($this->posts_template) {
+			$template    = $this->posts_template;
 			$this->posts = $template($this->wp_query);
 			return $this->posts;
 		}
 
 		// post list
-		if ($this->wp_query_args['wnd_post_tpl']) {
-			$template = $this->wp_query_args['wnd_post_tpl'];
+		if ($this->post_template) {
+			$template = $this->post_template;
 			if ($this->wp_query->have_posts()) {
 				while ($this->wp_query->have_posts()): $this->wp_query->the_post();
 					global $post;

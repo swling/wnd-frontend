@@ -18,7 +18,7 @@ class Wnd_Mail_Box extends Wnd_Module_User {
 		$filter->add_search_form();
 		$filter->add_post_type_filter(['mail']);
 		$filter->add_post_status_filter([__('全部', 'wnd') => 'any', __('未读', 'wnd') => 'wnd-unread', __('已读', 'wnd') => 'wnd-read']);
-		$filter->add_query(['author' => get_current_user_id()]);
+		$filter->add_query_vars(['author' => get_current_user_id()]);
 		$filter->set_posts_template('wnd_list_table');
 		$filter->set_posts_per_page($args['posts_per_page']);
 		$filter->query();

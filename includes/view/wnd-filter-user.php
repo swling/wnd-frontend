@@ -44,7 +44,7 @@ class Wnd_Filter_User {
 	 * 将在筛选容器，及分页容器上出现，以绑定点击事件，发送到api接口
 	 * 以data-{key}="{value}"形式出现，ajax请求中，将转化为 url请求参数 ?{key}={value}
 	 */
-	protected $add_query = [];
+	protected $add_query_vars = [];
 
 	// 默认切换筛选项时需要移除的参数
 	protected $remove_query_args = ['paged', 'page'];
@@ -108,7 +108,7 @@ class Wnd_Filter_User {
 
 		// 初始化时生成uniqid，并加入query参数，以便在ajax生成的新请求中保持一致
 		$this->uniqid = $uniqid ?: ($this->query_args['wnd_uniqid'] ?: uniqid());
-		$this->add_query(['wnd_uniqid' => $this->uniqid]);
+		$this->add_query_vars(['wnd_uniqid' => $this->uniqid]);
 	}
 
 	/**
@@ -232,7 +232,7 @@ class Wnd_Filter_User {
 	 *@param string $container posts列表ajax嵌入容器
 	 **/
 	public function set_ajax_container($container) {
-		$this->add_query(['wnd_ajax_container' => $container]);
+		$this->add_query_vars(['wnd_ajax_container' => $container]);
 	}
 
 	/**
@@ -241,7 +241,7 @@ class Wnd_Filter_User {
 	 *@param int $number 每页post数目
 	 **/
 	public function set_number($number) {
-		$this->add_query(['number' => $number]);
+		$this->add_query_vars(['number' => $number]);
 	}
 
 	/**
@@ -256,7 +256,7 @@ class Wnd_Filter_User {
 	 *在ajax环境中，将对应生成html data属性：data-{key}="{value}" 通过JavaScript获取后将转化为 ajax url请求参数 ?{key}={value}，
 	 *ajax发送到api接口，再通过parse_query_vars() 解析后，写入$query_args[key]=value
 	 **/
-	public function add_query($query = []) {
+	public function add_query_vars($query = []) {
 		foreach ($query as $key => $value) {
 			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
 			if (is_array($this->query_args[$key] ?? false) and is_array($value)) {
@@ -268,7 +268,7 @@ class Wnd_Filter_User {
 			}
 
 			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
-			$this->add_query[$key] = $value;
+			$this->add_query_vars[$key] = $value;
 		}
 		unset($key, $value);
 	}
@@ -417,12 +417,12 @@ class Wnd_Filter_User {
 	 *获取新增查询，并转化为html data属性，供前端读取后在ajax请求中发送到api
 	 */
 	protected function build_data_attr(): string {
-		if (!$this->add_query) {
+		if (!$this->add_query_vars) {
 			return '';
 		}
 
 		$data = ' ';
-		foreach ($this->add_query as $key => $value) {
+		foreach ($this->add_query_vars as $key => $value) {
 			$value = is_array($value) ? http_build_query($value) : $value;
 			$data .= 'data-' . $key . '="' . $value . '" ';
 		}
@@ -597,7 +597,7 @@ class Wnd_Filter_User {
 		$nav->set_items_per_page($number);
 		$nav->set_current_item_count(count($this->results));
 		$nav->set_show_pages($show_page);
-		$nav->set_data($this->add_query);
+		$nav->set_data($this->add_query_vars);
 		$nav->add_class($this->class);
 		return $nav->build();
 	}

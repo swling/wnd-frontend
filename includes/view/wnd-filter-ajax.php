@@ -103,7 +103,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	}
 
 	public function get_add_query_vars(): array{
-		return $this->add_query;
+		return $this->add_query_vars;
 	}
 
 	/**

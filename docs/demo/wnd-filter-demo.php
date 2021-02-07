@@ -86,7 +86,7 @@ $filter->set_post_template('wnd_post_tpl');
 $filter->set_posts_template('wnd_posts_tpl');
 
 // 新增查询参数：单个或数组
-$filter->add_query($query = ['test_key' => 'test_value']);
+$filter->add_query_vars($query = ['test_key' => 'test_value']);
 $tax_query = [
 	'relation' => 'AND',
 	[
@@ -95,7 +95,7 @@ $tax_query = [
 		'terms'    => 1,
 	],
 ];
-$filter->add_query(['tax_query' => $tax_query]);
+$filter->add_query_vars(['tax_query' => $tax_query]);
 
 echo $filter->get_tabs();
 
