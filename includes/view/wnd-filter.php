@@ -501,8 +501,8 @@ class Wnd_Filter {
 	 * 若未设置关联分类，则查询所有热门标签
 	 *@since 2019.03.25
 	 */
-	public function add_related_tags_filter($limit = 10) {
-		$this->build_related_tags_filter($limit);
+	public function add_tags_filter($limit = 10) {
+		$this->build_tags_filter($limit);
 	}
 
 	/**
@@ -697,7 +697,7 @@ class Wnd_Filter {
 	 *@since 2019.08.09
 	 *构建分类关联标签的HTML
 	 */
-	protected function build_related_tags_filter($limit = 10) {
+	protected function build_tags_filter($limit = 10) {
 		// 标签taxonomy
 		$taxonomy = $this->wp_query_args['post_type'] . '_tag';
 		if (!taxonomy_exists($taxonomy)) {

@@ -74,8 +74,8 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	 *获取主分类关联标签筛选 Tabs
 	 *
 	 */
-	public function get_related_tags_tabs($limit = 10) {
-		return $this->build_related_tags_filter($limit);
+	public function get_tags_tabs($limit = 10) {
+		return $this->build_tags_filter($limit);
 	}
 
 	/**
@@ -124,7 +124,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 			 */
 			'category_tabs'     => $this->get_category_tabs(),
 			'sub_taxonomy_tabs' => $this->get_sub_taxonomy_tabs(),
-			'related_tags_tabs' => $this->get_related_tags_tabs(),
+			'tags_tabs'         => $this->get_tags_tabs(),
 			'pagination'        => $this->get_pagination(),
 			'post_count'        => $this->wp_query->post_count,
 

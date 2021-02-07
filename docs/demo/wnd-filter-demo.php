@@ -38,7 +38,7 @@ $filter->add_taxonomy_filter(
 );
 
 // 相关性标签
-$filter->add_related_tags_filter($limit = 10);
+$filter->add_tags_filter($limit = 10);
 
 $filter->add_meta_filter(
 	[

@@ -151,7 +151,7 @@ function _wnd_render_filter(container, filter_json) {
 			if (is_category_tab(tab, filter)) {
 				var tab_vn = 'filter.category_tabs';
 			} else if (is_tag_tab(tab, filter)) {
-				var tab_vn = 'filter.related_tags_tabs';
+				var tab_vn = 'filter.tags_tabs';
 			} else {
 				var tab_vn = 'filter.tabs[' + index + ']';
 			}
