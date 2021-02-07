@@ -11,7 +11,7 @@ use WP_Query;
  * 多重筛选类
  * 样式基于bulma css
  *
- * @param bool 		$independent 	是否为独立 WP Query
+ * @param bool 	$independent 	是否为独立 WP Query
  */
 class Wnd_Filter {
 
@@ -90,7 +90,7 @@ class Wnd_Filter {
 	/**
 	 *Constructor.
 	 *
-	 *@param bool 		$independent 	是否为独立 WP Query
+	 *@param bool 	$independent	是否为独立 WP Query
 	 */
 	public function __construct(bool $independent = true) {
 		static::$http_query    = static::parse_query_vars();
@@ -126,7 +126,16 @@ class Wnd_Filter {
 			$this->category_taxonomy = ('post' == $this->wp_query_args['post_type']) ? 'category' : $this->wp_query_args['post_type'] . '_cat';
 		}
 
-		// 非管理员，仅可查询publish及close状态(作者本身除外)
+		// 权限检测
+		$this->check_permission();
+	}
+
+	/**
+	 *@since 0.9.25
+	 *
+	 *权限检测：非管理员，仅可查询publish及close状态(作者本身除外)
+	 */
+	protected function check_permission() {
 		if (is_super_admin()) {
 			return;
 		}
@@ -403,14 +412,24 @@ class Wnd_Filter {
 			return;
 		}
 
-		$this->build_post_type_filter($args, $with_any_tab);
+		// 构建 Tabs 数据
+		$key     = 'type';
+		$title   = __('类型：', 'wnd');
+		$options = [];
+		foreach ($args as $post_type) {
+			$post_type                  = get_post_type_object($post_type);
+			$options[$post_type->label] = $post_type->name;
+		}
+		unset($post_type);
+
+		return $this->build_tabs($key, $options, $title, $with_any_tab, ['all']);
 	}
 
 	/**
 	 *状态筛选
 	 *@param array $args 需要筛选的文章状态数组
 	 */
-	public function add_post_status_filter($args = []) {
+	public function add_post_status_filter($args = [], $with_any_tab = true) {
 		$this->add_query(['post_status' => $args]);
 
 		/**
@@ -420,7 +439,11 @@ class Wnd_Filter {
 			return;
 		}
 
-		$this->build_post_status_filter($args);
+		// 构建 Tabs 数据
+		$title   = __('状态', 'wnd');
+		$key     = 'status';
+		$options = $args;
+		return $this->build_tabs($key, $options, $title, $with_any_tab);
 	}
 
 	/**
@@ -460,7 +483,7 @@ class Wnd_Filter {
 		}
 
 		// 获取当前taxonomy子类tabs
-		$sub_tabs = $this->get_sub_taxonomy_tabs();
+		$this->get_sub_taxonomy_tabs();
 
 	}
 
@@ -510,10 +533,11 @@ class Wnd_Filter {
 	 *	];
 	 *
 	 */
-	public function add_meta_filter($args) {
-		$tabs = $this->build_meta_filter($args);
-		// $this->tabs .= $tabs;
-		return $tabs;
+	public function add_meta_filter($args, $with_any_tab = true) {
+		$title = $args['label'];
+		$key   = '_meta_' . $args['key'];
+
+		return $this->build_tabs($key, $args['options'], $title, $with_any_tab);
 	}
 
 	/**
@@ -533,10 +557,12 @@ class Wnd_Filter {
 	 *	];
 	 *
 	 */
-	public function add_orderby_filter($args) {
-		$tabs = $this->build_orderby_filter($args);
-		// $this->tabs .= $tabs;
-		return $tabs;
+	public function add_orderby_filter($args, $with_any_tab = true) {
+		$key     = 'orderby';
+		$title   = $args['label'];
+		$options = $args['options'];
+
+		return $this->build_tabs($key, $options, $title, $with_any_tab);
 	}
 
 	/**
@@ -550,9 +576,8 @@ class Wnd_Filter {
 	 *
 	 *@param string $label 选项名称
 	 */
-	public function add_order_filter($args, $label) {
-		$tabs = $this->build_order_filter($args, $label);
-		return $tabs;
+	public function add_order_filter($args, $label, $with_any_tab = true) {
+		return $this->build_tabs('order', $args, $label, $with_any_tab);
 	}
 
 	/**
@@ -570,6 +595,10 @@ class Wnd_Filter {
 	 *
 	 */
 	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []) {
+		if (!$options) {
+			return '';
+		}
+
 		/**
 		 * 定义当前筛选项基准 URL
 		 *  - 如果传参为 ['all'] 则移除移除动态参数，但保留语言参数
@@ -589,14 +618,14 @@ class Wnd_Filter {
 
 		// 【全部】选项
 		if ($with_any_tab) {
-			$tabs .= '<li class="' . $this->build_tab_item_class($key, '') . '">';
+			$tabs .= '<li class="' . $this->get_tab_item_class($key, '') . '">';
 			$tabs .= '<a href="' . remove_query_arg($key, $base_url) . '">' . __('全部', 'wnd') . '</a>';
 			$tabs .= '</li>';
 		}
 
 		// 输出 Tab 选项
 		foreach ($options as $name => $value) {
-			$tabs .= '<li class="' . $this->build_tab_item_class($key, $value) . '">';
+			$tabs .= '<li class="' . $this->get_tab_item_class($key, $value) . '">';
 			$tabs .= '<a href="' . add_query_arg($key, $value, $base_url) . '">' . $name . '</a>';
 			$tabs .= '</li>';
 		}
@@ -615,46 +644,9 @@ class Wnd_Filter {
 	/**
 	 *筛选项详情菜单 Class
 	 */
-	protected function build_tab_item_class($key, $value) {
+	protected function get_tab_item_class($key, $value) {
 		$query_vars = $_GET[$key] ?? '';
 		return ($query_vars == $value) ? 'item is-active' : 'item';
-	}
-
-	/**
-	 *类型筛选
-	 *@param array $args 需要筛选的类型数组 $args = ['post','page']
-	 *@param bool 	$with_any_tab 是否包含全部选项
-	 */
-	protected function build_post_type_filter($args = [], $with_any_tab = false) {
-		$key     = 'type';
-		$title   = __('类型：', 'wnd');
-		$options = [];
-
-		// 输出tabs
-		foreach ($args as $post_type) {
-			$post_type                  = get_post_type_object($post_type);
-			$options[$post_type->label] = $post_type->name;
-		}
-		unset($post_type);
-
-		return $this->build_tabs($key, $options, $title, $with_any_tab, ['all']);
-	}
-
-	/**
-	 *状态筛选
-	 *@param array $args 需要筛选的文章状态数组
-	 *
-	 *	$args = [
-	 *		'公开'=>publish',
-	 *		'草稿'=>draft'
-	 *	]
-	 */
-	protected function build_post_status_filter($args = [], $with_any_tab = false) {
-		$title   = __('状态', 'wnd');
-		$key     = 'status';
-		$options = $args;
-
-		return $this->build_tabs($key, $options, $title, $with_any_tab);
 	}
 
 	/**
@@ -727,20 +719,10 @@ class Wnd_Filter {
 		 *tax_query是一个无键名的数组，无法根据键名合并，因此需要准确定位
 		 *(数组默认键值从0开始， 当首元素即匹配则array_search返回 0，此处需要严格区分 0 和 false)
 		 */
-		// $all_class    = 'class="is-active"';
 		$category_key = ('category' == $this->category_taxonomy) ? 'category_name' : $this->category_taxonomy;
 		if (isset($this->wp_query_args[$category_key])) {
 			$category    = get_term_by('slug', $this->wp_query_args[$category_key], $this->category_taxonomy);
 			$category_id = $category ? $category->term_id : 0;
-
-			// 当前标签在 tax query 中的键名 若存在则移除 “全部”选项
-			// foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
-			// 	if (array_search($taxonomy, $tax_query) !== false) {
-			// 		$all_class = '';
-			// 		break;
-			// 	}
-			// }
-			// unset($key, $tax_query);
 		} else {
 			foreach ($this->wp_query_args['tax_query'] as $key => $tax_query) {
 				// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
@@ -755,12 +737,6 @@ class Wnd_Filter {
 					$category_id = $category ? $category->term_id : 0;
 					continue;
 				}
-
-				// 当前标签在 tax query 中的键名 若存在则移除 “全部”选项
-				// if (array_search($taxonomy, $tax_query) !== false) {
-				// 	$all_class = '';
-				// 	continue;
-				// }
 			}
 			unset($key, $tax_query);
 		}
@@ -795,81 +771,10 @@ class Wnd_Filter {
 	}
 
 	/**
-	 *@since 2019.04.18 meta query
-	 *@param 自定义： array args meta字段筛选。暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
-	 *
-	 *	$args = [
-	 *		'label' => '文章价格',
-	 *		'key' => 'price',
-	 *		'options' => [
-	 *			'10' => '10',
-	 *			'0.1' => '0.1',
-	 *		],
-	 *		'compare' => '=',
-	 *	];
-	 *
-	 *	查询一个字段是否存在：options只需要设置一个：其作用为key值显示为选项文章，value不参与查询，可设置为任意值
-	 *	$args = [
-	 *		'label' => '文章价格',
-	 *		'key' => 'price',
-	 *		'options' => [
-	 *			'包含' => 'exists',
-	 *		],
-	 *		'compare' => 'exists',
-	 *	];
-	 *
-	 */
-	protected function build_meta_filter($args, $with_any_tab = true) {
-		$title = $args['label'];
-		$key   = '_meta_' . $args['key'];
-
-		return $this->build_tabs($key, $args['options'], $title, $with_any_tab);
-	}
-
-	/**
-	 *@since 2019.04.21 排序
-	 *@param 自定义： array args
-	 *
-	 *	$args = [
-	 *		'label' => '排序',
-	 *		'options' => [
-	 *			'发布时间' => 'date', //常规排序 date title等
-	 *			'浏览量' => [ // 需要多个参数的排序
-	 *				'orderby'=>'meta_value_num',
-	 *				'meta_key'   => 'views',
-	 *			],
-	 *		],
-	 *	];
-	 *
-	 */
-	protected function build_orderby_filter($args) {
-		$key     = 'orderby';
-		$title   = $args['label'];
-		$options = $args['options'];
-		// $remove_query_args = ['orderby', 'order', 'meta_key'];
-
-		return $this->build_tabs($key, $options, $title, true);
-	}
-
-	/**
-	 *@since 2019.08.10 构建排序方式
-	 *@param 自定义： array args
-	 *
-	 *	$args = [
-	 *		'降序' => 'DESC',
-	 *		'升序' =>'ASC'
-	 *	];
-	 *
-	 *@param string $label 选项名称
-	 */
-	protected function build_order_filter($args, $label) {
-		return $this->build_tabs('order', $args, $label, true);
-	}
-
-	/**
 	 *@since 2019.03.26
 	 *遍历当前查询参数，输出取消当前查询链接
-	 *未完成
+	 *
+	 *@since 0.9.25  改造尚未未完成
 	 */
 	protected function build_current_filter() {
 		if (empty($this->wp_query_args['tax_query']) and empty($this->wp_query_args['meta_query'])) {
@@ -923,14 +828,11 @@ class Wnd_Filter {
 	 */
 	protected function build_pagination($show_page = 5) {
 		$nav = new Wnd_Pagination($this->independent);
-
 		$nav->set_paged($this->wp_query->query_vars['paged'] ?: 1);
 		$nav->set_max_num_pages($this->wp_query->max_num_pages);
 		$nav->set_items_per_page($this->wp_query->query_vars['posts_per_page']);
 		$nav->set_current_item_count($this->wp_query->post_count);
 		$nav->set_show_pages($show_page);
-
-		$nav->set_data($this->add_query);
 		$nav->add_class($this->class);
 		return $nav->build();
 	}
@@ -988,7 +890,6 @@ class Wnd_Filter {
 	 *tabs筛选项由于参数繁杂，无法通过api动态生成，因此不包含在api请求响应中
 	 *但已生成的相关筛选项会根据wp_query->query_var参数做动态修改
 	 *
-	 *@see wnd_filter_api_callback()
 	 */
 	public function get_tabs() {
 		$tabs = apply_filters('wnd_filter_tabs', $this->tabs, $this->wp_query_args);
@@ -997,15 +898,13 @@ class Wnd_Filter {
 
 	/**
 	 *@since 2019.08.09
-	 *当前tax query的子类筛选HTML
+	 *当前tax query的子类筛选项
 	 *
 	 *子类查询需要根据当前tax query动态生成
 	 *在ajax状态中，需要经由此方法，交付api响应动态生成
 	 *
-	 *非ajax请求中，直接使用echo get_sub_taxonomy_filter可单独查询某个分类子类
 	 *非ajax请求中，add_taxonomy_filter，在选择分类后，自动查询生成子类tabs
 	 *
-	 *@see wnd_filter_api_callback()
 	 *@return array $sub_tabs_array[$taxonomy] = [$sub_tabs];
 	 */
 	public function get_sub_taxonomy_tabs() {

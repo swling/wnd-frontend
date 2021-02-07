@@ -18,6 +18,10 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	 *构造筛选菜单数据
 	 */
 	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []): array{
+		if (!$options) {
+			return [];
+		}
+
 		// 筛选添加改变时，移除 Page 参数
 		$remove_query_args[] = 'page';
 

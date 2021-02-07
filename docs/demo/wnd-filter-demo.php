@@ -6,7 +6,7 @@ use Wnd\View\Wnd_Filter;
  *多重筛选演示代码
  **/
 
-$filter  = new Wnd_Filter();
+$filter = new Wnd_Filter();
 
 $filter->add_post_type_filter(['company', 'resource', 'post']);
 
