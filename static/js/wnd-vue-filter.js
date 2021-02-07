@@ -178,7 +178,7 @@ function _wnd_render_filter(container, filter_json) {
 
 	function build_tabs(tabs) {
 		let t = '';
-		t += '<div v-show="show_tab(' + tabs + ')" class="columns is-marginless is-vcentered">'
+		t += '<div v-if="' + tabs + '" class="columns is-marginless is-vcentered" :class="' + tabs + '.key">'
 		t += '<div class="column is-narrow">{{' + tabs + '.title}}</div>';
 
 		t += '<div class="column tabs">';

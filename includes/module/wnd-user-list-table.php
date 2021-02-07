@@ -26,7 +26,6 @@ class Wnd_User_List_Table extends Wnd_Module_Admin {
 		$filter->add_search_form();
 		$filter->add_orderby_filter($orderby_args);
 		$filter->add_status_filter(__('状态', 'wnd'));
-		$filter->set_ajax_container('#user-list-table');
 		$filter->query();
 
 		return $filter->get_tabs() . '<div id="user-list-table">' . $filter->get_results() . '</div>';

@@ -7,12 +7,6 @@ namespace Wnd\View;
  */
 class Wnd_Pagination {
 
-	// bool 是否ajax
-	protected static $is_ajax;
-
-	// bool 是否正处于ajax环境中
-	protected static $doing_ajax;
-
 	// 当前页码
 	protected $paged = 1;
 
@@ -37,14 +31,10 @@ class Wnd_Pagination {
 	/**
 	 *Constructor.
 	 *
-	 *@param bool 		$is_ajax 是否为ajax查询
 	 *@param string 	$uniqid当前筛选器唯一标识
 	 */
-	public function __construct(bool $is_ajax = false, string $id = '', $independent = true) {
-		static::$is_ajax    = $is_ajax;
-		static::$doing_ajax = wnd_doing_ajax();
-		$this->id           = $id;
-		$this->independent  = $independent;
+	public function __construct($independent = true) {
+		$this->independent = $independent;
 	}
 
 	/**
@@ -114,10 +104,7 @@ class Wnd_Pagination {
 	 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
 	 */
 	protected function build_next_pagination() {
-		if (static::$doing_ajax) {
-			$previous_link = '';
-			$next_link     = '';
-		} elseif ($this->independent) {
+		if ($this->independent) {
 			$previous_link = add_query_arg('page', $this->paged - 1);
 			$next_link     = add_query_arg('page', $this->paged + 1);
 		} else {
@@ -125,7 +112,7 @@ class Wnd_Pagination {
 			$next_link     = get_pagenum_link($this->paged + 1);
 		}
 
-		$html = '<nav id="nav-' . $this->id . '" class="pagination is-centered ' . $this->class . '">';
+		$html = '<nav class="pagination is-centered ' . $this->class . '">';
 		$html .= '<ul class="pagination-list">';
 		if ($this->paged >= 2) {
 			$html .= '<li><a data-key="paged" data-value="' . ($this->paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
@@ -144,12 +131,7 @@ class Wnd_Pagination {
 	 *在数据量较大的站点，查询文章总数会较为费时
 	 */
 	protected function build_general_pagination() {
-		if (static::$doing_ajax) {
-			$first_link    = '';
-			$previous_link = '';
-			$next_link     = '';
-			$last_link     = '';
-		} elseif ($this->independent) {
+		if ($this->independent) {
 			$first_link    = remove_query_arg('page');
 			$previous_link = add_query_arg('page', $this->paged - 1);
 			$next_link     = add_query_arg('page', $this->paged + 1);
@@ -161,7 +143,7 @@ class Wnd_Pagination {
 			$last_link     = get_pagenum_link($this->max_num_pages);
 		}
 
-		$html = '<nav id="nav-' . $this->id . '" class="pagination is-centered ' . $this->class . '"' . $this->build_data_attr($this->data) . '>';
+		$html = '<nav class="pagination is-centered ' . $this->class . '"' . $this->build_data_attr($this->data) . '>';
 		if ($this->paged > 1) {
 			$html .= '<a data-key="paged" data-value="' . ($this->paged - 1) . '" class="pagination-previous" href="' . $previous_link . '">' . __('上一页', 'wnd') . '</a>';
 		}
@@ -174,7 +156,7 @@ class Wnd_Pagination {
 		$html .= '<li><a data-key="paged" data-value="" class="pagination-link" href="' . $first_link . '" >' . __('首页', 'wnd') . '</a></li>';
 		for ($i = $this->paged - 1; $i <= $this->paged + $this->show_pages; $i++) {
 			if ($i > 0 and $i <= $this->max_num_pages) {
-				$page_link = static::$doing_ajax ? '' : ($this->independent ? add_query_arg('page', $i) : get_pagenum_link($i));
+				$page_link = $this->independent ? add_query_arg('page', $i) : get_pagenum_link($i);
 				if ($i == $this->paged) {
 					$html .= '<li><a data-key="paged" data-value="' . $i . '" class="pagination-link is-current" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
 				} else {

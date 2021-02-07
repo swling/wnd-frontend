@@ -20,7 +20,6 @@ class Wnd_Admin_Finance_Panel extends Wnd_Module_Root {
 		$filter->add_post_status_filter([__('全部', 'wnd') => 'any', __('已完成', 'wnd') => 'wnd-completed', __('进行中', 'wnd') => 'wnd-processing']);
 		$filter->set_posts_template('wnd_list_table');
 		$filter->set_posts_per_page($args['posts_per_page']);
-		$filter->set_ajax_container('#admin-finance-panel');
 		$filter->query();
 		return $filter->get_tabs() . '<div id="admin-finance-panel">' . $filter->get_results() . '</div>';
 	}

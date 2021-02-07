@@ -51,14 +51,13 @@ class Wnd_User_Finance_Panel extends Wnd_Module_User {
 		}
 		$html .= '</div>';
 
-		$filter = new Wnd_Filter(wnd_doing_ajax());
+		$filter = new Wnd_Filter();
 		$filter->add_search_form();
 		$filter->add_post_type_filter(['order', 'recharge']);
 		$filter->add_post_status_filter(['any']);
 		$filter->add_query(['author' => get_current_user_id()]);
 		$filter->set_posts_template('wnd_list_table');
 		$filter->set_posts_per_page($args['posts_per_page']);
-		$filter->set_ajax_container('#admin-fin-panel');
 		$filter->query();
 		$filter_html = $filter->get_tabs() . '<div id="admin-fin-panel">' . $filter->get_results() . '</div>';
 

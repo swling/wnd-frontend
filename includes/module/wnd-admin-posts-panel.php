@@ -20,7 +20,6 @@ class Wnd_Admin_Posts_Panel extends Wnd_Module_Admin {
 		$filter->add_post_status_filter([__('待审', 'wnd') => 'pending']);
 		$filter->set_posts_template('wnd_list_table');
 		$filter->set_posts_per_page($args['posts_per_page']);
-		$filter->set_ajax_container('#admin-posts-panel');
 		$filter->query();
 		return $filter->get_tabs() . '<div id="admin-posts-panel">' . $filter->get_results() . '</div>';
 	}

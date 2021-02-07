@@ -324,7 +324,7 @@ function _wnd_render_form(container, form_json) {
     function get_form_template(form_json) {
         // 表单头
         let t = '<form v-bind="form.attrs">';
-        t += '<h3 v-bind="form.title.attrs" v-html="form.title.title"></h3>';
+        t += '<h3 v-if="form.title.title" v-bind="form.title.attrs" v-html="form.title.title"></h3>';
         t += '<div v-bind="form.message.attrs" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>';
 
         // 循环字段数据，调用对应字段组件
@@ -332,7 +332,7 @@ function _wnd_render_form(container, form_json) {
 
         // 提交按钮
         t += '<div class="field is-grouped is-grouped-centered">';
-        t += '<button v-bind="form.submit.attrs" @click="submit" v-text="form.submit.text"></button>';
+        t += '<button type="button" v-bind="form.submit.attrs" @click="submit" v-text="form.submit.text"></button>';
         t += '</div>';
 
         // 表尾

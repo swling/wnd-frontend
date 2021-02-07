@@ -21,7 +21,6 @@ class Wnd_Mail_Box extends Wnd_Module_User {
 		$filter->add_query(['author' => get_current_user_id()]);
 		$filter->set_posts_template('wnd_list_table');
 		$filter->set_posts_per_page($args['posts_per_page']);
-		$filter->set_ajax_container('#user-mail-panel');
 		$filter->query();
 		return $filter->get_tabs() . '<div id="user-mail-panel">' . $filter->get_results() . '</div>';
 

@@ -6,8 +6,7 @@ use Wnd\View\Wnd_Filter;
  *多重筛选演示代码
  **/
 
-$is_ajax = is_user_logged_in() ? true : false;
-$filter  = new Wnd_Filter($is_ajax);
+$filter  = new Wnd_Filter();
 
 $filter->add_post_type_filter(['company', 'resource', 'post']);
 
@@ -79,8 +78,6 @@ $filter->add_current_filter();
 /**
  *配置wp_query其他参数
  */
-$filter->set_ajax_container('#filter-container');
-
 $filter->set_posts_per_page($posts_per_page = 3);
 
 // 设置输出结果列表样式，传递参数：$post对象
