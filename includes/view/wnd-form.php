@@ -306,11 +306,13 @@ class Wnd_Form {
 	 *@since 2019.03.06
 	 *表单构造函数
 	 **/
-	public function build() {
+	public function build(): string{
 		$this->build_form_header();
 		$this->build_input_fields();
 		$this->build_submit_button();
 		$this->build_form_footer();
+
+		return $this->html;
 	}
 
 	protected function build_form_header() {
@@ -543,7 +545,7 @@ class Wnd_Form {
 			return;
 		}
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="' . $this->get_submit_class(true) . '"' . ($this->submit_disabled ? ' disabled="disabled"' : '') . '>' . $this->submit_text . '</button>';
+		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="' . $this->get_submit_class() . '"' . ($this->submit_disabled ? ' disabled="disabled"' : '') . '>' . $this->submit_text . '</button>';
 		$this->html .= '</div>';
 	}
 
@@ -717,9 +719,9 @@ class Wnd_Form {
 		return '';
 	}
 
-	protected function get_submit_class(bool $space = false): string {
+	protected function get_submit_class(): string {
 		if ($this->submit_class) {
-			return $space ? ' ' . $this->submit_class : $this->submit_class;
+			return $this->submit_class;
 		}
 		return '';
 	}

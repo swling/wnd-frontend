@@ -309,21 +309,153 @@ function wnd_reset_modal() {
     }
 }
 
+// 常规HTML表单提交:绑定在submit button
+function wnd_ajax_submit(button) {
+    let form = button.closest('form');
+    let route = form.getAttribute('route');
+
+    form.addEventListener('submit', function() {
+        button.classList.add('is-loading');
+    });
+
+    // 为设置 route 表示为常规 HTML 提交，而非 API 请求
+    if (!route) {
+        return false;
+    }
+
+    // Ajax 请求
+    let data = new FormData(form);
+
+    // GET 将表单序列化
+    let params = {};
+    if ('get' == form.method) {
+        for (var key of data.keys()) {
+            params[key] = data.get(key);
+        }
+    }
+    axios({
+            method: form.method,
+            url: form.action,
+            // POST
+            data: data,
+            // GET
+            params: params,
+        })
+        .then(function(response) {
+            button.classList.remove('is-loading');
+            form_info = handle_response(response.data, route);
+            console.log(form_info);
+        });
+}
+
+// 统一处理表单响应
+function handle_response(response, route) {
+    let form_info = {
+        'msg': '',
+        'msg_class': ''
+    };
+
+    /**
+     *@since 0.8.73
+     *GET 提交弹出 UI 模块
+     */
+    if ('module' == route) {
+        if (response.status >= 1) {
+            if ('form' == response.data.type) {
+                wnd_alert_modal('<div id="vue-app"></div>');
+                wnd_render_form('#vue-app', response.data.structure);
+            } else {
+                wnd_alert_modal(response.data);
+            }
+        } else {
+            wnd_alert_modal(response.msg);
+        }
+        // this.form.submit.attrs.class = form_json.submit.attrs.class;
+        return form_info;
+    }
+
+    // 根据后端响应处理
+    form_info.msg = response.msg;
+    form_info.msg_class = response.status <= 0 ? 'is-danger' : 'is-success';
+    switch (response.status) {
+
+        // 常规类，展示后端提示信息，状态 8 表示禁用提交按钮 
+        case 1:
+        case 8:
+            // form_info.msg =  response.data.msg;
+            break;
+
+            //更新类
+        case 2:
+            form_info.msg = wnd.msg.submit_successfully + '<a href="' + response.data.url + '" target="_blank">&nbsp;' + wnd.msg.view + '</a>';
+            break;
+
+            // 跳转类
+        case 3:
+            form_info.msg = wnd.msg.waiting;
+            window.location = response.data.redirect_to;
+            break;
+
+            // 刷新当前页面
+        case 4:
+            if ("undefined" == typeof response.data || "undefined" == typeof response.data.waiting) {
+                window.location.reload();
+            }
+
+            // 延迟刷新
+            var timer = null;
+            var time = response.data.waiting;
+
+            submit_button.removeClass("is-loading");
+            submit_button.text(wnd.msg.waiting + " " + time);
+            timer = setInterval(function() {
+                if (time <= 0) {
+                    clearInterval(timer);
+                    wnd_reset_modal();
+                    window.location.reload();
+                } else {
+                    submit_button.text(wnd.msg.waiting + " " + time);
+                    time--;
+                }
+            }, 1000);
+            break;
+
+            // 弹出信息并自动消失
+        case 5:
+            // wnd_alert_msg(response.msg, 1);
+            break;
+
+            // 下载类
+        case 6:
+            form_info.msg = wnd.msg.downloading;
+            window.location = response.data.redirect_to;
+            break;
+
+            // 以响应数据替换当前表单
+        case 7:
+            // $("#" + form_id).replaceWith(response.data);
+            break;
+
+            // 默认
+        default:
+            // wnd_ajax_form_msg(form_id, response.msg, style);
+            break;
+    }
+
+    return form_info;
+}
+
 /**
  *@since 0.9.25
  *文档加载完成后执行
  */
 window.onload = function() {
     /**
-     *@since 0.8.76
-     *非 Ajax 表单提交，按钮设置加载中效果
-     *Ajax 提交 @see wnd_ajax_submit()
+     *@since 0.9.5
+     *常规表单(非 Vue 渲染表单)提交
      */
-    //    document.addEventListener('click', function(e) {
-    //        if (e.target && e.target.nodeName.toUpperCase() === 'LI') {
-    //            console.log(e.target.innerHTML)
-    //        }
-    //        console.log(e);
-    // })
+    // document.querySelector('.ajax-submit').addEventListener('click', function(e) {
+
+    // });
 
 }

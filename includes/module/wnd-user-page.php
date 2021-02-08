@@ -44,7 +44,7 @@ class Wnd_User_Page extends Wnd_Module {
 		}
 
 		$module = static::handle_module($args) ?: '';
-		$module = $module ? ('<div class="box">' . $module . '</div>') : '';
+		$module = $module ? ('<div id="ajax-module" class="content box">' . $module . '</div>') : '';
 
 		get_header();
 		echo '<main id="user-page-container" class="column">';
@@ -69,8 +69,7 @@ class Wnd_User_Page extends Wnd_Module {
 		extract($args);
 
 		if ($module) {
-			$class = \Wnd\Controller\Wnd_Controller::parse_class($module, 'Module');
-			return $class::render();
+			return '<script>wnd_ajax_embed("#ajax-module","' . $module . '",' . json_encode($_GET) . ')</script>';
 		}
 
 		// 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
@@ -154,16 +153,16 @@ class Wnd_User_Page extends Wnd_Module {
 		}
 
 		var element = hash.replace("#", "")
-		var a = $("li." + element +" a");
+		// var a = $("li." + element +" a");
 
 		// 激活当前菜单
-		a.addClass("is-active");
+		// a.addClass("is-active");
 		// 移除其他同级菜单的激活状态
-		a.parent("li").siblings().find("a").removeClass("is-active");
+		// a.parent("li").siblings().find("a").removeClass("is-active");
 		// 展开当前菜单（子菜单链接适用）
-		a.parents("ul").slideDown("fast");
+		// a.parents("ul").slideDown("fast");
 		// 收起其他一级菜单的子菜单
-		a.parents("li").siblings().find("ul").slideUp("fast");
+		// a.parents("li").siblings().find("ul").slideUp("fast");
 
 		wnd_ajax_embed("#user-page .ajax-container", element);
 	}

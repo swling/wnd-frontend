@@ -16,7 +16,18 @@ class Wnd_Payment_Form extends Wnd_Module {
 
 	protected $type = 'form';
 
-	protected function structure($args = []): array{
+	// HTML 输出
+	protected static function build($args = []): string {
+		return static::configure_form($args)->build();
+	}
+
+	// 结构输出 JavaScript 渲染
+	protected function structure(): array{
+		return static::configure_form($this->args)->get_structure();
+	}
+
+	// 配置表单
+	protected static function configure_form(array $args): Wnd_Form_WP{
 		/**
 		 *订单基本信息 + 产品属性等参数
 		 *
@@ -48,7 +59,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		$form = new Wnd_Form_WP(true, !$user_id);
 		$form->set_form_title($title, true);
 		if (!$user_id) {
-			$form->add_html(wnd_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd'), true));
+			$form->add_html(wnd_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd')));
 		}
 		$form->add_html($sku_info);
 		$form->add_html('<div class="has-text-centered field">');
@@ -71,7 +82,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		$form->add_checkbox(
 			[
 				'name'     => 'agreement',
-				'options'  => ['<i class="is-size-7">' . __('已阅读并同意交易协议及产品使用协议') . '</i>' => 1],
+				'options'  => [__('已阅读并同意交易协议及产品使用协议') => 1],
 				'checked'  => true,
 				'required' => 'required',
 			]
@@ -87,7 +98,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		}
 
 		$form->set_submit_button(__('确定', 'wnd'));
-		return $form->get_structure();
+		return $form;
 	}
 
 	/**

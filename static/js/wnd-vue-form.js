@@ -206,13 +206,19 @@ function _wnd_render_form(container, form_json) {
                 var form = document.querySelector('#' + this.form.attrs.id);
                 var data = new FormData(form);
 
-                // GET 将表单序列化
+                // GET 请求参数
                 var params = {};
-                if ('get' == this.form.attrs.method) {
-                    for (var key of data.keys()) {
-                        params[key] = data.get(key);
+                data.forEach((value, key) => {
+                    if (!Reflect.has(params, key)) {
+                        params[key] = value;
+                        return;
                     }
-                }
+                    if (!Array.isArray(params[key])) {
+                        params[key] = [params[key]];
+                    }
+                    params[key].push(value);
+                });
+
                 axios({
                         method: this.form.attrs.method,
                         url: this.form.attrs.action,
@@ -222,97 +228,15 @@ function _wnd_render_form(container, form_json) {
                         params: params,
                     })
                     .then(function(response) {
-                        _this.handle_response(response.data);
+                        info = handle_response(response.data, _this.form.attrs.route);
+                        _this.form.message.message = info.msg;
+                        _this.form.message.attrs.class = form_json.message.attrs.class + ' ' + info.msg_class;
+                        _this.form.submit.attrs.class = form_json.submit.attrs.class;
                     })
                     .catch(function(error) { // 请求失败处理
                         console.log(error);
-                        _this.form.message.message = wnd.msg.system_error;
-                        _this.form.message.attrs.class = form_json.message.attrs.class + ' is-danger';
-                        _this.form.submit.attrs.class = form_json.submit.attrs.class;
                     });
             },
-
-            // 处理表单提交响应
-            handle_response: function(response) {
-                /**
-                 *@since 0.8.73
-                 *GET 提交弹出 UI 模块
-                 */
-                if (('get' == this.form.attrs.method)) {
-                    if (response.status >= 1) {
-                        wnd_alert_modal(response.data);
-                    } else {
-                        wnd_alert_modal(response.msg);
-                    }
-                    this.form.submit.attrs.class = form_json.submit.attrs.class;
-                    return;
-                }
-
-                // POST
-                this.form.message.message = response.msg;
-                this.form.message.attrs.class = form_json.message.attrs.class + (response.status <= 0 ? ' is-danger' : ' is-success');
-                this.form.submit.attrs.class = form_json.submit.attrs.class;
-                switch (response.status) {
-                    // 常规类，展示后端提示信息，状态 8 表示禁用提交按钮 
-                    case 1:
-                    case 8:
-                        break;
-
-                        //更新类
-                    case 2:
-                        this.form.message.message = wnd.msg.submit_successfully + '<a href="' + response.data.url + '" target="_blank">&nbsp;' + wnd.msg.view + '</a>';
-                        break;
-
-                        // 跳转类
-                    case 3:
-                        this.form.message.message = wnd.msg.waiting;
-                        window.location.href = response.data.redirect_to;
-                        return;
-
-                        // 刷新当前页面
-                    case 4:
-                        if ("undefined" == typeof response.data || "undefined" == typeof response.data.waiting) {
-                            window.location.reload();
-                            return;
-                        }
-
-                        // 延迟刷新
-                        var timer = null;
-                        var time = response.data.waiting;
-                        this.form.submit.text = wnd.msg.waiting + " " + time;
-                        timer = setInterval(function() {
-                            if (time <= 0) {
-                                clearInterval(timer);
-                                wnd_reset_modal();
-                                window.location.reload();
-                            } else {
-                                this.form.submit.text = wnd.msg.waiting + " " + time;
-                                time--;
-                            }
-                        }, 1000);
-                        return;
-
-                        // 弹出信息并自动消失
-                    case 5:
-                        wnd_alert_msg(response.msg, 1);
-                        break;
-
-                        // 下载类
-                    case 6:
-                        this.form.message.message = wnd.msg.downloading;
-                        window.location.href = response.data.redirect_to;
-                        return;
-
-                        // 以响应数据替换当前表单
-                    case 7:
-                        // $("#" + form_id).replaceWith(response.data);
-                        break;
-
-                        // 默认
-                    default:
-                        break;
-                }
-            }
         },
         // 计算
         computed: {},
@@ -324,7 +248,7 @@ function _wnd_render_form(container, form_json) {
     function get_form_template(form_json) {
         // 表单头
         let t = '<form v-bind="form.attrs">';
-        t += '<h3 v-if="form.title.title" v-bind="form.title.attrs" v-html="form.title.title"></h3>';
+        t += '<h3 v-show="form.title.title" v-bind="form.title.attrs" v-html="form.title.title"></h3>';
         t += '<div v-bind="form.message.attrs" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>';
 
         // 循环字段数据，调用对应字段组件

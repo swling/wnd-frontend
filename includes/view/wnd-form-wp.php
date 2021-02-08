@@ -85,6 +85,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *@param $endpoint 	string 		Rest API 路由对应的后端处理本次提交的类名
 	 */
 	public function set_route(string $route, string $endpoint) {
+		$this->add_form_attr('route', $route);
 		if ('action' == $route) {
 			$this->add_hidden('_ajax_nonce', wp_create_nonce($endpoint));
 		}
@@ -410,6 +411,17 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->add_html(Wnd_Gallery::build_gallery_upload($args, false));
 	}
 
+	// 构造表单，可设置WordPress filter 过滤表单的input_values
+	public function build(): string{
+		// 本插件特定的数据结构
+		$this->wnd_structure();
+
+		/**
+		 *构建表单
+		 */
+		return parent::build();
+	}
+
 	/**
 	 *@since 0.9.25
 	 *构建本插件特定的数据结构
@@ -442,17 +454,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
 		 */
 		$this->build_sign_field();
-	}
-
-	// 构造表单，可设置WordPress filter 过滤表单的input_values
-	public function build() {
-		// 本插件特定的数据结构
-		$this->wnd_structure();
-
-		/**
-		 *构建表单
-		 */
-		parent::build();
 	}
 
 	/**
@@ -532,29 +533,22 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// 短信、邮件
 		$send_code_script = '
-		<script>
-			$(function() {
-				$(".send-code").click(function() {
-					wnd_send_code($(this));
-				});
-			});
-		</script>';
+<script>
+	var button = document.querySelector(".send-code");
+	if(button){
+		button.addEventListener("click", function(e) {wnd_send_code(this);});
+	}
+</script>';
 		$send_code_script = $this->enable_verification_captcha ? $captcha->render_send_code_script() : $send_code_script;
 
 		// 表单提交
 		$submit_script = '
-		<script>
-			$(function() {
-				$("[type=\'submit\'].ajax-submit").off("click").on("click", function() {
-					var form_id = $(this).closest("form").attr("id");
-					if (form_id) {
-						wnd_ajax_submit(form_id);
-					} else {
-						wnd_alert_msg(wnd.msg.system_error, 1);
-					}
-				});
-			});
-		</script>';
+<script>
+	var button = document.querySelector("button.ajax-submit, [type=submit]");
+	if(button){
+		button.addEventListener("click", function(e) {wnd_ajax_submit(this);});
+	}
+</script>';
 		$submit_script = $this->enable_captcha ? $captcha->render_submit_form_script() : $submit_script;
 
 		// 构造完整脚本

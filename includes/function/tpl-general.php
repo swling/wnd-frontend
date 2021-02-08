@@ -199,7 +199,7 @@ function wnd_pay_button(WP_post $post, bool $with_paid_content, string $text = '
  */
 function wnd_message($message, $color = '', $is_centered = false) {
 	$class = 'message content wnd-message';
-	$class .= $color ? ' ' . $color : '';
+	$class .= $color ? ' ' . $color : ' is-' . wnd_get_config('primary_color');
 	$class .= $is_centered ? ' has-text-centered' : '';
 
 	return '<div class="' . $class . '"><div class="message-body">' . $message . '</div></div>';
@@ -211,7 +211,7 @@ function wnd_message($message, $color = '', $is_centered = false) {
  */
 function wnd_notification($notification, $add_class = '', $delete = false) {
 	$class = 'notification is-light';
-	$class .= $add_class ? ' ' . $add_class : '';
+	$class .= $add_class ? ' ' . $add_class : ' is-' . wnd_get_config('primary_color');
 
 	$html = '<div class="' . $class . '">';
 	$html .= $delete ? '<button class="delete"></button>' : '';

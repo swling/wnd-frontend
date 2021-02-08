@@ -14,12 +14,23 @@ class Wnd_Order_Form extends Wnd_Module {
 
 	protected $type = 'form';
 
-	protected function structure($args = []): array{
+	// HTML 输出
+	protected static function build($args = []): string {
+		return static::configure_form($args)->build();
+	}
+
+	// 结构输出 JavaScript 渲染
+	protected function structure(): array{
+		return static::configure_form($this->args)->get_structure();
+	}
+
+	// 配置表单
+	protected static function configure_form(array $args): Wnd_Form_WP{
 		$defaults = [
 			'post_id'          => 0,
 			'ajax'             => true,
 			'buy_text'         => __('立即购买'),
-			'add_cart_text'    => __('立即购买'),
+			'add_cart_text'    => __('加入购物车'),
 			'support_quantity' => true,
 		];
 		$args = wp_parse_args($args, $defaults);
@@ -67,7 +78,7 @@ class Wnd_Order_Form extends Wnd_Module {
 			);
 		}
 		$form->set_submit_button($buy_text);
-		return $form->get_structure();
+		return $form;
 	}
 
 	/**
