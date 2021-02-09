@@ -492,18 +492,16 @@ function handle_response(response, route) {
 function wnd_send_code(button) {
     button.classList.add('is-loading');
     let form = button.closest('form');
-    let device = form.querySelector("input[name=\'_user_user_email\']") || form.querySelector("input[name=\'phone\']");
-    let device_value = device.value || "";
+    let device = form.querySelector('input[name=\'_user_user_email\']') || form.querySelector('input[name=\'phone\']');
+    let device_value = device.value || '';
     if (!device_value) {
-        wnd_form_msg(form, wnd.msg.required, "is-warning");
+        button.classList.remove('is-loading');
+        wnd_form_msg(form, wnd.msg.required, 'is-warning');
         return false;
     }
 
     let data = button.dataset;
-    console.log(data);
-
     data.device = device_value;
-
     let formData = new FormData();
     for (var key in data) {
         formData.append(key, data[key]);
@@ -550,10 +548,8 @@ function wnd_send_code(button) {
  *@since 0.9.5
  *常规表单(非 Vue 渲染表单)提交
  */
-document.addEventListener('click', function(e) {
-    if ('button' == e.target.getAttribute('type')) {
-        // e.preventDefault();
-        // wnd_ajax_submit(e.target);
-        // console.log(e.target);
-    }
-});
+// document.addEventListener('click', function(e) {
+//     if ('button' == e.target.getAttribute('type')) {
+//         wnd_ajax_submit(e.target);
+//     }
+// });

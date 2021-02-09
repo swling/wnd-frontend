@@ -534,20 +534,22 @@ class Wnd_Form_WP extends Wnd_Form {
 		// 短信、邮件
 		$send_code_script = '
 <script>
-	var button = document.querySelector(".send-code");
-	if(button){
-		button.addEventListener("click", function(e) {wnd_send_code(this);});
-	}
+document.addEventListener("click", function(e) {
+    if (e.target.getAttribute("class").includes("send-code")) {
+       wnd_send_code(e.target);
+    }
+});
 </script>';
 		$send_code_script = $this->enable_verification_captcha ? $captcha->render_send_code_script() : $send_code_script;
 
 		// 表单提交
 		$submit_script = '
 <script>
-	var button = document.querySelector("button.ajax-submit, [type=submit]");
-	if(button){
-		button.addEventListener("click", function(e) {wnd_ajax_submit(this);});
-	}
+document.addEventListener("click", function(e) {
+    if ("submit" == e.target.getAttribute("type")) {
+        wnd_ajax_submit(e.target);
+    }
+});
 </script>';
 		$submit_script = $this->enable_captcha ? $captcha->render_submit_form_script() : $submit_script;
 

@@ -83,10 +83,9 @@ function wnd_send_code_via_captcha(_this) {
 }
 
 // 绑定点击事件
-var send_button = document.querySelector(".send-code");
-if (send_button) {
-    send_button.addEventListener("click", function(e) {
-        var _this = this;
+document.addEventListener("click", function(e) {
+    if (e.target.getAttribute("class").includes("send-code")) {
+        var _this = e.target;
         var form = _this.closest("form");
         var device = form.querySelector("input[name=\'_user_user_email\']") || form.querySelector("input[name=\'phone\']");
         var device_value = device.value || "";
@@ -103,8 +102,8 @@ if (send_button) {
         } else {
             wnd_send_code_via_captcha(_this);
         }
-    });
-}
+    }
+});
 		</script>';
 		return $script;
 	}
@@ -139,10 +138,9 @@ function wnd_submit_via_captcha(_this) {
 }
 
 // 绑定点击事件
-var submit_button = document.querySelector("button.ajax-submit");
-if (submit_button) {
-    submit_button.addEventListener("click", function(e) {
-        var _this = this;
+document.addEventListener("click", function(e) {
+    if ("submit" == e.target.getAttribute("type")) {
+        var _this = e.target;
         _this.classList.add("is-loading");
         if (typeof TencentCaptcha == "undefined") {
             wnd_load_script("https://ssl.captcha.qq.com/TCaptcha.js", function() {
@@ -151,8 +149,8 @@ if (submit_button) {
         } else {
             wnd_submit_via_captcha(_this);
         }
-    });
-}
+    }
+});
 		</script>';
 		return $script;
 	}
