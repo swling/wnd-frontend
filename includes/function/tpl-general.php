@@ -197,7 +197,11 @@ function wnd_pay_button(WP_post $post, bool $with_paid_content, string $text = '
  *构建消息
  *@since 2020.03.22
  */
-function wnd_message($message, $color = '', $is_centered = false) {
+function wnd_message($message, $color = '', $is_centered = false): string {
+	if (!$message) {
+		return '';
+	}
+
 	$class = 'message content wnd-message';
 	$class .= $color ? ' ' . $color : ' is-' . wnd_get_config('primary_color');
 	$class .= $is_centered ? ' has-text-centered' : '';
@@ -209,7 +213,11 @@ function wnd_message($message, $color = '', $is_centered = false) {
  *构建系统通知
  *@since 2020.04.23
  */
-function wnd_notification($notification, $add_class = '', $delete = false) {
+function wnd_notification($notification, $add_class = '', $delete = false): string {
+	if (!$notification) {
+		return '';
+	}
+
 	$class = 'notification is-light';
 	$class .= $add_class ? ' ' . $add_class : ' is-' . wnd_get_config('primary_color');
 
