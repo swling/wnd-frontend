@@ -9,7 +9,7 @@ namespace Wnd\Module;
  */
 class Wnd_User_Center extends Wnd_Module_Html {
 
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		$ajax_type         = $_GET['ajax_type'] ?? '';
 		$enable_sms        = (1 == wnd_get_config('enable_sms')) ? true : false;
 		$disable_email_reg = (1 == wnd_get_config('disable_email_reg')) ? true : false;

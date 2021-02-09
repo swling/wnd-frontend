@@ -8,7 +8,7 @@ namespace Wnd\Module;
  */
 class Wnd_User_Overview extends Wnd_Module_Html {
 
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		$user_id = get_current_user_id();
 		$html    = '';
 

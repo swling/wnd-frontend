@@ -107,7 +107,7 @@ abstract class Wnd_Module {
 	 *@param $force 是否强制传参，忽略 GET 请求参数
 	 *@return string HTML 字符串
 	 */
-	public static function render($args = [], $force = false): string{
+	public static function render(array $args = [], bool $force = false): string{
 		/**
 		 *默认 $_GET 参数优先，若设置 $force = true 则忽略 $_GET
 		 */
@@ -119,7 +119,7 @@ abstract class Wnd_Module {
 
 	/**
 	 *HTML 模块构建常规字符串数据
-	 * - 此处不添加 $args 参数，因为如果父类添加，则所有子类必须添加会导致大量无需传参的 Module 鼻血设置无需传参
+	 * - 此处不添加 $args 参数，因为如果父类添加，则所有子类必须添加会导致大量无需传参的 Module 必须设置无效传参
 	 * - 接受传参子类可自行添加带默认值的传参 $args = [] 即可
 	 * - 如果设置传参，则必须设置参数的默认值，否则无法匹配本类方法一致性
 	 *

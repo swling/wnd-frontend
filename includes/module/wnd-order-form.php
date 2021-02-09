@@ -10,10 +10,10 @@ use Wnd\View\Wnd_Form_WP;
  *
  *商品购买表单
  */
-class Wnd_Order_Form extends Wnd_Module_From {
+class Wnd_Order_Form extends Wnd_Module_Form {
 
 	// 配置表单
-	protected static function configure_form(array $args): object{
+	protected static function configure_form(array $args = []): object{
 		$defaults = [
 			'post_id'          => 0,
 			'ajax'             => true,

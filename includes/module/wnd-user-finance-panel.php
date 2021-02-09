@@ -8,7 +8,7 @@ use Wnd\View\Wnd_Filter;
  */
 class Wnd_User_Finance_Panel extends Wnd_Module_Html {
 
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		$user_id                = get_current_user_id();
 		$args['posts_per_page'] = $args['posts_per_page'] ?? get_option('posts_per_page');
 

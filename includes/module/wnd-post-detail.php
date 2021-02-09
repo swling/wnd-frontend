@@ -8,7 +8,7 @@ namespace Wnd\Module;
  */
 class Wnd_Post_Detail extends Wnd_Module_Html {
 
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		/**
 		 *订单基本信息 + 产品属性等参数
 		 *移除表单签名参数

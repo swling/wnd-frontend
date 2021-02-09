@@ -11,7 +11,7 @@ use Wnd\Module\Wnd_Search_Form;
  */
 class Wnd_Menus_Side extends Wnd_Module_Html {
 
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		$html = '<aside id="menus-side" style="position: fixed;top: 0;height: 100%;z-index: 32;background: #FFF;max-width:100%;min-width:200px;overflow:auto;">';
 
 		$html .= '<div class="columns is-marginless is-mobile">';

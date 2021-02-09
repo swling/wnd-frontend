@@ -9,7 +9,7 @@ use Wnd\View\Wnd_Form_Post;
  */
 class Wnd_Post_Form_Post extends Wnd_Module_Form {
 
-	protected static function configure_form($args = []): object{
+	protected static function configure_form(array $args = []): object{
 		$defaults = [
 			'post_id'     => 0,
 			'post_parent' => 0,

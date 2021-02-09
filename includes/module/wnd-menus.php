@@ -8,7 +8,7 @@ namespace Wnd\Module;
  */
 class Wnd_Menus extends Wnd_Module_Html {
 
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		$defaults = [
 			'inside'               => false,
 			'expand_default_menus' => true,

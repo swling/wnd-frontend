@@ -8,7 +8,7 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Reset_Password_Form extends Wnd_Module_Form {
 
-	protected static function configure_form($args = []): object{
+	protected static function configure_form(array $args = []): object{
 		$type           = $args['type'] ?? 'email';
 		$enable_captcha = !is_user_logged_in();
 

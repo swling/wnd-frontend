@@ -15,7 +15,7 @@ use Wnd\View\Wnd_Form_WP;
 class Wnd_Payment_Form extends Wnd_Module_Form {
 
 	// 配置表单
-	protected static function configure_form(array $args): Wnd_Form_WP{
+	protected static function configure_form(array $args = []): Wnd_Form_WP{
 		/**
 		 *订单基本信息 + 产品属性等参数
 		 *

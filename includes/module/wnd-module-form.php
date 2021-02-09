@@ -10,7 +10,7 @@ abstract class Wnd_Module_Form extends Wnd_Module {
 	protected $type = 'form';
 
 	// HTML 输出
-	protected static function build($args = []): string {
+	protected static function build(array $args = []): string {
 		return static::configure_form($args)->build();
 	}
 
@@ -19,6 +19,9 @@ abstract class Wnd_Module_Form extends Wnd_Module {
 		return static::configure_form($this->args)->get_structure();
 	}
 
-	// 配置表单：返回对象为表单类实例
+	/**
+	 *配置表单：返回对象为表单类实例
+	 * - 此处不添加 $args 参数，因为如果父类添加，则所有子类必须添加会导致大量无需传参的 Module 必须设置无效传参
+	 */
 	abstract protected static function configure_form(): object;
 }
