@@ -74,10 +74,8 @@ function wnd_send_code_via_captcha(_this) {
                 return false;
             }
 
-            _this.dataset.
-            ' . static::$captcha_name . ' = res.ticket;
-            _this.dataset.
-            ' . static::$captcha_nonce_name . ' = res.randstr;
+            _this.dataset.' . static::$captcha_name . ' = res.ticket;
+            _this.dataset.' . static::$captcha_nonce_name . ' = res.randstr;
             wnd_send_code(_this);
         }
     )
