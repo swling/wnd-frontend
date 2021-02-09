@@ -61,6 +61,7 @@ class Wnd_Menus extends Wnd_Module_Html {
 
 		$html .= '<li><a href="' . static::get_front_page_url() . '#">概览</a></li>';
 		$html .= '<li class="wnd_admin_finance_panel"><a href="' . static::get_front_page_url() . '#wnd_admin_finance_panel">统计</a></li>';
+		$html .= '<li class="wnd_admin_posts_panel"><a href="' . static::get_front_page_url() . '#wnd_admin_posts_panel">审核</a></li>';
 		$html .= '<li class="wnd_user_posts_panel"><a href="' . static::get_front_page_url() . '#wnd_user_posts_panel">内容</a></li>';
 		$html .= '<li class="wnd_user_finance_panel"><a href="' . static::get_front_page_url() . '#wnd_user_finance_panel">财务</a></li>';
 		$html .= '<li class="wnd_user_list_table"><a href="' . static::get_front_page_url() . '#wnd_user_list_table">用户</a></li>';

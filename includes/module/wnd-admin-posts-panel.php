@@ -18,6 +18,6 @@ class Wnd_Admin_Posts_Panel extends Wnd_Module_Filter {
 		$filter->set_posts_template('wnd_list_table');
 		$filter->set_posts_per_page($this->args['posts_per_page']);
 		$filter->query();
-		return $filter->filter->get_filter();
+		return $filter->get_filter();
 	}
 }

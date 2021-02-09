@@ -16,11 +16,9 @@ use Wnd\Module\Wnd_User_Center;
  * - 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
  * - 默认为用户中心：注册、登录、账户管理，内容管理，财务管理等
  */
-class Wnd_User_Page extends Wnd_Module {
+class Wnd_User_Page extends Wnd_Module_Html {
 
-	protected $type = 'html';
-
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		$defaults = [
 			'module'    => '',
 			'action'    => '',
@@ -44,7 +42,7 @@ class Wnd_User_Page extends Wnd_Module {
 		}
 
 		$module = static::handle_module($args) ?: '';
-		$module = $module ? ('<div id="ajax-module" class="content box">' . $module . '</div>') : '';
+		$module = $module ? ('<div class="content box">' . $module . '</div>') : '';
 
 		get_header();
 		echo '<main id="user-page-container" class="column">';
@@ -69,7 +67,8 @@ class Wnd_User_Page extends Wnd_Module {
 		extract($args);
 
 		if ($module) {
-			return '<script>wnd_ajax_embed("#ajax-module","' . $module . '",' . json_encode($_GET) . ')</script>';
+			$class = \Wnd\Controller\Wnd_Controller::parse_class($module, 'Module');
+			return $class::render();
 		}
 
 		// 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
@@ -141,14 +140,14 @@ class Wnd_User_Page extends Wnd_Module {
 
 		$html = '<div id="user-page" class="columns">';
 		$html .= '<div class="column is-narrow is-hidden-mobile"><div class="box">' . Wnd_Menus::render() . '</div></div>';
-		$html .= '<div class="column"><div class="ajax-container box"></div></div>';
+		$html .= '<div class="column"><div id="ajax-module" class="box"></div></div>';
 		$html .= '</div>';
 		$html .= '
 <script type="text/javascript">
 	function user_center_hash() {
 		var hash = location.hash;
 		if (!hash) {
-			wnd_ajax_embed("#user-page .ajax-container", "' . $user_page_default_module . '");
+			wnd_ajax_embed("#ajax-module", "' . $user_page_default_module . '");
 			return;
 		}
 
@@ -164,7 +163,7 @@ class Wnd_User_Page extends Wnd_Module {
 		// 收起其他一级菜单的子菜单
 		// a.parents("li").siblings().find("ul").slideUp("fast");
 
-		wnd_ajax_embed("#user-page .ajax-container", element);
+		wnd_ajax_embed("#ajax-module", element);
 	}
 
 	// 用户中心Tabs
