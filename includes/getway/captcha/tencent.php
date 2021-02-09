@@ -65,45 +65,48 @@ class Tencent extends Wnd_Captcha {
 	public function render_send_code_script(): string{
 		$script = '
 		<script>
-		function wnd_send_code_via_captcha(_this){
-			var captcha = new TencentCaptcha(
-				"' . $this->appid . '",
-				function(res) {
-					if(0 !== res.ret){
-						_this.removeClass("is-loading");
-						return false;
-					}
+function wnd_send_code_via_captcha(_this) {
+    var captcha = new TencentCaptcha(
+        "' . $this->appid . '",
+        function(res) {
+            if (0 !== res.ret) {
+                _this.classList.remove("is-loading");
+                return false;
+            }
 
-					_this.data("' . static::$captcha_name . '", res.ticket);
-					_this.data("' . static::$captcha_nonce_name . '", res.randstr);
-					wnd_send_code(_this);
-				}
-			)
-			captcha.show();
-		}
+            _this.dataset.
+            ' . static::$captcha_name . ' = res.ticket;
+            _this.dataset.
+            ' . static::$captcha_nonce_name . ' = res.randstr;
+            wnd_send_code(_this);
+        }
+    )
+    captcha.show();
+}
 
-		// 绑定点击事件
-		$(function() {
-			$(".send-code").off("click").on("click", function() {
-				var _this = $(this);
-				var form_id = _this.closest("form").attr("id");
-				var email = _this.closest(".validate-field-wrap").find("input[name=\'_user_user_email\']").val();
-				var phone = _this.closest(".validate-field-wrap").find("input[name=\'phone\']").val();
-				if (!email && !phone) {
-					wnd_ajax_msg(wnd.msg.required, "is-warning", "#" + form_id);
-					return false;
-				}
+// 绑定点击事件
+var send_button = document.querySelector(".send-code");
+if (send_button) {
+    send_button.addEventListener("click", function(e) {
+        var _this = this;
+        var form = _this.closest("form");
+        var device = form.querySelector("input[name=\'_user_user_email\']") || form.querySelector("input[name=\'phone\']");
+        var device_value = device.value || "";
+        if (!device_value) {
+            wnd_form_msg(form, wnd.msg.required, "is-warning");
+            return false;
+        }
 
-				_this.addClass("is-loading");
-				if (typeof TencentCaptcha == "undefined") {
-					$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
-						wnd_send_code_via_captcha(_this);
-					});
-				}else{
-					wnd_send_code_via_captcha(_this);
-				}
-			});
-		});
+        _this.classList.add("is-loading");
+        if (typeof TencentCaptcha == "undefined") {
+            wnd_load_script("https://ssl.captcha.qq.com/TCaptcha.js", function() {
+                wnd_send_code_via_captcha(_this);
+            });
+        } else {
+            wnd_send_code_via_captcha(_this);
+        }
+    });
+}
 		</script>';
 		return $script;
 	}
@@ -118,48 +121,40 @@ class Tencent extends Wnd_Captcha {
 	public function render_submit_form_script(): string{
 		$script = '
 		<script>
-		function wnd_submit_form_via_captcha(_this){
-			var form_id = _this.closest("form").attr("id");
-			var ajax_submit = (-1 != _this.prop("class").indexOf("ajax-submit"));
+function wnd_submit_via_captcha(_this) {
+    var captcha = new TencentCaptcha(
+        "' . $this->appid . '",
+        function(res) {
+            if (0 !== res.ret) {
+                _this.classList.remove("is-loading");
+                return false;
+            }
 
-			var captcha = new TencentCaptcha(
-				"' . $this->appid . '",
-				function(res) {
-					if(0 !== res.ret){
-						_this.removeClass("is-loading");
-						return false;
-					}
+            let form = _this.closest("form");
+            form.querySelector("[name=\'' . static::$captcha_name . '\']").value = res.ticket;
+            form.querySelector("[name=\'' . static::$captcha_nonce_name . '\']").value = res.randstr;
 
-					$("#" + form_id + " [name=\'' . static::$captcha_name . '\']").val(res.ticket);
-					$("#" + form_id + " [name=\'' . static::$captcha_nonce_name . '\']").val(res.randstr);
+            wnd_ajax_submit(_this);
+        }
+    )
+    captcha.show();
+}
 
-					if (ajax_submit){
-						wnd_ajax_submit(form_id);
-					} else {
-						$("#" + form_id).submit();
-					}
-				}
-			);
-
-			captcha.show();
-		}
-
-		// 绑定点击事件
-		$(function() {
-			$("form [type=\'submit\'].captcha, form#commentform [type=\'submit\']").off("click").on("click", function() {
-				var _this = $(this);
-				_this.addClass("is-loading");
-				if ("undefined" == typeof TencentCaptcha) {
-					$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
-						wnd_submit_form_via_captcha(_this);
-					});
-				}else{
-					wnd_submit_form_via_captcha(_this);
-				}
-
-				return false;
-			});
-		});
+// 绑定点击事件
+var submit_button = document.querySelector("button.ajax-submit");
+if (submit_button) {
+    submit_button.addEventListener("click", function(e) {
+        var _this = this;
+        _this.classList.add("is-loading");
+        if (typeof TencentCaptcha == "undefined") {
+            wnd_load_script("https://ssl.captcha.qq.com/TCaptcha.js", function() {
+                wnd_submit_via_captcha(_this);
+            });
+        } else {
+            wnd_submit_via_captcha(_this);
+        }
+    });
+}
 		</script>';
 		return $script;
 	}

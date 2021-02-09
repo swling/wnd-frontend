@@ -302,7 +302,7 @@ function _wnd_render_form(container, form_json) {
             '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
             '<div v-if="' + field + '.addon_left" class="control" v-html="' + field + '.addon_left"></div>' +
             '<div :class="get_control_class(' + field + ')">' +
-            '<input v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.value" @change="change(' + field + ')"/>' +
+            '<input v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.value" @change="change(' + field + ')" @keyup.enter="submit"/>' +
             '<span v-if="' + field + '.icon_left" class="icon is-left"  v-html="' + field + '.icon_left"></span>' +
             '<span v-if="' + field + '.icon_right"  class="icon is-right" v-html="' + field + '.icon_right"></span>' +
             '</div>' +

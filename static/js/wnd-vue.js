@@ -25,9 +25,6 @@ axios.interceptors.request.use(function(config) {
     config.headers['X-WP-Nonce'] = wnd.rest_nonce;
     config.headers['X-Requested-With'] = 'XMLHttpRequest';
     return config;
-}, function(error) {
-    // Do something with request error
-    return Promise.reject(error);
 });
 
 //判断是否为移动端
@@ -63,10 +60,29 @@ function wnd_remove(el) {
     removed === self; // true	
 }
 
-// 嵌入 HTML
-function wnd_inner_html(el, html) {
-    var self = document.querySelector(el);
-    self.innerHTML = html;
+/**
+ *插入 HTML  支持运行 JavaScript
+ * */
+function wnd_inner_html(container, html) {
+    let el = document.querySelector(container);
+    el.innerHTML = html;
+    const scripts = el.querySelectorAll('script');
+    for (let script of scripts) {
+        runScript(script);
+    }
+
+    function runScript(script) {
+        // 直接 document.head.appendChild(script) 是不会生效的，需要重新创建一个
+        const newScript = document.createElement('script');
+        // 获取 inline script
+        newScript.innerHTML = script.innerHTML;
+        // 存在 src 属性的话
+        const src = script.getAttribute('src');
+        if (src) newScript.setAttribute('src', src);
+
+        document.body.appendChild(newScript);
+        document.body.removeChild(newScript);
+    }
 }
 
 // 追加
@@ -83,8 +99,30 @@ function wnd_append(el, html) {
     }
 }
 
+/**
+ *@since 0.9.25 动态加载脚本后执行回调函数
+ * 
+ */
+function wnd_load_script(url, callback) {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = url;
+    document.head.appendChild(script);
+    script.onload = callback;
+}
+
 // 指定容器设置加载中效果
 function wnd_loading(el, remove = false) {
+    var container = document.querySelector(el);
+    if (!remove) {
+        container.style.position = "relative";
+        wnd_append(el, '<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:999;background:#FFF;opacity:0.5">' + loading_el + '</div>');
+    } else {
+        wnd_remove(el + ' .wnd-loading');
+        container.style.position = "initial";
+    }
+    return;
+
     var el = document.querySelector(el);
     if (el && !remove) {
         el.innerHTML = loading_el;
@@ -173,9 +211,6 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
             if (callback) {
                 window[callback](response);
             }
-        })
-        .catch(function(error) { // 请求失败处理
-            console.log(error);
         });
 }
 
@@ -246,9 +281,6 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
             if (callback) {
                 window[callback](response);
             }
-        })
-        .catch(function(error) { // 请求失败处理
-            wnd_alert_modal(wnd.msg.system_error);
         });
 }
 
@@ -265,7 +297,7 @@ function wnd_alert_modal(content, is_gallery = false) {
     }
     modal_entry.classList.add('box');
     // 对于复杂的输入，不能直接使用 innerHTML
-    wnd_append('#modal .modal-entry', content);
+    wnd_inner_html('#modal .modal-entry', content);
 }
 
 // 直接弹出消息
@@ -344,8 +376,15 @@ function wnd_ajax_submit(button) {
         .then(function(response) {
             button.classList.remove('is-loading');
             form_info = handle_response(response.data, route);
-            console.log(form_info);
+            // console.log(form_info);
+            wnd_form_msg(form, form_info.msg, form_info.msg_class);
         });
+}
+
+function wnd_form_msg(form, msg, msg_class) {
+    let el = form.querySelector('.form-message');
+    el.classList.add('field');
+    el.innerHTML = '<div class="message ' + msg_class + '"><div class="message-body">' + msg + '</div></div>';
 }
 
 // 统一处理表单响应
@@ -403,21 +442,21 @@ function handle_response(response, route) {
             }
 
             // 延迟刷新
-            var timer = null;
-            var time = response.data.waiting;
+            // var timer = null;
+            // var time = response.data.waiting;
 
-            submit_button.removeClass("is-loading");
-            submit_button.text(wnd.msg.waiting + " " + time);
-            timer = setInterval(function() {
-                if (time <= 0) {
-                    clearInterval(timer);
-                    wnd_reset_modal();
-                    window.location.reload();
-                } else {
-                    submit_button.text(wnd.msg.waiting + " " + time);
-                    time--;
-                }
-            }, 1000);
+            // submit_button.removeClass("is-loading");
+            // submit_button.text(wnd.msg.waiting + " " + time);
+            // timer = setInterval(function() {
+            //     if (time <= 0) {
+            //         clearInterval(timer);
+            //         wnd_reset_modal();
+            //         window.location.reload();
+            //     } else {
+            //         submit_button.text(wnd.msg.waiting + " " + time);
+            //         time--;
+            //     }
+            // }, 1000);
             break;
 
             // 弹出信息并自动消失
@@ -445,17 +484,76 @@ function handle_response(response, route) {
     return form_info;
 }
 
+
+/**
+ *@since 2019.02.09 发送手机或邮箱验证码
+ *@param object button jquery object
+ */
+function wnd_send_code(button) {
+    button.classList.add('is-loading');
+    let form = button.closest('form');
+    let device = form.querySelector("input[name=\'_user_user_email\']") || form.querySelector("input[name=\'phone\']");
+    let device_value = device.value || "";
+    if (!device_value) {
+        wnd_form_msg(form, wnd.msg.required, "is-warning");
+        return false;
+    }
+
+    let data = button.dataset;
+    console.log(data);
+
+    data.device = device_value;
+
+    let formData = new FormData();
+    for (var key in data) {
+        formData.append(key, data[key]);
+    }
+    axios({
+        url: wnd_action_api + "/" + data.action + lang_query,
+        method: 'POST',
+        data: formData,
+    }).then(function(response) {
+        if (response.data.status <= 0) {
+            var style = "is-danger";
+        } else {
+            var style = "is-success";
+            button.disabled = true;
+            button.textContent = wnd.msg.send_successfully;
+
+            // 定时器
+            var time = data.interval;
+            var timer = null;
+            timer = setInterval(function() {
+                if (time <= 1) {
+                    clearInterval(timer);
+                    button.textContent = wnd.msg.try_again;
+                    button.disabled = false;
+                } else {
+                    time--;
+                    button.textContent = time;
+                }
+            }, 1000);
+        }
+
+        wnd_form_msg(form, response.data.msg, style);
+        button.classList.remove('is-loading');
+    });
+};
+
 /**
  *@since 0.9.25
  *文档加载完成后执行
  */
-window.onload = function() {
-    /**
-     *@since 0.9.5
-     *常规表单(非 Vue 渲染表单)提交
-     */
-    // document.querySelector('.ajax-submit').addEventListener('click', function(e) {
+// window.onload = function() {}
 
-    // });
-
-}
+/**
+ *@since 0.9.5
+ *常规表单(非 Vue 渲染表单)提交
+ */
+document.addEventListener('click', function(e) {
+    if ('button' == e.target.getAttribute('type')) {
+        // e.preventDefault();
+        // wnd_ajax_submit(e.target);
+        // console.log(e.target);
+    }
+});

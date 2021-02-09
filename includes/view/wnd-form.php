@@ -328,7 +328,7 @@ class Wnd_Form {
 			$html .= '</div>';
 		}
 
-		$this->html .= '<div class="form-message">' . $this->message . '</div>';
+		$html .= '<div class="form-message">' . $this->message . '</div>';
 
 		$this->html .= $html;
 	}
