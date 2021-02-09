@@ -19,6 +19,13 @@ use Exception;
  */
 abstract class Wnd_Module {
 
+	/**
+	 *@since 0.9.25
+	 *定义模块类型，供前端适配不同方法渲染
+	 *正是因为该属性的多样性不得设置为静态属性（可能引发难以排除的 bug）
+	 */
+	protected $type = '';
+
 	protected $args = [];
 
 	protected $structure = [];
