@@ -7,9 +7,7 @@ namespace Wnd\Module;
  *搜索框
  *
  */
-class Wnd_Search_Form extends Wnd_Module {
-
-	protected $type = 'html';
+class Wnd_Search_Form extends Wnd_Module_Html {
 
 	protected static function build(): string{
 		// 色调

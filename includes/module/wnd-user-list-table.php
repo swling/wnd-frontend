@@ -7,9 +7,7 @@ use Wnd\View\Wnd_Filter_User;
  *@since 2020.05.06 封装前端用户列表表格
  *@param $number 每页列表数目
  */
-class Wnd_User_List_Table extends Wnd_Module_Admin {
-
-	protected $type = 'html';
+class Wnd_User_List_Table extends Wnd_Module_Html {
 
 	protected static function build($args = []): string{
 		$orderby_args = [

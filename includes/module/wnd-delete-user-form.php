@@ -7,11 +7,9 @@ use Wnd\View\Wnd_Form_WP;
 /**
  *@since 2020.04.30 删除账户
  */
-class Wnd_Delete_User_Form extends Wnd_Module_Root {
+class Wnd_Delete_User_Form extends Wnd_Module_Form {
 
-	protected $type = 'form';
-
-	protected function structure($args = []): array{
+	protected static function configure_form($args = []): object {
 		if (!$args['user_id']) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
@@ -33,6 +31,6 @@ class Wnd_Delete_User_Form extends Wnd_Module_Root {
 		$form->add_hidden('user_id', $args['user_id']);
 		$form->set_route('action', 'wnd_delete_user');
 		$form->set_submit_button(__('确认删除', 'wnd'));
-		return $form->get_structure();
+		return $form;
 	}
 }

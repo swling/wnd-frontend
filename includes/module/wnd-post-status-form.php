@@ -8,11 +8,9 @@ use Wnd\View\Wnd_Form_WP;
  *@since 2019.01.20
  *快速编辑文章状态表单
  */
-class Wnd_Post_Status_Form extends Wnd_Module_User {
+class Wnd_Post_Status_Form extends Wnd_Module_Form {
 
-	protected $type = 'form';
-
-	protected function structure($args = []): array{
+	protected static function configure_form($args = []): object{
 		$post = get_post($args['post_id']);
 		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
@@ -95,6 +93,6 @@ class Wnd_Post_Status_Form extends Wnd_Module_User {
 		$form->set_route('action', 'wnd_update_post_status');
 		$form->add_form_attr('id', 'post-status');
 		$form->set_submit_button(__('提交', 'wnd'));
-		return $form->get_structure();
+		return $form;
 	}
 }

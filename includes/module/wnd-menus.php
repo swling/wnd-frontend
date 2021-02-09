@@ -6,9 +6,7 @@ namespace Wnd\Module;
  *
  *插件管理菜单
  */
-class Wnd_Menus extends Wnd_Module {
-
-	protected $type = 'html';
+class Wnd_Menus extends Wnd_Module_Html {
 
 	protected static function build($args = []): string{
 		$defaults = [

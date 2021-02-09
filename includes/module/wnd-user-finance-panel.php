@@ -6,9 +6,7 @@ use Wnd\View\Wnd_Filter;
 /**
  *@since 2019.02.18 封装用户财务中心
  */
-class Wnd_User_Finance_Panel extends Wnd_Module_User {
-
-	protected $type = 'html';
+class Wnd_User_Finance_Panel extends Wnd_Module_Html {
 
 	protected static function build($args = []): string{
 		$user_id                = get_current_user_id();

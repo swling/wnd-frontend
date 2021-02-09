@@ -12,19 +12,7 @@ use Wnd\View\Wnd_Form_WP;
  *在线支付订单表单
  *匿名支付订单默认启用人机验证
  */
-class Wnd_Payment_Form extends Wnd_Module {
-
-	protected $type = 'form';
-
-	// HTML 输出
-	protected static function build($args = []): string {
-		return static::configure_form($args)->build();
-	}
-
-	// 结构输出 JavaScript 渲染
-	protected function structure(): array{
-		return static::configure_form($this->args)->get_structure();
-	}
+class Wnd_Payment_Form extends Wnd_Module_Form {
 
 	// 配置表单
 	protected static function configure_form(array $args): Wnd_Form_WP{

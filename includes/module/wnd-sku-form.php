@@ -10,11 +10,9 @@ use Wnd\View\Wnd_Form_WP;
  *
  *产品属性设置表单
  */
-class Wnd_SKU_Form extends Wnd_Module {
+class Wnd_SKU_Form extends Wnd_Module_From {
 
-	protected $type = 'form';
-
-	protected function structure($args = []): array{
+	protected static function configure_form($args = []): object{
 		$post_id = $args['post_id'] ?? 0;
 		if (!$post_id) {
 			throw new Exception(__('ID无效', 'wnd'));
@@ -86,6 +84,6 @@ class Wnd_SKU_Form extends Wnd_Module {
 		$form->set_route('action', 'wnd_set_sku');
 		$form->set_submit_button(__('保存 SKU', 'wnd'));
 
-		return $form->get_structure();
+		return $form;
 	}
 }

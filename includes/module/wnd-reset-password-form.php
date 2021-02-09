@@ -6,11 +6,9 @@ use Wnd\View\Wnd_Form_User;
 /**
  *@since 2019.01.28 找回密码
  */
-class Wnd_Reset_Password_Form extends Wnd_Module {
+class Wnd_Reset_Password_Form extends Wnd_Module_Form {
 
-	protected $type = 'form';
-
-	protected function structure($args = []): array{
+	protected static function configure_form($args = []): object{
 		$type           = $args['type'] ?? 'email';
 		$enable_captcha = !is_user_logged_in();
 
@@ -28,6 +26,6 @@ class Wnd_Reset_Password_Form extends Wnd_Module {
 		$form->set_route('action', 'wnd_reset_password');
 		$form->set_submit_button(__('重置密码', 'wnd'));
 		$form->set_filter(__CLASS__);
-		return $form->get_structure();
+		return $form;
 	}
 }

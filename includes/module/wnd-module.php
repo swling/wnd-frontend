@@ -12,19 +12,12 @@ use Exception;
  * - HTML 模块可通过 static::render() 直接静态访问
  *
  * 注意：
- * - HTML 模块必须实现方法： static::build():string， 无需实现 $this->structure():array
- * - 非 HTML 模块必须实现方法： $this->structure():array，可选择性实现 static::build():string
+ * - HTML 模块必须实现方法 static::build():string， 抽象方法 $this->structure():array 直接返回空数组
+ * - 非 HTML 模块必须实现方法 $this->structure():array，抽象方法 static::build():string 可输出 HTML 字符串，或返回空值
  * - 未达到上述要求的模块定义为无效模块
  *
  */
 abstract class Wnd_Module {
-
-	/**
-	 *@since 0.9.25
-	 *定义模块类型，供前端适配不同方法渲染
-	 *正是因为该属性的多样性不得设置为静态属性（可能引发难以排除的 bug）
-	 */
-	protected $type = '';
 
 	protected $args = [];
 
@@ -37,6 +30,10 @@ abstract class Wnd_Module {
 	 *@param $force 是否强制传参，忽略 GET 请求参数
 	 */
 	public function __construct(array $args = [], bool $force = false) {
+		/**
+		 *@since 0.9.25
+		 *子类必须定义模块类型，供前端适配不同方法渲染
+		 */
 		if (!$this->type) {
 			throw new Exception(__('未定义 Module 类型', 'wnd'));
 		}
@@ -87,9 +84,7 @@ abstract class Wnd_Module {
 	/**
 	 *非 HTML 模块构建 Array
 	 */
-	protected function structure(): array{
-		return ['status' => 0, 'msg' => __('未定义') . __METHOD__];
-	}
+	abstract protected function structure(): array;
 
 	/**
 	 *是否为 HTML 模块
@@ -123,7 +118,5 @@ abstract class Wnd_Module {
 	 *
 	 *@return string HTML 字符串
 	 */
-	protected static function build(): string {
-		return __('未定义') . __METHOD__;
-	}
+	abstract protected static function build(): string;
 }

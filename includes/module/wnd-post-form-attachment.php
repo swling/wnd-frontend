@@ -31,11 +31,9 @@ use Wnd\View\Wnd_Form_WP;
  *本质上，替换文件，是删除后的新建，是全新的attachment post
  *
  */
-class Wnd_Post_Form_Attachment extends Wnd_Module {
+class Wnd_Post_Form_Attachment extends Wnd_Module_Form {
 
-	protected $type = 'form';
-
-	protected function structure($args = []): array{
+	protected static function configure_form($args = []): object{
 		$defaults = [
 			'attachment_id' => 0,
 			'post_parent'   => 0,
@@ -104,6 +102,6 @@ class Wnd_Post_Form_Attachment extends Wnd_Module {
 		$input_values = array_merge($parent_post_form->get_input_values(), $attachment_post_form->get_input_values());
 		$attachment_post_form->set_input_values($input_values);
 
-		return $attachment_post_form->get_structure();
+		return $attachment_post_form;
 	}
 }

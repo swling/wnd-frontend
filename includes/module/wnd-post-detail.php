@@ -6,9 +6,7 @@ namespace Wnd\Module;
  *Post 详情模块
  *
  */
-class Wnd_Post_Detail extends Wnd_Module {
-
-	protected $type = 'html';
+class Wnd_Post_Detail extends Wnd_Module_Html {
 
 	protected static function build($args = []): string{
 		/**

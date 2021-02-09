@@ -7,11 +7,9 @@ use Wnd\View\Wnd_Form_User;
 /**
  *@since 2019.01.23 用户更新账户表单
  */
-class Wnd_Account_Form extends Wnd_Module_User {
+class Wnd_Account_Form extends Wnd_Module_Form {
 
-	protected $type = 'form';
-
-	protected function structure(): array{
+	protected static function configure_form(): object{
 		$user       = wp_get_current_user();
 		$enable_sms = wnd_get_config('enable_sms');
 
@@ -52,6 +50,6 @@ class Wnd_Account_Form extends Wnd_Module_User {
 
 		$form->add_html($html);
 
-		return $form->get_structure();
+		return $form;
 	}
 }

@@ -7,11 +7,9 @@ use Wnd\View\Wnd_Form_WP;
 /**
  *@since 2020.04.30 账户状态操作表单
  */
-class Wnd_Account_Status_Form extends Wnd_Module_Admin {
+class Wnd_Account_Status_Form extends Wnd_Module_Form {
 
-	protected $type = 'form';
-
-	protected function structure($args = []): array{
+	protected static function configure_form($args = []): object {
 		if (!$args['user_id']) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
@@ -39,6 +37,6 @@ class Wnd_Account_Status_Form extends Wnd_Module_Admin {
 		$form->add_hidden('user_id', $args['user_id']);
 		$form->set_route('action', 'wnd_update_account_status');
 		$form->set_submit_button(__('确认', 'wnd'));
-		return $form->get_structure();
+		return $form;
 	}
 }

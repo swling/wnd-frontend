@@ -9,11 +9,9 @@ use Wnd\View\Wnd_Form_Post;
  *
  *Page 编辑表单
  */
-class Wnd_Post_Form_Page extends Wnd_Module {
+class Wnd_Post_Form_Page extends Wnd_Module_Form {
 
-	protected $type = 'form';
-
-	protected function structure($args = []): array{
+	protected static function configure_form($args = []): object{
 		$defaults = [
 			'post_id'     => 0,
 			'post_parent' => 0,
@@ -65,6 +63,6 @@ class Wnd_Post_Form_Page extends Wnd_Module {
 
 		// 以当前函数名设置filter hook
 		$form->set_filter(__CLASS__);
-		return $form->get_structure();
+		return $form;
 	}
 }

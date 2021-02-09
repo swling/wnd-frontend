@@ -1,16 +1,12 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\Module\Wnd_Module;
-
 /**
  *@since 0.9.2
  *
  *插件默认账户概览
  */
-class Wnd_User_Overview extends Wnd_Module {
-
-	protected $type = 'html';
+class Wnd_User_Overview extends Wnd_Module_Html {
 
 	protected static function build($args = []): string{
 		$user_id = get_current_user_id();

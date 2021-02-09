@@ -9,11 +9,9 @@ use Wnd\View\Wnd_Form_User;
  *@since 0.9.4
  *解除第三方账户绑定（不含手机及邮箱）
  */
-class Wnd_Unbind_Openid_Form extends Wnd_Module_User {
+class Wnd_Unbind_Openid_Form extends Wnd_Module_Form {
 
-	protected $type = 'form';
-
-	protected function structure(): array{
+	protected static function configure_form(): object{
 		// 获取当前用户绑定账户数据
 		$current_user = wp_get_current_user();
 		$wnd_user     = (array) Wnd_User::get_wnd_user($current_user->ID);
@@ -50,6 +48,6 @@ class Wnd_Unbind_Openid_Form extends Wnd_Module_User {
 
 		$form->set_route('action', 'wnd_unbind_openid');
 		$form->set_submit_button(__('解除绑定', 'wnd'));
-		return $form->get_structure();
+		return $form;
 	}
 }

@@ -7,11 +7,9 @@ use Wnd\View\Wnd_Form_User;
  *@since 2019.01.29
  *用户常规资料表单
  */
-class Wnd_Profile_Form extends Wnd_Module_User {
+class Wnd_Profile_Form extends Wnd_Module_Form {
 
-	protected $type = 'form';
-
-	protected function structure(): array{
+	protected static function configure_form(): object{
 		$form = new Wnd_Form_User();
 		// profile表单可能有较为复杂的编辑界面，阻止回车提交
 		$form->add_form_attr('onsubmit', 'return false');
@@ -30,6 +28,6 @@ class Wnd_Profile_Form extends Wnd_Module_User {
 		$form->set_submit_button(__('保存', 'wnd'));
 
 		$form->set_filter(__CLASS__);
-		return $form->get_structure();
+		return $form;
 	}
 }

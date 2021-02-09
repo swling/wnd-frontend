@@ -7,11 +7,9 @@ use Wnd\View\Wnd_Form_WP;
 /**
  *@since 2020.06.09 退款表单
  */
-class Wnd_Refund_Form extends Wnd_Module_Admin {
+class Wnd_Refund_Form extends Wnd_Module_Form {
 
-	protected $type = 'form';
-
-	protected function structure($args = []): array{
+	protected static function configure_form($args = []): object {
 		if (!$args['payment_id']) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
@@ -43,6 +41,6 @@ class Wnd_Refund_Form extends Wnd_Module_Admin {
 		$form->add_hidden('payment_id', $args['payment_id']);
 		$form->set_route('action', 'wnd_refund');
 		$form->set_submit_button(__('确认退款', 'wnd'));
-		return $form->get_structure();
+		return $form;
 	}
 }

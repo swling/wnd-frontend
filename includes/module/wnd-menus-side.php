@@ -2,7 +2,6 @@
 namespace Wnd\Module;
 
 use Wnd\Module\Wnd_Menus;
-use Wnd\Module\Wnd_Module;
 use Wnd\Module\Wnd_Search_Form;
 
 /**
@@ -10,9 +9,7 @@ use Wnd\Module\Wnd_Search_Form;
  *
  *侧边栏菜单
  */
-class Wnd_Menus_Side extends Wnd_Module {
-
-	protected $type = 'html';
+class Wnd_Menus_Side extends Wnd_Module_Html {
 
 	protected static function build($args = []): string{
 		$html = '<aside id="menus-side" style="position: fixed;top: 0;height: 100%;z-index: 32;background: #FFF;max-width:100%;min-width:200px;overflow:auto;">';

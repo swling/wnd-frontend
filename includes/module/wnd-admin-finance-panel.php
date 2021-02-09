@@ -7,9 +7,7 @@ use Wnd\View\Wnd_Filter;
  *@since 2019.03.14 财务统计中心
  *@param $args['posts_per_page'] 每页列表数目
  */
-class Wnd_Admin_Finance_Panel extends Wnd_Module_Root {
-
-	protected $type = 'html';
+class Wnd_Admin_Finance_Panel extends Wnd_Module_Html {
 
 	protected static function build($args = []): string{
 		$args['posts_per_page'] = $args['posts_per_page'] ?? get_option('posts_per_page');

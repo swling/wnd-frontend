@@ -7,11 +7,9 @@ use Wnd\View\Wnd_Form_User;
 /**
  *@since 2019.01.21 注册表单
  */
-class Wnd_Reg_Form extends Wnd_Module {
+class Wnd_Reg_Form extends Wnd_Module_Form {
 
-	protected $type = 'form';
-
-	protected function structure($args = []): array{
+	protected static function configure_form($args = []): object{
 		// 设定默认值
 		$args['type'] = $args['type'] ?? (wnd_get_config('enable_sms') ? 'phone' : 'email');
 
@@ -68,6 +66,6 @@ class Wnd_Reg_Form extends Wnd_Module {
 		$form->set_submit_button(__('注册', 'wnd', 'wnd'));
 		// 以当前函数名设置filter hook
 		$form->set_filter(__CLASS__);
-		return $form->get_structure();
+		return $form;
 	}
 }

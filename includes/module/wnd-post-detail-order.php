@@ -8,9 +8,7 @@ use Wnd\Model\Wnd_SKU;
  *@since 0.9.0
  *获取订单详情（未完善信息）
  */
-class Wnd_Post_Detail_Order extends Wnd_Module {
-
-	protected $type = 'html';
+class Wnd_Post_Detail_Order extends Wnd_Module_Html {
 
 	protected static function build($args = []): string{
 		/**
