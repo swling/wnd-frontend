@@ -355,6 +355,14 @@ function wnd_ajax_submit(button) {
         return false;
     }
 
+    for (var i = 0; i < form.elements.length; i++) {
+        if (form.elements[i].value === '' && form.elements[i].hasAttribute('required')) {
+            form.elements[i].classList.add('is-danger');
+            wnd_form_msg(form, wnd.msg.required, 'is-danger');
+            return false;
+        }
+    }
+
     // Ajax 请求
     let data = new FormData(form);
 
@@ -374,10 +382,11 @@ function wnd_ajax_submit(button) {
             params: params,
         })
         .then(function(response) {
-            button.classList.remove('is-loading');
             form_info = handle_response(response.data, route);
-            // console.log(form_info);
             wnd_form_msg(form, form_info.msg, form_info.msg_class);
+            if (response.data.status != 3 && response.data.status != 4 && response.data.status != 6) {
+                button.classList.remove('is-loading');
+            }
         });
 }
 
