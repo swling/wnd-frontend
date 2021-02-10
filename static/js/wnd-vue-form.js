@@ -208,16 +208,18 @@ function _wnd_render_form(container, form_json) {
 
                 // GET 请求参数
                 var params = {};
-                data.forEach((value, key) => {
-                    if (!Reflect.has(params, key)) {
-                        params[key] = value;
-                        return;
-                    }
-                    if (!Array.isArray(params[key])) {
-                        params[key] = [params[key]];
-                    }
-                    params[key].push(value);
-                });
+                if ('get' == this.form.attrs.method) {
+                    data.forEach((value, key) => {
+                        if (!Reflect.has(params, key)) {
+                            params[key] = value;
+                            return;
+                        }
+                        if (!Array.isArray(params[key])) {
+                            params[key] = [params[key]];
+                        }
+                        params[key].push(value);
+                    });
+                }
 
                 axios({
                         method: this.form.attrs.method,

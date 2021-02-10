@@ -470,7 +470,7 @@ function handle_response(response, route) {
 
             // 弹出信息并自动消失
         case 5:
-            // wnd_alert_msg(response.msg, 1);
+            wnd_alert_msg(response.msg, 1);
             break;
 
             // 下载类
@@ -481,7 +481,7 @@ function handle_response(response, route) {
 
             // 以响应数据替换当前表单
         case 7:
-            // $("#" + form_id).replaceWith(response.data);
+            wnd_alert_modal(response.data);
             break;
 
             // 默认
