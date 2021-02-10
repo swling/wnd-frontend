@@ -24,4 +24,11 @@ abstract class Wnd_Module_Form extends Wnd_Module {
 	 * - 此处不添加 $args 参数，因为如果父类添加，则所有子类必须添加会导致大量无需传参的 Module 必须设置无效传参
 	 */
 	abstract protected static function configure_form(): object;
+
+	/**
+	 *获取表单实例
+	 */
+	public static function get_form_instance(array $args = []): object {
+		return static::configure_form($args);
+	}
 }

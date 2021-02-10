@@ -181,7 +181,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'name'     => '_term_' . $taxonomy . '[]',
 				'options'  => $option_data,
 				'required' => $required,
-				'selected' => $this->current_terms[$taxonomy], //default checked value
+				'selected' => reset($this->current_terms[$taxonomy]), //default checked value
 				'label'    => $label,
 				'class'    => $taxonomy . ($dynamic_sub ? ' dynamic-sub' : false),
 				'data'     => ['child_level' => 0],
@@ -221,7 +221,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'options'  => $option_data,
 				'required' => $required,
 				'disabled' => count($option_data) <= 1, // 当可选项小于等于1，表明当前条件下子类不可用，设置disabled属性
-				'selected' => $this->current_terms[$taxonomy], //default checked value
+				'selected' => reset($this->current_terms[$taxonomy]), //default checked value
 				'label'    => $label,
 				'class'    => 'dynamic-sub ' . 'dynamic-sub-' . $taxonomy . ' ' . $taxonomy . '-child-' . $child_level,
 				'data'     => ['child_level' => $child_level, 'tips' => $tips],
@@ -247,7 +247,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			[
 				'name'     => '_term_' . $taxonomy . '[]',
 				'options'  => $option_data,
-				'checked'  => $this->current_terms[$taxonomy],
+				'checked'  => array_values($this->current_terms[$taxonomy]),
 				'label'    => $label,
 				'class'    => $taxonomy,
 				'required' => false,

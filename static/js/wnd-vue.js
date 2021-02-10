@@ -116,7 +116,7 @@ function wnd_loading(el, remove = false) {
     var container = document.querySelector(el);
     if (!remove) {
         container.style.position = "relative";
-        wnd_append(el, '<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:999;background:#FFF;opacity:0.5">' + loading_el + '</div>');
+        wnd_append(el, '<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:999;background:#FFF;opacity:0.3">' + loading_el + '</div>');
     } else {
         wnd_remove(el + ' .wnd-loading');
         container.style.position = "initial";
@@ -341,7 +341,10 @@ function wnd_reset_modal() {
     }
 }
 
-// 常规HTML表单提交:绑定在submit button
+/**
+ * 常规HTML表单提交:绑定在submit button
+ * 常规表单不具备文件上传能力，主要用户构建前端各类简单表单按钮，以避免在常规页面中 Vue 动态加载造成的页面抖动 
+ * */ 
 function wnd_ajax_submit(button) {
     let form = button.closest('form');
     let route = form.getAttribute('route');

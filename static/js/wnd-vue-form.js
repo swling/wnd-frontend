@@ -257,7 +257,7 @@ function _wnd_render_form(container, form_json) {
         t += get_fields_template(form_json);
 
         // 提交按钮
-        t += '<div class="field is-grouped is-grouped-centered">';
+        t += '<div v-if="form.submit.text" class="field is-grouped is-grouped-centered">';
         t += '<button type="button" v-bind="form.submit.attrs" @click="submit" v-text="form.submit.text"></button>';
         t += '</div>';
 
