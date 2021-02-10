@@ -84,13 +84,16 @@ function _wnd_render_filter(container, filter_json) {
 
 			update_filter: function(key, value) {
 				/**
-				 *切换类型：恢复初始参数
-				 *
-				 *  JavaScript 中，如果直接对数组、对象赋值，会导致关联的双方都同步改变
-				 *  因此需要做JSON.parse(JSON.stringify(html_data)) 处理，以保留初始参数
+				 *	切换类型：恢复初始参数
+				 *  	JavaScript 中，如果直接对数组、对象赋值，会导致关联的双方都同步改变
+				 * 		因此需要做JSON.parse(JSON.stringify(html_data)) 处理，以保留初始参数
+				 * 
+				 * 非翻页筛选条件变更：删除分页参数
 				 */
 				if ('type' == key) {
 					param = JSON.parse(JSON.stringify(init_param));
+				} else if ('paged' != key) {
+					delete param['paged'];
 				}
 
 				/**
@@ -135,8 +138,11 @@ function _wnd_render_filter(container, filter_json) {
 
 	function build_filter_template(filter) {
 		let t = '<div class="filter">';
+		t += '<div v-if="filter.before_html" v-html="filter.before_html"></div>';
 		t += build_tabs_template(filter);
 		t += build_posts_template(filter);
+		t += build_navigation(filter);
+		t += '<div v-if="filter.after_html" v-html="filter.after_html"></div>';
 		t += '</div>'
 		return t;
 	}
@@ -164,8 +170,7 @@ function _wnd_render_filter(container, filter_json) {
 	}
 
 	function build_posts_template(filter) {
-		let t = '';
-		t += '<div class="wnd-filter-posts">';
+		let t = '<div class="wnd-filter-posts">';
 		t += '<ul class="posts-list">'
 		t += '<template v-for="(post,index) in filter.posts">'
 		t += '<li><a :href="post.guid">{{post.post_title}}</a></li>'
@@ -190,6 +195,18 @@ function _wnd_render_filter(container, filter_json) {
 		t += '</div>'
 
 		t += '</div>'
+		return t;
+	}
+
+	function build_navigation(filter) {
+		let t = '<nav class="pagination is-centered">';
+		t += '<ul class="pagination-list">';
+		t += '<li v-if="filter.pagination.paged >= 2"><a class="pagination-previous" @click="update_filter(\'paged\', --filter.pagination.paged)">上一页</a></li>';
+		t += '<li v-if="filter.pagination.post_count >= filter.pagination.posts_per_page">';
+		t += '<a class="pagination-next" @click="update_filter(\'paged\', ++filter.pagination.paged)">下一页</a>';
+		t += '</li>';
+		t += '</ul>';
+		t += '</nav>';
 		return t;
 	}
 

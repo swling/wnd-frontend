@@ -83,9 +83,9 @@ function wnd_send_code_via_captcha(_this) {
 }
 
 // 绑定点击事件
-var sub_btn = document.querySelectorAll("button.send-code");
-if (sub_btn) {
-    sub_btn.forEach(function(btn) {
+var sd_btn = document.querySelectorAll("button.send-code");
+if (sd_btn) {
+    sd_btn.forEach(function(btn) {
         btn.addEventListener("click", function(e) {
             var _this = e.target;
             var form = _this.closest("form");

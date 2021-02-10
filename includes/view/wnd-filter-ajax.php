@@ -14,6 +14,18 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 
 	protected $ajax_tabs = [];
 
+	protected $before_html = '';
+
+	protected $after_html = '';
+
+	public function add_before_html($html) {
+		$this->before_html .= $html;
+	}
+
+	public function add_after_html($html) {
+		$this->after_html .= $html;
+	}
+
 	/**
 	 *构造筛选菜单数据
 	 */
@@ -112,6 +124,8 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	 */
 	public function get_filter(): array{
 		return [
+			'before_html'       => $this->before_html,
+			'after_html'        => $this->after_html,
 			'tabs'              => $this->get_tabs(),
 			'posts'             => $this->get_posts(),
 
@@ -155,7 +169,9 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	 */
 	public function get_results(): array{
 		$structure = $this->get_filter();
+		unset($structure['before_html']);
 		unset($structure['tabs']);
+		unset($structure['after_html']);
 		return $structure;
 	}
 }
