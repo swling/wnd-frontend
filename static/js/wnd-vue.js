@@ -392,9 +392,10 @@ function wnd_ajax_submit(button) {
 }
 
 function wnd_form_msg(form, msg, msg_class) {
-    let el = form.querySelector('.form-message');
-    el.classList.add('field');
-    el.innerHTML = '<div class="message ' + msg_class + '"><div class="message-body">' + msg + '</div></div>';
+    let el = form.querySelector('.message');
+    el.style.display = 'initial';
+    el.classList.add('field', msg_class);
+    el.innerHTML = '<div class="message-body">' + msg + '</div>';
 
     modal_entry = document.querySelector('#modal .modal-entry');
     if (modal_entry) {

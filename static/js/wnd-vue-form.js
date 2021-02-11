@@ -217,7 +217,7 @@ function _wnd_render_form(container, form_json) {
 
                 // GET 请求参数
                 var params = {};
-                if ('get' == this.form.attrs.method) {
+                if ('get' == this.form.attrs.method.toLowerCase()) {
                     data.forEach((value, key) => {
                         if (!Reflect.has(params, key)) {
                             params[key] = value;
