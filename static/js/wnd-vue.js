@@ -116,11 +116,11 @@ function wnd_load_script(url, callback) {
 function wnd_loading(el, remove = false) {
     var container = document.querySelector(el);
     if (!remove) {
-        container.style.position = "relative";
-        wnd_append(el, '<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:999;background:#FFF;opacity:0.3">' + loading_el + '</div>');
+        container.style.position = 'relative';
+        wnd_append(el, '<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:999;background:#FFF;opacity:0.7">' + loading_el + '</div>');
     } else {
         wnd_remove(el + ' .wnd-loading');
-        container.style.position = "initial";
+        container.style.position = 'initial';
     }
     return;
 
@@ -171,18 +171,11 @@ function wnd_render_filter(container, filter_json) {
  *@param 	callback 	回调函数
  **/
 function wnd_ajax_embed(container, module, param = {}, callback = '') {
-    // 添加请求拦截器
-    axios.interceptors.request.use(function(config) {
-        if ('get' == config.method && 'embed' == (config.params.ajax_type || false)) {
-            wnd_loading(container);
-        }
-
-        return config;
-    });
-
     // 初始高度：设置嵌入高度变化动画之用
     container_el = document.querySelector(container);
     funTransitionHeight(container_el);
+
+    wnd_loading(container);
 
     // GET request for remote image in node.js
     axios({
@@ -197,6 +190,8 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
                 console.log(response);
                 return false;
             }
+
+            wnd_loading(container, true);
 
             if (response.data.status <= 0) {
                 wnd_inner_html(container, '<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
@@ -251,13 +246,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 // ajax 从后端请求内容，并以弹窗形式展现
 function wnd_ajax_modal(module, param = {}, callback = '') {
     // 添加请求拦截器
-    axios.interceptors.request.use(function(config) {
-        if ('get' == config.method && 'modal' == (config.params.ajax_type || false)) {
-            wnd_alert_msg('');
-        }
-
-        return config;
-    });
+    wnd_alert_msg('');
 
     axios({
             method: 'get',
