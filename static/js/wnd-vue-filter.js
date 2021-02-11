@@ -13,6 +13,7 @@ function _wnd_render_filter(container, filter_json) {
 
 	// 	return config;
 	// });
+	let parent = document.querySelector(container).parentNode;
 
 	// 数据 合并数据，并进行深拷贝，以保留原生传参 form_json 不随 data 变动
 	let filter = JSON.parse(JSON.stringify(filter_json));
@@ -123,12 +124,18 @@ function _wnd_render_filter(container, filter_json) {
 						// 合并响应数据
 						_this.filter = Object.assign(_this.filter, response.data.data);
 
+						_this.$nextTick(function() {
+							funTransitionHeight(parent, trs_time);
+						});
 					})
 					.catch(function(error) { // 请求失败处理
 						console.log(error);
 					});
 			},
 
+		},
+		mounted() {
+			funTransitionHeight(parent, trs_time);
 		},
 		// 计算
 		computed: {},

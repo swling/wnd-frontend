@@ -8,6 +8,7 @@ var general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color
 function _wnd_render_form(container, form_json) {
     // 数据 合并数据，并进行深拷贝，以保留原生传参 form_json 不随 data 变动
     let form = JSON.parse(JSON.stringify(form_json));
+    let parent = document.querySelector(container).parentNode;
 
     new Vue({
         el: container,
@@ -80,6 +81,9 @@ function _wnd_render_form(container, form_json) {
                 field.class = field.class.replace('is-danger', '');
                 field.help.class = field.help.class.replace('is-danger', '');
                 field.help.text = field.help.text.replace(' ' + wnd.msg.required, '');
+                this.$nextTick(function() {
+                    funTransitionHeight(parent);
+                });
             },
 
             // 文件上传
@@ -198,6 +202,11 @@ function _wnd_render_form(container, form_json) {
                     this.form.submit.attrs.class = form_json.submit.attrs.class;
                     // this.form.message.message = wnd.msg.required;
                     // this.form.message.attrs.class = form_json.message.attrs.class + ' is-danger';
+
+                    this.$nextTick(function() {
+                        funTransitionHeight(parent);
+                    });
+
                     return false;
                 }
 
@@ -234,11 +243,17 @@ function _wnd_render_form(container, form_json) {
                         _this.form.message.message = info.msg;
                         _this.form.message.attrs.class = form_json.message.attrs.class + ' ' + info.msg_class;
                         _this.form.submit.attrs.class = form_json.submit.attrs.class;
+                        _this.$nextTick(function() {
+                            funTransitionHeight(parent);
+                        });
                     })
                     .catch(function(error) { // 请求失败处理
                         console.log(error);
                     });
             },
+        },
+        mounted() {
+            funTransitionHeight(parent, trs_time);
         },
         // 计算
         computed: {},

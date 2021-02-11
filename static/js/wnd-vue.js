@@ -9,6 +9,7 @@ var wnd_posts_api = wnd.rest_url + wnd.posts_api;
 var wnd_users_api = wnd.rest_url + wnd.users_api;
 var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api;
 var wnd_endpoint_api = wnd.rest_url + wnd.endpoint_api;
+var trs_time = 160;
 
 // 加载中 Element
 if ('undefined' == typeof loading_el) {
@@ -179,6 +180,10 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
         return config;
     });
 
+    // 初始高度：设置嵌入高度变化动画之用
+    container_el = document.querySelector(container);
+    funTransitionHeight(container_el);
+
     // GET request for remote image in node.js
     axios({
             method: 'get',
@@ -206,6 +211,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
                 wnd_render_filter(container + ' .vue-app', response.data.data.structure);
             } else {
                 wnd_inner_html(container, response.data.data.structure);
+                funTransitionHeight(container_el, trs_time);
             }
 
             if (callback) {
@@ -247,7 +253,7 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
     // 添加请求拦截器
     axios.interceptors.request.use(function(config) {
         if ('get' == config.method && 'modal' == (config.params.ajax_type || false)) {
-            wnd_alert_msg(loading_el);
+            wnd_alert_msg('');
         }
 
         return config;
@@ -298,6 +304,8 @@ function wnd_alert_modal(content, is_gallery = false) {
     modal_entry.classList.add('box');
     // 对于复杂的输入，不能直接使用 innerHTML
     wnd_inner_html('#modal .modal-entry', content);
+
+    funTransitionHeight(document.querySelector('#modal .modal-entry'), trs_time);
 }
 
 // 直接弹出消息
@@ -328,15 +336,16 @@ function wnd_reset_modal() {
         modal_entry.innerHTML = '';
         modal.classList.remove('is-active', 'wnd-gallery');
         modal_entry.classList.remove('box');
+        modal_entry.style.height = '0';
     } else {
         wnd_append('body',
-            '<div id="modal" class="modal">' +
-            '<div class="modal-background" onclick="wnd_reset_modal()"></div>' +
-            '<div class="modal-content">' +
-            '<div class="modal-entry content"></div>' +
-            '</div>' +
-            '<button class="modal-close is-large" aria-label="close" onclick="wnd_reset_modal()"></button>' +
-            '</div>'
+            `<div id="modal" class="modal">
+            <div class="modal-background" onclick="wnd_reset_modal()"></div>
+            <div class="modal-content">
+            <div class="modal-entry content"></div>
+            </div>
+            <button class="modal-close is-large" aria-label="close" onclick="wnd_reset_modal()"></button>
+            </div>`
         );
     }
 }
@@ -344,7 +353,7 @@ function wnd_reset_modal() {
 /**
  * 常规HTML表单提交:绑定在submit button
  * 常规表单不具备文件上传能力，主要用户构建前端各类简单表单按钮，以避免在常规页面中 Vue 动态加载造成的页面抖动 
- * */ 
+ * */
 function wnd_ajax_submit(button) {
     let form = button.closest('form');
     let route = form.getAttribute('route');
@@ -397,6 +406,11 @@ function wnd_form_msg(form, msg, msg_class) {
     let el = form.querySelector('.form-message');
     el.classList.add('field');
     el.innerHTML = '<div class="message ' + msg_class + '"><div class="message-body">' + msg + '</div></div>';
+
+    modal_entry = document.querySelector('#modal .modal-entry');
+    if (modal_entry) {
+        funTransitionHeight(modal_entry, trs_time);
+    }
 }
 
 // 统一处理表单响应
@@ -565,3 +579,18 @@ function wnd_send_code(button) {
 //         wnd_ajax_submit(e.target);
 //     }
 // });
+
+// 高度无缝动画方法
+var funTransitionHeight = function(element, time) { // time, 数值，可缺省
+    if (typeof window.getComputedStyle == 'undefined') return;
+
+    var height = window.getComputedStyle(element).height;
+    element.style.transition = 'none'; // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
+    element.style.height = 'auto';
+    var targetHeight = window.getComputedStyle(element).height;
+    element.style.height = height;
+    element.offsetWidth = element.offsetWidth;
+    if (time) element.style.transition = 'height ' + time + 'ms';
+    element.style.height = targetHeight;
+    element.style.overflow = 'hidden';
+};
