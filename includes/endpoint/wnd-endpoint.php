@@ -86,6 +86,10 @@ abstract class Wnd_Endpoint {
 			$content_type = 'application/json';
 			break;
 
+		case 'script':
+			$content_type = 'application/javascript';
+			break;
+
 		default:
 			$content_type = 'text/plain';
 			break;
