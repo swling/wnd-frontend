@@ -78,7 +78,7 @@ function wnd_send_code_via_captcha(_this) {
             _this.dataset.' . static::$captcha_nonce_name . ' = res.randstr;
             wnd_send_code(_this);
         }
-    )
+    );
     captcha.show();
 }
 
@@ -136,7 +136,7 @@ function wnd_submit_via_captcha(_this) {
 
             wnd_ajax_submit(_this);
         }
-    )
+    );
     captcha.show();
 }
 

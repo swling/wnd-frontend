@@ -1,5 +1,4 @@
-var wnd_vue_form = true;
-var general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color', 'date', 'range', 'tel'];
+let general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color', 'date', 'range', 'tel'];
 
 /**
  *@since 0.9.25
@@ -201,7 +200,6 @@ function _wnd_render_form(container, form_json) {
                 if (!can_submit) {
                     this.form.submit.attrs.class = form_json.submit.attrs.class;
                     // this.form.message.message = wnd.msg.required;
-                    // this.form.message.attrs.class = form_json.message.attrs.class + ' is-danger';
 
                     this.$nextTick(function() {
                         funTransitionHeight(parent);

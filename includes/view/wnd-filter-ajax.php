@@ -10,13 +10,20 @@ use WP_Query;
  */
 class Wnd_Filter_Ajax extends Wnd_Filter {
 
-	protected $is_ajax = true;
-
 	protected $ajax_tabs = [];
 
 	protected $before_html = '';
 
 	protected $after_html = '';
+
+	// 筛选项数据
+	protected $tabs = [];
+
+	// 筛选结果数据
+	protected $posts = [];
+
+	// 分页导航数据
+	protected $pagination = [];
 
 	public function add_before_html($html) {
 		$this->before_html .= $html;
@@ -24,6 +31,11 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 
 	public function add_after_html($html) {
 		$this->after_html .= $html;
+	}
+
+	// 未完成
+	public function add_search_form($button = 'Search', $placeholder = '') {
+		return [];
 	}
 
 	/**
@@ -92,13 +104,23 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 
 	/**
 	 *获取筛结果集
+	 *@since 0.9.25
+	 *@param bool $with_post_content 是否包含正文内容
+	 * 		-在很多情况下 Ajax 筛选用于各类管理面板，此时仅需要获取 post 列表，无需包含正文内容，以减少网络数据发送量
 	 */
-	public function get_posts() {
+	public function get_posts(bool $with_post_content = true): array{
 		if (!$this->wp_query) {
 			return __('未执行WP_Query', 'wnd');
 		}
 
-		$this->posts = $this->wp_query->posts;
+		foreach ($this->wp_query->get_posts() as $post) {
+			if (!$with_post_content) {
+				unset($post->post_content);
+			}
+			$this->posts[] = $post;
+		}
+		unset($post);
+
 		return $this->posts;
 	}
 
@@ -121,13 +143,16 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	/**
 	 *@since 0.9.25
 	 *获取完整的筛选数据结构：适用于初始化筛选器
+	 *
+	 *@param bool $with_post_content 是否包含正文内容
+	 * 		-在很多情况下 Ajax 筛选用于各类管理面板，此时仅需要获取 post 列表，无需包含正文内容，以减少网络数据发送量
 	 */
-	public function get_filter(): array{
+	public function get_filter(bool $with_post_content = true): array{
 		return [
 			'before_html'       => $this->before_html,
 			'after_html'        => $this->after_html,
 			'tabs'              => $this->get_tabs(),
-			'posts'             => $this->get_posts(),
+			'posts'             => $this->get_posts($with_post_content),
 
 			/**
 			 *@since 2019.08.10

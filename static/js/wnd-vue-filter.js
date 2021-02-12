@@ -1,5 +1,3 @@
-var wnd_vue_filter = true;
-
 /**
  *@since 0.9.25
  *Vue 根据 Json 动态渲染筛选列表
@@ -106,9 +104,11 @@ function _wnd_render_filter(container, filter_json) {
 				}
 
 				// 将当前 Tab 参数合并入请求参数
-				param = Object.assign(param, {
-					[key]: value
-				});
+				if (!value) {
+					delete param[key];
+				} else {
+					param[key] = value;
+				}
 
 				let _this = this;
 				axios({
@@ -178,13 +178,35 @@ function _wnd_render_filter(container, filter_json) {
 
 	function build_posts_template(filter) {
 		let t = '<div class="wnd-filter-posts">';
-		t += '<ul class="posts-list">'
-		t += '<template v-for="(post,index) in filter.posts">'
-		t += '<li><a :href="post.guid">{{post.post_title}}</a></li>'
-		t += '</template>'
-		t += '</ul>'
-
+		t += build_post_template();
 		t += '</div>'
+		return t;
+	}
+
+	function build_post_template() {
+		let t = '<table class="table is-fullwidth is-hoverable is-striped">';
+		// 表头
+		t += '<thead>';
+		t += '<tr>';
+		t += '<th class="is-narrow">日期</th>';
+		t += '<th>标题</th>';
+		t += '<th class="is-narrow has-text-centered">操作</th>';
+		t += '</tr>';
+		t += '</thead>';
+
+		//列表 
+		t += '<tbody>';
+		t += '<tr v-for="(post,index) in filter.posts">';
+		t += '<td class="is-narrow">{{post.post_date}}</td>';
+		t += '<td>{{post.post_title}}</td>';
+
+		t += '<td class="is-narrow has-text-centered">';
+		t += 'xxx';
+		t += '</td>';
+		t += '</tr>';
+		t += '</tbody>';
+		t += '</table>';
+
 		return t;
 	}
 

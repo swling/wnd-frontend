@@ -122,26 +122,15 @@ function wnd_loading(el, remove = false) {
         wnd_remove(el + ' .wnd-loading');
         container.style.position = 'initial';
     }
-    return;
-
-    var el = document.querySelector(el);
-    if (el && !remove) {
-        el.innerHTML = loading_el;
-    } else {
-        el.innerHTML = '';
-    }
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_form(container, form_json) {
-    if ('undefined' == typeof wnd_vue_form) {
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = wnd.plugin_url + '/static/js/wnd-vue-form.js?ver=' + wnd.ver;
-        script.onload = function() {
-            _wnd_render_form(container, form_json);
-        };
-        document.head.appendChild(script);
+    if ('function' != typeof _wnd_render_form) {
+        let url = wnd.plugin_url + '/static/js/wnd-vue-form.js?ver=' + wnd.ver;
+        wnd_load_script(url, function() {
+            _wnd_render_form(container, form_json)
+        });
     } else {
         _wnd_render_form(container, form_json);
     }
@@ -149,14 +138,11 @@ function wnd_render_form(container, form_json) {
 
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_filter(container, filter_json) {
-    if ('undefined' == typeof wnd_vue_filter) {
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = wnd.plugin_url + '/static/js/wnd-vue-filter.js?ver=' + wnd.ver;
-        script.onload = function() {
+    if ('function' != typeof _wnd_render_filter) {
+        let url = wnd.plugin_url + '/static/js/wnd-vue-filter.js?ver=' + wnd.ver;
+        wnd_load_script(url, function() {
             _wnd_render_filter(container, filter_json);
-        };
-        document.head.appendChild(script);
+        });
     } else {
         _wnd_render_filter(container, filter_json);
     }
@@ -325,6 +311,7 @@ function wnd_reset_modal() {
         modal_entry.innerHTML = '';
         modal.classList.remove('is-active', 'wnd-gallery');
         modal_entry.classList.remove('box');
+        // 动画效果需要
         modal_entry.style.height = '0';
     } else {
         wnd_append('body',
