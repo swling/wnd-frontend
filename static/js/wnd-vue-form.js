@@ -254,6 +254,8 @@ function _wnd_render_form(container, form_json) {
         },
         mounted() {
             funTransitionHeight(parent, trs_time);
+            // v-html 不支持执行 JavaScript 需要通过封装好的 wnd_inser_html
+            wnd_inner_html('#' + this.form.attrs.id + ' .form-script', this.form.script);
         },
         // 计算
         computed: {},
@@ -266,7 +268,7 @@ function _wnd_render_form(container, form_json) {
         // 表单头
         let t = '<form v-bind="form.attrs">';
         t += '<h3 v-show="form.title.title" v-bind="form.title.attrs" v-html="form.title.title"></h3>';
-        t += '<div v-bind="form.message.attrs" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>';
+        t += '<div v-bind="form.message.attrs" class="message" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>';
 
         // 循环字段数据，调用对应字段组件
         t += get_fields_template(form_json);
@@ -275,6 +277,9 @@ function _wnd_render_form(container, form_json) {
         t += '<div v-if="form.submit.text" class="field is-grouped is-grouped-centered">';
         t += '<button type="button" v-bind="form.submit.attrs" @click="submit" v-text="form.submit.text"></button>';
         t += '</div>';
+
+        // JavaScript
+        t += '<div class="form-script"></div>';
 
         // 表尾
         t += '</form>';

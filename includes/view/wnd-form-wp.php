@@ -571,6 +571,8 @@ if (sub_btn) {
 		// 本插件特定的数据结构
 		$this->wnd_structure();
 
-		return parent::get_structure();
+		$structure           = parent::get_structure();
+		$structure['script'] = $this->render_script();
+		return $structure;
 	}
 }

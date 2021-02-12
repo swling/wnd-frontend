@@ -21,7 +21,7 @@ class Wnd_Form {
 
 	protected $message = '';
 
-	protected $message_class = 'message';
+	protected $message_class = 'form-message';
 
 	protected $input_values = [];
 

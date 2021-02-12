@@ -27,6 +27,8 @@ abstract class Wnd_Binder {
 			return new Wnd_Binder_Email($bound_object);
 		} elseif (wnd_is_mobile($bound_object)) {
 			return new Wnd_Binder_Phone($bound_object);
+		} else {
+			throw new Exception(__('格式不正确', 'wnd'));
 		}
 	}
 
