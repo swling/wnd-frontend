@@ -185,7 +185,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 			/**
 			 *在debug模式下，返回当前WP_Query查询参数
 			 **/
-			'query_vars'        => WP_DEBUG ? $this->wp_query->query_vars : '请开启Debug',
+			'query_vars'        => $this->wp_query->query_vars,
 		];
 	}
 

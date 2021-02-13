@@ -124,6 +124,18 @@ function wnd_loading(el, remove = false) {
     }
 }
 
+/**
+ * Json 对象转 FormData
+ **/
+function object_to_formdata(data) {
+    let formData = new FormData();
+    for (var key in data) {
+        formData.append(key, data[key]);
+    }
+
+    return formData;
+}
+
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_form(container, form_json) {
     if ('function' != typeof _wnd_render_form) {
@@ -286,6 +298,10 @@ function wnd_alert_modal(content, is_gallery = false) {
 // 直接弹出消息
 function wnd_alert_msg(msg, time = 0) {
     wnd_reset_modal();
+
+    // 移除动画效果
+    funTransitionHeight(document.querySelector('#modal .modal-entry'));
+
     var modal = document.querySelector('#modal'); // assuming you have only 1
     var modal_entry = modal.querySelector('.modal-entry');
     modal.classList.add('is-active');
@@ -316,11 +332,11 @@ function wnd_reset_modal() {
     } else {
         wnd_append('body',
             `<div id="modal" class="modal">
-            <div class="modal-background" onclick="wnd_reset_modal()"></div>
+            <div class="modal-background"></div>
             <div class="modal-content">
             <div class="modal-entry content"></div>
             </div>
-            <button class="modal-close is-large" aria-label="close" onclick="wnd_reset_modal()"></button>
+            <button class="modal-close is-large" aria-label="close"></button>
             </div>`
         );
     }
@@ -505,10 +521,8 @@ function wnd_send_code(button) {
 
     let data = button.dataset;
     data.device = device_value;
-    let formData = new FormData();
-    for (var key in data) {
-        formData.append(key, data[key]);
-    }
+    formData = object_to_formdata(data);
+
     axios({
         url: wnd_action_api + "/" + data.action + lang_query,
         method: 'POST',
@@ -542,22 +556,103 @@ function wnd_send_code(button) {
 };
 
 /**
- *@since 0.9.25
- *文档加载完成后执行
+ * 流量统计
  */
-// window.onload = function() {}
+function wnd_update_views(post_id, interval = 3600) {
+    if ('function' != typeof _wnd_update_views) {
+        wnd_load_script(wnd.plugin_url + '/static/js/wnd-update-views.js?ver=' + wnd.ver, function() {
+            _wnd_update_views(post_id, interval);
+        });
+    } else {
+        _wnd_update_views(post_id, interval);
+    }
+}
 
 /**
- *@since 0.9.5
- *常规表单(非 Vue 渲染表单)提交
+ *@since 2019.07.02 非表单形式发送ajax请求
  */
-// document.addEventListener('click', function(e) {
-//     if ('button' == e.target.getAttribute('type')) {
-//         wnd_ajax_submit(e.target);
-//     }
-// });
+function wnd_ajax_click(link) {
+    var can_click_ajax_link = true;
+    // 是否在弹窗中操作
+    var is_in_modal = link.closest(".modal.is-active") ? true : false;
 
-// 高度无缝动画方法
+    // 点击频率控制
+    if (!can_click_ajax_link) {
+        return;
+    }
+    can_click_ajax_link = false;
+    setTimeout(function() {
+        can_click_ajax_link = true;
+    }, 1000);
+
+    if (1 == link.dataset.disabled) {
+        wnd_alert_msg(wnd.msg.waiting, 1);
+        return;
+    }
+
+    // 判断当前操作是否为取消
+    var is_cancel = 0 != link.dataset.is_cancel;
+    var action = is_cancel ? link.dataset.cancel : link.dataset.action;
+    var args = JSON.parse(link.dataset.args);
+    args._wnd_sign = link.dataset.sign;
+    args._ajax_nonce = is_cancel ? link.dataset.cancel_nonce : link.dataset.action_nonce;
+
+    axios({
+        url: wnd_action_api + "/" + action + lang_query,
+        method: 'POST',
+        data: object_to_formdata(args),
+    }).then(function(response) {
+        // 正向操作成功
+        if (response.data.status != 0 && action == link.dataset.action) {
+            // 设置了逆向操作
+            if (link.dataset.cancel) {
+                link.dataset.is_cancel = 1;
+                // 未设置逆向操作，禁止重复点击事件
+            } else {
+                link.dataset.disabled = 1;
+            }
+
+        } else {
+            link.dataset.is_cancel = 0;
+        }
+
+        // 根据后端响应处理
+        switch (response.data.status) {
+            // 常规类，展示后端提示信息
+            case 1:
+                link.innerHTML = response.data.data;
+                break;
+
+                // 弹出消息
+            case 2:
+                if (response.data.data) {
+                    link.innerHTML = response.data.data;
+                }
+                if (!is_in_modal) {
+                    wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.data.msg + '</h5></div>');
+                }
+                break;
+
+                // 跳转类
+            case 3:
+                wnd_alert_msg(wnd.msg.waiting);
+                window.location.href = response.data.data.redirect_to;
+                break;
+
+                // 刷新当前页面
+            case 4:
+                wnd_reset_modal();
+                window.location.reload();
+                break;
+        }
+    });
+}
+
+
+/**
+ * 高度无缝动画方法
+ * @link https://www.zhangxinxu.com/wordpress/2015/01/content-loading-height-change-css3-transition-better-experience/
+ */
 var funTransitionHeight = function(element, time) { // time, 数值，可缺省
     if (typeof window.getComputedStyle == 'undefined') return;
 
@@ -571,3 +666,28 @@ var funTransitionHeight = function(element, time) { // time, 数值，可缺省
     element.style.height = targetHeight;
     element.style.overflow = 'hidden';
 };
+
+/**
+ *@since 0.9.25
+ *监听点击事件
+ */
+document.addEventListener('click', function(e) {
+    // 关闭 Modal
+    if (e.target.classList.contains('modal-background') || e.target.classList.contains('modal-close')) {
+        wnd_reset_modal();
+        return;
+    }
+
+    // Ajax link
+    let a = e.target.closest('a');
+    if (a && a.classList.contains('ajax-link')) {
+        wnd_ajax_click(a);
+        return;
+    }
+});
+
+/**
+ *@since 0.9.25
+ *文档加载完成后执行
+ */
+// window.onload = function() {}

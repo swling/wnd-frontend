@@ -53,11 +53,11 @@ class Wnd_Ajax_Link {
 		// Action 层需要验证表单字段签名
 		$sign = Wnd_Request::sign(array_merge(['_ajax_nonce'], array_keys($this->args)));
 
-		$this->html = '<a class="ajax-link ' . $this->class . '" data-is-cancel="0" data-disabled="0"';
+		$this->html = '<a class="ajax-link ' . $this->class . '" data-is_cancel="0" data-disabled="0"';
 		$this->html .= ' data-action="' . $this->action . '"';
 		$this->html .= ' data-cancel="' . $this->cancel_action . '" data-args=\'' . json_encode($this->args) . '\'';
-		$this->html .= ' data-action-nonce="' . wp_create_nonce($this->action) . '"';
-		$this->html .= ' data-cancel-nonce="' . wp_create_nonce($this->cancel_action) . '"';
+		$this->html .= ' data-action_nonce="' . wp_create_nonce($this->action) . '"';
+		$this->html .= ' data-cancel_nonce="' . wp_create_nonce($this->cancel_action) . '"';
 		$this->html .= ' data-sign' . '="' . $sign . '"';
 		$this->html .= '>';
 		$this->html .= $this->text . '</a>';

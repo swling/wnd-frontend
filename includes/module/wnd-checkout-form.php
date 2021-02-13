@@ -9,7 +9,7 @@ namespace Wnd\Module;
 class Wnd_Checkout_Form extends Wnd_Module_Form {
 
 	protected static function configure_form(): object{
-		$form = new stdClass();
+		$form = new \stdClass();
 		return $form;
 	}
 }

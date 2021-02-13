@@ -3,9 +3,9 @@ namespace Wnd\Endpoint;
 
 /**
  *@since 0.9.25
- *响应人机校验脚本代码
+ *响应 JavaScript 脚本
  */
-class Wnd_Captcha_Script extends Wnd_Endpoint {
+class Wnd_Script extends Wnd_Endpoint {
 
 	protected $content_type = 'script';
 

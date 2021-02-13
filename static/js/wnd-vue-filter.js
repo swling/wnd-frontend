@@ -178,12 +178,20 @@ function _wnd_render_filter(container, filter_json) {
 
 	function build_posts_template(filter) {
 		let t = '<div class="wnd-filter-posts">';
-		t += build_post_template();
+		t += _build_post_template();
 		t += '</div>'
 		return t;
 	}
 
-	function build_post_template() {
+	/**
+	 *可在外部定义 build_post_template() 函数以覆盖默认的列表
+	 *
+	 */
+	function _build_post_template() {
+		if ('function' == typeof build_post_template) {
+			return build_post_template();
+		}
+
 		let t = '<table class="table is-fullwidth is-hoverable is-striped">';
 		// 表头
 		t += '<thead>';
