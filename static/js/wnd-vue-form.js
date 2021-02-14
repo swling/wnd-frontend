@@ -81,7 +81,7 @@ function _wnd_render_form(container, form_json) {
                 field.help.class = field.help.class.replace('is-danger', '');
                 field.help.text = field.help.text.replace(' ' + wnd.msg.required, '');
                 this.$nextTick(function() {
-                    funTransitionHeight(parent);
+                    funTransitionHeight(parent, trs_time);
                 });
             },
 
@@ -202,7 +202,7 @@ function _wnd_render_form(container, form_json) {
                     // this.form.message.message = wnd.msg.required;
 
                     this.$nextTick(function() {
-                        funTransitionHeight(parent);
+                        funTransitionHeight(parent, trs_time);
                     });
 
                     return false;
@@ -242,7 +242,7 @@ function _wnd_render_form(container, form_json) {
                         _this.form.message.attrs.class = form_json.message.attrs.class + ' ' + info.msg_class;
                         _this.form.submit.attrs.class = form_json.submit.attrs.class;
                         _this.$nextTick(function() {
-                            funTransitionHeight(parent);
+                            funTransitionHeight(parent, trs_time);
                         });
                     })
                     .catch(function(error) { // 请求失败处理
