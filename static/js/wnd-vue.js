@@ -9,7 +9,13 @@ var wnd_posts_api = wnd.rest_url + wnd.posts_api;
 var wnd_users_api = wnd.rest_url + wnd.users_api;
 var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api;
 var wnd_endpoint_api = wnd.rest_url + wnd.endpoint_api;
+
+/**
+ * 其他定义
+ *
+ **/
 var trs_time = 160;
+var menus_side = false;
 
 // 加载中 Element
 if ('undefined' == typeof loading_el) {
@@ -629,7 +635,7 @@ function wnd_ajax_click(link) {
                     link.innerHTML = response.data.data;
                 }
                 if (!is_in_modal) {
-                    wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.data.msg + '</h5></div>');
+                    wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.data.msg + '</h5></div>', 1);
                 }
                 break;
 
@@ -668,12 +674,62 @@ var funTransitionHeight = function(element, time) { // time, 数值，可缺省
 };
 
 /**
+ *@since 0.9.13
+ *Ajax 加载侧边栏
+ */
+function wnd_load_menus_side() {
+    if (!menus_side) {
+        wnd_append('body',
+            '<div id="wnd-side-container"></div>' +
+            '<div id="wnd-side-background" class="modal" style="z-index:31;">' +
+            '<div class="modal-background"></div>' +
+            '</div>'
+        );
+        wnd_ajax_embed('#wnd-side-container', 'wnd_menus_side', {}, 'wnd_menus_side_toggle');
+    } else {
+        wnd_menus_side_toggle();
+    }
+}
+
+/**
+ *@since 0.9.13
+ *展开或关闭侧边栏
+ */
+function wnd_menus_side_toggle(close = false) {
+    // 按钮及遮罩 Toggle
+    document.querySelectorAll('.wnd-side-burger').forEach(function(burger) {
+        burger.classList.toggle('is-active');
+    });
+    document.querySelector('#wnd-side-background').classList.toggle('is-active');
+
+    // Menus
+    menus_side = menus_side || document.querySelector('#wnd-side-container').firstChild;
+    menus_side.style.transition = 'all ' + trs_time * 2 + 'ms';
+
+    // close
+    if (true == close) {
+        menus_side.style.left = '-' + menus_side.offsetWidth + 'px';
+        return;
+    }
+
+    // 初次加载动画
+    if (!menus_side.style.left) {
+        menus_side.style.left = '-' + menus_side.offsetWidth + 'px';
+        setTimeout(() => {
+            menus_side.style.left = '0px';
+        }, trs_time - 50);
+    } else {
+        menus_side.style.left = '0px';
+    }
+}
+
+/**
  *@since 0.9.25
  *监听点击事件
  */
 document.addEventListener('click', function(e) {
     // 关闭 Modal
-    if (e.target.classList.contains('modal-background') || e.target.classList.contains('modal-close')) {
+    if (e.target.classList.contains('modal-close')) {
         wnd_reset_modal();
         return;
     }
@@ -682,6 +738,35 @@ document.addEventListener('click', function(e) {
     let a = e.target.closest('a');
     if (a && a.classList.contains('ajax-link')) {
         wnd_ajax_click(a);
+        return;
+    }
+
+    // DIV
+    let div = e.target.closest('div');
+
+    /**
+     *@since 0.9.13 从主题中移植
+     *移动导航点击展开侧边栏
+     */
+    if (div.classList.contains('wnd-side-burger')) {
+        if (div.classList.contains('is-active')) {
+            wnd_menus_side_toggle(true);
+        } else {
+            wnd_load_menus_side();
+        }
+
+        return;
+    }
+
+    // 点击Side Menus遮罩，关闭侧栏
+    if (div.parentElement.id == 'wnd-side-background') {
+        wnd_menus_side_toggle(true);
+        return;
+    }
+
+    // Modal 遮罩
+    if (div.classList.contains('modal-background')) {
+        wnd_reset_modal();
         return;
     }
 });

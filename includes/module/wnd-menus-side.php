@@ -17,7 +17,7 @@ class Wnd_Menus_Side extends Wnd_Module_Html {
 		$html .= '<div class="columns is-marginless is-mobile">';
 		$html .= '<div class="column">' . Wnd_Search_Form::render() . '</div>';
 		$html .= '<div class="column is-narrow is-marginless is-paddingless">';
-		$html .= '<div class="navbar-burger wnd-side-burger navbar-brand is-active" style="display:block">';
+		$html .= '<div class="navbar-burger wnd-side-burger navbar-brand" style="display:block">';
 		$html .= '<span></span><span></span><span></span>';
 		$html .= '</div>';
 		$html .= '</div>';
