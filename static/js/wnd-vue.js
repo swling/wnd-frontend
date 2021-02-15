@@ -167,6 +167,25 @@ function wnd_render_filter(container, filter_json) {
 }
 
 /**
+ *@since 2020.07.21
+ *ajax 获取 json数据
+ *@param jsonget	对应 JsonGet 类名称
+ *@param param 		对应传参
+ *@param callback 	回调函数
+ */
+function wnd_get_json(jsonget, param, callback = '') {
+    axios({
+        'method': 'get',
+        url: wnd_jsonget_api + '/' + jsonget + lang_query,
+        params: param,
+    }).then(function(response) {
+        if (callback) {
+            window[callback](response.data);
+        }
+    });
+}
+
+/**
  *@since 2019.1.10  从后端请求ajax内容并填充到指定DOM
  *原理同 wnd_ajax_modal()，区别为，响应方式为嵌入
  *@param 	container 	srting 		指定嵌入的容器选择器
@@ -214,7 +233,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
             }
 
             if (callback) {
-                window[callback](response);
+                window[callback](response.data);
             }
         });
 }
@@ -278,7 +297,7 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
             }
 
             if (callback) {
-                window[callback](response);
+                window[callback](response.data);
             }
         });
 }

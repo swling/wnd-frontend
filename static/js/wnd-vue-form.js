@@ -57,6 +57,7 @@ function _wnd_render_form(container, form_json) {
                 delete _field['addon_right'];
                 delete _field['options'];
                 delete _field['label'];
+                delete _field['help'];
 
                 delete _field['value'];
                 delete _field['field'];
@@ -72,7 +73,6 @@ function _wnd_render_form(container, form_json) {
             },
 
             click_target(selector) {
-                console.log(selector);
                 document.querySelector(selector).click();
             },
 
