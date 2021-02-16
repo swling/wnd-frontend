@@ -341,47 +341,29 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_post_image_upload('_thumbnail_id', $save_width, $save_height, $label);
 	}
 
+	/**
+	 *正文编辑器
+	 */
 	public function add_post_content($rich_media_editor = true, $placeholder = '详情', $required = false) {
-		/**
-		 *@since 2019.3.11 调用外部页面变量，后续更改为当前编辑的post，否则，wp_editor上传的文件将归属到页面，而非当前编辑的文章
-		 */
-		global $post;
-		$post = $this->post;
-
-		/**
-		 *@since 2019.03.11无法直接通过方法创建 wp_editor
-		 *需要提前在静态页面中创建一个 #hidden-wp-editor 包裹下的 隐藏wp_editor
-		 *然后通过js提取HTML的方式实现在指定位置嵌入
-		 */
-		if (!wnd_doing_ajax() and $rich_media_editor and $this->post_id) {
-
-			/**
-			 *@since 2019.05.09
-			 * 通过html方式直接创建的字段需要在表单input values 数据中新增一个同名names，否则无法通过nonce校验
-			 */
-			$this->add_input_name('_post_post_content');
-
-			echo '<div id="hidden-wp-editor" style="display: none;">';
-			if ($post) {
-				wp_editor($post->post_content, '_post_post_content', 'media_buttons=1');
-			} else {
-				wp_editor('', '_post_post_content', 'media_buttons=0');
-			}
-			echo '</div>';
-
+		if ($rich_media_editor) {
+			$this->add_editor(
+				[
+					'name'        => '_post_post_content',
+					'value'       => $this->post->post_content ?? '',
+					'placeholder' => $placeholder,
+					'required'    => $required,
+				]
+			);
 		} else {
 			$this->add_textarea(
 				[
 					'name'        => '_post_post_content',
-					'value'       => $post->post_content ?? '',
+					'value'       => $this->post->post_content ?? '',
 					'placeholder' => $placeholder,
 					'required'    => $required,
 				]
 			);
 		}
-
-		$this->add_html('<div id="wnd-wp-editor" class="field"></div>');
-		$this->add_html('<script type="text/javascript">var wp_editor = $("#hidden-wp-editor").html();$("#hidden-wp-editor").remove();$("#wnd-wp-editor").html(wp_editor);</script>');
 	}
 
 	/**
@@ -582,5 +564,15 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}
 
 		return $current_terms;
+	}
+
+	/**
+	 *在表单结构中加入 Post ID
+	 *@since 0.9.25
+	 */
+	public function get_structure(): array{
+		$structure            = parent::get_structure();
+		$structure['post_id'] = $this->post->ID;
+		return $structure;
 	}
 }

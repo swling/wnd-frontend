@@ -42,7 +42,7 @@ class Wnd_User_Page extends Wnd_Module_Html {
 		}
 
 		$module = static::handle_module($args) ?: '';
-		$module = $module ? ('<div class="content box">' . $module . '</div>') : '';
+		$module = $module ? ('<div id="ajax-module" class="content box">' . $module . '</div>') : '';
 
 		get_header();
 		echo '<main id="user-page-container" class="column">';
@@ -68,24 +68,23 @@ class Wnd_User_Page extends Wnd_Module_Html {
 
 		if ($module) {
 			$class = \Wnd\Controller\Wnd_Controller::parse_class($module, 'Module');
-			return $class::render();
+			// return $class::render();
+			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . json_encode($_GET) . ')</script>';
 		}
 
 		// 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
 		if ('submit' == $action) {
-			// 主题定义的表单
-			$class = '\Wndt\Module\\Wndt_Post_Form_' . $post_type;
-			if (class_exists($class)) {
-				return $class::render();
+			// 主题定义的表单优先，其次为插件表单
+			$module = 'Wndt_Post_Form_' . $post_type;
+			$class  = 'Wndt\\Module\\' . $module;
+			if (!class_exists($class)) {
+				$module = 'Wnd_Post_Form_' . $post_type;
+				$class  = 'Wnd\\Module\\' . $module;
+			} elseif (!class_exists($class)) {
+				throw new Exception($post_type . __('未定义表单', 'wnd'));
 			}
 
-			// 插件默认表单
-			$class = '\Wnd\Module\\Wnd_Post_Form_' . $post_type;
-			if (class_exists($class)) {
-				return $class::render();
-			}
-
-			throw new Exception(__('Post Type 未定义表单', 'wnd'), true);
+			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '")</script>';
 		}
 
 		// 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
@@ -95,30 +94,25 @@ class Wnd_User_Page extends Wnd_Module_Html {
 				throw new Exception(__('ID 无效', 'wnd'));
 			}
 
-			// 主题定义的表单
-			$class = '\Wndt\Module\\Wndt_Post_Form_' . $edit_post->post_type;
-			if (class_exists($class)) {
-				return $class::render(['post_id' => $post_id]);
+			$post_type = $edit_post->post_type;
+			$params    = json_encode([
+				'post_id'       => $post_id,
+				'attachment_id' => $post_id,
+				'post_parent'   => $edit_post->post_parent,
+				'is_free'       => 0,
+			]);
+
+			// 主题定义的表单优先，其次为插件表单
+			$module = 'Wndt_Post_Form_' . $post_type;
+			$class  = 'Wndt\\Module\\' . $module;
+			if (!class_exists($class)) {
+				$module = 'Wnd_Post_Form_' . $post_type;
+				$class  = 'Wnd\\Module\\' . $module;
+			} elseif (!class_exists($class)) {
+				throw new Exception($post_type . __('未定义表单', 'wnd'));
 			}
 
-			// 附件编辑表单
-			if ('attachment' == $edit_post->post_type) {
-				return \Wnd\Module\Wnd_Post_Form_Attachment::render(['attachment_id' => $post_id]);
-			}
-
-			// 插件默认表单
-			$class = '\Wnd\Module\\Wnd_Post_Form_' . $edit_post->post_type;
-			if (class_exists($class)) {
-				return $class::render(
-					[
-						'post_id'     => $post_id,
-						'post_parent' => $edit_post->post_parent,
-						'is_free'     => false,
-					]
-				);
-			}
-
-			throw new Exception(__('Post Type 未定义表单', 'wnd'), true);
+			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . $params . ');</script>';
 		}
 
 		return '';

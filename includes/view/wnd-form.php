@@ -183,6 +183,13 @@ class Wnd_Form {
 		$this->input_values[] = $args;
 	}
 
+	// 富文本编辑器构造方法需要结合实际项目自行完成，本类中默认以文本框替代
+	public function add_editor(array $args) {
+		$args                 = array_merge(static::$defaults, $args);
+		$args['type']         = 'editor';
+		$this->input_values[] = $args;
+	}
+
 	// email
 	public function add_email(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
@@ -538,6 +545,14 @@ class Wnd_Form {
 		$html .= static::build_help($input_value);
 		$html .= '</div>';
 		return $html;
+	}
+
+	/**
+	 *富文本编辑器需要结合实际项目开发，此处默认构造文本框
+	 */
+	protected function build_editor(array $input_value, string $input_key): string{
+		$input_value['class'] .= $input_value['class'] ? ' textarea' : 'textarea';
+		return $this->build_textarea($input_value, $input_key);
 	}
 
 	protected function build_submit_button() {

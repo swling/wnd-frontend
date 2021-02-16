@@ -71,6 +71,54 @@ function _wnd_render_form(container, form_json) {
 
                 return _field;
             },
+            // 富文本编辑器 @link https://doc.wangeditor.com/
+            build_editor: function() {
+                this.form.fields.forEach((field, index) => {
+                    if ('editor' == field.type) {
+                        const editor = new wangEditor('#' + form.attrs.id + '-' + index);
+                        // Rest Nonce
+                        editor.config.uploadImgHeaders = {
+                            'X-WP-Nonce': wnd.rest_nonce,
+                        }
+
+                        // 配置图片上传
+                        editor.config.uploadImgServer = wnd_action_api + '/wnd_upload_file_editor';
+                        editor.config.uploadFileName = 'wnd_file[]';
+                        editor.config.uploadImgParams = {
+                            type: 'wangeditor',
+                            post_parent: this.form.post_id || 0,
+                            _ajax_nonce: field._ajax_nonce
+                        }
+                        editor.config.showLinkImg = false;
+
+                        // 配置 onchange 回调函数，将数据同步到 vue 中
+                        editor.config.onchange = (newHtml) => {
+                            this.form.fields[index].value = newHtml
+                        }
+
+                        // 精简菜单按钮
+                        editor.config.excludeMenus = [
+                            'fontSize',
+                            'fontName',
+                            'indent',
+                            'todo',
+                            'lineHeight',
+                            'emoticon',
+                            'video'
+                        ]
+
+                        // 其他
+                        editor.config.zIndex = 9;
+                        editor.config.height = 500;
+
+                        // 创建编辑器
+                        editor.create()
+
+                        // 内容初始化
+                        editor.txt.html(field.value);
+                    }
+                });
+            },
 
             click_target(selector) {
                 document.querySelector(selector).click();
@@ -251,6 +299,9 @@ function _wnd_render_form(container, form_json) {
             },
         },
         mounted() {
+            // 构造富文本编辑器
+            this.build_editor();
+
             funTransitionHeight(parent, trs_time);
             // v-html 不支持执行 JavaScript 需要通过封装好的 wnd_inser_html
             wnd_inner_html('#' + this.form.attrs.id + ' .form-script', this.form.script);
@@ -305,6 +356,8 @@ function _wnd_render_form(container, form_json) {
                 t += '<input v-bind="parse_input_attr(' + field_vn + ')" v-model="' + field_vn + '.value" />';
             } else if ('textarea' == field.type) {
                 t += build_textarea(field_vn, index);
+            } else if ('editor' == field.type) {
+                t += build_editor(field_vn, index);
             } else if ('image_upload' == field.type) {
                 t += build_image_upload(field_vn, index);
             } else if ('file_upload' == field.type) {
@@ -414,4 +467,14 @@ function _wnd_render_form(container, form_json) {
             '<div class="file"><input type="file" class="file file-input" accept="image/*" :name="' + field + '.name" @change="upload($event,' + field + ')"></div>' +
             '</div>';
     }
+
+    // 富文本编辑器
+    function build_editor(field, index) {
+        return '<div :class="get_field_class(' + field + ')">' +
+            '<div :id="form.attrs.id + \'-' + index + '\'" class="rich-editor"></div>' +
+            '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
+            '<textarea style="display:none" v-model="' + field + '.value" v-bind="parse_input_attr(' + field + ')" @change="change(' + field + ')"></textarea>' +
+            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
+            '</div>';
+    };
 }

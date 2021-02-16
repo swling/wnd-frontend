@@ -762,6 +762,9 @@ document.addEventListener('click', function(e) {
 
     // DIV
     let div = e.target.closest('div');
+    if (!div) {
+        return;
+    }
 
     /**
      *@since 0.9.13 从主题中移植

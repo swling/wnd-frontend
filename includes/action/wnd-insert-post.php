@@ -133,7 +133,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 		}
 
 		// 创建或更新Post
-		if ($this->post_data['ID']) {
+		if ($this->post_data['ID'] ?? 0) {
 			$this->post_id = wp_update_post($this->post_data);
 		} else {
 			$this->post_id = wp_insert_post($this->post_data);
