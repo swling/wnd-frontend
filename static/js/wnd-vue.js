@@ -10,10 +10,11 @@ var wnd_users_api = wnd.rest_url + wnd.users_api;
 var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api;
 var wnd_endpoint_api = wnd.rest_url + wnd.endpoint_api;
 
-/**
- * 其他定义
- *
- **/
+// 当前 JS 文件所在 URL 路径
+var this_src = document.currentScript.src;
+var static_path = this_src.substring(0, this_src.lastIndexOf('/js/') + 1);
+
+// 其他
 var trs_time = 160;
 var menus_side = false;
 
@@ -145,7 +146,7 @@ function object_to_formdata(data) {
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_form(container, form_json) {
     if ('function' != typeof _wnd_render_form) {
-        let url = wnd.plugin_url + '/static/js/wnd-vue-form.js?ver=' + wnd.ver;
+        let url = static_path + 'js/wnd-vue-form.js?ver=' + wnd.ver;
         wnd_load_script(url, function() {
             _wnd_render_form(container, form_json)
         });
@@ -157,7 +158,7 @@ function wnd_render_form(container, form_json) {
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_filter(container, filter_json) {
     if ('function' != typeof _wnd_render_filter) {
-        let url = wnd.plugin_url + '/static/js/wnd-vue-filter.js?ver=' + wnd.ver;
+        let url = static_path + 'js/wnd-vue-filter.js?ver=' + wnd.ver;
         wnd_load_script(url, function() {
             _wnd_render_filter(container, filter_json);
         });
@@ -585,7 +586,7 @@ function wnd_send_code(button) {
  */
 function wnd_update_views(post_id, interval = 3600) {
     if ('function' != typeof _wnd_update_views) {
-        wnd_load_script(wnd.plugin_url + '/static/js/wnd-update-views.js?ver=' + wnd.ver, function() {
+        wnd_load_script(static_path + 'js/wnd-update-views.js?ver=' + wnd.ver, function() {
             _wnd_update_views(post_id, interval);
         });
     } else {

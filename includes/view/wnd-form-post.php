@@ -100,6 +100,12 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->post_id = $this->post->ID;
 
 		/**
+		 *@since 0.9.25
+		 *将post id 写入表单自定义属性，供前端渲染使用
+		 */
+		$this->add_form_attr('data-post-id', $this->post_id);
+
+		/**
 		 *文章类型：
 		 *若指定了id，则获取对应id的post type
 		 *若无则外部传入参数
@@ -564,15 +570,5 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}
 
 		return $current_terms;
-	}
-
-	/**
-	 *在表单结构中加入 Post ID
-	 *@since 0.9.25
-	 */
-	public function get_structure(): array{
-		$structure            = parent::get_structure();
-		$structure['post_id'] = $this->post->ID;
-		return $structure;
 	}
 }

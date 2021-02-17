@@ -73,51 +73,68 @@ function _wnd_render_form(container, form_json) {
             },
             // 富文本编辑器 @link https://doc.wangeditor.com/
             build_editor: function() {
-                this.form.fields.forEach((field, index) => {
-                    if ('editor' == field.type) {
-                        const editor = new wangEditor('#' + form.attrs.id + '-' + index);
-                        // Rest Nonce
-                        editor.config.uploadImgHeaders = {
-                            'X-WP-Nonce': wnd.rest_nonce,
+                let _this = this;
+                if ('undefined' == typeof wangEditor) {
+                    let url = static_path + 'editor/wangEditor.min.js?ver=' + wnd.ver;
+                    wnd_load_script(url, function() {
+                        build();
+                    });
+                } else {
+                    build();
+                }
+
+                function build() {
+                    _this.form.fields.forEach((field, index) => {
+                        if ('editor' == field.type) {
+                            const editor = new wangEditor('#' + _this.form.attrs.id + '-' + index);
+                            // Rest Nonce
+                            editor.config.uploadImgHeaders = {
+                                'X-WP-Nonce': wnd.rest_nonce,
+                            }
+
+                            // 配置图片上传
+                            editor.config.uploadImgServer = wnd_action_api + '/wnd_upload_file_editor';
+                            editor.config.uploadFileName = 'wnd_file[]';
+                            editor.config.uploadImgParams = {
+                                type: 'wangeditor',
+                                post_parent: _this.form.attrs['data-post-id'] || 0,
+                                _ajax_nonce: field._ajax_nonce
+                            }
+                            editor.config.showLinkImg = false;
+
+                            // 配置 onchange 回调函数，将数据同步到 vue 中
+                            editor.config.onchange = (newHtml) => {
+                                _this.form.fields[index].value = newHtml
+                            }
+
+                            // 精简菜单按钮
+                            editor.config.excludeMenus = [
+                                'fontSize',
+                                'fontName',
+                                'indent',
+                                'todo',
+                                'lineHeight',
+                                'emoticon',
+                                'video'
+                            ]
+
+                            // 其他
+                            editor.config.zIndex = 9;
+                            // editor.config.height = 500;
+
+                            // 创建编辑器
+                            editor.create()
+
+                            // 内容初始化
+                            editor.txt.html(field.value);
+
+                            // 编辑器是动态按需加载，需要额外再设置一次高度适应
+                            _this.$nextTick(function() {
+                                funTransitionHeight(parent, trs_time);
+                            });
                         }
-
-                        // 配置图片上传
-                        editor.config.uploadImgServer = wnd_action_api + '/wnd_upload_file_editor';
-                        editor.config.uploadFileName = 'wnd_file[]';
-                        editor.config.uploadImgParams = {
-                            type: 'wangeditor',
-                            post_parent: this.form.post_id || 0,
-                            _ajax_nonce: field._ajax_nonce
-                        }
-                        editor.config.showLinkImg = false;
-
-                        // 配置 onchange 回调函数，将数据同步到 vue 中
-                        editor.config.onchange = (newHtml) => {
-                            this.form.fields[index].value = newHtml
-                        }
-
-                        // 精简菜单按钮
-                        editor.config.excludeMenus = [
-                            'fontSize',
-                            'fontName',
-                            'indent',
-                            'todo',
-                            'lineHeight',
-                            'emoticon',
-                            'video'
-                        ]
-
-                        // 其他
-                        editor.config.zIndex = 9;
-                        editor.config.height = 500;
-
-                        // 创建编辑器
-                        editor.create()
-
-                        // 内容初始化
-                        editor.txt.html(field.value);
-                    }
-                });
+                    });
+                }
             },
 
             click_target(selector) {
@@ -300,7 +317,9 @@ function _wnd_render_form(container, form_json) {
         },
         mounted() {
             // 构造富文本编辑器
-            this.build_editor();
+            if (this.form.attrs['data-editor']) {
+                this.build_editor();
+            }
 
             funTransitionHeight(parent, trs_time);
             // v-html 不支持执行 JavaScript 需要通过封装好的 wnd_inser_html

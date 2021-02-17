@@ -138,6 +138,7 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	// 富文本编辑器可能需要上传文件操作新增 nonce
 	public function add_editor(array $args) {
+		$this->add_form_attr('data-editor', '1');
 		$args['_ajax_nonce'] = wp_create_nonce('wnd_upload_file_editor');
 		parent::add_editor($args);
 	}
