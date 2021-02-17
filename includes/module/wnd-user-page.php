@@ -67,9 +67,9 @@ class Wnd_User_Page extends Wnd_Module_Html {
 		extract($args);
 
 		if ($module) {
-			$class = \Wnd\Controller\Wnd_Controller::parse_class($module, 'Module');
-			// return $class::render();
-			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . json_encode($_GET) . ')</script>';
+			$params = $_GET;
+			unset($params['module']);
+			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . json_encode($params) . ')</script>';
 		}
 
 		// 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块

@@ -13,11 +13,11 @@ use Wnd\Model\Wnd_Term;
  */
 class Wnd_Form_Post extends Wnd_Form_WP {
 
-	protected $post_id;
+	protected $post_id = 0;
 
-	protected $post_type;
+	protected $post_type = 'post';
 
-	protected $post_parent;
+	protected $post_parent = 0;
 
 	protected $post;
 
@@ -70,10 +70,30 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		parent::__construct(true, $enable_captcha);
 
 		// 初始化属性
-		$this->post_parent      = 0;
 		$this->thumbnail_width  = 200;
 		$this->thumbnail_height = 200;
 
+		// 初始化 Post Data
+		$this->setup_postdata($post_type, $post_id);
+
+		// 文章表单固有字段
+		if (!$input_fields_only) {
+			$this->add_hidden('_post_ID', $this->post_id);
+			$this->add_hidden('_post_post_type', $this->post_type);
+			$this->set_route('action', 'wnd_insert_post');
+		}
+
+		// revision
+		$revision_id = Wnd_Post::get_revision_id($post_id);
+		if ($revision_id) {
+			$this->set_message(wnd_notification('<a href="' . get_edit_post_link($revision_id) . '">' . __('编辑版本', 'wnd') . '</a>', 'is-danger'));
+		}
+	}
+
+	/**
+	 *初始化 Post 数据
+	 */
+	protected function setup_postdata($post_type, $post_id) {
 		/**
 		 *@since 2019.12.16 若传参false，表示表单不需要创建草稿
 		 *用于不需要文件上传的表单以降低数据库操作
@@ -119,19 +139,6 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		 */
 		$this->taxonomies    = get_object_taxonomies($this->post_type, 'names');
 		$this->current_terms = $this->taxonomies ? $this->get_current_terms() : [];
-
-		// 文章表单固有字段
-		if (!$input_fields_only) {
-			$this->add_hidden('_post_ID', $this->post_id);
-			$this->add_hidden('_post_post_type', $this->post_type);
-			$this->set_route('action', 'wnd_insert_post');
-		}
-
-		// revision
-		$revision_id = Wnd_Post::get_revision_id($post_id);
-		if ($revision_id) {
-			$this->set_message(wnd_notification('<a href="' . get_edit_post_link($revision_id) . '">' . __('编辑版本', 'wnd') . '</a>', 'is-danger'));
-		}
 	}
 
 	/**
