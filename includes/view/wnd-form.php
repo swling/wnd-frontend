@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\View;
 
+use Exception;
+
 /**
  *Class for creating dynamic Bulma forms.
  *@since 2019.03
@@ -151,6 +153,20 @@ class Wnd_Form {
 	}
 
 	/**
+	 *@since 2021.02.18
+	 *添加任意自定义字段，主要用于自定义非标准字段
+	 */
+	public function add_field(array $args) {
+		$type = $args['type'] ?? '';
+		if (!$type) {
+			throw new Exception('Invalid type');
+		}
+
+		$args                 = array_merge(static::$defaults, $args);
+		$this->input_values[] = $args;
+	}
+
+	/**
 	 *@since 2019.03.10 设置常规input 字段
 	 */
 	// text
@@ -180,13 +196,6 @@ class Wnd_Form {
 	public function add_textarea(array $args) {
 		$args                 = array_merge(static::$defaults, $args);
 		$args['type']         = 'textarea';
-		$this->input_values[] = $args;
-	}
-
-	// 富文本编辑器构造方法需要结合实际项目自行完成，本类中默认以文本框替代
-	public function add_editor(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'editor';
 		$this->input_values[] = $args;
 	}
 
@@ -356,7 +365,9 @@ class Wnd_Form {
 			 *  - 执行字段构建方法
 			 */
 			$method = 'build_' . $input_value['type'];
-			$input_fields .= $this->$method($input_value, $input_key);
+			if (method_exists($this, $method)) {
+				$input_fields .= $this->$method($input_value, $input_key);
+			}
 		}
 		unset($input_value);
 
@@ -545,14 +556,6 @@ class Wnd_Form {
 		$html .= static::build_help($input_value);
 		$html .= '</div>';
 		return $html;
-	}
-
-	/**
-	 *富文本编辑器需要结合实际项目开发，此处默认构造文本框
-	 */
-	protected function build_editor(array $input_value, string $input_key): string{
-		$input_value['class'] .= $input_value['class'] ? ' textarea' : 'textarea';
-		return $this->build_textarea($input_value, $input_key);
 	}
 
 	protected function build_submit_button() {

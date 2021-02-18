@@ -1,5 +1,8 @@
 let general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color', 'date', 'range', 'tel'];
 
+// max tags limit
+var max_tag_num = ('undefined' != typeof max_tag_num) ? max_tag_num : 3;
+
 /**
  *@since 0.9.25
  *Vue 根据 Json 动态渲染表单
@@ -158,9 +161,7 @@ function _wnd_render_form(container, form_json) {
                 // 循环构造自定义 data-* 属性
                 if (field.data) {
                     for (const key in field.data) {
-                        if (Object.hasOwnProperty.call(field.data, key)) {
-                            form_data.append(key, field.data[key]);
-                        }
+                        form_data.append(key, field.data[key]);
                     }
                 }
 
@@ -245,7 +246,49 @@ function _wnd_render_form(container, form_json) {
                     console.log(err);
                 })
             },
+            // 根据当前输入查询已有 tags
+            suggest_tags: function(text, index) {
+                let params = {
+                    "search": text,
+                    "taxonomy": this.form.fields[index].taxonomy
+                };
+                let _this = this;
+                axios({
+                    'method': 'get',
+                    url: wnd_jsonget_api + '/wnd_term_searcher',
+                    params: params,
+                }).then(function(response) {
+                    _this.form.fields[index].suggestions = response.data.data;
+                });
+            },
+            // 回车输入写入数据并清空当前输入
+            enter_tag: function(e, index) {
+                if (!e.target.value || this.form.fields[index].tags.length >= max_tag_num) {
+                    return false;
+                }
 
+                this.form.fields[index].tags.push(e.target.value.trim());
+                e.target.value = '';
+            },
+            // 点击建议 Tag 写入数据并清空当前输入
+            enter_tag_by_sg: function(e, index) {
+                this.form.fields[index].tags.push(e.target.innerText.trim());
+                this.form.fields[index].suggestions = '';
+                let input = e.target.closest('.tags-input').querySelector('[type=text]');
+                input.value = '';
+            },
+            // 删除 Tag
+            delete_tag: function(tag, index) {
+                this.form.fields[index].tags = this.form.fields[index].tags.filter(function(item) {
+                    return item !== tag;
+                });
+            },
+            // 点击 Tag 输入字段
+            handle_tag_input_click: function($event, index) {
+                if (this.form.fields[index].tags.length >= max_tag_num) {
+                    this.form.fields[index].help.text = '最多' + max_tag_num + '个标签';
+                }
+            },
             // 提交
             submit: function() {
                 this.form.submit.attrs.class = form_json.submit.attrs.class + ' is-loading';
@@ -383,6 +426,8 @@ function _wnd_render_form(container, form_json) {
                 t += build_file_upload(field_vn, index);
             } else if ('select' == field.type) {
                 t += build_select(field_vn, index);
+            } else if ('tag_input' == field.type) {
+                t += build_tag_input(field_vn, index);
             }
         }
         return t;
@@ -394,7 +439,7 @@ function _wnd_render_form(container, form_json) {
             '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
             '<div v-if="' + field + '.addon_left" class="control" v-html="' + field + '.addon_left"></div>' +
             '<div :class="get_control_class(' + field + ')">' +
-            '<input v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.value" @change="change(' + field + ')" @keyup.enter="submit"/>' +
+            '<input v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.value" @change="change(' + field + ')" @keypress.enter="submit"/>' +
             '<span v-if="' + field + '.icon_left" class="icon is-left"  v-html="' + field + '.icon_left"></span>' +
             '<span v-if="' + field + '.icon_right"  class="icon is-right" v-html="' + field + '.icon_right"></span>' +
             '</div>' +
@@ -493,6 +538,28 @@ function _wnd_render_form(container, form_json) {
             '<div :id="form.attrs.id + \'-' + index + '\'" class="rich-editor"></div>' +
             '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
             '<textarea style="display:none" v-model="' + field + '.value" v-bind="parse_input_attr(' + field + ')" @change="change(' + field + ')"></textarea>' +
+            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
+            '</div>';
+    };
+
+    // 富文本编辑器
+    function build_tag_input(field, index) {
+        // 按需载入 CSS
+        wnd_load_style(static_path + 'css/tags.min.css?ver=' + wnd.ver);
+
+        let tags = '<template v-for="(tag, index) in ' + field + '.tags"><span class="tag is-medium is-light is-danger">{{tag}}<span class="delete" @click="delete_tag(tag ,' + index + ')"></span></span></template>';
+        let suggestions = '<template v-for="(tag, index) in ' + field + '.suggestions"><li @click="enter_tag_by_sg($event,' + index + ')">{{tag}}</li></template>';
+
+        return '<div :class="get_field_class(' + field + ')">' +
+            '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
+            '<div class="tags-input columns is-marginless">' +
+            '<div class="column is-marginless is-paddingless is-narrow">' + tags + '</div>' +
+            '<div class="autocomplete column is-marginless">' +
+            '<input type="text" :readonly="' + field + '.tags.length >= max_tag_num" @input="suggest_tags($event.target.value,' + index + ')" @keypress.enter="enter_tag($event,' + index + ')" @click="handle_tag_input_click($event,' + index + ')"/>' +
+            '<input type="hidden" v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.tags" />' +
+            '<ul v-show="' + field + '.tags.length < max_tag_num" class="autocomplete-items">' + suggestions + '</ul>' +
+            '</div>' +
+            '</div>' +
             '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
             '</div>';
     };

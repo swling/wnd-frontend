@@ -4,6 +4,10 @@ namespace Wnd\Module;
 /**
  *表单模块公共特性：表单模块同时支持结构数据输出前端渲染或直接PHP渲染
  *@since 0.9.2
+ *
+ *注意：
+ * - 前端 JavaScript 渲染与后端 PHP 渲染可能存在差异
+ * - 后端渲染仅支持标准 HTML 表单，不含各类依赖 JavaScript 的自定义字段如：富文本编辑器，标签编辑器等
  */
 abstract class Wnd_Module_Form extends Wnd_Module {
 

@@ -297,7 +297,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	/**
 	 *自定义标签编辑器
 	 *@since 2020.05.12
-	 *@link https://github.com/swling/tags-input
+	 *@since 0.9.25 以 Vue 重构 该字段不再支持常规 php 渲染
 	 */
 	public function add_post_tags($taxonomy, $label = '', $required = false) {
 		$taxonomy_object = get_taxonomy($taxonomy);
@@ -305,44 +305,15 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			return;
 		}
 
-		// label
-		$label = $label ?: $taxonomy_object->labels->name;
-
-		// exists tags
-		$terms     = $this->current_terms[$taxonomy] ?: [];
-		$term_list = '';
-		foreach ($terms as $term) {
-			$term_list .= '<span class="tag is-medium is-light is-danger">' . $term . '<span class="delete"></span></span>';
-
-		}unset($term);
-
-		// input attr
-		$attr = 'name="_term_' . $taxonomy . '"';
-		$attr .= $required ? ' required="required"' : '';
-
-		// load the script and style
-		$input = '';
-		$input .= '<link rel="stylesheet" href="' . WND_URL . 'static/css/tags.min.css?ver=' . WND_VER . '" type="text/css" media="all" />';
-		$input .= '<script>$.ajaxSetup({cache: true});$.getScript("' . WND_URL . 'static/js/tags.min.js?ver=' . WND_VER . '");</script>';
-
-		// build tags input html
-		$input .= '<div class="field">';
-		$input .= '<label class="label">' . $label . '</label>';
-		$input .= '<div class="tags-input columns is-marginless">';
-		$input .= '<div class="column is-marginless is-paddingless is-narrow"><span class="data">' . $term_list . '</span></div>';
-		$input .= '<div class="autocomplete column is-marginless">';
-		$input .= '<input type="text" data-taxonomy="' . $taxonomy . '" />';
-		$input .= '<input type="hidden" ' . $attr . ' />';
-		$input .= '<ul class="autocomplete-items"></ul>';
-		$input .= '</div>';
-		$input .= '</div>';
-		$input .= '</div>';
-
-		// add
-		$this->add_html($input);
-
-		// 采用自定义HTML方式添加的表单字段，需要补充input name以通过form nonce校验
-		$this->add_input_name('_term_' . $taxonomy);
+		$args = [
+			'type'        => 'tag_input',
+			'tags'        => array_values($this->current_terms[$taxonomy]) ?: [],
+			'label'       => $label ?: $taxonomy_object->labels->name,
+			'name'        => '_term_' . $taxonomy,
+			'required'    => $required,
+			'suggestions' => [],
+		];
+		$this->add_field($args);
 	}
 
 	/**

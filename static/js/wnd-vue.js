@@ -119,6 +119,18 @@ function wnd_load_script(url, callback) {
     script.onload = callback;
 }
 
+/**
+ * 动态加载CSS
+ * @param {string} url 样式地址
+ */
+function wnd_load_style(url) {
+    var link = document.createElement('link');
+    link.type = 'text/css';
+    link.rel = 'stylesheet';
+    link.href = url;
+    document.head.appendChild(link);
+}
+
 // 指定容器设置加载中效果
 function wnd_loading(el, remove = false) {
     var container = document.querySelector(el);
