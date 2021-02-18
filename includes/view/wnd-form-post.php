@@ -310,6 +310,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			'tags'        => array_values($this->current_terms[$taxonomy]) ?: [],
 			'label'       => $label ?: $taxonomy_object->labels->name,
 			'name'        => '_term_' . $taxonomy,
+			'taxonomy'    => $taxonomy,
 			'required'    => $required,
 			'suggestions' => [],
 		];
