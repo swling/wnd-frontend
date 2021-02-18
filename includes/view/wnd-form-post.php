@@ -355,7 +355,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 **/
 	public function add_post_meta($meta_key, $label = '', $placeholder = '', $required = false) {
 		$name  = '_meta_' . $meta_key;
-		$value = wnd_get_post_meta($this->post_id, $meta_key);
+		$value = wnd_get_post_meta($this->post_id, $meta_key) ?: '';
 		$this->add_text(
 			[
 				'name'        => $name,
@@ -372,7 +372,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 **/
 	public function add_wp_post_meta($meta_key, $label = '', $placeholder = '', $required = false) {
 		$name  = '_wpmeta_' . $meta_key;
-		$value = get_post_meta($this->post_id, $meta_key, true);
+		$value = get_post_meta($this->post_id, $meta_key, true) ?: '';
 		$this->add_text(
 			[
 				'name'        => $name,
@@ -423,7 +423,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_number(
 			[
 				'name'        => '_wpmeta_price',
-				'value'       => get_post_meta($this->post_id, 'price', true),
+				'value'       => get_post_meta($this->post_id, 'price', true) ?: '',
 				'label'       => $label,
 				'icon_left'   => '<i class="fas fa-yen-sign"></i>',
 				'placeholder' => $placeholder,
