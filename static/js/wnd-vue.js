@@ -438,9 +438,12 @@ function wnd_form_msg(form, msg, msg_class) {
     el.classList.add('message', msg_class);
     el.innerHTML = '<div class="message-body">' + msg + '</div>';
 
+    // 调整高度
     modal_entry = form.closest('#modal .modal-entry');
     if (modal_entry) {
         funTransitionHeight(modal_entry, trs_time);
+    } else {
+        funTransitionHeight(form.parentNode, trs_time);
     }
 }
 

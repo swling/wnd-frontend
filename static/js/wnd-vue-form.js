@@ -577,51 +577,52 @@ function _wnd_render_form(container, form_json) {
 		<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 		</div>`;
     };
+}
+
+/**
+ *@since 0.9.25
+ *字段追加
+ */
+document.addEventListener('click', function(e) {
+    let button = e.target.closest('button');
+    if (!button) {
+        return;
+    }
+    let parent = button.closest('form').parentNode;
 
     /**
-     *@since 0.9.25
-     *字段追加
+     *@since 2020.04.20
+     *动态追加字段
      */
-    parent.addEventListener('click', function(e) {
-        let button = e.target.closest('button');
-        if (!button) {
-            return;
-        }
+    if (button.classList.contains('add-row')) {
+        var field = button.closest(".field");
+        // 临时改变属性，以便复制给即将创建的字段
+        button.classList.remove('add-row');
+        button.classList.add('remove-row');
+        button.innerText = '-';
+
+        // 克隆（复制）改变后的元素
+        var new_field = button.closest('.field').cloneNode(true);
+
+        // 还原当前字段
+        button.classList.add('add-row');
+        button.classList.remove('remove-row');
+        button.innerText = '+';
+
+        // 追加新字段
+        field.after(new_field);
+
+        // Ajax 场景高度调整
+        funTransitionHeight(parent, trs_time);
 
         /**
          *@since 2020.04.20
-         *动态追加字段
+         *删除字段
          */
-        if (button.classList.contains('add-row')) {
-            var field = button.closest(".field");
-            // 临时改变属性，以便复制给即将创建的字段
-            button.classList.remove('add-row');
-            button.classList.add('remove-row');
-            button.innerText = '-';
+    } else if (button.classList.contains('remove-row')) {
+        button.closest('.field').outerHTML = '';
 
-            // 克隆（复制）改变后的元素
-            var new_field = button.closest('.field').cloneNode(true);
-
-            // 还原当前字段
-            button.classList.add('add-row');
-            button.classList.remove('remove-row');
-            button.innerText = '+';
-
-            // 追加新字段
-            field.after(new_field);
-
-            // Ajax 场景高度调整
-            funTransitionHeight(parent, trs_time);
-
-            /**
-             *@since 2020.04.20
-             *删除字段
-             */
-        } else if (button.classList.contains('remove-row')) {
-            button.closest('.field').outerHTML = '';
-
-            // Ajax 场景高度调整
-            funTransitionHeight(parent, trs_time);
-        }
-    });
-}
+        // Ajax 场景高度调整
+        funTransitionHeight(parent, trs_time);
+    }
+});
