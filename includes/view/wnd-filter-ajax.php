@@ -10,8 +10,6 @@ use WP_Query;
  */
 class Wnd_Filter_Ajax extends Wnd_Filter {
 
-	protected $ajax_tabs = [];
-
 	protected $before_html = '';
 
 	protected $after_html = '';
@@ -50,7 +48,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 		$remove_query_args[] = 'page';
 
 		if ($with_any_tab) {
-			$options[__('全部', 'wnd')] = '';
+			$options = array_merge([__('全部', 'wnd') => ''], $options);
 		}
 
 		$tabs = [
@@ -59,7 +57,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 			'options'           => $options,
 			'remove_query_args' => $remove_query_args,
 		];
-		$this->ajax_tabs[] = $tabs;
+		$this->tabs[] = $tabs;
 
 		return $tabs;
 	}
@@ -81,7 +79,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	 *获取完整筛选 Tabs
 	 */
 	public function get_tabs() {
-		return $this->ajax_tabs;
+		return $this->tabs;
 	}
 
 	/**
