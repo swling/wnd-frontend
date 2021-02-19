@@ -609,10 +609,11 @@ function wnd_update_views(post_id, interval = 3600) {
 /**
  *@since 2019.07.02 非表单形式发送ajax请求
  */
+var can_click_ajax_link = true;
+
 function wnd_ajax_click(link) {
-    var can_click_ajax_link = true;
     // 是否在弹窗中操作
-    var is_in_modal = link.closest(".modal.is-active") ? true : false;
+    var in_modal = link.closest(".modal.is-active") ? true : false;
 
     // 点击频率控制
     if (!can_click_ajax_link) {
@@ -666,7 +667,7 @@ function wnd_ajax_click(link) {
                 if (response.data.data) {
                     link.innerHTML = response.data.data;
                 }
-                if (!is_in_modal) {
+                if (!in_modal) {
                     wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.data.msg + '</h5></div>', 1);
                 }
                 break;
