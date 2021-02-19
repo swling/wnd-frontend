@@ -406,7 +406,7 @@ function _wnd_render_form(container, form_json) {
             let field = form_json.fields[index];
 
             // 特别注意：此处定义的是 Vue 模板字符串，而非实际数据，Vue 将据此字符串渲染为具体值
-            let field_vn = 'form.fields[' + index + ']';
+            let field_vn = `form.fields[${index}]`;
 
             if ('html' == field.type) {
                 t += field.value;
@@ -435,111 +435,118 @@ function _wnd_render_form(container, form_json) {
 
     // 常规 input 组件
     function build_text(field, index) {
-        return '<div :class="get_field_class(' + field + ')">' +
-            '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
-            '<div v-if="' + field + '.addon_left" class="control" v-html="' + field + '.addon_left"></div>' +
-            '<div :class="get_control_class(' + field + ')">' +
-            '<input v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.value" @change="change(' + field + ')" @keypress.enter="submit"/>' +
-            '<span v-if="' + field + '.icon_left" class="icon is-left"  v-html="' + field + '.icon_left"></span>' +
-            '<span v-if="' + field + '.icon_right"  class="icon is-right" v-html="' + field + '.icon_right"></span>' +
-            '</div>' +
-            '<div v-if="' + field + '.addon_right" class="control" v-html="' + field + '.addon_right"></div>' +
-            '<p v-if="!has_addon(' + field + ')" v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
-            '</div>';
+        return `
+		<div :class="get_field_class(${field})">
+		<label v-if="${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>
+		<div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
+		<div :class="get_control_class(${field})">
+		<input v-bind="parse_input_attr(${field})" v-model="${field}.value" @change="change(${field})" @keypress.enter="submit"/>
+		<span v-if="${field}.icon_left" class="icon is-left"  v-html="${field}.icon_left"></span>
+		<span v-if="${field}.icon_right"  class="icon is-right" v-html="${field}.icon_right"></span>
+		</div>
+		<div v-if="${field}.addon_right" class="control" v-html="${field}.addon_right"></div>
+		<p v-if="!has_addon(${field})" v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
+		</div>`;
     }
 
     // Radio / checkbox 组件
     function build_radio(field, index) {
-        return '<div :class="get_field_class(' + field + ')">' +
-            '<div :class="get_control_class(' + field + ')">' +
-            '<template v-for="(radio_value, radio_label) in ' + field + '.options">' +
-            '<label :class="' + field + '.type">' +
-            '<input v-bind="parse_input_attr(' + field + ')" :value="radio_value" v-model="' + field + '.checked" @click="change(' + field + ')">' +
-            '{{radio_label}}</label>' +
-            '</template>' +
-            '</div>' +
-            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
-            '</div>';
+        return `
+		<div :class="get_field_class(${field})">
+		<div :class="get_control_class(${field})">
+		<template v-for="(radio_value, radio_label) in ${field}.options">
+		<label :class="${field}.type">
+		<input v-bind="parse_input_attr(${field})" :value="radio_value" v-model="${field}.checked" @click="change(${field})">
+		{{radio_label}}</label>
+		</template>
+		</div>
+		<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
+		</div>`;
     }
 
     // 下拉 Select 组件
     function build_select(field, index) {
-        return '<div class="field">' +
-            '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
-            '<div class="control">' +
-            '<div class="select" :class="' + field + '.class" @change="change(' + field + ')">' +
-            '<select v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.selected">' +
-            '<template v-for="(value, name) in ' + field + '.options">' +
-            '<option :value="value">{{name}}</option>' +
-            '</template>' +
-            '</select>' +
-            '</div>' +
-            '</div>' +
-            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
-            '</div>';
+        return `
+		<div class="field">
+		<label v-if="${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>
+		<div class="control">
+		<div class="select" :class="${field}.class" @change="change(${field})">
+		<select v-bind="parse_input_attr(${field})" v-model="${field}.selected">
+		<template v-for="(value, name) in ${field}.options">
+		<option :value="value">{{name}}</option>
+		</template>
+		</select>
+		</div>
+		</div>
+		<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
+		</div>`;
     }
 
     // Textarea 组件
     function build_textarea(field, index) {
-        return '<div :class="get_field_class(' + field + ')">' +
-            '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
-            '<textarea v-html="' + field + '.value" v-bind="parse_input_attr(' + field + ')" @change="change(' + field + ')"></textarea>' +
-            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
-            '</div>';
+        return `
+		<div :class="get_field_class(${field})">
+		<label v-if="${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>
+		<textarea v-html="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
+		<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
+		</div>`;
     };
 
     // 文件上传字段
     function build_file_upload(field, index) {
-        return '<div :id="get_field_id(' + field + ',' + index + ')" class="field" :class="' + field + '.class">' +
-            '<div class="field"><div class="ajax-message"></div></div>' +
-            '<div class="columns is-mobile is-vcentered">' +
+        return `
+		<div :id="get_field_id(${field},${index})" class="field" :class="${field}.class">
+		<div class="field"><div class="ajax-message"></div></div>
+		<div class="columns is-mobile is-vcentered">
 
-            '<div class="column">' +
-            '<div class="file has-name is-fullwidth">' +
-            '<label class="file-label">' +
-            '<input type="file" class="file file-input" :name="' + field + '.name" @change="upload($event,' + field + ')">' +
-            '<span class="file-cta">' +
-            '<span class="file-icon"><i class="fa fa-upload"></i></span>' +
-            '<span class="file-label">{{' + field + '.label}}</span>' +
-            '</span>' +
-            '<span class="file-name" v-html="' + field + '.file_name"></span>' +
-            '</label>' +
-            '</div>' +
-            '</div>' +
+		<div class="column">
+		<div class="file has-name is-fullwidth">
+		<label class="file-label">
+		<input type="file" class="file file-input" :name="${field}.name" @change="upload($event,${field})">
+		<span class="file-cta">
+		<span class="file-icon"><i class="fa fa-upload"></i></span>
+		<span class="file-label">{{${field}.label}}</span>
+		</span>
+		<span class="file-name" v-html="${field}.file_name"></span>
+		</label>
+		</div>
+		</div>
 
-            '<div v-show="' + field + '.delete_button && ' + field + '.file_id" class="column is-narrow">' +
-            '<a class="delete" @click="delete_file(' + field + ',' + index + ')"></a>' +
-            '</div>' +
+		<div v-show="${field}.delete_button && ${field}.file_id" class="column is-narrow">
+		<a class="delete" @click="delete_file(${field},${index})"></a>
+		</div>
 
-            '</div>' +
-            '</div>';
+		</div>
+		</div>`;
     }
 
     // 单个图像上传字段
     function build_image_upload(field, index) {
-        return '<div :id="get_field_id(' + field + ',' + index + ')" class="field" :class="' + field + '.class">' +
-            '<div v-if="' + field + '.complete" class="' + field + '">' +
-            '<progress class="progress is-primary" :value="' + field + '.complete" max="100"></progress>' +
-            '</div>' +
+        return `
+		<div :id="get_field_id(${field},${index})" class="field" :class="${field}.class">
+		<div v-if="${field}.complete" class="${field}">
+		<progress class="progress is-primary" :value="${field}.complete" max="100"></progress>
+		</div>
 
-            '<label class="label">{{' + field + '.label}}<span v-if="' + field + '.required && ' + field + '.label" class="required">*</span></label>' +
-            '<a @click="click_target(\'#\'+get_field_id(' + field + ',' + index + ') + \' input[type=file]\')">' +
-            '<img class="thumbnail" :src="' + field + '.thumbnail" :height="' + field + '.thumbnail_size.height" :width="' + field + '.thumbnail_size.width">' +
-            '</a>' +
-            '<a v-show="' + field + '.delete_button && ' + field + '.file_id" class="delete" @click="delete_file(' + field + ',' + index + ')"></a>' +
-            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
-            '<div class="file"><input type="file" class="file file-input" accept="image/*" :name="' + field + '.name" @change="upload($event,' + field + ')"></div>' +
-            '</div>';
+		<label class="label">{{${field}.label}}<span v-if="${field}.required && ${field}.label" class="required">*</span></label>
+		<a @click="click_target('#' + get_field_id(${field}, ${index}) + ' input[type=file]')">
+		<img class="thumbnail" :src="${field}.thumbnail" :height="${field}.thumbnail_size.height" :width="${field}.thumbnail_size.width">
+		</a>
+		<a v-show="${field}.delete_button && ${field}.file_id" class="delete" @click="delete_file(${field}, ${index})"></a>
+		<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
+		<div class="file"><input type="file" class="file file-input" accept="image/*" :name="${field}.name" @change="upload($event,${field})"></div>
+		</div>`;
     }
 
     // 富文本编辑器
     function build_editor(field, index) {
-        return '<div :class="get_field_class(' + field + ')">' +
-            '<div :id="form.attrs.id + \'-' + index + '\'" class="rich-editor"></div>' +
-            '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
-            '<textarea style="display:none" v-model="' + field + '.value" v-bind="parse_input_attr(' + field + ')" @change="change(' + field + ')"></textarea>' +
-            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
-            '</div>';
+        return `
+		<div :class="get_field_class(${field})">
+		<div :id="form.attrs.id + '-${index}'" class="rich-editor"></div>
+		<label v-if="${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>
+		<textarea style="display:none" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
+		<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
+		</div>`;
     };
 
     // 富文本编辑器
@@ -547,21 +554,28 @@ function _wnd_render_form(container, form_json) {
         // 按需载入 CSS
         wnd_load_style(static_path + 'css/tags.min.css?ver=' + wnd.ver);
 
-        let tags = '<template v-for="(tag, index) in ' + field + '.tags"><span class="tag is-medium is-light is-danger">{{tag}}<span class="delete" @click="delete_tag(tag ,' + index + ')"></span></span></template>';
-        let suggestions = '<template v-for="(tag, index) in ' + field + '.suggestions"><li @click="enter_tag_by_sg($event,' + index + ')">{{tag}}</li></template>';
+        let tags = `
+		<template v-for="(tag, index) in ${field}.tags">
+		<span class="tag is-medium is-light is-danger">{{tag}}<span class="delete" @click="delete_tag(tag, ${index})"></span></span>
+		</template>`;
+        let suggestions = `
+		<template v-for="(tag, index) in ${field}.suggestions">
+		<li @click="enter_tag_by_sg($event, ${index})">{{tag}}</li>
+		</template>`;
 
-        return '<div :class="get_field_class(' + field + ')">' +
-            '<label v-if="' + field + '.label" class="label">{{' + field + '.label}}<span v-if="' + field + '.required" class="required">*</span></label>' +
-            '<div class="tags-input columns is-marginless">' +
-            '<div class="column is-marginless is-paddingless is-narrow">' + tags + '</div>' +
-            '<div class="autocomplete column is-marginless">' +
-            '<input type="text" :readonly="' + field + '.tags.length >= max_tag_num" @input="suggest_tags($event.target.value,' + index + ')" @keypress.enter="enter_tag($event,' + index + ')" @click="handle_tag_input_click($event,' + index + ')"/>' +
-            '<input type="hidden" v-bind="parse_input_attr(' + field + ')" v-model="' + field + '.tags" />' +
-            '<ul v-show="' + field + '.tags.length < max_tag_num" class="autocomplete-items">' + suggestions + '</ul>' +
-            '</div>' +
-            '</div>' +
-            '<p v-show="' + field + '.help.text" class="help" :class="' + field + '.help.class">{{' + field + '.help.text}}</p>' +
-            '</div>';
+        return `
+		<div :class="get_field_class(${field})">
+		<label v-if="${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>
+		<div class="tags-input columns is-marginless">
+		<div class="column is-marginless is-paddingless is-narrow">${tags}</div>
+		<div class="autocomplete column is-marginless">
+		<input type="text" :readonly="${field}.tags.length >= max_tag_num" @input="suggest_tags($event.target.value, ${index})" @keypress.enter="enter_tag($event, ${index})" @click="handle_tag_input_click($event, ${index})"/>
+		<input type="hidden" v-bind="parse_input_attr(${field})" v-model="${field}.tags" />
+		<ul v-show="${field}.tags.length < max_tag_num" class="autocomplete-items">${suggestions}</ul>
+		</div>
+		</div>
+		<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
+		</div>`;
     };
 
     /**

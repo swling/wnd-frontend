@@ -438,7 +438,7 @@ function wnd_form_msg(form, msg, msg_class) {
     el.classList.add('message', msg_class);
     el.innerHTML = '<div class="message-body">' + msg + '</div>';
 
-    modal_entry = document.querySelector('#modal .modal-entry');
+    modal_entry = form.closest('#modal .modal-entry');
     if (modal_entry) {
         funTransitionHeight(modal_entry, trs_time);
     }
