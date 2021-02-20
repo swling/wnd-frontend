@@ -93,7 +93,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 		wp_enqueue_script('vue', '//cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js', [], null);
 	}
 
-	wp_enqueue_script('wnd-vue', WND_URL . 'static/js/wnd-vue.js', [], WND_VER);
+	wp_enqueue_script('wnd-vue', WND_URL . 'static/js/wnd-vue.js', ['vue', 'axios'], WND_VER);
 
 	// api 及语言本地化
 	$wnd_data = [

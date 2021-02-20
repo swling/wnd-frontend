@@ -588,7 +588,11 @@ document.addEventListener('click', function(e) {
     if (!button) {
         return;
     }
-    let parent = button.closest('form').parentNode;
+    let form = button.closest('form');
+    if (!form) {
+        return;
+    }
+    let parent = form.parentNode;
 
     /**
      *@since 2020.04.20

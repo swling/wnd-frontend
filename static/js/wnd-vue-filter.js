@@ -192,59 +192,52 @@ function _wnd_render_filter(container, filter_json) {
 			return build_post_template();
 		}
 
-		let t = '<table class="table is-fullwidth is-hoverable is-striped">';
-		// 表头
-		t += '<thead>';
-		t += '<tr>';
-		t += '<th class="is-narrow">日期</th>';
-		t += '<th>标题</th>';
-		t += '<th class="is-narrow has-text-centered">操作</th>';
-		t += '</tr>';
-		t += '</thead>';
+		return `
+		<table class="table is-fullwidth is-hoverable is-striped">
+		<thead>
+		<tr>
+		<th class="is-narrow">日期</th>
+		<th>标题</th>
+		<th class="is-narrow has-text-centered">操作</th>
+		</tr>
+		</thead>
 
-		//列表 
-		t += '<tbody>';
-		t += '<tr v-for="(post,index) in filter.posts">';
-		t += '<td class="is-narrow">{{post.post_date}}</td>';
-		t += '<td>{{post.post_title}}</td>';
-
-		t += '<td class="is-narrow has-text-centered">';
-		t += 'xxx';
-		t += '</td>';
-		t += '</tr>';
-		t += '</tbody>';
-		t += '</table>';
-
-		return t;
+		<tbody>
+		<tr v-for="(post, index) in filter.posts">
+		<td class="is-narrow">{{post.post_date}}</td>
+		<td>{{post.post_title}}</td>
+		<td class="is-narrow has-text-centered">xxx</td>
+		</tr>
+		</tbody>
+		</table>`;
 	}
 
 	function build_tabs(tabs) {
-		let t = '';
-		t += '<div v-if="' + tabs + '" class="columns is-marginless is-vcentered" :class="' + tabs + '.key">'
-		t += '<div class="column is-narrow">{{' + tabs + '.title}}</div>';
+		return `
+		<div v-if="${tabs}" class="columns is-marginless is-vcentered" :class="${tabs}.key">
+		<div class="column is-narrow">{{${tabs}.title}}</div>
 
-		t += '<div class="column tabs">';
-		t += '<ul class="tab">'
-		t += '<template v-for="(value,name) in ' + tabs + '.options">'
-		t += '<li :class="item_class(' + tabs + '.key, value)"><a :data-key="' + tabs + '.key" :data-value="value" @click="update_filter(' + tabs + '.key ,value)">{{name}}</a></li>'
-		t += '</template>'
-		t += '</ul>'
-		t += '</div>'
+		<div class="column tabs">
+		<ul class="tab">
+		<template v-for="(value, name) in ${tabs}.options">
+		<li :class="item_class(${tabs}.key, value)"><a :data-key="${tabs}.key" :data-value="value" @click="update_filter(${tabs}.key, value)">{{name}}</a></li>
+		</template>
+		</ul>
+		</div>
 
-		t += '</div>'
-		return t;
+		</div>`
 	}
 
 	function build_navigation(filter) {
-		let t = '<nav class="pagination is-centered">';
-		t += '<ul class="pagination-list">';
-		t += '<li v-if="filter.pagination.paged >= 2"><a class="pagination-previous" @click="update_filter(\'paged\', --filter.pagination.paged)">上一页</a></li>';
-		t += '<li v-if="filter.pagination.post_count >= filter.pagination.posts_per_page">';
-		t += '<a class="pagination-next" @click="update_filter(\'paged\', ++filter.pagination.paged)">下一页</a>';
-		t += '</li>';
-		t += '</ul>';
-		t += '</nav>';
-		return t;
+		return `
+		<nav class="pagination is-centered">
+		<ul class="pagination-list">
+		<li v-if="filter.pagination.paged >= 2"><a class="pagination-previous" @click="update_filter('paged', --filter.pagination.paged)">上一页</a></li>
+		<li v-if="filter.pagination.post_count >= filter.pagination.posts_per_page">
+		<a class="pagination-next" @click="update_filter('paged', ++filter.pagination.paged)">下一页</a>
+		</li>
+		</ul>
+		</nav>`;
 	}
 
 	function is_category_tab(tab, filter) {
