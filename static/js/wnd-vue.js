@@ -32,7 +32,20 @@ axios.interceptors.request.use(function(config) {
     // config.headers.Authorization = "Bearer " + token
     config.headers['X-WP-Nonce'] = wnd.rest_nonce;
     config.headers['X-Requested-With'] = 'XMLHttpRequest';
+    // Loading
+    if (config.headers.container || false) {
+        wnd_loading(config.headers.container);
+    }
     return config;
+});
+
+//响应拦截器
+axios.interceptors.response.use(function(response) {
+    // Loading
+    if (response.config.headers.container || false) {
+        wnd_loading(response.config.headers.container, true);
+    }
+    return response;
 });
 
 //判断是否为移动端
@@ -59,13 +72,10 @@ function wnd_is_spider() {
 
 // 根据节点选择器删除
 function wnd_remove(el) {
-    // 拿到待删除节点:
     var self = document.querySelector(el);
-    // 拿到父节点:
-    var parent = self.parentElement;
-    // 删除:
-    var removed = parent.removeChild(self);
-    removed === self; // true	
+    if (self) {
+        self.outerHTML = '';
+    }
 }
 
 /**
@@ -134,6 +144,19 @@ function wnd_load_style(url) {
 // 指定容器设置加载中效果
 function wnd_loading(el, remove = false) {
     var container = document.querySelector(el);
+    if (!container) {
+        return;
+    }
+    // Modal
+    if ('.modal-entry' == el) {
+        if (remove) {
+            container.innerHTML = '';
+        } else {
+            container.innerHTML = loading_el;
+        }
+        return;
+    }
+    // Embed
     if (!remove) {
         container.style.position = 'relative';
         wnd_append(el, '<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:9;background:#FFF;opacity:0.7">' + loading_el + '</div>');
@@ -223,8 +246,6 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
     container_el = document.querySelector(container);
     funTransitionHeight(container_el);
 
-    wnd_loading(container);
-
     // GET request for remote image in node.js
     axios({
             method: 'get',
@@ -232,6 +253,9 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
             params: Object.assign({
                 'ajax_type': 'embed'
             }, param),
+            headers: {
+                'container': container
+            },
         })
         .then(function(response) {
             if ('undefined' == typeof response.data.status) {
@@ -293,8 +317,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 */
 // ajax 从后端请求内容，并以弹窗形式展现
 function wnd_ajax_modal(module, param = {}, callback = '') {
-    // 添加请求拦截器
-    wnd_alert_msg('');
+    wnd_alert_msg('……');
 
     axios({
             method: 'get',
@@ -302,6 +325,9 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
             params: Object.assign({
                 'ajax_type': 'modal'
             }, param),
+            headers: {
+                'container': '.modal-entry'
+            },
         })
         .then(function(response) {
             if ('undefined' == typeof response.data.status) {
