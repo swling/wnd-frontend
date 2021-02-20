@@ -3,14 +3,6 @@
  *Vue 根据 Json 动态渲染筛选列表
  */
 function _wnd_render_filter(container, filter_json) {
-	// 添加请求拦截器
-	// axios.interceptors.request.use(function (config) {
-	// 	if ('get' == config.method) {
-	// 		wnd_loading(container + ' .wnd-filter-posts');
-	// 	}
-
-	// 	return config;
-	// });
 	let parent = document.querySelector(container).parentNode;
 
 	// 数据 合并数据，并进行深拷贝，以保留原生传参 form_json 不随 data 变动
@@ -81,6 +73,10 @@ function _wnd_render_filter(container, filter_json) {
 				return true;
 			},
 
+			get_posts_container: function() {
+				return (parent.id ? '#' + parent.id : '') + ' .wnd-filter-posts';
+			},
+
 			update_filter: function(key, value) {
 				/**
 				 *	切换类型：恢复初始参数
@@ -114,7 +110,10 @@ function _wnd_render_filter(container, filter_json) {
 				axios({
 						method: 'get',
 						url: wnd_posts_api,
-						params: param
+						params: param,
+						headers: {
+							'container': _this.get_posts_container(),
+						},
 					})
 					.then(function(response) {
 						if ('undefined' == typeof response.data.status) {

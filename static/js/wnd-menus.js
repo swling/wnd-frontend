@@ -1,13 +1,15 @@
 // 定义菜单数据
-var wnd_menus_data = false;
+var wnd_menus_data = wnd_menus_data || false;
 
 // 菜单
-function _wnd_render_menus(el, menus_data) {
+function _wnd_render_menus(container, menus_data) {
 	// 优先接收外部传递参数
 	wnd_menus_data = menus_data || wnd_menus_data;
 
+	let parent = document.querySelector(container).parentNode;
+
 	new Vue({
-		el: el,
+		el: container,
 		template: `
 		<ul class="menu-list">
 		<template v-for="(menu, menu_index) in menus">
@@ -52,8 +54,10 @@ function _wnd_render_menus(el, menus_data) {
 						menu.expand = !(menu.expand || false);
 					}
 				}
-			}
-
+			},
+			get_container: function() {
+				return parent.id ? '#' + parent.id : '';
+			},
 		},
 		mounted() {
 			// 如果尚未定义菜单数据，异步请求数据并赋值
@@ -62,6 +66,9 @@ function _wnd_render_menus(el, menus_data) {
 				axios({
 					'method': 'get',
 					url: wnd_jsonget_api + '/wnd_menus' + lang_query,
+					headers: {
+						'container': _this.get_container(),
+					},
 				}).then(function(res) {
 					_this.menus = res.data.data;
 					wnd_menus_data = res.data.data;

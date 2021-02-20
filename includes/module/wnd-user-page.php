@@ -49,7 +49,7 @@ class Wnd_User_Page extends Wnd_Module_Html {
 		$module = $module ? ('<div id="ajax-module" class="content box">' . $module . '</div>') : '';
 
 		get_header();
-		echo '<script>var menus = ' . json_encode(Wnd_Menus::get()) . ';</script>';
+		echo '<script>var wnd_menus_data = ' . json_encode(Wnd_Menus::get()) . ';</script>';
 		echo '<main id="user-page-container" class="column">';
 		echo $module ?: static::build_user_page();
 		echo '</main>';
@@ -138,15 +138,14 @@ class Wnd_User_Page extends Wnd_Module_Html {
 		$html = '
 		<div id="user-center" class="columns">
 		<div v-if="menus" class="column is-narrow is-hidden-mobile">
-		<div class="box"><div id="app-menus"></div></div>
+		<div id="wnd-menus" class="box"><div id="app-menus"></div></div>
 		</div>
 
 		<div class="column"><div id="ajax-module" class="box"></div></div>
-		</div><script>wnd_render_menus("#app-menus", menus)</script>';
+		</div><script>wnd_render_menus("#app-menus", wnd_menus_data)</script>';
 
 		/**
 		 * 默认用户中心：注册、登录、账户管理，内容管理，财务管理等
-		 *
 		 */
 		return apply_filters('wnd_user_page', $html);
 	}

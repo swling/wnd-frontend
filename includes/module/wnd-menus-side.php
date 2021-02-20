@@ -32,7 +32,7 @@ class Wnd_Menus_Side extends Wnd_Module_Html {
 		}
 
 		$html .= apply_filters('wnd_menus_side_before', '');
-		$html .= '<div id="app-menus-side"></div>';
+		$html .= '<div id="wnd-menus-side"><div id="app-menus-side"></div></div>';
 		$html .= '<script>wnd_render_menus("#app-menus-side")</script>';
 		$html .= apply_filters('wnd_menus_side_after', '');
 
