@@ -2,6 +2,7 @@
 namespace Wnd\Module;
 
 use Exception;
+use Wnd\JsonGet\Wnd_Menus;
 use Wnd\Module\Wnd_User_Center;
 
 /**
@@ -42,14 +43,13 @@ class Wnd_User_Page extends Wnd_Module_Html {
 		}
 
 		// 加载脚本
-		wp_enqueue_script('router', WND_URL . 'static/js/lib/routie.min.js', ['wnd-vue'], WND_VER, true);
-		wp_enqueue_script('wnd-front-page', WND_URL . 'static/js/wnd-front-page.js', ['wnd-vue'], WND_VER, true);
-		wp_add_inline_script('wnd-front-page', 'var menus = ' . Wnd_Menus::render(), 'before');
-
+		wp_enqueue_script('wnd-menus', WND_URL . 'static/js/wnd-menus.js', ['wnd-vue'], WND_VER);
+		wp_enqueue_script('wnd-front-page', WND_URL . 'static/js/wnd-front-page.js', ['wnd-vue', 'wnd-menus'], WND_VER);
 		$module = static::handle_module($args) ?: '';
 		$module = $module ? ('<div id="ajax-module" class="content box">' . $module . '</div>') : '';
 
 		get_header();
+		echo '<script>var menus = ' . json_encode(Wnd_Menus::get()) . ';</script>';
 		echo '<main id="user-page-container" class="column">';
 		echo $module ?: static::build_user_page();
 		echo '</main>';
@@ -137,23 +137,12 @@ class Wnd_User_Page extends Wnd_Module_Html {
 
 		$html = '
 		<div id="user-center" class="columns">
-		<div v-if="menus" class="column is-narrow">
-		<div class="box">
-		<ul class="menu-list">
-
-		<template v-for="(menu, menu_index) in menus">
-		<a v-if="menu.label" v-text="menu.label" @click="expand(menu_index)"></a>
-		<li v-show="menu.expand"><ul><li v-for="(item, item_index) in menu.items">
-		<a :href="item.href" @click="active(menu_index, item_index)" :class="item.class" v-text="item.title"></a>
-		</li></ul></li>
-		</template>
-
-		</ul>
-		</div>
+		<div v-if="menus" class="column is-narrow is-hidden-mobile">
+		<div class="box"><div id="app-menus"></div></div>
 		</div>
 
 		<div class="column"><div id="ajax-module" class="box"></div></div>
-		</div>';
+		</div><script>wnd_render_menus("#app-menus", menus)</script>';
 
 		/**
 		 * 默认用户中心：注册、登录、账户管理，内容管理，财务管理等

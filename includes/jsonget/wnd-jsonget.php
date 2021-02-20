@@ -15,7 +15,7 @@ abstract class Wnd_JsonGet {
 	 *@return array 数据
 	 *
 	 */
-	public static function get($args = '', $force = false) {
+	public static function get($args = '', $force = false): array{
 		/**
 		 *默认 $_GET 参数优先，若设置 $force = true 则忽略 $_GET
 		 */
@@ -30,5 +30,5 @@ abstract class Wnd_JsonGet {
 	 *
 	 *此处不添加 $args 参数，子类可自行添加带默认值的传参如 $args = [] 即可接收传参
 	 */
-	abstract protected static function query();
+	abstract protected static function query(): array;
 }

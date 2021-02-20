@@ -1,14 +1,14 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\JsonGet;
 
 /**
  *@since 0.9.11
  *
  *插件管理菜单
  */
-class Wnd_Menus extends Wnd_Module_Html {
+class Wnd_Menus extends Wnd_JsonGet {
 
-	protected static function build(array $args = []): string{
+	protected static function query(array $args = []): array{
 		$defaults = [
 			'inside'               => false,
 			'expand_default_menus' => true,
@@ -27,7 +27,7 @@ class Wnd_Menus extends Wnd_Module_Html {
 		$menus[] = $default_menus;
 		$menus   = apply_filters('wnd_menus', $menus, $args);
 
-		return json_encode($menus);
+		return $menus;
 	}
 
 	protected static function build_user_menus($expand_default_menus): array{
@@ -50,7 +50,7 @@ class Wnd_Menus extends Wnd_Module_Html {
 
 	protected static function build_manager_menus($expand_default_menus): array{
 		$menus = [
-			'label'  => __('用户中心', 'wnd') . '&nbsp;<i class="fas fa-chevron-down"></i>',
+			'label'  => __('管理中心', 'wnd') . '&nbsp;<i class="fas fa-chevron-down"></i>',
 			'expand' => true,
 			'items'  => [
 				['title' => '概览', 'href' => static::get_front_page_url() . '#'],

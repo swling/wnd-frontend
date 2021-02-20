@@ -136,7 +136,7 @@ function wnd_loading(el, remove = false) {
     var container = document.querySelector(el);
     if (!remove) {
         container.style.position = 'relative';
-        wnd_append(el, '<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:999;background:#FFF;opacity:0.7">' + loading_el + '</div>');
+        wnd_append(el, '<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:9;background:#FFF;opacity:0.7">' + loading_el + '</div>');
     } else {
         wnd_remove(el + ' .wnd-loading');
         container.style.position = 'initial';
@@ -176,6 +176,18 @@ function wnd_render_filter(container, filter_json) {
         });
     } else {
         _wnd_render_filter(container, filter_json);
+    }
+}
+
+// 按需加载 wnd-vue-form.js 并渲染表达
+function wnd_render_menus(container, menus_json) {
+    if ('function' != typeof _wnd_render_menus) {
+        let url = static_path + 'js/wnd-menus.js?ver=' + wnd.ver;
+        wnd_load_script(url, function() {
+            _wnd_render_menus(container, menus_json);
+        });
+    } else {
+        _wnd_render_menus(container, menus_json);
     }
 }
 

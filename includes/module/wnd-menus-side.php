@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\Module\Wnd_Menus;
 use Wnd\Module\Wnd_Search_Form;
 
 /**
@@ -33,7 +32,8 @@ class Wnd_Menus_Side extends Wnd_Module_Html {
 		}
 
 		$html .= apply_filters('wnd_menus_side_before', '');
-		$html .= Wnd_Menus::render(['inside' => true, 'expand_default_menus' => false]);
+		$html .= '<div id="app-menus-side"></div>';
+		$html .= '<script>wnd_render_menus("#app-menus-side")</script>';
 		$html .= apply_filters('wnd_menus_side_after', '');
 
 		$html .= '</aside>';
