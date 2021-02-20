@@ -41,14 +41,17 @@ class Wnd_User_Page extends Wnd_Module_Html {
 			return '';
 		}
 
+		// 加载脚本
+		wp_enqueue_script('router', WND_URL . 'static/js/lib/routie.min.js', ['wnd-vue'], WND_VER, true);
+		wp_enqueue_script('wnd-front-page', WND_URL . 'static/js/wnd-front-page.js', ['wnd-vue'], WND_VER, true);
+		wp_add_inline_script('wnd-front-page', 'var menus = ' . Wnd_Menus::render(), 'before');
+
 		$module = static::handle_module($args) ?: '';
 		$module = $module ? ('<div id="ajax-module" class="content box">' . $module . '</div>') : '';
 
 		get_header();
 		echo '<main id="user-page-container" class="column">';
-		echo '<div class="main">';
 		echo $module ?: static::build_user_page();
-		echo '</div>';
 		echo '</main>';
 		get_footer();
 
@@ -121,7 +124,7 @@ class Wnd_User_Page extends Wnd_Module_Html {
 	// 常规用户面板
 	protected static function build_user_page(): string {
 		if (!is_user_logged_in()) {
-			$html = '<div id="user-page" class="columns">';
+			$html = '<div id="user-center" class="columns">';
 			$html .= '<div class="column"><div class="box">' . Wnd_User_Center::render() . '</div></div>';
 			$html .= '</div>';
 			return $html;
@@ -132,38 +135,25 @@ class Wnd_User_Page extends Wnd_Module_Html {
 		 */
 		$user_page_default_module = apply_filters('wnd_user_page_default_module', 'wnd_user_overview');
 
-		$html = '<div id="user-page" class="columns">';
-		$html .= '<div class="column is-narrow is-hidden-mobile"><div class="box">' . Wnd_Menus::render() . '</div></div>';
-		$html .= '<div class="column"><div id="ajax-module" class="box"></div></div>';
-		$html .= '</div>';
-		$html .= '
-<script type="text/javascript">
-	function user_center_hash() {
-		var hash = location.hash;
-		if (!hash) {
-			wnd_ajax_embed("#ajax-module", "' . $user_page_default_module . '");
-			return;
-		}
+		$html = '
+		<div id="user-center" class="columns">
+		<div v-if="menus" class="column is-narrow">
+		<div class="box">
+		<ul class="menu-list">
 
-		var element = hash.replace("#", "")
-		// var a = $("li." + element +" a");
+		<template v-for="(menu, menu_index) in menus">
+		<a v-if="menu.label" v-text="menu.label" @click="expand(menu_index)"></a>
+		<li v-show="menu.expand"><ul><li v-for="(item, item_index) in menu.items">
+		<a :href="item.href" @click="active(menu_index, item_index)" :class="item.class" v-text="item.title"></a>
+		</li></ul></li>
+		</template>
 
-		// 激活当前菜单
-		// a.addClass("is-active");
-		// 移除其他同级菜单的激活状态
-		// a.parent("li").siblings().find("a").removeClass("is-active");
-		// 展开当前菜单（子菜单链接适用）
-		// a.parents("ul").slideDown("fast");
-		// 收起其他一级菜单的子菜单
-		// a.parents("li").siblings().find("ul").slideUp("fast");
+		</ul>
+		</div>
+		</div>
 
-		wnd_ajax_embed("#ajax-module", element);
-	}
-
-	// 用户中心Tabs
-	user_center_hash();
-	window.onhashchange = user_center_hash;
-</script>';
+		<div class="column"><div id="ajax-module" class="box"></div></div>
+		</div>';
 
 		/**
 		 * 默认用户中心：注册、登录、账户管理，内容管理，财务管理等

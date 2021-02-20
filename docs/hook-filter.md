@@ -259,28 +259,17 @@ apply_filters('wnd_sku_keys', $sku_keys, $post_type);
 */
 apply_filters('wnd_menus_side_before', '');
 
-/**
- *@since 0.9.11
- *自定义用户中心页面菜单
- */
-add_filter('wnd_menus', function ($menus, $args) {
-	$html = '<li>';
-	$html .= '<a>拓展菜单测试</a>';
-	
-	// 设置 display:none 表示默认收起
-	$html .= '<ul style="display:none">';
-	$html .= '<li class="wnd_user_posts_panel"><a href="#wnd_user_posts_panel">拓展子菜单</a></li>';
-	$html .= '</ul>';
-
-	$html .= '</li>';
-
-	// 此为【追加】菜单
-	return $menus . $html;
-
-	// 此为【替换】菜单
-	return $html;
-
-}, 12, 2);
+add_filter('wnd_menus', function ($menus) {
+	// $menus = []; 清空已有菜单 否则为追加
+	$menus[] = [
+		'label' => '拓展菜单',
+		'expand'=>false,
+		'items' => [
+			['title' => '测试菜单', 'href' => wnd_get_ucenter_url() . '#wnd_profile_form'],
+		],
+	];
+	return $menus;
+});
 
 /**
 *@since 0.9.12
