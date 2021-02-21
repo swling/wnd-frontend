@@ -42,11 +42,14 @@ class Wnd_User_Page extends Wnd_Module_Html {
 			return '';
 		}
 
-		// 加载脚本
-		wp_enqueue_script('wnd-menus', WND_URL . 'static/js/wnd-menus.js', ['wnd-vue'], WND_VER);
-		wp_enqueue_script('wnd-front-page', WND_URL . 'static/js/wnd-front-page.js', ['wnd-vue', 'wnd-menus'], WND_VER);
 		$module = static::handle_module($args) ?: '';
 		$module = $module ? ('<div id="ajax-module" class="content box">' . $module . '</div>') : '';
+
+		// 加载前端中心脚本
+		if (!$module) {
+			wp_enqueue_script('wnd-menus', WND_URL . 'static/js/wnd-menus.js', ['wnd-vue'], WND_VER);
+			wp_enqueue_script('wnd-front-page', WND_URL . 'static/js/wnd-front-page.js', ['wnd-vue', 'wnd-menus'], WND_VER);
+		}
 
 		get_header();
 		echo '<script>var wnd_menus_data = ' . json_encode(Wnd_Menus::get()) . ';</script>';

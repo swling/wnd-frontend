@@ -1,6 +1,6 @@
 /**
  *@since 0.9.25
- *Vue 根据 Json 动态渲染筛选列表
+ *Vue 根据 Json 动态渲染筛选列表（含 Posts 及 Users）
  */
 function _wnd_render_filter(container, filter_json) {
 	let parent = document.querySelector(container).parentNode;
@@ -160,7 +160,7 @@ function _wnd_render_filter(container, filter_json) {
 		<div v-if="filter.before_html" v-html="filter.before_html"></div>
 		${build_tabs_template(filter)}
 		<div class="wnd-filter-results mb-3">
-		${filter.posts ? _build_posts_template(filter) : _build_users_template(filter)}
+		${filter.posts ? build_posts_template(filter) : build_users_template(filter)}
 		</div>
 		${build_navigation(filter)}
 		<div v-if="filter.after_html" v-html="filter.after_html"></div>
@@ -193,9 +193,9 @@ function _wnd_render_filter(container, filter_json) {
 	 *可在外部定义 build_post_template() 函数以覆盖默认的列表
 	 *
 	 */
-	function _build_posts_template() {
-		if ('function' == typeof build_posts_template) {
-			return build_posts_template();
+	function build_posts_template() {
+		if ('function' == typeof wnd_posts_template) {
+			return wnd_posts_template();
 		}
 
 		return `
@@ -222,9 +222,9 @@ function _wnd_render_filter(container, filter_json) {
 	 *可在外部定义 build_users_template() 函数以覆盖默认的列表
 	 *
 	 */
-	function _build_users_template() {
-		if ('function' == typeof build_users_template) {
-			return build_users_template();
+	function build_users_template() {
+		if ('function' == typeof wnd_users_template) {
+			return wnd_users_template();
 		}
 
 		return `
