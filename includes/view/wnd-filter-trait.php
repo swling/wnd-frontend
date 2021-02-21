@@ -6,9 +6,6 @@ namespace Wnd\View;
  * 筛选类特性
  * - 解析 URL 参数为查询参数
  * - 新增查询参数;
- * - 获取新增的查询参数;
- * - 实现搜索框构建
- * - 实现 Ajax Tabs 构建方法
  */
 trait Wnd_Filter_Trait {
 	/**
@@ -23,6 +20,11 @@ trait Wnd_Filter_Trait {
 	 * 以data-{key}="{value}"形式出现，ajax请求中，将转化为 url请求参数 ?{key}={value}
 	 */
 	protected $add_query_vars = [];
+
+	/**
+	 *根据配置生成的最终查询参数
+	 */
+	protected $query_args = [];
 
 	/**
 	 * @since 2019.07.20
@@ -172,7 +174,7 @@ trait Wnd_Filter_Trait {
 	 *
 	 *@param array $query [key=>value]
 	 *
-	 *在非 ajax 环境中，直接将写入$wp_query_args[key] = value;
+	 *在非 ajax 环境中，直接将写入$query_args[key] = value;
 	 *在 ajax 环境中，应在接口响应数据中包含本数据，供前端处理
 	 *
 	 *@since 0.8.64
@@ -182,55 +184,17 @@ trait Wnd_Filter_Trait {
 	public function add_query_vars($query = []) {
 		foreach ($query as $key => $value) {
 			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
-			if (is_array($this->wp_query_args[$key] ?? false) and is_array($value)) {
-				$this->wp_query_args[$key] = array_merge($this->wp_query_args[$key], $value, static::$http_query[$key] ?? []);
+			if (is_array($this->query_args[$key] ?? false) and is_array($value)) {
+				$this->query_args[$key] = array_merge($this->query_args[$key], $value, static::$http_query[$key] ?? []);
 
 			} else {
 				// $_GET参数优先，无法重新设置
-				$this->wp_query_args[$key] = (static::$http_query[$key] ?? false) ?: $value;
+				$this->query_args[$key] = (static::$http_query[$key] ?? false) ?: $value;
 			}
 
 			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
 			$this->add_query_vars[$key] = $value;
 		}
 		unset($key, $value);
-	}
-
-	// 搜索框（未完成）
-	public function add_search_form($button = 'Search', $placeholder = '') {
-		return [];
-	}
-
-	/**
-	 *构造 Ajax 筛选菜单数据
-	 */
-	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []): array{
-		if (!$options) {
-			return [];
-		}
-
-		// 筛选添加改变时，移除 Page 参数
-		$remove_query_args[] = 'page';
-
-		if ($with_any_tab) {
-			$options = array_merge([__('全部', 'wnd') => ''], $options);
-		}
-
-		$tabs = [
-			'key'               => $key,
-			'title'             => $title,
-			'options'           => $options,
-			'remove_query_args' => $remove_query_args,
-		];
-		$this->tabs[] = $tabs;
-
-		return $tabs;
-	}
-
-	/**
-	 *获取新增的查询参数
-	 */
-	public function get_add_query_vars(): array{
-		return $this->add_query_vars;
 	}
 }

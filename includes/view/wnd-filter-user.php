@@ -27,27 +27,6 @@ class Wnd_Filter_User {
 	// string html class
 	protected $class;
 
-	/**
-	 *根据配置设定的wp_user_query查询参数
-	 *默认值将随用户设定而改变
-	 *参数中包含自定义的非wp_user_query参数以"wnd"前缀区分
-	 */
-	protected $query_args = [
-		'order'              => 'DESC',
-		'orderby'            => 'registered',
-		'meta_key'           => '',
-		'meta_value'         => '',
-		'count_total'        => false,
-		'paged'              => 1,
-		'number'             => 20,
-		'search_columns'     => [],
-		'search'             => '',
-
-		// 自定义
-		'wnd_ajax_container' => '',
-		'wnd_uniqid'         => '',
-	];
-
 	// 筛选项HTML
 	protected $tabs = [];
 
@@ -73,8 +52,25 @@ class Wnd_Filter_User {
 		static::$http_query    = static::parse_query_vars();
 		static::$primary_color = wnd_get_config('primary_color');
 
+		/**
+		 *根据配置设定的wp_user_query查询参数
+		 *默认值将随用户设定而改变
+		 *参数中包含自定义的非wp_user_query参数以"wnd"前缀区分
+		 */
+		$defaults = [
+			'order'          => 'DESC',
+			'orderby'        => 'registered',
+			'meta_key'       => '',
+			'meta_value'     => '',
+			'count_total'    => false,
+			'paged'          => 1,
+			'number'         => 20,
+			'search_columns' => [],
+			'search'         => '',
+		];
+
 		// 解析GET参数为wp_user_query参数并与默认参数合并，以防止出现参数未定义的警告信息
-		$this->query_args = array_merge($this->query_args, static::$http_query);
+		$this->query_args = array_merge($defaults, static::$http_query);
 	}
 
 	/**
@@ -105,6 +101,11 @@ class Wnd_Filter_User {
 	 */
 	public function add_after_html($html) {
 		$this->after_html .= $html;
+	}
+
+	// 搜索框（未完成）
+	public function add_search_form($button = 'Search', $placeholder = '') {
+		return [];
 	}
 
 	/**
@@ -157,6 +158,51 @@ class Wnd_Filter_User {
 	}
 
 	/**
+	 *构造 Ajax 筛选菜单数据
+	 */
+	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []): array{
+		if (!$options) {
+			return [];
+		}
+
+		// 筛选添加改变时，移除 Page 参数
+		$remove_query_args[] = 'page';
+
+		if ($with_any_tab) {
+			$options = array_merge([__('全部', 'wnd') => ''], $options);
+		}
+
+		$tabs = [
+			'key'               => $key,
+			'title'             => $title,
+			'options'           => $options,
+			'remove_query_args' => $remove_query_args,
+		];
+		$this->tabs[] = $tabs;
+
+		return $tabs;
+	}
+
+	/**
+	 *分页导航
+	 */
+	protected function build_pagination($show_page = 5) {
+		$paged         = $this->wp_user_query->query_vars['paged'] ?: 1;
+		$total         = $this->wp_user_query->get_total();
+		$number        = $this->wp_user_query->query_vars['number'];
+		$current_count = count($this->users);
+		$max_num_pages = $total ? ($total / $number + 1) : 0;
+
+		return [
+			'paged'         => $paged,
+			'max_num_pages' => $max_num_pages,
+			'per_page'      => $number,
+			'current_count' => $current_count,
+			'show_page'     => $show_page,
+		];
+	}
+
+	/**
 	 *@since 2019.08.01
 	 *执行查询
 	 */
@@ -191,25 +237,6 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *分页导航
-	 */
-	protected function build_pagination($show_page = 5) {
-		$paged         = $this->wp_user_query->query_vars['paged'] ?: 1;
-		$total         = $this->wp_user_query->get_total();
-		$number        = $this->wp_user_query->query_vars['number'];
-		$current_count = count($this->users);
-		$max_num_pages = $total ? ($total / $number + 1) : 0;
-
-		return [
-			'paged'         => $paged,
-			'max_num_pages' => $max_num_pages,
-			'per_page'      => $number,
-			'current_count' => $current_count,
-			'show_page'     => $show_page,
-		];
-	}
-
-	/**
 	 *@since 0.9.25
 	 *获取完整的筛选数据结构：适用于初始化筛选器
 	 *
@@ -222,15 +249,8 @@ class Wnd_Filter_User {
 			'after_html'     => $this->after_html,
 			'tabs'           => $this->get_tabs(),
 			'users'          => $this->get_users(),
-
 			'pagination'     => $this->get_pagination(),
-			// 'post_count'     => $this->wp_user_query->post_count,
-
-			'add_query_vars' => $this->get_add_query_vars(),
-
-			/**
-			 *在debug模式下，返回当前WP_Query查询参数
-			 **/
+			'add_query_vars' => $this->add_query_vars,
 			'query_vars'     => $this->wp_user_query->query_vars,
 		];
 	}

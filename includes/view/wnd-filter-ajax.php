@@ -2,15 +2,11 @@
 
 namespace Wnd\View;
 
-use WP_Query;
-
 /**
  * @since 0.9.5
  * 多重筛选 Json API
  */
 class Wnd_Filter_Ajax extends Wnd_Filter {
-
-	use Wnd_Filter_Trait;
 
 	protected $before_html = '';
 
@@ -37,6 +33,37 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	 */
 	public function add_after_html($html) {
 		$this->after_html .= $html;
+	}
+
+	// 搜索框（未完成）
+	public function add_search_form($button = 'Search', $placeholder = '') {
+		return [];
+	}
+
+	/**
+	 *构造 Ajax 筛选菜单数据
+	 */
+	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []): array{
+		if (!$options) {
+			return [];
+		}
+
+		// 筛选添加改变时，移除 Page 参数
+		$remove_query_args[] = 'page';
+
+		if ($with_any_tab) {
+			$options = array_merge([__('全部', 'wnd') => ''], $options);
+		}
+
+		$tabs = [
+			'key'               => $key,
+			'title'             => $title,
+			'options'           => $options,
+			'remove_query_args' => $remove_query_args,
+		];
+		$this->tabs[] = $tabs;
+
+		return $tabs;
 	}
 
 	/**
@@ -151,11 +178,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 			 */
 			'category_taxonomy' => $this->category_taxonomy,
 
-			'add_query_vars'    => $this->get_add_query_vars(),
-
-			/**
-			 *在debug模式下，返回当前WP_Query查询参数
-			 **/
+			'add_query_vars'    => $this->add_query_vars,
 			'query_vars'        => $this->wp_query->query_vars,
 		];
 	}
