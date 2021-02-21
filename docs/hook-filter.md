@@ -45,16 +45,6 @@ apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_sta
 */
 apply_filters( 'wnd_allowed_post_types', $post_types );
 ```
-## 多重筛选
-```php
-/**
-*
-* @param $this->tabs 			筛选选项Tabs（HTML）
-* @param $this->wp_query_args 	当前多重筛选查询参数（注意：在执行get_tabs()方法之后新增的参数，将无法获取）
-*/
-apply_filters('wnd_filter_tabs', $this->tabs, $this->wp_query_args);
-```
-
 ## 文件上传
 ```php
 ###文件上传权限控制

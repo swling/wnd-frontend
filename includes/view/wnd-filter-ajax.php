@@ -67,22 +67,9 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	}
 
 	/**
-	 *分页导航
-	 */
-	protected function build_pagination($show_page = 5) {
-		return [
-			'paged'         => $this->wp_query->query_vars['paged'] ?: 1,
-			'max_num_pages' => $this->wp_query->max_num_pages,
-			'per_page'      => $this->wp_query->query_vars['posts_per_page'],
-			'current_count' => $this->wp_query->post_count,
-			'show_page'     => $show_page,
-		];
-	}
-
-	/**
 	 *获取完整筛选 Tabs
 	 */
-	public function get_tabs() {
+	public function get_tabs(): array{
 		return $this->tabs;
 	}
 
@@ -90,7 +77,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	 *获取当前查询的主分类 Tabs
 	 *
 	 */
-	public function get_category_tabs($args = []) {
+	public function get_category_tabs($args = []): array{
 		$args['taxonomy'] = $this->category_taxonomy;
 		$args['parent']   = $args['parent'] ?? 0;
 		return $this->build_taxonomy_filter($args);
@@ -100,7 +87,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	 *获取主分类关联标签筛选 Tabs
 	 *
 	 */
-	public function get_tags_tabs($limit = 10) {
+	public function get_tags_tabs($limit = 10): array{
 		return $this->build_tags_filter($limit);
 	}
 
@@ -129,13 +116,18 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	/**
 	 *分页导航
 	 */
-	public function get_pagination($show_page = 5) {
+	public function get_pagination($show_page = 5): array{
 		if (!$this->wp_query) {
 			return __('未执行WP_Query', 'wnd');
 		}
 
-		$this->pagination = $this->build_pagination($show_page);
-		return $this->pagination;
+		return [
+			'paged'         => $this->wp_query->query_vars['paged'] ?: 1,
+			'max_num_pages' => $this->wp_query->max_num_pages,
+			'per_page'      => $this->wp_query->query_vars['posts_per_page'],
+			'current_count' => $this->wp_query->post_count,
+			'show_page'     => $show_page,
+		];
 	}
 
 	/**

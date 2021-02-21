@@ -702,8 +702,7 @@ class Wnd_Filter {
 	 *
 	 */
 	public function get_tabs() {
-		$tabs = apply_filters('wnd_filter_tabs', $this->tabs, $this->query_args);
-		return '<div class="wnd-filter-tabs ' . $this->class . '">' . $tabs . '</div>';
+		return '<div class="wnd-filter-tabs ' . $this->class . '">' . $this->tabs . '</div>';
 	}
 
 	/**
