@@ -203,14 +203,14 @@ function wnd_render_filter(container, filter_json) {
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表达
-function wnd_render_menus(container, menus_json) {
+function wnd_render_menus(container, menus_json, is_side_menus = false) {
     if ('function' != typeof _wnd_render_menus) {
         let url = static_path + 'js/wnd-menus.js?ver=' + wnd.ver;
         wnd_load_script(url, function() {
-            _wnd_render_menus(container, menus_json);
+            _wnd_render_menus(container, menus_json, is_side_menus);
         });
     } else {
-        _wnd_render_menus(container, menus_json);
+        _wnd_render_menus(container, menus_json, is_side_menus);
     }
 }
 

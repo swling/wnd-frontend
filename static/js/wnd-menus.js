@@ -2,10 +2,9 @@
 var wnd_menus_data = wnd_menus_data || false;
 
 // 菜单
-function _wnd_render_menus(container, menus_data) {
+function _wnd_render_menus(container, menus_data, is_side_menus = false) {
 	// 优先接收外部传递参数
 	wnd_menus_data = menus_data || wnd_menus_data;
-
 	let parent = document.querySelector(container).parentNode;
 
 	new Vue({
@@ -28,7 +27,6 @@ function _wnd_render_menus(container, menus_data) {
 					const menu = this.menus[i];
 					if (menu_index !== i) {
 						menu.expand = false;
-						// continue;
 					}
 
 					/**
@@ -42,6 +40,10 @@ function _wnd_render_menus(container, menus_data) {
 						} else {
 							Vue.set(item, 'class', 'is-active');
 						}
+					}
+
+					if (is_side_menus) {
+						wnd_menus_side_toggle(true);
 					}
 				}
 			},
