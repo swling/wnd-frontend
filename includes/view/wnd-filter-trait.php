@@ -185,7 +185,7 @@ trait Wnd_Filter_Trait {
 		foreach ($query as $key => $value) {
 			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
 			if (is_array($this->query_args[$key] ?? false) and is_array($value)) {
-				$this->query_args[$key] = array_merge($this->query_args[$key], $value, static::$http_query[$key] ?? []);
+				$this->query_args[$key] = array_merge($this->query_args[$key], $value, (static::$http_query[$key] ?? []));
 
 			} else {
 				// $_GET参数优先，无法重新设置

@@ -6,7 +6,9 @@ namespace Wnd\View;
  * @since 0.9.5
  * 多重筛选 Json API
  */
-class Wnd_Filter_Ajax extends Wnd_Filter {
+class Wnd_Filter_Ajax {
+
+	use Wnd_Filter_Posts_Trait;
 
 	protected $before_html = '';
 
@@ -80,7 +82,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	public function get_category_tabs($args = []): array{
 		$args['taxonomy'] = $this->category_taxonomy;
 		$args['parent']   = $args['parent'] ?? 0;
-		return $this->build_taxonomy_filter($args);
+		return $this->build_taxonomy_filter($args) ?: [];
 	}
 
 	/**
@@ -88,7 +90,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	 *
 	 */
 	public function get_tags_tabs($limit = 10): array{
-		return $this->build_tags_filter($limit);
+		return $this->build_tags_filter($limit) ?: [];
 	}
 
 	/**
