@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\View;
 
-use Wnd\View\Wnd_Pagination;
 use WP_User_Query;
 
 /**
@@ -18,11 +17,9 @@ use WP_User_Query;
  */
 class Wnd_Filter_User {
 
-	// bool 是否ajax
-	protected static $is_ajax;
+	protected $before_html = '';
 
-	// bool 是否正处于ajax环境中
-	protected static $doing_ajax;
+	protected $after_html = '';
 
 	// 主色调
 	protected static $primary_color;
@@ -71,13 +68,13 @@ class Wnd_Filter_User {
 	];
 
 	// 筛选项HTML
-	protected $tabs = '';
+	protected $tabs = [];
 
 	// 筛选结果HTML
-	protected $users = '';
+	protected $users = [];
 
 	// 分页导航HTML
-	protected $pagination = '';
+	protected $pagination = [];
 
 	/**
 	 *wp_user_query 实例化
@@ -86,29 +83,17 @@ class Wnd_Filter_User {
 	public $wp_user_query;
 
 	/**
-	 *用户结果集
-	 */
-	protected $results = [];
-
-	/**
 	 *Constructor.
 	 *
 	 *@param bool 		$is_ajax 是否为ajax查询
 	 *@param string 	$uniqid当前筛选器唯一标识
 	 */
-	public function __construct(bool $is_ajax = false, string $uniqid = '') {
-		static::$is_ajax       = $is_ajax;
-		static::$doing_ajax    = wnd_doing_ajax();
+	public function __construct() {
 		static::$http_query    = static::parse_query_vars();
 		static::$primary_color = wnd_get_config('primary_color');
-		$this->class           = static::$is_ajax ? 'ajax-filter-user' : 'filter-user';
 
 		// 解析GET参数为wp_user_query参数并与默认参数合并，以防止出现参数未定义的警告信息
 		$this->query_args = array_merge($this->query_args, static::$http_query);
-
-		// 初始化时生成uniqid，并加入query参数，以便在ajax生成的新请求中保持一致
-		$this->uniqid = $uniqid ?: ($this->query_args['wnd_uniqid'] ?: uniqid());
-		$this->add_query_vars(['wnd_uniqid' => $this->uniqid]);
 	}
 
 	/**
@@ -176,34 +161,6 @@ class Wnd_Filter_User {
 				continue;
 			}
 
-			/**
-			 *@since 2019.08.04
-			 *ajax Orderby tabs链接请求中，orderby将发送HTTP query形式的信息，需要解析后并入查询参数
-			 *
-			 */
-			if ('orderby' == $key and static::$is_ajax) {
-				/**
-				 * @see 	build_orderby_filter
-				 * @since 	2019.08.18
-				 *
-				 * orderby=meta_value_num&meta_key=views
-				 * 解析结果
-				 * $query_vars['orderby'] =>meta_value_num
-				 * $query_vars['meta_ket'] =>views
-				 *
-				 * 判断方法：此类传参，必须包含 = 符号
-				 */
-				if (false !== strpos($value, '=')) {
-					$query_vars = wp_parse_args($value, $query_vars);
-
-					// 常规形式直接指定orderby
-				} else {
-					$query_vars['orderby'] = $value;
-				}
-
-				continue;
-			}
-
 			// 其他：按键名自动匹配
 			if (is_array($value)) {
 				$query_vars[$key] = $value;
@@ -224,15 +181,6 @@ class Wnd_Filter_User {
 		});
 
 		return $query_vars;
-	}
-
-	/**
-	 *@since 2019.07.31
-	 *设置ajax post列表嵌入容器
-	 *@param string $container posts列表ajax嵌入容器
-	 **/
-	public function set_ajax_container($container) {
-		$this->add_query_vars(['wnd_ajax_container' => $container]);
 	}
 
 	/**
@@ -274,11 +222,7 @@ class Wnd_Filter_User {
 	}
 
 	public function add_search_form($button = 'Search', $placeholder = '') {
-		if (static::$is_ajax) {
-			$html = '<form class="wnd-filter-user-search" method="POST" action="" "onsubmit"="return false">';
-		} else {
-			$html = '<form class="wnd-filter-user-search" method="GET" action="">';
-		}
+		$html = '<form class="wnd-filter-user-search" method="POST" action="" "onsubmit"="return false">';
 		$html .= '<div class="field has-addons">';
 
 		$html .= '<div class="control">';
@@ -307,26 +251,55 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *@since 2019.04.21 排序
+	 *构造筛选菜单数据
+	 */
+	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []): array{
+		if (!$options) {
+			return [];
+		}
+
+		// 筛选添加改变时，移除 Page 参数
+		$remove_query_args[] = 'page';
+
+		if ($with_any_tab) {
+			$options = array_merge([__('全部', 'wnd') => ''], $options);
+		}
+
+		$tabs = [
+			'key'               => $key,
+			'title'             => $title,
+			'options'           => $options,
+			'remove_query_args' => $remove_query_args,
+		];
+		$this->tabs[] = $tabs;
+
+		return $tabs;
+	}
+
+	/**
+	 *获取完整筛选 Tabs
+	 */
+	public function get_tabs() {
+		return $this->tabs;
+	}
+
+	/**
+	 *@since 2019.08.10 构建排序方式
 	 *@param 自定义： array args
 	 *
 	 *	$args = [
-	 *		'label' => '排序',
-	 *		'options' => [
-	 *			'发布时间' => 'date', //常规排序 date title等
-	 *			'浏览量' => [ // 需要多个参数的排序
-	 *				'orderby'=>'meta_value_num',
-	 *				'meta_key'   => 'views',
-	 *			],
-	 *		],
-	 *		'order' => 'DESC',
+	 *		'降序' => 'DESC',
+	 *		'升序' =>'ASC'
 	 *	];
 	 *
+	 *@param bool 全部选项
 	 */
-	public function add_orderby_filter(array $args) {
-		$tabs = $this->build_orderby_filter($args);
-		$this->tabs .= $tabs;
-		return $tabs;
+	public function add_orderby_filter(array $args, bool $with_any_tab = false) {
+		$key     = 'orderby';
+		$title   = $args['label'];
+		$options = $args['options'];
+
+		return $this->build_tabs($key, $options, $title, $with_any_tab);
 	}
 
 	/**
@@ -340,19 +313,23 @@ class Wnd_Filter_User {
 	 *
 	 *@param string $label 选项名称
 	 */
-	public function add_order_filter(array $args, $label) {
-		$tabs = $this->build_order_filter($args, $label);
-		$this->tabs .= $tabs;
-		return $tabs;
+	public function add_order_filter(array $args, $with_any_tab = false) {
+		$key     = 'order';
+		$title   = $args['label'];
+		$options = $args['options'];
+
+		return $this->build_tabs($key, $options, $title, $with_any_tab);
 	}
 
 	/**
 	 *@param string $label 选项名称
 	 */
-	public function add_status_filter($label) {
-		$tabs = $this->build_status_filter($label);
-		$this->tabs .= $tabs;
-		return $tabs;
+	public function add_status_filter($args, $with_any_tab = false) {
+		$key     = '_meta_status';
+		$title   = $args['label'];
+		$options = $args['options'];
+
+		return $this->build_tabs($key, $options, $title, $with_any_tab);
 	}
 
 	/**
@@ -361,19 +338,22 @@ class Wnd_Filter_User {
 	 */
 	public function query() {
 		$this->wp_user_query = new WP_User_Query($this->query_args);
-		$this->results       = $this->wp_user_query->get_results();
+		$this->users         = $this->wp_user_query->get_results();
+	}
+
+	public function get_add_query_vars(): array{
+		return $this->add_query_vars;
 	}
 
 	/**
 	 *执行查询
 	 *
 	 */
-	public function get_users() {
+	public function get_users(): array{
 		if (!$this->wp_user_query) {
 			return __('未执行WP_User_Query', 'wnd');
 		}
 
-		$this->users = $this->build_user_table();
 		return $this->users;
 	}
 
@@ -391,263 +371,58 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *@since 2019.07.31
-	 *获取筛选项HTML
-	 *
-	 *tabs筛选项由于参数繁杂，无法通过api动态生成，因此不包含在api请求响应中
-	 *但已生成的相关筛选项会根据wp_query->query_var参数做动态修改
-	 *
-	 *@see wnd_filter_api_callback()
-	 */
-	public function get_tabs() {
-		return '<div id="tabs-' . $this->uniqid . '" class="wnd-filter-tabs ' . $this->class . '"' . $this->build_data_attr() . '>' . $this->tabs . '</div>';
-	}
-
-	/**
-	 *@since 2019.07.31
-	 *合并返回：user列表及分页导航
-	 */
-	public function get_results() {
-		return $this->get_users() . $this->get_pagination();
-	}
-
-	/**
-	 *@since 2019.08.02
-	 *构造HTML data属性
-	 *获取新增查询，并转化为html data属性，供前端读取后在ajax请求中发送到api
-	 */
-	protected function build_data_attr(): string {
-		if (!$this->add_query_vars) {
-			return '';
-		}
-
-		$data = ' ';
-		foreach ($this->add_query_vars as $key => $value) {
-			$value = is_array($value) ? http_build_query($value) : $value;
-			$data .= 'data-' . $key . '="' . $value . '" ';
-		}
-
-		return $data;
-	}
-
-	/**
-	 *@since 2019.04.21 排序
-	 *@param 自定义： array args
-	 *
-	 *	$args = [
-	 *		'label' => '排序',
-	 *		'options' => [
-	 *			'发布时间' => 'date', //常规排序 date title等
-	 *			'浏览量' => [ // 需要多个参数的排序
-	 *				'orderby'=>'meta_value_num',
-	 *				'meta_key'   => 'views',
-	 *			],
-	 *		],
-	 *	];
-	 *
-	 */
-	protected function build_orderby_filter(array $args) {
-		// 移除选项
-		$remove_query_args = array_merge(['orderby', 'order', 'meta_key'], $this->remove_query_args);
-
-		// 输出容器
-		$tabs = '<div class="columns is-marginless is-vcentered orderby-tabs">';
-		$tabs .= '<div class="column is-narrow">' . $args['label'] . '：</div>';
-		$tabs .= '<div class="tabs column">';
-		$tabs .= '<ul class="tab">';
-
-		// 输出tabs
-		foreach ($args['options'] as $key => $orderby) {
-			// 查询当前orderby是否匹配当前tab
-			$class = '';
-			if (is_array($orderby) and ('meta_value_num' == $this->query_args['orderby'] or 'meta_value' == $this->query_args['orderby'])) {
-				if ($orderby['meta_key'] == $this->query_args['meta_key']) {
-					$class = 'class="is-active"';
-				}
-				// 常规排序
-			} else {
-				if ($orderby == $this->query_args['orderby']) {
-					$class = 'class="is-active"';
-				}
-			}
-
-			// data-key="orderby" data-value="' . http_build_query($query_arg) . '"
-			$query_arg    = is_array($orderby) ? $orderby : ['orderby' => $orderby];
-			$orderby_link = static::$doing_ajax ? '' : add_query_arg($query_arg, remove_query_arg($remove_query_args));
-			$tabs .= '<li ' . $class . '><a data-key="orderby" data-value="' . http_build_query($query_arg) . '" href="' . $orderby_link . '">' . $key . '</a></li>';
-		}
-		unset($key, $orderby);
-
-		// 输出结束
-		$tabs .= '</ul>';
-		$tabs .= '</div>';
-		$tabs .= '</div>';
-
-		return $tabs;
-	}
-
-	/**
-	 *@since 2019.08.10 构建排序方式
-	 *@param 自定义： array args
-	 *
-	 *	$args = [
-	 *		'降序' => 'DESC',
-	 *		'升序' =>'ASC'
-	 *	];
-	 *
-	 *@param string $label 选项名称
-	 */
-	protected function build_order_filter(array $args, $label) {
-		// 输出容器
-		$tabs = '<div class="columns is-marginless is-vcentered order-tabs">';
-		$tabs .= '<div class="column is-narrow">' . $label . '：</div>';
-		$tabs .= '<div class="tabs column">';
-		$tabs .= '<ul class="tab">';
-
-		// 是否已设置order参数
-		$all_class = isset($this->query_args['orderby']) ? '' : 'class="is-active"';
-		$all_link  = static::$doing_ajax ? '' : remove_query_arg('order', remove_query_arg($this->remove_query_args));
-		$tabs .= '<li ' . $all_class . '><a data-key="order" data-value="" href="' . $all_link . '">' . __('默认', 'wnd') . '</a></li>';
-
-		// 输出tabs
-		foreach ($args as $key => $value) {
-			// 遍历当前meta query查询是否匹配当前tab
-			$class = '';
-			if (isset($this->query_args['order']) and $this->query_args['order'] == $value) {
-				$class = 'class="is-active"';
-			}
-
-			/**
-			 *meta_query GET参数为：_meta_{key}?=
-			 */
-			$order_link = static::$doing_ajax ? '' : add_query_arg('order', $value, remove_query_arg($this->remove_query_args));
-			$tabs .= '<li ' . $class . '><a data-key="order" data-value="' . $value . '" href="' . $order_link . '">' . $key . '</a></li>';
-		}
-		unset($key, $value);
-
-		// 输出结束
-		$tabs .= '</ul>';
-		$tabs .= '</div>';
-		$tabs .= '</div>';
-
-		return $tabs;
-	}
-
-	/**
-	 *@param string $label 选项名称
-	 *
-	 */
-	protected function build_status_filter($label) {
-		/**
-		 *本插件自定义了用户状态：已封禁的用户设置wp user meta：status = banned
-		 */
-		$args = [__('已封禁', 'wnd') => 'banned'];
-
-		// 输出容器
-		$tabs = '<div class="columns is-marginless is-vcentered order-tabs">';
-		$tabs .= '<div class="column is-narrow">' . $label . '：</div>';
-		$tabs .= '<div class="tabs column">';
-		$tabs .= '<ul class="tab">';
-
-		// 是否已设置status参数
-		$all_class = '';
-		if ('status' != $this->query_args['meta_key']) {
-			$all_class = 'class="is-active"';
-		}
-		$all_link = static::$doing_ajax ? '' : remove_query_arg('_meta_status', remove_query_arg($this->remove_query_args));
-		$tabs .= '<li ' . $all_class . '><a data-key="_meta_status" data-value="" href="' . $all_link . '">' . __('全部', 'wnd') . '</a></li>';
-
-		// 输出tabs
-		foreach ($args as $key => $value) {
-			// 遍历当前meta query查询是否匹配当前tab
-			$class = '';
-			if ('status' == $this->query_args['meta_key'] and $value == $this->query_args['meta_value']) {
-				$class = 'class="is-active"';
-			}
-
-			/**
-			 *meta_query GET参数为：_meta_{key}?=
-			 */
-			$filter_link = static::$doing_ajax ? '' : add_query_arg('_meta_status', $value, remove_query_arg($this->remove_query_args));
-			$tabs .= '<li ' . $class . '><a data-key="_meta_status" data-value="' . $value . '" href="' . $filter_link . '">' . $key . '</a></li>';
-		}
-		unset($key, $value);
-
-		// 输出结束
-		$tabs .= '</ul>';
-		$tabs .= '</div>';
-		$tabs .= '</div>';
-
-		return $tabs;
-	}
-
-	/**
-	 *@since 2019.02.15
 	 *分页导航
 	 */
 	protected function build_pagination($show_page = 5) {
 		$paged         = $this->wp_user_query->query_vars['paged'] ?: 1;
 		$total         = $this->wp_user_query->get_total();
 		$number        = $this->wp_user_query->query_vars['number'];
+		$current_count = count($this->users);
 		$max_num_pages = $total ? ($total / $number + 1) : 0;
 
-		$nav = new Wnd_Pagination(static::$is_ajax, $this->uniqid);
-		$nav->set_paged($paged);
-		$nav->set_max_num_pages($max_num_pages);
-		$nav->set_items_per_page($number);
-		$nav->set_current_item_count(count($this->results));
-		$nav->set_show_pages($show_page);
-		$nav->set_data($this->add_query_vars);
-		$nav->add_class($this->class);
-		return $nav->build();
+		return [
+			'paged'         => $paged,
+			'max_num_pages' => $max_num_pages,
+			'per_page'      => $number,
+			'current_count' => $current_count,
+			'show_page'     => $show_page,
+		];
 	}
 
 	/**
+	 *@since 0.9.25
+	 *获取完整的筛选数据结构：适用于初始化筛选器
 	 *
-	 *构造表单列表
+	 *@param bool $with_post_content 是否包含正文内容
+	 * 		-在很多情况下 Ajax 筛选用于各类管理面板，此时仅需要获取 post 列表，无需包含正文内容，以减少网络数据发送量
 	 */
-	protected function build_user_table() {
-		$users = $this->results;
-		if (empty($users)) {
-			return 'No users found';
-		}
+	public function get_filter(): array{
+		return [
+			'before_html'    => $this->before_html,
+			'after_html'     => $this->after_html,
+			'tabs'           => $this->get_tabs(),
+			'users'          => $this->get_users(),
 
-		// 表单开始
-		$table = '<table class="table is-fullwidth is-hoverable is-striped">';
+			'pagination'     => $this->get_pagination(),
+			// 'post_count'     => $this->wp_user_query->post_count,
 
-		// 表头
-		$table .= '<thead>';
-		$table .= '<tr>';
-		$table .= '<th>' . __('名称', 'wnd') . '</th>';
-		$table .= '<th class="is-hidden-mobile">' . __('角色', 'wnd') . '</th>';
-		$table .= '<th class="is-hidden-mobile">' . __('注册时间', 'wnd') . '</th>';
+			'add_query_vars' => $this->get_add_query_vars(),
 
-		$table .= '<td class="is-narrow">';
-		$table .= __('操作', 'wnd');
-		$table .= '</td>';
-		$table .= '</tr>';
-		$table .= '</thead>';
+			/**
+			 *在debug模式下，返回当前WP_Query查询参数
+			 **/
+			'query_vars'     => $this->wp_user_query->query_vars,
+		];
+	}
 
-		// 列表
-		$table .= '<tbody>';
-		foreach ($users as $user) {
-			$table .= '<tr>';
-			$table .= '<td><a href="' . get_author_posts_url($user->ID) . '" target="_blank">' . $user->display_name . '</a></td>';
-			$table .= '<td class="is-hidden-mobile">' . $user->roles[0] . '</td>';
-			$table .= '<td class="is-hidden-mobile">' . get_date_from_gmt($user->user_registered, 'Y-m-d H:i:s') . '</td>';
-
-			// 编辑管理
-			$table .= '<td class="is-narrow has-text-centered">';
-			$table .= wnd_modal_link('<i class="fas fa-trash-alt"></i>&nbsp;', 'wnd_delete_user_form', ['user_id' => $user->ID]);
-			$table .= wnd_modal_link('<i class="fas fa-cog"></i>', 'wnd_account_status_form', ['user_id' => $user->ID]);
-			$table .= '</td>';
-			$table .= '</tr>';
-		}
-		$table .= '</tbody>';
-
-		// 表单结束
-		$table .= '</table>';
-
-		return $table;
+	/**
+	 *获取查询结果集：适用于已经完成初始化的筛选器，后续筛选查询（出主分类和标签筛选项外，不含其他 Tabs ）
+	 */
+	public function get_results(): array{
+		$structure = $this->get_filter();
+		unset($structure['before_html']);
+		unset($structure['tabs']);
+		unset($structure['after_html']);
+		return $structure;
 	}
 }

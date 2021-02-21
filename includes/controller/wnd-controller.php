@@ -346,10 +346,7 @@ class Wnd_Controller {
 
 		return [
 			'status' => 1,
-			'data'   => [
-				'users'      => $filter->get_users(),
-				'pagination' => $filter->get_pagination(),
-			],
+			'data'   => $filter->get_results(),
 		];
 	}
 }

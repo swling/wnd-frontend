@@ -7,11 +7,11 @@ use Wnd\View\Wnd_Filter_User;
  *@since 2020.05.06 封装前端用户列表表格
  *@param $number 每页列表数目
  */
-class Wnd_User_List_Table extends Wnd_Module_Html {
+class Wnd_Users_List extends Wnd_Module_Filter {
 
-	protected static function build(array $args = []): string{
+	protected function structure(): array{
 		$orderby_args = [
-			'label'   => '排序',
+			'label'   => __('排序', 'wnd'),
 			'options' => [
 				__('注册时间', 'wnd') => 'registered', //常规排序 date title等
 				__('文章数量', 'wnd') => 'post_count', //常规排序 date title等
@@ -19,13 +19,21 @@ class Wnd_User_List_Table extends Wnd_Module_Html {
 			'order'   => 'DESC',
 		];
 
-		$filter = new Wnd_Filter_User(wnd_doing_ajax());
+		$status_args = [
+			'label'   => __('状态', 'wnd'),
+			'options' => [
+				__('全部', 'wnd')  => '',
+				__('已封禁', 'wnd') => 'banned',
+			],
+		];
+
+		$filter = new Wnd_Filter_User();
 		$filter->set_number($args['number'] ?? 20);
-		$filter->add_search_form();
+		// $filter->add_search_form();
 		$filter->add_orderby_filter($orderby_args);
-		$filter->add_status_filter(__('状态', 'wnd'));
+		$filter->add_status_filter($status_args);
 		$filter->query();
 
-		return $filter->get_tabs() . '<div id="user-list-table">' . $filter->get_results() . '</div>';
+		return $filter->get_filter();
 	}
 }

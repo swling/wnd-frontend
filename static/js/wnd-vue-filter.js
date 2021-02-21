@@ -50,6 +50,18 @@ function _wnd_render_filter(container, filter_json) {
 						}
 					}
 				}
+
+				if (this.filter.query_vars.meta_query && key.includes('_meta_')) {
+					for (const [index, meta_query] of Object.entries(this.filter.query_vars.meta_query)) {
+						if (meta_query.value == value) {
+							return 'is-active';
+						}
+					}
+				}
+
+				if (this.filter.query_vars[key] == value) {
+					return 'is-active';
+				}
 			},
 
 			show_tab: function(tab) {
@@ -73,8 +85,8 @@ function _wnd_render_filter(container, filter_json) {
 				return true;
 			},
 
-			get_posts_container: function() {
-				return (parent.id ? '#' + parent.id : '') + ' .wnd-filter-posts';
+			get_container: function() {
+				return (parent.id ? '#' + parent.id : '') + ' .wnd-filter-results';
 			},
 
 			update_filter: function(key, value) {
@@ -109,10 +121,10 @@ function _wnd_render_filter(container, filter_json) {
 				let _this = this;
 				axios({
 						method: 'get',
-						url: wnd_posts_api,
+						url: filter.posts ? wnd_posts_api : wnd_users_api,
 						params: param,
 						headers: {
-							'container': _this.get_posts_container(),
+							'container': _this.get_container(),
 						},
 					})
 					.then(function(response) {
@@ -143,14 +155,16 @@ function _wnd_render_filter(container, filter_json) {
 	});
 
 	function build_filter_template(filter) {
-		let t = '<div class="filter">';
-		t += '<div v-if="filter.before_html" v-html="filter.before_html"></div>';
-		t += build_tabs_template(filter);
-		t += build_posts_template(filter);
-		t += build_navigation(filter);
-		t += '<div v-if="filter.after_html" v-html="filter.after_html"></div>';
-		t += '</div>'
-		return t;
+		return `
+		<div class="filter">
+		<div v-if="filter.before_html" v-html="filter.before_html"></div>
+		${build_tabs_template(filter)}
+		<div class="wnd-filter-results mb-3">
+		${filter.posts ? _build_posts_template(filter) : _build_users_template(filter)}
+		</div>
+		${build_navigation(filter)}
+		<div v-if="filter.after_html" v-html="filter.after_html"></div>
+		</div>`;
 	}
 
 	function build_tabs_template(filter) {
@@ -175,20 +189,13 @@ function _wnd_render_filter(container, filter_json) {
 		return t;
 	}
 
-	function build_posts_template(filter) {
-		let t = '<div class="wnd-filter-posts">';
-		t += _build_post_template();
-		t += '</div>'
-		return t;
-	}
-
 	/**
 	 *可在外部定义 build_post_template() 函数以覆盖默认的列表
 	 *
 	 */
-	function _build_post_template() {
-		if ('function' == typeof build_post_template) {
-			return build_post_template();
+	function _build_posts_template() {
+		if ('function' == typeof build_posts_template) {
+			return build_posts_template();
 		}
 
 		return `
@@ -205,6 +212,35 @@ function _wnd_render_filter(container, filter_json) {
 		<tr v-for="(post, index) in filter.posts">
 		<td class="is-narrow">{{post.post_date}}</td>
 		<td>{{post.post_title}}</td>
+		<td class="is-narrow has-text-centered">xxx</td>
+		</tr>
+		</tbody>
+		</table>`;
+	}
+
+	/**
+	 *可在外部定义 build_users_template() 函数以覆盖默认的列表
+	 *
+	 */
+	function _build_users_template() {
+		if ('function' == typeof build_users_template) {
+			return build_users_template();
+		}
+
+		return `
+		<table class="table is-fullwidth is-hoverable is-striped">
+		<thead>
+		<tr>
+		<th class="is-narrow">日期</th>
+		<th>标题</th>
+		<th class="is-narrow has-text-centered">操作</th>
+		</tr>
+		</thead>
+
+		<tbody>
+		<tr v-for="(user, index) in filter.users">
+		<td class="is-narrow">{{user.data.user_registered}}</td>
+		<td>{{user.data.display_name}}</td>
 		<td class="is-narrow has-text-centered">xxx</td>
 		</tr>
 		</tbody>
@@ -232,7 +268,7 @@ function _wnd_render_filter(container, filter_json) {
 		<nav class="pagination is-centered">
 		<ul class="pagination-list">
 		<li v-if="filter.pagination.paged >= 2"><a class="pagination-previous" @click="update_filter('paged', --filter.pagination.paged)">上一页</a></li>
-		<li v-if="filter.pagination.post_count >= filter.pagination.posts_per_page">
+		<li v-if="filter.pagination.current_count >= filter.pagination.per_page">
 		<a class="pagination-next" @click="update_filter('paged', ++filter.pagination.paged)">下一页</a>
 		</li>
 		</ul>

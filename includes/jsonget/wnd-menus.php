@@ -56,7 +56,7 @@ class Wnd_Menus extends Wnd_JsonGet {
 				['title' => '概览', 'href' => static::get_front_page_url() . '#'],
 				['title' => '统计', 'href' => static::get_front_page_url() . '#wnd_admin_finance_panel'],
 				['title' => '审核', 'href' => static::get_front_page_url() . '#wnd_admin_posts_panel'],
-				['title' => '用户', 'href' => static::get_front_page_url() . '#wnd_user_list_table'],
+				['title' => '用户', 'href' => static::get_front_page_url() . '#wnd_users_list'],
 				['title' => '内容', 'href' => static::get_front_page_url() . '#wnd_user_posts_panel'],
 				['title' => '财务', 'href' => static::get_front_page_url() . '#wnd_user_finance_panel'],
 				['title' => '资料', 'href' => static::get_front_page_url() . '#wnd_profile_form'],

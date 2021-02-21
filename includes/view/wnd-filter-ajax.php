@@ -67,11 +67,11 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	 */
 	protected function build_pagination($show_page = 5) {
 		return [
-			'paged'          => $this->wp_query->query_vars['paged'] ?: 1,
-			'max_num_pages'  => $this->wp_query->max_num_pages,
-			'posts_per_page' => $this->wp_query->query_vars['posts_per_page'],
-			'post_count'     => $this->wp_query->post_count,
-			'show_page'      => $show_page,
+			'paged'         => $this->wp_query->query_vars['paged'] ?: 1,
+			'max_num_pages' => $this->wp_query->max_num_pages,
+			'per_page'      => $this->wp_query->query_vars['posts_per_page'],
+			'current_count' => $this->wp_query->post_count,
+			'show_page'     => $show_page,
 		];
 	}
 
@@ -163,7 +163,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 			'sub_taxonomy_tabs' => $this->get_sub_taxonomy_tabs(),
 			'tags_tabs'         => $this->get_tags_tabs(),
 			'pagination'        => $this->get_pagination(),
-			'post_count'        => $this->wp_query->post_count,
+			// 'post_count'        => $this->wp_query->post_count,
 
 			/**
 			 *当前post type支持的taxonomy
