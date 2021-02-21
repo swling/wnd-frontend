@@ -9,13 +9,13 @@ use WP_User_Query;
  * 主要支持排序和搜索
  *
  * 样式基于bulma css
- * @param bool 		$is_ajax 	是否为ajax筛选（需要对应的前端支持）
- * @param string 	$uniqid 	HTML容器识别ID。默认值 uniqid() @see build_pagination() / get_tabs()
  *
  * @link https://developer.wordpress.org/reference/classes/WP_User_Query/
  * @link https://developer.wordpress.org/reference/classes/WP_User_Query/prepare_query/
  */
 class Wnd_Filter_User {
+
+	use Wnd_Filter_Trait;
 
 	protected $before_html = '';
 
@@ -24,27 +24,8 @@ class Wnd_Filter_User {
 	// 主色调
 	protected static $primary_color;
 
-	/**
-	 *@since 2019.10.26
-	 *URL请求参数
-	 */
-	protected static $http_query;
-
-	// string 当前筛选器唯一标识
-	protected $uniqid;
-
 	// string html class
 	protected $class;
-
-	/**
-	 * 现有方法之外，其他新增的查询参数
-	 * 将在筛选容器，及分页容器上出现，以绑定点击事件，发送到api接口
-	 * 以data-{key}="{value}"形式出现，ajax请求中，将转化为 url请求参数 ?{key}={value}
-	 */
-	protected $add_query_vars = [];
-
-	// 默认切换筛选项时需要移除的参数
-	protected $remove_query_args = ['paged', 'page'];
 
 	/**
 	 *根据配置设定的wp_user_query查询参数
@@ -97,93 +78,6 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 * @since 2020.05.05
-	 * 从GET参数中解析wp_user_query参数
-	 *
-	 * @return 	array 	wp_user_query $args
-	 *
-	 * @see 解析规则：
-	 *
-	 *meta查询
-	 * _meta_{key}={$meta_value}
-	 * _meta_{key}=exists
-	 *
-	 * 其他查询（具体参考 wp_user_query）
-	 * $args[$key] = $value;
-	 **/
-	public static function parse_query_vars() {
-		if (empty($_GET)) {
-			return [];
-		}
-
-		foreach ($_GET as $key => $value) {
-			/**
-			 *用户搜索关键词默认不支持模糊搜索
-			 *添加星标以支持模糊搜索
-			 *@since 2020.05.11
-			 */
-			if ('search' == $key) {
-				$query_vars['search'] = '*' . $value . '*';
-				continue;
-			}
-
-			/**
-			 *@since 2019.3.07 自动匹配meta query
-			 *?_meta_price=1 则查询 price = 1的user
-			 *?_meta_price=exists 则查询 存在price的user
-			 */
-			if (0 === strpos($key, '_meta_')) {
-				$key        = str_replace('_meta_', '', $key);
-				$compare    = 'exists' == $value ? 'exists' : '=';
-				$meta_query = [
-					'key'     => $key,
-					'value'   => $value,
-					'compare' => $compare,
-				];
-
-				/**
-				 *@since 2019.04.21 当meta_query compare == exists 不能设置value
-				 */
-				if ('exists' == $compare) {
-					unset($meta_query['value']);
-				}
-
-				$query_vars['meta_query'][] = $meta_query;
-				continue;
-			}
-
-			/**
-			 *@since 2019.07.30
-			 *分页
-			 */
-			if ('page' == $key) {
-				$query_vars['paged'] = $value ?: 1;
-				continue;
-			}
-
-			// 其他：按键名自动匹配
-			if (is_array($value)) {
-				$query_vars[$key] = $value;
-			} else {
-				$query_vars[$key] = (false !== strpos($value, '=')) ? wp_parse_args($value) : $value;
-			}
-			continue;
-		}
-		unset($key, $value);
-
-		/**
-		 *定义如何过滤HTTP请求
-		 *此处定义：过滤空值，但保留0
-		 *@since 2019.10.26
-		 **/
-		$query_vars = array_filter($query_vars, function ($value) {
-			return $value or 0 == $value;
-		});
-
-		return $query_vars;
-	}
-
-	/**
 	 *@since 2019.07.31
 	 *设置ajax post列表嵌入容器
 	 *@param int $number 每页post数目
@@ -193,94 +87,24 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *@since 2019.07.31
-	 *添加新的请求参数
-	 *添加的参数，将覆盖之前的设定，并将在所有请求中有效，直到被新的设定覆盖
-	 *
-	 *@param array $query [key=>value]
-	 *
-	 *在非ajax环境中，直接将写入$query_args[key]=value
-	 *
-	 *在ajax环境中，将对应生成html data属性：data-{key}="{value}" 通过JavaScript获取后将转化为 ajax url请求参数 ?{key}={value}，
-	 *ajax发送到api接口，再通过parse_query_vars() 解析后，写入$query_args[key]=value
-	 **/
-	public function add_query_vars($query = []) {
-		foreach ($query as $key => $value) {
-			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
-			if (is_array($this->query_args[$key] ?? false) and is_array($value)) {
-				$this->query_args[$key] = array_merge($this->query_args[$key], $value, static::$http_query[$key] ?? []);
-
-			} else {
-				// $_GET参数优先，无法重新设置
-				$this->query_args[$key] = (static::$http_query[$key] ?? false) ?: $value;
-			}
-
-			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
-			$this->add_query_vars[$key] = $value;
-		}
-		unset($key, $value);
-	}
-
-	public function add_search_form($button = 'Search', $placeholder = '') {
-		$html = '<form class="wnd-filter-user-search" method="POST" action="" "onsubmit"="return false">';
-		$html .= '<div class="field has-addons">';
-
-		$html .= '<div class="control">';
-		$html .= '<span class="select">';
-		$html .= '<select name="search_columns[]">';
-		$html .= ' <option value=""> - Field - </option>';
-		$html .= ' <option value="display_name"> - Name - </option>';
-		$html .= ' <option value="user_login"> - Login - </option>';
-		$html .= ' <option value="user_email"> - Email - </option>';
-		$html .= '</select>';
-		$html .= '</span>';
-		$html .= '</div>';
-
-		$html .= '<div class="control is-expanded">';
-		$html .= '<input class="input" type="text" name="search" placeholder="' . $placeholder . '" required="required">';
-		$html .= '</div>';
-
-		$html .= '<div class="control">';
-		$html .= '<button type="submit" class="button is-' . static::$primary_color . '">' . $button . '</button>';
-		$html .= '</div>';
-
-		$html .= '</div>';
-		$html .= '</form>';
-
-		$this->tabs .= $html;
-	}
-
-	/**
-	 *构造筛选菜单数据
-	 */
-	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []): array{
-		if (!$options) {
-			return [];
-		}
-
-		// 筛选添加改变时，移除 Page 参数
-		$remove_query_args[] = 'page';
-
-		if ($with_any_tab) {
-			$options = array_merge([__('全部', 'wnd') => ''], $options);
-		}
-
-		$tabs = [
-			'key'               => $key,
-			'title'             => $title,
-			'options'           => $options,
-			'remove_query_args' => $remove_query_args,
-		];
-		$this->tabs[] = $tabs;
-
-		return $tabs;
-	}
-
-	/**
 	 *获取完整筛选 Tabs
 	 */
 	public function get_tabs() {
 		return $this->tabs;
+	}
+
+	/**
+	 *筛选器之前 Html
+	 */
+	public function add_before_html($html) {
+		$this->before_html .= $html;
+	}
+
+	/**
+	 *筛选器之后 Html
+	 */
+	public function add_after_html($html) {
+		$this->after_html .= $html;
 	}
 
 	/**
@@ -339,10 +163,6 @@ class Wnd_Filter_User {
 	public function query() {
 		$this->wp_user_query = new WP_User_Query($this->query_args);
 		$this->users         = $this->wp_user_query->get_results();
-	}
-
-	public function get_add_query_vars(): array{
-		return $this->add_query_vars;
 	}
 
 	/**

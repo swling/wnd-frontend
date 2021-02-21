@@ -190,7 +190,7 @@ function _wnd_render_filter(container, filter_json) {
 	}
 
 	/**
-	 *可在外部定义 build_post_template() 函数以覆盖默认的列表
+	 *可在外部定义 wnd_post_template() 函数以覆盖默认的列表
 	 *
 	 */
 	function build_posts_template() {
@@ -219,7 +219,7 @@ function _wnd_render_filter(container, filter_json) {
 	}
 
 	/**
-	 *可在外部定义 build_users_template() 函数以覆盖默认的列表
+	 *可在外部定义 wnd_users_template() 函数以覆盖默认的列表
 	 *
 	 */
 	function build_users_template() {

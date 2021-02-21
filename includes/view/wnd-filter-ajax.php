@@ -10,6 +10,8 @@ use WP_Query;
  */
 class Wnd_Filter_Ajax extends Wnd_Filter {
 
+	use Wnd_Filter_Trait;
+
 	protected $before_html = '';
 
 	protected $after_html = '';
@@ -23,43 +25,18 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 	// 分页导航数据
 	protected $pagination = [];
 
+	/**
+	 *筛选器之前 Html
+	 */
 	public function add_before_html($html) {
 		$this->before_html .= $html;
 	}
 
+	/**
+	 *筛选器之后 Html
+	 */
 	public function add_after_html($html) {
 		$this->after_html .= $html;
-	}
-
-	// 未完成
-	public function add_search_form($button = 'Search', $placeholder = '') {
-		return [];
-	}
-
-	/**
-	 *构造筛选菜单数据
-	 */
-	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []): array{
-		if (!$options) {
-			return [];
-		}
-
-		// 筛选添加改变时，移除 Page 参数
-		$remove_query_args[] = 'page';
-
-		if ($with_any_tab) {
-			$options = array_merge([__('全部', 'wnd') => ''], $options);
-		}
-
-		$tabs = [
-			'key'               => $key,
-			'title'             => $title,
-			'options'           => $options,
-			'remove_query_args' => $remove_query_args,
-		];
-		$this->tabs[] = $tabs;
-
-		return $tabs;
 	}
 
 	/**
@@ -132,10 +109,6 @@ class Wnd_Filter_Ajax extends Wnd_Filter {
 
 		$this->pagination = $this->build_pagination($show_page);
 		return $this->pagination;
-	}
-
-	public function get_add_query_vars(): array{
-		return $this->add_query_vars;
 	}
 
 	/**
