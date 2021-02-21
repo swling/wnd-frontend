@@ -137,7 +137,7 @@ class Wnd_User_Page extends Wnd_Module_Html {
 
 		$html = '
 		<div id="user-center" class="columns">
-		<div v-if="menus" class="column is-narrow is-hidden-mobile">
+		<div class="column is-narrow is-hidden-mobile">
 		<div id="wnd-menus" class="box"><div id="app-menus"></div></div>
 		</div>
 

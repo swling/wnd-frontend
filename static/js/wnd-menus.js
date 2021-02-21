@@ -10,14 +10,16 @@ function _wnd_render_menus(container, menus_data, is_side_menus = false) {
 	new Vue({
 		el: container,
 		template: `
-		<ul class="menu-list">
+		<aside class="menu">
 		<template v-for="(menu, menu_index) in menus">
+		<ul class="menu-list">
 		<a v-if="menu.label" v-html="menu.label" @click="expand(menu_index)"></a>
 		<li v-show="menu.expand"><ul><li v-for="(item, item_index) in menu.items">
-		<a :href="item.href" @click="active(menu_index, item_index)" :class="item.class" v-text="item.title"></a>
-		</li></ul></li>
+		<a :href="item.href" @click="active(menu_index, item_index)" :class="item.class" v-html="item.title"></a></li>
+		</ul></li>
+		</ul>
 		</template>
-		</ul>`,
+		</aside>`,
 		data: {
 			menus: wnd_menus_data,
 		},
