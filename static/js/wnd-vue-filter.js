@@ -89,7 +89,7 @@ function _wnd_render_filter(container, filter_json) {
 				return (parent.id ? '#' + parent.id : '') + ' .wnd-filter-results';
 			},
 
-			update_filter: function(key, value) {
+			update_filter: function(key, value, remove_args = []) {
 				/**
 				 *	切换类型：恢复初始参数
 				 *  	JavaScript 中，如果直接对数组、对象赋值，会导致关联的双方都同步改变
@@ -97,10 +97,14 @@ function _wnd_render_filter(container, filter_json) {
 				 * 
 				 * 非翻页筛选条件变更：删除分页参数
 				 */
-				if ('type' == key) {
-					param = JSON.parse(JSON.stringify(init_param));
-				} else if ('paged' != key) {
-					delete param['paged'];
+				for (let i = 0; i < remove_args.length; i++) {
+					const key = remove_args[i];
+					if ('all' == key) {
+						param = JSON.parse(JSON.stringify(init_param));
+						break;
+					} else {
+						delete param[key];
+					}
 				}
 
 				/**
@@ -250,12 +254,12 @@ function _wnd_render_filter(container, filter_json) {
 	function build_tabs(tabs) {
 		return `
 		<div v-if="${tabs}" class="columns is-marginless is-vcentered" :class="${tabs}.key">
-		<div class="column is-narrow">{{${tabs}.title}}</div>
+		<div class="column is-narrow">{{${tabs}.label}}</div>
 
 		<div class="column tabs">
 		<ul class="tab">
 		<template v-for="(value, name) in ${tabs}.options">
-		<li :class="item_class(${tabs}.key, value)"><a :data-key="${tabs}.key" :data-value="value" @click="update_filter(${tabs}.key, value)">{{name}}</a></li>
+		<li :class="item_class(${tabs}.key, value)"><a :data-key="${tabs}.key" :data-value="value" @click="update_filter(${tabs}.key, value, ${tabs}.remove_args)">{{name}}</a></li>
 		</template>
 		</ul>
 		</div>

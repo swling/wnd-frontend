@@ -21,9 +21,6 @@ class Wnd_Filter_User {
 
 	protected $after_html = '';
 
-	// string html class
-	protected $class;
-
 	// 筛选项HTML
 	protected $tabs = [];
 
@@ -115,12 +112,12 @@ class Wnd_Filter_User {
 	 *
 	 *@param bool 全部选项
 	 */
-	public function add_orderby_filter(array $args, bool $with_any_tab = false) {
+	public function add_orderby_filter(array $args, bool $any = false) {
 		$key     = 'orderby';
-		$title   = $args['label'];
+		$label   = $args['label'];
 		$options = $args['options'];
 
-		return $this->build_tabs($key, $options, $title, $with_any_tab);
+		return $this->build_tabs($key, $options, $label, $any);
 	}
 
 	/**
@@ -134,45 +131,45 @@ class Wnd_Filter_User {
 	 *
 	 *@param string $label 选项名称
 	 */
-	public function add_order_filter(array $args, bool $with_any_tab = false) {
+	public function add_order_filter(array $args, bool $any = false) {
 		$key     = 'order';
-		$title   = $args['label'];
+		$label   = $args['label'];
 		$options = $args['options'];
 
-		return $this->build_tabs($key, $options, $title, $with_any_tab);
+		return $this->build_tabs($key, $options, $label, $any);
 	}
 
 	/**
 	 *@param string $label 选项名称
 	 */
-	public function add_status_filter(array $args, bool $with_any_tab = false) {
+	public function add_status_filter(array $args, bool $any = false) {
 		$key     = '_meta_status';
-		$title   = $args['label'];
+		$label   = $args['label'];
 		$options = $args['options'];
 
-		return $this->build_tabs($key, $options, $title, $with_any_tab);
+		return $this->build_tabs($key, $options, $label, $any);
 	}
 
 	/**
 	 *构造 Ajax 筛选菜单数据
 	 */
-	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []): array{
+	protected function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []): array{
 		if (!$options) {
 			return [];
 		}
 
 		// 筛选添加改变时，移除 Page 参数
-		$remove_query_args[] = 'page';
+		$remove_args[] = 'paged';
 
-		if ($with_any_tab) {
+		if ($any) {
 			$options = array_merge([__('全部', 'wnd') => ''], $options);
 		}
 
 		$tabs = [
-			'key'               => $key,
-			'title'             => $title,
-			'options'           => $options,
-			'remove_query_args' => $remove_query_args,
+			'key'         => $key,
+			'label'       => $label,
+			'options'     => $options,
+			'remove_args' => $remove_args,
 		];
 		$this->tabs[] = $tabs;
 

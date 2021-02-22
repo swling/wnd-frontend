@@ -73,7 +73,7 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	 *统一封装 Tabs 输出
 	 *
 	 */
-	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []): string {
+	protected function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []): string {
 		if (!$options) {
 			return '';
 		}
@@ -82,21 +82,21 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 		 * 定义当前筛选项基准 URL
 		 *  - 如果传参为 ['all'] 则移除移除动态参数，但保留语言参数
 		 */
-		if ('all' == ($remove_query_args[0] ?? false)) {
+		if ('all' == ($remove_args[0] ?? false)) {
 			$base_url = strtok($this->wp_base_url, '?');
 			$base_url = isset($_GET['lang']) ? add_query_arg('lang', $_GET['lang']) : $base_url;
 		} else {
-			$base_url = remove_query_arg($remove_query_args, $this->wp_base_url);
+			$base_url = remove_query_arg($remove_args, $this->wp_base_url);
 		}
 
 		// 输出容器
 		$tabs = '<div class="columns is-marginless is-vcentered ' . $key . '">';
-		$tabs .= '<div class="column is-narrow">' . $title . '</div>';
+		$tabs .= '<div class="column is-narrow">' . $label . '</div>';
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<ul class="tab">';
 
 		// 【全部】选项
-		if ($with_any_tab) {
+		if ($any) {
 			$tabs .= '<li class="' . $this->get_tab_item_class($key, '') . '">';
 			$tabs .= '<a href="' . remove_query_arg($key, $base_url) . '">' . __('全部', 'wnd') . '</a>';
 			$tabs .= '</li>';

@@ -137,9 +137,9 @@ abstract class Wnd_Filter_Abstract {
 
 	/**
 	 *@param array 	$args 需要筛选的类型数组
-	 *@param bool 	$with_any_tab 是否包含全部选项
+	 *@param bool 	$any 是否包含全部选项
 	 */
-	public function add_post_type_filter(array $args = [], bool $with_any_tab = false) {
+	public function add_post_type_filter(array $args = [], bool $any = false) {
 		/**
 		 *若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post
 		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
@@ -147,7 +147,7 @@ abstract class Wnd_Filter_Abstract {
 		 * 当前请求为包含post_type参数时，当前的主分类（category_taxonomy）无法在构造函数中无法完成定义，需在此处补充
 		 */
 		if (!$this->query_args['post_type']) {
-			$default_type = $with_any_tab ? 'any' : ($args ? reset($args) : 'post');
+			$default_type = $any ? 'any' : ($args ? reset($args) : 'post');
 			$this->add_query_vars(['post_type' => $default_type]);
 			$this->category_taxonomy = ('post' == $this->query_args['post_type']) ? 'category' : $this->query_args['post_type'] . '_cat';
 		}
@@ -161,7 +161,7 @@ abstract class Wnd_Filter_Abstract {
 
 		// 构建 Tabs 数据
 		$key     = 'type';
-		$title   = __('类型：', 'wnd');
+		$label   = __('类型：', 'wnd');
 		$options = [];
 		foreach ($args as $post_type) {
 			$post_type                  = get_post_type_object($post_type);
@@ -169,14 +169,14 @@ abstract class Wnd_Filter_Abstract {
 		}
 		unset($post_type);
 
-		return $this->build_tabs($key, $options, $title, $with_any_tab, ['all']);
+		return $this->build_tabs($key, $options, $label, $any, ['all']);
 	}
 
 	/**
 	 *状态筛选
 	 *@param array $args 需要筛选的文章状态数组
 	 */
-	public function add_post_status_filter(array $args = [], bool $with_any_tab = true) {
+	public function add_post_status_filter(array $args = [], bool $any = true) {
 		$this->add_query_vars(['post_status' => $args]);
 
 		/**
@@ -187,10 +187,10 @@ abstract class Wnd_Filter_Abstract {
 		}
 
 		// 构建 Tabs 数据
-		$title   = __('状态', 'wnd');
+		$label   = __('状态', 'wnd');
 		$key     = 'status';
 		$options = $args;
-		return $this->build_tabs($key, $options, $title, $with_any_tab);
+		return $this->build_tabs($key, $options, $label, $any);
 	}
 
 	/**
@@ -279,11 +279,11 @@ abstract class Wnd_Filter_Abstract {
 	 *	];
 	 *
 	 */
-	public function add_meta_filter(array $args, bool $with_any_tab = true) {
-		$title = $args['label'];
+	public function add_meta_filter(array $args, bool $any = true) {
+		$label = $args['label'];
 		$key   = '_meta_' . $args['key'];
 
-		return $this->build_tabs($key, $args['options'], $title, $with_any_tab);
+		return $this->build_tabs($key, $args['options'], $label, $any);
 	}
 
 	/**
@@ -303,12 +303,12 @@ abstract class Wnd_Filter_Abstract {
 	 *	];
 	 *
 	 */
-	public function add_orderby_filter(array $args, bool $with_any_tab = true) {
+	public function add_orderby_filter(array $args, bool $any = true) {
 		$key     = 'orderby';
-		$title   = $args['label'];
+		$label   = $args['label'];
 		$options = $args['options'];
 
-		return $this->build_tabs($key, $options, $title, $with_any_tab);
+		return $this->build_tabs($key, $options, $label, $any);
 	}
 
 	/**
@@ -322,8 +322,8 @@ abstract class Wnd_Filter_Abstract {
 	 *
 	 *@param string $label 选项名称
 	 */
-	public function add_order_filter(array $args, string $label, bool $with_any_tab = true) {
-		return $this->build_tabs('order', $args, $label, $with_any_tab);
+	public function add_order_filter(array $args, string $label, bool $any = true) {
+		return $this->build_tabs('order', $args, $label, $any);
 	}
 
 	/**
@@ -340,7 +340,7 @@ abstract class Wnd_Filter_Abstract {
 	 *@param string 	$class 		额外设置的class
 	 *若查询的taxonomy与当前post type未关联，则不输出
 	 */
-	protected function build_taxonomy_filter(array $args, bool $with_any_tab = true) {
+	protected function build_taxonomy_filter(array $args, bool $any = true) {
 		if (!isset($args['taxonomy'])) {
 			return;
 		}
@@ -364,21 +364,21 @@ abstract class Wnd_Filter_Abstract {
 		 * @since 2019.07.30
 		 */
 		if ($taxonomy == $this->category_taxonomy) {
-			$remove_query_args = ['_term_' . $this->query_args['post_type'] . '_tag'];
+			$remove_args = ['_term_' . $this->query_args['post_type'] . '_tag'];
 		} else {
-			$remove_query_args = [];
+			$remove_args = [];
 		}
 
 		// 输出tabs
 		$key     = '_term_' . $taxonomy;
 		$options = [];
-		$title   = get_taxonomy($taxonomy)->label;
+		$label   = get_taxonomy($taxonomy)->label;
 		foreach ($terms as $term) {
 			$options[$term->name] = $term->term_id;
 		}
 		unset($term);
 
-		return $this->build_tabs($key, $options, $title, $with_any_tab, $remove_query_args);
+		return $this->build_tabs($key, $options, $label, $any, $remove_args);
 	}
 
 	/**
@@ -441,10 +441,10 @@ abstract class Wnd_Filter_Abstract {
 			]);
 		}
 
-		$key          = '_term_' . $taxonomy;
-		$options      = [];
-		$title        = get_taxonomy($taxonomy)->label;
-		$with_any_tab = true;
+		$key     = '_term_' . $taxonomy;
+		$options = [];
+		$label   = get_taxonomy($taxonomy)->label;
+		$any     = true;
 
 		foreach ($terms as $term) {
 			$term->name           = $term->name ?? get_term($term->tag_id, $taxonomy)->name;
@@ -452,7 +452,7 @@ abstract class Wnd_Filter_Abstract {
 			$options[$term->name] = $term->term_id;
 		}
 
-		return $this->build_tabs($key, $options, $title, $with_any_tab);
+		return $this->build_tabs($key, $options, $label, $any);
 	}
 
 	/**
@@ -571,7 +571,7 @@ abstract class Wnd_Filter_Abstract {
 	 *@since 0.9.25
 	 *统一封装 Tabs 输出：在子类中实现
 	 */
-	abstract protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []);
+	abstract protected function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []);
 
 	/**
 	 *@since 0.9.25

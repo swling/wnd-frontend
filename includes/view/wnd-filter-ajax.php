@@ -43,23 +43,23 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	/**
 	 *构造 Ajax 筛选菜单数据
 	 */
-	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []): array{
+	protected function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []): array{
 		if (!$options) {
 			return [];
 		}
 
 		// 筛选添加改变时，移除 Page 参数
-		$remove_query_args[] = 'page';
+		$remove_args[] = 'paged';
 
-		if ($with_any_tab) {
+		if ($any) {
 			$options = array_merge([__('全部', 'wnd') => ''], $options);
 		}
 
 		$tabs = [
-			'key'               => $key,
-			'title'             => $title,
-			'options'           => $options,
-			'remove_query_args' => $remove_query_args,
+			'key'         => $key,
+			'label'       => $label,
+			'options'     => $options,
+			'remove_args' => $remove_args,
 		];
 		$this->tabs[] = $tabs;
 
