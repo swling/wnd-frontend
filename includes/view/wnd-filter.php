@@ -10,9 +10,7 @@ use Wnd\View\Wnd_Pagination;
  *
  * @param bool 	$independent 	是否为独立 WP Query
  */
-class Wnd_Filter {
-
-	use Wnd_Filter_Posts_Trait;
+class Wnd_Filter extends Wnd_Filter_Abstract {
 
 	public $post_template;
 
@@ -59,7 +57,7 @@ class Wnd_Filter {
 		$html .= '<input class="input" type="text" name="search" placeholder="' . $placeholder . '" required="required">';
 		$html .= '</div>';
 		$html .= '<div class="control">';
-		$html .= '<button type="submit" class="button is-' . static::$primary_color . '">' . $button . '</button>';
+		$html .= '<button type="submit" class="button is-' . wnd_get_config('primary_color') . '">' . $button . '</button>';
 		$html .= '</div>';
 
 		$html .= '</div>';

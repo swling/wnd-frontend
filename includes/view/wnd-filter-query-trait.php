@@ -3,16 +3,16 @@ namespace Wnd\View;
 
 /**
  * @since 0.9.25
- * 筛选类特性
+ * 筛选类查询参数公共特性
  * - 解析 URL 参数为查询参数
  * - 新增查询参数;
  */
-trait Wnd_Filter_Trait {
+trait Wnd_Filter_Query_Trait {
 	/**
 	 *@since 2019.10.26
 	 *URL请求参数
 	 */
-	protected static $http_query;
+	protected static $request_query_vars;
 
 	/**
 	 * 现有方法之外，其他新增的查询参数
@@ -181,19 +181,21 @@ trait Wnd_Filter_Trait {
 	 *仅在独立 WP Query （true == $this->independent）时，可在外部直接调用
 	 *依赖型多重筛选中此参数无效，依赖型查询中，仅 URL 参数可合并写入查询参数
 	 */
-	public function add_query_vars($query = []) {
+	public function add_query_vars(array $query = []) {
 		foreach ($query as $key => $value) {
-			// 数组参数，合并元素；非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
-			if (is_array($this->query_args[$key] ?? false) and is_array($value)) {
-				$this->query_args[$key] = array_merge($this->query_args[$key], $value, (static::$http_query[$key] ?? []));
-
-			} else {
-				// $_GET参数优先，无法重新设置
-				$this->query_args[$key] = (static::$http_query[$key] ?? false) ?: $value;
-			}
-
-			// 在html data属性中新增对应属性，以实现在ajax请求中同步添加参数
+			// 记录参数
 			$this->add_query_vars[$key] = $value;
+
+			/**
+			 *数组参数，合并元素
+			 *非数组参数，赋值 （php array_merge：相同键名覆盖，未定义键名或以整数做键名，则新增)
+			 *$_GET参数优先，无法重新设置
+			 */
+			if (is_array($this->query_args[$key] ?? false) and is_array($value)) {
+				$this->query_args[$key] = array_merge($this->query_args[$key], $value, (static::$request_query_vars[$key] ?? []));
+			} else {
+				$this->query_args[$key] = (static::$request_query_vars[$key] ?? false) ?: $value;
+			}
 		}
 		unset($key, $value);
 	}

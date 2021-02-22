@@ -6,15 +6,19 @@ use Wnd\Model\Wnd_Tag_Under_Category;
 use WP_Query;
 
 /**
- * @since 2019.07.30
- * 多重筛选类
- * 样式基于bulma css
+ * @since 0.9.25
+ * Posts 多重筛选抽象基类
+ * - 参数解析
+ * - 权限检测
+ * - 定义可用的筛选项方法
+ * - 执行 WP_Query（仅在非依赖型）
+ * - 定义子类中必须实现的抽象方法
  *
  * @param bool 	$independent 	是否为独立 WP Query
  */
-trait Wnd_Filter_Posts_Trait {
+abstract class Wnd_Filter_Abstract {
 
-	use Wnd_Filter_Trait;
+	use Wnd_Filter_Query_Trait;
 
 	// 当前请求基本 URL （移除 WP 默认伪静态分页参数)
 	protected $wp_base_url;
@@ -40,9 +44,9 @@ trait Wnd_Filter_Posts_Trait {
 	 *@param bool 	$independent	是否为独立 WP Query
 	 */
 	public function __construct(bool $independent = true) {
-		static::$http_query = static::parse_query_vars();
-		$this->independent  = $independent;
-		$this->wp_base_url  = get_pagenum_link(1, false);
+		static::$request_query_vars = static::parse_query_vars();
+		$this->independent          = $independent;
+		$this->wp_base_url          = get_pagenum_link(1, false);
 
 		// 初始化查询参数
 		$defaults = [
@@ -67,7 +71,7 @@ trait Wnd_Filter_Posts_Trait {
 		 */
 		if ($this->independent) {
 			$this->wp_base_url = remove_query_arg('page', $this->wp_base_url);
-			$this->query_args  = array_merge($defaults, static::$http_query);
+			$this->query_args  = array_merge($defaults, static::$request_query_vars);
 		} else {
 			global $wp_query;
 			if (!$wp_query->query_vars) {
@@ -75,7 +79,7 @@ trait Wnd_Filter_Posts_Trait {
 			}
 
 			$this->wp_query   = $wp_query;
-			$this->query_args = array_merge($defaults, $wp_query->query_vars, static::$http_query);
+			$this->query_args = array_merge($defaults, $wp_query->query_vars, static::$request_query_vars);
 		}
 
 		/**
@@ -127,23 +131,15 @@ trait Wnd_Filter_Posts_Trait {
 	 *设置ajax post列表嵌入容器
 	 *@param int $posts_per_page 每页post数目
 	 **/
-	public function set_posts_per_page($posts_per_page) {
+	public function set_posts_per_page(int $posts_per_page) {
 		$this->add_query_vars(['posts_per_page' => $posts_per_page]);
-	}
-
-	/**
-	 *@since 2020.05.11
-	 *搜索框
-	 */
-	public function add_search_form($button = 'Search', $placeholder = '') {
-
 	}
 
 	/**
 	 *@param array 	$args 需要筛选的类型数组
 	 *@param bool 	$with_any_tab 是否包含全部选项
 	 */
-	public function add_post_type_filter($args = [], $with_any_tab = false) {
+	public function add_post_type_filter(array $args = [], bool $with_any_tab = false) {
 		/**
 		 *若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post
 		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
@@ -180,7 +176,7 @@ trait Wnd_Filter_Posts_Trait {
 	 *状态筛选
 	 *@param array $args 需要筛选的文章状态数组
 	 */
-	public function add_post_status_filter($args = [], $with_any_tab = true) {
+	public function add_post_status_filter(array $args = [], bool $with_any_tab = true) {
 		$this->add_query_vars(['post_status' => $args]);
 
 		/**
@@ -235,7 +231,6 @@ trait Wnd_Filter_Posts_Trait {
 
 		// 获取当前taxonomy子类tabs
 		$this->get_sub_taxonomy_tabs();
-
 	}
 
 	/**
@@ -255,7 +250,7 @@ trait Wnd_Filter_Posts_Trait {
 	 * 若未设置关联分类，则查询所有热门标签
 	 *@since 2019.03.25
 	 */
-	public function add_tags_filter($limit = 10) {
+	public function add_tags_filter(int $limit = 10) {
 		$this->build_tags_filter($limit);
 	}
 
@@ -284,7 +279,7 @@ trait Wnd_Filter_Posts_Trait {
 	 *	];
 	 *
 	 */
-	public function add_meta_filter($args, $with_any_tab = true) {
+	public function add_meta_filter(array $args, bool $with_any_tab = true) {
 		$title = $args['label'];
 		$key   = '_meta_' . $args['key'];
 
@@ -308,7 +303,7 @@ trait Wnd_Filter_Posts_Trait {
 	 *	];
 	 *
 	 */
-	public function add_orderby_filter($args, $with_any_tab = true) {
+	public function add_orderby_filter(array $args, bool $with_any_tab = true) {
 		$key     = 'orderby';
 		$title   = $args['label'];
 		$options = $args['options'];
@@ -327,7 +322,7 @@ trait Wnd_Filter_Posts_Trait {
 	 *
 	 *@param string $label 选项名称
 	 */
-	public function add_order_filter($args, $label, $with_any_tab = true) {
+	public function add_order_filter(array $args, string $label, bool $with_any_tab = true) {
 		return $this->build_tabs('order', $args, $label, $with_any_tab);
 	}
 
@@ -336,17 +331,7 @@ trait Wnd_Filter_Posts_Trait {
 	 *遍历当前查询参数，输出取消当前查询链接
 	 */
 	public function add_current_filter() {
-		$tabs = $this->build_current_filter();
-		return $tabs;
-	}
-
-	/**
-	 *@since 0.9.25
-	 *统一封装 Tabs 输出
-	 *
-	 */
-	protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []) {
-
+		return $this->build_current_filter();
 	}
 
 	/**
@@ -355,7 +340,7 @@ trait Wnd_Filter_Posts_Trait {
 	 *@param string 	$class 		额外设置的class
 	 *若查询的taxonomy与当前post type未关联，则不输出
 	 */
-	protected function build_taxonomy_filter(array $args, $with_any_tab = true) {
+	protected function build_taxonomy_filter(array $args, bool $with_any_tab = true) {
 		if (!isset($args['taxonomy'])) {
 			return;
 		}
@@ -400,7 +385,7 @@ trait Wnd_Filter_Posts_Trait {
 	 *@since 2019.08.09
 	 *构建分类关联标签的HTML
 	 */
-	protected function build_tags_filter($limit = 10) {
+	protected function build_tags_filter(int $limit = 10) {
 		// 标签taxonomy
 		$taxonomy = $this->query_args['post_type'] . '_tag';
 		if (!taxonomy_exists($taxonomy)) {
@@ -474,7 +459,7 @@ trait Wnd_Filter_Posts_Trait {
 	 *@since 2019.03.26
 	 *遍历当前查询参数，输出取消当前查询链接
 	 *
-	 *@since 0.9.25  改造尚未未完成
+	 *@since 0.9.25  改造尚未完成
 	 */
 	protected function build_current_filter() {
 		if (empty($this->query_args['tax_query']) and empty($this->query_args['meta_query'])) {
@@ -575,4 +560,40 @@ trait Wnd_Filter_Posts_Trait {
 
 		return $sub_tabs_array;
 	}
+
+	/**
+	 *@since 2020.05.11
+	 *搜索框：在子类中实现
+	 */
+	abstract public function add_search_form(string $button = 'Search', string $placeholder = '');
+
+	/**
+	 *@since 0.9.25
+	 *统一封装 Tabs 输出：在子类中实现
+	 */
+	abstract protected function build_tabs(string $key, array $options, string $title, bool $with_any_tab, array $remove_query_args = []);
+
+	/**
+	 *@since 0.9.25
+	 *获取筛选 Tabs：在子类中实现
+	 */
+	abstract protected function get_tabs();
+
+	/**
+	 *@since 0.9.25
+	 *获取筛选 Posts 集：在子类中实现
+	 */
+	abstract protected function get_posts();
+
+	/**
+	 *@since 0.9.25
+	 *获取完整的查询结果集：通常为 Posts 及 pagination 的合集，根据具体场景在子类中实现
+	 */
+	abstract protected function get_results();
+
+	/**
+	 *@since 0.9.25
+	 *获取筛选分页导航：在子类中实现
+	 */
+	abstract protected function get_pagination();
 }

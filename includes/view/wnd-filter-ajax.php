@@ -6,9 +6,7 @@ namespace Wnd\View;
  * @since 0.9.5
  * 多重筛选 Json API
  */
-class Wnd_Filter_Ajax {
-
-	use Wnd_Filter_Posts_Trait;
+class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 
 	protected $before_html = '';
 
