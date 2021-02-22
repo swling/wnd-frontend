@@ -56,9 +56,9 @@ abstract class Wnd_Login_Social {
 	public static function parse_state($state) {
 		$state_array = explode('|', $state);
 		return [
-			'domain' => $state_array[0] ?? false,
-			'nonce'  => $state_array[1] ?? false,
-			'lang'   => $state_array[2] ?? false,
+			'domain'     => $state_array[0] ?? false,
+			'nonce'      => $state_array[1] ?? false,
+			WND_LANG_KEY => $state_array[2] ?? false,
 		];
 	}
 

@@ -69,7 +69,7 @@ function _wnd_render_menus(container, menus_data, is_side_menus = false) {
 				_this = this;
 				axios({
 					'method': 'get',
-					url: wnd_jsonget_api + '/wnd_menus' + lang_query,
+					url: wnd_jsonget_api + '/wnd_menus',
 					headers: {
 						'container': _this.get_container(),
 					},

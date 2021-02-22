@@ -28,6 +28,9 @@ define('WND_PATH', __DIR__);
 // 定义插件文件夹名称
 define('WND_DIR_NAME', basename(__DIR__));
 
+// 定义语言参数
+define('WND_LANG_KEY', 'lang');
+
 // 自动加载器
 require WND_PATH . DIRECTORY_SEPARATOR . 'wnd-autoloader.php';
 
@@ -105,7 +108,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 		'users_api'    => 'wnd/users',
 		'jsonget_api'  => 'wnd/jsonget',
 		'endpoint_api' => 'wnd/endpoint',
-		'lang'         => $_GET['lang'] ?? false,
+		'lang'         => $_GET[WND_LANG_KEY] ?? false,
 		'ver'          => WND_VER,
 		'msg'          => [
 			'required'            => __('必填项为空', 'wnd'),

@@ -175,7 +175,7 @@ function _wnd_render_form(container, form_json) {
 
                 // _this = this;
                 axios({
-                    url: wnd_action_api + "/wnd_upload_file" + lang_query,
+                    url: wnd_action_api + '/wnd_upload_file',
                     method: 'post',
                     data: form_data,
                     headers: {},
@@ -223,7 +223,7 @@ function _wnd_render_form(container, form_json) {
                 data.append('meta_key', field.data.meta_key);
                 data.append('_ajax_nonce', field.data.delete_nonce);
                 axios({
-                    url: wnd_action_api + "/wnd_delete_file" + lang_query,
+                    url: wnd_action_api + '/wnd_delete_file',
                     method: 'post',
                     data: data,
                 }).then(function(response) {

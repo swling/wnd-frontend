@@ -44,12 +44,12 @@ function _wnd_update_views(post_id, interval) {
     data.append('post_id', post_id);
     if (is_new) {
         axios({
-            url: wnd_endpoint_api + "/wnd_update_views" + lang_query,
+            url: wnd_endpoint_api + '/wnd_update_views',
             method: 'POST',
             data: data,
         }).then(function(response) {
             if (1 == response.data.status) {
-                localStorage.setItem("wnd_views", JSON.stringify(wnd_views));
+                localStorage.setItem('wnd_views', JSON.stringify(wnd_views));
             }
         });
     }

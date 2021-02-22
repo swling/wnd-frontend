@@ -84,7 +84,7 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 		 */
 		if ('all' == ($remove_args[0] ?? false)) {
 			$base_url = strtok($this->wp_base_url, '?');
-			$base_url = isset($_GET['lang']) ? add_query_arg('lang', $_GET['lang']) : $base_url;
+			$base_url = isset($_GET[WND_LANG_KEY]) ? add_query_arg(WND_LANG_KEY, $_GET[WND_LANG_KEY]) : $base_url;
 		} else {
 			$base_url = remove_query_arg($remove_args, $this->wp_base_url);
 		}

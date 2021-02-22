@@ -12,7 +12,7 @@ use Wnd\Utility\Wnd_Singleton_Trait;
  */
 class Wnd_language {
 
-	public static $request_key = 'lang';
+	public static $request_key = WND_LANG_KEY;
 
 	use Wnd_Singleton_Trait;
 
@@ -20,7 +20,7 @@ class Wnd_language {
 		// 加载语言包
 		add_action('plugins_loaded', [__CLASS__, 'load_languages']);
 
-		// 根据$_REQUEST['lang']切换语言
+		// 根据$_REQUEST[WND_LANG_KEY]切换语言
 		add_filter('locale', [__CLASS__, 'filter_locale']);
 
 		// 为链接添加$_REQUEST[static::$request_key]参数

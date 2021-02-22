@@ -2,7 +2,6 @@
  *定义API接口
  *
  */
-var lang_query = wnd.lang ? '?lang=' + wnd.lang : '';
 var wnd_module_api = wnd.rest_url + wnd.module_api;
 var wnd_action_api = wnd.rest_url + wnd.action_api;
 var wnd_posts_api = wnd.rest_url + wnd.posts_api;
@@ -36,6 +35,8 @@ axios.interceptors.request.use(function(config) {
     if (config.headers.container || false) {
         wnd_loading(config.headers.container);
     }
+    // 统一添加语言参数
+    config.params.lang = wnd.lang;
     return config;
 });
 
@@ -224,7 +225,7 @@ function wnd_render_menus(container, menus_json, is_side_menus = false) {
 function wnd_get_json(jsonget, param, callback = '') {
     axios({
         'method': 'get',
-        url: wnd_jsonget_api + '/' + jsonget + lang_query,
+        url: wnd_jsonget_api + '/' + jsonget,
         params: param,
     }).then(function(response) {
         if (callback) {
@@ -249,7 +250,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
     // GET request for remote image in node.js
     axios({
             method: 'get',
-            url: wnd_module_api + '/' + module + lang_query,
+            url: wnd_module_api + '/' + module,
             params: Object.assign({
                 'ajax_type': 'embed'
             }, param),
@@ -321,7 +322,7 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
 
     axios({
             method: 'get',
-            url: wnd_module_api + '/' + module + lang_query,
+            url: wnd_module_api + '/' + module,
             params: Object.assign({
                 'ajax_type': 'modal'
             }, param),
@@ -603,7 +604,7 @@ function wnd_send_code(button) {
     formData = object_to_formdata(data);
 
     axios({
-        url: wnd_action_api + "/" + data.action + lang_query,
+        url: wnd_action_api + "/" + data.action,
         method: 'POST',
         data: formData,
     }).then(function(response) {
@@ -678,7 +679,7 @@ function wnd_ajax_click(link) {
     args._ajax_nonce = is_cancel ? link.dataset.cancel_nonce : link.dataset.action_nonce;
 
     axios({
-        url: wnd_action_api + "/" + action + lang_query,
+        url: wnd_action_api + "/" + action,
         method: 'POST',
         data: object_to_formdata(args),
     }).then(function(response) {
