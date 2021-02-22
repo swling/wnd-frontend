@@ -22,27 +22,28 @@ if ('undefined' == typeof loading_el) {
     var loading_el = '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></div>';
 }
 
+// Axios 全局请求参数
+// axios.defaults.headers.Authorization = "Bearer " + token
+axios.defaults.headers['X-WP-Nonce'] = wnd.rest_nonce;
+axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
+if (wnd.lang) {
+    axios.defaults.params = {}
+    axios.defaults.params['lang'] = wnd.lang;
+}
+
 /**
  *axios 拦截器 统一设置 WP Rest Nonce
  *@link https://github.com/axios/axios#interceptors
  */
-// Add a request interceptor
 axios.interceptors.request.use(function(config) {
-    // config.headers.Authorization = "Bearer " + token
-    config.headers['X-WP-Nonce'] = wnd.rest_nonce;
-    config.headers['X-Requested-With'] = 'XMLHttpRequest';
-    // Loading
     if (config.headers.container || false) {
         wnd_loading(config.headers.container);
     }
-    // 统一添加语言参数
-    config.params.lang = wnd.lang;
     return config;
 });
 
 //响应拦截器
 axios.interceptors.response.use(function(response) {
-    // Loading
     if (response.config.headers.container || false) {
         wnd_loading(response.config.headers.container, true);
     }
