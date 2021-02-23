@@ -19,7 +19,7 @@ var menus_side = false;
 
 // 加载中 Element
 if ('undefined' == typeof loading_el) {
-    var loading_el = '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></div>';
+    var loading_el = `<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></div>`;
 }
 
 // Axios 全局请求参数
@@ -161,10 +161,10 @@ function wnd_loading(el, remove = false) {
     // Embed
     if (!remove) {
         container.style.position = 'relative';
-        wnd_append(el, '<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:9;background:#FFF;opacity:0.7">' + loading_el + '</div>');
+        wnd_append(el, `<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:9;background:#FFF;opacity:0.7">${loading_el}</div>`);
     } else {
         wnd_remove(el + ' .wnd-loading');
-        container.style.position = 'initial';
+        container.style.removeProperty('position');
     }
 }
 

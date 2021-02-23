@@ -552,7 +552,18 @@ function _wnd_render_form(container, form_json) {
     // 富文本编辑器
     function build_tag_input(field, index) {
         // 按需载入 CSS
-        wnd_load_style(static_path + 'css/tags.min.css?ver=' + wnd.ver);
+        let style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML = `
+        .tags-input{width:100%;border-bottom:1px solid #ccc}
+        .tags-input input{border:none;width:100%;font-size:1rem;padding-top:0!important;padding-bottom:0!important}
+        .tags-input input:focus{border:none;box-shadow:none;outline:0;padding-top:0!important;padding-bottom:0!important}
+        .tags-input .tag{margin:5px}
+        .tags-input .autocomplete{position:relative;display:inline-block}
+        .tags-input .autocomplete-items{position:absolute;box-shadow:0 2px 10px #999;border-bottom:none;border-top:none;z-index:99;top:100%;left:0}
+        .tags-input .autocomplete-items li{padding:10px;cursor:pointer;background-color:#fff;border-bottom:1px solid #eee}
+        .tags-input .autocomplete-items li:hover{background-color:#eee}`;
+        document.head.appendChild(style);
 
         let tags = `
 		<template v-for="(tag, index) in ${field}.tags">

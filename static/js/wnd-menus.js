@@ -78,11 +78,6 @@ function _wnd_render_menus(container, menus_data, is_side_menus = false) {
 					wnd_menus_data = res.data.data;
 				});
 			}
-
 		},
-		// 计算
-		computed: {},
-		// 侦听器
-		watch: {},
 	});
 }
