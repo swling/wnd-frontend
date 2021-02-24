@@ -148,7 +148,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 
 		// 获取taxonomy下的 term 键值对
 		$option_data = Wnd_Term::get_terms_data($args_or_taxonomy);
-		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => -1], $option_data);
+		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => ''], $option_data);
 
 		// 新增表单字段
 		$this->add_select(

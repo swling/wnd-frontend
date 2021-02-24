@@ -186,7 +186,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 		// 获取taxonomy下的 term 键值对
 		$option_data = Wnd_Term::get_terms_data($args_or_taxonomy);
-		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => -1], $option_data);
+		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => ''], $option_data);
 
 		// 新增表单字段
 		$this->add_select(
@@ -194,7 +194,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'name'     => '_term_' . $taxonomy . '[]',
 				'options'  => $option_data,
 				'required' => $required,
-				'selected' => reset($this->current_terms[$taxonomy]), //default checked value
+				'selected' => reset($this->current_terms[$taxonomy]) ?: '', //default checked value
 				'label'    => $label,
 				'class'    => $taxonomy . ($dynamic_sub ? ' dynamic-sub' : false),
 				'data'     => ['child_level' => 0],
@@ -220,7 +220,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}unset($current_term);
 
 		// 根据已选择的一级 term 获取对应层级的子类 ids 并构建下拉数组对
-		$option_data         = ['- ' . $tips . ' -' => -1];
+		$option_data         = ['- ' . $tips . ' -' => ''];
 		$this_level_term_ids = Wnd_Term::get_term_children_by_level($top_level_term_id, $taxonomy, $child_level);
 		foreach ($this_level_term_ids as $term_id) {
 			$term                     = get_term($term_id);

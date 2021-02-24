@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_Term;
  **/
 class Wnd_Sub_Terms extends Wnd_JsonGet {
 
-	protected static function query($args = []): string{
+	protected static function query($args = []): array{
 		$defaults = [
 			'taxonomy'   => 'category',
 			'parent'     => 0,
@@ -17,21 +17,7 @@ class Wnd_Sub_Terms extends Wnd_JsonGet {
 			'orderby'    => 'count',
 			'order'      => 'DESC',
 		];
-		$args  = wp_parse_args($args, $defaults);
-		$terms = Wnd_Term::get_terms_data($args);
-		if (!$terms) {
-			return '';
-		}
-
-		$tips = $args['tips'];
-		$html = '';
-
-		$html .= '<option value="-1">- ' . $args['tips'] . ' -</option>';
-		foreach ($terms as $key => $value) {
-			$html .= '<option value="' . $value . '">' . $key . '</option>';
-		}
-		unset($term);
-
-		return $html;
+		$args = wp_parse_args($args, $defaults);
+		return Wnd_Term::get_terms_data($args);
 	}
 }

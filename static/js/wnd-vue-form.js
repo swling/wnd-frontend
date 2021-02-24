@@ -305,15 +305,14 @@ function _wnd_render_form(container, form_json) {
 
                 // 表单检查
                 var can_submit = true;
-                this.form.fields.forEach(function(field, index) {
+                for (const [index, field] of this.form.fields.entries()) {
                     if (field.required && !field.value && !field.selected && !field.checked) {
                         field.class = form_json.fields[index].class + ' is-danger';
                         field.help.class = form_json.fields[index].help.class + ' is-danger';
                         field.help.text = form_json.fields[index].help.text + ' ' + wnd.msg.required;
                         can_submit = false;
-                        return false; //此处为退出 forEach 循环，而非阻止提交
                     };
-                });
+                }
 
                 if (!can_submit) {
                     this.form.submit.attrs.class = form_json.submit.attrs.class;
