@@ -66,15 +66,24 @@ class Tencent extends Wnd_Captcha {
 		$script = '
 <script>
 function wnd_send_code_via_captcha(e) {
-    var button = e.target;
-    var form = button.closest("form");
-    var device = form.querySelector("input[name=\'_user_user_email\']") || form.querySelector("input[name=\'phone\']");
-    var device_value = device.value || "";
+    let button = e.target;
+    let form = button.closest("form");
+
+    let device = form.querySelector("input[name=\'_user_user_email\']") || form.querySelector("input[name=\'phone\']");
+    let device_value = device.value || "";
     if (!device_value) {
-        wnd_form_msg(form, wnd.msg.required, "is-warning");
+		device.classList.add("is-danger");
         return false;
     }
+
     button.classList.add("is-loading");
+
+	// 已设置 Captcha：可能为修改后重复请求
+	if(button.dataset.' . static::$captcha_name . '){
+		wnd_send_code(button);
+		return;
+	}
+
     if (typeof TencentCaptcha == "undefined") {
         wnd_load_script("https://ssl.captcha.qq.com/TCaptcha.js", function() {
             captcha_send(button);
@@ -83,8 +92,8 @@ function wnd_send_code_via_captcha(e) {
         captcha_send(button);
     }
 
-     function captcha_send(button){
-        var captcha = new TencentCaptcha(
+     function captcha_send(){
+        let captcha = new TencentCaptcha(
             "' . $this->appid . '",
             function(res) {
                 if (0 !== res.ret) {
@@ -94,7 +103,7 @@ function wnd_send_code_via_captcha(e) {
 
                 button.dataset.' . static::$captcha_name . ' = res.ticket;
                 button.dataset.' . static::$captcha_nonce_name . ' = res.randstr;
-                wnd_send_code(button);
+                wnd_send_code(button, "' . static::$captcha_name . '");
             }
         );
         captcha.show();
@@ -124,17 +133,28 @@ if (sd_btn) {
 <script>
 function wnd_submit_via_captcha(e, callback = false) {
 	let button = e.target;
+    let form = button.closest("form");
+    let input =  form.querySelector("[name=\'' . static::$captcha_name . '\']");
+    let input_nonce =  form.querySelector("[name=\'' . static::$captcha_nonce_name . '\']");
+
     button.classList.add("is-loading");
-    if (typeof TencentCaptcha == "undefined") {
-        wnd_load_script("https://ssl.captcha.qq.com/TCaptcha.js", function() {
-            captcha_submit(button, callback);
-        });
-    } else {
-        captcha_submit(button, callback);
+
+    // 已设置 captcha 可能为前端表单校验导致的修改再次提交（表单完成提交后，无论后端校验如何都应清空 captcha）
+    if(input.value){
+		captcha_callback();
+        return;
     }
 
-    function captcha_submit(button, callback){
-        var captcha = new TencentCaptcha(
+    if (typeof TencentCaptcha == "undefined") {
+        wnd_load_script("https://ssl.captcha.qq.com/TCaptcha.js", function() {
+            captcha_submit();
+        });
+    } else {
+        captcha_submit();
+    }
+
+    function captcha_submit(){
+        let captcha = new TencentCaptcha(
             "' . $this->appid . '",
             function(res) {
                 if (0 !== res.ret) {
@@ -142,25 +162,26 @@ function wnd_submit_via_captcha(e, callback = false) {
                     return false;
                 }
 
-                let form = button.closest("form");
-				let captcha =  form.querySelector("[name=\'' . static::$captcha_name . '\']");
-                let captcha_nonce =  form.querySelector("[name=\'' . static::$captcha_nonce_name . '\']");
 				// 设置表单值
-        		captcha.value = res.ticket;
-                captcha_nonce.value = res.randstr;
+        		input.value = res.ticket;
+                input_nonce.value = res.randstr;
 				// 设置事件触发 VUE 数据同步
-				captcha.dispatchEvent(new Event("input"));
-				captcha_nonce.dispatchEvent(new Event("input"));
+				input.dispatchEvent(new Event("input"));
+				input_nonce.dispatchEvent(new Event("input"));
 
-                // 设置 captcha 后执行回调函数或再次点击按钮，再次点击按钮应做条件判断以免死循环
-                if (callback) {
-                    window[callback](button);
-                }else{
-					button.click();
-				}
+				captcha_callback();
             }
         );
         captcha.show();
+    }
+
+     // 设置 captcha 后执行回调函数或再次点击按钮，再次点击按钮应做条件判断以免死循环
+    function captcha_callback(){
+        if (callback) {
+            window[callback](button, input);
+        }else{
+            button.click();
+        }
     }
 }
 

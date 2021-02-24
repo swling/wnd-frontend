@@ -358,6 +358,13 @@ function _wnd_render_form(container, form_json) {
                         _this.form.message.message = info.msg;
                         _this.form.message.attrs.class = form_json.message.attrs.class + ' ' + info.msg_class;
                         _this.form.submit.attrs.class = form_json.submit.attrs.class;
+                        /*提交后清除 captcha 以便下次重新验证
+                         * Vue 直接修改数组的值无法触发重新渲染
+                         * @link https://cn.vuejs.org/v2/guide/reactivity.html#%E6%A3%80%E6%B5%8B%E5%8F%98%E5%8C%96%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9
+                         */
+                        if (_this.index.captcha) {
+                            Vue.set(_this.form.fields[_this.index.captcha], 'value', '');
+                        }
                         _this.$nextTick(function() {
                             funTransitionHeight(parent, trs_time);
                         });

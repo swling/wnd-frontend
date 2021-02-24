@@ -424,7 +424,7 @@ function wnd_reset_modal() {
  * 常规HTML表单提交:绑定在submit button
  * 常规表单不具备文件上传能力，主要用户构建前端各类简单表单按钮，以避免在常规页面中 Vue 动态加载造成的页面抖动 
  * */
-function wnd_ajax_submit(button) {
+function wnd_ajax_submit(button, captcha_input = false) {
     let form = button.closest('form');
     let route = form.getAttribute('route');
 
@@ -470,13 +470,18 @@ function wnd_ajax_submit(button) {
             if (![3, 4, 6].includes(response.data.status)) {
                 button.classList.remove('is-loading');
             }
+
+            // 提交后清空无论后端响应如何都应清空 Captcha，因为本次 captcha 行为验证已完成
+            if (captcha_input) {
+                captcha_input.value = '';
+            }
         });
 }
 
 function wnd_form_msg(form, msg, msg_class) {
     let el = form.querySelector('.form-message');
     el.style.display = '';
-    el.classList.add('message', msg_class);
+    el.className = `form-message message ${msg_class}`;
     el.innerHTML = '<div class="message-body">' + msg + '</div>';
 
     // 调整高度
@@ -516,7 +521,7 @@ function handle_response(response, route) {
 
     // 根据后端响应处理
     form_info.msg = response.msg;
-    form_info.msg_class = response.status <= 0 ? 'is-danger' : 'is-success';
+    form_info.msg_class = (response.status <= 0) ? 'is-danger' : 'is-success';
     switch (response.status) {
 
         // 常规类，展示后端提示信息，状态 8 表示禁用提交按钮 
@@ -588,9 +593,10 @@ function handle_response(response, route) {
 
 /**
  *@since 2019.02.09 发送手机或邮箱验证码
- *@param object button jquery object
+ *@param object button element
+ *@param string captcha data key
  */
-function wnd_send_code(button) {
+function wnd_send_code(button, captcha_data_key = '') {
     button.classList.add('is-loading');
     let form = button.closest('form');
     let device = form.querySelector('input[name=\'_user_user_email\']') || form.querySelector('input[name=\'phone\']');
@@ -634,6 +640,10 @@ function wnd_send_code(button) {
 
         wnd_form_msg(form, response.data.msg, style);
         button.classList.remove('is-loading');
+        // 清空 captcha
+        if (captcha_data_key) {
+            button.dataset[captcha_data_key] = '';
+        }
     });
 };
 
