@@ -17,6 +17,10 @@ function _wnd_render_form(container, form_json) {
         template: get_form_template(form),
         data: {
             form: form,
+            index: {
+                'editor': '',
+                'captcha': '',
+            }
         },
         methods: {
             has_addon: function(field) {
@@ -87,55 +91,52 @@ function _wnd_render_form(container, form_json) {
                 }
 
                 function build() {
-                    _this.form.fields.forEach((field, index) => {
-                        if ('editor' == field.type) {
-                            const editor = new wangEditor('#' + _this.form.attrs.id + '-' + index);
-                            // Rest Nonce
-                            editor.config.uploadImgHeaders = {
-                                'X-WP-Nonce': wnd.rest_nonce,
-                            }
+                    field = _this.form.fields[_this.index.editor];
+                    const editor = new wangEditor(`#${_this.form.attrs.id}-${_this.index.editor}`);
+                    // Rest Nonce
+                    editor.config.uploadImgHeaders = {
+                        'X-WP-Nonce': wnd.rest_nonce,
+                    }
 
-                            // 配置图片上传
-                            editor.config.uploadImgServer = wnd_action_api + '/wnd_upload_file_editor';
-                            editor.config.uploadFileName = 'wnd_file[]';
-                            editor.config.uploadImgParams = {
-                                type: 'wangeditor',
-                                post_parent: _this.form.attrs['data-post-id'] || 0,
-                                _ajax_nonce: field._ajax_nonce
-                            }
-                            editor.config.showLinkImg = false;
+                    // 配置图片上传
+                    editor.config.uploadImgServer = wnd_action_api + '/wnd_upload_file_editor';
+                    editor.config.uploadFileName = 'wnd_file[]';
+                    editor.config.uploadImgParams = {
+                        type: 'wangeditor',
+                        post_parent: _this.form.attrs['data-post-id'] || 0,
+                        _ajax_nonce: field._ajax_nonce
+                    }
+                    editor.config.showLinkImg = false;
 
-                            // 配置 onchange 回调函数，将数据同步到 vue 中
-                            editor.config.onchange = (newHtml) => {
-                                _this.form.fields[index].value = newHtml
-                            }
+                    // 配置 onchange 回调函数，将数据同步到 vue 中
+                    editor.config.onchange = (newHtml) => {
+                        field.value = newHtml
+                    }
 
-                            // 精简菜单按钮
-                            editor.config.excludeMenus = [
-                                'fontSize',
-                                'fontName',
-                                'indent',
-                                'todo',
-                                'lineHeight',
-                                'emoticon',
-                                'video'
-                            ]
+                    // 精简菜单按钮
+                    editor.config.excludeMenus = [
+                        'fontSize',
+                        'fontName',
+                        'indent',
+                        'todo',
+                        'lineHeight',
+                        'emoticon',
+                        'video'
+                    ]
 
-                            // 其他
-                            editor.config.zIndex = 9;
-                            // editor.config.height = 500;
+                    // 其他
+                    editor.config.zIndex = 9;
+                    // editor.config.height = 500;
 
-                            // 创建编辑器
-                            editor.create()
+                    // 创建编辑器
+                    editor.create()
 
-                            // 内容初始化
-                            editor.txt.html(field.value);
+                    // 内容初始化
+                    editor.txt.html(field.value);
 
-                            // 编辑器是动态按需加载，需要额外再设置一次高度适应
-                            _this.$nextTick(function() {
-                                funTransitionHeight(parent, trs_time);
-                            });
-                        }
+                    // 编辑器是动态按需加载，需要额外再设置一次高度适应
+                    _this.$nextTick(function() {
+                        funTransitionHeight(parent, trs_time);
                     });
                 }
             },
@@ -290,8 +291,17 @@ function _wnd_render_form(container, form_json) {
                 }
             },
             // 提交
-            submit: function() {
+            submit: function(e) {
                 this.form.submit.attrs.class = form_json.submit.attrs.class + ' is-loading';
+
+                // Captcha 验证提交
+                if (this.index.captcha) {
+                    let captcha = this.form.fields[this.index.captcha];
+                    if (!captcha.value) {
+                        wnd_submit_via_captcha(e);
+                        return;
+                    }
+                }
 
                 // 表单检查
                 var can_submit = true;
@@ -359,14 +369,25 @@ function _wnd_render_form(container, form_json) {
             },
         },
         mounted() {
+            // 索引特殊字段
+            this.form.fields.forEach((field, index) => {
+                if ('captcha' == field.name && '' == field.value) {
+                    this.index.captcha = index;
+                }
+
+                if ('editor' == field.type) {
+                    this.index.editor = index;
+                }
+
+            })
             // 构造富文本编辑器
-            if (this.form.attrs['data-editor']) {
+            if (this.index.editor) {
                 this.build_editor();
             }
 
             funTransitionHeight(parent, trs_time);
             // v-html 不支持执行 JavaScript 需要通过封装好的 wnd_inser_html
-            wnd_inner_html('#' + this.form.attrs.id + ' .form-script', this.form.script);
+            wnd_inner_html(`#${this.form.attrs.id} .form-script`, this.form.script);
         },
         // 计算
         computed: {},
@@ -376,26 +397,16 @@ function _wnd_render_form(container, form_json) {
 
     // 定义 Form 输出模板
     function get_form_template(form_json) {
-        // 表单头
-        let t = '<form v-bind="form.attrs">';
-        t += '<h3 v-show="form.title.title" v-bind="form.title.attrs" v-html="form.title.title"></h3>';
-        t += '<div v-bind="form.message.attrs" class="message" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>';
-
-        // 循环字段数据，调用对应字段组件
-        t += get_fields_template(form_json);
-
-        // 提交按钮
-        t += '<div v-if="form.submit.text" class="field is-grouped is-grouped-centered">';
-        t += '<button type="button" v-bind="form.submit.attrs" @click="submit" v-text="form.submit.text"></button>';
-        t += '</div>';
-
-        // JavaScript
-        t += '<div class="form-script"></div>';
-
-        // 表尾
-        t += '</form>';
-
-        return t;
+        return `
+        <form v-bind="form.attrs">
+        <h3 v-show="form.title.title" v-bind="form.title.attrs" v-html="form.title.title"></h3>
+        <div v-bind="form.message.attrs" class="message" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>
+        ${get_fields_template(form_json)}
+        <div v-if="form.submit.text" class="field is-grouped is-grouped-centered">
+        <button type="button" v-bind="form.submit.attrs" @click="submit($event)" v-text="form.submit.text"></button>
+        </div>
+        <div class="form-script"></div>
+        </form>`;
     }
 
     // 选择并构建字段模板

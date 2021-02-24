@@ -432,7 +432,7 @@ function wnd_ajax_submit(button) {
         button.classList.add('is-loading');
     });
 
-    // 为设置 route 表示为常规 HTML 提交，而非 API 请求
+    // 未设置 route 表示为常规 HTML 提交，而非 API 请求
     if (!route) {
         return false;
     }
@@ -441,6 +441,7 @@ function wnd_ajax_submit(button) {
         if (form.elements[i].value === '' && form.elements[i].hasAttribute('required')) {
             form.elements[i].classList.add('is-danger');
             wnd_form_msg(form, wnd.msg.required, 'is-danger');
+            button.classList.remove('is-loading');
             return false;
         }
     }
@@ -466,7 +467,7 @@ function wnd_ajax_submit(button) {
         .then(function(response) {
             form_info = handle_response(response.data, route);
             wnd_form_msg(form, form_info.msg, form_info.msg_class);
-            if (response.data.status != 3 && response.data.status != 4 && response.data.status != 6) {
+            if (![3, 4, 6].includes(response.data.status)) {
                 button.classList.remove('is-loading');
             }
         });

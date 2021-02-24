@@ -559,7 +559,7 @@ if (sd_btn) {
 var sub_btn = document.querySelectorAll("[type=submit]");
 if (sub_btn) {
     sub_btn.forEach(function(btn) {
-        btn.addEventListener("click", function(e) {
+        btn.addEventListener("click", function() {
             wnd_ajax_submit(this);
         });
     });
