@@ -597,15 +597,15 @@ function handle_response(response, route) {
  *@param string captcha data key
  */
 function wnd_send_code(button, captcha_data_key = '') {
-    button.classList.add('is-loading');
     let form = button.closest('form');
     let device = form.querySelector('input[name=\'_user_user_email\']') || form.querySelector('input[name=\'phone\']');
     let device_value = device.value || '';
     if (!device_value) {
-        button.classList.remove('is-loading');
-        wnd_form_msg(form, wnd.msg.required, 'is-warning');
+        device.classList.add('is-danger');
         return false;
     }
+
+    button.classList.add('is-loading');
 
     let data = button.dataset;
     data.device = device_value;
