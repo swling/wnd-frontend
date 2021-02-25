@@ -17,6 +17,9 @@ var static_path = this_src.substring(0, this_src.lastIndexOf('/js/') + 1);
 var trs_time = 160;
 var menus_side = false;
 
+// 定义菜单数据
+var wnd_menus_data = wnd_menus_data || false;
+
 // 加载中 Element
 if ('undefined' == typeof loading_el) {
     var loading_el = `<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></div>`;
@@ -63,7 +66,7 @@ function wnd_is_mobile() {
  *@since 2019.02.14 搜索引擎爬虫
  */
 function wnd_is_spider() {
-    var userAgent = navigator.userAgent;
+    let userAgent = navigator.userAgent;
     // 蜘蛛判断
     if (userAgent.match(/(Googlebot|Baiduspider|spider)/i)) {
         return true;
@@ -74,7 +77,7 @@ function wnd_is_spider() {
 
 // 根据节点选择器删除
 function wnd_remove(el) {
-    var self = document.querySelector(el);
+    let self = document.querySelector(el);
     if (self) {
         self.outerHTML = '';
     }
@@ -113,7 +116,7 @@ function wnd_append(el, html) {
      *beforeend 在元素的最后一个子元素之后
      *afterend 在元素之后 
      */
-    var self = document.querySelector(el);
+    let self = document.querySelector(el);
     if (self) {
         self.insertAdjacentHTML('beforeend', html);
     }
@@ -124,7 +127,7 @@ function wnd_append(el, html) {
  * 
  */
 function wnd_load_script(url, callback) {
-    var script = document.createElement("script");
+    let script = document.createElement("script");
     script.type = "text/javascript";
     script.src = url;
     document.head.appendChild(script);
@@ -136,7 +139,7 @@ function wnd_load_script(url, callback) {
  * @param {string} url 样式地址
  */
 function wnd_load_style(url) {
-    var link = document.createElement('link');
+    let link = document.createElement('link');
     link.type = 'text/css';
     link.rel = 'stylesheet';
     link.href = url;
@@ -145,7 +148,7 @@ function wnd_load_style(url) {
 
 // 指定容器设置加载中效果
 function wnd_loading(el, remove = false) {
-    var container = document.querySelector(el);
+    let container = document.querySelector(el);
     if (!container) {
         return;
     }
@@ -173,7 +176,7 @@ function wnd_loading(el, remove = false) {
  **/
 function object_to_formdata(data) {
     let formData = new FormData();
-    for (var key in data) {
+    for (const key in data) {
         formData.append(key, data[key]);
     }
 
@@ -205,15 +208,84 @@ function wnd_render_filter(container, filter_json) {
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表达
-function wnd_render_menus(container, menus_json, is_side_menus = false) {
-    if ('function' != typeof _wnd_render_menus) {
-        let url = static_path + 'js/wnd-menus.js?ver=' + wnd.ver;
-        wnd_load_script(url, function() {
-            _wnd_render_menus(container, menus_json, is_side_menus);
-        });
-    } else {
-        _wnd_render_menus(container, menus_json, is_side_menus);
-    }
+function wnd_render_menus(container, menus_data, is_side_menus = false) {
+    // 优先接收外部传递参数
+    wnd_menus_data = menus_data || wnd_menus_data;
+    let parent = document.querySelector(container).parentNode;
+
+    new Vue({
+        el: container,
+        template: `
+        <aside class="menu">
+        <template v-for="(menu, menu_index) in menus">
+        <ul class="menu-list">
+        <a v-if="menu.label" v-html="menu.label" @click="expand(menu_index)"></a>
+        <li v-show="menu.expand"><ul><li v-for="(item, item_index) in menu.items">
+        <a :href="item.href" @click="active(menu_index, item_index)" :class="item.class" v-html="item.title"></a></li>
+        </ul></li>
+        </ul>
+        </template>
+        </aside>`,
+        data: {
+            menus: wnd_menus_data,
+        },
+        methods: {
+            active: function(menu_index, item_index) {
+                for (let i = 0; i < this.menus.length; i++) {
+                    const menu = this.menus[i];
+                    if (menu_index !== i) {
+                        menu.expand = false;
+                    }
+
+                    /**
+                     * Vue 直接修改数组的值无法触发重新渲染
+                     * @link https://cn.vuejs.org/v2/guide/reactivity.html#%E6%A3%80%E6%B5%8B%E5%8F%98%E5%8C%96%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9
+                     */
+                    for (let j = 0; j < menu.items.length; j++) {
+                        const item = menu.items[j];
+                        if (j != item_index || menu_index !== i) {
+                            Vue.set(item, 'class', '');
+                        } else {
+                            Vue.set(item, 'class', 'is-active');
+                        }
+                    }
+
+                    if (is_side_menus) {
+                        wnd_menus_side_toggle(true);
+                    }
+                }
+            },
+            expand: function(menu_index) {
+                for (let i = 0; i < this.menus.length; i++) {
+                    const menu = this.menus[i];
+                    if (menu_index !== i) {
+                        menu.expand = false;
+                    } else {
+                        menu.expand = !(menu.expand || false);
+                    }
+                }
+            },
+            get_container: function() {
+                return parent.id ? '#' + parent.id : '';
+            },
+        },
+        mounted() {
+            // 如果尚未定义菜单数据，异步请求数据并赋值
+            if (!wnd_menus_data) {
+                _this = this;
+                axios({
+                    'method': 'get',
+                    url: wnd_jsonget_api + '/wnd_menus',
+                    headers: {
+                        'container': _this.get_container(),
+                    },
+                }).then(function(res) {
+                    _this.menus = res.data.data;
+                    wnd_menus_data = res.data.data;
+                });
+            }
+        },
+    });
 }
 
 /**
@@ -359,8 +431,8 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
 //弹出bulma对话框
 function wnd_alert_modal(content, is_gallery = false) {
     wnd_reset_modal();
-    var modal = document.querySelector('#modal'); // assuming you have only 1
-    var modal_entry = modal.querySelector('.modal-entry');
+    let modal = document.querySelector('#modal'); // assuming you have only 1
+    let modal_entry = modal.querySelector('.modal-entry');
     if (is_gallery) {
         modal.classList.add('is-active', 'wnd-gallery');
     } else {
@@ -380,15 +452,15 @@ function wnd_alert_msg(msg, time = 0) {
     // 移除动画效果
     funTransitionHeight(document.querySelector('#modal .modal-entry'));
 
-    var modal = document.querySelector('#modal'); // assuming you have only 1
-    var modal_entry = modal.querySelector('.modal-entry');
+    let modal = document.querySelector('#modal'); // assuming you have only 1
+    let modal_entry = modal.querySelector('.modal-entry');
     modal.classList.add('is-active');
     modal_entry.classList.remove('box');
     modal_entry.innerHTML = msg;
 
     // 定时关闭
     if (time > 0) {
-        var timer = null;
+        let timer = null;
         timer = setInterval(function() {
             clearInterval(timer);
             wnd_reset_modal();
@@ -398,9 +470,9 @@ function wnd_alert_msg(msg, time = 0) {
 
 // 初始化对话框
 function wnd_reset_modal() {
-    var modal = document.querySelector('#modal');
+    let modal = document.querySelector('#modal');
     if (modal) {
-        var modal_entry = modal.querySelector('#modal .modal-entry');
+        let modal_entry = modal.querySelector('#modal .modal-entry');
 
         modal_entry.innerHTML = '';
         modal.classList.remove('is-active', 'wnd-gallery');
@@ -437,7 +509,7 @@ function wnd_ajax_submit(button, captcha_input = false) {
         return false;
     }
 
-    for (var i = 0; i < form.elements.length; i++) {
+    for (let i = 0, n = form.elements.length; i < n; i++) {
         if (form.elements[i].value === '' && form.elements[i].hasAttribute('required')) {
             form.elements[i].classList.add('is-danger');
             wnd_form_msg(form, wnd.msg.required, 'is-danger');
@@ -452,7 +524,7 @@ function wnd_ajax_submit(button, captcha_input = false) {
     // GET 将表单序列化
     let params = {};
     if ('get' == form.method) {
-        for (var key of data.keys()) {
+        for (const key of data.keys()) {
             params[key] = data.get(key);
         }
     }
@@ -610,6 +682,7 @@ function wnd_send_code(button, captcha_data_key = '') {
     let data = button.dataset;
     data.device = device_value;
     formData = object_to_formdata(data);
+    let style = "is-success";
 
     axios({
         url: wnd_action_api + "/" + data.action,
@@ -617,15 +690,14 @@ function wnd_send_code(button, captcha_data_key = '') {
         data: formData,
     }).then(function(response) {
         if (response.data.status <= 0) {
-            var style = "is-danger";
+            style = "is-danger";
         } else {
-            var style = "is-success";
             button.disabled = true;
             button.textContent = wnd.msg.send_successfully;
 
             // 定时器
-            var time = data.interval;
-            var timer = null;
+            let time = data.interval;
+            let timer = null;
             timer = setInterval(function() {
                 if (time <= 1) {
                     clearInterval(timer);
@@ -651,12 +723,56 @@ function wnd_send_code(button, captcha_data_key = '') {
  * 流量统计
  */
 function wnd_update_views(post_id, interval = 3600) {
-    if ('function' != typeof _wnd_update_views) {
-        wnd_load_script(static_path + 'js/wnd-update-views.js?ver=' + wnd.ver, function() {
-            _wnd_update_views(post_id, interval);
+    if (wnd_is_spider()) {
+        return;
+    }
+
+    let timestamp = Date.parse(new Date()) / 1000;
+    let wnd_views = localStorage.getItem('wnd_views') ? JSON.parse(localStorage.getItem('wnd_views')) : [];
+    let max_length = 10;
+    let is_new = true;
+
+    // 数据处理
+    for (let i = 0, n = wnd_views.length; i < n; i++) {
+        if (wnd_views[i].post_id == post_id) {
+            // 存在记录中：且时间过期
+            if (wnd_views[i].timestamp < timestamp - interval) {
+                wnd_views[i].timestamp = timestamp;
+                is_new = true;
+            } else {
+                is_new = false;
+            }
+            break;
+        }
+    }
+
+    // 新浏览
+    if (is_new) {
+        let new_view = {
+            'post_id': post_id,
+            'timestamp': timestamp
+        };
+        wnd_views.unshift(new_view);
+    }
+
+    // 删除超过长度的元素
+    if (wnd_views.length > max_length) {
+        wnd_views.length = max_length;
+    }
+
+    // 更新服务器数据
+    data = new FormData();
+    data.append('post_id', post_id);
+    if (is_new) {
+        axios({
+            url: wnd_endpoint_api + '/wnd_update_views',
+            method: 'POST',
+            data: data,
+        }).then(function(response) {
+            if (1 == response.data.status) {
+                localStorage.setItem('wnd_views', JSON.stringify(wnd_views));
+            }
         });
-    } else {
-        _wnd_update_views(post_id, interval);
     }
 }
 
@@ -667,7 +783,7 @@ var can_click_ajax_link = true;
 
 function wnd_ajax_click(link) {
     // 是否在弹窗中操作
-    var in_modal = link.closest(".modal.is-active") ? true : false;
+    let in_modal = link.closest(".modal.is-active") ? true : false;
 
     // 点击频率控制
     if (!can_click_ajax_link) {
@@ -684,9 +800,9 @@ function wnd_ajax_click(link) {
     }
 
     // 判断当前操作是否为取消
-    var is_cancel = 0 != link.dataset.is_cancel;
-    var action = is_cancel ? link.dataset.cancel : link.dataset.action;
-    var args = JSON.parse(link.dataset.args);
+    let is_cancel = 0 != link.dataset.is_cancel;
+    let action = is_cancel ? link.dataset.cancel : link.dataset.action;
+    let args = JSON.parse(link.dataset.args);
     args._wnd_sign = link.dataset.sign;
     args._ajax_nonce = is_cancel ? link.dataset.cancel_nonce : link.dataset.action_nonce;
 
@@ -749,10 +865,10 @@ function wnd_ajax_click(link) {
 var funTransitionHeight = function(element, time) { // time, 数值，可缺省
     if (typeof window.getComputedStyle == 'undefined') return;
 
-    var height = window.getComputedStyle(element).height;
+    let height = window.getComputedStyle(element).height;
     element.style.transition = 'none'; // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
     element.style.height = 'auto';
-    var targetHeight = window.getComputedStyle(element).height;
+    let targetHeight = window.getComputedStyle(element).height;
     element.style.height = height;
     element.offsetWidth = element.offsetWidth;
     if (time) element.style.transition = 'height ' + time + 'ms';

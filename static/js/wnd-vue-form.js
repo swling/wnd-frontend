@@ -36,7 +36,7 @@ function _wnd_render_form(container, form_json) {
             },
 
             get_control_class: function(field) {
-                var el_class = 'control';
+                let el_class = 'control';
                 el_class += this.has_addon(field) ? ' is-expanded' : '';
                 el_class += field.icon_left ? ' has-icons-left' : '';
                 el_class += field.icon_right ? ' has-icons-right' : '';
@@ -167,7 +167,7 @@ function _wnd_render_form(container, form_json) {
                 }
 
                 // 获取文件，支持多文件上传（文件数据 name 统一设置为 wnd_file[] 这是与后端处理程序的约定 ）
-                for (var i = 0; i < files.length; ++i) {
+                for (let i = 0, n = files.length; i < n; i++) {
                     form_data.set('wnd_file[' + i + ']', files[i]);
                 }
 
@@ -191,7 +191,7 @@ function _wnd_render_form(container, form_json) {
                         return false;
                     }
 
-                    for (var i = 0, n = response.data.length; i < n; i++) {
+                    for (let i = 0, n = response.data.length; i < n; i++) {
                         field.thumbnail = response.data[i].data.thumbnail;
                         field.file_id = response.data[i].data.id;
                         field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + response.data[i].data.url + '" target="_blank">' + wnd.msg.view + '</a>';
@@ -219,7 +219,7 @@ function _wnd_render_form(container, form_json) {
                     return false;
                 }
 
-                var data = new FormData();
+                let data = new FormData();
                 data.append('file_id', field.file_id);
                 data.append('meta_key', field.data.meta_key);
                 data.append('_ajax_nonce', field.data.delete_nonce);
@@ -304,7 +304,7 @@ function _wnd_render_form(container, form_json) {
                 }
 
                 // 表单检查
-                var can_submit = true;
+                let can_submit = true;
                 for (const [index, field] of this.form.fields.entries()) {
                     if (field.required && !field.value && !field.selected && !field.checked) {
                         field.class = form_json.fields[index].class + ' is-danger';
@@ -326,23 +326,14 @@ function _wnd_render_form(container, form_json) {
                 }
 
                 // Ajax 请求
-                var _this = this;
-                var form = document.querySelector('#' + this.form.attrs.id);
-                var data = new FormData(form);
+                let _this = this;
+                let form = document.querySelector('#' + this.form.attrs.id);
+                let data = new FormData(form);
 
                 // GET 请求参数
-                var params = {};
+                let params = {};
                 if ('get' == this.form.attrs.method.toLowerCase()) {
-                    data.forEach((value, key) => {
-                        if (!Reflect.has(params, key)) {
-                            params[key] = value;
-                            return;
-                        }
-                        if (!Array.isArray(params[key])) {
-                            params[key] = [params[key]];
-                        }
-                        params[key].push(value);
-                    });
+                    params = Object.fromEntries(data);
                 }
 
                 axios({
@@ -627,14 +618,14 @@ document.addEventListener('click', function(e) {
      *动态追加字段
      */
     if (button.classList.contains('add-row')) {
-        var field = button.closest(".field");
+        let field = button.closest(".field");
         // 临时改变属性，以便复制给即将创建的字段
         button.classList.remove('add-row');
         button.classList.add('remove-row');
         button.innerText = '-';
 
         // 克隆（复制）改变后的元素
-        var new_field = button.closest('.field').cloneNode(true);
+        let new_field = button.closest('.field').cloneNode(true);
 
         // 还原当前字段
         button.classList.add('add-row');

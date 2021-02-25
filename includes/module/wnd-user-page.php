@@ -47,8 +47,7 @@ class Wnd_User_Page extends Wnd_Module_Html {
 
 		// 加载前端中心脚本
 		if (!$module) {
-			wp_enqueue_script('wnd-menus', WND_URL . 'static/js/wnd-menus.js', ['wnd-vue'], WND_VER);
-			wp_enqueue_script('wnd-front-page', WND_URL . 'static/js/wnd-front-page.js', ['wnd-vue', 'wnd-menus'], WND_VER);
+			wp_enqueue_script('wnd-front-page', WND_URL . 'static/js/wnd-front-page.js', ['wnd-vue'], WND_VER);
 		}
 
 		get_header();

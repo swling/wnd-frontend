@@ -18,7 +18,7 @@ function _wnd_render_filter(container, filter_json) {
 	init_param.status = init_param.post_status;
 	delete init_param.post_type;
 	delete init_param.post_status;
-	var param = JSON.parse(JSON.stringify(init_param));
+	let param = JSON.parse(JSON.stringify(init_param));
 
 	new Vue({
 		el: container,
@@ -173,17 +173,16 @@ function _wnd_render_filter(container, filter_json) {
 
 	function build_tabs_template(filter) {
 		let t = '<div class="wnd-filter-tabs">';
-		for (let index = 0; index < filter.tabs.length; index++) {
+		for (let i = 0, n = filter.tabs.length; i < n; i++) {
 			// 需要与定义数据匹配
-			let tab = filter.tabs[index];
+			let tab = filter.tabs[i];
+			let tab_vn = 'filter.tabs[' + i + ']';
 
 			// 特别注意：此处定义的是 Vue 模板字符串，而非实际数据，Vue 将据此字符串渲染为具体值
 			if (is_category_tab(tab, filter)) {
-				var tab_vn = 'filter.category_tabs';
+				tab_vn = 'filter.category_tabs';
 			} else if (is_tag_tab(tab, filter)) {
-				var tab_vn = 'filter.tags_tabs';
-			} else {
-				var tab_vn = 'filter.tabs[' + index + ']';
+				tab_vn = 'filter.tags_tabs';
 			}
 
 			t += build_tabs(tab_vn);
