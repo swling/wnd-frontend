@@ -77,7 +77,7 @@ function wnd_is_spider() {
 
 // 根据节点选择器删除
 function wnd_remove(el) {
-    let self = document.querySelector(el);
+    let self = ('object' == typeof el) ? el : document.querySelector(el);
     if (self) {
         self.outerHTML = '';
     }
@@ -86,10 +86,10 @@ function wnd_remove(el) {
 /**
  *插入 HTML  支持运行 JavaScript
  * */
-function wnd_inner_html(container, html) {
-    let el = document.querySelector(container);
-    el.innerHTML = html;
-    const scripts = el.querySelectorAll('script');
+function wnd_inner_html(el, html) {
+    let self = ('object' == typeof el) ? el : document.querySelector(el);
+    self.innerHTML = html;
+    const scripts = self.querySelectorAll('script');
     for (let script of scripts) {
         runScript(script);
     }
@@ -116,7 +116,7 @@ function wnd_append(el, html) {
      *beforeend 在元素的最后一个子元素之后
      *afterend 在元素之后 
      */
-    let self = document.querySelector(el);
+    let self = ('object' == typeof el) ? el : document.querySelector(el);
     if (self) {
         self.insertAdjacentHTML('beforeend', html);
     }
@@ -317,8 +317,8 @@ function wnd_get_json(jsonget, param, callback = '') {
  **/
 function wnd_ajax_embed(container, module, param = {}, callback = '') {
     // 初始高度：设置嵌入高度变化动画之用
-    container_el = document.querySelector(container);
-    funTransitionHeight(container_el);
+    let el = document.querySelector(container);
+    funTransitionHeight(el);
 
     // GET request for remote image in node.js
     axios({
@@ -340,19 +340,19 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
             wnd_loading(container, true);
 
             if (response.data.status <= 0) {
-                wnd_inner_html(container, '<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
+                wnd_inner_html(el, '<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
                 return false;
             }
 
             if ('form' == response.data.data.type) {
-                wnd_inner_html(container, '<div class="vue-app"></div>');
+                wnd_inner_html(el, '<div class="vue-app"></div>');
                 wnd_render_form(container + ' .vue-app', response.data.data.structure);
             } else if ('filter' == response.data.data.type) {
-                wnd_inner_html(container, '<div class="vue-app"></div>');
+                wnd_inner_html(el, '<div class="vue-app"></div>');
                 wnd_render_filter(container + ' .vue-app', response.data.data.structure);
             } else {
-                wnd_inner_html(container, response.data.data.structure);
-                funTransitionHeight(container_el, trs_time);
+                wnd_inner_html(el, response.data.data.structure);
+                funTransitionHeight(el, trs_time);
             }
 
             if (callback) {
@@ -440,20 +440,21 @@ function wnd_alert_modal(content, is_gallery = false) {
     }
     modal_entry.classList.add('box');
     // 对于复杂的输入，不能直接使用 innerHTML
-    wnd_inner_html('#modal .modal-entry', content);
+    wnd_inner_html(modal_entry, content);
 
-    funTransitionHeight(document.querySelector('#modal .modal-entry'), trs_time);
+    funTransitionHeight(modal_entry, trs_time);
 }
 
 // 直接弹出消息
 function wnd_alert_msg(msg, time = 0) {
     wnd_reset_modal();
 
-    // 移除动画效果
-    funTransitionHeight(document.querySelector('#modal .modal-entry'));
-
     let modal = document.querySelector('#modal'); // assuming you have only 1
     let modal_entry = modal.querySelector('.modal-entry');
+
+    // 移除动画效果
+    funTransitionHeight(modal_entry);
+
     modal.classList.add('is-active');
     modal_entry.classList.remove('box');
     modal_entry.innerHTML = msg;
@@ -537,7 +538,7 @@ function wnd_ajax_submit(button, captcha_input = false) {
             params: params,
         })
         .then(function(response) {
-            form_info = handle_response(response.data, route);
+            form_info = handle_response(response.data, route, form.parentNode);
             wnd_form_msg(form, form_info.msg, form_info.msg_class);
             if (![3, 4, 6].includes(response.data.status)) {
                 button.classList.remove('is-loading');
@@ -566,7 +567,7 @@ function wnd_form_msg(form, msg, msg_class) {
 }
 
 // 统一处理表单响应
-function handle_response(response, route) {
+function handle_response(response, route, parent) {
     let form_info = {
         'msg': '',
         'msg_class': ''
@@ -650,7 +651,7 @@ function handle_response(response, route) {
 
             // 以响应数据替换当前表单
         case 7:
-            wnd_alert_modal(response.data);
+            wnd_inner_html(parent, response.data);
             break;
 
             // 默认

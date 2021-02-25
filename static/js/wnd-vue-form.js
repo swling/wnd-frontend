@@ -345,7 +345,7 @@ function _wnd_render_form(container, form_json) {
                         params: params,
                     })
                     .then(function(response) {
-                        info = handle_response(response.data, _this.form.attrs.route);
+                        info = handle_response(response.data, _this.form.attrs.route, parent);
                         _this.form.message.message = info.msg;
                         _this.form.message.attrs.class = form_json.message.attrs.class + ' ' + info.msg_class;
                         _this.form.submit.attrs.class = form_json.submit.attrs.class;
