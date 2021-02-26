@@ -2,8 +2,11 @@
  *@since 0.9.25
  *Vue 根据 Json 动态渲染筛选列表（含 Posts 及 Users）
  */
-function _wnd_render_filter(container, filter_json) {
-	let parent = document.querySelector(container).parentNode;
+function _wnd_render_filter(container, filter_json, add_class) {
+	let parent = document.querySelector(container);
+	if (add_class) {
+		parent.classList.add(add_class);
+	}
 
 	// 数据 合并数据，并进行深拷贝，以保留原生传参 form_json 不随 data 变动
 	let filter = JSON.parse(JSON.stringify(filter_json));
@@ -20,8 +23,10 @@ function _wnd_render_filter(container, filter_json) {
 	delete init_param.post_status;
 	let param = JSON.parse(JSON.stringify(init_param));
 
+	wnd_inner_html(parent, '<div class="vue-app"></div>');
+
 	new Vue({
-		el: container,
+		el: container + ' .vue-app',
 		template: build_filter_template(filter),
 		data: {
 			filter: filter,
@@ -140,6 +145,7 @@ function _wnd_render_filter(container, filter_json) {
 						},
 					})
 					.then(function(response) {
+						wnd_loading(_this.get_container(), true);
 						if ('undefined' == typeof response.data.status) {
 							console.log(response);
 							return false;

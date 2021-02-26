@@ -7,13 +7,17 @@ var max_tag_num = ('undefined' != typeof max_tag_num) ? max_tag_num : 3;
  *@since 0.9.25
  *Vue 根据 Json 动态渲染表单
  */
-function _wnd_render_form(container, form_json) {
+function _wnd_render_form(container, form_json, add_class = '') {
     // 数据 合并数据，并进行深拷贝，以保留原生传参 form_json 不随 data 变动
     let form = JSON.parse(JSON.stringify(form_json));
-    let parent = document.querySelector(container).parentNode;
+    let parent = document.querySelector(container);
+    if (add_class) {
+        parent.classList.add(add_class);
+    }
 
+    wnd_inner_html(parent, '<div class="vue-app"></div>');
     new Vue({
-        el: container,
+        el: container + ' .vue-app',
         template: get_form_template(form),
         data: {
             form: form,

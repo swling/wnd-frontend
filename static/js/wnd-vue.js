@@ -37,20 +37,15 @@ if (wnd.lang) {
 /**
  *axios 拦截器 统一设置 WP Rest Nonce
  *@link https://github.com/axios/axios#interceptors
+ * - 如果设置了 header:container 则统一设置“loading”效果
+ * - 响应数据时，不设置统一清除“loading”效果，原因在于：获取响应数据后，可能需要动态加载 JavaScript 渲染当前数据，这需要耗时。
+ *   因此应该在对响应数据进行渲染的具体方法中，设置清除“loading”效果
  */
 axios.interceptors.request.use(function(config) {
     if (config.headers.container || false) {
         wnd_loading(config.headers.container);
     }
     return config;
-});
-
-//响应拦截器
-axios.interceptors.response.use(function(response) {
-    if (response.config.headers.container || false) {
-        wnd_loading(response.config.headers.container, true);
-    }
-    return response;
 });
 
 //判断是否为移动端
@@ -184,26 +179,26 @@ function object_to_formdata(data) {
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表达
-function wnd_render_form(container, form_json) {
+function wnd_render_form(container, form_json, add_class) {
     if ('function' != typeof _wnd_render_form) {
         let url = static_path + 'js/wnd-vue-form.js?ver=' + wnd.ver;
         wnd_load_script(url, function() {
-            _wnd_render_form(container, form_json)
+            _wnd_render_form(container, form_json, add_class)
         });
     } else {
-        _wnd_render_form(container, form_json);
+        _wnd_render_form(container, form_json, add_class);
     }
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表达
-function wnd_render_filter(container, filter_json) {
+function wnd_render_filter(container, filter_json, add_class) {
     if ('function' != typeof _wnd_render_filter) {
         let url = static_path + 'js/wnd-vue-filter.js?ver=' + wnd.ver;
         wnd_load_script(url, function() {
-            _wnd_render_filter(container, filter_json);
+            _wnd_render_filter(container, filter_json, add_class);
         });
     } else {
-        _wnd_render_filter(container, filter_json);
+        _wnd_render_filter(container, filter_json, add_class);
     }
 }
 
@@ -337,19 +332,15 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
                 return false;
             }
 
-            wnd_loading(container, true);
-
             if (response.data.status <= 0) {
                 wnd_inner_html(el, '<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
                 return false;
             }
 
             if ('form' == response.data.data.type) {
-                wnd_inner_html(el, '<div class="vue-app"></div>');
-                wnd_render_form(container + ' .vue-app', response.data.data.structure);
+                wnd_render_form(container, response.data.data.structure);
             } else if ('filter' == response.data.data.type) {
-                wnd_inner_html(el, '<div class="vue-app"></div>');
-                wnd_render_filter(container + ' .vue-app', response.data.data.structure);
+                wnd_render_filter(container, response.data.data.structure);
             } else {
                 wnd_inner_html(el, response.data.data.structure);
                 funTransitionHeight(el, trs_time);
@@ -391,7 +382,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 */
 // ajax 从后端请求内容，并以弹窗形式展现
 function wnd_ajax_modal(module, param = {}, callback = '') {
-    wnd_alert_msg('……');
+    wnd_alert_modal(loading_el, true);
 
     axios({
             method: 'get',
@@ -399,9 +390,6 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
             params: Object.assign({
                 'ajax_type': 'modal'
             }, param),
-            headers: {
-                'container': '.modal-entry'
-            },
         })
         .then(function(response) {
             if ('undefined' == typeof response.data.status) {
@@ -415,8 +403,9 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
             }
 
             if ('form' == response.data.data.type) {
-                wnd_alert_modal('<div id="vue-app"></div>');
-                wnd_render_form('#vue-app', response.data.data.structure);
+                wnd_render_form('#modal .modal-entry', response.data.data.structure, 'box');
+            } else if ('filter' == response.data.data.type) {
+                wnd_render_filter('#modal .modal-entry', response.data.data.structure, 'box');
             } else {
                 wnd_alert_modal(response.data.data.structure);
             }
@@ -437,8 +426,8 @@ function wnd_alert_modal(content, is_gallery = false) {
         modal.classList.add('is-active', 'wnd-gallery');
     } else {
         modal.classList.add('is-active');
+        modal_entry.classList.add('box');
     }
-    modal_entry.classList.add('box');
     // 对于复杂的输入，不能直接使用 innerHTML
     wnd_inner_html(modal_entry, content);
 
