@@ -89,6 +89,14 @@ function _wnd_render_filter(container, filter_json) {
 				return (parent.id ? '#' + parent.id : '') + ' .wnd-filter-results';
 			},
 
+			get_list_component(post_type) {
+				if (['order', 'recharge', 'stats-ex', 'stats-re'].includes(post_type)) {
+					return 'order-list';
+				} else {
+					return 'post-list';
+				}
+			},
+
 			update_filter: function(key, value, remove_args = []) {
 				/**
 				 *	切换类型：恢复初始参数
@@ -152,10 +160,62 @@ function _wnd_render_filter(container, filter_json) {
 		mounted() {
 			funTransitionHeight(parent, trs_time);
 		},
+		components: {
+			'post-list': {
+				props: ['posts'],
+				template: `
+				<table class="table is-fullwidth is-hoverable is-striped">
+				<thead>
+				<tr>
+				<th class="is-narrow">日期</th>
+				<th>标题</th>
+				<th class="is-narrow has-text-centered">操作</th>
+				</tr>
+				</thead>
+
+				<tbody>
+				<tr v-for="(post, index) in posts">
+				<td class="is-narrow">{{post.post_date}}</td>
+				<td>{{post.post_title}}</td>
+				<td class="is-narrow has-text-centered">
+				<a @click='wnd_ajax_modal("wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
+				<a @click='wnd_ajax_modal("wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
+				</td>
+				</tr>
+				</tbody>
+				</table>`,
+			},
+
+			'order-list': {
+				props: ['posts'],
+				template: `
+				<table class="table is-fullwidth is-hoverable is-striped">
+				<thead>
+				<tr>
+				<th class="is-narrow">订单日期</th>
+				<th>金额</th>
+				<th class="is-narrow has-text-centered">操作</th>
+				</tr>
+				</thead>
+					
+				<tbody>
+				<tr v-for="(post, index) in posts">
+				<td class="is-narrow">{{post.post_date}}</td>
+				<td>{{post.post_content}}</td>
+				<td class="is-narrow has-text-centered">
+				<a @click='wnd_ajax_modal("wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
+				<a @click='wnd_ajax_modal("wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
+				<a @click='wnd_ajax_modal("wnd_refund_form", {"payment_id": post.ID} )'><i class="fas fa-coins"></i></a>
+				</td>
+				</tr>
+				</tbody>
+				</table>`,
+			},
+		},
 		// 计算
-		computed: {},
+		// computed: {},
 		// 侦听器
-		watch: {},
+		// watch: {},
 	});
 
 	function build_filter_template(filter) {
@@ -196,34 +256,16 @@ function _wnd_render_filter(container, filter_json) {
 	 *可在外部定义 wnd_post_template() 函数以覆盖默认的列表
 	 *
 	 */
-	function build_posts_template() {
+	function build_posts_template(filter) {
 		if ('function' == typeof wnd_posts_template) {
 			return wnd_posts_template();
 		}
 
-		return `
-		<table class="table is-fullwidth is-hoverable is-striped">
-		<thead>
-		<tr>
-		<th class="is-narrow">日期</th>
-		<th>标题</th>
-		<th class="is-narrow has-text-centered">操作</th>
-		</tr>
-		</thead>
-
-		<tbody>
-		<tr v-for="(post, index) in filter.posts">
-		<td class="is-narrow">{{post.post_date}}</td>
-		<td>{{post.post_title}}</td>
-		<td class="is-narrow has-text-centered">xxx</td>
-		</tr>
-		</tbody>
-		</table>`;
+		return `<component :is="get_list_component(filter.query_vars.post_type)" :posts="filter.posts"></component>`;
 	}
 
 	/**
 	 *可在外部定义 wnd_users_template() 函数以覆盖默认的列表
-	 *
 	 */
 	function build_users_template() {
 		if ('function' == typeof wnd_users_template) {
@@ -244,7 +286,8 @@ function _wnd_render_filter(container, filter_json) {
 		<tr v-for="(user, index) in filter.users">
 		<td class="is-narrow">{{user.data.user_registered}}</td>
 		<td>{{user.data.display_name}}</td>
-		<td class="is-narrow has-text-centered">xxx</td>
+		<a @click='wnd_ajax_modal("wnd_delete_user_form", {"user_id": user.ID} )'><i class="fas fa-trash-alt"></i></a>
+		<a @click='wnd_ajax_modal("wnd_account_status_form", {"user_id": user.ID} )'><i class="fas fa-cog"></i></a>
 		</tr>
 		</tbody>
 		</table>`;

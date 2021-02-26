@@ -640,7 +640,7 @@ function handle_response(response, route, parent) {
 
             // 弹出信息并自动消失
         case 5:
-            wnd_alert_msg(response.msg, 1);
+            wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.msg + '</h5></div>', 1);
             break;
 
             // 下载类
