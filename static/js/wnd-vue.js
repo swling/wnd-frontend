@@ -15,9 +15,9 @@ var static_path = this_src.substring(0, this_src.lastIndexOf('/js/') + 1);
 
 // 其他
 var trs_time = 160;
-var menus_side = false;
 
-// 定义菜单数据
+// 定义菜单
+var menus_side = false;
 var wnd_menus_data = wnd_menus_data || false;
 
 // 加载中 Element
@@ -143,26 +143,29 @@ function wnd_load_style(url) {
 
 // 指定容器设置加载中效果
 function wnd_loading(el, remove = false) {
-    let container = document.querySelector(el);
-    if (!container) {
+    let self = ('object' == typeof el) ? el : document.querySelector(el);
+    if (!self) {
         return;
     }
+
     // Modal
-    if ('.modal-entry' == el) {
+    if (self.classList.contains('modal-entry')) {
         if (remove) {
-            container.innerHTML = '';
+            self.innerHTML = '';
         } else {
-            container.innerHTML = loading_el;
+            self.innerHTML = loading_el;
         }
         return;
     }
+
     // Embed
     if (!remove) {
-        container.style.position = 'relative';
-        wnd_append(el, `<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:9;background:#FFF;opacity:0.7">${loading_el}</div>`);
+        self.style.position = 'relative';
+        wnd_append(self, `<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:9;background:#FFF;opacity:0.7">${loading_el}</div>`);
     } else {
-        wnd_remove(el + ' .wnd-loading');
-        container.style.removeProperty('position');
+        console.log(document.querySelector('.wnd-loading'));
+        wnd_remove(self.querySelector('.wnd-loading'));
+        self.style.removeProperty('position');
     }
 }
 
@@ -206,10 +209,11 @@ function wnd_render_filter(container, filter_json, add_class) {
 function wnd_render_menus(container, menus_data, is_side_menus = false) {
     // 优先接收外部传递参数
     wnd_menus_data = menus_data || wnd_menus_data;
-    let parent = document.querySelector(container).parentNode;
+    let parent = document.querySelector(container);
+    wnd_inner_html(parent, '<div class="vue-app"></div>');
 
     new Vue({
-        el: container,
+        el: container + ' .vue-app',
         template: `
         <aside class="menu">
         <template v-for="(menu, menu_index) in menus">
@@ -277,6 +281,7 @@ function wnd_render_menus(container, menus_data, is_side_menus = false) {
                 }).then(function(res) {
                     _this.menus = res.data.data;
                     wnd_menus_data = res.data.data;
+                    wnd_loading(_this.get_container(), true);
                 });
             }
         },
@@ -382,7 +387,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 */
 // ajax 从后端请求内容，并以弹窗形式展现
 function wnd_ajax_modal(module, param = {}, callback = '') {
-    wnd_alert_modal(loading_el, true);
+    wnd_alert_modal(loading_el, false);
 
     axios({
             method: 'get',
@@ -418,16 +423,15 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
 
 
 //弹出bulma对话框
-function wnd_alert_modal(content, is_gallery = false) {
+function wnd_alert_modal(content, box = true) {
     wnd_reset_modal();
     let modal = document.querySelector('#modal'); // assuming you have only 1
     let modal_entry = modal.querySelector('.modal-entry');
-    if (is_gallery) {
-        modal.classList.add('is-active', 'wnd-gallery');
-    } else {
-        modal.classList.add('is-active');
+    modal.classList.add('is-active');
+    if (box) {
         modal_entry.classList.add('box');
     }
+
     // 对于复杂的输入，不能直接使用 innerHTML
     wnd_inner_html(modal_entry, content);
 
@@ -436,17 +440,7 @@ function wnd_alert_modal(content, is_gallery = false) {
 
 // 直接弹出消息
 function wnd_alert_msg(msg, time = 0) {
-    wnd_reset_modal();
-
-    let modal = document.querySelector('#modal'); // assuming you have only 1
-    let modal_entry = modal.querySelector('.modal-entry');
-
-    // 移除动画效果
-    funTransitionHeight(modal_entry);
-
-    modal.classList.add('is-active');
-    modal_entry.classList.remove('box');
-    modal_entry.innerHTML = msg;
+    wnd_alert_modal(msg, false);
 
     // 定时关闭
     if (time > 0) {
