@@ -214,7 +214,7 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
         <aside class="menu">
         <template v-for="(menu, menu_index) in menus">
         <ul class="menu-list">
-        <a v-if="menu.label" v-html="menu.label" @click="expand(menu_index)"></a>
+        <a v-if="menu.label" v-html="build_label(menu)" @click="expand(menu_index)"></a>
         <li v-show="menu.expand"><ul><li v-for="(item, item_index) in menu.items">
         <a :href="item.href" @click="active(menu_index, item_index)" :class="item.class" v-html="item.title"></a></li>
         </ul></li>
@@ -225,12 +225,12 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
             menus: wnd_menus_data,
         },
         methods: {
+            build_label: function(menu) {
+                return menu.label + '&nbsp;' + (menu.expand ? '<i class="fas fa-angle-up"></i>' : '<i class="fas fa-angle-down"></i>');
+            },
             active: function(menu_index, item_index) {
                 for (let i = 0; i < this.menus.length; i++) {
                     const menu = this.menus[i];
-                    if (menu_index !== i) {
-                        menu.expand = false;
-                    }
 
                     /**
                      * Vue 直接修改数组的值无法触发重新渲染
@@ -252,14 +252,7 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
                 }
             },
             expand: function(menu_index) {
-                for (let i = 0; i < this.menus.length; i++) {
-                    const menu = this.menus[i];
-                    if (menu_index !== i) {
-                        menu.expand = false;
-                    } else {
-                        menu.expand = !(menu.expand || false);
-                    }
-                }
+                this.menus[menu_index].expand = !(this.menus[menu_index].expand || false);
             },
             get_container: function() {
                 return parent.id ? '#' + parent.id : '';

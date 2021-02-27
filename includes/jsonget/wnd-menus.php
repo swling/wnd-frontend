@@ -33,7 +33,7 @@ class Wnd_Menus extends Wnd_JsonGet {
 	protected static function build_user_menus(): array{
 
 		$menus = [
-			'label'  => __('用户中心', 'wnd') . '&nbsp;<i class="fas fa-chevron-down"></i>',
+			'label'  => __('用户中心', 'wnd'),
 			'expand' => false, // 是否强制展开
 			'items'  => [
 				['title' => '概览', 'href' => static::get_front_page_url() . '#'],
@@ -50,7 +50,7 @@ class Wnd_Menus extends Wnd_JsonGet {
 
 	protected static function build_manager_menus(): array{
 		$menus = [
-			'label'  => __('管理中心', 'wnd') . '&nbsp;<i class="fas fa-chevron-down"></i>',
+			'label'  => __('管理中心', 'wnd'),
 			'expand' => false, // 是否强制展开
 			'items'  => [
 				['title' => '概览', 'href' => static::get_front_page_url() . '#'],
