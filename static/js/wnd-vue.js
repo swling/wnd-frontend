@@ -339,6 +339,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 
             if (response.data.status <= 0) {
                 wnd_inner_html(el, '<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
+                funTransitionHeight(el, trs_time);
                 return false;
             }
 
