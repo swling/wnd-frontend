@@ -249,11 +249,16 @@ apply_filters('wnd_sku_keys', $sku_keys, $post_type);
 */
 apply_filters('wnd_menus_side_before', '');
 
-add_filter('wnd_menus', function ($menus) {
+/**
+*$menus = []; 菜单
+*是否在侧边栏，是否展开第一个子菜单
+*$args  = ['in_side' => false, 'expand'  => true]
+*/
+add_filter('wnd_menus', function ($menus, $args) {
 	// $menus = []; 清空已有菜单 否则为追加
 	$menus[] = [
 		'label' => '拓展菜单',
-		'expand'=>false,
+		'expand'=> false, // 是否强制展开本菜单
 		'items' => [
 			['title' => '测试菜单', 'href' => wnd_get_ucenter_url() . '#wnd_profile_form'],
 		],

@@ -18,7 +18,6 @@ var trs_time = 160;
 
 // 定义菜单
 var menus_side = false;
-var wnd_menus_data = wnd_menus_data || false;
 
 // 加载中 Element
 if ('undefined' == typeof loading_el) {
@@ -163,7 +162,6 @@ function wnd_loading(el, remove = false) {
         self.style.position = 'relative';
         wnd_append(self, `<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:9;background:#FFF;opacity:0.7">${loading_el}</div>`);
     } else {
-        console.log(document.querySelector('.wnd-loading'));
         wnd_remove(self.querySelector('.wnd-loading'));
         self.style.removeProperty('position');
     }
@@ -206,9 +204,7 @@ function wnd_render_filter(container, filter_json, add_class) {
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表达
-function wnd_render_menus(container, menus_data, is_side_menus = false) {
-    // 优先接收外部传递参数
-    wnd_menus_data = menus_data || wnd_menus_data;
+function wnd_render_menus(container, wnd_menus_data, in_side = false) {
     let parent = document.querySelector(container);
     wnd_inner_html(parent, '<div class="vue-app"></div>');
 
@@ -249,6 +245,7 @@ function wnd_render_menus(container, menus_data, is_side_menus = false) {
                         }
                     }
 
+                    // 侧边栏菜单：点击后关闭侧边栏
                     if (is_side_menus) {
                         wnd_menus_side_toggle(true);
                     }
@@ -275,6 +272,9 @@ function wnd_render_menus(container, menus_data, is_side_menus = false) {
                 axios({
                     'method': 'get',
                     url: wnd_jsonget_api + '/wnd_menus',
+                    params: {
+                        "in_side": in_side
+                    },
                     headers: {
                         'container': _this.get_container(),
                     },
