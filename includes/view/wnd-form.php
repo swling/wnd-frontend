@@ -13,6 +13,10 @@ use Exception;
  */
 class Wnd_Form {
 
+	protected $before_html = '';
+
+	protected $after_html = '';
+
 	protected $id;
 
 	protected $form_attr = [];
@@ -95,6 +99,20 @@ class Wnd_Form {
 	public function __construct() {
 		$this->id = 'wnd-' . uniqid();
 		$this->add_form_attr('id', $this->id);
+	}
+
+	/**
+	 *表单字段之前 Html
+	 */
+	public function add_before_html($html) {
+		$this->before_html .= $html;
+	}
+
+	/**
+	 *表单字段之后 Html
+	 */
+	public function add_after_html($html) {
+		$this->after_html .= $html;
 	}
 
 	/**
@@ -762,17 +780,19 @@ class Wnd_Form {
 	 */
 	public function get_structure(): array{
 		return [
-			'attrs'   => $this->form_attr,
-			'title'   => [
+			'before_html' => $this->before_html,
+			'after_html'  => $this->after_html,
+			'attrs'       => $this->form_attr,
+			'title'       => [
 				'title' => $this->form_title,
 				'attrs' => ['class' => $this->is_title_centered ? 'has-text-centered' : ''],
 			],
-			'message' => [
+			'message'     => [
 				'message' => $this->message,
 				'attrs'   => ['class' => $this->message_class],
 			],
-			'fields'  => $this->get_input_values(),
-			'submit'  => [
+			'fields'      => $this->get_input_values(),
+			'submit'      => [
 				'text'  => $this->submit_text,
 				'attrs' => [
 					'is_disabled' => $this->submit_disabled,

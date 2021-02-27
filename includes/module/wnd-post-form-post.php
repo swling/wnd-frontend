@@ -66,9 +66,9 @@ class Wnd_Post_Form_Post extends Wnd_Module_Form {
 
 		// 分类
 		$form->add_html('<div class="field">');
-		$form->add_post_term_select(['taxonomy' => 'category'], '', true, true);
-		$form->add_dynamic_sub_term_select('category', 1, '', false, __('二级分类', 'wnd'));
-		$form->add_dynamic_sub_term_select('category', 2, '', false, __('三级分类', 'wnd'));
+		$form->add_post_term_select(['taxonomy' => 'category'], '', true);
+		// $form->add_dynamic_sub_term_select('category', 1, '', false, __('二级分类', 'wnd'));
+		// $form->add_dynamic_sub_term_select('category', 2, '', false, __('三级分类', 'wnd'));
 		$form->add_html('</div>');
 
 		// 缩略图

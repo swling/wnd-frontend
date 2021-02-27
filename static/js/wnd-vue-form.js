@@ -400,13 +400,15 @@ function _wnd_render_form(container, form_json, add_class = '') {
     function get_form_template(form_json) {
         return `
         <form v-bind="form.attrs">
-        <h3 v-show="form.title.title" v-bind="form.title.attrs" v-html="form.title.title"></h3>
+        <div v-if="form.before_html" v-html="form.before_html"></div>
+        <div class="field" v-show="form.title.title"><h3 v-bind="form.title.attrs" v-html="form.title.title"></h3></div>
         <div v-bind="form.message.attrs" class="message" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>
         ${get_fields_template(form_json)}
         <div v-if="form.submit.text" class="field is-grouped is-grouped-centered">
         <button type="button" v-bind="form.submit.attrs" @click="submit($event)" v-text="form.submit.text"></button>
         </div>
         <div class="form-script"></div>
+        <div v-if="form.after_html" v-html="form.after_html"></div>
         </form>`;
     }
 
@@ -499,7 +501,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
         return `
 		<div :class="get_field_class(${field})">
 		<label v-if="${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>
-		<textarea v-html="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
+		<textarea v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
 		<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 		</div>`;
     };
