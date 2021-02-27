@@ -144,7 +144,8 @@ class Wnd_User_Page extends Wnd_Module_Html {
 		</div>
 
 		<div class="column"><div id="ajax-module" class="box"></div></div>
-		</div><script>wnd_render_menus("#app-menus", wnd_menus_data)</script>';
+		<script>wnd_render_menus("#app-menus", wnd_menus_data)</script>
+		</div>';
 
 		/**
 		 * 默认用户中心：注册、登录、账户管理，内容管理，财务管理等

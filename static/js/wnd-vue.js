@@ -244,11 +244,11 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
                             Vue.set(item, 'class', 'is-active');
                         }
                     }
+                }
 
-                    // 侧边栏菜单：点击后关闭侧边栏
-                    if (is_side_menus) {
-                        wnd_menus_side_toggle(true);
-                    }
+                // 侧边栏菜单：点击后关闭侧边栏
+                if (in_side) {
+                    wnd_menus_side_toggle(true);
                 }
             },
             expand: function(menu_index) {
