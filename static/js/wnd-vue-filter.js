@@ -182,7 +182,7 @@ function _wnd_render_filter(container, filter_json, add_class) {
 				<tbody>
 				<tr v-for="(post, index) in posts">
 				<td class="is-narrow">{{post.post_date}}</td>
-				<td>{{post.post_title}}</td>
+				<td><a :href="post.link" target="_blank">{{post.post_title}}</a></td>
 				<td class="is-narrow has-text-centered">
 				<a @click='wnd_ajax_modal("wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
 				<a @click='wnd_ajax_modal("wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
@@ -291,7 +291,7 @@ function _wnd_render_filter(container, filter_json, add_class) {
 		<tbody>
 		<tr v-for="(user, index) in filter.users">
 		<td class="is-narrow">{{user.data.user_registered}}</td>
-		<td>{{user.data.display_name}}</td>
+		<td><a :href="user.data.link" target="_blank">{{user.data.display_name}}</a></td>
 		<a @click='wnd_ajax_modal("wnd_delete_user_form", {"user_id": user.ID} )'><i class="fas fa-trash-alt"></i></a>
 		<a @click='wnd_ajax_modal("wnd_account_status_form", {"user_id": user.ID} )'><i class="fas fa-cog"></i></a>
 		</tr>

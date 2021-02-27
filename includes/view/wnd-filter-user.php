@@ -182,7 +182,6 @@ class Wnd_Filter_User {
 	 */
 	public function query() {
 		$this->wp_user_query = new WP_User_Query($this->query_args);
-		$this->users         = $this->wp_user_query->get_results();
 	}
 
 	/**
@@ -194,7 +193,15 @@ class Wnd_Filter_User {
 			return __('未执行WP_User_Query', 'wnd');
 		}
 
-		return $this->users;
+		$this->users = $this->wp_user_query->get_results();
+		foreach ($this->users as $user) {
+			$user->link    = get_author_posts_url($user->ID);
+			$this->users[] = $user;
+		}
+		unset($user);
+
+		// Filter
+		return apply_filters('wnd_filter_users', $this->users);
 	}
 
 	/**

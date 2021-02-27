@@ -106,11 +106,14 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 			if (!$with_post_content) {
 				unset($post->post_content);
 			}
+
+			$post->link    = get_permalink($post);
 			$this->posts[] = $post;
 		}
 		unset($post);
 
-		return $this->posts;
+		// Filter
+		return apply_filters('wnd_filter_posts', $this->posts);
 	}
 
 	/**

@@ -288,3 +288,15 @@ add_filter('wnd_user_page', function ($html) {
 	return \Wnd\Module\Wnd_Bind_Phone_Form::render();
 }, 12, 1);
 ```
+
+## 内容筛选
+过滤 Ajax 筛选 Posts 集。（常规筛选中此 Filter 无效，此时应通过设置 post 模板函数来实现自定义输出结果）
+```php
+return apply_filters('wnd_filter_posts', $posts);
+```
+
+## 用户筛选
+过滤 Ajax 筛选 User 集
+```php
+return apply_filters('wnd_filter_users', $users);
+```
