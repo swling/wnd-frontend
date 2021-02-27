@@ -70,11 +70,11 @@ class Wnd_User_Page extends Wnd_Module_Html {
 	 */
 	protected static function handle_module($args): string{
 		extract($args);
+		unset($args['module']);
+		unset($args['action']);
 
 		if ($module) {
-			$params = $_GET;
-			unset($params['module']);
-			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . json_encode($params) . ')</script>';
+			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . json_encode($args) . ')</script>';
 		}
 
 		// 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
@@ -89,7 +89,7 @@ class Wnd_User_Page extends Wnd_Module_Html {
 				throw new Exception($post_type . __('未定义表单', 'wnd'));
 			}
 
-			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '")</script>';
+			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . json_encode($args) . ');</script>';
 		}
 
 		// 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
