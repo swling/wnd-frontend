@@ -77,10 +77,6 @@ add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
  *加载静态资源
  */
 add_action('wp_enqueue_scripts', 'wnd_enqueue_scripts');
-
-/**
- *加载静态资源
- */
 function wnd_enqueue_scripts($hook_suffix = '') {
 	// 公共脚本及样式库可选本地或 jsdeliver
 	$static_host = wnd_get_config('static_host');
@@ -97,6 +93,9 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 	}
 
 	wp_enqueue_script('wnd-vue', WND_URL . 'static/js/wnd-vue.js', ['vue', 'axios'], WND_VER);
+	if (is_singular() and comments_open()) {
+		wp_enqueue_script('wnd-comment', WND_URL . '/static/js/comment.min.js', ['axios', 'comment-reply'], WND_VER);
+	}
 
 	// api 及语言本地化
 	$wnd_data = [
@@ -108,20 +107,21 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 		'users_api'    => 'wnd/users',
 		'jsonget_api'  => 'wnd/jsonget',
 		'endpoint_api' => 'wnd/endpoint',
+		'comment'      => [
+			'api'      => 'wnd/comment',
+			'order'    => get_option('comment_order'),
+			'form_pos' => wnd_get_config('comment_form_pos') ?: 'top',
+		],
 		'lang'         => $_GET[WND_LANG_KEY] ?? false,
 		'ver'          => WND_VER,
 		'msg'          => [
 			'required'            => __('必填项为空', 'wnd'),
-
 			'submit_successfully' => __('提交成功', 'wnd'),
 			'submit_failed'       => __('提交失败', 'wnd'),
-
 			'upload_successfully' => __('上传成功', 'wnd'),
 			'upload_failed'       => __('上传失败', 'wnd'),
-
 			'send_successfully'   => __('发送成功', 'wnd'),
 			'send_failed'         => __('发送失败', 'wnd'),
-
 			'confirm'             => __('确定'),
 			'deleted'             => __('已删除', 'wnd'),
 			'system_error'        => __('系统错误', 'wnd'),

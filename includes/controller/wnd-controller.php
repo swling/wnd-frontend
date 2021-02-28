@@ -71,6 +71,13 @@ class Wnd_Controller {
 			'permission_callback' => '__return_true',
 			'route_rule'          => false,
 		],
+		'comment'  =>
+		[
+			'methods'             => ['POST', 'GET'],
+			'callback'            => __CLASS__ . '::add_comment',
+			'permission_callback' => '__return_true',
+			'route_rule'          => false,
+		],
 	];
 
 	private function __construct() {
@@ -348,5 +355,38 @@ class Wnd_Controller {
 			'status' => 1,
 			'data'   => $filter->get_results(),
 		];
+	}
+
+	/**
+	 *写入评论
+	 */
+	public static function add_comment($request): array{
+		$comment = wp_handle_comment_submission(wp_unslash($request));
+		$user    = wp_get_current_user();
+		if (is_wp_error($comment)) {
+			return ['status' => 0, 'msg' => $comment->get_error_message()];
+		}
+
+		do_action('set_comment_cookies', $comment, $user);
+		$GLOBALS['comment'] = $comment;
+
+		/**
+		 *敬请留意：
+		 *此结构可能随着WordPress wp_list_comments()输出结构变化而失效
+		 */
+		$html = '<li class="' . implode(' ', get_comment_class()) . '">';
+		$html .= '<article class="comment-body">';
+		$html .= '<footer class="comment-meta">';
+		$html .= '<div class="comment-author vcard">';
+		$html .= get_avatar($comment, '56');
+		$html .= '<b class="fn">' . get_comment_author_link() . '</b>';
+		$html .= '</div>';
+		$html .= '<div class="comment-metadata">' . get_comment_date('', $comment) . ' ' . get_comment_time() . '</div>';
+		$html .= '</footer>';
+		$html .= '<div class="comment-content">' . get_comment_text() . '</div>';
+		$html .= '</article>';
+		$html .= '</li>';
+
+		return ['status' => 1, 'msg' => '提交成功', 'data' => $html];
 	}
 }
