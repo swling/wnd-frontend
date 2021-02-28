@@ -135,25 +135,24 @@ function _wnd_render_filter(container, filter_json, add_class) {
 					param[key] = value;
 				}
 
-				let _this = this;
 				axios({
 						method: 'get',
 						url: filter.posts ? wnd_posts_api : wnd_users_api,
 						params: param,
 						headers: {
-							'container': _this.get_container(),
+							'container': this.get_container(),
 						},
 					})
-					.then(function(response) {
-						wnd_loading(_this.get_container(), true);
+					.then(response => {
+						wnd_loading(this.get_container(), true);
 						if ('undefined' == typeof response.data.status) {
 							console.log(response);
 							return false;
 						}
 						// 合并响应数据
-						_this.filter = Object.assign(_this.filter, response.data.data);
+						this.filter = Object.assign(this.filter, response.data.data);
 
-						_this.$nextTick(function() {
+						this.$nextTick(function() {
 							funTransitionHeight(parent, trs_time);
 						});
 					})

@@ -261,7 +261,6 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
         mounted() {
             // 如果尚未定义菜单数据，异步请求数据并赋值
             if (!wnd_menus_data) {
-                _this = this;
                 axios({
                     'method': 'get',
                     url: wnd_jsonget_api + '/wnd_menus',
@@ -269,12 +268,12 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
                         "in_side": in_side
                     },
                     headers: {
-                        'container': _this.get_container(),
+                        'container': this.get_container(),
                     },
-                }).then(function(res) {
-                    _this.menus = res.data.data;
+                }).then(res => {
+                    this.menus = res.data.data;
                     wnd_menus_data = res.data.data;
-                    wnd_loading(_this.get_container(), true);
+                    wnd_loading(this.get_container(), true);
                 });
             }
         },

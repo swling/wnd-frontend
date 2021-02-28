@@ -178,7 +178,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 // WP Nonce
                 form_data.set('_ajax_nonce', field.data.upload_nonce);
 
-                // _this = this;
                 axios({
                     url: wnd_action_api + '/wnd_upload_file',
                     method: 'post',
@@ -188,7 +187,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     onUploadProgress: function(progressEvent) {
                         field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
                     }
-                }).then(function(response) {
+                }).then(response => {
                     if (response.data.status <= 0) {
                         field.help.text = response.data.msg;
                         field.help.class = 'is-danger';
@@ -199,6 +198,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         field.thumbnail = response.data[i].data.thumbnail;
                         field.file_id = response.data[i].data.id;
                         field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + response.data[i].data.url + '" target="_blank">' + wnd.msg.view + '</a>';
+                        this.form.message.message = wnd.msg.upload_successfully;
 
                         // 单个图片
                         if ('image_upload' == field.type) {
@@ -212,6 +212,9 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         }
                     }
 
+                    this.$nextTick(function() {
+                        funTransitionHeight(parent, trs_time);
+                    });
                 }).catch(err => {
                     console.log(err);
                 })
@@ -231,7 +234,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     url: wnd_action_api + '/wnd_delete_file',
                     method: 'post',
                     data: data,
-                }).then(function(response) {
+                }).then(response => {
                     field.thumbnail = form_json.fields[index].default_thumbnail;
                     field.file_name = wnd.msg.deleted;
                     field.file_id = 0;
@@ -257,13 +260,12 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     "search": text,
                     "taxonomy": this.form.fields[index].taxonomy
                 };
-                let _this = this;
                 axios({
                     'method': 'get',
                     url: wnd_jsonget_api + '/wnd_term_searcher',
                     params: params,
-                }).then(function(response) {
-                    _this.form.fields[index].suggestions = response.data.data;
+                }).then(response => {
+                    this.form.fields[index].suggestions = response.data.data;
                 });
             },
             // 回车输入写入数据并清空当前输入
@@ -330,7 +332,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 }
 
                 // Ajax 请求
-                let _this = this;
                 let form = document.querySelector('#' + this.form.attrs.id);
                 let data = new FormData(form);
 
@@ -348,19 +349,19 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         // Get
                         params: params,
                     })
-                    .then(function(response) {
-                        info = handle_response(response.data, _this.form.attrs.route, parent);
-                        _this.form.message.message = info.msg;
-                        _this.form.message.attrs.class = form_json.message.attrs.class + ' ' + info.msg_class;
-                        _this.form.submit.attrs.class = form_json.submit.attrs.class;
+                    .then(response => {
+                        info = handle_response(response.data, this.form.attrs.route, parent);
+                        this.form.message.message = info.msg;
+                        this.form.message.attrs.class = form_json.message.attrs.class + ' ' + info.msg_class;
+                        this.form.submit.attrs.class = form_json.submit.attrs.class;
                         /*提交后清除 captcha 以便下次重新验证
                          * Vue 直接修改数组的值无法触发重新渲染
                          * @link https://cn.vuejs.org/v2/guide/reactivity.html#%E6%A3%80%E6%B5%8B%E5%8F%98%E5%8C%96%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9
                          */
-                        if (_this.index.captcha) {
-                            Vue.set(_this.form.fields[_this.index.captcha], 'value', '');
+                        if (this.index.captcha) {
+                            Vue.set(this.form.fields[this.index.captcha], 'value', '');
                         }
-                        _this.$nextTick(function() {
+                        this.$nextTick(function() {
                             funTransitionHeight(parent, trs_time);
                         });
                     })
@@ -538,7 +539,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
     function build_image_upload(field, index) {
         return `
 		<div :id="get_field_id(${field},${index})" class="field" :class="${field}.class">
-		<div v-if="${field}.complete" class="${field}">
+		<div v-if="${field}.complete">
 		<progress class="progress is-primary" :value="${field}.complete" max="100"></progress>
 		</div>
 
