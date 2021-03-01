@@ -50,16 +50,16 @@ class Wnd_Reg_Form extends Wnd_Module_Form {
 		} else {
 			$form->add_email_verification('register', '', true);
 		}
-		if (wnd_get_config('agreement_url') or 1) {
-			$text = __('已阅读并同意', 'wnd') . '<a href="' . wnd_get_config('agreement_url') . '" target="_blank">' . __('《注册协议》', 'wnd') . '</a>';
+		if (wnd_get_config('agreement_url')) {
 			$form->add_checkbox(
 				[
 					'name'     => 'agreement',
-					'options'  => [$text => 1],
+					'options'  => [__('已阅读并同意：', 'wnd') => 1],
 					'checked'  => 1,
 					'required' => 'required',
 				]
 			);
+			$form->add_html('<i><a href="' . wnd_get_config('agreement_url') . '" target="_blank">' . get_option('blogname') . __('《注册协议》', 'wnd') . '</a></i>');
 		}
 
 		$form->set_route('action', 'wnd_reg');

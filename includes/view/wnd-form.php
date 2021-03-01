@@ -356,6 +356,8 @@ class Wnd_Form {
 
 		$html = '<form' . $this->build_form_attr() . '>';
 
+		$html .= $this->before_html;
+
 		if ($this->form_title) {
 			$html .= $this->is_title_centered ? '<div class="field content has-text-centered">' : '<div class="field content">';
 			$html .= '<h3>' . $this->form_title . '</h3>';
@@ -590,7 +592,9 @@ class Wnd_Form {
 	 *闭合表单并渲染 Ajax 表单提交脚本
 	 */
 	protected function build_form_footer() {
-		$this->html .= '</form>' . $this->render_script();
+		$this->html .= $this->after_html;
+		$this->html .= '</form>';
+		$this->html .= $this->render_script();
 	}
 
 	/**
