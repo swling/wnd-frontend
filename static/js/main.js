@@ -182,7 +182,7 @@ function object_to_formdata(data) {
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_form(container, form_json, add_class) {
     if ('function' != typeof _wnd_render_form) {
-        let url = static_path + 'js/wnd-vue-form.js?ver=' + wnd.ver;
+        let url = static_path + 'js/form.min.js?ver=' + wnd.ver;
         wnd_load_script(url, function() {
             _wnd_render_form(container, form_json, add_class)
         });
@@ -194,7 +194,7 @@ function wnd_render_form(container, form_json, add_class) {
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_filter(container, filter_json, add_class) {
     if ('function' != typeof _wnd_render_filter) {
-        let url = static_path + 'js/wnd-vue-filter.js?ver=' + wnd.ver;
+        let url = static_path + 'js/filter.min.js?ver=' + wnd.ver;
         wnd_load_script(url, function() {
             _wnd_render_filter(container, filter_json, add_class);
         });
@@ -581,7 +581,7 @@ function handle_response(response, route, parent) {
 
             //更新类
         case 2:
-            form_info.msg = wnd.msg.submit_successfully + '<a href="' + response.data.url + '" target="_blank">&nbsp;' + wnd.msg.view + '</a>';
+            form_info.msg = response.msg + '<a href="' + response.data.url + '" target="_blank">&nbsp;' + wnd.msg.view + '</a>';
             break;
 
             // 跳转类
@@ -635,6 +635,10 @@ function handle_response(response, route, parent) {
             // wnd_ajax_form_msg(form_id, response.msg, style);
             break;
     }
+
+    parent.scrollIntoView({
+        behavior: 'smooth'
+    });
 
     return form_info;
 }

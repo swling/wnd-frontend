@@ -3,7 +3,7 @@
  *Plugin Name: Wnd-Frontend
  *Plugin URI: https://github.com/swling/wnd-frontend
  *Description: Wnd-Frontend 是一套基于 ajax 交互逻辑的 WordPress 前端基础框架。商业用途需购买授权。<a href="https://github.com/swling/wnd-frontend/releases">更新日志</a>
- *Version: 0.9.25
+ *Version: 0.9.25.1
  *Author: swling
  *Author URI: https://wndwp.com
  *Requires PHP: 7.3
@@ -17,7 +17,7 @@
  */
 
 // 版本
-define('WND_VER', '0.9.25');
+define('WND_VER', '0.9.25.1');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -92,7 +92,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 		wp_enqueue_script('vue', '//cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js', [], null);
 	}
 
-	wp_enqueue_script('wnd-vue', WND_URL . 'static/js/wnd-vue.js', ['vue', 'axios'], WND_VER);
+	wp_enqueue_script('wnd-main', WND_URL . 'static/js/main.min.js', ['vue', 'axios'], WND_VER);
 	if (is_singular() and comments_open()) {
 		wp_enqueue_script('wnd-comment', WND_URL . '/static/js/comment.min.js', ['axios', 'comment-reply'], WND_VER);
 	}
@@ -131,5 +131,5 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 			'view'                => __('查看', 'wnd'),
 		],
 	];
-	wp_localize_script('wnd-vue', 'wnd', $wnd_data);
+	wp_localize_script('wnd-main', 'wnd', $wnd_data);
 }
