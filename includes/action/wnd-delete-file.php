@@ -19,8 +19,8 @@ class Wnd_Delete_File extends Wnd_Action_User {
 
 	public function execute(): array{
 		$meta_key    = $this->data['meta_key'];
-		$post_parent = (int) $this->data['post_parent'];
 		$file_id     = (int) $this->data['file_id'];
+		$post_parent = get_post($file_id)->post_parent ?? 0;
 
 		if (!$file_id) {
 			throw new Exception(__('文件不存在', 'wnd'));
@@ -35,7 +35,6 @@ class Wnd_Delete_File extends Wnd_Action_User {
 			do_action('wnd_delete_file', $file_id, $post_parent, $meta_key);
 			return ['status' => 1, 'msg' => $file_id];
 
-			//删除失败
 		} else {
 			throw new Exception(__('删除失败', 'wnd'));
 		}

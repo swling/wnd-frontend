@@ -1,16 +1,17 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Form_WP;
 
 /**
  *@since 2020.04.30 删除账户
  */
-class Wnd_Delete_User_Form extends Wnd_Module_Root {
+class Wnd_Delete_User_Form extends Wnd_Module_Form {
 
-	protected static function build($args = []): string {
+	protected static function configure_form(array $args = []): object {
 		if (!$args['user_id']) {
-			return static::build_error_message(__('ID无效', 'wnd'));
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		$form = new Wnd_Form_WP();
@@ -30,8 +31,6 @@ class Wnd_Delete_User_Form extends Wnd_Module_Root {
 		$form->add_hidden('user_id', $args['user_id']);
 		$form->set_route('action', 'wnd_delete_user');
 		$form->set_submit_button(__('确认删除', 'wnd'));
-		$form->build();
-
-		return $form->html;
+		return $form;
 	}
 }

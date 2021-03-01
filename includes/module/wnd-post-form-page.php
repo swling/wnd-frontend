@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Form_Post;
 
 /**
@@ -8,9 +9,9 @@ use Wnd\View\Wnd_Form_Post;
  *
  *Page 编辑表单
  */
-class Wnd_Post_Form_Page extends Wnd_Module {
+class Wnd_Post_Form_Page extends Wnd_Module_Form {
 
-	protected static function build($args = []): string{
+	protected static function configure_form(array $args = []): object{
 		$defaults = [
 			'post_id'     => 0,
 			'post_parent' => 0,
@@ -21,7 +22,7 @@ class Wnd_Post_Form_Page extends Wnd_Module {
 
 		// 权限检测
 		if ($post_id and !current_user_can('edit_post', $post_id)) {
-			return static::build_error_message(__('权限错误', 'wnd'));
+			throw new Exception(__('权限错误', 'wnd'));
 		}
 
 		/**
@@ -62,8 +63,6 @@ class Wnd_Post_Form_Page extends Wnd_Module {
 
 		// 以当前函数名设置filter hook
 		$form->set_filter(__CLASS__);
-		$form->build();
-
-		return $form->html;
+		return $form;
 	}
 }

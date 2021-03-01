@@ -1,16 +1,16 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\View\Wnd_Filter;
+use Wnd\View\Wnd_Filter_Ajax;
 
 /**
  *@since 2019.02.18 封装用户财务中心
  */
-class Wnd_User_Finance_Panel extends Wnd_Module_User {
+class Wnd_User_Finance_Panel extends Wnd_Module_Filter {
 
-	protected static function build($args = []): string{
-		$user_id                = get_current_user_id();
-		$args['posts_per_page'] = $args['posts_per_page'] ?? get_option('posts_per_page');
+	protected function structure(): array{
+		$user_id        = get_current_user_id();
+		$posts_per_page = $this->args['posts_per_page'] ?? get_option('posts_per_page');
 
 		$html = '<div id="user-finance-panel">';
 		$html .= '<nav class="level is-mobile">';
@@ -49,17 +49,14 @@ class Wnd_User_Finance_Panel extends Wnd_Module_User {
 		}
 		$html .= '</div>';
 
-		$filter = new Wnd_Filter(wnd_doing_ajax());
+		$filter = new Wnd_Filter_Ajax();
+		$filter->add_before_html($html);
 		$filter->add_search_form();
 		$filter->add_post_type_filter(['order', 'recharge']);
 		$filter->add_post_status_filter(['any']);
-		$filter->add_query(['author' => get_current_user_id()]);
-		$filter->set_posts_template('wnd_list_table');
-		$filter->set_posts_per_page($args['posts_per_page']);
-		$filter->set_ajax_container('#admin-fin-panel');
+		$filter->add_query_vars(['author' => get_current_user_id()]);
+		$filter->set_posts_per_page($posts_per_page);
 		$filter->query();
-		$filter_html = $filter->get_tabs() . '<div id="admin-fin-panel">' . $filter->get_results() . '</div>';
-
-		return $html . $filter_html;
+		return $filter->get_filter();
 	}
 }

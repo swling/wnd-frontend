@@ -6,9 +6,9 @@ use Wnd\View\Wnd_Form_User;
 /**
  *@since 2019.07.23 用户设置邮箱表单
  */
-class Wnd_Bind_Phone_Form extends Wnd_Module_User {
+class Wnd_Bind_Phone_Form extends Wnd_Module_Form {
 
-	protected static function build(): string{
+	protected static function configure_form(): object{
 		$current_user       = wp_get_current_user();
 		$current_user_phone = wnd_get_user_phone($current_user->ID);
 
@@ -29,8 +29,6 @@ class Wnd_Bind_Phone_Form extends Wnd_Module_User {
 		$form->add_phone_verification('bind', wnd_get_config('sms_template_v'), false);
 		$form->set_route('action', 'wnd_bind_account');
 		$form->set_submit_button(__('保存', 'wnd'));
-		$form->build();
-
-		return $form->html;
+		return $form;
 	}
 }

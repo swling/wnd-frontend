@@ -51,10 +51,7 @@ class Wnd_Reg extends Wnd_Action {
 		$wp_user_meta_data = $this->request->get_wp_user_meta_data();
 		if (!empty($wp_user_meta_data)) {
 			foreach ($wp_user_meta_data as $key => $value) {
-				// 下拉菜单默认未选择时，值为 -1 。过滤
-				if ('-1' != $value) {
-					update_user_meta($user_id, $key, $value);
-				}
+				update_user_meta($user_id, $key, $value);
 			}
 			unset($key, $value);
 		}

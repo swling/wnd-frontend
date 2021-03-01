@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\View;
 
+use Exception;
+
 /**
  *Class for creating dynamic Bulma forms.
  *@since 2019.03
@@ -11,6 +13,10 @@ namespace Wnd\View;
  */
 class Wnd_Form {
 
+	protected $before_html = '';
+
+	protected $after_html = '';
+
 	protected $id;
 
 	protected $form_attr = [];
@@ -19,13 +25,17 @@ class Wnd_Form {
 
 	protected $is_title_centered = false;
 
+	protected $message = '';
+
+	protected $message_class = 'form-message';
+
 	protected $input_values = [];
 
 	protected $with_upload;
 
 	protected $submit_text = 'Submit';
 
-	protected $submit_class;
+	protected $submit_class = 'button';
 
 	protected $submit_disabled;
 
@@ -66,6 +76,7 @@ class Wnd_Form {
 		'icon_right'  => '',
 		'addon_left'  => '',
 		'addon_right' => '',
+		'help'        => ['text' => '', 'class' => ''],
 	];
 
 	/**
@@ -86,7 +97,22 @@ class Wnd_Form {
 
 	// 初始化构建
 	public function __construct() {
-		$this->id = uniqid();
+		$this->id = 'wnd-' . uniqid();
+		$this->add_form_attr('id', $this->id);
+	}
+
+	/**
+	 *表单字段之前 Html
+	 */
+	public function add_before_html($html) {
+		$this->before_html .= $html;
+	}
+
+	/**
+	 *表单字段之后 Html
+	 */
+	public function add_after_html($html) {
+		$this->after_html .= $html;
 	}
 
 	/**
@@ -95,6 +121,14 @@ class Wnd_Form {
 	public function set_form_title(string $form_title, bool $is_title_centered = false) {
 		$this->form_title        = $form_title;
 		$this->is_title_centered = $is_title_centered;
+	}
+
+	/**
+	 *设置表单提示信息
+	 */
+	public function set_message(string $message, $class = '') {
+		$this->message       = $message;
+		$this->message_class = $this->message_class . ' ' . $class;
 	}
 
 	/**
@@ -110,7 +144,7 @@ class Wnd_Form {
 	// Submit
 	public function set_submit_button(string $text, string $class = '', bool $disabled = false) {
 		$this->submit_text     = $text;
-		$this->submit_class    = $class;
+		$this->submit_class    = $this->submit_class . ' ' . $class;
 		$this->submit_disabled = $disabled;
 	}
 
@@ -118,6 +152,9 @@ class Wnd_Form {
 	public function set_action(string $action, string $method = 'POST') {
 		$this->method = $method;
 		$this->action = $action;
+
+		$this->add_form_attr('method', $this->method);
+		$this->add_form_attr('action', $this->action);
 	}
 
 	// 直接设置当前表单的组成数组（通常用于配合 filter 过滤）
@@ -131,6 +168,20 @@ class Wnd_Form {
 	 **/
 	public function add_form_attr(string $key, string $value) {
 		$this->form_attr[$key] = $value;
+	}
+
+	/**
+	 *@since 2021.02.18
+	 *添加任意自定义字段，主要用于自定义非标准字段
+	 */
+	public function add_field(array $args) {
+		$type = $args['type'] ?? '';
+		if (!$type) {
+			throw new Exception('Invalid type');
+		}
+
+		$args                 = array_merge(static::$defaults, $args);
+		$this->input_values[] = $args;
 	}
 
 	/**
@@ -243,7 +294,6 @@ class Wnd_Form {
 	// Image upload
 	public function add_image_upload(array $args) {
 		$defaults = [
-			'id'             => 'image-upload-' . $this->id,
 			'thumbnail'      => '',
 			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
 			'file_id'        => 0,
@@ -262,7 +312,6 @@ class Wnd_Form {
 	// File upload
 	public function add_file_upload(array $args) {
 		$defaults = [
-			'id'            => 'file-upload-' . $this->id,
 			'file_name'     => 'file name',
 			'file_id'       => 0,
 			'data'          => [],
@@ -291,24 +340,16 @@ class Wnd_Form {
 	 *@since 2019.03.06
 	 *表单构造函数
 	 **/
-	public function build() {
+	public function build(): string{
 		$this->build_form_header();
 		$this->build_input_fields();
 		$this->build_submit_button();
 		$this->build_form_footer();
+
+		return $this->html;
 	}
 
 	protected function build_form_header() {
-		$this->add_form_attr('id', $this->form_attr['id'] ?? $this->id);
-
-		if (!is_null($this->method)) {
-			$this->add_form_attr('method', $this->method);
-		}
-
-		if (!is_null($this->action)) {
-			$this->add_form_attr('action', $this->action);
-		}
-
 		if ($this->with_upload) {
 			$this->add_form_attr('enctype', 'multipart/form-data');
 		}
@@ -320,6 +361,8 @@ class Wnd_Form {
 			$html .= '<h3>' . $this->form_title . '</h3>';
 			$html .= '</div>';
 		}
+
+		$html .= '<div class="' . $this->message_class . '">' . $this->message . '</div>';
 
 		$this->html .= $html;
 	}
@@ -340,7 +383,9 @@ class Wnd_Form {
 			 *  - 执行字段构建方法
 			 */
 			$method = 'build_' . $input_value['type'];
-			$input_fields .= $this->$method($input_value, $input_key);
+			if (method_exists($this, $method)) {
+				$input_fields .= $this->$method($input_value, $input_key);
+			}
 		}
 		unset($input_value);
 
@@ -353,7 +398,7 @@ class Wnd_Form {
 		$html = '<div class="field">';
 		$html .= static::build_label($input_value);
 		$html .= '<div class="control">';
-		$html .= '<div class="select">';
+		$html .= '<div class="select' . static::get_class($input_value, true) . '">';
 		$html .= '<select' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
 		foreach ($input_value['options'] as $key => $value) {
 			if (is_array($input_value['selected'])) {
@@ -367,20 +412,23 @@ class Wnd_Form {
 		$html .= '</select>';
 		$html .= '</div>';
 		$html .= '</div>';
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 		return $html;
 	}
 
 	protected function build_radio(array $input_value, string $input_key): string{
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
+		$html .= '<div class="control">';
 		$html .= static::build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
-			$input_id = md5($key . $input_key);
-			$html .= '<input id="' . $input_id . '" value="' . $value . '"' . static::build_input_attr($input_value);
+			$html .= '<label class="radio">';
+			$html .= '<input value="' . $value . '"' . static::build_input_attr($input_value);
 			$html .= ($input_value['checked'] == $value) ? ' checked="checked">' : '>';
-
-			$html .= '<label for="' . $input_id . '" class="radio">' . $key . '</label>';
+			$html .= $key . '</label>';
 		}unset($key, $value);
+		$html .= '</div>';
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 
 		return $html;
@@ -388,18 +436,20 @@ class Wnd_Form {
 
 	protected function build_checkbox(array $input_value, string $input_key): string{
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
+		$html .= '<div class="control">';
 		$html .= static::build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
-			$input_id = md5($key . $input_key);
-			$html .= '<input id="' . $input_id . '" value="' . $value . '"' . static::build_input_attr($input_value);
+			$html .= '<label class="checkbox">';
+			$html .= '<input value="' . $value . '"' . static::build_input_attr($input_value);
 			if (is_array($input_value['checked'])) {
 				$html .= in_array($value, $input_value['checked']) ? ' checked="checked">' : '>';
 			} else {
 				$html .= ($input_value['checked'] == $value) ? ' checked="checked">' : '>';
 			}
-
-			$html .= '<label for="' . $input_id . '" class="checkbox">' . $key . '</label>';
+			$html .= $key . '</label>';
 		}unset($key, $value);
+		$html .= '</div>';
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 
 		return $html;
@@ -414,8 +464,9 @@ class Wnd_Form {
 		$has_addons = ($input_value['addon_left'] or $input_value['addon_right']) ? true : false;
 
 		if ($has_addons) {
-			$html = static::build_label($input_value);
+			$html = '<div class="field">';
 			$html .= '<div class="field has-addons">';
+			$html .= static::build_label($input_value);
 		} else {
 			$html = '<div class="field">';
 			$html .= static::build_label($input_value);
@@ -444,12 +495,14 @@ class Wnd_Form {
 			$html .= '<div class="control">' . $input_value['addon_right'] . '</div>';
 		}
 
+		$html .= $has_addons ? '</div>' : '';
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 		return $html;
 	}
 
 	protected function build_image_upload(array $input_value, string $input_key): string{
-		$id                        = $input_value['id'] . '-' . $input_key;
+		$id                        = ($input_value['id'] ?: $this->id) . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
 		$html = '<div id="' . $id . '" class="field' . static::get_class($input_value, true) . '">';
@@ -473,12 +526,13 @@ class Wnd_Form {
 			};
 		</script>';
 
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 		return $html;
 	}
 
 	protected function build_file_upload(array $input_value, string $input_key): string{
-		$id                        = $input_value['id'] . '-' . $input_key;
+		$id                        = ($input_value['id'] ?: $this->id) . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
 		$html = '<div id="' . $id . '" class="field' . static::get_class($input_value, true) . '">';
@@ -517,6 +571,7 @@ class Wnd_Form {
 		$html = '<div class="field">';
 		$html .= static::build_label($input_value);
 		$html .= '<textarea' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>' . $input_value['value'] . '</textarea>';
+		$html .= static::build_help($input_value);
 		$html .= '</div>';
 		return $html;
 	}
@@ -526,7 +581,7 @@ class Wnd_Form {
 			return;
 		}
 		$this->html .= '<div class="field is-grouped is-grouped-centered">';
-		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="button' . $this->get_submit_class(true) . '"' . ($this->submit_disabled ? ' disabled="disabled"' : '') . '>' . $this->submit_text . '</button>';
+		$this->html .= '<button type="submit" data-text="' . $this->submit_text . '" class="' . $this->get_submit_class() . '"' . ($this->submit_disabled ? ' disabled="disabled"' : '') . '>' . $this->submit_text . '</button>';
 		$this->html .= '</div>';
 	}
 
@@ -670,6 +725,27 @@ class Wnd_Form {
 	}
 
 	/**
+	 *@since 2021.02.03
+	 *构建 Help HTML
+	 *
+	 *@var string 	帮助提示信息
+	 *@var string 	$required
+	 */
+	protected static function build_help(array $input_value): string {
+		if (empty($input_value['help'])) {
+			return '';
+		}
+
+		if ($input_value['help']['class']) {
+			$class = 'help ' . $input_value['help']['class'];
+		} else {
+			$class = 'help';
+		}
+
+		return '<p class="' . $class . '">' . $input_value['help']['text'] . '</p>';
+	}
+
+	/**
 	 *辅助函数
 	 */
 	protected static function get_class(array $input_value, bool $space = false): string {
@@ -679,9 +755,9 @@ class Wnd_Form {
 		return '';
 	}
 
-	protected function get_submit_class(bool $space = false): string {
+	protected function get_submit_class(): string {
 		if ($this->submit_class) {
-			return $space ? ' ' . $this->submit_class : $this->submit_class;
+			return $this->submit_class;
 		}
 		return '';
 	}
@@ -697,5 +773,32 @@ class Wnd_Form {
 	// 获取当前表单的组成数据数组（通常用于配合 filter 过滤）
 	public function get_input_values(): array{
 		return $this->input_values;
+	}
+
+	/**
+	 *获取表单构造数组数据，可用于前端 JS 渲染
+	 */
+	public function get_structure(): array{
+		return [
+			'before_html' => $this->before_html,
+			'after_html'  => $this->after_html,
+			'attrs'       => $this->form_attr,
+			'title'       => [
+				'title' => $this->form_title,
+				'attrs' => ['class' => $this->is_title_centered ? 'has-text-centered' : ''],
+			],
+			'message'     => [
+				'message' => $this->message,
+				'attrs'   => ['class' => $this->message_class],
+			],
+			'fields'      => $this->get_input_values(),
+			'submit'      => [
+				'text'  => $this->submit_text,
+				'attrs' => [
+					'is_disabled' => $this->submit_disabled,
+					'class'       => $this->submit_class,
+				],
+			],
+		];
 	}
 }

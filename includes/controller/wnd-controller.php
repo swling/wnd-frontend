@@ -3,7 +3,7 @@ namespace Wnd\Controller;
 
 use Exception;
 use Wnd\Utility\Wnd_Singleton_Trait;
-use Wnd\View\Wnd_Filter;
+use Wnd\View\Wnd_Filter_Ajax;
 use Wnd\View\Wnd_Filter_User;
 
 /**
@@ -68,6 +68,13 @@ class Wnd_Controller {
 		'users'    => [
 			'methods'             => 'GET',
 			'callback'            => __CLASS__ . '::filter_users',
+			'permission_callback' => '__return_true',
+			'route_rule'          => false,
+		],
+		'comment'  =>
+		[
+			'methods'             => ['POST', 'GET'],
+			'callback'            => __CLASS__ . '::add_comment',
 			'permission_callback' => '__return_true',
 			'route_rule'          => false,
 		],
@@ -205,12 +212,13 @@ class Wnd_Controller {
 		 *@since 2019.10.01
 		 *为实现惰性加载，废弃函数支持，改用类
 		 */
-		if (!is_callable([$class, 'render'])) {
+		if (!is_callable([$class, 'get_structure'])) {
 			return ['status' => 0, 'msg' => __('无效的UI', 'wnd') . ':' . $class];
 		}
 
 		try {
-			return ['status' => 1, 'data' => $class::render()];
+			$module = new $class;
+			return ['status' => 1, 'data' => $module->get_structure()];
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
@@ -313,7 +321,7 @@ class Wnd_Controller {
 	 */
 	public static function filter_posts($request): array{
 		try {
-			$filter = new Wnd_Filter(true);
+			$filter = new Wnd_Filter_Ajax(true);
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
@@ -323,40 +331,7 @@ class Wnd_Controller {
 
 		return [
 			'status' => 1,
-			'data'   => [
-				'posts'             => $filter->get_posts(),
-
-				/**
-				 *@since 2019.08.10
-				 *当前post type的主分类筛选项 约定：post(category) / 自定义类型 （$post_type . '_cat'）
-				 *
-				 *动态插入主分类的情况，通常用在用于一些封装的用户面板：如果用户内容管理面板
-				 *常规筛选页面中，应通过add_taxonomy_filter方法添加
-				 */
-				'category_tabs'     => $filter->get_category_tabs(),
-				'sub_taxonomy_tabs' => $filter->get_sub_taxonomy_tabs(),
-				'related_tags_tabs' => $filter->get_related_tags_tabs(),
-				'pagination'        => $filter->get_pagination(),
-				'post_count'        => $filter->wp_query->post_count,
-
-				/**
-				 *当前post type支持的taxonomy
-				 *前端可据此修改页面行为
-				 */
-				'taxonomies'        => get_object_taxonomies($filter->wp_query->query_vars['post_type'], 'names'),
-
-				/**
-				 *@since 2019.08.10
-				 *当前post type的主分类taxonomy
-				 *约定：post(category) / 自定义类型 （$post_type . '_cat'）
-				 */
-				'category_taxonomy' => $filter->category_taxonomy,
-
-				/**
-				 *在debug模式下，返回当前WP_Query查询参数
-				 **/
-				'query_vars'        => WP_DEBUG ? $filter->wp_query->query_vars : '请开启Debug',
-			],
+			'data'   => $filter->get_results(),
 		];
 	}
 
@@ -378,10 +353,40 @@ class Wnd_Controller {
 
 		return [
 			'status' => 1,
-			'data'   => [
-				'users'      => $filter->get_users(),
-				'pagination' => $filter->get_pagination(),
-			],
+			'data'   => $filter->get_results(),
 		];
+	}
+
+	/**
+	 *写入评论
+	 */
+	public static function add_comment($request): array{
+		$comment = wp_handle_comment_submission(wp_unslash($request));
+		$user    = wp_get_current_user();
+		if (is_wp_error($comment)) {
+			return ['status' => 0, 'msg' => $comment->get_error_message()];
+		}
+
+		do_action('set_comment_cookies', $comment, $user);
+		$GLOBALS['comment'] = $comment;
+
+		/**
+		 *敬请留意：
+		 *此结构可能随着WordPress wp_list_comments()输出结构变化而失效
+		 */
+		$html = '<li class="' . implode(' ', get_comment_class()) . '">';
+		$html .= '<article class="comment-body">';
+		$html .= '<footer class="comment-meta">';
+		$html .= '<div class="comment-author vcard">';
+		$html .= get_avatar($comment, '56');
+		$html .= '<b class="fn">' . get_comment_author_link() . '</b>';
+		$html .= '</div>';
+		$html .= '<div class="comment-metadata">' . get_comment_date('', $comment) . ' ' . get_comment_time() . '</div>';
+		$html .= '</footer>';
+		$html .= '<div class="comment-content">' . get_comment_text() . '</div>';
+		$html .= '</article>';
+		$html .= '</li>';
+
+		return ['status' => 1, 'msg' => '提交成功', 'data' => $html];
 	}
 }

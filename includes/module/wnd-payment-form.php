@@ -12,9 +12,10 @@ use Wnd\View\Wnd_Form_WP;
  *在线支付订单表单
  *匿名支付订单默认启用人机验证
  */
-class Wnd_Payment_Form extends Wnd_Module {
+class Wnd_Payment_Form extends Wnd_Module_Form {
 
-	protected static function build($args = []): string{
+	// 配置表单
+	protected static function configure_form(array $args = []): Wnd_Form_WP{
 		/**
 		 *订单基本信息 + 产品属性等参数
 		 *
@@ -46,7 +47,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		$form = new Wnd_Form_WP(true, !$user_id);
 		$form->set_form_title($title, true);
 		if (!$user_id) {
-			$form->add_html(static::build_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd'), true));
+			$form->add_html(wnd_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd')));
 		}
 		$form->add_html($sku_info);
 		$form->add_html('<div class="has-text-centered field">');
@@ -69,7 +70,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		$form->add_checkbox(
 			[
 				'name'     => 'agreement',
-				'options'  => ['<i class="is-size-7">' . __('已阅读并同意交易协议及产品使用协议') . '</i>' => 1],
+				'options'  => [__('已阅读并同意交易协议及产品使用协议') => 1],
 				'checked'  => true,
 				'required' => 'required',
 			]
@@ -85,9 +86,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 		}
 
 		$form->set_submit_button(__('确定', 'wnd'));
-		$form->build();
-
-		return $form->html;
+		return $form;
 	}
 
 	/**
@@ -119,7 +118,7 @@ class Wnd_Payment_Form extends Wnd_Module {
 			$key = $sku_keys[$key] ?? $key;
 			$sku_info .= '[ ' . $key . ' : ' . $value . ' ]&nbsp;';
 		}
-		$sku_info = static::build_notification($sku_info);
+		$sku_info = wnd_notification($sku_info);
 
 		/**
 		 *构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息

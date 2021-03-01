@@ -6,9 +6,9 @@ namespace Wnd\Module;
  *Post 详情模块
  *
  */
-class Wnd_Post_Detail extends Wnd_Module {
+class Wnd_Post_Detail extends Wnd_Module_Html {
 
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		/**
 		 *订单基本信息 + 产品属性等参数
 		 *移除表单签名参数
@@ -23,7 +23,7 @@ class Wnd_Post_Detail extends Wnd_Module {
 		$post      = get_post($post_id);
 		$post_type = $post->post_type ?? '';
 		if (!$post_type) {
-			return static::build_notification(__('ID 无效', 'wnd'));
+			return wnd_notification(__('ID 无效', 'wnd'));
 		}
 
 		$class = __NAMESPACE__ . '\Wnd_Post_Detail_' . $post_type;
@@ -49,7 +49,7 @@ class Wnd_Post_Detail extends Wnd_Module {
 		}
 
 		if (wnd_get_post_price($post->ID)) {
-			return static::build_message(__('付费文章不支持预览', 'wnd'));
+			return wnd_message(__('付费文章不支持预览', 'wnd'));
 		}
 
 		// order recharge

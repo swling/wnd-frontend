@@ -1,18 +1,19 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Form_WP;
 
 /**
  *@since 2019.01.20
  *快速编辑文章状态表单
  */
-class Wnd_Post_Status_Form extends Wnd_Module_User {
+class Wnd_Post_Status_Form extends Wnd_Module_Form {
 
-	protected static function build($args = []): string{
+	protected static function configure_form(array $args = []): object{
 		$post = get_post($args['post_id']);
 		if (!$post) {
-			return __('ID无效', 'wnd');
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		switch ($post->post_status) {
@@ -92,8 +93,6 @@ class Wnd_Post_Status_Form extends Wnd_Module_User {
 		$form->set_route('action', 'wnd_update_post_status');
 		$form->add_form_attr('id', 'post-status');
 		$form->set_submit_button(__('提交', 'wnd'));
-		$form->build();
-
-		return $form->html;
+		return $form;
 	}
 }

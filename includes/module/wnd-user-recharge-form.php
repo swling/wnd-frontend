@@ -8,9 +8,9 @@ use Wnd\View\Wnd_Form_WP;
 /**
  *@since 2019.01.21 充值表单
  */
-class Wnd_User_Recharge_Form extends Wnd_Module_User {
+class Wnd_User_Recharge_Form extends Wnd_Module_Form {
 
-	protected static function build(): string{
+	protected static function configure_form(): object{
 		$form = new Wnd_Form_WP();
 		$form->add_html('<div class="has-text-centered field">');
 		$form->add_radio(
@@ -33,8 +33,6 @@ class Wnd_User_Recharge_Form extends Wnd_Module_User {
 		$form->add_html('</div>');
 		$form->set_route('action', 'wnd_do_pay');
 		$form->set_submit_button(__('充值', 'wnd'));
-		$form->build();
-
-		return $form->html;
+		return $form;
 	}
 }

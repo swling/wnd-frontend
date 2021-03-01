@@ -22,8 +22,6 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	protected $form_names = [];
 
-	protected $message = '';
-
 	protected $is_ajax_submit;
 
 	protected $enable_captcha;
@@ -31,6 +29,12 @@ class Wnd_Form_WP extends Wnd_Form {
 	protected $enable_verification_captcha;
 
 	protected $captcha_service;
+
+	/**
+	 *@since 09.25
+	 *是否已执行被插件特定构造
+	 */
+	protected $constructed = false;
 
 	public static $primary_color;
 
@@ -57,6 +61,13 @@ class Wnd_Form_WP extends Wnd_Form {
 		static::$second_color  = wnd_get_config('second_color');
 		$this->is_ajax_submit  = $is_ajax_submit;
 		$this->enable_captcha  = $this->captcha_service ? $enable_captcha : false;
+
+		/**
+		 *@since 2019.07.17 ajax表单
+		 */
+		if ($this->is_ajax_submit) {
+			$this->add_form_attr('onsubmit', 'return false');
+		}
 	}
 
 	/**
@@ -74,6 +85,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *@param $endpoint 	string 		Rest API 路由对应的后端处理本次提交的类名
 	 */
 	public function set_route(string $route, string $endpoint) {
+		$this->add_form_attr('route', $route);
 		if ('action' == $route) {
 			$this->add_hidden('_ajax_nonce', wp_create_nonce($endpoint));
 		}
@@ -82,10 +94,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->action = Wnd_Controller::get_route_url($route, $endpoint);
 
 		parent::set_action($this->action, $this->method);
-	}
-
-	public function set_message(string $message) {
-		$this->message = $message;
 	}
 
 	/**
@@ -126,6 +134,14 @@ class Wnd_Form_WP extends Wnd_Form {
 			$this->add_hidden($args['name'], '');
 		}
 		parent::add_checkbox($args);
+	}
+
+	// 富文本编辑器可能需要上传文件操作新增 nonce
+	public function add_editor(array $args) {
+		$this->add_form_attr('data-editor', '1');
+		$args['type']        = 'editor';
+		$args['_ajax_nonce'] = wp_create_nonce('wnd_upload_file_editor');
+		parent::add_field($args);
 	}
 
 	/**
@@ -266,14 +282,14 @@ class Wnd_Form_WP extends Wnd_Form {
 	// Image upload
 	public function add_image_upload(array $args) {
 		$defaults = [
-			'class'          => 'upload-field',
-			'label'          => 'Image upland',
-			'name'           => 'wnd_file',
-			'file_id'        => 0,
-			'thumbnail'      => apply_filters('wnd_default_thumbnail', WND_URL . 'static/images/default.jpg', $this),
-			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
-			'data'           => [],
-			'delete_button'  => true,
+			'class'             => 'upload-field',
+			'label'             => 'Image upland',
+			'name'              => 'wnd_file',
+			'file_id'           => 0,
+			'default_thumbnail' => apply_filters('wnd_default_thumbnail', WND_URL . 'static/images/default.jpg', $this),
+			'thumbnail_size'    => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
+			'data'              => [],
+			'delete_button'     => true,
 		];
 		$args = array_merge($defaults, $args);
 
@@ -299,21 +315,18 @@ class Wnd_Form_WP extends Wnd_Form {
 		extract($args['data']);
 
 		// 固定data
-		$args['data']['is_image']         = '1';
 		$args['data']['upload_nonce']     = wp_create_nonce('wnd_upload_file');
 		$args['data']['delete_nonce']     = wp_create_nonce('wnd_delete_file');
 		$args['data']['meta_key_nonce']   = wp_create_nonce($meta_key);
-		$args['data']['thumbnail']        = $args['thumbnail'];
 		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
-		$args['data']['method']           = $this->is_ajax_submit ? 'ajax' : $this->method;
 
 		// 根据 meta_key 查找目标文件
 		$file_id  = $args['file_id'] ?: static::get_attachment_id($meta_key, $post_parent, $user_id);
 		$file_url = static::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
 		$file_url = $file_url ? wnd_get_thumbnail_url($file_url, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']) : '';
 
-		$args['thumbnail'] = $file_url ?: $args['thumbnail'];
+		$args['thumbnail'] = $file_url ?: $args['default_thumbnail'];
 		$args['file_id']   = $file_id ?: 0;
 
 		parent::add_image_upload($args);
@@ -407,7 +420,28 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	// 构造表单，可设置WordPress filter 过滤表单的input_values
-	public function build() {
+	public function build(): string{
+		// 本插件特定的数据结构
+		$this->wnd_structure();
+
+		/**
+		 *构建表单
+		 */
+		return parent::build();
+	}
+
+	/**
+	 *@since 0.9.25
+	 *构建本插件特定的数据结构
+	 * - 本方法只应执行一次
+	 */
+	protected function wnd_structure() {
+		if ($this->constructed) {
+			return false;
+		} else {
+			$this->constructed = true;
+		}
+
 		/**
 		 *设置表单过滤filter
 		 **/
@@ -428,11 +462,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
 		 */
 		$this->build_sign_field();
-
-		/**
-		 *构建表单
-		 */
-		parent::build();
 	}
 
 	/**
@@ -457,21 +486,6 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// 根据表单字段生成wp nonce并加入表单字段
 		$this->add_hidden(Wnd_Request::$sign_name, Wnd_Request::sign($this->form_names));
-	}
-
-	/**
-	 *构建表单头部
-	 */
-	protected function build_form_header() {
-		/**
-		 *@since 2019.07.17 ajax表单
-		 */
-		if ($this->is_ajax_submit) {
-			$this->add_form_attr('onsubmit', 'return false');
-		}
-		parent::build_form_header();
-
-		$this->html .= '<div class="ajax-message">' . $this->message . '</div>';
 	}
 
 	/**
@@ -527,32 +541,46 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// 短信、邮件
 		$send_code_script = '
-		<script>
-			$(function() {
-				$(".send-code").click(function() {
-					wnd_send_code($(this));
-				});
-			});
-		</script>';
+<script>
+var sd_btn = document.querySelectorAll("button.send-code");
+if (sd_btn) {
+    sd_btn.forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            wnd_send_code(this);
+        });
+    });
+}
+</script>';
 		$send_code_script = $this->enable_verification_captcha ? $captcha->render_send_code_script() : $send_code_script;
 
 		// 表单提交
 		$submit_script = '
-		<script>
-			$(function() {
-				$("[type=\'submit\'].ajax-submit").off("click").on("click", function() {
-					var form_id = $(this).closest("form").attr("id");
-					if (form_id) {
-						wnd_ajax_submit(form_id);
-					} else {
-						wnd_alert_msg(wnd.msg.system_error, 1);
-					}
-				});
-			});
-		</script>';
+<script>
+var sub_btn = document.querySelectorAll("[type=submit]");
+if (sub_btn) {
+    sub_btn.forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            wnd_ajax_submit(this);
+        });
+    });
+}
+</script>';
 		$submit_script = $this->enable_captcha ? $captcha->render_submit_form_script() : $submit_script;
 
 		// 构造完整脚本
 		return $send_code_script . $submit_script;
+	}
+
+	/**
+	 *获取表单构造数组数据，可用于前端 JS 渲染
+	 *@since 0.9.25
+	 */
+	public function get_structure(): array{
+		// 本插件特定的数据结构
+		$this->wnd_structure();
+
+		$structure           = parent::get_structure();
+		$structure['script'] = $this->render_script();
+		return $structure;
 	}
 }

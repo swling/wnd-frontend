@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\Model\Wnd_SKU;
 use Wnd\View\Wnd_Form_WP;
 
@@ -9,12 +10,12 @@ use Wnd\View\Wnd_Form_WP;
  *
  *产品属性设置表单
  */
-class Wnd_SKU_Form extends Wnd_Module {
+class Wnd_SKU_Form extends Wnd_Module_Form {
 
-	protected static function build($args = []): string{
+	protected static function configure_form(array $args = []): object{
 		$post_id = $args['post_id'] ?? 0;
 		if (!$post_id) {
-			return static::build_error_message(__('ID无效', 'wnd'));
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		/**
@@ -83,7 +84,6 @@ class Wnd_SKU_Form extends Wnd_Module {
 		$form->set_route('action', 'wnd_set_sku');
 		$form->set_submit_button(__('保存 SKU', 'wnd'));
 
-		$form->build();
-		return $form->html;
+		return $form;
 	}
 }

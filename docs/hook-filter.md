@@ -45,16 +45,6 @@ apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_sta
 */
 apply_filters( 'wnd_allowed_post_types', $post_types );
 ```
-## 多重筛选
-```php
-/**
-*
-* @param $this->tabs 			筛选选项Tabs（HTML）
-* @param $this->wp_query_args 	当前多重筛选查询参数（注意：在执行get_tabs()方法之后新增的参数，将无法获取）
-*/
-apply_filters('wnd_filter_tabs', $this->tabs, $this->wp_query_args);
-```
-
 ## 文件上传
 ```php
 ###文件上传权限控制
@@ -260,27 +250,21 @@ apply_filters('wnd_sku_keys', $sku_keys, $post_type);
 apply_filters('wnd_menus_side_before', '');
 
 /**
- *@since 0.9.11
- *自定义用户中心页面菜单
- */
+*$menus = []; 菜单
+*是否在侧边栏，是否展开第一个子菜单
+*$args  = ['in_side' => false, 'expand'  => true]
+*/
 add_filter('wnd_menus', function ($menus, $args) {
-	$html = '<li>';
-	$html .= '<a>拓展菜单测试</a>';
-	
-	// 设置 display:none 表示默认收起
-	$html .= '<ul style="display:none">';
-	$html .= '<li class="wnd_user_posts_panel"><a href="#wnd_user_posts_panel">拓展子菜单</a></li>';
-	$html .= '</ul>';
-
-	$html .= '</li>';
-
-	// 此为【追加】菜单
-	return $menus . $html;
-
-	// 此为【替换】菜单
-	return $html;
-
-}, 12, 2);
+	// $menus = []; 清空已有菜单 否则为追加
+	$menus[] = [
+		'label' => '拓展菜单',
+		'expand'=> false, // 是否强制展开本菜单
+		'items' => [
+			['title' => '测试菜单', 'href' => wnd_get_ucenter_url() . '#wnd_profile_form'],
+		],
+	];
+	return $menus;
+});
 
 /**
 *@since 0.9.12
@@ -308,4 +292,16 @@ add_filter('wnd_user_page_default_module', function ($module_name) {
 add_filter('wnd_user_page', function ($html) {
 	return \Wnd\Module\Wnd_Bind_Phone_Form::render();
 }, 12, 1);
+```
+
+## 内容筛选
+过滤 Ajax 筛选 Posts 集。（常规筛选中此 Filter 无效，此时应通过设置 post 模板函数来实现自定义输出结果）
+```php
+return apply_filters('wnd_filter_posts', $posts);
+```
+
+## 用户筛选
+过滤 Ajax 筛选 User 集
+```php
+return apply_filters('wnd_filter_users', $users);
 ```

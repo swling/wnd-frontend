@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
+use Wnd\JsonGet\Wnd_Menus;
 use Wnd\Module\Wnd_User_Center;
 
 /**
@@ -15,9 +17,9 @@ use Wnd\Module\Wnd_User_Center;
  * - 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
  * - 默认为用户中心：注册、登录、账户管理，内容管理，财务管理等
  */
-class Wnd_User_Page extends Wnd_Module {
+class Wnd_User_Page extends Wnd_Module_Html {
 
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		$defaults = [
 			'module'    => '',
 			'action'    => '',
@@ -41,13 +43,17 @@ class Wnd_User_Page extends Wnd_Module {
 		}
 
 		$module = static::handle_module($args) ?: '';
-		$module = $module ? ('<div class="box">' . $module . '</div>') : '';
+		$module = $module ? ('<div id="ajax-module" class="content box">' . $module . '</div>') : '';
+
+		// 加载前端中心脚本
+		if (!$module) {
+			wp_enqueue_script('wnd-front-page', WND_URL . 'static/js/wnd-front-page.js', ['wnd-vue'], WND_VER);
+		}
 
 		get_header();
+		echo '<script>var wnd_menus_data = ' . json_encode(Wnd_Menus::get()) . ';</script>';
 		echo '<main id="user-page-container" class="column">';
-		echo '<div class="main">';
 		echo $module ?: static::build_user_page();
-		echo '</div>';
 		echo '</main>';
 		get_footer();
 
@@ -64,60 +70,54 @@ class Wnd_User_Page extends Wnd_Module {
 	 */
 	protected static function handle_module($args): string{
 		extract($args);
+		unset($args['module']);
+		unset($args['action']);
 
 		if ($module) {
-			$class = \Wnd\Controller\Wnd_Controller::parse_class($module, 'Module');
-			return $class::render();
+			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . json_encode($args) . ')</script>';
 		}
 
 		// 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
 		if ('submit' == $action) {
-			// 主题定义的表单
-			$class = '\Wndt\Module\\Wndt_Post_Form_' . $post_type;
-			if (class_exists($class)) {
-				return $class::render();
+			// 主题定义的表单优先，其次为插件表单
+			$module = 'Wndt_Post_Form_' . $post_type;
+			$class  = 'Wndt\\Module\\' . $module;
+			if (!class_exists($class)) {
+				$module = 'Wnd_Post_Form_' . $post_type;
+				$class  = 'Wnd\\Module\\' . $module;
+			} elseif (!class_exists($class)) {
+				throw new Exception($post_type . __('未定义表单', 'wnd'));
 			}
 
-			// 插件默认表单
-			$class = '\Wnd\Module\\Wnd_Post_Form_' . $post_type;
-			if (class_exists($class)) {
-				return $class::render();
-			}
-
-			return static::build_error_notification(__('Post Type 未定义表单', 'wnd'), true);
+			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . json_encode($args) . ');</script>';
 		}
 
 		// 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
 		if ('edit' == $action) {
 			$edit_post = $post_id ? get_post($post_id) : false;
 			if (!$edit_post) {
-				return static::build_error_message(__('ID 无效', 'wnd'));
+				throw new Exception(__('ID 无效', 'wnd'));
 			}
 
-			// 主题定义的表单
-			$class = '\Wndt\Module\\Wndt_Post_Form_' . $edit_post->post_type;
-			if (class_exists($class)) {
-				return $class::render(['post_id' => $post_id]);
+			$post_type = $edit_post->post_type;
+			$params    = json_encode([
+				'post_id'       => $post_id,
+				'attachment_id' => $post_id,
+				'post_parent'   => $edit_post->post_parent,
+				'is_free'       => 0,
+			]);
+
+			// 主题定义的表单优先，其次为插件表单
+			$module = 'Wndt_Post_Form_' . $post_type;
+			$class  = 'Wndt\\Module\\' . $module;
+			if (!class_exists($class)) {
+				$module = 'Wnd_Post_Form_' . $post_type;
+				$class  = 'Wnd\\Module\\' . $module;
+			} elseif (!class_exists($class)) {
+				throw new Exception($post_type . __('未定义表单', 'wnd'));
 			}
 
-			// 附件编辑表单
-			if ('attachment' == $edit_post->post_type) {
-				return \Wnd\Module\Wnd_Post_Form_Attachment::render(['attachment_id' => $post_id]);
-			}
-
-			// 插件默认表单
-			$class = '\Wnd\Module\\Wnd_Post_Form_' . $edit_post->post_type;
-			if (class_exists($class)) {
-				return $class::render(
-					[
-						'post_id'     => $post_id,
-						'post_parent' => $edit_post->post_parent,
-						'is_free'     => false,
-					]
-				);
-			}
-
-			return static::build_error_notification(__('Post Type 未定义表单', 'wnd'), true);
+			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . $params . ');</script>';
 		}
 
 		return '';
@@ -126,7 +126,7 @@ class Wnd_User_Page extends Wnd_Module {
 	// 常规用户面板
 	protected static function build_user_page(): string {
 		if (!is_user_logged_in()) {
-			$html = '<div id="user-page" class="columns">';
+			$html = '<div id="user-center" class="columns">';
 			$html .= '<div class="column"><div class="box">' . Wnd_User_Center::render() . '</div></div>';
 			$html .= '</div>';
 			return $html;
@@ -137,42 +137,18 @@ class Wnd_User_Page extends Wnd_Module {
 		 */
 		$user_page_default_module = apply_filters('wnd_user_page_default_module', 'wnd_user_overview');
 
-		$html = '<div id="user-page" class="columns">';
-		$html .= '<div class="column is-narrow is-hidden-mobile"><div class="box">' . Wnd_Menus::render() . '</div></div>';
-		$html .= '<div class="column"><div class="ajax-container box"></div></div>';
-		$html .= '</div>';
-		$html .= '
-<script type="text/javascript">
-	function user_center_hash() {
-		var hash = location.hash;
-		if (!hash) {
-			wnd_ajax_embed("#user-page .ajax-container", "' . $user_page_default_module . '");
-			return;
-		}
+		$html = '
+		<div id="user-center" class="columns">
+		<div class="column is-narrow is-hidden-mobile">
+		<div id="wnd-menus" class="box"><div id="app-menus"></div></div>
+		</div>
 
-		var element = hash.replace("#", "")
-		var a = $("li." + element +" a");
-
-		// 激活当前菜单
-		a.addClass("is-active");
-		// 移除其他同级菜单的激活状态
-		a.parent("li").siblings().find("a").removeClass("is-active");
-		// 展开当前菜单（子菜单链接适用）
-		a.parents("ul").slideDown("fast");
-		// 收起其他一级菜单的子菜单
-		a.parents("li").siblings().find("ul").slideUp("fast");
-
-		wnd_ajax_embed("#user-page .ajax-container", element);
-	}
-
-	// 用户中心Tabs
-	user_center_hash();
-	window.onhashchange = user_center_hash;
-</script>';
+		<div class="column"><div id="ajax-module" class="box"></div></div>
+		<script>wnd_render_menus("#app-menus", wnd_menus_data)</script>
+		</div>';
 
 		/**
 		 * 默认用户中心：注册、登录、账户管理，内容管理，财务管理等
-		 *
 		 */
 		return apply_filters('wnd_user_page', $html);
 	}

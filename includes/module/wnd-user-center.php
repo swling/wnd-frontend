@@ -7,9 +7,9 @@ namespace Wnd\Module;
  *do => register / login / reset_password, tab => string :profile / account, type => email / phone
  *@return $html .= el
  */
-class Wnd_User_Center extends Wnd_Module {
+class Wnd_User_Center extends Wnd_Module_Html {
 
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		$ajax_type         = $_GET['ajax_type'] ?? '';
 		$enable_sms        = (1 == wnd_get_config('enable_sms')) ? true : false;
 		$disable_email_reg = (1 == wnd_get_config('disable_email_reg')) ? true : false;
@@ -78,7 +78,7 @@ class Wnd_User_Center extends Wnd_Module {
 		if (!$is_user_logged_in) {
 			switch ($do) {
 			case 'register':
-				$html .= Wnd_Reg_Form::render($type);
+				$html .= Wnd_Reg_Form::render(['type' => $type]);
 				$html .= '<div class="has-text-centered mt-3">';
 				if (wnd_doing_ajax()) {
 					if ('email' == $type and $enable_sms) {

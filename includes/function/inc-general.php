@@ -46,7 +46,7 @@ function wnd_get_config($config_key) {
  */
 function wnd_get_ucenter_url($remove_language = false): string{
 	$ucenter_page_url = get_permalink(wnd_get_config('ucenter_page'));
-	return $remove_language ? remove_query_arg('lang', $ucenter_page_url) : $ucenter_page_url;
+	return $remove_language ? remove_query_arg(WND_LANG_KEY, $ucenter_page_url) : $ucenter_page_url;
 }
 
 /**
@@ -55,9 +55,13 @@ function wnd_get_ucenter_url($remove_language = false): string{
 function wnd_doing_ajax() {
 	if ('XMLHttpRequest' == ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? false)) {
 		return true;
-	} else {
-		return false;
 	}
+
+	if (wp_doing_ajax()) {
+		return true;
+	}
+
+	return false;
 }
 
 /**

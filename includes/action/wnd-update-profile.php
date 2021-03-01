@@ -38,10 +38,7 @@ class Wnd_Update_Profile extends Wnd_Action_User {
 
 		if (!empty($wp_user_meta_data)) {
 			foreach ($wp_user_meta_data as $key => $value) {
-				// 下拉菜单默认未选择时，值为 -1 。过滤
-				if ('-1' != $value) {
-					update_user_meta($this->user_id, $key, $value);
-				}
+				update_user_meta($this->user_id, $key, $value);
 			}
 			unset($key, $value);
 		}

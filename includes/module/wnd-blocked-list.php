@@ -8,7 +8,7 @@ use Wnd\Utility\Wnd_Defender;
  *列出对象缓存IP屏蔽信息
  *
  */
-class Wnd_Blocked_List extends Wnd_Module_Root {
+class Wnd_Blocked_List extends Wnd_Module_Html {
 
 	protected static function build(): string{
 		$defender = Wnd_Defender::get_instance(0, 0, 0);

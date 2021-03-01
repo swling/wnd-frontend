@@ -13,6 +13,10 @@ class Wnd_Term {
 	 *标签：返回[{$slug}=>{$name}]数组
 	 */
 	public static function get_post_terms($post_id, $taxonomy): array{
+		if (!$post_id) {
+			return [];
+		}
+
 		$current_terms      = get_the_terms($post_id, $taxonomy) ?: [];
 		$current_terms_data = [];
 		foreach ($current_terms as $current_term) {

@@ -8,9 +8,9 @@ use Wnd\Model\Wnd_SKU;
  *@since 0.9.0
  *获取订单详情（未完善信息）
  */
-class Wnd_Post_Detail_Order extends Wnd_Module {
+class Wnd_Post_Detail_Order extends Wnd_Module_Html {
 
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		/**
 		 *订单基本信息 + 产品属性等参数
 		 *移除表单签名参数
@@ -49,6 +49,6 @@ class Wnd_Post_Detail_Order extends Wnd_Module {
 			$sku_info .= '[ ' . $key . ' : ' . $value . ' ]&nbsp;';
 		}
 
-		return $orde_detail . static::build_notification($sku_info);
+		return $orde_detail . wnd_notification($sku_info);
 	}
 }

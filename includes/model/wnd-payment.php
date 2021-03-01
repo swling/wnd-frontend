@@ -292,9 +292,19 @@ function wnd_check_payment(response) {
 	}
 }
 // 关闭弹窗时，清除定时器
-$("body").on("click", "#modal .modal-background,#modal .modal-close", function() {
-	clearInterval(payment_checker);
-});
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("modal-close")) {
+        clearInterval(payment_checker);
+        return;
+    }
+
+    // DIV
+    let div = e.target.closest("div");
+    if (div.classList.contains("modal-background")) {
+        clearInterval(payment_checker);
+        return;
+    }
+ });
 </script>';
 	}
 }

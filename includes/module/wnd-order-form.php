@@ -10,14 +10,15 @@ use Wnd\View\Wnd_Form_WP;
  *
  *商品购买表单
  */
-class Wnd_Order_Form extends Wnd_Module {
+class Wnd_Order_Form extends Wnd_Module_Form {
 
-	protected static function build($args = []): string{
+	// 配置表单
+	protected static function configure_form(array $args = []): object{
 		$defaults = [
 			'post_id'          => 0,
 			'ajax'             => true,
 			'buy_text'         => __('立即购买'),
-			'add_cart_text'    => __('立即购买'),
+			'add_cart_text'    => __('加入购物车'),
 			'support_quantity' => true,
 		];
 		$args = wp_parse_args($args, $defaults);
@@ -65,8 +66,7 @@ class Wnd_Order_Form extends Wnd_Module {
 			);
 		}
 		$form->set_submit_button($buy_text);
-		$form->build();
-		return $form->html;
+		return $form;
 	}
 
 	/**

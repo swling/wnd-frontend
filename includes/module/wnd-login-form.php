@@ -1,17 +1,18 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Form_User;
 
 /**
  *@since 2019.01.13 登录框
  *@since 2019.03.10 Wnd_Form_WP
  */
-class Wnd_Login_Form extends Wnd_Module {
+class Wnd_Login_Form extends Wnd_Module_Form {
 
-	protected static function build(): string {
+	protected static function configure_form(): object {
 		if (is_user_logged_in()) {
-			return static::build_error_message(__('已登录', 'wnd'));
+			throw new Exception(__('已登录', 'wnd'));
 		}
 
 		/**
@@ -35,8 +36,6 @@ class Wnd_Login_Form extends Wnd_Module {
 		$form->set_route('action', 'wnd_login');
 		$form->set_submit_button(__('登录', 'wnd'));
 		$form->set_filter(__CLASS__);
-		$form->build();
-
-		return $form->html;
+		return $form;
 	}
 }

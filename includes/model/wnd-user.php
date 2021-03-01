@@ -104,6 +104,26 @@ class Wnd_User {
 		$user_id = $user ? $user->ID : $user_id;
 		wnd_update_user_meta($user_id, 'avatar_url', $avatar_url);
 		wp_set_auth_cookie($user_id, true);
+
+		/**
+		 *@since 0.8.61
+		 *
+		 *@param object WP_User
+		 */
+		do_action('wnd_login', $user);
+
+		/**
+		 * @see （本代码段从 wp_signon 复制而来)
+		 *
+		 * Fires after the user has successfully logged in.
+		 *
+		 * @since 1.5.0
+		 *
+		 * @param string  $user_login Username.
+		 * @param WP_User $user       WP_User object of the logged-in user.
+		 */
+		do_action('wp_login', $user->user_login, $user);
+
 		wp_redirect(static::get_reg_redirect_url());
 		exit();
 	}
@@ -115,10 +135,10 @@ class Wnd_User {
 	 */
 	public static function get_user_phone($user_id) {
 		if (!$user_id) {
-			return false;
+			return '';
 		}
 
-		return static::get_wnd_user($user_id)->phone ?? false;
+		return static::get_wnd_user($user_id)->phone ?? '';
 	}
 
 	/**
@@ -129,13 +149,13 @@ class Wnd_User {
 	 */
 	public static function get_user_openid($user_id, $type) {
 		if (!$user_id) {
-			return false;
+			return '';
 		}
 
 		// 统一小写类型
 		$type = strtolower($type);
 
-		return static::get_wnd_user($user_id)->$type ?? false;
+		return static::get_wnd_user($user_id)->$type ?? '';
 	}
 
 	/**

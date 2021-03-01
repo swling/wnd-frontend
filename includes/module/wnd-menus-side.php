@@ -1,8 +1,6 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\Module\Wnd_Menus;
-use Wnd\Module\Wnd_Module;
 use Wnd\Module\Wnd_Search_Form;
 
 /**
@@ -10,15 +8,15 @@ use Wnd\Module\Wnd_Search_Form;
  *
  *侧边栏菜单
  */
-class Wnd_Menus_Side extends Wnd_Module {
+class Wnd_Menus_Side extends Wnd_Module_Html {
 
-	protected static function build($args = []): string{
+	protected static function build(array $args = []): string{
 		$html = '<aside id="menus-side" style="position: fixed;top: 0;height: 100%;z-index: 32;background: #FFF;max-width:100%;min-width:200px;overflow:auto;">';
 
 		$html .= '<div class="columns is-marginless is-mobile">';
 		$html .= '<div class="column">' . Wnd_Search_Form::render() . '</div>';
 		$html .= '<div class="column is-narrow is-marginless is-paddingless">';
-		$html .= '<div class="navbar-burger wnd-side-burger navbar-brand is-active" style="display:block">';
+		$html .= '<div class="navbar-burger wnd-side-burger navbar-brand" style="display:block">';
 		$html .= '<span></span><span></span><span></span>';
 		$html .= '</div>';
 		$html .= '</div>';
@@ -34,7 +32,8 @@ class Wnd_Menus_Side extends Wnd_Module {
 		}
 
 		$html .= apply_filters('wnd_menus_side_before', '');
-		$html .= Wnd_Menus::render(['inside' => true, 'expand_default_menus' => false]);
+		$html .= '<div id="wnd-menus-side"></div>';
+		$html .= '<script>wnd_render_menus("#wnd-menus-side", false, true)</script>';
 		$html .= apply_filters('wnd_menus_side_after', '');
 
 		$html .= '</aside>';

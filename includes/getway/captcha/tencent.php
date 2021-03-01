@@ -64,103 +64,138 @@ class Tencent extends Wnd_Captcha {
 	 */
 	public function render_send_code_script(): string{
 		$script = '
-		<script>
-		function wnd_send_code_via_captcha(_this){
-			var captcha = new TencentCaptcha(
-				"' . $this->appid . '",
-				function(res) {
-					if(0 !== res.ret){
-						_this.removeClass("is-loading");
-						return false;
-					}
+<script>
+function wnd_send_code_via_captcha(e) {
+    let button = e.target;
+    let form = button.closest("form");
 
-					_this.data("' . static::$captcha_name . '", res.ticket);
-					_this.data("' . static::$captcha_nonce_name . '", res.randstr);
-					wnd_send_code(_this);
-				}
-			)
-			captcha.show();
-		}
+    let device = form.querySelector("input[name=\'_user_user_email\']") || form.querySelector("input[name=\'phone\']");
+    let device_value = device.value || "";
+    if (!device_value) {
+		device.classList.add("is-danger");
+        return false;
+    }
 
-		// 绑定点击事件
-		$(function() {
-			$(".send-code").off("click").on("click", function() {
-				var _this = $(this);
-				var form_id = _this.closest("form").attr("id");
-				var email = _this.closest(".validate-field-wrap").find("input[name=\'_user_user_email\']").val();
-				var phone = _this.closest(".validate-field-wrap").find("input[name=\'phone\']").val();
-				if (!email && !phone) {
-					wnd_ajax_msg(wnd.msg.required, "is-warning", "#" + form_id);
-					return false;
-				}
+    button.classList.add("is-loading");
 
-				_this.addClass("is-loading");
-				if (typeof TencentCaptcha == "undefined") {
-					$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
-						wnd_send_code_via_captcha(_this);
-					});
-				}else{
-					wnd_send_code_via_captcha(_this);
-				}
-			});
-		});
-		</script>';
+	// 已设置 Captcha：可能为修改后重复请求
+	if(button.dataset.' . static::$captcha_name . '){
+		wnd_send_code(button);
+		return;
+	}
+
+    if (typeof TencentCaptcha == "undefined") {
+        wnd_load_script("https://ssl.captcha.qq.com/TCaptcha.js", function() {
+            captcha_send(button);
+        });
+    } else {
+        captcha_send(button);
+    }
+
+     function captcha_send(){
+        let captcha = new TencentCaptcha(
+            "' . $this->appid . '",
+            function(res) {
+                if (0 !== res.ret) {
+                    button.classList.remove("is-loading");
+                    return false;
+                }
+
+                button.dataset.' . static::$captcha_name . ' = res.ticket;
+                button.dataset.' . static::$captcha_nonce_name . ' = res.randstr;
+                wnd_send_code(button, "' . static::$captcha_name . '");
+            }
+        );
+        captcha.show();
+    }
+}
+
+// 绑定点击事件
+var sd_btn = document.querySelectorAll("button.send-code");
+if (sd_btn) {
+    sd_btn.forEach(function(btn) {
+        btn.addEventListener("click", function(e) {
+            wnd_send_code_via_captcha(e);
+        });
+    });
+}
+</script>';
 		return $script;
 	}
 
 	/**
 	 *表单提交人机验证
 	 *@since 0.8.64
-	 *
-	 *@since 0.8.73
-	 *必须指定 form[captcha='1'] 选择器，否则页面请求一次后JavaScript已在当前页面生效，会影响其他表单
+	 *JavaScript 函数 [wnd_submit_via_captcha] 将会在前端渲染中被引用，因此函数名称及传参必须保持一致
 	 */
 	public function render_submit_form_script(): string{
 		$script = '
-		<script>
-		function wnd_submit_form_via_captcha(_this){
-			var form_id = _this.closest("form").attr("id");
-			var ajax_submit = (-1 != _this.prop("class").indexOf("ajax-submit"));
+<script>
+function wnd_submit_via_captcha(e, callback = false) {
+	let button = e.target;
+    let form = button.closest("form");
+    let input =  form.querySelector("[name=\'' . static::$captcha_name . '\']");
+    let input_nonce =  form.querySelector("[name=\'' . static::$captcha_nonce_name . '\']");
 
-			var captcha = new TencentCaptcha(
-				"' . $this->appid . '",
-				function(res) {
-					if(0 !== res.ret){
-						_this.removeClass("is-loading");
-						return false;
-					}
+    button.classList.add("is-loading");
 
-					$("#" + form_id + " [name=\'' . static::$captcha_name . '\']").val(res.ticket);
-					$("#" + form_id + " [name=\'' . static::$captcha_nonce_name . '\']").val(res.randstr);
+    // 已设置 captcha 可能为前端表单校验导致的修改再次提交（表单完成提交后，无论后端校验如何都应清空 captcha）
+    if(input.value){
+		captcha_callback();
+        return;
+    }
 
-					if (ajax_submit){
-						wnd_ajax_submit(form_id);
-					} else {
-						$("#" + form_id).submit();
-					}
-				}
-			);
+    if (typeof TencentCaptcha == "undefined") {
+        wnd_load_script("https://ssl.captcha.qq.com/TCaptcha.js", function() {
+            captcha_submit();
+        });
+    } else {
+        captcha_submit();
+    }
 
-			captcha.show();
-		}
+    function captcha_submit(){
+        let captcha = new TencentCaptcha(
+            "' . $this->appid . '",
+            function(res) {
+                if (0 !== res.ret) {
+                    button.classList.remove("is-loading");
+                    return false;
+                }
 
-		// 绑定点击事件
-		$(function() {
-			$("form [type=\'submit\'].captcha, form#commentform [type=\'submit\']").off("click").on("click", function() {
-				var _this = $(this);
-				_this.addClass("is-loading");
-				if ("undefined" == typeof TencentCaptcha) {
-					$.getScript("https://ssl.captcha.qq.com/TCaptcha.js", function() {
-						wnd_submit_form_via_captcha(_this);
-					});
-				}else{
-					wnd_submit_form_via_captcha(_this);
-				}
+				// 设置表单值
+        		input.value = res.ticket;
+                input_nonce.value = res.randstr;
+				// 设置事件触发 VUE 数据同步
+				input.dispatchEvent(new Event("input"));
+				input_nonce.dispatchEvent(new Event("input"));
 
-				return false;
-			});
-		});
-		</script>';
+				captcha_callback();
+            }
+        );
+        captcha.show();
+    }
+
+     // 设置 captcha 后执行回调函数或再次点击按钮，再次点击按钮应做条件判断以免死循环
+    function captcha_callback(){
+        if (callback) {
+            window[callback](button, input);
+        }else{
+            button.click();
+        }
+    }
+}
+
+// 非 Vue 表单绑定 Submit 点击事件
+var sub_btn = document.querySelectorAll("[type=submit]");
+if (sub_btn) {
+    sub_btn.forEach(function(btn) {
+        btn.addEventListener("click", function(e) {
+            wnd_submit_via_captcha(e, "wnd_ajax_submit");
+			e.preventDefault();
+        });
+    });
+}
+</script>';
 		return $script;
 	}
 }

@@ -7,7 +7,7 @@ namespace Wnd\Module;
  *搜索框
  *
  */
-class Wnd_Search_Form extends Wnd_Module {
+class Wnd_Search_Form extends Wnd_Module_Html {
 
 	protected static function build(): string{
 		// 色调
@@ -27,7 +27,7 @@ class Wnd_Search_Form extends Wnd_Module {
 		$html .= '</p>';
 		$html .= '<p class="control is-expanded">';
 		$html .= '<input class="input" type="text" name="s" placeholder="' . __('关键词', 'wnd') . '" required="required">';
-		$html .= '<input type="hidden" name="lang" value="' . ($_GET['lang'] ?? '') . '">';
+		$html .= '<input type="hidden" name="lang" value="' . ($_GET[WND_LANG_KEY] ?? '') . '">';
 		$html .= '</p>';
 		$html .= '<p class="control">';
 		$html .= '<input type="submit" class="button is-' . $primary_color . '" value="' . __('搜索', 'wnd') . '" />';

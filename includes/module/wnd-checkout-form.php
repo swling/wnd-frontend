@@ -6,9 +6,10 @@ namespace Wnd\Module;
  *
  *购物车结算表单
  */
-class Wnd_Checkout_Form extends Wnd_Module {
+class Wnd_Checkout_Form extends Wnd_Module_Form {
 
-	protected static function build($args = []): string {
-
+	protected static function configure_form(): object{
+		$form = new \stdClass();
+		return $form;
 	}
 }

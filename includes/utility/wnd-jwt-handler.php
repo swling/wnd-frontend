@@ -21,7 +21,7 @@ abstract class Wnd_JWT_Handler {
 
 	public function __construct() {
 		$this->domain = parse_url(home_url())['host'];
-		$this->exp    = time() + 3600 * 30;
+		$this->exp    = time() + 3600 * 24 * 90;
 
 		add_action('wp_login', [$this, 'handle_login'], 10, 2);
 		add_action('init', [$this, 'set_current_user'], 10);
@@ -63,21 +63,14 @@ abstract class Wnd_JWT_Handler {
 	 *处理用户登录
 	 */
 	public function set_current_user() {
-		if (is_user_logged_in()) {
-			return;
-		}
-
+		// 未能获取到 Token 保持现有账户状态
 		$this->verified_user_id = $this->verify_client_token();
 		if (-1 === $this->verified_user_id) {
 			return;
 		}
 
-		if (!$this->verified_user_id) {
-			return;
-		}
-
+		// 根据 Token 设置当前账户 ID （过期为 0）
 		wp_set_current_user($this->verified_user_id);
-		wp_set_auth_cookie($this->verified_user_id, true);
 	}
 
 	/**

@@ -13,11 +13,11 @@ use Wnd\Model\Wnd_Term;
  */
 class Wnd_Form_Post extends Wnd_Form_WP {
 
-	protected $post_id;
+	protected $post_id = 0;
 
-	protected $post_type;
+	protected $post_type = 'post';
 
-	protected $post_parent;
+	protected $post_parent = 0;
 
 	protected $post;
 
@@ -70,10 +70,30 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		parent::__construct(true, $enable_captcha);
 
 		// 初始化属性
-		$this->post_parent      = 0;
 		$this->thumbnail_width  = 200;
 		$this->thumbnail_height = 200;
 
+		// 初始化 Post Data
+		$this->setup_postdata($post_type, $post_id);
+
+		// 文章表单固有字段
+		if (!$input_fields_only) {
+			$this->add_hidden('_post_ID', $this->post_id);
+			$this->add_hidden('_post_post_type', $this->post_type);
+			$this->set_route('action', 'wnd_insert_post');
+		}
+
+		// revision
+		$revision_id = Wnd_Post::get_revision_id($post_id);
+		if ($revision_id) {
+			$this->set_message(wnd_notification('<a href="' . get_edit_post_link($revision_id) . '">' . __('编辑版本', 'wnd') . '</a>', 'is-danger'));
+		}
+	}
+
+	/**
+	 *初始化 Post 数据
+	 */
+	protected function setup_postdata($post_type, $post_id) {
 		/**
 		 *@since 2019.12.16 若传参false，表示表单不需要创建草稿
 		 *用于不需要文件上传的表单以降低数据库操作
@@ -100,6 +120,12 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->post_id = $this->post->ID;
 
 		/**
+		 *@since 0.9.25
+		 *将post id 写入表单自定义属性，供前端渲染使用
+		 */
+		$this->add_form_attr('data-post-id', $this->post_id);
+
+		/**
 		 *文章类型：
 		 *若指定了id，则获取对应id的post type
 		 *若无则外部传入参数
@@ -113,19 +139,6 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		 */
 		$this->taxonomies    = get_object_taxonomies($this->post_type, 'names');
 		$this->current_terms = $this->taxonomies ? $this->get_current_terms() : [];
-
-		// 文章表单固有字段
-		if (!$input_fields_only) {
-			$this->add_hidden('_post_ID', $this->post_id);
-			$this->add_hidden('_post_post_type', $this->post_type);
-			$this->set_route('action', 'wnd_insert_post');
-		}
-
-		// revision
-		$revision_id = Wnd_Post::get_revision_id($post_id);
-		if ($revision_id) {
-			$this->set_message(wnd_notification('<a href="' . get_edit_post_link($revision_id) . '">' . __('编辑版本', 'wnd') . '</a>', 'is-danger'));
-		}
 	}
 
 	/**
@@ -164,7 +177,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	// Term 分类单选下拉：本方法不支持复选
-	public function add_post_term_select($args_or_taxonomy, $label = '', $required = true, $dynamic_sub = false) {
+	public function add_post_term_select($args_or_taxonomy, $label = '', $required = true) {
 		$taxonomy        = is_array($args_or_taxonomy) ? $args_or_taxonomy['taxonomy'] : $args_or_taxonomy;
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
@@ -173,7 +186,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 		// 获取taxonomy下的 term 键值对
 		$option_data = Wnd_Term::get_terms_data($args_or_taxonomy);
-		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => -1], $option_data);
+		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => ''], $option_data);
 
 		// 新增表单字段
 		$this->add_select(
@@ -181,9 +194,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'name'     => '_term_' . $taxonomy . '[]',
 				'options'  => $option_data,
 				'required' => $required,
-				'selected' => $this->current_terms[$taxonomy], //default checked value
+				'selected' => reset($this->current_terms[$taxonomy]) ?: '', //default checked value
 				'label'    => $label,
-				'class'    => $taxonomy . ($dynamic_sub ? ' dynamic-sub' : false),
+				'class'    => $taxonomy,
 				'data'     => ['child_level' => 0],
 			]
 		);
@@ -207,7 +220,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}unset($current_term);
 
 		// 根据已选择的一级 term 获取对应层级的子类 ids 并构建下拉数组对
-		$option_data         = ['- ' . $tips . ' -' => -1];
+		$option_data         = ['- ' . $tips . ' -' => ''];
 		$this_level_term_ids = Wnd_Term::get_term_children_by_level($top_level_term_id, $taxonomy, $child_level);
 		foreach ($this_level_term_ids as $term_id) {
 			$term                     = get_term($term_id);
@@ -221,7 +234,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'options'  => $option_data,
 				'required' => $required,
 				'disabled' => count($option_data) <= 1, // 当可选项小于等于1，表明当前条件下子类不可用，设置disabled属性
-				'selected' => $this->current_terms[$taxonomy], //default checked value
+				'selected' => reset($this->current_terms[$taxonomy]), //default checked value
 				'label'    => $label,
 				'class'    => 'dynamic-sub ' . 'dynamic-sub-' . $taxonomy . ' ' . $taxonomy . '-child-' . $child_level,
 				'data'     => ['child_level' => $child_level, 'tips' => $tips],
@@ -247,7 +260,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			[
 				'name'     => '_term_' . $taxonomy . '[]',
 				'options'  => $option_data,
-				'checked'  => $this->current_terms[$taxonomy],
+				'checked'  => array_values($this->current_terms[$taxonomy]),
 				'label'    => $label,
 				'class'    => $taxonomy,
 				'required' => false,
@@ -284,7 +297,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	/**
 	 *自定义标签编辑器
 	 *@since 2020.05.12
-	 *@link https://github.com/swling/tags-input
+	 *@since 0.9.25 以 Vue 重构 该字段不再支持常规 php 渲染
 	 */
 	public function add_post_tags($taxonomy, $label = '', $required = false) {
 		$taxonomy_object = get_taxonomy($taxonomy);
@@ -292,44 +305,16 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			return;
 		}
 
-		// label
-		$label = $label ?: $taxonomy_object->labels->name;
-
-		// exists tags
-		$terms     = $this->current_terms[$taxonomy] ?: [];
-		$term_list = '';
-		foreach ($terms as $term) {
-			$term_list .= '<span class="tag is-medium is-light is-danger">' . $term . '<span class="delete"></span></span>';
-
-		}unset($term);
-
-		// input attr
-		$attr = 'name="_term_' . $taxonomy . '"';
-		$attr .= $required ? ' required="required"' : '';
-
-		// load the script and style
-		$input = '';
-		$input .= '<link rel="stylesheet" href="' . WND_URL . 'static/css/tags.min.css?ver=' . WND_VER . '" type="text/css" media="all" />';
-		$input .= '<script>$.ajaxSetup({cache: true});$.getScript("' . WND_URL . 'static/js/tags.min.js?ver=' . WND_VER . '");</script>';
-
-		// build tags input html
-		$input .= '<div class="field">';
-		$input .= '<label class="label">' . $label . '</label>';
-		$input .= '<div class="tags-input columns is-marginless">';
-		$input .= '<div class="column is-marginless is-paddingless is-narrow"><span class="data">' . $term_list . '</span></div>';
-		$input .= '<div class="autocomplete column is-marginless">';
-		$input .= '<input type="text" data-taxonomy="' . $taxonomy . '" />';
-		$input .= '<input type="hidden" ' . $attr . ' />';
-		$input .= '<ul class="autocomplete-items"></ul>';
-		$input .= '</div>';
-		$input .= '</div>';
-		$input .= '</div>';
-
-		// add
-		$this->add_html($input);
-
-		// 采用自定义HTML方式添加的表单字段，需要补充input name以通过form nonce校验
-		$this->add_input_name('_term_' . $taxonomy);
+		$args = [
+			'type'        => 'tag_input',
+			'tags'        => array_values($this->current_terms[$taxonomy]) ?: [],
+			'label'       => $label ?: $taxonomy_object->labels->name,
+			'name'        => '_term_' . $taxonomy,
+			'taxonomy'    => $taxonomy,
+			'required'    => $required,
+			'suggestions' => [],
+		];
+		$this->add_field($args);
 	}
 
 	/**
@@ -341,47 +326,29 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_post_image_upload('_thumbnail_id', $save_width, $save_height, $label);
 	}
 
+	/**
+	 *正文编辑器
+	 */
 	public function add_post_content($rich_media_editor = true, $placeholder = '详情', $required = false) {
-		/**
-		 *@since 2019.3.11 调用外部页面变量，后续更改为当前编辑的post，否则，wp_editor上传的文件将归属到页面，而非当前编辑的文章
-		 */
-		global $post;
-		$post = $this->post;
-
-		/**
-		 *@since 2019.03.11无法直接通过方法创建 wp_editor
-		 *需要提前在静态页面中创建一个 #hidden-wp-editor 包裹下的 隐藏wp_editor
-		 *然后通过js提取HTML的方式实现在指定位置嵌入
-		 */
-		if (!wnd_doing_ajax() and $rich_media_editor and $this->post_id) {
-
-			/**
-			 *@since 2019.05.09
-			 * 通过html方式直接创建的字段需要在表单input values 数据中新增一个同名names，否则无法通过nonce校验
-			 */
-			$this->add_input_name('_post_post_content');
-
-			echo '<div id="hidden-wp-editor" style="display: none;">';
-			if ($post) {
-				wp_editor($post->post_content, '_post_post_content', 'media_buttons=1');
-			} else {
-				wp_editor('', '_post_post_content', 'media_buttons=0');
-			}
-			echo '</div>';
-
+		if ($rich_media_editor) {
+			$this->add_editor(
+				[
+					'name'        => '_post_post_content',
+					'value'       => $this->post->post_content ?? '',
+					'placeholder' => $placeholder,
+					'required'    => $required,
+				]
+			);
 		} else {
 			$this->add_textarea(
 				[
 					'name'        => '_post_post_content',
-					'value'       => $post->post_content ?? '',
+					'value'       => $this->post->post_content ?? '',
 					'placeholder' => $placeholder,
 					'required'    => $required,
 				]
 			);
 		}
-
-		$this->add_html('<div id="wnd-wp-editor" class="field"></div>');
-		$this->add_html('<script type="text/javascript">var wp_editor = $("#hidden-wp-editor").html();$("#hidden-wp-editor").remove();$("#wnd-wp-editor").html(wp_editor);</script>');
 	}
 
 	/**
@@ -389,7 +356,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 **/
 	public function add_post_meta($meta_key, $label = '', $placeholder = '', $required = false) {
 		$name  = '_meta_' . $meta_key;
-		$value = wnd_get_post_meta($this->post_id, $meta_key);
+		$value = wnd_get_post_meta($this->post_id, $meta_key) ?: '';
 		$this->add_text(
 			[
 				'name'        => $name,
@@ -406,7 +373,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 **/
 	public function add_wp_post_meta($meta_key, $label = '', $placeholder = '', $required = false) {
 		$name  = '_wpmeta_' . $meta_key;
-		$value = get_post_meta($this->post_id, $meta_key, true);
+		$value = get_post_meta($this->post_id, $meta_key, true) ?: '';
 		$this->add_text(
 			[
 				'name'        => $name,
@@ -457,7 +424,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_number(
 			[
 				'name'        => '_wpmeta_price',
-				'value'       => get_post_meta($this->post_id, 'price', true),
+				'value'       => get_post_meta($this->post_id, 'price', true) ?: '',
 				'label'       => $label,
 				'icon_left'   => '<i class="fas fa-yen-sign"></i>',
 				'placeholder' => $placeholder,
