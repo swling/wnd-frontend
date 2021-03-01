@@ -36,6 +36,7 @@ declare const _default: {
                         恢复: string;
                         撤销: string;
                         全屏: string;
+                        取消全屏: string;
                         待办事项: string;
                     };
                     dropListMenu: {
@@ -176,6 +177,7 @@ declare const _default: {
                         恢复: string;
                         撤销: string;
                         全屏: string;
+                        取消全屏: string;
                         待办事项: string;
                     };
                     dropListMenu: {

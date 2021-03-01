@@ -12,7 +12,6 @@ class Wnd_Profile_Form extends Wnd_Module_Form {
 	protected static function configure_form(): object{
 		$form = new Wnd_Form_User();
 		// profile表单可能有较为复杂的编辑界面，阻止回车提交
-		$form->add_form_attr('onsubmit', 'return false');
 		$form->add_form_attr('onkeydown', 'if(event.keyCode==13){return false;}');
 
 		/*头像上传*/
