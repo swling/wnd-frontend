@@ -514,8 +514,10 @@ function wnd_ajax_submit(button, captcha_input = false) {
             params: params,
         })
         .then(function(response) {
-            form_info = handle_response(response.data, route, form.parentNode);
-            wnd_form_msg(form, form_info.msg, form_info.msg_class);
+            form_info = wnd_handle_response(response.data, route, form.parentNode);
+            if (form_info.msg) {
+                wnd_form_msg(form, form_info.msg, form_info.msg_class);
+            }
             if (![3, 4, 6].includes(response.data.status)) {
                 button.classList.remove('is-loading');
             }
@@ -543,7 +545,7 @@ function wnd_form_msg(form, msg, msg_class) {
 }
 
 // 统一处理表单响应
-function handle_response(response, route, parent) {
+function wnd_handle_response(response, route, parent) {
     let form_info = {
         'msg': '',
         'msg_class': ''
@@ -555,11 +557,13 @@ function handle_response(response, route, parent) {
      */
     if ('module' == route) {
         if (response.status >= 1) {
+            wnd_alert_modal(loading_el, false);
             if ('form' == response.data.type) {
-                wnd_alert_modal('<div id="vue-app"></div>');
-                wnd_render_form('#vue-app', response.data.structure);
+                wnd_render_form('#modal .modal-entry', response.data.structure, 'box');
+            } else if ('filter' == response.data.type) {
+                wnd_render_filter('#modal .modal-entry', response.data.structure, 'box');
             } else {
-                wnd_alert_modal(response.data);
+                wnd_alert_modal(response.data.structure);
             }
         } else {
             wnd_alert_modal(response.msg);
