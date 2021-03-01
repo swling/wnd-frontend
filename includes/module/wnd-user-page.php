@@ -44,12 +44,6 @@ class Wnd_User_Page extends Wnd_Module_Html {
 
 		$module = static::handle_module($args) ?: '';
 		$module = $module ? ('<div id="ajax-module" class="content box">' . $module . '</div>') : '';
-
-		// 加载前端中心脚本
-		if (!$module) {
-			wp_enqueue_script('wnd-front-page', WND_URL . 'static/js/wnd-front-page.js', ['wnd-vue'], WND_VER);
-		}
-
 		get_header();
 		echo '<script>var wnd_menus_data = ' . json_encode(Wnd_Menus::get()) . ';</script>';
 		echo '<main id="user-page-container" class="column">';
@@ -136,16 +130,34 @@ class Wnd_User_Page extends Wnd_Module_Html {
 		 *登录用户用户中心默认模块
 		 */
 		$user_page_default_module = apply_filters('wnd_user_page_default_module', 'wnd_user_overview');
-
-		$html = '
+		$html                     = '
 		<div id="user-center" class="columns">
 		<div class="column is-narrow is-hidden-mobile">
 		<div id="wnd-menus" class="box"><div id="app-menus"></div></div>
 		</div>
 
 		<div class="column"><div id="ajax-module" class="box"></div></div>
-		<script>wnd_render_menus("#app-menus", wnd_menus_data)</script>
 		</div>';
+
+		$html .= '
+<script type="text/javascript">
+	wnd_render_menus("#app-menus", wnd_menus_data);
+
+	function user_center_hash() {
+		var hash = location.hash;
+		if (!hash) {
+			wnd_ajax_embed("#ajax-module", "' . $user_page_default_module . '");
+			return;
+		}
+
+		var module = hash.replace("#", "");
+		wnd_ajax_embed("#ajax-module", module);
+	}
+
+	// 用户中心Tabs
+	user_center_hash();
+	window.onhashchange = user_center_hash;
+</script>';
 
 		/**
 		 * 默认用户中心：注册、登录、账户管理，内容管理，财务管理等
