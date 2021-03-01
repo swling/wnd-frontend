@@ -193,8 +193,8 @@ class Wnd_Filter_User {
 			return __('未执行WP_User_Query', 'wnd');
 		}
 
-		$this->users = $this->wp_user_query->get_results();
-		foreach ($this->users as $user) {
+		$users = $this->wp_user_query->get_results();
+		foreach ($users as $user) {
 			$user->link    = get_author_posts_url($user->ID);
 			$this->users[] = $user;
 		}
