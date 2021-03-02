@@ -54,7 +54,9 @@ class Wnd_language {
 	 *@since 2020.01.14
 	 */
 	public static function filter_locale($locale) {
-		return ($_REQUEST[static::$request_key] ?? false) ?: $locale;
+		$locale = ($_REQUEST[static::$request_key] ?? false) ?: $locale;
+		$locale = ('en' == $locale) ? 'en_US' : $locale;
+		return $locale;
 	}
 
 	/**
