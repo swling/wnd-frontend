@@ -745,7 +745,7 @@ class Wnd_Form {
 		 * 同步设置 Class
 		 */
 		$class = $input_value['class'] ? 'label ' . $input_value['class'] : 'label';
-		$label = $input_value['required'] ? $input_value['label'] . '<span class="required">*</span>' : $input_value['label'];
+		$label = $input_value['required'] ? ('<span class="required">*</span>' . $input_value['label']) : $input_value['label'];
 
 		return '<label class="' . $class . '">' . $label . '</label>';
 	}

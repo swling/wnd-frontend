@@ -22,7 +22,7 @@ class Wnd_Bind_Email_Form extends Wnd_Module_Form {
 					'disabled' => true,
 				]
 			);
-			$form->add_user_password(__('密码', 'wnd'), __('密码', 'wnd'));
+			$form->add_user_password('', __('密码', 'wnd'));
 		}
 
 		$form->add_email_verification('bind', '', false);

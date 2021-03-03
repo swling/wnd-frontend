@@ -428,7 +428,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 t += `
 				<div class="field is-horizontal">
 				<div class="field-label">
-				<label v-if="${field_vn}.label" class="label">{{${field_vn}.label}}<span v-if="${field_vn}.required" class="required">*</span></label>
+				<label v-if="${field_vn}.label" class="label"><span v-if="${field_vn}.required" class="required">*</span>{{${field_vn}.label}}</label>
 				</div>
 				<div class="field-body">`;
             }
@@ -624,7 +624,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
     };
 
     function build_label(field) {
-        return `<label v-if="!form.attrs['is-horizontal'] && ${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>`;
+        return `<label v-if="!form.attrs['is-horizontal'] && ${field}.label" class="label"><span v-if="${field}.required" class="required">*</span>{{${field}.label}}</label>`;
     }
 }
 
