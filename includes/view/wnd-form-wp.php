@@ -45,10 +45,11 @@ class Wnd_Form_WP extends Wnd_Form {
 	 *
 	 *@param bool $is_ajax_submit 	是否ajax提交
 	 *@param bool $enable_captcha 	提交时是否进行人机校验
+	 *@param bool $is_horizontal 	水平表单
 	 */
-	public function __construct(bool $is_ajax_submit = true, bool $enable_captcha = false) {
+	public function __construct(bool $is_ajax_submit = true, bool $enable_captcha = false, $is_horizontal = false) {
 		// 继承基础变量
-		parent::__construct();
+		parent::__construct($is_horizontal);
 
 		/**
 		 *基础属性
@@ -419,7 +420,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->add_html(Wnd_Gallery::build_gallery_upload($args, false));
 	}
 
-	// 构造表单，可设置WordPress filter 过滤表单的input_values
+	// 构造表单
 	public function build(): string{
 		// 本插件特定的数据结构
 		$this->wnd_structure();

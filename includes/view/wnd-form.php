@@ -21,6 +21,8 @@ class Wnd_Form {
 
 	protected $form_attr = [];
 
+	protected $is_horizontal = false;
+
 	protected $form_title;
 
 	protected $is_title_centered = false;
@@ -95,10 +97,15 @@ class Wnd_Form {
 		'tel',
 	];
 
-	// 初始化构建
-	public function __construct() {
-		$this->id = 'wnd-' . uniqid();
+	/**
+	 *初始化构建
+	 *@param bool $is_horizontal 	水平表单
+	 */
+	public function __construct($is_horizontal = false) {
+		$this->is_horizontal = $is_horizontal;
+		$this->id            = 'wnd-' . uniqid();
 		$this->add_form_attr('id', $this->id);
+		$this->add_form_attr('is-horizontal', $this->is_horizontal);
 	}
 
 	/**
@@ -372,33 +379,44 @@ class Wnd_Form {
 	protected function build_input_fields(): string{
 		$input_fields = '';
 		foreach ($this->input_values as $input_key => $input_value) {
-			// input 字段
-			if (in_array($input_value['type'], static::$input_types)) {
-				$input_fields .= $this->build_input($input_value, $input_key);
-				continue;
+			// horizontal
+			if ($this->is_horizontal and !in_array($input_value['type'], ['html', 'hidden'])) {
+				$input_fields .= '
+				<div class="field is-horizontal">
+				<div class="field-label">' . $this->build_label($input_value, true) . '</div>
+				<div class="field-body">';
 			}
 
 			/**
 			 * @since 0.9.0
+			 * 常规字段
 			 * 其他字段
 			 *  - 根据字段类型组合构建字段方法
 			 *  - 执行字段构建方法
 			 */
-			$method = 'build_' . $input_value['type'];
-			if (method_exists($this, $method)) {
-				$input_fields .= $this->$method($input_value, $input_key);
+			if (in_array($input_value['type'], static::$input_types)) {
+				$input_fields .= $this->build_input($input_value, $input_key);
+			} else {
+				$method = 'build_' . $input_value['type'];
+				if (method_exists($this, $method)) {
+					$input_fields .= $this->$method($input_value, $input_key);
+				}
+			}
+
+			// horizontal
+			if ($this->is_horizontal and !in_array($input_value['type'], ['html', 'hidden'])) {
+				$input_fields .= '</div></div>';
 			}
 		}
 		unset($input_value);
 
 		$this->html .= $input_fields;
-
 		return $input_fields;
 	}
 
 	protected function build_select(array $input_value, string $input_key): string{
 		$html = '<div class="field">';
-		$html .= static::build_label($input_value);
+		$html .= $this->build_label($input_value);
 		$html .= '<div class="control">';
 		$html .= '<div class="select' . static::get_class($input_value, true) . '">';
 		$html .= '<select' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
@@ -422,7 +440,7 @@ class Wnd_Form {
 	protected function build_radio(array $input_value, string $input_key): string{
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
 		$html .= '<div class="control">';
-		$html .= static::build_label($input_value);
+		$html .= $this->build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
 			$html .= '<label class="radio">';
 			$html .= '<input value="' . $value . '"' . static::build_input_attr($input_value);
@@ -439,7 +457,7 @@ class Wnd_Form {
 	protected function build_checkbox(array $input_value, string $input_key): string{
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
 		$html .= '<div class="control">';
-		$html .= static::build_label($input_value);
+		$html .= $this->build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
 			$html .= '<label class="checkbox">';
 			$html .= '<input value="' . $value . '"' . static::build_input_attr($input_value);
@@ -468,10 +486,10 @@ class Wnd_Form {
 		if ($has_addons) {
 			$html = '<div class="field">';
 			$html .= '<div class="field has-addons">';
-			$html .= static::build_label($input_value);
+			$html .= $this->build_label($input_value);
 		} else {
 			$html = '<div class="field">';
-			$html .= static::build_label($input_value);
+			$html .= $this->build_label($input_value);
 		}
 
 		// class
@@ -508,7 +526,7 @@ class Wnd_Form {
 		$input_value['data']['id'] = $id;
 
 		$html = '<div id="' . $id . '" class="field' . static::get_class($input_value, true) . '">';
-		$html .= static::build_label($input_value);
+		$html .= $this->build_label($input_value);
 		$html .= '<div class="field"><div class="ajax-message"></div></div>';
 
 		$html .= '<div class="field">';
@@ -571,7 +589,7 @@ class Wnd_Form {
 
 	protected function build_textarea(array $input_value, string $input_key): string{
 		$html = '<div class="field">';
-		$html .= static::build_label($input_value);
+		$html .= $this->build_label($input_value);
 		$html .= '<textarea' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>' . $input_value['value'] . '</textarea>';
 		$html .= static::build_help($input_value);
 		$html .= '</div>';
@@ -711,9 +729,13 @@ class Wnd_Form {
 	 *构建label HTML
 	 *
 	 *@var string 	$label
-	 *@var string 	$required
+	 *@var boole 	是否为水平 label
 	 */
-	protected static function build_label(array $input_value): string {
+	protected function build_label(array $input_value, $horizontal_label = false): string {
+		if ($this->is_horizontal and !$horizontal_label) {
+			return '';
+		}
+
 		if (empty($input_value['label'])) {
 			return '';
 		}

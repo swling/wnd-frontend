@@ -423,6 +423,16 @@ function _wnd_render_form(container, form_json, add_class = '') {
             // 特别注意：此处定义的是 Vue 模板字符串，而非实际数据，Vue 将据此字符串渲染为具体值
             let field_vn = `form.fields[${index}]`;
 
+            // Horizontal
+            if (form_json.attrs['is-horizontal'] && !['html', 'hidden'].includes(field.type)) {
+                t += `
+				<div class="field is-horizontal">
+				<div class="field-label">
+				<label v-if="${field_vn}.label" class="label">{{${field_vn}.label}}<span v-if="${field_vn}.required" class="required">*</span></label>
+				</div>
+				<div class="field-body">`;
+            }
+
             if ('html' == field.type) {
                 t += field.value;
             } else if (general_input_fields.includes(field.type)) {
@@ -444,6 +454,14 @@ function _wnd_render_form(container, form_json, add_class = '') {
             } else if ('tag_input' == field.type) {
                 t += build_tag_input(field_vn, index);
             }
+
+            // Horizontal
+            if (form_json.attrs['is-horizontal'] && !['html', 'hidden'].includes(field.type)) {
+                t += `
+				</div>
+				</div>
+				`
+            }
         }
         return t;
     }
@@ -452,7 +470,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
     function build_text(field, index) {
         return `
 		<div :class="get_field_class(${field})">
-		<label v-if="${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>
+		${build_label(field)}
 		<div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
 		<div :class="get_control_class(${field})">
 		<input v-bind="parse_input_attr(${field})" v-model="${field}.value" @change="change(${field})" @keypress.enter="submit"/>
@@ -468,6 +486,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
     function build_radio(field, index) {
         return `
 		<div :class="get_field_class(${field})">
+		${build_label(field)}
 		<div :class="get_control_class(${field})">
 		<template v-for="(radio_value, radio_label) in ${field}.options">
 		<label :class="${field}.type">
@@ -483,7 +502,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
     function build_select(field, index) {
         return `
 		<div class="field">
-		<label v-if="${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>
+		${build_label(field)}
 		<div class="control">
 		<div class="select" :class="${field}.class" @change="change(${field})">
 		<select v-bind="parse_input_attr(${field})" v-model="${field}.selected">
@@ -501,7 +520,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
     function build_textarea(field, index) {
         return `
 		<div :class="get_field_class(${field})">
-		<label v-if="${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>
+		${build_label(field)}
 		<textarea v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
 		<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 		</div>`;
@@ -543,7 +562,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
 		<progress class="progress is-primary" :value="${field}.complete" max="100"></progress>
 		</div>
 
-		<label class="label">{{${field}.label}}<span v-if="${field}.required && ${field}.label" class="required">*</span></label>
+		${build_label(field)}
 		<a @click="click_target('#' + get_field_id(${field}, ${index}) + ' input[type=file]')">
 		<img class="thumbnail" :src="${field}.thumbnail" :height="${field}.thumbnail_size.height" :width="${field}.thumbnail_size.width">
 		</a>
@@ -558,7 +577,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
         return `
 		<div :class="get_field_class(${field})">
 		<div :id="form.attrs.id + '-${index}'" class="rich-editor"></div>
-		<label v-if="${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>
+		${build_label(field)}
 		<textarea style="display:none" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
 		<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 		</div>`;
@@ -591,7 +610,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
 
         return `
 		<div :class="get_field_class(${field})">
-		<label v-if="${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>
+		${build_label(field)}
 		<div class="tags-input columns is-marginless">
 		<div class="column is-marginless is-paddingless is-narrow">${tags}</div>
 		<div class="autocomplete column is-marginless">
@@ -603,6 +622,10 @@ function _wnd_render_form(container, form_json, add_class = '') {
 		<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 		</div>`;
     };
+
+    function build_label(field) {
+        return `<label v-if="!form.attrs['is-horizontal'] && ${field}.label" class="label">{{${field}.label}}<span v-if="${field}.required" class="required">*</span></label>`;
+    }
 }
 
 /**
