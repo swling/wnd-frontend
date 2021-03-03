@@ -28,10 +28,10 @@ class Wnd_Account_Form extends Wnd_Module_Form {
 			throw new Exception(__($message, 'wnd'));
 		}
 
-		$form = new Wnd_Form_User();
-		$form->add_user_password('', __('当前密码', 'wnd'));
-		$form->add_user_new_password('', __('新密码', 'wnd'));
-		$form->add_user_new_password_repeat('', __('确认新密码', 'wnd'));
+		$form = new Wnd_Form_User(true);
+		$form->add_user_password(__('当前密码', 'wnd'), __('当前密码', 'wnd'));
+		$form->add_user_new_password(__('新密码', 'wnd'), __('新密码', 'wnd'));
+		$form->add_user_new_password_repeat(__('确认新密码', 'wnd'), __('确认新密码', 'wnd'));
 		$form->set_route('action', 'wnd_update_account');
 		$form->set_submit_button(__('保存', 'wnd'));
 		$form->set_filter(__CLASS__);

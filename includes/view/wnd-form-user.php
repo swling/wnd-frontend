@@ -7,6 +7,14 @@ namespace Wnd\View;
  */
 class Wnd_Form_User extends Wnd_Form_WP {
 
+	/**
+	 *@since 0.9.26
+	 *@param bool $is_horizontal 是否水平表单
+	 */
+	public function __construct($is_horizontal = false) {
+		parent::__construct(true, false, $is_horizontal);
+	}
+
 	public function add_user_login($label = '账号', $placeholder = '用户名、手机、邮箱', $required = true) {
 		$this->add_text(
 			[
