@@ -41,9 +41,9 @@ class Wnd_Reg_Form extends Wnd_Module_Form {
 		 *后端将随机生成用户名，用户可通过邮箱或手机号登录
 		 */
 		if (wnd_get_config('disable_user_login') != 1) {
-			$form->add_user_login(__('用户名', 'wnd'), __('用户名', 'wnd'));
+			$form->add_user_login('', __('用户名', 'wnd'));
 		}
-		$form->add_user_password(__('密码', 'wnd'), __('密码', 'wnd'));
+		$form->add_user_password('', __('密码', 'wnd'));
 
 		if ('phone' == $args['type']) {
 			$form->add_phone_verification('register', wnd_get_config('sms_template_r'), true);

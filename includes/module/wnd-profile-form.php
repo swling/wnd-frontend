@@ -18,11 +18,11 @@ class Wnd_Profile_Form extends Wnd_Module_Form {
 		$form->add_user_avatar();
 
 		$form->add_html('<div class="field is-horizontal"><div class="field-body">');
-		$form->add_user_display_name(__('名称', 'wnd'), __('名称', 'wnd'));
-		$form->add_user_url(__('网站', 'wnd'), __('网站', 'wnd'));
+		$form->add_user_display_name('', __('名称', 'wnd'));
+		$form->add_user_url('', __('网站', 'wnd'));
 		$form->add_html('</div></div>');
 
-		$form->add_user_description(__('简介', 'wnd'), __('简介', 'wnd'));
+		$form->add_user_description('', __('简介', 'wnd'));
 		$form->set_route('action', 'wnd_update_profile');
 		$form->set_submit_button(__('保存', 'wnd'));
 

@@ -23,8 +23,8 @@ class Wnd_Login_Form extends Wnd_Module_Form {
 
 		$form = new Wnd_Form_User();
 		$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>&nbsp;' . __('登录', 'wnd'), true);
-		$form->add_user_login(__('账号', 'wnd'), __('用户名、手机、邮箱', 'wnd'), true);
-		$form->add_user_password(__('密码', 'wnd'), __('密码', 'wnd'));
+		$form->add_user_login('', __('用户名、手机、邮箱', 'wnd'), true);
+		$form->add_user_password('', __('密码', 'wnd'));
 		$form->add_checkbox(
 			[
 				'name'    => 'remember',

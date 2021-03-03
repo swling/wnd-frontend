@@ -169,13 +169,11 @@ class Wnd_Form_WP extends Wnd_Form {
 		if ('email' == $device_type) {
 			$device      = $this->user->data->user_email ?? '';
 			$name        = '_user_user_email';
-			$label       = __('邮箱', 'wnd');
 			$placeholder = __('电子邮箱', 'wnd');
 			$icon        = '<i class="fa fa-at"></i>';
 		} elseif ('phone' == $device_type) {
 			$device      = wnd_get_user_phone($this->user->ID);
 			$name        = 'phone';
-			$label       = __('手机', 'wnd');
 			$placeholder = __('手机号码', 'wnd');
 			$icon        = '<i class="fas fa-mobile-alt"></i>';
 		}
@@ -207,7 +205,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$button .= ' data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '"';
 		$button .= ' data-type_nonce="' . wp_create_nonce($device_type . $type) . '"';
 		$button .= ' data-device_type="' . $device_type . '"';
-		$button .= ' data-device_name="' . $label . '"';
+		$button .= ' data-device_name="' . $placeholder . '"';
 		$button .= ' data-interval="' . wnd_get_config('min_verification_interval') . '"';
 		if ($this->enable_verification_captcha) {
 			$button .= ' data-' . Wnd_Captcha::$captcha_name . '=""';
@@ -224,7 +222,6 @@ class Wnd_Form_WP extends Wnd_Form {
 					'name'        => $name,
 					'icon_left'   => $icon,
 					'required'    => true,
-					'label'       => $label,
 					'placeholder' => $placeholder,
 				]
 			);
@@ -234,7 +231,6 @@ class Wnd_Form_WP extends Wnd_Form {
 			$this->add_text(
 				[
 					'name'     => $name,
-					'label'    => $label,
 					'value'    => $device,
 					'readonly' => true,
 					'required' => true,
