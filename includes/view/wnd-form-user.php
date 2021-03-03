@@ -144,7 +144,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 		}
 
 		$args = [
-			'label'          => '',
+			'label'          => __('头像', 'wnd'),
 			'thumbnail_size' => ['width' => $thumbnail_size, 'height' => $thumbnail_size],
 			'thumbnail'      => wnd_get_user_meta($this->user->ID, 'avatar_url') ?: WND_URL . 'static/images/default.jpg',
 			'data'           => [

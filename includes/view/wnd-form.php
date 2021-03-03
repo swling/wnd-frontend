@@ -19,6 +19,8 @@ class Wnd_Form {
 
 	protected $id;
 
+	protected $size = 'is-normal';
+
 	protected $form_attr = [];
 
 	protected $is_horizontal = false;
@@ -120,6 +122,14 @@ class Wnd_Form {
 	 */
 	public function add_after_html($html) {
 		$this->after_html .= $html;
+	}
+
+	/**
+	 *@since 2021.03.03
+	 *设置表单 size
+	 */
+	public function set_form_size(string $size) {
+		$this->size = $size;
 	}
 
 	/**
@@ -809,6 +819,7 @@ class Wnd_Form {
 			'before_html' => $this->before_html,
 			'after_html'  => $this->after_html,
 			'attrs'       => $this->form_attr,
+			'size'        => $this->size,
 			'title'       => [
 				'title' => $this->form_title,
 				'attrs' => ['class' => $this->is_title_centered ? 'has-text-centered' : ''],

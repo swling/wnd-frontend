@@ -61,7 +61,8 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     };
                 });
 
-                _field["class"] = (general_input_fields.includes(field.type) ? 'input' : field.type) + ' ' + (_field["class"] || '');
+                _field['class'] = (general_input_fields.includes(field.type) ? 'input' : field.type) + ' ' + (_field["class"] || '');
+                _field['class'] += ' ' + this.form.size;
                 delete _field['icon_left'];
                 delete _field['icon_right'];
                 delete _field['addon_left'];
@@ -406,7 +407,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
 <div v-bind="form.message.attrs" class="message" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>
 ${get_fields_template(form_json)}
 <div v-if="form.submit.text" class="field is-grouped is-grouped-centered">
-<button type="button" v-bind="form.submit.attrs" @click="submit($event)" v-text="form.submit.text"></button>
+<button type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
 </div>
 <div class="form-script"></div>
 <div v-if="form.after_html" v-html="form.after_html"></div>
@@ -427,7 +428,7 @@ ${get_fields_template(form_json)}
             if (form_json.attrs['is-horizontal'] && !['html', 'hidden'].includes(field.type)) {
                 t += `
 <div class="field is-horizontal">
-<div class="field-label">
+<div class="field-label ${form_json.size}">
 <label v-if="${field_vn}.label" class="label"><span v-if="${field_vn}.required" class="required">*</span>{{${field_vn}.label}}</label>
 </div>
 <div class="field-body">`;
@@ -504,7 +505,7 @@ ${build_label(field)}
 <div class="field">
 ${build_label(field)}
 <div class="control">
-<div class="select" :class="${field}.class" @change="change(${field})">
+<div class="select" :class="${field}.class + ' ' + form.size" @change="change(${field})">
 <select v-bind="parse_input_attr(${field})" v-model="${field}.selected">
 <template v-for="(value, name) in ${field}.options">
 <option :value="value">{{name}}</option>
@@ -534,7 +535,7 @@ ${build_label(field)}
 <div class="columns is-mobile is-vcentered">
 
 <div class="column">
-<div class="file has-name is-fullwidth">
+<div class="file has-name is-fullwidth" :class="form.size">
 <label class="file-label">
 <input type="file" class="file file-input" :name="${field}.name" @change="upload($event,${field})">
 <span class="file-cta">
@@ -624,7 +625,7 @@ ${build_label(field)}
     };
 
     function build_label(field) {
-        return `<label v-if="!form.attrs['is-horizontal'] && ${field}.label" class="label"><span v-if="${field}.required" class="required">*</span>{{${field}.label}}</label>`;
+        return `<label v-if="!form.attrs['is-horizontal'] && ${field}.label" class="label" :class="form.size"><span v-if="${field}.required" class="required">*</span>{{${field}.label}}</label>`;
     }
 }
 
