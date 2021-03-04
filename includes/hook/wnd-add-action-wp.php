@@ -210,10 +210,6 @@ class Wnd_Add_Action_WP {
 			return;
 		}
 
-		try {
-			Wnd_Validator::validate_captcha();
-		} catch (Exception $e) {
-			exit($e->getMessage());
-		}
+		Wnd_Validator::validate_captcha();
 	}
 }

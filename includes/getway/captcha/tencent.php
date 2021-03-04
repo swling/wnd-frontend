@@ -190,8 +190,12 @@ var sub_btn = document.querySelectorAll("[type=submit]");
 if (sub_btn) {
     sub_btn.forEach(function(btn) {
         btn.addEventListener("click", function(e) {
-            wnd_submit_via_captcha(e, "wnd_ajax_submit");
-			e.preventDefault();
+            let form = btn.closest("form");
+            let input =  form.querySelector("[name=\'' . static::$captcha_name . '\']");
+            if(input && !input.value){
+                wnd_submit_via_captcha(e);
+                e.preventDefault();
+            }
         });
     });
 }

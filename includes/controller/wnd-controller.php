@@ -361,12 +361,17 @@ class Wnd_Controller {
 	 *写入评论
 	 */
 	public static function add_comment($request): array{
-		$comment = wp_handle_comment_submission(wp_unslash($request));
-		$user    = wp_get_current_user();
+		try {
+			$comment = wp_handle_comment_submission(wp_unslash($request));
+		} catch (Exception $e) {
+			return ['status' => 0, 'msg' => $e->getMessage()];
+		}
+
 		if (is_wp_error($comment)) {
 			return ['status' => 0, 'msg' => $comment->get_error_message()];
 		}
 
+		$user = wp_get_current_user();
 		do_action('set_comment_cookies', $comment, $user);
 		$GLOBALS['comment'] = $comment;
 

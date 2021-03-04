@@ -32,6 +32,12 @@ document.addEventListener('submit', function(e) {
 		url: wnd.rest_url + wnd.comment.api,
 		data: form_data,
 	}).then(response => {
+		// 无论后端写入是否成功，如果存在 captcha 字段均需清空值：注意该字段名称可能随程序变动发生改变
+		let captcha = form.querySelector("[name='captcha']");
+		if (captcha) {
+			captcha.value = '';
+		}
+
 		if (0 == response.data.status) {
 			createButterbar(response.data.msg);
 			button.disabled = false;
