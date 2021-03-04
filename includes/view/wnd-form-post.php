@@ -299,7 +299,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *@since 2020.05.12
 	 *@since 0.9.25 以 Vue 重构 该字段不再支持常规 php 渲染
 	 */
-	public function add_post_tags($taxonomy, $label = '', $required = false) {
+	public function add_post_tags($taxonomy, $label = '', $required = false, $help = '') {
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
@@ -313,6 +313,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			'taxonomy'    => $taxonomy,
 			'required'    => $required,
 			'suggestions' => [],
+			'help'        => ['text' => $help, 'class' => 'is-success'],
 		];
 		$this->add_field($args);
 	}

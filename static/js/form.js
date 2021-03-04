@@ -425,11 +425,11 @@ ${get_fields_template(form_json)}
             let field_vn = `form.fields[${index}]`;
 
             // Horizontal
-            if (form_json.attrs['is-horizontal'] && !['html', 'hidden'].includes(field.type)) {
+            if (is_horizontal_field()) {
                 t += `
 <div class="field is-horizontal">
 <div class="field-label ${form_json.size}">
-<label v-if="${field_vn}.label" class="label"><span v-if="${field_vn}.required" class="required">*</span>{{${field_vn}.label}}</label>
+<label v-if="${field_vn}.label" class="label is-hidden-mobile"><span v-if="${field_vn}.required" class="required">*</span>{{${field_vn}.label}}</label>
 </div>
 <div class="field-body">`;
             }
@@ -457,11 +457,12 @@ ${get_fields_template(form_json)}
             }
 
             // Horizontal
-            if (form_json.attrs['is-horizontal'] && !['html', 'hidden'].includes(field.type)) {
-                t += `
-				</div>
-				</div>
-				`
+            if (is_horizontal_field()) {
+                t += `</div></div>`
+            }
+
+            function is_horizontal_field() {
+                return form_json.attrs['is-horizontal'] && !['html', 'hidden', 'editor'].includes(field.type) && field.name != '_post_post_title';
             }
         }
         return t;
@@ -531,7 +532,7 @@ ${build_label(field)}
     function build_file_upload(field, index) {
         return `
 <div :id="get_field_id(${field},${index})" class="field" :class="${field}.class">
-<div class="field"><div class="ajax-message"></div></div>
+<div class="field"></div>
 <div class="columns is-mobile is-vcentered">
 
 <div class="column">
@@ -602,7 +603,7 @@ ${build_label(field)}
 
         let tags = `
 <template v-for="(tag, index) in ${field}.tags">
-<span class="tag is-medium is-light is-danger">{{tag}}<span class="delete" @click="delete_tag(tag, ${index})"></span></span>
+<span class="tag is-medium is-light is-danger">{{tag}}<span class="delete is-small" @click="delete_tag(tag, ${index})"></span></span>
 </template>`;
         let suggestions = `
 <template v-for="(tag, index) in ${field}.suggestions">
