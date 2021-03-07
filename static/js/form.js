@@ -96,8 +96,9 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 }
 
                 function build() {
-                    field = _this.form.fields[_this.index.editor];
-                    const editor = new wangEditor(`#${_this.form.attrs.id}-${_this.index.editor}`);
+                    let field = _this.form.fields[_this.index.editor];
+                    let selector = `#${_this.form.attrs.id}-${_this.index.editor}`;
+                    const editor = new wangEditor(`${selector}-toolbar`, `${selector}-text`);
                     // Rest Nonce
                     editor.config.uploadImgHeaders = {
                         'X-WP-Nonce': wnd.rest_nonce,
@@ -578,7 +579,8 @@ ${build_label(field)}
     function build_editor(field, index) {
         return `
 <div :class="get_field_class(${field})">
-<div :id="form.attrs.id + '-${index}'" class="rich-editor"></div>
+<div :id="form.attrs.id + '-${index}-toolbar'" class="rich-editor"></div>
+<div :id="form.attrs.id + '-${index}-text'" class="rich-editor"></div>
 ${build_label(field)}
 <textarea style="display:none" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
