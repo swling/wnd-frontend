@@ -46,7 +46,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 		}
 
 		// 继承基础变量
-		parent::__construct();
+		parent::__construct(true, false, true);
 
 		// 设置Filter
 		$this->filter = __CLASS__;

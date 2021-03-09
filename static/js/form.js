@@ -1,5 +1,3 @@
-let general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color', 'date', 'range', 'tel'];
-
 // max tags limit
 var max_tag_num = ('undefined' != typeof max_tag_num) ? max_tag_num : 3;
 
@@ -8,6 +6,8 @@ var max_tag_num = ('undefined' != typeof max_tag_num) ? max_tag_num : 3;
  *Vue 根据 Json 动态渲染表单
  */
 function _wnd_render_form(container, form_json, add_class = '') {
+    let general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color', 'date', 'range', 'tel'];
+
     // 数据 合并数据，并进行深拷贝，以保留原生传参 form_json 不随 data 变动
     let form = JSON.parse(JSON.stringify(form_json));
     let parent = document.querySelector(container);
@@ -24,7 +24,8 @@ function _wnd_render_form(container, form_json, add_class = '') {
             index: {
                 'editor': '',
                 'captcha': '',
-            }
+            },
+            step: 0,
         },
         methods: {
             has_addon: function(field) {
@@ -117,6 +118,8 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     // 配置 onchange 回调函数，将数据同步到 vue 中
                     editor.config.onchange = (newHtml) => {
                         field.value = newHtml
+                        // 移除父容器高度，适应编辑器内容撑开高度
+                        parent.style.removeProperty('height');
                     }
 
                     // 精简菜单按钮
@@ -298,6 +301,21 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     this.form.fields[index].help.text = '最多' + max_tag_num + '个标签';
                 }
             },
+            // 下一步 or 上一步
+            nextPrev: function(n) {
+                // 编辑器输入时，移除了高度，此处重设，以实现切换动画
+                funTransitionHeight(parent);
+
+                var x = document.getElementsByClassName('step');
+                x[this.step].style.display = 'none';
+                this.step = this.step + n;
+                if (this.step >= x.length) {
+                    return false;
+                }
+                x[this.step].style.removeProperty('display');
+                // 修正高度
+                funTransitionHeight(parent, trs_time);
+            },
             // 提交
             submit: function(e) {
                 this.form.submit.attrs.class = form_json.submit.attrs.class + ' is-loading';
@@ -382,7 +400,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 if ('editor' == field.type) {
                     this.index.editor = index;
                 }
-
             })
             // 构造富文本编辑器
             if (this.index.editor) {
@@ -407,12 +424,34 @@ function _wnd_render_form(container, form_json, add_class = '') {
 <div class="field" v-show="form.title.title"><h3 v-bind="form.title.attrs" v-html="form.title.title"></h3></div>
 <div v-bind="form.message.attrs" class="message" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>
 ${get_fields_template(form_json)}
-<div v-if="form.submit.text" class="field is-grouped is-grouped-centered">
-<button type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
-</div>
+${get_submit_template(form_json)}
 <div class="form-script"></div>
 <div v-if="form.after_html" v-html="form.after_html"></div>
 </form>`;
+    }
+
+    function get_submit_template(form_json) {
+        if (form_json.step_index.length > 0) {
+            return `
+</div>
+<div class="navbar is-fixed-bottom has-background-light">
+<div class="navbar-item" style="text-align:center;">
+<span class="step-item"></span>
+<span class="step-item"></span>
+</div>
+<div class="buttons container navbar-end">
+<button v-show="step > 0" type="button"  class="button is-danger" @click="nextPrev(-1)">Previous</button>
+<button v-show="step < form.step_index.length - 1"  type="button"  class="button is-danger" @click="nextPrev(1)">Next</button>
+<button v-show="step == form.step_index.length - 1"  type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
+</div>
+</div>`;
+
+        } else {
+            return `
+<div v-if="form.submit.text" class="field is-grouped is-grouped-centered">
+<button type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
+</div>`;
+        }
     }
 
     // 选择并构建字段模板
@@ -424,6 +463,11 @@ ${get_fields_template(form_json)}
 
             // 特别注意：此处定义的是 Vue 模板字符串，而非实际数据，Vue 将据此字符串渲染为具体值
             let field_vn = `form.fields[${index}]`;
+
+            if ('step' == field.type) {
+                t += build_step(form_json.step_index, index);
+                continue;
+            }
 
             // Horizontal
             if (is_horizontal_field()) {
@@ -579,8 +623,8 @@ ${build_label(field)}
     function build_editor(field, index) {
         return `
 <div :class="get_field_class(${field})">
-<div :id="form.attrs.id + '-${index}-toolbar'" class="rich-editor"></div>
-<div :id="form.attrs.id + '-${index}-text'" class="rich-editor"></div>
+<div :id="form.attrs.id + '-${index}-toolbar'" class="editor-toolbar"></div>
+<div :id="form.attrs.id + '-${index}-text'" class="editor-text"></div>
 ${build_label(field)}
 <textarea style="display:none" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
@@ -630,6 +674,15 @@ ${build_label(field)}
     function build_label(field) {
         return `<label v-if="!form.attrs['is-horizontal'] && ${field}.label" class="label" :class="form.size"><span v-if="${field}.required" class="required">*</span>{{${field}.label}}</label>`;
     }
+
+    // Step
+    function build_step(step_index, index) {
+        if (index == step_index[0]) {
+            return `<div class="step">`;
+        } else {
+            return `</div><div class="step" style="display:none">`;
+        }
+    };
 }
 
 /**

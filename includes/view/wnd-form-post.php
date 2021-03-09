@@ -305,6 +305,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			return;
 		}
 
+		$help = $help ?: __('请用回车键区分多个 Tag', 'wnd');
+
 		$args = [
 			'type'        => 'tag_input',
 			'tags'        => array_values($this->current_terms[$taxonomy]) ?: [],

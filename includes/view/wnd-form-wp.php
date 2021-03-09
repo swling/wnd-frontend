@@ -498,11 +498,11 @@ class Wnd_Form_WP extends Wnd_Form {
 
 		// post meta
 		if ($post_parent) {
-			return wnd_get_post_meta($post_parent, $meta_key);
+			return (int) wnd_get_post_meta($post_parent, $meta_key);
 		}
 
 		// user meta
-		return wnd_get_user_meta($user_id, $meta_key);
+		return (int) wnd_get_user_meta($user_id, $meta_key);
 	}
 
 	/**

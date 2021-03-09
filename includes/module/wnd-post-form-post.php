@@ -27,56 +27,47 @@ class Wnd_Post_Form_Post extends Wnd_Module_Form {
 		 *@since 2019.03.11 表单类
 		 */
 		$form = new Wnd_Form_Post('post', $post_id);
-		$form->add_html('<div class="columns post-form-post">');
+		// $form->add_html('<div class="columns post-form-post">');
 
 		/**
 		 *左侧栏
 		 */
-		$form->add_html('<div class="column">');
-		$form->add_post_title();
-		$form->add_post_name();
-		$form->add_post_excerpt();
+		$form->add_step();
+		$form->add_post_title(__('标题', 'wnd'));
+		/**
+		 *@since 2019.04 富媒体编辑器仅在非ajax请求中有效
+		 */
+		$form->add_post_content(true);
+		$form->add_step();
+
+		// $form->add_post_name();
+		$form->add_post_excerpt(__('摘要', 'wnd'));
 
 		// 标签
-		$form->add_post_tags('post_tag', __('标签', 'wnd'));
-		$form->add_html(wnd_notification(__('请用回车键区分多个标签', 'wnd'), 'is-primary'));
+		$form->add_post_tags('post_tag');
 
 		// 相册
-		$form->set_thumbnail_size(100, 100);
-		$form->add_post_gallery_upload(0, 0, __('相册图集', 'wnd'));
+		// $form->set_thumbnail_size(100, 100);
+		// $form->add_post_gallery_upload(0, 0, __('相册图集', 'wnd'));
 
 		// 付费内容
 		if (!$is_free) {
 			$form->add_post_paid_file_upload();
 		}
 
-		/**
-		 *@since 2019.04 富媒体编辑器仅在非ajax请求中有效
-		 */
-		$form->add_post_content(true);
 		$form->add_post_status_select();
-		$form->add_html('</div>');
+		// $form->add_html('</div>');
 
-		/**
-		 *侧边栏
-		 */
-		$form->add_html('<div class="column is-3">');
-		// 产品属性
 		$form->add_html('<div class="field">' . wnd_modal_button(__('产品属性', 'wnd'), 'wnd_sku_form', ['post_id' => $form->get_post()->ID ?? 0]) . '</div>');
-
-		// 分类
 		$form->add_html('<div class="field">');
 		$form->add_post_term_select(['taxonomy' => 'category'], '', true);
-		// $form->add_dynamic_sub_term_select('category', 1, '', false, __('二级分类', 'wnd'));
-		// $form->add_dynamic_sub_term_select('category', 2, '', false, __('三级分类', 'wnd'));
 		$form->add_html('</div>');
 
 		// 缩略图
 		$form->set_thumbnail_size(150, 150);
 		$form->add_post_thumbnail(200, 200);
-		$form->add_html('</div>');
+		// $form->add_html('</div>');
 
-		$form->add_html('</div>');
 		$form->set_post_parent($post_parent ?: $form->get_post()->post_parent);
 		$form->set_submit_button(__('保存', 'wnd'));
 

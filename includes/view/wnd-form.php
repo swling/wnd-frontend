@@ -25,6 +25,9 @@ class Wnd_Form {
 
 	protected $is_horizontal = false;
 
+	// 记录分布标识符字段 index
+	protected $step_index = [];
+
 	protected $form_title;
 
 	protected $is_title_centered = false;
@@ -202,20 +205,28 @@ class Wnd_Form {
 	}
 
 	/**
+	 *@since 2021.03.08
+	 *表单分布切割标识
+	 */
+	public function add_step() {
+		$args['type']         = 'step';
+		$args['index']        = count($this->input_values);
+		$this->step_index[]   = $args['index'];
+		$this->input_values[] = $args;
+	}
+
+	/**
 	 *@since 2019.03.10 设置常规input 字段
 	 */
-	// text
 	public function add_text(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'text';
-		$this->input_values[] = $args;
+		$args['type'] = 'text';
+		$this->add_field($args);
 	}
 
 	// number
 	public function add_number(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'number';
-		$this->input_values[] = $args;
+		$args['type'] = 'number';
+		$this->add_field($args);
 	}
 
 	// hidden
@@ -229,23 +240,20 @@ class Wnd_Form {
 
 	// textarea
 	public function add_textarea(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'textarea';
-		$this->input_values[] = $args;
+		$args['type'] = 'textarea';
+		$this->add_field($args);
 	}
 
 	// email
 	public function add_email(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'email';
-		$this->input_values[] = $args;
+		$args['type'] = 'email';
+		$this->add_field($args);
 	}
 
 	// password
 	public function add_password(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'password';
-		$this->input_values[] = $args;
+		$args['type'] = 'password';
+		$this->add_field($args);
 	}
 
 	/**
@@ -254,58 +262,50 @@ class Wnd_Form {
 	 */
 	// URL
 	public function add_url(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'url';
-		$this->input_values[] = $args;
+		$args['type'] = 'url';
+		$this->add_field($args);
 	}
 
 	// color
 	public function add_color(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'color';
-		$this->input_values[] = $args;
+		$args['type'] = 'color';
+		$this->add_field($args);
 	}
 
 	// date
 	public function add_date(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'date';
-		$this->input_values[] = $args;
+		$args['type'] = 'date';
+		$this->add_field($args);
 	}
 
 	// range
 	public function add_range(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'range';
-		$this->input_values[] = $args;
+		$args['type'] = 'range';
+		$this->add_field($args);
 	}
 
 	// tel
 	public function add_tel(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'tel';
-		$this->input_values[] = $args;
+		$args['type'] = 'tel';
+		$this->add_field($args);
 	}
 
 	// select
 	public function add_select(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'select';
-		$this->input_values[] = $args;
+		$args['type'] = 'select';
+		$this->add_field($args);
 	}
 
 	// radio
 	public function add_radio(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'radio';
-		$this->input_values[] = $args;
+		$args['type'] = 'radio';
+		$this->add_field($args);
 	}
 
 	// checkbox
 	public function add_checkbox(array $args) {
-		$args                 = array_merge(static::$defaults, $args);
-		$args['type']         = 'checkbox';
-		$this->input_values[] = $args;
+		$args['type'] = 'checkbox';
+		$this->add_field($args);
 	}
 
 	// Image upload
@@ -820,6 +820,7 @@ class Wnd_Form {
 			'after_html'  => $this->after_html,
 			'attrs'       => $this->form_attr,
 			'size'        => $this->size,
+			'step_index'  => $this->step_index,
 			'title'       => [
 				'title' => $this->form_title,
 				'attrs' => ['class' => $this->is_title_centered ? 'has-text-centered' : ''],
