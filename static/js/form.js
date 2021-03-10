@@ -450,7 +450,7 @@ ${get_submit_template(form_json)}
 <div class="buttons">
 <button v-show="step > 0" type="button"  class="button" @click="nextPrev(-1)">{{index.step[step - 1] || 'Previous'}}</button>
 <button v-show="step < form.step_index.length - 1"  type="button"  class="button" @click="nextPrev(1)">{{index.step[step + 1]|| 'Next'}}</button>
-<button :disabled="step != form.step_index.length - 1"  type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
+<button :disabled="step != form.step_index.length - 1" type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size} is-${form_json.primary_color}" v-text="form.submit.text"></button>
 </div>
 </div>
 </div>`;

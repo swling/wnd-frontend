@@ -576,8 +576,10 @@ if (sub_btn) {
 		// 本插件特定的数据结构
 		$this->wnd_structure();
 
-		$structure           = parent::get_structure();
-		$structure['script'] = $this->render_script();
+		$structure                  = parent::get_structure();
+		$structure['script']        = $this->render_script();
+		$structure['primary_color'] = static::$primary_color;
+		$structure['second_color']  = static::$second_color;
 		return $structure;
 	}
 }
