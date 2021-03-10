@@ -208,9 +208,10 @@ class Wnd_Form {
 	 *@since 2021.03.08
 	 *表单分布切割标识
 	 */
-	public function add_step() {
+	public function add_step($text = '') {
 		$args['type']         = 'step';
 		$args['index']        = count($this->input_values);
+		$args['text']         = $text;
 		$this->step_index[]   = $args['index'];
 		$this->input_values[] = $args;
 	}

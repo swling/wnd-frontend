@@ -22,8 +22,9 @@ function _wnd_render_form(container, form_json, add_class = '') {
         data: {
             form: form,
             index: {
-                'editor': '',
+                'editor': [],
                 'captcha': '',
+                'step': [],
             },
             step: 0,
         },
@@ -90,15 +91,21 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 if ('undefined' == typeof wangEditor) {
                     let url = static_path + 'editor/wangEditor.min.js?ver=' + wnd.ver;
                     wnd_load_script(url, function() {
-                        build();
+                        build_editors();
                     });
                 } else {
-                    build();
+                    build_editors();
                 }
 
-                function build() {
-                    let field = _this.form.fields[_this.index.editor];
-                    let selector = `#${_this.form.attrs.id}-${_this.index.editor}`;
+                function build_editors() {
+                    _this.index.editor.forEach(index => {
+                        build(index);
+                    });
+                }
+
+                function build(index) {
+                    let field = _this.form.fields[index];
+                    let selector = `#${_this.form.attrs.id}-${index}`;
                     const editor = new wangEditor(`${selector}-toolbar`, `${selector}-text`);
                     // Rest Nonce
                     editor.config.uploadImgHeaders = {
@@ -398,7 +405,11 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 }
 
                 if ('editor' == field.type) {
-                    this.index.editor = index;
+                    this.index.editor.push(index);
+                }
+
+                if ('step' == field.type) {
+                    this.index.step.push(field.text);
                 }
             })
             // 构造富文本编辑器
@@ -433,16 +444,14 @@ ${get_submit_template(form_json)}
     function get_submit_template(form_json) {
         if (form_json.step_index.length > 0) {
             return `
+</div><!-- 关闭最后一个 step -->
+<div class="navbar is-fixed-bottom">
+<div class="navbar-end container">
+<div class="buttons">
+<button v-show="step > 0" type="button"  class="button" @click="nextPrev(-1)">{{index.step[step - 1] || 'Previous'}}</button>
+<button v-show="step < form.step_index.length - 1"  type="button"  class="button" @click="nextPrev(1)">{{index.step[step + 1]|| 'Next'}}</button>
+<button :disabled="step != form.step_index.length - 1"  type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
 </div>
-<div class="navbar is-fixed-bottom has-background-light">
-<div class="navbar-item" style="text-align:center;">
-<span class="step-item"></span>
-<span class="step-item"></span>
-</div>
-<div class="buttons container navbar-end">
-<button v-show="step > 0" type="button"  class="button is-danger" @click="nextPrev(-1)">Previous</button>
-<button v-show="step < form.step_index.length - 1"  type="button"  class="button is-danger" @click="nextPrev(1)">Next</button>
-<button v-show="step == form.step_index.length - 1"  type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
 </div>
 </div>`;
 

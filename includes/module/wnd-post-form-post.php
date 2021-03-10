@@ -32,13 +32,13 @@ class Wnd_Post_Form_Post extends Wnd_Module_Form {
 		/**
 		 *左侧栏
 		 */
-		$form->add_step();
+		$form->add_step(__('内容正文', 'wnd'));
 		$form->add_post_title(__('标题', 'wnd'));
 		/**
 		 *@since 2019.04 富媒体编辑器仅在非ajax请求中有效
 		 */
 		$form->add_post_content(true);
-		$form->add_step();
+		$form->add_step(__('发布选项', 'wnd'));
 
 		// $form->add_post_name();
 		$form->add_post_excerpt(__('摘要', 'wnd'));
