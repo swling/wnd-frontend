@@ -17,6 +17,8 @@ class Wnd_Init {
 
 	use Wnd_Singleton_Trait;
 
+	const FIN_TYPS = ['order', 'recharge', 'stats-re', 'stats-ex'];
+
 	private function __construct() {
 		// Init
 		static::init();

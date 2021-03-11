@@ -111,7 +111,7 @@ class Wnd_Order extends Wnd_Transaction {
 			'ID'           => $ID ?? 0,
 			'post_author'  => $this->user_id,
 			'post_parent'  => $this->object_id,
-			'post_content' => $this->total_amount ?: __('免费', 'wnd'),
+			'post_content' => $this->total_amount,
 			'post_excerpt' => $this->payment_gateway,
 			'post_status'  => $this->status,
 			'post_title'   => $this->subject,

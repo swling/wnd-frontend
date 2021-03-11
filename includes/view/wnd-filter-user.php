@@ -195,8 +195,9 @@ class Wnd_Filter_User {
 
 		$users = $this->wp_user_query->get_results();
 		foreach ($users as $user) {
-			$user->link    = get_author_posts_url($user->ID);
-			$this->users[] = $user;
+			$user->link            = get_author_posts_url($user->ID);
+			$user->user_registered = get_date_from_gmt($user->user_registered, 'Y-m-d H:i:s');
+			$this->users[]         = $user;
 		}
 		unset($user);
 

@@ -169,52 +169,56 @@ function _wnd_render_filter(container, filter_json, add_class) {
 			'post-list': {
 				props: ['posts'],
 				template: `
-				<table class="table is-fullwidth is-hoverable is-striped">
-				<thead>
-				<tr>
-				<th class="is-narrow">日期</th>
-				<th>标题</th>
-				<th class="is-narrow has-text-centered">操作</th>
-				</tr>
-				</thead>
+<table class="table is-fullwidth is-hoverable is-striped">
+<thead>
+<tr>
+<th class="is-narrow is-hidden-mobile">日期</th>
+<th class="is-narrow">用户</th>
+<th>标题</th>
+<th class="is-narrow has-text-centered">操作</th>
+</tr>
+</thead>
 
-				<tbody>
-				<tr v-for="(post, index) in posts">
-				<td class="is-narrow">{{post.post_date}}</td>
-				<td><a :href="post.link" target="_blank">{{post.post_title}}</a></td>
-				<td class="is-narrow has-text-centered">
-				<a @click='wnd_ajax_modal("wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
-				<a @click='wnd_ajax_modal("wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
-				</td>
-				</tr>
-				</tbody>
-				</table>`,
+<tbody>
+<tr v-for="(post, index) in posts">
+<td class="is-narrow is-hidden-mobile">{{post.post_date}}</td>
+<td class="is-narrow"><a :href="post.author.link" target="_blank">{{post.author.name}}</a></td>
+<td><a :href="post.link" target="_blank">{{post.post_title}}</a></td>
+<td class="is-narrow has-text-centered">
+<a @click='wnd_ajax_modal("wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
+<a @click='wnd_ajax_modal("wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
+</td>
+</tr>
+</tbody>
+</table>`,
 			},
 
 			'order-list': {
 				props: ['posts'],
 				template: `
-				<table class="table is-fullwidth is-hoverable is-striped">
-				<thead>
-				<tr>
-				<th class="is-narrow">订单日期</th>
-				<th>金额</th>
-				<th class="is-narrow has-text-centered">操作</th>
-				</tr>
-				</thead>
+<table class="table is-fullwidth is-hoverable is-striped">
+<thead>
+<tr>
+<th class="is-narrow is-hidden-mobile">订单日期</th>
+<th class="is-narrow">用户</th>
+<th>金额</th>
+<th class="is-narrow has-text-centered">操作</th>
+</tr>
+</thead>
 					
-				<tbody>
-				<tr v-for="(post, index) in posts">
-				<td class="is-narrow">{{post.post_date}}</td>
-				<td>{{post.post_content}}</td>
-				<td class="is-narrow has-text-centered">
-				<a @click='wnd_ajax_modal("wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
-				<a @click='wnd_ajax_modal("wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
-				<a @click='wnd_ajax_modal("wnd_refund_form", {"payment_id": post.ID} )'><i class="fas fa-coins"></i></a>
-				</td>
-				</tr>
-				</tbody>
-				</table>`,
+<tbody>
+<tr v-for="(post, index) in posts">
+<td class="is-narrow is-hidden-mobile">{{post.post_date}}</td>
+<td class="is-narrow"><a :href="post.author.link" target="_blank">{{post.author.name}}</a></td>
+<td>{{post.post_content}}</td>
+<td class="is-narrow has-text-centered">
+<a @click='wnd_ajax_modal("wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
+<a @click='wnd_ajax_modal("wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
+<a @click='wnd_ajax_modal("wnd_refund_form", {"payment_id": post.ID} )'><i class="fas fa-coins"></i></a>
+</td>
+</tr>
+</tbody>
+</table>`,
 			},
 		},
 		// 计算
@@ -225,15 +229,15 @@ function _wnd_render_filter(container, filter_json, add_class) {
 
 	function build_filter_template(filter) {
 		return `
-		<div class="filter">
-		<div v-if="filter.before_html" v-html="filter.before_html"></div>
-		${build_tabs_template(filter)}
-		<div class="wnd-filter-results mb-3">
-		${filter.posts ? build_posts_template(filter) : build_users_template(filter)}
-		</div>
-		${build_navigation(filter)}
-		<div v-if="filter.after_html" v-html="filter.after_html"></div>
-		</div>`;
+<div class="filter">
+<div v-if="filter.before_html" v-html="filter.before_html"></div>
+${build_tabs_template(filter)}
+<div class="wnd-filter-results mb-3">
+${filter.posts ? build_posts_template(filter) : build_users_template(filter)}
+</div>
+${build_navigation(filter)}
+<div v-if="filter.after_html" v-html="filter.after_html"></div>
+</div>`;
 	}
 
 	function build_tabs_template(filter) {
@@ -278,52 +282,52 @@ function _wnd_render_filter(container, filter_json, add_class) {
 		}
 
 		return `
-		<table class="table is-fullwidth is-hoverable is-striped">
-		<thead>
-		<tr>
-		<th class="is-narrow">日期</th>
-		<th>标题</th>
-		<th class="is-narrow has-text-centered">操作</th>
-		</tr>
-		</thead>
+<table class="table is-fullwidth is-hoverable is-striped">
+<thead>
+<tr>
+<th class="is-narrow is-hidden-mobile">注册日期</th>
+<th>用户</th>
+<th class="is-narrow has-text-centered">操作</th>
+</tr>
+</thead>
 
-		<tbody>
-		<tr v-for="(user, index) in filter.users">
-		<td class="is-narrow">{{user.data.user_registered}}</td>
-		<td><a :href="user.data.link" target="_blank">{{user.data.display_name}}</a></td>
-		<a @click='wnd_ajax_modal("wnd_delete_user_form", {"user_id": user.ID} )'><i class="fas fa-trash-alt"></i></a>
-		<a @click='wnd_ajax_modal("wnd_account_status_form", {"user_id": user.ID} )'><i class="fas fa-cog"></i></a>
-		</tr>
-		</tbody>
-		</table>`;
+<tbody>
+<tr v-for="(user, index) in filter.users">
+<td class="is-narrow is-hidden-mobile">{{user.data.user_registered}}</td>
+<td><a :href="user.data.link" target="_blank">{{user.data.display_name}}</a></td>
+<a @click='wnd_ajax_modal("wnd_delete_user_form", {"user_id": user.ID} )'><i class="fas fa-trash-alt"></i></a>
+<a @click='wnd_ajax_modal("wnd_account_status_form", {"user_id": user.ID} )'><i class="fas fa-cog"></i></a>
+</tr>
+</tbody>
+</table>`;
 	}
 
 	function build_tabs(tabs) {
 		return `
-		<div v-if="${tabs}" class="columns is-marginless is-vcentered" :class="${tabs}.key">
-		<div class="column is-narrow">{{${tabs}.label}}</div>
+<div v-if="${tabs}" class="columns is-marginless is-vcentered" :class="${tabs}.key">
+<div class="column is-narrow">{{${tabs}.label}}</div>
 
-		<div class="column tabs">
-		<ul class="tab">
-		<template v-for="(value, name) in ${tabs}.options">
-		<li :class="item_class(${tabs}.key, value)"><a :data-key="${tabs}.key" :data-value="value" @click="update_filter(${tabs}.key, value, ${tabs}.remove_args)">{{name}}</a></li>
-		</template>
-		</ul>
-		</div>
+<div class="column tabs">
+<ul class="tab">
+<template v-for="(value, name) in ${tabs}.options">
+<li :class="item_class(${tabs}.key, value)"><a :data-key="${tabs}.key" :data-value="value" @click="update_filter(${tabs}.key, value, ${tabs}.remove_args)">{{name}}</a></li>
+</template>
+</ul>
+</div>
 
-		</div>`
+</div>`
 	}
 
 	function build_navigation(filter) {
 		return `
-		<nav class="pagination is-centered">
-		<ul class="pagination-list">
-		<li v-if="filter.pagination.paged >= 2"><a class="pagination-previous" @click="update_filter('paged', --filter.pagination.paged)">上一页</a></li>
-		<li v-if="filter.pagination.current_count >= filter.pagination.per_page">
-		<a class="pagination-next" @click="update_filter('paged', ++filter.pagination.paged)">下一页</a>
-		</li>
-		</ul>
-		</nav>`;
+<nav class="pagination is-centered">
+<ul class="pagination-list">
+<li v-if="filter.pagination.paged >= 2"><a class="pagination-previous" @click="update_filter('paged', --filter.pagination.paged)">上一页</a></li>
+<li v-if="filter.pagination.current_count >= filter.pagination.per_page">
+<a class="pagination-next" @click="update_filter('paged', ++filter.pagination.paged)">下一页</a>
+</li>
+</ul>
+</nav>`;
 	}
 
 	function is_category_tab(tab, filter) {

@@ -107,7 +107,20 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 				unset($post->post_content);
 			}
 
-			$post->link    = get_permalink($post);
+			// 用户信息
+			$author       = get_userdata($post->post_author);
+			$author_name  = $author ? ($author->display_name ?? $author->user_login) : 'anonymous';
+			$author_link  = $author ? get_author_posts_url($post->post_author) : '';
+			$post->author = ['name' => $author_name, 'link' => $author_link];
+
+			// Post Link
+			$post->link = get_permalink($post);
+
+			// 财务类 Post Content 为金额，需格式化
+			if (in_array($post->post_type, \Wnd\Model\Wnd_Init::FIN_TYPS)) {
+				$post->post_content = number_format((float) $post->post_content, 2);
+			}
+
 			$this->posts[] = $post;
 		}
 		unset($post);
