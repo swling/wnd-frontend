@@ -28,36 +28,6 @@ class Wnd_Form_Render {
 	protected $thumbnail_width  = 100;
 	protected $thumbnail_height = 100;
 
-	protected static $defaults = [
-		'id'          => '',
-		'class'       => '',
-		'name'        => '',
-		'value'       => '',
-		'label'       => '',
-		'options'     => [], //value of select/radio. Example: [label=>value]
-		'checked'     => '', // checked value of select/radio; bool of checkbox
-		'selected'    => '', // selected value if select
-		'required'    => false,
-		'disabled'    => false,
-		'autofocus'   => false,
-		'readonly'    => false,
-		'placeholder' => '',
-		'size'        => '',
-		'maxlength'   => '',
-		'min'         => '',
-		'max'         => '',
-		'step'        => '',
-		'pattern'     => '',
-		'multiple'    => '',
-
-		// icon and addon
-		'icon_left'   => '',
-		'icon_right'  => '',
-		'addon_left'  => '',
-		'addon_right' => '',
-		'help'        => ['text' => '', 'class' => ''],
-	];
-
 	/**
 	 *@since 2020.04.17
 	 *input字段类型

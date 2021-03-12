@@ -87,22 +87,6 @@ class Wnd_Form {
 	];
 
 	/**
-	 *@since 2020.04.17
-	 *input字段类型
-	 */
-	protected static $input_types = [
-		'text',
-		'number',
-		'email',
-		'password',
-		'url',
-		'color',
-		'date',
-		'range',
-		'tel',
-	];
-
-	/**
 	 *初始化构建
 	 *@param bool $is_horizontal 	水平表单
 	 */
