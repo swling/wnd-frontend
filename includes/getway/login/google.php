@@ -21,7 +21,7 @@ class Google extends Wnd_Login_Social {
 
 		$this->app_id       = wnd_get_config('google_appid');
 		$this->app_key      = wnd_get_config('google_appkey');
-		$this->redirect_url = add_query_arg(['login' => 'google'], wnd_get_ucenter_url(true));
+		$this->redirect_url = wnd_get_endpoint_url('wnd_social_login');
 	}
 
 	/**
