@@ -34,14 +34,6 @@ class Wnd_User_Page extends Wnd_Module_Html {
 		// 解析并合并参数
 		$args = wp_parse_args($args, $defaults);
 
-		//监听社交登录 可能有跳转，因此需要在header之前
-		if ($args['state'] ?? '') {
-			$domain       = \Wnd\Utility\Wnd_Login_Social::parse_state($args['state'])['domain'];
-			$Login_Social = \Wnd\Utility\Wnd_Login_Social::get_instance($domain);
-			$Login_Social->login();
-			return '';
-		}
-
 		$module = static::handle_module($args) ?: '';
 		$module = $module ? ('<div id="ajax-module" class="content box">' . $module . '</div>') : '';
 		get_header();
