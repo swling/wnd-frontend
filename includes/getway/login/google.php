@@ -19,9 +19,8 @@ class Google extends Wnd_Login_Social {
 	public function __construct() {
 		parent::__construct();
 
-		$this->app_id       = wnd_get_config('google_appid');
-		$this->app_key      = wnd_get_config('google_appkey');
-		$this->redirect_url = wnd_get_endpoint_url('wnd_social_login');
+		$this->app_id  = wnd_get_config('google_appid');
+		$this->app_key = wnd_get_config('google_appkey');
 	}
 
 	/**

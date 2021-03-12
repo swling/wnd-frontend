@@ -23,7 +23,8 @@ abstract class Wnd_Login_Social {
 	protected $redirect_url;
 
 	public function __construct() {
-		$this->user_id = get_current_user_id();
+		$this->user_id      = get_current_user_id();
+		$this->redirect_url = wnd_get_endpoint_url('wnd_social_login');
 	}
 
 	/**
