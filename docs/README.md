@@ -33,10 +33,7 @@ $post_type.'_tag';//标签taxonomy
 - 整站月度财务统计：stats-re(充值)、stats-ex(消费)
 
 # 自定义文章状态
-## success
-用于功能型post、(如：充值，订单等) wp_insert_post 可直接写入未经注册的 post_status，但未经注册的post_status无法通过wp_query进行筛选，故此注册
-## close
-用于关闭文章相关功能，但不删除文章，保留前端可浏览
+@see Wnd\Modle\Wnd_Init::register_post_status();
 
 # 自定义文章版本
 本插件自定义了一个文章版本功能，假定当前 $post ,则该 $post 版本定义：
