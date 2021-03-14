@@ -17,7 +17,7 @@ class Wnd_Admin {
 		if (!get_option('wnd')) {
 			$default_option = [
 				'static_host'               => 'local',
-				'ucenter_page'              => '',
+				'front_page'                => '',
 				'agreement_url'             => '',
 				'reg_redirect_url'          => '',
 				'default_avatar_url'        => WND_URL . 'static/images/avatar.jpg',
@@ -141,11 +141,6 @@ class Wnd_Admin {
 	 *升级
 	 */
 	public static function upgrade() {
-		/**
-		 *@since 0.9.18
-		 */
-		flush_rewrite_rules();
-
 		global $wpdb;
 		// 升级 0.8.61
 		if (version_compare(get_option('wnd_ver'), '0.8.61', '<')) {
@@ -270,6 +265,21 @@ class Wnd_Admin {
 
 			$wpdb->query("DROP TABLE IF EXISTS $wpdb->wnd_users");
 			update_option('wnd_ver', '0.9.2');
+			wp_cache_flush();
+		}
+
+		// 升级 0.9.26
+		if (version_compare(get_option('wnd_ver'), '0.9.26', '<')) {
+			foreach (get_option('wnd') as $key => $value) {
+				if ('ucenter_page' == $key) {
+					$key = 'front_page';
+				}
+				$option[$key] = $value;
+			}
+			update_option('wnd', $option);
+
+			update_option('wnd_ver', '0.9.26');
+
 			wp_cache_flush();
 		}
 	}

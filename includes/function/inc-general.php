@@ -44,9 +44,9 @@ function wnd_get_config($config_key) {
  *获取用户中心页面 URL
  *@param bool $remove_language 是否移除语言参数
  */
-function wnd_get_ucenter_url($remove_language = false): string{
-	$ucenter_page_url = get_permalink(wnd_get_config('ucenter_page'));
-	return $remove_language ? remove_query_arg(WND_LANG_KEY, $ucenter_page_url) : $ucenter_page_url;
+function wnd_get_front_page_url($remove_language = false): string{
+	$front_page_url = get_permalink(wnd_get_config('front_page'));
+	return $remove_language ? remove_query_arg(WND_LANG_KEY, $front_page_url) : $front_page_url;
 }
 
 /**

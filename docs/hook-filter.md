@@ -260,7 +260,7 @@ add_filter('wnd_menus', function ($menus, $args) {
 		'label' => '拓展菜单',
 		'expand'=> false, // 是否强制展开本菜单
 		'items' => [
-			['title' => '测试菜单', 'href' => wnd_get_ucenter_url() . '#wnd_profile_form'],
+			['title' => '测试菜单', 'href' => wnd_get_front_page_url() . '#wnd_profile_form'],
 		],
 	];
 	return $menus;

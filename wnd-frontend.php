@@ -68,8 +68,9 @@ add_action('upgrader_process_complete', function ($upgrader_object, $options) {
 
 /**
  *@since 2019.04.16
- *访问后台时候，触发执行清理动作
+ *访问后台时候，触发执行升级及清理动作
  */
+add_action('admin_init', 'Wnd\Model\Wnd_Admin::upgrade');
 add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
 
 /**

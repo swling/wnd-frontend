@@ -73,6 +73,6 @@ class Wnd_Menus extends Wnd_JsonGet {
 	 *前端页面 URL
 	 */
 	protected static function get_front_page_url(): string {
-		return wnd_get_ucenter_url();
+		return wnd_get_front_page_url();
 	}
 }

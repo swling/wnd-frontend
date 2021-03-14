@@ -105,7 +105,7 @@ class Wnd_Menus {
 			]
 		);
 
-		$form->add_page_select('ucenter_page', '用户中心页面', true);
+		$form->add_page_select('front_page', '前端页面', true);
 
 		$form->add_text(
 			[

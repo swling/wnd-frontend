@@ -6,7 +6,7 @@ use Wnd\JsonGet\Wnd_Menus;
 use Wnd\Module\Wnd_User_Center;
 
 /**
- *封装用户中心页面
+ *封装前端中心页面
  *@since 0.9.0
  *
  *Template Name: 用户中心
@@ -17,7 +17,7 @@ use Wnd\Module\Wnd_User_Center;
  * - 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
  * - 默认为用户中心：注册、登录、账户管理，内容管理，财务管理等
  */
-class Wnd_User_Page extends Wnd_Module_Html {
+class Wnd_Front_Page extends Wnd_Module_Html {
 
 	protected static function build(array $args = []): string{
 		$defaults = [
