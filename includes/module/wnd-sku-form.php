@@ -59,7 +59,7 @@ class Wnd_SKU_Form extends Wnd_Module_Form {
 				$form->add_text(
 					[
 						'label'       => $label,
-						'name'        => '_' . Wnd_SKU::$sku_key . '_' . $sku_detail_key . '[]',
+						'name'        => Wnd_SKU::$name_prefix . $sku_detail_key . '[]',
 						'value'       => $sku_detail_value,
 						'placeholder' => $label,
 						'class'       => 'is-small',

@@ -20,6 +20,9 @@ class Wnd_SKU {
 	// SKU KEY
 	public static $sku_key = 'sku';
 
+	// Form input name prefix
+	public static $name_prefix = '_sku_';
+
 	/**
 	 * SKU 属性信息合集
 	 * @param $post_type 产品类型 本插件不固定商品类型，因此可能不同类型的 post 需要不同的 SKU
@@ -62,7 +65,6 @@ class Wnd_SKU {
 	 *	];
 	 */
 	protected static function parse_sku_data(array $data, string $post_type): array{
-		$prefix   = '_' . static::$sku_key . '_';
 		$sku_data = [];
 		$sku_keys = array_keys(static::get_sku_keys($post_type));
 
@@ -74,8 +76,8 @@ class Wnd_SKU {
 		 * - 忽略 SKU Keys 设定范围外的数据
 		 *
 		 * $data = [
-		 *		$prefix . 'name'  => ['name1','name2'],
-		 *		$prefix . 'price' => ['price1','price2'],
+		 *		static::$name_prefix . 'name'  => ['name1','name2'],
+		 *		static::$name_prefix . 'price' => ['price1','price2'],
 		 *	];
 		 *
 		 * 提取后的数据：
@@ -85,11 +87,11 @@ class Wnd_SKU {
 		 *	];
 		 */
 		foreach ($data as $key => $value) {
-			if (false === stripos($key, $prefix)) {
+			if (false === stripos($key, static::$name_prefix)) {
 				continue;
 			}
 
-			$props_key = str_replace($prefix, '', $key);
+			$props_key = str_replace(static::$name_prefix, '', $key);
 			if (!in_array($props_key, $sku_keys)) {
 				continue;
 			}
