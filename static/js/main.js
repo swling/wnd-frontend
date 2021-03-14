@@ -211,16 +211,16 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
     new Vue({
         el: container + ' .vue-app',
         template: `
-        <aside class="menu">
-        <template v-for="(menu, menu_index) in menus">
-        <ul class="menu-list">
-        <a v-if="menu.label" v-html="build_label(menu)" @click="expand(menu_index)"></a>
-        <li v-show="menu.expand"><ul><li v-for="(item, item_index) in menu.items">
-        <a :href="item.href" @click="active(menu_index, item_index)" :class="item.class" v-html="item.title"></a></li>
-        </ul></li>
-        </ul>
-        </template>
-        </aside>`,
+<aside class="menu">
+<template v-for="(menu, menu_index) in menus">
+<ul class="menu-list">
+<a v-if="menu.label" v-html="build_label(menu)" @click="expand(menu_index)"></a>
+<li v-show="menu.expand"><ul><li v-for="(item, item_index) in menu.items">
+<a :href="item.href" @click="active(menu_index, item_index)" :class="item.class" v-html="item.title"></a></li>
+</ul></li>
+</ul>
+</template>
+</aside>`,
         data: {
             menus: wnd_menus_data,
         },
@@ -252,7 +252,14 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
                 }
             },
             expand: function(menu_index) {
-                this.menus[menu_index].expand = !(this.menus[menu_index].expand || false);
+                for (let i = 0; i < this.menus.length; i++) {
+                    const menu = this.menus[i];
+                    if (menu_index !== i) {
+                        menu.expand = false;
+                    } else {
+                        menu.expand = !(menu.expand || false);
+                    }
+                }
             },
             get_container: function() {
                 return parent.id ? '#' + parent.id : '';
@@ -457,15 +464,14 @@ function wnd_reset_modal() {
         // 动画效果需要
         modal_entry.style.height = '0';
     } else {
-        wnd_append('body',
-            `<div id="modal" class="modal">
-            <div class="modal-background"></div>
-            <div class="modal-content">
-            <div class="modal-entry content"></div>
-            </div>
-            <button class="modal-close is-large" aria-label="close"></button>
-            </div>`
-        );
+        wnd_append('body', `
+<div id="modal" class="modal">
+<div class="modal-background"></div>
+<div class="modal-content">
+<div class="modal-entry content"></div>
+</div>
+<button class="modal-close is-large" aria-label="close"></button>
+</div>`);
     }
 }
 
@@ -867,12 +873,11 @@ var funTransitionHeight = function(element, time) { // time, 数值，可缺省
  */
 function wnd_load_menus_side() {
     if (!menus_side) {
-        wnd_append('body',
-            '<div id="wnd-side-container"></div>' +
-            '<div id="wnd-side-background" class="modal" style="z-index:31;">' +
-            '<div class="modal-background"></div>' +
-            '</div>'
-        );
+        wnd_append('body', `
+<div id="wnd-side-container"></div>
+<div id="wnd-side-background" class="modal" style="z-index:31;">
+<div class="modal-background"></div>
+</div>`);
         wnd_ajax_embed('#wnd-side-container', 'wnd_menus_side', {}, 'wnd_menus_side_toggle');
     } else {
         wnd_menus_side_toggle();
