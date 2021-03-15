@@ -62,6 +62,7 @@ wp_post_meta: price (价格)
 
 ## wnd自定义字段
 wnd_meta: file (存储付费附件的id)
+wnd_meta: file_url (存储付费附件的 URL 支持外链)
 wnd_meta: download_count (下载统计)
 wnd_meta: order_count (订单统计，含15分钟以内未完成的订单)
 wnd_meta: total_sales：付费内容总销售额

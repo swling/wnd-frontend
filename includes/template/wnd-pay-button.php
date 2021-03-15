@@ -23,7 +23,7 @@ class Wnd_Pay_Button {
 	protected $post_id;
 	protected $post;
 	protected $post_price;
-	protected $file_id;
+	protected $file;
 
 	protected $user_id;
 	protected $is_author;
@@ -51,7 +51,7 @@ class Wnd_Pay_Button {
 		$this->post_price    = wnd_get_post_price($this->post_id, '', true);
 		$this->user_money    = wnd_get_user_money($this->user_id, true);
 		$this->user_has_paid = wnd_user_has_paid($this->user_id, $this->post_id);
-		$this->file_id       = wnd_get_post_meta($this->post_id, 'file');
+		$this->file          = wnd_get_paid_file($this->post_id);
 		$this->primary_color = 'is-' . wnd_get_config('primary_color');
 
 		if (floatval($this->post_price) <= 0 or $this->user_has_paid) {
@@ -61,9 +61,9 @@ class Wnd_Pay_Button {
 		}
 
 		// 根据付费内容形式，构建对应变量：$message and $button_text
-		if ($with_paid_content and $this->file_id) {
+		if ($with_paid_content and $this->file) {
 			$this->build_pay_button_var();
-		} elseif ($this->file_id) {
+		} elseif ($this->file) {
 			$this->build_paid_download_button_var();
 		} elseif ($with_paid_content) {
 			$this->build_paid_reading_button_var();
@@ -110,7 +110,7 @@ class Wnd_Pay_Button {
 		 */
 		if (floatval($this->post_price) > 0 and !$this->user_has_paid and !$this->is_author) {
 			$this->html .= wnd_modal_button($this->button_text, 'wnd_payment_form', ['post_id' => $this->post_id], $this->primary_color);
-		} elseif (!$this->disabled and $this->file_id) {
+		} elseif (!$this->disabled and $this->file) {
 			$form = new Wnd_Form_WP();
 			$form->add_hidden('post_id', $this->post_id);
 			$form->set_route('action', 'wnd_pay_for_downloads');
@@ -133,7 +133,7 @@ class Wnd_Pay_Button {
 	 */
 	protected function build_paid_download_button_var() {
 		// 没有文件
-		if (!$this->file_id) {
+		if (!$this->file) {
 			return;
 		}
 

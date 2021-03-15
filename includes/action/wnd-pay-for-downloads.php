@@ -33,8 +33,7 @@ class Wnd_Pay_For_Downloads extends Wnd_Action {
 		}
 
 		// 获取文章附件
-		$attachment_id = wnd_get_post_meta($post_id, 'file') ?: get_post_meta($post_id, 'file');
-		$file          = get_attached_file($attachment_id, $unfiltered = true);
+		$file = wnd_get_paid_file($post_id);
 		if (!$file) {
 			throw new Exception(__('获取文件失败', 'wnd'));
 		}

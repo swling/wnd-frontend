@@ -181,3 +181,18 @@ function wnd_media_sideload($file, $post_id, $desc = '', $return = 'id') {
 		return new WP_Error('image_sideload_failed');
 	}
 }
+
+/**
+ *@since 09.26
+ *根据 post id 获取付费文件 URL
+ *
+ */
+function wnd_get_paid_file(int $post_id): string{
+	$file = wnd_get_post_meta($post_id, 'file_url') ?: '';
+	if ($file) {
+		return $file;
+	}
+
+	$file_id = wnd_get_post_meta($post_id, 'file') ?: 0;
+	return get_attached_file($file_id, false) ?: '';
+}
