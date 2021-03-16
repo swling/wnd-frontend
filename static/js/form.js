@@ -103,6 +103,15 @@ function _wnd_render_form(container, form_json, add_class = '') {
             },
             // 富文本编辑器 @link https://doc.wangeditor.com/
             build_editor: function() {
+                // 额外的 CSS
+                let style = document.createElement('style');
+                style.innerHTML = `
+img[data-wp-more] {
+    border: 0; box-shadow: none; width: 96%; height: 16px; display: block; margin: 15px auto 0; outline: 0; cursor: default;
+	background: transparent url( ${static_path}/images/more.png ) repeat-y scroll center center;
+}`;
+                document.head.appendChild(style);
+
                 let _this = this;
                 if ('undefined' == typeof wangEditor) {
                     let url = static_path + 'editor/wangEditor.min.js?ver=' + wnd.ver;
@@ -120,6 +129,36 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 }
 
                 function build(index) {
+                    /**
+                     *@since 0.9.26
+                     *自定义拓展编辑器菜单 
+                     */
+                    const E = window.wangEditor;
+
+                    // 获取必要的变量，这些在下文中都会用到
+                    const {
+                        $,
+                        BtnMenu,
+                    } = E;
+                    // 菜单 class ，Button 菜单继承 BtnMenu class
+                    class moreMenu extends BtnMenu {
+                        constructor(editor) {
+                            // data-title属性表示当鼠标悬停在该按钮上时提示该按钮的功能简述
+                            const $elem = E.$(`<div class="w-e-menu" data-title="切割免费内容与付费内容"><span class="button is-small">&nbsp;More&nbsp;</span></div>`);
+                            super($elem, editor);
+                        }
+                        // 菜单点击事件
+                        clickHandler() {
+                            // 可参考【常用 API】文档，来操作编辑器
+                            let img = `<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-wp-more="more" class="wp-more-tag" title="'Read more..." />`;
+                            editor.cmd.do('insertHTML', img);
+                        }
+                        // 菜单是否被激活（如果不需要，这个函数可以空着）
+                        tryChangeActive() {}
+                    }
+                    // 注册菜单
+                    E.registerMenu('moreMenuKey', moreMenu);
+
                     let field = _this.form.fields[index];
                     let selector = `#${_this.form.attrs.id}-${index}`;
                     const editor = new wangEditor(`${selector}-toolbar`, `${selector}-text`);
@@ -140,7 +179,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
 
                     // 配置 onchange 回调函数，将数据同步到 vue 中
                     editor.config.onchange = (newHtml) => {
-                        field.value = newHtml
+                        field.value = parse_more_img(newHtml);
                         // 移除父容器高度，适应编辑器内容撑开高度
                         parent.style.removeProperty('height');
                     }
@@ -164,12 +203,44 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     editor.create()
 
                     // 内容初始化
-                    editor.txt.html(field.value);
+                    editor.txt.html(parse_more_tag(field.value));
 
                     // 编辑器是动态按需加载，需要额外再设置一次高度适应
                     _this.$nextTick(function() {
                         funTransitionHeight(parent, trs_time);
                     });
+                }
+
+                // 将 more 标签转为 img 标签
+                function parse_more_tag(content) {
+                    if (content.indexOf('<!--more') !== -1) {
+                        let title = 'Read more...';
+                        content = content.replace(/<!--more(.*?)-->/g, function(match, moretext) {
+                            return '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-wp-more="more" data-wp-more-text="' + moretext + '" ' +
+                                'class="wp-more-tag mce-wp-more" alt="" title="' + title + '" />';
+                        });
+                    }
+
+                    return content;
+                }
+
+                // 将 more img 标签转为 more 标签
+                function parse_more_img(content) {
+                    let more_tag = '<!--more-->';
+                    content = content.replace(/<img[^>]+>/g, function(image) {
+                        let match, string = '';
+                        if (image.indexOf('data-wp-more="more"') !== -1) {
+                            if (match = image.match(/data-wp-more-text="([^"]+)"/)) {
+                                moretext = match[1];
+                            }
+
+                            string = more_tag;
+                        }
+
+                        return string || image;
+                    });
+                    // 回车后插入 more 编辑器会添加<p></p>
+                    return content.replace(`<p>${more_tag}</p>`, more_tag);
                 }
             },
 
@@ -663,7 +734,6 @@ ${build_label(field)}
     function build_tag_input(field, index) {
         // 按需载入 CSS
         let style = document.createElement('style');
-        style.type = 'text/css';
         style.innerHTML = `
 .tags-input{width:100%;border-bottom:1px solid #ccc}
 .tags-input input{border:none;width:100%;font-size:1rem;padding-top:0!important;padding-bottom:0!important}
