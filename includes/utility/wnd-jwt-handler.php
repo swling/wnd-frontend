@@ -137,7 +137,7 @@ abstract class Wnd_JWT_Handler {
 
 		// 无效 Token
 		if (0 === $this->verified_user_id) {
-			wp_set_current_user(0);
+			wp_logout();
 		}
 
 		return true;
