@@ -44,7 +44,7 @@ if ($module) {
 	}
 
 	// 渲染
-	$html = ($response['status'] > 0) ? $response['data'] : $response['msg'];
+	$html = ($response['status'] > 0 and 'html' == $response['data']['type']) ? $response['data']['structure'] : $response['msg'];
 	echo '<!DOCTYPE html><head>' . wp_head() . '</head><body>' . $html . '</body>';
 	return;
 }
