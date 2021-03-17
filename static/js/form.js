@@ -144,7 +144,7 @@ img[data-wp-more] {
                     class moreMenu extends BtnMenu {
                         constructor(editor) {
                             // data-title属性表示当鼠标悬停在该按钮上时提示该按钮的功能简述
-                            const $elem = E.$(`<div class="w-e-menu" data-title="切割免费内容与付费内容"><span class="button is-small">&nbsp;More&nbsp;</span></div>`);
+							const $elem = E.$(`<div class="w-e-menu" data-title="切割免费内容与付费内容"><i class="fas fa-yen-sign"></i></div>`);
                             super($elem, editor);
                         }
                         // 菜单点击事件
