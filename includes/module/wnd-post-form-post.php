@@ -27,7 +27,6 @@ class Wnd_Post_Form_Post extends Wnd_Module_Form {
 		 *@since 2019.03.11 表单类
 		 */
 		$form = new Wnd_Form_Post('post', $post_id);
-		// $form->add_html('<div class="columns post-form-post">');
 
 		/**
 		 *左侧栏
@@ -40,7 +39,6 @@ class Wnd_Post_Form_Post extends Wnd_Module_Form {
 		$form->add_post_content(true);
 		$form->add_step(__('发布选项', 'wnd'));
 
-		// $form->add_post_name();
 		$form->add_post_excerpt(__('摘要', 'wnd'));
 
 		// 标签
@@ -55,8 +53,6 @@ class Wnd_Post_Form_Post extends Wnd_Module_Form {
 			$form->add_post_paid_file_upload();
 		}
 
-		// $form->add_html('</div>');
-
 		$form->add_html('
 <div class="field is-horizontal">
 <div class="field-label is-normal"><label class="label is-hidden-mobile">' . __('产品属性', 'wnd') . '</label></div>
@@ -67,8 +63,7 @@ class Wnd_Post_Form_Post extends Wnd_Module_Form {
 
 		// 缩略图
 		$form->set_thumbnail_size(150, 150);
-		$form->add_post_thumbnail(200, 200);
-		// $form->add_html('</div>');
+		$form->add_post_thumbnail(200, 200, __('缩略图', 'wnd'));
 		$form->add_post_status_select();
 
 		$form->set_post_parent($post_parent ?: $form->get_post()->post_parent);

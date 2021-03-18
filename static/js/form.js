@@ -144,7 +144,7 @@ img[data-wp-more] {
                     class moreMenu extends BtnMenu {
                         constructor(editor) {
                             // data-title属性表示当鼠标悬停在该按钮上时提示该按钮的功能简述
-							const $elem = E.$(`<div class="w-e-menu" data-title="切割免费内容与付费内容"><i class="fas fa-yen-sign"></i></div>`);
+                            const $elem = E.$(`<div class="w-e-menu" data-title="切割免费内容与付费内容"><i class="fas fa-yen-sign"></i></div>`);
                             super($elem, editor);
                         }
                         // 菜单点击事件
@@ -685,7 +685,6 @@ ${build_label(field)}
 <input type="file" class="file file-input" :name="${field}.name" @change="upload($event,${field})">
 <span class="file-cta">
 <span class="file-icon"><i class="fa fa-upload"></i></span>
-<span class="file-label">{{${field}.label}}</span>
 </span>
 <span class="file-name" v-html="${field}.file_name"></span>
 </label>

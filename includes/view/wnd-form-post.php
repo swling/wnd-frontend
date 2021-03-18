@@ -423,14 +423,14 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		);
 	}
 
-	public function add_post_price($label = '', $placeholder = '价格', $required = false) {
+	public function add_post_price($label = '', $required = false) {
 		$this->add_number(
 			[
 				'name'        => '_wpmeta_price',
 				'value'       => get_post_meta($this->post_id, 'price', true) ?: '',
 				'label'       => $label,
 				'icon_left'   => '<i class="fas fa-yen-sign"></i>',
-				'placeholder' => $placeholder,
+				'placeholder' => __('价格', 'wnd'),
 				'required'    => $required,
 				'step'        => '0.01',
 				'min'         => '0',
@@ -442,10 +442,18 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *@since 2019.09.04
 	 *上传付费文件
 	 */
-	public function add_post_paid_file_upload($label = '', $placeholder = '价格', $required = false) {
-		$this->add_post_file_upload('file', __('文件上传', 'wnd'));
-		$this->add_post_meta('file_url', __('文件链接', 'wnd'), __('文件链接', 'wnd'));
-		$this->add_post_price($label, $placeholder, $required);
+	public function add_post_paid_file_upload($label = '', $required = false) {
+		$label = $label ?: __('付费文件', 'wnd');
+		$this->add_post_file_upload('file', $label);
+		$this->add_url(
+			[
+				'name'        => 'file_url',
+				'value'       => wnd_get_post_meta($this->post_id, 'file_url') ?: '',
+				'icon_left'   => '<i class="fas fa-link"></i>',
+				'placeholder' => __('文件链接', 'wnd'),
+			]
+		);
+		$this->add_post_price('', $required);
 	}
 
 	/**
