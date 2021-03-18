@@ -177,7 +177,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	// Term 分类单选下拉：本方法不支持复选
-	public function add_post_term_select($args_or_taxonomy, $label = '', $required = true) {
+	public function add_post_term_select($args_or_taxonomy, $label = 'default', $required = true) {
 		$taxonomy        = is_array($args_or_taxonomy) ? $args_or_taxonomy['taxonomy'] : $args_or_taxonomy;
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
@@ -195,7 +195,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'options'  => $option_data,
 				'required' => $required,
 				'selected' => reset($this->current_terms[$taxonomy]) ?: '', //default checked value
-				'label'    => $label,
+				'label'    => ('default' == $label) ? $taxonomy_object->labels->name : $label,
 				'class'    => $taxonomy,
 				'data'     => ['child_level' => 0],
 			]
