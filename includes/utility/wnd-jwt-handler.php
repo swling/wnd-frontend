@@ -69,6 +69,12 @@ abstract class Wnd_JWT_Handler {
 			return;
 		}
 
+		// 无效 Token
+		if (0 === $this->verified_user_id) {
+			wp_logout();
+			return;
+		}
+
 		// 根据 Token 设置当前账户 ID （过期为 0）
 		wp_set_current_user($this->verified_user_id);
 	}
@@ -133,11 +139,6 @@ abstract class Wnd_JWT_Handler {
 		// No Token
 		if (-1 === $this->verified_user_id) {
 			return $result;
-		}
-
-		// 无效 Token
-		if (0 === $this->verified_user_id) {
-			wp_logout();
 		}
 
 		return true;
