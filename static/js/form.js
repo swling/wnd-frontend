@@ -676,7 +676,9 @@ ${build_label(field)}
     function build_file_upload(field, index) {
         return `
 <div :id="get_field_id(${field},${index})" class="field" :class="${field}.class">
-<div class="field"></div>
+<div v-if="${field}.complete" class="field">
+<progress class="progress is-primary" :value="${field}.complete" max="100"></progress>
+</div>
 <div class="columns is-mobile is-vcentered">
 
 <div class="column">
