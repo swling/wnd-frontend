@@ -26,7 +26,9 @@ if ('undefined' == typeof loading_el) {
 
 // Axios 全局请求参数
 // axios.defaults.headers.Authorization = "Bearer " + token
-axios.defaults.headers['X-WP-Nonce'] = wnd.rest_nonce;
+if (!wnd.disable_rest_nonce) {
+    axios.defaults.headers['X-WP-Nonce'] = wnd.rest_nonce;
+}
 axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
 if (wnd.lang) {
     axios.defaults.params = {}

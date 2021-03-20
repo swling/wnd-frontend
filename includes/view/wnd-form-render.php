@@ -507,7 +507,7 @@ class Wnd_Form_Render {
 			return '';
 		}
 
-		if ($input_value['help']['class']) {
+		if ($input_value['help']['class'] ?? false) {
 			$class = 'help ' . $input_value['help']['class'];
 		} else {
 			$class = 'help';

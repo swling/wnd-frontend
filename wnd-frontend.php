@@ -3,7 +3,7 @@
  *Plugin Name: Wnd-Frontend
  *Plugin URI: https://github.com/swling/wnd-frontend
  *Description: Wnd-Frontend 是一套基于 ajax 交互逻辑的 WordPress 前端基础框架。商业用途需购买授权。<a href="https://github.com/swling/wnd-frontend/releases">更新日志</a>
- *Version: 0.9.26.5
+ *Version: 0.9.26.6
  *Author: swling
  *Author URI: https://wndwp.com
  *Requires PHP: 7.3
@@ -17,7 +17,7 @@
  */
 
 // 版本
-define('WND_VER', '0.9.26.5');
+define('WND_VER', '0.9.26.6');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -100,22 +100,23 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 
 	// api 及语言本地化
 	$wnd_data = [
-		'rest_url'     => get_rest_url(),
-		'rest_nonce'   => wp_create_nonce('wp_rest'),
-		'module_api'   => 'wnd/module',
-		'action_api'   => 'wnd/action',
-		'posts_api'    => 'wnd/posts',
-		'users_api'    => 'wnd/users',
-		'jsonget_api'  => 'wnd/jsonget',
-		'endpoint_api' => 'wnd/endpoint',
-		'comment'      => [
+		'rest_url'           => get_rest_url(),
+		'rest_nonce'         => wp_create_nonce('wp_rest'),
+		'disable_rest_nonce' => wnd_get_config('disable_rest_nonce'),
+		'module_api'         => 'wnd/module',
+		'action_api'         => 'wnd/action',
+		'posts_api'          => 'wnd/posts',
+		'users_api'          => 'wnd/users',
+		'jsonget_api'        => 'wnd/jsonget',
+		'endpoint_api'       => 'wnd/endpoint',
+		'comment'            => [
 			'api'      => 'wnd/comment',
 			'order'    => get_option('comment_order'),
 			'form_pos' => wnd_get_config('comment_form_pos') ?: 'top',
 		],
-		'lang'         => $_GET[WND_LANG_KEY] ?? false,
-		'ver'          => WND_VER,
-		'msg'          => [
+		'lang'               => $_GET[WND_LANG_KEY] ?? false,
+		'ver'                => WND_VER,
+		'msg'                => [
 			'required'            => __('必填项为空', 'wnd'),
 			'submit_successfully' => __('提交成功', 'wnd'),
 			'submit_failed'       => __('提交失败', 'wnd'),

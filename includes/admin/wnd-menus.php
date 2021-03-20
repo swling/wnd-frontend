@@ -201,6 +201,16 @@ class Wnd_Menus {
 			]
 		);
 
+		$form->add_radio(
+			[
+				'name'    => 'disable_rest_nonce',
+				'options' => ['启用' => 0, '禁用' => 1],
+				'label'   => 'Rest Nonce',
+				'help'    => ['text' => '是否禁用 Rest Nonce（当您采用其他身份校验如 Token 或执行跨域类操作的时候，可能需要禁用 WP Rest Nonce）'],
+				'class'   => 'is-checkradio is-danger',
+			]
+		);
+
 		$form->set_submit_button('保存', 'is-danger');
 		$form->build();
 
