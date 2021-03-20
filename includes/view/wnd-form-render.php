@@ -103,12 +103,12 @@ class Wnd_Form_Render {
 		$html .= $this->structure['before_html'];
 
 		if ($this->title) {
-			$html .= '<div class="field content">';
-			$html .= '<h3>' . $this->title . '</h3>';
+			$html .= '<div class="field">';
+			$html .= '<h3 ' . static::build_attrs($this->structure['title']['attrs']) . '>' . $this->title . '</h3>';
 			$html .= '</div>';
 		}
 
-		$html .= '<div class="' . $this->structure['message']['attrs']['class'] . '">' . $this->structure['message']['message'] . '</div>';
+		$html .= '<div ' . static::build_attrs($this->structure['message']['attrs']) . '>' . $this->structure['message']['message'] . '</div>';
 
 		$this->html .= $html;
 	}
@@ -364,9 +364,17 @@ class Wnd_Form_Render {
 	 *@since 2019.08.29
 	 *构造表单属性
 	 */
-	protected function build_form_attr(): string{
+	protected function build_form_attr(): string {
+		return static::build_attrs($this->structure['attrs']);
+	}
+
+	/**
+	 *@since 0.9.26
+	 *构造 HTML 属性
+	 */
+	protected static function build_attrs(array $attrs): string{
 		$attr = '';
-		foreach ($this->structure['attrs'] as $key => $value) {
+		foreach ($attrs as $key => $value) {
 			if (!$value and !is_numeric($value)) {
 				continue;
 			}

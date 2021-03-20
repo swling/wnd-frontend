@@ -197,7 +197,7 @@ img[data-wp-more] {
 
                     // 其他
                     editor.config.zIndex = 9;
-                    // editor.config.height = 500;
+                    editor.config.menuTooltipPosition = 'down';
 
                     // 创建编辑器
                     editor.create()
