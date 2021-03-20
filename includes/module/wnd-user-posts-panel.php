@@ -16,7 +16,7 @@ class Wnd_User_Posts_Panel extends Wnd_Module_Filter {
 		$filter->add_post_type_filter(wnd_get_user_panel_post_types());
 		$filter->add_post_status_filter([__('发布', 'wnd') => 'publish', __('待审', 'wnd') => 'pending', __('关闭', 'wnd') => 'wnd-closed', __('草稿', 'wnd') => 'draft']);
 		$filter->add_category_filter();
-		$filter->get_tags_tabs(10);
+		// $filter->add_tags_filter(10);
 		$filter->add_query_vars(['author' => get_current_user_id()]);
 		$filter->set_posts_per_page($this->args['posts_per_page']);
 		$filter->query();

@@ -1,5 +1,4 @@
 <?php
-
 namespace Wnd\View;
 
 /**
@@ -69,7 +68,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	/**
 	 *获取完整筛选 Tabs
 	 */
-	public function get_tabs(): array{
+	protected function get_tabs(): array{
 		return $this->tabs;
 	}
 
@@ -77,7 +76,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	 *获取当前查询的主分类 Tabs
 	 *
 	 */
-	public function get_category_tabs($args = []): array{
+	protected function get_category_tabs($args = []): array{
 		$args['taxonomy'] = $this->category_taxonomy;
 		$args['parent']   = $args['parent'] ?? 0;
 		return $this->build_taxonomy_filter($args) ?: [];
@@ -87,7 +86,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	 *获取主分类关联标签筛选 Tabs
 	 *
 	 */
-	public function get_tags_tabs($limit = 10): array{
+	protected function get_tags_tabs($limit = 10): array{
 		return $this->build_tags_filter($limit) ?: [];
 	}
 
@@ -97,7 +96,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	 *@param bool $with_post_content 是否包含正文内容
 	 * 		-在很多情况下 Ajax 筛选用于各类管理面板，此时仅需要获取 post 列表，无需包含正文内容，以减少网络数据发送量
 	 */
-	public function get_posts(bool $with_post_content = true): array{
+	protected function get_posts(bool $with_post_content = true): array{
 		if (!$this->wp_query) {
 			return __('未执行WP_Query', 'wnd');
 		}
@@ -132,7 +131,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	/**
 	 *分页导航
 	 */
-	public function get_pagination($show_page = 5): array{
+	protected function get_pagination($show_page = 5): array{
 		if (!$this->wp_query) {
 			return __('未执行WP_Query', 'wnd');
 		}
@@ -163,9 +162,8 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 			/**
 			 *@since 2019.08.10
 			 *当前post type的主分类筛选项 约定：post(category) / 自定义类型 （$post_type . '_cat'）
-			 *
-			 *动态插入主分类的情况，通常用在用于一些封装的用户面板：如果用户内容管理面板
-			 *常规筛选页面中，应通过add_taxonomy_filter方法添加
+			 * - 动态插入主分类的情况，通常用在用于一些封装的用户面板：如果用户内容管理面板
+			 * - 常规筛选页面中，应通过add_taxonomy_filter方法添加
 			 */
 			'category_tabs'     => $this->get_category_tabs(),
 			'sub_taxonomy_tabs' => $this->get_sub_taxonomy_tabs(),
