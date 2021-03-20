@@ -26,6 +26,7 @@ if ('undefined' == typeof loading_el) {
 
 // Axios 全局请求参数
 // axios.defaults.headers.Authorization = "Bearer " + token
+axios.defaults.withCredentials = true; // 跨域请求允许携带cookie 
 if (!wnd.disable_rest_nonce) {
     axios.defaults.headers['X-WP-Nonce'] = wnd.rest_nonce;
 }
