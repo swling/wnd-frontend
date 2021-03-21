@@ -136,8 +136,9 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	 *但已生成的相关筛选项会根据wp_query->query_var参数做动态修改
 	 *
 	 */
-	public function get_tabs(): string {
-		return '<div class="wnd-filter-tabs">' . $this->tabs . '</div>';
+	public function get_tabs() {
+		$tabs = apply_filters('wnd_filter_tabs', $this->tabs, $this->query_args);
+		return '<div class="wnd-filter-tabs">' . $tabs . '</div>';
 	}
 
 	/**
