@@ -215,7 +215,7 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	 * 在内页或 Ajax 请求中，应且只能执行独立的 WP Query
 	 */
 	public static function action_on_pre_get_posts($query) {
-		if (empty($_GET) or is_admin() or wnd_doing_ajax() or $query->is_singular()) {
+		if (empty($_GET) or is_admin() or wnd_is_rest_request() or $query->is_singular()) {
 			return $query;
 		}
 

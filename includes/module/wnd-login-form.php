@@ -19,7 +19,7 @@ class Wnd_Login_Form extends Wnd_Module_Form {
 		 *移除本插件用户中心相关调用参数
 		 *@since 2020.07.03
 		 */
-		$redirect_to = wnd_doing_ajax() ? false : remove_query_arg(['do', 'type', 'tab', 'wrap'], $_SERVER['HTTP_REFERER'] ?? false);
+		$redirect_to = wnd_is_rest_request() ? false : remove_query_arg(['do', 'type', 'tab', 'wrap'], $_SERVER['HTTP_REFERER'] ?? false);
 
 		$form = new Wnd_Form_User();
 		$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>&nbsp;' . __('登录', 'wnd'), true);

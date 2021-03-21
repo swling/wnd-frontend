@@ -30,7 +30,7 @@ axios.defaults.withCredentials = true; // 跨域请求允许携带cookie
 if (!wnd.disable_rest_nonce) {
     axios.defaults.headers['X-WP-Nonce'] = wnd.rest_nonce;
 }
-axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
+// axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
 if (wnd.lang) {
     axios.defaults.params = {}
     axios.defaults.params['lang'] = wnd.lang;
@@ -44,8 +44,8 @@ if (wnd.lang) {
  *   因此应该在对响应数据进行渲染的具体方法中，设置清除“loading”效果
  */
 axios.interceptors.request.use(function(config) {
-    if (config.headers.container || false) {
-        wnd_loading(config.headers.container);
+    if (config.headers.Container || false) {
+        wnd_loading(config.headers.Container);
     }
     return config;
 });
@@ -278,7 +278,7 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
                         "in_side": in_side
                     },
                     headers: {
-                        'container': this.get_container(),
+                        'Container': this.get_container(),
                     },
                 }).then(res => {
                     this.menus = res.data.data;
@@ -330,7 +330,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
                 'ajax_type': 'embed'
             }, param),
             headers: {
-                'container': container
+                'Container': container
             },
         })
         .then(function(response) {

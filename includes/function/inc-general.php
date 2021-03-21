@@ -50,18 +50,11 @@ function wnd_get_front_page_url($remove_language = false): string{
 }
 
 /**
- *@since 2019.04.07
+ *@since 0.9.26
+ *是否在 Rest 请求环境中
  */
-function wnd_doing_ajax() {
-	if ('XMLHttpRequest' == ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? false)) {
-		return true;
-	}
-
-	if (wp_doing_ajax()) {
-		return true;
-	}
-
-	return false;
+function wnd_is_rest_request(): bool {
+	return (defined('REST_REQUEST') and REST_REQUEST);
 }
 
 /**
