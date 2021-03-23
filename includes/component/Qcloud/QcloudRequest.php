@@ -12,8 +12,9 @@ use Exception;
  *
  * 在 云API密钥 上申请的标识身份的 SecretId，一个 SecretId 对应唯一的 SecretKey。非主账户需分配对应产品权限。
  * @link https://console.cloud.tencent.com/capi
+ *
  */
-trait SignatureTrait {
+class QcloudRequest {
 
 	// 腾讯云API Secret ID
 	protected $secret_id;
@@ -28,9 +29,22 @@ trait SignatureTrait {
 	protected $params = [];
 
 	/**
+	 *构造
+	 */
+	public function __construct(string $endpoint, array $params) {
+		$this->secret_id  = wnd_get_config('tencent_secretid');
+		$this->secret_key = wnd_get_config('tencent_secretkey');
+		$this->endpoint   = $endpoint;
+		$this->params     = $params;
+	}
+
+	/**
 	 * 请求服务器
 	 */
 	public function request(): array{
+		// SecretId
+		$this->params['SecretId'] = $this->secret_id;
+
 		// 参数签名
 		$this->params['Signature'] = $this->sign($this->params);
 

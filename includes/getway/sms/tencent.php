@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Getway\Sms;
 
-use Wnd\Component\Qcloud\Sms\SmsSender;
+use Wnd\Component\Qcloud\QcloudRequest;
 use Wnd\Utility\Wnd_Sms;
 
 /**
@@ -17,10 +17,6 @@ class Tencent extends Wnd_Sms {
 	 *@param $phone     string 短信模板ID
 	 */
 	public function send() {
-		$secret_id  = wnd_get_config('tencent_secretid');
-		$secret_key = wnd_get_config('tencent_secretkey');
-		$app_id     = wnd_get_config('sms_appid');
-
 		/**
 		 *模板参数:
 		 *
@@ -35,7 +31,52 @@ class Tencent extends Wnd_Sms {
 		$params = ($this->code and $this->valid_time) ? [$this->code, $this->valid_time] : [];
 
 		// 指定模板ID单发短信
-		$ssender = new SmsSender($secret_id, $secret_key, $app_id);
-		$ssender->sendWithParam('86', [$this->phone], $this->template, $params, $this->sign_name);
+		static::sendWithParam('86', [$this->phone], $this->template, $params, $this->sign_name);
+	}
+
+	/**
+	 *发送含参模板短信
+	 * @link https://cloud.tencent.com/document/product/382/38778
+	 * 使用签名方法 v1
+	 */
+	protected static function sendWithParam($nation_code, $phone_numbers, $templ_id, $templ_params, $sign_name) {
+		$endpoint = 'sms.tencentcloudapi.com';
+		$app_id   = wnd_get_config('sms_appid');
+
+		$params = [
+			// 公共参数：不含 SecretId 及 Signature （SecretId 及 Signature 参数将在 QcloudRequest 中自动添加）
+			'Action'      => 'SendSms',
+			'Timestamp'   => time(),
+			'Nonce'       => wnd_random_code(6, true),
+			'Version'     => '2019-07-11',
+
+			// 短信参数
+			'TemplateID'  => $templ_id,
+			'SmsSdkAppid' => $app_id,
+			'Sign'        => $sign_name,
+		];
+
+		// 手机号码参数
+		foreach ($phone_numbers as $key => $phone_number) {
+			$params['PhoneNumberSet.' . $key] = '+' . $nation_code . $phone_number;
+		}
+
+		// 模板传参
+		foreach ($templ_params as $key => $param) {
+			$params['TemplateParamSet.' . $key] = $param;
+		}
+
+		// 发起请求
+		$action  = new QcloudRequest($endpoint, $params);
+		$request = $action->request();
+
+		// 核查响应
+		if ($request['Response']['Error'] ?? false) {
+			throw new Exception($request['Response']['Error']['Code'] . ':' . $request['Response']['Error']['Message']);
+		}
+
+		if ($request['Response']['SendStatusSet'][0]['Code'] != 'Ok') {
+			throw new Exception($request['Response']['SendStatusSet'][0]['Message']);
+		}
 	}
 }

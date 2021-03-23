@@ -2,7 +2,7 @@
 namespace Wnd\Getway\Captcha;
 
 use Exception;
-use Wnd\Component\Qcloud\SignatureTrait;
+use Wnd\Component\Qcloud\QcloudRequest;
 use Wnd\Utility\Wnd_Captcha;
 
 /**
@@ -14,28 +14,18 @@ use Wnd\Utility\Wnd_Captcha;
  */
 class Tencent extends Wnd_Captcha {
 
-	// 引入腾讯云 API 签名及请求特性
-	use SignatureTrait;
-
-	public function __construct() {
-		$this->endpoint   = 'captcha.tencentcloudapi.com';
-		$this->secret_id  = wnd_get_config('tencent_secretid');
-		$this->secret_key = wnd_get_config('tencent_secretkey');
-
-		parent::__construct();
-	}
-
 	/**
 	 * 请求服务器验证
 	 */
 	public function validate() {
-		$this->params = [
-			// 公共参数
+		$endpoint = 'captcha.tencentcloudapi.com';
+
+		$params = [
+			// 公共参数：不含 SecretId 及 Signature （SecretId 及 Signature 参数将在 QcloudRequest 中自动添加）
 			'Action'       => 'DescribeCaptchaResult',
 			'Timestamp'    => time(),
 			'Nonce'        => wnd_random_code(6, true),
 			'Version'      => '2019-07-22',
-			'SecretId'     => $this->secret_id,
 
 			// 验证码参数
 			'CaptchaType'  => 9,
@@ -47,7 +37,8 @@ class Tencent extends Wnd_Captcha {
 		];
 
 		// 发起请求
-		$result = $this->request();
+		$request = new QcloudRequest($endpoint, $params);
+		$result  = $request->request();
 
 		// 核查响应
 		if ($result['Response']['Error'] ?? false) {
