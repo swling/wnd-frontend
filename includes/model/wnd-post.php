@@ -25,6 +25,17 @@ class Wnd_Post {
 		}
 
 		/**
+		 * 写入及更新权限过滤
+		 * @since 0.9.27
+		 * 创建草稿时同步权限钩子：'wnd_can_insert_post'
+		 * @see Wnd\Action\Wnd_Insert_Post
+		 */
+		$can_insert_post = apply_filters('wnd_can_insert_post', ['status' => 1, 'msg' => ''], $post_type, 0);
+		if (0 === $can_insert_post['status']) {
+			return 0;
+		}
+
+		/**
 		 *@since 2019.02.19
 		 * 写入post type检测
 		 *@since 2019.7.17
