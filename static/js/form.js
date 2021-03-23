@@ -296,11 +296,10 @@ img[data-wp-more] {
                         } else {
                             field.help.text = wnd.msg.upload_successfully;
                             field.help.class = 'is-success';
+                            field.thumbnail = response.data[i].data.thumbnail;
+                            field.file_id = response.data[i].data.id;
+                            field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + response.data[i].data.url + '" target="_blank">' + wnd.msg.view + '</a>';
                         }
-
-                        field.thumbnail = response.data[i].data.thumbnail;
-                        field.file_id = response.data[i].data.id;
-                        field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + response.data[i].data.url + '" target="_blank">' + wnd.msg.view + '</a>';
 
                         // 单个图片
                         if ('image_upload' == field.type) {
