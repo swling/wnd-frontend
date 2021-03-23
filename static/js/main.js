@@ -495,8 +495,22 @@ function wnd_ajax_submit(button, captcha_input = false) {
         return false;
     }
 
+    // 表单有效性检查
     for (let i = 0, n = form.elements.length; i < n; i++) {
-        if (form.elements[i].value === '' && form.elements[i].hasAttribute('required')) {
+        if (!form.elements[i].hasAttribute('required')) {
+            continue;
+        }
+
+        let required_error = false;
+        if (!form.elements[i].value) {
+            required_error = true;
+        } else if (['radio', 'checkbox'].includes(form.elements[i].type) && !form.elements[i].checked) {
+            required_error = true;
+        } else if ('select' == form.elements[i].type && !form.elements[i].selected) {
+            required_error = true;
+        }
+
+        if (required_error) {
             form.elements[i].classList.add('is-danger');
             wnd_form_msg(form, wnd.msg.required, 'is-danger');
             button.classList.remove('is-loading');
