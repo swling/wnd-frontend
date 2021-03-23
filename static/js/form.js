@@ -284,20 +284,23 @@ img[data-wp-more] {
                     headers: {},
                     //原生获取上传进度的事件
                     onUploadProgress: function(progressEvent) {
-                        field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
+                        // field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
+                        field.help.text = wnd.msg.waiting;
+                        field.help.class = 'is-primary';
                     }
                 }).then(response => {
-                    if (response.data.status <= 0) {
-                        field.help.text = response.data.msg;
-                        field.help.class = 'is-danger';
-                        return false;
-                    }
-
                     for (let i = 0, n = response.data.length; i < n; i++) {
+                        if (response.data[i].status <= 0) {
+                            field.help.text = response.data[i].msg;
+                            field.help.class = 'is-danger';
+                        } else {
+                            field.help.text = wnd.msg.upload_successfully;
+                            field.help.class = 'is-success';
+                        }
+
                         field.thumbnail = response.data[i].data.thumbnail;
                         field.file_id = response.data[i].data.id;
                         field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + response.data[i].data.url + '" target="_blank">' + wnd.msg.view + '</a>';
-                        this.form.message.message = wnd.msg.upload_successfully;
 
                         // 单个图片
                         if ('image_upload' == field.type) {
@@ -698,6 +701,7 @@ ${build_label(field)}
 </div>
 
 </div>
+<p v-show="${field}.help.text" class="help" :class="${field}.help.class" style="margin-top:-1rem;">{{${field}.help.text}}</p>
 </div>`;
     }
 
