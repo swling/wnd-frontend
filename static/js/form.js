@@ -289,27 +289,32 @@ img[data-wp-more] {
                         field.help.class = 'is-primary';
                     }
                 }).then(response => {
-                    for (let i = 0, n = response.data.length; i < n; i++) {
-                        if (response.data[i].status <= 0) {
-                            field.help.text = response.data[i].msg;
-                            field.help.class = 'is-danger';
-                        } else {
-                            field.help.text = wnd.msg.upload_successfully;
-                            field.help.class = 'is-success';
-                            field.thumbnail = response.data[i].data.thumbnail;
-                            field.file_id = response.data[i].data.id;
-                            field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + response.data[i].data.url + '" target="_blank">' + wnd.msg.view + '</a>';
-                        }
+                    if (response.data.status <= 0) {
+                        field.help.text = response.data.msg;
+                        field.help.class = 'is-danger';
+                    } else {
+                        for (let i = 0, n = response.data.length; i < n; i++) {
+                            if (response.data[i].status <= 0) {
+                                field.help.text = response.data[i].msg;
+                                field.help.class = 'is-danger';
+                            } else {
+                                field.help.text = wnd.msg.upload_successfully;
+                                field.help.class = 'is-success';
+                                field.thumbnail = response.data[i].data.thumbnail;
+                                field.file_id = response.data[i].data.id;
+                                field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + response.data[i].data.url + '" target="_blank">' + wnd.msg.view + '</a>';
+                            }
 
-                        // 单个图片
-                        if ('image_upload' == field.type) {
+                            // 单个图片
+                            if ('image_upload' == field.type) {
 
-                            // 单个文件
-                        } else if ('file_upload' == field.type) {
+                                // 单个文件
+                            } else if ('file_upload' == field.type) {
 
-                            // 图片相册
-                        } else if ('gallery' == field.type) {
+                                // 图片相册
+                            } else if ('gallery' == field.type) {
 
+                            }
                         }
                     }
 
