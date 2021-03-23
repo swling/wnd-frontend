@@ -140,7 +140,7 @@ function _wnd_render_filter(container, filter_json, add_class) {
 						url: filter.posts ? wnd_posts_api : wnd_users_api,
 						params: param,
 						headers: {
-							'container': this.get_container(),
+							'Container': this.get_container(),
 						},
 					})
 					.then(response => {
