@@ -497,16 +497,20 @@ function wnd_ajax_submit(button, captcha_input = false) {
 
     // 表单有效性检查
     for (let i = 0, n = form.elements.length; i < n; i++) {
-        if (!form.elements[i].hasAttribute('required')) {
+        if (!form.elements[i].hasAttribute('required') || form.elements[i].hasAttribute('disabled')) {
             continue;
         }
 
         let required_error = false;
-        if (!form.elements[i].value) {
-            required_error = true;
-        } else if (['radio', 'checkbox'].includes(form.elements[i].type) && !form.elements[i].checked) {
-            required_error = true;
+        if (['radio', 'checkbox'].includes(form.elements[i].type)) {
+            let name = form.elements[i].name;
+            let checked = form.querySelector('[name="' + name + '"]:checked');
+            if (!checked) {
+                required_error = true;
+            }
         } else if ('select' == form.elements[i].type && !form.elements[i].selected) {
+            required_error = true;
+        } else if (!form.elements[i].value) {
             required_error = true;
         }
 
