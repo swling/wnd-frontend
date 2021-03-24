@@ -61,53 +61,34 @@ class Wnd_Form_User extends Wnd_Form_WP {
 	}
 
 	public function add_user_password($label = '密码', $placeholder = '密码', $required = true) {
-		$this->add_password(
+		$this->__add_password('_user_user_pass', $label, $placeholder, $required);
+	}
+
+	public function add_user_password_repeat($label = '确认密码', $placeholder = '密码', $required = true) {
+		$this->__add_password('_user_user_pass_repeat', $label, $placeholder, $required);
+	}
+
+	public function add_user_new_password($label = '新密码', $placeholder = '新密码', $required = false) {
+		$this->__add_password('_user_new_pass', $label, $placeholder, $required);
+	}
+
+	public function add_user_new_password_repeat($label = '确认新密码', $placeholder = '确认新密码', $required = false) {
+		$this->__add_password('_user_new_pass_repeat', $label, $placeholder, $required);
+	}
+	/**
+	 *@since 0.9.26
+	 *封装密码字段
+	 *命名为 __add_password 而非 add_password 旨在避免和父类冲突
+	 */
+	protected function __add_password($name, $label, $placeholder, $required) {
+		parent::add_password(
 			[
-				'name'        => '_user_user_pass',
+				'name'        => $name,
 				'value'       => '',
 				'label'       => $label,
 				'placeholder' => $placeholder,
 				'icon_left'   => '<i class="fas fa-unlock-alt"></i>',
 				'icon_right'  => '<div class="hide-pw"><i class="far fa-eye" style="pointer-events:all; cursor:pointer"></i></div>',
-				'required'    => $required,
-			]
-		);
-	}
-
-	public function add_user_password_repeat($label = '确认密码', $placeholder = '密码', $required = true) {
-		$this->add_password(
-			[
-				'name'        => '_user_user_pass_repeat',
-				'value'       => '',
-				'label'       => $label,
-				'placeholder' => $placeholder,
-				'icon_left'   => '<i class="fas fa-unlock-alt"></i>',
-				'required'    => $required,
-			]
-		);
-	}
-
-	public function add_user_new_password($label = '新密码', $placeholder = '新密码', $required = false) {
-		$this->add_password(
-			[
-				'name'        => '_user_new_pass',
-				'value'       => '',
-				'label'       => $label,
-				'placeholder' => $placeholder,
-				'icon_left'   => '<i class="fas fa-unlock-alt"></i>',
-				'required'    => $required,
-			]
-		);
-	}
-
-	public function add_user_new_password_repeat($label = '确认新密码', $placeholder = '确认新密码', $required = false) {
-		$this->add_password(
-			[
-				'name'        => '_user_new_pass_repeat',
-				'value'       => '',
-				'label'       => $label,
-				'placeholder' => $placeholder,
-				'icon_left'   => '<i class="fas fa-unlock-alt"></i>',
 				'required'    => $required,
 			]
 		);
