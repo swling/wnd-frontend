@@ -87,18 +87,18 @@ class Wnd_Menu_Sms extends Wnd_Menus {
 		$form->add_text(
 			[
 				'name'        => 'sms_template_r',
-				'label'       => '注册短信模板',
+				'label'       => '注册短信模板 ID',
 				'required'    => false,
-				'placeholder' => '注册短信模板',
+				'placeholder' => '注册短信模板 ID',
 			]
 		);
 
 		$form->add_text(
 			[
 				'name'        => 'sms_template_v',
-				'label'       => '变更/校验 短信模板',
+				'label'       => '变更/校验 短信模板 ID',
 				'required'    => false,
-				'placeholder' => '变更/校验 短信模板',
+				'placeholder' => '变更/校验 短信模板 ID',
 			]
 		);
 
