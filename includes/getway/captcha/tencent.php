@@ -18,10 +18,12 @@ class Tencent extends Wnd_Captcha {
 	 * 请求服务器验证
 	 */
 	public function validate() {
-		$endpoint = 'captcha.tencentcloudapi.com';
-
-		$params = [
-			// 公共参数：不含 SecretId 及 Signature （SecretId 及 Signature 参数将在 QcloudRequest 中自动添加）
+		$secret_id  = wnd_get_config('tencent_secretid');
+		$secret_key = wnd_get_config('tencent_secretkey');
+		$endpoint   = 'captcha.tencentcloudapi.com';
+		$params     = [
+			// 公共参数：不含 Signature （Signature 参数将在 QcloudRequest 中添加）
+			'SecretId'     => $secret_id,
 			'Action'       => 'DescribeCaptchaResult',
 			'Timestamp'    => time(),
 			'Nonce'        => wnd_random_code(6, true),
@@ -37,7 +39,7 @@ class Tencent extends Wnd_Captcha {
 		];
 
 		// 发起请求
-		$request = new QcloudRequest($endpoint, $params);
+		$request = new QcloudRequest($secret_id, $secret_key, $endpoint, $params);
 		$result  = $request->request();
 
 		// 核查响应

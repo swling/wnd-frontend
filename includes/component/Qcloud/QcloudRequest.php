@@ -31,9 +31,9 @@ class QcloudRequest {
 	/**
 	 *构造
 	 */
-	public function __construct(string $endpoint, array $params) {
-		$this->secret_id  = wnd_get_config('tencent_secretid');
-		$this->secret_key = wnd_get_config('tencent_secretkey');
+	public function __construct(string $secret_id, string $secret_key, string $endpoint, array $params) {
+		$this->secret_id  = $secret_id;
+		$this->secret_key = $secret_key;
 		$this->endpoint   = $endpoint;
 		$this->params     = $params;
 	}
@@ -42,10 +42,7 @@ class QcloudRequest {
 	 * 请求服务器
 	 */
 	public function request(): array{
-		// SecretId
-		$this->params['SecretId'] = $this->secret_id;
-
-		// 参数签名
+		// 添加参数签名
 		$this->params['Signature'] = $this->sign($this->params);
 
 		/**

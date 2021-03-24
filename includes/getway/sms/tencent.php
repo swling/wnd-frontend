@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Getway\Sms;
 
+use Exception;
 use Wnd\Component\Qcloud\QcloudRequest;
 use Wnd\Utility\Wnd_Sms;
 
@@ -40,11 +41,12 @@ class Tencent extends Wnd_Sms {
 	 * 使用签名方法 v1
 	 */
 	protected static function sendWithParam($nation_code, $phone_numbers, $templ_id, $templ_params, $sign_name) {
-		$endpoint = 'sms.tencentcloudapi.com';
-		$app_id   = wnd_get_config('sms_appid');
-
-		$params = [
-			// 公共参数：不含 SecretId 及 Signature （SecretId 及 Signature 参数将在 QcloudRequest 中自动添加）
+		$secret_id  = wnd_get_config('tencent_secretid');
+		$secret_key = wnd_get_config('tencent_secretkey');
+		$endpoint   = 'sms.tencentcloudapi.com';
+		$params     = [
+			// 公共参数：不含 Signature （Signature 参数将在 QcloudRequest 中添加）
+			'SecretId'    => $secret_id,
 			'Action'      => 'SendSms',
 			'Timestamp'   => time(),
 			'Nonce'       => wnd_random_code(6, true),
@@ -52,7 +54,7 @@ class Tencent extends Wnd_Sms {
 
 			// 短信参数
 			'TemplateID'  => $templ_id,
-			'SmsSdkAppid' => $app_id,
+			'SmsSdkAppid' => wnd_get_config('sms_appid'),
 			'Sign'        => $sign_name,
 		];
 
@@ -67,7 +69,7 @@ class Tencent extends Wnd_Sms {
 		}
 
 		// 发起请求
-		$action  = new QcloudRequest($endpoint, $params);
+		$action  = new QcloudRequest($secret_id, $secret_key, $endpoint, $params);
 		$request = $action->request();
 
 		// 核查响应
