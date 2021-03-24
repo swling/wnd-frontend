@@ -982,6 +982,22 @@ document.addEventListener('click', function(e) {
         wnd_reset_modal();
         return;
     }
+
+    // 密码输入字段可视切换
+    if (div.classList.contains('hide-pw')) {
+        // icon
+        let i = div.querySelector('i');
+        let add = i.classList.contains('fa-eye') ? 'fa-eye-slash' : 'fa-eye';
+        let remove = 'fa-eye' == add ? 'fa-eye-slash' : 'fa-eye';
+        i.classList.remove(remove);
+        i.classList.add(add);
+
+        // input type
+        let input = div.closest('div.control').querySelector('input');
+        input.type = 'fa-eye' == add ? 'password' : 'text';
+
+        return;
+    }
 });
 
 /**
