@@ -304,7 +304,11 @@ function wnd_get_json(jsonget, param, callback = '') {
         params: param,
     }).then(function(response) {
         if (callback) {
-            window[callback](response.data);
+            if ('function' == typeof callback) {
+                callback(response.data);
+            } else {
+                window[callback](response.data);
+            }
         }
     });
 }
@@ -355,7 +359,11 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
             }
 
             if (callback) {
-                window[callback](response.data);
+                if ('function' == typeof callback) {
+                    callback(response.data);
+                } else {
+                    window[callback](response.data);
+                }
             }
         });
 }
@@ -419,7 +427,11 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
             }
 
             if (callback) {
-                window[callback](response.data);
+                if ('function' == typeof callback) {
+                    callback(response.data);
+                } else {
+                    window[callback](response.data);
+                }
             }
         });
 }
