@@ -56,12 +56,12 @@ class Wnd_Order_Form extends Wnd_Module_Form {
 		if ($support_quantity) {
 			$form->add_number(
 				[
-					'name'     => Wnd_Order_Product::$quantity_key,
-					'value'    => 1,
-					'step'     => 1,
-					'min'      => 1,
-					'required' => 'required',
-					'class'    => 'is-small',
+					'name'       => Wnd_Order_Product::$quantity_key,
+					'value'      => 1,
+					'step'       => 1,
+					'min'        => 1,
+					'required'   => 'required',
+					'addon_left' => '<button class="button is-static">' . __('数量', 'wnd') . '</button>',
 				]
 			);
 		}
