@@ -70,7 +70,7 @@ class QcloudRequest {
 	protected function sign(array $param): string{
 		ksort($param);
 
-		$signStr = $_SERVER['REQUEST_METHOD'] . $this->endpoint . '/?';
+		$signStr = 'POST' . $this->endpoint . '/?';
 		foreach ($param as $key => $value) {
 			$signStr = $signStr . $key . '=' . $value . '&';
 		}unset($key, $value);
