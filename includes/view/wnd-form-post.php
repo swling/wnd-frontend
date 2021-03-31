@@ -176,68 +176,33 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		);
 	}
 
-	// Term 分类单选下拉：本方法不支持复选
+	// Term 分类单选下拉：动态无限层级联动，单个 select 不支持复选 option，仅支持 JavaScript 渲染
 	public function add_post_term_select($args_or_taxonomy, $label = 'default', $required = true) {
+		if (!wnd_is_rest_request()) {
+			throw new \Exception('[' . __FUNCTION__ . '] Only available in rest request!');
+		}
+
 		$taxonomy        = is_array($args_or_taxonomy) ? $args_or_taxonomy['taxonomy'] : $args_or_taxonomy;
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
 		}
 
-		// 获取taxonomy下的 term 键值对
-		$option_data = Wnd_Term::get_terms_data($args_or_taxonomy);
-		$option_data = array_merge(['- ' . $taxonomy_object->labels->name . ' -' => ''], $option_data);
+		// 获取 taxonomy 下拉
+		$option_data = Wnd_Term::get_post_terms_options_with_level($this->post->ID, $args_or_taxonomy);
+		$selected    = Wnd_Term::get_post_terms_with_level($this->post_id, $taxonomy);
 
 		// 新增表单字段
-		$this->add_select(
+		$this->add_field(
 			[
+				'type'     => 'select_linked',
 				'name'     => '_term_' . $taxonomy . '[]',
 				'options'  => $option_data,
 				'required' => $required,
-				'selected' => reset($this->current_terms[$taxonomy]) ?: '', //default checked value
+				'selected' => $selected ?: [0 => ''], //default checked value
 				'label'    => ('default' == $label) ? $taxonomy_object->labels->name : $label,
 				'class'    => $taxonomy,
-				'data'     => ['child_level' => 0],
-			]
-		);
-	}
-
-	/**
-	 *动态子类下拉菜单，不支持复选
-	 *其具体筛选项，将跟随上一级动态菜单而定
-	 *@see Wnd\Module\Wnd_Sub_Terms_Options::render()
-	 *
-	 *@since 2020.04.14
-	 **/
-	public function add_dynamic_sub_term_select($taxonomy, $child_level = 1, $label = '', $required = false, $tips = '') {
-		// 获取当前 post 已选择的 taxonomy 一级 term
-		$top_level_term_id = 0;
-		foreach ($this->current_terms[$taxonomy] as $current_term) {
-			if (1 == Wnd_Term::get_term_level($current_term, $taxonomy)) {
-				$top_level_term_id = $current_term;
-				break;
-			}
-		}unset($current_term);
-
-		// 根据已选择的一级 term 获取对应层级的子类 ids 并构建下拉数组对
-		$option_data         = ['- ' . $tips . ' -' => ''];
-		$this_level_term_ids = Wnd_Term::get_term_children_by_level($top_level_term_id, $taxonomy, $child_level);
-		foreach ($this_level_term_ids as $term_id) {
-			$term                     = get_term($term_id);
-			$option_data[$term->name] = $term_id;
-		}unset($this_level_term_ids, $term_id);
-
-		// 新增表单字段
-		$this->add_select(
-			[
-				'name'     => '_term_' . $taxonomy . '[]',
-				'options'  => $option_data,
-				'required' => $required,
-				'disabled' => count($option_data) <= 1, // 当可选项小于等于1，表明当前条件下子类不可用，设置disabled属性
-				'selected' => reset($this->current_terms[$taxonomy]), //default checked value
-				'label'    => $label,
-				'class'    => 'dynamic-sub ' . 'dynamic-sub-' . $taxonomy . ' ' . $taxonomy . '-child-' . $child_level,
-				'data'     => ['child_level' => $child_level, 'tips' => $tips],
+				'data'     => ['taxonomy' => $taxonomy],
 			]
 		);
 	}
@@ -300,6 +265,10 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 *@since 0.9.25 以 Vue 重构 该字段不再支持常规 php 渲染
 	 */
 	public function add_post_tags($taxonomy, $label = '', $required = false, $help = '') {
+		if (!wnd_is_rest_request()) {
+			throw new \Exception('[' . __FUNCTION__ . '] Only available in rest request!');
+		}
+
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {
 			return;
@@ -308,14 +277,13 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$help = $help ?: __('请用回车键区分多个 Tag', 'wnd');
 
 		$args = [
-			'type'        => 'tag_input',
-			'tags'        => array_values($this->current_terms[$taxonomy]) ?: [],
-			'label'       => $label ?: $taxonomy_object->labels->name,
-			'name'        => '_term_' . $taxonomy,
-			'taxonomy'    => $taxonomy,
-			'required'    => $required,
-			'suggestions' => [],
-			'help'        => ['text' => $help, 'class' => 'is-success'],
+			'type'     => 'tag_input',
+			'tags'     => array_values($this->current_terms[$taxonomy]) ?: [],
+			'label'    => $label ?: $taxonomy_object->labels->name,
+			'name'     => '_term_' . $taxonomy,
+			'required' => $required,
+			'help'     => ['text' => $help, 'class' => 'is-success'],
+			'data'     => ['taxonomy' => $taxonomy, 'suggestions' => []],
 		];
 		$this->add_field($args);
 	}

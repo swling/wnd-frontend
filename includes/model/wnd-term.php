@@ -28,6 +28,60 @@ class Wnd_Term {
 	}
 
 	/**
+	 *@since 0.9.27
+	 *获取当前 post 已设定的 terms 并按以层级为 key 值（仅针对包含层级关系的 taxonomy）
+	 *用于编辑内容时，根据当前 Post 之前数据，根据分类层级设定下拉 Selected 值
+	 */
+	public static function get_post_terms_with_level($post_id, $taxonomy): array{
+		if (!is_taxonomy_hierarchical($taxonomy)) {
+			return [];
+		}
+
+		$terms = static::get_post_terms($post_id, $taxonomy);
+		$data  = [];
+		foreach ($terms as $term_id) {
+			$level        = static::get_term_level($term_id, $taxonomy);
+			$data[$level] = $term_id;
+		}
+
+		return $data;
+	}
+
+	/**
+	 *根据当前 post 已选各层级 terms 查询对应层级的其他选项，并与首层 term 组合返回
+	 *用于编辑内容时，自动载入当前 post 各层级分类法
+	 *@since 0.9.27
+	 */
+	public static function get_post_terms_options_with_level($post_id, $args_or_taxonomy): array{
+		$args            = is_array($args_or_taxonomy) ? $args_or_taxonomy : ['taxonomy' => $args_or_taxonomy];
+		$taxonomy        = $args['taxonomy'] ?? '';
+		$taxonomy_object = get_taxonomy($taxonomy);
+
+		if (!is_taxonomy_hierarchical($taxonomy) or !$taxonomy_object) {
+			return [];
+		}
+
+		// 默认选项
+		$default_option = ['- ' . $taxonomy_object->labels->name . ' -' => ''];
+
+		// 首层选项
+		$option_data[0] = array_merge($default_option, static::get_terms_data($args));
+
+		// 查询当前 POST 已选 term 的子类同层级选项
+		$current_term_ids = static::get_post_terms_with_level($post_id, $taxonomy);
+		for ($i = 0; $i < count($current_term_ids); $i++) {
+			$term_id     = $current_term_ids[$i];
+			$child_terms = static::get_term_children_by_level($term_id, $taxonomy, 1);
+
+			if ($child_terms) {
+				$option_data[$i + 1] = array_merge($default_option, $child_terms);
+			}
+		}
+
+		return $option_data;
+	}
+
+	/**
 	 *获取指定taxonomy下的terms数组键值对：通常用于前端构造html
 	 *分类：[$term->name => $term->term_id,...]
 	 *标签：[$term->name => $term->name,...]
@@ -58,38 +112,36 @@ class Wnd_Term {
 
 	/**
 	 *获取当前Term所处分类层级
-	 *
-	 *顶级分类：1
-	 *子级分类：2
-	 *孙级分类：3
-	 *
+	 *顶级分类：0
+	 *子级分类：1
+	 *孙级分类：2
 	 *以此类推
 	 *
 	 *@param int 	$term_id
 	 *@param string $taxonomy
 	 *@return int | false
 	 */
-	public static function get_term_level($term_id, $taxonomy) {
+	protected static function get_term_level($term_id, $taxonomy) {
 		$ancestors = get_ancestors($term_id, $taxonomy, 'taxonomy');
 		$count     = count($ancestors);
-		return $count + 1;
+		return $count;
 	}
 
 	/**
 	 *@since 2020.04.19
-	 *
 	 *获取当前term 指定层级子类
 	 *
-	 *@return array 指定层级子类的 ids
+	 *@return array 指定层级子类的 ids  [$term_name => $child_term_id]
 	 */
-	public static function get_term_children_by_level($term_id, $taxonomy, $child_level) {
+	protected static function get_term_children_by_level($term_id, $taxonomy, $child_level) {
 		$children    = get_term_children($term_id, $taxonomy);
 		$child_level = static::get_term_level($term_id, $taxonomy) + $child_level;
 
 		$this_level = [];
 		foreach ($children as $child_term_id) {
 			if ($child_level == static::get_term_level($child_term_id, $taxonomy)) {
-				$this_level[] = $child_term_id;
+				$term_name              = get_term($child_term_id, $taxonomy)->name;
+				$this_level[$term_name] = $child_term_id;
 			}
 		}
 

@@ -257,6 +257,38 @@ img[data-wp-more] {
                 });
             },
 
+            // 动态联动下拉选择
+            selected(e, key, index) {
+                let current = e.target.value; //获取选中值(实际项目可通过此值调接口获取下一级选项)
+                let select = this.form.fields[index];
+
+                // change
+                this.change(select);
+
+                // Ajax 联动下拉
+                // let _this = this;
+                wnd_get_json('wnd_sub_term_options', {
+                    "parent": current,
+                    "taxonomy": select.data.taxonomy,
+                }, function(res) {
+                    let nextSelect = res.data;
+                    // 写入或删除 select
+                    if (Object.keys(nextSelect).length) {
+                        select.options.splice(key + 1, select.options.length, nextSelect);
+                    } else {
+                        select.options.splice(key + 1, select.options.length);
+                    }
+
+                    // 设置默认选中值，否则下拉首项为空
+                    select.selected[key + 1] = '';
+                    // key 从 0 开始，故此 + 1 为元素个数 + 2 为下一个
+                    select.selected.length = key + 2;
+
+                    // 子菜单初次为空，必须强制渲染
+                    // Vue.set(_this.form.fields[index], 'options', select.options);
+                });
+            },
+
             // 文件上传
             upload: function(e, field) {
                 let files = e.target.files;
@@ -364,14 +396,14 @@ img[data-wp-more] {
             suggest_tags: function(text, index) {
                 let params = {
                     "search": text,
-                    "taxonomy": this.form.fields[index].taxonomy
+                    "taxonomy": this.form.fields[index].data.taxonomy
                 };
                 axios({
                     'method': 'get',
                     url: wnd_jsonget_api + '/wnd_term_searcher',
                     params: params,
                 }).then(response => {
-                    this.form.fields[index].suggestions = response.data.data;
+                    this.form.fields[index].data.suggestions = response.data.data;
                 });
             },
             // 回车输入写入数据并清空当前输入
@@ -386,7 +418,7 @@ img[data-wp-more] {
             // 点击建议 Tag 写入数据并清空当前输入
             enter_tag_by_sg: function(e, index) {
                 this.form.fields[index].tags.push(e.target.innerText.trim());
-                this.form.fields[index].suggestions = '';
+                this.form.fields[index].data.suggestions = '';
                 let input = e.target.closest('.tags-input').querySelector('[type=text]');
                 input.value = '';
             },
@@ -600,6 +632,8 @@ ${get_submit_template(form_json)}
                 t += build_file_upload(field_vn, index);
             } else if ('select' == field.type) {
                 t += build_select(field_vn, index);
+            } else if ('select_linked' == field.type) {
+                t += build_select_linked(field_vn, index);
             } else if ('tag_input' == field.type) {
                 t += build_tag_input(field_vn, index);
             }
@@ -628,7 +662,7 @@ ${build_label(field)}
 <div :class="get_control_class(${field})">
 <input v-bind="parse_input_attr(${field})" :value="Html_decode(${field}.value)" @input="${field}.value = Html_encode($event.target.value)" @change="change(${field})" @keypress.enter="submit"/>
 <span v-if="${field}.icon_left" class="icon is-left"  v-html="${field}.icon_left"></span>
-<span v-if="${field}.icon_right"  class="icon is-right" v-html="${field}.icon_right"></span>
+<span v-if="${field}.icon_right" class="icon is-right" v-html="${field}.icon_right"></span>
 </div>
 <div v-if="${field}.addon_right" class="control" v-html="${field}.addon_right"></div>
 <p v-if="!has_addon(${field})" v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
@@ -654,17 +688,39 @@ ${build_label(field)}
     // 下拉 Select 组件
     function build_select(field, index) {
         return `
-<div class="field">
+<div :class="get_field_class(${field})">
 ${build_label(field)}
-<div class="control">
-<div class="select" :class="${field}.class + ' ' + form.size" @change="change(${field})">
-<select v-bind="parse_input_attr(${field})" v-model="${field}.selected">
-<template v-for="(value, name) in ${field}.options">
-<option :value="value">{{name}}</option>
-</template>
+<div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
+<div :class="get_control_class(${field})">
+<div class="select" :class="${field}.class + ' ' + form.size">
+<select v-bind="parse_input_attr(${field})" v-model="${field}.selected" @change="change(${field})">
+<option v-for="(value, name) in ${field}.options" :value="value">{{name}}</option>
 </select>
 </div>
+<span v-if="${field}.icon_left" class="icon is-left"  v-html="${field}.icon_left"></span>
+<span v-if="${field}.icon_right" class="icon is-right" v-html="${field}.icon_right"></span>
 </div>
+<div v-if="${field}.addon_right" class="control" v-html="${field}.addon_right"></div>
+<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
+</div>`;
+    }
+
+    // 动态联动多级下拉 Select 组件：options 为二维数组，selected 为数组依次对应 options 中的子数组。每个 select 仍为单选
+    function build_select_linked(field, index) {
+        return `
+<div :class="get_field_class(${field})">
+${build_label(field)}
+<div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
+<div :class="get_control_class(${field})">
+<div class="select">
+<select class="select" style="display:inline-block" :class="${field}.class + ' ' + form.size" v-bind="parse_input_attr(${field})" v-for="(option, key) in ${field}.options" v-model="${field}.selected[key]" @change="selected($event, key, ${index})" :key="key">
+<option v-for="(v,k ) in option" :value="v" :key="v">{{k}}</option>
+</select>
+</div>
+<span v-if="${field}.icon_left" class="icon is-left"  v-html="${field}.icon_left"></span>
+<span v-if="${field}.icon_right" class="icon is-right" v-html="${field}.icon_right"></span>
+</div>
+<div v-if="${field}.addon_right" class="control" v-html="${field}.addon_right"></div>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
     }
@@ -745,10 +801,10 @@ ${build_label(field)}
         let style = document.createElement('style');
         style.innerHTML = `
 .tags-input{width:100%;border-bottom:1px solid #ccc}
-.tags-input input{border:none;width:100%;font-size:1rem;padding-top:0!important;padding-bottom:0!important}
-.tags-input input:focus{border:none;box-shadow:none;outline:0;padding-top:0!important;padding-bottom:0!important}
+.tags-input input{border:none;width:100%;font-size:1rem;position:absolute;top:0;bottom:0;height:100%;}
+.tags-input input:focus{border:none;box-shadow:none;outline:0;}
 .tags-input .tag{margin:5px}
-.tags-input .autocomplete{position:relative;display:inline-block}
+.tags-input .autocomplete{position:relative;display:inline-block;min-height:3rem;}
 .tags-input .autocomplete-items{position:absolute;box-shadow:0 2px 10px #999;border-bottom:none;border-top:none;z-index:99;top:100%;left:0}
 .tags-input .autocomplete-items li{padding:10px;cursor:pointer;background-color:#fff;border-bottom:1px solid #eee}
 .tags-input .autocomplete-items li:hover{background-color:#eee}`;
@@ -759,7 +815,7 @@ ${build_label(field)}
 <span class="tag is-medium is-light is-danger">{{tag}}<span class="delete is-small" @click="delete_tag(tag, ${index})"></span></span>
 </template>`;
         let suggestions = `
-<template v-for="(tag, index) in ${field}.suggestions">
+<template v-for="(tag, index) in ${field}.data.suggestions">
 <li @click="enter_tag_by_sg($event, ${index})">{{tag}}</li>
 </template>`;
 
