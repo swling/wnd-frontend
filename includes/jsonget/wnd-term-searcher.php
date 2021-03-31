@@ -27,6 +27,10 @@ class Wnd_Term_Searcher extends Wnd_JsonGet {
 		];
 		$args = wp_parse_args($args, $defaults);
 
+		if (!$args['search']) {
+			return [];
+		}
+
 		return Wnd_Term::get_terms_data($args);
 	}
 }
