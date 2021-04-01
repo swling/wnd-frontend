@@ -485,10 +485,10 @@ abstract class Wnd_Filter_Abstract {
 	/**
 	 *@since 2019.08.09
 	 *获取当前tax_query的所有父级term_id
-	 *@return array $parents 当前分类查询的所有父级：$parents[$taxonomy] = [$term_id_1, $term_id_2];
+	 *@return array $ancestors 当前分类查询的所有父级：$ancestors[$taxonomy] = [$term_id_1, $term_id_2];
 	 */
-	protected function get_tax_query_patents(): array{
-		$parents = [];
+	protected function get_tax_query_ancestors(): array{
+		$ancestors = [];
 
 		// 遍历当前tax query是否包含子类
 		foreach ($this->query_args['tax_query'] as $tax_query) {
@@ -498,19 +498,15 @@ abstract class Wnd_Filter_Abstract {
 			}
 
 			// 递归查询当前分类的父级分类
-			$parents[$tax_query['taxonomy']] = [];
-			$parent                          = get_term($tax_query['terms'])->parent ?? 0;
-			while ($parent) {
-				$parents[$tax_query['taxonomy']][] = $parent;
-				$parent                            = get_term($parent)->parent;
-			}
+			$taxonomy             = $tax_query['taxonomy'];
+			$ancestors[$taxonomy] = get_ancestors($tax_query['terms'], $taxonomy, 'taxonomy');
 
-			// 排序
-			sort($parents[$tax_query['taxonomy']]);
+			// 排序 @since 0.9.27 取消排序：因为 term id 与所在层级并无关联，如创建 term 后又手动调整将较大的 ID 作为祖先
+			// sort($ancestors[$taxonomy]);
 		}
 		unset($tax_query);
 
-		return $parents;
+		return $ancestors;
 	}
 
 	/**
@@ -535,9 +531,9 @@ abstract class Wnd_Filter_Abstract {
 			}
 
 			// 查询当前分类的所有上级分类的子分类
-			$sub_tabs = [];
-			$parents  = $this->get_tax_query_patents()[$tax_query['taxonomy']];
-			foreach ($parents as $parent) {
+			$sub_tabs  = [];
+			$ancestors = $this->get_tax_query_ancestors()[$tax_query['taxonomy']];
+			foreach ($ancestors as $parent) {
 				$args = [
 					'taxonomy' => $tax_query['taxonomy'],
 					'parent'   => $parent,
