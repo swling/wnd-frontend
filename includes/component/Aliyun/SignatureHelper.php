@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Component\Aliyun\Sms;
+namespace Wnd\Component\Aliyun;
 
 /**
  * 签名助手 2017/11/19
@@ -15,10 +15,10 @@ class SignatureHelper {
 	 * @param $accessKeySecret string AccessKeySecret
 	 * @param $domain string API接口所在域名
 	 * @param $params array API具体参数
-	 * @param $security boolean 使用https
+	 * @param $method boolean 使用GET或POST方法请求，VPC仅支持POST
 	 * @return bool|\stdClass 返回API接口调用结果，当发生错误时返回false
 	 */
-	public function request($accessKeyId, $accessKeySecret, $domain, $params, $security = false) {
+	public function request($accessKeyId, $accessKeySecret, $domain, $params, $method = 'POST') {
 		$apiParams = array_merge([
 			"SignatureMethod"  => "HMAC-SHA1",
 			"SignatureNonce"   => uniqid(mt_rand(0, 0xffff), true),
@@ -34,13 +34,13 @@ class SignatureHelper {
 			$sortedQueryStringTmp .= "&" . $this->encode($key) . "=" . $this->encode($value);
 		}
 
-		$stringToSign = "GET&%2F&" . $this->encode(substr($sortedQueryStringTmp, 1));
+		$stringToSign = "${method}&%2F&" . $this->encode(substr($sortedQueryStringTmp, 1));
 		$sign         = base64_encode(hash_hmac("sha1", $stringToSign, $accessKeySecret . "&", true));
 		$signature    = $this->encode($sign);
-		$url          = ($security ? 'https' : 'http') . "://{$domain}/?Signature={$signature}{$sortedQueryStringTmp}";
+		$url          = "https://{$domain}/";
 
 		try {
-			$content = $this->fetchContent($url);
+			$content = $this->fetchContent($url, $method, "Signature={$signature}{$sortedQueryStringTmp}");
 			return json_decode($content);
 		} catch (\Exception $e) {
 			return false;
@@ -55,8 +55,16 @@ class SignatureHelper {
 		return $res;
 	}
 
-	private function fetchContent($url) {
+	private function fetchContent($url, $method, $body) {
 		$ch = curl_init();
+
+		if ($method == 'POST') {
+			curl_setopt($ch, CURLOPT_POST, 1); //post提交方式
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+		} else {
+			$url .= '?' . $body;
+		}
+
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -64,7 +72,7 @@ class SignatureHelper {
 			"x-sdk-client" => "php/2.0.0",
 		]);
 
-		if ('https' == substr($url, 0, 5)) {
+		if ("https" == substr($url, 0, 5)) {
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 		}
@@ -72,6 +80,8 @@ class SignatureHelper {
 		$rtn = curl_exec($ch);
 
 		if (false === $rtn) {
+			// 大多由设置等原因引起，一般无法保障后续逻辑正常执行，
+			// 所以这里触发的是E_USER_ERROR，会终止脚本执行，无法被try...catch捕获，需要用户排查环境、网络等故障
 			trigger_error("[CURL_" . curl_errno($ch) . "]: " . curl_error($ch), E_USER_ERROR);
 		}
 		curl_close($ch);

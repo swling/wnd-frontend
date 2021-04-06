@@ -2,7 +2,7 @@
 namespace Wnd\Getway\Sms;
 
 use Exception;
-use Wnd\Component\Aliyun\Sms\SignatureHelper;
+use Wnd\Component\Aliyun\SignatureHelper;
 use Wnd\Utility\Wnd_Sms;
 
 /**
@@ -47,8 +47,6 @@ class Aliyun extends Wnd_Sms {
 				'Action'   => 'SendSms',
 				'Version'  => '2017-05-25',
 			])
-			// fixme 选填: 启用https
-			, true
 		);
 
 		// 返回结果
