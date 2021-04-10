@@ -475,7 +475,7 @@ img[data-wp-more] {
                             can_submit = false;
                         }
                     } else if (Array.isArray(field.checked)) {
-                        if (field.selected.includes('')) {
+                        if (field.checked.includes('')) {
                             can_submit = false;
                         }
                     }
