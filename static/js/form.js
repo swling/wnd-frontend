@@ -275,17 +275,13 @@ img[data-wp-more] {
                     // 写入或删除 select
                     if (Object.keys(nextSelect).length) {
                         select.options.splice(key + 1, select.options.length, nextSelect);
+                        // 设置默认选中值，否则下拉首项为空
+                        select.selected[key + 1] = '';
                     } else {
                         select.options.splice(key + 1, select.options.length);
+                        // key 从 0 开始，故此 + 1 为元素个数
+                        select.selected.length = key + 1;
                     }
-
-                    // 设置默认选中值，否则下拉首项为空
-                    select.selected[key + 1] = '';
-                    // key 从 0 开始，故此 + 1 为元素个数 + 2 为下一个
-                    select.selected.length = key + 2;
-
-                    // 子菜单初次为空，必须强制渲染
-                    // Vue.set(_this.form.fields[index], 'options', select.options);
                 });
             },
 
@@ -465,12 +461,30 @@ img[data-wp-more] {
                 // 表单检查
                 let can_submit = true;
                 for (const [index, field] of this.form.fields.entries()) {
-                    if (field.required && !field.value && !field.selected && !field.checked) {
+                    if (!field.required) {
+                        continue;
+                    }
+
+                    if (!field.value && !field.selected && !field.checked) {
+                        can_submit = false;
+                    };
+
+                    // 可复选的 select 及 checkbox 必选检测
+                    if (Array.isArray(field.selected)) {
+                        if (field.selected.includes('')) {
+                            can_submit = false;
+                        }
+                    } else if (Array.isArray(field.checked)) {
+                        if (field.selected.includes('')) {
+                            can_submit = false;
+                        }
+                    }
+
+                    if (!can_submit) {
                         field.class = form_json.fields[index].class + ' is-danger';
                         field.help.class = form_json.fields[index].help.class + ' is-danger';
                         field.help.text = form_json.fields[index].help.text + ' ' + wnd.msg.required;
-                        can_submit = false;
-                    };
+                    }
                 }
 
                 if (!can_submit) {
