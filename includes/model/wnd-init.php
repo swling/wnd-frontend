@@ -202,7 +202,7 @@ class Wnd_Init {
 			 */
 			'wnd-unread'     => [
 				'label'                     => __('未读', 'wnd'),
-				'public'                    => false,
+				'protected'                 => true,
 				'exclude_from_search'       => false,
 				'show_in_admin_all_list'    => false,
 				'show_in_admin_status_list' => false,
@@ -210,7 +210,7 @@ class Wnd_Init {
 
 			'wnd-read'       => [
 				'label'                     => __('未读', 'wnd'),
-				'public'                    => false,
+				'protected'                 => true,
 				'exclude_from_search'       => false,
 				'show_in_admin_all_list'    => false,
 				'show_in_admin_status_list' => false,
