@@ -204,10 +204,17 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		}
 
 		// 更新 订单/充值
-		$payment = $object_id ? new Wnd_Order() : new Wnd_Recharge();
-		$payment->set_transaction_id($ID);
-		$payment->set_subject($subject);
-		$payment->verify();
+		if ('order' == $this->transaction->post_type) {
+			$payment = new Wnd_Order();
+			$payment->set_transaction_id($ID);
+			$payment->set_subject($subject);
+			$payment->verify();
+		} elseif ('recharge' == $this->transaction->post_type) {
+			$payment = new Wnd_Recharge();
+			$payment->set_transaction_id($ID);
+			$payment->set_subject($subject);
+			$payment->verify();
+		}
 
 		/**
 		 * @since 2019.06.30
