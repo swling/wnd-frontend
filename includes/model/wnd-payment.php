@@ -291,6 +291,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		}
 
 		$object_id = $this->get_object_id();
+		$type      = $this->get_type();
 
 		// 订单
 		if ($object_id) {
@@ -301,7 +302,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 			$url = wnd_get_config('pay_return_url') ?: home_url();
 		}
 
-		header('Location:' . add_query_arg('from', 'payment_successful', $url));
+		header('Location:' . add_query_arg('from', $type . '_successful', $url));
 		exit;
 	}
 
