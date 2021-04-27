@@ -186,6 +186,13 @@ add_filter('wnd_recharge_amount_options', function(){
 }, 12, 1);
 ```
 
+### 在线支付类型实例
+- 定义支付类型处理实例：插件内置了订单（Wnd\Model\Wnd_Order）及充值（Wnd\Model\Wnd_Recharge）
+- 返回实例必须为 Wnd\Model\Wnd_Transaction 子类
+```php
+$instance = apply_filters('wnd_transaction_instance', $instance, $type, $this->object_id);
+```
+
 ## 表单
 ```php
 /**

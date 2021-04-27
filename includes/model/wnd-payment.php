@@ -111,7 +111,7 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 *@param int 		$this->object_id  			option
 	 */
 	protected function insert_record(bool $is_completed): WP_Post{
-		$payment = $this->object_id ? new Wnd_Order() : new Wnd_Recharge();
+		$payment = $this->get_transaction_instance();
 		$payment->set_object_id($this->object_id);
 		$payment->set_quantity($this->quantity);
 		$payment->set_total_amount($this->total_amount);
@@ -204,17 +204,10 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 		}
 
 		// 更新 订单/充值
-		if ('order' == $this->transaction->post_type) {
-			$payment = new Wnd_Order();
-			$payment->set_transaction_id($ID);
-			$payment->set_subject($subject);
-			$payment->verify();
-		} elseif ('recharge' == $this->transaction->post_type) {
-			$payment = new Wnd_Recharge();
-			$payment->set_transaction_id($ID);
-			$payment->set_subject($subject);
-			$payment->verify();
-		}
+		$payment = $this->get_transaction_instance();
+		$payment->set_transaction_id($ID);
+		$payment->set_subject($subject);
+		$payment->verify();
 
 		/**
 		 * @since 2019.06.30
@@ -259,6 +252,34 @@ abstract class Wnd_Payment extends Wnd_Transaction {
 	 */
 	protected static function build_site_prefix(): string {
 		return strtoupper(substr(md5(site_url()), 0, 4));
+	}
+
+	/**
+	 *@since 0.9.28
+	 *获取处理当前在线交易的站内 Class。插件内置：订单 Wnd_Order 及充值 Wnd_Recharge
+	 * - 创建在线交易时，应指定 Type
+	 * - 交易验签时，自动提取订单 Post Type
+	 */
+	protected function get_transaction_instance(): Wnd_Transaction{
+		$type = $this->transaction->post_type ?? $this->type;
+		if (!$type) {
+			throw new Exception(__('交易类型无效', 'wnd'));
+		}
+
+		if ('order' == $type) {
+			$instance = new Wnd_Order();
+		} elseif ('recharge' == $type) {
+			$instance = new Wnd_Recharge();
+		} else {
+			$instance = false;
+		}
+
+		$instance = apply_filters('wnd_transaction_instance', $instance, $type, $this->object_id);
+		if (!$instance) {
+			throw new Exception(__('无效的 Transaction 实例', 'wnd'));
+		}
+
+		return $instance;
 	}
 
 	/**

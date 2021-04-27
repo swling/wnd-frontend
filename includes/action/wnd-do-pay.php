@@ -33,7 +33,13 @@ class Wnd_Do_Pay extends Wnd_Action {
 			Wnd_Create_Order::check_create($post_id, $sku_id, $quantity, true);
 		}
 
+		/**
+		 *@since 0.9.28 指定交易类型
+		 */
+		$type = $post_id ? 'order' : 'recharge';
+
 		$payment = Wnd_Payment::get_instance($payment_gateway);
+		$payment->set_type($type);
 		$payment->set_object_id($post_id);
 		$payment->set_quantity($quantity);
 		$payment->set_total_amount($total_amount);

@@ -29,10 +29,10 @@ abstract class Wnd_Transaction {
 	protected $total_amount;
 
 	// 支付标题：产品标题 / 充值标题 / 其他自定义
-	protected $subject;
+	protected $subject = '';
 
 	// 交易订单对应的产品或服务属性
-	protected $props;
+	protected $props = [];
 
 	// 状态
 	protected $status;
@@ -72,6 +72,14 @@ abstract class Wnd_Transaction {
 	 */
 	public function __construct() {
 		$this->user_id = get_current_user_id();
+	}
+
+	/**
+	 *@since 0.9.28
+	 *设定交易类型即 交易数据记录的 WP Post Type
+	 **/
+	public function set_type(string $type) {
+		$this->type = $type;
 	}
 
 	/**
