@@ -86,16 +86,22 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 		wp_enqueue_style('font-awesome', WND_URL . 'static/css/font-awesome-all.min.css', [], WND_VER);
 		wp_enqueue_script('axios', WND_URL . 'static/js/lib/axios.min.js', [], WND_VER);
 		wp_enqueue_script('vue', WND_URL . 'static/js/lib/vue.min.js', [], WND_VER);
+
+		wp_enqueue_script('wnd-main', WND_URL . 'static/js/main.min.js', ['vue', 'axios'], WND_VER);
+		if (is_singular() and comments_open()) {
+			wp_enqueue_script('wnd-comment', WND_URL . '/static/js/comment.min.js', ['axios', 'comment-reply'], WND_VER);
+		}
 	} elseif ('jsdeliver' == $static_host) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css', [], null);
 		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css', [], null);
 		wp_enqueue_script('axios', '//cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js', [], null);
 		wp_enqueue_script('vue', '//cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js', [], null);
-	}
 
-	wp_enqueue_script('wnd-main', WND_URL . 'static/js/main.min.js', ['vue', 'axios'], WND_VER);
-	if (is_singular() and comments_open()) {
-		wp_enqueue_script('wnd-comment', WND_URL . '/static/js/comment.min.js', ['axios', 'comment-reply'], WND_VER);
+		$jsdelivr_base = '//cdn.jsdelivr.net/gh/swling/wnd-frontend@' . WND_VER;
+		wp_enqueue_script('wnd-main', $jsdelivr_base . '/static/js/main.min.js', ['vue', 'axios'], null);
+		if (is_singular() and comments_open()) {
+			wp_enqueue_script('wnd-comment', $jsdelivr_base . '/static/js/comment.min.js', ['axios', 'comment-reply'], null);
+		}
 	}
 
 	// api 及语言本地化
