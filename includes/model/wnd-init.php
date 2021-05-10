@@ -5,6 +5,7 @@ use Wnd\Admin\Wnd_Menus;
 use Wnd\Controller\Wnd_Controller;
 use Wnd\Hook\Wnd_Hook;
 use Wnd\Model\Wnd_DB;
+use Wnd\Utility\Wnd_Attachment_Handler;
 use Wnd\Utility\Wnd_language;
 use Wnd\Utility\Wnd_Optimization;
 use Wnd\Utility\Wnd_Singleton_Trait;
@@ -45,8 +46,12 @@ class Wnd_Init {
 		require WND_PATH . '/includes/function/inc-user.php'; //user相关自定义函数
 		require WND_PATH . '/includes/function/inc-media.php'; //媒体文件处理函数
 		require WND_PATH . '/includes/function/inc-finance.php'; //财务
-
 		require WND_PATH . '/includes/function/tpl-general.php'; //通用模板
+
+		// OSS @since 0.9.28 需要用到自定义函数，故此必须在进入文件之后
+		if (wnd_get_config('oss_enable')) {
+			Wnd_Attachment_Handler::get_instance();
+		}
 
 		// 管理后台
 		if (is_admin()) {
