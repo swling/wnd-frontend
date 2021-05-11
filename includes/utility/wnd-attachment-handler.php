@@ -19,8 +19,10 @@ class Wnd_Attachment_Handler {
 	// 是否保留本地文件
 	protected $local_storage;
 
-	// Hook
+	// Configure && Hook
 	private function __construct() {
+		$this->local_storage = wnd_get_config('oss_local_storage');
+
 		// 上传文件
 		add_action('add_attachment', array($this, 'upload_to_oss'), 10, 1);
 		// 删除本地文件
