@@ -5,7 +5,7 @@ use Exception;
 
 /**
  *@since 0.9.29
- *@link https://cloud.tencent.com/document/product/436/7751
+ *@link https://www.aliyun.com/product/oss
  *阿里云对象存储
  */
 class AliyunOSS {
@@ -15,12 +15,14 @@ class AliyunOSS {
 	private $endpoint       = ''; // COS 节点
 	private $file_path_name = ''; // 文件在节点中的相对存储路径（签名需要）
 	private $file_uri       = ''; // 文件的完整 URI： $this->endpoint . $this->file_path_name
+	private $date           = '';
 
 	// 初始化
 	public function __construct(string $secret_id, string $secret_key, string $endpoint) {
 		$this->secret_id  = $secret_id;
 		$this->secret_key = $secret_key;
 		$this->endpoint   = $endpoint;
+		$this->date       = gmdate('D, d M Y H:i:s') . ' GMT';
 	}
 
 	/**
@@ -34,24 +36,21 @@ class AliyunOSS {
 
 	/**
 	 * 上传文件
+	 * @link https://help.aliyun.com/document_detail/31978.html
 	 */
 	function upload_file(string $source_file, int $timeout = 1800) {
 		//设置头部
 		$mime_type = mime_content_type($source_file);
 		$md5       = base64_encode(md5_file($source_file, true));
 		$headers   = [
-			'Date:' . gmdate('D, d M Y H:i:s') . ' GMT',
+			'Date:' . $this->date,
 			'Content-Type:' . $mime_type,
 			'Content-MD5:' . $md5,
-			'Authorization:OSS ' . $this->secret_id . ':' . $this->create_authorization('PUT', $mime_type, $md5),
+			'Authorization:' . $this->create_authorization('PUT', $mime_type, $md5),
 		];
 
 		$file = fopen($source_file, 'rb');
-		if (!$file) {
-			throw new Exception($source_file . 'invalid');
-		}
-
-		$ch = curl_init(); //初始化curl
+		$ch   = curl_init(); //初始化curl
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //返回字符串,而不直接输出
 		curl_setopt($ch, CURLOPT_URL, $this->file_uri); //设置put到的url
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -80,13 +79,13 @@ class AliyunOSS {
 
 	/**
 	 *Delete
-	 *@link https://cloud.tencent.com/document/product/436/7743
+	 *@link https://help.aliyun.com/document_detail/31982.html
 	 **/
 	public function delete_file(int $timeout = 30) {
 		//设置头部
 		$headers = [
-			'Date:' . gmdate('D, d M Y H:i:s') . ' GMT',
-			'Authorization:OSS ' . $this->secret_id . ':' . $this->create_authorization('DELETE'),
+			'Date:' . $this->date,
+			'Authorization:' . $this->create_authorization('DELETE'),
 		];
 
 		$ch = curl_init(); //初始化curl
@@ -98,7 +97,6 @@ class AliyunOSS {
 		// curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); //不检查服务器SSL证书
 
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-
 		// curl_setopt($ch, CURLOPT_HEADER, true); // 开启header信息以供调试
 		// curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 
@@ -107,7 +105,7 @@ class AliyunOSS {
 		curl_close($ch);
 
 		if (204 != $response['http_code']) {
-			throw new \Exception($response['http_code']);
+			throw new Exception($response['http_code']);
 		}
 
 		return $response;
@@ -115,15 +113,16 @@ class AliyunOSS {
 
 	/**
 	 * 获取签名
+	 * @link https://help.aliyun.com/document_detail/31951.html
 	 */
 	protected function create_authorization(string $method, string $minType = '', $md5 = '') {
-		$dateTime = gmdate('D, d M Y H:i:s') . ' GMT';
-		$bucket   = $this->parse_bucket();
+		$bucket = $this->parse_bucket();
 
 		//生成签名：换行符必须使用双引号
-		$str       = $method . "\n" . $md5 . "\n" . $minType . "\n" . $dateTime . "\n/" . $bucket . $this->file_path_name;
+		$str       = $method . "\n" . $md5 . "\n" . $minType . "\n" . $this->date . "\n/" . $bucket . $this->file_path_name;
 		$signature = base64_encode(hash_hmac('sha1', $str, $this->secret_key, true));
-		return $signature;
+
+		return 'OSS ' . $this->secret_id . ':' . $signature;
 	}
 
 	/**
