@@ -37,10 +37,13 @@ class AliyunOSS {
 	 */
 	function upload_file(string $source_file, int $timeout = 1800) {
 		//设置头部
-		$headers = [
+		$mime_type = mime_content_type($source_file);
+		$md5       = base64_encode(md5_file($source_file, true));
+		$headers   = [
 			'Date:' . gmdate('D, d M Y H:i:s') . ' GMT',
-			'Content-Type:' . '',
-			'Authorization:OSS ' . $this->secret_id . ':' . $this->create_authorization('PUT'),
+			'Content-Type:' . $mime_type,
+			'Content-MD5:' . $md5,
+			'Authorization:OSS ' . $this->secret_id . ':' . $this->create_authorization('PUT', $mime_type, $md5),
 		];
 
 		$file = fopen($source_file, 'rb');
@@ -83,7 +86,6 @@ class AliyunOSS {
 		//设置头部
 		$headers = [
 			'Date:' . gmdate('D, d M Y H:i:s') . ' GMT',
-			'Content-Type:' . '',
 			'Authorization:OSS ' . $this->secret_id . ':' . $this->create_authorization('DELETE'),
 		];
 
@@ -114,9 +116,8 @@ class AliyunOSS {
 	/**
 	 * 获取签名
 	 */
-	protected function create_authorization(string $method = '', string $minType = '') {
+	protected function create_authorization(string $method, string $minType = '', $md5 = '') {
 		$dateTime = gmdate('D, d M Y H:i:s') . ' GMT';
-		$md5      = '';
 		$bucket   = $this->parse_bucket();
 
 		//生成签名：换行符必须使用双引号
