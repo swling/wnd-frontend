@@ -32,8 +32,9 @@ abstract class Wnd_Object_Storage {
 	protected function parse_file_path_name(string $source_file): string{
 		// WP 本地上传文件目录
 		$local_base_dir = wp_get_upload_dir()['basedir'];
+		$oss_dir        = $this->oss_dir ? ('/' . $this->oss_dir . '/') : '';
 
-		return '/' . $this->oss_dir . '/' . str_replace($local_base_dir, '', $source_file);
+		return $oss_dir . str_replace($local_base_dir, '', $source_file);
 	}
 
 	/**

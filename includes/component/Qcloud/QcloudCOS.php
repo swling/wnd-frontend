@@ -38,6 +38,7 @@ class QcloudCos {
 	 *@link https://cloud.tencent.com/document/product/436/7749
 	 */
 	public function upload_file(string $source_file, array $headers = [], int $timeout = 1800) {
+		$file                     = fopen($source_file, 'rb');
 		$headers['Content-MD5']   = base64_encode(md5_file($source_file, true));
 		$headers['Authorization'] = $this->create_authorization('put', 3600, $headers);
 
@@ -50,7 +51,7 @@ class QcloudCos {
 		// curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); //不检查服务器SSL证书
 
 		curl_setopt($ch, CURLOPT_PUT, true); //设置为PUT请求
-		curl_setopt($ch, CURLOPT_INFILE, fopen($source_file, 'rb')); //设置资源句柄
+		curl_setopt($ch, CURLOPT_INFILE, $file); //设置资源句柄
 		curl_setopt($ch, CURLOPT_INFILESIZE, filesize($source_file));
 
 		// curl_setopt($ch, CURLOPT_HEADER, true); // 开启header信息以供调试
@@ -58,6 +59,8 @@ class QcloudCos {
 
 		curl_exec($ch);
 		$response = curl_getinfo($ch);
+
+		fclose($file);
 		curl_close($ch);
 
 		if (200 != $response['http_code']) {
