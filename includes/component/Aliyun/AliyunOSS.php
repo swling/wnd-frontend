@@ -62,8 +62,8 @@ class AliyunOSS {
 		curl_setopt($ch, CURLOPT_INFILE, $file); //设置资源句柄
 		curl_setopt($ch, CURLOPT_INFILESIZE, filesize($source_file));
 
-		curl_setopt($ch, CURLOPT_HEADER, true); // 开启header信息以供调试
-		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+		// curl_setopt($ch, CURLOPT_HEADER, true); // 开启header信息以供调试
+		// curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 
 		curl_exec($ch);
 		$response = curl_getinfo($ch);
