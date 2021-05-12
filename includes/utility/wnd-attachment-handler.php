@@ -143,10 +143,10 @@ class Wnd_Attachment_Handler {
 
 	/**
 	 *@since 2019.07.26
-	 *阿里云图片处理
+	 *对象存储图片处理。若指定云平台不支持图像处理则返回原链接
 	 */
-	protected function resize_image($file, $width, $height) {
-		return "{$file}?x-oss-process=image/resize,m_fill,h_{$height},w_{$width}";
+	protected function resize_image($img_url, $width, $height) {
+		return $this->get_object_storage_instance()->resize_image($img_url, $width, $height);
 	}
 
 	/**
