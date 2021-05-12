@@ -6,6 +6,7 @@ use Wnd\Controller\Wnd_Controller;
 use Wnd\Hook\Wnd_Hook;
 use Wnd\Model\Wnd_DB;
 use Wnd\Utility\Wnd_Attachment_Handler;
+use Wnd\Utility\Wnd_CDN;
 use Wnd\Utility\Wnd_language;
 use Wnd\Utility\Wnd_Optimization;
 use Wnd\Utility\Wnd_Singleton_Trait;
@@ -48,9 +49,14 @@ class Wnd_Init {
 		require WND_PATH . '/includes/function/inc-finance.php'; //财务
 		require WND_PATH . '/includes/function/tpl-general.php'; //通用模板
 
-		// OSS @since 0.9.28 需要用到自定义函数，故此必须在进入文件之后
+		// OSS @since 0.9.29 需要用到自定义函数，故此必须在进入文件之后
 		if (wnd_get_config('oss_enable')) {
 			Wnd_Attachment_Handler::get_instance();
+		}
+
+		// CDN @since 0.9.29 需要用到自定义函数，故此必须在进入文件之后
+		if (wnd_get_config('cdn_enable')) {
+			Wnd_CDN::get_instance();
 		}
 
 		// 管理后台
