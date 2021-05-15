@@ -88,8 +88,17 @@ class PayPal extends Wnd_Payment {
 	/**
 	 * 获取access token
 	 * @link https://developer.paypal.com/docs/api/get-an-access-token-curl/
+	 * 		Token 具有一定时效性，出于性能考虑，避免重复请求，故缓存至瞬态 "set_transient"
+	 * 		当开启对象缓存后，瞬态将存储在对象缓存中，否则存储在 option
 	 */
 	private function get_access_token(): string{
+		// 瞬态缓存
+		$access_token = get_transient('paypal_access_token');
+		if ($access_token) {
+			return $access_token;
+		}
+
+		// API 请求
 		$url = $this->api_base . '/v1/oauth2/token';
 		$ch  = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -109,9 +118,15 @@ class PayPal extends Wnd_Payment {
 		curl_close($ch);
 		// echo $result;
 
-		$access_token = json_decode($result)->access_token ?? '';
+		$result       = json_decode($result);
+		$access_token = $result->access_token ?? '';
 		if (!$access_token) {
 			throw new Exception('Get access token failed');
+		}
+
+		// 设置瞬态缓存
+		if ($result->expires_in > 600) {
+			set_transient('paypal_access_token', $access_token, $result->expires_in - 60);
 		}
 
 		return $access_token;
