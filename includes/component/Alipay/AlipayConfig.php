@@ -42,7 +42,7 @@ class AlipayConfig {
 			'sign_type'              => 'RSA2',
 
 			//支付宝网关
-			'gateway_url'            => wnd_get_config('alipay_sandbox') ? 'https://openapi.alipaydev.com/gateway.do' : 'https://openapi.alipay.com/gateway.do',
+			'gateway_url'            => wnd_get_config('payment_sandbox') ? 'https://openapi.alipaydev.com/gateway.do' : 'https://openapi.alipay.com/gateway.do',
 		];
 
 		return $config;

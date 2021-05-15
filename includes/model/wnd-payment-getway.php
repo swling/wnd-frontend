@@ -22,9 +22,11 @@ abstract class Wnd_Payment_Getway {
 	 *构建支付接口名称及标识
 	 */
 	public static function get_gateway_options(): array{
-		$gateway_data = [
-			__('支付宝', 'wnd') => wnd_get_config('alipay_qrcode') ? 'Alipay_QRCode' : 'Alipay',
-		];
+		$gateway_data['支付宝'] = wnd_get_config('alipay_qrcode') ? 'Alipay_QRCode' : 'Alipay';
+
+		if (wnd_get_config('paypal_clientid')) {
+			$gateway_data['PayPal'] = 'PayPal';
+		}
 
 		return apply_filters('wnd_payment_gateway_options', $gateway_data);
 	}

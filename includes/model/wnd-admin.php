@@ -282,5 +282,11 @@ class Wnd_Admin {
 
 			wp_cache_flush();
 		}
+
+		// 升级 0.9.29
+		if (version_compare(get_option('wnd_ver'), '0.9.29', '<')) {
+			// 沙箱测试选项，不仅局限于支付宝，已更名为：payment_sandbox，此选项仅在测试时开启，故可直接删除历史key值
+			wnd_delete_option('wnd', 'alipay_sandbox');
+		}
 	}
 }

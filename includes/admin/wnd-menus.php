@@ -30,7 +30,7 @@ class Wnd_Menus {
 	 *定义子菜单
 	 * - 将依次循环拼接类名：Wnd_Admin_Menu_ {$slug} 并实例化
 	 */
-	protected $sub_menus = ['Accesskey', 'Transaction', 'Alipay', 'Sms', 'Captcha', 'Social_Login', 'OSS', 'CDN'];
+	protected $sub_menus = ['Accesskey', 'Transaction', 'Payment', 'Sms', 'Captcha', 'Social_Login', 'OSS', 'CDN'];
 
 	/**
 	 *构造
