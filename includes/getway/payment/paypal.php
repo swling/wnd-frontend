@@ -12,8 +12,8 @@ use Wnd\Model\Wnd_Payment;
  * - @link https://developer.paypal.com/docs/api/overview/
  *
  * 参考链接
- * - @link https://cloud.tencent.com/developer/article/1693706 （部分代码有误
- * - @link https://developer.paypal.com/docs/api/orders/v2/#orders）
+ * - @link https://cloud.tencent.com/developer/article/1693706 （部分代码有误)
+ * - @link https://developer.paypal.com/docs/api/orders/v2/#orders
  *
  *【注意事项】
  * @date 2021.05.15 PayPal 尚未完成货币转换，目前仅完成支付接口引入，并统一按美元结算
@@ -99,26 +99,21 @@ class PayPal extends Wnd_Payment {
 		}
 
 		// API 请求
-		$url = $this->api_base . '/v1/oauth2/token';
-		$ch  = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		// curl_setopt($ch, CURLOPT_HEADER, false);
-		curl_setopt($ch, CURLOPT_HTTPHEADER,
+		$url     = $this->api_base . '/v1/oauth2/token';
+		$request = wp_remote_request($url,
 			[
-				'Content-Type: application/json',
-				'Accept-Language: en_US',
+				'method'  => 'POST',
+				'headers' => [
+					'Content-Type'  => 'application/x-www-form-urlencoded',
+					'Authorization' => 'Basic ' . base64_encode($this->client_id . ':' . $this->client_secret),
+				],
+				'body'    => ['grant_type' => 'client_credentials'],
 			]
 		);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_USERPWD, $this->client_id . ':' . $this->client_secret);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
-		$result = curl_exec($ch);
-		curl_close($ch);
-		// echo $result;
-
-		$result       = json_decode($result);
+		if (is_wp_error($request)) {
+			throw new Exception($request->get_error_message());
+		}
+		$result       = json_decode($request['body']);
 		$access_token = $result->access_token ?? '';
 		if (!$access_token) {
 			throw new Exception('Get access token failed');
@@ -156,23 +151,21 @@ class PayPal extends Wnd_Payment {
 				'return_url' => wnd_get_endpoint_url('wnd_verify_paypal'),
 			],
 		];
+		$request = wp_remote_request($url,
+			[
+				'method'  => 'POST',
+				'headers' => [
+					'Content-Type'  => 'application/json',
+					'Authorization' => 'Bearer ' . $access_token,
+				],
+				'body'    => json_encode($postfilds),
+			]
+		);
+		if (is_wp_error($request)) {
+			throw new Exception($request->get_error_message());
+		}
 
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		// curl_setopt($ch, CURLOPT_HEADER, false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-			'Authorization: Bearer ' . $access_token,
-			'Accept: application/json',
-			'Content-Type: application/json',
-		));
-		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postfilds));
-		$result = curl_exec($ch);
-		curl_close($ch);
-
-		$result = json_decode($result);
+		$result = json_decode($request['body']);
 		if ('CREATED' !== $result->status) {
 			throw new Exception('Crete order failed');
 		}
@@ -195,24 +188,22 @@ class PayPal extends Wnd_Payment {
 	private function capture_order() {
 		$url          = $this->api_base . '/v2/checkout/orders/' . $this->capture_token . '/capture';
 		$access_token = $this->get_access_token();
-		$ch           = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		// curl_setopt($ch, CURLOPT_HEADER, false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_HTTPHEADER,
+		$request      = wp_remote_request($url,
 			[
-				'Authorization: Bearer ' . $access_token,
-				'Content-Type: application/json',
+				'method'  => 'POST',
+				'headers' => [
+					'Content-Type'  => 'application/json',
+					'Authorization' => 'Bearer ' . $access_token,
+				],
+				'body'    => '',
 			]
 		);
-		// curl_setopt($ch, CURLOPT_POSTFIELDS, $postfilds);
-		$result = curl_exec($ch);
-		curl_close($ch);
+		if (is_wp_error($request)) {
+			throw new Exception($request->get_error_message());
+		}
 
 		// 状态不为 COMPLETED 且原因不是“已支付”：抛出异常
-		$result = json_decode($result);
+		$result = json_decode($request['body']);
 		$status = $result->status ?? '';
 		$issue  = $result->details[0]->issue ?? '';
 		if ('COMPLETED' !== $status and 'ORDER_ALREADY_CAPTURED' != $issue) {
