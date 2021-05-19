@@ -89,7 +89,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 
 		wp_enqueue_script('wnd-main', WND_URL . 'static/js/main.min.js', ['vue', 'axios'], WND_VER);
 		if (is_singular() and comments_open()) {
-			wp_enqueue_script('wnd-comment', WND_URL . '/static/js/comment.min.js', ['axios', 'comment-reply'], WND_VER);
+			wp_enqueue_script('wnd-comment', WND_URL . 'static/js/comment.min.js', ['axios', 'comment-reply'], WND_VER);
 		}
 	} elseif ('jsdeliver' == $static_host) {
 		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css', [], null);

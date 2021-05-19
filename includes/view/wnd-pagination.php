@@ -25,6 +25,9 @@ class Wnd_Pagination {
 	// 容器 class
 	protected $class;
 
+	// data
+	protected $data;
+
 	// 分页是否为非 WP 原生分页的独立查询
 	protected $independent;
 
