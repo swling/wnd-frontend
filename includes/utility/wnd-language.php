@@ -14,6 +14,15 @@ class Wnd_language {
 
 	public static $request_key = WND_LANG_KEY;
 
+	/**
+	 *@link https://en.wikipedia.org/wiki/Language_localisation
+	 */
+	const language_codes = [
+		'zh_CN',
+		'en',
+		'en_US',
+	];
+
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
@@ -54,9 +63,9 @@ class Wnd_language {
 	 *@since 2020.01.14
 	 */
 	public static function filter_locale($locale) {
-		$locale = ($_REQUEST[static::$request_key] ?? false) ?: $locale;
-		$locale = ('en' == $locale) ? 'en_US' : $locale;
-		return $locale;
+		$switch_locale = static::parse_locale();
+		$switch_locale = ('en' == $switch_locale) ? 'en_US' : $switch_locale;
+		return $switch_locale ?: $locale;
 	}
 
 	/**
@@ -64,7 +73,7 @@ class Wnd_language {
 	 *
 	 */
 	public static function filter_link($link) {
-		$lang = $_REQUEST[static::$request_key] ?? false;
+		$lang = static::parse_locale();
 		return $lang ? add_query_arg(static::$request_key, $lang, $link) : $link;
 	}
 
@@ -114,5 +123,18 @@ class Wnd_language {
 	 */
 	public static function action_on_user_register($user_id) {
 		wnd_update_user_meta($user_id, 'locale', get_locale());
+	}
+
+	/**
+	 *@since 0.9.30
+	 *从 GET 参数中解析语言参数
+	 */
+	private static function parse_locale() {
+		$locale = $_REQUEST[static::$request_key] ?? false;
+		if (!$locale or !in_array($locale, self::language_codes)) {
+			return false;
+		}
+
+		return $locale;
 	}
 }
