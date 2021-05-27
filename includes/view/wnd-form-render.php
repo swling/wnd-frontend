@@ -72,7 +72,7 @@ class Wnd_Form_Render {
 
 		$this->structure = array_merge($defaults, $structure);
 
-		$this->is_horizontal = $this->structure['attrs']['is_horizontal'] ?? false;
+		$this->is_horizontal = $this->structure['attrs']['is-horizontal'] ?? false;
 		$this->id            = $this->structure['attrs']['id'];
 		$this->title         = $this->structure['title']['title'];
 		$this->submit        = $this->structure['submit'];
