@@ -39,7 +39,7 @@ class Wnd_Form {
 	protected $input_values = [];
 
 	protected $submit = [
-		'text'  => 'Submit',
+		'text'  => '',
 		'attrs' => [
 			'is_disabled' => false,
 			'class'       => 'button',

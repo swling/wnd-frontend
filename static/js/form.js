@@ -553,7 +553,7 @@ img[data-wp-more] {
                 }
             })
             // 构造富文本编辑器
-            if (this.index.editor) {
+            if (this.index.editor.length > 0) {
                 this.build_editor();
             }
 
