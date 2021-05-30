@@ -2,61 +2,21 @@
 namespace Wnd\Component\BaiduBce;
 
 use Exception;
+use Wnd\Component\Utility\CloudRequest;
 
 /**
  *@link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu
  *@since 0.9.30
  *百度云平台产品签名助手
  */
-class SignatureHelper {
-	private $ak;
-	private $sk;
-	private $timestamp;
-	private $expiration = 1800;
-	private $method;
-	private $path;
-	private $queryString = '';
-	private $headers     = [];
+class SignatureHelper extends CloudRequest {
 
-	/**
-	 *注意为简化代码 $params 仅支持一维数组
-	 */
-	function __construct(string $accessKey, string $secretKey) {
-		$this->ak        = $accessKey;
-		$this->sk        = $secretKey;
+	protected function genAuthorization(): string{
+		// 百度云特殊规定
 		$this->timestamp = gmdate('Y-m-d\TH:i:s\Z');
-	}
 
-	public function request(string $url, $params, array $headers = [], string $method = 'POST'): array{
-		$url_arr           = parse_url($url);
-		$this->path        = $url_arr['path'];
-		$this->queryString = $url_arr['query'] ?? '';
-
-		$this->method                   = strtoupper($method);
-		$this->headers                  = $headers;
-		$this->headers['host']          = $url_arr['host'];
-		$this->headers['Authorization'] = $this->genAuthorization();
-
-		$request = wp_remote_request(
-			$url,
-			[
-				'method'  => $this->method,
-				'body'    => $params,
-				'headers' => $this->headers,
-			]
-		);
-
-		if (is_wp_error($request)) {
-			throw new Exception($request->get_error_message());
-		}
-
-		// 解析响应为数组并返回
-		return json_decode($request['body'], true);
-	}
-
-	private function genAuthorization(): string{
 		$signature = $this->genSignature();
-		$authStr   = 'bce-auth-v1/' . $this->ak . '/' . $this->timestamp . '/' . $this->expiration . '/' . $this->getsignedHeaders() . '/' . $signature;
+		$authStr   = 'bce-auth-v1/' . $this->secretID . '/' . $this->timestamp . '/' . $this->expiration . '/' . $this->getsignedHeaders() . '/' . $signature;
 		return $authStr;
 	}
 
@@ -73,10 +33,10 @@ class SignatureHelper {
 	 *@link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#%E4%BB%BB%E5%8A%A1%E4%B8%89%EF%BC%9A%E7%94%9F%E6%88%90%E6%B4%BE%E7%94%9F%E5%AF%86%E9%92%A5signingkey
 	 */
 	private function genSigningKey(): string {
-		if (empty($this->ak)) {
+		if (empty($this->secretID)) {
 			throw new Exception('access key is null or empty');
 		}
-		if (empty($this->sk)) {
+		if (empty($this->secretKey)) {
 			throw new Exception('secret key is null or empty');
 		}
 		if (empty($this->timestamp)) {
@@ -85,8 +45,8 @@ class SignatureHelper {
 		if (empty($this->expiration)) {
 			throw new Exception('expiration is null or empty');
 		}
-		$authStr = 'bce-auth-v1/' . $this->ak . '/' . $this->timestamp . '/' . $this->expiration;
-		return $this->sha256($this->sk, $authStr);
+		$authStr = 'bce-auth-v1/' . $this->secretID . '/' . $this->timestamp . '/' . $this->expiration;
+		return $this->sha256($this->secretKey, $authStr);
 	}
 
 	/**

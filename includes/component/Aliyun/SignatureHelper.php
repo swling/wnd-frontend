@@ -1,91 +1,67 @@
 <?php
 namespace Wnd\Component\Aliyun;
 
+use Wnd\Component\Utility\CloudRequest;
+
 /**
  * 签名助手 2017/11/19
  *
  * Class SignatureHelper
+ * @link https://www.alibabacloud.com/help/zh/doc-detail/28761.htm
+ * @link https://usercenter.console.aliyun.com/#/manage/ak ( $secretID string AccessKeyId)
  */
-class SignatureHelper {
+class SignatureHelper extends CloudRequest {
 
 	/**
-	 * 生成签名并发起请求
+	 * 阿里云产品签名鉴权包含在请求 body 而非 headers 中，故无需生成 Authorization
 	 *
-	 * @param $accessKeyId string AccessKeyId (https://ak-console.aliyun.com/)
-	 * @param $accessKeySecret string AccessKeySecret
-	 * @param $domain string API接口所在域名
-	 * @param $params array API具体参数
-	 * @param $method boolean 使用GET或POST方法请求，VPC仅支持POST
-	 * @return bool|\stdClass 返回API接口调用结果，当发生错误时返回false
 	 */
-	public function request($accessKeyId, $accessKeySecret, $domain, $params, $method = 'POST') {
+	protected function genAuthorization(): string {
+		return '';
+	}
+
+	/**
+	 *阿里云产品签名鉴权包含在请求 body
+	 *因此，为保持类的接口统一，在请求执行方法中完成签名及请求参数拼接，并调用父类方法发起请求
+	 */
+	protected function excuteRequest(): array{
+		$this->body    = $this->generateRequestBody();
+		$this->headers = [];
+		return parent::excuteRequest();
+	}
+
+	/**
+	 *@link https://www.alibabacloud.com/help/zh/doc-detail/28761.htm#d7e57
+	 *构造请求数据
+	 */
+	private function generateRequestBody(): string{
 		$apiParams = array_merge([
-			"SignatureMethod"  => "HMAC-SHA1",
-			"SignatureNonce"   => uniqid(mt_rand(0, 0xffff), true),
-			"SignatureVersion" => "1.0",
-			"AccessKeyId"      => $accessKeyId,
-			"Timestamp"        => gmdate("Y-m-d\TH:i:s\Z"),
-			"Format"           => "JSON",
-		], $params);
+			'SignatureMethod'  => 'HMAC-SHA1',
+			'SignatureNonce'   => uniqid(mt_rand(0, 0xffff), true),
+			'SignatureVersion' => '1.0',
+			'AccessKeyId'      => $this->secretID,
+			'Timestamp'        => gmdate('Y-m-d\TH:i:s\Z'),
+			'Format'           => 'JSON',
+		], $this->body);
 		ksort($apiParams);
 
-		$sortedQueryStringTmp = "";
+		$sortedQueryStringTmp = '';
 		foreach ($apiParams as $key => $value) {
-			$sortedQueryStringTmp .= "&" . $this->encode($key) . "=" . $this->encode($value);
+			$sortedQueryStringTmp .= '&' . $this->encode($key) . '=' . $this->encode($value);
 		}
 
-		$stringToSign = "${method}&%2F&" . $this->encode(substr($sortedQueryStringTmp, 1));
-		$sign         = base64_encode(hash_hmac("sha1", $stringToSign, $accessKeySecret . "&", true));
+		$stringToSign = $this->method . '&%2F&' . $this->encode(substr($sortedQueryStringTmp, 1));
+		$sign         = base64_encode(hash_hmac('sha1', $stringToSign, $this->secretKey . '&', true));
 		$signature    = $this->encode($sign);
-		$url          = "https://{$domain}/";
 
-		try {
-			$content = $this->fetchContent($url, $method, "Signature={$signature}{$sortedQueryStringTmp}");
-			return json_decode($content);
-		} catch (\Exception $e) {
-			return false;
-		}
+		return "Signature={$signature}{$sortedQueryStringTmp}";
 	}
 
 	private function encode($str) {
 		$res = urlencode($str);
-		$res = preg_replace("/\+/", "%20", $res);
-		$res = preg_replace("/\*/", "%2A", $res);
-		$res = preg_replace("/%7E/", "~", $res);
+		$res = preg_replace('/\+/', '%20', $res);
+		$res = preg_replace('/\*/', '%2A', $res);
+		$res = preg_replace('/%7E/', '~', $res);
 		return $res;
-	}
-
-	private function fetchContent($url, $method, $body) {
-		$ch = curl_init();
-
-		if ($method == 'POST') {
-			curl_setopt($ch, CURLOPT_POST, 1); //post提交方式
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-		} else {
-			$url .= '?' . $body;
-		}
-
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, [
-			"x-sdk-client" => "php/2.0.0",
-		]);
-
-		if ("https" == substr($url, 0, 5)) {
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-		}
-
-		$rtn = curl_exec($ch);
-
-		if (false === $rtn) {
-			// 大多由设置等原因引起，一般无法保障后续逻辑正常执行，
-			// 所以这里触发的是E_USER_ERROR，会终止脚本执行，无法被try...catch捕获，需要用户排查环境、网络等故障
-			trigger_error("[CURL_" . curl_errno($ch) . "]: " . curl_error($ch), E_USER_ERROR);
-		}
-		curl_close($ch);
-
-		return $rtn;
 	}
 }
