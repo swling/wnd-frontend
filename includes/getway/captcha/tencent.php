@@ -2,8 +2,8 @@
 namespace Wnd\Getway\Captcha;
 
 use Exception;
-use Wnd\Component\Qcloud\QcloudRequest;
 use Wnd\Utility\Wnd_Captcha;
+use Wnd\Utility\Wnd_Cloud_API;
 
 /**
  *@since 2020.08.11
@@ -18,29 +18,25 @@ class Tencent extends Wnd_Captcha {
 	 * 请求服务器验证
 	 */
 	public function validate() {
-		$secret_id  = wnd_get_config('tencent_secretid');
-		$secret_key = wnd_get_config('tencent_secretkey');
-		$endpoint   = 'captcha.tencentcloudapi.com';
-		$params     = [
-			// 公共参数：不含 Signature （Signature 参数将在 QcloudRequest 中添加）
-			'SecretId'     => $secret_id,
-			'Action'       => 'DescribeCaptchaResult',
-			'Timestamp'    => time(),
-			'Nonce'        => wnd_random_code(6, true),
-			'Version'      => '2019-07-22',
-
-			// 验证码参数
-			'CaptchaType'  => 9,
-			'CaptchaAppId' => $this->appid,
-			'AppSecretKey' => $this->appkey,
-			'Ticket'       => $this->captcha,
-			'Randstr'      => $this->captcha_nonce,
-			'UserIp'       => $this->user_ip,
+		$url  = 'https://captcha.tencentcloudapi.com';
+		$args = [
+			'headers' => [
+				'X-TC-Action'  => 'DescribeCaptchaResult',
+				'X-TC-Version' => '2019-07-22',
+			],
+			'body'    => json_encode([
+				'CaptchaType'  => 9,
+				'CaptchaAppId' => (int) $this->appid,
+				'AppSecretKey' => $this->appkey,
+				'Ticket'       => $this->captcha,
+				'Randstr'      => $this->captcha_nonce,
+				'UserIp'       => $this->user_ip,
+			]),
 		];
 
 		// 发起请求
-		$request = new QcloudRequest($secret_id, $secret_key, $endpoint, $params);
-		$result  = $request->request();
+		$request = Wnd_Cloud_API::get_instance('Qcloud');
+		$result  = $request->request($url, $args);
 
 		// 核查响应
 		if ($result['Response']['Error'] ?? false) {

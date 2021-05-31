@@ -2,7 +2,7 @@
 namespace Wnd\Getway\Sms;
 
 use Exception;
-use Wnd\Component\Qcloud\QcloudRequest;
+use Wnd\Utility\Wnd_Cloud_API;
 use Wnd\Utility\Wnd_Sms;
 
 /**
@@ -29,7 +29,7 @@ class Tencent extends Wnd_Sms {
 		 *即数组具体的元素，与信息模板中的变量一一对应
 		 *
 		 */
-		$params = ($this->code and $this->valid_time) ? [$this->code, $this->valid_time] : [];
+		$params = ($this->code and $this->valid_time) ? [(string) $this->code, (string) $this->valid_time] : [];
 
 		// 指定模板ID单发短信
 		static::sendWithParam('86', [$this->phone], $this->template, $params, $this->sign_name);
@@ -41,36 +41,32 @@ class Tencent extends Wnd_Sms {
 	 * 使用签名方法 v1
 	 */
 	protected static function sendWithParam($nation_code, $phone_numbers, $templ_id, $templ_params, $sign_name) {
-		$secret_id  = wnd_get_config('tencent_secretid');
-		$secret_key = wnd_get_config('tencent_secretkey');
-		$endpoint   = 'sms.tencentcloudapi.com';
-		$params     = [
-			// 公共参数：不含 Signature （Signature 参数将在 QcloudRequest 中添加）
-			'SecretId'    => $secret_id,
-			'Action'      => 'SendSms',
-			'Timestamp'   => time(),
-			'Nonce'       => wnd_random_code(6, true),
-			'Version'     => '2019-07-11',
-
-			// 短信参数
+		$url    = 'https://sms.tencentcloudapi.com';
+		$params = [
 			'TemplateID'  => $templ_id,
 			'SmsSdkAppid' => wnd_get_config('sms_appid'),
 			'Sign'        => $sign_name,
 		];
 
 		// 手机号码参数
-		foreach ($phone_numbers as $key => $phone_number) {
-			$params['PhoneNumberSet.' . $key] = '+' . $nation_code . $phone_number;
+		foreach ($phone_numbers as $phone_number) {
+			$params['PhoneNumberSet'][] = '+' . $nation_code . $phone_number;
 		}
 
 		// 模板传参
-		foreach ($templ_params as $key => $param) {
-			$params['TemplateParamSet.' . $key] = $param;
-		}
+		$params['TemplateParamSet'] = $templ_params;
+
+		$args = [
+			'headers' => [
+				'X-TC-Action'  => 'SendSms',
+				'X-TC-Version' => '2019-07-11',
+			],
+			'body'    => json_encode($params),
+		];
 
 		// 发起请求
-		$action  = new QcloudRequest($secret_id, $secret_key, $endpoint, $params);
-		$request = $action->request();
+		$action  = Wnd_Cloud_API::get_instance('Qcloud');
+		$request = $action->request($url, $args);
 
 		// 核查响应
 		if ($request['Response']['Error'] ?? false) {

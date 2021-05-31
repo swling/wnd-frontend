@@ -2,7 +2,7 @@
 namespace Wnd\Getway\Sms;
 
 use Exception;
-use Wnd\Component\Aliyun\SignatureHelper;
+use Wnd\Utility\Wnd_Cloud_API;
 use Wnd\Utility\Wnd_Sms;
 
 /**
@@ -18,9 +18,6 @@ class Aliyun extends Wnd_Sms {
 	 * 发送短信
 	 */
 	public function send() {
-		$secret_id  = wnd_get_config('aliyun_secretid');
-		$secret_key = wnd_get_config('aliyun_secretkey');
-
 		$params                 = [];
 		$params['PhoneNumbers'] = $this->phone;
 		$params['SignName']     = $this->sign_name;
@@ -35,7 +32,7 @@ class Aliyun extends Wnd_Sms {
 		}
 
 		// 初始化SignatureHelper实例用于设置参数，签名以及发送请求
-		$helper = new SignatureHelper($secret_id, $secret_key);
+		$helper = Wnd_Cloud_API::get_instance('Aliyun');
 
 		// 此处可能会抛出异常，注意catch
 		$request = $helper->request(

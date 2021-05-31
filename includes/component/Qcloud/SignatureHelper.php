@@ -26,8 +26,11 @@ class SignatureHelper extends CloudRequest {
 		return $authorization;
 	}
 
+	/**
+	 *补充或修改用户传参 $args['headers']
+	 */
 	private function setHeaders() {
-		$this->headers["Content-Type"]   = 'application/json; charset=utf-8';
+		$this->headers["Content-Type"]   = $this->headers["Content-Type"] ?? 'application/json; charset=utf-8';
 		$this->headers["X-TC-Timestamp"] = $this->timestamp;
 	}
 
