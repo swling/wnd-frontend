@@ -50,18 +50,41 @@ class Wnd_Menu_Accesskey extends Wnd_Menus {
 		$form->add_text(
 			[
 				'name'        => 'aliyun_secretid',
-				'label'       => '阿里云云 AccessKey ID',
+				'label'       => '阿里云 AccessKey ID',
 				'required'    => false,
-				'placeholder' => '阿里云云 AccessKey ID',
+				'placeholder' => '阿里云 AccessKey ID',
 			]
 		);
 
 		$form->add_text(
 			[
 				'name'        => 'aliyun_secretkey',
-				'label'       => '阿里云云 AccessKey Secret',
+				'label'       => '阿里云 AccessKey Secret',
 				'required'    => false,
-				'placeholder' => '阿里云云 AccessKey Secret',
+				'placeholder' => '阿里云 AccessKey Secret',
+			]
+		);
+
+		$form->add_html('
+			<h3>百度云 API 密钥管理</h3>
+			<a href="https://console.bce.baidu.com/iam/#/iam/accesslist" target="_blank">https://console.bce.baidu.com/iam/#/iam/accesslist</a>
+			'
+		);
+		$form->add_text(
+			[
+				'name'        => 'baidu_secretid',
+				'label'       => '百度云 AccessKey',
+				'required'    => false,
+				'placeholder' => '百度云 AccessKey',
+			]
+		);
+
+		$form->add_text(
+			[
+				'name'        => 'baidu_secretkey',
+				'label'       => '百度云 SecretKey',
+				'required'    => false,
+				'placeholder' => '百度云 SecretKey',
 			]
 		);
 

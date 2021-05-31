@@ -6,23 +6,21 @@ use Exception;
 /**
  *@since 0.9.30
  *云平台产品签名助手基类
+ * 默认在请求 headers 中添加 'Host' 及 'Authorization'
  */
 abstract class CloudRequest {
 	protected $secretID;
 	protected $secretKey;
 	protected $timestamp;
-	protected $expiration = 1800;
-	protected $url;
 	protected $method;
+	protected $url;
+	protected $host;
 	protected $path;
 	protected $queryString = '';
 	protected $headers     = [];
 	protected $body;
 
-	/**
-	 *注意为简化代码 $params 仅支持一维数组
-	 */
-	function __construct(string $accessID, string $secretKey) {
+	public function __construct(string $accessID, string $secretKey) {
 		$this->secretID  = $accessID;
 		$this->secretKey = $secretKey;
 		$this->timestamp = time();
@@ -38,13 +36,14 @@ abstract class CloudRequest {
 
 		$url_arr           = parse_url($url);
 		$this->url         = $url;
+		$this->host        = $url_arr['host'];
 		$this->path        = $url_arr['path'] ?? '';
 		$this->queryString = $url_arr['query'] ?? '';
 
 		$this->method                   = strtoupper($args['method']);
 		$this->body                     = $args['body'];
 		$this->headers                  = $args['headers'];
-		$this->headers['host']          = $url_arr['host'];
+		$this->headers['Host']          = $this->host;
 		$this->headers['Authorization'] = $this->genAuthorization();
 
 		return $this->excuteRequest();
@@ -58,7 +57,7 @@ abstract class CloudRequest {
 	/**
 	 *拆分为独立方法，以便某些情况子类可重写覆盖
 	 */
-	protected function excuteRequest() {
+	protected function excuteRequest(): array{
 		$request = \wp_remote_request(
 			$this->url,
 			[

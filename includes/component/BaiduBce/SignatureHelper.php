@@ -11,6 +11,8 @@ use Wnd\Component\Utility\CloudRequest;
  */
 class SignatureHelper extends CloudRequest {
 
+	protected $expiration = 1800;
+
 	protected function genAuthorization(): string{
 		// 百度云特殊规定
 		$this->timestamp = gmdate('Y-m-d\TH:i:s\Z');
@@ -32,19 +34,7 @@ class SignatureHelper extends CloudRequest {
 	/**
 	 *@link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#%E4%BB%BB%E5%8A%A1%E4%B8%89%EF%BC%9A%E7%94%9F%E6%88%90%E6%B4%BE%E7%94%9F%E5%AF%86%E9%92%A5signingkey
 	 */
-	private function genSigningKey(): string {
-		if (empty($this->secretID)) {
-			throw new Exception('access key is null or empty');
-		}
-		if (empty($this->secretKey)) {
-			throw new Exception('secret key is null or empty');
-		}
-		if (empty($this->timestamp)) {
-			throw new Exception('timestamp is null or empty');
-		}
-		if (empty($this->expiration)) {
-			throw new Exception('expiration is null or empty');
-		}
+	private function genSigningKey(): string{
 		$authStr = 'bce-auth-v1/' . $this->secretID . '/' . $this->timestamp . '/' . $this->expiration;
 		return $this->sha256($this->secretKey, $authStr);
 	}
@@ -88,13 +78,13 @@ class SignatureHelper extends CloudRequest {
 	 *解析 headers 数组生成：signedHeaders 及 CanonicalHeaders
 	 */
 	private function parseHeaders(): array{
-		if (empty($this->headers) || !array_key_exists('host', $this->headers)) {
-			throw new Exception('host not in headers');
-		}
-
 		$list_array = [];
 		foreach ($this->headers as $key => $value) {
 			if (empty($value)) {
+				continue;
+			}
+
+			if (0 === stripos($key, 'x-bce-')) {
 				continue;
 			}
 
