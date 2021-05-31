@@ -16,8 +16,17 @@ class SignatureHelper extends CloudRequest {
 	 * 阿里云产品签名鉴权包含在请求 body 而非 headers 中，故无需生成 Authorization
 	 *
 	 */
-	protected function genAuthorization(): string {
+	protected function genAuthorization(): string{
+		$this->setHeaders();
+
 		return '';
+	}
+
+	/**
+	 *补充或修改用户传参 $args['headers']
+	 */
+	private function setHeaders() {
+		$this->headers = [];
 	}
 
 	/**
@@ -25,8 +34,7 @@ class SignatureHelper extends CloudRequest {
 	 *因此，为保持类的接口统一，在请求执行方法中完成签名及请求参数拼接，并调用父类方法发起请求
 	 */
 	protected function excuteRequest(): array{
-		$this->body    = $this->generateRequestBody();
-		$this->headers = [];
+		$this->body = $this->generateRequestBody();
 		return parent::excuteRequest();
 	}
 

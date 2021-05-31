@@ -11,17 +11,16 @@
  * @link https://cloud.baidu.com/doc/NLP/s/7k6z52ggx
  **/
 use Wnd\Utility\Wnd_Cloud_API;
-$sign    = Wnd_Cloud_API::get_instance('BaiduBce');
+$request    = Wnd_Cloud_API::get_instance('BaiduBce');
 $url     = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?charset=UTF-8';
-$headers = ['Content-type' => 'application/json'];
 $params  = json_encode(
 	[
 		'title'   => 'iphone手机出现“白苹果”原因及解决办法，用苹果手机的可以看下',
 		'content' => '如果下面的方法还是没有解决你的问题建议来我们门店看下成都市锦江区红星路三段99号银石广场24层01室。在通电的情况下掉进清水，这种情况一不需要拆机处理。尽快断电。用力甩干，但别把机器甩掉，主意要把屏幕内的水甩出来。如果屏幕残留有水滴，干后会有痕迹。^H3 放在台灯，射灯等轻微热源下让水分慢慢散去。',
 	], JSON_UNESCAPED_UNICODE
 );
-$request = $sign->request($url, ['body' => $params, 'headers' => $headers]);
-print_r($request);
+$result = $request->request($url, ['body' => $params]);
+print_r($result);
 ```
 
 ### 腾讯云分词
@@ -29,11 +28,12 @@ print_r($request);
 /**
  *@link https://cloud.tencent.com/document/product/271/35494
  **/
+use Wnd\Utility\Wnd_Cloud_API;
+$request = Wnd_Cloud_API::get_instance('Qcloud');
 $url    = 'https://nlp.tencentcloudapi.com';
 $params = [
 	'Text' => '腾讯云是个好平台，但是签名v3搞起来实在有点太复杂了，感觉没必要',
 ];
-$request = Wnd_Cloud_API::get_instance('Qcloud');
 $result  = $request->request(
 	$url,
 	[
@@ -57,6 +57,7 @@ print_r($result);
  *@link https://help.aliyun.com/document_detail/146443.html
  *
  */
+use Wnd\Utility\Wnd_Cloud_API;
 $image_url = 'oss.jpg';
 $request = Wnd_Cloud_API::get_instance('Aliyun');
 $result  = $request->request(

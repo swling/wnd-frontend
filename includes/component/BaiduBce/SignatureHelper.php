@@ -14,12 +14,21 @@ class SignatureHelper extends CloudRequest {
 	protected $expiration = 1800;
 
 	protected function genAuthorization(): string{
+		$this->setHeaders();
+
 		// 百度云特殊规定
 		$this->timestamp = gmdate('Y-m-d\TH:i:s\Z');
 
 		$signature = $this->genSignature();
 		$authStr   = 'bce-auth-v1/' . $this->secretID . '/' . $this->timestamp . '/' . $this->expiration . '/' . $this->getsignedHeaders() . '/' . $signature;
 		return $authStr;
+	}
+
+	/**
+	 *补充或修改用户传参 $args['headers']
+	 */
+	private function setHeaders() {
+		$this->headers["Content-Type"] = $this->headers["Content-Type"] ?? 'application/json; charset=utf-8';
 	}
 
 	private function genSignature(): string {
