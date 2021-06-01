@@ -2,10 +2,10 @@
 namespace Wnd\Hook;
 
 use Exception;
+use Wnd\Getway\Wnd_Captcha;
 use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\Model\Wnd_User;
-use Wnd\Utility\Wnd_Captcha;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\Utility\Wnd_Validator;

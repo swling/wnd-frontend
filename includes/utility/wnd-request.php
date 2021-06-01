@@ -2,7 +2,7 @@
 namespace Wnd\Utility;
 
 use Exception;
-use Wnd\Utility\Wnd_Captcha;
+use Wnd\Getway\Wnd_Captcha;
 use Wnd\Utility\Wnd_Validator;
 
 /**

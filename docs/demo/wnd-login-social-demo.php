@@ -1,5 +1,5 @@
 <?php
-use Wnd\Utility\Wnd_Login_Social;
+use Wnd\Getway\Wnd_Login_Social;
 
 /**
  *QQ社交登录

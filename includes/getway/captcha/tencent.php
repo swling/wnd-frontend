@@ -2,8 +2,8 @@
 namespace Wnd\Getway\Captcha;
 
 use Exception;
-use Wnd\Utility\Wnd_Captcha;
-use Wnd\Utility\Wnd_Cloud_API;
+use Wnd\Getway\Wnd_Captcha;
+use Wnd\Getway\Wnd_Cloud_API;
 
 /**
  *@since 2020.08.11

@@ -4,7 +4,7 @@
 - 请求依赖 wp_remote_request 函数，因此需要在 wordpress 环境中使用，如需在独立环境中使用，请重写 request 方法
 - 请将 accessKey、及 secretKey 替换为实际值，并确保以开通此项服务，或者根据你需要测试的其他百度云产品，自行修改对应参数
 ```php
-use Wnd\Utility\Wnd_Cloud_API;
+use Wnd\Getway\Wnd_Cloud_API;
 $sign    = Wnd_Cloud_API::get_instance('BaiduBce');
 $url     = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?charset=UTF-8';
 $headers = ['Content-type' => 'application/json'];

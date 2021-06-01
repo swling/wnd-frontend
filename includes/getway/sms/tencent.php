@@ -2,8 +2,8 @@
 namespace Wnd\Getway\Sms;
 
 use Exception;
-use Wnd\Utility\Wnd_Cloud_API;
-use Wnd\Utility\Wnd_Sms;
+use Wnd\Getway\Wnd_Cloud_API;
+use Wnd\Getway\Wnd_Sms;
 
 /**
  *@since 2019.09.25

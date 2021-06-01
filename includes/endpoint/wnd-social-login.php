@@ -2,7 +2,7 @@
 namespace Wnd\Endpoint;
 
 use Exception;
-use Wnd\Utility\Wnd_Login_Social;
+use Wnd\Getway\Wnd_Login_Social;
 
 /**
  *@since 0.9.26
@@ -24,7 +24,7 @@ class Wnd_Social_Login extends Wnd_Endpoint {
 		 *故此手动添加通过 Cookie 设置当前用户，以维持账户登录状态，确保社交账号绑定，WP Nonce 校验等相关操作有效性
 		 */
 		$user_id = wp_validate_logged_in_cookie(0);
-		set_current_user($user_id);
+		wp_set_current_user($user_id);
 
 		try {
 			$domain       = Wnd_Login_Social::parse_state($this->data['state'])['domain'];

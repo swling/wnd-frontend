@@ -2,7 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\Utility\Wnd_Sms;
+use Wnd\Getway\Wnd_Sms;
 
 /**
  *@since 2019.12.19

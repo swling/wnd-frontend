@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Utility;
+namespace Wnd\Getway;
 
 use Exception;
 

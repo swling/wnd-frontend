@@ -10,7 +10,7 @@
 /**
  * @link https://cloud.baidu.com/doc/NLP/s/7k6z52ggx
  **/
-use Wnd\Utility\Wnd_Cloud_API;
+use Wnd\Getway\Wnd_Cloud_API;
 $request    = Wnd_Cloud_API::get_instance('BaiduBce');
 $url     = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?charset=UTF-8';
 $params  = json_encode(
@@ -28,7 +28,7 @@ print_r($result);
 /**
  *@link https://cloud.tencent.com/document/product/271/35494
  **/
-use Wnd\Utility\Wnd_Cloud_API;
+use Wnd\Getway\Wnd_Cloud_API;
 $request = Wnd_Cloud_API::get_instance('Qcloud');
 $url    = 'https://nlp.tencentcloudapi.com';
 $params = [
@@ -57,7 +57,7 @@ print_r($result);
  *@link https://help.aliyun.com/document_detail/146443.html
  *
  */
-use Wnd\Utility\Wnd_Cloud_API;
+use Wnd\Getway\Wnd_Cloud_API;
 $image_url = 'oss.jpg';
 $request = Wnd_Cloud_API::get_instance('Aliyun');
 $result  = $request->request(

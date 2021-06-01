@@ -2,7 +2,7 @@
 namespace Wnd\Getway\Login;
 
 use Exception;
-use Wnd\Utility\Wnd_Login_Social;
+use Wnd\Getway\Wnd_Login_Social;
 
 /**
  *@since 2020.04.11

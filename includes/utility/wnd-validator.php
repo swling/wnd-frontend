@@ -1,8 +1,8 @@
 <?php
 namespace Wnd\Utility;
 
+use Wnd\Getway\Wnd_Captcha;
 use Wnd\Model\Wnd_Auth;
-use Wnd\Utility\Wnd_Captcha;
 
 /**
  *验证器

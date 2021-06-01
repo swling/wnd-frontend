@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Utility;
 
-use Wnd\Utility\Wnd_Login_Social;
+use Wnd\Getway\Wnd_Login_Social;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**

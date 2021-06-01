@@ -1,7 +1,7 @@
 <?php
 
 use Exception;
-use Wnd\Utility\Wnd_Sms;
+use Wnd\Getway\Wnd_Sms;
 
 /**
  *发送短信

@@ -3,7 +3,7 @@ namespace Wnd\Utility;
 
 use Exception;
 use Wnd\Component\Utility\ObjectStorage;
-use Wnd\Utility\Wnd_Object_Storage;
+use Wnd\Getway\Wnd_Object_Storage;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
