@@ -28,11 +28,10 @@ class COS extends Wnd_Object_Storage {
 	 */
 	public function upload_file(string $source_file) {
 		$file_path_name = $this->parse_file_path_name($source_file);
-		$headers        = [];
 
 		$COS = $this->get_cos_instance();
-		$COS->set_file_path_name($file_path_name);
-		$COS->upload_file($source_file, $headers);
+		$COS->setFilePathName($file_path_name);
+		$COS->uploadFile($source_file);
 	}
 
 	/**
@@ -41,11 +40,10 @@ class COS extends Wnd_Object_Storage {
 	 **/
 	public function delete_file(string $source_file) {
 		$file_path_name = $this->parse_file_path_name($source_file);
-		$headers        = [];
 
 		$COS = $this->get_cos_instance();
-		$COS->set_file_path_name($file_path_name);
-		$COS->delete_file($headers);
+		$COS->setFilePathName($file_path_name);
+		$COS->deleteFile();
 	}
 
 	/**

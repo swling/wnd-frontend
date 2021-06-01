@@ -28,8 +28,8 @@ class OSS extends Wnd_Object_Storage {
 	public function upload_file(string $source_file) {
 		$file_path_name = $this->parse_file_path_name($source_file);
 		$oss            = $this->get_oss_instance();
-		$oss->set_file_path_name($file_path_name);
-		$oss->upload_file($source_file);
+		$oss->setFilePathName($file_path_name);
+		$oss->uploadFile($source_file);
 	}
 
 	/**
@@ -39,8 +39,8 @@ class OSS extends Wnd_Object_Storage {
 	public function delete_file(string $source_file) {
 		$file_path_name = $this->parse_file_path_name($source_file);
 		$oss            = $this->get_oss_instance();
-		$oss->set_file_path_name($file_path_name);
-		$oss->delete_file();
+		$oss->setFilePathName($file_path_name);
+		$oss->deleteFile();
 	}
 
 	/**
