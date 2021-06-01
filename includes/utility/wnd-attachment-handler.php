@@ -2,6 +2,7 @@
 namespace Wnd\Utility;
 
 use Exception;
+use Wnd\Component\Utility\ObjectStorage;
 use Wnd\Utility\Wnd_Object_Storage;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
@@ -18,10 +19,18 @@ class Wnd_Attachment_Handler {
 
 	// 是否保留本地文件
 	protected $local_storage;
+	protected $service_provider;
+	protected $endpoint     = ''; // COS 节点
+	protected $oss_dir      = ''; // 文件在节点中的相对存储路径
+	protected $oss_base_url = ''; // 外网访问 URL
 
 	// Configure && Hook
 	private function __construct() {
-		$this->local_storage = wnd_get_config('oss_local_storage');
+		$this->local_storage    = wnd_get_config('oss_local_storage');
+		$this->service_provider = wnd_get_config('oss_sp');
+		$this->endpoint         = wnd_get_config('oss_endpoint');
+		$this->oss_dir          = trim(wnd_get_config('oss_dir'), '/'); // 文件在节点中的相对存储路径
+		$this->oss_base_url     = wnd_get_config('oss_base_url'); // 外网访问 URL
 
 		// 上传文件
 		add_action('add_attachment', array($this, 'upload_to_oss'), 10, 1);
@@ -42,11 +51,8 @@ class Wnd_Attachment_Handler {
 	 *在WordPress上传到本地服务器之后，将文件上传到oss
 	 **/
 	public function upload_to_oss($post_ID) {
-
 		// 获取WordPress上传并处理后文件
 		$file = get_attached_file($post_ID);
-		// $oss_file = str_replace(wp_get_upload_dir()['basedir'], self::$bucket_path, $file);
-		// $oss_file = trim($oss_file, '/');
 
 		// 调用WordPress，根据尺寸进行图片裁剪、上传到oss的文件将是按指定尺寸裁剪后的文件
 		$save_width  = $_POST["save_width"] ?? 0;
@@ -60,10 +66,10 @@ class Wnd_Attachment_Handler {
 		}
 
 		try {
+			$file_path_name = $this->parse_file_path_name($file);
 			$object_storage = $this->get_object_storage_instance();
-			$object_storage->upload_file($file);
-			// $ossClient = new OssClient(self::$access_key_id, self::$access_key_secret, self::$endpoint);
-			// $ossClient->uploadFile(self::$bucket, $oss_file, $file);
+			$object_storage->setFilePathName($file_path_name);
+			$object_storage->uploadFile($file);
 		} catch (Exception $e) {
 			/**
 			 *@data 2020.10.20
@@ -105,14 +111,12 @@ class Wnd_Attachment_Handler {
 
 		// 获取WordPress文件信息，并替换字符后，设定oss文件存储路径
 		$file = get_attached_file($post_ID);
-		// $oss_file = str_replace(wp_get_upload_dir()['basedir'], self::$bucket_path, $file);
-		// $oss_file = trim($oss_file, '/');
 
 		try {
-			// $ossClient = new OssClient(self::$access_key_id, self::$access_key_secret, self::$endpoint);
-			// $ossClient->deleteObject(self::$bucket, $oss_file);
+			$file_path_name = $this->parse_file_path_name($file);
 			$object_storage = $this->get_object_storage_instance();
-			$object_storage->delete_file($file);
+			$object_storage->setFilePathName($file_path_name);
+			$object_storage->deleteFile();
 		} catch (Exception $e) {
 			return $e->getMessage() . '@' . __FUNCTION__;
 		}
@@ -122,7 +126,7 @@ class Wnd_Attachment_Handler {
 	 *@since 2019.07.25
 	 *替换wordpress file meta
 	 */
-	public function filter_attachment_meta($data) {
+	public function filter_attachment_meta($data): array{
 		if (empty($data['sizes']) || (wp_debug_backtrace_summary(null, 4, false)[0] == 'wp_delete_attachment')) {
 			return $data;
 		}
@@ -145,8 +149,8 @@ class Wnd_Attachment_Handler {
 	 *@since 2019.07.26
 	 *对象存储图片处理。若指定云平台不支持图像处理则返回原链接
 	 */
-	protected function resize_image($img_url, $width, $height) {
-		return $this->get_object_storage_instance()->resize_image($img_url, $width, $height);
+	protected function resize_image($img_url, $width, $height): string {
+		return $this->get_object_storage_instance()->resizeImage($img_url, $width, $height);
 	}
 
 	/**
@@ -154,8 +158,8 @@ class Wnd_Attachment_Handler {
 	 *根据用户配置重写附件链接
 	 * apply_filters( 'wp_get_attachment_url', $url, $post->ID )
 	 */
-	public function filter_attachment_url($url, $post_ID) {
-		return $this->get_object_storage_instance()->rewrite_attachment_url($url, $post_ID);
+	public function filter_attachment_url($url, $post_ID): string {
+		return str_replace(wp_get_upload_dir()['baseurl'], $this->oss_base_url, $url);
 	}
 
 	/**
@@ -163,12 +167,12 @@ class Wnd_Attachment_Handler {
 	 *wp_get_attachment_image
 	 *return apply_filters( 'wp_get_attachment_image_src', $image, $attachment_id, $size, $icon );
 	 */
-	public function filter_attachment_image_src($image) {
-		$oss_image = array(
+	public function filter_attachment_image_src($image): array{
+		$oss_image = [
 			$this->resize_image($image[0], $image[1], $image[2]),
 			$image[1],
 			$image[2],
-		);
+		];
 
 		return $oss_image;
 	}
@@ -184,7 +188,17 @@ class Wnd_Attachment_Handler {
 	/**
 	 *对象存储实例
 	 */
-	protected function get_object_storage_instance(): Wnd_Object_Storage {
-		return Wnd_Object_Storage::get_instance();
+	protected function get_object_storage_instance(): ObjectStorage {
+		return Wnd_Object_Storage::get_instance($this->service_provider, $this->endpoint);
+	}
+
+	/**
+	 *获取 WP 服务器文件路径，并根据 OSS 存储目录，生成最终的 OSS 存储路径
+	 */
+	protected function parse_file_path_name(string $source_file): string{
+		// WP 本地上传文件目录
+		$local_base_dir = wp_get_upload_dir()['basedir'];
+
+		return $this->oss_dir . str_replace($local_base_dir, '', $source_file);
 	}
 }

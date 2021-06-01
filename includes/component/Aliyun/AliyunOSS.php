@@ -14,7 +14,7 @@ class AliyunOSS extends ObjectStorage {
 	 * 上传文件
 	 * @link https://help.aliyun.com/document_detail/31978.html
 	 */
-	function uploadFile(string $sourceFile, int $timeout = 1800): array{
+	public function uploadFile(string $sourceFile, int $timeout = 1800): array{
 		//设置头部
 		$mime_type = mime_content_type($sourceFile);
 		$md5       = base64_encode(md5_file($sourceFile, true));
@@ -40,6 +40,13 @@ class AliyunOSS extends ObjectStorage {
 		];
 
 		return static::curlDelete($this->fileUri, $headers, $timeout);
+	}
+
+	/**
+	 *云平台图片缩放处理
+	 */
+	public static function resizeImage(string $image_url, int $width, int $height): string {
+		return "{$image_url}?x-oss-process=image/resize,m_fill,h_{$height},w_{$width}";
 	}
 
 	/**

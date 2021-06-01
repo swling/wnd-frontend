@@ -28,6 +28,7 @@ abstract class ObjectStorage {
 	 *以 '/' 开头
 	 */
 	public function setFilePathName(string $filePathName) {
+		$filePathName       = '/' . trim($filePathName, '/');
 		$this->filePathName = $filePathName;
 		$this->fileUri      = $this->endpoint . $this->filePathName;
 	}
@@ -41,6 +42,11 @@ abstract class ObjectStorage {
 	 *Delete
 	 **/
 	abstract public function deleteFile(int $timeout = 30): array;
+
+	/**
+	 *云平台图片缩放处理
+	 */
+	abstract public static function resizeImage(string $image_url, int $width, int $height): string;
 
 	/**
 	 *Curl PUT
@@ -99,5 +105,12 @@ abstract class ObjectStorage {
 		}
 
 		return $response;
+	}
+
+	/**
+	 *获取文件 URI
+	 */
+	public function getFileUri(): string {
+		return $this->fileUri;
 	}
 }

@@ -9,7 +9,7 @@ use Wnd\Component\Utility\ObjectStorage;
  *
  *腾讯云对象存储
  */
-class QcloudCos extends ObjectStorage {
+class QcloudCOS extends ObjectStorage {
 
 	/**
 	 *PUT
@@ -35,6 +35,13 @@ class QcloudCos extends ObjectStorage {
 
 		$curlHeaders = static::array_to_curl_headers($headers);
 		return static::curlDelete($this->fileUri, $curlHeaders, $timeout);
+	}
+
+	/**
+	 *云平台图片缩放处理
+	 */
+	public static function resizeImage(string $image_url, int $width, int $height): string {
+		return $image_url;
 	}
 
 	/**
