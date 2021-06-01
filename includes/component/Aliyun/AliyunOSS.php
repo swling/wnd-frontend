@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Component\Aliyun;
 
-use Exception;
 use Wnd\Component\Utility\ObjectStorage;
 
 /**
@@ -26,32 +25,7 @@ class AliyunOSS extends ObjectStorage {
 			'Authorization:' . $this->create_authorization('PUT', $mime_type, $md5),
 		];
 
-		$file = fopen($sourceFile, 'rb');
-		$ch   = curl_init(); //初始化curl
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //返回字符串,而不直接输出
-		curl_setopt($ch, CURLOPT_URL, $this->fileUri); //设置put到的url
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-		// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); //不验证对等证书
-		// curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); //不检查服务器SSL证书
-
-		curl_setopt($ch, CURLOPT_PUT, true); //设置为PUT请求
-		curl_setopt($ch, CURLOPT_INFILE, $file); //设置资源句柄
-		curl_setopt($ch, CURLOPT_INFILESIZE, filesize($sourceFile));
-
-		// curl_setopt($ch, CURLOPT_HEADER, true); // 开启header信息以供调试
-		// curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-
-		curl_exec($ch);
-		$response = curl_getinfo($ch);
-
-		fclose($file);
-		curl_close($ch);
-
-		if (200 != $response['http_code']) {
-			throw new Exception(json_encode($response));
-		}
-		return $response;
+		return static::curlPut($sourceFile, $this->fileUri, $headers, $timeout);
 	}
 
 	/**
@@ -65,27 +39,7 @@ class AliyunOSS extends ObjectStorage {
 			'Authorization:' . $this->create_authorization('DELETE'),
 		];
 
-		$ch = curl_init(); //初始化curl
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //返回字符串,而不直接输出
-		curl_setopt($ch, CURLOPT_URL, $this->fileUri); //设置delete url
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-		// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); //不验证对等证书
-		// curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); //不检查服务器SSL证书
-
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-		// curl_setopt($ch, CURLOPT_HEADER, true); // 开启header信息以供调试
-		// curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-
-		curl_exec($ch);
-		$response = curl_getinfo($ch);
-		curl_close($ch);
-
-		if (204 != $response['http_code']) {
-			throw new Exception($response['http_code']);
-		}
-
-		return $response;
+		return static::curlDelete($this->fileUri, $headers, $timeout);
 	}
 
 	/**
