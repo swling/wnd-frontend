@@ -287,6 +287,30 @@ class Wnd_Admin {
 		if (version_compare(get_option('wnd_ver'), '0.9.29', '<')) {
 			// 沙箱测试选项，不仅局限于支付宝，已更名为：payment_sandbox，此选项仅在测试时开启，故可直接删除历史key值
 			wnd_delete_option('wnd', 'alipay_sandbox');
+			update_option('wnd_ver', '0.9.29');
+		}
+
+		// 升级 0.9.30
+		if (version_compare(get_option('wnd_ver'), '0.9.30', '<')) {
+			if ('COS' == wnd_get_option('wnd', 'oss_sp')) {
+				wnd_update_option('wnd', 'oss_sp', 'Qcloud');
+			} elseif ('OSS' == wnd_get_option('wnd', 'oss_sp')) {
+				wnd_update_option('wnd', 'oss_sp', 'Aliyun');
+			}
+
+			if ('tencent' == wnd_get_option('wnd', 'captcha_service')) {
+				wnd_update_option('wnd', 'captcha_service', 'Qcloud');
+			} elseif ('aliyun' == wnd_get_option('wnd', 'captcha_service')) {
+				wnd_update_option('wnd', 'captcha_service', 'Aliyun');
+			}
+
+			if ('tencent' == wnd_get_option('wnd', 'sms_sp')) {
+				wnd_update_option('wnd', 'sms_sp', 'Qcloud');
+			} elseif ('aliyun' == wnd_get_option('wnd', 'sms_sp')) {
+				wnd_update_option('wnd', 'sms_sp', 'Aliyun');
+			}
+
+			update_option('wnd_ver', '0.9.30');
 		}
 	}
 }
