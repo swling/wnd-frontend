@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\View;
 
+use Wnd\View\Wnd_Pagination;
+
 /**
  * @since 0.9.25
  * 筛选类查询参数公共特性
@@ -140,7 +142,7 @@ trait Wnd_Filter_Query_Trait {
 			 *@since 2019.07.30
 			 *分页
 			 */
-			if ('page' == $key) {
+			if (Wnd_Pagination::$page_query_var == $key) {
 				$query_vars['paged'] = $value ?: 1;
 				continue;
 			}

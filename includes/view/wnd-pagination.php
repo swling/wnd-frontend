@@ -10,6 +10,8 @@ class Wnd_Pagination {
 	// 当前页码
 	protected $paged = 1;
 
+	public static $page_query_var = 'pages';
+
 	// 最大页码
 	protected $max_num_pages;
 
@@ -108,8 +110,8 @@ class Wnd_Pagination {
 	 */
 	protected function build_next_pagination() {
 		if ($this->independent) {
-			$previous_link = add_query_arg('page', $this->paged - 1);
-			$next_link     = add_query_arg('page', $this->paged + 1);
+			$previous_link = add_query_arg(static::$page_query_var, $this->paged - 1);
+			$next_link     = add_query_arg(static::$page_query_var, $this->paged + 1);
 		} else {
 			$previous_link = get_pagenum_link($this->paged - 1);
 			$next_link     = get_pagenum_link($this->paged + 1);
@@ -135,10 +137,10 @@ class Wnd_Pagination {
 	 */
 	protected function build_general_pagination() {
 		if ($this->independent) {
-			$first_link    = remove_query_arg('page');
-			$previous_link = add_query_arg('page', $this->paged - 1);
-			$next_link     = add_query_arg('page', $this->paged + 1);
-			$last_link     = add_query_arg('page', $this->max_num_pages);
+			$first_link    = remove_query_arg(static::$page_query_var);
+			$previous_link = add_query_arg(static::$page_query_var, $this->paged - 1);
+			$next_link     = add_query_arg(static::$page_query_var, $this->paged + 1);
+			$last_link     = add_query_arg(static::$page_query_var, $this->max_num_pages);
 		} else {
 			$first_link    = get_pagenum_link(1);
 			$previous_link = get_pagenum_link($this->paged - 1);
@@ -159,7 +161,7 @@ class Wnd_Pagination {
 		$html .= '<li><a data-key="paged" data-value="" class="pagination-link" href="' . $first_link . '" >' . __('首页', 'wnd') . '</a></li>';
 		for ($i = $this->paged - 1; $i <= $this->paged + $this->show_pages; $i++) {
 			if ($i > 0 and $i <= $this->max_num_pages) {
-				$page_link = $this->independent ? add_query_arg('page', $i) : get_pagenum_link($i);
+				$page_link = $this->independent ? add_query_arg(static::$page_query_var, $i) : get_pagenum_link($i);
 				if ($i == $this->paged) {
 					$html .= '<li><a data-key="paged" data-value="' . $i . '" class="pagination-link is-current" href="' . $page_link . '"> <span>' . $i . '</span> </a></li>';
 				} else {
