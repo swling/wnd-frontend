@@ -26,13 +26,14 @@ class Wnd_Post_Detail_Order extends Wnd_Module_Html {
 
 		$order = $post ?: get_post($post_id);
 
-		$orde_detail = '<div class="box content"><ul>';
+		$orde_detail = '<div class="content"><ul>';
 		$orde_detail .= '<li><h1>' . get_the_title($order->post_parent) . '<h1></li>';
 		$orde_detail .= '<li>' . $order->post_date . '</li>';
 		$orde_detail .= '<li>' . $order->post_title . '</li>';
 		$orde_detail .= '<li>' . $order->post_content . '</li>';
 		$orde_detail .= '<li>' . $order->post_name . '</li>';
 		$orde_detail .= '<li>Refund_Count : ' . wnd_get_post_meta($order->ID, 'refund_count') . '</li>';
+		$orde_detail .= '<li>User IP : ' . wnd_get_post_meta($order->ID, Wnd_Order_Product::$ip_key) . '</li>';
 		$orde_detail .= '</ul></div>';
 
 		/**

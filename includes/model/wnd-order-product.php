@@ -27,6 +27,9 @@ class Wnd_Order_Product {
 	// 购买商品数目
 	public static $quantity_key = 'quantity';
 
+	// IP
+	public static $ip_key = 'ip';
+
 	/**
 	 *设置订单关联的产品属性
 	 *
@@ -52,6 +55,9 @@ class Wnd_Order_Product {
 		// quantity
 		$quantity                    = $data[static::$quantity_key] ?? 1;
 		$meta[static::$quantity_key] = $quantity;
+
+		// IP
+		$meta[static::$ip_key] = wnd_get_user_ip();
 
 		// save data
 		if ($meta) {
