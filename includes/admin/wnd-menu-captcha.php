@@ -23,7 +23,7 @@ class Wnd_Menu_Captcha extends Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'    => 'captcha_service',
-				'options' => ['关闭' => '', '腾讯云' => 'tencent'],
+				'options' => ['关闭' => '', '腾讯云' => 'Qcloud'],
 				'label'   => '验证码服务',
 				'class'   => 'is-checkradio is-danger',
 			]

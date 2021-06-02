@@ -9,7 +9,7 @@ use Wnd\Getway\Wnd_Sms;
  *@since 2019.09.25
  *短信
  */
-class Tencent extends Wnd_Sms {
+class Qcloud extends Wnd_Sms {
 
 	/**
 	 *@since 2019.02.11 发送短信

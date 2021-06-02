@@ -12,7 +12,7 @@ use Wnd\Getway\Wnd_Cloud_API;
  *@link captcha核验 https://cloud.tencent.com/document/product/1110/36926
  *@link 公共参数  https://cloud.tencent.com/document/api/1110/36920
  */
-class Tencent extends Wnd_Captcha {
+class Qcloud extends Wnd_Captcha {
 
 	/**
 	 * 请求服务器验证

@@ -32,18 +32,18 @@ abstract class Wnd_Cloud_API {
 	 *读取 Access Key
 	 */
 	public static function get_api_key(string $service_provider): array{
-		switch (strtolower($service_provider)) {
-		case 'aliyun':
+		switch ($service_provider) {
+		case 'Aliyun':
 			$secret_id  = wnd_get_config('aliyun_secretid');
 			$secret_key = wnd_get_config('aliyun_secretkey');
 			break;
 
-		case 'qcloud':
+		case 'Qcloud':
 			$secret_id  = wnd_get_config('tencent_secretid');
 			$secret_key = wnd_get_config('tencent_secretkey');
 			break;
 
-		case 'baidubce':
+		case 'BaiduBce':
 			$secret_id  = wnd_get_config('baidu_secretid');
 			$secret_key = wnd_get_config('baidu_secretkey');
 			break;
