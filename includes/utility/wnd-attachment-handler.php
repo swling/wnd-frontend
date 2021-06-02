@@ -2,7 +2,6 @@
 namespace Wnd\Utility;
 
 use Exception;
-use Wnd\Component\Utility\ObjectStorage;
 use Wnd\Getway\Wnd_Object_Storage;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
@@ -188,7 +187,7 @@ class Wnd_Attachment_Handler {
 	/**
 	 *对象存储实例
 	 */
-	protected function get_object_storage_instance(): ObjectStorage {
+	protected function get_object_storage_instance(): object {
 		return Wnd_Object_Storage::get_instance($this->service_provider, $this->endpoint);
 	}
 

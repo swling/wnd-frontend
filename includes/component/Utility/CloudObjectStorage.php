@@ -8,7 +8,7 @@ use Exception;
  *
  *对象存储抽象基类
  */
-abstract class ObjectStorage {
+abstract class CloudObjectStorage {
 
 	protected $secretID     = ''; //"云 API 密钥 SecretId";
 	protected $secretKey    = ''; //"云 API 密钥 SecretKey";

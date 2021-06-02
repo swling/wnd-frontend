@@ -16,39 +16,52 @@ abstract class Wnd_Cloud_API {
 	 *自动选择子类处理当前业务
 	 */
 	public static function get_instance(string $service_provider): CloudRequest {
-		if (!in_array($service_provider, static::$service_providers)) {
-			throw new Exception('$service_provider Only supports: ' . implode(' | ', static::$service_providers));
-		}
+		static::check_service_provider($service_provider);
 
 		$class_name = '\Wnd\Component\\' . $service_provider . '\\SignatureHelper';
 		if (!class_exists($class_name)) {
 			throw new Exception(__('未定义', 'wnd') . ':' . $class_name);
 		}
 
-		$api_key_method = __CLASS__ . '::get_api_key_' . $service_provider;
-		extract($api_key_method());
+		extract(static::get_api_key($service_provider));
 
 		return new $class_name($secret_id, $secret_key);
 	}
 
-	private static function get_api_key_aliyun(): array{
-		$secret_id  = wnd_get_config('aliyun_secretid');
-		$secret_key = wnd_get_config('aliyun_secretkey');
+	/**
+	 *读取 Access Key
+	 */
+	public static function get_api_key(string $service_provider): array{
+		switch (strtolower($service_provider)) {
+		case 'aliyun':
+			$secret_id  = wnd_get_config('aliyun_secretid');
+			$secret_key = wnd_get_config('aliyun_secretkey');
+			break;
+
+		case 'qcloud':
+			$secret_id  = wnd_get_config('tencent_secretid');
+			$secret_key = wnd_get_config('tencent_secretkey');
+			break;
+
+		case 'baidubce':
+			$secret_id  = wnd_get_config('baidu_secretid');
+			$secret_key = wnd_get_config('baidu_secretkey');
+			break;
+
+		default:
+			throw new Exception('$service_provider Only supports: ' . implode(' | ', static::$service_providers));
+			break;
+		}
 
 		return compact('secret_id', 'secret_key');
 	}
 
-	private static function get_api_key_qcloud(): array{
-		$secret_id  = wnd_get_config('tencent_secretid');
-		$secret_key = wnd_get_config('tencent_secretkey');
-
-		return compact('secret_id', 'secret_key');
-	}
-
-	private static function get_api_key_baidubce(): array{
-		$secret_id  = wnd_get_config('baidu_secretid');
-		$secret_key = wnd_get_config('baidu_secretkey');
-
-		return compact('secret_id', 'secret_key');
+	/**
+	 *检测云平台服务商是否有效
+	 */
+	public static function check_service_provider(string $service_provider) {
+		if (!in_array($service_provider, static::$service_providers)) {
+			throw new Exception('Error: [' . $service_provider . ']. Only supports: ' . implode(' | ', static::$service_providers));
+		}
 	}
 }

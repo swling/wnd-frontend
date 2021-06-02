@@ -2,39 +2,28 @@
 namespace Wnd\Getway;
 
 use Exception;
-use Wnd\Component\Utility\ObjectStorage;
+use Wnd\Component\Utility\CloudObjectStorage;
+use Wnd\Getway\Wnd_Cloud_API;
 
 /**
  *@since 0.9.29
- *第三方云平台生成器
+ *第三方云平台对象存储生成器
  * - 根据服务商选择对应处理类
  * - 读取并配置云平台 accesskey
  */
 abstract class Wnd_Object_Storage {
 	// 实例化
-	public static function get_instance(string $service_provider, string $endpoint): ObjectStorage {
-		switch (strtoupper($service_provider)) {
-		case 'OSS':
-			$class_name = '\Wnd\Component\Aliyun\AliyunOSS';
-			$secret_id  = wnd_get_config('aliyun_secretid');
-			$secret_key = wnd_get_config('aliyun_secretkey');
-			break;
+	public static function get_instance(string $service_provider, string $endpoint): CloudObjectStorage{
+		Wnd_Cloud_API::check_service_provider($service_provider);
 
-		case 'COS':
-			$class_name = '\Wnd\Component\Qcloud\QcloudCOS';
-			$secret_id  = wnd_get_config('tencent_secretid');
-			$secret_key = wnd_get_config('tencent_secretkey');
-			break;
-
-		default:
-			throw new Exception('object storage service invalid');
-			break;
-		}
+		$class_name = '\Wnd\Component\\' . $service_provider . '\ObjectStorage';
+		$api_keys   = Wnd_Cloud_API::get_api_key($service_provider);
 
 		if (class_exists($class_name)) {
+			extract($api_keys);
 			return new $class_name($secret_id, $secret_key, $endpoint);
 		} else {
-			throw new Exception('object storage service invalid');
+			throw new Exception($service_provider . ' object storage service invalid');
 		}
 	}
 }

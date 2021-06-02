@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Component\Qcloud;
 
-use Wnd\Component\Utility\ObjectStorage;
+use Wnd\Component\Utility\CloudObjectStorage;
 
 /**
  *@since 0.9.29
@@ -9,7 +9,7 @@ use Wnd\Component\Utility\ObjectStorage;
  *
  *腾讯云对象存储
  */
-class QcloudCOS extends ObjectStorage {
+class ObjectStorage extends CloudObjectStorage {
 
 	/**
 	 *PUT

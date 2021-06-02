@@ -43,7 +43,7 @@ class Wnd_Menu_OSS extends Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'     => 'oss_sp',
-				'options'  => ['腾讯云' => 'COS', '阿里云' => 'OSS'],
+				'options'  => ['腾讯云' => 'Qcloud', '阿里云' => 'Aliyun'],
 				'label'    => '对象存储服务商',
 				'class'    => 'is-checkradio is-danger',
 				'required' => true,
