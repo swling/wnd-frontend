@@ -1,7 +1,9 @@
 <?php
 namespace Wnd\Getway\Payment;
 
+use Exception;
 use Wnd\Model\Wnd_Payment;
+use WP_Post;
 
 /**
  *@since 2020.06.20
@@ -15,10 +17,18 @@ use Wnd\Model\Wnd_Payment;
 class Internal extends Wnd_Payment {
 
 	/**
+	 *@since 0.9.30
+	 *中断写入数据
+	 */
+	protected function insert_record(bool $is_completed): WP_Post {
+		throw new Exception('Getway Error : Internal');
+	}
+
+	/**
 	 *构造支付界面
 	 */
 	public function build_interface(): string {
-		return __('在线支付禁止调用 Internal 网关', 'wnd');
+		return 'Getway Error : Internal';
 	}
 
 	/**
