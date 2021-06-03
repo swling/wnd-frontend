@@ -141,176 +141,59 @@ class Wnd_Admin {
 	 *升级
 	 */
 	public static function upgrade() {
-		global $wpdb;
-		// 升级 0.8.61
-		if (version_compare(get_option('wnd_ver'), '0.8.61', '<')) {
-			$posts = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_status IN ( 'success', 'close')");
-			foreach ((array) $posts as $post) {
-				$update = $wpdb->update(
-					$wpdb->posts,
-					['post_status' => 'success' == $post->post_status ? 'wnd-completed' : 'wnd-closed'],
-					['ID' => $post->ID],
-					['%s', '%s'],
-					['%d']
-				);
-			}unset($posts, $post);
-
-			if ($update ?? false) {
-				update_option('wnd_ver', '0.8.61');
-
-				wp_cache_flush();
-			}
+		$db_version = get_option('wnd_ver');
+		if (version_compare($db_version, WND_VER) >= 0) {
+			return;
 		}
 
-		// 升级 0.8.62
-		if (version_compare(get_option('wnd_ver'), '0.8.62', '<')) {
-			foreach (get_option('wnd') as $key => $value) {
-				if ('wnd_app_private_key' == $key) {
-					$key = 'alipay_app_private_key';
-				} elseif (0 === stripos($key, 'wnd_')) {
-					$key = substr($key, 4);
-				}
-				$option[$key] = $value;
+		// 提取所有版本升级方法：以"v_"为前缀的方法，并做版本对比确定是否执行
+		$reflection      = new \ReflectionClass(__CLASS__);
+		$methods         = $reflection->getMethods(\ReflectionMethod::IS_STATIC);
+		$upgrade_methods = [];
+		foreach ($methods as $method) {
+			if (0 !== stripos($method->name, 'v_')) {
+				continue;
 			}
-			update_option('wnd', $option);
 
-			update_option('wnd_ver', '0.8.62');
+			// 版本对比：确保字符格式匹配
+			if (version_compare('v_' . $db_version, $method->name) >= 0) {
+				continue;
+			}
 
-			wp_cache_flush();
+			// 写入数组存储，因为升级方法的执行顺序非常重要，保险起见，存入数组后并排序后，再循环执行
+			$upgrade_methods[] = $method->class . '::' . $method->name;
 		}
 
-		// 升级 0.8.73
-		if (version_compare(get_option('wnd_ver'), '0.8.73', '<')) {
-			foreach (get_option('wnd') as $key => $value) {
-				if ('edit_page' == $key) {
-					$key = 'ucenter_page';
-				}
-				$option[$key] = $value;
-			}
-			update_option('wnd', $option);
-
-			update_option('wnd_ver', '0.8.73');
-
-			wp_cache_flush();
+		// 方法排序并执行升级
+		asort($upgrade_methods);
+		foreach ($upgrade_methods as $upgrade_method) {
+			$upgrade_method();
 		}
 
-		// 升级 0.9.0：采用自定义站内信状态
-		if (version_compare(get_option('wnd_ver'), '0.9.0', '<')) {
-			$posts = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_type = 'mail' AND post_status IN ( 'pending', 'private')");
-			foreach ((array) $posts as $post) {
-				$update = $wpdb->update(
-					$wpdb->posts,
-					['post_status' => 'pending' == $post->post_status ? 'wnd-unread' : 'wnd-unread'],
-					['ID' => $post->ID],
-					['%s', '%s'],
-					['%d']
-				);
-			}unset($posts, $post);
+		update_option('wnd_ver', WND_VER);
+	}
 
-			if ($update ?? false) {
-				update_option('wnd_ver', '0.9.0');
+	private static function v_0929() {
+		wnd_delete_option('wnd', 'alipay_sandbox');
+	}
 
-				wp_cache_flush();
-			}
+	private static function v_0930() {
+		if ('COS' == wnd_get_option('wnd', 'oss_sp')) {
+			wnd_update_option('wnd', 'oss_sp', 'Qcloud');
+		} elseif ('OSS' == wnd_get_option('wnd', 'oss_sp')) {
+			wnd_update_option('wnd', 'oss_sp', 'Aliyun');
 		}
 
-		// 升级 0.9.2：重写用户验证数据表
-		if (version_compare(get_option('wnd_ver'), '0.9.2', '<')) {
-			ini_set('max_execution_time', 0); //秒为单位，自己根据需要定义
-
-			function insert_auths($user_id, $identifier, $type) {
-				global $wpdb;
-
-				// 已写入
-				$data = $wpdb->get_row(
-					$wpdb->prepare(
-						"SELECT * FROM $wpdb->wnd_auths WHERE identifier = %s AND type = %s",
-						$identifier, $type
-					)
-				);
-				if ($data) {
-					return false;
-				}
-
-				// 新记录
-				return $wpdb->insert(
-					$wpdb->wnd_auths,
-					['user_id' => $user_id, 'identifier' => $identifier, 'type' => $type, 'credential' => '', 'time' => time()],
-					['%d', '%s', '%s']
-				);
-			}
-
-			// 创建数据表
-			Wnd_DB::create_table();
-
-			global $wpdb;
-			$wpdb->wnd_users = $wpdb->prefix . 'wnd_users';
-			$wpdb->wnd_auths = $wpdb->prefix . 'wnd_auths';
-
-			$users = $wpdb->get_results("SELECT * FROM $wpdb->wnd_users WHERE id != 0;");
-			foreach ($users as $user) {
-				if ($user->email) {
-					$do = insert_auths($user->user_id, $user->email, 'email');
-				}
-
-				if ($user->phone) {
-					$do = insert_auths($user->user_id, $user->phone, 'phone');
-				}
-
-				if ($user->open_id) {
-					$type = (32 == strlen($user->open_id)) ? 'qq' : 'google';
-					$do   = insert_auths($user->user_id, $user->open_id, $type);
-				}
-			}unset($users, $user);
-
-			$wpdb->query("DROP TABLE IF EXISTS $wpdb->wnd_users");
-			update_option('wnd_ver', '0.9.2');
-			wp_cache_flush();
+		if ('tencent' == wnd_get_option('wnd', 'captcha_service')) {
+			wnd_update_option('wnd', 'captcha_service', 'Qcloud');
+		} elseif ('aliyun' == wnd_get_option('wnd', 'captcha_service')) {
+			wnd_update_option('wnd', 'captcha_service', 'Aliyun');
 		}
 
-		// 升级 0.9.26
-		if (version_compare(get_option('wnd_ver'), '0.9.26', '<')) {
-			foreach (get_option('wnd') as $key => $value) {
-				if ('ucenter_page' == $key) {
-					$key = 'front_page';
-				}
-				$option[$key] = $value;
-			}
-			update_option('wnd', $option);
-
-			update_option('wnd_ver', '0.9.26');
-
-			wp_cache_flush();
-		}
-
-		// 升级 0.9.29
-		if (version_compare(get_option('wnd_ver'), '0.9.29', '<')) {
-			// 沙箱测试选项，不仅局限于支付宝，已更名为：payment_sandbox，此选项仅在测试时开启，故可直接删除历史key值
-			wnd_delete_option('wnd', 'alipay_sandbox');
-			update_option('wnd_ver', '0.9.29');
-		}
-
-		// 升级 0.9.30
-		if (version_compare(get_option('wnd_ver'), '0.9.30', '<')) {
-			if ('COS' == wnd_get_option('wnd', 'oss_sp')) {
-				wnd_update_option('wnd', 'oss_sp', 'Qcloud');
-			} elseif ('OSS' == wnd_get_option('wnd', 'oss_sp')) {
-				wnd_update_option('wnd', 'oss_sp', 'Aliyun');
-			}
-
-			if ('tencent' == wnd_get_option('wnd', 'captcha_service')) {
-				wnd_update_option('wnd', 'captcha_service', 'Qcloud');
-			} elseif ('aliyun' == wnd_get_option('wnd', 'captcha_service')) {
-				wnd_update_option('wnd', 'captcha_service', 'Aliyun');
-			}
-
-			if ('tencent' == wnd_get_option('wnd', 'sms_sp')) {
-				wnd_update_option('wnd', 'sms_sp', 'Qcloud');
-			} elseif ('aliyun' == wnd_get_option('wnd', 'sms_sp')) {
-				wnd_update_option('wnd', 'sms_sp', 'Aliyun');
-			}
-
-			update_option('wnd_ver', '0.9.30');
+		if ('tencent' == wnd_get_option('wnd', 'sms_sp')) {
+			wnd_update_option('wnd', 'sms_sp', 'Qcloud');
+		} elseif ('aliyun' == wnd_get_option('wnd', 'sms_sp')) {
+			wnd_update_option('wnd', 'sms_sp', 'Aliyun');
 		}
 	}
 }
