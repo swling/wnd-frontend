@@ -13,12 +13,12 @@ $local_file     = '/home/www/upload/filename.jpg'
 $endpoint       = 'https://xxx.aliyuxxx.com'; // 此处应填写完整的节点 URL 不要忘记 https:// 前缀
 $file_path_name = '/dir/newfilename.jpg'; // 文件存储相对路径：包含子目录及文件名，直接填写文件名则上传至根目录
 
-$object_storage = Wnd_Object_Storage::get_instance('OSS', $endpoint);
+$object_storage = Wnd_Object_Storage::get_instance('Aliyun', $endpoint);
 $object_storage->setFilePathName($file_path_name);
 $object_storage->uploadFile($local_file);
 
 // 删除 (参数释义同上)
-$object_storage = Wnd_Object_Storage::get_instance('OSS', $endpoint);
+$object_storage = Wnd_Object_Storage::get_instance('Aliyun', $endpoint);
 $object_storage->setFilePathName($file_path_name);
 $object_storage->deleteFile();
 ```

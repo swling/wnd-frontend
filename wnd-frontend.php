@@ -1,23 +1,23 @@
 <?php
 /**
- *Plugin Name: Wnd-Frontend
- *Plugin URI: https://github.com/swling/wnd-frontend
- *Description: Wnd-Frontend 是一套基于 ajax 交互逻辑的 WordPress 前端基础框架。商业用途需购买授权。<a href="https://github.com/swling/wnd-frontend/releases">更新日志</a>
- *Version: 0.9.29.1
- *Author: swling
- *Author URI: https://wndwp.com
- *Requires PHP: 7.3
+ * Plugin Name: Wnd-Frontend
+ * Plugin URI: https://github.com/swling/wnd-frontend
+ * Description: Wnd-Frontend 是一套基于 ajax 交互逻辑的 WordPress 前端基础框架。商业用途需购买授权。<a href="https://github.com/swling/wnd-frontend/releases">更新日志</a>
+ * Version: 0.9.30
+ * Author: swling
+ * Author URI: https://wndwp.com
+ * Requires PHP: 7.3
  *
- *万能的WordPress前端开发基础框架
+ * 万能的WordPress前端开发基础框架
  *
- *第一版开发日期：2018.04 ~ 2018.08
+ * 第一版开发日期：2018.04 ~ 2018.08
  *
- *@since 2019.1.6 : git版本控制
- *@since 2019.1.8 ：GitHub开通免费私人仓库，正式托管于GitHub
+ * @since 2019.1.6 : git版本控制
+ * @since 2019.1.8 ：GitHub开通免费私人仓库，正式托管于GitHub
  */
 
 // 版本
-define('WND_VER', '0.9.29.1');
+define('WND_VER', '0.9.30');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -38,15 +38,15 @@ require WND_PATH . DIRECTORY_SEPARATOR . 'wnd-autoloader.php';
 Wnd\Model\Wnd_Init::get_instance();
 
 /**
- *@since 初始化
- *插件安装卸载选项
+ * 插件安装卸载选项
+ * @since 初始化
  */
 register_activation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::install');
 register_deactivation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::uninstall');
 
 /**
- *插件更新触发升级操作
- *@since 0.9.2
+ * 插件更新触发升级操作
+ * @since 0.9.2
  */
 add_action('upgrader_process_complete', function ($upgrader_object, $options) {
 	if ($options['action'] != 'update') {
@@ -67,15 +67,15 @@ add_action('upgrader_process_complete', function ($upgrader_object, $options) {
 }, 10, 2);
 
 /**
- *@since 2019.04.16
- *访问后台时候，触发执行升级及清理动作
+ * 访问后台时候，触发执行升级及清理动作
+ * @since 2019.04.16
  */
 add_action('admin_init', 'Wnd\Model\Wnd_Admin::upgrade');
 add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
 
 /**
- *@since 初始化
- *加载静态资源
+ * 加载静态资源
+ * @since 初始化
  */
 add_action('wp_enqueue_scripts', 'wnd_enqueue_scripts');
 function wnd_enqueue_scripts($hook_suffix = '') {
