@@ -62,6 +62,17 @@ apply_filters('wnd_filter_tabs', $this->tabs, $this->query_args);
 apply_filters('wnd_can_upload_file', ['status' => 1, 'msg' => ''], $post_parent, $meta_key);
 ```
 
+## 文件下载
+```php
+/**
+ * 主要用于添加控制额外用户下载文件的权限，如限定用户下载频次 
+ * @see Wnd\Action\Wnd_Pay_For_Downloads->check();
+ * @since 0.9.31
+ */
+apply_filters('wnd_can_download', ['status' => 1, 'msg' => ''], $post_id);
+
+```
+
 ## 用户
 ```php
 ###用户注册(默认通过)
