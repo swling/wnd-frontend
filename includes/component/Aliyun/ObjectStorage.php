@@ -4,9 +4,9 @@ namespace Wnd\Component\Aliyun;
 use Wnd\Component\Utility\CloudObjectStorage;
 
 /**
- *@since 0.9.29
- *@link https://www.aliyun.com/product/oss
- *阿里云对象存储
+ * 阿里云对象存储
+ * @link https://www.aliyun.com/product/oss
+ * @since 0.9.29
  */
 class ObjectStorage extends CloudObjectStorage {
 
@@ -15,35 +15,39 @@ class ObjectStorage extends CloudObjectStorage {
 	 * @link https://help.aliyun.com/document_detail/31978.html
 	 */
 	public function uploadFile(string $sourceFile, int $timeout = 1800): array{
-		//设置头部
+		/**
+		 * 由于在前端请求中，无法设置头部参数'Date' 故此处也统一采用 'X-OSS-Date' 替换 'Date'
+		 * 官方文档中并未说明 X-OSS-Date 可替代 date，但实际运行中可以
+		 * @since 0.9.32
+		 */
 		$mime_type = mime_content_type($sourceFile);
 		$md5       = base64_encode(md5_file($sourceFile, true));
 		$headers   = [
-			'Date:' . static::getDate(),
+			'X-OSS-Date:' . static::getDate(),
 			'Content-Type:' . $mime_type,
 			'Content-MD5:' . $md5,
-			'Authorization:' . $this->create_authorization('PUT', $mime_type, $md5),
+			'Authorization:' . $this->generateAuthorization('PUT', $mime_type, $md5),
 		];
 
 		return static::curlPut($sourceFile, $this->fileUri, $headers, $timeout);
 	}
 
 	/**
-	 *Delete
-	 *@link https://help.aliyun.com/document_detail/31982.html
-	 **/
+	 * Delete
+	 * @link https://help.aliyun.com/document_detail/31982.html
+	 */
 	public function deleteFile(int $timeout = 30): array{
 		//设置头部
 		$headers = [
-			'Date:' . static::getDate(),
-			'Authorization:' . $this->create_authorization('DELETE'),
+			'X-OSS-Date:' . static::getDate(),
+			'Authorization:' . $this->generateAuthorization('DELETE'),
 		];
 
 		return static::curlDelete($this->fileUri, $headers, $timeout);
 	}
 
 	/**
-	 *云平台图片缩放处理
+	 * 云平台图片缩放处理
 	 */
 	public static function resizeImage(string $image_url, int $width, int $height): string {
 		return "{$image_url}?x-oss-process=image/resize,m_fill,h_{$height},w_{$width}";
@@ -53,12 +57,14 @@ class ObjectStorage extends CloudObjectStorage {
 	 * 获取签名
 	 * @link https://help.aliyun.com/document_detail/31951.html
 	 */
-	private function create_authorization(string $method, string $minType = '', $md5 = '') {
-		$bucket = $this->parse_bucket();
-		$date   = static::getDate();
+	public function generateAuthorization(string $method, string $minType = '', $md5 = ''): string{
+		$method                  = strtoupper($method);
+		$date                    = static::getDate();
+		$canonicalizedOSSHeaders = 'x-oss-date:' . $date;
+		$canonicalizedResource   = '/' . $this->parse_bucket() . $this->filePathName;
 
 		//生成签名：换行符必须使用双引号
-		$str       = $method . "\n" . $md5 . "\n" . $minType . "\n" . $date . "\n/" . $bucket . $this->filePathName;
+		$str       = $method . "\n" . $md5 . "\n" . $minType . "\n" . $date . "\n" . $canonicalizedOSSHeaders . "\n" . $canonicalizedResource;
 		$signature = base64_encode(hash_hmac('sha1', $str, $this->secretKey, true));
 
 		return 'OSS ' . $this->secretID . ':' . $signature;
@@ -73,7 +79,7 @@ class ObjectStorage extends CloudObjectStorage {
 	}
 
 	/**
-	 *根据 endpoint 域名解析出 bucket
+	 * 根据 endpoint 域名解析出 bucket
 	 */
 	private function parse_bucket(): string{
 		$parsedUrl = parse_url($this->endpoint);
