@@ -5,9 +5,9 @@ use Exception;
 use Wnd\Component\Utility\CloudRequest;
 
 /**
- *@link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu
- *@since 0.9.30
- *百度云平台产品签名助手
+ * 百度云平台产品签名助手
+ * @link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu
+ * @since 0.9.30
  */
 class SignatureHelper extends CloudRequest {
 
@@ -25,10 +25,10 @@ class SignatureHelper extends CloudRequest {
 	}
 
 	/**
-	 *补充或修改用户传参 $args['headers']
+	 * 补充或修改用户传参 $args['headers']
 	 */
 	private function setHeaders() {
-		$this->headers["Content-Type"] = $this->headers["Content-Type"] ?? 'application/json; charset=utf-8';
+		$this->headers['Content-Type'] = $this->headers['Content-Type'] ?? 'application/json; charset=utf-8';
 	}
 
 	private function genSignature(): string {
@@ -41,7 +41,7 @@ class SignatureHelper extends CloudRequest {
 	}
 
 	/**
-	 *@link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#%E4%BB%BB%E5%8A%A1%E4%B8%89%EF%BC%9A%E7%94%9F%E6%88%90%E6%B4%BE%E7%94%9F%E5%AF%86%E9%92%A5signingkey
+	 * @link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#%E4%BB%BB%E5%8A%A1%E4%B8%89%EF%BC%9A%E7%94%9F%E6%88%90%E6%B4%BE%E7%94%9F%E5%AF%86%E9%92%A5signingkey
 	 */
 	private function genSigningKey(): string{
 		$authStr = 'bce-auth-v1/' . $this->secretID . '/' . $this->timestamp . '/' . $this->expiration;
@@ -49,7 +49,7 @@ class SignatureHelper extends CloudRequest {
 	}
 
 	/**
-	 *@link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#2-canonicaluri
+	 * @link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#2-canonicaluri
 	 */
 	private function getCanonicalURI(): string {
 		if (empty($this->path)) {
@@ -59,7 +59,7 @@ class SignatureHelper extends CloudRequest {
 	}
 
 	/**
-	 *@link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#3-canonicalquerystring
+	 * @link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#3-canonicalquerystring
 	 */
 	private function getCanonicalQueryString(): string{
 		parse_str($this->queryString, $queryString);
@@ -71,7 +71,7 @@ class SignatureHelper extends CloudRequest {
 			$strArry[] = $this->dataEncode($key, false) . '=' . $this->dataEncode($value, false);
 		}
 		ksort($strArry);
-		return join('&', $strArry);
+		return implode('&', $strArry);
 	}
 
 	private function getCanonicalHeaders(): string {
@@ -83,8 +83,8 @@ class SignatureHelper extends CloudRequest {
 	}
 
 	/**
-	 *@link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#4-canonicalheaders
-	 *解析 headers 数组生成：signedHeaders 及 CanonicalHeaders
+	 * 解析 headers 数组生成：signedHeaders 及 CanonicalHeaders
+	 * @link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#4-canonicalheaders
 	 */
 	private function parseHeaders(): array{
 		$list_array = [];
@@ -103,8 +103,8 @@ class SignatureHelper extends CloudRequest {
 		}
 
 		ksort($list_array);
-		$signedHeaders    = join(';', array_keys($list_array));
-		$CanonicalHeaders = join("\n", array_values($list_array));
+		$signedHeaders    = implode(';', array_keys($list_array));
+		$CanonicalHeaders = implode("\n", array_values($list_array));
 
 		return compact('signedHeaders', 'CanonicalHeaders');
 	}
@@ -117,7 +117,7 @@ class SignatureHelper extends CloudRequest {
 		if (empty($data)) {
 			return '';
 		}
-		$encode = mb_detect_encoding($data, array('ASCII', 'UTF-8', 'GB2312', 'GBK', 'BIG5'));
+		$encode = mb_detect_encoding($data, ['ASCII', 'UTF-8', 'GB2312', 'GBK', 'BIG5']);
 		if ($encode != 'UTF-8') {
 			$data = $code1 = mb_convert_encoding($data, 'utf-8', $encode);
 		}
