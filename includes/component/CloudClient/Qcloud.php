@@ -1,14 +1,12 @@
 <?php
-namespace Wnd\Component\Qcloud;
-
-use Wnd\Component\Utility\CloudRequest;
+namespace Wnd\Component\CloudClient;
 
 /**
  * 腾讯云云平台产品签名助手 API 3.0 V3.0
  * @link https://cloud.tencent.com/document/product/1278/46715
  * @since 0.9.30
  */
-class SignatureHelper extends CloudRequest {
+class Qcloud extends CloudClient {
 
 	private $algorithm = 'TC3-HMAC-SHA256';
 	private $service   = '';

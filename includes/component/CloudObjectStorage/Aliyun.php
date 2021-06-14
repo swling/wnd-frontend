@@ -1,14 +1,12 @@
 <?php
-namespace Wnd\Component\Aliyun;
-
-use Wnd\Component\Utility\CloudObjectStorage;
+namespace Wnd\Component\CloudObjectStorage;
 
 /**
  * 阿里云对象存储
  * @link https://www.aliyun.com/product/oss
  * @since 0.9.29
  */
-class ObjectStorage extends CloudObjectStorage {
+class Aliyun extends CloudObjectStorage {
 
 	/**
 	 * 上传文件

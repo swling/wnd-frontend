@@ -1,14 +1,12 @@
 <?php
-namespace Wnd\Component\Qcloud;
-
-use Wnd\Component\Utility\CloudObjectStorage;
+namespace Wnd\Component\CloudObjectStorage;
 
 /**
  * 腾讯云对象存储
  * @link https://cloud.tencent.com/document/product/436/7751
  * @since 0.9.29
  */
-class ObjectStorage extends CloudObjectStorage {
+class Qcloud extends CloudObjectStorage {
 
 	/**
 	 * PUT
@@ -31,8 +29,7 @@ class ObjectStorage extends CloudObjectStorage {
 	public function deleteFile(int $timeout = 30): array{
 		$headers                  = [];
 		$headers['Authorization'] = $this->generateAuthorization('delete', 3600, $headers);
-
-		$curlHeaders = static::arrayToHeaders($headers);
+		$curlHeaders              = static::arrayToHeaders($headers);
 		return static::curlDelete($this->fileUri, $curlHeaders, $timeout);
 	}
 

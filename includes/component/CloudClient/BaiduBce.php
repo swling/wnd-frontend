@@ -1,15 +1,14 @@
 <?php
-namespace Wnd\Component\BaiduBce;
+namespace Wnd\Component\CloudClient;
 
 use Exception;
-use Wnd\Component\Utility\CloudRequest;
 
 /**
  * 百度云平台产品签名助手
  * @link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu
  * @since 0.9.30
  */
-class SignatureHelper extends CloudRequest {
+class BaiduBce extends CloudClient {
 
 	protected $expiration = 1800;
 

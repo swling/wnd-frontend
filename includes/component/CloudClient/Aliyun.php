@@ -1,16 +1,13 @@
 <?php
-namespace Wnd\Component\Aliyun;
-
-use Wnd\Component\Utility\CloudRequest;
+namespace Wnd\Component\CloudClient;
 
 /**
  * 签名助手 2017/11/19
- *
  * Class SignatureHelper
  * @link https://www.alibabacloud.com/help/zh/doc-detail/28761.htm
  * @link https://usercenter.console.aliyun.com/#/manage/ak ( $secretID string AccessKeyId)
  */
-class SignatureHelper extends CloudRequest {
+class Aliyun extends CloudClient {
 
 	/**
 	 * 阿里云产品签名鉴权包含在请求 body 而非 headers 中，故无需生成 Authorization
@@ -23,15 +20,15 @@ class SignatureHelper extends CloudRequest {
 	}
 
 	/**
-	 *补充或修改用户传参 $args['headers']
+	 * 补充或修改用户传参 $args['headers']
 	 */
 	private function setHeaders() {
 		$this->headers = [];
 	}
 
 	/**
-	 *阿里云产品签名鉴权包含在请求 body
-	 *因此，为保持类的接口统一，在请求执行方法中完成签名及请求参数拼接，并调用父类方法发起请求
+	 * 阿里云产品签名鉴权包含在请求 body
+	 * 因此，为保持类的接口统一，在请求执行方法中完成签名及请求参数拼接，并调用父类方法发起请求
 	 */
 	protected function excuteRequest(): array{
 		$this->body = $this->generateRequestBody();
@@ -39,8 +36,8 @@ class SignatureHelper extends CloudRequest {
 	}
 
 	/**
-	 *@link https://www.alibabacloud.com/help/zh/doc-detail/28761.htm#d7e57
-	 *构造请求数据
+	 * 构造请求数据
+	 * @link https://www.alibabacloud.com/help/zh/doc-detail/28761.htm#d7e57
 	 */
 	private function generateRequestBody(): string{
 		$apiParams = array_merge([

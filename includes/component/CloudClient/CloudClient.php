@@ -1,14 +1,14 @@
 <?php
-namespace Wnd\Component\Utility;
+namespace Wnd\Component\CloudClient;
 
 use Exception;
 
 /**
- *@since 0.9.30
- *云平台产品签名助手基类
+ * 云平台产品签名助手基类
  * 默认在请求 headers 中添加 'Host' 及 'Authorization'
+ * @since 0.9.30
  */
-abstract class CloudRequest {
+abstract class CloudClient {
 	protected $secretID;
 	protected $secretKey;
 	protected $timestamp;
@@ -50,12 +50,12 @@ abstract class CloudRequest {
 	}
 
 	/**
-	 *生成Authorization
+	 * 生成Authorization
 	 */
 	abstract protected function genAuthorization(): string;
 
 	/**
-	 *拆分为独立方法，以便某些情况子类可重写覆盖
+	 * 拆分为独立方法，以便某些情况子类可重写覆盖
 	 */
 	protected function excuteRequest(): array{
 		$request = \wp_remote_request(

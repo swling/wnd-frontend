@@ -1,12 +1,11 @@
 <?php
-namespace Wnd\Component\Utility;
+namespace Wnd\Component\CloudObjectStorage;
 
 use Exception;
 
 /**
- *@since 0.9.30
- *
- *对象存储抽象基类
+ * 对象存储抽象基类
+ * @since 0.9.30
  */
 abstract class CloudObjectStorage {
 
@@ -24,8 +23,8 @@ abstract class CloudObjectStorage {
 	}
 
 	/**
-	 *设置文件存储路径
-	 *以 '/' 开头
+	 * 设置文件存储路径
+	 * 以 '/' 开头
 	 */
 	public function setFilePathName(string $filePathName) {
 		$filePathName       = '/' . trim($filePathName, '/');
@@ -34,22 +33,23 @@ abstract class CloudObjectStorage {
 	}
 
 	/**
-	 *PUT
+	 * PUT
 	 */
 	abstract public function uploadFile(string $sourceFile, int $timeout = 1800): array;
 
 	/**
-	 *Delete
-	 **/
+	 * Delete
+	 *
+	 */
 	abstract public function deleteFile(int $timeout = 30): array;
 
 	/**
-	 *云平台图片缩放处理
+	 * 云平台图片缩放处理
 	 */
 	abstract public static function resizeImage(string $image_url, int $width, int $height): string;
 
 	/**
-	 *Curl PUT
+	 * Curl PUT
 	 */
 	protected static function curlPut(string $sourceFile, string $targetUri, array $headers, int $timeout): array{
 		$file = fopen($sourceFile, 'rb');
@@ -81,7 +81,7 @@ abstract class CloudObjectStorage {
 	}
 
 	/**
-	 *Curl Delete
+	 * Curl Delete
 	 */
 	protected static function curlDelete(string $targetUri, array $headers, int $timeout): array{
 		$ch = curl_init(); //初始化curl
@@ -108,7 +108,7 @@ abstract class CloudObjectStorage {
 	}
 
 	/**
-	 *获取文件 URI
+	 * 获取文件 URI
 	 */
 	public function getFileUri(): string {
 		return $this->fileUri;
