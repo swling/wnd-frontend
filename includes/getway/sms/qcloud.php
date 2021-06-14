@@ -2,31 +2,32 @@
 namespace Wnd\Getway\Sms;
 
 use Exception;
-use Wnd\Getway\Wnd_Cloud_API;
+use Wnd\Getway\Wnd_Cloud_Client;
 use Wnd\Getway\Wnd_Sms;
 
 /**
- *@since 2019.09.25
- *短信
+ * 短信
+ * @since 2019.09.25
  */
 class Qcloud extends Wnd_Sms {
 
 	/**
-	 *@since 2019.02.11 发送短信
-	 *@param $phone     string 手机号
-	 *@param $code      string 验证码
-	 *@param $phone     string 短信模板ID
+	 * @since 2019.02.11 发送短信
+	 *
+	 * @param $phone string 手机号
+	 * @param $code  string 验证码
+	 * @param $phone string 短信模板ID
 	 */
 	public function send() {
 		/**
-		 *模板参数:
+		 * 模板参数:
 		 *
-		 *模板实例：
-		 *验证码：{1}，{2}分钟内有效！（如非本人操作，请忽略本短信）
+		 * 模板实例：
+		 * 验证码：{1}，{2}分钟内有效！（如非本人操作，请忽略本短信）
 		 *
-		 *$params = [$this->code, '10']实际发送：
-		 *验证码：XXXX，10分钟内有效！（如非本人操作，请忽略本短信）
-		 *即数组具体的元素，与信息模板中的变量一一对应
+		 * $params = [$this->code, '10']实际发送：
+		 * 验证码：XXXX，10分钟内有效！（如非本人操作，请忽略本短信）
+		 * 即数组具体的元素，与信息模板中的变量一一对应
 		 *
 		 */
 		$params = ($this->code and $this->valid_time) ? [(string) $this->code, (string) $this->valid_time] : [];
@@ -36,9 +37,9 @@ class Qcloud extends Wnd_Sms {
 	}
 
 	/**
-	 *发送含参模板短信
-	 * @link https://cloud.tencent.com/document/product/382/38778
+	 * 发送含参模板短信
 	 * 使用签名方法 v1
+	 * @link https://cloud.tencent.com/document/product/382/38778
 	 */
 	protected static function sendWithParam($nation_code, $phone_numbers, $templ_id, $templ_params, $sign_name) {
 		$url    = 'https://sms.tencentcloudapi.com';
@@ -65,7 +66,7 @@ class Qcloud extends Wnd_Sms {
 		];
 
 		// 发起请求
-		$action  = Wnd_Cloud_API::get_instance('Qcloud');
+		$action  = Wnd_Cloud_Client::get_instance('Qcloud');
 		$request = $action->request($url, $args);
 
 		// 核查响应

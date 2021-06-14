@@ -3,14 +3,13 @@ namespace Wnd\Getway\Captcha;
 
 use Exception;
 use Wnd\Getway\Wnd_Captcha;
-use Wnd\Getway\Wnd_Cloud_API;
+use Wnd\Getway\Wnd_Cloud_Client;
 
 /**
- *@since 2020.08.11
- *验证码后端校验
- *
- *@link captcha核验 https://cloud.tencent.com/document/product/1110/36926
- *@link 公共参数  https://cloud.tencent.com/document/api/1110/36920
+ * 验证码后端校验
+ * @link captcha核验 https://cloud.tencent.com/document/product/1110/36926
+ * @link 公共参数  https://cloud.tencent.com/document/api/1110/36920
+ * @since 2020.08.11
  */
 class Qcloud extends Wnd_Captcha {
 
@@ -35,7 +34,7 @@ class Qcloud extends Wnd_Captcha {
 		];
 
 		// 发起请求
-		$request = Wnd_Cloud_API::get_instance('Qcloud');
+		$request = Wnd_Cloud_Client::get_instance('Qcloud');
 		$result  = $request->request($url, $args);
 
 		// 核查响应
@@ -49,7 +48,7 @@ class Qcloud extends Wnd_Captcha {
 	}
 
 	/**
-	 *验证码人机验证脚本
+	 * 验证码人机验证脚本
 	 */
 	public function render_send_code_script(): string{
 		$script = '
@@ -113,9 +112,9 @@ if (sd_btn) {
 	}
 
 	/**
-	 *表单提交人机验证
-	 *@since 0.8.64
-	 *JavaScript 函数 [wnd_submit_via_captcha] 将会在前端渲染中被引用，因此函数名称及传参必须保持一致
+	 * 表单提交人机验证
+	 * JavaScript 函数 [wnd_submit_via_captcha] 将会在前端渲染中被引用，因此函数名称及传参必须保持一致
+	 * @since 0.8.64
 	 */
 	public function render_submit_form_script(): string{
 		$script = '

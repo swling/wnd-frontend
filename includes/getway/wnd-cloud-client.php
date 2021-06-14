@@ -8,7 +8,7 @@ use Wnd\Component\CloudClient\CloudClient;
  * 统一封装云计算平台 API 请求
  * @since 0.9.30
  */
-abstract class Wnd_Cloud_API {
+abstract class Wnd_Cloud_Client {
 
 	private static $service_providers = ['Aliyun', 'Qcloud', 'BaiduBce'];
 

@@ -10,8 +10,8 @@
 /**
  * @link https://cloud.baidu.com/doc/NLP/s/7k6z52ggx
  **/
-use Wnd\Getway\Wnd_Cloud_API;
-$request    = Wnd_Cloud_API::get_instance('BaiduBce');
+use Wnd\Getway\Wnd_Cloud_Client;
+$request    = Wnd_Cloud_Client::get_instance('BaiduBce');
 $url     = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?charset=UTF-8';
 $params  = json_encode(
 	[
@@ -28,8 +28,8 @@ print_r($result);
 /**
  *@link https://cloud.tencent.com/document/product/271/35494
  **/
-use Wnd\Getway\Wnd_Cloud_API;
-$request = Wnd_Cloud_API::get_instance('Qcloud');
+use Wnd\Getway\Wnd_Cloud_Client;
+$request = Wnd_Cloud_Client::get_instance('Qcloud');
 $url    = 'https://nlp.tencentcloudapi.com';
 $params = [
 	'Text' => '腾讯云是个好平台，但是签名v3搞起来实在有点太复杂了，感觉没必要',
@@ -57,9 +57,9 @@ print_r($result);
  *@link https://help.aliyun.com/document_detail/146443.html
  *
  */
-use Wnd\Getway\Wnd_Cloud_API;
+use Wnd\Getway\Wnd_Cloud_Client;
 $image_url = 'oss.jpg';
-$request = Wnd_Cloud_API::get_instance('Aliyun');
+$request = Wnd_Cloud_Client::get_instance('Aliyun');
 $result  = $request->request(
 	'https://imageseg.cn-shanghai.aliyuncs.com',
 	[
