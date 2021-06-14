@@ -61,7 +61,7 @@ class ObjectStorage extends CloudObjectStorage {
 		$method                  = strtoupper($method);
 		$date                    = static::getDate();
 		$canonicalizedOSSHeaders = 'x-oss-date:' . $date;
-		$canonicalizedResource   = '/' . $this->parse_bucket() . $this->filePathName;
+		$canonicalizedResource   = '/' . $this->parseBucket() . $this->filePathName;
 
 		//生成签名：换行符必须使用双引号
 		$str       = $method . "\n" . $md5 . "\n" . $minType . "\n" . $date . "\n" . $canonicalizedOSSHeaders . "\n" . $canonicalizedResource;
@@ -81,7 +81,7 @@ class ObjectStorage extends CloudObjectStorage {
 	/**
 	 * 根据 endpoint 域名解析出 bucket
 	 */
-	private function parse_bucket(): string{
+	private function parseBucket(): string{
 		$parsedUrl = parse_url($this->endpoint);
 		$host      = explode('.', $parsedUrl['host']);
 		$subdomain = $host[0];

@@ -4,50 +4,50 @@ namespace Wnd\Component\Qcloud;
 use Wnd\Component\Utility\CloudObjectStorage;
 
 /**
- *@since 0.9.29
- *@link https://cloud.tencent.com/document/product/436/7751
- *
- *腾讯云对象存储
+ * 腾讯云对象存储
+ * @link https://cloud.tencent.com/document/product/436/7751
+ * @since 0.9.29
  */
 class ObjectStorage extends CloudObjectStorage {
 
 	/**
-	 *PUT
-	 *@link https://cloud.tencent.com/document/product/436/7749
+	 * PUT
+	 * @link https://cloud.tencent.com/document/product/436/7749
 	 */
 	public function uploadFile(string $sourceFile, int $timeout = 1800): array{
 		$file                     = fopen($sourceFile, 'rb');
 		$headers                  = [];
 		$headers['Content-MD5']   = base64_encode(md5_file($sourceFile, true));
-		$headers['Authorization'] = $this->create_authorization('put', 3600, $headers);
+		$headers['Authorization'] = $this->generateAuthorization('put', 3600, $headers);
 
-		$curlHeaders = static::array_to_curl_headers($headers);
+		$curlHeaders = static::arrayToHeaders($headers);
 		return static::curlPut($sourceFile, $this->fileUri, $curlHeaders, $timeout);
 	}
 
 	/**
-	 *Delete
-	 *@link https://cloud.tencent.com/document/product/436/7743
-	 **/
+	 * Delete
+	 * @link https://cloud.tencent.com/document/product/436/7743
+	 */
 	public function deleteFile(int $timeout = 30): array{
 		$headers                  = [];
-		$headers['Authorization'] = $this->create_authorization('delete', 3600, $headers);
+		$headers['Authorization'] = $this->generateAuthorization('delete', 3600, $headers);
 
-		$curlHeaders = static::array_to_curl_headers($headers);
+		$curlHeaders = static::arrayToHeaders($headers);
 		return static::curlDelete($this->fileUri, $curlHeaders, $timeout);
 	}
 
 	/**
-	 *云平台图片缩放处理
+	 * 云平台图片缩放处理
 	 */
 	public static function resizeImage(string $image_url, int $width, int $height): string {
 		return $image_url;
 	}
 
 	/**
-	 *将数组键值对转为 curl headers 数组
-	 **/
-	private static function array_to_curl_headers(array $headers): array{
+	 * 将数组键值对转为 curl headers 数组
+	 *
+	 */
+	private static function arrayToHeaders(array $headers): array{
 		$result = [];
 		foreach ($headers as $key => $value) {
 			$result[] = $key . ':' . $value;
@@ -60,7 +60,7 @@ class ObjectStorage extends CloudObjectStorage {
 	 * 计算签名
 	 * @link https://cloud.tencent.com/document/product/436/7778
 	 */
-	private function create_authorization(string $method, int $expires, array $headers, array $http_query = []): string{
+	private function generateAuthorization(string $method, int $expires, array $headers, array $http_query = []): string{
 		// 步骤1：生成 KeyTime
 		$key_time = time() . ';' . (time() + $expires); //unix_timestamp;unix_timestamp
 
@@ -68,12 +68,12 @@ class ObjectStorage extends CloudObjectStorage {
 		$sign_key = hash_hmac('sha1', $key_time, $this->secretKey);
 
 		// 步骤3：生成 UrlParamList 和 HttpParameters
-		$url_param_list_array = static::build_list_and_parameters($http_query);
+		$url_param_list_array = static::parseArrayToSign($http_query);
 		$url_param_list       = $url_param_list_array['list'];
 		$http_parameters      = $url_param_list_array['parameters'];
 
 		// 步骤4：生成 HeaderList 和 HttpHeaders
-		$header_list_array = static::build_list_and_parameters($headers);
+		$header_list_array = static::parseArrayToSign($headers);
 		$header_list       = $header_list_array['list'];
 		$http_headers      = $header_list_array['parameters'];
 
@@ -96,9 +96,9 @@ class ObjectStorage extends CloudObjectStorage {
 	}
 
 	/**
-	 *生成 UrlParamList 和 HttpParameters
+	 * 生成 UrlParamList 和 HttpParameters
 	 */
-	private static function build_list_and_parameters(array $data): array{
+	private static function parseArrayToSign(array $data): array{
 		$list_array = [];
 		foreach ($data as $key => $value) {
 			$key              = strtolower(urlencode($key));
@@ -107,8 +107,8 @@ class ObjectStorage extends CloudObjectStorage {
 		}
 
 		ksort($list_array);
-		$list       = join(';', array_keys($list_array));
-		$parameters = join('&', array_values($list_array));
+		$list       = implode(';', array_keys($list_array));
+		$parameters = implode('&', array_values($list_array));
 
 		return compact('list', 'parameters');
 	}
