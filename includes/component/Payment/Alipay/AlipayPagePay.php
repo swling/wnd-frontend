@@ -1,7 +1,7 @@
 <?php
-namespace Wnd\Component\Alipay;
+namespace Wnd\Component\Payment\Alipay;
 
-use Wnd\Component\Alipay\AlipayPayBuilder;
+use Wnd\Component\Payment\Alipay\AlipayPayBuilder;
 
 /**
  *@since 2019.03.02 支付宝网页支创建类

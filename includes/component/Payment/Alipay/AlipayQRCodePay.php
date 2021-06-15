@@ -1,6 +1,6 @@
 <?php
 
-namespace Wnd\Component\Alipay;
+namespace Wnd\Component\Payment\Alipay;
 
 use Exception;
 

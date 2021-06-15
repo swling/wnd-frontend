@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Component\Utility;
+namespace Wnd\Component\Payment;
 
 /**
  *@since 站外支付接口

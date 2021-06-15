@@ -1,8 +1,8 @@
 <?php
 namespace Wnd\Getway\Payment;
 
-use Wnd\Component\Alipay\AlipayPagePay;
-use Wnd\Component\Alipay\AlipayService;
+use Wnd\Component\Payment\Alipay\AlipayPagePay;
+use Wnd\Component\Payment\Alipay\AlipayService;
 use Wnd\Model\Wnd_Payment;
 
 /**

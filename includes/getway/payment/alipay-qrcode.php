@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Getway\Payment;
 
-use Wnd\Component\Alipay\AlipayQRCodePay;
+use Wnd\Component\Payment\Alipay\AlipayQRCodePay;
 use Wnd\Getway\Payment\Alipay;
 
 /**

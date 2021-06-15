@@ -1,7 +1,7 @@
 <?php
-namespace Wnd\Component\Alipay;
+namespace Wnd\Component\Payment\Alipay;
 
-use Wnd\Component\Alipay\AlipayService;
+use Wnd\Component\Payment\Alipay\AlipayService;
 
 /**
  *@since 2020.06.08

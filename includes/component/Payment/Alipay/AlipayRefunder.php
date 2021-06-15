@@ -1,10 +1,10 @@
 <?php
-namespace Wnd\Component\Alipay;
+namespace Wnd\Component\Payment\Alipay;
 
 use Exception;
-use Wnd\Component\Alipay\AlipayConfig;
-use Wnd\Component\Alipay\AlipayService;
-use Wnd\Component\Utility\Refunder;
+use Wnd\Component\Payment\Alipay\AlipayConfig;
+use Wnd\Component\Payment\Alipay\AlipayService;
+use Wnd\Component\Payment\Refunder;
 
 /**
  *支付宝退款

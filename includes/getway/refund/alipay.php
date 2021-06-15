@@ -2,7 +2,7 @@
 namespace Wnd\Getway\Refund;
 
 use Exception;
-use Wnd\Component\Alipay\AlipayRefunder;
+use Wnd\Component\Payment\Alipay\AlipayRefunder;
 use Wnd\Model\Wnd_Refunder;
 
 /**

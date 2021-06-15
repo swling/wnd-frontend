@@ -1,9 +1,9 @@
 <?php
-namespace Wnd\Component\Alipay;
+namespace Wnd\Component\Payment\Alipay;
 
-use Wnd\Component\Alipay\AlipayConfig;
-use Wnd\Component\Alipay\AlipayService;
-use Wnd\Component\Utility\PaymentBuilder;
+use Wnd\Component\Payment\Alipay\AlipayConfig;
+use Wnd\Component\Payment\Alipay\AlipayService;
+use Wnd\Component\Payment\PaymentBuilder;
 
 /**
  *@since 2020.07.16
