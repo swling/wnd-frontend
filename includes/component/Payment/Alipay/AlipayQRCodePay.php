@@ -5,9 +5,8 @@ namespace Wnd\Component\Payment\Alipay;
 use Exception;
 
 /**
- *@since 2020.07.16 支付宝当面付支创建类
- *
- *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.precreate
+ * @link https://opendocs.alipay.com/apis/api_1/alipay.trade.precreate
+ * @since 2020.07.16 支付宝当面付支创建类
  */
 class AlipayQRCodePay extends AlipayPayBuilder {
 
@@ -18,24 +17,23 @@ class AlipayQRCodePay extends AlipayPayBuilder {
 	 * 发起请求并生产二维码
 	 * @return array
 	 */
-	protected function buildInterface(): string{
+	public function buildInterface(): string{
 		/**
-		 *采用WordPress内置函数发送Post请求
+		 * 采用WordPress内置函数发送Post请求
 		 */
 		$response = wp_remote_post($this->gateway_url,
 			[
 				'timeout'     => 60,
 				'redirection' => 5,
-				'httpversion' => '2.0',
-				'body'        => $this->common_configs,
+				'body'        => $this->params,
 
 				// 必须设置此项，否则无法解析支付宝的响应json
-				'headers'     => array("Content-type" => "application/x-www-form-urlencoded;charset=$this->charset"),
+				'headers'     => ['Content-type' => "application/x-www-form-urlencoded; charset=$this->charset"],
 			]
 		);
 
 		/**
-		 *返回请求结果
+		 * 返回请求结果
 		 */
 		if (is_wp_error($response)) {
 			throw new Exception($response->get_error_message());

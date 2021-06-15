@@ -6,26 +6,27 @@ use Wnd\Component\Payment\Alipay\AlipayRefunder;
 use Wnd\Model\Wnd_Refunder;
 
 /**
- *@since 2020.06.09
- *支付宝退款
- *@link https://opendocs.alipay.com/apis/api_1/alipay.trade.refund
+ * 支付宝退款
+ * @link https://opendocs.alipay.com/apis/api_1/alipay.trade.refund
+ * @since 2020.06.09
  */
 class Alipay extends Wnd_Refunder {
 
 	/**
-	 *需要根据平台退款响应，设定退款状态，及平台响应数据包
+	 * 需要根据平台退款响应，设定退款状态，及平台响应数据包
 	 *
-	 *$this->out_trade_no
-	 *$this->out_request_no
-	 *$this->refund_amount
-	 *$this->total_amount
+	 * $this->out_trade_no
+	 * $this->out_request_no
+	 * $this->refund_amount
+	 * $this->total_amount
 	 */
 	protected function do_refund() {
 		/**
 		 * - 部分退款：以退款次数作为标识
 		 * - 获取支付宝响应
 		 */
-		$alipay = new AlipayRefunder();
+		$alipay_config = \Wnd\Getway\Payment\Alipay::getConfig();
+		$alipay        = new AlipayRefunder($alipay_config);
 		$alipay->setOutTradeNo($this->out_trade_no);
 		$alipay->setOutRequestNo($this->out_request_no);
 		$alipay->setRefundAmount($this->refund_amount);
