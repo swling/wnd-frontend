@@ -1,12 +1,12 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\Model\Wnd_Payment_Getway;
+use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Recharge;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 2019.01.21 充值表单
+ * @since 2019.01.21 充值表单
  */
 class Wnd_User_Recharge_Form extends Wnd_Module_Form {
 

@@ -2,7 +2,7 @@
 namespace Wnd\Getway;
 
 use Exception;
-use Wnd\Model\Wnd_Payment_Getway;
+use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Transaction;
 
 /**

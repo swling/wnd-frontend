@@ -1,31 +1,31 @@
 <?php
 namespace Wnd\Module;
 
+use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Order_Product;
-use Wnd\Model\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_SKU;
 use Wnd\Utility\Wnd_Request;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 2020.06.30
- *在线支付订单表单
- *匿名支付订单默认启用人机验证
+ * 在线支付订单表单
+ * 匿名支付订单默认启用人机验证
+ * @since 2020.06.30
  */
 class Wnd_Payment_Form extends Wnd_Module_Form {
 
 	// 配置表单
 	protected static function configure_form(array $args = []): object{
 		/**
-		 *订单基本信息 + 产品属性等参数
+		 * 订单基本信息 + 产品属性等参数
 		 *
-		 *构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
+		 * 构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
 		 * 		$post_id, $sku_id, $quantity, $total_amount, $title，$sku_info
 		 */
 		extract(static::get_payment_props($args));
 
 		/**
-		 *基础信息
+		 * 基础信息
 		 */
 		$user_id         = get_current_user_id();
 		$gateway_options = Wnd_Payment_Getway::get_gateway_options();
@@ -36,7 +36,7 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 		$message .= __('本次消费：¥ ', 'wnd') . '<b>' . number_format($total_amount, 2, '.', '') . '</b>';
 
 		/**
-		 *支付表单
+		 * 支付表单
 		 *
 		 * - 如果余额足够，提供站内支付结算方式
 		 */
@@ -79,7 +79,7 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 		$form->set_route('action', 'wnd_pay_for_order');
 
 		/**
-		 *遍历参数信息并构建表单字段
+		 * 遍历参数信息并构建表单字段
 		 */
 		foreach ($args as $key => $value) {
 			$form->add_hidden($key, $value);
@@ -90,9 +90,9 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 	}
 
 	/**
-	 *@since 0.8.76
-	 *根据参数读取本次订单对应产品信息
-	 *构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
+	 * 根据参数读取本次订单对应产品信息
+	 * 构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
+	 * @since 0.8.76
 	 */
 	protected static function get_payment_props(array $args): array{
 		// 将数组元素依次定义为按键名命名的变量
@@ -121,7 +121,7 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 		$sku_info = wnd_notification($sku_info);
 
 		/**
-		 *构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
+		 * 构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
 		 */
 		return compact('post_id', 'sku_id', 'quantity', 'total_amount', 'title', 'sku_info');
 	}

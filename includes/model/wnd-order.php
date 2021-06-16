@@ -2,28 +2,25 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Order_Product;
-use Wnd\Model\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Product;
 use Wnd\Model\Wnd_SKU;
 use WP_Post;
 
 /**
- *@since 2019.08.11
- *订单模块
- *
- *	# 自定义文章类型
- *	post_type属性('public' => false)，因此在WordPress后台无法查看到
- *	订单：order
- *
- *	# 消费post data
- *	金额：		post_content
- *	关联：		post_parent
- *	标题：		post_title
- *	类型：		post_type：order
+ * 订单模块
+ * 	# 自定义文章类型
+ * 	post_type属性('public' => false)，因此在WordPress后台无法查看到
+ * 	订单：order
+ * 	# 消费post data
+ * 	金额：		post_content
+ * 	关联：		post_parent
+ * 	标题：		post_title
+ * 	类型：		post_type：order
  * 	匿名cookie：post_name
- *	接口：		post_excerpt：（支付平台标识如：Alipay / Wepay）
- *
+ * 	接口：		post_excerpt：（支付平台标识如：Alipay / Wepay）
+ * @since 2019.08.11
  */
 class Wnd_Order extends Wnd_Transaction {
 
@@ -40,16 +37,15 @@ class Wnd_Order extends Wnd_Transaction {
 	protected static $anon_cookie_name_prefix = 'anon_order';
 
 	/**
-	 *@since 2019.02.11
-	 *用户本站消费数据(含余额消费，或直接第三方支付消费)
+	 * 用户本站消费数据(含余额消费，或直接第三方支付消费)
+	 * @since 2019.02.11
 	 *
-	 *@param int 		$this->user_id  		required
-	 *@param int 		$this->object_id  		option
-	 *@param string 	$this->subject 			option
-	 *@param string 	$this->payment_gateway	option 	支付平台标识
-	 *@param bool 	 	$is_completed 			option 	是否直接写入，无需支付平台校验
-	 *
-	 *@return object WP Post Object
+	 * @param  int    		$this->user_id               		required
+	 * @param  int    		$this->object_id             		option
+	 * @param  string 	$this->subject                			option
+	 * @param  string 	$this->payment_gateway	option 	支付平台标识
+	 * @param  bool   	$is_completed                 			option 	是否直接写入，无需支付平台校验
+	 * @return object WP Post Object
 	 */
 	protected function insert_record(bool $is_completed): WP_Post {
 		// 处理匿名订单属性
@@ -62,19 +58,19 @@ class Wnd_Order extends Wnd_Transaction {
 		}
 
 		/**
-		 *@since 0.8.76
-		 *处理订单 SKU 属性
+		 * 处理订单 SKU 属性
+		 * @since 0.8.76
 		 */
 		$this->handle_order_sku_props();
 
 		/**
-		 *订单状态及标题
+		 * 订单状态及标题
 		 */
 		$this->subject = $this->subject ?: (__('订单：', 'wnd') . get_the_title($this->object_id) . '[' . $this->quantity . ']');
 		$this->status  = $is_completed ? static::$completed_status : static::$processing_status;
 
 		/**
-		 *@since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
+		 * @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
 		 */
 		$old_orders = get_posts(
 			[
@@ -91,18 +87,18 @@ class Wnd_Order extends Wnd_Transaction {
 			$ID = $old_orders[0]->ID;
 		} elseif ($this->object_id) {
 			/**
-			 *@since 2019.06.04
-			 *新增订单统计
-			 *插入订单时，无论订单状态均新增订单统计，以实现某些场景下需要限定订单总数时，锁定数据，预留支付时间
-			 *获取订单统计时，删除超时未完成的订单，并减去对应订单统计 @see Wnd_Product::get_order_count($object_id)
+			 * 新增订单统计
+			 * 插入订单时，无论订单状态均新增订单统计，以实现某些场景下需要限定订单总数时，锁定数据，预留支付时间
+			 * 获取订单统计时，删除超时未完成的订单，并减去对应订单统计 @see Wnd_Product::get_order_count($object_id)
+			 * @since 2019.06.04
 			 */
 			Wnd_Product::inc_order_count($this->object_id, 1);
 
 			/**
-			 *@since 0.9.0
-			 *扣除库存
-			 *插入订单时，无论订单状态均新更新库存统计，以实现锁定数据，预留支付时间
-			 *获取库存时，会清空超时未支付的订单 @see Wnd_Product::get_object_props($object_id);
+			 * 扣除库存
+			 * 插入订单时，无论订单状态均新更新库存统计，以实现锁定数据，预留支付时间
+			 * 获取库存时，会清空超时未支付的订单 @see Wnd_Product::get_object_props($object_id);
+			 * @since 0.9.0
 			 */
 			Wnd_SKU::reduce_single_sku_stock($this->object_id, $this->sku_id, $this->quantity);
 		}
@@ -128,44 +124,43 @@ class Wnd_Order extends Wnd_Transaction {
 	}
 
 	/**
-	 *匿名支付订单cookie name
+	 * 匿名支付订单cookie name
 	 */
 	public static function get_anon_cookie_name(int $object_id) {
 		return static::$anon_cookie_name_prefix . '_' . $object_id;
 	}
 
 	/**
-	 *创建匿名支付随机码
+	 * 创建匿名支付随机码
 	 */
 	protected function generate_anon_cookie() {
 		return md5(uniqid($this->object_id));
 	}
 
 	/**
-	 *@since 0.9.2
-	 *构建匿名订单所需的订单属性：$this->post_name、$this->date_query
-	 *
+	 * 构建匿名订单所需的订单属性：$this->post_name、$this->date_query
 	 * - 设置匿名订单 cookie
 	 * - 将匿名订单 cookie 设置为订单 post name
 	 * - 设置订单复用日期条件
+	 * @since 0.9.2
 	 */
 	protected function handle_anon_order_props() {
 		/**
-		 *设置 Cookie
+		 * 设置 Cookie
 		 */
 		$anon_cookie = $this->generate_anon_cookie();
 		setcookie(static::get_anon_cookie_name($this->object_id), $anon_cookie, time() + 3600 * 24, '/');
 
 		/**
-		 *将 cookie 设置为订单 post name，以便后续通过 cookie 查询匿名用户订单
+		 * 将 cookie 设置为订单 post name，以便后续通过 cookie 查询匿名用户订单
 		 */
 		$this->post_name = $anon_cookie;
 
 		/**
-		 *匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
-		 *更新自动草稿时候，modified 不会变需要查询 post_date
-		 *@see get_posts()
-		 *@see wp_update_post
+		 * 匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
+		 * 更新自动草稿时候，modified 不会变需要查询 post_date
+		 * @see get_posts()
+		 * @see wp_update_post
 		 */
 		$this->date_query = [
 			[
@@ -176,8 +171,8 @@ class Wnd_Order extends Wnd_Transaction {
 	}
 
 	/**
-	 *根据 SKU 变量定义本次订单属性：$this->sku_id、$this->total_amount
-	 *@since 0.8.76
+	 * 根据 SKU 变量定义本次订单属性：$this->sku_id、$this->total_amount
+	 * @since 0.8.76
 	 */
 	protected function handle_order_sku_props() {
 		$this->sku_id = $this->props[Wnd_Order_Product::$sku_id_key] ?? '';
@@ -197,12 +192,12 @@ class Wnd_Order extends Wnd_Transaction {
 	}
 
 	/**
-	 *@since 2019.02.11
-	 *确认在线消费订单
-	 *@return true
+	 * 确认在线消费订单
+	 * @since 2019.02.11
 	 *
-	 *@param object 	$this->transaction			required 	订单记录Post
-	 *@param string 	$this->subject 		option
+	 * @param  object 	$this->transaction			required 	订单记录Post
+	 * @param  string 	$this->subject                		option
+	 * @return true
 	 */
 	protected function verify_transaction(): bool {
 		if ('order' != $this->get_type()) {
@@ -228,17 +223,17 @@ class Wnd_Order extends Wnd_Transaction {
 	}
 
 	/**
-	 *订单成功后，执行的统一操作
-	 *@since 2020.06.10
+	 * 订单成功后，执行的统一操作
+	 * @since 2020.06.10
 	 *
-	 *@param $this->transaction
-	 *@param object 	$this->transaction		required 	订单记录Post
+	 * @param $this->transaction
+	 * @param object               	$this->transaction		required 	订单记录Post
 	 */
 	protected function complete(): int{
 		/**
-		 *本方法可能在站内直接支付，或者站外验证支付中调用。
-		 *在线订单校验时，由支付平台发起请求，仅指定订单ID，需根据订单ID设置对应变量。
-		 *故不可直接读取相关属性
+		 * 本方法可能在站内直接支付，或者站外验证支付中调用。
+		 * 在线订单校验时，由支付平台发起请求，仅指定订单ID，需根据订单ID设置对应变量。
+		 * 故不可直接读取相关属性
 		 */
 		$ID           = $this->get_transaction_id();
 		$user_id      = $this->get_user_id();
@@ -254,8 +249,8 @@ class Wnd_Order extends Wnd_Transaction {
 		}
 
 		/**
-		 *@since 2019.06.04
-		 *产品订单：更新总销售额、设置原作者佣金
+		 * 产品订单：更新总销售额、设置原作者佣金
+		 * @since 2019.06.04
 		 */
 		if ($object_id) {
 			wnd_inc_post_total_sales($object_id, $total_amount);
@@ -276,8 +271,8 @@ class Wnd_Order extends Wnd_Transaction {
 		}
 
 		/**
-		 *@since 2019.08.12
-		 *充值完成
+		 * 充值完成
+		 * @since 2019.08.12
 		 */
 		do_action('wnd_order_completed', $ID);
 
