@@ -1,9 +1,11 @@
 <?php
 namespace Wnd\Getway\Payment;
 
+use Exception;
 use Wnd\Component\Payment\Alipay\AlipayPagePay;
 use Wnd\Component\Payment\Alipay\AlipayService;
-use Wnd\Model\Wnd_Payment;
+use Wnd\Getway\Wnd_Payment;
+use Wnd\Model\Wnd_Transaction;
 
 /**
  * 支付宝支付
@@ -11,6 +13,7 @@ use Wnd\Model\Wnd_Payment;
  * 问题排查：
  * - @link https://opendocs.alipay.com/open/common/fr9vsk
  * - @link https://opensupport.alipay.com/support/tools/cloudparse
+ *
  * @link https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay
  * @link https://opendocs.alipay.com/apis/api_1/alipay.trade.wap.pay
  * @since 2020.06.19
@@ -33,10 +36,10 @@ class Alipay extends Wnd_Payment {
 			'alipay_public_key'      => wnd_get_config('alipay_public_key'),
 
 			//异步通知地址 *不能带参数否则校验不过 （插件执行页面地址）
-			'notify_url'             => wnd_get_endpoint_url('wnd_verify_pay'),
+			'notify_url'             => wnd_get_endpoint_url('wnd_verify_alipay'),
 
 			//同步跳转 *不能带参数否则校验不过 （插件执行页面地址）
-			'return_url'             => wnd_get_endpoint_url('wnd_verify_pay'),
+			'return_url'             => wnd_get_endpoint_url('wnd_verify_alipay'),
 
 			//编码格式
 			'charset'                => 'utf-8',
@@ -57,13 +60,54 @@ class Alipay extends Wnd_Payment {
 	 */
 	public function build_interface(): string{
 		$aliPay = new AlipayPagePay(static::getConfig());
-		$aliPay->setTotalAmount($this->get_total_amount());
-		$aliPay->setOutTradeNo($this->get_out_trade_no());
-		$aliPay->setSubject($this->get_subject());
+		$aliPay->setTotalAmount($this->total_amount);
+		$aliPay->setOutTradeNo($this->out_trade_no);
+		$aliPay->setSubject($this->subject);
 		$aliPay->generateParams();
 
 		// 生成表单
 		return $aliPay->buildInterface();
+	}
+
+	/**
+	 * 根据交易订单解析站内交易ID，并查询记录
+	 */
+	public static function parse_transaction(): Wnd_Transaction{
+		$out_trade_no   = $_REQUEST['out_trade_no'] ?? '';
+		$total_amount   = $_REQUEST['total_amount'] ?? 0.00;
+		$transaction_id = static::parse_out_trade_no($out_trade_no);
+		$transaction    = Wnd_Transaction::get_instance('', $transaction_id);
+
+		if ($total_amount != $transaction->get_total_amount()) {
+			throw new Exception(__('金额不匹配', 'wnd'));
+		}
+
+		return $transaction;
+	}
+
+	/**
+	 * 验证支付
+	 *
+	 * @param $this->total_amount
+	 */
+	public function verify_payment() {
+		/**
+		 * 支付平台回调验签
+		 *
+		 * WordPress 始终开启了魔法引号，因此需要对post 数据做还原处理
+		 * @link https://developer.wordpress.org/reference/functions/stripslashes_deep/
+		 */
+		if ('POST' == $_SERVER['REQUEST_METHOD']) {
+			$_POST = stripslashes_deep($_POST);
+			if (!$this->check_notify()) {
+				throw new Exception(__('异步验签失败', 'wnd'));
+			}
+		} else {
+			$_GET = stripslashes_deep($_GET);
+			if (!$this->check_return()) {
+				throw new Exception(__('同步验签失败', 'wnd'));
+			}
+		}
 	}
 
 	/**

@@ -2,50 +2,44 @@
 namespace Wnd\Getway\Payment;
 
 use Exception;
-use Wnd\Model\Wnd_Payment;
+use Wnd\Getway\Wnd_Payment;
+use Wnd\Model\Wnd_Transaction;
 
 /**
- *@since 0.9.29
- *PayPal 支付
+ * PayPal 支付
  * - paypal 支付流程显著区别于支付宝及微信支付
- * - 由于流程上的区别，本网关重写了 $this->verify_transaction 方法
+ * - 由于流程上的区别，本网关重写了 $this->verify_Payment 方法
  * - @link https://developer.paypal.com/docs/api/overview/
- *
  * 参考链接
  * - @link https://cloud.tencent.com/developer/article/1693706 （部分代码有误)
  * - @link https://developer.paypal.com/docs/api/orders/v2/#orders
- *
- *【注意事项】
+ * - @link https://github.com/paypal/Checkout-PHP-SDK
+ * 【注意事项】
  * @date 2021.05.15 PayPal 尚未完成货币转换，目前仅完成支付接口引入，并统一按美元结算
+ * @since 0.9.29
  */
 class PayPal extends Wnd_Payment {
 
-	private $client_id;
-	private $client_secret;
-	private $capture_token;
-	private $api_base;
-	private $currency_code;
+	private $currency_code = 'USD';
 
-	/**
-	 *继承父类构造，及 PayPal 基础环境构造
-	 */
-	public function __construct($payment_gateway) {
-		parent::__construct($payment_gateway);
-		$this->api_base      = wnd_get_config('payment_sandbox') ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
-		$this->client_id     = wnd_get_config('paypal_clientid');
-		$this->client_secret = wnd_get_config('paypal_secret');
-		$this->currency_code = 'USD';
+	public static function get_config() {
+		return [
+			'api_base'      => wnd_get_config('payment_sandbox') ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com',
+			'client_id'     => wnd_get_config('paypal_clientid'),
+			'client_secret' => wnd_get_config('paypal_secret'),
+			'currency_code' => 'USD',
+		];
 	}
 
 	/**
-	 *PayPal 货币代码如：'USD'，'CNY'
+	 * PayPal 货币代码如：'USD'，'CNY'
 	 */
 	public function set_currency_code(string $currency_code) {
 		$this->currency_code = $currency_code;
 	}
 
 	/**
-	 *发起支付
+	 * 发起支付
 	 *
 	 */
 	public function build_interface(): string {
@@ -53,97 +47,38 @@ class PayPal extends Wnd_Payment {
 	}
 
 	/**
-	 *PayPal 返回的是订单 Token，需通过 token 完成 capture order，并从PayPal 响应数据中解析出 reference_id 即为 out_trade_no
+	 * 根据交易订单解析站内交易ID，并查询记录
 	 */
-	public function set_capture_token(string $capture_token) {
-		$this->capture_token = $capture_token;
+	public static function parse_transaction(): Wnd_Transaction{
+		$capture_token = $_REQUEST['token'] ?? '';
+		return static::capture_order($capture_token);
 	}
 
 	/**
-	 *验证支付 paypal 使用 $this->capture_order 替代本方法
-	 *
-	 *@return bool
-	 */
-	protected function verify_transaction(): bool{
-		$this->capture_order();
-		return true;
-	}
-
-	/**
-	 *同步回调通知（paypal 使用 $this->capture_order 替代本方法，本方法不会被调用，但抽象方法必须完成故此直接返回 false）
+	 * Paypal 使用 $this->capture_order 替代本方法
 	 *
 	 */
-	protected function check_return(): bool {
+	public function verify_payment() {
 		return false;
 	}
 
 	/**
-	 *异步回调通知（paypal 使用 $this->capture_order 替代本方法，本方法不会被调用，但抽象方法必须完成故此直接返回 false）
-	 *
-	 */
-	protected function check_notify(): bool {
-		return false;
-	}
-
-	/**
-	 * 获取access token
-	 * @link https://developer.paypal.com/docs/api/get-an-access-token-curl/
-	 * 		Token 具有一定时效性，出于性能考虑，避免重复请求，故缓存至瞬态 "set_transient"
-	 * 		当开启对象缓存后，瞬态将存储在对象缓存中，否则存储在 option
-	 */
-	private function get_access_token(): string{
-		// 瞬态缓存
-		$access_token = get_transient('paypal_access_token');
-		if ($access_token) {
-			return $access_token;
-		}
-
-		// API 请求
-		$url     = $this->api_base . '/v1/oauth2/token';
-		$request = wp_remote_request($url,
-			[
-				'method'  => 'POST',
-				'headers' => [
-					'Content-Type'  => 'application/x-www-form-urlencoded',
-					'Authorization' => 'Basic ' . base64_encode($this->client_id . ':' . $this->client_secret),
-				],
-				'body'    => ['grant_type' => 'client_credentials'],
-			]
-		);
-		if (is_wp_error($request)) {
-			throw new Exception($request->get_error_message());
-		}
-		$result       = json_decode($request['body']);
-		$access_token = $result->access_token ?? '';
-		if (!$access_token) {
-			throw new Exception('Get access token failed');
-		}
-
-		// 设置瞬态缓存
-		if ($result->expires_in > 600) {
-			set_transient('paypal_access_token', $access_token, $result->expires_in - 60);
-		}
-
-		return $access_token;
-	}
-
-	/**
-	 *创建订单
-	 *@link https://developer.paypal.com/docs/api/orders/v2/#orders_create
+	 * 创建订单
+	 * @link https://developer.paypal.com/docs/api/orders/v2/#orders_create
 	 */
 	private function create_order(): string{
-		$url          = $this->api_base . '/v2/checkout/orders';
+		$url          = static::get_config()['api_base'] . '/v2/checkout/orders';
 		$access_token = $this->get_access_token();
 		$postfilds    = [
 			'intent'              => 'CAPTURE',
 			'purchase_units'      => [
 				[
-					'reference_id' => $this->get_out_trade_no(),
+					'reference_id' => $this->out_trade_no,
 					'amount'       => [
-						'value'         => $this->get_total_amount(),
+						'value'         => $this->total_amount,
 						'currency_code' => $this->currency_code,
 					],
-					'description'  => $this->get_subject(),
+					'description'  => $this->subject,
 				],
 			],
 			'application_context' => [
@@ -182,12 +117,12 @@ class PayPal extends Wnd_Payment {
 	}
 
 	/**
-	 *捕获订单：需要考虑重复捕获的判断
-	 *@link https://developer.paypal.com/docs/api/orders/v2/#orders_capture
+	 * 捕获订单：需要考虑重复捕获的判断
+	 * @link https://developer.paypal.com/docs/api/orders/v2/#orders_capture
 	 */
-	private function capture_order() {
-		$url          = $this->api_base . '/v2/checkout/orders/' . $this->capture_token . '/capture';
-		$access_token = $this->get_access_token();
+	private static function capture_order(string $capture_token): Wnd_Transaction{
+		$url          = static::get_config()['api_base'] . '/v2/checkout/orders/' . $capture_token . '/capture';
+		$access_token = static::get_access_token();
 		$request      = wp_remote_request($url,
 			[
 				'method'  => 'POST',
@@ -210,16 +145,61 @@ class PayPal extends Wnd_Payment {
 			throw new Exception('Capture order failed');
 		}
 
-		// 订单扣款完成根据响应，设置 $out_trade_no
-		$out_trade_no = $result->purchase_units[0]->reference_id ?? 0;
-		$this->set_out_trade_no($out_trade_no);
+		// 订单扣款完成，根据响应查询站内交易记录实例
+		$out_trade_no   = $result->purchase_units[0]->reference_id ?? 0;
+		$transaction_id = static::parse_out_trade_no($out_trade_no);
+		$transaction    = Wnd_Transaction::get_instance('', $transaction_id);
 
 		// 核查订单金额
 		$amount = $result->purchase_units[0]->payments->captures[0]->amount;
-		if ($amount->value != $this->get_total_amount()) {
+		if ($amount->value != $transaction->get_total_amount()) {
 			throw new Exception('Amount does not match ');
 		}
 
-		return $result;
+		return $transaction;
+	}
+
+	/**
+	 * 获取access token
+	 * 		Token 具有一定时效性，出于性能考虑，避免重复请求，故缓存至瞬态 "set_transient"
+	 * 		当开启对象缓存后，瞬态将存储在对象缓存中，否则存储在 option
+	 * @link https://developer.paypal.com/docs/api/get-an-access-token-curl/
+	 */
+	private static function get_access_token(): string{
+		// 瞬态缓存
+		$access_token = get_transient('paypal_access_token');
+		if ($access_token) {
+			return $access_token;
+		}
+
+		$config = static::get_config();
+
+		// API 请求
+		$url     = $config['api_base'] . '/v1/oauth2/token';
+		$request = wp_remote_request($url,
+			[
+				'method'  => 'POST',
+				'headers' => [
+					'Content-Type'  => 'application/x-www-form-urlencoded',
+					'Authorization' => 'Basic ' . base64_encode($config['client_id'] . ':' . $config['client_secret']),
+				],
+				'body'    => ['grant_type' => 'client_credentials'],
+			]
+		);
+		if (is_wp_error($request)) {
+			throw new Exception($request->get_error_message());
+		}
+		$result       = json_decode($request['body']);
+		$access_token = $result->access_token ?? '';
+		if (!$access_token) {
+			throw new Exception('Get access token failed');
+		}
+
+		// 设置瞬态缓存
+		if ($result->expires_in > 600) {
+			set_transient('paypal_access_token', $access_token, $result->expires_in - 60);
+		}
+
+		return $access_token;
 	}
 }

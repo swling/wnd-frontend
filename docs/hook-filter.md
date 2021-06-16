@@ -167,7 +167,7 @@ apply_filters('wnd_default_payment_gateway', $default_gateway);
 ```
 ### 接口后端拓展支付接口
 接上，可以通过 wnd_payment_handler 过滤器，返回一个完整的可执行的类名称（若存在，需包含命名空间）来实现对微信支付的接口拓展
-通常来讲，该类应该是继承 Wnd\Model\Wnd_Payment 的子类，否则您需要在该类中以同样的方法名，完整实现相关业务逻辑
+通常来讲，该类应该是继承 Wnd\Getway\Wnd_Payment 的子类，否则您需要在该类中以同样的方法名，完整实现相关业务逻辑
 实现代码可参考本插件已内置的支付宝接口：Wnd\Model\Wnd_Payment_Alipay
 ```php
 $class_name = apply_filters('wnd_payment_handler', $class_name, $payment_gateway);
@@ -201,7 +201,7 @@ add_filter('wnd_recharge_amount_options', function(){
 - 定义支付类型处理实例：插件内置了订单（Wnd\Model\Wnd_Order）及充值（Wnd\Model\Wnd_Recharge）
 - 返回实例必须为 Wnd\Model\Wnd_Transaction 子类
 ```php
-$instance = apply_filters('wnd_transaction_instance', $instance, $type, $this->object_id);
+$instance = apply_filters('wnd_transaction_instance', $instance, $type);
 ```
 
 ## 表单
