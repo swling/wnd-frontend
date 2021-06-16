@@ -2,8 +2,9 @@
 namespace Wnd\Getway\Payment;
 
 use Exception;
-use Wnd\Component\Payment\Alipay\AlipayPagePay;
 use Wnd\Component\Payment\Alipay\AlipayService;
+use Wnd\Component\Payment\Alipay\PayPC;
+use Wnd\Component\Payment\Alipay\PayWAP;
 use Wnd\Getway\Wnd_Payment;
 use Wnd\Model\Wnd_Transaction;
 
@@ -59,7 +60,7 @@ class Alipay extends Wnd_Payment {
 	 *
 	 */
 	public function build_interface(): string{
-		$aliPay = new AlipayPagePay(static::getConfig());
+		$aliPay = wp_is_mobile() ? new PayWAP(static::getConfig()) : new PayPC(static::getConfig());
 		$aliPay->setTotalAmount($this->total_amount);
 		$aliPay->setOutTradeNo($this->out_trade_no);
 		$aliPay->setSubject($this->subject);

@@ -9,7 +9,7 @@ use Wnd\Component\Payment\PaymentBuilder;
  * 支付宝支付创建基类
  * @since 2020.07.16
  */
-abstract class AlipayPayBuilder implements PaymentBuilder {
+abstract class PayBuilder implements PaymentBuilder {
 	// 支付宝接口
 	protected $gateway_url;
 	protected $charset;

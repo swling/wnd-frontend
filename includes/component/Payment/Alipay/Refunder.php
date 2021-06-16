@@ -2,15 +2,14 @@
 namespace Wnd\Component\Payment\Alipay;
 
 use Exception;
-use Wnd\Component\Payment\Alipay\AlipayConfig;
 use Wnd\Component\Payment\Alipay\AlipayService;
-use Wnd\Component\Payment\Refunder;
+use Wnd\Component\Payment\RefunderBuilder;
 
 /**
  * 支付宝退款
  * @link https://opendocs.alipay.com/apis/api_1/alipay.trade.refund
  */
-class AlipayRefunder implements Refunder {
+class Refunder implements RefunderBuilder {
 
 	protected $gateway_url;
 

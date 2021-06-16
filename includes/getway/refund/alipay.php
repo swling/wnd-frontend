@@ -2,7 +2,7 @@
 namespace Wnd\Getway\Refund;
 
 use Exception;
-use Wnd\Component\Payment\Alipay\AlipayRefunder;
+use Wnd\Component\Payment\Alipay\Refunder;
 use Wnd\Getway\Wnd_Refunder;
 
 /**
@@ -26,7 +26,7 @@ class Alipay extends Wnd_Refunder {
 		 * - 获取支付宝响应
 		 */
 		$alipay_config = \Wnd\Getway\Payment\Alipay::getConfig();
-		$alipay        = new AlipayRefunder($alipay_config);
+		$alipay        = new Refunder($alipay_config);
 		$alipay->setOutTradeNo($this->out_trade_no);
 		$alipay->setOutRequestNo($this->out_request_no);
 		$alipay->setRefundAmount($this->refund_amount);

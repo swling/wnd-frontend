@@ -15,7 +15,7 @@ use Wnd\Component\Payment\Alipay\AlipayService;
  *
  * @since 2020.06.08
  */
-class AlipayTransfer extends AlipayService {
+class Transfer extends AlipayService {
 	// 转账固定值
 	protected $method       = 'alipay.fund.trans.uni.transfer';
 	protected $product_code = 'TRANS_ACCOUNT_NO_PWD';

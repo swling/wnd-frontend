@@ -1,29 +1,16 @@
 <?php
 namespace Wnd\Component\Payment\Alipay;
 
-use Wnd\Component\Payment\Alipay\AlipayPayBuilder;
-
 /**
+ * 支付宝PC网页支付
+ *
+ * @link https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay
  * @since 2019.03.02 支付宝网页支创建类
  */
-class AlipayPagePay extends AlipayPayBuilder {
+class PayPC extends PayBuilder {
 
-	/**
-	 * PC支付和wap支付中：product_code 、method 参数有所不同，详情查阅如下
-	 * @link https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay
-	 * @link https://opendocs.alipay.com/apis/api_1/alipay.trade.wap.pay
-	 */
-	public function __construct(array $alipayConfig) {
-		parent::__construct($alipayConfig);
-
-		if (wp_is_mobile()) {
-			$this->product_code = 'QUICK_WAP_WAY';
-			$this->method       = 'alipay.trade.wap.pay';
-		} else {
-			$this->product_code = 'FAST_INSTANT_TRADE_PAY';
-			$this->method       = 'alipay.trade.page.pay';
-		}
-	}
+	protected $product_code = 'FAST_INSTANT_TRADE_PAY';
+	protected $method       = 'alipay.trade.page.pay';
 
 	/**
 	 * 建立请求，以表单HTML形式构造（默认）

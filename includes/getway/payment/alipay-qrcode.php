@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Getway\Payment;
 
-use Wnd\Component\Payment\Alipay\AlipayQRCodePay;
+use Wnd\Component\Payment\Alipay\PayQRCode;
 use Wnd\Getway\Payment\Alipay;
 
 /**
@@ -19,7 +19,7 @@ class Alipay_QRCode extends Alipay {
 	 *
 	 */
 	public function build_interface(): string{
-		$aliPay = new AlipayQRCodePay(static::getConfig());
+		$aliPay = new PayQRCode(static::getConfig());
 		$aliPay->setTotalAmount($this->total_amount);
 		$aliPay->setOutTradeNo($this->out_trade_no);
 		$aliPay->setSubject($this->subject);

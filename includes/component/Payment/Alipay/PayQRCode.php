@@ -1,5 +1,4 @@
 <?php
-
 namespace Wnd\Component\Payment\Alipay;
 
 use Exception;
@@ -8,7 +7,7 @@ use Exception;
  * @link https://opendocs.alipay.com/apis/api_1/alipay.trade.precreate
  * @since 2020.07.16 支付宝当面付支创建类
  */
-class AlipayQRCodePay extends AlipayPayBuilder {
+class PayQRCode extends PayBuilder {
 
 	protected $product_code = 'FACE_TO_FACE_PAYMENT';
 	protected $method       = 'alipay.trade.precreate';
