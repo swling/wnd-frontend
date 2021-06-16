@@ -24,10 +24,10 @@ abstract class Wnd_Payment {
 	protected $subject;
 
 	// 站点前缀，用于区分订单号
-	private static $site_prefix;
+	protected static $site_prefix;
 
 	// 站点名
-	private static $site_name;
+	protected static $site_name;
 
 	/**
 	 * 根据支付平台，并自动选择子类处理当前业务
