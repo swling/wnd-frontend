@@ -14,8 +14,13 @@ use Wnd\Model\Wnd_Transaction;
  * - @link https://cloud.tencent.com/developer/article/1693706 （部分代码有误)
  * - @link https://developer.paypal.com/docs/api/orders/v2/#orders
  * - @link https://github.com/paypal/Checkout-PHP-SDK
- * 【注意事项】
+ *
+ * ### 注意事项及待解决问题
  * @date 2021.05.15 PayPal 尚未完成货币转换，目前仅完成支付接口引入，并统一按美元结算
+ * @date 2021.06.16
+ * - 尚未测试异步通知（需在PayPal后台添加 webhooks）
+ * - 不同于国内支付平台，PayPal 对同一个站内订单号可重复创建，因此可能存在对同一个站内订单重复付款的情况
+ *
  * @since 0.9.29
  */
 class PayPal extends Wnd_Payment {
