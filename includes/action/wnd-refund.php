@@ -1,21 +1,19 @@
 <?php
 namespace Wnd\Action;
 
-use Wnd\Model\Wnd_Refunder;
+use Wnd\Getway\Wnd_Refunder;
 
 /**
- *@since 2019.10.02
- *订单退款
- *@param $_POST['payment_id'] 		required 	订单 ID
- *@param $_POST['refund_amount']	可选		退款金额
+ * 订单退款
+ * @since 2019.10.02
  */
 class Wnd_Refund extends Wnd_Action_Admin {
 
 	public function execute(): array{
-		$payment_id    = (int) ($this->data['payment_id'] ?? 0);
-		$refund_amount = (float) ($this->data['refund_amount'] ?? 0);
+		$transaction_id = (int) ($this->data['transaction_id'] ?? 0);
+		$refund_amount  = (float) ($this->data['refund_amount'] ?? 0);
 
-		$refunder = Wnd_Refunder::get_instance($payment_id);
+		$refunder = Wnd_Refunder::get_instance($transaction_id);
 		$refunder->set_refund_amount($refund_amount);
 		$refunder->refund();
 

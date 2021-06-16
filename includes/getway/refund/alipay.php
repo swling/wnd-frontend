@@ -3,7 +3,7 @@ namespace Wnd\Getway\Refund;
 
 use Exception;
 use Wnd\Component\Payment\Alipay\AlipayRefunder;
-use Wnd\Model\Wnd_Refunder;
+use Wnd\Getway\Wnd_Refunder;
 
 /**
  * 支付宝退款

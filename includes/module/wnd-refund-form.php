@@ -5,12 +5,12 @@ use Exception;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 2020.06.09 退款表单
+ * @since 2020.06.09 退款表单
  */
 class Wnd_Refund_Form extends Wnd_Module_Form {
 
 	protected static function configure_form(array $args = []): object {
-		if (!$args['payment_id']) {
+		if (!$args['transaction_id']) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
@@ -38,7 +38,7 @@ class Wnd_Refund_Form extends Wnd_Module_Form {
 			]
 		);
 		$form->add_html('</div>');
-		$form->add_hidden('payment_id', $args['payment_id']);
+		$form->add_hidden('transaction_id', $args['transaction_id']);
 		$form->set_route('action', 'wnd_refund');
 		$form->set_submit_button(__('确认退款', 'wnd'));
 		return $form;

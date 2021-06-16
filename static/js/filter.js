@@ -214,7 +214,7 @@ function _wnd_render_filter(container, filter_json, add_class) {
 <td class="is-narrow has-text-centered">
 <a @click='wnd_ajax_modal("wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
 <a @click='wnd_ajax_modal("wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
-<a @click='wnd_ajax_modal("wnd_refund_form", {"payment_id": post.ID} )'><i class="fas fa-coins"></i></a>
+<a @click='wnd_ajax_modal("wnd_refund_form", {"transaction_id": post.ID} )'><i class="fas fa-coins"></i></a>
 </td>
 </tr>
 </tbody>
