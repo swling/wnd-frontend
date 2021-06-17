@@ -2,23 +2,23 @@
 namespace Wnd\Model;
 
 use Wnd\Model\Wnd_Order;
+use Wnd\Model\Wnd_Order_Anonymous;
 use Wnd\Model\Wnd_SKU;
 use Wnd\Model\Wnd_Transaction;
 
 /**
- *@since 2019.10.25
- *站内财务信息
- *
+ * 站内财务信息
+ * @since 2019.10.25
  */
 class Wnd_Finance {
 
 	/**
-	 *@since 2019.02.11 查询是否已经支付
-	 *@param int 	$user_id 	用户ID
-	 *@param int 	$object_id  Post ID
+	 * @since 2019.02.11 查询是否已经支付
 	 *
-	 *@return bool 	是否已支付
-	 **/
+	 * @param  int  	$user_id          	用户ID
+	 * @param  int  	$object_id        Post ID
+	 * @return bool 	是否已支付
+	 */
 	public static function user_has_paid($user_id, $object_id): bool {
 		if (!$object_id) {
 			return false;
@@ -28,7 +28,7 @@ class Wnd_Finance {
 
 		// 匿名支付订单查询
 		if (!$user_id) {
-			$cookie_name = Wnd_Order::get_anon_cookie_name($object_id);
+			$cookie_name = Wnd_Order_Anonymous::get_anon_cookie_name($object_id);
 			$anon_cookie = $_COOKIE[$cookie_name] ?? '';
 			$order       = wnd_get_post_by_slug($anon_cookie, 'order', $order_status);
 			if (!$order) {
@@ -64,9 +64,9 @@ class Wnd_Finance {
 	/**
 	 * 充值成功 写入用户 字段
 	 *
-	 *@param 	int 	$user_id 	用户ID
-	 *@param 	float 	$money 		金额
-	 *@param 	bool 	$recharge 	是否为充值，若是则将记录到当月充值记录中
+	 * @param 	int   	$user_id  	用户ID
+	 * @param 	float 	$money    		金额
+	 * @param 	bool  	$recharge 	是否为充值，若是则将记录到当月充值记录中
 	 */
 	public static function inc_user_money($user_id, $money, $recharge): bool{
 		$new_money = static::get_user_money($user_id) + $money;
@@ -82,9 +82,9 @@ class Wnd_Finance {
 	}
 
 	/**
-	 *获取用户账户金额
-	 *@param 	int 	$user_id 	用户ID
-	 *@return 	float 	用户余额
+	 * 获取用户账户金额
+	 * @param  	int   	$user_id       	用户ID
+	 * @return 	float 	用户余额
 	 */
 	public static function get_user_money($user_id, $format = false) {
 		$money = floatval(wnd_get_user_meta($user_id, 'money'));
@@ -92,11 +92,10 @@ class Wnd_Finance {
 	}
 
 	/**
-	 *新增用户消费记录
+	 * 新增用户消费记录
 	 *
-	 *@param 	int 	$user_id 	用户ID
-	 *@param 	float 	$money 		金额
-	 *
+	 * @param 	int   	$user_id 	用户ID
+	 * @param 	float 	$money   		金额
 	 */
 	public static function inc_user_expense($user_id, $money): bool{
 		$new_money = static::get_user_expense($user_id) + $money;
@@ -110,10 +109,9 @@ class Wnd_Finance {
 	}
 
 	/**
-	 *获取用户消费
-	 *@param 	int 	$user_id 	用户ID
-	 *@return 	float 	用户消费
-	 *
+	 * 获取用户消费
+	 * @param  	int   	$user_id       	用户ID
+	 * @return 	float 	用户消费
 	 */
 	public static function get_user_expense($user_id, $format = false) {
 		$expense = floatval(wnd_get_user_meta($user_id, 'expense'));
@@ -121,20 +119,21 @@ class Wnd_Finance {
 	}
 
 	/**
-	 *@since 2019.02.22
-	 *写入用户佣金
-	 *@param 	int 	$user_id 	用户ID
-	 *@param 	float 	$money 		金额
+	 * 写入用户佣金
+	 * @since 2019.02.22
+	 *
+	 * @param 	int   	$user_id 	用户ID
+	 * @param 	float 	$money   		金额
 	 */
 	public static function inc_user_commission($user_id, $money): bool {
 		return wnd_inc_wnd_user_meta($user_id, 'commission', number_format($money, 2, '.', ''));
 	}
 
 	/**
-	 *@since 2019.02.18 获取用户佣金
-	 *@param 	int 	$user_id 	用户ID
+	 * @since 2019.02.18 获取用户佣金
 	 *
-	 *@return 	float 	用户佣金
+	 * @param  	int   	$user_id       	用户ID
+	 * @return 	float 	用户佣金
 	 */
 	public static function get_user_commission($user_id, $format = false) {
 		$commission = floatval(wnd_get_user_meta($user_id, 'commission'));
@@ -142,15 +141,15 @@ class Wnd_Finance {
 	}
 
 	/**
-	 *@since 2019.02.13
-	 *文章价格
-	 *@param 	int 	$user_id 	用户 ID
-	 *@param 	string 	$sku_id		产品 SKU ID
-	 *@param 	bool 	$format 	是否格式化输出
-	 *@return  	float 	两位数的价格信息 或者 0
+	 * 文章价格
+	 * 新增产品 SKU
+	 * @since 2019.02.13
+	 * @since 0.8.76
 	 *
-	 *@since 0.8.76
-	 *新增产品 SKU
+	 * @param  	int    	$user_id                 	用户 ID
+	 * @param  	string 	$sku_id		产品          SKU ID
+	 * @param  	bool   	$format                  	是否格式化输出
+	 * @return 	float  	两位数的价格信息 或者 0
 	 */
 	public static function get_post_price($post_id, $sku_id = '', $format = false) {
 		if ($sku_id) {
@@ -165,11 +164,11 @@ class Wnd_Finance {
 	}
 
 	/**
-	 *@since 0.8.76
-	 *订单实际支付金额
+	 * 订单实际支付金额
+	 * @since 0.8.76
 	 *
-	 *@param 	int 	$order_id 	订单 ID
-	 *@return 	float 	订单金额
+	 * @param  	int   	$order_id      	订单 ID
+	 * @return 	float 	订单金额
 	 */
 	public static function get_order_amount($order_id, $format = false) {
 		try {
@@ -183,11 +182,12 @@ class Wnd_Finance {
 	}
 
 	/**
-	 *@since 2019.02.12
-	 *订单佣金分成
-	 *@param 	int 	$order_id 产生佣金的订单
-	 *@param 	int 	$order_id 产生佣金的订单
-	 *@return 	float 	佣金分成
+	 * 订单佣金分成
+	 * @since 2019.02.12
+	 *
+	 * @param  	int   	$order_id      产生佣金的订单
+	 * @param  	int   	$order_id      产生佣金的订单
+	 * @return 	float 	佣金分成
 	 */
 	public static function get_order_commission($order_id, $format = false) {
 		$rate       = floatval(wnd_get_config('commission_rate'));
@@ -199,22 +199,22 @@ class Wnd_Finance {
 	}
 
 	/**
-	 *@since 2020.06.10
-	 *新增本篇付费内容作者佣金总额
+	 * 新增本篇付费内容作者佣金总额
+	 * @since 2020.06.10
 	 *
-	 *@param 	int 	$post_id 	Post ID
-	 *@param 	float 	$money 		金额
+	 * @param 	int   	$post_id 	Post ID
+	 * @param 	float 	$money   		金额
 	 */
 	public static function inc_post_total_commission($post_id, $money): bool {
 		return wnd_inc_wnd_post_meta($post_id, 'total_commission', number_format($money, 2, '.', ''));
 	}
 
 	/**
-	 *@since 2020.06.10
-	 *获取付费内容作者获得的佣金
+	 * 获取付费内容作者获得的佣金
+	 * @since 2020.06.10
 	 *
-	 *@param 	int 	$post_id  Post ID
-	 *@return 	float 	用户佣金
+	 * @param  	int   	$post_id       Post ID
+	 * @return 	float 	用户佣金
 	 */
 	public static function get_post_total_commission($post_id, $format = false) {
 		$total_commission = floatval(wnd_get_post_meta($post_id, 'total_commission'));
@@ -222,20 +222,22 @@ class Wnd_Finance {
 	}
 
 	/**
-	 *@since 2020.06.10
-	 *新增商品总销售额
-	 *@param 	int 	$post_id 	Post ID
-	 *@param 	float 	$money 		金额
+	 * 新增商品总销售额
+	 * @since 2020.06.10
+	 *
+	 * @param 	int   	$post_id 	Post ID
+	 * @param 	float 	$money   		金额
 	 */
 	public static function inc_post_total_sales($post_id, $money): bool {
 		return wnd_inc_wnd_post_meta($post_id, 'total_sales', number_format($money, 2, '.', ''));
 	}
 
 	/**
-	 *@since 2020.06.10
-	 *获取商品总销售额
-	 *@param 	int 	$user_id 	用户ID
-	 *@return 	float 	用户佣金
+	 * 获取商品总销售额
+	 * @since 2020.06.10
+	 *
+	 * @param  	int   	$user_id       	用户ID
+	 * @return 	float 	用户佣金
 	 */
 	public static function get_post_total_sales($post_id, $format = false) {
 		$total_sales = floatval(wnd_get_post_meta($post_id, 'total_sales'));
@@ -243,36 +245,33 @@ class Wnd_Finance {
 	}
 
 	/**
-	 *@since 初始化
-	 *统计整站财务数据，当用户发生充值或消费行为时触发
-	 *按月统计，每月生成两条post数据
+	 * 统计整站财务数据，当用户发生充值或消费行为时触发
+	 * 按月统计，每月生成两条post数据
+	 * 用户充值post_type:stats-re
+	 * 用户消费post_type:stats-ex
+	 * 写入前，按post type 和时间查询，如果存在记录则更新记录，否则写入一条记录
+	 * @since 初始化
 	 *
-	 *用户充值post_type:stats-re
-	 *用户消费post_type:stats-ex
-	 *
-	 *写入前，按post type 和时间查询，如果存在记录则更新记录，否则写入一条记录
-	 *
-	 *@param float 	$money 	变动金额
-	 *@param string $type 	数据类型：recharge/expense
-	 *
-	 **/
+	 * @param float  	$money 	变动金额
+	 * @param string $type   	数据类型：recharge/expense
+	 */
 	protected static function update_fin_stats($money, $type) {
 		switch ($type) {
-		// 充值
-		case 'recharge':
-			$post_type = 'stats-re';
-			break;
+			// 充值
+			case 'recharge':
+				$post_type = 'stats-re';
+				break;
 
-		// 消费
-		case 'expense':
-			$post_type = 'stats-ex';
+			// 消费
+			case 'expense':
+				$post_type = 'stats-ex';
 
-			break;
+				break;
 
-		// 默认
-		default:
-			$post_type = '';
-			break;
+			// 默认
+			default:
+				$post_type = '';
+				break;
 		}
 
 		if (!$money or !$type) {

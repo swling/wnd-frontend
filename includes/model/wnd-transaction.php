@@ -94,12 +94,23 @@ abstract class Wnd_Transaction {
 			$type = static::get_type_by_transaction_id($transaction_id);
 		}
 
-		if ('order' == $type) {
-			$instance = new Wnd_Order();
-		} elseif ('recharge' == $type) {
-			$instance = new Wnd_Recharge();
-		} else {
-			$instance = false;
+		// 根据类型选择对应处理类
+		$user_id = get_current_user_id();
+		switch ($type) {
+			case 'order':
+				if (!$user_id and !wnd_get_config('enable_anon_order')) {
+					throw new Exception(__('请登录', 'wnd'));
+				}
+				$instance = $user_id ? new Wnd_Order() : new Wnd_Order_Anonymous();
+				break;
+
+			case 'recharge':
+				$instance = new Wnd_Recharge();
+				break;
+
+			default:
+				$instance = false;
+				break;
 		}
 
 		$instance = apply_filters('wnd_transaction_instance', $instance, $type);

@@ -6,6 +6,7 @@ use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Product;
 use Wnd\Model\Wnd_SKU;
+use WP_Post;
 
 /**
  * 订单模块
@@ -18,8 +19,8 @@ class Wnd_Order extends Wnd_Transaction {
 	// SKU ID
 	protected $sku_id;
 
-	// 定义匿名支付cookie名称
-	protected static $anon_cookie_name_prefix = 'anon_order';
+	// 是否为全新订单（用户创建而尚未支付的订单，再次调用支付时，为复用订单，非全新订单）
+	protected $is_new_order;
 
 	/**
 	 * 按需对如下数据进行构造：
@@ -39,15 +40,6 @@ class Wnd_Order extends Wnd_Transaction {
 	 * @since 0.9.32
 	 */
 	protected function generate_transaction_data(bool $is_completed) {
-		// 处理匿名订单属性
-		if (!$this->user_id) {
-			if (!wnd_get_config('enable_anon_order')) {
-				throw new Exception(__('请登录', 'wnd'));
-			}
-
-			$this->handle_anon_order_props();
-		}
-
 		/**
 		 * 处理订单 SKU 属性
 		 * @since 0.8.76
@@ -65,57 +57,10 @@ class Wnd_Order extends Wnd_Transaction {
 		 */
 		$this->transaction_id = $this->get_reusable_transaction_id();
 
-		if (!$this->transaction_id and $this->object_id) {
-			/**
-			 * 新增订单统计
-			 * 插入订单时，无论订单状态均新增订单统计，以实现某些场景下需要限定订单总数时，锁定数据，预留支付时间
-			 * 获取订单统计时，删除超时未完成的订单，并减去对应订单统计 @see Wnd_Product::get_order_count($object_id)
-			 * @since 2019.06.04
-			 */
-			Wnd_Product::inc_order_count($this->object_id, 1);
-
-			/**
-			 * 扣除库存
-			 * 插入订单时，无论订单状态均新更新库存统计，以实现锁定数据，预留支付时间
-			 * 获取库存时，会清空超时未支付的订单 @see Wnd_Product::get_object_props($object_id);
-			 * @since 0.9.0
-			 */
-			Wnd_SKU::reduce_single_sku_stock($this->object_id, $this->sku_id, $this->quantity);
-		}
-	}
-
-	/**
-	 * 匿名支付订单cookie name
-	 */
-	public static function get_anon_cookie_name(int $object_id) {
-		return static::$anon_cookie_name_prefix . '_' . $object_id;
-	}
-
-	/**
-	 * 创建匿名支付随机码
-	 */
-	protected function generate_anon_cookie() {
-		return md5(uniqid($this->object_id));
-	}
-
-	/**
-	 * 构建匿名订单所需的订单属性：$this->transaction_slug
-	 * - 设置匿名订单 cookie
-	 * - 将匿名订单 cookie 设置为订单 post name
-	 * - 设置订单复用日期条件
-	 * @since 0.9.2
-	 */
-	protected function handle_anon_order_props() {
 		/**
-		 * 设置 Cookie
+		 * 若当前订单为：未完成付款的订单再次调用，则不是新订单
 		 */
-		$anon_cookie = $this->generate_anon_cookie();
-		setcookie(static::get_anon_cookie_name($this->object_id), $anon_cookie, time() + 3600 * 24, '/');
-
-		/**
-		 * 将 cookie 设置为订单 post name，以便后续通过 cookie 查询匿名用户订单
-		 */
-		$this->transaction_slug = $anon_cookie;
+		$this->is_new_order = !$this->transaction_id;
 	}
 
 	/**
@@ -137,6 +82,41 @@ class Wnd_Order extends Wnd_Transaction {
 		}
 
 		$this->total_amount = $price * $this->quantity;
+	}
+
+	/**
+	 * - 调用父类方法写入数据库
+	 * - 更新订单及库存统计
+	 * @since 0.9.32
+	 */
+	protected function insert_transaction(): WP_Post{
+		// 调用父类方法，写入数据库
+		$transaction = parent::insert_transaction();
+
+		/**
+		 * 全新订单：
+		 * - 更新订单统计
+		 * - 更新库存统计
+		 */
+		if ($this->is_new_order and $this->object_id) {
+			/**
+			 * 新增订单统计
+			 * 插入订单时，无论订单状态均新增订单统计，以实现某些场景下需要限定订单总数时，锁定数据，预留支付时间
+			 * 获取订单统计时，删除超时未完成的订单，并减去对应订单统计 @see Wnd_Product::get_order_count($object_id)
+			 * @since 2019.06.04
+			 */
+			Wnd_Product::inc_order_count($this->object_id, 1);
+
+			/**
+			 * 扣除库存
+			 * 插入订单时，无论订单状态均新更新库存统计，以实现锁定数据，预留支付时间
+			 * 获取库存时，会清空超时未支付的订单 @see Wnd_Product::get_object_props($object_id);
+			 * @since 0.9.0
+			 */
+			Wnd_SKU::reduce_single_sku_stock($this->object_id, $this->sku_id, $this->quantity);
+		}
+
+		return $transaction;
 	}
 
 	/**
