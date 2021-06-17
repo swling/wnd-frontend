@@ -4,11 +4,10 @@ namespace Wnd\Utility;
 use Wnd\Utility\Wnd_JWT;
 
 /**
- *@since 0.9.18
  * 将WordPress 账户体系与 JWT Token 绑定
- *
  * 本插件并未启用 jWT，如需启用 JWT，请在主题或插件中，继承本抽象类创建子类并在 WP init Hook 中实例化
  * 子类需要完成客户端处理 Token 的具体方法，包含：存储、获取、删除
+ * @since 0.9.18
  */
 abstract class Wnd_JWT_Handler {
 
@@ -17,7 +16,7 @@ abstract class Wnd_JWT_Handler {
 	protected $exp;
 
 	// Token 验证后得到的用户 ID
-	protected $verified_user_id = null;
+	protected $verified_user_id;
 
 	public function __construct() {
 		$this->domain = parse_url(home_url())['host'];
@@ -30,7 +29,7 @@ abstract class Wnd_JWT_Handler {
 	}
 
 	/**
-	 *登录时设置 JWT Token
+	 * 登录时设置 JWT Token
 	 *
 	 * - iss (issuer)：签发人
 	 * - exp (expiration time)：过期时间
@@ -53,14 +52,14 @@ abstract class Wnd_JWT_Handler {
 	}
 
 	/**
-	 *处理用户登录
+	 * 处理用户登录
 	 */
 	public function handle_login($user_name, $user) {
 		$this->save_client_token($this->generate_token($user->ID));
 	}
 
 	/**
-	 *处理用户登录
+	 * 处理用户登录
 	 */
 	public function set_current_user() {
 		// 未能获取到 Token 保持现有账户状态
@@ -75,12 +74,18 @@ abstract class Wnd_JWT_Handler {
 			return;
 		}
 
-		// 根据 Token 设置当前账户 ID （过期为 0）
+		/**
+		 * - 如果 Token 有效，而当前账户未登录，则设置同步设置 Cookie @since 0.9.32
+		 * - 根据 Token 设置当前账户 ID （过期为 0）
+		 */
+		if (!is_user_logged_in()) {
+			wp_set_auth_cookie($this->verified_user_id, true);
+		}
 		wp_set_current_user($this->verified_user_id);
 	}
 
 	/**
-	 *验证客户端 Token
+	 * 验证客户端 Token
 	 */
 	protected function verify_client_token(): int{
 		// 未能获取 Token
@@ -101,7 +106,7 @@ abstract class Wnd_JWT_Handler {
 	}
 
 	/**
-	 *处理账户退出
+	 * 处理账户退出
 	 */
 	public function handle_logout() {
 		$this->clean_client_token();
@@ -126,10 +131,10 @@ abstract class Wnd_JWT_Handler {
 	 * data should be used). A callback can return `true` to indicate that
 	 * the authentication method was used, and it succeeded.
 	 *
+	 *                                   method wasn't used, true if authentication succeeded.
 	 * @since 4.4.0
 	 *
 	 * @param WP_Error|null|true $errors WP_Error if authentication error, null if authentication
-	 *                                   method wasn't used, true if authentication succeeded.
 	 */
 	function rest_token_check_errors($result) {
 		if (!empty($result)) {
@@ -145,17 +150,17 @@ abstract class Wnd_JWT_Handler {
 	}
 
 	/**
-	 *客户端存储 Token
+	 * 客户端存储 Token
 	 */
 	abstract protected function save_client_token($token);
 
 	/**
-	 *获取客户端 JWT Token
+	 * 获取客户端 JWT Token
 	 */
 	abstract protected function get_client_token();
 
 	/**
-	 *删除客户端 Token
+	 * 删除客户端 Token
 	 */
 	abstract protected function clean_client_token();
 }
