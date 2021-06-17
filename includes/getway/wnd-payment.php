@@ -80,18 +80,8 @@ abstract class Wnd_Payment {
 
 	/**
 	 * 支付验签通过后，更新站内记录
-	 * - 已经完成的订单：中止操作
-	 * - 其他不合法状态：抛出异常
 	 */
 	public function update_transaction() {
-		$status = $this->transaction->get_status();
-		if (Wnd_Transaction::$completed_status == $status) {
-			return;
-		}
-		if (Wnd_Transaction::$processing_status != $status) {
-			throw new Exception(__('订单状态无效', 'wnd'));
-		}
-
 		$verify_type = ('POST' == $_SERVER['REQUEST_METHOD']) ? __('异步', 'wnd') : __('同步', 'wnd');
 		$subject     = $this->transaction->get_subject() . '(' . $verify_type . ')';
 		$this->transaction->set_subject($subject);

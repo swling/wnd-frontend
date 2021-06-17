@@ -248,13 +248,17 @@ abstract class Wnd_Transaction {
 
 	/**
 	 * 通常校验用于需要跳转第三方支付平台的交易
-	 * - 校验交易是否完成
-	 * - 交易完成，执行相关操作
+	 * - 已经完成的订单：中止操作
+	 * - 其他不合法状态：抛出异常
 	 * @since 2019.02.11
 	 */
 	public function verify() {
 		// 订单支付状态检查
-		if (static::$processing_status != $this->get_status()) {
+		$status = $this->get_status();
+		if (static::$completed_status == $status) {
+			return;
+		}
+		if (static::$processing_status != $status) {
 			throw new Exception(__('订单状态无效', 'wnd'));
 		}
 
