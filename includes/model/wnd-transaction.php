@@ -406,11 +406,10 @@ abstract class Wnd_Transaction {
 		 * @see get_posts()
 		 * @see wp_update_post
 		 */
-		$reusable_interval_time = $this->user_id ? 0 : 86400;
-		$date_query             = [
+		$date_query = [
 			[
 				'column' => 'post_date',
-				'before' => date('Y-m-d H:i', current_time('timestamp') - $reusable_interval_time),
+				'before' => date('Y-m-d H:i', current_time('timestamp') - 86400),
 			],
 		];
 
@@ -424,7 +423,7 @@ abstract class Wnd_Transaction {
 				'post_status'    => static::$processing_status,
 				'post_type'      => $this->transaction_type,
 				'posts_per_page' => 1,
-				'date_query'     => $date_query,
+				'date_query'     => $this->user_id ? [] : $date_query,
 			]
 		);
 
