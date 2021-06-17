@@ -394,4 +394,41 @@ abstract class Wnd_Transaction {
 
 		return get_post($transaction_id)->post_type ?? '';
 	}
+
+	/**
+	 * 同一用户同等条件下，未完成订单复用时间限制(秒)
+	 * @since 0.9.32
+	 */
+	protected function get_reusable_transaction_id(): int{
+		/**
+		 * 匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
+		 * 更新自动草稿时候，modified 不会变需要查询 post_date
+		 * @see get_posts()
+		 * @see wp_update_post
+		 */
+		$reusable_interval_time = $this->user_id ? 0 : 86400;
+		$date_query             = [
+			[
+				'column' => 'post_date',
+				'before' => date('Y-m-d H:i', current_time('timestamp') - $reusable_interval_time),
+			],
+		];
+
+		/**
+		 * @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
+		 */
+		$reusable_posts = get_posts(
+			[
+				'author'         => $this->user_id,
+				'post_parent'    => $this->object_id,
+				'post_status'    => static::$processing_status,
+				'post_type'      => $this->transaction_type,
+				'posts_per_page' => 1,
+				'date_query'     => $date_query,
+			]
+		);
+
+		$transaction_id = $reusable_posts[0]->ID ?? 0;
+		return $transaction_id;
+	}
 }

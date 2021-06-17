@@ -43,18 +43,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 		/**
 		 * @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
 		 */
-		$old_recharges = get_posts(
-			[
-				'author'         => $this->user_id,
-				'post_parent'    => $this->object_id,
-				'post_status'    => static::$processing_status,
-				'post_type'      => $this->transaction_type,
-				'posts_per_page' => 1,
-			]
-		);
-		if ($old_recharges) {
-			$this->transaction_id = $old_recharges[0]->ID;
-		}
+		$this->transaction_id = $this->get_reusable_transaction_id();
 	}
 
 	/**

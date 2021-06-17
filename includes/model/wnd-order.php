@@ -15,9 +15,6 @@ class Wnd_Order extends Wnd_Transaction {
 
 	protected $transaction_type = 'order';
 
-	// 用户同条件历史订单复用时间限制
-	protected $date_query = [];
-
 	// SKU ID
 	protected $sku_id;
 
@@ -66,20 +63,9 @@ class Wnd_Order extends Wnd_Transaction {
 		/**
 		 * @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
 		 */
-		$old_orders = get_posts(
-			[
-				'author'         => $this->user_id,
-				'post_parent'    => $this->object_id,
-				'post_status'    => static::$processing_status,
-				'post_type'      => $this->transaction_type,
-				'posts_per_page' => 1,
-				'date_query'     => $this->date_query,
-			]
-		);
+		$this->transaction_id = $this->get_reusable_transaction_id();
 
-		if ($old_orders) {
-			$ID = $old_orders[0]->ID;
-		} elseif ($this->object_id) {
+		if (!$this->transaction_id and $this->object_id) {
 			/**
 			 * 新增订单统计
 			 * 插入订单时，无论订单状态均新增订单统计，以实现某些场景下需要限定订单总数时，锁定数据，预留支付时间
@@ -113,7 +99,7 @@ class Wnd_Order extends Wnd_Transaction {
 	}
 
 	/**
-	 * 构建匿名订单所需的订单属性：$this->transaction_slug、$this->date_query
+	 * 构建匿名订单所需的订单属性：$this->transaction_slug
 	 * - 设置匿名订单 cookie
 	 * - 将匿名订单 cookie 设置为订单 post name
 	 * - 设置订单复用日期条件
@@ -130,19 +116,6 @@ class Wnd_Order extends Wnd_Transaction {
 		 * 将 cookie 设置为订单 post name，以便后续通过 cookie 查询匿名用户订单
 		 */
 		$this->transaction_slug = $anon_cookie;
-
-		/**
-		 * 匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
-		 * 更新自动草稿时候，modified 不会变需要查询 post_date
-		 * @see get_posts()
-		 * @see wp_update_post
-		 */
-		$this->date_query = [
-			[
-				'column' => 'post_date',
-				'before' => date('Y-m-d H:i', current_time('timestamp') - 86400),
-			],
-		];
 	}
 
 	/**
