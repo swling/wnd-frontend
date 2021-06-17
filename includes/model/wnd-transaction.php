@@ -251,21 +251,36 @@ abstract class Wnd_Transaction {
 	 * - 校验交易是否完成
 	 * - 交易完成，执行相关操作
 	 * @since 2019.02.11
-	 *
-	 * @return int 验证成功后返回 Transaction ID。其他情况抛出异常。
 	 */
 	public function verify() {
-		$this->verify_transaction();
+		// 订单支付状态检查
+		if (static::$processing_status != $this->get_status()) {
+			throw new Exception(__('订单状态无效', 'wnd'));
+		}
 
-		return $this->complete();
+		$this->update_transaction_status(static::$completed_status);
+		$this->complete();
 	}
 
 	/**
-	 * 校验：具体实现在子类中定义
-	 * 通常校验用于需要跳转第三方支付平台的交易
-	 * @since 2019.02.11
+	 * 更新 Transaction 状态
+	 * @since 0.9.32
+	 *
+	 * @return true
 	 */
-	abstract protected function verify_transaction(): bool;
+	protected function update_transaction_status(string $status): bool{
+		$post_arr = [
+			'ID'          => $this->get_transaction_id(),
+			'post_status' => $status,
+			'post_title'  => $this->subject ?: $this->get_subject(),
+		];
+		$ID = wp_update_post($post_arr);
+		if (!$ID or is_wp_error($ID)) {
+			throw new Exception(__('数据更新失败', 'wnd'));
+		}
+
+		return true;
+	}
 
 	/**
 	 * 交易完成，执行相关操作。具体方法在子类中实现
@@ -331,7 +346,12 @@ abstract class Wnd_Transaction {
 	 * 根据 id 获取交易 Type
 	 * @since 0.9.32
 	 */
-	private static function get_type_by_transaction_id(int $transaction_id): string {
+	private static function get_type_by_transaction_id(int $transaction_id): string{
+		$post = get_post($transaction_id);
+		if (!$post) {
+			throw new Exception(__('订单ID无效', 'wnd'));
+		}
+
 		return get_post($transaction_id)->post_type ?? '';
 	}
 }

@@ -192,37 +192,6 @@ class Wnd_Order extends Wnd_Transaction {
 	}
 
 	/**
-	 * 确认在线消费订单
-	 * @since 2019.02.11
-	 *
-	 * @param  object 	$this->transaction			required 	订单记录Post
-	 * @param  string 	$this->subject                		option
-	 * @return true
-	 */
-	protected function verify_transaction(): bool {
-		if ('order' != $this->get_type()) {
-			throw new Exception(__('订单ID无效', 'wnd'));
-		}
-
-		// 订单支付状态检查
-		if (static::$processing_status != $this->get_status()) {
-			throw new Exception(__('订单状态无效', 'wnd'));
-		}
-
-		$post_arr = [
-			'ID'          => $this->get_transaction_id(),
-			'post_status' => static::$completed_status,
-			'post_title'  => $this->subject ?: $this->get_subject() . __('(在线支付)', 'wnd'),
-		];
-		$ID = wp_update_post($post_arr);
-		if (!$ID or is_wp_error($ID)) {
-			throw new Exception(__('数据更新失败', 'wnd'));
-		}
-
-		return true;
-	}
-
-	/**
 	 * 订单成功后，执行的统一操作
 	 * @since 2020.06.10
 	 *
