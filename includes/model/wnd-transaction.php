@@ -8,37 +8,32 @@ use WP_User;
 
 /**
  * 定义订单站内数据库记录的抽象基类
- *
- * 	### 自定义文章类型
- * 	以下 post_type 并未均为私有属性('public' => false)，因此在WordPress后台无法查看到
- * 	充值：recharge
- * 	消费、订单：order
- *
- * 	### 充值、消费post data
- * 	金额：post_content
- * 	关联：post_parent
- * 	标题：post_title
- * 	类型：post_type：recharge / order
- * 	接口：post_excerpt：（支付平台标识如：Alipay / Wepay）
+ * 对应 WP Post 数据参见方法：insert_transaction();
  *
  * @since 2019.09.24
  */
 abstract class Wnd_Transaction {
 
-	// order / recharge Post ID
-	protected $transaction_id;
-
-	// order / recharge WP Post object
+	// WP Post object
 	protected $transaction;
 
+	// WP Post ID
+	protected $transaction_id = 0;
+
+	// WP Post Type
+	protected $transaction_type;
+
+	// WP Post Name
+	protected $transaction_slug;
+
 	// 站点用户ID
-	protected $user_id;
+	protected $user_id = 0;
 
 	// 产品ID 对应WordPress产品类型Post ID
-	protected $object_id;
+	protected $object_id = 0;
 
 	// 金额
-	protected $total_amount;
+	protected $total_amount = 0.00;
 
 	// 支付标题：产品标题 / 充值标题 / 其他自定义
 	protected $subject = '';
@@ -109,7 +104,7 @@ abstract class Wnd_Transaction {
 
 		$instance = apply_filters('wnd_transaction_instance', $instance, $type);
 		if (!$instance) {
-			throw new Exception(__('无效的 Transaction 实例', 'wnd'));
+			throw new Exception(__('无效的 Transaction 实例类型：', 'wnd') . $type);
 		}
 
 		/**
@@ -221,7 +216,8 @@ abstract class Wnd_Transaction {
 	 */
 	public function create(bool $is_completed = false): WP_Post{
 		// 写入数据
-		$this->transaction = $this->insert_record($is_completed);
+		$this->generate_transaction_data($is_completed);
+		$this->insert_transaction();
 
 		// 保存产品属性
 		if ($this->props and $this->get_object_id()) {
@@ -238,13 +234,53 @@ abstract class Wnd_Transaction {
 	}
 
 	/**
-	 * 创建 WP Post 记录，具体实现在子类中定义
-	 * @since 2019.02.11
+	 * 按需对如下数据进行构造：
 	 *
-	 * @param  	bool  	$is_completed 	是否直接完成订单
-	 * @return object WP Post Object
+	 * $post_arr = [
+	 *     'ID'           => $this->transaction_id,
+	 *     'post_type'    => $this->transaction_type,
+	 *     'post_author'  => $this->user_id,
+	 *     'post_parent'  => $this->object_id,
+	 *     'post_content' => $this->total_amount,
+	 *     'post_excerpt' => $this->payment_gateway,
+	 *     'post_status'  => $this->status,
+	 *     'post_title'   => $this->subject,
+	 *     'post_name'    => $this->transaction_slug ?: uniqid(),
+	 * ];
+	 *
+	 * @since 0.9.32
 	 */
-	abstract protected function insert_record(bool $is_completed): WP_Post;
+	abstract protected function generate_transaction_data(bool $is_completed);
+
+	/**
+	 * 写入数据库
+	 * @since 0.9.32
+	 */
+	protected function insert_transaction(): WP_Post {
+		if (!$this->transaction_type) {
+			throw new Exception('Invalid transaction type');
+		}
+
+		$post_arr = [
+			'ID'           => $this->transaction_id,
+			'post_type'    => $this->transaction_type,
+			'post_author'  => $this->user_id,
+			'post_parent'  => $this->object_id,
+			'post_content' => $this->total_amount,
+			'post_excerpt' => $this->payment_gateway,
+			'post_status'  => $this->status,
+			'post_title'   => $this->subject,
+			'post_name'    => $this->transaction_slug ?: uniqid(),
+		];
+		$ID = wp_insert_post($post_arr);
+		if (is_wp_error($ID) or !$ID) {
+			throw new Exception('Failed to write to the database');
+		}
+
+		// 构建Post
+		$this->transaction = get_post($ID);
+		return $this->transaction;
+	}
 
 	/**
 	 * 通常校验用于需要跳转第三方支付平台的交易

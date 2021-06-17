@@ -73,8 +73,9 @@ abstract class Wnd_Payment {
 	abstract static public function parse_transaction(): Wnd_Transaction;
 
 	/**
-	 * 验证支付
-	 * @param $this->total_amount
+	 * 支付验签
+	 * - 通常应包含同步验签及异步验签
+	 * - 若验签失败，需抛出异常中止支付流程
 	 */
 	abstract public function verify_payment();
 

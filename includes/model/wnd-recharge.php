@@ -2,38 +2,33 @@
 namespace Wnd\Model;
 
 use Exception;
-use WP_Post;
 
 /**
  * 支付模块
- * 	# 自定义文章类型
- * 	post_type属性('public' => false)，因此在WordPress后台无法查看到
- * 	充值：recharge
- * 	# 充值Post Data
- * 	金额：post_content
- * 	关联：post_parent
- * 	标题：post_title
- * 	类型：post_type：recharge
- * 	接口：post_excerpt：（支付平台标识如：Alipay / Wepay）
- * 在线支付充值，设置如下参数，以区分站内充值。用于充值标识，及退款
- * post_excerpt = $payment_gateway（记录支付平台如：alipay、wepay）
  * @since 2019.08.11
  */
 class Wnd_Recharge extends Wnd_Transaction {
 
+	protected $transaction_type = 'recharge';
+
 	/**
-	 * 写入post时需要设置别名，否则更新时会自动根据标题设置别名，而充值类标题一致，会导致WordPress持续循环查询并设置 -2、-3这类自增标题，产生大量查询
-	 * @since 2019.01.30
+	 * 按需对如下数据进行构造：
 	 *
-	 * @param  int    		$this->user_id                		required
-	 * @param  float  	$this->total_money		required
-	 * @param  string 	$this->subject                 			option
-	 * @param  int    		$this->object_id              		option
-	 * @param  string 	$this->payment_gateway	option  	支付平台标识
-	 * @param  bool   	$is_completed                  			option 	是否直接写入，无需支付平台校验
-	 * @return object WP Post Object
+	 * $post_arr = [
+	 *     'ID'           => $this->transaction_id,
+	 *     'post_type'    => $this->transaction_type,
+	 *     'post_author'  => $this->user_id,
+	 *     'post_parent'  => $this->object_id,
+	 *     'post_content' => $this->total_amount,
+	 *     'post_excerpt' => $this->payment_gateway,
+	 *     'post_status'  => $this->status,
+	 *     'post_title'   => $this->subject,
+	 *     'post_name'    => $this->transaction_slug ?: uniqid(),
+	 * ];
+	 *
+	 * @since 0.9.32
 	 */
-	protected function insert_record(bool $is_completed): WP_Post {
+	protected function generate_transaction_data(bool $is_completed) {
 		if (!$this->user_id) {
 			throw new Exception(__('请登录', 'wnd'));
 		}
@@ -53,32 +48,13 @@ class Wnd_Recharge extends Wnd_Transaction {
 				'author'         => $this->user_id,
 				'post_parent'    => $this->object_id,
 				'post_status'    => static::$processing_status,
-				'post_type'      => 'recharge',
+				'post_type'      => $this->transaction_type,
 				'posts_per_page' => 1,
 			]
 		);
 		if ($old_recharges) {
-			$ID = $old_recharges[0]->ID;
+			$this->transaction_id = $old_recharges[0]->ID;
 		}
-
-		$post_arr = [
-			'ID'           => $ID ?? 0,
-			'post_author'  => $this->user_id,
-			'post_parent'  => $this->object_id,
-			'post_content' => $this->total_amount,
-			'post_excerpt' => $this->payment_gateway,
-			'post_status'  => $this->status,
-			'post_title'   => $this->subject,
-			'post_type'    => 'recharge',
-			'post_name'    => uniqid(),
-		];
-		$ID = wp_insert_post($post_arr);
-		if (is_wp_error($ID) or !$ID) {
-			throw new Exception(__('创建充值订单失败', 'wnd'));
-		}
-
-		// 构建Post
-		return get_post($ID);
 	}
 
 	/**

@@ -6,29 +6,17 @@ use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Product;
 use Wnd\Model\Wnd_SKU;
-use WP_Post;
 
 /**
  * 订单模块
- * 	# 自定义文章类型
- * 	post_type属性('public' => false)，因此在WordPress后台无法查看到
- * 	订单：order
- * 	# 消费post data
- * 	金额：		post_content
- * 	关联：		post_parent
- * 	标题：		post_title
- * 	类型：		post_type：order
- * 	匿名cookie：post_name
- * 	接口：		post_excerpt：（支付平台标识如：Alipay / Wepay）
  * @since 2019.08.11
  */
 class Wnd_Order extends Wnd_Transaction {
 
+	protected $transaction_type = 'order';
+
 	// 用户同条件历史订单复用时间限制
 	protected $date_query = [];
-
-	// 订单记录 post name
-	protected $post_name;
 
 	// SKU ID
 	protected $sku_id;
@@ -37,17 +25,23 @@ class Wnd_Order extends Wnd_Transaction {
 	protected static $anon_cookie_name_prefix = 'anon_order';
 
 	/**
-	 * 用户本站消费数据(含余额消费，或直接第三方支付消费)
-	 * @since 2019.02.11
+	 * 按需对如下数据进行构造：
 	 *
-	 * @param  int    		$this->user_id               		required
-	 * @param  int    		$this->object_id             		option
-	 * @param  string 	$this->subject                			option
-	 * @param  string 	$this->payment_gateway	option 	支付平台标识
-	 * @param  bool   	$is_completed                 			option 	是否直接写入，无需支付平台校验
-	 * @return object WP Post Object
+	 * $post_arr = [
+	 *     'ID'           => $this->transaction_id,
+	 *     'post_type'    => $this->transaction_type,
+	 *     'post_author'  => $this->user_id,
+	 *     'post_parent'  => $this->object_id,
+	 *     'post_content' => $this->total_amount,
+	 *     'post_excerpt' => $this->payment_gateway,
+	 *     'post_status'  => $this->status,
+	 *     'post_title'   => $this->subject,
+	 *     'transaction_slug'    => $this->transaction_slug ?: uniqid(),
+	 * ];
+	 *
+	 * @since 0.9.32
 	 */
-	protected function insert_record(bool $is_completed): WP_Post {
+	protected function generate_transaction_data(bool $is_completed) {
 		// 处理匿名订单属性
 		if (!$this->user_id) {
 			if (!wnd_get_config('enable_anon_order')) {
@@ -77,7 +71,7 @@ class Wnd_Order extends Wnd_Transaction {
 				'author'         => $this->user_id,
 				'post_parent'    => $this->object_id,
 				'post_status'    => static::$processing_status,
-				'post_type'      => 'order',
+				'post_type'      => $this->transaction_type,
 				'posts_per_page' => 1,
 				'date_query'     => $this->date_query,
 			]
@@ -102,25 +96,6 @@ class Wnd_Order extends Wnd_Transaction {
 			 */
 			Wnd_SKU::reduce_single_sku_stock($this->object_id, $this->sku_id, $this->quantity);
 		}
-
-		$post_arr = [
-			'ID'           => $ID ?? 0,
-			'post_author'  => $this->user_id,
-			'post_parent'  => $this->object_id,
-			'post_content' => $this->total_amount,
-			'post_excerpt' => $this->payment_gateway,
-			'post_status'  => $this->status,
-			'post_title'   => $this->subject,
-			'post_type'    => 'order',
-			'post_name'    => $this->post_name ?: uniqid(),
-		];
-		$ID = wp_insert_post($post_arr);
-		if (is_wp_error($ID) or !$ID) {
-			throw new Exception(__('创建订单失败', 'wnd'));
-		}
-
-		// 构建Post
-		return get_post($ID);
 	}
 
 	/**
@@ -138,7 +113,7 @@ class Wnd_Order extends Wnd_Transaction {
 	}
 
 	/**
-	 * 构建匿名订单所需的订单属性：$this->post_name、$this->date_query
+	 * 构建匿名订单所需的订单属性：$this->transaction_slug、$this->date_query
 	 * - 设置匿名订单 cookie
 	 * - 将匿名订单 cookie 设置为订单 post name
 	 * - 设置订单复用日期条件
@@ -154,7 +129,7 @@ class Wnd_Order extends Wnd_Transaction {
 		/**
 		 * 将 cookie 设置为订单 post name，以便后续通过 cookie 查询匿名用户订单
 		 */
-		$this->post_name = $anon_cookie;
+		$this->transaction_slug = $anon_cookie;
 
 		/**
 		 * 匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
