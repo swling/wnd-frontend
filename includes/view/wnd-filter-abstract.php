@@ -3,16 +3,17 @@ namespace Wnd\View;
 
 use Exception;
 use Wnd\Model\Wnd_Tag_Under_Category;
+use Wnd\View\Wnd_Pagination;
 use WP_Query;
 
 /**
- * @since 0.9.25
  * Posts 多重筛选抽象基类
  * - 参数解析
  * - 权限检测
  * - 定义可用的筛选项方法
  * - 执行 WP_Query（仅在非依赖型）
  * - 定义子类中必须实现的抽象方法
+ * @since 0.9.25
  *
  * @param bool 	$independent 	是否为独立 WP Query
  */
@@ -24,14 +25,14 @@ abstract class Wnd_Filter_Abstract {
 	protected $wp_base_url;
 
 	/**
-	 *WP_Query 查询结果：
-	 *@see $this->query();
+	 * WP_Query 查询结果：
+	 * @see $this->query();
 	 */
 	public $wp_query;
 
 	/**
-	 *@since 0.8.64
-	 *是否为独立的、不依赖当前页面的 WP_Query
+	 * 是否为独立的、不依赖当前页面的 WP_Query
+	 * @since 0.8.64
 	 */
 	public $independent;
 
@@ -39,9 +40,9 @@ abstract class Wnd_Filter_Abstract {
 	public $category_taxonomy;
 
 	/**
-	 *Constructor.
+	 * Constructor.
 	 *
-	 *@param bool 	$independent	是否为独立 WP Query
+	 * @param bool 	$independent	是否为独立 WP Query
 	 */
 	public function __construct(bool $independent = true) {
 		static::$request_query_vars = static::parse_query_vars();
@@ -64,13 +65,12 @@ abstract class Wnd_Filter_Abstract {
 		];
 
 		/**
-		 *@since 0.8.64
-		 *
-		 *- 独立型 WP Query：分页需要自定义处理
-		 *- 依赖型 WP Query：获取全局 $wp_query，并读取全局查询参数赋值到当前筛选环境，以供构建与之匹配的 tabs
+		 * - 独立型 WP Query：分页需要自定义处理
+		 * - 依赖型 WP Query：获取全局 $wp_query，并读取全局查询参数赋值到当前筛选环境，以供构建与之匹配的 tabs
+		 * @since 0.8.64
 		 */
 		if ($this->independent) {
-			$this->wp_base_url = remove_query_arg('page', $this->wp_base_url);
+			$this->wp_base_url = remove_query_arg(Wnd_Pagination::$page_query_var, $this->wp_base_url);
 			$this->query_args  = array_merge($defaults, static::$request_query_vars);
 		} else {
 			global $wp_query;
@@ -83,7 +83,7 @@ abstract class Wnd_Filter_Abstract {
 		}
 
 		/**
-		 *定义当前post type的主分类：$category_taxonomy
+		 * 定义当前post type的主分类：$category_taxonomy
 		 */
 		if ($this->query_args['post_type']) {
 			$this->category_taxonomy = ('post' == $this->query_args['post_type']) ? 'category' : $this->query_args['post_type'] . '_cat';
@@ -94,9 +94,8 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 0.9.25
-	 *
-	 *权限检测：非管理员，仅可查询publish及close状态(作者本身除外)
+	 * 权限检测：非管理员，仅可查询publish及close状态(作者本身除外)
+	 * @since 0.9.25
 	 */
 	protected function check_permission() {
 		if (is_super_admin()) {
@@ -127,22 +126,23 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.07.31
-	 *设置ajax post列表嵌入容器
-	 *@param int $posts_per_page 每页post数目
-	 **/
+	 * 设置ajax post列表嵌入容器
+	 * @since 2019.07.31
+	 *
+	 * @param int $posts_per_page 每页post数目
+	 */
 	public function set_posts_per_page(int $posts_per_page) {
 		$this->add_query_vars(['posts_per_page' => $posts_per_page]);
 	}
 
 	/**
-	 *@param array 	$args 需要筛选的类型数组
-	 *@param bool 	$any 是否包含全部选项
+	 * @param array 	$args 需要筛选的类型数组
+	 * @param bool  	$any  是否包含全部选项
 	 */
 	public function add_post_type_filter(array $args = [], bool $any = false) {
 		/**
-		 *若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post
-		 *post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
+		 * 若当前请求未指定post_type，设置第一个post_type为默认值；若筛选项也为空，最后默认post
+		 * post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
 		 *
 		 * 当前请求为包含post_type参数时，当前的主分类（category_taxonomy）无法在构造函数中无法完成定义，需在此处补充
 		 */
@@ -153,7 +153,7 @@ abstract class Wnd_Filter_Abstract {
 		}
 
 		/**
-		 *仅筛选项大于2时，构建HTML
+		 * 仅筛选项大于2时，构建HTML
 		 */
 		if (count($args) < 2) {
 			return;
@@ -173,14 +173,14 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *状态筛选
-	 *@param array $args 需要筛选的文章状态数组
+	 * 状态筛选
+	 * @param array $args 需要筛选的文章状态数组
 	 */
 	public function add_post_status_filter(array $args = [], bool $any = true) {
 		$this->add_query_vars(['post_status' => $args]);
 
 		/**
-		 *仅筛选项大于2时，构建HTML
+		 * 仅筛选项大于2时，构建HTML
 		 */
 		if (count($args) < 2) {
 			return;
@@ -194,9 +194,10 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.02.28
-	 *@param $args 	array get_terms 参数
-	 *若查询的taxonomy与当前post type未关联，则不输出
+	 * 若查询的taxonomy与当前post type未关联，则不输出
+	 * @since 2019.02.28
+	 *
+	 * @param $args 	array get_terms 参数
 	 */
 	public function add_taxonomy_filter(array $args) {
 		$args['parent'] = $args['parent'] ?? 0;
@@ -208,8 +209,8 @@ abstract class Wnd_Filter_Abstract {
 		$this->build_taxonomy_filter($args);
 
 		/**
-		 *@since 2019.03.12
-		 *遍历当前tax query 查询是否设置了对应的taxonomy查询，若存在则查询其对应子类
+		 * 遍历当前tax query 查询是否设置了对应的taxonomy查询，若存在则查询其对应子类
+		 * @since 2019.03.12
 		 */
 		$taxonomy_query = false;
 		foreach ($this->query_args['tax_query'] as $key => $tax_query) {
@@ -234,10 +235,9 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 0.9.25
-	 *主分类
-	 *
-	 **/
+	 * 主分类
+	 * @since 0.9.25
+	 */
 	public function add_category_filter(array $args = []) {
 		$args['taxonomy'] = $this->category_taxonomy;
 		return $this->add_taxonomy_filter($args);
@@ -248,36 +248,34 @@ abstract class Wnd_Filter_Abstract {
 	 * 定义taxonomy：{$post_type}.'_tag'
 	 * 读取wp_query中tax_query 提取taxonomy为{$post_type}.'_cat'的分类id，并获取对应的关联标签(需启用标签分类关联功能)
 	 * 若未设置关联分类，则查询所有热门标签
-	 *@since 2019.03.25
+	 * @since 2019.03.25
 	 */
 	public function add_tags_filter(int $limit = 10) {
 		$this->build_tags_filter($limit);
 	}
 
 	/**
-	 *@since 2019.04.18 meta query
-	 *@param 自定义： array args meta字段筛选。暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
+	 * 	$args = [
+	 * 		'label' => '文章价格',
+	 * 		'key' => 'price',
+	 * 		'options' => [
+	 * 			'10' => '10',
+	 * 			'0.1' => '0.1',
+	 * 		],
+	 * 		'compare' => '=',
+	 * 	];
+	 * 	查询一个字段是否存在：options只需要设置一个：其作用为key值显示为选项文章，value不参与查询，可设置为任意值
+	 * 	$args = [
+	 * 		'label' => '文章价格',
+	 * 		'key' => 'price',
+	 * 		'options' => [
+	 * 			'包含' => 'exists',
+	 * 		],
+	 * 		'compare' => 'exists',
+	 * 	];
+	 * @since 2019.04.18 meta query
 	 *
-	 *	$args = [
-	 *		'label' => '文章价格',
-	 *		'key' => 'price',
-	 *		'options' => [
-	 *			'10' => '10',
-	 *			'0.1' => '0.1',
-	 *		],
-	 *		'compare' => '=',
-	 *	];
-	 *
-	 *	查询一个字段是否存在：options只需要设置一个：其作用为key值显示为选项文章，value不参与查询，可设置为任意值
-	 *	$args = [
-	 *		'label' => '文章价格',
-	 *		'key' => 'price',
-	 *		'options' => [
-	 *			'包含' => 'exists',
-	 *		],
-	 *		'compare' => 'exists',
-	 *	];
-	 *
+	 * @param 自定义： array args meta字段筛选。暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
 	 */
 	public function add_meta_filter(array $args, bool $any = true) {
 		$label = $args['label'];
@@ -287,21 +285,20 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.04.21 排序
-	 *@param 自定义： array args
+	 * 	$args = [
+	 * 		'label' => '排序',
+	 * 		'options' => [
+	 * 			'发布时间' => 'date', //常规排序 date title等
+	 * 			'浏览量' => [ // 需要多个参数的排序
+	 * 				'orderby'=>'meta_value_num',
+	 * 				'meta_key'   => 'views',
+	 * 			],
+	 * 		],
+	 * 		'order' => 'DESC',
+	 * 	];
+	 * @since 2019.04.21 排序
 	 *
-	 *	$args = [
-	 *		'label' => '排序',
-	 *		'options' => [
-	 *			'发布时间' => 'date', //常规排序 date title等
-	 *			'浏览量' => [ // 需要多个参数的排序
-	 *				'orderby'=>'meta_value_num',
-	 *				'meta_key'   => 'views',
-	 *			],
-	 *		],
-	 *		'order' => 'DESC',
-	 *	];
-	 *
+	 * @param 自定义： array args
 	 */
 	public function add_orderby_filter(array $args, bool $any = true) {
 		$key     = 'orderby';
@@ -312,33 +309,33 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.08.10 排序方式
-	 *@param 自定义： array args
+	 * 	$args = [
+	 * 		'降序' => 'DESC',
+	 * 		'升序' =>'ASC'
+	 * 	];
+	 * @since 2019.08.10 排序方式
 	 *
-	 *	$args = [
-	 *		'降序' => 'DESC',
-	 *		'升序' =>'ASC'
-	 *	];
-	 *
-	 *@param string $label 选项名称
+	 * @param 自定义： array  args
+	 * @param string       $label 选项名称
 	 */
 	public function add_order_filter(array $args, string $label, bool $any = true) {
 		return $this->build_tabs('order', $args, $label, $any);
 	}
 
 	/**
-	 *@since 2019.03.26
-	 *遍历当前查询参数，输出取消当前查询链接
+	 * 遍历当前查询参数，输出取消当前查询链接
+	 * @since 2019.03.26
 	 */
 	public function add_current_filter() {
 		return $this->build_current_filter();
 	}
 
 	/**
-	 *@since 2019.08.09
-	 *@param array 		$args  		WordPress get_terms() 参数
-	 *@param string 	$class 		额外设置的class
-	 *若查询的taxonomy与当前post type未关联，则不输出
+	 * 若查询的taxonomy与当前post type未关联，则不输出
+	 * @since 2019.08.09
+	 *
+	 * @param array  		$args 		WordPress get_terms() 参数
+	 * @param string 	$class 		额外设置的class
 	 */
 	protected function build_taxonomy_filter(array $args, bool $any = true) {
 		if (!isset($args['taxonomy'])) {
@@ -351,8 +348,8 @@ abstract class Wnd_Filter_Abstract {
 		}
 
 		/**
-		 *@since 2019.07.30
-		 *如果当前指定的taxonomy并不存在指定的post type中，非ajax环境直接中止，ajax环境中隐藏输出（根据post_type动态切换是否显示）
+		 * 如果当前指定的taxonomy并不存在指定的post type中，非ajax环境直接中止，ajax环境中隐藏输出（根据post_type动态切换是否显示）
+		 * @since 2019.07.30
 		 */
 		$current_post_type_taxonomies = get_object_taxonomies($this->query_args['post_type'], 'names');
 		if (!in_array($taxonomy, $current_post_type_taxonomies)) {
@@ -382,8 +379,8 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.08.09
-	 *构建分类关联标签的HTML
+	 * 构建分类关联标签的HTML
+	 * @since 2019.08.09
 	 */
 	protected function build_tags_filter(int $limit = 10) {
 		// 标签taxonomy
@@ -393,16 +390,15 @@ abstract class Wnd_Filter_Abstract {
 		}
 
 		/**
-		 *@since 0.8.70
-		 *在依赖型多重筛选中，分类及标签归档页默认不再包含 tax_query 查询参数
-		 *因此，首先判断当前查询是否为分类归档页查询：
+		 * 在依赖型多重筛选中，分类及标签归档页默认不再包含 tax_query 查询参数
+		 * 因此，首先判断当前查询是否为分类归档页查询：
 		 * - Post 分类归档页查询参数包含 	'category_name' => $slug
 		 * - 自定义分类归档页查询参数包含 	{$taxonomy}		=> $slug
-		 *
-		 *@since 2019.03.07
-		 *查找在当前的tax_query查询参数中，当前taxonomy的键名，如果没有则加入
-		 *tax_query是一个无键名的数组，无法根据键名合并，因此需要准确定位
-		 *(数组默认键值从0开始， 当首元素即匹配则array_search返回 0，此处需要严格区分 0 和 false)
+		 * 查找在当前的tax_query查询参数中，当前taxonomy的键名，如果没有则加入
+		 * tax_query是一个无键名的数组，无法根据键名合并，因此需要准确定位
+		 * (数组默认键值从0开始， 当首元素即匹配则array_search返回 0，此处需要严格区分 0 和 false)
+		 * @since 0.8.70
+		 * @since 2019.03.07
 		 */
 		$category_key = ('category' == $this->category_taxonomy) ? 'category_name' : $this->category_taxonomy;
 		if (isset($this->query_args[$category_key])) {
@@ -427,8 +423,8 @@ abstract class Wnd_Filter_Abstract {
 		}
 
 		/**
-		 *指定category_id时查询关联标签，否则调用热门标签
-		 *@since 2019.03.25
+		 * 指定category_id时查询关联标签，否则调用热门标签
+		 * @since 2019.03.25
 		 */
 		if (isset($category_id)) {
 			$terms = Wnd_Tag_Under_Category::get_tags($category_id, $taxonomy, $limit);
@@ -456,10 +452,9 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.03.26
-	 *遍历当前查询参数，输出取消当前查询链接
-	 *
-	 *@since 0.9.25  改造尚未完成
+	 * 遍历当前查询参数，输出取消当前查询链接
+	 * @since 2019.03.26
+	 * @since 0.9.25  改造尚未完成
 	 */
 	protected function build_current_filter() {
 		if (empty($this->query_args['tax_query']) and empty($this->query_args['meta_query'])) {
@@ -468,13 +463,12 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.08.01
-	 *执行查询
-	 *
-	 *@since 0.8.64
-	 *- 执行独立 WP Query
-	 *- 当设置为非独立查询（依赖当前页面查询）时，查询参数将通过 'pre_get_posts' 实现修改，无需执行 WP Query @see static::action_on_pre_get_posts();
+	 * 执行查询
+	 * - 执行独立 WP Query
+	 * - 当设置为非独立查询（依赖当前页面查询）时，查询参数将通过 'pre_get_posts' 实现修改，无需执行 WP Query @see static::action_on_pre_get_posts();
 	 *  当下场景中 $this->wp_query 为 global $wp_query; @see __construct();
+	 * @since 2019.08.01
+	 * @since 0.8.64
 	 */
 	public function query() {
 		if ($this->independent) {
@@ -483,9 +477,10 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.08.09
-	 *获取当前tax_query的所有父级term_id
-	 *@return array $ancestors 当前分类查询的所有父级：$ancestors[$taxonomy] = [$term_id_1, $term_id_2];
+	 * 获取当前tax_query的所有父级term_id
+	 * @since 2019.08.09
+	 *
+	 * @return array $ancestors 当前分类查询的所有父级：$ancestors[$taxonomy] = [$term_id_1, $term_id_2];
 	 */
 	protected function get_tax_query_ancestors(): array{
 		$ancestors = [];
@@ -510,15 +505,13 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.08.09
-	 *当前tax query的子类筛选项
+	 * 当前tax query的子类筛选项
+	 * 子类查询需要根据当前tax query动态生成
+	 * 在ajax状态中，需要经由此方法，交付api响应动态生成
+	 * 非ajax请求中，add_taxonomy_filter，在选择分类后，自动查询生成子类tabs
+	 * @since 2019.08.09
 	 *
-	 *子类查询需要根据当前tax query动态生成
-	 *在ajax状态中，需要经由此方法，交付api响应动态生成
-	 *
-	 *非ajax请求中，add_taxonomy_filter，在选择分类后，自动查询生成子类tabs
-	 *
-	 *@return array $sub_tabs_array[$taxonomy] = [$sub_tabs];
+	 * @return array $sub_tabs_array[$taxonomy] = [$sub_tabs];
 	 */
 	public function get_sub_taxonomy_tabs() {
 		$sub_tabs_array = [];
@@ -558,38 +551,38 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2020.05.11
-	 *搜索框：在子类中实现
+	 * 搜索框：在子类中实现
+	 * @since 2020.05.11
 	 */
 	abstract public function add_search_form(string $button = 'Search', string $placeholder = '');
 
 	/**
-	 *@since 0.9.25
-	 *统一封装 Tabs 输出：在子类中实现
+	 * 统一封装 Tabs 输出：在子类中实现
+	 * @since 0.9.25
 	 */
 	abstract protected function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []);
 
 	/**
-	 *@since 0.9.25
-	 *获取筛选 Tabs：在子类中实现
+	 * 获取筛选 Tabs：在子类中实现
+	 * @since 0.9.25
 	 */
 	abstract protected function get_tabs();
 
 	/**
-	 *@since 0.9.25
-	 *获取筛选 Posts 集：在子类中实现
+	 * 获取筛选 Posts 集：在子类中实现
+	 * @since 0.9.25
 	 */
 	abstract protected function get_posts();
 
 	/**
-	 *@since 0.9.25
-	 *获取完整的查询结果集：通常为 Posts 及 pagination 的合集，根据具体场景在子类中实现
+	 * 获取完整的查询结果集：通常为 Posts 及 pagination 的合集，根据具体场景在子类中实现
+	 * @since 0.9.25
 	 */
 	abstract protected function get_results();
 
 	/**
-	 *@since 0.9.25
-	 *获取筛选分页导航：在子类中实现
+	 * 获取筛选分页导航：在子类中实现
+	 * @since 0.9.25
 	 */
 	abstract protected function get_pagination();
 }
