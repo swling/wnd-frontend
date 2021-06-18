@@ -5,7 +5,9 @@ namespace Wnd\Model;
  * 用户
  * @since 2019.10.25
  */
-class Wnd_User {
+abstract class Wnd_User {
+
+	private static $user_cache_group = 'wnd_users';
 
 	/**
 	 * 获取自定义用户对象
@@ -13,7 +15,7 @@ class Wnd_User {
 	 * @since 2019.11.06
 	 */
 	public static function get_wnd_user($user_id) {
-		$user = wp_cache_get($user_id, 'wnd_users');
+		$user = wp_cache_get($user_id, static::$user_cache_group);
 		if ($user) {
 			return $user;
 		}
@@ -347,7 +349,7 @@ class Wnd_User {
 		}
 
 		// 按 user id 缓存指定用户所有 auth 数据
-		wp_cache_set($user_id, $user_data, 'wnd_users');
+		wp_cache_set($user_id, $user_data, static::$user_cache_group);
 
 		// 变量用户 auth 数据（排除 user_id 属性），读取设备 id 并缓存对应 user id
 		$user_data = (array) $user_data;
@@ -371,7 +373,7 @@ class Wnd_User {
 		}
 
 		// 按 user id 删除对象缓存
-		wp_cache_delete($user_id, 'wnd_users');
+		wp_cache_delete($user_id, static::$user_cache_group);
 
 		// 遍历用户 auth 数据，并按值删除对应对象缓存
 		$user_data = (array) $user_data;

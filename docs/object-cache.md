@@ -8,7 +8,7 @@ wp_cache_set($cat_id . $tag_taxonomy . $limit, $tags, 'wnd_tags_under_category',
 wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
 
 // 存储wnd_user数据表对象
-wp_cache_set($user_id, $user_data, 'wnd_users');
+wp_cache_set($user_id, $user_data, static::$user_cache_group);
 
 // 存储openID与用户id的对应关系
 wp_cache_set($open_id, $user_id, $cache_group);
