@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_SKU;
 use Wnd\Model\Wnd_Transaction;
 
@@ -123,10 +124,11 @@ class Wnd_Order_Product {
 		/**
 		 * @since 2019.07.03 删除订单时，删除user_has_paid缓存
 		 */
-		wp_cache_delete($order->post_author . '-' . $object_id, 'wnd_has_paid');
+		Wnd_Finance::delete_user_paid_cache($order->post_author, $object_id);
 
 		/**
-		 *  订单及库存取消行为仅针对状态为待处理的订单
+		 * 订单及库存取消行为仅针对状态为待处理的订单
+		 * 不可取消此处判断，因本方法可在外部直接调用
 		 */
 		if (Wnd_Transaction::$processing_status != $order->post_status) {
 			return false;

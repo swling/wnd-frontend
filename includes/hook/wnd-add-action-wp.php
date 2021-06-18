@@ -4,6 +4,7 @@ namespace Wnd\Hook;
 use Exception;
 use Wnd\Getway\Wnd_Captcha;
 use Wnd\Model\Wnd_Auth;
+use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\Model\Wnd_User;
@@ -152,7 +153,7 @@ class Wnd_Add_Action_WP {
 		 * @since 2020.06.11 订单更新，删除订单缓存
 		 */
 		if ('order' == $post_after->post_type) {
-			wp_cache_delete($post_after->post_author . '-' . $post_after->post_parent, 'wnd_has_paid');
+			Wnd_Finance::delete_user_paid_cache($post_after->post_author, $post_after->post_parent);
 			return;
 		}
 	}

@@ -3,6 +3,7 @@ namespace Wnd\Model;
 
 use Exception;
 use Wnd\Getway\Wnd_Payment_Getway;
+use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Product;
 use Wnd\Model\Wnd_SKU;
@@ -152,8 +153,8 @@ class Wnd_Order extends Wnd_Transaction {
 		if ($object_id) {
 			wnd_inc_post_total_sales($object_id, $total_amount);
 
-			// 删除对象缓存
-			wp_cache_delete($this->user_id . '-' . $this->object_id, 'wnd_has_paid');
+			// 设置对象缓存：不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
+			Wnd_Finance::set_user_paid_cache($user_id, $object_id, 1);
 
 			// 文章作者新增佣金
 			$commission = (float) wnd_get_order_commission($ID);

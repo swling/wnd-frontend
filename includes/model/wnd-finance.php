@@ -10,12 +10,14 @@ use Wnd\Model\Wnd_Transaction;
  * 站内财务信息
  * @since 2019.10.25
  */
-class Wnd_Finance {
+abstract class Wnd_Finance {
+
+	private static $has_paid_cache_group = 'wnd_has_paid';
 
 	/**
 	 * @since 2019.02.11 查询是否已经支付
 	 *
-	 * @param  int  	$user_id          	用户ID
+	 * @param  int  	$user_id          用户ID
 	 * @param  int  	$object_id        Post ID
 	 * @return bool 	是否已支付
 	 */
@@ -30,7 +32,11 @@ class Wnd_Finance {
 		if (!$user_id) {
 			$cookie_name = Wnd_Order_Anonymous::get_anon_cookie_name($object_id);
 			$anon_cookie = $_COOKIE[$cookie_name] ?? '';
-			$order       = wnd_get_post_by_slug($anon_cookie, 'order', $order_status);
+			if (!$anon_cookie) {
+				return false;
+			}
+
+			$order = wnd_get_post_by_slug($anon_cookie, 'order', $order_status);
 			if (!$order) {
 				return false;
 			}
@@ -42,8 +48,7 @@ class Wnd_Finance {
 			}
 		}
 
-		$user_has_paid = wp_cache_get($user_id . '-' . $object_id, 'wnd_has_paid');
-
+		$user_has_paid = static::get_user_paid_cache($user_id, $object_id);
 		if (false === $user_has_paid) {
 			$args = [
 				'posts_per_page' => 1,
@@ -55,10 +60,55 @@ class Wnd_Finance {
 
 			// 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
 			$user_has_paid = empty(get_posts($args)) ? 0 : 1;
-			wp_cache_set($user_id . '-' . $object_id, $user_has_paid, 'wnd_has_paid');
+			static::set_user_paid_cache($user_id, $object_id, $user_has_paid);
 		}
 
 		return (1 === $user_has_paid ? true : false);
+	}
+
+	/**
+	 * @since 0.9.32 设置用户付费缓存
+	 */
+	public static function set_user_paid_cache(int $user_id, int $object_id, int $paid): bool {
+		if (!$user_id) {
+			return false;
+		}
+
+		$cache_key   = static::generate_user_paid_cache_key($user_id, $object_id);
+		$cache_group = static::$has_paid_cache_group;
+		return wp_cache_set($cache_key, $paid, $cache_group);
+	}
+
+	/**
+	 * 获取用户付费缓存
+	 *  - 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
+	 * @since 0.9.32
+	 */
+	public static function get_user_paid_cache(int $user_id, int $object_id): int {
+		if (!$user_id) {
+			return 0;
+		}
+
+		$cache_key   = static::generate_user_paid_cache_key($user_id, $object_id);
+		$cache_group = static::$has_paid_cache_group;
+		return wp_cache_get($cache_key, $cache_group);
+	}
+
+	/**
+	 * @since 0.9.32 删除用户付费缓存
+	 */
+	public static function delete_user_paid_cache(int $user_id, int $object_id): bool {
+		if (!$user_id) {
+			return false;
+		}
+
+		$cache_key   = static::generate_user_paid_cache_key($user_id, $object_id);
+		$cache_group = static::$has_paid_cache_group;
+		return wp_cache_delete($cache_key, $cache_group);
+	}
+
+	private static function generate_user_paid_cache_key(int $user_id, int $object_id): string {
+		return $user_id . '-' . $object_id;
 	}
 
 	/**
