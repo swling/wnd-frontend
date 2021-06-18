@@ -344,7 +344,7 @@ abstract class Wnd_User {
 	 */
 	public static function update_wnd_user_caches(object $user_data) {
 		$user_id = $user_data->user_id ?? 0;
-		if ($user_id) {
+		if (!$user_id) {
 			return false;
 		}
 

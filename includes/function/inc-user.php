@@ -36,7 +36,7 @@ function wnd_get_user_openid($user_id, $type) {
 /**
  * @since 2019.01.28 根据邮箱，手机，或用户名查询用户
  *
- * @param  	string                 			$email_or_phone_or_login
+ * @param  	string                 $email_or_phone_or_login
  * @return 	object|false	WordPress user object on success
  */
 function wnd_get_user_by($email_or_phone_or_login) {
@@ -161,7 +161,7 @@ function wnd_get_user_panel_post_types() {
 /**
  * @since 2020.04.11
  *
- * @param  int    user                                                                                      id
+ * @param  int    user_id
  * @return string 用户语言字段值，若无效用户或未设置语言，则返回当前站点语言
  */
 function wnd_get_user_locale($user_id) {
