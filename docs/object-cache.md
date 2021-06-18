@@ -1,11 +1,14 @@
 # object cache
 
 ```php
+// 用户订单支付缓存
 Wnd\Model\Wnd_Finance::set_user_paid_cache($user_id, $object_id, 1);
 
+// 分类关联标签
 wp_cache_set($cat_id . $tag_taxonomy . $limit, $tags, 'wnd_tags_under_category', 86400);
 
-wp_cache_set($user_id, $user_mail_count, 'wnd_mail_count');
+// 未读邮件统计
+wp_cache_set($user_id, $user_mail_count, static::$mail_count_cache_group);
 
 // 存储wnd_user数据表对象
 wp_cache_set($user_id, $user_data, static::$user_cache_group);

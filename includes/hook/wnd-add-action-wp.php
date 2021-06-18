@@ -5,6 +5,7 @@ use Exception;
 use Wnd\Getway\Wnd_Captcha;
 use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Finance;
+use Wnd\Model\Wnd_Mail;
 use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\Model\Wnd_User;
@@ -126,13 +127,15 @@ class Wnd_Add_Action_WP {
 		 */
 		if ('order' == $delete_post->post_type) {
 			Wnd_Order_Product::cancel_order($delete_post);
+			return;
 		}
 
 		/**
 		 * @since 2020.06.28 删除邮件时删除邮件查询对象缓存
 		 */
 		if ('mail' == $delete_post->post_type) {
-			wp_cache_delete($delete_post->post_author, 'wnd_mail_count');
+			Wnd_Mail::delete_mail_count_cache($delete_post->post_author);
+			return;
 		}
 	}
 
@@ -145,7 +148,7 @@ class Wnd_Add_Action_WP {
 		 * @since 2019.06.05 邮件状态改变时删除邮件查询对象缓存
 		 */
 		if ('mail' == $post_after->post_type) {
-			wp_cache_delete($post_after->post_author, 'wnd_mail_count');
+			Wnd_Mail::delete_mail_count_cache($post_after->post_author);
 			return;
 		}
 
