@@ -84,9 +84,9 @@ abstract class Wnd_Finance {
 	 *  - 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
 	 * @since 0.9.32
 	 */
-	public static function get_user_paid_cache(int $user_id, int $object_id): int {
+	public static function get_user_paid_cache(int $user_id, int $object_id) {
 		if (!$user_id) {
-			return 0;
+			return false;
 		}
 
 		$cache_key   = static::generate_user_paid_cache_key($user_id, $object_id);
