@@ -4,9 +4,9 @@ namespace Wnd\View;
 use Wnd\View\Wnd_Pagination;
 
 /**
- * @since 2019.07.30
  * 多重筛选类
  * 样式基于bulma css
+ * @since 2019.07.30
  *
  * @param bool 	$independent 	是否为独立 WP Query
  */
@@ -26,27 +26,29 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	protected $pagination = '';
 
 	/**
-	 *@since 2019.08.02
-	 *设置列表post模板函数，传递$post对象
-	 *@param string $template post模板函数名
-	 **/
+	 * 设置列表post模板函数，传递$post对象
+	 * @since 2019.08.02
+	 *
+	 * @param string $template post模板函数名
+	 */
 	public function set_post_template($template) {
 		$this->post_template = $template;
 	}
 
 	/**
-	 *@since 2019.08.16
-	 *文章列表页整体模板函数，传递wp_query查询结果
-	 *设置模板后，$this->get_posts() 即为被该函数返回值
-	 *@param string $template posts模板函数名
-	 **/
+	 * 文章列表页整体模板函数，传递wp_query查询结果
+	 * 设置模板后，$this->get_posts() 即为被该函数返回值
+	 * @since 2019.08.16
+	 *
+	 * @param string $template posts模板函数名
+	 */
 	public function set_posts_template($template) {
 		$this->posts_template = $template;
 	}
 
 	/**
-	 *@since 2020.05.11
-	 *搜索框
+	 * 搜索框
+	 * @since 2020.05.11
 	 */
 	public function add_search_form($button = 'Search', $placeholder = '') {
 		$html = '<form class="wnd-filter-search" method="POST" action="" "onsubmit"="return false">';
@@ -69,9 +71,8 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 0.9.25
-	 *统一封装 Tabs 输出
-	 *
+	 * 统一封装 Tabs 输出
+	 * @since 0.9.25
 	 */
 	protected function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []): string {
 		if (!$options) {
@@ -121,7 +122,7 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *筛选项详情菜单 Class
+	 * 筛选项详情菜单 Class
 	 */
 	protected function get_tab_item_class($key, $value): string{
 		$query_vars = $_GET[$key] ?? '';
@@ -129,21 +130,19 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.07.31
-	 *获取筛选项HTML
-	 *
-	 *tabs筛选项由于参数繁杂，无法通过api动态生成，因此不包含在api请求响应中
-	 *但已生成的相关筛选项会根据wp_query->query_var参数做动态修改
-	 *
+	 * 获取筛选项HTML
+	 * tabs筛选项由于参数繁杂，无法通过api动态生成，因此不包含在api请求响应中
+	 * 但已生成的相关筛选项会根据wp_query->query_var参数做动态修改
+	 * @since 2019.07.31
 	 */
 	public function get_tabs() {
-		$tabs = apply_filters('wnd_filter_tabs', $this->tabs, $this->query_args);
+		$tabs = apply_filters('wnd_filter_tabs', $this->tabs, $this->query->get_query_vars());
 		return '<div class="wnd-filter-tabs">' . $tabs . '</div>';
 	}
 
 	/**
-	 *@since 2019.07.31
-	 *获取筛结果HTML
+	 * 获取筛结果HTML
+	 * @since 2019.07.31
 	 */
 	public function get_posts(): string {
 		if (!$this->wp_query) {
@@ -176,8 +175,8 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.02.15
-	 *分页导航
+	 * 分页导航
+	 * @since 2019.02.15
 	 */
 	public function get_pagination($show_page = 5): string {
 		if (!$this->wp_query) {
@@ -194,26 +193,23 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 2019.07.31
-	 *合并返回：文章列表及分页导航
+	 * 合并返回：文章列表及分页导航
+	 * @since 2019.07.31
 	 */
 	public function get_results(): string {
 		return $this->get_posts() . $this->get_pagination();
 	}
 
 	/**
-	 *@since 0.8.64
-	 *
-	 *多重筛选：解析 $_GET 获取 WP_Query 参数，写入查询
+	 * 多重筛选：解析 $_GET 获取 WP_Query 参数，写入查询
 	 * - 排除无 $_GET 参数的查询
 	 * - 排除后台
 	 * - 排除 Ajax 请求
 	 * - 排除内页
-	 *
-	 *@since 0.8.72
 	 * - 排除 WP 内置功能型 Post Type 查询
-	 *
 	 * 在内页或 Ajax 请求中，应且只能执行独立的 WP Query
+	 * @since 0.8.64
+	 * @since 0.8.72
 	 */
 	public static function action_on_pre_get_posts($query) {
 		if (empty($_GET) or is_admin() or wnd_is_rest_request() or $query->is_singular()) {
@@ -236,17 +232,17 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 		}
 
 		/**
-		 *解析 $_GET 获取 WP_Query 参数
+		 * 解析 $_GET 获取 WP_Query 参数
 		 * - 排除分页：pre_get_posts 仅适用于非独立 wp query，此种情况下分页已在 URL 中确定
 		 */
-		$query_vars = static::parse_query_vars();
+		$query_vars = Wnd_Filter_Query::parse_query_vars();
 		if (!$query_vars) {
 			return $query;
 		}
 		unset($query_vars['paged']);
 
 		/**
-		 *依次将 $_GET 解析参数写入
+		 * 依次将 $_GET 解析参数写入
 		 */
 		foreach ($query_vars as $key => $value) {
 			/**
@@ -267,10 +263,9 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 0.9.0
 	 * 定义多重筛选支持的 Post Types
 	 * - 排除 WP 内置功能型 Post Type 查询
-	 *
+	 * @since 0.9.0
 	 */
 	protected static function get_supported_post_types(): array{
 		$custom_post_types = get_post_types(['_builtin' => false]);

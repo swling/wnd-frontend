@@ -1,21 +1,18 @@
 <?php
 namespace Wnd\View;
 
+use Wnd\View\Wnd_Filter_Query;
 use WP_User_Query;
 
 /**
- * @since 2020.05.05
  * 用户筛选类
  * 主要支持排序和搜索
- *
  * 样式基于bulma css
- *
  * @link https://developer.wordpress.org/reference/classes/WP_User_Query/
  * @link https://developer.wordpress.org/reference/classes/WP_User_Query/prepare_query/
+ * @since 2020.05.05
  */
 class Wnd_Filter_User {
-
-	use Wnd_Filter_Query_Trait;
 
 	protected $before_html = '';
 
@@ -31,24 +28,25 @@ class Wnd_Filter_User {
 	protected $pagination = [];
 
 	/**
-	 *wp_user_query 实例化
-	 *@see $this->query();
+	 * wp_user_query 实例化
+	 * @see $this->query();
 	 */
 	public $wp_user_query;
 
+	// Wnd\View\Wnd_Filter_Query 查询类实例化对象;
+	protected $query;
+
 	/**
-	 *Constructor.
+	 * Constructor.
 	 *
-	 *@param bool 		$is_ajax 是否为ajax查询
-	 *@param string 	$uniqid当前筛选器唯一标识
+	 * @param bool   		$is_ajax                            是否为ajax查询
+	 * @param string 	$uniqid当前筛选器唯一标识
 	 */
 	public function __construct() {
-		static::$request_query_vars = static::parse_query_vars();
-
 		/**
-		 *根据配置设定的wp_user_query查询参数
-		 *默认值将随用户设定而改变
-		 *参数中包含自定义的非wp_user_query参数以"wnd"前缀区分
+		 * 根据配置设定的wp_user_query查询参数
+		 * 默认值将随用户设定而改变
+		 * 参数中包含自定义的非wp_user_query参数以"wnd"前缀区分
 		 */
 		$defaults = [
 			'order'          => 'DESC',
@@ -63,34 +61,43 @@ class Wnd_Filter_User {
 		];
 
 		// 解析GET参数为wp_user_query参数并与默认参数合并，以防止出现参数未定义的警告信息
-		$this->query_args = array_merge($defaults, static::$request_query_vars);
+		$this->query = new Wnd_Filter_Query($defaults);
 	}
 
 	/**
-	 *@since 2019.07.31
-	 *设置ajax post列表嵌入容器
-	 *@param int $number 每页post数目
-	 **/
+	 * 添加新的请求参数
+	 * @see Wnd_Filter_query::add_query_vars();
+	 */
+	public function add_query_vars(array $query = []) {
+		$this->query->add_query_vars($query);
+	}
+
+	/**
+	 * 设置ajax post列表嵌入容器
+	 * @since 2019.07.31
+	 *
+	 * @param int $number 每页post数目
+	 */
 	public function set_number(int $number) {
 		$this->add_query_vars(['number' => $number]);
 	}
 
 	/**
-	 *获取完整筛选 Tabs
+	 * 获取完整筛选 Tabs
 	 */
 	public function get_tabs() {
 		return $this->tabs;
 	}
 
 	/**
-	 *筛选器之前 Html
+	 * 筛选器之前 Html
 	 */
 	public function add_before_html(string $html) {
 		$this->before_html .= $html;
 	}
 
 	/**
-	 *筛选器之后 Html
+	 * 筛选器之后 Html
 	 */
 	public function add_after_html(string $html) {
 		$this->after_html .= $html;
@@ -102,15 +109,14 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *@since 2019.08.10 构建排序方式
-	 *@param 自定义： array args
+	 * 	$args = [
+	 * 		'降序' => 'DESC',
+	 * 		'升序' =>'ASC'
+	 * 	];
+	 * @since 2019.08.10 构建排序方式
 	 *
-	 *	$args = [
-	 *		'降序' => 'DESC',
-	 *		'升序' =>'ASC'
-	 *	];
-	 *
-	 *@param bool 全部选项
+	 * @param 自定义： array          args
+	 * @param bool         全部选项
 	 */
 	public function add_orderby_filter(array $args, bool $any = false) {
 		$key     = 'orderby';
@@ -121,15 +127,14 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *@since 2019.08.10 排序方式
-	 *@param 自定义： array args
+	 * 	$args = [
+	 * 		'降序' => 'DESC',
+	 * 		'升序' =>'ASC'
+	 * 	];
+	 * @since 2019.08.10 排序方式
 	 *
-	 *	$args = [
-	 *		'降序' => 'DESC',
-	 *		'升序' =>'ASC'
-	 *	];
-	 *
-	 *@param string $label 选项名称
+	 * @param 自定义： array  args
+	 * @param string       $label 选项名称
 	 */
 	public function add_order_filter(array $args, bool $any = false) {
 		$key     = 'order';
@@ -140,7 +145,7 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *@param string $label 选项名称
+	 * @param string $label 选项名称
 	 */
 	public function add_status_filter(array $args, bool $any = false) {
 		$key     = '_meta_status';
@@ -151,7 +156,7 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *构造 Ajax 筛选菜单数据
+	 * 构造 Ajax 筛选菜单数据
 	 */
 	protected function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []): array{
 		if (!$options) {
@@ -177,15 +182,15 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *@since 2019.08.01
-	 *执行查询
+	 * 执行查询
+	 * @since 2019.08.01
 	 */
 	public function query() {
-		$this->wp_user_query = new WP_User_Query($this->query_args);
+		$this->wp_user_query = new WP_User_Query($this->query->get_query_vars());
 	}
 
 	/**
-	 *执行查询
+	 * 执行查询
 	 *
 	 */
 	public function get_users(): array{
@@ -206,8 +211,8 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *@since 2019.02.15
-	 *分页导航
+	 * 分页导航
+	 * @since 2019.02.15
 	 */
 	public function get_pagination(int $show_page = 5) {
 		if (!$this->wp_user_query) {
@@ -230,11 +235,11 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 *@since 0.9.25
-	 *获取完整的筛选数据结构：适用于初始化筛选器
-	 *
-	 *@param bool $with_post_content 是否包含正文内容
+	 * 获取完整的筛选数据结构：适用于初始化筛选器
 	 * 		-在很多情况下 Ajax 筛选用于各类管理面板，此时仅需要获取 post 列表，无需包含正文内容，以减少网络数据发送量
+	 * @since 0.9.25
+	 *
+	 * @param bool $with_post_content 是否包含正文内容
 	 */
 	public function get_filter(): array{
 		return [
@@ -243,13 +248,13 @@ class Wnd_Filter_User {
 			'tabs'           => $this->get_tabs(),
 			'users'          => $this->get_users(),
 			'pagination'     => $this->get_pagination(),
-			'add_query_vars' => $this->add_query_vars,
+			'add_query_vars' => $this->query->get_add_query_vars(),
 			'query_vars'     => $this->wp_user_query->query_vars,
 		];
 	}
 
 	/**
-	 *获取查询结果集：适用于已经完成初始化的筛选器，后续筛选查询（出主分类和标签筛选项外，不含其他 Tabs ）
+	 * 获取查询结果集：适用于已经完成初始化的筛选器，后续筛选查询（出主分类和标签筛选项外，不含其他 Tabs ）
 	 */
 	public function get_results(): array{
 		$structure = $this->get_filter();

@@ -2,8 +2,8 @@
 namespace Wnd\View;
 
 /**
- * @since 0.9.5
  * 多重筛选 Json API
+ * @since 0.9.5
  */
 class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 
@@ -21,14 +21,14 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	protected $pagination = [];
 
 	/**
-	 *筛选器之前 Html
+	 * 筛选器之前 Html
 	 */
 	public function add_before_html($html) {
 		$this->before_html .= $html;
 	}
 
 	/**
-	 *筛选器之后 Html
+	 * 筛选器之后 Html
 	 */
 	public function add_after_html($html) {
 		$this->after_html .= $html;
@@ -40,7 +40,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *构造 Ajax 筛选菜单数据
+	 * 构造 Ajax 筛选菜单数据
 	 */
 	protected function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []): array{
 		if (!$options) {
@@ -66,14 +66,14 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *获取完整筛选 Tabs
+	 * 获取完整筛选 Tabs
 	 */
 	protected function get_tabs(): array{
 		return $this->tabs;
 	}
 
 	/**
-	 *获取当前查询的主分类 Tabs
+	 * 获取当前查询的主分类 Tabs
 	 *
 	 */
 	protected function get_category_tabs($args = []): array{
@@ -83,7 +83,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *获取主分类关联标签筛选 Tabs
+	 * 获取主分类关联标签筛选 Tabs
 	 *
 	 */
 	protected function get_tags_tabs($limit = 10): array{
@@ -91,10 +91,11 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *获取筛结果集
-	 *@since 0.9.25
-	 *@param bool $with_post_content 是否包含正文内容
+	 * 获取筛结果集
 	 * 		-在很多情况下 Ajax 筛选用于各类管理面板，此时仅需要获取 post 列表，无需包含正文内容，以减少网络数据发送量
+	 * @since 0.9.25
+	 *
+	 * @param bool $with_post_content 是否包含正文内容
 	 */
 	protected function get_posts(bool $with_post_content = true): array{
 		if (!$this->wp_query) {
@@ -129,7 +130,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *分页导航
+	 * 分页导航
 	 */
 	protected function get_pagination($show_page = 5): array{
 		if (!$this->wp_query) {
@@ -146,11 +147,11 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	}
 
 	/**
-	 *@since 0.9.25
-	 *获取完整的筛选数据结构：适用于初始化筛选器
-	 *
-	 *@param bool $with_post_content 是否包含正文内容
+	 * 获取完整的筛选数据结构：适用于初始化筛选器
 	 * 		-在很多情况下 Ajax 筛选用于各类管理面板，此时仅需要获取 post 列表，无需包含正文内容，以减少网络数据发送量
+	 * @since 0.9.25
+	 *
+	 * @param bool $with_post_content 是否包含正文内容
 	 */
 	public function get_filter(bool $with_post_content = true): array{
 		return [
@@ -160,10 +161,10 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 			'posts'             => $this->get_posts($with_post_content),
 
 			/**
-			 *@since 2019.08.10
-			 *当前post type的主分类筛选项 约定：post(category) / 自定义类型 （$post_type . '_cat'）
+			 * 当前post type的主分类筛选项 约定：post(category) / 自定义类型 （$post_type . '_cat'）
 			 * - 动态插入主分类的情况，通常用在用于一些封装的用户面板：如果用户内容管理面板
 			 * - 常规筛选页面中，应通过add_taxonomy_filter方法添加
+			 * @since 2019.08.10
 			 */
 			'category_tabs'     => $this->get_category_tabs(),
 			'sub_taxonomy_tabs' => $this->get_sub_taxonomy_tabs(),
@@ -172,25 +173,25 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 			// 'post_count'        => $this->wp_query->post_count,
 
 			/**
-			 *当前post type支持的taxonomy
-			 *前端可据此修改页面行为
+			 * 当前post type支持的taxonomy
+			 * 前端可据此修改页面行为
 			 */
 			'taxonomies'        => get_object_taxonomies($this->wp_query->query_vars['post_type'], 'names'),
 
 			/**
-			 *@since 2019.08.10
-			 *当前post type的主分类taxonomy
-			 *约定：post(category) / 自定义类型 （$post_type . '_cat'）
+			 * 当前post type的主分类taxonomy
+			 * 约定：post(category) / 自定义类型 （$post_type . '_cat'）
+			 * @since 2019.08.10
 			 */
 			'category_taxonomy' => $this->category_taxonomy,
 
-			'add_query_vars'    => $this->add_query_vars,
+			'add_query_vars'    => $this->query->get_add_query_vars(),
 			'query_vars'        => $this->wp_query->query_vars,
 		];
 	}
 
 	/**
-	 *获取查询结果集：适用于已经完成初始化的筛选器，后续筛选查询（出主分类和标签筛选项外，不含其他 Tabs ）
+	 * 获取查询结果集：适用于已经完成初始化的筛选器，后续筛选查询（出主分类和标签筛选项外，不含其他 Tabs ）
 	 */
 	public function get_results(): array{
 		$structure = $this->get_filter();
