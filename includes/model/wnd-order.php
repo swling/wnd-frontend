@@ -176,4 +176,22 @@ class Wnd_Order extends Wnd_Transaction {
 
 		return $ID;
 	}
+
+	/**
+	 * 匿名支付订单查询
+	 * @since 0.9.32
+	 *
+	 * @return bool
+	 */
+	public static function has_paid(int $user_id, int $object_id): bool{
+		$args = [
+			'posts_per_page' => 1,
+			'post_type'      => 'order',
+			'post_parent'    => $object_id,
+			'author'         => $user_id,
+			'post_status'    => [static::$completed_status, static::$pending_status],
+		];
+
+		return !empty(get_posts($args));
+	}
 }

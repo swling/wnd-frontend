@@ -30,36 +30,13 @@ abstract class Wnd_Finance {
 
 		// 匿名支付订单查询
 		if (!$user_id) {
-			$cookie_name = Wnd_Order_Anonymous::get_anon_cookie_name($object_id);
-			$anon_cookie = $_COOKIE[$cookie_name] ?? '';
-			if (!$anon_cookie) {
-				return false;
-			}
-
-			$order = wnd_get_post_by_slug($anon_cookie, 'order', $order_status);
-			if (!$order) {
-				return false;
-			}
-
-			if (time() - strtotime($order->post_date_gmt) < 3600 * 24) {
-				return true;
-			} else {
-				return false;
-			}
+			return Wnd_Order_Anonymous::has_paid(0, $object_id);
 		}
 
 		$user_has_paid = static::get_user_paid_cache($user_id, $object_id);
 		if (false === $user_has_paid) {
-			$args = [
-				'posts_per_page' => 1,
-				'post_type'      => 'order',
-				'post_parent'    => $object_id,
-				'author'         => $user_id,
-				'post_status'    => $order_status,
-			];
-
 			// 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
-			$user_has_paid = empty(get_posts($args)) ? 0 : 1;
+			$user_has_paid = Wnd_Order::has_paid($user_id, $object_id) ? 1 : 0;
 			static::set_user_paid_cache($user_id, $object_id, $user_has_paid);
 		}
 
@@ -302,8 +279,8 @@ abstract class Wnd_Finance {
 	 * 写入前，按post type 和时间查询，如果存在记录则更新记录，否则写入一条记录
 	 * @since 初始化
 	 *
-	 * @param float  	$money 	变动金额
-	 * @param string $type   	数据类型：recharge/expense
+	 * @param float  $money 	变动金额
+	 * @param string $type  	数据类型：recharge/expense
 	 */
 	protected static function update_fin_stats($money, $type) {
 		switch ($type) {

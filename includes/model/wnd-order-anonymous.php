@@ -45,4 +45,29 @@ class Wnd_Order_Anonymous extends Wnd_Order {
 	public static function get_anon_cookie_name(int $object_id) {
 		return static::$anon_cookie_name_prefix . '_' . $object_id;
 	}
+
+	/**
+	 * 匿名支付订单查询
+	 * @since 0.9.32
+	 *
+	 * @return bool
+	 */
+	public static function has_paid(int $user_id, int $object_id): bool{
+		$cookie_name = static::get_anon_cookie_name($object_id);
+		$anon_cookie = $_COOKIE[$cookie_name] ?? '';
+		if (!$anon_cookie) {
+			return false;
+		}
+
+		$order = wnd_get_post_by_slug($anon_cookie, 'order', [static::$completed_status, static::$pending_status]);
+		if (!$order) {
+			return false;
+		}
+
+		if (time() - strtotime($order->post_date_gmt) < 3600 * 24) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
