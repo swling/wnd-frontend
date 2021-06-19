@@ -47,7 +47,7 @@ class Wnd_Order_Anonymous extends Wnd_Order {
 	}
 
 	/**
-	 * 匿名支付订单查询
+	 * 查询匿名订单是否已完成支付
 	 * @since 0.9.32
 	 *
 	 * @return bool

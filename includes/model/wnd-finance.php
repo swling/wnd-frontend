@@ -4,7 +4,6 @@ namespace Wnd\Model;
 use Wnd\Model\Wnd_Order;
 use Wnd\Model\Wnd_Order_Anonymous;
 use Wnd\Model\Wnd_SKU;
-use Wnd\Model\Wnd_Transaction;
 
 /**
  * 站内财务信息
@@ -25,8 +24,6 @@ abstract class Wnd_Finance {
 		if (!$object_id) {
 			return false;
 		}
-
-		$order_status = Wnd_Transaction::$completed_status;
 
 		// 匿名支付订单查询
 		if (!$user_id) {
