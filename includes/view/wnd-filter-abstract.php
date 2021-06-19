@@ -372,7 +372,7 @@ abstract class Wnd_Filter_Abstract {
 	 * 若查询的taxonomy与当前post type未关联，则不输出
 	 * @since 2019.08.09
 	 *
-	 * @param array  		$args 		WordPress get_terms() 参数
+	 * @param array  	$args  		WordPress get_terms() 参数
 	 * @param string 	$class 		额外设置的class
 	 */
 	protected function build_taxonomy_filter(array $args, bool $any = true) {
