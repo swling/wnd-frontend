@@ -268,6 +268,12 @@ apply_filters('enable_post_form_captcha', !is_user_logged_in(), $post_type, $pos
  *过滤产品 SKU 字段
 */
 apply_filters('wnd_sku_keys', $sku_keys, $post_type);
+
+/**
+ * Filter：过滤产品属性如 SKU 等
+ * @since 0.9.32
+ */
+return apply_filters('wnd_product_props', $props, $object_id);
 ```
 
 ## 菜单
