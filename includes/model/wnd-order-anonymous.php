@@ -64,6 +64,15 @@ class Wnd_Order_Anonymous extends Wnd_Order {
 			return false;
 		}
 
+		/**
+		 * 修复严重匿名支付漏洞
+		 * 必须检测订单是否与 object id 是否匹配。否则用户前端支付任意订单后，即可修改 cookie name 篡改任意 object id 的支付权限
+		 * @since 0.9.32
+		 */
+		if ($order->post_parent != $object_id) {
+			return false;
+		}
+
 		if (time() - strtotime($order->post_date_gmt) < 3600 * 24) {
 			return true;
 		} else {
