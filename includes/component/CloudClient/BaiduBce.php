@@ -10,7 +10,7 @@ use Exception;
  */
 class BaiduBce extends CloudClient {
 
-	protected $expiration = 1800;
+	private $expiration = 1800;
 
 	protected function genAuthorization(): string{
 		$this->setHeaders();

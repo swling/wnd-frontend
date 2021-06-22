@@ -18,8 +18,7 @@ class Qcloud extends CloudObjectStorage {
 		$headers['Content-MD5']   = base64_encode(md5_file($sourceFile, true));
 		$headers['Authorization'] = $this->generateAuthorization('put', 3600, $headers);
 
-		$curlHeaders = static::arrayToHeaders($headers);
-		return static::curlPut($sourceFile, $this->fileUri, $curlHeaders, $timeout);
+		return static::put($sourceFile, $this->fileUri, $headers, $timeout);
 	}
 
 	/**
@@ -29,8 +28,7 @@ class Qcloud extends CloudObjectStorage {
 	public function deleteFile(int $timeout = 30): array{
 		$headers                  = [];
 		$headers['Authorization'] = $this->generateAuthorization('delete', 3600, $headers);
-		$curlHeaders              = static::arrayToHeaders($headers);
-		return static::curlDelete($this->fileUri, $curlHeaders, $timeout);
+		return static::delete($this->fileUri, $headers, $timeout);
 	}
 
 	/**
@@ -38,19 +36,6 @@ class Qcloud extends CloudObjectStorage {
 	 */
 	public static function resizeImage(string $image_url, int $width, int $height): string {
 		return $image_url;
-	}
-
-	/**
-	 * 将数组键值对转为 curl headers 数组
-	 *
-	 */
-	private static function arrayToHeaders(array $headers): array{
-		$result = [];
-		foreach ($headers as $key => $value) {
-			$result[] = $key . ':' . $value;
-		}
-
-		return $result;
 	}
 
 	/**

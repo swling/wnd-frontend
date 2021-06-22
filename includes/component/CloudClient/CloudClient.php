@@ -1,11 +1,12 @@
 <?php
 namespace Wnd\Component\CloudClient;
 
-use Exception;
+use Wnd\Component\Requests\Requests;
 
 /**
  * 云平台产品签名助手基类
  * 默认在请求 headers 中添加 'Host' 及 'Authorization'
+ *
  * @since 0.9.30
  */
 abstract class CloudClient {
@@ -58,7 +59,8 @@ abstract class CloudClient {
 	 * 拆分为独立方法，以便某些情况子类可重写覆盖
 	 */
 	protected function excuteRequest(): array{
-		$request = \wp_remote_request(
+		$request  = new Requests;
+		$response = $request->request(
 			$this->url,
 			[
 				'method'  => $this->method,
@@ -67,11 +69,6 @@ abstract class CloudClient {
 			]
 		);
 
-		if (is_wp_error($request)) {
-			throw new Exception($request->get_error_message());
-		}
-
-		// 解析响应为数组并返回
-		return json_decode($request['body'], true);
+		return json_decode($response['body'], true);
 	}
 }

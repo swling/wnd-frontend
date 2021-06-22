@@ -1,9 +1,9 @@
 <?php
 namespace Wnd\Component\Payment\Alipay;
 
-use Exception;
 use Wnd\Component\Payment\Alipay\AlipayService;
 use Wnd\Component\Payment\RefunderBuilder;
+use Wnd\Component\Requests\Requests;
 
 /**
  * 支付宝退款
@@ -75,25 +75,19 @@ class Refunder implements RefunderBuilder {
 		$alipayService  = new AlipayService($this->alipayConfig);
 		$common_configs = $alipayService->generateRefundParams($this->method, $biz_content);
 
-		/**
-		 * 采用WordPress内置函数发送Post请求
-		 */
-		$response = wp_remote_post($this->gateway_url,
+		// 发起请求
+		$request  = new Requests;
+		$response = $request->request($this->gateway_url,
 			[
-				'timeout'     => 60,
-				'redirection' => 5,
-				'httpversion' => '2.0',
-				'body'        => $common_configs,
+				'method'  => 'POST',
+				'timeout' => 60,
 
-				// 必须设置此项，否则无法解析支付宝的响应json
-				'headers'     => ['Content-type' => "application/x-www-form-urlencoded; charset=$this->charset"],
+				// 支付宝的请求中 header 及 body 必须按此设置
+				'body'    => http_build_query($common_configs),
+				'headers' => ['Content-type' => "application/x-www-form-urlencoded; charset=$this->charset"],
 			]
 		);
 
-		if (is_wp_error($response)) {
-			throw new Exception($response->get_error_message());
-		} else {
-			return json_decode($response['body'], true);
-		}
+		return json_decode($response['body'], true);
 	}
 }

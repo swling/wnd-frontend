@@ -2,6 +2,7 @@
 namespace Wnd\Component\Payment\Alipay;
 
 use Exception;
+use Wnd\Component\Requests\Requests;
 
 /**
  * @link https://opendocs.alipay.com/apis/api_1/alipay.trade.precreate
@@ -17,27 +18,21 @@ class PayQRCode extends PayBuilder {
 	 * @return array
 	 */
 	public function buildInterface(): string{
-		/**
-		 * 采用WordPress内置函数发送Post请求
-		 */
-		$response = wp_remote_post($this->gateway_url,
+		$request  = new Requests;
+		$response = $request->request($this->gateway_url,
 			[
-				'timeout'     => 60,
-				'redirection' => 5,
-				'body'        => $this->params,
+				'method'  => 'POST',
+				'timeout' => 60,
 
-				// 必须设置此项，否则无法解析支付宝的响应json
-				'headers'     => ['Content-type' => "application/x-www-form-urlencoded; charset=$this->charset"],
+				// 支付宝的请求中 header 及 body 必须按此设置
+				'body'    => http_build_query($this->params),
+				'headers' => ['Content-type' => "application/x-www-form-urlencoded; charset=$this->charset"],
 			]
 		);
 
 		/**
 		 * 返回请求结果
 		 */
-		if (is_wp_error($response)) {
-			throw new Exception($response->get_error_message());
-		}
-
 		$result = json_decode($response['body'], true);
 		$result = $result['alipay_trade_precreate_response'];
 
@@ -45,11 +40,36 @@ class PayQRCode extends PayBuilder {
 			throw new Exception($result['code'] . ' - ' . $result['msg'] . ' - ' . $result['sub_msg']);
 		}
 
-		if (wp_is_mobile()) {
+		if (static::is_mobile()) {
 			$alipay_app_link = 'alipayqr://platformapi/startapp?saId=10000007&qrcode=' . urldecode($result['qr_code']);
 			return '<script>window.location.href="' . $alipay_app_link . '"</script><a href="' . $alipay_app_link . '" class="button">打开支付宝支付</a>';
 		} else {
 			return '<img src="' . wnd_generate_qrcode($result['qr_code']) . '" width="250" height="250"><h3>支付宝扫码支付</h3>';
 		}
+	}
+
+	/**
+	 * Test if the current browser runs on a mobile device (smart phone, tablet, etc.)
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return bool
+	 */
+	private static function is_mobile(): bool {
+		if (empty($_SERVER['HTTP_USER_AGENT'])) {
+			$is_mobile = false;
+		} elseif (strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false// Many mobile devices (all iPhone, iPad, etc.)
+			 || strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false
+			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Silk/') !== false
+			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Kindle') !== false
+			|| strpos($_SERVER['HTTP_USER_AGENT'], 'BlackBerry') !== false
+			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mini') !== false
+			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mobi') !== false) {
+			$is_mobile = true;
+		} else {
+			$is_mobile = false;
+		}
+
+		return $is_mobile;
 	}
 }

@@ -27,7 +27,7 @@ class Aliyun extends CloudObjectStorage {
 			'Authorization:' . $this->generateAuthorization('PUT', $mime_type, $md5),
 		];
 
-		return static::curlPut($sourceFile, $this->fileUri, $headers, $timeout);
+		return static::put($sourceFile, $this->fileUri, $headers, $timeout);
 	}
 
 	/**
@@ -41,7 +41,7 @@ class Aliyun extends CloudObjectStorage {
 			'Authorization:' . $this->generateAuthorization('DELETE'),
 		];
 
-		return static::curlDelete($this->fileUri, $headers, $timeout);
+		return static::delete($this->fileUri, $headers, $timeout);
 	}
 
 	/**

@@ -2,6 +2,7 @@
 namespace Wnd\Component\CloudObjectStorage;
 
 use Exception;
+use Wnd\Component\Requests\Requests;
 
 /**
  * 对象存储抽象基类
@@ -51,57 +52,28 @@ abstract class CloudObjectStorage {
 	/**
 	 * Curl PUT
 	 */
-	protected static function curlPut(string $sourceFile, string $targetUri, array $headers, int $timeout): array{
-		$file = fopen($sourceFile, 'rb');
-		$ch   = curl_init(); //初始化curl
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //返回字符串,而不直接输出
-		curl_setopt($ch, CURLOPT_URL, $targetUri); //设置put到的url
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-		// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); //不验证对等证书
-		// curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); //不检查服务器SSL证书
-
-		curl_setopt($ch, CURLOPT_PUT, true); //设置为PUT请求
-		curl_setopt($ch, CURLOPT_INFILE, $file); //设置资源句柄
-		curl_setopt($ch, CURLOPT_INFILESIZE, filesize($sourceFile));
-
-		// curl_setopt($ch, CURLOPT_HEADER, true); // 开启header信息以供调试
-		// curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-
-		curl_exec($ch);
-		$response = curl_getinfo($ch);
-
-		fclose($file);
-		curl_close($ch);
-
-		if (200 != $response['http_code']) {
-			throw new Exception(json_encode($response));
-		}
-		return $response;
+	protected static function put(string $sourceFile, string $targetUri, array $headers, int $timeout): array{
+		$request  = new Requests;
+		$response = $request->request($targetUri, ['method' => 'PUT', 'headers' => $headers, 'timeout' => $timeout, 'filename' => $sourceFile]);
+		return static::handle_response($response);
 	}
 
 	/**
 	 * Curl Delete
 	 */
-	protected static function curlDelete(string $targetUri, array $headers, int $timeout): array{
-		$ch = curl_init(); //初始化curl
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //返回字符串,而不直接输出
-		curl_setopt($ch, CURLOPT_URL, $targetUri); //设置delete url
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-		// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); //不验证对等证书
-		// curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); //不检查服务器SSL证书
+	protected static function delete(string $targetUri, array $headers, int $timeout): array{
+		$request  = new Requests;
+		$response = $request->request($targetUri, ['method' => 'DELETE', 'headers' => $headers, 'timeout' => $timeout]);
+		return static::handle_response($response);
+	}
 
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-		// curl_setopt($ch, CURLOPT_HEADER, true); // 开启header信息以供调试
-		// curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-
-		curl_exec($ch);
-		$response = curl_getinfo($ch);
-		curl_close($ch);
-
-		if (204 != $response['http_code']) {
-			throw new Exception($response['http_code']);
+	/**
+	 * handle_response
+	 * @since 0.9.32
+	 */
+	protected static function handle_response(array $response): array{
+		if (200 != $response['headers']['http_code'] and 204 != $response['headers']['http_code']) {
+			throw new Exception(json_encode($response));
 		}
 
 		return $response;
