@@ -21,10 +21,10 @@ class Aliyun extends CloudObjectStorage {
 		$mime_type = mime_content_type($sourceFile);
 		$md5       = base64_encode(md5_file($sourceFile, true));
 		$headers   = [
-			'X-OSS-Date:' . static::getDate(),
-			'Content-Type:' . $mime_type,
-			'Content-MD5:' . $md5,
-			'Authorization:' . $this->generateAuthorization('PUT', $mime_type, $md5),
+			'X-OSS-Date'    => static::getDate(),
+			'Content-Type'  => $mime_type,
+			'Content-MD5'   => $md5,
+			'Authorization' => $this->generateAuthorization('PUT', $mime_type, $md5),
 		];
 
 		return static::put($sourceFile, $this->fileUri, $headers, $timeout);
@@ -37,8 +37,8 @@ class Aliyun extends CloudObjectStorage {
 	public function deleteFile(int $timeout = 30): array{
 		//设置头部
 		$headers = [
-			'X-OSS-Date:' . static::getDate(),
-			'Authorization:' . $this->generateAuthorization('DELETE'),
+			'X-OSS-Date'    => static::getDate(),
+			'Authorization' => $this->generateAuthorization('DELETE'),
 		];
 
 		return static::delete($this->fileUri, $headers, $timeout);
