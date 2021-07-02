@@ -145,7 +145,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         pagebreak_separator: '<!--more-->',
                         pagebreak_split_block: true,
 
-
+                        // 定义插件及菜单按钮
                         plugins: 'advlist autolink autoresize autosave code codesample fullscreen image link lists pagebreak wordcount wndimage wndinit',
                         toolbar: 'formatselect | alignleft aligncenter alignright bullist numlist | ' +
                             'blockquote wndimage link codesample  pagebreak wndpaidcontent | removeformat code fullscreen',
