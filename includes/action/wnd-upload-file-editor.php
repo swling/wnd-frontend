@@ -4,22 +4,22 @@ namespace Wnd\Action;
 use Exception;
 
 /**
- *@since 0.9.25
- *响应前端富文本编辑器文件上传
+ * 响应前端富文本编辑器文件上传
+ * 响应数据格式应该根据具体采用的编辑器确定，本插件目前采用国产开源编辑器 wangEditor
+ * 	[
+ * 		'errno' => 0,
+ * 		'data' => [
+ * 			['url' => $url, 'alt' => '', 'href' => ''],
+ * 		]
+ * 	],
+ * @link https://doc.wangeditor.com
+ * @since 0.9.25
  *
- *响应数据格式应该根据具体采用的编辑器确定，本插件目前采用国产开源编辑器 wangEditor
- *@link https://doc.wangeditor.com
- *@return $return_array array 数组
- *	[
- *		'errno' => 0,
- *		'data' => [
- *			['url' => $url, 'alt' => '', 'href' => ''],
- *		]
- *	],
+ * @return $return_array array 数组
  */
 class Wnd_Upload_File_Editor extends Wnd_Action {
 	/**
-	 *本操作非标准表单请求，无需验证签名
+	 * 本操作非标准表单请求，无需验证签名
 	 */
 	protected $verify_sign = false;
 
@@ -37,12 +37,12 @@ class Wnd_Upload_File_Editor extends Wnd_Action {
 		}
 
 		/**
-		 *@since 2019.05.06 改写
-		 *遍历文件上传
+		 * 遍历文件上传
+		 * @since 2019.05.06 改写
 		 */
 		$return_array = [
-			'errno' => 0,
-			'data'  => [],
+			'status' => 1,
+			'data'   => [],
 		];
 		$files = $_FILES['wnd_file']; //暂存原始上传信息，后续将重写$_FILES全局变量以适配WordPress上传方式
 
@@ -91,6 +91,7 @@ class Wnd_Upload_File_Editor extends Wnd_Action {
 			// 写入响应数组
 			$return_array['data'][] = [
 				'url' => $url,
+				'id'  => $file_id,
 			];
 		}
 		unset($key, $value);
@@ -100,7 +101,7 @@ class Wnd_Upload_File_Editor extends Wnd_Action {
 	}
 
 	/**
-	 *权限检测
+	 * 权限检测
 	 */
 	protected function check() {
 		// 继承父类权限
@@ -119,8 +120,8 @@ class Wnd_Upload_File_Editor extends Wnd_Action {
 		}
 
 		/**
-		 *@since 2019.05.08 上传文件meta_key post_parent校验
-		 *meta_key 及 post_parent同时为空时，上传文件将成为孤立的的文件，在前端上传附件应该具有明确的用途，应避免这种情况
+		 * meta_key 及 post_parent同时为空时，上传文件将成为孤立的的文件，在前端上传附件应该具有明确的用途，应避免这种情况
+		 * @since 2019.05.08 上传文件meta_key post_parent校验
 		 */
 		if (!$post_parent) {
 			throw new Exception(__('Meta_key与Post_parent不可同时为空', 'wnd'));

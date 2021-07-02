@@ -7,12 +7,11 @@ use Wnd\Utility\Wnd_Request;
 use Wnd\View\Wnd_Gallery;
 
 /**
- *适配本插件的ajax表单类
- *@since 2019.03.08
- *常规情况下，未选中的checkbox 和radio等字段不会出现在提交的表单数据中
- *在本环境中，为实现字段name nonce校验，未选中的字段也会发送一个空值到后台（通过 hidden字段实现），在相关数据处理上需要注意
- *为保障表单不被前端篡改，会提取所有字段的name值，结合算法生成校验码，后端通过同样的方式提取$_POST数据，并做校验
- *
+ * 适配本插件的ajax表单类
+ * 常规情况下，未选中的checkbox 和radio等字段不会出现在提交的表单数据中
+ * 在本环境中，为实现字段name nonce校验，未选中的字段也会发送一个空值到后台（通过 hidden字段实现），在相关数据处理上需要注意
+ * 为保障表单不被前端篡改，会提取所有字段的name值，结合算法生成校验码，后端通过同样的方式提取$_POST数据，并做校验
+ * @since 2019.03.08
  */
 class Wnd_Form_WP extends Wnd_Form {
 
@@ -31,8 +30,8 @@ class Wnd_Form_WP extends Wnd_Form {
 	protected $captcha_service;
 
 	/**
-	 *@since 09.25
-	 *是否已执行被插件特定构造
+	 * 是否已执行被插件特定构造
+	 * @since 09.25
 	 */
 	protected $constructed = false;
 
@@ -41,20 +40,20 @@ class Wnd_Form_WP extends Wnd_Form {
 	public static $second_color;
 
 	/**
-	 *@since 2019.07.17
+	 * @since 2019.07.17
 	 *
-	 *@param bool $is_ajax_submit 	是否ajax提交
-	 *@param bool $enable_captcha 	提交时是否进行人机校验
-	 *@param bool $is_horizontal 	水平表单
+	 * @param bool $is_ajax_submit 	是否ajax提交
+	 * @param bool $enable_captcha 	提交时是否进行人机校验
+	 * @param bool $is_horizontal  	水平表单
 	 */
 	public function __construct(bool $is_ajax_submit = true, bool $enable_captcha = false, $is_horizontal = false) {
 		// 继承基础变量
 		parent::__construct($is_horizontal);
 
 		/**
-		 *基础属性
+		 * 基础属性
 		 *
-		 *- 人机校验：若当前未配置人机校验服务，则忽略传参，统一取消表单相关属性
+		 * - 人机校验：若当前未配置人机校验服务，则忽略传参，统一取消表单相关属性
 		 */
 		$this->user            = wp_get_current_user();
 		$this->captcha_service = wnd_get_config('captcha_service');
@@ -64,7 +63,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->enable_captcha  = $this->captcha_service ? $enable_captcha : false;
 
 		/**
-		 *@since 2019.07.17 ajax表单
+		 * @since 2019.07.17 ajax表单
 		 */
 		if ($this->is_ajax_submit) {
 			$this->add_form_attr('onsubmit', 'return false');
@@ -72,18 +71,18 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *设置表单字段数据 filter
+	 * 设置表单字段数据 filter
 	 */
 	public function set_filter(string $filter) {
 		$this->filter = $filter;
 	}
 
 	/**
-	 *@since 0.9.19
-	 *设置表单提交至 Rest API
+	 * 设置表单提交至 Rest API
+	 * @since 0.9.19
 	 *
-	 *@param $route 	string 		Rest API 路由
-	 *@param $endpoint 	string 		Rest API 路由对应的后端处理本次提交的类名
+	 * @param $route    	string 		Rest API 路由
+	 * @param $endpoint 	string 		Rest API 路由对应的后端处理本次提交的类名
 	 */
 	public function set_route(string $route, string $endpoint) {
 		$this->add_form_attr('route', $route);
@@ -98,7 +97,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *@since 2019.05.26 表单按钮默认配色
+	 * @since 2019.05.26 表单按钮默认配色
 	 */
 	public function set_submit_button(string $text, string $class = '', bool $disabled = false) {
 		$class = $class ?: 'is-' . static::$primary_color;
@@ -108,20 +107,19 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *@since 2019.05.10
-	 *直接新增表单names数组元素
-	 *用于nonce校验，如直接通过html方式新增的表单字段，无法被提取，需要通过这种方式新增name，以通过nonce校验
-	 **/
+	 * 直接新增表单names数组元素
+	 * 用于nonce校验，如直接通过html方式新增的表单字段，无法被提取，需要通过这种方式新增name，以通过nonce校验
+	 * @since 2019.05.10
+	 */
 	public function add_input_name(string $name) {
 		$this->form_names[] = $name;
 	}
 
 	/**
-	 *@since 2019.05.09
-	 *未被选中的radio 与checkbox将不会发送到后端，会导致wnd_form_nonce 校验失败，此处通过设置hidden字段修改
-	 *
-	 *@since 0.8.76 GET 表单不设置。
+	 * 未被选中的radio 与checkbox将不会发送到后端，会导致wnd_form_nonce 校验失败，此处通过设置hidden字段修改
 	 * - 注意：需要此设置生效，则必须在新增字段之前配置 set_action($action, 'GET')，以修改 $this->method 值
+	 * @since 2019.05.09
+	 * @since 0.8.76 GET 表单不设置。
 	 */
 	public function add_radio(array $args) {
 		if ('GET' != $this->method) {
@@ -140,27 +138,26 @@ class Wnd_Form_WP extends Wnd_Form {
 	// 富文本编辑器可能需要上传文件操作新增 nonce
 	public function add_editor(array $args) {
 		$this->add_form_attr('data-editor', '1');
-		$args['type']        = 'editor';
-		$args['_ajax_nonce'] = wp_create_nonce('wnd_upload_file_editor');
+		$args['type']         = 'editor';
+		$args['upload_nonce'] = wp_create_nonce('wnd_upload_file_editor');
+		$args['upload_url']   = wnd_get_route_url('action', 'wnd_upload_file_editor');
 		parent::add_field($args);
 	}
 
 	/**
-	 *构建验证码字段
-	 *@param string 	$device_type  					email / phone
-	 *@param string 	$type 		  					register / reset_password / bind / verify
-	 *@param string 	$template 						短信模板
-	 *@param bool 		$enable_verification_captcha 	获取验证码时是否进行人机校验
-	 *
-	 *注册时若当前手机已注册，则无法发送验证码
-	 *找回密码时若当前手机未注册，则无法发送验证码
-	 **/
+	 * 构建验证码字段
+	 * 注册时若当前手机已注册，则无法发送验证码
+	 * 找回密码时若当前手机未注册，则无法发送验证码
+	 * @param string 	$device_type                  					email / phone
+	 * @param string 	$type                         					register / reset_password / bind / verify
+	 * @param string 	$template                     						短信模板
+	 * @param bool   		$enable_verification_captcha 	获取验证码时是否进行人机校验
+	 */
 	protected function add_verification_field(string $device_type, string $type, string $template = '', bool $enable_verification_captcha = true) {
 		/**
-		 * @since 0.9.11
-		 *
 		 * - 人机校验：若当前未配置人机校验服务，则忽略传参，统一取消人机验证
 		 * - 同一表单，若设置了验证码（调用本方法），且开启了验证码人机验证，则提交时无效再次进行人机验证
+		 * @since 0.9.11
 		 */
 		$this->enable_verification_captcha = $this->captcha_service ? $enable_verification_captcha : false;
 		$this->enable_captcha              = $this->enable_verification_captcha ? false : $this->enable_captcha;
@@ -253,25 +250,25 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *短信校验
-	 *@param string 	$type 		  					register / reset_password / bind / verify
-	 *@param string 	$template 						短信模板
-	 *@param bool 		$enable_verification_captcha 	获取验证码时是否进行人机校验
-	 *注册时若当前手机已注册，则无法发送验证码
-	 *找回密码时若当前手机未注册，则无法发送验证码
-	 **/
+	 * 短信校验
+	 * 注册时若当前手机已注册，则无法发送验证码
+	 * 找回密码时若当前手机未注册，则无法发送验证码
+	 * @param string 	$type                         					register / reset_password / bind / verify
+	 * @param string 	$template                     						短信模板
+	 * @param bool   		$enable_verification_captcha 	获取验证码时是否进行人机校验
+	 */
 	public function add_phone_verification(string $type = 'verify', string $template = '', bool $enable_verification_captcha = true) {
 		$this->add_verification_field('phone', $type, $template, $enable_verification_captcha);
 	}
 
 	/**
-	 *邮箱校验
-	 *@param string 	$type 		  					register / reset_password / bind / verify
-	 *@param string 	$template 						邮件模板
-	 *@param bool 		$enable_verification_captcha 	获取验证码时是否进行人机校验
-	 *注册时若当前邮箱已注册，则无法发送验证码
-	 *找回密码时若当前邮箱未注册，则无法发送验证码
-	 **/
+	 * 邮箱校验
+	 * 注册时若当前邮箱已注册，则无法发送验证码
+	 * 找回密码时若当前邮箱未注册，则无法发送验证码
+	 * @param string 	$type                         					register / reset_password / bind / verify
+	 * @param string 	$template                     						邮件模板
+	 * @param bool   		$enable_verification_captcha 	获取验证码时是否进行人机校验
+	 */
 	public function add_email_verification(string $type = 'verify', string $template = '', bool $enable_verification_captcha = true) {
 		$this->add_verification_field('email', $type, $template, $enable_verification_captcha);
 	}
@@ -301,13 +298,12 @@ class Wnd_Form_WP extends Wnd_Form {
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
 		/**
-		 *@since 2019.12.13
-		 *
-		 *将$args['data']数组拓展为变量
-		 *$post_parent
-		 *$user_id
-		 *$meta_key
-		 *……
+		 * 将$args['data']数组拓展为变量
+		 * $post_parent
+		 * $user_id
+		 * $meta_key
+		 * ……
+		 * @since 2019.12.13
 		 */
 		extract($args['data']);
 
@@ -349,14 +345,12 @@ class Wnd_Form_WP extends Wnd_Form {
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
 		/**
-		 *@since 2019.12.13
-		 *
-		 *将$args['data']数组拓展为变量
-		 *
-		 *$post_parent
-		 *$user_id
-		 *$meta_key
-		 *……
+		 * 将$args['data']数组拓展为变量
+		 * $post_parent
+		 * $user_id
+		 * $meta_key
+		 * ……
+		 * @since 2019.12.13
 		 */
 		extract($args['data']);
 
@@ -378,15 +372,14 @@ class Wnd_Form_WP extends Wnd_Form {
 
 	/**
 	 *
-	 *相册上传
-	 *如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
-	 *meta_key: 	gallery
+	 * 相册上传
+	 * 如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
+	 * meta_key: 	gallery
 	 */
 	public function add_gallery_upload(array $args) {
 		/**
-		 *@since 0.9.0
-		 *
-		 *相册字段为纯 HTML 构建，需要新增对应 input_name 以完成表单签名
+		 * 相册字段为纯 HTML 构建，需要新增对应 input_name 以完成表单签名
+		 * @since 0.9.0
 		 */
 		$input_name = 'wnd_file';
 		$this->add_input_name($input_name);
@@ -422,15 +415,15 @@ class Wnd_Form_WP extends Wnd_Form {
 		$this->wnd_structure();
 
 		/**
-		 *构建表单
+		 * 构建表单
 		 */
 		return parent::build();
 	}
 
 	/**
-	 *@since 0.9.25
-	 *构建本插件特定的数据结构
+	 * 构建本插件特定的数据结构
 	 * - 本方法只应执行一次
+	 * @since 0.9.25
 	 */
 	protected function wnd_structure() {
 		if ($this->constructed) {
@@ -440,15 +433,16 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 
 		/**
-		 *设置表单过滤filter
-		 **/
+		 * 设置表单过滤filter
+		 *
+		 */
 		if ($this->filter) {
 			$this->input_values = apply_filters($this->filter, $this->input_values);
 		}
 
 		/**
-		 *@since 0.8.64
-		 *开启验证码字段
+		 * 开启验证码字段
+		 * @since 0.8.64
 		 */
 		if ($this->enable_captcha) {
 			$this->add_hidden(Wnd_Captcha::$captcha_name, '');
@@ -456,14 +450,14 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 
 		/**
-		 *@since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
+		 * @since 2019.05.09 设置表单fields校验，需要在$this->input_values filter 后执行
 		 */
 		$this->build_sign_field();
 	}
 
 	/**
-	 *@since 2019.05.09
-	 *根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
+	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
+	 * @since 2019.05.09
 	 */
 	protected function build_sign_field() {
 		// 提取表单字段names
@@ -486,9 +480,8 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *@since 2020.04.13
-	 *
-	 *根据meta key获取附件ID
+	 * 根据meta key获取附件ID
+	 * @since 2020.04.13
 	 */
 	protected static function get_attachment_id(string $meta_key, int $post_parent, int $user_id): int {
 		// option
@@ -506,10 +499,9 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *@since 2020.04.13
-	 *
-	 *获取附件URL
-	 *如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta_key or option
+	 * 获取附件URL
+	 * 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta_key or option
+	 * @since 2020.04.13
 	 */
 	protected static function get_attachment_url(int $attachment_id, string $meta_key, int $post_parent, int $user_id): string{
 		$attachment_url = $attachment_id ? wp_get_attachment_url($attachment_id) : false;
@@ -528,8 +520,8 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	/**
-	 *表单脚本：将在表单结束成后加载
-	 *@since 0.8.64
+	 * 表单脚本：将在表单结束成后加载
+	 * @since 0.8.64
 	 */
 	protected function render_script(): string {
 		if ($this->enable_verification_captcha or $this->enable_captcha) {
@@ -569,8 +561,8 @@ if (sub_btn) {
 	}
 
 	/**
-	 *获取表单构造数组数据，可用于前端 JS 渲染
-	 *@since 0.9.25
+	 * 获取表单构造数组数据，可用于前端 JS 渲染
+	 * @since 0.9.25
 	 */
 	public function get_structure(): array{
 		// 本插件特定的数据结构

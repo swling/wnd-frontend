@@ -101,20 +101,11 @@ function _wnd_render_form(container, form_json, add_class = '') {
 
                 return _field;
             },
-            // 富文本编辑器 @link https://doc.wangeditor.com/
+            // 富文本编辑器 @link https://tiny.cloud
             build_editor: function() {
-                // 额外的 CSS
-                let style = document.createElement('style');
-                style.innerHTML = `
-img[data-wp-more] {
-    border: 0; box-shadow: none; width: 96%; height: 16px; display: block; margin: 15px auto 0; outline: 0; cursor: default;
-	background: transparent url( ${static_path}/images/more.png ) repeat-y scroll center center;
-}`;
-                document.head.appendChild(style);
-
                 let _this = this;
-                if ('undefined' == typeof wangEditor) {
-                    let url = static_path + 'editor/wangEditor.min.js?ver=' + wnd.ver;
+                if ('undefined' == typeof tinymce) {
+                    let url = static_path + 'editor/tinymce/tinymce.min.js?ver=' + wnd.ver;
                     wnd_load_script(url, function() {
                         build_editors();
                     });
@@ -124,123 +115,62 @@ img[data-wp-more] {
 
                 function build_editors() {
                     _this.index.editor.forEach(index => {
-                        build(index);
+                        build_tinymce(index);
                     });
                 }
 
-                function build(index) {
-                    /**
-                     *@since 0.9.26
-                     *自定义拓展编辑器菜单 
-                     */
-                    const E = window.wangEditor;
-
-                    // 获取必要的变量，这些在下文中都会用到
-                    const {
-                        $,
-                        BtnMenu,
-                    } = E;
-                    // 菜单 class ，Button 菜单继承 BtnMenu class
-                    class moreMenu extends BtnMenu {
-                        constructor(editor) {
-                            // data-title属性表示当鼠标悬停在该按钮上时提示该按钮的功能简述
-                            const $elem = E.$(`<div class="w-e-menu" data-title="切割免费内容与付费内容"><i class="fas fa-yen-sign"></i></div>`);
-                            super($elem, editor);
-                        }
-                        // 菜单点击事件
-                        clickHandler() {
-                            // 可参考【常用 API】文档，来操作编辑器
-                            let img = `<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-wp-more="more" class="wp-more-tag" title="'Read more..." />`;
-                            editor.cmd.do('insertHTML', img);
-                        }
-                        // 菜单是否被激活（如果不需要，这个函数可以空着）
-                        tryChangeActive() {}
-                    }
-                    // 注册菜单
-                    E.registerMenu('moreMenuKey', moreMenu);
-
+                function build_tinymce(index) {
                     let field = _this.form.fields[index];
+                    let post_id = _this.form.attrs['data-post-id'] || 0;
                     let selector = `#${_this.form.attrs.id}-${index}`;
-                    const editor = new wangEditor(`${selector}-toolbar`, `${selector}-text`);
-                    // Rest Nonce
-                    editor.config.uploadImgHeaders = {
-                        'X-WP-Nonce': wnd.rest_nonce,
-                    }
+                    tinymce.init({
+                        // 基础配置
+                        branding: false,
+                        selector: selector,
+                        menubar: false,
+                        language: 'zh_CN',
+                        cache_suffix: '?ver=' + wnd.ver,
 
-                    // 配置图片上传
-                    editor.config.uploadImgServer = wnd_action_api + '/wnd_upload_file_editor';
-                    editor.config.uploadFileName = 'wnd_file[]';
-                    editor.config.uploadImgParams = {
-                        type: 'wangeditor',
-                        post_parent: _this.form.attrs['data-post-id'] || 0,
-                        _ajax_nonce: field._ajax_nonce
-                    }
-                    editor.config.showLinkImg = false;
+                        // 自动保存
+                        autosave_restore_when_empty: true,
+                        autosave_prefix: 'tinymce-autosave-' + post_id,
+                        autosave_ask_before_unload: false,
 
-                    // 配置 onchange 回调函数，将数据同步到 vue 中
-                    editor.config.onchange = (newHtml) => {
-                        field.value = parse_more_img(newHtml);
-                        // 移除父容器高度，适应编辑器内容撑开高度
-                        parent.style.removeProperty('height');
-                    }
+                        // 设置文件 URL 为绝对路径
+                        relative_urls: false,
+                        remove_script_host: false,
 
-                    // 精简菜单按钮
-                    editor.config.excludeMenus = [
-                        'fontSize',
-                        'fontName',
-                        'indent',
-                        'todo',
-                        'lineHeight',
-                        'emoticon',
-                        'video'
-                    ]
+                        // 将分页符设置为 WP More
+                        pagebreak_separator: '<!--more-->',
+                        pagebreak_split_block: true,
 
-                    // 其他
-                    editor.config.zIndex = 9;
-                    editor.config.menuTooltipPosition = 'down';
 
-                    // 创建编辑器
-                    editor.create()
+                        plugins: 'advlist autolink autoresize autosave code codesample fullscreen image link lists pagebreak wordcount wndimage wndinit',
+                        toolbar: 'formatselect | alignleft aligncenter alignright bullist numlist | ' +
+                            'blockquote wndimage link codesample  pagebreak wndpaidcontent | removeformat code fullscreen',
 
-                    // 内容初始化
-                    editor.txt.html(parse_more_tag(field.value));
-
-                    // 编辑器是动态按需加载，需要额外再设置一次高度适应
-                    _this.$nextTick(function() {
-                        funTransitionHeight(parent, trs_time);
+                        // 自定义配置
+                        wnd_config: {
+                            'rest_nonce': wnd.rest_nonce,
+                            'upload_nonce': field.upload_nonce,
+                            'upload_url': field.upload_url,
+                            'post_parent': post_id,
+                        },
+                        setup: function(editor) {
+                            texarea = document.querySelector(selector);
+                            texarea.style.removeProperty('display');
+                            editor.on('change', function() {
+                                field.value = tinymce.get(`${_this.form.attrs.id}-${index}`).getContent();
+                                parent.style.removeProperty('height');
+                            });
+                        },
+                        init_instance_callback: function(editor) {
+                            // 编辑器是动态按需加载，需要额外再设置一次高度适应
+                            _this.$nextTick(function() {
+                                funTransitionHeight(parent, trs_time);
+                            });
+                        },
                     });
-                }
-
-                // 将 more 标签转为 img 标签
-                function parse_more_tag(content) {
-                    if (content.indexOf('<!--more') !== -1) {
-                        let title = 'Read more...';
-                        content = content.replace(/<!--more(.*?)-->/g, function(match, moretext) {
-                            return '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-wp-more="more" data-wp-more-text="' + moretext + '" ' +
-                                'class="wp-more-tag mce-wp-more" alt="" title="' + title + '" />';
-                        });
-                    }
-
-                    return content;
-                }
-
-                // 将 more img 标签转为 more 标签
-                function parse_more_img(content) {
-                    let more_tag = '<!--more-->';
-                    content = content.replace(/<img[^>]+>/g, function(image) {
-                        let match, string = '';
-                        if (image.indexOf('data-wp-more="more"') !== -1) {
-                            if (match = image.match(/data-wp-more-text="([^"]+)"/)) {
-                                moretext = match[1];
-                            }
-
-                            string = more_tag;
-                        }
-
-                        return string || image;
-                    });
-                    // 回车后插入 more 编辑器会添加<p></p>
-                    return content.replace(`<p>${more_tag}</p>`, more_tag);
                 }
             },
 
@@ -268,8 +198,8 @@ img[data-wp-more] {
                 // Ajax 联动下拉
                 // let _this = this;
                 wnd_get_json('wnd_sub_term_options', {
-                    "parent": current,
-                    "taxonomy": select.data.taxonomy,
+                    'parent': current,
+                    'taxonomy': select.data.taxonomy,
                 }, function(res) {
                     let nextSelect = res.data;
                     // 写入或删除 select
@@ -801,10 +731,8 @@ ${build_label(field)}
     function build_editor(field, index) {
         return `
 <div :class="get_field_class(${field})">
-<div :id="form.attrs.id + '-${index}-toolbar'" class="editor-toolbar"></div>
-<div :id="form.attrs.id + '-${index}-text'" class="editor-text"></div>
 ${build_label(field)}
-<textarea style="display:none" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
+<textarea :id="form.attrs.id + '-${index}'" style="display:none;border:#f1e2c3 1px solid;" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
     };
