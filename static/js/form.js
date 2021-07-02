@@ -123,13 +123,15 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     let field = _this.form.fields[index];
                     let post_id = _this.form.attrs['data-post-id'] || 0;
                     let selector = `#${_this.form.attrs.id}-${index}`;
+                    // jsdeliver CDN 无效添加 suffix
+                    let cache_suffix = static_path.includes('//cdn.jsdelivr.net/gh') ? '' : '?ver=' + wnd.ver;
                     tinymce.init({
                         // 基础配置
                         branding: false,
                         selector: selector,
                         menubar: false,
                         language: 'zh_CN',
-                        cache_suffix: '?ver=' + wnd.ver,
+                        cache_suffix: cache_suffix,
 
                         // 自动保存
                         autosave_restore_when_empty: true,
