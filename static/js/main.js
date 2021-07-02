@@ -13,6 +13,9 @@ var wnd_endpoint_api = wnd.rest_url + wnd.endpoint_api;
 var this_src = document.currentScript.src;
 var static_path = this_src.substring(0, this_src.lastIndexOf('/js/') + 1);
 
+// jsdeliver CDN 无效添加 suffix
+let cache_suffix = static_path.includes('//cdn.jsdelivr.net/gh') ? '' : '?ver=' + wnd.ver;
+
 // 其他
 var trs_time = 160;
 
@@ -185,7 +188,7 @@ function object_to_formdata(data) {
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_form(container, form_json, add_class) {
     if ('function' != typeof _wnd_render_form) {
-        let url = static_path + 'js/form.min.js?ver=' + wnd.ver;
+        let url = static_path + 'js/form.min.js' + cache_suffix;
         wnd_load_script(url, function() {
             _wnd_render_form(container, form_json, add_class)
         });
@@ -197,7 +200,7 @@ function wnd_render_form(container, form_json, add_class) {
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_filter(container, filter_json, add_class) {
     if ('function' != typeof _wnd_render_filter) {
-        let url = static_path + 'js/filter.min.js?ver=' + wnd.ver;
+        let url = static_path + 'js/filter.min.js' + cache_suffix;
         wnd_load_script(url, function() {
             _wnd_render_filter(container, filter_json, add_class);
         });

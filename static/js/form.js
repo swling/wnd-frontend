@@ -105,7 +105,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
             build_editor: function() {
                 let _this = this;
                 if ('undefined' == typeof tinymce) {
-                    let url = static_path + 'editor/tinymce/tinymce.min.js?ver=' + wnd.ver;
+                    let url = static_path + 'editor/tinymce/tinymce.min.js' + cache_suffix;
                     wnd_load_script(url, function() {
                         build_editors();
                     });
@@ -124,7 +124,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     let post_id = _this.form.attrs['data-post-id'] || 0;
                     let selector = `#${_this.form.attrs.id}-${index}`;
                     // jsdeliver CDN 无效添加 suffix
-                    let cache_suffix = static_path.includes('//cdn.jsdelivr.net/gh') ? '' : '?ver=' + wnd.ver;
                     tinymce.init({
                         // 基础配置
                         branding: false,
