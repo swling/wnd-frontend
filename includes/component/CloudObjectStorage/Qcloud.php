@@ -13,10 +13,9 @@ class Qcloud extends CloudObjectStorage {
 	 * @link https://cloud.tencent.com/document/product/436/7749
 	 */
 	public function uploadFile(string $sourceFile, int $timeout = 1800): array{
-		$file                     = fopen($sourceFile, 'rb');
-		$headers                  = [];
-		$headers['Content-MD5']   = base64_encode(md5_file($sourceFile, true));
-		$headers['Authorization'] = $this->generateAuthorization('put', 3600, $headers);
+		$md5         = base64_encode(md5_file($sourceFile, true));
+		$contentType = mime_content_type($sourceFile);
+		$headers     = $this->generateHeaders('PUT', $contentType, $md5);
 
 		return static::put($sourceFile, $this->fileUri, $headers, $timeout);
 	}
@@ -26,9 +25,25 @@ class Qcloud extends CloudObjectStorage {
 	 * @link https://cloud.tencent.com/document/product/436/7743
 	 */
 	public function deleteFile(int $timeout = 30): array{
-		$headers                  = [];
-		$headers['Authorization'] = $this->generateAuthorization('delete', 3600, $headers);
+		$headers = $this->generateHeaders('DELETE');
 		return static::delete($this->fileUri, $headers, $timeout);
+	}
+
+	/**
+	 * 获取签名后的完整 headers
+	 * @since 0.9.35
+	 */
+	public function generateHeaders(string $method, string $contentType = '', string $md5 = ''): array{
+		$method  = strtoupper($method);
+		$headers = [];
+		if ('PUT' == $method or 'POST' == $method) {
+			$headers['Content-Type'] = $contentType;
+			$headers['Content-MD5']  = $md5;
+		}
+
+		$headers['Authorization'] = $this->generateAuthorization($method, 3600, $headers);
+
+		return $headers;
 	}
 
 	/**

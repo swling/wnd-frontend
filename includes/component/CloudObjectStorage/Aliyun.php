@@ -18,14 +18,9 @@ class Aliyun extends CloudObjectStorage {
 		 * 官方文档中并未说明 X-OSS-Date 可替代 date，但实际运行中可以
 		 * @since 0.9.32
 		 */
-		$mime_type = mime_content_type($sourceFile);
-		$md5       = base64_encode(md5_file($sourceFile, true));
-		$headers   = [
-			'X-OSS-Date'    => static::getDate(),
-			'Content-Type'  => $mime_type,
-			'Content-MD5'   => $md5,
-			'Authorization' => $this->generateAuthorization('PUT', $mime_type, $md5),
-		];
+		$contentType = mime_content_type($sourceFile);
+		$md5         = base64_encode(md5_file($sourceFile, true));
+		$headers     = $this->generateHeaders('PUT', $contentType, $md5);
 
 		return static::put($sourceFile, $this->fileUri, $headers, $timeout);
 	}
@@ -35,13 +30,28 @@ class Aliyun extends CloudObjectStorage {
 	 * @link https://help.aliyun.com/document_detail/31982.html
 	 */
 	public function deleteFile(int $timeout = 30): array{
-		//设置头部
-		$headers = [
-			'X-OSS-Date'    => static::getDate(),
-			'Authorization' => $this->generateAuthorization('DELETE'),
-		];
+		$headers = $this->generateHeaders('DELETE');
 
 		return static::delete($this->fileUri, $headers, $timeout);
+	}
+
+	/**
+	 * 获取签名后的完整 headers
+	 * @since 0.9.35
+	 */
+	public function generateHeaders(string $method, string $contentType = '', string $md5 = ''): array{
+		$method  = strtoupper($method);
+		$headers = [
+			'X-OSS-Date'    => static::getDate(),
+			'Authorization' => $this->generateAuthorization($method, $contentType, $md5),
+		];
+
+		if ('PUT' == $method or 'POST' == $method) {
+			$headers['Content-Type'] = $contentType;
+			$headers['Content-MD5']  = $md5;
+		}
+
+		return $headers;
 	}
 
 	/**
@@ -55,14 +65,14 @@ class Aliyun extends CloudObjectStorage {
 	 * 获取签名
 	 * @link https://help.aliyun.com/document_detail/31951.html
 	 */
-	public function generateAuthorization(string $method, string $minType = '', $md5 = ''): string{
+	private function generateAuthorization(string $method, string $contentType = '', $md5 = ''): string{
 		$method                  = strtoupper($method);
 		$date                    = static::getDate();
 		$canonicalizedOSSHeaders = 'x-oss-date:' . $date;
 		$canonicalizedResource   = '/' . $this->parseBucket() . $this->filePathName;
 
 		//生成签名：换行符必须使用双引号
-		$str       = $method . "\n" . $md5 . "\n" . $minType . "\n" . $date . "\n" . $canonicalizedOSSHeaders . "\n" . $canonicalizedResource;
+		$str       = $method . "\n" . $md5 . "\n" . $contentType . "\n" . $date . "\n" . $canonicalizedOSSHeaders . "\n" . $canonicalizedResource;
 		$signature = base64_encode(hash_hmac('sha1', $str, $this->secretKey, true));
 
 		return 'OSS ' . $this->secretID . ':' . $signature;
