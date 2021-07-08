@@ -220,6 +220,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
             upload: function(e, field) {
                 let files = e.target.files;
                 let form_data = new FormData()
+                let _this = this;
 
                 // 循环构造自定义 data-* 属性
                 if (field.data) {
@@ -228,62 +229,113 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     }
                 }
 
-                // 获取文件，支持多文件上传（文件数据 name 统一设置为 wnd_file[] 这是与后端处理程序的约定 ）
-                for (let i = 0, n = files.length; i < n; i++) {
-                    form_data.set('wnd_file[' + i + ']', files[i]);
-                }
-
                 // WP Nonce
                 form_data.set('_ajax_nonce', field.data.upload_nonce);
 
-                axios({
-                    url: wnd_action_api + '/wnd_upload_file',
-                    method: 'post',
-                    data: form_data,
-                    headers: {},
-                    //原生获取上传进度的事件
-                    onUploadProgress: function(progressEvent) {
-                        // field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
-                        field.help.text = wnd.msg.waiting;
-                        field.help.class = 'is-primary';
-                    }
-                }).then(response => {
-                    if (response.data.status <= 0) {
-                        field.help.text = response.data.msg;
-                        field.help.class = 'is-danger';
+                // 获取文件，支持多文件上传（文件数据 name 统一设置为 wnd_file[] 这是与后端处理程序的约定 ）
+                for (let i = 0, n = files.length; i < n; i++) {
+                    // 图片处理
+                    if (files[i].type.includes('image/') && (field.data.save_width || field.data.save_height)) {
+                        handel_image_upload(i, files[i]);
                     } else {
-                        for (let i = 0, n = response.data.length; i < n; i++) {
-                            if (response.data[i].status <= 0) {
-                                field.help.text = response.data[i].msg;
-                                field.help.class = 'is-danger';
-                            } else {
-                                field.help.text = wnd.msg.upload_successfully;
-                                field.help.class = 'is-success';
-                                field.thumbnail = response.data[i].data.thumbnail;
-                                field.file_id = response.data[i].data.id;
-                                field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + response.data[i].data.url + '" target="_blank">' + wnd.msg.view + '</a>';
-                            }
+                        form_data.set('wnd_file[' + i + ']', files[i]);
+                        sendAjax(form_data);
+                    }
+                }
 
-                            // 单个图片
-                            if ('image_upload' == field.type) {
+                function handel_image_upload(i, source_file) {
+                    let image = new Image();
+                    let reader = new FileReader();
+                    reader.onload = function() {
+                        // 通过 reader.result 来访问生成的 DataURL
+                        var url = reader.result;
+                        image.src = url;
+                        image.onload = function(e) {
+                            crop_and_upload_img(source_file, image, i);
+                        }
+                    };
+                    reader.readAsDataURL(source_file);
+                }
 
-                                // 单个文件
-                            } else if ('file_upload' == field.type) {
+                function crop_and_upload_img(source_file, image, i) {
+                    let canvas = document.createElement('canvas');
+                    canvas.width = field.data.save_width;
+                    canvas.height = field.data.save_height;
 
-                                // 图片相册
-                            } else if ('gallery' == field.type) {
+                    /**
+                     * 缩放、裁剪
+                     * @link https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/scale
+                     * @link https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement/toBlob
+                     **/
+                    let s = Math.max(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
+                    let ctx = canvas.getContext('2d');
+                    ctx.scale(s, s);
+                    var x = (ctx.canvas.width / s - image.naturalWidth) / 2;
+                    var y = (ctx.canvas.height / s - image.naturalHeight) / 2;
+                    ctx.drawImage(image, x, y);
 
+                    canvas.toBlob((blob) => {
+                        let file = new File([blob], source_file.name, {
+                            type: source_file.type
+                        });
+                        form_data.append('wnd_file[' + i + ']', file);
+
+                        sendAjax(form_data);
+                    }, source_file.type);
+                }
+
+                // Ajax
+                function sendAjax() {
+                    axios({
+                        url: wnd_action_api + '/wnd_upload_file',
+                        method: 'post',
+                        data: form_data,
+                        headers: {},
+                        //原生获取上传进度的事件
+                        onUploadProgress: function(progressEvent) {
+                            // field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
+                            field.help.text = wnd.msg.waiting;
+                            field.help.class = 'is-primary';
+                        }
+                    }).then(response => {
+                        if (response.data.status <= 0) {
+                            field.help.text = response.data.msg;
+                            field.help.class = 'is-danger';
+                        } else {
+                            for (let i = 0, n = response.data.length; i < n; i++) {
+                                if (response.data[i].status <= 0) {
+                                    field.help.text = response.data[i].msg;
+                                    field.help.class = 'is-danger';
+                                } else {
+                                    field.help.text = wnd.msg.upload_successfully;
+                                    field.help.class = 'is-success';
+                                    field.thumbnail = response.data[i].data.thumbnail;
+                                    field.file_id = response.data[i].data.id;
+                                    field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + response.data[i].data.url + '" target="_blank">' + wnd.msg.view + '</a>';
+                                }
+
+                                // 单个图片
+                                if ('image_upload' == field.type) {
+
+                                    // 单个文件
+                                } else if ('file_upload' == field.type) {
+
+                                    // 图片相册
+                                } else if ('gallery' == field.type) {
+
+                                }
                             }
                         }
-                    }
 
-                    this.$nextTick(function() {
-                        funTransitionHeight(parent, trs_time);
+                        _this.$nextTick(function() {
+                            funTransitionHeight(parent, trs_time);
+                        });
+                    }).catch(err => {
+                        console.log(err);
                     });
-                }).catch(err => {
-                    console.log(err);
-                })
+                }
             },
+
             // 删除文件
             delete_file: function(field, index) {
                 if (!field.file_id) {

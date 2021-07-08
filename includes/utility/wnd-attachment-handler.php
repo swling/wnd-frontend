@@ -53,17 +53,6 @@ class Wnd_Attachment_Handler {
 		// 获取WordPress上传并处理后文件
 		$file = get_attached_file($post_ID);
 
-		// 调用WordPress，根据尺寸进行图片裁剪、上传到oss的文件将是按指定尺寸裁剪后的文件
-		$save_width  = $_POST["save_width"] ?? 0;
-		$save_height = $_POST["save_height"] ?? 0;
-		if ($save_width or $save_height) {
-			$image_editor = wp_get_image_editor($file);
-			if (!is_wp_error($image_editor)) {
-				$image_editor->resize($save_width, $save_height, array('center', 'center'));
-				$image_editor->save($file);
-			}
-		}
-
 		try {
 			$file_path_name = $this->parse_file_path_name($file);
 			$object_storage = $this->get_object_storage_instance();

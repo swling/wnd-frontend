@@ -119,17 +119,6 @@ class Wnd_Upload_File extends Wnd_Action {
 
 			// 判断是否为图片
 			if (strrpos($file['type'], 'image') !== false) {
-				//根据尺寸进行图片裁剪
-				if ($save_width or $save_height) {
-					//获取文件服务器路径
-					$image_file = get_attached_file($file_id);
-					$image      = wp_get_image_editor($image_file);
-					if (!is_wp_error($image)) {
-						$image->resize($save_width, $save_height, ['center', 'center']);
-						$image->save($image_file);
-					}
-				}
-
 				// 返回缩略图
 				$thumbnail = wnd_get_thumbnail_url($url, $thumbnail_width, $thumbnail_height);
 			}
