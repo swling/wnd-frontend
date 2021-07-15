@@ -4,6 +4,7 @@
  * 仅适用于 WordPress 插件：Wnd-Frontend
  */
 tinymce.PluginManager.add('wndimage', function(editor, url) {
+	let config = editor.getParam('wnd_config');
 	var openDialog = function() {
 		return editor.windowManager.open({
 			title: '',
@@ -32,7 +33,7 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 			img: {},
 			// 提交
 			onSubmit: function(api) {
-				var data = api.getData();
+				let data = api.getData();
 				if (data.title) {
 					img.alt = data.title;
 				}
@@ -49,13 +50,12 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 				// 获取节点
 				img = document.querySelector('#wnd-single-img');
 
-				let config = editor.getParam('wnd_config');
 				let data = api.getData();
 
 				// 上传文件
 				let file = data.fileinput[0];
 				if (config.oss_sign_nonce) {
-					let file_info = await upload_to_oss(file, config.oss_sign_nonce, config.oss_sign_endpoint);
+					let file_info = await upload_to_oss(file);
 					img.src = file_info.url;
 					img.dataset.id = file_info.id;
 				} else {
@@ -64,7 +64,7 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					formdata.append('post_parent', config.post_parent);
 					formdata.append('_ajax_nonce', config.upload_nonce);
 
-					let file_info = await upload_to_local_server(formdata, config.upload_url);
+					let file_info = await upload_to_local_server(formdata);
 					img.src = file_info.url;
 					img.dataset.id = file_info.id;
 				}
@@ -72,9 +72,9 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 		});
 
 		// Ajax
-		async function upload_to_local_server(form_data, upload_url) {
+		async function upload_to_local_server(form_data) {
 			let file_info = axios({
-				url: upload_url,
+				url: config.upload_url,
 				method: 'POST',
 				data: form_data,
 			}).then(res => {
@@ -91,9 +91,9 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 		}
 
 		// 浏览器直传 OSS
-		async function upload_to_oss(file, oss_sign_nonce, oss_sign_endpoint) {
+		async function upload_to_oss(file) {
 			let extension = file.name.split('.').pop();
-			let token = await get_oss_token(extension, oss_sign_nonce, oss_sign_endpoint);
+			let token = await get_oss_token(extension);
 			let file_info = axios({
 				url: token.url,
 				method: 'PUT',
@@ -119,13 +119,16 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 		}
 
 		// 获取浏览器 OSS 直传签名
-		function get_oss_token(extension, oss_sign_nonce, oss_sign_endpoint) {
+		function get_oss_token(extension) {
 			let token = axios({
-				url: oss_sign_endpoint,
+				url: config.oss_sign_endpoint,
 				method: 'POST',
 				data: {
-					'_ajax_nonce': oss_sign_nonce,
+					'_ajax_nonce': config.oss_sign_nonce,
 					'extension': extension,
+					'data': {
+						'post_parent': config.post_parent
+					},
 				},
 			}).then(res => {
 				return res.data.data;
