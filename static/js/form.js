@@ -156,6 +156,8 @@ function _wnd_render_form(container, form_json, add_class = '') {
                             'upload_nonce': field.upload_nonce,
                             'upload_url': field.upload_url,
                             'post_parent': post_id,
+                            'oss_sign_nonce': _this.form.attrs['data-oss-sign-nonce'],
+                            'oss_sign_endpoint': wnd_action_api + '/wnd_sign_oss_upload',
                         },
                         setup: function(editor) {
                             texarea = document.querySelector(selector);
@@ -238,8 +240,12 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     if (files[i].type.includes('image/') && (field.data.save_width || field.data.save_height)) {
                         handel_image_upload(i, files[i]);
                     } else {
-                        form_data.set('wnd_file[' + i + ']', files[i]);
-                        sendAjax(form_data);
+                        if (_this.form.attrs['data-oss-sign-nonce']) {
+                            upload_to_oss(files[i]);
+                        } else {
+                            form_data.set('wnd_file[' + i + ']', files[i]);
+                            upload_to_local_server(form_data);
+                        }
                     }
                 }
 
@@ -280,12 +286,16 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         });
                         form_data.append('wnd_file[' + i + ']', file);
 
-                        sendAjax(form_data);
+                        if (_this.form.attrs['data-oss-sign-nonce']) {
+                            upload_to_oss(file);
+                        } else {
+                            upload_to_local_server(form_data);
+                        }
                     }, source_file.type);
                 }
 
                 // Ajax
-                function sendAjax() {
+                function upload_to_local_server() {
                     axios({
                         url: wnd_action_api + '/wnd_upload_file',
                         method: 'post',
@@ -333,6 +343,57 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     }).catch(err => {
                         console.log(err);
                     });
+                }
+
+                // 浏览器直传 OSS
+                async function upload_to_oss(file) {
+                    let extension = file.name.split('.').pop();
+                    let token = await get_oss_token(extension);
+                    axios({
+                        url: token.url,
+                        method: 'PUT',
+                        data: file,
+                        headers: token.headers,
+                        /**
+                         *  Access-Control-Allow-Origin 的值为通配符 ("*") ，而这与使用credentials相悖。
+                         * @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials
+                         **/
+                        withCredentials: false,
+                    }).then(response => {
+                        if (response.status == 200) {
+                            field.help.text = wnd.msg.upload_successfully;
+                            field.help.class = 'is-success';
+                            field.thumbnail = token.url;
+                            field.file_id = token.id;
+                            field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + token.url + '" target="_blank">' + wnd.msg.view + '</a>';
+                        } else {
+                            // 直传失败，应该删除对应 WP Attachment Post
+                            // return '';
+                        }
+
+                        _this.$nextTick(function() {
+                            funTransitionHeight(parent, trs_time);
+                        });
+                    }).catch(err => {
+                        console.log(err);
+                    });
+                }
+
+                // 获取浏览器 OSS 直传签名
+                function get_oss_token(extension) {
+                    let token = axios({
+                        url: wnd_action_api + '/wnd_sign_oss_upload',
+                        method: "POST",
+                        data: {
+                            '_ajax_nonce': _this.form.attrs['data-oss-sign-nonce'],
+                            'extension': extension,
+                            'data': field.data,
+                        },
+                    }).then(res => {
+                        return res.data.data;
+                    })
+
+                    return token;
                 }
             },
 

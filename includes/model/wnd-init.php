@@ -5,15 +5,15 @@ use Wnd\Admin\Wnd_Menus;
 use Wnd\Controller\Wnd_Controller;
 use Wnd\Hook\Wnd_Hook;
 use Wnd\Model\Wnd_DB;
-use Wnd\Utility\Wnd_Attachment_Handler;
 use Wnd\Utility\Wnd_CDN;
 use Wnd\Utility\Wnd_language;
 use Wnd\Utility\Wnd_Optimization;
+use Wnd\Utility\Wnd_OSS_Handler;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\Utility\Wnd_Upgrader_Plugin_This;
 
 /**
- *初始化 单例模式
+ * 初始化 单例模式
  */
 class Wnd_Init {
 
@@ -51,7 +51,7 @@ class Wnd_Init {
 
 		// OSS @since 0.9.29 需要用到自定义函数，故此必须在进入文件之后
 		if (wnd_get_config('oss_enable')) {
-			Wnd_Attachment_Handler::get_instance();
+			Wnd_OSS_Handler::get_instance();
 		}
 
 		// CDN @since 0.9.29 需要用到自定义函数，故此必须在进入文件之后
@@ -77,8 +77,8 @@ class Wnd_Init {
 	}
 
 	/**
-	 *@since 2019.02.28 如不注册类型，直接创建pending状态post时，会有notice级别的错误
-	 *@see wp-includes/post.php @3509
+	 * @see wp-includes/post.php @3509
+	 * @since 2019.02.28 如不注册类型，直接创建pending状态post时，会有notice级别的错误
 	 */
 	public static function register_post_type() {
 
@@ -93,9 +93,9 @@ class Wnd_Init {
 			'has_archive' => false,
 			'query_var'   => false,
 			/**
-			 *支持author的post type 删除用户时才能自动删除对应的自定义post
-			 *@see wp-admin/includes/user.php @370
-			 *@since 2019.05.05
+			 * 支持author的post type 删除用户时才能自动删除对应的自定义post
+			 * @see wp-admin/includes/user.php @370
+			 * @since 2019.05.05
 			 */
 			'supports'    => ['title', 'author', 'editor'],
 		];
@@ -116,12 +116,12 @@ class Wnd_Init {
 		register_post_type('order', $args);
 
 		/**
-		 *站内信
+		 * 站内信
 		 *
-		 *@date 2020.03.20
-		 *参数解释：
-		 *'public'              => true, 需要设置为公开，站内信才能使用固定连接打开
-		 *'exclude_from_search' => true, 从搜索中排除，防止当指定查询post_type为any时，查询出站内信
+		 * @date 2020.03.20
+		 * 参数解释：
+		 * 'public'              => true, 需要设置为公开，站内信才能使用固定连接打开
+		 * 'exclude_from_search' => true, 从搜索中排除，防止当指定查询post_type为any时，查询出站内信
 		 */
 		$labels = [
 			'name' => __('站内信', 'wnd'),
@@ -167,8 +167,9 @@ class Wnd_Init {
 	}
 
 	/**
-	 *注册自定义post status
-	 **/
+	 * 注册自定义post status
+	 *
+	 */
 	public static function register_post_status() {
 		// 订单功能类 Post Status公共属性
 		$transaction_common_args = [
@@ -180,10 +181,10 @@ class Wnd_Init {
 
 		$post_statuses = [
 			/**
-			 *@since 2019.03.01 注册自定义状态，用于功能型post
-			 *wp_insert_post可直接写入未经注册的post_status
-			 *未经注册的post_status无法通过wp_query进行筛选，故此注册
-			 **/
+			 * wp_insert_post可直接写入未经注册的post_status
+			 * 未经注册的post_status无法通过wp_query进行筛选，故此注册
+			 * @since 2019.03.01 注册自定义状态，用于功能型post
+			 */
 			'wnd-processing' => $transaction_common_args,
 			'wnd-pending'    => $transaction_common_args,
 			'wnd-completed'  => $transaction_common_args,
@@ -191,10 +192,9 @@ class Wnd_Init {
 			'wnd-cancelled'  => $transaction_common_args,
 
 			/**
-			 *@since 2019.05.31 注册自定义状态：closed 用于关闭文章条目，但前端可以正常浏览
-			 *
-			 *wp_insert_post可直接写入未经注册的post_status
-			 *未经注册的post_status无法通过wp_query进行筛选，故此注册
+			 * wp_insert_post可直接写入未经注册的post_status
+			 * 未经注册的post_status无法通过wp_query进行筛选，故此注册
+			 * @since 2019.05.31 注册自定义状态：closed 用于关闭文章条目，但前端可以正常浏览
 			 */
 			'wnd-closed'     => [
 				'label'                     => __('关闭', 'wnd'),
@@ -205,11 +205,10 @@ class Wnd_Init {
 			],
 
 			/**
-			 *@since 0.9.0
-			 *
-			 *站内信状态
+			 * 站内信状态
 			 * - 未读
 			 * - 已读
+			 * @since 0.9.0
 			 */
 			'wnd-unread'     => [
 				'label'                     => __('未读', 'wnd'),

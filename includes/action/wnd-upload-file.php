@@ -4,31 +4,30 @@ namespace Wnd\Action;
 use Exception;
 
 /**
- *@since 2019.01.20
- *ajax文件上传
- *@param $_FILES
- *@param $_POST['save_width']
- *@param $_POST['save_height']
- *@param $_POST['thumbnail_width']
- *@param $_POST['thumbnail_height']
- *@param $_POST['meta_key']
- *@param $_POST['meta_key_nonce']
- *@param $_POST['post_parent']
+ * ajax文件上传
+ * 	[
+ * 		[
+ * 			'status' => 1,
+ * 			'data' => ['url' => $url, 'thumbnail' => $thumbnail ?? 0, 'id' => $file_id],
+ * 			'msg' => '上传成功',
+ * 		],
+ * 	];
+ * @since 2019.01.20
  *
- *@return $return_array array 二维数组
- *	[
- *		[
- *			'status' => 1,
- *			'data' => ['url' => $url, 'thumbnail' => $thumbnail ?? 0, 'id' => $file_id],
- *			'msg' => '上传成功',
- *		],
- *	];
- *
+ * @param  $_FILES
+ * @param  $_POST['save_width']
+ * @param  $_POST['save_height']
+ * @param  $_POST['thumbnail_width']
+ * @param  $_POST['thumbnail_height']
+ * @param  $_POST['meta_key']
+ * @param  $_POST['meta_key_nonce']
+ * @param  $_POST['post_parent']
+ * @return $return_array                 array 二维数组
  */
 class Wnd_Upload_File extends Wnd_Action {
 
 	/**
-	 *本操作非标准表单请求，无需验证签名
+	 * 本操作非标准表单请求，无需验证签名
 	 */
 	protected $verify_sign = false;
 
@@ -38,8 +37,6 @@ class Wnd_Upload_File extends Wnd_Action {
 			throw new Exception(__('上传文件为空', 'wnd'));
 		}
 
-		$save_width       = (int) ($this->data['save_width'] ?? 0);
-		$save_height      = (int) ($this->data['save_height'] ?? 0);
 		$thumbnail_height = (int) ($this->data['thumbnail_height'] ?? 0);
 		$thumbnail_width  = (int) ($this->data['thumbnail_width'] ?? 0);
 		$meta_key         = $this->data['meta_key'] ?? '';
@@ -51,14 +48,14 @@ class Wnd_Upload_File extends Wnd_Action {
 		}
 
 		/**
-		 *@since 2019.05.08 上传文件meta_key post_parent校验
-		 *meta_key 及 post_parent同时为空时，上传文件将成为孤立的的文件，在前端上传附件应该具有明确的用途，应避免这种情况
+		 * meta_key 及 post_parent同时为空时，上传文件将成为孤立的的文件，在前端上传附件应该具有明确的用途，应避免这种情况
+		 * @since 2019.05.08 上传文件meta_key post_parent校验
 		 */
 		if (!$meta_key and !$post_parent) {
 			throw new Exception(__('Meta_key与Post_parent不可同时为空', 'wnd'));
 		}
 
-		if (!wp_verify_nonce($this->data['meta_key_nonce'], $meta_key)) {
+		if ($meta_key and !wp_verify_nonce($this->data['meta_key_nonce'], $meta_key)) {
 			throw new Exception(__('meta_key不合法', 'wnd'));
 		}
 
@@ -67,8 +64,8 @@ class Wnd_Upload_File extends Wnd_Action {
 		}
 
 		/**
-		 *@since 2019.04.16
-		 *上传权限过滤
+		 * 上传权限过滤
+		 * @since 2019.04.16
 		 */
 		$can_upload_file = apply_filters('wnd_can_upload_file', ['status' => 1, 'msg' => ''], $post_parent, $meta_key);
 		if (0 === $can_upload_file['status']) {
@@ -83,8 +80,8 @@ class Wnd_Upload_File extends Wnd_Action {
 		}
 
 		/**
-		 *@since 2019.05.06 改写
-		 *遍历文件上传
+		 * 遍历文件上传
+		 * @since 2019.05.06 改写
 		 */
 		$return_array = []; // 定义图片信息返回数组
 		$files        = $_FILES['wnd_file']; //暂存原始上传信息，后续将重写$_FILES全局变量以适配WordPress上传方式
@@ -137,8 +134,8 @@ class Wnd_Upload_File extends Wnd_Action {
 			$return_array[] = $temp_array;
 
 			/**
-			 *@since 2019.02.13 当存在meta key时，表明上传文件为特定用途存储，仅允许上传单个文件
-			 *@since 2019.05.05 当meta key == gallery 表示为上传图集相册 允许上传多个文件
+			 * @since 2019.02.13 当存在meta key时，表明上传文件为特定用途存储，仅允许上传单个文件
+			 * @since 2019.05.05 当meta key == gallery 表示为上传图集相册 允许上传多个文件
 			 */
 			if ('gallery' != $meta_key) {
 				//处理完成根据用途做下一步处理
@@ -149,7 +146,7 @@ class Wnd_Upload_File extends Wnd_Action {
 		unset($key, $value);
 
 		/**
-		 *@since 2019.05.05 当meta key == gallery 表示为上传图集相册 允许上传多个文件
+		 * @since 2019.05.05 当meta key == gallery 表示为上传图集相册 允许上传多个文件
 		 */
 		if ('gallery' == $meta_key) {
 			do_action('wnd_upload_gallery', $return_array, $post_parent);

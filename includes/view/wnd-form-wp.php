@@ -68,6 +68,21 @@ class Wnd_Form_WP extends Wnd_Form {
 		if ($this->is_ajax_submit) {
 			$this->add_form_attr('onsubmit', 'return false');
 		}
+
+		/**
+		 * 设置 OSS 签名 Nonce
+		 * @since 0.9.33.7
+		 */
+		$this->add_form_attr('data-oss-sign-nonce', static::get_oss_sign_nonce());
+	}
+
+	/**
+	 * 获取直传 OSS 签名 Nonce
+	 * @since 0.9.33.7
+	 */
+	protected static function get_oss_sign_nonce(): string{
+		$local_storage = (int) wnd_get_config('oss_local_storage');
+		return ($local_storage < 0) ? wp_create_nonce('wnd_sign_oss_upload') : '';
 	}
 
 	/**
@@ -139,8 +154,8 @@ class Wnd_Form_WP extends Wnd_Form {
 	public function add_editor(array $args) {
 		$this->add_form_attr('data-editor', '1');
 		$args['type']         = 'editor';
-		$args['upload_nonce'] = wp_create_nonce('wnd_upload_file_editor');
-		$args['upload_url']   = wnd_get_route_url('action', 'wnd_upload_file_editor');
+		$args['upload_nonce'] = wp_create_nonce('wnd_upload_file');
+		$args['upload_url']   = wnd_get_route_url('action', 'wnd_upload_file');
 		parent::add_field($args);
 	}
 

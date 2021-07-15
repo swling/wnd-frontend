@@ -15,7 +15,7 @@ class Wnd_Menu_OSS extends Wnd_Menus {
 	protected $menu_slug  = 'wnd-frontend-oss';
 
 	/**
-	 *构造表单
+	 * 构造表单
 	 */
 	public function build_form() {
 		$form = new Wnd_Form_Option($this->option_name, $this->append);
@@ -33,7 +33,7 @@ class Wnd_Menu_OSS extends Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'     => 'oss_local_storage',
-				'options'  => ['删除' => 0, '保留' => 1],
+				'options'  => ['删除' => 0, '保留' => 1, '浏览器直传' => -1],
 				'label'    => '本地服务器文件',
 				'class'    => 'is-checkradio is-danger',
 				'required' => true,
