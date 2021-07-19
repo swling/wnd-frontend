@@ -19,7 +19,7 @@ class Aliyun extends CloudObjectStorage {
 		 * @since 0.9.32
 		 */
 		$contentType = mime_content_type($sourceFile);
-		$md5         = base64_encode(md5_file($sourceFile, true));
+		$md5         = md5_file($sourceFile);
 		$headers     = $this->generateHeaders('PUT', $contentType, $md5);
 
 		return static::put($sourceFile, $this->fileUri, $headers, $timeout);
@@ -37,18 +37,21 @@ class Aliyun extends CloudObjectStorage {
 
 	/**
 	 * 获取签名后的完整 headers
+	 * - 本方法中 md5 参数设定为为32位16进制字符串，而非二进制数据。
+	 * - 之所以如此设置，是为了方便外部调用，如前端 OSS 直传时可利用 js 计算 MD5 值，进而调用本方法生成请求 headers
 	 * @since 0.9.35
 	 */
 	public function generateHeaders(string $method, string $contentType = '', string $md5 = ''): array{
-		$method  = strtoupper($method);
-		$headers = [
+		$method     = strtoupper($method);
+		$md5_base64 = base64_encode(hex2bin($md5));
+		$headers    = [
 			'X-OSS-Date'    => static::getDate(),
-			'Authorization' => $this->generateAuthorization($method, $contentType, $md5),
+			'Authorization' => $this->generateAuthorization($method, $contentType, $md5_base64),
 		];
 
 		if ('PUT' == $method or 'POST' == $method) {
 			$headers['Content-Type'] = $contentType;
-			$headers['Content-MD5']  = $md5;
+			$headers['Content-MD5']  = $md5_base64;
 		}
 
 		return $headers;

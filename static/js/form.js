@@ -241,7 +241,9 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         handel_image_upload(i, files[i]);
                     } else {
                         if (_this.form.attrs['data-oss-sign-nonce']) {
-                            upload_to_oss(files[i]);
+                            wnd_load_md5_script(function() {
+                                upload_to_oss(files[i]);
+                            });
                         } else {
                             form_data.set('wnd_file[' + i + ']', files[i]);
                             upload_to_local_server(form_data);
@@ -287,7 +289,9 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         form_data.append('wnd_file[' + i + ']', file);
 
                         if (_this.form.attrs['data-oss-sign-nonce']) {
-                            upload_to_oss(file);
+                            wnd_load_md5_script(function() {
+                                upload_to_oss(file)
+                            });
                         } else {
                             upload_to_local_server(form_data);
                         }
@@ -346,54 +350,98 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 }
 
                 // 浏览器直传 OSS
-                async function upload_to_oss(file) {
-                    let extension = file.name.split('.').pop();
-                    let token = await get_oss_token(extension);
-                    axios({
-                        url: token.url,
-                        method: 'PUT',
-                        data: file,
-                        headers: token.headers,
-                        /**
-                         *  Access-Control-Allow-Origin 的值为通配符 ("*") ，而这与使用credentials相悖。
-                         * @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials
-                         **/
-                        withCredentials: false,
-                    }).then(response => {
-                        if (response.status == 200) {
-                            field.help.text = wnd.msg.upload_successfully;
-                            field.help.class = 'is-success';
-                            field.thumbnail = token.url;
-                            field.file_id = token.id;
-                            field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + token.url + '" target="_blank">' + wnd.msg.view + '</a>';
+                function upload_to_oss(file) {
+                    /**
+                     * 计算文件 MD5
+                     * @link https://github.com/satazor/js-spark-md5
+                     **/
+                    let blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+                        chunkSize = 2097152, // Read in chunks of 2MB
+                        chunks = Math.ceil(file.size / chunkSize),
+                        currentChunk = 0,
+                        spark = new SparkMD5.ArrayBuffer(),
+                        fileReader = new FileReader();
+
+                    fileReader.onload = function(e) {
+                        spark.append(e.target.result); // Append array buffer
+                        currentChunk++;
+
+                        if (currentChunk < chunks) {
+                            loadNext();
                         } else {
-                            // 直传失败，应该删除对应 WP Attachment Post
-                            // return '';
+                            let md5 = spark.end();
+                            upload(md5);
                         }
+                    };
 
-                        _this.$nextTick(function() {
-                            funTransitionHeight(parent, trs_time);
+                    fileReader.onerror = function() {
+                        console.warn('oops, something went wrong.');
+                    };
+
+                    function loadNext() {
+                        let start = currentChunk * chunkSize,
+                            end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+
+                        fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+                    }
+
+                    loadNext();
+
+                    /**
+                     * 上传
+                     **/
+                    async function upload(md5) {
+                        let token = await get_oss_token(file, md5);
+                        axios({
+                            url: token.url,
+                            method: 'PUT',
+                            data: file,
+                            headers: token.headers,
+                            /**
+                             *  Access-Control-Allow-Origin 的值为通配符 ("*") ，而这与使用credentials相悖。
+                             * @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials
+                             **/
+                            withCredentials: false,
+                        }).then(response => {
+                            if (response.status == 200) {
+                                field.help.text = wnd.msg.upload_successfully;
+                                field.help.class = 'is-success';
+                                field.thumbnail = token.url;
+                                field.file_id = token.id;
+                                field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + token.url + '" target="_blank">' + wnd.msg.view + '</a>';
+                            } else {
+                                // 直传失败，应该删除对应 WP Attachment Post
+                                // return '';
+                            }
+
+                            _this.$nextTick(function() {
+                                funTransitionHeight(parent, trs_time);
+                            });
+                        }).catch(err => {
+                            console.log(err);
                         });
-                    }).catch(err => {
-                        console.log(err);
-                    });
-                }
+                    }
 
-                // 获取浏览器 OSS 直传签名
-                function get_oss_token(extension) {
-                    let token = axios({
-                        url: wnd_action_api + '/wnd_sign_oss_upload',
-                        method: "POST",
-                        data: {
-                            '_ajax_nonce': _this.form.attrs['data-oss-sign-nonce'],
-                            'extension': extension,
-                            'data': field.data,
-                        },
-                    }).then(res => {
-                        return res.data.data;
-                    })
+                    // 获取浏览器 OSS 直传签名
+                    function get_oss_token(file, md5) {
+                        let extension = file.name.split('.').pop();
+                        let mime_type = file.type;
+                        let token = axios({
+                            url: wnd_action_api + '/wnd_sign_oss_upload',
+                            method: 'POST',
+                            data: {
+                                '_ajax_nonce': _this.form.attrs['data-oss-sign-nonce'],
+                                'extension': extension,
+                                'data': field.data,
+                                'mime_type': mime_type,
+                                'md5': md5,
+                            },
+                        }).then(res => {
+                            return res.data.data;
+                        })
 
-                    return token;
+                        return token;
+                    }
                 }
             },
 

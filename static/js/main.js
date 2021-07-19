@@ -127,8 +127,8 @@ function wnd_append(el, html) {
  * 
  */
 function wnd_load_script(url, callback) {
-    let script = document.createElement("script");
-    script.type = "text/javascript";
+    let script = document.createElement('script');
+    script.type = 'text/javascript';
     script.src = url;
     document.head.appendChild(script);
     script.onload = callback;
@@ -185,7 +185,7 @@ function object_to_formdata(data) {
     return formData;
 }
 
-// 按需加载 wnd-vue-form.js 并渲染表达
+// 按需加载 wnd-vue-form.js 并渲染表单
 function wnd_render_form(container, form_json, add_class) {
     if ('function' != typeof _wnd_render_form) {
         let url = static_path + 'js/form.min.js' + cache_suffix;
@@ -194,6 +194,19 @@ function wnd_render_form(container, form_json, add_class) {
         });
     } else {
         _wnd_render_form(container, form_json, add_class);
+    }
+}
+
+/**
+ * 按需加载 spark-md5 计算文件 md5
+ * @link https://github.com/satazor/js-spark-md5
+ */
+function wnd_load_md5_script(callback) {
+    if ('undefined' == typeof SparkMD5) {
+        let url = static_path + 'js/lib/spark-md5.min.js' + cache_suffix;
+        wnd_load_script(url, callback);
+    } else {
+        callback();
     }
 }
 
