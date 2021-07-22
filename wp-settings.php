@@ -167,6 +167,10 @@ remove_action( 'enqueue_block_assets', 'enqueue_block_styles_assets', 30 );
 remove_action( 'enqueue_block_assets', 'wp_enqueue_registered_block_scripts_and_styles' );
 remove_action( 'enqueue_block_editor_assets', 'wp_enqueue_registered_block_scripts_and_styles' );
 // 古腾堡函数
+function has_blocks() {
+	return false;
+}
+
 function has_block(){
 	return false;
 }
