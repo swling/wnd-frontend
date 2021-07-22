@@ -6,6 +6,13 @@
  * Allows for some configuration in wp-config.php (see default-constants.php)
  *
  * @package WordPress
+ * 
+ * @since Wnd Frontend 0.9.35
+ * 此文件是 WordPress 加载文件和设置核心变量的初始化文件，Wnd Frontend 将此文件引入插件，以便于做二次修改，
+ * 精简一些不必要的 WordPress 功能，如古腾堡编辑器。
+ * 这些修改默认不会生效，因为并不是所有用户都需要精简 WordPress 核心功能
+ * 如需使用精简版 WordPress，请配置网站根目录下的 wp-config.php，
+ * 将 require_once ABSPATH . 'wp-settings.php'; 修改为：require_once ABSPATH . 'wp-content/plugins/wnd-frontend/wp-settings.php';
  */
 
 /**
