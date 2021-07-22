@@ -25,7 +25,8 @@ require_once ABSPATH . 'wp-settings.php';
 
 修改为：
 ```php
-require_once ABSPATH . 'wp-content/plugins/wnd-frontend/wp-settings.php';
+// 如果插件文件夹名称不为 wnd-frontend 请注意同步修改
+require_once ABSPATH . 'wp-content/plugins/wnd-frontend/accelerator/wp-settings.php';
 ```
   
 ### 注意事项
