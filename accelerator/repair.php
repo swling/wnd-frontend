@@ -62,6 +62,7 @@ remove_action('init', 'wp_widgets_init', 1);
 remove_action('plugins_loaded', 'wp_maybe_load_widgets', 0);
 remove_action('admin_head', 'wp_check_widget_editor_deps');
 remove_action('after_switch_theme', '_wp_sidebars_changed');
+
 function is_active_sidebar() {
 	return false;
 }
