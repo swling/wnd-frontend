@@ -8,7 +8,10 @@
 // WP 默认 Rest API
 remove_action('rest_api_init', 'create_initial_rest_routes', 99);
 
-// 古腾堡
+// 禁用古腾堡
+add_filter('use_block_editor_for_post', '__return_false');
+
+// 移除依赖于古腾堡的相关 Hook
 remove_action('init', ['WP_Block_Supports', 'init'], 22);
 remove_action('init', '_register_core_block_patterns_and_categories');
 remove_filter('pre_kses', 'wp_pre_kses_block_attributes', 10, 3);
@@ -18,7 +21,7 @@ remove_action('enqueue_block_assets', 'enqueue_block_styles_assets', 30);
 remove_action('enqueue_block_assets', 'wp_enqueue_registered_block_scripts_and_styles');
 remove_action('enqueue_block_editor_assets', 'wp_enqueue_registered_block_scripts_and_styles');
 
-// 古腾堡函数
+// 重写依赖于古腾堡的函数
 function has_blocks() {
 	return false;
 }
