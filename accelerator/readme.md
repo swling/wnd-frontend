@@ -35,3 +35,5 @@ require_once ABSPATH . 'wp-content/plugins/wnd-frontend/accelerator/wp-settings.
  ### 变更日志
  - @2021.07.22 禁用 WP 原生 Rest API
  - @2021.07.22 移除古腾堡相关文件
+ - @2021.07.23 移除 WP Embed
+ - @2021.07.23 移除 WP Widget

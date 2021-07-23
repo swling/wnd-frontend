@@ -179,9 +179,9 @@ require ABSPATH . WPINC . '/theme.php';
 require ABSPATH . WPINC . '/class-wp-theme.php';
 require ABSPATH . WPINC . '/class-wp-theme-json.php';
 require ABSPATH . WPINC . '/class-wp-theme-json-resolver.php';
-require ABSPATH . WPINC . '/class-wp-block-template.php';
-require ABSPATH . WPINC . '/block-template-utils.php';
-require ABSPATH . WPINC . '/block-template.php';
+// require ABSPATH . WPINC . '/class-wp-block-template.php';
+// require ABSPATH . WPINC . '/block-template-utils.php';
+// require ABSPATH . WPINC . '/block-template.php';
 require ABSPATH . WPINC . '/theme-templates.php';
 require ABSPATH . WPINC . '/template.php';
 require ABSPATH . WPINC . '/https-detection.php';
@@ -231,10 +231,10 @@ require ABSPATH . WPINC . '/class-wp-tax-query.php';
 require ABSPATH . WPINC . '/update.php';
 require ABSPATH . WPINC . '/canonical.php';
 require ABSPATH . WPINC . '/shortcodes.php';
-require ABSPATH . WPINC . '/embed.php';
-require ABSPATH . WPINC . '/class-wp-embed.php';
-require ABSPATH . WPINC . '/class-wp-oembed.php';
-require ABSPATH . WPINC . '/class-wp-oembed-controller.php';
+// require ABSPATH . WPINC . '/embed.php';
+// require ABSPATH . WPINC . '/class-wp-embed.php';
+// require ABSPATH . WPINC . '/class-wp-oembed.php';
+// require ABSPATH . WPINC . '/class-wp-oembed-controller.php';
 require ABSPATH . WPINC . '/media.php';
 require ABSPATH . WPINC . '/http.php';
 require ABSPATH . WPINC . '/class-http.php';
@@ -246,9 +246,9 @@ require ABSPATH . WPINC . '/class-wp-http-encoding.php';
 require ABSPATH . WPINC . '/class-wp-http-response.php';
 require ABSPATH . WPINC . '/class-wp-http-requests-response.php';
 require ABSPATH . WPINC . '/class-wp-http-requests-hooks.php';
-require ABSPATH . WPINC . '/widgets.php';
-require ABSPATH . WPINC . '/class-wp-widget.php';
-require ABSPATH . WPINC . '/class-wp-widget-factory.php';
+// require ABSPATH . WPINC . '/widgets.php';
+// require ABSPATH . WPINC . '/class-wp-widget.php';
+// require ABSPATH . WPINC . '/class-wp-widget-factory.php';
 require ABSPATH . WPINC . '/nav-menu.php';
 require ABSPATH . WPINC . '/nav-menu-template.php';
 require ABSPATH . WPINC . '/admin-bar.php';
@@ -327,7 +327,7 @@ require ABSPATH . WPINC . '/sitemaps/providers/class-wp-sitemaps-users.php';
 // require ABSPATH . WPINC . '/block-supports/spacing.php';
 // require ABSPATH . WPINC . '/block-supports/typography.php';
 
-$GLOBALS['wp_embed'] = new WP_Embed();
+// $GLOBALS['wp_embed'] = new WP_Embed();
 
 // Load multisite-specific files.
 if ( is_multisite() ) {
@@ -499,7 +499,7 @@ $GLOBALS['wp'] = new WP();
  * @global WP_Widget_Factory $wp_widget_factory
  * @since 2.8.0
  */
-$GLOBALS['wp_widget_factory'] = new WP_Widget_Factory();
+// $GLOBALS['wp_widget_factory'] = new WP_Widget_Factory();
 
 /**
  * WordPress User Roles
