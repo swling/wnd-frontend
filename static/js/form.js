@@ -391,12 +391,12 @@ function _wnd_render_form(container, form_json, add_class = '') {
                      * 上传
                      **/
                     async function upload(md5) {
-                        let token = await get_oss_token(file, md5);
+                        let sign = await get_oss_sign(file, md5);
                         axios({
-                            url: token.url,
+                            url: sign.url,
                             method: 'PUT',
                             data: file,
-                            headers: token.headers,
+                            headers: sign.headers,
                             /**
                              *  Access-Control-Allow-Origin 的值为通配符 ("*") ，而这与使用credentials相悖。
                              * @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials
@@ -406,9 +406,9 @@ function _wnd_render_form(container, form_json, add_class = '') {
                             if (response.status == 200) {
                                 field.help.text = wnd.msg.upload_successfully;
                                 field.help.class = 'is-success';
-                                field.thumbnail = token.url;
-                                field.file_id = token.id;
-                                field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + token.url + '" target="_blank">' + wnd.msg.view + '</a>';
+                                field.thumbnail = sign.url;
+                                field.file_id = sign.id;
+                                field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + sign.url + '" target="_blank">' + wnd.msg.view + '</a>';
                             } else {
                                 // 直传失败，应该删除对应 WP Attachment Post
                                 // return '';
@@ -423,10 +423,10 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     }
 
                     // 获取浏览器 OSS 直传签名
-                    function get_oss_token(file, md5) {
+                    function get_oss_sign(file, md5) {
                         let extension = file.name.split('.').pop();
                         let mime_type = file.type;
-                        let token = axios({
+                        let sign = axios({
                             url: wnd_action_api + '/wnd_sign_oss_upload',
                             method: 'POST',
                             data: {
@@ -440,7 +440,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                             return res.data.data;
                         })
 
-                        return token;
+                        return sign;
                     }
                 }
             },
