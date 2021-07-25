@@ -10,30 +10,18 @@ use Wnd\Utility\Wnd_OSS_Handler;
  *
  * @since 0.9.33.7
  */
-class Wnd_Sign_OSS_Upload extends Wnd_Action {
-
-	/**
-	 * 本操作非标准表单请求，无需验证签名
-	 */
-	protected $verify_sign = false;
+class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 
 	private $file_name;
-
-	private $post_parent;
-
-	private $meta_key;
 
 	private $mime_type;
 
 	private $local_file;
 
 	public function execute(): array{
-		$this->file_name   = uniqid('oss-') . '.' . $this->data['extension'];
-		$this->post_parent = $this->data['data']['post_parent'] ?? 0;
-		$this->meta_key    = $this->data['data']['meta_key'] ?? '';
-		$this->mime_type   = $this->data['mime_type'] ?? '';
-		$md5               = $this->data['md5'] ?? '';
-
+		$this->file_name  = uniqid('oss-') . '.' . $this->data['extension'];
+		$this->mime_type  = $this->data['mime_type'] ?? '';
+		$md5              = $this->data['md5'] ?? '';
 		$this->local_file = $this->get_attached_file();
 
 		$oss_handler = Wnd_OSS_Handler::get_instance();
@@ -63,6 +51,8 @@ class Wnd_Sign_OSS_Upload extends Wnd_Action {
 	 * 文件核查
 	 */
 	protected function check() {
+		parent::check();
+
 		if (!wnd_get_config('oss_enable')) {
 			throw new Exception('Object storage service is disabled');
 		}
@@ -90,7 +80,6 @@ class Wnd_Sign_OSS_Upload extends Wnd_Action {
 	private function inset_attachment(): int{
 		$attachment = [
 			'post_mime_type' => $this->mime_type,
-			// 'guid'           => $url,
 			'post_title'     => wp_basename($this->file_name, '.' . $this->data['extension']),
 			'post_content'   => '',
 			'post_excerpt'   => '',

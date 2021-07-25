@@ -130,7 +130,13 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 
 			// 浏览器直传 OSS
 			async function upload(md5) {
-				let sign = await get_oss_sign(file, md5);
+				let sign_res = await get_oss_sign(file, md5);
+				if (sign_res.status <= 0) {
+					alert(sign_res.msg)
+					return false;
+				}
+				let sign = sign_res.data;
+
 				let file_info = axios({
 					url: sign.url,
 					method: 'PUT',
@@ -166,14 +172,12 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					data: {
 						'_ajax_nonce': config.oss_sign_nonce,
 						'extension': extension,
-						'data': {
-							'post_parent': config.post_parent
-						},
+						'post_parent': config.post_parent,
 						'mime_type': mime_type,
 						'md5': md5,
 					},
 				}).then(res => {
-					return res.data.data;
+					return res.data;
 				})
 
 				return sign;

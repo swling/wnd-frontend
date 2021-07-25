@@ -391,7 +391,14 @@ function _wnd_render_form(container, form_json, add_class = '') {
                      * 上传
                      **/
                     async function upload(md5) {
-                        let sign = await get_oss_sign(file, md5);
+                        let sign_res = await get_oss_sign(file, md5);
+                        if (sign_res.status <= 0) {
+                            field.help.text = sign_res.msg;
+                            field.help.class = 'is-danger';
+                            return false;
+                        }
+                        let sign = sign_res.data;
+
                         axios({
                             url: sign.url,
                             method: 'PUT',
@@ -426,18 +433,19 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     function get_oss_sign(file, md5) {
                         let extension = file.name.split('.').pop();
                         let mime_type = file.type;
+                        let data = {
+                            '_ajax_nonce': _this.form.attrs['data-oss-sign-nonce'],
+                            'extension': extension,
+                            'mime_type': mime_type,
+                            'md5': md5,
+                        };
+                        data = Object.assign(data, field.data);
                         let sign = axios({
                             url: wnd_action_api + '/wnd_sign_oss_upload',
                             method: 'POST',
-                            data: {
-                                '_ajax_nonce': _this.form.attrs['data-oss-sign-nonce'],
-                                'extension': extension,
-                                'data': field.data,
-                                'mime_type': mime_type,
-                                'md5': md5,
-                            },
+                            data: data,
                         }).then(res => {
-                            return res.data.data;
+                            return res.data;
                         })
 
                         return sign;
