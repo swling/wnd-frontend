@@ -55,7 +55,7 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 
 				// 上传文件
 				let file = data.fileinput[0];
-				if (config.oss_sign_nonce) {
+				if (config.oss_direct_upload) {
 					upload_to_oss(file);
 				} else {
 					let formdata = new FormData();
@@ -63,8 +63,10 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					formdata.append('post_parent', config.post_parent);
 
 					let file_info = await upload_to_local_server(formdata);
-					img.src = file_info.url;
-					img.dataset.id = file_info.id;
+					if (file_info) {
+						img.src = file_info.url;
+						img.dataset.id = file_info.id;
+					}
 				}
 			},
 		});
@@ -77,6 +79,7 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 				data: form_data,
 			}).then(res => {
 				if (res.data.status <= 0) {
+					alert(res.data.msg);
 					return '';
 				} else {
 					return res.data[0].data;

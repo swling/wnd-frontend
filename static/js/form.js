@@ -153,9 +153,9 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         // 自定义配置
                         wnd_config: {
                             'rest_nonce': wnd.rest_nonce,
-                            'upload_nonce': field.upload_nonce,
                             'upload_url': field.upload_url,
                             'post_parent': post_id,
+                            'oss_direct_upload': _this.form.attrs['data-oss-direct-upload'],
                             'oss_sign_endpoint': wnd_action_api + '/wnd_sign_oss_upload',
                         },
                         setup: function(editor) {
