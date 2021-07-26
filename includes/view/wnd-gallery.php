@@ -2,14 +2,13 @@
 namespace Wnd\View;
 
 /**
- *@since 0.9.2
- *
- *相册图集
+ * 相册图集
+ * @since 0.9.2
  */
 class Wnd_Gallery {
 
 	/**
-	 *将外部传参与默认参数合并，以确保参数完整
+	 * 将外部传参与默认参数合并，以确保参数完整
 	 */
 	public static function parse_args(array $args): array{
 		$defaults = [
@@ -41,29 +40,25 @@ class Wnd_Gallery {
 	}
 
 	/**
-	 *构建相册上传
-	 *@param array 传参 详情参看 static::parse_args();
-	 *@param bool 是否对外部传参与默认参数合并解析（当外部传参不完整时，需选择此项，否则将出现参数未定义等错误）
-	 *@return string html element
+	 * 构建相册上传
+	 * @param  array  传参                                                                                                                                          详情参看 static::parse_args();
+	 * @param  bool   是否对外部传参与默认参数合并解析（当外部传参不完整时，需选择此项，否则将出现参数未定义等错误）
+	 * @return string html element
 	 */
 	public static function build_gallery_upload(array $args, $parse_args = true): string{
 		$args = $parse_args ? static::parse_args($args) : $args;
 
 		/**
-		 *@since 2019.12.13
-		 *
-		 *将$args['data']数组拓展为变量
-		 *
-		 *$post_parent
-		 *$user_id
-		 *$meta_key
-		 *……
+		 * 将$args['data']数组拓展为变量
+		 * $post_parent
+		 * $user_id
+		 * $meta_key
+		 * ……
+		 * @since 2019.12.13
 		 */
 		extract($args['data']);
 
 		// 固定data
-		$args['data']['upload_nonce']     = wp_create_nonce('wnd_upload_file');
-		$args['data']['delete_nonce']     = wp_create_nonce('wnd_delete_file');
 		$args['data']['meta_key_nonce']   = wp_create_nonce($meta_key);
 		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
@@ -74,7 +69,7 @@ class Wnd_Gallery {
 		$images = is_array($images) ? $images : [];
 
 		/**
-		 *@since 2019.05.06 构建 html
+		 * @since 2019.05.06 构建 html
 		 */
 		$id   = 'gallery-' . $args['id'];
 		$data = ' data-id="' . $id . '"';
@@ -131,12 +126,13 @@ class Wnd_Gallery {
 	}
 
 	/**
-	 *@since 2019.05.05
-	 *Post gallery 相册展示
-	 *@param $post_id 			int 		相册所附属的文章ID
-	 *@param $thumbnail_width 	number 		缩略图宽度
-	 *@param $thumbnail_height 	number 		缩略图高度
-	 **/
+	 * Post gallery 相册展示
+	 * @since 2019.05.05
+	 *
+	 * @param $post_id          			int  		相册所附属的文章ID
+	 * @param $thumbnail_width  	number 		缩略图宽度
+	 * @param $thumbnail_height 	number 		缩略图高度
+	 */
 	public static function build_post_gallery(int $post_id, int $thumbnail_width, int $thumbnail_height): string{
 		$images = wnd_get_post_meta($post_id, 'gallery');
 		if (!$images) {
@@ -152,12 +148,13 @@ class Wnd_Gallery {
 	}
 
 	/**
-	 *@since 2020.07.15
-	 *User gallery 相册展示
-	 *@param $user_id 			int 		相册所附属的用户ID
-	 *@param $thumbnail_width 	number 		缩略图宽度
-	 *@param $thumbnail_height 	number 		缩略图高度
-	 **/
+	 * User gallery 相册展示
+	 * @since 2020.07.15
+	 *
+	 * @param $user_id          			int  		相册所附属的用户ID
+	 * @param $thumbnail_width  	number 		缩略图宽度
+	 * @param $thumbnail_height 	number 		缩略图高度
+	 */
 	public static function build_user_gallery(int $user_id, int $thumbnail_width, int $thumbnail_height): string{
 		$images = wnd_get_user_meta($user_id, 'gallery');
 		if (!$images) {
@@ -173,9 +170,9 @@ class Wnd_Gallery {
 	}
 
 	/**
-	 *@since 0.9.2
-	 *根据附件id构造相册，并对检测id有效性
-	 *返回构造完成的相册 html ，及剔除无效附件id的附件id数据
+	 * 根据附件id构造相册，并对检测id有效性
+	 * 返回构造完成的相册 html ，及剔除无效附件id的附件id数据
+	 * @since 0.9.2
 	 */
 	protected static function build_gallery(array $images, int $thumbnail_width, int $thumbnail_height): array{
 		// 遍历输出图片集

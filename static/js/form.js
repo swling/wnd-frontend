@@ -156,7 +156,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                             'upload_nonce': field.upload_nonce,
                             'upload_url': field.upload_url,
                             'post_parent': post_id,
-                            'oss_sign_nonce': _this.form.attrs['data-oss-sign-nonce'],
                             'oss_sign_endpoint': wnd_action_api + '/wnd_sign_oss_upload',
                         },
                         setup: function(editor) {
@@ -231,16 +230,13 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     }
                 }
 
-                // WP Nonce
-                form_data.set('_ajax_nonce', field.data.upload_nonce);
-
                 // 获取文件，支持多文件上传（文件数据 name 统一设置为 wnd_file[] 这是与后端处理程序的约定 ）
                 for (let i = 0, n = files.length; i < n; i++) {
                     // 图片处理
                     if (files[i].type.includes('image/') && (field.data.save_width || field.data.save_height)) {
                         handel_image_upload(i, files[i]);
                     } else {
-                        if (_this.form.attrs['data-oss-sign-nonce']) {
+                        if (_this.form.attrs['data-oss-direct-upload']) {
                             wnd_load_md5_script(function() {
                                 upload_to_oss(files[i]);
                             });
@@ -288,7 +284,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         });
                         form_data.append('wnd_file[' + i + ']', file);
 
-                        if (_this.form.attrs['data-oss-sign-nonce']) {
+                        if (_this.form.attrs['data-oss-direct-upload']) {
                             wnd_load_md5_script(function() {
                                 upload_to_oss(file)
                             });
@@ -434,7 +430,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         let extension = file.name.split('.').pop();
                         let mime_type = file.type;
                         let data = {
-                            '_ajax_nonce': _this.form.attrs['data-oss-sign-nonce'],
                             'extension': extension,
                             'mime_type': mime_type,
                             'md5': md5,
@@ -463,7 +458,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 let data = new FormData();
                 data.append('file_id', field.file_id);
                 data.append('meta_key', field.data.meta_key);
-                data.append('_ajax_nonce', field.data.delete_nonce);
                 axios({
                     url: wnd_action_api + '/wnd_delete_file',
                     method: 'post',

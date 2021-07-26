@@ -61,7 +61,6 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					let formdata = new FormData();
 					formdata.append('wnd_file[]', file);
 					formdata.append('post_parent', config.post_parent);
-					formdata.append('_ajax_nonce', config.upload_nonce);
 
 					let file_info = await upload_to_local_server(formdata);
 					img.src = file_info.url;
@@ -166,7 +165,6 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					url: config.oss_sign_endpoint,
 					method: 'POST',
 					data: {
-						'_ajax_nonce': config.oss_sign_nonce,
 						'extension': extension,
 						'post_parent': config.post_parent,
 						'mime_type': mime_type,

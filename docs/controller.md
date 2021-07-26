@@ -13,10 +13,6 @@
 ## 自动加载规则 
 @see autoloader.md
 
-### action api
-提交的数据中必须包含：$_POST['action']：该值为处理当前请求的控制类名称（不含命名空间）<br>
-$_POST['_ajax_nonce'] nonce 生成方式：wp_create_nonce($_POST['action'])
-
 #### @see Wnd_Form_WP->set_action
 
 后端控制类接收数据并选择模型处理后，返回数组值：<br>
@@ -26,14 +22,14 @@ $response = ['status'=>'状态值','msg'=>'消息','data'=>'数据'];
 API统一将结果转为json格式，输出交付前端处理
 
 ### interface api
-UI请求无需nonce校验需要包含如下参数
+UI请求需要包含如下参数
 - $_GET['module']：该值为响应当前UI的类名称（不含命名空间）
 - 传参请直接通过 $_GET
 UI类将返回字符串（通常为HTML字符串）交付前端
 
 
 ### jsonGet api
-json获取请求无需nonce校验需要包含如下参数
+json获取请求需要包含如下参数
 - $_GET['data']：该值为需要获取的数据处理类名称（不含命名空间）
 - 传参请直接通过 $_GET
 返回为json数据

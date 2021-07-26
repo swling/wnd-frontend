@@ -70,19 +70,21 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 
 		/**
-		 * 设置 OSS 签名 Nonce
+		 * OSS 浏览器直传选项
 		 * @since 0.9.33.7
 		 */
-		$this->add_form_attr('data-oss-sign-nonce', static::get_oss_sign_nonce());
+		if (static::is_oss_direct_upload()) {
+			$this->add_form_attr('data-oss-direct-upload', '1');
+		}
 	}
 
 	/**
-	 * 获取直传 OSS 签名 Nonce
+	 * 是否为浏览器直传 OSS
 	 * @since 0.9.33.7
 	 */
-	protected static function get_oss_sign_nonce(): string{
+	private static function is_oss_direct_upload(): bool{
 		$local_storage = (int) wnd_get_config('oss_local_storage');
-		return ($local_storage < 0) ? wp_create_nonce('wnd_sign_oss_upload') : '';
+		return ($local_storage < 0) ? true : false;
 	}
 
 	/**
@@ -101,13 +103,8 @@ class Wnd_Form_WP extends Wnd_Form {
 	 */
 	public function set_route(string $route, string $endpoint) {
 		$this->add_form_attr('route', $route);
-		if ('action' == $route) {
-			$this->add_hidden('_ajax_nonce', wp_create_nonce($endpoint));
-		}
-
 		$this->method = Wnd_Controller::$routes[$route]['methods'] ?? '';
 		$this->action = Wnd_Controller::get_route_url($route, $endpoint);
-
 		parent::set_action($this->action, $this->method);
 	}
 
@@ -153,9 +150,8 @@ class Wnd_Form_WP extends Wnd_Form {
 	// 富文本编辑器可能需要上传文件操作新增 nonce
 	public function add_editor(array $args) {
 		$this->add_form_attr('data-editor', '1');
-		$args['type']         = 'editor';
-		$args['upload_nonce'] = wp_create_nonce('wnd_upload_file');
-		$args['upload_url']   = wnd_get_route_url('action', 'wnd_upload_file');
+		$args['type']       = 'editor';
+		$args['upload_url'] = wnd_get_route_url('action', 'wnd_upload_file');
 		parent::add_field($args);
 	}
 
@@ -195,7 +191,6 @@ class Wnd_Form_WP extends Wnd_Form {
 			'action',
 			'type',
 			'template',
-			'_ajax_nonce',
 			'type_nonce',
 			'device_type',
 			'device_name',
@@ -214,7 +209,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		$button .= ' data-action="wnd_send_code"';
 		$button .= ' data-type="' . $type . '"';
 		$button .= ' data-template="' . $template . '"';
-		$button .= ' data-_ajax_nonce="' . wp_create_nonce('wnd_send_code') . '"';
 		$button .= ' data-type_nonce="' . wp_create_nonce($device_type . $type) . '"';
 		$button .= ' data-device_type="' . $device_type . '"';
 		$button .= ' data-device_name="' . $placeholder . '"';
@@ -323,8 +317,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		extract($args['data']);
 
 		// 固定data
-		$args['data']['upload_nonce']     = wp_create_nonce('wnd_upload_file');
-		$args['data']['delete_nonce']     = wp_create_nonce('wnd_delete_file');
 		$args['data']['meta_key_nonce']   = wp_create_nonce($meta_key);
 		$args['data']['thumbnail_width']  = $args['thumbnail_size']['width'];
 		$args['data']['thumbnail_height'] = $args['thumbnail_size']['height'];
@@ -370,8 +362,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		extract($args['data']);
 
 		// 固定data
-		$args['data']['upload_nonce']   = wp_create_nonce('wnd_upload_file');
-		$args['data']['delete_nonce']   = wp_create_nonce('wnd_delete_file');
 		$args['data']['meta_key_nonce'] = wp_create_nonce($meta_key);
 		$args['data']['method']         = $this->is_ajax_submit ? 'ajax' : $this->method;
 

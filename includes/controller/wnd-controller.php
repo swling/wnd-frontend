@@ -7,30 +7,29 @@ use Wnd\View\Wnd_Filter_Ajax;
 use Wnd\View\Wnd_Filter_User;
 
 /**
- *@since 2019.04.07
- *
  * Wnd Rest API
- *
- * # 主题或插件可拓展 Action、Module、Jsonget 详情参见：
+ * ## 主题或插件可拓展 Action、Module、Jsonget 详情参见：
  * - @see docs/controller.md
  * - @see docs/autoloader.md
  *
  * 注意：
- *	通过回调函数传参的数据是未经处理的原始数据（不会添加反斜线）。
- *	而 WordPress 环境中，默认的超全局变量 $_POST / $_GET / $_REQUEST 则是经过转义的数据（无论 PHP 配置）
- *	@link https://make.wordpress.org/core/2016/04/06/rest-api-slashed-data-in-wordpress-4-4-and-4-5/
+ * - 通过回调函数传参的数据是未经处理的原始数据（不会添加反斜线）。
+ * - 而 WordPress 环境中，默认的超全局变量 $_POST / $_GET / $_REQUEST 则是经过转义的数据（无论 PHP 配置）
+ * - @link https://make.wordpress.org/core/2016/04/06/rest-api-slashed-data-in-wordpress-4-4-and-4-5/
+ *
+ * @since 2019.04.07
  */
 class Wnd_Controller {
 
 	use Wnd_Singleton_Trait;
 
 	/**
-	 *路由命名空间
+	 * 路由命名空间
 	 */
 	public static $namespace = 'wnd';
 
 	/**
-	 *集中定义 API
+	 * 集中定义 API
 	 * - 为统一前端提交行为，本插件约定，所有 Route 仅支持单一 Method 请求方式
 	 * - 'route_rule' 为本插件自定义参数，用于设定对应路由的匹配规则
 	 */
@@ -84,7 +83,7 @@ class Wnd_Controller {
 		add_action('rest_api_init', [__CLASS__, 'register_route']);
 
 		/**
-		 *前端移除 WordPress 默认的API
+		 * 前端移除 WordPress 默认的API
 		 * - 原因：
 		 *   本插件的网站，通常包含用户贡献内容（UGC）功能，如果网站设置了自定义的内容管理权限，必须禁止 WordPress 默认的管理接口
 		 *   例如：站点利用本插件的权限控制，设置了用户发布文章的总数，或特定情况的编辑权限。如果此时未禁用 WP 原生 API
@@ -102,20 +101,20 @@ class Wnd_Controller {
 		remove_action('rest_api_init', 'wp_oembed_register_route');
 
 		/**
-		 *@since 2019.10.08
-		 *禁用xmlrpc
-		 *如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
+		 * 禁用xmlrpc
+		 * 如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
+		 * @since 2019.10.08
 		 */
 		add_filter('xmlrpc_enabled', '__return_false');
 	}
 
 	/**
-	 *注册API
+	 * 注册API
 	 */
 	public static function register_route() {
 		/**
-		 *插件移除了所有 WP 默认的 Rest API
-		 *此处恢复 WP 默认的 Application Passwords API 可用于自定义 API 身份验证
+		 * 插件移除了所有 WP 默认的 Rest API
+		 * 此处恢复 WP 默认的 Application Passwords API 可用于自定义 API 身份验证
 		 *
 		 */
 		$controller = new \WP_REST_Application_Passwords_Controller();
@@ -135,30 +134,30 @@ class Wnd_Controller {
 	}
 
 	/**
-	 *注册API
+	 * 注册API
 	 */
 	public static function get_route_url(string $route, string $endpoint = ''): string {
 		return rest_url(static::$namespace . '/' . $route . ($endpoint ? ('/' . $endpoint) : ''));
 	}
 
 	/**
-	 *解析前端发送的类标识，返回包含完整命名空间的真实类名
+	 * 解析前端发送的类标识，返回包含完整命名空间的真实类名
 	 *
-	 *因拓展插件不具唯一性，因此加载插件中的拓展类需要添加插件名称
-	 *parse_class('Wndt_File_Import/Wndt_Demo', 'Module') 	=> Wnd_Plugin\Wndt_File_Import\Module\Wndt_Demo;
-	 *parse_class('Wnd_Demo', 'Module') 					=> Wnd\Module\Wnd_Demo;
-	 *parse_class('Wndt_Demo', 'Module') 					=> Wndt\Module\Wndt_Demo;
+	 * 因拓展插件不具唯一性，因此加载插件中的拓展类需要添加插件名称
+	 * parse_class('Wndt_File_Import/Wndt_Demo', 'Module') 	=> Wnd_Plugin\Wndt_File_Import\Module\Wndt_Demo;
+	 * parse_class('Wnd_Demo', 'Module') 					=> Wnd\Module\Wnd_Demo;
+	 * parse_class('Wndt_Demo', 'Module') 					=> Wndt\Module\Wndt_Demo;
 	 *
-	 *其他 api 请求以此类推
+	 * 其他 api 请求以此类推
 	 *
-	 *@see 自动加载机制 wnd-load.php
+	 * @see 自动加载机制 wnd-load.php
 	 *
-	 *@return string 包含完整命名空间的类名称
+	 * @return string 包含完整命名空间的类名称
 	 */
 	public static function parse_class(string $class, string $route_base): string{
 		/**
-		 *拓展插件类请求格式：Wndt_File_Import/Wndt_Demo
-		 *判断是否为拓展插件类，若是，则提取插件名称
+		 * 拓展插件类请求格式：Wndt_File_Import/Wndt_Demo
+		 * 判断是否为拓展插件类，若是，则提取插件名称
 		 */
 		$class_info = explode('/', $class, 2);
 		if (isset($class_info[1])) {
@@ -170,19 +169,19 @@ class Wnd_Controller {
 		}
 
 		/**
-		 *解析类名称
+		 * 解析类名称
 		 *
 		 * 插件：
 		 * - 添加插件固定命名空间前缀：Wnd_Plugin
 		 * - 添加插件名称
 		 *
-		 *本插件及主题：
+		 * 本插件及主题：
 		 * - 提取类名称前缀作为命名空间前缀
 		 *
-		 *拼接完整类名称：
+		 * 拼接完整类名称：
 		 * - 添加API接口
 		 * - 添加类名称
-		 *最终拼接成具有完整命名空间的实际类名称
+		 * 最终拼接成具有完整命名空间的实际类名称
 		 */
 		if ($plugin) {
 			$real_class = 'Wnd_Plugin' . '\\' . $plugin . '\\' . $route_base . '\\' . $class_name;
@@ -195,10 +194,10 @@ class Wnd_Controller {
 	}
 
 	/**
-	 *@since 2019.04.07
-	 *UI 响应
+	 * UI 响应
+	 * @since 2019.04.07
 	 *
-	 *@param $request
+	 * @param $request
 	 */
 	public static function handle_module($request): array{
 		if (!isset($request['module'])) {
@@ -209,8 +208,8 @@ class Wnd_Controller {
 		$class = static::parse_class($request['module'], 'Module');
 
 		/**
-		 *@since 2019.10.01
-		 *为实现惰性加载，废弃函数支持，改用类
+		 * 为实现惰性加载，废弃函数支持，改用类
+		 * @since 2019.10.01
 		 */
 		if (!is_callable([$class, 'get_structure'])) {
 			return ['status' => 0, 'msg' => __('无效的UI', 'wnd') . ':' . $class];
@@ -225,10 +224,10 @@ class Wnd_Controller {
 	}
 
 	/**
-	 *@since 2020.04.24
-	 *获取 json data
+	 * 获取 json data
+	 * @since 2020.04.24
 	 *
-	 *@param $request
+	 * @param $request
 	 */
 	public static function handle_jsonget($request): array{
 		if (!isset($request['jsonget'])) {
@@ -250,15 +249,14 @@ class Wnd_Controller {
 	}
 
 	/**
-	 *@since 2019.04.07
-	 *数据处理
-	 *
-	 *注意：
-	 *	WordPress Rest API 回调函数的传参 $request 数据为原始数据，如直接使用 $request 数据执行数据库操作需要做数据清理。
-	 *	因此在本插件，Action 层相关方法中，用户数据采用 Wnd\Utility\Wnd_Request 统一处理
+	 * 数据处理
+	 * 注意：
+	 * 	WordPress Rest API 回调函数的传参 $request 数据为原始数据，如直接使用 $request 数据执行数据库操作需要做数据清理。
+	 * 	因此在本插件，Action 层相关方法中，用户数据采用 Wnd\Utility\Wnd_Request 统一处理
 	 * 	@see Wnd\Utility\Wnd_Request; Wnd\Action\Wnd_Action_Ajax
+	 * @since 2019.04.07
 	 *
-	 *@param $request
+	 * @param $request
 	 */
 	public static function handle_action($request): array{
 		if (!isset($request['action'])) {
@@ -268,14 +266,9 @@ class Wnd_Controller {
 		// 解析实际类名称
 		$class = static::parse_class($request['action'], 'Action');
 
-		// nonce校验：action
-		if (!wp_verify_nonce($request['_ajax_nonce'] ?? '', $request['action'])) {
-			return ['status' => 0, 'msg' => __('Nonce校验失败', 'wnd')];
-		}
-
 		/**
-		 *@since 2019.10.01
-		 *为实现惰性加载，使用控制类
+		 * 为实现惰性加载，使用控制类
+		 * @since 2019.10.01
 		 */
 		if (!is_callable([$class, 'execute'])) {
 			return ['status' => 0, 'msg' => __('无效的Action', 'wnd')];
@@ -290,8 +283,8 @@ class Wnd_Controller {
 	}
 
 	/**
-	 *@since 0.9.17
-	 *根据查询参数判断是否为自定义伪静态接口，从而实现输出重写
+	 * 根据查询参数判断是否为自定义伪静态接口，从而实现输出重写
+	 * @since 0.9.17
 	 */
 	public static function handle_endpoint($request) {
 		// 解析实际类名称及参数
@@ -309,15 +302,14 @@ class Wnd_Controller {
 	}
 
 	/**
-	 *@since 2019.07.31
-	 *多重筛选 API
+	 * 多重筛选 API
+	 * 常规情况下，controller 应将用户请求转为操作命令并调用 model 处理，但 Wnd\View\Wnd_Filter 是一个完全独立的功能类
+	 * Wnd\View\Wnd_Filter 既包含了生成筛选链接的视图功能，也包含了根据请求参数执行对应 WP_Query 并返回查询结果的功能，且两者紧密相关不宜分割
+	 * 可以理解为，Wnd\View\Wnd_Filter 是通过生成一个筛选视图，发送用户请求，最终根据用户请求，生成新的视图的特殊类：视图<->控制<->视图
+	 * @since 2019.07.31
+	 * @since 2019.10.07 OOP改造
 	 *
-	 *@since 2019.10.07 OOP改造
-	 *常规情况下，controller 应将用户请求转为操作命令并调用 model 处理，但 Wnd\View\Wnd_Filter 是一个完全独立的功能类
-	 *Wnd\View\Wnd_Filter 既包含了生成筛选链接的视图功能，也包含了根据请求参数执行对应 WP_Query 并返回查询结果的功能，且两者紧密相关不宜分割
-	 *可以理解为，Wnd\View\Wnd_Filter 是通过生成一个筛选视图，发送用户请求，最终根据用户请求，生成新的视图的特殊类：视图<->控制<->视图
-	 *
-	 *@param $request
+	 * @param $request
 	 */
 	public static function filter_posts($request): array{
 		try {
@@ -336,10 +328,10 @@ class Wnd_Controller {
 	}
 
 	/**
-	 *@since 2020.05.05
-	 *User 筛选 API
+	 * User 筛选 API
+	 * @since 2020.05.05
 	 *
-	 *@param $request
+	 * @param $request
 	 */
 	public static function filter_users($request): array{
 		try {
@@ -358,7 +350,7 @@ class Wnd_Controller {
 	}
 
 	/**
-	 *写入评论
+	 * 写入评论
 	 */
 	public static function add_comment($request): array{
 		try {
@@ -376,8 +368,8 @@ class Wnd_Controller {
 		$GLOBALS['comment'] = $comment;
 
 		/**
-		 *敬请留意：
-		 *此结构可能随着WordPress wp_list_comments()输出结构变化而失效
+		 * 敬请留意：
+		 * 此结构可能随着WordPress wp_list_comments()输出结构变化而失效
 		 */
 		$html = '<li class="' . implode(' ', get_comment_class()) . '">';
 		$html .= '<article class="comment-body">';

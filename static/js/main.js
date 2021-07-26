@@ -860,12 +860,11 @@ function wnd_ajax_click(link) {
     let action = is_cancel ? link.dataset.cancel : link.dataset.action;
     let args = JSON.parse(link.dataset.args);
     args._wnd_sign = link.dataset.sign;
-    args._ajax_nonce = is_cancel ? link.dataset.cancel_nonce : link.dataset.action_nonce;
 
     axios({
         url: wnd_action_api + '/' + action,
         method: 'POST',
-        data: object_to_formdata(args),
+        data: args,
     }).then(function(response) {
         // 正向操作成功
         if (response.data.status != 0 && action == link.dataset.action) {
