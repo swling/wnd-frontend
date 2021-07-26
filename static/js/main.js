@@ -702,6 +702,22 @@ function wnd_handle_response(response, route, parent) {
     return form_info;
 }
 
+/**
+ * 发送删除附件请求 
+ * @since 0.9.35
+ */
+function wnd_delete_attachment(attachment_id, meta_key = '') {
+    axios({
+        url: wnd_action_api + '/wnd_delete_file',
+        method: 'POST',
+        data: {
+            'file_id': attachment_id,
+            'meta_key': meta_key,
+        },
+    }).then(response => {
+        if (response.status == 200) {}
+    });
+}
 
 /**
  *@since 2019.02.09 发送手机或邮箱验证码
@@ -722,15 +738,15 @@ function wnd_send_code(button, captcha_data_key = '') {
     let data = button.dataset;
     data.device = device_value;
     formData = object_to_formdata(data);
-    let style = "is-success";
+    let style = 'is-success';
 
     axios({
-        url: wnd_action_api + "/" + data.action,
+        url: wnd_action_api + '/' + data.action,
         method: 'POST',
         data: formData,
     }).then(function(response) {
         if (response.data.status <= 0) {
-            style = "is-danger";
+            style = 'is-danger';
         } else {
             button.disabled = true;
             button.textContent = wnd.msg.send_successfully;
@@ -823,7 +839,7 @@ var can_click_ajax_link = true;
 
 function wnd_ajax_click(link) {
     // 是否在弹窗中操作
-    let in_modal = link.closest(".modal.is-active") ? true : false;
+    let in_modal = link.closest('.modal.is-active') ? true : false;
 
     // 点击频率控制
     if (!can_click_ajax_link) {
@@ -847,7 +863,7 @@ function wnd_ajax_click(link) {
     args._ajax_nonce = is_cancel ? link.dataset.cancel_nonce : link.dataset.action_nonce;
 
     axios({
-        url: wnd_action_api + "/" + action,
+        url: wnd_action_api + '/' + action,
         method: 'POST',
         data: object_to_formdata(args),
     }).then(function(response) {

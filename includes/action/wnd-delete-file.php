@@ -4,21 +4,15 @@ namespace Wnd\Action;
 use Exception;
 
 /**
- *删除附件
- *@since 2019.01.23
- *@param $_POST['meta_key'];
- *@param $_POST['post_parent'];
- *@param $_POST['file_id'];
+ * 删除附件
+ * @since 2019.01.23
  */
 class Wnd_Delete_File extends Wnd_Action_User {
 
-	/**
-	 *本操作非标准表单请求，无需校验数据签名
-	 */
 	protected $verify_sign = false;
 
 	public function execute(): array{
-		$meta_key    = $this->data['meta_key'];
+		$meta_key    = $this->data['meta_key'] ?? '';
 		$file_id     = (int) $this->data['file_id'];
 		$post_parent = get_post($file_id)->post_parent ?? 0;
 

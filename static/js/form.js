@@ -410,22 +410,22 @@ function _wnd_render_form(container, form_json, add_class = '') {
                              **/
                             withCredentials: false,
                         }).then(response => {
-                            if (response.status == 200) {
-                                field.help.text = wnd.msg.upload_successfully;
-                                field.help.class = 'is-success';
-                                field.thumbnail = sign.url;
-                                field.file_id = sign.id;
-                                field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + sign.url + '" target="_blank">' + wnd.msg.view + '</a>';
-                            } else {
-                                // 直传失败，应该删除对应 WP Attachment Post
-                                // return '';
-                            }
+                            field.help.text = wnd.msg.upload_successfully;
+                            field.help.class = 'is-success';
+                            field.thumbnail = sign.url;
+                            field.file_id = sign.id;
+                            field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + sign.url + '" target="_blank">' + wnd.msg.view + '</a>';
 
                             _this.$nextTick(function() {
                                 funTransitionHeight(parent, trs_time);
                             });
                         }).catch(err => {
                             console.log(err);
+                            field.help.text = wnd.msg.upload_failed;
+                            field.help.class = 'is-danger';
+                            let meta_key = field.data.meta_key || '';
+                            let attachment_id = sign.id;
+                            wnd_delete_attachment(attachment_id, meta_key);
                         });
                     }
 

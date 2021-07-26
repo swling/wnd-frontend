@@ -148,15 +148,11 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					 **/
 					withCredentials: false,
 				}).then(res => {
-					if (res.status == 200) {
-						img.src = sign.url;
-						img.dataset.id = sign.id;
-					} else {
-						// 直传失败，应该删除对应 WP Attachment Post
-						return '';
-					}
+					img.src = sign.url;
+					img.dataset.id = sign.id;
 				}).catch(err => {
-					console.log(err);
+					wnd_delete_attachment(sign.id);
+					// alert(wnd.msg.upload_failed);
 				});
 
 				return file_info;
