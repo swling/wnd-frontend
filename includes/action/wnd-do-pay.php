@@ -30,7 +30,7 @@ class Wnd_Do_Pay extends Wnd_Action {
 		 * 当设置 $post_id 表征改支付为在线支付订单，需同步设置权限检测
 		 * @since 0.8.69
 		 */
-		if ($post_id) {
+		if ($post_id and 'order' == $type) {
 			Wnd_Create_Order::check_create($post_id, $sku_id, $quantity, true);
 		}
 
