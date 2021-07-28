@@ -26,6 +26,7 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 
 		$oss_handler = Wnd_OSS_Handler::get_instance();
 		$oss_params  = $oss_handler->get_oss_sign_params('PUT', $this->local_file, $this->mime_type, $md5);
+		$oss_handler->remove_local_storage_hook(); // 移除本地文件处理钩子
 
 		// 写入 attachment post
 		$attachment_id = $this->inset_attachment();

@@ -38,12 +38,7 @@ class Wnd_OSS_Handler {
 		$this->oss_dir          = trim(wnd_get_config('oss_dir'), '/'); // 文件在节点中的相对存储路径
 		$this->oss_base_url     = wnd_get_config('oss_base_url'); // 外网访问 URL
 
-		if ($this->local_storage >= 0) {
-			// 上传文件
-			add_action('add_attachment', [$this, 'upload_to_oss'], 10, 1);
-			// 删除本地文件
-			add_action('added_post_meta', [$this, 'delete_local_file'], 10, 4);
-		}
+		$this->add_local_storage_hook();
 
 		// 同步删除远程文件
 		add_action('delete_attachment', [$this, 'delete_oss_file'], 10, 1);
@@ -53,6 +48,27 @@ class Wnd_OSS_Handler {
 		add_filter('wp_get_attachment_url', [$this, 'filter_attachment_url'], 10, 2);
 		add_filter('wp_calculate_image_srcset', [$this, 'filter_wp_srcset'], 10, 1);
 		add_filter('wp_get_attachment_image_src', [$this, 'filter_attachment_image_src'], 10, 1);
+	}
+
+	/**
+	 * 本地文件处理钩子
+	 * @since 0.9.35.5
+	 */
+	private function add_local_storage_hook() {
+		// 上传文件
+		add_action('add_attachment', [$this, 'upload_to_oss'], 10, 1);
+		// 删除本地文件
+		add_action('added_post_meta', [$this, 'delete_local_file'], 10, 4);
+	}
+
+	/**
+	 * 移除本地文件处理钩子
+	 * - 如前端浏览器直传文件至 OSS 时
+	 * @since 0.9.35.5
+	 */
+	public function remove_local_storage_hook() {
+		remove_action('add_attachment', [$this, 'upload_to_oss'], 10);
+		remove_action('added_post_meta', [$this, 'delete_local_file'], 10);
 	}
 
 	/**
