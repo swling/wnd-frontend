@@ -10,16 +10,15 @@
  * @param string $the_file 	本地或远程完整文件地址
  * @param string $rename   发送给浏览器的文件名称，重命名后可防止在收费类下载场景中，用户通过文件名猜测路径
  */
-function wnd_download_file($the_file, $rename = 'download') {
+function wnd_download_file($file, $rename = 'download') {
 	// 获取文件后缀信息
-	$ext      = '.' . pathinfo($the_file)['extension'];
-	$filename = urlencode(get_option('blogname') . '-' . $rename . $ext);
+	$ext      = wnd_parse_file_ext($file);
+	$filename = urlencode(get_option('blogname') . '-' . $rename . '.' . $ext);
 
 	// Force download
-	header('Content-type: application/x-file-to-save');
+	header('Content-type: application/octet-stream');
 	header('Content-Disposition: attachment; filename*=UTF-8\'\'' . $filename);
-	ob_end_clean();
-	readfile($the_file);
+	readfile($file);
 	exit;
 }
 
@@ -102,22 +101,8 @@ function wnd_media_sideload($file, $post_id, $desc = '', $return = 'id') {
 	if (!empty($file)) {
 		$file_array = [];
 
-		/**
-		 * 将远程文件随机重命名
-		 * @since 2020.06.15
-		 */
-		$url_info = parse_url($file);
-		$path     = $url_info['path'];
-		$query    = $url_info['query'];
-		$info     = pathinfo($path);
-		$ext      = isset($info['extension']) ?? '';
-
-		// 带有处理参数的 url 可能实际文件类型不是后缀名
-		if ($query) {
-			$content_type = get_headers($file, 1)['Content-Type'];
-			$ext          = wnd_mime2ext($content_type);
-		}
-
+		// 提取文件后缀
+		$ext = wnd_parse_file_ext($file);
 		if (!$ext) {
 			return new WP_Error('Invalid file URL.');
 		}
@@ -169,6 +154,31 @@ function wnd_media_sideload($file, $post_id, $desc = '', $return = 'id') {
 	} else {
 		return new WP_Error('image_sideload_failed');
 	}
+}
+
+/**
+ * 根据文件路径或 URL 提取文件后缀名
+ * @since 0.9.35.5
+ */
+function wnd_parse_file_ext(string $file): string{
+	$url_info = parse_url($file);
+	$path     = $url_info['path'] ?? '';
+	$query    = $url_info['query'] ?? '';
+	$scheme   = $url_info['scheme'] ?? '';
+	if (!$path) {
+		return '';
+	}
+
+	$info = pathinfo($path);
+	$ext  = $info['extension'] ?? '';
+
+	// 带有处理参数的 url 可能实际文件类型不是后缀名
+	if ($scheme and $query) {
+		$content_type = get_headers($file, 1)['Content-Type'];
+		$ext          = wnd_mime2ext($content_type);
+	}
+
+	return $ext;
 }
 
 /**
