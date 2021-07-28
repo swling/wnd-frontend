@@ -1,13 +1,14 @@
 <?php
 /**
- *@since 初始化
- *下载文件
- *通过php脚本的方式将文件发送到浏览器下载，避免保留文件的真实路径
- *然而，用户仍然可能通过文件名和网站结构，猜测到可能的真实路径，
- *因此建议将$file定义在网站目录之外，这样通过任何url都无法访问到文件存储目录
- *主要用户付费下载
- *@param string		$the_file 	本地或远程完整文件地址
- *@param string 	$rename 	发送给浏览器的文件名称，重命名后可防止在收费类下载场景中，用户通过文件名猜测路径
+ * 下载文件
+ * 通过php脚本的方式将文件发送到浏览器下载，避免保留文件的真实路径
+ * 然而，用户仍然可能通过文件名和网站结构，猜测到可能的真实路径，
+ * 因此建议将$file定义在网站目录之外，这样通过任何url都无法访问到文件存储目录
+ * 主要用户付费下载
+ * @since 初始化
+ *
+ * @param string $the_file 	本地或远程完整文件地址
+ * @param string $rename   发送给浏览器的文件名称，重命名后可防止在收费类下载场景中，用户通过文件名猜测路径
  */
 function wnd_download_file($the_file, $rename = 'download') {
 	// 获取文件后缀信息
@@ -23,13 +24,13 @@ function wnd_download_file($the_file, $rename = 'download') {
 }
 
 /**
- *@since 2019.01.22
- *保存文章中的外链图片，并替换html图片地址
- *@param 	string 	 $content
- *@param 	string 	 $upload_dir
- *@param 	int 	 $post_id
+ * 保存文章中的外链图片，并替换html图片地址
+ * @since 2019.01.22
  *
- *@return 	string 	$content 	经过本地化后的内容
+ * @param  string 	content
+ * @param  string 	$upload_dir
+ * @param  int    	$post_id
+ * @return string 	$content 	经过本地化后的内容
  */
 function wnd_download_remote_images($content, $upload_dir, $post_id) {
 	if (empty($content)) {
@@ -60,57 +61,35 @@ function wnd_download_remote_images($content, $upload_dir, $post_id) {
 }
 
 /**
- *@since 2019.01.22
- *WordPress 远程下载图片 并返回上传后的图片地址/html 或 id
+ * WordPress 远程下载图片 并返回上传后的图片地址/html 或 id
+ * @since 2019.01.22
  *
- *@param string 	$url 			远程URL
- *@param int 		$post_parent 	需要附属到的Post ID
- *@param string 	$title 			文件名称
- *@param string 	$return  		Optional. Accepts 'html' (image tag html) or 'src' (URL), or 'id' (attachment ID). Default 'html'.
- *
- *@return string|WP_Error Populated HTML img tag on success, WP_Error object otherwise.
+ * @param  string          	$url         	远程URL
+ * @param  int             	$post_parent 	需要附属到的Post ID
+ * @param  string          	$title       	文件名称
+ * @param  string          	$return      	Optional. Accepts 'html' (image tag html) or 'src' (URL), or 'id' (attachment ID). Default 'html'.
+ * @return string|WP_Error Populated HTML img tag on success, WP_Error object otherwise.
  */
 function wnd_download_remote_image($url, $post_parent, $title, $return = 'src') {
 	return wnd_media_sideload($url, $post_parent, $title, $return);
 }
 
 /**
- *@since 2019.05.08 获取图像缩略图
- *需要将图像存储在阿里云oss，并利用filter对wp_get_attachment_url重写为阿里oss地址
- *阿里云的图片处理
- *@link https://help.aliyun.com/document_detail/44688.html
- *截至2019.05.11图片处理定价：每月0-10TB：免费 >10TB：0.025元/GB
- *
- *@param int|string 	$is_or_url 	 	附件post id 或者oss完整图片地址
- *@param int 			$width 	 		图片宽度
- *@param int 			$height 		图片高度
- */
-function wnd_get_thumbnail_url($id_or_url, $width = 160, $height = 120) {
-	$url = is_numeric($id_or_url) ? wp_get_attachment_url($id_or_url) : $id_or_url;
-	if (!$url) {
-		return false;
-	}
-
-	return $url . '?x-oss-process=image/resize,m_fill,w_' . $width . ',h_' . $height;
-}
-
-/**
  * Downloads an file from the specified URL and attaches it to a post.
+ * post meta value. or 'id' (attachment ID). Default 'html'.
  *
- *@see 相较于Wp函数，更新了多前端调用的默认支持，更新了对图像外文件下载的支持，并自动将文件随机重命名
- *
+ * 相较于Wp函数，更新了多前端调用的默认支持，更新了对图像外文件下载的支持，并自动将文件随机重命名
+ * @see media_sideload_image
  * @since 2.6.0
  * @since 4.2.0 Introduced the `$return` parameter.
  * @since 4.8.0 Introduced the 'id' option within the `$return` parameter.
  * @since 5.3.0 The `$post_id` parameter was made optional.
  * @since 5.4.0 The original URL of the attachment is stored in the `_source_url`
- *              post meta value.
  *
- * @param string $file    The URL of the image to download.
- * @param int    $post_id Optional. The post ID the media is to be associated with.
- * @param string $desc    Optional. Description of the image.
- * @param string $return  Optional. Accepts 'html' (image tag html) or 'src' (URL),
- *                        or 'id' (attachment ID). Default 'html'.
+ * @param  string          $file     The URL of the image to download.
+ * @param  int             $post_id  Optional. The post ID the media is to be associated with.
+ * @param  string          $desc     Optional. Description of the image.
+ * @param  string          $return   Optional. Accepts 'html' (image tag html) or 'src' (URL),
  * @return string|WP_Error Populated HTML img tag on success, WP_Error object otherwise.
  */
 function wnd_media_sideload($file, $post_id, $desc = '', $return = 'id') {
@@ -122,18 +101,28 @@ function wnd_media_sideload($file, $post_id, $desc = '', $return = 'id') {
 
 	if (!empty($file)) {
 		$file_array = [];
-		// $file_array['name'] = wp_basename($file);
 
 		/**
-		 *@since 2020.06.15
-		 *将远程文件随机重命名
+		 * 将远程文件随机重命名
+		 * @since 2020.06.15
 		 */
-		$info = pathinfo($file);
-		$ext  = isset($info['extension']) ? '.' . $info['extension'] : '';
-		if (!$ext) {
-			return new WP_Error('image_sideload_failed');
+		$url_info = parse_url($file);
+		$path     = $url_info['path'];
+		$query    = $url_info['query'];
+		$info     = pathinfo($path);
+		$ext      = isset($info['extension']) ?? '';
+
+		// 带有处理参数的 url 可能实际文件类型不是后缀名
+		if ($query) {
+			$content_type = get_headers($file, 1)['Content-Type'];
+			$ext          = wnd_mime2ext($content_type);
 		}
-		$file_array['name'] = 'sync' . uniqid() . $ext;
+
+		if (!$ext) {
+			return new WP_Error('Invalid file URL.');
+		}
+
+		$file_array['name'] = 'sync' . uniqid() . '.' . $ext;
 
 		// Download file to temp location.
 		$file_array['tmp_name'] = download_url($file);
@@ -183,9 +172,197 @@ function wnd_media_sideload($file, $post_id, $desc = '', $return = 'id') {
 }
 
 /**
- *@since 09.26
- *根据 post id 获取付费文件 URL
- *
+ * Content Type 转文件后缀名
+ * @since 0.9.35.5
+ */
+function wnd_mime2ext(string $mime): string{
+	$mime_map = [
+		'video/3gpp2'                                                               => '3g2',
+		'video/3gp'                                                                 => '3gp',
+		'video/3gpp'                                                                => '3gp',
+		'application/x-compressed'                                                  => '7zip',
+		'audio/x-acc'                                                               => 'aac',
+		'audio/ac3'                                                                 => 'ac3',
+		'application/postscript'                                                    => 'ai',
+		'audio/x-aiff'                                                              => 'aif',
+		'audio/aiff'                                                                => 'aif',
+		'audio/x-au'                                                                => 'au',
+		'video/x-msvideo'                                                           => 'avi',
+		'video/msvideo'                                                             => 'avi',
+		'video/avi'                                                                 => 'avi',
+		'application/x-troff-msvideo'                                               => 'avi',
+		'application/macbinary'                                                     => 'bin',
+		'application/mac-binary'                                                    => 'bin',
+		'application/x-binary'                                                      => 'bin',
+		'application/x-macbinary'                                                   => 'bin',
+		'image/bmp'                                                                 => 'bmp',
+		'image/x-bmp'                                                               => 'bmp',
+		'image/x-bitmap'                                                            => 'bmp',
+		'image/x-xbitmap'                                                           => 'bmp',
+		'image/x-win-bitmap'                                                        => 'bmp',
+		'image/x-windows-bmp'                                                       => 'bmp',
+		'image/ms-bmp'                                                              => 'bmp',
+		'image/x-ms-bmp'                                                            => 'bmp',
+		'application/bmp'                                                           => 'bmp',
+		'application/x-bmp'                                                         => 'bmp',
+		'application/x-win-bitmap'                                                  => 'bmp',
+		'application/cdr'                                                           => 'cdr',
+		'application/coreldraw'                                                     => 'cdr',
+		'application/x-cdr'                                                         => 'cdr',
+		'application/x-coreldraw'                                                   => 'cdr',
+		'image/cdr'                                                                 => 'cdr',
+		'image/x-cdr'                                                               => 'cdr',
+		'zz-application/zz-winassoc-cdr'                                            => 'cdr',
+		'application/mac-compactpro'                                                => 'cpt',
+		'application/pkix-crl'                                                      => 'crl',
+		'application/pkcs-crl'                                                      => 'crl',
+		'application/x-x509-ca-cert'                                                => 'crt',
+		'application/pkix-cert'                                                     => 'crt',
+		'text/css'                                                                  => 'css',
+		'text/x-comma-separated-values'                                             => 'csv',
+		'text/comma-separated-values'                                               => 'csv',
+		'application/vnd.msexcel'                                                   => 'csv',
+		'application/x-director'                                                    => 'dcr',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document'   => 'docx',
+		'application/x-dvi'                                                         => 'dvi',
+		'message/rfc822'                                                            => 'eml',
+		'application/x-msdownload'                                                  => 'exe',
+		'video/x-f4v'                                                               => 'f4v',
+		'audio/x-flac'                                                              => 'flac',
+		'video/x-flv'                                                               => 'flv',
+		'image/gif'                                                                 => 'gif',
+		'application/gpg-keys'                                                      => 'gpg',
+		'application/x-gtar'                                                        => 'gtar',
+		'application/x-gzip'                                                        => 'gzip',
+		'application/mac-binhex40'                                                  => 'hqx',
+		'application/mac-binhex'                                                    => 'hqx',
+		'application/x-binhex40'                                                    => 'hqx',
+		'application/x-mac-binhex40'                                                => 'hqx',
+		'text/html'                                                                 => 'html',
+		'image/x-icon'                                                              => 'ico',
+		'image/x-ico'                                                               => 'ico',
+		'image/vnd.microsoft.icon'                                                  => 'ico',
+		'text/calendar'                                                             => 'ics',
+		'application/java-archive'                                                  => 'jar',
+		'application/x-java-application'                                            => 'jar',
+		'application/x-jar'                                                         => 'jar',
+		'image/jp2'                                                                 => 'jp2',
+		'video/mj2'                                                                 => 'jp2',
+		'image/jpx'                                                                 => 'jp2',
+		'image/jpm'                                                                 => 'jp2',
+		'image/jpeg'                                                                => 'jpeg',
+		'image/pjpeg'                                                               => 'jpeg',
+		'application/x-javascript'                                                  => 'js',
+		'application/json'                                                          => 'json',
+		'text/json'                                                                 => 'json',
+		'application/vnd.google-earth.kml+xml'                                      => 'kml',
+		'application/vnd.google-earth.kmz'                                          => 'kmz',
+		'text/x-log'                                                                => 'log',
+		'audio/x-m4a'                                                               => 'm4a',
+		'application/vnd.mpegurl'                                                   => 'm4u',
+		'audio/midi'                                                                => 'mid',
+		'application/vnd.mif'                                                       => 'mif',
+		'video/quicktime'                                                           => 'mov',
+		'video/x-sgi-movie'                                                         => 'movie',
+		'audio/mpeg'                                                                => 'mp3',
+		'audio/mpg'                                                                 => 'mp3',
+		'audio/mpeg3'                                                               => 'mp3',
+		'audio/mp3'                                                                 => 'mp3',
+		'video/mp4'                                                                 => 'mp4',
+		'video/mpeg'                                                                => 'mpeg',
+		'application/oda'                                                           => 'oda',
+		'audio/ogg'                                                                 => 'ogg',
+		'video/ogg'                                                                 => 'ogg',
+		'application/ogg'                                                           => 'ogg',
+		'application/x-pkcs10'                                                      => 'p10',
+		'application/pkcs10'                                                        => 'p10',
+		'application/x-pkcs12'                                                      => 'p12',
+		'application/x-pkcs7-signature'                                             => 'p7a',
+		'application/pkcs7-mime'                                                    => 'p7c',
+		'application/x-pkcs7-mime'                                                  => 'p7c',
+		'application/x-pkcs7-certreqresp'                                           => 'p7r',
+		'application/pkcs7-signature'                                               => 'p7s',
+		'application/pdf'                                                           => 'pdf',
+		'application/octet-stream'                                                  => 'pdf',
+		'application/x-x509-user-cert'                                              => 'pem',
+		'application/x-pem-file'                                                    => 'pem',
+		'application/pgp'                                                           => 'pgp',
+		'application/x-httpd-php'                                                   => 'php',
+		'application/php'                                                           => 'php',
+		'application/x-php'                                                         => 'php',
+		'text/php'                                                                  => 'php',
+		'text/x-php'                                                                => 'php',
+		'application/x-httpd-php-source'                                            => 'php',
+		'image/png'                                                                 => 'png',
+		'image/x-png'                                                               => 'png',
+		'application/powerpoint'                                                    => 'ppt',
+		'application/vnd.ms-powerpoint'                                             => 'ppt',
+		'application/vnd.ms-office'                                                 => 'ppt',
+		'application/msword'                                                        => 'doc',
+		'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
+		'application/x-photoshop'                                                   => 'psd',
+		'image/vnd.adobe.photoshop'                                                 => 'psd',
+		'audio/x-realaudio'                                                         => 'ra',
+		'audio/x-pn-realaudio'                                                      => 'ram',
+		'application/x-rar'                                                         => 'rar',
+		'application/rar'                                                           => 'rar',
+		'application/x-rar-compressed'                                              => 'rar',
+		'audio/x-pn-realaudio-plugin'                                               => 'rpm',
+		'application/x-pkcs7'                                                       => 'rsa',
+		'text/rtf'                                                                  => 'rtf',
+		'text/richtext'                                                             => 'rtx',
+		'video/vnd.rn-realvideo'                                                    => 'rv',
+		'application/x-stuffit'                                                     => 'sit',
+		'application/smil'                                                          => 'smil',
+		'text/srt'                                                                  => 'srt',
+		'image/svg+xml'                                                             => 'svg',
+		'application/x-shockwave-flash'                                             => 'swf',
+		'application/x-tar'                                                         => 'tar',
+		'application/x-gzip-compressed'                                             => 'tgz',
+		'image/tiff'                                                                => 'tiff',
+		'text/plain'                                                                => 'txt',
+		'text/x-vcard'                                                              => 'vcf',
+		'application/videolan'                                                      => 'vlc',
+		'text/vtt'                                                                  => 'vtt',
+		'audio/x-wav'                                                               => 'wav',
+		'audio/wave'                                                                => 'wav',
+		'audio/wav'                                                                 => 'wav',
+		'application/wbxml'                                                         => 'wbxml',
+		'video/webm'                                                                => 'webm',
+		'audio/x-ms-wma'                                                            => 'wma',
+		'application/wmlc'                                                          => 'wmlc',
+		'video/x-ms-wmv'                                                            => 'wmv',
+		'video/x-ms-asf'                                                            => 'wmv',
+		'application/xhtml+xml'                                                     => 'xhtml',
+		'application/excel'                                                         => 'xl',
+		'application/msexcel'                                                       => 'xls',
+		'application/x-msexcel'                                                     => 'xls',
+		'application/x-ms-excel'                                                    => 'xls',
+		'application/x-excel'                                                       => 'xls',
+		'application/x-dos_ms_excel'                                                => 'xls',
+		'application/xls'                                                           => 'xls',
+		'application/x-xls'                                                         => 'xls',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'         => 'xlsx',
+		'application/vnd.ms-excel'                                                  => 'xlsx',
+		'application/xml'                                                           => 'xml',
+		'text/xml'                                                                  => 'xml',
+		'text/xsl'                                                                  => 'xsl',
+		'application/xspf+xml'                                                      => 'xspf',
+		'application/x-compress'                                                    => 'z',
+		'application/x-zip'                                                         => 'zip',
+		'application/zip'                                                           => 'zip',
+		'application/x-zip-compressed'                                              => 'zip',
+		'application/s-compressed'                                                  => 'zip',
+		'multipart/x-zip'                                                           => 'zip',
+		'text/x-scriptzsh'                                                          => 'zsh',
+	];
+
+	return $mime_map[$mime] ?? '';
+}
+
+/**
+ * 根据 post id 获取付费文件 URL
+ * @since 0.9.26
  */
 function wnd_get_paid_file(int $post_id): string{
 	$file = wnd_get_post_meta($post_id, 'file_url') ?: '';
@@ -194,5 +371,25 @@ function wnd_get_paid_file(int $post_id): string{
 	}
 
 	$file_id = wnd_get_post_meta($post_id, 'file') ?: 0;
-	return get_attached_file($file_id, false) ?: '';
+	return wp_get_attachment_url($file_id) ?: '';
+}
+
+/**
+ * 需要将图像存储在阿里云oss，并利用filter对wp_get_attachment_url重写为阿里oss地址
+ * 阿里云的图片处理
+ * 截至2019.05.11图片处理定价：每月0-10TB：免费 >10TB：0.025元/GB
+ * @link https://help.aliyun.com/document_detail/44688.html
+ * @since 2019.05.08 获取图像缩略图
+ *
+ * @param int|string 	$is_or_url 	附件post id 或者oss完整图片地址
+ * @param int        			$width   		图片宽度
+ * @param int        			$height  		图片高度
+ */
+function wnd_get_thumbnail_url($id_or_url, $width = 160, $height = 120) {
+	$url = is_numeric($id_or_url) ? wp_get_attachment_url($id_or_url) : $id_or_url;
+	if (!$url) {
+		return false;
+	}
+
+	return $url . '?x-oss-process=image/resize,m_fill,w_' . $width . ',h_' . $height;
 }
