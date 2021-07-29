@@ -66,3 +66,9 @@ remove_action('after_switch_theme', '_wp_sidebars_changed');
 function is_active_sidebar() {
 	return false;
 }
+
+/**
+ * 移除 wptexturize
+ *
+ */
+add_filter('run_wptexturize', '__return_false');
