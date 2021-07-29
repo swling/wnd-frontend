@@ -79,11 +79,6 @@ function wnd_download_remote_image($url, $post_parent, $title, $return = 'src') 
  *
  * 相较于Wp函数，更新了多前端调用的默认支持，更新了对图像外文件下载的支持，并自动将文件随机重命名
  * @see media_sideload_image
- * @since 2.6.0
- * @since 4.2.0 Introduced the `$return` parameter.
- * @since 4.8.0 Introduced the 'id' option within the `$return` parameter.
- * @since 5.3.0 The `$post_id` parameter was made optional.
- * @since 5.4.0 The original URL of the attachment is stored in the `_source_url`
  *
  * @param  string          $file     The URL of the image to download.
  * @param  int             $post_id  Optional. The post ID the media is to be associated with.
@@ -380,8 +375,16 @@ function wnd_get_paid_file(int $post_id): string{
 		return $file;
 	}
 
-	$file_id = wnd_get_post_meta($post_id, 'file') ?: 0;
+	$file_id = wnd_get_paid_file_id($post_id);
 	return wp_get_attachment_url($file_id) ?: '';
+}
+
+/**
+ * 根据 post id 获取付费文件 Attachment ID
+ * @since 0.9.35.5
+ */
+function wnd_get_paid_file_id(int $post_id): int {
+	return wnd_get_post_meta($post_id, 'file') ?: 0;
 }
 
 /**
