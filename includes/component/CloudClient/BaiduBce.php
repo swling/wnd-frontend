@@ -12,7 +12,7 @@ class BaiduBce extends CloudClient {
 
 	private $expiration = 1800;
 
-	protected function genAuthorization(): string{
+	protected function generateAuthorization(): string{
 		$this->setHeaders();
 
 		// 百度云特殊规定

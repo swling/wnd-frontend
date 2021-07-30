@@ -45,7 +45,7 @@ abstract class CloudClient {
 		$this->body                     = $args['body'];
 		$this->headers                  = $args['headers'];
 		$this->headers['Host']          = $this->host;
-		$this->headers['Authorization'] = $this->genAuthorization();
+		$this->headers['Authorization'] = $this->generateAuthorization();
 
 		return $this->excuteRequest();
 	}
@@ -53,7 +53,7 @@ abstract class CloudClient {
 	/**
 	 * 生成Authorization
 	 */
-	abstract protected function genAuthorization(): string;
+	abstract protected function generateAuthorization(): string;
 
 	/**
 	 * 拆分为独立方法，以便某些情况子类可重写覆盖

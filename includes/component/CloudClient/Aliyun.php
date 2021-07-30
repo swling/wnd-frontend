@@ -13,7 +13,7 @@ class Aliyun extends CloudClient {
 	 * 阿里云产品签名鉴权包含在请求 body 而非 headers 中，故无需生成 Authorization
 	 *
 	 */
-	protected function genAuthorization(): string{
+	protected function generateAuthorization(): string{
 		$this->setHeaders();
 
 		return '';

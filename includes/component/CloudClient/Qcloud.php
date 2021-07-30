@@ -11,7 +11,7 @@ class Qcloud extends CloudClient {
 	private $algorithm = 'TC3-HMAC-SHA256';
 	private $service   = '';
 
-	protected function genAuthorization(): string{
+	protected function generateAuthorization(): string{
 		$this->setHeaders();
 
 		$this->service   = $this->getService();
