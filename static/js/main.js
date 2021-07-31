@@ -344,44 +344,43 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 
     // GET request for remote image in node.js
     axios({
-            method: 'get',
-            url: wnd_module_api + '/' + module,
-            params: Object.assign({
-                'ajax_type': 'embed'
-            }, param),
-            headers: {
-                'Container': container
-            },
-        })
-        .then(function(response) {
-            if ('undefined' == typeof response.data.status) {
-                console.log(response);
-                return false;
-            }
+        method: 'get',
+        url: wnd_module_api + '/' + module,
+        params: Object.assign({
+            'ajax_type': 'embed'
+        }, param),
+        headers: {
+            'Container': container
+        },
+    }).then(function(response) {
+        if ('undefined' == typeof response.data.status) {
+            console.log(response);
+            return false;
+        }
 
-            if (response.data.status <= 0) {
-                wnd_inner_html(el, '<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
-                funTransitionHeight(el, trs_time);
-                return false;
-            }
+        if (response.data.status <= 0) {
+            wnd_inner_html(el, '<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
+            funTransitionHeight(el, trs_time);
+            return false;
+        }
 
-            if ('form' == response.data.data.type) {
-                wnd_render_form(container, response.data.data.structure);
-            } else if ('filter' == response.data.data.type) {
-                wnd_render_filter(container, response.data.data.structure);
+        if ('form' == response.data.data.type) {
+            wnd_render_form(container, response.data.data.structure);
+        } else if ('filter' == response.data.data.type) {
+            wnd_render_filter(container, response.data.data.structure);
+        } else {
+            wnd_inner_html(el, response.data.data.structure);
+            funTransitionHeight(el, trs_time);
+        }
+
+        if (callback) {
+            if ('function' == typeof callback) {
+                callback(response.data);
             } else {
-                wnd_inner_html(el, response.data.data.structure);
-                funTransitionHeight(el, trs_time);
+                window[callback](response.data);
             }
-
-            if (callback) {
-                if ('function' == typeof callback) {
-                    callback(response.data);
-                } else {
-                    window[callback](response.data);
-                }
-            }
-        });
+        }
+    });
 }
 
 
@@ -417,41 +416,64 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
     wnd_alert_modal(loading_el, false);
 
     axios({
-            method: 'get',
-            url: wnd_module_api + '/' + module,
-            params: Object.assign({
-                'ajax_type': 'modal'
-            }, param),
-        })
-        .then(function(response) {
-            if ('undefined' == typeof response.data.status) {
-                console.log(response);
-                return false;
-            }
+        method: 'get',
+        url: wnd_module_api + '/' + module,
+        params: Object.assign({
+            'ajax_type': 'modal'
+        }, param),
+    }).then(function(response) {
+        if ('undefined' == typeof response.data.status) {
+            console.log(response);
+            return false;
+        }
 
-            if (response.data.status <= 0) {
-                wnd_alert_modal('<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
-                return false;
-            }
+        if (response.data.status <= 0) {
+            wnd_alert_modal('<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
+            return false;
+        }
 
-            if ('form' == response.data.data.type) {
-                wnd_render_form('#modal .modal-entry', response.data.data.structure, 'box');
-            } else if ('filter' == response.data.data.type) {
-                wnd_render_filter('#modal .modal-entry', response.data.data.structure, 'box');
+        if ('form' == response.data.data.type) {
+            wnd_render_form('#modal .modal-entry', response.data.data.structure, 'box');
+        } else if ('filter' == response.data.data.type) {
+            wnd_render_filter('#modal .modal-entry', response.data.data.structure, 'box');
+        } else {
+            wnd_alert_modal(response.data.data.structure);
+        }
+
+        if (callback) {
+            if ('function' == typeof callback) {
+                callback(response.data);
             } else {
-                wnd_alert_modal(response.data.data.structure);
+                window[callback](response.data);
             }
-
-            if (callback) {
-                if ('function' == typeof callback) {
-                    callback(response.data);
-                } else {
-                    window[callback](response.data);
-                }
-            }
-        });
+        }
+    });
 }
 
+/**
+ * @since 0.9.35.6
+ * 发送 ajax Action
+ **/
+function wnd_ajax_action(action, param = {}, callback = '') {
+    axios({
+        method: 'POST',
+        url: wnd_action_api + '/' + action,
+        data: param,
+    }).then(function(response) {
+        if ('undefined' == typeof response.data.status) {
+            console.log(response);
+            return false;
+        }
+
+        if (callback) {
+            if ('function' == typeof callback) {
+                callback(response.data);
+            } else {
+                window[callback](response.data);
+            }
+        }
+    });
+}
 
 //弹出bulma对话框
 function wnd_alert_modal(content, box = true) {
@@ -561,27 +583,26 @@ function wnd_ajax_submit(button, captcha_input = false) {
         }
     }
     axios({
-            method: form.method,
-            url: form.action,
-            // POST
-            data: data,
-            // GET
-            params: params,
-        })
-        .then(function(response) {
-            form_info = wnd_handle_response(response.data, route, form.parentNode);
-            if (form_info.msg) {
-                wnd_form_msg(form, form_info.msg, form_info.msg_class);
-            }
-            if (![3, 4, 6].includes(response.data.status)) {
-                button.classList.remove('is-loading');
-            }
+        method: form.method,
+        url: form.action,
+        // POST
+        data: data,
+        // GET
+        params: params,
+    }).then(function(response) {
+        form_info = wnd_handle_response(response.data, route, form.parentNode);
+        if (form_info.msg) {
+            wnd_form_msg(form, form_info.msg, form_info.msg_class);
+        }
+        if (![3, 4, 6].includes(response.data.status)) {
+            button.classList.remove('is-loading');
+        }
 
-            // 提交后清空无论后端响应如何都应清空 Captcha，因为本次 captcha 行为验证已完成
-            if (captcha_input) {
-                captcha_input.value = '';
-            }
-        });
+        // 提交后清空无论后端响应如何都应清空 Captcha，因为本次 captcha 行为验证已完成
+        if (captcha_input) {
+            captcha_input.value = '';
+        }
+    });
 }
 
 function wnd_form_msg(form, msg, msg_class) {

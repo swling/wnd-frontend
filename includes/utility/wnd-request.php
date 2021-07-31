@@ -184,6 +184,16 @@ class Wnd_Request {
 	}
 
 	/**
+	 * 生成包含签名数据的完整请求数据数组
+	 * @since 0.9.35.6
+	 */
+	public static function sign_request(array $request): array{
+		$sign                        = static::sign(array_keys($request));
+		$request[static::$sign_name] = $sign;
+		return $request;
+	}
+
+	/**
 	 * 构建请求签名
 	 *
 	 * @since 2019.10.27
