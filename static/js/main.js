@@ -838,13 +838,13 @@ function wnd_update_views(post_id, interval = 3600) {
     }
 
     // 更新服务器数据
-    data = new FormData();
-    data.append('post_id', post_id);
     if (is_new) {
         axios({
-            url: wnd_endpoint_api + '/wnd_update_views',
+            url: wnd_action_api + '/wnd_update_views',
             method: 'POST',
-            data: data,
+            data: {
+                'post_id': post_id
+            },
         }).then(function(response) {
             if (1 == response.data.status) {
                 localStorage.setItem('wnd_views', JSON.stringify(wnd_views));
