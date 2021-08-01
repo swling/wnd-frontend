@@ -2,16 +2,22 @@
 /**
  *  - 由于精简了部分功能，需要对应移除依赖这些功能的 Hook
  *  - 由于精简了部分功能，需要对应补充部分依赖这些功能的函数
+ * @see wp-includes/default-filters.php
  * @since Wnd Frontend 0.9.35
  */
 
-// WP 默认 Rest API
+/**
+ * WP 默认 Rest API
+ *
+ */
 remove_action('rest_api_init', 'create_initial_rest_routes', 99);
 
-// 禁用古腾堡
+/**
+ * 禁用古腾堡
+ *
+ */
 add_filter('use_block_editor_for_post', '__return_false');
 
-// 移除依赖于古腾堡的相关 Hook
 remove_action('init', ['WP_Block_Supports', 'init'], 22);
 remove_action('init', '_register_core_block_patterns_and_categories');
 remove_action('current_screen', '_load_remote_block_patterns');
@@ -21,7 +27,6 @@ remove_action('enqueue_block_editor_assets', 'wp_enqueue_registered_block_script
 remove_filter('pre_kses', 'wp_pre_kses_block_attributes', 10, 3);
 remove_filter('the_content', 'do_blocks', 9);
 
-// 重写依赖于古腾堡的函数
 function has_blocks() {
 	return false;
 }
@@ -72,3 +77,19 @@ function is_active_sidebar() {
  *
  */
 add_filter('run_wptexturize', '__return_false');
+
+/**
+ * 移除 HTTPS 相关
+ *
+ */
+remove_filter('the_content', 'wp_replace_insecure_home_url');
+remove_filter('the_excerpt', 'wp_replace_insecure_home_url');
+remove_filter('wp_get_custom_css', 'wp_replace_insecure_home_url');
+
+// HTTPS detection.
+remove_action('init', 'wp_schedule_https_detection');
+remove_action('wp_https_detection', 'wp_update_https_detection_errors');
+remove_filter('cron_request', 'wp_cron_conditionally_prevent_sslverify', 9999);
+
+// HTTPS migration.
+remove_action('update_option_home', 'wp_update_https_migration_required', 10, 2);

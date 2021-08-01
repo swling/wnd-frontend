@@ -37,3 +37,4 @@ require_once ABSPATH . 'wp-content/plugins/wnd-frontend/accelerator/wp-settings.
  - @2021.07.22 移除古腾堡相关文件
  - @2021.07.23 移除 WP Embed
  - @2021.07.23 移除 WP Widget
+ - @2021.08.01 移除 WP HTTPS migration
