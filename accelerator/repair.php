@@ -93,3 +93,71 @@ remove_filter('cron_request', 'wp_cron_conditionally_prevent_sslverify', 9999);
 
 // HTTPS migration.
 remove_action('update_option_home', 'wp_update_https_migration_required', 10, 2);
+
+/**
+ * ###########################################################################
+ * 其他 Filters
+ * 以下的 Filter 为优化操作，即保留这些 Filter 也不会报错
+ */
+
+// Embeds.
+remove_action('wp_head', 'wp_oembed_remove_discovery_links');
+remove_action('wp_head', 'wp_oembed_remove_host_js');
+
+remove_action('embed_head', 'enqueue_embed_scripts', 1);
+remove_action('embed_head', 'print_emoji_detection_script');
+remove_action('embed_head', 'print_embed_styles');
+remove_action('embed_head', 'wp_print_head_scripts', 20);
+remove_action('embed_head', 'wp_print_styles', 20);
+remove_action('embed_head', 'wp_robots');
+remove_action('embed_head', 'rel_canonical');
+remove_action('embed_head', 'locale_stylesheet', 30);
+
+remove_action('embed_content_meta', 'print_embed_comments_button');
+remove_action('embed_content_meta', 'print_embed_sharing_button');
+
+remove_action('embed_footer', 'print_embed_sharing_dialog');
+remove_action('embed_footer', 'print_embed_scripts');
+remove_action('embed_footer', 'wp_print_footer_scripts', 20);
+
+remove_filter('the_excerpt_embed', 'wptexturize');
+remove_filter('the_excerpt_embed', 'convert_chars');
+remove_filter('the_excerpt_embed', 'wpautop');
+remove_filter('the_excerpt_embed', 'shortcode_unautop');
+remove_filter('the_excerpt_embed', 'wp_embed_excerpt_attachment');
+
+remove_filter('oembed_dataparse', 'wp_filter_oembed_iframe_title_attribute', 5, 3);
+remove_filter('oembed_dataparse', 'wp_filter_oembed_result', 10, 3);
+remove_filter('oembed_response_data', 'get_oembed_response_data_rich', 10, 4);
+remove_filter('pre_oembed_result', 'wp_filter_pre_oembed_result', 10, 3);
+
+// Script
+remove_action('enqueue_block_assets', 'wp_enqueue_registered_block_scripts_and_styles');
+remove_action('enqueue_block_assets', 'enqueue_block_styles_assets', 30);
+remove_action('enqueue_block_editor_assets', 'wp_enqueue_registered_block_scripts_and_styles');
+remove_action('enqueue_block_editor_assets', 'enqueue_editor_block_styles_assets');
+remove_action('enqueue_block_editor_assets', 'wp_enqueue_editor_block_directory_assets');
+remove_action('enqueue_block_editor_assets', 'wp_enqueue_editor_format_library_assets');
+
+// Block Templates CPT and Rendering
+remove_filter('render_block_context', '_block_template_render_without_post_block_context');
+remove_filter('pre_wp_unique_post_slug', 'wp_filter_wp_template_unique_post_slug', 10, 5);
+remove_action('wp_footer', 'the_block_template_skip_link');
+remove_action('setup_theme', 'wp_enable_block_templates');
+
+// Display Filters
+remove_filter('widget_text', 'balanceTags');
+remove_filter('widget_text_content', 'capital_P_dangit', 11);
+remove_filter('widget_text_content', 'wptexturize');
+remove_filter('widget_text_content', 'convert_smilies', 20);
+remove_filter('widget_text_content', 'wpautop');
+remove_filter('widget_text_content', 'shortcode_unautop');
+remove_filter('widget_text_content', 'wp_filter_content_tags');
+remove_filter('widget_text_content', 'wp_replace_insecure_home_url');
+remove_filter('widget_text_content', 'do_shortcode', 11); // Runs after wpautop(); note that $post global will be null when shortcodes run.
+
+remove_filter('widget_block_content', 'do_blocks', 9);
+remove_filter('widget_block_content', 'wp_filter_content_tags');
+remove_filter('widget_block_content', 'do_shortcode', 11);
+
+remove_filter('block_type_metadata', 'wp_migrate_old_typography_shape');
