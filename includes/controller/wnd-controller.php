@@ -211,7 +211,7 @@ class Wnd_Controller {
 		 * 为实现惰性加载，废弃函数支持，改用类
 		 * @since 2019.10.01
 		 */
-		if (!is_callable([$class, 'get_structure'])) {
+		if (!class_exists($class)) {
 			return ['status' => 0, 'msg' => __('无效的UI', 'wnd') . ':' . $class];
 		}
 
@@ -237,7 +237,7 @@ class Wnd_Controller {
 		// 解析实际类名称及参数
 		$class = static::parse_class($request['jsonget'], 'JsonGet');
 
-		if (!is_callable([$class, 'get'])) {
+		if (!class_exists($class)) {
 			return ['status' => 0, 'msg' => __('无效的JsonGet', 'wnd') . ':' . $class];
 		}
 
@@ -270,7 +270,7 @@ class Wnd_Controller {
 		 * 为实现惰性加载，使用控制类
 		 * @since 2019.10.01
 		 */
-		if (!is_callable([$class, 'execute'])) {
+		if (!class_exists($class)) {
 			return ['status' => 0, 'msg' => __('无效的Action', 'wnd')];
 		}
 
