@@ -189,7 +189,8 @@ function wnd_ajax_embed($template, $args = []) {
 }
 
 /**
- * @since 2019.02.19 在当前位置自动生成一个容器，以供ajax嵌入模板
+ * 快速生成 ajax action 请求脚本
+ * @since 0.9.35
  *
  * @param  $action 	string    				被调用Action
  * @param  $args   array      or string 	传递给被调用Action的参数
