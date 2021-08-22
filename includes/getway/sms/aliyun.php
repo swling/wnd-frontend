@@ -22,8 +22,8 @@ class Aliyun extends Wnd_Sms {
 		$params['SignName']     = $this->sign_name;
 		$params['TemplateCode'] = $this->template;
 
-		// fixme 可选: 设置模板参数, 假如模板中存在变量需要替换则为必填项
-		$params['TemplateParam'] = ($this->code and $this->valid_time) ? ['code' => $this->code, 'valid_time' => $this->valid_time] : [];
+		// fixme 可选: 设置模板参数, 假如模板中存在变量需要替换则为必填项。阿里云短信模板仅支持一个变量。
+		$params['TemplateParam'] = $this->code ? ['code' => $this->code] : [];
 
 		// *** 需用户填写部分结束, 以下代码若无必要无需更改 ***
 		if (!empty($params['TemplateParam']) and is_array($params['TemplateParam'])) {
