@@ -10,6 +10,7 @@ use Wnd\Getway\Wnd_Sms;
  * 参数配置
  * - 公共参数 @link https://help.aliyun.com/document_detail/101341.html
  * - 发送短信 @link https://help.aliyun.com/document_detail/101414.html
+ *
  * @since 2019.09.25
  */
 class Aliyun extends Wnd_Sms {
@@ -22,19 +23,13 @@ class Aliyun extends Wnd_Sms {
 		$params['SignName']     = $this->sign_name;
 		$params['TemplateCode'] = $this->template;
 
-		// fixme 可选: 设置模板参数, 假如模板中存在变量需要替换则为必填项。阿里云短信模板仅支持一个变量。
-		$params['TemplateParam'] = $this->code ? ['code' => $this->code] : [];
-
-		// *** 需用户填写部分结束, 以下代码若无必要无需更改 ***
-		if (!empty($params['TemplateParam']) and is_array($params['TemplateParam'])) {
-			$params['TemplateParam'] = json_encode($params['TemplateParam'], JSON_UNESCAPED_UNICODE);
+		// 阿里云短信模板仅支持一个变量
+		if ($this->code) {
+			$params['TemplateParam'] = json_encode(['code' => $this->code], JSON_UNESCAPED_UNICODE);
 		}
 
-		// 初始化SignatureHelper实例用于设置参数，签名以及发送请求
-		$helper = Wnd_Cloud_Client::get_instance('Aliyun');
-
-		// 此处可能会抛出异常，注意catch
-		$request = $helper->request(
+		$client  = Wnd_Cloud_Client::get_instance('Aliyun');
+		$request = $client->request(
 			'https://dysmsapi.aliyuncs.com',
 			[
 				'body' => array_merge($params, [
@@ -45,15 +40,8 @@ class Aliyun extends Wnd_Sms {
 			]
 		);
 
-		// 返回结果
-		if (!$request) {
-			throw new Exception(__('短信请求发送失败', 'wnd'));
-
-		} elseif ($request['Code'] != 'OK') {
-			throw new Exception(__('系统错误：', 'wnd') . $request['Code']);
-
-		} else {
-			return true;
+		if ($request['Code'] != 'OK') {
+			throw new Exception($request['Message']);
 		}
 	}
 }
