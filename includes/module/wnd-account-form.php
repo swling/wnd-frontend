@@ -3,6 +3,7 @@ namespace Wnd\Module;
 
 use Exception;
 use Wnd\View\Wnd_Form_User;
+use WP_User;
 
 /**
  * @since 2019.01.23 用户更新账户表单
@@ -16,16 +17,9 @@ class Wnd_Account_Form extends Wnd_Module_Form {
 		/**
 		 * 如果当前账户为社交登录，账户设置前必须绑定邮箱或手机
 		 */
-		if (!$user->data->user_email and !wnd_get_user_phone($user->data->ID)) {
-			$message = '<p>' . __('出于安全考虑，请绑定邮箱或手机') . '</p>';
-			$message .= wnd_modal_button(__('绑定邮箱'), 'wnd_bind_email_form');
-
-			if ($enable_sms) {
-				$message .= '&nbsp;&nbsp;';
-				$message .= wnd_modal_button(__('绑定手机'), 'wnd_bind_phone_form');
-			}
-
-			throw new Exception($message);
+		$notification = static::account_binding_notification($user);
+		if ($notification) {
+			throw new Exception($notification);
 		}
 
 		$form = new Wnd_Form_User(true);
@@ -51,5 +45,25 @@ class Wnd_Account_Form extends Wnd_Module_Form {
 		$form->add_html($html);
 
 		return $form;
+	}
+
+	/**
+	 * 如果当前账户为社交登录，账户设置前必须绑定邮箱或手机
+	 */
+	public static function account_binding_notification(WP_User $user): string {
+		if ($user->data->user_email or wnd_get_user_phone($user->data->ID)) {
+			return '';
+		}
+
+		$msg = '<div class="content has-text-centered">';
+		$msg .= '<p>' . __('出于安全考虑，请绑定邮箱或手机', 'wnd') . '</p>';
+		$msg .= wnd_modal_button(__('绑定邮箱', 'wnd'), 'wnd_bind_email_form');
+		if (wnd_get_config('enable_sms')) {
+			$msg .= '&nbsp;&nbsp;';
+			$msg .= wnd_modal_button(__('绑定手机', 'wnd'), 'wnd_bind_phone_form');
+		}
+		$msg .= '</div>';
+
+		return $msg;
 	}
 }
