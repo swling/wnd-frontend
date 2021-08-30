@@ -1,19 +1,20 @@
 <?php
 namespace Wnd\Module;
 
+use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_SKU;
 
 /**
- *@since 0.9.0
- *获取订单详情（未完善信息）
+ * 获取订单详情（未完善信息）
+ * @since 0.9.0
  */
 class Wnd_Post_Detail_Order extends Wnd_Module_Html {
 
 	protected static function build(array $args = []): string{
 		/**
-		 *订单基本信息 + 产品属性等参数
-		 *移除表单签名参数
+		 * 订单基本信息 + 产品属性等参数
+		 * 移除表单签名参数
 		 */
 		$defaults = [
 			'post_id' => 0,
@@ -32,13 +33,14 @@ class Wnd_Post_Detail_Order extends Wnd_Module_Html {
 		$orde_detail .= '<li>' . $order->post_title . '</li>';
 		$orde_detail .= '<li>' . $order->post_content . '</li>';
 		$orde_detail .= '<li>' . $order->post_name . '</li>';
+		$orde_detail .= '<li>' . Wnd_Payment_Getway::get_payment_gateway($order->ID) . '</li>';
 		$orde_detail .= '<li>Refund_Count : ' . wnd_get_post_meta($order->ID, 'refund_count') . '</li>';
 		$orde_detail .= '<li>User IP : ' . wnd_get_post_meta($order->ID, Wnd_Order_Product::$ip_key) . '</li>';
 		$orde_detail .= '</ul></div>';
 
 		/**
-		 *@since 0.8.76
-		 *产品属性
+		 * 产品属性
+		 * @since 0.8.76
 		 */
 		$sku      = Wnd_Order_Product::get_order_sku($post_id);
 		$sku_keys = Wnd_SKU::get_sku_keys(get_post_type($post_id));
