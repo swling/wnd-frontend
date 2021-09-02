@@ -126,4 +126,14 @@ class BaiduBce extends CloudClient {
 		}
 		return $encodeStr;
 	}
+
+	/**
+	 * 核查响应，如果出现错误，则抛出异常
+	 * @link https://cloud.baidu.com/doc/NLP/s/Bk6z52e59
+	 */
+	protected static function checkResponse(array $responseBody) {
+		if (isset($responseBody['error_code'])) {
+			throw new Exception($responseBody['error_msg']);
+		}
+	}
 }

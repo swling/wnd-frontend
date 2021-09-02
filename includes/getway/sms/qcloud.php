@@ -70,10 +70,6 @@ class Qcloud extends Wnd_Sms {
 		$request = $action->request($url, $args);
 
 		// 核查响应
-		if ($request['Response']['Error'] ?? false) {
-			throw new Exception($request['Response']['Error']['Code'] . ':' . $request['Response']['Error']['Message']);
-		}
-
 		if ($request['Response']['SendStatusSet'][0]['Code'] != 'Ok') {
 			throw new Exception($request['Response']['SendStatusSet'][0]['Message']);
 		}

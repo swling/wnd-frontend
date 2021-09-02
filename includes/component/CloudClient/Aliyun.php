@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Component\CloudClient;
 
+use Exception;
+
 /**
  * 签名助手 2017/11/19
  * Class SignatureHelper
@@ -68,5 +70,16 @@ class Aliyun extends CloudClient {
 		$res = preg_replace('/\*/', '%2A', $res);
 		$res = preg_replace('/%7E/', '~', $res);
 		return $res;
+	}
+
+	/**
+	 * 核查响应，如果出现错误，则抛出异常
+	 * @link https://help.aliyun.com/document_detail/102364.html#h2-url-3
+	 */
+	protected static function checkResponse(array $responseBody) {
+		$code = $responseBody['Code'] ?? 'OK';
+		if ('OK' != $code) {
+			throw new Exception($responseBody['Message']);
+		}
 	}
 }

@@ -38,10 +38,6 @@ class Qcloud extends Wnd_Captcha {
 		$result  = $request->request($url, $args);
 
 		// 核查响应
-		if ($result['Response']['Error'] ?? false) {
-			throw new Exception($result['Response']['Error']['Code'] . ':' . $result['Response']['Error']['Message']);
-		}
-
 		if (1 != $result['Response']['CaptchaCode']) {
 			throw new Exception($result['Response']['CaptchaCode'] . ':' . $result['Response']['CaptchaMsg']);
 		}

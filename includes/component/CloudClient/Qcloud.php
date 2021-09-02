@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Component\CloudClient;
 
+use Exception;
+
 /**
  * 腾讯云云平台产品签名助手 API 3.0 V3.0
  * @link https://cloud.tencent.com/document/product/1278/46715
@@ -99,5 +101,15 @@ class Qcloud extends CloudClient {
 		$CanonicalHeaders = implode("\n", array_values($list_array)) . "\n";
 
 		return compact('signedHeaders', 'CanonicalHeaders');
+	}
+
+	/**
+	 * 核查响应，如果出现错误，则抛出异常
+	 * @link https://cloud.tencent.com/document/api/271/35512
+	 */
+	protected static function checkResponse(array $responseBody) {
+		if (isset($responseBody['Response']['Error'])) {
+			throw new Exception($responseBody['Response']['Error']['Code'] . ':' . $responseBody['Response']['Error']['Message']);
+		}
 	}
 }

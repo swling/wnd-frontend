@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Getway\Sms;
 
-use Exception;
 use Wnd\Getway\Wnd_Cloud_Client;
 use Wnd\Getway\Wnd_Sms;
 
@@ -39,9 +38,5 @@ class Aliyun extends Wnd_Sms {
 				]),
 			]
 		);
-
-		if ($request['Code'] != 'OK') {
-			throw new Exception($request['Message']);
-		}
 	}
 }

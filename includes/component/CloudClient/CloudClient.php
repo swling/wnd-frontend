@@ -20,6 +20,7 @@ abstract class CloudClient {
 	protected $queryString = '';
 	protected $headers     = [];
 	protected $body;
+	protected $response;
 
 	public function __construct(string $accessID, string $secretKey) {
 		$this->secretID  = $accessID;
@@ -46,8 +47,9 @@ abstract class CloudClient {
 		$this->headers                  = $args['headers'];
 		$this->headers['Host']          = $this->host;
 		$this->headers['Authorization'] = $this->generateAuthorization();
+		$this->response                 = $this->excuteRequest();
 
-		return $this->excuteRequest();
+		return $this->handleResponse();
 	}
 
 	/**
@@ -59,8 +61,8 @@ abstract class CloudClient {
 	 * 拆分为独立方法，以便某些情况子类可重写覆盖
 	 */
 	protected function excuteRequest(): array{
-		$request  = new Requests;
-		$response = $request->request(
+		$request = new Requests;
+		return $request->request(
 			$this->url,
 			[
 				'method'  => $this->method,
@@ -68,7 +70,23 @@ abstract class CloudClient {
 				'headers' => $this->headers,
 			]
 		);
-
-		return json_decode($response['body'], true);
 	}
+
+	/**
+	 * 解析响应结果为数组数据
+	 *
+	 */
+	protected function handleResponse(): array{
+		$responseBody = json_decode($this->response['body'], true);
+		static::checkResponse($responseBody);
+
+		return $responseBody;
+	}
+
+	/**
+	 * 根据响应数据核查相关请求是否成功
+	 * 若出现错误，则抛出异常
+	 *
+	 */
+	abstract protected static function checkResponse(array $responseBody);
 }
