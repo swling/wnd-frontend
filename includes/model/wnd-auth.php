@@ -52,7 +52,7 @@ abstract class Wnd_Auth {
 	/**
 	 * 设置：邮件、手机号码、WP_User object
 	 */
-	public static function get_instance(string $identifier) {
+	public static function get_instance(string $identifier): Wnd_Auth {
 		if (is_email($identifier)) {
 			static::$text = __('邮箱', 'wnd');
 			return new Wnd_Auth_Email($identifier);
@@ -89,6 +89,24 @@ abstract class Wnd_Auth {
 	 */
 	public function set_template(string $template) {
 		$this->template = $template;
+	}
+
+	/**
+	 * 检测权限，写入记录，并发送短信或邮箱
+	 * @since 初始化
+	 */
+	public function send() {
+		// 类型检测
+		$this->check_type();
+
+		// 权限检测
+		$this->check_send();
+
+		// 写入数据记录
+		$this->insert();
+
+		// 发送短信或邮件
+		$this->send_code();
 	}
 
 	/**
@@ -151,21 +169,46 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 * 检测权限，写入记录，并发送短信或邮箱
-	 * @since 初始化
+	 * @since 2019.02.09 手机及邮箱验证模块
 	 */
-	public function send() {
-		// 类型检测
-		$this->check_type();
+	protected function insert() {
+		$this->check_auth_fields(true);
 
-		// 权限检测
-		$this->check_send();
+		$record  = static::get_db($this->identity_type, $this->identifier);
+		$ID      = $record->ID ?? 0;
+		$user_id = $record->user_id ?? 0;
 
-		// 写入数据记录
-		$this->insert();
+		if ($ID) {
+			$db = static::update_db($ID, $user_id, $this->identity_type, $this->identifier, $this->auth_code);
+		} else {
+			$db = $db = static::insert_db($user_id, $this->identity_type, $this->identifier, $this->auth_code);
+		}
 
-		// 发送短信或邮件
-		$this->send_code();
+		if (!$db) {
+			throw new Exception(__('数据库写入失败', 'wnd'));
+		}
+	}
+
+	/**
+	 * 检测验证数据库基本属性是否完整
+	 * - 检测 identity_type 字段：设备类型
+	 * - 检测 identifier 	字段：设备地址，如邮箱或手机号等
+	 * - 检测 auth_code 	字段：验证码
+	 *
+	 * @param bool $check_auth_code 是否检查验证码字段
+	 */
+	protected function check_auth_fields(bool $check_auth_code) {
+		if (!$this->identity_type) {
+			throw new Exception(__('未指定验证设备类型', 'wnd'));
+		}
+
+		if (!$this->identifier) {
+			throw new Exception(__('未指定验证设备', 'wnd') . '&nbsp;' . static::$text);
+		}
+
+		if ($check_auth_code and empty($this->auth_code)) {
+			throw new Exception(__('验证码为空', 'wnd'));
+		}
 	}
 
 	/**
@@ -219,27 +262,6 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 * @since 2019.02.09 手机及邮箱验证模块
-	 */
-	protected function insert() {
-		$this->check_auth_fields(true);
-
-		$record  = static::get_db($this->identity_type, $this->identifier);
-		$ID      = $record->ID ?? 0;
-		$user_id = $record->user_id ?? 0;
-
-		if ($ID) {
-			$db = static::update_db($ID, $user_id, $this->identity_type, $this->identifier, $this->auth_code);
-		} else {
-			$db = $db = static::insert_db($user_id, $this->identity_type, $this->identifier, $this->auth_code);
-		}
-
-		if (!$db) {
-			throw new Exception(__('数据库写入失败', 'wnd'));
-		}
-	}
-
-	/**
 	 * 绑定用户
 	 * @param int $user_id 	注册用户ID
 	 */
@@ -261,28 +283,6 @@ abstract class Wnd_Auth {
 	 */
 	public function delete() {
 		return static::delete_db($this->identity_type, $this->identifier);
-	}
-
-	/**
-	 * 检测验证数据库基本属性是否完整
-	 * - 检测 identity_type 字段：设备类型
-	 * - 检测 identifier 	字段：设备地址，如邮箱或手机号等
-	 * - 检测 auth_code 	字段：验证码
-	 *
-	 * @param bool $check_auth_code 是否检查验证码字段
-	 */
-	protected function check_auth_fields(bool $check_auth_code) {
-		if (!$this->identity_type) {
-			throw new Exception(__('未指定验证设备类型', 'wnd'));
-		}
-
-		if (!$this->identifier) {
-			throw new Exception(__('未指定验证设备', 'wnd') . '&nbsp;' . static::$text);
-		}
-
-		if ($check_auth_code and empty($this->auth_code)) {
-			throw new Exception(__('验证码为空', 'wnd'));
-		}
 	}
 
 	/**
