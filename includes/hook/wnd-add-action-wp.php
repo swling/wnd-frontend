@@ -69,7 +69,7 @@ class Wnd_Add_Action_WP {
 
 		// 绑定邮箱或手机
 		$auth = Wnd_Auth::get_instance($email_or_phone);
-		$auth->reset_code($user_id);
+		$auth->bind_user($user_id);
 	}
 
 	/**

@@ -19,7 +19,7 @@ $auth->set_type('register');
 $auth->set_auth_code('6507080');
 $auth->verify();
 // 将当前邮箱/号码绑定到用户
-$auth->reset_code($user_id);
+$auth->bind_user($user_id);
 
 # 删除
 $auth = Wnd_Auth::get_instance('xxx');

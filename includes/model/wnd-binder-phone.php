@@ -4,8 +4,8 @@ namespace Wnd\Model;
 use Exception;
 
 /**
- *@since 2019.11.26
- *用户绑定邮箱或手机
+ * 用户绑定邮箱或手机
+ * @since 2019.11.26
  */
 class Wnd_Binder_Phone extends Wnd_Binder {
 
@@ -16,7 +16,7 @@ class Wnd_Binder_Phone extends Wnd_Binder {
 	}
 
 	/**
-	 *核对验证码并绑定
+	 * 核对验证码并绑定
 	 */
 	public function bind() {
 		// 更改邮箱或手机需要验证当前密码、首次绑定不需要
@@ -30,7 +30,7 @@ class Wnd_Binder_Phone extends Wnd_Binder {
 
 		$bind = wnd_update_user_phone($this->user->ID, $this->bound_object);
 		if (!$bind) {
-			throw new Exception(__('未知错误', 'wnd'));
+			throw new Exception(__('数据库写入失败', 'wnd'));
 		}
 	}
 }

@@ -130,7 +130,7 @@ abstract class Wnd_Auth {
 	 * @since 2019.02.10
 	 */
 	protected function check_send() {
-		$data = $this->get_db_record();
+		$data = static::get_db($this->identity_type, $this->identifier);
 		if (!$data) {
 			return;
 		}
@@ -194,7 +194,7 @@ abstract class Wnd_Auth {
 		$this->check_type();
 
 		// 有效性校验
-		$data = $this->get_db_record();
+		$data = static::get_db($this->identity_type, $this->identifier);
 		if (!$data or !$data->credential) {
 			throw new Exception(__('校验失败：请先获取验证码', 'wnd'));
 		}
@@ -224,22 +224,14 @@ abstract class Wnd_Auth {
 	protected function insert() {
 		$this->check_auth_fields(true);
 
-		global $wpdb;
-		$ID = $this->get_db_record()->ID ?? 0;
+		$record  = static::get_db($this->identity_type, $this->identifier);
+		$ID      = $record->ID ?? 0;
+		$user_id = $record->user_id ?? 0;
+
 		if ($ID) {
-			$db = $wpdb->update(
-				$wpdb->wnd_auths,
-				['credential' => $this->auth_code, 'time' => time()],
-				['identifier' => $this->identifier, 'type' => $this->identity_type],
-				['%s', '%d'],
-				['%s', '%s']
-			);
+			$db = static::update_db($ID, $user_id, $this->identity_type, $this->identifier, $this->auth_code);
 		} else {
-			$db = $wpdb->insert(
-				$wpdb->wnd_auths,
-				['identifier' => $this->identifier, 'type' => $this->identity_type, 'credential' => $this->auth_code, 'time' => time()],
-				['%s', '%s', '%s', '%d']
-			);
+			$db = $db = static::insert_db($user_id, $this->identity_type, $this->identifier, $this->auth_code);
 		}
 
 		if (!$db) {
@@ -248,31 +240,19 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 * 重置验证码
+	 * 绑定用户
 	 * @param int $user_id 	注册用户ID
 	 */
-	public function reset_code(int $user_id = 0) {
+	public function bind_user(int $user_id) {
 		$this->check_auth_fields(false);
 
-		global $wpdb;
-		if ($user_id) {
-			$wpdb->update(
-				$wpdb->wnd_auths,
-				['credential' => '', 'time' => time(), 'user_id' => $user_id],
-				['identifier' => $this->identifier, 'type' => $this->identity_type],
-				['%s', '%d', '%d'],
-				['%s', '%s']
-			);
-
-		} else {
-			$wpdb->update(
-				$wpdb->wnd_auths,
-				['credential' => '', 'time' => time()],
-				['identifier' => $this->identifier, 'type' => $this->identity_type],
-				['%s', '%d'],
-				['%s', '%s']
-			);
+		$record = static::get_db($this->identity_type, $this->identifier);
+		$ID     = $record->ID ?? 0;
+		if (!$ID) {
+			return false;
 		}
+
+		return static::update_db($ID, $user_id, $this->identity_type, $this->identifier);
 	}
 
 	/**
@@ -280,29 +260,7 @@ abstract class Wnd_Auth {
 	 * @since 2019.07.23
 	 */
 	public function delete() {
-		global $wpdb;
-		return $wpdb->delete(
-			$wpdb->wnd_auths,
-			['identifier' => $this->identifier, 'type' => $this->identity_type],
-			['%s', '%s']
-		);
-	}
-
-	/**
-	 * @since 2019.12.19
-	 */
-	protected function get_db_record() {
-		$this->check_auth_fields(false);
-
-		global $wpdb;
-		$data = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM $wpdb->wnd_auths WHERE identifier = %s AND type = %s",
-				$this->identifier, $this->identity_type
-			)
-		);
-
-		return $data;
+		return static::delete_db($this->identity_type, $this->identifier);
 	}
 
 	/**
@@ -325,5 +283,75 @@ abstract class Wnd_Auth {
 		if ($check_auth_code and empty($this->auth_code)) {
 			throw new Exception(__('验证码为空', 'wnd'));
 		}
+	}
+
+	/**
+	 * @since 0.9.36
+	 */
+	public static function get_db(string $identity_type, string $identifier) {
+		global $wpdb;
+		$data = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM $wpdb->wnd_auths WHERE identifier = %s AND type = %s",
+				$identifier, $identity_type
+			)
+		);
+
+		return $data;
+	}
+
+	/**
+	 * 写入Auth数据库
+	 * @since 0.9.36
+	 */
+	public static function insert_db(int $user_id, string $identity_type, string $identifier, string $credential = '') {
+		global $wpdb;
+		return $wpdb->insert(
+			$wpdb->wnd_auths,
+			['user_id' => $user_id, 'identifier' => $identifier, 'type' => $identity_type, 'credential' => $credential, 'time' => time()],
+			['%d', '%s', '%s', '%s', '%d'],
+		);
+	}
+
+	/**
+	 * 更新Auth数据库
+	 * @since 0.9.36
+	 */
+	public static function update_db(int $ID, int $user_id, string $identity_type, string $identifier, string $credential = '') {
+		global $wpdb;
+		return $wpdb->update(
+			$wpdb->wnd_auths,
+			['user_id' => $user_id, 'identifier' => $identifier, 'type' => $identity_type, 'credential' => $credential, 'time' => time()],
+			['ID' => $ID],
+			['%d', '%s', '%s', '%s', '%d'],
+			['%d']
+		);
+	}
+
+	/**
+	 * 删除
+	 * @since 0.9.36
+	 */
+	public static function delete_db(string $identity_type, string $identifier) {
+		global $wpdb;
+		return $wpdb->delete(
+			$wpdb->wnd_auths,
+			['identifier' => $identifier, 'type' => $identity_type],
+			['%s', '%s']
+		);
+	}
+
+	/**
+	 * 获取指定用户的所有auth记录
+	 * @since 0.9.36
+	 */
+	public static function get_user_auth_records(int $user_id) {
+		global $wpdb;
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM $wpdb->wnd_auths WHERE user_id = %d",
+				$user_id
+			)
+		);
 	}
 }

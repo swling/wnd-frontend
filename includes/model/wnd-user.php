@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Model\Wnd_Auth;
+
 /**
  * 用户
  * @since 2019.10.25
@@ -26,20 +28,15 @@ abstract class Wnd_User {
 		global $wpdb;
 		$user          = new \StdClass();
 		$user->user_id = $user_id;
-		$user_data     = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM $wpdb->wnd_auths WHERE user_id = %d",
-				$user_id
-			)
-		);
+		$user_data     = Wnd_Auth::get_user_auth_records($user_id);
 
 		if ($user_data) {
 			foreach ($user_data as $data) {
-				if (!$data->type or !$data->identifier) {
+				$type = $data->type;
+				if (!$type) {
 					continue;
 				}
 
-				$type        = $data->type;
 				$user->$type = $data->identifier;
 			}
 			unset($data);
@@ -201,9 +198,9 @@ abstract class Wnd_User {
 	 * 根据openID获取WordPress用户，用于第三方账户登录
 	 * @since 2019.07.11
 	 *
-	 * @param  string           	$type        			第三方账号类型
-	 * @param  string		openID
-	 * @return WP_User          	object|false 	（WordPress：get_user_by）
+	 * @param  string          $type
+	 * @param  string          $openID
+	 * @return WP_User|false
 	 */
 	public static function get_user_by_openid($type, $open_id) {
 		$type        = strtolower($type);
@@ -212,13 +209,8 @@ abstract class Wnd_User {
 		// 查询对象缓存
 		$user_id = wp_cache_get($open_id, $cache_group);
 		if (false === $user_id) {
-			global $wpdb;
-			$user_id = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT user_id FROM $wpdb->wnd_auths WHERE identifier = %s AND type = %s",
-					$open_id, $type
-				)
-			);
+			$auth_record = Wnd_Auth::get_db($type, $open_id);
+			$user_id     = $auth_record->user_id ?? 0;
 			if ($user_id) {
 				wp_cache_set($open_id, $user_id, $cache_group);
 			}
@@ -237,38 +229,24 @@ abstract class Wnd_User {
 	 * @return 	int    	$wpdb->insert
 	 */
 	public static function update_user_openid($user_id, $type, $open_id) {
-		global $wpdb;
 		$type = strtolower($type);
 
-		// 查询
+		// 查询原有用户openid信息
 		$user        = static::get_wnd_user($user_id);
 		$old_open_id = $user->$type ?? '';
 
-		// 更新
-		if ($old_open_id) {
-			if ($open_id == $old_open_id) {
-				return;
-			}
-
-			$db = $wpdb->update(
-				$wpdb->wnd_auths,
-				['identifier' => $open_id, 'time' => time()],
-				['user_id' => $user_id, 'type' => $type],
-				['%s', '%d'],
-				['%d', '%s']
-			);
-
-			// 写入
+		// 更新或写入
+		$auth_record = Wnd_Auth::get_db($type, $open_id);
+		$ID          = $auth_record->ID ?? 0;
+		if ($ID) {
+			$db = Wnd_Auth::update_db($ID, $user_id, $type, $open_id);
 		} else {
-			$db = $wpdb->insert(
-				$wpdb->wnd_auths,
-				['user_id' => $user_id, 'identifier' => $open_id, 'type' => $type, 'time' => time()],
-				['%d', '%s', '%s', '%d']
-			);
+			$db = Wnd_Auth::insert_db($user_id, $type, $open_id);
 		}
 
-		// 更新用户缓存
+		// 删除原有同类型openid并更新用户缓存
 		if ($db) {
+			Wnd_Auth::delete_db($type, $old_open_id);
 			static::clean_wnd_user_caches($user);
 		}
 
@@ -288,14 +266,9 @@ abstract class Wnd_User {
 		$type = strtolower($type);
 
 		// 查询
-		$user = static::get_wnd_user($user_id);
-
-		// 删除
-		$db = $wpdb->delete(
-			$wpdb->wnd_auths,
-			['user_id' => $user_id, 'type' => $type],
-			['%d', '%s']
-		);
+		$user    = static::get_wnd_user($user_id);
+		$open_id = $user->$type ?? '';
+		$db      = Wnd_Auth::delete_db($type, $open_id);
 
 		// 缓存
 		if ($db) {
