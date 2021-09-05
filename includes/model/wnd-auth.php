@@ -4,12 +4,10 @@ namespace Wnd\Model;
 use Exception;
 
 /**
- *@since 2019.08.13
- *验证授权
- *
- *邮件验证码
- *短信验证码
- *
+ * 验证授权
+ * 邮件验证码
+ * 短信验证码
+ * @since 2019.08.13
  */
 abstract class Wnd_Auth {
 
@@ -41,10 +39,10 @@ abstract class Wnd_Auth {
 	protected $intervals;
 
 	/**
-	 *@since 2019.08.13
-	 *构造函数
-	 **/
-	public function __construct($identifier) {
+	 * 构造函数
+	 * @since 2019.08.13
+	 */
+	public function __construct(string $identifier) {
 		$this->identifier = $identifier;
 		$this->auth_code  = wnd_random_code(6);
 		$this->user       = wp_get_current_user();
@@ -52,9 +50,9 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *设置：邮件、手机号码、WP_User object
+	 * 设置：邮件、手机号码、WP_User object
 	 */
-	public static function get_instance($identifier) {
+	public static function get_instance(string $identifier) {
 		if (is_email($identifier)) {
 			static::$text = __('邮箱', 'wnd');
 			return new Wnd_Auth_Email($identifier);
@@ -69,16 +67,16 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *设置验证码，覆盖本实例默认的验证码
+	 * 设置验证码，覆盖本实例默认的验证码
 	 */
-	public function set_auth_code($auth_code) {
+	public function set_auth_code(string $auth_code) {
 		$this->auth_code = $auth_code;
 	}
 
 	/**
-	 *设置验证类型
+	 * 设置验证类型
 	 */
-	public function set_type($type) {
+	public function set_type(string $type) {
 		if (!in_array($type, ['register', 'reset_password', 'verify', 'bind'])) {
 			throw new Exception(__('类型无效，请选择：register / reset_password / verify / bind', 'wnd'));
 		}
@@ -87,21 +85,17 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *设置信息模板
+	 * 设置信息模板
 	 */
-	public function set_template($template) {
+	public function set_template(string $template) {
 		$this->template = $template;
 	}
 
 	/**
-	 *@since 2019.02.10 类型权限检测
-	 *
-	 *@param string $this->identifier 	邮箱或手机
-	 *@param string $this->type 		验证类型
-	 *
-	 *register / reset_password / verify / bind
-	 *register / bind 	：注册、绑定	当前邮箱或手机已注册、则不可发送
-	 *reset_password 	：找回密码 		当前邮箱或手机未注册、则不可发送
+	 * register / reset_password / verify / bind
+	 * register / bind 	：注册、绑定	当前邮箱或手机已注册、则不可发送
+	 * reset_password 	：找回密码 		当前邮箱或手机未注册、则不可发送
+	 * @since 2019.02.10 类型权限检测
 	 */
 	protected function check_type() {
 		// 必须指定类型
@@ -132,10 +126,8 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *@since 2019.02.10
-	 *
-	 *信息发送权限检测
-	 *
+	 * 信息发送权限检测
+	 * @since 2019.02.10
 	 */
 	protected function check_send() {
 		$data = $this->get_db_record();
@@ -159,11 +151,8 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *@since 初始化
-	 *检测权限，写入记录，并发送短信或邮箱
-	 *
-	 *@param string $this->identifier 	邮箱或手机
-	 *@param string $this->auth_code 	验证码
+	 * 检测权限，写入记录，并发送短信或邮箱
+	 * @since 初始化
 	 */
 	public function send() {
 		// 类型检测
@@ -180,32 +169,27 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *@since 2019.02.21
-	 *发送验证码
+	 * 发送验证码
+	 * @since 2019.02.21
 	 */
 	abstract protected function send_code();
 
 	/**
-	 *校验验证码
+	 * 校验验证码
 	 *
-	 *若已指定 $this->identifier 则依据邮箱或手机校验
-	 *若未指定邮箱及手机且当前用户已登录，则依据用户ID校验
+	 * 若已指定 $this->identifier 则依据邮箱或手机校验
+	 * 若未指定邮箱及手机且当前用户已登录，则依据用户ID校验
 	 *
-	 *@since 初始化
+	 * @since 初始化
 	 *
-	 *@param bool 		$$delete_after_verified 	验证成功后是否删除本条记录(对应记录必须没有绑定用户)
-	 *@param string 	$this->identifier 			邮箱/手机/用户
-	 *@param string 	$this->type 				验证类型
-	 *@param string 	$this->auth_code	 		验证码
-	 *
-	 *@return true|exception
+	 * @param bool $delete_after_verified 	验证成功后是否删除本条记录(对应记录必须没有绑定用户)
 	 */
 	public function verify(bool $delete_after_verified = false) {
 		$this->check_auth_fields(true);
 
 		/**
-		 *@since 2019.10.02
-		 *类型检测
+		 * 类型检测
+		 * @since 2019.10.02
 		 */
 		$this->check_type();
 
@@ -222,9 +206,9 @@ abstract class Wnd_Auth {
 		}
 
 		/**
-		 *@since 2019.07.23
-		 *验证完成后是否删除
-		 *删除的记录必须没有绑定用户
+		 * 验证完成后是否删除
+		 * 删除的记录必须没有绑定用户
+		 * @since 2019.07.23
 		 */
 		if ($delete_after_verified) {
 			global $wpdb;
@@ -235,11 +219,7 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *@since 2019.02.09 手机及邮箱验证模块
-	 *@param string $this->identity_type 	邮箱或手机数据库字段名
-	 *@param string $this->identifier 		邮箱或手机
-	 *@param string $this->auth_code 		验证码
-	 *@return int|exception
+	 * @since 2019.02.09 手机及邮箱验证模块
 	 */
 	protected function insert() {
 		$this->check_auth_fields(true);
@@ -268,19 +248,17 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *@param int 	$reg_user_id  			注册用户ID
-	 *@param string $this->identity_type 	邮箱或手机数据库字段名
-	 *@param string $this->identifier 		邮箱或手机
-	 *重置验证码
+	 * 重置验证码
+	 * @param int $user_id 	注册用户ID
 	 */
-	public function reset_code($reg_user_id = 0) {
+	public function reset_code(int $user_id = 0) {
 		$this->check_auth_fields(false);
 
 		global $wpdb;
-		if ($reg_user_id) {
+		if ($user_id) {
 			$wpdb->update(
 				$wpdb->wnd_auths,
-				['credential' => '', 'time' => time(), 'user_id' => $reg_user_id],
+				['credential' => '', 'time' => time(), 'user_id' => $user_id],
 				['identifier' => $this->identifier, 'type' => $this->identity_type],
 				['%s', '%d', '%d'],
 				['%s', '%s']
@@ -298,10 +276,8 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *@since 2019.07.23
-	 *删除
-	 *@param string $this->identity_type 	据库字查询段名
-	 *@param string $this->identifier 		数据库查询字段值
+	 * 删除
+	 * @since 2019.07.23
 	 */
 	public function delete() {
 		global $wpdb;
@@ -313,10 +289,7 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *@param string $this->identity_type 	据库字查询段名
-	 *@param string $this->identifier 		数据库查询字段值
-	 *
-	 *@since 2019.12.19
+	 * @since 2019.12.19
 	 */
 	protected function get_db_record() {
 		$this->check_auth_fields(false);
@@ -333,12 +306,12 @@ abstract class Wnd_Auth {
 	}
 
 	/**
-	 *检测验证数据库基本属性是否完整
+	 * 检测验证数据库基本属性是否完整
 	 * - 检测 identity_type 字段：设备类型
 	 * - 检测 identifier 	字段：设备地址，如邮箱或手机号等
 	 * - 检测 auth_code 	字段：验证码
 	 *
-	 *@param bool $check_auth_code 是否检查验证码字段
+	 * @param bool $check_auth_code 是否检查验证码字段
 	 */
 	protected function check_auth_fields(bool $check_auth_code) {
 		if (!$this->identity_type) {

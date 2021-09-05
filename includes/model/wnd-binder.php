@@ -5,8 +5,8 @@ use Exception;
 use Wnd\Model\Wnd_Auth;
 
 /**
- *@since 2019.11.26
- *用户绑定
+ * 用户绑定
+ * @since 2019.11.26
  */
 abstract class Wnd_Binder {
 
@@ -33,14 +33,14 @@ abstract class Wnd_Binder {
 	}
 
 	/**
-	 *设置当前账户密码
+	 * 设置当前账户密码
 	 */
 	public function set_password($password) {
 		$this->password = $password;
 	}
 
 	/**
-	 *设置验证码
+	 * 设置验证码
 	 */
 	public function set_auth_code($auth_code) {
 		$this->auth_code = $auth_code;
@@ -49,20 +49,14 @@ abstract class Wnd_Binder {
 	abstract public function bind();
 
 	/**
-	 *核对验证码并绑定
+	 * 核对验证码并绑定
 	 *
-	 *可能抛出异常
+	 * 可能抛出异常
 	 */
 	protected function verify_auth_code() {
 		$auth = Wnd_Auth::get_instance($this->bound_object);
 		$auth->set_type('bind');
 		$auth->set_auth_code($this->auth_code);
-
-		/**
-		 * 通常，正常前端注册的用户，已通过了邮件或短信验证中的一种，已有数据记录，绑定成功后更新对应数据记录，并删除当前验证数据记录
-		 * 删除时会验证该条记录是否绑定用户，只删除未绑定用户的记录
-		 * 若当前用户没有任何验证绑定记录，删除本条验证记录后，会通过 wnd_update_user_email() / wnd_update_user_phone() 重新新增一条记录
-		 */
-		$auth->verify(true);
+		$auth->verify();
 	}
 }

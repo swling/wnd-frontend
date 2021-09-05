@@ -31,22 +31,19 @@ $auth->delete();
 $auth = Wnd_Auth::get_instance('xxx');
 $auth->set_type('bind');
 $auth->set_template('324234');
-// 发送短信：$is_email = false / 发送邮件： $is_email = true
 $auth->send();
 
 # 验证绑定手机
 $auth = Wnd_Auth::get_instance('xxx');
 $auth->set_type('bind');
 $auth->set_auth_code($auth_code);
-// 已注册用户，已有数据记录，绑定成功后更新对应数据记录，并删除当前验证数据记录
-$auth->verify($delete_after_verified = true);
+$auth->verify();
 
 ###########################################################
 
 # 绑定邮箱
 $auth = Wnd_Auth::get_instance('xxx');
 $auth->set_type('bind');
-// 发送短信：$is_email = false / 发送邮件： $is_email = true
 $auth->send();
 
 # 验证绑定邮箱
@@ -54,7 +51,7 @@ $auth = Wnd_Auth::get_instance('xxx');
 $auth->set_type('bind');
 $auth->set_auth_code($auth_code);
 // 已注册用户，已有数据记录，绑定成功后更新对应数据记录，并删除当前验证数据记录
-$auth->verify($delete_after_verified = true);
+$auth->verify();
 
 ###########################################################
 
