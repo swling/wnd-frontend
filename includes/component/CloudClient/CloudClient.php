@@ -71,7 +71,7 @@ abstract class CloudClient {
 				'method'  => $this->method,
 				'body'    => $this->body,
 				'headers' => $this->headers,
-				'timeout' => $this->timed_out,
+				'timeout' => $this->timeout,
 			]
 		);
 	}
