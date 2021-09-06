@@ -15,6 +15,7 @@ abstract class CloudClient {
 	protected $timestamp;
 	protected $method;
 	protected $url;
+	protected $timeout;
 	protected $host;
 	protected $path;
 	protected $queryString = '';
@@ -33,6 +34,7 @@ abstract class CloudClient {
 			'method'  => 'POST',
 			'headers' => [],
 			'body'    => [],
+			'timeout' => 10,
 		];
 		$args = array_merge($defaults, $args);
 
@@ -43,6 +45,7 @@ abstract class CloudClient {
 		$this->queryString = $url_arr['query'] ?? '';
 
 		$this->method                   = strtoupper($args['method']);
+		$this->timeout                  = $args['timeout'];
 		$this->body                     = $args['body'];
 		$this->headers                  = $args['headers'];
 		$this->headers['Host']          = $this->host;
@@ -68,6 +71,7 @@ abstract class CloudClient {
 				'method'  => $this->method,
 				'body'    => $this->body,
 				'headers' => $this->headers,
+				'timeout' => $this->timed_out,
 			]
 		);
 	}
