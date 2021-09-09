@@ -1,15 +1,15 @@
 <?php
 namespace Wnd\Module;
 
-use Exception;
 use Wnd\View\Wnd_Form_Post;
 
 /**
- *@since 0.8.76
- *
- *Page 编辑表单
+ * Page 编辑表单
+ * @since 0.8.76
  */
-class Wnd_Post_Form_Page extends Wnd_Module_Form {
+class Wnd_Post_Form_Page extends Wnd_Post_Form {
+
+	public static $post_type = 'page';
 
 	protected static function configure_form(array $args = []): object{
 		$defaults = [
@@ -20,19 +20,14 @@ class Wnd_Post_Form_Page extends Wnd_Module_Form {
 		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
-		// 权限检测
-		if ($post_id and !current_user_can('edit_post', $post_id)) {
-			throw new Exception(__('权限错误', 'wnd'));
-		}
-
 		/**
-		 *@since 2019.03.11 表单类
+		 * @since 2019.03.11 表单类
 		 */
 		$form = new Wnd_Form_Post('page', $post_id);
 		$form->add_html('<div class="columns post-form-post">');
 
 		/**
-		 *左侧栏
+		 * 左侧栏
 		 */
 		$form->add_html('<div class="column">');
 		$form->add_post_title();
@@ -44,14 +39,14 @@ class Wnd_Post_Form_Page extends Wnd_Module_Form {
 		$form->add_post_gallery_upload(0, 0, __('相册图集', 'wnd'));
 
 		/**
-		 *@since 2019.04 富媒体编辑器仅在非ajax请求中有效
+		 * @since 2019.04 富媒体编辑器仅在非ajax请求中有效
 		 */
 		$form->add_post_content(true);
 		$form->add_post_status_select();
 		$form->add_html('</div>');
 
 		/**
-		 *侧边栏
+		 * 侧边栏
 		 */
 		$form->add_html('<div class="column is-2">');
 		$form->add_html('<div class="field">' . wnd_modal_button(__('产品属性', 'wnd'), 'wnd_sku_form', ['post_id' => $form->get_post()->ID ?? 0]) . '</div>');

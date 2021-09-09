@@ -1,13 +1,14 @@
 <?php
 namespace Wnd\Module;
 
-use Exception;
 use Wnd\View\Wnd_Form_Post;
 
 /**
- *@since 2019.01.31 发布/编辑文章通用模板
+ * @since 2019.01.31 发布/编辑文章通用模板
  */
-class Wnd_Post_Form_Post extends Wnd_Module_Form {
+class Wnd_Post_Form_Post extends Wnd_Post_Form {
+
+	public static $post_type = 'post';
 
 	protected static function configure_form(array $args = []): object{
 		$defaults = [
@@ -18,23 +19,18 @@ class Wnd_Post_Form_Post extends Wnd_Module_Form {
 		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
-		// 权限检测
-		if ($post_id and !current_user_can('edit_post', $post_id)) {
-			throw new Exception(__('权限错误', 'wnd'));
-		}
-
 		/**
-		 *@since 2019.03.11 表单类
+		 * @since 2019.03.11 表单类
 		 */
 		$form = new Wnd_Form_Post('post', $post_id);
 
 		/**
-		 *左侧栏
+		 * 左侧栏
 		 */
 		$form->add_step(__('内容正文', 'wnd'));
 		$form->add_post_title(__('标题', 'wnd'));
 		/**
-		 *@since 2019.04 富媒体编辑器仅在非ajax请求中有效
+		 * @since 2019.04 富媒体编辑器仅在非ajax请求中有效
 		 */
 		$form->add_post_content(true);
 		$form->add_step(__('发布选项', 'wnd'));

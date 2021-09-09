@@ -46,6 +46,32 @@ apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_sta
 apply_filters( 'wnd_allowed_post_types', $post_types );
 ```
 
+### 文章权限控制实例拓展（PPC）
+ 默认权限如下：
+ - 写入内容：登录用户可发布内容
+ - 编辑权限：WP默认 current_user_can('edit_post', $this->post_id)
+ - 更改状态：仅管理员可设置为 publish
+
+```php
+/**
+ * 可通过此 filter 指定 PPC 实例化对象
+ * 返回的实例化对象必须为本 Wnd\Permission\Wnd_PPC 的子类
+ * @see Wnd\Permission\Wnd_PPC;
+ */
+$instance = apply_filters('wnd_ppc_instance', $instance, $post_type);
+
+// 演示
+add_filter('wnd_ppc_instance', function ($instance, $post_type) {
+	$ppc_class_name = 'Wndt\\Permission\\Wndt_PPC_' . $post_type;
+	if (class_exists($ppc_class_name)) {
+		return new $ppc_class_name($post_type);
+	}
+
+	return $instance;
+
+}, 11, 2);
+```
+
 ## 多重筛选
 ```php
 /**
