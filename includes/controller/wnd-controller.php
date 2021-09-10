@@ -242,7 +242,7 @@ class Wnd_Controller {
 		}
 
 		try {
-			return ['status' => 1, 'msg' => '', 'data' => $class::get()];
+			return ['status' => 1, 'msg' => '', 'data' => $class::get($request->get_query_params())];
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
@@ -354,7 +354,7 @@ class Wnd_Controller {
 	 */
 	public static function add_comment($request): array{
 		try {
-			$comment = wp_handle_comment_submission(wp_unslash($request));
+			$comment = wp_handle_comment_submission(wp_unslash($request->get_params()));
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
