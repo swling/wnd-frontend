@@ -216,7 +216,7 @@ class Wnd_Controller {
 		}
 
 		try {
-			$module = new $class;
+			$module = new $class($request->get_query_params());
 			return ['status' => 1, 'data' => $module->get_structure()];
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
@@ -275,7 +275,7 @@ class Wnd_Controller {
 		}
 
 		try {
-			$action = new $class();
+			$action = new $class($request);
 			return $action->execute();
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];

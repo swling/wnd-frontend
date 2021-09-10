@@ -20,10 +20,9 @@ apply_filters('wnd_request', $_POST)
 
 /**
 *@since 2019.12.22
-*根据表单数据控制该表单是否可以提交
-*注意：$request = apply_filters('wnd_request', $_POST);
+*REST API 数据请求控制
 */
-apply_filters('wnd_request_controller', ['status' => 1], $request);
+apply_filters('wnd_request_controller', ['status' => 1], $request, $route);
 ```
 
 ## 文章
