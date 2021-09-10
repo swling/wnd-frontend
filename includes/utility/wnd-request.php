@@ -80,9 +80,14 @@ class Wnd_Request {
 	 * @return array 返回解析后的请求提交数据
 	 */
 	protected function validate_request(): array{
-		$method  = $this->wp_rest_request->get_method();
-		$route   = $this->wp_rest_request->get_route();
-		$request = ('POST' == $method) ? $this->wp_rest_request->get_body_params() : $this->wp_rest_request->get_query_params();
+		$method = $this->wp_rest_request->get_method();
+		$route  = $this->wp_rest_request->get_route();
+
+		if ('GET' == $method) {
+			$request = $this->wp_rest_request->get_query_params();
+		} else {
+			$request = $this->wp_rest_request->get_json_params() ?: $this->wp_rest_request->get_body_params();
+		}
 		if (empty($request)) {
 			return [];
 		}
