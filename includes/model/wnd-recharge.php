@@ -33,7 +33,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 			throw new Exception(__('请登录', 'wnd'));
 		}
 		if (!$this->total_amount) {
-			throw new Exception(__('获取充值金额失败', 'wnd'));
+			throw new Exception(__('获取金额失败', 'wnd'));
 		}
 
 		// 定义变量
