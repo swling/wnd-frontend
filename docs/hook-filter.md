@@ -152,11 +152,11 @@ apply_filters('wnd_option_pay_return_url', $return_url);
 ```
 ## 订单
 ```php
-// 用户订单权限
-apply_filters('wnd_can_create_order', ['status'=>1,'msg'=>''], $post_id, $sku_id, $quantity);
+// 用户创建 订单/支付 的权限
+apply_filters('wnd_can_do_payment', ['status'=>1,'msg'=>''], $post_id, $transaction_type, $sku_id, $quantity);
 
 /**
- *订单创建成功返回信息
+ *站内交易成功返回信息
  *@since 0.8.71
  */
 $return_array = ['status' => 4, 'msg' => __('支付成功', 'wnd'), 'data' => ['waiting' => 5]];

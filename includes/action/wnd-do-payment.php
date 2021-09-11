@@ -82,6 +82,12 @@ class Wnd_Do_Payment extends Wnd_Action {
 		if ($this->internal) {
 			$this->check_internal_payment();
 		}
+
+		// Filter
+		$can_do_payment = apply_filters('wnd_can_do_payment', ['status' => 1], $this->post_id, $this->type, $this->sku_id, $this->quantity);
+		if (0 === $can_do_payment['status']) {
+			throw new Exception($can_do_payment['msg']);
+		}
 	}
 
 	/**
@@ -129,12 +135,6 @@ class Wnd_Do_Payment extends Wnd_Action {
 			if (-1 != $single_sku_stock and $this->quantity > $single_sku_stock) {
 				throw new Exception(__('产品库存不足', 'wnd'));
 			}
-		}
-
-		// Filter
-		$can_create_order = apply_filters('wnd_can_create_order', ['status' => 1, 'msg' => ''], $this->post_id, $this->sku_id, $this->quantity);
-		if (0 === $can_create_order['status']) {
-			throw new Exception($can_create_order['msg']);
 		}
 	}
 
