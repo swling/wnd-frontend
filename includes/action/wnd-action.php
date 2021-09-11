@@ -37,6 +37,12 @@ abstract class Wnd_Action {
 	protected $validate_captcha = true;
 
 	/**
+	 * Instance of WP REST Request
+	 * @since 0.9.36
+	 */
+	protected $wp_rest_request;
+
+	/**
 	 * Instance of Wnd_Request
 	 */
 	protected $request;
@@ -48,10 +54,11 @@ abstract class Wnd_Action {
 	 * @since 0.8.66
 	 */
 	public function __construct(WP_REST_Request $wp_rest_request) {
-		$this->request = new Wnd_Request($wp_rest_request, $this->verify_sign, $this->validate_captcha);
-		$this->data    = $this->request->get_request();
-		$this->user    = wp_get_current_user();
-		$this->user_id = $this->user->ID ?? 0;
+		$this->wp_rest_request = $wp_rest_request;
+		$this->request         = new Wnd_Request($wp_rest_request, $this->verify_sign, $this->validate_captcha);
+		$this->data            = $this->request->get_request();
+		$this->user            = wp_get_current_user();
+		$this->user_id         = $this->user->ID ?? 0;
 
 		$this->check();
 	}
