@@ -5,8 +5,8 @@ use Exception;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 2019.01.20
- *快速编辑文章状态表单
+ * 快速编辑文章状态表单
+ * @since 2019.01.20
  */
 class Wnd_Post_Status_Form extends Wnd_Module_Form {
 
@@ -18,25 +18,25 @@ class Wnd_Post_Status_Form extends Wnd_Module_Form {
 
 		switch ($post->post_status) {
 
-		case 'publish':
-			$status_text = __('已发布', 'wnd');
-			break;
+			case 'publish':
+				$status_text = __('已发布', 'wnd');
+				break;
 
-		case 'pending':
-			$status_text = __('待审核', 'wnd');
-			break;
+			case 'pending':
+				$status_text = __('待审核', 'wnd');
+				break;
 
-		case 'draft':
-			$status_text = __('草稿', 'wnd');
-			break;
+			case 'draft':
+				$status_text = __('草稿', 'wnd');
+				break;
 
-		case false:
-			$status_text = __('已删除', 'wnd');
-			break;
+			case false:
+				$status_text = __('已删除', 'wnd');
+				break;
 
-		default:
-			$status_text = $post->post_status;
-			break;
+			default:
+				$status_text = $post->post_status;
+				break;
 		}
 
 		$form = new Wnd_Form_WP();

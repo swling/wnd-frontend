@@ -2,9 +2,9 @@
 namespace Wnd\Module;
 
 /**
- *@since 2019.05.16
- *列出term链接列表
- **/
+ * 列出term链接列表
+ * @since 2019.05.16
+ */
 class Wnd_Terms_List extends Wnd_Module_Html {
 
 	protected static function build(array $args = []): string{

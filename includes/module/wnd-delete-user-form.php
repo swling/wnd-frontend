@@ -5,7 +5,7 @@ use Exception;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 2020.04.30 删除账户
+ * @since 2020.04.30 删除账户
  */
 class Wnd_Delete_User_Form extends Wnd_Module_Form {
 

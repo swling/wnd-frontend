@@ -2,10 +2,8 @@
 namespace Wnd\Module;
 
 /**
- *@since 0.8.64
- *
- *搜索框
- *
+ * 搜索框
+ * @since 0.8.64
  */
 class Wnd_Search_Form extends Wnd_Module_Html {
 

@@ -6,8 +6,8 @@ use Wnd\Model\Wnd_User;
 use Wnd\View\Wnd_Form_User;
 
 /**
- *@since 0.9.4
- *解除第三方账户绑定（不含手机及邮箱）
+ * 解除第三方账户绑定（不含手机及邮箱）
+ * @since 0.9.4
  */
 class Wnd_Unbind_Openid_Form extends Wnd_Module_Form {
 

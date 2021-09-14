@@ -4,8 +4,8 @@ namespace Wnd\Module;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 2019.02.22
- *管理员手动增加用户余额
+ * 管理员手动增加用户余额
+ * @since 2019.02.22
  */
 class Wnd_Admin_Recharge_Form extends Wnd_Module_Form {
 

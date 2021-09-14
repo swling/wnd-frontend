@@ -5,7 +5,7 @@ use Exception;
 use Wnd\View\Wnd_Form_User;
 
 /**
- *@since 2019.01.21 注册表单
+ * @since 2019.01.21 注册表单
  */
 class Wnd_Reg_Form extends Wnd_Module_Form {
 
@@ -37,8 +37,8 @@ class Wnd_Reg_Form extends Wnd_Module_Form {
 		$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>&nbsp;' . __('注册', 'wnd'), true);
 
 		/**
-		 *注册用户通常为手机验证，或邮箱验证，为简化注册流程，可选择禁用用户名字段
-		 *后端将随机生成用户名，用户可通过邮箱或手机号登录
+		 * 注册用户通常为手机验证，或邮箱验证，为简化注册流程，可选择禁用用户名字段
+		 * 后端将随机生成用户名，用户可通过邮箱或手机号登录
 		 */
 		if (wnd_get_config('disable_user_login') != 1) {
 			$form->add_user_login('', __('用户名', 'wnd'));

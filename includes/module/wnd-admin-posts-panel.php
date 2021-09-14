@@ -4,7 +4,7 @@ namespace Wnd\Module;
 use Wnd\View\Wnd_Filter_Ajax;
 
 /**
- *@since 2019.02.19 封装前端管理员内容审核平台
+ * @since 2019.02.19 封装前端管理员内容审核平台
  */
 class Wnd_Admin_Posts_Panel extends Wnd_Module_Filter {
 

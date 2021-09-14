@@ -5,7 +5,7 @@ use Exception;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 2020.04.30 账户状态操作表单
+ * @since 2020.04.30 账户状态操作表单
  */
 class Wnd_Account_Status_Form extends Wnd_Module_Form {
 

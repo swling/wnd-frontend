@@ -6,16 +6,16 @@ use Wnd\JsonGet\Wnd_Menus;
 use Wnd\Module\Wnd_User_Center;
 
 /**
- *封装前端中心页面
- *@since 0.9.0
- *
- *Template Name: 用户中心
+ * 封装前端中心页面
+ * Template Name: 用户中心
  *
  * 页面功能：
  * - 根据 URL 参数 $_GET['state'] 处理社交登录（绝大部分社交登录均支持在回调 URL 中添加 $_GET['state']，如有例外后续补充处理）
  * - 根据 URL 参数 $_GET['module'] 呈现对应 UI 模块
  * - 根据 URL 参数 $_GET['action'] = （submit/edit） 调用对应内容发布/编辑表单模块
  * - 默认为用户中心：注册、登录、账户管理，内容管理，财务管理等
+ *
+ * @since 0.9.0
  */
 class Wnd_Front_Page extends Wnd_Module_Html {
 
@@ -119,7 +119,7 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 		}
 
 		/**
-		 *登录用户用户中心默认模块
+		 * 登录用户用户中心默认模块
 		 */
 		$user_page_default_module = apply_filters('wnd_user_page_default_module', 'wnd_user_overview');
 		$html                     = '

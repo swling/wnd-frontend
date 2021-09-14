@@ -2,9 +2,8 @@
 namespace Wnd\Module;
 
 /**
- *@since 0.9.2
- *
- *插件默认账户概览
+ * 插件默认账户概览
+ * @since 0.9.2
  */
 class Wnd_User_Overview extends Wnd_Module_Html {
 
@@ -25,7 +24,7 @@ class Wnd_User_Overview extends Wnd_Module_Html {
 	}
 
 	/**
-	 *财务概览
+	 * 财务概览
 	 */
 	public static function build_financial_overview($user_id) {
 		$user_id = get_current_user_id();

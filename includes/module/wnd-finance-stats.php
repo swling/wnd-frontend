@@ -4,7 +4,7 @@ namespace Wnd\Module;
 use Wnd\View\Wnd_Filter_Ajax;
 
 /**
- *@since 0.9.26 财务统计中心
+ * @since 0.9.26 财务统计中心
  */
 class Wnd_Finance_Stats extends Wnd_Module_Filter {
 

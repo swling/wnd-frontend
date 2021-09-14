@@ -2,8 +2,8 @@
 namespace Wnd\Module;
 
 /**
- *Filter 模块公共特性
- *@since 0.9.2
+ * Filter 模块公共特性
+ * @since 0.9.2
  */
 abstract class Wnd_Module_Filter extends Wnd_Module {
 

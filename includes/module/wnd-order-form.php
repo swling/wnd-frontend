@@ -6,9 +6,8 @@ use Wnd\Model\Wnd_SKU;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 0.8.73
- *
- *商品购买表单
+ * 商品购买表单
+ * @since 0.8.73
  */
 class Wnd_Order_Form extends Wnd_Module_Form {
 
@@ -51,7 +50,7 @@ class Wnd_Order_Form extends Wnd_Module_Form {
 		);
 
 		/**
-		 *支持批量购买商品
+		 * 支持批量购买商品
 		 */
 		if ($support_quantity) {
 			$form->add_number(
@@ -72,10 +71,10 @@ class Wnd_Order_Form extends Wnd_Module_Form {
 	/**
 	 * 遍历产品属性，并生成表单字段
 	 *
-	 *	$sku = [
-	 *		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
-	 *		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
-	 *	];
+	 * 	$sku = [
+	 * 		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
+	 * 		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
+	 * 	];
 	 */
 	protected static function get_sku_options(int $post_id): array{
 		$sku     = Wnd_SKU::get_object_sku($post_id);

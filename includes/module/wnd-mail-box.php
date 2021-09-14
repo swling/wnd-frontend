@@ -4,7 +4,7 @@ namespace Wnd\Module;
 use Wnd\View\Wnd_Filter_Ajax;
 
 /**
- *@since 2019.02.19 封装前端当前用户站内信
+ * @since 2019.02.19 封装前端当前用户站内信
  */
 class Wnd_Mail_Box extends Wnd_Module_Filter {
 

@@ -4,7 +4,7 @@ namespace Wnd\Module;
 use Wnd\View\Wnd_Filter_Ajax;
 
 /**
- *@since 0.9.26 订单及充值记录
+ * @since 0.9.26 订单及充值记录
  */
 class Wnd_Finance_List extends Wnd_Module_Filter {
 

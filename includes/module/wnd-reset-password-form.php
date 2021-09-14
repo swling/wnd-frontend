@@ -4,7 +4,7 @@ namespace Wnd\Module;
 use Wnd\View\Wnd_Form_User;
 
 /**
- *@since 2019.01.28 找回密码
+ * @since 2019.01.28 找回密码
  */
 class Wnd_Reset_Password_Form extends Wnd_Module_Form {
 

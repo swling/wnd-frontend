@@ -4,7 +4,7 @@ namespace Wnd\Module;
 use Wnd\View\Wnd_Filter_Ajax;
 
 /**
- *@since 2019.02.18 封装用户财务中心
+ * @since 2019.02.18 封装用户财务中心
  */
 class Wnd_User_Finance_Panel extends Wnd_Module_Filter {
 

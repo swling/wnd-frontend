@@ -2,16 +2,15 @@
 namespace Wnd\Module;
 
 /**
- *@since 0.9.0
- *Post 详情模块
- *
+ * Post 详情模块
+ * @since 0.9.0
  */
 class Wnd_Post_Detail extends Wnd_Module_Html {
 
 	protected static function build(array $args = []): string{
 		/**
-		 *订单基本信息 + 产品属性等参数
-		 *移除表单签名参数
+		 * 订单基本信息 + 产品属性等参数
+		 * 移除表单签名参数
 		 */
 		$defaults = [
 			'post_id' => 0,
@@ -35,7 +34,7 @@ class Wnd_Post_Detail extends Wnd_Module_Html {
 	}
 
 	/**
-	 *默认文章详情
+	 * 默认文章详情
 	 *
 	 */
 	private static function build_post_detail(\WP_Post $post): string {

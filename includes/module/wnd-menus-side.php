@@ -4,9 +4,8 @@ namespace Wnd\Module;
 use Wnd\Module\Wnd_Search_Form;
 
 /**
- *@since 0.9.11
- *
- *侧边栏菜单
+ * 侧边栏菜单
+ * @since 0.9.11
  */
 class Wnd_Menus_Side extends Wnd_Module_Html {
 

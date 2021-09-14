@@ -5,8 +5,8 @@ use Exception;
 use Wnd\View\Wnd_Form_User;
 
 /**
- *@since 2019.01.13 登录框
- *@since 2019.03.10 Wnd_Form_WP
+ * @since 2019.01.13 登录框
+ * @since 2019.03.10 Wnd_Form_WP
  */
 class Wnd_Login_Form extends Wnd_Module_Form {
 
@@ -16,8 +16,8 @@ class Wnd_Login_Form extends Wnd_Module_Form {
 		}
 
 		/**
-		 *移除本插件用户中心相关调用参数
-		 *@since 2020.07.03
+		 * 移除本插件用户中心相关调用参数
+		 * @since 2020.07.03
 		 */
 		$redirect_to = wnd_is_rest_request() ? false : remove_query_arg(['do', 'type', 'tab', 'wrap'], $_SERVER['HTTP_REFERER'] ?? false);
 

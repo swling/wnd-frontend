@@ -2,9 +2,8 @@
 namespace Wnd\Module;
 
 /**
- *@since 0.8.73
- *
- *购物车结算表单
+ * 购物车结算表单
+ * @since 0.8.73
  */
 class Wnd_Checkout_Form extends Wnd_Module_Form {
 

@@ -6,30 +6,28 @@ use Wnd\View\Wnd_Form_Post;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 2019.07.16
- *上传或编辑附件信息
- *指定$args['attachment_id'] 表示为编辑
+ * 上传或编辑附件信息
+ * 指定$args['attachment_id'] 表示为编辑
  *
- *原理：
- *基于 post parent创建文件上传字段，ajax上传附件并附属到指定post parent
- *attachment post在上传文件后，由WordPress创建
- *后端将附件文件attachment post信息返回
- *@see php: Wnd\Action\Wnd_Upload_File
+ * ## 原理：
+ * 基于 post parent创建文件上传字段，ajax上传附件并附属到指定post parent
+ * attachment post在上传文件后，由WordPress创建
+ * 后端将附件文件attachment post信息返回 @see php: Wnd\Action\Wnd_Upload_File
  *
- *创建父级文件上传字段的同时，创建空白的attachment post form（实际表单是通过这两个表单的字段重新形成）
- *利用JavaScript捕获上传文件后返回的attachment post信息
- *JavaScript捕获新上传的attachment post信息后，首先判断当前表单对应字段是否已有信息，若有值，则不作修改。ID除外。
- *完成对表单字段信息的动态替换后，自动提交一次
- *若需修改信息，则编辑对应字段，手动提交一次
- *@see JavaScript: $("body").on("change", "[type='file']", function() {});
+ * 创建父级文件上传字段的同时，创建空白的attachment post form（实际表单是通过这两个表单的字段重新形成）
+ * 利用JavaScript捕获上传文件后返回的attachment post信息
+ * JavaScript捕获新上传的attachment post信息后，首先判断当前表单对应字段是否已有信息，若有值，则不作修改。ID除外。
+ * 完成对表单字段信息的动态替换后，自动提交一次
+ * 若需修改信息，则编辑对应字段，手动提交一次 @see JavaScript: $("body").on("change", "[type='file']", function() {});
  *
- *文件替换：
- *指定attachment_id，并调用本函数，为防止上传附件后忘记删除原有文件（操作直观上，这是一次替换），此时文件字段为禁用状态
- *删除原有文件后，前端恢复上传
- *选择新的文件，则重复上述ajax文件上传过程，即此时表单已经动态更改为编辑最新上传的attachment post
- *通过保留相同的post_name(别名)、及menu_order（排序）可实现用户端的无缝替换文件。
- *本质上，替换文件，是删除后的新建，是全新的attachment post
+ * ## 文件替换：
+ * 指定attachment_id，并调用本函数，为防止上传附件后忘记删除原有文件（操作直观上，这是一次替换），此时文件字段为禁用状态
+ * 删除原有文件后，前端恢复上传
+ * 选择新的文件，则重复上述ajax文件上传过程，即此时表单已经动态更改为编辑最新上传的attachment post
+ * 通过保留相同的post_name(别名)、及menu_order（排序）可实现用户端的无缝替换文件。
+ * 本质上，替换文件，是删除后的新建，是全新的attachment post
  *
+ * @since 2019.07.16
  */
 class Wnd_Post_Form_Attachment extends Wnd_Module_Form {
 
@@ -62,9 +60,9 @@ class Wnd_Post_Form_Attachment extends Wnd_Module_Form {
 				'file_id'  => $attachment_id,
 
 				/**
-				 *如果设置了meta_key及post parent, 则上传的附件id将保留在对应的wnd_post_meta
-				 *若仅设置了meta_key否则保留为 wnd_user_meta
-				 *若未设置meta_key、则不在meta中保留附件信息，仅能通过指定id方式查询
+				 * 如果设置了meta_key及post parent, 则上传的附件id将保留在对应的wnd_post_meta
+				 * 若仅设置了meta_key否则保留为 wnd_user_meta
+				 * 若未设置meta_key、则不在meta中保留附件信息，仅能通过指定id方式查询
 				 */
 				'data'     => [
 					'meta_key'    => $args['meta_key'],
@@ -74,8 +72,8 @@ class Wnd_Post_Form_Attachment extends Wnd_Module_Form {
 		);
 
 		/**
-		 *上传媒体信息表单字段。attachment 无法也不应创建草稿
-		 *此处的attachment post_ID将根据上传文件后，ajax返回值获取
+		 * 上传媒体信息表单字段。attachment 无法也不应创建草稿
+		 * 此处的attachment post_ID将根据上传文件后，ajax返回值获取
 		 */
 		$attachment_post_form = new Wnd_Form_Post('attachment', $attachment_id, false);
 		if ($attachment_id) {

@@ -4,8 +4,8 @@ namespace Wnd\Module;
 use Wnd\View\Wnd_Form_User;
 
 /**
- *@since 2019.01.29
- *用户常规资料表单
+ * 用户常规资料表单
+ * @since 2019.01.29
  */
 class Wnd_Profile_Form extends Wnd_Module_Form {
 

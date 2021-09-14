@@ -4,9 +4,8 @@ namespace Wnd\Module;
 use Wnd\Utility\Wnd_Defender;
 
 /**
- *@since 0.8.62
- *列出对象缓存IP屏蔽信息
- *
+ * 列出对象缓存IP屏蔽信息
+ * @since 0.8.62
  */
 class Wnd_Blocked_List extends Wnd_Module_Html {
 
