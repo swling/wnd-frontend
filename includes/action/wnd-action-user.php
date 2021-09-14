@@ -4,14 +4,14 @@ namespace Wnd\Action;
 use Exception;
 
 /**
- *@since 0.8.66
- *注册用户 Ajax 操作基类
+ * 注册用户 Ajax 操作基类
+ * @since 0.8.66
  */
 abstract class Wnd_Action_User extends Wnd_Action {
 
 	/**
-	 *权限检测
-	 *@since 0.8.66
+	 * 权限检测
+	 * @since 0.8.66
 	 */
 	protected function check() {
 		if (!$this->user_id) {

@@ -5,8 +5,8 @@ use Exception;
 use Wnd\Model\Wnd_Auth;
 
 /**
- *@since 2019.01.28
- *发送手机或邮箱验证码
+ * 发送手机或邮箱验证码
+ * @since 2019.01.28
  */
 class Wnd_Send_Code extends Wnd_Action {
 
@@ -23,8 +23,8 @@ class Wnd_Send_Code extends Wnd_Action {
 		}
 
 		/**
-		 *已登录用户，且账户已绑定邮箱/手机，且验证类型不为bind（切换绑定邮箱）
-		 *核查当前表单字段与用户已有数据是否一致（验证码核验需要指定手机或邮箱，故此不可省略手机或邮箱表单字段）
+		 * 已登录用户，且账户已绑定邮箱/手机，且验证类型不为bind（切换绑定邮箱）
+		 * 核查当前表单字段与用户已有数据是否一致（验证码核验需要指定手机或邮箱，故此不可省略手机或邮箱表单字段）
 		 */
 		if ($this->user->ID and $type != 'bind') {
 			$user_device = ('email' == $device_type) ? $this->user->user_email : wnd_get_user_phone($this->user->ID);

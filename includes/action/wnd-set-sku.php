@@ -5,9 +5,8 @@ use Exception;
 use Wnd\Model\Wnd_SKU;
 
 /**
- *@since 0.8.76
- *
- *设置产品属性
+ * 设置产品属性
+ * @since 0.8.76
  */
 class Wnd_Set_SKU extends Wnd_Action_User {
 

@@ -4,13 +4,12 @@ namespace Wnd\Action;
 use Exception;
 
 /**
- *账户状态
- *@since 2020.04.30
- *@param $_POST['user_id'];
+ * 账户状态
+ * 账户状态为本插件自定义功能，故添加两个do_action以便后期拓展功能：
+ * do_action('wnd_ban_account', $user_id);
+ * do_action('wnd_restore_account', $user_id);
  *
- *账户状态为本插件自定义功能，故添加两个do_action以便后期拓展功能：
- *do_action('wnd_ban_account', $user_id);
- *do_action('wnd_restore_account', $user_id);
+ * @since 2020.04.30
  */
 class Wnd_Update_Account_Status extends Wnd_Action_Admin {
 

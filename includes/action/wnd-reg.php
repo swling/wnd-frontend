@@ -4,21 +4,13 @@ namespace Wnd\Action;
 use Exception;
 
 /**
- *@see README.md
- *ajax user POST name规则：
- *user field：_user_{field}
- *user meta：
- *_usermeta_{key} （*自定义数组字段）
- *_wpusermeta_{key} （*WordPress原生字段）
+ * ajax user POST name规则：
+ * user field：_user_{field}
+ * user meta：
+ * _usermeta_{key} （*自定义数组字段）
+ * _wpusermeta_{key} （*WordPress原生字段）
  *
- *@since 初始化 用户注册
- *@param $_POST['_user_user_login']
- *@param $_POST['_user_user_pass']
- *@param $_POST['_user_user_pass_repeat']
- *
- *@param $_POST['_user_user_email']
- *@param $_POST['_user_display_name']
- *@param $_POST['_wpusermeta_description']
+ * @since 初始化 用户注册
  */
 class Wnd_Reg extends Wnd_Action {
 
@@ -69,7 +61,7 @@ class Wnd_Reg extends Wnd_Action {
 	}
 
 	/**
-	 *检查数据
+	 * 检查数据
 	 */
 	protected static function check_data(array $user_data) {
 		if (isset($user_data['user_login'])) {

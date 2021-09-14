@@ -5,11 +5,8 @@ use Exception;
 use Wnd\Model\Wnd_Auth;
 
 /**
- *@since 2019.02.10 用户找回密码
- *@param $_POST['phone'] ?? $_POST['_user_user_email'];
- *@param $_POST['auth_code']
- *@param $_POST['_user_new_pass']
- *@param $_POST['_user_new_pass_repeat']
+ * 用户找回密码
+ * @since 2019.02.10
  */
 class Wnd_Reset_Password extends Wnd_Action {
 
@@ -35,9 +32,9 @@ class Wnd_Reset_Password extends Wnd_Action {
 
 		/**
 		 *
-		 *获取用户的方法：
-		 *已登录用户则为当前用户
-		 *未登录用户通过邮箱或手机获取
+		 * 获取用户的方法：
+		 * 已登录用户则为当前用户
+		 * 未登录用户通过邮箱或手机获取
 		 */
 		$auth = Wnd_Auth::get_instance($email_or_phone);
 		$auth->set_type('reset_password');

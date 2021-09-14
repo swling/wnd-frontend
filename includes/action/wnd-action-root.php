@@ -4,14 +4,14 @@ namespace Wnd\Action;
 use Exception;
 
 /**
- *@since 0.8.66
- *超级管理员 Ajax 操作基类
+ * 超级管理员 Ajax 操作基类
+ * @since 0.8.66
  */
 abstract class Wnd_Action_Root extends Wnd_Action {
 
 	/**
-	 *权限检测
-	 *@since 0.8.66
+	 * 权限检测
+	 * @since 0.8.66
 	 */
 	protected function check() {
 		if (!is_super_admin()) {

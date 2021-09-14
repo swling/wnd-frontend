@@ -19,19 +19,18 @@ class Wnd_Insert_Post extends Wnd_Action {
 	protected $update_post;
 
 	/**
-	 *@see README.md
-	 *ajax post $_POST name规则：
-	 *post field：_post_{field}
-	 *post meta：
-	 *_meta_{key} (*自定义数组字段)
-	 *_wpmeta_{key} (*WordPress原生字段)
-	 *_term_{taxonomy}(*taxonomy)
+	 * ajax post $_POST name规则：
+	 * post field：_post_{field}
+	 * post meta：
+	 * _meta_{key} (*自定义数组字段)
+	 * _wpmeta_{key} (*WordPress原生字段)
+	 * _term_{taxonomy}(*taxonomy)
+	 * 保存提交数据
 	 *
-	 *@since 初始化
+	 * @see README.md
+	 * @since 初始化
 	 *
-	 *保存提交数据
-	 *
-	 *@return 	array 	操作结果
+	 * @return 	array 	操作结果
 	 */
 	public function execute(): array{
 		$this->parse_data();
@@ -56,7 +55,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 	}
 
 	/**
-	 *解析提交数据
+	 * 解析提交数据
 	 */
 	protected function parse_data() {
 		$this->post_data    = $this->request->get_post_data();
@@ -69,13 +68,13 @@ class Wnd_Insert_Post extends Wnd_Action {
 		$this->update_post = $this->post_id ? get_post($this->post_id) : false;
 
 		/**
-		 *文章特定字段处理：
+		 * 文章特定字段处理：
 		 *
-		 *1.Post一旦创建，不允许再次修改post type
+		 * 1.Post一旦创建，不允许再次修改post type
 		 *
-		 *2.若未指定post name（slug）：已创建的Post保持原有，否则为随机码
+		 * 2.若未指定post name（slug）：已创建的Post保持原有，否则为随机码
 		 *
-		 *3.filter：post status
+		 * 3.filter：post status
 		 */
 		$this->post_data['post_type']   = $this->post_id ? $this->update_post->post_type : ($this->post_data['post_type'] ?? 'post');
 		$this->post_data['post_name']   = ($this->post_data['post_name'] ?? false) ?: ($this->post_id ? $this->update_post->post_name : uniqid());
@@ -83,7 +82,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 	}
 
 	/**
-	 *更新权限判断
+	 * 更新权限判断
 	 */
 	protected function check_data() {
 		if ($this->post_id) {
@@ -97,16 +96,16 @@ class Wnd_Insert_Post extends Wnd_Action {
 		}
 
 		/**
-		 *@since 2019.07.17
-		 *attachment仅允许更新，而不能直接写入（写入应在文件上传时完成）
+		 * attachment仅允许更新，而不能直接写入（写入应在文件上传时完成）
+		 * @since 2019.07.17
 		 */
 		if ('attachment' == $this->post_data['post_type']) {
 			throw new Exception(__('未指定文件', 'wnd'));
 		}
 
 		/**
-		 *限制ajax可以创建的post类型，避免功能型post被意外创建
-		 *功能型post应通常具有更复杂的权限控制，并wp_insert_post创建
+		 * 限制ajax可以创建的post类型，避免功能型post被意外创建
+		 * 功能型post应通常具有更复杂的权限控制，并wp_insert_post创建
 		 *
 		 */
 		if (!in_array($this->post_data['post_type'], Wnd_Post::get_allowed_post_types())) {
@@ -121,7 +120,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 	}
 
 	/**
-	 *写入数据
+	 * 写入数据
 	 */
 	protected function insert() {
 		// 创建revision 该revision不同于WordPress原生revision：创建一个同类型Post，设置post parent，并设置wp post meta
@@ -148,21 +147,21 @@ class Wnd_Insert_Post extends Wnd_Action {
 		}
 
 		/**
-		 *设置Meta
+		 * 设置Meta
 		 *
 		 */
 		Wnd_Post::set_meta($this->post_id, $this->meta_data, $this->wp_meta_data);
 
 		/**
-		 *设置Terms
+		 * 设置Terms
 		 *
 		 */
 		Wnd_Post::set_terms($this->post_id, $this->terms_data);
 	}
 
 	/**
-	 *判断是否应该创建一个版本
-	 *@since 2020.05.20
+	 * 判断是否应该创建一个版本
+	 * @since 2020.05.20
 	 */
 	protected function should_be_update_reversion(): bool {
 		// 非更新

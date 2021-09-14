@@ -4,12 +4,7 @@ namespace Wnd\Action;
 use Exception;
 
 /**
- *@since 2019.1.13 用户登录
- *
- *@param $_POST['_user_user_login']
- *@param $_POST['_user_user_pass'];
- *@param $_POST['remember'];
- *@param $_REQUEST['redirect_to'];
+ * @since 2019.1.13 用户登录
  */
 class Wnd_Login extends Wnd_Action {
 
@@ -41,9 +36,9 @@ class Wnd_Login extends Wnd_Action {
 		 */
 		if (!wp_check_password($password, $user->data->user_pass, $user->ID)) {
 			/**
-			 *@since 0.8.61
+			 * @since 0.8.61
 			 *
-			 *@param object WP_User
+			 * @param object WP_User
 			 */
 			do_action('wnd_login_failed', $user);
 
@@ -54,17 +49,15 @@ class Wnd_Login extends Wnd_Action {
 		wp_set_auth_cookie($user->ID, $remember);
 
 		/**
-		 *@since 0.8.61
+		 * @since 0.8.61
 		 *
-		 *@param object WP_User
+		 * @param object WP_User
 		 */
 		do_action('wnd_login', $user);
 
 		/**
-		 * @see （本代码段从 wp_signon 复制而来)
-		 *
 		 * Fires after the user has successfully logged in.
-		 *
+		 * @see （本代码段从 wp_signon 复制而来)
 		 * @since 1.5.0
 		 *
 		 * @param string  $user_login Username.

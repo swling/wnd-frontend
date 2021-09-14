@@ -4,11 +4,8 @@ namespace Wnd\Action;
 use Exception;
 
 /**
- *@since 初始化
- *用户账户更新：修改密码
- *@param $_POST['_user_user_pass']
- *@param $_POST['_user_new_pass']
- *@param $_POST['_user_new_pass_repeat']
+ * 用户账户更新：修改密码
+ * @since 初始化
  */
 class Wnd_Update_Account extends Wnd_Action_User {
 

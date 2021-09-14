@@ -4,8 +4,8 @@ namespace Wnd\Action;
 use Exception;
 
 /**
- *@since 2020.06.24
- *更新options
+ * 更新options
+ * @since 2020.06.24
  */
 class Wnd_Update_Option extends Wnd_Action_Root {
 

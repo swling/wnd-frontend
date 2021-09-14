@@ -13,11 +13,11 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 	protected $before_post;
 
 	/**
-	 *@since 2019.01.21
+	 * 前端快速更改文章状态
+	 * 依赖：wp_update_post、wp_delete_post
+	 * @since 2019.01.21
 	 *
-	 *@return array
-	 *前端快速更改文章状态
-	 *依赖：wp_update_post、wp_delete_post
+	 * @return array
 	 */
 	public function execute(): array{
 		// 获取数据
@@ -52,7 +52,7 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 	}
 
 	/**
-	 *更新状态
+	 * 更新状态
 	 */
 	protected function update_status() {
 		//执行更新：如果当前post为自定义版本，将版本数据更新到原post
@@ -63,7 +63,7 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 		}
 
 		/**
-		 *@since 2019.06.11 置顶操作
+		 * @since 2019.06.11 置顶操作
 		 */
 		$this->stick_post();
 
@@ -79,7 +79,7 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 	}
 
 	/**
-	 *删除文章 无论是否设置了$force_delete 自定义类型的文章都会直接被删除
+	 * 删除文章 无论是否设置了$force_delete 自定义类型的文章都会直接被删除
 	 */
 	protected function delete_post() {
 		$delete = wp_delete_post($this->post_id, true);
@@ -93,7 +93,7 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 	}
 
 	/**
-	 *@since 2019.06.11 置顶操作
+	 * @since 2019.06.11 置顶操作
 	 */
 	protected function stick_post() {
 		if (wnd_is_manager()) {
@@ -109,8 +109,8 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 	}
 
 	/**
-	 *@since 2020.05.23
-	 *站内信
+	 * 站内信
+	 * @since 2020.05.23
 	 */
 	protected function send_mail() {
 		if ($this->user_id == $this->before_post->post_author) {

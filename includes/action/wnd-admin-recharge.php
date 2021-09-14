@@ -5,11 +5,8 @@ use Exception;
 use Wnd\Model\Wnd_Recharge;
 
 /**
- *@since 2019.02.22
- *管理员ajax手动新增用户金额
- *@param $_POST['user_field']
- *@param $_POST['total_amount']
- *@param $_POST['remarks']
+ * 管理员ajax手动新增用户金额
+ * @since 2019.02.22
  */
 class Wnd_Admin_Recharge extends Wnd_Action_Admin {
 
