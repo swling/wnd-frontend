@@ -3,21 +3,28 @@
  * Plugin Name: Wnd-Frontend
  * Plugin URI: https://github.com/swling/wnd-frontend
  * Description: Wnd-Frontend 是一套基于 ajax 交互逻辑的 WordPress 前端基础框架。商业用途需购买授权。<a href="https://github.com/swling/wnd-frontend/releases">更新日志</a>
- * Version: 0.9.35.8
+ * Version: 0.9.36
  * Author: swling
  * Author URI: https://wndwp.com
  * Requires PHP: 7.3
  *
- * 万能的WordPress前端开发基础框架
+ * ## 万能的WordPress前端开发基础框架
+ * - 第一版开发日期：2018.04 ~ 2018.08
+ * - 官方网站： https://wndwp.com
  *
- * 第一版开发日期：2018.04 ~ 2018.08
+ * ## 二开或其他咨询
+ * - QQ：245484493
+ * - 邮箱：tangfou@gmail.com
+ *
+ * ## 交流 QQ 群：
+ * - 801676983 （验证消息：wndwp）
  *
  * @since 2019.1.6 : git版本控制
  * @since 2019.1.8 ：GitHub开通免费私人仓库，正式托管于GitHub
  */
 
 // 版本
-define('WND_VER', '0.9.35.8');
+define('WND_VER', '0.9.36');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -139,5 +146,6 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 			'view'                => __('查看', 'wnd'),
 		],
 	];
+
 	wp_localize_script('wnd-main', 'wnd', $wnd_data);
 }

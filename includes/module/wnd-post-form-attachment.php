@@ -55,7 +55,6 @@ class Wnd_Post_Form_Attachment extends Wnd_Module_Form {
 		$parent_post_form = new Wnd_Form_WP();
 
 		// 文件上传字段可能被前端设置disabled属性，导致无法通过表单一致性校验，故此设置同名固定隐藏字段
-		$parent_post_form->add_hidden('wnd_file', '');
 		$parent_post_form->add_file_upload(
 			[
 				'label'    => __('附件上传', 'wnd'),

@@ -18,7 +18,6 @@ class Wnd_Gallery {
 			'data'           => [],
 			'ajax'           => true,
 			'method'         => 'POST',
-			'input_name'     => 'wnd_file',
 		];
 		$args = array_merge($defaults, $args);
 
@@ -41,7 +40,7 @@ class Wnd_Gallery {
 
 	/**
 	 * 构建相册上传
-	 * @param  array  传参                                                                                                                                          详情参看 static::parse_args();
+	 * @param  array  传参详情参看static::parse_args();
 	 * @param  bool   是否对外部传参与默认参数合并解析（当外部传参不完整时，需选择此项，否则将出现参数未定义等错误）
 	 * @return string html element
 	 */
@@ -84,7 +83,7 @@ class Wnd_Gallery {
 		$html .= '<div class="field">';
 		$html .= '<div class="file">';
 		$html .= '<label class="file-label">';
-		$html .= '<input type="file" multiple="multiple" class="file-input" name="' . $args['input_name'] . '[]' . '"' . $data . 'accept="image/*" >';
+		$html .= '<input type="file" multiple="multiple" class="file-input"' . $data . 'accept="image/*" >';
 		$html .= ' <span class="file-cta"><span class="file-icon"><i class="fas fa-upload"></i></span><span class="file-label">选择图片</span></span>';
 		$html .= '</label>';
 		$html .= '</div>';

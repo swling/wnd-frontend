@@ -498,29 +498,29 @@ function _wnd_render_form(container, form_json, add_class = '') {
             },
             // 回车输入写入数据并清空当前输入
             enter_tag: function(e, index) {
-                if (!e.target.value || this.form.fields[index].tags.length >= max_tag_num) {
+                if (!e.target.value || this.form.fields[index].value.length >= max_tag_num) {
                     return false;
                 }
 
-                this.form.fields[index].tags.push(e.target.value.trim());
+                this.form.fields[index].value.push(e.target.value.trim());
                 e.target.value = '';
             },
             // 点击建议 Tag 写入数据并清空当前输入
             enter_tag_by_sg: function(e, index) {
-                this.form.fields[index].tags.push(e.target.innerText.trim());
+                this.form.fields[index].value.push(e.target.innerText.trim());
                 this.form.fields[index].data.suggestions = '';
                 let input = e.target.closest('.tags-input').querySelector('[type=text]');
                 input.value = '';
             },
             // 删除 Tag
             delete_tag: function(tag, index) {
-                this.form.fields[index].tags = this.form.fields[index].tags.filter(function(item) {
+                this.form.fields[index].value = this.form.fields[index].value.filter(function(item) {
                     return item !== tag;
                 });
             },
             // 点击 Tag 输入字段
             handle_tag_input_click: function($event, index) {
-                if (this.form.fields[index].tags.length >= max_tag_num) {
+                if (this.form.fields[index].value.length >= max_tag_num) {
                     this.form.fields[index].help.text = '最多' + max_tag_num + '个标签';
                 }
             },
@@ -552,26 +552,72 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     }
                 }
 
-                // 表单检查
+                // 表单数据处理
                 let can_submit = true;
+                let data = {};
                 for (const [index, field] of this.form.fields.entries()) {
+                    if (!field.name) {
+                        continue;
+                    }
+
+                    /**
+                     * 提取表单数据
+                     * @since 0.9.36
+                     **/
+                    let value = '';
+                    if (field.value) {
+                        value = field.value;
+                    } else if (field.checked && field.checked.length) {
+                        value = field.checked;
+                    } else if (field.selected && field.selected.length) {
+                        value = field.selected;
+                    }
+                    value = 'object' == typeof(value) ? Object.values(value) : value
+
+                    /**
+                     * 多选字段处理
+                     * - 常规表单中使用 {name}[] 来实现数组发送，本操作提交 json 数据，需要移除 [] 
+                     * - 多个同名 name 字段，需要合并数据
+                     * @since 0.9.36
+                     **/
+                    let name = field.name;
+                    if (name.includes('[]')) {
+                        name = name.replace('[]', '');
+
+                        /**
+                         * 无需合并数据的情况：
+                         * - 单一可多选字段如 checkbox 或 select。在本插件中，该字段均包含候选数据 field.options，故此作为判断条件
+                         * - 单一字段数据已通过 vue 双向绑定处理，无需合并
+                         * 
+                         * 需要合并数据的情况：
+                         *  - 多个独立字段，使用了同一个 name
+                         *  - 多为不常见的情况，如多个同名 input 提交一组数据
+                         * 
+                         * @since 0.9.36
+                         **/
+                        if (field.options.length) {
+                            data[name] = value;
+                        } else {
+                            data[name] = data[name] ? data[name] : [];
+                            data[name].push(value);
+                        }
+                    } else {
+                        data[name] = value;
+                    }
+
+                    // 核查必选项
                     if (!field.required) {
                         continue;
                     }
 
-                    if (!field.value && !field.selected && !field.checked) {
+                    // 字符串数据
+                    if (!value.length) {
                         can_submit = false;
                     };
 
-                    // 可复选的 select 及 checkbox 必选检测
-                    if (Array.isArray(field.selected)) {
-                        if (field.selected.includes('')) {
-                            can_submit = false;
-                        }
-                    } else if (Array.isArray(field.checked)) {
-                        if (field.checked.includes('')) {
-                            can_submit = false;
-                        }
+                    // 数组数据：数组只有一个值，且为空值
+                    if (Array.isArray(value) && 1 == value.length && !value[0]) {
+                        can_submit = false;
                     }
 
                     if (!can_submit) {
@@ -583,8 +629,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
 
                 if (!can_submit) {
                     this.form.submit.attrs.class = form_json.submit.attrs.class;
-                    // this.form.message.message = wnd.msg.required;
-
                     this.$nextTick(function() {
                         funTransitionHeight(parent, trs_time);
                     });
@@ -593,42 +637,34 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 }
 
                 // Ajax 请求
-                let form = document.querySelector('#' + this.form.attrs.id);
-                let data = new FormData(form);
-
-                // GET 请求参数
                 let params = {};
                 if ('get' == this.form.attrs.method.toLowerCase()) {
-                    params = Object.fromEntries(data);
+                    params = data;
                 }
-
                 axios({
-                        method: this.form.attrs.method,
-                        url: this.form.attrs.action,
-                        // Post
-                        data: data,
-                        // Get
-                        params: params,
-                    })
-                    .then(response => {
-                        info = wnd_handle_response(response.data, this.form.attrs.route, parent);
-                        this.form.message.message = info.msg;
-                        this.form.message.attrs.class = form_json.message.attrs.class + ' ' + info.msg_class;
-                        this.form.submit.attrs.class = form_json.submit.attrs.class;
-                        /*提交后清除 captcha 以便下次重新验证
-                         * Vue 直接修改数组的值无法触发重新渲染
-                         * @link https://cn.vuejs.org/v2/guide/reactivity.html#%E6%A3%80%E6%B5%8B%E5%8F%98%E5%8C%96%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9
-                         */
-                        if (this.index.captcha) {
-                            Vue.set(this.form.fields[this.index.captcha], 'value', '');
-                        }
-                        this.$nextTick(function() {
-                            funTransitionHeight(parent, trs_time);
-                        });
-                    })
-                    .catch(function(error) { // 请求失败处理
-                        console.log(error);
+                    method: this.form.attrs.method,
+                    url: this.form.attrs.action,
+                    data: data,
+                    params: params,
+                }).then(response => {
+                    info = wnd_handle_response(response.data, this.form.attrs.route, parent);
+                    this.form.message.message = info.msg;
+                    this.form.message.attrs.class = form_json.message.attrs.class + ' ' + info.msg_class;
+                    this.form.submit.attrs.class = form_json.submit.attrs.class;
+                    /**
+                     * 提交后清除 captcha 以便下次重新验证
+                     * Vue 直接修改数组的值无法触发重新渲染
+                     * @link https://cn.vuejs.org/v2/guide/reactivity.html#%E6%A3%80%E6%B5%8B%E5%8F%98%E5%8C%96%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9
+                     */
+                    if (this.index.captcha) {
+                        Vue.set(this.form.fields[this.index.captcha], 'value', '');
+                    }
+                    this.$nextTick(function() {
+                        funTransitionHeight(parent, trs_time);
                     });
+                }).catch(function(error) { // 请求失败处理
+                    console.log(error);
+                });
             },
         },
         mounted() {
@@ -768,7 +804,7 @@ ${get_submit_template(form_json)}
 ${build_label(field)}
 <div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
 <div :class="get_control_class(${field})">
-<input v-bind="parse_input_attr(${field})" :value="Html_decode(${field}.value)" @input="${field}.value = Html_encode($event.target.value)" @change="change(${field})" @keypress.enter="submit"/>
+<input v-bind="parse_input_attr(${field})" :value="Html_decode(${field}.value)" @input="${field}.value=Html_encode($event.target.value)" @change="change(${field})" @keypress.enter="submit"/>
 <span v-if="${field}.icon_left" class="icon is-left"  v-html="${field}.icon_left"></span>
 <span v-if="${field}.icon_right" class="icon is-right" v-html="${field}.icon_right"></span>
 </div>
@@ -917,7 +953,7 @@ ${build_label(field)}
         document.head.appendChild(style);
 
         let tags = `
-<template v-for="(tag, index) in ${field}.tags">
+<template v-for="(tag, index) in ${field}.value">
 <span class="tag is-medium is-light is-danger">{{tag}}<span class="delete is-small" @click="delete_tag(tag, ${index})"></span></span>
 </template>`;
         let suggestions = `
@@ -931,9 +967,9 @@ ${build_label(field)}
 <div class="tags-input columns is-marginless">
 <div class="column is-marginless is-paddingless is-narrow">${tags}</div>
 <div class="autocomplete column is-marginless">
-<input type="text" :readonly="${field}.tags.length >= max_tag_num" @input="suggest_tags($event.target.value, ${index})" @keypress.enter="enter_tag($event, ${index})" @click="handle_tag_input_click($event, ${index})"/>
-<input type="hidden" v-bind="parse_input_attr(${field})" v-model="${field}.tags" />
-<ul v-show="${field}.tags.length < max_tag_num" class="autocomplete-items">${suggestions}</ul>
+<input type="text" :readonly="${field}.value.length >= max_tag_num" @input="suggest_tags($event.target.value, ${index})" @keypress.enter="enter_tag($event, ${index})" @click="handle_tag_input_click($event, ${index})"/>
+<input type="hidden" v-bind="parse_input_attr(${field})" v-model="${field}.value" />
+<ul v-show="${field}.value.length < max_tag_num" class="autocomplete-items">${suggestions}</ul>
 </div>
 </div>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>

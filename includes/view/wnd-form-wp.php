@@ -287,7 +287,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		$defaults = [
 			'class'             => 'upload-field',
 			'label'             => 'Image upland',
-			'name'              => 'wnd_file',
 			'file_id'           => 0,
 			'default_thumbnail' => apply_filters('wnd_default_thumbnail', WND_URL . 'static/images/default.jpg', $this),
 			'thumbnail_size'    => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
@@ -337,7 +336,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		$defaults = [
 			'class'         => 'upload-field',
 			'label'         => 'File upload',
-			'name'          => 'wnd_file',
 			'file_id'       => 0,
 			'data'          => [],
 			'delete_button' => true,
@@ -382,13 +380,6 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * meta_key: 	gallery
 	 */
 	public function add_gallery_upload(array $args) {
-		/**
-		 * 相册字段为纯 HTML 构建，需要新增对应 input_name 以完成表单签名
-		 * @since 0.9.0
-		 */
-		$input_name = 'wnd_file';
-		$this->add_input_name($input_name);
-
 		$defaults = [
 			'id'             => $this->id,
 			'label'          => 'Gallery',
@@ -396,7 +387,6 @@ class Wnd_Form_WP extends Wnd_Form {
 			'data'           => [],
 			'ajax'           => $this->is_ajax_submit,
 			'method'         => $this->method,
-			'input_name'     => $input_name,
 		];
 		$args = array_merge($defaults, $args);
 
@@ -547,7 +537,10 @@ if (sd_btn) {
 </script>';
 		$send_code_script = $this->enable_verification_captcha ? $captcha->render_send_code_script() : $send_code_script;
 
-		// 表单提交
+		/**
+		 * 表单提交：本提交代码仅作用域常规 php 渲染的静态表单
+		 * vue 表单 @see static/js/form.js method： submit();
+		 */
 		$submit_script = '
 <script>
 var sub_btn = document.querySelectorAll("[type=submit]");

@@ -196,7 +196,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_field(
 			[
 				'type'     => 'select_linked',
-				'name'     => '_term_' . $taxonomy . '[]',
+				'name'     => '_term_' . $taxonomy,
 				'options'  => $option_data,
 				'required' => $required,
 				'selected' => $selected ?: [0 => ''], //default checked value
@@ -249,7 +249,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 		$this->add_radio(
 			[
-				'name'     => '_term_' . $taxonomy . '[]',
+				'name'     => '_term_' . $taxonomy,
 				'options'  => $option_data,
 				'checked'  => $this->current_terms[$taxonomy][0] ?? false,
 				'label'    => $label,
@@ -278,7 +278,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 		$args = [
 			'type'     => 'tag_input',
-			'tags'     => array_values($this->current_terms[$taxonomy]) ?: [],
+			'value'    => array_values($this->current_terms[$taxonomy]) ?: [],
 			'label'    => $label ?: $taxonomy_object->labels->name,
 			'name'     => '_term_' . $taxonomy,
 			'required' => $required,
@@ -501,14 +501,6 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		];
 
 		$this->add_gallery_upload($args);
-	}
-
-	/**
-	 *文章表头，屏蔽回车提交
-	 */
-	protected function build_form_header() {
-		$this->add_form_attr('onkeydown', 'if(event.keyCode==13){return false;}');
-		parent::build_form_header();
 	}
 
 	/**
