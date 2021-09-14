@@ -607,9 +607,24 @@ function wnd_ajax_submit(button, captcha_input = false) {
 
 function wnd_form_msg(form, msg, msg_class) {
     let el = form.querySelector('.form-message');
+    if (!el) {
+        return false;
+    }
+
     el.style.display = '';
     el.className = `form-message message ${msg_class}`;
-    el.innerHTML = '<div class="message-body">' + msg + '</div>';
+    let msg_body = el.querySelector('.message-body');
+
+    /**
+     * @since 0.9.36
+     * 当表单已包含完整的 message element（如 Vue 渲染的表单），仅替换内容不破坏原有的元素结构
+     * 防止可能因破坏原有结构导致消息无法呈现
+     **/
+    if (msg_body) {
+        msg_body.innerHTML = msg;
+    } else {
+        el.innerHTML = '<div class="message-body">' + msg + '</div>';
+    }
 
     // 调整高度
     modal_entry = form.closest('#modal .modal-entry');

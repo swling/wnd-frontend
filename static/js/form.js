@@ -30,7 +30,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
         },
         methods: {
             //HTML转义
-            Html_encode: function(html) {
+            html_encode: function(html) {
                 let temp = document.createElement('div');
                 temp.innerText = html;
                 let output = temp.innerHTML;
@@ -38,7 +38,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 return output;
             },
             //HTML反转义
-            Html_decode: function(text) {
+            html_decode: function(text) {
                 var temp = document.createElement('div');
                 temp.innerHTML = text;
                 var output = temp.innerText;
@@ -796,7 +796,7 @@ ${get_submit_template(form_json)}
 
     /** 常规 input 组件：
      * 采用如下方法替换 v-model 旨在实现 HTML 转义呈现 textare 同理
-     * :value="Html_decode(${field}.value)" @input="${field}.value = Html_encode($event.target.value)"
+     * :value="html_decode(${field}.value)" @input="${field}.value = html_encode($event.target.value)"
      */
     function build_text(field, index) {
         return `
@@ -804,7 +804,7 @@ ${get_submit_template(form_json)}
 ${build_label(field)}
 <div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
 <div :class="get_control_class(${field})">
-<input v-bind="parse_input_attr(${field})" :value="Html_decode(${field}.value)" @input="${field}.value=Html_encode($event.target.value)" @change="change(${field})" @keypress.enter="submit"/>
+<input v-bind="parse_input_attr(${field})" :value="html_decode(${field}.value)" @input="${field}.value=html_encode($event.target.value)" @change="change(${field})" @keypress.enter="submit"/>
 <span v-if="${field}.icon_left" class="icon is-left"  v-html="${field}.icon_left"></span>
 <span v-if="${field}.icon_right" class="icon is-right" v-html="${field}.icon_right"></span>
 </div>
@@ -874,7 +874,7 @@ ${build_label(field)}
         return `
 <div :class="get_field_class(${field})">
 ${build_label(field)}
-<textarea :value="Html_decode(${field}.value)" @input="${field}.value = Html_encode($event.target.value)" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
+<textarea :value="html_decode(${field}.value)" @input="${field}.value = html_encode($event.target.value)" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
     };
