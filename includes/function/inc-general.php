@@ -244,12 +244,12 @@ function wnd_explode_post_by_more(string $content): array{
  * @since 2019.07.17
  */
 set_exception_handler('wnd_exception_handler');
-function wnd_exception_handler($exception) {
+function wnd_exception_handler($e) {
 	$html = '<article class="column message is-danger">';
 	$html .= '<div class="message-header">';
 	$html .= '<p>异常</p>';
 	$html .= '</div>';
-	$html .= '<div class="message-body">' . $exception->getMessage() . '</div>';
+	$html .= '<div class="message-body">' . $e->getMessage() . '@' . $e->getFile() . ' line ' . $e->getLine() . '</div>';
 	$html .= '</article>';
 
 	echo $html;
