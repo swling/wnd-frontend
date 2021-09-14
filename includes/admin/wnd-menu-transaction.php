@@ -15,7 +15,7 @@ class Wnd_Menu_Transaction extends Wnd_Menus {
 	protected $menu_slug  = 'wnd-frontend-transaction';
 
 	/**
-	 *构造表单
+	 * 构造表单
 	 */
 	public function build_form() {
 		$form = new Wnd_Form_Option($this->option_name, $this->append);

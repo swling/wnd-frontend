@@ -5,8 +5,8 @@ use Exception;
 use Wnd\Getway\Wnd_Login_Social;
 
 /**
- *@since 2019.09.27
- *QQ登录
+ * QQ登录
+ * @since 2019.09.27
  */
 class QQ extends Wnd_Login_Social {
 
@@ -20,7 +20,7 @@ class QQ extends Wnd_Login_Social {
 	}
 
 	/**
-	 *创建授权地址
+	 * 创建授权地址
 	 */
 	public function build_oauth_url() {
 		if (!$this->app_id) {
@@ -43,7 +43,7 @@ class QQ extends Wnd_Login_Social {
 	}
 
 	/**
-	 *根据授权码请求token
+	 * 根据授权码请求token
 	 */
 	protected function get_token() {
 		if (!$this->app_key) {
@@ -90,7 +90,7 @@ class QQ extends Wnd_Login_Social {
 	}
 
 	/**
-	 *根据token 获取用户QQ open id
+	 * 根据token 获取用户QQ open id
 	 */
 	private function get_open_id() {
 		if (!$this->token) {
@@ -118,7 +118,7 @@ class QQ extends Wnd_Login_Social {
 	}
 
 	/**
-	 *根据token 和 open id获取用户信息
+	 * 根据token 和 open id获取用户信息
 	 */
 	protected function get_user_info() {
 		$this->get_open_id();

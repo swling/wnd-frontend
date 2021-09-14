@@ -4,10 +4,11 @@ namespace Wnd\View;
 use WP_Query;
 
 /**
- *@since 2019.03.13
- *@param object		$query 				WP_Query对象
- *@param bool 		$show_edit 			是否显示编辑链接
- *@param bool 		$show_preview 		是否显示编辑链接
+ * @since 2019.03.13
+ *
+ * @param object 	$query        WP_Query对象
+ * @param bool   	$show_edit    是否显示编辑链接
+ * @param bool   	$show_preview 是否显示编辑链接
  */
 class Wnd_Posts_Table {
 	protected $columns = [];
@@ -23,7 +24,7 @@ class Wnd_Posts_Table {
 	public $html;
 
 	/**
-	 *构造函数
+	 * 构造函数
 	 */
 	public function __construct(WP_Query $query, bool $show_edit = false, bool $show_preview = false) {
 		$this->query        = $query;
@@ -32,7 +33,7 @@ class Wnd_Posts_Table {
 	}
 
 	/**
-	 *新增表单列
+	 * 新增表单列
 	 *
 	 */
 	public function add_column($column = []) {
@@ -42,7 +43,7 @@ class Wnd_Posts_Table {
 
 	/**
 	 *
-	 *构造表单列表
+	 * 构造表单列表
 	 */
 	public function build() {
 		// 表单开始
@@ -146,8 +147,9 @@ class Wnd_Posts_Table {
 	}
 
 	/**
-	 *获取column class
-	 **/
+	 * 获取column class
+	 *
+	 */
 	protected function get_the_class($column) {
 		if ($column['class'] ?? false) {
 			return ' class="' . $column['class'] . '"';

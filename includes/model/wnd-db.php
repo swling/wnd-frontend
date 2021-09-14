@@ -4,7 +4,8 @@ namespace Wnd\Model;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
- *@since 2019.01.24 WndWP所需独立数据表
+ * 数据表
+ * @since 2019.01.24
  */
 class Wnd_DB {
 
@@ -21,8 +22,8 @@ class Wnd_DB {
 	}
 
 	/**
-	 *@since 2019.01.24
-	 *创建插件数据表
+	 * 创建插件数据表
+	 * @since 2019.01.24
 	 */
 	public static function create_table() {
 		global $wpdb;

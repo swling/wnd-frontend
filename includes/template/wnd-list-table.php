@@ -4,14 +4,14 @@ namespace Wnd\Template;
 use Wnd\View\Wnd_Posts_Table;
 
 /**
- *表格
+ * 表格
  *
- *@since 2019.12.18
+ * @since 2019.12.18
  */
 class Wnd_List_table {
 
 	/**
-	 *构建表单
+	 * 构建表单
 	 */
 	public static function render(\WP_Query $query) {
 		$method = 'build_' . $query->query_vars['post_type'] . '_table';
@@ -24,11 +24,12 @@ class Wnd_List_table {
 	}
 
 	/**
-	 *@since 2019.08.16
-	 *常规文章列表
-	 *@param 	object 	$query 	WP_Query 实例化结果
-	 *@return 	string 	$html 	输出表单
-	 **/
+	 * 常规文章列表
+	 * @since 2019.08.16
+	 *
+	 * @param  	object 	$query 	WP_Query 实例化结果
+	 * @return 	string 	$html 	输出表单
+	 */
 	protected static function build_post_table($query) {
 		$table = new Wnd_Posts_Table($query, true, true);
 		$table->add_column(
@@ -64,11 +65,12 @@ class Wnd_List_table {
 	}
 
 	/**
-	 *@since 2019.08.16
-	 *用户邮件列表
-	 *@param 	object 	$query 	WP_Query 实例化结果
-	 *@return 	string 	$html 	输出表单
-	 **/
+	 * 用户邮件列表
+	 * @since 2019.08.16
+	 *
+	 * @param  	object 	$query 	WP_Query 实例化结果
+	 * @return 	string 	$html 	输出表单
+	 */
 	protected static function build_mail_table($query) {
 		$table = new Wnd_Posts_Table($query, true, true);
 		$table->add_column(
@@ -90,33 +92,33 @@ class Wnd_List_table {
 	}
 
 	/**
-	 *@since 2019.03.14
-	 *以表格形式输出用户充值记录
+	 * 以表格形式输出用户充值记录
+	 * @since 2019.03.14
 	 *
-	 *@param 	object 	$query 	WP_Query 实例化结果
-	 *@return 	string 	$html 	输出表单
+	 * @param  	object 	$query 	WP_Query 实例化结果
+	 * @return 	string 	$html 	输出表单
 	 */
 	protected static function build_recharge_table($query) {
 		return static::build_finance_table($query);
 	}
 
 	/**
-	 *@since 2019.03.14
-	 *以表格形式输出用户消费记录
+	 * 以表格形式输出用户消费记录
+	 * @since 2019.03.14
 	 *
-	 *@param 	object 	$query 	WP_Query 实例化结果
-	 *@return 	string 	$html 	输出表单
+	 * @param  	object 	$query 	WP_Query 实例化结果
+	 * @return 	string 	$html 	输出表单
 	 */
 	protected static function build_order_table($query) {
 		return static::build_finance_table($query);
 	}
 
 	/**
-	 *@since 2019.03.14
-	 *以表格形式输出用户消费/充值记录
+	 * 以表格形式输出用户消费/充值记录
+	 * @since 2019.03.14
 	 *
-	 *@param 	object 	$query 	WP_Query 实例化结果
-	 *@return 	string 	$html 	输出表单
+	 * @param  	object 	$query 	WP_Query 实例化结果
+	 * @return 	string 	$html 	输出表单
 	 */
 	protected static function build_finance_table($query) {
 		$table = new Wnd_Posts_Table($query, true, true);
@@ -160,37 +162,34 @@ class Wnd_List_table {
 	}
 
 	/**
-	 *@since 2019.12.19
+	 * 消费统计列表
+	 * @since 2019.12.19
 	 *
-	 *消费统计列表
-	 *
-	 *@param 	object 	$query 	WP_Query 实例化结果
-	 *@return 	string 	$html 	输出表单
-	 **/
+	 * @param  	object 	$query 	WP_Query 实例化结果
+	 * @return 	string 	$html 	输出表单
+	 */
 	protected static function build_stats_ex_table($query) {
 		return static::build_finance_stats_table($query);
 	}
 
 	/**
-	 *@since 2019.12.19
+	 * 充值统计列表
+	 * @since 2019.12.19
 	 *
-	 *充值统计列表
-	 *
-	 *@param 	object 	$query 	WP_Query 实例化结果
-	 *@return 	string 	$html 	输出表单
-	 **/
+	 * @param  	object 	$query 	WP_Query 实例化结果
+	 * @return 	string 	$html 	输出表单
+	 */
 	protected static function build_stats_re_table($query) {
 		return static::build_finance_stats_table($query);
 	}
 
 	/**
-	 *@since 2019.12.19
+	 * 财务统计列表
+	 * @since 2019.12.19
 	 *
-	 *财务统计列表
-	 *
-	 *@param 	object 	$query 	WP_Query 实例化结果
-	 *@return 	string 	$html 	输出表单
-	 **/
+	 * @param  	object 	$query 	WP_Query 实例化结果
+	 * @return 	string 	$html 	输出表单
+	 */
 	protected static function build_finance_stats_table($query) {
 		$table = new Wnd_Posts_Table($query, true, true);
 		$table->add_column(

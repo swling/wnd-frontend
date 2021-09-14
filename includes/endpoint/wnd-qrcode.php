@@ -4,8 +4,8 @@ namespace Wnd\Endpoint;
 use Exception;
 
 /**
- *@since 2019.08.30
- *生成二维码图像
+ * 生成二维码图像
+ * @since 2019.08.30
  */
 class Wnd_Qrcode extends Wnd_Endpoint {
 
@@ -16,7 +16,7 @@ class Wnd_Qrcode extends Wnd_Endpoint {
 		}
 
 		/**
-		 *防止盗链 $_SERVER['HTTP_REFERER'];
+		 * 防止盗链 $_SERVER['HTTP_REFERER'];
 		 */
 
 		header('Content-Type: image/png');

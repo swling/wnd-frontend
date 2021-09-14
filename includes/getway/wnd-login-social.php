@@ -5,8 +5,8 @@ use Exception;
 use Wnd\Model\Wnd_User;
 
 /**
- *@since 2019.09.27
- *社交登录抽象类
+ * 社交登录抽象类
+ * @since 2019.09.27
  */
 abstract class Wnd_Login_Social {
 
@@ -28,7 +28,7 @@ abstract class Wnd_Login_Social {
 	}
 
 	/**
-	 *根据$domain自动选择子类
+	 * 根据$domain自动选择子类
 	 */
 	public static function get_instance($domain) {
 		$class_name = '\Wnd\Getway\Login\\' . $domain;
@@ -40,19 +40,19 @@ abstract class Wnd_Login_Social {
 	}
 
 	/**
-	 *创建授权地址
+	 * 创建授权地址
 	 */
 	abstract public function build_oauth_url();
 
 	/**
-	 *创建自定义state
+	 * 创建自定义state
 	 */
 	protected static function build_state($domain) {
 		return $domain . '|' . wp_create_nonce('social_login') . '|' . get_locale();
 	}
 
 	/**
-	 *解析自定义state
+	 * 解析自定义state
 	 */
 	public static function parse_state($state) {
 		$state_array = explode('|', $state);
@@ -64,7 +64,7 @@ abstract class Wnd_Login_Social {
 	}
 
 	/**
-	 *校验自定义state nonce
+	 * 校验自定义state nonce
 	 */
 	protected static function check_state_nonce($state) {
 		$nonce = static::parse_state($state)['nonce'];
@@ -74,17 +74,17 @@ abstract class Wnd_Login_Social {
 	}
 
 	/**
-	 *根据用户授权码获取token
+	 * 根据用户授权码获取token
 	 */
 	abstract protected function get_token();
 
 	/**
-	 *根据token和open id获取用户信息
+	 * 根据token和open id获取用户信息
 	 */
 	abstract protected function get_user_info();
 
 	/**
-	 *根据第三方平台用户信息登录或创建账户
+	 * 根据第三方平台用户信息登录或创建账户
 	 */
 	public function login() {
 		$this->get_token();

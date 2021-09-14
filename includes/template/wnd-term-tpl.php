@@ -4,13 +4,13 @@ namespace Wnd\Template;
 use Wnd\Model\Wnd_Tag_Under_Category;
 
 /**
- *Term模板
+ * Term模板
  */
 class Wnd_Term_Tpl {
 
 	/**
-	 *获取指定taxonomy的分类列表并附带下属标签
-	 *@since 2018
+	 * 获取指定taxonomy的分类列表并附带下属标签
+	 * @since 2018
 	 */
 	public static function list_categories_with_tags($cat_taxonomy, $tag_taxonomy = 'any', $limit = 10, $show_count = false, $hide_empty = 1) {
 		$args  = ['hide_empty' => $hide_empty, 'orderby' => 'count', 'order' => 'DESC'];
@@ -55,11 +55,8 @@ class Wnd_Term_Tpl {
 	}
 
 	/**
-	 *@since 2019.04.25（未完成）
-	 *下拉菜单形式，生成taxonomy 多重查询参数 GET key：_term_{$taxonomy} GET value: $term_id
-	 *@param $args 						array 		get_terms参数
-	 *@param $remove_query_arg 			array 		需要移除的参数
-	 *@param $title 					string 		标题label
+	 * 下拉菜单形式，生成taxonomy 多重查询参数 GET key：_term_{$taxonomy} GET value: $term_id
+	 * @since 2019.04.25（未完成）
 	 */
 	// public static function term_select_query_arg() {}
 }

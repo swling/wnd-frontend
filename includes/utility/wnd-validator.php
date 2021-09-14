@@ -5,13 +5,13 @@ use Wnd\Getway\Wnd_Captcha;
 use Wnd\Model\Wnd_Auth;
 
 /**
- *验证器
- *@since 0.8.61
+ * 验证器
+ * @since 0.8.61
  */
 class Wnd_Validator {
 
 	/**
-	 *封装手机或邮箱验证
+	 * 封装手机或邮箱验证
 	 */
 	public static function validate_auth_code($type) {
 		$auth_code      = $_POST['auth_code'] ?? '';
@@ -24,8 +24,8 @@ class Wnd_Validator {
 	}
 
 	/**
-	 *@since 2020.08.13
-	 *发送短信或邮件验证码时，进行人机验证
+	 * 发送短信或邮件验证码时，进行人机验证
+	 * @since 2020.08.13
 	 */
 	public static function validate_captcha() {
 		// 禁用人机校验

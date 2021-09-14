@@ -2,15 +2,15 @@
 namespace Wnd\Model;
 
 /**
- *@since 2020.04.19
- *Term
+ * Term
+ * @since 2020.04.19
  */
 class Wnd_Term {
 
 	/**
-	 *获取当前文章已选择terms数组
-	 *分类：返回{[{$slug}=>${term_id}]数组
-	 *标签：返回[{$slug}=>{$name}]数组
+	 * 获取当前文章已选择terms数组
+	 * 分类：返回{[{$slug}=>${term_id}]数组
+	 * 标签：返回[{$slug}=>{$name}]数组
 	 */
 	public static function get_post_terms($post_id, $taxonomy): array{
 		if (!$post_id) {
@@ -28,9 +28,9 @@ class Wnd_Term {
 	}
 
 	/**
-	 *@since 0.9.27
-	 *获取当前 post 已设定的 terms 并按以层级为 key 值（仅针对包含层级关系的 taxonomy）
-	 *用于编辑内容时，根据当前 Post 之前数据，根据分类层级设定下拉 Selected 值
+	 * 获取当前 post 已设定的 terms 并按以层级为 key 值（仅针对包含层级关系的 taxonomy）
+	 * 用于编辑内容时，根据当前 Post 之前数据，根据分类层级设定下拉 Selected 值
+	 * @since 0.9.27
 	 */
 	public static function get_post_terms_with_level($post_id, $taxonomy): array{
 		if (!is_taxonomy_hierarchical($taxonomy)) {
@@ -48,9 +48,9 @@ class Wnd_Term {
 	}
 
 	/**
-	 *根据当前 post 已选各层级 terms 查询对应层级的其他选项，并与首层 term 组合返回
-	 *用于编辑内容时，自动载入当前 post 各层级分类法
-	 *@since 0.9.27
+	 * 根据当前 post 已选各层级 terms 查询对应层级的其他选项，并与首层 term 组合返回
+	 * 用于编辑内容时，自动载入当前 post 各层级分类法
+	 * @since 0.9.27
 	 */
 	public static function get_post_terms_options_with_level($post_id, $args_or_taxonomy): array{
 		$args            = is_array($args_or_taxonomy) ? $args_or_taxonomy : ['taxonomy' => $args_or_taxonomy];
@@ -82,12 +82,12 @@ class Wnd_Term {
 	}
 
 	/**
-	 *获取指定taxonomy下的terms数组键值对：通常用于前端构造html
-	 *分类：[$term->name => $term->term_id,...]
-	 *标签：[$term->name => $term->name,...]
+	 * 获取指定taxonomy下的terms数组键值对：通常用于前端构造html
+	 * 分类：[$term->name => $term->term_id,...]
+	 * 标签：[$term->name => $term->name,...]
 	 *
-	 *@see	注意：根据上述数据结构，我们得知，如果同一个taxonomy中存在多个同名分类，将仅返回一个数据。
-	 *		因此，为避免这种意外，请确保同一个taxonomy下，各个分类名称唯一。
+	 * 		因此，为避免这种意外，请确保同一个taxonomy下，各个分类名称唯一。
+	 * @see	注意：根据上述数据结构，我们得知，如果同一个taxonomy中存在多个同名分类，将仅返回一个数据。
 	 */
 	public static function get_terms_data($args_or_taxonomy): array{
 		$defaults = [
@@ -111,15 +111,15 @@ class Wnd_Term {
 	}
 
 	/**
-	 *获取当前Term所处分类层级
-	 *顶级分类：0
-	 *子级分类：1
-	 *孙级分类：2
-	 *以此类推
+	 * 获取当前Term所处分类层级
+	 * 顶级分类：0
+	 * 子级分类：1
+	 * 孙级分类：2
+	 * 以此类推
 	 *
-	 *@param int 	$term_id
-	 *@param string $taxonomy
-	 *@return int | false
+	 * @param  int    	$term_id
+	 * @param  string $taxonomy
+	 * @return int    | false
 	 */
 	protected static function get_term_level($term_id, $taxonomy) {
 		$ancestors = get_ancestors($term_id, $taxonomy, 'taxonomy');
@@ -128,10 +128,10 @@ class Wnd_Term {
 	}
 
 	/**
-	 *@since 2020.04.19
-	 *获取当前term 指定层级子类
+	 * 获取当前term 指定层级子类
+	 * @since 2020.04.19
 	 *
-	 *@return array 指定层级子类的 ids  [$term_name => $child_term_id]
+	 * @return array 指定层级子类的 ids [$term_name => $child_term_id]
 	 */
 	protected static function get_term_children_by_level($term_id, $taxonomy, $child_level) {
 		$children    = get_term_children($term_id, $taxonomy);

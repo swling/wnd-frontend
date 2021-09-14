@@ -4,18 +4,18 @@ namespace Wnd\Utility;
 use Exception;
 
 /**
- *用户安全防护
- *@since 0.8.61
+ * 用户安全防护
+ * @since 0.8.61
  */
 class Wnd_Defender_User {
 
 	/**
-	 *Wnd User Meta Key
+	 * Wnd User Meta Key
 	 */
 	protected static $meta_key = 'login_log';
 
 	/**
-	 *默认 log 数据
+	 * 默认 log 数据
 	 */
 	protected static $default_user_log = [
 		'failure_time'  => 0,
@@ -23,32 +23,32 @@ class Wnd_Defender_User {
 	];
 
 	/**
-	 *拦截计数时间段
+	 * 拦截计数时间段
 	 */
 	protected static $period = 300;
 
 	/**
-	 *在规定时间段最多错误次数
+	 * 在规定时间段最多错误次数
 	 */
 	protected static $max_failures = 3;
 
 	/**
-	 *锁定时间
+	 * 锁定时间
 	 */
 	protected static $locked_time = 1800;
 
 	/**
-	 *用户 ID
+	 * 用户 ID
 	 */
 	protected $user_id;
 
 	/**
-	 *用户 log 数据
+	 * 用户 log 数据
 	 */
 	protected $user_log = [];
 
 	/**
-	 *构造
+	 * 构造
 	 */
 	public function __construct($user_id) {
 		$this->user_id  = $user_id;
@@ -58,10 +58,10 @@ class Wnd_Defender_User {
 	}
 
 	/**
-	 *@since 0.8.61
-	 *写入试错日志
+	 * 写入试错日志
 	 * - 拦截时间范围内，新增统计次数
 	 * - 拦截时间范围外，初始化日志信息：更新出错时间，统计次数为1
+	 * @since 0.8.61
 	 */
 	public function write_failure_log() {
 		if (time() - $this->user_log['failure_time'] < static::$period) {
@@ -78,16 +78,16 @@ class Wnd_Defender_User {
 	}
 
 	/**
-	 *@since 0.8.61
-	 *清空试错日志
+	 * 清空试错日志
+	 * @since 0.8.61
 	 */
 	public function reset_log() {
 		wnd_delete_user_meta($this->user_id, static::$meta_key);
 	}
 
 	/**
-	 *@since 0.8.61
-	 *是否应该拦截此次登录尝试
+	 * 是否应该拦截此次登录尝试
+	 * @since 0.8.61
 	 */
 	public function check_login() {
 		// 错误次数未达到，无需拦截

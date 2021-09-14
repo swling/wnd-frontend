@@ -4,8 +4,8 @@ namespace Wnd\Getway;
 use Exception;
 
 /**
- *@since 2019.09.25
- *短信抽象类
+ * 短信抽象类
+ * @since 2019.09.25
  */
 abstract class Wnd_Sms {
 	// 短信实例属性
@@ -18,7 +18,7 @@ abstract class Wnd_Sms {
 	protected $valid_time;
 
 	/**
-	 *Construct
+	 * Construct
 	 */
 	public function __construct() {
 		$this->sign_name = wnd_get_config('sms_sign');
@@ -46,16 +46,16 @@ abstract class Wnd_Sms {
 	}
 
 	/**
-	 *验证码
-	 *需请配合短信模板使用
+	 * 验证码
+	 * 需请配合短信模板使用
 	 */
 	public function set_code($code) {
 		$this->code = $code;
 	}
 
 	/**
-	 *验证码有效时间
-	 *需请配合短信模板使用
+	 * 验证码有效时间
+	 * 需请配合短信模板使用
 	 */
 	public function set_valid_time($valid_time) {
 		$this->valid_time = $valid_time;

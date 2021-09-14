@@ -5,8 +5,8 @@ namespace Wnd\Utility;
 use Wnd\Utility\Wnd_Upgrader;
 
 /**
- *@since 2020.07.06
- *自定义主题升级API
+ * 自定义主题升级API
+ * @since 2020.07.06
  */
 abstract class Wnd_Upgrader_Theme extends Wnd_Upgrader {
 
@@ -14,12 +14,12 @@ abstract class Wnd_Upgrader_Theme extends Wnd_Upgrader {
 	protected $update_transient_name = 'pre_set_site_transient_update_themes';
 
 	/**
-	 *获取本地主题或插件的基本信息，需要完成对如下信息的构造
+	 * 获取本地主题或插件的基本信息，需要完成对如下信息的构造
 	 *
-	 *	$this->directory_name
-	 *	$this->local_version
-	 *	$this->plugin_file_or_theme_slug
-	 *	$this->api_transient_name
+	 * 	$this->directory_name
+	 * 	$this->local_version
+	 * 	$this->plugin_file_or_theme_slug
+	 * 	$this->api_transient_name
 	 */
 	protected function get_local_info() {
 		// only for test
@@ -32,11 +32,11 @@ abstract class Wnd_Upgrader_Theme extends Wnd_Upgrader {
 	}
 
 	/**
-	 *获取更新包详细信息，至少需要完成如下下信息构造：
+	 * 获取更新包详细信息，至少需要完成如下下信息构造：
 	 *
-	 *	$this->upgrade_info['url'];
-	 *	$this->upgrade_info['package'];
-	 *	$this->upgrade_info['new_version'];
+	 * 	$this->upgrade_info['url'];
+	 * 	$this->upgrade_info['package'];
+	 * 	$this->upgrade_info['new_version'];
 	 */
 	abstract protected function get_remote_info();
 }

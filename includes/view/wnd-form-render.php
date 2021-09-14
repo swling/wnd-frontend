@@ -2,12 +2,12 @@
 namespace Wnd\View;
 
 /**
- *Class for creating dynamic Bulma forms.
- *@since 0.9.26
- *PHP 表单渲染器
+ * Class for creating dynamic Bulma forms.
+ * PHP 表单渲染器
+ * @author swling tangfou@gmail.com
  *
- *@link https://wndwp.com
- *@author swling tangfou@gmail.com
+ * @link https://wndwp.com
+ * @since 0.9.26
  */
 class Wnd_Form_Render {
 
@@ -29,8 +29,8 @@ class Wnd_Form_Render {
 	protected $thumbnail_height = 100;
 
 	/**
-	 *@since 2020.04.17
-	 *input字段类型
+	 * input字段类型
+	 * @since 2020.04.17
 	 */
 	protected static $input_types = [
 		'text',
@@ -45,8 +45,8 @@ class Wnd_Form_Render {
 	];
 
 	/**
-	 *初始化构建
-	 *@param array $is_horizontal 	水平表单
+	 * 初始化构建
+	 * @param array $is_horizontal 	水平表单
 	 */
 	public function __construct(array $structure) {
 		$defaults = [
@@ -85,9 +85,9 @@ class Wnd_Form_Render {
 	}
 
 	/**
-	 *@since 2019.03.06
-	 *表单构造函数
-	 **/
+	 * 表单构造函数
+	 * @since 2019.03.06
+	 */
 	public function render(): string{
 		$this->build_form_header();
 		$this->build_input_fields();
@@ -125,11 +125,11 @@ class Wnd_Form_Render {
 			}
 
 			/**
-			 * @since 0.9.0
 			 * 常规字段
 			 * 其他字段
 			 *  - 根据字段类型组合构建字段方法
 			 *  - 执行字段构建方法
+			 * @since 0.9.0
 			 */
 			if (in_array($input_value['type'], static::$input_types)) {
 				$input_fields .= $this->build_input($input_value, $input_key);
@@ -343,8 +343,8 @@ class Wnd_Form_Render {
 	}
 
 	/**
-	 *@since 0.8.65
-	 *闭合表单并渲染 Ajax 表单提交脚本
+	 * 闭合表单并渲染 Ajax 表单提交脚本
+	 * @since 0.8.65
 	 */
 	protected function build_form_footer() {
 		$this->html .= $this->after_html;
@@ -353,24 +353,24 @@ class Wnd_Form_Render {
 	}
 
 	/**
-	 *表单脚本：将在表单结束成后加载
-	 *@since 0.8.65
+	 * 表单脚本：将在表单结束成后加载
+	 * @since 0.8.65
 	 */
 	protected function render_script(): string {
 		return $this->structure['script'] ?? '';
 	}
 
 	/**
-	 *@since 2019.08.29
-	 *构造表单属性
+	 * 构造表单属性
+	 * @since 2019.08.29
 	 */
 	protected function build_form_attr(): string {
 		return static::build_attrs($this->structure['attrs']);
 	}
 
 	/**
-	 *@since 0.9.26
-	 *构造 HTML 属性
+	 * 构造 HTML 属性
+	 * @since 0.9.26
 	 */
 	protected static function build_attrs(array $attrs): string{
 		$attr = '';
@@ -394,12 +394,12 @@ class Wnd_Form_Render {
 	}
 
 	/**
-	 *@since 2019.07.19
-	 *统一封装获取字段attribute
-	 *不含：id
-	 *不含：下拉selected
-	 *不含：单选、复选checked属性
-	 *不含：Textarea value属性
+	 * 统一封装获取字段attribute
+	 * 不含：id
+	 * 不含：下拉selected
+	 * 不含：单选、复选checked属性
+	 * 不含：Textarea value属性
+	 * @since 2019.07.19
 	 */
 	protected static function build_input_attr(array $input_value): string{
 		$bool_attrs   = ['readonly', 'disabled', 'autofocus', 'required', 'multiple'];
@@ -407,11 +407,10 @@ class Wnd_Form_Render {
 		$attr         = '';
 
 		/**
-		 *@since 2020.04.17
-		 *文件上传及图像上传
-		 *
-		 *上传字段type值为自定义值，此处需要矫正为合规的 HTML Type：file
-		 *适应bulma样式，需要统一添加class：file-input
+		 * 文件上传及图像上传
+		 * 上传字段type值为自定义值，此处需要矫正为合规的 HTML Type：file
+		 * 适应bulma样式，需要统一添加class：file-input
+		 * @since 2020.04.17
 		 */
 		if (in_array($input_value['type'], ['image_upload', 'file_upload'])) {
 			$input_value['type']  = 'file';
@@ -442,8 +441,8 @@ class Wnd_Form_Render {
 			}
 
 			/**
-			 *构建Data数据
-			 *@since 2020.04.14
+			 * 构建Data数据
+			 * @since 2020.04.14
 			 */
 			if ('data' == $key) {
 				foreach ($value as $data_key => $data_value) {
@@ -470,11 +469,10 @@ class Wnd_Form_Render {
 	}
 
 	/**
-	 *@since 2019.08.25
-	 *构建label HTML
-	 *
-	 *@var string 	$label
-	 *@var boole 	是否为水平 label
+	 * 构建label HTML
+	 * @var string 	$label
+	 * @var boole  	是否为水平 label
+	 * @since 2019.08.25
 	 */
 	protected function build_label(array $input_value, $horizontal_label = false): string {
 		if ($this->is_horizontal and !$horizontal_label) {
@@ -496,11 +494,10 @@ class Wnd_Form_Render {
 	}
 
 	/**
-	 *@since 2021.02.03
-	 *构建 Help HTML
-	 *
-	 *@var string 	帮助提示信息
-	 *@var string 	$required
+	 * 构建 Help HTML
+	 * @var string 	帮助提示信息
+	 * @var string 	$required
+	 * @since 2021.02.03
 	 */
 	protected static function build_help(array $input_value): string {
 		if (empty($input_value['help'])) {
@@ -517,7 +514,7 @@ class Wnd_Form_Render {
 	}
 
 	/**
-	 *辅助函数
+	 * 辅助函数
 	 */
 	protected static function get_class(array $input_value, bool $space = false): string {
 		if ($input_value['class'] ?? false) {
@@ -527,8 +524,8 @@ class Wnd_Form_Render {
 	}
 
 	/**
-	 *获取表单字段HTML
-	 *@since 2019.04.28
+	 * 获取表单字段HTML
+	 * @since 2019.04.28
 	 */
 	public function get_input_fields(): string {
 		return $this->build_input_fields();

@@ -3,8 +3,8 @@
 namespace Wnd\Utility;
 
 /**
- *@since 2020.07.06
- *自定义插件升级
+ * 自定义插件升级
+ * @since 2020.07.06
  */
 class Wnd_Upgrader_Plugin_This extends Wnd_Upgrader_Plugin {
 
@@ -12,11 +12,11 @@ class Wnd_Upgrader_Plugin_This extends Wnd_Upgrader_Plugin {
 	protected $plugin_file_or_theme_slug = WND_DIR_NAME . '/wnd-frontend.php';
 
 	/**
-	 *获取更新包详细信息，至少需要完成如下下信息构造：
+	 * 获取更新包详细信息，至少需要完成如下下信息构造：
 	 *
-	 *	$this->upgrade_info['url'];
-	 *	$this->upgrade_info['package'];
-	 *	$this->upgrade_info['new_version'];
+	 * 	$this->upgrade_info['url'];
+	 * 	$this->upgrade_info['package'];
+	 * 	$this->upgrade_info['new_version'];
 	 */
 	protected function get_remote_info() {
 		$url      = 'https://wndwp.com/wp-json/wndt/project/157';

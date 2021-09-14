@@ -4,8 +4,8 @@ namespace Wnd\Utility;
 use WP_Error;
 
 /**
- *@since 2020.07.06
- *自定义插件或主题更新API
+ * 自定义插件或主题更新API
+ * @since 2020.07.06
  */
 abstract class Wnd_Upgrader {
 
@@ -49,12 +49,13 @@ abstract class Wnd_Upgrader {
 	}
 
 	/**
-	 *检测更新信息
-	 **/
+	 * 检测更新信息
+	 *
+	 */
 	public function check_for_update($transient): object{
 		/**
-		 *自定义 API 本身是对WP瞬态的过滤器
-		 *故此，单独重新定义一个瞬态缓存当前插件或主题的远程 API 信息
+		 * 自定义 API 本身是对WP瞬态的过滤器
+		 * 故此，单独重新定义一个瞬态缓存当前插件或主题的远程 API 信息
 		 */
 		$upgrade_info = get_transient($this->api_transient_name);
 		if (false == $upgrade_info) {
@@ -71,9 +72,9 @@ abstract class Wnd_Upgrader {
 		}
 
 		/**
-		 *写入更新信息
-		 *插件需要返回对象型数据
-		 *主题则需返回数组型数据
+		 * 写入更新信息
+		 * 插件需要返回对象型数据
+		 * 主题则需返回数组型数据
 		 */
 		if ('pre_set_site_transient_update_plugins' == $this->update_transient_name) {
 			$transient->response[$this->plugin_file_or_theme_slug] = (object) $this->upgrade_info;
@@ -86,21 +87,21 @@ abstract class Wnd_Upgrader {
 	}
 
 	/**
-	 *获取本地主题或插件的基本信息，需要完成对如下信息的构造
+	 * 获取本地主题或插件的基本信息，需要完成对如下信息的构造
 	 *
-	 *	$this->directory_name
-	 *	$this->local_version
-	 *	$this->plugin_file_or_theme_slug
-	 *	$this->api_transient_name
+	 * 	$this->directory_name
+	 * 	$this->local_version
+	 * 	$this->plugin_file_or_theme_slug
+	 * 	$this->api_transient_name
 	 */
 	abstract protected function get_local_info();
 
 	/**
-	 *获取更新包详细信息，至少需要完成如下下信息构造：
+	 * 获取更新包详细信息，至少需要完成如下下信息构造：
 	 *
-	 *	$this->upgrade_info['url'];
-	 *	$this->upgrade_info['package'];
-	 *	$this->upgrade_info['new_version'];
+	 * 	$this->upgrade_info['url'];
+	 * 	$this->upgrade_info['package'];
+	 * 	$this->upgrade_info['new_version'];
 	 */
 	abstract protected function get_remote_info();
 
@@ -123,14 +124,16 @@ abstract class Wnd_Upgrader {
 	 *
 	 * @access protected
 	 *
-	 * @param string $source The directory to copy to /wp-content/plugins or /wp-content/themes. Usually a subdirectory of $remoteSource.
-	 * @param string $remoteSource WordPress has extracted the update to this directory.
-	 * @param WP_Upgrader $upgrader
+	 * @param  string             $source       The directory to copy to /wp-content/plugins or /wp-content/themes. Usually a subdirectory of $remoteSource.
+	 * @param  string             $remoteSource WordPress has extracted the update to this directory.
+	 * @param  WP_Upgrader        $upgrader
 	 * @return string|WP_Error
 	 */
 	public function fix_directory_name($source, $remoteSource, $upgrader) {
 		global $wp_filesystem;
-		/** @var WP_Filesystem_Base $wp_filesystem */
+		/**
+		 * @var WP_Filesystem_Base $wp_filesystem
+		 */
 
 		//Basic sanity checks.
 		if (!isset($source, $remoteSource, $upgrader, $upgrader->skin, $wp_filesystem)) {
@@ -163,7 +166,9 @@ abstract class Wnd_Upgrader {
 			);
 		}
 
-		/** @var WP_Upgrader_Skin $upgrader ->skin */
+		/**
+		 * @var WP_Upgrader_Skin $upgrader ->skin
+		 */
 		$upgrader->skin->feedback(sprintf(
 			'Renaming %s to %s&#8230;',
 			'<span class="code">' . basename($source) . '</span>',
@@ -187,12 +192,14 @@ abstract class Wnd_Upgrader {
 	 * Check for incorrect update directory structure. An update must contain a single directory,
 	 * all other files should be inside that directory.
 	 *
-	 * @param string $remoteSource Directory path.
+	 * @param  string $remoteSource Directory path.
 	 * @return bool
 	 */
 	protected static function is_bad_directory_structure($remoteSource): bool {
 		global $wp_filesystem;
-		/** @var WP_Filesystem_Base $wp_filesystem */
+		/**
+		 * @var WP_Filesystem_Base $wp_filesystem
+		 */
 
 		$sourceFiles = $wp_filesystem->dirlist($remoteSource);
 		if (is_array($sourceFiles)) {

@@ -2,8 +2,8 @@
 namespace Wnd\Template;
 
 /**
- *模板类
- *@since 0.9.25
+ * 模板类
+ * @since 0.9.25
  */
 abstract class Wnd_Template {
 
@@ -13,7 +13,7 @@ abstract class Wnd_Template {
 	}
 
 	/**
-	 *权限核查请复写本方法
+	 * 权限核查请复写本方法
 	 */
 	protected static function check($args) {
 		return;

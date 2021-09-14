@@ -2,8 +2,8 @@
 namespace Wnd\Endpoint;
 
 /**
- *@since 0.9.17
- *测试专用
+ * 测试专用
+ * @since 0.9.17
  */
 class Wnd_Default extends Wnd_Endpoint {
 

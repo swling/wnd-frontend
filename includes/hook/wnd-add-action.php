@@ -6,7 +6,7 @@ use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Form_Option;
 
 /**
- *Wnd Action
+ * Wnd Action
  */
 class Wnd_Add_Action {
 
@@ -21,8 +21,8 @@ class Wnd_Add_Action {
 	}
 
 	/**
-	 *@since 0.8.61
-	 *登录成功
+	 * 登录成功
+	 * @since 0.8.61
 	 */
 	public static function action_on_login($user) {
 		// Defender：清空登录失败日志
@@ -31,8 +31,8 @@ class Wnd_Add_Action {
 	}
 
 	/**
-	 *@since 0.8.61
-	 *登录失败
+	 * 登录失败
+	 * @since 0.8.61
 	 */
 	public static function action_on_login_failed($user) {
 		// Defender：写入登录失败日志
@@ -41,8 +41,8 @@ class Wnd_Add_Action {
 	}
 
 	/**
-	 *ajax上传文件时，根据 meta_key 做后续处理
-	 *@since 2018
+	 * ajax上传文件时，根据 meta_key 做后续处理
+	 * @since 2018
 	 */
 	public static function action_on_upload_file($attachment_id, $post_parent, $meta_key) {
 		if (!$meta_key) {
@@ -91,9 +91,10 @@ class Wnd_Add_Action {
 	}
 
 	/**
-	 *@since 2019.05.05 相册
-	 *do_action('wnd_upload_gallery', $return_array, $post_parent);
-	 **/
+	 * do_action('wnd_upload_gallery', $return_array, $post_parent);
+	 * 相册
+	 * @since 2019.05.05
+	 */
 	public static function action_on_upload_gallery($image_array, $post_parent) {
 		if (empty($image_array)) {
 			return;
@@ -120,8 +121,8 @@ class Wnd_Add_Action {
 	}
 
 	/**
-	 *ajax删除附件时
-	 *@since 2018
+	 * ajax删除附件时
+	 * @since 2018
 	 */
 	public static function action_on_delete_file($attachment_id, $post_parent, $meta_key) {
 		if (!$meta_key) {
@@ -129,7 +130,8 @@ class Wnd_Add_Action {
 		}
 
 		/**
-		 *@since 2019.05.06 相册编辑
+		 * 相册编辑
+		 * @since 2019.05.06
 		 */
 		if ('gallery' == $meta_key) {
 			// 从相册数组中删除当前图片

@@ -8,7 +8,7 @@ use Wnd\Hook\Wnd_Add_Filter_WP;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
- *Wnd Default Hook
+ * Wnd Default Hook
  */
 class Wnd_Hook {
 

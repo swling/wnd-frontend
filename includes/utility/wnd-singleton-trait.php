@@ -2,9 +2,9 @@
 namespace Wnd\Utility;
 
 /**
- *单例模式实例化部分公共代码
+ * 单例模式实例化部分公共代码
  *
- *@since 2020.04.25
+ * @since 2020.04.25
  */
 trait Wnd_Singleton_Trait {
 

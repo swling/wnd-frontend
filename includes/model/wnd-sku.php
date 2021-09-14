@@ -4,16 +4,16 @@ namespace Wnd\Model;
 use Wnd\Model\Wnd_Product;
 
 /**
- *@since 0.9.5
+ * SKU 模块
  *
- *SKU 模块
+ * 在本插件中，不单独对产品做定义。任何 singular 如 Post、Page 以及其他自定义 Post Type 均可为商品。一切皆可销售。
  *
- *在本插件中，不单独对产品做定义。任何 singular 如 Post、Page 以及其他自定义 Post Type 均可为商品。一切皆可销售。
+ * 注意：
+ *  - 产品配置将影响订单价格，因而不适用于付费阅读付费下载。
+ *  - 因为付费阅读、付费下载，目前尚不支持指定 SKU 信息查询，仅通过判断用户在当前 Post 下是否有已完成支付的订单，决定内容呈现。
+ *   -简言之，付费阅读付费下载，应该设置唯一产品价格。
  *
- *注意：
- *  产品配置将影响订单价格，因而不适用于付费阅读付费下载。
- *  因为付费阅读、付费下载，目前尚不支持指定 SKU 信息查询，仅通过判断用户在当前 Post 下是否有已完成支付的订单，决定内容呈现。
- *  简言之，付费阅读付费下载，应该设置唯一产品价格。
+ * @since 0.9.5
  */
 class Wnd_SKU {
 
@@ -40,13 +40,13 @@ class Wnd_SKU {
 	}
 
 	/**
-	 *设置产品属性
+	 * 设置产品属性
 	 *
 	 * # SKU
-	 *	$sku = [
-	 *		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
-	 *		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
-	 *	];
+	 * 	$sku = [
+	 * 		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
+	 * 		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
+	 * 	];
 	 *
 	 */
 	public static function set_object_sku(int $object_id, array $data): bool{
@@ -59,10 +59,10 @@ class Wnd_SKU {
 
 	/**
 	 * 根据表单 name 前缀 自动依序遍历提取 _sku_* 并组合成新的二维数组，数据格式参考如下：
-	 *	$sku = [
-	 *		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
-	 *		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
-	 *	];
+	 * 	$sku = [
+	 * 		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
+	 * 		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
+	 * 	];
 	 */
 	protected static function parse_sku_data(array $data, string $post_type): array{
 		$sku_data = [];
@@ -76,15 +76,15 @@ class Wnd_SKU {
 		 * - 忽略 SKU Keys 设定范围外的数据
 		 *
 		 * $data = [
-		 *		static::$name_prefix . 'name'  => ['name1','name2'],
-		 *		static::$name_prefix . 'price' => ['price1','price2'],
-		 *	];
+		 * 		static::$name_prefix . 'name'  => ['name1','name2'],
+		 * 		static::$name_prefix . 'price' => ['price1','price2'],
+		 * 	];
 		 *
 		 * 提取后的数据：
 		 * $sku_data = [
-		 *		'name'  => ['name1','name2'],
-		 *		'price' => ['price1','price2'],
-		 *	];
+		 * 		'name'  => ['name1','name2'],
+		 * 		'price' => ['price1','price2'],
+		 * 	];
 		 */
 		foreach ($data as $key => $value) {
 			if (false === stripos($key, static::$name_prefix)) {
@@ -104,15 +104,15 @@ class Wnd_SKU {
 		 *
 		 * 接收数据：
 		 * $sku_data = [
-		 *		'name'  => ['name1','name2'],
-		 *		'price' => ['price1','price2'],
-		 *	];
+		 * 		'name'  => ['name1','name2'],
+		 * 		'price' => ['price1','price2'],
+		 * 	];
 		 *
-		 *返回数据：
-		 *	$sku = [
-		 *		'sku_0' => ['name' => 'name1', 'price' => 'price1'],
-		 *		'sku_1' => ['name' => 'name2', 'price' => 'price2'],
-		 *	];
+		 * 返回数据：
+		 * 	$sku = [
+		 * 		'sku_0' => ['name' => 'name1', 'price' => 'price1'],
+		 * 		'sku_1' => ['name' => 'name2', 'price' => 'price2'],
+		 * 	];
 		 */
 		$sku = [];
 		for ($i = 0, $size = count($sku_data['name']); $i < $size; $i++) {
@@ -137,49 +137,49 @@ class Wnd_SKU {
 	}
 
 	/**
-	 *获取产品 SKU，数据格式参考如下
+	 * 获取产品 SKU，数据格式参考如下
 	 *
-	 *	$sku = [
-	 *		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
-	 *		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
-	 *	];
+	 * 	$sku = [
+	 * 		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
+	 * 		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
+	 * 	];
 	 */
 	public static function get_object_sku(int $object_id): array{
 		return Wnd_Product::get_object_props($object_id)[static::$sku_key] ?? [];
 	}
 
 	/**
-	 *获取指定单个 SKU 详情
+	 * 获取指定单个 SKU 详情
 	 */
 	public static function get_single_sku(int $object_id, string $sku_id): array{
 		return static::get_object_sku($object_id)[$sku_id] ?? [];
 	}
 
 	/**
-	 *获取指定单个 SKU 价格
+	 * 获取指定单个 SKU 价格
 	 */
 	public static function get_single_sku_price(int $object_id, string $sku_id): float {
 		return (float) (static::get_single_sku($object_id, $sku_id)['price'] ?? 0);
 	}
 
 	/**
-	 *获取指定单个 SKU 名称
+	 * 获取指定单个 SKU 名称
 	 */
 	public static function get_single_sku_name(int $object_id, string $sku_id): string {
 		return static::get_single_sku($object_id, $sku_id)['name'] ?? '';
 	}
 
 	/**
-	 *获取指定单个 SKU 名称
+	 * 获取指定单个 SKU 名称
 	 *
-	 *若未设置库存，表示该商品为无限库存（如虚拟商品等），返回 -1
+	 * 若未设置库存，表示该商品为无限库存（如虚拟商品等），返回 -1
 	 */
 	public static function get_single_sku_stock(int $object_id, string $sku_id): int {
 		return static::get_single_sku($object_id, $sku_id)['stock'] ?? -1;
 	}
 
 	/**
-	 *更新指定单个 SKU
+	 * 更新指定单个 SKU
 	 */
 	protected static function update_single_sku(int $object_id, string $sku_id, array $single_sku): bool{
 		// 移除不合规的 SKU 属性
@@ -198,7 +198,7 @@ class Wnd_SKU {
 	}
 
 	/**
-	 *扣除单个 SKU 库存
+	 * 扣除单个 SKU 库存
 	 *
 	 * - 若未设置库存或库为 -1 ：则为无限库存产品，如虚拟商品，则无需操作库存
 	 *

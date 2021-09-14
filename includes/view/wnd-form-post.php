@@ -5,11 +5,12 @@ use Wnd\Model\Wnd_Post;
 use Wnd\Model\Wnd_Term;
 
 /**
- *适配本插件的ajax Post表单类
- *@since 2019.03.11
- *@param $post_type 			string 	option 		类型
- *@param $post_id 				int 	option 		ID
- *@param $input_fields_only 	bool 	option 		是否只生成表单字段（不添加post form 属性字段）
+ * 适配本插件的ajax Post表单类
+ * @since 2019.03.11
+ *
+ * @param $post_type         	string option 		类型
+ * @param $post_id           	int    option 		ID
+ * @param $input_fields_only 	bool   option 		是否只生成表单字段（不添加post form 属性字段）
  */
 class Wnd_Form_Post extends Wnd_Form_WP {
 
@@ -24,7 +25,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	/**
 	 * 当post已选的Terms
 	 * [
-	 *	${taxonomy}=>[term_id1,term_id2]
+	 * 	${taxonomy}=>[term_id1,term_id2]
 	 * ]
 	 */
 	protected $current_terms = [];
@@ -61,8 +62,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	// 初始化构建
 	public function __construct($post_type = 'post', $post_id = 0, $input_fields_only = false) {
 		/**
-		 *@since 0.9.0
-		 *表单提交验证码
+		 * 表单提交验证码
+		 * @since 0.9.0
 		 */
 		$enable_captcha = apply_filters('enable_post_form_captcha', !is_user_logged_in(), $post_type, $post_id);
 
@@ -91,16 +92,13 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *初始化 Post 数据
+	 * 初始化 Post 数据
 	 */
 	protected function setup_postdata($post_type, $post_id) {
 		/**
-		 *@since 2019.12.16 若传参false，表示表单不需要创建草稿
-		 *用于不需要文件上传的表单以降低数据库操作
-		 *
-		 *
-		 *其余情况未指定ID，创建新草稿
-		 *
+		 * 用于不需要文件上传的表单以降低数据库操作
+		 * 其余情况未指定ID，创建新草稿
+		 * @since 2019.12.16 若传参false，表示表单不需要创建草稿
 		 */
 		if (false === $post_id) {
 			$post_id = 0;
@@ -109,43 +107,45 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}
 
 		/**
-		 *@see WordPress get_post()
-		 *当创建草稿失败，$this->post_id = 0 $this->post获取得到的将是WordPress当前页面
-		 *当指定post_id无效，get_post将返回null
-		 *上述两种情况均初始化一个空白的对象
-		 *2019.07.16
+		 * 当创建草稿失败，$this->post_id = 0 $this->post获取得到的将是WordPress当前页面
+		 * 当指定post_id无效，get_post将返回null
+		 * 上述两种情况均初始化一个空白的对象
+		 * 2019.07.16
+		 * @see WordPress get_post()
 		 */
 		$this->post    = $post_id ? get_post($post_id) : (object) static::$default_post;
 		$this->post    = $this->post ?: (object) static::$default_post;
 		$this->post_id = $this->post->ID;
 
 		/**
-		 *@since 0.9.25
-		 *将post id 写入表单自定义属性，供前端渲染使用
+		 * 将post id 写入表单自定义属性，供前端渲染使用
+		 * @since 0.9.25
 		 */
 		$this->add_form_attr('data-post-id', $this->post_id);
 
 		/**
-		 *文章类型：
-		 *若指定了id，则获取对应id的post type
-		 *若无则外部传入参数
-		 **/
+		 * 文章类型：
+		 * 若指定了id，则获取对应id的post type
+		 * 若无则外部传入参数
+		 *
+		 */
 		$this->post_type = $this->post_id ? $this->post->post_type : $post_type;
 
 		/**
-		 *@since 2020.04.19
-		 *获取当前Post_type 的所有 Taxonomy
-		 *获取当前post 已选term数据
+		 * 获取当前Post_type 的所有 Taxonomy
+		 * 获取当前post 已选term数据
+		 * @since 2020.04.19
 		 */
 		$this->taxonomies    = get_object_taxonomies($this->post_type, 'names');
 		$this->current_terms = $this->taxonomies ? $this->get_current_terms() : [];
 	}
 
 	/**
-	 *@since 2019.09.04
-	 *设置post parent
-	 *@param int 	$post_parent
-	 **/
+	 * 设置post parent
+	 * @since 2019.09.04
+	 *
+	 * @param int 	$post_parent
+	 */
 	public function set_post_parent($post_parent) {
 		$this->post_parent = $post_parent;
 		$this->add_hidden('_post_post_parent', $post_parent);
@@ -208,7 +208,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *分类复选框
+	 * 分类复选框
 	 *
 	 */
 	public function add_post_term_checkbox($args_or_taxonomy, $label = '') {
@@ -234,8 +234,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *分类单选框
-	 *@since 2020.04.17
+	 * 分类单选框
+	 * @since 2020.04.17
 	 */
 	public function add_post_term_radio($args_or_taxonomy, $label = '', $required = true) {
 		$taxonomy        = is_array($args_or_taxonomy) ? $args_or_taxonomy['taxonomy'] : $args_or_taxonomy;
@@ -260,9 +260,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *自定义标签编辑器
-	 *@since 2020.05.12
-	 *@since 0.9.25 以 Vue 重构 该字段不再支持常规 php 渲染
+	 * 自定义标签编辑器
+	 * @since 2020.05.12
+	 * @since 0.9.25 : 以 Vue 重构 该字段不再支持常规 php 渲染
 	 */
 	public function add_post_tags($taxonomy, $label = '', $required = false, $help = '') {
 		if (!wnd_is_rest_request()) {
@@ -289,16 +289,16 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *@param int $save_width 	缩略图保存宽度
-	 *@param int $save_height 	缩略图保存高度
-	 *@param int $label
-	 **/
+	 * @param int $save_width  	缩略图保存宽度
+	 * @param int $save_height 	缩略图保存高度
+	 * @param int $label
+	 */
 	public function add_post_thumbnail($save_width = 200, $save_height = 200, $label = '') {
 		$this->add_post_image_upload('_thumbnail_id', $save_width, $save_height, $label);
 	}
 
 	/**
-	 *正文编辑器
+	 * 正文编辑器
 	 */
 	public function add_post_content($rich_media_editor = true, $placeholder = '详情', $required = false) {
 		if ($rich_media_editor) {
@@ -323,8 +323,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *@since 2019.07.09 常规wnd meta文章字段
-	 **/
+	 * 常规wnd meta文章字段
+	 * @since 2019.07.09
+	 */
 	public function add_post_meta($meta_key, $label = '', $placeholder = '', $required = false) {
 		$name  = '_meta_' . $meta_key;
 		$value = wnd_get_post_meta($this->post_id, $meta_key) ?: '';
@@ -340,8 +341,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *@since 2019.08.25 常规WordPress原生文章字段
-	 **/
+	 * 常规WordPress原生文章字段
+	 * @since 2019.08.25
+	 */
 	public function add_wp_post_meta($meta_key, $label = '', $placeholder = '', $required = false) {
 		$name  = '_wpmeta_' . $meta_key;
 		$value = get_post_meta($this->post_id, $meta_key, true) ?: '';
@@ -357,10 +359,10 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *@since 2019.07.17
-	 *设置post menu_order
-	 *常用菜单、附件等排序
-	 **/
+	 * 设置post menu_order
+	 * 常用菜单、附件等排序
+	 * @since 2019.07.17
+	 */
 	public function add_post_menu_order($label = '排序', $placeholder = '输入排序', $required = false) {
 		$this->add_number(
 			[
@@ -375,9 +377,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *@since 2019.07.18
-	 *设置post_name 固定链接别名
-	 **/
+	 * 设置post_name 固定链接别名
+	 * @since 2019.07.18
+	 */
 	public function add_post_name($label = '别名', $placeholder = '文章固定连接别名', $required = false) {
 		$this->add_text(
 			[
@@ -407,8 +409,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *@since 2019.09.04
-	 *上传付费文件
+	 * 上传付费文件
+	 * @since 2019.09.04
 	 */
 	public function add_post_paid_file_upload($label = '', $required = false) {
 		$label = $label ?: __('付费文件', 'wnd');
@@ -425,9 +427,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *@since 2019.09.04
-	 *设置文章状态
-	 **/
+	 * 设置文章状态
+	 * @since 2019.09.04
+	 */
 	public function add_post_status_select() {
 		$this->add_checkbox(
 			[
@@ -439,11 +441,13 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *@since 2019.04.28 上传字段简易封装
-	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Form_WP
-	 *@param string $meta_key 		meta key
-	 *@param int 	$save_width 	保存图片宽度
-	 *@param int 	$save_height 	保存图片高度
+	 * 上传字段简易封装
+	 * 如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Form_WP
+	 * @since 2019.04.28
+	 *
+	 * @param string 	$meta_key    	meta key
+	 * @param int    	$save_width  	保存图片宽度
+	 * @param int    	$save_height 	保存图片高度
 	 */
 	public function add_post_image_upload($meta_key, $save_width = 0, $save_height = 0, $label = '') {
 		if (!$this->post_id) {
@@ -482,7 +486,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *@since 2019.05.08 上传图片集
+	 * 上传图片集
+	 * @since 2019.05.08
 	 */
 	public function add_post_gallery_upload($save_width = 0, $save_height = 0, $label = '') {
 		if (!$this->post_id) {
@@ -504,16 +509,16 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *@since 2019.08.28
-	 *获取Post
-	 **/
+	 * 获取Post
+	 * @since 2019.08.28
+	 */
 	public function get_post() {
 		return $this->post;
 	}
 
 	/**
 	 *
-	 *获取当前 Post 全部 所选 term 分类
+	 * 获取当前 Post 全部 所选 term 分类
 	 */
 	public function get_current_terms() {
 		foreach ($this->taxonomies as $taxonomy) {

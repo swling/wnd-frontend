@@ -2,14 +2,15 @@
 namespace Wnd\View;
 
 /**
- *适配本插件的ajax User表单类
- *@since 2019.03.11
+ * 适配本插件的ajax User表单类
+ * @since 2019.03.11
  */
 class Wnd_Form_User extends Wnd_Form_WP {
 
 	/**
-	 *@since 0.9.26
-	 *@param bool $is_horizontal 是否水平表单
+	 * @since 0.9.26
+	 *
+	 * @param bool $is_horizontal 是否水平表单
 	 */
 	public function __construct($is_horizontal = false) {
 		parent::__construct(true, false, $is_horizontal);
@@ -44,8 +45,8 @@ class Wnd_Form_User extends Wnd_Form_WP {
 
 	/**
 	 *
-	 *注意：
-	 *当用户注册时未设置昵称，WP将自动根据用户名生成昵称。在实际应用中，我们应该避免用户昵称与自动用户名相同
+	 * 注意：
+	 * 当用户注册时未设置昵称，WP将自动根据用户名生成昵称。在实际应用中，我们应该避免用户昵称与自动用户名相同
 	 */
 	public function add_user_display_name($label = '名称', $placeholder = '名称', $required = true) {
 		$this->add_text(
@@ -76,9 +77,9 @@ class Wnd_Form_User extends Wnd_Form_WP {
 		$this->__add_password('_user_new_pass_repeat', $label, $placeholder, $required);
 	}
 	/**
-	 *@since 0.9.26
-	 *封装密码字段
-	 *命名为 __add_password 而非 add_password 旨在避免和父类冲突
+	 * 封装密码字段
+	 * 命名为 __add_password 而非 add_password 旨在避免和父类冲突
+	 * @since 0.9.26
 	 */
 	protected function __add_password($name, $label, $placeholder, $required) {
 		parent::add_password(
@@ -140,8 +141,8 @@ class Wnd_Form_User extends Wnd_Form_WP {
 	}
 
 	/**
-	 *@since 2019.04.28 上传字段简易封装
-	 *如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Form_WP
+	 * 如需更多选项，请使用 add_image_upload、add_file_upload 方法 @see Wnd_Form_WP
+	 * @since 2019.04.28 上传字段简易封装
 	 */
 	public function add_user_image_upload($meta_key, $save_width = 0, $save_height = 0, $label = '') {
 		if (!$this->user->ID) {

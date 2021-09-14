@@ -5,12 +5,10 @@ use Exception;
 use Wnd\Getway\Wnd_Login_Social;
 
 /**
- *@since 2020.04.11
- *Google登录
- *
- *
- *@link https://developers.google.com/youtube/v3/live/guides/auth/server-side-web-apps#OAuth2_Revoking_a_Token
- *注意，上述链接属于YouTube产品api，但可参考其互获取code及token的流程
+ * Google登录
+ * 注意，上述链接属于YouTube产品api，但可参考其互获取code及token的流程
+ * @link https://developers.google.com/youtube/v3/live/guides/auth/server-side-web-apps#OAuth2_Revoking_a_Token
+ * @since 2020.04.11
  */
 class Google extends Wnd_Login_Social {
 
@@ -24,7 +22,7 @@ class Google extends Wnd_Login_Social {
 	}
 
 	/**
-	 *创建授权地址
+	 * 创建授权地址
 	 */
 	public function build_oauth_url() {
 		if (!$this->app_id) {
@@ -50,7 +48,7 @@ class Google extends Wnd_Login_Social {
 	}
 
 	/**
-	 *根据授权码请求token
+	 * 根据授权码请求token
 	 */
 	protected function get_token() {
 		if (!$this->app_key) {
@@ -80,7 +78,7 @@ class Google extends Wnd_Login_Social {
 		$token_url = 'https://accounts.google.com/o/oauth2/token';
 
 		//获取响应报文
-		$response = wp_remote_post($token_url, array('body' => $data));
+		$response = wp_remote_post($token_url, ['body' => $data]);
 		if (is_wp_error($response)) {
 			throw new Exception($response->get_error_message());
 		}
@@ -94,11 +92,11 @@ class Google extends Wnd_Login_Social {
 	}
 
 	/**
-	 *根据token 和 open id获取用户信息
+	 * 根据token 和 open id获取用户信息
 	 *
 	 */
 	protected function get_user_info() {
-		$url       = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" . $this->token;
+		$url       = 'https://www.googleapis.com/oauth2/v1/userinfo?access_token=' . $this->token;
 		$user_info = wp_remote_get($url);
 		$user_info = $user_info['body'];
 		$user_info = json_decode($user_info, true);

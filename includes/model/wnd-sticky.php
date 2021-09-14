@@ -4,12 +4,13 @@ namespace Wnd\Model;
 class Wnd_Sticky {
 
 	/**
-	 *@since 2019.06.11
-	 *精选置顶文章
-	 *精选post id存储方式：
-	 *option：二维数组 wnd_sticky_posts[$post_type]['post'.$post_id]
-	 *@param $post_id
-	 **/
+	 * 精选置顶文章
+	 * 精选post id存储方式：
+	 * option：二维数组 wnd_sticky_posts[$post_type]['post'.$post_id]
+	 * @since 2019.06.11
+	 *
+	 * @param $post_id
+	 */
 	public static function stick_post($post_id) {
 		if (!$post_id) {
 			return;
@@ -33,10 +34,11 @@ class Wnd_Sticky {
 	}
 
 	/**
-	 *@since 2019.06.11
-	 *取消精选置顶文章
-	 *@param $post_id
-	 **/
+	 * 取消精选置顶文章
+	 * @since 2019.06.11
+	 *
+	 * @param $post_id
+	 */
 	public static function unstick_post($post_id) {
 		$post_type = get_post_type($post_id);
 		if (!$post_type) {
@@ -51,12 +53,13 @@ class Wnd_Sticky {
 	}
 
 	/**
-	 *@since 2019.06.11
-	 *获取精选置顶文章
-	 *@param 	$post_type 	文章类型
-	 *@param 	$number 	文章数量
-	 *@return 	array 		文章id数组
-	 **/
+	 * 获取精选置顶文章
+	 * @since 2019.06.11
+	 *
+	 * @param  	$post_type 	文章类型
+	 * @param  	$number    	文章数量
+	 * @return 	array      		文章id数组
+	 */
 	public static function get_sticky_posts($post_type, $number = -1): array{
 		$sticky_posts = wnd_get_option('wnd_sticky_posts', $post_type);
 		$sticky_posts = is_array($sticky_posts) ? $sticky_posts : [];

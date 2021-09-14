@@ -4,8 +4,8 @@ namespace Wnd\Model;
 use Wnd\Model\Wnd_DB;
 
 /**
- *@since 2019.3.14
- *清理站点内容
+ * 清理站点内容
+ * @since 2019.3.14
  */
 class Wnd_Admin {
 
@@ -58,8 +58,8 @@ class Wnd_Admin {
 		update_option('wnd_ver', WND_VER);
 
 		/**
+		 * 关闭WordPress缩略图裁剪
 		 * @since 2019.06.17
-		 *关闭WordPress缩略图裁剪
 		 */
 		update_option('medium_large_size_w', 0);
 		update_option('medium_large_size_h', 0);
@@ -74,14 +74,14 @@ class Wnd_Admin {
 		update_option('large_size_h', 0);
 
 		/**
-		 *@since 0.9.18
+		 * @since 0.9.18
 		 */
 		flush_rewrite_rules();
 	}
 
 	/**
-	 *@since 初始化
-	 *卸载插件
+	 * 卸载插件
+	 * @since 初始化
 	 */
 	public static function uninstall() {
 		// delete_option('wnd');
@@ -89,8 +89,9 @@ class Wnd_Admin {
 	}
 
 	/**
-	 *清理数据
-	 **/
+	 * 清理数据
+	 *
+	 */
 	public static function clean_up() {
 		if (!is_super_admin()) {
 			return false;
@@ -137,8 +138,8 @@ class Wnd_Admin {
 	}
 
 	/**
-	 *@since 2020.08.19
-	 *升级
+	 * 升级
+	 * @since 2020.08.19
 	 */
 	public static function upgrade() {
 		$db_version = get_option('wnd_ver');

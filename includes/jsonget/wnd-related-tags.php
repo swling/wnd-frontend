@@ -4,9 +4,9 @@ namespace Wnd\JsonGet;
 use Wnd\Model\Wnd_Tag_Under_Category;
 
 /**
- *@since 2020.04.14
- *列出term下拉选项
- **/
+ * 列出term下拉选项
+ * @since 2020.04.14
+ */
 class Wnd_Related_Tags extends Wnd_JsonGet {
 
 	protected static function query($args = []): array{

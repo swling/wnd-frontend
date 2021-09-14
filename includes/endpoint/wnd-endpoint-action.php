@@ -5,15 +5,15 @@ use Exception;
 use ReflectionClass;
 
 /**
- *@since 0.9.18
- *需要进行 Nonce 校验的 Endpoint
+ * 需要进行 Nonce 校验的 Endpoint
+ * @since 0.9.18
  */
 abstract class Wnd_Endpoint_Action extends Wnd_Endpoint {
 
 	protected static $nonce_name = '_wndnonce';
 
 	/**
-	 *权限检测 WP Nonce 校验
+	 * 权限检测 WP Nonce 校验
 	 */
 	protected function check() {
 		$nonce  = $this->data[static::$nonce_name] ?? '';
@@ -26,7 +26,7 @@ abstract class Wnd_Endpoint_Action extends Wnd_Endpoint {
 	}
 
 	/**
-	 *组合生成需要 nonce 校验的 Endpoint 请求链接
+	 * 组合生成需要 nonce 校验的 Endpoint 请求链接
 	 */
 	public static function build_request_url(string $endpoint, array $args): string{
 		$args[static::$nonce_name] = wp_create_nonce($endpoint);

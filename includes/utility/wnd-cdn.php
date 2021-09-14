@@ -4,8 +4,7 @@ namespace Wnd\Utility;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
- *@since 0.9.29 静态资源 CDN
- *
+ * @since 0.9.29 静态资源 CDN
  */
 class Wnd_CDN {
 

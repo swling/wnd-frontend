@@ -4,8 +4,8 @@ namespace Wnd\Admin;
 use Wnd\View\Wnd_Form_Option;
 
 /**
- * @since 0.8.62
  * WP后台选项配置菜单
+ * @since 0.8.62
  */
 class Wnd_Menus {
 	// 菜单基本属性
@@ -27,18 +27,18 @@ class Wnd_Menus {
 	protected $is_submenu = false;
 
 	/**
-	 *定义子菜单
+	 * 定义子菜单
 	 * - 将依次循环拼接类名：Wnd_Admin_Menu_ {$slug} 并实例化
 	 */
 	protected $sub_menus = ['Accesskey', 'Transaction', 'Payment', 'Sms', 'Captcha', 'Social_Login', 'OSS', 'CDN'];
 
 	/**
-	 *构造
+	 * 构造
 	 *
 	 */
 	public function __construct() {
 		/**
-		 *判断当前实例是否为继承本类的子类
+		 * 判断当前实例是否为继承本类的子类
 		 */
 		$this->is_submenu = is_subclass_of($this, __CLASS__);
 
@@ -50,7 +50,7 @@ class Wnd_Menus {
 		add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
 
 		/**
-		 *根据配置实例化子菜单
+		 * 根据配置实例化子菜单
 		 */
 		if (!$this->is_submenu) {
 			foreach ($this->sub_menus as $slug) {
@@ -61,7 +61,7 @@ class Wnd_Menus {
 	}
 
 	/**
-	 *仅在定义的菜单页面加载静态资源
+	 * 仅在定义的菜单页面加载静态资源
 	 */
 	public function enqueue_scripts($hook_suffix) {
 		if ('toplevel_page_' . $this->menu_slug != $hook_suffix and 0 !== stripos($hook_suffix, 'wnd-frontend')) {
@@ -72,7 +72,7 @@ class Wnd_Menus {
 	}
 
 	/**
-	 *注册菜单
+	 * 注册菜单
 	 */
 	public function add_menu() {
 		if ($this->is_submenu) {
@@ -83,14 +83,14 @@ class Wnd_Menus {
 	}
 
 	/**
-	 *构建选项页面
+	 * 构建选项页面
 	 */
 	public function build_page() {
 		echo '<div class="wrap">' . $this->build_form() . '</div>';
 	}
 
 	/**
-	 *构造选项表单
+	 * 构造选项表单
 	 */
 	public function build_form() {
 		$form = new Wnd_Form_Option($this->option_name, $this->append);

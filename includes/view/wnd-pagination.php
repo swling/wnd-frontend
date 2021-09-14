@@ -2,8 +2,8 @@
 namespace Wnd\View;
 
 /**
- * @since 2020.08.18
  * 分页导航条
+ * @since 2020.08.18
  */
 class Wnd_Pagination {
 
@@ -34,67 +34,67 @@ class Wnd_Pagination {
 	protected $independent;
 
 	/**
-	 *Constructor.
+	 * Constructor.
 	 *
-	 *@param string 	$uniqid当前筛选器唯一标识
 	 */
 	public function __construct($independent = true) {
 		$this->independent = $independent;
 	}
 
 	/**
-	 *当前页面
+	 * 当前页面
 	 */
 	public function set_paged($paged) {
 		$this->paged = $paged;
 	}
 
 	/**
-	 *最大页面：若未设置此属性，则生成 《上一页 下一页》 类导航，在数据较多的站点，建议忽略此属性
+	 * 最大页面：若未设置此属性，则生成 《上一页 下一页》 类导航，在数据较多的站点，建议忽略此属性
 	 */
 	public function set_max_num_pages($max_num_pages) {
 		$this->max_num_pages = $max_num_pages;
 	}
 
 	/**
-	 *每页项目数
+	 * 每页项目数
 	 */
 	public function set_items_per_page($items_per_page) {
 		$this->items_per_page = $items_per_page;
 	}
 
 	/**
-	 *当前页面项目数
+	 * 当前页面项目数
 	 */
 	public function set_current_item_count($current_item_count) {
 		$this->current_item_count = $current_item_count;
 	}
 
 	/**
-	 *常规分页中，展示的导航页面数量
+	 * 常规分页中，展示的导航页面数量
 	 */
 	public function set_show_pages($show_pages) {
 		$this->show_pages = $show_pages;
 	}
 
 	/**
-	 *其他数据，转为HTML data属性
+	 * 其他数据，转为HTML data属性
 	 */
 	public function set_data(array $data) {
 		$this->data = $data;
 	}
 
 	/**
-	 *容器HTML class 用空格隔开多个类
+	 * 容器HTML class 用空格隔开多个类
 	 */
 	public function add_class($class) {
 		$this->class = $class;
 	}
 
 	/**
-	 *@since 2019.02.15 简单分页导航
-	 *不查询总数的情况下，简单实现下一页翻页
-	 *翻页参数键名page 不能设置为 paged 会与原生WordPress翻页机制产生冲突
+	 * 简单分页导航
+	 * - 不查询总数的情况下，简单实现下一页翻页
+	 * - 翻页参数键名page 不能设置为 paged 会与原生WordPress翻页机制产生冲突
+	 * @since 2019.02.15
 	 */
 	public function build() {
 		if (!$this->max_num_pages) {
@@ -105,8 +105,8 @@ class Wnd_Pagination {
 	}
 
 	/**
-	 *未查询文章总数，以上一页下一页的形式翻页(在数据较多的情况下，可以提升查询性能)
-	 *在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
+	 * 未查询文章总数，以上一页下一页的形式翻页(在数据较多的情况下，可以提升查询性能)
+	 * 在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
 	 */
 	protected function build_next_pagination() {
 		if ($this->independent) {
@@ -132,8 +132,8 @@ class Wnd_Pagination {
 	}
 
 	/**
-	 *常规分页，需要查询文章总数
-	 *在数据量较大的站点，查询文章总数会较为费时
+	 * 常规分页，需要查询文章总数
+	 * 在数据量较大的站点，查询文章总数会较为费时
 	 */
 	protected function build_general_pagination() {
 		if ($this->independent) {
@@ -180,7 +180,7 @@ class Wnd_Pagination {
 	}
 
 	/**
-	 *构造HTML data属性
+	 * 构造HTML data属性
 	 */
 	protected function build_data_attr($data_array): string {
 		if (!$data_array) {

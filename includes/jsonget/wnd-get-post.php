@@ -4,10 +4,10 @@ namespace Wnd\JsonGet;
 use Exception;
 
 /**
- *@since 2020.07.21
- *获取Post Json
+ * 获取Post Json
+ * @since 2020.07.21
  *
- *@param int $post_id  Post ID
+ * @param int $post_id Post ID
  */
 class Wnd_Get_Post extends Wnd_JsonGet {
 
@@ -20,7 +20,7 @@ class Wnd_Get_Post extends Wnd_JsonGet {
 		$post = get_post($post_id, ARRAY_A);
 
 		/**
-		 *非公开post仅返回基本状态
+		 * 非公开post仅返回基本状态
 		 */
 		if ('publish' != $post['post_status'] and !current_user_can('edit_post', $post_id)) {
 			return [

@@ -5,18 +5,15 @@ use Exception;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- *@since 2020.03.21
+ * 付费按钮
+ * - 接收传参，区分是否为付费阅读
+ * - 将根据price 及 file 自动检测是否包含付费文件
+ * - 支持同时设置付费阅读及付费下载
+ * - 付费阅读将刷新当前页面
  *
- *付费按钮
- *
- *接收传参，区分是否为付费阅读
- *将根据price 及 file 自动检测是否包含付费文件
- *支持同时设置付费阅读及付费下载
- *
- *付费阅读将刷新当前页面
- *
- *@see Wnd\Action\Wnd_Pay_For_Reading
- *@see Wnd\Action\Wnd_Pay_For_Downloads
+ * @see Wnd\Action\Wnd_Pay_For_Reading
+ * @see Wnd\Action\Wnd_Pay_For_Downloads
+ * @since 2020.03.21
  */
 class Wnd_Pay_Button {
 
@@ -41,7 +38,7 @@ class Wnd_Pay_Button {
 	protected $disabled = false;
 
 	/**
-	 *Construct
+	 * Construct
 	 */
 	public function __construct(\WP_Post $post, bool $with_paid_content, string $button_text = '') {
 		$this->post_id       = $post->ID;
@@ -72,14 +69,14 @@ class Wnd_Pay_Button {
 		}
 
 		/**
-		 *@since 0.8.73
-		 *如果外部传参按钮文字，则覆盖
+		 * 如果外部传参按钮文字，则覆盖
+		 * @since 0.8.73
 		 */
 		$this->button_text = $button_text ?: $this->button_text;
 	}
 
 	/**
-	 *构建Html
+	 * 构建Html
 	 *
 	 */
 	public function render(): string {
@@ -125,11 +122,9 @@ class Wnd_Pay_Button {
 
 	/**
 	 * 付费下载
-	 *@since 2018.09.17
-	 *
-	 *价格：wp post meta 	-> price
-	 *文件：wnd post meta 	-> file
-	 *
+	 * 价格：wp post meta 	-> price
+	 * 文件：wnd post meta 	-> file
+	 * @since 2018.09.17
 	 */
 	protected function build_paid_download_button_var() {
 		// 没有文件
@@ -162,7 +157,7 @@ class Wnd_Pay_Button {
 	}
 
 	/**
-	 *付费阅读
+	 * 付费阅读
 	 */
 	protected function build_paid_reading_button_var() {
 		// 已支付
@@ -183,12 +178,12 @@ class Wnd_Pay_Button {
 	}
 
 	/**
-	 *@since 2020.06.04
-	 *同时包含付费阅读及付费下载
+	 * 同时包含付费阅读及付费下载
+	 * @since 2020.06.04
 	 */
 	protected function build_pay_button_var() {
 		/**
-		 *支付后，采用付费下载方法，下载文件（下载文件时，不会重复扣费）@see Wnd\Action\Wnd_Pay_For_Downloads
+		 * 支付后，采用付费下载方法，下载文件（下载文件时，不会重复扣费）@see Wnd\Action\Wnd_Pay_For_Downloads
 		 */
 		if ($this->user_has_paid or $this->user_id == $this->post->post_author) {
 			$this->button_text = __('下载', 'wnd');

@@ -3,10 +3,10 @@ namespace Wnd\Utility;
 
 /**
  * PHP JWT
- * @since 0.8.61
  *
  * @link https://jwt.io/introduction/
  * @link http://www.ruanyifeng.com/blog/2018/07/json_web_token-tutorial.html
+ * @since 0.8.61
  */
 class Wnd_JWT {
 
@@ -21,8 +21,6 @@ class Wnd_JWT {
 
 	/**
 	 * 获取 jwt token
-	 * @param array $payload JWT 载荷格式如下：
-	 *
 	 * - iss (issuer)：签发人
 	 * - exp (expiration time)：过期时间
 	 * - sub (subject)：主题
@@ -30,9 +28,8 @@ class Wnd_JWT {
 	 * - nbf (Not Before)：生效时间
 	 * - iat (Issued At)：签发时间
 	 * - jti (JWT ID)：编号
-	 *
 	 * Payload 数据格式建议遵循约定，同时可根据实际应用场景自行添加或移除一项或多项
-	 *
+	 * @param  array     $payload JWT 载荷格式如下：
 	 * @return string
 	 */
 	public static function getToken(array $payload): string{
@@ -45,7 +42,7 @@ class Wnd_JWT {
 
 	/**
 	 * 验证token是否有效,默认验证exp,nbf,iat时间
-	 * @param string $Token 需要验证的token
+	 * @param  string       $Token 需要验证的token
 	 * @return bool|array
 	 */
 	public static function verifyToken(string $Token) {
@@ -89,7 +86,7 @@ class Wnd_JWT {
 
 	/**
 	 * base64UrlEncode   https://jwt.io/  中base64UrlEncode编码实现
-	 * @param string $input 需要编码的字符串
+	 * @param  string   $input 需要编码的字符串
 	 * @return string
 	 */
 	private static function base64UrlEncode(string $input): string {
@@ -98,7 +95,7 @@ class Wnd_JWT {
 
 	/**
 	 * base64UrlEncode  https://jwt.io/  中base64UrlEncode解码实现
-	 * @param string $input 需要解码的字符串
+	 * @param  string        $input 需要解码的字符串
 	 * @return bool|string
 	 */
 	private static function base64UrlDecode(string $input): string{
@@ -112,9 +109,9 @@ class Wnd_JWT {
 
 	/**
 	 * HMACSHA256签名   https://jwt.io/  中HMACSHA256签名实现
-	 * @param string $input 为base64UrlEncode(header).".".base64UrlEncode(payload)
-	 * @param string $key
-	 * @param string $alg   算法方式
+	 * @param  string  $input 为base64UrlEncode(header).".".base64UrlEncode(payload)
+	 * @param  string  $key
+	 * @param  string  $alg   算法方式
 	 * @return mixed
 	 */
 	private static function signature(string $input, string $key, string $alg = 'HS256'): string{

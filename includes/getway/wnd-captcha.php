@@ -4,8 +4,8 @@ namespace Wnd\Getway;
 use Exception;
 
 /**
- *@since 2020.08.11
- *验证码后端校验
+ * 验证码后端校验
+ * @since 2020.08.11
  */
 abstract class Wnd_Captcha {
 
@@ -32,7 +32,7 @@ abstract class Wnd_Captcha {
 	}
 
 	/**
-	 *自动选择子类处理当前业务
+	 * 自动选择子类处理当前业务
 	 */
 	public static function get_instance(): Wnd_Captcha{
 		$service = wnd_get_config('captcha_service') ?: '';
@@ -49,14 +49,14 @@ abstract class Wnd_Captcha {
 	}
 
 	/**
-	 *设置captcha
+	 * 设置captcha
 	 */
 	public function set_captcha($captcha) {
 		$this->captcha = $captcha;
 	}
 
 	/**
-	 *设置captcha nonce
+	 * 设置captcha nonce
 	 */
 	public function set_captcha_nonce($captcha_nonce) {
 		$this->captcha_nonce = $captcha_nonce;
@@ -68,14 +68,14 @@ abstract class Wnd_Captcha {
 	abstract public function validate();
 
 	/**
-	 *JavaScript
-	 *构建手机及邮箱类发送人机校验脚本
+	 * JavaScript
+	 * 构建手机及邮箱类发送人机校验脚本
 	 */
 	abstract public function render_send_code_script(): string;
 
 	/**
-	 *@since 0.8.64
-	 *构建表单提交人机校验脚本
+	 * 构建表单提交人机校验脚本
+	 * @since 0.8.64
 	 */
 	abstract public function render_submit_form_script(): string;
 }

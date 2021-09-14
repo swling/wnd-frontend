@@ -4,14 +4,15 @@ namespace Wnd\View;
 use Exception;
 
 /**
- *表单结构生成器
+ * 表单结构生成器
  * - 以 PHP 数组形式保存表单结构
  * - 可转为 json 供前端渲染 @see [JS Function] _wnd_render_form
  * - PHP 渲染 @see Wnd\View\Wnd_Form_Render
  *
- *@since 2019.03
- *@link https://wndwp.com
- *@author swling tangfou@gmail.com
+ * @author swling tangfou@gmail.com
+ *
+ * @link https://wndwp.com
+ * @since 2019.03
  */
 class Wnd_Form {
 
@@ -87,8 +88,8 @@ class Wnd_Form {
 	];
 
 	/**
-	 *初始化构建
-	 *@param bool $is_horizontal 	水平表单
+	 * 初始化构建
+	 * @param bool $is_horizontal 	水平表单
 	 */
 	public function __construct($is_horizontal = false) {
 		$this->id = 'wnd-' . uniqid();
@@ -97,29 +98,30 @@ class Wnd_Form {
 	}
 
 	/**
-	 *表单字段之前 Html
+	 * 表单字段之前 Html
 	 */
 	public function add_before_html($html) {
 		$this->before_html .= $html;
 	}
 
 	/**
-	 *表单字段之后 Html
+	 * 表单字段之后 Html
 	 */
 	public function add_after_html($html) {
 		$this->after_html .= $html;
 	}
 
 	/**
-	 *@since 2021.03.03
-	 *设置表单 size
+	 * 设置表单 size
+	 * @since 2021.03.03
 	 */
 	public function set_form_size(string $size) {
 		$this->size = $size;
 	}
 
 	/**
-	 *@since 2019.03.10 设置表单属性
+	 * 设置表单属性
+	 * @since 2019.03.10
 	 */
 	public function set_form_title(string $form_title, bool $is_title_centered = false) {
 		$this->form_title        = $form_title;
@@ -127,7 +129,7 @@ class Wnd_Form {
 	}
 
 	/**
-	 *设置表单提示信息
+	 * 设置表单提示信息
 	 */
 	public function set_message(string $message, $class = '') {
 		$this->message       = $message;
@@ -135,9 +137,9 @@ class Wnd_Form {
 	}
 
 	/**
-	 *设置表单缩略图尺寸
-	 *@param int 	$width
-	 *@param int 	$height
+	 * 设置表单缩略图尺寸
+	 * @param int 	$width
+	 * @param int 	$height
 	 */
 	public function set_thumbnail_size(int $width, int $height) {
 		$this->thumbnail_width  = $width;
@@ -167,16 +169,16 @@ class Wnd_Form {
 	}
 
 	/**
-	 *@since 2019.08.29
-	 *设置表单属性
-	 **/
+	 * 设置表单属性
+	 * @since 2019.08.29
+	 */
 	public function add_form_attr(string $key, string $value) {
 		$this->form_attr[$key] = $value;
 	}
 
 	/**
-	 *@since 2021.02.18
-	 *添加任意自定义字段，主要用于自定义非标准字段
+	 * 添加任意自定义字段，主要用于自定义非标准字段
+	 * @since 2021.02.18
 	 */
 	public function add_field(array $args) {
 		$type = $args['type'] ?? '';
@@ -189,8 +191,8 @@ class Wnd_Form {
 	}
 
 	/**
-	 *@since 2021.03.08
-	 *表单分布切割标识
+	 * 表单分布切割标识
+	 * @since 2021.03.08
 	 */
 	public function add_step($text = '') {
 		$args['type']         = 'step';
@@ -201,7 +203,8 @@ class Wnd_Form {
 	}
 
 	/**
-	 *@since 2019.03.10 设置常规input 字段
+	 * 设置常规input 字段
+	 * @since 2019.03.10
 	 */
 	public function add_text(array $args) {
 		$args['type'] = 'text';
@@ -242,8 +245,8 @@ class Wnd_Form {
 	}
 
 	/**
-	 *@since 2019.08.23
-	 *新增HTML5 字段
+	 * 新增HTML5 字段
+	 * @since 2019.08.23
 	 */
 	// URL
 	public function add_url(array $args) {
@@ -325,7 +328,8 @@ class Wnd_Form {
 	}
 
 	/**
-	 *@since 2019.03.06 在表单当前位置插入指定html代码以补充现有方法无法实现的效果
+	 * 在表单当前位置插入指定html代码以补充现有方法无法实现的效果
+	 * @since 2019.03.06
 	 */
 	public function add_html(string $html) {
 		$this->input_values[] = [
@@ -335,9 +339,9 @@ class Wnd_Form {
 	}
 
 	/**
-	 *@since 2019.03.06
-	 *表单构造函数
-	 **/
+	 * 表单构造函数
+	 * @since 2019.03.06
+	 */
 	public function build(): string{
 		$structure = $this->get_structure();
 		$render    = new Wnd_Form_Render($structure);
@@ -352,7 +356,7 @@ class Wnd_Form {
 	}
 
 	/**
-	 *获取表单构造数组数据，可用于前端 JS 渲染
+	 * 获取表单构造数组数据，可用于前端 JS 渲染
 	 */
 	public function get_structure(): array{
 		return [

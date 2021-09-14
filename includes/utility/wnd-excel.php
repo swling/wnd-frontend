@@ -17,8 +17,8 @@ class Wnd_Excel {
 
 		header('Content-Type: application/vnd.ms-execl');
 		header('Content-Disposition: attachment;filename="' . $filename . '.csv"');
-		header("Pragma: no-cache");
-		header("Expires: 0");
+		header('Pragma: no-cache');
+		header('Expires: 0');
 
 		//以写入追加的方式打开
 		$fp = fopen('php://output', 'a');

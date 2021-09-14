@@ -4,9 +4,8 @@ namespace Wnd\JsonGet;
 use Wnd\Model\Wnd_Term;
 
 /**
- *@since 0.9.27
- *列出指定 term 的 child term 下拉选项
- *
+ * 列出指定 term 的 child term 下拉选项
+ * @since 0.9.27
  */
 class Wnd_Sub_Term_Options extends Wnd_JsonGet {
 

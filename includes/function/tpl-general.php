@@ -1,33 +1,34 @@
 <?php
 
 /**
- *@since 2019.12.31
+ * Post List 表格列表
+ * @since 2019.12.31
  *
- *Post List 表格列表
- *
- *@param WP_Query 实例化
+ * @param WP_Query 实例化
  */
 function wnd_list_table(WP_Query $query) {
 	return Wnd\Template\Wnd_List_Table::render($query);
 }
 
 /**
- *@since 2019.05.23
- *面包屑导航
- **/
+ * 面包屑导航
+ * @since 2019.05.23
+ */
 function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 	if (is_home() or is_author()) {
 		return;
 	}
 
 	/**
-	 *columns
-	 **/
+	 * columns
+	 *
+	 */
 	$html = '<div class="breadcrumb-wrap columns is-mobile">';
 
 	/**
-	 *左侧导航
-	 **/
+	 * 左侧导航
+	 *
+	 */
 	$html .= '<div class="column">';
 	$html .= '<nav class="breadcrumb ' . $font_size . '" aria-label="breadcrumbs">';
 	$html .= '<ul>';
@@ -87,8 +88,9 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 	$html .= '</div>';
 
 	/**
-	 *左侧导航
-	 **/
+	 * 左侧导航
+	 *
+	 */
 	$html .= '<div class="column is-narrow is-size-7 breadcrumb-right">';
 	$breadcrumb_right = '';
 	// 内页编辑
@@ -102,15 +104,16 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 	$html .= '</div>';
 
 	/**
-	 *容器结束
-	 **/
+	 * 容器结束
+	 *
+	 */
 	$html .= '</div>';
 
 	return $html;
 }
 
 /**
- *@since 2019.05.26 bulma 颜色下拉选择
+ * @since 2019.05.26 bulma 颜色下拉选择
  */
 function wnd_dropdown_colors($name, $selected) {
 	$colors = [
@@ -140,32 +143,35 @@ function wnd_dropdown_colors($name, $selected) {
 }
 
 /**
- *@since 2019.05.05
- *Post gallery 相册展示
- *@param $post_id 			int 		相册所附属的文章ID
- *@param $thumbnail_width 	number 		缩略图宽度
- *@param $thumbnail_height 	number 		缩略图高度
- **/
+ * Post gallery 相册展示
+ * @since 2019.05.05
+ *
+ * @param $post_id          			int  		相册所附属的文章ID
+ * @param $thumbnail_width  	number 		缩略图宽度
+ * @param $thumbnail_height 	number 		缩略图高度
+ */
 function wnd_post_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120) {
 	return Wnd\View\Wnd_Gallery::build_post_gallery($post_id, $thumbnail_width, $thumbnail_height);
 }
 
 /**
- *@since 2020.07.15
- *User gallery 相册展示
- *@param $user_id 			int 		相册所附属的用户ID
- *@param $thumbnail_width 	number 		缩略图宽度
- *@param $thumbnail_height 	number 		缩略图高度
- **/
+ * User gallery 相册展示
+ * @since 2020.07.15
+ *
+ * @param $user_id          			int  		相册所附属的用户ID
+ * @param $thumbnail_width  	number 		缩略图宽度
+ * @param $thumbnail_height 	number 		缩略图高度
+ */
 function wnd_user_gallery($user_id, $thumbnail_width = 160, $thumbnail_height = 120) {
 	return Wnd\View\Wnd_Gallery::build_user_gallery($user_id, $thumbnail_width, $thumbnail_height);
 }
 
 /**
- *@since 2019.02.27 获取WndWP文章缩略图
- *@param int $post_id 	文章ID
- *@param int $width 	缩略图宽度
- *@param int $height 	缩略图高度
+ * @since 2019.02.27 获取WndWP文章缩略图
+ *
+ * @param int $post_id 	文章ID
+ * @param int $width   	缩略图宽度
+ * @param int $height  	缩略图高度
  */
 function wnd_post_thumbnail($post_id, $width, $height) {
 	$post_id = $post_id ?: get_the_ID();
@@ -180,9 +186,8 @@ function wnd_post_thumbnail($post_id, $width, $height) {
 }
 
 /**
- *@since 2020.03.21
- *
- *付费按钮
+ * 付费按钮
+ * @since 2020.03.21
  */
 function wnd_pay_button(WP_post $post, bool $with_paid_content, string $text = ''): string {
 	try {
@@ -194,8 +199,8 @@ function wnd_pay_button(WP_post $post, bool $with_paid_content, string $text = '
 }
 
 /**
- *构建消息
- *@since 2020.03.22
+ * 构建消息
+ * @since 2020.03.22
  */
 function wnd_message($message, $color = '', $is_centered = false): string {
 	if (!$message) {
@@ -210,8 +215,8 @@ function wnd_message($message, $color = '', $is_centered = false): string {
 }
 
 /**
- *构建系统通知
- *@since 2020.04.23
+ * 构建系统通知
+ * @since 2020.04.23
  */
 function wnd_notification($notification, $add_class = '', $delete = false): string {
 	if (!$notification) {
@@ -230,12 +235,13 @@ function wnd_notification($notification, $add_class = '', $delete = false): stri
 }
 
 /**
- *唤起 Modal
- *@since 2020.04.23
- *@param $text 		按钮文字
- *@param $module 	点击弹窗
- *@param $param  	传输参数
- *@param $add_calss class
+ * 唤起 Modal
+ * @since 2020.04.23
+ *
+ * @param $text      		按钮文字
+ * @param $module    	点击弹窗
+ * @param $param     	传输参数
+ * @param $add_calss class
  */
 function wnd_modal_button($text, $module, $param = [], $add_class = '') {
 	$class = 'button';
@@ -250,12 +256,13 @@ function wnd_modal_button($text, $module, $param = [], $add_class = '') {
 }
 
 /**
- *唤起 Modal
- *@since 0.8.73
- *@param $text 		按钮文字
- *@param $module 	点击弹窗
- *@param $param  	传输参数
- *@param $add_calss class
+ * 唤起 Modal
+ * @since 0.8.73
+ *
+ * @param $text      		按钮文字
+ * @param $module    	点击弹窗
+ * @param $param     	传输参数
+ * @param $add_calss class
  */
 function wnd_modal_link($text, $module, $param = [], $add_class = '') {
 	$class = '';
@@ -270,12 +277,13 @@ function wnd_modal_link($text, $module, $param = [], $add_class = '') {
 }
 
 /**
- *嵌入 Module
- *@since 0.8.73
- *@param $text 		按钮文字
- *@param $module 	点击弹窗
- *@param $param  	传输参数
- *@param $add_calss class
+ * 嵌入 Module
+ * @since 0.8.73
+ *
+ * @param $text      		按钮文字
+ * @param $module    	点击弹窗
+ * @param $param     	传输参数
+ * @param $add_calss class
  */
 function wnd_embed_link($container, $text, $module, $param = [], $add_class = '') {
 	$class = '';

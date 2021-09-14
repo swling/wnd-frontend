@@ -2,20 +2,19 @@
 namespace Wnd\Model;
 
 /**
- *@since 2019.09.27
- *万能的WordPress
+ * 万能的WordPress
  *
- *@since 2018.07
- *主要功能：
- *1、关联文章的分类和标签，获取当前分类下，文章所携带的标签、获取指定 taxonomy下所有分类，及各个分类对应的标签
- *2、单独数据表实现，增删term时，及删除文章时，实现同步更新
+ * 主要功能：
+ * - 1、关联文章的分类和标签，获取当前分类下，文章所携带的标签、获取指定 taxonomy下所有分类，及各个分类对应的标签
+ * - 2、单独数据表实现，增删term时，及删除文章时，实现同步更新
+ * 自定义分类法约定taxonomy：分类为 $post_type_cat 标签为：$post_type_tag
  *
- *自定义分类法约定taxonomy：分类为 $post_type_cat 标签为：$post_type_tag
+ * @since 2018.07
  */
 class Wnd_Tag_Under_Category {
 
 	/**
-	 *Hook
+	 * Hook
 	 */
 	public static function add_hook() {
 		add_action('set_object_terms', [__CLASS__, 'monitor_object_terms_changes'], 10, 6);
@@ -24,7 +23,7 @@ class Wnd_Tag_Under_Category {
 	}
 
 	/**
-	 *监听文章分类及标签更新
+	 * 监听文章分类及标签更新
 	 */
 	public static function monitor_object_terms_changes($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids) {
 		$post_type    = get_post_type($object_id);
@@ -101,7 +100,7 @@ class Wnd_Tag_Under_Category {
 	}
 
 	/**
-	 *删除文章时：更新tag under category数据
+	 * 删除文章时：更新tag under category数据
 	 */
 	public static function update_tag_under_category_when_post_delete($object_id) {
 		$post_type    = get_post_type($object_id);
@@ -132,13 +131,13 @@ class Wnd_Tag_Under_Category {
 	}
 
 	/**
-	 *删除term时，更新 tag under category数据
+	 * 删除term时，更新 tag under category数据
 	 */
 	public static function delete_term($term_id, $taxonomy) {
 		global $wpdb;
 
 		/**
-		 *删除标签
+		 * 删除标签
 		 */
 		if (strpos($taxonomy, '_tag')) {
 			// 删除对象缓存
@@ -158,7 +157,7 @@ class Wnd_Tag_Under_Category {
 			$wpdb->delete($wpdb->wnd_terms, ['tag_id' => $term_id]);
 
 			/**
-			 *删除分类
+			 * 删除分类
 			 */
 		} else {
 			// 删除对象缓存
@@ -180,7 +179,7 @@ class Wnd_Tag_Under_Category {
 	}
 
 	/**
-	 *写入标签和分类数据库
+	 * 写入标签和分类数据库
 	 */
 	protected static function update_tag_under_category($cat_id, $tag_id, $tag_taxonomy, $inc) {
 		global $wpdb;
@@ -231,10 +230,11 @@ class Wnd_Tag_Under_Category {
 	}
 
 	/**
-	 *@since 2019.03.24 获取标签数据
-	 *@param int 	$cat_id
-	 *@param string $tag_taxonomy
-	 *@param int 	$milit
+	 * @since 2019.03.24 获取标签数据
+	 *
+	 * @param int    	$cat_id
+	 * @param string $tag_taxonomy
+	 * @param int    	$milit
 	 */
 	public static function get_tags($cat_id, $tag_taxonomy, $limit = 50) {
 		// 获取缓存

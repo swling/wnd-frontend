@@ -5,10 +5,9 @@ use Exception;
 use Wnd\Getway\Wnd_Sms;
 
 /**
- *@since 2019.12.19
- *验证授权
- *
- *短信验证码
+ * 验证授权
+ * 短信验证码
+ * @since 2019.12.19
  */
 class Wnd_Auth_phone extends Wnd_Auth {
 
@@ -25,12 +24,13 @@ class Wnd_Auth_phone extends Wnd_Auth {
 	}
 
 	/**
-	 *@since 初始化
-	 *通过ajax发送短信
-	 *点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
-	 *@param string $this->identifier 	邮箱或手机
-	 *@param string $this->auth_code 		验证码
-	 *@return true|exception
+	 * 通过ajax发送短信
+	 * 点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
+	 * @since 初始化
+	 *
+	 * @param  string           $this->identifier 	邮箱或手机
+	 * @param  string           $this->auth_code  		验证码
+	 * @return true|exception
 	 */
 	protected function send_code() {
 		$sms = Wnd_Sms::get_instance();

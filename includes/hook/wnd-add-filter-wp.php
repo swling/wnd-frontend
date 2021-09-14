@@ -4,7 +4,7 @@ namespace Wnd\Hook;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
- *WP Filter
+ * WP Filter
  */
 class Wnd_Add_Filter_WP {
 
@@ -22,8 +22,8 @@ class Wnd_Add_Filter_WP {
 	}
 
 	/**
-	 *@since 2019.01.16
 	 * 限制wp editor上传附件
+	 * @since 2019.01.16
 	 */
 	public static function filter_limit_upload($file) {
 		// 排除后台
@@ -55,7 +55,8 @@ class Wnd_Add_Filter_WP {
 	}
 
 	/**
-	 *@since 2019.01.31 重写WordPress原生编辑链接到指定的页面
+	 * 重写WordPress原生编辑链接到指定的页面
+	 * @since 2019.01.31
 	 */
 	public static function filter_edit_post_link($link, $post_id, $context) {
 		if (is_admin()) {
@@ -70,8 +71,8 @@ class Wnd_Add_Filter_WP {
 	}
 
 	/**
-	 *@since 0.9.0
 	 * 重写插件定义的功能型非公开型 POST 链接，以通过 Module 展示相关详情
+	 * @since 0.9.0
 	 */
 	public static function filter_post_type_link($link, $post) {
 		if (is_admin()) {
@@ -87,10 +88,9 @@ class Wnd_Add_Filter_WP {
 	}
 
 	/**
-	 *@since 2019.04.03
-	 *apply_filters( 'wp_insert_post_data', $data, $postarr )
-	 *
+	 * apply_filters( 'wp_insert_post_data', $data, $postarr )
 	 * - 防止插入相同标题文章时（功能型post），反复查询post name，故此设置为随机值
+	 * @since 2019.04.03
 	 */
 	public static function filter_wp_insert_post_data($data, $postarr) {
 		if (empty($data['post_name'])) {
@@ -101,12 +101,11 @@ class Wnd_Add_Filter_WP {
 	}
 
 	/**
-	 *@since 2019.07.18
-	 *$data = apply_filters( 'wp_insert_attachment_data', $data, $postarr );
-	 *自动给上传的附件依次设置 menu_order
-	 *
-	 *menu order值为当前附属的post上传附件总次数
-	 *@see wnd_action_add_attachment
+	 * $data = apply_filters( 'wp_insert_attachment_data', $data, $postarr );
+	 * 自动给上传的附件依次设置 menu_order
+	 * menu order值为当前附属的post上传附件总次数
+	 * @see wnd_action_add_attachment
+	 * @since 2019.07.18
 	 */
 	public static function filter_wp_insert_attachment_data($data, $postarr) {
 		// 如果已经指定了menu order或者附件并未附属到post
@@ -121,11 +120,10 @@ class Wnd_Add_Filter_WP {
 	}
 
 	/**
-	 *@since 2019.01.16
-	 *注册用户的评论链接到作者页面
-	 *
-	 *@time 2020.08.16
-	 *新增检测用户是否存在，避免已删除用户的评论产生无效链接
+	 * 注册用户的评论链接到作者页面
+	 * @time 2020.08.16
+	 * 新增检测用户是否存在，避免已删除用户的评论产生无效链接
+	 * @since 2019.01.16
 	 */
 	public static function filter_comment_author_url($url, $id, $comment) {
 		if ($comment->user_id and get_user_by('id', $comment->user_id)) {
@@ -135,8 +133,8 @@ class Wnd_Add_Filter_WP {
 	}
 
 	/**
-	 *@since 初始化
 	 * 调用用户字段 avatar存储的图像id，或者avatar_url存储的图像地址做自定义头像，并添加用户主页链接
+	 * @since 初始化
 	 */
 	public static function filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 
@@ -163,8 +161,8 @@ class Wnd_Add_Filter_WP {
 				$avatar_id  = wnd_get_user_meta($user_id, 'avatar');
 				$avatar_url = wp_get_attachment_url($avatar_id) ?: $avatar_url;
 				/**
-				 *@since 2019.07.23
 				 * 统一按阿里云oss裁剪缩略图
+				 * @since 2019.07.23
 				 */
 				$avatar_url = wnd_get_thumbnail_url($avatar_url, $size, $size);
 			} elseif (wnd_get_user_meta($user_id, 'avatar_url')) {

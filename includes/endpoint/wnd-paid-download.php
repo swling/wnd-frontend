@@ -4,14 +4,14 @@ namespace Wnd\Endpoint;
 use Wnd\Model\Wnd_Order_Product;
 
 /**
- *@since 2019.02.12 文件校验下载
+ * @since 2019.02.12 文件校验下载
  */
 class Wnd_Paid_Download extends Wnd_Endpoint_Action {
 
 	protected function do() {
 		/**
-		 *@since 0.8.76
-		 *新增 SKU ID
+		 * 新增 SKU ID
+		 * @since 0.8.76
 		 */
 		$sku_id = $_REQUEST[Wnd_Order_Product::$sku_id_key] ?? '';
 

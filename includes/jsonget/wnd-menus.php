@@ -2,9 +2,8 @@
 namespace Wnd\JsonGet;
 
 /**
- *@since 0.9.11
- *
- *插件管理菜单
+ * 插件管理菜单
+ * @since 0.9.11
  */
 class Wnd_Menus extends Wnd_JsonGet {
 
@@ -70,7 +69,7 @@ class Wnd_Menus extends Wnd_JsonGet {
 	}
 
 	/**
-	 *前端页面 URL
+	 * 前端页面 URL
 	 */
 	protected static function get_front_page_url(): string {
 		return wnd_get_front_page_url();
