@@ -18,13 +18,14 @@ abstract class Wnd_Cloud_Client {
 	 * @since 0.9.36 当外部传入密匙时，覆盖后台设置
 	 */
 	public static function get_instance(string $service_provider, string $secret_id = '', string $secret_key = ''): CloudClient {
+		// 服务商
 		static::check_service_provider($service_provider);
-
 		$class_name = '\Wnd\Component\CloudClient\\' . $service_provider;
 		if (!class_exists($class_name)) {
 			throw new Exception(__('未定义', 'wnd') . ':' . $class_name);
 		}
 
+		// 密匙
 		if ($secret_id and !$secret_key) {
 			throw new Exception('missed secret key');
 		}
