@@ -23,8 +23,8 @@ abstract class CloudClient {
 	protected $body;
 	protected $response;
 
-	public function __construct(string $accessID, string $secretKey) {
-		$this->secretID  = $accessID;
+	public function __construct(string $secretID, string $secretKey) {
+		$this->secretID  = $secretID;
 		$this->secretKey = $secretKey;
 		$this->timestamp = time();
 	}
