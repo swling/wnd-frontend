@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Model;
 
-use Exception;
 use Wnd\Getway\Wnd_Sms;
 
 /**
@@ -20,17 +19,13 @@ class Wnd_Auth_phone extends Wnd_Auth {
 	public function __construct($identifier) {
 		parent::__construct($identifier);
 
-		$this->template = wnd_get_config('sms_template_v');
+		$this->template      = wnd_get_config('sms_template_v');
+		$this->identity_name = __('手机', 'wnd');
 	}
 
 	/**
 	 * 通过ajax发送短信
 	 * 点击发送按钮，通过js获取表单填写的手机号，检测并发送短信
-	 * @since 初始化
-	 *
-	 * @param  string           $this->identifier 	邮箱或手机
-	 * @param  string           $this->auth_code  		验证码
-	 * @return true|exception
 	 */
 	protected function send_code() {
 		$sms = Wnd_Sms::get_instance();

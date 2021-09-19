@@ -27,7 +27,7 @@ abstract class Wnd_Auth {
 	protected $identifier;
 
 	// 提示文字：邮箱 or 手机
-	protected static $text;
+	protected $identity_name;
 
 	// string 信息模板
 	protected $template;
@@ -54,12 +54,10 @@ abstract class Wnd_Auth {
 	 */
 	public static function get_instance(string $identifier): Wnd_Auth {
 		if (is_email($identifier)) {
-			static::$text = __('邮箱', 'wnd');
 			return new Wnd_Auth_Email($identifier);
 		}
 
 		if (wnd_is_mobile($identifier)) {
-			static::$text = __('手机', 'wnd');
 			return new Wnd_Auth_Phone($identifier);
 		}
 
@@ -124,7 +122,7 @@ abstract class Wnd_Auth {
 		// 注册
 		$temp_user = wnd_get_user_by($this->identifier);
 		if ('register' == $this->type and $temp_user) {
-			throw new Exception(static::$text . '&nbsp;' . __('已注册', 'wnd'));
+			throw new Exception($this->identity_name . '&nbsp;' . __('已注册', 'wnd'));
 		}
 
 		// 绑定
@@ -133,13 +131,30 @@ abstract class Wnd_Auth {
 				throw new Exception(__('请登录', 'wnd'));
 			}
 			if ($temp_user) {
-				throw new Exception(static::$text . '&nbsp;' . __('已注册', 'wnd'));
+				throw new Exception($this->identity_name . '&nbsp;' . __('已注册', 'wnd'));
 			}
 		}
 
 		// 找回密码
 		if ('reset_password' == $this->type and !$temp_user) {
-			throw new Exception(static::$text . '&nbsp;' . __('尚未注册', 'wnd'));
+			throw new Exception($this->identity_name . '&nbsp;' . __('尚未注册', 'wnd'));
+		}
+
+		/**
+		 * 已登录用户，且账户已绑定邮箱/手机，且验证类型不为bind（切换绑定邮箱）
+		 * 核查当前表单字段与用户已有数据是否一致（验证码核验需要指定手机或邮箱，故此不可省略手机或邮箱表单字段）
+		 */
+		if (!$this->user->ID or 'bind' == $this->type) {
+			return;
+		}
+
+		$user_identifier = ('email' == $this->identity_type) ? $this->user->user_email : wnd_get_user_phone($this->user->ID);
+		if (!$user_identifier) {
+			throw new Exception(__('当前账户未绑定', 'wnd') . $this->identity_name);
+		}
+
+		if ($this->identifier != $user_identifier) {
+			throw new Exception($this->identity_name . __('与当前账户不匹配', 'wnd'));
 		}
 	}
 
@@ -203,7 +218,7 @@ abstract class Wnd_Auth {
 		}
 
 		if (!$this->identifier) {
-			throw new Exception(__('未指定验证设备', 'wnd') . '&nbsp;' . static::$text);
+			throw new Exception(__('未指定验证设备', 'wnd') . '&nbsp;' . $this->identity_name);
 		}
 
 		if ($check_auth_code and empty($this->auth_code)) {
