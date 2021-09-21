@@ -273,7 +273,7 @@ apply_filters('wnd_default_thumbnail', WND_URL . 'static/images/default.jpg', $t
 
 ## 发送短信或邮件验证码权限
 ```php
-$can_send_code = apply_filters('wnd_can_send_code', ['status' => 1, 'msg' => '']);
+$can_send_code = apply_filters('wnd_can_send_auth_code', ['status' => 1, 'msg' => '']);
 ```
 
 ## 人机校验
