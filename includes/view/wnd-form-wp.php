@@ -187,7 +187,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 
 		// Action 层需要验证表单字段签名(需要完整包含 button data 属性名及固定值 action、device、人机验证字段 )
-		$data_keys = ['action', 'type', 'template', 'type_nonce', 'device_type', 'device', 'interval'];
+		$data_keys = ['action', 'type', 'template', 'device_type', 'device', 'interval'];
 		if ($this->enable_verification_captcha) {
 			$data_keys[] = Wnd_Captcha::$captcha_name;
 			$data_keys[] = Wnd_Captcha::$captcha_nonce_name;
