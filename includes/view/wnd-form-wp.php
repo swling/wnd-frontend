@@ -200,7 +200,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		$button .= ' data-action="wnd_send_auth_code"';
 		$button .= ' data-type="' . $type . '"';
 		$button .= ' data-template="' . $template . '"';
-		$button .= ' data-type_nonce="' . wp_create_nonce($device_type . $type) . '"';
 		$button .= ' data-device_type="' . $device_type . '"';
 		$button .= ' data-interval="' . wnd_get_config('min_verification_interval') . '"';
 		if ($this->enable_verification_captcha) {

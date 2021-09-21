@@ -16,11 +16,6 @@ class Wnd_Send_Auth_Code extends Wnd_Action {
 		$device_type = $this->data['device_type'] ?? '';
 		$template    = $this->data['template'] ?: wnd_get_config('sms_template_v');
 
-		// 防止前端篡改表单：校验验证码类型及接受设备
-		if (!wp_verify_nonce($this->data['type_nonce'], $device_type . $type)) {
-			throw new Exception(__('Nonce校验失败', 'wnd'));
-		}
-
 		// 检测对应手机或邮箱格式：防止在邮箱绑定中输入手机号，反之亦然
 		if (('email' == $device_type) and !is_email($device)) {
 			throw new Exception(__('邮箱地址无效', 'wnd'));
