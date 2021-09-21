@@ -773,13 +773,12 @@ function wnd_send_code(button, captcha_data_key = '') {
 
     let data = button.dataset;
     data.device = device_value;
-    formData = object_to_formdata(data);
     let style = 'is-success';
 
     axios({
         url: wnd_action_api + '/' + data.action,
         method: 'POST',
-        data: formData,
+        data: data,
     }).then(function(response) {
         if (response.data.status <= 0) {
             style = 'is-danger';
