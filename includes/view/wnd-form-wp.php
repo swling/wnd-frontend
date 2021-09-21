@@ -159,10 +159,10 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * 构建验证码字段
 	 * 注册时若当前手机已注册，则无法发送验证码
 	 * 找回密码时若当前手机未注册，则无法发送验证码
-	 * @param string 	$device_type                  					email / phone
-	 * @param string 	$type                         					register / reset_password / bind / verify
-	 * @param string 	$template                     						短信模板
-	 * @param bool   		$enable_verification_captcha 	获取验证码时是否进行人机校验
+	 * @param string 	$device_type                 	email / phone
+	 * @param string 	$type                        	register / reset_password / bind / verify
+	 * @param string 	$template                    	短信模板
+	 * @param bool   	$enable_verification_captcha 	获取验证码时是否进行人机校验
 	 */
 	protected function add_verification_field(string $device_type, string $type, string $template = '', bool $enable_verification_captcha = true) {
 		/**
@@ -187,15 +187,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		}
 
 		// Action 层需要验证表单字段签名(需要完整包含 button data 属性名及固定值 action、device、人机验证字段 )
-		$data_keys = [
-			'action',
-			'type',
-			'template',
-			'type_nonce',
-			'device_type',
-			'device',
-			'interval',
-		];
+		$data_keys = ['action', 'type', 'template', 'type_nonce', 'device_type', 'device', 'interval'];
 		if ($this->enable_verification_captcha) {
 			$data_keys[] = Wnd_Captcha::$captcha_name;
 			$data_keys[] = Wnd_Captcha::$captcha_nonce_name;
@@ -205,7 +197,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		// 构建发送按钮
 		$button = '<button type="button"';
 		$button .= ' class="send-code button is-outlined is-' . static::$primary_color . '"';
-		$button .= ' data-action="wnd_send_code"';
+		$button .= ' data-action="wnd_send_auth_code"';
 		$button .= ' data-type="' . $type . '"';
 		$button .= ' data-template="' . $template . '"';
 		$button .= ' data-type_nonce="' . wp_create_nonce($device_type . $type) . '"';
