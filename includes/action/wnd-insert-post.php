@@ -19,7 +19,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 	protected $update_post;
 
 	/**
-	 * ajax post $_POST name规则：
+	 * ajax post name规则：
 	 * post field：_post_{field}
 	 * post meta：
 	 * _meta_{key} (*自定义数组字段)
@@ -37,6 +37,12 @@ class Wnd_Insert_Post extends Wnd_Action {
 		$this->check_data();
 		$this->insert();
 
+		/**
+		 * 完成文章写入后
+		 * @since 0.9.37
+		 */
+		do_action('wnd_insert_post', $this->post_id, $this->data);
+
 		// 完成返回
 		$permalink    = get_permalink($this->post_id);
 		$redirect_to  = $_REQUEST['redirect_to'] ?? '';
@@ -51,7 +57,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 			],
 		];
 
-		return apply_filters('wnd_insert_post_return', $return_array, $this->post_data['post_type'], $this->post_id);
+		return apply_filters('wnd_insert_post_return', $return_array, $this->data, $this->post_id);
 	}
 
 	/**
@@ -78,7 +84,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 		 */
 		$this->post_data['post_type']   = $this->post_id ? $this->update_post->post_type : ($this->post_data['post_type'] ?? 'post');
 		$this->post_data['post_name']   = ($this->post_data['post_name'] ?? false) ?: ($this->post_id ? $this->update_post->post_name : uniqid());
-		$this->post_data['post_status'] = apply_filters('wnd_insert_post_status', 'pending', $this->post_data['post_type'], $this->post_id);
+		$this->post_data['post_status'] = apply_filters('wnd_insert_post_status', 'pending', $this->data, $this->post_id);
 	}
 
 	/**
@@ -113,7 +119,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 		}
 
 		// 写入及更新权限过滤
-		$can_insert_post = apply_filters('wnd_can_insert_post', ['status' => 1, 'msg' => ''], $this->post_data['post_type'], $this->post_id);
+		$can_insert_post = apply_filters('wnd_can_insert_post', ['status' => 1, 'msg' => ''], $this->data, $this->post_id);
 		if (0 === $can_insert_post['status']) {
 			throw new Exception($can_insert_post['msg']);
 		}

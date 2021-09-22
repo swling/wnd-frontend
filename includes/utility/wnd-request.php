@@ -107,7 +107,7 @@ class Wnd_Request {
 		 * @since 0.8.64
 		 */
 		if ($this->validate_captcha and isset($request[Wnd_Captcha::$captcha_name])) {
-			Wnd_Validator::validate_captcha();
+			Wnd_Validator::validate_captcha($request);
 		}
 
 		// 允许修改请求提交数据

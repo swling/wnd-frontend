@@ -3,7 +3,6 @@ namespace Wnd\Hook;
 
 use Exception;
 use Wnd\Getway\Wnd_Captcha;
-use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Mail;
 use Wnd\Model\Wnd_Order_Product;
@@ -22,7 +21,6 @@ class Wnd_Add_Action_WP {
 
 	private function __construct() {
 		add_action('wp_loaded', [__CLASS__, 'action_on_wp_loaded'], 10);
-		add_action('user_register', [__CLASS__, 'action_on_user_register'], 10, 1);
 		add_action('after_password_reset', [__CLASS__, 'action_on_password_reset'], 10, 1);
 		add_action('deleted_user', [__CLASS__, 'action_on_delete_user'], 10, 1);
 		add_action('before_delete_post', [__CLASS__, 'action_on_before_delete_post'], 10, 1);
@@ -55,21 +53,6 @@ class Wnd_Add_Action_WP {
 			wp_logout();
 			wp_die('账户已被封禁', get_option('blogname'));
 		}
-	}
-
-	/**
-	 * @since 初始化 用户注册后
-	 */
-	public static function action_on_user_register($user_id) {
-		// 注册类，将注册用户id写入对应数据表
-		$email_or_phone = $_POST['phone'] ?? $_POST['_user_user_email'] ?? '';
-		if (!$email_or_phone) {
-			return;
-		}
-
-		// 绑定邮箱或手机
-		$auth = Wnd_Auth::get_instance($email_or_phone);
-		$auth->bind_user($user_id);
 	}
 
 	/**
@@ -210,6 +193,6 @@ class Wnd_Add_Action_WP {
 			return;
 		}
 
-		Wnd_Validator::validate_captcha();
+		Wnd_Validator::validate_captcha($_POST);
 	}
 }

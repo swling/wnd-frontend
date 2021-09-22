@@ -22,7 +22,7 @@ class Wnd_Reg extends Wnd_Action {
 		static::check_data($user_data);
 
 		// 注册权限过滤挂钩
-		$user_can_reg = apply_filters('wnd_can_reg', ['status' => 1, 'msg' => '']);
+		$user_can_reg = apply_filters('wnd_can_reg', ['status' => 1, 'msg' => ''], $this->data);
 		if (0 === $user_can_reg['status']) {
 			return $user_can_reg;
 		}
@@ -32,6 +32,13 @@ class Wnd_Reg extends Wnd_Action {
 		if (is_wp_error($user_id)) {
 			throw new Exception($user_id->get_error_message());
 		}
+
+		/**
+		 * 注册完成
+		 * - 由于注册采用了 json 数据，故此设置，以传递数据
+		 * @since 0.9.37
+		 */
+		do_action('wnd_user_register', $user_id, $this->data);
 
 		// 写入用户自定义数组meta
 		$user_meta_data = $this->request->get_user_meta_data();

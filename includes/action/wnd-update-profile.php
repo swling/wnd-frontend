@@ -17,7 +17,7 @@ class Wnd_Update_Profile extends Wnd_Action_User {
 		$wp_user_meta_data = $this->request->get_wp_user_meta_data();
 
 		// 更新权限过滤挂钩
-		$user_can_update_profile = apply_filters('wnd_can_update_profile', ['status' => 1, 'msg' => '']);
+		$user_can_update_profile = apply_filters('wnd_can_update_profile', ['status' => 1, 'msg' => ''], $this->data);
 		if (0 === $user_can_update_profile['status']) {
 			return $user_can_update_profile;
 		}

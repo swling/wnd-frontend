@@ -29,7 +29,7 @@ class Wnd_Post {
 		 * @see Wnd\Action\Wnd_Insert_Post
 		 * @since 0.9.27
 		 */
-		$can_insert_post = apply_filters('wnd_can_insert_post', ['status' => 1, 'msg' => ''], $post_type, 0);
+		$can_insert_post = apply_filters('wnd_can_insert_post', ['status' => 1, 'msg' => ''], ['post_type' => $post_type, 'post_status' => 'auto-draft'], 0);
 		if (0 === $can_insert_post['status']) {
 			return 0;
 		}

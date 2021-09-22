@@ -59,6 +59,19 @@ function wnd_is_rest_request(): bool {
 }
 
 /**
+ * 获取 Json 请求数据
+ * @since 0.9.37
+ */
+function wnd_get_json_request(): array{
+	if (!wp_is_json_request()) {
+		return [];
+	}
+
+	$json = file_get_contents('php://input') ?: '{}';
+	return json_decode($json, true);
+}
+
+/**
  * 获取用户ip
  * @since 初始化
  *

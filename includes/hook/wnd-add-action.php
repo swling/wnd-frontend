@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Hook;
 
+use Wnd\Model\Wnd_Auth;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Form_Option;
@@ -13,11 +14,27 @@ class Wnd_Add_Action {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
+		add_action('wnd_user_register', [__CLASS__, 'action_on_user_register'], 10, 2);
 		add_action('wnd_login', [__CLASS__, 'action_on_login'], 10);
 		add_action('wnd_login_failed', [__CLASS__, 'action_on_login_failed'], 10);
 		add_action('wnd_upload_file', [__CLASS__, 'action_on_upload_file'], 10, 3);
 		add_action('wnd_upload_gallery', [__CLASS__, 'action_on_upload_gallery'], 10, 2);
 		add_action('wnd_delete_file', [__CLASS__, 'action_on_delete_file'], 10, 3);
+	}
+
+	/**
+	 * @since 初始化 用户注册后
+	 */
+	public static function action_on_user_register($user_id, $data) {
+		// 注册类，将注册用户id写入对应数据表
+		$email_or_phone = $data['phone'] ?? $data['_user_user_email'] ?? '';
+		if (!$email_or_phone) {
+			return;
+		}
+
+		// 绑定邮箱或手机
+		$auth = Wnd_Auth::get_instance($email_or_phone);
+		$auth->bind_user($user_id);
 	}
 
 	/**

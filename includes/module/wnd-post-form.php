@@ -33,7 +33,7 @@ abstract class Wnd_Post_Form extends Wnd_Module_Form {
 			// 发布权限检测
 		} else {
 			$ppc = Wnd_PPC::get_instance(static::$post_type);
-			$ppc->check_insert();
+			$ppc->check_create();
 		}
 	}
 }

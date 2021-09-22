@@ -595,7 +595,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                          * 
                          * @since 0.9.36
                          **/
-                        if (field.options.length) {
+                        if (field.options && Object.keys(field.options).length) {
                             data[name] = value;
                         } else {
                             data[name] = data[name] ? data[name] : [];

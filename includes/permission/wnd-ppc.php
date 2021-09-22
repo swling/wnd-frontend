@@ -78,6 +78,15 @@ class Wnd_PPC {
 	}
 
 	/**
+	 * 基础创建权限检查：登录
+	 */
+	public function check_create() {
+		if (!$this->user_id) {
+			throw new Exception('请登录');
+		}
+	}
+
+	/**
 	 * 基础写入权限检查：登录
 	 */
 	public function check_insert() {

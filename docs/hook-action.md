@@ -2,6 +2,16 @@
 本插件所有用户注册，及post写入更新等基础操作，底层均采用wp原生功能，因此相关原生Hook均可用。
 除此之外，插件自定义了一些功能，以及与之配套的Hook。
 
+## 文章
+```php
+/**
+ * 完成文章写入后
+ * @since 0.9.37
+ */
+do_action('wnd_insert_post', $this->post_id, $this->data);
+
+```
+
 ## 上传文件
 ```php
 ##单上传文件后
@@ -17,6 +27,13 @@ do_action('wnd_delete_file', $attachment_id, $post_parent, $meta_key);
 
 ## 用户
 ```php
+/**
+ * 注册完成
+ * - 由于注册采用了 json 数据，故此设置，以传递数据
+ * @since 0.9.37
+ */
+do_action('wnd_user_register', $user_id, $this->data);
+
 ##更新用户资料后 
 // 已废弃 请采用 WordPress官方 Hook : do_action( 'profile_update', $user_id, $old_user_data );
 // do_action('wnd_update_profile', $user_id);

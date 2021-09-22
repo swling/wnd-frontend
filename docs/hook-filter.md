@@ -3,8 +3,8 @@
 ```php
 // 预先在需要权限校验的地方，设置filter,若status 为 0，表示权限校验不通过，当前钩子所在函数操作会中断，将权限校验数组结果返回
 add_filter('wnd_can_insert_post', 'wnd_can_insert_post', 10, 3);
-function wnd_can_insert_post($default_return, $post_type, $update_id) {
-	if($post_type=='post'){
+function wnd_can_insert_post($default_return, $request_data, $update_id) {
+	if($request_data['_post_post_type'] == 'post'){
 		return ['status'=>0,'msg'=>'测试权限阻断:不能插入post类型的文章']
 	}
 }
@@ -14,26 +14,27 @@ function wnd_can_insert_post($default_return, $post_type, $update_id) {
 /**
 *@since 2019.03.16 Wnd_Request
 *过滤前端表单提交的数据，改操作在verify_form_nonce()校验通过后执行
-*$this->request = apply_filters('wnd_request', $_POST);
+*$this->request = apply_filters('wnd_request', $request_data);
 */
-apply_filters('wnd_request', $_POST)
+apply_filters('wnd_request', $request_data)
 
 /**
 *@since 2019.12.22
 *REST API 数据请求控制
 */
-apply_filters('wnd_request_controller', ['status' => 1], $request, $route);
+apply_filters('wnd_request_controller', ['status' => 1], $request_data, $route);
 ```
 
 ## 文章
 ```php
 ### 文章写入(默认直接通过，当$update_id有效，默认根据WordPress判断当前用户是否可以编辑)
-apply_filters('wnd_can_insert_post', ['status'=>1,'msg'=>''], $post_type, $update_id);
+apply_filters('wnd_can_insert_post', ['status'=>1,'msg'=>''], $request_data, $update_id);
+
 ####返回值过滤
-apply_filters('wnd_insert_post_return', $return_array, $post_type, $post_id);
+apply_filters('wnd_insert_post_return', $return_array, $request_data, $post_id);
 
 ###写入文章时的状态(默pending)
-apply_filters('wnd_insert_post_status', 'pending', $post_type, $update_id);
+apply_filters('wnd_insert_post_status', 'pending', $request_data, $update_id);
 
 ##更新文章状态权限 @since 2019.01.21(默认根据WordPress判断当前用户是否可以编辑文章)
 apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_status );
@@ -101,7 +102,7 @@ apply_filters('wnd_can_download', ['status' => 1, 'msg' => ''], $post_id);
 ## 用户
 ```php
 ###用户注册(默认通过)
-apply_filters('wnd_can_reg', ['status'=>1,'msg'=>'']);
+apply_filters('wnd_can_reg', ['status'=>1,'msg'=>''], $request_data);
 ###返回值过滤
 apply_filters('wnd_reg_return',  ['status' => 3, 'msg' => $redirect_to], $user_id);
 
@@ -109,12 +110,12 @@ apply_filters('wnd_reg_return',  ['status' => 3, 'msg' => $redirect_to], $user_i
 apply_filters('wnd_can_login', ['status'=>1,'msg'=>''], $user);
 
 ###用户更新资料
-apply_filters('wnd_can_update_profile', ['status'=>1,'msg'=>'']);
+apply_filters('wnd_can_update_profile', ['status'=>1,'msg'=>''], $request_data);
 ####返回值过滤
 apply_filters('wnd_update_profile_return', ['status' => 1, 'msg' => '更新成功'], $user_id);
 
 ##用户更新账户：邮箱，密码
-apply_filters('wnd_can_update_account', ['status'=>1,'msg'=>'']);
+apply_filters('wnd_can_update_account', ['status'=>1,'msg'=>''], $request_data);
 ####用户更新返回值
 apply_filters('wnd_update_account_return', ['status' => 1, 'msg' => '更新成功'], $user_id);
 
@@ -273,7 +274,7 @@ apply_filters('wnd_default_thumbnail', WND_URL . 'static/images/default.jpg', $t
 
 ## 发送短信或邮件验证码权限
 ```php
-$can_send_code = apply_filters('wnd_can_send_auth_code', ['status' => 1, 'msg' => '']);
+$can_send_code = apply_filters('wnd_can_send_auth_code', ['status' => 1, 'msg' => ''], $request_data);
 ```
 
 ## 人机校验

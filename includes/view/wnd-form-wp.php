@@ -10,7 +10,7 @@ use Wnd\View\Wnd_Gallery;
  * 适配本插件的ajax表单类
  * 常规情况下，未选中的checkbox 和radio等字段不会出现在提交的表单数据中
  * 在本环境中，为实现字段name nonce校验，未选中的字段也会发送一个空值到后台（通过 hidden字段实现），在相关数据处理上需要注意
- * 为保障表单不被前端篡改，会提取所有字段的name值，结合算法生成校验码，后端通过同样的方式提取$_POST数据，并做校验
+ * 为保障表单不被前端篡改，会提取所有字段的name值，结合算法生成校验码，后端通过同样的方式提取数据，并做校验
  * @since 2019.03.08
  */
 class Wnd_Form_WP extends Wnd_Form {
@@ -125,26 +125,6 @@ class Wnd_Form_WP extends Wnd_Form {
 	 */
 	public function add_input_name(string $name) {
 		$this->form_names[] = $name;
-	}
-
-	/**
-	 * 未被选中的radio 与checkbox将不会发送到后端，会导致wnd_form_nonce 校验失败，此处通过设置hidden字段修改
-	 * - 注意：需要此设置生效，则必须在新增字段之前配置 set_action($action, 'GET')，以修改 $this->method 值
-	 * @since 2019.05.09
-	 * @since 0.8.76 GET 表单不设置。
-	 */
-	public function add_radio(array $args) {
-		if ('GET' != $this->method) {
-			$this->add_hidden($args['name'], '');
-		}
-		parent::add_radio($args);
-	}
-
-	public function add_checkbox(array $args) {
-		if ('GET' != $this->method) {
-			$this->add_hidden($args['name'], '');
-		}
-		parent::add_checkbox($args);
 	}
 
 	// 富文本编辑器可能需要上传文件操作新增 nonce

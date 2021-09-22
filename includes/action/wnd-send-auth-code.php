@@ -25,7 +25,7 @@ class Wnd_Send_Auth_Code extends Wnd_Action {
 		}
 
 		// 发送权限过滤
-		$can_send_code = apply_filters('wnd_can_send_auth_code', ['status' => 1, 'msg' => '']);
+		$can_send_code = apply_filters('wnd_can_send_auth_code', ['status' => 1, 'msg' => ''], $this->data);
 		if (0 === $can_send_code['status']) {
 			return $can_send_code;
 		}

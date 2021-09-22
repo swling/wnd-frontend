@@ -34,7 +34,7 @@ class Wnd_Update_Account extends Wnd_Action_User {
 		}
 
 		// 更新权限过滤挂钩
-		$user_can_update_account = apply_filters('wnd_can_update_account', ['status' => 1, 'msg' => '']);
+		$user_can_update_account = apply_filters('wnd_can_update_account', ['status' => 1, 'msg' => ''], $this->data);
 		if (0 === $user_can_update_account['status']) {
 			return $user_can_update_account;
 		}

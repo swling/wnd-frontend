@@ -293,7 +293,7 @@ class Wnd_Form {
 	// checkbox
 	public function add_checkbox(array $args) {
 		$args['type']    = 'checkbox';
-		$args['checked'] = [];
+		$args['checked'] = $args['checked'] ?: [];
 		$this->add_field($args);
 	}
 
