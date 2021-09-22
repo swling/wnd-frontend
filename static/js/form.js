@@ -610,14 +610,12 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         continue;
                     }
 
-                    // 字符串数据
-                    if (!value.length) {
+                    if ('string' == typeof value && !value.length) { // 字符串数据
                         can_submit = false;
-                    };
-
-                    // 数组数据：数组只有一个值，且为空值
-                    if (Array.isArray(value) && 1 == value.length && !value[0]) {
+                    } else if (Array.isArray(value) && 1 == value.length && !value[0]) { // 数组数据：数组只有一个值，且为空值
                         can_submit = false;
+                    } else { // 布尔值或数值
+                        can_submit = value;
                     }
 
                     if (!can_submit) {
