@@ -58,8 +58,14 @@ class Wnd_Order_Anonymous extends Wnd_Order {
 		$key           = static::generate_object_cookie_key($this->object_id);
 		$cookies[$key] = ['value' => $this->transaction_slug, 'time' => time()];
 
+		/**
+		 * 匿名订单cookie作用域名
+		 * @since 0.9.37.1
+		 */
+		$domain         = parse_url(home_url())['host'];
+		$domain         = apply_filters('wnd_anonymous_order_domain', $domain);
 		$cookies_string = json_encode($cookies);
-		return setcookie(LOGGED_IN_COOKIE, $cookies_string, static::$valid_period + time(), '/');
+		return setcookie(LOGGED_IN_COOKIE, $cookies_string, static::$valid_period + time(), '/', $domain);
 	}
 
 	/**

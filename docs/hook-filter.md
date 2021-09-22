@@ -176,6 +176,13 @@ apply_filters('wnd_get_order_commission', $commission, $order_id);
 */
 apply_filters('wnd_get_post_price', $price, $post_id, $sku_id);
 
+
+/**
+ * @since 0.9.37.1
+ * 匿名订单cookie作用域名
+ **/
+apply_filters('wnd_anonymous_order_domain', $domain)
+
 ```
 ## 支付
 ### UI端拓展支付接口
