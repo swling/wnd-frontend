@@ -546,6 +546,35 @@ function _wnd_render_form(container, form_json, add_class = '') {
             },
             // 提交
             submit: function(e) {
+
+                /**
+                 * 提取表单数据
+                 * @since 0.9.36
+                 * 变量如果不为0，null，undefined，false，都会被处理为true。只要变量有非0的值或是某个对象，数组，字符串，都会认为true
+                 **/
+                function get_value(field) {
+                    let value = '';
+                    if (field.value) {
+                        return field.value;
+                    }
+
+                    // 单选复选：数组或字符串或数字
+                    if (field.checked) {
+                        if ('object' != typeof(field.checked) || field.checked.length) {
+                            return field.checked;
+                        }
+                    }
+
+                    // 下拉：数组或字符串或数字
+                    if (field.selected) {
+                        if ('object' != typeof(field.selected) || field.selected.length) {
+                            return field.selected;
+                        }
+                    }
+
+                    return value;
+                }
+
                 this.form.submit.attrs.class = form_json.submit.attrs.class + ' is-loading';
 
                 // Captcha 验证提交
@@ -569,14 +598,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                      * 提取表单数据
                      * @since 0.9.36
                      **/
-                    let value = '';
-                    if (field.value) {
-                        value = field.value;
-                    } else if (field.checked && field.checked.length) {
-                        value = field.checked;
-                    } else if (field.selected && field.selected.length) {
-                        value = field.selected;
-                    }
+                    let value = get_value(field);
                     value = 'object' == typeof(value) ? Object.values(value) : value
 
                     /**
