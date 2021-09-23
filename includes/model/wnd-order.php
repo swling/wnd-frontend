@@ -142,7 +142,7 @@ class Wnd_Order extends Wnd_Transaction {
 		wnd_inc_user_expense($user_id, $total_amount);
 
 		// 站内直接消费，无需支付平台支付校验，记录扣除账户余额、在线支付则不影响当前余额
-		if (!Wnd_Payment_Getway::get_payment_gateway($ID)) {
+		if (Wnd_Payment_Getway::is_internal_payment($ID)) {
 			wnd_inc_user_money($user_id, $total_amount * -1, false);
 		}
 
