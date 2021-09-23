@@ -5,6 +5,7 @@ use Exception;
 use Wnd\Getway\Wnd_Captcha;
 use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Mail;
+use Wnd\Model\Wnd_Order_Anonymous;
 use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\Model\Wnd_User;
@@ -41,6 +42,13 @@ class Wnd_Add_Action_WP {
 		 * 分类关联标签
 		 */
 		Wnd_Tag_Under_Category::add_hook();
+
+		/**
+		 * 登录成功设置cookie之前，删除匿名订单的cookie
+		 * do_action( 'set_auth_cookie', $auth_cookie, $expire, $expiration, $user_id, $scheme, $token );
+		 * @since 0.9.37
+		 */
+		add_action('set_auth_cookie', [__CLASS__, 'action_before_login_success'], 10);
 	}
 
 	/**
@@ -194,5 +202,17 @@ class Wnd_Add_Action_WP {
 		}
 
 		Wnd_Validator::validate_captcha($_POST);
+	}
+
+	/**
+	 * 登录成功设置cookie之前，删除匿名订单的cookie
+	 * @since 0.9.37
+	 */
+	public static function action_before_login_success() {
+		if (!wnd_get_config('enable_anon_order')) {
+			return;
+		}
+
+		Wnd_Order_Anonymous::delete_anon_cookie();
 	}
 }

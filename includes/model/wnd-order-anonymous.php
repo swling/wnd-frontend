@@ -60,12 +60,36 @@ class Wnd_Order_Anonymous extends Wnd_Order {
 
 		/**
 		 * 匿名订单cookie作用域名
+		 *
+		 * Domain 属性
+		 * Domain 指定了哪些主机可以接受 Cookie。如果不指定，默认为 origin，不包含子域名。
+		 * 如果指定了Domain，则一般包含子域名。因此，指定 Domain 比省略它的限制要少。但是，当子域需要共享有关用户的信息时，这可能会有所帮助。
+		 * 例如，如果设置 Domain=mozilla.org，则 Cookie 也包含在子域名中（如developer.mozilla.org）。
+		 * 当前大多数浏览器遵循 RFC 6265，设置 Domain 时 不需要加前导点。浏览器不遵循该规范，则需要加前导点，例如：Domain=.mozilla.org
+		 * @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Cookies#cookie_%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F
 		 * @since 0.9.37.1
 		 */
-		$domain         = parse_url(home_url())['host'];
-		$domain         = apply_filters('wnd_anonymous_order_domain', $domain);
+		$domain         = static::get_anon_cookie_domain();
 		$cookies_string = json_encode($cookies);
 		return setcookie(LOGGED_IN_COOKIE, $cookies_string, static::$valid_period + time(), '/', $domain);
+	}
+
+	/**
+	 * 删除匿名订单 cookie
+	 * @since 0.9.37
+	 */
+	public static function delete_anon_cookie() {
+		$domain = static::get_anon_cookie_domain();
+		setcookie(LOGGED_IN_COOKIE, '', time() - 1, '/', $domain);
+	}
+
+	/**
+	 * 匿名订单 cookie 作用域
+	 * @since 0.9.37
+	 */
+	public static function get_anon_cookie_domain(): string{
+		$domain = parse_url(home_url())['host'];
+		return apply_filters('wnd_anonymous_order_domain', $domain);
 	}
 
 	/**
