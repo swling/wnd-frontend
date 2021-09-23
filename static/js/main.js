@@ -505,6 +505,11 @@ function wnd_alert_msg(msg, time = 0) {
     }
 }
 
+function wnd_alert_notification(content, add_class = '') {
+    add_class = add_class ? ('notification ' + add_class) : 'notification';
+    wnd_alert_modal('<div class="notification is-light is-danger">' + content + '</div>', false);
+}
+
 // 初始化对话框
 function wnd_reset_modal() {
     let modal = document.querySelector('#modal');

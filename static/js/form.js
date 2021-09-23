@@ -463,6 +463,11 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     method: 'post',
                     data: data,
                 }).then(response => {
+                    if (response.data.status <= 0) {
+                        wnd_alert_notification(response.data.msg, 'is-danger');
+                        return false;
+                    }
+
                     field.thumbnail = form_json.fields[index].default_thumbnail;
                     field.file_name = wnd.msg.deleted;
                     field.file_id = 0;
