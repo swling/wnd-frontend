@@ -6,11 +6,11 @@ use Wnd\Model\Wnd_Post;
 
 class Wnd_Update_Post_Status extends Wnd_Action {
 
-	protected $post_id;
-	protected $after_status;
-	protected $remarks;
-	protected $stick_post;
-	protected $before_post;
+	private $post_id;
+	private $after_status;
+	private $remarks;
+	private $stick_post;
+	private $before_post;
 
 	/**
 	 * 前端快速更改文章状态
@@ -20,6 +20,15 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 	 * @return array
 	 */
 	public function execute(): array{
+		// 更新Post
+		if ('delete' == $this->after_status) {
+			return $this->delete_post();
+		} else {
+			return $this->update_status();
+		}
+	}
+
+	protected function check() {
 		// 获取数据
 		$this->post_id      = (int) $this->data['post_id'];
 		$this->after_status = $this->data['post_status'];
@@ -37,24 +46,17 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 		}
 
 		// 权限检测
-		$can_array              = ['status' => current_user_can('edit_post', $this->post_id) ? 1 : 0, 'msg' => __('权限错误', 'wnd')];
-		$can_update_post_status = apply_filters('wnd_can_update_post_status', $can_array, $this->before_post, $this->after_status);
-		if (0 === $can_update_post_status['status']) {
-			return $can_update_post_status;
-		}
-
-		// 更新Post
-		if ('delete' == $this->after_status) {
-			return $this->delete_post();
-		} else {
-			return $this->update_status();
+		$can_array = ['status' => current_user_can('edit_post', $this->post_id) ? 1 : 0, 'msg' => __('权限错误', 'wnd')];
+		$can       = apply_filters('wnd_can_update_post_status', $can_array, $this->before_post, $this->after_status);
+		if (0 === $can['status']) {
+			throw new Exception($can['msg']);
 		}
 	}
 
 	/**
 	 * 更新状态
 	 */
-	protected function update_status() {
+	private function update_status() {
 		//执行更新：如果当前post为自定义版本，将版本数据更新到原post
 		if ('publish' == $this->after_status and Wnd_Post::is_revision($this->post_id)) {
 			$update = Wnd_Post::restore_post_revision($this->post_id, $this->after_status);
@@ -81,7 +83,7 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 	/**
 	 * 删除文章 无论是否设置了$force_delete 自定义类型的文章都会直接被删除
 	 */
-	protected function delete_post() {
+	private function delete_post() {
 		$delete = wp_delete_post($this->post_id, true);
 		if ($delete) {
 			$this->send_mail();
@@ -95,7 +97,7 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 	/**
 	 * @since 2019.06.11 置顶操作
 	 */
-	protected function stick_post() {
+	private function stick_post() {
 		if (wnd_is_manager()) {
 			return;
 		}
@@ -112,7 +114,7 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 	 * 站内信
 	 * @since 2020.05.23
 	 */
-	protected function send_mail() {
+	private function send_mail() {
 		if ($this->user_id == $this->before_post->post_author) {
 			return false;
 		}

@@ -10,7 +10,18 @@ use Wnd\Model\Wnd_Auth;
  */
 class Wnd_Reset_Password extends Wnd_Action {
 
+	private $target_user;
+	private $new_password;
+
 	public function execute(): array{
+		reset_password($this->target_user, $this->new_password);
+		return [
+			'status' => $this->user_id ? 4 : 1,
+			'msg'    => __('密码修改成功', 'wnd') . '&nbsp;' . wnd_modal_link(__('登录', 'wnd'), 'wnd_login_form'),
+		];
+	}
+
+	protected function check() {
 		$email_or_phone      = $this->data['_user_user_email'] ?? $this->data['phone'] ?? '';
 		$new_password        = $this->data['_user_new_pass'] ?? '';
 		$new_password_repeat = $this->data['_user_new_pass_repeat'] ?? '';
@@ -23,10 +34,11 @@ class Wnd_Reset_Password extends Wnd_Action {
 		} elseif ($new_password_repeat != $new_password) {
 			throw new Exception(__('两次输入的新密码不匹配', 'wnd'));
 		}
+		$this->new_password = $new_password;
 
 		//获取用户
-		$user = wnd_get_user_by($email_or_phone);
-		if (!$user) {
+		$this->target_user = wnd_get_user_by($email_or_phone);
+		if (!$this->target_user) {
 			throw new Exception(__('账户未注册', 'wnd'));
 		}
 
@@ -40,11 +52,5 @@ class Wnd_Reset_Password extends Wnd_Action {
 		$auth->set_type('reset_password');
 		$auth->set_auth_code($auth_code);
 		$auth->verify();
-
-		reset_password($user, $new_password);
-		return [
-			'status' => $this->user_id ? 4 : 1,
-			'msg'    => __('密码修改成功', 'wnd') . '&nbsp;' . wnd_modal_link(__('登录', 'wnd'), 'wnd_login_form'),
-		];
 	}
 }

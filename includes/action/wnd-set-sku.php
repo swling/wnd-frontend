@@ -10,25 +10,27 @@ use Wnd\Model\Wnd_SKU;
  */
 class Wnd_Set_SKU extends Wnd_Action_User {
 
-	public function execute(int $post_id = 0): array{
-		if (!$post_id) {
-			$post_id = $this->data['post_id'] ?? 0;
-		}
+	private $post_id;
 
-		if (wnd_get_post_price($post_id)) {
+	public function execute(): array{
+		Wnd_SKU::set_object_sku($this->post_id, $this->data);
+
+		return ['status' => 1, 'msg' => __('设置成功', 'wnd')];
+	}
+
+	protected function check() {
+		$this->post_id = $this->data['post_id'] ?? 0;
+
+		if (wnd_get_post_price($this->post_id)) {
 			throw new Exception(__('当前商品已设置固定价格', 'wnd'));
 		}
 
-		if (!$post_id or !get_post($post_id)) {
+		if (!$this->post_id or !get_post($this->post_id)) {
 			throw new Exception(__('ID 无效', 'wnd'));
 		}
 
-		if (!current_user_can('edit_post', $post_id)) {
+		if (!current_user_can('edit_post', $this->post_id)) {
 			throw new Exception(__('权限错误', 'wnd'));
 		}
-
-		Wnd_SKU::set_object_sku($post_id, $this->data);
-
-		return ['status' => 1, 'msg' => __('设置成功', 'wnd')];
 	}
 }

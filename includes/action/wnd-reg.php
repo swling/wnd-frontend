@@ -14,21 +14,13 @@ use Exception;
  */
 class Wnd_Reg extends Wnd_Action {
 
+	private $user_data;
+	private $user_meta_data;
+	private $wp_user_meta_data;
+
 	public function execute(): array{
-		$user_data               = $this->request->get_user_data();
-		$user_data['user_login'] = $user_data['user_login'] ?? wnd_generate_login();
-
-		// 检查表单数据
-		static::check_data($user_data);
-
-		// 注册权限过滤挂钩
-		$user_can_reg = apply_filters('wnd_can_reg', ['status' => 1, 'msg' => ''], $this->data);
-		if (0 === $user_can_reg['status']) {
-			return $user_can_reg;
-		}
-
 		// 写入新用户
-		$user_id = wp_insert_user($user_data);
+		$user_id = wp_insert_user($this->user_data);
 		if (is_wp_error($user_id)) {
 			throw new Exception($user_id->get_error_message());
 		}
@@ -41,15 +33,13 @@ class Wnd_Reg extends Wnd_Action {
 		do_action('wnd_user_register', $user_id, $this->data);
 
 		// 写入用户自定义数组meta
-		$user_meta_data = $this->request->get_user_meta_data();
-		if (!empty($user_meta_data)) {
-			wnd_update_user_meta_array($user_id, $user_meta_data);
+		if ($this->user_meta_data) {
+			wnd_update_user_meta_array($user_id, $this->user_meta_data);
 		}
 
 		// 写入WordPress原生用户字段
-		$wp_user_meta_data = $this->request->get_wp_user_meta_data();
-		if (!empty($wp_user_meta_data)) {
-			foreach ($wp_user_meta_data as $key => $value) {
+		if ($this->wp_user_meta_data) {
+			foreach ($this->wp_user_meta_data as $key => $value) {
 				update_user_meta($user_id, $key, $value);
 			}
 			unset($key, $value);
@@ -67,10 +57,26 @@ class Wnd_Reg extends Wnd_Action {
 		return $return_array;
 	}
 
+	protected function check() {
+		$this->user_data               = $this->request->get_user_data();
+		$this->user_data['user_login'] = $this->user_data['user_login'] ?? wnd_generate_login();
+		$this->user_meta_data          = $this->request->get_user_meta_data();
+		$this->wp_user_meta_data       = $this->request->get_wp_user_meta_data();
+
+		// 检查表单数据
+		static::check_data($this->user_data);
+
+		// 注册权限过滤挂钩
+		$user_can_reg = apply_filters('wnd_can_reg', ['status' => 1, 'msg' => ''], $this->data);
+		if (0 === $user_can_reg['status']) {
+			throw new Exception($user_can_reg['msg']);
+		}
+	}
+
 	/**
 	 * 检查数据
 	 */
-	protected static function check_data(array $user_data) {
+	private static function check_data(array $user_data) {
 		if (isset($user_data['user_login'])) {
 			if (strlen($user_data['user_login']) < 3) {
 				throw new Exception(__('用户名不能低于3位', 'wnd'));

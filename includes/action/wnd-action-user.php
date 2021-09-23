@@ -2,6 +2,7 @@
 namespace Wnd\Action;
 
 use Exception;
+use WP_REST_Request;
 
 /**
  * 注册用户 Ajax 操作基类
@@ -9,13 +10,11 @@ use Exception;
  */
 abstract class Wnd_Action_User extends Wnd_Action {
 
-	/**
-	 * 权限检测
-	 * @since 0.8.66
-	 */
-	protected function check() {
-		if (!$this->user_id) {
-			throw new Exception(__('请登录', 'wnd'));
+	public function __construct(WP_REST_Request $wp_rest_request) {
+		if (!is_user_logged_in()) {
+			throw new Exception(__('权限不足', 'wnd'));
 		}
+
+		parent::__construct($wp_rest_request);
 	}
 }
