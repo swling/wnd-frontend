@@ -4,37 +4,20 @@ namespace Wnd\Action;
 use Exception;
 use Wnd\Model\Wnd_Post;
 
+/**
+ * 写入或更新 WP Post
+ * @since 初始化
+ */
 class Wnd_Insert_Post extends Wnd_Action {
 
-	protected $post_data;
+	private $post_data;
+	private $meta_data;
+	private $wp_meta_data;
+	private $terms_data;
+	private $post_id;
+	private $update_post;
 
-	protected $meta_data;
-
-	protected $wp_meta_data;
-
-	protected $terms_data;
-
-	protected $post_id;
-
-	protected $update_post;
-
-	/**
-	 * ajax post name规则：
-	 * post field：_post_{field}
-	 * post meta：
-	 * _meta_{key} (*自定义数组字段)
-	 * _wpmeta_{key} (*WordPress原生字段)
-	 * _term_{taxonomy}(*taxonomy)
-	 * 保存提交数据
-	 *
-	 * @see README.md
-	 * @since 初始化
-	 *
-	 * @return 	array 	操作结果
-	 */
 	public function execute(): array{
-		$this->parse_data();
-		$this->check_data();
 		$this->insert();
 
 		/**
@@ -60,10 +43,15 @@ class Wnd_Insert_Post extends Wnd_Action {
 		return apply_filters('wnd_insert_post_return', $return_array, $this->data, $this->post_id);
 	}
 
+	protected function check() {
+		$this->parse_data();
+		$this->check_data();
+	}
+
 	/**
 	 * 解析提交数据
 	 */
-	protected function parse_data() {
+	private function parse_data() {
 		$this->post_data    = $this->request->get_post_data();
 		$this->meta_data    = $this->request->get_post_meta_data();
 		$this->wp_meta_data = $this->request->get_wp_post_meta_data();
@@ -90,7 +78,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 	/**
 	 * 更新权限判断
 	 */
-	protected function check_data() {
+	private function check_data() {
 		if ($this->post_id) {
 			if (!$this->update_post) {
 				throw new Exception(__('ID无效', 'wnd'));
@@ -128,7 +116,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 	/**
 	 * 写入数据
 	 */
-	protected function insert() {
+	private function insert() {
 		// 创建revision 该revision不同于WordPress原生revision：创建一个同类型Post，设置post parent，并设置wp post meta
 		if ($this->should_be_update_reversion()) {
 			$this->post_data['ID']                                 = Wnd_Post::get_revision_id($this->post_id);
@@ -169,7 +157,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 	 * 判断是否应该创建一个版本
 	 * @since 2020.05.20
 	 */
-	protected function should_be_update_reversion(): bool {
+	private function should_be_update_reversion(): bool {
 		// 非更新
 		if (!$this->update_post) {
 			return false;
