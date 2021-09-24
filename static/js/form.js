@@ -594,6 +594,8 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         continue;
                     }
 
+                    let require_check = true;
+
                     /**
                      * 提取表单数据
                      * @since 0.9.36
@@ -638,17 +640,18 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     }
 
                     if ('string' == typeof value && !value.length) { // 字符串数据
-                        can_submit = false;
+                        require_check = false;
                     } else if (Array.isArray(value) && 1 == value.length && !value[0]) { // 数组数据：数组只有一个值，且为空值
-                        can_submit = false;
-                    } else { // 布尔值或数值
-                        can_submit = value;
+                        require_check = false;
+                    } else if (!value && 0 !== value) { // 布尔值或数值
+                        require_check = false;
                     }
 
-                    if (!can_submit) {
+                    if (!require_check) {
                         field.class = form_json.fields[index].class + ' is-danger';
                         field.help.class = form_json.fields[index].help.class + ' is-danger';
                         field.help.text = form_json.fields[index].help.text + ' ' + wnd.msg.required;
+                        can_submit = false;
                     }
                 }
 
