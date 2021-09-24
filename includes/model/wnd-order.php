@@ -41,6 +41,10 @@ class Wnd_Order extends Wnd_Transaction {
 	 * @since 0.9.32
 	 */
 	protected function generate_transaction_data() {
+		if (!$this->object_id) {
+			throw new Exception(__('Object ID 无效', 'wnd'));
+		}
+
 		/**
 		 * 处理订单 SKU 属性
 		 * @since 0.8.76
@@ -90,7 +94,7 @@ class Wnd_Order extends Wnd_Transaction {
 		$transaction = parent::create($is_completed);
 
 		// 保存订单产品属性
-		if ($this->props and $this->object_id) {
+		if ($this->props) {
 			Wnd_Order_Product::set_order_props($this->transaction_id, $this->props);
 		}
 
@@ -99,7 +103,7 @@ class Wnd_Order extends Wnd_Transaction {
 		 * - 更新订单统计
 		 * - 更新库存统计
 		 */
-		if ($this->is_new_order and $this->object_id) {
+		if ($this->is_new_order) {
 			/**
 			 * 新增订单统计
 			 * 插入订单时，无论订单状态均新增订单统计，以实现某些场景下需要限定订单总数时，锁定数据，预留支付时间
