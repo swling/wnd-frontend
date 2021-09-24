@@ -13,15 +13,15 @@ use Wnd\Model\Wnd_Transaction;
  */
 class Wnd_Do_Payment extends Wnd_Action {
 
-	protected $post_id;
-	protected $sku_id;
-	protected $quantity;
-	protected $type;
+	private $post_id;
+	private $sku_id;
+	private $quantity;
+	private $type;
 
-	protected $internal;
-	protected $total_amount;
-	protected $payment_gateway;
-	protected $subject;
+	private $internal;
+	private $total_amount;
+	private $payment_gateway;
+	private $subject;
 
 	public function execute(): array{
 		// 定义是否为站内交易
@@ -94,7 +94,7 @@ class Wnd_Do_Payment extends Wnd_Action {
 	 * 解析交易数据
 	 * @since 0.9.36
 	 */
-	protected function parse_data() {
+	private function parse_data() {
 		// 基本数据
 		$this->post_id  = $this->data['post_id'] ?? 0;
 		$this->sku_id   = $this->data[Wnd_Order_Product::$sku_id_key] ?? '';
@@ -114,7 +114,7 @@ class Wnd_Do_Payment extends Wnd_Action {
 	 * - 典型场景如各类针对特定商品的购买订单
 	 * - 反之如余额充值类，则为非产品订单
 	 */
-	protected function check_product_payment() {
+	private function check_product_payment() {
 		// 订单属性检测
 		if ($this->quantity <= 0) {
 			throw new Exception(__('订单 Quantity 无效', 'wnd'));
@@ -145,7 +145,7 @@ class Wnd_Do_Payment extends Wnd_Action {
 	 * - 典型如余额充值
 	 *
 	 */
-	protected function check_none_product_payment() {
+	private function check_none_product_payment() {
 		if (!$this->total_amount) {
 			throw new Exception(__('获取金额失败', 'wnd'));
 		}
@@ -156,7 +156,7 @@ class Wnd_Do_Payment extends Wnd_Action {
 	 * - 余额检测
 	 *
 	 */
-	protected function check_internal_payment() {
+	private function check_internal_payment() {
 		// 站内交易余额检测
 		$post_price   = wnd_get_post_price($this->post_id, $this->sku_id);
 		$total_amount = $post_price * $this->quantity;
