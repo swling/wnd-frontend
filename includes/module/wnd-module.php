@@ -61,7 +61,7 @@ abstract class Wnd_Module {
 	 * - 权限检查
 	 * @since 0.9.25
 	 */
-	protected static function init_module(array $args, bool $force): array{
+	private static function init_module(array $args, bool $force): array{
 		/**
 		 * 默认 $_GET 参数优先，若设置 $force = true 则忽略 $_GET
 		 */
@@ -87,7 +87,7 @@ abstract class Wnd_Module {
 	public function get_structure(): array{
 		return [
 			'type'      => $this->type,
-			'structure' => $this->is_html_module() ? static::build($this->args) : $this->structure($this->args),
+			'structure' => ('html' == $this->type) ? static::build($this->args) : $this->structure($this->args),
 		];
 	}
 
@@ -95,13 +95,6 @@ abstract class Wnd_Module {
 	 * 非 HTML 模块构建 Array
 	 */
 	abstract protected function structure(): array;
-
-	/**
-	 * 是否为 HTML 模块
-	 */
-	protected function is_html_module(): bool {
-		return 'html' == $this->type;
-	}
 
 	/**
 	 * HTML Module 静态渲染
