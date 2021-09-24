@@ -142,14 +142,6 @@ class Wnd_Order extends Wnd_Transaction {
 		$total_amount = $this->get_total_amount();
 		$object_id    = $this->get_object_id();
 
-		// 写入消费记录
-		wnd_inc_user_expense($user_id, $total_amount);
-
-		// 站内直接消费，无需支付平台支付校验，记录扣除账户余额、在线支付则不影响当前余额
-		if (Wnd_Payment_Getway::is_internal_payment($ID)) {
-			wnd_inc_user_money($user_id, $total_amount * -1, false);
-		}
-
 		/**
 		 * 产品订单：更新总销售额、设置原作者佣金
 		 * @since 2019.06.04
@@ -169,6 +161,16 @@ class Wnd_Order extends Wnd_Transaction {
 				$recharge->set_user_id($object->post_author);
 				$recharge->set_total_amount($commission);
 				$recharge->create(true); // 直接写入余额
+			}
+		}
+
+		if ($user_id) {
+			// 写入消费记录
+			wnd_inc_user_expense($user_id, $total_amount);
+
+			// 站内直接消费，无需支付平台支付校验，记录扣除账户余额、在线支付则不影响当前余额
+			if (Wnd_Payment_Getway::is_internal_payment($ID)) {
+				wnd_inc_user_money($user_id, $total_amount * -1, false);
 			}
 		}
 
