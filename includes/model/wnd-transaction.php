@@ -2,7 +2,6 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\Model\Wnd_Order_Product;
 use WP_Post;
 use WP_User;
 
@@ -218,8 +217,9 @@ abstract class Wnd_Transaction {
 
 	/**
 	 * 创建交易
+	 * - 统一 Transaction 数据
+	 * - 调用子类 generate_transaction_data() 方法，对交易数据做最后处理
 	 * - 写入数据库
-	 * - 保存产品属性
 	 * - 交易完成，执行相关操作
 	 * @since 2019.02.11
 	 *
@@ -237,11 +237,6 @@ abstract class Wnd_Transaction {
 		// 写入数据
 		$this->generate_transaction_data();
 		$this->insert_transaction();
-
-		// 保存产品属性
-		if ($this->props and $this->get_object_id()) {
-			Wnd_Order_Product::set_order_props($this->transaction->ID, $this->props);
-		}
 
 		// 完成
 		if ($is_completed) {

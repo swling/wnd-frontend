@@ -87,7 +87,7 @@ class Wnd_Order_Anonymous extends Wnd_Order {
 	 * 匿名订单 cookie 作用域
 	 * @since 0.9.37
 	 */
-	public static function get_anon_cookie_domain(): string{
+	private static function get_anon_cookie_domain(): string{
 		$domain = parse_url(home_url())['host'];
 		return apply_filters('wnd_anonymous_order_domain', $domain);
 	}
