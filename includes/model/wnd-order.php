@@ -18,10 +18,10 @@ class Wnd_Order extends Wnd_Transaction {
 	protected $transaction_type = 'order';
 
 	// SKU ID
-	protected $sku_id;
+	private $sku_id;
 
 	// 是否为全新订单（用户创建而尚未支付的订单，再次调用支付时，为复用订单，非全新订单）
-	protected $is_new_order;
+	private $is_new_order;
 
 	/**
 	 * 此方法用于补充、修改、核查外部通过方法设定的交易数据，组成最终写入数据库的数据。完整的交易记录构造如下所示：
@@ -62,7 +62,7 @@ class Wnd_Order extends Wnd_Transaction {
 	 * 根据 SKU 变量定义本次订单属性：$this->sku_id、$this->total_amount
 	 * @since 0.8.76
 	 */
-	protected function handle_order_sku_props() {
+	private function handle_order_sku_props() {
 		$this->sku_id = $this->props[Wnd_Order_Product::$sku_id_key] ?? '';
 		$object_sku   = Wnd_SKU::get_object_sku($this->object_id);
 
