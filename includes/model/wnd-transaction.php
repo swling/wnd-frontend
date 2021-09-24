@@ -270,6 +270,9 @@ abstract class Wnd_Transaction {
 
 	/**
 	 * 写入数据库
+	 * - 构建 $this->transaction
+	 * - 构建 $this->transaction_id
+	 *
 	 * @since 0.9.32
 	 */
 	private function insert_transaction(): WP_Post {
@@ -293,8 +296,13 @@ abstract class Wnd_Transaction {
 			throw new Exception('Failed to write to the database');
 		}
 
-		// 构建Post
-		$this->transaction = get_post($ID);
+		/**
+		 * - 构建 $this->transaction
+		 * - 构建 $this->transaction_id
+		 * @since 0.9.37.2
+		 */
+		$this->set_transaction_id($ID);
+
 		return $this->transaction;
 	}
 
@@ -339,10 +347,30 @@ abstract class Wnd_Transaction {
 	}
 
 	/**
+	 * 交易完成
+	 *
+	 *  ## 属性 $this->transaction_id、$this->transaction 赋值：
+	 * - 站内直接完成：$this->insert_transaction()
+	 * - 在线交易验证：static::get_instance($type = '', $transaction_id)
+	 * - @see $this->set_transaction_id();
+	 *
+	 * @since 0.9.37 新增统一钩子 'wnd_transaction_completed'
+	 */
+	private function complete() {
+		$this->complete_transaction();
+
+		// 统一的交易钩子
+		do_action('wnd_transaction_completed', $this->transaction_id, $this->transaction_type, $this->transaction);
+
+		// 按类型区分的交易钩子
+		do_action('wnd_' . $this->transaction_type . '_completed', $this->transaction_id, $this->transaction);
+	}
+
+	/**
 	 * 交易完成，执行相关操作。具体方法在子类中实现
 	 * @since 2020.06.10
 	 */
-	abstract protected function complete(): int;
+	abstract protected function complete_transaction(): int;
 
 	/**
 	 * 获取WordPress order/recharge post ID

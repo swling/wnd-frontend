@@ -126,7 +126,7 @@ class Wnd_Order extends Wnd_Transaction {
 	 * @param $this->transaction
 	 * @param object               	$this->transaction		required 	订单记录Post
 	 */
-	protected function complete(): int{
+	protected function complete_transaction(): int{
 		/**
 		 * 本方法可能在站内直接支付，或者站外验证支付中调用。
 		 * 在线订单校验时，由支付平台发起请求，仅指定订单ID，需根据订单ID设置对应变量。
@@ -166,12 +166,6 @@ class Wnd_Order extends Wnd_Transaction {
 				$recharge->create(true); // 直接写入余额
 			}
 		}
-
-		/**
-		 * 充值完成
-		 * @since 2019.08.12
-		 */
-		do_action('wnd_order_completed', $ID);
 
 		return $ID;
 	}

@@ -53,7 +53,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 * 当充值包含关联object_id，表示收入来自站内佣金收入：更新用户佣金及产品总佣金统计
 	 * @param object 	$this->transaction			required 	订单记录Post
 	 */
-	protected function complete(): int{
+	protected function complete_transaction(): int{
 		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
 		$ID           = $this->get_transaction_id();
 		$user_id      = $this->get_user_id();
@@ -69,12 +69,6 @@ class Wnd_Recharge extends Wnd_Transaction {
 		} else {
 			wnd_inc_user_money($user_id, $total_amount, true);
 		}
-
-		/**
-		 * 充值完成
-		 * @since 2019.08.12
-		 */
-		do_action('wnd_recharge_completed', $ID);
 
 		return $ID;
 	}

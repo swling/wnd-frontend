@@ -59,27 +59,27 @@ do_action('wnd_login_failed', $user);
 do_action('wnd_login', $user);
 ```
 
-## 支付
+## 交易及支付
 ```php
 /**
- * @since 2019.06.30
- *成功完成付款后
- *$order_or_recherche_id 订单或充值记录ID
+ * 交易完成
+ * @since 0.9.37 
+ * - 动态钩子 'wnd_' . $this->transaction_type . '_completed'
+ * - 新增统一钩子 'wnd_transaction_completed'
  */
-do_action('wnd_payment_verified', $order_or_recherche_id);
+do_action('wnd_' . $this->transaction_type . '_completed', $this->transaction_id, $this->transaction);
+
+do_action('wnd_transaction_completed', $this->transaction_id, $this->transaction_type, $this->transaction);
 
 /**
- * @since 2019.07.14
- *订单完成
+ * 基于上述动态钩子，可以得知，插件内置了如下两个钩子
+ * - 订单完成
+ * - 充值完成
+ * 
+ * 其他拓展交易类，亦自动添加与之 Type 匹配的钩子
  */
-do_action('wnd_order_completed', $order_id);
-
-/**
- *@since 2019.08.12
- *充值完成
- */
-do_action('wnd_recharge_completed', $recharge_id);
-
+do_action('wnd_order_completed', $order_id, $order_post);
+do_action('wnd_recharge_completed', $recharge_id, $recharge_post);
 ```
 
 ## 其他
