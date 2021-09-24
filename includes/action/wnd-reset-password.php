@@ -2,7 +2,7 @@
 namespace Wnd\Action;
 
 use Exception;
-use Wnd\Model\Wnd_Auth;
+use Wnd\Utility\Wnd_Validator;
 
 /**
  * 用户找回密码
@@ -25,7 +25,6 @@ class Wnd_Reset_Password extends Wnd_Action {
 		$email_or_phone      = $this->data['_user_user_email'] ?? $this->data['phone'] ?? '';
 		$new_password        = $this->data['_user_new_pass'] ?? '';
 		$new_password_repeat = $this->data['_user_new_pass_repeat'] ?? '';
-		$auth_code           = $this->data['auth_code'];
 
 		// 验证密码正确性
 		if (strlen($new_password) < 6) {
@@ -43,14 +42,8 @@ class Wnd_Reset_Password extends Wnd_Action {
 		}
 
 		/**
-		 *
-		 * 获取用户的方法：
-		 * 已登录用户则为当前用户
-		 * 未登录用户通过邮箱或手机获取
+		 * 设备校验码
 		 */
-		$auth = Wnd_Auth::get_instance($email_or_phone);
-		$auth->set_type('reset_password');
-		$auth->set_auth_code($auth_code);
-		$auth->verify();
+		Wnd_Validator::validate_auth_code('reset_password', $this->data);
 	}
 }
