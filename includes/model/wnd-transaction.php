@@ -227,10 +227,12 @@ abstract class Wnd_Transaction {
 	 */
 	public function create(bool $is_completed = false): WP_Post{
 		/**
-		 * 设定状态
-		 * @since 0.9.37
+		 * 全局统一 Transaction 数据设定：
+		 * - @since 0.9.37 设定状态
+		 * - @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
 		 */
-		$this->status = $is_completed ? static::$completed_status : static::$processing_status;
+		$this->status         = $is_completed ? static::$completed_status : static::$processing_status;
+		$this->transaction_id = $this->get_reusable_transaction_id();
 
 		// 写入数据
 		$this->generate_transaction_data();
@@ -443,7 +445,7 @@ abstract class Wnd_Transaction {
 	 * 同一用户同等条件下，未完成订单复用时间限制(秒)
 	 * @since 0.9.32
 	 */
-	protected function get_reusable_transaction_id(): int{
+	private function get_reusable_transaction_id(): int{
 		/**
 		 * 匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
 		 * 更新自动草稿时候，modified 不会变需要查询 post_date

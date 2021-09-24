@@ -53,11 +53,6 @@ class Wnd_Order extends Wnd_Transaction {
 		$this->subject = $this->subject ?: (__('订单：', 'wnd') . get_the_title($this->object_id) . '[' . $this->quantity . ']');
 
 		/**
-		 * @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
-		 */
-		$this->transaction_id = $this->get_reusable_transaction_id();
-
-		/**
 		 * 若当前订单为：未完成付款的订单再次调用，则不是新订单
 		 */
 		$this->is_new_order = !$this->transaction_id;

@@ -38,11 +38,6 @@ class Wnd_Recharge extends Wnd_Transaction {
 
 		// 定义变量
 		$this->subject = $this->subject ?: (($this->object_id ? __('佣金：¥', 'wnd') : __('充值：¥', 'wnd')) . $this->total_amount);
-
-		/**
-		 * @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
-		 */
-		$this->transaction_id = $this->get_reusable_transaction_id();
 	}
 
 	/**
