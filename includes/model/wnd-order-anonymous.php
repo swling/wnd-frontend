@@ -21,9 +21,9 @@ class Wnd_Order_Anonymous extends Wnd_Order {
 	 *
 	 * @since 0.9.32
 	 */
-	protected function generate_transaction_data(bool $is_completed) {
+	protected function generate_transaction_data() {
 		$this->handle_anon_order_props();
-		parent::generate_transaction_data($is_completed);
+		parent::generate_transaction_data();
 	}
 
 	/**

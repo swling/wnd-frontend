@@ -226,8 +226,14 @@ abstract class Wnd_Transaction {
 	 * @param 	bool 	$is_completed 	是否直接完成订单
 	 */
 	public function create(bool $is_completed = false): WP_Post{
+		/**
+		 * 设定状态
+		 * @since 0.9.37
+		 */
+		$this->status = $is_completed ? static::$completed_status : static::$processing_status;
+
 		// 写入数据
-		$this->generate_transaction_data($is_completed);
+		$this->generate_transaction_data();
 		$this->insert_transaction();
 
 		// 保存产品属性
@@ -245,8 +251,7 @@ abstract class Wnd_Transaction {
 	}
 
 	/**
-	 * 按需对如下数据进行构造：
-	 *
+	 * 此方法用于补充、修改、核查外部通过方法设定的交易数据，组成最终写入数据库的数据。完整的交易记录构造如下所示：
 	 * $post_arr = [
 	 *     'ID'           => $this->transaction_id,
 	 *     'post_type'    => $this->transaction_type,
@@ -261,13 +266,13 @@ abstract class Wnd_Transaction {
 	 *
 	 * @since 0.9.32
 	 */
-	abstract protected function generate_transaction_data(bool $is_completed);
+	abstract protected function generate_transaction_data();
 
 	/**
 	 * 写入数据库
 	 * @since 0.9.32
 	 */
-	protected function insert_transaction(): WP_Post {
+	private function insert_transaction(): WP_Post {
 		if (!$this->transaction_type) {
 			throw new Exception('Invalid transaction type');
 		}
@@ -319,7 +324,7 @@ abstract class Wnd_Transaction {
 	 *
 	 * @return true
 	 */
-	protected function update_transaction_status(string $status): bool{
+	private function update_transaction_status(string $status): bool{
 		$post_arr = [
 			'ID'          => $this->get_transaction_id(),
 			'post_status' => $status,

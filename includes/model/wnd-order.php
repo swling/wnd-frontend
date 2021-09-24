@@ -24,7 +24,7 @@ class Wnd_Order extends Wnd_Transaction {
 	protected $is_new_order;
 
 	/**
-	 * 按需对如下数据进行构造：
+	 * 此方法用于补充、修改、核查外部通过方法设定的交易数据，组成最终写入数据库的数据。完整的交易记录构造如下所示：
 	 *
 	 * $post_arr = [
 	 *     'ID'           => $this->transaction_id,
@@ -40,7 +40,7 @@ class Wnd_Order extends Wnd_Transaction {
 	 *
 	 * @since 0.9.32
 	 */
-	protected function generate_transaction_data(bool $is_completed) {
+	protected function generate_transaction_data() {
 		/**
 		 * 处理订单 SKU 属性
 		 * @since 0.8.76
@@ -48,10 +48,9 @@ class Wnd_Order extends Wnd_Transaction {
 		$this->handle_order_sku_props();
 
 		/**
-		 * 订单状态及标题
+		 * 订单标题
 		 */
 		$this->subject = $this->subject ?: (__('订单：', 'wnd') . get_the_title($this->object_id) . '[' . $this->quantity . ']');
-		$this->status  = $is_completed ? static::$completed_status : static::$processing_status;
 
 		/**
 		 * @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
@@ -86,13 +85,13 @@ class Wnd_Order extends Wnd_Transaction {
 	}
 
 	/**
-	 * - 调用父类方法写入数据库
+	 * - 调用父类方法创建交易
 	 * - 更新订单及库存统计
 	 * @since 0.9.32
 	 */
-	protected function insert_transaction(): WP_Post{
+	public function create(bool $is_completed = false): WP_Post{
 		// 调用父类方法，写入数据库
-		$transaction = parent::insert_transaction();
+		$transaction = parent::create($is_completed);
 
 		/**
 		 * 全新订单：

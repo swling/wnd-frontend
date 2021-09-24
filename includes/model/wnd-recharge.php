@@ -12,7 +12,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	protected $transaction_type = 'recharge';
 
 	/**
-	 * 按需对如下数据进行构造：
+	 * 此方法用于补充、修改、核查外部通过方法设定的交易数据，组成最终写入数据库的数据。完整的交易记录构造如下所示：
 	 *
 	 * $post_arr = [
 	 *     'ID'           => $this->transaction_id,
@@ -28,7 +28,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *
 	 * @since 0.9.32
 	 */
-	protected function generate_transaction_data(bool $is_completed) {
+	protected function generate_transaction_data() {
 		if (!$this->user_id) {
 			throw new Exception(__('请登录', 'wnd'));
 		}
@@ -37,7 +37,6 @@ class Wnd_Recharge extends Wnd_Transaction {
 		}
 
 		// 定义变量
-		$this->status  = $is_completed ? static::$completed_status : static::$processing_status;
 		$this->subject = $this->subject ?: (($this->object_id ? __('佣金：¥', 'wnd') : __('充值：¥', 'wnd')) . $this->total_amount);
 
 		/**

@@ -102,7 +102,7 @@ class Wnd_Do_Payment extends Wnd_Action {
 		$this->type     = $this->data['type'] ?? ($this->post_id ? 'order' : 'recharge');
 
 		// 在线支付数据
-		$this->total_amount    = (float) ($this->data['total_amount'] ?? 0);
+		$this->total_amount    = (float) ($this->data['total_amount'] ?? ($this->data['custom_total_amount'] ?? 0));
 		$this->payment_gateway = $this->data['payment_gateway'] ?? '';
 		$this->subject         = $this->data['subject'] ?? '';
 	}

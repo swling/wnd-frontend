@@ -6,7 +6,9 @@ use Wnd\Model\Wnd_Recharge;
 use Wnd\View\Wnd_Form_WP;
 
 /**
- * @since 2019.01.21 充值表单
+ * 充值表单
+ *
+ * @since 2019.01.21
  */
 class Wnd_User_Recharge_Form extends Wnd_Module_Form {
 
@@ -15,17 +17,24 @@ class Wnd_User_Recharge_Form extends Wnd_Module_Form {
 		$form->add_html('<div class="has-text-centered field">');
 		$form->add_radio(
 			[
-				'name'     => 'total_amount',
-				'options'  => Wnd_Recharge::get_recharge_amount_options(),
-				'required' => 'required',
-				'class'    => 'is-checkradio is-danger',
+				'name'    => 'total_amount',
+				'options' => Wnd_Recharge::get_recharge_amount_options(),
+				'class'   => 'is-checkradio is-danger',
+			]
+		);
+		$form->add_number(
+			[
+				'name'        => 'custom_total_amount',
+				'placeholder' => '自定义金额',
+				'min'         => 0.01,
+				'step'        => 0.01,
 			]
 		);
 		$form->add_radio(
 			[
 				'name'     => 'payment_gateway',
 				'options'  => Wnd_Payment_Getway::get_gateway_options(),
-				'required' => 'required',
+				'required' => true,
 				'checked'  => Wnd_Payment_Getway::get_default_gateway(),
 				'class'    => 'is-checkradio is-danger',
 			]
@@ -34,6 +43,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module_Form {
 		$form->add_hidden('type', 'recharge');
 		$form->set_route('action', 'wnd_do_payment');
 		$form->set_submit_button(__('充值', 'wnd'));
+
 		return $form;
 	}
 }
