@@ -39,7 +39,7 @@ abstract class Wnd_JWT_Handler {
 	 * - iat (Issued At)：签发时间
 	 * - jti (JWT ID)：编号
 	 */
-	protected function generate_token(int $user_id): string{
+	private function generate_token(int $user_id): string{
 		$payload = [
 			'iss' => $this->domain,
 			'iat' => time(),
@@ -87,7 +87,7 @@ abstract class Wnd_JWT_Handler {
 	/**
 	 * 验证客户端 Token
 	 */
-	protected function verify_client_token(): int{
+	private function verify_client_token(): int{
 		// 未能获取 Token
 		$token = $this->get_client_token();
 		if (!$token) {
@@ -131,12 +131,12 @@ abstract class Wnd_JWT_Handler {
 	 * data should be used). A callback can return `true` to indicate that
 	 * the authentication method was used, and it succeeded.
 	 *
-	 *                                   method wasn't used, true if authentication succeeded.
+	 * method wasn't used, true if authentication succeeded.
 	 * @since 4.4.0
 	 *
 	 * @param WP_Error|null|true $errors WP_Error if authentication error, null if authentication
 	 */
-	function rest_token_check_errors($result) {
+	public function rest_token_check_errors($result) {
 		if (!empty($result)) {
 			return $result;
 		}
