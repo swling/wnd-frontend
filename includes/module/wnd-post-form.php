@@ -19,7 +19,7 @@ abstract class Wnd_Post_Form extends Wnd_Module_Form {
 			throw new Exception(__('Post Type 无效', 'wnd') . '@' . __CLASS__);
 		}
 
-		// 更新权限检测
+		// 编辑权限检测
 		if ($post_id) {
 			$edit_post = $post_id ? get_post($post_id) : false;
 			if (!$edit_post) {
@@ -28,9 +28,9 @@ abstract class Wnd_Post_Form extends Wnd_Module_Form {
 
 			$ppc = Wnd_PPC::get_instance($edit_post->post_type);
 			$ppc->set_post_id($post_id);
-			$ppc->check_update();
+			$ppc->check_edit();
 
-			// 发布权限检测
+			// 创建权限检测
 		} else {
 			$ppc = Wnd_PPC::get_instance(static::$post_type);
 			$ppc->check_create();

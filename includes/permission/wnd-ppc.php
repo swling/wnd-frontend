@@ -4,11 +4,14 @@ namespace Wnd\Permission;
 use Exception;
 
 /**
- * 文章发布管理权限：Post permission control
+ * 文章发布管理权限：Post Permission Controller
+ *
  * 默认权限如下：
  * - 写入内容：登录用户可发布内容
  * - 编辑权限：WP默认 current_user_can('edit_post', $this->post_id)
+ * - 更新权限：WP默认 current_user_can('edit_post', $this->post_id)
  * - 更改状态：仅管理员可设置为 publish
+ *
  * @since 0.9.36
  */
 class Wnd_PPC {
@@ -78,7 +81,7 @@ class Wnd_PPC {
 	}
 
 	/**
-	 * 基础创建权限检查：登录
+	 * 基础创建权限检查
 	 */
 	public function check_create() {
 		if (!$this->user_id) {
@@ -87,7 +90,7 @@ class Wnd_PPC {
 	}
 
 	/**
-	 * 基础写入权限检查：登录
+	 * 基础写入权限检查
 	 */
 	public function check_insert() {
 		if (!$this->user_id) {
@@ -96,8 +99,28 @@ class Wnd_PPC {
 	}
 
 	/**
-	 * 基础更新文章权限检测
-	 * @since 2018
+	 * 基础编辑权限检查
+	 *
+	 * - 本权限用于前端控制
+	 * - 主要依据现有状态控制是否可以打开编辑界面
+	 * - 不对修改更新的数据做检查
+	 * - 数据写入权限检测请在 $this->check_update() 中实现
+	 *
+	 * @since 0.9.37
+	 */
+	public function check_edit() {
+		if (!$this->post) {
+			throw new Exception('获取内容失败');
+		}
+
+		// 更新权限
+		if (!current_user_can('edit_post', $this->post_id)) {
+			throw new Exception('权限错误');
+		}
+	}
+
+	/**
+	 * 基础更新权限检查
 	 */
 	public function check_update() {
 		if (!$this->post) {
@@ -111,11 +134,8 @@ class Wnd_PPC {
 	}
 
 	/**
-	 * 基础更新文章状态权限：非管理员不等直接发布公开
-	 * @since 2019.01.22
-	 *
-	 * @param $this->post_status
-	 * @param $this->post_id
+	 * 基础更新文章状态权限
+	 * - 非管理员不等直接发布公开
 	 */
 	public function check_status_update() {
 		if (wnd_is_manager()) {
