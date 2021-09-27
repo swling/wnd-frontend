@@ -69,7 +69,7 @@ class Wnd_Term {
 
 		// 查询当前 POST 已选 term 的子类同层级选项
 		$current_term_ids = static::get_post_terms_with_level($post_id, $taxonomy);
-		for ($i = 0; $i < count($current_term_ids); $i++) {
+		for ($i = 0, $j = count($current_term_ids); $i < $j; $i++) {
 			$term_id     = $current_term_ids[$i];
 			$child_terms = static::get_term_children_by_level($term_id, $taxonomy, 1);
 
