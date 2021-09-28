@@ -14,7 +14,7 @@ use Wnd\Model\Wnd_Transaction;
  *  简言之，付费阅读付费下载，应该设置唯一产品价格。
  * @since 0.9.0
  */
-class Wnd_Order_Product {
+abstract class Wnd_Order_Product {
 
 	// SKU KEY
 	protected static $sku_key = 'sku';

@@ -13,12 +13,12 @@ use Wnd\Model\Wnd_Order_Product;
  * 简言之，付费阅读付费下载，应该设置唯一产品价格。
  * @since 0.8.76
  */
-class Wnd_Product {
+abstract class Wnd_Product {
 
 	/**
 	 * 产品属性信息合集
 	 */
-	public static function get_props_keys(): array{
+	private static function get_props_keys(): array{
 		return [
 			'sku'         => __('SKU', 'wnd'),
 			'order_count' => __('销量', 'wnd'),
@@ -46,7 +46,7 @@ class Wnd_Product {
 	 * 从数组数据中按 static::get_props_keys() 数组键名提取产品 Props 数据
 	 *
 	 */
-	protected static function parse_props_data(array $data): array{
+	private static function parse_props_data(array $data): array{
 		$props_keys = array_keys(static::get_props_keys());
 		foreach ($data as $key => $value) {
 			// 移除非产品属性数据
