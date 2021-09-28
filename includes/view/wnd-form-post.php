@@ -196,7 +196,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_field(
 			[
 				'type'     => 'select_linked',
-				'name'     => '_term_' . $taxonomy,
+				'name'     => '_term_' . $taxonomy . '[]',
 				'options'  => $option_data,
 				'required' => $required,
 				'selected' => $selected ?: [0 => ''], //default checked value

@@ -27,6 +27,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 'step': [],
             },
             step: 0,
+            default_data: {}, // 记录表单默认数据，在提交表单时与现有表单合并，以确保所有字段名均包含在提交数据中，从而通过一致性签名
         },
         methods: {
             //HTML转义
@@ -77,10 +78,11 @@ function _wnd_render_form(container, form_json, add_class = '') {
             get_value: function(field) {
                 let value = '';
                 let checked_or_selected = field.checked || field.selected;
+
                 if (field.value) {
                     value = field.value;
                 } else if (checked_or_selected) {
-                    if ('object' != typeof(checked_or_selected) || checked_or_selected.length) {
+                    if ('object' != typeof(checked_or_selected) || checked_or_selected.length || Object.keys(checked_or_selected).length) {
                         value = field.checked || field.selected;
                     }
                 }
@@ -563,6 +565,33 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 // 修正高度
                 funTransitionHeight(parent, trs_time);
             },
+            // FormData 转 object
+            formdata_to_object: function(form_data) {
+                let object = {};
+                form_data.forEach((value, key) => {
+                    // 单个字段
+                    if (!key.includes('[]')) {
+                        object[key] = value;
+                        return;
+                    }
+
+                    /**
+                     * 数组字段
+                     * - 移除键名 []
+                     * - 首次：组成数组数据
+                     * - 后续：将值写入数组
+                     **/
+                    key = key.replace('[]', '');
+                    if (!Reflect.has(object, key)) {
+                        object[key] = [value];
+                        return;
+                    } else {
+                        object[key].push(value);
+                    }
+                });
+
+                return object;
+            },
             // 提交
             submit: function(e) {
                 this.form.submit.attrs.class = form_json.submit.attrs.class + ' is-loading';
@@ -576,57 +605,15 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     }
                 }
 
-                // 表单数据处理
+                // 核查必选项
                 let can_submit = true;
-                let data = {};
                 for (const [index, field] of this.form.fields.entries()) {
-                    if (!field.name) {
+                    if (!field.name || !field.required) {
                         continue;
                     }
 
                     let require_check = true;
-
-                    /**
-                     * 提取表单数据
-                     * @since 0.9.36
-                     **/
                     let value = this.get_value(field);
-
-                    /**
-                     * 多选字段处理
-                     * - 常规表单中使用 {name}[] 来实现数组发送，本操作提交 json 数据，需要移除 [] 
-                     * - 多个同名 name 字段，需要合并数据
-                     * @since 0.9.36
-                     **/
-                    let name = field.name;
-                    if (name.includes('[]')) {
-                        name = name.replace('[]', '');
-
-                        /**
-                         * 无需合并数据的情况：
-                         * - 单一可多选字段如 checkbox 或 select。在本插件中，该字段均包含候选数据 field.options，故此作为判断条件
-                         * - 单一字段数据已通过 vue 双向绑定处理，无需合并
-                         * 
-                         * 需要合并数据的情况：
-                         *  - 多个独立字段，使用了同一个 name
-                         *  - 多为不常见的情况，如多个同名 input 提交一组数据
-                         * 
-                         * @since 0.9.36
-                         **/
-                        if (field.options && Object.keys(field.options).length) {
-                            data[name] = value;
-                        } else {
-                            data[name] = data[name] ? data[name] : [];
-                            data[name].push(value);
-                        }
-                    } else {
-                        data[name] = value;
-                    }
-
-                    // 核查必选项
-                    if (!field.required) {
-                        continue;
-                    }
 
                     if ('string' == typeof value && !value.length) { // 字符串数据
                         require_check = false;
@@ -653,15 +640,25 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     return false;
                 }
 
-                // Ajax 请求
+                /**
+                 * 
+                 * Ajax 请求
+                 * - 之所以不直接提取从 field 中提取 value 组合对象，因为表单中可能存在动态字段，此类字段增删目前采用的是直接操作dom，无法同步 VUE
+                 * - 之所以提取表单数据后，又转化为 json，是为了保持后端数据统一为 json，以确保后期适配 APP、小程序等，与站内请求一致
+                 * - 将表单数据与默认表单数据合并的原因在于，表单对未选择的单选，复选字段不会构造数据，从而导致数据键值丢失，无法通过表单签名(_wnd_sign)
+                 **/
+                let form = document.querySelector('#' + this.form.attrs.id);
+                let form_data = new FormData(form);
+                let json = Object.assign(this.default_data, this.formdata_to_object(form_data));
+
                 let params = {};
                 if ('get' == this.form.attrs.method.toLowerCase()) {
-                    params = data;
+                    params = json;
                 }
                 axios({
                     method: this.form.attrs.method,
                     url: this.form.attrs.action,
-                    data: data,
+                    data: json,
                     params: params,
                 }).then(response => {
                     info = wnd_handle_response(response.data, this.form.attrs.route, parent);
@@ -684,8 +681,8 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 });
             },
         },
-        mounted() {
-            // 索引特殊字段
+        created() {
+            // 提取表单数据
             this.form.fields.forEach((field, index) => {
                 if ('captcha' == field.name && '' == field.value) {
                     this.index.captcha = index;
@@ -698,7 +695,24 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 if ('step' == field.type) {
                     this.index.step.push(field.text);
                 }
-            })
+
+                /**
+                 * 联动下拉，追加设置下一级选项默认值，否则子下拉菜单首项为空
+                 * 注意由于联动下拉的options 及 selected均采用层级作为键名，因此类型为对象
+                 **/
+                if ('select_linked' == field.type) {
+                    let last = Object.keys(field.selected)[Object.keys(field.selected).length - 1];
+                    let next = parseInt(last) + 1;
+                    field.selected[next] = '';
+                }
+
+                if (field.name) {
+                    let name = field.name.replace('[]', '');
+                    this.default_data[name] = '';
+                }
+            });
+        },
+        mounted() {
             // 构造富文本编辑器
             if (this.index.editor.length > 0) {
                 this.build_editor();
@@ -811,7 +825,8 @@ ${get_submit_template(form_json)}
         return t;
     }
 
-    /** 常规 input 组件：
+    /** 
+     * 常规 input 组件：
      * 采用如下方法替换 v-model 旨在实现 HTML 转义呈现 textare 同理
      * :value="html_decode(${field}.value)" @input="${field}.value = html_encode($event.target.value)"
      */
