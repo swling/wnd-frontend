@@ -129,7 +129,7 @@ class Wnd_SKU {
 				$sku[$sku_id][$sku_detail_key] = $sku_detail_value[$i];
 
 				// 移除 SKU 属性中的空值
-				$sku[$sku_id] = array_filter(array_unique($sku[$sku_id], SORT_REGULAR));
+				$sku[$sku_id] = array_filter($sku[$sku_id]);
 			}unset($key, $value);
 		}
 
