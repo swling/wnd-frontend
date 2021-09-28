@@ -10,7 +10,7 @@ use WP_REST_Request;
  */
 abstract class Wnd_Action_User extends Wnd_Action {
 
-	public function __construct(WP_REST_Request $wp_rest_request) {
+	final public function __construct(WP_REST_Request $wp_rest_request) {
 		if (!is_user_logged_in()) {
 			throw new Exception(__('权限不足', 'wnd'));
 		}
