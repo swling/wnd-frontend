@@ -1000,7 +1000,7 @@ ${build_label(field)}
 <div class="column is-marginless is-paddingless is-narrow">${tags}</div>
 <div class="autocomplete column is-marginless">
 <input type="text" :readonly="${field}.value.length >= max_tag_num" @input="suggest_tags($event.target.value, ${index})" @keypress.enter="enter_tag($event, ${index})" @click="handle_tag_input_click($event, ${index})"/>
-<input type="hidden" v-bind="parse_input_attr(${field})" v-model="${field}.value" />
+<template v-for="(tag, index) in ${field}.value"><input type="hidden" v-bind="parse_input_attr(${field})" v-model="tag" /></template>
 <ul v-show="${field}.value.length < max_tag_num" class="autocomplete-items">${suggestions}</ul>
 </div>
 </div>
