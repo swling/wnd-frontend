@@ -4,8 +4,9 @@ namespace Wnd\Model;
 use Wnd\Model\Wnd_Order_Product;
 
 /**
- * 商品模块
- * 在本插件中，不单独对产品做定义。任何 singular 如 Post、Page 以及其他自定义 Post Type 均可为商品。一切皆可销售。
+ * 商品属性模块（作用于商品）
+ * - 读取商品相关属性
+ * - 在本插件中，不单独对产品做定义。任何 singular 如 Post、Page 以及其他自定义 Post Type 均可为商品。一切皆可销售。
  *
  * 注意：
  * - 产品配置将影响订单价格，因而不适用于付费阅读付费下载。

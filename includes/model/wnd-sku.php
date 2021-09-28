@@ -4,9 +4,9 @@ namespace Wnd\Model;
 use Wnd\Model\Wnd_Product;
 
 /**
- * SKU 模块
- *
- * 在本插件中，不单独对产品做定义。任何 singular 如 Post、Page 以及其他自定义 Post Type 均可为商品。一切皆可销售。
+ * SKU 模块（作用于商品）
+ * - 设置或读取商品 SKU 信息
+ * - 在本插件中，不单独对产品做定义。任何 singular 如 Post、Page 以及其他自定义 Post Type 均可为商品。一切皆可销售。
  *
  * 注意：
  *  - 产品配置将影响订单价格，因而不适用于付费阅读付费下载。
@@ -15,7 +15,7 @@ use Wnd\Model\Wnd_Product;
  *
  * @since 0.9.5
  */
-class Wnd_SKU {
+abstract class Wnd_SKU {
 
 	// SKU KEY
 	public static $sku_key = 'sku';
