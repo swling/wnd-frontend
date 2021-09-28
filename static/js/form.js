@@ -617,7 +617,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
 
                     if ('string' == typeof value && !value.length) { // 字符串数据
                         require_check = false;
-                    } else if (Array.isArray(value) && 1 == value.length && !value[0]) { // 数组数据：数组只有一个值，且为空值
+                    } else if (Array.isArray(value) && value.every(el => !el)) { // 数组数据：均为空值
                         require_check = false;
                     } else if (!value && 0 !== value) { // 布尔值或数值
                         require_check = false;
