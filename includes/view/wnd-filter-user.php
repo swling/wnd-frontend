@@ -24,9 +24,6 @@ class Wnd_Filter_User {
 	// 筛选结果HTML
 	private $users = [];
 
-	// 分页导航HTML
-	private $pagination = [];
-
 	/**
 	 * wp_user_query 实例化
 	 * @see $this->query();

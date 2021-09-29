@@ -19,14 +19,10 @@ class Wnd_Form_Render {
 
 	private $before_html;
 	private $after_html;
-	private $primary_color;
-	private $second_color;
 
 	private $title;
 	private $fields;
 	private $submit;
-	private $thumbnail_width  = 100;
-	private $thumbnail_height = 100;
 
 	/**
 	 * input字段类型
@@ -79,9 +75,6 @@ class Wnd_Form_Render {
 		$this->before_html   = $this->structure['before_html'];
 		$this->after_html    = $this->structure['after_html'];
 		$this->fields        = $this->structure['fields'];
-
-		$this->primary_color = $this->structure['primary_color'];
-		$this->second_color  = $this->structure['second_color'];
 	}
 
 	/**
@@ -100,7 +93,7 @@ class Wnd_Form_Render {
 	private function build_form_header() {
 		$html = '<form' . $this->build_form_attr() . '>';
 
-		$html .= $this->structure['before_html'];
+		$html .= $this->before_html;
 
 		if ($this->title) {
 			$html .= '<div class="field">';

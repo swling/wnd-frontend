@@ -21,7 +21,7 @@ class Wnd_Posts_Table {
 		'content'    => '',
 		'class'      => '',
 	];
-	public $html;
+	private $html;
 
 	/**
 	 * 构造函数

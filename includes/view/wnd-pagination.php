@@ -21,9 +21,6 @@ class Wnd_Pagination {
 	// 当前页项目数
 	private $current_item_count;
 
-	// 容器 ID
-	private $id;
-
 	// 容器 class
 	private $class;
 

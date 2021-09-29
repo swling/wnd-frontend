@@ -17,9 +17,6 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	// 筛选结果数据
 	private $posts = [];
 
-	// 分页导航数据
-	private $pagination = [];
-
 	/**
 	 * 筛选器之前 Html
 	 */

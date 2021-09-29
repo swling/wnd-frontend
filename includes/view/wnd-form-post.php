@@ -148,7 +148,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 */
 	public function set_post_parent($post_parent) {
 		$this->post_parent = $post_parent;
-		$this->add_hidden('_post_post_parent', $post_parent);
+		$this->add_hidden('_post_post_parent', $this->post_parent);
 	}
 
 	public function add_post_title($label = '', $placeholder = '请输入标题', $required = true) {
