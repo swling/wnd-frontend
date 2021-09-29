@@ -113,7 +113,7 @@ abstract class Wnd_Auth {
 	 * reset_password 	：找回密码 		当前邮箱或手机未注册、则不可发送
 	 * @since 2019.02.10 类型权限检测
 	 */
-	protected function check_type() {
+	private function check_type() {
 		// 必须指定类型
 		if (!$this->type) {
 			throw new Exception(__('未指定验证类型', 'wnd'));
@@ -162,7 +162,7 @@ abstract class Wnd_Auth {
 	 * 信息发送权限检测
 	 * @since 2019.02.10
 	 */
-	protected function check_send() {
+	private function check_send() {
 		$data = static::get_db($this->identity_type, $this->identifier);
 		if (!$data) {
 			return;
@@ -186,7 +186,7 @@ abstract class Wnd_Auth {
 	/**
 	 * @since 2019.02.09 手机及邮箱验证模块
 	 */
-	protected function insert() {
+	private function insert() {
 		$this->check_auth_fields(true);
 
 		$record  = static::get_db($this->identity_type, $this->identifier);
@@ -212,7 +212,7 @@ abstract class Wnd_Auth {
 	 *
 	 * @param bool $check_auth_code 是否检查验证码字段
 	 */
-	protected function check_auth_fields(bool $check_auth_code) {
+	private function check_auth_fields(bool $check_auth_code) {
 		if (!$this->identity_type) {
 			throw new Exception(__('未指定验证设备类型', 'wnd'));
 		}
