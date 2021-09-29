@@ -108,7 +108,7 @@ class Wnd_Pagination {
 	 * 未查询文章总数，以上一页下一页的形式翻页(在数据较多的情况下，可以提升查询性能)
 	 * 在ajax环境中，动态分页较为复杂，暂统一设定为上下页的形式，前端处理更容易
 	 */
-	protected function build_next_pagination() {
+	private function build_next_pagination() {
 		if ($this->independent) {
 			$previous_link = add_query_arg(static::$page_query_var, $this->paged - 1);
 			$next_link     = add_query_arg(static::$page_query_var, $this->paged + 1);
@@ -135,7 +135,7 @@ class Wnd_Pagination {
 	 * 常规分页，需要查询文章总数
 	 * 在数据量较大的站点，查询文章总数会较为费时
 	 */
-	protected function build_general_pagination() {
+	private function build_general_pagination() {
 		if ($this->independent) {
 			$first_link    = remove_query_arg(static::$page_query_var);
 			$previous_link = add_query_arg(static::$page_query_var, $this->paged - 1);
