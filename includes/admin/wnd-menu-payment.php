@@ -17,8 +17,7 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 	/**
 	 * 构造表单
 	 */
-	public function build_form() {
-		$form = new Wnd_Form_Option($this->option_name, $this->append);
+	protected function build_form(Wnd_Form_Option $form): string{
 
 		$form->add_html('<h2 class="title">沙箱测试</h2>');
 

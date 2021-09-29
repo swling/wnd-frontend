@@ -17,8 +17,7 @@ class Wnd_Menu_Accesskey extends Wnd_Menus {
 	/**
 	 * 构造表单
 	 */
-	public function build_form() {
-		$form = new Wnd_Form_Option($this->option_name, $this->append);
+	protected function build_form(Wnd_Form_Option $form): string{
 		$form->add_html('
 			<h3>腾讯云 API 密钥管理</h3>
 			<a href="https://console.cloud.tencent.com/capi" target="_blank">https://console.cloud.tencent.com/capi</a>

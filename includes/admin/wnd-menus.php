@@ -11,26 +11,22 @@ class Wnd_Menus {
 	// 菜单基本属性
 	protected $page_title = 'Wnd Frontend Setting';
 	protected $menu_title = 'Wnd Frontend';
-	protected $capability = 'administrator';
 	protected $menu_slug  = 'wnd-frontend';
 
-	// 主菜单 slug
-	protected static $main_slug = 'wnd-frontend';
-
-	// 数据存储 option name
-	protected $option_name = 'wnd';
-
-	// 当前表单数据是否合并到已有数据，否则将以此表单数据存储为 option
-	protected $append = true;
-
-	// 当前实例是否为子菜单
-	protected $is_submenu = false;
-
 	/**
-	 * 定义子菜单
-	 * - 将依次循环拼接类名：Wnd_Admin_Menu_ {$slug} 并实例化
+	 * - 菜单权限
+	 * - 主菜单别名
+	 * - 当前实例是否为子菜单
+	 * - 子菜单项目：将依次循环拼接类名：Wnd_Admin_Menu_ {$slug} 并实例化
 	 */
-	protected $sub_menus = ['Accesskey', 'Transaction', 'Payment', 'Sms', 'Captcha', 'Social_Login', 'OSS', 'CDN'];
+	private $capability       = 'administrator';
+	private static $main_slug = 'wnd-frontend';
+	private $is_submenu       = false;
+	private $sub_menus        = ['Accesskey', 'Transaction', 'Payment', 'Sms', 'Captcha', 'Social_Login', 'OSS', 'CDN'];
+
+	// 表单存储属性
+	private $option_name = 'wnd';
+	private $append      = true;
 
 	/**
 	 * 构造
@@ -86,15 +82,14 @@ class Wnd_Menus {
 	 * 构建选项页面
 	 */
 	public function build_page() {
-		echo '<div class="wrap">' . $this->build_form() . '</div>';
+		$form = new Wnd_Form_Option($this->option_name, $this->append);
+		echo '<div class="wrap">' . $this->build_form($form) . '</div>';
 	}
 
 	/**
 	 * 构造选项表单
 	 */
-	public function build_form() {
-		$form = new Wnd_Form_Option($this->option_name, $this->append);
-
+	protected function build_form(Wnd_Form_Option $form): string{
 		$form->add_radio(
 			[
 				'name'     => 'static_host',
