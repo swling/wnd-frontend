@@ -426,6 +426,12 @@ function _wnd_render_form(container, form_json, add_class = '') {
                              * @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials
                              **/
                             withCredentials: false,
+                            //原生获取上传进度的事件
+                            onUploadProgress: function(progressEvent) {
+                                // field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
+                                field.help.text = wnd.msg.waiting;
+                                field.help.class = 'is-primary';
+                            }
                         }).then(response => {
                             field.help.text = wnd.msg.upload_successfully;
                             field.help.class = 'is-success';
