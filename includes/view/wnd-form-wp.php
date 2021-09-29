@@ -144,7 +144,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * @param string 	$template                    	短信模板
 	 * @param bool   	$enable_verification_captcha 	获取验证码时是否进行人机校验
 	 */
-	protected function add_verification_field(string $device_type, string $type, string $template = '', bool $enable_verification_captcha = true) {
+	private function add_verification_field(string $device_type, string $type, string $template = '', bool $enable_verification_captcha = true) {
 		/**
 		 * - 人机校验：若当前未配置人机校验服务，则忽略传参，统一取消人机验证
 		 * - 同一表单，若设置了验证码（调用本方法），且开启了验证码人机验证，则提交时无效再次进行人机验证
@@ -389,7 +389,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * - 本方法只应执行一次
 	 * @since 0.9.25
 	 */
-	protected function wnd_structure() {
+	private function wnd_structure() {
 		if ($this->constructed) {
 			return false;
 		} else {
@@ -423,7 +423,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * 根据当前表单所有字段name生成wp nonce 用于防止用户在前端篡改表单结构提交未经允许的数据
 	 * @since 2019.05.09
 	 */
-	protected function build_sign_field() {
+	private function build_sign_field() {
 		// 提取表单字段names
 		foreach ($this->get_input_values() as $input_value) {
 			if (!isset($input_value['name'])) {
@@ -487,7 +487,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * 表单脚本：将在表单结束成后加载
 	 * @since 0.8.64
 	 */
-	protected function render_script(): string {
+	private function render_script(): string {
 		if ($this->enable_verification_captcha or $this->enable_captcha) {
 			$captcha = Wnd_Captcha::get_instance();
 		}
