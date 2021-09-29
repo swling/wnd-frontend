@@ -3,7 +3,7 @@ namespace Wnd\Model;
 
 use Wnd\Model\Wnd_Term;
 
-class Wnd_Post {
+abstract class Wnd_Post {
 
 	/**
 	 * 如果需要上传图片等，需要在提交文章之前，预先获取一篇文章
