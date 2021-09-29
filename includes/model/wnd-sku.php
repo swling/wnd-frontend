@@ -64,7 +64,7 @@ abstract class Wnd_SKU {
 	 * 		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
 	 * 	];
 	 */
-	protected static function parse_sku_data(array $data, string $post_type): array{
+	private static function parse_sku_data(array $data, string $post_type): array{
 		$sku_data = [];
 		$sku_keys = array_keys(static::get_sku_keys($post_type));
 
@@ -181,7 +181,7 @@ abstract class Wnd_SKU {
 	/**
 	 * 更新指定单个 SKU
 	 */
-	protected static function update_single_sku(int $object_id, string $sku_id, array $single_sku): bool{
+	private static function update_single_sku(int $object_id, string $sku_id, array $single_sku): bool{
 		// 移除不合规的 SKU 属性
 		$sku_keys = array_keys(static::get_sku_keys(get_post_type($object_id)));
 		foreach ($single_sku as $key => $value) {
