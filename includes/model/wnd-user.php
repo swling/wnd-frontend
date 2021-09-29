@@ -359,7 +359,7 @@ abstract class Wnd_User {
 	/**
 	 * 根据类型构造 AUTH 对象缓存组
 	 */
-	protected static function get_auth_cache_group(string $type): string {
+	private static function get_auth_cache_group(string $type): string {
 		return 'wnd_auth_' . $type;
 	}
 
