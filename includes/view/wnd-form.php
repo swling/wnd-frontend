@@ -378,4 +378,12 @@ class Wnd_Form {
 			'submit'      => $this->submit,
 		];
 	}
+
+	/**
+	 * 获取表单 json 字符串
+	 * @date 2021.09.29
+	 */
+	public function get_json(): string {
+		return json_encode($this->get_structure());
+	}
 }
