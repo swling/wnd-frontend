@@ -17,25 +17,24 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Pay_Button {
 
-	protected $post_id;
-	protected $post;
-	protected $post_price;
-	protected $file;
+	private $post_id;
+	private $post;
+	private $post_price;
+	private $file;
 
-	protected $user_id;
-	protected $is_author;
-	protected $user_money;
-	protected $user_has_paid;
+	private $user_id;
+	private $is_author;
+	private $user_money;
+	private $user_has_paid;
 
-	protected $action;
-	protected $message;
-	protected $button_text;
-	protected $html;
+	private $message;
+	private $button_text;
+	private $html;
 
-	protected $primary_color;
+	private $primary_color;
 
 	// 禁止按钮
-	protected $disabled = false;
+	private $disabled = false;
 
 	/**
 	 * Construct
@@ -126,7 +125,7 @@ class Wnd_Pay_Button {
 	 * 文件：wnd post meta 	-> file
 	 * @since 2018.09.17
 	 */
-	protected function build_paid_download_button_var() {
+	private function build_paid_download_button_var() {
 		// 没有文件
 		if (!$this->file) {
 			return;
@@ -159,7 +158,7 @@ class Wnd_Pay_Button {
 	/**
 	 * 付费阅读
 	 */
-	protected function build_paid_reading_button_var() {
+	private function build_paid_reading_button_var() {
 		// 已支付
 		if ($this->user_has_paid) {
 			$this->message .= '<p>' . __('您已付费：¥ ', 'wnd') . $this->post_price . '</p>';
@@ -181,7 +180,7 @@ class Wnd_Pay_Button {
 	 * 同时包含付费阅读及付费下载
 	 * @since 2020.06.04
 	 */
-	protected function build_pay_button_var() {
+	private function build_pay_button_var() {
 		/**
 		 * 支付后，采用付费下载方法，下载文件（下载文件时，不会重复扣费）@see Wnd\Action\Wnd_Pay_For_Downloads
 		 */
