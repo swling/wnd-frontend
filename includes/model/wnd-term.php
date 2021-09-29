@@ -5,7 +5,7 @@ namespace Wnd\Model;
  * Term
  * @since 2020.04.19
  */
-class Wnd_Term {
+abstract class Wnd_Term {
 
 	/**
 	 * 获取当前文章已选择terms数组
@@ -121,7 +121,7 @@ class Wnd_Term {
 	 * @param  string $taxonomy
 	 * @return int    | false
 	 */
-	protected static function get_term_level($term_id, $taxonomy) {
+	public static function get_term_level($term_id, $taxonomy) {
 		$ancestors = get_ancestors($term_id, $taxonomy, 'taxonomy');
 		$count     = count($ancestors);
 		return $count;
@@ -133,7 +133,7 @@ class Wnd_Term {
 	 *
 	 * @return array 指定层级子类的 ids [$term_name => $child_term_id]
 	 */
-	protected static function get_term_children_by_level($term_id, $taxonomy, $child_level) {
+	public static function get_term_children_by_level($term_id, $taxonomy, $child_level) {
 		$children    = get_term_children($term_id, $taxonomy);
 		$child_level = static::get_term_level($term_id, $taxonomy) + $child_level;
 
