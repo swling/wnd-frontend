@@ -33,7 +33,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * 是否已执行被插件特定构造
 	 * @since 09.25
 	 */
-	protected $constructed = false;
+	private $constructed = false;
 
 	public static $primary_color;
 
@@ -447,7 +447,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * 根据meta key获取附件ID
 	 * @since 2020.04.13
 	 */
-	protected static function get_attachment_id(string $meta_key, int $post_parent, int $user_id): int {
+	private static function get_attachment_id(string $meta_key, int $post_parent, int $user_id): int {
 		// option
 		if (0 === stripos($meta_key, '_option_')) {
 			return (int) Wnd_Form_Option::get_option_value_by_input_name($meta_key);
@@ -467,7 +467,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta_key or option
 	 * @since 2020.04.13
 	 */
-	protected static function get_attachment_url(int $attachment_id, string $meta_key, int $post_parent, int $user_id): string{
+	private static function get_attachment_url(int $attachment_id, string $meta_key, int $post_parent, int $user_id): string{
 		$attachment_url = $attachment_id ? wp_get_attachment_url($attachment_id) : false;
 
 		if ($attachment_id and !$attachment_url) {

@@ -15,19 +15,19 @@ class Wnd_Filter_Query {
 	 * URL请求参数
 	 * @since 2019.10.26
 	 */
-	protected static $request_query_vars;
+	private static $request_query_vars;
 
 	/**
 	 * 现有方法之外，其他新增的查询参数
 	 * 将在筛选容器，及分页容器上出现，以绑定点击事件，发送到api接口
 	 * 以data-{key}="{value}"形式出现，ajax请求中，将转化为 url请求参数 ?{key}={value}
 	 */
-	protected $add_query_vars = [];
+	private $add_query_vars = [];
 
 	/**
 	 * 根据配置生成的最终查询参数
 	 */
-	protected $query_vars = [];
+	private $query_vars = [];
 
 	/**
 	 * Constructor.

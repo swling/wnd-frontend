@@ -29,7 +29,7 @@ use Wnd\Utility\Wnd_Request;
  */
 class Wnd_Form_Option extends Wnd_Form_WP {
 
-	protected $option_name;
+	private $option_name;
 
 	/**
 	 * @param $option_name option名称
@@ -198,7 +198,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	/**
 	 * 根据规则统一构造表单name值
 	 */
-	protected function build_input_name($option_key): string {
+	private function build_input_name($option_key): string {
 		return '_option_' . $this->option_name . '_' . $option_key;
 	}
 
@@ -206,7 +206,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 	 * 解析表单名，获取对应 option_name / option_key
 	 * 为准确匹配本规则，要求 option_name 不得包含下划线
 	 */
-	protected static function parse_input_name($input_name): array{
+	private static function parse_input_name($input_name): array{
 		$arr = explode('_', $input_name, 4);
 
 		$data                = [];

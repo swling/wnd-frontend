@@ -11,28 +11,28 @@ namespace Wnd\View;
  */
 class Wnd_Form_Render {
 
-	protected $structure = [];
-	public $html         = '';
+	private $structure = [];
+	private $html      = '';
 
-	protected $is_horizontal;
-	protected $id;
+	private $is_horizontal;
+	private $id;
 
-	protected $before_html;
-	protected $after_html;
-	protected $primary_color;
-	protected $second_color;
+	private $before_html;
+	private $after_html;
+	private $primary_color;
+	private $second_color;
 
-	protected $title;
-	protected $fields;
-	protected $submit;
-	protected $thumbnail_width  = 100;
-	protected $thumbnail_height = 100;
+	private $title;
+	private $fields;
+	private $submit;
+	private $thumbnail_width  = 100;
+	private $thumbnail_height = 100;
 
 	/**
 	 * input字段类型
 	 * @since 2020.04.17
 	 */
-	protected static $input_types = [
+	private static $input_types = [
 		'text',
 		'number',
 		'email',
@@ -97,7 +97,7 @@ class Wnd_Form_Render {
 		return $this->html;
 	}
 
-	protected function build_form_header() {
+	private function build_form_header() {
 		$html = '<form' . $this->build_form_attr() . '>';
 
 		$html .= $this->structure['before_html'];
@@ -113,7 +113,7 @@ class Wnd_Form_Render {
 		$this->html .= $html;
 	}
 
-	protected function build_input_fields(): string{
+	private function build_input_fields(): string{
 		$input_fields = '';
 		foreach ($this->fields as $input_key => $input_value) {
 			// horizontal
@@ -151,7 +151,7 @@ class Wnd_Form_Render {
 		return $input_fields;
 	}
 
-	protected function build_select(array $input_value, string $input_key): string{
+	private function build_select(array $input_value, string $input_key): string{
 		$html = '<div class="field">';
 		$html .= $this->build_label($input_value);
 		$html .= '<div class="control">';
@@ -174,7 +174,7 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	protected function build_radio(array $input_value, string $input_key): string{
+	private function build_radio(array $input_value, string $input_key): string{
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
 		$html .= '<div class="control">';
 		$html .= $this->build_label($input_value);
@@ -191,7 +191,7 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	protected function build_checkbox(array $input_value, string $input_key): string{
+	private function build_checkbox(array $input_value, string $input_key): string{
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
 		$html .= '<div class="control">';
 		$html .= $this->build_label($input_value);
@@ -212,12 +212,12 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	protected function build_hidden(array $input_value, string $input_key): string{
+	private function build_hidden(array $input_value, string $input_key): string{
 		$html = '<input' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
 		return $html;
 	}
 
-	protected function build_input($input_value, $input_key) {
+	private function build_input($input_value, $input_key) {
 		$has_addons = ($input_value['addon_left'] or $input_value['addon_right']) ? true : false;
 
 		if ($has_addons) {
@@ -258,7 +258,7 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	protected function build_image_upload(array $input_value, string $input_key): string{
+	private function build_image_upload(array $input_value, string $input_key): string{
 		$id                        = ($input_value['id'] ?: $this->id) . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
@@ -288,7 +288,7 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	protected function build_file_upload(array $input_value, string $input_key): string{
+	private function build_file_upload(array $input_value, string $input_key): string{
 		$id                        = ($input_value['id'] ?: $this->id) . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
@@ -320,11 +320,11 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	protected function build_html(array $input_value, string $input_key): string {
+	private function build_html(array $input_value, string $input_key): string {
 		return $input_value['value'];
 	}
 
-	protected function build_textarea(array $input_value, string $input_key): string{
+	private function build_textarea(array $input_value, string $input_key): string{
 		$html = '<div class="field">';
 		$html .= $this->build_label($input_value);
 		$html .= '<textarea' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>' . $input_value['value'] . '</textarea>';
@@ -333,7 +333,7 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	protected function build_submit_button() {
+	private function build_submit_button() {
 		if (!$this->submit['text']) {
 			return;
 		}
@@ -346,7 +346,7 @@ class Wnd_Form_Render {
 	 * 闭合表单并渲染 Ajax 表单提交脚本
 	 * @since 0.8.65
 	 */
-	protected function build_form_footer() {
+	private function build_form_footer() {
 		$this->html .= $this->after_html;
 		$this->html .= '</form>';
 		$this->html .= $this->render_script();
@@ -356,7 +356,7 @@ class Wnd_Form_Render {
 	 * 表单脚本：将在表单结束成后加载
 	 * @since 0.8.65
 	 */
-	protected function render_script(): string {
+	private function render_script(): string {
 		return $this->structure['script'] ?? '';
 	}
 
@@ -364,7 +364,7 @@ class Wnd_Form_Render {
 	 * 构造表单属性
 	 * @since 2019.08.29
 	 */
-	protected function build_form_attr(): string {
+	private function build_form_attr(): string {
 		return static::build_attrs($this->structure['attrs']);
 	}
 
@@ -372,7 +372,7 @@ class Wnd_Form_Render {
 	 * 构造 HTML 属性
 	 * @since 0.9.26
 	 */
-	protected static function build_attrs(array $attrs): string{
+	private static function build_attrs(array $attrs): string{
 		$attr = '';
 		foreach ($attrs as $key => $value) {
 			if (!$value and !is_numeric($value)) {
@@ -386,7 +386,7 @@ class Wnd_Form_Render {
 		return $attr;
 	}
 
-	protected static function build_input_id(array $input_value): string {
+	private static function build_input_id(array $input_value): string {
 		if ($input_value['id'] ?? false) {
 			return ' id="' . $input_value['id'] . '"';
 		}
@@ -401,7 +401,7 @@ class Wnd_Form_Render {
 	 * 不含：Textarea value属性
 	 * @since 2019.07.19
 	 */
-	protected static function build_input_attr(array $input_value): string{
+	private static function build_input_attr(array $input_value): string{
 		$bool_attrs   = ['readonly', 'disabled', 'autofocus', 'required', 'multiple'];
 		$normal_attrs = ['class', 'value', 'type', 'name', 'placeholder', 'size', 'maxlength', 'min', 'max', 'step', 'pattern'];
 		$attr         = '';
@@ -474,7 +474,7 @@ class Wnd_Form_Render {
 	 * @var boole  	是否为水平 label
 	 * @since 2019.08.25
 	 */
-	protected function build_label(array $input_value, $horizontal_label = false): string {
+	private function build_label(array $input_value, $horizontal_label = false): string {
 		if ($this->is_horizontal and !$horizontal_label) {
 			return '';
 		}
@@ -499,7 +499,7 @@ class Wnd_Form_Render {
 	 * @var string 	$required
 	 * @since 2021.02.03
 	 */
-	protected static function build_help(array $input_value): string {
+	private static function build_help(array $input_value): string {
 		if (empty($input_value['help'])) {
 			return '';
 		}
@@ -516,7 +516,7 @@ class Wnd_Form_Render {
 	/**
 	 * 辅助函数
 	 */
-	protected static function get_class(array $input_value, bool $space = false): string {
+	private static function get_class(array $input_value, bool $space = false): string {
 		if ($input_value['class'] ?? false) {
 			return $space ? ' ' . $input_value['class'] : $input_value['class'];
 		}

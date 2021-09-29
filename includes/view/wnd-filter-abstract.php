@@ -27,19 +27,19 @@ abstract class Wnd_Filter_Abstract {
 	 * WP_Query 查询结果：
 	 * @see $this->query();
 	 */
-	public $wp_query;
+	protected $wp_query;
 
 	/**
 	 * 是否为独立的、不依赖当前页面的 WP_Query
 	 * @since 0.8.64
 	 */
-	public $independent;
+	protected $independent;
 
 	// 当前post type的主分类taxonomy 约定：post(category) / 自定义类型 （$post_type . '_cat'）
 	public $category_taxonomy;
 
 	// Wnd\View\Wnd_Filter_Query 查询类实例化对象;
-	public $query;
+	protected $query;
 
 	/**
 	 * Constructor.
@@ -104,7 +104,7 @@ abstract class Wnd_Filter_Abstract {
 	 * 权限检测：非管理员，仅可查询publish及close状态(作者本身除外)
 	 * @since 0.9.25
 	 */
-	protected function check_permission() {
+	private function check_permission() {
 		if (is_super_admin()) {
 			return;
 		}
@@ -523,7 +523,7 @@ abstract class Wnd_Filter_Abstract {
 	 *
 	 * @return array $ancestors 当前分类查询的所有父级：$ancestors[$taxonomy] = [$term_id_1, $term_id_2];
 	 */
-	protected function get_tax_query_ancestors(): array{
+	private function get_tax_query_ancestors(): array{
 		$ancestors = [];
 
 		// 遍历当前tax query是否包含子类

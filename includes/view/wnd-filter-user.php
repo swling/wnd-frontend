@@ -14,27 +14,27 @@ use WP_User_Query;
  */
 class Wnd_Filter_User {
 
-	protected $before_html = '';
+	private $before_html = '';
 
-	protected $after_html = '';
+	private $after_html = '';
 
 	// 筛选项HTML
-	protected $tabs = [];
+	private $tabs = [];
 
 	// 筛选结果HTML
-	protected $users = [];
+	private $users = [];
 
 	// 分页导航HTML
-	protected $pagination = [];
+	private $pagination = [];
 
 	/**
 	 * wp_user_query 实例化
 	 * @see $this->query();
 	 */
-	public $wp_user_query;
+	private $wp_user_query;
 
 	// Wnd\View\Wnd_Filter_Query 查询类实例化对象;
-	protected $query;
+	private $query;
 
 	/**
 	 * Constructor.
@@ -158,7 +158,7 @@ class Wnd_Filter_User {
 	/**
 	 * 构造 Ajax 筛选菜单数据
 	 */
-	protected function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []): array{
+	private function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []): array{
 		if (!$options) {
 			return [];
 		}

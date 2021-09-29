@@ -7,18 +7,18 @@ namespace Wnd\View;
  */
 class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 
-	protected $before_html = '';
+	private $before_html = '';
 
-	protected $after_html = '';
+	private $after_html = '';
 
 	// 筛选项数据
-	protected $tabs = [];
+	private $tabs = [];
 
 	// 筛选结果数据
-	protected $posts = [];
+	private $posts = [];
 
 	// 分页导航数据
-	protected $pagination = [];
+	private $pagination = [];
 
 	/**
 	 * 筛选器之前 Html

@@ -81,7 +81,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 	 * 命名为 __add_password 而非 add_password 旨在避免和父类冲突
 	 * @since 0.9.26
 	 */
-	protected function __add_password($name, $label, $placeholder, $required) {
+	private function __add_password($name, $label, $placeholder, $required) {
 		parent::add_password(
 			[
 				'name'        => $name,

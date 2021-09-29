@@ -12,18 +12,15 @@ use Wnd\View\Wnd_Pagination;
  */
 class Wnd_Filter extends Wnd_Filter_Abstract {
 
-	public $post_template;
+	private $post_template;
 
-	public $posts_template;
+	private $posts_template;
 
 	// 筛选项HTML
-	protected $tabs = '';
+	private $tabs = '';
 
 	// 筛选结果HTML
-	protected $posts = '';
-
-	// 分页导航HTML
-	protected $pagination = '';
+	private $posts = '';
 
 	/**
 	 * 设置列表post模板函数，传递$post对象
@@ -124,7 +121,7 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	/**
 	 * 筛选项详情菜单 Class
 	 */
-	protected function get_tab_item_class($key, $value): string{
+	private function get_tab_item_class($key, $value): string{
 		$query_vars = $_GET[$key] ?? '';
 		return ($query_vars == $value) ? 'item is-active' : 'item';
 	}
@@ -267,7 +264,7 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	 * - 排除 WP 内置功能型 Post Type 查询
 	 * @since 0.9.0
 	 */
-	protected static function get_supported_post_types(): array{
+	private static function get_supported_post_types(): array{
 		$custom_post_types = get_post_types(['_builtin' => false]);
 		return array_merge($custom_post_types, ['post' => 'post', 'page' => 'page', 'attachment' => 'attachment']);
 	}

@@ -14,13 +14,13 @@ use Wnd\Model\Wnd_Term;
  */
 class Wnd_Form_Post extends Wnd_Form_WP {
 
-	protected $post_id = 0;
+	private $post_id = 0;
 
-	protected $post_type = 'post';
+	private $post_type = 'post';
 
-	protected $post_parent = 0;
+	private $post_parent = 0;
 
-	protected $post;
+	private $post;
 
 	/**
 	 * 当post已选的Terms
@@ -28,12 +28,12 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 * 	${taxonomy}=>[term_id1,term_id2]
 	 * ]
 	 */
-	protected $current_terms = [];
+	private $current_terms = [];
 
 	// 当前post 支持的 taxonomy
-	protected $taxonomies = [];
+	private $taxonomies = [];
 
-	static protected $default_post = [
+	static private $default_post = [
 		'ID'                    => 0,
 		'post_author'           => 0,
 		'post_date'             => '',
@@ -94,7 +94,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	/**
 	 * 初始化 Post 数据
 	 */
-	protected function setup_postdata($post_type, $post_id) {
+	private function setup_postdata($post_type, $post_id) {
 		/**
 		 * 用于不需要文件上传的表单以降低数据库操作
 		 * 其余情况未指定ID，创建新草稿

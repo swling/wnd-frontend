@@ -9,12 +9,12 @@ use Wnd\Utility\Wnd_Request;
  */
 class Wnd_Ajax_Link {
 
-	protected $text;
-	protected $action;
-	protected $cancel_action;
-	protected $args;
-	protected $class;
-	protected $html;
+	private $text;
+	private $action;
+	private $cancel_action;
+	private $args;
+	private $class;
+	private $html;
 
 	public function set_text(string $text) {
 		$this->text = $text;
@@ -48,8 +48,7 @@ class Wnd_Ajax_Link {
 	 * 封装一个链接，发送ajax请求到后端
 	 * 功能实现依赖对应的前端支持
 	 * @since 2019.07.02
-	 */
-	protected function build() {
+	 */private function build() {
 		// Action 层需要验证表单字段签名
 		$sign = Wnd_Request::sign(array_keys($this->args));
 

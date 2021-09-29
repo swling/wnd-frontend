@@ -173,7 +173,7 @@ class Wnd_Gallery {
 	 * 返回构造完成的相册 html ，及剔除无效附件id的附件id数据
 	 * @since 0.9.2
 	 */
-	protected static function build_gallery(array $images, int $thumbnail_width, int $thumbnail_height): array{
+	private static function build_gallery(array $images, int $thumbnail_width, int $thumbnail_height): array{
 		// 遍历输出图片集
 		$html = '<div class="gallery columns is-vcentered is-multiline has-text-centered is-marginless is-mobile">';
 		foreach ($images as $key => $attachment_id) {

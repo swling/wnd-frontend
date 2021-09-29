@@ -8,30 +8,30 @@ namespace Wnd\View;
 class Wnd_Pagination {
 
 	// 当前页码
-	protected $paged = 1;
+	private $paged = 1;
 
 	public static $page_query_var = 'pages';
 
 	// 最大页码
-	protected $max_num_pages;
+	private $max_num_pages;
 
 	// 每页项目数
-	protected $items_per_page;
+	private $items_per_page;
 
 	// 当前页项目数
-	protected $current_item_count;
+	private $current_item_count;
 
 	// 容器 ID
-	protected $id;
+	private $id;
 
 	// 容器 class
-	protected $class;
+	private $class;
 
 	// data
-	protected $data;
+	private $data;
 
 	// 分页是否为非 WP 原生分页的独立查询
-	protected $independent;
+	private $independent;
 
 	/**
 	 * Constructor.
@@ -182,7 +182,7 @@ class Wnd_Pagination {
 	/**
 	 * 构造HTML data属性
 	 */
-	protected function build_data_attr($data_array): string {
+	private function build_data_attr($data_array): string {
 		if (!$data_array) {
 			return '';
 		}

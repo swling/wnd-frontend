@@ -11,11 +11,11 @@ use WP_Query;
  * @param bool   	$show_preview 是否显示编辑链接
  */
 class Wnd_Posts_Table {
-	protected $columns = [];
-	protected $query;
-	protected $show_preview;
-	protected $show_edit;
-	protected static $defaults = [
+	private $columns = [];
+	private $query;
+	private $show_preview;
+	private $show_edit;
+	private static $defaults = [
 		'post_field' => '',
 		'title'      => '',
 		'content'    => '',
@@ -150,7 +150,7 @@ class Wnd_Posts_Table {
 	 * 获取column class
 	 *
 	 */
-	protected function get_the_class($column) {
+	private function get_the_class($column) {
 		if ($column['class'] ?? false) {
 			return ' class="' . $column['class'] . '"';
 		}
