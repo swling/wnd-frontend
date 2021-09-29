@@ -17,7 +17,7 @@ class Wnd_Menu_Social_Login extends Wnd_Menus {
 	/**
 	 * 构造表单
 	 */
-	protected function build_form(Wnd_Form_Option $form): string{
+	protected function build_form_json(Wnd_Form_Option $form): string{
 
 		$form->add_html('<h3>QQ 登录</h3>');
 
@@ -56,8 +56,7 @@ class Wnd_Menu_Social_Login extends Wnd_Menus {
 		);
 
 		$form->set_submit_button('保存', 'is-danger');
-		$form->build();
 
-		return $form->html;
+		return $form->get_json();
 	}
 }

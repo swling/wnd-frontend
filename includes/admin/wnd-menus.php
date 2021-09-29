@@ -83,13 +83,14 @@ class Wnd_Menus {
 	 */
 	public function build_page() {
 		$form = new Wnd_Form_Option($this->option_name, $this->append);
-		echo '<div class="wrap">' . $this->build_form($form) . '</div>';
+		echo '<script>var form_json = ' . $this->build_form_json($form) . ';</script>';
+		echo '<div class="wrap"><div id="form-container" class="box content mt-3"><script>wnd_render_form("#form-container", form_json)</script></div></div>';
 	}
 
 	/**
 	 * 构造选项表单
 	 */
-	protected function build_form(Wnd_Form_Option $form): string{
+	protected function build_form_json(Wnd_Form_Option $form): string{
 		$form->add_radio(
 			[
 				'name'     => 'static_host',
@@ -207,8 +208,6 @@ class Wnd_Menus {
 		);
 
 		$form->set_submit_button('保存', 'is-danger');
-		$form->build();
-
-		return $form->html;
+		return $form->get_json();
 	}
 }

@@ -17,7 +17,7 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 	/**
 	 * 构造表单
 	 */
-	protected function build_form(Wnd_Form_Option $form): string{
+	protected function build_form_json(Wnd_Form_Option $form): string{
 
 		$form->add_html('<h2 class="title">沙箱测试</h2>');
 
@@ -74,26 +74,23 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 		$form->add_text(
 			[
 				'name'        => 'paypal_clientid',
-				'label'       => 'PayPal REST API Client ID',
+				'label'       => 'REST API Client ID',
 				'required'    => false,
 				'placeholder' => 'PayPal Client ID',
-				'help'        => ['text' => '<a href="https://developer.paypal.com/developer/applications" target="_blank">创建 REST API APP 并获取 Client ID</a>'],
 			]
 		);
 
 		$form->add_text(
 			[
 				'name'        => 'paypal_secret',
-				'label'       => 'PayPal  REST API Secret',
+				'label'       => 'REST API Secret',
 				'required'    => false,
 				'placeholder' => 'PayPal Secret',
-				'help'        => ['text' => '<a href="https://developer.paypal.com/developer/applications" target="_blank">创建 REST API APP 并获取 Secret</a>'],
 			]
 		);
 
 		$form->set_submit_button('保存', 'is-danger');
-		$form->build();
 
-		return $form->html;
+		return $form->get_json();
 	}
 }

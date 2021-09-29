@@ -17,7 +17,7 @@ class Wnd_Menu_Accesskey extends Wnd_Menus {
 	/**
 	 * 构造表单
 	 */
-	protected function build_form(Wnd_Form_Option $form): string{
+	protected function build_form_json(Wnd_Form_Option $form): string{
 		$form->add_html('
 			<h3>腾讯云 API 密钥管理</h3>
 			<a href="https://console.cloud.tencent.com/capi" target="_blank">https://console.cloud.tencent.com/capi</a>
@@ -88,8 +88,7 @@ class Wnd_Menu_Accesskey extends Wnd_Menus {
 		);
 
 		$form->set_submit_button('保存', 'is-danger');
-		$form->build();
 
-		return $form->html;
+		return $form->get_json();
 	}
 }
