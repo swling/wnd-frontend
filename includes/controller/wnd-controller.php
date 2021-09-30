@@ -5,6 +5,7 @@ use Exception;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Filter_Ajax;
 use Wnd\View\Wnd_Filter_User;
+use WP_REST_Request;
 
 /**
  * Wnd Rest API
@@ -199,7 +200,7 @@ class Wnd_Controller {
 	 *
 	 * @param $request
 	 */
-	public static function handle_module($request): array{
+	public static function handle_module(WP_REST_Request $request): array{
 		if (!isset($request['module'])) {
 			return ['status' => 0, 'msg' => __('未指定UI', 'wnd')];
 		}
@@ -229,7 +230,7 @@ class Wnd_Controller {
 	 *
 	 * @param $request
 	 */
-	public static function handle_jsonget($request): array{
+	public static function handle_jsonget(WP_REST_Request $request): array{
 		if (!isset($request['jsonget'])) {
 			return ['status' => 0, 'msg' => __('未指定Data', 'wnd')];
 		}
@@ -258,7 +259,7 @@ class Wnd_Controller {
 	 *
 	 * @param $request
 	 */
-	public static function handle_action($request): array{
+	public static function handle_action(WP_REST_Request $request): array{
 		if (!isset($request['action'])) {
 			return ['status' => 0, 'msg' => __('未指定Action', 'wnd')];
 		}
@@ -286,7 +287,7 @@ class Wnd_Controller {
 	 * 根据查询参数判断是否为自定义伪静态接口，从而实现输出重写
 	 * @since 0.9.17
 	 */
-	public static function handle_endpoint($request) {
+	public static function handle_endpoint(WP_REST_Request $request) {
 		// 解析实际类名称及参数
 		$class = Wnd_Controller::parse_class($request['endpoint'], 'Endpoint');
 		if (!class_exists($class)) {
@@ -311,7 +312,7 @@ class Wnd_Controller {
 	 *
 	 * @param $request
 	 */
-	public static function filter_posts($request): array{
+	public static function filter_posts(WP_REST_Request $request): array{
 		try {
 			$filter = new Wnd_Filter_Ajax(true);
 		} catch (Exception $e) {
@@ -333,7 +334,7 @@ class Wnd_Controller {
 	 *
 	 * @param $request
 	 */
-	public static function filter_users($request): array{
+	public static function filter_users(WP_REST_Request $request): array{
 		try {
 			$filter = new Wnd_Filter_User(true);
 		} catch (Exception $e) {
@@ -352,7 +353,7 @@ class Wnd_Controller {
 	/**
 	 * 写入评论
 	 */
-	public static function add_comment($request): array{
+	public static function add_comment(WP_REST_Request $request): array{
 		try {
 			$comment = wp_handle_comment_submission(wp_unslash($request->get_params()));
 		} catch (Exception $e) {
