@@ -21,8 +21,8 @@ class Wnd_Menu_CDN extends Wnd_Menus {
 
 		$form->add_radio(
 			[
-				'name'     => 'cdn_enable',
-				'options'  => ['启用' => 1, '禁用' => 0],
+				'name'     => 'enable_cdn',
+				'options'  => ['启用' => 1, '禁用' => ''],
 				'label'    => '启用 CDN',
 				'class'    => 'is-checkradio is-danger',
 				'required' => true,

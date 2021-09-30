@@ -32,7 +32,7 @@ class Wnd_Menu_Transaction extends Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'    => 'enable_anon_order',
-				'options' => ['禁用' => 0, '启用' => 1],
+				'options' => ['禁用' => '', '启用' => 1],
 				'label'   => '匿名支付订单',
 				'class'   => 'is-checkradio is-danger',
 			]

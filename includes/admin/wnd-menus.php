@@ -40,20 +40,21 @@ class Wnd_Menus {
 
 		/**
 		 * - 注册菜单
-		 * - 加载静态资源
 		 */
 		add_action('admin_menu', [$this, 'add_menu']);
-		add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
+		if ($this->is_submenu) {
+			return;
+		}
 
 		/**
-		 * 根据配置实例化子菜单
+		 * - 根据配置实例化子菜单
+		 * - 加载静态资源
 		 */
-		if (!$this->is_submenu) {
-			foreach ($this->sub_menus as $slug) {
-				$class_name = __NAMESPACE__ . '\\' . 'Wnd_Menu_' . $slug;
-				new $class_name();
-			}
+		foreach ($this->sub_menus as $slug) {
+			$class_name = __NAMESPACE__ . '\\' . 'Wnd_Menu_' . $slug;
+			new $class_name();
 		}
+		add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
 	}
 
 	/**
@@ -153,7 +154,7 @@ class Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'    => 'disable_locale',
-				'options' => ['启用' => 0, '禁用' => 1],
+				'options' => ['启用' => '', '禁用' => 1],
 				'label'   => '禁用语言包',
 				'class'   => 'is-checkradio is-danger',
 			]
@@ -200,7 +201,7 @@ class Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'    => 'disable_rest_nonce',
-				'options' => ['启用' => 0, '禁用' => 1],
+				'options' => ['启用' => '', '禁用' => 1],
 				'label'   => 'Rest Nonce',
 				'help'    => ['text' => '是否禁用 Rest Nonce（当您采用其他身份校验如 Token 或执行跨域类操作的时候，可能需要禁用 WP Rest Nonce）'],
 				'class'   => 'is-checkradio is-danger',

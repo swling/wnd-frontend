@@ -24,7 +24,7 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'    => 'payment_sandbox',
-				'options' => ['生产环境' => 0, '沙箱调试' => 1],
+				'options' => ['生产环境' => '', '沙箱调试' => 1],
 				'label'   => '沙箱调试',
 				'class'   => 'is-checkradio is-danger',
 			]
@@ -35,7 +35,7 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'    => 'alipay_qrcode',
-				'options' => ['常规接口' => 0, '当面付接口' => 1],
+				'options' => ['常规接口' => '', '当面付接口' => 1],
 				'label'   => '是否为当面付接口',
 				'class'   => 'is-checkradio is-danger',
 			]

@@ -22,7 +22,7 @@ class Wnd_Menu_Sms extends Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'    => 'disable_email_reg',
-				'options' => ['允许邮箱注册' => 0, '强制手机注册' => 1],
+				'options' => ['允许邮箱注册' => '', '强制手机注册' => 1],
 				'label'   => '禁止邮箱注册',
 				'class'   => 'is-checkradio is-danger',
 			]
@@ -31,7 +31,7 @@ class Wnd_Menu_Sms extends Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'    => 'disable_user_login',
-				'options' => ['开启用户名' => 0, '禁止用户名' => 1],
+				'options' => ['开启用户名' => '', '禁止用户名' => 1],
 				'label'   => '禁止用户名',
 				'class'   => 'is-checkradio is-danger',
 			]
@@ -40,7 +40,7 @@ class Wnd_Menu_Sms extends Wnd_Menus {
 		$form->add_radio(
 			[
 				'name'    => 'enable_sms',
-				'options' => ['关闭短信' => 0, '开启短信' => 1],
+				'options' => ['关闭短信' => '', '开启短信' => 1],
 				'label'   => '启用短信功能',
 				'class'   => 'is-checkradio is-danger',
 			]
