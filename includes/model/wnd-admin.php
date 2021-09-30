@@ -199,8 +199,12 @@ class Wnd_Admin {
 	}
 
 	private static function v_0938() {
-		$value = wnd_delete_option('wnd', 'cdn_enable');
+		$enable_cdn = wnd_get_option('wnd', 'cdn_enable');
 		wnd_delete_option('wnd', 'cdn_enable');
-		wnd_update_option('wnd', 'enable_cdn', $value);
+		wnd_update_option('wnd', 'enable_cdn', $enable_cdn);
+
+		$enable_oss = wnd_get_option('wnd', 'oss_enable');
+		wnd_delete_option('wnd', 'oss_enable');
+		wnd_update_option('wnd', 'enable_oss', $enable_oss);
 	}
 }

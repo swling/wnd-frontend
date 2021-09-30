@@ -55,7 +55,7 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 	protected function check() {
 		parent::check();
 
-		if (!wnd_get_config('oss_enable')) {
+		if (!wnd_get_config('enable_oss')) {
 			throw new Exception('Object storage service is disabled');
 		}
 

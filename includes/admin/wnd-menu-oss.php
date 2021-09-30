@@ -21,7 +21,7 @@ class Wnd_Menu_OSS extends Wnd_Menus {
 
 		$form->add_radio(
 			[
-				'name'     => 'oss_enable',
+				'name'     => 'enable_oss',
 				'options'  => ['启用' => 1, '禁用' => ''],
 				'label'    => '启用对象存储功能',
 				'class'    => 'is-checkradio is-danger',

@@ -50,12 +50,12 @@ class Wnd_Init {
 		require WND_PATH . '/includes/function/tpl-general.php'; //通用模板
 
 		// OSS @since 0.9.29 需要用到自定义函数，故此必须在进入文件之后
-		if (wnd_get_config('oss_enable')) {
+		if (wnd_get_config('enable_oss')) {
 			Wnd_OSS_Handler::get_instance();
 		}
 
 		// CDN @since 0.9.29 需要用到自定义函数，故此必须在进入文件之后
-		if (wnd_get_config('cdn_enable')) {
+		if (wnd_get_config('enable_cdn')) {
 			Wnd_CDN::get_instance();
 		}
 
