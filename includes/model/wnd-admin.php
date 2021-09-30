@@ -197,4 +197,10 @@ class Wnd_Admin {
 			wnd_update_option('wnd', 'sms_sp', 'Aliyun');
 		}
 	}
+
+	private static function v_0938() {
+		$value = wnd_delete_option('wnd', 'cdn_enable');
+		wnd_delete_option('wnd', 'cdn_enable');
+		wnd_update_option('wnd', 'enable_cdn', $value);
+	}
 }
