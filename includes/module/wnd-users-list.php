@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Filter_User;
 
 /**
@@ -36,5 +37,11 @@ class Wnd_Users_List extends Wnd_Module_Filter {
 		$filter->query();
 
 		return $filter->get_filter();
+	}
+
+	protected static function check($args) {
+		if (!wnd_is_manager()) {
+			throw new Exception(__('权限不足', 'wnd'));
+		}
 	}
 }

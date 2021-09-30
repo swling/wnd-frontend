@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -40,5 +41,11 @@ class Wnd_Admin_Recharge_Form extends Wnd_Module_Form {
 		$form->set_route('action', 'wnd_admin_recharge');
 		$form->set_submit_button(__('确认充值', 'wnd'));
 		return $form;
+	}
+
+	protected static function check($args) {
+		if (!wnd_is_manager()) {
+			throw new Exception(__('权限不足', 'wnd'));
+		}
 	}
 }

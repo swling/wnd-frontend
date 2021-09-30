@@ -33,4 +33,10 @@ class Wnd_Delete_User_Form extends Wnd_Module_Form {
 		$form->set_submit_button(__('确认删除', 'wnd'));
 		return $form;
 	}
+
+	protected static function check($args) {
+		if (!wnd_is_manager()) {
+			throw new Exception(__('权限不足', 'wnd'));
+		}
+	}
 }

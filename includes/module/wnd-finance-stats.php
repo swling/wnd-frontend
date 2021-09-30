@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module;
 
+use Exception;
 use Wnd\View\Wnd_Filter_Ajax;
 
 /**
@@ -17,5 +18,11 @@ class Wnd_Finance_Stats extends Wnd_Module_Filter {
 		$filter->set_posts_per_page($this->args['posts_per_page']);
 		$filter->query();
 		return $filter->get_filter();
+	}
+
+	protected static function check($args) {
+		if (!wnd_is_manager()) {
+			throw new Exception(__('权限不足', 'wnd'));
+		}
 	}
 }
