@@ -167,11 +167,7 @@ class Wnd_Filter_Query {
 		 * 此处定义：过滤空值，但保留0
 		 * @since 2019.10.26
 		 */
-		$query_vars = array_filter($query_vars, function ($value) {
-			return $value or 0 == $value;
-		});
-
-		return $query_vars;
+		return wnd_array_filter($query_vars);
 	}
 
 	/**

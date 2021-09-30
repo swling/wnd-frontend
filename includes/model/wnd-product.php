@@ -57,7 +57,7 @@ abstract class Wnd_Product {
 			}
 
 			// 数组数据：过滤空值并去重
-			$data[$key] = is_array($data[$key]) ? array_filter(array_unique($data[$key], SORT_REGULAR)) : $data[$key];
+			$data[$key] = is_array($data[$key]) ? wnd_array_filter(array_unique($data[$key], SORT_REGULAR)) : $data[$key];
 		}unset($key, $value);
 
 		return $data;

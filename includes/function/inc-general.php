@@ -253,6 +253,17 @@ function wnd_explode_post_by_more(string $content): array{
 }
 
 /**
+ * 定义如何过滤数组数据
+ * 本插件定义：过滤空值，但保留0
+ * @since 0.9.38
+ */
+function wnd_array_filter(array $arr): array{
+	return array_filter($arr, function ($value) {
+		return $value or is_numeric($value);
+	});
+}
+
+/**
  * 设置默认的异常处理函数
  * @since 2019.07.17
  */

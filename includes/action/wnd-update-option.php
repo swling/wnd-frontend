@@ -22,7 +22,7 @@ class Wnd_Update_Option extends Wnd_Action_Root {
 		}
 
 		// 剔除空值
-		$option_data = array_filter($option_data);
+		$option_data = wnd_array_filter($option_data);
 
 		// Update
 		if (update_option($option_name, $option_data, false)) {

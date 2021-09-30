@@ -26,6 +26,6 @@ class Wnd_Related_Tags extends Wnd_JsonGet {
 			$data[] = get_term($tag->tag_id)->name ?? '';
 		}unset($tags, $tag);
 
-		return array_filter($data);
+		return wnd_array_filter($data);
 	}
 }

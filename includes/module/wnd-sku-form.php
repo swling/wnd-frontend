@@ -69,7 +69,7 @@ class Wnd_SKU_Form extends Wnd_Module_Form {
 			$form->add_html('</div>');
 
 			// 按钮设置：现有数据设置移除按钮，空白数据设置新增按钮
-			if (array_filter($sku_detail)) {
+			if (wnd_array_filter($sku_detail)) {
 				$form->add_html('<div class="has-text-centered"><button type="button" class="button remove-row is-small" title="Remove">-</button></div>');
 			} else {
 				$form->add_html('<div class="has-text-centered"><button type="button" class="button add-row is-small" title="Add">+</button></div>');
