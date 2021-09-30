@@ -95,44 +95,6 @@ abstract class Wnd_Filter_Abstract {
 		if ($post_type) {
 			$this->category_taxonomy = ('post' == $post_type) ? 'category' : $post_type . '_cat';
 		}
-
-		// 权限检测
-		$this->check_permission();
-	}
-
-	/**
-	 * 权限检测：非管理员，仅可查询publish及close状态(作者本身除外)
-	 * @since 0.9.25
-	 */
-	private function check_permission() {
-		if (is_super_admin()) {
-			return;
-		}
-
-		$post_status     = $this->get_post_status_query() ?: 'publish';
-		$current_user_id = get_current_user_id();
-
-		// 数组查询，如果包含publish及closed之外的状态，指定作者为当前用户
-		if (is_array($post_status)) {
-			foreach ($post_status as $status) {
-				if (!in_array($status, ['publish', 'wnd-closed'])) {
-					if (!is_user_logged_in()) {
-						throw new Exception(__('未登录用户，仅可查询公开信息', 'wnd'));
-					} else {
-						$this->query->set_query_var('author', $current_user_id);
-					}
-					break;
-				}
-			}unset($status);
-
-			// 单个查询
-		} elseif (!in_array($post_status, ['publish', 'wnd-closed'])) {
-			if (!is_user_logged_in()) {
-				throw new Exception(__('未登录用户，仅可查询公开信息', 'wnd'));
-			} else {
-				$this->query->set_query_var('author', $current_user_id);
-			}
-		}
 	}
 
 	/**
@@ -510,10 +472,46 @@ abstract class Wnd_Filter_Abstract {
 	 *  当下场景中 $this->wp_query 为 global $wp_query; @see __construct();
 	 * @since 2019.08.01
 	 * @since 0.8.64
+	 * @since 0.9.38 将权限检测移至查询之前
 	 */
 	public function query() {
+		$this->check_query_permission();
+
 		if ($this->independent) {
 			$this->wp_query = new WP_Query($this->query->get_query_vars());
+		}
+	}
+
+	/**
+	 * 查询权限检测：
+	 * - 管理员无限制
+	 * - publish 及 close 状态无限制
+	 * - 其他状态仅可查看当前用户自身的内容
+	 *
+	 * @since 0.9.25
+	 */
+	private function check_query_permission() {
+		if (is_super_admin()) {
+			return;
+		}
+
+		$post_status     = $this->get_post_status_query() ?: 'publish';
+		$current_user_id = get_current_user_id();
+
+		// 数组查询
+		if (is_array($post_status) and array_intersect($post_status, ['publish', 'wnd-closed']) == $post_status) {
+			return;
+		}
+
+		// 单个查询
+		if (is_string($post_status) and in_array($post_status, ['publish', 'wnd-closed'])) {
+			return;
+		}
+
+		if (!$current_user_id) {
+			throw new Exception(__('未登录用户，仅可查询公开信息', 'wnd'));
+		} else {
+			$this->query->set_query_var('author', $current_user_id);
 		}
 	}
 
