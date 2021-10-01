@@ -78,7 +78,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	 * 获取当前查询的主分类 Tabs
 	 *
 	 */
-	protected function get_category_tabs($args = []): array{
+	private function get_category_tabs($args = []): array{
 		$args['taxonomy'] = $this->category_taxonomy;
 		$args['parent']   = $args['parent'] ?? 0;
 		return $this->build_taxonomy_filter($args) ?: [];
@@ -88,8 +88,41 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	 * 获取主分类关联标签筛选 Tabs
 	 *
 	 */
-	protected function get_tags_tabs($limit = 10): array{
+	private function get_tags_tabs($limit = 10): array{
 		return $this->build_tags_filter($limit) ?: [];
+	}
+
+	/**
+	 * 当前 tax query 所有子类筛选项
+	 * - 子类查询需要根据当前tax query动态生成
+	 * - 在ajax状态中，需要经由此方法，交付api响应动态生成
+	 *
+	 * @since 2019.08.09
+	 * @since 0.9.38 Wnd_Filter_Abstract => Wnd_Filter_Ajax
+	 *
+	 * @return array $sub_tabs_array[$taxonomy] = [$sub_tabs];
+	 */
+	private function get_sub_taxonomy_tabs(): array{
+		$sub_tabs_array = [];
+		foreach ($this->get_tax_query() as $tax_query) {
+			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
+			if (!isset($tax_query['terms'])) {
+				continue;
+			}
+
+			// 当前分类的子类
+			$args = [
+				'taxonomy' => $tax_query['taxonomy'],
+				'parent'   => $tax_query['terms'],
+			];
+			$sub_tabs[] = $this->build_taxonomy_filter($args);
+
+			// 构造子类查询
+			$sub_tabs_array[$tax_query['taxonomy']] = $sub_tabs;
+		}
+		unset($tax_query);
+
+		return $sub_tabs_array;
 	}
 
 	/**

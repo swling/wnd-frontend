@@ -109,19 +109,19 @@ abstract class Wnd_Filter_Abstract {
 	 * 封装常用查询参数读取方法（私有方法，仅内部使用）
 	 * @since 0.9.32
 	 */
-	private function get_post_type_query() {
+	protected function get_post_type_query() {
 		return $this->query->get_query_var('post_type');
 	}
 
-	private function get_post_status_query() {
+	protected function get_post_status_query() {
 		return $this->query->get_query_var('post_status');
 	}
 
-	private function get_tax_query() {
+	protected function get_tax_query() {
 		return $this->query->get_query_var('tax_query');
 	}
 
-	private function get_meta_query() {
+	protected function get_meta_query() {
 		return $this->query->get_query_var('meta_query');
 	}
 
@@ -206,7 +206,8 @@ abstract class Wnd_Filter_Abstract {
 			return;
 		}
 
-		$this->build_taxonomy_filter($args);
+		// 初始筛选 term tabs
+		$tabs = $this->build_taxonomy_filter($args);
 
 		/**
 		 * 遍历当前tax query 查询是否设置了对应的taxonomy查询，若存在则查询其对应子类
@@ -220,18 +221,40 @@ abstract class Wnd_Filter_Abstract {
 			}
 
 			if (array_search($taxonomy, $tax_query) !== false) {
-				$taxonomy_query = true;
+				$taxonomy_query         = true;
+				$current_taxonomy_terms = $tax_query['terms'];
 				break;
 			}
 		}
 		unset($key, $tax_query);
 
 		if (!$taxonomy_query) {
-			return;
+			return $tabs;
 		}
 
-		// 获取当前taxonomy子类tabs
-		$this->get_sub_taxonomy_tabs();
+		/**
+		 * 当前 term 的父类的 child term ：即当前筛选条件下的 term tabs
+		 *  - WP 函数 get_ancestors() 获取的父类 id 是从低到高，此处需要反转为从高到低 @see array_reverse()
+		 *    以符合: 子类 => 孙类 之上而下的 tabs 排序
+		 *
+		 */
+		$ancestors = array_reverse($this->get_tax_query_ancestors()[$taxonomy]);
+		foreach ($ancestors as $parent) {
+			$parent_args = [
+				'taxonomy' => $taxonomy,
+				'parent'   => $parent,
+			];
+			$this->build_taxonomy_filter($parent_args);
+		}
+
+		// 当前 term 的 child term
+		$sub_args = [
+			'taxonomy' => $taxonomy,
+			'parent'   => $current_taxonomy_terms,
+		];
+		$this->build_taxonomy_filter($sub_args);
+
+		return $tabs;
 	}
 
 	/**
@@ -275,7 +298,7 @@ abstract class Wnd_Filter_Abstract {
 	 * 	];
 	 * @since 2019.04.18 meta query
 	 *
-	 * @param 自定义： array args meta字段筛选。暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
+	 * @param array args meta字段筛选。暂只支持单一 meta_key 暂仅支持 = 、exists 两种compare
 	 */
 	public function add_meta_filter(array $args, bool $any = true) {
 		$label = $args['label'];
@@ -298,7 +321,7 @@ abstract class Wnd_Filter_Abstract {
 	 * 	];
 	 * @since 2019.04.21 排序
 	 *
-	 * @param 自定义： array args
+	 * @param array $args
 	 */
 	public function add_orderby_filter(array $args, bool $any = true) {
 		$key     = 'orderby';
@@ -315,8 +338,8 @@ abstract class Wnd_Filter_Abstract {
 	 * 	];
 	 * @since 2019.08.10 排序方式
 	 *
-	 * @param 自定义： array  args
-	 * @param string       $label 选项名称
+	 * @param array  $args
+	 * @param string $label  选项名称
 	 */
 	public function add_order_filter(array $args, string $label, bool $any = true) {
 		return $this->build_tabs('order', $args, $label, $any);
@@ -334,8 +357,8 @@ abstract class Wnd_Filter_Abstract {
 	 * 若查询的taxonomy与当前post type未关联，则不输出
 	 * @since 2019.08.09
 	 *
-	 * @param array  	$args  		WordPress get_terms() 参数
-	 * @param string 	$class 		额外设置的class
+	 * @param array 	$args 		WordPress get_terms() 参数
+	 * @param bool  	$any  		是否包含【全部】选项
 	 */
 	protected function build_taxonomy_filter(array $args, bool $any = true) {
 		if (!isset($args['taxonomy'])) {
@@ -521,7 +544,7 @@ abstract class Wnd_Filter_Abstract {
 	 *
 	 * @return array $ancestors 当前分类查询的所有父级：$ancestors[$taxonomy] = [$term_id_1, $term_id_2];
 	 */
-	private function get_tax_query_ancestors(): array{
+	protected function get_tax_query_ancestors(): array{
 		$ancestors = [];
 
 		// 遍历当前tax query是否包含子类
@@ -541,52 +564,6 @@ abstract class Wnd_Filter_Abstract {
 		unset($tax_query);
 
 		return $ancestors;
-	}
-
-	/**
-	 * 当前tax query的子类筛选项
-	 * 子类查询需要根据当前tax query动态生成
-	 * 在ajax状态中，需要经由此方法，交付api响应动态生成
-	 * 非ajax请求中，add_taxonomy_filter，在选择分类后，自动查询生成子类tabs
-	 * @since 2019.08.09
-	 *
-	 * @return array $sub_tabs_array[$taxonomy] = [$sub_tabs];
-	 */
-	public function get_sub_taxonomy_tabs() {
-		$sub_tabs_array = [];
-
-		// 遍历当前tax query是否包含子类
-		foreach ($this->get_tax_query() as $tax_query) {
-			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
-			if (!isset($tax_query['terms'])) {
-				continue;
-			}
-
-			// 查询当前分类的所有上级分类的子分类
-			$sub_tabs  = [];
-			$ancestors = $this->get_tax_query_ancestors()[$tax_query['taxonomy']];
-			foreach ($ancestors as $parent) {
-				$args = [
-					'taxonomy' => $tax_query['taxonomy'],
-					'parent'   => $parent,
-				];
-				$sub_tabs[] = $this->build_taxonomy_filter($args, 'sub-tabs');
-			}
-			unset($parent);
-
-			// 当前分类的子类
-			$args = [
-				'taxonomy' => $tax_query['taxonomy'],
-				'parent'   => $tax_query['terms'],
-			];
-			$sub_tabs[] = $this->build_taxonomy_filter($args, 'sub-tabs');
-
-			// 构造子类查询
-			$sub_tabs_array[$tax_query['taxonomy']] = $sub_tabs;
-		}
-		unset($tax_query);
-
-		return $sub_tabs_array;
 	}
 
 	/**
