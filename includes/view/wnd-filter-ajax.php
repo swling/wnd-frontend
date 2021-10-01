@@ -36,6 +36,11 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 		return [];
 	}
 
+	// 移除筛选结果正文
+	public function remove_post_content() {
+		$this->add_query_vars(['without_content' => 1]);
+	}
+
 	/**
 	 * 构造 Ajax 筛选菜单数据
 	 */
@@ -89,18 +94,15 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 
 	/**
 	 * 获取筛结果集
-	 * - 在很多情况下 Ajax 筛选用于各类管理面板，此时仅需要获取 post 列表，无需包含正文内容，以减少网络数据发送量
 	 * @since 0.9.25
-	 *
-	 * @param bool $with_post_content 是否包含正文内容
 	 */
-	protected function get_posts(bool $with_post_content = true): array{
+	protected function get_posts(): array{
 		if (!$this->wp_query) {
 			return __('未执行WP_Query', 'wnd');
 		}
 
 		foreach ($this->wp_query->get_posts() as $post) {
-			if (!$with_post_content) {
+			if ($this->query->get_query_var('without_content')) {
 				unset($post->post_content);
 			}
 
@@ -145,17 +147,16 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 
 	/**
 	 * 获取完整的筛选数据结构：适用于初始化筛选器
-	 * - 在很多情况下 Ajax 筛选用于各类管理面板，此时仅需要获取 post 列表，无需包含正文内容，以减少网络数据发送量
 	 * @since 0.9.25
 	 *
 	 * @param bool $with_post_content 是否包含正文内容
 	 */
-	public function get_filter(bool $with_post_content = true): array{
+	public function get_filter(): array{
 		return [
 			'before_html'       => $this->before_html,
 			'after_html'        => $this->after_html,
 			'tabs'              => $this->get_tabs(),
-			'posts'             => $this->get_posts($with_post_content),
+			'posts'             => $this->get_posts(),
 
 			/**
 			 * 当前post type的主分类筛选项 约定：post(category) / 自定义类型 （$post_type . '_cat'）

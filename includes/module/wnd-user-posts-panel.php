@@ -12,6 +12,7 @@ class Wnd_User_Posts_Panel extends Wnd_Module_Filter {
 		$this->args['posts_per_page'] = $this->args['posts_per_page'] ?? get_option('posts_per_page');
 
 		$filter = new Wnd_Filter_Ajax();
+		$filter->remove_post_content();
 		// $filter->add_search_form();
 		$filter->add_post_type_filter(wnd_get_user_panel_post_types());
 		$filter->add_post_status_filter([__('发布', 'wnd') => 'publish', __('待审', 'wnd') => 'pending', __('关闭', 'wnd') => 'wnd-closed', __('草稿', 'wnd') => 'draft']);
@@ -21,6 +22,6 @@ class Wnd_User_Posts_Panel extends Wnd_Module_Filter {
 		$filter->set_posts_per_page($this->args['posts_per_page']);
 		$filter->query();
 
-		return $filter->get_filter(false);
+		return $filter->get_filter();
 	}
 }
