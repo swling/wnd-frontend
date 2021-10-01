@@ -133,7 +133,7 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	 * @since 2019.07.31
 	 */
 	public function get_tabs() {
-		$tabs = apply_filters('wnd_filter_tabs', $this->tabs, $this->query->get_query_vars());
+		$tabs = apply_filters('wnd_filter_tabs', $this->tabs, $this->get_query_vars());
 		return '<div class="wnd-filter-tabs">' . $tabs . '</div>';
 	}
 

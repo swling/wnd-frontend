@@ -39,7 +39,7 @@ abstract class Wnd_Filter_Abstract {
 	public $category_taxonomy;
 
 	// Wnd\View\Wnd_Filter_Query 查询类实例化对象;
-	protected $query;
+	private $filter_query;
 
 	/**
 	 * Constructor.
@@ -86,7 +86,7 @@ abstract class Wnd_Filter_Abstract {
 		 * 初始化查询类
 		 * @since 0.9.32
 		 */
-		$this->query = new Wnd_Filter_Query($defaults);
+		$this->filter_query = new Wnd_Filter_Query($defaults);
 
 		/**
 		 * 定义当前post type的主分类：$category_taxonomy
@@ -102,7 +102,45 @@ abstract class Wnd_Filter_Abstract {
 	 * @see Wnd_Filter_query::add_query_vars();
 	 */
 	public function add_query_vars(array $query = []) {
-		$this->query->add_query_vars($query);
+		$this->filter_query->add_query_vars($query);
+	}
+
+	/**
+	 * 设定指定查询参数
+	 *
+	 * 本方法与 $this->add_query_vars() 区别在于：
+	 * - 本方法主要用于系统设定，即设定初始化时的参数
+	 * - 相关设定参数不会对外界暴露
+	 * - 典型用途：在完成对外部查询参数的解析后，强制添加或修改某些参数
+	 *
+	 * @since 0.9.38
+	 */
+	public function set_query_var(string $var, $value) {
+		return $this->filter_query->set_query_var($var, $value);
+	}
+
+	/**
+	 * 读取指定查询参数值
+	 * @since 0.9.38
+	 */
+	public function get_query_var(string $var) {
+		return $this->filter_query->get_query_var($var);
+	}
+
+	/**
+	 * 读取全部查询参数数组
+	 * @since 0.9.38
+	 */
+	public function get_query_vars(): array{
+		return $this->filter_query->get_query_vars();
+	}
+
+	/**
+	 * 获取新增的查询参数
+	 * @since 0.9.38
+	 */
+	public function get_add_query_vars(): array{
+		return $this->filter_query->get_add_query_vars();
 	}
 
 	/**
@@ -412,7 +450,7 @@ abstract class Wnd_Filter_Abstract {
 		 * @since 2019.03.07
 		 */
 		$category_key   = ('category' == $this->category_taxonomy) ? 'category_name' : $this->category_taxonomy;
-		$category_query = $this->query->get_query_var($category_key);
+		$category_query = $this->get_query_var($category_key);
 		if ($category_query) {
 			$category    = get_term_by('slug', $category_query, $this->category_taxonomy);
 			$category_id = $category ? $category->term_id : 0;
@@ -487,7 +525,7 @@ abstract class Wnd_Filter_Abstract {
 		$this->check_query_permission();
 
 		if ($this->independent) {
-			$this->wp_query = new WP_Query($this->query->get_query_vars());
+			$this->wp_query = new WP_Query($this->get_query_vars());
 		}
 	}
 
@@ -520,7 +558,7 @@ abstract class Wnd_Filter_Abstract {
 		if (!$current_user_id) {
 			throw new Exception(__('未登录用户，仅可查询公开信息', 'wnd'));
 		} else {
-			$this->query->set_query_var('author', $current_user_id);
+			$this->set_query_var('author', $current_user_id);
 		}
 	}
 
@@ -529,19 +567,19 @@ abstract class Wnd_Filter_Abstract {
 	 * @since 0.9.32
 	 */
 	protected function get_post_type_query() {
-		return $this->query->get_query_var('post_type');
+		return $this->get_query_var('post_type');
 	}
 
 	protected function get_post_status_query() {
-		return $this->query->get_query_var('post_status');
+		return $this->get_query_var('post_status');
 	}
 
 	protected function get_tax_query() {
-		return $this->query->get_query_var('tax_query');
+		return $this->get_query_var('tax_query');
 	}
 
 	protected function get_meta_query() {
-		return $this->query->get_query_var('meta_query');
+		return $this->get_query_var('meta_query');
 	}
 
 	/**

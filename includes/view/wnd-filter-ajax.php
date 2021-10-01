@@ -135,7 +135,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 		}
 
 		foreach ($this->wp_query->get_posts() as $post) {
-			if ($this->query->get_query_var('without_content')) {
+			if ($this->get_query_var('without_content')) {
 				unset($post->post_content);
 			}
 
@@ -216,7 +216,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 			 */
 			'category_taxonomy' => $this->category_taxonomy,
 
-			'add_query_vars'    => $this->query->get_add_query_vars(),
+			'add_query_vars'    => $this->get_add_query_vars(),
 			'query_vars'        => $this->wp_query->query_vars,
 		];
 	}

@@ -62,21 +62,13 @@ class Wnd_Filter_User {
 	}
 
 	/**
-	 * 添加新的请求参数
-	 * @see Wnd_Filter_query::add_query_vars();
-	 */
-	public function add_query_vars(array $query = []) {
-		$this->query->add_query_vars($query);
-	}
-
-	/**
 	 * 设置ajax post列表嵌入容器
 	 * @since 2019.07.31
 	 *
 	 * @param int $number 每页post数目
 	 */
 	public function set_number(int $number) {
-		$this->add_query_vars(['number' => $number]);
+		$this->query->add_query_vars(['number' => $number]);
 	}
 
 	/**
