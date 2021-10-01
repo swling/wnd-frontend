@@ -257,7 +257,7 @@ abstract class Wnd_Filter_Abstract {
 		}
 
 		/**
-		 * 当前 term 的父类的 child term ：即当前筛选条件下的 term tabs
+		 * 当前 term 的父类的 child term， 即（层级）：当前筛选 term <= and > 初始筛选 Term
 		 *  - WP 函数 get_ancestors() 获取的父类 id 是从低到高，此处需要反转为从高到低 @see array_reverse()
 		 *    以符合: 子类 => 孙类 之上而下的 tabs 排序
 		 *
