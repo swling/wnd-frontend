@@ -106,26 +106,6 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
-	 * 封装常用查询参数读取方法（私有方法，仅内部使用）
-	 * @since 0.9.32
-	 */
-	protected function get_post_type_query() {
-		return $this->query->get_query_var('post_type');
-	}
-
-	protected function get_post_status_query() {
-		return $this->query->get_query_var('post_status');
-	}
-
-	protected function get_tax_query() {
-		return $this->query->get_query_var('tax_query');
-	}
-
-	protected function get_meta_query() {
-		return $this->query->get_query_var('meta_query');
-	}
-
-	/**
 	 * 设置ajax post列表嵌入容器
 	 * @since 2019.07.31
 	 *
@@ -134,6 +114,12 @@ abstract class Wnd_Filter_Abstract {
 	public function set_posts_per_page(int $posts_per_page) {
 		$this->add_query_vars(['posts_per_page' => $posts_per_page]);
 	}
+
+	/**
+	 * 搜索框：在子类中实现
+	 * @since 2020.05.11
+	 */
+	abstract public function add_search_form(string $button = 'Search', string $placeholder = '');
 
 	/**
 	 * @param array 	$args 需要筛选的类型数组
@@ -539,6 +525,26 @@ abstract class Wnd_Filter_Abstract {
 	}
 
 	/**
+	 * 封装常用查询参数读取方法（私有方法，仅内部使用）
+	 * @since 0.9.32
+	 */
+	protected function get_post_type_query() {
+		return $this->query->get_query_var('post_type');
+	}
+
+	protected function get_post_status_query() {
+		return $this->query->get_query_var('post_status');
+	}
+
+	protected function get_tax_query() {
+		return $this->query->get_query_var('tax_query');
+	}
+
+	protected function get_meta_query() {
+		return $this->query->get_query_var('meta_query');
+	}
+
+	/**
 	 * 获取当前tax_query的所有父级term_id
 	 * @since 2019.08.09
 	 *
@@ -565,12 +571,6 @@ abstract class Wnd_Filter_Abstract {
 
 		return $ancestors;
 	}
-
-	/**
-	 * 搜索框：在子类中实现
-	 * @since 2020.05.11
-	 */
-	abstract public function add_search_form(string $button = 'Search', string $placeholder = '');
 
 	/**
 	 * 统一封装 Tabs 输出：在子类中实现
