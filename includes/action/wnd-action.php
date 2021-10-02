@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Action;
 
-use Wnd\Utility\Wnd_Request;
+use Wnd\Controller\Wnd_Request;
 use WP_REST_Request;
 
 /**

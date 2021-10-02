@@ -253,8 +253,8 @@ class Wnd_Controller {
 	 * 数据处理
 	 * 注意：
 	 * 	WordPress Rest API 回调函数的传参 $request 数据为原始数据，如直接使用 $request 数据执行数据库操作需要做数据清理。
-	 * 	因此在本插件，Action 层相关方法中，用户数据采用 Wnd\Utility\Wnd_Request 统一处理
-	 * 	@see Wnd\Utility\Wnd_Request; Wnd\Action\Wnd_Action_Ajax
+	 * 	因此在本插件，Action 层相关方法中，用户数据采用 Wnd\Controller\Wnd_Request 统一处理
+	 * 	@see Wnd\Controller\Wnd_Request; Wnd\Action\Wnd_Action_Ajax
 	 * @since 2019.04.07
 	 *
 	 * @param $request

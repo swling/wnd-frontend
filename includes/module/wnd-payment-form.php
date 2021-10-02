@@ -1,10 +1,10 @@
 <?php
 namespace Wnd\Module;
 
+use Wnd\Controller\Wnd_Request;
 use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Order_Product;
 use Wnd\Model\Wnd_SKU;
-use Wnd\Utility\Wnd_Request;
 use Wnd\View\Wnd_Form_WP;
 
 /**

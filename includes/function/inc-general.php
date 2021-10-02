@@ -210,7 +210,7 @@ function wnd_ajax_embed($template, $args = []) {
  * @return string  JavaScript 脚本
  */
 function wnd_ajax_action(string $action, array $args = []): string{
-	$args = Wnd\Utility\Wnd_Request::sign_request($args);
+	$args = Wnd\Controller\Wnd_Request::sign_request($args);
 	$args = json_encode(wp_parse_args($args));
 	return '<script>wnd_ajax_action(\'' . $action . '\', ' . $args . ')</script>';
 }

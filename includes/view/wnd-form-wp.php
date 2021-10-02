@@ -2,8 +2,8 @@
 namespace Wnd\View;
 
 use Wnd\Controller\Wnd_Controller;
+use Wnd\Controller\Wnd_Request;
 use Wnd\Getway\Wnd_Captcha;
-use Wnd\Utility\Wnd_Request;
 use Wnd\View\Wnd_Gallery;
 
 /**

@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Utility;
+namespace Wnd\Controller;
 
 use Exception;
 use Wnd\Getway\Wnd_Captcha;
