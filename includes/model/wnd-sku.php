@@ -49,7 +49,9 @@ abstract class Wnd_SKU {
 	 * 	];
 	 *
 	 */
-	public static function set_object_sku(int $object_id, array $sku_data): bool {
+	public static function set_object_sku(int $object_id, array $data): bool{
+		$post_type = get_post_type($object_id);
+		$sku_data  = static::parse_sku_data($data, $post_type);
 		return wnd_update_post_meta($object_id, static::$sku_meta_key, $sku_data);
 	}
 
@@ -60,7 +62,7 @@ abstract class Wnd_SKU {
 	 * 		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
 	 * 	];
 	 */
-	public static function parse_sku_data(array $data, string $post_type): array{
+	private static function parse_sku_data(array $data, string $post_type): array{
 		$sku_data = [];
 		$sku_keys = array_keys(static::get_sku_keys($post_type));
 
@@ -167,11 +169,31 @@ abstract class Wnd_SKU {
 
 	/**
 	 * 获取指定单个 SKU 名称
-	 *
-	 * 若未设置库存，表示该商品为无限库存（如虚拟商品等），返回 -1
+	 * - 若未设置库存，表示该商品为无限库存（如虚拟商品等），返回 -1
 	 */
 	public static function get_single_sku_stock(int $object_id, string $sku_id): int {
 		return static::get_single_sku($object_id, $sku_id)['stock'] ?? -1;
+	}
+
+	/**
+	 * 扣除单个 SKU 库存
+	 * - 若未设置库存或库为 -1 ：则为无限库存产品，如虚拟商品，则无需操作库存
+	 * - 可设置 $quantity 为负值，则增加库存（如取消订单时）
+	 *
+	 */
+	public static function reduce_single_sku_stock(int $object_id, string $sku_id, int $quantity): bool{
+		$single_sku = static::get_single_sku($object_id, $sku_id);
+		if (!isset($single_sku['stock'])) {
+			return false;
+		}
+
+		if (-1 == $single_sku['stock']) {
+			return false;
+		}
+
+		$single_sku['stock'] = $single_sku['stock'] - $quantity;
+
+		return static::update_single_sku($object_id, $sku_id, $single_sku);
 	}
 
 	/**
@@ -191,26 +213,5 @@ abstract class Wnd_SKU {
 		$sku[$sku_id] = $single_sku;
 
 		return wnd_update_post_meta($object_id, static::$sku_meta_key, $sku);
-	}
-
-	/**
-	 * 扣除单个 SKU 库存
-	 *
-	 * - 若未设置库存或库为 -1 ：则为无限库存产品，如虚拟商品，则无需操作库存
-	 *
-	 */
-	public static function reduce_single_sku_stock(int $object_id, string $sku_id, int $quantity): bool{
-		$single_sku = static::get_single_sku($object_id, $sku_id);
-		if (!isset($single_sku['stock'])) {
-			return false;
-		}
-
-		if (-1 == $single_sku['stock']) {
-			return false;
-		}
-
-		$single_sku['stock'] = $single_sku['stock'] - $quantity;
-
-		return static::update_single_sku($object_id, $sku_id, $single_sku);
 	}
 }
