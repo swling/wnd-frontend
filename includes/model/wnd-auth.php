@@ -187,7 +187,7 @@ abstract class Wnd_Auth {
 	 * @since 2019.02.09 手机及邮箱验证模块
 	 */
 	private function insert() {
-		$this->check_auth_fields(true);
+		$this->check_db_fields(true);
 
 		$record  = static::get_db($this->identity_type, $this->identifier);
 		$ID      = $record->ID ?? 0;
@@ -212,7 +212,7 @@ abstract class Wnd_Auth {
 	 *
 	 * @param bool $check_auth_code 是否检查验证码字段
 	 */
-	private function check_auth_fields(bool $check_auth_code) {
+	private function check_db_fields(bool $check_auth_code) {
 		if (!$this->identity_type) {
 			throw new Exception(__('未指定验证设备类型', 'wnd'));
 		}
@@ -235,15 +235,10 @@ abstract class Wnd_Auth {
 	/**
 	 * 校验验证码
 	 *
-	 * 若已指定 $this->identifier 则依据邮箱或手机校验
-	 * 若未指定邮箱及手机且当前用户已登录，则依据用户ID校验
-	 *
 	 * @since 初始化
-	 *
-	 * @param bool $delete_after_verified 	验证成功后是否删除本条记录(对应记录必须没有绑定用户)
 	 */
-	public function verify(bool $delete_after_verified = false) {
-		$this->check_auth_fields(true);
+	public function verify() {
+		$this->check_db_fields(true);
 
 		/**
 		 * 类型检测
@@ -262,18 +257,6 @@ abstract class Wnd_Auth {
 		if ($this->auth_code != $data->credential) {
 			throw new Exception(__('校验失败：验证码不正确', 'wnd'));
 		}
-
-		/**
-		 * 验证完成后是否删除
-		 * 删除的记录必须没有绑定用户
-		 * @since 2019.07.23
-		 */
-		if ($delete_after_verified) {
-			global $wpdb;
-			$wpdb->delete($wpdb->wnd_auths, ['ID' => $data->ID, 'user_id' => 0], ['%d', '%d']);
-		}
-
-		return true;
 	}
 
 	/**
@@ -281,7 +264,7 @@ abstract class Wnd_Auth {
 	 * @param int $user_id 	注册用户ID
 	 */
 	public function bind_user(int $user_id) {
-		$this->check_auth_fields(false);
+		$this->check_db_fields(false);
 
 		$record = static::get_db($this->identity_type, $this->identifier);
 		$ID     = $record->ID ?? 0;
@@ -297,6 +280,7 @@ abstract class Wnd_Auth {
 	 * @since 2019.07.23
 	 */
 	public function delete() {
+		$this->check_db_fields(false);
 		return static::delete_db($this->identity_type, $this->identifier);
 	}
 
