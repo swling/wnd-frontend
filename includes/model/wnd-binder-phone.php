@@ -16,7 +16,7 @@ class Wnd_Binder_Phone extends Wnd_Binder {
 	/**
 	 * 核对验证码并绑定
 	 */
-	protected function bind_object() {
+	protected function bind_device() {
 		$bind = wnd_update_user_phone($this->user->ID, $this->device);
 		if (!$bind) {
 			throw new Exception(__('数据库写入失败', 'wnd'));

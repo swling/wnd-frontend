@@ -57,7 +57,7 @@ abstract class Wnd_Binder {
 	public function bind() {
 		$this->check_password();
 		$this->verify_auth_code();
-		$this->bind_object();
+		$this->bind_device();
 	}
 
 	/**
@@ -95,5 +95,5 @@ abstract class Wnd_Binder {
 	 * 更新数据库
 	 *
 	 */
-	abstract protected function bind_object();
+	abstract protected function bind_device();
 }
