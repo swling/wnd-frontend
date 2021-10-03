@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Wnd\Model\Wnd_Finance;
+use Wnd\Model\Wnd_Product;
 use Wnd\Model\Wnd_SKU;
 use Wnd\Model\Wnd_Transaction;
 
@@ -140,7 +141,7 @@ abstract class Wnd_Order_Product {
 		/**
 		 * @since 2019.06.04 扣除订单统计
 		 */
-		wnd_inc_wnd_post_meta($object_id, 'order_count', -1, true);
+		Wnd_Product::inc_order_count($object_id, -1);
 
 		/**
 		 *  还原库存

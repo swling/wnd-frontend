@@ -57,7 +57,7 @@ class Wnd_Filter_Query {
 	 *
 	 * @return 	array 	wp_query $args
 	 */
-	public static function parse_query_vars() {
+	public static function parse_query_vars(): array{
 		if (empty($_GET)) {
 			return [];
 		}

@@ -69,8 +69,8 @@ abstract class Wnd_Product {
 	 * @param  	int 	$object_id 	商品ID
 	 * @return 	int 	order count
 	 */
-	public static function get_order_count($object_id): int {
-		return static::get_object_props($object_id)['order_count'] ?? 0;
+	public static function get_order_count(int $object_id): int {
+		return wnd_get_post_meta($object_id, 'order_count') ?: 0;
 	}
 
 	/**
@@ -79,9 +79,7 @@ abstract class Wnd_Product {
 	 * @param 	int 	$object_id 	商品ID
 	 * @param 	int 	$number    	增加的数目，可为负
 	 */
-	public static function inc_order_count(int $object_id, int $number): bool{
-		$order_count = static::get_order_count($object_id);
-		$order_count = $order_count + $number;
-		return wnd_update_post_meta($object_id, 'order_count', $order_count);
+	public static function inc_order_count(int $object_id, int $number): bool {
+		return wnd_inc_wnd_post_meta($object_id, 'order_count', $number, true);
 	}
 }
