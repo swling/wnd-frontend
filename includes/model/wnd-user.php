@@ -16,7 +16,7 @@ abstract class Wnd_User {
 	 * 主要数据：user_id、email、phone……
 	 * @since 2019.11.06
 	 */
-	public static function get_wnd_user($user_id) {
+	public static function get_wnd_user($user_id): object{
 		$user = wp_cache_get($user_id, static::$user_cache_group);
 		if ($user) {
 			return $user;
