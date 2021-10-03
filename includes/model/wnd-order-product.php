@@ -143,12 +143,19 @@ abstract class Wnd_Order_Product {
 		 */
 		Wnd_Product::inc_order_count($object_id, -1);
 
-		/**
-		 *  还原库存
-		 *
-		 * 此处不可调用 Wnd_SKU::reduce_single_sku_stock 及 Wnd_Product 其他获取产品属性的方法
-		 * Wnd_Product 相关方法在获取现有 SKU 信息时，会调用本类中的 static::release_pending_orders 从而产生死循环
-		 */
+		// 还原对应产品的库存
+		static::restore_stock($order);
+	}
+
+	/**
+	 *  还原库存
+	 *
+	 * 此处不可调用 Wnd_SKU::reduce_single_sku_stock 及 Wnd_Product 其他获取产品属性的方法
+	 * Wnd_Product 相关方法在获取现有 SKU 信息时，会调用本类中的 static::release_pending_orders 从而产生死循环
+	 */
+	private static function restore_stock(\WP_Post $order) {
+		$object_id = $order->post_parent ?? 0;
+
 		$props    = static::get_order_props($order->ID);
 		$sku_id   = $props[static::$sku_key][static::$sku_id_key] ?? '';
 		$quantity = $props[static::$quantity_key] ?? 1;
@@ -161,8 +168,8 @@ abstract class Wnd_Order_Product {
 		}
 		$object_single_sku['stock'] = $object_single_sku['stock'] + $quantity;
 
-		// update post meta
+		// update SKU
 		$object_sku[$sku_id] = $object_single_sku;
-		wnd_update_post_meta($object_id, Wnd_SKU::$sku_key, $object_sku);
+		Wnd_SKU::set_object_sku($object_id, $object_sku);
 	}
 }

@@ -49,11 +49,7 @@ abstract class Wnd_SKU {
 	 * 	];
 	 *
 	 */
-	public static function set_object_sku(int $object_id, array $data): bool{
-		// SKU 解析
-		$sku_data = static::parse_sku_data($data, get_post_type($object_id));
-
-		// 保存数据
+	public static function set_object_sku(int $object_id, array $sku_data): bool {
 		return wnd_update_post_meta($object_id, static::$sku_key, $sku_data);
 	}
 
@@ -64,7 +60,7 @@ abstract class Wnd_SKU {
 	 * 		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
 	 * 	];
 	 */
-	private static function parse_sku_data(array $data, string $post_type): array{
+	public static function parse_sku_data(array $data, string $post_type): array{
 		$sku_data = [];
 		$sku_keys = array_keys(static::get_sku_keys($post_type));
 
