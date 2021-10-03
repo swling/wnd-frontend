@@ -21,12 +21,12 @@ use Wnd\Model\Wnd_Transaction;
 abstract class Wnd_Order_Product {
 
 	// SKU KEY
-	protected static $sku_key = 'sku';
+	private static $sku_key = 'sku';
 
-	// SKU ID KEY
+	// SKU ID KEY（同时也为订单创建时，用户请求的数据 name）
 	public static $sku_id_key = 'sku_id';
 
-	// 购买商品数目
+	// 购买商品数目（同时也为订单创建时，用户请求的数据 name）
 	public static $quantity_key = 'quantity';
 
 	// IP
@@ -160,16 +160,6 @@ abstract class Wnd_Order_Product {
 		$sku_id   = $props[static::$sku_key][static::$sku_id_key] ?? '';
 		$quantity = $props[static::$quantity_key] ?? 1;
 
-		// 获取现有库存，若未设置库存，或库存为 -1 表示为虚拟产品或其他无限量库存产品，无需操作
-		$object_sku        = wnd_get_post_meta($object_id, Wnd_SKU::$sku_key) ?? [];
-		$object_single_sku = $object_sku[$sku_id] ?? [];
-		if (!isset($object_single_sku['stock']) or -1 == $object_single_sku['stock']) {
-			return false;
-		}
-		$object_single_sku['stock'] = $object_single_sku['stock'] + $quantity;
-
-		// update SKU
-		$object_sku[$sku_id] = $object_single_sku;
-		Wnd_SKU::set_object_sku($object_id, $object_sku);
+		Wnd_SKU::reduce_single_sku_stock($object_id, $sku_id, $quantity * -1);
 	}
 }

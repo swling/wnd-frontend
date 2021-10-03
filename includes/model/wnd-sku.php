@@ -18,7 +18,7 @@ use Wnd\Model\Wnd_Product;
 abstract class Wnd_SKU {
 
 	// SKU KEY
-	public static $sku_key = 'sku';
+	private static $sku_meta_key = 'sku';
 
 	// Form input name prefix
 	public static $name_prefix = '_sku_';
@@ -50,7 +50,7 @@ abstract class Wnd_SKU {
 	 *
 	 */
 	public static function set_object_sku(int $object_id, array $sku_data): bool {
-		return wnd_update_post_meta($object_id, static::$sku_key, $sku_data);
+		return wnd_update_post_meta($object_id, static::$sku_meta_key, $sku_data);
 	}
 
 	/**
@@ -141,7 +141,7 @@ abstract class Wnd_SKU {
 	 * 	];
 	 */
 	public static function get_object_sku(int $object_id): array{
-		return Wnd_Product::get_object_props($object_id)[static::$sku_key] ?? [];
+		return Wnd_Product::get_object_props($object_id)[static::$sku_meta_key] ?? [];
 	}
 
 	/**
@@ -190,7 +190,7 @@ abstract class Wnd_SKU {
 		$sku          = static::get_object_sku($object_id);
 		$sku[$sku_id] = $single_sku;
 
-		return wnd_update_post_meta($object_id, static::$sku_key, $sku);
+		return wnd_update_post_meta($object_id, static::$sku_meta_key, $sku);
 	}
 
 	/**
