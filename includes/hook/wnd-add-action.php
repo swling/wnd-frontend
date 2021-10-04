@@ -20,6 +20,14 @@ class Wnd_Add_Action {
 		add_action('wnd_upload_file', [__CLASS__, 'action_on_upload_file'], 10, 3);
 		add_action('wnd_upload_gallery', [__CLASS__, 'action_on_upload_gallery'], 10, 2);
 		add_action('wnd_delete_file', [__CLASS__, 'action_on_delete_file'], 10, 3);
+
+		/**
+		 * 获取产品属性时，释放指定时间内未完成支付的库存
+		 * - 之所以通过钩子挂载，因为某些情况下需要移除这个操作，避免死循环
+		 * - 如在订单删除还原库存时，如果当前产品包含可释放的订单，将陷入死循环：还原库存=>触发订单释放=>还原库存
+		 * @since 0.9.38
+		 */
+		add_action('wnd_pre_get_product_props', 'Wnd\Model\Wnd_Order_Product::release_pending_orders', 10, 1);
 	}
 
 	/**

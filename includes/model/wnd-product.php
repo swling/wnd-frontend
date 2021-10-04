@@ -1,8 +1,6 @@
 <?php
 namespace Wnd\Model;
 
-use Wnd\Model\Wnd_Order_Product;
-
 /**
  * 商品属性模块（作用于商品）
  * - 读取商品相关属性
@@ -30,8 +28,12 @@ abstract class Wnd_Product {
 	 * 获取产品全部属性
 	 */
 	public static function get_object_props(int $object_id): array{
-		// 释放规定时间未完成的订单，以确保库存数据正确性
-		Wnd_Order_Product::release_pending_orders($object_id);
+		/**
+		 * 获取产品属性时之前的 Action
+		 * - 如释放符号条件的订单等
+		 * @since 0.9.38
+		 */
+		do_action('wnd_pre_get_product_props', $object_id);
 
 		$meta  = get_post_meta($object_id, 'wnd_meta', true) ?: [];
 		$props = static::parse_props_data($meta);

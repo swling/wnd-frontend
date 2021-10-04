@@ -82,6 +82,16 @@ do_action('wnd_order_completed', $order_id, $order_post);
 do_action('wnd_recharge_completed', $recharge_id, $recharge_post);
 ```
 
+## 产品
+```php
+/**
+ * 获取产品属性时之前的 Action
+ * - 如释放符号条件的订单等
+ * @since 0.9.38
+ */
+do_action('wnd_pre_get_product_props', $object_id);
+```
+
 ## 其他
 ```php
 ##@since 2019.03.14 站点清理

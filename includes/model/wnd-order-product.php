@@ -148,10 +148,8 @@ abstract class Wnd_Order_Product {
 	}
 
 	/**
-	 *  还原库存
+	 * 还原库存
 	 *
-	 * 此处不可调用 Wnd_SKU::reduce_single_sku_stock 及 Wnd_Product 其他获取产品属性的方法
-	 * Wnd_Product 相关方法在获取现有 SKU 信息时，会调用本类中的 static::release_pending_orders 从而产生死循环
 	 */
 	private static function restore_stock(\WP_Post $order) {
 		$object_id = $order->post_parent ?? 0;
@@ -160,6 +158,22 @@ abstract class Wnd_Order_Product {
 		$sku_id   = $props[static::$sku_key][static::$sku_id_key] ?? '';
 		$quantity = $props[static::$quantity_key] ?? 1;
 
+		/**
+		 * 移除钩子
+		 * - Wnd_SKU 获取产品属性时，会触发释放指定时间内未完成支付的订单
+		 * - 如果当前产品包含可释放的订单，将陷入死循环：还原库存=>触发订单释放=>还原库存
+		 * - 因而此处移除 Action
+		 * @since 0.9.38
+		 */
+		remove_action('wnd_pre_get_product_props', 'Wnd\Model\Wnd_Order_Product::release_pending_orders', 10);
+
+		// 还原库存（反向扣除库存）
 		Wnd_SKU::reduce_single_sku_stock($object_id, $sku_id, $quantity * -1);
+
+		/**
+		 * 库存恢复完成，恢复 Action
+		 * @since 0.9.38
+		 */
+		add_action('wnd_pre_get_product_props', 'Wnd\Model\Wnd_Order_Product::release_pending_orders', 10, 1);
 	}
 }
