@@ -28,6 +28,10 @@ abstract class Wnd_Payment_Getway {
 	public static function get_gateway_options(): array{
 		$gateway_data['支付宝'] = wnd_get_config('alipay_qrcode') ? 'Alipay_QRCode' : 'Alipay';
 
+		if (wnd_get_config('wechat_mchid')) {
+			$gateway_data['微信'] = wp_is_mobile() ? 'WeChat_H5' : 'WeChat_Native';
+		}
+
 		if (wnd_get_config('paypal_clientid')) {
 			$gateway_data['PayPal'] = 'PayPal';
 		}

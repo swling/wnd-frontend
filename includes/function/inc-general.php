@@ -267,8 +267,14 @@ function wnd_array_filter(array $arr): array{
  * 记录常规错误日志
  * @since 0.9.38
  */
-function wnd_error_log(string $msg, string $file = 'error.log') {
-	error_log($msg . '@' . wp_date('Y-m-d:h-i-s', time()) . "\n", 3, WND_PATH . '/log/' . $file);
+function wnd_error_log(string $msg, string $file = 'wnd_error.log') {
+	$path = wnd_get_config('error_log_path');
+	if (!$path) {
+		return;
+	}
+
+	$path = '/' . trim($path, '/');
+	@error_log($msg . '@' . wp_date('Y-m-d:h-i-s', time()) . "\n", 3, $path . '/' . $file);
 }
 
 /**
@@ -276,7 +282,7 @@ function wnd_error_log(string $msg, string $file = 'error.log') {
  * @since 0.9.38
  */
 function wnd_error_payment_log(string $msg) {
-	wnd_error_log($msg, 'payment_error.log');
+	wnd_error_log($msg, 'wnd_payment_error.log');
 }
 
 /**

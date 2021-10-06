@@ -30,7 +30,6 @@ class Wnd_Menus {
 
 	/**
 	 * 构造
-	 *
 	 */
 	public function __construct() {
 		/**
@@ -148,6 +147,15 @@ class Wnd_Menus {
 				'label'       => '最大置顶文章数量',
 				'min'         => 1,
 				'step'        => 1,
+			]
+		);
+
+		$form->add_text(
+			[
+				'name'        => 'error_log_path',
+				'placeholder' => '存放在本地服务器的路径，请确保目录可写',
+				'label'       => '错误日志路径',
+				'help'        => ['text' => '请确保目录可写，留空则不记录插件错误日志。参考：当前插件安装路径为： ' . WND_PATH],
 			]
 		);
 

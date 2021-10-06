@@ -20,7 +20,6 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 	protected function build_form_json(Wnd_Form_Option $form): string{
 
 		$form->add_html('<h2 class="title">沙箱测试</h2>');
-
 		$form->add_radio(
 			[
 				'name'    => 'payment_sandbox',
@@ -31,7 +30,6 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 		);
 
 		$form->add_html('<h2 class="title">支付宝</h2>');
-
 		$form->add_radio(
 			[
 				'name'    => 'alipay_qrcode',
@@ -68,9 +66,57 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 			]
 		);
 
+		// 微信支付
+		$form->add_html('<h2 class="title">微信支付</h2>');
+		$form->add_text(
+			[
+				'name'        => 'wechat_mchid',
+				'label'       => '商户ID',
+				'required'    => false,
+				'placeholder' => '微信支付商户号',
+				'help'        => ['text' => 'https://pay.weixin.qq.com/index.php/core/account/info'],
+			]
+		);
+		$form->add_text(
+			[
+				'name'        => 'wechat_appid',
+				'label'       => '关联AppID',
+				'required'    => false,
+				'placeholder' => '服务号、小程序、企业微信 AppID',
+				'help'        => ['text' => 'https://pay.weixin.qq.com/index.php/extend/merchant_appid/mapay_platform/account_manage'],
+			]
+		);
+		$form->add_text(
+			[
+				'name'        => 'wechat_apikey',
+				'label'       => 'APIv3密钥',
+				'required'    => false,
+				'placeholder' => '服务号 APP ID',
+				'help'        => ['text' => 'https://pay.weixin.qq.com/index.php/core/cert/api_cert#/'],
+			]
+		);
+		$form->add_text(
+			[
+				'name'        => 'wechat_apicert_sn',
+				'label'       => 'API证书序列号',
+				'required'    => false,
+				'placeholder' => 'API证书序列号',
+				'help'        => ['text' => 'https://pay.weixin.qq.com/index.php/core/cert/api_cert#/api-cert-manage'],
+			]
+		);
+
+		$form->add_textarea(
+			[
+				'name'        => 'wechat_private_key',
+				'label'       => '商户私钥',
+				'required'    => false,
+				'placeholder' => 'API证书中 apiclient_key.pem 的文本',
+				'help'        => ['text' => '编辑器打开证书，-----BEGIN RSA PRIVATE KEY----- [粘贴的部分] -----END RSA PRIVATE KEY-----'],
+			]
+		);
+
 		// Paypal
 		$form->add_html('<h2 class="title">PayPal</h2>');
-
 		$form->add_text(
 			[
 				'name'        => 'paypal_clientid',
