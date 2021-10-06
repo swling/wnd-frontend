@@ -264,6 +264,22 @@ function wnd_array_filter(array $arr): array{
 }
 
 /**
+ * 记录常规错误日志
+ * @since 0.9.38
+ */
+function wnd_error_log(string $msg, string $file = 'error.log') {
+	error_log($msg . '@' . wp_date('Y-m-d:h-i-s', time()) . "\n", 3, WND_PATH . '/log/' . $file);
+}
+
+/**
+ * 记录支付错误日志
+ * @since 0.9.38
+ */
+function wnd_error_payment_log(string $msg) {
+	wnd_error_log($msg, 'payment_error.log');
+}
+
+/**
  * 设置默认的异常处理函数
  * @since 2019.07.17
  */
