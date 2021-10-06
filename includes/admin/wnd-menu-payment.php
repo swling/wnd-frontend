@@ -111,7 +111,7 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 				'label'       => '商户私钥',
 				'required'    => false,
 				'placeholder' => 'API证书中 apiclient_key.pem 的文本',
-				'help'        => ['text' => '编辑器打开证书，-----BEGIN RSA PRIVATE KEY----- [粘贴的部分] -----END RSA PRIVATE KEY-----'],
+				'help'        => ['text' => '编辑器打开证书【apiclient_key.pem】-----BEGIN RSA PRIVATE KEY----- [复制粘贴此部分] -----END RSA PRIVATE KEY-----'],
 			]
 		);
 
