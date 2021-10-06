@@ -25,7 +25,7 @@ interface PaymentBuilder {
 	 * 构建签名并创建请求参数
 	 *
 	 */
-	public function generateParams(): array;
+	public function generateParams();
 
 	/**
 	 * 构造支付请求 UI 接口，如自动提交的表单或支付二维码

@@ -61,7 +61,7 @@ abstract class PayBuilder implements PaymentBuilder {
 	 * 签名并构造完整的请求参数
 	 * @return string
 	 */
-	public function generateParams(): array{
+	public function generateParams() {
 		//请求参数
 		$biz_content = [
 			'out_trade_no' => $this->out_trade_no,
@@ -72,8 +72,6 @@ abstract class PayBuilder implements PaymentBuilder {
 
 		$alipayService = new AlipayService($this->alipayConfig);
 		$this->params  = $alipayService->generatePayParams($this->method, $biz_content);
-
-		return $this->params;
 	}
 
 	/**
