@@ -150,15 +150,6 @@ class Wnd_Menus {
 			]
 		);
 
-		$form->add_text(
-			[
-				'name'        => 'error_log_path',
-				'placeholder' => '存放在本地服务器的路径，请确保目录可写',
-				'label'       => '错误日志路径',
-				'help'        => ['text' => '请确保目录可写，留空则不记录插件错误日志。参考：当前插件安装路径为： ' . WND_PATH],
-			]
-		);
-
 		$form->add_radio(
 			[
 				'name'    => 'disable_locale',
@@ -213,6 +204,15 @@ class Wnd_Menus {
 				'label'   => 'Rest Nonce',
 				'help'    => ['text' => '是否禁用 Rest Nonce（当您采用其他身份校验如 Token 或执行跨域类操作的时候，可能需要禁用 WP Rest Nonce）'],
 				'class'   => 'is-checkradio is-danger',
+			]
+		);
+
+		$form->add_radio(
+			[
+				'name'    => 'enable_error_log',
+				'options' => ['启用' => 1, '禁用' => ''],
+				'label'   => '记录插件错误日志',
+				'help'    => ['text' => '日志存储路径： ' . WP_PLUGIN_DIR . '（以 wnd_ 起头的 log 文件）'],
 			]
 		);
 
