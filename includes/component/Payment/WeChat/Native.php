@@ -21,8 +21,7 @@ class Native extends PayBuilder {
 			throw new \Exception($body['code'] . ':' . $body['message']);
 		}
 
-		$url = 'https://wenhairu.com/static/api/qr/?size=300&text=' . $body['code_url'];
-		return '<img src="' . $url . '" width="250" height="250"><br>';
+		return '<img src="' . wnd_generate_qrcode($body['code_url']) . '" width="250" height="250"><h3>微信扫码支付</h3>';
 	}
 
 }
