@@ -13,7 +13,7 @@
  *
  * Payload 数据格式建议遵循约定，同时可根据实际应用场景自行添加或移除一项或多项
  */
-$jwt = new Wnd\Utility\Wnd_JWT;
+$jwt = new Wnd\Component\JWT\JWTAuth;
 
 // 根据 payload 生成 Token
 $payload = [
@@ -23,9 +23,9 @@ $payload = [
 	'nbf' => time(), 
 	'sub' => 'www.admin.com'
 ];
-$token   = $jwt::getToken($payload);
+$token   = $jwt::generateToken($payload);
 
 // 根据 Token 还原 payload
-$getPayload = $jwt::verifyToken($token);
+$getPayload = $jwt::parseToken($token);
 var_dump($getPayload);
 ```
