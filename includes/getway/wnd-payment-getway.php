@@ -19,7 +19,7 @@ abstract class Wnd_Payment_Getway {
 			return '';
 		}
 
-		return $payment->post_excerpt;
+		return $payment->post_excerpt ?: 'Internal';
 	}
 
 	/**

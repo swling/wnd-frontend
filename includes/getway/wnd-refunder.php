@@ -66,7 +66,7 @@ abstract class Wnd_Refunder {
 	 */
 	public static function get_instance($transaction_id): Wnd_Refunder{
 		// 订单支付方式
-		$payment_gateway = Wnd_Payment_Getway::get_payment_gateway($transaction_id) ?: 'Internal';
+		$payment_gateway = Wnd_Payment_Getway::get_payment_gateway($transaction_id);
 
 		/**
 		 * 根据交易类型选择退款方式
