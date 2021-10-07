@@ -15,9 +15,9 @@ class Wnd_Verify_WeChat extends Wnd_Verify_Pay {
 	protected $content_type = 'json';
 
 	/**
-	 * 根据交易订单解析站内交易ID，并查询记录
+	 * 验签并解析返回站内交易订单对象实例化
 	 */
-	protected function parse_transaction(): Wnd_Transaction {
-		return WeChat_Native::parse_transaction();
+	protected function verify_payment(): Wnd_Transaction {
+		return WeChat_Native::verify_payment();
 	}
 }

@@ -26,8 +26,8 @@ abstract class Wnd_Verify_Pay extends Wnd_Endpoint {
 		 * 验签并处理相关站内业务
 		 */
 		try {
-			$payment = Wnd_Payment::get_instance($this->parse_transaction());
-			$payment->verify_payment();
+			$transaction = $this->verify_payment();
+			$payment     = Wnd_Payment::get_instance($transaction);
 			$payment->update_transaction();
 			$payment->return();
 		} catch (Exception $e) {
@@ -36,7 +36,7 @@ abstract class Wnd_Verify_Pay extends Wnd_Endpoint {
 	}
 
 	/**
-	 * 根据交易订单解析站内交易ID，并查询记录
+	 * 验签并解析返回站内交易订单对象实例化
 	 */
-	abstract protected function parse_transaction(): Wnd_Transaction;
+	abstract protected function verify_payment(): Wnd_Transaction;
 }

@@ -54,17 +54,9 @@ class PayPal extends Wnd_Payment {
 	/**
 	 * 根据交易订单解析站内交易ID，并查询记录
 	 */
-	public static function parse_transaction(): Wnd_Transaction{
+	public static function verify_payment(): Wnd_Transaction{
 		$capture_token = $_REQUEST['token'] ?? '';
 		return static::capture_order($capture_token);
-	}
-
-	/**
-	 * Paypal 使用 $this->capture_order 替代本方法
-	 *
-	 */
-	public function verify_payment() {
-		return false;
 	}
 
 	/**
@@ -99,6 +91,7 @@ class PayPal extends Wnd_Payment {
 					'Authorization' => 'Bearer ' . $access_token,
 				],
 				'body'    => json_encode($postfilds),
+				'timeout' => 10,
 			]
 		);
 		if (is_wp_error($request)) {
@@ -189,6 +182,7 @@ class PayPal extends Wnd_Payment {
 					'Authorization' => 'Basic ' . base64_encode($config['client_id'] . ':' . $config['client_secret']),
 				],
 				'body'    => ['grant_type' => 'client_credentials'],
+				'timeout' => 10,
 			]
 		);
 		if (is_wp_error($request)) {

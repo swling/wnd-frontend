@@ -11,10 +11,11 @@ use Wnd\Model\Wnd_Transaction;
  * @since 0.9.32
  */
 class Wnd_Verify_PayPal extends Wnd_Verify_Pay {
+
 	/**
-	 * 根据交易订单解析站内交易ID，并查询记录
+	 * 验签并解析返回站内交易订单对象实例化
 	 */
-	protected function parse_transaction(): Wnd_Transaction {
-		return PayPal::parse_transaction();
+	protected function verify_payment(): Wnd_Transaction {
+		return PayPal::verify_payment();
 	}
 }

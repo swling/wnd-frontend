@@ -68,16 +68,12 @@ abstract class Wnd_Payment {
 	abstract public function build_interface(): string;
 
 	/**
-	 * 解析支付平台发送的响应通知
-	 */
-	abstract static public function parse_transaction(): Wnd_Transaction;
-
-	/**
 	 * 支付验签
 	 * - 通常应包含同步验签及异步验签
 	 * - 若验签失败，需抛出异常中止支付流程
+	 * - 验签通过后，根据支付报文，解析出站内交易订单对象
 	 */
-	abstract public function verify_payment();
+	abstract public static function verify_payment(): Wnd_Transaction;
 
 	/**
 	 * 支付验签通过后，更新站内记录

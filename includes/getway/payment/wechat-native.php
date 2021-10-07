@@ -12,7 +12,7 @@ use Wnd\Model\Wnd_Transaction;
  */
 class WeChat_Native extends Wnd_Payment {
 
-	private static function get_config(): array{
+	protected static function get_config(): array{
 		return [
 			'mchid'       => wnd_get_config('wechat_mchid'),
 			'appid'       => wnd_get_config('wechat_appid'),
@@ -50,42 +50,8 @@ class WeChat_Native extends Wnd_Payment {
 	 * - 因而在解密订单信息的同时，也完成了验签
 	 * - 故此本类中的 verify_payment() 方法无需额外处理
 	 */
-	public static function parse_transaction(): Wnd_Transaction{
-		extract(static::get_config());
-		$verify = new verify($mchid, $apikey, $apicert_sn, $private_key);
-
-		// 验签
-		if (!$verify->validate()) {
-			wnd_error_payment_log('【微信支付】验签失败');
-			http_response_code(401);
-			echo json_encode([
-				'code'    => 'ERROR',
-				'message' => '验签失败',
-			]);
-			exit;
-		}
-
-		// 解密微信支付报文
-		$result = $verify->notify();
-		if (!$result) {
-			wnd_error_payment_log('【微信支付】解密报文失败');
-			http_response_code(401);
-			echo json_encode([
-				'code'    => 'ERROR',
-				'message' => '解密报文失败',
-			]);
-			exit;
-		}
-
-		// 交易状态检测
-		if ('SUCCESS' != $result['trade_state']) {
-			wnd_error_payment_log('【微信支付】校验成功，但支付状态异常' . $result['trade_state']);
-			echo json_encode([
-				'code'    => 'SUCCESS',
-				'message' => '',
-			]);
-			exit;
-		}
+	public static function verify_payment(): Wnd_Transaction{
+		$result = static::verify();
 
 		/**
 		 * 支付成功，完成你的逻辑
@@ -125,9 +91,48 @@ class WeChat_Native extends Wnd_Payment {
 	}
 
 	/**
-	 * 验证支付
+	 * 验签并解密报文
+	 * - 若验签失败，需要设定 HTTP 状态码
+	 * - 若状态码为 200 无论响应何种数据，微信支付均认为验签完成，将不再发送回调消息
+	 *
 	 */
-	public function verify_payment() {
-		return true;
+	private static function verify(): array{
+		extract(static::get_config());
+		$verify = new verify($mchid, $apikey, $apicert_sn, $private_key);
+
+		// 验签
+		if (!$verify->validate()) {
+			wnd_error_payment_log('【微信支付】验签失败');
+			http_response_code(401);
+			echo json_encode([
+				'code'    => 'ERROR',
+				'message' => '验签失败',
+			]);
+			exit;
+		}
+
+		// 解密微信支付报文
+		$result = $verify->notify();
+		if (!$result) {
+			wnd_error_payment_log('【微信支付】解密报文失败');
+			http_response_code(401);
+			echo json_encode([
+				'code'    => 'ERROR',
+				'message' => '解密报文失败',
+			]);
+			exit;
+		}
+
+		// 交易状态检测
+		if ('SUCCESS' != $result['trade_state']) {
+			wnd_error_payment_log('【微信支付】校验成功，但支付状态异常' . $result['trade_state']);
+			echo json_encode([
+				'code'    => 'SUCCESS',
+				'message' => '',
+			]);
+			exit;
+		}
+
+		return $result;
 	}
 }

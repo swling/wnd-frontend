@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Getway\Payment;
 
-use Exception;
 use Wnd\Component\Payment\Alipay\AlipayService;
 use Wnd\Component\Payment\Alipay\PayPC;
 use Wnd\Component\Payment\Alipay\PayWAP;
@@ -60,7 +59,8 @@ class Alipay extends Wnd_Payment {
 	 *
 	 */
 	public function build_interface(): string{
-		$aliPay = wp_is_mobile() ? new PayWAP(static::getConfig()) : new PayPC(static::getConfig());
+		$config = static::getConfig();
+		$aliPay = wp_is_mobile() ? new PayWAP($config) : new PayPC($config);
 		$aliPay->setTotalAmount($this->total_amount);
 		$aliPay->setOutTradeNo($this->out_trade_no);
 		$aliPay->setSubject($this->subject);
@@ -73,14 +73,17 @@ class Alipay extends Wnd_Payment {
 	/**
 	 * 根据交易订单解析站内交易ID，并查询记录
 	 */
-	public static function parse_transaction(): Wnd_Transaction{
+	public static function verify_payment(): Wnd_Transaction {
+		static::verify();
+
 		$out_trade_no   = $_REQUEST['out_trade_no'] ?? '';
 		$total_amount   = $_REQUEST['total_amount'] ?? 0.00;
 		$transaction_id = static::parse_out_trade_no($out_trade_no);
 		$transaction    = Wnd_Transaction::get_instance('', $transaction_id);
 
 		if ($total_amount != $transaction->get_total_amount()) {
-			throw new Exception(__('金额不匹配', 'wnd'));
+			wnd_error_payment_log('【支付宝】金额不匹配');
+			exit('金额不匹配');
 		}
 
 		return $transaction;
@@ -91,7 +94,7 @@ class Alipay extends Wnd_Payment {
 	 *
 	 * @param $this->total_amount
 	 */
-	public function verify_payment() {
+	private static function verify() {
 		/**
 		 * 支付平台回调验签
 		 *
@@ -100,13 +103,15 @@ class Alipay extends Wnd_Payment {
 		 */
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$_POST = stripslashes_deep($_POST);
-			if (!$this->check_notify()) {
-				throw new Exception(__('异步验签失败', 'wnd'));
+			if (!static::check_notify()) {
+				wnd_error_payment_log('【支付宝】异步验签失败');
+				exit('异步验签失败');
 			}
 		} else {
 			$_GET = stripslashes_deep($_GET);
-			if (!$this->check_return()) {
-				throw new Exception(__('同步验签失败', 'wnd'));
+			if (!static::check_return()) {
+				wnd_error_payment_log('【支付宝】同步验签失败');
+				exit('同步验签失败');
 			}
 		}
 	}
@@ -115,7 +120,7 @@ class Alipay extends Wnd_Payment {
 	 * 回调验签
 	 *
 	 */
-	protected function check($params): bool{
+	private static function check($params): bool{
 		$aliPay = new AlipayService(static::getConfig());
 		return $aliPay->rsaCheck($params);
 	}
@@ -124,11 +129,11 @@ class Alipay extends Wnd_Payment {
 	 * 同步回调通知
 	 *
 	 */
-	protected function check_return(): bool{
+	private static function check_return(): bool{
 		/**
 		 * 验签
 		 */
-		$check = $this->check($_GET);
+		$check = static::check($_GET);
 		if (true !== $check) {
 			echo ('fail');
 		}
@@ -141,11 +146,11 @@ class Alipay extends Wnd_Payment {
 	 *
 	 * @link https://opendocs.alipay.com/open/203/105286/#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E9%A1%B5%E9%9D%A2%E7%89%B9%E6%80%A7
 	 */
-	protected function check_notify(): bool {
+	private static function check_notify(): bool {
 		/**
 		 * 验签
 		 */
-		if (true !== $this->check($_POST)) {
+		if (true !== static::check($_POST)) {
 			echo ('fail');
 			return false;
 		}

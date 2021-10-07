@@ -14,12 +14,13 @@ class WeChat_H5 extends WeChat_Native {
 	 *
 	 */
 	public function build_interface(): string{
-		$pay = new H5(static::$mchid, static::$appid, static::$privateKey, static::$serialNumber);
+		extract(static::get_config());
+		$pay = new H5($mchid, $appid, $apicert_sn, $private_key);
 
 		$pay->setTotalAmount($this->total_amount);
 		$pay->setOutTradeNo($this->out_trade_no);
 		$pay->setSubject($this->subject);
-		$pay->setNotifyUrl('https://wndwp.com/wp-json');
+		$pay->setNotifyUrl(wnd_get_endpoint_url('wnd_verify_wechat'));
 		$pay->generateParams();
 
 		return $pay->buildInterface();
