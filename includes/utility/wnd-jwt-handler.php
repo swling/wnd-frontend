@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Utility;
 
-use Wnd\Utility\Wnd_JWT;
+use Wnd\Component\JWT\JWTAuth;
 
 /**
  * 将WordPress 账户体系与 JWT Token 绑定
@@ -10,6 +10,9 @@ use Wnd\Utility\Wnd_JWT;
  * @since 0.9.18
  */
 abstract class Wnd_JWT_Handler {
+
+	//使用HMAC生成信息摘要时所使用的密钥
+	private static $secret_key = LOGGED_IN_KEY;
 
 	protected $domain;
 
@@ -48,7 +51,7 @@ abstract class Wnd_JWT_Handler {
 			'sub' => $user_id,
 		];
 
-		return Wnd_JWT::getToken($payload);
+		return JWTAuth::generateToken($payload, static::$secret_key);
 	}
 
 	/**
@@ -95,7 +98,7 @@ abstract class Wnd_JWT_Handler {
 		}
 
 		// Token 失效
-		$getPayload = Wnd_JWT::verifyToken($token);
+		$getPayload = JWTAuth::parseToken($token, static::$secret_key);
 		if (!$getPayload) {
 			$this->clean_client_token();
 			return 0;

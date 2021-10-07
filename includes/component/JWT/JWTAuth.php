@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Utility;
+namespace Wnd\Component\JWT;
 
 /**
  * PHP JWT
@@ -8,7 +8,7 @@ namespace Wnd\Utility;
  * @link http://www.ruanyifeng.com/blog/2018/07/json_web_token-tutorial.html
  * @since 0.8.61
  */
-class Wnd_JWT {
+class JWTAuth {
 
 	//头部
 	private static $header = [
@@ -16,11 +16,8 @@ class Wnd_JWT {
 		'typ' => 'JWT', //类型
 	];
 
-	//使用HMAC生成信息摘要时所使用的密钥
-	private static $key = LOGGED_IN_KEY;
-
 	/**
-	 * 获取 jwt token
+	 * 生成 jwt token
 	 * - iss (issuer)：签发人
 	 * - exp (expiration time)：过期时间
 	 * - sub (subject)：主题
@@ -29,24 +26,28 @@ class Wnd_JWT {
 	 * - iat (Issued At)：签发时间
 	 * - jti (JWT ID)：编号
 	 * Payload 数据格式建议遵循约定，同时可根据实际应用场景自行添加或移除一项或多项
-	 * @param  array     $payload JWT 载荷格式如下：
-	 * @return string
+	 *
+	 * @param  array  	$payload   	JWT 载荷
+	 * @param  string 	$secretKey 	加密密匙
+	 * @return string 	$token 		Token
 	 */
-	public static function getToken(array $payload): string{
-		$base64header  = self::base64UrlEncode(json_encode(self::$header, JSON_UNESCAPED_UNICODE));
-		$base64payload = self::base64UrlEncode(json_encode($payload, JSON_UNESCAPED_UNICODE));
-		$Signature     = self::signature($base64header . '.' . $base64payload, self::$key, self::$header['alg']);
+	public static function generateToken(array $payload, string $secretkey): string{
+		$base64header  = static::base64UrlEncode(json_encode(self::$header, JSON_UNESCAPED_UNICODE));
+		$base64payload = static::base64UrlEncode(json_encode($payload, JSON_UNESCAPED_UNICODE));
+		$Signature     = static::signature($base64header . '.' . $base64payload, $secretkey, self::$header['alg']);
 		$token         = $base64header . '.' . $base64payload . '.' . $Signature;
 		return $token;
 	}
 
 	/**
 	 * 验证token是否有效,默认验证exp,nbf,iat时间
-	 * @param  string       $Token 需要验证的token
+	 *
+	 * @param  string       $token     需要验证的token
+	 * @param  string       $secretKey 	加密密匙
 	 * @return bool|array
 	 */
-	public static function verifyToken(string $Token) {
-		$tokens = explode('.', $Token);
+	public static function parseToken(string $token, string $secretkey) {
+		$tokens = explode('.', $token);
 		if (count($tokens) != 3) {
 			return false;
 		}
@@ -54,17 +55,17 @@ class Wnd_JWT {
 		list($base64header, $base64payload, $sign) = $tokens;
 
 		//获取jwt算法
-		$base64decodeheader = json_decode(self::base64UrlDecode($base64header), true);
+		$base64decodeheader = json_decode(static::base64UrlDecode($base64header), true);
 		if (empty($base64decodeheader['alg'])) {
 			return false;
 		}
 
 		//签名验证
-		if (self::signature($base64header . '.' . $base64payload, self::$key, $base64decodeheader['alg']) !== $sign) {
+		if (static::signature($base64header . '.' . $base64payload, $secretkey, $base64decodeheader['alg']) !== $sign) {
 			return false;
 		}
 
-		$payload = json_decode(self::base64UrlDecode($base64payload), true);
+		$payload = json_decode(static::base64UrlDecode($base64payload), true);
 
 		//签发时间大于当前服务器时间验证失败
 		if (isset($payload['iat']) && $payload['iat'] > time()) {
@@ -118,6 +119,6 @@ class Wnd_JWT {
 		$alg_config = [
 			'HS256' => 'sha256',
 		];
-		return self::base64UrlEncode(hash_hmac($alg_config[$alg], $input, $key, true));
+		return static::base64UrlEncode(hash_hmac($alg_config[$alg], $input, $key, true));
 	}
 }
