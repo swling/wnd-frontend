@@ -51,7 +51,7 @@ class WeChat_Native extends Wnd_Payment {
 	 * - 故此本类中的 verify_payment() 方法无需额外处理
 	 */
 	public static function verify_payment(): Wnd_Transaction{
-		$result = static::verify();
+		$result = static::Verify();
 
 		/**
 		 * 支付成功，完成你的逻辑
@@ -98,7 +98,16 @@ class WeChat_Native extends Wnd_Payment {
 	 */
 	private static function verify(): array{
 		extract(static::get_config());
-		$verify = new verify($mchid, $apikey, $apicert_sn, $private_key);
+		$verify        = new verify($mchid, $apikey, $apicert_sn, $private_key);
+		$transient_key = 'wnd_wechat_certificates';
+
+		// 缓存平台证书
+		$wechat_certificates = get_transient($transient_key);
+		if (get_transient($transient_key)) {
+			$verify->setWechatCertificates($wechat_certificates);
+		} else {
+			set_transient($transient_key, $verify->getRemoteWechatCertificates(), 3600 * 12);
+		}
 
 		// 验签
 		if (!$verify->validate()) {
