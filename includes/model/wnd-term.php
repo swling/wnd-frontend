@@ -61,11 +61,8 @@ abstract class Wnd_Term {
 			return [];
 		}
 
-		// 默认选项
-		$default_option = ['- ' . $taxonomy_object->labels->name . ' -' => ''];
-
 		// 首层选项
-		$option_data[0] = array_merge($default_option, static::get_terms_data($args));
+		$option_data[0] = static::get_terms_data($args);
 
 		// 查询当前 POST 已选 term 的子类同层级选项
 		$current_term_ids = static::get_post_terms_with_level($post_id, $taxonomy);
@@ -74,7 +71,7 @@ abstract class Wnd_Term {
 			$child_terms = static::get_term_children_by_level($term_id, $taxonomy, 1);
 
 			if ($child_terms) {
-				$option_data[$i + 1] = array_merge($default_option, $child_terms);
+				$option_data[$i + 1] = $child_terms;
 			}
 		}
 

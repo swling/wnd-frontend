@@ -621,6 +621,16 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     let require_check = true;
                     let value = this.get_value(field);
 
+                    /**
+                     * 检测为空的值是否包含在预设的选项中：如各类【开关】选项默认空值
+                     * 此类值，不进行常规必选字段检测
+                     * @since 0.9.39.3
+                     **/
+                    let options = Object.values(field.options);
+                    if (options.includes(value)) {
+                        continue;
+                    }
+
                     if ('string' == typeof value && !value.length) { // 字符串数据
                         require_check = false;
                     } else if (Array.isArray(value) && value.every(el => !el)) { // 数组数据：均为空值
@@ -876,6 +886,7 @@ ${build_label(field)}
 <div :class="get_control_class(${field})">
 <div class="select" :class="${field}.class + ' ' + form.size">
 <select v-bind="parse_input_attr(${field})" v-model="${field}.selected" @change="change(${field})">
+<option disabled value="">-- {{${field}.label}} --</option>
 <option v-for="(value, name) in ${field}.options" :value="value">{{name}}</option>
 </select>
 </div>
@@ -896,6 +907,7 @@ ${build_label(field)}
 <div :class="get_control_class(${field})">
 <div class="select">
 <select class="select" style="display:inline-block" :class="${field}.class + ' ' + form.size" v-bind="parse_input_attr(${field})" v-for="(option, key) in ${field}.options" v-model="${field}.selected[key]" @change="selected($event, key, ${index})" :key="key">
+<option disabled value="">-- {{${field}.label}} --</option>
 <option v-for="(v,k ) in option" :value="v" :key="v">{{k}}</option>
 </select>
 </div>
