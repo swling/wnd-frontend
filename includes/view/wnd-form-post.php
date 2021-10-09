@@ -14,13 +14,13 @@ use Wnd\Model\Wnd_Term;
  */
 class Wnd_Form_Post extends Wnd_Form_WP {
 
-	private $post_id = 0;
+	protected $post_id = 0;
 
-	private $post_type = 'post';
+	protected $post_type = 'post';
 
-	private $post_parent = 0;
+	protected $post_parent = 0;
 
-	private $post;
+	protected $post;
 
 	/**
 	 * 当post已选的Terms
@@ -28,12 +28,12 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 * 	${taxonomy}=>[term_id1,term_id2]
 	 * ]
 	 */
-	private $current_terms = [];
+	protected $current_terms = [];
 
 	// 当前post 支持的 taxonomy
-	private $taxonomies = [];
+	protected $taxonomies = [];
 
-	static private $default_post = [
+	protected static $default_post = [
 		'ID'                    => 0,
 		'post_author'           => 0,
 		'post_date'             => '',
