@@ -29,8 +29,8 @@ if ('undefined' == typeof loading_el) {
 
 // Axios 全局请求参数
 // axios.defaults.headers.Authorization = "Bearer " + token
-axios.defaults.withCredentials = true; // 跨域请求允许携带cookie 
-if (!wnd.disable_rest_nonce) {
+axios.defaults.withCredentials = true; // 跨域请求允许携带cookie
+if (!wnd.disable_rest_nonce || wnd.is_admin) {
     axios.defaults.headers['X-WP-Nonce'] = wnd.rest_nonce;
 }
 // axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
@@ -188,7 +188,7 @@ function object_to_formdata(data) {
 // 按需加载 wnd-vue-form.js 并渲染表单
 function wnd_render_form(container, form_json, add_class) {
     if ('function' != typeof _wnd_render_form) {
-        let url = static_path + 'js/form.min.js' + cache_suffix;
+        let url = static_path + 'js/form.js' + cache_suffix;
         wnd_load_script(url, function() {
             _wnd_render_form(container, form_json, add_class)
         });
