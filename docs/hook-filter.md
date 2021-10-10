@@ -237,6 +237,14 @@ add_filter('wnd_recharge_amount_options', function(){
 $instance = apply_filters('wnd_transaction_instance', $instance, $type);
 ```
 
+## 财务类 Post Type
+```php
+/**
+ * @since 0.9.39
+ **/
+apply_filters('wnd_fin_types', ['order', 'recharge', 'stats-re', 'stats-ex']);
+```
+
 ## 表单
 ```php
 /**
@@ -306,7 +314,7 @@ apply_filters('wnd_sku_keys', $sku_keys, $post_type);
  * Filter：过滤产品属性如 SKU 等
  * @since 0.9.32
  */
-return apply_filters('wnd_product_props', $props, $object_id);
+apply_filters('wnd_product_props', $props, $object_id);
 ```
 
 ## 菜单

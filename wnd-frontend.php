@@ -23,6 +23,9 @@
  * @since 2019.1.8 ：GitHub开通免费私人仓库，正式托管于GitHub
  */
 
+use Wnd\Model\Wnd_Admin;
+use Wnd\Model\Wnd_Init;
+
 // 版本
 define('WND_VER', '0.9.39.3');
 
@@ -42,7 +45,7 @@ define('WND_LANG_KEY', 'lang');
 require WND_PATH . DIRECTORY_SEPARATOR . 'wnd-autoloader.php';
 
 // 初始化
-Wnd\Model\Wnd_Init::get_instance();
+Wnd_Init::get_instance();
 
 /**
  * 插件安装卸载选项
@@ -67,7 +70,7 @@ add_action('upgrader_process_complete', function ($upgrader_object, $options) {
 	$current_plugin_path_name = plugin_basename(__FILE__);
 	foreach ($options['plugins'] as $each_plugin) {
 		if ($each_plugin == $current_plugin_path_name) {
-			Wnd\Model\Wnd_Admin::upgrade();
+			Wnd_Admin::upgrade();
 			break;
 		}
 	}
@@ -127,6 +130,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 			'order'    => get_option('comment_order'),
 			'form_pos' => wnd_get_config('comment_form_pos') ?: 'top',
 		],
+		'fin_types'          => json_encode(Wnd_Init::get_fin_types()),
 		'is_admin'           => is_admin(),
 		'lang'               => $_GET[WND_LANG_KEY] ?? false,
 		'ver'                => WND_VER,

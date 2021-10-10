@@ -19,8 +19,6 @@ class Wnd_Init {
 
 	use Wnd_Singleton_Trait;
 
-	const FIN_TYPS = ['order', 'recharge', 'stats-re', 'stats-ex'];
-
 	private function __construct() {
 		// Init
 		static::init();
@@ -230,5 +228,13 @@ class Wnd_Init {
 		foreach ($post_statuses as $post_status => $values) {
 			register_post_status($post_status, $values);
 		}
+	}
+
+	/**
+	 * 获取财务类 post types
+	 * @since 0.9.39
+	 */
+	public static function get_fin_types(): array{
+		return apply_filters('wnd_fin_types', ['order', 'recharge', 'stats-re', 'stats-ex']);
 	}
 }

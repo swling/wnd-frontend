@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\View;
 
+use Wnd\Model\Wnd_Init;
+
 /**
  * 多重筛选 Json API
  * @since 0.9.5
@@ -149,7 +151,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 			$post->link = get_permalink($post);
 
 			// 财务类 Post Content 为金额，需格式化
-			if (in_array($post->post_type, \Wnd\Model\Wnd_Init::FIN_TYPS)) {
+			if (in_array($post->post_type, Wnd_Init::get_fin_types())) {
 				$post->post_content = number_format((float) $post->post_content, 2);
 			}
 

@@ -95,7 +95,7 @@ function _wnd_render_filter(container, filter_json, add_class) {
 			},
 
 			get_list_component(post_type) {
-				if (['order', 'recharge', 'stats-ex', 'stats-re'].includes(post_type)) {
+				if (wnd.fin_types.includes(post_type)) {
 					return 'order-list';
 				} else {
 					return 'post-list';
@@ -233,9 +233,9 @@ function _wnd_render_filter(container, filter_json, add_class) {
 <div v-if="filter.before_html" v-html="filter.before_html"></div>
 ${build_tabs_template(filter)}
 <div class="wnd-filter-results mb-3">
-${filter.posts ? build_posts_template(filter) : build_users_template(filter)}
+${filter.posts ? build_posts_template() : build_users_template()}
 </div>
-${build_navigation(filter)}
+${build_navigation()}
 <div v-if="filter.after_html" v-html="filter.after_html"></div>
 </div>`;
 	}
@@ -261,11 +261,47 @@ ${build_navigation(filter)}
 		return t;
 	}
 
+	function is_category_tab(tab, filter) {
+		if (tab.key.includes('_term_')) {
+			taxonomy = tab.key.replace('_term_', '');
+			if (taxonomy == filter.category_taxonomy) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function is_tag_tab(tab, filter) {
+		if (tab.key.includes('_term_')) {
+			taxonomy = tab.key.replace('_term_', '');
+			if (taxonomy == (filter.query_vars.post_type + '_tag')) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function build_tabs(tabs) {
+		return `
+<div v-if="${tabs}" class="columns is-marginless is-vcentered" :class="${tabs}.key">
+<div class="column is-narrow">{{${tabs}.label}}</div>
+
+<div class="column tabs">
+<ul class="tab">
+<template v-for="(value, name) in ${tabs}.options">
+<li :class="item_class(${tabs}.key, value)"><a :data-key="${tabs}.key" :data-value="value" @click="update_filter(${tabs}.key, value, ${tabs}.remove_args)">{{name}}</a></li>
+</template>
+</ul>
+</div>
+
+</div>`
+	}
+
 	/**
 	 *可在外部定义 wnd_post_template() 函数以覆盖默认的列表
 	 *
 	 */
-	function build_posts_template(filter) {
+	function build_posts_template() {
 		if ('function' == typeof wnd_posts_template) {
 			return wnd_posts_template();
 		}
@@ -302,23 +338,7 @@ ${build_navigation(filter)}
 </table>`;
 	}
 
-	function build_tabs(tabs) {
-		return `
-<div v-if="${tabs}" class="columns is-marginless is-vcentered" :class="${tabs}.key">
-<div class="column is-narrow">{{${tabs}.label}}</div>
-
-<div class="column tabs">
-<ul class="tab">
-<template v-for="(value, name) in ${tabs}.options">
-<li :class="item_class(${tabs}.key, value)"><a :data-key="${tabs}.key" :data-value="value" @click="update_filter(${tabs}.key, value, ${tabs}.remove_args)">{{name}}</a></li>
-</template>
-</ul>
-</div>
-
-</div>`
-	}
-
-	function build_navigation(filter) {
+	function build_navigation() {
 		return `
 <nav class="pagination is-centered">
 <ul class="pagination-list">
@@ -328,25 +348,5 @@ ${build_navigation(filter)}
 </li>
 </ul>
 </nav>`;
-	}
-
-	function is_category_tab(tab, filter) {
-		if (tab.key.includes('_term_')) {
-			taxonomy = tab.key.replace('_term_', '');
-			if (taxonomy == filter.category_taxonomy) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	function is_tag_tab(tab, filter) {
-		if (tab.key.includes('_term_')) {
-			taxonomy = tab.key.replace('_term_', '');
-			if (taxonomy == (filter.query_vars.post_type + '_tag')) {
-				return true;
-			}
-		}
-		return false;
 	}
 }
