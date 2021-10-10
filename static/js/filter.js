@@ -255,7 +255,7 @@ function _wnd_render_filter(container, filter_json, add_class) {
 <div class="filter">
 <div v-if="filter.before_html" v-html="filter.before_html"></div>
 ${build_tabs_template(filter)}
-<div class="wnd-filter-results mb-3">${build_list_template()}</div>
+<div class="wnd-filter-results mb-3">${build_list_template(filter)}</div>
 ${build_navigation_template()}
 <div v-if="filter.after_html" v-html="filter.after_html"></div>
 </div>`;
@@ -318,7 +318,10 @@ ${build_navigation_template()}
 </div>`
 	}
 
-	function build_list_template() {
+	function build_list_template(filter) {
+		if ('function' == typeof wnd_filter_list_template) {
+			return wnd_filter_list_template(filter);
+		}
 		return `<component :is="get_list_component(filter.query_vars.post_type)" :posts="filter.posts" :users="filter.users"></component>`;
 	}
 
