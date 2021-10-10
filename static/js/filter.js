@@ -275,7 +275,7 @@ ${build_navigation_template()}
 				tab_vn = 'filter.tags_tabs';
 			}
 
-			t += build_tabs_template(tab_vn);
+			t += _build_tabs_template(tab_vn);
 		}
 
 		t += '</div>'
@@ -302,7 +302,7 @@ ${build_navigation_template()}
 		return false;
 	}
 
-	function build_tabs_template(tabs) {
+	function _build_tabs_template(tabs) {
 		return `
 <div v-if="${tabs}" class="columns is-marginless is-vcentered" :class="${tabs}.key">
 <div class="column is-narrow">{{${tabs}.label}}</div>
