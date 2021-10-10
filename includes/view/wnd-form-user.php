@@ -24,7 +24,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 				'value'       => $this->user->data->user_login ?? '',
 				'placeholder' => $placeholder,
 				'label'       => $label,
-				'icon_left'   => '<i class="far fa-id-card"></i>',
+				'icon_left'   => '<i class="fas fa-user"></i>',
 				'required'    => $required,
 			]
 		);
@@ -53,7 +53,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 				'value'       => $this->user->data->display_name ?? '',
 				'label'       => $label,
 				'placeholder' => $placeholder,
-				'icon_left'   => '<i class="fas fa-user"></i>',
+				'icon_left'   => '<i class="fa fa-address-card"></i>',
 				'required'    => $required,
 			]
 		);

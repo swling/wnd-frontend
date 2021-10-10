@@ -26,8 +26,8 @@ class Wnd_Reg_Form extends Wnd_Module_Form {
 		if (wnd_get_config('disable_user_login') != 1) {
 			$form->add_user_login('', __('账号', 'wnd'));
 		}
-		$form->add_user_display_name('', __('名称', 'wnd'));
 		$form->add_user_password('', __('密码', 'wnd'));
+		$form->add_user_display_name('', __('名称', 'wnd'));
 
 		if (wnd_get_config('agreement_url')) {
 			$form->add_checkbox(
