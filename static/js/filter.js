@@ -95,6 +95,10 @@ function _wnd_render_filter(container, filter_json, add_class) {
 			},
 
 			get_list_component(post_type) {
+				if (!post_type) {
+					return 'user-list';
+				}
+
 				if (wnd.fin_types.includes(post_type)) {
 					return 'order-list';
 				} else {
@@ -220,11 +224,30 @@ function _wnd_render_filter(container, filter_json, add_class) {
 </tbody>
 </table>`,
 			},
+
+			'user-list': {
+				props: ['users'],
+				template: `
+<table class="table is-fullwidth is-hoverable is-striped">
+<thead>
+<tr>
+<th class="is-narrow is-hidden-mobile">注册日期</th>
+<th>用户</th>
+<th class="is-narrow has-text-centered">操作</th>
+</tr>
+</thead>
+
+<tbody>
+<tr v-for="(user, index) in users">
+<td class="is-narrow is-hidden-mobile">{{user.data.user_registered}}</td>
+<td><a :href="user.data.link" target="_blank">{{user.data.display_name}}</a></td>
+<a @click='wnd_ajax_modal("wnd_delete_user_form", {"user_id": user.ID} )'><i class="fas fa-trash-alt"></i></a>
+<a @click='wnd_ajax_modal("wnd_account_status_form", {"user_id": user.ID} )'><i class="fas fa-cog"></i></a>
+</tr>
+</tbody>
+</table>`,
+			},
 		},
-		// 计算
-		// computed: {},
-		// 侦听器
-		// watch: {},
 	});
 
 	function build_filter_template(filter) {
@@ -232,10 +255,8 @@ function _wnd_render_filter(container, filter_json, add_class) {
 <div class="filter">
 <div v-if="filter.before_html" v-html="filter.before_html"></div>
 ${build_tabs_template(filter)}
-<div class="wnd-filter-results mb-3">
-${filter.posts ? build_posts_template() : build_users_template()}
-</div>
-${build_navigation()}
+<div class="wnd-filter-results mb-3">${build_list_template()}</div>
+${build_navigation_template()}
 <div v-if="filter.after_html" v-html="filter.after_html"></div>
 </div>`;
 	}
@@ -254,7 +275,7 @@ ${build_navigation()}
 				tab_vn = 'filter.tags_tabs';
 			}
 
-			t += build_tabs(tab_vn);
+			t += build_tabs_template(tab_vn);
 		}
 
 		t += '</div>'
@@ -281,7 +302,7 @@ ${build_navigation()}
 		return false;
 	}
 
-	function build_tabs(tabs) {
+	function build_tabs_template(tabs) {
 		return `
 <div v-if="${tabs}" class="columns is-marginless is-vcentered" :class="${tabs}.key">
 <div class="column is-narrow">{{${tabs}.label}}</div>
@@ -297,48 +318,12 @@ ${build_navigation()}
 </div>`
 	}
 
-	/**
-	 *可在外部定义 wnd_post_template() 函数以覆盖默认的列表
-	 *
-	 */
-	function build_posts_template() {
-		if ('function' == typeof wnd_posts_template) {
-			return wnd_posts_template();
-		}
-
-		return `<component :is="get_list_component(filter.query_vars.post_type)" :posts="filter.posts"></component>`;
+	function build_list_template() {
+		return `<component :is="get_list_component(filter.query_vars.post_type)" :posts="filter.posts" :users="filter.users"></component>`;
 	}
 
-	/**
-	 *可在外部定义 wnd_users_template() 函数以覆盖默认的列表
-	 */
-	function build_users_template() {
-		if ('function' == typeof wnd_users_template) {
-			return wnd_users_template();
-		}
 
-		return `
-<table class="table is-fullwidth is-hoverable is-striped">
-<thead>
-<tr>
-<th class="is-narrow is-hidden-mobile">注册日期</th>
-<th>用户</th>
-<th class="is-narrow has-text-centered">操作</th>
-</tr>
-</thead>
-
-<tbody>
-<tr v-for="(user, index) in filter.users">
-<td class="is-narrow is-hidden-mobile">{{user.data.user_registered}}</td>
-<td><a :href="user.data.link" target="_blank">{{user.data.display_name}}</a></td>
-<a @click='wnd_ajax_modal("wnd_delete_user_form", {"user_id": user.ID} )'><i class="fas fa-trash-alt"></i></a>
-<a @click='wnd_ajax_modal("wnd_account_status_form", {"user_id": user.ID} )'><i class="fas fa-cog"></i></a>
-</tr>
-</tbody>
-</table>`;
-	}
-
-	function build_navigation() {
+	function build_navigation_template() {
 		return `
 <nav class="pagination is-centered">
 <ul class="pagination-list">
