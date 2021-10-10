@@ -32,8 +32,8 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 		$user_money      = wnd_get_user_money($user_id);
 
 		// 消费提示
-		$message = $user_id ? __('当前余额：¥ ', 'wnd') . '<b>' . number_format($user_money, 2, '.', '') . '</b>&nbsp;&nbsp;' : '';
-		$message .= __('本次消费：¥ ', 'wnd') . '<b>' . number_format($total_amount, 2, '.', '') . '</b>';
+		$message = __('本次消费：¥ ', 'wnd') . '<b>' . number_format($total_amount, 2, '.', '') . '</b>';
+		$message .= $user_id ? '&nbsp;&nbsp;' . __('可用余额：¥ ', 'wnd') . '<b>' . number_format($user_money, 2, '.', '') . '</b>' : '';
 
 		/**
 		 * 支付表单

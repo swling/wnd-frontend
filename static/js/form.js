@@ -886,7 +886,7 @@ ${build_label(field)}
 <div :class="get_control_class(${field})">
 <div class="select" :class="${field}.class + ' ' + form.size">
 <select v-bind="parse_input_attr(${field})" v-model="${field}.selected" @change="change(${field})">
-<option disabled value="">-- {{${field}.label}} --</option>
+<option disabled value="">- {{${field}.label}} -</option>
 <option v-for="(value, name) in ${field}.options" :value="value">{{name}}</option>
 </select>
 </div>
@@ -907,7 +907,7 @@ ${build_label(field)}
 <div :class="get_control_class(${field})">
 <div class="select">
 <select class="select" style="display:inline-block" :class="${field}.class + ' ' + form.size" v-bind="parse_input_attr(${field})" v-for="(option, key) in ${field}.options" v-model="${field}.selected[key]" @change="selected($event, key, ${index})" :key="key">
-<option disabled value="">-- {{${field}.label}} --</option>
+<option disabled value="">- {{${field}.label}} -</option>
 <option v-for="(v,k ) in option" :value="v" :key="v">{{k}}</option>
 </select>
 </div>

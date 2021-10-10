@@ -10,8 +10,8 @@ use Wnd\View\Wnd_Form_Option;
 class Wnd_Menu_Sms extends Wnd_Menus {
 
 	// 子菜单基本属性
-	protected $page_title = '短信配置';
-	protected $menu_title = '短信配置';
+	protected $page_title = '短信/注册配置';
+	protected $menu_title = '短信/注册配置';
 	protected $menu_slug  = 'wnd-frontend-sms';
 
 	/**
