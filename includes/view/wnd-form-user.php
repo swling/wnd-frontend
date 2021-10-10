@@ -3,6 +3,7 @@ namespace Wnd\View;
 
 /**
  * 适配本插件的ajax User表单类
+ *
  * @since 2019.03.11
  */
 class Wnd_Form_User extends Wnd_Form_WP {
@@ -20,11 +21,10 @@ class Wnd_Form_User extends Wnd_Form_WP {
 		$this->add_text(
 			[
 				'name'        => '_user_user_login',
-				'value'       => '',
+				'value'       => $this->user->data->user_login ?? '',
 				'placeholder' => $placeholder,
 				'label'       => $label,
-				'icon_left'   => '<i class="fas fa-user"></i>',
-				'autofocus'   => 'autofocus',
+				'icon_left'   => '<i class="far fa-id-card"></i>',
 				'required'    => $required,
 			]
 		);
@@ -34,7 +34,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 		$this->add_email(
 			[
 				'name'        => '_user_user_email',
-				'value'       => $this->user->data->user_email,
+				'value'       => $this->user->data->user_email ?? '',
 				'label'       => $label,
 				'icon_left'   => '<i class="fa fa-at"></i>',
 				'required'    => $required,
@@ -44,15 +44,13 @@ class Wnd_Form_User extends Wnd_Form_WP {
 	}
 
 	/**
-	 *
-	 * 注意：
-	 * 当用户注册时未设置昵称，WP将自动根据用户名生成昵称。在实际应用中，我们应该避免用户昵称与自动用户名相同
+	 * 注意：当用户注册时未设置昵称，WP将自动根据用户名生成昵称
 	 */
 	public function add_user_display_name($label = '名称', $placeholder = '名称', $required = true) {
 		$this->add_text(
 			[
 				'name'        => '_user_display_name',
-				'value'       => ($this->user->data->display_name != $this->user->data->user_login) ? $this->user->data->display_name : '',
+				'value'       => $this->user->data->display_name ?? '',
 				'label'       => $label,
 				'placeholder' => $placeholder,
 				'icon_left'   => '<i class="fas fa-user"></i>',
@@ -99,7 +97,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 		$this->add_url(
 			[
 				'name'        => '_user_user_url',
-				'value'       => $this->user->data->user_url,
+				'value'       => $this->user->data->user_url ?? '',
 				'label'       => $label,
 				'placeholder' => $placeholder,
 				'icon_left'   => '<i class="fas fa-link"></i>',
@@ -114,7 +112,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 				'name'        => '_wpusermeta_description',
 				'label'       => $label,
 				'placeholder' => $placeholder,
-				'value'       => $this->user->description,
+				'value'       => $this->user->description ?? '',
 				'required'    => $required,
 			]
 		);
