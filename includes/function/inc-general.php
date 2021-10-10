@@ -290,7 +290,6 @@ function wnd_error_payment_log(string $msg) {
  */
 set_exception_handler('wnd_exception_handler');
 function wnd_exception_handler($e) {
-
 	$error = $e->getMessage() . '@' . $e->getFile() . ' line ' . $e->getLine();
 	$html  = '<article class="column message is-danger">';
 	$html .= '<div class="message-header">';
@@ -298,8 +297,9 @@ function wnd_exception_handler($e) {
 	$html .= '</div>';
 	$html .= '<div class="message-body">' . $error . '</div>';
 	$html .= '</article>';
-
 	echo $html;
 
-	wnd_error_log($error);
+	if (wnd_get_config('enable_error_log')) {
+		wnd_error_log($error);
+	}
 }
