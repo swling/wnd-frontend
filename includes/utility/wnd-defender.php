@@ -162,26 +162,15 @@ class Wnd_Defender {
 	 * 获取客户端 ip 地址
 	 *
 	 */
-	protected static function get_real_ip(): string {
-		static $realip;
+	protected static function get_real_ip(): string{
+		$ip = '';
 		if (isset($_SERVER)) {
-			if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-				$realip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-			} else if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-				$realip = $_SERVER['HTTP_CLIENT_IP'];
-			} else {
-				$realip = $_SERVER['REMOTE_ADDR'];
-			}
+			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['REMOTE_ADDR']);
 		} else {
-			if (getenv('HTTP_X_FORWARDED_FOR')) {
-				$realip = getenv('HTTP_X_FORWARDED_FOR');
-			} else if (getenv('HTTP_CLIENT_IP')) {
-				$realip = getenv('HTTP_CLIENT_IP');
-			} else {
-				$realip = getenv('REMOTE_ADDR');
-			}
+			$ip = getenv('HTTP_X_FORWARDED_FOR') ?: (getenv('HTTP_CLIENT_IP') ?: getenv('REMOTE_ADDR'));
 		}
-		return $realip;
+
+		return $ip ?: '';
 	}
 
 	/**

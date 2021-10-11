@@ -68,7 +68,7 @@ abstract class PayBuilder implements PaymentBuilder {
 				'currency' => 'CNY', //CNY：人民币，境内商户号仅支持人民币
 			],
 			'scene_info'   => [ //支付场景描述
-				'payer_client_ip' => '127.0.0.1', //调用微信支付API的机器IP
+				'payer_client_ip' => static::getClientIP(), //调用微信支付API的机器IP
 			],
 		];
 
@@ -96,5 +96,20 @@ abstract class PayBuilder implements PaymentBuilder {
 				'timeout' => 10,
 			]
 		);
+	}
+
+	/**
+	 * 获取客户端 ip 地址
+	 *
+	 */
+	protected static function getClientIP(): string{
+		$ip = '';
+		if (isset($_SERVER)) {
+			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['REMOTE_ADDR']);
+		} else {
+			$ip = getenv('HTTP_X_FORWARDED_FOR') ?: (getenv('HTTP_CLIENT_IP') ?: getenv('REMOTE_ADDR'));
+		}
+
+		return $ip ?: '';
 	}
 }

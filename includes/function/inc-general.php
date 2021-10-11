@@ -78,14 +78,13 @@ function wnd_get_json_request(): array{
  * @param  	bool   	$hidden 	是否隐藏IP部分字段
  * @return 	string 	IP address
  */
-function wnd_get_user_ip($hidden = false) {
-	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-		$ip = $_SERVER['HTTP_CLIENT_IP'];
-	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+function wnd_get_user_ip(bool $hidden = false): string {
+	if (isset($_SERVER)) {
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['REMOTE_ADDR']);
 	} else {
-		$ip = $_SERVER['REMOTE_ADDR'];
+		$ip = getenv('HTTP_X_FORWARDED_FOR') ?: (getenv('HTTP_CLIENT_IP') ?: getenv('REMOTE_ADDR'));
 	}
+	$ip = $ip ?: '';
 
 	if ($hidden) {
 		return preg_replace('/(\d+)\.(\d+)\.(\d+)\.(\d+)/is', '$1.$2.$3.*', $ip);
