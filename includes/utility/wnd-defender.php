@@ -81,11 +81,6 @@ class Wnd_Defender {
 	protected $action;
 
 	/**
-	 * 安全操作
-	 */
-	protected $safe_actions = ['wnd_safe_action'];
-
-	/**
 	 * 高危操作
 	 */
 	protected $risky_actions = ['wnd_send_code', 'wnd_login', 'wnd_reset_password'];
@@ -151,11 +146,6 @@ class Wnd_Defender {
 		$this->count      = $this->cache_get($this->key);
 		$this->base_count = $this->cache_get($this->base_key);
 
-		// 排除在外的安全操作
-		if (in_array($this->action, $this->safe_actions)) {
-			return;
-		}
-
 		// 高风险操作探知
 		if (in_array($this->action, $this->risky_actions)) {
 			$this->insight();
@@ -169,54 +159,36 @@ class Wnd_Defender {
 	}
 
 	/**
-	 * 核查防护
-	 * 单个IP规定时间内返回超限拦截，并记录ip端
-	 * IP段累积拦截超限，拦截整个IP段（为避免误杀，IP段拦截时间为IP检测时间段，而非IP拦截时间）
+	 * 获取客户端 ip 地址
+	 *
 	 */
-	protected function defend() {
-		// IP段拦截
-		if ($this->base_count > $this->max_connections) {
-			// 将当前 IP 写入屏蔽分析日志
-			$this->write_block_logs();
-
-			header('HTTP/1.1 429 Too Many Requests');
-			exit('Too Many Requests. Blocked By IP Base : ' . $this->base_count . '-' . $this->ip);
-		}
-
-		// 首次访问
-		if (!$this->count) {
-			$this->cache_set($this->key, 1, $this->period);
-			return;
-		}
-
-		// 如果当前访问首次被拦截，统计IP段拦截次数，
-		if ($this->count == $this->max_connections) {
-			if ($this->base_count) {
-				$this->cache_inc($this->base_key, 1);
+	protected static function get_real_ip(): string {
+		static $realip;
+		if (isset($_SERVER)) {
+			if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+				$realip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			} else if (isset($_SERVER['HTTP_CLIENT_IP'])) {
+				$realip = $_SERVER['HTTP_CLIENT_IP'];
 			} else {
-				$this->cache_set($this->base_key, 1, $this->period);
+				$realip = $_SERVER['REMOTE_ADDR'];
+			}
+		} else {
+			if (getenv('HTTP_X_FORWARDED_FOR')) {
+				$realip = getenv('HTTP_X_FORWARDED_FOR');
+			} else if (getenv('HTTP_CLIENT_IP')) {
+				$realip = getenv('HTTP_CLIENT_IP');
+			} else {
+				$realip = getenv('REMOTE_ADDR');
 			}
 		}
+		return $realip;
+	}
 
-		/**
-		 * 符合拦截条件：
-		 * - 更新当前 IP 记录
-		 * - 更新当前 IP 拦截日志时间
-		 * - 中断当前 IP 连接
-		 *
-		 */
-		if ($this->count >= $this->max_connections) {
-			$this->cache_set($this->key, $this->count + 1, $this->blocked_time);
-
-			// 将当前 IP 写入屏蔽分析日志
-			$this->write_block_logs();
-
-			header('HTTP/1.1 429 Too Many Requests');
-			exit('Too Many Requests. Blocked By IP : ' . $this->count . ' - ' . $this->ip);
-		}
-
-		// 非首次访问，但尚未达到拦截条件：累计访问次数
-		$this->cache_inc($this->key, 1);
+	/**
+	 * 生成识别 key
+	 */
+	protected function build_key($key): string {
+		return 'wnd_' . $key;
 	}
 
 	/**
@@ -266,6 +238,62 @@ class Wnd_Defender {
 	}
 
 	/**
+	 * 核查防护
+	 * 单个IP规定时间内返回超限拦截，并记录ip端
+	 * IP段累积拦截超限，拦截整个IP段（为避免误杀，IP段拦截时间为IP检测时间段，而非IP拦截时间）
+	 */
+	protected function defend() {
+		// IP段拦截
+		if ($this->base_count > $this->max_connections) {
+			$this->intercept(true);
+		}
+
+		// 首次访问
+		if (!$this->count) {
+			$this->cache_set($this->key, 1, $this->period);
+			return;
+		}
+
+		// 如果当前访问首次被拦截，统计IP段拦截次数，
+		if ($this->count == $this->max_connections) {
+			if ($this->base_count) {
+				$this->cache_inc($this->base_key, 1);
+			} else {
+				$this->cache_set($this->base_key, 1, $this->period);
+			}
+		}
+
+		/**
+		 * 符合拦截条件：
+		 * - 更新当前 IP 记录
+		 * - 中断当前 IP 连接
+		 */
+		if ($this->count >= $this->max_connections) {
+			$this->cache_set($this->key, $this->count + 1, $this->blocked_time);
+			$this->intercept(false);
+		}
+
+		// 非首次访问，但尚未达到拦截条件：累计访问次数
+		$this->cache_inc($this->key, 1);
+	}
+
+	/**
+	 * ### 拦截
+	 * - 写入拦截日志
+	 * - 阻断访问
+	 * @since 0.9.39
+	 */
+	protected function intercept(bool $ip_base_intercept) {
+		$this->write_block_logs();
+		http_response_code(429);
+		if ($ip_base_intercept) {
+			exit('Too Many Requests. Blocked By IP Base : ' . $this->base_count . ' - ' . $this->ip);
+		} else {
+			exit('Too Many Requests. Blocked By IP : ' . $this->count . ' - ' . $this->ip);
+		}
+	}
+
+	/**
 	 * 记录屏蔽ip的请求信息，以供分析
 	 *
 	 */
@@ -293,13 +321,6 @@ class Wnd_Defender {
 		$logs = $this->cache_get(static::$block_logs_key);
 
 		return is_array($logs) ? $logs : [];
-	}
-
-	/**
-	 * 生成识别 key
-	 */
-	protected function build_key($key): string {
-		return 'wnd_' . $key;
 	}
 
 	/**
@@ -352,31 +373,5 @@ class Wnd_Defender {
 	 */
 	public function reset() {
 		$this->cache_delete($this->key);
-	}
-
-	/**
-	 * 获取客户端 ip 地址
-	 *
-	 */
-	protected static function get_real_ip(): string {
-		static $realip;
-		if (isset($_SERVER)) {
-			if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-				$realip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-			} else if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-				$realip = $_SERVER['HTTP_CLIENT_IP'];
-			} else {
-				$realip = $_SERVER['REMOTE_ADDR'];
-			}
-		} else {
-			if (getenv('HTTP_X_FORWARDED_FOR')) {
-				$realip = getenv('HTTP_X_FORWARDED_FOR');
-			} else if (getenv('HTTP_CLIENT_IP')) {
-				$realip = getenv('HTTP_CLIENT_IP');
-			} else {
-				$realip = getenv('REMOTE_ADDR');
-			}
-		}
-		return $realip;
 	}
 }
