@@ -154,7 +154,7 @@ class Wnd_Menus {
 			[
 				'name'    => 'disable_locale',
 				'options' => ['启用' => '', '禁用' => 1],
-				'label'   => '禁用语言包',
+				'label'   => '语言包',
 				'class'   => 'is-checkradio is-danger',
 			]
 		);
