@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Component\Payment\WeChat;
 
+use Exception;
+
 /**
  * @link https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_3_1.shtml
  */
@@ -18,10 +20,10 @@ class H5 extends PayBuilder {
 		$body   = json_decode($result['body'], true);
 
 		if ($result['headers']['http_code'] != 200) {
-			throw new \Exception($body['code']);
+			throw new Exception($body['code']);
 		}
 
 		$payUrl = $body['h5_url'];
-		return '<script>window.location.href="' . $payUrl . '"</script><a href="' . $payUrl . '" class="button">微信支付</a>';
+		return '<a href="' . $payUrl . '" target="_blank" class="button">打开微信支付</a>';
 	}
 }

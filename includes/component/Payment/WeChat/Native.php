@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Component\Payment\WeChat;
 
+use Exception;
+
 /**
  * @link https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_4_1.shtml
  */
@@ -18,10 +20,9 @@ class Native extends PayBuilder {
 		$body   = json_decode($result['body'], true);
 
 		if ($result['headers']['http_code'] != 200) {
-			throw new \Exception($body['code'] . ':' . $body['message']);
+			throw new Exception($body['code'] . ':' . $body['message']);
 		}
 
 		return '<img src="' . wnd_generate_qrcode($body['code_url']) . '" width="250" height="250"><h3>微信扫码支付</h3>';
 	}
-
 }

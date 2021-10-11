@@ -23,6 +23,6 @@ class WeChat_H5 extends WeChat_Native {
 		$pay->setNotifyUrl(wnd_get_endpoint_url('wnd_verify_wechat'));
 		$pay->generateParams();
 
-		return $pay->buildInterface();
+		return $pay->buildInterface() . static::build_ajax_check_script($this->transaction->get_transaction_id());
 	}
 }
