@@ -8,11 +8,17 @@ use Wnd\Component\Requests\Requests;
  * @link https://pay.weixin.qq.com/wiki/doc/apiv3/wechatpay/wechatpay4_1.shtml
  */
 class Verify {
+	const KEY_LENGTH_BYTE      = 32;
+	const AUTH_TAG_LENGTH_BYTE = 16;
+
 	private $apiKey;
 	private $weChatCertificates      = [];
 	private $curretWeChatCertificate = '';
 
 	public function __construct($mchID, $apiKey, $serialNumber, $privateKey) {
+		if (strlen($apiKey) != static::KEY_LENGTH_BYTE) {
+			throw new \InvalidArgumentException('无效的ApiV3Key，长度应为32个字节');
+		}
 		$this->apiKey    = $apiKey;
 		$this->signature = new Signature($mchID, $serialNumber, $privateKey);
 	}
@@ -185,6 +191,7 @@ class Verify {
 	/**
 	 * 解密数据
 	 * Decrypt AEAD_AES_256_GCM ciphertext
+	 * @link https://pay.weixin.qq.com/wiki/doc/apiv3/wechatpay/wechatpay4_2.shtml
 	 *
 	 * @param  string      $associatedData AES GCM additional authentication data
 	 * @param  string      $nonceStr       AES GCM nonce
@@ -193,7 +200,7 @@ class Verify {
 	 */
 	private function decryptToString($ciphertext, $associatedData, $nonceStr) {
 		$ciphertext = \base64_decode($ciphertext);
-		if (strlen($ciphertext) <= 16) {
+		if (strlen($ciphertext) <= static::AUTH_TAG_LENGTH_BYTE) {
 			return false;
 		}
 
@@ -209,10 +216,9 @@ class Verify {
 
 		// openssl (PHP >= 7.1 support AEAD)
 		if (PHP_VERSION_ID >= 70100 && in_array('aes-256-gcm', \openssl_get_cipher_methods())) {
-			$ctext   = substr($ciphertext, 0, -16);
-			$authTag = substr($ciphertext, -16);
-			return \openssl_decrypt($ctext, 'aes-256-gcm', $this->apiKey, \OPENSSL_RAW_DATA, $nonceStr,
-				$authTag, $associatedData);
+			$ctext   = substr($ciphertext, 0, static::AUTH_TAG_LENGTH_BYTE);
+			$authTag = substr($ciphertext, static::AUTH_TAG_LENGTH_BYTE);
+			return \openssl_decrypt($ctext, 'aes-256-gcm', $this->apiKey, \OPENSSL_RAW_DATA, $nonceStr, $authTag, $associatedData);
 		}
 
 		throw new \RuntimeException('AEAD_AES_256_GCM需要PHP 7.1以上或者安装libsodium-php');
