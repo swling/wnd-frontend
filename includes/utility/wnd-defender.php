@@ -316,7 +316,7 @@ class Wnd_Defender {
 
 	/**
 	 * 封装内存缓存读取方法，以便重写以适配其他内存缓存如 redis
-	 *
+	 * 获取
 	 */
 	protected function cache_get($key) {
 		return $this->cache->get($key);
@@ -324,7 +324,7 @@ class Wnd_Defender {
 
 	/**
 	 * 封装内存缓存设置方法，以便重写以适配其他内存缓存如 redis
-	 *
+	 * 设置
 	 */
 	protected function cache_set($key, $value, $expiration) {
 		return $this->cache->set($key, $value, $expiration);
@@ -332,10 +332,26 @@ class Wnd_Defender {
 
 	/**
 	 * 封装内存缓存增加方法，以便重写以适配其他内存缓存如 redis
-	 *
+	 * 新增
 	 */
 	protected function cache_inc($key, $offset) {
 		return $this->cache->increment($key, $offset);
+	}
+
+	/**
+	 * 封装内存缓存设置方法，以便重写以适配其他内存缓存如 redis
+	 * 删除
+	 */
+	protected function cache_delete($key) {
+		return $this->cache->delete($key);
+	}
+
+	/**
+	 * 重置拦截统计
+	 * 可用于防止错误拦截已登录用户
+	 */
+	public function reset() {
+		$this->cache_delete($this->key);
 	}
 
 	/**
