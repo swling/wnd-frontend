@@ -243,8 +243,8 @@ class Wnd_Defender {
 	 * IP段累积拦截超限，拦截整个IP段（为避免误杀，IP段拦截时间为IP检测时间段，而非IP拦截时间）
 	 */
 	protected function defend() {
-		// IP段拦截
-		if ($this->base_count > $this->max_connections) {
+		// IP段拦截：IP段拦截频率条件固定为单个ip访问频率的三倍
+		if ($this->base_count > $this->max_connections * 3) {
 			$this->intercept(true);
 		}
 
@@ -254,13 +254,11 @@ class Wnd_Defender {
 			return;
 		}
 
-		// 如果当前访问首次被拦截，统计IP段拦截次数，
-		if ($this->count == $this->max_connections) {
-			if ($this->base_count) {
-				$this->cache_inc($this->base_key, 1);
-			} else {
-				$this->cache_set($this->base_key, 1, $this->period);
-			}
+		// 统计IP段拦截次数，
+		if ($this->base_count) {
+			$this->cache_inc($this->base_key, 1);
+		} else {
+			$this->cache_set($this->base_key, 1, $this->period);
 		}
 
 		/**
