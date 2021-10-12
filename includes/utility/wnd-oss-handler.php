@@ -104,6 +104,47 @@ class Wnd_OSS_Handler {
 	}
 
 	/**
+	 * 获取 WP 服务器文件路径，并根据 OSS 存储目录，生成最终的 OSS 存储路径
+	 */
+	private function parse_file_path_name(string $source_file): string{
+		// WP 本地上传文件目录
+		$local_base_dir = wp_get_upload_dir()['basedir'];
+
+		return $this->oss_dir . str_replace($local_base_dir, '', $source_file);
+	}
+
+	/**
+	 * 判断当前附件是否为私有存储
+	 * - 是否开启私有存储
+	 * - 当前附件 meta key 是否为 'file'
+	 * 即：私有存储仅针对“付费下载”（价格可设置为0）
+	 *
+	 * 仅支持插件编辑器前端上传
+	 * - 上传时将 meta key 写入 Attachment Post 的 post_content_filtered 字段
+	 * - @see Action\Wnd_Upload_File
+	 * - @see Action\Wnd_Sign_OSS_Upload
+	 *
+	 * @since 0.9.39
+	 */
+	private function is_private_storage(int $attachment_id): bool {
+		if (!$this->endpoint_private) {
+			return false;
+		}
+
+		$meta_key = get_post($attachment_id)->post_content_filtered ?? '';
+
+		return 'file' == $meta_key;
+	}
+
+	/**
+	 * 对象存储实例
+	 */
+	private function get_object_storage_instance(bool $is_private = false): object{
+		$endpoint = $is_private ? $this->endpoint_private : $this->endpoint;
+		return Wnd_Object_Storage::get_instance($this->service_provider, $endpoint);
+	}
+
+	/**
 	 * 根据用户设定选择是否清理本地文件
 	 * @see do_action( "added_{$meta_type}_meta", $mid, $object_id, $meta_key, $_meta_value )
 	 * @since WordPress读取本地文件信息并存入字段后
@@ -171,14 +212,6 @@ class Wnd_OSS_Handler {
 	}
 
 	/**
-	 * 对象存储图片处理。若指定云平台不支持图像处理则返回原链接
-	 * @since 2019.07.26
-	 */
-	protected function resize_image(string $img_url, int $width, int $height): string {
-		return $this->get_object_storage_instance()->resizeImage($img_url, $width, $height);
-	}
-
-	/**
 	 * 根据用户配置重写附件链接
 	 * apply_filters( 'wp_get_attachment_url', $url, $post->ID )
 	 *
@@ -209,29 +242,19 @@ class Wnd_OSS_Handler {
 	}
 
 	/**
+	 * 对象存储图片处理。若指定云平台不支持图像处理则返回原链接
+	 * @since 2019.07.26
+	 */
+	private function resize_image(string $img_url, int $width, int $height): string {
+		return $this->get_object_storage_instance()->resizeImage($img_url, $width, $height);
+	}
+
+	/**
 	 * WordPress后台附件列表使用了srcset，由于我们采用了远程图片，需禁用此功能
 	 * 否则无法正常显示，即使已通过wp_get_attachment_url filter重写链接
 	 */
 	public function filter_wp_srcset($sources) {
 		return false;
-	}
-
-	/**
-	 * 对象存储实例
-	 */
-	protected function get_object_storage_instance(bool $is_private = false): object{
-		$endpoint = $is_private ? $this->endpoint_private : $this->endpoint;
-		return Wnd_Object_Storage::get_instance($this->service_provider, $endpoint);
-	}
-
-	/**
-	 * 获取 WP 服务器文件路径，并根据 OSS 存储目录，生成最终的 OSS 存储路径
-	 */
-	protected function parse_file_path_name(string $source_file): string{
-		// WP 本地上传文件目录
-		$local_base_dir = wp_get_upload_dir()['basedir'];
-
-		return $this->oss_dir . str_replace($local_base_dir, '', $source_file);
 	}
 
 	/**
@@ -252,28 +275,5 @@ class Wnd_OSS_Handler {
 			'url'     => $url,
 			'headers' => $headers,
 		];
-	}
-
-	/**
-	 * 判断当前附件是否为私有存储
-	 * - 是否开启私有存储
-	 * - 当前附件 meta key 是否为 'file'
-	 * 即：私有存储仅针对“付费下载”（价格可设置为0）
-	 *
-	 * 仅支持插件编辑器前端上传
-	 * - 上传时将 meta key 写入 Attachment Post 的 post_content_filtered 字段
-	 * - @see Action\Wnd_Upload_File
-	 * - @see Action\Wnd_Sign_OSS_Upload
-	 *
-	 * @since 0.9.39
-	 */
-	private function is_private_storage(int $attachment_id): bool {
-		if (!$this->endpoint_private) {
-			return false;
-		}
-
-		$meta_key = get_post($attachment_id)->post_content_filtered ?? '';
-
-		return 'file' == $meta_key;
 	}
 }
