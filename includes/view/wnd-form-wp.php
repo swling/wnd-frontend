@@ -82,7 +82,11 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * 是否为浏览器直传 OSS
 	 * @since 0.9.33.7
 	 */
-	private static function is_oss_direct_upload(): bool{
+	private static function is_oss_direct_upload(): bool {
+		if (!wnd_get_config('enable_oss')) {
+			return false;
+		}
+
 		$local_storage = (int) wnd_get_config('oss_local_storage');
 		return ($local_storage < 0) ? true : false;
 	}
@@ -271,6 +275,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			'meta_key'    => 0,
 			'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
 			'save_height' => 0, //图片文件存储最大过度 0 为不限制
+			'is_paid'     => false,
 		];
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
@@ -315,6 +320,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			'post_parent' => 0,
 			'user_id'     => $this->user->ID,
 			'meta_key'    => 0,
+			'is_paid'     => false,
 		];
 		$args['data'] = array_merge($defaults_data, $args['data']);
 

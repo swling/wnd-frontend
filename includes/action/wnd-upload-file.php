@@ -66,8 +66,17 @@ class Wnd_Upload_File extends Wnd_Action {
 				continue;
 			}
 
-			//上传文件并附属到对应的post parent 默认为0 即孤立文件
-			$file_id = media_handle_upload('temp_key', $this->post_parent);
+			/**
+			 * 上传文件并附属到对应的post parent 默认为 0 即孤立文件
+			 *
+			 * 新增 Attachment Post 字段：post_content_filtered
+			 * - @since 0.9.39
+			 * - used by plugins to cache a version of post_content typically passed through the ‘the_content’ filter.Not used by WordPress core itself.
+			 * - 保存 meta key 至此，从而使得 Utility\Wnd_OSS_Handler 可以识别判断是否需要上传至私有 OSS 节点
+			 * - @see Utility\Wnd_OSS_Handler::is_private_storage()
+			 *
+			 */
+			$file_id = media_handle_upload('temp_key', $this->post_parent, ['post_content_filtered' => $this->meta_key]);
 
 			// 上传失败
 			if (is_wp_error($file_id)) {

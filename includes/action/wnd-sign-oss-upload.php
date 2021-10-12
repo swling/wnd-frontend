@@ -19,14 +19,17 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 
 	private $local_file;
 
+	private $is_private;
+
 	public function execute(): array{
 		$this->file_name  = uniqid('oss-') . '.' . $this->data['extension'];
 		$this->mime_type  = $this->data['mime_type'] ?? '';
 		$md5              = $this->data['md5'] ?? '';
 		$this->local_file = $this->get_attached_file();
+		$this->is_private = (bool) ($this->data['is_paid'] ?? false);
 
 		$oss_handler = Wnd_OSS_Handler::get_instance();
-		$oss_params  = $oss_handler->get_oss_sign_params('PUT', $this->local_file, $this->mime_type, $md5);
+		$oss_params  = $oss_handler->get_oss_sign_params('PUT', $this->local_file, $this->mime_type, $md5, $this->is_private);
 		$oss_handler->remove_local_storage_hook(); // 移除本地文件处理钩子
 
 		// 写入 attachment post
@@ -78,13 +81,20 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 
 	/**
 	 * 直传 OSS 需手动写入 WP 附件数据
+	 *
+	 * 新增 Attachment Post 字段：post_content_filtered
+	 * - @since 0.9.39
+	 * - used by plugins to cache a version of post_content typically passed through the ‘the_content’ filter.Not used by WordPress core itself.
+	 * - 保存 meta key 至此，从而使得 Utility\Wnd_OSS_Handler 可以识别判断是否需要上传至私有 OSS 节点
+	 * - @see Utility\Wnd_OSS_Handler::is_private_storage()
 	 */
 	private function inset_attachment(): int{
 		$attachment = [
-			'post_mime_type' => $this->mime_type,
-			'post_title'     => wp_basename($this->file_name, '.' . $this->data['extension']),
-			'post_content'   => '',
-			'post_excerpt'   => '',
+			'post_mime_type'        => $this->mime_type,
+			'post_title'            => wp_basename($this->file_name, '.' . $this->data['extension']),
+			'post_content'          => '',
+			'post_excerpt'          => '',
+			'post_content_filtered' => $this->meta_key,
 		];
 
 		// Save the data.

@@ -26,17 +26,21 @@ class Wnd_OSS_Handler {
 	// 是否保留本地文件
 	protected $local_storage;
 	protected $service_provider;
-	protected $endpoint     = ''; // COS 节点
-	protected $oss_dir      = ''; // 文件在节点中的相对存储路径
-	protected $oss_base_url = ''; // 外网访问 URL
+	protected $oss_dir              = ''; // 文件在节点中的相对存储路径
+	protected $endpoint             = ''; // 储存节点
+	protected $oss_base_url         = ''; // 外网访问 URL
+	protected $endpoint_private     = ''; // 私有储存节点
+	protected $oss_base_url_private = ''; // 私有节点外网 URL
 
 	// Configure && Hook
 	private function __construct() {
-		$this->local_storage    = (int) wnd_get_config('oss_local_storage');
-		$this->service_provider = wnd_get_config('oss_sp');
-		$this->endpoint         = wnd_get_config('oss_endpoint');
-		$this->oss_dir          = trim(wnd_get_config('oss_dir'), '/'); // 文件在节点中的相对存储路径
-		$this->oss_base_url     = wnd_get_config('oss_base_url'); // 外网访问 URL
+		$this->local_storage        = (int) wnd_get_config('oss_local_storage');
+		$this->service_provider     = wnd_get_config('oss_sp');
+		$this->oss_dir              = trim(wnd_get_config('oss_dir'), '/');
+		$this->endpoint             = wnd_get_config('oss_endpoint');
+		$this->oss_base_url         = wnd_get_config('oss_base_url');
+		$this->endpoint_private     = wnd_get_config('oss_endpoint_private');
+		$this->oss_base_url_private = wnd_get_config('oss_base_url_private');
 
 		$this->add_local_storage_hook();
 
@@ -57,8 +61,12 @@ class Wnd_OSS_Handler {
 	private function add_local_storage_hook() {
 		// 上传文件
 		add_action('add_attachment', [$this, 'upload_to_oss'], 10, 1);
-		// 删除本地文件
-		add_action('added_post_meta', [$this, 'delete_local_file'], 10, 4);
+
+		/**
+		 * 生成本地文件 meta 之后 删除文件
+		 * @see apply_filters( 'wp_generate_attachment_metadata', $metadata, $attachment_id, 'create' );
+		 */
+		add_filter('wp_generate_attachment_metadata', [$this, 'delete_local_file'], 10, 2);
 	}
 
 	/**
@@ -68,20 +76,21 @@ class Wnd_OSS_Handler {
 	 */
 	public function remove_local_storage_hook() {
 		remove_action('add_attachment', [$this, 'upload_to_oss'], 10);
-		remove_action('added_post_meta', [$this, 'delete_local_file'], 10);
+		remove_filter('wp_generate_attachment_metadata', [$this, 'delete_local_file'], 10);
 	}
 
 	/**
 	 * 在WordPress上传到本地服务器之后，将文件上传到oss
 	 * @since 2019.07.26
 	 */
-	public function upload_to_oss($post_ID) {
+	public function upload_to_oss(int $attachment_id) {
 		// 获取WordPress上传并处理后文件
-		$file = get_attached_file($post_ID);
+		$file       = get_attached_file($attachment_id);
+		$is_private = $this->is_private_storage($attachment_id);
 
 		try {
 			$file_path_name = $this->parse_file_path_name($file);
-			$object_storage = $this->get_object_storage_instance();
+			$object_storage = $this->get_object_storage_instance($is_private);
 			$object_storage->setFilePathName($file_path_name);
 			$object_storage->uploadFile($file);
 		} catch (Exception $e) {
@@ -89,7 +98,7 @@ class Wnd_OSS_Handler {
 			 * @data 2020.10.20
 			 * 同步上传失败，则删除本条附件，防止产生孤立附件
 			 */
-			wp_delete_attachment($post_ID, true);
+			wp_delete_attachment($attachment_id, true);
 			exit($e->getMessage() . '@' . __FUNCTION__);
 		}
 	}
@@ -99,19 +108,24 @@ class Wnd_OSS_Handler {
 	 * @see do_action( "added_{$meta_type}_meta", $mid, $object_id, $meta_key, $_meta_value )
 	 * @since WordPress读取本地文件信息并存入字段后
 	 */
-	public function delete_local_file($meta_id, $post_ID, $meta_key, $meta_value) {
-		if ('_wp_attachment_metadata' != $meta_key or $this->local_storage > 0) {
-			return;
+	public function delete_local_file(array $data, int $attachment_id): array{
+		if ($this->local_storage > 0) {
+			return $data;
 		}
 
 		/**
 		 * $meta = wp_get_attachment_metadata($post_ID);
 		 * 因为插件对 wp_get_attachment_metadata 进行了oss远程重写，因此此处不可采用 wp_get_attachment_metadata获取
 		 */
-		$meta         = $meta_value;
-		$backup_sizes = get_post_meta($post_ID, '_wp_attachment_backup_sizes', true);
-		$file         = get_attached_file($post_ID);
-		wp_delete_attachment_files($post_ID, $meta, $backup_sizes, $file);
+		$meta         = get_post_meta($attachment_id, '_wp_attachment_metadata', true);
+		$backup_sizes = get_post_meta($attachment_id, '_wp_attachment_backup_sizes', true);
+		$file         = get_attached_file($attachment_id);
+		$delete       = wp_delete_attachment_files($attachment_id, $meta, $backup_sizes, $file);
+		if (!$delete) {
+			throw new Exception('wp_delete_attachment_files filed @' . __FUNCTION__);
+		}
+
+		return $data;
 	}
 
 	/**
@@ -119,14 +133,13 @@ class Wnd_OSS_Handler {
 	 * do_action( 'delete_attachment', $post_id );
 	 * @since 2019.07.26
 	 */
-	public function delete_oss_file($post_ID) {
-
-		// 获取WordPress文件信息，并替换字符后，设定oss文件存储路径
-		$file = get_attached_file($post_ID);
+	public function delete_oss_file(int $attachment_id) {
+		$file       = get_attached_file($attachment_id);
+		$is_private = $this->is_private_storage($attachment_id);
 
 		try {
 			$file_path_name = $this->parse_file_path_name($file);
-			$object_storage = $this->get_object_storage_instance();
+			$object_storage = $this->get_object_storage_instance($is_private);
 			$object_storage->setFilePathName($file_path_name);
 			$object_storage->deleteFile();
 		} catch (Exception $e) {
@@ -138,7 +151,7 @@ class Wnd_OSS_Handler {
 	 * 替换wordpress file meta
 	 * @since 2019.07.25
 	 */
-	public function filter_attachment_meta($data): array{
+	public function filter_attachment_meta(array $data): array{
 		if (empty($data['sizes']) || (wp_debug_backtrace_summary(null, 4, false)[0] == 'wp_delete_attachment')) {
 			return $data;
 		}
@@ -161,17 +174,23 @@ class Wnd_OSS_Handler {
 	 * 对象存储图片处理。若指定云平台不支持图像处理则返回原链接
 	 * @since 2019.07.26
 	 */
-	protected function resize_image($img_url, $width, $height): string {
+	protected function resize_image(string $img_url, int $width, int $height): string {
 		return $this->get_object_storage_instance()->resizeImage($img_url, $width, $height);
 	}
 
 	/**
 	 * 根据用户配置重写附件链接
 	 * apply_filters( 'wp_get_attachment_url', $url, $post->ID )
+	 *
 	 * @since 2019.07.25
+	 * @since 0.9.39 新增私有存储
 	 */
-	public function filter_attachment_url($url, $post_ID): string {
-		return str_replace(wp_get_upload_dir()['baseurl'], $this->oss_base_url, $url);
+	public function filter_attachment_url(string $url, int $attachment_id): string{
+		$is_private   = $this->is_private_storage($attachment_id);
+		$oss_base_url = $is_private ? $this->oss_base_url_private : $this->oss_base_url;
+		$oss_file_url = str_replace(wp_get_upload_dir()['baseurl'], $oss_base_url, $url);
+
+		return $oss_file_url;
 	}
 
 	/**
@@ -179,7 +198,7 @@ class Wnd_OSS_Handler {
 	 * return apply_filters( 'wp_get_attachment_image_src', $image, $attachment_id, $size, $icon );
 	 * @since 2019.07.25
 	 */
-	public function filter_attachment_image_src($image): array{
+	public function filter_attachment_image_src(array $image): array{
 		$oss_image = [
 			$this->resize_image($image[0], $image[1], $image[2]),
 			$image[1],
@@ -200,8 +219,9 @@ class Wnd_OSS_Handler {
 	/**
 	 * 对象存储实例
 	 */
-	protected function get_object_storage_instance(): object {
-		return Wnd_Object_Storage::get_instance($this->service_provider, $this->endpoint);
+	protected function get_object_storage_instance(bool $is_private = false): object{
+		$endpoint = $is_private ? $this->endpoint_private : $this->endpoint;
+		return Wnd_Object_Storage::get_instance($this->service_provider, $endpoint);
 	}
 
 	/**
@@ -218,18 +238,42 @@ class Wnd_OSS_Handler {
 	 * 根据文件名，生成直传 OSS 所需的参数
 	 * @since 0.9.33.7
 	 */
-	public function get_oss_sign_params(string $method, string $local_file, string $content_type = '', string $md5 = ''): array{
+	public function get_oss_sign_params(string $method, string $local_file, string $content_type = '', string $md5 = '', bool $is_private = false): array{
 		// OSS 存储路径
 		$file_path_name = $this->parse_file_path_name($local_file);
 
 		// 获取 OSS 签名
-		$oss = $this->get_object_storage_instance();
+		$oss = $this->get_object_storage_instance($is_private);
 		$oss->setFilePathName($file_path_name);
 		$headers = $oss->generateHeaders($method, $content_type, $md5);
+		$url     = $oss->getFileUri();
 
 		return [
-			'url'     => $this->endpoint . '/' . $file_path_name,
+			'url'     => $url,
 			'headers' => $headers,
 		];
+	}
+
+	/**
+	 * 判断当前附件是否为私有存储
+	 * - 是否开启私有存储
+	 * - 当前附件 meta key 是否为 'file'
+	 * 即：私有存储仅针对“付费下载”（价格可设置为0）
+	 *
+	 * 仅支持插件编辑器前端上传
+	 * - 上传时将 meta key 写入 Attachment Post 的 post_content_filtered 字段
+	 * - @see Action\Wnd_Upload_File
+	 * - @see Action\Wnd_Sign_OSS_Upload
+	 *
+	 * @since 0.9.39
+	 */
+	private function is_private_storage(int $attachment_id): bool {
+		if (!$this->endpoint_private) {
+			return false;
+		}
+
+		$meta_key = get_post($attachment_id)->post_content_filtered ?? '';
+
+		return 'file' == $meta_key;
 	}
 }
