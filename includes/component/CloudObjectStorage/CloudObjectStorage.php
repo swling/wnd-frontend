@@ -39,17 +39,17 @@ abstract class CloudObjectStorage {
 	abstract public function uploadFile(string $sourceFile, int $timeout = 1800): array;
 
 	/**
+	 * GET
+	 * - 公共读：$this->fileUri
+	 * - 私有读：签名后的访问链接。具体实现在子类中根据服务商文档完成构造。
+	 */
+	abstract public function getFileUri(bool $signature, int $expires): string;
+
+	/**
 	 * Delete
 	 *
 	 */
 	abstract public function deleteFile(int $timeout = 30): array;
-
-	/**
-	 * 获取文件 URI
-	 * - 公共读：$this->fileUri
-	 * - 私有读：签名后的访问链接。具体实现在子类中根据服务商文档完成构造。
-	 */
-	abstract function getFileUri(bool $signature, int $expires): string;
 
 	/**
 	 * 生成签名后的完整 headers
