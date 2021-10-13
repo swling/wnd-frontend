@@ -225,8 +225,8 @@ class Wnd_Defender {
 
 		$threat_extension = ['jsp', 'jspx', 'action', 'asp', 'aspx', 'do', 'cgi'];
 		if (in_array($ext, $threat_extension)) {
-			$this->max_connections = 0;
-			$this->blocked_time    = 3600 * 24;
+			$this->count        = $this->max_connections;
+			$this->blocked_time = 3600 * 24;
 		}
 	}
 
@@ -243,7 +243,7 @@ class Wnd_Defender {
 			return;
 		}
 
-		$this->max_connections = 0;
+		$this->count = $this->max_connections;
 	}
 
 	/**
