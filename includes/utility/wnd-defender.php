@@ -151,6 +151,9 @@ class Wnd_Defender {
 			$this->insight();
 		}
 
+		// 直接拦截违禁的拓展名请求
+		$this->defend_extension();
+
 		// xmlrpc
 		$this->defend_xmlrpc();
 
@@ -207,6 +210,23 @@ class Wnd_Defender {
 		 */
 		if ($this->count >= $this->max_request_changes and $cache_changes >= $this->max_request_changes) {
 			$this->max_connections = 0;
+		}
+	}
+
+	/**
+	 * 根据请求后缀直接拦截恶意请求，并修正延长设定拦截时间
+	 * @since 0.9.39.7
+	 */
+	protected function defend_extension() {
+		$ext = pathinfo($_SERVER['REQUEST_URI'])['extension'] ?? '';
+		if (!$ext) {
+			return;
+		}
+
+		$threat_extension = ['jsp', 'jspx', 'action', 'asp', 'aspx', 'do', 'cgi'];
+		if (in_array($ext, $threat_extension)) {
+			$this->max_connections = 0;
+			$this->blocked_time    = 3600 * 24;
 		}
 	}
 
