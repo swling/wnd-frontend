@@ -128,8 +128,8 @@ class Wnd_OSS_Handler {
 	 *
 	 * @since 0.9.39
 	 */
-	private function is_private_storage(int $attachment_id): bool {
-		if (!$this->endpoint_private) {
+	public function is_private_storage(int $attachment_id): bool {
+		if (!$this->is_private_storage_available()) {
 			return false;
 		}
 
@@ -139,10 +139,27 @@ class Wnd_OSS_Handler {
 	}
 
 	/**
+	 * 当前站点配置私有存储是否可用
+	 * @since 0.9.39
+	 */
+	private function is_private_storage_available(): bool {
+		if ($this->endpoint_private and wnd_get_config('enable_oss')) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * 对象存储实例
 	 */
-	private function get_object_storage_instance(bool $is_private = false): object{
-		$endpoint = $is_private ? $this->endpoint_private : $this->endpoint;
+	private function get_object_storage_instance(bool $is_private = false): object {
+		if ($is_private and $this->endpoint_private) {
+			$endpoint = $this->endpoint_private;
+		} else {
+			$endpoint = $this->endpoint;
+		}
+
 		return Wnd_Object_Storage::get_instance($this->service_provider, $endpoint);
 	}
 
@@ -273,6 +290,9 @@ class Wnd_OSS_Handler {
 	public function get_oss_sign_params(string $method, string $local_file, string $content_type = '', string $md5 = '', bool $is_private = false): array{
 		// OSS 存储路径
 		$file_path_name = $this->parse_file_path_name($local_file);
+
+		// 如果当前未配置私有存储，忽略传参
+		$is_private = ($this->is_private_storage_available() and $is_private);
 
 		// 获取 OSS 签名
 		$oss = $this->get_object_storage_instance($is_private);
