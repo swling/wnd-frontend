@@ -21,6 +21,28 @@ class Qcloud extends CloudObjectStorage {
 	}
 
 	/**
+	 * 获取文件 URI
+	 *
+	 * 签名加入 URL sign 参数即可读取私有存储 object。链接文档是 node.js 版，我们在这篇文档需要确认的是，鉴权凭证使用方式有两种：
+	 * - 放在 header 参数里使用，字段名：authorization。
+	 * - 放在 url 参数里使用，字段名：sign。
+	 * 这样重要的签名信息（第二条），在其他文档几乎没找到，全靠猜。o(╯□╰)o
+	 * @link https://cloud.tencent.com/document/product/436/36121
+	 * @since 0.9.39
+	 */
+	public function getFileUri(bool $signature, int $expires): string {
+		if (!$signature) {
+			return $this->fileUri;
+		}
+
+		// 签名
+		$method    = 'GET';
+		$headers   = [];
+		$signature = $this->generateAuthorization($method, $expires, $headers);
+		return $this->fileUri . '?sign=' . rawurlencode($signature);
+	}
+
+	/**
 	 * Delete
 	 * @link https://cloud.tencent.com/document/product/436/7743
 	 */

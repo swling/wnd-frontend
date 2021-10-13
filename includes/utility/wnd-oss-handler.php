@@ -31,6 +31,7 @@ class Wnd_OSS_Handler {
 	protected $oss_base_url         = ''; // 外网访问 URL
 	protected $endpoint_private     = ''; // 私有储存节点
 	protected $oss_base_url_private = ''; // 私有节点外网 URL
+	protected $sign_expires         = 600; // 私有读 URL 链接（签名）有效时间（秒）
 
 	// Configure && Hook
 	private function __construct() {
@@ -41,6 +42,7 @@ class Wnd_OSS_Handler {
 		$this->oss_base_url         = wnd_get_config('oss_base_url');
 		$this->endpoint_private     = wnd_get_config('oss_endpoint_private');
 		$this->oss_base_url_private = wnd_get_config('oss_base_url_private');
+		$this->sign_expires         = wnd_get_config('oss_sign_expires') ?: $this->sign_expires;
 
 		$this->add_local_storage_hook();
 
@@ -223,7 +225,14 @@ class Wnd_OSS_Handler {
 		$oss_base_url = $is_private ? $this->oss_base_url_private : $this->oss_base_url;
 		$oss_file_url = str_replace(wp_get_upload_dir()['baseurl'], $oss_base_url, $url);
 
-		return $oss_file_url;
+		if (!$is_private) {
+			return $oss_file_url;
+		}
+
+		$file_path_name = parse_url($oss_file_url)['path'];
+		$oss            = $this->get_object_storage_instance($is_private);
+		$oss->setFilePathName($file_path_name);
+		return $oss->getFileUri($is_private, $this->sign_expires);
 	}
 
 	/**
@@ -268,12 +277,14 @@ class Wnd_OSS_Handler {
 		// 获取 OSS 签名
 		$oss = $this->get_object_storage_instance($is_private);
 		$oss->setFilePathName($file_path_name);
-		$headers = $oss->generateHeaders($method, $content_type, $md5);
-		$url     = $oss->getFileUri();
+		$headers    = $oss->generateHeaders($method, $content_type, $md5);
+		$url        = $oss->getFileUri(false, $this->sign_expires);
+		$signed_url = $oss->getFileUri($is_private, $this->sign_expires);
 
 		return [
-			'url'     => $url,
-			'headers' => $headers,
+			'signed_url' => $signed_url,
+			'url'        => $url,
+			'headers'    => $headers,
 		];
 	}
 }

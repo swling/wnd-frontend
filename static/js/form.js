@@ -435,9 +435,9 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         }).then(response => {
                             field.help.text = wnd.msg.upload_successfully;
                             field.help.class = 'is-success';
-                            field.thumbnail = sign.url;
+                            field.thumbnail = sign.signed_url || sign.url;
                             field.file_id = sign.id;
-                            field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + sign.url + '" target="_blank">' + wnd.msg.view + '</a>';
+                            field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + (sign.signed_url || sign.url) + '" target="_blank">' + wnd.msg.view + '</a>';
 
                             _this.$nextTick(function() {
                                 funTransitionHeight(parent, trs_time);

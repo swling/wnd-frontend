@@ -99,6 +99,15 @@ class Wnd_Menu_OSS extends Wnd_Menus {
 			]
 		);
 
+		$form->add_url(
+			[
+				'name'        => 'oss_sign_expires',
+				'label'       => '私有链接过期',
+				'placeholder' => '私有存储签名链接有效时间（秒）',
+				'help'        => ['text' => '应根据自身站点私有存储文件所需的下载时间长短综合判断，留空默认：600 （秒）'],
+			]
+		);
+
 		$form->set_submit_button('保存', 'is-danger');
 
 		return $form->get_json();

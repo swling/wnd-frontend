@@ -44,10 +44,11 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 		do_action('wnd_upload_file', $attachment_id, $this->post_parent, $this->meta_key);
 
 		$data = [
-			'url'       => $oss_params['url'],
-			'thumbnail' => '',
-			'headers'   => $oss_params['headers'],
-			'id'        => $attachment_id,
+			'url'        => $oss_params['url'],
+			'signed_url' => $oss_params['signed_url'], // 若为私有存储返回包含签名的链接，否则与 url 一致
+			'thumbnail'  => '',
+			'headers'    => $oss_params['headers'],
+			'id'         => $attachment_id,
 		];
 		return ['status' => 1, 'data' => $data];
 	}
