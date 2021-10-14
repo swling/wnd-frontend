@@ -106,16 +106,6 @@ class Wnd_OSS_Handler {
 	}
 
 	/**
-	 * 获取 WP 服务器文件路径，并根据 OSS 存储目录，生成最终的 OSS 存储路径
-	 */
-	private function parse_file_path_name(string $source_file): string{
-		// WP 本地上传文件目录
-		$local_base_dir = wp_get_upload_dir()['basedir'];
-
-		return $this->oss_dir . str_replace($local_base_dir, '', $source_file);
-	}
-
-	/**
 	 * 判断当前附件是否为私有存储
 	 * - 是否开启私有存储
 	 * - 当前附件 meta key 是否为 'file'
@@ -148,6 +138,16 @@ class Wnd_OSS_Handler {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * 获取 WP 服务器文件路径，并根据 OSS 存储目录，生成最终的 OSS 存储路径
+	 */
+	private function parse_file_path_name(string $source_file): string{
+		// WP 本地上传文件目录
+		$local_base_dir = wp_get_upload_dir()['basedir'];
+
+		return $this->oss_dir . str_replace($local_base_dir, '', $source_file);
 	}
 
 	/**
@@ -287,7 +287,7 @@ class Wnd_OSS_Handler {
 	 * 根据文件名，生成直传 OSS 所需的参数
 	 * @since 0.9.33.7
 	 */
-	public function get_oss_sign_params(string $method, string $local_file, string $content_type = '', string $md5 = '', bool $is_private = false): array{
+	public function sign_oss_request(string $method, string $local_file, string $content_type = '', string $md5 = '', bool $is_private = false): array{
 		// OSS 存储路径
 		$file_path_name = $this->parse_file_path_name($local_file);
 

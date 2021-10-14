@@ -69,10 +69,12 @@ class Wnd_Upload_File extends Wnd_Action {
 			/**
 			 * 上传文件并附属到对应的post parent 默认为 0 即孤立文件
 			 *
-			 * 新增 Attachment Post 字段：post_content_filtered
+			 * 新增 Attachment Post 字段：post_content_filtered 保存附件对应在 parent post 中的 meta key
 			 * - @since 0.9.39
 			 * - used by plugins to cache a version of post_content typically passed through the ‘the_content’ filter.Not used by WordPress core itself.
+			 * - meta key 写入 parent post meta 是在附件上传完成之后执行，因此无法用于附件上传过程中，判断是否应该写入私有 OSS 节点
 			 * - 保存 meta key 至此，从而使得 Utility\Wnd_OSS_Handler 可以识别判断是否需要上传至私有 OSS 节点
+			 * - 不保存 meta key 至 attachment post 的 post meta 是为了减少一行数据记录
 			 * - @see Utility\Wnd_OSS_Handler::is_private_storage()
 			 *
 			 */

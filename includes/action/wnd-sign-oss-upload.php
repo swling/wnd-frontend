@@ -29,7 +29,7 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 		$this->is_private = (bool) ($this->data['is_paid'] ?? false);
 
 		$oss_handler = Wnd_OSS_Handler::get_instance();
-		$oss_params  = $oss_handler->get_oss_sign_params('PUT', $this->local_file, $this->mime_type, $md5, $this->is_private);
+		$oss_request = $oss_handler->sign_oss_request('PUT', $this->local_file, $this->mime_type, $md5, $this->is_private);
 		$oss_handler->remove_local_storage_hook(); // 移除本地文件处理钩子
 
 		// 写入 attachment post
@@ -44,10 +44,10 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 		do_action('wnd_upload_file', $attachment_id, $this->post_parent, $this->meta_key);
 
 		$data = [
-			'url'        => $oss_params['url'],
-			'signed_url' => $oss_params['signed_url'], // 若为私有存储返回包含签名的链接，否则与 url 一致
+			'url'        => $oss_request['url'],
+			'signed_url' => $oss_request['signed_url'], // 若为私有存储返回包含签名的链接，否则与 url 一致
 			'thumbnail'  => '',
-			'headers'    => $oss_params['headers'],
+			'headers'    => $oss_request['headers'],
 			'id'         => $attachment_id,
 		];
 		return ['status' => 1, 'data' => $data];
@@ -62,31 +62,17 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 		if (!wnd_get_config('enable_oss')) {
 			throw new Exception('Object storage service is disabled');
 		}
-
-		// $allowedExts = ['.gif', '.jpeg', '.jpg', '.png'];
-		// $info        = pathinfo($_FILES[static::$input_name]['name']);
-		// $this->ext   = '.' . strtolower($info['extension']);
-
-		// if ($_FILES[static::$input_name]['error'] > 0) {
-		// 	throw new Exception('Error:' . $_FILES[static::$input_name]['error'] . '<br>');
-		// }
-
-		// if (!in_array($this->ext, $allowedExts)) {
-		// 	throw new Exception('非法的文件格式');
-		// }
-
-		// if ($_FILES[static::$input_name]['size'] > 1024 * 1024 * 5) {
-		// 	throw new Exception('文件不得大于 5 M');
-		// }
 	}
 
 	/**
 	 * 直传 OSS 需手动写入 WP 附件数据
 	 *
-	 * 新增 Attachment Post 字段：post_content_filtered
+	 * 新增 Attachment Post 字段：post_content_filtered 保存附件对应在 parent post 中的 meta key
 	 * - @since 0.9.39
 	 * - used by plugins to cache a version of post_content typically passed through the ‘the_content’ filter.Not used by WordPress core itself.
+	 * - meta key 写入 parent post meta 是在附件上传完成之后执行，因此无法用于附件上传过程中，判断是否应该写入私有 OSS 节点
 	 * - 保存 meta key 至此，从而使得 Utility\Wnd_OSS_Handler 可以识别判断是否需要上传至私有 OSS 节点
+	 * - 不保存 meta key 至 attachment post 的 post meta 是为了减少一行数据记录
 	 * - @see Utility\Wnd_OSS_Handler::is_private_storage()
 	 */
 	private function inset_attachment(): int{
