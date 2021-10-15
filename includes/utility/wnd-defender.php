@@ -105,6 +105,9 @@ class Wnd_Defender {
 	 */
 	private static $instance;
 
+	// 请求URL信息
+	private $pathinfo;
+
 	/**
 	 * 单例模式
 	 */
@@ -145,6 +148,9 @@ class Wnd_Defender {
 		// IP 缓存数据
 		$this->count      = $this->cache_get($this->key);
 		$this->base_count = $this->cache_get($this->base_key);
+
+		// URL 信息
+		$this->pathinfo = pathinfo($_SERVER['REQUEST_URI']);
 
 		// 高风险操作探知
 		if (in_array($this->action, $this->risky_actions)) {
@@ -218,7 +224,7 @@ class Wnd_Defender {
 	 * @since 0.9.39.7
 	 */
 	protected function defend_extension() {
-		$ext = pathinfo($_SERVER['REQUEST_URI'])['extension'] ?? '';
+		$ext = $this->pathinfo['extension'] ?? '';
 		if (!$ext) {
 			return;
 		}
@@ -239,7 +245,8 @@ class Wnd_Defender {
 			return;
 		}
 
-		if (false === strpos($_SERVER['REQUEST_URI'], '/xmlrpc.php')) {
+		$base_name = $this->pathinfo['basename'] ?? '';
+		if ('xmlrpc.php' != $base_name) {
 			return;
 		}
 
