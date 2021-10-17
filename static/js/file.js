@@ -1,0 +1,147 @@
+/**
+ * @since 0.9.39
+ * 文件直传 OSS
+ **/
+async function _wnd_upload_to_oss(file, oss_sp, endpoint, direct = true, sign_data = {}) {
+    let sign_action = direct ? 'wnd_sign_oss_direct' : 'wnd_sign_oss_upload';
+    let fileData = new Blob([file]);
+    let method = 'PUT';
+
+    // 计算 MD5（腾讯 COS 必须）
+    let md5 = await _wnd_md5_file(file);
+
+    // 获取 OSS 签名
+    let oss_sign = await get_oss_sign(md5);
+
+    // 获取签名，上传文件，并将签名的结果合并写入实现约定的值
+    let upload_res = axios({
+        url: oss_sign.url,
+        method: method,
+        data: fileData,
+        headers: oss_sign.headers,
+        /**
+         *  Access-Control-Allow-Origin 的值为通配符 ("*") ，而这与使用credentials相悖。
+         * @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials
+         **/
+        withCredentials: false,
+    }).then(res => {
+        return oss_sign;
+        /**
+         * 上传失败，WP 附件类上传，需要清空附件数据库记录 
+         * @link https://github.com/axios/axios#handling-errors
+         * 状态码不为 2xx 均视为失败
+         **/
+    }).catch(err => {
+        if (!direct) {
+            let meta_key = sign_data.meta_key;
+            let attachment_id = oss_sign.id;
+            _wnd_delete_attachment(attachment_id, meta_key);
+        }
+    });
+
+    return upload_res;
+
+    // 获取签名 
+    function get_oss_sign(md5) {
+        let extension = file.name.split('.').pop();
+        let mime_type = file.type;
+        let data = {
+            'extension': extension,
+            'mime_type': mime_type,
+            'method': method,
+            'oss_sp': oss_sp,
+            'endpoint': endpoint,
+            'md5': md5,
+        };
+        data = Object.assign(data, sign_data);
+
+        let oss_sign = axios({
+            url: wnd_action_api + '/' + sign_action,
+            method: 'POST',
+            data: data,
+        }).then(res => {
+            return res.data.data;
+        })
+
+        return oss_sign;
+    }
+}
+
+/**
+ * 按需加载 spark-md5 计算文件 md5
+ * @link https://github.com/satazor/js-spark-md5
+ */
+async function _wnd_md5_file(file) {
+    let md5_str = '';
+    if ('undefined' == typeof SparkMD5) {
+        let url = static_path + 'js/lib/spark-md5.min.js' + cache_suffix;
+        md5_str = await wnd_load_script(
+            url,
+            function() {
+                return MD5(file);
+            }
+        );
+    } else {
+        md5_str = MD5(file);
+    }
+    return md5_str;
+
+    /**
+     * 使用 spark-md5 生成文件MD5摘要
+     * @resolve {string} md5
+     * @link https://www.jianshu.com/p/1694888bcae1
+     */
+    async function MD5(file) {
+        return new Promise((resolve, reject) => {
+            const blobSlice =
+                File.prototype.slice ||
+                File.prototype.mozSlice ||
+                File.prototype.webkitSlice
+            const chunkSize = 2097152 // Read in chunks of 2MB
+            const chunks = Math.ceil(file.size / chunkSize)
+            const spark = new SparkMD5.ArrayBuffer()
+            const fileReader = new FileReader()
+            let currentChunk = 0
+
+            fileReader.onload = function(e) {
+                spark.append(e.target.result) // Append array buffer
+                currentChunk++
+
+                if (currentChunk < chunks) {
+                    loadNext()
+                } else {
+                    resolve(spark.end())
+                }
+            }
+
+            fileReader.onerror = function(e) {
+                reject(e)
+            }
+
+            function loadNext() {
+                const start = currentChunk * chunkSize
+                const end = start + chunkSize >= file.size ? file.size : start + chunkSize
+                fileReader.readAsArrayBuffer(blobSlice.call(file, start, end))
+            }
+
+            loadNext()
+        })
+    }
+}
+
+/**
+ * 发送删除附件请求 
+ * @since 0.9.35
+ */
+function _wnd_delete_attachment(attachment_id, meta_key = '') {
+    axios({
+        url: wnd_action_api + '/wnd_delete_file',
+        method: 'POST',
+        data: {
+            'file_id': attachment_id,
+            'meta_key': meta_key,
+        },
+    }).then(response => {
+        if (response.status == 200) {}
+    });
+}

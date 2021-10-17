@@ -123,15 +123,28 @@ function wnd_append(el, html) {
 }
 
 /**
- *@since 0.9.25 动态加载脚本后执行回调函数
+ * @since 0.9.25 动态加载脚本后执行回调函数
+ * @since 0.9.39 改用 promise 可获取回调函数返回值
+ *  let url = static_path + 'js/lib/spark-md5.min.js' + cache_suffix;
+ *  md5_str = await wndt_load_script(
+ *      url,
+ *      function() {
+ *          // do something and return value
+ *          return 'xxx';
+ *      }
+ *  );  
  * 
  */
 function wnd_load_script(url, callback) {
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = url;
-    document.head.appendChild(script);
-    script.onload = callback;
+    return new Promise(function(resolve, reject) {
+        let script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+        document.head.appendChild(script);
+        script.onload = function() {
+            resolve(callback());
+        };
+    });
 }
 
 /**
@@ -198,16 +211,41 @@ function wnd_render_form(container, form_json, add_class) {
 }
 
 /**
- * 按需加载 spark-md5 计算文件 md5
- * @link https://github.com/satazor/js-spark-md5
- */
-function wnd_load_md5_script(callback) {
-    if ('undefined' == typeof SparkMD5) {
-        let url = static_path + 'js/lib/spark-md5.min.js' + cache_suffix;
-        wnd_load_script(url, callback);
+ * @since 0.9.39
+ * 文件直传 OSS，并写入附件记录
+ **/
+async function wnd_upload_to_oss(file, sign_data = {}) {
+    return await wnd_upload_to_oss_dynamic(file, '', '', false, sign_data);
+}
+
+/**
+ * @since 0.9.39
+ * 文件直传 OSS
+ * 不写入附件记录
+ **/
+async function wnd_upload_to_oss_direct(file, oss_sp, endpoint, sign_data = {}) {
+    return await wnd_upload_to_oss_dynamic(file, oss_sp, endpoint, true, sign_data);
+}
+
+
+/**
+ * @since 0.9.39
+ * 文件直传 OSS，并写入附件记录
+ **/
+async function wnd_upload_to_oss_dynamic(file, oss_sp, endpoint, direct = true, sign_data = {}) {
+    let upload_res;
+    if ('undefined' == typeof _wnd_upload_to_oss) {
+        let url = static_path + 'js/file.min.js' + cache_suffix;
+        upload_res = await wnd_load_script(
+            url,
+            function() {
+                return _wnd_upload_to_oss(file, oss_sp, endpoint, direct, sign_data);
+            }
+        );
     } else {
-        callback();
+        upload_res = _wnd_upload_to_oss(file, oss_sp, endpoint, direct, sign_data);
     }
+    return upload_res;
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表达
@@ -744,23 +782,6 @@ function wnd_handle_response(response, route, parent) {
 }
 
 /**
- * 发送删除附件请求 
- * @since 0.9.35
- */
-function wnd_delete_attachment(attachment_id, meta_key = '') {
-    axios({
-        url: wnd_action_api + '/wnd_delete_file',
-        method: 'POST',
-        data: {
-            'file_id': attachment_id,
-            'meta_key': meta_key,
-        },
-    }).then(response => {
-        if (response.status == 200) {}
-    });
-}
-
-/**
  *@since 2019.02.09 发送手机或邮箱验证码
  *@param object button element
  *@param string captcha data key
@@ -1086,9 +1107,3 @@ document.addEventListener('click', function(e) {
         return;
     }
 });
-
-/**
- *@since 0.9.25
- *文档加载完成后执行
- */
-// window.onload = function() {}

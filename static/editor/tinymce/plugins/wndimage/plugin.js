@@ -56,7 +56,14 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 				// 上传文件
 				let file = data.fileinput[0];
 				if (config.oss_direct_upload) {
-					upload_to_oss(file);
+					let sign_data = {
+						'post_parent': config.post_parent,
+					};
+					let file_info = await wnd_upload_to_oss(file, sign_data);
+					if (file_info) {
+						img.src = file_info.url;
+						img.dataset.id = file_info.id;
+					}
 				} else {
 					let formdata = new FormData();
 					formdata.append('wnd_file[]', file);
@@ -89,96 +96,6 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 			});
 
 			return file_info;
-		}
-
-		async function upload_to_oss(file) {
-			wnd_load_md5_script(function() {
-				/**
-				 * 计算文件 MD5
-				 * @link https://github.com/satazor/js-spark-md5
-				 **/
-				let blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
-					chunkSize = 2097152, // Read in chunks of 2MB
-					chunks = Math.ceil(file.size / chunkSize),
-					currentChunk = 0,
-					spark = new SparkMD5.ArrayBuffer(),
-					fileReader = new FileReader();
-
-				fileReader.onload = function(e) {
-					spark.append(e.target.result); // Append array buffer
-					currentChunk++;
-
-					if (currentChunk < chunks) {
-						loadNext();
-					} else {
-						let md5 = spark.end();
-						upload(md5);
-					}
-				};
-
-				fileReader.onerror = function() {
-					console.warn('oops, something went wrong.');
-				};
-
-				function loadNext() {
-					let start = currentChunk * chunkSize,
-						end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
-
-					fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
-				}
-
-				loadNext();
-			});
-
-			// 浏览器直传 OSS
-			async function upload(md5) {
-				let sign_res = await get_oss_sign(file, md5);
-				if (sign_res.status <= 0) {
-					alert(sign_res.msg)
-					return false;
-				}
-				let sign = sign_res.data;
-
-				let file_info = axios({
-					url: sign.url,
-					method: 'PUT',
-					data: file,
-					headers: sign.headers,
-					/**
-					 *  Access-Control-Allow-Origin 的值为通配符 ("*") ，而这与使用credentials相悖。
-					 * @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials
-					 **/
-					withCredentials: false,
-				}).then(res => {
-					img.src = sign.url;
-					img.dataset.id = sign.id;
-				}).catch(err => {
-					wnd_delete_attachment(sign.id);
-					// alert(wnd.msg.upload_failed);
-				});
-
-				return file_info;
-			}
-
-			// 获取浏览器 OSS 直传签名
-			function get_oss_sign(file, md5) {
-				let extension = file.name.split('.').pop();
-				let mime_type = file.type;
-				let sign = axios({
-					url: config.oss_sign_endpoint,
-					method: 'POST',
-					data: {
-						'extension': extension,
-						'post_parent': config.post_parent,
-						'mime_type': mime_type,
-						'md5': md5,
-					},
-				}).then(res => {
-					return res.data;
-				})
-
-				return sign;
-			}
 		}
 	};
 

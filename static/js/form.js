@@ -177,7 +177,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                             'upload_url': field.upload_url,
                             'post_parent': post_id,
                             'oss_direct_upload': _this.form.attrs['data-oss-direct-upload'],
-                            'oss_sign_endpoint': wnd_action_api + '/wnd_sign_oss_upload',
                         },
                         setup: function(editor) {
                             texarea = document.querySelector(selector);
@@ -258,9 +257,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         handel_image_upload(i, files[i]);
                     } else {
                         if (_this.form.attrs['data-oss-direct-upload']) {
-                            wnd_load_md5_script(function() {
-                                upload_to_oss(files[i]);
-                            });
+                            upload_to_oss(files[i]);
                         } else {
                             form_data.set('wnd_file[' + i + ']', files[i]);
                             upload_to_local_server(form_data);
@@ -306,9 +303,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         form_data.append('wnd_file[' + i + ']', file);
 
                         if (_this.form.attrs['data-oss-direct-upload']) {
-                            wnd_load_md5_script(function() {
-                                upload_to_oss(file)
-                            });
+                            upload_to_oss(file)
                         } else {
                             upload_to_local_server(form_data);
                         }
@@ -367,110 +362,21 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 }
 
                 // 浏览器直传 OSS
-                function upload_to_oss(file) {
-                    /**
-                     * 计算文件 MD5
-                     * @link https://github.com/satazor/js-spark-md5
-                     **/
-                    let blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
-                        chunkSize = 2097152, // Read in chunks of 2MB
-                        chunks = Math.ceil(file.size / chunkSize),
-                        currentChunk = 0,
-                        spark = new SparkMD5.ArrayBuffer(),
-                        fileReader = new FileReader();
+                async function upload_to_oss(file) {
+                    let upload_res = await wnd_upload_to_oss(file, field.data);
+                    if (upload_res) {
+                        field.help.text = wnd.msg.upload_successfully;
+                        field.help.class = 'is-success';
+                        field.thumbnail = upload_res.signed_url || upload_res.url;
+                        field.file_id = upload_res.id;
+                        field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + (upload_res.signed_url || upload_res.url) + '" target="_blank">' + wnd.msg.view + '</a>';
 
-                    fileReader.onload = function(e) {
-                        spark.append(e.target.result); // Append array buffer
-                        currentChunk++;
-
-                        if (currentChunk < chunks) {
-                            loadNext();
-                        } else {
-                            let md5 = spark.end();
-                            upload(md5);
-                        }
-                    };
-
-                    fileReader.onerror = function() {
-                        console.warn('oops, something went wrong.');
-                    };
-
-                    function loadNext() {
-                        let start = currentChunk * chunkSize,
-                            end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
-
-                        fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
-                    }
-
-                    loadNext();
-
-                    /**
-                     * 上传
-                     **/
-                    async function upload(md5) {
-                        let sign_res = await get_oss_sign(file, md5);
-                        if (sign_res.status <= 0) {
-                            field.help.text = sign_res.msg;
-                            field.help.class = 'is-danger';
-                            return false;
-                        }
-                        let sign = sign_res.data;
-
-                        axios({
-                            url: sign.url,
-                            method: 'PUT',
-                            data: file,
-                            headers: sign.headers,
-                            /**
-                             *  Access-Control-Allow-Origin 的值为通配符 ("*") ，而这与使用credentials相悖。
-                             * @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials
-                             **/
-                            withCredentials: false,
-                            //原生获取上传进度的事件
-                            onUploadProgress: function(progressEvent) {
-                                // field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
-                                field.help.text = wnd.msg.waiting;
-                                field.help.class = 'is-primary';
-                            }
-                        }).then(response => {
-                            field.help.text = wnd.msg.upload_successfully;
-                            field.help.class = 'is-success';
-                            field.thumbnail = sign.signed_url || sign.url;
-                            field.file_id = sign.id;
-                            field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + (sign.signed_url || sign.url) + '" target="_blank">' + wnd.msg.view + '</a>';
-
-                            _this.$nextTick(function() {
-                                funTransitionHeight(parent, trs_time);
-                            });
-                        }).catch(err => {
-                            console.log(err);
-                            field.help.text = wnd.msg.upload_failed;
-                            field.help.class = 'is-danger';
-                            let meta_key = field.data.meta_key || '';
-                            let attachment_id = sign.id;
-                            wnd_delete_attachment(attachment_id, meta_key);
+                        _this.$nextTick(function() {
+                            funTransitionHeight(parent, trs_time);
                         });
-                    }
-
-                    // 获取浏览器 OSS 直传签名
-                    function get_oss_sign(file, md5) {
-                        let extension = file.name.split('.').pop();
-                        let mime_type = file.type;
-                        let data = {
-                            'extension': extension,
-                            'mime_type': mime_type,
-                            'md5': md5,
-                        };
-                        data = Object.assign(data, field.data);
-                        let sign = axios({
-                            url: wnd_action_api + '/wnd_sign_oss_upload',
-                            method: 'POST',
-                            data: data,
-                        }).then(res => {
-                            return res.data;
-                        })
-
-                        return sign;
+                    } else {
+                        field.help.text = wnd.msg.upload_failed;
+                        field.help.class = 'is-danger';
                     }
                 }
             },
