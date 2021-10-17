@@ -134,14 +134,8 @@ async function _wnd_md5_file(file) {
  * @since 0.9.35
  */
 function _wnd_delete_attachment(attachment_id, meta_key = '') {
-    axios({
-        url: wnd_action_api + '/wnd_delete_file',
-        method: 'POST',
-        data: {
-            'file_id': attachment_id,
-            'meta_key': meta_key,
-        },
-    }).then(response => {
-        if (response.status == 200) {}
+    wnd_ajax_action('wnd_delete_file', {
+        'file_id': attachment_id,
+        'meta_key': meta_key,
     });
 }

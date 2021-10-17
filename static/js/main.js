@@ -186,18 +186,6 @@ function wnd_loading(el, remove = false) {
     }
 }
 
-/**
- * Json 对象转 FormData
- **/
-function object_to_formdata(data) {
-    let formData = new FormData();
-    for (const key in data) {
-        formData.append(key, data[key]);
-    }
-
-    return formData;
-}
-
 // 按需加载 wnd-vue-form.js 并渲染表单
 function wnd_render_form(container, form_json, add_class) {
     if ('function' != typeof _wnd_render_form) {
