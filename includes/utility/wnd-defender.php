@@ -28,12 +28,12 @@ class Wnd_Defender {
 	/**
 	 * 在规定时间段最多错误次数
 	 */
-	protected $max_connections;
+	protected $max_connections = 0;
 
 	/**
 	 * 锁定时间（秒）
 	 */
-	protected $blocked_time;
+	protected $blocked_time = 0;
 
 	/**
 	 * 客户端ip
@@ -58,12 +58,12 @@ class Wnd_Defender {
 	/**
 	 * 访问次数统计
 	 */
-	public $count;
+	public $count = 0;
 
 	/**
 	 * IP段拦截统计
 	 */
-	public $base_count;
+	public $base_count = 0;
 
 	/**
 	 * 屏蔽日志内存缓存 Key
@@ -232,6 +232,7 @@ class Wnd_Defender {
 		$threat_extension = ['jsp', 'jspx', 'action', 'asp', 'aspx', 'do', 'cgi', 'exe', 'bak', 'inc', '7z'];
 		if (in_array($ext, $threat_extension)) {
 			$this->count        = $this->max_connections;
+			$this->base_count   = $this->base_count + $this->max_connections;
 			$this->blocked_time = 3600 * 24;
 		}
 	}
