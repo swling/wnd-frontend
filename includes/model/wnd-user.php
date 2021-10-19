@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Model;
 
+use Exception;
 use Wnd\Model\Wnd_Auth;
 
 /**
@@ -51,8 +52,8 @@ abstract class Wnd_User {
 	 * 根据第三方网站获取的用户信息，注册或者登录到WordPress站点
 	 * @since 2019.07.23
 	 *
-	 * @param string $type         			第三方账号类型
-	 * @param string $open_id      		第三方账号openID
+	 * @param string $type         	第三方账号类型
+	 * @param string $open_id      	第三方账号openID
 	 * @param string $display_name 	用户名称
 	 * @param string $avatar_url   	用户外链头像
 	 */
@@ -62,15 +63,15 @@ abstract class Wnd_User {
 		 * @since 0.8.73
 		 */
 		if (!$display_name) {
-			exit(__('昵称无效', 'wnd'));
+			throw new Exception(__('昵称无效', 'wnd'));
 		}
 
-		//当前用户已登录，同步信息
+		//当前用户已登录：新增绑定或同步信息
 		if (is_user_logged_in()) {
 			$this_user   = wp_get_current_user();
 			$may_be_user = static::get_user_by_openid($type, $open_id);
 			if ($may_be_user and $may_be_user->ID != $this_user->ID) {
-				exit(__('OpenID已被其他账户占用', 'wnd'));
+				throw new Exception(__('OpenID 已被其他账户占用', 'wnd'));
 			}
 
 			if ($avatar_url) {
@@ -79,11 +80,11 @@ abstract class Wnd_User {
 			if ($open_id) {
 				static::update_user_openid($this_user->ID, $type, $open_id);
 			}
-			wp_redirect(static::get_reg_redirect_url());
-			exit;
+
+			return $this_user;
 		}
 
-		//当前用户未登录，注册或者登录 检测是否已注册
+		//当前用户未登录：注册或者登录
 		$user = static::get_user_by_openid($type, $open_id);
 		if (!$user) {
 			$user_login = wnd_generate_login();
@@ -92,14 +93,15 @@ abstract class Wnd_User {
 			$user_id    = wp_insert_user($user_data);
 
 			if (is_wp_error($user_id)) {
-				wp_die($user_id->get_error_message(), get_option('blogname'));
-			} else {
-				static::update_user_openid($user_id, $type, $open_id);
+				throw new Exception(__('注册失败', 'wnd'));
 			}
+
+			static::update_user_openid($user_id, $type, $open_id);
+			$user = get_user_by('id', $user_id);
 		}
 
 		// 同步头像并登录
-		$user_id = $user ? $user->ID : $user_id;
+		$user_id = $user->ID;
 		wnd_update_user_meta($user_id, 'avatar_url', $avatar_url);
 		wp_set_auth_cookie($user_id, true);
 
@@ -120,8 +122,7 @@ abstract class Wnd_User {
 		 */
 		do_action('wp_login', $user->user_login, $user);
 
-		wp_redirect(static::get_reg_redirect_url());
-		exit();
+		return $user;
 	}
 
 	/**
@@ -231,9 +232,12 @@ abstract class Wnd_User {
 	public static function update_user_openid($user_id, $type, $open_id) {
 		$type = strtolower($type);
 
-		// 查询原有用户openid信息
+		// 查询原有用户同类型openid信息，若与当前指定更新的openid相同，则无需操作
 		$user        = static::get_wnd_user($user_id);
 		$old_open_id = $user->$type ?? '';
+		if ($old_open_id == $open_id) {
+			return $user_id;
+		}
 
 		// 更新或写入
 		$auth_record = Wnd_Auth::get_db($type, $open_id);

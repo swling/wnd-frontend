@@ -92,5 +92,7 @@ abstract class Wnd_Login_Social {
 
 		// 根据open id创建或登录账户
 		Wnd_User::social_login($this->domain, $this->open_id, $this->display_name, $this->avatar_url);
+		wp_redirect(Wnd_User::get_reg_redirect_url());
+		exit();
 	}
 }
