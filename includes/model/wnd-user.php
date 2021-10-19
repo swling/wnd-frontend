@@ -3,6 +3,7 @@ namespace Wnd\Model;
 
 use Exception;
 use Wnd\Model\Wnd_Auth;
+use WP_User;
 
 /**
  * 用户
@@ -57,7 +58,7 @@ abstract class Wnd_User {
 	 * @param string $display_name 	用户名称
 	 * @param string $avatar_url   	用户外链头像
 	 */
-	public static function social_login($type, $open_id, $display_name, $avatar_url) {
+	public static function social_login($type, $open_id, $display_name, $avatar_url): WP_User {
 		/**
 		 * 社交登录必须获取用户昵称
 		 * @since 0.8.73
