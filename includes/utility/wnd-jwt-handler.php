@@ -7,6 +7,7 @@ use Wnd\Component\JWT\JWTAuth;
  * 将WordPress 账户体系与 JWT Token 绑定
  * 本插件并未启用 jWT，如需启用 JWT，请在主题或插件中，继承本抽象类创建子类并在 WP init Hook 中实例化
  * 子类需要完成客户端处理 Token 的具体方法，包含：存储、获取、删除
+ * 由于在构造函数中添加了 WP Hook，子类应该只实例化一次，建议定义为单例模式
  * @since 0.9.18
  */
 abstract class Wnd_JWT_Handler {
@@ -42,7 +43,7 @@ abstract class Wnd_JWT_Handler {
 	 * - iat (Issued At)：签发时间
 	 * - jti (JWT ID)：编号
 	 */
-	private function generate_token(int $user_id): string{
+	public function generate_token(int $user_id): string{
 		$payload = [
 			'iss' => $this->domain,
 			'iat' => time(),
