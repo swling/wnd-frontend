@@ -99,7 +99,7 @@ abstract class Wnd_JWT_Handler {
 		}
 
 		// Token 失效
-		$getPayload = JWTAuth::parseToken($token, static::$secret_key);
+		$getPayload = static::parse_token($token);
 		if (!$getPayload) {
 			$this->clean_client_token();
 			return 0;
@@ -107,6 +107,14 @@ abstract class Wnd_JWT_Handler {
 
 		// Token 认证成功，返回用户 ID
 		return (int) $getPayload['sub'];
+	}
+
+	/**
+	 * 解析本插件生成的 JWT Token
+	 * @since 0.9.39
+	 */
+	public static function parse_token(string $token) {
+		return JWTAuth::parseToken($token, static::$secret_key);
 	}
 
 	/**
