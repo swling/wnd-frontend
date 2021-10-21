@@ -285,6 +285,7 @@ class Wnd_Controller {
 
 	/**
 	 * 根据查询参数判断是否为自定义伪静态接口，从而实现输出重写
+	 * Endpoint 类相关响应数据应直接输出，而非返回值
 	 * @since 0.9.17
 	 */
 	public static function handle_endpoint(WP_REST_Request $request) {
@@ -296,9 +297,9 @@ class Wnd_Controller {
 
 		// 执行 Endpoint 类
 		try {
-			$action = new $class();
+			new $class();
 		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
+			echo json_encode(['status' => 0, 'msg' => $e->getMessage()]);
 		}
 	}
 
