@@ -12,9 +12,13 @@ use Exception;
 class Wnd_Get_Profile extends Wnd_JsonGet {
 
 	protected static function query($args = []): array{
-		$user_id = get_current_user_id();
+		$user_id    = get_current_user_id();
+		$avatar_url = wnd_get_config('default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
 		if (!$user_id) {
-			return [];
+			return [
+				'avatar_url'   => $avatar_url,
+				'display_name' => __('匿名用户', 'wnd'),
+			];
 		}
 
 		$user = get_userdata($user_id);
@@ -27,7 +31,6 @@ class Wnd_Get_Profile extends Wnd_JsonGet {
 		$user_profile = (array) $user->data;
 
 		// 头像
-		$avatar_url = wnd_get_config('default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
 		if (wnd_get_user_meta($user_id, 'avatar')) {
 			$avatar_id  = wnd_get_user_meta($user_id, 'avatar');
 			$avatar_url = wp_get_attachment_url($avatar_id) ?: $avatar_url;
