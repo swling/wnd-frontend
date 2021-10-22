@@ -103,7 +103,9 @@ abstract class Wnd_User {
 
 		// 同步头像并登录
 		$user_id = $user->ID;
-		wnd_update_user_meta($user_id, 'avatar_url', $avatar_url);
+		if ($avatar_url) {
+			wnd_update_user_meta($user_id, 'avatar_url', $avatar_url);
+		}
 		wp_set_auth_cookie($user_id, true);
 
 		/**
