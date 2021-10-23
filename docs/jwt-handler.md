@@ -48,3 +48,24 @@ add_action( 'init', function(){
 	new Wndt\Utility\Wndt_JWT_handler();
 } );
 ```
+
+### Token 相关 Endpoint
+
+#### 签发 JWT Token
+根据第三方应用 openid 快速注册或登录到本应用，并签发对应的 JWT Token。
+- Endpoint\Wnd_Issue_Token; 
+- 该节点为抽象节点，需在子类中实现对实际第三方应用 openid 的获取
+- 支持在本应用内部调用即：通过 WP-Nonce 完成了身份认证，同样会返回对应用户的 JWT token
+
+#### 同步用户 Profile
+快速将第三方应用用户的基本资料，如头像、昵称等，同步到本应用。
+- Endpoint\Wnd_Sync_Profile;
+- 该节点包含可通过 Action 拓展相关操作：
+```php
+do_action('wnd_sync_profile', $user_id, $this->data);
+```
+
+综上，对接第三方应用时的典型应用场景如下：
+- 第一步：根据第三方应用规则，获取到用户 openid，发送至与之对应的  Endpoint\Wnd_Issue_Token 的子类节点，完成在本应用的注册，并存储 JWT Token
+- 第二步：用户请求中携带 JWT Token 以验证用户身份，并将第三方应用的基本资料快速同步到本应用（可选操作）
+- 第三步：后续其他请求，均携带 JWT Token，即在本应用内被视为对应的已登录用户
