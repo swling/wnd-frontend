@@ -297,7 +297,7 @@ class Wnd_Controller {
 
 		// 执行 Endpoint 类
 		try {
-			new $class();
+			new $class($request);
 		} catch (Exception $e) {
 			echo json_encode(['status' => 0, 'msg' => $e->getMessage()]);
 		}

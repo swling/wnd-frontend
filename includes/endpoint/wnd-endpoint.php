@@ -1,6 +1,9 @@
 <?php
 namespace Wnd\Endpoint;
 
+use Wnd\Controller\Wnd_Request;
+use WP_REST_Request;
+
 /**
  * 非标准数据路由端点处理，抽象基类
  * - Wnd\Endpoint 主要用于处理与外部第三方平台的交互响应如：支付回调通知、微信公众号通讯等，或系统内其他非 Json 数据交互
@@ -12,6 +15,11 @@ namespace Wnd\Endpoint;
  * @since 0.9.17
  */
 abstract class Wnd_Endpoint {
+
+	/**
+	 * Instance of Wnd_Request
+	 */
+	protected $request;
 
 	/**
 	 * Request Data Array
@@ -30,13 +38,14 @@ abstract class Wnd_Endpoint {
 	 * - 核查权限许可
 	 *
 	 */
-	public function __construct() {
+	public function __construct(WP_REST_Request $wp_rest_request) {
 		/**
 		 * 重写 Rest API 输出
 		 */
 		add_filter('rest_pre_serve_request', '__return_true', 10);
 
-		$this->data = ('POST' == $_SERVER['REQUEST_METHOD']) ? $_POST : $_GET;
+		$this->request = new Wnd_Request($wp_rest_request, false, false);
+		$this->data    = $this->request->get_request();
 
 		$this->check();
 		$this->set_content_type();
