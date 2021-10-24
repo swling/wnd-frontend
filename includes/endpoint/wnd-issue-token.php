@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Endpoint;
 
-use Exception;
 use Wndt\Utility\Wndt_JWT_handler;
 use Wnd\Endpoint\Wnd_Endpoint;
 use Wnd\Model\Wnd_User;
@@ -10,12 +9,16 @@ use Wnd\Model\Wnd_User;
  * 签发 Token
  * - 基于第三方应用 openid，在本站系统注册或登录
  * - 返回用户 token
- * - 在本应用内部调用即：通过 WP-Nonce 完成了身份认证，同样会返回对应用户的 JWT token
+ * - 在本应用内部调用即：通过 WP-Nonce 或 Cookies 完成了身份认证，同样会返回对应用户的 JWT token
  */
-abstract class Wnd_Issue_Token extends Wnd_Endpoint {
+class Wnd_Issue_Token extends Wnd_Endpoint {
 
 	protected $content_type = 'json';
 
+	/**
+	 * 站外应用必须在子类中定义该属性，即对应：社交登录中的 openid type
+	 *
+	 */
 	protected $app_type = '';
 
 	protected function do() {
@@ -50,14 +53,7 @@ abstract class Wnd_Issue_Token extends Wnd_Endpoint {
 	 * 针对不同的应用在实际场景中在子类中具体实现
 	 *
 	 */
-	abstract protected function get_app_openid(): string;
-
-	/**
-	 * 子类必须指定 app_type 即等同于：社交登录类型
-	 */
-	protected function check() {
-		if (!$this->app_type) {
-			throw new Exception('Invalid app type');
-		}
+	protected function get_app_openid(): string {
+		return '';
 	}
 }

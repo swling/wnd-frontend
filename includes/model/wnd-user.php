@@ -60,11 +60,11 @@ abstract class Wnd_User {
 	 */
 	public static function social_login($type, $open_id, $display_name, $avatar_url): WP_User {
 		/**
-		 * 社交登录必须获取用户昵称
-		 * @since 0.8.73
+		 * $type, $open_id, $display_name 必须为有效值
+		 * @since 0.9.50
 		 */
-		if (!$display_name) {
-			throw new Exception(__('昵称无效', 'wnd'));
+		if (!$type or !$open_id or !$display_name) {
+			throw new Exception('Invalid parameter. type:' . $type . '; openid:' . $open_id . '; display_name:' . $display_name);
 		}
 
 		//当前用户已登录：新增绑定或同步信息
@@ -228,11 +228,24 @@ abstract class Wnd_User {
 	 * @since 2019.07.11
 	 *
 	 * @param  	int    	$user_id
-	 * @param  	string 	$type           			第三方账号类型
+	 * @param  	string 	$type
 	 * @param  	string 	$open_id
 	 * @return 	int    	$wpdb->insert
 	 */
 	public static function update_user_openid($user_id, $type, $open_id) {
+		if (!$user_id or !get_userdata($user_id)) {
+			throw new Exception('Invalid user id ');
+		}
+
+		if (!$type) {
+			throw new Exception('Invalid user openid type');
+		}
+
+		if (!$open_id) {
+			throw new Exception('Invalid user openid');
+		}
+
+		// 统一将类型转为小写
 		$type = strtolower($type);
 
 		// 查询原有用户同类型openid信息，若与当前指定更新的openid相同，则无需操作
