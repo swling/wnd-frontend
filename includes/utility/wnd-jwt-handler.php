@@ -182,6 +182,11 @@ class Wnd_JWT_Handler {
 			return new \WP_Error('invalid_token', 'Invalid Token.', ['status' => 401]);
 		}
 
+		// Token 有效，但对应的 user id 无效
+		if (!\get_userdata($this->verified_user_id)) {
+			return new \WP_Error('invalid_user_id', 'Invalid User ID.', ['status' => 401]);
+		}
+
 		return true;
 	}
 }
