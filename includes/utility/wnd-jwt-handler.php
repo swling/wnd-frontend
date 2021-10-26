@@ -17,12 +17,12 @@ class Wnd_JWT_Handler {
 
 	public static $header_name = 'Authorization';
 
+	public $domain;
+
+	public $exp;
+
 	//使用HMAC生成信息摘要时所使用的密钥
 	private static $secret_key = LOGGED_IN_KEY;
-
-	private $domain;
-
-	private $exp;
 
 	// Token 的发送方式：header or cookie
 	private $token_method;
