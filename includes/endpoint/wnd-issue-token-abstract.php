@@ -6,17 +6,14 @@ use Wnd\Model\Wnd_User;
 use Wnd\Utility\Wnd_JWT_handler;
 
 /**
- * ## 签发 Token
+ * ## 签发 Token 抽象基类
  * - 基于第三方应用 openid，在本站系统注册或登录并返回用户 token
- * - 在本应用内部调用即：通过 WP-Nonce 或 Cookies 完成了身份认证，同样会返回当前用户的 JWT token
- *
- * ### 注意事项
- * - 本节点仅可针对站内已登录用户签发 token
- * - 第三方应用中，应该继承本类并定义 $this->app_type、完成对 openid 的获取，最终构成实际的签发节点
+ * - 针对不同的三方应用，应该继承本类并定义 $this->app_type、实现 get_app_openid() 方法，最终构成实际的签发节点
+ * - 默认在本应用内部调用即：通过 WP-Nonce 或 Cookies 完成了身份认证，同样会返回当前用户的 JWT token
  *
  * @since 0.9.50
  */
-class Wnd_Issue_Token extends Wnd_Endpoint {
+abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 
 	protected $content_type = 'json';
 
@@ -64,7 +61,5 @@ class Wnd_Issue_Token extends Wnd_Endpoint {
 	 * 获取应用openid以此作为账户标识，在本应用内注册或登录
 	 * 针对不同的应用在实际场景中在子类中具体实现
 	 */
-	protected function get_app_openid(): string {
-		return '';
-	}
+	abstract protected function get_app_openid(): string;
 }
