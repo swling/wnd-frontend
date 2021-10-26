@@ -1,7 +1,7 @@
 # JWT Token Hanlder
-将WordPress 账户体系与 JWT Token 绑定。<br/>
-本插件并未启用 JWT，如需启用 JWT，请在主题或插件中，继承 Wnd\Utility\Wnd_JWT_Handler; 创建子类并在 WP init Hook 中实例化。<br/>
-子类需要完成客户端处理 Token 的具体方法，包含：存储、获取、删除。<br/>
+将WordPress 账户体系与 JWT Token 绑定
+- 支持标准 bear token
+- 支持特定 cookie 传递 token
 
 ## Cookie 存储 Token 实例
 - Cookie 存储 Token 可用于 Web 端跨域远程同步账户权限。
@@ -10,36 +10,50 @@
 namespace Wndt\Utility;
 
 use Wnd\Utility\Wnd_JWT_Handler;
+use Wnd\Utility\Wnd_Singleton_Trait;
 
-/**
- *@since 2021.01.20
- *
- */
-class Wndt_JWT_Handler extends Wnd_JWT_Handler {
+class Wndt_JWT_Handler {
 
-	protected $cookie_name = 'wnd_token';
+	use Wnd_Singleton_Trait;
+
+	protected $cookie_name;
+
+	private function __construct() {
+		$this->cookie_name = Wnd_JWT_Handler::$cookie_name;
+
+		add_action('wp_login', [$this, 'handle_login'], 10, 2);
+		add_action('wp_logout', [$this, 'handle_logout'], 10);
+	}
 
 	/**
-	 *删除客户端 Token
+	 * 处理用户登录
+	 */
+	public function handle_login($user_name, $user) {
+		$this->save_client_token(Wnd_JWT_Handler::get_instance()->generate_token($user->ID));
+	}
+
+	/**
+	 * 处理账户退出
+	 */
+	public function handle_logout() {
+		$this->clean_client_token();
+	}
+
+	/**
+	 * 删除客户端 Token
 	 */
 	protected function clean_client_token() {
 		setcookie($this->cookie_name, '', time(), '/', $this->domain);
 	}
 
 	/**
-	 *获取客户端 JWT Token
-	 */
-	protected function get_client_token() {
-		return $_COOKIE[$this->cookie_name] ?? '';
-	}
-
-	/**
-	 *客户端存储 Token
+	 * 客户端存储 Token
 	 */
 	protected function save_client_token($token) {
-		setcookie($this->cookie_name, $token, $this->exp, '/', $this->domain);
+		setcookie($this->cookie_name, $token, $this->exp, '/', $this->domain, false, false);
 	}
 }
+
 ```
 
 ### 挂载
@@ -54,8 +68,8 @@ add_action( 'init', function(){
 #### 签发 JWT Token
 根据第三方应用 openid 快速注册或登录到本应用，并签发对应的 JWT Token。
 - Endpoint\Wnd_Issue_Token; 
-- 该节点为抽象节点，需在子类中实现对实际第三方应用 openid 的获取
-- 支持在本应用内部调用即：通过 WP-Nonce 完成了身份认证，同样会返回对应用户的 JWT token
+- 该节点默认仅支持站内签发：即已通过 WP-Nonce 或cookie 完成了身份认证的，返回对应用户的 JWT token
+- 若需用于第三方对接，需要继承节点类，创建子类，并完成对应配置：@see Endpoint\Wnd_Issue_Token;
 
 #### 同步用户 Profile
 快速将第三方应用用户的基本资料，如头像、昵称等，同步到本应用。

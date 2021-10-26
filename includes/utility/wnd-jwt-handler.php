@@ -5,12 +5,13 @@ use Wnd\Component\JWT\JWTAuth;
 
 /**
  * 将WordPress 账户体系与 JWT Token 绑定
- * 本插件并未启用 jWT，如需启用 JWT，请在主题或插件中，继承本抽象类创建子类并在 WP init Hook 中实例化
- * 子类需要完成客户端处理 Token 的具体方法，包含：存储、获取、删除
- * 由于在构造函数中添加了 WP Hook，子类应该只实例化一次，建议定义为单例模式
+ * Token 可通过如下方式传递 @since 0.9.50
+ * - Header 传递：'Authorization'  	（用于App，小程序等第三方账户对接： "Authorization": "Bearer " + token）
+ * - Cookie 传递：'wnd_token'		（用于web端浏览器跨域操作，获取其他特定情况）
+ *
  * @since 0.9.18
  */
-abstract class Wnd_JWT_Handler {
+class Wnd_JWT_Handler {
 
 	//使用HMAC生成信息摘要时所使用的密钥
 	private static $secret_key = LOGGED_IN_KEY;
@@ -19,16 +20,20 @@ abstract class Wnd_JWT_Handler {
 
 	protected $exp;
 
+	public static $cookie_name = 'wnd_token';
+
+	public static $header_name = 'Authorization';
+
 	// Token 验证后得到的用户 ID
 	protected $verified_user_id;
 
-	public function __construct() {
+	use Wnd_Singleton_Trait;
+
+	private function __construct() {
 		$this->domain = parse_url(home_url())['host'];
 		$this->exp    = time() + 3600 * 24 * 90;
 
-		add_action('wp_login', [$this, 'handle_login'], 10, 2);
 		add_action('init', [$this, 'set_current_user'], 10);
-		add_action('wp_logout', [$this, 'handle_logout'], 10);
 		add_filter('rest_authentication_errors', [$this, 'rest_token_check_errors'], 10, 1);
 	}
 
@@ -56,10 +61,11 @@ abstract class Wnd_JWT_Handler {
 	}
 
 	/**
-	 * 处理用户登录
+	 * 解析本插件生成的 JWT Token
+	 * @since 0.9.39
 	 */
-	public function handle_login($user_name, $user) {
-		$this->save_client_token($this->generate_token($user->ID));
+	public static function parse_token(string $token) {
+		return JWTAuth::parseToken($token, static::$secret_key);
 	}
 
 	/**
@@ -101,7 +107,6 @@ abstract class Wnd_JWT_Handler {
 		// Token 失效
 		$getPayload = static::parse_token($token);
 		if (!$getPayload) {
-			$this->clean_client_token();
 			return 0;
 		}
 
@@ -110,18 +115,25 @@ abstract class Wnd_JWT_Handler {
 	}
 
 	/**
-	 * 解析本插件生成的 JWT Token
-	 * @since 0.9.39
+	 * 获取客户端 JWT Token
+	 * - 获取方式需要与前端请求保持一致
+	 * - axios.defaults.headers["Authorization"] = "Bearer " + getCookie("wnd_token");
 	 */
-	public static function parse_token(string $token) {
-		return JWTAuth::parseToken($token, static::$secret_key);
-	}
+	private function get_client_token() {
+		// 从 Cookie 中读取
+		$token = $_COOKIE[static::$cookie_name] ?? '';
+		if ($token) {
+			return $token;
+		}
 
-	/**
-	 * 处理账户退出
-	 */
-	public function handle_logout() {
-		$this->clean_client_token();
+		// 从 header 请求中获取
+		$headers       = getallheaders();
+		$authorization = $headers[static::$header_name] ?? '';
+		if (!$authorization) {
+			return '';
+		}
+		$bearer_token = explode(' ', $authorization);
+		return $bearer_token[1] ?? '';
 	}
 
 	/**
@@ -160,19 +172,4 @@ abstract class Wnd_JWT_Handler {
 
 		return true;
 	}
-
-	/**
-	 * 客户端存储 Token
-	 */
-	abstract protected function save_client_token($token);
-
-	/**
-	 * 获取客户端 JWT Token
-	 */
-	abstract protected function get_client_token();
-
-	/**
-	 * 删除客户端 Token
-	 */
-	abstract protected function clean_client_token();
 }
