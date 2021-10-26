@@ -13,19 +13,22 @@ use Wnd\Component\JWT\JWTAuth;
  */
 class Wnd_JWT_Handler {
 
-	//使用HMAC生成信息摘要时所使用的密钥
-	private static $secret_key = LOGGED_IN_KEY;
-
-	protected $domain;
-
-	protected $exp;
-
 	public static $cookie_name = 'wnd_token';
 
 	public static $header_name = 'Authorization';
 
+	//使用HMAC生成信息摘要时所使用的密钥
+	private static $secret_key = LOGGED_IN_KEY;
+
+	private $domain;
+
+	private $exp;
+
+	// Token 的发送方式：header or cookie
+	private $token_method;
+
 	// Token 验证后得到的用户 ID
-	protected $verified_user_id;
+	private $verified_user_id;
 
 	use Wnd_Singleton_Trait;
 
@@ -88,7 +91,7 @@ class Wnd_JWT_Handler {
 		 * - 如果 Token 有效，而当前账户未登录，则设置同步设置 Cookie @since 0.9.32
 		 * - 根据 Token 设置当前账户 ID （过期为 0）
 		 */
-		if (!is_user_logged_in()) {
+		if (!is_user_logged_in() and 'cookie' == $this->token_method) {
 			wp_set_auth_cookie($this->verified_user_id, true);
 		}
 		wp_set_current_user($this->verified_user_id);
@@ -119,21 +122,25 @@ class Wnd_JWT_Handler {
 	 * - 获取方式需要与前端请求保持一致
 	 * - axios.defaults.headers["Authorization"] = "Bearer " + getCookie("wnd_token");
 	 */
-	private function get_client_token() {
+	private function get_client_token(): string{
 		// 从 Cookie 中读取
 		$token = $_COOKIE[static::$cookie_name] ?? '';
 		if ($token) {
+			$this->token_method = 'cookie';
 			return $token;
 		}
 
 		// 从 header 请求中获取
 		$headers       = getallheaders();
 		$authorization = $headers[static::$header_name] ?? '';
-		if (!$authorization) {
-			return '';
+		if ($authorization) {
+			$this->token_method = 'header';
+			$bearer_token       = explode(' ', $authorization);
+			return $bearer_token[1] ?? '';
 		}
-		$bearer_token = explode(' ', $authorization);
-		return $bearer_token[1] ?? '';
+
+		// 空
+		return '';
 	}
 
 	/**
