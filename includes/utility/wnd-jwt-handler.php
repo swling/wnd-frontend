@@ -33,15 +33,16 @@ class Wnd_JWT_Handler {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
-		$this->domain = parse_url(home_url())['host'];
-		$this->exp    = time() + 3600 * 24 * 90;
+		$this->domain           = parse_url(home_url())['host'];
+		$this->exp              = time() + 3600 * 24 * 90;
+		$this->verified_user_id = $this->verify_client_token();
 
 		add_action('init', [$this, 'set_current_user'], 10);
 		add_filter('rest_authentication_errors', [$this, 'rest_token_check_errors'], 10, 1);
 	}
 
 	/**
-	 * 登录时设置 JWT Token
+	 * 签发 JWT Token
 	 *
 	 * - iss (issuer)：签发人
 	 * - exp (expiration time)：过期时间
@@ -64,37 +65,11 @@ class Wnd_JWT_Handler {
 	}
 
 	/**
-	 * 解析本插件生成的 JWT Token
+	 * 解析 JWT Token
 	 * @since 0.9.39
 	 */
 	public static function parse_token(string $token) {
 		return JWTAuth::parseToken($token, static::$secret_key);
-	}
-
-	/**
-	 * 处理用户登录
-	 */
-	public function set_current_user() {
-		// 未能获取到 Token 保持现有账户状态
-		$this->verified_user_id = $this->verify_client_token();
-		if (-1 === $this->verified_user_id) {
-			return;
-		}
-
-		// 无效 Token
-		if (0 === $this->verified_user_id) {
-			wp_logout();
-			return;
-		}
-
-		/**
-		 * - 如果 Token 有效，而当前账户未登录，则设置同步设置 Cookie @since 0.9.32
-		 * - 根据 Token 设置当前账户 ID （过期为 0）
-		 */
-		if (!is_user_logged_in() and 'cookie' == $this->token_method) {
-			wp_set_auth_cookie($this->verified_user_id, true);
-		}
-		wp_set_current_user($this->verified_user_id);
 	}
 
 	/**
@@ -144,6 +119,31 @@ class Wnd_JWT_Handler {
 	}
 
 	/**
+	 * 处理用户登录
+	 */
+	public function set_current_user() {
+		// 未能获取到 Token 保持现有账户状态
+		if (-1 === $this->verified_user_id) {
+			return;
+		}
+
+		// 无效 Token
+		if (0 === $this->verified_user_id) {
+			wp_logout();
+			return;
+		}
+
+		/**
+		 * - 如果 Token 有效，而当前账户未登录，则设置同步设置 Cookie @since 0.9.32
+		 * - 根据 Token 设置当前账户 ID （过期为 0）
+		 */
+		if (!is_user_logged_in() and 'cookie' == $this->token_method) {
+			wp_set_auth_cookie($this->verified_user_id, true);
+		}
+		wp_set_current_user($this->verified_user_id);
+	}
+
+	/**
 	 * Filters REST authentication errors.
 	 *
 	 * This is used to pass a WP_Error from an authentication method back to
@@ -175,6 +175,11 @@ class Wnd_JWT_Handler {
 		// No Token
 		if (-1 === $this->verified_user_id) {
 			return $result;
+		}
+
+		// Invalid Token
+		if (0 === $this->verified_user_id) {
+			return new \WP_Error('invalid_token', 'Invalid Token.', ['status' => 401]);
 		}
 
 		return true;
