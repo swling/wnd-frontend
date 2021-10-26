@@ -4,7 +4,8 @@ namespace Wnd\Utility;
 use Wnd\Component\JWT\JWTAuth;
 
 /**
- * 将WordPress 账户体系与 JWT Token 绑定
+ * ## 将WordPress 账户体系与 JWT Token 绑定
+ *
  * Token 可通过如下方式传递 @since 0.9.50
  * - Header 传递：'Authorization'  	（用于App，小程序等第三方账户对接： "Authorization": "Bearer " + token）
  * - Cookie 传递：'wnd_token'		（用于web端浏览器跨域操作，获取其他特定情况）
@@ -23,9 +24,6 @@ class Wnd_JWT_Handler {
 
 	//使用HMAC生成信息摘要时所使用的密钥
 	private static $secret_key = LOGGED_IN_KEY;
-
-	// Token 的发送方式：header or cookie
-	private $token_method;
 
 	// Token 验证后得到的用户 ID
 	private $verified_user_id;
@@ -101,7 +99,6 @@ class Wnd_JWT_Handler {
 		// 从 Cookie 中读取
 		$token = $_COOKIE[static::$cookie_name] ?? '';
 		if ($token) {
-			$this->token_method = 'cookie';
 			return $token;
 		}
 
@@ -109,8 +106,7 @@ class Wnd_JWT_Handler {
 		$headers       = getallheaders();
 		$authorization = $headers[static::$header_name] ?? '';
 		if ($authorization) {
-			$this->token_method = 'header';
-			$bearer_token       = explode(' ', $authorization);
+			$bearer_token = explode(' ', $authorization);
 			return $bearer_token[1] ?? '';
 		}
 
@@ -133,13 +129,7 @@ class Wnd_JWT_Handler {
 			return;
 		}
 
-		/**
-		 * - 如果 Token 有效，而当前账户未登录，则设置同步设置 Cookie @since 0.9.32
-		 * - 根据 Token 设置当前账户 ID （过期为 0）
-		 */
-		if (!is_user_logged_in() and 'cookie' == $this->token_method) {
-			wp_set_auth_cookie($this->verified_user_id, true);
-		}
+		// 根据 Token 设置当前账户 ID
 		wp_set_current_user($this->verified_user_id);
 	}
 
