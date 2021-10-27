@@ -4,6 +4,7 @@ namespace Wnd\Action;
 use Exception;
 use Wnd\Action\Wnd_Action;
 use Wnd\Getway\Wnd_Object_Storage;
+use Wnd\Utility\Wnd_OSS_Handler;
 
 /**
  * 浏览器直传对象存储签名
@@ -11,6 +12,9 @@ use Wnd\Getway\Wnd_Object_Storage;
  * - 返回完整的 URL 及 header
  * - 不写入 WP 附件数据库
  *
+ * ## 安全策略 @since 0.9.50.1
+ * - 本签名主要应用于临时文件上传存储，通常面向含匿名用户在内的所有用户用户开放
+ * - 出于安全考虑，本签名对应的节点不可与站内常规对象存储节点相同
  */
 class Wnd_Sign_OSS_Direct extends Wnd_Action {
 
@@ -53,7 +57,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 	protected function check() {
 		$ext = $this->data['extension'] ?? '';
 		if (!$ext) {
-			throw new Exception('文件类型不合规！');
+			throw new Exception('Invalid file type');
 		}
 
 		$this->oss_sp            = $this->data['oss_sp'] ?? '';
@@ -63,5 +67,11 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		$this->mime_type         = $this->data['mime_type'] ?? '';
 		$this->md5               = $this->data['md5'] ?? '';
 		$this->file_path_name    = uniqid() . '.' . $ext;
+
+		// 处于安全考虑，不写入附件的浏览器直传对象存储，不可与站内常规对象存储为同一个节点
+		$oss_handler = Wnd_OSS_Handler::get_instance();
+		if (!$oss_handler->is_external_endpoint($this->endpoint)) {
+			throw new Exception('Not allowed to be an internal endpoint');
+		}
 	}
 }

@@ -307,4 +307,16 @@ class Wnd_OSS_Handler {
 			'headers'    => $headers,
 		];
 	}
+
+	/**
+	 * 判断指定 OSS 节点是否为站外节点：即存储节点不为当前插件配置的存储节点
+	 * @since 0.9.50.1
+	 */
+	public function is_external_endpoint(string $endpoint): bool {
+		if ($endpoint == $this->endpoint or $endpoint == $this->endpoint_private) {
+			return false;
+		}
+
+		return true;
+	}
 }
