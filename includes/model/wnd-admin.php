@@ -148,6 +148,7 @@ class Wnd_Admin {
 		}
 
 		// 提取所有版本升级方法：以"v_"为前缀的方法，并做版本对比确定是否执行
+		$_db_version     = str_replace('.', '', $db_version);
 		$reflection      = new \ReflectionClass(__CLASS__);
 		$methods         = $reflection->getMethods(\ReflectionMethod::IS_STATIC);
 		$upgrade_methods = [];
@@ -157,7 +158,7 @@ class Wnd_Admin {
 			}
 
 			// 版本对比：确保字符格式匹配
-			if (version_compare('v_' . $db_version, $method->name) >= 0) {
+			if (version_compare('v_' . $_db_version, $method->name) >= 0) {
 				continue;
 			}
 
