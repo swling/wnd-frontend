@@ -66,7 +66,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		$this->method            = $this->data['method'] ?? 'PUT';
 		$this->mime_type         = $this->data['mime_type'] ?? '';
 		$this->md5               = $this->data['md5'] ?? '';
-		$this->file_path_name    = uniqid() . '.' . $ext;
+		$this->file_path_name    = uniqid() . '_' . $this->user_id . '.' . $ext;
 
 		// 处于安全考虑，不写入附件的浏览器直传对象存储，不可与站内常规对象存储为同一个节点
 		$oss_handler = Wnd_OSS_Handler::get_instance();
