@@ -381,3 +381,22 @@ return apply_filters('wnd_filter_posts', $posts);
 ```php
 return apply_filters('wnd_filter_users', $users);
 ```
+
+## Action 频次控制
+```php
+/**
+ * 通过钩子，控制任意 Action 的操作频次
+ * @since 0.9.51
+ */
+add_filter('wnd_action_defend_args', function (array $args, Wnd\Action\Wnd_Action $action): array{
+    $class_name = strtolower(get_class($action));
+    if ('wnd\action\wnd_update_profile' == $class_name) {
+        $args['max_actions'] = 1;
+        $args['period']      = 60;
+    }
+
+    return $args;
+
+}, 10, 2);
+
+```

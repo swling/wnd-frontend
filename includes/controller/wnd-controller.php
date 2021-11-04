@@ -2,7 +2,6 @@
 namespace Wnd\Controller;
 
 use Exception;
-use Wnd\Utility\Wnd_Defender_Action;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Filter_Ajax;
 use Wnd\View\Wnd_Filter_User;
@@ -271,19 +270,8 @@ class Wnd_Controller {
 		}
 
 		try {
-			// 实例化
 			$action = new $class($request);
-
-			// 防护
-			$defender = new Wnd_Defender_Action($action);
-			$defender->defend_action();
-
-			// 执行
-			$execute = $action->execute();
-
-			// 执行成功
-			$defender->write_log();
-			return $execute;
+			return $action->do_action();
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}

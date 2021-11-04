@@ -1,19 +1,22 @@
 <?php
-namespace Wnd\Utility;
+namespace Wnd\Controller;
 
 use Exception;
 use Wnd\Action\Wnd_Action;
 
 /**
- * 操作防护：
- * [action_log] =
- * [
- * 		'action'=>[
+ * 操作防护
+ *
+ * ## 数据格式
+ * $actions_log = [
+ * 		'$this->action'=>[
  * 			'time'=>'',
  * 			'count'=>''
  * 		]
  * ];
  *
+ * - 对用登录用户操作日志写入 wnd user meta
+ * - 如需按ip控制未登录用户需要开启 WP 对象缓存
  * @since 0.9.50
  */
 class Wnd_Defender_Action {
@@ -47,7 +50,6 @@ class Wnd_Defender_Action {
 	/**
 	 * 锁定时间
 	 */
-	// protected static $locked_time = 1800;
 
 	/**
 	 * 用户 ID
@@ -78,9 +80,17 @@ class Wnd_Defender_Action {
 	 * 构造
 	 */
 	public function __construct(Wnd_Action $wnd_action) {
-		$this->period           = $wnd_action->period;
-		$this->max_actions      = $wnd_action->max_actions;
-		$this->should_be_defend = ($this->max_actions and $this->period);
+		// 过滤钩子：可通过本过滤器，修改对应 Action 的拦截策略
+		$defend_args = [
+			'period'      => $wnd_action->period,
+			'max_actions' => $wnd_action->max_actions,
+		];
+		$defend_args = \apply_filters('wnd_action_defend_args', $defend_args, $wnd_action);
+		\extract($defend_args);
+
+		$this->period           = $period;
+		$this->max_actions      = $max_actions;
+		$this->should_be_defend = ($max_actions and $period);
 		$this->action           = $wnd_action::get_class_name();
 		$this->user_id          = \get_current_user_id();
 		$this->client_ip        = \wnd_get_user_ip();

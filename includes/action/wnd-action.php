@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Action;
 
+use Wnd\Controller\Wnd_Defender_Action;
 use Wnd\Controller\Wnd_Request;
 use WP_REST_Request;
 
@@ -79,14 +80,39 @@ abstract class Wnd_Action {
 	 * 权限检测
 	 * @since 0.8.66
 	 */
-	protected function check() {
-		return true;
+	protected function check() {}
+
+	/**
+	 * 封装执行
+	 * @since 0.9.50
+	 */
+	public function do_action(): array{
+		// 防护
+		$defender = new Wnd_Defender_Action($this);
+		$defender->defend_action();
+
+		// 执行
+		$execute = $this->execute();
+		$this->complete();
+
+		// 执行成功
+		$defender->write_log();
+
+		// 响应
+		return $execute;
 	}
 
 	/**
 	 * 执行
 	 */
-	abstract public function execute(): array;
+	abstract protected function execute(): array;
+
+	/**
+	 * Action 执行完成后
+	 * - 具体子类中执行成功后的相关后续操作，如扣费，扣积分等
+	 * @since 0.9.50
+	 */
+	protected function complete() {}
 
 	/**
 	 * 获取当前操作类名称
