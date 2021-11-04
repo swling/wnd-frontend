@@ -29,9 +29,6 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 * @since 0.9.32
 	 */
 	protected function generate_transaction_data() {
-		if (!$this->user_id) {
-			throw new Exception(__('请登录', 'wnd'));
-		}
 		if (!$this->total_amount) {
 			throw new Exception(__('获取金额失败', 'wnd'));
 		}

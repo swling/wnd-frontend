@@ -16,6 +16,16 @@ class Wnd_Order_Anonymous extends Wnd_Order {
 	private static $valid_period = 3600 * 24;
 
 	/**
+	 * 检测创建权限
+	 * @since 0.9.51
+	 */
+	protected function check_create() {
+		if (!wnd_get_config('enable_anon_order')) {
+			throw new Exception('Anonymous orders are not enabled.');
+		}
+	}
+
+	/**
 	 * 匿名订单处理
 	 * 调用父类同名方法
 	 *

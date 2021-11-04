@@ -97,9 +97,6 @@ abstract class Wnd_Transaction {
 		$user_id = get_current_user_id();
 		switch ($type) {
 			case 'order':
-				if (!$user_id and !wnd_get_config('enable_anon_order')) {
-					throw new Exception(__('请登录', 'wnd'));
-				}
 				$instance = $user_id ? new Wnd_Order() : new Wnd_Order_Anonymous();
 				break;
 
@@ -227,6 +224,12 @@ abstract class Wnd_Transaction {
 	 */
 	public function create(bool $is_completed = false): WP_Post{
 		/**
+		 * 检测创建权限
+		 * @since 0.9.51
+		 */
+		$this->check_create();
+
+		/**
 		 * 全局统一 Transaction 数据设定：
 		 * - @since 0.9.37 设定状态
 		 * - @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
@@ -245,6 +248,18 @@ abstract class Wnd_Transaction {
 
 		// 返回创建的 WP Post Object
 		return $this->transaction;
+	}
+
+	/**
+	 * 检测创建权限
+	 * - 默认必须登录
+	 * - 如需不同权限，请在子类中复写本方法
+	 * @since 0.9.51
+	 */
+	protected function check_create() {
+		if (!$this->user_id) {
+			throw new Exception(__('请登录', 'wnd'));
+		}
 	}
 
 	/**

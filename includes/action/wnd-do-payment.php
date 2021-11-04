@@ -125,10 +125,6 @@ class Wnd_Do_Payment extends Wnd_Action {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
-		if ('order' == strtolower($this->type) and !$this->user_id and !wnd_get_config('enable_anon_order')) {
-			throw new Exception(__('请登录', 'wnd'));
-		}
-
 		/**
 		 * 库存检测
 		 */
