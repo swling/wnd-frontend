@@ -21,7 +21,7 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 
 	private $is_private;
 
-	public function execute(): array{
+	protected function execute(): array{
 		$this->file_name  = uniqid('oss-') . '.' . $this->data['extension'];
 		$this->mime_type  = $this->data['mime_type'] ?? '';
 		$md5              = $this->data['md5'] ?? '';

@@ -17,7 +17,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 	private $post_id;
 	private $update_post;
 
-	public function execute(): array{
+	protected function execute(): array{
 		$this->insert();
 
 		/**

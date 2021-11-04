@@ -16,7 +16,7 @@ class Wnd_Update_Profile extends Wnd_Action_User {
 	private $user_meta_data;
 	private $wp_user_meta_data;
 
-	public function execute(): array{
+	protected function execute(): array{
 		// 更新meta
 		if ($this->user_meta_data) {
 			wnd_update_user_meta_array($this->user_id, $this->user_meta_data);

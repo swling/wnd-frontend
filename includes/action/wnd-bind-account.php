@@ -9,7 +9,7 @@ use Wnd\Model\Wnd_Binder;
  */
 class Wnd_Bind_Account extends Wnd_Action_User {
 
-	public function execute(): array{
+	protected function execute(): array{
 		$email_or_phone = $this->data['_user_user_email'] ?? ($this->data['phone'] ?? '');
 		$auth_code      = $this->data['auth_code'] ?? '';
 		$password       = $this->data['_user_user_pass'] ?? '';

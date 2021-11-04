@@ -15,7 +15,7 @@ class Wnd_Unbind_Openid extends Wnd_Action_User {
 
 	private $type;
 
-	public function execute(): array{
+	protected function execute(): array{
 		// 解除绑定
 		if (!Wnd_User::delete_user_openid($this->user_id, $this->type)) {
 			throw new Exception(__('解绑失败，请稍后重试', 'wnd'));

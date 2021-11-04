@@ -31,7 +31,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 	private $md5;
 	private $file_path_name;
 
-	public function execute(): array{
+	protected function execute(): array{
 		$oss = Wnd_Object_Storage::get_instance($this->oss_sp, $this->endpoint);
 		$oss->setFilePathName($this->file_path_name);
 		$headers = $oss->generateHeaders($this->method, $this->mime_type, $this->md5);

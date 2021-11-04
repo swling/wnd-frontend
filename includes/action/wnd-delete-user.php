@@ -11,7 +11,7 @@ class Wnd_Delete_User extends Wnd_Action_Root {
 
 	private $target_user_id;
 
-	public function execute(): array{
+	protected function execute(): array{
 		require_once ABSPATH . 'wp-admin/includes/user.php';
 
 		$action = wp_delete_user($this->target_user_id);

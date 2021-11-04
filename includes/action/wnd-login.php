@@ -14,7 +14,7 @@ class Wnd_Login extends Wnd_Action {
 	private $redirect_to;
 	private $target_user;
 
-	public function execute(): array{
+	protected function execute(): array{
 		/**
 		 * 校验密码并登录
 		 *

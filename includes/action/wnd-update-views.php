@@ -13,7 +13,7 @@ class Wnd_Update_Views extends Wnd_Action {
 
 	private $post_id;
 
-	public function execute(): array{
+	protected function execute(): array{
 		// 更新字段信息
 		if (wnd_inc_post_meta($this->post_id, 'views', 1)) {
 			do_action('wnd_update_views', $this->post_id);

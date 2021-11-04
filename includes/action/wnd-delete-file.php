@@ -14,7 +14,7 @@ class Wnd_Delete_File extends Wnd_Action_User {
 	private $file_id;
 	private $post_parent;
 
-	public function execute(): array{
+	protected function execute(): array{
 		if (wp_delete_attachment($this->file_id, true)) {
 			do_action('wnd_delete_file', $this->file_id, $this->post_parent, $this->meta_key);
 			return ['status' => 1, 'msg' => __('删除成功', 'wnd'), 'data' => $this->file_id];

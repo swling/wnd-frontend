@@ -26,7 +26,7 @@ class Wnd_Upload_File extends Wnd_Action {
 
 	protected $meta_key;
 
-	public function execute(): array{
+	protected function execute(): array{
 		//$_FILES['wnd_file']需要与input name 值匹配
 		if (empty($_FILES['wnd_file'])) {
 			throw new Exception(__('上传文件为空', 'wnd'));

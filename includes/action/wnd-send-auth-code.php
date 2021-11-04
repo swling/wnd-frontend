@@ -14,7 +14,7 @@ class Wnd_Send_Auth_Code extends Wnd_Action {
 	private $type;
 	private $template;
 
-	public function execute(): array{
+	protected function execute(): array{
 		$auth = Wnd_Auth::get_instance($this->device);
 		$auth->set_type($this->type);
 		$auth->set_template($this->template);

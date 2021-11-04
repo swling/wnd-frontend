@@ -13,7 +13,7 @@ class Wnd_Reset_Password extends Wnd_Action {
 	private $target_user;
 	private $new_password;
 
-	public function execute(): array{
+	protected function execute(): array{
 		reset_password($this->target_user, $this->new_password);
 		return [
 			'status' => $this->user_id ? 4 : 1,

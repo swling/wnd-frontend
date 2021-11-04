@@ -18,7 +18,7 @@ class Wnd_Reg extends Wnd_Action {
 	private $user_meta_data;
 	private $wp_user_meta_data;
 
-	public function execute(): array{
+	protected function execute(): array{
 		// 写入新用户
 		$user_id = wp_insert_user($this->user_data);
 		if (is_wp_error($user_id)) {

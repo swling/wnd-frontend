@@ -9,7 +9,7 @@ use Wnd\Getway\Wnd_Refunder;
  */
 class Wnd_Refund extends Wnd_Action_Admin {
 
-	public function execute(): array{
+	protected function execute(): array{
 		$transaction_id = (int) ($this->data['transaction_id'] ?? 0);
 		$refund_amount  = (float) ($this->data['refund_amount'] ?? 0);
 

@@ -14,7 +14,7 @@ class Wnd_Admin_Recharge extends Wnd_Action_Admin {
 	private $remarks;
 	private $target_user;
 
-	public function execute(): array{
+	protected function execute(): array{
 		// 写入充值记录
 		$recharge = new Wnd_Recharge();
 		$recharge->set_user_id($this->target_user->ID);

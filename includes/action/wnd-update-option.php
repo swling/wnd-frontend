@@ -9,7 +9,7 @@ use Exception;
  */
 class Wnd_Update_Option extends Wnd_Action_Root {
 
-	public function execute(): array{
+	protected function execute(): array{
 		$option_name = $this->data['option_name'];
 		$append      = (bool) $this->data['append'];
 		$option_data = $this->request->get_option_data($option_name);

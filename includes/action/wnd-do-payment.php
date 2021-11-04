@@ -23,7 +23,7 @@ class Wnd_Do_Payment extends Wnd_Action {
 	private $payment_gateway;
 	private $subject;
 
-	public function execute(): array{
+	protected function execute(): array{
 		// 定义是否为站内交易
 		$this->internal = 'internal' == strtolower($this->payment_gateway);
 

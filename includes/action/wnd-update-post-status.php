@@ -19,7 +19,7 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 	 *
 	 * @return array
 	 */
-	public function execute(): array{
+	protected function execute(): array{
 		// 更新Post
 		if ('delete' == $this->after_status) {
 			return $this->delete_post();

@@ -17,7 +17,7 @@ class Wnd_Update_Account_Status extends Wnd_Action_Admin {
 	private $status;
 	private $before_status;
 
-	public function execute(): array{
+	protected function execute(): array{
 		// 更新状态
 		$action = update_user_meta($this->target_user_id, 'status', $this->status);
 		if (!$action) {

@@ -10,7 +10,7 @@ use Wnd\Model\Wnd_Order_Product;
  */
 class Wnd_Pay_For_Downloads extends Wnd_Action {
 
-	public function execute(): array{
+	protected function execute(): array{
 		/**
 		 * 组合ajax验证下载参数:该url地址并非文件实际下载地址，而是一个调用参数的请求
 		 * 前端接收后跳转至该网址（status == 6 是专为下载类ajax请求设置的代码前端响应），以实现ajax下载
