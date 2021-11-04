@@ -2,6 +2,7 @@
 namespace Wnd\Controller;
 
 use Exception;
+use Wnd\Utility\Wnd_Defender_Action;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Filter_Ajax;
 use Wnd\View\Wnd_Filter_User;
@@ -116,7 +117,6 @@ class Wnd_Controller {
 		/**
 		 * 插件移除了所有 WP 默认的 Rest API
 		 * 此处恢复 WP 默认的 Application Passwords API 可用于自定义 API 身份验证
-		 *
 		 */
 		$controller = new \WP_REST_Application_Passwords_Controller();
 		$controller->register_routes();
@@ -251,11 +251,6 @@ class Wnd_Controller {
 
 	/**
 	 * 数据处理
-	 * 注意：
-	 * 	WordPress Rest API 回调函数的传参 $request 数据为原始数据，如直接使用 $request 数据执行数据库操作需要做数据清理。
-	 * 	因此在本插件，Action 层相关方法中，用户数据采用 Wnd\Controller\Wnd_Request 统一处理
-	 * 	@see Wnd\Controller\Wnd_Request; Wnd\Action\Wnd_Action_Ajax
-	 * @since 2019.04.07
 	 *
 	 * @param $request
 	 */
@@ -276,8 +271,19 @@ class Wnd_Controller {
 		}
 
 		try {
+			// 实例化
 			$action = new $class($request);
-			return $action->execute();
+
+			// 防护
+			$defender = new Wnd_Defender_Action($action);
+			$defender->defend_action();
+
+			// 执行
+			$execute = $action->execute();
+
+			// 执行成功
+			$defender->write_log();
+			return $execute;
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
@@ -369,10 +375,7 @@ class Wnd_Controller {
 		do_action('set_comment_cookies', $comment, $user);
 		$GLOBALS['comment'] = $comment;
 
-		/**
-		 * 敬请留意：
-		 * 此结构可能随着WordPress wp_list_comments()输出结构变化而失效
-		 */
+		// 此结构可能随着WordPress wp_list_comments()输出结构变化而失效
 		$html = '<li class="' . implode(' ', get_comment_class()) . '">';
 		$html .= '<article class="comment-body">';
 		$html .= '<footer class="comment-meta">';

@@ -48,6 +48,18 @@ abstract class Wnd_Action {
 	protected $request;
 
 	/**
+	 * 时间范围
+	 * 与 $this->max_actions 结合，用于控制操作执行频次
+	 */
+	public $period;
+
+	/**
+	 * 最多执行
+	 * 与 $this->period 结合，用于控制操作执行频次
+	 */
+	public $max_actions;
+
+	/**
 	 * 构造
 	 * - 校验请求数据
 	 * - 核查权限许可
@@ -75,4 +87,13 @@ abstract class Wnd_Action {
 	 * 执行
 	 */
 	abstract public function execute(): array;
+
+	/**
+	 * 获取当前操作类名称
+	 * @since 0.9.50
+	 */
+	public static function get_class_name(): string{
+		$class_name = \get_called_class();
+		return strtolower($class_name);
+	}
 }
