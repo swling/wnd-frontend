@@ -20,7 +20,7 @@ class Wnd_Upgrader_Plugin_This extends Wnd_Upgrader_Plugin {
 	 */
 	protected function get_remote_info() {
 		$url      = 'https://wndwp.com/wp-json/wndt/project/157';
-		$response = wp_remote_get($url, ['headers' => ['Authorization' => 'token xxx']]);
+		$response = wp_remote_get($url);
 		if (is_wp_error($response)) {
 			return $response;
 		}
