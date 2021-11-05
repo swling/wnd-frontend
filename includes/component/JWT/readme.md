@@ -23,9 +23,13 @@ $payload = [
 	'nbf' => time(), 
 	'sub' => 'www.admin.com'
 ];
-$token   = $jwt::generateToken($payload);
+
+// 密钥（secret）
+$secretkey = 'xxx';
+
+$token   = $jwt::generateToken($payload, $secretkey);
 
 // 根据 Token 还原 payload
-$getPayload = $jwt::parseToken($token);
+$getPayload = $jwt::parseToken($token, $secretkey);
 var_dump($getPayload);
 ```
