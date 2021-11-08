@@ -310,12 +310,10 @@ class Wnd_Controller {
 	public static function filter_posts(WP_REST_Request $request): array{
 		try {
 			$filter = new Wnd_Filter_Ajax(true);
+			$filter->query();
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
-
-		// 执行查询
-		$filter->query();
 
 		return [
 			'status' => 1,
@@ -332,12 +330,10 @@ class Wnd_Controller {
 	public static function filter_users(WP_REST_Request $request): array{
 		try {
 			$filter = new Wnd_Filter_User(true);
+			$filter->query();
 		} catch (Exception $e) {
 			return ['status' => 0, 'msg' => $e->getMessage()];
 		}
-
-		// 执行查询
-		$filter->query();
 
 		return [
 			'status' => 1,
