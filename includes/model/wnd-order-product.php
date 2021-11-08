@@ -165,7 +165,7 @@ abstract class Wnd_Order_Product {
 		 * - 因而此处移除 Action
 		 * @since 0.9.38
 		 */
-		remove_action('wnd_pre_get_product_props', 'Wnd\Model\Wnd_Order_Product::release_pending_orders', 10);
+		remove_action('wnd_pre_get_product_props', [__CLASS__, 'release_pending_orders'], 10);
 
 		// 还原库存（反向扣除库存）
 		Wnd_SKU::reduce_single_sku_stock($object_id, $sku_id, $quantity * -1);
@@ -174,6 +174,6 @@ abstract class Wnd_Order_Product {
 		 * 库存恢复完成，恢复 Action
 		 * @since 0.9.38
 		 */
-		add_action('wnd_pre_get_product_props', 'Wnd\Model\Wnd_Order_Product::release_pending_orders', 10, 1);
+		add_action('wnd_pre_get_product_props', [__CLASS__, 'release_pending_orders'], 10, 1);
 	}
 }
