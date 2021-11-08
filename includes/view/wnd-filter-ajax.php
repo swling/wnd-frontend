@@ -135,10 +135,16 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 		}
 
 		foreach ($this->wp_query->get_posts() as $post) {
+			/**
+			 * - 请求指定移除内容
+			 * - 财务类 Post Content 为金额，需格式化
+			 * - 针对付费内容等做安全过滤 @since 0.9.52
+			 */
 			if ($this->get_query_var('without_content')) {
 				unset($post->post_content);
+			} elseif (in_array($post->post_type, Wnd_Init::get_fin_types())) {
+				$post->post_content = number_format((float) $post->post_content, 2);
 			} else {
-				// 针对付费内容等做安全过滤 @since 0.9.52
 				$post = wnd_filter_post($post);
 			}
 
@@ -150,11 +156,6 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 
 			// Post Link
 			$post->link = get_permalink($post);
-
-			// 财务类 Post Content 为金额，需格式化
-			if (in_array($post->post_type, Wnd_Init::get_fin_types())) {
-				$post->post_content = number_format((float) $post->post_content, 2);
-			}
 
 			$this->posts[] = $post;
 		}
