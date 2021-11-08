@@ -185,7 +185,7 @@ function wnd_is_paid_post(int $post_id): bool{
 
 	$sku = Wnd_SKU::get_object_sku($post_id);
 	foreach ($sku as $single_sku) {
-		if ($single_sku['price']) {
+		if ($single_sku['price'] ?? 0) {
 			return true;
 		}
 	}
