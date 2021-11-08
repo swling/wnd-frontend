@@ -87,3 +87,43 @@ function wnd_is_revision($post_id): bool {
 function wnd_get_revision_id($post_id): int {
 	return Wnd_post::get_revision_id($post_id);
 }
+
+/**
+ * 获取付费内容的免费摘要文本
+ * @since 0.9.52
+ */
+function wnd_get_free_content(WP_Post $post): string {
+	if (!wnd_is_paid_post($post->ID)) {
+		return $post->post_content;
+	}
+
+	$content = wnd_explode_post_by_more($post->post_content);
+	return $content[0];
+}
+
+/**
+ * 获取付费内容的付费文本
+ * @since 0.9.52
+ */
+function wnd_get_paid_content(WP_Post $post): string {
+	if (!wnd_is_paid_post($post->ID)) {
+		return '';
+	}
+
+	$content = wnd_explode_post_by_more($post->post_content);
+	return $content[1] ?? '';
+}
+
+/**
+ * 根据当前 user 及 post 获取“安全”的 post
+ * @since 0.9.52
+ */
+function wnd_filter_post(WP_Post $post): WP_Post{
+	$user_id                = get_current_user_id();
+	$is_current_post_author = ($user_id and $user_id = $post->post_author);
+	if (!$is_current_post_author and wnd_is_paid_post($post->ID) and !wnd_user_has_paid($user_id, $post->ID)) {
+		$post->post_content = wnd_get_free_content($post);
+	}
+
+	return $post;
+}

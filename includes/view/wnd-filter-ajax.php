@@ -78,7 +78,6 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 
 	/**
 	 * 获取当前查询的主分类 Tabs
-	 *
 	 */
 	private function get_category_tabs($args = []): array{
 		$args['taxonomy'] = $this->category_taxonomy;
@@ -88,7 +87,6 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 
 	/**
 	 * 获取主分类关联标签筛选 Tabs
-	 *
 	 */
 	private function get_tags_tabs($limit = 10): array{
 		return $this->build_tags_filter($limit) ?: [];
@@ -139,6 +137,9 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 		foreach ($this->wp_query->get_posts() as $post) {
 			if ($this->get_query_var('without_content')) {
 				unset($post->post_content);
+			} else {
+				// 针对付费内容等做安全过滤 @since 0.9.52
+				$post = wnd_filter_post($post);
 			}
 
 			// 用户信息

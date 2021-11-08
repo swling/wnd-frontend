@@ -1,6 +1,7 @@
 <?php
 use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_SKU;
 
 /**
  * @since 2019.02.11 查询是否已经支付
@@ -170,4 +171,24 @@ function wnd_inc_post_total_sales($post_id, $money) {
  */
 function wnd_get_post_total_sales($post_id, $format = false) {
 	return Wnd_Finance::get_post_total_sales($post_id, $format);
+}
+
+/**
+ * 是否为付费 post
+ * @since 0.9.52
+ */
+function wnd_is_paid_post(int $post_id): bool{
+	$post_price = Wnd_Finance::get_post_price($post_id);
+	if ($post_price) {
+		return true;
+	}
+
+	$sku = Wnd_SKU::get_object_sku($post_id);
+	foreach ($sku as $single_sku) {
+		if ($single_sku['price']) {
+			return true;
+		}
+	}
+
+	return false;
 }

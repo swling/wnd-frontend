@@ -13,21 +13,23 @@ class Wnd_Get_Post extends Wnd_JsonGet {
 
 	protected static function query($args = []): array{
 		$post_id = (int) ($args['post_id'] ?? 0);
+		$post    = get_post($post_id);
 		if (!$post_id) {
-			throw new Exception(__('ID 无效', 'wnd'));
+			throw new Exception('Invalid Post ID');
 		}
 
-		$post = get_post($post_id, ARRAY_A);
+		// 处理付费内容
+		$post = wnd_filter_post($post);
 
 		/**
 		 * 非公开post仅返回基本状态
 		 */
-		if ('publish' != $post['post_status'] and !current_user_can('edit_post', $post_id)) {
+		if ('publish' != $post->post_status and !current_user_can('edit_post', $post_id)) {
 			return [
-				'post_status' => $post['post_status'],
+				'post_status' => $post->post_status,
 			];
 		}
 
-		return $post;
+		return (array) $post;
 	}
 }
