@@ -1,7 +1,9 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Controller\Wnd_Request;
 use Wnd\Model\Wnd_Term;
+use WP_REST_Request;
 
 abstract class Wnd_Post {
 
@@ -195,6 +197,28 @@ abstract class Wnd_Post {
 			}
 			unset($taxonomy, $term);
 		}
+	}
+
+	/**
+	 * 从请求数据中提取 meta 及 terms 数据，并设置到对应 post
+	 * @since 0.9.52
+	 */
+	public static function set_meta_and_terms(int $post_id, array $data) {
+		$wp_rest_request = new WP_REST_Request('POST');
+		foreach ($data as $key => $value) {
+			$wp_rest_request->set_param($key, $value);
+		}
+		unset($key, $value);
+
+		// 提取 meta 及 terms
+		$wnd_request  = new Wnd_Request($wp_rest_request, false, false);
+		$meta_data    = $wnd_request->get_post_meta_data();
+		$wp_meta_data = $wnd_request->get_wp_post_meta_data();
+		$terms_data   = $wnd_request->get_terms_data();
+
+		// 设置 Meta 及 terms
+		Wnd_Post::set_meta($post_id, $meta_data, $wp_meta_data);
+		Wnd_Post::set_terms($post_id, $terms_data);
 	}
 
 	/**

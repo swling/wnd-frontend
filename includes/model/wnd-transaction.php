@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Model\Wnd_Post;
 use WP_Post;
 use WP_User;
 
@@ -314,6 +315,15 @@ abstract class Wnd_Transaction {
 		 * @since 0.9.37.2
 		 */
 		$this->set_transaction_id($ID);
+
+		/**
+		 * 设置订单属性
+		 * - 设置自定义 meta （含 wp_meta 及 wnd_meta）
+		 * - 设置 Terms
+		 * - 前端在交易创建时，按常规 Post 设定请求数据，即可设置对应对应属性
+		 * @since 0.9.52
+		 */
+		Wnd_Post::set_meta_and_terms($this->transaction_id, $this->props);
 
 		return $this->transaction;
 	}
