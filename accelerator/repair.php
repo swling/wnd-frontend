@@ -53,6 +53,7 @@ remove_action('wp_head', 'wp_oembed_add_host_js');
 remove_action('rest_api_init', 'wp_oembed_register_route');
 remove_filter('rest_pre_serve_request', '_oembed_rest_pre_serve_request', 10, 4);
 remove_filter('excerpt_more', 'wp_embed_excerpt_more', 20);
+remove_filter('the_content_feed', '_oembed_filter_feed_content');
 
 function wp_embed_register_handler($id, $regex, $callback, $priority = 10) {
 	return false;
