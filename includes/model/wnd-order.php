@@ -49,7 +49,8 @@ class Wnd_Order extends Wnd_Transaction {
 		 * 处理订单 SKU 属性
 		 * @since 0.8.76
 		 */
-		$this->handle_order_sku_props();
+		$this->sku_id       = $this->props[Wnd_Order_Product::$sku_id_key] ?? '';
+		$this->total_amount = $this->calculate_total_amount();
 
 		// 解析订单产品属性
 		if ($this->props) {
@@ -68,12 +69,11 @@ class Wnd_Order extends Wnd_Transaction {
 	}
 
 	/**
-	 * 根据 SKU 变量定义本次订单属性：$this->sku_id、$this->total_amount
-	 * @since 0.8.76
+	 * 计算本次订单总金额
+	 * @since 0.9.52
 	 */
-	private function handle_order_sku_props() {
-		$this->sku_id = $this->props[Wnd_Order_Product::$sku_id_key] ?? '';
-		$object_sku   = Wnd_SKU::get_object_sku($this->object_id);
+	private function calculate_total_amount(): float{
+		$object_sku = Wnd_SKU::get_object_sku($this->object_id);
 
 		if ($object_sku) {
 			if (!$this->sku_id or !in_array($this->sku_id, array_keys($object_sku))) {
@@ -85,7 +85,7 @@ class Wnd_Order extends Wnd_Transaction {
 			$price = wnd_get_post_price($this->object_id);
 		}
 
-		$this->total_amount = $price * $this->quantity;
+		return (float) $price * $this->quantity;
 	}
 
 	/**
