@@ -51,6 +51,11 @@ class Wnd_Order extends Wnd_Transaction {
 		 */
 		$this->handle_order_sku_props();
 
+		// 解析订单产品属性
+		if ($this->props) {
+			$this->props = Wnd_Order_Product::parse_order_props($this->object_id, $this->props);
+		}
+
 		/**
 		 * 订单标题
 		 */
@@ -85,18 +90,12 @@ class Wnd_Order extends Wnd_Transaction {
 
 	/**
 	 * - 调用父类方法创建交易
-	 * - 保存订单产品属性
 	 * - 更新订单及库存统计
 	 * @since 0.9.32
 	 */
 	public function create(bool $is_completed = false): WP_Post{
 		// 调用父类方法，写入数据库
 		$transaction = parent::create($is_completed);
-
-		// 保存订单产品属性
-		if ($this->props) {
-			Wnd_Order_Product::set_order_props($this->transaction_id, $this->props);
-		}
 
 		/**
 		 * 全新订单：

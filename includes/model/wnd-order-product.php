@@ -33,48 +33,40 @@ abstract class Wnd_Order_Product {
 	public static $ip_key = 'ip';
 
 	/**
-	 * 设置订单关联的产品属性
-	 *
-	 * 读取数据中和产品属性相关的数据，保存至订单 wnd meta
-	 * 由于sku_id 对应的产品信息可能发生改变，因此必须保存订单产生时的产品完整属性，以备后续核查
-	 * 在产品单条 SKU 信息之外新增保存 SKU ID
+	 * 从订单请求数据中解析订单属性，并转为 wnd_meta 数据格式，返回合并的数据
+	 * - 由于sku_id 对应的产品信息可能发生改变，因此必须保存订单产生时的产品完整属性，以备后续核查，同时保存 SKU ID
+	 * - 保存订单产品数量
+	 * - 保存客户端 ip
+	 *  解析完成的数组键值需要添加 _meta_ 前缀，以符合 Model\Wnd_Post::set_meta_and_terms() 规则 @see Wnd\Wnd_Transaction::insert_transaction()
 	 */
-	public static function set_order_props(int $order_id, array $data): bool{
-		$meta      = [];
-		$object_id = get_post($order_id)->post_parent ?? 0;
-		if (!$object_id) {
-			return false;
-		}
+	public static function parse_order_props(int $object_id, array $data): array{
+		$meta         = [];
+		$sku_key      = '_meta_' . static::$sku_key;
+		$quantity_key = '_meta_' . static::$quantity_key;
+		$ip_key       = '_meta_' . static::$ip_key;
 
 		// SKU
 		$sku_id = $data[static::$sku_id_key] ?? '';
 		if ($sku_id) {
 			$sku_detail                      = Wnd_SKU::get_single_sku($object_id, $sku_id);
 			$sku_detail[static::$sku_id_key] = $sku_id;
-			$meta[static::$sku_key]          = $sku_detail;
+			$meta[$sku_key]                  = $sku_detail;
 		}
 
 		// quantity
-		$quantity                    = $data[static::$quantity_key] ?? 1;
-		$meta[static::$quantity_key] = $quantity;
+		$meta[$quantity_key] = $data[static::$quantity_key] ?? 1;
 
 		// IP
-		$meta[static::$ip_key] = wnd_get_user_ip();
+		$meta[$ip_key] = wnd_get_user_ip();
 
-		// save data
-		if ($meta) {
-			return wnd_update_post_meta_array($order_id, $meta);
-		} else {
-			return true;
-		}
+		// data
+		return array_merge($data, $meta);
 	}
 
 	/**
 	 * 获取订单关联的产品属性
-	 *
-	 * 	订单属性，即从产品属性提供的选项中依次确定某一项组成。数据存储键名与产品属性保持一致。因此可复用 Wnd_Product::get_object_props($order_id);
-	 * 	与产品属性返回的数据格式不同，【产品属性值】通常为维数组甚至二维数组，而【订单属性值】通常为确定的字符串。
-	 *
+	 * - 订单属性，即从产品属性提供的选项中依次确定某一项组成。数据存储键名与产品属性保持一致。因此可复用 Wnd_Product::get_object_props($order_id);
+	 * - 与产品属性返回的数据格式不同，【产品属性值】通常为维数组甚至二维数组，而【订单属性值】通常为确定的字符串。
 	 */
 	public static function get_order_props(int $order_id): array{
 		return get_post_meta($order_id, 'wnd_meta', true) ?: [];
@@ -82,7 +74,6 @@ abstract class Wnd_Order_Product {
 
 	/**
 	 * 获取订单关联的产品 SKU 属性
-	 *
 	 */
 	public static function get_order_sku(int $order_id): array{
 		return static::get_order_props($order_id)[static::$sku_key] ?? [];
