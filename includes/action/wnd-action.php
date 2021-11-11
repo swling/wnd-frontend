@@ -119,7 +119,7 @@ abstract class Wnd_Action {
 	 * @since 0.9.50
 	 */
 	public static function get_class_name(): string{
-		$class_name = \get_called_class();
+		$class_name = get_called_class();
 		return strtolower($class_name);
 	}
 }
