@@ -2,31 +2,7 @@
 use Wnd\Model\Wnd_Meta;
 use Wnd\Model\Wnd_Meta_User;
 
-//############################################################################ 用户字段增量函数
-function wnd_inc_user_meta(int $user_id, string $meta_key, float $val = 1, bool $min_zero = false) {
-	$meta = new Wnd_Meta_User($user_id);
-	return $meta->inc_wp_meta($meta_key, $val, $min_zero);
-}
-
-//############################################################################ 用户数组字段增量函数
-function wnd_inc_wnd_user_meta(int $user_id, string $meta_key, float $val = 1, bool $min_zero = false) {
-	$meta = new Wnd_Meta_User($user_id);
-	return $meta->inc_wnd_meta($meta_key, $val, $min_zero);
-}
-
-//############################################################################ 文章字段增量函数
-function wnd_inc_post_meta(int $post_id, string $meta_key, float $val = 1, bool $min_zero = false) {
-	$meta = new Wnd_Meta($post_id);
-	return $meta->inc_wp_meta($meta_key, $val, $min_zero);
-}
-
-//############################################################################ 文章数组字段增量函数
-function wnd_inc_wnd_post_meta(int $post_id, string $meta_key, float $val = 1, bool $min_zero = false) {
-	$meta = new Wnd_Meta($post_id);
-	return $meta->inc_wnd_meta($meta_key, $val, $min_zero);
-}
-
-//############################################################################ 更新用户字段数组元素，若数组不存在，则插入更新数组元素
+//############################################################################ User Meta
 function wnd_update_user_meta(int $user_id, string $meta_key, $meta_value) {
 	$meta = new Wnd_Meta_User($user_id);
 	return $meta->update_wnd_meta($meta_key, $meta_value);
@@ -49,7 +25,19 @@ function wnd_delete_user_meta(int $user_id, string $meta_key) {
 	return $meta->delete_wnd_meta($meta_key);
 }
 
-//############################################################################ 更新文章字段数组元素，若数组不存在，则插入更新数组元素
+// 用户字段增量函数
+function wnd_inc_user_meta(int $user_id, string $meta_key, float $val = 1, bool $min_zero = false) {
+	$meta = new Wnd_Meta_User($user_id);
+	return $meta->inc_wp_meta($meta_key, $val, $min_zero);
+}
+
+// 用户数组字段增量函数
+function wnd_inc_wnd_user_meta(int $user_id, string $meta_key, float $val = 1, bool $min_zero = false) {
+	$meta = new Wnd_Meta_User($user_id);
+	return $meta->inc_wnd_meta($meta_key, $val, $min_zero);
+}
+
+//############################################################################ Post Meta
 function wnd_update_post_meta(int $post_id, string $meta_key, $meta_value) {
 	$meta = new Wnd_Meta($post_id);
 	return $meta->update_wnd_meta($meta_key, $meta_value);
@@ -72,7 +60,19 @@ function wnd_delete_post_meta(int $post_id, string $meta_key) {
 	return $meta->delete_wnd_meta($meta_key);
 }
 
-//############################################################################ 更新options数组元素，若数组不存在，则插入更新数组元素
+// 文章字段增量函数
+function wnd_inc_post_meta(int $post_id, string $meta_key, float $val = 1, bool $min_zero = false) {
+	$meta = new Wnd_Meta($post_id);
+	return $meta->inc_wp_meta($meta_key, $val, $min_zero);
+}
+
+// 文章数组字段增量函数
+function wnd_inc_wnd_post_meta(int $post_id, string $meta_key, float $val = 1, bool $min_zero = false) {
+	$meta = new Wnd_Meta($post_id);
+	return $meta->inc_wnd_meta($meta_key, $val, $min_zero);
+}
+
+//############################################################################ option
 function wnd_update_option(string $option_name, string $key, $value): bool{
 	$update_array = [$key => $value];
 	return wnd_update_option_array($option_name, $update_array);
