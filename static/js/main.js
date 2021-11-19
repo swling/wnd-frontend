@@ -89,11 +89,23 @@ function wnd_remove(el) {
 function wnd_inner_html(el, html) {
     let self = ('object' == typeof el) ? el : document.querySelector(el);
     self.innerHTML = html;
-    const scripts = self.querySelectorAll('script');
+    _wnd_run_script(html);
+}
+
+// 运行html代码中的JavaScript代码
+function _wnd_run_script(html) {
+    // 创建元素
+    let el = document.createElement('div');
+    el.innerHTML = html;
+
+    // 读取 JavaScript 并销毁元素
+    const scripts = el.querySelectorAll('script');
     for (let script of scripts) {
         runScript(script);
     }
+    el = null;
 
+    // 执行 JavaScript 
     function runScript(script) {
         // 直接 document.head.appendChild(script) 是不会生效的，需要重新创建一个
         const newScript = document.createElement('script');
@@ -119,6 +131,9 @@ function wnd_append(el, html) {
     let self = ('object' == typeof el) ? el : document.querySelector(el);
     if (self) {
         self.insertAdjacentHTML('beforeend', html);
+
+        // script
+        _wnd_run_script(html);
     }
 }
 
@@ -133,6 +148,9 @@ function wnd_prepend(el, html) {
     let self = ('object' == typeof el) ? el : document.querySelector(el);
     if (self) {
         self.insertAdjacentHTML('afterbegin', html);
+
+        // script
+        _wnd_run_script(html);
     }
 }
 
