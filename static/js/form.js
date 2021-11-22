@@ -25,6 +25,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 'editor': [],
                 'captcha': '',
                 'step': [],
+                'ids': [],
             },
             step: 0,
             default_data: {}, // 记录表单默认数据，在提交表单时与现有表单合并，以确保所有字段名均包含在提交数据中，从而通过一致性签名
@@ -201,6 +202,30 @@ function _wnd_render_form(container, form_json, add_class = '') {
             },
 
             change: function(field) {
+                // 关联字段数据
+                if (field.data.linked) {
+                    let current_value = this.get_value(field);
+                    let jsonget = field.data.jsonget;
+                    let data = field.data.data;
+                    let params = field.data.params;
+                    params[field.name] = current_value;
+
+                    // 获取关联字段
+                    let linked_field_index = this.index.ids[field.data.linked.id];
+                    let linked_field = this.form.fields[linked_field_index];
+                    let linked_field_props = field.data.linked.props;
+
+                    // 向关联字段指定属性赋值
+                    if (data) {
+                        linked_field[linked_field_props] = data[current_value];
+                    } else if (jsonget) {
+                        wnd_get_json(jsonget, params, (res) => {
+                            linked_field[linked_field_props] = res.data;
+                        });
+                    }
+                }
+
+                // 常规
                 field.class = field.class.replace('is-danger', '');
                 field.help.class = field.help.class.replace('is-danger', '');
                 field.help.text = field.help.text.replace(' ' + wnd.msg.required, '');
@@ -604,17 +629,22 @@ function _wnd_render_form(container, form_json, add_class = '') {
         },
         created() {
             // 提取表单数据
-            this.form.fields.forEach((field, index) => {
+            for (let index = 0, j = this.form.fields.length; index < j; index++) {
+                let field = this.form.fields[index];
+
                 if ('captcha' == field.name && '' == field.value) {
                     this.index.captcha = index;
+                    continue;
                 }
 
                 if ('editor' == field.type) {
                     this.index.editor.push(index);
+                    continue;
                 }
 
                 if ('step' == field.type) {
                     this.index.step.push(field.text);
+                    continue;
                 }
 
                 /**
@@ -625,13 +655,19 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     let last = Object.keys(field.selected)[Object.keys(field.selected).length - 1];
                     let next = parseInt(last) + 1;
                     field.selected[next] = '';
+                    continue;
                 }
 
                 if (field.name) {
                     let name = field.name.replace('[]', '');
                     this.default_data[name] = '';
                 }
-            });
+
+                // 将字段 ID 与 index 索引，便于快速通过 ID 定位到指定字段数据
+                if (field.id) {
+                    this.index.ids[field.id] = index;
+                }
+            }
         },
         mounted() {
             // 构造富文本编辑器
