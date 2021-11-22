@@ -202,7 +202,13 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'selected' => $selected ?: [0 => ''], //default checked value
 				'label'    => ('default' == $label) ? $taxonomy_object->labels->name : $label,
 				'class'    => $taxonomy,
-				'data'     => ['taxonomy' => $taxonomy],
+				// 多级分类联动属性配置
+				'data'     => [
+					'jsonget' => 'wnd_sub_term_options',
+					'params'  => [
+						'taxonomy' => $taxonomy,
+					],
+				],
 			]
 		);
 	}
@@ -518,7 +524,6 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	/**
-	 *
 	 * 获取当前 Post 全部 所选 term 分类
 	 */
 	public function get_current_terms() {

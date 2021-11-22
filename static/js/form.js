@@ -211,18 +211,17 @@ function _wnd_render_form(container, form_json, add_class = '') {
 
             // 动态联动下拉选择
             selected(e, key, index) {
-                let current = e.target.value; //获取选中值(实际项目可通过此值调接口获取下一级选项)
                 let select = this.form.fields[index];
+                let jsonget = select.data.jsonget;
+                let params = Object.assign(select.data.params, {
+                    'parent': e.target.value,
+                });
 
                 // change
                 this.change(select);
 
                 // Ajax 联动下拉
-                // let _this = this;
-                wnd_get_json('wnd_sub_term_options', {
-                    'parent': current,
-                    'taxonomy': select.data.taxonomy,
-                }, function(res) {
+                wnd_get_json(jsonget, params, (res) => {
                     let nextSelect = res.data;
                     // 写入或删除 select
                     if (Object.keys(nextSelect).length) {

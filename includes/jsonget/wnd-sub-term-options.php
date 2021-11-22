@@ -29,8 +29,6 @@ class Wnd_Sub_Term_Options extends Wnd_JsonGet {
 			return [];
 		}
 
-		// 为下拉选项设置缺省首选项
-		$taxonomy_object = get_taxonomy($args['taxonomy']);
-		return array_merge(['- ' . $taxonomy_object->labels->name . ' -' => ''], $options);
+		return $options;
 	}
 }
