@@ -121,6 +121,9 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 // 自定义 data-* 属性应直接获取使用，无需渲染 DOM
                 delete _field['data'];
 
+                // 字段关联属性
+                delete _field['linkage'];
+
                 return _field;
             },
             // 富文本编辑器 @link https://tiny.cloud
@@ -201,26 +204,29 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 document.querySelector(selector).click();
             },
 
-            change: function(field) {
+            change: function(field, e) {
                 // 关联字段数据
-                if (field.data.linked) {
-                    let current_value = this.get_value(field);
-                    let jsonget = field.data.jsonget;
-                    let data = field.data.data;
-                    let params = field.data.params;
+                if (field.linkage) {
+                    let current_value = e.target.value; // 此处不能使用 this.get_value() 因为双向绑定值会晚一步
+                    let jsonget = field.linkage.jsonget || false;
+                    let data = field.linkage.data ? (field.linkage.data[current_value] || false) : false;
+                    let params = field.linkage.params || {};
                     params[field.name] = current_value;
-
-                    // 获取关联字段
-                    let linked_field_index = this.index.ids[field.data.linked.id];
-                    let linked_field = this.form.fields[linked_field_index];
-                    let linked_field_props = field.data.linked.props;
 
                     // 向关联字段指定属性赋值
                     if (data) {
-                        linked_field[linked_field_props] = data[current_value];
+                        linkage(this, data);
                     } else if (jsonget) {
                         wnd_get_json(jsonget, params, (res) => {
-                            linked_field[linked_field_props] = res.data;
+                            linkage(this, res.data);
+                        });
+                    }
+
+                    function linkage(_this, data) {
+                        field.linkage.fields.forEach(id => {
+                            let index = _this.index.ids[id];
+                            let field = _this.form.fields[index];
+                            field = Object.assign(field, data);
                         });
                     }
                 }
@@ -587,7 +593,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 }
 
                 /**
-                 * 
                  * Ajax 请求
                  * - 之所以不直接提取从 field 中提取 value 组合对象，因为表单中可能存在动态字段，此类字段增删目前采用的是直接操作dom，无法同步 VUE
                  * - 之所以提取表单数据后，又转化为 json，是为了保持后端数据统一为 json，以确保后期适配 APP、小程序等，与站内请求一致
@@ -679,10 +684,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
             // v-html 不支持执行 JavaScript 需要通过封装好的 wnd_inser_html
             wnd_inner_html(`#${this.form.attrs.id} .form-script`, this.form.script);
         },
-        // 计算
-        computed: {},
-        // 侦听器
-        watch: {},
     });
 
     // 定义 Form 输出模板
@@ -793,7 +794,7 @@ ${get_submit_template(form_json)}
 ${build_label(field)}
 <div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
 <div :class="get_control_class(${field})">
-<input v-bind="parse_input_attr(${field})" :value="html_decode(${field}.value)" @input="${field}.value=html_encode($event.target.value)" @change="change(${field})" @keypress.enter="submit"/>
+<input v-bind="parse_input_attr(${field})" :value="html_decode(${field}.value)" @input="${field}.value=html_encode($event.target.value)" @change="change(${field}, $event)" @keypress.enter="submit"/>
 <span v-if="${field}.icon_left" class="icon is-left"  v-html="${field}.icon_left"></span>
 <span v-if="${field}.icon_right" class="icon is-right" v-html="${field}.icon_right"></span>
 </div>
@@ -810,7 +811,7 @@ ${build_label(field)}
 <div :class="get_control_class(${field})">
 <template v-for="(radio_value, radio_label) in ${field}.options">
 <label :class="${field}.type">
-<input v-bind="parse_input_attr(${field})" :value="radio_value" v-model="${field}.checked" @click="change(${field})">
+<input v-bind="parse_input_attr(${field})" :value="radio_value" v-model="${field}.checked" @click="change(${field}, $event)">
 {{radio_label}}</label>
 </template>
 </div>
@@ -826,7 +827,7 @@ ${build_label(field)}
 <div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
 <div :class="get_control_class(${field})">
 <div class="select" :class="${field}.class + ' ' + form.size">
-<select v-bind="parse_input_attr(${field})" v-model="${field}.selected" @change="change(${field})">
+<select v-bind="parse_input_attr(${field})" v-model="${field}.selected" @change="change(${field}, $event)">
 <option disabled value="">- {{${field}.label}} -</option>
 <option v-for="(value, name) in ${field}.options" :value="value">{{name}}</option>
 </select>
@@ -865,7 +866,7 @@ ${build_label(field)}
         return `
 <div :class="get_field_class(${field})">
 ${build_label(field)}
-<textarea :value="html_decode(${field}.value)" @input="${field}.value = html_encode($event.target.value)" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
+<textarea :value="html_decode(${field}.value)" @input="${field}.value = html_encode($event.target.value)" v-bind="parse_input_attr(${field})" @change="change(${field}, $event)"></textarea>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
     };
@@ -923,7 +924,7 @@ ${build_label(field)}
         return `
 <div :class="get_field_class(${field})">
 ${build_label(field)}
-<textarea :id="form.attrs.id + '-${index}'" style="display:none;border:#f1e2c3 1px solid;" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field})"></textarea>
+<textarea :id="form.attrs.id + '-${index}'" style="display:none;border:#f1e2c3 1px solid;" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field}, $event)"></textarea>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
     };
