@@ -289,7 +289,11 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			'name'     => '_term_' . $taxonomy . '[]',
 			'required' => $required,
 			'help'     => ['text' => $help, 'class' => 'is-success'],
-			'data'     => ['taxonomy' => $taxonomy, 'suggestions' => []],
+			'data'     => [
+				'taxonomy'    => $taxonomy,
+				'suggestions' => [],
+				'max'         => 3,
+			],
 		];
 		$this->add_field($args);
 	}

@@ -1,6 +1,3 @@
-// max tags limit
-var max_tag_num = ('undefined' != typeof max_tag_num) ? max_tag_num : 3;
-
 /**
  *@since 0.9.25
  *Vue 根据 Json 动态渲染表单
@@ -452,44 +449,49 @@ function _wnd_render_form(container, form_json, add_class = '') {
             },
             // 根据当前输入查询已有 tags
             suggest_tags: function(text, index) {
+                let field = this.form.fields[index];
                 let params = {
                     "search": text,
-                    "taxonomy": this.form.fields[index].data.taxonomy
+                    "taxonomy": field.data.taxonomy
                 };
                 axios({
                     'method': 'get',
                     url: wnd_jsonget_api + '/wnd_term_searcher',
                     params: params,
                 }).then(response => {
-                    this.form.fields[index].data.suggestions = response.data.data;
+                    field.data.suggestions = response.data.data;
                 });
             },
             // 回车输入写入数据并清空当前输入
             enter_tag: function(e, index) {
-                if (!e.target.value || this.form.fields[index].value.length >= max_tag_num) {
+                let field = this.form.fields[index];
+                if (!e.target.value || field.value.length >= field.data.max) {
                     return false;
                 }
 
-                this.form.fields[index].value.push(e.target.value.trim());
+                field.value.push(e.target.value.trim());
                 e.target.value = '';
             },
             // 点击建议 Tag 写入数据并清空当前输入
             enter_tag_by_sg: function(e, index) {
-                this.form.fields[index].value.push(e.target.innerText.trim());
-                this.form.fields[index].data.suggestions = '';
+                let field = this.form.fields[index];
+                field.value.push(e.target.innerText.trim());
+                field.data.suggestions = '';
                 let input = e.target.closest('.tags-input').querySelector('[type=text]');
                 input.value = '';
             },
             // 删除 Tag
             delete_tag: function(tag, index) {
-                this.form.fields[index].value = this.form.fields[index].value.filter(function(item) {
+                let field = this.form.fields[index];
+                field.value = field.value.filter(function(item) {
                     return item !== tag;
                 });
             },
             // 点击 Tag 输入字段
             handle_tag_input_click: function($event, index) {
-                if (this.form.fields[index].value.length >= max_tag_num) {
-                    this.form.fields[index].help.text = '最多' + max_tag_num + '个标签';
+                let field = this.form.fields[index];
+                if (field.value.length >= field.data.max) {
+                    field.help.text = '最多' + field.data.max + '个标签';
                 }
             },
             // 下一步 or 上一步
@@ -959,9 +961,9 @@ ${build_label(field)}
 <div class="tags-input columns is-marginless">
 <div class="column is-marginless is-paddingless is-narrow">${tags}</div>
 <div class="autocomplete column is-marginless">
-<input type="text" :readonly="${field}.value.length >= max_tag_num" @input="suggest_tags($event.target.value, ${index})" @keypress.enter="enter_tag($event, ${index})" @click="handle_tag_input_click($event, ${index})"/>
+<input type="text" :readonly="${field}.value.length >= ${field}.data.max" @input="suggest_tags($event.target.value, ${index})" @keypress.enter="enter_tag($event, ${index})" @click="handle_tag_input_click($event, ${index})"/>
 <template v-for="(tag, index) in ${field}.value"><input type="hidden" v-bind="parse_input_attr(${field})" v-model="tag" /></template>
-<ul v-show="${field}.value.length < max_tag_num" class="autocomplete-items">${suggestions}</ul>
+<ul v-show="${field}.value.length < ${field}.data.max" class="autocomplete-items">${suggestions}</ul>
 </div>
 </div>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
