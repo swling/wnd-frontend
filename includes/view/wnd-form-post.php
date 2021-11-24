@@ -178,10 +178,6 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 	// Term 分类单选下拉：动态无限层级联动，单个 select 不支持复选 option，仅支持 JavaScript 渲染
 	public function add_post_term_select($args_or_taxonomy, $label = 'default', $required = true) {
-		if (!wnd_is_rest_request()) {
-			throw new \Exception('[' . __FUNCTION__ . '] Only available in rest request!');
-		}
-
 		$taxonomy        = is_array($args_or_taxonomy) ? $args_or_taxonomy['taxonomy'] : $args_or_taxonomy;
 		$taxonomy_object = get_taxonomy($taxonomy);
 		if (!$taxonomy_object) {

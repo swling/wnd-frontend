@@ -2,32 +2,10 @@
 use Wnd\View\Wnd_Form;
 
 /**
- *仅仅输出表单字段
- *@since 2019.04.28
- */
-$form = new Wnd_Form;
-$form->add_text(
-	[
-		'addon_right' => '<button type="button" class="send-code button is-primary">获取验证码</button>',
-		'name'        => 'test',
-	]
-);
-echo $form->get_input_fields();
-
-/**
- *字段数组数据输出与设置
- *@since 2019.04.28
- */
-$form = new Wnd_Form();
-$form->add_hidden('hidden_key', 'hidden_value');
-// 获取当前表单的组成数据数组（通常用于配合 filter 过滤）
-$form->get_input_values();
-// 直接设置表单的组成数组（通常用于配合 filter 过滤）
-// $form->set_input_values($input_values);
-
-/**
- *常规表单生成
- *@since 2019.03.10
+ * 常规表单生成
+ * - 常规表单在本插件中较少使用
+ * - 本实例主要用于展示各个表单字段的各类属性配置
+ * @since 2019.03.10
  */
 $form = new Wnd_Form();
 $form->add_form_attr('data-test', 'test-value');
@@ -50,9 +28,8 @@ $form->add_text(
 );
 
 /**
- *@since 2020.04.20
- *当前字段可复制追加（需要对应前端js支持）
- *
+ * 当前字段可复制追加（需要对应前端js支持）
+ * @since 2020.04.20
  */
 $form->add_text(
 	[
@@ -149,8 +126,8 @@ $form->add_checkbox(
 $form->add_html('</div></div>');
 
 /**
- *@since 2019.04.08 bulma拓展样式
- *https://wikiki.github.io/form/checkradio/
+ * https://wikiki.github.io/form/checkradio/
+ * @since 2019.04.08 bulma拓展样式
  */
 $form->add_radio(
 	[
@@ -163,8 +140,8 @@ $form->add_radio(
 );
 
 /**
- *@since 2019.04.08 bulma拓展样式
- *@link https://wikiki.github.io/form/switch/
+ * @link https://wikiki.github.io/form/switch/
+ * @since 2019.04.08 bulma拓展样式
  */
 $form->add_checkbox(
 	[
@@ -177,11 +154,10 @@ $form->add_checkbox(
 );
 
 /**
- * @since 2019.12.13
  * 设置表单默认缩略图尺寸：非保存尺寸
  * 该尺寸可被具体图片上传字段中：$args['thumbnail_size']参数覆盖
- *
  * 如果表单中不同图片上传需要设置不同的缩略图，则重复调用该方法即可覆盖之前的设定
+ * @since 2019.12.13
  */
 $form->set_thumbnail_size(100, 100);
 
@@ -229,9 +205,9 @@ $form->add_textarea(
 );
 
 /**
- *@since 2019.08.23
- *新增HTML5 字段
- **/
+ * 新增HTML5 字段
+ * @since 2019.08.23
+ */
 $form->add_color(
 	[
 		'name'  => 'color',
@@ -274,6 +250,4 @@ $form->add_tel(
 $form->set_action('https://www.baidu.com', 'post');
 $form->set_submit_button('Submit', 'is-primary');
 
-$form->build();
-
-echo $form->html;
+echo $form->build();

@@ -547,4 +547,16 @@ if (sub_btn) {
 		$structure['second_color']  = static::$second_color;
 		return $structure;
 	}
+
+	/**
+	 * JavaScript 渲染表单
+	 * @since 0.9.56.1
+	 */
+	public function render(string $element) {
+		$structure = $this->get_structure();
+		$json_var  = 'wnd_form_json_' . str_replace('-', '_', $this->id);
+		$json      = json_encode($structure);
+
+		echo '<script>let ' . $json_var . '= ' . $json . '; wnd_render_form(\'' . $element . '\',  ' . $json_var . ')</script>';
+	}
 }
