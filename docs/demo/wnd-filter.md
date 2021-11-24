@@ -1,4 +1,4 @@
-<?php
+```php
 use Wnd\View\Wnd_Filter;
 
 /**
@@ -104,3 +104,4 @@ $filter->query();
 echo '<div class="box">';
 echo '<div id="filter-container">' . $filter->get_results() . '</div>';
 '</div>';
+```

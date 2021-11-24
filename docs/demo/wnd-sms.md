@@ -1,4 +1,4 @@
-<?php
+```php
 
 use Exception;
 use Wnd\Getway\Wnd_Sms;
@@ -36,3 +36,4 @@ try {
  *
  *注：文字信息可根据情况自行修改，变量顺序及名称请保持一致
  */
+```

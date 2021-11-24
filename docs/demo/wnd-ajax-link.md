@@ -1,4 +1,4 @@
-<?php
+```php
 use Wnd\Action\Wnd_Action_Ajax;
 use Wnd\View\Wnd_Ajax_Link;
 
@@ -127,3 +127,4 @@ function _wndt_set_favorite($post_id) {
  ************************************** JavaScript前端响应规则 *********************************************
  *@see static/js/wnd-frontend.js wnd_ajax_submit()
  */
+```

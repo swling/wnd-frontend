@@ -1,4 +1,4 @@
-<?php
+```php
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -65,3 +65,4 @@ function wnd_demo_form() {
 	echo '<div id="demo"></div>';
 	$form->render('#demo');
 }
+```

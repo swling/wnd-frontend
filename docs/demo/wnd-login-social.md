@@ -1,4 +1,4 @@
-<?php
+```php
 use Wnd\Getway\Wnd_Login_Social;
 
 /**
@@ -24,3 +24,4 @@ try {
 } catch (Exception $e) {
 	wp_die($e->getMessage(), bloginfo('name'));
 }
+```

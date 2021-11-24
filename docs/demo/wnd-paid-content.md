@@ -1,4 +1,4 @@
-<?php
+```php
 /**
  *##############################################################
  *付费阅读
@@ -49,3 +49,4 @@ echo wnd_pay_button($post_id, $with_paid_content = false);
 
 // 在内容页放置按钮
 echo wnd_pay_button($post_id, $with_paid_content = true);
+```

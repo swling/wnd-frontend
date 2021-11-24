@@ -1,4 +1,4 @@
-<?php
+```php
 use Wnd\Getway\Wnd_Payment;
 use Wnd\Model\Wnd_Order;
 use Wnd\Model\Wnd_Recharge;
@@ -97,3 +97,4 @@ $recharge->create(true); // 直接写入余额
 $recharge = new Wnd_Recharge();
 $recharge->set_transaction_id($post_id);
 $recharge->verify();
+```

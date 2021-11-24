@@ -1,4 +1,4 @@
-<?php
+```php
 use Wnd\Model\Wnd_Auth;
 
 ###########################################################
@@ -60,3 +60,4 @@ $auth = Wnd_Auth::get_instance($user);
 $auth->set_type('reset_password');
 $auth->set_auth_code($auth_code);
 $auth->verify();
+```

@@ -1,4 +1,4 @@
-<?php
+```php
 /**
  * ## Option Form
  * - 本实例中：所有表单数据将以数组形式存储在 wndt option数据中
@@ -59,3 +59,4 @@ $form->set_submit_button('保存', 'is-danger');
 
 echo '<div id="demo"></div>';
 $form->render('#demo');
+```

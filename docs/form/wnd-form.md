@@ -1,4 +1,4 @@
-<?php
+```php
 use Wnd\View\Wnd_Form;
 
 /**
@@ -251,3 +251,4 @@ $form->set_action('https://www.baidu.com', 'post');
 $form->set_submit_button('Submit', 'is-primary');
 
 echo $form->build();
+```

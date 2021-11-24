@@ -1,4 +1,4 @@
-<?php
+```php
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -81,3 +81,4 @@ $form->set_route('action', 'wnd_login');
 // ajax 渲染
 echo '<div id="demo"></div>';
 $form->render('#demo');
+```

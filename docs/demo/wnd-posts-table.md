@@ -1,4 +1,4 @@
-<?php
+```php
 use Wnd\View\Wnd_Posts_Table;
 
 $query = new WP_Query(['author' => 1, 'posts_per_page' => 5]);
@@ -50,3 +50,4 @@ $table->add_column(
 $table->build();
 
 echo $table->html;
+```
