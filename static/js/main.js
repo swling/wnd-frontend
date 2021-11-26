@@ -213,6 +213,30 @@ function wnd_render_form(container, form_json, add_class) {
 }
 
 /**
+ * 渲染 QRcode
+ * @since 0.9.56.1
+ **/
+function wnd_qrcode(el, data, size = 250) {
+    el = ('object' == typeof el) ? el : document.querySelector(el);
+    if ('function' != typeof qrcanvas) {
+        let url = static_path + 'js/lib/qrcanvas.min.js' + cache_suffix;
+        wnd_load_script(url, function() {
+            render(el, data, size);
+        });
+    } else {
+        render(el, data, size);
+    }
+
+    function render(el, data, size) {
+        const canvas = qrcanvas.qrcanvas({
+            data: data,
+            size: size
+        });
+        el.appendChild(canvas);
+    }
+}
+
+/**
  * @since 0.9.39
  * 文件直传 OSS，并写入附件记录
  **/

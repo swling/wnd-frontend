@@ -23,6 +23,6 @@ class Native extends PayBuilder {
 			throw new Exception($body['code'] . ':' . $body['message']);
 		}
 
-		return '<img src="' . wnd_generate_qrcode($body['code_url']) . '" width="250" height="250"><h3>微信扫码支付</h3>';
+		return '<div id="wechat-qrcode""></div><script>wnd_qrcode("#wechat-qrcode", "' . $body['code_url'] . '", 250)</script><h3>微信扫码支付</h3>';
 	}
 }

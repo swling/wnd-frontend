@@ -223,15 +223,6 @@ function wnd_get_current_url() {
 }
 
 /**
- * 生成二维码图像
- * @param  string 需要转换的字符信息
- * @return string 二维码图像地址
- */
-function wnd_generate_qrcode(string $string): string {
-	return wnd_get_endpoint_url('wnd_qrcode') . '?string=' . $string;
-}
-
-/**
  * 按more标签，切割内容
  * 字符串处理代码取自wp官方函数：get_the_content
  * @see get_the_content
