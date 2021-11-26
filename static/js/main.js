@@ -218,7 +218,7 @@ function wnd_render_form(container, form_json, add_class) {
  **/
 function wnd_qrcode(el, data, size = 250) {
     el = ('object' == typeof el) ? el : document.querySelector(el);
-    if ('function' != typeof qrcanvas) {
+    if ('undefined' == typeof qrcanvas) {
         let url = static_path + 'js/lib/qrcanvas.min.js' + cache_suffix;
         wnd_load_script(url, function() {
             render(el, data, size);

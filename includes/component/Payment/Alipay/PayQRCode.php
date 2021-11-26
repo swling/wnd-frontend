@@ -44,7 +44,7 @@ class PayQRCode extends PayBuilder {
 			$alipay_app_link = 'alipayqr://platformapi/startapp?saId=10000007&qrcode=' . urldecode($result['qr_code']);
 			return '<script>window.location.href="' . $alipay_app_link . '"</script><a href="' . $alipay_app_link . '" class="button">打开支付宝支付</a>';
 		} else {
-			return '<div id="alipay-qrcode"></div><script>wnd_qrcode("#alipay-qrcode", "' . $result['qr_code'] . '", 250)</script><h3>支付宝扫码支付</h3>';
+			return '<div id="alipay-qrcode" style="height:250px;"></div><script>wnd_qrcode("#alipay-qrcode", "' . $result['qr_code'] . '", 250)</script><h3>支付宝扫码支付</h3>';
 		}
 	}
 
