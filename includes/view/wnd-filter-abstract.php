@@ -556,7 +556,7 @@ abstract class Wnd_Filter_Abstract {
 		}
 
 		if (!$current_user_id) {
-			throw new Exception(__('未登录用户，仅可查询公开信息', 'wnd'));
+			throw new Exception('Only support querying the public status when not logged in. ' . $post_status);
 		} else {
 			$this->set_query_var('author', $current_user_id);
 		}

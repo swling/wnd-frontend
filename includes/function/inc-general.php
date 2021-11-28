@@ -270,6 +270,7 @@ function wnd_error_log(string $msg, string $file_name = 'wnd_error') {
  * @since 0.9.38
  */
 function wnd_error_payment_log(string $msg) {
+	$msg = $msg . ' Request from ' . wnd_get_user_ip();
 	wnd_error_log($msg, 'wnd_payment_error');
 }
 
