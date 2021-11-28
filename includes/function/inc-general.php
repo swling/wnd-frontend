@@ -262,7 +262,7 @@ function wnd_error_log(string $msg, string $file_name = 'wnd_error') {
 		return;
 	}
 
-	@error_log($msg . '@' . wp_date('Y-m-d:h-i-s', time()) . "\n", 3, WP_PLUGIN_DIR . '/' . $file_name . '.log');
+	@error_log($msg . ' @' . wp_date('Y-m-d:h-i-s', time()) . "\n", 3, WP_PLUGIN_DIR . '/' . $file_name . '.log');
 }
 
 /**
@@ -270,7 +270,7 @@ function wnd_error_log(string $msg, string $file_name = 'wnd_error') {
  * @since 0.9.38
  */
 function wnd_error_payment_log(string $msg) {
-	$msg = $msg . ' Request from ' . wnd_get_user_ip();
+	$msg = $msg . ' Request from ' . wnd_get_user_ip() . '. @' . $_SERVER['REQUEST_URI'] ?? '';
 	wnd_error_log($msg, 'wnd_payment_error');
 }
 
@@ -281,7 +281,7 @@ function wnd_error_payment_log(string $msg) {
  */
 set_exception_handler('wnd_exception_handler');
 function wnd_exception_handler($e) {
-	$error = $e->getMessage() . '@' . $e->getFile() . ' line ' . $e->getLine() . '. Request from ' . wnd_get_user_ip();
+	$error = $e->getMessage() . '@' . $e->getFile() . ' line ' . $e->getLine() . '. Request from ' . wnd_get_user_ip() . '. @' . $_SERVER['REQUEST_URI'] ?? '';
 	$html  = '<article class="column message is-danger">';
 	$html .= '<div class="message-header">';
 	$html .= '<p>异常</p>';
