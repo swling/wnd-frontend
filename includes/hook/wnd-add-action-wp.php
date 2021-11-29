@@ -201,7 +201,23 @@ class Wnd_Add_Action_WP {
 			return;
 		}
 
-		Wnd_Validator::validate_captcha($_POST);
+		/**
+		 * 评论验证
+		 * - rest api 提交 @see Controller\Wnd_Controller::add_comment();
+		 * - 常规提交：@see /wp-comments-post.php
+		 *
+		 * 常规提交中缺失异常捕获，故此添加异常捕获
+		 * @since 0.9.56
+		 */
+		try {
+			Wnd_Validator::validate_captcha();
+		} catch (Exception $e) {
+			if (wnd_is_rest_request()) {
+				throw new Exception($e->getMessage());
+			} else {
+				exit($e->getMessage());
+			}
+		}
 	}
 
 	/**
