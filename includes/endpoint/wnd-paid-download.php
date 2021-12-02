@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Endpoint;
 
-use Wnd\Model\Wnd_Order_Product;
+use Wnd\Model\Wnd_Order_Props;
 use Wnd\Utility\Wnd_OSS_Handler;
 
 /**
@@ -39,7 +39,7 @@ class Wnd_Paid_Download extends Wnd_Endpoint_Action {
 	protected function check() {
 		parent::check();
 
-		$this->sku_id         = $this->data[Wnd_Order_Product::$sku_id_key] ?? '';
+		$this->sku_id         = $this->data[Wnd_Order_Props::$sku_id_key] ?? '';
 		$this->post_id        = (int) $this->data['post_id'] ?? 0;
 		$this->user_id        = get_current_user_id();
 		$this->price          = wnd_get_post_price($this->post_id, $this->sku_id);

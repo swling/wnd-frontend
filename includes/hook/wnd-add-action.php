@@ -27,7 +27,7 @@ class Wnd_Add_Action {
 		 * - 如在订单删除还原库存时，如果当前产品包含可释放的订单，将陷入死循环：还原库存=>触发订单释放=>还原库存
 		 * @since 0.9.38
 		 */
-		add_action('wnd_pre_get_product_props', 'Wnd\Model\Wnd_Order_Product::release_pending_orders', 10, 1);
+		add_action('wnd_pre_get_product_props', 'Wnd\Model\Wnd_Order_Props::release_pending_orders', 10, 1);
 	}
 
 	/**

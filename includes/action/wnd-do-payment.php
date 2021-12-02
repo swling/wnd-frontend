@@ -3,7 +3,7 @@ namespace Wnd\Action;
 
 use Exception;
 use Wnd\Getway\Wnd_Payment;
-use Wnd\Model\Wnd_Order_Product;
+use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_SKU;
 use Wnd\Model\Wnd_Transaction;
 
@@ -97,8 +97,8 @@ class Wnd_Do_Payment extends Wnd_Action {
 	private function parse_data() {
 		// 基本数据
 		$this->post_id  = $this->data['post_id'] ?? 0;
-		$this->sku_id   = $this->data[Wnd_Order_Product::$sku_id_key] ?? '';
-		$this->quantity = $this->data[Wnd_Order_Product::$quantity_key] ?? 1;
+		$this->sku_id   = $this->data[Wnd_Order_Props::$sku_id_key] ?? '';
+		$this->quantity = $this->data[Wnd_Order_Props::$quantity_key] ?? 1;
 		$this->type     = $this->data['type'] ?? ($this->post_id ? 'order' : 'recharge');
 
 		// 在线支付数据

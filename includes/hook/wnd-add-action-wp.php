@@ -6,7 +6,7 @@ use Wnd\Getway\Wnd_Captcha;
 use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Mail;
 use Wnd\Model\Wnd_Order_Anonymous;
-use Wnd\Model\Wnd_Order_Product;
+use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\Model\Wnd_User;
 use Wnd\Utility\Wnd_Defender_User;
@@ -117,7 +117,7 @@ class Wnd_Add_Action_WP {
 		 * @since 2019.07.03 删除订单时，删除user_has_paid缓存
 		 */
 		if ('order' == $delete_post->post_type) {
-			Wnd_Order_Product::cancel_order($delete_post);
+			Wnd_Order_Props::cancel_order($delete_post);
 			return;
 		}
 

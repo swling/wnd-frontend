@@ -18,7 +18,7 @@ use Wnd\Model\Wnd_Transaction;
  *
  * @since 0.9.0
  */
-abstract class Wnd_Order_Product {
+abstract class Wnd_Order_Props {
 
 	// SKU KEY
 	private static $sku_key = 'sku';

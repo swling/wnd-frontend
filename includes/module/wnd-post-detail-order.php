@@ -2,7 +2,7 @@
 namespace Wnd\Module;
 
 use Wnd\Getway\Wnd_Payment_Getway;
-use Wnd\Model\Wnd_Order_Product;
+use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_SKU;
 
 /**
@@ -35,14 +35,14 @@ class Wnd_Post_Detail_Order extends Wnd_Module_Html {
 		$orde_detail .= '<li>' . $order->post_name . '</li>';
 		$orde_detail .= '<li>' . Wnd_Payment_Getway::get_payment_gateway($order->ID) . '</li>';
 		$orde_detail .= '<li>Refund_Count : ' . wnd_get_post_meta($order->ID, 'refund_count') . '</li>';
-		$orde_detail .= '<li>User IP : ' . wnd_get_post_meta($order->ID, Wnd_Order_Product::$ip_key) . '</li>';
+		$orde_detail .= '<li>User IP : ' . wnd_get_post_meta($order->ID, Wnd_Order_Props::$ip_key) . '</li>';
 		$orde_detail .= '</ul></div>';
 
 		/**
 		 * 产品属性
 		 * @since 0.8.76
 		 */
-		$sku      = Wnd_Order_Product::get_order_sku($post_id);
+		$sku      = Wnd_Order_Props::get_order_sku($post_id);
 		$sku_keys = Wnd_SKU::get_sku_keys(get_post_type($post_id));
 
 		// 列出产品属性提示信息

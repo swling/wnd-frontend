@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Module;
 
-use Wnd\Model\Wnd_Order_Product;
+use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_SKU;
 use Wnd\View\Wnd_Form_WP;
 
@@ -42,7 +42,7 @@ class Wnd_Order_Form extends Wnd_Module_Form {
 		$form->add_radio(
 			[
 				'label'    => '',
-				'name'     => Wnd_Order_Product::$sku_id_key,
+				'name'     => Wnd_Order_Props::$sku_id_key,
 				'options'  => static::get_sku_options($post_id),
 				'required' => 'required',
 				'class'    => 'is-checkradio is-' . wnd_get_config('primary_color'),
@@ -55,7 +55,7 @@ class Wnd_Order_Form extends Wnd_Module_Form {
 		if ($support_quantity) {
 			$form->add_number(
 				[
-					'name'       => Wnd_Order_Product::$quantity_key,
+					'name'       => Wnd_Order_Props::$quantity_key,
 					'value'      => 1,
 					'step'       => 1,
 					'min'        => 1,

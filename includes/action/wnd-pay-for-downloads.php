@@ -3,7 +3,7 @@ namespace Wnd\Action;
 
 use Exception;
 use Wnd\Endpoint\Wnd_Endpoint_Action;
-use Wnd\Model\Wnd_Order_Product;
+use Wnd\Model\Wnd_Order_Props;
 
 /**
  * 付费阅读下载类
@@ -41,7 +41,7 @@ class Wnd_Pay_For_Downloads extends Wnd_Action {
 		 * 新增 SKU ID
 		 * @since 0.8.76
 		 */
-		$sku_id = $this->data[Wnd_Order_Product::$sku_id_key] ?? '';
+		$sku_id = $this->data[Wnd_Order_Props::$sku_id_key] ?? '';
 		$price  = wnd_get_post_price($post_id, $sku_id);
 		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));

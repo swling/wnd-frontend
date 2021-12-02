@@ -3,7 +3,7 @@ namespace Wnd\Module;
 
 use Wnd\Controller\Wnd_Request;
 use Wnd\Getway\Wnd_Payment_Getway;
-use Wnd\Model\Wnd_Order_Product;
+use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_SKU;
 use Wnd\View\Wnd_Form_WP;
 
@@ -99,8 +99,8 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 		// 将数组元素依次定义为按键名命名的变量
 		$defaults = [
 			'post_id'  => 0,
-			'quantity' => $args[Wnd_Order_Product::$quantity_key] ?? 1,
-			'sku_id'   => $args[Wnd_Order_Product::$sku_id_key] ?? '',
+			'quantity' => $args[Wnd_Order_Props::$quantity_key] ?? 1,
+			'sku_id'   => $args[Wnd_Order_Props::$sku_id_key] ?? '',
 		];
 		unset($args[Wnd_Request::$sign_name]);
 		$args = wp_parse_args($args, $defaults);

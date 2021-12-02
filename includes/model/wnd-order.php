@@ -4,7 +4,7 @@ namespace Wnd\Model;
 use Exception;
 use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Finance;
-use Wnd\Model\Wnd_Order_Product;
+use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_Product;
 use Wnd\Model\Wnd_SKU;
 use WP_Post;
@@ -49,12 +49,12 @@ class Wnd_Order extends Wnd_Transaction {
 		 * 处理订单 SKU 属性
 		 * @since 0.8.76
 		 */
-		$this->sku_id       = $this->props[Wnd_Order_Product::$sku_id_key] ?? '';
+		$this->sku_id       = $this->props[Wnd_Order_Props::$sku_id_key] ?? '';
 		$this->total_amount = $this->calculate_total_amount();
 
 		// 解析订单产品属性
 		if ($this->props) {
-			$this->props = Wnd_Order_Product::parse_order_props($this->object_id, $this->props);
+			$this->props = Wnd_Order_Props::parse_order_props($this->object_id, $this->props);
 		}
 
 		/**
