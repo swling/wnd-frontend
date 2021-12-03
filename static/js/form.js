@@ -5,6 +5,7 @@
 function _wnd_render_form(container, form_json, add_class = '') {
     let general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color', 'date', 'range', 'tel'];
 
+    /******************************************************* Vue 渲染及交互 **********************************************************/
     // 数据 合并数据，并进行深拷贝，以保留原生传参 form_json 不随 data 变动
     let form = JSON.parse(JSON.stringify(form_json));
     let parent = document.querySelector(container);
@@ -15,16 +16,14 @@ function _wnd_render_form(container, form_json, add_class = '') {
     wnd_inner_html(parent, '<div class="vue-app"></div>');
     new Vue({
         el: container + ' .vue-app',
-        template: get_form_template(form),
+        template: build_form_template(form),
         data: {
             form: form,
             index: {
                 'editor': [],
                 'captcha': '',
-                'step': [],
                 'ids': [],
             },
-            step: 0,
             default_data: {}, // 记录表单默认数据，在提交表单时与现有表单合并，以确保所有字段名均包含在提交数据中，从而通过一致性签名
         },
         methods: {
@@ -494,21 +493,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     field.help.text = '最多' + field.data.max + '个标签';
                 }
             },
-            // 下一步 or 上一步
-            nextPrev: function(n) {
-                // 编辑器输入时，移除了高度，此处重设，以实现切换动画
-                funTransitionHeight(parent);
-
-                var x = document.getElementsByClassName('step');
-                x[this.step].style.display = 'none';
-                this.step = this.step + n;
-                if (this.step >= x.length) {
-                    return false;
-                }
-                x[this.step].style.removeProperty('display');
-                // 修正高度
-                funTransitionHeight(parent, trs_time);
-            },
             // FormData 转 object
             formdata_to_object: function(form_data) {
                 let object = {};
@@ -649,11 +633,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     continue;
                 }
 
-                if ('step' == field.type) {
-                    this.index.step.push(field.text);
-                    continue;
-                }
-
                 /**
                  * 联动下拉，追加设置下一级选项默认值，否则子下拉菜单首项为空
                  * 注意由于联动下拉的options 及 selected均采用层级作为键名，因此类型为对象
@@ -688,110 +667,86 @@ function _wnd_render_form(container, form_json, add_class = '') {
         },
     });
 
-    // 定义 Form 输出模板
-    function get_form_template(form_json) {
-        return `
+    /******************************************************* 构造 Vue 模板 **********************************************************/
+    function build_form_template(form_json) {
+        // 定义当前函数，以便于通过字符串变量，动态调用内部函数
+        let _this = build_form_template;
+
+        function build() {
+            return `
 <form v-bind="form.attrs">
 <div v-if="form.before_html" v-html="form.before_html"></div>
 <div class="field" v-show="form.title.title"><h3 v-bind="form.title.attrs" v-html="form.title.title"></h3></div>
 <div v-bind="form.message.attrs" class="message" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>
-${get_fields_template(form_json)}
-${get_submit_template(form_json)}
+${build_fields_template(form_json)}
+${build_submit_template(form_json)}
 <div class="form-script"></div>
 <div v-if="form.after_html" v-html="form.after_html"></div>
 </form>`;
-    }
-
-    function get_submit_template(form_json) {
-        if (form_json.step_index.length > 0) {
-            return `
-</div><!-- 关闭最后一个 step -->
-<div class="navbar is-fixed-bottom">
-<div class="navbar-end container">
-<div class="buttons">
-<button v-show="step > 0" type="button"  class="button" @click="nextPrev(-1)">{{index.step[step - 1] || 'Previous'}}</button>
-<button v-show="step < form.step_index.length - 1"  type="button"  class="button" @click="nextPrev(1)">{{index.step[step + 1]|| 'Next'}}</button>
-<button :disabled="step != form.step_index.length - 1" type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size} is-${form_json.primary_color}" v-text="form.submit.text"></button>
-</div>
-</div>
-</div>`;
-
-        } else {
-            return `
-<div v-if="form.submit.text" class="field is-grouped is-grouped-centered">
-<button type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
-</div>`;
         }
-    }
 
-    // 选择并构建字段模板
-    function get_fields_template(form_json) {
-        let t = '';
-        for (let index = 0; index < form_json.fields.length; index++) {
-            // 需要与定义数据匹配
-            let field = form_json.fields[index];
+        // 选择并构建字段模板
+        function build_fields_template(form_json) {
+            let t = '';
+            for (let index = 0; index < form_json.fields.length; index++) {
+                // 需要与定义数据匹配
+                let field = form_json.fields[index];
+                // 特别注意：此处定义的是 Vue 模板字符串，而非实际数据，Vue 将据此字符串渲染为具体值
+                let field_vn = `form.fields[${index}]`;
 
-            // 特别注意：此处定义的是 Vue 模板字符串，而非实际数据，Vue 将据此字符串渲染为具体值
-            let field_vn = `form.fields[${index}]`;
-
-            if ('step' == field.type) {
-                t += build_step(form_json.step_index, index);
-                continue;
-            }
-
-            // Horizontal
-            if (is_horizontal_field()) {
-                t += `
+                // Horizontal
+                if (is_horizontal_field()) {
+                    t += `
 <div class="field is-horizontal">
 <div class="field-label ${form_json.size}">
 <label v-if="${field_vn}.label" class="label is-hidden-mobile"><span v-if="${field_vn}.required" class="required">*</span>{{${field_vn}.label}}</label>
 </div>
 <div class="field-body">`;
-            }
+                }
 
-            if ('html' == field.type) {
-                t += field.value;
-            } else if (general_input_fields.includes(field.type)) {
-                t += build_text(field_vn, index);
-            } else if ('radio' == field.type || 'checkbox' == field.type) {
-                t += build_radio(field_vn, index);
-            } else if ('hidden' == field.type) {
-                t += '<input v-bind="parse_input_attr(' + field_vn + ')" v-model="' + field_vn + '.value" />';
-            } else if ('textarea' == field.type) {
-                t += build_textarea(field_vn, index);
-            } else if ('editor' == field.type) {
-                t += build_editor(field_vn, index);
-            } else if ('image_upload' == field.type) {
-                t += build_image_upload(field_vn, index);
-            } else if ('file_upload' == field.type) {
-                t += build_file_upload(field_vn, index);
-            } else if ('select' == field.type) {
-                t += build_select(field_vn, index);
-            } else if ('select_linked' == field.type) {
-                t += build_select_linked(field_vn, index);
-            } else if ('tag_input' == field.type) {
-                t += build_tag_input(field_vn, index);
-            }
+                if ('html' == field.type) {
+                    t += field.value;
+                } else if (general_input_fields.includes(field.type)) {
+                    t += _this.build_text(field_vn, index);
+                } else if ('radio' == field.type || 'checkbox' == field.type) {
+                    t += _this.build_radio(field_vn, index);
+                } else if ('hidden' == field.type) {
+                    t += '<input v-bind="parse_input_attr(' + field_vn + ')" v-model="' + field_vn + '.value" />';
+                } else {
+                    let method = 'build_' + field.type;
+                    t += _this[method](field_vn, index);
+                }
 
-            // Horizontal
-            if (is_horizontal_field()) {
-                t += `</div></div>`
-            }
+                // Horizontal
+                if (is_horizontal_field()) {
+                    t += `</div></div>`
+                }
 
-            function is_horizontal_field() {
-                return form_json.attrs['is-horizontal'] && !['html', 'hidden', 'editor'].includes(field.type) && field.name != '_post_post_title';
+                function is_horizontal_field() {
+                    return form_json.attrs['is-horizontal'] && !['html', 'hidden', 'editor'].includes(field.type) && field.name != '_post_post_title';
+                }
             }
+            return t;
         }
-        return t;
-    }
 
-    /** 
-     * 常规 input 组件：
-     * 采用如下方法替换 v-model 旨在实现 HTML 转义呈现 textare 同理
-     * :value="html_decode(${field}.value)" @input="${field}.value = html_encode($event.target.value)"
-     */
-    function build_text(field, index) {
-        return `
+        function build_submit_template(form_json) {
+            return `
+<div v-if="form.submit.text" class="field is-grouped is-grouped-centered">
+<button type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
+</div>`;
+        }
+
+        build_label = (field, index) => {
+            return `<label v-if="!form.attrs['is-horizontal'] && ${field}.label" class="label" :class="form.size"><span v-if="${field}.required" class="required">*</span>{{${field}.label}}</label>`;
+        }
+
+        /** 
+         * 常规 input 组件：
+         * 采用如下方法替换 v-model 旨在实现 HTML 转义呈现 textare 同理
+         * :value="html_decode(${field}.value)" @input="${field}.value = html_encode($event.target.value)"
+         */
+        _this.build_text = (field, index) => {
+            return `
 <div :class="get_field_class(${field})">
 ${build_label(field)}
 <div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
@@ -803,11 +758,11 @@ ${build_label(field)}
 <div v-if="${field}.addon_right" class="control" v-html="${field}.addon_right"></div>
 <p v-if="!has_addon(${field})" v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
-    }
+        }
 
-    // Radio / checkbox 组件
-    function build_radio(field, index) {
-        return `
+        // Radio / checkbox 组件
+        _this.build_radio = (field, index) => {
+            return `
 <div :class="get_field_class(${field})">
 ${build_label(field)}
 <div :class="get_control_class(${field})">
@@ -819,11 +774,11 @@ ${build_label(field)}
 </div>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
-    }
+        }
 
-    // 下拉 Select 组件
-    function build_select(field, index) {
-        return `
+        // 下拉 Select 组件
+        _this.build_select = (field, index) => {
+            return `
 <div :class="get_field_class(${field})">
 ${build_label(field)}
 <div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
@@ -840,11 +795,11 @@ ${build_label(field)}
 <div v-if="${field}.addon_right" class="control" v-html="${field}.addon_right"></div>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
-    }
+        }
 
-    // 动态联动多级下拉 Select 组件：options 为二维数组，selected 为数组依次对应 options 中的子数组。每个 select 仍为单选
-    function build_select_linked(field, index) {
-        return `
+        // 动态联动多级下拉 Select 组件：options 为二维数组，selected 为数组依次对应 options 中的子数组。每个 select 仍为单选
+        _this.build_select_linked = (field, index) => {
+            return `
 <div :class="get_field_class(${field})">
 ${build_label(field)}
 <div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
@@ -861,21 +816,21 @@ ${build_label(field)}
 <div v-if="${field}.addon_right" class="control" v-html="${field}.addon_right"></div>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
-    }
+        }
 
-    // Textarea 组件
-    function build_textarea(field, index) {
-        return `
+        // Textarea 组件
+        _this.build_textarea = (field, index) => {
+            return `
 <div :class="get_field_class(${field})">
 ${build_label(field)}
 <textarea :value="html_decode(${field}.value)" @input="${field}.value = html_encode($event.target.value)" v-bind="parse_input_attr(${field})" @change="change(${field}, $event)"></textarea>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
-    };
+        };
 
-    // 文件上传字段
-    function build_file_upload(field, index) {
-        return `
+        // 文件上传字段
+        _this.build_file_upload = (field, index) => {
+            return `
 <div :id="get_field_id(${field},${index})" class="field" :class="${field}.class">
 <div v-if="${field}.complete" class="field">
 <progress class="progress is-primary" :value="${field}.complete" max="100"></progress>
@@ -901,11 +856,11 @@ ${build_label(field)}
 </div>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class" style="margin-top:-1rem;">{{${field}.help.text}}</p>
 </div>`;
-    }
+        }
 
-    // 单个图像上传字段
-    function build_image_upload(field, index) {
-        return `
+        // 单个图像上传字段
+        _this.build_image_upload = (field, index) => {
+            return `
 <div :id="get_field_id(${field},${index})" class="field" :class="${field}.class">
 <div v-if="${field}.complete">
 <progress class="progress is-primary" :value="${field}.complete" max="100"></progress>
@@ -919,23 +874,23 @@ ${build_label(field)}
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 <div class="file"><input type="file" class="file file-input" accept="image/*" :name="${field}.name" @change="upload($event,${field})"></div>
 </div>`;
-    }
+        }
 
-    // 富文本编辑器
-    function build_editor(field, index) {
-        return `
+        // 富文本编辑器
+        _this.build_editor = (field, index) => {
+            return `
 <div :class="get_field_class(${field})">
 ${build_label(field)}
 <textarea :id="form.attrs.id + '-${index}'" style="display:none;border:#f1e2c3 1px solid;" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field}, $event)"></textarea>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
-    };
+        };
 
-    // 富文本编辑器
-    function build_tag_input(field, index) {
-        // 按需载入 CSS
-        let style = document.createElement('style');
-        style.innerHTML = `
+        // 富文本编辑器
+        _this.build_tag_input = (field, index) => {
+            // 按需载入 CSS
+            let style = document.createElement('style');
+            style.innerHTML = `
 .tags-input{width:100%;border-bottom:1px solid #ccc}
 .tags-input input{border:none;width:100%;font-size:1rem;position:absolute;top:0;bottom:0;height:100%;}
 .tags-input input:focus{border:none;box-shadow:none;outline:0;}
@@ -944,18 +899,18 @@ ${build_label(field)}
 .tags-input .autocomplete-items{position:absolute;box-shadow:0 2px 10px #999;border-bottom:none;border-top:none;z-index:99;top:100%;left:0}
 .tags-input .autocomplete-items li{padding:10px;cursor:pointer;background-color:#fff;border-bottom:1px solid #eee}
 .tags-input .autocomplete-items li:hover{background-color:#eee}`;
-        document.head.appendChild(style);
+            document.head.appendChild(style);
 
-        let tags = `
+            let tags = `
 <template v-for="(tag, index) in ${field}.value">
 <span class="tag is-medium is-light is-danger">{{tag}}<span class="delete is-small" @click="delete_tag(tag, ${index})"></span></span>
 </template>`;
-        let suggestions = `
+            let suggestions = `
 <template v-for="(tag, index) in ${field}.data.suggestions">
 <li @click="enter_tag_by_sg($event, ${index})">{{tag}}</li>
 </template>`;
 
-        return `
+            return `
 <div :class="get_field_class(${field})">
 ${build_label(field)}
 <div class="tags-input columns is-marginless">
@@ -968,20 +923,10 @@ ${build_label(field)}
 </div>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
-    };
+        };
 
-    function build_label(field) {
-        return `<label v-if="!form.attrs['is-horizontal'] && ${field}.label" class="label" :class="form.size"><span v-if="${field}.required" class="required">*</span>{{${field}.label}}</label>`;
+        return build();
     }
-
-    // Step
-    function build_step(step_index, index) {
-        if (index == step_index[0]) {
-            return `<div class="step">`;
-        } else {
-            return `</div><div class="step" style="display:none">`;
-        }
-    };
 }
 
 /**
