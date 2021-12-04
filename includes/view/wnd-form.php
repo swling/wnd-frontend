@@ -64,8 +64,8 @@ class Wnd_Form {
 		'value'       => '',
 		'label'       => '',
 		'options'     => [], // value of select/radio. Example: [label=>value]
-		'checked'     => [], // checked value of select/radio; bool of checkbox
-		'selected'    => [], // selected value if select
+		'checked'     => '', // checked value of select/radio; bool of checkbox
+		'selected'    => '', // selected value if select
 		'required'    => false,
 		'disabled'    => false,
 		'autofocus'   => false,
