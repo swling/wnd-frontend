@@ -73,18 +73,18 @@ function _wnd_render_form(container, form_json, add_class = '') {
              * 变量如果不为0，null，undefined，false，都会被处理为true。只要变量有非0的值或是某个对象，数组，字符串，都会认为true
              **/
             get_value: function(field) {
-                let value = '';
+                let value = ['checkbox', 'radio'].includes(field.type) ? [] : '';
                 let checked_or_selected = field.checked || field.selected;
 
                 if (field.value) {
                     value = field.value;
                 } else if (checked_or_selected) {
-                    if ('object' != typeof(checked_or_selected) || checked_or_selected.length || Object.keys(checked_or_selected).length) {
+                    if ('object' != typeof checked_or_selected || checked_or_selected.length || Object.keys(checked_or_selected).length) {
                         value = field.checked || field.selected;
                     }
                 }
 
-                value = 'object' == typeof(value) ? Object.values(value) : value;
+                value = ('object' == typeof value) ? Object.values(value) : value;
                 return value;
             },
             parse_input_attr: function(field) {
@@ -198,6 +198,19 @@ function _wnd_render_form(container, form_json, add_class = '') {
 
             click_target(selector) {
                 document.querySelector(selector).click();
+            },
+
+            // 字段是否应该设置disabled属性
+            should_be_disabled: function(field, value) {
+                // checkbox 选项数量限制
+                if ('checkbox' == field.type && field.max > 0) {
+                    let data = field.checked;
+                    if (data.length >= field.max && !data.includes(value)) {
+                        return true;
+                    }
+                }
+
+                return false;
             },
 
             change: function(field, e) {
@@ -768,7 +781,7 @@ ${build_label(field)}
 <div :class="get_control_class(${field})">
 <template v-for="(radio_value, radio_label) in ${field}.options">
 <label :class="${field}.type">
-<input v-bind="parse_input_attr(${field})" :value="radio_value" v-model="${field}.checked" @click="change(${field}, $event)">
+<input v-bind="parse_input_attr(${field})" :value="radio_value" v-model="${field}.checked" @change="change(${field}, $event)" :disabled="should_be_disabled(${field}, radio_value)">
 {{radio_label}}</label>
 </template>
 </div>
