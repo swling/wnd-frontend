@@ -3,7 +3,7 @@
  * Plugin Name: Wnd-Frontend
  * Plugin URI: https://github.com/swling/wnd-frontend
  * Description: Wnd-Frontend 是一套基于 ajax 交互逻辑的 WordPress 前端基础框架。商业用途需购买授权。<a href="https://github.com/swling/wnd-frontend/releases">更新日志</a>
- * Version: 0.9.56.3
+ * Version: 0.9.56.5
  * Author: swling
  * Author URI: https://wndwp.com
  * Requires PHP: 7.3
@@ -27,7 +27,7 @@ use Wnd\Model\Wnd_Admin;
 use Wnd\Model\Wnd_Init;
 
 // 版本
-define('WND_VER', '0.9.56.3');
+define('WND_VER', '0.9.56.5');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -103,7 +103,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 			wp_enqueue_script('wnd-comment', $static_path . 'js/comment.min.js', ['axios', 'comment-reply'], WND_VER);
 		}
 	} elseif ('jsdeliver' == $static_host) {
-		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css', [], null);
+		wp_enqueue_style('bulma', '//cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css', [], null);
 		wp_enqueue_style('font-awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css', [], null);
 		wp_enqueue_script('axios', '//cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js', [], null);
 		wp_enqueue_script('vue', '//cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js', [], null);
