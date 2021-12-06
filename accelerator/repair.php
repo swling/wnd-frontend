@@ -95,6 +95,10 @@ remove_filter('cron_request', 'wp_cron_conditionally_prevent_sslverify', 9999);
 // HTTPS migration.
 remove_action('update_option_home', 'wp_update_https_migration_required', 10, 2);
 
+function wp_is_using_https() {
+	return 'https' === wp_parse_url(home_url(), PHP_URL_SCHEME);
+}
+
 // 后端 WP Site Heath 会调用（插件保留了 WP Site Heath 相关功能）
 function wp_update_https_detection_errors() {}
 
