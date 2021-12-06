@@ -26,9 +26,6 @@ class Wnd_language {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
-		// 加载语言包
-		add_action('plugins_loaded', [__CLASS__, 'load_languages']);
-
 		// 根据$_REQUEST[WND_LANG_KEY]切换语言
 		add_filter('locale', [__CLASS__, 'filter_locale']);
 
@@ -46,15 +43,6 @@ class Wnd_language {
 
 		// 在用户完成注册时，将当前站点语言记录到用户字段
 		add_action('user_register', [__CLASS__, 'action_on_user_register'], 99, 1);
-	}
-
-	/**
-	 * 语言包
-	 *
-	 * @since 2020.01.14
-	 */
-	public static function load_languages() {
-		load_plugin_textdomain('wnd', false, 'wnd-frontend' . DIRECTORY_SEPARATOR . 'languages');
 	}
 
 	/**

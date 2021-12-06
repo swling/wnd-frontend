@@ -43,8 +43,10 @@ class Wnd_Init {
 		// 优化
 		Wnd_Optimization::get_instance();
 
-		// 语言
-		Wnd_language::get_instance();
+		// 语言切换
+		if ($_REQUEST[WND_LANG_KEY] ?? false) {
+			Wnd_language::get_instance();
+		}
 
 		// OSS @since 0.9.29 需要用到自定义函数，故此必须在进入文件之后
 		if (wnd_get_config('enable_oss')) {

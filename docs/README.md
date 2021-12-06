@@ -131,16 +131,6 @@ post_status => 未读：pengding 已读: private
 - 自定义置顶文章：wnd_sticky_posts
 - 置顶文章数据格式：二维数组 wnd_sticky_posts[$post_type]['post'.$post_id]
 
-# 多语言设置
-```php
-/**
-*@since 2020.01.14
-*在当前任意链接中新增 ?lang=xx 参数即可切换至对应语言
-*注意：需要对应语言包支持；暂只支持中英双语
-*/
-$_GET['lang']
-```
-
 # 统计浏览量
 ```JavaScript
 <JavaScript>
