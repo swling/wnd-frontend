@@ -4,6 +4,7 @@ namespace Wnd\Model;
 use Wnd\Admin\Wnd_Menus;
 use Wnd\Controller\Wnd_Controller;
 use Wnd\Hook\Wnd_Hook;
+use Wnd\Model\Wnd_Admin;
 use Wnd\Model\Wnd_DB;
 use Wnd\Utility\Wnd_CDN;
 use Wnd\Utility\Wnd_JWT_Handler;
@@ -21,6 +22,9 @@ class Wnd_Init {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
+		// function
+		static::load_function_file();
+
 		// Init
 		static::init();
 
@@ -42,15 +46,6 @@ class Wnd_Init {
 		// 语言
 		Wnd_language::get_instance();
 
-		// function
-		require WND_PATH . '/includes/function/inc-meta.php'; //数组形式储存 meta、option
-		require WND_PATH . '/includes/function/inc-general.php'; //通用函数定义
-		require WND_PATH . '/includes/function/inc-post.php'; //post相关自定义函数
-		require WND_PATH . '/includes/function/inc-user.php'; //user相关自定义函数
-		require WND_PATH . '/includes/function/inc-media.php'; //媒体文件处理函数
-		require WND_PATH . '/includes/function/inc-finance.php'; //财务
-		require WND_PATH . '/includes/function/tpl-general.php'; //通用模板
-
 		// OSS @since 0.9.29 需要用到自定义函数，故此必须在进入文件之后
 		if (wnd_get_config('enable_oss')) {
 			Wnd_OSS_Handler::get_instance();
@@ -64,15 +59,62 @@ class Wnd_Init {
 		// 管理后台
 		if (is_admin()) {
 			// 配置菜单
-			new Wnd_Menus;
+			new Wnd_Menus();
 
 			// 检查更新
-			new Wnd_Upgrader_Plugin_This;
+			new Wnd_Upgrader_Plugin_This();
 		}
+	}
+
+	// 加载函数封装文件
+	private static function load_function_file() {
+		require WND_PATH . '/includes/function/inc-general.php'; //通用函数定义
+		require WND_PATH . '/includes/function/inc-meta.php'; //数组形式储存 meta、option
+		require WND_PATH . '/includes/function/inc-post.php'; //post相关自定义函数
+		require WND_PATH . '/includes/function/inc-user.php'; //user相关自定义函数
+		require WND_PATH . '/includes/function/inc-media.php'; //媒体文件处理函数
+		require WND_PATH . '/includes/function/inc-finance.php'; //财务
+		require WND_PATH . '/includes/function/tpl-general.php'; //通用模板
 	}
 
 	// Init
 	private static function init() {
+		/**
+		 * 插件安装卸载选项
+		 * @since 初始化
+		 */
+		register_activation_hook(WND_PLUGIN_FILE, 'Wnd\Model\Wnd_Admin::install');
+		register_deactivation_hook(WND_PLUGIN_FILE, 'Wnd\Model\Wnd_Admin::uninstall');
+
+		/**
+		 * 插件更新触发升级操作
+		 * @since 0.9.2
+		 */
+		add_action('upgrader_process_complete', function ($upgrader_object, $options) {
+			if ($options['action'] != 'update') {
+				return false;
+			}
+
+			if ($options['type'] != 'plugin') {
+				return false;
+			}
+
+			$current_plugin_path_name = plugin_basename(WND_PLUGIN_FILE);
+			foreach ($options['plugins'] as $each_plugin) {
+				if ($each_plugin == $current_plugin_path_name) {
+					Wnd_Admin::upgrade();
+					break;
+				}
+			}
+		}, 10, 2);
+
+		/**
+		 * 访问后台时候，触发执行升级及清理动作
+		 * @since 2019.04.16
+		 */
+		add_action('admin_init', 'Wnd\Model\Wnd_Admin::upgrade');
+		add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
+
 		// 自定义文章类型及状态
 		add_action('init', [__CLASS__, 'register_post_type']);
 		add_action('init', [__CLASS__, 'register_post_status']);

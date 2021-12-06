@@ -23,7 +23,6 @@
  * @since 2019.1.8 ：GitHub开通免费私人仓库，正式托管于GitHub
  */
 
-use Wnd\Model\Wnd_Admin;
 use Wnd\Model\Wnd_Init;
 
 // 版本
@@ -41,47 +40,14 @@ define('WND_DIR_NAME', basename(__DIR__));
 // 定义语言参数
 define('WND_LANG_KEY', 'lang');
 
+// 定义当前插件入口文件名
+define('WND_PLUGIN_FILE', __FILE__);
+
 // 自动加载器
 require WND_PATH . DIRECTORY_SEPARATOR . 'wnd-autoloader.php';
 
 // 初始化
 Wnd_Init::get_instance();
-
-/**
- * 插件安装卸载选项
- * @since 初始化
- */
-register_activation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::install');
-register_deactivation_hook(__FILE__, 'Wnd\Model\Wnd_Admin::uninstall');
-
-/**
- * 插件更新触发升级操作
- * @since 0.9.2
- */
-add_action('upgrader_process_complete', function ($upgrader_object, $options) {
-	if ($options['action'] != 'update') {
-		return false;
-	}
-
-	if ($options['type'] != 'plugin') {
-		return false;
-	}
-
-	$current_plugin_path_name = plugin_basename(__FILE__);
-	foreach ($options['plugins'] as $each_plugin) {
-		if ($each_plugin == $current_plugin_path_name) {
-			Wnd_Admin::upgrade();
-			break;
-		}
-	}
-}, 10, 2);
-
-/**
- * 访问后台时候，触发执行升级及清理动作
- * @since 2019.04.16
- */
-add_action('admin_init', 'Wnd\Model\Wnd_Admin::upgrade');
-add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
 
 /**
  * 加载静态资源
@@ -152,6 +118,5 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 			'view'                => __('查看', 'wnd'),
 		],
 	];
-
 	wp_localize_script('wnd-main', 'wnd', $wnd_data);
 }
