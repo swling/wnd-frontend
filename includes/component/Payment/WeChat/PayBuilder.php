@@ -16,6 +16,7 @@ abstract class PayBuilder implements PaymentBuilder {
 	protected $outTradeNo;
 	protected $subject;
 	protected $notifyUrl;
+	protected $payer;
 
 	protected $gateWay    = '';
 	protected $method     = 'POST';
@@ -42,6 +43,11 @@ abstract class PayBuilder implements PaymentBuilder {
 
 	public function setNotifyUrl(string $notifyUrl) {
 		$this->notifyUrl = $notifyUrl;
+	}
+
+	// 支付者：JSAPI 支付专有
+	public function setPayer(array $payer) {
+		$this->payer = $payer;
 	}
 
 	/**
@@ -71,6 +77,11 @@ abstract class PayBuilder implements PaymentBuilder {
 				'payer_client_ip' => static::getClientIP(), //调用微信支付API的机器IP
 			],
 		];
+
+		// JSAPI 专有支付参数
+		if ($this->payer) {
+			$reqParams['payer'] = $this->payer;
+		}
 
 		$this->ReqHeaders = [
 			'Authorization' => $this->signature->getAuthStr($this->gateWay, $this->method, $reqParams),

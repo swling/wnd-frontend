@@ -16,11 +16,11 @@ class H5 extends PayBuilder {
 	 * @return string 返回构造支付请求的Html，如自动提交的表单或支付二维码
 	 */
 	public function buildInterface(): string{
-		$result = static::excuteRequest();
+		$result = $this->excuteRequest();
 		$body   = json_decode($result['body'], true);
 
 		if ($result['headers']['http_code'] != 200) {
-			throw new Exception($body['code']);
+			throw new Exception($body['code'] . ':' . $body['message']);
 		}
 
 		$payUrl = $body['h5_url'];
