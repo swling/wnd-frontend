@@ -8,6 +8,7 @@ use Wnd\Component\Requests\Requests;
  * @link https://pay.weixin.qq.com/wiki/doc/apiv3/wechatpay/wechatpay4_1.shtml
  */
 class Verify {
+
 	const KEY_LENGTH_BYTE      = 32;
 	const AUTH_TAG_LENGTH_BYTE = 16;
 
@@ -15,7 +16,7 @@ class Verify {
 	private $weChatCertificates      = [];
 	private $curretWeChatCertificate = '';
 
-	public function __construct($mchID, $apiKey, $serialNumber, $privateKey) {
+	public function __construct(string $mchID, string $apiKey, string $serialNumber, string $privateKey) {
 		if (strlen($apiKey) != static::KEY_LENGTH_BYTE) {
 			throw new \InvalidArgumentException('无效的ApiV3Key，长度应为32个字节');
 		}
@@ -65,7 +66,7 @@ class Verify {
 		return $this->verify($message, $sign);
 	}
 
-	private function getHeader($key = '') {
+	private function getHeader(string $key = '') {
 		$headers = getallheaders();
 		if ($key) {
 			return $headers[$key] ?? '';
@@ -77,7 +78,7 @@ class Verify {
 	 * 验签
 	 *
 	 */
-	private function verify($message, $signature): bool{
+	private function verify(string $message, string $signature): bool{
 		$publicKey = openssl_get_publickey($this->curretWeChatCertificate);
 		if (!$publicKey) {
 			return false;
@@ -198,7 +199,7 @@ class Verify {
 	 * @param  string      $ciphertext     AES GCM cipher text
 	 * @return string|bool Decrypted string on success or FALSE on failure
 	 */
-	private function decryptToString($ciphertext, $associatedData, $nonceStr) {
+	private function decryptToString(string $ciphertext, string $associatedData, string $nonceStr) {
 		$ciphertext = \base64_decode($ciphertext);
 		if (strlen($ciphertext) <= static::AUTH_TAG_LENGTH_BYTE) {
 			return false;
