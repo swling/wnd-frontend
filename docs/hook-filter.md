@@ -400,3 +400,16 @@ add_filter('wnd_action_defend_args', function (array $args, Wnd\Action\Wnd_Actio
 }, 10, 2);
 
 ```
+
+## Endpoint\Wnd_Issue_Action_Sign
+签发 Action Sign 时，需要验证当前的签名请求 keys 数组是否包含在允许的范围内。处于安全考虑，默认只允许最基本的 keys。
+通过本过滤器，可在实际应用中，根据场景需要拓展或禁用默认 keys 允许范围。
+
+```php
+/**
+ * 设置过滤器，允许在实际应用中拓展
+ * @see Endpoint\Wnd_Issue_Action_Sign
+ * @since 0.9.56.6
+ */
+$allowed_keys = apply_filters('wnd_allowed_sign_keys', $allowed_keys, $this->sign_type, $this->sign_keys);
+```

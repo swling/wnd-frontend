@@ -57,13 +57,6 @@ do_action('wnd_login_failed', $user);
  *@param object WP_User
  */
 do_action('wnd_login', $user);
-
-/**
- * @since 0.9.50
- * 第三方应用快速同步用户资料到本应用
- * @see Endpoint\Wnd_Sync_Profile
- */
-do_action('wnd_sync_profile', $user_id, $this->data);
 ```
 
 ## 交易及支付
