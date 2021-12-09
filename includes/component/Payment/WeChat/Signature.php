@@ -72,7 +72,7 @@ class Signature {
 	 * 计算签名值
 	 * @link https://pay.weixin.qq.com/wiki/doc/apiv3/wechatpay/wechatpay4_0.shtml#part-2
 	 */
-	private function sign(string $message): string {
+	public function sign(string $message): string {
 		if (!in_array('sha256WithRSAEncryption', openssl_get_md_methods(true))) {
 			throw new \RuntimeException('当前PHP环境不支持SHA256withRSA');
 		}

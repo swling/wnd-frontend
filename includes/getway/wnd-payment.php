@@ -23,6 +23,9 @@ abstract class Wnd_Payment {
 	// 订单标题
 	protected $subject;
 
+	// App ID：站外支付可能需要设置此属性（如微信小程序、公众号支付）@since 0.9.56.6
+	protected $app_id;
+
 	// 站点前缀，用于区分订单号
 	protected static $site_prefix;
 
@@ -32,7 +35,7 @@ abstract class Wnd_Payment {
 	/**
 	 * 根据支付平台，并自动选择子类处理当前业务
 	 */
-	public static function get_instance(Wnd_Transaction $transaction): Wnd_Payment {
+	public static function get_instance(Wnd_Transaction $transaction, string $app_id = ''): Wnd_Payment {
 		static::$site_name   = get_bloginfo('name');
 		static::$site_prefix = static::build_site_prefix();
 		$payment_gateway     = Wnd_Payment_Getway::get_payment_gateway($transaction->get_transaction_id());
@@ -44,22 +47,22 @@ abstract class Wnd_Payment {
 		$class_name = '\Wnd\Getway\Payment\\' . $payment_gateway;
 		$class_name = apply_filters('wnd_payment_handler', $class_name, $payment_gateway);
 		if (class_exists($class_name)) {
-			return new $class_name($transaction);
+			return new $class_name($transaction, $app_id);
 		} else {
 			throw new Exception(__('未定义支付接口处理类', 'wnd') . ':' . $class_name);
 		}
 	}
 
 	/**
-	 * 构造函数
-	 * @param string          支付网关
-	 * @param Wnd_Transaction 设定站内交易对象
+	 * @param $Wnd_Transaction Wnd_Transaction 设定站内交易对象
+	 * @param $app_id          string          设置当前付款的 App ID. 如微信小程序、公众号支付，通常与站内微信支付 AppID 不同. @since 0.9.56.6
 	 */
-	public function __construct(Wnd_Transaction $transaction) {
+	public function __construct(Wnd_Transaction $transaction, string $app_id = '') {
 		$this->transaction  = $transaction;
 		$this->total_amount = $this->transaction->get_total_amount();
 		$this->out_trade_no = $this->get_out_trade_no();
 		$this->subject      = $this->get_subject();
+		$this->app_id       = $app_id;
 	}
 
 	/**

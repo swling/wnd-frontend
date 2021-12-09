@@ -11,6 +11,7 @@ use Wnd\Component\Requests\Requests;
 abstract class PayBuilder implements PaymentBuilder {
 	protected $mchID;
 	protected $appID;
+	protected $signature;
 
 	protected $totalFee;
 	protected $outTradeNo;
@@ -111,7 +112,6 @@ abstract class PayBuilder implements PaymentBuilder {
 
 	/**
 	 * 获取客户端 ip 地址
-	 *
 	 */
 	protected static function getClientIP(): string{
 		$ip = '';

@@ -22,6 +22,7 @@ class Wnd_Do_Payment extends Wnd_Action {
 	private $total_amount;
 	private $payment_gateway;
 	private $subject;
+	private $app_id;
 
 	protected function execute(): array{
 		// 定义是否为站内交易
@@ -48,10 +49,18 @@ class Wnd_Do_Payment extends Wnd_Action {
 
 		/**
 		 * 第三方支付平台
+		 * - 设定 App ID 时，应该直接返回json转换后的数组
+		 * - 站内 web 支付，响应对应的 HTML 数组
 		 * @since 0.9.32
 		 */
-		$payment = Wnd_Payment::get_instance($transaction);
-		return ['status' => 7, 'data' => '<div class="has-text-centered">' . $payment->build_interface() . '</div>'];
+		$payment = Wnd_Payment::get_instance($transaction, $this->app_id);
+		$result  = $payment->build_interface();
+		if ($this->app_id) {
+			$result = json_decode($result, true) ?: [];
+		} else {
+			$result = ['status' => 7, 'data' => '<div class="has-text-centered">' . $payment->build_interface() . '</div>'];
+		}
+		return $result;
 	}
 
 	/**
@@ -107,6 +116,12 @@ class Wnd_Do_Payment extends Wnd_Action {
 		$this->total_amount    = (float) ($custom_total_amount ?: $total_amount);
 		$this->payment_gateway = $this->data['payment_gateway'] ?? '';
 		$this->subject         = $this->data['subject'] ?? '';
+
+		/**
+		 * 设置当前付款的 App ID. 如微信小程序、公众号支付，通常与站内微信支付 AppID 不同.
+		 * @since 0.9.56.6
+		 */
+		$this->app_id = $this->data['app_id'] ?? '';
 	}
 
 	/**
