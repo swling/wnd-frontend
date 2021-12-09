@@ -17,7 +17,7 @@ class WeChat_JSAPI extends WeChat_Native {
 	 */
 	public function build_interface(): string {
 		// JSAPI 支付环境为微信内部：公众号、小程序等，对应 appid 应从微信中传参而来
-		if ($this->app_id) {
+		if (!$this->app_id) {
 			throw new Exception('JSAPI 支付必须指定 app_id');
 		}
 
