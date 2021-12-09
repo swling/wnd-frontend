@@ -10,8 +10,8 @@ use Wnd\View\Wnd_Form_Option;
 class Wnd_Menu_CDN extends Wnd_Menus {
 
 	// 子菜单基本属性
-	protected $page_title = 'CDN';
-	protected $menu_title = 'CDN';
+	protected $page_title = 'CDN 配置';
+	protected $menu_title = 'CDN 配置';
 	protected $menu_slug  = 'wnd-frontend-cdn';
 
 	/**
