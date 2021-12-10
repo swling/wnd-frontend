@@ -143,13 +143,17 @@ class Wnd_Controller {
 	/**
 	 * 解析前端发送的类标识，返回包含完整命名空间的真实类名
 	 *
-	 * 因拓展插件不具唯一性，因此加载插件中的拓展类需要添加插件名称
+	 * ## 插件内置
+	 * parse_class('Wnd_Demo', 'Module') 		=> Wnd\Module\Wnd_Demo;
+	 * parse_class('Sub\Wnd_Demo', 'Module') 	=> Wnd\Module\Sub\Wnd_Demo;
+	 *
+	 * ## 主题
+	 * parse_class('Wndt_Demo', 'Module') 		=> Wndt\Module\Wndt_Demo;
+	 * parse_class('Sub\Wndt_Demo', 'Module') 	=> Wndt\Module\Sub\Wndt_Demo;
+	 *
+	 * ## 拓展插件
 	 * parse_class('Plugin/PluginName/Wndt_Demo', 'Module') 	=> Wnd_Plugin\PluginName\Module\Wndt_Demo;
 	 * parse_class('Plugin/PluginName/Sub/Wndt_Demo', 'Module') => Wnd_Plugin\PluginName\Module\Sub\Wndt_Demo;
-	 * parse_class('Wnd_Demo', 'Module') 						=> Wnd\Module\Wnd_Demo;
-	 * parse_class('Sub\Wnd_Demo', 'Module') 					=> Wnd\Module\Sub\Wnd_Demo;
-	 * parse_class('Wndt_Demo', 'Module') 						=> Wndt\Module\Wndt_Demo;
-	 * parse_class('Sub\Wndt_Demo', 'Module') 					=> Wndt\Module\Sub\Wndt_Demo;
 	 *
 	 * 其他 api 请求以此类推
 	 *
@@ -158,12 +162,6 @@ class Wnd_Controller {
 	 * @return string 包含完整命名空间的类名称
 	 */
 	public static function parse_class(string $class, string $route_base): string {
-		/**
-		 * 拓展插件类请求格式：Plugin/Wndt_File_Import/Wndt_Demo
-		 * 判断是否为拓展插件类，若是，则提取插件名称
-		 * 拓展插件类请求格式：App/Wndt_Demo
-		 */
-
 		// 拓展插件
 		if (0 === stripos($class, 'plugin')) {
 			$class_info = explode('/', $class, 3);
@@ -193,7 +191,7 @@ class Wnd_Controller {
 		 * 拼接完整类名称：
 		 * - 添加API接口
 		 * - 添加类名称
-		 * 最终拼接成具有完整命名空间的实际类名称
+		 * - 最终拼接成具有完整命名空间的实际类名称
 		 */
 		if ($plugin) {
 			$real_class = 'Wnd_Plugin' . '\\' . $plugin . '\\' . $route_base . '\\' . $class_name;
