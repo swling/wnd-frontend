@@ -12,11 +12,11 @@ use Exception;
 class Wnd_Get_Profile extends Wnd_JsonGet {
 
 	protected static function query($args = []): array{
-		$user_id    = get_current_user_id();
-		$avatar_url = wnd_get_config('default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
+		$default_avatar = wnd_get_config('default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
+		$user_id        = get_current_user_id();
 		if (!$user_id) {
 			return [
-				'avatar_url'   => $avatar_url,
+				'avatar_url'   => $default_avatar,
 				'display_name' => __('匿名用户', 'wnd'),
 			];
 		}
@@ -28,9 +28,18 @@ class Wnd_Get_Profile extends Wnd_JsonGet {
 
 		// 定义用户 profile 数组
 		unset($user->data->user_pass);
-		$user_profile = (array) $user->data;
+		$user_profile                = (array) $user->data;
+		$user_profile['avatar_url']  = static::get_avatar_url($user_id, $default_avatar);
+		$user_profile['description'] = get_user_meta($user_id, 'description', true);
+		$user_profile['balance']     = wnd_get_user_money($user_id);
 
-		// 头像
+		return $user_profile;
+	}
+
+	// 头像
+	private static function get_avatar_url(int $user_id, string $default_avatar): string{
+		$avatar_url = $default_avatar;
+
 		if (wnd_get_user_meta($user_id, 'avatar')) {
 			$avatar_id  = wnd_get_user_meta($user_id, 'avatar');
 			$avatar_url = wp_get_attachment_url($avatar_id) ?: $avatar_url;
@@ -44,9 +53,6 @@ class Wnd_Get_Profile extends Wnd_JsonGet {
 			$avatar_url = wnd_get_user_meta($user_id, 'avatar_url') ?: $avatar_url;
 		}
 
-		$user_profile['avatar_url']  = $avatar_url;
-		$user_profile['description'] = get_user_meta($user_id, 'description', true);
-
-		return (array) $user_profile;
+		return $avatar_url;
 	}
 }
