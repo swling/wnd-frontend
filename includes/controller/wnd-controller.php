@@ -144,9 +144,12 @@ class Wnd_Controller {
 	 * 解析前端发送的类标识，返回包含完整命名空间的真实类名
 	 *
 	 * 因拓展插件不具唯一性，因此加载插件中的拓展类需要添加插件名称
-	 * parse_class('Wndt_File_Import/Wndt_Demo', 'Module') 	=> Wnd_Plugin\Wndt_File_Import\Module\Wndt_Demo;
-	 * parse_class('Wnd_Demo', 'Module') 					=> Wnd\Module\Wnd_Demo;
-	 * parse_class('Wndt_Demo', 'Module') 					=> Wndt\Module\Wndt_Demo;
+	 * parse_class('Plugin/PluginName/Wndt_Demo', 'Module') 	=> Wnd_Plugin\PluginName\Module\Wndt_Demo;
+	 * parse_class('Plugin/PluginName/Sub/Wndt_Demo', 'Module') => Wnd_Plugin\PluginName\Module\Sub\Wndt_Demo;
+	 * parse_class('Wnd_Demo', 'Module') 						=> Wnd\Module\Wnd_Demo;
+	 * parse_class('Sub\Wnd_Demo', 'Module') 					=> Wnd\Module\Sub\Wnd_Demo;
+	 * parse_class('Wndt_Demo', 'Module') 						=> Wndt\Module\Wndt_Demo;
+	 * parse_class('Sub\Wndt_Demo', 'Module') 					=> Wndt\Module\Sub\Wndt_Demo;
 	 *
 	 * 其他 api 请求以此类推
 	 *
@@ -154,19 +157,28 @@ class Wnd_Controller {
 	 *
 	 * @return string 包含完整命名空间的类名称
 	 */
-	public static function parse_class(string $class, string $route_base): string{
+	public static function parse_class(string $class, string $route_base): string {
 		/**
-		 * 拓展插件类请求格式：Wndt_File_Import/Wndt_Demo
+		 * 拓展插件类请求格式：Plugin/Wndt_File_Import/Wndt_Demo
 		 * 判断是否为拓展插件类，若是，则提取插件名称
+		 * 拓展插件类请求格式：App/Wndt_Demo
 		 */
-		$class_info = explode('/', $class, 2);
-		if (isset($class_info[1])) {
-			$plugin     = $class_info[0];
-			$class_name = $class_info[1];
+
+		// 拓展插件
+		if (0 === stripos($class, 'plugin')) {
+			$class_info = explode('/', $class, 3);
+			$plugin     = $class_info[1];
+			$class_name = $class_info[2] ?? '';
 		} else {
 			$plugin     = '';
-			$class_name = $class_info[0];
+			$class_name = $class;
 		}
+
+		// 获取不含命名空间的类名称 实测相比：$short_name = basename($class_name); 更快
+		$short_name = preg_replace('/.*\//', '', $class_name);
+
+		// 将类名称包含的目录斜线，转为命名空间形式
+		$class_name = str_replace('/', '\\', $class_name);
 
 		/**
 		 * 解析类名称
@@ -186,7 +198,7 @@ class Wnd_Controller {
 		if ($plugin) {
 			$real_class = 'Wnd_Plugin' . '\\' . $plugin . '\\' . $route_base . '\\' . $class_name;
 		} else {
-			$prefix     = explode('_', $class, 2)[0];
+			$prefix     = explode('_', $short_name, 2)[0];
 			$real_class = $prefix . '\\' . $route_base . '\\' . $class_name;
 		}
 
