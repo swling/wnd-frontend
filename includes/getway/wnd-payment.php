@@ -100,7 +100,7 @@ abstract class Wnd_Payment {
 			return 0;
 		}
 
-		list($prefix, $ID) = explode('-', $out_trade_no, 2);
+		list($prefix, $ID, $timestamp) = explode('-', $out_trade_no, 3);
 		if ($prefix != $site_prefix) {
 			return 0;
 		}
@@ -110,6 +110,7 @@ abstract class Wnd_Payment {
 
 	/**
 	 * 构建包含当前站点标识的订单号码作为发送至三方支付平台的订单号
+	 * @since 0.9.56 订单号加入时间戳。解决微信支付订单创建后，若修改金额再次支付，报错：201 订单重复
 	 */
 	public function get_out_trade_no() {
 		$ID = $this->transaction->get_transaction_id();
@@ -117,7 +118,7 @@ abstract class Wnd_Payment {
 			throw new Exception(__('站内支付数据尚未写入', 'wnd'));
 		}
 
-		return static::$site_prefix . '-' . $ID;
+		return static::$site_prefix . '-' . $ID . '-' . time();
 	}
 
 	/**
