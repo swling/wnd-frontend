@@ -210,7 +210,7 @@ class Wnd_Add_Action_WP {
 		 * @since 0.9.56
 		 */
 		try {
-			Wnd_Validator::validate_captcha();
+			Wnd_Validator::validate_captcha($_POST);
 		} catch (Exception $e) {
 			if (wnd_is_rest_request()) {
 				throw new Exception($e->getMessage());
