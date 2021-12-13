@@ -148,7 +148,6 @@ class Wnd_Admin {
 		}
 
 		// 提取所有版本升级方法：以"v_"为前缀的方法，并做版本对比确定是否执行
-		$_db_version     = str_replace('.', '', $db_version);
 		$reflection      = new \ReflectionClass(__CLASS__);
 		$methods         = $reflection->getMethods(\ReflectionMethod::IS_STATIC);
 		$upgrade_methods = [];
@@ -157,8 +156,9 @@ class Wnd_Admin {
 				continue;
 			}
 
-			// 版本对比：确保字符格式匹配
-			if (version_compare('v_' . $_db_version, $method->name) >= 0) {
+			// 将升级方法名称，转为与之匹配的版本号（v_0_9_57 =>v.0.9.57）
+			$method_version = str_replace('_', '.', $method->name);
+			if (version_compare('v.' . $db_version, $method_version) >= 0) {
 				continue;
 			}
 
@@ -175,11 +175,11 @@ class Wnd_Admin {
 		update_option('wnd_ver', WND_VER);
 	}
 
-	private static function v_0929() {
+	private static function v_0_9_29() {
 		wnd_delete_option('wnd', 'alipay_sandbox');
 	}
 
-	private static function v_0930() {
+	private static function v_0_9_30() {
 		if ('COS' == wnd_get_option('wnd', 'oss_sp')) {
 			wnd_update_option('wnd', 'oss_sp', 'Qcloud');
 		} elseif ('OSS' == wnd_get_option('wnd', 'oss_sp')) {
@@ -199,7 +199,7 @@ class Wnd_Admin {
 		}
 	}
 
-	private static function v_0938() {
+	private static function v_0_9_38() {
 		$enable_cdn = wnd_get_option('wnd', 'cdn_enable');
 		wnd_delete_option('wnd', 'cdn_enable');
 		wnd_update_option('wnd', 'enable_cdn', $enable_cdn);
