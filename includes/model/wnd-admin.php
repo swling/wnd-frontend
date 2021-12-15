@@ -208,4 +208,9 @@ class Wnd_Admin {
 		wnd_delete_option('wnd', 'oss_enable');
 		wnd_update_option('wnd', 'enable_oss', $enable_oss);
 	}
+
+	// 新增用户日志表，需要升级数据表
+	private static function v_0_9_57() {
+		Wnd_DB::create_table();
+	}
 }
