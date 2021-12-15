@@ -182,7 +182,17 @@ class Wnd_Order extends Wnd_Transaction {
 	 *
 	 * @return bool
 	 */
-	public static function has_paid(int $user_id, int $object_id): bool{
+	public static function has_paid(int $user_id, int $object_id): bool {
+		return !empty(static::get_user_valid_orders($user_id, $object_id));
+	}
+
+	/**
+	 * 获取指定用户在指定产品下的有效订单合集
+	 * @since 0.9.57
+	 *
+	 * @return array 有效订单的合集 [order_post_object]
+	 */
+	public static function get_user_valid_orders(int $user_id, int $object_id): array{
 		$args = [
 			'posts_per_page' => 1,
 			'post_type'      => 'order',
@@ -191,6 +201,6 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_status'    => [static::$completed_status, static::$pending_status],
 		];
 
-		return !empty(get_posts($args));
+		return get_posts($args) ?: [];
 	}
 }
