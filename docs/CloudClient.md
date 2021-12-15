@@ -1,6 +1,5 @@
 # 主流云平台 API 统一请求
 注意：
-- 请求依赖 wp_remote_request 函数，因此需要在 wordpress 环境中使用，如需在独立环境中使用，请重写 request 方法
 - 请在后台填写对应平台的 accessKey、及 secretKey ，并确保以开通此项服务，或者根据你需要测试的其他百度云产品，自行修改对应参数
 - 具体请求 body 及 headers 需要根据对应的产品文档对应配置填写
 - 各云平台签名助手默认已配置默认公共参数，因此绝大部分情况，无需填写公共参数。
@@ -26,7 +25,8 @@ print_r($result);
 ### 腾讯云分词
 ```php
 /**
- *@link https://cloud.tencent.com/document/product/271/35494
+ * @link https://cloud.tencent.com/document/product/271/35494
+ * 腾讯云公共参数均在 headers 中以 X-TC-Xxx 形式添加。通常包含：'X-TC-Action', 'X-TC-Version'，'X-TC-Region'
  **/
 use Wnd\Getway\Wnd_Cloud_Client;
 $request = Wnd_Cloud_Client::get_instance('Qcloud');

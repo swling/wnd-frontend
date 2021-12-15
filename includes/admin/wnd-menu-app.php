@@ -21,7 +21,7 @@ class Wnd_Menu_App extends Wnd_Menus {
 				'label'       => '微信密匙对',
 				'required'    => false,
 				'placeholder' => '基于本插件开发微信应用时，需填写微信应用 AppId 及 Secret 密匙对，同一个站点可能对应多个微信应用，故需要按 Json 数组格式填写。',
-				'help'        => ['text' => '同一个站点可对应多个微信应用，参考格式：{"Appid1":"secret1", "Appid2":"secret2"}'],
+				'help'        => ['text' => '同一个站点可对应多个微信应用，参考格式：{"Appid1":"secret1", "Appid2":"secret2"} （对应 Endpoint\\Wnd_Issue_Token_WeChat）'],
 			]
 		);
 		$form->set_submit_button('保存', 'is-danger');
