@@ -612,7 +612,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     params: params,
                 }).then(response => {
                     info = wnd_handle_response(response.data, this.form.attrs.route, parent);
-                    this.form.message.message = info.msg;
+                    this.form.message.message = (false === info.msg) ? this.form.message.message : info.msg;
                     this.form.message.attrs.class = form_json.message.attrs.class + ' ' + info.msg_class;
                     this.form.submit.attrs.class = form_json.submit.attrs.class;
                     /**
