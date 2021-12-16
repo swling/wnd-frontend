@@ -18,6 +18,11 @@ use WP_REST_Request;
  * - 而 WordPress 环境中，默认的超全局变量 $_POST / $_GET / $_REQUEST 则是经过转义的数据（无论 PHP 配置）
  * - @link https://make.wordpress.org/core/2016/04/06/rest-api-slashed-data-in-wordpress-4-4-and-4-5/
  *
+ * 响应状态（status） 规范 @since 0.9.57
+ * - 本插 rest api 定义：status >= 1 为正常处理
+ * - 异常抛出时采用 [status => $e->getCode()] 捕获; 因此，各节点若无特殊需求，统一设置 Exception Code 为 0 （即默认值）
+ * - 若需要抛出其他 EXception Code，可自行定义，但应该小于 0 (即为负数) 并确保与前端处理方式匹配
+ *
  * @since 2019.04.07
  */
 class Wnd_Controller {
@@ -229,7 +234,7 @@ class Wnd_Controller {
 			$module = new $class($request->get_query_params());
 			return ['status' => 1, 'data' => $module->get_structure()];
 		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
+			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
 		}
 	}
 
@@ -254,7 +259,7 @@ class Wnd_Controller {
 		try {
 			return ['status' => 1, 'msg' => '', 'data' => $class::get($request->get_query_params())];
 		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
+			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
 		}
 	}
 
@@ -283,7 +288,7 @@ class Wnd_Controller {
 			$action = new $class($request);
 			return $action->do_action();
 		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
+			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
 		}
 	}
 
@@ -303,7 +308,7 @@ class Wnd_Controller {
 		try {
 			new $class($request);
 		} catch (Exception $e) {
-			echo json_encode(['status' => 0, 'msg' => $e->getMessage()]);
+			echo json_encode(['status' => $e->getCode(), 'msg' => $e->getMessage()]);
 		}
 	}
 
@@ -322,7 +327,7 @@ class Wnd_Controller {
 			$filter = new Wnd_Filter_Ajax(true);
 			$filter->query();
 		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
+			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
 		}
 
 		return [
@@ -342,7 +347,7 @@ class Wnd_Controller {
 			$filter = new Wnd_Filter_User(true);
 			$filter->query();
 		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
+			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
 		}
 
 		return [
@@ -355,10 +360,11 @@ class Wnd_Controller {
 	 * 写入评论
 	 */
 	public static function add_comment(WP_REST_Request $request): array{
+		// 此处需要捕获异常：因为插件可能通过 hook 抛出异常，如验证码
 		try {
 			$comment = wp_handle_comment_submission(wp_unslash($request->get_params()));
 		} catch (Exception $e) {
-			return ['status' => 0, 'msg' => $e->getMessage()];
+			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
 		}
 
 		if (is_wp_error($comment)) {
