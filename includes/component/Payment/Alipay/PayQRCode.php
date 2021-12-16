@@ -40,36 +40,6 @@ class PayQRCode extends PayBuilder {
 			throw new Exception($result['code'] . ' - ' . $result['msg'] . ' - ' . $result['sub_msg']);
 		}
 
-		if (static::is_mobile()) {
-			$alipay_app_link = 'alipayqr://platformapi/startapp?saId=10000007&qrcode=' . urldecode($result['qr_code']);
-			return '<script>window.location.href="' . $alipay_app_link . '"</script><a href="' . $alipay_app_link . '" class="button">打开支付宝支付</a>';
-		} else {
-			return '<div id="alipay-qrcode" style="height:250px;"></div><script>wnd_qrcode("#alipay-qrcode", "' . $result['qr_code'] . '", 250)</script><h3>支付宝扫码支付</h3>';
-		}
-	}
-
-	/**
-	 * Test if the current browser runs on a mobile device (smart phone, tablet, etc.)
-	 *
-	 * @since 3.4.0
-	 *
-	 * @return bool
-	 */
-	private static function is_mobile(): bool {
-		if (empty($_SERVER['HTTP_USER_AGENT'])) {
-			$is_mobile = false;
-		} elseif (strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false
-			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false
-			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Silk/') !== false
-			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Kindle') !== false
-			|| strpos($_SERVER['HTTP_USER_AGENT'], 'BlackBerry') !== false
-			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mini') !== false
-			|| strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mobi') !== false) {
-			$is_mobile = true;
-		} else {
-			$is_mobile = false;
-		}
-
-		return $is_mobile;
+		return $result['qr_code'];
 	}
 }
