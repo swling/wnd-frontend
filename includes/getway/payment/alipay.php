@@ -66,8 +66,11 @@ class Alipay extends Wnd_Payment {
 		$aliPay->setSubject($this->subject);
 		$aliPay->generateParams();
 
-		// 生成表单
-		return $aliPay->buildInterface();
+		// 生成支付界面
+		$payment_interface = $aliPay->buildInterface();
+		$payment_id        = $this->transaction->get_transaction_id();
+		$title             = '支付宝支付';
+		return static::build_payment_interface($payment_id, $payment_interface, $title);
 	}
 
 	/**
@@ -185,7 +188,6 @@ class Alipay extends Wnd_Payment {
 
 		/**
 		 * 交易关闭
-		 *
 		 */
 		if ('TRADE_CLOSED' == $_POST['trade_status']) {
 			echo ('success');

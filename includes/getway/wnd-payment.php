@@ -168,17 +168,27 @@ abstract class Wnd_Payment {
 	}
 
 	/**
-	 * ajax轮询订单状态：支付成功则刷新当前页面
-	 *
+	 * 统一构支付界面
+	 * @since 0.9.56.7
 	 */
-	protected static function build_ajax_check_script($payment_id) {
+	public static function build_payment_interface(int $payment_id, string $payment_interface, string $title): string{
+		$interface    = '<div id="payment-interface">' . $payment_interface . '<h3 id="payment-title">' . $title . '</h3></div>';
+		$check_script = static::build_ajax_check_script($payment_id);
+		return $interface . $check_script;
+	}
+
+	/**
+	 * ajax轮询订单状态：支付成功则更新支付界面
+	 */
+	private static function build_ajax_check_script(int $payment_id) {
 		return '
 <script>
-// 定时查询指定订单状态，如完成，则刷新当前页面
 var payment_checker = setInterval(function(post_id){ wnd_get_json("wnd_get_post", {"post_id": post_id}, "wnd_check_payment") }, 3000, ' . $payment_id . ');
 function wnd_check_payment(response) {
 	if("' . Wnd_Transaction::$completed_status . '" == response.data.post_status){
-		window.location.reload();
+		var title = document.querySelector("#payment-title");
+		title.innerText = "支付成功，请继续此前的操作！";
+		clearInterval(payment_checker);
 	}
 }
 // 关闭弹窗时，清除定时器

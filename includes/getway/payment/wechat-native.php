@@ -41,7 +41,12 @@ class WeChat_Native extends Wnd_Payment {
 		 * 获取响应提取支付链接信息，生成二维码
 		 * Ajax定期查询订单是否已经完成支付，以便下一步操作
 		 */
-		return $pay->buildInterface() . static::build_ajax_check_script($this->transaction->get_transaction_id());
+		$payment_id        = $this->transaction->get_transaction_id();
+		$qr_code           = $pay->buildInterface();
+		$payment_interface = '<div id="wechat-qrcode" style="height:250px;"></div><script>wnd_qrcode("#wechat-qrcode", "' . $qr_code . '", 250)</script>';
+		$title             = '微信支付';
+
+		return static::build_payment_interface($payment_id, $payment_interface, $title);
 	}
 
 	/**

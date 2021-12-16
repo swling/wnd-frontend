@@ -15,7 +15,7 @@ class PayQRCode extends PayBuilder {
 
 	/**
 	 * 发起请求并生产二维码
-	 * @return array
+	 * @return string 支付二维码字符串
 	 */
 	public function buildInterface(): string{
 		$request  = new Requests;
