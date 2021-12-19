@@ -24,9 +24,9 @@ class Wnd_Menus_Side extends Wnd_Module_Html {
 		//未登录用户
 		if (!is_user_logged_in()) {
 			$html .= '<div class="has-text-centered mb-3">';
-			$html .= wnd_modal_button('免费注册', 'wnd_user_center', [], 'is-black');
+			$html .= wnd_modal_button('免费注册', 'user/wnd_user_center', [], 'is-black');
 			$html .= '&nbsp;';
-			$html .= wnd_modal_button('立即登录', 'wnd_user_center', ['do' => 'login'], 'is-danger is-outlined');
+			$html .= wnd_modal_button('立即登录', 'user/wnd_user_center', ['do' => 'login'], 'is-danger is-outlined');
 			$html .= '</div>';
 		}
 

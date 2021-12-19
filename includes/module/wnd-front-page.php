@@ -3,7 +3,7 @@ namespace Wnd\Module;
 
 use Exception;
 use Wnd\JsonGet\Wnd_Menus;
-use Wnd\Module\Wnd_User_Center;
+use Wnd\Module\User\Wnd_User_Center;
 
 /**
  * 封装前端中心页面
@@ -127,7 +127,7 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 		/**
 		 * 登录用户用户中心默认模块
 		 */
-		$user_page_default_module = apply_filters('wnd_user_page_default_module', 'wnd_user_overview');
+		$user_page_default_module = apply_filters('wnd_user_page_default_module', 'user/wnd_user_overview');
 		$html                     = '
 		<div id="user-center" class="columns">
 		<div class="column is-narrow is-hidden-mobile">

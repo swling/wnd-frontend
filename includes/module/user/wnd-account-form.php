@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\User;
 
 use Exception;
+use Wnd\Module\Wnd_Module_Form;
 use Wnd\View\Wnd_Form_User;
 use WP_User;
 
@@ -37,10 +38,10 @@ class Wnd_Account_Form extends Wnd_Module_Form {
 		 * @since 2019.09.19
 		 */
 		$html = '<div class="has-text-centered mb-3">';
-		$html .= wnd_modal_link(__('邮箱设置', 'wnd'), 'wnd_bind_email_form') . ' | ';
-		$html .= $enable_sms ? (wnd_modal_link(__('手机设置', 'wnd'), 'wnd_bind_phone_form') . ' | ') : '';
-		$html .= wnd_modal_link(__('重置密码', 'wnd'), 'wnd_user_center', ['do' => 'reset_password']) . ' | ';
-		$html .= wnd_modal_link(__('解除绑定', 'wnd'), 'wnd_unbind_openid_form');
+		$html .= wnd_modal_link(__('邮箱设置', 'wnd'), 'user/wnd_bind_email_form') . ' | ';
+		$html .= $enable_sms ? (wnd_modal_link(__('手机设置', 'wnd'), 'user/wnd_bind_phone_form') . ' | ') : '';
+		$html .= wnd_modal_link(__('重置密码', 'wnd'), 'user/wnd_user_center', ['do' => 'reset_password']) . ' | ';
+		$html .= wnd_modal_link(__('解除绑定', 'wnd'), 'user/wnd_unbind_openid_form');
 		$html .= '</div>';
 
 		$form->add_html($html);
@@ -58,10 +59,10 @@ class Wnd_Account_Form extends Wnd_Module_Form {
 
 		$msg = '<div class="content has-text-centered">';
 		$msg .= '<p>' . __('出于安全考虑，请绑定邮箱或手机', 'wnd') . '</p>';
-		$msg .= wnd_modal_button(__('绑定邮箱', 'wnd'), 'wnd_bind_email_form');
+		$msg .= wnd_modal_button(__('绑定邮箱', 'wnd'), 'user/wnd_bind_email_form');
 		if (wnd_get_config('enable_sms')) {
 			$msg .= '&nbsp;&nbsp;';
-			$msg .= wnd_modal_button(__('绑定手机', 'wnd'), 'wnd_bind_phone_form');
+			$msg .= wnd_modal_button(__('绑定手机', 'wnd'), 'user/wnd_bind_phone_form');
 		}
 		$msg .= '</div>';
 

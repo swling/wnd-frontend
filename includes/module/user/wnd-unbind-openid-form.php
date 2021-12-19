@@ -1,8 +1,9 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\User;
 
 use Exception;
 use Wnd\Model\Wnd_User;
+use Wnd\Module\Wnd_Module_Form;
 use Wnd\View\Wnd_Form_User;
 
 /**

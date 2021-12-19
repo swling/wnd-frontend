@@ -1,5 +1,7 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\User;
+
+use Wnd\Module\Wnd_Module_Html;
 
 /**
  * do => register / login / reset_password, tab => string :profile / account, type => email / phone
@@ -162,9 +164,9 @@ class Wnd_User_Center extends Wnd_Module_Html {
 		$args = wp_parse_args($args, ['wrap' => ('embed' == $ajax_type) ? '0' : '1']);
 
 		if ('embed' == $ajax_type) {
-			return wnd_embed_link('#user-center', $text, 'wnd_user_center', $args);
+			return wnd_embed_link('#user-center', $text, 'user/wnd_user_center', $args);
 		} elseif ('modal' == $ajax_type) {
-			return wnd_modal_link($text, 'wnd_user_center', $args);
+			return wnd_modal_link($text, 'user/wnd_user_center', $args);
 		}
 	}
 }

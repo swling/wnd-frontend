@@ -1,6 +1,7 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\User;
 
+use Wnd\Module\Wnd_Module_Filter;
 use Wnd\View\Wnd_Filter_Ajax;
 
 /**

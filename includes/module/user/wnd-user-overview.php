@@ -1,5 +1,7 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\User;
+
+use Wnd\Module\Wnd_Module_Html;
 
 /**
  * 插件默认账户概览

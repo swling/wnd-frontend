@@ -18,7 +18,7 @@ class Wnd_Reset_Password extends Wnd_Action {
 		reset_password($this->target_user, $this->new_password);
 		return [
 			'status' => $this->user_id ? 4 : 1,
-			'msg'    => __('密码修改成功', 'wnd') . '&nbsp;' . wnd_modal_link(__('登录', 'wnd'), 'wnd_login_form'),
+			'msg'    => __('密码修改成功', 'wnd') . '&nbsp;' . wnd_modal_link(__('登录', 'wnd'), 'user/wnd_login_form'),
 		];
 	}
 
