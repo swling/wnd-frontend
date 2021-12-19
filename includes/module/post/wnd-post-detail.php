@@ -1,5 +1,7 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\Post;
+
+use Wnd\Module\Wnd_Module_Html;
 
 /**
  * Post 详情模块

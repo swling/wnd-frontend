@@ -102,17 +102,17 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 	private static function get_post_form_module(string $post_type): string{
 		// 主题定义的表单优先，其次为插件表单
 		$module = 'Wndt_Post_Form_' . $post_type;
-		$class  = 'Wndt\\Module\\' . $module;
+		$class  = 'Wndt\\Module\\Post\\' . $module;
 		if (!class_exists($class)) {
 			$module = 'Wnd_Post_Form_' . $post_type;
-			$class  = 'Wnd\\Module\\' . $module;
+			$class  = 'Wnd\\Module\\Post\\' . $module;
 		}
 
 		if (!class_exists($class)) {
 			throw new Exception(__('未定义表单', 'wnd') . ' : ' . $class);
 		}
 
-		return $module;
+		return 'Post/' . $module;
 	}
 
 	// 常规用户面板

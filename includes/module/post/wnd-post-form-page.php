@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\Post;
 
 use Wnd\View\Wnd_Form_Post;
 

@@ -84,7 +84,7 @@ class Wnd_Add_Filter_WP {
 		}
 
 		$url = wnd_get_front_page_url() ?: wnd_get_router_url();
-		return add_query_arg(['module' => 'wnd_post_detail', 'post_id' => $post->ID], $url);
+		return add_query_arg(['module' => 'post/wnd_post_detail', 'post_id' => $post->ID], $url);
 	}
 
 	/**

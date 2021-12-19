@@ -1,9 +1,10 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\Post;
 
 use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_SKU;
+use Wnd\Module\Wnd_Module_Html;
 
 /**
  * 获取订单详情（未完善信息）

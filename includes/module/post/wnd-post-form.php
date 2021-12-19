@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\Post;
 
 use Exception;
 use Wnd\Module\Wnd_Module_Form;

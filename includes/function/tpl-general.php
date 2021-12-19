@@ -97,7 +97,7 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 	if (is_singular()) {
 		if (current_user_can('edit_post', $queried_object->ID)) {
 			$breadcrumb_right .= '<a href="' . get_edit_post_link($queried_object->ID) . '">[' . __('编辑', 'wnd') . ']</a>';
-			$breadcrumb_right .= '&nbsp;' . wnd_modal_link('[' . __('状态', 'wnd') . ']', 'wnd_post_status_form', ['post_id' => $queried_object->ID]);
+			$breadcrumb_right .= '&nbsp;' . wnd_modal_link('[' . __('状态', 'wnd') . ']', 'post/wnd_post_status_form', ['post_id' => $queried_object->ID]);
 		}
 	}
 	$html .= apply_filters('wnd_breadcrumb_right', $breadcrumb_right);
