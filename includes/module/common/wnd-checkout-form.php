@@ -1,5 +1,7 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\Common;
+
+use Wnd\Module\Wnd_Module_Form;
 
 /**
  * 购物车结算表单

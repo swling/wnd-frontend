@@ -1,6 +1,7 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\Common;
 
+use Wnd\Module\Wnd_Module_Html;
 use Wnd\Utility\Wnd_Defender;
 
 /**

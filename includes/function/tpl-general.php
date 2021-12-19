@@ -76,7 +76,7 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 		//其他归档页
 	} elseif (is_archive()) {
 		$args = ['taxonomy' => $queried_object->taxonomy, 'orderby' => 'name'];
-		$html .= '<li>' . wnd_modal_link(get_taxonomy($queried_object->taxonomy)->label, 'wnd_terms_list', $args) . '</li>';
+		$html .= '<li>' . wnd_modal_link(get_taxonomy($queried_object->taxonomy)->label, 'common/wnd_terms_list', $args) . '</li>';
 		$html .= '<li class="is-active"><a>' . $queried_object->name . '</a></li>';
 
 	} else {

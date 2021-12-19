@@ -1,7 +1,7 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\Common;
 
-use Wnd\Module\Wnd_Search_Form;
+use Wnd\Module\Wnd_Module_Html;
 
 /**
  * 侧边栏菜单

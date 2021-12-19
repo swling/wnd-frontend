@@ -1,8 +1,9 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\Common;
 
 use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_SKU;
+use Wnd\Module\Wnd_Module_Form;
 use Wnd\View\Wnd_Form_WP;
 
 /**
@@ -33,10 +34,10 @@ class Wnd_Order_Form extends Wnd_Module_Form {
 		$form->add_hidden('post_id', $post_id);
 
 		if ($ajax) {
-			$form->set_route('module', 'wnd_payment_form');
+			$form->set_route('module', 'common/wnd_payment_form');
 		} else {
 			$form->set_action(get_permalink(wnd_get_config('front_page')), 'GET');
-			$form->add_hidden('module', 'wnd_payment_form');
+			$form->add_hidden('module', 'common/wnd_payment_form');
 		}
 
 		$form->add_radio(

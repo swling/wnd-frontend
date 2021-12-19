@@ -49,7 +49,7 @@ class Wnd_Post_Form_Page extends Wnd_Post_Form {
 		 * 侧边栏
 		 */
 		$form->add_html('<div class="column is-2">');
-		$form->add_html('<div class="field">' . wnd_modal_button(__('产品属性', 'wnd'), 'wnd_sku_form', ['post_id' => $form->get_post()->ID ?? 0]) . '</div>');
+		$form->add_html('<div class="field">' . wnd_modal_button(__('产品属性', 'wnd'), 'common/wnd_sku_form', ['post_id' => $form->get_post()->ID ?? 0]) . '</div>');
 		$form->add_html('</div>');
 
 		$form->add_html('</div>');

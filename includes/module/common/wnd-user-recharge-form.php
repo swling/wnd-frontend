@@ -1,8 +1,9 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\Common;
 
 use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Recharge;
+use Wnd\Module\Wnd_Module_Form;
 use Wnd\View\Wnd_Form_WP;
 
 /**
