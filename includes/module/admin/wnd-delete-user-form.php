@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\Admin;
 
 use Exception;
+use Wnd\Module\Wnd_Module_Form;
 use Wnd\View\Wnd_Form_WP;
 
 /**
