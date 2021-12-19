@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Action\Admin;
 
 use Exception;
+use Wnd\Action\Wnd_Action_Root;
 
 /**
  * 删除用户

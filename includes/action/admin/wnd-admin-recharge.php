@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Action\Admin;
 
 use Exception;
+use Wnd\Action\Wnd_Action_Admin;
 use Wnd\Model\Wnd_Recharge;
 
 /**
@@ -15,7 +16,6 @@ class Wnd_Admin_Recharge extends Wnd_Action_Admin {
 	private $target_user;
 
 	protected function execute(): array{
-		// 写入充值记录
 		$recharge = new Wnd_Recharge();
 		$recharge->set_user_id($this->target_user->ID);
 		$recharge->set_total_amount($this->total_amount);
