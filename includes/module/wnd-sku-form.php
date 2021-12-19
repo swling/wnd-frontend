@@ -80,7 +80,7 @@ class Wnd_SKU_Form extends Wnd_Module_Form {
 		}unset($sku_detail);
 
 		$form->add_hidden('post_id', $post_id);
-		$form->set_route('action', 'wnd_set_sku');
+		$form->set_route('action', 'common/wnd_set_sku');
 		$form->set_submit_button(__('保存 SKU', 'wnd'));
 
 		return $form;

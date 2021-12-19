@@ -39,7 +39,7 @@ class Wnd_Refund_Form extends Wnd_Module_Form {
 		);
 		$form->add_html('</div>');
 		$form->add_hidden('transaction_id', $args['transaction_id']);
-		$form->set_route('action', 'wnd_refund');
+		$form->set_route('action', 'admin/wnd_refund');
 		$form->set_submit_button(__('确认退款', 'wnd'));
 		return $form;
 	}

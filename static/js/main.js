@@ -898,7 +898,7 @@ function wnd_update_views(post_id, interval = 3600) {
     // 更新服务器数据
     if (is_new) {
         axios({
-            url: wnd_action_api + '/wnd_update_views',
+            url: wnd_action_api + '/common/wnd_update_views',
             method: 'POST',
             data: {
                 'post_id': post_id

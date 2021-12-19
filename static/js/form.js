@@ -352,7 +352,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 // Ajax
                 function upload_to_local_server() {
                     axios({
-                        url: wnd_action_api + '/wnd_upload_file',
+                        url: wnd_action_api + '/common/wnd_upload_file',
                         method: 'post',
                         data: form_data,
                         headers: {},
@@ -431,7 +431,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 data.append('file_id', field.file_id);
                 data.append('meta_key', field.data.meta_key);
                 axios({
-                    url: wnd_action_api + '/wnd_delete_file',
+                    url: wnd_action_api + '/common/wnd_delete_file',
                     method: 'post',
                     data: data,
                 }).then(response => {

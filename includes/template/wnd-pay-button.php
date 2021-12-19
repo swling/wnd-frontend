@@ -109,7 +109,7 @@ class Wnd_Pay_Button {
 		} elseif (!$this->disabled and $this->file) {
 			$form = new Wnd_Form_WP();
 			$form->add_hidden('post_id', $this->post_id);
-			$form->set_route('action', 'wnd_pay_for_downloads');
+			$form->set_route('action', 'common/wnd_pay_for_downloads');
 			$form->set_submit_button($this->button_text);
 			$form->build();
 			$this->html .= $form->html;

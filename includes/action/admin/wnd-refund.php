@@ -1,6 +1,7 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Action\Admin;
 
+use Wnd\Action\Wnd_Action_Admin;
 use Wnd\Getway\Wnd_Refunder;
 
 /**

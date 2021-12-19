@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Action\Common;
 
 use Exception;
+use Wnd\Action\Wnd_Action;
 use Wnd\Endpoint\Wnd_Endpoint_Action;
 use Wnd\Model\Wnd_Order_Props;
 

@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Action\Common;
 
 use Exception;
 use Wnd\Utility\Wnd_OSS_Handler;
