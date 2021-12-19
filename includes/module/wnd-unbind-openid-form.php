@@ -46,7 +46,7 @@ class Wnd_Unbind_Openid_Form extends Wnd_Module_Form {
 
 		$form->add_user_password(__('密码', 'wnd'), __('密码', 'wnd'));
 
-		$form->set_route('action', 'wnd_unbind_openid');
+		$form->set_route('action', 'user/wnd_unbind_openid');
 		$form->set_submit_button(__('解除绑定', 'wnd'));
 		return $form;
 	}

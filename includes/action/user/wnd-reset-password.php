@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Action\User;
 
 use Exception;
+use Wnd\Action\Wnd_Action;
 use Wnd\Utility\Wnd_Validator;
 
 /**

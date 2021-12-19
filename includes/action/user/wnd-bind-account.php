@@ -1,6 +1,7 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Action\User;
 
+use Wnd\Action\Wnd_Action_User;
 use Wnd\Model\Wnd_Binder;
 
 /**

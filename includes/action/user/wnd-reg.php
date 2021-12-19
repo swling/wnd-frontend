@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Action\User;
 
 use Exception;
+use Wnd\Action\Wnd_Action;
 
 /**
  * ajax user POST name规则：

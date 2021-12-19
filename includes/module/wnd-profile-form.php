@@ -21,7 +21,7 @@ class Wnd_Profile_Form extends Wnd_Module_Form {
 		$form->add_user_url(__('网站', 'wnd'), __('网站', 'wnd'));
 
 		$form->add_user_description(__('简介', 'wnd'), __('简介', 'wnd'));
-		$form->set_route('action', 'wnd_update_profile');
+		$form->set_route('action', 'user/wnd_update_profile');
 		$form->set_submit_button(__('保存', 'wnd'));
 
 		$form->set_filter(__CLASS__);

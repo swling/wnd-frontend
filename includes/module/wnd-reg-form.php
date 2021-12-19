@@ -41,7 +41,7 @@ class Wnd_Reg_Form extends Wnd_Module_Form {
 			$form->add_html('<i><a href="' . wnd_get_config('agreement_url') . '" target="_blank">' . get_option('blogname') . __('《注册协议》', 'wnd') . '</a></i>');
 		}
 
-		$form->set_route('action', 'wnd_reg');
+		$form->set_route('action', 'user/wnd_reg');
 		$form->set_submit_button(__('注册', 'wnd', 'wnd'));
 		// 以当前函数名设置filter hook
 		$form->set_filter(__CLASS__);

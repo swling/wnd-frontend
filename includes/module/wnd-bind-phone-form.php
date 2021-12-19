@@ -27,7 +27,7 @@ class Wnd_Bind_Phone_Form extends Wnd_Module_Form {
 		}
 
 		$form->add_phone_verification('bind', wnd_get_config('sms_template_v'), false);
-		$form->set_route('action', 'wnd_bind_account');
+		$form->set_route('action', 'user/wnd_bind_account');
 		$form->set_submit_button(__('保存', 'wnd'));
 		return $form;
 	}

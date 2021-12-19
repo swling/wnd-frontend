@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Action\User;
 
 use Exception;
+use Wnd\Action\Wnd_Action_User;
 
 /**
  * 用户账户更新：修改密码

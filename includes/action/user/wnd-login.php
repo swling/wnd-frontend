@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Action\User;
 
 use Exception;
+use Wnd\Action\Wnd_Action;
 
 /**
  * @since 2019.1.13 用户登录
