@@ -216,9 +216,9 @@ function _wnd_render_filter(container, filter_json, add_class) {
 <td class="is-narrow"><a :href="post.author.link" target="_blank">{{post.author.name}}</a></td>
 <td>{{post.post_content}}</td>
 <td class="is-narrow has-text-centered">
-<a @click='wnd_ajax_modal("wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
-<a @click='wnd_ajax_modal("wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
-<a @click='wnd_ajax_modal("wnd_refund_form", {"transaction_id": post.ID} )'><i class="fas fa-coins"></i></a>
+<a @click='wnd_ajax_modal("post/wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
+<a @click='wnd_ajax_modal("post/wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
+<a @click='wnd_ajax_modal("admin/wnd_refund_form", {"transaction_id": post.ID} )'><i class="fas fa-coins"></i></a>
 </td>
 </tr>
 </tbody>
@@ -241,8 +241,8 @@ function _wnd_render_filter(container, filter_json, add_class) {
 <tr v-for="(user, index) in users">
 <td class="is-narrow is-hidden-mobile">{{user.data.user_registered}}</td>
 <td><a :href="user.data.link" target="_blank">{{user.data.display_name}}</a></td>
-<a @click='wnd_ajax_modal("wnd_delete_user_form", {"user_id": user.ID} )'><i class="fas fa-trash-alt"></i></a>
-<a @click='wnd_ajax_modal("wnd_account_status_form", {"user_id": user.ID} )'><i class="fas fa-cog"></i></a>
+<a @click='wnd_ajax_modal("admin/wnd_delete_user_form", {"user_id": user.ID} )'><i class="fas fa-trash-alt"></i></a>
+<a @click='wnd_ajax_modal("admin/wnd_account_status_form", {"user_id": user.ID} )'><i class="fas fa-cog"></i></a>
 </tr>
 </tbody>
 </table>`,
