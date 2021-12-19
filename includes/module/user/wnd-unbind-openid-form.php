@@ -27,7 +27,7 @@ class Wnd_Unbind_Openid_Form extends Wnd_Module_Form {
 		}
 		unset($key, $value);
 		if (!$type_options) {
-			throw new Exception(__('当前账户未绑定第三方账号', 'wnd'), true);
+			throw new Exception(__('当前账户未绑定第三方账号', 'wnd'));
 		}
 
 		// 构建解绑操作提交表单

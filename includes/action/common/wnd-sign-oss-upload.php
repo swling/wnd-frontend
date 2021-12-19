@@ -87,7 +87,7 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 		// Save the data.
 		$attachment_id = wp_insert_attachment($attachment, $this->local_file, $this->post_parent, true);
 		if (is_wp_error($attachment_id)) {
-			throw new Exception($attachment_id->get_error_message(), 1);
+			throw new Exception($attachment_id->get_error_message());
 		}
 
 		return $attachment_id;
