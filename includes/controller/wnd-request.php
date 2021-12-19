@@ -89,7 +89,8 @@ class Wnd_Request {
 			$request = $this->wp_rest_request->get_json_params() ?: $this->wp_rest_request->get_body_params();
 		}
 		if (empty($request)) {
-			return [];
+			$this->request = [];
+			return $this->request;
 		}
 
 		/**
