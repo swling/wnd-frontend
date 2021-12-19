@@ -90,7 +90,7 @@ class Wnd_Post_Status_Form extends Wnd_Module_Form {
 		}
 
 		$form->add_hidden('post_id', $args['post_id']);
-		$form->set_route('action', 'wnd_update_post_status');
+		$form->set_route('action', 'post/wnd_update_post_status');
 		$form->add_form_attr('id', 'post-status');
 		$form->set_submit_button(__('提交', 'wnd'));
 		return $form;

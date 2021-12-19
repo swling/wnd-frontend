@@ -1,7 +1,8 @@
 <?php
-namespace Wnd\Action;
+namespace Wnd\Action\Post;
 
 use Exception;
+use Wnd\Action\Wnd_Action;
 use Wnd\Model\Wnd_Post;
 
 class Wnd_Update_Post_Status extends Wnd_Action {
