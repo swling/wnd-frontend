@@ -1,9 +1,9 @@
 <?php
-namespace Wnd\Module;
+namespace Wnd\Module\User;
 
 use Exception;
 use Wnd\JsonGet\Wnd_Menus;
-use Wnd\Module\User\Wnd_User_Center;
+use Wnd\Module\Wnd_Module_Html;
 
 /**
  * 封装前端中心页面
