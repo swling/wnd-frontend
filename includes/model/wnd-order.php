@@ -42,7 +42,12 @@ class Wnd_Order extends Wnd_Transaction {
 	 */
 	protected function generate_transaction_data() {
 		if (!$this->object_id) {
-			throw new Exception(__('Object ID 无效', 'wnd'));
+			if (!$this->total_amount) {
+				throw new Exception('When Object ID is not set, Total amount must be set');
+			}
+			if (!$this->subject) {
+				throw new Exception('When Object ID is not set, Subject must be set');
+			}
 		}
 
 		/**
@@ -72,7 +77,11 @@ class Wnd_Order extends Wnd_Transaction {
 	 * 计算本次订单总金额
 	 * @since 0.9.52
 	 */
-	private function calculate_total_amount(): float{
+	private function calculate_total_amount(): float {
+		if (!$this->object_id) {
+			return $this->total_amount;
+		}
+
 		$object_sku = Wnd_SKU::get_object_sku($this->object_id);
 
 		if ($object_sku) {
