@@ -57,7 +57,7 @@ add_action('wp_enqueue_scripts', 'wnd_enqueue_scripts');
 function wnd_enqueue_scripts($hook_suffix = '') {
 	// 公共脚本及样式库可选本地或 jsdeliver
 	$static_host = wnd_get_config('static_host');
-	if (!$static_host or 'local' == $static_host) {
+	if (!$static_host or 'local' == $static_host or is_admin()) {
 		$static_path = WND_URL . 'static/';
 		wp_enqueue_style('bulma', $static_path . 'css/bulma.min.css', [], WND_VER);
 		wp_enqueue_style('font-awesome', $static_path . 'css/font-awesome-all.min.css', [], WND_VER);
