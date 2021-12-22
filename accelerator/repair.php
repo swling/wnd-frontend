@@ -103,23 +103,6 @@ function wp_is_using_https() {
 function wp_update_https_detection_errors() {}
 
 /**
- * admin bar
- * @since 2021.12.22
- */
-remove_action('template_redirect', '_wp_admin_bar_init', 0);
-remove_action('admin_init', '_wp_admin_bar_init');
-remove_action('before_signup_header', '_wp_admin_bar_init');
-remove_action('activate_header', '_wp_admin_bar_init');
-
-function is_admin_bar_showing(): bool {
-	return false;
-}
-
-remove_action('wp_body_open', 'wp_admin_bar_render', 0);
-remove_action('wp_footer', 'wp_admin_bar_render', 1000); // Back-compat for themes not using `wp_body_open`.
-remove_action('in_admin_header', 'wp_admin_bar_render', 0);
-
-/**
  * 禁止 feed
  * @since 2021.12.22
  */
