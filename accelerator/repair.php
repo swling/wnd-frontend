@@ -120,6 +120,17 @@ remove_action('wp_footer', 'wp_admin_bar_render', 1000); // Back-compat for them
 remove_action('in_admin_header', 'wp_admin_bar_render', 0);
 
 /**
+ * 禁止 feed
+ * @since 2021.12.22
+ */
+remove_action('wp_head', 'feed_links', 2);
+remove_action('wp_head', 'feed_links_extra', 3);
+add_action('init', function () {
+	global $wp_rewrite;
+	$wp_rewrite->feeds = [];
+}, 99);
+
+/**
  * ###########################################################################
  * 其他 Filters
  * 以下的 Filter 为优化操作，即保留这些 Filter 也不会报错
