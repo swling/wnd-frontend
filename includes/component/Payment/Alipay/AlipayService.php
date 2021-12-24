@@ -112,7 +112,7 @@ class AlipayService {
 	/**
 	 * 生成sign
 	 */
-	private function sign($data, $signType = 'RSA') {
+	private function sign(string $data, string $signType = 'RSA'): string{
 		$priKey = $this->config['alipay_app_private_key'];
 		$res    = "-----BEGIN RSA PRIVATE KEY-----\n" .
 		wordwrap($priKey, 64, "\n", true) .
@@ -130,7 +130,7 @@ class AlipayService {
 	/**
 	 * 验证签名
 	 */
-	public function rsaCheck($params) {
+	public function rsaCheck(array $params): bool{
 		$sign     = $params['sign'] ?? '';
 		$signType = $params['sign_type'] ?? '';
 		unset($params['sign_type']);
@@ -138,7 +138,7 @@ class AlipayService {
 		return $this->verify($this->getSignContent($params), $sign, $signType);
 	}
 
-	private function verify($data, $sign, $signType = 'RSA') {
+	private function verify(string $data, string $sign, string $signType = 'RSA'): bool{
 		$pubKey = $this->config['alipay_public_key'];
 		$res    = "-----BEGIN PUBLIC KEY-----\n" .
 		wordwrap($pubKey, 64, "\n", true) .
@@ -164,9 +164,8 @@ class AlipayService {
 	 * 校验$value是否非空
 	 * if not set ,return true;
 	 * if is null , return true;
-	 *
 	 */
-	private static function checkEmpty($value) {
+	private static function checkEmpty(string $value): bool {
 		if (!isset($value)) {
 			return true;
 		}
@@ -188,7 +187,7 @@ class AlipayService {
 	 * @param  $targetCharset
 	 * @return string
 	 */
-	private function characet($data, $targetCharset) {
+	private function characet(string $data, string $targetCharset): string {
 		if (!empty($data)) {
 			$fileType = $this->config['charset'];
 			if (strcasecmp($fileType, $targetCharset) != 0) {
