@@ -113,6 +113,10 @@ add_action('init', function () {
 	$wp_rewrite->feeds = [];
 }, 99);
 
+function get_default_feed(): string {
+	return 'rss2';
+}
+
 /**
  * ###########################################################################
  * 其他 Filters
