@@ -129,11 +129,10 @@ class AlipayService {
 
 	/**
 	 * 验证签名
-	 *
 	 */
 	public function rsaCheck($params) {
-		$sign     = $params['sign'];
-		$signType = $params['sign_type'];
+		$sign     = $params['sign'] ?? '';
+		$signType = $params['sign_type'] ?? '';
 		unset($params['sign_type']);
 		unset($params['sign']);
 		return $this->verify($this->getSignContent($params), $sign, $signType);
