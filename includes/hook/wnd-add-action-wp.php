@@ -85,6 +85,7 @@ class Wnd_Add_Action_WP {
 		// 删除自定义用户数据
 		global $wpdb;
 		$wpdb->delete($wpdb->wnd_auths, ['user_id' => $user_id]);
+		$wpdb->delete($wpdb->wnd_users, ['user_id' => $user_id]);
 	}
 
 	/**
