@@ -148,17 +148,17 @@ class Wnd_Order_Anonymous extends Wnd_Order {
 	 * 查询匿名订单是否已完成支付
 	 * @since 0.9.32
 	 *
-	 * @return bool
+	 * @return array 有效订单的合集 [order_post_object]
 	 */
-	public static function has_paid(int $user_id, int $object_id): bool{
+	public static function get_user_valid_orders(int $user_id, int $object_id): array{
 		$anon_cookie = static::get_anon_cookie($object_id);
 		if (!$anon_cookie) {
-			return false;
+			return [];
 		}
 
 		$order = wnd_get_post_by_slug($anon_cookie, 'order', [static::$completed_status, static::$pending_status]);
 		if (!$order) {
-			return false;
+			return [];
 		}
 
 		/**
@@ -166,13 +166,13 @@ class Wnd_Order_Anonymous extends Wnd_Order {
 		 * @since 0.9.32
 		 */
 		if ($order->post_parent != $object_id) {
-			return false;
+			return [];
 		}
 
 		if (time() - strtotime($order->post_date_gmt) < 3600 * 24) {
-			return true;
+			return [$order];
 		} else {
-			return false;
+			return [];
 		}
 	}
 }

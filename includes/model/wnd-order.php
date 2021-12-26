@@ -42,7 +42,12 @@ class Wnd_Order extends Wnd_Transaction {
 	 */
 	protected function generate_transaction_data() {
 		if (!$this->object_id) {
-			throw new Exception(__('Object ID 无效', 'wnd'));
+			if (!$this->total_amount) {
+				throw new Exception('When Object ID is not set, Total amount must be set');
+			}
+			if (!$this->subject) {
+				throw new Exception('When Object ID is not set, Subject must be set');
+			}
 		}
 
 		/**
@@ -72,7 +77,11 @@ class Wnd_Order extends Wnd_Transaction {
 	 * 计算本次订单总金额
 	 * @since 0.9.52
 	 */
-	private function calculate_total_amount(): float{
+	private function calculate_total_amount(): float {
+		if (!$this->object_id) {
+			return $this->total_amount;
+		}
+
 		$object_sku = Wnd_SKU::get_object_sku($this->object_id);
 
 		if ($object_sku) {
@@ -163,14 +172,12 @@ class Wnd_Order extends Wnd_Transaction {
 			}
 		}
 
-		if ($user_id) {
-			// 写入消费记录
-			wnd_inc_user_expense($user_id, $total_amount);
+		// 写入消费记录（即使是匿名订单也需要此操作，否则不会更新整站消费统计）
+		wnd_inc_user_expense($user_id, $total_amount);
 
-			// 站内直接消费，无需支付平台支付校验，记录扣除账户余额、在线支付则不影响当前余额
-			if (Wnd_Payment_Getway::is_internal_payment($ID)) {
-				wnd_inc_user_money($user_id, $total_amount * -1, false);
-			}
+		// 站内直接消费，无需支付平台支付校验，记录扣除账户余额、在线支付则不影响当前余额
+		if (Wnd_Payment_Getway::is_internal_payment($ID)) {
+			wnd_inc_user_money($user_id, $total_amount * -1, false);
 		}
 
 		return $ID;
@@ -182,7 +189,17 @@ class Wnd_Order extends Wnd_Transaction {
 	 *
 	 * @return bool
 	 */
-	public static function has_paid(int $user_id, int $object_id): bool{
+	public static function has_paid(int $user_id, int $object_id): bool {
+		return !empty(static::get_user_valid_orders($user_id, $object_id));
+	}
+
+	/**
+	 * 获取指定用户在指定产品下的有效订单合集
+	 * @since 0.9.57
+	 *
+	 * @return array 有效订单的合集 [order_post_object]
+	 */
+	public static function get_user_valid_orders(int $user_id, int $object_id): array{
 		$args = [
 			'posts_per_page' => 1,
 			'post_type'      => 'order',
@@ -191,6 +208,6 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_status'    => [static::$completed_status, static::$pending_status],
 		];
 
-		return !empty(get_posts($args));
+		return get_posts($args) ?: [];
 	}
 }

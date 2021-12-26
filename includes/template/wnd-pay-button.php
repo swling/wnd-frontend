@@ -84,7 +84,7 @@ class Wnd_Pay_Button {
 			$this->html = '<div class="wnd-pay-button box has-text-centered">';
 			$this->html .= '<div class="pay-notification field">' . $this->message . '</div>';
 			$this->html .= '<div class="field is-grouped is-grouped-centered">';
-			$this->html .= wnd_modal_button(__('登录', 'wnd'), 'wnd_user_center', ['do' => 'login'], $this->primary_color);
+			$this->html .= wnd_modal_button(__('登录', 'wnd'), 'user/wnd_user_center', ['do' => 'login'], $this->primary_color);
 			$this->html .= '</div>';
 			$this->html .= '</div>';
 			return $this->html;
@@ -105,11 +105,11 @@ class Wnd_Pay_Button {
 		 * - 当包含文件时，无论是否已支付，均需要提交下载请求，是否扣费将在 Wnd\Action\Wnd_Pay_For_Downloads 判断
 		 */
 		if (floatval($this->post_price) > 0 and !$this->user_has_paid and !$this->is_author) {
-			$this->html .= wnd_modal_button($this->button_text, 'wnd_payment_form', ['post_id' => $this->post_id], $this->primary_color);
+			$this->html .= wnd_modal_button($this->button_text, 'common/wnd_payment_form', ['post_id' => $this->post_id], $this->primary_color);
 		} elseif (!$this->disabled and $this->file) {
 			$form = new Wnd_Form_WP();
 			$form->add_hidden('post_id', $this->post_id);
-			$form->set_route('action', 'wnd_pay_for_downloads');
+			$form->set_route('action', 'common/wnd_pay_for_downloads');
 			$form->set_submit_button($this->button_text);
 			$form->build();
 			$this->html .= $form->html;

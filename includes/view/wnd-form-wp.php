@@ -135,7 +135,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	public function add_editor(array $args) {
 		$this->add_form_attr('data-editor', '1');
 		$args['type']       = 'editor';
-		$args['upload_url'] = wnd_get_route_url('action', 'wnd_upload_file');
+		$args['upload_url'] = wnd_get_route_url('action', 'common/wnd_upload_file');
 		parent::add_field($args);
 	}
 
@@ -181,7 +181,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		// 构建发送按钮
 		$button = '<button type="button"';
 		$button .= ' class="send-code button is-outlined is-' . static::$primary_color . '"';
-		$button .= ' data-action="wnd_send_auth_code"';
+		$button .= ' data-action="common/wnd_send_auth_code"';
 		$button .= ' data-type="' . $type . '"';
 		$button .= ' data-template="' . $template . '"';
 		$button .= ' data-device_type="' . $device_type . '"';

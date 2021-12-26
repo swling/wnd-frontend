@@ -23,7 +23,6 @@ class H5 extends PayBuilder {
 			throw new Exception($body['code'] . ':' . $body['message']);
 		}
 
-		$payUrl = $body['h5_url'];
-		return '<a href="' . $payUrl . '" target="_blank" class="button">打开微信支付</a>';
+		return $body['h5_url'];
 	}
 }

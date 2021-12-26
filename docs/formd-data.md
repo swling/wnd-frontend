@@ -31,4 +31,4 @@ option表单将整个表单字段作为数组存储在一个特定 wp option 记
 	auth_code
 
 # ajax表单响应代码表
-@see static/js/wnd-frontend.js wnd_ajax_submit()
+@see static/js/main.js wnd_handle_response()

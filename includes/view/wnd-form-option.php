@@ -55,7 +55,7 @@ class Wnd_Form_Option extends Wnd_Form_WP {
 		$this->option_name = $option_name;
 		$this->add_hidden('append', $append ? '1' : '0');
 		$this->add_hidden('option_name', $option_name);
-		$this->set_route('action', 'wnd_update_option');
+		$this->set_route('action', 'admin/wnd_update_option');
 	}
 
 	/**

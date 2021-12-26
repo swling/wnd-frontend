@@ -76,7 +76,7 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 		//其他归档页
 	} elseif (is_archive()) {
 		$args = ['taxonomy' => $queried_object->taxonomy, 'orderby' => 'name'];
-		$html .= '<li>' . wnd_modal_link(get_taxonomy($queried_object->taxonomy)->label, 'wnd_terms_list', $args) . '</li>';
+		$html .= '<li>' . wnd_modal_link(get_taxonomy($queried_object->taxonomy)->label, 'common/wnd_terms_list', $args) . '</li>';
 		$html .= '<li class="is-active"><a>' . $queried_object->name . '</a></li>';
 
 	} else {
@@ -97,7 +97,7 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 	if (is_singular()) {
 		if (current_user_can('edit_post', $queried_object->ID)) {
 			$breadcrumb_right .= '<a href="' . get_edit_post_link($queried_object->ID) . '">[' . __('编辑', 'wnd') . ']</a>';
-			$breadcrumb_right .= '&nbsp;' . wnd_modal_link('[' . __('状态', 'wnd') . ']', 'wnd_post_status_form', ['post_id' => $queried_object->ID]);
+			$breadcrumb_right .= '&nbsp;' . wnd_modal_link('[' . __('状态', 'wnd') . ']', 'post/wnd_post_status_form', ['post_id' => $queried_object->ID]);
 		}
 	}
 	$html .= apply_filters('wnd_breadcrumb_right', $breadcrumb_right);

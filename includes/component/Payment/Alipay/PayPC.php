@@ -14,17 +14,16 @@ class PayPC extends PayBuilder {
 
 	/**
 	 * 建立请求，以表单HTML形式构造（默认）
+	 * 表单字段属性不能使用双引号，因为 value 可能包含 json 字符串
 	 * @return string
 	 */
 	public function buildInterface(): string{
-		$sHtml = '<h3>即将跳转到第三方支付平台……</h3>';
-		$sHtml .= "<form id='alipaysubmit' action='" . $this->gateway_url . '?charset=' . $this->charset . "' method='POST'>";
+		$sHtml = '<h2>支付宝支付</h2>';
+		$sHtml .= "<form id='alipaysubmit' action='" . $this->gateway_url . '?charset=' . $this->charset . "' method='POST' target='_blank'>";
 		foreach ($this->params as $key => $val) {
 			$val = str_replace("'", '&apos;', $val);
 			$sHtml .= "<input type='hidden' name='" . $key . "' value='" . $val . "'>";
 		}unset($key, $val);
-		//submit按钮控件请不要含有name属性
-		$sHtml .= "<input type='submit'style='display:none;'>";
 		$sHtml .= '</form>';
 		$sHtml .= "<script>document.forms['alipaysubmit'].submit();</script>";
 		return $sHtml;

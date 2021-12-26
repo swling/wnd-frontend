@@ -122,9 +122,9 @@ class Wnd_Posts_Table {
 			// 财务类管理
 			if (in_array($post->post_type, ['order', 'recharge'])) {
 				$this->html .= '<td class="is-narrow has-text-centered">';
-				$this->html .= $this->show_preview ? wnd_modal_link('<i class="fas fa-info-circle"></i>', 'wnd_post_detail', ['post_id' => get_the_ID()]) : '';
-				$this->html .= $this->show_preview ? wnd_modal_link(' <i class="fas fa-coins"></i>', 'wnd_refund_form', ['payment_id' => get_the_ID()]) : '';
-				$this->html .= $this->show_preview ? wnd_modal_link(' <i class="fas fa-cog"></i>', 'wnd_post_status_form', ['post_id' => get_the_ID()]) : '';
+				$this->html .= $this->show_preview ? wnd_modal_link('<i class="fas fa-info-circle"></i>', 'post/wnd_post_detail', ['post_id' => get_the_ID()]) : '';
+				$this->html .= $this->show_preview ? wnd_modal_link(' <i class="fas fa-coins"></i>', 'admin/wnd_refund_form', ['payment_id' => get_the_ID()]) : '';
+				$this->html .= $this->show_preview ? wnd_modal_link(' <i class="fas fa-cog"></i>', 'post/wnd_post_status_form', ['post_id' => get_the_ID()]) : '';
 
 				$this->html .= '</td>';
 				$this->html .= '</td>';
@@ -132,8 +132,8 @@ class Wnd_Posts_Table {
 				// 内容类管理
 			} else if ($this->show_edit or $this->show_preview) {
 				$this->html .= '<td class="is-narrow has-text-centered">';
-				$this->html .= $this->show_preview ? wnd_modal_link('<i class="fas fa-info-circle"></i>', 'wnd_post_detail', ['post_id' => get_the_ID()]) : '';
-				$this->html .= $this->show_preview ? wnd_modal_link(' <i class="fas fa-cog"></i>', 'wnd_post_status_form', ['post_id' => get_the_ID()]) : '';
+				$this->html .= $this->show_preview ? wnd_modal_link('<i class="fas fa-info-circle"></i>', 'post/wnd_post_detail', ['post_id' => get_the_ID()]) : '';
+				$this->html .= $this->show_preview ? wnd_modal_link(' <i class="fas fa-cog"></i>', 'post/wnd_post_status_form', ['post_id' => get_the_ID()]) : '';
 				$this->html .= '</td>';
 			}
 

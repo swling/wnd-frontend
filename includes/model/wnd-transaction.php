@@ -59,8 +59,11 @@ abstract class Wnd_Transaction {
 	// 交易退款
 	public static $refunded_status = 'wnd-refunded';
 
-	// 交易关闭（取消订单 \ 无效订单）
+	// 交易取消（交易未完成：取消订单 \ 无效订单）
 	public static $cancelled_status = 'wnd-cancelled';
+
+	// 交易关闭（交易完成后：因某种原因关闭）
+	public static $closed_status = 'wnd-closed';
 
 	/**
 	 * 第三方支付接口
@@ -393,6 +396,14 @@ abstract class Wnd_Transaction {
 	 * @since 2020.06.10
 	 */
 	abstract protected function complete_transaction(): int;
+
+	/**
+	 * 关闭交易（交易完成后）
+	 * @since 0.9.57
+	 */
+	public function close() {
+		$this->update_transaction_status(static::$closed_status);
+	}
 
 	/**
 	 * 获取WordPress order/recharge post ID

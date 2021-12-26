@@ -352,7 +352,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 // Ajax
                 function upload_to_local_server() {
                     axios({
-                        url: wnd_action_api + '/wnd_upload_file',
+                        url: wnd_action_api + '/common/wnd_upload_file',
                         method: 'post',
                         data: form_data,
                         headers: {},
@@ -431,7 +431,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 data.append('file_id', field.file_id);
                 data.append('meta_key', field.data.meta_key);
                 axios({
-                    url: wnd_action_api + '/wnd_delete_file',
+                    url: wnd_action_api + '/common/wnd_delete_file',
                     method: 'post',
                     data: data,
                 }).then(response => {
@@ -612,7 +612,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     params: params,
                 }).then(response => {
                     info = wnd_handle_response(response.data, this.form.attrs.route, parent);
-                    this.form.message.message = info.msg;
+                    this.form.message.message = (false === info.msg) ? this.form.message.message : info.msg;
                     this.form.message.attrs.class = form_json.message.attrs.class + ' ' + info.msg_class;
                     this.form.submit.attrs.class = form_json.submit.attrs.class;
                     /**

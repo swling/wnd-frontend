@@ -1,17 +1,16 @@
 /**
- *定义API接口
- *
+ * 定义API接口
  */
-var wnd_module_api = wnd.rest_url + wnd.module_api;
-var wnd_action_api = wnd.rest_url + wnd.action_api;
-var wnd_posts_api = wnd.rest_url + wnd.posts_api;
-var wnd_users_api = wnd.rest_url + wnd.users_api;
-var wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api;
-var wnd_endpoint_api = wnd.rest_url + wnd.endpoint_api;
+let wnd_module_api = wnd.rest_url + wnd.module_api;
+let wnd_action_api = wnd.rest_url + wnd.action_api;
+let wnd_posts_api = wnd.rest_url + wnd.posts_api;
+let wnd_users_api = wnd.rest_url + wnd.users_api;
+let wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api;
+let wnd_endpoint_api = wnd.rest_url + wnd.endpoint_api;
 
 // 当前 JS 文件所在 URL 路径
-var this_src = document.currentScript.src;
-var static_path = this_src.substring(0, this_src.lastIndexOf('/js/') + 1);
+let this_src = document.currentScript.src;
+let static_path = this_src.substring(0, this_src.lastIndexOf('/js/') + 1);
 
 // jsdeliver CDN 无效添加 suffix
 let cache_suffix = static_path.includes('//cdn.jsdelivr.net/gh') ? '' : '?ver=' + wnd.ver;
@@ -732,7 +731,11 @@ function wnd_handle_response(response, route, parent) {
         return form_info;
     }
 
-    // 根据后端响应处理
+    /**
+     * 根据后端响应处理：
+     * - response.status >= 1 表示请求正常完成;
+     * - response.status <= 0 表示请求异常
+     **/
     form_info.msg = response.msg;
     form_info.msg_class = (response.status <= 0) ? 'is-danger' : 'is-success';
     switch (response.status) {
@@ -759,23 +762,6 @@ function wnd_handle_response(response, route, parent) {
             if ("undefined" == typeof response.data || "undefined" == typeof response.data.waiting) {
                 window.location.reload();
             }
-
-            // 延迟刷新
-            // var timer = null;
-            // var time = response.data.waiting;
-
-            // submit_button.removeClass("is-loading");
-            // submit_button.text(wnd.msg.waiting + " " + time);
-            // timer = setInterval(function() {
-            //     if (time <= 0) {
-            //         clearInterval(timer);
-            //         wnd_reset_modal();
-            //         window.location.reload();
-            //     } else {
-            //         submit_button.text(wnd.msg.waiting + " " + time);
-            //         time--;
-            //     }
-            // }, 1000);
             break;
 
             // 弹出信息并自动消失
@@ -792,6 +778,12 @@ function wnd_handle_response(response, route, parent) {
             // 以响应数据替换当前表单
         case 7:
             wnd_inner_html(parent, response.data);
+            break;
+
+            // -1 将异常消息作为弹窗
+        case -1:
+            wnd_alert_modal(response.msg);
+            form_info.msg = false; // false 表示维持原有信息不变
             break;
 
             // 默认
@@ -906,7 +898,7 @@ function wnd_update_views(post_id, interval = 3600) {
     // 更新服务器数据
     if (is_new) {
         axios({
-            url: wnd_action_api + '/wnd_update_views',
+            url: wnd_action_api + '/common/wnd_update_views',
             method: 'POST',
             data: {
                 'post_id': post_id
@@ -1029,7 +1021,7 @@ function wnd_load_menus_side() {
 <div id="wnd-side-background" class="modal" style="z-index:31;">
 <div class="modal-background"></div>
 </div>`);
-        wnd_ajax_embed('#wnd-side-container', 'wnd_menus_side', {}, 'wnd_menus_side_toggle');
+        wnd_ajax_embed('#wnd-side-container', 'common/wnd_menus_side', {}, 'wnd_menus_side_toggle');
     } else {
         wnd_menus_side_toggle();
     }

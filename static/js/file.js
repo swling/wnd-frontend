@@ -56,7 +56,7 @@ async function _wnd_upload_to_oss(file, oss_sp, endpoint, direct = true, sign_da
         data = Object.assign(data, sign_data);
 
         let oss_sign = axios({
-            url: wnd_action_api + '/' + sign_action,
+            url: wnd_action_api + '/common/' + sign_action,
             method: 'POST',
             data: data,
         }).then(res => {
@@ -134,7 +134,7 @@ async function _wnd_md5_file(file) {
  * @since 0.9.35
  */
 function _wnd_delete_attachment(attachment_id, meta_key = '') {
-    wnd_ajax_action('wnd_delete_file', {
+    wnd_ajax_action('common/wnd_delete_file', {
         'file_id': attachment_id,
         'meta_key': meta_key,
     });
