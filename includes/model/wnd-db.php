@@ -20,7 +20,7 @@ class Wnd_DB {
 		// 标签关联分类
 		$wpdb->wnd_terms = $wpdb->prefix . 'wnd_terms';
 
-		// 用户日志表 @since 0.9.56.7
+		// 用户表 @since 0.9.56.7
 		$wpdb->wnd_users = $wpdb->prefix . 'wnd_users';
 	}
 
@@ -60,13 +60,19 @@ class Wnd_DB {
 			) $charset_collate;";
 		dbDelta($create_auths_sql);
 
-		// 创建用户日志数据库 @since 0.9.56.7
+		/**
+		 * 创建自定义用户数据库
+		 * @link https://stackoverflow.com/questions/13030368/best-data-type-to-store-money-values-in-mysql
+		 * @since 0.9.56.7
+		 */
 		$create_users_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_users (
 			ID bigint(20) NOT NULL auto_increment,
 			user_id bigint(20) NOT NULL,
+			balance decimal(10, 2) NOT NULL,
+			role varchar(64) NOT NULL,
+			attribute varchar(64) NOT NULL,
 			last_login bigint(20) NOT NULL,
 			client_ip varchar(100) NOT NULL,
-			type varchar(32) NOT NULL,
 			PRIMARY KEY (ID),
 			UNIQUE KEY user_id(user_id),
 			KEY last_login(last_login)

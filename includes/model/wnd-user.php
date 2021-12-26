@@ -15,7 +15,8 @@ abstract class Wnd_User {
 
 	/**
 	 * 获取自定义用户对象
-	 * 主要数据：user_id、email、phone……
+	 * Auths 主要数据：user_id、email、phone……
+	 * Users 主要数据：balance、role、attribute、last_login、client_ip
 	 * @since 2019.11.06
 	 */
 	public static function get_wnd_user($user_id): object{
@@ -30,10 +31,9 @@ abstract class Wnd_User {
 		global $wpdb;
 		$user          = new \StdClass();
 		$user->user_id = $user_id;
-		$user_data     = Wnd_Auth::get_user_auth_records($user_id);
-
-		if ($user_data) {
-			foreach ($user_data as $data) {
+		$user_auths    = Wnd_Auth::get_user_auth_records($user_id);
+		if ($user_auths) {
+			foreach ($user_auths as $data) {
 				$type = $data->type;
 				if (!$type) {
 					continue;
@@ -44,9 +44,110 @@ abstract class Wnd_User {
 			unset($data);
 		}
 
+		/**
+		 * 自定义用户数据表
+		 * @since 0.9.57
+		 */
+		$user_data = static::get_db($user_id);
+		if ($user_data) {
+			unset($user_data->ID, $user_data->user_id);
+			foreach ($user_data as $key => $value) {
+				$user->$key = $value;
+			}unset($key, $value);
+		}
+
 		static::update_wnd_user_caches($user);
 
 		return $user;
+	}
+
+	/**
+	 * 判断是否为当天首次登录
+	 */
+	public static function is_daily_login(): bool{
+		$user_id = get_current_user_id();
+		if (!$user_id) {
+			return false;
+		}
+
+		$db_records = static::get_db($user_id);
+		$last_login = $db_records->last_login ?? 0;
+		if ($last_login) {
+			$last_login = date('Y-m-d', $last_login);
+			if ($last_login == date('Y-m-d', time())) {
+				return false;
+			}
+		}
+
+		// 未设置登录时间/注册后未登录
+		static::update_db($user_id, ['last_login' => time()]);
+		return true;
+	}
+
+	/**
+	 * 获取指定用户数据表记录
+	 */
+	public static function get_db(int $user_id) {
+		global $wpdb;
+		return $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM $wpdb->wnd_users WHERE user_id = %d",
+				$user_id
+			)
+		);
+	}
+
+	/**
+	 * 写入 user 数据库
+	 */
+	private static function insert_db(array $data) {
+		$user_id = $data['user_id'] ?? 0;
+		if (!$user_id) {
+			return false;
+		}
+
+		global $wpdb;
+		$defaults    = ['user_id' => 0, 'balance' => 0, 'role' => '', 'attribute' => '', 'last_login' => '', 'client_ip' => ''];
+		$db_records  = ((array) static::get_db($user_id)) ?: $defaults;
+		$data        = array_merge($db_records, $data);
+		$data_format = ['%d', '%f', '%s', '%s', '%d', '%s'];
+		$update_ID   = $data['ID'] ?? 0;
+		if ($update_ID) {
+			unset($data['ID']);
+			$wpdb->update(
+				$wpdb->wnd_users,
+				$data,
+				['ID' => $update_ID],
+				$data_format,
+				['%d']
+			);
+		} else {
+			$wpdb->insert($wpdb->wnd_users, $data, $data_format);
+		}
+
+		$user_data          = new \stdClass;
+		$user_data->user_id = $user_id;
+		static::clean_wnd_user_caches($user_data);
+	}
+
+	/**
+	 * 更新数据库
+	 */
+	private static function update_db(int $user_id, array $data) {
+		$data['user_id'] = $user_id;
+		return static::insert_db($data);
+	}
+
+	/**
+	 * 删除记录
+	 */
+	public static function delete_db(int $user_id) {
+		global $wpdb;
+		return $wpdb->delete(
+			$wpdb->wnd_users,
+			['user_id' => $user_id],
+			['%d']
+		);
 	}
 
 	/**
