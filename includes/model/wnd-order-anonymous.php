@@ -156,7 +156,7 @@ class Wnd_Order_Anonymous extends Wnd_Order {
 			return [];
 		}
 
-		$order = wnd_get_post_by_slug($anon_cookie, 'order', [static::$completed_status, static::$pending_status]);
+		$order = wnd_get_post_by_slug($anon_cookie, 'order', [static::$completed_status, static::$processing_status]);
 		if (!$order) {
 			return [];
 		}

@@ -205,7 +205,7 @@ class Wnd_Order extends Wnd_Transaction {
 			'post_type'      => 'order',
 			'post_parent'    => $object_id,
 			'author'         => $user_id,
-			'post_status'    => [static::$completed_status, static::$pending_status],
+			'post_status'    => [static::$completed_status, static::$processing_status],
 		];
 
 		return get_posts($args) ?: [];

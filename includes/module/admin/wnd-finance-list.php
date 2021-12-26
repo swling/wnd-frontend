@@ -21,7 +21,8 @@ class Wnd_Finance_List extends Wnd_Module_Filter {
 			[
 				__('全部', 'wnd')  => 'any',
 				__('已完成', 'wnd') => Wnd_Transaction::$completed_status,
-				__('进行中', 'wnd') => Wnd_Transaction::$processing_status,
+				__('待付款', 'wnd') => Wnd_Transaction::$pending_status,
+				__('待发货', 'wnd') => Wnd_Transaction::$processing_status,
 				__('已关闭', 'wnd') => Wnd_Transaction::$closed_status,
 				__('已退款', 'wnd') => Wnd_Transaction::$refunded_status,
 			]

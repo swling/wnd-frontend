@@ -47,11 +47,11 @@ abstract class Wnd_Transaction {
 	// 交易数目
 	protected $quantity = 1;
 
-	// 付款进行中
-	public static $processing_status = 'wnd-processing';
+	// 等待付款（订单已创建，库存已扣除）
+	public static $pending_status = 'wnd-pending';
 
 	// 付款完成、交易等待（实体商品交易中：待收货 / 待确认）
-	public static $pending_status = 'wnd-pending';
+	public static $processing_status = 'wnd-processing';
 
 	// 交易完成
 	public static $completed_status = 'wnd-completed';
@@ -238,7 +238,7 @@ abstract class Wnd_Transaction {
 		 * - @since 0.9.37 设定状态
 		 * - @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
 		 */
-		$this->status         = $is_completed ? static::$completed_status : static::$processing_status;
+		$this->status         = $is_completed ? static::$completed_status : static::$pending_status;
 		$this->transaction_id = $this->get_reusable_transaction_id();
 
 		// 写入数据
@@ -343,7 +343,7 @@ abstract class Wnd_Transaction {
 		if (static::$completed_status == $status) {
 			return;
 		}
-		if (static::$processing_status != $status) {
+		if (static::$pending_status != $status) {
 			throw new Exception(__('订单状态无效', 'wnd'));
 		}
 
@@ -491,13 +491,13 @@ abstract class Wnd_Transaction {
 		];
 
 		/**
-		 * @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
+		 * @since 2019.03.31 查询符合当前条件，但尚未完成付款的订单
 		 */
 		$reusable_posts = get_posts(
 			[
 				'author'         => $this->user_id,
 				'post_parent'    => $this->object_id,
-				'post_status'    => static::$processing_status,
+				'post_status'    => static::$pending_status,
 				'post_type'      => $this->transaction_type,
 				'posts_per_page' => 1,
 				'date_query'     => $this->user_id ? [] : $date_query,

@@ -81,14 +81,14 @@ abstract class Wnd_Order_Props {
 
 	/**
 	 * 释放未支付的订单，已更新订单统计及库存
-	 * - 删除15分钟前未完成的订单，并扣除订单统计
+	 * - 删除15分钟前未付款的订单，并扣除订单统计
 	 */
 	public static function release_pending_orders(int $object_id) {
 		$args = [
 			'posts_per_page' => -1,
 			'post_type'      => 'order',
 			'post_parent'    => $object_id,
-			'post_status'    => Wnd_Transaction::$processing_status,
+			'post_status'    => Wnd_Transaction::$pending_status,
 			'date_query'     => [
 				[
 					'column'    => 'post_date',
@@ -122,10 +122,10 @@ abstract class Wnd_Order_Props {
 		Wnd_Finance::delete_user_paid_cache($order->post_author, $object_id);
 
 		/**
-		 * 订单及库存取消行为仅针对状态为待处理的订单
+		 * 订单及库存取消行为仅针对状态为待付款的订单
 		 * 不可取消此处判断，因本方法可在外部直接调用
 		 */
-		if (Wnd_Transaction::$processing_status != $order->post_status) {
+		if (Wnd_Transaction::$pending_status != $order->post_status) {
 			return false;
 		}
 
