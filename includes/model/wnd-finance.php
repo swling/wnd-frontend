@@ -94,7 +94,7 @@ abstract class Wnd_Finance {
 	 * @param 	bool  	$recharge 	是否为充值，若是则将记录到当月充值记录中
 	 */
 	public static function inc_user_balance(int $user_id, float $amount, bool $recharge): bool{
-		$new_balance = static::get_user_balance($user_id) + $amount;
+		$new_balance = bcadd(static::get_user_balance($user_id), $amount, 2);
 		$action      = Wnd_User::update_db($user_id, ['balance' => $new_balance]);
 
 		// 整站按月统计充值和消费
@@ -112,7 +112,6 @@ abstract class Wnd_Finance {
 	 */
 	public static function get_user_balance(int $user_id, bool $format = false): float{
 		$balance = Wnd_User::get_wnd_user($user_id)->balance ?? 0;
-		$balance = floatval($balance);
 		return $format ? number_format($balance, 2, '.', '') : $balance;
 	}
 
