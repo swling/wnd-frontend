@@ -30,7 +30,7 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 		 */
 		$user_id         = get_current_user_id();
 		$gateway_options = Wnd_Payment_Getway::get_gateway_options();
-		$user_money      = wnd_get_user_money($user_id);
+		$user_money      = wnd_get_user_balance($user_id);
 
 		// 消费提示
 		$message = __('本次消费：¥ ', 'wnd') . '<b>' . number_format($total_amount, 2, '.', '') . '</b>';

@@ -31,7 +31,7 @@ class Wnd_Get_Profile extends Wnd_JsonGet {
 		$user_profile                = (array) $user->data;
 		$user_profile['avatar_url']  = static::get_avatar_url($user_id, $default_avatar);
 		$user_profile['description'] = get_user_meta($user_id, 'description', true);
-		$user_profile['balance']     = wnd_get_user_money($user_id);
+		$user_profile['balance']     = wnd_get_user_balance($user_id);
 
 		return $user_profile;
 	}

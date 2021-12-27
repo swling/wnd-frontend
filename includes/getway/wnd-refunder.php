@@ -175,7 +175,7 @@ abstract class Wnd_Refunder {
 				throw new Exception(__('当前交易不支持退款', 'wnd'));
 			}
 
-			return wnd_inc_user_money($this->user_id, $this->refund_amount * -1, true);
+			return wnd_inc_user_balance($this->user_id, $this->refund_amount * -1, true);
 		}
 
 		/**

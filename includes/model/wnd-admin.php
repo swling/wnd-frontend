@@ -225,7 +225,7 @@ class Wnd_Admin {
 			}
 
 			// 转移
-			$action = \Wnd\Model\Wnd_Finance::inc_user_money($user_id, $old_money, false);
+			$action = \Wnd\Model\Wnd_Finance::inc_user_balance($user_id, $old_money, false);
 			if ($action) {
 				wnd_delete_user_meta($user_id, 'money');
 			}

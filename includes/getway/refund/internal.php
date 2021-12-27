@@ -20,7 +20,7 @@ class Internal extends Wnd_Refunder {
 			return;
 		}
 
-		if (!wnd_inc_user_money($this->user_id, $this->refund_amount, false)) {
+		if (!wnd_inc_user_balance($this->user_id, $this->refund_amount, false)) {
 			throw new Exception(__('退款失败', 'wnd') . ': Internal');
 		}
 	}

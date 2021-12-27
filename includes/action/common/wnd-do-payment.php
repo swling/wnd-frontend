@@ -172,7 +172,7 @@ class Wnd_Do_Payment extends Wnd_Action {
 		// 站内交易余额检测
 		$post_price   = wnd_get_post_price($this->post_id, $this->sku_id);
 		$total_amount = $post_price * $this->quantity;
-		$user_money   = wnd_get_user_money($this->user_id);
+		$user_money   = wnd_get_user_balance($this->user_id);
 		if ($total_amount > $user_money) {
 			$msg = '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . number_format($user_money, 2, '.', '') . '</b>&nbsp;&nbsp;' . __('本次消费：¥ ', 'wnd') . '<b>' . number_format($total_amount, 2, '.', '') . '</b></p>';
 			throw new Exception($msg);

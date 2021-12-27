@@ -94,7 +94,7 @@ class Wnd_Add_Filter {
 	 * @since 0.8.64
 	 */
 	public static function filter_can_delete_user($can_array, $user_id) {
-		$money = wnd_get_user_money($user_id);
+		$money = wnd_get_user_balance($user_id);
 		if (0 != $money) {
 			$can_array = ['status' => 0, 'msg' => __('当前账户余额不为零：¥' . $money, 'wnd')];
 		}

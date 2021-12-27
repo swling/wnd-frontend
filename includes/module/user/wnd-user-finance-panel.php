@@ -19,7 +19,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module_Filter {
 		<div class="level-item has-text-centered">
 			<div>
 				<p class="heading">' . __('余额', 'wnd') . '</p>
-				<p class="title">' . wnd_get_user_money($user_id, true) . '</p>
+				<p class="title">' . wnd_get_user_balance($user_id, true) . '</p>
 			</div>
 		</div>';
 
