@@ -57,6 +57,10 @@ class Wnd_Add_Action_WP {
 	 * @since 2020.04.30
 	 */
 	public static function action_on_wp_loaded() {
+		// 记录登录日志
+		Wnd_User::write_login_log();
+
+		// 拦截封禁账户登录
 		if (wnd_has_been_banned()) {
 			wp_logout();
 			wp_die('账户已被封禁', get_option('blogname'));

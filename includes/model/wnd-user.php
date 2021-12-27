@@ -444,16 +444,16 @@ abstract class Wnd_User {
 	}
 
 	/**
-	 * 判断是否为当天首次登录
+	 * 记录登录日志
 	 * @since 0.9.57
 	 */
-	public static function is_daily_login(): bool{
+	public static function write_login_log(): bool{
 		$user_id = get_current_user_id();
 		if (!$user_id) {
 			return false;
 		}
 
-		$db_records = static::get_db($user_id);
+		$db_records = static::get_wnd_user($user_id);
 		$last_login = $db_records->last_login ?? 0;
 		if ($last_login) {
 			$last_login = date('Y-m-d', $last_login);
@@ -463,7 +463,7 @@ abstract class Wnd_User {
 		}
 
 		// 未设置登录时间/注册后未登录
-		static::update_db($user_id, ['last_login' => time()]);
+		static::update_db($user_id, ['last_login' => time(), 'client_ip' => wnd_get_user_ip()]);
 		return true;
 	}
 
