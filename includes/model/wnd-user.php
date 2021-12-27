@@ -28,7 +28,6 @@ abstract class Wnd_User {
 		/**
 		 * 将用户所有绑定设备集合为一个对象
 		 */
-		global $wpdb;
 		$user          = new \StdClass();
 		$user->user_id = $user_id;
 		$user_auths    = Wnd_Auth::get_user_auth_records($user_id);
@@ -104,9 +103,17 @@ abstract class Wnd_User {
 			$action = $wpdb->insert($wpdb->wnd_users, $data, $data_format);
 		}
 
-		// 设置/更新 对象缓存
-		$user_data = (object) $data;
-		static::update_wnd_user_caches($user_data);
+		/**
+		 * - 读取现有 user data
+		 * - 将本次数据依次设置到 user data
+		 * - 更新对象缓存
+		 * （此处不直接清理用户数据缓存，旨在减少一次数据查询）
+		 */
+		$user = static::get_wnd_user($user_id);
+		foreach ($data as $key => $value) {
+			$user->$key = $value;
+		}unset($key, $value);
+		static::update_wnd_user_caches($user);
 
 		return $action;
 	}
