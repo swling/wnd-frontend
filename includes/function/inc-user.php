@@ -167,3 +167,37 @@ function wnd_get_user_panel_post_types() {
 function wnd_get_user_locale($user_id) {
 	return Wnd_User::get_user_locale($user_id);
 }
+
+/**
+ * 读取用户角色
+ * @since 0.9.57
+ */
+function wnd_get_user_role(int $user_id): string {
+	return Wnd_User::get_wnd_user($user_id)->role;
+}
+
+/**
+ * 更新用户角色
+ * @since 0.9.57
+ */
+function wnd_update_user_role(int $user_id, string $role) {
+	$data = ['role' => $role];
+	Wnd_User::update_db($user_id, $data);
+}
+
+/**
+ * 读取用户属性
+ * @since 0.9.57
+ */
+function wnd_get_user_attribute(int $user_id): string {
+	return Wnd_User::get_wnd_user($user_id)->attribute;
+}
+
+/**
+ * 更新用户属性
+ * @since 0.9.57
+ */
+function wnd_update_user_attribute(int $user_id, string $attribute) {
+	$data = ['attribute' => $attribute];
+	Wnd_User::update_db($user_id, $data);
+}

@@ -79,7 +79,7 @@ abstract class Wnd_User {
 	 * 写入 user 数据库
 	 * @since 0.9.57
 	 */
-	public static function insert_db(array $data) {
+	public static function insert_db(array $data): bool{
 		$user_id = $data['user_id'] ?? 0;
 		if (!$user_id) {
 			return false;
@@ -93,7 +93,7 @@ abstract class Wnd_User {
 		$update_ID   = $data['ID'] ?? 0;
 		if ($update_ID) {
 			unset($data['ID']);
-			$wpdb->update(
+			$action = $wpdb->update(
 				$wpdb->wnd_users,
 				$data,
 				['ID' => $update_ID],
@@ -101,19 +101,21 @@ abstract class Wnd_User {
 				['%d']
 			);
 		} else {
-			$wpdb->insert($wpdb->wnd_users, $data, $data_format);
+			$action = $wpdb->insert($wpdb->wnd_users, $data, $data_format);
 		}
 
 		// 设置/更新 对象缓存
 		$user_data = (object) $data;
 		static::update_wnd_user_caches($user_data);
+
+		return $action;
 	}
 
 	/**
 	 * 更新数据库
 	 * @since 0.9.57
 	 */
-	public static function update_db(int $user_id, array $data) {
+	public static function update_db(int $user_id, array $data): bool{
 		$data['user_id'] = $user_id;
 		return static::insert_db($data);
 	}
@@ -122,7 +124,7 @@ abstract class Wnd_User {
 	 * 删除记录
 	 * @since 0.9.57
 	 */
-	public static function delete_db(int $user_id) {
+	public static function delete_db(int $user_id): bool {
 		global $wpdb;
 		return $wpdb->delete(
 			$wpdb->wnd_users,
@@ -463,6 +465,23 @@ abstract class Wnd_User {
 		// 未设置登录时间/注册后未登录
 		static::update_db($user_id, ['last_login' => time()]);
 		return true;
+	}
+
+	/**
+	 * 获取长期未登录的睡眠账户
+	 * @since 0.9.57
+	 */
+	public static function get_sleep_users(int $day): array{
+		global $wpdb;
+		$timestamp = time() - (3600 * 24 * $day);
+		$results   = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM $wpdb->wnd_users WHERE last_login < %d",
+				$timestamp
+			)
+		);
+
+		return $results ?: [];
 	}
 
 	/**
