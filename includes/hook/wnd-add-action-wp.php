@@ -83,8 +83,7 @@ class Wnd_Add_Action_WP {
 	 */
 	public static function action_on_delete_user($user_id) {
 		// 删除Wnd_User对象缓存
-		$wnd_user = Wnd_User::get_wnd_user($user_id);
-		Wnd_User::clean_wnd_user_caches($wnd_user);
+		Wnd_User::clean_wnd_user_caches($user_id);
 
 		// 删除自定义用户数据
 		global $wpdb;

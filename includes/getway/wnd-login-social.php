@@ -2,7 +2,6 @@
 namespace Wnd\Getway;
 
 use Exception;
-use Wnd\Model\Wnd_User;
 use WP_User;
 
 /**
@@ -93,7 +92,7 @@ abstract class Wnd_Login_Social {
 
 		// 根据open id创建或登录账户
 		static::login_social($this->domain, $this->open_id, $this->display_name, $this->avatar_url);
-		wp_redirect(Wnd_User::get_reg_redirect_url());
+		wp_redirect(wnd_get_reg_redirect_url());
 		exit();
 	}
 
@@ -118,7 +117,7 @@ abstract class Wnd_Login_Social {
 		//当前用户已登录：新增绑定或同步信息
 		if (is_user_logged_in()) {
 			$this_user   = wp_get_current_user();
-			$may_be_user = Wnd_User::get_user_by_openid($type, $open_id);
+			$may_be_user = wnd_get_user_by_openid($type, $open_id);
 			if ($may_be_user and $may_be_user->ID != $this_user->ID) {
 				throw new Exception(__('OpenID 已被其他账户占用', 'wnd'));
 			}
@@ -127,14 +126,14 @@ abstract class Wnd_Login_Social {
 				wnd_update_user_meta($this_user->ID, 'avatar_url', $avatar_url);
 			}
 			if ($open_id) {
-				Wnd_User::update_user_openid($this_user->ID, $type, $open_id);
+				wnd_update_user_openid($this_user->ID, $type, $open_id);
 			}
 
 			return $this_user;
 		}
 
 		//当前用户未登录：注册或者登录
-		$user = Wnd_User::get_user_by_openid($type, $open_id);
+		$user = wnd_get_user_by_openid($type, $open_id);
 		if (!$user) {
 			$user_login = wnd_generate_login();
 			$user_pass  = wp_generate_password();
@@ -145,7 +144,7 @@ abstract class Wnd_Login_Social {
 				throw new Exception(__('注册失败', 'wnd'));
 			}
 
-			Wnd_User::update_user_openid($user_id, $type, $open_id);
+			wnd_update_user_openid($user_id, $type, $open_id);
 			$user = get_user_by('id', $user_id);
 		}
 

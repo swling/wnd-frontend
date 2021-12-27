@@ -1,6 +1,7 @@
 <?php
 use Wnd\Model\Wnd_Mail;
 use Wnd\Model\Wnd_User;
+use Wnd\Model\Wnd_User_Auth;
 
 /**
  * 随机生成用户名
@@ -13,13 +14,22 @@ function wnd_generate_login() {
 }
 
 /**
+ * 获取自定义用户对象
+ * - Auths 主要数据：user_id、email、phone……
+ * - Users 主要数据：balance、role、attribute、last_login、client_ip
+ */
+function wnd_get_wnd_user(int $user_id): object {
+	return Wnd_User::get_wnd_user($user_id);
+}
+
+/**
  * @since 2019.01.26 根据用户id获取号码
  *
  * @param  	int          			$user_id
  * @return 	string|false 	用户手机号或false
  */
 function wnd_get_user_phone($user_id) {
-	return Wnd_User::get_user_phone($user_id);
+	return Wnd_User_Auth::get_user_phone($user_id);
 }
 
 /**
@@ -30,7 +40,7 @@ function wnd_get_user_phone($user_id) {
  * @return 	string|false 	用户openid或false
  */
 function wnd_get_user_openid($user_id, $type) {
-	return Wnd_User::get_user_openid($user_id, $type);
+	return Wnd_User_Auth::get_user_openid($user_id, $type);
 }
 
 /**
@@ -40,7 +50,7 @@ function wnd_get_user_openid($user_id, $type) {
  * @return 	object|false	WordPress user object on success
  */
 function wnd_get_user_by($email_or_phone_or_login) {
-	return Wnd_User::get_user_by($email_or_phone_or_login);
+	return Wnd_User_Auth::get_user_by($email_or_phone_or_login);
 }
 
 /**
@@ -52,7 +62,7 @@ function wnd_get_user_by($email_or_phone_or_login) {
  * @return 	object|false 	（WordPress：get_user_by）
  */
 function wnd_get_user_by_openid($openid, $type) {
-	return Wnd_User::get_user_by_openid($openid, $type);
+	return Wnd_User_Auth::get_user_by_openid($openid, $type);
 }
 
 /**
@@ -65,7 +75,19 @@ function wnd_get_user_by_openid($openid, $type) {
  * @return 	int    	$wpdb->insert
  */
 function wnd_update_user_openid($user_id, $type, $openid) {
-	return Wnd_User::update_user_openid($user_id, $type, $openid);
+	return Wnd_User_Auth::update_user_openid($user_id, $type, $openid);
+}
+
+/**
+ * 删除用户 open id
+ * @since 0.9.4
+ *
+ * @param  int    $user_id
+ * @param  string $type           第三方账号类型
+ * @return int    $wpdb->delete
+ */
+function wnd_delete_user_openid($user_id, $type) {
+	return Wnd_User_Auth::delete_user_openid($user_id, $type);
 }
 
 /**
@@ -77,7 +99,7 @@ function wnd_update_user_openid($user_id, $type, $openid) {
  * @return 	int    	$wpdb->insert
  */
 function wnd_update_user_email($user_id, $email) {
-	return Wnd_User::update_user_email($user_id, $email);
+	return Wnd_User_Auth::update_user_email($user_id, $email);
 }
 
 /**
@@ -89,7 +111,7 @@ function wnd_update_user_email($user_id, $email) {
  * @return 	int    	$wpdb->insert
  */
 function wnd_update_user_phone($user_id, $phone) {
-	return Wnd_User::update_user_phone($user_id, $phone);
+	return Wnd_User_Auth::update_user_phone($user_id, $phone);
 }
 
 /**
@@ -100,7 +122,14 @@ function wnd_update_user_phone($user_id, $phone) {
  * @return 	bool
  */
 function wnd_is_manager($user_id = 0) {
-	return Wnd_User::is_manager($user_id);
+	$user = $user_id ? get_user_by('id', $user_id) : wp_get_current_user();
+
+	$user_role = $user->roles[0] ?? false;
+	if ('administrator' == $user_role or 'editor' == $user_role) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 /**
@@ -110,7 +139,10 @@ function wnd_is_manager($user_id = 0) {
  * @return 	bool
  */
 function wnd_has_been_banned($user_id = 0) {
-	return Wnd_User::has_been_banned($user_id);
+	$user_id = $user_id ?: get_current_user_id();
+	$status  = get_user_meta($user_id, 'status', true);
+
+	return 'banned' == $status ? true : false;
 }
 
 /**
@@ -122,7 +154,19 @@ function wnd_has_been_banned($user_id = 0) {
  * @return 	int|false
  */
 function wnd_is_name_duplicated($display_name, $exclude_id = 0) {
-	return Wnd_User::is_name_duplicated($display_name, $exclude_id);
+	// 名称为空
+	if (empty($display_name)) {
+		return false;
+	}
+
+	global $wpdb;
+	$results = $wpdb->get_var($wpdb->prepare(
+		"SELECT ID FROM $wpdb->users WHERE display_name = %s AND  ID != %d  limit 1",
+		$display_name,
+		$exclude_id
+	));
+
+	return $results ?: false;
 }
 
 /**
@@ -155,7 +199,10 @@ function wnd_get_mail_count() {
  * @return array 	文章类型数组
  */
 function wnd_get_user_panel_post_types() {
-	return Wnd_User::get_user_panel_post_types();
+	$post_types = get_post_types(['public' => true], 'names', 'and');
+	// 排除页面/附件/站内信
+	unset($post_types['page'], $post_types['attachment'], $post_types['mail']);
+	return apply_filters('wnd_user_panel_post_types', $post_types);
 }
 
 /**
@@ -165,7 +212,7 @@ function wnd_get_user_panel_post_types() {
  * @return string 用户语言字段值，若无效用户或未设置语言，则返回当前站点语言
  */
 function wnd_get_user_locale($user_id) {
-	return Wnd_User::get_user_locale($user_id);
+	return wnd_get_user_meta($user_id, 'locale') ?: 'default';
 }
 
 /**
@@ -173,7 +220,7 @@ function wnd_get_user_locale($user_id) {
  * @since 0.9.57
  */
 function wnd_get_user_role(int $user_id): string {
-	return Wnd_User::get_wnd_user($user_id)->role;
+	return wnd_get_wnd_user($user_id)->role;
 }
 
 /**
@@ -190,7 +237,7 @@ function wnd_update_user_role(int $user_id, string $role) {
  * @since 0.9.57
  */
 function wnd_get_user_attribute(int $user_id): string {
-	return Wnd_User::get_wnd_user($user_id)->attribute;
+	return wnd_get_wnd_user($user_id)->attribute;
 }
 
 /**
@@ -200,4 +247,12 @@ function wnd_get_user_attribute(int $user_id): string {
 function wnd_update_user_attribute(int $user_id, string $attribute) {
 	$data = ['attribute' => $attribute];
 	Wnd_User::update_db($user_id, $data);
+}
+
+/**
+ * 获取注册后跳转地址
+ * @since 2020.04.11
+ */
+function wnd_get_reg_redirect_url() {
+	return wnd_get_config('reg_redirect_url') ?: home_url();
 }

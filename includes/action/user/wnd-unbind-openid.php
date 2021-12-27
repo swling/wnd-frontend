@@ -3,7 +3,6 @@ namespace Wnd\Action\User;
 
 use Exception;
 use Wnd\Action\Wnd_Action_User;
-use Wnd\Model\Wnd_User;
 
 /**
  * 解除账户绑定
@@ -18,7 +17,7 @@ class Wnd_Unbind_Openid extends Wnd_Action_User {
 
 	protected function execute(): array{
 		// 解除绑定
-		if (!Wnd_User::delete_user_openid($this->user_id, $this->type)) {
+		if (!wnd_delete_user_openid($this->user_id, $this->type)) {
 			throw new Exception(__('解绑失败，请稍后重试', 'wnd'));
 		}
 
@@ -28,7 +27,7 @@ class Wnd_Unbind_Openid extends Wnd_Action_User {
 	protected function check() {
 		$this->type = $this->data['type'] ?? '';
 		$user_pass  = $this->data['_user_user_pass'];
-		$wnd_user   = (array) Wnd_User::get_wnd_user($this->user->ID);
+		$wnd_user   = (array) wnd_get_wnd_user($this->user->ID);
 
 		/**
 		 * 如果当前账户未绑定邮箱、手机、或其他第三方账户，则不允许解绑最后一个绑定
