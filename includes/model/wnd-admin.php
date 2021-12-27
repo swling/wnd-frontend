@@ -212,5 +212,23 @@ class Wnd_Admin {
 	// 新增用户日志表，需要升级数据表
 	private static function v_0_9_57() {
 		Wnd_DB::create_table();
+
+		// 将旧的用户余额转移至新表（之所有需要将用户余额作为新表存储，是为了定期清理余额为零的睡眠账户）
+		global $wpdb;
+		$results = $wpdb->get_results("SELECT ID FROM $wpdb->users");
+		foreach ($results as $user) {
+			$user_id   = $user->ID;
+			$old_money = floatval(wnd_get_user_meta($user_id, 'money'));
+			if (!$old_money) {
+				wnd_delete_user_meta($user_id, 'money');
+				continue;
+			}
+
+			// 转移
+			$action = \Wnd\Model\Wnd_Finance::inc_user_money($user_id, $old_money, false);
+			if ($action) {
+				wnd_delete_user_meta($user_id, 'money');
+			}
+		}
 	}
 }

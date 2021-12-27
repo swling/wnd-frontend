@@ -4,6 +4,7 @@ namespace Wnd\Model;
 use Wnd\Model\Wnd_Order;
 use Wnd\Model\Wnd_Order_Anonymous;
 use Wnd\Model\Wnd_SKU;
+use Wnd\Model\Wnd_User;
 
 /**
  * 站内财务信息
@@ -92,14 +93,13 @@ abstract class Wnd_Finance {
 	 * @param 	float 	$money    		金额
 	 * @param 	bool  	$recharge 	是否为充值，若是则将记录到当月充值记录中
 	 */
-	public static function inc_user_money($user_id, $money, $recharge): bool{
-		$new_money = static::get_user_money($user_id) + $money;
-		$new_money = number_format($new_money, 2, '.', '');
-		$action    = wnd_update_user_meta($user_id, 'money', $new_money);
+	public static function inc_user_money(int $user_id, float $amount, bool $recharge): bool{
+		$new_balance = static::get_user_money($user_id) + $amount;
+		$action      = Wnd_User::update_db($user_id, ['balance' => $new_balance]);
 
 		// 整站按月统计充值和消费
 		if ($recharge) {
-			static::update_fin_stats($money, 'recharge');
+			static::update_fin_stats($amount, 'recharge');
 		}
 
 		return $action;
@@ -110,9 +110,10 @@ abstract class Wnd_Finance {
 	 * @param  	int   	$user_id       	用户ID
 	 * @return 	float 	用户余额
 	 */
-	public static function get_user_money($user_id, $format = false) {
-		$money = floatval(wnd_get_user_meta($user_id, 'money'));
-		return $format ? number_format($money, 2, '.', '') : $money;
+	public static function get_user_money(int $user_id, bool $format = false): float{
+		$balance = Wnd_User::get_wnd_user($user_id)->balance ?? 0;
+		$balance = floatval($balance);
+		return $format ? number_format($balance, 2, '.', '') : $balance;
 	}
 
 	/**
