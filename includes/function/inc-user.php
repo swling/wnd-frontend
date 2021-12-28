@@ -92,12 +92,12 @@ function wnd_get_user_by($email_or_phone_or_login) {
  * 根据openID获取WordPress用户，用于第三方账户登录
  * @since 2019.07.11
  *
- * @param  	int          			openID
- * @param  	string       			$type
+ * @param  	string       	$type
+ * @param  	int          	openID
  * @return 	object|false 	（WordPress：get_user_by）
  */
-function wnd_get_user_by_openid($openid, $type) {
-	return Wnd_Auth::get_user_by_openid($openid, $type);
+function wnd_get_user_by_openid(string $type, string $open_id) {
+	return Wnd_Auth::get_user_by_openid($type, $open_id);
 }
 
 /**
