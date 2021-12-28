@@ -83,18 +83,18 @@ abstract class Wnd_Auth {
 		$auth_record = static::get_db($type, $open_id);
 		$ID          = $auth_record->ID ?? 0;
 		if ($ID) {
-			$db = static::update_db($ID, $user_id, $type, $open_id);
+			$action = static::update_db($ID, $user_id, $type, $open_id);
 		} else {
-			$db = static::insert_db($user_id, $type, $open_id);
+			$action = static::insert_db($user_id, $type, $open_id);
 		}
 
-		// 删除原有同类型openid并更新用户缓存
-		if ($db) {
+		// 数据更新成功：删除可能存在的原有同类型 openid、设置缓存
+		if ($action) {
 			static::delete_db($type, $old_open_id);
 			static::update_auth_cache($user_id, $type, $open_id);
 		}
 
-		return $db ? $user_id : 0;
+		return $action ? $user_id : 0;
 	}
 
 	/**
@@ -111,14 +111,14 @@ abstract class Wnd_Auth {
 		// 查询
 		$user    = static::get_user_auths($user_id);
 		$open_id = $user->$type ?? '';
-		$db      = static::delete_db($type, $open_id);
+		$action  = static::delete_db($type, $open_id);
 
 		// 缓存
-		if ($db) {
-			static::clean_auth_caches($user_id);
+		if ($action) {
+			static::update_auth_cache($user_id, $type, '');
 		}
 
-		return $db ? $user_id : 0;
+		return $action ? $user_id : 0;
 	}
 
 	/**
@@ -130,11 +130,30 @@ abstract class Wnd_Auth {
 		$auths        = static::get_user_auths($user_id);
 		$auths->$type = $open_id;
 
-		// 用户对象集合
-		wp_cache_set($user_id, $auths, static::$auths_cache_group);
+		/**
+		 * - 如果指定 openid 为空，表示删除
+		 * - 用户对象集合
+		 * - 单个绑定 与 user_id 对应关系
+		 */
+		if (!$open_id) {
+			unset($auths->$type);
+			wp_cache_set($user_id, $auths, static::$auths_cache_group);
 
-		// 单个绑定 与 user_id 对应关系
-		wp_cache_set($open_id, $user_id, $cache_group);
+			wp_cache_delete($open_id, $cache_group);
+		} else {
+			wp_cache_set($user_id, $auths, static::$auths_cache_group);
+
+			wp_cache_set($open_id, $user_id, $cache_group);
+		}
+	}
+
+	/**
+	 * 删除指定用户全部 auth 记录
+	 */
+	public static function delete_user_auths(int $user_id) {
+		global $wpdb;
+		$wpdb->delete($wpdb->wnd_auths, ['user_id' => $user_id]);
+		static::clean_auth_caches($user_id);
 	}
 
 	/**

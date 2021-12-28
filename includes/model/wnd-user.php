@@ -74,8 +74,10 @@ abstract class Wnd_User {
 		 * 更新对象缓存
 		 * （此处不直接清理用户数据缓存，旨在减少一次数据查询）
 		 */
-		$user = (object) $data;
-		static::update_wnd_user_caches($user);
+		if ($action) {
+			$user = (object) $data;
+			static::update_wnd_user_caches($user);
+		}
 
 		return $action;
 	}
@@ -95,11 +97,17 @@ abstract class Wnd_User {
 	 */
 	public static function delete_db(int $user_id): bool {
 		global $wpdb;
-		return $wpdb->delete(
+		$action = $wpdb->delete(
 			$wpdb->wnd_users,
 			['user_id' => $user_id],
 			['%d']
 		);
+
+		if ($action) {
+			static::clean_wnd_user_caches($user_id);
+		}
+
+		return $action;
 	}
 
 	/**

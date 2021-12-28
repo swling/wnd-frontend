@@ -83,14 +83,11 @@ class Wnd_Add_Action_WP {
 	 * @since 2018
 	 */
 	public static function action_on_delete_user($user_id) {
-		// 删除对象缓存
-		Wnd_User::clean_wnd_user_caches($user_id);
-		Wnd_Auth::clean_auth_caches($user_id);
+		// 删除自定义 wnd_users 表记录
+		Wnd_User::delete_db($user_id);
 
-		// 删除自定义用户数据
-		global $wpdb;
-		$wpdb->delete($wpdb->wnd_auths, ['user_id' => $user_id]);
-		$wpdb->delete($wpdb->wnd_users, ['user_id' => $user_id]);
+		// 删除自定义用户 wnd_auths 表记录
+		Wnd_Auth::delete_user_auths($user_id);
 	}
 
 	/**

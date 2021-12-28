@@ -267,21 +267,6 @@ abstract class Wnd_Auth_Code {
 	public function bind_user(int $user_id) {
 		$this->check_db_fields(false);
 
-		$record = Wnd_Auth::get_db($this->identity_type, $this->identifier);
-		$ID     = $record->ID ?? 0;
-		if (!$ID) {
-			return false;
-		}
-
-		return Wnd_Auth::update_db($ID, $user_id, $this->identity_type, $this->identifier);
-	}
-
-	/**
-	 * 删除
-	 * @since 2019.07.23
-	 */
-	public function delete() {
-		$this->check_db_fields(false);
-		return Wnd_Auth::delete_db($this->identity_type, $this->identifier);
+		return Wnd_Auth::update_user_openid($user_id, $this->identity_type, $this->identifier);
 	}
 }

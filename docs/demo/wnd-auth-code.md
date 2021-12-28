@@ -21,10 +21,6 @@ $auth->verify();
 // 将当前邮箱/号码绑定到用户
 $auth->bind_user($user_id);
 
-# 删除
-$auth = Wnd_Auth_Code::get_instance('xxx');
-$auth->delete();
-
 ###########################################################
 
 # 绑定手机
