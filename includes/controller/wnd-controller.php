@@ -150,11 +150,11 @@ class Wnd_Controller {
 	 *
 	 * ## 插件内置
 	 * parse_class('Wnd_Demo', 'Module') 		=> Wnd\Module\Wnd_Demo;
-	 * parse_class('Sub\Wnd_Demo', 'Module') 	=> Wnd\Module\Sub\Wnd_Demo;
+	 * parse_class('Sub/Wnd_Demo', 'Module') 	=> Wnd\Module\Sub\Wnd_Demo;
 	 *
 	 * ## 主题
 	 * parse_class('Wndt_Demo', 'Module') 		=> Wndt\Module\Wndt_Demo;
-	 * parse_class('Sub\Wndt_Demo', 'Module') 	=> Wndt\Module\Sub\Wndt_Demo;
+	 * parse_class('Sub/Wndt_Demo', 'Module') 	=> Wndt\Module\Sub\Wndt_Demo;
 	 *
 	 * ## 拓展插件
 	 * parse_class('Plugin/PluginName/Wndt_Demo', 'Module') 	=> Wnd_Plugin\PluginName\Module\Wndt_Demo;
@@ -162,7 +162,7 @@ class Wnd_Controller {
 	 *
 	 * 其他 api 请求以此类推
 	 *
-	 * @see 自动加载机制 wnd-load.php
+	 * @see 自动加载机制 wnd-autoloader.php
 	 *
 	 * @return string 包含完整命名空间的类名称
 	 */
