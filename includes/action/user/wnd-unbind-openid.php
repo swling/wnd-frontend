@@ -27,13 +27,12 @@ class Wnd_Unbind_Openid extends Wnd_Action_User {
 	protected function check() {
 		$this->type = $this->data['type'] ?? '';
 		$user_pass  = $this->data['_user_user_pass'];
-		$wnd_user   = (array) wnd_get_wnd_user($this->user->ID);
+		$auths      = (array) wnd_get_user_auths($this->user->ID);
 
 		/**
 		 * 如果当前账户未绑定邮箱、手机、或其他第三方账户，则不允许解绑最后一个绑定
-		 * $wnd_user 包含属性 $wnd_user->user_id 故判断条件为: <= 2
 		 */
-		if (count($wnd_user) <= 2) {
+		if (count($auths) <= 1) {
 			throw new Exception(__('当前账户不可解绑', 'wnd'));
 		}
 

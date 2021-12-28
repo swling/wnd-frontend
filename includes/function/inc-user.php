@@ -15,11 +15,18 @@ function wnd_generate_login() {
 
 /**
  * 获取自定义用户对象
- * - Auths 主要数据：user_id、email、phone……
  * - Users 主要数据：balance、role、attribute、last_login、client_ip
  */
 function wnd_get_wnd_user(int $user_id): object {
 	return Wnd_User::get_wnd_user($user_id);
+}
+
+/**
+ * 获取自定义用户对象
+ * - Auths 主要数据：user_id、email、phone……
+ */
+function wnd_get_user_auths(int $user_id): object {
+	return Wnd_User_Auth::get_user_auths($user_id);
 }
 
 /**
@@ -29,7 +36,7 @@ function wnd_get_wnd_user(int $user_id): object {
  * @return 	string|false 	用户手机号或false
  */
 function wnd_get_user_phone($user_id) {
-	return Wnd_User_Auth::get_user_phone($user_id);
+	return Wnd_User_Auth::get_user_openid($user_id, 'phone');
 }
 
 /**
@@ -50,7 +57,35 @@ function wnd_get_user_openid($user_id, $type) {
  * @return 	object|false	WordPress user object on success
  */
 function wnd_get_user_by($email_or_phone_or_login) {
-	return Wnd_User_Auth::get_user_by($email_or_phone_or_login);
+	if (!$email_or_phone_or_login) {
+		return false;
+	}
+
+	/**
+	 * 邮箱
+	 */
+	if (is_email($email_or_phone_or_login)) {
+		return get_user_by('email', $email_or_phone_or_login);
+	}
+
+	/**
+	 * 手机或登录名
+	 *
+	 * 若当前字符匹配手机号码格式，则优先使用手机号查询
+	 * 若查询到用户即返回
+	 * 最后返回用户名查询结果
+	 *
+	 * 注意：
+	 * 强烈建议禁止用户使用纯数字作为用户名
+	 * 否则可能出现手机号码与用户名的混乱，造成同一个登录名，对应过个账户信息的问题
+	 *
+	 * 本插件已禁用纯数字用户名：@see wnd_ajax_reg()
+	 */
+	if (wnd_is_mobile($email_or_phone_or_login)) {
+		return Wnd_User_Auth::get_user_by_openid('phone', $email_or_phone_or_login);
+	}
+
+	return get_user_by('login', $email_or_phone_or_login);
 }
 
 /**
@@ -99,7 +134,14 @@ function wnd_delete_user_openid($user_id, $type) {
  * @return 	int    	$wpdb->insert
  */
 function wnd_update_user_email($user_id, $email) {
-	return Wnd_User_Auth::update_user_email($user_id, $email);
+	$db = Wnd_User_Auth::update_user_openid($user_id, 'email', $email);
+
+	// 更新WordPress账户email
+	if ($db) {
+		$db = wp_update_user(['ID' => $user_id, 'user_email' => $email]);
+	}
+
+	return $db;
 }
 
 /**
@@ -111,7 +153,7 @@ function wnd_update_user_email($user_id, $email) {
  * @return 	int    	$wpdb->insert
  */
 function wnd_update_user_phone($user_id, $phone) {
-	return Wnd_User_Auth::update_user_phone($user_id, $phone);
+	return Wnd_User_Auth::update_user_openid($user_id, 'phone', $phone);
 }
 
 /**

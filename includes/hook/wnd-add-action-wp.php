@@ -9,6 +9,7 @@ use Wnd\Model\Wnd_Order_Anonymous;
 use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\Model\Wnd_User;
+use Wnd\Model\Wnd_User_Auth;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\Utility\Wnd_Validator;
@@ -82,8 +83,9 @@ class Wnd_Add_Action_WP {
 	 * @since 2018
 	 */
 	public static function action_on_delete_user($user_id) {
-		// 删除Wnd_User对象缓存
+		// 删除对象缓存
 		Wnd_User::clean_wnd_user_caches($user_id);
+		Wnd_User_Auth::clean_auth_caches($user_id);
 
 		// 删除自定义用户数据
 		global $wpdb;

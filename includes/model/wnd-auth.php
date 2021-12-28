@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Model\Wnd_User_Auth;
 
 /**
  * 验证授权
@@ -163,7 +164,7 @@ abstract class Wnd_Auth {
 	 * @since 2019.02.10
 	 */
 	private function check_send() {
-		$data = static::get_db($this->identity_type, $this->identifier);
+		$data = Wnd_User_Auth::get_db($this->identity_type, $this->identifier);
 		if (!$data) {
 			return;
 		}
@@ -189,14 +190,14 @@ abstract class Wnd_Auth {
 	private function insert() {
 		$this->check_db_fields(true);
 
-		$record  = static::get_db($this->identity_type, $this->identifier);
+		$record  = Wnd_User_Auth::get_db($this->identity_type, $this->identifier);
 		$ID      = $record->ID ?? 0;
 		$user_id = $record->user_id ?? 0;
 
 		if ($ID) {
-			$db = static::update_db($ID, $user_id, $this->identity_type, $this->identifier, $this->auth_code);
+			$db = Wnd_User_Auth::update_db($ID, $user_id, $this->identity_type, $this->identifier, $this->auth_code);
 		} else {
-			$db = $db = static::insert_db($user_id, $this->identity_type, $this->identifier, $this->auth_code);
+			$db = Wnd_User_Auth::insert_db($user_id, $this->identity_type, $this->identifier, $this->auth_code);
 		}
 
 		if (!$db) {
@@ -247,7 +248,7 @@ abstract class Wnd_Auth {
 		$this->check_type();
 
 		// 有效性校验
-		$data = static::get_db($this->identity_type, $this->identifier);
+		$data = Wnd_User_Auth::get_db($this->identity_type, $this->identifier);
 		if (!$data or !$data->credential) {
 			throw new Exception(__('校验失败：请先获取验证码', 'wnd'));
 		}
@@ -266,13 +267,13 @@ abstract class Wnd_Auth {
 	public function bind_user(int $user_id) {
 		$this->check_db_fields(false);
 
-		$record = static::get_db($this->identity_type, $this->identifier);
+		$record = Wnd_User_Auth::get_db($this->identity_type, $this->identifier);
 		$ID     = $record->ID ?? 0;
 		if (!$ID) {
 			return false;
 		}
 
-		return static::update_db($ID, $user_id, $this->identity_type, $this->identifier);
+		return Wnd_User_Auth::update_db($ID, $user_id, $this->identity_type, $this->identifier);
 	}
 
 	/**
@@ -281,76 +282,6 @@ abstract class Wnd_Auth {
 	 */
 	public function delete() {
 		$this->check_db_fields(false);
-		return static::delete_db($this->identity_type, $this->identifier);
-	}
-
-	/**
-	 * @since 0.9.36
-	 */
-	public static function get_db(string $identity_type, string $identifier) {
-		global $wpdb;
-		$data = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM $wpdb->wnd_auths WHERE identifier = %s AND type = %s",
-				$identifier, $identity_type
-			)
-		);
-
-		return $data;
-	}
-
-	/**
-	 * 写入Auth数据库
-	 * @since 0.9.36
-	 */
-	public static function insert_db(int $user_id, string $identity_type, string $identifier, string $credential = '') {
-		global $wpdb;
-		return $wpdb->insert(
-			$wpdb->wnd_auths,
-			['user_id' => $user_id, 'identifier' => $identifier, 'type' => $identity_type, 'credential' => $credential, 'time' => time()],
-			['%d', '%s', '%s', '%s', '%d'],
-		);
-	}
-
-	/**
-	 * 更新Auth数据库
-	 * @since 0.9.36
-	 */
-	public static function update_db(int $ID, int $user_id, string $identity_type, string $identifier, string $credential = '') {
-		global $wpdb;
-		return $wpdb->update(
-			$wpdb->wnd_auths,
-			['user_id' => $user_id, 'identifier' => $identifier, 'type' => $identity_type, 'credential' => $credential, 'time' => time()],
-			['ID' => $ID],
-			['%d', '%s', '%s', '%s', '%d'],
-			['%d']
-		);
-	}
-
-	/**
-	 * 删除
-	 * @since 0.9.36
-	 */
-	public static function delete_db(string $identity_type, string $identifier) {
-		global $wpdb;
-		return $wpdb->delete(
-			$wpdb->wnd_auths,
-			['identifier' => $identifier, 'type' => $identity_type],
-			['%s', '%s']
-		);
-	}
-
-	/**
-	 * 获取指定用户的所有auth记录
-	 * @since 0.9.36
-	 */
-	public static function get_user_auth_records(int $user_id) {
-		global $wpdb;
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM $wpdb->wnd_auths WHERE user_id = %d",
-				$user_id
-			)
-		);
+		return Wnd_User_Auth::delete_db($this->identity_type, $this->identifier);
 	}
 }

@@ -14,14 +14,14 @@ class Wnd_Unbind_Openid_Form extends Wnd_Module_Form {
 	protected static function configure_form(): object{
 		// 获取当前用户绑定账户数据
 		$current_user = wp_get_current_user();
-		$wnd_user     = (array) wnd_get_wnd_user($current_user->ID);
+		$auths        = (array) wnd_get_user_auths($current_user->ID);
 
 		// 排除用户ID，邮箱，手机
-		unset($wnd_user['user_id'], $wnd_user['email'], $wnd_user['phone']);
+		unset($auths['user_id'], $auths['email'], $auths['phone']);
 
 		// 组合表单选项数据
 		$type_options = [];
-		foreach ($wnd_user as $key => $value) {
+		foreach ($auths as $key => $value) {
 			$type_options[strtoupper($key)] = $key;
 		}
 		unset($key, $value);
