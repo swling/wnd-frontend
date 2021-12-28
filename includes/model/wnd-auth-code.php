@@ -2,7 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\Model\Wnd_User_Auth;
+use Wnd\Model\Wnd_Auth;
 
 /**
  * 验证授权
@@ -164,7 +164,7 @@ abstract class Wnd_Auth_Code {
 	 * @since 2019.02.10
 	 */
 	private function check_send() {
-		$data = Wnd_User_Auth::get_db($this->identity_type, $this->identifier);
+		$data = Wnd_Auth::get_db($this->identity_type, $this->identifier);
 		if (!$data) {
 			return;
 		}
@@ -190,14 +190,14 @@ abstract class Wnd_Auth_Code {
 	private function insert() {
 		$this->check_db_fields(true);
 
-		$record  = Wnd_User_Auth::get_db($this->identity_type, $this->identifier);
+		$record  = Wnd_Auth::get_db($this->identity_type, $this->identifier);
 		$ID      = $record->ID ?? 0;
 		$user_id = $record->user_id ?? 0;
 
 		if ($ID) {
-			$db = Wnd_User_Auth::update_db($ID, $user_id, $this->identity_type, $this->identifier, $this->auth_code);
+			$db = Wnd_Auth::update_db($ID, $user_id, $this->identity_type, $this->identifier, $this->auth_code);
 		} else {
-			$db = Wnd_User_Auth::insert_db($user_id, $this->identity_type, $this->identifier, $this->auth_code);
+			$db = Wnd_Auth::insert_db($user_id, $this->identity_type, $this->identifier, $this->auth_code);
 		}
 
 		if (!$db) {
@@ -248,7 +248,7 @@ abstract class Wnd_Auth_Code {
 		$this->check_type();
 
 		// 有效性校验
-		$data = Wnd_User_Auth::get_db($this->identity_type, $this->identifier);
+		$data = Wnd_Auth::get_db($this->identity_type, $this->identifier);
 		if (!$data or !$data->credential) {
 			throw new Exception(__('校验失败：请先获取验证码', 'wnd'));
 		}
@@ -267,13 +267,13 @@ abstract class Wnd_Auth_Code {
 	public function bind_user(int $user_id) {
 		$this->check_db_fields(false);
 
-		$record = Wnd_User_Auth::get_db($this->identity_type, $this->identifier);
+		$record = Wnd_Auth::get_db($this->identity_type, $this->identifier);
 		$ID     = $record->ID ?? 0;
 		if (!$ID) {
 			return false;
 		}
 
-		return Wnd_User_Auth::update_db($ID, $user_id, $this->identity_type, $this->identifier);
+		return Wnd_Auth::update_db($ID, $user_id, $this->identity_type, $this->identifier);
 	}
 
 	/**
@@ -282,6 +282,6 @@ abstract class Wnd_Auth_Code {
 	 */
 	public function delete() {
 		$this->check_db_fields(false);
-		return Wnd_User_Auth::delete_db($this->identity_type, $this->identifier);
+		return Wnd_Auth::delete_db($this->identity_type, $this->identifier);
 	}
 }

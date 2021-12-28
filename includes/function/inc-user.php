@@ -1,7 +1,7 @@
 <?php
+use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Mail;
 use Wnd\Model\Wnd_User;
-use Wnd\Model\Wnd_User_Auth;
 
 /**
  * 随机生成用户名
@@ -26,7 +26,7 @@ function wnd_get_wnd_user(int $user_id): object {
  * - Auths 主要数据：user_id、email、phone……
  */
 function wnd_get_user_auths(int $user_id): object {
-	return Wnd_User_Auth::get_user_auths($user_id);
+	return Wnd_Auth::get_user_auths($user_id);
 }
 
 /**
@@ -36,7 +36,7 @@ function wnd_get_user_auths(int $user_id): object {
  * @return 	string|false 	用户手机号或false
  */
 function wnd_get_user_phone($user_id) {
-	return Wnd_User_Auth::get_user_openid($user_id, 'phone');
+	return Wnd_Auth::get_user_openid($user_id, 'phone');
 }
 
 /**
@@ -47,7 +47,7 @@ function wnd_get_user_phone($user_id) {
  * @return 	string|false 	用户openid或false
  */
 function wnd_get_user_openid($user_id, $type) {
-	return Wnd_User_Auth::get_user_openid($user_id, $type);
+	return Wnd_Auth::get_user_openid($user_id, $type);
 }
 
 /**
@@ -82,7 +82,7 @@ function wnd_get_user_by($email_or_phone_or_login) {
 	 * 本插件已禁用纯数字用户名：@see wnd_ajax_reg()
 	 */
 	if (wnd_is_mobile($email_or_phone_or_login)) {
-		return Wnd_User_Auth::get_user_by_openid('phone', $email_or_phone_or_login);
+		return Wnd_Auth::get_user_by_openid('phone', $email_or_phone_or_login);
 	}
 
 	return get_user_by('login', $email_or_phone_or_login);
@@ -97,7 +97,7 @@ function wnd_get_user_by($email_or_phone_or_login) {
  * @return 	object|false 	（WordPress：get_user_by）
  */
 function wnd_get_user_by_openid($openid, $type) {
-	return Wnd_User_Auth::get_user_by_openid($openid, $type);
+	return Wnd_Auth::get_user_by_openid($openid, $type);
 }
 
 /**
@@ -110,7 +110,7 @@ function wnd_get_user_by_openid($openid, $type) {
  * @return 	int    	$wpdb->insert
  */
 function wnd_update_user_openid($user_id, $type, $openid) {
-	return Wnd_User_Auth::update_user_openid($user_id, $type, $openid);
+	return Wnd_Auth::update_user_openid($user_id, $type, $openid);
 }
 
 /**
@@ -122,7 +122,7 @@ function wnd_update_user_openid($user_id, $type, $openid) {
  * @return int    $wpdb->delete
  */
 function wnd_delete_user_openid($user_id, $type) {
-	return Wnd_User_Auth::delete_user_openid($user_id, $type);
+	return Wnd_Auth::delete_user_openid($user_id, $type);
 }
 
 /**
@@ -134,7 +134,7 @@ function wnd_delete_user_openid($user_id, $type) {
  * @return 	int    	$wpdb->insert
  */
 function wnd_update_user_email($user_id, $email) {
-	$db = Wnd_User_Auth::update_user_openid($user_id, 'email', $email);
+	$db = Wnd_Auth::update_user_openid($user_id, 'email', $email);
 
 	// 更新WordPress账户email
 	if ($db) {
@@ -153,7 +153,7 @@ function wnd_update_user_email($user_id, $email) {
  * @return 	int    	$wpdb->insert
  */
 function wnd_update_user_phone($user_id, $phone) {
-	return Wnd_User_Auth::update_user_openid($user_id, 'phone', $phone);
+	return Wnd_Auth::update_user_openid($user_id, 'phone', $phone);
 }
 
 /**

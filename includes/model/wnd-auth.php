@@ -10,7 +10,7 @@ use WP_User;
  * - 设置对象缓存
  * @since 0.9.57.1
  */
-abstract class Wnd_User_Auth {
+abstract class Wnd_Auth {
 
 	private static $auths_cache_group = 'wnd_auths';
 
