@@ -8,7 +8,7 @@ use Exception;
  * 邮件验证码
  * @since 2019.12.19
  */
-class Wnd_Auth_Email extends Wnd_Auth {
+class Wnd_Auth_Code_Email extends Wnd_Auth_Code {
 
 	// 数据库字段：Email
 	protected $identity_type = 'email';

@@ -2,7 +2,6 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\Model\Wnd_Auth;
 use WP_User;
 
 /**

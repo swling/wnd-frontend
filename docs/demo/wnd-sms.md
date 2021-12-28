@@ -26,7 +26,7 @@ try {
 }
 
 /**
- *验证码默认有效时间均为600秒 @see Wnd\Model\Wnd_Auth_Phone
+ *验证码默认有效时间均为600秒 @see Wnd\Model\Wnd_Auth_Code_Phone
  *
  *1、腾讯验证码短信模板参考：
  *验证码：{1}，{2}分钟内有效！（如非本人操作，请忽略本短信）

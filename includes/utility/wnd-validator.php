@@ -2,7 +2,7 @@
 namespace Wnd\Utility;
 
 use Wnd\Getway\Wnd_Captcha;
-use Wnd\Model\Wnd_Auth;
+use Wnd\Model\Wnd_Auth_Code;
 
 /**
  * 验证器
@@ -18,7 +18,7 @@ class Wnd_Validator {
 		$auth_code      = $data['auth_code'] ?? '';
 		$email_or_phone = $data['phone'] ?? $data['_user_user_email'] ?? '';
 
-		$auth = Wnd_Auth::get_instance($email_or_phone);
+		$auth = Wnd_Auth_Code::get_instance($email_or_phone);
 		$auth->set_type($type);
 		$auth->set_auth_code($auth_code);
 		$auth->verify();

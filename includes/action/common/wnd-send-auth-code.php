@@ -3,7 +3,7 @@ namespace Wnd\Action\Common;
 
 use Exception;
 use Wnd\Action\Wnd_Action;
-use Wnd\Model\Wnd_Auth;
+use Wnd\Model\Wnd_Auth_Code;
 
 /**
  * 发送手机或邮箱验证码
@@ -16,7 +16,7 @@ class Wnd_Send_Auth_Code extends Wnd_Action {
 	private $template;
 
 	protected function execute(): array{
-		$auth = Wnd_Auth::get_instance($this->device);
+		$auth = Wnd_Auth_Code::get_instance($this->device);
 		$auth->set_type($this->type);
 		$auth->set_template($this->template);
 		$auth->send();

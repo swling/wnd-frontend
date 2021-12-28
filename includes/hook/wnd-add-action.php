@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Hook;
 
-use Wnd\Model\Wnd_Auth;
+use Wnd\Model\Wnd_Auth_Code;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Form_Option;
@@ -41,7 +41,7 @@ class Wnd_Add_Action {
 		}
 
 		// 绑定邮箱或手机
-		$auth = Wnd_Auth::get_instance($email_or_phone);
+		$auth = Wnd_Auth_Code::get_instance($email_or_phone);
 		$auth->bind_user($user_id);
 	}
 

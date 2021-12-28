@@ -8,7 +8,7 @@ use Wnd\Getway\Wnd_Sms;
  * 短信验证码
  * @since 2019.12.19
  */
-class Wnd_Auth_phone extends Wnd_Auth {
+class Wnd_Auth_Code_Phone extends Wnd_Auth_Code {
 
 	// 数据库字段：phone
 	protected $identity_type = 'phone';

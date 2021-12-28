@@ -2,7 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\Model\Wnd_Auth;
+use Wnd\Model\Wnd_Auth_Code;
 
 /**
  * 用户绑定
@@ -79,7 +79,7 @@ abstract class Wnd_Binder {
 	 * 可能抛出异常
 	 */
 	private function verify_auth_code() {
-		$auth = Wnd_Auth::get_instance($this->device);
+		$auth = Wnd_Auth_Code::get_instance($this->device);
 		$auth->set_type('bind');
 		$auth->set_auth_code($this->auth_code);
 		$auth->verify();

@@ -10,7 +10,7 @@ use Wnd\Model\Wnd_User_Auth;
  * 短信验证码
  * @since 2019.08.13
  */
-abstract class Wnd_Auth {
+abstract class Wnd_Auth_Code {
 
 	// object 当前用户
 	protected $user;
@@ -53,13 +53,13 @@ abstract class Wnd_Auth {
 	/**
 	 * 设置：邮件、手机号码、WP_User object
 	 */
-	public static function get_instance(string $identifier): Wnd_Auth {
+	public static function get_instance(string $identifier): Wnd_Auth_Code {
 		if (is_email($identifier)) {
-			return new Wnd_Auth_Email($identifier);
+			return new Wnd_Auth_Code_Email($identifier);
 		}
 
 		if (wnd_is_mobile($identifier)) {
-			return new Wnd_Auth_Phone($identifier);
+			return new Wnd_Auth_Code_Phone($identifier);
 		}
 
 		throw new Exception(__('格式不正确', 'wnd'));
