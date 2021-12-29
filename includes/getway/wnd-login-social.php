@@ -114,6 +114,9 @@ abstract class Wnd_Login_Social {
 			throw new Exception('Invalid parameter. type:' . $type . '; openid:' . $open_id . '; display_name:' . $display_name);
 		}
 
+		// 统一转为小写
+		$type = strtolower($type);
+
 		//当前用户已登录：新增绑定或同步信息
 		if (is_user_logged_in()) {
 			$this_user   = wp_get_current_user();

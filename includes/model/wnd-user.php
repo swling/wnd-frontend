@@ -116,7 +116,7 @@ abstract class Wnd_User {
 	 *
 	 * @param object $user Wnd_user表对象
 	 */
-	public static function update_wnd_user_caches(object $user_data) {
+	private static function update_wnd_user_caches(object $user_data) {
 		$user_id = $user_data->user_id ?? 0;
 		if (!$user_id) {
 			return false;
@@ -130,7 +130,7 @@ abstract class Wnd_User {
 	 * 删除缓存
 	 * @param int $user_id
 	 */
-	public static function clean_wnd_user_caches(int $user_id) {
+	private static function clean_wnd_user_caches(int $user_id) {
 		wp_cache_delete($user_id, static::$user_cache_group);
 	}
 
