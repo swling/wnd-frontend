@@ -58,7 +58,7 @@ abstract class Wnd_Auth {
 	public static function delete_user_auths(int $user_id) {
 		global $wpdb;
 		$wpdb->delete($wpdb->wnd_auths, ['user_id' => $user_id]);
-		static::clean_auth_caches($user_id);
+		static::delete_auth_caches($user_id);
 	}
 
 	/**
@@ -79,7 +79,7 @@ abstract class Wnd_Auth {
 	 * 删除用户所有 auths 对象缓存
 	 * @since 0.9.57.1
 	 */
-	private static function clean_auth_caches(int $user_id) {
+	private static function delete_auth_caches(int $user_id) {
 		// 遍历用户 auth 数据，并按值删除对应对象缓存
 		$auths = static::get_user_auths($user_id);
 		foreach ($auths as $type => $identifier) {
