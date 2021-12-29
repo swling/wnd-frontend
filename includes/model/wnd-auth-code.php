@@ -164,7 +164,7 @@ abstract class Wnd_Auth_Code {
 	 * @since 2019.02.10
 	 */
 	private function check_send() {
-		$data = Wnd_Auth::get_db($this->identity_type, $this->identifier);
+		$data = $this->get_db_record();
 		if (!$data) {
 			return;
 		}
@@ -185,22 +185,21 @@ abstract class Wnd_Auth_Code {
 	}
 
 	/**
+	 * 获取当前设备的数据记录
+	 * @since 0.9.57
+	 */
+	private function get_db_record() {
+		return Wnd_Auth::get_db($this->identity_type, $this->identifier);
+	}
+
+	/**
 	 * @since 2019.02.09 手机及邮箱验证模块
 	 */
 	private function insert() {
 		$this->check_db_fields(true);
 
-		$record  = Wnd_Auth::get_db($this->identity_type, $this->identifier);
-		$ID      = $record->ID ?? 0;
-		$user_id = $record->user_id ?? 0;
-
-		if ($ID) {
-			$db = Wnd_Auth::update_db($ID, $user_id, $this->identity_type, $this->identifier, $this->auth_code);
-		} else {
-			$db = Wnd_Auth::insert_db($user_id, $this->identity_type, $this->identifier, $this->auth_code);
-		}
-
-		if (!$db) {
+		$action = Wnd_Auth::update_auth_db($this->identity_type, $this->identifier, ['credential' => $this->auth_code]);
+		if (!$action) {
 			throw new Exception(__('数据库写入失败', 'wnd'));
 		}
 	}
@@ -248,7 +247,7 @@ abstract class Wnd_Auth_Code {
 		$this->check_type();
 
 		// 有效性校验
-		$data = Wnd_Auth::get_db($this->identity_type, $this->identifier);
+		$data = $this->get_db_record();
 		if (!$data or !$data->credential) {
 			throw new Exception(__('校验失败：请先获取验证码', 'wnd'));
 		}

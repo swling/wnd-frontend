@@ -120,28 +120,35 @@ abstract class Wnd_Auth {
 		}
 
 		// 更新或写入（{$type, $open_id} 为复合唯一索引）
-		$auth_record = static::get_db($type, $open_id);
-		$ID          = $auth_record->ID ?? 0;
-		if ($ID) {
-			$action = static::update_db($ID, $user_id, $type, $open_id);
-		} else {
-			$action = static::insert_db($user_id, $type, $open_id);
-		}
+		$action = static::update_auth_db($type, $open_id, ['user_id' => $user_id]);
 
 		/**
 		 * 数据更新成功
 		 * - 删除可能存在的原有同类型 openid
-		 * - 设置缓存
 		 */
 		if ($action) {
 			if ($old_open_id) {
 				static::delete_db($type, $old_open_id);
 			}
-
-			static::update_auth_cache($user_id, $type, $open_id);
 		}
 
 		return $action ? $user_id : 0;
+	}
+
+	/**
+	 * 根据 auth type 及 ID  更新或写入数据库记录
+	 * - （{$type, $open_id} 为复合唯一索引）
+	 * - 如果更新数据指定了 user_id 则更新对应的缓存
+	 */
+	public static function update_auth_db(string $type, string $open_id, array $data): bool{
+		$defaults = ['user_id' => 0, 'identifier' => $open_id, 'type' => $type, 'credential' => '', 'time' => time()];
+		$data     = array_merge($defaults, $data);
+		$action   = static::update_db($type, $open_id, $data);
+		if ($action and $data['user_id']) {
+			static::update_auth_cache($data['user_id'], $type, $open_id);
+		}
+
+		return $action;
 	}
 
 	/**
@@ -192,7 +199,7 @@ abstract class Wnd_Auth {
 	public static function get_user_by_openid(string $type, string $open_id) {
 		// 查询对象缓存
 		$user_id = static::get_auth_cache($type, $open_id);
-		if (false === $user_id) {
+		if (!$user_id) {
 			$auth_record = static::get_db($type, $open_id);
 			$user_id     = $auth_record->user_id ?? 0;
 			if ($user_id) {
@@ -277,36 +284,47 @@ abstract class Wnd_Auth {
 	 * - 不可在操作数据库时，直接设置对象缓存，因为写入的数据可能是待验证的数据
 	 * @since 0.9.36
 	 */
-	public static function insert_db(int $user_id, string $identity_type, string $identifier, string $credential = ''): bool {
+	private static function insert_db(array $data): bool {
 		global $wpdb;
-		return $wpdb->insert(
-			$wpdb->wnd_auths,
-			['user_id' => $user_id, 'identifier' => $identifier, 'type' => $identity_type, 'credential' => $credential, 'time' => time()],
-			['%d', '%s', '%s', '%s', '%d'],
-		);
+		$update_ID   = $data['ID'] ?? 0;
+		$data_format = ['%d', '%s', '%s', '%s', '%d'];
+
+		if ($update_ID) {
+			unset($data['ID']);
+			return $wpdb->update(
+				$wpdb->wnd_auths,
+				$data,
+				['ID' => $update_ID],
+				$data_format,
+				['%d']
+			);
+		} else {
+			return $wpdb->insert(
+				$wpdb->wnd_auths,
+				$data,
+				$data_format
+			);
+		}
 	}
 
 	/**
-	 * 更新Auth数据库
+	 * 更新 Auth 数据库
+	 * - 更新或写入（{$type, $open_id} 为复合唯一索引）
 	 * - 不可在操作数据库时，直接设置对象缓存，因为写入的数据可能是待验证的数据
 	 * @since 0.9.36
 	 */
-	public static function update_db(int $ID, int $user_id, string $identity_type, string $identifier, string $credential = ''): bool {
-		global $wpdb;
-		return $wpdb->update(
-			$wpdb->wnd_auths,
-			['user_id' => $user_id, 'identifier' => $identifier, 'type' => $identity_type, 'credential' => $credential, 'time' => time()],
-			['ID' => $ID],
-			['%d', '%s', '%s', '%s', '%d'],
-			['%d']
-		);
+	private static function update_db(string $type, string $open_id, array $data): bool{
+		$auth_record = (array) (static::get_db($type, $open_id) ?: []);
+		$data        = array_merge($auth_record, $data, ['type' => $type, 'identifier' => $open_id]);
+
+		return static::insert_db($data);
 	}
 
 	/**
 	 * 删除
 	 * @since 0.9.36
 	 */
-	public static function delete_db(string $identity_type, string $identifier): bool {
+	private static function delete_db(string $identity_type, string $identifier): bool {
 		global $wpdb;
 		return $wpdb->delete(
 			$wpdb->wnd_auths,
