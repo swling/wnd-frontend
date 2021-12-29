@@ -141,10 +141,9 @@ abstract class Wnd_Auth {
 	 * - 如果更新数据指定了 user_id 则更新对应的缓存
 	 */
 	public static function update_auth_db(string $type, string $open_id, array $data): bool{
-		$defaults = ['user_id' => 0, 'identifier' => $open_id, 'type' => $type, 'credential' => '', 'time' => time()];
-		$data     = array_merge($defaults, $data);
-		$action   = static::update_db($type, $open_id, $data);
-		if ($action and $data['user_id']) {
+		$action  = static::update_db($type, $open_id, $data);
+		$user_id = $data['user_id'] ?? 0;
+		if ($action and $user_id) {
 			static::update_auth_cache($data['user_id'], $type, $open_id);
 		}
 
@@ -314,8 +313,9 @@ abstract class Wnd_Auth {
 	 * @since 0.9.36
 	 */
 	private static function update_db(string $type, string $open_id, array $data): bool{
-		$auth_record = (array) (static::get_db($type, $open_id) ?: []);
-		$data        = array_merge($auth_record, $data, ['type' => $type, 'identifier' => $open_id]);
+		$defaults    = ['user_id' => 0, 'identifier' => $open_id, 'type' => $type, 'credential' => '', 'time' => time()];
+		$auth_record = (array) (static::get_db($type, $open_id) ?: $defaults);
+		$data        = array_merge($auth_record, $data);
 
 		return static::insert_db($data);
 	}
