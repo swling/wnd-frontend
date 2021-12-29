@@ -93,7 +93,7 @@ abstract class Wnd_Auth {
 
 	/**
 	 * 写入或更新用户open id
-	 * - 更新同类型不同ID时，需要写入新纪录，然后删除原有同类型记录。其原因在于更换邮箱、手机时，需要先写入验证码记录，待验证后才能正式更换。
+	 * - 更新同类型不同 openid 时，需要写入新纪录，然后删除原有同类型记录。其原因在于更换邮箱、手机时，需要先写入验证码记录，待验证后才能正式更换。
 	 * @since 2019.07.11
 	 *
 	 * @param  	int    	$user_id
@@ -119,7 +119,7 @@ abstract class Wnd_Auth {
 			return $user_id;
 		}
 
-		// 更新或写入
+		// 更新或写入（{$type, $open_id} 为复合唯一索引）
 		$auth_record = static::get_db($type, $open_id);
 		$ID          = $auth_record->ID ?? 0;
 		if ($ID) {
