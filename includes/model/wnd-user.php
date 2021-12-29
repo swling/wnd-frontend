@@ -111,7 +111,7 @@ abstract class Wnd_User {
 		}
 
 		// 未设置登录时间/注册后未登录
-		static::update_db($user_id, ['last_login' => time(), 'client_ip' => wnd_get_user_ip()]);
+		static::update_wnd_user($user_id, ['last_login' => time(), 'client_ip' => wnd_get_user_ip()]);
 		return true;
 	}
 
