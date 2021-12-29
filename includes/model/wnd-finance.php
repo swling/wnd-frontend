@@ -95,7 +95,7 @@ abstract class Wnd_Finance {
 	 */
 	public static function inc_user_balance(int $user_id, float $amount, bool $recharge): bool{
 		$new_balance = bcadd(static::get_user_balance($user_id), $amount, 2);
-		$action      = Wnd_User::update_db($user_id, ['balance' => $new_balance]);
+		$action      = Wnd_User::update_wnd_user($user_id, ['balance' => $new_balance]);
 
 		// 整站按月统计充值和消费
 		if ($recharge) {

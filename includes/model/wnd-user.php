@@ -14,17 +14,49 @@ abstract class Wnd_User {
 	 * - Users 主要数据：balance、role、attribute、last_login、client_ip
 	 * @since 2019.11.06
 	 */
-	public static function get_wnd_user($user_id): object{
+	public static function get_wnd_user(int $user_id): object{
 		$user = static::get_wnd_user_cache($user_id);
 		if ($user) {
 			return $user;
 		}
 
 		$user = static::get_db($user_id) ?: new \stdClass;
-		unset($user->ID);
 		static::update_wnd_user_cache($user);
 
 		return $user;
+	}
+
+	/**
+	 * 更新自定义用户对象
+	 * - Users 主要数据：balance、role、attribute、last_login、client_ip
+	 * - 此处不直接清理用户数据缓存，旨在减少一次数据查询
+	 * @since 2019.11.06
+	 */
+	public static function update_wnd_user(int $user_id, array $data): bool{
+		$defaults   = ['user_id' => 0, 'balance' => 0, 'role' => '', 'attribute' => '', 'last_login' => '', 'client_ip' => ''];
+		$db_records = ((array) static::get_wnd_user($user_id)) ?: $defaults;
+		$data       = array_merge($db_records, $data);
+
+		$action = static::update_db($user_id, $data);
+		if ($action) {
+			$user = (object) $data;
+			static::update_wnd_user_cache($user);
+		}
+
+		return $action;
+	}
+
+	/**
+	 * 删除记录
+	 * @since 0.9.57
+	 */
+	public static function delete_wnd_user(int $user_id): bool{
+		$action = static::delete_db($user_id);
+		if ($action) {
+			static::delete_wnd_user_cache($user_id);
+		}
+
+		return $action;
 	}
 
 	/**
@@ -104,7 +136,7 @@ abstract class Wnd_User {
 	 * 获取指定用户数据表记录
 	 * @since 0.9.57
 	 */
-	public static function get_db(int $user_id) {
+	private static function get_db(int $user_id) {
 		global $wpdb;
 		return $wpdb->get_row(
 			$wpdb->prepare(
@@ -118,38 +150,20 @@ abstract class Wnd_User {
 	 * 写入 user 数据库
 	 * @since 0.9.57
 	 */
-	public static function insert_db(array $data): bool{
+	private static function insert_db(array $data): bool{
 		$user_id = $data['user_id'] ?? 0;
 		if (!$user_id) {
 			return false;
 		}
 
 		global $wpdb;
-		$defaults    = ['user_id' => 0, 'balance' => 0, 'role' => '', 'attribute' => '', 'last_login' => '', 'client_ip' => ''];
-		$db_records  = ((array) static::get_db($user_id)) ?: $defaults;
-		$data        = array_merge($db_records, $data);
 		$data_format = ['%d', '%f', '%s', '%s', '%d', '%s'];
 		$update_ID   = $data['ID'] ?? 0;
 		if ($update_ID) {
 			unset($data['ID']);
-			$action = $wpdb->update(
-				$wpdb->wnd_users,
-				$data,
-				['ID' => $update_ID],
-				$data_format,
-				['%d']
-			);
+			$action = $wpdb->update($wpdb->wnd_users, $data, ['ID' => $update_ID], $data_format, ['%d']);
 		} else {
 			$action = $wpdb->insert($wpdb->wnd_users, $data, $data_format);
-		}
-
-		/**
-		 * 更新对象缓存
-		 * （此处不直接清理用户数据缓存，旨在减少一次数据查询）
-		 */
-		if ($action) {
-			$user = (object) $data;
-			static::update_wnd_user_cache($user);
 		}
 
 		return $action;
@@ -159,7 +173,7 @@ abstract class Wnd_User {
 	 * 更新数据库
 	 * @since 0.9.57
 	 */
-	public static function update_db(int $user_id, array $data): bool{
+	private static function update_db(int $user_id, array $data): bool{
 		$data['user_id'] = $user_id;
 		return static::insert_db($data);
 	}
@@ -168,18 +182,8 @@ abstract class Wnd_User {
 	 * 删除记录
 	 * @since 0.9.57
 	 */
-	public static function delete_db(int $user_id): bool {
+	private static function delete_db(int $user_id): bool {
 		global $wpdb;
-		$action = $wpdb->delete(
-			$wpdb->wnd_users,
-			['user_id' => $user_id],
-			['%d']
-		);
-
-		if ($action) {
-			static::delete_wnd_user_cache($user_id);
-		}
-
-		return $action;
+		return $wpdb->delete($wpdb->wnd_users, ['user_id' => $user_id], ['%d']);
 	}
 }

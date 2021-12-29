@@ -84,7 +84,7 @@ class Wnd_Add_Action_WP {
 	 */
 	public static function action_on_delete_user($user_id) {
 		// 删除自定义 wnd_users 表记录
-		Wnd_User::delete_db($user_id);
+		Wnd_User::delete_wnd_user($user_id);
 
 		// 删除自定义用户 wnd_auths 表记录
 		Wnd_Auth::delete_user_auths($user_id);

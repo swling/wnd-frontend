@@ -271,7 +271,7 @@ function wnd_get_user_role(int $user_id): string {
  */
 function wnd_update_user_role(int $user_id, string $role) {
 	$data = ['role' => $role];
-	Wnd_User::update_db($user_id, $data);
+	Wnd_User::update_wnd_user($user_id, $data);
 }
 
 /**
@@ -288,7 +288,7 @@ function wnd_get_user_attribute(int $user_id): string {
  */
 function wnd_update_user_attribute(int $user_id, string $attribute) {
 	$data = ['attribute' => $attribute];
-	Wnd_User::update_db($user_id, $data);
+	Wnd_User::update_wnd_user($user_id, $data);
 }
 
 /**
