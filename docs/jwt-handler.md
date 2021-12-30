@@ -16,44 +16,47 @@ class Wndt_JWT_Handler {
 
 	use Wnd_Singleton_Trait;
 
-	protected $cookie_name;
+	private $JWT_Handler;
 
 	private function __construct() {
-		$this->cookie_name = Wnd_JWT_Handler::$cookie_name;
+		$this->JWT_Handler = Wnd_JWT_Handler::get_instance();
 
 		add_action('wp_login', [$this, 'handle_login'], 10, 2);
 		add_action('wp_logout', [$this, 'handle_logout'], 10);
+		add_action('init', [$this, 'sync_login_status'], 10);
 	}
 
 	/**
 	 * 处理用户登录
 	 */
 	public function handle_login($user_name, $user) {
-		$this->save_client_token(Wnd_JWT_Handler::get_instance()->generate_token($user->ID));
+		$this->JWT_Handler->set_user_token_cookie($user->ID, false, false);
 	}
 
 	/**
 	 * 处理账户退出
 	 */
 	public function handle_logout() {
-		$this->clean_client_token();
+		$this->JWT_Handler->delete_token_cookie();
 	}
 
 	/**
-	 * 删除客户端 Token
+	 * 同步 Token 与默认 Cookie
 	 */
-	protected function clean_client_token() {
-		setcookie($this->cookie_name, '', time(), '/', $this->domain);
-	}
+	public function sync_login_status() {
+		if (!is_user_logged_in()) {
+			return;
+		}
 
-	/**
-	 * 客户端存储 Token
-	 */
-	protected function save_client_token($token) {
-		setcookie($this->cookie_name, $token, $this->exp, '/', $this->domain, false, false);
+		$token            = $_COOKIE[$this->JWT_Handler::$cookie_name] ?? '';
+		$logged_in_cookie = $_COOKIE[LOGGED_IN_COOKIE] ?? '';
+		if (!$token) {
+			$this->handle_login('', wp_get_current_user());
+		} elseif (!$logged_in_cookie) {
+			wp_set_auth_cookie(get_current_user_id(), true);
+		}
 	}
 }
-
 ```
 
 ### 挂载

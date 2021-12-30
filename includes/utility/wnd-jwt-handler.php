@@ -2,6 +2,7 @@
 namespace Wnd\Utility;
 
 use Wnd\Component\JWT\JWTAuth;
+use WP_Error;
 
 /**
  * ## 将WordPress 账户体系与 JWT Token 绑定
@@ -169,14 +170,37 @@ class Wnd_JWT_Handler {
 
 		// Invalid Token
 		if (0 === $this->verified_user_id) {
-			return new \WP_Error('invalid_token', 'Invalid Token.', ['status' => 401]);
+			return new WP_Error('invalid_token', 'Invalid Token.', ['status' => 401]);
 		}
 
 		// Token 有效，但对应的 user id 无效
-		if (!\get_userdata($this->verified_user_id)) {
-			return new \WP_Error('invalid_user_id', 'Invalid User ID.', ['status' => 401]);
+		if (!get_userdata($this->verified_user_id)) {
+			return new WP_Error('invalid_user_id', 'Invalid User ID.', ['status' => 401]);
 		}
 
 		return true;
+	}
+
+	/**
+	 * 为指定账户生成 Token 并设置 Cookie
+	 */
+	public function set_user_token_cookie(int $user_id, bool $secure = false, bool $httponly = false) {
+		$token = $this->generate_token($user_id);
+		$this->set_token_cookie($token, $secure, $httponly);
+	}
+
+	/**
+	 * 设置 Token Cookie
+	 */
+	public function set_token_cookie(string $token, bool $secure = false, bool $httponly = false) {
+		$exp = $this->parse_token($token)['exp'] ?? 0;
+		setcookie(static::$cookie_name, $token, $exp, '/', $this->domain, $secure, $httponly);
+	}
+
+	/**
+	 * 清理 Token Cookie
+	 */
+	public function delete_token_cookie() {
+		setcookie(static::$cookie_name, '', time(), '/', $this->domain);
 	}
 }
