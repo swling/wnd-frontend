@@ -113,6 +113,10 @@ add_action('init', function () {
 	$wp_rewrite->feeds = [];
 }, 99);
 
+function feed_content_type($type = ''): string {
+	return get_default_feed();
+}
+
 function get_default_feed(): string {
 	return 'rss2';
 }
