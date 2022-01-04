@@ -243,6 +243,16 @@ function wnd_explode_post_by_more(string $content): array{
 }
 
 /**
+ * 封装字符串截断
+ * wp_trim_words 依赖语言包，如果前端禁止语言包，则中文失效
+ * @since 0.9.57.3
+ */
+function wnd_trim_words(string $text, int $num_words = 55, string $more = '……'): string{
+	$text = mb_substr($text, 0, $num_words, 'utf-8');
+	return wp_strip_all_tags($text) . $more;
+}
+
+/**
  * 定义如何过滤数组数据
  * 本插件定义：过滤空值，但保留0
  * @since 0.9.38
