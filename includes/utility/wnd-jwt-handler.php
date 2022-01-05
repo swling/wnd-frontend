@@ -124,8 +124,8 @@ class Wnd_JWT_Handler {
 			return;
 		}
 
-		// 无效 Token
-		if (0 === $this->verified_user_id) {
+		// 无效 Token 或者对应的 User ID 已无效（用户被删除等）
+		if (0 === $this->verified_user_id or !get_userdata($this->verified_user_id)) {
 			wp_logout();
 			return;
 		}
