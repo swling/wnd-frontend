@@ -17,8 +17,9 @@ class Wnd_Order_Form extends Wnd_Module_Form {
 		$defaults = [
 			'post_id'          => 0,
 			'ajax'             => true,
-			'buy_text'         => __('立即购买'),
-			'add_cart_text'    => __('加入购物车'),
+			'checked'          => '',
+			'buy_text'         => __('立即购买', 'wnd'),
+			'add_cart_text'    => __('加入购物车', 'wnd'),
 			'support_quantity' => true,
 		];
 		$args = wp_parse_args($args, $defaults);
@@ -46,6 +47,7 @@ class Wnd_Order_Form extends Wnd_Module_Form {
 				'name'     => Wnd_Order_Props::$sku_id_key,
 				'options'  => static::get_sku_options($post_id),
 				'required' => 'required',
+				'checked'  => $checked,
 				'class'    => 'is-checkradio is-' . wnd_get_config('primary_color'),
 			]
 		);
