@@ -58,7 +58,7 @@ class Wnd_Issue_Action_Sign extends Wnd_Endpoint {
 		 */
 		switch ($this->sign_type) {
 			case 'payment':
-				$allowed_keys = ['post_id', 'type', 'subject', 'total_amount', 'custom_amount', 'payment_gateway'];
+				$allowed_keys = ['post_id', 'type', 'subject', 'total_amount', 'custom_amount', 'payment_gateway', 'app_id'];
 				break;
 			case 'profile':
 				$allowed_keys = ['_usermeta_avatar', '_usermeta_avatar_url', '_user_display_name', '__wpusermeta_description', '_user_user_url'];
