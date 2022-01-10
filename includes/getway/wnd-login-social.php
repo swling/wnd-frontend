@@ -110,7 +110,7 @@ abstract class Wnd_Login_Social {
 		 * $type, $open_id, $display_name 必须为有效值
 		 * @since 0.9.50
 		 */
-		if (!$type or !$open_id or !$display_name) {
+		if (!$type or !$open_id) {
 			throw new Exception('Invalid parameter. type:' . $type . '; openid:' . $open_id . '; display_name:' . $display_name);
 		}
 
@@ -135,9 +135,13 @@ abstract class Wnd_Login_Social {
 			return $this_user;
 		}
 
-		//当前用户未登录：注册或者登录
+		//当前用户未登录：注册新用户
 		$user = wnd_get_user_by_openid($type, $open_id);
 		if (!$user) {
+			if (!$display_name) {
+				throw new Exception('display_name is empty');
+			}
+
 			$user_login = wnd_generate_login();
 			$user_pass  = wp_generate_password();
 			$user_data  = ['user_login' => $user_login, 'user_pass' => $user_pass, 'display_name' => $display_name];

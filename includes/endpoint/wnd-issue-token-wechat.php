@@ -13,7 +13,7 @@ class Wnd_Issue_Token_WeChat extends Wnd_Issue_Token_Abstract {
 	protected function get_app_openid(): string{
 		$config         = json_decode(wnd_get_config('wechat_app'));
 		$code           = $this->data['code'] ?? '';
-		$app_id         = $this->data['app_id'] ?? '';
+		$app_id         = $this->data['app_id'] ?? (getallheaders()['Wx-App-Id'] ?? '');
 		$this->app_type = static::get_app_type($app_id);
 
 		// 读取对应 App id 的密匙
