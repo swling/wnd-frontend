@@ -119,6 +119,12 @@ abstract class Wnd_Auth {
 			return $user_id;
 		}
 
+		// 当前绑定的 openid 已被占用
+		$exists_user = static::get_user_by_openid($type, $open_id);
+		if ($exists_user) {
+			throw new Exception($type . __(' OpenID 已被其他账户占用', 'wnd'));
+		}
+
 		// 更新或写入（{$type, $open_id} 为复合唯一索引）
 		$action = static::update_auth_db($type, $open_id, ['user_id' => $user_id]);
 
