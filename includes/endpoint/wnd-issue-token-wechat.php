@@ -41,7 +41,7 @@ class Wnd_Issue_Token_WeChat extends Wnd_Issue_Token_Abstract {
 	 * 微信应用标识
 	 * - 同一个站点可能对应多个微信应用，且应用之间的 openid 并不通用。因此不能设置为简单的 mp 或 wechat 字符
 	 */
-	public static function get_app_type(string $app_id): string {
+	private static function get_app_type(string $app_id): string {
 		return 'wx_' . $app_id;
 	}
 
