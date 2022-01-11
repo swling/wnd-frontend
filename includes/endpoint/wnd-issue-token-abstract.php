@@ -24,7 +24,7 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 	protected $app_type = '';
 
 	protected function do() {
-		$user_id = $this->get_current_user_id();
+		$user_id = $this->register_or_login();
 		$jwt     = Wnd_JWT_Handler::get_instance();
 		$token   = $jwt->generate_token($user_id);
 		$exp     = $jwt->parse_token($token)['exp'] ?? 0;
@@ -36,7 +36,7 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 	 * 获取当前用户id
 	 * - 第三方应用注册/登录
 	 */
-	private function get_current_user_id(): int{
+	protected function register_or_login(): int{
 		/**
 		 * 站外应用签发 Token条件
 		 * - 必须定义 $this->app_type，即对应：社交登录中的 openid type
