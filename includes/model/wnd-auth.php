@@ -18,7 +18,7 @@ abstract class Wnd_Auth {
 	 * 获取用户所有 auth 合集对象
 	 */
 	public static function get_user_auths(int $user_id): object{
-		$auths = wp_cache_get($user_id, static::$auths_cache_group);
+		$auths = static::get_auths_cache($user_id);
 		if ($auths) {
 			return $auths;
 		}
@@ -47,7 +47,7 @@ abstract class Wnd_Auth {
 		unset($data);
 
 		// 设置用户 auths 合集缓存
-		wp_cache_set($user_id, $auths, static::$auths_cache_group);
+		static::set_auths_cache($user_id, $auths);
 
 		return $auths;
 	}
@@ -58,7 +58,7 @@ abstract class Wnd_Auth {
 	public static function delete_user_auths(int $user_id) {
 		global $wpdb;
 		$wpdb->delete($wpdb->wnd_auths, ['user_id' => $user_id]);
-		static::delete_auth_caches($user_id);
+		static::delete_auths_cache($user_id);
 	}
 
 	/**
@@ -76,10 +76,26 @@ abstract class Wnd_Auth {
 	}
 
 	/**
+	 * 获取用户所有 auths 对象合集缓存
+	 * @since 0.9.57.6
+	 */
+	private static function set_auths_cache(int $user_id, object $auths) {
+		return wp_cache_set($user_id, $auths, static::$auths_cache_group);
+	}
+
+	/**
+	 * 获取用户所有 auths 对象合集缓存
+	 * @since 0.9.57.6
+	 */
+	private static function get_auths_cache(int $user_id) {
+		return wp_cache_get($user_id, static::$auths_cache_group);
+	}
+
+	/**
 	 * 删除用户所有 auths 对象缓存
 	 * @since 0.9.57.1
 	 */
-	private static function delete_auth_caches(int $user_id) {
+	private static function delete_auths_cache(int $user_id) {
 		// 遍历用户 auth 数据，并按值删除对应对象缓存
 		$auths = static::get_user_auths($user_id);
 		foreach ($auths as $type => $identifier) {
@@ -232,7 +248,7 @@ abstract class Wnd_Auth {
 		if ($sync_caches) {
 			$auths        = static::get_user_auths($user_id);
 			$auths->$type = $open_id;
-			wp_cache_set($user_id, $auths, static::$auths_cache_group);
+			static::set_auths_cache($user_id, $auths);
 		}
 	}
 
@@ -255,7 +271,7 @@ abstract class Wnd_Auth {
 
 		// 更新用户 auth 对象集合缓存
 		unset($auths->$type);
-		wp_cache_set($user_id, $auths, static::$auths_cache_group);
+		static::set_auths_cache($user_id, $auths);
 
 		// 删除单个绑定 与 user_id 对应关系缓存
 		wp_cache_delete($invalid_openid, $cache_group);
