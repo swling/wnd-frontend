@@ -231,4 +231,15 @@ class Wnd_Admin {
 			}
 		}
 	}
+
+	// 用户日志表新增字段：login_count 统计用户累计登录次数（按天）
+	private static function v_0_9_57_5() {
+		global $wpdb;
+		$exists = $wpdb->query("SHOW COLUMNS FROM $wpdb->wnd_users WHERE field='login_count' ");
+		if ($exists) {
+			return;
+		}
+
+		$wpdb->query("ALTER TABLE $wpdb->wnd_users ADD COLUMN `login_count` BIGINT NOT NULL AFTER `last_login`,  ADD INDEX(login_count)");
+	}
 }

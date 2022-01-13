@@ -33,7 +33,7 @@ abstract class Wnd_User {
 	 * @since 2019.11.06
 	 */
 	public static function update_wnd_user(int $user_id, array $data): bool{
-		$defaults   = ['user_id' => 0, 'balance' => 0, 'role' => '', 'attribute' => '', 'last_login' => '', 'client_ip' => ''];
+		$defaults   = ['user_id' => 0, 'balance' => 0, 'role' => '', 'attribute' => '', 'last_login' => '', 'login_count' => '', 'client_ip' => ''];
 		$db_records = ((array) static::get_wnd_user($user_id)) ?: $defaults;
 		$data       = array_merge($db_records, $data);
 
@@ -101,8 +101,9 @@ abstract class Wnd_User {
 			return false;
 		}
 
-		$db_records = static::get_wnd_user($user_id);
-		$last_login = $db_records->last_login ?? 0;
+		$db_records  = static::get_wnd_user($user_id);
+		$last_login  = $db_records->last_login ?? 0;
+		$login_count = $db_records->login_count ?? 0;
 		if ($last_login) {
 			$last_login = date('Y-m-d', $last_login);
 			if ($last_login == date('Y-m-d', time())) {
@@ -111,7 +112,7 @@ abstract class Wnd_User {
 		}
 
 		// 未设置登录时间/注册后未登录
-		static::update_wnd_user($user_id, ['last_login' => time(), 'client_ip' => wnd_get_user_ip()]);
+		static::update_wnd_user($user_id, ['last_login' => time(), 'login_count' => $login_count + 1, 'client_ip' => wnd_get_user_ip()]);
 		return true;
 	}
 

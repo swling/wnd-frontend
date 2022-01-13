@@ -72,10 +72,12 @@ class Wnd_DB {
 			role varchar(64) NOT NULL,
 			attribute varchar(64) NOT NULL,
 			last_login bigint(20) NOT NULL,
+			login_count bigint(20) NOT NULL,
 			client_ip varchar(100) NOT NULL,
 			PRIMARY KEY (ID),
 			UNIQUE KEY user_id(user_id),
-			KEY last_login(last_login)
+			KEY last_login(last_login),
+			KEY login_count(login_count)
 			) $charset_collate;";
 		dbDelta($create_users_sql);
 	}
