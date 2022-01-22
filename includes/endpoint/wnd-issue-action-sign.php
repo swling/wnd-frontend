@@ -42,7 +42,7 @@ class Wnd_Issue_Action_Sign extends Wnd_Endpoint {
 	 */
 	protected function check() {
 		$this->sign_type = $this->data['_sign_type'] ?? '';
-		$this->sign_keys = $this->data['keys'] ?? '';
+		$this->sign_keys = (array) ($this->data['keys'] ?? []);
 
 		if (!$this->sign_type) {
 			throw new Exception('Missing parameter [_sign_type]');
