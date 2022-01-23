@@ -2,7 +2,7 @@
 namespace Wnd\Getway;
 
 use Exception;
-use WP_User;
+use Wnd\Model\Wnd_Social_Login;
 
 /**
  * 社交登录抽象类
@@ -91,88 +91,8 @@ abstract class Wnd_Login_Social {
 		$this->get_user_info();
 
 		// 根据open id创建或登录账户
-		static::login_social($this->domain, $this->open_id, $this->display_name, $this->avatar_url);
+		Wnd_Social_Login::login($this->domain, $this->open_id, $this->display_name, $this->avatar_url);
 		wp_redirect(wnd_get_reg_redirect_url());
 		exit();
-	}
-
-	/**
-	 * 根据第三方网站获取的用户信息，注册或者登录到WordPress站点
-	 * @since 2019.07.23
-	 *
-	 * @param string $type         	第三方账号类型
-	 * @param string $open_id      	第三方账号openID
-	 * @param string $display_name 	用户名称
-	 * @param string $avatar_url   	用户外链头像
-	 */
-	public static function login_social($type, $open_id, $display_name, $avatar_url): WP_User {
-		/**
-		 * $type, $open_id, $display_name 必须为有效值
-		 * @since 0.9.50
-		 */
-		if (!$type or !$open_id) {
-			throw new Exception('Invalid parameter. type:' . $type . '; openid:' . $open_id . '; display_name:' . $display_name);
-		}
-
-		// 统一转为小写
-		$type = strtolower($type);
-
-		//当前用户已登录：新增绑定或同步信息
-		if (is_user_logged_in()) {
-			$this_user = wp_get_current_user();
-			wnd_update_user_openid($this_user->ID, $type, $open_id);
-
-			if ($avatar_url) {
-				wnd_update_user_meta($this_user->ID, 'avatar_url', $avatar_url);
-			}
-
-			return $this_user;
-		}
-
-		//当前用户未登录：注册新用户
-		$user = wnd_get_user_by_openid($type, $open_id);
-		if (!$user) {
-			if (!$display_name) {
-				throw new Exception('display_name is empty');
-			}
-
-			$user_login = wnd_generate_login();
-			$user_pass  = wp_generate_password();
-			$user_data  = ['user_login' => $user_login, 'user_pass' => $user_pass, 'display_name' => $display_name];
-			$user_id    = wp_insert_user($user_data);
-
-			if (is_wp_error($user_id)) {
-				throw new Exception(__('注册失败', 'wnd'));
-			}
-
-			wnd_update_user_openid($user_id, $type, $open_id);
-			$user = get_user_by('id', $user_id);
-		}
-
-		// 同步头像并登录
-		$user_id = $user->ID;
-		if ($avatar_url) {
-			wnd_update_user_meta($user_id, 'avatar_url', $avatar_url);
-		}
-		wp_set_auth_cookie($user_id, true);
-
-		/**
-		 * @since 0.8.61
-		 *
-		 * @param object WP_User
-		 */
-		do_action('wnd_login', $user);
-
-		/**
-		 * Fires after the user has successfully logged in.
-		 * @see （本代码段从 wp_signon 复制而来)
-		 * @since 1.5.0
-		 *
-		 * @param string  $user_login Username.
-		 * @param WP_User $user       WP_User object of the logged-in user.
-		 */
-		do_action('wp_login', $user->user_login, $user);
-
-		return $user;
 	}
 }
