@@ -103,25 +103,6 @@ function wp_is_using_https() {
 function wp_update_https_detection_errors() {}
 
 /**
- * 禁止 feed
- * @since 2021.12.22
- */
-remove_action('wp_head', 'feed_links', 2);
-remove_action('wp_head', 'feed_links_extra', 3);
-add_action('init', function () {
-	global $wp_rewrite;
-	$wp_rewrite->feeds = [];
-}, 99);
-
-function feed_content_type($type = ''): string {
-	return get_default_feed();
-}
-
-function get_default_feed(): string {
-	return 'rss2';
-}
-
-/**
  * ###########################################################################
  * 其他 Filters
  * 以下的 Filter 为优化操作，即保留这些 Filter 也不会报错
