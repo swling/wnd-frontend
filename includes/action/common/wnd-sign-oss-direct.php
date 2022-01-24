@@ -25,7 +25,6 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 
 	private $oss_sp;
 	private $endpoint;
-	private $endpoint_internal;
 	private $method;
 	private $mime_type;
 	private $md5;
@@ -34,22 +33,25 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 	protected function execute(): array{
 		$oss = Wnd_Object_Storage::get_instance($this->oss_sp, $this->endpoint);
 		$oss->setFilePathName($this->file_path_name);
-		$headers = $oss->generateHeaders($this->method, $this->mime_type, $this->md5);
+		$headers    = $oss->generateHeaders($this->method, $this->mime_type, $this->md5);
+		$url        = $oss->getFileUri(false, 0);
+		$signed_url = $oss->getFileUri(true, 1800);
 
 		/**
 		 * - 阿里云 oss 内网地址需要替换
 		 * - 腾讯云文档声称会智能解析 @link https://cloud.tencent.com/document/product/436/6224#.E5.86.85.E7.BD.91.E5.92.8C.E5.A4.96.E7.BD.91.E8.AE.BF.E9.97.AE
 		 */
-		if ('Aliyun' == $this->oss_sp and !$this->endpoint_internal) {
-			$this->endpoint_internal = str_replace('.aliyuncs.com', '-internal.aliyuncs.com', $this->endpoint);
+		if ('Aliyun' == $this->oss_sp) {
+			$internal_url = str_replace('.aliyuncs.com', '-internal.aliyuncs.com', $url);
 		} else {
-			$this->endpoint_internal = $this->endpoint;
+			$internal_url = $url;
 		}
 
 		$data = [
-			'url'      => $this->endpoint . '/' . $this->file_path_name,
-			'internal' => $this->endpoint_internal . '/' . $this->file_path_name,
-			'headers'  => $headers,
+			'url'        => $url,
+			'signed_url' => $signed_url,
+			'internal'   => $internal_url,
+			'headers'    => $headers,
 		];
 		return ['status' => 1, 'data' => $data];
 	}
@@ -60,13 +62,12 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 			throw new Exception('Invalid file type');
 		}
 
-		$this->oss_sp            = $this->data['oss_sp'] ?? '';
-		$this->endpoint          = $this->data['endpoint'] ?? '';
-		$this->endpoint_internal = $this->data['endpoint_internal'] ?? '';
-		$this->method            = $this->data['method'] ?? 'PUT';
-		$this->mime_type         = $this->data['mime_type'] ?? '';
-		$this->md5               = $this->data['md5'] ?? '';
-		$this->file_path_name    = uniqid() . '_' . $this->user_id . '.' . $ext;
+		$this->oss_sp         = $this->data['oss_sp'] ?? '';
+		$this->endpoint       = $this->data['endpoint'] ?? '';
+		$this->method         = $this->data['method'] ?? 'PUT';
+		$this->mime_type      = $this->data['mime_type'] ?? '';
+		$this->md5            = $this->data['md5'] ?? '';
+		$this->file_path_name = uniqid() . '_' . $this->user_id . '.' . $ext;
 
 		// 处于安全考虑，不写入附件的浏览器直传对象存储，不可与站内常规对象存储为同一个节点
 		$oss_handler = Wnd_OSS_Handler::get_instance();
