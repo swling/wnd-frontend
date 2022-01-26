@@ -66,6 +66,9 @@ class WP_Theme_JSON_Resolver {
 	}
 }
 
+remove_action('switch_theme', ['WP_Theme_JSON_Resolver', 'clean_cached_data']);
+remove_action('start_previewing_theme', ['WP_Theme_JSON_Resolver', 'clean_cached_data']);
+
 /**
  * 禁用 Embed
  *
