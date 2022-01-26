@@ -131,7 +131,7 @@ wp_set_wpdb_vars();
 wp_start_object_cache();
 
 // Attach the default filters.
-require ABSPATH . WPINC . '/default-filters.php';
+require __DIR__ .  '/default-filters.php';
 
 /**
  * @since Wnd Frontend 0.9.35
