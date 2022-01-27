@@ -234,13 +234,13 @@ add_filter( 'the_excerpt_rss', 'ent2ncr', 8 );
 add_filter( 'comment_author_rss', 'ent2ncr', 8 );
 add_filter( 'comment_text_rss', 'ent2ncr', 8 );
 add_filter( 'comment_text_rss', 'esc_html' );
-add_filter( 'comment_text_rss', 'wp_staticize_emoji' );
+// add_filter( 'comment_text_rss', 'wp_staticize_emoji' );
 add_filter( 'bloginfo_rss', 'ent2ncr', 8 );
 add_filter( 'the_author', 'ent2ncr', 8 );
 add_filter( 'the_guid', 'esc_url' );
 
 // Email filters.
-add_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
+// add_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
 
 // Robots filters.
 add_filter( 'wp_robots', 'wp_robots_noindex' );
@@ -310,22 +310,22 @@ add_filter( 'rest_authentication_errors', 'rest_application_password_check_error
 add_filter( 'rest_authentication_errors', 'rest_cookie_check_errors', 100 );
 
 // Actions.
-add_action( 'wp_head', '_wp_render_title_tag', 1 );
+// add_action( 'wp_head', '_wp_render_title_tag', 1 );
 add_action( 'wp_head', 'wp_enqueue_scripts', 1 );
-add_action( 'wp_head', 'wp_resource_hints', 2 );
-add_action( 'wp_head', 'feed_links', 2 );
-add_action( 'wp_head', 'feed_links_extra', 3 );
-add_action( 'wp_head', 'rsd_link' );
-add_action( 'wp_head', 'wlwmanifest_link' );
+// add_action( 'wp_head', 'wp_resource_hints', 2 );
+// add_action( 'wp_head', 'feed_links', 2 );
+// add_action( 'wp_head', 'feed_links_extra', 3 );
+// add_action( 'wp_head', 'rsd_link' );
+// add_action( 'wp_head', 'wlwmanifest_link' );
 add_action( 'wp_head', 'locale_stylesheet' );
 add_action( 'publish_future_post', 'check_and_publish_future_post', 10, 1 );
 add_action( 'wp_head', 'wp_robots', 1 );
-add_action( 'wp_head', 'print_emoji_detection_script', 7 );
+// add_action( 'wp_head', 'print_emoji_detection_script', 7 );
 add_action( 'wp_head', 'wp_print_styles', 8 );
 add_action( 'wp_head', 'wp_print_head_scripts', 9 );
-add_action( 'wp_head', 'wp_generator' );
+// add_action( 'wp_head', 'wp_generator' );
 add_action( 'wp_head', 'rel_canonical' );
-add_action( 'wp_head', 'wp_shortlink_wp_head', 10, 0 );
+// add_action( 'wp_head', 'wp_shortlink_wp_head', 10, 0 );
 add_action( 'wp_head', 'wp_custom_css_cb', 101 );
 add_action( 'wp_head', 'wp_site_icon', 99 );
 add_action( 'wp_footer', 'wp_print_footer_scripts', 20 );
@@ -338,7 +338,7 @@ add_action( 'init', 'check_theme_switched', 99 );
 // add_action( 'start_previewing_theme', array( 'WP_Theme_JSON_Resolver', 'clean_cached_data' ) );
 add_action( 'after_switch_theme', '_wp_menus_changed' );
 // add_action( 'after_switch_theme', '_wp_sidebars_changed' );
-add_action( 'wp_print_styles', 'print_emoji_styles' );
+// add_action( 'wp_print_styles', 'print_emoji_styles' );
 
 if ( isset( $_GET['replytocom'] ) ) {
 	add_filter( 'wp_robots', 'wp_robots_no_robots' );
@@ -390,10 +390,10 @@ add_action( 'do_robots', 'do_robots' );
 add_action( 'do_favicon', 'do_favicon' );
 add_action( 'set_comment_cookies', 'wp_set_comment_cookies', 10, 3 );
 add_action( 'sanitize_comment_cookies', 'sanitize_comment_cookies' );
-add_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+// add_action( 'admin_print_scripts', 'print_emoji_detection_script' );
 add_action( 'admin_print_scripts', 'print_head_scripts', 20 );
 add_action( 'admin_print_footer_scripts', '_wp_footer_scripts' );
-add_action( 'admin_print_styles', 'print_emoji_styles' );
+// add_action( 'admin_print_styles', 'print_emoji_styles' );
 add_action( 'admin_print_styles', 'print_admin_styles', 20 );
 add_action( 'init', 'smilies_init', 5 );
 // add_action( 'plugins_loaded', 'wp_maybe_load_widgets', 0 );
@@ -512,13 +512,13 @@ add_action( 'init', 'wp_sitemaps_get_server' );
  * Filters formerly mixed into wp-includes.
  */
 // Theme.
-add_action( 'setup_theme', 'create_initial_theme_features', 0 );
+// add_action( 'setup_theme', 'create_initial_theme_features', 0 );
 // add_action( 'setup_theme', '_add_default_theme_supports', 1 );
 add_action( 'wp_loaded', '_custom_header_background_just_in_time' );
-add_action( 'wp_head', '_custom_logo_header_styles' );
-add_action( 'plugins_loaded', '_wp_customize_include' );
+// add_action( 'wp_head', '_custom_logo_header_styles' );
+// add_action( 'plugins_loaded', '_wp_customize_include' );
 add_action( 'transition_post_status', '_wp_customize_publish_changeset', 10, 3 );
-add_action( 'admin_enqueue_scripts', '_wp_customize_loader_settings' );
+// add_action( 'admin_enqueue_scripts', '_wp_customize_loader_settings' );
 add_action( 'delete_attachment', '_delete_attachment_theme_mod' );
 add_action( 'transition_post_status', '_wp_keep_alive_customize_changeset_dependent_auto_drafts', 20, 3 );
 
@@ -571,14 +571,14 @@ add_action( 'wp_default_scripts', 'wp_default_packages' );
 // add_action( 'admin_head', 'wp_check_widget_editor_deps' );
 
 // Global styles can be enqueued in both the header and the footer. See https://core.trac.wordpress.org/ticket/53494.
-add_action( 'wp_enqueue_scripts', 'wp_enqueue_global_styles' );
-add_action( 'wp_footer', 'wp_enqueue_global_styles', 1 );
+// add_action( 'wp_enqueue_scripts', 'wp_enqueue_global_styles' );
+// add_action( 'wp_footer', 'wp_enqueue_global_styles', 1 );
 
 add_action( 'wp_default_styles', 'wp_default_styles' );
 add_filter( 'style_loader_src', 'wp_style_loader_src', 10, 2 );
 
-add_action( 'wp_head', 'wp_maybe_inline_styles', 1 ); // Run for styles enqueued in <head>.
-add_action( 'wp_footer', 'wp_maybe_inline_styles', 1 ); // Run for late-loaded styles in the footer.
+// add_action( 'wp_head', 'wp_maybe_inline_styles', 1 ); // Run for styles enqueued in <head>.
+// add_action( 'wp_footer', 'wp_maybe_inline_styles', 1 ); // Run for late-loaded styles in the footer.
 
 add_action( 'admin_footer-post.php', 'wp_add_iframed_editor_assets_html' );
 add_action( 'admin_footer-post-new.php', 'wp_add_iframed_editor_assets_html' );
@@ -605,7 +605,7 @@ add_action( 'template_redirect', 'redirect_canonical' );
 add_action( 'template_redirect', 'wp_redirect_admin_locations', 1000 );
 
 // Shortcodes.
-add_filter( 'the_content', 'do_shortcode', 11 ); // AFTER wpautop().
+// add_filter( 'the_content', 'do_shortcode', 11 ); // AFTER wpautop().
 
 // Media.
 // add_action( 'wp_playlist_scripts', 'wp_playlist_scripts' );
