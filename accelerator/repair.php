@@ -82,3 +82,8 @@ function wp_is_using_https() {
 
 // 后端 WP Site Heath 会调用（插件保留了 WP Site Heath 相关功能）
 function wp_update_https_detection_errors() {}
+
+// 短代码
+function add_shortcode() {
+	return;
+}

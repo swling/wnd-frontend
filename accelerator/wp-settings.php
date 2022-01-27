@@ -167,7 +167,7 @@ wp_not_installed();
 
 // Load most of WordPress.
 require ABSPATH . WPINC . '/class-wp-walker.php';
-require ABSPATH . WPINC . '/class-wp-ajax-response.php';
+// require ABSPATH . WPINC . '/class-wp-ajax-response.php';
 require ABSPATH . WPINC . '/capabilities.php';
 require ABSPATH . WPINC . '/class-wp-roles.php';
 require ABSPATH . WPINC . '/class-wp-role.php';
@@ -232,7 +232,7 @@ require ABSPATH . WPINC . '/class-wp-term-query.php';
 require ABSPATH . WPINC . '/class-wp-tax-query.php';
 require ABSPATH . WPINC . '/update.php';
 require ABSPATH . WPINC . '/canonical.php';
-require ABSPATH . WPINC . '/shortcodes.php';
+// require ABSPATH . WPINC . '/shortcodes.php';
 // require ABSPATH . WPINC . '/embed.php';
 // require ABSPATH . WPINC . '/class-wp-embed.php';
 // require ABSPATH . WPINC . '/class-wp-oembed.php';
