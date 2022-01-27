@@ -107,7 +107,7 @@ class Wnd_Controller {
 		remove_action('rest_api_init', 'wp_oembed_register_route');
 
 		/**
-		 * 禁用xmlrpc
+		 * 禁用 xmlrpc
 		 * 如果网站设置了自定义的内容管理权限，必须禁止WordPress默认的管理接口
 		 * @since 2019.10.08
 		 */
@@ -115,22 +115,9 @@ class Wnd_Controller {
 	}
 
 	/**
-	 * 注册API
+	 * 注册 API
 	 */
 	public static function register_route() {
-		/**
-		 * 插件移除了所有 WP 默认的 Rest API
-		 * 此处恢复 WP 默认的 Application Passwords API 可用于自定义 API 身份验证
-		 */
-		$controller = new \WP_REST_Application_Passwords_Controller();
-		$controller->register_routes();
-
-		// Site Health.
-		$site_health = \WP_Site_Health::get_instance();
-		$controller  = new \WP_REST_Site_Health_Controller($site_health);
-		$controller->register_routes();
-
-		// Wnd Rest API
 		foreach (static::$routes as $route => $args) {
 			$route = $args['route_rule'] ? ($route . '/' . $args['route_rule']) : $route;
 			register_rest_route(static::$namespace, $route, $args);
@@ -139,7 +126,7 @@ class Wnd_Controller {
 	}
 
 	/**
-	 * 注册API
+	 * 获取 API Url
 	 */
 	public static function get_route_url(string $route, string $endpoint = ''): string {
 		return rest_url(static::$namespace . '/' . $route . ($endpoint ? ('/' . $endpoint) : ''));

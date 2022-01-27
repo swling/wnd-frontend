@@ -87,3 +87,6 @@ function wp_update_https_detection_errors() {}
 function add_shortcode() {
 	return;
 }
+
+// Application passwords
+add_filter('wp_is_application_passwords_available', '__return_false');
