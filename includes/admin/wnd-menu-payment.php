@@ -80,9 +80,9 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 		$form->add_text(
 			[
 				'name'        => 'wechat_appid',
-				'label'       => '关联AppID',
+				'label'       => '默认AppID',
 				'required'    => false,
-				'placeholder' => '服务号、小程序、企业微信 AppID',
+				'placeholder' => '同一商户可绑定多个服务号、小程序、企业微信 AppID，此处填写站内 web 支付对应的 App id',
 				'help'        => ['text' => 'https://pay.weixin.qq.com/index.php/extend/merchant_appid/mapay_platform/account_manage'],
 			]
 		);
@@ -91,7 +91,7 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 				'name'        => 'wechat_apikey',
 				'label'       => 'APIv3密钥',
 				'required'    => false,
-				'placeholder' => '服务号 APP ID',
+				'placeholder' => 'APIv3密钥',
 				'help'        => ['text' => 'https://pay.weixin.qq.com/index.php/core/cert/api_cert#/'],
 			]
 		);
