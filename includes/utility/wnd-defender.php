@@ -247,7 +247,7 @@ class Wnd_Defender {
 		}
 
 		$base_name = $this->pathinfo['basename'] ?? '';
-		if ('xmlrpc.php' != $base_name) {
+		if ('xmlrpc.php' != $base_name and 'wp-comments-post.php' != $base_name) {
 			return;
 		}
 
