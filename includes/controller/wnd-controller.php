@@ -98,13 +98,11 @@ class Wnd_Controller {
 		 * - 影响：
 		 *   禁用 WP 原生 API 对网站前端几乎没有任何影响，主要影响在管理后台：
 		 *   -- 古腾堡编辑器将不可用
-		 *   -- 插件恢复了 WP_Site_Health（站点健康），及 WP_REST_Application_Passwords （应用密码) 两个实用且与本插件不冲突的原生 API @see $this->register_route();
-		 *
-		 * - 结论：
-		 *   本插件对 WP 有众多个性化定制，因此如果您最终决定采用本插件
+		 *   -- 本插件对 WP 有众多个性化定制，除非对 WordPress 有深入的理解，否则不建议启用本插件
 		 */
 		remove_action('rest_api_init', 'create_initial_rest_routes', 99);
 		remove_action('rest_api_init', 'wp_oembed_register_route');
+		add_filter('use_block_editor_for_post', '__return_false');
 
 		/**
 		 * 禁用 xmlrpc
