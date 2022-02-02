@@ -150,15 +150,6 @@ class Wnd_Menus {
 			]
 		);
 
-		$form->add_radio(
-			[
-				'name'    => 'disable_locale',
-				'options' => ['启用' => '', '禁用' => 1],
-				'label'   => '语言包',
-				'class'   => 'is-checkradio is-danger',
-			]
-		);
-
 		$form->add_select(
 			[
 				'name'     => 'primary_color',
@@ -194,6 +185,25 @@ class Wnd_Menus {
 				],
 				'label'    => '辅色调',
 				'required' => false,
+			]
+		);
+
+		$form->add_radio(
+			[
+				'name'    => 'disable_locale',
+				'options' => ['启用' => '', '禁用' => 1],
+				'label'   => '语言包',
+				'class'   => 'is-checkradio is-danger',
+			]
+		);
+
+		$form->add_radio(
+			[
+				'name'    => 'enable_admin_optimization',
+				'options' => ['启用' => 1, '禁用' => ''],
+				'label'   => 'WP 后台优化',
+				'help'    => ['text' => '针对数据较多的站点，优化后台文章列表、用户列表等加载速度'],
+				'class'   => 'is-checkradio is-danger',
 			]
 		);
 

@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Admin\Wnd_Admin_Optimization;
 use Wnd\Admin\Wnd_Menus;
 use Wnd\Controller\Wnd_Controller;
 use Wnd\Hook\Wnd_Hook;
@@ -65,6 +66,11 @@ class Wnd_Init {
 
 			// 检查更新
 			new Wnd_Upgrader_Plugin_This();
+
+			// 优化大数据库站点的 WP 后台
+			if (wnd_get_config('enable_admin_optimization')) {
+				Wnd_Admin_Optimization::get_instance();
+			}
 		}
 	}
 
