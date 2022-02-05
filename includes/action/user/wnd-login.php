@@ -50,15 +50,21 @@ class Wnd_Login extends Wnd_Action {
 	}
 
 	/**
-	 * 解析数据并核查密码
+	 * 解析数据
+	 * @since 0.9.57.7
 	 */
-	protected function check() {
+	protected function parse_data() {
 		$this->username    = trim($this->data['_user_user_login']);
 		$this->password    = $this->data['_user_user_pass'];
 		$this->remember    = (bool) $this->data['remember'] ?? 0;
 		$this->redirect_to = $_REQUEST['redirect_to'] ?? home_url();
 		$this->type        = $this->data['type'] ?? '';
+	}
 
+	/**
+	 * 核查密码
+	 */
+	protected function check() {
 		// 可根据邮箱，手机，或用户名查询用户
 		$this->target_user = wnd_get_user_by($this->username);
 		if (!$this->target_user) {

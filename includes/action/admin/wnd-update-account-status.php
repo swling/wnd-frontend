@@ -38,11 +38,13 @@ class Wnd_Update_Account_Status extends Wnd_Action_Admin {
 		}
 	}
 
-	protected function check() {
+	protected function parse_data() {
 		$this->target_user_id = (int) $this->data['user_id'];
 		$this->status         = $this->data['status'] ?? '';
 		$this->before_status  = get_user_meta($this->target_user_id, 'status', true) ?: 'ok';
+	}
 
+	protected function check() {
 		if (!$this->target_user_id) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}

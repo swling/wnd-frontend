@@ -59,6 +59,13 @@ class Wnd_Reg extends Wnd_Action {
 	}
 
 	protected function check() {
+		$user_can_reg = apply_filters('wnd_can_reg', ['status' => 1, 'msg' => ''], $this->data);
+		if (0 === $user_can_reg['status']) {
+			throw new Exception($user_can_reg['msg']);
+		}
+	}
+
+	protected function parse_data() {
 		$this->user_data               = $this->request->get_user_data();
 		$this->user_data['user_login'] = $this->user_data['user_login'] ?? wnd_generate_login();
 		$this->user_meta_data          = $this->request->get_user_meta_data();
@@ -66,12 +73,6 @@ class Wnd_Reg extends Wnd_Action {
 
 		// 检查表单数据
 		static::check_data($this->user_data);
-
-		// 注册权限过滤挂钩
-		$user_can_reg = apply_filters('wnd_can_reg', ['status' => 1, 'msg' => ''], $this->data);
-		if (0 === $user_can_reg['status']) {
-			throw new Exception($user_can_reg['msg']);
-		}
 	}
 
 	/**

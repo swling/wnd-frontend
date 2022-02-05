@@ -24,11 +24,13 @@ class Wnd_Delete_File extends Wnd_Action_User {
 		throw new Exception(__('删除失败', 'wnd'));
 	}
 
-	protected function check() {
+	protected function parse_data() {
 		$this->meta_key    = $this->data['meta_key'] ?? '';
 		$this->file_id     = (int) $this->data['file_id'];
 		$this->post_parent = get_post($this->file_id)->post_parent ?? 0;
+	}
 
+	protected function check() {
 		if (!$this->file_id) {
 			throw new Exception(__('文件不存在', 'wnd'));
 		}

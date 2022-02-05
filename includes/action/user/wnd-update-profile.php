@@ -40,13 +40,14 @@ class Wnd_Update_Profile extends Wnd_Action_User {
 		return apply_filters('wnd_update_profile_return', ['status' => 1, 'msg' => __('更新成功', 'wnd')], $this->user_id);
 	}
 
-	protected function check() {
+	protected function parse_data() {
 		$this->user_data         = $this->request->get_user_data();
 		$this->user_data['ID']   = $this->user_id;
 		$this->user_meta_data    = $this->request->get_user_meta_data();
 		$this->wp_user_meta_data = $this->request->get_wp_user_meta_data();
+	}
 
-		// 更新权限过滤挂钩
+	protected function check() {
 		$can = apply_filters('wnd_can_update_profile', ['status' => 1, 'msg' => ''], $this->data);
 		if (0 === $can['status']) {
 			throw new Exception($can['msg']);

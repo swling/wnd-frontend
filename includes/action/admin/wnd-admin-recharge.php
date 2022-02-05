@@ -25,13 +25,13 @@ class Wnd_Admin_Recharge extends Wnd_Action_Admin {
 		return ['status' => 1, 'msg' => $this->target_user->display_name . '&nbsp;' . __('充值：¥', 'wnd') . $this->total_amount];
 	}
 
-	protected function check() {
-		$user_field         = $this->data['user_field'];
+	protected function parse_data() {
+		$this->target_user  = wnd_get_user_by($this->data['user_field']);
 		$this->total_amount = (float) $this->data['total_amount'];
 		$this->remarks      = $this->data['remarks'] ?: __('人工充值', 'wnd');
+	}
 
-		// 根据邮箱，手机，或用户名查询用户
-		$this->target_user = wnd_get_user_by($user_field);
+	protected function check() {
 		if (!$this->target_user) {
 			throw new Exception(__('用户不存在', 'wnd'));
 		}

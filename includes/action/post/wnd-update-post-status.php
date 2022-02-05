@@ -29,14 +29,15 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 		}
 	}
 
-	protected function check() {
-		// 获取数据
+	protected function parse_data() {
 		$this->post_id      = (int) $this->data['post_id'];
 		$this->after_status = $this->data['post_status'];
 		$this->remarks      = $this->data['remarks'] ?? '';
 		$this->stick_post   = $this->data['stick_post'] ?? '';
 		$this->before_post  = get_post($this->post_id);
+	}
 
+	protected function check() {
 		if (!$this->before_post) {
 			throw new Exception(__('无效的Post', 'wnd'));
 		}

@@ -23,12 +23,14 @@ class Wnd_Delete_User extends Wnd_Action_Root {
 		}
 	}
 
-	protected function check() {
+	protected function parse_data() {
 		$this->target_user_id = (int) $this->data['user_id'];
 		if (!$this->target_user_id) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
+	}
 
+	protected function check() {
 		if (is_super_admin($this->target_user_id)) {
 			throw new Exception(__('无法删除超级管理员', 'wnd'));
 		}

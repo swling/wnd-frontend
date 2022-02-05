@@ -56,7 +56,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		return ['status' => 1, 'data' => $data];
 	}
 
-	protected function check() {
+	protected function parse_data() {
 		$ext = $this->data['extension'] ?? '';
 		if (!$ext) {
 			throw new Exception('Invalid file type');
@@ -68,7 +68,9 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		$this->mime_type      = $this->data['mime_type'] ?? '';
 		$this->md5            = $this->data['md5'] ?? '';
 		$this->file_path_name = uniqid() . '_' . $this->user_id . '.' . $ext;
+	}
 
+	protected function check() {
 		// 处于安全考虑，不写入附件的浏览器直传对象存储，不可与站内常规对象存储为同一个节点
 		$oss_handler = Wnd_OSS_Handler::get_instance();
 		if (!$oss_handler->is_external_endpoint($this->endpoint)) {
