@@ -63,6 +63,7 @@ abstract class Wnd_Action {
 	/**
 	 * 构造
 	 * - 校验请求数据
+	 * - 解析请求并定义类属性
 	 * - 核查权限许可
 	 * @since 0.8.66
 	 */
@@ -73,8 +74,16 @@ abstract class Wnd_Action {
 		$this->user            = wp_get_current_user();
 		$this->user_id         = $this->user->ID ?? 0;
 
+		$this->parse_data();
 		$this->check();
 	}
+
+	/**
+	 * 解析数据
+	 * - 从请求数据中解析并定义类属性
+	 * @since 0.9.57.7
+	 */
+	protected function parse_data() {}
 
 	/**
 	 * 权限检测
@@ -86,7 +95,7 @@ abstract class Wnd_Action {
 	 * 封装执行
 	 * @since 0.9.50
 	 */
-	public function do_action(): array{
+	final public function do_action(): array{
 		// 防护
 		$defender = new Wnd_Defender_Action($this);
 		$defender->defend_action();

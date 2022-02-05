@@ -73,9 +73,6 @@ class Wnd_Do_Payment extends Wnd_Action {
 	 * @param bool 	$online_payment 是否为在线支付
 	 */
 	protected function check() {
-		// 解析数据
-		$this->parse_data();
-
 		// 通用检测
 		if (!$this->payment_gateway) {
 			throw new Exception(__('未定义支付方式', 'wnd'));
@@ -104,7 +101,7 @@ class Wnd_Do_Payment extends Wnd_Action {
 	 * 解析交易数据
 	 * @since 0.9.36
 	 */
-	private function parse_data() {
+	protected function parse_data() {
 		// 基本数据
 		$this->post_id  = $this->data['post_id'] ?? 0;
 		$this->sku_id   = $this->data[Wnd_Order_Props::$sku_id_key] ?? '';

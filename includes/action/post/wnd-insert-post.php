@@ -44,15 +44,10 @@ class Wnd_Insert_Post extends Wnd_Action {
 		return apply_filters('wnd_insert_post_return', $return_array, $this->data, $this->post_id);
 	}
 
-	protected function check() {
-		$this->parse_data();
-		$this->check_data();
-	}
-
 	/**
 	 * 解析提交数据
 	 */
-	private function parse_data() {
+	protected function parse_data() {
 		$this->post_data    = $this->request->get_post_data();
 		$this->meta_data    = $this->request->get_post_meta_data();
 		$this->wp_meta_data = $this->request->get_wp_post_meta_data();
@@ -79,7 +74,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 	/**
 	 * 更新权限判断
 	 */
-	private function check_data() {
+	protected function check() {
 		if ($this->post_id) {
 			if (!$this->update_post) {
 				throw new Exception(__('ID无效', 'wnd'));
