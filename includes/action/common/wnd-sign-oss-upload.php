@@ -14,22 +14,14 @@ use Wnd\Utility\Wnd_OSS_Handler;
 class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 
 	private $file_name;
-
 	private $mime_type;
-
+	private $md5;
 	private $local_file;
-
 	private $is_private;
 
 	protected function execute(): array{
-		$this->file_name  = uniqid('oss-') . '.' . $this->data['extension'];
-		$this->mime_type  = $this->data['mime_type'] ?? '';
-		$md5              = $this->data['md5'] ?? '';
-		$this->local_file = $this->get_attached_file();
-		$this->is_private = (bool) ($this->data['is_paid'] ?? false);
-
 		$oss_handler = Wnd_OSS_Handler::get_instance();
-		$oss_request = $oss_handler->sign_oss_request('PUT', $this->local_file, $this->mime_type, $md5, $this->is_private);
+		$oss_request = $oss_handler->sign_oss_request('PUT', $this->local_file, $this->mime_type, $this->md5, $this->is_private);
 		$oss_handler->remove_local_storage_hook(); // 移除本地文件处理钩子
 
 		// 写入 attachment post
@@ -51,6 +43,14 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 			'id'         => $attachment_id,
 		];
 		return ['status' => 1, 'data' => $data];
+	}
+
+	protected function parse_data() {
+		$this->file_name  = uniqid('oss-') . '.' . $this->data['extension'];
+		$this->mime_type  = $this->data['mime_type'] ?? '';
+		$this->md5        = $this->data['md5'] ?? '';
+		$this->local_file = $this->get_attached_file();
+		$this->is_private = (bool) ($this->data['is_paid'] ?? false);
 	}
 
 	/**

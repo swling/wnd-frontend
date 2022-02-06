@@ -19,9 +19,11 @@ class Wnd_Set_SKU extends Wnd_Action_User {
 		return ['status' => 1, 'msg' => __('设置成功', 'wnd')];
 	}
 
-	protected function check() {
+	protected function parse_data() {
 		$this->post_id = $this->data['post_id'] ?? 0;
+	}
 
+	protected function check() {
 		if (wnd_get_post_price($this->post_id)) {
 			throw new Exception(__('当前商品已设置固定价格', 'wnd'));
 		}

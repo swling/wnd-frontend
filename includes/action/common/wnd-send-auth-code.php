@@ -14,6 +14,7 @@ class Wnd_Send_Auth_Code extends Wnd_Action {
 	private $device;
 	private $type;
 	private $template;
+	private $device_type;
 
 	protected function execute(): array{
 		$auth = Wnd_Auth_Code::get_instance($this->device);
@@ -23,17 +24,19 @@ class Wnd_Send_Auth_Code extends Wnd_Action {
 		return ['status' => 1, 'msg' => __('发送成功，请注意查收', 'wnd')];
 	}
 
-	protected function check() {
-		$this->type     = $this->data['type'] ?? '';
-		$this->device   = $this->data['device'] ?? '';
-		$this->template = $this->data['template'] ?: wnd_get_config('sms_template_v');
-		$device_type    = $this->data['device_type'] ?? '';
+	protected function parse_data() {
+		$this->type        = $this->data['type'] ?? '';
+		$this->device      = $this->data['device'] ?? '';
+		$this->template    = $this->data['template'] ?: wnd_get_config('sms_template_v');
+		$this->device_type = $this->data['device_type'] ?? '';
+	}
 
+	protected function check() {
 		// 检测对应手机或邮箱格式：防止在邮箱绑定中输入手机号，反之亦然
-		if ('email' == $device_type and !is_email($this->device)) {
+		if ('email' == $this->device_type and !is_email($this->device)) {
 			throw new Exception(__('邮箱地址无效', 'wnd'));
 		}
-		if ('phone' == $device_type and !wnd_is_mobile($this->device)) {
+		if ('phone' == $this->device_type and !wnd_is_mobile($this->device)) {
 			throw new Exception(__('手机号码无效', 'wnd'));
 		}
 

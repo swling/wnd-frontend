@@ -10,12 +10,12 @@ use Wnd\Getway\Wnd_Refunder;
  */
 class Wnd_Refund extends Wnd_Action_Admin {
 
-	protected function execute(): array{
-		$transaction_id = (int) ($this->data['transaction_id'] ?? 0);
-		$refund_amount  = (float) ($this->data['refund_amount'] ?? 0);
+	private $transaction_id;
+	private $refund_amount;
 
-		$refunder = Wnd_Refunder::get_instance($transaction_id);
-		$refunder->set_refund_amount($refund_amount);
+	protected function execute(): array{
+		$refunder = Wnd_Refunder::get_instance($this->transaction_id);
+		$refunder->set_refund_amount($this->refund_amount);
 		$refunder->refund();
 
 		return [
@@ -23,5 +23,10 @@ class Wnd_Refund extends Wnd_Action_Admin {
 			'msg'    => __('退款成功', 'wnd'),
 			'data'   => $refunder->get_response(),
 		];
+	}
+
+	protected function parse_data() {
+		$this->transaction_id = (int) ($this->data['transaction_id'] ?? 0);
+		$this->refund_amount  = (float) ($this->data['refund_amount'] ?? 0);
 	}
 }

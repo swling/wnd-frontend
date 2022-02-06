@@ -26,8 +26,11 @@ class Wnd_Update_Views extends Wnd_Action {
 		return ['status' => 0, 'msg' => time()];
 	}
 
-	protected function check() {
+	protected function parse_data() {
 		$this->post_id = (int) ($this->data['post_id'] ?? 0);
+	}
+
+	protected function check() {
 		if (!$this->post_id) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}

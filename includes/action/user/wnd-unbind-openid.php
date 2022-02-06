@@ -14,9 +14,9 @@ use Wnd\Action\Wnd_Action_User;
 class Wnd_Unbind_Openid extends Wnd_Action_User {
 
 	private $type;
+	private $user_pass;
 
 	protected function execute(): array{
-		// 解除绑定
 		if (!wnd_delete_user_openid($this->user_id, $this->type)) {
 			throw new Exception(__('解绑失败，请稍后重试', 'wnd'));
 		}
@@ -24,10 +24,13 @@ class Wnd_Unbind_Openid extends Wnd_Action_User {
 		return ['status' => 8, 'msg' => __('已解除绑定', 'wnd') . ':' . strtoupper($this->type)];
 	}
 
+	protected function parse_data() {
+		$this->type      = $this->data['type'] ?? '';
+		$this->user_pass = $this->data['_user_user_pass'];
+	}
+
 	protected function check() {
-		$this->type = $this->data['type'] ?? '';
-		$user_pass  = $this->data['_user_user_pass'];
-		$auths      = (array) wnd_get_user_auths($this->user->ID);
+		$auths = (array) wnd_get_user_auths($this->user->ID);
 
 		/**
 		 * 如果当前账户未绑定邮箱、手机、或其他第三方账户，则不允许解绑最后一个绑定
@@ -41,7 +44,7 @@ class Wnd_Unbind_Openid extends Wnd_Action_User {
 		}
 
 		// 密码校验
-		if (!wp_check_password($user_pass, $this->user->data->user_pass, $this->user->ID)) {
+		if (!wp_check_password($this->user_pass, $this->user->data->user_pass, $this->user->ID)) {
 			throw new Exception(__('密码错误', 'wnd'));
 		}
 	}

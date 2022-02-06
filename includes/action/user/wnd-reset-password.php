@@ -22,7 +22,7 @@ class Wnd_Reset_Password extends Wnd_Action {
 		];
 	}
 
-	protected function check() {
+	protected function parse_data() {
 		$email_or_phone      = $this->data['_user_user_email'] ?? $this->data['phone'] ?? '';
 		$new_password        = $this->data['_user_new_pass'] ?? '';
 		$new_password_repeat = $this->data['_user_new_pass_repeat'] ?? '';
@@ -38,6 +38,9 @@ class Wnd_Reset_Password extends Wnd_Action {
 
 		//获取用户
 		$this->target_user = wnd_get_user_by($email_or_phone);
+	}
+
+	protected function check() {
 		if (!$this->target_user) {
 			throw new Exception(__('账户未注册', 'wnd'));
 		}
