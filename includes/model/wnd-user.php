@@ -158,7 +158,7 @@ abstract class Wnd_User {
 		}
 
 		global $wpdb;
-		$data_format = ['%d', '%f', '%s', '%s', '%d', '%s'];
+		$data_format = ['%d', '%f', '%s', '%s', '%d', '%d', '%s'];
 		$update_ID   = $data['ID'] ?? 0;
 		if ($update_ID) {
 			unset($data['ID']);
