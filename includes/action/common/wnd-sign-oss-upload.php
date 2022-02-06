@@ -15,6 +15,7 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 
 	private $file_name;
 	private $mime_type;
+	private $extension;
 	private $md5;
 	private $local_file;
 	private $is_private;
@@ -46,7 +47,8 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 	}
 
 	protected function parse_data() {
-		$this->file_name  = uniqid('oss-') . '.' . $this->data['extension'];
+		$this->extension  = $this->data['extension'];
+		$this->file_name  = uniqid('oss-') . '.' . $this->extension;
 		$this->mime_type  = $this->data['mime_type'] ?? '';
 		$this->md5        = $this->data['md5'] ?? '';
 		$this->local_file = $this->get_attached_file();
@@ -58,6 +60,11 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 	 */
 	protected function check() {
 		parent::check();
+
+		$allowed_extensions = array_keys(get_allowed_mime_types());
+		if (!in_array($this->extension, $allowed_extensions)) {
+			throw new Exception('File types not allowed');
+		}
 
 		if (!wnd_get_config('enable_oss')) {
 			throw new Exception('Object storage service is disabled');

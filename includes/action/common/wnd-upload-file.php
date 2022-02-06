@@ -67,6 +67,14 @@ class Wnd_Upload_File extends Wnd_Action {
 				continue;
 			}
 
+			// 文件格式限制
+			$extension          = pathinfo($_FILES['temp_key']['name'])['extension'] ?? '';
+			$allowed_extensions = array_keys(get_allowed_mime_types());
+			if (!in_array($extension, $allowed_extensions)) {
+				$return_array[] = ['status' => 0, 'msg' => 'Error: File types not allowed'];
+				continue;
+			}
+
 			/**
 			 * 上传文件并附属到对应的post parent 默认为 0 即孤立文件
 			 *
