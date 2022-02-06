@@ -406,3 +406,18 @@ function wnd_get_thumbnail_url($id_or_url, $width = 160, $height = 120) {
 
 	return $url . '?x-oss-process=image/resize,m_fill,w_' . $width . ',h_' . $height;
 }
+
+/**
+ * 核查文件类型是否在允许列表中
+ * @since 0.9.57.7
+ */
+function wnd_is_allowed_extension(string $extension): bool{
+	$allowed_extensions = array_keys(get_allowed_mime_types());
+	$extensions         = [];
+	foreach ($allowed_extensions as $value) {
+		$extensions = array_merge($extensions, explode('|', $value));
+	}
+	unset($value);
+
+	return in_array($extension, $extensions);
+}

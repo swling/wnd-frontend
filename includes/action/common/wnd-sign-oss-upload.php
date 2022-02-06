@@ -61,8 +61,7 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 	protected function check() {
 		parent::check();
 
-		$allowed_extensions = array_keys(get_allowed_mime_types());
-		if (!in_array($this->extension, $allowed_extensions)) {
+		if (!wnd_is_allowed_extension($this->extension)) {
 			throw new Exception('File types not allowed');
 		}
 

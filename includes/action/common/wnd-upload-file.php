@@ -68,9 +68,8 @@ class Wnd_Upload_File extends Wnd_Action {
 			}
 
 			// 文件格式限制
-			$extension          = pathinfo($_FILES['temp_key']['name'])['extension'] ?? '';
-			$allowed_extensions = array_keys(get_allowed_mime_types());
-			if (!in_array($extension, $allowed_extensions)) {
+			$extension = pathinfo($_FILES['temp_key']['name'])['extension'] ?? '';
+			if (!wnd_is_allowed_extension($extension)) {
 				$return_array[] = ['status' => 0, 'msg' => 'Error: File types not allowed'];
 				continue;
 			}
