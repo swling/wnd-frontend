@@ -242,4 +242,10 @@ class Wnd_Admin {
 
 		$wpdb->query("ALTER TABLE $wpdb->wnd_users ADD COLUMN `login_count` BIGINT NOT NULL AFTER `last_login`,  ADD INDEX(login_count)");
 	}
+
+	// 删除自定义用户表 role 及 attribute 字段
+	private static function v_0_9_57_7() {
+		global $wpdb;
+		$wpdb->query("ALTER TABLE $wpdb->wnd_users DROP COLUMN role, DROP COLUMN attribute");
+	}
 }

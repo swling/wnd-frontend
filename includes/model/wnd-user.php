@@ -11,7 +11,7 @@ abstract class Wnd_User {
 
 	/**
 	 * 获取自定义用户对象
-	 * - Users 主要数据：balance、role、attribute、last_login、client_ip
+	 * - Users 主要数据：balance、last_login、client_ip
 	 * @since 2019.11.06
 	 */
 	public static function get_wnd_user(int $user_id): object{
@@ -28,12 +28,12 @@ abstract class Wnd_User {
 
 	/**
 	 * 更新自定义用户对象
-	 * - Users 主要数据：balance、role、attribute、last_login、client_ip
+	 * - Users 主要数据：balance、last_login、client_ip
 	 * - 此处不直接清理用户数据缓存，旨在减少一次数据查询
 	 * @since 2019.11.06
 	 */
 	public static function update_wnd_user(int $user_id, array $data): bool{
-		$defaults   = ['user_id' => 0, 'balance' => 0, 'role' => '', 'attribute' => '', 'last_login' => '', 'login_count' => '', 'client_ip' => ''];
+		$defaults   = ['user_id' => 0, 'balance' => 0, 'last_login' => '', 'login_count' => '', 'client_ip' => ''];
 		$db_records = ((array) static::get_wnd_user($user_id)) ?: $defaults;
 		$data       = array_merge($db_records, $data);
 
@@ -158,7 +158,7 @@ abstract class Wnd_User {
 		}
 
 		global $wpdb;
-		$data_format = ['%d', '%f', '%s', '%s', '%d', '%d', '%s'];
+		$data_format = ['%d', '%f', '%d', '%d', '%s'];
 		$update_ID   = $data['ID'] ?? 0;
 		if ($update_ID) {
 			unset($data['ID']);

@@ -69,8 +69,6 @@ class Wnd_DB {
 			ID bigint(20) NOT NULL auto_increment,
 			user_id bigint(20) NOT NULL,
 			balance decimal(10, 2) NOT NULL,
-			role varchar(64) NOT NULL,
-			attribute varchar(64) NOT NULL,
 			last_login bigint(20) NOT NULL,
 			login_count bigint(20) NOT NULL,
 			client_ip varchar(100) NOT NULL,
