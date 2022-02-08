@@ -50,6 +50,15 @@ class Wnd_Add_Action_WP {
 		 * @since 0.9.37
 		 */
 		add_action('set_auth_cookie', [__CLASS__, 'action_before_login_success'], 10);
+
+		/**
+		 * WP 最后一个 Action
+		 * - 记录WordPress非致命性错误日志
+		 *
+		 * @link https://developer.wordpress.org/reference/hooks/shutdown/
+		 * @since 0.9.57.8
+		 */
+		add_action('shutdown', [__CLASS__, 'action_before_shutdown']);
 	}
 
 	/**
@@ -233,5 +242,18 @@ class Wnd_Add_Action_WP {
 		}
 
 		Wnd_Order_Anonymous::delete_anon_cookie();
+	}
+
+	/**
+	 * WP 生命周期结束前
+	 * - 记录WordPress非致命性错误日志
+	 * @since 0.9.57.8
+	 */
+	public static function action_before_shutdown() {
+		global $wpdb;
+		if ($wpdb->last_error) {
+			$error = $wpdb->last_error . '@ Request from ' . wnd_get_user_ip() . '. @' . $_SERVER['REQUEST_URI'] ?? '';
+			wnd_error_log($error, 'wnd_wpdb_error');
+		}
 	}
 }

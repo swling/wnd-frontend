@@ -300,7 +300,5 @@ function wnd_exception_handler($e) {
 	$html .= '</article>';
 	echo $html;
 
-	if (wnd_get_config('enable_error_log')) {
-		wnd_error_log($error);
-	}
+	wnd_error_log($error);
 }
