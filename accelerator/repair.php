@@ -90,3 +90,9 @@ function add_shortcode() {
 
 // Application passwords
 add_filter('wp_is_application_passwords_available', '__return_false');
+
+/**
+ * 缓存核心更新结果，否则大陆服务器可能不定期拖站点加载速度（暂未查明具体逻辑）
+ * @since 0.9.57.7
+ */
+get_site_option('auto_core_update_failed');
