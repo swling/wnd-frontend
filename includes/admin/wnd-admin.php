@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\Admin;
 
 use Wnd\Model\Wnd_DB;
 
@@ -143,7 +143,7 @@ class Wnd_Admin {
 	 */
 	public static function upgrade() {
 		$db_version = get_option('wnd_ver');
-		if (version_compare($db_version, WND_VER) >= 0) {
+		if (version_compare($db_version, WND_VER, '>=')) {
 			return;
 		}
 
@@ -158,7 +158,7 @@ class Wnd_Admin {
 
 			// 将升级方法名称，转为与之匹配的版本号（v_0_9_57 =>v.0.9.57）
 			$method_version = str_replace('_', '.', $method->name);
-			if (version_compare('v.' . $db_version, $method_version) >= 0) {
+			if (version_compare('v.' . $db_version, $method_version, '>=')) {
 				continue;
 			}
 

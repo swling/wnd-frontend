@@ -1,11 +1,11 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\Admin\Wnd_Admin;
 use Wnd\Admin\Wnd_Admin_Optimization;
 use Wnd\Admin\Wnd_Menus;
 use Wnd\Controller\Wnd_Controller;
 use Wnd\Hook\Wnd_Hook;
-use Wnd\Model\Wnd_Admin;
 use Wnd\Model\Wnd_DB;
 use Wnd\Utility\Wnd_CDN;
 use Wnd\Utility\Wnd_JWT_Handler;
@@ -91,8 +91,8 @@ class Wnd_Init {
 		 * 插件安装卸载选项
 		 * @since 初始化
 		 */
-		register_activation_hook(WND_PLUGIN_FILE, 'Wnd\Model\Wnd_Admin::install');
-		register_deactivation_hook(WND_PLUGIN_FILE, 'Wnd\Model\Wnd_Admin::uninstall');
+		register_activation_hook(WND_PLUGIN_FILE, 'Wnd\Admin\Wnd_Admin::install');
+		register_deactivation_hook(WND_PLUGIN_FILE, 'Wnd\Admin\Wnd_Admin::uninstall');
 
 		/**
 		 * 插件更新触发升级操作
@@ -120,8 +120,8 @@ class Wnd_Init {
 		 * 访问后台时候，触发执行升级及清理动作
 		 * @since 2019.04.16
 		 */
-		add_action('admin_init', 'Wnd\Model\Wnd_Admin::upgrade');
-		add_action('admin_init', 'Wnd\Model\Wnd_Admin::clean_up');
+		add_action('admin_init', 'Wnd\Admin\Wnd_Admin::upgrade');
+		add_action('admin_init', 'Wnd\Admin\Wnd_Admin::clean_up');
 
 		// 自定义文章类型及状态
 		add_action('init', [__CLASS__, 'register_post_type']);
