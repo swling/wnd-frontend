@@ -14,7 +14,7 @@ class Wnd_Get_Post extends Wnd_JsonGet {
 	protected static function query($args = []): array{
 		$post_id = (int) ($args['post_id'] ?? 0);
 		$post    = get_post($post_id);
-		if (!$post_id) {
+		if (!$post) {
 			throw new Exception('Invalid Post ID');
 		}
 
