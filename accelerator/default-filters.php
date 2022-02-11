@@ -296,17 +296,17 @@ add_action( 'transition_comment_status', '_clear_modified_cache_on_transition_co
 add_filter( 'http_request_host_is_external', 'allowed_http_request_hosts', 10, 2 );
 
 // REST API filters.
-add_action( 'xmlrpc_rsd_apis', 'rest_output_rsd' );
-add_action( 'wp_head', 'rest_output_link_wp_head', 10, 0 );
-add_action( 'template_redirect', 'rest_output_link_header', 11, 0 );
+// add_action( 'xmlrpc_rsd_apis', 'rest_output_rsd' );
+// add_action( 'wp_head', 'rest_output_link_wp_head', 10, 0 );
+// add_action( 'template_redirect', 'rest_output_link_header', 11, 0 );
 add_action( 'auth_cookie_malformed', 'rest_cookie_collect_status' );
 add_action( 'auth_cookie_expired', 'rest_cookie_collect_status' );
 add_action( 'auth_cookie_bad_username', 'rest_cookie_collect_status' );
 add_action( 'auth_cookie_bad_hash', 'rest_cookie_collect_status' );
 add_action( 'auth_cookie_valid', 'rest_cookie_collect_status' );
-add_action( 'application_password_failed_authentication', 'rest_application_password_collect_status' );
-add_action( 'application_password_did_authenticate', 'rest_application_password_collect_status', 10, 2 );
-add_filter( 'rest_authentication_errors', 'rest_application_password_check_errors', 90 );
+// add_action( 'application_password_failed_authentication', 'rest_application_password_collect_status' );
+// add_action( 'application_password_did_authenticate', 'rest_application_password_collect_status', 10, 2 );
+// add_filter( 'rest_authentication_errors', 'rest_application_password_check_errors', 90 );
 add_filter( 'rest_authentication_errors', 'rest_cookie_check_errors', 100 );
 
 // Actions.
@@ -326,10 +326,10 @@ add_action( 'wp_head', 'wp_print_head_scripts', 9 );
 // add_action( 'wp_head', 'wp_generator' );
 add_action( 'wp_head', 'rel_canonical' );
 // add_action( 'wp_head', 'wp_shortlink_wp_head', 10, 0 );
-add_action( 'wp_head', 'wp_custom_css_cb', 101 );
-add_action( 'wp_head', 'wp_site_icon', 99 );
+// add_action( 'wp_head', 'wp_custom_css_cb', 101 );
+// add_action( 'wp_head', 'wp_site_icon', 99 );
 add_action( 'wp_footer', 'wp_print_footer_scripts', 20 );
-add_action( 'template_redirect', 'wp_shortlink_header', 11, 0 );
+// add_action( 'template_redirect', 'wp_shortlink_header', 11, 0 );
 add_action( 'wp_print_footer_scripts', '_wp_footer_scripts' );
 // add_action( 'init', '_register_core_block_patterns_and_categories' );
 add_action( 'init', 'check_theme_switched', 99 );
@@ -381,13 +381,13 @@ add_action( 'do_feed_rdf', 'do_feed_rdf', 10, 0 );
 add_action( 'do_feed_rss', 'do_feed_rss', 10, 0 );
 add_action( 'do_feed_rss2', 'do_feed_rss2', 10, 1 );
 add_action( 'do_feed_atom', 'do_feed_atom', 10, 1 );
-add_action( 'do_pings', 'do_all_pings', 10, 0 );
-add_action( 'do_all_pings', 'do_all_pingbacks', 10, 0 );
-add_action( 'do_all_pings', 'do_all_enclosures', 10, 0 );
-add_action( 'do_all_pings', 'do_all_trackbacks', 10, 0 );
-add_action( 'do_all_pings', 'generic_ping', 10, 0 );
+// add_action( 'do_pings', 'do_all_pings', 10, 0 );
+// add_action( 'do_all_pings', 'do_all_pingbacks', 10, 0 );
+// add_action( 'do_all_pings', 'do_all_enclosures', 10, 0 );
+// add_action( 'do_all_pings', 'do_all_trackbacks', 10, 0 );
+// add_action( 'do_all_pings', 'generic_ping', 10, 0 );
 add_action( 'do_robots', 'do_robots' );
-add_action( 'do_favicon', 'do_favicon' );
+// add_action( 'do_favicon', 'do_favicon' );
 add_action( 'set_comment_cookies', 'wp_set_comment_cookies', 10, 3 );
 add_action( 'sanitize_comment_cookies', 'sanitize_comment_cookies' );
 // add_action( 'admin_print_scripts', 'print_emoji_detection_script' );
@@ -432,13 +432,13 @@ add_action( 'transition_post_status', '_wp_auto_add_pages_to_menu', 10, 3 );
 add_action( 'delete_post', '_wp_delete_customize_changeset_dependent_auto_drafts' );
 
 // Post Thumbnail CSS class filtering.
-add_action( 'begin_fetch_post_thumbnail_html', '_wp_post_thumbnail_class_filter_add' );
-add_action( 'end_fetch_post_thumbnail_html', '_wp_post_thumbnail_class_filter_remove' );
+// add_action( 'begin_fetch_post_thumbnail_html', '_wp_post_thumbnail_class_filter_add' );
+// add_action( 'end_fetch_post_thumbnail_html', '_wp_post_thumbnail_class_filter_remove' );
 
 // Redirect old slugs.
-add_action( 'template_redirect', 'wp_old_slug_redirect' );
-add_action( 'post_updated', 'wp_check_for_changed_slugs', 12, 3 );
-add_action( 'attachment_updated', 'wp_check_for_changed_slugs', 12, 3 );
+// add_action( 'template_redirect', 'wp_old_slug_redirect' );
+// add_action( 'post_updated', 'wp_check_for_changed_slugs', 12, 3 );
+// add_action( 'attachment_updated', 'wp_check_for_changed_slugs', 12, 3 );
 
 // Redirect old dates.
 add_action( 'post_updated', 'wp_check_for_changed_dates', 12, 3 );
@@ -461,7 +461,7 @@ add_action( 'admin_color_scheme_picker', 'admin_color_scheme_picker' );
 add_filter( 'default_option_link_manager_enabled', '__return_true' );
 
 // This option no longer exists; tell plugins we always support auto-embedding.
-add_filter( 'pre_option_embed_autourls', '__return_true' );
+// add_filter( 'pre_option_embed_autourls', '__return_true' );
 
 // Default settings for heartbeat.
 add_filter( 'heartbeat_settings', 'wp_heartbeat_settings' );
@@ -514,7 +514,7 @@ add_action( 'init', 'wp_sitemaps_get_server' );
 // Theme.
 // add_action( 'setup_theme', 'create_initial_theme_features', 0 );
 // add_action( 'setup_theme', '_add_default_theme_supports', 1 );
-add_action( 'wp_loaded', '_custom_header_background_just_in_time' );
+// add_action( 'wp_loaded', '_custom_header_background_just_in_time' );
 // add_action( 'wp_head', '_custom_logo_header_styles' );
 // add_action( 'plugins_loaded', '_wp_customize_include' );
 add_action( 'transition_post_status', '_wp_customize_publish_changeset', 10, 3 );
@@ -585,16 +585,16 @@ add_action( 'admin_footer-post-new.php', 'wp_add_iframed_editor_assets_html' );
 add_action( 'admin_footer-widgets.php', 'wp_add_iframed_editor_assets_html' );
 add_action( 'admin_footer-site-editor.php', 'wp_add_iframed_editor_assets_html' );
 
-add_action( 'use_block_editor_for_post_type', '_disable_block_editor_for_navigation_post_type', 10, 2 );
-add_action( 'edit_form_after_title', '_disable_content_editor_for_navigation_post_type' );
-add_action( 'edit_form_after_editor', '_enable_content_editor_for_navigation_post_type' );
+// add_action( 'use_block_editor_for_post_type', '_disable_block_editor_for_navigation_post_type', 10, 2 );
+// add_action( 'edit_form_after_title', '_disable_content_editor_for_navigation_post_type' );
+// add_action( 'edit_form_after_editor', '_enable_content_editor_for_navigation_post_type' );
 
 /*
  * Disable "Post Attributes" for wp_navigation post type. The attributes are
  * also conditionally enabled when a site has custom templates. Block Theme
  * templates can be available for every post type.
  */
-add_filter( 'theme_wp_navigation_templates', '__return_empty_array' );
+// add_filter( 'theme_wp_navigation_templates', '__return_empty_array' );
 
 // Taxonomy.
 add_action( 'init', 'create_initial_taxonomies', 0 ); // Highest priority.
