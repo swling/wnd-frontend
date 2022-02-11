@@ -6,6 +6,7 @@ use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Filter_Ajax;
 use Wnd\View\Wnd_Filter_User;
 use WP_REST_Request;
+use WP_REST_Server;
 
 /**
  * Wnd Rest API
@@ -28,11 +29,6 @@ use WP_REST_Request;
 class Wnd_Controller {
 
 	use Wnd_Singleton_Trait;
-
-	/**
-	 * 路由命名空间
-	 */
-	public static $namespace = 'wnd';
 
 	/**
 	 * 集中定义 API
@@ -113,12 +109,17 @@ class Wnd_Controller {
 	}
 
 	/**
-	 * 注册 API
+	 * 注册API
+	 * - 采用 WP_REST_Server->register_route() 是为了移除 namespace，使得 API URL 简短美观
+	 * - 移除 Rest Api namespace 的隐患在于可能会与其他自定义 api 命名空间冲突
+	 * - 考虑到本插件一贯的强侵入性，我们忽略了上述隐患。我们默认，当你采用本插件，即你已认可本插件的大量定制规则
 	 */
-	public static function register_route() {
+	public static function register_route(WP_REST_Server $rest) {
+		// Wnd Rest API @since 0.9.56.8 采用 WP_REST_Server->register_route() 移除命名空间前缀
 		foreach (static::$routes as $route => $args) {
-			$route = $args['route_rule'] ? ($route . '/' . $args['route_rule']) : $route;
-			register_rest_route(static::$namespace, $route, $args);
+			$namespace = $route;
+			$route     = $args['route_rule'] ? ($route . '/' . $args['route_rule']) : $route;
+			$rest->register_route($namespace, '/' . $route, $args);
 		}
 		unset($route, $args);
 	}
@@ -127,7 +128,7 @@ class Wnd_Controller {
 	 * 获取 API Url
 	 */
 	public static function get_route_url(string $route, string $endpoint = ''): string {
-		return rest_url(static::$namespace . '/' . $route . ($endpoint ? ('/' . $endpoint) : ''));
+		return rest_url('/' . $route . ($endpoint ? ('/' . $endpoint) : ''));
 	}
 
 	/**
