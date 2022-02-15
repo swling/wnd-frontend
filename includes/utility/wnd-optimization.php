@@ -60,6 +60,7 @@ class Wnd_Optimization {
 		unset($meta['first_name']);
 		unset($meta['last_name']);
 		unset($meta['syntax_highlighting']);
+		unset($meta['rich_editing']);
 		unset($meta['comment_shortcuts']); //评论快捷方式
 		unset($meta['admin_color']);
 		unset($meta['use_ssl']);
