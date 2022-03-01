@@ -198,7 +198,7 @@ abstract class Wnd_Auth_Code {
 	private function insert() {
 		$this->check_db_fields(true);
 
-		$action = Wnd_Auth::update_auth_db($this->identity_type, $this->identifier, ['credential' => $this->auth_code]);
+		$action = Wnd_Auth::update_auth_db($this->identity_type, $this->identifier, ['credential' => $this->auth_code, 'time' => time()]);
 		if (!$action) {
 			throw new Exception(__('数据库写入失败', 'wnd'));
 		}
