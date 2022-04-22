@@ -4,6 +4,12 @@
 - 具体请求 body 及 headers 需要根据对应的产品文档对应配置填写
 - 各云平台签名助手默认已配置默认公共参数，因此绝大部分情况，无需填写公共参数。
 
+### Filter
+```php
+// 用于对特定云服务商的特定产品，配置特定的密匙，数据格式： ['secret_id'  => 'xxx', 'secret_key' => 'xxx']
+$access_info = apply_filters('wnd_cloud_client_access_info', [], $service_provider, $product);
+```
+
 ### 百度云自然语言处理：文章标签
 ```php
 /**

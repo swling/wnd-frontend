@@ -34,7 +34,7 @@ class Qcloud extends Wnd_Captcha {
 		];
 
 		// 发起请求
-		$request = Wnd_Cloud_Client::get_instance('Qcloud');
+		$request = Wnd_Cloud_Client::get_instance('Qcloud', 'captcha');
 		$result  = $request->request($url, $args);
 
 		// 核查响应

@@ -66,7 +66,7 @@ class Qcloud extends Wnd_Sms {
 		];
 
 		// 发起请求
-		$action  = Wnd_Cloud_Client::get_instance('Qcloud');
+		$action  = Wnd_Cloud_Client::get_instance('Qcloud', 'sms');
 		$request = $action->request($url, $args);
 
 		// 核查响应

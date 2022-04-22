@@ -27,7 +27,7 @@ class Aliyun extends Wnd_Sms {
 			$params['TemplateParam'] = json_encode(['code' => $this->code], JSON_UNESCAPED_UNICODE);
 		}
 
-		$client  = Wnd_Cloud_Client::get_instance('Aliyun');
+		$client  = Wnd_Cloud_Client::get_instance('Aliyun', 'sms');
 		$request = $client->request(
 			'https://dysmsapi.aliyuncs.com',
 			[
