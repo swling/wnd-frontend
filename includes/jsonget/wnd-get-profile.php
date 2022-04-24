@@ -15,10 +15,16 @@ class Wnd_Get_Profile extends Wnd_JsonGet {
 		$default_avatar = wnd_get_config('default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
 		$user_id        = get_current_user_id();
 		if (!$user_id) {
-			return [
+			$user_profile = [
 				'avatar_url'   => $default_avatar,
 				'display_name' => __('匿名用户', 'wnd'),
 			];
+
+			/**
+			 * @since 0.9.57.9
+			 * 过滤用户 profile 数据
+			 */
+			return apply_filters('wnd_get_profile', $user_profile, $user_id);
 		}
 
 		$user = get_userdata($user_id);
