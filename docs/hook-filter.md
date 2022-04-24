@@ -131,6 +131,13 @@ apply_filters('wnd_can_delete_user', ['status' => 1, 'msg' => ''], $user_id);
  */
 apply_filters('wnd_user_panel_post_types', $post_types);
 
+/**
+ * @since 0.9.57.9
+ * @see jsonget\wnd_get_profile
+ * 
+ * 过滤用户 profile 数据
+ */
+apply_filters('wnd_get_profile', $user_profile, $user_id);
 ```
 
 ## 配置Wnd Config

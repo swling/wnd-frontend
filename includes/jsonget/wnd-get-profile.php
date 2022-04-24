@@ -4,7 +4,7 @@ namespace Wnd\JsonGet;
 use Exception;
 
 /**
- * 获取 User Profile Json
+ * 获取 current user Profile Json
  * @since 0.9.39
  *
  * @param int $user_id User ID
@@ -34,7 +34,11 @@ class Wnd_Get_Profile extends Wnd_JsonGet {
 		$user_profile['balance']     = wnd_get_user_balance($user_id);
 		$user_profile['phone']       = wnd_get_user_phone($user_id);
 
-		return $user_profile;
+		/**
+		 * @since 0.9.57.9
+		 * 过滤用户 profile 数据
+		 */
+		return apply_filters('wnd_get_profile', $user_profile, $user_id);
 	}
 
 	// 头像
