@@ -383,10 +383,14 @@ class Wnd_Defender {
 	}
 
 	/**
-	 * 重置拦截统计
-	 * 可用于防止错误拦截已登录用户
+	 * 重置拦截统计：可用于防止错误拦截已登录用户
 	 */
 	public function reset() {
+		if (!$this->cache) {
+			return;
+		}
+
 		$this->cache_delete($this->key);
+		$this->cache_delete($this->base_key);
 	}
 }
