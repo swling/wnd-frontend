@@ -67,7 +67,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		$this->method         = $this->data['method'] ?? 'PUT';
 		$this->mime_type      = $this->data['mime_type'] ?? '';
 		$this->md5            = $this->data['md5'] ?? '';
-		$this->file_path_name = uniqid() . '_' . $this->user_id . '.' . $ext;
+		$this->file_path_name = date('Y/m/d/H/', current_time('timestamp')) . uniqid() . '_' . $this->user_id . '.' . $ext;
 	}
 
 	protected function check() {
