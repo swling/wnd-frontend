@@ -377,7 +377,7 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
  *@param callback 	回调函数
  */
 function wnd_get_json(jsonget, param, callback = '') {
-    axios({
+    return axios({
         'method': 'get',
         url: wnd_jsonget_api + '/' + jsonget,
         params: param,
@@ -389,6 +389,8 @@ function wnd_get_json(jsonget, param, callback = '') {
                 window[callback](response.data);
             }
         }
+
+        return response.data;
     });
 }
 
