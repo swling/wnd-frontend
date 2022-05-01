@@ -199,6 +199,15 @@ class Wnd_Menus {
 
 		$form->add_radio(
 			[
+				'name'    => 'enable_multi_language',
+				'options' => ['启用' => 1, '禁用' => ''],
+				'label'   => '启用多语言',
+				'class'   => 'is-checkradio is-danger',
+			]
+		);
+
+		$form->add_radio(
+			[
 				'name'    => 'enable_admin_optimization',
 				'options' => ['启用' => 1, '禁用' => ''],
 				'label'   => 'WP 后台优化',

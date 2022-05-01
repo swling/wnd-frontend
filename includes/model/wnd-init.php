@@ -45,7 +45,7 @@ class Wnd_Init {
 		Wnd_Optimization::get_instance();
 
 		// 语言切换
-		if ($_REQUEST[WND_LANG_KEY] ?? false) {
+		if (($_REQUEST[WND_LANG_KEY] ?? false) and wnd_get_config('enable_multi_language')) {
 			Wnd_language::get_instance();
 		}
 
