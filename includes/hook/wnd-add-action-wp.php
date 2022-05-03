@@ -6,9 +6,9 @@ use Wnd\Getway\Wnd_Captcha;
 use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Mail;
-use Wnd\Model\Wnd_Order_Anonymous;
 use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_Tag_Under_Category;
+use Wnd\Model\Wnd_Transaction_Anonymous;
 use Wnd\Model\Wnd_User;
 use Wnd\Utility\Wnd_Defender;
 use Wnd\Utility\Wnd_Defender_User;
@@ -242,7 +242,7 @@ class Wnd_Add_Action_WP {
 			return;
 		}
 
-		Wnd_Order_Anonymous::delete_anon_cookie();
+		Wnd_Transaction_Anonymous::delete_anon_cookie();
 	}
 
 	/**
