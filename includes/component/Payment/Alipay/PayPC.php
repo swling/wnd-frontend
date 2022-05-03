@@ -9,8 +9,8 @@ namespace Wnd\Component\Payment\Alipay;
  */
 class PayPC extends PayBuilder {
 
-	protected $product_code = 'FAST_INSTANT_TRADE_PAY';
-	protected $method       = 'alipay.trade.page.pay';
+	protected $productCode = 'FAST_INSTANT_TRADE_PAY';
+	protected $method      = 'alipay.trade.page.pay';
 
 	/**
 	 * 建立请求，以表单HTML形式构造（默认）
@@ -19,7 +19,7 @@ class PayPC extends PayBuilder {
 	 */
 	public function buildInterface(): string{
 		$sHtml = '<h2>支付宝支付</h2>';
-		$sHtml .= "<form id='alipaysubmit' action='" . $this->gateway_url . '?charset=' . $this->charset . "' method='POST' target='_blank'>";
+		$sHtml .= "<form id='alipaysubmit' action='" . $this->gatewayUrl . '?charset=' . $this->charset . "' method='POST' target='_blank'>";
 		foreach ($this->params as $key => $val) {
 			$val = str_replace("'", '&apos;', $val);
 			$sHtml .= "<input type='hidden' name='" . $key . "' value='" . $val . "'>";

@@ -9,7 +9,7 @@ namespace Wnd\Component\Payment\Alipay;
  */
 class PayWAP extends PayPC {
 
-	protected $product_code = 'QUICK_WAP_PAY';
-	protected $method       = 'alipay.trade.wap.pay';
+	protected $productCode = 'QUICK_WAP_PAY';
+	protected $method      = 'alipay.trade.wap.pay';
 
 }

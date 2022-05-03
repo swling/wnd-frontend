@@ -14,7 +14,7 @@ interface PaymentBuilder {
 	/**
 	 * 交易订单号
 	 */
-	public function setOutTradeNo(string $outTradeNO);
+	public function setOutTradeNo(string $outTradeNo);
 
 	/**
 	 * 订单主题

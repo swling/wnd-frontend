@@ -51,12 +51,12 @@ class AlipayService {
 	 * 签名并构造完整的付款请求参数
 	 * @return array
 	 */
-	public function generatePayParams(string $method, array $biz_content): array{
+	public function generatePayParams(string $method, array $bizContent): array{
 		$commonParams                = $this->commonParams;
 		$commonParams['notify_url']  = $this->config['notify_url'];
 		$commonParams['return_url']  = $this->config['return_url'];
 		$commonParams['method']      = $method;
-		$commonParams['biz_content'] = json_encode($biz_content);
+		$commonParams['biz_content'] = json_encode($bizContent);
 		$commonParams['sign']        = $this->generateSign($commonParams, $commonParams['sign_type']);
 
 		return $commonParams;
@@ -68,10 +68,10 @@ class AlipayService {
 	 *
 	 * @return array
 	 */
-	public function generateRefundParams(string $method, array $biz_content): array{
+	public function generateRefundParams(string $method, array $bizContent): array{
 		$commonParams                = $this->commonParams;
 		$commonParams['method']      = $method;
-		$commonParams['biz_content'] = json_encode($biz_content);
+		$commonParams['biz_content'] = json_encode($bizContent);
 		$commonParams['sign']        = $this->generateSign($commonParams, $commonParams['sign_type']);
 
 		return $commonParams;

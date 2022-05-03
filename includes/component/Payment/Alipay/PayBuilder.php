@@ -11,14 +11,14 @@ use Wnd\Component\Payment\PaymentBuilder;
  */
 abstract class PayBuilder implements PaymentBuilder {
 	// 支付宝接口
-	protected $gateway_url;
+	protected $gatewayUrl;
 	protected $charset;
-	protected $product_code;
+	protected $productCode;
 	protected $method;
 
 	// 订单基本参数
-	protected $total_amount;
-	protected $out_trade_no;
+	protected $totalAmount;
+	protected $outTradeNo;
 	protected $subject;
 
 	// 支付宝基本配置参数
@@ -33,21 +33,21 @@ abstract class PayBuilder implements PaymentBuilder {
 	public function __construct(array $alipayConfig) {
 		$this->alipayConfig = $alipayConfig;
 		$this->charset      = $alipayConfig['charset'];
-		$this->gateway_url  = $alipayConfig['gateway_url'];
+		$this->gatewayUrl   = $alipayConfig['gateway_url'];
 	}
 
 	/**
 	 * 总金额
 	 */
-	public function setTotalAmount(float $total_amount) {
-		$this->total_amount = $total_amount;
+	public function setTotalAmount(float $totalAmount) {
+		$this->totalAmount = $totalAmount;
 	}
 
 	/**
 	 * 交易订单号
 	 */
-	public function setOutTradeNo(string $out_trade_no) {
-		$this->out_trade_no = $out_trade_no;
+	public function setOutTradeNo(string $outTradeNo) {
+		$this->outTradeNo = $outTradeNo;
 	}
 
 	/**
@@ -63,15 +63,15 @@ abstract class PayBuilder implements PaymentBuilder {
 	 */
 	public function generateParams() {
 		//请求参数
-		$biz_content = [
-			'out_trade_no' => $this->out_trade_no,
-			'product_code' => $this->product_code,
-			'total_amount' => $this->total_amount, //单位 元
+		$bizContent = [
+			'out_trade_no' => $this->outTradeNo,
+			'product_code' => $this->productCode,
+			'total_amount' => $this->totalAmount, //单位 元
 			'subject'      => $this->subject, //订单标题
 		];
 
 		$alipayService = new AlipayService($this->alipayConfig);
-		$this->params  = $alipayService->generatePayParams($this->method, $biz_content);
+		$this->params  = $alipayService->generatePayParams($this->method, $bizContent);
 	}
 
 	/**

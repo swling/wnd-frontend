@@ -11,20 +11,20 @@ use Wnd\Component\Requests\Requests;
  */
 class Refunder implements RefunderBuilder {
 
-	protected $gateway_url;
+	protected $gatewayUrl;
 
 	protected $charset;
 
 	protected $method = 'alipay.trade.refund';
 
 	// 退款金额
-	protected $refund_amount;
+	protected $refundAmount;
 
 	// 订单号
-	protected $out_trade_no;
+	protected $outTradeNo;
 
 	// 标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
-	protected $out_request_no;
+	protected $outRequestNo;
 
 	// 支付宝基本配置参数
 	protected $alipayConfig;
@@ -35,28 +35,28 @@ class Refunder implements RefunderBuilder {
 	public function __construct(array $alipayConfig) {
 		$this->alipayConfig = $alipayConfig;
 		$this->charset      = $alipayConfig['charset'];
-		$this->gateway_url  = $alipayConfig['gateway_url'];
+		$this->gatewayUrl   = $alipayConfig['gateway_url'];
 	}
 
 	/**
 	 * 退款金额
 	 */
-	public function setRefundAmount(float $refund_amount) {
-		$this->refund_amount = $refund_amount;
+	public function setRefundAmount(float $refundAmount) {
+		$this->refundAmount = $refundAmount;
 	}
 
 	/**
 	 * 交易订单号
 	 */
-	public function setOutTradeNo(string $out_trade_no) {
-		$this->out_trade_no = $out_trade_no;
+	public function setOutTradeNo(string $outTradeNo) {
+		$this->outTradeNo = $outTradeNo;
 	}
 
 	/**
 	 * 部分退款：退款请求号
 	 */
-	public function setOutRequestNo(string $out_request_no) {
-		$this->out_request_no = $out_request_no;
+	public function setOutRequestNo(string $outRequestNo) {
+		$this->outRequestNo = $outRequestNo;
 	}
 
 	/**
@@ -65,19 +65,19 @@ class Refunder implements RefunderBuilder {
 	 */
 	public function doRefund(): array{
 		//请求参数
-		$biz_content = [
-			'out_trade_no'   => $this->out_trade_no,
-			'refund_amount'  => $this->refund_amount,
-			'out_request_no' => $this->out_request_no,
+		$bizContent = [
+			'out_trade_no'   => $this->outTradeNo,
+			'refund_amount'  => $this->refundAmount,
+			'out_request_no' => $this->outRequestNo,
 		];
 
 		//公共参数
 		$alipayService  = new AlipayService($this->alipayConfig);
-		$common_configs = $alipayService->generateRefundParams($this->method, $biz_content);
+		$common_configs = $alipayService->generateRefundParams($this->method, $bizContent);
 
 		// 发起请求
 		$request  = new Requests;
-		$response = $request->request($this->gateway_url,
+		$response = $request->request($this->gatewayUrl,
 			[
 				'method'  => 'POST',
 				'timeout' => 60,

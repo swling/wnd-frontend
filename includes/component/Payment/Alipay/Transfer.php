@@ -17,8 +17,8 @@ use Wnd\Component\Payment\Alipay\AlipayService;
  */
 class Transfer extends AlipayService {
 	// 转账固定值
-	protected $method       = 'alipay.fund.trans.uni.transfer';
-	protected $product_code = 'TRANS_ACCOUNT_NO_PWD';
+	protected $method      = 'alipay.fund.trans.uni.transfer';
+	protected $productCode = 'TRANS_ACCOUNT_NO_PWD';
 
 	// 应用公钥证书服务器文件路径
 	protected $app_public_key_path;
@@ -94,7 +94,7 @@ class Transfer extends AlipayService {
 		//请求参数
 		$request_configs = [
 			'out_biz_no'   => $this->out_biz_no,
-			'product_code' => $this->product_code,
+			'product_code' => $this->productCode,
 			'trans_amount' => $this->trans_amount, //单位 元
 			'order_title'  => $this->order_title, //订单标题
 			'payee_info'   => $this->payee_info,
@@ -190,7 +190,7 @@ class Transfer extends AlipayService {
 	 * @return 提交表单HTML文本
 	 */
 	protected function buildRequestForm($para_temp) {
-		$sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='" . $this->gateway_url . '?charset=' . $this->charset . "' method='POST'>";
+		$sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='" . $this->gatewayUrl . '?charset=' . $this->charset . "' method='POST'>";
 		foreach ($para_temp as $key => $val) {
 			if (false === $this->checkEmpty($val)) {
 				$val = str_replace("'", '&apos;', $val);

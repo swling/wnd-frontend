@@ -30,8 +30,8 @@ abstract class PayBuilder implements PaymentBuilder {
 		$this->signature = new Signature($mchID, $serialNumber, $privateKey);
 	}
 
-	public function setTotalAmount(float $totalFee) {
-		$this->totalFee = floatval($totalFee);
+	public function setTotalAmount(float $totalAmount) {
+		$this->totalFee = floatval($totalAmount);
 	}
 
 	public function setOutTradeNo(string $outTradeNo) {

@@ -9,17 +9,17 @@ interface RefunderBuilder {
 	/**
 	 * 退款金额
 	 */
-	public function setRefundAmount(float $refund_amount);
+	public function setRefundAmount(float $refundAmount);
 
 	/**
 	 * 交易订单号
 	 */
-	public function setOutTradeNo(string $out_trade_no);
+	public function setOutTradeNo(string $outTradeNo);
 
 	/**
 	 * 部分退款：退款请求号
 	 */
-	public function setOutRequestNo(string $out_request_no);
+	public function setOutRequestNo(string $outRequestNo);
 
 	/**
 	 * 发起退款并获取响应
