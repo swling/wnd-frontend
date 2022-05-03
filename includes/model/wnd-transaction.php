@@ -436,6 +436,14 @@ abstract class Wnd_Transaction {
 	}
 
 	/**
+	 * 获取创建时间戳
+	 * @since 0.9.57.9
+	 */
+	public function get_timestamp(): int {
+		return get_post_timestamp($this->transaction) ?: 0;
+	}
+
+	/**
 	 * 获取用户ID
 	 * @since 2020.06.20
 	 */

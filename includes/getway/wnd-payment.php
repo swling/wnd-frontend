@@ -113,12 +113,13 @@ abstract class Wnd_Payment {
 	 * @since 0.9.56 订单号加入时间戳。解决微信支付订单创建后，若修改金额再次支付，报错：201 订单重复
 	 */
 	public function get_out_trade_no() {
-		$ID = $this->transaction->get_transaction_id();
+		$ID        = $this->transaction->get_transaction_id();
+		$timestamp = $this->transaction->get_timestamp();
 		if (!$ID) {
 			throw new Exception(__('站内支付数据尚未写入', 'wnd'));
 		}
 
-		return static::$site_prefix . '-' . $ID . '-' . time();
+		return static::$site_prefix . '-' . $ID . '-' . $timestamp;
 	}
 
 	/**
