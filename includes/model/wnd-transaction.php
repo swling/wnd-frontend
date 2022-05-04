@@ -105,7 +105,7 @@ abstract class Wnd_Transaction {
 				break;
 
 			case 'recharge':
-				$instance = new Wnd_Recharge();
+				$instance = $user_id ? new Wnd_Recharge() : new Wnd_Recharge_Anonymous();
 				break;
 
 			default:

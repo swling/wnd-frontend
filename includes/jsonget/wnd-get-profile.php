@@ -18,6 +18,7 @@ class Wnd_Get_Profile extends Wnd_JsonGet {
 			$user_profile = [
 				'avatar_url'   => $default_avatar,
 				'display_name' => __('匿名用户', 'wnd'),
+				'balance'      => wnd_get_anon_user_balance(),
 			];
 
 			/**

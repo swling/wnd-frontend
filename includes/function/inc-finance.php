@@ -1,6 +1,7 @@
 <?php
 use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Product;
+use Wnd\Model\Wnd_Recharge_Anonymous;
 use Wnd\Model\Wnd_SKU;
 
 /**
@@ -191,4 +192,20 @@ function wnd_is_paid_post(int $post_id): bool{
 	}
 
 	return false;
+}
+
+/**
+ * 获取匿名用户账户金额（基于 cookie）
+ * 用户余额 =  充值订单总额 - 消费金额
+ * @return  float   用户余额
+ */
+function wnd_get_anon_user_balance(): float {
+	return Wnd_Recharge_Anonymous::get_anon_user_balance();
+}
+
+/**
+ * 增加/减少匿名用户账户消费金额（基于 cookie）
+ */
+function wnd_inc_anon_user_expense(float $amount): bool {
+	return Wnd_Recharge_Anonymous::inc_anon_user_expense($amount);
 }
