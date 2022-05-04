@@ -794,9 +794,11 @@ function wnd_handle_response(response, route, parent) {
             break;
     }
 
-    parent.scrollIntoView({
-        behavior: 'smooth'
-    });
+    if (-1 != response.status) {
+        parent.scrollIntoView({
+            behavior: 'smooth'
+        });
+    }
 
     return form_info;
 }
