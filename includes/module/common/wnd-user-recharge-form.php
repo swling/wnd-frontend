@@ -13,7 +13,7 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_User_Recharge_Form extends Wnd_Module_Form {
 
-	protected static function configure_form(): object{
+	protected static function configure_form(array $args = []): object{
 		$form = new Wnd_Form_WP();
 		$form->add_html('<div class="has-text-centered field">');
 		$form->add_radio(
@@ -29,6 +29,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module_Form {
 				'placeholder' => '自定义金额',
 				'min'         => 0.01,
 				'step'        => 0.01,
+				'value'       => $args['amount'] ?? '',
 			]
 		);
 		$form->add_radio(
