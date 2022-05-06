@@ -419,3 +419,9 @@ add_filter('wnd_action_defend_args', function (array $args, Wnd\Action\Wnd_Actio
  */
 $allowed_keys = apply_filters('wnd_allowed_sign_keys', $allowed_keys, $this->sign_type, $this->sign_keys);
 ```
+
+## CloudClient
+```php
+// 用于对特定云服务商的特定产品，配置特定的密匙，数据格式： ['secret_id'  => 'xxx', 'secret_key' => 'xxx']
+$access_info = apply_filters('wnd_cloud_client_access_info', [], $service_provider, $product);
+```

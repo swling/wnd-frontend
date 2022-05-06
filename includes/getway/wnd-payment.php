@@ -111,6 +111,7 @@ abstract class Wnd_Payment {
 	/**
 	 * 构建包含当前站点标识的订单号码作为发送至三方支付平台的订单号
 	 * @since 0.9.56 订单号加入时间戳。解决微信支付订单创建后，若修改金额再次支付，报错：201 订单重复
+	 *               该时间戳需要在商户系统保存，以备后续调用（如退款，查询等），故不可设置为随机时间戳
 	 */
 	public function get_out_trade_no() {
 		$ID        = $this->transaction->get_transaction_id();
