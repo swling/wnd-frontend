@@ -10,8 +10,11 @@ async function _wnd_upload_to_oss(file, oss_sp, endpoint, direct = true, sign_da
     // 计算 MD5（腾讯 COS 必须）
     let md5 = await _wnd_md5_file(file);
 
-    // 获取 OSS 签名
+    // 获取 OSS 签名，若为重复上传文件，直接返回文件信息
     let oss_sign = await get_oss_sign(md5);
+    if (oss_sign.is_duplicate || false) {
+        return oss_sign;
+    }
 
     // 获取签名，上传文件，并将签名的结果合并写入实现约定的值
     let upload_res = axios({
