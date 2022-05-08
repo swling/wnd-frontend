@@ -111,7 +111,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 			'file_path_name' => $file_path_name,
 		];
 
-		return wp_cache_set($this->cache_key, $data, 'oss_direct', 600);
+		return wp_cache_set($this->cache_key, $data, 'oss_direct', 3600);
 	}
 
 	private function get_cache() {
