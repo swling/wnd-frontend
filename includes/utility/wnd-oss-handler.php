@@ -249,7 +249,7 @@ class Wnd_OSS_Handler {
 		$file_path_name = parse_url($oss_file_url)['path'];
 		$oss            = $this->get_object_storage_instance($is_private);
 		$oss->setFilePathName($file_path_name);
-		return $oss->getFileUri($is_private, $this->sign_expires);
+		return $oss->getFileUri($this->sign_expires);
 	}
 
 	/**
@@ -298,8 +298,8 @@ class Wnd_OSS_Handler {
 		$oss = $this->get_object_storage_instance($is_private);
 		$oss->setFilePathName($file_path_name);
 		$headers    = $oss->generateHeaders($method, $content_type, $md5);
-		$url        = $oss->getFileUri(false, $this->sign_expires);
-		$signed_url = $oss->getFileUri($is_private, $this->sign_expires);
+		$url        = $oss->getFileUri();
+		$signed_url = $oss->getFileUri($this->sign_expires);
 
 		return [
 			'signed_url' => $signed_url,

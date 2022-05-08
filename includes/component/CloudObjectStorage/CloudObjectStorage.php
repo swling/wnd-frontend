@@ -43,7 +43,7 @@ abstract class CloudObjectStorage {
 	 * - 公共读：$this->fileUri
 	 * - 私有读：签名后的访问链接。具体实现在子类中根据服务商文档完成构造。
 	 */
-	abstract public function getFileUri(bool $signature, int $expires): string;
+	abstract public function getFileUri(int $expires = 0): string;
 
 	/**
 	 * Delete

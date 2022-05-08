@@ -29,8 +29,8 @@ class Aliyun extends CloudObjectStorage {
 	 * 获取文件 URI
 	 * @link https://help.aliyun.com/document_detail/31952.html
 	 */
-	public function getFileUri(bool $signature, int $expires): string {
-		if (!$signature) {
+	public function getFileUri(int $expires = 0): string {
+		if (!$expires) {
 			return $this->fileUri;
 		}
 

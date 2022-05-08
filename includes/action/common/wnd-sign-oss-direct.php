@@ -44,8 +44,8 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		$oss = Wnd_Object_Storage::get_instance($this->oss_sp, $this->endpoint);
 		$oss->setFilePathName($this->file_path_name);
 		$headers    = $oss->generateHeaders($this->method, $this->mime_type, $this->md5);
-		$url        = $oss->getFileUri(false, 0);
-		$signed_url = $oss->getFileUri(true, 1800);
+		$url        = $oss->getFileUri();
+		$signed_url = $oss->getFileUri(1800);
 
 		/**
 		 * - 阿里云 oss 内网地址需要替换
