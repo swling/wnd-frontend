@@ -248,7 +248,7 @@ class Wnd_Add_Action_WP {
 	/**
 	 * WP 生命周期结束前
 	 * - 记录WordPress非致命性错误日志
-	 * - 对已登录用户移除防护统计
+	 * - 对已登录/含有匿名支付信息的用户移除防护统计
 	 * @since 0.9.57.8
 	 */
 	public static function action_before_shutdown() {
@@ -258,7 +258,7 @@ class Wnd_Add_Action_WP {
 			wnd_error_log($error, 'wnd_wpdb_error');
 		}
 
-		if (is_user_logged_in()) {
+		if (is_user_logged_in() or Wnd_Transaction_Anonymous::get_anon_cookies()) {
 			$defender = Wnd_Defender::get_instance(0, 0, 0);
 			$defender->reset();
 		}

@@ -133,7 +133,6 @@ class Wnd_Defender {
 		}
 
 		// 拦截配置
-		$this->action          = $_REQUEST['action'] ?? '';
 		$this->period          = $period;
 		$this->max_connections = $max_connections;
 		$this->blocked_time    = $blocked_time;
@@ -151,6 +150,7 @@ class Wnd_Defender {
 
 		// URL 信息
 		$this->pathinfo = pathinfo($_SERVER['REQUEST_URI']);
+		$this->action   = $this->pathinfo['filename'];
 
 		// 高风险操作探知
 		if (in_array($this->action, $this->risky_actions)) {
