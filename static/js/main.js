@@ -972,11 +972,12 @@ function wnd_ajax_click(link) {
 
                 // 弹出消息
             case 2:
+            case 0:
                 if (response.data.data) {
                     link.innerHTML = response.data.data;
                 }
                 if (!in_modal) {
-                    wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.data.msg + '</h5></div>', 1);
+                    wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.data.msg + '</h5></div>', 2);
                 }
                 break;
 

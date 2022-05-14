@@ -12,7 +12,7 @@ abstract class Wnd_Action_User extends Wnd_Action {
 
 	final public function __construct(WP_REST_Request $wp_rest_request) {
 		if (!is_user_logged_in()) {
-			throw new Exception(__('权限不足', 'wnd'));
+			throw new Exception(__('请登录', 'wnd'));
 		}
 
 		parent::__construct($wp_rest_request);
