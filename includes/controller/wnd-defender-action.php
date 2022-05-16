@@ -5,7 +5,8 @@ use Exception;
 use Wnd\Action\Wnd_Action;
 
 /**
- * 操作防护
+ * # 操作防护
+ * 需要开启 WP 对象缓存
  *
  * ## 数据格式
  * $actions_log = [
@@ -15,8 +16,8 @@ use Wnd\Action\Wnd_Action;
  * 		]
  * ];
  *
- * - 对用登录用户操作日志写入 wnd user meta
- * - 如需按ip控制未登录用户需要开启 WP 对象缓存
+ * - 已登录用户按 user ID 缓存
+ * - 未登录用户按 IP地址 缓存
  * @since 0.9.50
  */
 class Wnd_Defender_Action {
@@ -48,18 +49,11 @@ class Wnd_Defender_Action {
 	protected $max_actions;
 
 	/**
-	 * 锁定时间
-	 */
-
-	/**
-	 * 用户 ID
-	 */
-	protected $user_id;
-
-	/**
-	 * 用户 IP
-	 */
-	protected $client_ip;
+	 * 针对当前用户的拦截标识
+	 * - 已登录用户为用户 ID
+	 * - 未登录用户基于 IP地址
+	 * **/
+	protected $cache_key;
 
 	/**
 	 * 当前 Action 操作标识
@@ -92,19 +86,16 @@ class Wnd_Defender_Action {
 		$this->max_actions      = $max_actions;
 		$this->should_be_defend = ($max_actions and $period);
 		$this->action           = $wnd_action::get_class_name();
-		$this->user_id          = get_current_user_id();
-		$this->client_ip        = wnd_get_user_ip();
+		$this->cache_key        = get_current_user_id() ?: wnd_get_user_ip();
 		$this->actions_log      = $this->get_actions_log();
 		$this->action_log       = $this->get_action_log();
+
+		// 清理历史数据
+		static::_temp_clean_up_historical_data();
 	}
 
 	private function get_actions_log(): array{
-		if ($this->user_id) {
-			$actions_log = wnd_get_user_meta($this->user_id, static::$meta_key);
-		} else {
-			$actions_log = wp_cache_get($this->client_ip, static::$meta_key);
-		}
-
+		$actions_log = wp_cache_get($this->cache_key, static::$meta_key);
 		$actions_log = is_array($actions_log) ? $actions_log : [];
 
 		// 清理超期的日志
@@ -162,21 +153,25 @@ class Wnd_Defender_Action {
 
 		$this->actions_log[$this->action] = $this->action_log;
 
-		if ($this->user_id) {
-			wnd_update_user_meta($this->user_id, static::$meta_key, $this->actions_log);
-		} else {
-			wp_cache_set($this->client_ip, $this->actions_log, static::$meta_key, $this->period);
-		}
+		wp_cache_set($this->cache_key, $this->actions_log, static::$meta_key, $this->period);
 	}
 
 	/**
 	 * 清空日志
 	 */
 	public function reset_log() {
-		if ($this->user_id) {
-			wnd_delete_user_meta($this->user_id, static::$meta_key);
-		} else {
-			wp_cache_delete($this->client_ip, static::$meta_key);
+		wp_cache_delete($this->cache_key, static::$meta_key);
+	}
+
+	/**
+	 * 废弃的 action 拦截日志（转入对象缓存拦截）
+	 * 后期可移除本代码
+	 */
+	private static function _temp_clean_up_historical_data() {
+		$user_id = get_current_user_id();
+		if ($user_id and wnd_get_user_meta($user_id, 'action_log')) {
+			wnd_delete_user_meta($user_id, 'action_log');
 		}
 	}
+
 }
