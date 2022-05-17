@@ -287,11 +287,7 @@ function wnd_render_filter(container, filter_json, add_class) {
 
 // 按需加载 wnd-vue-form.js 并渲染表达
 function wnd_render_menus(container, wnd_menus_data, in_side = false) {
-    let parent = document.querySelector(container);
-    wnd_inner_html(parent, '<div class="vue-app"></div>');
-
-    new Vue({
-        el: container + ' .vue-app',
+    let option = {
         template: `
 <aside class="menu">
 <template v-for="(menu, menu_index) in menus">
@@ -303,8 +299,10 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
 </ul>
 </template>
 </aside>`,
-        data: {
-            menus: wnd_menus_data,
+        data() {
+            return {
+                menus: wnd_menus_data,
+            }
         },
         methods: {
             build_label: function(menu) {
@@ -314,16 +312,12 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
                 for (let i = 0; i < this.menus.length; i++) {
                     const menu = this.menus[i];
 
-                    /**
-                     * Vue 直接修改数组的值无法触发重新渲染
-                     * @link https://cn.vuejs.org/v2/guide/reactivity.html#%E6%A3%80%E6%B5%8B%E5%8F%98%E5%8C%96%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9
-                     */
                     for (let j = 0; j < menu.items.length; j++) {
                         const item = menu.items[j];
                         if (j != item_index || menu_index !== i) {
-                            Vue.set(item, 'class', '');
+                            item.class = '';
                         } else {
-                            Vue.set(item, 'class', 'is-active');
+                            item.class = 'is-active';
                         }
                     }
                 }
@@ -366,7 +360,11 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
                 });
             }
         },
-    });
+    };
+
+    let parent = document.querySelector(container);
+    wnd_inner_html(parent, '<div class="vue-app"></div>');
+    Vue.createApp(option).mount(container + ' .vue-app');
 }
 
 /**

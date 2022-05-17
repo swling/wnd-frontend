@@ -13,18 +13,18 @@ function _wnd_render_form(container, form_json, add_class = '') {
         parent.classList.add(add_class);
     }
 
-    wnd_inner_html(parent, '<div class="vue-app"></div>');
-    new Vue({
-        el: container + ' .vue-app',
+    let form_option = {
         template: build_form_template(form),
-        data: {
-            form: form,
-            index: {
-                'editor': [],
-                'captcha': '',
-                'ids': [],
-            },
-            default_data: {}, // 记录表单默认数据，在提交表单时与现有表单合并，以确保所有字段名均包含在提交数据中，从而通过一致性签名
+        data() {
+            return {
+                form: form,
+                index: {
+                    'editor': [],
+                    'captcha': '',
+                    'ids': [],
+                },
+                default_data: {}, // 记录表单默认数据，在提交表单时与现有表单合并，以确保所有字段名均包含在提交数据中，从而通过一致性签名
+            }
         },
         methods: {
             //HTML转义
@@ -617,11 +617,9 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     this.form.submit.attrs.class = form_json.submit.attrs.class;
                     /**
                      * 提交后清除 captcha 以便下次重新验证
-                     * Vue 直接修改数组的值无法触发重新渲染
-                     * @link https://cn.vuejs.org/v2/guide/reactivity.html#%E6%A3%80%E6%B5%8B%E5%8F%98%E5%8C%96%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9
                      */
                     if (this.index.captcha) {
-                        Vue.set(this.form.fields[this.index.captcha], 'value', '');
+                        this.form.fields[this.index.captcha].value = '';
                     }
                     this.$nextTick(function() {
                         funTransitionHeight(parent, trs_time);
@@ -678,7 +676,10 @@ function _wnd_render_form(container, form_json, add_class = '') {
             // v-html 不支持执行 JavaScript 需要通过封装好的 wnd_inser_html
             wnd_inner_html(`#${this.form.attrs.id} .form-script`, this.form.script);
         },
-    });
+    };
+
+    wnd_inner_html(parent, '<div class="vue-app"></div>');
+    Vue.createApp(form_option).mount(container + ' .vue-app');
 
     /******************************************************* 构造 Vue 模板 **********************************************************/
     function build_form_template(form_json) {

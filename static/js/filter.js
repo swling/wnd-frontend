@@ -23,13 +23,13 @@ function _wnd_render_filter(container, filter_json, add_class) {
 	delete init_param.post_status;
 	let param = JSON.parse(JSON.stringify(init_param));
 
-	wnd_inner_html(parent, '<div class="vue-app"></div>');
-
-	new Vue({
+	let option = {
 		el: container + ' .vue-app',
 		template: build_filter_template(filter),
-		data: {
-			filter: filter,
+		data() {
+			return {
+				filter: filter,
+			}
 		},
 		methods: {
 			item_class: function(key, value) {
@@ -209,7 +209,7 @@ function _wnd_render_filter(container, filter_json, add_class) {
 <th class="is-narrow has-text-centered">操作</th>
 </tr>
 </thead>
-					
+
 <tbody>
 <tr v-for="(post, index) in posts">
 <td class="is-narrow is-hidden-mobile">{{post.post_date}}</td>
@@ -248,8 +248,12 @@ function _wnd_render_filter(container, filter_json, add_class) {
 </table>`,
 			},
 		},
-	});
+	};
 
+	wnd_inner_html(parent, '<div class="vue-app"></div>');
+	Vue.createApp(option).mount(container + ' .vue-app');
+
+	/******************************************************* 构造 Vue 模板 **********************************************************/
 	function build_filter_template(filter) {
 		return `
 <div class="filter">

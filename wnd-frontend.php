@@ -3,7 +3,7 @@
  * Plugin Name: Wnd-Frontend
  * Plugin URI: https://github.com/swling/wnd-frontend
  * Description: Wnd-Frontend 是一套基于 ajax 交互逻辑的 WordPress 前端基础框架。商业用途需购买授权。<a href="https://github.com/swling/wnd-frontend/releases">更新日志</a>
- * Version: 0.9.57.13
+ * Version: 0.9.57.15
  * Author: swling
  * Author URI: https://wndwp.com
  * Requires PHP: 7.3
@@ -26,7 +26,7 @@
 use Wnd\Model\Wnd_Init;
 
 // 版本
-define('WND_VER', '0.9.57.13');
+define('WND_VER', '0.9.57.15');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -62,12 +62,12 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 		wp_enqueue_style('bulma', $static_path . 'css/bulma.min.css', [], WND_VER);
 		wp_enqueue_style('font-awesome', $static_path . 'css/font-awesome-all.min.css', [], WND_VER);
 		wp_enqueue_script('axios', $static_path . 'js/lib/axios.min.js', [], WND_VER);
-		wp_enqueue_script('vue', $static_path . 'js/lib/vue.min.js', [], WND_VER);
+		wp_enqueue_script('vue', $static_path . 'js/lib/vue.global.min.js', [], WND_VER);
 	} elseif ('jsdeliver' == $static_host) {
-		wp_enqueue_style('bulma', '//cdn.staticfile.org/bulma/0.9.3/css/bulma.min.css', [], null);
-		wp_enqueue_style('font-awesome', '//cdn.staticfile.org/font-awesome/5.15.4/css/all.min.css', [], null);
-		wp_enqueue_script('axios', '//cdn.staticfile.org/axios/0.24.0/axios.min.js', [], null);
-		wp_enqueue_script('vue', '//cdn.staticfile.org/vue/2.6.14/vue.min.js', [], null);
+		wp_enqueue_style('bulma', '//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/bulma/0.9.3/css/bulma.min.css', [], null);
+		wp_enqueue_style('font-awesome', '//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/5.15.4/css/all.min.css', [], null);
+		wp_enqueue_script('axios', '//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/axios/0.26.0/axios.min.js', [], null);
+		wp_enqueue_script('vue', '//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/vue/3.2.31/vue.global.min.js', [], null);
 	}
 	wp_enqueue_script('wnd-main', $static_path . 'js/main.min.js', ['vue', 'axios'], WND_VER);
 	if (is_singular() and comments_open()) {
