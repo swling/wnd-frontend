@@ -108,10 +108,14 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 delete _field['help'];
 
                 delete _field['value'];
-                delete _field['field'];
+                delete _field['checked'];
+                delete _field['selected'];
+                delete _field['options'];
 
                 if ('file_upload' == _field['type']) {
                     _field['type'] = 'file';
+                } else if ('select' == _field['type'] || 'select_linked' == _field['type']) {
+                    delete _field['type'];
                 }
 
                 // 自定义 data-* 属性应直接获取使用，无需渲染 DOM
