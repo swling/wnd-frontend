@@ -518,7 +518,7 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
  * 发送 ajax Action
  **/
 function wnd_ajax_action(action, param = {}, callback = '') {
-    axios({
+    return axios({
         method: 'POST',
         url: wnd_action_api + '/' + action,
         data: param,
@@ -535,6 +535,8 @@ function wnd_ajax_action(action, param = {}, callback = '') {
                 window[callback](response.data);
             }
         }
+
+        return response.data;
     });
 }
 
