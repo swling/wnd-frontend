@@ -108,6 +108,7 @@ abstract class Wnd_Action {
 		$defender->write_log();
 
 		// 响应
+		$execute['time'] = timer_stop();
 		return $execute;
 	}
 

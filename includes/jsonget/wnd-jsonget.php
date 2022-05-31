@@ -14,7 +14,7 @@ abstract class Wnd_JsonGet {
 	 * @param  $force 是否强制传参，忽略                    GET 请求参数
 	 * @return array  数据
 	 */
-	public static function get($args = '', $force = false): array{
+	final public static function get($args = '', $force = false): array{
 		/**
 		 * 默认 $_GET 参数优先，若设置 $force = true 则忽略 $_GET
 		 */

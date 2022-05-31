@@ -218,7 +218,7 @@ class Wnd_Controller {
 
 		try {
 			$module = new $class($request->get_query_params());
-			return ['status' => 1, 'data' => $module->get_structure()];
+			return ['status' => 1, 'data' => $module->get_structure(), 'time' => timer_stop()];
 		} catch (Exception $e) {
 			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
 		}
@@ -243,7 +243,7 @@ class Wnd_Controller {
 		}
 
 		try {
-			return ['status' => 1, 'msg' => '', 'data' => $class::get($request->get_query_params())];
+			return ['status' => 1, 'msg' => '', 'data' => $class::get($request->get_query_params()), 'time' => timer_stop()];
 		} catch (Exception $e) {
 			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
 		}
@@ -319,6 +319,7 @@ class Wnd_Controller {
 		return [
 			'status' => 1,
 			'data'   => $filter->get_results(),
+			'time'   => timer_stop(),
 		];
 	}
 
@@ -339,6 +340,7 @@ class Wnd_Controller {
 		return [
 			'status' => 1,
 			'data'   => $filter->get_results(),
+			'time'   => timer_stop(),
 		];
 	}
 
@@ -375,6 +377,6 @@ class Wnd_Controller {
 		$html .= '</article>';
 		$html .= '</li>';
 
-		return ['status' => 1, 'msg' => '提交成功', 'data' => $html];
+		return ['status' => 1, 'msg' => '提交成功', 'data' => $html, 'time' => timer_stop()];
 	}
 }
