@@ -121,6 +121,14 @@ class Wnd_Issue_Token_WeChat extends Wnd_Issue_Token_Abstract {
 	 * @link https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/access-token/auth.getAccessToken.html
 	 */
 	private function get_wechat_access_token(): string{
+		// 获取缓存
+		$cache_key    = md5($this->app_id . $this->secret);
+		$cache_group  = 'wechat_token';
+		$access_token = wp_cache_get($cache_key, $cache_group);
+		if ($access_token) {
+			return $access_token;
+		}
+
 		$url     = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$this->app_id}&secret={$this->secret}";
 		$request = wp_remote_get($url);
 		if (is_wp_error($request)) {
@@ -132,6 +140,9 @@ class Wnd_Issue_Token_WeChat extends Wnd_Issue_Token_Abstract {
 		if (!$access_token) {
 			throw new Exception('解析 access_token 失败');
 		}
+
+		// 设置缓存
+		wp_cache_set($cache_key, $access_token, $cache_group, $request['expires_in']);
 
 		return $access_token;
 	}
