@@ -34,7 +34,7 @@ class Wnd_Login extends Wnd_Action {
 		 */
 		if ('token' == $this->type) {
 			$this->do_login_action();
-			return static::generate_token($this->target_user->ID);
+			return ['status' => 1, 'msg' => __('登录成功', 'wnd'), 'data' => static::generate_token($this->target_user->ID)];
 		}
 
 		/**
