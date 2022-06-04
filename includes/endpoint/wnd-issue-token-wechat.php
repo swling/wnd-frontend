@@ -142,7 +142,7 @@ class Wnd_Issue_Token_WeChat extends Wnd_Issue_Token_Abstract {
 		}
 
 		// 设置缓存
-		wp_cache_set($cache_key, $access_token, $cache_group, $request['expires_in']);
+		wp_cache_set($cache_key, $access_token, $cache_group, $result['expires_in']);
 
 		return $access_token;
 	}
