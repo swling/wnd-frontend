@@ -3,7 +3,7 @@ namespace Wnd\Getway\Payment;
 
 use Exception;
 use Wnd\Component\Payment\WeChat\JSAPI;
-use Wnd\Endpoint\Wnd_Issue_Token_WeChat;
+use Wnd\Utility\Wnd_WeChat;
 
 /**
  * 微信 JSAPI 支付（微信环境中支付：小程序，公众号内支付）
@@ -23,7 +23,7 @@ class WeChat_JSAPI extends WeChat_Native {
 
 		extract(static::get_config());
 		$pay    = new JSAPI($mchid, $this->app_id, $apicert_sn, $private_key);
-		$openid = Wnd_Issue_Token_WeChat::get_current_user_openid($this->app_id);
+		$openid = Wnd_WeChat::get_current_user_openid($this->app_id);
 		if (!$openid) {
 			throw new Exception('获取当前账户微信 openid 失败');
 		}
