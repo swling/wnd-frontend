@@ -87,6 +87,10 @@ function wnd_remove(el) {
  * */
 function wnd_inner_html(el, html) {
     let self = ('object' == typeof el) ? el : document.querySelector(el);
+    if (!self) {
+        return;
+    }
+
     self.innerHTML = html;
     const scripts = self.querySelectorAll('script');
     for (let script of scripts) {
