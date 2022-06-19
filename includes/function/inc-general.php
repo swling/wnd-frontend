@@ -302,3 +302,37 @@ function wnd_exception_handler($e) {
 
 	wnd_error_log($error);
 }
+
+/**
+ * @since 0.9.58.3
+ *
+ * wp_mail 为可覆盖函数，此处直接使用阿里云邮件 API 推送取代之
+ *
+ * 注意：不支持附件
+ *
+ * @link https://help.aliyun.com/document_detail/29444.html
+ */
+if (wnd_get_config('aliyun_dm_account')) {
+	function wp_mail(string $to, string $subject, string $message) {
+		$client = Wnd\Getway\Wnd_Cloud_Client::get_instance('Aliyun', 'DM');
+		$client->request(
+			'https://dm.aliyuncs.com',
+			[
+				'body' => [
+					'RegionId'       => 'cn-hangzhou',
+					'Action'         => 'SingleSendMail',
+					'Format'         => 'JSON',
+					'Version'        => '2015-11-23',
+					'AccountName'    => wnd_get_config('aliyun_dm_account'),
+					'AddressType'    => 1,
+					'ReplyToAddress' => 'true',
+
+					'FromAlias'      => get_bloginfo('name'),
+					'Subject'        => $subject,
+					'ToAddress'      => $to,
+					'HtmlBody'       => $message,
+				],
+			]
+		);
+	}
+}

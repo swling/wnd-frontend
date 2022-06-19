@@ -22,7 +22,7 @@ class Wnd_Menus {
 	private $capability       = 'administrator';
 	private static $main_slug = 'wnd-frontend';
 	private $is_submenu       = false;
-	private $sub_menus        = ['Accesskey', 'Transaction', 'Payment', 'Sms', 'Captcha', 'Social_Login', 'OSS', 'CDN', 'APP'];
+	private $sub_menus        = ['Accesskey', 'Transaction', 'Payment', 'Sms', 'Captcha', 'Social_Login', 'OSS', 'CDN', 'APP', 'Email'];
 
 	// 表单存储属性
 	private $option_name = 'wnd';
