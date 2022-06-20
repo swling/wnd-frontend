@@ -272,7 +272,7 @@ function wnd_error_log(string $msg, string $file_name = 'wnd_error') {
 		return;
 	}
 
-	@error_log($msg . ' @' . wp_date('Y-m-d:h-i-s', time()) . "\n", 3, WP_PLUGIN_DIR . '/' . $file_name . '.log');
+	@error_log($msg . ' @' . wp_date('Y-m-d:H-i-s', time()) . "\n", 3, WP_PLUGIN_DIR . '/' . $file_name . '.log');
 }
 
 /**

@@ -209,6 +209,9 @@ class Wnd_Request {
 	 * @since 2019.10.27
 	 *
 	 * @param array 	$request_names 请求所有字段name数组
+	 *
+	 * 注意：
+	 *     nonce 生成值和客户端 $_COOKIE[LOGGED_IN_COOKIE] 值相关，并非简单和当前用户相关
 	 */
 	public static function sign(array $request_names): string{
 		// nonce 自身字段也需要包含在内，生成请求标识
