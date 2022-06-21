@@ -11,23 +11,44 @@ namespace Wnd\Component\Payment\Alipay;
  */
 class AlipayService {
 
-	/**
-	 * @since 2019.03.02 请根据注释说明，修改支付宝配置信息，
-	 */
-	protected $config = [
+	// 默认配置
+	public static $defaultConfig = [
+		//应用ID,您的APPID。
 		'app_id'              => '',
-		'app_private_key'     => '',
-		'alipay_public_key'   => '', // 支付宝公钥，获取方法：AlipayCertClient::getPublicKeyFromContent($cert); 对应证书：alipayCertPublicKey_RSA2.crt
-		'alipay_root_cert_sn' => '', // 支付宝根证书序列号，获取方法：AlipayCertClient::getRootCertSNFromContent($certContent); 对应证书：alipayRootCert.crt
-		'app_cert_sn'         => '', // 应用公钥证书序列号，获取方法：AlipayCertClient::getCertSNFromContent($certContent); 对应证书；appCertPublicKey_{xxx}.crt
 
+		// 支付宝根证书序列号，获取方法：AlipayCertClient::getRootCertSNFromContent($certContent); 对应证书：alipayRootCert.crt
+		'alipay_root_cert_sn' => '',
+
+		// 应用公钥证书序列号，获取方法：AlipayCertClient::getCertSNFromContent($certContent); 对应证书；appCertPublicKey_{xxx}.crt
+		'app_cert_sn'         => '',
+
+		// RSA2 商户私钥 用工具生成的应用私钥
+		'app_private_key'     => '',
+
+		// 支付宝公钥，获取方法：AlipayCertClient::getPublicKeyFromContent($cert); 对应证书：alipayCertPublicKey_RSA2.crt
+		'alipay_public_key'   => '',
+
+		//异步通知地址 *不能带参数否则校验不过 （插件执行页面地址）
 		'notify_url'          => '',
+
+		//同步跳转 *不能带参数否则校验不过 （插件执行页面地址）
 		'return_url'          => '',
 
+		//编码格式
 		'charset'             => 'utf-8',
+
+		//签名方式
 		'sign_type'           => 'RSA2',
+
+		// 版本
 		'version'             => '1.0',
+
+		//支付宝网关
+		'gateway_url'         => '',
 	];
+
+	// 传参后的配置
+	private $config;
 
 	/**
 	 * 公共请求参数
@@ -38,7 +59,7 @@ class AlipayService {
 	 * @param array 支付宝基础配置信息
 	 */
 	public function __construct(array $config) {
-		$this->config = array_merge($this->config, $config);
+		$this->config = array_merge(static::$defaultConfig, $config);
 
 		// 构造支付宝公共请求参数，实际应用参数方法请根据接口文档添加或移除部分元素
 		$this->commonParams = [

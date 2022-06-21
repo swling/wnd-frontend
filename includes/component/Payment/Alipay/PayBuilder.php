@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\Component\Payment\Alipay;
 
-use Wnd\Component\Payment\Alipay\AlipayConfig;
 use Wnd\Component\Payment\Alipay\AlipayService;
 use Wnd\Component\Payment\PaymentBuilder;
 
@@ -31,7 +30,7 @@ abstract class PayBuilder implements PaymentBuilder {
 	 * @since 0.9.17
 	 */
 	public function __construct(array $alipayConfig) {
-		$this->alipayConfig = $alipayConfig;
+		$this->alipayConfig = array_merge(AlipayService::$defaultConfig, $alipayConfig);
 		$this->charset      = $alipayConfig['charset'];
 		$this->gatewayUrl   = $alipayConfig['gateway_url'];
 	}
@@ -76,8 +75,8 @@ abstract class PayBuilder implements PaymentBuilder {
 
 	/**
 	 * 发起客户端支付请求
-	 *
 	 * @return string 返回构造支付请求的Html，如自动提交的表单或支付二维码
 	 */
 	abstract public function buildInterface(): string;
+
 }

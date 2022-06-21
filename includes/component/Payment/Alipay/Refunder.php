@@ -33,7 +33,7 @@ class Refunder implements RefunderBuilder {
 	 * @since 0.9.17
 	 */
 	public function __construct(array $alipayConfig) {
-		$this->alipayConfig = $alipayConfig;
+		$this->alipayConfig = array_merge(AlipayService::$defaultConfig, $alipayConfig);
 		$this->charset      = $alipayConfig['charset'];
 		$this->gatewayUrl   = $alipayConfig['gateway_url'];
 	}
