@@ -23,32 +23,39 @@ class Alipay extends Wnd_Payment {
 	/**
 	 * 示例代码中采用的是函数调用，为WndWP插件专用务必修改后才能用于其他网站
 	 * @since 2019.03.02 请根据注释说明，修改支付宝配置信息，
+	 * use Wnd\Component\Payment\Alipay\AlipayCertClient;
 	 */
 	public static function getConfig() {
 		$config = [
 			//应用ID,您的APPID。
-			'app_id'                 => wnd_get_config('alipay_appid'),
+			'app_id'              => wnd_get_config('alipay_appid'),
+
+			// 支付宝根证书序列号，获取方法：AlipayCertClient::getRootCertSNFromContent($certContent); 对应证书：alipayRootCert.crt
+			'alipay_root_cert_sn' => wnd_get_config('alipay_root_cert_sn'),
+
+			// 应用公钥证书序列号，获取方法：AlipayCertClient::getCertSNFromContent($certContent); 对应证书；appCertPublicKey_{xxx}.crt
+			'app_cert_sn'         => wnd_get_config('alipay_app_cert_sn'),
 
 			// RSA2 商户私钥 用工具生成的应用私钥
-			'alipay_app_private_key' => wnd_get_config('alipay_app_private_key'),
+			'app_private_key'     => wnd_get_config('alipay_app_private_key'),
 
-			// RSA2 应用支付宝公钥
-			'alipay_public_key'      => wnd_get_config('alipay_public_key'),
+			// 支付宝公钥，获取方法：AlipayCertClient::getPublicKeyFromContent($cert); 对应证书：alipayCertPublicKey_RSA2.crt
+			'alipay_public_key'   => wnd_get_config('alipay_public_key'),
 
 			//异步通知地址 *不能带参数否则校验不过 （插件执行页面地址）
-			'notify_url'             => wnd_get_endpoint_url('wnd_verify_alipay'),
+			'notify_url'          => wnd_get_endpoint_url('wnd_verify_alipay'),
 
 			//同步跳转 *不能带参数否则校验不过 （插件执行页面地址）
-			'return_url'             => wnd_get_endpoint_url('wnd_verify_alipay'),
+			'return_url'          => wnd_get_endpoint_url('wnd_verify_alipay'),
 
 			//编码格式
-			'charset'                => 'utf-8',
+			'charset'             => 'utf-8',
 
 			//签名方式
-			'sign_type'              => 'RSA2',
+			'sign_type'           => 'RSA2',
 
 			//支付宝网关
-			'gateway_url'            => wnd_get_config('payment_sandbox') ? 'https://openapi.alipaydev.com/gateway.do' : 'https://openapi.alipay.com/gateway.do',
+			'gateway_url'         => wnd_get_config('payment_sandbox') ? 'https://openapi.alipaydev.com/gateway.do' : 'https://openapi.alipay.com/gateway.do',
 		];
 
 		return $config;

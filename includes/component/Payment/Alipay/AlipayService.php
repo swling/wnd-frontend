@@ -4,8 +4,8 @@ namespace Wnd\Component\Payment\Alipay;
 /**
  * 支付宝签名及验签
  *
- * 签名： @link https://opendocs.alipay.com/open/291/106118
- * 验签： @link https://opendocs.alipay.com/open/200/106120
+ * 签名： @link https://opendocs.alipay.com/common/02kf5q#%E8%87%AA%E8%A1%8C%E5%AE%9E%E7%8E%B0%E7%AD%BE%E5%90%8D
+ * 验签： @link https://opendocs.alipay.com/common/02mse7#%E8%87%AA%E8%A1%8C%E5%AE%9E%E7%8E%B0%E9%AA%8C%E7%AD%BE
  *
  * @since 2019.03.02
  */
@@ -15,14 +15,18 @@ class AlipayService {
 	 * @since 2019.03.02 请根据注释说明，修改支付宝配置信息，
 	 */
 	protected $config = [
-		'app_id'                 => '',
-		'alipay_app_private_key' => '',
-		'alipay_public_key'      => '',
-		'notify_url'             => '',
-		'return_url'             => '',
-		'charset'                => 'utf-8',
-		'sign_type'              => 'RSA2',
-		'version'                => '1.0',
+		'app_id'              => '',
+		'app_private_key'     => '',
+		'alipay_public_key'   => '', // 支付宝公钥，获取方法：AlipayCertClient::getPublicKeyFromContent($cert); 对应证书：alipayCertPublicKey_RSA2.crt
+		'alipay_root_cert_sn' => '', // 支付宝根证书序列号，获取方法：AlipayCertClient::getRootCertSNFromContent($certContent); 对应证书：alipayRootCert.crt
+		'app_cert_sn'         => '', // 应用公钥证书序列号，获取方法：AlipayCertClient::getCertSNFromContent($certContent); 对应证书；appCertPublicKey_{xxx}.crt
+
+		'notify_url'          => '',
+		'return_url'          => '',
+
+		'charset'             => 'utf-8',
+		'sign_type'           => 'RSA2',
+		'version'             => '1.0',
 	];
 
 	/**
@@ -38,12 +42,14 @@ class AlipayService {
 
 		// 构造支付宝公共请求参数，实际应用参数方法请根据接口文档添加或移除部分元素
 		$this->commonParams = [
-			'app_id'    => $this->config['app_id'],
-			'format'    => 'JSON',
-			'charset'   => $this->config['charset'],
-			'sign_type' => $this->config['sign_type'],
-			'timestamp' => date('Y-m-d H:i:s'),
-			'version'   => $this->config['version'],
+			'app_id'              => $this->config['app_id'],
+			'alipay_root_cert_sn' => $this->config['alipay_root_cert_sn'],
+			'app_cert_sn'         => $this->config['app_cert_sn'],
+			'format'              => 'JSON',
+			'charset'             => $this->config['charset'],
+			'sign_type'           => $this->config['sign_type'],
+			'timestamp'           => date('Y-m-d H:i:s'),
+			'version'             => $this->config['version'],
 		];
 	}
 
@@ -113,7 +119,7 @@ class AlipayService {
 	 * 生成sign
 	 */
 	private function sign(string $data, string $signType = 'RSA'): string{
-		$priKey = $this->config['alipay_app_private_key'];
+		$priKey = $this->config['app_private_key'];
 		$res    = "-----BEGIN RSA PRIVATE KEY-----\n" .
 		wordwrap($priKey, 64, "\n", true) .
 			"\n-----END RSA PRIVATE KEY-----";

@@ -30,6 +30,7 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 		);
 
 		$form->add_html('<h2 class="title">支付宝</h2>');
+		$form->add_html('<p>本插件统一采用【公钥证书】模式，证书工具下载: https://opendocs.alipay.com/common/02kipl</p>');
 		$form->add_radio(
 			[
 				'name'    => 'alipay_qrcode',
@@ -48,12 +49,32 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 			]
 		);
 
+		$form->add_text(
+			[
+				'name'        => 'alipay_root_cert_sn',
+				'label'       => '支付宝根证书序列号',
+				'required'    => false,
+				'placeholder' => '支付宝根证书序列号',
+				'help'        => ['text' => '获取方法：AlipayCertClient::getRootCertSNFromContent($certContent); 【对应证书：alipayRootCert.crt】'],
+			]
+		);
+
+		$form->add_text(
+			[
+				'name'        => 'alipay_app_cert_sn',
+				'label'       => '应用公钥证书序列号',
+				'required'    => false,
+				'placeholder' => '应用公钥证书序列号',
+				'help'        => ['text' => '获取方法：AlipayCertClient::getCertSNFromContent($certContent); 对应证书；【appCertPublicKey_{xxx}.crt】'],
+			]
+		);
+
 		$form->add_textarea(
 			[
 				'name'        => 'alipay_app_private_key',
-				'label'       => '支付宝应用私钥',
+				'label'       => '应用私钥',
 				'required'    => false,
-				'placeholder' => '应用私钥，由开发者自己生成',
+				'placeholder' => '应用私钥，由秘钥工具生成位于：CSR/xxx.com_私钥',
 			]
 		);
 
@@ -62,7 +83,8 @@ class Wnd_Menu_Payment extends Wnd_Menus {
 				'name'        => 'alipay_public_key',
 				'label'       => '支付宝公钥',
 				'required'    => false,
-				'placeholder' => '支付宝公钥，开发者生成公钥后上传至支付宝，再由支付宝生成',
+				'placeholder' => '支付宝公钥，开发者工具生成 .csr 文件后上传至支付宝，再由支付宝生成公钥的证书',
+				'help'        => ['text' => '获取方法：AlipayCertClient::getPublicKeyFromContent($certContent); 对应证书：【alipayCertPublicKey_RSA2.crt】'],
 			]
 		);
 
