@@ -42,6 +42,10 @@ class Wnd_Update_Post_Status extends Wnd_Action {
 			throw new Exception(__('无效的Post', 'wnd'));
 		}
 
+		if ('page' == $this->before_post->post_type) {
+			throw new Exception(__('前端无法删除 page', 'wnd'));
+		}
+
 		// 在现有注册的post status基础上新增 delete，该状态表示直接删除文章 @since 2019.03.03
 		if (!in_array($this->after_status, array_merge(get_post_stati(), ['delete']))) {
 			throw new Exception(__('无效的Post状态', 'wnd'));
