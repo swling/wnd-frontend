@@ -58,8 +58,7 @@ class Wnd_Issue_Token_WeChat extends Wnd_Issue_Token_Abstract {
 		}
 
 		if ($exists_user) {
-			$openid = $this->get_app_openid();
-			wnd_update_user_openid($exists_user->ID, $this->app_type, $openid);
+			wnd_update_user_openid($exists_user->ID, $this->app_type, $this->get_openid());
 			return $exists_user->ID;
 		} else {
 			$user_id = parent::register_or_login();

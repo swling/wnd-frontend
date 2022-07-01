@@ -1,3 +1,6 @@
+### 证书生成教程
+- https://opensupport.alipay.com/support/helpcenter/207/201602471154#
+
 ### 证书序列及支付宝公钥获取方法
 
 ```php
