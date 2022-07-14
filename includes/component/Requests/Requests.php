@@ -16,6 +16,7 @@ class Requests {
 		'body'     => [],
 		'timeout'  => 10,
 		'filename' => '',
+		'referer'  => '',
 	];
 
 	private $args;
@@ -62,6 +63,9 @@ class Requests {
 		curl_setopt($this->curl, CURLOPT_TIMEOUT, $this->args['timeout']);
 		if ($this->args['body']) {
 			curl_setopt($this->curl, CURLOPT_POSTFIELDS, $this->args['body']);
+		}
+		if ($this->args['referer']) {
+			curl_setopt($this->curl, CURLOPT_REFERER, $this->args['referer']);
 		}
 		// curl_setopt($this->$curl, CURLOPT_SSL_VERIFYPEER, false); //不验证对等证书
 		// curl_setopt($this->$curl, CURLOPT_SSL_VERIFYHOST, 0); //不检查服务器SSL证书
