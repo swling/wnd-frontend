@@ -20,8 +20,12 @@ abstract class Wnd_JsonGet {
 		 */
 		$args = $force ? wp_parse_args($args) : wp_parse_args($_GET, $args);
 
+		static::check();
+
 		return static::query($args);
 	}
+
+	protected static function check() {}
 
 	/**
 	 * 查询数据
