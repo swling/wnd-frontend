@@ -50,6 +50,8 @@ abstract class Wnd_Term {
 	/**
 	 * 根据当前 post 已选各层级 terms 查询对应层级的其他选项，并与首层 term 组合返回
 	 * 用于编辑内容时，自动载入当前 post 各层级分类法
+	 * @since 2022.08.04 支持非层级 term （即返回首层 term）
+	 *
 	 * @since 0.9.27
 	 */
 	public static function get_post_terms_options_with_level($post_id, $args_or_taxonomy): array{
@@ -57,12 +59,15 @@ abstract class Wnd_Term {
 		$taxonomy        = $args['taxonomy'] ?? '';
 		$taxonomy_object = get_taxonomy($taxonomy);
 
-		if (!is_taxonomy_hierarchical($taxonomy) or !$taxonomy_object) {
+		if (!$taxonomy_object) {
 			return [];
 		}
 
 		// 首层选项
 		$option_data[0] = static::get_terms_data($args);
+		if (!is_taxonomy_hierarchical($taxonomy)) {
+			return $option_data;
+		}
 
 		// 查询当前 POST 已选 term 的子类同层级选项
 		$current_term_ids = static::get_post_terms_with_level($post_id, $taxonomy);
