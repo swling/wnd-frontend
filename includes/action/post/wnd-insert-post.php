@@ -31,7 +31,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 		// 完成返回
 		$permalink    = get_permalink($this->post_id);
 		$redirect_to  = $_REQUEST['redirect_to'] ?? '';
-		$status       = $this->post_data['ID'] ? ($redirect_to ? 3 : 2) : 8;
+		$status       = ($this->post_data['ID'] ?? 0) ? ($redirect_to ? 3 : 2) : 8;
 		$return_array = [
 			'status' => $status,
 			'msg'    => __('发布成功', 'wnd'),
