@@ -7,16 +7,17 @@ use Wnd\Model\Wnd_Post;
 
 /**
  * 写入或更新 WP Post
+ * - 本接口为写入数据的核心接口，故特别设置属性权限为 protected 旨在方便拓展继承
  * @since 初始化
  */
 class Wnd_Insert_Post extends Wnd_Action {
 
-	private $post_data;
-	private $meta_data;
-	private $wp_meta_data;
-	private $terms_data;
-	private $post_id;
-	private $update_post;
+	protected $post_data;
+	protected $meta_data;
+	protected $wp_meta_data;
+	protected $terms_data;
+	protected $post_id;
+	protected $update_post;
 
 	protected function execute(): array{
 		$this->insert();
