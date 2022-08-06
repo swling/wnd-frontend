@@ -26,7 +26,7 @@
 use Wnd\Model\Wnd_Init;
 
 // 版本
-define('WND_VER', '0.9.58.2');
+define('WND_VER', '0.9.58.3');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));

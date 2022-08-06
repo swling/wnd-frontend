@@ -87,7 +87,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 value = ('object' == typeof value) ? Object.values(value) : value;
                 return value;
             },
-            parse_input_attr: function(field) {
+            parse_input_attr: function(field, exclude = []) {
                 // 深拷贝 以免影响 data
                 let _field = JSON.parse(JSON.stringify(field));
 
@@ -95,6 +95,11 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     if (!_field[item] || '' == _field[item]) {
                         delete _field[item]
                     };
+                });
+
+                // 排除指定属性
+                exclude.forEach(item => {
+                    delete _field[item];
                 });
 
                 _field['class'] = (general_input_fields.includes(field.type) ? 'input' : field.type) + ' ' + (_field["class"] || '');
@@ -935,7 +940,7 @@ ${build_label(field)}
 <div class="column is-marginless is-paddingless is-narrow">${tags}</div>
 <div class="autocomplete column is-marginless">
 <input type="text" :readonly="${field}.value.length >= ${field}.data.max" @input="suggest_tags($event.target.value, ${index})" @keypress.enter="enter_tag($event, ${index})" @click="handle_tag_input_click($event, ${index})"/>
-<template v-for="(tag, index) in ${field}.value"><input type="hidden" v-bind="parse_input_attr(${field})" v-model="tag" /></template>
+<template v-for="(tag, index) in ${field}.value"><input type="hidden" v-bind="parse_input_attr(${field}, ['type'])" v-model="tag" /></template>
 <ul v-show="${field}.value.length < ${field}.data.max" class="autocomplete-items">${suggestions}</ul>
 </div>
 </div>
