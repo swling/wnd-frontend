@@ -425,3 +425,16 @@ $allowed_keys = apply_filters('wnd_allowed_sign_keys', $allowed_keys, $this->sig
 // 用于对特定云服务商的特定产品，配置特定的密匙，数据格式： ['secret_id'  => 'xxx', 'secret_key' => 'xxx']
 $access_info = apply_filters('wnd_cloud_client_access_info', [], $service_provider, $product);
 ```
+
+## tag under category
+```php
+    public static function get_cat_taxonomy(string $post_type): string{
+        $cat_taxonomy = ('post' == $post_type) ? 'category' : $post_type . '_cat';
+        return apply_filters('wnd_get_cat_taxonomy', $cat_taxonomy, $post_type);
+    }
+
+    public static function get_tag_taxonomy(string $post_type): string{
+        $tag_taxonomy = $post_type . '_tag';
+        return apply_filters('wnd_get_tag_taxonomy', $tag_taxonomy, $post_type);
+    }
+```

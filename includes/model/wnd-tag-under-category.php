@@ -13,6 +13,16 @@ namespace Wnd\Model;
  */
 class Wnd_Tag_Under_Category {
 
+	public static function get_cat_taxonomy(string $post_type): string{
+		$cat_taxonomy = ('post' == $post_type) ? 'category' : $post_type . '_cat';
+		return apply_filters('wnd_get_cat_taxonomy', $cat_taxonomy, $post_type);
+	}
+
+	public static function get_tag_taxonomy(string $post_type): string{
+		$tag_taxonomy = $post_type . '_tag';
+		return apply_filters('wnd_get_tag_taxonomy', $tag_taxonomy, $post_type);
+	}
+
 	/**
 	 * Hook
 	 */
@@ -27,8 +37,8 @@ class Wnd_Tag_Under_Category {
 	 */
 	public static function monitor_object_terms_changes($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids) {
 		$post_type    = get_post_type($object_id);
-		$cat_taxonomy = ('post' == $post_type) ? 'category' : $post_type . '_cat';
-		$tag_taxonomy = $post_type . '_tag';
+		$cat_taxonomy = static::get_cat_taxonomy($post_type);
+		$tag_taxonomy = static::get_tag_taxonomy($post_type);
 
 		// taxonomy合法性检测
 		if (!taxonomy_exists($cat_taxonomy) or !taxonomy_exists($tag_taxonomy)) {
