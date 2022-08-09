@@ -93,7 +93,7 @@ abstract class Wnd_Filter_Abstract {
 		 */
 		$post_type = $this->get_post_type_query();
 		if ($post_type) {
-			$this->category_taxonomy = ('post' == $post_type) ? 'category' : $post_type . '_cat';
+			$this->category_taxonomy = Wnd_Tag_Under_Category::get_cat_taxonomy($post_type);
 		}
 	}
 
@@ -173,7 +173,7 @@ abstract class Wnd_Filter_Abstract {
 		if (!$this->get_post_type_query()) {
 			$default_type = $any ? 'any' : ($args ? reset($args) : 'post');
 			$this->add_query_vars(['post_type' => $default_type]);
-			$this->category_taxonomy = ('post' == $default_type) ? 'category' : $default_type . '_cat';
+			$this->category_taxonomy = Wnd_Tag_Under_Category::get_cat_taxonomy($default_type);
 		}
 
 		/**
@@ -237,7 +237,8 @@ abstract class Wnd_Filter_Abstract {
 		 * 遍历当前tax query 查询是否设置了对应的taxonomy查询，若存在则查询其对应子类
 		 * @since 2019.03.12
 		 */
-		$taxonomy_query = false;
+		$taxonomy_query         = false;
+		$current_taxonomy_terms = 0;
 		foreach ($this->get_tax_query() as $key => $tax_query) {
 			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
 			if (!isset($tax_query['terms'])) {
@@ -433,7 +434,7 @@ abstract class Wnd_Filter_Abstract {
 	 */
 	protected function build_tags_filter(int $limit = 10) {
 		// 标签taxonomy
-		$taxonomy = $this->get_post_type_query() . '_tag';
+		$taxonomy = Wnd_Tag_Under_Category::get_tag_taxonomy($this->get_post_type_query());
 		if (!taxonomy_exists($taxonomy)) {
 			return;
 		}
