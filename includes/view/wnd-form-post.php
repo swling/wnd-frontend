@@ -423,7 +423,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_post_file_upload('file', true, $label);
 		$this->add_url(
 			[
-				'name'        => 'file_url',
+				'name'        => '_meta_file_url',
 				'value'       => wnd_get_post_meta($this->post_id, 'file_url') ?: '',
 				'icon_left'   => '<i class="fas fa-link"></i>',
 				'placeholder' => __('文件链接', 'wnd'),
