@@ -35,8 +35,11 @@ abstract class Wnd_Filter_Abstract {
 	 */
 	protected $independent;
 
-	// 当前post type的主分类taxonomy 约定：post(category) / 自定义类型 （$post_type . '_cat'）
+	// 当前post type的主分类 taxonomy 默认：post(category) / 自定义类型 （$post_type . '_cat'）
 	public $category_taxonomy;
+
+	// 当前post type的主标签 taxonomy 默认：post(post_tag) / 自定义类型 （$post_type . '_cat'）
+	public $tag_taxonomy;
 
 	// Wnd\View\Wnd_Filter_Query 查询类实例化对象;
 	private $filter_query;
@@ -94,6 +97,7 @@ abstract class Wnd_Filter_Abstract {
 		$post_type = $this->get_post_type_query();
 		if ($post_type) {
 			$this->category_taxonomy = Wnd_Tag_Under_Category::get_cat_taxonomy($post_type);
+			$this->tag_taxonomy      = Wnd_Tag_Under_Category::get_tag_taxonomy($post_type);
 		}
 	}
 
@@ -174,6 +178,7 @@ abstract class Wnd_Filter_Abstract {
 			$default_type = $any ? 'any' : ($args ? reset($args) : 'post');
 			$this->add_query_vars(['post_type' => $default_type]);
 			$this->category_taxonomy = Wnd_Tag_Under_Category::get_cat_taxonomy($default_type);
+			$this->tag_taxonomy      = Wnd_Tag_Under_Category::get_tag_taxonomy($default_type);
 		}
 
 		/**
@@ -411,7 +416,7 @@ abstract class Wnd_Filter_Abstract {
 		 * @since 2019.07.30
 		 */
 		if ($taxonomy == $this->category_taxonomy) {
-			$remove_args = ['_term_' . $post_type . '_tag'];
+			$remove_args = ['_term_' . $this->tag_taxonomy];
 		} else {
 			$remove_args = [];
 		}
@@ -434,7 +439,7 @@ abstract class Wnd_Filter_Abstract {
 	 */
 	protected function build_tags_filter(int $limit = 10) {
 		// 标签taxonomy
-		$taxonomy = Wnd_Tag_Under_Category::get_tag_taxonomy($this->get_post_type_query());
+		$taxonomy = $this->tag_taxonomy;
 		if (!taxonomy_exists($taxonomy)) {
 			return;
 		}
