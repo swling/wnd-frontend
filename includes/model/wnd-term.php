@@ -28,15 +28,11 @@ abstract class Wnd_Term {
 	}
 
 	/**
-	 * 获取当前 post 已设定的 terms 并按以层级为 key 值（仅针对包含层级关系的 taxonomy）
+	 * 获取当前 post 已设定的 terms 并按以层级为 key 值（非层级关系的 taxonomy 均为 0层）
 	 * 用于编辑内容时，根据当前 Post 之前数据，根据分类层级设定下拉 Selected 值
 	 * @since 0.9.27
 	 */
 	public static function get_post_terms_with_level($post_id, $taxonomy): array{
-		if (!is_taxonomy_hierarchical($taxonomy)) {
-			return [];
-		}
-
 		$terms = static::get_post_terms($post_id, $taxonomy);
 		$data  = [];
 		foreach ($terms as $term_id) {
@@ -117,7 +113,7 @@ abstract class Wnd_Term {
 	 * 顶级分类：0
 	 * 子级分类：1
 	 * 孙级分类：2
-	 * 以此类推
+	 * 以此类推，非层级关系的 taxonomy 均为 0层
 	 *
 	 * @param  int    	$term_id
 	 * @param  string $taxonomy
