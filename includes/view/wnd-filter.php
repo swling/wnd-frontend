@@ -95,8 +95,9 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 
 		// 【全部】选项
 		if ($any) {
+			$all_label = (in_array($key, ['orderby', 'order'])) ? __('默认', 'wnd') : __('全部', 'wnd');
 			$tabs .= '<li class="' . $this->get_tab_item_class($key, '') . '">';
-			$tabs .= '<a href="' . remove_query_arg($key, $base_url) . '">' . __('全部', 'wnd') . '</a>';
+			$tabs .= '<a href="' . remove_query_arg($key, $base_url) . '">' . $all_label . '</a>';
 			$tabs .= '</li>';
 		}
 
