@@ -23,6 +23,7 @@ class Google extends Wnd_Login_Social {
 
 	/**
 	 * 创建授权地址
+	 * @link https://developers.google.com/identity/protocols/oauth2/scopes#google-sign-in
 	 */
 	public function build_oauth_url() {
 		if (!$this->app_id) {
@@ -40,7 +41,7 @@ class Google extends Wnd_Login_Social {
 				'redirect_uri'    => $this->redirect_url,
 				'access_type'     => 'offline',
 				'approval_prompt' => 'auto',
-				'scope'           => 'https://www.googleapis.com/auth/userinfo.profile',
+				'scope'           => 'email profile',
 			]
 		);
 
@@ -96,21 +97,14 @@ class Google extends Wnd_Login_Social {
 	 *
 	 */
 	protected function get_user_info() {
-		$url       = 'https://www.googleapis.com/oauth2/v1/userinfo?access_token=' . $this->token;
+		$url       = 'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' . $this->token;
 		$user_info = wp_remote_get($url);
 		$user_info = $user_info['body'];
 		$user_info = json_decode($user_info, true);
 
-		// $data['id']          = $user_info['id'];
-		// $data['name']        = $user_info['name'];
-		// $data['locale']      = $user_info['locale'];
-		// $data['picture']     = $user_info['picture'];
-		// $data['given_name']  = $user_info['given_name'];
-		// $data['family_name'] = $user_info['family_name'];
-
-		//2.4 组成用户数据
 		$this->display_name = $user_info['name'];
 		$this->avatar_url   = $user_info['picture'];
-		$this->open_id      = $user_info['id'];
+		$this->open_id      = $user_info['sub'];
+		$this->email        = $user_info['email'];
 	}
 }
