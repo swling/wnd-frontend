@@ -32,10 +32,10 @@ class Wnd_JWT_Handler {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
-		$this->domain           = parse_url(home_url())['host'];
-		$this->exp              = time() + 3600 * 24 * 90;
-		$this->verified_user_id = $this->verify_client_token();
+		$this->domain = parse_url(home_url())['host'];
+		$this->exp    = time() + 3600 * 24 * 90;
 
+		add_action('init', [$this, 'parse_token_user_id'], 10);
 		add_action('init', [$this, 'set_current_user'], 10);
 		add_filter('rest_authentication_errors', [$this, 'rest_token_check_errors'], 10, 1);
 	}
@@ -72,6 +72,16 @@ class Wnd_JWT_Handler {
 	}
 
 	/**
+	 * 解析 Token user id 并设置到实例属性
+	 *  - 之所以封装此方法在构造函数中通过添加 init 钩子挂载，而不是在构造函数中直接执行是因为
+	 *    本类的构造函数直接在插件初始化即加载完成，若直接在构造函数中执行会导致 'wnd_get_client_token' 钩子执行过早，
+	 *    即：无法在主题添加过滤器
+	 */
+	public function parse_token_user_id() {
+		$this->verified_user_id = $this->verify_client_token();
+	}
+
+	/**
 	 * 验证客户端 Token
 	 */
 	private function verify_client_token(): int{
@@ -93,26 +103,34 @@ class Wnd_JWT_Handler {
 
 	/**
 	 * 获取客户端 JWT Token
-	 * - 获取方式需要与前端请求保持一致
-	 * - axios.defaults.headers["Authorization"] = "Bearer " + getCookie("wnd_token");
 	 */
 	private function get_client_token(): string{
-		// 从 Cookie 中读取
-		$token = $_COOKIE[static::$cookie_name] ?? '';
-		if ($token) {
-			return $token;
-		}
+		$token = $this->get_token_form_cookie() ?: $this->get_token_form_header();
 
-		// 从 header 请求中获取
+		return apply_filters('wnd_get_client_token', $token);
+	}
+
+	/**
+	 * 从 Cookie 中读取 Token
+	 */
+	private function get_token_form_cookie(): string {
+		return $_COOKIE[static::$cookie_name] ?? '';
+	}
+
+	/**
+	 * 从 Header 头中读取 Token
+	 */
+	private function get_token_form_header(): string{
+		$token = '';
+
 		$headers       = getallheaders();
 		$authorization = $headers[static::$header_name] ?? '';
 		if ($authorization) {
 			$bearer_token = explode(' ', $authorization);
-			return $bearer_token[1] ?? '';
+			$token        = $bearer_token[1] ?? '';
 		}
 
-		// 空
-		return '';
+		return $token;
 	}
 
 	/**
