@@ -438,3 +438,8 @@ $access_info = apply_filters('wnd_cloud_client_access_info', [], $service_provid
         return apply_filters('wnd_get_tag_taxonomy', $tag_taxonomy, $post_type);
     }
 ```
+
+## JWT
+```php
+ $toeken = apply_filters('wnd_get_client_token', $token);
+ ```
