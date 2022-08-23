@@ -376,16 +376,17 @@ function _wnd_render_form(container, form_json, add_class = '') {
                             field.help.text = response.data.msg;
                             field.help.class = 'is-danger';
                         } else {
-                            for (let i = 0, n = response.data.length; i < n; i++) {
-                                if (response.data[i].status <= 0) {
-                                    field.help.text = response.data[i].msg;
+                            let data = response.data.data;
+                            for (let i = 0, n = data.length; i < n; i++) {
+                                if (data[i].status <= 0) {
+                                    field.help.text = data[i].msg;
                                     field.help.class = 'is-danger';
                                 } else {
                                     field.help.text = wnd.msg.upload_successfully;
                                     field.help.class = 'is-success';
-                                    field.thumbnail = response.data[i].data.thumbnail;
-                                    field.file_id = response.data[i].data.id;
-                                    field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + response.data[i].data.url + '" target="_blank">' + wnd.msg.view + '</a>';
+                                    field.thumbnail = data[i].thumbnail;
+                                    field.file_id = data[i].id;
+                                    field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + data[i].url + '" target="_blank">' + wnd.msg.view + '</a>';
                                 }
 
                                 // 单个图片

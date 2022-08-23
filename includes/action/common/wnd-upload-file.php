@@ -47,7 +47,7 @@ class Wnd_Upload_File extends Wnd_Action {
 		 * 遍历文件上传
 		 * @since 2019.05.06 改写
 		 */
-		$return_array = []; // 定义图片信息返回数组
+		$return_array = ['status' => 1, 'msg' => __('上传成功', 'wnd'), 'data' => []]; // 定义图片信息返回数组
 		$files        = $_FILES['wnd_file']; //暂存原始上传信息，后续将重写$_FILES全局变量以适配WordPress上传方式
 
 		foreach ($files['name'] as $key => $value) {
@@ -63,14 +63,14 @@ class Wnd_Upload_File extends Wnd_Action {
 
 			// 单文件错误检测
 			if ($_FILES['temp_key']['error'] > 0) {
-				$return_array[] = ['status' => 0, 'msg' => 'Error: ' . $_FILES['temp_key']['error']];
+				$$return_array['data'] = ['status' => 0, 'msg' => 'Error: ' . $_FILES['temp_key']['error']];
 				continue;
 			}
 
 			// 文件格式限制
 			$extension = pathinfo($_FILES['temp_key']['name'])['extension'] ?? '';
 			if (!wnd_is_allowed_extension($extension)) {
-				$return_array[] = ['status' => 0, 'msg' => 'Error: File types not allowed'];
+				$$return_array['data'] = ['status' => 0, 'msg' => 'Error: File types not allowed'];
 				continue;
 			}
 
@@ -90,7 +90,7 @@ class Wnd_Upload_File extends Wnd_Action {
 
 			// 上传失败
 			if (is_wp_error($file_id)) {
-				$return_array[] = ['status' => 0, 'msg' => $file_id->get_error_message()];
+				$$return_array['data'] = ['status' => 0, 'msg' => $file_id->get_error_message()];
 				continue;
 			}
 
@@ -104,16 +104,12 @@ class Wnd_Upload_File extends Wnd_Action {
 
 			// 将当前上传的图片信息写入数组
 			$temp_array = [
-				'status' => 1,
-				'data'   => [
-					'url'       => $url,
-					'thumbnail' => $thumbnail ?? 0,
-					'id'        => $file_id,
-					'post'      => get_post($file_id),
-				],
-				'msg'    => __('上传成功', 'wnd'),
+				'url'       => $url,
+				'thumbnail' => $thumbnail ?? 0,
+				'id'        => $file_id,
+				'post'      => get_post($file_id),
 			];
-			$return_array[] = $temp_array;
+			$return_array['data'][] = $temp_array;
 
 			/**
 			 * @since 2019.02.13 当存在meta key时，表明上传文件为特定用途存储，仅允许上传单个文件

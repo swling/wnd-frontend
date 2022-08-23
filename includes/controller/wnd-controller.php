@@ -271,8 +271,10 @@ class Wnd_Controller {
 		}
 
 		try {
-			$action = new $class($request);
-			return $action->do_action();
+			$action      = new $class($request);
+			$res         = $action->do_action();
+			$res['time'] = timer_stop();
+			return $res;
 		} catch (Exception $e) {
 			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
 		}
