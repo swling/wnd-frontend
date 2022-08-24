@@ -89,7 +89,7 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					alert(res.data.msg);
 					return '';
 				} else {
-					return res.data[0].data;
+					return res.data.data[0];
 				}
 			}).catch(err => {
 				console.log(err);
