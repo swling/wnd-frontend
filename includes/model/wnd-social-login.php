@@ -39,8 +39,8 @@ class Wnd_Social_Login {
 		}
 
 		$this->type         = strtolower($type);
-		$this->open_id      = $open_id;
-		$this->display_name = $display_name;
+		$this->open_id      = trim($open_id);
+		$this->display_name = trim($display_name);
 		$this->avatar_url   = $avatar_url;
 		$this->email        = $email;
 		$this->current_user = wp_get_current_user();
