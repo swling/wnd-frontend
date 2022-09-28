@@ -16,10 +16,11 @@ abstract class Wnd_Login_Social {
 
 	protected $domain;
 	protected $token;
-	protected $open_id;
-	protected $display_name;
-	protected $avatar_url;
-	protected $email;
+
+	protected $open_id      = '';
+	protected $display_name = '';
+	protected $avatar_url   = '';
+	protected $email        = '';
 
 	protected $redirect_url;
 
