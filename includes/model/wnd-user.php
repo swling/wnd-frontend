@@ -106,7 +106,7 @@ abstract class Wnd_User {
 		$login_count = $db_records->login_count ?? 0;
 		if ($last_login) {
 			$last_login = date('Y-m-d', $last_login);
-			if ($last_login == date('Y-m-d', time())) {
+			if ($last_login == date('Y-m-d', current_time('timestamp'))) {
 				return false;
 			}
 		}

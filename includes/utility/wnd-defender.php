@@ -314,7 +314,7 @@ class Wnd_Defender {
 	 */
 	protected function write_block_logs() {
 		// 新增当前IP拦截日志时间及累计拦截次数
-		$_REQUEST['wnd_time']   = date('m-d H:i:s');
+		$_REQUEST['wnd_time']   = date('m-d H:i:s', current_time('timestamp'));
 		$_REQUEST['wnd_count']  = $this->count + 1;
 		$_REQUEST['wnd_server'] = $_SERVER;
 

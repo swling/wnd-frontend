@@ -302,8 +302,8 @@ abstract class Wnd_Finance {
 			return;
 		}
 
-		$year       = date('Y', time());
-		$month      = date('m', time());
+		$year       = date('Y', current_time('timestamp'));
+		$month      = date('m', current_time('timestamp'));
 		$post_title = $year . '-' . $month . '-' . $post_type;
 		$slug       = $post_title;
 		$stats_post = wnd_get_post_by_slug($slug, $post_type, 'private');

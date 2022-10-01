@@ -10,7 +10,7 @@ class Wnd_Excel {
 	 * @param $filename
 	 */
 	public static function array_to_csv(array $data, string $filename = '') {
-		$filename = $filename ?: date('Y-m-d:h-i-s', time());
+		$filename = $filename ?: date('Y-m-d:h-i-s', current_time('timestamp'));
 		if (!$data) {
 			return;
 		}
