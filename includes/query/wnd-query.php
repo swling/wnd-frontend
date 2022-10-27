@@ -1,11 +1,11 @@
 <?php
-namespace Wnd\JsonGet;
+namespace Wnd\Query;
 
 /**
  * Json输出基类
  * @since 2020.04.24
  */
-abstract class Wnd_JsonGet {
+abstract class Wnd_Query {
 
 	/**
 	 * 获取Json Data

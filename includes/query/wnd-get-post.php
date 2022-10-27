@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\JsonGet;
+namespace Wnd\Query;
 
 use Exception;
 
@@ -9,7 +9,7 @@ use Exception;
  *
  * @param int $post_id Post ID
  */
-class Wnd_Get_Post extends Wnd_JsonGet {
+class Wnd_Get_Post extends Wnd_Query {
 
 	protected static function query($args = []): array{
 		$post_id = (int) ($args['post_id'] ?? 0);

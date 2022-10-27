@@ -10,7 +10,7 @@ use WP_REST_Server;
 
 /**
  * Wnd Rest API
- * ## 主题或插件可拓展 Action、Module、Jsonget 详情参见：
+ * ## 主题或插件可拓展 Action、Module、Query 详情参见：
  * - @see docs/controller.md
  * - @see docs/autoloader.md
  *
@@ -48,11 +48,11 @@ class Wnd_Controller {
 			'permission_callback' => '__return_true',
 			'route_rule'          => '(?P<action>(.*))',
 		],
-		'jsonget'  => [
+		'query'    => [
 			'methods'             => 'GET',
-			'callback'            => __CLASS__ . '::handle_jsonget',
+			'callback'            => __CLASS__ . '::handle_query',
 			'permission_callback' => '__return_true',
-			'route_rule'          => '(?P<jsonget>(.*))',
+			'route_rule'          => '(?P<query>(.*))',
 		],
 		'endpoint' => [
 			'methods'             => ['GET', 'POST'],
@@ -230,16 +230,16 @@ class Wnd_Controller {
 	 *
 	 * @param $request
 	 */
-	public static function handle_jsonget(WP_REST_Request $request): array{
-		if (!isset($request['jsonget'])) {
+	public static function handle_query(WP_REST_Request $request): array{
+		if (!isset($request['query'])) {
 			return ['status' => 0, 'msg' => __('未指定Data', 'wnd')];
 		}
 
 		// 解析实际类名称及参数
-		$class = static::parse_class($request['jsonget'], 'JsonGet');
+		$class = static::parse_class($request['query'], 'Query');
 
 		if (!class_exists($class)) {
-			return ['status' => 0, 'msg' => __('无效的JsonGet', 'wnd') . ':' . $class];
+			return ['status' => 0, 'msg' => __('无效的Query', 'wnd') . ':' . $class];
 		}
 
 		try {

@@ -25,7 +25,7 @@ unset($key, $value);
  */
 $action       = $_POST['action'] ?? '';
 $module       = $request['module'] ?? '';
-$jsonget      = $request['jsonget'] ?? '';
+$query        = $request['query'] ?? '';
 $endpoint     = $request['endpoint'] ?? '';
 $filter_posts = $request['filter_posts'] ?? '';
 $filter_users = $request['filter_users'] ?? '';
@@ -59,9 +59,9 @@ if ($action) {
 	wp_send_json(Wnd_Controller::handle_action($request));
 }
 
-// JsonGet
-if ($jsonget) {
-	wp_send_json(Wnd_Controller::handle_jsonget($request));
+// Query
+if ($query) {
+	wp_send_json(Wnd_Controller::handle_query($request));
 }
 
 // filter posts

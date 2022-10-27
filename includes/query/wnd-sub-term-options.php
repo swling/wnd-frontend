@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\JsonGet;
+namespace Wnd\Query;
 
 use Wnd\Model\Wnd_Term;
 
@@ -7,7 +7,7 @@ use Wnd\Model\Wnd_Term;
  * 列出指定 term 的 child term 下拉选项
  * @since 0.9.27
  */
-class Wnd_Sub_Term_Options extends Wnd_JsonGet {
+class Wnd_Sub_Term_Options extends Wnd_Query {
 
 	protected static function query($args = []): array{
 		$defaults = [

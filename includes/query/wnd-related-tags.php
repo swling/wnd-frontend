@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\JsonGet;
+namespace Wnd\Query;
 
 use Wnd\Model\Wnd_Tag_Under_Category;
 
@@ -7,7 +7,7 @@ use Wnd\Model\Wnd_Tag_Under_Category;
  * 列出term下拉选项
  * @since 2020.04.14
  */
-class Wnd_Related_Tags extends Wnd_JsonGet {
+class Wnd_Related_Tags extends Wnd_Query {
 
 	protected static function query($args = []): array{
 		$defaults = [

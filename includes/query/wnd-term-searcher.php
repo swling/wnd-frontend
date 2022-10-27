@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\JsonGet;
+namespace Wnd\Query;
 
 use Wnd\Model\Wnd_Term;
 
@@ -12,7 +12,7 @@ use Wnd\Model\Wnd_Term;
  * @see class WP_Term_Query
  * @since 2020.05.13
  */
-class Wnd_Term_Searcher extends Wnd_JsonGet {
+class Wnd_Term_Searcher extends Wnd_Query {
 
 	protected static function query($args = []): array{
 		$defaults = [

@@ -2,7 +2,7 @@
 namespace Wnd\Module\User;
 
 use Exception;
-use Wnd\JsonGet\Wnd_Menus;
+use Wnd\Query\Wnd_Menus;
 use Wnd\Module\Wnd_Module_Html;
 
 /**

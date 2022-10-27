@@ -226,7 +226,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 // 关联字段数据
                 if (field.linkage) {
                     let current_value = e.target.value; // 此处不能使用 this.get_value() 因为双向绑定值会晚一步
-                    let jsonget = field.linkage.jsonget || false;
+                    let query = field.linkage.query || false;
                     let data = field.linkage.data ? (field.linkage.data[current_value] || false) : false;
                     let params = field.linkage.params || {};
                     params[field.name] = current_value;
@@ -234,8 +234,8 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     // 向关联字段指定属性赋值
                     if (data) {
                         linkage(this, data);
-                    } else if (jsonget) {
-                        wnd_get_json(jsonget, params, (res) => {
+                    } else if (query) {
+                        wnd_get_json(query, params, (res) => {
                             linkage(this, res.data);
                         });
                     }
@@ -261,7 +261,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
             // 动态联动下拉选择
             selected(e, key, index) {
                 let select = this.form.fields[index];
-                let jsonget = select.data.jsonget;
+                let query = select.data.query;
                 let params = Object.assign(select.data.params, {
                     'parent': e.target.value,
                 });
@@ -270,7 +270,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 this.change(select);
 
                 // Ajax 联动下拉
-                wnd_get_json(jsonget, params, (res) => {
+                wnd_get_json(query, params, (res) => {
                     let nextSelect = res.data;
                     // 写入或删除 select
                     if (Object.keys(nextSelect).length) {
@@ -478,7 +478,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 };
                 axios({
                     'method': 'get',
-                    url: wnd_jsonget_api + '/wnd_term_searcher',
+                    url: wnd_query_api + '/wnd_term_searcher',
                     params: params,
                 }).then(response => {
                     field.data.suggestions = response.data.data;

@@ -1,11 +1,11 @@
 <?php
-namespace Wnd\JsonGet;
+namespace Wnd\Query;
 
 /**
  * 插件管理菜单
  * @since 0.9.11
  */
-class Wnd_Menus extends Wnd_JsonGet {
+class Wnd_Menus extends Wnd_Query {
 
 	protected static function query(array $args = []): array{
 		$defaults = [

@@ -5,7 +5,7 @@ let wnd_module_api = wnd.rest_url + wnd.module_api;
 let wnd_action_api = wnd.rest_url + wnd.action_api;
 let wnd_posts_api = wnd.rest_url + wnd.posts_api;
 let wnd_users_api = wnd.rest_url + wnd.users_api;
-let wnd_jsonget_api = wnd.rest_url + wnd.jsonget_api;
+let wnd_query_api = wnd.rest_url + wnd.query_api;
 let wnd_endpoint_api = wnd.rest_url + wnd.endpoint_api;
 
 // 当前 JS 文件所在 URL 路径
@@ -350,7 +350,7 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
             if (!wnd_menus_data) {
                 axios({
                     'method': 'get',
-                    url: wnd_jsonget_api + '/wnd_menus',
+                    url: wnd_query_api + '/wnd_menus',
                     params: {
                         "in_side": in_side
                     },
@@ -374,14 +374,14 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
 /**
  *@since 2020.07.21
  *ajax 获取 json数据
- *@param jsonget	对应 JsonGet 类名称
+ *@param query	对应 Query 类名称
  *@param param 		对应传参
  *@param callback 	回调函数
  */
-function wnd_get_json(jsonget, param, callback = '') {
+function wnd_get_json(query, param, callback = '') {
     return axios({
         'method': 'get',
-        url: wnd_jsonget_api + '/' + jsonget,
+        url: wnd_query_api + '/' + query,
         params: param,
     }).then(function(response) {
         if (callback) {

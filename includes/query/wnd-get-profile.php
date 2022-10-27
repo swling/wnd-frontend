@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\JsonGet;
+namespace Wnd\Query;
 
 use Exception;
 
@@ -9,7 +9,7 @@ use Exception;
  *
  * @param int $user_id User ID
  */
-class Wnd_Get_Profile extends Wnd_JsonGet {
+class Wnd_Get_Profile extends Wnd_Query {
 
 	protected static function query($args = []): array{
 		$default_avatar = wnd_get_config('default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';

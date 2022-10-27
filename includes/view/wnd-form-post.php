@@ -200,8 +200,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'class'    => $taxonomy,
 				// 多级分类联动属性配置
 				'data'     => [
-					'jsonget' => 'wnd_sub_term_options',
-					'params'  => [
+					'query'  => 'wnd_sub_term_options',
+					'params' => [
 						'taxonomy' => $taxonomy,
 					],
 				],
