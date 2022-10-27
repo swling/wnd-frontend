@@ -185,7 +185,7 @@ abstract class Wnd_Payment {
 	private static function build_ajax_check_script(int $payment_id) {
 		return '
 <script>
-var payment_checker = setInterval(function(post_id){ wnd_get_json("wnd_get_post", {"post_id": post_id}, "wnd_check_payment") }, 3000, ' . $payment_id . ');
+var payment_checker = setInterval(function(post_id){ wnd_query("wnd_get_post", {"post_id": post_id}, "wnd_check_payment") }, 3000, ' . $payment_id . ');
 function wnd_check_payment(response) {
 	if("' . Wnd_Transaction::$completed_status . '" == response.data.post_status){
 		var title = document.querySelector("#payment-title");

@@ -378,7 +378,7 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
  *@param param 		对应传参
  *@param callback 	回调函数
  */
-function wnd_get_json(query, param, callback = '') {
+function wnd_query(query, param, callback = '') {
     return axios({
         'method': 'get',
         url: wnd_query_api + '/' + query,

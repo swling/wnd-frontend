@@ -235,7 +235,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     if (data) {
                         linkage(this, data);
                     } else if (query) {
-                        wnd_get_json(query, params, (res) => {
+                        wnd_query(query, params, (res) => {
                             linkage(this, res.data);
                         });
                     }
@@ -270,7 +270,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 this.change(select);
 
                 // Ajax 联动下拉
-                wnd_get_json(query, params, (res) => {
+                wnd_query(query, params, (res) => {
                     let nextSelect = res.data;
                     // 写入或删除 select
                     if (Object.keys(nextSelect).length) {
