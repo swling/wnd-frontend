@@ -30,7 +30,7 @@ namespace Wnd\Action;
 namespace Wnd\Module;
 
 // 数据类：读取json数据
-namespace Wnd\JsonGet;
+namespace Wnd\Query;
 
 // 拓展类
 namespace Wnd\Component;
@@ -56,14 +56,14 @@ namespace Wndt\Action;
 namespace Wnd_Plugin\PluginName\Action;
 ```
 
-## 用户自定义拓展JsonGet响应
+## 用户自定义拓展Query响应
 命名空间为：
 ```php
 // 主题
-namespace Wndt\JsonGet;
+namespace Wndt\Query;
 
 // 插件
-namespace Wnd_Plugin\PluginName\JsonGet;
+namespace Wnd_Plugin\PluginName\Query;
 ```
 以此类推……
 

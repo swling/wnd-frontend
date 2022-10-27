@@ -133,7 +133,7 @@ apply_filters('wnd_user_panel_post_types', $post_types);
 
 /**
  * @since 0.9.57.9
- * @see jsonget\wnd_get_profile
+ * @see query\wnd_get_profile
  * 
  * 过滤用户 profile 数据
  */

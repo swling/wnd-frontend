@@ -14,7 +14,7 @@ QQ：245484493  网站：https://wndwp.com
 API 转发响应结构及对应功能如下：
 - Module：构建用户交互界面（本意命名为 interface 但该词为 PHP 保留关键词，容易引发各类冲突）
 - Action：接收 Module 模块提交的数据请求，并执行对应操作
-- Jsonget：Json 数据读取接口
+- Query：Json 数据读取接口
 - Endpoint：用于对接外部交互，如支付异步回调、第三方登录
 - View/Wnd_Filter：筛选文章
 - View/Wnd_User：筛选用户

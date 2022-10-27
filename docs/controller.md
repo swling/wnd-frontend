@@ -5,7 +5,7 @@
 - 自定义interface api：	wp-json/wnd/interface	Allow: GET
 - 自定义posts api：		wp-json/wnd/posts	 	Allow: GET
 - 自定义users api：		wp-json/wnd/users	 	Allow: GET
-- 自定义jsonget api：	wp-json/wnd/jsonget	 	Allow: GET
+- 自定义query api：	wp-json/wnd/query	 	Allow: GET
 
 ## Wnd_Controller 定义 
 @see /includes/controller/wnd-controller.php
@@ -28,7 +28,7 @@ UI请求需要包含如下参数
 UI类将返回字符串（通常为HTML字符串）交付前端
 
 
-### jsonGet api
+### query api
 json获取请求需要包含如下参数
 - $_GET['data']：该值为需要获取的数据处理类名称（不含命名空间）
 - 传参请直接通过 $_GET
