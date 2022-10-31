@@ -2,7 +2,8 @@
 namespace Wnd\Utility;
 
 use Exception;
-use Memcached;
+use Wnd\Utility\Wnd_Defender_Memcached;
+use Wnd\Utility\Wnd_Defender_Redis;
 
 /**
  * 安全防护
@@ -18,7 +19,7 @@ use Memcached;
  *
  * @since 0.8.61
  */
-class Wnd_Defender {
+abstract class Wnd_Defender {
 
 	/**
 	 * 拦截计数时间段（秒）
@@ -112,8 +113,20 @@ class Wnd_Defender {
 	 * 单例模式
 	 */
 	public static function get_instance(int $period, int $max_connections, int $blocked_time) {
-		if (!(self::$instance instanceof self)) {
-			static::$instance = new self($period, $max_connections, $blocked_time);
+		if (!(static::$instance instanceof static )) {
+			if (class_exists('Memcached')) {
+				if (!class_exists('\Wnd\Utility\Wnd_Defender_Memcached')) {
+					require dirname(__FILE__) . '/wnd-defender-memcached.php';
+				}
+
+				static::$instance = new Wnd_Defender_Memcached($period, $max_connections, $blocked_time);
+			} elseif (class_exists('Redis')) {
+				if (!class_exists('\Wnd\Utility\Wnd_Defender_Redis')) {
+					require dirname(__FILE__) . '/wnd-defender-redis.php';
+				}
+
+				static::$instance = new Wnd_Defender_Redis($period, $max_connections, $blocked_time);
+			}
 		}
 
 		return static::$instance;
@@ -125,7 +138,7 @@ class Wnd_Defender {
 	 * @param int $max_connections 	拦截时间范围内，单ip允许的最大连接数
 	 * @param int $blocked_time    	符合拦截条件的ip锁定时间
 	 */
-	protected function __construct(int $period, int $max_connections, int $blocked_time) {
+	final protected function __construct(int $period, int $max_connections, int $blocked_time) {
 		try {
 			$this->cache_init();
 		} catch (Exception $e) {
@@ -325,6 +338,8 @@ class Wnd_Defender {
 		$block_logs = array_reverse($block_logs);
 		$block_logs = array_slice($block_logs, 0, $this->block_logs_limit);
 
+		// Redis set 不支持直接存放 php 数组，故序列化为 json
+		$block_logs = json_encode($block_logs);
 		$this->cache_set(static::$block_logs_key, $block_logs, 3600 * 24);
 	}
 
@@ -334,53 +349,37 @@ class Wnd_Defender {
 	 */
 	public function get_block_logs(): array{
 		$logs = $this->cache_get(static::$block_logs_key);
-
-		return is_array($logs) ? $logs : [];
+		return json_decode($logs, true) ?: [];
 	}
 
 	/**
 	 * 封装实例化内存缓存初始化，以便重写以适配其他内存缓存如 redis
 	 */
-	protected function cache_init() {
-		if (!class_exists('Memcached')) {
-			throw new Exception('Memcached is not installed yet');
-		}
-
-		$this->cache = new Memcached();
-		$this->cache->addServer('localhost', 11211);
-	}
+	abstract protected function cache_init();
 
 	/**
 	 * 封装内存缓存读取方法，以便重写以适配其他内存缓存如 redis
 	 * 获取
 	 */
-	protected function cache_get($key) {
-		return $this->cache->get($key);
-	}
+	abstract protected function cache_get($key);
 
 	/**
 	 * 封装内存缓存设置方法，以便重写以适配其他内存缓存如 redis
 	 * 设置
 	 */
-	protected function cache_set($key, $value, $expiration) {
-		return $this->cache->set($key, $value, $expiration);
-	}
+	abstract protected function cache_set($key, $value, $expiration);
 
 	/**
 	 * 封装内存缓存增加方法，以便重写以适配其他内存缓存如 redis
 	 * 新增
 	 */
-	protected function cache_inc($key, $offset) {
-		return $this->cache->increment($key, $offset);
-	}
+	abstract protected function cache_inc($key, $offset);
 
 	/**
 	 * 封装内存缓存设置方法，以便重写以适配其他内存缓存如 redis
 	 * 删除
 	 */
-	protected function cache_delete($key) {
-		return $this->cache->delete($key);
-	}
+	abstract protected function cache_delete($key);
 
 	/**
 	 * 重置拦截统计：可用于防止错误拦截已登录用户
