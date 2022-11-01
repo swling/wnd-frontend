@@ -16,7 +16,7 @@ class Wnd_Blocked_List extends Wnd_Module_Html {
 
 		$html = '<ul>';
 		foreach ($logs as $ip => $request) {
-			$html .= '<li><h3 class="is-size-5">' . $ip . '</h3><p>' . json_encode($request) . '</p></li>';
+			$html .= '<li><h3 class="is-size-5">' . $ip . '</h3><p>' . esc_html(json_encode($request)) . '</p></li>';
 		}unset($ip, $request);
 		$html .= '</ul>';
 
