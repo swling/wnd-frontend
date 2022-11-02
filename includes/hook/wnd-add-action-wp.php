@@ -260,7 +260,9 @@ class Wnd_Add_Action_WP {
 
 		if (is_user_logged_in() or Wnd_Transaction_Anonymous::get_anon_cookies()) {
 			$defender = Wnd_Defender::get_instance(0, 0, 0);
-			$defender->reset();
+			if ($defender) {
+				$defender->reset();
+			}
 		}
 	}
 }
