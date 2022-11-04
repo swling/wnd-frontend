@@ -10,7 +10,7 @@ use Wnd\Component\CloudClient\CloudClient;
  */
 abstract class Wnd_Cloud_Client {
 
-	private static $service_providers = ['Aliyun', 'Qcloud', 'BaiduBce'];
+	private static $service_providers = ['Aliyun', 'Qcloud', 'BaiduBce', 'AliyunROA'];
 
 	/**
 	 * 自动选择子类处理当前业务
@@ -41,6 +41,7 @@ abstract class Wnd_Cloud_Client {
 
 		switch ($service_provider) {
 			case 'Aliyun':
+			case 'AliyunROA':
 				$secret_id  = wnd_get_config('aliyun_secretid');
 				$secret_key = wnd_get_config('aliyun_secretkey');
 				break;

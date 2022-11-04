@@ -56,7 +56,9 @@ $result  = $request->request(
 print_r($result);
 ```
 
-### 阿里云抠图
+阿里云接口区分 RPC 及 ROA 调用，需要根据具体产品调用不同方法
+
+### 阿里云 RPC
 ```php
 /**
  *阿里云 AI 抠图
@@ -77,4 +79,31 @@ $result  = $request->request(
 		],
 	]
 );
+```
+
+### 阿里云 ROA
+```php
+/**
+ * 内容安全
+ * @link https://help.aliyun.com/document_detail/53413.html
+ * 
+ */
+use Wnd\Getway\Wnd_Cloud_Client;
+$request = Wnd_Cloud_Client::get_instance('AliyunROA');
+$url     = 'https://green.cn-shanghai.aliyuncs.com/green/image/scan';
+$headers = [
+	'x-acs-signature-version' => '1.0',
+	'x-acs-version'           => '2018-05-09',
+];
+$params =
+	[
+	'scenes' => ['porn', 'terrorism'],
+	'tasks'  => [
+		[
+			'url' => 'https://uploads.fenbu.net/chuangtu/2019/10/file5db7b01649128.png?x-oss-process=image/resize,m_fill,w_100,h_100',
+		],
+	],
+];
+$result = $request->request($url, ['headers' => $headers, 'body' => json_encode($params, JSON_UNESCAPED_UNICODE)]);
+print_r($result);
 ```
