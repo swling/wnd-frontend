@@ -25,11 +25,11 @@ abstract class WPDB_Rows {
 	// 共同属性 id 字段名
 	protected $object_id_column;
 
-	// 数据表基本属性
+	// 数据表基本属性（根据上述属性生成，故一般无需在子类额外配置）
 	protected $wpdb;
 	protected $table;
 
-	// 单行操作实例
+	// 单行操作实例（根据上述属性生成，故一般无需在子类额外配置）
 	protected $wpdb_row;
 
 	/**
@@ -102,6 +102,7 @@ abstract class WPDB_Rows {
 		if (!$action) {
 			return 0;
 		}
+		$this->delete_object_rows_cache($object_id);
 
 		// 依次删除每一行数据对应的缓存
 		$old_data = $this->get_rows($object_id);
