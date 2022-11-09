@@ -206,7 +206,14 @@ abstract class Wnd_Filter_Abstract {
 	 * @param array $args 需要筛选的文章状态数组
 	 */
 	public function add_post_status_filter(array $args = [], bool $any = true) {
-		$this->add_query_vars(['post_status' => $args]);
+		/**
+		 * 若当前请求未指定post_staus，设置第一个post_status为默认值
+		 * post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
+		 */
+		if (!$this->get_post_status_query()) {
+			$default_status = $any ? 'any' : ($args ? reset($args) : 'publish');
+			$this->add_query_vars(['post_status' => $default_status]);
+		}
 
 		/**
 		 * 仅筛选项大于2时，构建HTML

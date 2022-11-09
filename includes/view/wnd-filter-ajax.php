@@ -54,8 +54,10 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 		// 筛选添加改变时，移除 Page 参数
 		$remove_args[] = 'paged';
 
+		// post_status 及 post_type 额外处理
 		if ($any) {
-			$options = array_merge([__('全部', 'wnd') => ''], $options);
+			$all_value = in_array($key, ['status', 'type']) ? 'any' : '';
+			$options   = array_merge([__('全部', 'wnd') => $all_value], $options);
 		}
 
 		$tabs = [

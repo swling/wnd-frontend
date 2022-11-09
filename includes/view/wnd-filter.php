@@ -96,14 +96,14 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 		// 【全部】选项
 		if ($any) {
 			$all_label = (in_array($key, ['orderby', 'order'])) ? __('默认', 'wnd') : __('全部', 'wnd');
-			$tabs .= '<li class="' . $this->get_tab_item_class($key, '') . '">';
+			$tabs .= '<li class="' . $this->get_tab_item_class($key, '', $options, $any) . '">';
 			$tabs .= '<a href="' . remove_query_arg($key, $base_url) . '">' . $all_label . '</a>';
 			$tabs .= '</li>';
 		}
 
 		// 输出 Tab 选项
 		foreach ($options as $name => $value) {
-			$tabs .= '<li class="' . $this->get_tab_item_class($key, $value) . '">';
+			$tabs .= '<li class="' . $this->get_tab_item_class($key, $value, $options, $any) . '">';
 			$tabs .= '<a href="' . add_query_arg($key, $value, $base_url) . '">' . $name . '</a>';
 			$tabs .= '</li>';
 		}
@@ -122,8 +122,16 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 	/**
 	 * 筛选项详情菜单 Class
 	 */
-	private function get_tab_item_class($key, $value): string{
+	private function get_tab_item_class($key, $value, $options, $any): string{
 		$query_vars = $_GET[$key] ?? '';
+
+		// post_type 及 post_status 默认首项
+		if (!$any and !$query_vars and in_array($key, ['status', 'type'])) {
+			if ($value == reset($options)) {
+				return 'item is-active';
+			}
+		}
+
 		return ($query_vars == $value) ? 'item is-active' : 'item';
 	}
 
