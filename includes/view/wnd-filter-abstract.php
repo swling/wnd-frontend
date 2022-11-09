@@ -190,7 +190,7 @@ abstract class Wnd_Filter_Abstract {
 
 		// 构建 Tabs 数据
 		$key     = 'type';
-		$label   = __('类型：', 'wnd');
+		$label   = __('类型', 'wnd');
 		$options = [];
 		foreach ($args as $post_type) {
 			$post_type                  = get_post_type_object($post_type);
