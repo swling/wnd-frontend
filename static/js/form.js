@@ -747,7 +747,7 @@ ${build_submit_template(form_json)}
                 }
 
                 function is_horizontal_field() {
-                    return form_json.attrs['is-horizontal'] && !['html', 'hidden', 'editor'].includes(field.type) && field.name != '_post_post_title';
+                    return form_json.attrs['is-horizontal'] && !['html', 'hidden'].includes(field.type);
                 }
             }
             return t;
