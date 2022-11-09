@@ -60,7 +60,12 @@ function _wnd_render_filter(container, filter_json, add_class) {
 					}
 				}
 
-				if (this.filter.query_vars.meta_query && key.includes('_meta_')) {
+				if (key.includes('_meta_')) {
+					// user meta query 可能不存在该值
+					if (!this.filter.query_vars.meta_query || !this.filter.query_vars.meta_query.length) {
+						return value ? '' : 'is-active';
+					}
+
 					for (const [index, meta_query] of Object.entries(this.filter.query_vars.meta_query)) {
 						if (meta_query.value == value) {
 							return 'is-active';
