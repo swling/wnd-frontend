@@ -205,7 +205,7 @@ abstract class Wnd_Filter_Abstract {
 	 * 状态筛选
 	 * @param array $args 需要筛选的文章状态数组
 	 */
-	public function add_post_status_filter(array $args = [], bool $any = true) {
+	public function add_post_status_filter(array $args = [], bool $any = false) {
 		/**
 		 * 若当前请求未指定post_staus，设置第一个post_status为默认值
 		 * post_type/post_status 在所有筛选中均需要指定默认值，若不指定，WordPress也会默认设定
