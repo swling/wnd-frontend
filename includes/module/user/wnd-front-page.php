@@ -2,8 +2,8 @@
 namespace Wnd\Module\User;
 
 use Exception;
-use Wnd\Query\Wnd_Menus;
 use Wnd\Module\Wnd_Module_Html;
+use Wnd\Query\Wnd_Menus;
 
 /**
  * 封装前端中心页面
@@ -42,7 +42,12 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 		get_header();
 		echo '<script>var wnd_menus_data = ' . json_encode(Wnd_Menus::get()) . ';</script>';
 		echo '<main id="user-page-container" class="column">';
-		echo $module ?: static::build_user_page();
+
+		try {
+			echo $module ?: static::build_user_page();
+		} catch (Exception $e) {
+			echo wnd_notification($e->getMessage(), 'is-danger');
+		}
 		echo '</main>';
 		get_footer();
 
