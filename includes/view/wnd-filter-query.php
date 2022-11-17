@@ -29,13 +29,28 @@ class Wnd_Filter_Query {
 	 */
 	private $query_vars = [];
 
+	// 初始化查询参数
+	public static $defaults = [
+		'orderby'       => 'date',
+		'order'         => 'DESC',
+		'meta_query'    => [],
+		'tax_query'     => [],
+		'date_query'    => [],
+		'meta_key'      => '',
+		'meta_value'    => '',
+		'post_type'     => '',
+		'post_status'   => '',
+		'no_found_rows' => true,
+		'paged'         => 1,
+	];
+
 	/**
 	 * Constructor.
 	 * 解析 GET 请求为查询参数，并与默认参数合并组成初始查询参数
 	 */
 	public function __construct(array $default_query_vars = []) {
 		static::$request_query_vars = static::parse_query_vars();
-		$this->query_vars           = array_merge($default_query_vars, static::$request_query_vars);
+		$this->query_vars           = array_merge(static::$defaults, $default_query_vars, static::$request_query_vars);
 	}
 
 	/**
@@ -68,6 +83,12 @@ class Wnd_Filter_Query {
 			'date_query' => [],
 		];
 
+		/**
+		 * @since 0.9.59
+		 * 新增 $allowed_keys = array_keys(static::$defaults);
+		 * 若不设置 $allowed_keys 则 $_GET 参数将全部写入 WP_Query 可能引起错误的数据库查询
+		 */
+		$allowed_keys = array_keys(static::$defaults);
 		foreach ($_GET as $key => $value) {
 			/**
 			 * post type tabs生成的GET参数为：type={$post_type}
@@ -152,7 +173,11 @@ class Wnd_Filter_Query {
 				continue;
 			}
 
-			// 其他：按键名自动匹配
+			// 其他：若在允许的查询键名范围内，按键名自动匹配
+			if (!in_array($key, $allowed_keys)) {
+				continue;
+			}
+
 			if (is_array($value)) {
 				$query_vars = wp_parse_args($value, $query_vars);
 			} else {
@@ -242,4 +267,78 @@ class Wnd_Filter_Query {
 	public function get_add_query_vars(): array{
 		return $this->add_query_vars;
 	}
+
+	/**
+	 * 多重筛选：解析 $_GET 获取 WP_Query 参数，写入查询
+	 * - 排除无 $_GET 参数的查询
+	 * - 排除后台
+	 * - 排除 Ajax 请求
+	 * - 排除内页
+	 * - 排除 WP 内置功能型 Post Type 查询
+	 * 在内页或 Ajax 请求中，应且只能执行独立的 WP Query
+	 *
+	 * @since 0.8.64
+	 * @since 0.8.72
+	 */
+	public static function action_on_pre_get_posts($query) {
+		if (empty($_GET) or is_admin() or wnd_is_rest_request() or $query->is_singular()) {
+			return $query;
+		}
+
+		$post_type = $query->query_vars['post_type'] ?? false;
+		if ($post_type) {
+			if (is_array($post_type)) {
+				foreach ($post_type as $single_post_type) {
+					if (!in_array($single_post_type, static::get_supported_post_types())) {
+						return $query;
+					}
+				}unset($single_post_type);
+			}
+
+			if (!in_array($post_type, static::get_supported_post_types())) {
+				return $query;
+			}
+		}
+
+		/**
+		 * 解析 $_GET 获取 WP_Query 参数
+		 * - 排除分页：pre_get_posts 仅适用于非独立 wp query，此种情况下分页已在 URL 中确定
+		 */
+		$query_vars = static::parse_query_vars();
+		if (!$query_vars) {
+			return $query;
+		}
+		unset($query_vars['paged']);
+
+		/**
+		 * 依次将 $_GET 解析参数写入
+		 */
+		foreach ($query_vars as $key => $value) {
+			/**
+			 * tax_query 需要额外处理：
+			 * 当在 taxonomy 归档页添加其他分类多重查询时，会导致归档类型判断错乱。
+			 * 为保证归档页类型不变，需要提前获取默认 tax_query 查询参数，并保证默认查询为查询数组首元素（WP 以第一条 taxonomy 为标准）。
+			 * @see WP_Query->get_queried_object();
+			 */
+			if ('tax_query' == $key) {
+				$default_tax_query = $query->tax_query->queries ?? [];
+				$query->set($key, array_merge($default_tax_query, $value));
+			} else {
+				$query->set($key, $value);
+			}
+		}unset($key, $value);
+
+		return $query;
+	}
+
+	/**
+	 * 定义多重筛选支持的 Post Types
+	 * - 排除 WP 内置功能型 Post Type 查询
+	 * @since 0.9.0
+	 */
+	private static function get_supported_post_types(): array{
+		$custom_post_types = get_post_types(['_builtin' => false]);
+		return array_merge($custom_post_types, ['post' => 'post', 'page' => 'page', 'attachment' => 'attachment']);
+	}
+
 }

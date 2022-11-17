@@ -29,7 +29,7 @@ class Wnd_Add_Action_WP {
 		add_action('before_delete_post', [__CLASS__, 'action_on_before_delete_post'], 10, 1);
 		add_action('post_updated', [__CLASS__, 'action_on_post_updated'], 10, 3);
 		add_action('add_attachment', [__CLASS__, 'action_on_add_attachment'], 10, 1);
-		add_action('pre_get_posts', ['Wnd\View\Wnd_Filter', 'action_on_pre_get_posts'], 10, 1);
+		add_action('pre_get_posts', ['Wnd\View\Wnd_Filter_Query', 'action_on_pre_get_posts'], 10, 1);
 
 		/**
 		 * 匿名用户评论验证码，基于 WordPress 原生评论表单及 wp_handle_comment_submission 评论提交
@@ -265,4 +265,5 @@ class Wnd_Add_Action_WP {
 			}
 		}
 	}
+
 }

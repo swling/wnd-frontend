@@ -53,26 +53,12 @@ abstract class Wnd_Filter_Abstract {
 		$this->independent = $independent;
 		$this->wp_base_url = get_pagenum_link(1, false);
 
-		// 初始化查询参数
-		$defaults = [
-			'orderby'       => 'date',
-			'order'         => 'DESC',
-			'meta_query'    => [],
-			'tax_query'     => [],
-			'date_query'    => [],
-			'meta_key'      => '',
-			'meta_value'    => '',
-			'post_type'     => '',
-			'post_status'   => '',
-			'no_found_rows' => true,
-			'paged'         => 1,
-		];
-
 		/**
 		 * - 独立型 WP Query：分页需要自定义处理
 		 * - 依赖型 WP Query：获取全局 $wp_query，并读取全局查询参数赋值到当前筛选环境，以供构建与之匹配的 tabs
 		 * @since 0.8.64
 		 */
+		$defaults = [];
 		if ($this->independent) {
 			$this->wp_base_url = remove_query_arg(Wnd_Pagination::$page_query_var, $this->wp_base_url);
 		} else {
@@ -82,7 +68,7 @@ abstract class Wnd_Filter_Abstract {
 			}
 
 			$this->wp_query = $wp_query;
-			$defaults       = array_merge($defaults, $wp_query->query_vars);
+			$defaults       = $wp_query->query_vars;
 		}
 
 		/**
@@ -528,7 +514,7 @@ abstract class Wnd_Filter_Abstract {
 	/**
 	 * 执行查询
 	 * - 执行独立 WP Query
-	 * - 当设置为非独立查询（依赖当前页面查询）时，查询参数将通过 'pre_get_posts' 实现修改，无需执行 WP Query @see static::action_on_pre_get_posts();
+	 * - 当设置为非独立查询（依赖当前页面查询）时，查询参数将通过 'pre_get_posts' 实现修改，无需执行 WP Query @see Wnd\View\Wnd_Filter_Query::action_on_pre_get_posts();
 	 *  当下场景中 $this->wp_query 为 global $wp_query; @see __construct();
 	 * @since 2019.08.01
 	 * @since 0.8.64
@@ -652,4 +638,5 @@ abstract class Wnd_Filter_Abstract {
 	 * @since 0.9.25
 	 */
 	abstract protected function get_pagination();
+
 }
