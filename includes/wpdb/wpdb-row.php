@@ -2,6 +2,7 @@
 namespace Wnd\WPDB;
 
 use Exception;
+use Wnd\WPDB\WPDB_Row_Cache;
 
 /**
  * # 单行数据表操作基类
@@ -32,8 +33,18 @@ class WPDB_Row {
 	protected $primary_id_column;
 	protected $required_columns = [];
 
+	/**
+	 * 需要缓存的字段
+	 * - 注意被缓存的字段应该是唯一值，否则可能导致缓存混乱
+	 * - 示例:['id', ['field_1', 'field_2']]
+	 * @see $this->maybe_set_data_into_cache()
+	 */
+	protected $object_cache_fields = [];
+
 	protected $wpdb;
 	protected $table;
+
+	protected $cache;
 
 	/**
 	 * Constructer
@@ -56,6 +67,8 @@ class WPDB_Row {
 			$table_name  = $this->table_name;
 			$this->table = $wpdb->$table_name;
 		}
+
+		$this->cache = new WPDB_Row_Cache($this->object_cache_fields, $this->table_name);
 	}
 
 	/**
@@ -75,7 +88,7 @@ class WPDB_Row {
 		$data   = $this->parse_insert_data($data);
 		$insert = $this->wpdb->insert($this->table, $data);
 		if ($insert) {
-			$this->refresh_db_table_last_changed();
+			$this->cache->refresh_db_table_last_changed();
 
 			do_action("after_{$this->object_name}_inserted", $this->wpdb->insert_id, $data);
 		}
@@ -112,7 +125,6 @@ class WPDB_Row {
 
 		// sql 语句
 		$conditions = '';
-		ksort($where);
 		foreach ($where as $field => $value) {
 			if (is_null($value)) {
 				$conditions .= "`$field` IS NULL";
@@ -120,11 +132,10 @@ class WPDB_Row {
 				$conditions .= "`$field` = " . "'{$value}'";
 			}
 		}
-		$sql       = "SELECT * FROM `$this->table` WHERE $conditions LIMIT 1";
-		$query_key = md5($sql);
+		$sql = "SELECT * FROM `$this->table` WHERE $conditions LIMIT 1";
 
 		// object cache
-		$data = $this->get_data_from_cache($query_key);
+		$data = $this->cache->get_data_from_cache($where);
 		if (false !== $data) {
 			return $data;
 		}
@@ -132,7 +143,7 @@ class WPDB_Row {
 		// get data form database success
 		$data = $this->wpdb->get_row($sql);
 		if ($data) {
-			$this->set_data_into_cache($query_key, $data);
+			$this->cache->set_data_into_cache($where, $data);
 
 			do_action("get_{$this->object_name}_data_success", $data, $where);
 		}
@@ -157,7 +168,7 @@ class WPDB_Row {
 		$where  = [$this->primary_id_column => $ID];
 		$update = $this->wpdb->update($this->table, $data, $where);
 		if ($update) {
-			$this->clean_row_cache($object_before);
+			$this->cache->clean_row_cache($object_before);
 
 			$object_after = $this->get($ID);
 			do_action("after_{$this->object_name}_updated", $ID, $object_after, $object_before);
@@ -181,7 +192,7 @@ class WPDB_Row {
 		$where  = [$this->primary_id_column => $ID];
 		$delete = $this->wpdb->delete($this->table, $where);
 		if ($delete) {
-			$this->clean_row_cache($data);
+			$this->cache->clean_row_cache($data);
 
 			do_action("after_{$this->object_name}_deleted", $data, $ID);
 		}
@@ -236,89 +247,6 @@ class WPDB_Row {
 	 */
 	protected function check_update_data(array $data): array{
 		return $data;
-	}
-
-	/**
-	 * get data from cache
-	 */
-	private function get_data_from_cache(string $query_key) {
-		$cache_group = $this->generate_cache_group();
-		return wp_cache_get($query_key, $cache_group);
-	}
-
-	/**
-	 * set data into cache
-	 */
-	private function set_data_into_cache(string $query_key, $data) {
-		// 缓存查询结果
-		$cache_group = $this->generate_cache_group();
-		$cache_data  = wp_cache_set($query_key, $data, $cache_group);
-		if (!$cache_data) {
-			return;
-		}
-
-		// 将查询缓存键作为值缓存，用于在数据删除时，删除当前行已经生成的所有查询缓存
-		$primary_id       = $this->primary_id_column;
-		$cache_keys_group = $this->generate_cache_keys_group();
-		$cache_keys       = wp_cache_get($data->$primary_id, $cache_keys_group) ?: [];
-		$cache_keys[]     = $query_key;
-		$cache_keys       = array_unique($cache_keys);
-
-		wp_cache_set($data->$primary_id, $cache_keys, $cache_keys_group);
-	}
-
-	/**
-	 * clean table cache When a row is deleted or updated
-	 */
-	public function clean_row_cache(object $old_data) {
-		$primary_id       = $this->primary_id_column;
-		$cache_keys_group = $this->generate_cache_keys_group();
-		$cache_keys       = wp_cache_get($old_data->$primary_id, $cache_keys_group) ?: [];
-
-		// 删除已缓存的查询
-		$cache_group = $this->generate_cache_group();
-		foreach ($cache_keys as $query_key) {
-			wp_cache_delete($query_key, $cache_group);
-		}
-
-		// 删除对应主键已缓存的【查询键】
-		wp_cache_delete($old_data->$primary_id, $cache_keys_group);
-
-		// 更新表单更改时间
-		$this->refresh_db_table_last_changed();
-	}
-
-	/**
-	 * Generate field cache group name
-	 * @return string|false
-	 */
-	private function generate_cache_group(): string {
-		return $this->table_name;
-	}
-
-	/**
-	 * Generate field cache group name
-	 * @return string|false
-	 */
-	private function generate_cache_keys_group(): string {
-		return $this->table_name . '_cache_keys';
-	}
-
-	/**
-	 * Refresh last changed date for DB Table
-	 */
-	protected function refresh_db_table_last_changed(): bool {
-		return wp_cache_delete('last_changed', $this->table_name);
-	}
-
-	/**
-	 * Gets last changed date for the current DB table.
-	 *
-	 * @param string $group Where the cache contents are grouped.
-	 * @return string UNIX timestamp with microseconds representing when the group was last changed.
-	 */
-	public function get_current_db_table_last_changed(): string {
-		return wp_cache_get_last_changed($this->table_name);
 	}
 
 }
