@@ -60,10 +60,23 @@ class WPDB_Row_Cache {
 	}
 
 	/**
+	 * clean table cache When a row is deleted or updated
+	 */
+	public function clean_row_cache(object $old_data) {
+		$cache_keys = $this->get_all_cache_keys($old_data);
+		foreach ($cache_keys as $cache_key) {
+			wp_cache_delete($cache_key, $this->cache_group);
+		}
+
+		// 更新表单更改时间
+		$this->refresh_db_table_last_changed();
+	}
+
+	/**
 	 * 根据查询条件与缓存字段的匹配情况，生成缓存键名
 	 * 查询条件未匹配缓存字段，则返回 false
 	 */
-	public function maybe_cache(array $where): bool{
+	private function maybe_cache(array $where): bool{
 		/**
 		 * 整理查询排序：
 		 * - 若查询多个字段，提取字段数组
@@ -98,19 +111,6 @@ class WPDB_Row_Cache {
 		}
 
 		return $cache_keys;
-	}
-
-	/**
-	 * clean table cache When a row is deleted or updated
-	 */
-	public function clean_row_cache(object $old_data) {
-		$cache_keys = $this->get_all_cache_keys($old_data);
-		foreach ($cache_keys as $cache_key) {
-			wp_cache_delete($cache_key, $this->cache_group);
-		}
-
-		// 更新表单更改时间
-		$this->refresh_db_table_last_changed();
 	}
 
 	/**
