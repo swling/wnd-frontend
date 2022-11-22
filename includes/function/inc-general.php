@@ -291,8 +291,9 @@ function wnd_error_payment_log(string $msg) {
  */
 set_exception_handler('wnd_exception_handler');
 function wnd_exception_handler($e) {
-	$error = $e->getMessage() . '@' . $e->getFile() . ' line ' . $e->getLine() . '. Request from ' . wnd_get_user_ip() . '. @' . $_SERVER['REQUEST_URI'] ?? '';
-	$html  = '<article class="column message is-danger">';
+	$error = $e->getMessage() . ' @ ' . $e->getFile() . ' line ' . $e->getLine() . '.';
+	$error .= 'Request from ' . wnd_get_user_ip() . '. @' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	$html = '<article class="column message is-danger">';
 	$html .= '<div class="message-header">';
 	$html .= '<p>异常</p>';
 	$html .= '</div>';

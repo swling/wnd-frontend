@@ -2,23 +2,23 @@
 namespace Wnd\Module\Admin;
 
 use Exception;
-use Wnd\Module\Wnd_Module_Filter;
-use Wnd\View\Wnd_Filter_Ajax;
+use Wnd\Module\Wnd_Module_Html;
 
 /**
  * @since 0.9.26 财务统计中心
  */
-class Wnd_Finance_Stats extends Wnd_Module_Filter {
+class Wnd_Finance_Stats extends Wnd_Module_Html {
 
-	protected function structure(): array{
-		$this->args['posts_per_page'] = $this->args['posts_per_page'] ?? get_option('posts_per_page');
-
-		$filter = new Wnd_Filter_Ajax();
-		$filter->add_search_form();
-		$filter->add_post_type_filter(['stats-ex', 'stats-re']);
-		$filter->set_posts_per_page($this->args['posts_per_page']);
-		$filter->query();
-		return $filter->get_filter();
+	protected static function build(): string{
+		/**
+		 * 采用 vue 文件编写代码，并通过 php 读取文件文本作为字符串使用
+		 * 主要目的是便于编辑，避免在 php 文件中混入大量 HTML 源码，难以维护
+		 * 虽然的确基于 vue 构建，然而在这里，它并不是标准的 vue 文件，而是 HTML 文件
+		 * 之所以使用 .vue 后缀是因为 .HTML 文件在文件夹中将以浏览器图标展示，非常丑陋，毫无科技感
+		 * 仅此而已
+		 */
+		$html = file_get_contents(__DIR__ . '/vue/finance-stats.vue');
+		return $html;
 	}
 
 	protected static function check($args) {
@@ -26,4 +26,5 @@ class Wnd_Finance_Stats extends Wnd_Module_Filter {
 			throw new Exception(__('权限不足', 'wnd'));
 		}
 	}
+
 }
