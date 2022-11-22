@@ -76,7 +76,8 @@
 					},
 					yAxis: {
 						gridType: 'dash',
-						dashLength: 2
+						dashLength: 2,
+						data: [{}] // 添加此空白参数后， Y 轴刻度精度问题得以解决，原因不明
 					},
 					extra: {
 						line: {
