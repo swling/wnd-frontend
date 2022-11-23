@@ -337,3 +337,25 @@ if (wnd_get_config('aliyun_dm_account')) {
 		);
 	}
 }
+
+/**
+ * @since 0.9.59.2
+ * 获取本地日期时间
+ * - WP 默认设置为 UTC 时间，并通过后台配置时区来实现偏移
+ * - 本函数用于取代较为复杂的 wp_date() 函数
+ */
+function wnd_date(string $format): string{
+	$locale_timestrap = time() + (int) (get_option('gmt_offset') * HOUR_IN_SECONDS);
+	return date($format, $locale_timestrap);
+}
+
+/**
+ * @since 0.9.59.2
+ * 获取本地日期时间
+ * - WP 默认设置为 UTC 时间，并通过后台配置时区来实现偏移
+ * - 本函数用于自动给 php 函数 getdate() 添加时区信息
+ */
+function wnd_getdate(): array{
+	$locale_timestrap = time() + (int) (get_option('gmt_offset') * HOUR_IN_SECONDS);
+	return getdate($locale_timestrap);
+}
