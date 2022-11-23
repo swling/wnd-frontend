@@ -137,6 +137,7 @@ class WPDB_Row {
 		// object cache
 		$data = $this->cache->get_data_from_cache($where);
 		if (false !== $data) {
+			do_action("get_{$this->object_name}_data_success", $data, $where);
 			return $data;
 		}
 
@@ -152,25 +153,30 @@ class WPDB_Row {
 	}
 
 	/**
-	 * update data by primary id
+	 * update data by primary id, or $where if is give in
 	 *
 	 * @return int The primary id on success. The value 0 on failure.
 	 */
-	public function update(array $data): int{
+	public function update(array $data, array $where = []): int{
 		$data = apply_filters("update_{$this->object_name}_data", $data);
 		do_action("before_update_{$this->object_name}", $data);
 
-		$ID            = $data[$this->primary_id_column] ?? 0;
-		$object_before = $this->get($ID);
-		$data          = array_merge((array) $object_before, $data);
-		$data          = $this->parse_update_data($data);
+		$ID    = $data[$this->primary_id_column] ?? 0;
+		$where = $where ?: [$this->primary_id_column => $ID];
 
-		$where  = [$this->primary_id_column => $ID];
+		$object_before = $this->query($where);
+		if (!$object_before) {
+			return 0;
+		}
+
+		$data = array_merge((array) $object_before, $data);
+		$data = $this->parse_update_data($data, $where);
+
 		$update = $this->wpdb->update($this->table, $data, $where);
 		if ($update) {
 			$this->cache->clean_row_cache($object_before);
 
-			$object_after = $this->get($ID);
+			$object_after = $this->query($where);
 			do_action("after_{$this->object_name}_updated", $ID, $object_after, $object_before);
 		}
 
@@ -182,14 +188,26 @@ class WPDB_Row {
 	 *
 	 * @return int The primary id on success. The value 0 on failure.
 	 */
-	public function delete(int $ID): int{
-		$data = $this->get($ID);
+	public function delete(int $ID): int {
+		return $this->delete_by($this->primary_id_column, $ID);
+	}
+
+	/**
+	 * delete data by specified filed and value
+	 *
+	 * @return int The primary id on success. The value 0 on failure.
+	 */
+	public function delete_by(string $field, $value): int{
+		$where = [$field => $value];
+		$data  = $this->query($where);
 		if (!$data) {
 			return 0;
 		}
+
+		$primary_id_column = $this->primary_id_column;
+		$ID                = $data->$primary_id_column;
 		do_action("before_delete_{$this->object_name}", $data, $ID);
 
-		$where  = [$this->primary_id_column => $ID];
 		$delete = $this->wpdb->delete($this->table, $where);
 		if ($delete) {
 			$this->cache->clean_row_cache($data);
@@ -229,16 +247,7 @@ class WPDB_Row {
 	 * check update data
 	 * @access private
 	 */
-	private function parse_update_data(array $data): array{
-		$ID = $data[$this->primary_id_column] ?? 0;
-		if (!$ID) {
-			throw new Exception('Primary ID column are empty on update: ' . $this->primary_id_column);
-		}
-
-		if (!$this->get($ID)) {
-			throw new Exception('Primary ID is invalid');
-		}
-
+	private function parse_update_data(array $data, array $where): array{
 		return $this->check_update_data($data);
 	}
 
