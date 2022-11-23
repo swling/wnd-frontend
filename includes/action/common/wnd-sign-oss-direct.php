@@ -89,7 +89,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		$this->cache_key = $this->generate_cache_key();
 		$cache           = $this->get_cache();
 		if (false === $cache) {
-			$this->file_path_name = date('Y/m/d/H/', current_time('timestamp')) . uniqid() . '_' . $this->user_id . '.' . $ext;
+			$this->file_path_name = wnd_date('Y/m/d/H/') . uniqid() . '_' . $this->user_id . '.' . $ext;
 		} else {
 			$this->file_path_name    = $cache['file_path_name'];
 			$this->is_duplicate_file = true;
@@ -121,4 +121,5 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 	private function generate_cache_key() {
 		return md5($this->endpoint . $this->md5);
 	}
+
 }

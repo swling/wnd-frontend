@@ -71,7 +71,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 			'categories' => ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
 			'series'     => [],
 		];
-		$year = date('Y', current_time('U'));
+		$year = wnd_date('Y');
 
 		/**
 		 * 今年
@@ -126,11 +126,11 @@ class Wnd_Site_Stats extends Wnd_Query {
 	}
 
 	private static function query_daily_finance_data($type, $range): array{
-		$date_query = ['year' => date('Y', current_time('U'))];
+		$date_query = ['year' => wnd_date('Y')];
 		if ('week' == $range) {
-			$date_query['week'] = date('W', current_time('U'));
+			$date_query['week'] = wnd_date('W');
 		} else {
-			$date_query['month'] = date('n', current_time('U'));
+			$date_query['month'] = wnd_date('n');
 		}
 		$args = [
 			'date_query'             => $date_query,

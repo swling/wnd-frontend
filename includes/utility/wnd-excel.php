@@ -1,5 +1,4 @@
 <?php
-
 namespace Wnd\Utility;
 
 class Wnd_Excel {
@@ -10,7 +9,7 @@ class Wnd_Excel {
 	 * @param $filename
 	 */
 	public static function array_to_csv(array $data, string $filename = '') {
-		$filename = $filename ?: date('Y-m-d:h-i-s', current_time('timestamp'));
+		$filename = $filename ?: wnd_date('Y-m-d:h-i-s');
 		if (!$data) {
 			return;
 		}
@@ -39,4 +38,5 @@ class Wnd_Excel {
 
 		fclose($fp);
 	}
+
 }

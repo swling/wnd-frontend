@@ -145,7 +145,7 @@ function wnd_random_code($length = 6, $positive = false) {
  * @return 	string 	随机字符
  */
 function wnd_generate_order_NO() {
-	$today = date('Ymd');
+	$today = wnd_date('Ymd');
 	$rand  = substr(hash('sha256', uniqid(rand(), TRUE)), 0, 10);
 	return $today . $rand;
 }
