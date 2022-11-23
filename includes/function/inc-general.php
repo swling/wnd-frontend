@@ -340,13 +340,25 @@ if (wnd_get_config('aliyun_dm_account')) {
 
 /**
  * @since 0.9.59.2
+ * 获取本地时间戳
+ * - WP 默认设置为 UTC 时间，并通过后台配置时区来实现偏移
+ */
+function wnd_local_time(): int {
+	return wnd_time_to_local(time());
+}
+
+function wnd_time_to_local(int $timestamp): int {
+	return $timestamp + (int) get_option('gmt_offset') * HOUR_IN_SECONDS;
+}
+
+/**
+ * @since 0.9.59.2
  * 获取本地日期时间
  * - WP 默认设置为 UTC 时间，并通过后台配置时区来实现偏移
  * - 本函数用于取代较为复杂的 wp_date() 函数
  */
-function wnd_date(string $format): string{
-	$locale_timestrap = time() + (int) (get_option('gmt_offset') * HOUR_IN_SECONDS);
-	return date($format, $locale_timestrap);
+function wnd_date(string $format): string {
+	return date($format, wnd_local_time());
 }
 
 /**
@@ -356,6 +368,5 @@ function wnd_date(string $format): string{
  * - 本函数用于自动给 php 函数 getdate() 添加时区信息
  */
 function wnd_getdate(): array{
-	$locale_timestrap = time() + (int) (get_option('gmt_offset') * HOUR_IN_SECONDS);
-	return getdate($locale_timestrap);
+	return getdate(wnd_local_time());
 }
