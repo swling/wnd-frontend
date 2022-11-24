@@ -81,7 +81,7 @@ abstract class Wnd_Filter_Abstract {
 		 * 定义当前post type的主分类：$category_taxonomy
 		 */
 		$post_type = $this->get_post_type_query();
-		if ($post_type) {
+		if ($post_type and !is_array($post_type)) {
 			$this->category_taxonomy = Wnd_Tag_Under_Category::get_cat_taxonomy($post_type);
 			$this->tag_taxonomy      = Wnd_Tag_Under_Category::get_tag_taxonomy($post_type);
 		}
