@@ -254,7 +254,7 @@ class Wnd_Add_Action_WP {
 	public static function action_before_shutdown() {
 		global $wpdb;
 		if ($wpdb->last_error) {
-			$error = $wpdb->last_error . '@ Request from ' . wnd_get_user_ip() . '. @' . $_SERVER['REQUEST_URI'] ?? '';
+			$error = $wpdb->last_error . '@ Request from ' . wnd_get_user_ip() . '. @' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 			wnd_error_log($error, 'wnd_wpdb_error');
 		}
 
