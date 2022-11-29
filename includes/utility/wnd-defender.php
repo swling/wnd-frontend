@@ -157,6 +157,11 @@ abstract class Wnd_Defender {
 		$this->base_key    = $this->build_key($this->ip_base);
 		$this->insight_key = 'wnd_insight_' . $this->ip;
 
+		// 放行当前服务器 ip
+		if ($_SERVER['SERVER_ADDR'] == $this->ip) {
+			return false;
+		}
+
 		// IP 缓存数据
 		$this->count      = $this->cache_get($this->key);
 		$this->base_count = $this->cache_get($this->base_key);
