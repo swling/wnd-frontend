@@ -3,8 +3,6 @@ namespace Wnd\Controller;
 
 use Exception;
 use Wnd\Utility\Wnd_Singleton_Trait;
-use Wnd\View\Wnd_Filter_Ajax;
-use Wnd\View\Wnd_Filter_User;
 use WP_REST_Request;
 use WP_REST_Server;
 
@@ -59,18 +57,6 @@ class Wnd_Controller {
 			'callback'            => __CLASS__ . '::handle_endpoint',
 			'permission_callback' => '__return_true',
 			'route_rule'          => '(?P<endpoint>(.*))',
-		],
-		'posts'    => [
-			'methods'             => 'GET',
-			'callback'            => __CLASS__ . '::filter_posts',
-			'permission_callback' => '__return_true',
-			'route_rule'          => false,
-		],
-		'users'    => [
-			'methods'             => 'GET',
-			'callback'            => __CLASS__ . '::filter_users',
-			'permission_callback' => '__return_true',
-			'route_rule'          => false,
 		],
 		'comment'  =>
 		[
@@ -301,52 +287,6 @@ class Wnd_Controller {
 	}
 
 	/**
-	 * 多重筛选 API
-	 * 常规情况下，controller 应将用户请求转为操作命令并调用 model 处理，但 Wnd\View\Wnd_Filter 是一个完全独立的功能类
-	 * Wnd\View\Wnd_Filter 既包含了生成筛选链接的视图功能，也包含了根据请求参数执行对应 WP_Query 并返回查询结果的功能，且两者紧密相关不宜分割
-	 * 可以理解为，Wnd\View\Wnd_Filter 是通过生成一个筛选视图，发送用户请求，最终根据用户请求，生成新的视图的特殊类：视图<->控制<->视图
-	 * @since 2019.07.31
-	 * @since 2019.10.07 OOP改造
-	 *
-	 * @param $request
-	 */
-	public static function filter_posts(WP_REST_Request $request): array{
-		try {
-			$filter = new Wnd_Filter_Ajax(true);
-			$filter->query();
-		} catch (Exception $e) {
-			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
-		}
-
-		return [
-			'status' => 1,
-			'data'   => $filter->get_results(),
-			'time'   => timer_stop(),
-		];
-	}
-
-	/**
-	 * User 筛选 API
-	 * @since 2020.05.05
-	 *
-	 * @param $request
-	 */
-	public static function filter_users(WP_REST_Request $request): array{
-		try {
-			$filter = new Wnd_Filter_User(true);
-			$filter->query();
-		} catch (Exception $e) {
-			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
-		}
-
-		return [
-			'status' => 1,
-			'data'   => $filter->get_results(),
-			'time'   => timer_stop(),
-		];
-	}
-
-	/**
 	 * 写入评论
 	 */
 	public static function add_comment(WP_REST_Request $request): array{
@@ -381,4 +321,5 @@ class Wnd_Controller {
 
 		return ['status' => 1, 'msg' => '提交成功', 'data' => $html, 'time' => timer_stop()];
 	}
+
 }
