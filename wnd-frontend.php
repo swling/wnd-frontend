@@ -86,7 +86,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 		'users_api'          => 'query/wnd_users',
 		'endpoint_api'       => 'endpoint',
 		'comment'            => [
-			'api'      => 'comment',
+			'api'      => 'action/common/wnd_add_comment',
 			'order'    => get_option('comment_order'),
 			'form_pos' => wnd_get_config('comment_form_pos') ?: 'top',
 		],

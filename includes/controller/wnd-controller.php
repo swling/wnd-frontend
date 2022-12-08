@@ -58,13 +58,6 @@ class Wnd_Controller {
 			'permission_callback' => '__return_true',
 			'route_rule'          => '(?P<endpoint>(.*))',
 		],
-		'comment'  =>
-		[
-			'methods'             => ['POST', 'GET'],
-			'callback'            => __CLASS__ . '::add_comment',
-			'permission_callback' => '__return_true',
-			'route_rule'          => false,
-		],
 	];
 
 	private function __construct() {
@@ -284,42 +277,6 @@ class Wnd_Controller {
 		} catch (Exception $e) {
 			echo json_encode(['status' => $e->getCode(), 'msg' => $e->getMessage()]);
 		}
-	}
-
-	/**
-	 * 写入评论
-	 */
-	public static function add_comment(WP_REST_Request $request): array{
-		// 此处需要捕获异常：因为插件可能通过 hook 抛出异常，如验证码
-		try {
-			$comment = wp_handle_comment_submission(wp_unslash($request->get_params()));
-		} catch (Exception $e) {
-			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
-		}
-
-		if (is_wp_error($comment)) {
-			return ['status' => 0, 'msg' => $comment->get_error_message()];
-		}
-
-		$user = wp_get_current_user();
-		do_action('set_comment_cookies', $comment, $user);
-		$GLOBALS['comment'] = $comment;
-
-		// 此结构可能随着WordPress wp_list_comments()输出结构变化而失效
-		$html = '<li class="' . implode(' ', get_comment_class()) . '">';
-		$html .= '<article class="comment-body">';
-		$html .= '<footer class="comment-meta">';
-		$html .= '<div class="comment-author vcard">';
-		$html .= get_avatar($comment, '56');
-		$html .= '<b class="fn">' . get_comment_author_link() . '</b>';
-		$html .= '</div>';
-		$html .= '<div class="comment-metadata">' . get_comment_date('', $comment) . ' ' . get_comment_time() . '</div>';
-		$html .= '</footer>';
-		$html .= '<div class="comment-content">' . get_comment_text() . '</div>';
-		$html .= '</article>';
-		$html .= '</li>';
-
-		return ['status' => 1, 'msg' => '提交成功', 'data' => $html, 'time' => timer_stop()];
 	}
 
 }
