@@ -299,7 +299,7 @@ class Wnd_OSS_Handler {
 		$oss->setFilePathName($file_path_name);
 		$headers    = $oss->generateHeaders($method, $content_type, $md5);
 		$url        = $oss->getFileUri();
-		$signed_url = $oss->getFileUri($this->sign_expires);
+		$signed_url = $is_private ? $oss->getFileUri($this->sign_expires) : '';
 
 		return [
 			'signed_url' => $signed_url,

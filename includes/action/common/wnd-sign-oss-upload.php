@@ -37,8 +37,9 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 		do_action('wnd_upload_file', $attachment_id, $this->post_parent, $this->meta_key);
 
 		$data = [
-			'url'        => $oss_request['url'],
-			'signed_url' => $oss_request['signed_url'], // 若为私有存储返回包含签名的链接，否则与 url 一致
+			'put_url'    => $oss_request['url'],
+			'signed_url' => $oss_request['signed_url'], // 若为私有存储返回包含签名的链接，否则为空
+			'url'        => wp_get_attachment_url($attachment_id), // WP 附件链接（若无 CDN 重写等特殊 filter，则通常与 put_url 一致）
 			'thumbnail'  => '',
 			'headers'    => $oss_request['headers'],
 			'id'         => $attachment_id,
@@ -118,4 +119,5 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 		$file    = $uploads['path'] . '/' . $this->file_name;
 		return $file;
 	}
+
 }

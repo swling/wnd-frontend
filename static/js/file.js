@@ -18,7 +18,7 @@ async function _wnd_upload_to_oss(file, oss_sp, endpoint, direct = true, sign_da
 
     // 获取签名，上传文件，并将签名的结果合并写入实现约定的值
     let upload_res = axios({
-        url: oss_sign.url,
+        url: oss_sign.put_url,
         method: method,
         data: fileData,
         headers: oss_sign.headers,
