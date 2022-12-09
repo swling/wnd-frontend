@@ -58,8 +58,9 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		}
 
 		$data = [
-			'url'          => $url,
+			'put_url'      => $url,
 			'signed_url'   => $signed_url,
+			'url'          => $url,
 			'internal'     => $internal_url,
 			'headers'      => $headers,
 			'is_duplicate' => $this->is_duplicate_file,
