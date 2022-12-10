@@ -18,7 +18,10 @@ class Wnd_Mail_Box extends Wnd_Module_Filter {
 		$filter->add_post_status_filter([__('全部', 'wnd') => 'any', __('未读', 'wnd') => 'wnd-unread', __('已读', 'wnd') => 'wnd-read']);
 		$filter->add_query_vars(['author' => get_current_user_id()]);
 		$filter->set_posts_per_page($this->args['posts_per_page']);
+		$filter->add_query_vars(['update_post_term_cache' => false, 'update_post_meta_cache' => false]);
 		$filter->query();
+
 		return $filter->get_filter();
 	}
+
 }

@@ -19,7 +19,9 @@ class Wnd_Admin_Posts_Panel extends Wnd_Module_Filter {
 		$filter->add_post_type_filter(wnd_get_user_panel_post_types(), true);
 		$filter->add_post_status_filter([__('待审', 'wnd') => 'pending']);
 		$filter->set_posts_per_page($this->args['posts_per_page']);
+		$filter->add_query_vars(['update_post_term_cache' => false, 'update_post_meta_cache' => false]);
 		$filter->query();
+
 		return $filter->get_filter();
 	}
 
@@ -28,4 +30,5 @@ class Wnd_Admin_Posts_Panel extends Wnd_Module_Filter {
 			throw new Exception(__('权限不足', 'wnd'));
 		}
 	}
+
 }

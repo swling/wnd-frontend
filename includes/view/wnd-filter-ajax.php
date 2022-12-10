@@ -136,7 +136,8 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 			return __('未执行WP_Query', 'wnd');
 		}
 
-		foreach ($this->wp_query->get_posts() as $post) {
+		$posts = $this->wp_query->get_posts();
+		foreach ($posts as $post) {
 			/**
 			 * - 请求指定移除内容
 			 * - 财务类 Post Content 为金额，需格式化
@@ -151,6 +152,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 			}
 
 			// 用户信息
+			update_post_author_caches($posts);
 			$author       = get_userdata($post->post_author);
 			$author_name  = $author ? ($author->display_name ?? $author->user_login) : 'anonymous';
 			$author_link  = $author ? get_author_posts_url($post->post_author) : '';
@@ -224,6 +226,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 
 			'add_query_vars'    => $this->get_add_query_vars(),
 			'query_vars'        => $this->wp_query->query_vars,
+			'querys'            => get_num_queries(),
 		];
 	}
 
@@ -237,4 +240,5 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 		unset($structure['after_html']);
 		return $structure;
 	}
+
 }

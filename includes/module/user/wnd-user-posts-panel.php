@@ -19,10 +19,11 @@ class Wnd_User_Posts_Panel extends Wnd_Module_Filter {
 		$filter->add_post_status_filter([__('发布', 'wnd') => 'publish', __('待审', 'wnd') => 'pending', __('关闭', 'wnd') => 'wnd-closed', __('草稿', 'wnd') => 'draft']);
 		$filter->add_category_filter();
 		// $filter->add_tags_filter(10);
-		$filter->add_query_vars(['author' => get_current_user_id()]);
+		$filter->add_query_vars(['author' => get_current_user_id(), 'update_post_term_cache' => false, 'update_post_meta_cache' => false]);
 		$filter->set_posts_per_page($this->args['posts_per_page']);
 		$filter->query();
 
 		return $filter->get_filter();
 	}
+
 }

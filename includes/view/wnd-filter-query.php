@@ -31,17 +31,20 @@ class Wnd_Filter_Query {
 
 	// 初始化查询参数
 	public static $defaults = [
-		'orderby'       => 'date',
-		'order'         => 'DESC',
-		'meta_query'    => [],
-		'tax_query'     => [],
-		'date_query'    => [],
-		'meta_key'      => '',
-		'meta_value'    => '',
-		'post_type'     => '',
-		'post_status'   => '',
-		'no_found_rows' => true,
-		'paged'         => 1,
+		'orderby'                => 'date',
+		'order'                  => 'DESC',
+		'meta_query'             => [],
+		'tax_query'              => [],
+		'date_query'             => [],
+		'meta_key'               => '',
+		'meta_value'             => '',
+		'post_type'              => '',
+		'post_status'            => '',
+		'author'                 => 0,
+		'no_found_rows'          => true,
+		'paged'                  => 1,
+		'update_post_term_cache' => true,
+		'update_post_meta_cache' => true,
 	];
 
 	/**
@@ -90,6 +93,13 @@ class Wnd_Filter_Query {
 		 */
 		$allowed_keys = array_keys(static::$defaults);
 		foreach ($_GET as $key => $value) {
+			// 将【字符串布尔值】转为实体布尔值
+			if ('false' == $value) {
+				$value = false;
+			} elseif ('true' == $value) {
+				$value = true;
+			}
+
 			/**
 			 * post type tabs生成的GET参数为：type={$post_type}
 			 * 直接用 post_type 作为参数会触发WordPress原生请求导致错误
@@ -183,16 +193,10 @@ class Wnd_Filter_Query {
 			} else {
 				$query_vars[$key] = $value;
 			}
-			continue;
 		}
 		unset($key, $value);
 
-		/**
-		 * 定义如何过滤HTTP请求
-		 * 此处定义：过滤空值，但保留0
-		 * @since 2019.10.26
-		 */
-		return wnd_array_filter($query_vars);
+		return $query_vars;
 	}
 
 	/**

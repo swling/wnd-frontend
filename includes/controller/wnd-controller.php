@@ -197,7 +197,7 @@ class Wnd_Controller {
 
 		try {
 			$module = new $class($request->get_query_params());
-			return ['status' => 1, 'data' => $module->get_structure(), 'time' => timer_stop()];
+			return ['status' => 1, 'data' => $module->get_structure(), 'time' => timer_stop(), 'queries' => get_num_queries()];
 		} catch (Exception $e) {
 			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
 		}
@@ -222,7 +222,7 @@ class Wnd_Controller {
 		}
 
 		try {
-			return ['status' => 1, 'msg' => '', 'data' => $class::get($request->get_query_params()), 'time' => timer_stop()];
+			return ['status' => 1, 'msg' => '', 'data' => $class::get($request->get_query_params()), 'time' => timer_stop(), 'queries' => get_num_queries()];
 		} catch (Exception $e) {
 			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
 		}
@@ -250,9 +250,10 @@ class Wnd_Controller {
 		}
 
 		try {
-			$action      = new $class($request);
-			$res         = $action->do_action();
-			$res['time'] = timer_stop();
+			$action         = new $class($request);
+			$res            = $action->do_action();
+			$res['time']    = timer_stop();
+			$res['queries'] = get_num_queries();
 			return $res;
 		} catch (Exception $e) {
 			return ['status' => $e->getCode(), 'msg' => $e->getMessage()];
