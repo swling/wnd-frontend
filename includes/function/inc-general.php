@@ -1,6 +1,15 @@
 <?php
 
 /**
+ * 保留语言参数的 home_url()
+ * @since 0.9.59.2
+ */
+function wnd_home_url(string $path = '', string $scheme = null) {
+	$home_url = get_home_url(null, $path, $scheme);
+	return Wnd\Utility\Wnd_language::filter_link($home_url);
+}
+
+/**
  * 获取 Router PHP 文件绝对网址，用于不支持伪静态或其他应急场景
  * - 本路由地址整合了 Wnd_Controller Json API 并定义了部分应急操作
  * @since 2019.01.21
