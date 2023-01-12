@@ -34,6 +34,8 @@ class Wnd_language {
 		add_filter('post_type_archive_link', [__CLASS__, 'filter_link'], 99);
 		add_filter('post_type_link', [__CLASS__, 'filter_link'], 99);
 		add_filter('post_link', [__CLASS__, 'filter_link'], 99);
+		add_filter('page_link', [__CLASS__, 'filter_link'], 99);
+		add_filter('attachment_link', [__CLASS__, 'filter_link'], 99);
 		add_filter('author_link', [__CLASS__, 'filter_link'], 99);
 		add_filter('get_edit_post_link', [__CLASS__, 'filter_link'], 99);
 
