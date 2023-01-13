@@ -128,7 +128,7 @@ class Wnd_language {
 	 * 从 GET 参数中解析语言参数
 	 * @since 0.9.30
 	 */
-	private static function parse_locale() {
+	public static function parse_locale() {
 		$locale = $_REQUEST[static::$request_key] ?? false;
 		if (!$locale or !in_array($locale, self::language_codes)) {
 			return false;
