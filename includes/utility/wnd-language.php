@@ -39,6 +39,15 @@ class Wnd_language {
 		add_filter('author_link', [__CLASS__, 'filter_link'], 99);
 		add_filter('get_edit_post_link', [__CLASS__, 'filter_link'], 99);
 
+		// 修复因语言参数导致的评论分页 bug
+		$lang = static::parse_locale();
+		if ($lang) {
+			add_filter('get_comments_pagenum_link', function ($link) use ($lang) {
+				$link = str_replace('?' . static::$request_key . '=' . $lang, '', $link);
+				return static::filter_link($link);
+			}, 99);
+		}
+
 		// Wnd Filter
 		add_filter('wnd_option_reg_redirect_url', [__CLASS__, 'filter_reg_redirect_link'], 99);
 		add_filter('wnd_option_pay_return_url', [__CLASS__, 'filter_return_link'], 99);

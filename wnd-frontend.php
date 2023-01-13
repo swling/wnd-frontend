@@ -6,7 +6,7 @@
  * Version: 0.9.59.1
  * Author: swling
  * Author URI: https://wndwp.com
- * Requires PHP: 7.3
+ * Requires PHP: 8.0
  *
  * ## 万能的WordPress前端开发基础框架
  * - 第一版开发日期：2018.04 ~ 2018.08
