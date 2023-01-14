@@ -561,12 +561,19 @@ wp_templating_constants();
 // Load the default text localization domain.
 load_default_textdomain();
 
-$locale      = get_locale();
-$locale_file = WP_LANG_DIR . "/$locale.php";
-if ( ( 0 === validate_file( $locale ) ) && is_readable( $locale_file ) ) {
-	require $locale_file;
+/**
+ * @since Wnd Frontend 0.9.59.3
+ * @author Swling: tangfou@gmail.com
+ * 插件配置：是否禁止加载语言包（不影响 get_locale() 结果）
+ */
+if(!wnd_get_config('disable_locale')){
+	$locale      = get_locale();
+	$locale_file = WP_LANG_DIR . "/$locale.php";
+	if ( ( 0 === validate_file( $locale ) ) && is_readable( $locale_file ) ) {
+		require $locale_file;
+	}
+	unset( $locale_file );
 }
-unset( $locale_file );
 
 /**
  * WordPress Locale object for loading locale domain date and various strings.

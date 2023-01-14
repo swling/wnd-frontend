@@ -42,8 +42,18 @@ class Wnd_Optimization {
 
 		/**
 		 * @since 2019.01.26 语言包
+		 * @see load_textdomain() apply_filters( 'override_load_textdomain', false, $domain, $mofile );
 		 */
-		add_filter('locale', [__CLASS__, 'filter_locale']);
+		if (!is_admin() and wnd_get_config('disable_locale')) {
+			add_filter('override_load_textdomain', function ($override, $domain): bool {
+				if ('default' == $domain) {
+					return true;
+				}
+
+				return $override;
+			}, 10, 2);
+		}
+
 	}
 
 	/**
@@ -159,14 +169,4 @@ class Wnd_Optimization {
 		exit(); // always call `exit()` after `wp_redirect`
 	}
 
-	/**
-	 * @since 2019.01.26 前端禁用语言包
-	 */
-	public static function filter_locale($locale) {
-		if (!is_admin() and wnd_get_config('disable_locale')) {
-			$locale = 'en_US';
-		}
-
-		return $locale;
-	}
 }
