@@ -6,8 +6,14 @@ use Wnd\Getway\Wnd_Login_Social;
 
 /**
  * Google登录
- * 注意，上述链接属于YouTube产品api，但可参考其互获取code及token的流程
+ *
+ * - 项目创建地址
+ * @link https://console.developers.google.com/apis/credentials
+ *
+ * - 授权流程文档
  * @link https://developers.google.com/youtube/v3/live/guides/auth/server-side-web-apps#OAuth2_Revoking_a_Token
+ * 注意，上述链接属于YouTube产品api，但可参考其互获取code及token的流程
+ *
  * @since 2020.04.11
  */
 class Google extends Wnd_Login_Social {
