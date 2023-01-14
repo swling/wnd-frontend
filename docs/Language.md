@@ -16,24 +16,26 @@
 /**
  * ## 方式一：加载插件内置的语言包（语言更新滞后）
  * 实际加载路径: 插件目录/languages/wnd-en_US.mo
+ * @see 注意 action 优先级应该小于 10，否则本插件 init 阶段执行的代码将不会执行翻译
  */
 add_action('init', function () {
     $domain = 'wnd';
     $locale = determine_locale();
     $mofile = $domain . '-' . $locale . '.mo';
     load_textdomain('wnd', WND_PATH . '/languages/' . $mofile);
-}, 10, 1);
+}, 9, 1);
 
 /**
  *  ## 方式一（推荐）：自行制作并加载语言包（本代码以主题为例）
  * 实际加载路径: 主题目录/languages/wnd-en_US.mo
+ * @see 注意 action 优先级应该小于 10，否则本插件 init 阶段执行的代码将不会执行翻译
  */
 add_action('init', function () {
     $domain = 'wnd';
     $locale = determine_locale();
     $mofile = $domain . '-' . $locale . '.mo';
     load_textdomain('wnd', TEMPLATEPATH . '/languages/' . $mofile);
-}, 10, 1);
+}, 9, 1);
 
 ```
 

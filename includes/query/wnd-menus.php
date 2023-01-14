@@ -32,15 +32,15 @@ class Wnd_Menus extends Wnd_Query {
 	protected static function build_user_menus(): array{
 
 		$menus = [
-			'label'  => __('用户中心', 'wnd'),
+			'label'  => __('控制板', 'wnd'),
 			'expand' => false, // 是否强制展开
 			'items'  => [
-				['title' => '概览', 'href' => static::get_front_page_url() . '#'],
-				['title' => '内容', 'href' => static::get_front_page_url() . '#user/wnd_user_posts_panel'],
-				['title' => '财务', 'href' => static::get_front_page_url() . '#user/wnd_user_finance_panel'],
-				['title' => '资料', 'href' => static::get_front_page_url() . '#user/wnd_profile_form'],
-				['title' => '账户', 'href' => static::get_front_page_url() . '#user/wnd_account_form'],
-				['title' => '消息', 'href' => static::get_front_page_url() . '#user/wnd_mail_box'],
+				['title' => __('概览', 'wnd'), 'href' => static::get_front_page_url() . '#'],
+				['title' => __('内容', 'wnd'), 'href' => static::get_front_page_url() . '#user/wnd_user_posts_panel'],
+				['title' => __('财务', 'wnd'), 'href' => static::get_front_page_url() . '#user/wnd_user_finance_panel'],
+				['title' => __('资料', 'wnd'), 'href' => static::get_front_page_url() . '#user/wnd_profile_form'],
+				['title' => __('账户', 'wnd'), 'href' => static::get_front_page_url() . '#user/wnd_account_form'],
+				['title' => __('消息', 'wnd'), 'href' => static::get_front_page_url() . '#user/wnd_mail_box'],
 			],
 		];
 
@@ -49,19 +49,19 @@ class Wnd_Menus extends Wnd_Query {
 
 	protected static function build_manager_menus(): array{
 		$menus = [
-			'label'  => __('管理中心', 'wnd'),
+			'label'  => __('控制板', 'wnd'),
 			'expand' => false, // 是否强制展开
 			'items'  => [
-				['title' => '概览', 'href' => static::get_front_page_url() . '#'],
-				['title' => '审核', 'href' => static::get_front_page_url() . '#admin/wnd_admin_posts_panel'],
-				['title' => '统计', 'href' => static::get_front_page_url() . '#admin/wnd_finance_stats'],
-				['title' => '订单', 'href' => static::get_front_page_url() . '#admin/wnd_finance_list'],
-				['title' => '用户', 'href' => static::get_front_page_url() . '#admin/wnd_users_list'],
-				['title' => '内容', 'href' => static::get_front_page_url() . '#user/wnd_user_posts_panel'],
-				['title' => '财务', 'href' => static::get_front_page_url() . '#user/wnd_user_finance_panel'],
-				['title' => '资料', 'href' => static::get_front_page_url() . '#user/wnd_profile_form'],
-				['title' => '账户', 'href' => static::get_front_page_url() . '#user/wnd_account_form'],
-				['title' => '消息', 'href' => static::get_front_page_url() . '#user/wnd_mail_box'],
+				['title' => __('概览', 'wnd'), 'href' => static::get_front_page_url() . '#'],
+				['title' => __('审核', 'wnd'), 'href' => static::get_front_page_url() . '#admin/wnd_admin_posts_panel'],
+				['title' => __('统计', 'wnd'), 'href' => static::get_front_page_url() . '#admin/wnd_finance_stats'],
+				['title' => __('订单', 'wnd'), 'href' => static::get_front_page_url() . '#admin/wnd_finance_list'],
+				['title' => __('用户', 'wnd'), 'href' => static::get_front_page_url() . '#admin/wnd_users_list'],
+				['title' => __('内容', 'wnd'), 'href' => static::get_front_page_url() . '#user/wnd_user_posts_panel'],
+				['title' => __('财务', 'wnd'), 'href' => static::get_front_page_url() . '#user/wnd_user_finance_panel'],
+				['title' => __('资料', 'wnd'), 'href' => static::get_front_page_url() . '#user/wnd_profile_form'],
+				['title' => __('账户', 'wnd'), 'href' => static::get_front_page_url() . '#user/wnd_account_form'],
+				['title' => __('消息', 'wnd'), 'href' => static::get_front_page_url() . '#user/wnd_mail_box'],
 			],
 		];
 
