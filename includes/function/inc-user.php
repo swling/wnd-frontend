@@ -259,8 +259,24 @@ function wnd_get_user_locale($user_id) {
 
 /**
  * 获取注册后跳转地址
+ * 若设置有语言，则保留语言参数
+ *
  * @since 2020.04.11
  */
-function wnd_get_reg_redirect_url() {
-	return wnd_get_config('reg_redirect_url') ?: home_url();
+function wnd_get_reg_redirect_url(string $lang = ''): string{
+	$url = wnd_get_config('reg_redirect_url') ?: home_url();
+
+	/**
+	 * 英语类 en_US, en_GB, en_CA 等统一设置 为 en
+	 * @see Wnd\Utility\Wnd_language::language_codes
+	 */
+	if ($lang and $lang !== get_locale()) {
+		if (str_starts_with($lang, 'en_')) {
+			$lang = 'en';
+		}
+
+		return add_query_arg(WND_LANG_KEY, $lang, $url);
+	}
+
+	return $url;
 }

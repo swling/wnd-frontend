@@ -88,13 +88,14 @@ abstract class Wnd_Login_Social {
 	/**
 	 * 根据第三方平台用户信息登录或创建账户
 	 */
-	public function login() {
+	public function login(string $lang = '') {
 		$this->get_token();
 		$this->get_user_info();
 
 		// 根据open id创建或登录账户
 		Wnd_Social_Login::login($this->domain, $this->open_id, $this->display_name, $this->avatar_url, $this->email);
-		wp_redirect(wnd_get_reg_redirect_url());
+		wp_redirect(wnd_get_reg_redirect_url($lang));
 		exit();
 	}
+
 }

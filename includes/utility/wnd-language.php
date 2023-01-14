@@ -20,7 +20,6 @@ class Wnd_language {
 	const language_codes = [
 		'zh_CN',
 		'en',
-		'en_US',
 	];
 
 	use Wnd_Singleton_Trait;

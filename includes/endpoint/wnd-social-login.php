@@ -26,9 +26,11 @@ class Wnd_Social_Login extends Wnd_Endpoint {
 		wp_set_current_user($user_id);
 
 		try {
-			$domain       = Wnd_Login_Social::parse_state($this->data['state'])['domain'];
+			$state        = Wnd_Login_Social::parse_state($this->data['state']);
+			$domain       = $state['domain'] ?? '';
+			$lang         = $state[WND_LANG_KEY] ?? '';
 			$Login_Social = Wnd_Login_Social::get_instance($domain);
-			$Login_Social->login();
+			$Login_Social->login($lang);
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
