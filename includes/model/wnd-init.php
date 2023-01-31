@@ -45,7 +45,7 @@ class Wnd_Init {
 		Wnd_Optimization::get_instance();
 
 		// 语言切换
-		if (($_REQUEST[WND_LANG_KEY] ?? false) and wnd_get_config('enable_multi_language')) {
+		if (wnd_get_config('enable_multi_language')) {
 			Wnd_language::get_instance();
 		}
 
@@ -291,4 +291,5 @@ class Wnd_Init {
 	public static function get_fin_types(): array{
 		return apply_filters('wnd_fin_types', ['order', 'recharge', 'stats-re', 'stats-ex']);
 	}
+
 }
