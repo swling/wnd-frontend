@@ -1,24 +1,30 @@
 <?php
 namespace Wnd\Utility;
 
-use Wnd\Getway\Wnd_Login_Social;
 use Wnd\Utility\Wnd_Singleton_Trait;
 
 /**
  * 多语言
  * - 目前仅支持中英双语
  *
+ * 语言优先级
+ * - $_GET 参数优先
+ * - cookie 其次
+ * - 浏览器语言最后
+ *
+ * 当 URL 包含语言参数时：
+ * - 将解析后的语言参数写入 cookie 保存
+ * - 若解析后的语言参数与当前 WP 默认语言 get_locale() 不一致，则会触发 filter，对各类固定链接添加语言参数
+ *
  * @since 2020.01.14
  */
 class Wnd_language {
 
-	public static $request_key = WND_LANG_KEY;
+	public static $request_key  = WND_LANG_KEY;
+	private static $site_locale = 'zh_CN';
 
 	/**
-	 * @link https://en.wikipedia.org/wiki/Language_localisation
-	 *
-	 * - 此处并非标准 language code 而是简化后用于 GET 参数的 key 值
-	 * - 首项元素为默认语言，对应链接将不会添加语言参数
+	 * 此处并非标准 language code 而是简化后用于 GET 参数的 key 值
 	 */
 	const language_codes = [
 		'zh_CN',
@@ -28,8 +34,13 @@ class Wnd_language {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
+		// 站点默认语言，必须设置在 'locale' 钩子之前
+		static::$site_locale = get_locale();
+
 		// 切换语言
-		add_filter('locale', [__CLASS__, 'filter_locale']);
+		if (!is_admin()) {
+			add_filter('locale', [__CLASS__, 'filter_locale']);
+		}
 
 		// 在用户完成注册时，将当前站点语言记录到用户字段
 		add_action('user_register', [__CLASS__, 'action_on_user_register'], 99, 1);
@@ -41,13 +52,13 @@ class Wnd_language {
 		}
 
 		// 语言参数用于用户手动修改语言，存入 cookie
-		$switch_locale = $lang;
-		$switch_locale = ('en' == $switch_locale) ? 'en_US' : $switch_locale;
-		$domain        = parse_url(home_url())['host'];
-		setcookie('lang', $switch_locale, time() + (3600 * 24 * 365), '/', $domain);
+		if (!isset($_COOKIE['lang']) or $lang != $_COOKIE['lang']) {
+			$domain = parse_url(home_url())['host'];
+			setcookie('lang', $lang, time() + (3600 * 24 * 365), '/', $domain);
+		}
 
 		// 默认语言不会添加语言参数
-		if ($lang == static::language_codes[0]) {
+		if ($lang == static::$site_locale) {
 			return;
 		}
 
@@ -68,7 +79,7 @@ class Wnd_language {
 		}, 99);
 
 		// Wnd Filter
-		add_filter('wnd_option_reg_redirect_url', [__CLASS__, 'filter_reg_redirect_link'], 99);
+		add_filter('wnd_option_reg_redirect_url', [__CLASS__, 'filter_link'], 99);
 		add_filter('wnd_option_pay_return_url', [__CLASS__, 'filter_return_link'], 99);
 	}
 
@@ -80,10 +91,9 @@ class Wnd_language {
 	 */
 	public static function filter_locale(string $locale): string{
 		// 参数优先
-		$switch_locale = static::parse_locale();
-		$switch_locale = ('en' == $switch_locale) ? 'en_US' : $switch_locale;
-		if ($switch_locale) {
-			return $switch_locale;
+		$lang = static::parse_locale();
+		if ($lang) {
+			return $lang;
 		}
 
 		// cookie 其次
@@ -91,48 +101,30 @@ class Wnd_language {
 			return $_COOKIE['lang'];
 		}
 
-		// 浏览器语言
+		/**
+		 * - 获取浏览器首选语言
+		 * - 将浏览器语言转为 WP locale
+		 */
 		$lang = static::get_browser_language($locale);
 		return ('zh-CN' == $lang or 'zh' == $lang) ? 'zh_CN' : 'en_US';
 	}
 
 	/**
 	 * 根据当前语言参数，自动为其他链接添加语言参数
-	 * 注：默认语言不会添加语言参数
+	 * 注：
+	 * - 默认语言不会添加语言参数
+	 * - 英语类 en_US, en_GB, en_CA 等统一设置 为 en
 	 */
 	public static function filter_link($link) {
 		$lang = static::parse_locale();
 
 		// 默认语言
-		if ($lang == static::language_codes[0]) {
+		if ($lang == static::$site_locale) {
 			return $link;
 		}
 
-		return $lang ? add_query_arg(static::$request_key, $lang, $link) : $link;
-	}
-
-	/**
-	 * 根据语言参数或社交登录回调参数，获取注册页面语言，并添加到跳转url
-	 *
-	 * @since 2020.04.11
-	 */
-	public static function filter_reg_redirect_link($link) {
-		// 本地语言参数优先
-		$lang = $_REQUEST[static::$request_key] ?? false;
-		if ($lang) {
-			return add_query_arg(static::$request_key, $lang, $link);
-		}
-
-		// 社交登录回调语言检测
-		$state = $_REQUEST['state'] ?? false;
-		if (!$state) {
-			return $link;
-		}
-
-		// 解析自定义state
-		$lang = Wnd_Login_Social::parse_state($state)[static::$request_key] ?? false;
-		if (get_locale() == $lang) {
-			return $link;
+		if (str_starts_with($lang, 'en_')) {
+			$lang = 'en';
 		}
 
 		return $lang ? add_query_arg(static::$request_key, $lang, $link) : $link;
@@ -140,6 +132,7 @@ class Wnd_language {
 
 	/**
 	 * 根据当前语言参数，自动为外部回调链接添加语言参数
+	 * 之所以存在本方法，因为在支付类场景，不允许回调带参，故此需要调用用户字段来设置
 	 * @since 2020.04.11
 	 */
 	public static function filter_return_link($link) {
@@ -161,6 +154,7 @@ class Wnd_language {
 
 	/**
 	 * 从 GET 参数中解析语言参数
+	 * 注：英语类统一转为 en_US
 	 * @since 0.9.30
 	 */
 	public static function parse_locale() {
@@ -169,7 +163,7 @@ class Wnd_language {
 			return false;
 		}
 
-		return $locale;
+		return ('en' == $locale) ? 'en_US' : $locale;
 	}
 
 	/**
