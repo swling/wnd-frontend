@@ -74,6 +74,9 @@ class Wnd_language {
 
 		// 修复因语言参数导致的评论分页 bug
 		add_filter('get_comments_pagenum_link', function ($link) use ($lang) {
+			if (str_starts_with($lang, 'en_')) {
+				$lang = 'en';
+			}
 			$link = str_replace('?' . static::$request_key . '=' . $lang, '', $link);
 			return static::filter_link($link);
 		}, 99);
