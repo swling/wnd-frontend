@@ -49,7 +49,7 @@ class Wnd_Reg extends Wnd_Action {
 		// 用户注册完成，自动登录
 		wp_set_current_user($user_id);
 		wp_set_auth_cookie($user_id, true);
-		$redirect_to  = $_REQUEST['redirect_to'] ?? (wnd_get_config('reg_redirect_url') ?: home_url());
+		$redirect_to  = $_REQUEST['redirect_to'] ?? wnd_get_reg_redirect_url();
 		$return_array = apply_filters(
 			'wnd_reg_return',
 			['status' => 3, 'msg' => __('注册成功', 'wnd'), 'data' => ['redirect_to' => $redirect_to, 'user_id' => $user_id]],

@@ -2,6 +2,7 @@
 use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Mail;
 use Wnd\Model\Wnd_User;
+use Wnd\Utility\Wnd_language;
 
 /**
  * 随机生成用户名
@@ -264,19 +265,17 @@ function wnd_get_user_locale($user_id) {
  * @since 2020.04.11
  */
 function wnd_get_reg_redirect_url(string $lang = ''): string{
-	$url = wnd_get_config('reg_redirect_url') ?: home_url();
+	$url  = wnd_get_config('reg_redirect_url') ?: home_url();
+	$lang = $lang ?: Wnd_language::parse_locale();
 
-	/**
-	 * 英语类 en_US, en_GB, en_CA 等统一设置 为 en
-	 * @see Wnd\Utility\Wnd_language::language_codes
-	 */
-	if ($lang and $lang !== get_locale()) {
-		if (str_starts_with($lang, 'en_')) {
-			$lang = 'en';
-		}
-
-		return add_query_arg(WND_LANG_KEY, $lang, $url);
+	// 英语类 en_US, en_GB, en_CA 等统一设置 为 en
+	if (!$lang) {
+		return $url;
 	}
 
-	return $url;
+	if (str_starts_with($lang, 'en_')) {
+		$lang = 'en';
+	}
+
+	return add_query_arg(WND_LANG_KEY, $lang, $url);
 }
