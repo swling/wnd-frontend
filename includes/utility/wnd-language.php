@@ -109,7 +109,7 @@ class Wnd_language {
 		 * - 将浏览器语言转为 WP locale
 		 */
 		$lang = static::get_browser_language($locale);
-		return ('zh-CN' == $lang or 'zh' == $lang) ? 'zh_CN' : 'en_US';
+		return in_array($lang, ['zh-CN', 'zh-cn', 'zh', 'zh_CN', 'zh_cn']) ? 'zh_CN' : 'en_US';
 	}
 
 	/**
