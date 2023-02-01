@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2023-02-01 16:34+0800\n"
-"PO-Revision-Date: 2023-02-01 16:35+0800\n"
+"PO-Revision-Date: 2023-02-01 17:58+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -18,29 +18,29 @@ msgstr ""
 #: includes/action/admin/wnd-admin-recharge.php:25
 #: includes/model/wnd-recharge.php:37
 msgid "充值：¥"
-msgstr ""
+msgstr "充值：¥"
 
 #: includes/action/admin/wnd-admin-recharge.php:31
 #: includes/module/user/wnd-user-finance-panel.php:49
 msgid "人工充值"
-msgstr ""
+msgstr "人工充值"
 
 #: includes/action/admin/wnd-admin-recharge.php:36
 #: includes/action/user/wnd-login.php:71
 #: includes/endpoint/wnd-issue-token-abstract.php:73
 #: includes/model/wnd-mail.php:23
 msgid "用户不存在"
-msgstr ""
+msgstr "用戶不存在"
 
 #: includes/action/admin/wnd-delete-user.php:20
 #: includes/action/common/wnd-delete-file.php:21
 msgid "删除成功"
-msgstr ""
+msgstr "刪除成功"
 
 #: includes/action/admin/wnd-delete-user.php:22
 #: includes/action/common/wnd-delete-file.php:24
 msgid "删除失败"
-msgstr ""
+msgstr "刪除失敗"
 
 #: includes/action/admin/wnd-delete-user.php:29
 #: includes/action/admin/wnd-update-account-status.php:49
@@ -55,60 +55,60 @@ msgstr ""
 #: includes/module/post/wnd-post-detail.php:44
 #: includes/module/post/wnd-post-status-form.php:17
 msgid "ID无效"
-msgstr ""
+msgstr "ID無效"
 
 #: includes/action/admin/wnd-delete-user.php:35
 msgid "无法删除超级管理员"
-msgstr ""
+msgstr "無法刪除超級管理員"
 
 #: includes/action/admin/wnd-refund.php:23
 msgid "退款成功"
-msgstr ""
+msgstr "退款成功"
 
 #: includes/action/admin/wnd-update-account-status.php:25
 #: includes/action/post/wnd-update-post-status.php:99
 msgid "操作失败"
-msgstr ""
+msgstr "操作失敗"
 
 #: includes/action/admin/wnd-update-account-status.php:31
 #: includes/hook/wnd-add-filter.php:64
 msgid "账户已被封禁"
-msgstr ""
+msgstr "賬戶已被封禁"
 
 #: includes/action/admin/wnd-update-account-status.php:37
 msgid "账户已解封"
-msgstr ""
+msgstr "賬戶已解封"
 
 #: includes/action/admin/wnd-update-account-status.php:54
 msgid "未发生改变"
-msgstr ""
+msgstr "未發生改變"
 
 #: includes/action/admin/wnd-update-option.php:19
 #: includes/action/post/wnd-update-post-status.php:83
 #: includes/action/user/wnd-update-account.php:23
 #: includes/action/user/wnd-update-profile.php:40
 msgid "更新成功"
-msgstr ""
+msgstr "更新成功"
 
 #: includes/action/admin/wnd-update-option.php:21
 msgid "更新失败"
-msgstr ""
+msgstr "更新失敗"
 
 #: includes/action/async/wnd-send-mail.php:25 wnd-frontend.php:103
 msgid "发送成功"
-msgstr ""
+msgstr "發送成功"
 
 #: includes/action/async/wnd-send-mail.php:37
 msgid "邮件地址无效"
-msgstr ""
+msgstr "郵件地址無效"
 
 #: includes/action/async/wnd-send-mail.php:41
 msgid "邮件主题无效"
-msgstr ""
+msgstr "郵件主題無效"
 
 #: includes/action/common/wnd-delete-file.php:35
 msgid "文件不存在"
-msgstr ""
+msgstr "文件不存在"
 
 #: includes/action/common/wnd-delete-file.php:39
 #: includes/action/common/wnd-set-sku.php:36
@@ -117,68 +117,68 @@ msgstr ""
 #: includes/endpoint/wnd-paid-download.php:32
 #: includes/module/post/wnd-post-form-attachment.php:48
 msgid "权限错误"
-msgstr ""
+msgstr "權限錯誤"
 
 #: includes/action/common/wnd-do-payment.php:47
 msgid "支付成功"
-msgstr ""
+msgstr "支付成功"
 
 #: includes/action/common/wnd-do-payment.php:78
 msgid "未定义支付方式"
-msgstr ""
+msgstr "未定義支付方式"
 
 #: includes/action/common/wnd-do-payment.php:133
 msgid "订单 Quantity 无效"
-msgstr ""
+msgstr "訂單 Quantity 無效"
 
 #: includes/action/common/wnd-do-payment.php:147
 msgid "产品库存不足"
-msgstr ""
+msgstr "產品庫存不足"
 
 #: includes/action/common/wnd-do-payment.php:159
 #: includes/model/wnd-recharge.php:33
 msgid "获取金额失败"
-msgstr ""
+msgstr "獲取金額失敗"
 
 #: includes/action/common/wnd-do-payment.php:174
 #: includes/template/wnd-pay-button.php:96
 msgid "当前余额：¥ "
-msgstr ""
+msgstr "當前餘額：¥ "
 
 #: includes/action/common/wnd-do-payment.php:174
 #: includes/module/common/wnd-payment-form.php:36
 #: includes/template/wnd-pay-button.php:97
 msgid "本次消费：¥ "
-msgstr ""
+msgstr "本次消費：¥ "
 
 #: includes/action/common/wnd-pay-for-downloads.php:50
 #: includes/endpoint/wnd-paid-download.php:49
 msgid "获取文件失败"
-msgstr ""
+msgstr "獲取文件失敗"
 
 #: includes/action/common/wnd-pay-for-downloads.php:63
 msgid "尚未支付"
-msgstr ""
+msgstr "尚未支付"
 
 #: includes/action/common/wnd-send-auth-code.php:24
 msgid "发送成功，请注意查收"
-msgstr ""
+msgstr "發送成功，請注意查收"
 
 #: includes/action/common/wnd-send-auth-code.php:37
 msgid "邮箱地址无效"
-msgstr ""
+msgstr "郵箱地址無效"
 
 #: includes/action/common/wnd-send-auth-code.php:40
 msgid "手机号码无效"
-msgstr ""
+msgstr "手機號碼無效"
 
 #: includes/action/common/wnd-set-sku.php:19
 msgid "设置成功"
-msgstr ""
+msgstr "設置成功"
 
 #: includes/action/common/wnd-set-sku.php:28
 msgid "当前商品已设置固定价格"
-msgstr ""
+msgstr "當前商品已設置固定價格"
 
 #: includes/action/common/wnd-set-sku.php:32
 #: includes/module/common/wnd-order-form.php:30
@@ -186,82 +186,82 @@ msgstr ""
 #: includes/module/post/wnd-post-form.php:26
 #: includes/module/user/wnd-front-page.php:84
 msgid "ID 无效"
-msgstr ""
+msgstr "ID 無效"
 
 #: includes/action/common/wnd-upload-file.php:33
 msgid "上传文件为空"
-msgstr ""
+msgstr "上傳文件為空"
 
 #: includes/action/common/wnd-upload-file.php:50 wnd-frontend.php:101
 msgid "上传成功"
-msgstr ""
+msgstr "上傳成功"
 
 #: includes/action/common/wnd-upload-file.php:143
 msgid "User ID及Post ID不可同时为空"
-msgstr ""
+msgstr "User ID及Post ID不可同時為空"
 
 #: includes/action/common/wnd-upload-file.php:151
 msgid "Meta_key与Post_parent不可同时为空"
-msgstr ""
+msgstr "Meta_key與Post_parent不可同時為空"
 
 #: includes/action/common/wnd-upload-file.php:155
 msgid "meta_key不合法"
-msgstr ""
+msgstr "meta_key不合法"
 
 #: includes/action/common/wnd-upload-file.php:159
 msgid "post_parent无效"
-msgstr ""
+msgstr "post_parent无效"
 
 #: includes/action/post/wnd-insert-post.php:37
 msgid "发布成功"
-msgstr ""
+msgstr "發送成功"
 
 #: includes/action/post/wnd-insert-post.php:94
 msgid "未指定文件"
-msgstr ""
+msgstr "未指定文件"
 
 #: includes/action/post/wnd-insert-post.php:103
 msgid "类型无效"
-msgstr ""
+msgstr "類型無效"
 
 #: includes/action/post/wnd-insert-post.php:133
 #: includes/action/post/wnd-update-post-status.php:85
 msgid "写入数据失败"
-msgstr ""
+msgstr "寫入數據失敗"
 
 #: includes/action/post/wnd-update-post-status.php:42
 msgid "无效的Post"
-msgstr ""
+msgstr "無效的Post"
 
 #: includes/action/post/wnd-update-post-status.php:46
 msgid "前端无法删除 page"
-msgstr ""
+msgstr "前端無法刪除 page"
 
 #: includes/action/post/wnd-update-post-status.php:51
 msgid "无效的Post状态"
-msgstr ""
+msgstr "無效的Post狀態"
 
 #: includes/action/post/wnd-update-post-status.php:97
 #: includes/module/post/wnd-post-status-form.php:35 wnd-frontend.php:106
 msgid "已删除"
-msgstr ""
+msgstr "已刪除"
 
 #: includes/action/post/wnd-update-post-status.php:131
 msgid "审核失败"
-msgstr ""
+msgstr "審核失敗"
 
 #: includes/action/post/wnd-update-post-status.php:134
 msgid "已被删除"
-msgstr ""
+msgstr "已被刪除"
 
 #: includes/action/user/wnd-bind-account.php:22
 msgid "绑定成功"
-msgstr ""
+msgstr "綁定成功"
 
 #: includes/action/user/wnd-login.php:37 includes/action/user/wnd-login.php:46
 #: includes/action/user/wnd-login.php:48
 msgid "登录成功"
-msgstr ""
+msgstr "登錄成功"
 
 #: includes/action/user/wnd-login.php:88
 #: includes/action/user/wnd-unbind-openid.php:48
@@ -276,25 +276,25 @@ msgstr "註冊成功"
 
 #: includes/action/user/wnd-reg.php:84
 msgid "用户名不能低于3位"
-msgstr ""
+msgstr "用戶名不能低於3位"
 
 #: includes/action/user/wnd-reg.php:88
 msgid "用户名不能是纯数字"
-msgstr ""
+msgstr "用戶名不能是純數字"
 
 #: includes/action/user/wnd-reg.php:93
 #: includes/action/user/wnd-reset-password.php:32
 #: includes/action/user/wnd-update-account.php:35
 msgid "密码不能低于6位"
-msgstr ""
+msgstr "密碼不能低於6位"
 
 #: includes/action/user/wnd-reg.php:98
 msgid "两次输入的密码不匹配"
-msgstr ""
+msgstr "兩次輸入的密碼不匹配"
 
 #: includes/action/user/wnd-reset-password.php:21
 msgid "密码修改成功"
-msgstr ""
+msgstr "密碼修改成功"
 
 #: includes/action/user/wnd-reset-password.php:21
 #: includes/module/user/wnd-login-form.php:26
@@ -310,19 +310,19 @@ msgstr "登錄"
 #: includes/action/user/wnd-reset-password.php:35
 #: includes/action/user/wnd-update-account.php:39
 msgid "两次输入的新密码不匹配"
-msgstr ""
+msgstr "兩次輸入的新密碼不匹配"
 
 #: includes/action/user/wnd-reset-password.php:45
 msgid "账户未注册"
-msgstr ""
+msgstr "賬戶未註冊"
 
 #: includes/action/user/wnd-unbind-openid.php:21
 msgid "解绑失败，请稍后重试"
-msgstr ""
+msgstr "解綁失敗，請稍後重試"
 
 #: includes/action/user/wnd-unbind-openid.php:24
 msgid "已解除绑定"
-msgstr ""
+msgstr "已解除綁定"
 
 #: includes/action/user/wnd-unbind-openid.php:39
 msgid "当前账户不可解绑"
@@ -330,7 +330,7 @@ msgstr "當前賬戶不可解綁"
 
 #: includes/action/user/wnd-unbind-openid.php:43
 msgid "未指定解绑类型"
-msgstr ""
+msgstr "未指定解綁類型"
 
 #: includes/action/wnd-action-admin.php:15
 #: includes/action/wnd-action-root.php:15
@@ -354,412 +354,412 @@ msgstr "請登錄"
 
 #: includes/controller/wnd-controller.php:184
 msgid "未指定UI"
-msgstr ""
+msgstr "未指定UI"
 
 #: includes/controller/wnd-controller.php:195
 msgid "无效的UI"
-msgstr ""
+msgstr "無效的UI"
 
 #: includes/controller/wnd-controller.php:214
 msgid "未指定Data"
-msgstr ""
+msgstr "未指定Data"
 
 #: includes/controller/wnd-controller.php:221
 msgid "无效的Query"
-msgstr ""
+msgstr "無效的Query"
 
 #: includes/controller/wnd-controller.php:238
 msgid "未指定Action"
-msgstr ""
+msgstr "未指定Action"
 
 #: includes/controller/wnd-controller.php:249
 msgid "无效的Action"
-msgstr ""
+msgstr "無效的Action"
 
 #: includes/controller/wnd-controller.php:272
 msgid "Endpoint 无效"
-msgstr ""
+msgstr "Endpoint 無效"
 
 #: includes/controller/wnd-defender-action.php:133
 #, php-format
 msgid "操作太频繁，请 %s 分钟后重试"
-msgstr ""
+msgstr "操作太頻繁，請 %s 分鐘後重試"
 
 #: includes/controller/wnd-request.php:103
 msgid "数据已被篡改"
-msgstr ""
+msgstr "數據已被篡改"
 
 #: includes/endpoint/wnd-endpoint-action.php:24
 msgid "Nonce 校验失败"
-msgstr ""
+msgstr "Nonce 校驗失敗"
 
 #: includes/function/tpl-general.php:35 includes/view/wnd-pagination.php:158
 msgid "首页"
-msgstr ""
+msgstr "首頁"
 
 #: includes/function/tpl-general.php:99
 msgid "编辑"
-msgstr ""
+msgstr "編輯"
 
 #: includes/function/tpl-general.php:100
 #: includes/module/admin/wnd-users-list.php:26
 #: includes/view/wnd-filter-abstract.php:212
 msgid "状态"
-msgstr ""
+msgstr "狀態"
 
 #: includes/getway/payment/paypal.php:51 wnd-frontend.php:108
 msgid "请稍后"
-msgstr ""
+msgstr "請稍後"
 
 #: includes/getway/refund/alipay.php:41 includes/getway/refund/internal.php:24
 msgid "退款失败"
-msgstr ""
+msgstr "退款失敗"
 
 #: includes/getway/wnd-captcha.php:40
 msgid "未配置 Captcha Service"
-msgstr ""
+msgstr "未配置 Captcha Service"
 
 #: includes/getway/wnd-captcha.php:47
 msgid "未定义子类"
-msgstr ""
+msgstr "未定義子類"
 
 #: includes/getway/wnd-cloud-client.php:24
 msgid "未定义"
-msgstr ""
+msgstr "未定義"
 
 #: includes/getway/wnd-login-social.php:40
 msgid "指定社交登录类未定义"
-msgstr ""
+msgstr "指定社交登錄類未定義"
 
 #: includes/getway/wnd-login-social.php:74
 msgid "验证失败，请返回页面并刷新重试"
-msgstr ""
+msgstr "驗證失敗，請返回頁面並刷新重試"
 
 #: includes/getway/wnd-payment.php:52
 msgid "未定义支付接口处理类"
-msgstr ""
+msgstr "未定義支付接口處理類"
 
 #: includes/getway/wnd-payment.php:85
 msgid "异步"
-msgstr ""
+msgstr "異步"
 
 #: includes/getway/wnd-payment.php:85
 msgid "同步"
-msgstr ""
+msgstr "同步"
 
 #: includes/getway/wnd-payment.php:120
 msgid "站内支付数据尚未写入"
-msgstr ""
+msgstr "站內支付數據尚未寫入"
 
 #: includes/getway/wnd-refunder.php:81
 msgid "未定义支付方式："
-msgstr ""
+msgstr "未定義支付方式："
 
 #: includes/getway/wnd-refunder.php:99
 msgid "订单无可退余额"
-msgstr ""
+msgstr "訂單無可退餘額"
 
 #: includes/getway/wnd-refunder.php:105
 msgid "退款金额不得大于订单总额"
-msgstr ""
+msgstr "退款金額不得大於訂單總額"
 
 #: includes/getway/wnd-refunder.php:122
 msgid "更新订单失败"
-msgstr ""
+msgstr "更新訂單失敗"
 
 #: includes/getway/wnd-refunder.php:175
 msgid "当前交易不支持退款"
-msgstr ""
+msgstr "當前交易不支持退款"
 
 #: includes/getway/wnd-sms.php:37
 msgid "指定短信服务商未完成配置"
-msgstr ""
+msgstr "指定短信服務商為完成配置"
 
 #: includes/hook/wnd-add-filter.php:45 includes/module/user/wnd-reg-form.php:63
 msgid "站点已关闭注册"
-msgstr ""
+msgstr "站點已關閉註冊"
 
 #: includes/hook/wnd-add-filter.php:86
 msgid "名称不得与登录名一致"
-msgstr ""
+msgstr "名稱不得與登錄名一致"
 
 #: includes/hook/wnd-add-filter.php:99
 msgid "当前账户余额不为零：¥"
-msgstr ""
+msgstr "當前賬戶餘額不為零：¥"
 
 #: includes/model/wnd-auth-code-email.php:22
 msgid "邮箱"
-msgstr ""
+msgstr "郵箱"
 
 #: includes/model/wnd-auth-code-email.php:29
 msgid "邮箱验证秘钥"
-msgstr ""
+msgstr "郵箱驗證秘鑰"
 
 #: includes/model/wnd-auth-code-email.php:29
 msgid "（不含括号），关键凭证，请勿泄露"
-msgstr ""
+msgstr "（不含括號），關鍵憑證，請勿洩露"
 
 #: includes/model/wnd-auth-code-email.php:30
 msgid "验证邮箱"
-msgstr ""
+msgstr "驗證郵箱"
 
 #: includes/model/wnd-auth-code-email.php:34
 msgid "发送失败，请稍后重试"
-msgstr ""
+msgstr "發送失敗，請稍後重試"
 
 #: includes/model/wnd-auth-code-phone.php:23
 msgid "手机"
-msgstr ""
+msgstr "手機"
 
 #: includes/model/wnd-auth-code.php:65 includes/model/wnd-binder.php:36
 msgid "格式不正确"
-msgstr ""
+msgstr "格式不正確"
 
 #: includes/model/wnd-auth-code.php:80
 msgid "类型无效，请选择：register / reset_password / verify / bind"
-msgstr ""
+msgstr "類型無效，請選擇：register / reset_password / verify / bind"
 
 #: includes/model/wnd-auth-code.php:120
 msgid "未指定验证类型"
-msgstr ""
+msgstr "未指定驗證類型"
 
 #: includes/model/wnd-auth-code.php:126 includes/model/wnd-auth-code.php:135
 #: includes/model/wnd-social-login.php:88
 msgid "已注册"
-msgstr ""
+msgstr "已註冊"
 
 #: includes/model/wnd-auth-code.php:141
 msgid "尚未注册"
-msgstr ""
+msgstr "尚未註冊"
 
 #: includes/model/wnd-auth-code.php:154
 msgid "当前账户未绑定"
-msgstr ""
+msgstr "當前賬戶未綁定"
 
 #: includes/model/wnd-auth-code.php:158
 msgid "与当前账户不匹配"
-msgstr ""
+msgstr "與當前賬戶不匹配"
 
 #: includes/model/wnd-auth-code.php:178
 msgid "操作太频繁，请等待"
-msgstr ""
+msgstr "操作太頻繁，請等待"
 
 #: includes/model/wnd-auth-code.php:178
 msgid "秒"
-msgstr ""
+msgstr "秒"
 
 #: includes/model/wnd-auth-code.php:203 includes/model/wnd-binder-email.php:22
 #: includes/model/wnd-binder-phone.php:22
 msgid "数据库写入失败"
-msgstr ""
+msgstr "數據庫寫入失敗"
 
 #: includes/model/wnd-auth-code.php:217
 msgid "未指定验证设备类型"
-msgstr ""
+msgstr "未指定驗證設備類型"
 
 #: includes/model/wnd-auth-code.php:221
 msgid "未指定验证设备"
-msgstr ""
+msgstr "未指定驗證設備"
 
 #: includes/model/wnd-auth-code.php:225
 msgid "验证码为空"
-msgstr ""
+msgstr "驗證碼為空"
 
 #: includes/model/wnd-auth-code.php:252
 msgid "校验失败：请先获取验证码"
-msgstr ""
+msgstr "校驗失敗：請先獲取驗證碼"
 
 #: includes/model/wnd-auth-code.php:255
 msgid "校验失败：验证码已过期"
-msgstr ""
+msgstr "校验失败：验证码已过期"
 
 #: includes/model/wnd-auth-code.php:258
 msgid "校验失败：验证码不正确"
-msgstr ""
+msgstr "校驗失敗：驗證碼不正確"
 
 #: includes/model/wnd-auth.php:141
 msgid " 已被其他账户占用"
-msgstr ""
+msgstr " 已被其他賬戶佔用"
 
 #: includes/model/wnd-binder.php:73
 msgid "当前密码错误"
-msgstr ""
+msgstr "當前密碼錯誤"
 
 #: includes/model/wnd-init.php:139
 msgid "充值记录"
-msgstr ""
+msgstr "充值記錄"
 
 #: includes/model/wnd-init.php:143
 #: includes/module/common/wnd-user-recharge-form.php:47
 msgid "充值"
-msgstr ""
+msgstr "充值"
 
 #: includes/model/wnd-init.php:158
 msgid "订单记录"
-msgstr ""
+msgstr "訂單記錄"
 
 #: includes/model/wnd-init.php:162 includes/query/wnd-menus.php:58
 msgid "订单"
-msgstr ""
+msgstr "訂單"
 
 #: includes/model/wnd-init.php:179 includes/model/wnd-init.php:183
 msgid "站内信"
-msgstr ""
+msgstr "站內信"
 
 #: includes/model/wnd-init.php:195 includes/model/wnd-init.php:199
 msgid "充值统计"
-msgstr ""
+msgstr "充值統計"
 
 #: includes/model/wnd-init.php:208 includes/model/wnd-init.php:212
 msgid "消费统计"
-msgstr ""
+msgstr "消費統計"
 
 #: includes/model/wnd-init.php:252
 #: includes/module/post/wnd-post-status-form.php:51
 #: includes/module/user/wnd-user-posts-panel.php:19
 msgid "关闭"
-msgstr ""
+msgstr "關閉"
 
 #: includes/model/wnd-init.php:266 includes/model/wnd-init.php:274
 #: includes/module/user/wnd-mail-box.php:18
 msgid "未读"
-msgstr ""
+msgstr "未讀"
 
 #: includes/model/wnd-order.php:68
 msgid "订单："
-msgstr ""
+msgstr "訂單："
 
 #: includes/model/wnd-order.php:89
 msgid "SKU ID 无效"
-msgstr ""
+msgstr "SKU ID 無效"
 
 #: includes/model/wnd-product.php:22
 msgid "SKU"
-msgstr ""
+msgstr "SKU"
 
 #: includes/model/wnd-product.php:23
 msgid "销量"
-msgstr ""
+msgstr "銷量"
 
 #: includes/model/wnd-recharge.php:37
 msgid "佣金：¥"
-msgstr ""
+msgstr "佣金：¥"
 
 #: includes/model/wnd-sku.php:32 includes/module/user/wnd-profile-form.php:21
 #: includes/module/user/wnd-reg-form.php:31
 msgid "名称"
-msgstr ""
+msgstr "名稱"
 
 #: includes/model/wnd-sku.php:33 includes/view/wnd-form-post.php:409
 msgid "价格"
-msgstr ""
+msgstr "價格"
 
 #: includes/model/wnd-sku.php:34
 msgid "库存"
-msgstr ""
+msgstr "庫存"
 
 #: includes/model/wnd-sku.php:35
 msgid "颜色"
-msgstr ""
+msgstr "顏色"
 
 #: includes/model/wnd-sku.php:36
 msgid "尺寸"
-msgstr ""
+msgstr "尺寸"
 
 #: includes/model/wnd-social-login.php:97
 msgid "注册失败"
-msgstr ""
+msgstr "註冊失敗"
 
 #: includes/model/wnd-transaction.php:92
 msgid "交易类型无效"
-msgstr ""
+msgstr "交易類型無效"
 
 #: includes/model/wnd-transaction.php:118
 msgid "无效的 Transaction 实例类型："
-msgstr ""
+msgstr "無效的 Transaction 實例類型："
 
 #: includes/model/wnd-transaction.php:142
 msgid "交易ID无效"
-msgstr ""
+msgstr "交易ID無效"
 
 #: includes/model/wnd-transaction.php:162
 msgid "金额无效"
-msgstr ""
+msgstr "金額無效"
 
 #: includes/model/wnd-transaction.php:175
 msgid "商品ID无效"
-msgstr ""
+msgstr "商品ID無效"
 
 #: includes/model/wnd-transaction.php:196
 msgid "用户ID无效"
-msgstr ""
+msgstr "用戶ID無效"
 
 #: includes/model/wnd-transaction.php:347
 msgid "订单状态无效"
-msgstr ""
+msgstr "訂單狀態無效"
 
 #: includes/model/wnd-transaction.php:368
 msgid "数据更新失败"
-msgstr ""
+msgstr "數據更新失敗"
 
 #: includes/model/wnd-transaction.php:477
 msgid "订单ID无效"
-msgstr ""
+msgstr "訂單ID無效"
 
 #: includes/module/admin/wnd-account-status-form.php:20
 #: includes/module/admin/wnd-account-status-form.php:29
 msgid "封禁用户"
-msgstr ""
+msgstr "封禁用戶"
 
 #: includes/module/admin/wnd-account-status-form.php:22
 msgid "当前状态："
-msgstr ""
+msgstr "當前狀態："
 
 #: includes/module/admin/wnd-account-status-form.php:30
 msgid "取消封禁"
-msgstr ""
+msgstr "無效封禁"
 
 #: includes/module/admin/wnd-account-status-form.php:40
 #: includes/module/admin/wnd-delete-user-form.php:25
 #: includes/module/admin/wnd-refund-form.php:35
 msgid "确认"
-msgstr ""
+msgstr "確認"
 
 #: includes/module/admin/wnd-admin-posts-panel.php:20
 #: includes/module/post/wnd-post-status-form.php:50
 #: includes/module/user/wnd-user-posts-panel.php:19
 msgid "待审"
-msgstr ""
+msgstr "待審"
 
 #: includes/module/admin/wnd-admin-recharge-form.php:20
 #: includes/query/wnd-menus.php:59
 msgid "用户"
-msgstr ""
+msgstr "用戶"
 
 #: includes/module/admin/wnd-admin-recharge-form.php:23
 msgid "用户名、邮箱、注册手机"
-msgstr ""
+msgstr "用戶名、郵箱、註冊手機"
 
 #: includes/module/admin/wnd-admin-recharge-form.php:32
 msgid "充值金额（负数可扣款）"
-msgstr ""
+msgstr "充值金額（負數可扣款）"
 
 #: includes/module/admin/wnd-admin-recharge-form.php:39
 #: includes/module/post/wnd-post-status-form.php:84
 msgid "备注（可选）"
-msgstr ""
+msgstr "備註（可選）"
 
 #: includes/module/admin/wnd-admin-recharge-form.php:43
 msgid "确认充值"
-msgstr ""
+msgstr "確認充值"
 
 #: includes/module/admin/wnd-delete-user-form.php:19
 msgid "删除用户"
-msgstr ""
+msgstr "刪除用戶"
 
 #: includes/module/admin/wnd-delete-user-form.php:34
 msgid "确认删除"
-msgstr ""
+msgstr "確認刪除"
 
 #: includes/module/admin/wnd-finance-list.php:22
 #: includes/module/admin/wnd-users-list.php:28
@@ -767,137 +767,137 @@ msgstr ""
 #: includes/view/wnd-filter-ajax.php:60 includes/view/wnd-filter-user.php:159
 #: includes/view/wnd-filter.php:98
 msgid "全部"
-msgstr ""
+msgstr "全部"
 
 #: includes/module/admin/wnd-finance-list.php:23
 msgid "已完成"
-msgstr ""
+msgstr "已完成"
 
 #: includes/module/admin/wnd-finance-list.php:24
 msgid "待付款"
-msgstr ""
+msgstr "待付款"
 
 #: includes/module/admin/wnd-finance-list.php:25
 msgid "待发货"
-msgstr ""
+msgstr "待發貨"
 
 #: includes/module/admin/wnd-finance-list.php:26
 msgid "已关闭"
-msgstr ""
+msgstr "已關閉"
 
 #: includes/module/admin/wnd-finance-list.php:27
 msgid "已退款"
-msgstr ""
+msgstr "已退款"
 
 #: includes/module/admin/wnd-refund-form.php:19
 msgid "退款"
-msgstr ""
+msgstr "退款"
 
 #: includes/module/admin/wnd-refund-form.php:24
 msgid "留空为全额退款"
-msgstr ""
+msgstr "留空為全額退款"
 
 #: includes/module/admin/wnd-refund-form.php:44
 msgid "确认退款"
-msgstr ""
+msgstr "確認退款"
 
 #: includes/module/admin/wnd-users-list.php:17
 #: includes/module/post/wnd-post-form-attachment.php:85
 msgid "排序"
-msgstr ""
+msgstr "排序"
 
 #: includes/module/admin/wnd-users-list.php:19
 msgid "注册时间"
-msgstr ""
+msgstr "註冊時間"
 
 #: includes/module/admin/wnd-users-list.php:20
 msgid "文章数量"
-msgstr ""
+msgstr "文章數量"
 
 #: includes/module/admin/wnd-users-list.php:29
 msgid "已封禁"
-msgstr ""
+msgstr "已封禁"
 
 #: includes/module/common/wnd-order-form.php:21
 msgid "立即购买"
-msgstr ""
+msgstr "立即購買"
 
 #: includes/module/common/wnd-order-form.php:22
 msgid "加入购物车"
-msgstr ""
+msgstr "加入購物車"
 
 #: includes/module/common/wnd-order-form.php:66
 msgid "数量"
-msgstr ""
+msgstr "數量"
 
 #: includes/module/common/wnd-payment-form.php:37
 msgid "可用余额：¥ "
-msgstr ""
+msgstr "可用餘額：¥ "
 
 #: includes/module/common/wnd-payment-form.php:45
 msgid "余额支付"
-msgstr ""
+msgstr "餘額支付"
 
 #: includes/module/common/wnd-payment-form.php:51
 msgid "您当前尚未登录，匿名订单仅24小时有效，请悉知！"
-msgstr ""
+msgstr "您當前尚未登錄，匿名訂單僅24小時有效，請悉知！"
 
 #: includes/module/common/wnd-payment-form.php:74
 msgid "已阅读并同意交易协议及产品使用协议"
-msgstr ""
+msgstr "已閱讀並同意交易協議及產品使用協議"
 
 #: includes/module/common/wnd-payment-form.php:90 wnd-frontend.php:105
 msgid "确定"
-msgstr ""
+msgstr "確定"
 
 #: includes/module/common/wnd-search-form.php:21
 msgid "全站"
-msgstr ""
+msgstr "全站"
 
 #: includes/module/common/wnd-search-form.php:29
 msgid "关键词"
-msgstr ""
+msgstr "關鍵詞"
 
 #: includes/module/common/wnd-search-form.php:33
 msgid "搜索"
-msgstr ""
+msgstr "搜索"
 
 #: includes/module/common/wnd-sku-form.php:85
 msgid "保存 SKU"
-msgstr ""
+msgstr "保存 SKU"
 
 #: includes/module/post/wnd-post-detail.php:53
 msgid "付费文章不支持预览"
-msgstr ""
+msgstr "付費文章不支持預覽"
 
 #: includes/module/post/wnd-post-form-attachment.php:59
 msgid "附件上传"
-msgstr ""
+msgstr "附件上傳"
 
 #: includes/module/post/wnd-post-form-attachment.php:81
 msgid "如需更改文件，请先删除后重新选择文件"
-msgstr ""
+msgstr "如需更改文件，請先刪除後重新選擇文件"
 
 #: includes/module/post/wnd-post-form-attachment.php:83
 msgid "文件名称"
-msgstr ""
+msgstr "文件名稱"
 
 #: includes/module/post/wnd-post-form-attachment.php:85
 msgid "输入排序"
-msgstr ""
+msgstr "輸入排序"
 
 #: includes/module/post/wnd-post-form-attachment.php:95
 msgid "链接别名"
-msgstr ""
+msgstr "鏈接別名"
 
 #: includes/module/post/wnd-post-form-attachment.php:95
 msgid "附件的固定链接别名"
-msgstr ""
+msgstr "附件的固定鏈接別名"
 
 #: includes/module/post/wnd-post-form-attachment.php:96
 #: includes/module/user/wnd-profile-form.php:24
 msgid "简介"
-msgstr ""
+msgstr "簡介"
 
 #: includes/module/post/wnd-post-form-attachment.php:97
 #: includes/module/post/wnd-post-form-page.php:57
@@ -907,124 +907,124 @@ msgstr ""
 #: includes/module/user/wnd-bind-phone-form.php:32
 #: includes/module/user/wnd-profile-form.php:26
 msgid "保存"
-msgstr ""
+msgstr "保存"
 
 #: includes/module/post/wnd-post-form-page.php:39
 msgid "相册图集"
-msgstr ""
+msgstr "相冊圖集"
 
 #: includes/module/post/wnd-post-form-page.php:52
 #: includes/module/post/wnd-post-form-post.php:54
 msgid "产品属性"
-msgstr ""
+msgstr "產品屬性"
 
 #: includes/module/post/wnd-post-form-post.php:31
 msgid "标题"
-msgstr ""
+msgstr "標題"
 
 #: includes/module/post/wnd-post-form-post.php:38
 msgid "摘要"
-msgstr ""
+msgstr "摘要"
 
 #: includes/module/post/wnd-post-form-post.php:55
 msgid "产品 SKU"
-msgstr ""
+msgstr "產品 SKU"
 
 #: includes/module/post/wnd-post-form-post.php:62
 msgid "缩略图"
-msgstr ""
+msgstr "縮略圖"
 
 #: includes/module/post/wnd-post-form.php:19
 msgid "Post Type 无效"
-msgstr ""
+msgstr "Post Type 無效"
 
 #: includes/module/post/wnd-post-status-form.php:23
 msgid "已发布"
-msgstr ""
+msgstr "已發佈"
 
 #: includes/module/post/wnd-post-status-form.php:27
 msgid "待审核"
-msgstr ""
+msgstr "待審核"
 
 #: includes/module/post/wnd-post-status-form.php:31
 #: includes/module/post/wnd-post-status-form.php:52
 #: includes/module/user/wnd-user-posts-panel.php:19
 msgid "草稿"
-msgstr ""
+msgstr "草稿"
 
 #: includes/module/post/wnd-post-status-form.php:49
 #: includes/module/user/wnd-user-posts-panel.php:19
 msgid "发布"
-msgstr ""
+msgstr "發佈"
 
 #: includes/module/post/wnd-post-status-form.php:53
 msgid "删除"
-msgstr ""
+msgstr "刪除"
 
 #: includes/module/post/wnd-post-status-form.php:71
 msgid "置顶"
-msgstr ""
+msgstr "置頂"
 
 #: includes/module/post/wnd-post-status-form.php:72
 msgid "取消"
-msgstr ""
+msgstr "取消"
 
 #: includes/module/post/wnd-post-status-form.php:90
 msgid "删除订单记录，不可退款，请谨慎操作"
-msgstr ""
+msgstr "刪除訂單記錄，不可退款，請謹慎操作"
 
 #: includes/module/post/wnd-post-status-form.php:96
 msgid "提交"
-msgstr ""
+msgstr "提交"
 
 #: includes/module/user/wnd-account-form.php:29
 msgid "当前密码"
-msgstr ""
+msgstr "當前密碼"
 
 #: includes/module/user/wnd-account-form.php:30
 #: includes/module/user/wnd-reset-password-form.php:25
 msgid "新密码"
-msgstr ""
+msgstr "新密碼"
 
 #: includes/module/user/wnd-account-form.php:31
 #: includes/module/user/wnd-reset-password-form.php:26
 msgid "确认新密码"
-msgstr ""
+msgstr "確認新密碼"
 
 #: includes/module/user/wnd-account-form.php:41
 msgid "邮箱设置"
-msgstr ""
+msgstr "郵箱設置"
 
 #: includes/module/user/wnd-account-form.php:42
 msgid "手机设置"
-msgstr ""
+msgstr "手機設置"
 
 #: includes/module/user/wnd-account-form.php:43
 #: includes/module/user/wnd-reset-password-form.php:18
 #: includes/module/user/wnd-reset-password-form.php:21
 #: includes/module/user/wnd-reset-password-form.php:28
 msgid "重置密码"
-msgstr ""
+msgstr "重置密碼"
 
 #: includes/module/user/wnd-account-form.php:44
 #: includes/module/user/wnd-unbind-openid-form.php:34
 #: includes/module/user/wnd-unbind-openid-form.php:50
 msgid "解除绑定"
-msgstr ""
+msgstr "解除綁定"
 
 #: includes/module/user/wnd-account-form.php:61
 msgid "出于安全考虑，请绑定邮箱或手机"
-msgstr ""
+msgstr "出於安全考慮，請綁定郵箱或手機"
 
 #: includes/module/user/wnd-account-form.php:62
 #: includes/module/user/wnd-bind-email-form.php:16
 msgid "绑定邮箱"
-msgstr ""
+msgstr "綁定郵箱"
 
 #: includes/module/user/wnd-account-form.php:65
 #: includes/module/user/wnd-bind-phone-form.php:17
 msgid "绑定手机"
-msgstr ""
+msgstr "綁定手機"
 
 #: includes/module/user/wnd-bind-email-form.php:26
 #: includes/module/user/wnd-bind-phone-form.php:27
@@ -1032,91 +1032,91 @@ msgstr ""
 #: includes/module/user/wnd-reg-form.php:30
 #: includes/module/user/wnd-unbind-openid-form.php:47
 msgid "密码"
-msgstr ""
+msgstr "密碼"
 
 #: includes/module/user/wnd-front-page.php:117
 msgid "未定义表单"
-msgstr ""
+msgstr "未定義表單"
 
 #: includes/module/user/wnd-login-form.php:16
 #: includes/module/user/wnd-reg-form.php:58
 msgid "已登录"
-msgstr ""
+msgstr "已登錄"
 
 #: includes/module/user/wnd-login-form.php:27
 msgid "用户名、手机、邮箱"
-msgstr ""
+msgstr "用戶名、手機、郵箱"
 
 #: includes/module/user/wnd-login-form.php:32
 msgid "记住我"
-msgstr ""
+msgstr "記住我"
 
 #: includes/module/user/wnd-mail-box.php:18
 msgid "已读"
-msgstr ""
+msgstr "已讀"
 
 #: includes/module/user/wnd-profile-form.php:22
 msgid "网站"
-msgstr ""
+msgstr "網站"
 
 #: includes/module/user/wnd-reg-form.php:15
 #: includes/module/user/wnd-reg-form.php:46
 msgid "注册"
-msgstr ""
+msgstr "註冊"
 
 #: includes/module/user/wnd-reg-form.php:28
 msgid "账号"
-msgstr ""
+msgstr "賬號"
 
 #: includes/module/user/wnd-reg-form.php:37
 msgid "已阅读并同意："
-msgstr ""
+msgstr "已閱讀並同意："
 
 #: includes/module/user/wnd-reg-form.php:42
 msgid "《注册协议》"
-msgstr ""
+msgstr "《註冊協議》"
 
 #: includes/module/user/wnd-reg-form.php:68
 msgid "当前未配置短信验证"
-msgstr ""
+msgstr "當前未配置短信驗證"
 
 #: includes/module/user/wnd-reg-form.php:73
 msgid "当前设置禁止邮箱注册"
-msgstr ""
+msgstr "當前設置禁止郵箱註冊"
 
 #: includes/module/user/wnd-unbind-openid-form.php:29
 msgid "当前账户未绑定第三方账号"
-msgstr ""
+msgstr "當前賬戶未綁定第三方賬號"
 
 #: includes/module/user/wnd-user-center.php:46
 #: includes/module/user/wnd-user-center.php:58
 msgid "手机验证找回"
-msgstr ""
+msgstr "手機驗證找回"
 
 #: includes/module/user/wnd-user-center.php:48
 #: includes/module/user/wnd-user-center.php:60
 msgid "邮箱验证找回"
-msgstr ""
+msgstr "郵箱驗證找回"
 
 #: includes/module/user/wnd-user-center.php:88
 #: includes/module/user/wnd-user-center.php:97
 msgid "手机注册"
-msgstr ""
+msgstr "手機註冊"
 
 #: includes/module/user/wnd-user-center.php:90
 #: includes/module/user/wnd-user-center.php:99
 msgid "邮箱注册"
-msgstr ""
+msgstr "郵箱註冊"
 
 #: includes/module/user/wnd-user-center.php:112
 #: includes/module/user/wnd-user-center.php:115
 msgid "立即注册"
-msgstr ""
+msgstr "立即註冊"
 
 #: includes/module/user/wnd-user-center.php:113
 #: includes/module/user/wnd-user-center.php:116
 msgid "忘记密码"
-msgstr ""
+msgstr "忘記密碼"
 
 #: includes/module/user/wnd-user-center.php:128
 #: includes/module/user/wnd-user-center.php:131
@@ -1124,7 +1124,7 @@ msgstr ""
 #: includes/module/user/wnd-user-center.php:144 includes/query/wnd-menus.php:41
 #: includes/query/wnd-menus.php:62
 msgid "资料"
-msgstr ""
+msgstr "資料"
 
 #: includes/module/user/wnd-user-center.php:129
 #: includes/module/user/wnd-user-center.php:132
@@ -1132,231 +1132,231 @@ msgstr ""
 #: includes/module/user/wnd-user-center.php:145 includes/query/wnd-menus.php:42
 #: includes/query/wnd-menus.php:63
 msgid "账户"
-msgstr ""
+msgstr "賬戶"
 
 #: includes/module/user/wnd-user-finance-panel.php:21
 msgid "余额"
-msgstr ""
+msgstr "餘額"
 
 #: includes/module/user/wnd-user-finance-panel.php:29
 msgid "消费"
-msgstr ""
+msgstr "消費"
 
 #: includes/module/user/wnd-user-finance-panel.php:38
 msgid "佣金"
-msgstr ""
+msgstr "佣金"
 
 #: includes/module/user/wnd-user-finance-panel.php:46
 msgid "余额充值"
-msgstr ""
+msgstr "餘額充值"
 
 #: includes/module/wnd-module.php:49
 msgid "未定义 Module 类型"
-msgstr ""
+msgstr "未定義 Module 類型"
 
 #: includes/permission/wnd-ppc.php:48
 msgid "无效的 PPC 实例类型："
-msgstr ""
+msgstr "無效的 PPC 實例類型："
 
 #: includes/query/wnd-get-profile.php:20 includes/view/wnd-posts-table.php:94
 msgid "匿名用户"
-msgstr ""
+msgstr "匿名用戶"
 
 #: includes/query/wnd-get-profile.php:33
 msgid "User ID 无效"
-msgstr ""
+msgstr "User ID 無效"
 
 #: includes/query/wnd-menus.php:35 includes/query/wnd-menus.php:52
 msgid "控制板"
-msgstr ""
+msgstr "控制板"
 
 #: includes/query/wnd-menus.php:38 includes/query/wnd-menus.php:55
 msgid "概览"
-msgstr ""
+msgstr "概覽"
 
 #: includes/query/wnd-menus.php:39 includes/query/wnd-menus.php:60
 msgid "内容"
-msgstr ""
+msgstr "內容"
 
 #: includes/query/wnd-menus.php:40 includes/query/wnd-menus.php:61
 msgid "财务"
-msgstr ""
+msgstr "財務"
 
 #: includes/query/wnd-menus.php:43 includes/query/wnd-menus.php:64
 msgid "消息"
-msgstr ""
+msgstr "消息"
 
 #: includes/query/wnd-menus.php:56
 msgid "审核"
-msgstr ""
+msgstr "審核"
 
 #: includes/query/wnd-menus.php:57
 msgid "统计"
-msgstr ""
+msgstr "統計"
 
 #: includes/template/wnd-pay-button.php:67
 msgid "免费且不含文件"
-msgstr ""
+msgstr "免費且不含文件"
 
 #: includes/template/wnd-pay-button.php:136
 #: includes/template/wnd-pay-button.php:164
 #: includes/template/wnd-pay-button.php:195
 msgid "您已付费：¥ "
-msgstr ""
+msgstr "您已付費：¥ "
 
 #: includes/template/wnd-pay-button.php:137
 #: includes/template/wnd-pay-button.php:144
 #: includes/template/wnd-pay-button.php:188
 msgid "下载"
-msgstr ""
+msgstr "下載"
 
 #: includes/template/wnd-pay-button.php:143
 msgid "您发布的文件：¥ "
-msgstr ""
+msgstr "您發布的文件：¥ "
 
 #: includes/template/wnd-pay-button.php:151
 msgid "文件需付费下载：¥"
-msgstr ""
+msgstr "文件需付費下載：¥"
 
 #: includes/template/wnd-pay-button.php:152
 msgid "付费下载"
-msgstr ""
+msgstr "付費下載"
 
 #: includes/template/wnd-pay-button.php:154
 msgid "免费下载"
-msgstr ""
+msgstr "免費下載"
 
 #: includes/template/wnd-pay-button.php:170
 msgid "您的付费文章：¥ "
-msgstr ""
+msgstr "您的付費文章：¥ "
 
 #: includes/template/wnd-pay-button.php:175
 msgid "付费阅读"
-msgstr ""
+msgstr "付費閱讀"
 
 #: includes/template/wnd-pay-button.php:176
 msgid "以下内容需付费阅读：¥ "
-msgstr ""
+msgstr "以下內容需付費閱讀：¥ "
 
 #: includes/template/wnd-pay-button.php:190
 msgid "购买"
-msgstr ""
+msgstr "購買"
 
 #: includes/template/wnd-pay-button.php:201
 msgid "您的付费内容：¥ "
-msgstr ""
+msgstr "您的付費內容：¥ "
 
 #: includes/template/wnd-pay-button.php:206
 msgid "以下内容及文件需付费购买：¥ "
-msgstr ""
+msgstr "以下內容及文件需付費購買：¥ "
 
 #: includes/utility/wnd-defender-user.php:77
 #, php-format
 msgid "登录失败， %s 分钟剩余次数：%s"
-msgstr ""
+msgstr "登錄失敗， %s 分鐘剩餘次數：%s"
 
 #: includes/utility/wnd-defender-user.php:101
 #, php-format
 msgid "错误次数太多请 %s 分钟后重试，或立即重置密码"
-msgstr ""
+msgstr "錯誤次數太多請 %s 分鐘後重試，或立即重置密碼"
 
 #: includes/utility/wnd-upgrader-plugin.php:50
 msgid "未定义插件入口文件"
-msgstr ""
+msgstr "未定義插件入口文件"
 
 #: includes/view/wnd-filter-abstract.php:67
 msgid "当前环境需执行独立 WP Query"
-msgstr ""
+msgstr "當前環境需執行獨立 WP Query"
 
 #: includes/view/wnd-filter-abstract.php:179
 msgid "类型"
-msgstr ""
+msgstr "類型"
 
 #: includes/view/wnd-filter-ajax.php:136 includes/view/wnd-filter-ajax.php:177
 #: includes/view/wnd-filter.php:155 includes/view/wnd-filter.php:189
 msgid "未执行WP_Query"
-msgstr ""
+msgstr "未執行WP_Query"
 
 #: includes/view/wnd-filter-user.php:187
 msgid "未执行WP_User_Query"
-msgstr ""
+msgstr "未執行WP_User_Query"
 
 #: includes/view/wnd-filter-user.php:208
 msgid "未执行wp_user_query"
-msgstr ""
+msgstr "未執行wp_user_query"
 
 #: includes/view/wnd-filter.php:98
 msgid "默认"
-msgstr ""
+msgstr "默認"
 
 #: includes/view/wnd-filter.php:180
 msgid "未定义输出模板"
-msgstr ""
+msgstr "未定義輸出模板"
 
 #: includes/view/wnd-form-option.php:44
 msgid "$option_name 不得包含下划线"
-msgstr ""
+msgstr "$option_name 不得包含下劃線"
 
 #: includes/view/wnd-form-post.php:90
 msgid "编辑版本"
-msgstr ""
+msgstr "編輯版本"
 
 #: includes/view/wnd-form-post.php:279
 msgid "请用回车键区分多个 Tag"
-msgstr ""
+msgstr "請用回車鍵區分多個 Tag"
 
 #: includes/view/wnd-form-post.php:422
 msgid "付费文件"
-msgstr ""
+msgstr "付費文件"
 
 #: includes/view/wnd-form-post.php:429
 msgid "文件链接"
-msgstr ""
+msgstr "文件鏈接"
 
 #: includes/view/wnd-form-post.php:443
 msgid "存为草稿"
-msgstr ""
+msgstr "村為草稿"
 
 #: includes/view/wnd-form-post.php:460 includes/view/wnd-form-post.php:479
 #: includes/view/wnd-form-post.php:501
 msgid "创建post失败，无法上传文件"
-msgstr ""
+msgstr "創建post失敗，無法上傳文件"
 
 #: includes/view/wnd-form-user.php:128
 msgid "头像"
-msgstr ""
+msgstr "頭像"
 
 #: includes/view/wnd-form-wp.php:164
 msgid "电子邮箱"
-msgstr ""
+msgstr "電子郵箱"
 
 #: includes/view/wnd-form-wp.php:169
 msgid "手机号码"
-msgstr ""
+msgstr "手機號碼"
 
 #: includes/view/wnd-form-wp.php:194
 msgid "获取验证码"
-msgstr ""
+msgstr "獲取驗證"
 
 #: includes/view/wnd-form-wp.php:226
 msgid "验证码"
-msgstr ""
+msgstr "驗證碼"
 
 #: includes/view/wnd-form-wp.php:346
 msgid "查看文件"
-msgstr ""
+msgstr "查看文件"
 
 #: includes/view/wnd-pagination.php:120 includes/view/wnd-pagination.php:150
 msgid "上一页"
-msgstr ""
+msgstr "上一頁"
 
 #: includes/view/wnd-pagination.php:123 includes/view/wnd-pagination.php:154
 msgid "下一页"
-msgstr ""
+msgstr "下一頁"
 
 #: includes/view/wnd-pagination.php:172
 msgid "尾页"
-msgstr ""
+msgstr "尾頁"
 
 #: static/editor/tinymce/plugins/lists/plugin.min.js:9
 msgid "opera"
@@ -1404,39 +1404,39 @@ msgstr ""
 
 #: wnd-frontend.php:98
 msgid "必填项为空"
-msgstr ""
+msgstr "必填項為空"
 
 #: wnd-frontend.php:99
 msgid "提交成功"
-msgstr ""
+msgstr "提交成功"
 
 #: wnd-frontend.php:100
 msgid "提交失败"
-msgstr ""
+msgstr "提交失敗"
 
 #: wnd-frontend.php:102
 msgid "上传失败"
-msgstr ""
+msgstr "上傳失敗"
 
 #: wnd-frontend.php:104
 msgid "发送失败"
-msgstr ""
+msgstr "發送失敗"
 
 #: wnd-frontend.php:107
 msgid "系统错误"
-msgstr ""
+msgstr "系統錯誤"
 
 #: wnd-frontend.php:109
 msgid "下载中"
-msgstr ""
+msgstr "下載中"
 
 #: wnd-frontend.php:110
 msgid "再试一次"
-msgstr ""
+msgstr "再試一次"
 
 #: wnd-frontend.php:111
 msgid "查看"
-msgstr ""
+msgstr "查看"
 
 #~ msgid "撰写评论"
 #~ msgstr "撰寫評論"
