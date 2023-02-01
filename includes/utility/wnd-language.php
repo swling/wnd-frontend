@@ -28,6 +28,7 @@ class Wnd_language {
 	 */
 	const language_codes = [
 		'zh_CN',
+		'zh_TW',
 		'en',
 	];
 
@@ -109,7 +110,15 @@ class Wnd_language {
 		 * - 将浏览器语言转为 WP locale
 		 */
 		$lang = static::get_browser_language($locale);
-		return in_array($lang, ['zh-CN', 'zh-cn', 'zh', 'zh_CN', 'zh_cn']) ? 'zh_CN' : 'en_US';
+		if (in_array($lang, ['zh-CN', 'zh-cn', 'zh', 'zh_CN', 'zh_cn'])) {
+			return 'zh_CN';
+		}
+
+		if (in_array($lang, ['zh-TW', 'zh_TW'])) {
+			return 'zh_TW';
+		}
+
+		return 'en_US';
 	}
 
 	/**
