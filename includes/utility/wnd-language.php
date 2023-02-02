@@ -114,7 +114,7 @@ class Wnd_language {
 			return 'zh_CN';
 		}
 
-		if (in_array($lang, ['zh-TW', 'zh_TW'])) {
+		if (in_array($lang, ['zh-TW', 'zh_TW', 'zh-HK', 'zh_HK'])) {
 			return 'zh_TW';
 		}
 
