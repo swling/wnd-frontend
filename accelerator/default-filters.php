@@ -557,7 +557,7 @@ add_action( 'wp_default_scripts', 'wp_default_packages' );
 
 // add_action( 'wp_enqueue_scripts', 'wp_localize_jquery_ui_datepicker', 1000 );
 // add_action( 'wp_enqueue_scripts', 'wp_common_block_scripts_and_styles' );
-add_action( 'wp_enqueue_scripts', 'wp_enqueue_classic_theme_styles' );
+// add_action( 'wp_enqueue_scripts', 'wp_enqueue_classic_theme_styles' );
 // add_action( 'admin_enqueue_scripts', 'wp_localize_jquery_ui_datepicker', 1000 );
 // add_action( 'admin_enqueue_scripts', 'wp_common_block_scripts_and_styles' );
 // add_action( 'enqueue_block_assets', 'wp_enqueue_registered_block_scripts_and_styles' );
@@ -571,7 +571,7 @@ add_action( 'wp_enqueue_scripts', 'wp_enqueue_classic_theme_styles' );
 // add_filter( 'print_scripts_array', 'wp_prototype_before_jquery' );
 // add_filter( 'customize_controls_print_styles', 'wp_resource_hints', 1 );
 // add_action( 'admin_head', 'wp_check_widget_editor_deps' );
-add_filter( 'block_editor_settings_all', 'wp_add_editor_classic_theme_styles' );
+// add_filter( 'block_editor_settings_all', 'wp_add_editor_classic_theme_styles' );
 
 // Global styles can be enqueued in both the header and the footer. See https://core.trac.wordpress.org/ticket/53494.
 // add_action( 'wp_enqueue_scripts', 'wp_enqueue_global_styles' );
