@@ -606,10 +606,12 @@ function _wnd_render_form(container, form_json, add_class = '') {
                  * - 之所以不直接提取从 field 中提取 value 组合对象，因为表单中可能存在动态字段，此类字段增删目前采用的是直接操作dom，无法同步 VUE
                  * - 之所以提取表单数据后，又转化为 json，是为了保持后端数据统一为 json，以确保后期适配 APP、小程序等，与站内请求一致
                  * - 将表单数据与默认表单数据合并的原因在于，表单对未选择的单选，复选字段不会构造数据，从而导致数据键值丢失，无法通过表单签名(_wnd_sign)
+                 * - Object.assign 执行浅拷贝，故此需要深拷贝一份 default_data 以防止 this.default_data 被表单数据覆盖，导致修改如取消 checkbox 无效
                  **/
                 let form = document.querySelector('#' + this.form.attrs.id);
                 let form_data = new FormData(form);
-                let json = Object.assign(this.default_data, this.formdata_to_object(form_data));
+                let default_data = JSON.parse(JSON.stringify(this.default_data));
+                let json = Object.assign(default_data, this.formdata_to_object(form_data));
 
                 let params = {};
                 if ('get' == this.form.attrs.method.toLowerCase()) {
