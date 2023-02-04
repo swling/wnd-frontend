@@ -87,7 +87,7 @@ class Wnd_Form_User extends Wnd_Form_WP {
 				'label'       => $label,
 				'placeholder' => $placeholder,
 				'icon_left'   => '<i class="fas fa-unlock-alt"></i>',
-				'icon_right'  => '<div class="hide-pw"><i class="far fa-eye" style="pointer-events:all; cursor:pointer"></i></div>',
+				'icon_right'  => '<div class="hide-pw"><i class="fas fa-eye" style="pointer-events:all; cursor:pointer"></i></div>',
 				'required'    => $required,
 			]
 		);
