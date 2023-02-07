@@ -31,13 +31,9 @@ class Wnd_Error_Handler {
 
 	private function __construct() {
 		// 面向用户：关闭错误显示；面向开发者：记录所有错误
-		if (WP_DEBUG_DISPLAY) {
-			ini_set('display_errors', 1);
-		} elseif (null !== WP_DEBUG_DISPLAY) {
-			ini_set('display_errors', 0);
-		}
-
+		ini_set('display_errors', 0);
 		error_reporting(E_ALL);
+
 		register_shutdown_function(__CLASS__ . '::check_for_fatal');
 		set_error_handler(__CLASS__ . '::log_error');
 		set_exception_handler(__CLASS__ . '::log_exception');
