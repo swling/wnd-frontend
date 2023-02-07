@@ -70,7 +70,7 @@ class Wnd_Defender_Redis Extends Wnd_Defender {
 	 * 删除
 	 */
 	protected function cache_delete($key) {
-		return $this->cache->delete($key);
+		return $this->cache->del($key);
 	}
 
 }
