@@ -277,11 +277,7 @@ function wnd_array_filter(array $arr): array{
  * @since 0.9.38
  */
 function wnd_error_log(string $msg, string $file_name = 'wnd_error') {
-	if (!wnd_get_config('enable_error_log')) {
-		return;
-	}
-
-	@error_log($msg . ' @' . wp_date('Y-m-d H:i:s', time()) . "\n", 3, WP_PLUGIN_DIR . '/' . $file_name . '.log');
+	Wnd\Utility\Wnd_Error_Handler::write_log($msg, $file_name);
 }
 
 /**
@@ -291,26 +287,6 @@ function wnd_error_log(string $msg, string $file_name = 'wnd_error') {
 function wnd_error_payment_log(string $msg) {
 	$msg = $msg . ' Request from ' . wnd_get_user_ip() . '. @' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 	wnd_error_log($msg, 'wnd_payment_error');
-}
-
-/**
- * 设置默认的异常处理函数
- * @since 2019.07.17
- * @since 0.9.38 新增错误日志记录功能
- */
-set_exception_handler('wnd_exception_handler');
-function wnd_exception_handler($e) {
-	$error = $e->getMessage() . ' @ ' . $e->getFile() . ' line ' . $e->getLine() . '.';
-	$error .= 'Request from ' . wnd_get_user_ip() . '. @' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-	$html = '<article class="column message is-danger">';
-	$html .= '<div class="message-header">';
-	$html .= '<p>异常</p>';
-	$html .= '</div>';
-	$html .= '<div class="message-body">' . $error . '</div>';
-	$html .= '</article>';
-	echo $html;
-
-	wnd_error_log($error);
 }
 
 /**

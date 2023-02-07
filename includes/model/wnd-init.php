@@ -8,6 +8,7 @@ use Wnd\Controller\Wnd_Controller;
 use Wnd\Hook\Wnd_Hook;
 use Wnd\Model\Wnd_DB;
 use Wnd\Utility\Wnd_CDN;
+use Wnd\Utility\Wnd_Error_Handler;
 use Wnd\Utility\Wnd_JWT_Handler;
 use Wnd\Utility\Wnd_language;
 use Wnd\Utility\Wnd_Optimization;
@@ -23,6 +24,9 @@ class Wnd_Init {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
+		// Error Handler
+		Wnd_Error_Handler::get_instance();
+
 		// function
 		static::load_function_file();
 
