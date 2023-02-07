@@ -2,7 +2,7 @@
 namespace Wnd\Utility;
 
 use ErrorException;
-use Exception;
+use Throwable;
 
 /**
  * @since 0.9.59.3
@@ -39,7 +39,7 @@ class Wnd_Error_Handler {
 		set_exception_handler(__CLASS__ . '::log_exception');
 	}
 
-	public static function log_exception(Exception $e) {
+	public static function log_exception(Throwable $e) {
 		$error = 'Type: ' . get_class($e) . "; Message: {$e->getMessage()}; File: {$e->getFile()}; Line: {$e->getLine()};";
 		$error .= 'Request from ' . static::get_client_ip() . '. @' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		$html = '<article class="column message is-danger">';
