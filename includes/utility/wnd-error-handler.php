@@ -75,13 +75,13 @@ class Wnd_Error_Handler {
 		$log = 'Type: ' . $code . "; Message: {$str}; File: {$file}; Line: {$line};";
 
 		/**
-		 * WP 内核 8129 错误：未来版本中可能无法正常工作的代码警告
+		 * WP 内核错误：
 		 * - 主要为 WP 内核代码中存在的一些 PHP 版本兼容性警告
 		 * - 此类警告只能等待 WP 官方升级，不宜自行处理，故不记录日志
 		 *
 		 * @link https://www.php.net/manual/zh/errorfunc.constants.php
 		 */
-		if (8192 == $code and str_starts_with($file, ABSPATH . WPINC)) {
+		if (str_starts_with($file, ABSPATH . WPINC)) {
 			return false;
 		}
 
