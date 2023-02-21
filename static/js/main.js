@@ -149,7 +149,7 @@ function wnd_prepend(el, html) {
  *          // do something and return value
  *          return 'xxx';
  *      }
- *  );  
+ *  );
  * 
  */
 function wnd_load_script(url, callback) {
@@ -158,8 +158,12 @@ function wnd_load_script(url, callback) {
         script.type = 'text/javascript';
         script.src = url;
         document.head.appendChild(script);
-        script.onload = function() {
-            resolve(callback());
+        script.onload = () => {
+            if ("function" == typeof callback) {
+                resolve(callback());
+            } else {
+                resolve(true);
+            }
         };
     });
 }
@@ -169,11 +173,16 @@ function wnd_load_script(url, callback) {
  * @param {string} url 样式地址
  */
 function wnd_load_style(url) {
-    let link = document.createElement('link');
-    link.type = 'text/css';
-    link.rel = 'stylesheet';
-    link.href = url;
-    document.head.appendChild(link);
+    return new Promise(function(resolve, reject) {
+        let link = document.createElement('link');
+        link.type = 'text/css';
+        link.rel = 'stylesheet';
+        link.href = url;
+        document.head.appendChild(link);
+        link.onload = () => {
+            resolve(true);
+        };
+    });
 }
 
 // 指定容器设置加载中效果
