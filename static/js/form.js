@@ -132,16 +132,14 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 return _field;
             },
             // 富文本编辑器 @link https://tiny.cloud
-            build_editor: function() {
+            build_editor: async function() {
                 let _this = this;
                 if ('undefined' == typeof tinymce) {
                     let url = static_path + 'editor/tinymce/tinymce.min.js' + cache_suffix;
-                    wnd_load_script(url, function() {
-                        build_editors();
-                    });
-                } else {
-                    build_editors();
+                    await wnd_load_script(url);
                 }
+                build_editors();
+
 
                 function build_editors() {
                     _this.index.editor.forEach(index => {

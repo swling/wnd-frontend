@@ -213,31 +213,25 @@ function wnd_loading(el, remove = false) {
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表单
-function wnd_render_form(container, form_json, add_class) {
+async function wnd_render_form(container, form_json, add_class) {
     if ('function' != typeof _wnd_render_form) {
         let url = static_path + 'js/form.min.js' + cache_suffix;
-        wnd_load_script(url, function() {
-            _wnd_render_form(container, form_json, add_class)
-        });
-    } else {
-        _wnd_render_form(container, form_json, add_class);
+        await wnd_load_script(url);
     }
+    _wnd_render_form(container, form_json, add_class);
 }
 
 /**
  * 渲染 QRcode
  * @since 0.9.56.1
  **/
-function wnd_qrcode(el, data, size = 250) {
+async function wnd_qrcode(el, data, size = 250) {
     el = ('object' == typeof el) ? el : document.querySelector(el);
     if ('undefined' == typeof qrcanvas) {
         let url = static_path + 'js/lib/qrcanvas.min.js' + cache_suffix;
-        wnd_load_script(url, function() {
-            render(el, data, size);
-        });
-    } else {
-        render(el, data, size);
+        await wnd_load_script(url);
     }
+    render(el, data, size);
 
     function render(el, data, size) {
         const canvas = qrcanvas.qrcanvas({
@@ -271,31 +265,20 @@ async function wnd_upload_to_oss_direct(file, oss_sp, endpoint, sign_data = {}) 
  * 文件直传 OSS，并写入附件记录
  **/
 async function wnd_upload_to_oss_dynamic(file, oss_sp, endpoint, direct = true, sign_data = {}) {
-    let upload_res;
     if ('undefined' == typeof _wnd_upload_to_oss) {
         let url = static_path + 'js/file.min.js' + cache_suffix;
-        upload_res = await wnd_load_script(
-            url,
-            function() {
-                return _wnd_upload_to_oss(file, oss_sp, endpoint, direct, sign_data);
-            }
-        );
-    } else {
-        upload_res = _wnd_upload_to_oss(file, oss_sp, endpoint, direct, sign_data);
+        await wnd_load_script(url);
     }
-    return upload_res;
+    return _wnd_upload_to_oss(file, oss_sp, endpoint, direct, sign_data);
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表达
-function wnd_render_filter(container, filter_json, add_class) {
+async function wnd_render_filter(container, filter_json, add_class) {
     if ('function' != typeof _wnd_render_filter) {
         let url = static_path + 'js/filter.min.js' + cache_suffix;
-        wnd_load_script(url, function() {
-            _wnd_render_filter(container, filter_json, add_class);
-        });
-    } else {
-        _wnd_render_filter(container, filter_json, add_class);
+        await wnd_load_script(url);
     }
+    _wnd_render_filter(container, filter_json, add_class);
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表达

@@ -78,15 +78,9 @@ async function _wnd_md5_file(file) {
     let md5_str = '';
     if ('undefined' == typeof SparkMD5) {
         let url = static_path + 'js/lib/spark-md5.min.js' + cache_suffix;
-        md5_str = await wnd_load_script(
-            url,
-            function() {
-                return MD5(file);
-            }
-        );
-    } else {
-        md5_str = MD5(file);
+        await wnd_load_script(url);
     }
+    md5_str = await MD5(file);
     return md5_str;
 
     /**

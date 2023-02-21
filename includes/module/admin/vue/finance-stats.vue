@@ -41,15 +41,12 @@
 				this.res = res.data;
 				this.showCharts('finance-stats', this.res);
 			},
-			showCharts: function (id, data) {
+			showCharts: async function (id, data) {
 				if ('undefined' == typeof uCharts) {
 					let url = static_path + 'js/lib/u-charts.min.js' + cache_suffix;
-					wnd_load_script(url, () => {
-						this._showCharts(id, data);
-					});
-				} else {
-					this._showCharts(id, data);
-				}
+					await wnd_load_script(url);
+				} 
+				this._showCharts(id, data);
 			},
 
 			_showCharts: function (id, data) {
