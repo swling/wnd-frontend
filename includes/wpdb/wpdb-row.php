@@ -66,7 +66,7 @@ class WPDB_Row {
 		// meta 类需要按类型 指定数据表
 		if ($this->table_name) {
 			$table_name  = $this->table_name;
-			$this->table = $wpdb->$table_name;
+			$this->table = $wpdb->prefix . $table_name;
 			$this->cache = new WPDB_Row_Cache($this->object_cache_fields, $this->table_name);
 		}
 	}

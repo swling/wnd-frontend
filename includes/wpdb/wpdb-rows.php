@@ -50,7 +50,7 @@ abstract class WPDB_Rows {
 
 		if ($this->table_name) {
 			$table_name  = $this->table_name;
-			$this->table = $wpdb->$table_name;
+			$this->table = $wpdb->prefix . $table_name;
 		}
 	}
 
