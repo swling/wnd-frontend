@@ -17,7 +17,7 @@ class Wnd_Finance_Stats extends Wnd_Module_Html {
 		 * 之所以使用 .vue 后缀是因为 .HTML 文件在文件夹中将以浏览器图标展示，非常丑陋，毫无科技感
 		 * 仅此而已
 		 */
-		$html = file_get_contents(__DIR__ . '/vue/finance-stats.vue');
+		$html = file_get_contents(WND_PATH . '/includes/module-vue/admin/finance-stats.vue');
 		return $html;
 	}
 
