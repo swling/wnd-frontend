@@ -274,8 +274,7 @@ function _wnd_render_filter(container, filter_json, add_class) {
 		},
 	};
 
-	wnd_inner_html(parent, '<div class="vue-app"></div>');
-	Vue.createApp(option).mount(container + ' .vue-app');
+	Vue.createApp(option).mount(container);
 
 	/******************************************************* 构造 Vue 模板 **********************************************************/
 	function build_filter_template(filter) {

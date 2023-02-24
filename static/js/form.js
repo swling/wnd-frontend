@@ -688,8 +688,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
         },
     };
 
-    wnd_inner_html(parent, '<div class="vue-app"></div>');
-    Vue.createApp(form_option).mount(container + ' .vue-app');
+    Vue.createApp(form_option).mount(container);
 
     /******************************************************* 构造 Vue 模板 **********************************************************/
     function build_form_template(form_json) {

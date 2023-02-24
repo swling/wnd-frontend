@@ -359,8 +359,7 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
     };
 
     let parent = document.querySelector(container);
-    wnd_inner_html(parent, '<div class="vue-app"></div>');
-    Vue.createApp(option).mount(container + ' .vue-app');
+    Vue.createApp(option).mount(container);
 }
 
 /**
