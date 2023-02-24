@@ -30,7 +30,12 @@ class Qcloud extends Wnd_Sms {
 		 * 即数组具体的元素，与信息模板中的变量一一对应
 		 *
 		 */
-		$params = ($this->code and $this->valid_time) ? [(string) $this->code, (string) $this->valid_time] : [];
+		$params = [];
+		if ($this->code and $this->valid_time) {
+			$params = [(string) $this->code, (string) $this->valid_time];
+		} elseif ($this->code) {
+			$params = [(string) $this->code];
+		}
 
 		// 指定模板ID单发短信
 		static::sendWithParam('86', [$this->phone], $this->template, $params, $this->sign_name);
