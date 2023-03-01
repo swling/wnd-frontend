@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
 "POT-Creation-Date: 2023-01-14 11:36+0800\n"
-"PO-Revision-Date: 2023-01-14 11:56+0800\n"
+"PO-Revision-Date: 2023-02-28 13:34+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -37,7 +37,7 @@ msgstr "User does not exist"
 #: includes/action/admin/wnd-delete-user.php:20
 #: includes/action/common/wnd-delete-file.php:21
 msgid "删除成功"
-msgstr ""
+msgstr "Successfully deleted"
 
 #: includes/action/admin/wnd-delete-user.php:22
 #: includes/action/common/wnd-delete-file.php:24
@@ -246,7 +246,7 @@ msgstr ""
 #: includes/action/post/wnd-update-post-status.php:97
 #: includes/module/post/wnd-post-status-form.php:35 wnd-frontend.php:106
 msgid "已删除"
-msgstr "Delete Failed"
+msgstr "Deleted"
 
 #: includes/action/post/wnd-update-post-status.php:131
 msgid "审核失败"

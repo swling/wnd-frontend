@@ -86,12 +86,16 @@ function wnd_get_json_request(): array{
  *
  * @param  	bool   	$hidden 	是否隐藏IP部分字段
  * @return 	string 	IP address
+ *
+ * @link https://learnku.com/laravel/t/3905/do-you-really-know-ip-how-do-php-get-the-real-user-ip
+ * @link https://stackoverflow.com/questions/3003145/how-to-get-the-client-ip-address-in-php
+ * @link https://www.php.net/manual/zh/reserved.variables.server.php
  */
 function wnd_get_user_ip(bool $hidden = false): string {
 	if (isset($_SERVER)) {
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['REMOTE_ADDR']);
+		$ip = $_SERVER['REMOTE_ADDR'] ?? '';
 	} else {
-		$ip = getenv('HTTP_X_FORWARDED_FOR') ?: (getenv('HTTP_CLIENT_IP') ?: getenv('REMOTE_ADDR'));
+		$ip = getenv('REMOTE_ADDR') ?? '';
 	}
 	$ip = $ip ?: '';
 
