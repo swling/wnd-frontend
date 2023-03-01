@@ -45,6 +45,7 @@ class Wnd_Filter_Query {
 		'paged'                  => 1,
 		'update_post_term_cache' => true,
 		'update_post_meta_cache' => true,
+		'without_content'        => false,
 	];
 
 	/**
