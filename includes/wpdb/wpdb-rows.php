@@ -166,7 +166,7 @@ abstract class WPDB_Rows {
 	 * If no value already exists for the specified object ID and rowdata key, the rowdata will be added.
 	 * @return int row id
 	 */
-	public function update_row(int $object_id, array $where, array $data): int{
+	public function update_row(int $object_id, array $data, array $where): int{
 		$_data = $this->get_row($object_id, $where);
 		if (!$_data) {
 			return 0;
