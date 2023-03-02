@@ -36,6 +36,7 @@ class Wnd_language {
 
 	public static $request_key  = WND_LANG_KEY;
 	private static $user_locale = '';
+	private static $site_locale = '';
 
 	/**
 	 * 此处并非标准 language code 而是简化后用于 GET 参数的 key 值
@@ -49,8 +50,11 @@ class Wnd_language {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
+		// 站点默认语言，必须设置在 'locale' 钩子之前
+		static::$site_locale = get_locale();
+
 		// 用户语言
-		static::$user_locale = static::parse_user_locale();
+		static::$user_locale = static::parse_user_locale(static::$site_locale);
 
 		// 切换语言：绕过 WP 后台，否则管理员将难以确认当前站点的默认语言
 		if (!is_admin()) {
@@ -72,8 +76,8 @@ class Wnd_language {
 			setcookie('lang', $lang, time() + (3600 * 24 * 365), '/', $domain);
 		}
 
-		// 语言切换参数与用户环境语言一致：无需添加语言参数
-		if ($lang == static::$user_locale) {
+		// 语言切换参数与站点默认语言一致：无需添加语言参数
+		if ($lang == static::$site_locale) {
 			return;
 		}
 
@@ -108,7 +112,7 @@ class Wnd_language {
 	 * - 浏览器语言最后
 	 * - 若全部为空则为 WP 后台配置的站点语言
 	 */
-	public static function parse_user_locale(): string{
+	private static function parse_user_locale(string $site_locale): string{
 		// 参数优先
 		$lang = static::parse_locale();
 		if ($lang) {
@@ -137,7 +141,7 @@ class Wnd_language {
 			return 'en_US';
 		}
 
-		return get_locale();
+		return $site_locale;
 	}
 
 	/**
@@ -148,11 +152,6 @@ class Wnd_language {
 	 */
 	public static function filter_link($link) {
 		$lang = static::parse_locale();
-
-		// 默认语言
-		if ($lang == static::$user_locale) {
-			return $link;
-		}
 
 		if (str_starts_with($lang, 'en_')) {
 			$lang = 'en';
@@ -204,17 +203,16 @@ class Wnd_language {
 	 * Language code
 	 * @see https://en.wikipedia.org/wiki/Language_localisation
 	 *
-	 * @param  [string]  $default             Default language for the site
-	 * @return [string]                       Language code/prefix
+	 * @return [string] 	Language code/prefix
 	 */
-	public static function get_browser_language(string $default = 'zh-CN'): string {
+	public static function get_browser_language(): string {
 		if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-			return $default;
+			return '';
 		}
 
 		$langs = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 
-		return empty($langs) ? $default : $langs[0];
+		return empty($langs) ? '' : $langs[0];
 	}
 
 }
