@@ -11,17 +11,31 @@ use Wnd\Utility\Wnd_Singleton_Trait;
  * - $_GET 参数优先
  * - cookie 其次
  * - 浏览器语言最后
+ * - 若全部为空则为 WP 后台配置的站点语言
+ *  @see static::parse_user_locale()
  *
- * 当 URL 包含语言参数时：
+ * ### 当 URL 包含语言参数时，针对浏览器用户：
  * - 将解析后的语言参数写入 cookie 保存
- * - 若解析后的语言参数与当前 WP 默认语言 get_locale() 不一致，则会触发 filter，对各类固定链接添加语言参数
+ * - 当 URL 包含语言参数时，由于 cookie的写入，$user_locale 也随之改变，因此无需对其他链接添加语言参数
+ * - 简而言之：包含语言参数的 URL 对浏览器用户主要用于手动切换网站语言，为一次性操作
+ *
+ * ### 当 URL 包含语言参数时，针对 Google 等搜索引擎
+ * - Googlebot/Bingbot 不会携带 Accept-Language 头，且不会保存 cookie故：$user_locale 始终为站点默认语言
+ * - 当语言参数与 $user_locale（站点默认语言） 不一致时会触发 filter 对页面上的各类固定链接添加语言参数
+ * - 简而言之：包含语言参数的 URL 旨在供 Google 等海外搜索引擎索引多语言版本
+ *
+ * ### 注意
+ * -【百度】搜索引擎会携带 Accept-Language 头，且为：zh-CN
+ * - 应拦截百度对多语言版本的抓取，仅允许其抓取中文版本
+ *
+ * @link https://developers.google.com/search/docs/specialty/international/managing-multi-regional-sites?hl=zh-Hans#use-different-urls-for-different-language-versions
  *
  * @since 2020.01.14
  */
 class Wnd_language {
 
 	public static $request_key  = WND_LANG_KEY;
-	private static $site_locale = 'zh_CN';
+	private static $user_locale = '';
 
 	/**
 	 * 此处并非标准 language code 而是简化后用于 GET 参数的 key 值
@@ -35,12 +49,12 @@ class Wnd_language {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
-		// 站点默认语言，必须设置在 'locale' 钩子之前
-		static::$site_locale = get_locale();
+		// 用户语言
+		static::$user_locale = static::parse_user_locale();
 
-		// 切换语言
+		// 切换语言：绕过 WP 后台，否则管理员将难以确认当前站点的默认语言
 		if (!is_admin()) {
-			add_filter('locale', [__CLASS__, 'filter_locale']);
+			add_filter('locale', function () {return static::$user_locale;});
 		}
 
 		// 在用户完成注册时，将当前站点语言记录到用户字段
@@ -58,8 +72,8 @@ class Wnd_language {
 			setcookie('lang', $lang, time() + (3600 * 24 * 365), '/', $domain);
 		}
 
-		// 默认语言不会添加语言参数
-		if ($lang == static::$site_locale) {
+		// 语言切换参数与用户环境语言一致：无需添加语言参数
+		if ($lang == static::$user_locale) {
 			return;
 		}
 
@@ -88,12 +102,13 @@ class Wnd_language {
 	}
 
 	/**
-	 * 切换语言
+	 * 解析用户语言并转为 WP_Locale 格式（ '-' 改 '_' ）
 	 * - $_GET 参数优先
 	 * - cookie 其次
 	 * - 浏览器语言最后
+	 * - 若全部为空则为 WP 后台配置的站点语言
 	 */
-	public static function filter_locale(string $locale): string{
+	public static function parse_user_locale(): string{
 		// 参数优先
 		$lang = static::parse_locale();
 		if ($lang) {
@@ -109,7 +124,7 @@ class Wnd_language {
 		 * - 获取浏览器首选语言
 		 * - 将浏览器语言转为 WP locale
 		 */
-		$lang = static::get_browser_language($locale);
+		$lang = static::get_browser_language();
 		if (in_array($lang, ['zh-CN', 'zh-cn', 'zh', 'zh_CN', 'zh_cn'])) {
 			return 'zh_CN';
 		}
@@ -118,7 +133,11 @@ class Wnd_language {
 			return 'zh_TW';
 		}
 
-		return 'en_US';
+		if (str_starts_with($lang, 'en-') or 'en' == $lang) {
+			return 'en_US';
+		}
+
+		return get_locale();
 	}
 
 	/**
@@ -131,7 +150,7 @@ class Wnd_language {
 		$lang = static::parse_locale();
 
 		// 默认语言
-		if ($lang == static::$site_locale) {
+		if ($lang == static::$user_locale) {
 			return $link;
 		}
 
