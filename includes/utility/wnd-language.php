@@ -16,12 +16,12 @@ use Wnd\Utility\Wnd_Singleton_Trait;
  *
  * ### 当 URL 包含语言参数时，针对浏览器用户：
  * - 将解析后的语言参数写入 cookie 保存
- * - 当 URL 包含语言参数时，由于 cookie的写入，$user_locale 也随之改变，因此无需对其他链接添加语言参数
- * - 简而言之：包含语言参数的 URL 对浏览器用户主要用于手动切换网站语言，为一次性操作
+ * - 当语言参数与 $site_locale（站点默认语言） 不一致时会触发 filter 对页面上的各类固定链接添加语言参数
+ * - 简而言之：包含语言参数的 URL 对浏览器用户主要用于手动切换网站语言
  *
  * ### 当 URL 包含语言参数时，针对 Google 等搜索引擎
- * - Googlebot/Bingbot 不会携带 Accept-Language 头，且不会保存 cookie故：$user_locale 始终为站点默认语言
- * - 当语言参数与 $user_locale（站点默认语言） 不一致时会触发 filter 对页面上的各类固定链接添加语言参数
+ * - Googlebot/Bingbot 不会携带 Accept-Language 头，且不会保存 cookie故：$user_locale = $site_locale
+ * - 当语言参数与 $site_locale（站点默认语言） 不一致时会触发 filter 对页面上的各类固定链接添加语言参数
  * - 简而言之：包含语言参数的 URL 旨在供 Google 等海外搜索引擎索引多语言版本
  *
  * ### 注意
