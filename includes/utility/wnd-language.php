@@ -228,7 +228,7 @@ class Wnd_language {
 	}
 
 	public static function selector(): string{
-		$langs       = ['zh_CN' => '简体', 'zh_TW' => '繁体', 'en' => 'EN'];
+		$langs       = ['zh_CN' => '简体', 'zh_TW' => '繁體', 'en' => 'EN'];
 		$user_locale = static::$user_locale;
 		if ('en_US' == $user_locale) {
 			$user_locale = 'en';
