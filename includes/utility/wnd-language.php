@@ -227,4 +227,25 @@ class Wnd_language {
 		return empty($langs) ? '' : $langs[0];
 	}
 
+	public static function selector(): string{
+		$langs       = ['zh_CN' => '简体', 'zh_TW' => '繁体', 'en' => 'EN'];
+		$user_locale = static::$user_locale;
+		if ('en_US' == $user_locale) {
+			$user_locale = 'en';
+		}
+
+		$html = '<select onchange="window.location=this.value">';
+		foreach ($langs as $key => $lang) {
+			$link = add_query_arg('lang', $key);
+			if ($key == $user_locale) {
+				$html .= '<option value="' . $link . '" selected>' . $lang . '</option>';
+			} else {
+				$html .= '<option value="' . $link . '">' . $lang . '</option>';
+			}
+		}
+		$html .= '</select>';
+
+		return $html;
+	}
+
 }
