@@ -37,6 +37,7 @@ class Wnd_language {
 	public static $request_key  = WND_LANG_KEY;
 	private static $user_locale = '';
 	private static $site_locale = '';
+	private static $lang        = '';
 
 	/**
 	 * 此处并非标准 language code 而是简化后用于 GET 参数的 key 值
@@ -53,8 +54,11 @@ class Wnd_language {
 		// 站点默认语言，必须设置在 'locale' 钩子之前
 		static::$site_locale = get_locale();
 
+		// 解析语言参数
+		static::$lang = static::parse_locale();
+
 		// 用户语言
-		static::$user_locale = static::parse_user_locale(static::$site_locale);
+		static::$user_locale = static::parse_user_locale(static::$site_locale, static::$lang);
 
 		// 切换语言：绕过 WP 后台，否则管理员将难以确认当前站点的默认语言
 		if (!is_admin()) {
@@ -64,45 +68,8 @@ class Wnd_language {
 		// 在用户完成注册时，将当前站点语言记录到用户字段
 		add_action('user_register', [__CLASS__, 'action_on_user_register'], 99, 1);
 
-		// 解析语言 $_GET 参数
-		$lang = static::parse_locale();
-		if (!$lang) {
-			return;
-		}
-
-		// 语言参数用于用户手动修改语言，存入 cookie
-		if (!isset($_COOKIE['lang']) or $lang != $_COOKIE['lang']) {
-			$domain = parse_url(home_url())['host'];
-			setcookie('lang', $lang, time() + (3600 * 24 * 365), '/', $domain);
-		}
-
-		// 语言切换参数与站点默认语言一致：无需添加语言参数
-		if ($lang == static::$site_locale) {
-			return;
-		}
-
-		// 为链接添加$_REQUEST[static::$request_key]参数
-		add_filter('term_link', [__CLASS__, 'filter_link'], 99);
-		add_filter('post_type_archive_link', [__CLASS__, 'filter_link'], 99);
-		add_filter('post_type_link', [__CLASS__, 'filter_link'], 99);
-		add_filter('post_link', [__CLASS__, 'filter_link'], 99);
-		add_filter('page_link', [__CLASS__, 'filter_link'], 99);
-		add_filter('attachment_link', [__CLASS__, 'filter_link'], 99);
-		add_filter('author_link', [__CLASS__, 'filter_link'], 99);
-		add_filter('get_edit_post_link', [__CLASS__, 'filter_link'], 99);
-
-		// 修复因语言参数导致的评论分页 bug
-		add_filter('get_comments_pagenum_link', function ($link) use ($lang) {
-			if (str_starts_with($lang, 'en_')) {
-				$lang = 'en';
-			}
-			$link = str_replace('?' . static::$request_key . '=' . $lang, '', $link);
-			return static::filter_link($link);
-		}, 99);
-
-		// Wnd Filter
-		add_filter('wnd_option_reg_redirect_url', [__CLASS__, 'filter_link'], 99);
-		add_filter('wnd_option_pay_return_url', [__CLASS__, 'filter_return_link'], 99);
+		// 处理语言 $_GET 参数
+		static::handle_lang_query(static::$lang);
 	}
 
 	/**
@@ -112,9 +79,8 @@ class Wnd_language {
 	 * - 浏览器语言最后
 	 * - 若全部为空则为 WP 后台配置的站点语言
 	 */
-	private static function parse_user_locale(string $site_locale): string{
+	private static function parse_user_locale(string $site_locale, string $lang): string {
 		// 参数优先
-		$lang = static::parse_locale();
 		if ($lang) {
 			return $lang;
 		}
@@ -144,14 +110,60 @@ class Wnd_language {
 		return $site_locale;
 	}
 
+	private function handle_lang_query(string $lang) {
+		if (!$lang) {
+			return;
+		}
+
+		// 语言参数用于用户手动修改语言，存入 cookie
+		if (!isset($_COOKIE['lang']) or $lang != $_COOKIE['lang']) {
+			$domain = parse_url(home_url())['host'];
+			setcookie('lang', $lang, time() + (3600 * 24 * 365), '/', $domain);
+		}
+
+		// 语言切换参数与：（站点默认语言 or Cookie 设置语言） 一致时，页面链接无需添加语言参数
+		if ($lang == static::$site_locale or (isset($_COOKIE['lang']) and $lang == $_COOKIE['lang'])) {
+			return;
+		}
+
+		// 为链接添加$_REQUEST[static::$request_key]参数
+		add_filter('term_link', [__CLASS__, 'filter_link'], 99);
+		add_filter('post_type_archive_link', [__CLASS__, 'filter_link'], 99);
+		add_filter('post_type_link', [__CLASS__, 'filter_link'], 99);
+		add_filter('post_link', [__CLASS__, 'filter_link'], 99);
+		add_filter('page_link', [__CLASS__, 'filter_link'], 99);
+		add_filter('attachment_link', [__CLASS__, 'filter_link'], 99);
+		add_filter('author_link', [__CLASS__, 'filter_link'], 99);
+		add_filter('get_edit_post_link', [__CLASS__, 'filter_link'], 99);
+
+		// 修复因语言参数导致的评论分页 bug
+		add_filter('get_comments_pagenum_link', function ($link) use ($lang) {
+			if (str_starts_with($lang, 'en_')) {
+				$lang = 'en';
+			}
+			$link = str_replace('?' . static::$request_key . '=' . $lang, '', $link);
+			return static::filter_link($link);
+		}, 99);
+
+		// Wnd Filter
+		add_filter('wnd_option_reg_redirect_url', [__CLASS__, 'filter_link'], 99);
+		add_filter('wnd_option_pay_return_url', [__CLASS__, 'filter_return_link'], 99);
+	}
+
 	/**
 	 * 根据当前语言参数，自动为其他链接添加语言参数
 	 * 注：
-	 * - 默认语言不会添加语言参数
+	 * - 常规浏览器用户不会添加语言参数（与 handle_lang_query 重复判断的原因在于，外部可能会调用本方法）
 	 * - 英语类 en_US, en_GB, en_CA 等统一设置 为 en
+	 * - 由于本类为单例模式，因此 static::$site_locale 已在插件初始化时被赋值
 	 */
-	public static function filter_link($link) {
+	public static function filter_link($link): string{
 		$lang = static::parse_locale();
+
+		// 语言切换参数与：（站点默认语言 or Cookie 设置语言） 一致时，页面链接无需添加语言参数
+		if ($lang == static::$site_locale or (isset($_COOKIE['lang']) and $lang == $_COOKIE['lang'])) {
+			return $link;
+		}
 
 		if (str_starts_with($lang, 'en_')) {
 			$lang = 'en';
