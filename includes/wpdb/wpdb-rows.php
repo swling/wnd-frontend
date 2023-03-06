@@ -30,7 +30,7 @@ abstract class WPDB_Rows {
 	protected $table;
 
 	// 单行操作实例（根据上述属性生成，故一般无需在子类额外配置）
-	protected $wpdb_row;
+	public $wpdb_row;
 
 	/**
 	 * Constructer
