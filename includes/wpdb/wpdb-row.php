@@ -124,12 +124,12 @@ class WPDB_Row {
 		}
 
 		// sql 语句
-		$conditions = '';
+		$conditions = '1 = 1';
 		foreach ($where as $field => $value) {
 			if (is_null($value)) {
-				$conditions .= "`$field` IS NULL";
+				$conditions .= " AND `$field` IS NULL";
 			} else {
-				$conditions .= "`$field` = " . "'{$value}'";
+				$conditions .= " AND `$field` = " . "'{$value}'";
 			}
 		}
 		$sql = "SELECT * FROM `$this->table` WHERE $conditions LIMIT 1";
