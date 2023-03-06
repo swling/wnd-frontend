@@ -39,7 +39,7 @@ class Wnd_Filter_Query {
 		'meta_key'               => '',
 		'meta_value'             => '',
 		'post_type'              => '',
-		'post_status'            => '',
+		'post_status'            => 'publish',
 		'author'                 => 0,
 		'no_found_rows'          => true,
 		'paged'                  => 1,
