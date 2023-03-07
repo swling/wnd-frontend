@@ -443,3 +443,8 @@ $access_info = apply_filters('wnd_cloud_client_access_info', [], $service_provid
 ```php
  $toeken = apply_filters('wnd_get_client_token', $token);
  ```
+
+ ## CDN
+```php
+$this->cdn_url = apply_filters('wnd_cdn_url', $this->cdn_url);
+```

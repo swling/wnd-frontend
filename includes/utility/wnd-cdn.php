@@ -24,10 +24,16 @@ class Wnd_CDN {
 		$excludes       = wnd_get_config('cdn_excludes') ?: '.php';
 		$this->excludes = array_map('trim', explode(',', $excludes));
 
-		add_action('setup_theme', [$this, 'register_as_output_buffer']);
+		add_action('after_setup_theme', [$this, 'register_as_output_buffer']);
 	}
 
 	public function register_as_output_buffer() {
+		/**
+		 * @since 0.9.59.7
+		 * 允许主题或其他插件对 cdn url 重写（通常适用于多区域多语言站点）
+		 */
+		$this->cdn_url = apply_filters('wnd_cdn_url', $this->cdn_url);
+
 		if (!is_admin() and $this->blog_url != $this->cdn_url) {
 			ob_start([$this, 'rewrite']);
 		}
