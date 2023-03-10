@@ -45,7 +45,7 @@ if (wnd.lang) {
  * - 响应数据时，不设置统一清除“loading”效果，原因在于：获取响应数据后，可能需要动态加载 JavaScript 渲染当前数据，这需要耗时。
  *   因此应该在对响应数据进行渲染的具体方法中，设置清除“loading”效果
  */
-axios.interceptors.request.use(function(config) {
+axios.interceptors.request.use(function (config) {
     if (config.headers.Container || false) {
         wnd_loading(config.headers.Container);
     }
@@ -153,7 +153,7 @@ function wnd_prepend(el, html) {
  * 
  */
 function wnd_load_script(url, callback) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         let script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = url;
@@ -173,7 +173,7 @@ function wnd_load_script(url, callback) {
  * @param {string} url 样式地址
  */
 function wnd_load_style(url) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         let link = document.createElement('link');
         link.type = 'text/css';
         link.rel = 'stylesheet';
@@ -301,10 +301,10 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
             }
         },
         methods: {
-            build_label: function(menu) {
+            build_label: function (menu) {
                 return menu.label + '&nbsp;' + (menu.expand ? '<i class="fas fa-angle-up"></i>' : '<i class="fas fa-angle-down"></i>');
             },
-            active: function(menu_index, item_index) {
+            active: function (menu_index, item_index) {
                 for (let i = 0; i < this.menus.length; i++) {
                     const menu = this.menus[i];
 
@@ -323,7 +323,7 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
                     wnd_menus_side_toggle(true);
                 }
             },
-            expand: function(menu_index) {
+            expand: function (menu_index) {
                 for (let i = 0; i < this.menus.length; i++) {
                     const menu = this.menus[i];
                     if (menu_index !== i) {
@@ -333,7 +333,7 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
                     }
                 }
             },
-            get_container: function() {
+            get_container: function () {
                 return parent.id ? '#' + parent.id : '';
             },
         },
@@ -374,7 +374,7 @@ function wnd_query(query, param, callback = '') {
         'method': 'get',
         url: wnd_query_api + '/' + query,
         params: param,
-    }).then(function(response) {
+    }).then(function (response) {
         if (callback) {
             if ('function' == typeof callback) {
                 callback(response.data);
@@ -410,7 +410,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
         headers: {
             'Container': container
         },
-    }).then(function(response) {
+    }).then(function (response) {
         if ('undefined' == typeof response.data.status) {
             console.log(response);
             return false;
@@ -446,23 +446,23 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
  * @since 2019.1
 *######################## ajax动态内容请求
 *使用本函数主要用以返回更复杂的结果如：表单，页面以弹窗或嵌入指定DOM的形式呈现，以供用户操作。表单提交则通常返回较为简单的结果
-	允许携带一个参数
+    允许携带一个参数
 
-	@since 2019.01.26
-	若需要传递参数值超过一个，可将参数定义为GET参数形式如：'post_id=1&user_id=2'，后端采用:wp_parse_args() 解析参数
+    @since 2019.01.26
+    若需要传递参数值超过一个，可将参数定义为GET参数形式如：'post_id=1&user_id=2'，后端采用:wp_parse_args() 解析参数
 
-	实例：
-		前端
-		wnd_ajax_modal('wnd_xxx','post_id=1&user_id=2');
+    实例：
+        前端
+        wnd_ajax_modal('wnd_xxx','post_id=1&user_id=2');
 
-		后端
-		namespace Wnd\Module;
-		class wnd_xxx($args){
-			$args = wp_parse_args($args)
-			return($args);
-		}
-		弹窗将输出
-		Array ( [post_id] => 1 [user_id] =>2)
+        后端
+        namespace Wnd\Module;
+        class wnd_xxx($args){
+            $args = wp_parse_args($args)
+            return($args);
+        }
+        弹窗将输出
+        Array ( [post_id] => 1 [user_id] =>2)
 
 *典型用途：  击弹出登录框、点击弹出建议发布文章框
 *@param     module      string      module类
@@ -479,7 +479,7 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
         params: Object.assign({
             'ajax_type': 'modal'
         }, param),
-    }).then(function(response) {
+    }).then(function (response) {
         if ('undefined' == typeof response.data.status) {
             console.log(response);
             return false;
@@ -512,23 +512,16 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
  * @since 0.9.35.6
  * 发送 ajax Action
  **/
-function wnd_ajax_action(action, param = {}, callback = '') {
+function wnd_ajax_action(action, param = {}, headers = {}) {
     return axios({
         method: 'POST',
         url: wnd_action_api + '/' + action,
         data: param,
-    }).then(function(response) {
+        headers: headers,
+    }).then(function (response) {
         if ('undefined' == typeof response.data.status) {
             console.log(response);
             return false;
-        }
-
-        if (callback) {
-            if ('function' == typeof callback) {
-                callback(response.data);
-            } else {
-                window[callback](response.data);
-            }
         }
 
         return response.data;
@@ -558,7 +551,7 @@ function wnd_alert_msg(msg, time = 0) {
     // 定时关闭
     if (time > 0) {
         let timer = null;
-        timer = setInterval(function() {
+        timer = setInterval(function () {
             clearInterval(timer);
             wnd_reset_modal();
         }, time * 1000);
@@ -601,7 +594,7 @@ function wnd_ajax_submit(button, captcha_input = false) {
     let form = button.closest('form');
     let route = form.getAttribute('route');
 
-    form.addEventListener('submit', function() {
+    form.addEventListener('submit', function () {
         button.classList.add('is-loading');
     });
 
@@ -654,7 +647,7 @@ function wnd_ajax_submit(button, captcha_input = false) {
         data: data,
         // GET
         params: params,
-    }).then(function(response) {
+    }).then(function (response) {
         form_info = wnd_handle_response(response.data, route, form.parentNode);
         if (form_info.msg) {
             wnd_form_msg(form, form_info.msg, form_info.msg_class);
@@ -743,47 +736,47 @@ function wnd_handle_response(response, route, parent) {
             // form_info.msg =  response.data.msg;
             break;
 
-            //更新类
+        //更新类
         case 2:
             form_info.msg = response.msg + '<a href="' + response.data.url + '" target="_blank">&nbsp;' + wnd.msg.view + '</a>';
             break;
 
-            // 跳转类
+        // 跳转类
         case 3:
             form_info.msg = wnd.msg.waiting;
             window.location = response.data.redirect_to;
             break;
 
-            // 刷新当前页面
+        // 刷新当前页面
         case 4:
             if ("undefined" == typeof response.data || "undefined" == typeof response.data.waiting) {
                 window.location.reload();
             }
             break;
 
-            // 弹出信息并自动消失
+        // 弹出信息并自动消失
         case 5:
             wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.msg + '</h5></div>', 1);
             break;
 
-            // 下载类
+        // 下载类
         case 6:
             form_info.msg = wnd.msg.downloading;
             window.location = response.data.redirect_to;
             break;
 
-            // 以响应数据替换当前表单
+        // 以响应数据替换当前表单
         case 7:
             wnd_inner_html(parent, response.data);
             break;
 
-            // -1 将异常消息作为弹窗
+        // -1 将异常消息作为弹窗
         case -1:
             wnd_alert_modal(response.msg);
             form_info.msg = false; // false 表示维持原有信息不变
             break;
 
-            // 默认
+        // 默认
         default:
             // wnd_ajax_form_msg(form_id, response.msg, style);
             break;
@@ -822,7 +815,7 @@ function wnd_send_code(button, captcha_data_key = '') {
         url: wnd_action_api + '/' + data.action,
         method: 'POST',
         data: data,
-    }).then(function(response) {
+    }).then(function (response) {
         if (response.data.status <= 0) {
             style = 'is-danger';
         } else {
@@ -832,7 +825,7 @@ function wnd_send_code(button, captcha_data_key = '') {
             // 定时器
             let time = data.interval;
             let timer = null;
-            timer = setInterval(function() {
+            timer = setInterval(function () {
                 if (time <= 1) {
                     clearInterval(timer);
                     button.textContent = wnd.msg.try_again;
@@ -902,7 +895,7 @@ function wnd_update_views(post_id, interval = 3600) {
             data: {
                 'post_id': post_id
             },
-        }).then(function(response) {
+        }).then(function (response) {
             if (1 == response.data.status) {
                 localStorage.setItem('wnd_views', JSON.stringify(wnd_views));
             }
@@ -924,7 +917,7 @@ function wnd_ajax_click(link) {
         return;
     }
     can_click_ajax_link = false;
-    setTimeout(function() {
+    setTimeout(function () {
         can_click_ajax_link = true;
     }, 1000);
 
@@ -943,7 +936,7 @@ function wnd_ajax_click(link) {
         url: wnd_action_api + '/' + action,
         method: 'POST',
         data: args,
-    }).then(function(response) {
+    }).then(function (response) {
         // 正向操作成功
         if (response.data.status != 0 && action == link.dataset.action) {
             // 设置了逆向操作
@@ -965,7 +958,7 @@ function wnd_ajax_click(link) {
                 link.innerHTML = response.data.data;
                 break;
 
-                // 弹出消息
+            // 弹出消息
             case 2:
             case 0:
                 if (response.data.data) {
@@ -976,13 +969,13 @@ function wnd_ajax_click(link) {
                 }
                 break;
 
-                // 跳转类
+            // 跳转类
             case 3:
                 wnd_alert_msg(wnd.msg.waiting);
                 window.location.href = response.data.data.redirect_to;
                 break;
 
-                // 刷新当前页面
+            // 刷新当前页面
             case 4:
                 wnd_reset_modal();
                 window.location.reload();
@@ -996,7 +989,7 @@ function wnd_ajax_click(link) {
  * 高度无缝动画方法
  * @link https://www.zhangxinxu.com/wordpress/2015/01/content-loading-height-change-css3-transition-better-experience/
  */
-var funTransitionHeight = function(element, time) { // time, 数值，可缺省
+var funTransitionHeight = function (element, time) { // time, 数值，可缺省
     if (typeof window.getComputedStyle == 'undefined') return;
 
     let height = window.getComputedStyle(element).height;
@@ -1033,7 +1026,7 @@ function wnd_load_menus_side() {
  */
 function wnd_menus_side_toggle(close = false) {
     // 按钮及遮罩 Toggle
-    document.querySelectorAll('.wnd-side-burger').forEach(function(burger) {
+    document.querySelectorAll('.wnd-side-burger').forEach(function (burger) {
         burger.classList.toggle('is-active');
     });
     document.querySelector('#wnd-side-background').classList.toggle('is-active');
@@ -1063,7 +1056,7 @@ function wnd_menus_side_toggle(close = false) {
  *@since 0.9.25
  *监听点击事件
  */
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     // 关闭 Modal
     if (e.target.classList.contains('modal-close')) {
         wnd_reset_modal();
