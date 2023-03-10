@@ -365,24 +365,17 @@ function wnd_render_menus(container, wnd_menus_data, in_side = false) {
 /**
  *@since 2020.07.21
  *ajax 获取 json数据
- *@param query	对应 Query 类名称
+ *@param query	    对应 Query 类名称
  *@param param 		对应传参
- *@param callback 	回调函数
+ *@param headers 	请求headers
  */
-function wnd_query(query, param, callback = '') {
+function wnd_query(query, param, headers = {}) {
     return axios({
         'method': 'get',
         url: wnd_query_api + '/' + query,
         params: param,
+        headers: headers,
     }).then(function (response) {
-        if (callback) {
-            if ('function' == typeof callback) {
-                callback(response.data);
-            } else {
-                window[callback](response.data);
-            }
-        }
-
         return response.data;
     });
 }

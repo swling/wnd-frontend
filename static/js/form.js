@@ -220,7 +220,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 return false;
             },
 
-            change: function(field, e) {
+            change: async function(field, e) {
                 // 关联字段数据
                 if (field.linkage) {
                     let current_value = e.target.value; // 此处不能使用 this.get_value() 因为双向绑定值会晚一步
@@ -233,9 +233,8 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     if (data) {
                         linkage(this, data);
                     } else if (query) {
-                        wnd_query(query, params, (res) => {
-                            linkage(this, res.data);
-                        });
+                        let res = await wnd_query(query, params);
+                        linkage(this, res.data);
                     }
 
                     function linkage(_this, data) {
@@ -257,7 +256,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
             },
 
             // 动态联动下拉选择
-            selected(e, key, index) {
+            selected: async function(e, key, index) {
                 let select = this.form.fields[index];
                 let query = select.data.query;
                 let params = Object.assign(select.data.params, {
@@ -268,19 +267,18 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 this.change(select);
 
                 // Ajax 联动下拉
-                wnd_query(query, params, (res) => {
-                    let nextSelect = res.data;
-                    // 写入或删除 select
-                    if (Object.keys(nextSelect).length) {
-                        select.options.splice(key + 1, select.options.length, nextSelect);
-                        // 设置默认选中值，否则下拉首项为空
-                        select.selected[key + 1] = '';
-                    } else {
-                        select.options.splice(key + 1, select.options.length);
-                        // key 从 0 开始，故此 + 1 为元素个数
-                        select.selected.length = key + 1;
-                    }
-                });
+                let res = await wnd_query(query, params);
+                let nextSelect = res.data;
+                // 写入或删除 select
+                if (Object.keys(nextSelect).length) {
+                    select.options.splice(key + 1, select.options.length, nextSelect);
+                    // 设置默认选中值，否则下拉首项为空
+                    select.selected[key + 1] = '';
+                } else {
+                    select.options.splice(key + 1, select.options.length);
+                    // key 从 0 开始，故此 + 1 为元素个数
+                    select.selected.length = key + 1;
+                }
             },
 
             // 文件上传

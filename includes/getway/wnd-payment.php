@@ -185,28 +185,30 @@ abstract class Wnd_Payment {
 	private static function build_ajax_check_script(int $payment_id) {
 		return '
 <script>
-var payment_checker = setInterval(function(post_id){ wnd_query("wnd_get_post", {"post_id": post_id}, "wnd_check_payment") }, 3000, ' . $payment_id . ');
-function wnd_check_payment(response) {
-	if("' . Wnd_Transaction::$completed_status . '" == response.data.post_status){
-		var title = document.querySelector("#payment-title");
-		title.innerText = "支付成功，请继续此前的操作！";
-		clearInterval(payment_checker);
-	}
-}
-// 关闭弹窗时，清除定时器
-document.addEventListener("click", function(e) {
-    if (e.target.classList.contains("modal-close")) {
-        clearInterval(payment_checker);
-        return;
-    }
+    var payment_checker = setInterval(wnd_check_payment, 3000, ' . $payment_id . ');
+    async function wnd_check_payment(post_id) {
+        let response = await wnd_query("wnd_get_post", { "post_id": post_id });
 
-    // DIV
-    let div = e.target.closest("div");
-    if (div.classList.contains("modal-background")) {
-        clearInterval(payment_checker);
-        return;
+        if ("' . Wnd_Transaction::$completed_status . '" == response.data.post_status) {
+            var title = document.querySelector("#payment-title");
+            title.innerText = "支付成功，请继续此前的操作！";
+            clearInterval(payment_checker);
+        }
     }
- });
+    // 关闭弹窗时，清除定时器
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("modal-close")) {
+            clearInterval(payment_checker);
+            return;
+        }
+
+        // DIV
+        let div = e.target.closest("div");
+        if (div.classList.contains("modal-background")) {
+            clearInterval(payment_checker);
+            return;
+        }
+    });
 </script>';
 	}
 }
