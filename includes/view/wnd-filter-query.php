@@ -46,6 +46,7 @@ class Wnd_Filter_Query {
 		'update_post_term_cache' => true,
 		'update_post_meta_cache' => true,
 		'without_content'        => false,
+		'posts_per_page'         => 0, // 默认设置为无效值 0，实际取值为 get_option( 'posts_per_page' ); 传参则覆盖之
 	];
 
 	/**
