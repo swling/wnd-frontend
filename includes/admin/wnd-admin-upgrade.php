@@ -116,4 +116,15 @@ class Wnd_Admin_Upgrade {
 		global $wpdb;
 		$wpdb->query("ALTER TABLE $wpdb->wnd_users DROP COLUMN role, DROP COLUMN attribute");
 	}
+
+	// 用户日志表新增字段：last_recall 记录最后一次召回睡眠用户的时间
+	private static function v_0_9_59_9() {
+		global $wpdb;
+		$exists = $wpdb->query("SHOW COLUMNS FROM $wpdb->wnd_users WHERE field='last_recall' ");
+		if ($exists) {
+			return;
+		}
+
+		$wpdb->query("ALTER TABLE $wpdb->wnd_users ADD COLUMN `last_recall` BIGINT NOT NULL AFTER `login_count`,  ADD INDEX(last_recall)");
+	}
 }

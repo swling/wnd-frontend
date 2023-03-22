@@ -50,7 +50,7 @@ class Wnd_User extends WPDB_Row {
 			$data = array_merge($user, $data);
 			return $instance->update($data, ['user_id' => $user_id]);
 		} else {
-			$defaults = ['user_id' => $user_id, 'balance' => 0, 'last_login' => '', 'login_count' => '', 'client_ip' => ''];
+			$defaults = ['user_id' => $user_id, 'balance' => 0, 'last_login' => '', 'login_count' => '', 'last_recall' => '', 'client_ip' => ''];
 			$data     = array_merge($defaults, $data);
 			return $instance->insert($data);
 		}
