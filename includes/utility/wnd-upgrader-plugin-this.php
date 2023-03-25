@@ -26,6 +26,10 @@ class Wnd_Upgrader_Plugin_This extends Wnd_Upgrader_Plugin {
 		}
 		$response = json_decode($response['body'], true);
 
+		if (!$response) {
+			return;
+		}
+
 		if ($response['status'] > 0) {
 			$this->upgrade_info = array_merge($this->upgrade_info, $response['data']);
 		}
