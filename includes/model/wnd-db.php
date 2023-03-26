@@ -71,11 +71,13 @@ class Wnd_DB {
 			balance decimal(10, 2) NOT NULL,
 			last_login bigint(20) NOT NULL,
 			login_count bigint(20) NOT NULL,
+			last_recall bigint(20) NOT NULL,
 			client_ip varchar(100) NOT NULL,
 			PRIMARY KEY (ID),
 			UNIQUE KEY user_id(user_id),
 			KEY last_login(last_login),
-			KEY login_count(login_count)
+			KEY login_count(login_count),
+			KEY last_recall(last_recall)
 			) $charset_collate;";
 		dbDelta($create_users_sql);
 	}
