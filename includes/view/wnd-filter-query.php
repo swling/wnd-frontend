@@ -31,8 +31,8 @@ class Wnd_Filter_Query {
 
 	// 初始化查询参数
 	public static $defaults = [
-		'orderby'                => 'date',
-		'order'                  => 'DESC',
+		'orderby'                => '',
+		'order'                  => '',
 		'meta_query'             => [],
 		'tax_query'              => [],
 		'date_query'             => [],
