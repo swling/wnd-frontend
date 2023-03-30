@@ -96,3 +96,33 @@ add_filter('wp_is_application_passwords_available', '__return_false');
  * @since 0.9.57.7
  */
 get_site_option('auto_core_update_failed');
+
+/**
+ * @since wp 6.2
+ */
+function wp_theme_has_theme_json() {
+	return false;
+}
+
+/**
+ * Utilities used to fetch and create templates and template parts.
+ *
+ * @package WordPress
+ * @since 5.8.0
+ *
+ * @since wp 6.2
+ */
+
+// Define constants for supported wp_template_part_area taxonomy.
+if (!defined('WP_TEMPLATE_PART_AREA_HEADER')) {
+	define('WP_TEMPLATE_PART_AREA_HEADER', 'header');
+}
+if (!defined('WP_TEMPLATE_PART_AREA_FOOTER')) {
+	define('WP_TEMPLATE_PART_AREA_FOOTER', 'footer');
+}
+if (!defined('WP_TEMPLATE_PART_AREA_SIDEBAR')) {
+	define('WP_TEMPLATE_PART_AREA_SIDEBAR', 'sidebar');
+}
+if (!defined('WP_TEMPLATE_PART_AREA_UNCATEGORIZED')) {
+	define('WP_TEMPLATE_PART_AREA_UNCATEGORIZED', 'uncategorized');
+}
