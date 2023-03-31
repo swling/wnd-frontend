@@ -35,10 +35,13 @@ class Requests {
 				$this->post();
 				break;
 			case 'PUT':
-				$this->PUT();
+				$this->put();
 				break;
 			case 'DELETE':
-				$this->DELETE();
+				$this->delete();
+				break;
+			case 'HEAD':
+				$this->head();
 				break;
 
 			default:
@@ -120,6 +123,14 @@ class Requests {
 	 */
 	private function delete() {
 		curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+	}
+
+	/**
+	 * Head
+	 */
+	private function head() {
+		curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'HEAD');
+		curl_setopt($this->curl, CURLOPT_NOBODY, true);
 	}
 
 	/**
