@@ -279,3 +279,27 @@ function wnd_get_reg_redirect_url(string $lang = ''): string{
 
 	return add_query_arg(WND_LANG_KEY, $lang, $url);
 }
+
+/**
+ * 获取用户头像图片地址
+ *
+ * @since 0.9.59.10
+ */
+function wnd_get_avatar_url(int $user_id, int $size = 200): string{
+	$avatar_url = wnd_get_config('default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
+
+	if (wnd_get_user_meta($user_id, 'avatar')) {
+		$avatar_id  = wnd_get_user_meta($user_id, 'avatar');
+		$avatar_url = wp_get_attachment_url($avatar_id) ?: $avatar_url;
+
+		/**
+		 * 统一按阿里云oss裁剪缩略图
+		 * @since 2019.07.23
+		 */
+		$avatar_url = wnd_get_thumbnail_url($avatar_url, $size, $size);
+	} elseif (wnd_get_user_meta($user_id, 'avatar_url')) {
+		$avatar_url = wnd_get_user_meta($user_id, 'avatar_url') ?: $avatar_url;
+	}
+
+	return $avatar_url;
+}

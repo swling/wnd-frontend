@@ -137,10 +137,6 @@ class Wnd_Add_Filter_WP {
 	 * @since 初始化
 	 */
 	public static function filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
-
-		// 默认头像
-		$avatar_url = wnd_get_config('default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
-
 		// 获取用户 ID
 		$user_id = 0;
 		if (is_numeric($id_or_email)) {
@@ -155,23 +151,9 @@ class Wnd_Add_Filter_WP {
 		}
 		$user_id = ($user_id and get_user_by('id', $user_id)) ? $user_id : 0;
 
-		//已登录用户调用字段头像
-		if ($user_id) {
-			if (wnd_get_user_meta($user_id, 'avatar')) {
-				$avatar_id  = wnd_get_user_meta($user_id, 'avatar');
-				$avatar_url = wp_get_attachment_url($avatar_id) ?: $avatar_url;
-				/**
-				 * 统一按阿里云oss裁剪缩略图
-				 * @since 2019.07.23
-				 */
-				$avatar_url = wnd_get_thumbnail_url($avatar_url, $size, $size);
-			} elseif (wnd_get_user_meta($user_id, 'avatar_url')) {
-				$avatar_url = wnd_get_user_meta($user_id, 'avatar_url') ?: $avatar_url;
-			}
-		}
-
 		//头像
-		$avatar = "<img alt='{$alt}' src='$avatar_url' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
+		$avatar_url = wnd_get_avatar_url($user_id, $size);
+		$avatar     = "<img alt='{$alt}' src='$avatar_url' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
 
 		//注册用户，添加链接
 		if ($user_id and !is_admin()) {
