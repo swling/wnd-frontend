@@ -1084,7 +1084,7 @@ document.addEventListener('click', function (e) {
     }
 
     // 点击Side Menus遮罩，关闭侧栏
-    if (div.parentElement.id == 'wnd-side-background') {
+    if (div.parentElement && div.parentElement.id == 'wnd-side-background') {
         wnd_menus_side_toggle(true);
         return;
     }
