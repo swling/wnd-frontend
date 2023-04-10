@@ -3,7 +3,6 @@ namespace Wnd\Hook;
 
 use Exception;
 use Wnd\Getway\Wnd_Captcha;
-use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Mail;
 use Wnd\Model\Wnd_Order_Props;
@@ -13,6 +12,7 @@ use Wnd\Utility\Wnd_Defender;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\Utility\Wnd_Validator;
+use Wnd\WPDB\Wnd_Auth;
 use Wnd\WPDB\Wnd_User;
 
 /**

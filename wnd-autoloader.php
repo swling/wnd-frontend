@@ -4,7 +4,7 @@
  * - (注意：component 目录中的类与文件名需严格区分大小写)
  *
  * ## 一、本插件：
- * new Wnd\Model\Wnd_Auth; 对应文件路径 includes/model/wnd-auth.php
+ * new Wnd\WPDB\Wnd_Auth; 对应文件路径 includes/model/wnd-auth.php
  *
  * ### 第三方组件：
  * - new Wnd\Component\Aliyun\Sms\SignatureHelper;

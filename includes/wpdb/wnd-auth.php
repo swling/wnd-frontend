@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\WPDB;
 
 use Exception;
 use WP_User;

@@ -2,7 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\Model\Wnd_Auth;
+use Wnd\WPDB\Wnd_Auth;
 
 /**
  * 验证授权

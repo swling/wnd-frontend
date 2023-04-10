@@ -1,7 +1,7 @@
 <?php
-use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Mail;
 use Wnd\Utility\Wnd_language;
+use Wnd\WPDB\Wnd_Auth;
 use Wnd\WPDB\Wnd_User;
 
 /**

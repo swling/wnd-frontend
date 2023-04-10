@@ -8,7 +8,7 @@
 
 ```php
 // 实例化
-new Wnd\Model\Wnd_Auth;
+new Wnd\WPDB\Wnd_Auth;
 
 // 实际加载文件
 require 'includes/model/wnd-auth.php';
