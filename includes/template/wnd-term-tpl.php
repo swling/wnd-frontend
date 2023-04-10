@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Template;
 
-use Wnd\Model\Wnd_Tag_Under_Category;
+use Wnd\WPDB\Wnd_Tag_Under_Category;
 
 /**
  * Term模板

@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Query;
 
-use Wnd\Model\Wnd_Tag_Under_Category;
+use Wnd\WPDB\Wnd_Tag_Under_Category;
 
 /**
  * 列出term下拉选项

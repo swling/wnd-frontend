@@ -2,9 +2,9 @@
 namespace Wnd\View;
 
 use Exception;
-use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\View\Wnd_Filter_Query;
 use Wnd\View\Wnd_Pagination;
+use Wnd\WPDB\Wnd_Tag_Under_Category;
 use WP_Query;
 
 /**

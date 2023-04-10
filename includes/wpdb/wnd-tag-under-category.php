@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\WPDB;
 
 /**
  * 万能的WordPress
