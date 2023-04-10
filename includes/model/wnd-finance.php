@@ -4,7 +4,7 @@ namespace Wnd\Model;
 use Wnd\Model\Wnd_Order;
 use Wnd\Model\Wnd_Order_Anonymous;
 use Wnd\Model\Wnd_SKU;
-use Wnd\Model\Wnd_User;
+use Wnd\WPDB\Wnd_User;
 
 /**
  * 站内财务信息

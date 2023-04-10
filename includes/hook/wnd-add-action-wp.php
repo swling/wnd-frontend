@@ -9,11 +9,11 @@ use Wnd\Model\Wnd_Mail;
 use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_Tag_Under_Category;
 use Wnd\Model\Wnd_Transaction_Anonymous;
-use Wnd\Model\Wnd_User;
 use Wnd\Utility\Wnd_Defender;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\Utility\Wnd_Validator;
+use Wnd\WPDB\Wnd_User;
 
 /**
  * WP Action

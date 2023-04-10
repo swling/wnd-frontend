@@ -1,8 +1,8 @@
 <?php
 use Wnd\Model\Wnd_Auth;
 use Wnd\Model\Wnd_Mail;
-use Wnd\Model\Wnd_User;
 use Wnd\Utility\Wnd_language;
+use Wnd\WPDB\Wnd_User;
 
 /**
  * 随机生成用户名

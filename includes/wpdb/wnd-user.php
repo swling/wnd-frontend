@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd\WPDB;
 
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\WPDB\WPDB_Row;
