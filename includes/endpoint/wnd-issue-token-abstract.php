@@ -59,7 +59,7 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 		$openid       = $this->get_openid();
 		$display_name = $this->app_type . '_' . uniqid();
 		$avatar       = '';
-		$user         = Wnd_Social_Login::login($this->app_type, $this->openid, $display_name, $avatar);
+		$user         = Wnd_Social_Login::login($this->app_type, $openid, $display_name, $avatar);
 		return $user->ID;
 	}
 
