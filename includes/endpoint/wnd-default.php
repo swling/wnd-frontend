@@ -17,6 +17,8 @@ class Wnd_Default extends Wnd_Endpoint {
 			'Mem'     => number_format(memory_get_peak_usage() / 1024 / 1024, 2),
 			'User'    => get_current_user_id(),
 			'request' => $GLOBALS['wp_query']->request,
+			'cookie'  => $_COOKIE,
+			'is_rest' => wnd_is_rest_request(),
 		];
 
 		echo json_encode($info);

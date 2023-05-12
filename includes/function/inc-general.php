@@ -63,8 +63,11 @@ function wnd_get_front_page_url($remove_language = false): string{
  * 是否在 Rest 请求环境中
  * @since 0.9.26
  */
-function wnd_is_rest_request(): bool {
-	return (defined('REST_REQUEST') and REST_REQUEST);
+function wnd_is_rest_request(): bool{
+	$current_url = wnd_get_current_url();
+	$rest_url    = rest_url();
+
+	return defined('REST_REQUEST') ? REST_REQUEST : str_starts_with($current_url, $rest_url);
 }
 
 /**
