@@ -56,7 +56,7 @@ class Wnd_Login extends Wnd_Action {
 	protected function parse_data() {
 		$this->username    = trim($this->data['_user_user_login']);
 		$this->password    = $this->data['_user_user_pass'];
-		$this->remember    = (bool) $this->data['remember'] ?? 0;
+		$this->remember    = (bool) ($this->data['remember'] ?? false);
 		$this->redirect_to = $_REQUEST['redirect_to'] ?? home_url();
 		$this->type        = $this->data['type'] ?? '';
 	}
