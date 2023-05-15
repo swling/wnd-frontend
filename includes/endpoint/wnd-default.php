@@ -18,6 +18,7 @@ class Wnd_Default extends Wnd_Endpoint {
 			'User'    => get_current_user_id(),
 			'request' => $GLOBALS['wp_query']->request,
 			'cookie'  => $_COOKIE,
+			'headers' => getallheaders(),
 			'is_rest' => wnd_is_rest_request(),
 		];
 

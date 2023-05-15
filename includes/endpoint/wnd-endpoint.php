@@ -50,6 +50,7 @@ abstract class Wnd_Endpoint {
 		$this->check();
 		$this->set_content_type();
 		$this->do();
+		exit;
 	}
 
 	/**
