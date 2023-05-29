@@ -16,6 +16,7 @@ class Wnd_Default extends Wnd_Endpoint {
 			'Time'    => timer_stop(),
 			'Mem'     => number_format(memory_get_peak_usage() / 1024 / 1024, 2),
 			'User'    => get_current_user_id(),
+			'IP'      => wnd_get_user_ip(),
 			'request' => $GLOBALS['wp_query']->request,
 			'cookie'  => $_COOKIE,
 			'headers' => getallheaders(),
