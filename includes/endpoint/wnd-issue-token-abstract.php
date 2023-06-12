@@ -5,11 +5,13 @@ use Exception;
 use Wnd\Endpoint\Wnd_Endpoint;
 use Wnd\Model\Wnd_Social_Login;
 use Wnd\Utility\Wnd_JWT_handler;
+use Wnd\Utility\Wnd_Qrcode_Login;
 
 /**
  * ## 签发 Token 抽象基类
  * - 基于第三方应用 openid，在本站系统注册或登录并返回用户 token
  * - 如果请求数据中包含账号：'user_login' 密码：'user_pass'，则尝试将对应 openid 绑定到指定账号
+ * - 如果请求数据中包含 scene，表示为随机二维码扫描授权登录，则尝试将 scene 与 user_id 绑定 @see Wnd\Utility\Wnd_Qrcode_Login
  * - 针对不同的三方应用，应该继承本类并定义 $this->app_type、实现 get_app_openid() 方法，最终构成实际的签发节点
  *
  * @since 0.9.50
@@ -22,6 +24,8 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 
 	protected $user_pass;
 
+	protected $scene;
+
 	/**
 	 * 站外应用类型标识
 	 * - 站外应用必须在子类中定义该属性
@@ -30,13 +34,19 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 	protected $app_type = '';
 	protected $openid   = '';
 
-	protected function do() {
+	final protected function do() {
 		$user_id = $this->register_or_login();
 		$jwt     = Wnd_JWT_Handler::get_instance();
 		$token   = $jwt->generate_token($user_id);
 		$exp     = $jwt->parse_token($token)['exp'] ?? 0;
 
-		echo json_encode(['token' => $token, 'exp' => $exp]);
+		// 请求数据包含 scene，表示二维码授权登录：绑定 scene 与 user_id
+		$this->scene = $this->data['scene'] ?? '';
+		if ($this->scene) {
+			Wnd_Qrcode_Login::bind($this->scene, $user_id);
+		}
+
+		echo json_encode(['token' => $token, 'exp' => $exp, 'user_id' => $user_id]);
 	}
 
 	/**
@@ -60,6 +70,9 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 		$display_name = $this->app_type . '_' . uniqid();
 		$avatar       = '';
 		$user         = Wnd_Social_Login::login($this->app_type, $openid, $display_name, $avatar);
+
+		// 设置当前用户
+		wp_set_current_user($user->ID);
 		return $user->ID;
 	}
 
@@ -97,4 +110,5 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 	 * 针对不同的应用在实际场景中在子类中具体实现
 	 */
 	abstract protected function get_app_openid(): string;
+
 }
