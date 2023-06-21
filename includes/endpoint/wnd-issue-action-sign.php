@@ -55,12 +55,16 @@ class Wnd_Issue_Action_Sign extends Wnd_Endpoint {
 		/**
 		 * 根据类型设定默认允许的签名字段，默认字段应充分考虑安全性，以保守为原则
 		 * - 常规登录
+		 * - 常规注册
 		 * - 支付
 		 * - 同步资料
 		 */
 		switch ($this->sign_type) {
 			case 'login':
 				$allowed_keys = ['_user_user_login', '_user_user_pass', 'type'];
+				break;
+			case 'reg':
+				$allowed_keys = ['_user_user_login', '_user_user_pass', '_user_user_pass_repeat', '_user_user_email', '_user_display_name'];
 				break;
 			case 'payment':
 				$allowed_keys = ['post_id', 'type', 'subject', 'total_amount', 'custom_amount', 'payment_gateway', 'app_id'];
@@ -83,4 +87,5 @@ class Wnd_Issue_Action_Sign extends Wnd_Endpoint {
 			throw new Exception('The signature field name exceeds the allowable.');
 		}
 	}
+
 }
