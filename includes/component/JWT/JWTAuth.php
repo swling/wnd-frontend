@@ -61,7 +61,8 @@ class JWTAuth {
 		}
 
 		//签名验证
-		if (static::signature($base64header . '.' . $base64payload, $secretkey, $base64decodeheader['alg']) !== $sign) {
+		$_sign = static::signature($base64header . '.' . $base64payload, $secretkey, $base64decodeheader['alg']);
+		if (!hash_equals($_sign, $sign)) {
 			return false;
 		}
 
