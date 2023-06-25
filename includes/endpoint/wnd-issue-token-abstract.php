@@ -3,7 +3,7 @@ namespace Wnd\Endpoint;
 
 use Exception;
 use Wnd\Endpoint\Wnd_Endpoint;
-use Wnd\Model\Wnd_Social_Login;
+use Wnd\Model\Wnd_Social_Login_Handler;
 use Wnd\Utility\Wnd_JWT_handler;
 use Wnd\Utility\Wnd_Qrcode_Login;
 
@@ -69,7 +69,7 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 		$openid       = $this->get_openid();
 		$display_name = $this->app_type . '_' . uniqid();
 		$avatar       = '';
-		$user         = Wnd_Social_Login::login($this->app_type, $openid, $display_name, $avatar);
+		$user         = Wnd_Social_Login_Handler::login($this->app_type, $openid, $display_name, $avatar);
 
 		// 设置当前用户
 		wp_set_current_user($user->ID);

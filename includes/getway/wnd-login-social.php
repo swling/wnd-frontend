@@ -2,7 +2,7 @@
 namespace Wnd\Getway;
 
 use Exception;
-use Wnd\Model\Wnd_Social_Login;
+use Wnd\Model\Wnd_Social_Login_Handler;
 
 /**
  * 社交登录抽象类
@@ -93,7 +93,7 @@ abstract class Wnd_Login_Social {
 		$this->get_user_info();
 
 		// 根据open id创建或登录账户
-		Wnd_Social_Login::login($this->domain, $this->open_id, $this->display_name, $this->avatar_url, $this->email);
+		Wnd_Social_Login_Handler::login($this->domain, $this->open_id, $this->display_name, $this->avatar_url, $this->email);
 		wp_redirect(wnd_get_reg_redirect_url($lang));
 		exit();
 	}

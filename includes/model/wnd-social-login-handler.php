@@ -8,7 +8,7 @@ use WP_User;
  * 社交登录
  * @since 0.9.57.6
  */
-class Wnd_Social_Login {
+class Wnd_Social_Login_Handler {
 
 	private $type;
 	private $open_id;
