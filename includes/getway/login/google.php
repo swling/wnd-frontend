@@ -2,7 +2,7 @@
 namespace Wnd\Getway\Login;
 
 use Exception;
-use Wnd\Getway\Wnd_Login_Social;
+use Wnd\Getway\Wnd_Social_Login_Builder;
 
 /**
  * Google登录
@@ -16,7 +16,7 @@ use Wnd\Getway\Wnd_Login_Social;
  *
  * @since 2020.04.11
  */
-class Google extends Wnd_Login_Social {
+class Google extends Wnd_Social_Login_Builder {
 
 	protected $domain = 'google';
 

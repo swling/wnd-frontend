@@ -1,5 +1,5 @@
 ```php
-use Wnd\Getway\Wnd_Login_Social;
+use Wnd\Getway\Wnd_Social_Login_Builder;
 
 /**
  *QQ社交登录
@@ -9,14 +9,14 @@ use Wnd\Getway\Wnd_Login_Social;
 $redirect_url = home_url('ucenter');
 
 // 创建第三方平台授权登录链接
-$qq_login = Wnd_Login_Social::get_instance('QQ');
+$qq_login = Wnd_Social_Login_Builder::get_instance('QQ');
 $qq_login->set_app_id('qq_appid');
 $qq_login->set_redirect_url($redirect_url);
 echo $qq_login->build_oauth_url();
 
 // 在授权回调页面登录
 try {
-	$qq_login = Wnd_Login_Social::get_instance('QQ');
+	$qq_login = Wnd_Social_Login_Builder::get_instance('QQ');
 	$qq_login->set_app_id('qq_appid');
 	$qq_login->set_app_key('qq_appkey');
 	$qq_login->set_redirect_url($redirect_url);

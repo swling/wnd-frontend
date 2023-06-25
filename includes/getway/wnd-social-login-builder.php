@@ -8,7 +8,7 @@ use Wnd\Model\Wnd_Social_Login_Handler;
  * 社交登录抽象类
  * @since 2019.09.27
  */
-abstract class Wnd_Login_Social {
+abstract class Wnd_Social_Login_Builder {
 
 	protected $user_id;
 	protected $app_id;

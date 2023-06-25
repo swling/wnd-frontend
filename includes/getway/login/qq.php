@@ -2,13 +2,13 @@
 namespace Wnd\Getway\Login;
 
 use Exception;
-use Wnd\Getway\Wnd_Login_Social;
+use Wnd\Getway\Wnd_Social_Login_Builder;
 
 /**
  * QQ登录
  * @since 2019.09.27
  */
-class QQ extends Wnd_Login_Social {
+class QQ extends Wnd_Social_Login_Builder {
 
 	protected $domain = 'qq';
 

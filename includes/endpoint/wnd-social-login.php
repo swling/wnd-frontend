@@ -2,7 +2,7 @@
 namespace Wnd\Endpoint;
 
 use Exception;
-use Wnd\Getway\Wnd_Login_Social;
+use Wnd\Getway\Wnd_Social_Login_Builder;
 
 /**
  * 社交登录节点
@@ -26,10 +26,10 @@ class Wnd_Social_Login extends Wnd_Endpoint {
 		wp_set_current_user($user_id);
 
 		try {
-			$state        = Wnd_Login_Social::parse_state($this->data['state']);
+			$state        = Wnd_Social_Login_Builder::parse_state($this->data['state']);
 			$domain       = $state['domain'] ?? '';
 			$lang         = $state[WND_LANG_KEY] ?? '';
-			$Login_Social = Wnd_Login_Social::get_instance($domain);
+			$Login_Social = Wnd_Social_Login_Builder::get_instance($domain);
 			$Login_Social->login($lang);
 		} catch (Exception $e) {
 			echo $e->getMessage();
