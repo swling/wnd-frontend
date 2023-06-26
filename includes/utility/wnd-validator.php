@@ -17,6 +17,9 @@ class Wnd_Validator {
 		$data           = $data ?: wnd_get_json_request();
 		$auth_code      = $data['auth_code'] ?? '';
 		$email_or_phone = $data['phone'] ?? $data['_user_user_email'] ?? '';
+		if (!$email_or_phone) {
+			return true;
+		}
 
 		$auth = Wnd_Auth_Code::get_instance($email_or_phone);
 		$auth->set_type($type);
