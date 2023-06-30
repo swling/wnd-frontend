@@ -349,8 +349,9 @@ function wnd_time_to_local(int $timestamp): int {
  * - WP 默认设置为 UTC 时间，并通过后台配置时区来实现偏移
  * - 本函数用于取代较为复杂的 wp_date() 函数
  */
-function wnd_date(string $format): string {
-	return date($format, wnd_local_time());
+function wnd_date(string $format, $time = 0): string{
+	$time = $time ?: time();
+	return date($format, wnd_time_to_local($time));
 }
 
 /**
