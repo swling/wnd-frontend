@@ -264,8 +264,8 @@ function wnd_explode_post_by_more(string $content): array{
  * @since 0.9.57.3
  */
 function wnd_trim_words(string $text, int $num_words = 55, string $more = '……'): string{
-	$text = mb_substr($text, 0, $num_words, 'utf-8');
-	return wp_strip_all_tags($text) . $more;
+	$text = mb_substr(wp_strip_all_tags($text), 0, $num_words, 'utf-8');
+	return $text . $more;
 }
 
 /**
