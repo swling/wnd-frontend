@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Endpoint;
 
+use Exception;
 use Wnd\Controller\Wnd_Request;
 use WP_REST_Request;
 
@@ -47,9 +48,14 @@ abstract class Wnd_Endpoint {
 		$this->request = new Wnd_Request($wp_rest_request, false, false);
 		$this->data    = $this->request->get_request();
 
-		$this->check();
-		$this->set_content_type();
-		$this->do();
+		try {
+			$this->check();
+			$this->set_content_type();
+			$this->do();
+		} catch (Exception $e) {
+			echo json_encode(['status' => 0, 'msg' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+		}
+
 		exit;
 	}
 
