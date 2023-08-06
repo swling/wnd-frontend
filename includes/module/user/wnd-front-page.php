@@ -46,7 +46,7 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 
 		if ($module) {
 			echo $module;
-		}if (!is_user_logged_in()) {
+		} elseif (!is_user_logged_in()) {
 			$html = '<div id="user-center" class="columns">';
 			$html .= '<div class="column"><div class="box">' . Wnd_User_Center::render() . '</div></div>';
 			$html .= '</div>';
@@ -128,4 +128,5 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 
 		return 'Post/' . $module;
 	}
+
 }
