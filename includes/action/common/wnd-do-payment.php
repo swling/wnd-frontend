@@ -26,9 +26,6 @@ class Wnd_Do_Payment extends Wnd_Action {
 	private $app_id;
 
 	protected function execute(): array{
-		// 定义是否为站内交易
-		$this->internal = 'internal' == strtolower($this->payment_gateway);
-
 		// 写入交易记录
 		$transaction = Wnd_Transaction::get_instance($this->type);
 		$transaction->set_payment_gateway($this->payment_gateway);
@@ -115,6 +112,9 @@ class Wnd_Do_Payment extends Wnd_Action {
 		$this->payment_gateway = $this->data['payment_gateway'] ?? '';
 		$this->subject         = $this->data['subject'] ?? '';
 
+		// 定义是否为站内交易
+		$this->internal = 'internal' == strtolower($this->payment_gateway);
+
 		/**
 		 * 设置当前付款的 App ID. 如微信小程序、公众号支付，通常与站内微信支付 AppID 不同.
 		 * @since 0.9.56.6
@@ -175,4 +175,5 @@ class Wnd_Do_Payment extends Wnd_Action {
 			throw new Exception($msg);
 		}
 	}
+
 }
