@@ -326,31 +326,40 @@ apply_filters('wnd_product_props', $props, $object_id);
 ## 菜单
 ```php
 /**
-*@since 0.9.12
-*侧边栏菜单顶部
+* @since 0.9.12
+* 侧边栏菜单顶部
 */
 apply_filters('wnd_menus_side_before', '');
 
 /**
-*$menus = []; 菜单
-*是否在侧边栏，是否展开第一个子菜单
-*$args  = ['in_side' => false, 'expand'  => true]
-*/
+ * $menus = []; 菜单
+ * 是否在侧边栏，是否展开第一个子菜单
+ * $args  = ['in_side' => false, 'expand'  => true]
+ */
 add_filter('wnd_menus', function ($menus, $args) {
 	// $menus = []; 清空已有菜单 否则为追加
-	$menus[] = [
-		'label' => '拓展菜单',
-		'expand'=> false, // 是否强制展开本菜单
-		'items' => [
-			['title' => '测试菜单', 'href' => wnd_get_front_page_url() . '#wnd_profile_form'],
-		],
-	];
+
+	// 在侧边栏第一个菜单添加子项
+	if ($args['in_side']) {
+		$menus[0]['items'][] = ['title' => 'LiveHouse', 'href' => wnd_home_url('livehouse')];
+		$menus[0]['items'][] = ['title' => __('联系', 'wndt'), 'href' => wnd_home_url('contact')];;
+
+		// 在控制菜单追加一个一级菜单
+	} else {
+		$menus[] = [
+			'label'  => '控制菜单',
+			'expand' => false, // 是否强制展开本菜单
+			'items'  => [
+				['title' => '测试菜单', 'href' => '#wnd_profile_form'],
+			],
+		];
+	}
 	return $menus;
-});
+}, 11, 2);
 
 /**
-*@since 0.9.12
-*侧边栏菜单底部
+* @since 0.9.12
+* 侧边栏菜单底部
 */
 apply_filters('wnd_menus_side_after', '');
 ```
@@ -366,14 +375,6 @@ add_filter('wnd_user_page_default_module', function ($module_name) {
 	return 'Wndt_User_Overview';
 }, 12, 1);
 
-/**
- *@since 0.9.2
- *自定义用户中心页面
- *该 filter 将完全重写用户页面 
- */
-add_filter('wnd_user_page', function ($html) {
-	return \Wnd\Module\Wnd_Bind_Phone_Form::render();
-}, 12, 1);
 ```
 
 ## 内容筛选

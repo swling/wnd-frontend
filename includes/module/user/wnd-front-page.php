@@ -18,7 +18,7 @@ use Wnd\Query\Wnd_Menus;
  */
 class Wnd_Front_Page extends Wnd_Module_Html {
 
-	protected static function build(array $args = []): string{
+	protected static function build(array $args = []): string {
 		$defaults = [
 			'module'    => '',
 			'action'    => '',
@@ -31,6 +31,7 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 		$args              = wp_parse_args($args, $defaults);
 
 		// 解析 Module 并捕获可能抛出的异常
+		$default_module = apply_filters('wnd_user_page_default_module', 'user/wnd_user_overview');
 		try {
 			$module = static::handle_module($args) ?: '';
 		} catch (Exception $e) {
@@ -40,14 +41,22 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 
 		// 构造页面 HTML
 		get_header();
-		echo '<script>var wnd_menus_data = ' . json_encode(Wnd_Menus::get()) . ';</script>';
+		echo '<script>var wnd_menus_data = ' . json_encode(Wnd_Menus::get()) . '; var default_module = "' . $default_module . '";</script>';
 		echo '<main id="user-page-container" class="column">';
 
-		try {
-			echo $module ?: static::build_user_page();
-		} catch (Exception $e) {
-			echo wnd_notification($e->getMessage(), 'is-danger');
+		if ($module) {
+			echo $module;
+		}if (!is_user_logged_in()) {
+			$html = '<div id="user-center" class="columns">';
+			$html .= '<div class="column"><div class="box">' . Wnd_User_Center::render() . '</div></div>';
+			$html .= '</div>';
+			echo $html;
+		} else {
+			$html = file_get_contents(WND_PATH . '/includes/module-vue/user/dashboard.vue');
+			$html = apply_filters('wnd_user_page', $html);
+			echo $html;
 		}
+
 		echo '</main>';
 		get_footer();
 
@@ -62,7 +71,7 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 	 * 主题可拓展或修改内容表单：\Wndt\Module\Wndt_Post_Form_{$post_type}
 	 * 主题可拓展或修改用户中心：\Wndt\Module\Wndt_User_Center;
 	 */
-	private static function handle_module(array $args): string{
+	private static function handle_module(array $args): string {
 		extract($args);
 		unset($args['module']);
 		unset($args['action']);
@@ -104,7 +113,7 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 	 * 根据 Post Type 查找对应表单模块
 	 * @since 0.9.39
 	 */
-	private static function get_post_form_module(string $post_type): string{
+	private static function get_post_form_module(string $post_type): string {
 		// 主题定义的表单优先，其次为插件表单
 		$module = 'Wndt_Post_Form_' . $post_type;
 		$class  = 'Wndt\\Module\\Post\\' . $module;
@@ -118,53 +127,5 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 		}
 
 		return 'Post/' . $module;
-	}
-
-	// 常规用户面板
-	private static function build_user_page(): string {
-		if (!is_user_logged_in()) {
-			$html = '<div id="user-center" class="columns">';
-			$html .= '<div class="column"><div class="box">' . Wnd_User_Center::render() . '</div></div>';
-			$html .= '</div>';
-			return $html;
-		}
-
-		/**
-		 * 登录用户用户中心默认模块
-		 */
-		$user_page_default_module = apply_filters('wnd_user_page_default_module', 'user/wnd_user_overview');
-		$html                     = '
-		<div id="user-center" class="columns">
-		<div class="column is-narrow is-hidden-mobile">
-		<div id="wnd-menus" class="box"><div id="app-menus"></div></div>
-		</div>
-
-		<div class="column"><div id="ajax-module" class="box"></div></div>
-		</div>';
-
-		$html .= '
-<script type="text/javascript">
-	wnd_render_menus("#app-menus", wnd_menus_data);
-
-	function user_center_hash() {
-		var hash = location.hash;
-		if (!hash) {
-			wnd_ajax_embed("#ajax-module", "' . $user_page_default_module . '");
-			return;
-		}
-
-		var module = hash.replace("#", "");
-		wnd_ajax_embed("#ajax-module", module);
-	}
-
-	// 用户中心Tabs
-	user_center_hash();
-	window.onhashchange = user_center_hash;
-</script>';
-
-		/**
-		 * 默认用户中心：注册、登录、账户管理，内容管理，财务管理等
-		 */
-		return apply_filters('wnd_user_page', $html);
 	}
 }
