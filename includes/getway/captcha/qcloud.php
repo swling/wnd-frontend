@@ -46,7 +46,7 @@ class Qcloud extends Wnd_Captcha {
 	/**
 	 * 验证码人机验证脚本
 	 */
-	public function render_send_code_script(): string{
+	public function render_send_code_script(): string {
 		$script = '
 <script>
 function wnd_send_code_via_captcha(e) {
@@ -69,7 +69,7 @@ function wnd_send_code_via_captcha(e) {
 	}
 
     if (typeof TencentCaptcha == "undefined") {
-        wnd_load_script("https://ssl.captcha.qq.com/TCaptcha.js", function() {
+        wnd_load_script("https://turing.captcha.qcloud.com/TCaptcha.js", function() {
             captcha_send(button);
         });
     } else {
@@ -112,7 +112,7 @@ if (sd_btn) {
 	 * JavaScript 函数 [wnd_submit_via_captcha] 将会在前端渲染中被引用，因此函数名称及传参必须保持一致
 	 * @since 0.8.64
 	 */
-	public function render_submit_form_script(): string{
+	public function render_submit_form_script(): string {
 		$script = '
 <script>
 function wnd_submit_via_captcha(e, callback = false) {
@@ -130,7 +130,7 @@ function wnd_submit_via_captcha(e, callback = false) {
     }
 
     if (typeof TencentCaptcha == "undefined") {
-        wnd_load_script("https://ssl.captcha.qq.com/TCaptcha.js", function() {
+        wnd_load_script("https://turing.captcha.qcloud.com/TCaptcha.js", function() {
             captcha_submit();
         });
     } else {
