@@ -30,6 +30,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 	private $mime_type;
 	private $md5;
 	private $file_path_name;
+	private $query = [];
 
 	/**
 	 * 短期类重复上传的文件，直接返回 url 不再存储
@@ -45,25 +46,27 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		$oss->setFilePathName($this->file_path_name);
 		$headers    = $oss->generateHeaders($this->method, $this->mime_type, $this->md5);
 		$url        = $oss->getFileUri();
-		$signed_url = $oss->getFileUri(1800);
+		$signed_url = $oss->getFileUri(900, $this->query);
 
 		/**
 		 * - 阿里云 oss 内网地址需要替换
 		 * - 腾讯云文档声称会智能解析 @link https://cloud.tencent.com/document/product/436/6224#.E5.86.85.E7.BD.91.E5.92.8C.E5.A4.96.E7.BD.91.E8.AE.BF.E9.97.AE
 		 */
 		if ('Aliyun' == $this->oss_sp) {
-			$internal_url = str_replace('.aliyuncs.com', '-internal.aliyuncs.com', $url);
+			$internal_url    = str_replace('.aliyuncs.com', '-internal.aliyuncs.com', $url);
+			$signed_internal = str_replace('.aliyuncs.com', '-internal.aliyuncs.com', $signed_url);
 		} else {
 			$internal_url = $url;
 		}
 
 		$data = [
-			'put_url'      => $url,
-			'signed_url'   => $signed_url,
-			'url'          => $url,
-			'internal'     => $internal_url,
-			'headers'      => $headers,
-			'is_duplicate' => $this->is_duplicate_file,
+			'put_url'         => $url,
+			'url'             => $url,
+			'signed_url'      => $signed_url,
+			'internal'        => $internal_url,
+			'signed_internal' => $signed_internal,
+			'headers'         => $headers,
+			'is_duplicate'    => $this->is_duplicate_file,
 		];
 
 		// 将文件信息写入缓存
@@ -86,6 +89,10 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		$this->mime_type = $this->data['mime_type'] ?? '';
 		$this->md5       = $this->data['md5'] ?? '';
 
+		// OSS 请求参数（如裁剪变换等，具体参看对象储存文档）
+		$query       = $this->data['query'] ?? [];
+		$this->query = is_array($query) ? $query : [];
+
 		// 如果文件被缓存（短时期重复上传）
 		$this->cache_key = $this->generate_cache_key();
 		$cache           = $this->get_cache();
@@ -105,7 +112,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		}
 	}
 
-	private function set_cache(string $url, string $internal_url, string $file_path_name): bool{
+	private function set_cache(string $url, string $internal_url, string $file_path_name): bool {
 		$data = [
 			'url'            => $url,
 			'internal'       => $internal_url,

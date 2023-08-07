@@ -29,9 +29,14 @@ class Aliyun extends CloudObjectStorage {
 	 * 获取文件 URI
 	 * @link https://help.aliyun.com/document_detail/31952.html
 	 */
-	public function getFileUri(int $expires = 0): string {
+	public function getFileUri(int $expires = 0, array $query = []): string {
 		if (!$expires) {
-			return $this->fileUri;
+			if (!$query) {
+				return $this->fileUri;
+			}
+
+			$queryStr = urldecode(http_build_query($query));
+			return $this->fileUri . '?' . $queryStr;
 		}
 
 		// 签名
@@ -41,12 +46,25 @@ class Aliyun extends CloudObjectStorage {
 		$canonicalizedResource = '/' . $this->parseBucket() . $this->filePathName;
 		$expires               = time() + $expires;
 
+		// 带参数的文件，需要将参数加入 $canonicalizedResource 一并签名
+		if ($query) {
+			$queryStr = urldecode(http_build_query($query));
+			$canonicalizedResource .= '?' . $queryStr;
+		}
+
 		//生成签名：换行符必须使用双引号
 		$str       = $method . "\n" . $md5 . "\n" . $content_type . "\n" . $expires . "\n" . $canonicalizedResource;
 		$signature = base64_encode(hash_hmac('sha1', $str, $this->secretKey, true));
+		$signStr   = 'OSSAccessKeyId=' . rawurlencode($this->secretID) . '&Expires=' . $expires . '&Signature=' . rawurlencode($signature);
 
-		$oss_file_url = $this->fileUri . '?OSSAccessKeyId=' . rawurlencode($this->secretID) . '&Expires=' . $expires . '&Signature=' . rawurlencode($signature);
-		return $oss_file_url;
+		// 组成最终链接
+		if ($query) {
+			$fileUrl = $this->fileUri . '?' . $queryStr . '&' . $signStr;
+		} else {
+			$fileUrl = $this->fileUri . '?' . $signStr;
+		}
+
+		return $fileUrl;
 	}
 
 	/**
@@ -93,7 +111,7 @@ class Aliyun extends CloudObjectStorage {
 	 * 文档有误：$canonicalizedOSSHeaders . "\n" . $canonicalizedResource 之间必须加入换行符
 	 * @link https://help.aliyun.com/document_detail/31951.html
 	 */
-	private function generateAuthorization(string $method, string $contentType = '', $md5 = ''): string{
+	private function generateAuthorization(string $method, string $contentType = '', $md5 = ''): string {
 		$method                  = strtoupper($method);
 		$date                    = static::getDate();
 		$canonicalizedOSSHeaders = 'x-oss-date:' . $date;
@@ -117,7 +135,7 @@ class Aliyun extends CloudObjectStorage {
 	/**
 	 * 根据 endpoint 域名解析出 bucket
 	 */
-	private function parseBucket(): string{
+	private function parseBucket(): string {
 		$parsedUrl = parse_url($this->endpoint);
 		$host      = explode('.', $parsedUrl['host']);
 		$subdomain = $host[0];

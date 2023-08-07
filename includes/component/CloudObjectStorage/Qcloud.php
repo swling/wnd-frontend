@@ -30,16 +30,31 @@ class Qcloud extends CloudObjectStorage {
 	 * @link https://cloud.tencent.com/document/product/436/36121
 	 * @since 0.9.39
 	 */
-	public function getFileUri(int $expires = 0): string {
+	public function getFileUri(int $expires = 0, array $query = []): string {
 		if (!$expires) {
-			return $this->fileUri;
+			if (!$query) {
+				return $this->fileUri;
+			}
+
+			$queryStr = urldecode(http_build_query($query));
+			return $this->fileUri . '?' . $queryStr;
 		}
 
 		// 签名
 		$method    = 'GET';
 		$headers   = [];
-		$signature = $this->generateAuthorization($method, $expires, $headers);
-		return $this->fileUri . '?sign=' . rawurlencode($signature);
+		$signature = $this->generateAuthorization($method, $expires, $headers, $query);
+		$signStr   = 'sign=' . rawurlencode($signature);
+
+		// 组成最终链接
+		if ($query) {
+			$queryStr = urldecode(http_build_query($query));
+			$fileUrl  = $this->fileUri . '?' . $queryStr . '&' . $signStr;
+		} else {
+			$fileUrl = $this->fileUri . '?' . $signStr;
+		}
+
+		return $fileUrl;
 	}
 
 	/**
@@ -82,7 +97,7 @@ class Qcloud extends CloudObjectStorage {
 	 * 计算签名
 	 * @link https://cloud.tencent.com/document/product/436/7778
 	 */
-	private function generateAuthorization(string $method, int $expires, array $headers, array $http_query = []): string{
+	private function generateAuthorization(string $method, int $expires, array $headers, array $http_query = []): string {
 		// 步骤1：生成 KeyTime
 		$key_time = time() . ';' . (time() + $expires); //unix_timestamp;unix_timestamp
 
