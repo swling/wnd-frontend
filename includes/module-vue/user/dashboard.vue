@@ -47,8 +47,6 @@
 		},
 
 		mounted: function () {
-			console.log(this.menus);
-			console.log(default_module);
 			this.hash = location.hash;
 			handle_hash();
 		},
@@ -59,7 +57,6 @@
 	// hash render
 	function handle_hash() {
 		let module = location.hash.replace('#', '');
-		console.log(module);
 		if (!module) {
 			wnd_ajax_embed('#ajax-module', default_module);
 			return;
