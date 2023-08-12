@@ -112,7 +112,7 @@ abstract class Wnd_Finance {
 	 */
 	public static function get_user_balance(int $user_id, bool $format = false): mixed {
 		$balance = wnd_get_wnd_user($user_id)->balance ?? 0;
-		return $format ? number_format($balance, 2, '.', '') : $balance;
+		return static::format($balance, $format);
 	}
 
 	/**
@@ -139,7 +139,7 @@ abstract class Wnd_Finance {
 	 */
 	public static function get_user_expense($user_id, $format = false): mixed {
 		$expense = floatval(wnd_get_user_meta($user_id, 'expense'));
-		return $format ? number_format($expense, 2, '.', '') : $expense;
+		return static::format($expense, $format);
 	}
 
 	/**
@@ -161,7 +161,7 @@ abstract class Wnd_Finance {
 	 */
 	public static function get_user_commission($user_id, $format = false): mixed {
 		$commission = floatval(wnd_get_user_meta($user_id, 'commission'));
-		return $format ? number_format($commission, 2, '.', '') : $commission;
+		return static::format($commission, $format);
 	}
 
 	/**
@@ -184,7 +184,7 @@ abstract class Wnd_Finance {
 		}
 
 		$price = apply_filters('wnd_get_post_price', $price, $post_id, $sku_id);
-		return $format ? number_format($price, 2, '.', '') : $price;
+		return static::format($price, $format);
 	}
 
 	/**
@@ -199,7 +199,7 @@ abstract class Wnd_Finance {
 			$order = new Wnd_Order;
 			$order->set_transaction_id($order_id);
 			$amount = $order->get_total_amount();
-			return $format ? number_format($amount, 2, '.', '') : $amount;
+			return static::format($amount, $format);
 		} catch (\Exception $e) {
 			return $format ? 0.00 : 0;
 		}
@@ -219,7 +219,7 @@ abstract class Wnd_Finance {
 		$commission = $amount * $rate;
 
 		$commission = apply_filters('wnd_get_order_commission', $commission, $order_id);
-		return $format ? number_format($commission, 2, '.', '') : $commission;
+		return static::format($commission, $format);
 	}
 
 	/**
@@ -242,7 +242,7 @@ abstract class Wnd_Finance {
 	 */
 	public static function get_post_total_commission($post_id, $format = false): mixed {
 		$total_commission = floatval(wnd_get_post_meta($post_id, 'total_commission'));
-		return $format ? number_format($total_commission, 2, '.', '') : $total_commission;
+		return static::format($total_commission, $format);
 	}
 
 	/**
@@ -265,7 +265,7 @@ abstract class Wnd_Finance {
 	 */
 	public static function get_post_total_sales($post_id, $format = false): mixed {
 		$total_sales = floatval(wnd_get_post_meta($post_id, 'total_sales'));
-		return $format ? number_format($total_sales, 2, '.', '') : $total_sales;
+		return static::format($total_sales, $format);
 	}
 
 	/**
@@ -326,6 +326,19 @@ abstract class Wnd_Finance {
 				'post_name'    => $slug,
 			];
 			wp_insert_post($post_arr);
+		}
+	}
+
+	/**
+	 * 货币格式化
+	 * @since 0.9.60.4
+	 *
+	 */
+	private static function format(float $amount, bool $format): mixed {
+		if ($format) {
+			return number_format($amount, 2, '.', '');
+		} else {
+			return floatval($amount);
 		}
 	}
 
