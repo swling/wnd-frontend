@@ -64,7 +64,7 @@ abstract class Wnd_Refunder {
 	/**
 	 * 根据transaction_id读取支付平台信息，并自动选择子类处理当前业务
 	 */
-	public static function get_instance($transaction_id): Wnd_Refunder{
+	public static function get_instance($transaction_id): Wnd_Refunder {
 		// 订单支付方式
 		$payment_gateway = Wnd_Payment_Getway::get_payment_gateway($transaction_id);
 
@@ -167,15 +167,20 @@ abstract class Wnd_Refunder {
 		/**
 		 * 充值退款
 		 *
-		 * - 站内佣金不支持退款
-		 * - 扣除账户余额
+		 * - 站内佣金：不支持退款
+		 * - 注册用户：扣除账户余额
+		 * - 匿名充值：无需操作（充值订单状态改变后，充值即失效因此仅支持全额退款）
 		 */
 		if ('recharge' == $this->transaction_type) {
 			if ($this->object_id) {
 				throw new Exception(__('当前交易不支持退款', 'wnd'));
 			}
 
-			return wnd_inc_user_balance($this->user_id, $this->refund_amount * -1, true);
+			if ($this->user_id) {
+				return wnd_inc_user_balance($this->user_id, $this->refund_amount * -1, true);
+			} else {
+				return false;
+			}
 		}
 
 		/**
