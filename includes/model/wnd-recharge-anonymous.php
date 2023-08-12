@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Transaction_Anonymous;
 
 /**
@@ -38,10 +39,27 @@ class Wnd_Recharge_Anonymous extends Wnd_Recharge {
 	}
 
 	/**
+	 * 完成充值
+	 * @since 0.09.64 fix
+	 *
+	 * 匿名充值基于匿名 transaction post 本身，除更新整站充值统计外无需额外数据库操作
+	 */
+	protected function complete_transaction(): int {
+		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
+		$ID           = $this->get_transaction_id();
+		$total_amount = $this->get_total_amount();
+
+		// 更新整站统计
+		Wnd_Finance::update_fin_stats($total_amount, 'recharge');
+
+		return $ID;
+	}
+
+	/**
 	 * 匿名用户余额 = 充值金额 - 消费金额
 	 *
 	 */
-	public static function get_anon_user_balance(): float{
+	public static function get_anon_user_balance(): float {
 		$recharge = static::get_anon_recharge();
 		if (!$recharge) {
 			return 0.00;
@@ -59,7 +77,7 @@ class Wnd_Recharge_Anonymous extends Wnd_Recharge {
 	 * 更新匿名用户余额消费
 	 *
 	 */
-	public static function inc_anon_user_expense(float $amount): bool{
+	public static function inc_anon_user_expense(float $amount): bool {
 		$recharge = static::get_anon_recharge();
 		if (!$recharge) {
 			return false;
@@ -67,6 +85,7 @@ class Wnd_Recharge_Anonymous extends Wnd_Recharge {
 
 		$new_consumption = ((float) $recharge->post_content_filtered) + $amount;
 		$ID              = wp_update_post(['ID' => $recharge->ID, 'post_content_filtered' => $new_consumption]);
+		Wnd_Finance::update_fin_stats($amount, 'expense');
 
 		return is_wp_error($ID) ? false : true;
 	}

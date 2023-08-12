@@ -93,7 +93,7 @@ abstract class Wnd_Finance {
 	 * @param 	float 	$money    		金额
 	 * @param 	bool  	$recharge 	是否为充值，若是则将记录到当月充值记录中
 	 */
-	public static function inc_user_balance(int $user_id, float $amount, bool $recharge): bool{
+	public static function inc_user_balance(int $user_id, float $amount, bool $recharge): bool {
 		$new_balance = bcadd(static::get_user_balance($user_id), $amount, 2);
 		$action      = Wnd_User::update_wnd_user($user_id, ['balance' => $new_balance]);
 
@@ -110,7 +110,7 @@ abstract class Wnd_Finance {
 	 * @param  	int   	$user_id       	用户ID
 	 * @return 	float 	用户余额
 	 */
-	public static function get_user_balance(int $user_id, bool $format = false): float{
+	public static function get_user_balance(int $user_id, bool $format = false): float {
 		$balance = wnd_get_wnd_user($user_id)->balance ?? 0;
 		return $format ? number_format($balance, 2, '.', '') : $balance;
 	}
@@ -121,7 +121,7 @@ abstract class Wnd_Finance {
 	 * @param 	int   	$user_id 	用户ID
 	 * @param 	float 	$money   		金额
 	 */
-	public static function inc_user_expense($user_id, $money): bool{
+	public static function inc_user_expense($user_id, $money): bool {
 		$new_money = static::get_user_expense($user_id) + $money;
 		$new_money = number_format($new_money, 2, '.', '');
 		$action    = wnd_update_user_meta($user_id, 'expense', $new_money);
@@ -279,7 +279,7 @@ abstract class Wnd_Finance {
 	 * @param float  $money 	变动金额
 	 * @param string $type  	数据类型：recharge/expense
 	 */
-	protected static function update_fin_stats($money, $type) {
+	public static function update_fin_stats($money, $type) {
 		switch ($type) {
 			// 充值
 			case 'recharge':
