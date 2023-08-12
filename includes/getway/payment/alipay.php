@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Getway\Payment;
 
+use Exception;
 use Wnd\Component\Payment\Alipay\AlipayService;
 use Wnd\Component\Payment\Alipay\PayPC;
 use Wnd\Component\Payment\Alipay\PayWAP;
@@ -65,7 +66,7 @@ class Alipay extends Wnd_Payment {
 	 * 发起支付
 	 *
 	 */
-	public function build_interface(): string{
+	public function build_interface(): string {
 		$config = static::getConfig();
 		$aliPay = wp_is_mobile() ? new PayWAP($config) : new PayPC($config);
 		$aliPay->setTotalAmount($this->total_amount);
@@ -92,8 +93,7 @@ class Alipay extends Wnd_Payment {
 		$transaction    = Wnd_Transaction::get_instance('', $transaction_id);
 
 		if ($total_amount != $transaction->get_total_amount()) {
-			wnd_error_payment_log('【支付宝】金额不匹配');
-			exit('金额不匹配');
+			throw new Exception('金额不匹配');
 		}
 
 		return $transaction;
@@ -114,14 +114,12 @@ class Alipay extends Wnd_Payment {
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$_POST = stripslashes_deep($_POST);
 			if (!static::check_notify()) {
-				wnd_error_payment_log('【支付宝】异步验签失败');
-				exit('异步验签失败');
+				throw new Exception('异步验签失败');
 			}
 		} else {
 			$_GET = stripslashes_deep($_GET);
 			if (!static::check_return()) {
-				wnd_error_payment_log('【支付宝】同步验签失败');
-				exit('同步验签失败');
+				throw new Exception('同步验签失败');
 			}
 		}
 	}
@@ -130,7 +128,7 @@ class Alipay extends Wnd_Payment {
 	 * 回调验签
 	 *
 	 */
-	private static function check($params): bool{
+	private static function check($params): bool {
 		$aliPay = new AlipayService(static::getConfig());
 		return $aliPay->rsaCheck($params);
 	}
@@ -139,7 +137,7 @@ class Alipay extends Wnd_Payment {
 	 * 同步回调通知
 	 *
 	 */
-	private static function check_return(): bool{
+	private static function check_return(): bool {
 		/**
 		 * 验签
 		 */

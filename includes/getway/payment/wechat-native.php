@@ -27,7 +27,7 @@ class WeChat_Native extends Wnd_Payment {
 	 * 发起支付
 	 *
 	 */
-	public function build_interface(): string{
+	public function build_interface(): string {
 		extract(static::get_config());
 		$pay = new Native($mchid, $appid, $apicert_sn, $private_key);
 
@@ -55,7 +55,7 @@ class WeChat_Native extends Wnd_Payment {
 	 * - 因而在解密订单信息的同时，也完成了验签
 	 * - 故此本类中的 verify_payment() 方法无需额外处理
 	 */
-	public static function verify_payment(): Wnd_Transaction{
+	public static function verify_payment(): Wnd_Transaction {
 		$result = static::handle_verify();
 
 		/**
@@ -81,11 +81,6 @@ class WeChat_Native extends Wnd_Payment {
 			static::handle_verify_failed('【微信支付】金额不匹配');
 		}
 
-		echo json_encode([
-			'code'    => 'SUCCESS',
-			'message' => '支付成功',
-		]);
-
 		return $transaction;
 	}
 
@@ -104,15 +99,12 @@ class WeChat_Native extends Wnd_Payment {
 	 * 处理验签失败
 	 * - 若验签失败，需要设定 HTTP 状态码
 	 * - 若状态码为 200 无论响应何种数据，微信支付均认为验签完成，将不再发送回调消息
+	 *
+	 * @see https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_1_5.shtml
 	 */
 	private static function handle_verify_failed(string $message) {
-		http_response_code(401);
-		wnd_error_payment_log('【微信支付】' . $message);
-		echo json_encode([
-			'code'    => 'ERROR',
-			'message' => $message,
-		]);
-		exit;
+		$msg = json_encode(['code' => 'FAIL', 'message' => $message], JSON_UNESCAPED_UNICODE);
+		throw new Exception($msg);
 	}
 
 	/**
@@ -144,14 +136,10 @@ class WeChat_Native extends Wnd_Payment {
 
 		// 交易状态检测
 		if ('SUCCESS' != $result['trade_state']) {
-			wnd_error_payment_log('【微信支付】校验成功，但支付状态异常' . $result['trade_state']);
-			echo json_encode([
-				'code'    => 'SUCCESS',
-				'message' => '',
-			]);
-			exit;
+			throw new Exception('验签成功，但支付状态异常' . $result['trade_state']);
 		}
 
 		return $result;
 	}
+
 }

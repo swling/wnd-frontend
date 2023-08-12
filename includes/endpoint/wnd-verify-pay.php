@@ -12,6 +12,7 @@ use Wnd\Model\Wnd_Transaction;
  * @since 0.9.32
  */
 abstract class Wnd_Verify_Pay extends Wnd_Endpoint {
+
 	// 响应类型
 	protected $content_type = 'txt';
 
@@ -31,6 +32,8 @@ abstract class Wnd_Verify_Pay extends Wnd_Endpoint {
 			$payment->update_transaction();
 			$payment->return();
 		} catch (Exception $e) {
+			wnd_error_payment_log('【支付错误】: ' . $e->getMessage());
+			http_response_code(500);
 			exit($e->getMessage());
 		}
 	}
@@ -39,4 +42,5 @@ abstract class Wnd_Verify_Pay extends Wnd_Endpoint {
 	 * 验签并解析返回站内交易订单对象实例化
 	 */
 	abstract protected function verify_payment(): Wnd_Transaction;
+
 }
