@@ -110,7 +110,7 @@ abstract class Wnd_Finance {
 	 * @param  	int   	$user_id       	用户ID
 	 * @return 	float 	用户余额
 	 */
-	public static function get_user_balance(int $user_id, bool $format = false): float {
+	public static function get_user_balance(int $user_id, bool $format = false): mixed {
 		$balance = wnd_get_wnd_user($user_id)->balance ?? 0;
 		return $format ? number_format($balance, 2, '.', '') : $balance;
 	}
@@ -137,7 +137,7 @@ abstract class Wnd_Finance {
 	 * @param  	int   	$user_id       	用户ID
 	 * @return 	float 	用户消费
 	 */
-	public static function get_user_expense($user_id, $format = false) {
+	public static function get_user_expense($user_id, $format = false): mixed {
 		$expense = floatval(wnd_get_user_meta($user_id, 'expense'));
 		return $format ? number_format($expense, 2, '.', '') : $expense;
 	}
@@ -159,7 +159,7 @@ abstract class Wnd_Finance {
 	 * @param  	int   	$user_id       	用户ID
 	 * @return 	float 	用户佣金
 	 */
-	public static function get_user_commission($user_id, $format = false) {
+	public static function get_user_commission($user_id, $format = false): mixed {
 		$commission = floatval(wnd_get_user_meta($user_id, 'commission'));
 		return $format ? number_format($commission, 2, '.', '') : $commission;
 	}
@@ -175,7 +175,7 @@ abstract class Wnd_Finance {
 	 * @param  	bool   	$format                  	是否格式化输出
 	 * @return 	float  	两位数的价格信息 或者 0
 	 */
-	public static function get_post_price($post_id, $sku_id = '', $format = false) {
+	public static function get_post_price($post_id, $sku_id = '', $format = false): mixed {
 		if ($sku_id) {
 			$price = Wnd_SKU::get_single_sku_price($post_id, $sku_id);
 			$price = floatval($price);
@@ -194,7 +194,7 @@ abstract class Wnd_Finance {
 	 * @param  	int   	$order_id      	订单 ID
 	 * @return 	float 	订单金额
 	 */
-	public static function get_order_amount($order_id, $format = false) {
+	public static function get_order_amount($order_id, $format = false): mixed {
 		try {
 			$order = new Wnd_Order;
 			$order->set_transaction_id($order_id);
@@ -213,7 +213,7 @@ abstract class Wnd_Finance {
 	 * @param  	int   	$order_id      产生佣金的订单
 	 * @return 	float 	佣金分成
 	 */
-	public static function get_order_commission($order_id, $format = false) {
+	public static function get_order_commission($order_id, $format = false): mixed {
 		$rate       = floatval(wnd_get_config('commission_rate'));
 		$amount     = static::get_order_amount($order_id);
 		$commission = $amount * $rate;
@@ -240,7 +240,7 @@ abstract class Wnd_Finance {
 	 * @param  	int   	$post_id       Post ID
 	 * @return 	float 	用户佣金
 	 */
-	public static function get_post_total_commission($post_id, $format = false) {
+	public static function get_post_total_commission($post_id, $format = false): mixed {
 		$total_commission = floatval(wnd_get_post_meta($post_id, 'total_commission'));
 		return $format ? number_format($total_commission, 2, '.', '') : $total_commission;
 	}
@@ -263,7 +263,7 @@ abstract class Wnd_Finance {
 	 * @param  	int   	$user_id       	用户ID
 	 * @return 	float 	用户佣金
 	 */
-	public static function get_post_total_sales($post_id, $format = false) {
+	public static function get_post_total_sales($post_id, $format = false): mixed {
 		$total_sales = floatval(wnd_get_post_meta($post_id, 'total_sales'));
 		return $format ? number_format($total_sales, 2, '.', '') : $total_sales;
 	}
