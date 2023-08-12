@@ -3,6 +3,7 @@ namespace Wnd\Model;
 
 use Exception;
 use Wnd\Model\Wnd_Finance;
+use Wnd\Model\Wnd_Transaction;
 use Wnd\Model\Wnd_Transaction_Anonymous;
 
 /**
@@ -36,23 +37,6 @@ class Wnd_Recharge_Anonymous extends Wnd_Recharge {
 		Wnd_Transaction_Anonymous::set_anon_cookie($this->transaction_type, $this->object_id, $this->transaction_slug);
 
 		parent::generate_transaction_data();
-	}
-
-	/**
-	 * 完成充值
-	 * @since 0.09.64 fix
-	 *
-	 * 匿名充值基于匿名 transaction post 本身，除更新整站充值统计外无需额外数据库操作
-	 */
-	protected function complete_transaction(): int {
-		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
-		$ID           = $this->get_transaction_id();
-		$total_amount = $this->get_total_amount();
-
-		// 更新整站统计
-		Wnd_Finance::update_fin_stats($total_amount, 'recharge');
-
-		return $ID;
 	}
 
 	/**

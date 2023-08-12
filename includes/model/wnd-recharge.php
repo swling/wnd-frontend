@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Model\Wnd_Finance;
 
 /**
  * 支付模块
@@ -42,10 +43,14 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *
 	 * 在线充值：直接新增用户余额
 	 *
+	 * @since 0.9.64
+	 *  - 在线支付回调时会进入匿名状态，因此不允许在匿名子类中复写本方法
+	 *  - 即：本方法也必须兼顾注册用户与匿名用户
+	 *
 	 * 当充值包含关联object_id，表示收入来自站内佣金收入：更新用户佣金及产品总佣金统计
 	 * @param object 	$this->transaction			required 	订单记录Post
 	 */
-	protected function complete_transaction(): int {
+	final protected function complete_transaction(): int {
 		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量
 		$ID           = $this->get_transaction_id();
 		$user_id      = $this->get_user_id();
@@ -57,9 +62,13 @@ class Wnd_Recharge extends Wnd_Transaction {
 			wnd_inc_user_commission($user_id, $total_amount);
 			wnd_inc_post_total_commission($object_id, $total_amount);
 
-			// 在线余额充值
+			// 注册用户：新增余额（将更新整站充值统计）;匿名充值：仅更新整站充值统计
 		} else {
-			wnd_inc_user_balance($user_id, $total_amount, true);
+			if ($user_id) {
+				wnd_inc_user_balance($user_id, $total_amount, true);
+			} else {
+				Wnd_Finance::update_fin_stats($total_amount, 'recharge');
+			}
 		}
 
 		return $ID;

@@ -102,7 +102,7 @@ class Wnd_Order extends Wnd_Transaction {
 	 * - 更新订单及库存统计
 	 * @since 0.9.32
 	 */
-	public function create(bool $is_completed = false): WP_Post{
+	public function create(bool $is_completed = false): WP_Post {
 		// 调用父类方法，写入数据库
 		$transaction = parent::create($is_completed);
 
@@ -136,10 +136,14 @@ class Wnd_Order extends Wnd_Transaction {
 	 * 订单成功后，执行的统一操作
 	 * @since 2020.06.10
 	 *
+	 * @since 0.9.64
+	 *  - 在线支付回调时会进入匿名状态，因此不允许在匿名子类中复写本方法
+	 *  - 即：本方法也必须兼顾注册用户与匿名用户
+	 *
 	 * @param $this->transaction
 	 * @param object               	$this->transaction		required 	订单记录Post
 	 */
-	protected function complete_transaction(): int{
+	final protected function complete_transaction(): int {
 		/**
 		 * 本方法可能在站内直接支付，或者站外验证支付中调用。
 		 * 在线订单校验时，由支付平台发起请求，仅指定订单ID，需根据订单ID设置对应变量。
@@ -172,8 +176,12 @@ class Wnd_Order extends Wnd_Transaction {
 			}
 		}
 
-		// 写入消费记录（即使是匿名订单也需要此操作，否则不会更新整站消费统计）
-		wnd_inc_user_expense($user_id, $total_amount);
+		// 注册用户：更新用户消费统计（将更新整站统计）；匿名订单：仅更新整站消费统计
+		if ($user_id) {
+			wnd_inc_user_expense($user_id, $total_amount);
+		} else {
+			Wnd_Finance::update_fin_stats($total_amount, 'expense');
+		}
 
 		// 站内直接消费，无需支付平台支付校验，记录扣除账户余额、在线支付则不影响当前余额
 		if (Wnd_Payment_Getway::is_internal_payment($ID)) {
