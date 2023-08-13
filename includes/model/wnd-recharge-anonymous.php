@@ -24,6 +24,10 @@ class Wnd_Recharge_Anonymous extends Wnd_Recharge {
 		if (!wnd_get_config('enable_anon_order')) {
 			throw new Exception('Anonymous orders are not enabled.');
 		}
+
+		if (wnd_get_anon_user_balance() > 0) {
+			throw new Exception(__('匿名用户：需清空当前余额后，方可再次充值', 'wnd'));
+		}
 	}
 
 	/**
