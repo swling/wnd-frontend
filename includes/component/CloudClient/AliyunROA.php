@@ -19,7 +19,7 @@ class AliyunROA extends CloudClient {
 	 * 生成 Authorization
 	 *
 	 */
-	protected function generateAuthorization(): string{
+	protected function generateAuthorization(): string {
 		$this->setHeaders();
 
 		return 'acs ' . $this->secretID . ':' . $this->genSignature();
@@ -37,7 +37,7 @@ class AliyunROA extends CloudClient {
 		$this->headers['x-acs-signature-nonce']  = uniqid();
 	}
 
-	private function genSignature(): string{
+	private function genSignature(): string {
 		$stringToSign = $this->roaString();
 		$sign         = base64_encode(hash_hmac('sha1', $stringToSign, $this->secretKey, true));
 		return $sign;
@@ -113,7 +113,7 @@ class AliyunROA extends CloudClient {
 	 *
 	 * @return string
 	 */
-	private static function resourceString(string $uri): string{
+	private static function resourceString(string $uri): string {
 		$uri_info = parse_url($uri);
 		if (isset($uri_info['query'])) {
 			return $uri_info['path'] . '?' . rawurldecode($uri_info['query']);
@@ -125,11 +125,13 @@ class AliyunROA extends CloudClient {
 	/**
 	 * 核查响应，如果出现错误，则抛出异常
 	 * @link https://help.aliyun.com/document_detail/315525.html#section-x9t-xmq-5iu
+	 *
+	 * 签名等基础错误时，响应数据不含 $responseBody['code']
 	 */
 	protected static function checkResponse(array $responseBody) {
 		$code = $responseBody['code'] ?? '';
 		if (200 != $code) {
-			throw new Exception(json_encode($responseBody['msg']));
+			throw new Exception($responseBody['Code'] . ':' . $responseBody['Message']);
 		}
 	}
 

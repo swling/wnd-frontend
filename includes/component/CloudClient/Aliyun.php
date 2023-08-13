@@ -31,7 +31,7 @@ class Aliyun extends CloudClient {
 	 * 构造请求数据
 	 * @link https://www.alibabacloud.com/help/zh/doc-detail/28761.htm#d7e57
 	 */
-	private function generateRequestBody(): string{
+	private function generateRequestBody(): string {
 		$apiParams = array_merge([
 			'SignatureMethod'  => 'HMAC-SHA1',
 			'SignatureNonce'   => uniqid(mt_rand(0, 0xffff), true),
@@ -63,12 +63,12 @@ class Aliyun extends CloudClient {
 
 	/**
 	 * 核查响应，如果出现错误，则抛出异常
-	 * @link https://help.aliyun.com/document_detail/102364.html#h2-url-3
+	 * @link https://help.aliyun.com/zh/sdk/product-overview/rpc-mechanism#section-ugl-kl6-nip
 	 */
 	protected static function checkResponse(array $responseBody) {
 		$code = $responseBody['Code'] ?? 'OK';
 		if ('OK' != $code) {
-			throw new Exception($responseBody['Message']);
+			throw new Exception($responseBody['Code'] . ':' . $responseBody['Message']);
 		}
 	}
 }
