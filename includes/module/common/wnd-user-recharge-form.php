@@ -32,7 +32,8 @@ class Wnd_User_Recharge_Form extends Wnd_Module_Form {
 				'placeholder' => '自定义金额',
 				'min'         => 0.01,
 				'step'        => 0.01,
-				'value'       => $args['amount'] ?? '',
+				'value'       => ($args['amount'] ?? '') ?: '',
+				'required'    => true,
 			]
 		);
 		$form->add_radio(
