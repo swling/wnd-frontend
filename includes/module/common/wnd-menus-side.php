@@ -25,13 +25,13 @@ class Wnd_Menus_Side extends Wnd_Module_Html {
 		// 用户中心
 		$html .= '<div class="has-text-centered mb-3 mt-3">';
 		if (!is_user_logged_in()) {
-			$html .= wnd_modal_button('免费注册', 'user/wnd_user_center', [], 'is-danger is-outlined');
+			$html .= wnd_modal_button('免费注册', 'user/wnd_user_center', [], 'is-outlined');
 			$html .= '&nbsp;';
-			$html .= wnd_modal_button('立即登录', 'user/wnd_user_center', ['do' => 'login'], 'is-danger is-outlined');
+			$html .= wnd_modal_button('立即登录', 'user/wnd_user_center', ['do' => 'login'], 'is-outlined');
 		} else {
-			$html .= '<a class="button is-danger is-outlined" href="' . wnd_get_front_page_url() . '">' . __('用户中心', 'wnd') . '</a>';
+			$html .= '<a class="button is-outlined" href="' . wnd_get_front_page_url() . '">' . __('用户中心', 'wnd') . '</a>';
 			$html .= '&nbsp;';
-			$html .= '<a href="' . wp_logout_url(wnd_home_url()) . '" title="退出" class="button is-danger is-outlined">' . __('退出账户', 'wnd') . '</a>';
+			$html .= '<a href="' . wp_logout_url(wnd_home_url()) . '" title="退出" class="button is-outlined">' . __('退出账户', 'wnd') . '</a>';
 		}
 		$html .= '</div>';
 

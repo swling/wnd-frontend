@@ -58,7 +58,7 @@ class Wnd_PPC {
 		$this->post_id = $post_id;
 		$this->post    = $this->post_id ? get_post($this->post_id) : false;
 		if (!$this->post) {
-			throw new Exception('指定ID无效');
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		if ($this->post_type != $this->post->post_type) {
@@ -85,7 +85,7 @@ class Wnd_PPC {
 	 */
 	public function check_create() {
 		if (!$this->user_id) {
-			throw new Exception('请登录');
+			throw new Exception(__('请登录', 'wnd'));
 		}
 	}
 
@@ -94,7 +94,7 @@ class Wnd_PPC {
 	 */
 	public function check_insert() {
 		if (!$this->user_id) {
-			throw new Exception('请登录');
+			throw new Exception(__('请登录', 'wnd'));
 		}
 	}
 
@@ -110,12 +110,12 @@ class Wnd_PPC {
 	 */
 	public function check_edit() {
 		if (!$this->post) {
-			throw new Exception('获取内容失败');
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		// 更新权限
 		if (!current_user_can('edit_post', $this->post_id)) {
-			throw new Exception('权限错误');
+			throw new Exception(__('权限错误', 'wnd'));
 		}
 	}
 
@@ -124,12 +124,12 @@ class Wnd_PPC {
 	 */
 	public function check_update() {
 		if (!$this->post) {
-			throw new Exception('获取内容失败');
+			throw new Exception(__('ID无效', 'wnd'));
 		}
 
 		// 更新权限
 		if (!current_user_can('edit_post', $this->post_id)) {
-			throw new Exception('权限错误');
+			throw new Exception(__('权限错误', 'wnd'));
 		}
 	}
 
@@ -143,7 +143,7 @@ class Wnd_PPC {
 		}
 
 		if ('publish' == $this->post_status) {
-			throw new Exception('权限错误');
+			throw new Exception(__('权限错误', 'wnd'));
 		}
 	}
 }
