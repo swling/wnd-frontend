@@ -46,11 +46,6 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 
 		if ($module) {
 			echo $module;
-		} elseif (!is_user_logged_in()) {
-			$html = '<div id="user-center" class="columns">';
-			$html .= '<div class="column"><div class="box">' . Wnd_User_Center::render() . '</div></div>';
-			$html .= '</div>';
-			echo $html;
 		} else {
 			$html = file_get_contents(WND_PATH . '/includes/module-vue/user/dashboard.vue');
 			$html = apply_filters('wnd_user_page', $html);
@@ -104,6 +99,11 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 			// 主题定义的表单优先，其次为插件表单
 			$module = static::get_post_form_module($post_type);
 			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . $params . ');</script>';
+		}
+
+		// 未登录用户返回用户中心
+		if (!is_user_logged_in()) {
+			return '<script>wnd_ajax_embed("#ajax-module", "User/Wnd_User_Center", ' . json_encode($args) . ');</script>';
 		}
 
 		return '';
