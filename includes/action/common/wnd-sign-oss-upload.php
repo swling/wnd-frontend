@@ -20,7 +20,7 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 	private $local_file;
 	private $is_private;
 
-	protected function execute(): array{
+	protected function execute(): array {
 		$oss_handler = Wnd_OSS_Handler::get_instance();
 		$oss_request = $oss_handler->sign_oss_request('PUT', $this->local_file, $this->mime_type, $this->md5, $this->is_private);
 		$oss_handler->remove_local_storage_hook(); // 移除本地文件处理钩子
@@ -48,6 +48,8 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 	}
 
 	protected function parse_data() {
+		parent::parse_data();
+
 		$this->extension  = $this->data['extension'];
 		$this->file_name  = uniqid('oss-') . '.' . $this->extension;
 		$this->mime_type  = $this->data['mime_type'] ?? '';
@@ -82,7 +84,7 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 	 * - 不保存 meta key 至 attachment post 的 post meta 是为了减少一行数据记录
 	 * - @see Utility\Wnd_OSS_Handler::is_private_storage()
 	 */
-	private function inset_attachment(): int{
+	private function inset_attachment(): int {
 		$attachment = [
 			'post_mime_type'        => $this->mime_type,
 			'post_title'            => wp_basename($this->file_name, '.' . $this->data['extension']),
@@ -104,7 +106,7 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 	 * 直传 OSS 需要手动设置附件 Post Meta，用以记录文件路径
 	 * 直传 OSS 并未在本地存储文件，故亦无缩略图等相关数据，故此 wp_update_attachment_metadata 可忽略
 	 */
-	private function get_attached_file(): string{
+	private function get_attached_file(): string {
 		$time = current_time('mysql');
 		$post = get_post($this->post_parent);
 

@@ -27,7 +27,7 @@ class Wnd_Upload_File extends Wnd_Action {
 
 	protected $meta_key;
 
-	protected function execute(): array{
+	protected function execute(): array {
 		//$_FILES['wnd_file']需要与input name 值匹配
 		if (empty($_FILES['wnd_file'])) {
 			throw new Exception(__('上传文件为空', 'wnd'));
@@ -134,10 +134,12 @@ class Wnd_Upload_File extends Wnd_Action {
 		return $return_array;
 	}
 
-	protected function check() {
+	protected function parse_data() {
 		$this->post_parent = (int) ($this->data['post_parent'] ?? 0);
 		$this->meta_key    = $this->data['meta_key'] ?? '';
+	}
 
+	protected function check() {
 		// 上传信息校验
 		if (!$this->user_id and !$this->post_parent) {
 			throw new Exception(__('User ID及Post ID不可同时为空', 'wnd'));
@@ -168,4 +170,5 @@ class Wnd_Upload_File extends Wnd_Action {
 			throw new Exception($can_upload_file['msg']);
 		}
 	}
+
 }
