@@ -698,7 +698,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
 <form v-bind="form.attrs">
 <div v-if="form.before_html" v-html="form.before_html"></div>
 <div class="field" v-show="form.title.title"><h3 v-bind="form.title.attrs" v-html="form.title.title"></h3></div>
-<div v-bind="form.message.attrs" class="message" v-show="form.message.message"><div class="message-body" v-html="form.message.message"></div></div>
+<div v-bind="form.message.attrs" class="notification is-light" v-show="form.message.message" v-html="form.message.message"></div>
 ${build_fields_template(form_json)}
 ${build_submit_template(form_json)}
 <div class="form-script"></div>
