@@ -77,7 +77,7 @@ class Wnd_Filter_Query {
 	 *
 	 * @return 	array 	wp_query $args
 	 */
-	public static function parse_query_vars(): array{
+	public static function parse_query_vars(): array {
 		if (empty($_GET)) {
 			return [];
 		}
@@ -161,7 +161,7 @@ class Wnd_Filter_Query {
 			if (0 === strpos($key, '_term_')) {
 				$term_query = [
 					'taxonomy' => str_replace('_term_', '', $key),
-					'field'    => 'term_id',
+					'field'    => is_numeric($value) ? 'term_id' : 'slug',
 					'terms'    => $value,
 				];
 				$query_vars['tax_query'][] = $term_query;
@@ -262,7 +262,7 @@ class Wnd_Filter_Query {
 	 * 读取全部查询参数数组
 	 * @since 0.9.32
 	 */
-	public function get_query_vars(): array{
+	public function get_query_vars(): array {
 		return $this->query_vars;
 	}
 
@@ -270,7 +270,7 @@ class Wnd_Filter_Query {
 	 * 获取新增的查询参数
 	 * @since 0.9.32
 	 */
-	public function get_add_query_vars(): array{
+	public function get_add_query_vars(): array {
 		return $this->add_query_vars;
 	}
 
@@ -342,7 +342,7 @@ class Wnd_Filter_Query {
 	 * - 排除 WP 内置功能型 Post Type 查询
 	 * @since 0.9.0
 	 */
-	private static function get_supported_post_types(): array{
+	private static function get_supported_post_types(): array {
 		$custom_post_types = get_post_types(['_builtin' => false]);
 		return array_merge($custom_post_types, ['post' => 'post', 'page' => 'page', 'attachment' => 'attachment']);
 	}
