@@ -112,6 +112,7 @@ class Wnd_Optimization {
 			$cached_post_views = 10;
 			if (0 == $meta_value % $cached_post_views or 1 == $meta_value) {
 				//每增加 10 次浏览 或首次 写入数据库中去
+				wp_cache_delete($object_id, 'wnd_views');
 				return $check;
 			} else {
 				return true;
