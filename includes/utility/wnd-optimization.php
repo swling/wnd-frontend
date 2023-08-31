@@ -103,10 +103,7 @@ class Wnd_Optimization {
 	 * @since 2019.06.13
 	 */
 	public static function filter_update_post_metadata($check, $object_id, $meta_key, $meta_value, $prev_value) {
-
-		//已经安装了 memcached 插件
-		global $wp_object_cache;
-		if (!isset($wp_object_cache->mc) or !$wp_object_cache->mc) {
+		if (!wp_using_ext_object_cache()) {
 			return $check;
 		}
 
@@ -125,10 +122,7 @@ class Wnd_Optimization {
 	}
 
 	public static function filter_get_post_metadata($check, $object_id, $meta_key, $single) {
-
-		//已经安装了 memcached 插件
-		global $wp_object_cache;
-		if (!isset($wp_object_cache->mc) or !$wp_object_cache->mc) {
+		if (!wp_using_ext_object_cache()) {
 			return $check;
 		}
 
