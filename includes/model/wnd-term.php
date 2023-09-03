@@ -12,7 +12,7 @@ abstract class Wnd_Term {
 	 * 分类：返回{[{$slug}=>${term_id}]数组
 	 * 标签：返回[{$slug}=>{$name}]数组
 	 */
-	public static function get_post_terms($post_id, $taxonomy): array{
+	public static function get_post_terms($post_id, $taxonomy): array {
 		if (!$post_id) {
 			return [];
 		}
@@ -32,7 +32,7 @@ abstract class Wnd_Term {
 	 * 用于编辑内容时，根据当前 Post 之前数据，根据分类层级设定下拉 Selected 值
 	 * @since 0.9.27
 	 */
-	public static function get_post_terms_with_level($post_id, $taxonomy): array{
+	public static function get_post_terms_with_level($post_id, $taxonomy): array {
 		$terms = static::get_post_terms($post_id, $taxonomy);
 		$data  = [];
 		foreach ($terms as $term_id) {
@@ -50,7 +50,7 @@ abstract class Wnd_Term {
 	 *
 	 * @since 0.9.27
 	 */
-	public static function get_post_terms_options_with_level($post_id, $args_or_taxonomy): array{
+	public static function get_post_terms_options_with_level($post_id, $args_or_taxonomy): array {
 		$args            = is_array($args_or_taxonomy) ? $args_or_taxonomy : ['taxonomy' => $args_or_taxonomy];
 		$taxonomy        = $args['taxonomy'] ?? '';
 		$taxonomy_object = get_taxonomy($taxonomy);
@@ -87,7 +87,7 @@ abstract class Wnd_Term {
 	 * 		因此，为避免这种意外，请确保同一个taxonomy下，各个分类名称唯一。
 	 * @see	注意：根据上述数据结构，我们得知，如果同一个taxonomy中存在多个同名分类，将仅返回一个数据。
 	 */
-	public static function get_terms_data($args_or_taxonomy): array{
+	public static function get_terms_data($args_or_taxonomy, $field = false): array {
 		$defaults = [
 			'taxonomy'   => 'category',
 			'hide_empty' => false,
@@ -100,8 +100,13 @@ abstract class Wnd_Term {
 		$option_data = [];
 		foreach ($terms as $term) {
 			// 如果分类名称为整数，则需要转换，否则数组会出错
-			$name               = is_numeric($term->name) ? '(' . $term->name . ')' : $term->name;
-			$option_data[$name] = is_taxonomy_hierarchical($args['taxonomy']) ? $term->term_id : $term->name;
+			$name = is_numeric($term->name) ? '(' . $term->name . ')' : $term->name;
+
+			if (false == $field) {
+				$option_data[$name] = is_taxonomy_hierarchical($args['taxonomy']) ? $term->term_id : $term->name;
+			} else {
+				$option_data[$name] = $term->$field ?? $term->term_id;
+			}
 		}
 		unset($term);
 

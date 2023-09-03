@@ -124,7 +124,7 @@ class Wnd_Filter_Query {
 			 * 直接使用s作为GET参数，会与WordPress原生请求冲突
 			 * @since 2020.05.11
 			 */
-			if ('search' === $key) {
+			if ('search' === $key and $value) {
 				$query_vars['s'] = $value;
 				continue;
 			}
