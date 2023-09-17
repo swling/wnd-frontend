@@ -57,6 +57,11 @@ abstract class Wnd_Defender {
 	public $base_key;
 
 	/**
+	 * IP 黑名单 Key
+	 */
+	public $blacklist_key;
+
+	/**
 	 * 访问次数统计
 	 */
 	public $count = 0;
@@ -151,11 +156,12 @@ abstract class Wnd_Defender {
 		$this->blocked_time    = $blocked_time;
 
 		// IP 属性
-		$this->ip          = static::get_real_ip();
-		$this->ip_base     = preg_replace('/(\d+)\.(\d+)\.(\d+)\.(\d+)/is', '$1.$2.$3', $this->ip);
-		$this->key         = $this->build_key($this->ip);
-		$this->base_key    = $this->build_key($this->ip_base);
-		$this->insight_key = 'wnd_insight_' . $this->ip;
+		$this->ip            = static::get_real_ip();
+		$this->ip_base       = preg_replace('/(\d+)\.(\d+)\.(\d+)\.(\d+)/is', '$1.$2.$3', $this->ip);
+		$this->key           = $this->build_key($this->ip);
+		$this->base_key      = $this->build_key($this->ip_base);
+		$this->insight_key   = 'wnd_insight_' . $this->ip;
+		$this->blacklist_key = $this->build_key('blacklist_' . $this->ip);
 
 		// 放行当前服务器 ip
 		if ($_SERVER['SERVER_ADDR'] == $this->ip) {
@@ -189,7 +195,7 @@ abstract class Wnd_Defender {
 	 * 获取客户端 ip 地址
 	 *
 	 */
-	protected static function get_real_ip(): string{
+	protected static function get_real_ip(): string {
 		$ip = '';
 		if (isset($_SERVER)) {
 			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['REMOTE_ADDR']);
@@ -278,6 +284,11 @@ abstract class Wnd_Defender {
 	 * IP段累积拦截超限，拦截整个IP段（为避免误杀，IP段拦截时间为IP检测时间段，而非IP拦截时间）
 	 */
 	protected function defend() {
+		// ip 黑名单
+		if ($this->cache_get($this->blacklist_key)) {
+			$this->intercept(false);
+		}
+
 		// IP段拦截：IP段拦截频率条件固定为单个ip访问频率的三倍
 		if ($this->base_count > $this->max_connections * 3) {
 			$this->intercept(true);
@@ -289,19 +300,20 @@ abstract class Wnd_Defender {
 			return;
 		}
 
-		// 统计IP段拦截次数，
-		if ($this->base_count) {
-			$this->cache_inc($this->base_key, 1);
-		} else {
-			$this->cache_set($this->base_key, 1, $this->period);
-		}
-
 		/**
 		 * 符合拦截条件：
+		 * - 统计 ip 段拦截记录
 		 * - 更新当前 IP 记录
 		 * - 中断当前 IP 连接
 		 */
 		if ($this->count >= $this->max_connections) {
+			// 统计IP段拦截次数，
+			if ($this->base_count) {
+				$this->cache_inc($this->base_key, 1);
+			} else {
+				$this->cache_set($this->base_key, 1, $this->period);
+			}
+
 			$this->cache_set($this->key, $this->count + 1, $this->blocked_time);
 			$this->intercept(false);
 		}
@@ -352,7 +364,7 @@ abstract class Wnd_Defender {
 	 * 记录屏蔽ip的请求信息，以供分析
 	 *
 	 */
-	public function get_block_logs(): array{
+	public function get_block_logs(): array {
 		$logs = $this->cache_get(static::$block_logs_key);
 		return json_decode($logs, true) ?: [];
 	}
@@ -396,5 +408,14 @@ abstract class Wnd_Defender {
 
 		$this->cache_delete($this->key);
 		$this->cache_delete($this->base_key);
+	}
+
+	/**
+	 * 手动加入黑名单
+	 * @since 2023.09.17
+	 *
+	 */
+	public function add_to_blacklist(int $timeout) {
+		$this->cache_set($this->blacklist_key, 'blacklist', $timeout);
 	}
 }
