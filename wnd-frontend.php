@@ -55,25 +55,6 @@ Wnd_Init::get_instance();
  */
 add_action('wp_enqueue_scripts', 'wnd_enqueue_scripts');
 function wnd_enqueue_scripts($hook_suffix = '') {
-	// 公共脚本及样式库可选本地或 jsdeliver
-	$static_host = wnd_get_config('static_host');
-	$static_path = WND_URL . 'static/';
-	if (!$static_host or 'local' == $static_host or is_admin()) {
-		wp_enqueue_style('bulma', $static_path . 'css/bulma.min.css', [], WND_VER);
-		wp_enqueue_style('font-awesome', $static_path . 'css/font-awesome-all.min.css', [], WND_VER);
-		wp_enqueue_script('axios', $static_path . 'js/lib/axios.min.js', [], WND_VER);
-		wp_enqueue_script('vue', $static_path . 'js/lib/vue.global.prod.js', [], WND_VER);
-	} elseif ('jsdeliver' == $static_host) {
-		wp_enqueue_style('bulma', '//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/bulma/0.9.3/css/bulma.min.css', [], null);
-		wp_enqueue_style('font-awesome', '//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/5.15.4/css/all.min.css', [], null);
-		wp_enqueue_script('axios', '//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/axios/0.26.0/axios.min.js', [], null);
-		wp_enqueue_script('vue', '//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/vue/3.2.31/vue.global.prod.js', [], null);
-	}
-	wp_enqueue_script('wnd-main', $static_path . 'js/main.min.js', ['vue', 'axios'], WND_VER);
-	if (is_singular() and comments_open()) {
-		wp_enqueue_script('wnd-comment', $static_path . 'js/comment.min.js', ['axios', 'comment-reply'], WND_VER);
-	}
-
 	// api 及语言本地化
 	$wnd_data = [
 		'rest_url'           => get_rest_url(),
@@ -111,5 +92,25 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 			'view'                => __('查看', 'wnd'),
 		],
 	];
-	wp_localize_script('wnd-main', 'wnd', $wnd_data);
+	echo '<script>let wnd = ' . json_encode($wnd_data, JSON_UNESCAPED_UNICODE) . ';</script>' . PHP_EOL;
+
+	// 公共脚本及样式库可选本地或 jsdeliver
+	$static_host = wnd_get_config('static_host');
+	$static_path = WND_URL . 'static/';
+	if (!$static_host or 'local' == $static_host or is_admin()) {
+		wp_enqueue_style('bulma', $static_path . 'css/bulma.min.css', [], WND_VER);
+		wp_enqueue_style('font-awesome', $static_path . 'css/font-awesome-all.min.css', [], WND_VER);
+		wp_enqueue_script('axios', $static_path . 'js/lib/axios.min.js', [], WND_VER);
+		wp_enqueue_script('vue', $static_path . 'js/lib/vue.global.prod.js', [], WND_VER);
+	} elseif ('jsdeliver' == $static_host) {
+		wp_enqueue_style('bulma', '//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/bulma/0.9.3/css/bulma.min.css', [], null);
+		wp_enqueue_style('font-awesome', '//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/5.15.4/css/all.min.css', [], null);
+		wp_enqueue_script('axios', '//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/axios/0.26.0/axios.min.js', [], null);
+		wp_enqueue_script('vue', '//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/vue/3.2.31/vue.global.prod.js', [], null);
+	}
+	wp_enqueue_script('wnd-main', $static_path . 'js/main.min.js', ['vue', 'axios'], WND_VER);
+	if (is_singular() and comments_open()) {
+		wp_enqueue_script('wnd-comment', $static_path . 'js/comment.min.js', ['axios', 'comment-reply'], WND_VER);
+	}
+
 }
