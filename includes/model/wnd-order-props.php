@@ -39,7 +39,7 @@ abstract class Wnd_Order_Props {
 	 * - 保存客户端 ip
 	 *  解析完成的数组键值需要添加 _meta_ 前缀，以符合 Model\Wnd_Post::set_meta_and_terms() 规则 @see Wnd\Wnd_Transaction::insert_transaction()
 	 */
-	public static function parse_order_props(int $object_id, array $data): array{
+	public static function parse_order_props(int $object_id, array $data): array {
 		$meta         = [];
 		$sku_key      = '_meta_' . static::$sku_key;
 		$quantity_key = '_meta_' . static::$quantity_key;
@@ -68,15 +68,29 @@ abstract class Wnd_Order_Props {
 	 * - 订单属性，即从产品属性提供的选项中依次确定某一项组成。数据存储键名与产品属性保持一致。因此可复用 Wnd_Product::get_object_props($order_id);
 	 * - 与产品属性返回的数据格式不同，【产品属性值】通常为维数组甚至二维数组，而【订单属性值】通常为确定的字符串。
 	 */
-	public static function get_order_props(int $order_id): array{
+	public static function get_order_props(int $order_id): array {
 		return get_post_meta($order_id, 'wnd_meta', true) ?: [];
 	}
 
 	/**
 	 * 获取订单关联的产品 SKU 属性
 	 */
-	public static function get_order_sku(int $order_id): array{
+	public static function get_order_sku(int $order_id): array {
 		return static::get_order_props($order_id)[static::$sku_key] ?? [];
+	}
+
+	/**
+	 * 获取订单关联的产品 SKU ID
+	 */
+	public static function get_order_sku_id(int $order_id): string {
+		return static::get_order_sku($order_id)[static::$sku_id_key] ?? '';
+	}
+
+	/**
+	 * 获取订单关联的产品 SKU ID
+	 */
+	public static function get_order_quantity(int $order_id): int {
+		return static::get_order_props($order_id)[static::$quantity_key] ?? 0;
 	}
 
 	/**
