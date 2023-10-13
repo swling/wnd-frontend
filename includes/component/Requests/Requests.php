@@ -17,13 +17,14 @@ class Requests {
 		'timeout'  => 10,
 		'filename' => '',
 		'referer'  => '',
+		'follow'   => false,
 	];
 
 	private $args;
 
 	private $file;
 
-	public function request(string $url, array $args): array{
+	public function request(string $url, array $args): array {
 		$this->initRequest($url, $args);
 		$method = strtoupper($this->args['method']);
 
@@ -64,6 +65,12 @@ class Requests {
 		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true); //返回字符串,而不直接输出
 		curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($this->curl, CURLOPT_TIMEOUT, $this->args['timeout']);
+
+		// 重定向跟随
+		if ($this->args['follow']) {
+			curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
+		}
+
 		if ($this->args['body']) {
 			curl_setopt($this->curl, CURLOPT_POSTFIELDS, $this->args['body']);
 		}
@@ -78,7 +85,7 @@ class Requests {
 	 * 将数组键值对转为 curl headers 数组
 	 *
 	 */
-	private static function arrayToHeaders(array $headers): array{
+	private static function arrayToHeaders(array $headers): array {
 		$result = [];
 		foreach ($headers as $key => $value) {
 			$result[] = $key . ':' . $value;
@@ -136,7 +143,7 @@ class Requests {
 	/**
 	 * excute
 	 */
-	private function execute_request(): array{
+	private function execute_request(): array {
 		// curl_setopt($this->curl, CURLOPT_HEADER, true); // 开启header信息以供调试
 		// curl_setopt($this->curl, CURLINFO_HEADER_OUT, true);
 		$body    = curl_exec($this->curl);
