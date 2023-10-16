@@ -41,14 +41,19 @@ class Wnd_Error_Handler {
 
 	public static function log_exception(Throwable $e) {
 		$error = 'Type: ' . get_class($e) . "; Message: {$e->getMessage()}; File: {$e->getFile()}; Line: {$e->getLine()};";
-		$error .= 'Request from ' . static::get_client_ip() . '. @' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-		$html = '<article class="column message is-danger">';
-		$html .= '<div class="message-header">';
-		$html .= '<p>异常</p>';
-		$html .= '</div>';
-		$html .= '<div class="message-body">' . $error . '</div>';
-		$html .= '</article>';
-		echo $html;
+
+		if (static::is_rest_request()) {
+			echo $error;
+		} else {
+			$error .= 'Request from ' . static::get_client_ip() . '. @' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+			$html = '<article class="column message is-danger">';
+			$html .= '<div class="message-header">';
+			$html .= '<p>异常</p>';
+			$html .= '</div>';
+			$html .= '<div class="message-body">' . $error . '</div>';
+			$html .= '</article>';
+			echo $html;
+		}
 
 		static::write_log($error, 'wnd_exception');
 	}
@@ -108,13 +113,26 @@ class Wnd_Error_Handler {
 	 *
 	 * @return 	string 	IP address
 	 */
-	private static function get_client_ip(): string{
+	private static function get_client_ip(): string {
 		$ip = '';
 		if (isset($_SERVER)) {
 			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['REMOTE_ADDR']);
 		}
 
 		return $ip ?: '';
+	}
+
+	/**
+	 * 判断是否为 rest 请求
+	 *
+	 */
+	private static function is_rest_request(): bool {
+		$content_type = $_SERVER['CONTENT_TYPE'] ?? '';
+		if (str_contains(strtolower($content_type), 'application/json')) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }
