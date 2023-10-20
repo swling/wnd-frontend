@@ -33,7 +33,6 @@ class Wnd_User_Recharge_Form extends Wnd_Module_Form {
 				'min'         => 0.01,
 				'step'        => 0.01,
 				'value'       => ($args['amount'] ?? '') ?: '',
-				'required'    => true,
 			]
 		);
 		$form->add_radio(
