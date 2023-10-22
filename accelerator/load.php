@@ -13,6 +13,24 @@
  *
  */
 
+/**
+ * 自动加载 wp-includes 根目录下的 class-wp-* 和 class-walker-* 类文件
+ * @since 0.9.67
+ *
+ */
+spl_autoload_register(function ($class) {
+	$class = strtolower($class);
+	if (!str_contains($class, 'wp_') and !str_contains($class, 'walker_')) {
+		return;
+	}
+
+	$filename = 'class-' . str_replace('_', '-', $class) . '.php';
+	$file     = ABSPATH . WPINC . DIRECTORY_SEPARATOR . $filename;
+	if (file_exists($file)) {
+		require $file;
+	}
+});
+
 require ABSPATH . 'wp-includes/version.php';
 global $wp_version;
 
