@@ -95,7 +95,7 @@ abstract class Wnd_Order_Props {
 
 	/**
 	 * 释放未支付的订单，已更新订单统计及库存
-	 * - 删除15分钟前未付款的订单，并扣除订单统计
+	 * - 删除30分钟前未付款的订单，并扣除订单统计
 	 */
 	public static function release_pending_orders(int $object_id) {
 		$args = [
@@ -106,7 +106,7 @@ abstract class Wnd_Order_Props {
 			'date_query'     => [
 				[
 					'column'    => 'post_date',
-					'before'    => date('Y-m-d H:i:s', current_time('timestamp', false) - 900),
+					'before'    => date('Y-m-d H:i:s', current_time('timestamp', false) - 1800),
 					'inclusive' => true,
 				],
 			],
