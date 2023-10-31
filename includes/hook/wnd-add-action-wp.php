@@ -155,14 +155,6 @@ class Wnd_Add_Action_WP {
 			Wnd_Mail::delete_mail_count_cache($post_after->post_author);
 			return;
 		}
-
-		/**
-		 * @since 2020.06.11 订单更新，删除订单缓存
-		 */
-		if ('order' == $post_after->post_type) {
-			Wnd_Finance::delete_user_paid_cache($post_after->post_author, $post_after->post_parent);
-			return;
-		}
 	}
 
 	/**

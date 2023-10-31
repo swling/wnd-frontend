@@ -128,11 +128,6 @@ abstract class Wnd_Order_Props {
 		}
 
 		/**
-		 * @since 2019.07.03 删除订单时，删除user_has_paid缓存
-		 */
-		Wnd_Finance::delete_user_paid_cache($order->user_id, $object_id);
-
-		/**
 		 * 订单及库存取消行为仅针对状态为待付款的订单
 		 * 不可取消此处判断，因本方法可在外部直接调用
 		 */

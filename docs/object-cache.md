@@ -1,9 +1,6 @@
 # object cache
 
 ```php
-// 用户订单支付缓存
-Wnd\Model\Wnd_Finance::set_user_paid_cache($user_id, $object_id, 1);
-
 // 分类关联标签
 wp_cache_set($cat_id . $tag_taxonomy . $limit, $tags, 'wnd_tags_under_category', 86400);
 

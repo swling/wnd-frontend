@@ -12,8 +12,6 @@ use Wnd\WPDB\Wnd_User;
  */
 abstract class Wnd_Finance {
 
-	private static $has_paid_cache_group = 'wnd_has_paid';
-
 	/**
 	 * @since 2019.02.11 查询是否已经支付
 	 *
@@ -31,59 +29,8 @@ abstract class Wnd_Finance {
 			return Wnd_Order_Anonymous::has_paid(0, $object_id);
 		}
 
-		$user_has_paid = static::get_user_paid_cache($user_id, $object_id);
-		if (false === $user_has_paid) {
-			// 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
-			$user_has_paid = Wnd_Order::has_paid($user_id, $object_id) ? 1 : 0;
-			static::set_user_paid_cache($user_id, $object_id, $user_has_paid);
-		}
-
-		return (1 === $user_has_paid ? true : false);
-	}
-
-	/**
-	 * @since 0.9.32 设置用户付费缓存
-	 */
-	public static function set_user_paid_cache(int $user_id, int $object_id, int $paid): bool {
-		if (!$user_id) {
-			return false;
-		}
-
-		$cache_key   = static::generate_user_paid_cache_key($user_id, $object_id);
-		$cache_group = static::$has_paid_cache_group;
-		return wp_cache_set($cache_key, $paid, $cache_group);
-	}
-
-	/**
-	 * 获取用户付费缓存
-	 *  - 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
-	 * @since 0.9.32
-	 */
-	public static function get_user_paid_cache(int $user_id, int $object_id) {
-		if (!$user_id) {
-			return false;
-		}
-
-		$cache_key   = static::generate_user_paid_cache_key($user_id, $object_id);
-		$cache_group = static::$has_paid_cache_group;
-		return wp_cache_get($cache_key, $cache_group);
-	}
-
-	/**
-	 * @since 0.9.32 删除用户付费缓存
-	 */
-	public static function delete_user_paid_cache(int $user_id, int $object_id): bool {
-		if (!$user_id) {
-			return false;
-		}
-
-		$cache_key   = static::generate_user_paid_cache_key($user_id, $object_id);
-		$cache_group = static::$has_paid_cache_group;
-		return wp_cache_delete($cache_key, $cache_group);
-	}
-
-	private static function generate_user_paid_cache_key(int $user_id, int $object_id): string {
-		return $user_id . '-' . $object_id;
+		// 不能将布尔值直接做为缓存结果，会导致无法判断是否具有缓存，转为整型 0/1
+		return Wnd_Order::has_paid($user_id, $object_id);
 	}
 
 	/**
