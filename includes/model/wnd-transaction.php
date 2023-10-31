@@ -2,8 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\Model\Wnd_Post;
-use WP_Post;
+use Wnd\WPDB\Wnd_Transaction_DB;
 use WP_User;
 
 /**
@@ -13,6 +12,8 @@ use WP_User;
  * @since 2019.09.24
  */
 abstract class Wnd_Transaction {
+
+	protected $db_handler;
 
 	// WP Post object
 	protected $transaction;
@@ -48,22 +49,22 @@ abstract class Wnd_Transaction {
 	protected $quantity = 1;
 
 	// 等待付款（订单已创建，库存已扣除）
-	public static $pending_status = 'wnd-pending';
+	public static $pending_status = 'pending';
 
 	// 付款完成、交易等待（实体商品交易中：待收货 / 待确认）
-	public static $processing_status = 'wnd-processing';
+	public static $processing_status = 'processing';
 
 	// 交易完成
-	public static $completed_status = 'wnd-completed';
+	public static $completed_status = 'completed';
 
 	// 交易退款
-	public static $refunded_status = 'wnd-refunded';
+	public static $refunded_status = 'refunded';
 
 	// 交易取消（交易未完成：取消订单 \ 无效订单）
-	public static $cancelled_status = 'wnd-cancelled';
+	public static $cancelled_status = 'cancelled';
 
 	// 交易关闭（交易完成后：因某种原因关闭）
-	public static $closed_status = 'wnd-closed';
+	public static $closed_status = 'closed';
 
 	/**
 	 * 第三方支付接口
@@ -78,7 +79,8 @@ abstract class Wnd_Transaction {
 	 * @since 2019.08.11
 	 */
 	public function __construct() {
-		$this->user_id = get_current_user_id();
+		$this->user_id    = get_current_user_id();
+		$this->db_handler = Wnd_Transaction_DB::get_instance();
 	}
 
 	/**
@@ -135,9 +137,9 @@ abstract class Wnd_Transaction {
 	 *
 	 * @return object 	WP Post Object
 	 */
-	public function set_transaction_id(int $ID): WP_Post{
+	public function set_transaction_id(int $ID): object {
 		$this->transaction_id = $ID;
-		$this->transaction    = get_post($ID);
+		$this->transaction    = $this->db_handler->get($ID);
 		if (!$ID or !$this->transaction) {
 			throw new Exception(__('交易ID无效', 'wnd'));
 		}
@@ -190,7 +192,7 @@ abstract class Wnd_Transaction {
 	 * 指定用户，默认为当前用户
 	 * @since 2019.08.11
 	 */
-	public function set_user_id(int $user_id): WP_User{
+	public function set_user_id(int $user_id): WP_User {
 		$user = get_user_by('ID', $user_id);
 		if (!$user) {
 			throw new Exception(__('用户ID无效', 'wnd'));
@@ -226,7 +228,7 @@ abstract class Wnd_Transaction {
 	 *
 	 * @param 	bool 	$is_completed 	是否直接完成订单
 	 */
-	public function create(bool $is_completed = false): WP_Post{
+	public function create(bool $is_completed = false): object {
 		/**
 		 * 检测创建权限
 		 * @since 0.9.51
@@ -291,26 +293,28 @@ abstract class Wnd_Transaction {
 	 *
 	 * @since 0.9.32
 	 */
-	private function insert_transaction(): WP_Post {
+	private function insert_transaction(): object {
 		if (!$this->transaction_type) {
 			throw new Exception('Invalid transaction type');
 		}
 
 		$post_arr = [
-			'ID'           => $this->transaction_id,
-			'post_type'    => $this->transaction_type,
-			'post_author'  => $this->user_id,
-			'post_parent'  => $this->object_id,
-			'post_content' => $this->total_amount,
-			'post_excerpt' => $this->payment_gateway,
-			'post_status'  => $this->status,
-			'post_title'   => $this->subject,
-			'post_name'    => $this->transaction_slug ?: uniqid(),
-			'post_date'    => current_time('mysql'),
+			'ID'              => $this->transaction_id,
+			'type'            => $this->transaction_type,
+			'user_id'         => $this->user_id,
+			'object_id'       => $this->object_id,
+			'total_amount'    => $this->total_amount,
+			'payment_gateway' => $this->payment_gateway,
+			'status'          => $this->status,
+			'subject'         => $this->subject,
+			'slug'            => $this->transaction_slug ?: uniqid(),
+			'time'            => time(),
+			'props'           => json_encode($this->props, JSON_UNESCAPED_UNICODE),
 		];
-		$ID = wp_insert_post($post_arr);
-		if (is_wp_error($ID) or !$ID) {
-			throw new Exception('Failed to write to the database');
+		$ID = $this->db_handler->insert($post_arr);
+		if (!$ID) {
+			global $wpdb;
+			throw new Exception('Failed to write to the database : ' . $wpdb->last_error);
 		}
 
 		/**
@@ -327,7 +331,7 @@ abstract class Wnd_Transaction {
 		 * - 前端在交易创建时，按常规 Post 设定请求数据，即可设置对应对应属性
 		 * @since 0.9.52
 		 */
-		Wnd_Post::set_meta_and_terms($this->transaction_id, $this->props);
+		// Wnd_Post::set_meta_and_terms($this->transaction_id, $this->props);
 
 		return $this->transaction;
 	}
@@ -358,14 +362,13 @@ abstract class Wnd_Transaction {
 	 *
 	 * @return true
 	 */
-	private function update_transaction_status(string $status): bool{
-		$post_arr = [
-			'ID'          => $this->get_transaction_id(),
-			'post_status' => $status,
-			'post_title'  => $this->subject ?: $this->get_subject(),
+	private function update_transaction_status(string $status): bool {
+		$data = [
+			'status'  => $status,
+			'subject' => $this->subject ?: $this->get_subject(),
 		];
-		$ID = wp_update_post($post_arr);
-		if (!$ID or is_wp_error($ID)) {
+		$ID = $this->db_handler->update($data, ['ID' => $this->get_transaction_id()]);
+		if (!$ID) {
 			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 
@@ -417,7 +420,7 @@ abstract class Wnd_Transaction {
 	 * 获取支付订单标题
 	 */
 	public function get_subject() {
-		return $this->transaction->post_title;
+		return $this->transaction->subject;
 	}
 
 	/**
@@ -425,7 +428,7 @@ abstract class Wnd_Transaction {
 	 * @since 2019.08.12
 	 */
 	public function get_object_id() {
-		return $this->transaction->post_parent;
+		return $this->transaction->object_id;
 	}
 
 	/**
@@ -433,7 +436,7 @@ abstract class Wnd_Transaction {
 	 * @since 2019.08.12
 	 */
 	public function get_total_amount(): float {
-		return number_format(floatval($this->transaction->post_content), 2, '.', '');
+		return number_format(floatval($this->transaction->total_amount), 2, '.', '');
 	}
 
 	/**
@@ -441,7 +444,7 @@ abstract class Wnd_Transaction {
 	 * @since 0.9.57.9
 	 */
 	public function get_timestamp(): int {
-		return get_post_timestamp($this->transaction) ?: 0;
+		return $this->transaction->time ?: 0;
 	}
 
 	/**
@@ -449,7 +452,7 @@ abstract class Wnd_Transaction {
 	 * @since 2020.06.20
 	 */
 	public function get_user_id() {
-		return $this->transaction->post_author;
+		return $this->transaction->user_id;
 	}
 
 	/**
@@ -457,7 +460,7 @@ abstract class Wnd_Transaction {
 	 * @since 2020.06.21
 	 */
 	public function get_status() {
-		return $this->transaction->post_status;
+		return $this->transaction->status;
 	}
 
 	/**
@@ -465,55 +468,72 @@ abstract class Wnd_Transaction {
 	 * @since 2020.06.20
 	 */
 	public function get_type() {
-		return $this->transaction->post_type;
+		return $this->transaction->type;
+	}
+
+	/**
+	 * 获取第三方支付接口标识
+	 * @since 2023.10.30
+	 */
+	public function get_payment_gateway() {
+		return $this->transaction->payment_gateway;
 	}
 
 	/**
 	 * 根据 id 获取交易 Type
 	 * @since 0.9.32
 	 */
-	private static function get_type_by_transaction_id(int $transaction_id): string{
-		$post = get_post($transaction_id);
-		if (!$post) {
+	private static function get_type_by_transaction_id(int $transaction_id): string {
+		$transaction = static::query_db(['ID' => $transaction_id]);
+		if (!$transaction) {
 			throw new Exception(__('订单ID无效', 'wnd'));
 		}
 
-		return get_post($transaction_id)->post_type ?? '';
+		return $transaction->type ?? '';
 	}
 
 	/**
 	 * 同一用户同等条件下，未完成订单复用时间限制(秒)
 	 * @since 0.9.32
 	 */
-	private function get_reusable_transaction_id(): int{
-		/**
-		 * 匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
-		 * 更新自动草稿时候，modified 不会变需要查询 post_date
-		 * @see get_posts()
-		 * @see wp_update_post
-		 */
-		$date_query = [
-			[
-				'column' => 'post_date',
-				'before' => date('Y-m-d H:i', current_time('timestamp') - 86400),
-			],
-		];
-
+	private function get_reusable_transaction_id(): int {
 		/**
 		 * @since 2019.03.31 查询符合当前条件，但尚未完成付款的订单
+		 * 匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
 		 */
-		$reusable_posts = get_posts(
-			[
-				'author'         => $this->user_id,
-				'post_parent'    => $this->object_id,
-				'post_status'    => static::$pending_status,
-				'post_type'      => $this->transaction_type,
-				'posts_per_page' => 1,
-				'date_query'     => $this->user_id ? [] : $date_query,
-			]
-		);
+		$args = [
+			'user_id'   => $this->user_id,
+			'object_id' => $this->object_id,
+			'status'    => static::$pending_status,
+			'type'      => $this->transaction_type,
+		];
+		if (!$this->user_id) {
+			$args['time'] = '< ' . time() - 86400;
+		}
+		$reusable_posts = static::get_results($args, 1);
 
 		$transaction_id = $reusable_posts[0]->ID ?? 0;
 		return $transaction_id;
 	}
+
+	public static function query_db(array $where) {
+		$db_handler = Wnd_Transaction_DB::get_instance();
+		return $db_handler->query($where);
+	}
+
+	public static function get_results(array $where, int $limit = 0) {
+		$db_handler = Wnd_Transaction_DB::get_instance();
+		return $db_handler->get_results($where, $limit);
+	}
+
+	public static function get(int $ID) {
+		$db_handler = Wnd_Transaction_DB::get_instance();
+		return $db_handler->get($ID);
+	}
+
+	public static function delete(int $ID) {
+		$db_handler = Wnd_Transaction_DB::get_instance();
+		return $db_handler->delete($ID);
+	}
+
 }

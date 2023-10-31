@@ -22,6 +22,9 @@ class Wnd_DB {
 
 		// 用户表 @since 0.9.56.7
 		$wpdb->wnd_users = $wpdb->prefix . 'wnd_users';
+
+		// 交易数据表 @since 0.9.67
+		$wpdb->wnd_transactions = $wpdb->prefix . 'wnd_transactions';
 	}
 
 	/**
@@ -78,6 +81,30 @@ class Wnd_DB {
 			KEY last_login(last_login),
 			KEY login_count(login_count),
 			KEY last_recall(last_recall)
+			) $charset_collate;";
+		dbDelta($create_users_sql);
+
+		/**
+		 * 创建自定义交易数据库
+		 * @since 0.9.67
+		 */
+		$create_users_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_transactions (
+			ID bigint(20) NOT NULL auto_increment,
+			object_id bigint(20) NOT NULL,
+			user_id bigint(20) NOT NULL,
+			type varchar(32) NOT NULL,
+			total_amount decimal(10, 2) NOT NULL,
+			payment_gateway varchar(32) NOT NULL,
+			status varchar(16) NOT NULL,
+			subject varchar(100) NOT NULL,
+			slug varchar(100) NOT NULL,
+			time bigint(20) NOT NULL,
+			props json NOT NULL,
+			PRIMARY KEY (ID),
+			UNIQUE KEY slug(slug),
+			KEY user_id(user_id),
+			KEY object_uts(object_id, user_id, type, status),
+			KEY time(time)
 			) $charset_collate;";
 		dbDelta($create_users_sql);
 	}

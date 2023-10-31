@@ -124,15 +124,7 @@ class WPDB_Row {
 		}
 
 		// sql 语句
-		$conditions = '1 = 1';
-		foreach ($where as $field => $value) {
-			if (is_null($value)) {
-				$conditions .= " AND `$field` IS NULL";
-			} else {
-				$conditions .= " AND `$field` = " . "'{$value}'";
-			}
-		}
-		$sql = "SELECT * FROM `$this->table` WHERE $conditions LIMIT 1";
+		$sql = $this->build_sql($where, 1);
 
 		// object cache
 		$data = $this->cache->get_data_from_cache($where);
@@ -153,22 +145,86 @@ class WPDB_Row {
 	}
 
 	/**
+	 * 获取指定条件的数据记录数组合集（多行）
+	 * @since 0.9.67
+	 *
+	 * @return array
+	 */
+	public function get_results(array $where, int $limit = 0, int $offset = 0): array {
+		// 按键名排序：用以统一 sql 语句及对应的缓存 key
+		ksort($where);
+
+		$sql     = $this->build_sql($where, $limit, $offset);
+		$results = $this->cache->get_results_from_cache($sql);
+		if (false !== $results) {
+			return $results ?: [];
+		}
+
+		$results = $this->wpdb->get_results($sql);
+		if ($results) {
+			$this->cache->set_results_into_cache($sql, $results);
+		}
+
+		return $results ?: [];
+	}
+
+	private function build_sql(array $where, int $limit = 0, int $offset = 0): string {
+		// sql 语句
+		$conditions = '1 = 1';
+		foreach ($where as $field => $value) {
+			$value = trim($value);
+			if ('any' == $value) {
+				continue;
+			}
+
+			if (str_starts_with($value, '>')) {
+				$value = trim(str_replace('>', '', $value));
+				$conditions .= " AND `$field` > " . "'{$value}'";
+				continue;
+			}
+
+			if (str_starts_with($value, '<')) {
+				$value = trim(str_replace('<', '', $value));
+				$conditions .= " AND `$field` < " . "'{$value}'";
+				continue;
+			}
+
+			if (str_starts_with($value, '!=')) {
+				$value = trim(str_replace('!=', '', $value));
+				$conditions .= " AND `$field` != " . "'{$value}'";
+				continue;
+			}
+
+			if (is_null($value)) {
+				$conditions .= " AND `$field` IS NULL";
+				continue;
+			}
+
+			$conditions .= " AND `$field` = " . "'{$value}'";
+		}
+
+		return "SELECT * FROM `$this->table` WHERE $conditions" . ($limit ? " LIMIT $limit" : '') . ($offset ? ' OFFSET ' . $offset : '');
+	}
+
+	/**
 	 * update data by primary id, or $where if is give in
 	 *
 	 * @return int The primary id on success. The value 0 on failure.
 	 */
-	public function update(array $data, array $where = []): int{
+	public function update(array $data, array $where = []): int {
 		$data = apply_filters("update_{$this->object_name}_data", $data);
 		do_action("before_update_{$this->object_name}", $data);
 
-		$ID    = $data[$this->primary_id_column] ?? 0;
-		$where = $where ?: [$this->primary_id_column => $ID];
+		$id_column = $this->primary_id_column;
+		$ID        = $data[$id_column] ?? 0;
+		$where     = $where ?: [$id_column => $ID];
 
 		$object_before = $this->query($where);
 		if (!$object_before) {
 			return 0;
 		}
 
+		$ID   = $object_before->$id_column;
 		$data = array_merge((array) $object_before, $data);
 		$data = $this->parse_update_data($data, $where);
 
@@ -180,7 +236,7 @@ class WPDB_Row {
 			do_action("after_{$this->object_name}_updated", $ID, $object_after, $object_before);
 		}
 
-		return $update ? $ID : 0;
+		return (false === $update) ? 0 : $ID;
 	}
 
 	/**
@@ -197,7 +253,7 @@ class WPDB_Row {
 	 *
 	 * @return int The primary id on success. The value 0 on failure.
 	 */
-	public function delete_by(string $field, $value): int{
+	public function delete_by(string $field, $value): int {
 		$where = [$field => $value];
 		$data  = $this->query($where);
 		if (!$data) {
@@ -222,13 +278,13 @@ class WPDB_Row {
 	 * check insert data
 	 * @access private
 	 */
-	private function parse_insert_data(array $data): array{
+	private function parse_insert_data(array $data): array {
 		if (!$this->required_columns) {
 			throw new Exception('Required columns have not been initialized');
 		}
 
 		foreach ($this->required_columns as $column) {
-			if (!isset($data[$column]) or !$data[$column]) {
+			if (!isset($data[$column]) or (!$data[$column] and 0 !== $data[$column])) {
 				throw new Exception('Required columns are empty : ' . $column);
 			}
 		}
@@ -239,7 +295,7 @@ class WPDB_Row {
 	/**
 	 * check insert data
 	 */
-	protected function check_insert_data(array $data): array{
+	protected function check_insert_data(array $data): array {
 		return $data;
 	}
 
@@ -247,14 +303,14 @@ class WPDB_Row {
 	 * check update data
 	 * @access private
 	 */
-	private function parse_update_data(array $data, array $where): array{
+	private function parse_update_data(array $data, array $where): array {
 		return $this->check_update_data($data);
 	}
 
 	/**
 	 * check update data
 	 */
-	protected function check_update_data(array $data): array{
+	protected function check_update_data(array $data): array {
 		return $data;
 	}
 

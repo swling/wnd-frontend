@@ -135,7 +135,7 @@ abstract class Wnd_Refunder {
 	/**
 	 * 获取支付平台响应数据
 	 */
-	public function get_response(): array{
+	public function get_response(): array {
 		return $this->response;
 	}
 
@@ -198,6 +198,7 @@ abstract class Wnd_Refunder {
 
 		$object   = get_post($this->object_id);
 		$recharge = new Wnd_Recharge();
+		$recharge->set_payment_gateway('internal');
 		$recharge->set_object_id($object->ID);
 		$recharge->set_user_id($object->post_author);
 		$recharge->set_total_amount($commission * -1);

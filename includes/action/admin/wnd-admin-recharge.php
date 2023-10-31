@@ -15,10 +15,11 @@ class Wnd_Admin_Recharge extends Wnd_Action_Admin {
 	private $remarks;
 	private $target_user;
 
-	protected function execute(): array{
+	protected function execute(): array {
 		$recharge = new Wnd_Recharge();
 		$recharge->set_user_id($this->target_user->ID);
 		$recharge->set_total_amount($this->total_amount);
+		$recharge->set_payment_gateway('internal');
 		$recharge->set_subject($this->remarks);
 		$recharge->create(true); // 直接写入余额
 

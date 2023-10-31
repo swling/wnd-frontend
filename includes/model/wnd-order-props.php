@@ -33,17 +33,16 @@ abstract class Wnd_Order_Props {
 	public static $ip_key = 'ip';
 
 	/**
-	 * 从订单请求数据中解析订单属性，并转为 wnd_meta 数据格式，返回合并的数据
+	 * 从订单请求数据中解析订单属性
 	 * - 由于sku_id 对应的产品信息可能发生改变，因此必须保存订单产生时的产品完整属性，以备后续核查，同时保存 SKU ID
 	 * - 保存订单产品数量
 	 * - 保存客户端 ip
-	 *  解析完成的数组键值需要添加 _meta_ 前缀，以符合 Model\Wnd_Post::set_meta_and_terms() 规则 @see Wnd\Wnd_Transaction::insert_transaction()
 	 */
 	public static function parse_order_props(int $object_id, array $data): array {
 		$meta         = [];
-		$sku_key      = '_meta_' . static::$sku_key;
-		$quantity_key = '_meta_' . static::$quantity_key;
-		$ip_key       = '_meta_' . static::$ip_key;
+		$sku_key      = static::$sku_key;
+		$quantity_key = static::$quantity_key;
+		$ip_key       = static::$ip_key;
 
 		// SKU
 		$sku_id = $data[static::$sku_id_key] ?? '';
@@ -60,7 +59,7 @@ abstract class Wnd_Order_Props {
 		$meta[$ip_key] = wnd_get_user_ip();
 
 		// data
-		return array_merge($data, $meta);
+		return $meta;
 	}
 
 	/**
@@ -69,7 +68,9 @@ abstract class Wnd_Order_Props {
 	 * - 与产品属性返回的数据格式不同，【产品属性值】通常为维数组甚至二维数组，而【订单属性值】通常为确定的字符串。
 	 */
 	public static function get_order_props(int $order_id): array {
-		return get_post_meta($order_id, 'wnd_meta', true) ?: [];
+		$order = Wnd_Transaction::query_db(['ID' => $order_id]);
+		$props = $order->props ?? '';
+		return json_decode($props, true);
 	}
 
 	/**
@@ -99,24 +100,20 @@ abstract class Wnd_Order_Props {
 	 */
 	public static function release_pending_orders(int $object_id) {
 		$args = [
-			'posts_per_page' => -1,
-			'post_type'      => 'order',
-			'post_parent'    => $object_id,
-			'post_status'    => Wnd_Transaction::$pending_status,
-			'date_query'     => [
-				[
-					'column'    => 'post_date',
-					'before'    => date('Y-m-d H:i:s', current_time('timestamp', false) - 1800),
-					'inclusive' => true,
-				],
-			],
+			'type'      => 'order',
+			'object_id' => $object_id,
+			'status'    => Wnd_Transaction::$pending_status,
+			'time'      => '< ' . time() - 1800,
 		];
-		foreach (get_posts($args) as $order) {
+		$orders = Wnd_Transaction::get_results($args);
+
+		foreach ($orders as $order) {
 			/**
 			 * 此处不直接调用 static::cancel_order()，而是在删除订单时，通过action修正 @see wnd_action_deleted_post
 			 * 以此确保订单统计的准确性，如用户主动删除，或其他原因人为删除订单时亦能自动修正订单统计
 			 */
-			wp_delete_post($order->ID, true);
+			// wp_delete_post($order->ID, true);
+			Wnd_Transaction::delete($order->ID);
 		}
 		unset($order, $args);
 	}
@@ -124,8 +121,8 @@ abstract class Wnd_Order_Props {
 	/**
 	 * 取消订单
 	 */
-	public static function cancel_order(\WP_Post $order) {
-		$object_id = $order->post_parent ?? 0;
+	public static function cancel_order(object $order) {
+		$object_id = $order->object_id ?? 0;
 		if (!$object_id) {
 			return false;
 		}
@@ -133,13 +130,13 @@ abstract class Wnd_Order_Props {
 		/**
 		 * @since 2019.07.03 删除订单时，删除user_has_paid缓存
 		 */
-		Wnd_Finance::delete_user_paid_cache($order->post_author, $object_id);
+		Wnd_Finance::delete_user_paid_cache($order->user_id, $object_id);
 
 		/**
 		 * 订单及库存取消行为仅针对状态为待付款的订单
 		 * 不可取消此处判断，因本方法可在外部直接调用
 		 */
-		if (Wnd_Transaction::$pending_status != $order->post_status) {
+		if (Wnd_Transaction::$pending_status != $order->status) {
 			return false;
 		}
 
@@ -156,8 +153,8 @@ abstract class Wnd_Order_Props {
 	 * 还原库存
 	 *
 	 */
-	private static function restore_stock(\WP_Post $order) {
-		$object_id = $order->post_parent ?? 0;
+	private static function restore_stock(object $order) {
+		$object_id = $order->object_id ?? 0;
 
 		$props    = static::get_order_props($order->ID);
 		$sku_id   = $props[static::$sku_key][static::$sku_id_key] ?? '';

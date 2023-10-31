@@ -41,7 +41,7 @@ class WPDB_Row_Cache {
 	/**
 	 * get data from cache
 	 */
-	public function get_data_from_cache(array $where): mixed{
+	public function get_data_from_cache(array $where): mixed {
 		$key = $this->generate_cache_key($where);
 		return wp_cache_get($key, $this->cache_group);
 	}
@@ -76,7 +76,7 @@ class WPDB_Row_Cache {
 	 * 根据查询条件与缓存字段的匹配情况，生成缓存键名
 	 * 查询条件未匹配缓存字段，则返回 false
 	 */
-	private function maybe_cache(array $where): bool{
+	private function maybe_cache(array $where): bool {
 		/**
 		 * 整理查询排序：
 		 * - 若查询多个字段，提取字段数组
@@ -94,7 +94,7 @@ class WPDB_Row_Cache {
 	 * 用于更新或删除单行数据时，更新或删除本行数据对应的所有缓存
 	 *
 	 */
-	private function get_all_cache_keys(object $data): array{
+	private function get_all_cache_keys(object $data): array {
 		$cache_keys = [];
 		foreach ($this->object_cache_fields as $cache_key) {
 			$where = [];
@@ -117,12 +117,28 @@ class WPDB_Row_Cache {
 	 * 生成缓存键名
 	 * - 将所有查询条件值统一转为【字符串类型】并生成对应的缓存键值
 	 */
-	private function generate_cache_key(array $where): string{
+	private function generate_cache_key(array $where): string {
 		$where = array_map(function ($value) {
 			return (string) $value;
 		}, $where);
 
 		return md5(json_encode($where));
+	}
+
+	/**
+	 * 读取多行查询缓存
+	 */
+	public function get_results_from_cache(string $sql): mixed {
+		$key = md5($this->get_current_db_table_last_changed() . $sql);
+		return wp_cache_get($key, $this->cache_group);
+	}
+
+	/**
+	 * 设置多行查询缓存
+	 */
+	public function set_results_into_cache(string $sql, array $results): bool {
+		$key = md5($this->get_current_db_table_last_changed() . $sql);
+		return wp_cache_set($key, $results, $this->cache_group, 3600 * 24);
 	}
 
 	/**

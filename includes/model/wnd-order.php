@@ -7,7 +7,6 @@ use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_Product;
 use Wnd\Model\Wnd_SKU;
-use WP_Post;
 
 /**
  * 订单模块
@@ -102,7 +101,7 @@ class Wnd_Order extends Wnd_Transaction {
 	 * - 更新订单及库存统计
 	 * @since 0.9.32
 	 */
-	public function create(bool $is_completed = false): WP_Post {
+	public function create(bool $is_completed = false): object {
 		// 调用父类方法，写入数据库
 		$transaction = parent::create($is_completed);
 
@@ -169,6 +168,7 @@ class Wnd_Order extends Wnd_Transaction {
 			if ($commission > 0) {
 				$object   = get_post($object_id);
 				$recharge = new Wnd_Recharge();
+				$recharge->set_payment_gateway('internal');
 				$recharge->set_object_id($object->ID); // 设置佣金来源
 				$recharge->set_user_id($object->post_author);
 				$recharge->set_total_amount($commission);
@@ -198,7 +198,8 @@ class Wnd_Order extends Wnd_Transaction {
 	 * @return bool
 	 */
 	public static function has_paid(int $user_id, int $object_id): bool {
-		return !empty(static::get_user_valid_orders($user_id, $object_id));
+		$order = static::query_db(['object_id' => $object_id, 'user_id' => $user_id, 'type' => 'order', 'status' => static::$completed_status]);
+		return $order ? true : false;
 	}
 
 	/**
@@ -207,15 +208,14 @@ class Wnd_Order extends Wnd_Transaction {
 	 *
 	 * @return array 有效订单的合集 [order_post_object]
 	 */
-	public static function get_user_valid_orders(int $user_id, int $object_id): array{
-		$args = [
-			'posts_per_page' => 1,
-			'post_type'      => 'order',
-			'post_parent'    => $object_id,
-			'author'         => $user_id,
-			'post_status'    => [static::$completed_status, static::$processing_status],
+	public static function get_user_valid_orders(int $user_id, int $object_id, int $limit = 1): array {
+		$where = [
+			'type'      => 'order',
+			'object_id' => $object_id,
+			'user_id'   => $user_id,
+			'status'    => static::$completed_status,
 		];
 
-		return get_posts($args) ?: [];
+		return static::get_results($where, $limit) ?: [];
 	}
 }

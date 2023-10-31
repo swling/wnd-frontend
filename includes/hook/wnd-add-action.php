@@ -2,6 +2,7 @@
 namespace Wnd\Hook;
 
 use Wnd\Model\Wnd_Auth_Code;
+use Wnd\Model\Wnd_Order_Props;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Form_Option;
@@ -20,6 +21,7 @@ class Wnd_Add_Action {
 		add_action('wnd_upload_file', [__CLASS__, 'action_on_upload_file'], 10, 3);
 		add_action('wnd_upload_gallery', [__CLASS__, 'action_on_upload_gallery'], 10, 2);
 		add_action('wnd_delete_file', [__CLASS__, 'action_on_delete_file'], 10, 3);
+		add_action('before_delete_wnd_transaction', [__CLASS__, 'action_on_wnd_transaction_deleted'], 10);
 
 		/**
 		 * 获取产品属性时，释放指定时间内未完成支付的库存
@@ -186,5 +188,17 @@ class Wnd_Add_Action {
 		} else {
 			wnd_delete_user_meta(get_current_user_id(), $meta_key);
 		}
+	}
+
+	public static function action_on_wnd_transaction_deleted(object $transaction) {
+		/**
+		 * @since 2019.06.04 删除订单时，扣除订单统计字段
+		 * @since 2019.07.03 删除订单时，删除user_has_paid缓存
+		 */
+		if ('order' == $transaction->type) {
+			Wnd_Order_Props::cancel_order($transaction);
+			return;
+		}
+
 	}
 }

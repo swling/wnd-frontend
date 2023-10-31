@@ -186,10 +186,10 @@ abstract class Wnd_Payment {
 		return '
 <script>
     var payment_checker = setInterval(wnd_check_payment, 3000, ' . $payment_id . ');
-    async function wnd_check_payment(post_id) {
-        let response = await wnd_query("wnd_get_post", { "post_id": post_id });
+    async function wnd_check_payment(id) {
+        let response = await wnd_query("wnd_get_transaction", { "id": id });
 
-        if ("' . Wnd_Transaction::$completed_status . '" == response.data.post_status) {
+        if ("' . Wnd_Transaction::$completed_status . '" == response.data.status) {
             var title = document.querySelector("#payment-title");
             title.innerText = "支付成功，请继续此前的操作！";
             clearInterval(payment_checker);
