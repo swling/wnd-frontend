@@ -49,7 +49,7 @@ class WPDB_Row_Cache {
 	/**
 	 * set data into cache
 	 */
-	public function set_data_into_cache(array $where, object $data): bool {
+	public function set_data_into_cache(array $where, mixed $data): bool {
 		if (!$this->maybe_cache($where)) {
 			return false;
 		}
@@ -118,6 +118,7 @@ class WPDB_Row_Cache {
 	 * - 将所有查询条件值统一转为【字符串类型】并生成对应的缓存键值
 	 */
 	private function generate_cache_key(array $where): string {
+		ksort($where);
 		$where = array_map(function ($value) {
 			return (string) $value;
 		}, $where);
@@ -136,7 +137,7 @@ class WPDB_Row_Cache {
 	/**
 	 * 设置多行查询缓存
 	 */
-	public function set_results_into_cache(string $sql, array $results): bool {
+	public function set_results_into_cache(string $sql, mixed $results): bool {
 		$key = md5($this->get_current_db_table_last_changed() . $sql);
 		return wp_cache_set($key, $results, $this->cache_group, 3600 * 24);
 	}

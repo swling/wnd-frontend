@@ -8,7 +8,7 @@ use Wnd\WPDB\WPDB_Row;
 /**
  * 自定义交易订单数据表
  * @since 0.9.67
- * 
+ *
  *  'ID'              => $this->transaction_id,
  *  'user_id'         => $this->user_id,
  *  'object_id'       => $this->object_id,
