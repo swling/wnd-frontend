@@ -88,7 +88,7 @@ class Wnd_Order extends Wnd_Transaction {
 				throw new Exception(__('SKU ID 无效', 'wnd'));
 			}
 
-			$price = Wnd_SKU::get_single_sku_price($this->object_id, $this->sku_id);
+			$price = wnd_get_post_price($this->object_id, $this->sku_id);
 		} else {
 			$price = wnd_get_post_price($this->object_id);
 		}
