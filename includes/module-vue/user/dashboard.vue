@@ -48,7 +48,6 @@
 
 		mounted: function () {
 			this.hash = location.hash;
-			handle_hash();
 		},
 	}
 
