@@ -3,9 +3,7 @@ namespace Wnd\Hook;
 
 use Exception;
 use Wnd\Getway\Wnd_Captcha;
-use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Mail;
-use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_Transaction_Anonymous;
 use Wnd\Utility\Wnd_Defender;
 use Wnd\Utility\Wnd_Defender_User;
@@ -124,15 +122,6 @@ class Wnd_Add_Action_WP {
 			wp_delete_post($child->ID, true);
 		}
 		unset($child);
-
-		/**
-		 * @since 2019.06.04 删除订单时，扣除订单统计字段
-		 * @since 2019.07.03 删除订单时，删除user_has_paid缓存
-		 */
-		if ('order' == $delete_post->post_type) {
-			Wnd_Order_Props::cancel_order($delete_post);
-			return;
-		}
 
 		/**
 		 * @since 2020.06.28 删除邮件时删除邮件查询对象缓存

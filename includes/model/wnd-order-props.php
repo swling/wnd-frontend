@@ -1,10 +1,10 @@
 <?php
 namespace Wnd\Model;
 
-use Wnd\Model\Wnd_Finance;
 use Wnd\Model\Wnd_Product;
 use Wnd\Model\Wnd_SKU;
 use Wnd\Model\Wnd_Transaction;
+use Wnd\WPDB\Wnd_Transaction_DB;
 
 /**
  * 商品类订单模块 （作用于订单）
@@ -60,6 +60,17 @@ abstract class Wnd_Order_Props {
 
 		// data
 		return $meta;
+	}
+
+	/**
+	 * 更新订单 props
+	 * @since 0.9.67
+	 */
+	public static function update_order_props(int $order_id, array $data) {
+		$data    = array_merge(static::get_order_props($order_id), $data);
+		$props   = json_encode($data, JSON_UNESCAPED_UNICODE);
+		$handler = Wnd_Transaction_DB::get_instance();
+		return $handler->update(['ID' => $order_id, 'props' => $props]);
 	}
 
 	/**

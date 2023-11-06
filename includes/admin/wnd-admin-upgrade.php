@@ -127,4 +127,39 @@ class Wnd_Admin_Upgrade {
 
 		$wpdb->query("ALTER TABLE $wpdb->wnd_users ADD COLUMN `last_recall` BIGINT NOT NULL AFTER `login_count`,  ADD INDEX(last_recall)");
 	}
+
+	// 交易数据采用独立数据：转移历史订单至独立数据表
+	private static function v_0_9_67() {
+		// 脚本超时
+		ini_set('max_execution_time', 0);
+
+		Wnd_DB::create_table();
+
+		global $wpdb;
+		$old_posts = $wpdb->get_results(
+			"SELECT * FROM $wpdb->posts WHERE post_type IN ('order','recharge')"
+		);
+
+		$handler = \Wnd\WPDB\Wnd_Transaction_DB::get_instance();
+		foreach ($old_posts as $post) {
+			$post_arr = [
+				// 'ID'              => $post->ID,
+				'type'            => $post->post_type,
+				'user_id'         => $post->post_author ?: 0,
+				'object_id'       => $post->post_parent,
+				'total_amount'    => $post->post_content ?: 0,
+				'payment_gateway' => $post->post_excerpt ?: 'internal',
+				'status'          => str_replace('wnd-', '', $post->post_status),
+				'subject'         => $post->post_title,
+				'slug'            => $post->post_name,
+				'time'            => strtotime($post->post_date_gmt),
+				'props'           => json_encode(get_post_meta($post->ID, 'wnd_meta', true), JSON_UNESCAPED_UNICODE),
+			];
+
+			$ID = $handler->insert($post_arr);
+			if ($ID) {
+				wp_delete_post($post->ID, true);
+			}
+		}
+	}
 }
