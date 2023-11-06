@@ -200,7 +200,7 @@ class WPDB_Row {
 			$conditions .= " AND `$field` = " . "'{$value}'";
 		}
 
-		return "SELECT * FROM `$this->table` WHERE $conditions" . ($limit ? " LIMIT $limit" : '') . ($offset ? ' OFFSET ' . $offset : '');
+		return "SELECT * FROM `$this->table` WHERE $conditions ORDER BY $this->primary_id_column DESC" . ($limit ? " LIMIT $limit" : '') . ($offset ? ' OFFSET ' . $offset : '');
 	}
 
 	/**

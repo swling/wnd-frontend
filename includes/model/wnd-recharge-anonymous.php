@@ -3,13 +3,13 @@ namespace Wnd\Model;
 
 use Exception;
 use Wnd\Model\Wnd_Finance;
-use Wnd\Model\Wnd_Transaction;
+use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_Transaction_Anonymous;
 
 /**
  * 匿名小额充值模块
- * - 充值金额：post_content
- * - 消费金额：post_content_filtered
+ * - 充值金额：total_amount
+ * - 消费金额：props->used_amount
  *
  * 注意：匿名充值后，如果再次充值，会覆盖掉之前的订单，用户余额将以最新订单为准
  *
@@ -53,9 +53,8 @@ class Wnd_Recharge_Anonymous extends Wnd_Recharge {
 			return 0.00;
 		}
 
-		if (time() - strtotime($recharge->post_date_gmt) < 3600 * 24) {
-			$transaction = Wnd_Transaction::get_instance('', $recharge->ID);
-			return $transaction->get_total_amount() - ((float) $recharge->post_content_filtered);
+		if (time() - $recharge->time < 3600 * 24) {
+			return $recharge->total_amount - ((float) static::get_used_amount($recharge));
 		} else {
 			return 0.00;
 		}
@@ -71,24 +70,39 @@ class Wnd_Recharge_Anonymous extends Wnd_Recharge {
 			return false;
 		}
 
-		$new_consumption = ((float) $recharge->post_content_filtered) + $amount;
-		$ID              = wp_update_post(['ID' => $recharge->ID, 'post_content_filtered' => $new_consumption]);
-		Wnd_Finance::update_fin_stats($amount, 'expense');
+		$used_amount = static::get_used_amount($recharge);
+		$used_amount = $used_amount + $amount;
+		$action      = Wnd_Order_Props::update_order_props($recharge->ID, ['used_amount' => $used_amount]);
 
-		return is_wp_error($ID) ? false : true;
+		Wnd_Finance::update_fin_stats($amount, 'expense');
+		return $action;
 	}
 
 	/**
 	 * 获取匿名用户充值订单
 	 *
 	 */
-	private static function get_anon_recharge() {
+	private static function get_anon_recharge(): mixed {
 		$transaction_slug = Wnd_Transaction_Anonymous::get_anon_cookie_value('recharge', 0);
 		if (!$transaction_slug) {
 			return false;
 		}
 
-		$recharge = wnd_get_post_by_slug($transaction_slug, 'recharge', [static::$completed_status, static::$processing_status]);
-		return $recharge ?: false;
+		$recharge = static::query_db(['slug' => $transaction_slug]);
+		if (!$recharge) {
+			return false;
+		}
+
+		if ($recharge->status != static::$completed_status or 'recharge' != $recharge->type) {
+			return false;
+		}
+
+		return $recharge;
 	}
+
+	private static function get_used_amount($recharge): float {
+		$props = json_decode($recharge->props);
+		return (float) ($props->used_amount ?? 0);
+	}
+
 }
