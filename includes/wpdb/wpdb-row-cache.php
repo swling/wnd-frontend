@@ -146,7 +146,7 @@ class WPDB_Row_Cache {
 	 * Refresh last changed date for DB Table
 	 */
 	public function refresh_db_table_last_changed(): bool {
-		return wp_cache_delete('last_changed', $this->cache_group);
+		return wp_cache_set_last_changed($this->cache_group);
 	}
 
 	/**
