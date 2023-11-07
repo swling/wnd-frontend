@@ -5,11 +5,10 @@ use Exception;
 use Wnd\WPDB\WPDB_Row_Cache;
 
 /**
- * # 单行数据表操作基类
- * - “增删改”操作仅针对单行
- * - 仅支持单行查询，并统一缓存查询结果
+ * # 独立数据表操作基类
+ * - “增改”操作仅针对单行
+ * - 统一缓存查询结果
  * - 在 wpdb 的基础上统一添加 Hook
- * - term_relationships 读取与其他表紧密关联，因此不适用于本类，对应为独立类 @see Term_Relationships_Handler();
  *
  * ### 数据检查
  * - 写入数据时，默认检查是否包含了必须字段（具体由子类定义）

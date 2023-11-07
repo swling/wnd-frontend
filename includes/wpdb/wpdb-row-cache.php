@@ -107,7 +107,6 @@ class WPDB_Row_Cache {
 			}
 
 			$cache_keys[] = $this->generate_cache_key($where);
-			// $cache_keys[] = $where;
 		}
 
 		return $cache_keys;
