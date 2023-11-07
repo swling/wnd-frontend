@@ -107,14 +107,14 @@ abstract class Wnd_Order_Props {
 
 	/**
 	 * 释放未支付的订单，已更新订单统计及库存
-	 * - 删除30分钟前未付款的订单，并扣除订单统计
+	 * - 删除60分钟前未付款的订单，并扣除订单统计
 	 */
 	public static function release_pending_orders(int $object_id) {
 		$args = [
 			'type'      => 'order',
 			'object_id' => $object_id,
 			'status'    => Wnd_Transaction::$pending_status,
-			'time'      => '< ' . time() - 1800,
+			'time'      => '< ' . time() - 3600,
 		];
 		$orders = Wnd_Transaction::get_results($args);
 

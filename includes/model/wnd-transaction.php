@@ -486,7 +486,7 @@ abstract class Wnd_Transaction {
 	private static function get_type_by_transaction_id(int $transaction_id): string {
 		$transaction = static::query_db(['ID' => $transaction_id]);
 		if (!$transaction) {
-			throw new Exception(__('订单ID无效', 'wnd'));
+			throw new Exception(__('订单ID无效', 'wnd') . ' : ' . $transaction_id);
 		}
 
 		return $transaction->type ?? '';
