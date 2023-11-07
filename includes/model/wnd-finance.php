@@ -41,6 +41,10 @@ abstract class Wnd_Finance {
 	 * @param 	bool  	$recharge 	是否为充值，若是则将记录到当月充值记录中
 	 */
 	public static function inc_user_balance(int $user_id, float $amount, bool $recharge): bool {
+		if (!get_user_by('id', $user_id)) {
+			return false;
+		}
+
 		$new_balance = bcadd(static::get_user_balance($user_id), $amount, 2);
 		$action      = Wnd_User::update_wnd_user($user_id, ['balance' => $new_balance]);
 

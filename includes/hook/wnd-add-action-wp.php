@@ -11,6 +11,7 @@ use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\Utility\Wnd_Validator;
 use Wnd\WPDB\Wnd_Auth;
 use Wnd\WPDB\Wnd_Tag_Under_Category;
+use Wnd\WPDB\Wnd_Transaction_DB;
 use Wnd\WPDB\Wnd_User;
 
 /**
@@ -96,6 +97,10 @@ class Wnd_Add_Action_WP {
 
 		// 删除自定义用户 wnd_auths 表记录
 		Wnd_Auth::delete_user_auths($user_id);
+
+		// 删除用户交易表记录
+		$handler = Wnd_Transaction_DB::get_instance();
+		$handler->delete_by('user_id', $user_id);
 	}
 
 	/**

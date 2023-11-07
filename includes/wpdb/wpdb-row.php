@@ -248,27 +248,29 @@ class WPDB_Row {
 	/**
 	 * delete data by specified filed and value
 	 *
-	 * @return int The primary id on success. The value 0 on failure.
+	 * @return int The number of row which has been deleted.
 	 */
 	public function delete_by(string $field, $value): int {
-		$where = [$field => $value];
-		$data  = $this->query($where);
-		if (!$data) {
+		$where   = [$field => $value];
+		$results = $this->get_results($where);
+		if (!$results) {
 			return 0;
 		}
 
-		$primary_id_column = $this->primary_id_column;
-		$ID                = $data->$primary_id_column;
-		do_action("before_delete_{$this->object_name}", $data, $ID);
+		foreach ($results as $data) {
+			$primary_id_column = $this->primary_id_column;
+			$ID                = $data->$primary_id_column;
+			do_action("before_delete_{$this->object_name}", $data, $ID);
 
-		$delete = $this->wpdb->delete($this->table, $where);
-		if ($delete) {
-			$this->cache->clean_row_cache($data);
+			$delete = $this->wpdb->delete($this->table, $where);
+			if ($delete) {
+				$this->cache->clean_row_cache($data);
 
-			do_action("after_{$this->object_name}_deleted", $data, $ID);
+				do_action("after_{$this->object_name}_deleted", $data, $ID);
+			}
 		}
 
-		return $delete ? $ID : 0;
+		return count($results);
 	}
 
 	/**

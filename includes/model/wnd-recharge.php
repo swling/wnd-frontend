@@ -65,7 +65,10 @@ class Wnd_Recharge extends Wnd_Transaction {
 			// 注册用户：新增余额（将更新整站充值统计）;匿名充值：仅更新整站充值统计
 		} else {
 			if ($user_id) {
-				wnd_inc_user_balance($user_id, $total_amount, true);
+				$action = wnd_inc_user_balance($user_id, $total_amount, true);
+				if (!$action) {
+					wnd_error_payment_log('【支付错误】: 写入充值失败 user_id : ' . $user_id . ' - 金额 : ' . $total_amount);
+				}
 			} else {
 				Wnd_Finance::update_fin_stats($total_amount, 'recharge');
 			}
@@ -78,7 +81,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 * 用户充值金额选项
 	 * @since 0.8.62
 	 */
-	public static function get_recharge_amount_options(): array{
+	public static function get_recharge_amount_options(): array {
 		$defaults = ['0.01' => '0.01', '10.00' => '10.00', '50.00' => '50.00', '100.00' => '100.00', '500.00' => '500.00'];
 		return apply_filters('wnd_recharge_amount_options', $defaults);
 	}
