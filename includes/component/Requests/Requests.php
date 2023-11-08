@@ -28,6 +28,7 @@ class Requests {
 		'filename'   => '',
 		'referer'    => '',
 		'follow'     => false,
+		'proxy'      => false,
 	];
 
 	private $args;
@@ -81,9 +82,14 @@ class Requests {
 			curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
 		}
 
-		// 设置用户代理
+		// 设置 UA
 		if ($this->args['user_agent']) {
 			curl_setopt($this->curl, CURLOPT_USERAGENT, $this->args['user_agent']);
+		}
+
+		// 设置代理服务器
+		if ($this->args['proxy']) {
+			curl_setopt($this->curl, CURLOPT_PROXY, $this->args['proxy']);
 		}
 
 		if ($this->args['body']) {
