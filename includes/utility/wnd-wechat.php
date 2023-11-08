@@ -23,14 +23,11 @@ class Wnd_Wechat {
 		}
 
 		$url     = 'https://api.weixin.qq.com/cgi-bin/stable_token';
-		$request = wp_remote_post($url,
+		$request = wnd_remote_post($url,
 			[
 				'body' => json_encode(['grant_type' => 'client_credential', 'appid' => $app_id, 'secret' => $secret], JSON_UNESCAPED_UNICODE),
 			]
 		);
-		if (is_wp_error($request)) {
-			throw new Exception('获取 access_token 网络请求失败');
-		}
 
 		$result       = json_decode($request['body'], true);
 		$access_token = $result['access_token'] ?? '';
@@ -51,10 +48,7 @@ class Wnd_Wechat {
 	 */
 	public static function get_openid(string $app_id, string $secret, string $js_code): string {
 		$url     = "https://api.weixin.qq.com/sns/jscode2session?appid={$app_id}&secret={$secret}&js_code={$js_code}&grant_type=authorization_code";
-		$request = wp_remote_get($url);
-		if (is_wp_error($request)) {
-			throw new Exception('获取 openid 网络请求失败');
-		}
+		$request = wnd_remote_get($url);
 
 		$result = json_decode($request['body'], true);
 		$openid = $result['openid'] ?? '';
@@ -73,12 +67,9 @@ class Wnd_Wechat {
 	public static function get_phone_number(string $app_id, string $secret, string $js_code): string {
 		$access_token = static::get_access_token($app_id, $secret);
 		$url          = "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={$access_token}";
-		$request      = wp_remote_post($url, [
+		$request      = wnd_remote_post($url, [
 			'body' => json_encode(['code' => $js_code]),
 		]);
-		if (is_wp_error($request)) {
-			throw new Exception('获取手机号码网络请求失败');
-		}
 
 		$result = json_decode($request['body'], true);
 		if (0 !== $result['errcode']) {

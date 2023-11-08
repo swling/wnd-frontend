@@ -1,5 +1,31 @@
 <?php
 
+function wnd_remote_get(string $url, array $args = []) {
+	$args['method'] = 'GET';
+	return wnd_remote_request($url, $args);
+}
+
+function wnd_remote_post(string $url, array $args = []) {
+	$args['method'] = 'POST';
+	return wnd_remote_request($url, $args);
+}
+
+function wnd_remote_head($url, array $args = []) {
+	$args['method'] = 'HEAD';
+	return wnd_remote_request($url, $args);
+}
+
+function wnd_remote_request(string $url, array $args) {
+	$request = new Wnd\Component\Requests\Requests;
+
+	$ua                 = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36';
+	$ua                 = apply_filters('http_headers_useragent', $ua);
+	$args['user_agent'] = $ua;
+	$response           = $request->request($url, $args);
+
+	return $response;
+}
+
 /**
  * 保留语言参数的 home_url()
  * @since 0.9.59.2
@@ -54,7 +80,7 @@ function wnd_get_config($config_key) {
  *
  * @param bool $remove_language 是否移除语言参数
  */
-function wnd_get_front_page_url($remove_language = false): string{
+function wnd_get_front_page_url($remove_language = false): string {
 	$front_page_url = get_permalink(wnd_get_config('front_page'));
 	return $remove_language ? remove_query_arg(WND_LANG_KEY, $front_page_url) : $front_page_url;
 }
@@ -63,7 +89,7 @@ function wnd_get_front_page_url($remove_language = false): string{
  * 是否在 Rest 请求环境中
  * @since 0.9.26
  */
-function wnd_is_rest_request(): bool{
+function wnd_is_rest_request(): bool {
 	$current_url = wnd_get_current_url();
 	$rest_url    = rest_url();
 
@@ -74,7 +100,7 @@ function wnd_is_rest_request(): bool{
  * 获取 Json 请求数据
  * @since 0.9.37
  */
-function wnd_get_json_request(): array{
+function wnd_get_json_request(): array {
 	if (!wp_is_json_request()) {
 		return [];
 	}
@@ -224,7 +250,7 @@ function wnd_ajax_embed($template, $args = []) {
  * @param  $args   array      or string 	传递给被调用Action的参数
  * @return string  JavaScript 脚本
  */
-function wnd_ajax_action(string $action, array $args = []): string{
+function wnd_ajax_action(string $action, array $args = []): string {
 	$args = Wnd\Controller\Wnd_Request::sign_request($args);
 	$args = json_encode(wp_parse_args($args));
 	return '<script>wnd_ajax_action(\'' . $action . '\', ' . $args . ')</script>';
@@ -243,7 +269,7 @@ function wnd_get_current_url() {
  * 字符串处理代码取自wp官方函数：get_the_content
  * @see get_the_content
  */
-function wnd_explode_post_by_more(string $content): array{
+function wnd_explode_post_by_more(string $content): array {
 	if (preg_match('/<!--more(.*?)?-->/', $content, $matches)) {
 		if (has_block('more', $content)) {
 			// Remove the core/more block delimiters. They will be left over after $content is split up.
@@ -263,7 +289,7 @@ function wnd_explode_post_by_more(string $content): array{
  * wp_trim_words 依赖语言包，如果前端禁止语言包，则中文失效
  * @since 0.9.57.3
  */
-function wnd_trim_words(string $text, int $num_words = 55, string $more = '……'): string{
+function wnd_trim_words(string $text, int $num_words = 55, string $more = '……'): string {
 	$text = mb_substr(wp_strip_all_tags($text), 0, $num_words, 'utf-8');
 	return $text . $more;
 }
@@ -273,7 +299,7 @@ function wnd_trim_words(string $text, int $num_words = 55, string $more = '…�
  * 本插件定义：过滤空值，但保留0
  * @since 0.9.38
  */
-function wnd_array_filter(array $arr): array{
+function wnd_array_filter(array $arr): array {
 	return array_filter($arr, function ($value) {
 		return $value or is_numeric($value);
 	});
@@ -349,7 +375,7 @@ function wnd_time_to_local(int $timestamp): int {
  * - WP 默认设置为 UTC 时间，并通过后台配置时区来实现偏移
  * - 本函数用于取代较为复杂的 wp_date() 函数
  */
-function wnd_date(string $format, $time = 0): string{
+function wnd_date(string $format, $time = 0): string {
 	$time = $time ?: time();
 	return date($format, wnd_time_to_local($time));
 }
@@ -360,6 +386,6 @@ function wnd_date(string $format, $time = 0): string{
  * - WP 默认设置为 UTC 时间，并通过后台配置时区来实现偏移
  * - 本函数用于自动给 php 函数 getdate() 添加时区信息
  */
-function wnd_getdate(): array{
+function wnd_getdate(): array {
 	return getdate(wnd_local_time());
 }

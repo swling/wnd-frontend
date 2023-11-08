@@ -5,19 +5,29 @@ use Exception;
 
 /**
  * Curl Request
+ *
+ * 表单数据请求：
+ * 'headers' => ['Content-Type'  => 'application/x-www-form-urlencoded'],
+ * 'body'    => http_build_query(['grant_type' => 'client_credentials']),
+ *
+ * Json 请求：
+ * 'headers' => ['Content-Type' => 'application/json; charset=UTF-8'],
+ * 'body'    => json_encode($data),
+ *
  */
 class Requests {
 
 	private $curl;
 
 	private static $defaults = [
-		'method'   => 'GET',
-		'headers'  => [],
-		'body'     => [],
-		'timeout'  => 10,
-		'filename' => '',
-		'referer'  => '',
-		'follow'   => false,
+		'method'     => 'GET',
+		'headers'    => ['Content-Type' => 'application/json; charset=UTF-8'],
+		'user_agent' => 'Wnd Requests/1.0',
+		'body'       => [],
+		'timeout'    => 10,
+		'filename'   => '',
+		'referer'    => '',
+		'follow'     => false,
 	];
 
 	private $args;
@@ -69,6 +79,11 @@ class Requests {
 		// 重定向跟随
 		if ($this->args['follow']) {
 			curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
+		}
+
+		// 设置用户代理
+		if ($this->args['user_agent']) {
+			curl_setopt($this->curl, CURLOPT_USERAGENT, $this->args['user_agent']);
 		}
 
 		if ($this->args['body']) {

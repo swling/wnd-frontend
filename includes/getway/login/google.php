@@ -85,10 +85,7 @@ class Google extends Wnd_Social_Login_Builder {
 		$token_url = 'https://accounts.google.com/o/oauth2/token';
 
 		//获取响应报文
-		$response = wp_remote_post($token_url, ['body' => $data]);
-		if (is_wp_error($response)) {
-			throw new Exception($response->get_error_message());
-		}
+		$response = wnd_remote_post($token_url, ['body' => json_encode($data)]);
 
 		//解析报文，获取token
 		$body        = json_decode($response['body'], true);
@@ -104,7 +101,7 @@ class Google extends Wnd_Social_Login_Builder {
 	 */
 	protected function get_user_info() {
 		$url       = 'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' . $this->token;
-		$user_info = wp_remote_get($url);
+		$user_info = wnd_remote_get($url);
 		$user_info = $user_info['body'];
 		$user_info = json_decode($user_info, true);
 

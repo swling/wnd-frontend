@@ -74,10 +74,7 @@ class QQ extends Wnd_Social_Login_Builder {
 		$token_url = 'https://graph.qq.com/oauth2.0/token?' . $query;
 
 		//获取响应报文
-		$response = wp_remote_get($token_url);
-		if (is_wp_error($response)) {
-			throw new Exception($response->get_error_message());
-		}
+		$response = wnd_remote_get($token_url);
 
 		//解析报文，获取token
 		$response = $response['body'];
@@ -98,7 +95,7 @@ class QQ extends Wnd_Social_Login_Builder {
 		}
 
 		$graph_url = 'https://graph.qq.com/oauth2.0/me?access_token=' . $this->token;
-		$str       = wp_remote_get($graph_url);
+		$str       = wnd_remote_get($graph_url);
 		$str       = $str['body'];
 		if (strpos($str, 'callback') !== false) {
 			$lpos = strpos($str, '(');
@@ -135,7 +132,7 @@ class QQ extends Wnd_Social_Login_Builder {
 		]);
 
 		$get_info_link = 'https://graph.qq.com/user/get_user_info?' . $query;
-		$user_info     = wp_remote_get($get_info_link);
+		$user_info     = wnd_remote_get($get_info_link);
 		$user_info     = $user_info['body'];
 		$user_info     = json_decode($user_info, true);
 

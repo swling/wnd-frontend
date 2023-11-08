@@ -54,7 +54,7 @@ class PayPal extends Wnd_Payment {
 	/**
 	 * 根据交易订单解析站内交易ID，并查询记录
 	 */
-	public static function verify_payment(): Wnd_Transaction{
+	public static function verify_payment(): Wnd_Transaction {
 		$capture_token = $_REQUEST['token'] ?? '';
 		return static::capture_order($capture_token);
 	}
@@ -63,7 +63,7 @@ class PayPal extends Wnd_Payment {
 	 * 创建订单
 	 * @link https://developer.paypal.com/docs/api/orders/v2/#orders_create
 	 */
-	private function create_order(): string{
+	private function create_order(): string {
 		$url          = static::get_config()['api_base'] . '/v2/checkout/orders';
 		$access_token = $this->get_access_token();
 		$postfilds    = [
@@ -83,7 +83,7 @@ class PayPal extends Wnd_Payment {
 				'return_url' => wnd_get_endpoint_url('wnd_verify_paypal'),
 			],
 		];
-		$request = wp_remote_request($url,
+		$request = wnd_remote_request($url,
 			[
 				'method'  => 'POST',
 				'headers' => [
@@ -94,9 +94,6 @@ class PayPal extends Wnd_Payment {
 				'timeout' => 10,
 			]
 		);
-		if (is_wp_error($request)) {
-			throw new Exception($request->get_error_message());
-		}
 
 		$result = json_decode($request['body']);
 		if ('CREATED' !== $result->status) {
@@ -118,10 +115,10 @@ class PayPal extends Wnd_Payment {
 	 * 捕获订单：需要考虑重复捕获的判断
 	 * @link https://developer.paypal.com/docs/api/orders/v2/#orders_capture
 	 */
-	private static function capture_order(string $capture_token): Wnd_Transaction{
+	private static function capture_order(string $capture_token): Wnd_Transaction {
 		$url          = static::get_config()['api_base'] . '/v2/checkout/orders/' . $capture_token . '/capture';
 		$access_token = static::get_access_token();
-		$request      = wp_remote_request($url,
+		$request      = wnd_remote_request($url,
 			[
 				'method'  => 'POST',
 				'headers' => [
@@ -131,9 +128,6 @@ class PayPal extends Wnd_Payment {
 				'body'    => '',
 			]
 		);
-		if (is_wp_error($request)) {
-			throw new Exception($request->get_error_message());
-		}
 
 		// 状态不为 COMPLETED 且原因不是“已支付”：抛出异常
 		$result = json_decode($request['body']);
@@ -163,7 +157,7 @@ class PayPal extends Wnd_Payment {
 	 * 		当开启对象缓存后，瞬态将存储在对象缓存中，否则存储在 option
 	 * @link https://developer.paypal.com/docs/api/get-an-access-token-curl/
 	 */
-	private static function get_access_token(): string{
+	private static function get_access_token(): string {
 		// 瞬态缓存
 		$access_token = get_transient('paypal_access_token');
 		if ($access_token) {
@@ -174,20 +168,18 @@ class PayPal extends Wnd_Payment {
 
 		// API 请求
 		$url     = $config['api_base'] . '/v1/oauth2/token';
-		$request = wp_remote_request($url,
+		$request = wnd_remote_request($url,
 			[
 				'method'  => 'POST',
 				'headers' => [
 					'Content-Type'  => 'application/x-www-form-urlencoded',
 					'Authorization' => 'Basic ' . base64_encode($config['client_id'] . ':' . $config['client_secret']),
 				],
-				'body'    => ['grant_type' => 'client_credentials'],
-				'timeout' => 10,
+				'body'    => http_build_query(['grant_type' => 'client_credentials']),
+				'timeout' => 20,
 			]
 		);
-		if (is_wp_error($request)) {
-			throw new Exception($request->get_error_message());
-		}
+
 		$result       = json_decode($request['body']);
 		$access_token = $result->access_token ?? '';
 		if (!$access_token) {
