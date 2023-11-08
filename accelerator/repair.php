@@ -81,7 +81,7 @@ function wp_is_using_https() {
 }
 
 // 后端 WP Site Heath 会调用（插件保留了 WP Site Heath 相关功能）
-function wp_update_https_detection_errors() {}
+// function wp_update_https_detection_errors() {}
 
 // 短代码
 function add_shortcode() {
@@ -126,3 +126,12 @@ if (!defined('WP_TEMPLATE_PART_AREA_SIDEBAR')) {
 if (!defined('WP_TEMPLATE_PART_AREA_UNCATEGORIZED')) {
 	define('WP_TEMPLATE_PART_AREA_UNCATEGORIZED', 'uncategorized');
 }
+
+/**
+ * wp-admin 后台
+ * @since 0.9.67
+ *
+ */
+add_action('admin_init', function () {
+	remove_action('admin_print_styles', 'wp_print_font_faces', 50);
+});
