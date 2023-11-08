@@ -179,7 +179,7 @@ class Wnd_Controller {
 	 *
 	 * @param $request
 	 */
-	public static function handle_module(WP_REST_Request $request): array{
+	public static function handle_module(WP_REST_Request $request): array {
 		if (!isset($request['module'])) {
 			return ['status' => 0, 'msg' => __('未指定UI', 'wnd')];
 		}
@@ -209,7 +209,7 @@ class Wnd_Controller {
 	 *
 	 * @param $request
 	 */
-	public static function handle_query(WP_REST_Request $request): array{
+	public static function handle_query(WP_REST_Request $request): array {
 		if (!isset($request['query'])) {
 			return ['status' => 0, 'msg' => __('未指定Data', 'wnd')];
 		}
@@ -233,7 +233,7 @@ class Wnd_Controller {
 	 *
 	 * @param $request
 	 */
-	public static function handle_action(WP_REST_Request $request): array{
+	public static function handle_action(WP_REST_Request $request): array {
 		if (!isset($request['action'])) {
 			return ['status' => 0, 'msg' => __('未指定Action', 'wnd')];
 		}
@@ -276,6 +276,7 @@ class Wnd_Controller {
 		try {
 			new $class($request);
 		} catch (Exception $e) {
+			wnd_error_log('Endpoint Error : ' . $e->getMessage());
 			echo json_encode(['status' => $e->getCode(), 'msg' => $e->getMessage()]);
 		}
 	}
