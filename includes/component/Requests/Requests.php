@@ -36,6 +36,10 @@ class Requests {
 	private $file;
 
 	public function request(string $url, array $args): array {
+		if (!filter_var($url, FILTER_VALIDATE_URL)) {
+			throw new Exception('Invalid url: ' . $url);
+		}
+
 		$this->initRequest($url, $args);
 		$method = strtoupper($this->args['method']);
 
