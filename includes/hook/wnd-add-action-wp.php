@@ -101,6 +101,12 @@ class Wnd_Add_Action_WP {
 		// 删除用户交易表记录
 		$handler = Wnd_Transaction_DB::get_instance();
 		$handler->delete_by('user_id', $user_id);
+
+		// 删除用户评论（若不删除，对应评论列表会产生无法缓存的重复sql查询）
+		$comments = get_comments(['user_id' => $user_id]);
+		foreach ($comments as $comment) {
+			wp_delete_comment($comment->comment_ID, true);
+		}
 	}
 
 	/**
@@ -114,10 +120,11 @@ class Wnd_Add_Action_WP {
 
 		/**
 		 * 删除附属文件
+		 * 此处需要删除所有子文章，如果设置为 any，自定义类型中设置public为false的仍然无法包含，故获取全部注册类型
 		 */
 		$args = [
 			'posts_per_page' => -1,
-			'post_type'      => get_post_types(), //此处需要删除所有子文章，如果设置为 any，自定义类型中设置public为false的仍然无法包含，故获取全部注册类型
+			'post_type'      => get_post_types(),
 			'post_status'    => 'any',
 			'post_parent'    => $post_id,
 		];
