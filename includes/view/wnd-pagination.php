@@ -21,6 +21,9 @@ class Wnd_Pagination {
 	// 当前页项目数
 	private $current_item_count;
 
+	// 常规分页中，展示的导航页面数量
+	private $show_pages;
+
 	// 容器 class
 	private $class;
 
