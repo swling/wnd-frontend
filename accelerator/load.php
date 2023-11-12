@@ -20,6 +20,21 @@
  */
 spl_autoload_register(function ($class) {
 	$class = strtolower($class);
+
+	// 类名称与文件不规则的类
+	if ('walker_categorydropdown' == $class) {
+		require ABSPATH . WPINC . '/class-walker-category-dropdown.php';
+		return;
+	}
+	if ('walker_pagedropdown' == $class) {
+		require ABSPATH . WPINC . '/class-walker-page-dropdown.php';
+		return;
+	}
+	if ('walker' == $class) {
+		require ABSPATH . WPINC . '/class-wp-walker.php';
+		return;
+	}
+
 	if (!str_contains($class, 'wp_') and !str_contains($class, 'walker_')) {
 		return;
 	}
