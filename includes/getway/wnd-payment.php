@@ -93,7 +93,7 @@ abstract class Wnd_Payment {
 	 * @param  	string 	$out_trade_no  	支付平台订单号
 	 * @return 	int|0  	order|recharge Post ID
 	 */
-	public static function parse_out_trade_no(string $out_trade_no): int{
+	public static function parse_out_trade_no(string $out_trade_no): int {
 		$site_prefix = static::$site_prefix ?: static::build_site_prefix();
 
 		if (false === strpos($out_trade_no, $site_prefix . '-')) {
@@ -173,8 +173,8 @@ abstract class Wnd_Payment {
 	 * 统一构支付界面
 	 * @since 0.9.56.7
 	 */
-	public static function build_payment_interface(int $payment_id, string $payment_interface, string $title): string{
-		$interface    = '<div id="payment-interface">' . $payment_interface . '<h3 id="payment-title">' . $title . '</h3></div>';
+	public static function build_payment_interface(int $payment_id, string $payment_interface, string $title): string {
+		$interface    = '<div id="payment-interface"><h3 id="payment-title">' . $title . '</h3>' . $payment_interface . '</div>';
 		$check_script = static::build_ajax_check_script($payment_id);
 		return $interface . $check_script;
 	}
@@ -211,4 +211,5 @@ abstract class Wnd_Payment {
     });
 </script>';
 	}
+
 }

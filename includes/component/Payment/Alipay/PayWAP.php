@@ -11,5 +11,6 @@ class PayWAP extends PayPC {
 
 	protected $productCode = 'QUICK_WAP_PAY';
 	protected $method      = 'alipay.trade.wap.pay';
+	protected $target      = '_self';
 
 }
