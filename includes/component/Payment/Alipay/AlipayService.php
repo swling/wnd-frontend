@@ -174,9 +174,9 @@ class AlipayService {
 
 		//调用openssl内置方法验签，返回bool值
 		if ('RSA2' == $signType) {
-			$result = (bool) openssl_verify($data, base64_decode($sign), $res, OPENSSL_ALGO_SHA256);
+			$result = openssl_verify($data, base64_decode($sign), $res, OPENSSL_ALGO_SHA256);
 		} else {
-			$result = (bool) openssl_verify($data, base64_decode($sign), $res);
+			$result = openssl_verify($data, base64_decode($sign), $res);
 		}
 
 		//释放资源：仅在读取证书文件时
@@ -184,7 +184,7 @@ class AlipayService {
 		// 	openssl_free_key($res);
 		// }
 
-		return $result;
+		return 1 === $result;
 	}
 
 	/**

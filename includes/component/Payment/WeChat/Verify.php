@@ -13,6 +13,7 @@ class Verify {
 	const AUTH_TAG_LENGTH_BYTE = 16;
 
 	private $apiKey;
+	private $signature;
 	private $weChatCertificates      = [];
 	private $curretWeChatCertificate = '';
 
@@ -88,7 +89,7 @@ class Verify {
 		}
 
 		$signature = base64_decode($signature);
-		return openssl_verify($message, $signature, $publicKey, 'sha256WithRSAEncryption');
+		return 1 === openssl_verify($message, $signature, $publicKey, 'sha256WithRSAEncryption');
 	}
 
 	/**
