@@ -78,8 +78,8 @@ do_action('wnd_transaction_completed', $this->transaction_id, $this->transaction
  * 
  * 其他拓展交易类，亦自动添加与之 Type 匹配的钩子
  */
-do_action('wnd_order_completed', $order_id, $order_post);
-do_action('wnd_recharge_completed', $recharge_id, $recharge_post);
+do_action('wnd_order_completed', $order_id, $order_object);
+do_action('wnd_recharge_completed', $recharge_id, $recharge_object);
 ```
 
 ## 产品

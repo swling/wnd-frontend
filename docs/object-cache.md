@@ -7,7 +7,7 @@ wp_cache_set($cat_id . $tag_taxonomy . $limit, $tags, 'wnd_tags_under_category',
 // 未读邮件统计
 wp_cache_set($user_id, $user_mail_count, static::$mail_count_cache_group);
 
-// 存储wnd_user数据表对象
+// 存储wnd_auth数据表对象
 wp_cache_set($user_id, $user_data, static::$user_cache_group);
 wp_cache_set($open_id, $user_id, $cache_group);
 

@@ -32,7 +32,7 @@ abstract class Wnd_Verify_Pay extends Wnd_Endpoint {
 			$payment->update_transaction();
 			$payment->return();
 		} catch (Exception $e) {
-			wnd_error_payment_log('【支付错误】: ' . $e->getMessage());
+			wnd_error_payment_log('【支付错误】: ' . $e->getMessage() . ' 序列化后的数据 : ' . json_encode($_POST, JSON_UNESCAPED_UNICODE));
 			http_response_code(500);
 			exit($e->getMessage());
 		}
