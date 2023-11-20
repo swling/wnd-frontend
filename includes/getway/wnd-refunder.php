@@ -4,8 +4,10 @@ namespace Wnd\Getway;
 use Exception;
 use Wnd\Getway\Wnd_Payment;
 use Wnd\Getway\Wnd_Payment_Getway;
+use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_Recharge;
 use Wnd\Model\Wnd_Transaction;
+use Wnd\WPDB\Wnd_Transaction_DB;
 
 /**
  * 退款
@@ -26,6 +28,9 @@ abstract class Wnd_Refunder {
 
 	// 退款金额
 	protected $refund_amount;
+
+	// 订单属性
+	protected $order_props;
 
 	// 支付平台响应数据：支付失败时用于查询信息及调试
 	protected $response = [];
@@ -56,8 +61,10 @@ abstract class Wnd_Refunder {
 		$payment            = Wnd_Payment::get_instance($transaction);
 		$this->out_trade_no = $payment->get_out_trade_no();
 
+		$this->order_props = Wnd_Order_Props::get_order_props($transaction_id);
+
 		// 分批次退款时需要设置子订单编号（支付宝）
-		$refund_count         = wnd_get_post_meta($this->transaction_id, 'refund_count') ?: 0;
+		$refund_count         = $this->order_props['refund_count'] ?? 0;
 		$this->out_request_no = $refund_count + 1;
 	}
 
@@ -112,14 +119,16 @@ abstract class Wnd_Refunder {
 		$this->deduction();
 
 		// 关闭支付订单，扣除订单余额，设置标题备注
-		$post_arr = [
+		$data = [
 			'ID'           => $this->transaction_id,
-			'post_status'  => Wnd_Transaction::$refunded_status,
-			'post_content' => $balance,
+			'status'       => Wnd_Transaction::$refunded_status,
+			'total_amount' => $balance,
 		];
-		$ID = wp_update_post($post_arr);
-		if (!$ID or is_wp_error($ID)) {
-			throw new Exception(__('更新订单失败', 'wnd'));
+
+		$db_handler = Wnd_Transaction_DB::get_instance();
+		$ID         = $db_handler->update($data);
+		if (!$ID) {
+			throw new Exception(__('数据更新失败', 'wnd'));
 		}
 	}
 
@@ -146,16 +155,17 @@ abstract class Wnd_Refunder {
 	 * 记录操作记录
 	 */
 	protected function add_refund_records() {
-		wnd_inc_wnd_post_meta($this->transaction_id, 'refund_count', 1);
+		$refund_count = ($this->order_props['refund_count'] ?? 0) + 1;
 
-		$refund_records   = wnd_get_post_meta($this->transaction_id, 'refund_records');
+		$refund_records   = $this->order_props['refund_records'] ?? [];
 		$refund_records   = is_array($refund_records) ? $refund_records : [];
 		$refund_records[] = [
 			'user_id'       => get_current_user_id(),
 			'refund_amount' => $this->refund_amount,
 			'time'          => time(),
 		];
-		wnd_update_post_meta($this->transaction_id, 'refund_records', $refund_records);
+
+		Wnd_Order_Props::update_order_props($this->transaction_id, ['refund_count' => $refund_count, 'refund_records' => $refund_records]);
 	}
 
 	/**

@@ -103,7 +103,7 @@
 				}
 				let str = '';
 				// str += `<button class="button is-small" onclick='wnd_ajax_modal("admin/wnd_account_status_form", {"user_id": ${obj.ID}} )'><i class="fas fa-info-circle"></i></button>`;
-				// str += `<button class="button is-small" onclick='wnd_ajax_modal("admin/wnd_refund_form", {"transaction_id": ${obj.ID}} )'><i class="fas fa-coins"></i></button>`;
+				str += `<button class="button is-small" onclick='wnd_ajax_modal("admin/wnd_refund_form", {"transaction_id": ${obj.ID}} )'><i class="fas fa-coins"></i></button>`;
 				str += '<table class="table is-fullwidth  is-size-7 is-bordered">';
 				str += Object.entries(obj).map(([key, value]) => `<tr><td style="white-space:nowrap;width:1px;">${key}</td><td>${value}</td></tr>`).join('\n');
 				str += '</table>';
