@@ -140,7 +140,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 }
                 build_editors();
 
-
                 function build_editors() {
                     _this.index.editor.forEach(index => {
                         build_tinymce(index);
@@ -157,7 +156,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         branding: false,
                         selector: selector,
                         menubar: false,
-                        language: 'zh_CN',
+                        language: wnd.lang,
                         cache_suffix: cache_suffix,
 
                         // 自动保存
