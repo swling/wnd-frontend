@@ -32,11 +32,6 @@ axios.defaults.withCredentials = true; // 跨域请求允许携带cookie
 if (!wnd.disable_rest_nonce || wnd.is_admin) {
     axios.defaults.headers['X-WP-Nonce'] = wnd.rest_nonce;
 }
-// axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
-if (wnd.lang) {
-    axios.defaults.params = {}
-    axios.defaults.params['lang'] = wnd.lang;
-}
 
 /**
  *axios 拦截器 统一设置 WP Rest Nonce
