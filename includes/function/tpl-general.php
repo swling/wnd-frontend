@@ -73,6 +73,10 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 	} elseif (is_post_type_archive()) {
 		$html .= '<li class="is-active"><a>' . $queried_object->label . '</a></li>';
 
+		//搜索
+	} elseif (is_search()) {
+		$html .= '<li class="is-active"><a>' . __('搜索', 'wnd') . '</a></li>';
+
 		//其他归档页
 	} elseif (is_archive()) {
 		$args = ['taxonomy' => $queried_object->taxonomy, 'orderby' => 'name'];
