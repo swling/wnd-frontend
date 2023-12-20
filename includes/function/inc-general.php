@@ -195,15 +195,14 @@ function wnd_generate_order_NO() {
 /**
  * @since 2019.02.09  验证是否为手机号
  *
- * @param  	string 	$phone                                 	需要验证的手机号
+ * @0.9.69.2
+ * 简化判断：仅判断字符串是否为纯数字
+ *
+ * @param  	string 	$phone  需要验证的手机号
  * @return 	bool   	是否为合法的手机号码格式
  */
-function wnd_is_mobile($phone) {
-	if ((empty($phone) or !preg_match("/^(((13[0-9]{1})|(15[0-9]{1})|(17[0-9]{1})|(18[0-9]{1})|(19[0-9]{1}))+\d{8})$/", $phone))) {
-		return false;
-	} else {
-		return true;
-	}
+function wnd_is_mobile($phone): bool {
+	return ctype_digit($phone);
 }
 
 /**
