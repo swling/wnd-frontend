@@ -122,9 +122,9 @@ function wnd_get_json_request(): array {
  */
 function wnd_get_user_ip(bool $hidden = false): string {
 	if (isset($_SERVER)) {
-		$ip = $_SERVER['REMOTE_ADDR'] ?? '';
+		$ip = $_SERVER['HTTP_CLIENT_IP'] ?? ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR']);
 	} else {
-		$ip = getenv('REMOTE_ADDR') ?? '';
+		$ip = getenv('HTTP_CLIENT_IP') ?: (getenv('HTTP_X_FORWARDED_FOR') ?: getenv('REMOTE_ADDR'));
 	}
 	$ip = $ip ?: '';
 
