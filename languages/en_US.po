@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
 "POT-Creation-Date: 2023-12-17 18:22+0800\n"
-"PO-Revision-Date: 2023-12-17 18:22+0800\n"
+"PO-Revision-Date: 2023-12-25 11:16+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -488,7 +488,7 @@ msgstr ""
 
 #: includes/hook/wnd-add-filter.php:45 includes/module/user/wnd-reg-form.php:63
 msgid "站点已关闭注册"
-msgstr ""
+msgstr "Site is closed for registration"
 
 #: includes/hook/wnd-add-filter.php:86
 msgid "名称不得与登录名一致"
