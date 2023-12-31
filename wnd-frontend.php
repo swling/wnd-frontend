@@ -110,7 +110,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 	}
 	wp_enqueue_script('wnd-main', $static_path . 'js/main.min.js', ['vue', 'axios'], WND_VER);
 	if (is_singular() and comments_open()) {
-		wp_enqueue_script('wnd-comment', $static_path . 'js/comment.min.js', ['axios', 'comment-reply'], WND_VER);
+		wp_enqueue_script('wnd-comment', $static_path . 'js/comment.min.js', ['axios', 'comment-reply'], WND_VER, ['strategy' => 'async']);
 	}
 
 }
