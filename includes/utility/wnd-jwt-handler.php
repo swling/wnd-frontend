@@ -51,7 +51,7 @@ class Wnd_JWT_Handler {
 	 * - iat (Issued At)：签发时间
 	 * - jti (JWT ID)：编号
 	 */
-	public function generate_token(int $user_id): string{
+	public function generate_token(int $user_id): string {
 		$payload = [
 			'iss' => $this->domain,
 			'iat' => time(),
@@ -84,7 +84,7 @@ class Wnd_JWT_Handler {
 	/**
 	 * 验证客户端 Token
 	 */
-	private function verify_client_token(): int{
+	private function verify_client_token(): int {
 		// 未能获取 Token
 		$token = $this->get_client_token();
 		if (!$token) {
@@ -104,7 +104,7 @@ class Wnd_JWT_Handler {
 	/**
 	 * 获取客户端 JWT Token
 	 */
-	private function get_client_token(): string{
+	private function get_client_token(): string {
 		$token = $this->get_token_form_cookie() ?: $this->get_token_form_header();
 
 		return apply_filters('wnd_get_client_token', $token);
@@ -120,7 +120,7 @@ class Wnd_JWT_Handler {
 	/**
 	 * 从 Header 头中读取 Token
 	 */
-	private function get_token_form_header(): string{
+	private function get_token_form_header(): string {
 		$token = '';
 
 		$headers       = getallheaders();
@@ -218,7 +218,11 @@ class Wnd_JWT_Handler {
 	/**
 	 * 清理 Token Cookie
 	 */
-	public function delete_token_cookie() {
+	public function delete_token_cookie(string $domain = '') {
+		if ($domain) {
+			setcookie(static::$cookie_name, '', time(), '/', $domain);
+		}
+
 		setcookie(static::$cookie_name, '', time(), '/', $this->domain);
 	}
 }
