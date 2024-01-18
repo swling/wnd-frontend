@@ -58,6 +58,9 @@ abstract class Wnd_Order_Props {
 		// IP
 		$meta[$ip_key] = wnd_get_user_ip();
 
+		// 备份全部请求数据信息
+		$meta['request'] = $data;
+
 		// data
 		return $meta;
 	}
