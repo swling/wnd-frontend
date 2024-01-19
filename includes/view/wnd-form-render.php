@@ -81,7 +81,7 @@ class Wnd_Form_Render {
 	 * 表单构造函数
 	 * @since 2019.03.06
 	 */
-	public function render(): string{
+	public function render(): string {
 		$this->build_form_header();
 		$this->build_input_fields();
 		$this->build_submit_button();
@@ -106,7 +106,7 @@ class Wnd_Form_Render {
 		$this->html .= $html;
 	}
 
-	private function build_input_fields(): string{
+	private function build_input_fields(): string {
 		$input_fields = '';
 		foreach ($this->fields as $input_key => $input_value) {
 			// horizontal
@@ -144,7 +144,7 @@ class Wnd_Form_Render {
 		return $input_fields;
 	}
 
-	private function build_select(array $input_value, string $input_key): string{
+	private function build_select(array $input_value, string $input_key): string {
 		$html = '<div class="field">';
 		$html .= $this->build_label($input_value);
 		$html .= '<div class="control">';
@@ -167,7 +167,7 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	private function build_radio(array $input_value, string $input_key): string{
+	private function build_radio(array $input_value, string $input_key): string {
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
 		$html .= '<div class="control">';
 		$html .= $this->build_label($input_value);
@@ -184,7 +184,7 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	private function build_checkbox(array $input_value, string $input_key): string{
+	private function build_checkbox(array $input_value, string $input_key): string {
 		$html = '<div' . static::build_input_id($input_value) . ' class="field' . static::get_class($input_value, true) . '">';
 		$html .= '<div class="control">';
 		$html .= $this->build_label($input_value);
@@ -205,7 +205,7 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	private function build_hidden(array $input_value, string $input_key): string{
+	private function build_hidden(array $input_value, string $input_key): string {
 		$html = '<input' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
 		return $html;
 	}
@@ -251,7 +251,7 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	private function build_image_upload(array $input_value, string $input_key): string{
+	private function build_image_upload(array $input_value, string $input_key): string {
 		$id                        = ($input_value['id'] ?: $this->id) . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
@@ -281,7 +281,7 @@ class Wnd_Form_Render {
 		return $html;
 	}
 
-	private function build_file_upload(array $input_value, string $input_key): string{
+	private function build_file_upload(array $input_value, string $input_key): string {
 		$id                        = ($input_value['id'] ?: $this->id) . '-' . $input_key;
 		$input_value['data']['id'] = $id;
 
@@ -317,7 +317,7 @@ class Wnd_Form_Render {
 		return $input_value['value'];
 	}
 
-	private function build_textarea(array $input_value, string $input_key): string{
+	private function build_textarea(array $input_value, string $input_key): string {
 		$html = '<div class="field">';
 		$html .= $this->build_label($input_value);
 		$html .= '<textarea' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>' . $input_value['value'] . '</textarea>';
@@ -341,8 +341,8 @@ class Wnd_Form_Render {
 	 */
 	private function build_form_footer() {
 		$this->html .= $this->after_html;
-		$this->html .= '</form>';
 		$this->html .= $this->render_script();
+		$this->html .= '</form>';
 	}
 
 	/**
@@ -365,7 +365,7 @@ class Wnd_Form_Render {
 	 * 构造 HTML 属性
 	 * @since 0.9.26
 	 */
-	private static function build_attrs(array $attrs): string{
+	private static function build_attrs(array $attrs): string {
 		$attr = '';
 		foreach ($attrs as $key => $value) {
 			if (!$value and !is_numeric($value)) {
@@ -394,7 +394,7 @@ class Wnd_Form_Render {
 	 * 不含：Textarea value属性
 	 * @since 2019.07.19
 	 */
-	private static function build_input_attr(array $input_value): string{
+	private static function build_input_attr(array $input_value): string {
 		$bool_attrs   = ['readonly', 'disabled', 'autofocus', 'required', 'multiple'];
 		$normal_attrs = ['class', 'value', 'type', 'name', 'placeholder', 'size', 'maxlength', 'min', 'max', 'step', 'pattern'];
 		$attr         = '';

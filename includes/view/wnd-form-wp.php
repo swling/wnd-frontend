@@ -380,7 +380,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	}
 
 	// 构造表单
-	public function build(): string{
+	public function build(): string {
 		// 本插件特定的数据结构
 		$this->wnd_structure();
 
@@ -473,7 +473,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta_key or option
 	 * @since 2020.04.13
 	 */
-	private static function get_attachment_url(int $attachment_id, string $meta_key, int $post_parent, int $user_id): string{
+	private static function get_attachment_url(int $attachment_id, string $meta_key, int $post_parent, int $user_id): string {
 		$attachment_url = $attachment_id ? wp_get_attachment_url($attachment_id) : false;
 
 		if ($attachment_id and !$attachment_url) {
@@ -501,13 +501,12 @@ class Wnd_Form_WP extends Wnd_Form {
 		// 短信、邮件
 		$send_code_script = '
 <script>
-var sd_btn = document.querySelectorAll("button.send-code");
-if (sd_btn) {
-    sd_btn.forEach(function(btn) {
-        btn.addEventListener("click", function() {
-            wnd_send_code(this);
-        });
-    });
+var _form = document.getElementById("' . $this->id . '");
+var _sd_btn = _form.querySelector("button.send-code");
+if (_sd_btn) {
+    _sd_btn.addEventListener("click", function() {
+		wnd_send_code(this);
+	});
 }
 </script>';
 		$send_code_script = $this->enable_verification_captcha ? $captcha->render_send_code_script() : $send_code_script;
@@ -518,14 +517,13 @@ if (sd_btn) {
 		 */
 		$submit_script = '
 <script>
-var sub_btn = document.querySelectorAll("[type=submit]");
-if (sub_btn) {
-    sub_btn.forEach(function(btn) {
-        btn.addEventListener("click", function() {
-            wnd_ajax_submit(this);
-        });
-    });
-}
+var _form = document.getElementById("' . $this->id . '");
+var _sub_btn = _form.querySelector("[type=submit]");
+if (_sub_btn) {
+	_sub_btn.addEventListener("click", function(){
+		wnd_ajax_submit(this);
+	});
+};
 </script>';
 		$submit_script = $this->enable_captcha ? $captcha->render_submit_form_script() : $submit_script;
 
@@ -537,7 +535,7 @@ if (sub_btn) {
 	 * 获取表单构造数组数据，可用于前端 JS 渲染
 	 * @since 0.9.25
 	 */
-	public function get_structure(): array{
+	public function get_structure(): array {
 		// 本插件特定的数据结构
 		$this->wnd_structure();
 
