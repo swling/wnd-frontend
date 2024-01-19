@@ -7,7 +7,7 @@ use Wnd\Model\Wnd_Transaction;
 /**
  * 根据交易 id 查询交易记录
  * 若当前用户并非交易发起者，且非超级管理员，则仅返回状态值
- * 
+ *
  * @since 2023.10.30
  */
 class Wnd_Get_Transaction extends Wnd_Query {
@@ -26,6 +26,11 @@ class Wnd_Get_Transaction extends Wnd_Query {
 			return [
 				'status' => $transaction->status,
 			];
+		}
+
+		// 新增产品 url
+		if ($transaction->object_id) {
+			$transaction->object_url = get_permalink($transaction->object_id);
 		}
 
 		return (array) $transaction;

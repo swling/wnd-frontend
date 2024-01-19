@@ -193,6 +193,10 @@ abstract class Wnd_Payment {
             var title = document.querySelector("#payment-title");
             title.innerText = "支付成功，请继续此前的操作！";
             clearInterval(payment_checker);
+
+			if (response.data.object_id) {
+				window.location.href = response.data.object_url;
+			}
         }
     }
     // 关闭弹窗时，清除定时器
