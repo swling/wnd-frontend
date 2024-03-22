@@ -2,6 +2,7 @@
 
 namespace Wnd\Query;
 
+use Exception;
 use Wnd\WPDB\Wnd_Transaction_DB;
 
 /**
@@ -19,11 +20,17 @@ use Wnd\WPDB\Wnd_Transaction_DB;
  */
 class Wnd_Transactions extends Wnd_Query {
 
+	protected static function check() {
+		if (!is_user_logged_in()) {
+			throw new Exception(__('请登录', 'wndt'), 1);
+		}
+	}
+
 	protected static function query($args = []): array {
-		$type   = $args['type'] ?? 'any';
-		$status = $args['status'] ?? 'any';
-		$paged  = $args['paged'] ?? 1;
-		$number = $args['number'] ?? get_option('posts_per_page');
+		$type    = $args['type'] ?? 'any';
+		$status  = $args['status'] ?? 'any';
+		$paged   = $args['paged'] ?? 1;
+		$number  = $args['number'] ?? get_option('posts_per_page');
 		$user_id = !is_super_admin() ? get_current_user_id() : ($args['user_id'] ?? 'any');
 
 		$where = [
@@ -37,4 +44,5 @@ class Wnd_Transactions extends Wnd_Query {
 
 		return ['results' => $results, 'number' => count($results)];
 	}
+
 }
