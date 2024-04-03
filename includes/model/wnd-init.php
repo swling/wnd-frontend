@@ -115,6 +115,7 @@ class Wnd_Init {
 			foreach ($options['plugins'] as $each_plugin) {
 				if ($each_plugin == $current_plugin_path_name) {
 					Wnd_Admin_Upgrade::upgrade();
+					Wnd_language::transform_mo_to_php();
 					break;
 				}
 			}
@@ -208,7 +209,7 @@ class Wnd_Init {
 			 * 未经注册的post_status无法通过wp_query进行筛选，故此注册
 			 * @since 2019.05.31 注册自定义状态：closed 用于关闭文章条目，但前端可以正常浏览
 			 */
-			'wnd-closed'     => [
+			'wnd-closed' => [
 				'label'                     => __('关闭', 'wnd'),
 				'public'                    => true,
 				'exclude_from_search'       => false,
@@ -222,7 +223,7 @@ class Wnd_Init {
 			 * - 已读
 			 * @since 0.9.0
 			 */
-			'wnd-unread'     => [
+			'wnd-unread' => [
 				'label'                     => __('未读', 'wnd'),
 				'protected'                 => true,
 				'exclude_from_search'       => false,
@@ -230,7 +231,7 @@ class Wnd_Init {
 				'show_in_admin_status_list' => false,
 			],
 
-			'wnd-read'       => [
+			'wnd-read'   => [
 				'label'                     => __('未读', 'wnd'),
 				'protected'                 => true,
 				'exclude_from_search'       => false,
@@ -248,7 +249,7 @@ class Wnd_Init {
 	 * 获取财务类 post types
 	 * @since 0.9.39
 	 */
-	public static function get_fin_types(): array{
+	public static function get_fin_types(): array {
 		return apply_filters('wnd_fin_types', ['order', 'recharge', 'stats-re', 'stats-ex']);
 	}
 

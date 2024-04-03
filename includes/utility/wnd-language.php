@@ -2,6 +2,7 @@
 namespace Wnd\Utility;
 
 use Wnd\Utility\Wnd_Singleton_Trait;
+use WP_Translation_File;
 
 /**
  * 多语言
@@ -157,7 +158,7 @@ class Wnd_language {
 	 * - 英语类 en_US, en_GB, en_CA 等统一设置 为 en
 	 * - 由于本类为单例模式，因此 static::$site_locale 已在插件初始化时被赋值
 	 */
-	public static function filter_link($link): string{
+	public static function filter_link($link): string {
 		$lang = static::parse_locale();
 
 		// 语言切换参数与：（站点默认语言 or Cookie 设置语言） 一致时，页面链接无需添加语言参数
@@ -227,7 +228,7 @@ class Wnd_language {
 		return empty($langs) ? '' : $langs[0];
 	}
 
-	public static function selector(): string{
+	public static function selector(): string {
 		$langs       = ['zh_CN' => '简体', 'zh_TW' => '繁體', 'en' => 'EN'];
 		$user_locale = static::$user_locale;
 		if ('en_US' == $user_locale) {
@@ -246,6 +247,21 @@ class Wnd_language {
 		$html .= '</select>';
 
 		return $html;
+	}
+
+	// 翻译文件转换 2024.04.03
+	public static function transform_mo_to_php() {
+		$mofile   = WND_PATH . '/languages/en_US.mo';
+		$contents = WP_Translation_File::transform($mofile, 'php');
+		if ($contents) {
+			file_put_contents(WND_PATH . '/languages/en_US.l10n.php', $contents);
+		}
+
+		$mofile   = WND_PATH . '/languages/zh_TW.mo';
+		$contents = WP_Translation_File::transform($mofile, 'php');
+		if ($contents) {
+			file_put_contents(WND_PATH . '/languages/zh_TW.l10n.php', $contents);
+		}
 	}
 
 }
