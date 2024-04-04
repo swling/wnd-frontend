@@ -39,8 +39,19 @@ spl_autoload_register(function ($class) {
 		return;
 	}
 
+	// 子目录
+	$dir = '';
+	if (str_contains($class, 'wp_translation')) {
+		$dir = 'l10n';
+	} elseif (str_contains($class, 'wp_rest')) {
+		$dir = 'rest-api';
+	} elseif (str_contains($class, 'wp_sitemaps')) {
+		$dir = 'sitemaps';
+	}
+
+	$path     = $dir ? (ABSPATH . WPINC . DIRECTORY_SEPARATOR . $dir) : (ABSPATH . WPINC);
 	$filename = 'class-' . str_replace('_', '-', $class) . '.php';
-	$file     = ABSPATH . WPINC . DIRECTORY_SEPARATOR . $filename;
+	$file     = $path . DIRECTORY_SEPARATOR . $filename;
 	if (file_exists($file)) {
 		require $file;
 	}
