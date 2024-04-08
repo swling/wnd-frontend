@@ -240,7 +240,7 @@ abstract class Wnd_Transaction {
 		 * - @since 0.9.37 设定状态
 		 * - @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
 		 */
-		$this->status         = $is_completed ? static::$completed_status : static::$pending_status;
+		$this->status         = $is_completed ? (static::$completed_status) : (static::$pending_status);
 		$this->transaction_id = $this->get_reusable_transaction_id();
 
 		// 写入数据
@@ -338,16 +338,17 @@ abstract class Wnd_Transaction {
 
 	/**
 	 * 通常校验用于需要跳转第三方支付平台的交易
-	 * - 已经完成的订单：中止操作
+	 * - 已经完成的订单：终止操作
 	 * - 其他不合法状态：抛出异常
 	 * @since 2019.02.11
 	 */
 	public function verify() {
-		// 订单支付状态检查
+		// 订单支付状态检查：已完成、已关闭的订单，终止
 		$status = $this->get_status();
-		if (static::$completed_status == $status) {
+		if (static::$completed_status == $status or static::$closed_status == $status) {
 			return;
 		}
+
 		if (static::$pending_status != $status) {
 			throw new Exception(__('订单状态无效', 'wnd'));
 		}
