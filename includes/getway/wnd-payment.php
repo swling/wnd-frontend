@@ -194,7 +194,7 @@ abstract class Wnd_Payment {
             title.innerText = "支付成功，请继续此前的操作！";
             clearInterval(payment_checker);
 
-			if (response.data.object_id) {
+			if (response.data.object_id > 0) {
 				window.location.href = response.data.object_url;
 			}
         }

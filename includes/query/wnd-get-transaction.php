@@ -19,18 +19,25 @@ class Wnd_Get_Transaction extends Wnd_Query {
 			throw new Exception('Invalid Transaction ID');
 		}
 
-		/**
-		 * 非公开post仅返回基本状态
-		 */
-		if ($transaction->user_id != get_current_user_id() and !is_super_admin()) {
-			return [
-				'status' => $transaction->status,
-			];
+		// 产品 url
+		$transaction->object_url = $transaction->object_id ? get_permalink($transaction->object_id) : '';
+
+		// 基本信息
+		$basic_info = [
+			'status'     => $transaction->status,
+			'object_id'  => $transaction->object_id,
+			'object_url' => $transaction->object_url,
+		];
+
+		// 超级管理员
+		if (is_super_admin()) {
+			return (array) $transaction;
 		}
 
-		// 新增产品 url
-		if ($transaction->object_id) {
-			$transaction->object_url = get_permalink($transaction->object_id);
+		// 用户未登录，或登陆用户查询他人订单，仅返回基本信息
+		$current_user_id = get_current_user_id();
+		if (!$current_user_id or $transaction->user_id != $current_user_id) {
+			return $basic_info;
 		}
 
 		return (array) $transaction;
