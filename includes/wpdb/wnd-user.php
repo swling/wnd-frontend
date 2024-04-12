@@ -32,7 +32,7 @@ class Wnd_User extends WPDB_Row {
 	 * - Users 主要数据：balance、last_login、client_ip
 	 * @since 2019.11.06
 	 */
-	public static function get_wnd_user(int $user_id): object{
+	public static function get_wnd_user(int $user_id): object {
 		$instance = new static();
 		return $instance->get_by('user_id', $user_id) ?: new \stdClass;
 	}
@@ -42,7 +42,7 @@ class Wnd_User extends WPDB_Row {
 	 * - Users 主要数据：balance、last_login、client_ip
 	 * @since 2019.11.06
 	 */
-	public static function update_wnd_user(int $user_id, array $data): bool{
+	public static function update_wnd_user(int $user_id, array $data): bool {
 		$instance = new static();
 		$user     = (array) static::get_wnd_user($user_id);
 
@@ -60,7 +60,7 @@ class Wnd_User extends WPDB_Row {
 	 * 删除记录
 	 * @since 0.9.57
 	 */
-	public static function delete_wnd_user(int $user_id): int{
+	public static function delete_wnd_user(int $user_id): int {
 		$instance = new static();
 		return $instance->delete_by('user_id', $user_id);
 	}
@@ -69,7 +69,7 @@ class Wnd_User extends WPDB_Row {
 	 * 记录登录日志
 	 * @since 0.9.57
 	 */
-	public static function write_login_log(): bool{
+	public static function write_login_log(): bool {
 		$user_id = get_current_user_id();
 		if (!$user_id) {
 			return false;
@@ -91,10 +91,26 @@ class Wnd_User extends WPDB_Row {
 	}
 
 	/**
+	 * 判断用户是否注册后首次登陆
+	 * @since 0.9.69.7
+	 */
+	public static function is_first_login(): bool {
+		$user_id = get_current_user_id();
+		if (!$user_id) {
+			return false;
+		}
+
+		$db_records  = static::get_wnd_user($user_id);
+		$login_count = $db_records->login_count ?? 0;
+
+		return $login_count < 1;
+	}
+
+	/**
 	 * 获取长期未登录的睡眠账户
 	 * @since 0.9.57
 	 */
-	public static function get_sleep_users(int $day): array{
+	public static function get_sleep_users(int $day): array {
 		global $wpdb;
 		$timestamp = time() - (3600 * 24 * $day);
 		$results   = $wpdb->get_results(
