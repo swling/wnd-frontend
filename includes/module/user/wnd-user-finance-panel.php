@@ -10,8 +10,12 @@ use Wnd\Module\Wnd_Module_Html;
 class Wnd_User_Finance_Panel extends Wnd_Module_Html {
 
 	protected static function build($args = []): string {
-		$user_id = get_current_user_id();
-		$html    = static::build_panel($user_id);
+		$user_id = !is_super_admin() ? get_current_user_id() : ($args['user_id'] ?? get_current_user_id());
+
+		$html = '';
+		if ($user_id == get_current_user_id()) {
+			$html = static::build_panel($user_id);
+		}
 
 		// 订单列表
 		$tabs = [
