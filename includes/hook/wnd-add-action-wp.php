@@ -5,6 +5,7 @@ use Exception;
 use Wnd\Getway\Wnd_Captcha;
 use Wnd\Model\Wnd_Mail;
 use Wnd\Model\Wnd_Transaction_Anonymous;
+use Wnd\Utility\Wnd_Affiliate;
 use Wnd\Utility\Wnd_Defender;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
@@ -16,12 +17,14 @@ use Wnd\WPDB\Wnd_User;
 
 /**
  * WP Action
+ * @link https://developer.wordpress.org/apis/hooks/action-reference/
  */
 class Wnd_Add_Action_WP {
 
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
+		add_action('init', [__CLASS__, 'action_on_init'], 10);
 		add_action('wp_loaded', [__CLASS__, 'action_on_wp_loaded'], 10);
 		add_action('after_password_reset', [__CLASS__, 'action_on_password_reset'], 10, 1);
 		add_action('deleted_user', [__CLASS__, 'action_on_delete_user'], 10, 1);
@@ -59,6 +62,26 @@ class Wnd_Add_Action_WP {
 		 * @since 0.9.57.8
 		 */
 		add_action('shutdown', [__CLASS__, 'action_before_shutdown']);
+	}
+
+	/**
+	 * init
+	 * @link https://developer.wordpress.org/reference/hooks/init/
+	 * @since 0.9.70
+	 */
+	public static function action_on_init() {
+		// 登录：由推广注册而来
+		if (is_user_logged_in()) {
+			if (wnd_get_aff_cookie()) {
+				Wnd_Affiliate::handle_aff_reg();
+			}
+			return;
+		}
+
+		// 匿名：存在推广参数
+		if (isset($_GET[WND_AFF_KEY])) {
+			wnd_set_aff_cookie();
+		}
 	}
 
 	/**

@@ -388,3 +388,28 @@ function wnd_date(string $format, $time = 0): string {
 function wnd_getdate(): array {
 	return getdate(wnd_local_time());
 }
+
+// 设置推广 cookie
+function wnd_set_aff_cookie() {
+	$aff_id = $_GET[WND_AFF_KEY] ?? 0;
+	if (!$aff_id) {
+		return;
+	}
+
+	if (is_user_logged_in()) {
+		return;
+	}
+
+	/* 24 小时过期  */
+	setcookie(WND_AFF_KEY, $aff_id, time() + (3600 * 24), '/');
+}
+
+// 获取可能存在的推广 id
+function wnd_get_aff_cookie(): int {
+	return intval($_COOKIE[WND_AFF_KEY] ?? 0);
+}
+
+// 删除推广 cookie
+function wnd_delete_aff_cookie() {
+	setcookie(WND_AFF_KEY, '', time() - 3600, '/');
+}

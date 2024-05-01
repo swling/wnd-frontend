@@ -22,7 +22,7 @@ class Wnd_Menus {
 	private $capability       = 'administrator';
 	private static $main_slug = 'wnd-frontend';
 	private $is_submenu       = false;
-	private $sub_menus        = ['Accesskey', 'Transaction', 'Payment', 'Sms', 'Captcha', 'Social_Login', 'OSS', 'CDN', 'APP', 'Email'];
+	private $sub_menus        = ['Accesskey', 'Transaction', 'Payment', 'Sms', 'Captcha', 'Social_Login', 'OSS', 'CDN', 'APP', 'Email', 'Affiliate'];
 
 	// 表单存储属性
 	private $option_name = 'wnd';
@@ -90,7 +90,7 @@ class Wnd_Menus {
 	/**
 	 * 构造选项表单
 	 */
-	protected function build_form_json(Wnd_Form_Option $form): string{
+	protected function build_form_json(Wnd_Form_Option $form): string {
 		$form->add_radio(
 			[
 				'name'     => 'static_host',

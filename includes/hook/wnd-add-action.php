@@ -3,6 +3,7 @@ namespace Wnd\Hook;
 
 use Wnd\Model\Wnd_Auth_Code;
 use Wnd\Model\Wnd_Order_Props;
+use Wnd\Utility\Wnd_Affiliate;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Form_Option;
@@ -36,6 +37,9 @@ class Wnd_Add_Action {
 	 * @since 初始化 用户注册后
 	 */
 	public static function action_on_user_register($user_id, $data) {
+		// 注册成功
+		Wnd_Affiliate::reg_success($user_id);
+
 		// 注册类，将注册用户id写入对应数据表
 		$email_or_phone = $data['phone'] ?? $data['_user_user_email'] ?? '';
 		if (!$email_or_phone) {

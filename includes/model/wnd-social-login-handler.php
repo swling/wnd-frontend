@@ -20,7 +20,7 @@ class Wnd_Social_Login_Handler {
 	/**
 	 * 对外封装一个静态方法
 	 */
-	public static function login(string $type, string $open_id, string $display_name, string $avatar_url, string $email = ''): WP_User{
+	public static function login(string $type, string $open_id, string $display_name, string $avatar_url, string $email = ''): WP_User {
 		$login = new static($type, $open_id, $display_name, $avatar_url, $email);
 		return is_user_logged_in() ? $login->update_user_social_login() : $login->handle_login();
 	}
@@ -46,7 +46,7 @@ class Wnd_Social_Login_Handler {
 		$this->current_user = wp_get_current_user();
 	}
 
-	private function handle_login(): WP_User{
+	private function handle_login(): WP_User {
 		// 根据openid登录或注册新用户
 		$user = wnd_get_user_by_openid($this->type, $this->open_id);
 		if (!$user) {
@@ -110,13 +110,21 @@ class Wnd_Social_Login_Handler {
 		// 设置 openid
 		wnd_update_user_openid($user_id, $this->type, $this->open_id);
 
+		/**
+		 * 注册完成：同步执行注册钩子
+		 * @see Wnd\Action\User\Wnd_Reg
+		 *
+		 * @since 0.9.70
+		 */
+		do_action('wnd_user_register', $user_id, []);
+
 		return get_user_by('id', $user_id);
 	}
 
 	/**
 	 * 更新当前用户社交登录
 	 */
-	private function update_user_social_login(): WP_User{
+	private function update_user_social_login(): WP_User {
 		wnd_update_user_openid($this->current_user->ID, $this->type, $this->open_id);
 
 		if ($this->avatar_url) {

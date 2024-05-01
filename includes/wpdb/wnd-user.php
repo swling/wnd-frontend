@@ -92,10 +92,13 @@ class Wnd_User extends WPDB_Row {
 
 	/**
 	 * 判断用户是否注册后首次登陆
+	 * 使用该判断方法，需要注意代码执行顺序，即：需要在首次写入登陆日志之前判断
+	 * @see Wnd\Hook\Wnd_Add_Action_WP::action_on_wp_loaded
+	 *
 	 * @since 0.9.69.7
 	 */
-	public static function is_first_login(): bool {
-		$user_id = get_current_user_id();
+	public static function is_first_login(int $user_id = 0): bool {
+		$user_id = $user_id ?: get_current_user_id();
 		if (!$user_id) {
 			return false;
 		}
