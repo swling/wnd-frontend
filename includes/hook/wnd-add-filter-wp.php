@@ -11,6 +11,7 @@ class Wnd_Add_Filter_WP {
 	use Wnd_Singleton_Trait;
 
 	private function __construct() {
+		add_filter('auth_cookie_expiration', [__CLASS__, 'filter_auth_cookie_expiration'], 10, 3);
 		add_filter('wp_handle_upload_prefilter', [__CLASS__, 'filter_limit_upload']);
 		add_filter('get_edit_post_link', [__CLASS__, 'filter_edit_post_link'], 10, 3);
 		add_filter('post_type_link', [__CLASS__, 'filter_post_type_link'], 10, 2);
@@ -19,6 +20,15 @@ class Wnd_Add_Filter_WP {
 		add_filter('get_comment_author_url', [__CLASS__, 'filter_comment_author_url'], 10, 3);
 		add_filter('get_avatar', [__CLASS__, 'filter_avatar'], 10, 5);
 		add_filter('get_comment_author', [__CLASS__, 'filter_comment_author'], 10, 3);
+	}
+
+	/**
+	 * apply_filters( 'auth_cookie_expiration', 14 * DAY_IN_SECONDS, $user_id, $remember );
+	 * @since 0.9.71
+	 * 账号 cookie 有效时间
+	 */
+	public static function filter_auth_cookie_expiration($seconds, $user_id, $remember): int {
+		return $remember ? 180 * DAY_IN_SECONDS : $seconds;
 	}
 
 	/**

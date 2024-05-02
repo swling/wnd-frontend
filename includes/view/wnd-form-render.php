@@ -190,6 +190,8 @@ class Wnd_Form_Render {
 		$html .= $this->build_label($input_value);
 		foreach ($input_value['options'] as $key => $value) {
 			$html .= '<label class="checkbox">';
+			// 新增 hidden 字段，以保证提交数据中包含本字段名（表单签名需要）
+			$html .= '<input type="hidden" value="" name="' . $input_value['name'] . '">';
 			$html .= '<input value="' . $value . '"' . static::build_input_attr($input_value);
 			if (is_array($input_value['checked'])) {
 				$html .= in_array($value, $input_value['checked']) ? ' checked="checked">' : '>';
