@@ -17,7 +17,7 @@ class Wnd_Menu_OSS extends Wnd_Menus {
 	/**
 	 * 构造表单
 	 */
-	protected function build_form_json(Wnd_Form_Option $form): string{
+	protected function build_form_json(Wnd_Form_Option $form): string {
 
 		$form->add_radio(
 			[
@@ -105,6 +105,16 @@ class Wnd_Menu_OSS extends Wnd_Menus {
 				'label'       => '私有链接过期',
 				'placeholder' => '私有存储签名链接有效时间（秒）',
 				'help'        => ['text' => '应根据自身站点私有存储文件所需的下载时间长短综合判断，留空默认：600 （秒）'],
+			]
+		);
+
+		$form->add_text(
+			[
+				'name'        => 'oss_direct_bucket',
+				'label'       => '临时 Bucket',
+				'required'    => false,
+				'placeholder' => '对象储存节点 bucket 名称，用英文逗号区隔多个',
+				'help'        => ['text' => '临时用途、浏览器直传，即任何用户均可上传，用户临时场景'],
 			]
 		);
 

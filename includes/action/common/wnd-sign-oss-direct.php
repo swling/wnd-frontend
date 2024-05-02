@@ -30,6 +30,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 	private $mime_type;
 	private $md5;
 	private $file_path_name;
+	private $file;
 	private $query = [];
 
 	/**
@@ -41,7 +42,34 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 	private $is_duplicate_file;
 	private $cache_key;
 
-	protected function execute(): array{
+	protected function parse_data() {
+		$this->oss_sp   = $this->data['oss_sp'] ?? '';
+		$this->endpoint = $this->data['endpoint'] ?? '';
+		$this->method   = $this->data['method'] ?? 'PUT';
+		if ('PUT' == $this->method) {
+			$this->parse_put_data();
+		} else {
+			$this->parse_delete_data();
+		}
+	}
+
+	protected function check() {
+		// 处于安全考虑，不写入附件的浏览器直传对象存储，不可与站内常规对象存储为同一个节点
+		$oss_handler = Wnd_OSS_Handler::get_instance();
+		if (!$oss_handler->is_direct_endpoint($this->endpoint)) {
+			throw new Exception('Not allowed to be an internal endpoint');
+		}
+	}
+
+	protected function execute(): array {
+		if ('PUT' == $this->method) {
+			return $this->sign_put();
+		} elseif ('DELETE' == $this->method) {
+			return $this->sign_delete();
+		}
+	}
+
+	private function sign_put(): array {
 		$oss = Wnd_Object_Storage::get_instance($this->oss_sp, $this->endpoint);
 		$oss->setFilePathName($this->file_path_name);
 		$headers    = $oss->generateHeaders($this->method, $this->mime_type, $this->md5);
@@ -67,6 +95,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 			'signed_internal' => $signed_internal,
 			'headers'         => $headers,
 			'is_duplicate'    => $this->is_duplicate_file,
+			'cache_key'       => $this->cache_key,
 		];
 
 		// 将文件信息写入缓存
@@ -77,15 +106,27 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		return ['status' => 1, 'data' => $data];
 	}
 
-	protected function parse_data() {
+	private function sign_delete(): array {
+		$path = parse_url($this->file)['path'];
+		$oss  = Wnd_Object_Storage::get_instance($this->oss_sp, $this->endpoint);
+		$oss->setFilePathName($path);
+		$headers = $oss->generateHeaders($this->method);
+		$data    = [
+			'file'    => $oss->getFileUri(),
+			'headers' => $headers,
+		];
+		return ['status' => 1, 'data' => $data];
+	}
+
+	private function parse_delete_data() {
+		$this->file = $this->data['file'] ?? '';
+	}
+
+	private function parse_put_data() {
 		$ext = $this->data['extension'] ?? '';
 		if (!$ext) {
 			throw new Exception('Invalid file type');
 		}
-
-		$this->oss_sp    = $this->data['oss_sp'] ?? '';
-		$this->endpoint  = $this->data['endpoint'] ?? '';
-		$this->method    = $this->data['method'] ?? 'PUT';
 		$this->mime_type = $this->data['mime_type'] ?? '';
 		$this->md5       = $this->data['md5'] ?? '';
 
@@ -101,14 +142,6 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		} else {
 			$this->file_path_name    = $cache['file_path_name'];
 			$this->is_duplicate_file = true;
-		}
-	}
-
-	protected function check() {
-		// 处于安全考虑，不写入附件的浏览器直传对象存储，不可与站内常规对象存储为同一个节点
-		$oss_handler = Wnd_OSS_Handler::get_instance();
-		if (!$oss_handler->is_external_endpoint($this->endpoint)) {
-			throw new Exception('Not allowed to be an internal endpoint');
 		}
 	}
 
@@ -130,4 +163,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		return md5($this->endpoint . $this->md5);
 	}
 
+	public static function delete_cache(string $cache_key) {
+		return wp_cache_delete($cache_key, 'oss_direct');
+	}
 }

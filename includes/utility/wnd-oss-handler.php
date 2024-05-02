@@ -143,7 +143,7 @@ class Wnd_OSS_Handler {
 	/**
 	 * 获取 WP 服务器文件路径，并根据 OSS 存储目录，生成最终的 OSS 存储路径
 	 */
-	private function parse_file_path_name(string $source_file): string{
+	private function parse_file_path_name(string $source_file): string {
 		// WP 本地上传文件目录
 		$local_base_dir = wp_get_upload_dir()['basedir'];
 
@@ -168,7 +168,7 @@ class Wnd_OSS_Handler {
 	 * @see do_action( "added_{$meta_type}_meta", $mid, $object_id, $meta_key, $_meta_value )
 	 * @since WordPress读取本地文件信息并存入字段后
 	 */
-	public function delete_local_file(array $data, int $attachment_id): array{
+	public function delete_local_file(array $data, int $attachment_id): array {
 		if ($this->local_storage > 0) {
 			return $data;
 		}
@@ -211,7 +211,7 @@ class Wnd_OSS_Handler {
 	 * 替换wordpress file meta
 	 * @since 2019.07.25
 	 */
-	public function filter_attachment_meta(array $data): array{
+	public function filter_attachment_meta(array $data): array {
 		if (empty($data['sizes']) || (wp_debug_backtrace_summary(null, 4, false)[0] == 'wp_delete_attachment')) {
 			return $data;
 		}
@@ -237,7 +237,7 @@ class Wnd_OSS_Handler {
 	 * @since 2019.07.25
 	 * @since 0.9.39 新增私有存储
 	 */
-	public function filter_attachment_url(string $url, int $attachment_id): string{
+	public function filter_attachment_url(string $url, int $attachment_id): string {
 		$is_private   = $this->is_private_storage($attachment_id);
 		$oss_base_url = $is_private ? $this->oss_base_url_private : $this->oss_base_url;
 		$oss_file_url = str_replace(wp_get_upload_dir()['baseurl'], $oss_base_url, $url);
@@ -257,7 +257,7 @@ class Wnd_OSS_Handler {
 	 * return apply_filters( 'wp_get_attachment_image_src', $image, $attachment_id, $size, $icon );
 	 * @since 2019.07.25
 	 */
-	public function filter_attachment_image_src(array $image): array{
+	public function filter_attachment_image_src(array $image): array {
 		$oss_image = [
 			$this->resize_image($image[0], $image[1], $image[2]),
 			$image[1],
@@ -287,7 +287,7 @@ class Wnd_OSS_Handler {
 	 * 根据文件名，生成直传 OSS 所需的参数
 	 * @since 0.9.33.7
 	 */
-	public function sign_oss_request(string $method, string $local_file, string $content_type = '', string $md5 = '', bool $is_private = false): array{
+	public function sign_oss_request(string $method, string $local_file, string $content_type = '', string $md5 = '', bool $is_private = false): array {
 		// OSS 存储路径
 		$file_path_name = $this->parse_file_path_name($local_file);
 
@@ -310,13 +310,25 @@ class Wnd_OSS_Handler {
 
 	/**
 	 * 判断指定 OSS 节点是否为站外节点：即存储节点不为当前插件配置的存储节点
+	 * 对象储存的 bucket 为全局唯一，且作为签名依据
 	 * @since 0.9.50.1
 	 */
-	public function is_external_endpoint(string $endpoint): bool {
-		if ($endpoint == $this->endpoint or $endpoint == $this->endpoint_private) {
-			return false;
-		}
+	public function is_direct_endpoint(string $endpoint): bool {
+		$buckets = wnd_get_config('oss_direct_bucket');
+		$buckets = explode(',', $buckets);
+		$bucket  = static::parseBucket($endpoint);
 
-		return true;
+		return in_array($bucket, $buckets);
+	}
+
+	/**
+	 * 根据 endpoint 域名解析出 bucket
+	 */
+	private static function parseBucket($endpoint): string {
+		$parsedUrl = parse_url($endpoint);
+		$host      = explode('.', $parsedUrl['host']);
+		$subdomain = $host[0];
+
+		return $subdomain;
 	}
 }
