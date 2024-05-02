@@ -52,6 +52,12 @@ abstract class CloudObjectStorage {
 	abstract public function deleteFile(int $timeout = 30): array;
 
 	/**
+	 * Delete Batch
+	 *
+	 */
+	abstract public function deleteBatch(array $files, int $timeout = 30): array;
+
+	/**
 	 * 生成签名后的完整 headers
 	 * @since 0.9.35
 	 */
@@ -65,7 +71,7 @@ abstract class CloudObjectStorage {
 	/**
 	 * Curl PUT
 	 */
-	protected static function put(string $sourceFile, string $targetUri, array $headers, int $timeout): array{
+	protected static function put(string $sourceFile, string $targetUri, array $headers, int $timeout): array {
 		$request  = new Requests;
 		$response = $request->request($targetUri, ['method' => 'PUT', 'headers' => $headers, 'timeout' => $timeout, 'filename' => $sourceFile]);
 		return static::handleResponse($response);
@@ -74,7 +80,7 @@ abstract class CloudObjectStorage {
 	/**
 	 * Curl Delete
 	 */
-	protected static function delete(string $targetUri, array $headers, int $timeout): array{
+	protected static function delete(string $targetUri, array $headers, int $timeout): array {
 		$request  = new Requests;
 		$response = $request->request($targetUri, ['method' => 'DELETE', 'headers' => $headers, 'timeout' => $timeout]);
 		return static::handleResponse($response);
@@ -84,7 +90,7 @@ abstract class CloudObjectStorage {
 	 * handleResponse
 	 * @since 0.9.32
 	 */
-	protected static function handleResponse(array $response): array{
+	protected static function handleResponse(array $response): array {
 		if (200 != $response['headers']['http_code'] and 204 != $response['headers']['http_code']) {
 			throw new Exception(json_encode($response));
 		}

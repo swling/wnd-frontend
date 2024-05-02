@@ -12,7 +12,7 @@ class Qcloud extends CloudObjectStorage {
 	 * PUT
 	 * @link https://cloud.tencent.com/document/product/436/7749
 	 */
-	public function uploadFile(string $sourceFile, int $timeout = 1800): array{
+	public function uploadFile(string $sourceFile, int $timeout = 1800): array {
 		$md5         = md5_file($sourceFile);
 		$contentType = mime_content_type($sourceFile);
 		$headers     = $this->generateHeaders('PUT', $contentType, $md5);
@@ -61,9 +61,17 @@ class Qcloud extends CloudObjectStorage {
 	 * Delete
 	 * @link https://cloud.tencent.com/document/product/436/7743
 	 */
-	public function deleteFile(int $timeout = 30): array{
+	public function deleteFile(int $timeout = 30): array {
 		$headers = $this->generateHeaders('DELETE');
 		return static::delete($this->fileUri, $headers, $timeout);
+	}
+
+	/**
+	 * DELETE Multiple Objects
+	 * @link https://cloud.tencent.com/document/product/436/8289
+	 */
+	public function deleteBatch(array $files, int $timeout = 30): array {
+		throw new \Exception('腾讯云对象储存批量删除功能尚未开发完成');
 	}
 
 	/**
@@ -72,7 +80,7 @@ class Qcloud extends CloudObjectStorage {
 	 * - 之所以如此设置，是为了方便外部调用，如前端 OSS 直传时可利用 js 计算 MD5 值，进而调用本方法生成请求 headers
 	 * @since 0.9.35
 	 */
-	public function generateHeaders(string $method, string $contentType = '', string $md5 = ''): array{
+	public function generateHeaders(string $method, string $contentType = '', string $md5 = ''): array {
 		$method     = strtoupper($method);
 		$md5_base64 = base64_encode(hex2bin($md5));
 		$headers    = [];
@@ -135,7 +143,7 @@ class Qcloud extends CloudObjectStorage {
 	/**
 	 * 生成 UrlParamList 和 HttpParameters
 	 */
-	private static function parseArrayToSign(array $data): array{
+	private static function parseArrayToSign(array $data): array {
 		$list_array = [];
 		foreach ($data as $key => $value) {
 			$key              = strtolower(urlencode($key));

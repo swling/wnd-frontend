@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Component\CloudObjectStorage;
 
+use Wnd\Component\Requests\Requests;
+
 /**
  * 阿里云对象存储
  * @link https://www.aliyun.com/product/oss
@@ -12,7 +14,7 @@ class Aliyun extends CloudObjectStorage {
 	 * 上传文件
 	 * @link https://help.aliyun.com/document_detail/31978.html
 	 */
-	public function uploadFile(string $sourceFile, int $timeout = 1800): array{
+	public function uploadFile(string $sourceFile, int $timeout = 1800): array {
 		/**
 		 * 由于在前端请求中，无法设置头部参数'Date' 故此处也统一采用 'X-OSS-Date' 替换 'Date'
 		 * 官方文档中并未说明 X-OSS-Date 可替代 date，但实际运行中可以
@@ -71,10 +73,36 @@ class Aliyun extends CloudObjectStorage {
 	 * Delete
 	 * @link https://help.aliyun.com/document_detail/31982.html
 	 */
-	public function deleteFile(int $timeout = 30): array{
+	public function deleteFile(int $timeout = 30): array {
 		$headers = $this->generateHeaders('DELETE');
 
 		return static::delete($this->fileUri, $headers, $timeout);
+	}
+
+	/**
+	 * 批量删除
+	 * @link https://help.aliyun.com/zh/oss/developer-reference/deletemultipleobjects#section-ztg-wzw-wdb
+	 *
+	 */
+	public function deleteBatch(array $files, int $timeout = 30): array {
+		// xml
+		$requestBody = '<?xml version="1.0" encoding="UTF-8"?>';
+		$requestBody .= '<Delete>';
+		$requestBody .= '<Quiet>false</Quiet>';
+		foreach ($files as $file) {
+			$requestBody .= "<Object><Key>{$file}</Key></Object>";
+		}
+		$requestBody .= '</Delete>';
+
+		// 签名及请求地址
+		$targetUri = $this->endpoint . '/?delete';
+		$this->setFilePathName('/?delete');
+		$headers                   = $this->generateHeaders('POST', '', md5($requestBody));
+		$headers['Content-Length'] = strlen($requestBody);
+
+		// 发起请求
+		$request = new Requests();
+		return $request->request($targetUri, ['method' => 'POST', 'headers' => $headers, 'timeout' => $timeout, 'body' => $requestBody]);
 	}
 
 	/**
@@ -83,7 +111,7 @@ class Aliyun extends CloudObjectStorage {
 	 * - 之所以如此设置，是为了方便外部调用，如前端 OSS 直传时可利用 js 计算 MD5 值，进而调用本方法生成请求 headers
 	 * @since 0.9.35
 	 */
-	public function generateHeaders(string $method, string $contentType = '', string $md5 = ''): array{
+	public function generateHeaders(string $method, string $contentType = '', string $md5 = ''): array {
 		$method     = strtoupper($method);
 		$md5_base64 = base64_encode(hex2bin($md5));
 		$headers    = [
