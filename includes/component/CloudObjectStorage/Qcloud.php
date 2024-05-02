@@ -1,6 +1,8 @@
 <?php
 namespace Wnd\Component\CloudObjectStorage;
 
+use Wnd\Component\Requests\Requests;
+
 /**
  * 腾讯云对象存储
  * @link https://cloud.tencent.com/document/product/436/7751
@@ -71,7 +73,24 @@ class Qcloud extends CloudObjectStorage {
 	 * @link https://cloud.tencent.com/document/product/436/8289
 	 */
 	public function deleteBatch(array $files, int $timeout = 30): array {
-		throw new \Exception('腾讯云对象储存批量删除功能尚未开发完成');
+		// xml
+		$requestBody = '<?xml version="1.0" encoding="UTF-8"?>';
+		$requestBody .= '<Delete>';
+		$requestBody .= '<Quiet>false</Quiet>';
+		foreach ($files as $file) {
+			$requestBody .= "<Object><Key>{$file}</Key></Object>";
+		}
+		$requestBody .= '</Delete>';
+
+		// 签名及请求地址
+		$targetUri = $this->endpoint . '/?delete';
+		$this->setFilePathName('/');
+		$headers                   = $this->generateHeaders('POST', 'application/xml', md5($requestBody));
+		$headers['Content-Length'] = strlen($requestBody);
+
+		// 发起请求
+		$request = new Requests();
+		return $request->request($targetUri, ['method' => 'POST', 'headers' => $headers, 'timeout' => $timeout, 'body' => $requestBody]);
 	}
 
 	/**
