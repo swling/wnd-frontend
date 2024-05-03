@@ -45,8 +45,7 @@ abstract class Wnd_Finance {
 			return false;
 		}
 
-		$new_balance = bcadd(static::get_user_balance($user_id), $amount, 2);
-		$action      = Wnd_User::update_wnd_user($user_id, ['balance' => $new_balance]);
+		$action = Wnd_User::inc_user_balance($user_id, $amount);
 
 		// 整站按月统计充值和消费
 		if ($recharge) {

@@ -235,6 +235,27 @@ class WPDB_Row {
 		return (false === $update) ? 0 : $ID;
 	}
 
+	// 较高并发情况下：update 存在数据不同步的问题。通过加减语法，来处理高并发数据
+	public function inc($where, $column, $num) {
+		$object_before = $this->query($where);
+		if (!$object_before) {
+			return false;
+		}
+
+		$id_column = $this->primary_id_column;
+		$sql       = $this->wpdb->prepare(
+			"UPDATE $this->table SET $column = $column + %.2f WHERE $this->primary_id_column = %s",
+			[$num, $object_before->$id_column]
+		);
+
+		$action = $this->wpdb->query($sql);
+		if ($action) {
+			$this->cache->clean_row_cache($object_before);
+		}
+
+		return $action;
+	}
+
 	/**
 	 * delete data by primary id
 	 *
