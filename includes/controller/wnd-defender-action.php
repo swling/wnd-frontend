@@ -89,9 +89,6 @@ class Wnd_Defender_Action {
 		$this->cache_key        = get_current_user_id() ?: wnd_get_user_ip();
 		$this->actions_log      = $this->get_actions_log();
 		$this->action_log       = $this->get_action_log();
-
-		// 清理历史数据
-		static::_temp_clean_up_historical_data();
 	}
 
 	private function get_actions_log(): array{
@@ -161,17 +158,6 @@ class Wnd_Defender_Action {
 	 */
 	public function reset_log() {
 		wp_cache_delete($this->cache_key, static::$meta_key);
-	}
-
-	/**
-	 * 废弃的 action 拦截日志（转入对象缓存拦截）
-	 * 后期可移除本代码
-	 */
-	private static function _temp_clean_up_historical_data() {
-		$user_id = get_current_user_id();
-		if ($user_id and wnd_get_user_meta($user_id, 'action_log')) {
-			wnd_delete_user_meta($user_id, 'action_log');
-		}
 	}
 
 }
