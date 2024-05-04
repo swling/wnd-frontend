@@ -8,7 +8,7 @@
 	<div class="tabs">
 		<ul>
 			<li :class="is_active('range','15')"><a @click="set_range('15')">近15天</a></li>
-			<li :class="is_active('range','year')"><a @click="set_range('year')">今年</a></li>
+			<li :class="is_active('range','year')"><a @click="set_range('year')">近12个月</a></li>
 		</ul>
 	</div>
 	<canvas id="finance-stats" class="charts" style="width:100%;min-height:300px;"></canvas>
