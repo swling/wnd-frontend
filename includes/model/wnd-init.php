@@ -138,29 +138,6 @@ class Wnd_Init {
 	 * @since 2019.02.28 如不注册类型，直接创建pending状态post时，会有notice级别的错误
 	 */
 	public static function register_post_type() {
-		/**
-		 * 站内信
-		 *
-		 * @date 2020.03.20
-		 * 参数解释：
-		 * 'public'              => true, 需要设置为公开，站内信才能使用固定连接打开
-		 * 'exclude_from_search' => true, 从搜索中排除，防止当指定查询post_type为any时，查询出站内信
-		 */
-		$labels = [
-			'name' => __('站内信', 'wnd'),
-		];
-		$args = [
-			'labels'              => $labels,
-			'description'         => __('站内信', 'wnd'),
-			'public'              => true,
-			'exclude_from_search' => true,
-			'has_archive'         => false,
-			'show_ui'             => false,
-			'supports'            => ['title', 'author', 'editor', 'thumbnail', 'excerpt', 'comments', 'custom-fields'],
-			'rewrite'             => ['slug' => 'mail', 'with_front' => false],
-		];
-		register_post_type('mail', $args);
-
 		/*整站充值统计*/
 		$labels = [
 			'name' => __('充值统计', 'wnd'),
@@ -216,28 +193,6 @@ class Wnd_Init {
 				'show_in_admin_all_list'    => false,
 				'show_in_admin_status_list' => false,
 			],
-
-			/**
-			 * 站内信状态
-			 * - 未读
-			 * - 已读
-			 * @since 0.9.0
-			 */
-			'wnd-unread' => [
-				'label'                     => __('未读', 'wnd'),
-				'protected'                 => true,
-				'exclude_from_search'       => false,
-				'show_in_admin_all_list'    => false,
-				'show_in_admin_status_list' => false,
-			],
-
-			'wnd-read'   => [
-				'label'                     => __('未读', 'wnd'),
-				'protected'                 => true,
-				'exclude_from_search'       => false,
-				'show_in_admin_all_list'    => false,
-				'show_in_admin_status_list' => false,
-			],
 		];
 
 		foreach ($post_statuses as $post_status => $values) {
@@ -250,7 +205,7 @@ class Wnd_Init {
 	 * @since 0.9.39
 	 */
 	public static function get_fin_types(): array {
-		return apply_filters('wnd_fin_types', ['order', 'recharge', 'stats-re', 'stats-ex']);
+		return apply_filters('wnd_fin_types', ['stats-re', 'stats-ex']);
 	}
 
 }

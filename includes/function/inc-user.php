@@ -244,7 +244,7 @@ function wnd_get_mail_count() {
 function wnd_get_user_panel_post_types() {
 	$post_types = get_post_types(['public' => true], 'names', 'and');
 	// 排除页面/附件/站内信
-	unset($post_types['page'], $post_types['attachment'], $post_types['mail']);
+	unset($post_types['page'], $post_types['attachment']);
 	return apply_filters('wnd_user_panel_post_types', $post_types);
 }
 

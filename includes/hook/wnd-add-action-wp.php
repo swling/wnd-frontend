@@ -3,7 +3,6 @@ namespace Wnd\Hook;
 
 use Exception;
 use Wnd\Getway\Wnd_Captcha;
-use Wnd\Model\Wnd_Mail;
 use Wnd\Model\Wnd_Transaction_Anonymous;
 use Wnd\Utility\Wnd_Affiliate;
 use Wnd\Utility\Wnd_Defender;
@@ -157,29 +156,13 @@ class Wnd_Add_Action_WP {
 			wp_delete_post($child->ID, true);
 		}
 		unset($child);
-
-		/**
-		 * @since 2020.06.28 删除邮件时删除邮件查询对象缓存
-		 */
-		if ('mail' == $delete_post->post_type) {
-			Wnd_Mail::delete_mail_count_cache($delete_post->post_author);
-			return;
-		}
 	}
 
 	/**
 	 * 文章更新
 	 * @since 2019.06.05
 	 */
-	public static function action_on_post_updated($post_ID, $post_after, $post_before) {
-		/**
-		 * @since 2019.06.05 邮件状态改变时删除邮件查询对象缓存
-		 */
-		if ('mail' == $post_after->post_type) {
-			Wnd_Mail::delete_mail_count_cache($post_after->post_author);
-			return;
-		}
-	}
+	public static function action_on_post_updated($post_ID, $post_after, $post_before) {}
 
 	/**
 	 * do_action( 'add_attachment', $post_ID );

@@ -44,11 +44,6 @@ class Wnd_Post_Detail extends Wnd_Module_Html {
 			return __('ID无效', 'wnd');
 		}
 
-		// 站内信阅读后，更新为已读 @since 2019.02.25
-		if ('mail' == $post->post_type and $post->post_type != 'wnd-read') {
-			wp_update_post(['ID' => $post->ID, 'post_status' => 'wnd-read']);
-		}
-
 		if (wnd_get_post_price($post->ID)) {
 			return wnd_message(__('付费文章不支持预览', 'wnd'));
 		}

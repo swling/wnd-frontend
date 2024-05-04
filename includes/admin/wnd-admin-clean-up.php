@@ -15,13 +15,6 @@ class Wnd_Admin_Clean_UP {
 		}
 		global $wpdb;
 
-		// 一年前的站内信
-		$old_posts = $wpdb->get_col("SELECT ID FROM $wpdb->posts WHERE post_type = 'mail' AND DATE_SUB(NOW(), INTERVAL 365 DAY) > post_date");
-		foreach ((array) $old_posts as $delete) {
-			// Force delete.
-			wp_delete_post($delete, true);
-		}
-
 		// 一年前的充值/非产品订单
 		$old_posts = $wpdb->get_col("SELECT ID FROM $wpdb->wnd_transactions WHERE object_id = 0 AND DATE_SUB(NOW(), INTERVAL 365 DAY) > FROM_UNIXTIME(time)");
 		foreach ((array) $old_posts as $delete) {

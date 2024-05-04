@@ -298,7 +298,7 @@ abstract class Wnd_Post {
 		$post_types = get_post_types(['public' => true], 'names', 'and');
 		// 排除页面/站内信
 		if (!is_super_admin()) {
-			unset($post_types['page'], $post_types['mail']);
+			unset($post_types['page']);
 		}
 		return apply_filters('wnd_allowed_post_types', $post_types);
 	}
