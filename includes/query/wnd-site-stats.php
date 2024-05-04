@@ -43,7 +43,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 	}
 
 	protected static function query($args = []): array {
-		$type  = $args['type'] ?? 'order';
+		$type  = $args['type'] ?? 'recharge';
 		$range = $args['range'] ?? 'year';
 
 		if (in_array($type, ['order', 'recharge'])) {
@@ -64,27 +64,24 @@ class Wnd_Site_Stats extends Wnd_Query {
 
 	// 财务数据：年度消费/充值统计
 	private static function get_annual_finance_stats($type): array {
-		$result = [
-			'categories' => ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
-			'series'     => [],
-		];
-		$year = wnd_date('Y');
+		// 过去十二个月初始化数据
+		$data  = [];
+		$today = new \DateTime();
+		for ($i = 12; $i >= 1; $i--) {
+			$date = clone $today;
+			$date->modify('-' . $i . ' month');
+			$data[$date->format('y-m')] = 0;
+		}
 
-		/**
-		 * 今年
-		 * 去年
-		 */
-		$result['series'][] = static::query_annual_finance_data($type, $year);
-		// $result['series'][] = static::query_annual_finance_data($type, $year-1);
-
-		return $result;
-	}
-
-	private static function query_annual_finance_data($type, $year): array {
-		$args = [
+		// 查询过去十二个月交易统计posts
+		$today     = current_time('mysql');
+		$last_year = date('Y-m-d H:i:s', strtotime('-12 months', strtotime($today)));
+		$args      = [
 			'date_query'             => [
 				[
-					'year' => $year,
+					'after'     => $last_year,
+					'before'    => $today,
+					'inclusive' => true,
 				],
 			],
 			'post_type'              => 'order' == $type ? 'stats-ex' : 'stats-re',
@@ -96,18 +93,29 @@ class Wnd_Site_Stats extends Wnd_Query {
 		$query = new WP_Query($args);
 		$posts = $query->get_posts();
 
-		$data = [
-			'name' => 'date:' . $year,
-			'data' => array_fill(0, 12, 0.00),
-		];
-		// 数据记录的月份-1 后对应插入数据（不能直接循环生成，因为可能存在某个月没有任何数据，引起错配）
+		// 将交易记录按日期对应合并到日期数据
 		foreach ($posts as $post) {
-			$month              = date('n', strtotime($post->post_date));
-			$key                = $month - 1;
-			$data['data'][$key] = number_format($post->post_content, 2, '.');
+			$month        = date('y-m', strtotime($post->post_date));
+			$data[$month] = number_format(($data[$month] + $post->post_content), 2, '.');
 		}
 
-		return $data;
+		// 组成最终数据格式
+		$result = [
+			'categories' => [],
+			'series'     => [
+				[
+					'name' => $type,
+					'data' => [],
+				],
+			],
+			'total'      => number_format(array_sum($data), 2, '.'),
+		];
+		foreach ($data as $date => $value) {
+			$result['categories'][]        = $date;
+			$result['series'][0]['data'][] = $value;
+		}
+
+		return $result;
 	}
 
 	// 财务数据：周度/月度财务数据
@@ -139,10 +147,11 @@ class Wnd_Site_Stats extends Wnd_Query {
 			'categories' => [],
 			'series'     => [
 				[
-					'name' => $days,
+					'name' => $type,
 					'data' => [],
 				],
 			],
+			'total'      => number_format(array_sum($data), 2, '.'),
 		];
 		foreach ($data as $date => $value) {
 			$result['categories'][]        = $date;

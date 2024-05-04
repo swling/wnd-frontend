@@ -12,6 +12,7 @@
 		</ul>
 	</div>
 	<canvas id="finance-stats" class="charts" style="width:100%;min-height:300px;"></canvas>
+	<h3 class="has-text-centered is-size-3">Total: ${{res.total}}</h3>
 </div>
 
 <script>
