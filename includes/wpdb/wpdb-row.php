@@ -244,7 +244,7 @@ class WPDB_Row {
 
 		$id_column = $this->primary_id_column;
 		$sql       = $this->wpdb->prepare(
-			"UPDATE $this->table SET $column = $column + %.2f WHERE $this->primary_id_column = %s",
+			"UPDATE $this->table SET $column = $column + %.2f WHERE $this->primary_id_column = %d",
 			[$num, $object_before->$id_column]
 		);
 

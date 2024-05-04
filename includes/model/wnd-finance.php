@@ -226,10 +226,12 @@ abstract class Wnd_Finance {
 	 * 写入前，按post type 和时间查询，如果存在记录则更新记录，否则写入一条记录
 	 * @since 初始化
 	 *
-	 * @param float  $money 	变动金额
+	 * 注意：本方法并未采用 wp 内置的 wp_insert_post 及 wp_update_post 更新数据是出于数据库性能考虑
+	 *
+	 * @param float  $amout 	变动金额
 	 * @param string $type  	数据类型：recharge/expense
 	 */
-	public static function update_fin_stats($money, $type) {
+	public static function update_fin_stats(float $amount, string $type) {
 		switch ($type) {
 			// 充值
 			case 'recharge':
@@ -248,34 +250,50 @@ abstract class Wnd_Finance {
 				break;
 		}
 
-		if (!$money or !$type) {
+		if (!$amount or !$type) {
 			return;
 		}
 
+		global $wpdb;
 		$year       = wnd_date('Y');
 		$month      = wnd_date('m');
 		$post_title = $year . '-' . $month . '-' . $post_type;
 		$slug       = $post_title;
 		$stats_post = wnd_get_post_by_slug($slug, $post_type, 'private');
 
-		// 更新统计
+		// 更新统计：较高并发情况下：update 存在数据不同步的问题。通过加减语法，来处理高并发数据
 		if ($stats_post) {
-			$old_money = $stats_post->post_content;
-			$new_money = $old_money + $money;
-			$new_money = number_format($new_money, 2, '.', '');
-			wp_update_post(['ID' => $stats_post->ID, 'post_content' => $new_money]);
+			$sql = $wpdb->prepare(
+				"UPDATE $wpdb->posts SET post_content = post_content + %.2f WHERE ID = %d",
+				[$amount, $stats_post->ID]
+			);
+
+			$action = $wpdb->query($sql);
+			if ($action) {
+				clean_post_cache($stats_post->ID);
+			}
 
 			// 新增统计
 		} else {
+			$date     = current_time('mysql');
+			$date_gmt = current_time('mysql', 1);
 			$post_arr = [
-				'post_author'  => 1,
-				'post_type'    => $post_type,
-				'post_title'   => $post_title,
-				'post_content' => $money,
-				'post_status'  => 'private',
-				'post_name'    => $slug,
+				'post_author'       => 1,
+				'post_type'         => $post_type,
+				'post_title'        => $post_title,
+				'post_content'      => $amount,
+				'post_status'       => 'private',
+				'post_name'         => $slug,
+				'post_date'         => $date,
+				'post_date_gmt'     => $date_gmt,
+				'post_modified'     => $date,
+				'post_modified_gmt' => $date_gmt,
 			];
-			wp_insert_post($post_arr);
+			$wpdb->insert($wpdb->posts, $post_arr);
+			$post_id = (int) $wpdb->insert_id;
+			if ($post_id) {
+				clean_post_cache($post_id);
+			}
 		}
 	}
 

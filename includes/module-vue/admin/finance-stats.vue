@@ -1,8 +1,8 @@
 <div id="vue-finance-stats">
 	<div class="tabs">
 		<ul>
-			<li :class="is_active('type','order')"><a @click="set_type('order')">消费统计</a></li>
 			<li :class="is_active('type','recharge')"><a @click="set_type('recharge')">充值统计</a></li>
+			<li :class="is_active('type','order')"><a @click="set_type('order')">消费统计</a></li>
 		</ul>
 	</div>
 	<div class="tabs">
@@ -20,7 +20,7 @@
 		data() {
 			return {
 				res: {},
-				type: 'order',
+				type: 'recharge',
 				range: 'month',
 			}
 		},
@@ -45,7 +45,7 @@
 				if ('undefined' == typeof uCharts) {
 					let url = static_path + 'js/lib/u-charts.min.js' + cache_suffix;
 					await wnd_load_script(url);
-				} 
+				}
 				this._showCharts(id, data);
 			},
 
