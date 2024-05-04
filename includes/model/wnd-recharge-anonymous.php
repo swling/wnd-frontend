@@ -3,8 +3,8 @@ namespace Wnd\Model;
 
 use Exception;
 use Wnd\Model\Wnd_Finance;
-use Wnd\Model\Wnd_Order_Props;
 use Wnd\Model\Wnd_Transaction_Anonymous;
+use Wnd\WPDB\Wnd_Transaction_DB;
 
 /**
  * 匿名小额充值模块
@@ -54,7 +54,7 @@ class Wnd_Recharge_Anonymous extends Wnd_Recharge {
 		}
 
 		if (time() - $recharge->time < 3600 * 24) {
-			return $recharge->total_amount - ((float) static::get_used_amount($recharge));
+			return $recharge->total_amount;
 		} else {
 			return 0.00;
 		}
@@ -70,11 +70,11 @@ class Wnd_Recharge_Anonymous extends Wnd_Recharge {
 			return false;
 		}
 
-		$used_amount = static::get_used_amount($recharge);
-		$used_amount = $used_amount + $amount;
-		$action      = Wnd_Order_Props::update_order_props($recharge->ID, ['used_amount' => $used_amount]);
-
-		Wnd_Finance::update_fin_stats($amount, 'expense');
+		$handler = Wnd_Transaction_DB::get_instance();
+		$action  = $handler->inc(['ID' => $recharge->ID], 'total_amount', $amount * -1);
+		if ($action) {
+			Wnd_Finance::update_fin_stats($amount, 'expense');
+		}
 		return $action;
 	}
 
@@ -98,11 +98,6 @@ class Wnd_Recharge_Anonymous extends Wnd_Recharge {
 		}
 
 		return $recharge;
-	}
-
-	private static function get_used_amount($recharge): float {
-		$props = json_decode($recharge->props);
-		return (float) ($props->used_amount ?? 0);
 	}
 
 }
