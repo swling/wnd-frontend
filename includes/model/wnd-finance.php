@@ -48,7 +48,7 @@ abstract class Wnd_Finance {
 		$action = Wnd_User::inc_user_balance($user_id, $amount);
 
 		// 整站按月统计充值和消费
-		if ($recharge) {
+		if ($recharge and $action) {
 			static::update_fin_stats($amount, 'recharge');
 		}
 
@@ -69,16 +69,19 @@ abstract class Wnd_Finance {
 	 * 新增用户消费记录
 	 *
 	 * @param 	int   	$user_id 	用户ID
-	 * @param 	float 	$money   		金额
+	 * @param 	float 	$amount		金额
 	 */
-	public static function inc_user_expense($user_id, $money): bool {
-		$new_money = static::get_user_expense($user_id) + $money;
-		$new_money = number_format($new_money, 2, '.', '');
-		$action    = wnd_update_user_meta($user_id, 'expense', $new_money);
+	public static function inc_user_expense($user_id, $amount): bool {
+		if (!get_user_by('id', $user_id)) {
+			return false;
+		}
+
+		$action = Wnd_User::inc_user_expense($user_id, $amount);
 
 		// 整站按月统计充值和消费
-		static::update_fin_stats($money, 'expense');
-
+		if ($action) {
+			static::update_fin_stats($amount, 'expense');
+		}
 		return $action;
 	}
 
@@ -88,7 +91,7 @@ abstract class Wnd_Finance {
 	 * @return 	float 	用户消费
 	 */
 	public static function get_user_expense($user_id, $format = false): mixed {
-		$expense = floatval(wnd_get_user_meta($user_id, 'expense'));
+		$expense = wnd_get_wnd_user($user_id)->expense ?? 0;
 		return static::format($expense, $format);
 	}
 

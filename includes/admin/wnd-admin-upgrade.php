@@ -162,4 +162,37 @@ class Wnd_Admin_Upgrade {
 			}
 		}
 	}
+
+	private static function v_0_9_71() {
+		global $wpdb;
+
+		// 废弃的站内信和赞赏
+		$old_posts = $wpdb->get_col("SELECT ID FROM $wpdb->posts WHERE post_type = 'mail' OR post_type = 'reward' ");
+		foreach ((array) $old_posts as $delete) {
+			// Force delete.
+			wp_delete_post($delete, true);
+		}
+
+		// 新增用户开销字段 expense
+		$exists = $wpdb->query("SHOW COLUMNS FROM $wpdb->wnd_users WHERE field='expense' ");
+		if (!$exists) {
+			$wpdb->query("ALTER TABLE $wpdb->wnd_users ADD COLUMN `expense` decimal(10, 2) NOT NULL AFTER `balance` ");
+		}
+
+		// 转移原有 expense 字段
+		$user_ids = $wpdb->get_col("SELECT ID FROM $wpdb->users");
+		foreach ($user_ids as $user_id) {
+			$expense = floatval(wnd_get_user_meta($user_id, 'expense'));
+			if ($expense <= 0) {
+				continue;
+			}
+
+			$action = \Wnd\WPDB\Wnd_User::update_wnd_user($user_id, ['expense' => $expense]);
+			if ($action) {
+				wnd_delete_user_meta($user_id, 'expense');
+			} else {
+				exit('出现错误');
+			}
+		}
+	}
 }

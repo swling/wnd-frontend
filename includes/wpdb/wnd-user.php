@@ -61,6 +61,11 @@ class Wnd_User extends WPDB_Row {
 		return $instance->inc(['user_id' => $user_id], 'balance', $amout);
 	}
 
+	public static function inc_user_expense(int $user_id, float $amout) {
+		$instance = new static();
+		return $instance->inc(['user_id' => $user_id], 'expense', $amout);
+	}
+
 	/**
 	 * 删除记录
 	 * @since 0.9.57

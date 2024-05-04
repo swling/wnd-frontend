@@ -72,6 +72,7 @@ class Wnd_DB {
 			ID bigint(20) NOT NULL auto_increment,
 			user_id bigint(20) NOT NULL,
 			balance decimal(10, 2) NOT NULL,
+			expense decimal(10, 2) NOT NULL,
 			last_login bigint(20) NOT NULL,
 			login_count bigint(20) NOT NULL,
 			last_recall bigint(20) NOT NULL,
