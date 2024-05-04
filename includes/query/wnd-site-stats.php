@@ -3,7 +3,6 @@
 namespace Wnd\Query;
 
 use Exception;
-use Wnd\Model\Wnd_Transaction;
 use WP_Query;
 
 /**
@@ -43,7 +42,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 		}
 	}
 
-	protected static function query($args = []): array{
+	protected static function query($args = []): array {
 		$type  = $args['type'] ?? 'order';
 		$range = $args['range'] ?? 'year';
 
@@ -53,20 +52,18 @@ class Wnd_Site_Stats extends Wnd_Query {
 	}
 
 	// 查询财务统计数据
-	private static function get_finance_stats($type, $range): array{
+	private static function get_finance_stats($type, $range): array {
 		// 年度统计直接查询每月统计数据
 		if ('year' == $range) {
 			return static::get_annual_finance_stats($type);
 		}
 
 		// 周月统计需要按天查询所有订单后合并计算
-		if (in_array($range, ['week', 'month'])) {
-			return static::get_finance_stats_by_day($type, $range);
-		}
+		return static::get_finance_stats_by_day($type, $range);
 	}
 
 	// 财务数据：年度消费/充值统计
-	private static function get_annual_finance_stats($type): array{
+	private static function get_annual_finance_stats($type): array {
 		$result = [
 			'categories' => ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
 			'series'     => [],
@@ -83,7 +80,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 		return $result;
 	}
 
-	private static function query_annual_finance_data($type, $year): array{
+	private static function query_annual_finance_data($type, $year): array {
 		$args = [
 			'date_query'             => [
 				[
@@ -114,50 +111,44 @@ class Wnd_Site_Stats extends Wnd_Query {
 	}
 
 	// 财务数据：周度/月度财务数据
-	private static function get_finance_stats_by_day($type, $range) {
-		$result = [
-			'categories' => 'week' == $range ? range(1, 7) : range(1, 31),
-			'series'     => [],
-		];
+	private static function get_finance_stats_by_day(string $type, int $days): array {
+		global $wpdb;
+		$results = $wpdb->get_results(
+			"SELECT * FROM $wpdb->wnd_transactions
+			 WHERE FROM_UNIXTIME(time) >= DATE_SUB(CURDATE(), INTERVAL $days DAY)
+			 AND type = '{$type}'
+			;"
+		);
 
-		$result['series'][] = static::query_daily_finance_data($type, $range);
+		// 日期数据初始化
+		$data  = [];
+		$today = new \DateTime();
+		for ($i = $days; $i > 1; $i--) {
+			$date = clone $today;
+			$date->modify('-' . $i . ' day');
+			$data[$date->format('m-d')] = 0;
+		}
+		// 将交易记录按日期对应合并到日期数据
+		foreach ($results as $value) {
+			$day        = date('m-d', $value->time);
+			$data[$day] = number_format(($data[$day] + $value->total_amount), 2, '.');
+		}
+
+		// 组成最终数据格式
+		$result = [
+			'categories' => [],
+			'series'     => [
+				[
+					'name' => $days,
+					'data' => [],
+				],
+			],
+		];
+		foreach ($data as $date => $value) {
+			$result['categories'][]        = $date;
+			$result['series'][0]['data'][] = $value;
+		}
 
 		return $result;
 	}
-
-	private static function query_daily_finance_data($type, $range): array{
-		$date_query = ['year' => wnd_date('Y')];
-		if ('week' == $range) {
-			$date_query['week'] = wnd_date('W');
-		} else {
-			$date_query['month'] = wnd_date('n');
-		}
-		$args = [
-			'date_query'             => $date_query,
-			'post_type'              => $type,
-			'post_status'            => [Wnd_Transaction::$completed_status, Wnd_Transaction::$closed_status],
-			'posts_per_page'         => -1,
-			'update_post_meta_cache' => false,
-			'update_post_term_cache' => false,
-		];
-		$query = new WP_Query($args);
-		$posts = $query->get_posts();
-
-		$days = 'week' == $range ? 7 : 31;
-		$data = [
-			'name' => 'this ' . $range,
-			'data' => array_fill(0, $days, 0.00),
-		];
-
-		// 数据记录 星期/阳历 -1 后对应插入并累积数据（不能直接循环生成，因为可能存在某个月没有任何数据，引起错配）
-		$date_key = 'week' == $range ? 'N' : 'j';
-		foreach ($posts as $post) {
-			$day                = date($date_key, strtotime($post->post_date));
-			$key                = $day - 1;
-			$data['data'][$key] = number_format(($data['data'][$key] + $post->post_content), 2, '.');
-		}
-
-		return $data;
-	}
-
 }

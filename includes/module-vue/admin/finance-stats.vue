@@ -7,8 +7,7 @@
 	</div>
 	<div class="tabs">
 		<ul>
-			<li :class="is_active('range','week')"><a @click="set_range('week')">本周</a></li>
-			<li :class="is_active('range','month')"><a @click="set_range('month')">本月</a></li>
+			<li :class="is_active('range','15')"><a @click="set_range('15')">近15天</a></li>
 			<li :class="is_active('range','year')"><a @click="set_range('year')">今年</a></li>
 		</ul>
 	</div>
@@ -21,7 +20,7 @@
 			return {
 				res: {},
 				type: 'recharge',
-				range: 'month',
+				range: '15',
 			}
 		},
 		methods: {
