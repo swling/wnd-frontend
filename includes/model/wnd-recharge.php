@@ -36,6 +36,9 @@ class Wnd_Recharge extends Wnd_Transaction {
 
 		// 定义变量
 		$this->subject = $this->subject ?: (($this->object_id ? __('佣金：', 'wnd') : __('充值：', 'wnd')) . $this->total_amount);
+
+		// 记录充值订单 IP
+		$this->props['ip'] = wnd_get_user_ip();
 	}
 
 	/**

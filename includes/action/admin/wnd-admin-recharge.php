@@ -21,6 +21,7 @@ class Wnd_Admin_Recharge extends Wnd_Action_Admin {
 		$recharge->set_total_amount($this->total_amount);
 		$recharge->set_payment_gateway('internal');
 		$recharge->set_subject($this->remarks);
+		$recharge->set_props($this->data);
 		$recharge->create(true); // 直接写入余额
 
 		return ['status' => 1, 'msg' => $this->target_user->display_name . '&nbsp;' . __('充值：¥', 'wnd') . $this->total_amount];

@@ -9,7 +9,7 @@ use Wnd\WPDB\Wnd_Transaction_DB;
 /**
  * 匿名小额充值模块
  * - 充值金额：total_amount
- * - 消费金额：props->used_amount
+ * - 消费金额：扣除 total_amount
  *
  * 注意：匿名充值后，如果再次充值，会覆盖掉之前的订单，用户余额将以最新订单为准
  *
