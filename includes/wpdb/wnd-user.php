@@ -33,7 +33,7 @@ class Wnd_User extends WPDB_Row {
 	 * @since 2019.11.06
 	 */
 	public static function get_wnd_user(int $user_id): object {
-		$instance = new static();
+		$instance = static::get_instance();
 		return $instance->get_by('user_id', $user_id) ?: new \stdClass;
 	}
 
@@ -43,7 +43,7 @@ class Wnd_User extends WPDB_Row {
 	 * @since 2019.11.06
 	 */
 	public static function update_wnd_user(int $user_id, array $data): bool {
-		$instance = new static();
+		$instance = static::get_instance();
 		$user     = (array) static::get_wnd_user($user_id);
 
 		if ($user) {
@@ -57,12 +57,12 @@ class Wnd_User extends WPDB_Row {
 	}
 
 	public static function inc_user_balance(int $user_id, float $amout) {
-		$instance = new static();
+		$instance = static::get_instance();
 		return $instance->inc(['user_id' => $user_id], 'balance', $amout);
 	}
 
 	public static function inc_user_expense(int $user_id, float $amout) {
-		$instance = new static();
+		$instance = static::get_instance();
 		return $instance->inc(['user_id' => $user_id], 'expense', $amout);
 	}
 
@@ -71,7 +71,7 @@ class Wnd_User extends WPDB_Row {
 	 * @since 0.9.57
 	 */
 	public static function delete_wnd_user(int $user_id): int {
-		$instance = new static();
+		$instance = static::get_instance();
 		return $instance->delete_by('user_id', $user_id);
 	}
 
