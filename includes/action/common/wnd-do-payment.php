@@ -25,7 +25,7 @@ class Wnd_Do_Payment extends Wnd_Action {
 	private $subject;
 	private $app_id;
 
-	protected function execute(): array{
+	protected function execute(): array {
 		// 写入交易记录
 		$transaction = Wnd_Transaction::get_instance($this->type);
 		$transaction->set_payment_gateway($this->payment_gateway);
@@ -73,6 +73,11 @@ class Wnd_Do_Payment extends Wnd_Action {
 		// 通用检测
 		if (!$this->payment_gateway) {
 			throw new Exception(__('未定义支付方式', 'wnd'));
+		}
+
+		// 最大支付金额限制：9万9……（用于预防一些手贱用户瞎几把输入）
+		if ($this->total_amount > 99999.99) {
+			throw new Exception(__('金额超限', 'wnd'));
 		}
 
 		// 区别检测产品订单与非产品订单
