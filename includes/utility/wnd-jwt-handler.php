@@ -127,7 +127,9 @@ class Wnd_JWT_Handler {
 		$authorization = $headers[static::$header_name] ?? '';
 		if ($authorization) {
 			$bearer_token = explode(' ', $authorization);
-			$token        = $bearer_token[1] ?? '';
+			if ('bearer' == strtolower($bearer_token[0])) {
+				$token = $bearer_token[1] ?? '';
+			}
 		}
 
 		return $token;

@@ -1,32 +1,32 @@
-<div id="user-dashboard"></div>
-<script>
-	let dashboard_option = {
-		template: `
-<div id="dashboard-template">
-	<div class="is-hidden-desktop is-hidden-tablet mb-5">
-		<div class="box is-size-5">
-			<a v-show="hash" href="#" @click="handle_home()" class="mr-5"><i class="fas fa-arrow-left"></i></a>
-			<span>{{title}}</span>
-		</div>
-		<div class="columns is-multiline is-full is-mobile box is-marginless" v-show="!hash">
-			<div class="column is-4" v-for="menu in menus">
-				<div class="menu-box box has-text-centered">
-					<a :href="menu.href" @click="sync_menu(menu)">{{menu.title}}</a>
+<div id="user-dashboard">
+	<div id="dashboard-template">
+		<div class="is-hidden-desktop is-hidden-tablet mb-5">
+			<div class="box is-size-5">
+				<a v-show="hash" href="#" @click="handle_home()" class="mr-5"><i class="fas fa-arrow-left"></i></a>
+				<span>{{title}}</span>
+			</div>
+			<div class="columns is-multiline is-full is-mobile box is-marginless" v-show="!hash">
+				<div class="column is-4" v-for="menu in menus">
+					<div class="menu-box box has-text-centered">
+						<a :href="menu.href" @click="sync_menu(menu)">{{menu.title}}</a>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="columns">
-		<div class="column is-narrow is-hidden-mobile">
-			<div id="wnd-menus" class="box"><div id="app-menus"></div></div>
+		<div class="columns">
+			<div class="column is-narrow is-hidden-mobile">
+				<div id="wnd-menus" class="box">
+					<div id="app-menus"></div>
+				</div>
+			</div>
+			<div class="column">
+				<div id="ajax-module" class="box"></div>
+			</div>
 		</div>
-		<div class="column">
-			<div id="ajax-module" class="box"></div>
-		</div>
 	</div>
-</div>		
-		`,
-
+</div>
+<script>
+	let dashboard_option = {
 		data() {
 			return {
 				menus: wnd_menus_data[0].items,
