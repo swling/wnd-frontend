@@ -400,6 +400,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	public function add_post_price($label = '', $required = false) {
+		$sku_button = wnd_modal_button('SKU', 'common/wnd_sku_form', ['post_id' => $this->post_id ?? 0]);
 		$this->add_number(
 			[
 				'name'        => '_wpmeta_price',
@@ -410,6 +411,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'required'    => $required,
 				'step'        => '0.01',
 				'min'         => '0',
+				'addon_right' => $sku_button,
 			]
 		);
 	}

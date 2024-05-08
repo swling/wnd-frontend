@@ -49,12 +49,6 @@ class Wnd_Post_Form_Post extends Wnd_Post_Form {
 			$form->add_post_paid_file_upload();
 		}
 
-		$form->add_html('
-<div class="field is-horizontal">
-<div class="field-label is-normal"><label class="label is-hidden-mobile">' . __('产品属性', 'wnd') . '</label></div>
-<div class="field-body"><div class="field">' . wnd_modal_button(__('产品 SKU', 'wnd'), 'common/wnd_sku_form', ['post_id' => $form->get_post()->ID ?? 0]) . '</div></div>
-</div>');
-
 		$form->add_post_term_select(['taxonomy' => 'category']);
 
 		// 缩略图
