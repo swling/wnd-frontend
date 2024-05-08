@@ -100,7 +100,7 @@ async function _wnd_md5_file(file) {
             const fileReader = new FileReader()
             let currentChunk = 0
 
-            fileReader.onload = function(e) {
+            fileReader.onload = function (e) {
                 spark.append(e.target.result) // Append array buffer
                 currentChunk++
 
@@ -111,7 +111,7 @@ async function _wnd_md5_file(file) {
                 }
             }
 
-            fileReader.onerror = function(e) {
+            fileReader.onerror = function (e) {
                 reject(e)
             }
 
@@ -135,4 +135,57 @@ function _wnd_delete_attachment(attachment_id, meta_key = '') {
         'file_id': attachment_id,
         'meta_key': meta_key,
     });
+}
+
+
+/**
+ * @since 0.9.72
+ * 前端直接删除 OSS 文件
+ * 
+ * let file = 'https://fenbu-ai.oss-cn-shanghai.aliyuncs.com/image.png';
+ * _wnd_delete_oss_file(file, 'Aliyun', 'https://fenbu-ai.oss-cn-shanghai.aliyuncs.com');
+ **/
+async function _wnd_delete_oss_file(file, oss_sp, endpoint) {
+    let sign_action = 'wnd_sign_oss_direct';
+    let method = 'DELETE';
+    // 获取 OSS 签名，若为重复上传文件，直接返回文件信息
+    let oss_sign = await get_oss_sign(file);
+
+    // 获取签名，上传文件，并将签名的结果合并写入实现约定的值
+    return axios({
+        url: oss_sign.delete_url,
+        method: method,
+        headers: oss_sign.headers,
+        /**
+         *  Access-Control-Allow-Origin 的值为通配符 ("*") ，而这与使用credentials相悖。
+         * @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials
+         **/
+        withCredentials: false,
+    }).then(res => {
+        return oss_sign;
+        /**
+         * 上传失败，WP 附件类上传，需要清空附件数据库记录 
+         * @link https://github.com/axios/axios#handling-errors
+         * 状态码不为 2xx 均视为失败
+         **/
+    }).catch(err => {
+        console.error(err);
+    });
+
+    // 获取签名 
+    function get_oss_sign() {
+        let data = {
+            'method': method,
+            'oss_sp': oss_sp,
+            'endpoint': endpoint,
+            'file': file,
+        };
+        return axios({
+            url: wnd_action_api + '/common/' + sign_action,
+            method: 'POST',
+            data: data,
+        }).then(res => {
+            return res.data.data;
+        })
+    }
 }

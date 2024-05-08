@@ -267,6 +267,18 @@ async function wnd_upload_to_oss_dynamic(file, oss_sp, endpoint, direct = true, 
     return _wnd_upload_to_oss(file, oss_sp, endpoint, direct, sign_data);
 }
 
+/**
+ * @since 0.9.72
+ * 前端直接删除 OSS 文件（仅支持后台已配置的临时节点）
+ */
+async function wnd_delete_oss_file(file, oss_sp, endpoint) {
+    if ('undefined' == typeof _wnd_delete_oss_file) {
+        let url = static_path + 'js/file.min.js' + cache_suffix;
+        await wnd_load_script(url);
+    }
+    return await _wnd_delete_oss_file(file, oss_sp, endpoint);
+}
+
 // 按需加载 wnd-vue-form.js 并渲染表达
 async function wnd_render_filter(container, filter_json, add_class) {
     if ('function' != typeof _wnd_render_filter) {

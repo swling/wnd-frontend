@@ -57,7 +57,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		// 处于安全考虑，不写入附件的浏览器直传对象存储，不可与站内常规对象存储为同一个节点
 		$oss_handler = Wnd_OSS_Handler::get_instance();
 		if (!$oss_handler->is_direct_endpoint($this->endpoint)) {
-			throw new Exception('Not allowed to be an internal endpoint');
+			throw new Exception('This endpoint is not allowed.');
 		}
 	}
 
@@ -112,8 +112,8 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		$oss->setFilePathName($path);
 		$headers = $oss->generateHeaders($this->method);
 		$data    = [
-			'file'    => $oss->getFileUri(),
-			'headers' => $headers,
+			'delete_url' => $oss->getFileUri(),
+			'headers'    => $headers,
 		];
 		return ['status' => 1, 'data' => $data];
 	}
