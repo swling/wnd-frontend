@@ -129,11 +129,11 @@ abstract class Wnd_Finance {
 	 * @return 	float  	两位数的价格信息 或者 0
 	 */
 	public static function get_post_price($post_id, $sku_id = '', $format = false): mixed {
-		if ($sku_id) {
+		$price = floatval(get_post_meta($post_id, 'price', 1) ?: 0);
+
+		if (!$price and $sku_id) {
 			$price = Wnd_SKU::get_single_sku_price($post_id, $sku_id);
 			$price = floatval($price);
-		} else {
-			$price = floatval(get_post_meta($post_id, 'price', 1) ?: 0);
 		}
 
 		$price = apply_filters('wnd_get_post_price', $price, $post_id, $sku_id);
