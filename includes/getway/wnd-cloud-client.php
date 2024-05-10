@@ -32,9 +32,9 @@ abstract class Wnd_Cloud_Client {
 	/**
 	 * 读取 Access Key
 	 */
-	public static function get_api_key(string $service_provider, string $product = ''): array{
+	public static function get_api_key(string $service_provider, string $product = '', string $endpoint = ''): array {
 		// 用于对特定云服务商的特定产品，配置特定的密匙，数据格式： ['secret_id'  => 'xxx', 'secret_key' => 'xxx']
-		$access_info = apply_filters('wnd_cloud_client_access_info', [], $service_provider, $product);
+		$access_info = apply_filters('wnd_cloud_client_access_info', [], $service_provider, $product, $endpoint);
 		if ($access_info) {
 			return $access_info;
 		}

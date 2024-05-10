@@ -424,7 +424,7 @@ $allowed_keys = apply_filters('wnd_allowed_sign_keys', $allowed_keys, $this->sig
 ## CloudClient
 ```php
 // 用于对特定云服务商的特定产品，配置特定的密匙，数据格式： ['secret_id'  => 'xxx', 'secret_key' => 'xxx']
-$access_info = apply_filters('wnd_cloud_client_access_info', [], $service_provider, $product);
+$access_info = apply_filters('wnd_cloud_client_access_info', [], $service_provider, $product, $endpoint);
 ```
 
 ## tag under category

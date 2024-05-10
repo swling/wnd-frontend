@@ -13,7 +13,7 @@ use Wnd\Getway\Wnd_Cloud_Client;
  */
 abstract class Wnd_Object_Storage {
 
-	public static function get_instance(string $service_provider, string $endpoint): CloudObjectStorage{
+	public static function get_instance(string $service_provider, string $endpoint): CloudObjectStorage {
 		// 服务商
 		Wnd_Cloud_Client::check_service_provider($service_provider);
 		$class_name = '\Wnd\Component\CloudObjectStorage\\' . $service_provider;
@@ -22,7 +22,7 @@ abstract class Wnd_Object_Storage {
 		}
 
 		// 密匙
-		extract(Wnd_Cloud_Client::get_api_key($service_provider, 'oss'));
+		extract(Wnd_Cloud_Client::get_api_key($service_provider, 'oss', $endpoint));
 
 		return new $class_name($secret_id, $secret_key, $endpoint);
 	}
