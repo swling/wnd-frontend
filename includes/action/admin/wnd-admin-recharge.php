@@ -37,5 +37,10 @@ class Wnd_Admin_Recharge extends Wnd_Action_Admin {
 		if (!$this->target_user) {
 			throw new Exception(__('用户不存在', 'wnd'));
 		}
+
+		// 最大支付金额限制：10万
+		if ($this->total_amount > (100 * 100 * 10)) {
+			throw new Exception(__('金额超限', 'wnd'));
+		}
 	}
 }

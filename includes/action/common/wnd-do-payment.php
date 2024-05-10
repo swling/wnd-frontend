@@ -75,8 +75,8 @@ class Wnd_Do_Payment extends Wnd_Action {
 			throw new Exception(__('未定义支付方式', 'wnd'));
 		}
 
-		// 最大支付金额限制：9万9……（用于预防一些手贱用户瞎几把输入）
-		if ($this->total_amount > 99999.99) {
+		// 最大支付金额限制：10万……（用于预防一些手贱用户瞎几把输入）
+		if ($this->total_amount > (100 * 100 * 10)) {
 			throw new Exception(__('金额超限', 'wnd'));
 		}
 
