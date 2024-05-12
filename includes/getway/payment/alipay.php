@@ -92,7 +92,11 @@ class Alipay extends Wnd_Payment {
 		$transaction_id = static::parse_out_trade_no($out_trade_no);
 		$transaction    = Wnd_Transaction::get_instance('', $transaction_id);
 
-		if ($total_amount != $transaction->get_total_amount()) {
+		/**
+		 * 仅在 pending 订单中校验金额，避免错误验证，如：
+		 * - 支持退款的支付宝交易会在三个月后执行一次 FINISHED 回调，此时匿名充值订单的交易额可能已经改变
+		 */
+		if (Wnd_Transaction::$pending_status == $transaction->get_status() and $total_amount != $transaction->get_total_amount()) {
 			throw new Exception('金额不匹配');
 		}
 
@@ -173,7 +177,8 @@ class Alipay extends Wnd_Payment {
 		 * - 通知触发条件是商户签约的产品支持退款功能的前提下，买家付款成功
 		 *
 		 * # 交易状态TRADE_FINISHED：
-		 * - 通知触发条件是商户签约的产品不支持退款功能的前提下，买家付款成功；或者，商户签约的产品支持退款功能的前提下，交易已经成功并且已经超过可退款期限。
+		 * - 知触发条件是商户签约的产品不支持退款功能的前提下，买家付款成功；
+		 *   或者，商户签约的产品支持退款功能的前提下，交易已经成功并且已经超过可退款期限。
 		 *
 		 * 业务处理：
 		 * - 判断该笔订单是否在商户网站中已经做过处理
@@ -193,10 +198,12 @@ class Alipay extends Wnd_Payment {
 
 		/**
 		 * 交易关闭
+		 * 未付款交易超时关闭，或支付完成后全额退款。
+		 * 本系统未针对此操作做订单处理，故直接回报平台响应，并终止
 		 */
 		if ('TRADE_CLOSED' == $_POST['trade_status']) {
 			echo ('success');
-			return false;
+			exit;
 		}
 
 		/**
