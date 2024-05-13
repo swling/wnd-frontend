@@ -195,14 +195,19 @@ function wnd_generate_order_NO() {
 /**
  * @since 2019.02.09  验证是否为手机号
  *
- * @0.9.69.2
- * 简化判断：仅判断字符串是否为纯数字
- *
  * @param  	string 	$phone  需要验证的手机号
  * @return 	bool   	是否为合法的手机号码格式
  */
 function wnd_is_mobile($phone): bool {
-	return ctype_digit($phone);
+	// 中国手机号正则表达式
+	$pattern = '/^1[3-9]\d{9}$/';
+
+	// 使用 preg_match 函数进行匹配
+	if (preg_match($pattern, $phone)) {
+		return true; // 是中国手机号
+	} else {
+		return false; // 不是中国手机号
+	}
 }
 
 /**
