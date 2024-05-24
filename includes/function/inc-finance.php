@@ -47,12 +47,12 @@ function wnd_inc_order_count($object_id, $number) {
 /**
  * 充值成功 写入用户 字段
  *
- * @param 	int   	$user_id  	用户ID
- * @param 	float 	$money    		金额
- * @param 	bool  	$recharge 	是否为充值，若是则将记录到当月充值记录中
+ * @param 	int   	$user_id   用户ID
+ * @param 	float 	$money     金额
+ * @param 	bool  	$external  是否站外
  */
-function wnd_inc_user_balance($user_id, $money, $recharge) {
-	return Wnd_Finance::inc_user_balance($user_id, $money, $recharge);
+function wnd_inc_user_balance($user_id, $money, $external) {
+	return Wnd_Finance::inc_user_balance($user_id, $money, $external);
 }
 
 /**

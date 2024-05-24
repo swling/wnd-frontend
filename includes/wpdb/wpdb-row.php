@@ -236,16 +236,28 @@ class WPDB_Row {
 	}
 
 	// 较高并发情况下：update 存在数据不同步的问题。通过加减语法，来处理高并发数据
-	public function inc($where, $column, $num) {
+	public function inc(array $where, string $column, float $num) {
+		return $this->inc_multiple($where, [$column => $num]);
+	}
+
+	// 较高并发情况下：update 存在数据不同步的问题。通过加减语法，来处理高并发数据
+	public function inc_multiple(array $where, array $data) {
 		$object_before = $this->query($where);
 		if (!$object_before) {
 			return false;
 		}
 
+		// 构建 SET 子句
+		$setClauses = [];
+		foreach ($data as $column => $value) {
+			$setClauses[] = $this->wpdb->prepare("$column = $column + %.3f", [$value]);
+		}
+		$set_sql = implode(', ', $setClauses);
+
 		$id_column = $this->primary_id_column;
 		$sql       = $this->wpdb->prepare(
-			"UPDATE $this->table SET $column = $column + %.2f WHERE $this->primary_id_column = %d",
-			[$num, $object_before->$id_column]
+			"UPDATE $this->table SET $set_sql WHERE $this->primary_id_column = %d",
+			[$object_before->$id_column]
 		);
 
 		$action = $this->wpdb->query($sql);

@@ -173,16 +173,17 @@ class Wnd_Order extends Wnd_Transaction {
 			}
 		}
 
-		// 注册用户：更新用户消费统计（将更新整站统计）；匿名订单：仅更新整站消费统计
-		if ($user_id) {
-			wnd_inc_user_expense($user_id, $total_amount);
-		} else {
+		// 匿名订单：仅更新整站消费统计
+		if (!$user_id) {
 			Wnd_Finance::update_fin_stats($total_amount, 'expense');
+			return $ID;
 		}
 
-		// 站内直接消费，无需支付平台支付校验，记录扣除账户余额、在线支付则不影响当前余额
+		// 注册用户：站内订单：扣除余额、更新消费；站外订单：仅更新消费
 		if (Wnd_Payment_Getway::is_internal_payment($ID)) {
 			wnd_inc_user_balance($user_id, $total_amount * -1, false);
+		} else {
+			wnd_inc_user_expense($user_id, $total_amount);
 		}
 
 		return $ID;

@@ -37,19 +37,27 @@ abstract class Wnd_Finance {
 	 * 充值成功 写入用户 字段
 	 *
 	 * @param 	int   	$user_id  	用户ID
-	 * @param 	float 	$money    		金额
-	 * @param 	bool  	$recharge 	是否为充值，若是则将记录到当月充值记录中
+	 * @param 	float 	$money 		金额
+	 * @param 	bool  	$external  	是否站外
 	 */
-	public static function inc_user_balance(int $user_id, float $amount, bool $recharge): bool {
+	public static function inc_user_balance(int $user_id, float $amount, bool $external): bool {
 		if (!get_user_by('id', $user_id)) {
 			return false;
 		}
 
 		$action = Wnd_User::inc_user_balance($user_id, $amount);
+		if (!$action) {
+			return $action;
+		}
 
-		// 整站按月统计充值和消费
-		if ($recharge and $action) {
+		// 站外充值
+		if ($amount > 0 and $external) {
 			static::update_fin_stats($amount, 'recharge');
+		}
+
+		// 站内消费
+		if ($amount < 0 and !$external) {
+			static::update_fin_stats($amount, 'expense');
 		}
 
 		return $action;
