@@ -66,11 +66,10 @@ class Wnd_Site_Stats extends Wnd_Query {
 	private static function get_annual_finance_stats($type): array {
 		// 过去十二个月初始化数据
 		$data  = [];
-		$today = new \DateTime();
-		for ($i = 12; $i >= 1; $i--) {
-			$date = clone $today;
-			$date->modify('-' . $i . ' month');
-			$data[$date->format('y-m')] = 0;
+		$today = new \DateTimeImmutable();
+		for ($i = 12; $i >= 0; $i--) {
+			$date        = $today->modify('-' . $i . ' month')->format('y-m');
+			$data[$date] = 0;
 		}
 
 		// 查询过去十二个月交易统计posts
@@ -96,7 +95,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 		// 将交易记录按日期对应合并到日期数据
 		foreach ($posts as $post) {
 			$month        = date('y-m', strtotime($post->post_date));
-			$data[$month] = number_format(($data[$month] + $post->post_content), 2, '.');
+			$data[$month] = number_format(($data[$month] + $post->post_content), 2, '.', '');
 		}
 
 		// 组成最终数据格式
@@ -130,16 +129,15 @@ class Wnd_Site_Stats extends Wnd_Query {
 
 		// 日期数据初始化
 		$data  = [];
-		$today = new \DateTime();
-		for ($i = $days; $i > 1; $i--) {
-			$date = clone $today;
-			$date->modify('-' . $i . ' day');
-			$data[$date->format('m-d')] = 0;
+		$today = new \DateTimeImmutable();
+		for ($i = $days; $i >= 0; $i--) {
+			$date        = $today->modify('-' . $i . ' day')->format('m-d');
+			$data[$date] = 0;
 		}
 		// 将交易记录按日期对应合并到日期数据
 		foreach ($results as $value) {
 			$day        = date('m-d', $value->time);
-			$data[$day] = number_format(($data[$day] + $value->total_amount), 2, '.');
+			$data[$day] = number_format(($data[$day] + $value->total_amount), 2, '.', '');
 		}
 
 		// 组成最终数据格式
