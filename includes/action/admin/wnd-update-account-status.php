@@ -18,7 +18,7 @@ class Wnd_Update_Account_Status extends Wnd_Action_Admin {
 	private $status;
 	private $before_status;
 
-	protected function execute(): array{
+	protected function execute(): array {
 		// 更新状态
 		$action = update_user_meta($this->target_user_id, 'status', $this->status);
 		if (!$action) {
@@ -47,6 +47,10 @@ class Wnd_Update_Account_Status extends Wnd_Action_Admin {
 	protected function check() {
 		if (!$this->target_user_id) {
 			throw new Exception(__('ID无效', 'wnd'));
+		}
+
+		if (is_super_admin($this->target_user_id)) {
+			throw new Exception(__('无法封禁超级管理员', 'wnd'));
 		}
 
 		// 未发生改变
