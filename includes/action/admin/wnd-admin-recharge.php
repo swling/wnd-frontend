@@ -3,7 +3,7 @@ namespace Wnd\Action\Admin;
 
 use Exception;
 use Wnd\Action\Wnd_Action_Admin;
-use Wnd\Model\Wnd_Recharge;
+use Wnd\Model\Wnd_Recharge_Admin;
 
 /**
  * 管理员ajax手动新增用户金额
@@ -16,7 +16,7 @@ class Wnd_Admin_Recharge extends Wnd_Action_Admin {
 	private $target_user;
 
 	protected function execute(): array {
-		$recharge = new Wnd_Recharge();
+		$recharge = new Wnd_Recharge_Admin();
 		$recharge->set_user_id($this->target_user->ID);
 		$recharge->set_total_amount($this->total_amount);
 		$recharge->set_payment_gateway('internal');

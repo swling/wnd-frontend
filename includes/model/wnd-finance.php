@@ -57,7 +57,7 @@ abstract class Wnd_Finance {
 
 		// 站内消费
 		if ($amount < 0 and !$external) {
-			static::update_fin_stats($amount, 'expense');
+			static::update_fin_stats($amount * -1, 'expense');
 		}
 
 		return $action;
