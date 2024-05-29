@@ -316,7 +316,7 @@ class Wnd_OSS_Handler {
 	public function is_direct_endpoint(string $endpoint): bool {
 		$buckets = wnd_get_config('oss_direct_bucket');
 		$buckets = explode(',', $buckets);
-		$bucket  = static::parseBucket($endpoint);
+		$bucket  = static::parse_bucket($endpoint);
 
 		return in_array($bucket, $buckets);
 	}
@@ -324,11 +324,13 @@ class Wnd_OSS_Handler {
 	/**
 	 * 根据 endpoint 域名解析出 bucket
 	 */
-	private static function parseBucket($endpoint): string {
+	private static function parse_bucket(string $endpoint): string {
 		$parsedUrl = parse_url($endpoint);
-		$host      = explode('.', $parsedUrl['host']);
-		$subdomain = $host[0];
+		if (!$parsedUrl) {
+			return '';
+		}
 
-		return $subdomain;
+		$host = explode('.', $parsedUrl['host']);
+		return $host[0] ?? '';
 	}
 }
