@@ -22,7 +22,7 @@ class Aliyun extends CloudClient {
 	 * RPC 签名鉴权包含在请求 body
 	 * 因此，为保持类的接口统一，在请求执行方法中完成签名及请求参数拼接，并调用父类方法发起请求
 	 */
-	protected function excuteRequest(): array{
+	protected function excuteRequest(): array {
 		$this->body = $this->generateRequestBody();
 		return parent::excuteRequest();
 	}
@@ -67,7 +67,7 @@ class Aliyun extends CloudClient {
 	 */
 	protected static function checkResponse(array $responseBody) {
 		$code = $responseBody['Code'] ?? 'OK';
-		if ('OK' != $code) {
+		if ('OK' != $code and '200' != $code) {
 			throw new Exception($responseBody['Code'] . ':' . $responseBody['Message']);
 		}
 	}
