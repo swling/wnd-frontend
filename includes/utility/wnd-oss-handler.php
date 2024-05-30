@@ -326,7 +326,7 @@ class Wnd_OSS_Handler {
 	 */
 	private static function parse_bucket(string $endpoint): string {
 		$parsedUrl = parse_url($endpoint);
-		if (!$parsedUrl) {
+		if (!isset($parsedUrl['host'])) {
 			return '';
 		}
 
