@@ -79,6 +79,13 @@ class Wnd_Meta {
 			return false;
 		}
 
+		// 从 update_metadata() 复制而来; 允许拦截数据更新操作
+		$prev_value = '';
+		$check      = apply_filters("update_{$this->meta_type}_metadata", null, $this->object_id, $meta_key, $val, $prev_value);
+		if (null !== $check) {
+			return (bool) $check;
+		}
+
 		$column    = sanitize_key($this->meta_type . '_id');
 		$id_column = ('user' === $this->meta_type) ? 'umeta_id' : 'meta_id';
 

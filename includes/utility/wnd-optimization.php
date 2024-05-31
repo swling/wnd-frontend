@@ -27,7 +27,7 @@ class Wnd_Optimization {
 		add_filter('redirect_canonical', [__CLASS__, 'filter_redirect_canonical']);
 
 		// 对象缓存views字段
-		add_filter('update_post_metadata', [__CLASS__, 'filter_update_post_metadata'], 10, 5);
+		add_filter('update_post_metadata', [__CLASS__, 'filter_update_post_metadata'], 10, 4);
 		add_filter('get_post_metadata', [__CLASS__, 'filter_get_post_metadata'], 10, 4);
 
 		// 禁用WP默认注册登录
@@ -102,7 +102,7 @@ class Wnd_Optimization {
 	 * 将文章流量统计：views字段缓存在对象缓存中，降低数据库读写
 	 * @since 2019.06.13
 	 */
-	public static function filter_update_post_metadata($check, $object_id, $meta_key, $meta_value, $prev_value) {
+	public static function filter_update_post_metadata($check, $object_id, $meta_key, $meta_value) {
 		if (!wp_using_ext_object_cache()) {
 			return $check;
 		}
