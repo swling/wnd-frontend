@@ -17,7 +17,7 @@ class Wnd_Meta {
 		$this->object_id = $object_id;
 	}
 
-	public function update_wnd_meta(string $meta_key, $meta_value): bool{
+	public function update_wnd_meta(string $meta_key, $meta_value): bool {
 		$update_meta = [$meta_key => $meta_value];
 		return $this->update_wnd_meta_array($update_meta);
 	}
@@ -27,7 +27,7 @@ class Wnd_Meta {
 		return $meta[$meta_key] ?? '';
 	}
 
-	public function delete_wnd_meta(string $meta_key): bool{
+	public function delete_wnd_meta(string $meta_key): bool {
 		$meta = $this->get_wp_meta();
 		if (!is_array($meta)) {
 			return false;
@@ -68,21 +68,45 @@ class Wnd_Meta {
 		}
 	}
 
-	public function inc_wp_meta(string $meta_key, float $val, bool $min_zero): bool{
-		$get_method    = '\get_' . $this->meta_type . '_meta';
-		$update_method = '\update_' . $this->meta_type . '_meta';
-		$old_value     = (float) $get_method($this->object_id, $meta_key, true);
-		$new_value     = $old_value + $val;
-
-		// 不为负数
-		if ($min_zero and $new_value < 0) {
-			$new_value = 0;
+	/**
+	 * @since 0.9.72
+	 * 重构使用：inc 语法 meta_value = meta_value + %.3f
+	 * 较高并发情况下：update 存在数据不同步的问题。通过加减语法，来处理高并发数据
+	 */
+	public function inc_wp_meta(string $meta_key, float $val): bool {
+		$table = _get_meta_table($this->meta_type);
+		if (!$table) {
+			return false;
 		}
 
-		return $update_method($this->object_id, $meta_key, $new_value);
+		$column    = sanitize_key($this->meta_type . '_id');
+		$id_column = ('user' === $this->meta_type) ? 'umeta_id' : 'meta_id';
+
+		global $wpdb;
+		$mid = $wpdb->get_var(
+			$wpdb->prepare("SELECT $id_column FROM $table WHERE meta_key = %s AND $column = %d LIMIT 1", [$meta_key, $this->object_id])
+		);
+		if (!$mid) {
+			return add_metadata($this->meta_type, $this->object_id, $meta_key, $val);
+		}
+
+		$sql = $wpdb->prepare(
+			"UPDATE $table SET meta_value = meta_value + %.3f WHERE $id_column = %s",
+			[$val, $mid]
+		);
+
+		$action = $wpdb->query($sql);
+		if (!$action) {
+			return false;
+		}
+
+		// WP Object Cache @see 原生函数：update_metadata()
+		wp_cache_delete($this->object_id, $this->meta_type . '_meta');
+
+		return $action;
 	}
 
-	public function inc_wnd_meta(string $meta_key, float $val, bool $min_zero): bool{
+	public function inc_wnd_meta(string $meta_key, float $val, bool $min_zero): bool {
 		$old_value = (float) $this->get_wnd_meta($meta_key);
 		$new_value = $old_value + $val;
 

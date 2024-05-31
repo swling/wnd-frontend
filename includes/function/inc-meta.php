@@ -26,9 +26,9 @@ function wnd_delete_user_meta(int $user_id, string $meta_key) {
 }
 
 // 用户字段增量函数
-function wnd_inc_user_meta(int $user_id, string $meta_key, float $val = 1, bool $min_zero = false) {
+function wnd_inc_user_meta(int $user_id, string $meta_key, float $val = 1) {
 	$meta = new Wnd_Meta_User($user_id);
-	return $meta->inc_wp_meta($meta_key, $val, $min_zero);
+	return $meta->inc_wp_meta($meta_key, $val);
 }
 
 // 用户数组字段增量函数
@@ -61,9 +61,9 @@ function wnd_delete_post_meta(int $post_id, string $meta_key) {
 }
 
 // 文章字段增量函数
-function wnd_inc_post_meta(int $post_id, string $meta_key, float $val = 1, bool $min_zero = false) {
+function wnd_inc_post_meta(int $post_id, string $meta_key, float $val = 1) {
 	$meta = new Wnd_Meta($post_id);
-	return $meta->inc_wp_meta($meta_key, $val, $min_zero);
+	return $meta->inc_wp_meta($meta_key, $val);
 }
 
 // 文章数组字段增量函数
@@ -73,7 +73,7 @@ function wnd_inc_wnd_post_meta(int $post_id, string $meta_key, float $val = 1, b
 }
 
 //############################################################################ option
-function wnd_update_option(string $option_name, string $key, $value): bool{
+function wnd_update_option(string $option_name, string $key, $value): bool {
 	$update_array = [$key => $value];
 	return wnd_update_option_array($option_name, $update_array);
 }
@@ -109,7 +109,7 @@ function wnd_get_option(string $option_name, string $meta_key) {
 }
 
 // 删除options数组元素
-function wnd_delete_option(string $option_name, string $meta_key): bool{
+function wnd_delete_option(string $option_name, string $meta_key): bool {
 	$array = get_option($option_name);
 	if (!$array or !is_array($array)) {
 		return false;
