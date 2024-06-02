@@ -39,6 +39,8 @@ class Wnd_Issue_Token_WeChat extends Wnd_Issue_Token_Abstract {
 	 * 微信注册或登录（支持仅微信 openid 或微信手机）
 	 */
 	protected function register_or_login(): int {
+		$this->display_name = 'wx_' . uniqid();
+
 		// 仅微信 openid
 		if (!$this->phone_code) {
 			return parent::register_or_login();

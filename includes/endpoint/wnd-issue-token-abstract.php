@@ -24,6 +24,8 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 
 	protected $user_pass;
 
+	protected $display_name;
+
 	protected $scene;
 
 	/**
@@ -53,7 +55,7 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 	 * 获取当前用户id
 	 * - 第三方应用注册/登录
 	 */
-	protected function register_or_login(): int{
+	protected function register_or_login(): int {
 		$this->user_login = $this->data['user_login'] ?? '';
 		$this->user_pass  = $this->data['user_pass'] ?? '';
 		if ($this->user_login and $this->user_pass) {
@@ -67,7 +69,7 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 		 * - 必须指定 display_name
 		 */
 		$openid       = $this->get_openid();
-		$display_name = $this->app_type . '_' . uniqid();
+		$display_name = $this->display_name ?: $this->app_type . '_' . uniqid();
 		$avatar       = '';
 		$user         = Wnd_Social_Login_Handler::login($this->app_type, $openid, $display_name, $avatar);
 
@@ -100,7 +102,7 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 	 * 防止重复获取远程 openid
 	 *
 	 */
-	final protected function get_openid(): string{
+	final protected function get_openid(): string {
 		$this->openid = $this->openid ?: $this->get_app_openid();
 		return $this->openid;
 	}
