@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\View;
 
+use Exception;
 use Wnd\Model\Wnd_Post;
 use Wnd\Model\Wnd_Term;
 
@@ -84,10 +85,23 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			$this->set_route('action', 'post/wnd_insert_post');
 		}
 
-		// revision
+		/**
+		 * 当前内容，存在待审核的 revision
+		 * - 阻止编辑
+		 * - 仅允许编辑 revision
+		 *
+		 */
 		$revision_id = Wnd_Post::get_revision_id($post_id);
 		if ($revision_id) {
-			$this->set_message(wnd_notification('<a href="' . get_edit_post_link($revision_id) . '">' . __('编辑版本', 'wnd') . '</a>', 'is-danger'));
+			throw new Exception('修改待审核 / Modifications pending review.&nbsp;
+			<a href="' . get_edit_post_link($revision_id) . '">重新编辑 / Re-edit</a>');
+		}
+
+		// 提示：正在编辑一个待审核版本
+		if (Wnd_Post::is_revision($post_id)) {
+			$message = '编辑待审版本 / Edit the version: ';
+			$message .= '<a target="_blank" href="' . get_permalink($this->post->post_parent) . '"><em>"' . get_the_title($this->post->post_parent) . '"</em></a>';
+			$this->set_message($message, 'is-danger');
 		}
 	}
 
