@@ -23,6 +23,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 	protected $post;
 
+	protected $is_revision = false;
+
 	/**
 	 * 当post已选的Terms
 	 * [
@@ -98,7 +100,8 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		}
 
 		// 提示：正在编辑一个待审核版本
-		if (Wnd_Post::is_revision($post_id)) {
+		$this->is_revision = Wnd_Post::is_revision($post_id);
+		if ($this->is_revision) {
 			$message = '编辑待审版本 / Edit the version: ';
 			$message .= '<a target="_blank" href="' . get_permalink($this->post->post_parent) . '"><em>"' . get_the_title($this->post->post_parent) . '"</em></a>';
 			$this->set_message($message, 'is-danger');
@@ -472,8 +475,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 * @param int    	$save_height 	保存图片高度
 	 */
 	public function add_post_image_upload($meta_key, $save_width = 0, $save_height = 0, $label = '') {
-		if (!$this->post_id) {
-			$this->add_html('<div class="notification">' . __('创建post失败，无法上传文件', 'wnd') . '</div>');
+		if (!$this->check_upload()) {
 			return;
 		}
 
@@ -491,8 +493,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	}
 
 	public function add_post_file_upload($meta_key, $is_paid, $label = '文件上传') {
-		if (!$this->post_id) {
-			$this->add_html('<div class="notification">' . __('创建post失败，无法上传文件', 'wnd') . '</div>');
+		if (!$this->check_upload()) {
 			return;
 		}
 
@@ -513,8 +514,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 * @since 2019.05.08
 	 */
 	public function add_post_gallery_upload($save_width = 0, $save_height = 0, $label = '') {
-		if (!$this->post_id) {
-			$this->add_html('<div class="notification">' . __('创建post失败，无法上传文件', 'wnd') . '</div>');
+		if (!$this->check_upload()) {
 			return;
 		}
 
@@ -529,6 +529,19 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		];
 
 		$this->add_gallery_upload($args);
+	}
+
+	private function check_upload(): bool {
+		if (!$this->post_id) {
+			$this->add_html('<div class="notification">' . __('创建post失败，无法上传文件', 'wnd') . '</div>');
+			return false;
+		}
+
+		if ($this->is_revision) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
