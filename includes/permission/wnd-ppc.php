@@ -131,6 +131,13 @@ class Wnd_PPC {
 		if (!current_user_can('edit_post', $this->post_id)) {
 			throw new Exception(__('权限错误', 'wnd'));
 		}
+
+		// 存在待审核版本
+		$revision_id = wnd_get_revision_id($this->post_id);
+		if ($revision_id) {
+			throw new Exception('修改待审核 / Modifications pending review.&nbsp;
+			<a href="' . get_edit_post_link($revision_id) . '">重新编辑 / Re-edit</a>');
+		}
 	}
 
 	/**
