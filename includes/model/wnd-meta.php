@@ -126,7 +126,8 @@ class Wnd_Meta {
 	}
 
 	protected function update_wp_meta($meta) {
-		return update_post_meta($this->object_id, static::META_KEY, $meta);
+		// 此处不得使用 update_post_meta() 因为它无法给 revision 添加字段;
+		return update_metadata('post', $this->object_id, static::META_KEY, $meta);
 	}
 
 	protected function get_wp_meta() {
@@ -134,6 +135,7 @@ class Wnd_Meta {
 	}
 
 	protected function delete_wp_meta() {
-		return delete_post_meta($this->object_id, static::META_KEY);
+		// 此处不得使用 delete_post_meta() 因为它无法作用于 revision;
+		return delete_metadata( 'post', $this->object_id, static::META_KEY);
 	}
 }

@@ -87,22 +87,9 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			$this->set_route('action', 'post/wnd_insert_post');
 		}
 
-		/**
-		 * 当前内容，存在待审核的 revision
-		 * - 阻止编辑
-		 * - 仅允许编辑 revision
-		 *
-		 */
-		$revision_id = Wnd_Post::get_revision_id($post_id);
-		if ($revision_id) {
-			throw new Exception('修改待审核 / Modifications pending review.&nbsp;
-			<a href="' . get_edit_post_link($revision_id) . '">重新编辑 / Re-edit</a>');
-		}
-
 		// 提示：正在编辑一个待审核版本
-		$this->is_revision = Wnd_Post::is_revision($post_id);
 		if ($this->is_revision) {
-			$message = '编辑待审版本 / Edit the version: ';
+			$message = '编辑修订版本 / Edit the revision: ';
 			$message .= '<a target="_blank" href="' . get_permalink($this->post->post_parent) . '"><em>"' . get_the_title($this->post->post_parent) . '"</em></a>';
 			$this->set_message($message, 'is-danger');
 		}
@@ -153,7 +140,13 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		 * 获取当前post 已选term数据
 		 * @since 2020.04.19
 		 */
-		$this->taxonomies    = get_object_taxonomies($this->post_type, 'names');
+		$this->is_revision = Wnd_Post::is_revision($this->post_id);
+		if ($this->is_revision) {
+			$post_type = get_post_type($this->post->post_parent);
+		} else {
+			$post_type = $this->post->post_type;
+		}
+		$this->taxonomies    = get_object_taxonomies($post_type, 'names');
 		$this->current_terms = $this->taxonomies ? $this->get_current_terms() : [];
 	}
 

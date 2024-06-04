@@ -97,7 +97,7 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 			]);
 
 			// 主题定义的表单优先，其次为插件表单
-			$module = static::get_post_form_module($post_type);
+			$module = static::get_post_form_module($post_type, $edit_post);
 			return '<script>wnd_ajax_embed("#ajax-module", "' . $module . '", ' . $params . ');</script>';
 		}
 
@@ -113,8 +113,11 @@ class Wnd_Front_Page extends Wnd_Module_Html {
 	 * 根据 Post Type 查找对应表单模块
 	 * @since 0.9.39
 	 */
-	private static function get_post_form_module(string $post_type): string {
+	private static function get_post_form_module(string $post_type, $edit_post=null): string {
 		// 主题定义的表单优先，其次为插件表单
+		if(wnd_is_revision($edit_post)){
+			$post_type = get_post_type($edit_post->post_parent);
+		}
 		$module = 'Wndt_Post_Form_' . $post_type;
 		$class  = 'Wndt\\Module\\Post\\' . $module;
 		if (!class_exists($class)) {

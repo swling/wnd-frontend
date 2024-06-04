@@ -36,14 +36,8 @@ $post_type.'_tag';//标签taxonomy
 @see Wnd\Modle\Wnd_Init::register_post_status();
 
 # 自定义文章版本
-本插件自定义了一个文章版本功能，假定当前 $post ,则该 $post 版本定义：
-```php
-$revision['post_parent'] = $post->ID
-$revision['post_type'] = $post->post_type
+post type 为 wp 元素 revision
 
-// 此外，为区分常规child post，在自定义revision中，设置wp post meta：
-update_post_meta($revision_id, '_wnd_revision', 'true');
-```
 ## 版本创建条件：
 非管理员，编辑已公开发布过的文章
 

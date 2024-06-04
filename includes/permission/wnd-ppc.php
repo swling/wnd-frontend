@@ -12,6 +12,10 @@ use Exception;
  * - 更新权限：WP默认 current_user_can('edit_post', $this->post_id)
  * - 更改状态：仅管理员可设置为 publish
  *
+ * @since 0.9.72
+ * 主题覆盖：
+ *  - 定义子类 'Wndt\\Permission\\Wndt_PPC_' . $post_type;
+ *
  * @since 0.9.36
  */
 class Wnd_PPC {
@@ -37,7 +41,13 @@ class Wnd_PPC {
 			throw new Exception($post_type . '未设指定Post Type');
 		}
 
-		$instance = new self($post_type);
+		// 优先从主题加载：主题中按下列路径新建本类的子类
+		$ppc_class_name = 'Wndt\\Permission\\Wndt_PPC_' . $post_type;
+		if (class_exists($ppc_class_name)) {
+			$instance = new $ppc_class_name($post_type);
+		} else {
+			$instance = new static($post_type);
+		}
 
 		/**
 		 * 可通过此 filter 指定 PPC 实例化对象
@@ -117,6 +127,8 @@ class Wnd_PPC {
 		if (!current_user_can('edit_post', $this->post_id)) {
 			throw new Exception(__('权限错误', 'wnd'));
 		}
+
+		$this->check_revision();
 	}
 
 	/**
@@ -132,10 +144,14 @@ class Wnd_PPC {
 			throw new Exception(__('权限错误', 'wnd'));
 		}
 
-		// 存在待审核版本
+		$this->check_revision();
+	}
+
+	// 是否存在待审修订版本
+	private function check_revision() {
 		$revision_id = wnd_get_revision_id($this->post_id);
 		if ($revision_id) {
-			throw new Exception('修改待审核 / Modifications pending review.&nbsp;
+			throw new Exception('修订待审核 / Revision pending review.&nbsp;
 			<a href="' . get_edit_post_link($revision_id) . '">重新编辑 / Re-edit</a>');
 		}
 	}

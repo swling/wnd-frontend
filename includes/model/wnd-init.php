@@ -13,6 +13,7 @@ use Wnd\Utility\Wnd_JWT_Handler;
 use Wnd\Utility\Wnd_language;
 use Wnd\Utility\Wnd_Optimization;
 use Wnd\Utility\Wnd_OSS_Handler;
+use Wnd\Utility\Wnd_Preview_Revisions;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\Utility\Wnd_Upgrader_Plugin_This;
 
@@ -171,16 +172,7 @@ class Wnd_Init {
 	 *
 	 */
 	public static function register_post_status() {
-		// 订单功能类 Post Status公共属性
-		$transaction_common_args = [
-			'public'                    => false,
-			'exclude_from_search'       => false,
-			'show_in_admin_all_list'    => false,
-			'show_in_admin_status_list' => false,
-		];
-
 		$post_statuses = [
-
 			/**
 			 * wp_insert_post可直接写入未经注册的post_status
 			 * 未经注册的post_status无法通过wp_query进行筛选，故此注册
@@ -197,6 +189,11 @@ class Wnd_Init {
 
 		foreach ($post_statuses as $post_status => $values) {
 			register_post_status($post_status, $values);
+		}
+
+		// 允许预览版本：本插件中，普通用户公开发布后的内容，再次修改时，新增一个版本作为审核
+		if(is_user_logged_in()){
+			new Wnd_Preview_Revisions();
 		}
 	}
 

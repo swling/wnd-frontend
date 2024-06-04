@@ -116,10 +116,10 @@ class Wnd_Insert_Post extends Wnd_Action {
 	private function insert() {
 		// 创建revision 该revision不同于WordPress原生revision：创建一个同类型Post，设置post parent，并设置wp post meta
 		if ($this->should_be_update_reversion()) {
-			$this->post_data['ID']                                 = Wnd_Post::get_revision_id($this->post_id);
-			$this->post_data['post_parent']                        = $this->post_id;
-			$this->post_data['post_name']                          = uniqid();
-			$this->wp_meta_data[Wnd_Post::get_revision_meta_key()] = 'true';
+			$this->post_data['ID']          = Wnd_Post::get_revision_id($this->post_id);
+			$this->post_data['post_parent'] = $this->post_id;
+			$this->post_data['post_name']   = uniqid();
+			$this->post_data['post_type']   = 'revision';
 		}
 
 		// 创建或更新Post

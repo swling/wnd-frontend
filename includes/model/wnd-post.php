@@ -19,7 +19,7 @@ abstract class Wnd_Post {
 	 * @param  string 	$post_type  		类型
 	 * @return int    		$post_id|0 		成功获取草稿返回ID，否则返回0
 	 */
-	public static function get_draft(string $post_type): int{
+	public static function get_draft(string $post_type): int {
 		$user_id = get_current_user_id();
 		if (!$user_id) {
 			return 0;
@@ -168,9 +168,11 @@ abstract class Wnd_Post {
 			foreach ($wp_meta_data as $key => $value) {
 				// 空值，如设置了表单，但无数据的情况，过滤
 				if ('' == $value) {
-					delete_post_meta($post_id, $key);
+					// 此处不得使用 delete_post_meta() 因为它无法作用于 revision;
+					delete_metadata( 'post', $post_id, $key);
 				} else {
-					update_post_meta($post_id, $key, $value);
+					// 此处不得使用 update_post_meta() 因为它无法给 revision 添加字段;
+					update_metadata('post', $post_id, $key, $value);
 				}
 
 			}
@@ -294,8 +296,9 @@ abstract class Wnd_Post {
 	 *
 	 * @return array : post type name数组
 	 */
-	public static function get_allowed_post_types(): array{
-		$post_types = get_post_types(['public' => true], 'names', 'and');
+	public static function get_allowed_post_types(): array {
+		$post_types   = get_post_types(['public' => true], 'names', 'and');
+		$post_types[] = 'revision';
 		// 排除页面/站内信
 		if (!is_super_admin()) {
 			unset($post_types['page']);
@@ -317,10 +320,8 @@ abstract class Wnd_Post {
 			'order'       => 'DESC',
 			'orderby'     => 'date ID',
 			'post_parent' => $post_id,
-			'post_type'   => get_post_type($post_id),
+			'post_type'   => 'revision',
 			'post_status' => 'any',
-			'meta_key'    => static::get_revision_meta_key(),
-			'meta_value'  => 'true',
 		];
 
 		$revisions = get_posts($args);
@@ -337,19 +338,12 @@ abstract class Wnd_Post {
 	 * @since 2020.05.20
 	 */
 	public static function is_revision($post_id): bool {
-		if ('true' == get_post_meta($post_id, static::get_revision_meta_key(), true)) {
-			return true;
+		$revision = get_post($post_id);
+		if (!$revision) {
+			return false;
 		}
 
-		return false;
-	}
-
-	/**
-	 * 定义revision meta key
-	 * @since 2020.05.20
-	 */
-	public static function get_revision_meta_key(): string {
-		return '_wnd_revision';
+		return 'revision' == $revision->post_type;
 	}
 
 	/**
@@ -376,6 +370,7 @@ abstract class Wnd_Post {
 
 		// 移除revision别名
 		unset($update['post_name']);
+		unset($update['post_type']);
 
 		$update['ID']          = $revision['post_parent'];
 		$update['post_status'] = $post_status;
@@ -387,7 +382,7 @@ abstract class Wnd_Post {
 
 		// restore post meta
 		foreach (get_post_meta($revision_id) as $key => $value) {
-			if (static::get_revision_meta_key() == $key) {
+			if ('views' == $key) {
 				continue;
 			}
 
@@ -396,14 +391,16 @@ abstract class Wnd_Post {
 		unset($key, $value);
 
 		// restore terms
-		foreach (get_object_taxonomies($revision['post_type'], 'names') as $taxonomy) {
+		$post_type = get_post_type($revision['post_parent']);
+		foreach (get_object_taxonomies($post_type, 'names') as $taxonomy) {
 			$terms = Wnd_Term::get_post_terms($revision_id, $taxonomy);
 			if ($terms) {
 				wp_set_post_terms($revision['post_parent'], $terms, $taxonomy);
 			}
 		}unset($taxonomy);
 
-		// 永久删除revision
+		// 永久删除revision（此处必须手动删除 term relationships）
+		wp_delete_object_term_relationships($revision_id, get_object_taxonomies($post_type));
 		wp_delete_post($revision_id, true);
 
 		return $post_id;

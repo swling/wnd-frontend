@@ -15,7 +15,7 @@ class Wnd_Update_Views extends Wnd_Action {
 
 	private $post_id;
 
-	protected function execute(): array{
+	protected function execute(): array {
 		// 更新字段信息
 		if (wnd_inc_post_meta($this->post_id, 'views', 1)) {
 			$data = [];
@@ -42,6 +42,10 @@ class Wnd_Update_Views extends Wnd_Action {
 	protected function check() {
 		if (!$this->post_id) {
 			throw new Exception(__('ID无效', 'wnd'));
+		}
+
+		if (wnd_is_revision($this->post_id)) {
+			throw new Exception('revision');
 		}
 	}
 
