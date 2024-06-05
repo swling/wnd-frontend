@@ -136,8 +136,18 @@ class Wnd_Site_Stats extends Wnd_Query {
 		}
 		// 将交易记录按日期对应合并到日期数据
 		foreach ($results as $value) {
-			$day        = date('m-d', $value->time);
-			$data[$day] = number_format(($data[$day] + $value->total_amount), 2, '.', '');
+			if (in_array($value->status, ['pending', 'refunded', 'cancelled'])) {
+				continue;
+			}
+
+			$day = date('m-d', $value->time);
+			if (!isset($data[$day])) {
+				continue;
+			}
+
+			$props        = json_decode($value->props);
+			$total_amount = $props->custom_total_amount ?: $props->total_amount;
+			$data[$day]   = number_format(($data[$day] + $total_amount), 2, '.', '');
 		}
 
 		// 组成最终数据格式
