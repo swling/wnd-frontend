@@ -145,9 +145,14 @@ class Wnd_Site_Stats extends Wnd_Query {
 				continue;
 			}
 
-			$props        = json_decode($value->props);
-			$total_amount = $props->custom_total_amount ?: $props->total_amount;
-			$data[$day]   = number_format(($data[$day] + $total_amount), 2, '.', '');
+			$props = json_decode($value->props);
+			if ('recharge' == $type) {
+				$total_amount = floatval($props->custom_total_amount ?? $props->total_amount);
+			} else {
+				$total_amount = $value->total_amount;
+			}
+
+			$data[$day] = number_format(($data[$day] + $total_amount), 2, '.', '');
 		}
 
 		// 组成最终数据格式
