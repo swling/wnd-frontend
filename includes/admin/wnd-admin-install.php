@@ -33,7 +33,6 @@ class Wnd_Admin_Install {
 				'commission_rate'           => '',
 				'enable_anon_order'         => 0,
 
-				'pay_return_url'            => get_option('home'),
 				'alipay_appid'              => '',
 				'alipay_private_key'        => '',
 				'alipay_public_key'         => '',

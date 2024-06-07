@@ -148,7 +148,6 @@ class Wnd_language {
 
 		// Wnd Filter
 		add_filter('wnd_option_reg_redirect_url', [__CLASS__, 'filter_link'], 99);
-		add_filter('wnd_option_pay_return_url', [__CLASS__, 'filter_return_link'], 99);
 	}
 
 	/**
@@ -171,20 +170,6 @@ class Wnd_language {
 		}
 
 		return $lang ? add_query_arg(static::$request_key, $lang, $link) : $link;
-	}
-
-	/**
-	 * 根据当前语言参数，自动为外部回调链接添加语言参数
-	 * 之所以存在本方法，因为在支付类场景，不允许回调带参，故此需要调用用户字段来设置
-	 * @since 2020.04.11
-	 */
-	public static function filter_return_link($link) {
-		$user_locale = wnd_get_user_locale(get_current_user_id());
-		if ('default' == $user_locale or get_locale() == $user_locale) {
-			return $link;
-		}
-
-		return add_query_arg(static::$request_key, $user_locale, $link);
 	}
 
 	/**

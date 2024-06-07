@@ -195,4 +195,8 @@ class Wnd_Admin_Upgrade {
 			}
 		}
 	}
+
+	private static function v_0_9_73() {
+		wnd_delete_option('wnd', 'pay_return_url');
+	}
 }

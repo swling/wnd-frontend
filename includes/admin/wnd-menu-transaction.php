@@ -38,15 +38,6 @@ class Wnd_Menu_Transaction extends Wnd_Menus {
 			]
 		);
 
-		$form->add_url(
-			[
-				'name'        => 'pay_return_url',
-				'label'       => '充值返回',
-				'required'    => false,
-				'placeholder' => '用户充值后跳转地址',
-			]
-		);
-
 		$form->set_submit_button('保存', 'is-danger');
 
 		return $form->get_json();

@@ -155,7 +155,7 @@ apply_filters('wnd_option_reg_redirect_url', $redirect_url);
 *@since 2020.04.12
 *支付成功后跳转链接（包含订单或充值）
 */
-apply_filters('wnd_option_pay_return_url', $return_url);
+apply_filters('wnd_pay_return_url', $url, $type, $object_id);
 
 ```
 ## 订单

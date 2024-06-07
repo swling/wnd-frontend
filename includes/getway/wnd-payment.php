@@ -158,14 +158,15 @@ abstract class Wnd_Payment {
 
 		// 订单
 		if ($object_id) {
-			$url = get_permalink($object_id) ?: (wnd_get_config('pay_return_url') ?: home_url());
-
-			// 充值
+			$url = get_permalink($object_id) ?: home_url();
 		} else {
-			$url = wnd_get_config('pay_return_url') ?: home_url();
+			$url = wnd_get_front_page_url() ?: home_url();
 		}
 
-		header('Location:' . add_query_arg('from', $type . '_successful', $url));
+		// Filter
+		$return_url = apply_filters('wnd_pay_return_url', $url, $type, $object_id);
+
+		header('Location:' . add_query_arg('from', $type . '_successful', $return_url));
 		exit;
 	}
 
