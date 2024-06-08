@@ -140,6 +140,10 @@ class Wnd_Site_Stats extends Wnd_Query {
 				continue;
 			}
 
+			if (!$value) {
+				continue;
+			}
+
 			$day = date('m-d', $value->time);
 			if (!isset($data[$day])) {
 				continue;
