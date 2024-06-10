@@ -108,11 +108,7 @@ function _wnd_render_filter(container, filter_json, add_class) {
 					return 'user-list';
 				}
 
-				if (wnd.fin_types.includes(post_type)) {
-					return 'order-list';
-				} else {
-					return 'post-list';
-				}
+				return 'post-list';
 			},
 
 			update_filter: function (key, value, remove_args = []) {
@@ -155,23 +151,21 @@ function _wnd_render_filter(container, filter_json, add_class) {
 					headers: {
 						'Container': this.get_container(),
 					},
-				})
-					.then(response => {
-						wnd_loading(this.get_container(), true);
-						if ('undefined' == typeof response.data.status) {
-							console.log(response);
-							return false;
-						}
-						// 合并响应数据
-						this.filter = Object.assign(this.filter, response.data.data);
+				}).then(response => {
+					wnd_loading(this.get_container(), true);
+					if ('undefined' == typeof response.data.status) {
+						console.log(response);
+						return false;
+					}
+					// 合并响应数据
+					this.filter = Object.assign(this.filter, response.data.data);
 
-						this.$nextTick(function () {
-							funTransitionHeight(parent, trs_time);
-						});
-					})
-					.catch(function (error) { // 请求失败处理
-						console.log(error);
+					this.$nextTick(function () {
+						funTransitionHeight(parent, trs_time);
 					});
+				}).catch(function (error) {
+					console.log(error);
+				});
 			},
 
 		},
