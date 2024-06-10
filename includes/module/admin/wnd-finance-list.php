@@ -16,8 +16,8 @@ class Wnd_Finance_List extends Wnd_Module_Html {
 				'label'   => '订单类型',
 				'key'     => 'type',
 				'options' => [
-					__('订单', 'wndt') => 'order',
-					__('充值', 'wndt') => 'recharge',
+					__('订单', 'wnd') => 'order',
+					__('充值', 'wnd') => 'recharge',
 				],
 			],
 			[
