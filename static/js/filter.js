@@ -185,10 +185,10 @@ function _wnd_render_filter(container, filter_json, add_class) {
 <table class="table is-fullwidth is-hoverable is-striped">
 <thead>
 <tr>
-<th class="is-narrow is-hidden-mobile">日期</th>
-<th class="is-narrow">用户</th>
-<th>标题</th>
-<th class="is-narrow has-text-centered">操作</th>
+<th class="is-narrow is-hidden-mobile">日期/Date</th>
+<th class="is-narrow">用户/User</th>
+<th>标题/Title</th>
+<th class="is-narrow has-text-centered">操作/Set</th>
 </tr>
 </thead>
 
@@ -198,41 +198,8 @@ function _wnd_render_filter(container, filter_json, add_class) {
 <td class="is-narrow"><a :href="post.author.link" target="_blank">{{post.author.name}}</a></td>
 <td><a :href="post.link" target="_blank">{{post.post_title}}</a></td>
 <td class="is-narrow has-text-centered">
-<a @click='ajax_modal("post/wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
+<a @click='ajax_modal("post/wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>&nbsp;
 <a @click='ajax_modal("post/wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
-</td>
-</tr>
-</tbody>
-</table>`,
-				methods: {
-					ajax_modal: function (module, params) {
-						wnd_ajax_modal(module, params);
-					}
-				},
-			},
-
-			'order-list': {
-				props: ['posts'],
-				template: `
-<table class="table is-fullwidth is-hoverable is-striped">
-<thead>
-<tr>
-<th class="is-narrow is-hidden-mobile">订单日期</th>
-<th class="is-narrow">用户</th>
-<th>金额</th>
-<th class="is-narrow has-text-centered">操作</th>
-</tr>
-</thead>
-
-<tbody>
-<tr v-for="(post, index) in posts">
-<td class="is-narrow is-hidden-mobile">{{post.post_date}}</td>
-<td class="is-narrow"><a :href="post.author.link" target="_blank">{{post.author.name}}</a></td>
-<td>{{post.post_content}}</td>
-<td class="is-narrow has-text-centered">
-<a @click='ajax_modal("post/wnd_post_detail", {"post_id": post.ID} )'><i class="fas fa-info-circle"></i></a>
-<a @click='ajax_modal("post/wnd_post_status_form", {"post_id": post.ID} )'><i class="fas fa-cog"></i></a>
-<a @click='ajax_modal("admin/wnd_refund_form", {"transaction_id": post.ID} )'><i class="fas fa-coins"></i></a>
 </td>
 </tr>
 </tbody>
@@ -250,9 +217,9 @@ function _wnd_render_filter(container, filter_json, add_class) {
 <table class="table is-fullwidth is-hoverable is-striped">
 <thead>
 <tr>
-<th class="is-narrow is-hidden-mobile">注册日期</th>
-<th>用户</th>
-<th class="is-narrow has-text-centered">操作</th>
+<th class="is-narrow is-hidden-mobile">注册日期/Reg Date</th>
+<th>用户/User</th>
+<th class="is-narrow has-text-centered">操作/Set</th>
 </tr>
 </thead>
 
@@ -260,8 +227,10 @@ function _wnd_render_filter(container, filter_json, add_class) {
 <tr v-for="(user, index) in users">
 <td class="is-narrow is-hidden-mobile">{{user.data.user_registered}}</td>
 <td><a :href="user.data.link" target="_blank">{{user.data.display_name}}</a></td>
-<a @click='ajax_modal("admin/wnd_delete_user_form", {"user_id": user.ID} )'><i class="fas fa-trash-alt"></i></a>
+<td class="is-narrow has-text-centered">
+<a @click='ajax_modal("admin/wnd_delete_user_form", {"user_id": user.ID} )'><i class="fas fa-trash-alt"></i></a>&nbsp;
 <a @click='ajax_modal("admin/wnd_account_status_form", {"user_id": user.ID} )'><i class="fas fa-cog"></i></a>
+</td>
 </tr>
 </tbody>
 </table>`,
