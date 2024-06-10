@@ -150,8 +150,12 @@ class Wnd_Site_Stats extends Wnd_Query {
 			}
 
 			$props = json_decode($value->props);
+			if (!$props) {
+				continue;
+			}
+
 			if ('recharge' == $type) {
-				$total_amount = floatval($props->custom_total_amount ?? $props->total_amount);
+				$total_amount = floatval($props->custom_total_amount ?: $props->total_amount);
 			} else {
 				$total_amount = $value->total_amount;
 			}
