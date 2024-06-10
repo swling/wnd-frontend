@@ -11,7 +11,7 @@ use Wnd\View\Wnd_Form_WP;
  */
 class Wnd_Post_Status_Form extends Wnd_Module_Form {
 
-	protected static function configure_form(array $args = []): object{
+	protected static function configure_form(array $args = []): object {
 		$post = get_post($args['post_id']);
 		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
@@ -58,36 +58,19 @@ class Wnd_Post_Status_Form extends Wnd_Module_Form {
 			]
 		);
 		$form->add_html('</div>');
+		$form->add_html('
+			<div class="field is-grouped is-grouped-centered">
+			<a class="button" href="' . get_edit_post_link($post->ID) . '" target="_blank">' . __('编辑', 'wnd') . '</a>
+			</div>');
 
 		// 管理员权限
 		if (wnd_is_manager()) {
-			// 公开的post type可设置置顶
-			if (in_array($post->post_type, get_post_types(['public' => true]))) {
-				$form->add_html('<div class="field is-grouped is-grouped-centered">');
-				$form->add_radio(
-					[
-						'name'    => 'stick_post',
-						'options' => [
-							__('置顶', 'wnd') => 'stick',
-							__('取消', 'wnd') => 'unstick',
-						],
-						'checked' => (false === array_search($post->ID, wnd_get_sticky_posts($post->post_type))) ? '' : 'stick',
-						'class'   => 'is-checkradio is-danger',
-					]
-				);
-				$form->add_html('</div>');
-			}
-
 			$form->add_textarea(
 				[
 					'name'        => 'remarks',
 					'placeholder' => __('备注（可选）', 'wnd'),
 				]
 			);
-		}
-
-		if ('order' == $post->post_type) {
-			$form->add_html(wnd_message(__('删除订单记录，不可退款，请谨慎操作', 'wnd'), 'is-danger'));
 		}
 
 		$form->add_hidden('post_id', $args['post_id']);
