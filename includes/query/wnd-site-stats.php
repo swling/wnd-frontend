@@ -154,8 +154,11 @@ class Wnd_Site_Stats extends Wnd_Query {
 				continue;
 			}
 
+			// 匿名充值订单中 $value->total_amount 会随着用户消耗而减少，故从订单属性中读取原始数据
 			if ('recharge' == $type) {
-				$total_amount = floatval($props->custom_total_amount ?: $props->total_amount);
+				$custom_total_amount = $props->custom_total_amount ?? 0;
+				$total_amount        = $custom_total_amount ?: ($props->total_amount ?? 0);
+				$total_amount        = floatval($total_amount);
 			} else {
 				$total_amount = $value->total_amount;
 			}
