@@ -14,12 +14,15 @@ use Wnd\Action\Wnd_Action;
  * @since 初始化 用户注册
  */
 class Wnd_Reg extends Wnd_Action {
+	// 注册用户需设置防抖，防止用户短期重复提交写入
+	public $period      = 5;
+	public $max_actions = 1;
 
 	private $user_data;
 	private $user_meta_data;
 	private $wp_user_meta_data;
 
-	protected function execute(): array{
+	protected function execute(): array {
 		// 写入新用户
 		$user_id = wp_insert_user($this->user_data);
 		if (is_wp_error($user_id)) {
