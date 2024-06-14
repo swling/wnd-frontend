@@ -2,7 +2,6 @@
 namespace Wnd\Controller;
 
 use Exception;
-use Wnd\Action\Wnd_Action;
 
 /**
  * # 操作防护
@@ -73,7 +72,7 @@ class Wnd_Defender_Action {
 	/**
 	 * 构造
 	 */
-	public function __construct(Wnd_Action $wnd_action) {
+	public function __construct(object $wnd_action) {
 		// 过滤钩子：可通过本过滤器，修改对应 Action 的拦截策略
 		$defend_args = [
 			'period'      => $wnd_action->period,
@@ -91,22 +90,21 @@ class Wnd_Defender_Action {
 		$this->action_log       = $this->get_action_log();
 	}
 
-	private function get_actions_log(): array{
+	public function get_actions_log(): array {
 		$actions_log = wp_cache_get($this->cache_key, static::$meta_key);
 		$actions_log = is_array($actions_log) ? $actions_log : [];
 
 		// 清理超期的日志
 		foreach ($actions_log as $action => $log) {
-			if (time() - $log['time'] > $this->period) {
+			if (time() - $log['time'] > 3600 * 24) {
 				unset($actions_log[$action]);
 			}
-
 		}
 
 		return $actions_log;
 	}
 
-	private function get_action_log(): array{
+	private function get_action_log(): array {
 		$action_log = $this->actions_log[$this->action] ?? [];
 		return array_merge(static::$default_action_log, $action_log);
 	}
@@ -150,7 +148,8 @@ class Wnd_Defender_Action {
 
 		$this->actions_log[$this->action] = $this->action_log;
 
-		wp_cache_set($this->cache_key, $this->actions_log, static::$meta_key, $this->period);
+		// 注意：此处写入的是单个用户/ip，所有操作的全局数据组，故超时时间应该较长（一天）
+		wp_cache_set($this->cache_key, $this->actions_log, static::$meta_key, 3600 * 24);
 	}
 
 	/**

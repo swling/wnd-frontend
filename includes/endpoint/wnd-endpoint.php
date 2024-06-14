@@ -2,6 +2,7 @@
 namespace Wnd\Endpoint;
 
 use Exception;
+use Wnd\Controller\Wnd_Defender_Action;
 use Wnd\Controller\Wnd_Request;
 use WP_REST_Request;
 
@@ -33,13 +34,25 @@ abstract class Wnd_Endpoint {
 	protected $content_type;
 
 	/**
+	 * 时间范围
+	 * 与 $this->max_actions 结合，用于控制操作执行频次
+	 */
+	public $period;
+
+	/**
+	 * 最多执行
+	 * 与 $this->period 结合，用于控制操作执行频次
+	 */
+	public $max_actions;
+
+	/**
 	 * 构造
 	 *
 	 * - 校验请求数据
 	 * - 核查权限许可
 	 *
 	 */
-	public function __construct(WP_REST_Request $wp_rest_request) {
+	final public function __construct(WP_REST_Request $wp_rest_request) {
 		/**
 		 * 重写 Rest API 输出
 		 */
@@ -49,6 +62,11 @@ abstract class Wnd_Endpoint {
 		$this->data    = $this->request->get_request();
 
 		try {
+			// 防护
+			$defender = new Wnd_Defender_Action($this);
+			$defender->defend_action();
+			$defender->write_log();
+
 			$this->check();
 			$this->set_content_type();
 			$this->do();
@@ -118,4 +136,13 @@ abstract class Wnd_Endpoint {
 	 * - 文本响应数据应直接输出；图像、文件等则应返回对应对象
 	 */
 	abstract protected function do();
+
+	/**
+	 * 获取当前操作类名称
+	 * @since 0.9.50
+	 */
+	public static function get_class_name(): string {
+		$class_name = get_called_class();
+		return strtolower($class_name);
+	}
 }

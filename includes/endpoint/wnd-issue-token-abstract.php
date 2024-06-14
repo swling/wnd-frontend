@@ -18,6 +18,10 @@ use Wnd\Utility\Wnd_Qrcode_Login;
  */
 abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 
+	// 注册用户需设置防抖，防止用户短期重复提交写入
+	public $period      = 5;
+	public $max_actions = 1;
+
 	protected $content_type = 'json';
 
 	protected $user_login;

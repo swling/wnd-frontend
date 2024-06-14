@@ -95,17 +95,15 @@ abstract class Wnd_Action {
 	 * 封装执行
 	 * @since 0.9.50
 	 */
-	final public function do_action(): array{
+	final public function do_action(): array {
 		// 防护
 		$defender = new Wnd_Defender_Action($this);
 		$defender->defend_action();
+		$defender->write_log();
 
 		// 执行
 		$execute = $this->execute();
 		$this->complete();
-
-		// 执行成功
-		$defender->write_log();
 
 		// 响应
 		return $execute;
@@ -127,7 +125,7 @@ abstract class Wnd_Action {
 	 * 获取当前操作类名称
 	 * @since 0.9.50
 	 */
-	public static function get_class_name(): string{
+	public static function get_class_name(): string {
 		$class_name = get_called_class();
 		return strtolower($class_name);
 	}
