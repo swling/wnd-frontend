@@ -238,10 +238,8 @@ abstract class Wnd_Transaction {
 		/**
 		 * 全局统一 Transaction 数据设定：
 		 * - @since 0.9.37 设定状态
-		 * - @since 2019.03.31 查询符合当前条件，但尚未完成的付款订单
 		 */
-		$this->status         = $is_completed ? (static::$completed_status) : (static::$pending_status);
-		$this->transaction_id = $this->get_reusable_transaction_id();
+		$this->status = $is_completed ? (static::$completed_status) : (static::$pending_status);
 
 		// 写入数据
 		$this->generate_transaction_data();
@@ -491,30 +489,6 @@ abstract class Wnd_Transaction {
 		}
 
 		return $transaction->type ?? '';
-	}
-
-	/**
-	 * 同一用户同等条件下，未完成订单复用时间限制(秒)
-	 * @since 0.9.32
-	 */
-	private function get_reusable_transaction_id(): int {
-		/**
-		 * @since 2019.03.31 查询符合当前条件，但尚未完成付款的订单
-		 * 匿名订单用户均为0，不可短时间内复用订单记录，或者会造成订单冲突
-		 */
-		$args = [
-			'user_id'   => $this->user_id,
-			'object_id' => $this->object_id,
-			'status'    => static::$pending_status,
-			'type'      => $this->transaction_type,
-		];
-		if (!$this->user_id) {
-			$args['time'] = '< ' . time() - 86400;
-		}
-		$reusable_posts = static::get_results($args, 1);
-
-		$transaction_id = $reusable_posts[0]->ID ?? 0;
-		return $transaction_id;
 	}
 
 	public static function query_db(array $where) {
