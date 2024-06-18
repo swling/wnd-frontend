@@ -73,6 +73,7 @@ class Wnd_Add_Action_WP {
 		if (is_user_logged_in()) {
 			if (wnd_get_aff_cookie()) {
 				Wnd_Affiliate::handle_aff_reg();
+				wnd_delete_aff_cookie();
 			}
 			return;
 		}

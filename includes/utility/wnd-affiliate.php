@@ -18,7 +18,6 @@ class Wnd_Affiliate {
 		$aff_id     = wnd_get_aff_cookie();
 		$commission = floatval(wnd_get_config('reg_commission'));
 		if (!$aff_id or $commission <= 0) {
-			wnd_delete_aff_cookie();
 			return;
 		}
 		$user_id = get_current_user_id();
@@ -26,9 +25,18 @@ class Wnd_Affiliate {
 			return;
 		}
 
+		// 仅首次登陆
+		if (!Wnd_User::is_first_login($user_id)) {
+			return;
+		}
+
+		// 自己的推广链接
+		if ($user_id == $aff_id) {
+			return;
+		}
+
 		// 已经写入
 		if (wnd_get_user_meta($user_id, WND_AFF_KEY)) {
-			wnd_delete_aff_cookie();
 			return;
 		}
 
@@ -40,9 +48,8 @@ class Wnd_Affiliate {
 		$recharge->set_subject('Affiliate : ' . $user_id);
 		$recharge->create(true); // 直接写入余额
 
-		// 将推广 id 写入用户 meta 备查备用、删除推广 cookie
+		// 将推广 id 写入用户 meta 备查备用
 		wnd_update_user_meta($user_id, WND_AFF_KEY, $aff_id);
-		wnd_delete_aff_cookie();
 	}
 
 	/**
