@@ -169,7 +169,7 @@ abstract class Wnd_Post {
 				// 空值，如设置了表单，但无数据的情况，过滤
 				if ('' == $value) {
 					// 此处不得使用 delete_post_meta() 因为它无法作用于 revision;
-					delete_metadata( 'post', $post_id, $key);
+					delete_metadata('post', $post_id, $key);
 				} else {
 					// 此处不得使用 update_post_meta() 因为它无法给 revision 添加字段;
 					update_metadata('post', $post_id, $key, $value);
@@ -363,14 +363,16 @@ abstract class Wnd_Post {
 			return $revision;
 		}
 
-		$update = $revision;
-		if (!$update) {
-			return false;
+		// Allow these to be versioned.
+		$fields = [
+			'post_title',
+			'post_content',
+			'post_excerpt',
+		];
+		$update = [];
+		foreach (array_intersect(array_keys($revision), $fields) as $field) {
+			$update[$field] = $revision[$field];
 		}
-
-		// 移除revision别名
-		unset($update['post_name']);
-		unset($update['post_type']);
 
 		$update['ID']          = $revision['post_parent'];
 		$update['post_status'] = $post_status;
