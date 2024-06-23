@@ -294,7 +294,7 @@ ${build_navigation_template()}
 
 	function _build_tabs_template(tabs) {
 		return `
-<div v-if="${tabs}" class="columns is-marginless is-vcentered" :class="${tabs}.key">
+<div v-if="${tabs}" class="columns is-marginless is-vcentered is-mobile" :class="${tabs}.key">
 <div class="column is-narrow">{{${tabs}.label}}</div>
 
 <div class="column tabs">

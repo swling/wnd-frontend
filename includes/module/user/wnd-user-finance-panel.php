@@ -20,7 +20,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module_Html {
 		// 订单列表
 		$tabs = [
 			[
-				'label'   => '订单类型',
+				'label'   => __('类型', 'wnd'),
 				'key'     => 'type',
 				'options' => [
 					__('订单', 'wnd') => 'order',
@@ -28,7 +28,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module_Html {
 				],
 			],
 			[
-				'label'   => '订单状态',
+				'label'   => __('状态', 'wnd'),
 				'key'     => 'status',
 				'options' => [
 					__('全部', 'wnd')  => 'any',

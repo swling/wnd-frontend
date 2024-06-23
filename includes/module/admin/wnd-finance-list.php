@@ -13,7 +13,7 @@ class Wnd_Finance_List extends Wnd_Module_Html {
 	protected static function build(): string {
 		$tabs = [
 			[
-				'label'   => '订单类型',
+				'label'   => __('类型', 'wnd'),
 				'key'     => 'type',
 				'options' => [
 					__('订单', 'wnd') => 'order',
@@ -21,7 +21,7 @@ class Wnd_Finance_List extends Wnd_Module_Html {
 				],
 			],
 			[
-				'label'   => '订单状态',
+				'label'   => __('状态', 'wnd'),
 				'key'     => 'status',
 				'options' => [
 					__('全部', 'wnd')  => 'any',

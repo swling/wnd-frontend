@@ -1,6 +1,6 @@
 <div id="vue-list-app">
 	<div class="wnd-filter-tabs mb-3">
-		<div v-for="tab in tabs" class="columns is-marginless is-vcentered">
+		<div v-for="tab in tabs" class="columns is-marginless is-vcentered is-mobile">
 			<div class="column is-narrow">{{tab.label}}</div>
 			<div class="column tabs">
 				<ul class="tab">
