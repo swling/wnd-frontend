@@ -135,3 +135,17 @@ if (!defined('WP_TEMPLATE_PART_AREA_UNCATEGORIZED')) {
 add_action('admin_init', function () {
 	remove_action('admin_print_styles', 'wp_print_font_faces', 50);
 });
+
+// 禁止 Feed
+function get_default_feed() {
+	return 'rss2';
+}
+
+add_action('parse_query', function () {
+	if (is_feed()) {
+		global $wp_query;
+		$wp_query->set_404();
+		status_header(404);
+		exit();
+	}
+});

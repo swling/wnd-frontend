@@ -375,13 +375,13 @@ add_action( 'login_footer', 'wp_print_footer_scripts', 20 );
 add_action( 'login_init', 'send_frame_options_header', 10, 0 );
 
 // Feed generator tags.
-foreach ( array( 'rss2_head', 'commentsrss2_head', 'rss_head', 'rdf_header', 'atom_head', 'comments_atom_head', 'opml_head', 'app_head' ) as $action ) {
-	add_action( $action, 'the_generator' );
-}
+// foreach ( array( 'rss2_head', 'commentsrss2_head', 'rss_head', 'rdf_header', 'atom_head', 'comments_atom_head', 'opml_head', 'app_head' ) as $action ) {
+// 	add_action( $action, 'the_generator' );
+// }
 
 // Feed Site Icon.
-add_action( 'atom_head', 'atom_site_icon' );
-add_action( 'rss2_head', 'rss2_site_icon' );
+// add_action( 'atom_head', 'atom_site_icon' );
+// add_action( 'rss2_head', 'rss2_site_icon' );
 
 
 // WP Cron.
@@ -393,10 +393,10 @@ if ( ! defined( 'DOING_CRON' ) ) {
 // add_action( 'update_option_home', 'wp_update_https_migration_required', 10, 2 );
 
 // 2 Actions 2 Furious.
-add_action( 'do_feed_rdf', 'do_feed_rdf', 10, 0 );
-add_action( 'do_feed_rss', 'do_feed_rss', 10, 0 );
-add_action( 'do_feed_rss2', 'do_feed_rss2', 10, 1 );
-add_action( 'do_feed_atom', 'do_feed_atom', 10, 1 );
+// add_action( 'do_feed_rdf', 'do_feed_rdf', 10, 0 );
+// add_action( 'do_feed_rss', 'do_feed_rss', 10, 0 );
+// add_action( 'do_feed_rss2', 'do_feed_rss2', 10, 1 );
+// add_action( 'do_feed_atom', 'do_feed_atom', 10, 1 );
 // add_action( 'do_pings', 'do_all_pings', 10, 0 );
 // add_action( 'do_all_pings', 'do_all_pingbacks', 10, 0 );
 // add_action( 'do_all_pings', 'do_all_enclosures', 10, 0 );
