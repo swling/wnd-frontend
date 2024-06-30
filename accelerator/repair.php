@@ -141,6 +141,10 @@ function get_default_feed() {
 	return 'rss2';
 }
 
+function bloginfo_rss($show = '') {
+	echo '/';
+}
+
 add_action('parse_query', function () {
 	if (is_feed()) {
 		global $wp_query;
