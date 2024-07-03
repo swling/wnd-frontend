@@ -16,7 +16,7 @@ class Wnd_User_Recharge_Form extends Wnd_Module_Form {
 	protected static function configure_form(array $args = []): object {
 		$form = new Wnd_Form_WP();
 		if (!is_user_logged_in()) {
-			$form->set_message(__('匿名充值24小时有效，无法累加，即充即用！', 'wnd'), 'is-danger has-text-centered');
+			$form->set_message(__('匿名充值24小时内有效，无法累加，请即充即用！', 'wnd'), 'is-danger');
 		}
 		$form->add_html('<div class="has-text-centered field">');
 		$form->add_radio(

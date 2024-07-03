@@ -16,7 +16,7 @@ use Wnd\View\Wnd_Form_WP;
 class Wnd_Payment_Form extends Wnd_Module_Form {
 
 	// 配置表单
-	protected static function configure_form(array $args = []): object{
+	protected static function configure_form(array $args = []): object {
 		/**
 		 * 订单基本信息 + 产品属性等参数
 		 *
@@ -48,7 +48,7 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 		$form = new Wnd_Form_WP(true, !$user_id);
 		$form->set_form_title($title, true);
 		if (!$user_id) {
-			$form->add_html(wnd_notification(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd')));
+			$form->set_message(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd'));
 		}
 		$form->add_html($sku_info);
 		$form->add_html('<div class="has-text-centered field">');
@@ -96,7 +96,7 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 	 * 构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
 	 * @since 0.8.76
 	 */
-	protected static function get_payment_props(array $args): array{
+	protected static function get_payment_props(array $args): array {
 		// 将数组元素依次定义为按键名命名的变量
 		$defaults = [
 			'post_id'  => 0,
