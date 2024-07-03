@@ -48,7 +48,7 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 		$form = new Wnd_Form_WP(true, !$user_id);
 		$form->set_form_title($title, true);
 		if (!$user_id) {
-			$form->set_message(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd'));
+			$form->set_message(__('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd'), 'is-danger');
 		}
 		$form->add_html($sku_info);
 		$form->add_html('<div class="has-text-centered field">');
