@@ -192,11 +192,14 @@ abstract class Wnd_Payment {
 
         if ("' . Wnd_Transaction::$completed_status . '" == response.data.status) {
             var title = document.querySelector("#payment-title");
-            title.innerText = "支付成功，请继续此前的操作！";
+            title.innerText = "支付成功！/ Payment successful!";
             clearInterval(payment_checker);
 
 			if (response.data.object_id > 0) {
 				window.location.href = response.data.object_url;
+			}
+			if("function" == typeof wnd_payment_callback){
+				wnd_payment_callback(response);
 			}
         }
     }
