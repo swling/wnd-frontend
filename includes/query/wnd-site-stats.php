@@ -74,7 +74,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 
 		// 查询过去十二个月交易统计posts
 		$today     = current_time('mysql');
-		$last_year = date('Y-m-d H:i:s', strtotime('-12 months', strtotime($today)));
+		$last_year = wnd_date('Y-m-d H:i:s', strtotime('-12 months', strtotime($today)));
 		$args      = [
 			'date_query'             => [
 				[
@@ -94,7 +94,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 
 		// 将交易记录按日期对应合并到日期数据
 		foreach ($posts as $post) {
-			$month        = date('y-m', strtotime($post->post_date));
+			$month        = wnd_date('y-m', strtotime($post->post_date));
 			$data[$month] = number_format(($data[$month] + $post->post_content), 2, '.', '');
 		}
 
@@ -144,7 +144,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 				continue;
 			}
 
-			$day = date('m-d', $value->time);
+			$day = wnd_date('m-d', $value->time);
 			if (!isset($data[$day])) {
 				continue;
 			}

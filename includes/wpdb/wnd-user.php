@@ -96,7 +96,7 @@ class Wnd_User extends WPDB_Row {
 		$last_login  = $db_records->last_login ?? 0;
 		$login_count = $db_records->login_count ?? 0;
 		if ($last_login) {
-			$last_login = date('Y-m-d', wnd_time_to_local($last_login));
+			$last_login = wnd_date('Y-m-d', $last_login);
 			if ($last_login == wnd_date('Y-m-d')) {
 				return false;
 			}
