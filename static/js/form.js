@@ -150,6 +150,11 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     let field = _this.form.fields[index];
                     let post_id = _this.form.attrs['data-post-id'] || 0;
                     let selector = `#${_this.form.attrs.id}-${index}`;
+                    // 监听编辑器所在元素高度变化
+                    const resizeObserver = new ResizeObserver(entries => {
+                        funTransitionHeight(parent, trs_time);
+                    });
+                    resizeObserver.observe(document.querySelector(selector));
                     // jsdeliver CDN 无效添加 suffix
                     tinymce.init({
                         // 基础配置
@@ -192,12 +197,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                                 parent.style.removeProperty('height');
                             });
                         },
-                        init_instance_callback: function(editor) {
-                            // 编辑器是动态按需加载，需要额外再设置一次高度适应
-                            _this.$nextTick(function() {
-                                funTransitionHeight(parent, trs_time);
-                            });
-                        },
+                        init_instance_callback: function(editor) {},
                     });
                 }
             },
@@ -249,9 +249,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 field.class = field.class.replace('is-danger', '');
                 field.help.class = field.help.class.replace('is-danger', '');
                 field.help.text = field.help.text.replace(' ' + wnd.msg.required, '');
-                this.$nextTick(function() {
-                    funTransitionHeight(parent, trs_time);
-                });
             },
 
             // 动态联动下拉选择
@@ -396,10 +393,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                                 }
                             }
                         }
-
-                        _this.$nextTick(function() {
-                            funTransitionHeight(parent, trs_time);
-                        });
                     }).catch(err => {
                         console.log(err);
                     });
@@ -414,10 +407,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         field.thumbnail = upload_res.signed_url || upload_res.url;
                         field.file_id = upload_res.id;
                         field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + (upload_res.signed_url || upload_res.url) + '" target="_blank">' + wnd.msg.view + '</a>';
-
-                        _this.$nextTick(function() {
-                            funTransitionHeight(parent, trs_time);
-                        });
                     } else {
                         field.help.text = wnd.msg.upload_failed;
                         field.help.class = 'is-danger';
@@ -589,10 +578,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
 
                 if (!can_submit) {
                     this.form.submit.attrs.class = form_json.submit.attrs.class;
-                    this.$nextTick(function() {
-                        funTransitionHeight(parent, trs_time);
-                    });
-
                     return false;
                 }
 
@@ -628,9 +613,6 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     if (this.index.captcha) {
                         this.form.fields[this.index.captcha].value = '';
                     }
-                    this.$nextTick(function() {
-                        funTransitionHeight(parent, trs_time);
-                    });
                 }).catch(function(error) { // 请求失败处理
                     console.log(error);
                 });
@@ -679,10 +661,13 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 this.build_editor();
             }
 
-            funTransitionHeight(parent, trs_time);
             // v-html 不支持执行 JavaScript 需要通过封装好的 wnd_inser_html
             wnd_inner_html(`#${this.form.attrs.id} .form-script`, this.form.script);
+            funTransitionHeight(parent, trs_time);
         },
+        updated() {
+            funTransitionHeight(parent, trs_time);
+        }
     };
 
     Vue.createApp(form_option).mount(container);
@@ -986,17 +971,14 @@ document.addEventListener('click', function(e) {
         // 追加新字段
         field.after(new_field);
 
-        // Ajax 场景高度调整
-        funTransitionHeight(parent, trs_time);
-
         /**
          *@since 2020.04.20
          *删除字段
          */
     } else if (button.classList.contains('remove-row')) {
         button.closest('.field').outerHTML = '';
-
-        // Ajax 场景高度调整
-        funTransitionHeight(parent, trs_time);
     }
+
+    // Ajax 场景高度调整
+    funTransitionHeight(parent, trs_time);
 });

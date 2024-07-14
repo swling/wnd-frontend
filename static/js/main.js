@@ -16,7 +16,7 @@ let static_path = this_src.substring(0, this_src.lastIndexOf('/js/') + 1);
 let cache_suffix = static_path.includes('//cdn.jsdelivr.net/gh') ? '' : '?ver=' + wnd.ver;
 
 // 其他
-var trs_time = 160;
+var trs_time = 100;
 
 // 定义菜单
 var menus_side = false;

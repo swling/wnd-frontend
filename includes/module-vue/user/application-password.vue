@@ -44,9 +44,6 @@
 				let res = await wnd_ajax_action("user/wnd_create_application_password", { "name": this.name });
 				this.new_password = res.data[0];
 				this.passwords.push(res.data[1]);
-				this.$nextTick(function () {
-					funTransitionHeight(parent, trs_time);
-				});
 			},
 			delete_password: async function (uuid, index) {
 				if (!confirm("确认删除本条秘钥？")) {
@@ -55,9 +52,6 @@
 
 				let res = await wnd_ajax_action("user/wnd_delete_application_password", { "uuid": uuid });
 				this.passwords.splice(index, 1);
-				this.$nextTick(function () {
-					funTransitionHeight(parent, trs_time);
-				});
 			},
 			get_date: function (timestamp) {
 				// 创建一个新的Date对象，使用时间戳作为参数（以毫秒为单位） 
@@ -77,6 +71,9 @@
 				}
 			},
 		},
+		updated() {
+			funTransitionHeight(parent, trs_time);
+		}
 	}
 	Vue.createApp(application_password_option).mount('#application-password');
 </script>

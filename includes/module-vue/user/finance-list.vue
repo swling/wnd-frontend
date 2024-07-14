@@ -74,17 +74,10 @@
 
 				wnd_loading("#lists", true);
 				this.data = res.data;
-
-				this.$nextTick(function () {
-					funTransitionHeight(parent, trs_time);
-				});
 			},
 			get_detail: async function (id) {
 				if (this.details[id]) {
 					this.details[id].hidden = !this.details[id].hidden;
-					this.$nextTick(function () {
-						funTransitionHeight(parent, trs_time);
-					});
 					return;
 				}
 
@@ -92,10 +85,6 @@
 				if (1 == res.status) {
 					this.details[id] = res.data;
 				}
-
-				this.$nextTick(function () {
-					funTransitionHeight(parent, trs_time);
-				});
 			},
 			show_detail: function (obj) {
 				if (!obj) {
@@ -149,8 +138,11 @@
 				}
 			}
 		},
-		mounted: function () {
+		mounted() {
 			this.query();
+		},
+		updated() {
+			funTransitionHeight(parent, trs_time);
 		},
 		watch: {
 			param: {

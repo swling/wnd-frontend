@@ -159,10 +159,6 @@ function _wnd_render_filter(container, filter_json, add_class) {
 					}
 					// 合并响应数据
 					this.filter = Object.assign(this.filter, response.data.data);
-
-					this.$nextTick(function () {
-						funTransitionHeight(parent, trs_time);
-					});
 				}).catch(function (error) {
 					console.log(error);
 				});
@@ -170,6 +166,9 @@ function _wnd_render_filter(container, filter_json, add_class) {
 
 		},
 		mounted() {
+			funTransitionHeight(parent, trs_time);
+		},
+		updated() {
 			funTransitionHeight(parent, trs_time);
 		},
 		components: {
