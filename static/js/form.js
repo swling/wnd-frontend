@@ -197,7 +197,9 @@ function _wnd_render_form(container, form_json, add_class = '') {
                                 parent.style.removeProperty('height');
                             });
                         },
-                        init_instance_callback: function(editor) {},
+                        init_instance_callback: function(editor) {
+                            resizeObserver.observe(document.querySelector(`#${_this.form.attrs.id} .tox-tinymce`));
+                        },
                     });
                 }
             },
