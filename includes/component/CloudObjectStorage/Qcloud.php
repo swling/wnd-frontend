@@ -15,9 +15,10 @@ class Qcloud extends CloudObjectStorage {
 	 * @link https://cloud.tencent.com/document/product/436/7749
 	 */
 	public function uploadFile(string $sourceFile, int $timeout = 1800): array {
-		$md5         = md5_file($sourceFile);
-		$contentType = mime_content_type($sourceFile);
-		$headers     = $this->generateHeaders('PUT', $contentType, $md5);
+		$headers                 = [];
+		$headers['Content-Type'] = mime_content_type($sourceFile);
+		$headers['Content-MD5']  = md5_file($sourceFile);
+		$headers                 = $this->generateHeaders('PUT', $headers);
 
 		return static::put($sourceFile, $this->fileUri, $headers, $timeout);
 	}
@@ -32,7 +33,7 @@ class Qcloud extends CloudObjectStorage {
 	 * @link https://cloud.tencent.com/document/product/436/36121
 	 * @since 0.9.39
 	 */
-	public function getFileUri(int $expires = 0, array $query = []): string {
+	public function getFileUri(int $expires = 0, array $query = [], bool $internal = false): string {
 		if (!$expires) {
 			if (!$query) {
 				return $this->fileUri;
@@ -85,8 +86,11 @@ class Qcloud extends CloudObjectStorage {
 		// 签名及请求地址
 		$targetUri = $this->endpoint . '/?delete';
 		$this->setFilePathName('/');
-		$headers                   = $this->generateHeaders('POST', 'application/xml', md5($requestBody));
+		$headers                   = [];
 		$headers['Content-Length'] = strlen($requestBody);
+		$headers['Content-Type']   = 'application/xml';
+		$headers['Content-MD5']    = md5($requestBody);
+		$headers                   = $this->generateHeaders('POST', $headers, ['delete' => '']);
 
 		// 发起请求
 		$request = new Requests();
@@ -98,17 +102,17 @@ class Qcloud extends CloudObjectStorage {
 	 * - 本方法中 md5 参数设定为为32位16进制字符串，而非二进制数据。
 	 * - 之所以如此设置，是为了方便外部调用，如前端 OSS 直传时可利用 js 计算 MD5 值，进而调用本方法生成请求 headers
 	 * @since 0.9.35
+	 * @see 本方法中统一处理：将 method 大写；header 小写
 	 */
-	public function generateHeaders(string $method, string $contentType = '', string $md5 = ''): array {
-		$method     = strtoupper($method);
-		$md5_base64 = base64_encode(hex2bin($md5));
-		$headers    = [];
-		if ('PUT' == $method or 'POST' == $method) {
-			$headers['Content-Type'] = $contentType;
-			$headers['Content-MD5']  = $md5_base64;
+	public function generateHeaders(string $method, array $headers = [], array $query = []): array {
+		$method  = strtoupper($method);
+		$headers = array_change_key_case($headers, CASE_LOWER);
+
+		if (isset($headers['content-md5'])) {
+			$headers['content-md5'] = base64_encode(hex2bin($headers['content-md5']));
 		}
 
-		$headers['Authorization'] = $this->generateAuthorization($method, 3600, $headers);
+		$headers['authorization'] = $this->generateAuthorization($method, 3600, $headers);
 
 		return $headers;
 	}

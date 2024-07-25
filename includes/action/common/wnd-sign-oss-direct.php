@@ -72,7 +72,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 	private function sign_put(): array {
 		$oss = Wnd_Object_Storage::get_instance($this->oss_sp, $this->endpoint);
 		$oss->setFilePathName($this->file_path_name);
-		$headers    = $oss->generateHeaders($this->method, $this->mime_type, $this->md5);
+		$headers    = $oss->generateHeaders($this->method, ['Content-Type' => $this->mime_type, 'Content-MD5' => $this->md5]);
 		$url        = $oss->getFileUri();
 		$signed_url = $oss->getFileUri(1800, $this->query);
 
@@ -82,7 +82,7 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 		 */
 		if ('Aliyun' == $this->oss_sp) {
 			$internal_url    = str_replace('.aliyuncs.com', '-internal.aliyuncs.com', $url);
-			$signed_internal = str_replace('.aliyuncs.com', '-internal.aliyuncs.com', $signed_url);
+			$signed_internal = $oss->getFileUri(1800, $this->query, true);
 		} else {
 			$internal_url = $url;
 		}

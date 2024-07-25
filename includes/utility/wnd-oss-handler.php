@@ -297,7 +297,7 @@ class Wnd_OSS_Handler {
 		// 获取 OSS 签名
 		$oss = $this->get_object_storage_instance($is_private);
 		$oss->setFilePathName($file_path_name);
-		$headers    = $oss->generateHeaders($method, $content_type, $md5);
+		$headers    = $oss->generateHeaders($method, ['Content-Type' => $content_type, 'Content-MD5' => $md5]);
 		$url        = $oss->getFileUri();
 		$signed_url = $is_private ? $oss->getFileUri($this->sign_expires) : '';
 

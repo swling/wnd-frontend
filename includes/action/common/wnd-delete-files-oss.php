@@ -28,7 +28,11 @@ class Wnd_Delete_Files_OSS extends Wnd_Action {
 		$res = $oss->deleteBatch($this->files);
 
 		$obj = simplexml_load_string($res['body']);
-		return ['status' => 1, 'data' => ['obj' => $obj, 'count' => count($obj)]];
+		if (!isset($obj->Deleted)) {
+			throw new Exception('Delete failed');
+		}
+
+		return ['status' => 1, 'data' => ['obj' => $obj, 'count' => count($obj->Deleted)]];
 	}
 
 	protected function parse_data() {
