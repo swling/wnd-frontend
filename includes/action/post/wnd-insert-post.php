@@ -165,6 +165,11 @@ class Wnd_Insert_Post extends Wnd_Action {
 			return false;
 		}
 
+		// 无需审核的新增 post
+		if ('pending' != $this->post_data['post_status']) {
+			return false;
+		}
+
 		// 普通用户，已公开发布的内容再次编辑，需要创建revision
 		if (!wnd_is_manager() and 'publish' == $this->update_post->post_status) {
 			return true;
