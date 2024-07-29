@@ -66,7 +66,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 	private static function get_annual_finance_stats($type): array {
 		// 过去十二个月初始化数据
 		$data  = [];
-		$today = new \DateTimeImmutable();
+		$today = new \DateTimeImmutable(get_option('timezone_string'));
 		for ($i = 12; $i >= 0; $i--) {
 			$date        = $today->modify('-' . $i . ' month')->format('y-m');
 			$data[$date] = 0;
@@ -129,7 +129,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 
 		// 日期数据初始化
 		$data  = [];
-		$today = new \DateTimeImmutable();
+		$today = new \DateTimeImmutable(get_option('timezone_string'));
 		for ($i = $days; $i >= 0; $i--) {
 			$date        = $today->modify('-' . $i . ' day')->format('m-d');
 			$data[$date] = 0;
