@@ -68,9 +68,10 @@ class Wnd_Site_Stats extends Wnd_Query {
 		$data  = [];
 		$today = new \DateTimeImmutable(get_option('timezone_string'));
 		for ($i = 12; $i >= 0; $i--) {
-			$date        = $today->modify('-' . $i . ' month')->format('y-m');
+			$date        = $today->modify('first day of -' . $i . ' month')->format('y-m');
 			$data[$date] = 0;
 		}
+		unset($date);
 
 		// 查询过去十二个月交易统计posts
 		$today     = current_time('mysql');
