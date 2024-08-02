@@ -88,7 +88,7 @@ abstract class Wnd_Module {
 		return [
 			'type'        => $this->type,
 			'structure'   => ('html' == $this->type) ? static::build($this->args) : $this->structure($this->args),
-			'request_url' => static::get_request_url(),
+			'request_url' => wnd_get_current_url(),
 		];
 	}
 
@@ -123,28 +123,5 @@ abstract class Wnd_Module {
 	 * @return string HTML 字符串
 	 */
 	abstract protected static function build(): string;
-
-	/**
-	 * 获取 Module 的完整 Request URL
-	 *
-	 * @since 0.9.73.6
-	 */
-	public static function get_request_url(): string {
-		$path = get_called_class();
-		// 剔除命名空间前缀
-		$pos  = strpos($path, '\\');
-		$path = substr($path, $pos);
-
-		// 命名空间符号 转 路径符号
-		$path = str_replace('\\', '/', $path);
-
-		// 添加 GET 参数
-		$url = rest_url($path);
-		if ($_GET) {
-			$url .= '?' . http_build_query($_GET);
-		}
-
-		return $url;
-	}
 
 }
