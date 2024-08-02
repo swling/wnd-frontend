@@ -208,12 +208,12 @@ function wnd_loading(el, remove = false) {
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表单
-async function wnd_render_form(container, form_json, add_class) {
+async function wnd_render_form(container, form_json, add_class, request_url) {
     if ('function' != typeof _wnd_render_form) {
         let url = static_path + 'js/form.min.js' + cache_suffix;
         await wnd_load_script(url);
     }
-    _wnd_render_form(container, form_json, add_class);
+    _wnd_render_form(container, form_json, add_class, request_url);
 }
 
 /**
@@ -423,7 +423,7 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
         }
 
         if ('form' == response.data.data.type) {
-            wnd_render_form(container, response.data.data.structure);
+            wnd_render_form(container, response.data.data.structure, '', response.data.data.request_url);
         } else if ('filter' == response.data.data.type) {
             wnd_render_filter(container, response.data.data.structure);
         } else {
@@ -491,7 +491,7 @@ function wnd_ajax_modal(module, param = {}, callback = '') {
         }
 
         if ('form' == response.data.data.type) {
-            wnd_render_form('#modal .modal-entry', response.data.data.structure, 'box');
+            wnd_render_form('#modal .modal-entry', response.data.data.structure, 'box', response.data.data.request_url);
         } else if ('filter' == response.data.data.type) {
             wnd_render_filter('#modal .modal-entry', response.data.data.structure, 'box');
         } else {
@@ -708,7 +708,7 @@ function wnd_handle_response(response, route, parent) {
         if (response.status >= 1) {
             wnd_alert_modal(loading_el, false);
             if ('form' == response.data.type) {
-                wnd_render_form('#modal .modal-entry', response.data.structure, 'box');
+                wnd_render_form('#modal .modal-entry', response.data.structure, 'box', response.data.data.request_url);
             } else if ('filter' == response.data.type) {
                 wnd_render_filter('#modal .modal-entry', response.data.structure, 'box');
             } else {

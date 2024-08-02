@@ -2,7 +2,7 @@
  *@since 0.9.25
  *Vue 根据 Json 动态渲染表单
  */
-function _wnd_render_form(container, form_json, add_class = '') {
+function _wnd_render_form(container, form_json, add_class = '', api_url) {
     let general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color', 'date', 'range', 'tel'];
 
     /******************************************************* Vue 渲染及交互 **********************************************************/
@@ -28,7 +28,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
         },
         methods: {
             //HTML转义
-            html_encode: function(html) {
+            html_encode: function (html) {
                 let temp = document.createElement('div');
                 temp.innerText = html;
                 let output = temp.innerHTML;
@@ -36,26 +36,26 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 return output;
             },
             //HTML反转义
-            html_decode: function(text) {
+            html_decode: function (text) {
                 var temp = document.createElement('div');
                 temp.innerHTML = text;
                 var output = temp.innerText;
                 temp = null;
                 return output;
             },
-            has_addon: function(field) {
+            has_addon: function (field) {
                 return (field.addon_left || field.addon_right);
             },
 
-            has_icon: function(field) {
+            has_icon: function (field) {
                 return (field.icon_left || field.icon_right);
             },
 
-            get_field_class: function(field) {
+            get_field_class: function (field) {
                 return this.has_addon(field) ? 'field has-addons' : 'field';
             },
 
-            get_control_class: function(field) {
+            get_control_class: function (field) {
                 let el_class = 'control';
                 el_class += this.has_addon(field) ? ' is-expanded' : '';
                 el_class += field.icon_left ? ' has-icons-left' : '';
@@ -63,7 +63,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 return el_class;
             },
 
-            get_field_id: function(field, index) {
+            get_field_id: function (field, index) {
                 return field.id || (this.form.attrs.id + '-' + index);
             },
 
@@ -72,7 +72,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
              * @since 0.9.36
              * 变量如果不为0，null，undefined，false，都会被处理为true。只要变量有非0的值或是某个对象，数组，字符串，都会认为true
              **/
-            get_value: function(field) {
+            get_value: function (field) {
                 let value = ['checkbox', 'radio'].includes(field.type) ? [] : '';
                 let checked_or_selected = field.checked || field.selected;
 
@@ -87,7 +87,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 value = ('object' == typeof value) ? Object.values(value) : value;
                 return value;
             },
-            parse_input_attr: function(field, exclude = []) {
+            parse_input_attr: function (field, exclude = []) {
                 // 深拷贝 以免影响 data
                 let _field = JSON.parse(JSON.stringify(field));
 
@@ -132,7 +132,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 return _field;
             },
             // 富文本编辑器 @link https://tiny.cloud
-            build_editor: async function() {
+            build_editor: async function () {
                 let _this = this;
                 if ('undefined' == typeof tinymce) {
                     let url = static_path + 'editor/tinymce/tinymce.min.js' + cache_suffix;
@@ -189,15 +189,15 @@ function _wnd_render_form(container, form_json, add_class = '') {
                             'post_parent': post_id,
                             'oss_direct_upload': _this.form.attrs['data-oss-direct-upload'],
                         },
-                        setup: function(editor) {
+                        setup: function (editor) {
                             texarea = document.querySelector(selector);
                             texarea.style.removeProperty('display');
-                            editor.on('change', function() {
+                            editor.on('change', function () {
                                 field.value = tinymce.get(`${_this.form.attrs.id}-${index}`).getContent();
                                 parent.style.removeProperty('height');
                             });
                         },
-                        init_instance_callback: function(editor) {
+                        init_instance_callback: function (editor) {
                             resizeObserver.observe(document.querySelector(`#${_this.form.attrs.id} .tox-tinymce`));
                         },
                     });
@@ -209,7 +209,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
             },
 
             // 字段是否应该设置disabled属性
-            should_be_disabled: function(field, value) {
+            should_be_disabled: function (field, value) {
                 // checkbox 选项数量限制
                 if ('checkbox' == field.type && field.max > 0) {
                     let data = field.checked;
@@ -221,7 +221,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 return false;
             },
 
-            change: async function(field, e) {
+            change: async function (field, e) {
                 // 关联字段数据
                 if (field.linkage) {
                     let current_value = e.target.value; // 此处不能使用 this.get_value() 因为双向绑定值会晚一步
@@ -254,7 +254,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
             },
 
             // 动态联动下拉选择
-            selected: async function(e, key, index) {
+            selected: async function (e, key, index) {
                 let select = this.form.fields[index];
                 let query = select.data.query;
                 let params = Object.assign(select.data.params, {
@@ -280,7 +280,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
             },
 
             // 文件上传
-            upload: function(e, field) {
+            upload: function (e, field) {
                 let files = e.target.files;
                 let form_data = new FormData()
                 let _this = this;
@@ -310,11 +310,11 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 function handel_image_upload(i, source_file) {
                     let image = new Image();
                     let reader = new FileReader();
-                    reader.onload = function() {
+                    reader.onload = function () {
                         // 通过 reader.result 来访问生成的 DataURL
                         var url = reader.result;
                         image.src = url;
-                        image.onload = function(e) {
+                        image.onload = function (e) {
                             crop_and_upload_img(source_file, image, i);
                         }
                     };
@@ -360,7 +360,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                         data: form_data,
                         headers: {},
                         //原生获取上传进度的事件
-                        onUploadProgress: function(progressEvent) {
+                        onUploadProgress: function (progressEvent) {
                             // field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
                             field.help.text = wnd.msg.waiting;
                             field.help.class = 'is-primary';
@@ -417,7 +417,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
             },
 
             // 删除文件
-            delete_file: function(field, index) {
+            delete_file: function (field, index) {
                 if (!field.file_id) {
                     field.file_name = 'Error';
                     return false;
@@ -456,7 +456,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 })
             },
             // 根据当前输入查询已有 tags
-            suggest_tags: function(text, index) {
+            suggest_tags: function (text, index) {
                 let field = this.form.fields[index];
                 let params = {
                     "search": text,
@@ -471,7 +471,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 });
             },
             // 回车输入写入数据并清空当前输入
-            enter_tag: function(e, index) {
+            enter_tag: function (e, index) {
                 let field = this.form.fields[index];
                 if (!e.target.value || field.value.length >= field.data.max) {
                     return false;
@@ -481,7 +481,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 e.target.value = '';
             },
             // 点击建议 Tag 写入数据并清空当前输入
-            enter_tag_by_sg: function(e, index) {
+            enter_tag_by_sg: function (e, index) {
                 let field = this.form.fields[index];
                 field.value.push(e.target.innerText.trim());
                 field.data.suggestions = '';
@@ -489,21 +489,21 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 input.value = '';
             },
             // 删除 Tag
-            delete_tag: function(tag, index) {
+            delete_tag: function (tag, index) {
                 let field = this.form.fields[index];
-                field.value = field.value.filter(function(item) {
+                field.value = field.value.filter(function (item) {
                     return item !== tag;
                 });
             },
             // 点击 Tag 输入字段
-            handle_tag_input_click: function($event, index) {
+            handle_tag_input_click: function ($event, index) {
                 let field = this.form.fields[index];
                 if (field.value.length >= field.data.max) {
                     field.help.text = '最多' + field.data.max + '个标签';
                 }
             },
             // FormData 转 object
-            formdata_to_object: function(form_data) {
+            formdata_to_object: function (form_data) {
                 let object = {};
                 form_data.forEach((value, key) => {
                     // 单个字段
@@ -530,7 +530,7 @@ function _wnd_render_form(container, form_json, add_class = '') {
                 return object;
             },
             // 提交
-            submit: function(e) {
+            submit: function (e) {
                 this.form.submit.attrs.class = form_json.submit.attrs.class + ' is-loading';
 
                 // Captcha 验证提交
@@ -615,10 +615,19 @@ function _wnd_render_form(container, form_json, add_class = '') {
                     if (this.index.captcha) {
                         this.form.fields[this.index.captcha].value = '';
                     }
-                }).catch(function(error) { // 请求失败处理
+                }).catch(function (error) { // 请求失败处理
                     console.log(error);
                 });
             },
+            // 重新请求数据并更新表单
+            reload: async function (e) {
+                if (!confirm("Reload the form data? / 重载表单数据？")) {
+                    return;
+                }
+
+                let res = await axios({ method: 'get', url: api_url });
+                this.form = res.data.data.structure;
+            }
         },
         created() {
             // 提取表单数据
@@ -738,8 +747,9 @@ ${build_submit_template(form_json)}
 
         function build_submit_template(form_json) {
             return `
-<div v-if="form.submit.text" class="field is-grouped is-grouped-centered">
+<div v-if="form.submit.text" class="field has-text-centered">
 <button type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
+<p v-if="index.editor.length" class="mt-3 is-size-7"><a @click="reload($event)" class="${form_json.size}">Reload</a></p>
 </div>`;
         }
 
@@ -940,7 +950,7 @@ ${build_label(field)}
  *@since 0.9.25
  *字段追加
  */
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     let button = e.target.closest('button');
     if (!button) {
         return;

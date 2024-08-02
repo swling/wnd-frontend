@@ -61,7 +61,7 @@ abstract class Wnd_Module {
 	 * - 权限检查
 	 * @since 0.9.25
 	 */
-	private static function init_module(array $args, bool $force): array{
+	private static function init_module(array $args, bool $force): array {
 		/**
 		 * 默认 $_GET 参数优先，若设置 $force = true 则忽略 $_GET
 		 */
@@ -84,10 +84,11 @@ abstract class Wnd_Module {
 	 * 输出 Module 数据结构，经由 Controller 转为Json 后供前端渲染
 	 * @since 0.9.25
 	 */
-	public function get_structure(): array{
+	public function get_structure(): array {
 		return [
-			'type'      => $this->type,
-			'structure' => ('html' == $this->type) ? static::build($this->args) : $this->structure($this->args),
+			'type'        => $this->type,
+			'structure'   => ('html' == $this->type) ? static::build($this->args) : $this->structure($this->args),
+			'request_url' => static::get_request_url(),
 		];
 	}
 
@@ -103,7 +104,7 @@ abstract class Wnd_Module {
 	 * @param  $force 是否强制传参，忽略                    GET 请求参数
 	 * @return string HTML 字符串
 	 */
-	public static function render(array $args = [], bool $force = false): string{
+	public static function render(array $args = [], bool $force = false): string {
 		/**
 		 * 默认 $_GET 参数优先，若设置 $force = true 则忽略 $_GET
 		 */
@@ -122,4 +123,28 @@ abstract class Wnd_Module {
 	 * @return string HTML 字符串
 	 */
 	abstract protected static function build(): string;
+
+	/**
+	 * 获取 Module 的完整 Request URL
+	 *
+	 * @since 0.9.73.6
+	 */
+	public static function get_request_url(): string {
+		$path = get_called_class();
+		// 剔除命名空间前缀
+		$pos  = strpos($path, '\\');
+		$path = substr($path, $pos);
+
+		// 命名空间符号 转 路径符号
+		$path = str_replace('\\', '/', $path);
+
+		// 添加 GET 参数
+		$url = rest_url($path);
+		if ($_GET) {
+			$url .= '?' . http_build_query($_GET);
+		}
+
+		return $url;
+	}
+
 }
