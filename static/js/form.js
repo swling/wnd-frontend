@@ -626,8 +626,22 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
                     return;
                 }
 
+                // 销毁可能存在的 TinyMCE 实例
+                this.index.editor.forEach(index => {
+                    let selector = `#${this.form.attrs.id}-${index}`;
+                    if (typeof tinymce != 'undefined') {
+                        tinymce.remove(selector);
+                    }
+                });
+
+                // 重新载入数据
                 let res = await axios({ method: 'get', url: api_url });
                 this.form = res.data.data.structure;
+
+                // 下一次渲染时重新构建编辑器
+                this.$nextTick(() => {
+                    this.build_editor();
+                });
             }
         },
         created() {
@@ -899,7 +913,7 @@ ${build_label(field)}
             return `
 <div :class="get_field_class(${field})">
 ${build_label(field)}
-<textarea :id="form.attrs.id + '-${index}'" style="display:none;border:#f1e2c3 1px solid;" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field}, $event)"></textarea>
+<textarea :id="form.attrs.id + '-${index}'" class="is-hidden" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field}, $event)"></textarea>
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
         };
