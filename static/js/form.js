@@ -499,7 +499,8 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
             handle_tag_input_click: function ($event, index) {
                 let field = this.form.fields[index];
                 if (field.value.length >= field.data.max) {
-                    field.help.text = '最多' + field.data.max + '个标签';
+                    field.help.text = 'Limit to ' + field.data.max + ' tags.';
+                    field.help.class = 'is-danger';
                 }
             },
             // FormData 转 object
@@ -933,7 +934,9 @@ ${build_label(field)}
 <div class="tags-input columns is-marginless">
 <div class="column is-marginless is-paddingless is-narrow">${tags}</div>
 <div class="autocomplete column is-marginless">
-<input type="text" :readonly="${field}.value.length >= ${field}.data.max" @input="suggest_tags($event.target.value, ${index})" @keypress.enter="enter_tag($event, ${index})" @click="handle_tag_input_click($event, ${index})"/>
+<input type="text" :placeholder="${field}.value.length ? '' : ${field}.placeholder" 
+:readonly="${field}.value.length >= ${field}.data.max" @input="suggest_tags($event.target.value, ${index})" 
+@keypress.enter="enter_tag($event, ${index})" @click="handle_tag_input_click($event, ${index})"/>
 <template v-for="(tag, index) in ${field}.value"><input type="hidden" v-bind="parse_input_attr(${field}, ['type'])" v-model="tag" /></template>
 <ul v-show="${field}.value.length < ${field}.data.max" class="autocomplete-items">${suggestions}</ul>
 </div>

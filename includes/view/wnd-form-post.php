@@ -1,7 +1,6 @@
 <?php
 namespace Wnd\View;
 
-use Exception;
 use Wnd\Model\Wnd_Post;
 use Wnd\Model\Wnd_Term;
 
@@ -276,7 +275,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 	 * @since 2020.05.12
 	 * @since 0.9.25 : 以 Vue 重构 该字段不再支持常规 php 渲染
 	 */
-	public function add_post_tags($taxonomy, $label = '', $required = false, $help = '') {
+	public function add_post_tags($taxonomy, $label = '', $required = false) {
 		if (!wnd_is_rest_request()) {
 			throw new \Exception('[' . __FUNCTION__ . '] Only available in rest request!');
 		}
@@ -286,16 +285,14 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 			return;
 		}
 
-		$help = $help ?: __('请用回车键区分多个 Tag', 'wnd');
-
 		$args = [
-			'type'     => 'tag_input',
-			'value'    => array_values($this->current_terms[$taxonomy]) ?: [],
-			'label'    => $label ?: $taxonomy_object->labels->name,
-			'name'     => '_term_' . $taxonomy . '[]',
-			'required' => $required,
-			'help'     => ['text' => $help, 'class' => 'is-success'],
-			'data'     => [
+			'type'        => 'tag_input',
+			'value'       => array_values($this->current_terms[$taxonomy]) ?: [],
+			'label'       => $label ?: $taxonomy_object->labels->name,
+			'name'        => '_term_' . $taxonomy . '[]',
+			'required'    => $required,
+			'placeholder' => __('请用回车键区分多个 Tag', 'wnd'),
+			'data'        => [
 				'taxonomy'    => $taxonomy,
 				'suggestions' => [],
 				'max'         => 3,
