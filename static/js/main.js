@@ -708,7 +708,7 @@ function wnd_handle_response(response, route, parent) {
         if (response.status >= 1) {
             wnd_alert_modal(loading_el, false);
             if ('form' == response.data.type) {
-                wnd_render_form('#modal .modal-entry', response.data.structure, 'box', response.data.data.request_url);
+                wnd_render_form('#modal .modal-entry', response.data.structure, 'box', response.data.request_url);
             } else if ('filter' == response.data.type) {
                 wnd_render_filter('#modal .modal-entry', response.data.structure, 'box');
             } else {
