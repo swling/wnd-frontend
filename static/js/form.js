@@ -622,7 +622,7 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
             },
             // 重新请求数据并更新表单
             reload: async function (e) {
-                if (!confirm("Reload the form data? / 重载表单数据？")) {
+                if (!confirm("Reset the form? / 重置表单？")) {
                     return;
                 }
 
@@ -764,7 +764,7 @@ ${build_submit_template(form_json)}
             return `
 <div v-if="form.submit.text" class="field has-text-centered">
 <button type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
-<p v-if="index.editor.length" class="mt-3 is-size-7"><a @click="reload($event)" class="${form_json.size}">Reload</a></p>
+<p v-if="index.editor.length" class="mt-3 is-size-7"><a @click="reload($event)" class="${form_json.size}"><i class="fas fa-sync"></i></a></p>
 </div>`;
         }
 
