@@ -622,10 +622,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
             },
             // 重新请求数据并更新表单
             reload: async function (e) {
-                if (!confirm("Reset the form? / 重置表单？")) {
-                    return;
-                }
-
                 // 销毁可能存在的 TinyMCE 实例
                 this.index.editor.forEach(index => {
                     let selector = `#${this.form.attrs.id}-${index}`;
@@ -640,7 +636,9 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
 
                 // 下一次渲染时重新构建编辑器
                 this.$nextTick(() => {
-                    this.build_editor();
+                    if (this.index.editor.length) {
+                        this.build_editor();
+                    }
                 });
             }
         },
@@ -690,6 +688,14 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
             // v-html 不支持执行 JavaScript 需要通过封装好的 wnd_inser_html
             wnd_inner_html(`#${this.form.attrs.id} .form-script`, this.form.script);
             funTransitionHeight(parent, trs_time);
+
+            // F8 重新载入表单数据
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'F8') {
+                    event.preventDefault();
+                    this.reload();
+                }
+            });
         },
         updated() {
             funTransitionHeight(parent, trs_time);
@@ -764,7 +770,6 @@ ${build_submit_template(form_json)}
             return `
 <div v-if="form.submit.text" class="field has-text-centered">
 <button type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
-<p v-if="index.editor.length" class="mt-3 is-size-7"><a @click="reload($event)" class="${form_json.size}"><i class="fas fa-sync"></i></a></p>
 </div>`;
         }
 
