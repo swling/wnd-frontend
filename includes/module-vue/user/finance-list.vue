@@ -9,10 +9,15 @@
 			</div>
 		</div>
 	</div>
+	<!-- <input type="checkbox" @change="toggleAll" :checked="allSelected"> -->
+	<div v-show="selectedItems.length">{{selectedItems}}</div>
 	<div id="lists">
 		<div v-for="(item, index) in data.results" class="columns is-multiline is-marginless is-justify-content-space-between" style="border-top: 1px dotted #CCC;">
 			<div class="column is-narrow">
-				<div class="is-pulled-left" :class="get_status_class(item)" style="min-width: 80px;"><b>${{item.total_amount}}</b></div>
+				<div class="is-pulled-left" :class="get_status_class(item)" style="min-width: 80px;">
+					<input type="checkbox" v-model="item.selected" class="mr-1">
+					<b>${{item.total_amount}}</b>
+				</div>
 				<span>{{timeToString(item.time)}}</span>
 				<span class="is-size-7">&nbsp;-&nbsp;<em v-text="0 == item.user_id ? `[Anonymous]`: `[user : ${item.user_id}]`"></em></span>
 			</div>
@@ -66,6 +71,8 @@
 				if ("paged" != key) {
 					this.param.paged = 1;
 				}
+
+				this.query();
 			},
 			query: async function () {
 				let res = await wnd_query("wnd_transactions", this.param, {
@@ -136,6 +143,29 @@
 				} else {
 					return this.get_date(timestamp);
 				}
+			},
+			toggleAll(event) {
+				this.allSelected = event.target.checked;
+			},
+			toggleSelection() {
+				this.data.results.forEach(item => {
+					item.selected = !item.selected;
+				});
+			}
+		},
+		computed: {
+			allSelected: {
+				get() {
+					return this.data.results.every(item => item.selected);
+				},
+				set(value) {
+					this.data.results.forEach(item => {
+						item.selected = value;
+					});
+				}
+			},
+			selectedItems() {
+				return this.data.results.filter(item => item.selected).map(item => item.ID);
 			}
 		},
 		mounted() {
@@ -144,14 +174,6 @@
 		updated() {
 			funTransitionHeight(parent, trs_time);
 		},
-		watch: {
-			param: {
-				handler(newValue, oldValue) {
-					this.query();
-				},
-				deep: true
-			}
-		}
 	}
 	Vue.createApp(option).mount('#vue-list-app');
 </script>
