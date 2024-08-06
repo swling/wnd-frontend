@@ -24,8 +24,8 @@ class Wnd_Mails extends Wnd_Query {
 		$user_id = !is_super_admin() ? get_current_user_id() : ($args['user_id'] ?? 'any');
 
 		$where = [
-			'status' => $status,
-			'to'     => $user_id,
+			'status'   => $status,
+			'receiver' => $user_id,
 		];
 
 		$handler = Wnd_Mail_DB::get_instance();

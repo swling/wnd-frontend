@@ -23,7 +23,7 @@ class Wnd_Get_Mail extends Wnd_Query {
 
 		// 标记为已读
 		$current_user_id = get_current_user_id();
-		if ('unread' == $mail->status and $current_user_id == $mail->to) {
+		if ('unread' == $mail->status and $current_user_id == $mail->receiver) {
 			$instance->update([
 				'ID'      => $mail->ID,
 				'status'  => 'read',
@@ -37,7 +37,7 @@ class Wnd_Get_Mail extends Wnd_Query {
 		}
 
 		// 用户未登录，或登陆用户查询他人邮件：抛出异常
-		if (!$current_user_id or $mail->to != $current_user_id) {
+		if (!$current_user_id or $mail->receiver != $current_user_id) {
 			throw new Exception('权限错误');
 		}
 

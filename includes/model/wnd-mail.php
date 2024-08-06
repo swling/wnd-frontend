@@ -22,10 +22,10 @@ abstract class Wnd_Mail {
 	public static function mail(int $to, string $subject, string $message): int {
 		$hander = Wnd_Mail_DB::get_instance();
 		return $hander->insert([
-			'to'      => $to,
-			'subject' => $subject,
-			'content' => $message,
-			'sent_at' => time(),
+			'receiver' => $to,
+			'subject'  => $subject,
+			'content'  => $message,
+			'sent_at'  => time(),
 		]);
 	}
 
@@ -36,6 +36,6 @@ abstract class Wnd_Mail {
 	public static function get_mail_count(): int {
 		$user_id = get_current_user_id();
 		$hander  = Wnd_Mail_DB::get_instance();
-		return count($hander->get_results(['to' => $user_id, 'status' => 'unread'], 10));
+		return count($hander->get_results(['receiver' => $user_id, 'status' => 'unread'], 10));
 	}
 }
