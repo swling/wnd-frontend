@@ -70,7 +70,7 @@ class Wnd_Menus extends Wnd_Query {
 				['title' => __('财务', 'wnd'), 'href' => '#user/wnd_user_finance_panel'],
 				['title' => __('资料', 'wnd'), 'href' => '#user/wnd_profile_form'],
 				['title' => __('账户', 'wnd'), 'href' => '#user/wnd_account_form'],
-				// ['title' => __('消息', 'wnd'), 'href' => '#user/wnd_mail_box'],
+				['title' => __('消息', 'wnd'), 'href' => '#user/wnd_mail_box'],
 			],
 		];
 

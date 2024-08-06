@@ -1,39 +1,41 @@
 <?php
 namespace Wnd\Model;
 
+use Wnd\WPDB\Wnd_Mail_DB;
+
 /**
  * 站内信
  * @since 0.9.32
  *
- * @since 0.9.71 预备独立表重构
+ * @since 0.9.73 独立表重构
  */
 abstract class Wnd_Mail {
 
-	private static $mail_count_cache_group = 'wnd_mail_count';
-
 	/**
 	 * 发送站内信
-	 * @since 2019.02.25
 	 *
-	 * @param  	int    	$to      		收件人ID
+	 * @param  	int    	$to      	收件人ID
 	 * @param  	string 	$subject 	邮件主题
 	 * @param  	string 	$message 	邮件内容
-	 * @return 	bool   	true on success
+	 * @return 	int   	ID/0
 	 */
-	public static function mail($to, $subject, $message) {}
+	public static function mail(int $to, string $subject, string $message): int {
+		$hander = Wnd_Mail_DB::get_instance();
+		return $hander->insert([
+			'to'      => $to,
+			'subject' => $subject,
+			'content' => $message,
+			'sent_at' => time(),
+		]);
+	}
 
 	/**
 	 * 获取最近的10封未读邮件
-	 * @since 2019.04.11
-	 *
-	 * @return 	int 	用户未读邮件
+	 * @return 	int 用户未读邮件
 	 */
-	public static function get_mail_count() {}
-
-	/**
-	 * 删除未读邮件统计缓存
-	 */
-	public static function delete_mail_count_cache(int $user_id) {
-		wp_cache_delete($user_id, static::$mail_count_cache_group);
+	public static function get_mail_count(): int {
+		$user_id = get_current_user_id();
+		$hander  = Wnd_Mail_DB::get_instance();
+		return count($hander->get_results(['to' => $user_id, 'status' => 'unread'], 10));
 	}
 }

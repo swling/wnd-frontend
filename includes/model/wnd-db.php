@@ -25,6 +25,9 @@ class Wnd_DB {
 
 		// 交易数据表 @since 0.9.67
 		$wpdb->wnd_transactions = $wpdb->prefix . 'wnd_transactions';
+
+		// 站内信 @since 0.9.73
+		$wpdb->wnd_mails = $wpdb->prefix . 'wnd_mails';
 	}
 
 	/**
@@ -106,6 +109,25 @@ class Wnd_DB {
 			KEY user_id(user_id),
 			KEY object_uts(object_id, user_id, type, status),
 			KEY time(time)
+			) $charset_collate;";
+		dbDelta($create_users_sql);
+
+		/**
+		 * 创建站内信
+		 * @since 0.9.73
+		 */
+		$create_users_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_mails (
+			`ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 消息ID，主键，自增
+    		`from` BIGINT UNSIGNED NOT NULL,               -- 发送者ID
+    		`to` BIGINT UNSIGNED NOT NULL,                 -- 接收者ID
+    		`subject` VARCHAR(255) NOT NULL,               -- 消息主题
+    		`content` TEXT NOT NULL,                       -- 消息内容
+    		`sent_at` bigint(20) NOT NULL,                 -- 发送时间，默认当前时间
+    		`read_at` bigint(20) NOT NULL,                 -- 阅读时间，默认为NULL，表示未读
+    		`status` ENUM('unread', 'read', 'deleted') DEFAULT 'unread',  -- 消息状态：未读，已读，删除
+    		PRIMARY KEY (`ID`),                            -- 设置主键
+    		INDEX `to` (`to`),                             -- 为接收者ID添加索引，方便查询
+    		INDEX `from` (`from`)                          -- 为发送者ID添加索引，方便查询
 			) $charset_collate;";
 		dbDelta($create_users_sql);
 	}
