@@ -56,7 +56,13 @@ abstract class Wnd_SKU {
 	}
 
 	/**
-	 * 根据表单 name 前缀 自动依序遍历提取 _sku_* 并组合成新的二维数组，数据格式参考如下：
+	 * 前端接收数据格式：
+	 * 	$data = [
+	 * 		0 => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
+	 * 		1 => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
+	 * 	];
+	 * 
+	 * 清洗后数据格式参考如下：
 	 * 	$sku = [
 	 * 		'sku_0' => ['name' => '套餐1', 'price' => '0.1', 'stock' => 10],
 	 * 		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
@@ -66,72 +72,19 @@ abstract class Wnd_SKU {
 		$sku_data = [];
 		$sku_keys = array_keys(static::get_sku_keys($post_type));
 
-		/**
-		 * #第一步：
-		 *
-		 * - 忽略非 SKU 属性数据
-		 * - 移除表单 name 前缀
-		 * - 忽略 SKU Keys 设定范围外的数据
-		 *
-		 * $data = [
-		 * 		static::$name_prefix . 'name'  => ['name1','name2'],
-		 * 		static::$name_prefix . 'price' => ['price1','price2'],
-		 * 	];
-		 *
-		 * 提取后的数据：
-		 * $sku_data = [
-		 * 		'name'  => ['name1','name2'],
-		 * 		'price' => ['price1','price2'],
-		 * 	];
-		 */
-		foreach ($data as $key => $value) {
-			if (false === stripos($key, static::$name_prefix)) {
+		foreach ($data as $key => $sku_detail) {
+			// 过滤空值、仅提取指定 sku 属性
+			if (!wnd_array_filter($sku_detail)) {
 				continue;
 			}
+			$sku_detail = array_intersect_key($sku_detail, array_flip($sku_keys));
 
-			$props_key = str_replace(static::$name_prefix, '', $key);
-			if (!in_array($props_key, $sku_keys)) {
-				continue;
-			}
-
-			$sku_data[$props_key] = $value;
-		}unset($key, $value);
-
-		/**
-		 * #第二步：
-		 *
-		 * 接收数据：
-		 * $sku_data = [
-		 * 		'name'  => ['name1','name2'],
-		 * 		'price' => ['price1','price2'],
-		 * 	];
-		 *
-		 * 返回数据：
-		 * 	$sku = [
-		 * 		'sku_0' => ['name' => 'name1', 'price' => 'price1'],
-		 * 		'sku_1' => ['name' => 'name2', 'price' => 'price2'],
-		 * 	];
-		 */
-		$sku = [];
-		for ($i = 0, $size = count($sku_data['name']); $i < $size; $i++) {
-			// SKU 标题为必选，若未设置，则删除本条信息
-			if (!$sku_data['name'][$i]) {
-				continue;
-			}
-
-			foreach ($sku_data as $sku_detail_key => $sku_detail_value) {
-				// SKU ID
-				$sku_id = 'sku_' . $i;
-
-				// 组合 SKU 数据
-				$sku[$sku_id][$sku_detail_key] = $sku_detail_value[$i];
-
-				// 移除 SKU 属性中的空值
-				$sku[$sku_id] = wnd_array_filter($sku[$sku_id]);
-			}unset($key, $value);
+			$key            = 'sku_' . $key;
+			$sku_data[$key] = $sku_detail;
 		}
+		unset($key, $value);
 
-		return $sku;
+		return $sku_data;
 	}
 
 	/**

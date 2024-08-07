@@ -12,15 +12,17 @@ use Wnd\Model\Wnd_SKU;
 class Wnd_Set_SKU extends Wnd_Action_User {
 
 	private $post_id;
+	private $sku_data;
 
-	protected function execute(): array{
-		Wnd_SKU::set_object_sku($this->post_id, $this->data);
+	protected function execute(): array {
+		Wnd_SKU::set_object_sku($this->post_id, $this->sku_data);
 
 		return ['status' => 1, 'msg' => __('设置成功', 'wnd')];
 	}
 
 	protected function parse_data() {
-		$this->post_id = $this->data['post_id'] ?? 0;
+		$this->post_id  = $this->data['post_id'] ?? 0;
+		$this->sku_data = $this->data['sku'] ?? [];
 	}
 
 	protected function check() {

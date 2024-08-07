@@ -2,17 +2,17 @@
 namespace Wnd\Module\Common;
 
 use Exception;
+use Wnd\Controller\Wnd_Request;
 use Wnd\Model\Wnd_SKU;
-use Wnd\Module\Wnd_Module_Form;
-use Wnd\View\Wnd_Form_WP;
+use Wnd\Module\Wnd_Module_Html;
 
 /**
  * 产品属性设置表单
  * @since 0.8.76
  */
-class Wnd_SKU_Form extends Wnd_Module_Form {
+class Wnd_SKU_Form extends Wnd_Module_Html {
 
-	protected static function configure_form(array $args = []): object{
+	protected static function build(array $args = []): string {
 		$post_id = $args['post_id'] ?? 0;
 		if (!$post_id) {
 			throw new Exception(__('ID无效', 'wnd'));
@@ -37,53 +37,32 @@ class Wnd_SKU_Form extends Wnd_Module_Form {
 		 *
 		 * 获取现有属性并追加一个空白属性
 		 */
-		$sku   = Wnd_SKU::get_object_sku($post_id);
-		$sku[] = $default_sku_detail;
+		$sku      = Wnd_SKU::get_object_sku($post_id);
+		$sku_data = [];
+		foreach ($sku as $key => $sku_detail) {
+			$sku_data[] = array_merge($default_sku_detail, $sku_detail);
+		}
+		$sku_data[] = $default_sku_detail;
+
+		$app_data = [
+			'post_id'     => $post_id,
+			'sku'         => $sku_data,
+			'sku_keys'    => $sku_keys,
+			'action'      => 'common/wnd_set_sku',
+			'sign'        => Wnd_Request::sign(['sku', 'post_id']),
+			'sign_key'    => Wnd_Request::$sign_name,
+			'submit_text' => __('保存', 'wnd'),
+		];
 
 		/**
-		 * 构建表单
+		 * 采用 vue 文件编写代码，并通过 php 读取文件文本作为字符串使用
+		 * 主要目的是便于编辑，避免在 php 文件中混入大量 HTML 源码，难以维护
+		 * 虽然的确基于 vue 构建，然而在这里，它并不是标准的 vue 文件，而是 HTML 文件
+		 * 之所以使用 .vue 后缀是因为 .HTML 文件在文件夹中将以浏览器图标展示，非常丑陋，毫无科技感
+		 * 仅此而已
 		 */
-		$form = new Wnd_Form_WP();
-		foreach ($sku as $sku_detail) {
-			// 将现有单个 SKU 信息与默认单个 SKU 信息合并，以确保属性字段完整性及后续新增字段呈现
-			$sku_detail = array_merge($default_sku_detail, $sku_detail);
-
-			// 单个 SKU 容器
-			$form->add_html('<div class="field"><div class="box">');
-
-			// 构造 SKU 详情字段
-			$form->add_html('<div class="columns is-multiline">');
-			foreach ($sku_detail as $sku_detail_key => $sku_detail_value) {
-				$label = $sku_keys[$sku_detail_key] ?? $sku_detail_key;
-				$form->add_html('<div class="column is-4">');
-				$form->add_text(
-					[
-						'label'       => $label,
-						'name'        => Wnd_SKU::$name_prefix . $sku_detail_key . '[]',
-						'value'       => $sku_detail_value,
-						'placeholder' => $label,
-						'class'       => 'is-small',
-					]
-				);
-				$form->add_html('</div>');
-			}unset($sku_detail_key, $sku_detail_value);
-			$form->add_html('</div>');
-
-			// 按钮设置：现有数据设置移除按钮，空白数据设置新增按钮
-			if (wnd_array_filter($sku_detail)) {
-				$form->add_html('<div class="has-text-centered"><button type="button" class="button remove-row is-small" title="Remove">-</button></div>');
-			} else {
-				$form->add_html('<div class="has-text-centered"><button type="button" class="button add-row is-small" title="Add">+</button></div>');
-			}
-
-			// 容器闭合
-			$form->add_html('</div></div>');
-		}unset($sku_detail);
-
-		$form->add_hidden('post_id', $post_id);
-		$form->set_route('action', 'common/wnd_set_sku');
-		$form->set_submit_button(__('保存 SKU', 'wnd'));
-
-		return $form;
+		$html = '<script>var app_data = ' . json_encode($app_data, JSON_UNESCAPED_UNICODE) . ';</script>';
+		$html .= file_get_contents(WND_PATH . '/includes/module-vue/common/sku-form.vue');
+		return $html;
 	}
 }

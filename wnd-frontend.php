@@ -3,7 +3,7 @@
  * Plugin Name: Wnd-Frontend
  * Plugin URI: https://github.com/swling/wnd-frontend
  * Description: Wnd-Frontend 是一套基于 ajax 交互逻辑的 WordPress 前端基础框架。商业用途需购买授权。<a href="https://github.com/swling/wnd-frontend/releases">更新日志</a>
- * Version: 0.9.74
+ * Version: 0.9.74.1
  * Author: swling
  * Author URI: https://wndwp.com
  * Requires PHP: 8.0
@@ -26,7 +26,7 @@
 use Wnd\Model\Wnd_Init;
 
 // 版本
-define('WND_VER', '0.9.74');
+define('WND_VER', '0.9.74.1');
 
 // 定义插件网址路径
 define('WND_URL', plugin_dir_url(__FILE__));
@@ -79,6 +79,10 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 		'is_admin'           => is_admin(),
 		'lang'               => $_GET[WND_LANG_KEY] ?? get_locale(),
 		'ver'                => WND_VER,
+		'color'              => [
+			'primary' => wnd_get_config('primary_color'),
+			'second'  => wnd_get_config('second_color'),
+		],
 		'msg'                => [
 			'required'            => __('必填项为空', 'wnd'),
 			'submit_successfully' => __('提交成功', 'wnd'),
