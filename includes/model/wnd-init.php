@@ -192,17 +192,9 @@ class Wnd_Init {
 		}
 
 		// 允许预览版本：本插件中，普通用户公开发布后的内容，再次修改时，新增一个版本作为审核
-		if(is_user_logged_in()){
+		if (is_user_logged_in()) {
 			new Wnd_Preview_Revisions();
 		}
-	}
-
-	/**
-	 * 获取财务类 post types
-	 * @since 0.9.39
-	 */
-	public static function get_fin_types(): array {
-		return apply_filters('wnd_fin_types', ['stats-re', 'stats-ex']);
 	}
 
 }

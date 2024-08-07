@@ -1,8 +1,6 @@
 <?php
 namespace Wnd\View;
 
-use Wnd\Model\Wnd_Init;
-
 /**
  * 多重筛选 Json API
  * @since 0.9.5
@@ -46,7 +44,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	/**
 	 * 构造 Ajax 筛选菜单数据
 	 */
-	protected function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []): array{
+	protected function build_tabs(string $key, array $options, string $label, bool $any, array $remove_args = []): array {
 		if (!$options) {
 			return [];
 		}
@@ -74,14 +72,14 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	/**
 	 * 获取完整筛选 Tabs
 	 */
-	protected function get_tabs(): array{
+	protected function get_tabs(): array {
 		return $this->tabs;
 	}
 
 	/**
 	 * 获取当前查询的主分类 Tabs
 	 */
-	private function get_category_tabs($args = []): array{
+	private function get_category_tabs($args = []): array {
 		$args['taxonomy'] = $this->category_taxonomy;
 		$args['parent']   = $args['parent'] ?? 0;
 		return $this->build_taxonomy_filter($args) ?: [];
@@ -90,7 +88,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	/**
 	 * 获取主分类关联标签筛选 Tabs
 	 */
-	private function get_tags_tabs($limit = 10): array{
+	private function get_tags_tabs($limit = 10): array {
 		return $this->build_tags_filter($limit) ?: [];
 	}
 
@@ -104,7 +102,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	 *
 	 * @return array $sub_tabs_array[$taxonomy] = [$sub_tabs];
 	 */
-	private function get_sub_taxonomy_tabs(): array{
+	private function get_sub_taxonomy_tabs(): array {
 		$sub_tabs_array = [];
 		foreach ($this->get_tax_query() as $tax_query) {
 			// WP_Query tax_query参数可能存在：'relation' => 'AND', 'relation' => 'OR',参数，需排除 @since 2019.06.14
@@ -131,7 +129,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	 * 获取筛结果集
 	 * @since 0.9.25
 	 */
-	protected function get_posts(): array{
+	protected function get_posts(): array {
 		if (!$this->wp_query) {
 			return __('未执行WP_Query', 'wnd');
 		}
@@ -145,8 +143,6 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 			 */
 			if ($this->get_query_var('without_content')) {
 				unset($post->post_content);
-			} elseif (in_array($post->post_type, Wnd_Init::get_fin_types())) {
-				$post->post_content = number_format((float) $post->post_content, 2);
 			} else {
 				$post = wnd_filter_post($post);
 			}
@@ -172,7 +168,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	/**
 	 * 分页导航
 	 */
-	protected function get_pagination($show_page = 5): array{
+	protected function get_pagination($show_page = 5): array {
 		if (!$this->wp_query) {
 			return __('未执行WP_Query', 'wnd');
 		}
@@ -192,7 +188,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	 *
 	 * @param bool $with_post_content 是否包含正文内容
 	 */
-	public function get_filter(): array{
+	public function get_filter(): array {
 		return [
 			'before_html'       => $this->before_html,
 			'after_html'        => $this->after_html,
@@ -233,7 +229,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	/**
 	 * 获取查询结果集：适用于已经完成初始化的筛选器，后续筛选查询（出主分类和标签筛选项外，不含其他 Tabs ）
 	 */
-	public function get_results(): array{
+	public function get_results(): array {
 		$structure = $this->get_filter();
 		unset($structure['before_html']);
 		unset($structure['tabs']);

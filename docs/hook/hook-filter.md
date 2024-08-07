@@ -243,14 +243,6 @@ add_filter('wnd_recharge_amount_options', function(){
 $instance = apply_filters('wnd_transaction_instance', $instance, $type);
 ```
 
-## 财务类 Post Type
-```php
-/**
- * @since 0.9.39
- **/
-apply_filters('wnd_fin_types', ['order', 'recharge', 'stats-re', 'stats-ex']);
-```
-
 ## 表单
 ```php
 /**

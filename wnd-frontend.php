@@ -75,7 +75,6 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 			'order'    => get_option('comment_order'),
 			'form_pos' => wnd_get_config('comment_form_pos') ?: 'top',
 		],
-		'fin_types'          => json_encode(Wnd_Init::get_fin_types()),
 		'is_admin'           => is_admin(),
 		'lang'               => $_GET[WND_LANG_KEY] ?? get_locale(),
 		'ver'                => WND_VER,
@@ -120,5 +119,4 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 	if (is_singular() and comments_open()) {
 		wp_enqueue_script('wnd-comment', $static_path . 'js/comment.min.js', ['axios', 'comment-reply'], WND_VER, ['strategy' => 'async']);
 	}
-
 }
