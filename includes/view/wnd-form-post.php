@@ -287,7 +287,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 
 		$args = [
 			'type'        => 'tag_input',
-			'value'       => array_values($this->current_terms[$taxonomy]) ?: [],
+			'value'       => array_values($this->current_terms[$taxonomy] ?? []) ?: [],
 			'label'       => $label ?: $taxonomy_object->labels->name,
 			'name'        => '_term_' . $taxonomy . '[]',
 			'required'    => $required,
