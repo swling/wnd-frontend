@@ -14,7 +14,7 @@
 	<div id="lists">
 		<div v-for="(item, index) in data.results" class="columns is-multiline is-justify-content-space-between" style="border-top: 1px dotted #CCC;">
 			<div class="column is-narrow">
-				<div class="is-pulled-left" :class="get_status_class(item)" style="min-width: 80px;">
+				<div class="is-pulled-left mr-3" :class="get_status_class(item)">
 					<input type="checkbox" v-model="item.selected" class="mr-1">
 					<a @click="get_detail(item.ID, index)">
 						<b v-if="`unread` == item.status">{{item.subject}}</b>
