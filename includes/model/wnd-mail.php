@@ -20,8 +20,13 @@ abstract class Wnd_Mail {
 	 * @return 	int   	ID/0
 	 */
 	public static function mail(int $to, string $subject, string $message): int {
+		if (!$to) {
+			return 0;
+		}
+
 		$hander = Wnd_Mail_DB::get_instance();
 		return $hander->insert([
+			'sender'   => get_current_user_id(),
 			'receiver' => $to,
 			'subject'  => $subject,
 			'content'  => $message,
