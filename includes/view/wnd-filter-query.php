@@ -157,11 +157,14 @@ class Wnd_Filter_Query {
 			/**
 			 * categories tabs生成的GET参数为：'_term_' . $taxonomy，
 			 * 直接用 $taxonomy 作为参数会触发WordPress原生分类请求导致错误
+			 *
+			 * @link https://developer.wordpress.org/reference/classes/wp_query/#taxonomy-parameters
+			 * Possible values are ‘term_id’, ‘name’, ‘slug’ or ‘term_taxonomy_id’. Default value is ‘term_id’.
 			 */
 			if (0 === strpos($key, '_term_')) {
 				$term_query = [
 					'taxonomy' => str_replace('_term_', '', $key),
-					'field'    => is_numeric($value) ? 'term_id' : 'slug',
+					'field'    => is_numeric($value) ? 'term_id' : 'name',
 					'terms'    => $value,
 				];
 				$query_vars['tax_query'][] = $term_query;
