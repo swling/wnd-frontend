@@ -14,7 +14,7 @@ use Wnd\Model\Wnd_Term;
  */
 class Wnd_Term_Searcher extends Wnd_Query {
 
-	protected static function query($args = []): array{
+	protected static function query($args = []): array {
 		$defaults = [
 			'taxonomy'   => 'post_tag',
 			'parent'     => '',
@@ -29,6 +29,9 @@ class Wnd_Term_Searcher extends Wnd_Query {
 		if (!$args['search']) {
 			return [];
 		}
+
+		// 移除全部钩子：如中文简繁体自动翻译钩子，将导致输出名称与数据库名称不一致
+		remove_all_filters('get_term');
 
 		return Wnd_Term::get_terms_data($args);
 	}
