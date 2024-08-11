@@ -10,6 +10,7 @@ use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\Utility\Wnd_Validator;
 use Wnd\WPDB\Wnd_Auth;
+use Wnd\WPDB\Wnd_Mail_DB;
 use Wnd\WPDB\Wnd_Tag_Under_Category;
 use Wnd\WPDB\Wnd_Transaction_DB;
 use Wnd\WPDB\Wnd_User;
@@ -124,6 +125,10 @@ class Wnd_Add_Action_WP {
 		// 删除用户交易表记录
 		$handler = Wnd_Transaction_DB::get_instance();
 		$handler->delete_by('user_id', $user_id);
+
+		// 删除用户站内信表记录
+		$handler = Wnd_Mail_DB::get_instance();
+		$handler->delete_by('receiver', $user_id);
 
 		// 删除用户评论（若不删除，对应评论列表会产生无法缓存的重复sql查询）
 		$comments = get_comments(['user_id' => $user_id]);
