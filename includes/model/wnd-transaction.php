@@ -341,9 +341,9 @@ abstract class Wnd_Transaction {
 	 * @since 2019.02.11
 	 */
 	public function verify() {
-		// 订单支付状态检查：已完成、已关闭的订单，终止
+		// 订单支付状态检查：已完成、已关闭、已退款的订单，终止
 		$status = $this->get_status();
-		if (static::$completed_status == $status or static::$closed_status == $status) {
+		if (static::$completed_status == $status or static::$closed_status == $status or static::$refunded_status == $status) {
 			return;
 		}
 
