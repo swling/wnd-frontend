@@ -20,7 +20,7 @@ abstract class Wnd_Mail {
 	 * @return 	int   	ID/0
 	 */
 	public static function mail(int $to, string $subject, string $message): int {
-		if (!$to) {
+		if (!$to or !get_user_by('id', $to)) {
 			return 0;
 		}
 
