@@ -22,6 +22,14 @@ function has_block() {
 	return false;
 }
 
+function parse_blocks($content) {
+	return [];
+}
+
+function get_dynamic_block_names() {
+	return [];
+}
+
 function excerpt_remove_blocks($text) {
 	return $text;
 }
