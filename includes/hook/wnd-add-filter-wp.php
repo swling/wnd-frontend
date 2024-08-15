@@ -204,7 +204,7 @@ class Wnd_Add_Filter_WP {
 	 */
 	public static function join_posts_analyses_table($join, $query) {
 		global $wpdb;
-		if (in_array($query->query_vars['orderby'], ['today_views', 'week_views', 'month_views', 'total_views', 'favorites_count', 'rating_score'])) {
+		if (in_array($query->get('orderby'), ['today_views', 'week_views', 'month_views', 'total_views', 'favorites_count', 'rating_score'])) {
 			$join .= " LEFT JOIN {$wpdb->wnd_analyses} pa ON {$wpdb->posts}.ID = pa.post_id";
 		}
 
@@ -212,11 +212,7 @@ class Wnd_Add_Filter_WP {
 	}
 
 	public static function order_by_posts_analyses($orderby, $query) {
-		/**
-		 * WP Query 限定了 orderby 参数，因此不能使用 $query->get('orderby') 获取
-		 * @see WP_Query::parse_orderby()
-		 */
-		$orderby_var = $query->query_vars['orderby'];
+		$orderby_var = $query->get('orderby');
 		if (!$orderby_var) {
 			return $orderby;
 		}
