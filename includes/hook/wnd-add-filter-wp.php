@@ -20,6 +20,8 @@ class Wnd_Add_Filter_WP {
 		add_filter('get_comment_author_url', [__CLASS__, 'filter_comment_author_url'], 10, 3);
 		add_filter('get_avatar', [__CLASS__, 'filter_avatar'], 10, 5);
 		add_filter('get_comment_author', [__CLASS__, 'filter_comment_author'], 10, 3);
+		add_filter('posts_join', [__CLASS__, 'join_posts_analyses_table'], 10, 2);
+		add_filter('posts_orderby', [__CLASS__, 'order_by_posts_analyses'], 10, 2);
 	}
 
 	/**
@@ -194,4 +196,50 @@ class Wnd_Add_Filter_WP {
 
 		return $user->display_name ?: $author;
 	}
+
+	/**
+	 * posts 独立分析表排序
+	 * @since 0.9.74
+	 *
+	 */
+	public static function join_posts_analyses_table($join, $query) {
+		global $wpdb;
+		if (in_array($query->get('orderby'), ['today_views', 'week_views', 'month_views', 'total_views', 'favorites_count', 'rating_score'])) {
+			$join .= " LEFT JOIN {$wpdb->wnd_analyses} pa ON {$wpdb->posts}.ID = pa.post_id";
+		}
+
+		return $join;
+	}
+
+	public static function order_by_posts_analyses($orderby, $query) {
+		$current_date   = wnd_date('Y-m-d');
+		$start_of_week  = wnd_date('Y-m-d', strtotime('monday this week'));
+		$start_of_month = wnd_date('Y-m-01');
+
+		if ($query->get('orderby') == 'favorites_count') {
+			$orderby = 'pa.favorites_count ' . $query->get('order');
+		} elseif ($query->get('orderby') == 'rating_score') {
+			$orderby = 'pa.rating_score ' . $query->get('order');
+		} elseif ($query->get('orderby') == 'today_views') {
+			$orderby = "CASE
+                        WHEN pa.last_viewed_date = '{$current_date}' THEN pa.today_views
+                        ELSE 0
+                    END " . $query->get('order');
+		} elseif ($query->get('orderby') == 'week_views') {
+			$orderby = "CASE
+                        WHEN pa.last_viewed_date >= '{$start_of_week}' THEN pa.week_views
+                        ELSE 0
+                    END " . $query->get('order');
+		} elseif ($query->get('orderby') == 'month_views') {
+			$orderby = "CASE
+                        WHEN pa.last_viewed_date >= '{$start_of_month}' THEN pa.month_views
+                        ELSE 0
+                    END " . $query->get('order');
+		} elseif ($query->get('orderby') == 'total_views') {
+			$orderby = 'pa.total_views ' . $query->get('order');
+		}
+
+		return $orderby;
+	}
+
 }

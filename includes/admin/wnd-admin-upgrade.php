@@ -203,4 +203,29 @@ class Wnd_Admin_Upgrade {
 	private static function v_0_9_74() {
 		Wnd_DB::create_table();
 	}
+
+	private static function v_0_9_75() {
+		// 创建 analyses 数据表
+		Wnd_DB::create_table();
+
+		/**
+		 * 一、删除孤立的 post meta。原因如下：
+		 * 1、 analyses 表 post_id 启用了外键约束，需确保 meta 均对应有 post，否则无法写入。
+		 * 2、移除冗余数据。
+		 *
+		 * 二、历史数据迁移：将 views 字段转入独立表
+		 */
+		global $wpdb;
+		// $meta = $wpdb->get_results("SELECT pm.* FROM {$wpdb->postmeta} pm LEFT JOIN {$wpdb->posts} p ON pm.post_id = p.ID WHERE p.ID IS NULL;");
+		$meta = $wpdb->query("DELETE pm FROM {$wpdb->postmeta} pm LEFT JOIN {$wpdb->posts} p ON pm.post_id = p.ID WHERE p.ID IS NULL;");
+
+		$wpdb->query("
+			INSERT INTO {$wpdb->wnd_analyses} (post_id, total_views) SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = 'views';
+		");
+
+		// 清理 user meta
+		// $meta = $wpdb->query("SELECT um.* FROM {$wpdb->usermeta} um LEFT JOIN {$wpdb->users} u ON um.user_id = u.ID WHERE u.ID IS NULL;");
+		// $meta = $wpdb->query("DELETE um FROM {$wpdb->usermeta} um LEFT JOIN {$wpdb->users} u ON um.user_id = u.ID WHERE u.ID IS NULL;");
+	}
+
 }

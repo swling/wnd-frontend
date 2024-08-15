@@ -28,6 +28,8 @@ class Wnd_DB {
 
 		// 站内信 @since 0.9.73
 		$wpdb->wnd_mails = $wpdb->prefix . 'wnd_mails';
+
+		$wpdb->wnd_analyses = $wpdb->prefix . 'wnd_analyses';
 	}
 
 	/**
@@ -119,7 +121,7 @@ class Wnd_DB {
 		$create_users_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_mails (
 			`ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 消息ID，主键，自增
     		`sender` BIGINT UNSIGNED NOT NULL,             -- 发送者ID
-    		`receiver` BIGINT UNSIGNED NOT NULL,            -- 接收者ID
+    		`receiver` BIGINT UNSIGNED NOT NULL,           -- 接收者ID
     		`subject` VARCHAR(255) NOT NULL,               -- 消息主题
     		`content` TEXT NOT NULL,                       -- 消息内容
     		`sent_at` bigint(20) NOT NULL,                 -- 发送时间，默认当前时间
@@ -128,6 +130,34 @@ class Wnd_DB {
     		PRIMARY KEY (`ID`),                            -- 设置主键
     		INDEX `receiver` (`receiver`),                 -- 为接收者ID添加索引，方便查询
     		INDEX `sender` (`sender`)                      -- 为发送者ID添加索引，方便查询
+			) $charset_collate;";
+		dbDelta($create_users_sql);
+
+		/**
+		 * 创建 posts 分析数据表
+		 * @since 0.9.73
+		 */
+		$create_users_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_analyses (
+			`ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 消息ID，主键，自增
+			`post_id` BIGINT(20) UNSIGNED NOT NULL,
+			`today_views` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+			`week_views` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+			`month_views` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+			`total_views` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+			`favorites_count` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+			`rating_score` FLOAT NOT NULL DEFAULT 0,
+			`rating_count` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+			`last_viewed_date` DATE NOT NULL DEFAULT '1970-01-01',
+			PRIMARY KEY (`ID`),
+			UNIQUE INDEX `post_id` (`post_id`),
+			INDEX `today_views` (`today_views`),
+			INDEX `week_views` (`week_views`),
+			INDEX `month_views` (`month_views`),
+			INDEX `total_views` (`total_views`),
+			INDEX `favorites_count` (`favorites_count`),
+			INDEX `rating_score` (`rating_score`),
+			INDEX `last_viewed_date` (`last_viewed_date`),
+			FOREIGN KEY (`post_id`) REFERENCES `wp_posts`(`ID`) ON DELETE CASCADE
 			) $charset_collate;";
 		dbDelta($create_users_sql);
 	}

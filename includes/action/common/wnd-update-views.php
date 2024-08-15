@@ -3,6 +3,7 @@ namespace Wnd\Action\Common;
 
 use Exception;
 use Wnd\Action\Wnd_Action;
+use Wnd\WPDB\Wnd_Analysis_DB;
 
 /**
  * 更新 Post Views
@@ -16,23 +17,17 @@ class Wnd_Update_Views extends Wnd_Action {
 	private $post_id;
 
 	protected function execute(): array {
-		// 更新字段信息
-		if (wnd_inc_post_meta($this->post_id, 'views', 1)) {
-			$data = [];
+		$handler = Wnd_Analysis_DB::get_instance();
+		$handler->update_post_views($this->post_id);
 
-			// 捕获挂载函数中可能抛出的异常信息
-			try {
-				do_action('wnd_update_views', $this->post_id);
-			} catch (Exception $e) {
-				$data['msg'] = $e->getMessage();
-			} finally {
-				return ['status' => 1, 'msg' => time(), 'data' => $data];
-			}
+		// 捕获挂载函数中可能抛出的异常信息
+		try {
+			do_action('wnd_update_views', $this->post_id);
+		} catch (Exception $e) {
+			$error = 'Hook Error: ' . $e->getMessage();
+		} finally {
+			return ['status' => 1, 'msg' => 'success', 'data' => $error ?? ''];
 		}
-
-		//字段写入失败，清除对象缓存
-		wp_cache_delete($this->post_id, 'post_meta');
-		return ['status' => 0, 'msg' => time()];
 	}
 
 	protected function parse_data() {
