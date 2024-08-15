@@ -204,7 +204,7 @@ class Wnd_Add_Filter_WP {
 	 */
 	public static function join_posts_analyses_table($join, $query) {
 		global $wpdb;
-		if (in_array($query->get('orderby'), ['today_views', 'week_views', 'month_views', 'total_views', 'favorites_count', 'rating_score'])) {
+		if (in_array($query->query_vars['orderby'], ['today_views', 'week_views', 'month_views', 'total_views', 'favorites_count', 'rating_score'])) {
 			$join .= " LEFT JOIN {$wpdb->wnd_analyses} pa ON {$wpdb->posts}.ID = pa.post_id";
 		}
 
@@ -212,30 +212,39 @@ class Wnd_Add_Filter_WP {
 	}
 
 	public static function order_by_posts_analyses($orderby, $query) {
+		/**
+		 * WP Query 限定了 orderby 参数，因此不能使用 $query->get('orderby') 获取
+		 * @see WP_Query::parse_orderby()
+		 */
+		$orderby_var = $query->query_vars['orderby'];
+		if (!$orderby_var) {
+			return $orderby;
+		}
+
 		$current_date   = wnd_date('Y-m-d');
 		$start_of_week  = wnd_date('Y-m-d', strtotime('monday this week'));
 		$start_of_month = wnd_date('Y-m-01');
 
-		if ($query->get('orderby') == 'favorites_count') {
+		if ($orderby_var == 'favorites_count') {
 			$orderby = 'pa.favorites_count ' . $query->get('order');
-		} elseif ($query->get('orderby') == 'rating_score') {
+		} elseif ($orderby_var == 'rating_score') {
 			$orderby = 'pa.rating_score ' . $query->get('order');
-		} elseif ($query->get('orderby') == 'today_views') {
+		} elseif ($orderby_var == 'today_views') {
 			$orderby = "CASE
                         WHEN pa.last_viewed_date = '{$current_date}' THEN pa.today_views
                         ELSE 0
                     END " . $query->get('order');
-		} elseif ($query->get('orderby') == 'week_views') {
+		} elseif ($orderby_var == 'week_views') {
 			$orderby = "CASE
                         WHEN pa.last_viewed_date >= '{$start_of_week}' THEN pa.week_views
                         ELSE 0
                     END " . $query->get('order');
-		} elseif ($query->get('orderby') == 'month_views') {
+		} elseif ($orderby_var == 'month_views') {
 			$orderby = "CASE
                         WHEN pa.last_viewed_date >= '{$start_of_month}' THEN pa.month_views
                         ELSE 0
                     END " . $query->get('order');
-		} elseif ($query->get('orderby') == 'total_views') {
+		} elseif ($orderby_var == 'total_views') {
 			$orderby = 'pa.total_views ' . $query->get('order');
 		}
 
