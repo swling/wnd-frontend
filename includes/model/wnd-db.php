@@ -39,7 +39,7 @@ class Wnd_DB {
 	public static function create_table() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
-		require ABSPATH . 'wp-admin/includes/upgrade.php';
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		// 创建标签关联分类数据库
 		$create_terms_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_terms (
