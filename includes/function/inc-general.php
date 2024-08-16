@@ -418,3 +418,14 @@ function wnd_get_aff_cookie(): int {
 function wnd_delete_aff_cookie() {
 	setcookie(WND_AFF_KEY, '', time() - 3600, '/');
 }
+
+// 获取 post 浏览数据
+function wnd_get_views(int $post_id, string $period = 'total_views'): int {
+	$instance = Wnd\WPDB\Wnd_Analysis_DB::get_instance();
+	$data     = $instance->get_by('post_id', $post_id);
+	if (!$data) {
+		return 0;
+	}
+
+	return $data->$period ?? 0;
+}
