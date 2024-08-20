@@ -50,7 +50,7 @@
 		data() {
 			return {
 				param: vue_param,
-				data: {},
+				data: { "results": [] },
 				details: {},
 				tabs: vue_tabs,
 			}

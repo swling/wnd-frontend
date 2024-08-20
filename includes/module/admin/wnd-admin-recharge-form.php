@@ -13,7 +13,6 @@ class Wnd_Admin_Recharge_Form extends Wnd_Module_Form {
 
 	protected static function configure_form(): object{
 		$form = new Wnd_Form_WP();
-		$form->add_form_attr('id', 'admin-recharge-form');
 		$form->add_html('<div class="field is-horizontal"><div class="field-body">');
 		$form->add_text(
 			[

@@ -77,7 +77,7 @@ class Wnd_Add_Filter_WP {
 
 		$front_page_url = wnd_get_front_page_url();
 		if ($front_page_url) {
-			return add_query_arg(['action' => 'edit', 'post_id' => $post_id], $front_page_url);
+			return $front_page_url . '#module=post_form&post_id=' . $post_id;
 		}
 		return $link;
 	}

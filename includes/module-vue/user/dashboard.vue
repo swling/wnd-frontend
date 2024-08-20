@@ -1,69 +1,131 @@
-<div id="user-dashboard">
-	<div id="dashboard-template">
-		<div class="is-hidden-desktop is-hidden-tablet mb-5">
-			<div class="box is-size-5">
-				<a v-show="hash" href="#" @click="handle_home()" class="mr-5"><i class="fas fa-arrow-left"></i></a>
-				<span>{{title}}</span>
-			</div>
-			<div class="columns is-multiline is-full is-mobile box is-marginless" v-show="!hash">
-				<div class="column is-4" v-for="menu in menus">
-					<div class="menu-box box has-text-centered">
-						<a :href="menu.href" @click="sync_menu(menu)">{{menu.title}}</a>
-					</div>
+<div id="dashboard-app">
+	<div class="is-hidden-desktop is-hidden-tablet mb-5">
+		<div class="box is-size-5" v-show="hash">
+			<a href="#" @click="go_home()" class="mr-5"><i class="fas fa-arrow-left"></i></a>
+			<span v-text="title"></span>
+		</div>
+		<div class="columns is-multiline is-full is-mobile box is-marginless" v-show="!hash">
+			<div class="column is-4" v-for="menu in menus">
+				<div class="menu-box box has-text-centered">
+					<a @click="load_module(menu.href)">{{menu.title}}</a>
 				</div>
 			</div>
 		</div>
-		<div class="columns">
-			<div class="column is-narrow is-hidden-mobile">
-				<div id="wnd-menus" class="box">
-					<div id="app-menus"></div>
-				</div>
+	</div>
+	<div class="columns">
+		<div class="column is-narrow is-hidden-mobile" v-show="show_menus">
+			<div id="wnd-menus" class="box menu">
+				<ul class="menu-list">
+					<!-- <a>Menus</a> -->
+					<li>
+						<ul>
+							<li v-for="menu in menus" :key="menu.href">
+								<a v-html="menu.title" @click="load_module(menu.href)" :class="{ 'is-active': is_active(menu.href) }"></a>
+							</li>
+						</ul>
+					</li>
+				</ul>
 			</div>
-			<div class="column">
-				<div id="ajax-module" class="box"></div>
-			</div>
+		</div>
+		<div class="column">
+			<div id="ajax-module" class="box"></div>
 		</div>
 	</div>
 </div>
 <script>
-	let dashboard_option = {
+	const app = Vue.createApp({
 		data() {
 			return {
-				menus: wnd_menus_data[0].items,
-				hash: '',
 				title: 'Home',
-			}
+				hash: '',
+				default_module: wnd_dashboard.default,
+				menus: wnd_dashboard.menus[0].items,
+				current_module: '',
+				current_props: {}
+			};
 		},
-
 		methods: {
-			sync_menu: function (menu) {
-				this.hash = menu.href;
-				this.title = menu.title;
-			},
-			handle_home: function () {
+			go_home: function () {
 				this.hash = '';
 				this.title = 'Home';
+			},
+			load_module: async function (module_name, props = {}) {
+				this.current_module = module_name;
+				this.current_props = props;
+
+				const hash = new URLSearchParams(props).toString();
+				if (this.default_module == module_name) {
+					window.location.hash = hash;
+				} else {
+					let _hash = hash ? `module=${module_name}&${hash}` : `module=${module_name}`;
+					window.location.hash = _hash;
+				}
+				this.hash = window.location.hash;
+
+				const menu = this.menus.find(menu => menu.href === module_name);
+				if (menu) {
+					this.title = menu.title;
+				}
+
+				if ('post_form' == module_name) {
+					this.load_post_form(props);
+				} else {
+					wnd_ajax_embed('#ajax-module', module_name, props);
+				}
+			},
+			load_post_form: async function (props) {
+				let res = await wnd_query('wnd_query_post_form', props);
+				if (res.status <= 0) {
+					wnd_inner_html('#ajax-module', '<div class="notification is-danger is-light">' + res.msg + '</div>');
+					return false;
+				}
+				wnd_render_form('#ajax-module', res.data.structure, '', res.data.request_url);
+			},
+			load_module_from_hash() {
+				const hash = window.location.hash.slice(1);
+				const params = new URLSearchParams(hash);
+
+				const module = params.get('module');
+				const props = {};
+				for (const [key, value] of params.entries()) {
+					if (key !== 'module') {
+						props[key] = value;
+					}
+				}
+
+				if (module) {
+					this.load_module(module, props);
+				} else {
+					this.load_module(this.default_module);
+				}
+			},
+			is_active(module_name) {
+				return this.current_module.toLowerCase() === module_name.toLowerCase();
 			}
 		},
+		computed: {
+			show_menus() {
+				if (!wnd_dashboard.user_id) {
+					return false;
+				}
 
-		mounted: function () {
-			this.hash = location.hash;
+				return `post_form` != this.current_module && !wnd_dashboard.module;
+			}
 		},
-	}
+		mounted() {
+			// url GET 参数优先
+			if (wnd_dashboard.module) {
+				wnd_ajax_embed('#ajax-module', wnd_dashboard.module, wnd_dashboard.query);
+				return;
+			}
 
-	Vue.createApp(dashboard_option).mount('#user-dashboard');
+			this.load_module_from_hash();
+			window.addEventListener('hashchange', this.load_module_from_hash);
+		},
+		beforeUnmount() {
+			window.removeEventListener('hashchange', this.load_module_from_hash);
+		},
+	});
 
-	// hash render
-	function handle_hash() {
-		let module = location.hash.replace('#', '');
-		if (!module) {
-			wnd_ajax_embed('#ajax-module', default_module);
-			return;
-		}
-
-		wnd_ajax_embed('#ajax-module', module);
-	}
-
-	window.onload = window.onhashchange = handle_hash;
-	wnd_render_menus('#app-menus', wnd_menus_data);
+	app.mount('#dashboard-app');
 </script>
