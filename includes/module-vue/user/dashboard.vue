@@ -55,7 +55,9 @@
 
 				const hash = new URLSearchParams(props).toString();
 				if (this.default_module == module_name) {
-					window.location.hash = hash;
+					if (hash) {
+						window.location.hash = hash;
+					}
 				} else {
 					let _hash = hash ? `module=${module_name}&${hash}` : `module=${module_name}`;
 					window.location.hash = _hash;
