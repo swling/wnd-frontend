@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module\User;
 
+use Exception;
 use Wnd\Model\Wnd_Transaction;
 use Wnd\Module\Wnd_Module_Html;
 
@@ -95,6 +96,12 @@ class Wnd_User_Finance_Panel extends Wnd_Module_Html {
 		$html .= '</div>';
 
 		return $html;
+	}
+
+	protected static function check($args) {
+		if (!is_user_logged_in()) {
+			throw new Exception(__('请登录', 'wnd'));
+		}
 	}
 
 }

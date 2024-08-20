@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module\User;
 
+use Exception;
 use Wnd\Module\Wnd_Module_Html;
 
 /**
@@ -37,5 +38,11 @@ class Wnd_Mail_Box extends Wnd_Module_Html {
 		 */
 		$html .= file_get_contents(WND_PATH . '/includes/module-vue/user/mail-list.vue');
 		return $html;
+	}
+
+	protected static function check($args) {
+		if (!is_user_logged_in()) {
+			throw new Exception(__('请登录', 'wnd'));
+		}
 	}
 }

@@ -11,7 +11,7 @@ use WP_User;
  */
 class Wnd_Account_Form extends Wnd_Module_Form {
 
-	protected static function configure_form(): object{
+	protected static function configure_form(): object {
 		$user       = wp_get_current_user();
 		$enable_sms = wnd_get_config('enable_sms');
 
@@ -67,5 +67,11 @@ class Wnd_Account_Form extends Wnd_Module_Form {
 		$msg .= '</div>';
 
 		return $msg;
+	}
+
+	protected static function check($args) {
+		if (!is_user_logged_in()) {
+			throw new Exception(__('请登录', 'wnd'));
+		}
 	}
 }

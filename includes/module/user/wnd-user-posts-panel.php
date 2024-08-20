@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module\User;
 
+use Exception;
 use Wnd\Module\Wnd_Module_Filter;
 use Wnd\View\Wnd_Filter_Ajax;
 
@@ -32,6 +33,12 @@ class Wnd_User_Posts_Panel extends Wnd_Module_Filter {
 		$filter->query();
 
 		return $filter->get_filter();
+	}
+
+	protected static function check($args) {
+		if (!is_user_logged_in()) {
+			throw new Exception(__('请登录', 'wnd'));
+		}
 	}
 
 }

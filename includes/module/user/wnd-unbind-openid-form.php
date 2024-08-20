@@ -11,7 +11,7 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Unbind_Openid_Form extends Wnd_Module_Form {
 
-	protected static function configure_form(): object{
+	protected static function configure_form(): object {
 		// 获取当前用户绑定账户数据
 		$current_user = wp_get_current_user();
 		$auths        = (array) wnd_get_user_auths($current_user->ID);
@@ -49,5 +49,11 @@ class Wnd_Unbind_Openid_Form extends Wnd_Module_Form {
 		$form->set_route('action', 'user/wnd_unbind_openid');
 		$form->set_submit_button(__('解除绑定', 'wnd'));
 		return $form;
+	}
+
+	protected static function check($args) {
+		if (!is_user_logged_in()) {
+			throw new Exception(__('请登录', 'wnd'));
+		}
 	}
 }

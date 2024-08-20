@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module\User;
 
+use Exception;
 use Wnd\Module\Wnd_Module_Html;
 
 /**
@@ -9,7 +10,7 @@ use Wnd\Module\Wnd_Module_Html;
  */
 class Wnd_User_Overview extends Wnd_Module_Html {
 
-	protected static function build(array $args = []): string{
+	protected static function build(array $args = []): string {
 		$user_id = get_current_user_id();
 		$html    = '';
 
@@ -68,5 +69,11 @@ class Wnd_User_Overview extends Wnd_Module_Html {
 		$html .= '</div>';
 
 		return $html;
+	}
+
+	protected static function check($args) {
+		if (!is_user_logged_in()) {
+			throw new Exception(__('请登录', 'wnd'));
+		}
 	}
 }

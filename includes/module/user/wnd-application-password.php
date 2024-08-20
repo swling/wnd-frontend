@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module\User;
 
+use Exception;
 use Wnd\Module\Wnd_Module_Html;
 use WP_Application_Passwords;
 
@@ -25,5 +26,11 @@ class Wnd_Application_Password extends Wnd_Module_Html {
 		 */
 		$html .= file_get_contents(WND_PATH . '/includes/module-vue/user/application-password.vue');
 		return $html;
+	}
+
+	protected static function check($args) {
+		if (!is_user_logged_in()) {
+			throw new Exception(__('请登录', 'wnd'));
+		}
 	}
 }

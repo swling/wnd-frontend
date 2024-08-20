@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Module\User;
 
+use Exception;
 use Wnd\Module\Wnd_Module_Form;
 use Wnd\View\Wnd_Form_User;
 
@@ -9,7 +10,7 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Bind_Phone_Form extends Wnd_Module_Form {
 
-	protected static function configure_form(): object{
+	protected static function configure_form(): object {
 		$current_user       = wp_get_current_user();
 		$current_user_phone = wnd_get_user_phone($current_user->ID);
 
@@ -31,5 +32,11 @@ class Wnd_Bind_Phone_Form extends Wnd_Module_Form {
 		$form->set_route('action', 'user/wnd_bind_account');
 		$form->set_submit_button(__('保存', 'wnd'));
 		return $form;
+	}
+
+	protected static function check($args) {
+		if (!is_user_logged_in()) {
+			throw new Exception(__('请登录', 'wnd'));
+		}
 	}
 }
