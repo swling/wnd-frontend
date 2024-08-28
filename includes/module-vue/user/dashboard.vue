@@ -46,18 +46,17 @@
 		},
 		methods: {
 			go_home: function () {
-				this.hash = '';
 				this.title = 'Home';
+				this.load_module(this.default_module);
 			},
 			load_module: async function (module_name, props = {}) {
+				module_name = module_name || this.default_module;
 				this.current_module = module_name;
 				this.current_props = props;
 
 				const hash = new URLSearchParams(props).toString();
 				if (this.default_module == module_name) {
-					if (hash) {
-						window.location.hash = hash;
-					}
+					window.location.hash = hash ? hash : '';
 				} else {
 					let _hash = hash ? `module=${module_name}&${hash}` : `module=${module_name}`;
 					window.location.hash = _hash;
@@ -87,12 +86,17 @@
 				const hash = window.location.hash.slice(1);
 				const params = new URLSearchParams(hash);
 
-				const module = params.get('module');
+				const module = params.get('module') || this.default_module;
 				const props = {};
 				for (const [key, value] of params.entries()) {
 					if (key !== 'module') {
 						props[key] = value;
 					}
+				}
+
+				// 阻止点击事件已经触发后的重复请求
+				if (module == this.current_module && JSON.stringify(props) == JSON.stringify(this.current_props)) {
+					return;
 				}
 
 				if (module) {
