@@ -228,4 +228,9 @@ class Wnd_Admin_Upgrade {
 		// $meta = $wpdb->query("DELETE um FROM {$wpdb->usermeta} um LEFT JOIN {$wpdb->users} u ON um.user_id = u.ID WHERE u.ID IS NULL;");
 	}
 
+	// 删除原有浏览量统计字段
+	private static function v_0_9_76() {
+		delete_post_meta_by_key('views');
+	}
+
 }
