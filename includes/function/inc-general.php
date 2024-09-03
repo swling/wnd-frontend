@@ -119,14 +119,14 @@ function wnd_get_json_request(): array {
  * @link https://learnku.com/laravel/t/3905/do-you-really-know-ip-how-do-php-get-the-real-user-ip
  * @link https://stackoverflow.com/questions/3003145/how-to-get-the-client-ip-address-in-php
  * @link https://www.php.net/manual/zh/reserved.variables.server.php
+ *
+ * @since 2024.09.03
+ * 在没有使用反向代理、负载均衡器等技术时，$_SERVER['REMOTE_ADDR'] 是获取用户真实 IP 的可靠方法。
+ * 在这种情况下，它通常能够准确反映与服务器建立连接的客户端 IP。
+ *
  */
 function wnd_get_user_ip(bool $hidden = false): string {
-	if (isset($_SERVER)) {
-		$ip = $_SERVER['HTTP_CLIENT_IP'] ?? ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR']);
-	} else {
-		$ip = getenv('HTTP_CLIENT_IP') ?: (getenv('HTTP_X_FORWARDED_FOR') ?: getenv('REMOTE_ADDR'));
-	}
-	$ip = $ip ?: '';
+	$ip = $_SERVER['REMOTE_ADDR'];
 
 	if ($hidden) {
 		return preg_replace('/(\d+)\.(\d+)\.(\d+)\.(\d+)/is', '$1.$2.$3.*', $ip);
