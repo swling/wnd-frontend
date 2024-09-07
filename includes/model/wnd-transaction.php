@@ -348,7 +348,7 @@ abstract class Wnd_Transaction {
 		}
 
 		if (static::$pending_status != $status) {
-			throw new Exception(__('订单状态无效', 'wnd'));
+			throw new Exception(__('订单状态无效', 'wnd') . $status);
 		}
 
 		$this->update_transaction_status(static::$completed_status);
