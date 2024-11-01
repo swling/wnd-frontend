@@ -17,29 +17,6 @@ class Wnd_Post_Status_Form extends Wnd_Module_Form {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
-		switch ($post->post_status) {
-
-			case 'publish':
-				$status_text = __('已发布', 'wnd');
-				break;
-
-			case 'pending':
-				$status_text = __('待审核', 'wnd');
-				break;
-
-			case 'draft':
-				$status_text = __('草稿', 'wnd');
-				break;
-
-			case false:
-				$status_text = __('已删除', 'wnd');
-				break;
-
-			default:
-				$status_text = $post->post_status;
-				break;
-		}
-
 		$form = new Wnd_Form_WP();
 		$form->add_html('<div class="field is-grouped is-grouped-centered">');
 		$form->add_radio(
@@ -48,6 +25,7 @@ class Wnd_Post_Status_Form extends Wnd_Module_Form {
 				'options'  => [
 					__('发布', 'wnd') => 'publish',
 					__('待审', 'wnd') => 'pending',
+					__('私有', 'wnd') => 'private',
 					__('关闭', 'wnd') => 'wnd-closed',
 					__('草稿', 'wnd') => 'draft',
 					__('删除', 'wnd') => 'delete',
