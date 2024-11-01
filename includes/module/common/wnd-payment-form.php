@@ -88,6 +88,13 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 		}
 
 		$form->set_submit_button(__('确定', 'wnd'));
+
+		/**
+		 * @since 0.9.77
+		 * 拓展支付表单
+		 */
+		$form = apply_filters('wnd_payment_form', $form);
+
 		return $form;
 	}
 
