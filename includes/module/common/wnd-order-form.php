@@ -13,7 +13,7 @@ use Wnd\View\Wnd_Form_WP;
 class Wnd_Order_Form extends Wnd_Module_Form {
 
 	// 配置表单
-	protected static function configure_form(array $args = []): object{
+	protected static function configure_form(array $args = []): object {
 		$defaults = [
 			'post_id'          => 0,
 			'ajax'             => true,
@@ -37,7 +37,7 @@ class Wnd_Order_Form extends Wnd_Module_Form {
 		if ($ajax) {
 			$form->set_route('module', 'common/wnd_payment_form');
 		} else {
-			$form->set_action(get_permalink(wnd_get_config('front_page')), 'GET');
+			$form->set_action(wnd_get_front_page_url(), 'GET');
 			$form->add_hidden('module', 'common/wnd_payment_form');
 		}
 
@@ -79,7 +79,7 @@ class Wnd_Order_Form extends Wnd_Module_Form {
 	 * 		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
 	 * 	];
 	 */
-	protected static function get_sku_options(int $post_id): array{
+	protected static function get_sku_options(int $post_id): array {
 		$sku     = Wnd_SKU::get_object_sku($post_id);
 		$options = [];
 		foreach ($sku as $sku_id => $sku_detail) {

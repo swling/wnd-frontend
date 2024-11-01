@@ -1,5 +1,5 @@
 <div id="dashboard-app">
-	<div class="is-hidden-desktop is-hidden-tablet mb-5">
+	<div class="is-hidden-desktop is-hidden-tablet mb-5" v-show="!query_module">
 		<div class="box is-size-5" v-show="hash">
 			<a href="#" @click="go_home()" class="mr-5"><i class="fas fa-arrow-left"></i></a>
 			<span v-text="title"></span>
@@ -36,6 +36,7 @@
 	const app = Vue.createApp({
 		data() {
 			return {
+				query_module: wnd_dashboard.module, // $_GET 请求 module
 				title: 'Home',
 				hash: '',
 				default_module: wnd_dashboard.default,
@@ -115,13 +116,13 @@
 					return false;
 				}
 
-				return `post_form` != this.current_module && !wnd_dashboard.module;
+				return `post_form` != this.current_module && !this.query_module;
 			}
 		},
 		mounted() {
 			// url GET 参数优先
-			if (wnd_dashboard.module) {
-				wnd_ajax_embed('#ajax-module', wnd_dashboard.module, wnd_dashboard.query);
+			if (this.query_module) {
+				wnd_ajax_embed('#ajax-module', this.query_module, wnd_dashboard.query);
 				return;
 			}
 
