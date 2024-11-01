@@ -93,7 +93,7 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 		 * @since 0.9.77
 		 * 拓展支付表单
 		 */
-		$form = apply_filters('wnd_payment_form', $form);
+		$form = apply_filters('wnd_payment_form', $form, $args);
 
 		return $form;
 	}

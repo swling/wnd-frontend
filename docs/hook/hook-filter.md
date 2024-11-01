@@ -228,8 +228,10 @@ add_filter('wnd_payment_handler', function ($class_name, $payment_gateway) {
 /**
  * @since 0.9.77
  * 拓展支付表单
+ * @param $form 表单实例
+ * @param $args 订单参数
  */
-$form = apply_filters('wnd_payment_form', $form);
+$form = apply_filters('wnd_payment_form', $form, $args);
 
 // 实例：新增一个字段（亦可参考 wnd_payment_form 代码完全新建一个表单）
 add_filter('wnd_payment_form', function ($form) {
