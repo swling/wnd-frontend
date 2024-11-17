@@ -63,7 +63,7 @@ global $wp_version;
 // 升级或安装中
 $installing = defined('WP_INSTALLING') && WP_INSTALLING;
 
-if (6.6 == floatval($wp_version) and !$installing) {
+if (6.7 == floatval($wp_version) and !$installing) {
 	require __DIR__ . '/wp-settings.php';
 } else {
 	require ABSPATH . 'wp-settings.php';
