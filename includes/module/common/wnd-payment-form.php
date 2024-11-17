@@ -71,7 +71,7 @@ class Wnd_Payment_Form extends Wnd_Module_Form {
 		$form->add_checkbox(
 			[
 				'name'     => 'agreement',
-				'options'  => [__('已阅读并同意交易协议及产品使用协议') => '1'],
+				'options'  => [__('已阅读并同意交易协议及产品使用协议', 'wnd') => '1'],
 				'checked'  => ['1'],
 				'required' => 'required',
 			]
