@@ -125,7 +125,7 @@ class Wnd_Defender_Action {
 		// 锁定时间范围内:
 		$time = $this->period - (time() - $this->action_log['time']);
 		if ($time > 0) {
-			throw new Exception(sprintf(__('操作太频繁，请 %s 分钟后重试', 'wnd'), ceil($time / 60)));
+			throw new Exception(sprintf(__('操作太频繁，请 %s 分钟后重试', 'wnd'), ceil($time / 60)), -99);
 		}
 	}
 

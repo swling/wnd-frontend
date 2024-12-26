@@ -571,7 +571,7 @@ function wnd_ajax_submit(button, captcha_input = false) {
         if (form_info.msg) {
             wnd_form_msg(form, form_info.msg, form_info.msg_class);
         }
-        if (![3, 4, 6].includes(response.data.status)) {
+        if (![3, 4].includes(response.data.status)) {
             button.classList.remove('is-loading');
         }
 
@@ -880,6 +880,7 @@ function wnd_ajax_click(link) {
             // 弹出消息
             case 2:
             case 0:
+            case -99:
                 if (response.data.data) {
                     link.innerHTML = response.data.data;
                 }
