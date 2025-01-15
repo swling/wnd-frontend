@@ -26,10 +26,6 @@ class Wnd_Optimization {
 		// 404 SEO
 		add_filter('redirect_canonical', [__CLASS__, 'filter_redirect_canonical']);
 
-		// 对象缓存views字段
-		add_filter('update_post_metadata', [__CLASS__, 'filter_update_post_metadata'], 10, 4);
-		add_filter('get_post_metadata', [__CLASS__, 'filter_get_post_metadata'], 10, 4);
-
 		// 禁用WP默认注册登录
 		add_action('admin_init', [__CLASS__, 'redirect_non_admin_users']);
 		add_action('login_init', [__CLASS__, 'redirect_login_form_register']);
@@ -96,47 +92,6 @@ class Wnd_Optimization {
 			return false;
 		}
 		return $redirect_url;
-	}
-
-	/**
-	 * 将文章流量统计：views字段缓存在对象缓存中，降低数据库读写
-	 * @since 2019.06.13
-	 */
-	public static function filter_update_post_metadata($check, $object_id, $meta_key, $meta_value) {
-		if (!wp_using_ext_object_cache()) {
-			return $check;
-		}
-
-		if ('views' == $meta_key) {
-			wp_cache_set($object_id, $meta_value, 'wnd_views');
-			$cached_post_views = 10;
-			if (0 == $meta_value % $cached_post_views or 1 == $meta_value) {
-				//每增加 10 次浏览 或首次 写入数据库中去
-				wp_cache_delete($object_id, 'wnd_views');
-				return $check;
-			} else {
-				return true;
-			}
-		} else {
-			return $check;
-		}
-	}
-
-	public static function filter_get_post_metadata($check, $object_id, $meta_key, $single) {
-		if (!wp_using_ext_object_cache()) {
-			return $check;
-		}
-
-		if ($single and 'views' == $meta_key) {
-			$views = wp_cache_get($object_id, 'wnd_views'); //显示的时候直接从内存中获取
-			if (false === $views) {
-				return $check;
-			} else {
-				return $views;
-			}
-		} else {
-			return $check;
-		}
 	}
 
 	/**
