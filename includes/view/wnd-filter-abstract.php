@@ -121,7 +121,7 @@ abstract class Wnd_Filter_Abstract {
 	 * 读取全部查询参数数组
 	 * @since 0.9.38
 	 */
-	public function get_query_vars(): array{
+	public function get_query_vars(): array {
 		return $this->filter_query->get_query_vars();
 	}
 
@@ -129,7 +129,7 @@ abstract class Wnd_Filter_Abstract {
 	 * 获取新增的查询参数
 	 * @since 0.9.38
 	 */
-	public function get_add_query_vars(): array{
+	public function get_add_query_vars(): array {
 		return $this->filter_query->get_add_query_vars();
 	}
 
@@ -541,16 +541,22 @@ abstract class Wnd_Filter_Abstract {
 			return;
 		}
 
+		/**
+		 * @since 0.9.80
+		 * 允许修改可供匿名查询的 post status
+		 */
 		$post_status     = $this->get_post_status_query() ?: 'publish';
 		$current_user_id = get_current_user_id();
+		$post_type       = $this->get_post_type_query();
+		$allowed_status  = apply_filters('wnd_allowed_query_status', ['publish', 'wnd-closed'], $post_type, $current_user_id);
 
 		// 数组查询
-		if (is_array($post_status) and array_intersect($post_status, ['publish', 'wnd-closed']) == $post_status) {
+		if (is_array($post_status) and array_intersect($post_status, $allowed_status) == $post_status) {
 			return;
 		}
 
 		// 单个查询
-		if (is_string($post_status) and in_array($post_status, ['publish', 'wnd-closed'])) {
+		if (is_string($post_status) and in_array($post_status, $allowed_status)) {
 			return;
 		}
 
@@ -587,7 +593,7 @@ abstract class Wnd_Filter_Abstract {
 	 *
 	 * @return array $ancestors 当前分类查询的所有父级：$ancestors[$taxonomy] = [$term_id_1, $term_id_2];
 	 */
-	protected function get_tax_query_ancestors(): array{
+	protected function get_tax_query_ancestors(): array {
 		$ancestors = [];
 
 		// 遍历当前tax query是否包含子类

@@ -399,6 +399,12 @@ add_filter('wnd_user_page_default_module', function ($module_name) {
 过滤 Ajax 筛选 Posts 集。（常规筛选中此 Filter 无效，此时应通过设置 post 模板函数来实现自定义输出结果）
 ```php
 return apply_filters('wnd_filter_posts', $posts);
+
+/**
+ * @since 0.9.80
+ * 允许修改可供匿名查询的 post status
+ */
+$allowed_status  = apply_filters('wnd_allowed_query_status', ['publish', 'wnd-closed'], $post_type, $current_user_id);
 ```
 
 ## 用户筛选
