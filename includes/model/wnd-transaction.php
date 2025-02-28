@@ -498,7 +498,7 @@ abstract class Wnd_Transaction {
 
 	public static function get_results(array $where, int $limit = 0) {
 		$db_handler = Wnd_Transaction_DB::get_instance();
-		return $db_handler->get_results($where, $limit);
+		return $db_handler->get_results($where, ['limit' => $limit]);
 	}
 
 	public static function get(int $ID) {

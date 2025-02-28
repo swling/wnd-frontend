@@ -122,10 +122,8 @@ class Wnd_Site_Stats extends Wnd_Query {
 	private static function get_finance_stats_by_day(string $type, int $days): array {
 		global $wpdb;
 		$results = $wpdb->get_results(
-			"SELECT * FROM $wpdb->wnd_transactions
-			 WHERE FROM_UNIXTIME(time) >= DATE_SUB(CURDATE(), INTERVAL $days DAY)
-			 AND type = '{$type}'
-			;"
+			$wpdb->prepare(
+				"SELECT * FROM $wpdb->wnd_transactions WHERE FROM_UNIXTIME(time) >= DATE_SUB(CURDATE(), INTERVAL %d DAY) AND type = '%s' ", $days, $type)
 		);
 
 		// 日期数据初始化

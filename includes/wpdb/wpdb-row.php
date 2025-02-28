@@ -123,7 +123,7 @@ class WPDB_Row {
 		}
 
 		// sql 语句
-		$sql = $this->build_sql($where, 1);
+		$sql = $this->build_sql($where, ['limit' => 1]);
 
 		// object cache
 		$data = $this->cache->get_data_from_cache($where);
@@ -148,11 +148,11 @@ class WPDB_Row {
 	 *
 	 * @return array
 	 */
-	public function get_results(array $where, int $limit = 0, int $offset = 0): array {
+	public function get_results(array $where, array $options = []): array {
 		// 按键名排序：用以统一 sql 语句及对应的缓存 key
 		ksort($where);
 
-		$sql     = $this->build_sql($where, $limit, $offset);
+		$sql     = $this->build_sql($where, $options);
 		$results = $this->cache->get_results_from_cache($sql);
 		if (false !== $results) {
 			return $results ?: [];
@@ -164,42 +164,84 @@ class WPDB_Row {
 		return $results ?: [];
 	}
 
-	private function build_sql(array $where, int $limit = 0, int $offset = 0): string {
-		// sql 语句
-		$conditions = '1 = 1';
+	/**
+	 * @since 0.9.72
+	 * sql防止注入安全过滤
+	 *
+	 *	$where = [
+	 *	    'age'        => '10<age<50',
+	 *	    'created_at' => '2024-01-01<created_at<2025-01-01',
+	 *	    'status'     => '!=inactive'
+	 *	];
+	 */
+	private function build_sql(array $where, array $options = []): string {
+		// 默认参数
+		$defaults = [
+			'limit'    => 0,
+			'offset'   => 0,
+			'order_by' => $this->primary_id_column,
+			'order'    => 'DESC',
+		];
+		$options = array_merge($defaults, $options);
+
+		$conditions = ['1 = 1'];
+		$params     = [];
+
 		foreach ($where as $field => $value) {
 			$value = trim($value);
-			if ('any' == $value) {
+			if ($value === 'any') {
 				continue;
 			}
 
-			if (str_starts_with($value, '>')) {
-				$value = trim(str_replace('>', '', $value));
-				$conditions .= " AND `$field` > " . "'{$value}'";
+			// 处理区间查询 '10<age<50' 或 '2024-01-01<created_at<2025-01-01'
+			if (preg_match('/^(.+?)\s*<\s*([\w]+)\s*<\s*(.+?)$/', $value, $matches)) {
+				$conditions[] = "`{$matches[2]}` BETWEEN %s AND %s";
+				$params[]     = $matches[1];
+				$params[]     = $matches[3];
 				continue;
 			}
 
-			if (str_starts_with($value, '<')) {
-				$value = trim(str_replace('<', '', $value));
-				$conditions .= " AND `$field` < " . "'{$value}'";
+			// 处理大于、小于、不等于
+			if (preg_match('/^(>=?|<=?|!=)\s*(.+)$/', $value, $matches)) {
+				$operator     = $matches[1];
+				$val          = $matches[2];
+				$conditions[] = "`$field` $operator %s";
+				$params[]     = $val;
 				continue;
 			}
 
-			if (str_starts_with($value, '!=')) {
-				$value = trim(str_replace('!=', '', $value));
-				$conditions .= " AND `$field` != " . "'{$value}'";
-				continue;
-			}
-
+			// 处理 NULL 值
 			if (is_null($value)) {
-				$conditions .= " AND `$field` IS NULL";
+				$conditions[] = "`$field` IS NULL";
 				continue;
 			}
 
-			$conditions .= " AND `$field` = " . "'{$value}'";
+			// 默认等于查询
+			$conditions[] = "`$field` = %s";
+			$params[]     = $value;
 		}
 
-		return "SELECT * FROM `$this->table` WHERE $conditions ORDER BY $this->primary_id_column DESC" . ($limit ? " LIMIT $limit" : '') . ($offset ? ' OFFSET ' . $offset : '');
+		// 验证排序字段（仅允许字母、数字、下划线）
+		if (!preg_match('/^[a-zA-Z0-9_]+$/', $options['order_by'])) {
+			$options['order_by'] = $this->primary_id_column;
+		}
+
+		// 确保排序方式只能是 ASC 或 DESC
+		$options['order'] = strtoupper($options['order']);
+		if (!in_array($options['order'], ['ASC', 'DESC'])) {
+			$options['order'] = 'DESC';
+		}
+
+		// 构造 SQL 语句
+		$sql = "SELECT * FROM `{$this->table}` WHERE " . implode(' AND ', $conditions) . " ORDER BY `{$options['order_by']}` {$options['order']}";
+
+		if ($options['limit']) {
+			$sql .= ' LIMIT %d OFFSET %d';
+			$params[] = $options['limit'];
+			$params[] = $options['offset'];
+		}
+
+		return $this->wpdb->prepare($sql, ...$params);
 	}
 
 	/**

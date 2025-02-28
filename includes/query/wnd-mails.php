@@ -29,7 +29,7 @@ class Wnd_Mails extends Wnd_Query {
 		];
 
 		$handler = Wnd_Mail_DB::get_instance();
-		$results = $handler->get_results($where, $number, ($paged - 1) * $number);
+		$results = $handler->get_results($where, ['limit' => $number, 'offset' => ($paged - 1) * $number]);
 
 		return ['results' => $results, 'number' => count($results)];
 	}

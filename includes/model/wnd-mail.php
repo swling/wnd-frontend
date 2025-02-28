@@ -40,7 +40,7 @@ abstract class Wnd_Mail {
 	 */
 	public static function get_mail_count(): int {
 		$user_id = get_current_user_id();
-		$hander  = Wnd_Mail_DB::get_instance();
-		return count($hander->get_results(['receiver' => $user_id, 'status' => 'unread'], 10));
+		$handler = Wnd_Mail_DB::get_instance();
+		return count($handler->get_results(['receiver' => $user_id, 'status' => 'unread'], ['limit' => 10]));
 	}
 }
