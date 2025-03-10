@@ -295,15 +295,11 @@ async function wnd_render_filter(container, filter_json, add_class) {
  *@param param 		对应传参
  *@param headers 	请求headers
  */
-function wnd_query(query, param, headers = {}) {
-    return axios({
-        'method': 'get',
-        url: wnd_query_api + '/' + query,
-        params: param,
-        headers: headers,
-    }).then(function (response) {
-        return response.data;
-    });
+async function wnd_query(query, param, headers = {}) {
+    // 请求 api
+    let api = wnd_query_api + '/' + query;
+    let response = await wnd_request_api(api, param, 'GET', headers);
+    return response;
 }
 
 /**
@@ -314,50 +310,41 @@ function wnd_query(query, param, headers = {}) {
  *@param 	param 		json 		传参
  *@param 	callback 	回调函数
  **/
-function wnd_ajax_embed(container, module, param = {}, callback = '') {
+async function wnd_ajax_embed(container, module, param = {}, callback = '') {
     // 初始高度：设置嵌入高度变化动画之用
     let el = document.querySelector(container);
     funTransitionHeight(el);
 
-    // GET request for remote image in node.js
-    axios({
-        method: 'get',
-        url: wnd_module_api + '/' + module,
-        params: Object.assign({
-            'ajax_type': 'embed'
-        }, param),
-        headers: {
-            'Container': container
-        },
-    }).then(function (response) {
-        if ('undefined' == typeof response.data.status) {
-            console.log(response);
-            return false;
-        }
+    // 请求 api
+    param = Object.assign({
+        'ajax_type': 'embed'
+    }, param);
+    let api = wnd_module_api + '/' + module;
+    let header = { 'Container': container };
+    let response = await wnd_request_api(api, param, 'GET', header);
 
-        if (response.data.status <= 0) {
-            wnd_inner_html(el, '<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
-            funTransitionHeight(el, trs_time);
-            return false;
-        }
+    if (response.status <= 0) {
+        wnd_inner_html(el, '<div class="message is-danger"><div class="message-body">' + response.msg + '</div></div>');
+        funTransitionHeight(el, trs_time);
+        return false;
+    }
 
-        if ('form' == response.data.data.type) {
-            wnd_render_form(container, response.data.data.structure, '', response.data.data.request_url);
-        } else if ('filter' == response.data.data.type) {
-            wnd_render_filter(container, response.data.data.structure);
+    if ('form' == response.data.type) {
+        wnd_render_form(container, response.data.structure, '', response.data.request_url);
+    } else if ('filter' == response.data.type) {
+        wnd_render_filter(container, response.data.structure);
+    } else {
+        wnd_inner_html(el, response.data.structure);
+        funTransitionHeight(el, trs_time);
+    }
+
+    if (callback) {
+        if ('function' == typeof callback) {
+            callback(response.data);
         } else {
-            wnd_inner_html(el, response.data.data.structure);
-            funTransitionHeight(el, trs_time);
+            window[callback](response.data);
         }
-
-        if (callback) {
-            if ('function' == typeof callback) {
-                callback(response.data);
-            } else {
-                window[callback](response.data);
-            }
-        }
-    });
+    }
 }
 
 
@@ -389,62 +376,57 @@ function wnd_ajax_embed(container, module, param = {}, callback = '') {
 *@param     callback    回调函数
 */
 // ajax 从后端请求内容，并以弹窗形式展现
-function wnd_ajax_modal(module, param = {}, callback = '') {
-    wnd_alert_modal(loading_el, false);
-
-    axios({
-        method: 'get',
-        url: wnd_module_api + '/' + module,
-        params: Object.assign({
-            'ajax_type': 'modal'
-        }, param),
-    }).then(function (response) {
-        if ('undefined' == typeof response.data.status) {
-            console.log(response);
-            return false;
-        }
-
-        if (response.data.status <= 0) {
-            wnd_alert_modal('<div class="message is-danger"><div class="message-body">' + response.data.msg + '</div></div>');
-            return false;
-        }
-
-        if ('form' == response.data.data.type) {
-            wnd_render_form('#modal .modal-entry', response.data.data.structure, 'box', response.data.data.request_url);
-        } else if ('filter' == response.data.data.type) {
-            wnd_render_filter('#modal .modal-entry', response.data.data.structure, 'box');
-        } else {
-            wnd_alert_modal(response.data.data.structure);
-        }
-
-        if (callback) {
-            if ('function' == typeof callback) {
-                callback(response.data);
-            } else {
-                window[callback](response.data);
-            }
-        }
-    });
+async function wnd_ajax_modal(module, param = {}, callback = '') {
+    wnd_alert_modal(loading_el, true);
+    let container = '#modal .modal-entry';
+    param.ajax_type = 'modal';
+    return wnd_ajax_embed(container, module, param, callback);
 }
 
 /**
  * @since 0.9.35.6
  * 发送 ajax Action
  **/
-function wnd_ajax_action(action, param = {}, headers = {}) {
-    return axios({
-        method: 'POST',
-        url: wnd_action_api + '/' + action,
-        data: param,
-        headers: headers,
-    }).then(function (response) {
-        if ('undefined' == typeof response.data.status) {
-            console.log(response);
-            return false;
+async function wnd_ajax_action(action, param = {}, headers = {}) {
+    // 请求 api
+    let api = wnd_action_api + '/' + action;
+    let response = await wnd_request_api(api, param, 'POST', headers);
+    return response;
+}
+
+/**
+ * @since 2025.03.10  从后端请求 API 数据
+ * @param 	api      	srting      api URL
+ * @param 	param 		object 		请求参数
+ * @param 	method 		string 		请求方法
+ * @param 	headers 	object      headers
+ **/
+async function wnd_request_api(api, param = {}, method = 'GET', headers = {}) {
+    let request = {};
+    try {
+        let config = {
+            method: method,
+            url: api,
+            headers: headers,
+        };
+        if ('POST' == method) {
+            config.data = param;
+        } else {
+            config.params = param;
         }
 
-        return response.data;
-    });
+        request = await axios(config).then(function (response) {
+            if ('undefined' == typeof response.data.status) {
+                return { "status": 0, "msg": "unknown error" };
+            }
+
+            return response.data;
+        });
+    } catch (error) {
+        request = { "status": 0, "msg": error.message };
+    }
+
+    return request;
 }
 
 //弹出bulma对话框
