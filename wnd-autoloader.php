@@ -48,7 +48,7 @@ spl_autoload_register(function ($class) {
 
 		// 主题拓展类
 		case 'wndt':
-			$base_dir = TEMPLATEPATH . DIRECTORY_SEPARATOR . 'includes';
+			$base_dir = get_template_directory() . DIRECTORY_SEPARATOR . 'includes';
 			break;
 
 		// 其他插件拓展类：设定插件目录，从数组中剔除固定命名空间前缀 Wnd_Plugin，以匹配后续算法
@@ -75,10 +75,10 @@ spl_autoload_register(function ($class) {
 		$class_name = $class_info[1];
 	}
 	$class_name = ('component' == $sub_dir) ? $class_name : strtolower($class_name);
+	$class_name = str_replace('_', '-', $class_name);
 
 	// 加载文件
 	$path = $base_dir . DIRECTORY_SEPARATOR . ($sub_dir ? $sub_dir . DIRECTORY_SEPARATOR : '') . $class_name;
-	$path = str_replace('_', '-', $path);
 	$path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
 	$file = $path . '.php';
 	if (file_exists($file)) {
