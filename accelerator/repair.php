@@ -42,6 +42,10 @@ function locate_block_template($template, $type, array $templates) {
 	return $template;
 }
 
+function get_block_theme_folders() {
+	return [];
+}
+
 /**
  * global style and setting
  */
@@ -142,7 +146,7 @@ if (!defined('WP_TEMPLATE_PART_AREA_UNCATEGORIZED')) {
  */
 add_action('admin_init', function () {
 	remove_action('admin_print_styles', 'wp_print_font_faces', 50);
-	remove_action( 'admin_print_styles', 'wp_print_font_faces_from_style_variations', 50 );
+	remove_action('admin_print_styles', 'wp_print_font_faces_from_style_variations', 50);
 });
 
 // 禁止 Feed
