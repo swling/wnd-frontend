@@ -110,6 +110,19 @@ function wnd_get_json_request(): array {
 }
 
 /**
+ * 是否为浏览器直传 OSS
+ * @since 0.9.81
+ */
+function wnd_is_oss_direct_upload(): bool {
+	if (!wnd_get_config('enable_oss')) {
+		return false;
+	}
+
+	$local_storage = (int) wnd_get_config('oss_local_storage');
+	return ($local_storage < 0) ? true : false;
+}
+
+/**
  * 获取用户ip
  * @since 初始化
  *

@@ -73,22 +73,9 @@ class Wnd_Form_WP extends Wnd_Form {
 		 * OSS 浏览器直传选项
 		 * @since 0.9.33.7
 		 */
-		if (static::is_oss_direct_upload()) {
+		if (wnd_is_oss_direct_upload()) {
 			$this->add_form_attr('data-oss-direct-upload', '1');
 		}
-	}
-
-	/**
-	 * 是否为浏览器直传 OSS
-	 * @since 0.9.33.7
-	 */
-	private static function is_oss_direct_upload(): bool {
-		if (!wnd_get_config('enable_oss')) {
-			return false;
-		}
-
-		$local_storage = (int) wnd_get_config('oss_local_storage');
-		return ($local_storage < 0) ? true : false;
 	}
 
 	/**

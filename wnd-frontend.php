@@ -70,6 +70,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 		'posts_api'          => 'query/wnd_posts',
 		'users_api'          => 'query/wnd_users',
 		'endpoint_api'       => 'endpoint',
+		'oss_direct_upload'  => wnd_is_oss_direct_upload(),
 		'comment'            => [
 			'api'      => 'action/common/wnd_add_comment',
 			'order'    => get_option('comment_order'),
@@ -119,4 +120,5 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 	if (is_singular() and comments_open()) {
 		wp_enqueue_script('wnd-comment', $static_path . 'js/comment.min.js', ['axios', 'comment-reply'], WND_VER, ['strategy' => 'async']);
 	}
+
 }
