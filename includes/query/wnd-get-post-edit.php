@@ -3,6 +3,7 @@
 namespace Wnd\Query;
 
 use Exception;
+use Wnd\Model\Wnd_Post;
 
 /**
  * 获取 Post 编辑数据
@@ -27,6 +28,7 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 		// 获取参数
 		$post_id   = (int) ($args['post_id'] ?? 0);
 		$post_type = $args['post_type'] ?? 'post';
+		$post_id   = $post_id ?: Wnd_Post::get_draft($post_type);
 		if ($post_id) {
 			$post = get_post($post_id);
 			if (!$post) {
