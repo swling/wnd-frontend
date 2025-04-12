@@ -85,7 +85,7 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 		$term_map = [];
 		foreach ($terms as $term) {
 			$term_map[$term->term_id] = [
-				'id'       => $term->term_id,
+				'term_id'  => $term->term_id,
 				'name'     => $term->name,
 				'slug'     => $term->slug,
 				'children' => [],
