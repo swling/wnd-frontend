@@ -55,12 +55,14 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 		}
 
 		// 返回数据
-		return [
+		$data = [
 			'terms'        => $terms_by_tax,
 			'term_options' => $options,
 			'meta'         => static::get_post_meta($post_id),
 			'post'         => $post,
 		];
+
+		return apply_filters('wnd_get_post_edit', $data, $post_id);
 	}
 
 	/**

@@ -44,6 +44,9 @@ apply_filters('wnd_can_update_post_status', $can_array, $before_post, $after_sta
 *@param $post_types array 文章类型数组 如移除 post 类型： unset($post_type['post'])
 */
 apply_filters( 'wnd_allowed_post_types', $post_types );
+
+// post 内容编辑
+apply_filters('wnd_get_post_edit', $data, $post_id);
 ```
 
 ### 文章权限控制实例拓展（PPC）
