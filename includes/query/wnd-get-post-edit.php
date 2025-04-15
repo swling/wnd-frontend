@@ -51,6 +51,8 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 			$terms = get_the_terms($post_id, $taxonomy);
 			if (!empty($terms) && !is_wp_error($terms)) {
 				$terms_by_tax[$taxonomy] = $terms;
+			} else {
+				$terms_by_tax[$taxonomy] = is_taxonomy_hierarchical($taxonomy) ? '' : [];
 			}
 		}
 
