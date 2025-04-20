@@ -431,11 +431,11 @@ const ThumbnailCard = {
     props: {
         imgWidth: {
             type: Number,
-            default: 140 // 展示尺寸
+            default: 100 // 展示尺寸
         },
         imgHeight: {
             type: Number,
-            default: 140
+            default: 100
         },
         cropWidth: {
             type: Number,
@@ -522,22 +522,25 @@ const ThumbnailCard = {
         },
         async uploadCroppedImage(blob, canvas) {
             try {
-                let response = {};
                 if (wnd.oss_direct_upload) {
-                    response = await this.upload_to_oss(blob);
+                    let response = await this.upload_to_oss(blob);
+                    if (response.id) {
+                        this.imageDataUrl = URL.createObjectURL(blob);
+                    } else {
+                        alert('Upload failed : ' + response.msg)
+                    }
                 } else {
-                    response = await this.upload_to_local_server(blob);
-                }
-                // 将裁剪后的图片转换为 URL.createObjectURL
-                if (response.status > 0) {
-                    this.imageDataUrl = URL.createObjectURL(blob);
-                } else {
-                    alert(response.msg);
+                    let response = await this.upload_to_local_server(blob);
+                    if (response.status > 0) {
+                        this.imageDataUrl = URL.createObjectURL(blob);
+                    } else {
+                        alert(response.msg);
+                    }
                 }
                 // this.thumbnail_url = response.data[0].thumbnail;
             } catch (error) {
-                console.error('上传失败', error);
-                alert('上传失败，请重试');
+                console.error(error);
+                alert('Upload failed.');
             }
         },
         async upload_to_local_server(blob) {
@@ -653,23 +656,26 @@ const FileUploader = {
         async handleFileChange(event) {
             const file = event.target.files[0];
             try {
-                let response = {};
                 if (wnd.oss_direct_upload) {
-                    response = await this.upload_to_oss(file);
+                    let response = await this.upload_to_oss(file);
+                    if (response.id) {
+                        this.current_file_id = response.id;
+                        this.current_file_url = response.url;
+                    } else {
+                        alert('Upload failed : ' + response.msg)
+                    }
                 } else {
-                    response = await this.upload_to_local_server(file);
+                    let response = await this.upload_to_local_server(file);
+                    if (response.status > 0) {
+                        this.current_file_id = response.data[0].id;
+                        this.current_file_url = response.data[0].url;
+                    } else {
+                        alert(response.msg);
+                    }
                 }
-
-                if (response.status > 0) {
-                    this.current_file_id = response.data[0].id;
-                    this.current_file_url = response.data[0].url;
-                } else {
-                    alert(response.msg);
-                }
-
             } catch (error) {
-                console.error('上传失败', error);
-                alert('上传失败，请重试');
+                console.error(error);
+                alert('Upload failed.');
             }
         },
         async upload_to_local_server(file) {

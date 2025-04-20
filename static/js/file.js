@@ -40,6 +40,10 @@ async function _wnd_upload_to_oss(file, oss_sp, endpoint, direct = true, sign_da
             let attachment_id = oss_sign.id;
             _wnd_delete_attachment(attachment_id, meta_key);
         }
+        return {
+            status: 0,
+            msg: err,
+        };
     });
 
     return upload_res;
