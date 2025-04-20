@@ -12,6 +12,32 @@ use Wnd\Model\Wnd_Post;
  */
 class Wnd_Get_Post_Edit extends Wnd_Query {
 
+	protected static $default_post = [
+		'ID'                    => 0,
+		'post_author'           => 0,
+		'post_date'             => '',
+		'post_date_gmt'         => '',
+		'post_content'          => '',
+		'post_title'            => '',
+		'post_excerpt'          => '',
+		'post_status'           => '',
+		'comment_status'        => '',
+		'ping_status'           => '',
+		'post_password'         => '',
+		'post_name'             => '',
+		'to_ping'               => '',
+		'pinged'                => '',
+		'post_modified'         => '',
+		'post_modified_gmt'     => '',
+		'post_content_filtered' => '',
+		'post_parent'           => 0,
+		'guid'                  => '',
+		'menu_order'            => 0,
+		'post_type'             => '',
+		'post_mime_type'        => '',
+		'comment_count'         => 0,
+	];
+
 	protected static function check($args = []) {
 		$post_id = (int) ($args['post_id'] ?? 0);
 		if (!$post_id) {
@@ -27,7 +53,7 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 	protected static function query($args = []): array {
 		// 获取参数
 		$post_id   = (int) ($args['post_id'] ?? 0);
-		$post_type = $args['post_type'] ?? 'post';
+		$post_type = $args['post_type'] ?? ($args['type'] ?? 'post');
 		$post_id   = $post_id ?: Wnd_Post::get_draft($post_type);
 		if ($post_id) {
 			$post = get_post($post_id);
@@ -35,6 +61,9 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 				throw new Exception('Invalid Post ID');
 			}
 			$post_type = $post->post_type;
+		} else {
+			$post            = (object) static::$default_post;
+			$post->post_type = $post_type;
 		}
 
 		// 获取所有注册的分类法
@@ -45,6 +74,7 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 			$options[$taxonomy] = static::get_terms_hierarchy($taxonomy);
 
 			if (!$post_id) {
+				$terms_by_tax[$taxonomy] = [];
 				continue;
 			}
 
@@ -56,12 +86,27 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 			}
 		}
 
+		// 缩略图
+		$thumbnail_id = wnd_get_post_meta($post_id, '_thumbnail_id');
+		if ($thumbnail_id) {
+			$thumbnail_url = static::get_attachment_url($thumbnail_id, '_thumbnail_id', $post_id);
+		} else {
+			$thumbnail_url = '';
+		}
+
+		$file_id  = wnd_get_post_meta($post_id, 'file');
+		$file_url = $file_id ? static::get_attachment_url($file_id, 'file', $post_id) : '';
+
 		// 返回数据
 		$data = [
+			'post'         => $post,
+			'thumbnail'    => $thumbnail_url,
+			'file_id'      => $file_id,
+			'file_url'     => $file_url,
 			'terms'        => $terms_by_tax,
 			'term_options' => $options,
 			'meta'         => static::get_post_meta($post_id),
-			'post'         => $post,
+			'templates'    => 'page' == $post_type ? static::get_page_templates() : [],
 		];
 
 		return apply_filters('wnd_get_post_edit', $data, $post_id);
@@ -137,5 +182,37 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * 获取附件URL
+	 * 如果字段存在，但文件已不存在，例如已被后台删除，删除对应meta_key or option
+	 * @since 2020.04.13
+	 */
+	private static function get_attachment_url(int $attachment_id, string $meta_key, int $post_parent): string {
+		$attachment_url = $attachment_id ? wp_get_attachment_url($attachment_id) : false;
+		$user_id        = get_current_user_id();
+
+		if ($attachment_id and !$attachment_url) {
+			if ($post_parent) {
+				wnd_delete_post_meta($post_parent, $meta_key);
+			} else {
+				wnd_delete_user_meta($user_id, $meta_key);
+			}
+		}
+
+		return $attachment_url;
+	}
+
+	private static function get_page_templates(): array {
+		$templates = array_flip(wp_get_theme()->get_page_templates(null, 'page'));
+
+		ksort($templates);
+		$options = ['Default' => 'default'];
+		foreach (array_keys($templates) as $template) {
+			$options[$template] = esc_attr($templates[$template]);
+		}
+
+		return $options;
 	}
 }

@@ -33,24 +33,42 @@
 	</div>
 </div>
 <script>
-	const app = Vue.createApp({
+	const vueInstances = [];
+	const dashboard = Vue.createApp({
 		data() {
 			return {
 				query_module: wnd_dashboard.module, // $_GET 请求 module
 				title: 'Home',
 				hash: '',
 				default_module: wnd_dashboard.default,
-				menus: wnd_dashboard.menus[0].items,
+				menus: wnd_dashboard.menus[0].items || [],
 				current_module: '',
 				current_props: {}
 			};
 		},
 		methods: {
+			destroyAllVueApps() {
+				return new Promise((resolve) => {
+					vueInstances.forEach(app => {
+						app.unmount();
+						app = null;
+						console.log("销毁 Module app");
+					});
+					vueInstances.length = 0;
+
+					// 等 DOM 更新或微任务执行完成再继续
+					requestAnimationFrame(() => {
+						resolve();
+					});
+				});
+			},
 			go_home: function () {
 				this.title = 'Home';
 				this.load_module(this.default_module);
 			},
 			load_module: async function (module_name, props = {}) {
+				await this.destroyAllVueApps();
+
 				module_name = module_name || this.default_module;
 				this.current_module = module_name;
 				this.current_props = props;
@@ -70,18 +88,13 @@
 				}
 
 				if ('post_form' == module_name) {
-					this.load_post_form(props);
-				} else {
-					wnd_ajax_embed('#ajax-module', module_name, props);
+					module_name = 'post/wnd_post_form_vue';
+					if ("undefined" == typeof FormComponent) {
+						await wnd_load_script(static_path + 'js/form-vue.js' + cache_suffix);
+					}
 				}
-			},
-			load_post_form: async function (props) {
-				let res = await wnd_query('wnd_query_post_form', props);
-				if (res.status <= 0) {
-					wnd_inner_html('#ajax-module', '<div class="notification is-danger is-light">' + res.msg + '</div>');
-					return false;
-				}
-				wnd_render_form('#ajax-module', res.data.structure, '', res.data.request_url);
+
+				wnd_ajax_embed('#ajax-module', module_name, props);
 			},
 			load_module_from_hash() {
 				const hash = window.location.hash.slice(1);
@@ -134,5 +147,5 @@
 		},
 	});
 
-	app.mount('#dashboard-app');
+	dashboard.mount('#dashboard-app');
 </script>

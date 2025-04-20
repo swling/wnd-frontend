@@ -12,6 +12,8 @@ use Wnd\Model\Wnd_Post;
  */
 class Wnd_Insert_Post extends Wnd_Action {
 
+	protected $verify_sign = false;
+
 	protected $post_data;
 	protected $meta_data;
 	protected $wp_meta_data;

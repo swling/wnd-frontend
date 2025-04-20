@@ -153,9 +153,9 @@ class Wnd_Upload_File extends Wnd_Action {
 			throw new Exception(__('Meta_key与Post_parent不可同时为空', 'wnd'));
 		}
 
-		if ($this->meta_key and !wp_verify_nonce($this->data['meta_key_nonce'], $this->meta_key)) {
-			throw new Exception(__('meta_key不合法', 'wnd'));
-		}
+		// if ($this->meta_key and !wp_verify_nonce($this->data['meta_key_nonce'], $this->meta_key)) {
+		// 	throw new Exception(__('meta_key不合法', 'wnd'));
+		// }
 
 		if ($this->post_parent and !get_post($this->post_parent)) {
 			throw new Exception(__('post_parent无效', 'wnd'));

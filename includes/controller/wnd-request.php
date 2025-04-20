@@ -161,7 +161,22 @@ class Wnd_Request {
 
 	// 获取WordPress原生use meta数据数组
 	public function get_wp_user_meta_data(): array{
-		return $this->get_data_by_prefix('_wpusermeta_');
+		$data =  $this->get_data_by_prefix('_wpusermeta_');
+		
+		// 剔除这三个敏感字段
+		global $wpdb;
+		$prefix = $wpdb->prefix;
+		$keys   = [
+			$prefix . 'capabilities',
+			$prefix . 'user_level',
+			'session_tokens',
+		];
+
+		foreach ($keys as $key) {
+			unset($data[$key]);
+		}
+
+		return $data;
 	}
 
 	// 获取自定义WndWP user meta数据数组
