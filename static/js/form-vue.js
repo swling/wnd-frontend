@@ -112,6 +112,10 @@ const DropdownSearch = {
         modelValue: {
             type: [String, Number],
             default: null
+        },
+        required: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:modelValue'],
@@ -215,6 +219,7 @@ const DropdownSearch = {
       @keydown="handleKeydown"
       @blur="handleBlur"
       @mousedown="handleClickOnInput"
+      :required="required"
     >
   </div>
   <div class="dropdown-menu" v-show="isOpen" style="width: 100%;">
@@ -244,6 +249,10 @@ const TagsInput = {
         modelValue: {
             type: Array,
             default: () => []
+        },
+        required: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:modelValue'],
@@ -408,6 +417,7 @@ const TagsInput = {
       :placeholder="selectedTags.length >= maxTags ? 'Maximum reached' : 'Add a tag...'"
       :disabled="selectedTags.length >= maxTags"
       @focus="onFocus"
+      :required="required"
     />
   </div>
 

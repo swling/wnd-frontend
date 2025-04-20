@@ -14,7 +14,7 @@
                 <label class="label">Title</label>
             </div>
             <div class="field-body">
-                <input type="text" class="input" v-model="post.post_title" :placeholder="`ID ${post.ID}`" required/>
+                <input type="text" class="input" v-model="post.post_title" :placeholder="`ID ${post.ID}`" required />
             </div>
         </div>
 
@@ -25,7 +25,7 @@
                 <label class="label">Category</label>
             </div>
             <div class="field-body">
-                <dropdown-search :options="category_options" v-model.number="category_selected"></dropdown-search>
+                <dropdown-search :options="category_options" v-model.number="category_selected" required="1"></dropdown-search>
             </div>
         </div>
         <div class="field is-horizontal">
