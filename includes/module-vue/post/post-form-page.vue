@@ -1,6 +1,6 @@
 <!-- ********************************* 组件结束 ********************************* -->
 <div id="app-post-form">
-    <form ref="formRef" @submit.prevent="handle_submit">
+    <form ref="formRef" @submit.prevent="handle_submit" v-show="res.status > 0">
         <div class="field is-horizontal">
             <div class="field-label is-normal">
                 <label class="label">Title</label>
@@ -46,11 +46,14 @@
                 </button>
             </div>
         </div>
-
-        <div class="notification is-light has-text-centered is-primary" v-show="msg || link" :class="{'is-danger' : has_error}">
-            <p>{{msg}} <span v-show="submit_res.status > 0"> : <a :href="link" target="_blank">{{link}}</a></span></p>
-        </div>
     </form>
+    <div class="notification is-light has-text-centered is-primary" v-show="msg || link" :class="{'is-danger' : has_error}">
+        <p v-html="msg" v-show="msg"></p>
+        <p v-show="submit_res.status > 0"><span><a :href="link" target="_blank">{{link}}</a></span></p>
+    </div>
+    <div class="notification is-light has-text-centered is-danger" v-show="`revision`==post.post_type" :class="{'is-danger' : has_error}">
+        <p>编辑修订版本 / Edit the revision</p>
+    </div>
 </div>
 <script>
     {

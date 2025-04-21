@@ -104,6 +104,7 @@ const RichEditor = {
 
 // ********************************* 下拉组件
 const DropdownSearch = {
+    name: 'DropdownSearch',
     props: {
         options: {
             type: Array,
@@ -118,7 +119,7 @@ const DropdownSearch = {
             default: false
         }
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'select'],
     data() {
         return {
             search: '',
@@ -136,19 +137,22 @@ const DropdownSearch = {
     },
     mounted() {
         this.injectStyles();
-        this.monitorModelValue(this.modelValue);
+        this.updateSelection();
     },
     methods: {
-        monitorModelValue(newVal) {
-            const match = this.options.find(opt => opt.value === newVal);
-            if (match) {
-                this.selectedOption = match;
-                this.search = match.name;
+        // 核心方法：统一更新选中状态
+        updateSelection() {
+            if (this.modelValue != null) {
+                const match = this.options.find(o => o.value === this.modelValue);
+                this.selectedOption = match || null;
+                this.search = match ? match.name : '';
             } else {
                 this.selectedOption = null;
                 this.search = '';
             }
         },
+
+        // 选项选中逻辑
         selectOption(opt) {
             this.search = opt.name;
             this.selectedOption = opt;
@@ -156,43 +160,51 @@ const DropdownSearch = {
             this.$emit('select', opt);
             this.$emit('update:modelValue', opt.value);
         },
+
+        // 键盘导航处理
         handleKeydown(e) {
+            const filtered = this.filteredOptions;
             if (!this.isOpen && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
                 this.isOpen = true;
                 return;
             }
-            if (e.key === 'ArrowDown') {
-                this.activeIndex = (this.activeIndex + 1) % this.filteredOptions.length;
-            } else if (e.key === 'ArrowUp') {
-                this.activeIndex = (this.activeIndex - 1 + this.filteredOptions.length) % this.filteredOptions.length;
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                if (this.activeIndex >= 0 && this.activeIndex < this.filteredOptions.length) {
-                    this.selectOption(this.filteredOptions[this.activeIndex]);
-                }
+            switch (e.key) {
+                case 'ArrowDown':
+                    this.activeIndex = (this.activeIndex + 1) % filtered.length;
+                    break;
+                case 'ArrowUp':
+                    this.activeIndex = (this.activeIndex - 1 + filtered.length) % filtered.length;
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    if (this.activeIndex >= 0 && this.activeIndex < filtered.length) {
+                        this.selectOption(filtered[this.activeIndex]);
+                    }
+                    break;
             }
         },
+
+        // 输入框失焦处理（优化版）
         handleBlur() {
-            if (!this.selectedOption) {
-                this.search = '';
-            } else {
-                this.search = this.selectedOption.name;
-            }
-            setTimeout(() => {
+            this.$nextTick(() => {
+                this.search = this.selectedOption?.name || '';
                 this.isOpen = false;
-            }, 150);
+            });
         },
+
+        // 输入框点击处理
         handleClickOnInput(e) {
             this.isOpen = true;
             // 如果已有选中项，清空搜索内容以展示更多选项
             if (this.selectedOption) {
                 this.search = '';
             }
+            this.$nextTick(() => this.$refs.input.focus());
         },
         injectStyles() {
             const style = document.createElement('style');
             style.textContent = `
-                .dropdown-search .is-active-option,.dropdown-search .dropdown-menu li:hover {
+                .dropdown-search .is-active-option {
                     cursor: pointer;
                     background-color: #F0F0F0;
                     transition: background-color 0.05s;
@@ -201,42 +213,122 @@ const DropdownSearch = {
         }
     },
     watch: {
-        modelValue(newVal) {
-            this.monitorModelValue(newVal);
+        modelValue: {
+            immediate: true,
+            handler(val) {
+                this.updateSelection();
+            }
+        },
+        options: {
+            immediate: true,
+            handler() {
+                this.updateSelection();
+            }
         }
     },
     template: `
-<div class="dropdown-search field dropdown is-active" style="width: 100%;">
+<div class="dropdown dropdown-search is-active column is-paddingless">
   <div class="dropdown-trigger" style="width: 100%;">
     <input
+      ref="input"
       class="input"
-      :class="{'selected': selectedOption}"
+      :class="{'selected': selectedOption }"
       type="text"
       placeholder="..."
       v-model="search"
-      @focus="isOpen = true"
+      @mousedown="handleClickOnInput"
       @input="isOpen = true"
       @keydown="handleKeydown"
       @blur="handleBlur"
-      @mousedown="handleClickOnInput"
       :required="required"
-    >
+    />
   </div>
   <div class="dropdown-menu" v-show="isOpen" style="width: 100%;">
-    <ul class="dropdown-content is-marginless">
-      <li
+    <div class="dropdown-content" style="overflow-y:auto;max-height:300px;z-index:99">
+      <a
         v-for="(opt, index) in filteredOptions"
         :key="opt.value"
         class="dropdown-item"
-        :class="{ 'is-active-option': index === activeIndex }"
+        :class="[{'is-active-option': index === activeIndex }, {'is-selected-option': modelValue === opt.value}]"
         @mousedown.prevent="selectOption(opt)"
       >
-        {{ opt.name }}
-      </li>
-    </ul>
+      {{ opt.name }}
+      </a>
+    </div>
   </div>
 </div>
-      `
+    `
+};
+
+const MultiLevelDropdown = {
+    components: { DropdownSearch },
+    props: {
+        options: Array,
+        modelValue: Array,
+        required: Boolean
+    },
+    data() {
+        return {
+            selectedValues: [...this.modelValue],
+            currentOptionsList: []
+        };
+    },
+    watch: {
+        modelValue: {
+            immediate: true,
+            handler(val) {
+                const isSame = JSON.stringify(val) === JSON.stringify(this.selectedValues);
+                if (Array.isArray(val) && !isSame) {
+                    this.initializeFromModelValue(val);
+                }
+            }
+        }
+    },
+    methods: {
+        initializeFromModelValue(val) {
+            this.selectedValues = [];
+            this.currentOptionsList = [];
+            let opts = this.options;
+            for (const value of val) {
+                this.currentOptionsList.push(opts);
+                const selected = opts.find(o => o.value === value);
+                if (selected) {
+                    this.selectedValues.push(selected.value);
+                    opts = selected.children || [];
+                } else {
+                    break;
+                }
+            }
+            if (opts?.length) {
+                this.currentOptionsList.push(opts);
+            }
+        },
+        handleSelect(level, option) {
+            this.selectedValues.splice(level);
+            this.selectedValues[level] = option.value;
+            this.currentOptionsList.splice(level + 1);
+            if (option.children?.length) {
+                this.currentOptionsList.push(option.children);
+            }
+            this.$emit('update:modelValue', [...this.selectedValues]);
+        }
+    },
+    mounted() {
+        this.initializeFromModelValue(this.modelValue);
+    },
+    template: `
+  <div class="dropdown-container columns is-gapless" style="width:100%">
+    <dropdown-search
+      v-for="(opts, index) in currentOptionsList"
+      :key="index"
+      :options="opts"
+      :model-value="selectedValues[index] ?? null"
+      @update:modelValue="val => selectedValues[index] = val"
+      @select="opt => handleSelect(index, opt)"
+      :required="required"
+    />
+  </div>
+`
 };
 // ********************************* Taginput
 const TagsInput = {
@@ -266,7 +358,7 @@ const TagsInput = {
         };
     },
     mounted() {
-        this.selectedTags = this.modelValue.map(val => this.options.find(opt => opt.value === val)).filter(Boolean);
+        this.selectedTags = this.mapModelValueToTags(this.modelValue);
         this.filterOptions();
         this.injectStyles();
     },
@@ -276,11 +368,18 @@ const TagsInput = {
             this.pendingDeleteIndex = null;
         },
         modelValue(newVal) {
-            this.selectedTags = newVal.map(val => this.options.find(opt => opt.value === val)).filter(Boolean);
+            this.selectedTags = this.mapModelValueToTags(newVal);
             this.filterOptions();
         },
     },
     methods: {
+        // 新增映射方法
+        mapModelValueToTags(modelValue) {
+            return modelValue.map(val => {
+                const found = this.options.find(opt => opt.value === val);
+                return found || { name: val, value: val };
+            });
+        },
         filterOptions() {
             const term = this.input.toLowerCase();
             const selectedValues = this.selectedTags.map(tag => tag.value);
@@ -350,6 +449,7 @@ const TagsInput = {
         handleBlur() {
             this.filteredOptions = [];
             this.selectedIndex = -1;
+            this.pendingDeleteIndex = null;
         },
         isPendingDelete(index) {
             return index === this.pendingDeleteIndex;
@@ -417,6 +517,7 @@ const TagsInput = {
       :placeholder="selectedTags.length >= maxTags ? 'Maximum reached' : 'Add a tag...'"
       :disabled="selectedTags.length >= maxTags"
       @focus="onFocus"
+      @blur="handleBlur"
       :required="required"
     />
   </div>
@@ -899,6 +1000,7 @@ class FormComponent {
             ThumbnailCard,
             RichEditor,
             DropdownSearch,
+            MultiLevelDropdown,
             TagsInput,
             PaidContent,
             FileUploader
@@ -1076,17 +1178,39 @@ class PostFormComponent extends FormComponent {
             name: item.name,
             value: item.slug,
         }));
-        const selected = terms ? terms.map((item) => item.slug) : "";
+        const selected = terms ? terms.map((item) => item.slug) : [];
         return { options, selected };
     }
 
     processCatOptions(termOptions, terms) {
-        const options = termOptions.map((item) => ({
-            name: item.name,
-            value: item.term_id,
-        }));
-        const selected = terms ? terms[0].term_id : -1;
-        return { options, selected };
+        const selected = [];
+
+        function processItems(items) {
+            return items.map(item => {
+                const option = {
+                    name: item.name,
+                    value: item.term_id,
+                };
+
+                // 如果当前项被选中，加入 selected
+                if (terms && terms.some(t => t.term_id === item.term_id)) {
+                    selected.push(item.term_id);
+                }
+
+                // 如果有 children，递归处理
+                if (item.children && item.children.length > 0) {
+                    option.children = processItems(item.children);
+                }
+
+                return option;
+            });
+        }
+
+        const options = processItems(termOptions);
+        return {
+            options,
+            selected: selected.length > 0 ? selected : [],
+        };
     }
 
     onKeydown(event) {

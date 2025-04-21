@@ -4,13 +4,14 @@ namespace Wnd\Query;
 
 use Exception;
 use Wnd\Model\Wnd_Post;
+use Wnd\Permission\Wnd_PPC;
 
 /**
  * 获取 Post 编辑数据
  * 若未指定 post id 则返回新增 post 的基础数据
  * @since 0.9.81
  */
-class Wnd_Get_Post_Edit extends Wnd_Query {
+final class Wnd_Get_Post_Edit extends Wnd_Query {
 
 	protected static $default_post = [
 		'ID'                    => 0,
@@ -39,32 +40,27 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 	];
 
 	protected static function check($args = []) {
-		$post_id = (int) ($args['post_id'] ?? 0);
-		if (!$post_id) {
-			return;
-		}
+		// 获取参数
+		$post = static::init_post_data($args);
 
-		// 检查是否有权限
-		if (!current_user_can('edit_posts', $post_id)) {
-			throw new Exception('Permission Denied');
+		// 编辑权限检测
+		if ($post->ID) {
+			$ppc = Wnd_PPC::get_instance($post->post_type);
+			$ppc->set_post_id($post->ID);
+			$ppc->check_edit();
+
+			// 创建权限检测
+		} else {
+			$ppc = Wnd_PPC::get_instance($post->post_type);
+			$ppc->check_create();
 		}
 	}
 
 	protected static function query($args = []): array {
 		// 获取参数
-		$post_id   = (int) ($args['post_id'] ?? 0);
-		$post_type = $args['post_type'] ?? ($args['type'] ?? 'post');
-		$post_id   = $post_id ?: Wnd_Post::get_draft($post_type);
-		if ($post_id) {
-			$post = get_post($post_id);
-			if (!$post) {
-				throw new Exception('Invalid Post ID');
-			}
-			$post_type = $post->post_type;
-		} else {
-			$post            = (object) static::$default_post;
-			$post->post_type = $post_type;
-		}
+		$post      = static::init_post_data($args);
+		$post_id   = $post->ID;
+		$post_type = $post->post_type;
 
 		// 获取所有注册的分类法
 		$taxonomies   = get_object_taxonomies($post_type);
@@ -82,7 +78,7 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 			if (!empty($terms) && !is_wp_error($terms)) {
 				$terms_by_tax[$taxonomy] = $terms;
 			} else {
-				$terms_by_tax[$taxonomy] = is_taxonomy_hierarchical($taxonomy) ? '' : [];
+				$terms_by_tax[$taxonomy] = [];
 			}
 		}
 
@@ -110,6 +106,24 @@ class Wnd_Get_Post_Edit extends Wnd_Query {
 		];
 
 		return apply_filters('wnd_get_post_edit', $data, $post_id);
+	}
+
+	private static function init_post_data(array $args): object {
+		// 获取参数
+		$post_id   = (int) ($args['post_id'] ?? 0);
+		$post_type = $args['post_type'] ?? ($args['type'] ?? 'post');
+		$post_id   = $post_id ?: Wnd_Post::get_draft($post_type);
+		if ($post_id) {
+			$post = get_post($post_id);
+			if (!$post) {
+				throw new Exception('Invalid Post ID');
+			}
+		} else {
+			$post            = (object) static::$default_post;
+			$post->post_type = $post_type;
+		}
+
+		return $post;
 	}
 
 	/**
