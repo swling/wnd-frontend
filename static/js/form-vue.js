@@ -133,6 +133,9 @@ const DropdownSearch = {
             return this.options.filter(opt =>
                 opt.name.toLowerCase().includes(this.search.toLowerCase())
             );
+        },
+        maybe_required() {
+            return this.required ? (this.options.length > 0) : false;
         }
     },
     mounted() {
@@ -240,7 +243,7 @@ const DropdownSearch = {
       @input="isOpen = true"
       @keydown="handleKeydown"
       @blur="handleBlur"
-      :required="required"
+      :required="maybe_required"
     />
   </div>
   <div class="dropdown-menu" v-show="isOpen" style="width: 100%;">
