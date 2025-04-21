@@ -46,6 +46,11 @@ define('WND_AFF_KEY', 'aff');
 // 定义当前插件入口文件名
 define('WND_PLUGIN_FILE', __FILE__);
 
+// 本插件定义了修订版本用于审核用途，故此需要彻底禁用 WP 默认版本行为
+if (!defined('WP_POST_REVISIONS')) {
+	define('WP_POST_REVISIONS', false);
+}
+
 // 自动加载器
 require WND_PATH . DIRECTORY_SEPARATOR . 'wnd-autoloader.php';
 
