@@ -31,14 +31,21 @@
 
         <div class="field is-horizontal">
             <div class="field-label is-normal">
-                <label class="label">Content</label>
+                <label class="label"></label>
             </div>
             <div class="field-body">
                 <rich-editor v-model="post.post_content" v-model:post_id="post.ID" :parent_node="parent_node" v-if="!loading"></rich-editor>
                 <div v-else style="height: 100px;"></div>
             </div>
         </div>
-
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label"></label>
+            </div>
+            <div class="field-body">
+                <textarea class="textarea" v-model="post.post_excerpt" placeholder="excerpt" rows="1" @input="resizeTextarea($event)"></textarea>
+            </div>
+        </div>
         <div class="field is-grouped is-grouped-centered">
             <div class="has-text-centered">
                 <button :class="[`button is-${wnd.color.primary}`, { 'is-loading': submitting }]">

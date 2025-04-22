@@ -1097,6 +1097,14 @@ class FormComponent {
         );
     }
 
+    resizeTextarea(e) {
+        e.target.style['overflow-y'] = 'hidden';
+        // 先重置高度，以便正确计算 scrollHeight
+        e.target.style.height = 'auto';
+        // 再将高度设置为内容的高度
+        e.target.style.height = e.target.scrollHeight + 'px';
+    }
+
     // 原始方法（业务逻辑）这里的 this 为 Vue 实例。将 methods 中的方法抽离出来的原因是，方便子类针对性重写
     async get_data() { }
 

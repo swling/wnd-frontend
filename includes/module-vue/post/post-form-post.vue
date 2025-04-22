@@ -3,7 +3,7 @@
     <form ref="formRef" @submit.prevent="handle_submit" v-if="res.status">
         <div class="field is-horizontal">
             <div class="field-label is-normal">
-                <label class="label">Thumb</label>
+                <label class="label"></label>
             </div>
             <div class="field-body">
                 <thumbnail-card :img-width="80" :img-height="60" :crop-width="400" :crop-height="300" :post_parent="post.ID" meta_key="_thumbnail_id" :thumbnail="thumbnail"></thumbnail-card>
@@ -39,14 +39,21 @@
 
         <div class="field is-horizontal">
             <div class="field-label is-normal">
-                <label class="label">Content</label>
+                <label class="label"></label>
             </div>
             <div class="field-body">
                 <rich-editor v-model="post.post_content" v-model:post_id="post.ID" :parent_node="parent_node" v-if="!loading"></rich-editor>
                 <div v-else style="height: 100px;"></div>
             </div>
         </div>
-
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label"></label>
+            </div>
+            <div class="field-body">
+                <textarea class="textarea" v-model="post.post_excerpt" placeholder="excerpt" rows="1" @input="resizeTextarea($event)"></textarea>
+            </div>
+        </div>
         <div class="field is-grouped is-grouped-centered">
             <div class="has-text-centered">
                 <button :class="[`button is-${wnd.color.primary}`, { 'is-loading': submitting }]">
