@@ -78,39 +78,32 @@ function wnd_remove(el) {
 }
 
 /**
- * 插入 HTML 支持运行 JavaScript
- *
- */
-function wnd_inner_html(target, htmlString) {
-    // 解析目标节点：支持传入元素或选择器字符串
-    const container = typeof target === 'object' ? target : document.querySelector(target);
-    if (!container) return;
+ *插入 HTML  支持运行 JavaScript
+ * */
+function wnd_inner_html(el, html) {
+    let self = ('object' == typeof el) ? el : document.querySelector(el);
+    if (!self) {
+        return;
+    }
 
-    container.innerHTML = '';
+    self.innerHTML = html;
+    const scripts = self.querySelectorAll('script');
+    for (let script of scripts) {
+        runScript(script);
+    }
 
-    // 创建临时容器解析 HTML 字符串
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlString;
+    function runScript(script) {
+        // 直接 document.head.appendChild(script) 是不会生效的，需要重新创建一个
+        const newScript = document.createElement('script');
+        // 获取 inline script
+        newScript.innerHTML = script.innerHTML;
+        // 存在 src 属性的话
+        const src = script.getAttribute('src');
+        if (src) newScript.setAttribute('src', src);
 
-    // 遍历所有子节点，插入目标容器并执行脚本
-    Array.from(tempDiv.childNodes).forEach(node => {
-        if (node.nodeName === 'SCRIPT') {
-            const newScript = document.createElement('script');
-
-            // 复制 script 所有属性
-            for (let attr of node.attributes) {
-                newScript.setAttribute(attr.name, attr.value);
-            }
-
-            // 设置脚本内容
-            newScript.textContent = node.textContent;
-
-            // 插入到容器中
-            container.appendChild(newScript);
-        } else {
-            container.appendChild(node.cloneNode(true));
-        }
-    });
+        document.body.appendChild(newScript);
+        document.body.removeChild(newScript);
+    }
 }
 
 // 尾部追加
