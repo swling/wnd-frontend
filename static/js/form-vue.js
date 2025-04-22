@@ -234,11 +234,11 @@ const DropdownSearch = {
   <div class="dropdown-trigger" style="width: 100%;">
     <input
       ref="input"
-      class="input"
-      :class="{'selected': selectedOption }"
+      :class="[{'selected': selectedOption }, 'input']"
       type="text"
       placeholder="..."
       v-model="search"
+      :disabled="options.length < 1"
       @mousedown="handleClickOnInput"
       @input="isOpen = true"
       @keydown="handleKeydown"
@@ -501,16 +501,10 @@ const TagsInput = {
       v-for="(tag, index) in selectedTags"
       :key="tag.value"
       class="tag"
-      :class="[
-        'is-medium',
-        isPendingDelete(index) ? 'is-danger' : 'is-danger is-light',
-      ]"
+      :class="['is-medium', isPendingDelete(index) ? 'is-danger' : 'is-danger is-light']"
     >
       {{ tag.name }}
-      <button
-        class="delete is-small"
-        @click="removeTag(index)"
-      ></button>
+      <button class="delete is-small" @click="removeTag(index)"></button>
     </span>
     <input
       class="input"
@@ -524,7 +518,6 @@ const TagsInput = {
       :required="required"
     />
   </div>
-
   <div v-show="filteredOptions.length && input && selectedTags.length < maxTags" class="dropdown-menu" style="width: 100%;">
     <ul class="dropdown-content is-marginless">
       <li
@@ -830,22 +823,60 @@ const FileUploader = {
         },
     },
     template: `
-<div class="columns is-mobile is-vcentered">
-	<div class="column">
-		<div class="file has-name is-fullwidth is-normal">
-			<label class="file-label">
-				<input type="file" class="file file-input" name="file" @change="handleFileChange" />
-				<span class="file-cta"><span class="file-icon"><i class="fa fa-upload"></i></span></span>
-				<span class="file-name">
-					<a v-if="current_file_url" :href="current_file_url" target="_blank">
-						<i class="fas fa-download"></i> ……
-					</a>
-					<span v-else>……</span>
-				</span>
-			</label>
-		</div>
+<div class="file has-name is-fullwidth is-normal">
+	<div class="file-label" style="cursor: default;">
+		<input type="file" id="paid-file-component" class="file file-input" @change="handleFileChange"/>
+		<label class="file-cta is-clickable" for="paid-file-component">
+            <span class="file-icon"><i class="fa fa-upload"></i></span>
+        </label>
+		<span class="file-name">
+			<a v-if="current_file_url" :href="current_file_url" target="_blank">
+				<i class="fas fa-download"></i> ……
+			</a>
+			<span v-else>……</span>
+            <span v-show="current_file_id" class="is-pulled-right">
+                <a class="delete is-medium" @click="delete_file()" title="Delete"></a>
+            </span>
+		</span>
 	</div>
-	<div v-show="current_file_id" class="column is-narrow"><a class="delete" @click="delete_file()"></a></div>
+</div>
+    `
+};
+// ********************************* 价格设置字段
+const PostPriceInput = {
+    props: {
+        post_parent: {
+            type: Number,
+            default: 0
+        },
+        modelValue: {
+            type: [Number, String],  // 允许数字和字符串类型
+            default: ""
+        }
+    },
+    emits: ['update:modelValue'],
+    methods: {
+        set_sku() {
+            wnd_ajax_modal('common/wnd_sku_form', { 'post_id': this.post_parent })
+        }
+    },
+    template: `
+<div class="field has-addons">
+	<div class="control is-expanded has-icons-left">
+		<input 
+            placeholder="price" 
+            min="0" 
+            step="0.01" 
+            type="number" 
+            class="input" 
+            :value="modelValue" 
+            @input="$emit('update:modelValue', $event.target.value)" 
+        />
+		<span class="icon is-left"><i class="fas fa-dollar-sign"></i></span>
+	</div>
+	<div class="control">
+		<a class="button" @click="set_sku">SKU</a>
+	</div>
 </div>
     `
 };
@@ -872,6 +903,7 @@ const PaidContent = {
     emits: ['update:price'],
     // 注册的子组件
     components: {
+        PostPriceInput,
         FileUploader
     },
     methods: {
@@ -887,15 +919,7 @@ const PaidContent = {
 	<div class="field-body is-block">
 		<div class="columns">
 			<div class="column">
-				<div class="field has-addons">
-					<div class="control is-expanded has-icons-left">
-						<input placeholder="price" min="0" step="0.01" type="number" class="input" :value="price" @input="$emit('update:price', $event.target.value)" />
-						<span class="icon is-left"><i class="fas fa-dollar-sign"></i></span>
-					</div>
-					<div class="control">
-						<a class="button" @click="set_sku">SKU</a>
-					</div>
-				</div>
+            <post-price-input :post_parent="post_parent" v-model="price" @update:modelValue="$emit('update:price', $event)"></post-price-input>
 			</div>
 			<div class="column upload-field">
 				<file-uploader :post_parent="post_parent" meta_key="file" :file_id="file_id" :file_url="file_url" is_paid="1"></file-uploader>
@@ -1005,8 +1029,9 @@ class FormComponent {
             DropdownSearch,
             MultiLevelDropdown,
             TagsInput,
+            FileUploader,
+            PostPriceInput,
             PaidContent,
-            FileUploader
         };
     }
 
@@ -1037,7 +1062,7 @@ class FormComponent {
     computed() { }
 
     updated() {
-        console.log("updated");
+        // console.log("updated");
         funTransitionHeight(this.parent_node, trs_time);
     }
 

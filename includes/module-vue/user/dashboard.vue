@@ -90,7 +90,7 @@
 				if ('post_form' == module_name) {
 					module_name = 'post/wnd_post_form_vue';
 					if ("undefined" == typeof FormComponent) {
-						await wnd_load_script(static_path + 'js/form-vue.js' + cache_suffix);
+						await wnd_load_script(static_path + 'js/form-vue.min.js' + cache_suffix);
 					}
 				}
 
