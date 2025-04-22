@@ -51,9 +51,6 @@ class Wnd_Post_Form_Vue extends Wnd_Module_Html {
 			$post_type = get_post_type($edit_post->post_parent);
 		}
 
-		WND_PATH . DIRECTORY_SEPARATOR . 'includes';
-		get_template_directory() . DIRECTORY_SEPARATOR . 'includes';
-
 		$file_path = '/includes/module-vue/post/post-form-' . $post_type . '.vue';
 		$file      = get_template_directory() . $file_path;
 		if (file_exists($file)) {
