@@ -19,7 +19,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
             return {
                 form: form,
                 index: {
-                    'editor': [],
                     'captcha': '',
                     'ids': [],
                 },
@@ -131,79 +130,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
 
                 return _field;
             },
-            // 富文本编辑器 @link https://tiny.cloud
-            build_editor: async function () {
-                let _this = this;
-                if ('undefined' == typeof tinymce) {
-                    let url = static_path + 'editor/tinymce/tinymce.min.js' + cache_suffix;
-                    await wnd_load_script(url);
-                }
-                build_editors();
-
-                function build_editors() {
-                    _this.index.editor.forEach(index => {
-                        build_tinymce(index);
-                    });
-                }
-
-                function build_tinymce(index) {
-                    let field = _this.form.fields[index];
-                    let post_id = _this.form.attrs['data-post-id'] || 0;
-                    let selector = `#${_this.form.attrs.id}-${index}`;
-                    // 监听编辑器所在元素高度变化
-                    const resizeObserver = new ResizeObserver(entries => {
-                        funTransitionHeight(parent, trs_time);
-                    });
-                    resizeObserver.observe(document.querySelector(selector));
-                    // jsdeliver CDN 无效添加 suffix
-                    tinymce.init({
-                        // 基础配置
-                        branding: false,
-                        selector: selector,
-                        menubar: false,
-                        language: wnd.lang,
-                        cache_suffix: cache_suffix,
-
-                        // 自动保存
-                        autosave_restore_when_empty: true,
-                        autosave_prefix: 'tinymce-autosave-' + post_id,
-                        autosave_ask_before_unload: false,
-
-                        // 设置文件 URL 为绝对路径
-                        relative_urls: false,
-                        remove_script_host: false,
-
-                        // 将分页符设置为 WP More
-                        pagebreak_separator: '<!--more-->',
-                        pagebreak_split_block: true,
-
-                        // 定义插件及菜单按钮
-                        plugins: 'advlist autolink autoresize autosave code codesample fullscreen image link lists pagebreak wordcount wndimage wndinit',
-                        toolbar: 'formatselect | alignleft aligncenter alignright bullist numlist | ' +
-                            'blockquote wndimage link codesample  pagebreak wndpaidcontent | removeformat code fullscreen',
-
-                        // 自定义配置
-                        wnd_config: {
-                            'rest_nonce': wnd.rest_nonce,
-                            'upload_url': field.upload_url,
-                            'post_parent': post_id,
-                            'oss_direct_upload': _this.form.attrs['data-oss-direct-upload'],
-                        },
-                        setup: function (editor) {
-                            texarea = document.querySelector(selector);
-                            texarea.style.removeProperty('display');
-                            editor.on('change', function () {
-                                field.value = tinymce.get(`${_this.form.attrs.id}-${index}`).getContent();
-                                parent.style.removeProperty('height');
-                            });
-                        },
-                        init_instance_callback: function (editor) {
-                            resizeObserver.observe(document.querySelector(`#${_this.form.attrs.id} .tox-tinymce`));
-                        },
-                    });
-                }
-            },
-
             click_target(selector) {
                 document.querySelector(selector).click();
             },
@@ -455,54 +381,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
                     console.log(err);
                 })
             },
-            // 根据当前输入查询已有 tags
-            suggest_tags: function (text, index) {
-                let field = this.form.fields[index];
-                let params = {
-                    "search": text,
-                    "taxonomy": field.data.taxonomy
-                };
-                axios({
-                    'method': 'get',
-                    url: wnd_query_api + '/wnd_term_searcher',
-                    params: params,
-                }).then(response => {
-                    field.data.suggestions = response.data.data;
-                });
-            },
-            // 回车输入写入数据并清空当前输入
-            enter_tag: function (e, index) {
-                let field = this.form.fields[index];
-                if (!e.target.value || field.value.length >= field.data.max) {
-                    return false;
-                }
-
-                field.value.push(e.target.value.trim());
-                e.target.value = '';
-            },
-            // 点击建议 Tag 写入数据并清空当前输入
-            enter_tag_by_sg: function (e, index) {
-                let field = this.form.fields[index];
-                field.value.push(e.target.innerText.trim());
-                field.data.suggestions = '';
-                let input = e.target.closest('.tags-input').querySelector('[type=text]');
-                input.value = '';
-            },
-            // 删除 Tag
-            delete_tag: function (tag, index) {
-                let field = this.form.fields[index];
-                field.value = field.value.filter(function (item) {
-                    return item !== tag;
-                });
-            },
-            // 点击 Tag 输入字段
-            handle_tag_input_click: function ($event, index) {
-                let field = this.form.fields[index];
-                if (field.value.length >= field.data.max) {
-                    field.help.text = 'Limit to ' + field.data.max + ' tags.';
-                    field.help.class = 'is-danger';
-                }
-            },
             // FormData 转 object
             formdata_to_object: function (form_data) {
                 let object = {};
@@ -622,24 +500,9 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
             },
             // 重新请求数据并更新表单
             reload: async function (e) {
-                // 销毁可能存在的 TinyMCE 实例
-                this.index.editor.forEach(index => {
-                    let selector = `#${this.form.attrs.id}-${index}`;
-                    if (typeof tinymce != 'undefined') {
-                        tinymce.remove(selector);
-                    }
-                });
-
                 // 重新载入数据
                 let res = await axios({ method: 'get', url: api_url });
                 this.form = res.data.data.structure;
-
-                // 下一次渲染时重新构建编辑器
-                this.$nextTick(() => {
-                    if (this.index.editor.length) {
-                        this.build_editor();
-                    }
-                });
             }
         },
         created() {
@@ -649,11 +512,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
 
                 if ('captcha' == field.name && '' == field.value) {
                     this.index.captcha = index;
-                    continue;
-                }
-
-                if ('editor' == field.type) {
-                    this.index.editor.push(index);
                     continue;
                 }
 
@@ -680,11 +538,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
             }
         },
         mounted() {
-            // 构造富文本编辑器
-            if (this.index.editor.length > 0) {
-                this.build_editor();
-            }
-
             // v-html 不支持执行 JavaScript 需要通过封装好的 wnd_inser_html
             wnd_inner_html(`#${this.form.attrs.id} .form-script`, this.form.script);
             funTransitionHeight(parent, trs_time);
@@ -912,57 +765,6 @@ ${build_label(field)}
 <div class="file"><input type="file" class="file file-input" accept="image/*" :name="${field}.name" @change="upload($event,${field})"></div>
 </div>`;
         }
-
-        // 富文本编辑器
-        _this.build_editor = (field, index) => {
-            return `
-<div :class="get_field_class(${field})">
-${build_label(field)}
-<textarea :id="form.attrs.id + '-${index}'" class="is-hidden" v-model="${field}.value" v-bind="parse_input_attr(${field})" @change="change(${field}, $event)"></textarea>
-<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
-</div>`;
-        };
-
-        // 富文本编辑器
-        _this.build_tag_input = (field, index) => {
-            // 按需载入 CSS
-            let style = document.createElement('style');
-            style.innerHTML = `
-.tags-input{width:100%;border-bottom:1px solid #ccc}
-.tags-input input{border:none;width:100%;font-size:1rem;position:absolute;top:0;bottom:0;height:100%;}
-.tags-input input:focus{border:none;box-shadow:none;outline:0;}
-.tags-input .tag{margin:5px}
-.tags-input .autocomplete{position:relative;display:inline-block;min-height:3rem;}
-.tags-input .autocomplete-items{position:absolute;box-shadow:0 2px 10px #999;border-bottom:none;border-top:none;z-index:99;top:100%;left:0}
-.tags-input .autocomplete-items li{padding:10px;cursor:pointer;background-color:#fff;border-bottom:1px solid #eee}
-.tags-input .autocomplete-items li:hover{background-color:#eee}`;
-            document.head.appendChild(style);
-
-            let tags = `
-<template v-for="(tag, index) in ${field}.value">
-<span class="tag is-medium is-light is-danger">{{tag}}<span class="delete is-small" @click="delete_tag(tag, ${index})"></span></span>
-</template>`;
-            let suggestions = `
-<template v-for="(tag, index) in ${field}.data.suggestions">
-<li @click="enter_tag_by_sg($event, ${index})">{{tag}}</li>
-</template>`;
-
-            return `
-<div :class="get_field_class(${field})">
-${build_label(field)}
-<div class="tags-input columns is-marginless">
-<div class="column is-marginless is-paddingless is-narrow">${tags}</div>
-<div class="autocomplete column is-marginless">
-<input type="text" :placeholder="${field}.value.length ? '' : ${field}.placeholder" 
-:readonly="${field}.value.length >= ${field}.data.max" @input="suggest_tags($event.target.value, ${index})" 
-@keypress.enter="enter_tag($event, ${index})" @click="handle_tag_input_click($event, ${index})"/>
-<template v-for="(tag, index) in ${field}.value"><input type="hidden" v-bind="parse_input_attr(${field}, ['type'])" v-model="tag" /></template>
-<ul v-show="${field}.value.length < ${field}.data.max" class="autocomplete-items">${suggestions}</ul>
-</div>
-</div>
-<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
-</div>`;
-        };
 
         return build();
     }

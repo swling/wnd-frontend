@@ -19,9 +19,9 @@ class Wnd_Search_Form extends Wnd_Module_Html {
 		$html .= '<input class="input" type="text" name="s" placeholder="' . __('关键词', 'wnd') . '" required="required">';
 		$html .= '<input type="hidden" name="lang" value="' . ($_GET[WND_LANG_KEY] ?? '') . '">';
 		$html .= '</p>';
-		$html .= '<p class="control">';
+		$html .= '<div class="control">';
 		$html .= '<input type="submit" class="button is-' . $primary_color . '" value="' . __('搜索', 'wnd') . '" />';
-		$html .= '</p>';
+		$html .= '</div>';
 		$html .= '</div>';
 		$html .= '</form>';
 
