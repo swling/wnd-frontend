@@ -148,61 +148,10 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
             },
 
             change: async function (field, e) {
-                // 关联字段数据
-                if (field.linkage) {
-                    let current_value = e.target.value; // 此处不能使用 this.get_value() 因为双向绑定值会晚一步
-                    let query = field.linkage.query || false;
-                    let data = field.linkage.data ? (field.linkage.data[current_value] || false) : false;
-                    let params = field.linkage.params || {};
-                    params[field.name] = current_value;
-
-                    // 向关联字段指定属性赋值
-                    if (data) {
-                        linkage(this, data);
-                    } else if (query) {
-                        let res = await wnd_query(query, params);
-                        linkage(this, res.data);
-                    }
-
-                    function linkage(_this, data) {
-                        field.linkage.fields.forEach(id => {
-                            let index = _this.index.ids[id];
-                            let field = _this.form.fields[index];
-                            field = Object.assign(field, data);
-                        });
-                    }
-                }
-
                 // 常规
                 field.class = field.class.replace('is-danger', '');
                 field.help.class = field.help.class.replace('is-danger', '');
                 field.help.text = field.help.text.replace(' ' + wnd.msg.required, '');
-            },
-
-            // 动态联动下拉选择
-            selected: async function (e, key, index) {
-                let select = this.form.fields[index];
-                let query = select.data.query;
-                let params = Object.assign(select.data.params, {
-                    'parent': e.target.value,
-                });
-
-                // change
-                this.change(select);
-
-                // Ajax 联动下拉
-                let res = await wnd_query(query, params);
-                let nextSelect = res.data;
-                // 写入或删除 select
-                if (Object.keys(nextSelect).length) {
-                    select.options.splice(key + 1, select.options.length, nextSelect);
-                    // 设置默认选中值，否则下拉首项为空
-                    select.selected[key + 1] = '';
-                } else {
-                    select.options.splice(key + 1, select.options.length);
-                    // key 从 0 开始，故此 + 1 为元素个数
-                    select.selected.length = key + 1;
-                }
             },
 
             // 文件上传
@@ -308,17 +257,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
                                     field.file_id = data[i].id;
                                     field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + data[i].url + '" target="_blank">' + wnd.msg.view + '</a>';
                                 }
-
-                                // 单个图片
-                                if ('image_upload' == field.type) {
-
-                                    // 单个文件
-                                } else if ('file_upload' == field.type) {
-
-                                    // 图片相册
-                                } else if ('gallery' == field.type) {
-
-                                }
                             }
                         }
                     }).catch(err => {
@@ -365,17 +303,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
                     field.thumbnail = form_json.fields[index].default_thumbnail;
                     field.file_name = wnd.msg.deleted;
                     field.file_id = 0;
-
-                    // 单个图片
-                    if ('image_upload' == field.type) {
-
-                        // 单个文件
-                    } else if ('file_upload' == field.type) {
-
-                        // 图片相册
-                    } else if ('gallery' == field.type) {
-
-                    }
 
                 }).catch(err => {
                     console.log(err);
@@ -515,17 +442,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
                     continue;
                 }
 
-                /**
-                 * 联动下拉，追加设置下一级选项默认值，否则子下拉菜单首项为空
-                 * 注意由于联动下拉的options 及 selected均采用层级作为键名，因此类型为对象
-                 **/
-                if ('select_linked' == field.type) {
-                    let last = Object.keys(field.selected)[Object.keys(field.selected).length - 1];
-                    let next = parseInt(last) + 1;
-                    field.selected[next] = '';
-                    continue;
-                }
-
                 if (field.name) {
                     let name = field.name.replace('[]', '');
                     this.default_data[name] = '';
@@ -541,14 +457,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
             // v-html 不支持执行 JavaScript 需要通过封装好的 wnd_inser_html
             wnd_inner_html(`#${this.form.attrs.id} .form-script`, this.form.script);
             funTransitionHeight(parent, trs_time);
-
-            // F8 重新载入表单数据
-            document.addEventListener('keydown', (event) => {
-                if (event.key === 'F8') {
-                    event.preventDefault();
-                    this.reload();
-                }
-            });
         },
         updated() {
             funTransitionHeight(parent, trs_time);
@@ -687,27 +595,6 @@ ${build_label(field)}
 </div>`;
         }
 
-        // 动态联动多级下拉 Select 组件：options 为二维数组，selected 为数组依次对应 options 中的子数组。每个 select 仍为单选
-        _this.build_select_linked = (field, index) => {
-            return `
-<div :class="get_field_class(${field})">
-${build_label(field)}
-<div v-if="${field}.addon_left" class="control" v-html="${field}.addon_left"></div>
-<div :class="get_control_class(${field})">
-<div class="select">
-<select class="select" style="display:inline-block" :class="${field}.class + ' ' + form.size" v-bind="parse_input_attr(${field})" v-for="(option, key) in ${field}.options" v-model="${field}.selected[key]" @change="selected($event, key, ${index})" :key="key">
-<option disabled value="">- {{${field}.label}} -</option>
-<option v-for="(v,k ) in option" :value="v" :key="v">{{k}}</option>
-</select>
-</div>
-<span v-if="${field}.icon_left" class="icon is-left"  v-html="${field}.icon_left"></span>
-<span v-if="${field}.icon_right" class="icon is-right" v-html="${field}.icon_right"></span>
-</div>
-<div v-if="${field}.addon_right" class="control" v-html="${field}.addon_right"></div>
-<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
-</div>`;
-        }
-
         // Textarea 组件
         _this.build_textarea = (field, index) => {
             return `
@@ -717,36 +604,6 @@ ${build_label(field)}
 <p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
 </div>`;
         };
-
-        // 文件上传字段
-        _this.build_file_upload = (field, index) => {
-            return `
-<div :id="get_field_id(${field},${index})" class="field" :class="${field}.class">
-<div v-if="${field}.complete" class="field">
-<progress class="progress is-primary" :value="${field}.complete" max="100"></progress>
-</div>
-<div class="columns is-mobile is-vcentered">
-
-<div class="column">
-<div class="file has-name is-fullwidth" :class="form.size">
-<label class="file-label">
-<input type="file" class="file file-input" :name="${field}.name" @change="upload($event,${field})">
-<span class="file-cta">
-<span class="file-icon"><i class="fa fa-upload"></i></span>
-</span>
-<span class="file-name" v-html="${field}.file_name"></span>
-</label>
-</div>
-</div>
-
-<div v-show="${field}.delete_button && ${field}.file_id" class="column is-narrow">
-<a class="delete" @click="delete_file(${field},${index})"></a>
-</div>
-
-</div>
-<p v-show="${field}.help.text" class="help" :class="${field}.help.class" style="margin-top:-1rem;">{{${field}.help.text}}</p>
-</div>`;
-        }
 
         // 单个图像上传字段
         _this.build_image_upload = (field, index) => {
