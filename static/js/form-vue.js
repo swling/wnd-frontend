@@ -504,7 +504,7 @@ const TagsInput = {
       :class="['is-medium', isPendingDelete(index) ? 'is-danger' : 'is-danger is-light']"
     >
       {{ tag.name }}
-      <button class="delete is-small" @click="removeTag(index)"></button>
+      <a class="delete is-small" @click="removeTag(index)"></a>
     </span>
     <input
       class="input"
