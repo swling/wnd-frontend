@@ -219,6 +219,7 @@ function wnd_loading(el, remove = false) {
 // 按需加载 wnd-vue-form.js 并渲染表单
 async function wnd_render_form(container, form_json, add_class, request_url) {
     if ('function' != typeof _wnd_render_form) {
+        await wnd_load_script(static_path + 'js/form-vue.min.js' + cache_suffix);
         let url = static_path + 'js/form.min.js' + cache_suffix;
         await wnd_load_script(url);
     }

@@ -25,6 +25,10 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
                 default_data: {}, // 记录表单默认数据，在提交表单时与现有表单合并，以确保所有字段名均包含在提交数据中，从而通过一致性签名
             }
         },
+        // 注册的子组件
+        components: {
+            ThumbnailCard: ThumbnailCard,
+        },
         methods: {
             //HTML转义
             html_encode: function (html) {
@@ -152,161 +156,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
                 field.class = field.class.replace('is-danger', '');
                 field.help.class = field.help.class.replace('is-danger', '');
                 field.help.text = field.help.text.replace(' ' + wnd.msg.required, '');
-            },
-
-            // 文件上传
-            upload: function (e, field) {
-                let files = e.target.files;
-                let form_data = new FormData()
-                let _this = this;
-
-                // 循环构造自定义 data-* 属性
-                if (field.data) {
-                    for (const key in field.data) {
-                        form_data.append(key, field.data[key]);
-                    }
-                }
-
-                // 获取文件，支持多文件上传（文件数据 name 统一设置为 wnd_file[] 这是与后端处理程序的约定 ）
-                for (let i = 0, n = files.length; i < n; i++) {
-                    // 图片处理
-                    if (files[i].type.includes('image/') && (field.data.save_width || field.data.save_height)) {
-                        handel_image_upload(i, files[i]);
-                    } else {
-                        if (_this.form.attrs['data-oss-direct-upload']) {
-                            upload_to_oss(files[i]);
-                        } else {
-                            form_data.set('wnd_file[' + i + ']', files[i]);
-                            upload_to_local_server(form_data);
-                        }
-                    }
-                }
-
-                function handel_image_upload(i, source_file) {
-                    let image = new Image();
-                    let reader = new FileReader();
-                    reader.onload = function () {
-                        // 通过 reader.result 来访问生成的 DataURL
-                        var url = reader.result;
-                        image.src = url;
-                        image.onload = function (e) {
-                            crop_and_upload_img(source_file, image, i);
-                        }
-                    };
-                    reader.readAsDataURL(source_file);
-                }
-
-                function crop_and_upload_img(source_file, image, i) {
-                    let canvas = document.createElement('canvas');
-                    canvas.width = field.data.save_width;
-                    canvas.height = field.data.save_height;
-
-                    /**
-                     * 缩放、裁剪
-                     * @link https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/scale
-                     * @link https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement/toBlob
-                     **/
-                    let s = Math.max(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
-                    let ctx = canvas.getContext('2d');
-                    ctx.scale(s, s);
-                    var x = (ctx.canvas.width / s - image.naturalWidth) / 2;
-                    var y = (ctx.canvas.height / s - image.naturalHeight) / 2;
-                    ctx.drawImage(image, x, y);
-
-                    canvas.toBlob((blob) => {
-                        let file = new File([blob], source_file.name, {
-                            type: source_file.type
-                        });
-                        form_data.append('wnd_file[' + i + ']', file);
-
-                        if (_this.form.attrs['data-oss-direct-upload']) {
-                            upload_to_oss(file)
-                        } else {
-                            upload_to_local_server(form_data);
-                        }
-                    }, source_file.type);
-                }
-
-                // Ajax
-                function upload_to_local_server() {
-                    axios({
-                        url: wnd_action_api + '/common/wnd_upload_file',
-                        method: 'post',
-                        data: form_data,
-                        headers: {},
-                        //原生获取上传进度的事件
-                        onUploadProgress: function (progressEvent) {
-                            // field.complete = (progressEvent.loaded / progressEvent.total * 100 | 0);
-                            field.help.text = wnd.msg.waiting;
-                            field.help.class = 'is-primary';
-                        }
-                    }).then(response => {
-                        if (response.data.status <= 0) {
-                            field.help.text = response.data.msg;
-                            field.help.class = 'is-danger';
-                        } else {
-                            let data = response.data.data;
-                            for (let i = 0, n = data.length; i < n; i++) {
-                                if (data[i].status <= 0) {
-                                    field.help.text = data[i].msg;
-                                    field.help.class = 'is-danger';
-                                } else {
-                                    field.help.text = wnd.msg.upload_successfully;
-                                    field.help.class = 'is-success';
-                                    field.thumbnail = data[i].thumbnail;
-                                    field.file_id = data[i].id;
-                                    field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + data[i].url + '" target="_blank">' + wnd.msg.view + '</a>';
-                                }
-                            }
-                        }
-                    }).catch(err => {
-                        console.log(err);
-                    });
-                }
-
-                // 浏览器直传 OSS
-                async function upload_to_oss(file) {
-                    let upload_res = await wnd_upload_to_oss(file, field.data);
-                    if (upload_res) {
-                        field.help.text = wnd.msg.upload_successfully;
-                        field.help.class = 'is-success';
-                        field.thumbnail = upload_res.signed_url || upload_res.url;
-                        field.file_id = upload_res.id;
-                        field.file_name = wnd.msg.upload_successfully + '&nbsp<a href="' + (upload_res.signed_url || upload_res.url) + '" target="_blank">' + wnd.msg.view + '</a>';
-                    } else {
-                        field.help.text = wnd.msg.upload_failed;
-                        field.help.class = 'is-danger';
-                    }
-                }
-            },
-
-            // 删除文件
-            delete_file: function (field, index) {
-                if (!field.file_id) {
-                    field.file_name = 'Error';
-                    return false;
-                }
-
-                let data = new FormData();
-                data.append('file_id', field.file_id);
-                data.append('meta_key', field.data.meta_key);
-                axios({
-                    url: wnd_action_api + '/common/wnd_delete_file',
-                    method: 'post',
-                    data: data,
-                }).then(response => {
-                    if (response.data.status <= 0) {
-                        wnd_alert_notification(response.data.msg, 'is-danger');
-                        return false;
-                    }
-
-                    field.thumbnail = form_json.fields[index].default_thumbnail;
-                    field.file_name = wnd.msg.deleted;
-                    field.file_id = 0;
-
-                }).catch(err => {
-                    console.log(err);
-                })
             },
             // FormData 转 object
             formdata_to_object: function (form_data) {
@@ -608,18 +457,16 @@ ${build_label(field)}
         // 单个图像上传字段
         _this.build_image_upload = (field, index) => {
             return `
-<div :id="get_field_id(${field},${index})" class="field" :class="${field}.class">
-<div v-if="${field}.complete">
-<progress class="progress is-primary" :value="${field}.complete" max="100"></progress>
-</div>
-
-${build_label(field)}
-<a @click="click_target('#' + get_field_id(${field}, ${index}) + ' input[type=file]')">
-<img class="thumbnail" :src="${field}.thumbnail" :height="${field}.thumbnail_size.height" :width="${field}.thumbnail_size.width">
-</a>
-<a v-show="${field}.delete_button && ${field}.file_id" class="delete" @click="delete_file(${field}, ${index})"></a>
-<p v-show="${field}.help.text" class="help" :class="${field}.help.class">{{${field}.help.text}}</p>
-<div class="file"><input type="file" class="file file-input" accept="image/*" :name="${field}.name" @change="upload($event,${field})"></div>
+<div :class="get_field_class(${field})">            
+<thumbnail-card 
+:img-width="${field}.thumbnail_size.width" 
+:img-height="${field}.thumbnail_size.height" 
+:crop-width="${field}.data.save_width" 
+:crop-height="${field}.data.save_height" 
+:post_parent="${field}.data.post_parent" 
+:meta_key="${field}.data.meta_key" 
+:thumbnail="${field}.thumbnail">
+</thumbnail-card>
 </div>`;
         }
 
