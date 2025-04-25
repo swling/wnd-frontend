@@ -284,7 +284,7 @@ class Wnd_Form_WP extends Wnd_Form {
 		// 根据 meta_key 查找目标文件
 		$file_id  = $args['file_id'] ?: static::get_attachment_id($meta_key, $post_parent, $user_id);
 		$file_url = static::get_attachment_url($file_id, $meta_key, $post_parent, $user_id);
-		$file_url = $file_url ? wnd_get_thumbnail_url($file_url, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']) : '';
+		// $file_url = $file_url ? wnd_get_thumbnail_url($file_url, $args['thumbnail_size']['width'], $args['thumbnail_size']['height']) : '';
 
 		$args['thumbnail'] = $file_url ?: $args['default_thumbnail'];
 		$args['file_id']   = $file_id ?: 0;

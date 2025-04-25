@@ -298,7 +298,7 @@ function wnd_get_avatar_url(int $user_id, int $size = 200): string{
 		 * 统一按阿里云oss裁剪缩略图
 		 * @since 2019.07.23
 		 */
-		$avatar_url = wnd_get_thumbnail_url($avatar_url, $size, $size);
+		// $avatar_url = wnd_get_thumbnail_url($avatar_url, $size, $size);
 	} elseif (wnd_get_user_meta($user_id, 'avatar_url')) {
 		$avatar_url = wnd_get_user_meta($user_id, 'avatar_url') ?: $avatar_url;
 	}
