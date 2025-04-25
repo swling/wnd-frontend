@@ -499,28 +499,6 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		);
 	}
 
-	/**
-	 * 上传图片集
-	 * @since 2019.05.08
-	 */
-	public function add_post_gallery_upload($save_width = 0, $save_height = 0, $label = '') {
-		if (!$this->check_upload()) {
-			return;
-		}
-
-		$args = [
-			'label'          => $label,
-			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
-			'data'           => [
-				'post_parent' => $this->post_id,
-				'save_width'  => $save_width, //图片文件存储最大宽度 0 为不限制
-				'save_height' => $save_height, //图片文件存储最大过度 0 为不限制
-			],
-		];
-
-		$this->add_gallery_upload($args);
-	}
-
 	private function check_upload(): bool {
 		if (!$this->post_id) {
 			$this->add_html('<div class="notification">' . __('创建post失败，无法上传文件', 'wnd') . '</div>');

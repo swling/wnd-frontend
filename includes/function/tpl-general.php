@@ -147,30 +147,6 @@ function wnd_dropdown_colors($name, $selected) {
 }
 
 /**
- * Post gallery 相册展示
- * @since 2019.05.05
- *
- * @param $post_id          			int  		相册所附属的文章ID
- * @param $thumbnail_width  	number 		缩略图宽度
- * @param $thumbnail_height 	number 		缩略图高度
- */
-function wnd_post_gallery($post_id, $thumbnail_width = 160, $thumbnail_height = 120) {
-	return Wnd\View\Wnd_Gallery::build_post_gallery($post_id, $thumbnail_width, $thumbnail_height);
-}
-
-/**
- * User gallery 相册展示
- * @since 2020.07.15
- *
- * @param $user_id          			int  		相册所附属的用户ID
- * @param $thumbnail_width  	number 		缩略图宽度
- * @param $thumbnail_height 	number 		缩略图高度
- */
-function wnd_user_gallery($user_id, $thumbnail_width = 160, $thumbnail_height = 120) {
-	return Wnd\View\Wnd_Gallery::build_user_gallery($user_id, $thumbnail_width, $thumbnail_height);
-}
-
-/**
  * @since 2019.02.27 获取WndWP文章缩略图
  *
  * @param int $post_id 	文章ID

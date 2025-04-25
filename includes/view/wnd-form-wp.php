@@ -4,7 +4,6 @@ namespace Wnd\View;
 use Wnd\Controller\Wnd_Controller;
 use Wnd\Controller\Wnd_Request;
 use Wnd\Getway\Wnd_Captcha;
-use Wnd\View\Wnd_Gallery;
 
 /**
  * 适配本插件的ajax表单类
@@ -333,37 +332,6 @@ class Wnd_Form_WP extends Wnd_Form {
 		$args['file_name'] = $file_url ? '<a href="' . $file_url . '" target="_blank">' . __('查看文件', 'wnd') . '</a>' : '……';
 
 		parent::add_file_upload($args);
-	}
-
-	/**
-	 *
-	 * 相册上传
-	 * 如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
-	 * meta_key: 	gallery
-	 */
-	public function add_gallery_upload(array $args) {
-		$defaults = [
-			'id'             => $this->id,
-			'label'          => 'Gallery',
-			'thumbnail_size' => ['width' => $this->thumbnail_width, 'height' => $this->thumbnail_height],
-			'data'           => [],
-			'ajax'           => $this->is_ajax_submit,
-			'method'         => $this->method,
-		];
-		$args = array_merge($defaults, $args);
-
-		// 合并$data
-		$defaults_data = [
-			'post_parent' => 0,
-			'user_id'     => $this->user->ID,
-			'meta_key'    => 'gallery',
-			'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
-			'save_height' => 0, //图片文件存储最大过度 0 为不限制
-		];
-		$args['data'] = array_merge($defaults_data, $args['data']);
-
-		// 构造 Html
-		$this->add_html(Wnd_Gallery::build_gallery_upload($args, false));
 	}
 
 	// 构造表单
