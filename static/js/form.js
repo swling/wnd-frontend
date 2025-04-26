@@ -134,9 +134,6 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
 
                 return _field;
             },
-            click_target(selector) {
-                document.querySelector(selector).click();
-            },
 
             // 字段是否应该设置disabled属性
             should_be_disabled: function (field, value) {
@@ -315,7 +312,7 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
     Vue.createApp(form_option).mount(container);
 
     /******************************************************* 构造 Vue 模板 **********************************************************/
-    function build_form_template(form_json) {
+    function build_form_template(form) {
         // 定义当前函数，以便于通过字符串变量，动态调用内部函数
         let _this = build_form_template;
 
@@ -325,19 +322,19 @@ function _wnd_render_form(container, form_json, add_class = '', api_url) {
 <div v-if="form.before_html" v-html="form.before_html"></div>
 <div class="field" v-show="form.title.title"><h3 v-bind="form.title.attrs" v-html="form.title.title"></h3></div>
 <div v-bind="form.message.attrs" class="notification is-light" v-show="form.message.message" v-html="form.message.message"></div>
-${build_fields_template(form_json)}
-${build_submit_template(form_json)}
+${build_fields_template(form)}
+${build_submit_template(form)}
 <div class="form-script"></div>
 <div v-if="form.after_html" v-html="form.after_html"></div>
 </form>`;
         }
 
         // 选择并构建字段模板
-        function build_fields_template(form_json) {
+        function build_fields_template(form) {
             let t = '';
-            for (let index = 0; index < form_json.fields.length; index++) {
+            for (let index = 0; index < form.fields.length; index++) {
                 // 需要与定义数据匹配
-                let field = form_json.fields[index];
+                let field = form.fields[index];
                 // 特别注意：此处定义的是 Vue 模板字符串，而非实际数据，Vue 将据此字符串渲染为具体值
                 let field_vn = `form.fields[${index}]`;
 
@@ -345,7 +342,7 @@ ${build_submit_template(form_json)}
                 if (is_horizontal_field()) {
                     t += `
 <div class="field is-horizontal">
-<div class="field-label ${form_json.size}">
+<div class="field-label ${form.size}">
 <label v-if="${field_vn}.label" class="label is-hidden-mobile"><span v-if="${field_vn}.required" class="required">*</span>{{${field_vn}.label}}</label>
 </div>
 <div class="field-body">`;
@@ -370,16 +367,16 @@ ${build_submit_template(form_json)}
                 }
 
                 function is_horizontal_field() {
-                    return form_json.attrs['is-horizontal'] && !['html', 'hidden'].includes(field.type);
+                    return form.attrs['is-horizontal'] && !['html', 'hidden'].includes(field.type);
                 }
             }
             return t;
         }
 
-        function build_submit_template(form_json) {
+        function build_submit_template(form) {
             return `
 <div v-if="form.submit.text" class="field has-text-centered">
-<button type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form_json.size}" v-text="form.submit.text"></button>
+<button type="button" v-bind="form.submit.attrs" @click="submit($event)" class="${form.size}" v-text="form.submit.text"></button>
 </div>`;
         }
 
