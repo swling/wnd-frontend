@@ -1182,6 +1182,7 @@ class PostFormComponent extends FormComponent {
         let term_data = this.get_term_data();
         let post_data = this.addPrefixToKeys(this.post, "_post_");
         let extra_data = this.get_extra_data();
+        delete post_data._post_post_status; // 删除 post_status，避免冲突
 
         // 组合数据发起请求
         let data = { ...meta_data, ...term_data, ...post_data, ...extra_data };
@@ -1265,7 +1266,7 @@ class PostFormComponent extends FormComponent {
  *@since 0.9.25
  *Vue 根据 Json 动态渲染表单
  */
- function _wnd_render_form(container, form_json, add_class = '', api_url) {
+function _wnd_render_form(container, form_json, add_class = '', api_url) {
     let general_input_fields = ['text', 'number', 'email', 'password', 'url', 'color', 'date', 'range', 'tel'];
 
     /******************************************************* Vue 渲染及交互 **********************************************************/
