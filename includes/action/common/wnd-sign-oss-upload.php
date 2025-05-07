@@ -61,20 +61,10 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 	}
 
 	/**
-	 * 直传 OSS 需要手动设置附件 Post Meta，用以记录文件路径
-	 * 直传 OSS 并未在本地存储文件，故亦无缩略图等相关数据，故此 wp_update_attachment_metadata 可忽略
+	 * 直传 OSS 需要手动设置附件文件路径
 	 */
 	private function get_attached_file($file_name): string {
-		$time = current_time('mysql');
-		$post = get_post($this->post_parent);
-
-		if ($post) {
-			// The post date doesn't usually matter for pages, so don't backdate this upload.
-			if ('page' !== $post->post_type && substr($post->post_date, 0, 4) > 0) {
-				$time = $post->post_date;
-			}
-		}
-
+		$time    = $this->get_archive_time();
 		$uploads = wp_upload_dir($time);
 		$file    = $uploads['path'] . '/' . $file_name;
 		return $file;

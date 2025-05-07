@@ -6,15 +6,6 @@ use Wnd\Action\Wnd_Action;
 use Wnd\WPDB\Wnd_Attachment_DB;
 
 /**
- * ajax文件上传
- * 	[
- * 		[
- * 			'status' => 1,
- * 			'data' => ['url' => $url, 'thumbnail' => $thumbnail ?? 0, 'id' => $file_id],
- * 			'msg' => '上传成功',
- * 		],
- * 	];
- *
  * @since 2019.01.20
  */
 class Wnd_Upload_File extends Wnd_Action {
@@ -39,16 +30,7 @@ class Wnd_Upload_File extends Wnd_Action {
 		}
 
 		// ############################### 2025 拆分附件数据表
-		$time = current_time('mysql');
-		if ($this->post_parent) {
-			$post = get_post($this->post_parent);
-			// The post date doesn't usually matter for pages, so don't backdate this upload.
-			if ('page' !== $post->post_type && substr($post->post_date, 0, 4) > 0) {
-				$time = $post->post_date;
-			}
-		}
-
-		$res = wp_handle_upload($_FILES['wnd_file'], ['test_form' => false], $time);
+		$res = wp_handle_upload($_FILES['wnd_file'], ['test_form' => false], $this->get_archive_time());
 		if (isset($res['error'])) {
 			throw new Exception('upload_error' . $res['error']);
 		}
@@ -88,10 +70,6 @@ class Wnd_Upload_File extends Wnd_Action {
 		if (!$this->meta_key and !$this->post_parent) {
 			throw new Exception(__('Meta_key与Post_parent不可同时为空', 'wnd'));
 		}
-
-		// if ($this->meta_key and !wp_verify_nonce($this->data['meta_key_nonce'], $this->meta_key)) {
-		// 	throw new Exception(__('meta_key不合法', 'wnd'));
-		// }
 
 		if ($this->post_parent and !get_post($this->post_parent)) {
 			throw new Exception(__('post_parent无效', 'wnd'));
@@ -159,6 +137,23 @@ class Wnd_Upload_File extends Wnd_Action {
 			'created_at' => time(),
 		];
 		return Wnd_Attachment_DB::get_instance()->insert($attachment);
+	}
+
+	/**
+	 * @since 0.9.86
+	 * 确定附件归档时间
+	 * 如果归属到 post 则根据 post 确定，否则为当前时间
+	 */
+	protected function get_archive_time() {
+		$time = current_time('mysql');
+		if ($this->post_parent) {
+			$post = get_post($this->post_parent);
+			// The post date doesn't usually matter for pages, so don't backdate this upload.
+			if ('page' !== $post->post_type && substr($post->post_date, 0, 4) > 0) {
+				$time = $post->post_date;
+			}
+		}
+		return $time;
 	}
 
 	final protected function complete() {
