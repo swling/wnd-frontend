@@ -266,7 +266,7 @@ function wnd_get_user_locale($user_id) {
  *
  * @since 2020.04.11
  */
-function wnd_get_reg_redirect_url(string $lang = ''): string{
+function wnd_get_reg_redirect_url(string $lang = ''): string {
 	$url  = wnd_get_config('reg_redirect_url') ?: home_url();
 	$lang = $lang ?: Wnd_language::parse_locale();
 
@@ -287,12 +287,12 @@ function wnd_get_reg_redirect_url(string $lang = ''): string{
  *
  * @since 0.9.59.10
  */
-function wnd_get_avatar_url(int $user_id, int $size = 200): string{
+function wnd_get_avatar_url(int $user_id, int $size = 200): string {
 	$avatar_url = wnd_get_config('default_avatar_url') ?: WND_URL . 'static/images/avatar.jpg';
 
 	if (wnd_get_user_meta($user_id, 'avatar')) {
 		$avatar_id  = wnd_get_user_meta($user_id, 'avatar');
-		$avatar_url = wp_get_attachment_url($avatar_id) ?: $avatar_url;
+		$avatar_url = wnd_get_attachment_url($avatar_id) ?: $avatar_url;
 
 		/**
 		 * 统一按阿里云oss裁剪缩略图

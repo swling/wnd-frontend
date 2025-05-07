@@ -24,6 +24,7 @@ class Wnd_Add_Action {
 		add_action('wnd_upload_gallery', [__CLASS__, 'action_on_upload_gallery'], 10, 2);
 		add_action('wnd_delete_file', [__CLASS__, 'action_on_delete_file'], 10, 3);
 		add_action('before_delete_wnd_transaction', [__CLASS__, 'action_on_wnd_transaction_deleted'], 10);
+		add_action('before_delete_wnd_attachment', [__CLASS__, 'action_on_delete_attachment']);
 
 		/**
 		 * 获取产品属性时，释放指定时间内未完成支付的库存
@@ -88,7 +89,7 @@ class Wnd_Add_Action {
 		if (0 === stripos($meta_key, '_option_')) {
 			$old_option = Wnd_Form_Option::get_option_value_by_input_name($meta_key);
 			if ($old_option) {
-				wp_delete_attachment($old_option, true);
+				wnd_delete_attachment($old_option, true);
 			}
 
 			Wnd_Form_Option::update_option_by_input_name($meta_key, $attachment_id);
@@ -99,7 +100,7 @@ class Wnd_Add_Action {
 		if ('_wpthumbnail_id' == $meta_key) {
 			$old_meta = get_post_meta($post_parent, '_thumbnail_id', true);
 			if ($old_meta) {
-				wp_delete_attachment($old_meta, true);
+				wnd_delete_attachment($old_meta, true);
 			}
 
 			set_post_thumbnail($post_parent, $attachment_id);
@@ -110,7 +111,7 @@ class Wnd_Add_Action {
 		if ($post_parent) {
 			$old_meta = wnd_get_post_meta($post_parent, $meta_key);
 			if ($old_meta) {
-				wp_delete_attachment($old_meta, true);
+				wnd_delete_attachment($old_meta, true);
 			}
 			wnd_update_post_meta($post_parent, $meta_key, $attachment_id);
 
@@ -119,7 +120,7 @@ class Wnd_Add_Action {
 			$user_id       = get_current_user_id();
 			$old_user_meta = wnd_get_user_meta($user_id, $meta_key);
 			if ($old_user_meta) {
-				wp_delete_attachment($old_user_meta, true);
+				wnd_delete_attachment($old_user_meta, true);
 			}
 			wnd_update_user_meta($user_id, $meta_key, $attachment_id);
 		}
@@ -208,5 +209,16 @@ class Wnd_Add_Action {
 			return;
 		}
 
+	}
+
+	/**
+	 * 删除附件数据时，同步删除服务器文件
+	 */
+	public static function action_on_delete_attachment(object $attachment): bool {
+		$uploadpath = wp_get_upload_dir();
+		$path       = $attachment->file_path;
+
+		$file = $uploadpath['basedir'] . "/$path";
+		return wp_delete_file_from_directory($file, $uploadpath['basedir']);
 	}
 }

@@ -331,20 +331,24 @@ class WPDB_Row {
 			return 0;
 		}
 
+		$deleted_rows = 0;
 		foreach ($results as $data) {
 			$primary_id_column = $this->primary_id_column;
 			$ID                = $data->$primary_id_column;
 			do_action("before_delete_{$this->object_name}", $data, $ID);
 
-			$delete = $this->wpdb->delete($this->table, $where);
+			// 此处不能使用 $where 批量删除，否则会导致钩子中无法再读取数据，需牺牲效率逐行删除
+			$delete = $this->wpdb->delete($this->table, [$primary_id_column => $ID]);
 			if ($delete) {
 				$this->cache->clean_row_cache($data);
 
 				do_action("after_{$this->object_name}_deleted", $data, $ID);
+
+				$deleted_rows++;
 			}
 		}
 
-		return count($results);
+		return $deleted_rows;
 	}
 
 	/**

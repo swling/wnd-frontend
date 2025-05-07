@@ -30,6 +30,8 @@ class Wnd_DB {
 		$wpdb->wnd_mails = $wpdb->prefix . 'wnd_mails';
 
 		$wpdb->wnd_analyses = $wpdb->prefix . 'wnd_analyses';
+
+		$wpdb->wnd_attachments = $wpdb->prefix . 'wnd_attachments';
 	}
 
 	/**
@@ -158,6 +160,27 @@ class Wnd_DB {
 			INDEX `rating_score` (`rating_score`),
 			INDEX `last_viewed_date` (`last_viewed_date`),
 			FOREIGN KEY (`post_id`) REFERENCES `wp_posts`(`ID`) ON DELETE CASCADE
+			) $charset_collate;";
+		dbDelta($create_users_sql);
+
+		/**
+		 * 创建 attachment 附件数据表
+		 * @since 0.9.85
+		 */
+		$create_users_sql = "CREATE TABLE IF NOT EXISTS $wpdb->wnd_attachments (
+			`ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 消息ID，主键，自增
+			`post_id` BIGINT(20) UNSIGNED NOT NULL,
+			`user_id` BIGINT(20) UNSIGNED NOT NULL,
+			`file_path` TEXT NOT NULL,
+			`attachment_id` BIGINT(20) UNSIGNED NOT NULL,
+			`mime_type` VARCHAR(100) NOT NULL,
+			`meta_key` VARCHAR(100) NOT NULL,
+			`created_at` bigint(20) NOT NULL,
+			status TINYINT(1) DEFAULT 1,
+			PRIMARY KEY (`ID`),
+			KEY post_id (`post_id`),
+			KEY user_id (`user_id`),
+			KEY attachment_id (`attachment_id`)
 			) $charset_collate;";
 		dbDelta($create_users_sql);
 	}

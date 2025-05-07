@@ -66,7 +66,7 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					}
 				} else {
 					let formdata = new FormData();
-					formdata.append('wnd_file[]', file);
+					formdata.append('wnd_file', file);
 					formdata.append('post_parent', config.post_parent);
 
 					let file_info = await upload_to_local_server(formdata);
@@ -89,7 +89,7 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					alert(res.data.msg);
 					return '';
 				} else {
-					return res.data.data[0];
+					return res.data.data;
 				}
 			}).catch(err => {
 				console.log(err);

@@ -162,6 +162,9 @@ class Wnd_Add_Action_WP {
 			wp_delete_post($child->ID, true);
 		}
 		unset($child);
+
+		// 删除自定义附件
+		wnd_delete_attachment_by_post($post_id);
 	}
 
 	/**

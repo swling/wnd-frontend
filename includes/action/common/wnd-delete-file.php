@@ -15,8 +15,8 @@ class Wnd_Delete_File extends Wnd_Action_User {
 	private $file_id;
 	private $post_parent;
 
-	protected function execute(): array{
-		if (wp_delete_attachment($this->file_id, true)) {
+	protected function execute(): array {
+		if (wnd_delete_attachment($this->file_id, true)) {
 			do_action('wnd_delete_file', $this->file_id, $this->post_parent, $this->meta_key);
 			return ['status' => 1, 'msg' => __('删除成功', 'wnd'), 'data' => $this->file_id];
 		}
@@ -31,12 +31,18 @@ class Wnd_Delete_File extends Wnd_Action_User {
 	}
 
 	protected function check() {
-		if (!$this->file_id) {
+		$attachment = wnd_get_attachment($this->file_id);
+		if (!$attachment) {
 			throw new Exception(__('文件不存在', 'wnd'));
 		}
 
-		if (!current_user_can('edit_post', $this->file_id)) {
+		if (wnd_is_manager()) {
+			return;
+		}
+
+		if (!$this->user_id or $this->user_id != $attachment->user_id) {
 			throw new Exception(__('权限错误', 'wnd'));
 		}
 	}
+
 }

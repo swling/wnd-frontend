@@ -204,7 +204,7 @@ final class Wnd_Get_Post_Edit extends Wnd_Query {
 	 * @since 2020.04.13
 	 */
 	private static function get_attachment_url(int $attachment_id, string $meta_key, int $post_parent): string {
-		$attachment_url = $attachment_id ? wp_get_attachment_url($attachment_id) : false;
+		$attachment_url = $attachment_id ? wnd_get_attachment_url($attachment_id) : false;
 		$user_id        = get_current_user_id();
 
 		if ($attachment_id and !$attachment_url) {

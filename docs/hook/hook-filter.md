@@ -476,3 +476,8 @@ $access_info = apply_filters('wnd_cloud_client_access_info', [], $service_provid
 ```php
 $this->cdn_url = apply_filters('wnd_cdn_url', $this->cdn_url);
 ```
+
+## 自定义附件表
+```php
+apply_filters('wnd_get_attachment_url', $url, $attachment_id);
+```

@@ -17,7 +17,7 @@ tinymce.PluginManager.add('wndinit', function(editor, url) {
 			let nodeName = node.nodeName.toLowerCase();
 			return (!editor.selection.isCollapsed() && !['img', 'pre', 'code', 'body'].includes(nodeName));
 		},
-		items: 'formatselect bold italic underline strikethrough | forecolor backcolor | blockquote link unlink',
+		items: 'styles bold italic underline strikethrough | forecolor backcolor | blockquote link unlink',
 		position: 'selection',
 		scope: 'node'
 	});

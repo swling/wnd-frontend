@@ -429,7 +429,7 @@ class Wnd_Form_WP extends Wnd_Form {
 	 * @since 2020.04.13
 	 */
 	private static function get_attachment_url(int $attachment_id, string $meta_key, int $post_parent, int $user_id): string {
-		$attachment_url = $attachment_id ? wp_get_attachment_url($attachment_id) : false;
+		$attachment_url = $attachment_id ? wnd_get_attachment_url($attachment_id) : false;
 
 		if ($attachment_id and !$attachment_url) {
 			if (0 === stripos($meta_key, '_option_')) {

@@ -3,6 +3,7 @@ namespace Wnd\Action\Common;
 
 use Exception;
 use Wnd\Action\Wnd_Action;
+use Wnd\WPDB\Wnd_Attachment_DB;
 
 /**
  * ajax文件上传
@@ -27,111 +28,44 @@ class Wnd_Upload_File extends Wnd_Action {
 
 	protected $meta_key;
 
+	protected $relative_path;
+	protected $attachment_id;
+	protected $mime_type;
+
 	protected function execute(): array {
-		//$_FILES['wnd_file']需要与input name 值匹配
-		if (empty($_FILES['wnd_file'])) {
-			throw new Exception(__('上传文件为空', 'wnd'));
-		}
-
-		$thumbnail_height = (int) ($this->data['thumbnail_height'] ?? 0);
-		$thumbnail_width  = (int) ($this->data['thumbnail_width'] ?? 0);
-
 		// These files need to be included as dependencies when on the front end.
 		if (!is_admin()) {
-			require ABSPATH . 'wp-admin/includes/image.php';
 			require ABSPATH . 'wp-admin/includes/file.php';
-			require ABSPATH . 'wp-admin/includes/media.php';
 		}
 
-		/**
-		 * 遍历文件上传
-		 * @since 2019.05.06 改写
-		 */
-		$return_array = ['status' => 1, 'msg' => __('上传成功', 'wnd'), 'data' => []]; // 定义图片信息返回数组
-		$files        = $_FILES['wnd_file']; //暂存原始上传信息，后续将重写$_FILES全局变量以适配WordPress上传方式
-
-		foreach ($files['name'] as $key => $value) {
-			// 将多文件上传数据遍历循环后，重写为适配 media_handle_upload 的单文件模式
-			$file = [
-				'name'     => $files['name'][$key],
-				'type'     => $files['type'][$key],
-				'tmp_name' => $files['tmp_name'][$key],
-				'error'    => $files['error'][$key],
-				'size'     => $files['size'][$key],
-			];
-			$_FILES = ['temp_key' => $file];
-
-			// 单文件错误检测
-			if ($_FILES['temp_key']['error'] > 0) {
-				$$return_array['data'] = ['status' => 0, 'msg' => 'Error: ' . $_FILES['temp_key']['error']];
-				continue;
-			}
-
-			// 文件格式限制
-			$extension = pathinfo($_FILES['temp_key']['name'])['extension'] ?? '';
-			if (!wnd_is_allowed_extension($extension)) {
-				$$return_array['data'] = ['status' => 0, 'msg' => 'Error: File types not allowed'];
-				continue;
-			}
-
-			/**
-			 * 上传文件并附属到对应的post parent 默认为 0 即孤立文件
-			 *
-			 * 新增 Attachment Post 字段：post_content_filtered 保存附件对应在 parent post 中的 meta key
-			 * - @since 0.9.39
-			 * - used by plugins to cache a version of post_content typically passed through the ‘the_content’ filter.Not used by WordPress core itself.
-			 * - meta key 写入 parent post meta 是在附件上传完成之后执行，因此无法用于附件上传过程中，判断是否应该写入私有 OSS 节点
-			 * - 保存 meta key 至此，从而使得 Utility\Wnd_OSS_Handler 可以识别判断是否需要上传至私有 OSS 节点
-			 * - 不保存 meta key 至 attachment post 的 post meta 是为了减少一行数据记录
-			 * - @see Utility\Wnd_OSS_Handler::is_private_storage()
-			 *
-			 */
-			$file_id = media_handle_upload('temp_key', $this->post_parent, ['post_content_filtered' => $this->meta_key]);
-
-			// 上传失败
-			if (is_wp_error($file_id)) {
-				$$return_array['data'] = ['status' => 0, 'msg' => $file_id->get_error_message()];
-				continue;
-			}
-
-			$url = wp_get_attachment_url($file_id);
-
-			// 判断是否为图片
-			if (strrpos($file['type'], 'image') !== false) {
-				// 返回缩略图
-				$thumbnail = wnd_get_thumbnail_url($url, $thumbnail_width, $thumbnail_height);
-			}
-
-			// 将当前上传的图片信息写入数组
-			$temp_array = [
-				'url'       => $url,
-				'thumbnail' => $thumbnail ?? 0,
-				'id'        => $file_id,
-				'post'      => get_post($file_id),
-			];
-			$return_array['data'][] = $temp_array;
-
-			/**
-			 * @since 2019.02.13 当存在meta key时，表明上传文件为特定用途存储，仅允许上传单个文件
-			 * @since 2019.05.05 当meta key == gallery 表示为上传图集相册 允许上传多个文件
-			 */
-			if ('gallery' != $this->meta_key) {
-				//处理完成根据用途做下一步处理
-				do_action('wnd_upload_file', $file_id, $this->post_parent, $this->meta_key);
-				break;
+		// ############################### 2025 拆分附件数据表
+		$time = current_time('mysql');
+		if ($this->post_parent) {
+			$post = get_post($this->post_parent);
+			// The post date doesn't usually matter for pages, so don't backdate this upload.
+			if ('page' !== $post->post_type && substr($post->post_date, 0, 4) > 0) {
+				$time = $post->post_date;
 			}
 		}
-		unset($key, $value);
 
-		/**
-		 * @since 2019.05.05 当meta key == gallery 表示为上传图集相册 允许上传多个文件
-		 */
-		if ('gallery' == $this->meta_key) {
-			do_action('wnd_upload_gallery', $return_array, $this->post_parent);
+		$res = wp_handle_upload($_FILES['wnd_file'], ['test_form' => false], $time);
+		if (isset($res['error'])) {
+			throw new Exception('upload_error' . $res['error']);
 		}
 
-		// 返回上传信息二维数组合集
-		return $return_array;
+		$this->mime_type     = $res['type'];
+		$this->relative_path = $this->relative_upload_path($res['file']);
+		// $title = sanitize_text_field($name);
+
+		$this->attachment_id = $this->insert_attachment_db();
+
+		$data = [
+			'id'        => $this->attachment_id,
+			'url'       => $res['url'],
+			'thumbnail' => $res['url'],
+		];
+		return ['status' => 1, 'data' => $data];
+		// ############################### 2025 拆分附件数据表
 	}
 
 	protected function parse_data() {
@@ -139,7 +73,9 @@ class Wnd_Upload_File extends Wnd_Action {
 		$this->meta_key    = $this->data['meta_key'] ?? '';
 	}
 
-	protected function check() {
+	final protected function check() {
+		$this->check_file();
+
 		// 上传信息校验
 		if (!$this->user_id and !$this->post_parent) {
 			throw new Exception(__('User ID及Post ID不可同时为空', 'wnd'));
@@ -171,4 +107,71 @@ class Wnd_Upload_File extends Wnd_Action {
 		}
 	}
 
+	protected function check_file() {
+		//$_FILES['wnd_file']需要与input name 值匹配
+		if (empty($_FILES['wnd_file'])) {
+			throw new Exception(__('上传文件为空', 'wnd'));
+		}
+
+		// 文件错误检测
+		if ($_FILES['wnd_file']['error'] > 0) {
+			throw new Exception('File Error!');
+		}
+
+		// 文件格式限制
+		$extension = pathinfo($_FILES['wnd_file']['name'])['extension'] ?? '';
+		if (!wnd_is_allowed_extension($extension)) {
+			throw new Exception('Error: File types not allowed');
+		}
+	}
+
+	/**
+	 * Returns relative path to an uploaded file.
+	 *
+	 * The path is relative to the current upload dir.
+	 *
+	 * @since 2.9.0
+	 * @access private
+	 *
+	 * @param string $path Full path to the file.
+	 * @return string Relative path on success, unchanged path on failure.
+	 */
+	protected function relative_upload_path($path) {
+		$new_path = $path;
+
+		$uploads = wp_get_upload_dir();
+		if (str_starts_with($new_path, $uploads['basedir'])) {
+			$new_path = str_replace($uploads['basedir'], '', $new_path);
+			$new_path = ltrim($new_path, '/');
+		}
+
+		return $new_path;
+	}
+
+	protected function insert_attachment_db(): int {
+		$attachment = [
+			'post_id'    => $this->post_parent,
+			'user_id'    => $this->user_id,
+			'meta_key'   => $this->meta_key,
+			'file_path'  => $this->relative_path,
+			'mime_type'  => $this->mime_type,
+			// 'meta_json'   => '',
+			'created_at' => time(),
+		];
+		return Wnd_Attachment_DB::get_instance()->insert($attachment);
+	}
+
+	final protected function complete() {
+		if (!$this->attachment_id) {
+			throw new Exception(__('附件ID无效', 'wnd'));
+		}
+
+		/**
+		 *
+		 * 根据用途做下一步处理
+		 *  - 此项 Hook 非常重要，在特定文件上传场景，如付费文件及用户资料头像上传中，将以此做下一步处理
+		 *  - @see Wnd_Upload_File
+		 */
+		do_action('wnd_upload_file', $this->attachment_id, $this->post_parent, $this->meta_key);
+	}
 }

@@ -233,4 +233,119 @@ class Wnd_Admin_Upgrade {
 		delete_post_meta_by_key('views');
 	}
 
+	// 附件数据采用独立数据：转移附件posts至独立数据表
+	private static function v_0_9_86() {
+		// 脚本超时
+		ini_set('max_execution_time', 0);
+
+		Wnd_DB::create_table();
+
+		global $wpdb;
+		$handler = \Wnd\WPDB\Wnd_Attachment_DB::get_instance();
+
+		// 迁移数据
+		$batch_size = 1000;
+		$offset     = 0;
+		do {
+			$attachments = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM {$wpdb->posts}  WHERE post_type = 'attachment' ORDER BY ID LIMIT %d OFFSET %d",
+					$batch_size,
+					$offset
+				)
+			);
+
+			foreach ($attachments as $post) {
+				$file_path = get_post_meta($post->ID, '_wp_attached_file', true);
+				if (empty($file_path)) {
+					continue;
+				}
+
+				$exists = $handler->get_by('attachment_id', $post->ID);
+				if ($exists) {
+					continue;
+				}
+
+				$post_arr = [
+					'user_id'       => $post->post_author,
+					'post_id'       => $post->post_parent,
+					'mime_type'     => $post->post_mime_type,
+					'file_path'     => $file_path,
+					'attachment_id' => $post->ID,
+					'meta_key'      => $post->post_content_filtered,
+					'created_at'    => strtotime($post->post_date_gmt),
+				];
+
+				$ID = $handler->insert($post_arr);
+				// if ($ID) {
+				// 	wp_delete_post($post->ID, true);
+				// }
+			}
+
+			$offset += $batch_size;
+		} while (count($attachments) === $batch_size);
+
+		// 迁移用户头像
+		$batch_size = 1000;
+		$offset     = 0;
+		do {
+			$users = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT ID FROM {$wpdb->users} ORDER BY ID LIMIT %d OFFSET %d",
+					$batch_size,
+					$offset
+				)
+			);
+
+			foreach ($users as $user) {
+				$avatar = wnd_get_user_meta($user->ID, 'avatar');
+				if (!$avatar) {
+					continue;
+				}
+
+				$new_db = $handler->get_by('attachment_id', $avatar);
+				if ($new_db and $new_db->ID != $avatar) {
+					wnd_update_user_meta($user->ID, 'avatar', $new_db->ID);
+				}
+			}
+
+			$offset += $batch_size;
+		} while (count($users) === $batch_size);
+
+		// 迁移文章缩略图和付费文件
+		$batch_size = 1000;
+		$offset     = 0;
+		do {
+			$posts = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT ID FROM {$wpdb->posts} ORDER BY ID LIMIT %d OFFSET %d",
+					$batch_size,
+					$offset
+				)
+			);
+
+			foreach ($posts as $post) {
+				$thumb = wnd_get_post_meta($post->ID, '_thumbnail_id');
+				$file  = wnd_get_post_meta($post->ID, 'file');
+				if (!$thumb and !$file) {
+					continue;
+				}
+
+				// 缩略图
+				$new_db = $handler->get_by('attachment_id', $thumb);
+				if ($new_db and $new_db->ID != $thumb) {
+					wnd_update_post_meta($post->ID, '_thumbnail_id', $new_db->ID);
+				}
+
+				// 文件
+				$new_db = $handler->get_by('attachment_id', $file);
+				if ($new_db and $new_db->ID != $file) {
+					wnd_update_post_meta($post->ID, 'file', $new_db->ID);
+				}
+			}
+
+			$offset += $batch_size;
+		} while (count($posts) === $batch_size);
+	}
+
 }

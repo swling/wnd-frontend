@@ -18,6 +18,7 @@ use Wnd\Utility\Wnd_Singleton_Trait;
  *   Aliyun OSS 签名中包含 secretID，也将明文暴露，但签名算法在后端，所以安全性无需担心
  *
  * @since 0.9.29
+ * @since 0.9.86 采用独立附件数据表
  */
 class Wnd_OSS_Handler {
 
@@ -47,13 +48,10 @@ class Wnd_OSS_Handler {
 		$this->add_local_storage_hook();
 
 		// 同步删除远程文件
-		add_action('delete_attachment', [$this, 'delete_oss_file'], 10, 1);
+		add_action('before_delete_wnd_attachment', [$this, 'delete_oss_file'], 10, 1);
 
 		// 重写附件链接
-		add_filter('wp_get_attachment_metadata', [$this, 'filter_attachment_meta'], 10, 1);
-		add_filter('wp_get_attachment_url', [$this, 'filter_attachment_url'], 10, 2);
-		add_filter('wp_calculate_image_srcset', [$this, 'filter_wp_srcset'], 10, 1);
-		add_filter('wp_get_attachment_image_src', [$this, 'filter_attachment_image_src'], 10, 1);
+		add_filter('wnd_get_attachment_url', [$this, 'filter_attachment_url'], 10, 2);
 	}
 
 	/**
@@ -62,13 +60,7 @@ class Wnd_OSS_Handler {
 	 */
 	private function add_local_storage_hook() {
 		// 上传文件
-		add_action('add_attachment', [$this, 'upload_to_oss'], 10, 1);
-
-		/**
-		 * 生成本地文件 meta 之后 删除文件
-		 * @see apply_filters( 'wp_generate_attachment_metadata', $metadata, $attachment_id, 'create' );
-		 */
-		add_filter('wp_generate_attachment_metadata', [$this, 'delete_local_file'], 10, 2);
+		add_action('wnd_upload_file', [$this, 'upload_to_oss'], 10, 1);
 	}
 
 	/**
@@ -77,30 +69,40 @@ class Wnd_OSS_Handler {
 	 * @since 0.9.35.5
 	 */
 	public function remove_local_storage_hook() {
-		remove_action('add_attachment', [$this, 'upload_to_oss'], 10);
-		remove_filter('wp_generate_attachment_metadata', [$this, 'delete_local_file'], 10);
+		remove_action('wnd_upload_file', [$this, 'upload_to_oss'], 10, 1);
 	}
 
 	/**
 	 * 在WordPress上传到本地服务器之后，将文件上传到oss
-	 * @since 2019.07.26
+	 * @since 0.9.85
 	 */
 	public function upload_to_oss(int $attachment_id) {
+		if (-1 == $this->local_storage) {
+			return;
+		}
+
+		$attachment = wnd_get_attachment($attachment_id);
 		// 获取WordPress上传并处理后文件
-		$file       = get_attached_file($attachment_id);
-		$is_private = $this->is_private_storage($attachment_id);
+		$uploadpath = wp_get_upload_dir();
+		$file       = $uploadpath['basedir'] . "/$attachment->file_path";
+		$is_private = 'file' == $attachment->meta_key;
 
 		try {
-			$file_path_name = $this->parse_file_path_name($file);
+			$file_path_name = $this->oss_dir . '/' . $attachment->file_path;
 			$object_storage = $this->get_object_storage_instance($is_private);
 			$object_storage->setFilePathName($file_path_name);
 			$object_storage->uploadFile($file);
+
+			// 删除本地文件
+			if (1 != $this->local_storage) {
+				return wnd_delete_attachment_file($attachment->ID);
+			}
 		} catch (Exception $e) {
 			/**
 			 * @data 2020.10.20
 			 * 同步上传失败，则删除本条附件，防止产生孤立附件
 			 */
-			wp_delete_attachment($attachment_id, true);
+			wnd_delete_attachment($attachment_id);
 			exit($e->getMessage() . '@' . __FUNCTION__);
 		}
 	}
@@ -123,7 +125,7 @@ class Wnd_OSS_Handler {
 			return false;
 		}
 
-		$meta_key = get_post($attachment_id)->post_content_filtered ?? '';
+		$meta_key = wnd_get_attachment($attachment_id)->meta_key ?? '';
 
 		return 'file' == $meta_key;
 	}
@@ -164,70 +166,20 @@ class Wnd_OSS_Handler {
 	}
 
 	/**
-	 * 根据用户设定选择是否清理本地文件
-	 * @see do_action( "added_{$meta_type}_meta", $mid, $object_id, $meta_key, $_meta_value )
-	 * @since WordPress读取本地文件信息并存入字段后
+	 * 删除OSS文件(插件独立附件数据表)
+	 * @since 0.9.85
 	 */
-	public function delete_local_file(array $data, int $attachment_id): array {
-		if ($this->local_storage > 0) {
-			return $data;
-		}
-
-		/**
-		 * $meta = wp_get_attachment_metadata($post_ID);
-		 * 因为插件对 wp_get_attachment_metadata 进行了oss远程重写，因此此处不可采用 wp_get_attachment_metadata获取
-		 */
-		$meta         = get_post_meta($attachment_id, '_wp_attachment_metadata', true);
-		$backup_sizes = get_post_meta($attachment_id, '_wp_attachment_backup_sizes', true);
-		$file         = get_attached_file($attachment_id);
-		$delete       = wp_delete_attachment_files($attachment_id, $meta, $backup_sizes, $file);
-		if (!$delete) {
-			throw new Exception('wp_delete_attachment_files filed @' . __FUNCTION__);
-		}
-
-		return $data;
-	}
-
-	/**
-	 * 删除OSS文件
-	 * do_action( 'delete_attachment', $post_id );
-	 * @since 2019.07.26
-	 */
-	public function delete_oss_file(int $attachment_id) {
-		$file       = get_attached_file($attachment_id);
-		$is_private = $this->is_private_storage($attachment_id);
+	public function delete_oss_file(object $attachment) {
+		$is_private = 'file' == $attachment->meta_key;
 
 		try {
-			$file_path_name = $this->parse_file_path_name($file);
+			$file_path_name = $this->oss_dir . '/' . $attachment->file_path;
 			$object_storage = $this->get_object_storage_instance($is_private);
 			$object_storage->setFilePathName($file_path_name);
 			$object_storage->deleteFile();
 		} catch (Exception $e) {
 			return $e->getMessage() . '@' . __FUNCTION__;
 		}
-	}
-
-	/**
-	 * 替换wordpress file meta
-	 * @since 2019.07.25
-	 */
-	public function filter_attachment_meta(array $data): array {
-		if (empty($data['sizes']) || (wp_debug_backtrace_summary(null, 4, false)[0] == 'wp_delete_attachment')) {
-			return $data;
-		}
-
-		/**
-		 *
-		 * WordPress的缩略图仅保存了文件名，不包含日期信息，即使文件是按月归档，路径信息也仅在data['file']中
-		 * @since 07.26.19：34
-		 */
-		$file = basename($data['file']);
-
-		foreach ($data['sizes'] as $size => $info) {
-			$data['sizes'][$size]['file'] = $file;
-		}
-
-		return $data;
 	}
 
 	/**
@@ -253,34 +205,11 @@ class Wnd_OSS_Handler {
 	}
 
 	/**
-	 * wp_get_attachment_image
-	 * return apply_filters( 'wp_get_attachment_image_src', $image, $attachment_id, $size, $icon );
-	 * @since 2019.07.25
-	 */
-	public function filter_attachment_image_src(array $image): array {
-		$oss_image = [
-			$this->resize_image($image[0], $image[1], $image[2]),
-			$image[1],
-			$image[2],
-		];
-
-		return $oss_image;
-	}
-
-	/**
 	 * 对象存储图片处理。若指定云平台不支持图像处理则返回原链接
 	 * @since 2019.07.26
 	 */
 	private function resize_image(string $img_url, int $width, int $height): string {
 		return $this->get_object_storage_instance()->resizeImage($img_url, $width, $height);
-	}
-
-	/**
-	 * WordPress后台附件列表使用了srcset，由于我们采用了远程图片，需禁用此功能
-	 * 否则无法正常显示，即使已通过wp_get_attachment_url filter重写链接
-	 */
-	public function filter_wp_srcset($sources) {
-		return false;
 	}
 
 	/**

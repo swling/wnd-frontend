@@ -53,7 +53,7 @@ const RichEditor = {
 
                 // 定义插件及菜单按钮
                 plugins: 'advlist autolink autoresize autosave code codesample fullscreen image link lists pagebreak wordcount wndimage wndinit',
-                toolbar: 'formatselect | alignleft aligncenter alignright bullist numlist | ' +
+                toolbar: 'styles | alignleft aligncenter alignright bullist numlist | ' +
                     'blockquote wndimage link codesample  pagebreak wndpaidcontent | removeformat code fullscreen',
 
                 // 自定义配置
@@ -652,7 +652,7 @@ const ThumbnailCard = {
         },
         async upload_to_local_server(blob) {
             const formData = new FormData();
-            formData.append('wnd_file[]', blob, 'CroppedImage.webp');
+            formData.append('wnd_file', blob, 'CroppedImage.webp');
             formData.append('meta_key', this.meta_key);
             formData.append('post_parent', this.post_parent);
             let response = await wnd_ajax_action("common/wnd_upload_file", formData);
@@ -774,8 +774,8 @@ const FileUploader = {
                 } else {
                     let response = await this.upload_to_local_server(file);
                     if (response.status > 0) {
-                        this.current_file_id = response.data[0].id;
-                        this.current_file_url = response.data[0].url;
+                        this.current_file_id = response.data.id;
+                        this.current_file_url = response.data.url;
                     } else {
                         alert(response.msg);
                     }
@@ -787,7 +787,7 @@ const FileUploader = {
         },
         async upload_to_local_server(file) {
             const formData = new FormData();
-            formData.append('wnd_file[]', file);
+            formData.append('wnd_file', file);
             formData.append('meta_key', this.meta_key);
             formData.append('post_parent', this.post_parent);
             formData.append('is_paid', this.is_paid);

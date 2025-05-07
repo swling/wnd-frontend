@@ -1,4 +1,58 @@
 <?php
+
+// 获取附件数据
+function wnd_get_attachment(int $attachment_id): mixed {
+	$instance = Wnd\WPDB\Wnd_Attachment_DB::get_instance();
+	$data     = $instance->get_by('ID', $attachment_id);
+	if (!$data) {
+		return false;
+	}
+
+	return $data;
+}
+
+// 获取附件的绝对 URL
+function wnd_get_attachment_url(int $attachment_id): string {
+	$path = wnd_get_attachment_path($attachment_id);
+	if (!$path) {
+		return '';
+	}
+
+	$uploads = wp_get_upload_dir();
+	$url     = $uploads['baseurl'] . '/' . $path;
+	$url     = apply_filters('wnd_get_attachment_url', $url, $attachment_id);
+
+	return $url;
+}
+
+// 获取附件的绝对路径
+function wnd_get_attachment_path(int $attachment_id): string {
+	$data = wnd_get_attachment($attachment_id);
+	if (!$data) {
+		return '';
+	}
+
+	return $data->file_path ?? '';
+}
+
+function wnd_delete_attachment(int $attachment_id) {
+	$instance = Wnd\WPDB\Wnd_Attachment_DB::get_instance();
+	return $instance->delete_by('ID', $attachment_id);
+}
+
+function wnd_delete_attachment_file(int $attachment_id): bool {
+	$uploadpath = wp_get_upload_dir();
+	$path       = wnd_get_attachment_path($attachment_id);
+
+	$file = $uploadpath['basedir'] . "/$path";
+	return wp_delete_file_from_directory($file, $uploadpath['basedir']);
+}
+
+function wnd_delete_attachment_by_post(int $post_id) {
+	$instance = Wnd\WPDB\Wnd_Attachment_DB::get_instance();
+	return $instance->delete_by('post_id', $post_id);
+}
+
 /**
  * 下载文件
  * 通过php脚本的方式将文件发送到浏览器下载，避免保留文件的真实路径
@@ -155,7 +209,7 @@ function wnd_media_sideload($file, $post_id, $desc = '', $return = 'id') {
  * 根据文件路径或 URL 提取文件后缀名
  * @since 0.9.35.5
  */
-function wnd_parse_file_ext(string $file): string{
+function wnd_parse_file_ext(string $file): string {
 	$url_info = parse_url($file);
 	$path     = $url_info['path'] ?? '';
 	$query    = $url_info['query'] ?? '';
@@ -180,7 +234,7 @@ function wnd_parse_file_ext(string $file): string{
  * Content Type 转文件后缀名
  * @since 0.9.35.5
  */
-function wnd_mime2ext(string $mime): string{
+function wnd_mime2ext(string $mime): string {
 	$mime_map = [
 		'video/3gpp2'                                                               => '3g2',
 		'video/3gp'                                                                 => '3gp',
@@ -369,14 +423,14 @@ function wnd_mime2ext(string $mime): string{
  * 根据 post id 获取付费文件 URL
  * @since 0.9.26
  */
-function wnd_get_paid_file(int $post_id): string{
+function wnd_get_paid_file(int $post_id): string {
 	$file = wnd_get_post_meta($post_id, 'file_url') ?: '';
 	if ($file) {
 		return $file;
 	}
 
 	$file_id = wnd_get_paid_file_id($post_id);
-	return wp_get_attachment_url($file_id) ?: '';
+	return wnd_get_attachment_url($file_id) ?: '';
 }
 
 /**
@@ -399,7 +453,7 @@ function wnd_get_paid_file_id(int $post_id): int {
  * @param int        			$height  		图片高度
  */
 function wnd_get_thumbnail_url($id_or_url, $width = 160, $height = 120) {
-	$url = is_numeric($id_or_url) ? wp_get_attachment_url($id_or_url) : $id_or_url;
+	$url = is_numeric($id_or_url) ? wnd_get_attachment_url($id_or_url) : $id_or_url;
 	if (!$url) {
 		return false;
 	}
@@ -411,7 +465,7 @@ function wnd_get_thumbnail_url($id_or_url, $width = 160, $height = 120) {
  * 核查文件类型是否在允许列表中
  * @since 0.9.57.7
  */
-function wnd_is_allowed_extension(string $extension): bool{
+function wnd_is_allowed_extension(string $extension): bool {
 	$allowed_extensions = array_keys(get_allowed_mime_types());
 	$extensions         = [];
 	foreach ($allowed_extensions as $value) {
