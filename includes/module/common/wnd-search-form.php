@@ -15,10 +15,10 @@ class Wnd_Search_Form extends Wnd_Module_Html {
 
 		$html = '<form role="search" method="get" id="searchform" action="' . home_url() . '">';
 		$html .= '<div class="field has-addons has-addons-right">';
-		$html .= '<p class="control is-expanded">';
+		$html .= '<div class="control is-expanded">';
 		$html .= '<input class="input" type="text" name="s" placeholder="' . __('关键词', 'wnd') . '" required="required">';
 		$html .= '<input type="hidden" name="lang" value="' . ($_GET[WND_LANG_KEY] ?? '') . '">';
-		$html .= '</p>';
+		$html .= '</div>';
 		$html .= '<div class="control">';
 		$html .= '<input type="submit" class="button is-' . $primary_color . '" value="' . __('搜索', 'wnd') . '" />';
 		$html .= '</div>';
