@@ -21,7 +21,6 @@ class Wnd_Add_Action {
 		add_action('wnd_login', [__CLASS__, 'action_on_login'], 10);
 		add_action('wnd_login_failed', [__CLASS__, 'action_on_login_failed'], 10);
 		add_action('wnd_upload_file', [__CLASS__, 'action_on_upload_file'], 10, 3);
-		add_action('wnd_upload_gallery', [__CLASS__, 'action_on_upload_gallery'], 10, 2);
 		add_action('wnd_delete_file', [__CLASS__, 'action_on_delete_file'], 10, 3);
 		add_action('before_delete_wnd_transaction', [__CLASS__, 'action_on_wnd_transaction_deleted'], 10);
 		add_action('before_delete_wnd_attachment', [__CLASS__, 'action_on_delete_attachment']);
@@ -127,61 +126,11 @@ class Wnd_Add_Action {
 	}
 
 	/**
-	 * do_action('wnd_upload_gallery', $return_array, $post_parent);
-	 * 相册
-	 * @since 2019.05.05
-	 */
-	public static function action_on_upload_gallery($image_array, $post_parent) {
-		if (empty($image_array)) {
-			return;
-		}
-
-		$images = [];
-		foreach ($image_array as $image_info) {
-			// 上传失败的图片跳出
-			if (0 === $image_info['status']) {
-				continue;
-			}
-
-			// 将 img+附件id 作为键名（整型直接做数组键名会存在有效范围，超过整型范围后会出现负数，0等错乱）
-			$images['img' . $image_info['data']['id']] = $image_info['data']['id'];
-		}
-		unset($image_array, $image_info);
-
-		$old_images = wnd_get_post_meta($post_parent, 'gallery');
-		$old_images = is_array($old_images) ? $old_images : [];
-
-		// 合并数组，注意新旧数据顺序 array_merge($images, $old_images) 表示将旧数据合并到新数据，因而新上传的在顶部，反之在尾部
-		$new_images = array_merge($images, $old_images);
-		wnd_update_post_meta($post_parent, 'gallery', $new_images);
-	}
-
-	/**
 	 * ajax删除附件时
 	 * @since 2018
 	 */
 	public static function action_on_delete_file($attachment_id, $post_parent, $meta_key) {
 		if (!$meta_key) {
-			return;
-		}
-
-		/**
-		 * 相册编辑
-		 * @since 2019.05.06
-		 */
-		if ('gallery' == $meta_key) {
-			// 从相册数组中删除当前图片
-			$user_id = get_current_user_id();
-			$images  = $post_parent ? wnd_get_post_meta($post_parent, 'gallery') : wnd_get_user_meta($user_id, 'gallery');
-			$images  = is_array($images) ? $images : [];
-			unset($images['img' . $attachment_id]);
-
-			if ($post_parent) {
-				wnd_update_post_meta($post_parent, 'gallery', $images);
-			} else {
-				wnd_update_user_meta($user_id, 'gallery', $images);
-			}
-
 			return;
 		}
 

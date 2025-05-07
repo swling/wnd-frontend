@@ -26,14 +26,6 @@ $form->add_text(
 	]
 );
 
-$form->add_number(
-	[
-		'name'     => 'gallery_picture_limit',
-		'label'    => '产品相册图片',
-		'required' => false,
-	]
-);
-
 $form->add_page_select('ucenter', '用户中心页面', true);
 
 $form->add_term_select('default_cat', 'category', $label = '默认分类', $required = true, $dynamic_sub = false);
