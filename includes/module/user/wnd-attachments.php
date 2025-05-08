@@ -3,11 +3,10 @@
 namespace Wnd\Module\User;
 
 use Exception;
-use Wnd\Model\Wnd_Transaction;
 use Wnd\Module\Wnd_Module_Html;
 
 /**
- * @since 0.9.26 订单及充值记录
+ * @since 0.9.86 独立附件数据表
  */
 class Wnd_Attachments extends Wnd_Module_Html {
 
@@ -18,11 +17,6 @@ class Wnd_Attachments extends Wnd_Module_Html {
 				'key'     => 'status',
 				'options' => [
 					__('全部', 'wnd')  => 'any',
-					__('已完成', 'wnd') => Wnd_Transaction::$completed_status,
-					__('待付款', 'wnd') => Wnd_Transaction::$pending_status,
-					__('待发货', 'wnd') => Wnd_Transaction::$processing_status,
-					__('已关闭', 'wnd') => Wnd_Transaction::$closed_status,
-					__('已退款', 'wnd') => Wnd_Transaction::$refunded_status,
 				],
 			],
 

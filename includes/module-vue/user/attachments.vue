@@ -1,10 +1,12 @@
 <div id="vue-list-app">
-	<div class="wnd-filter-tabs mb-3">
+	<div class="wnd-filter-tabs mb-3 is-hidden">
 		<div v-for="tab in tabs" class="columns is-marginless is-vcentered is-mobile">
 			<div class="column is-narrow">{{tab.label}}</div>
 			<div class="column tabs">
 				<ul class="tab">
-					<li v-for="(value, key) in tab.options" :class="is_active(tab.key, value)"><a @click="update_filter(tab.key, value)">{{key}}</a></li>
+					<li v-for="(value, key) in tab.options" :class="is_active(tab.key, value)">
+						<a @click="update_filter(tab.key, value)">{{key}}</a>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -16,16 +18,20 @@
 			<div class="column is-narrow">
 				<div class="is-pulled-left mr-3" :class="get_status_class(item)">
 					<input type="checkbox" v-model="item.selected" class="mr-1">
-					<b>{{item.file_path}}</b>
+					{{item.file_path}}
 				</div>
-				<span>{{timeToString(item.created_at)}}</span>
-				<span class="is-size-7">&nbsp;-&nbsp;<em v-text="0 == item.user_id ? `[Anonymous]`: `[user : ${item.user_id}]`"></em></span>
+				<span class="is-size-7">{{timeToString(item.created_at)}}</span>
+				<span class="is-size-7">&nbsp;-&nbsp;
+					<em v-text="0 == item.user_id ? `[Anonymous]`: `[user : ${item.user_id}]`"></em>
+					<em v-text="0 == item.post_id ? `0`: `[post : ${item.post_id}]`"></em>
+				</span>
 			</div>
 
 			<div class="column is-narrow">
-				<a @click="get_detail(item.ID)"><span v-text="item.subject"></span></a>
+				<a class="button is-danger is-small" @click="delete_attachment(item.ID,index)">Delete</a>
+				<!-- <a @click="get_detail(item.ID)"><span v-text="item.subject"></span></a> -->
 			</div>
-			<div class="column is-full" v-show="details[item.ID] && !details[item.ID].hidden" v-html="show_detail(details[item.ID])"></div>
+			<!-- <div class="column is-full" v-show="details[item.ID] && !details[item.ID].hidden" v-html="show_detail(details[item.ID])"></div> -->
 		</div>
 	</div>
 	<nav class="pagination is-centered">
@@ -82,28 +88,15 @@
 					wnd_loading("#lists", true);
 					this.data = res.data;
 				},
-				get_detail: async function (id) {
-					if (this.details[id]) {
-						this.details[id].hidden = !this.details[id].hidden;
+				delete_attachment: async function (id, index) {
+					if (!confirm("Are you sure to delete this attachment?" + index)) {
 						return;
 					}
-
-					let res = await wnd_query("wnd_get_transaction", { "id": id });
+					let res = await wnd_ajax_action("common/wnd_delete_file", { "file_id": id });
 					if (1 == res.status) {
-						this.details[id] = res.data;
+						this.data.results.splice(index, 1);
+
 					}
-				},
-				show_detail: function (obj) {
-					if (!obj) {
-						return '';
-					}
-					let str = '';
-					// str += `<button class="button is-small" onclick='wnd_ajax_modal("admin/wnd_account_status_form", {"user_id": ${obj.ID}} )'><i class="fas fa-info-circle"></i></button>`;
-					str += `<button class="button is-small" onclick='wnd_ajax_modal("admin/wnd_refund_form", {"transaction_id": ${obj.ID}} )'><i class="fas fa-coins"></i></button>`;
-					str += '<table class="table is-fullwidth  is-size-7 is-bordered">';
-					str += Object.entries(obj).map(([key, value]) => `<tr><td style="white-space:nowrap;width:1px;">${key}</td><td>${value}</td></tr>`).join('\n');
-					str += '</table>';
-					return str;
 				},
 				is_active: function (key, value) {
 					return this.param[key] == value ? "is-active" : "";

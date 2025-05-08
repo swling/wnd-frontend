@@ -14,6 +14,7 @@ class Wnd_Delete_File extends Wnd_Action_User {
 	private $meta_key;
 	private $file_id;
 	private $post_parent;
+	private $attachment;
 
 	protected function execute(): array {
 		if (wnd_delete_attachment($this->file_id, true)) {
@@ -25,14 +26,14 @@ class Wnd_Delete_File extends Wnd_Action_User {
 	}
 
 	protected function parse_data() {
-		$this->meta_key    = $this->data['meta_key'] ?? '';
 		$this->file_id     = (int) $this->data['file_id'];
-		$this->post_parent = get_post($this->file_id)->post_parent ?? 0;
+		$this->attachment  = wnd_get_attachment($this->file_id);
+		$this->meta_key    = $this->attachment->meta_key ?? ($this->data['meta_key'] ?? '');
+		$this->post_parent = $this->attachment->post_id ?? 0;
 	}
 
 	protected function check() {
-		$attachment = wnd_get_attachment($this->file_id);
-		if (!$attachment) {
+		if (!$this->attachment) {
 			throw new Exception(__('文件不存在', 'wnd'));
 		}
 
@@ -40,7 +41,7 @@ class Wnd_Delete_File extends Wnd_Action_User {
 			return;
 		}
 
-		if (!$this->user_id or $this->user_id != $attachment->user_id) {
+		if (!$this->user_id or $this->user_id != $this->attachment->user_id) {
 			throw new Exception(__('权限错误', 'wnd'));
 		}
 	}
