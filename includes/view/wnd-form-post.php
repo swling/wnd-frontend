@@ -482,7 +482,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 		$this->add_image_upload($args);
 	}
 
-	public function add_post_file_upload($meta_key, $is_paid, $label = '文件上传') {
+	public function add_post_file_upload($meta_key, $is_private, $label = '文件上传') {
 		if (!$this->check_upload()) {
 			return;
 		}
@@ -493,7 +493,7 @@ class Wnd_Form_Post extends Wnd_Form_WP {
 				'data'  => [ // some hidden input,maybe useful in ajax upload
 					'meta_key'    => $meta_key,
 					'post_parent' => $this->post_id, //如果设置了post parent, 则上传的附件id将保留在对应的wnd_post_meta 否则保留为 wnd_user_meta
-					'is_paid'     => $is_paid,
+					'is_private'  => $is_private,
 				],
 			]
 		);

@@ -44,7 +44,7 @@ class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 		$file_name        = uniqid('oss-') . '.' . $extension;
 		$this->md5        = $this->data['md5'] ?? '';
 		$this->local_file = $this->get_attached_file($file_name);
-		$this->is_private = (bool) ($this->data['is_paid'] ?? false);
+		$this->is_private = '1' == ($this->data['is_private'] ?? 0);
 
 		// 数据表属性
 		$this->mime_type     = $this->data['mime_type'] ?? '';

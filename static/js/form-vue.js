@@ -738,7 +738,7 @@ const FileUploader = {
             type: String,
             default: ''
         },
-        is_paid: {
+        is_private: {
             type: Boolean,
             default: false
         }
@@ -790,7 +790,7 @@ const FileUploader = {
             formData.append('wnd_file', file);
             formData.append('meta_key', this.meta_key);
             formData.append('post_parent', this.post_parent);
-            formData.append('is_paid', this.is_paid);
+            formData.append('is_private', this.is_private);
             let response = await wnd_ajax_action("common/wnd_upload_file", formData);
             return response;
         },
@@ -800,7 +800,7 @@ const FileUploader = {
                 {
                     "meta_key": this.meta_key,
                     "post_parent": this.post_parent,
-                    "is_paid": this.is_paid
+                    "is_private": this.is_private
                 }
             );
             return upload_res;
@@ -922,7 +922,7 @@ const PaidContent = {
             <post-price-input :post_parent="post_parent" v-model="price" @update:modelValue="$emit('update:price', $event)"></post-price-input>
 			</div>
 			<div class="column upload-field">
-				<file-uploader :post_parent="post_parent" meta_key="file" :file_id="file_id" :file_url="file_url" is_paid="1"></file-uploader>
+				<file-uploader :post_parent="post_parent" meta_key="file" :file_id="file_id" :file_url="file_url" is_private="1"></file-uploader>
 			</div>
 		</div>
 	</div>

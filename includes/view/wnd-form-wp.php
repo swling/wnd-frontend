@@ -261,7 +261,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			'meta_key'    => 0,
 			'save_width'  => 0, //图片文件存储最大宽度 0 为不限制
 			'save_height' => 0, //图片文件存储最大过度 0 为不限制
-			'is_paid'     => false,
+			'is_private'  => false,
 		];
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
@@ -306,7 +306,7 @@ class Wnd_Form_WP extends Wnd_Form {
 			'post_parent' => 0,
 			'user_id'     => $this->user->ID,
 			'meta_key'    => 0,
-			'is_paid'     => false,
+			'is_private'  => false,
 		];
 		$args['data'] = array_merge($defaults_data, $args['data']);
 
