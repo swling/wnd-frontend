@@ -761,6 +761,9 @@ const FileUploader = {
     },
     methods: {
         async handleFileChange(event) {
+            this.current_file_id = 0;
+            this.current_file_url = '';
+
             const file = event.target.files[0];
             try {
                 if (wnd.oss_direct_upload) {
