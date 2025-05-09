@@ -34,6 +34,9 @@ class Wnd_Admin_Upgrade {
 			$upgrade_methods[] = $method->class . '::' . $method->name;
 		}
 
+		// 脚本超时
+		ini_set('max_execution_time', 0);
+
 		// 方法排序并执行升级
 		asort($upgrade_methods);
 		foreach ($upgrade_methods as $upgrade_method) {
@@ -346,6 +349,53 @@ class Wnd_Admin_Upgrade {
 
 			$offset += $batch_size;
 		} while (count($posts) === $batch_size);
+	}
+
+	private static function v_0_9_87() {
+		global $wpdb;
+		$batch_size = 1000;
+
+		do {
+			$attachment_ids = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment' LIMIT %d",
+					$batch_size
+				)
+			);
+
+			if (empty($attachment_ids)) {
+				break;
+			}
+
+			// 删除 postmeta
+			$placeholders = implode(',', array_fill(0, count($attachment_ids), '%d'));
+			$wpdb->query(
+				$wpdb->prepare(
+					"DELETE FROM {$wpdb->postmeta} WHERE post_id IN ($placeholders)",
+					...$attachment_ids
+				)
+			);
+
+			// 删除 attachment posts
+			$wpdb->query(
+				$wpdb->prepare(
+					"DELETE FROM {$wpdb->posts} WHERE ID IN ($placeholders)",
+					...$attachment_ids
+				)
+			);
+
+			// 清理缓存
+			foreach ($attachment_ids as $post_id) {
+				wp_cache_delete($post_id, 'posts');
+				wp_cache_delete($post_id, 'post_meta');
+			}
+
+			// 可选：强制刷新整个对象缓存（不推荐频繁使用）
+			// wp_cache_flush();
+
+			usleep(50000); // 50ms
+
+		} while (!empty($attachment_ids));
 	}
 
 }
