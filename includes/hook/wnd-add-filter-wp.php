@@ -13,6 +13,7 @@ class Wnd_Add_Filter_WP {
 	private function __construct() {
 		add_filter('auth_cookie_expiration', [__CLASS__, 'filter_auth_cookie_expiration'], 10, 3);
 		add_filter('wp_handle_upload_prefilter', [__CLASS__, 'filter_limit_upload']);
+		add_filter('wp_handle_upload', [__CLASS__, 'convert_to_webp_and_delete_original']);
 		add_filter('get_edit_post_link', [__CLASS__, 'filter_edit_post_link'], 10, 3);
 		add_filter('post_type_link', [__CLASS__, 'filter_post_type_link'], 10, 2);
 		add_filter('wp_insert_post_data', [__CLASS__, 'filter_wp_insert_post_data'], 10, 2);
@@ -64,6 +65,61 @@ class Wnd_Add_Filter_WP {
 		$file['name'] = uniqid('file') . $ext;
 
 		return $file;
+	}
+
+	/**
+	 * @since 0.9.86
+	 * 将图片文件转为 webp
+	 */
+	public static function convert_to_webp_and_delete_original($upload) {
+		if (wnd_get_config('convert_webp') != 1) {
+			return $upload;
+		}
+
+		$quality       = wnd_get_config('webp_quality') ?: 80;
+		$original_path = $upload['file'];
+		$original_url  = $upload['url'];
+		$original_type = wp_check_filetype($original_path);
+
+		$supported_types = ['image/jpeg', 'image/png', 'image/gif'];
+		if (!in_array($original_type['type'], $supported_types)) {
+			return $upload; // 跳过非支持的格式
+		}
+
+		// 去掉扩展名，拼接 .webp
+		$webp_path = preg_replace('/\.[^.]+$/', '', $original_path) . '.webp';
+		$webp_url  = preg_replace('/\.[^.]+$/', '', $original_url) . '.webp';
+
+		// 根据原始类型创建图像资源
+		switch ($original_type['type']) {
+			case 'image/jpeg':
+				$image = imagecreatefromjpeg($original_path);
+				break;
+			case 'image/png':
+				$image = imagecreatefrompng($original_path);
+				imagepalettetotruecolor($image);
+				imagealphablending($image, false);
+				imagesavealpha($image, true);
+				break;
+			case 'image/gif':
+				$image = imagecreatefromgif($original_path);
+				break;
+			default:
+				return $upload;
+		}
+
+		// 保存为 WebP
+		if (imagewebp($image, $webp_path, $quality)) {
+			imagedestroy($image);
+			unlink($original_path); // ❗删除原文件
+
+			// 替换返回的 file、url 和 type
+			$upload['file'] = $webp_path;
+			$upload['url']  = $webp_url;
+			$upload['type'] = 'image/webp';
+		}
+
+		return $upload;
 	}
 
 	/**
