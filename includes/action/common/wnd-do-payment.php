@@ -183,6 +183,10 @@ class Wnd_Do_Payment extends Wnd_Action {
 	 *
 	 */
 	private function check_internal_payment() {
+		if ('recharge' == $this->type) {
+			throw new Exception('Internal recharge is not allowed.');
+		}
+
 		// 站内交易余额检测
 		$post_price   = wnd_get_post_price($this->post_id, $this->sku_id);
 		$total_amount = $post_price * $this->quantity;
