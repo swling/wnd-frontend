@@ -11,7 +11,7 @@ use Wnd\Module\Wnd_Module_Vue;
  * 匿名支付订单默认启用人机验证
  * @since 2020.06.30
  */
-class Wnd_User_Recharge_Form extends Wnd_Module_Vue {
+class Wnd_Recharge_Form extends Wnd_Module_Vue {
 
 	/**
 	 * 根据参数读取本次订单对应产品信息

@@ -87,7 +87,7 @@ class Wnd_User_Finance_Panel extends Wnd_Module_Html {
 		$html .= '</nav>';
 
 		$html .= '<div class="level is-mobile">';
-		$html .= '<div class="level-item">' . wnd_modal_button(__('余额充值', 'wnd'), 'common/wnd_user_recharge_form') . '</div>';
+		$html .= '<div class="level-item">' . wnd_modal_button(__('余额充值', 'wnd'), 'common/wnd_recharge_form') . '</div>';
 
 		if (is_super_admin()) {
 			$html .= '<div class="level-item">' . wnd_modal_button(__('人工充值', 'wnd'), 'admin/wnd_admin_recharge_form') . '</div>';

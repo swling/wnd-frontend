@@ -113,7 +113,7 @@ abstract class Wnd_Action_App extends Wnd_Action {
 			$msg = '<p>余额不足，需扣费：¥' . $this->action_price . '/次</p>';
 		}
 
-		$payment_button = wnd_modal_button('充值：¥' . $this->action_price, 'common/wnd_user_recharge_form', ['amount' => $this->action_price], 'is-danger');
+		$payment_button = wnd_modal_button('充值：¥' . $this->action_price, 'common/wnd_recharge_form', ['amount' => $this->action_price], 'is-danger');
 		throw new Exception('<div class="has-text-centered">' . $msg . $payment_button . '</div>', -1);
 	}
 
