@@ -45,7 +45,6 @@ class Wnd_Error_Handler {
 		if (static::is_rest_request()) {
 			echo $error;
 		} else {
-			$error .= 'Request from ' . static::get_client_ip() . '. @' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 			$html = '<article class="column message is-danger">';
 			$html .= '<div class="message-header">';
 			$html .= '<p>异常</p>';
@@ -104,7 +103,10 @@ class Wnd_Error_Handler {
 			return;
 		}
 
-		@error_log($msg . ' @' . wp_date('Y-m-d H:i:s', time()) . "\n", 3, WP_PLUGIN_DIR . '/' . $file_name . '.log');
+		// 统一记录产生错误时的请求数据
+		$msg .= "\n" . 'Request from ' . static::get_client_ip() . '. @' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+		@error_log($msg . ' @' . wp_date('Y-m-d H:i:s', time()) . "\n\n", 3, WP_PLUGIN_DIR . '/' . $file_name . '.log');
 	}
 
 	/**

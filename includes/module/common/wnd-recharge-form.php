@@ -22,6 +22,7 @@ class Wnd_Recharge_Form extends Wnd_Module_Vue {
 		$gateway_options = Wnd_Payment_Getway::get_gateway_options();
 		$default_gateway = Wnd_Payment_Getway::get_default_gateway();
 
+		$msg = '';
 		if (!is_user_logged_in()) {
 			$balance = wnd_get_anon_user_balance();
 			$msg     = $balance ? (__('<b>注意：</b>新充值将覆盖当前余额：', 'wnd') . $balance) : __('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd');
