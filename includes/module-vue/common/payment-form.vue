@@ -1,4 +1,4 @@
-<section id="payment-app" class="section container">
+<section id="payment-app" class="container">
     <div v-show="paymentInterface" id="payment-interface" class="has-text-centered"></div>
 
     <div v-show="!paymentInterface">
@@ -62,7 +62,7 @@
 
         <!-- 提交按钮 -->
         <div class="field mt-4 has-text-centered">
-            <button :class="`button is-${wnd.color.primary}`" @click="submitOrder">提交订单</button>
+            <button :class="`button is-${wnd.color.primary}`" @click="submitOrder" v-text="t('submit')"></button>
         </div>
     </div>
 </section>
@@ -134,6 +134,17 @@
                 }
             },
             methods: {
+                t(key) {
+                    const lang = {
+                        en_US: {
+                            'submit': 'Submit',
+                        },
+                        zh_CN: {
+                            'submit': '提交订单',
+                        }
+                    };
+                    return lang[data.lang] ? lang[data.lang][key] : lang.en_US[key];
+                },
                 updateQuantity(val) {
                     const intVal = parseInt(val.trim());
                     const stock = this.allSkus[this.skuId].stock;

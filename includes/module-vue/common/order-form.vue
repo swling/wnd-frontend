@@ -45,7 +45,7 @@
     <div class="field is-grouped">
         <div class="control">
             <button :class="`button is-${wnd.color.primary}`" :disabled="!selectedSku || quantity > selectedSku.stock" @click="submitOrder">
-                提交订单
+                {{t('submit')}}
             </button>
         </div>
     </div>
@@ -94,6 +94,17 @@
                 }
             },
             methods: {
+                t(key) {
+                    const lang = {
+                        en_US: {
+                            'submit': 'Submit',
+                        },
+                        zh_CN: {
+                            'submit': '立即购买',
+                        }
+                    };
+                    return lang[data.lang] ? lang[data.lang][key] : lang.en_US[key];
+                },
                 selectOption(key, val) {
                     this.selected[key] = this.selected[key] === val ? null : val;
                 },
