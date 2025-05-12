@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
-"POT-Creation-Date: 2023-12-17 18:22+0800\n"
-"PO-Revision-Date: 2024-08-03 09:40+0800\n"
+"POT-Creation-Date: 2025-05-12 15:09+0800\n"
+"PO-Revision-Date: 2025-05-12 15:10+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -10,53 +10,59 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.6\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: static\n"
 
-#: includes/action/admin/wnd-admin-recharge.php:26
+#: includes/action/admin/wnd-admin-recharge.php:27
 msgid "充值：¥"
-msgstr ""
+msgstr "Charge: ¥"
 
-#: includes/action/admin/wnd-admin-recharge.php:32
-#: includes/module/user/wnd-user-finance-panel.php:88
+#: includes/action/admin/wnd-admin-recharge.php:33
+#: includes/module/user/wnd-user-finance-panel.php:93
 msgid "人工充值"
 msgstr "Admin recharge"
 
-#: includes/action/admin/wnd-admin-recharge.php:37
+#: includes/action/admin/wnd-admin-recharge.php:38
 #: includes/action/user/wnd-login.php:71
-#: includes/endpoint/wnd-issue-token-abstract.php:86
-#: includes/model/wnd-mail.php:23
+#: includes/endpoint/wnd-issue-token-abstract.php:92
 msgid "用户不存在"
 msgstr "User does not exist"
 
+#: includes/action/admin/wnd-admin-recharge.php:43
+#: includes/action/common/wnd-do-payment.php:92
+msgid "金额超限"
+msgstr ""
+
 #: includes/action/admin/wnd-delete-user.php:20
-#: includes/action/common/wnd-delete-file.php:21
+#: includes/action/common/wnd-delete-file.php:22
+#: includes/action/user/wnd-delete-application-password.php:25
 msgid "删除成功"
 msgstr "Successfully deleted"
 
 #: includes/action/admin/wnd-delete-user.php:22
-#: includes/action/common/wnd-delete-file.php:24
+#: includes/action/common/wnd-delete-file.php:25
+#: includes/action/user/wnd-delete-application-password.php:22
 msgid "删除失败"
 msgstr "Delete Failed"
 
 #: includes/action/admin/wnd-delete-user.php:29
 #: includes/action/admin/wnd-update-account-status.php:49
-#: includes/action/common/wnd-do-payment.php:138
+#: includes/action/common/wnd-do-payment.php:155
 #: includes/action/common/wnd-pay-for-downloads.php:37
-#: includes/action/common/wnd-update-views.php:44
-#: includes/action/post/wnd-insert-post.php:81
+#: includes/action/common/wnd-update-views.php:39
+#: includes/action/post/wnd-insert-post.php:83
 #: includes/module/admin/wnd-account-status-form.php:15
 #: includes/module/admin/wnd-delete-user-form.php:15
 #: includes/module/admin/wnd-refund-form.php:15
-#: includes/module/common/wnd-sku-form.php:18
+#: includes/module/common/wnd-sku-form.php:19
 #: includes/module/post/wnd-post-detail.php:44
 #: includes/module/post/wnd-post-status-form.php:17
-#: includes/permission/wnd-ppc.php:61 includes/permission/wnd-ppc.php:113
-#: includes/permission/wnd-ppc.php:127
+#: includes/permission/wnd-ppc.php:71 includes/permission/wnd-ppc.php:123
+#: includes/permission/wnd-ppc.php:139
 msgid "ID无效"
 msgstr "ID is not valid"
 
@@ -82,7 +88,11 @@ msgstr "The account has been banned"
 msgid "账户已解封"
 msgstr "Account unblocked"
 
-#: includes/action/admin/wnd-update-account-status.php:54
+#: includes/action/admin/wnd-update-account-status.php:53
+msgid "无法封禁超级管理员"
+msgstr ""
+
+#: includes/action/admin/wnd-update-account-status.php:58
 msgid "未发生改变"
 msgstr "unchanged"
 
@@ -97,7 +107,7 @@ msgstr "Update Success"
 msgid "更新失败"
 msgstr "Update Failed"
 
-#: includes/action/async/wnd-send-mail.php:25 wnd-frontend.php:84
+#: includes/action/async/wnd-send-mail.php:25 wnd-frontend.php:98
 msgid "发送成功"
 msgstr "Successfully sent"
 
@@ -109,49 +119,50 @@ msgstr ""
 msgid "邮件主题无效"
 msgstr ""
 
-#: includes/action/common/wnd-delete-file.php:35
+#: includes/action/common/wnd-delete-file.php:37
 msgid "文件不存在"
 msgstr "File does not exists"
 
-#: includes/action/common/wnd-delete-file.php:39
-#: includes/action/common/wnd-set-sku.php:36
-#: includes/action/post/wnd-insert-post.php:85
+#: includes/action/common/wnd-delete-file.php:45
+#: includes/action/common/wnd-set-sku.php:38
+#: includes/action/post/wnd-insert-post.php:87
 #: includes/action/post/wnd-update-post-status.php:55
 #: includes/endpoint/wnd-paid-download.php:32
 #: includes/module/post/wnd-post-form-attachment.php:48
-#: includes/permission/wnd-ppc.php:118 includes/permission/wnd-ppc.php:132
-#: includes/permission/wnd-ppc.php:146
+#: includes/permission/wnd-ppc.php:128 includes/permission/wnd-ppc.php:144
+#: includes/permission/wnd-ppc.php:169
 msgid "权限错误"
 msgstr "Permission Denied"
 
-#: includes/action/common/wnd-do-payment.php:44
+#: includes/action/common/wnd-do-payment.php:45
+#: includes/action/common/wnd-do-payment.php:47
+#: includes/action/common/wnd-do-payment.php:66
 msgid "支付成功"
 msgstr "Payment was made successfully"
 
-#: includes/action/common/wnd-do-payment.php:75
+#: includes/action/common/wnd-do-payment.php:87
 msgid "未定义支付方式"
 msgstr ""
 
-#: includes/action/common/wnd-do-payment.php:133
+#: includes/action/common/wnd-do-payment.php:150
 msgid "订单 Quantity 无效"
 msgstr ""
 
-#: includes/action/common/wnd-do-payment.php:147
+#: includes/action/common/wnd-do-payment.php:164
 msgid "产品库存不足"
 msgstr ""
 
-#: includes/action/common/wnd-do-payment.php:159
-#: includes/model/wnd-recharge.php:34
+#: includes/action/common/wnd-do-payment.php:176
+#: includes/model/wnd-recharge-admin.php:20 includes/model/wnd-recharge.php:34
 msgid "获取金额失败"
 msgstr ""
 
-#: includes/action/common/wnd-do-payment.php:174
+#: includes/action/common/wnd-do-payment.php:191
 #: includes/template/wnd-pay-button.php:96
 msgid "当前余额：¥ "
 msgstr ""
 
-#: includes/action/common/wnd-do-payment.php:174
-#: includes/module/common/wnd-payment-form.php:36
+#: includes/action/common/wnd-do-payment.php:191
 #: includes/template/wnd-pay-button.php:97
 msgid "本次消费：¥ "
 msgstr ""
@@ -177,59 +188,55 @@ msgstr ""
 msgid "手机号码无效"
 msgstr "Phone is not valid"
 
-#: includes/action/common/wnd-set-sku.php:19
+#: includes/action/common/wnd-set-sku.php:20
 msgid "设置成功"
 msgstr ""
 
-#: includes/action/common/wnd-set-sku.php:28
+#: includes/action/common/wnd-set-sku.php:30
 msgid "当前商品已设置固定价格"
 msgstr ""
 
-#: includes/action/common/wnd-set-sku.php:32
-#: includes/module/common/wnd-order-form.php:30
+#: includes/action/common/wnd-set-sku.php:34
 #: includes/module/post/wnd-post-detail.php:27
 #: includes/module/post/wnd-post-form.php:26
-#: includes/module/user/wnd-front-page.php:88
 msgid "ID 无效"
 msgstr "ID is invalid"
 
-#: includes/action/common/wnd-upload-file.php:33
-msgid "上传文件为空"
-msgstr ""
-
-#: includes/action/common/wnd-upload-file.php:50 wnd-frontend.php:82
-msgid "上传成功"
-msgstr "Upload successful"
-
-#: includes/action/common/wnd-upload-file.php:145
+#: includes/action/common/wnd-upload-file.php:63
 msgid "User ID及Post ID不可同时为空"
 msgstr "User ID and Post ID cannot be empty at the same time"
 
-#: includes/action/common/wnd-upload-file.php:153
+#: includes/action/common/wnd-upload-file.php:71
 msgid "Meta_key与Post_parent不可同时为空"
 msgstr ""
 
-#: includes/action/common/wnd-upload-file.php:157
-msgid "meta_key不合法"
-msgstr ""
-
-#: includes/action/common/wnd-upload-file.php:161
+#: includes/action/common/wnd-upload-file.php:75
 msgid "post_parent无效"
 msgstr ""
 
-#: includes/action/post/wnd-insert-post.php:37
+#: includes/action/common/wnd-upload-file.php:91
+msgid "上传文件为空"
+msgstr ""
+
+#: includes/action/common/wnd-upload-file.php:161
+#, fuzzy
+#| msgid "ID无效"
+msgid "附件ID无效"
+msgstr "ID is not valid"
+
+#: includes/action/post/wnd-insert-post.php:39
 msgid "发布成功"
 msgstr "Published successfully"
 
-#: includes/action/post/wnd-insert-post.php:94
+#: includes/action/post/wnd-insert-post.php:96
 msgid "未指定文件"
 msgstr "File not specified"
 
-#: includes/action/post/wnd-insert-post.php:103
+#: includes/action/post/wnd-insert-post.php:105
 msgid "类型无效"
 msgstr "Type is not valid"
 
-#: includes/action/post/wnd-insert-post.php:133
+#: includes/action/post/wnd-insert-post.php:134
 #: includes/action/post/wnd-update-post-status.php:85
 msgid "写入数据失败"
 msgstr "Failed to write data"
@@ -246,8 +253,7 @@ msgstr ""
 msgid "无效的Post状态"
 msgstr ""
 
-#: includes/action/post/wnd-update-post-status.php:97
-#: includes/module/post/wnd-post-status-form.php:35 wnd-frontend.php:87
+#: includes/action/post/wnd-update-post-status.php:97 wnd-frontend.php:101
 msgid "已删除"
 msgstr "Deleted"
 
@@ -263,6 +269,14 @@ msgstr ""
 msgid "绑定成功"
 msgstr "Binding successful"
 
+#: includes/action/user/wnd-create-application-password.php:29
+msgid "创建失败"
+msgstr ""
+
+#: includes/action/user/wnd-create-application-password.php:32
+msgid "创建成功"
+msgstr ""
+
 #: includes/action/user/wnd-login.php:37 includes/action/user/wnd-login.php:46
 #: includes/action/user/wnd-login.php:48
 msgid "登录成功"
@@ -271,29 +285,29 @@ msgstr "Login success"
 #: includes/action/user/wnd-login.php:88
 #: includes/action/user/wnd-unbind-openid.php:48
 #: includes/action/user/wnd-update-account.php:52
-#: includes/endpoint/wnd-issue-token-abstract.php:90
+#: includes/endpoint/wnd-issue-token-abstract.php:96
 msgid "密码错误"
 msgstr "Invalid password"
 
-#: includes/action/user/wnd-reg.php:55
+#: includes/action/user/wnd-reg.php:58
 msgid "注册成功"
 msgstr "Registration Success"
 
-#: includes/action/user/wnd-reg.php:84
+#: includes/action/user/wnd-reg.php:87
 msgid "用户名不能低于3位"
 msgstr "User name cannot be less than 3 letters"
 
-#: includes/action/user/wnd-reg.php:88
+#: includes/action/user/wnd-reg.php:91
 msgid "用户名不能是纯数字"
 msgstr "The username cannot be a pure number"
 
-#: includes/action/user/wnd-reg.php:93
+#: includes/action/user/wnd-reg.php:96
 #: includes/action/user/wnd-reset-password.php:32
 #: includes/action/user/wnd-update-account.php:40
 msgid "密码不能低于6位"
 msgstr "Password cannot be lower than 6 Letters"
 
-#: includes/action/user/wnd-reg.php:98
+#: includes/action/user/wnd-reg.php:101
 msgid "两次输入的密码不匹配"
 msgstr "Two passwords entered do not match"
 
@@ -340,21 +354,33 @@ msgstr ""
 #: includes/action/wnd-action-admin.php:15
 #: includes/action/wnd-action-root.php:15
 #: includes/module/admin/wnd-admin-posts-panel.php:30
-#: includes/module/admin/wnd-admin-recharge-form.php:49
+#: includes/module/admin/wnd-admin-recharge-form.php:48
 #: includes/module/admin/wnd-delete-user-form.php:40
 #: includes/module/admin/wnd-finance-list.php:53
 #: includes/module/admin/wnd-finance-stats.php:26
 #: includes/module/admin/wnd-refund-form.php:50
 #: includes/module/admin/wnd-users-list.php:45
-#: includes/query/wnd-site-stats.php:42 includes/view/wnd-form-option.php:40
+#: includes/module/user/wnd-attachments.php:40
+#: includes/query/wnd-site-stats.php:41 includes/view/wnd-form-option.php:40
 msgid "权限不足"
 msgstr ""
 
 #: includes/action/wnd-action-user.php:15 includes/model/wnd-auth-code.php:132
-#: includes/model/wnd-binder.php:23 includes/model/wnd-transaction.php:267
-#: includes/permission/wnd-ppc.php:88 includes/permission/wnd-ppc.php:97
-#: includes/view/wnd-form-user.php:123 includes/view/wnd-form-user.php:147
-#: includes/view/wnd-form-user.php:167
+#: includes/model/wnd-binder.php:23 includes/model/wnd-transaction.php:268
+#: includes/module/user/wnd-account-form.php:74
+#: includes/module/user/wnd-application-password.php:33
+#: includes/module/user/wnd-bind-email-form.php:38
+#: includes/module/user/wnd-bind-phone-form.php:39
+#: includes/module/user/wnd-mail-box.php:45
+#: includes/module/user/wnd-profile-form.php:35
+#: includes/module/user/wnd-unbind-openid-form.php:56
+#: includes/module/user/wnd-user-finance-panel.php:103
+#: includes/module/user/wnd-user-overview.php:76
+#: includes/module/user/wnd-user-posts-panel.php:40
+#: includes/permission/wnd-ppc.php:98 includes/permission/wnd-ppc.php:107
+#: includes/query/wnd-attachments.php:25 includes/query/wnd-mails.php:16
+#: includes/query/wnd-transactions.php:25 includes/view/wnd-form-user.php:123
+#: includes/view/wnd-form-user.php:147 includes/view/wnd-form-user.php:167
 msgid "请登录"
 msgstr "Please Sign In"
 
@@ -386,7 +412,7 @@ msgstr "Invalid Action"
 msgid "Endpoint 无效"
 msgstr ""
 
-#: includes/controller/wnd-defender-action.php:133
+#: includes/controller/wnd-defender-action.php:128
 #, php-format
 msgid "操作太频繁，请 %s 分钟后重试"
 msgstr ""
@@ -404,21 +430,25 @@ msgid "首页"
 msgstr "Home"
 
 #: includes/function/tpl-general.php:78
-#: includes/module/common/wnd-search-form.php:33
+#: includes/module/common/wnd-search-form.php:23
 msgid "搜索"
 msgstr "Search"
 
-#: includes/function/tpl-general.php:102
+#: includes/function/tpl-general.php:103
+#: includes/module/post/wnd-post-status-form.php:41
 msgid "编辑"
 msgstr "Edit"
 
-#: includes/function/tpl-general.php:103
+#: includes/function/tpl-general.php:104
+#: includes/module/admin/wnd-finance-list.php:24
 #: includes/module/admin/wnd-users-list.php:26
+#: includes/module/user/wnd-attachments.php:16
+#: includes/module/user/wnd-user-finance-panel.php:32
 #: includes/view/wnd-filter-abstract.php:212
 msgid "状态"
 msgstr "State"
 
-#: includes/getway/payment/paypal.php:51 wnd-frontend.php:89
+#: includes/getway/payment/paypal.php:51 wnd-frontend.php:103
 msgid "请稍后"
 msgstr "Please wait"
 
@@ -466,7 +496,7 @@ msgstr ""
 msgid "退款金额不得大于订单总额"
 msgstr ""
 
-#: includes/getway/wnd-refunder.php:131 includes/model/wnd-transaction.php:372
+#: includes/getway/wnd-refunder.php:131 includes/model/wnd-transaction.php:385
 msgid "数据更新失败"
 msgstr ""
 
@@ -592,28 +622,19 @@ msgstr "Incorrect verification code"
 msgid "当前密码错误"
 msgstr "Current password error"
 
-#: includes/model/wnd-init.php:149 includes/model/wnd-init.php:153
-msgid "站内信"
-msgstr ""
-
-#: includes/model/wnd-init.php:165 includes/model/wnd-init.php:169
+#: includes/model/wnd-init.php:144 includes/model/wnd-init.php:148
 msgid "充值统计"
 msgstr "Recharge Stats"
 
-#: includes/model/wnd-init.php:178 includes/model/wnd-init.php:182
+#: includes/model/wnd-init.php:157 includes/model/wnd-init.php:161
 msgid "消费统计"
 msgstr "Expense Stats"
 
-#: includes/model/wnd-init.php:212
-#: includes/module/post/wnd-post-status-form.php:51
-#: includes/module/user/wnd-user-posts-panel.php:19
+#: includes/model/wnd-init.php:182
+#: includes/module/post/wnd-post-status-form.php:29
+#: includes/module/user/wnd-user-posts-panel.php:24
 msgid "关闭"
 msgstr "Closed"
-
-#: includes/model/wnd-init.php:226 includes/model/wnd-init.php:234
-#: includes/module/user/wnd-mail-box.php:18
-msgid "未读"
-msgstr ""
 
 #: includes/model/wnd-order.php:67
 msgid "订单："
@@ -632,23 +653,23 @@ msgid "销量"
 msgstr ""
 
 #: includes/model/wnd-recharge-anonymous.php:29
-msgid "匿名用户：需清空当前余额后，方可再次充值"
+msgid "匿名余额大于 1.00"
 msgstr ""
 
 #: includes/model/wnd-recharge.php:38
 msgid "佣金："
-msgstr "Commission"
+msgstr "Commission:"
 
 #: includes/model/wnd-recharge.php:38
 msgid "充值："
-msgstr "Recharge"
+msgstr "Recharge:"
 
-#: includes/model/wnd-sku.php:32 includes/module/user/wnd-profile-form.php:21
+#: includes/model/wnd-sku.php:32 includes/module/user/wnd-profile-form.php:22
 #: includes/module/user/wnd-reg-form.php:31
 msgid "名称"
 msgstr "Name"
 
-#: includes/model/wnd-sku.php:33 includes/view/wnd-form-post.php:409
+#: includes/model/wnd-sku.php:33 includes/view/wnd-form-post.php:417
 msgid "价格"
 msgstr ""
 
@@ -668,35 +689,35 @@ msgstr ""
 msgid "注册失败"
 msgstr ""
 
-#: includes/model/wnd-transaction.php:94
+#: includes/model/wnd-transaction.php:97
 msgid "交易类型无效"
 msgstr "Invalid transaction type"
 
-#: includes/model/wnd-transaction.php:120
+#: includes/model/wnd-transaction.php:123
 msgid "无效的 Transaction 实例类型："
 msgstr ""
 
-#: includes/model/wnd-transaction.php:144
+#: includes/model/wnd-transaction.php:147
 msgid "交易ID无效"
 msgstr "Invalid transaction ID"
 
-#: includes/model/wnd-transaction.php:164
+#: includes/model/wnd-transaction.php:167
 msgid "金额无效"
 msgstr ""
 
-#: includes/model/wnd-transaction.php:177
+#: includes/model/wnd-transaction.php:180
 msgid "商品ID无效"
 msgstr ""
 
-#: includes/model/wnd-transaction.php:198
+#: includes/model/wnd-transaction.php:201
 msgid "用户ID无效"
 msgstr ""
 
-#: includes/model/wnd-transaction.php:352
+#: includes/model/wnd-transaction.php:354
 msgid "订单状态无效"
 msgstr ""
 
-#: includes/model/wnd-transaction.php:489
+#: includes/model/wnd-transaction.php:502
 msgid "订单ID无效"
 msgstr ""
 
@@ -720,30 +741,30 @@ msgid "确认"
 msgstr "Confirm Recharge"
 
 #: includes/module/admin/wnd-admin-posts-panel.php:20
-#: includes/module/post/wnd-post-status-form.php:50
-#: includes/module/user/wnd-user-posts-panel.php:19
+#: includes/module/post/wnd-post-status-form.php:27
+#: includes/module/user/wnd-user-posts-panel.php:23
 msgid "待审"
 msgstr "Pending"
 
-#: includes/module/admin/wnd-admin-recharge-form.php:20
-#: includes/query/wnd-menus.php:68
+#: includes/module/admin/wnd-admin-recharge-form.php:19
+#: includes/query/wnd-menus.php:69
 msgid "用户"
 msgstr "User"
 
-#: includes/module/admin/wnd-admin-recharge-form.php:23
+#: includes/module/admin/wnd-admin-recharge-form.php:22
 msgid "用户名、邮箱、注册手机"
 msgstr "User name, Email, Phone"
 
-#: includes/module/admin/wnd-admin-recharge-form.php:32
+#: includes/module/admin/wnd-admin-recharge-form.php:31
 msgid "充值金额（负数可扣款）"
 msgstr ""
 
-#: includes/module/admin/wnd-admin-recharge-form.php:39
-#: includes/module/post/wnd-post-status-form.php:84
+#: includes/module/admin/wnd-admin-recharge-form.php:38
+#: includes/module/post/wnd-post-status-form.php:49
 msgid "备注（可选）"
 msgstr "Notes (optional)"
 
-#: includes/module/admin/wnd-admin-recharge-form.php:43
+#: includes/module/admin/wnd-admin-recharge-form.php:42
 msgid "确认充值"
 msgstr "Confirm Recharge"
 
@@ -755,49 +776,55 @@ msgstr ""
 msgid "确认删除"
 msgstr ""
 
+#: includes/module/admin/wnd-finance-list.php:16
+#: includes/module/user/wnd-user-finance-panel.php:24
+#: includes/view/wnd-filter-abstract.php:179
+msgid "类型"
+msgstr "Type"
+
 #: includes/module/admin/wnd-finance-list.php:19
-#: includes/module/user/wnd-user-finance-panel.php:22
-#: includes/query/wnd-menus.php:67
+#: includes/module/user/wnd-user-finance-panel.php:27
+#: includes/query/wnd-menus.php:68
 msgid "订单"
 msgstr "Order"
 
 #: includes/module/admin/wnd-finance-list.php:20
-#: includes/module/common/wnd-user-recharge-form.php:50
-#: includes/module/user/wnd-user-finance-panel.php:23
+#: includes/module/user/wnd-user-finance-panel.php:28
 msgid "充值"
 msgstr "Recharge"
 
 #: includes/module/admin/wnd-finance-list.php:27
 #: includes/module/admin/wnd-users-list.php:28
-#: includes/module/user/wnd-mail-box.php:18
-#: includes/module/user/wnd-user-finance-panel.php:30
-#: includes/view/wnd-filter-ajax.php:60 includes/view/wnd-filter-user.php:159
+#: includes/module/user/wnd-attachments.php:19
+#: includes/module/user/wnd-mail-box.php:22
+#: includes/module/user/wnd-user-finance-panel.php:35
+#: includes/view/wnd-filter-ajax.php:58 includes/view/wnd-filter-user.php:159
 #: includes/view/wnd-filter.php:98
 msgid "全部"
 msgstr "All"
 
 #: includes/module/admin/wnd-finance-list.php:28
-#: includes/module/user/wnd-user-finance-panel.php:31
+#: includes/module/user/wnd-user-finance-panel.php:36
 msgid "已完成"
 msgstr "Completed"
 
 #: includes/module/admin/wnd-finance-list.php:29
-#: includes/module/user/wnd-user-finance-panel.php:32
+#: includes/module/user/wnd-user-finance-panel.php:37
 msgid "待付款"
 msgstr ""
 
 #: includes/module/admin/wnd-finance-list.php:30
-#: includes/module/user/wnd-user-finance-panel.php:33
+#: includes/module/user/wnd-user-finance-panel.php:38
 msgid "待发货"
 msgstr ""
 
 #: includes/module/admin/wnd-finance-list.php:31
-#: includes/module/user/wnd-user-finance-panel.php:34
+#: includes/module/user/wnd-user-finance-panel.php:39
 msgid "已关闭"
 msgstr "Closed"
 
 #: includes/module/admin/wnd-finance-list.php:32
-#: includes/module/user/wnd-user-finance-panel.php:35
+#: includes/module/user/wnd-user-finance-panel.php:40
 msgid "已退款"
 msgstr ""
 
@@ -838,55 +865,25 @@ msgstr "Dashboard"
 msgid "退出账户"
 msgstr "Logout"
 
-#: includes/module/common/wnd-order-form.php:21
-msgid "立即购买"
-msgstr ""
+#: includes/module/common/wnd-payment-form.php:49
+#: includes/module/user/wnd-user-finance-panel.php:65
+msgid "余额"
+msgstr "Balance"
 
-#: includes/module/common/wnd-order-form.php:22
-msgid "加入购物车"
-msgstr ""
-
-#: includes/module/common/wnd-order-form.php:66
-msgid "数量"
-msgstr ""
-
-#: includes/module/common/wnd-payment-form.php:37
-msgid "可用余额：¥ "
-msgstr ""
-
-#: includes/module/common/wnd-payment-form.php:45
-msgid "余额支付"
-msgstr ""
-
-#: includes/module/common/wnd-payment-form.php:51
+#: includes/module/common/wnd-payment-form.php:60
+#: includes/module/common/wnd-recharge-form.php:27
 msgid "您当前尚未登录，匿名订单仅24小时有效，请悉知！"
 msgstr ""
 
-#: includes/module/common/wnd-payment-form.php:74
-msgid "已阅读并同意交易协议及产品使用协议"
+#: includes/module/common/wnd-recharge-form.php:27
+msgid "<b>注意：</b>新充值将覆盖当前余额："
 msgstr ""
 
-#: includes/module/common/wnd-payment-form.php:90 wnd-frontend.php:86
-msgid "确定"
-msgstr "Confirm"
-
-#: includes/module/common/wnd-search-form.php:21
-msgid "全站"
-msgstr ""
-
-#: includes/module/common/wnd-search-form.php:29
+#: includes/module/common/wnd-search-form.php:19
 msgid "关键词"
 msgstr ""
 
-#: includes/module/common/wnd-sku-form.php:85
-msgid "保存 SKU"
-msgstr ""
-
-#: includes/module/common/wnd-user-recharge-form.php:19
-msgid "匿名充值仅限当前浏览器24小时内有效，切勿大额充值"
-msgstr ""
-
-#: includes/module/post/wnd-post-detail.php:53
+#: includes/module/post/wnd-post-detail.php:48
 msgid "付费文章不支持预览"
 msgstr ""
 
@@ -915,85 +912,45 @@ msgid "附件的固定链接别名"
 msgstr ""
 
 #: includes/module/post/wnd-post-form-attachment.php:96
-#: includes/module/user/wnd-profile-form.php:24
+#: includes/module/user/wnd-profile-form.php:25
 msgid "简介"
 msgstr "About"
 
 #: includes/module/post/wnd-post-form-attachment.php:97
-#: includes/module/post/wnd-post-form-page.php:57
-#: includes/module/post/wnd-post-form-post.php:66
 #: includes/module/user/wnd-account-form.php:33
-#: includes/module/user/wnd-bind-email-form.php:31
-#: includes/module/user/wnd-bind-phone-form.php:32
-#: includes/module/user/wnd-profile-form.php:26
+#: includes/module/user/wnd-bind-email-form.php:32
+#: includes/module/user/wnd-bind-phone-form.php:33
+#: includes/module/user/wnd-profile-form.php:27
 msgid "保存"
 msgstr "Save"
 
-#: includes/module/post/wnd-post-form-page.php:39
-msgid "相册图集"
-msgstr ""
-
-#: includes/module/post/wnd-post-form-page.php:52
-#: includes/module/post/wnd-post-form-post.php:54
-msgid "产品属性"
-msgstr ""
-
-#: includes/module/post/wnd-post-form-post.php:31
-msgid "标题"
-msgstr ""
-
-#: includes/module/post/wnd-post-form-post.php:38
-msgid "摘要"
-msgstr ""
-
-#: includes/module/post/wnd-post-form-post.php:55
-msgid "产品 SKU"
-msgstr ""
-
-#: includes/module/post/wnd-post-form-post.php:62
-msgid "缩略图"
+#: includes/module/post/wnd-post-form-vue.php:61
+msgid "未定义表单"
 msgstr ""
 
 #: includes/module/post/wnd-post-form.php:19
 msgid "Post Type 无效"
 msgstr ""
 
-#: includes/module/post/wnd-post-status-form.php:23
-msgid "已发布"
-msgstr "Published"
-
-#: includes/module/post/wnd-post-status-form.php:27
-msgid "待审核"
-msgstr "Pending"
-
-#: includes/module/post/wnd-post-status-form.php:31
-#: includes/module/post/wnd-post-status-form.php:52
-#: includes/module/user/wnd-user-posts-panel.php:19
-msgid "草稿"
-msgstr "Draft"
-
-#: includes/module/post/wnd-post-status-form.php:49
-#: includes/module/user/wnd-user-posts-panel.php:19
+#: includes/module/post/wnd-post-status-form.php:26
+#: includes/module/user/wnd-user-posts-panel.php:22
 msgid "发布"
 msgstr "Publish"
 
-#: includes/module/post/wnd-post-status-form.php:53
+#: includes/module/post/wnd-post-status-form.php:28
+msgid "私有"
+msgstr ""
+
+#: includes/module/post/wnd-post-status-form.php:30
+#: includes/module/user/wnd-user-posts-panel.php:25
+msgid "草稿"
+msgstr "Draft"
+
+#: includes/module/post/wnd-post-status-form.php:31
 msgid "删除"
 msgstr "Delete"
 
-#: includes/module/post/wnd-post-status-form.php:71
-msgid "置顶"
-msgstr "Sticky on top"
-
-#: includes/module/post/wnd-post-status-form.php:72
-msgid "取消"
-msgstr "Cancel"
-
-#: includes/module/post/wnd-post-status-form.php:90
-msgid "删除订单记录，不可退款，请谨慎操作"
-msgstr ""
-
-#: includes/module/post/wnd-post-status-form.php:96
+#: includes/module/post/wnd-post-status-form.php:57
 msgid "提交"
 msgstr "Submit"
 
@@ -1037,26 +994,22 @@ msgid "出于安全考虑，请绑定邮箱或手机"
 msgstr "For security reasons, please bind email or cell phone"
 
 #: includes/module/user/wnd-account-form.php:62
-#: includes/module/user/wnd-bind-email-form.php:16
+#: includes/module/user/wnd-bind-email-form.php:17
 msgid "绑定邮箱"
 msgstr "Bind Email"
 
 #: includes/module/user/wnd-account-form.php:65
-#: includes/module/user/wnd-bind-phone-form.php:17
+#: includes/module/user/wnd-bind-phone-form.php:18
 msgid "绑定手机"
 msgstr "Bind Phone"
 
-#: includes/module/user/wnd-bind-email-form.php:26
-#: includes/module/user/wnd-bind-phone-form.php:27
+#: includes/module/user/wnd-bind-email-form.php:27
+#: includes/module/user/wnd-bind-phone-form.php:28
 #: includes/module/user/wnd-login-form.php:28
 #: includes/module/user/wnd-reg-form.php:30
 #: includes/module/user/wnd-unbind-openid-form.php:47
 msgid "密码"
 msgstr "Password"
-
-#: includes/module/user/wnd-front-page.php:126
-msgid "未定义表单"
-msgstr ""
 
 #: includes/module/user/wnd-login-form.php:16
 #: includes/module/user/wnd-reg-form.php:58
@@ -1071,11 +1024,15 @@ msgstr "User name, email, phone"
 msgid "记住我"
 msgstr "Remember me"
 
-#: includes/module/user/wnd-mail-box.php:18
+#: includes/module/user/wnd-mail-box.php:23
+msgid "未读"
+msgstr ""
+
+#: includes/module/user/wnd-mail-box.php:24
 msgid "已读"
 msgstr ""
 
-#: includes/module/user/wnd-profile-form.php:22
+#: includes/module/user/wnd-profile-form.php:23
 msgid "网站"
 msgstr "URL"
 
@@ -1142,7 +1099,7 @@ msgstr "Forget Password"
 #: includes/module/user/wnd-user-center.php:131
 #: includes/module/user/wnd-user-center.php:141
 #: includes/module/user/wnd-user-center.php:144 includes/query/wnd-menus.php:50
-#: includes/query/wnd-menus.php:71
+#: includes/query/wnd-menus.php:72
 msgid "资料"
 msgstr "Profile"
 
@@ -1150,23 +1107,19 @@ msgstr "Profile"
 #: includes/module/user/wnd-user-center.php:132
 #: includes/module/user/wnd-user-center.php:142
 #: includes/module/user/wnd-user-center.php:145 includes/query/wnd-menus.php:51
-#: includes/query/wnd-menus.php:72
+#: includes/query/wnd-menus.php:73
 msgid "账户"
 msgstr "Account"
 
-#: includes/module/user/wnd-user-finance-panel.php:60
-msgid "余额"
-msgstr "Balance"
-
-#: includes/module/user/wnd-user-finance-panel.php:68
+#: includes/module/user/wnd-user-finance-panel.php:73
 msgid "消费"
 msgstr "expenses"
 
-#: includes/module/user/wnd-user-finance-panel.php:77
+#: includes/module/user/wnd-user-finance-panel.php:82
 msgid "佣金"
 msgstr "Commission"
 
-#: includes/module/user/wnd-user-finance-panel.php:85
+#: includes/module/user/wnd-user-finance-panel.php:90
 msgid "余额充值"
 msgstr "Recharge"
 
@@ -1174,7 +1127,7 @@ msgstr "Recharge"
 msgid "未定义 Module 类型"
 msgstr ""
 
-#: includes/permission/wnd-ppc.php:48
+#: includes/permission/wnd-ppc.php:58
 msgid "无效的 PPC 实例类型："
 msgstr ""
 
@@ -1186,35 +1139,39 @@ msgstr "Anonymous users"
 msgid "User ID 无效"
 msgstr ""
 
-#: includes/query/wnd-menus.php:44 includes/query/wnd-menus.php:61
+#: includes/query/wnd-menus.php:44 includes/query/wnd-menus.php:62
 msgid "控制板"
 msgstr "Dashboard"
 
-#: includes/query/wnd-menus.php:47 includes/query/wnd-menus.php:64
+#: includes/query/wnd-menus.php:47 includes/query/wnd-menus.php:65
 msgid "概览"
 msgstr "Overview"
 
-#: includes/query/wnd-menus.php:48 includes/query/wnd-menus.php:69
+#: includes/query/wnd-menus.php:48 includes/query/wnd-menus.php:70
 msgid "内容"
 msgstr "Content"
 
-#: includes/query/wnd-menus.php:49 includes/query/wnd-menus.php:70
+#: includes/query/wnd-menus.php:49 includes/query/wnd-menus.php:71
 msgid "财务"
 msgstr "Finance"
 
-#: includes/query/wnd-menus.php:52
+#: includes/query/wnd-menus.php:52 includes/query/wnd-menus.php:74
 msgid "消息"
 msgstr "Message"
 
-#: includes/query/wnd-menus.php:65
+#: includes/query/wnd-menus.php:53 includes/query/wnd-menus.php:75
+msgid "附件"
+msgstr ""
+
+#: includes/query/wnd-menus.php:66
 msgid "审核"
 msgstr "Review"
 
-#: includes/query/wnd-menus.php:66
+#: includes/query/wnd-menus.php:67
 msgid "统计"
 msgstr "Stats"
 
-#: includes/query/wnd-menus.php:103
+#: includes/query/wnd-menus.php:105
 msgid "站点导航"
 msgstr "Navigation"
 
@@ -1292,11 +1249,7 @@ msgstr ""
 msgid "当前环境需执行独立 WP Query"
 msgstr ""
 
-#: includes/view/wnd-filter-abstract.php:179
-msgid "类型"
-msgstr "Type"
-
-#: includes/view/wnd-filter-ajax.php:136 includes/view/wnd-filter-ajax.php:177
+#: includes/view/wnd-filter-ajax.php:134 includes/view/wnd-filter-ajax.php:173
 #: includes/view/wnd-filter.php:155 includes/view/wnd-filter.php:189
 msgid "未执行WP_Query"
 msgstr "WP_Query not executed"
@@ -1321,28 +1274,23 @@ msgstr "The output template is not defined"
 msgid "$option_name 不得包含下划线"
 msgstr ""
 
-#: includes/view/wnd-form-post.php:90
-msgid "编辑版本"
-msgstr "Edit version"
-
-#: includes/view/wnd-form-post.php:279
+#: includes/view/wnd-form-post.php:294
 msgid "请用回车键区分多个 Tag"
 msgstr "Press the \"Enter\" key to confirm the Tag"
 
-#: includes/view/wnd-form-post.php:422
+#: includes/view/wnd-form-post.php:431
 msgid "付费文件"
 msgstr ""
 
-#: includes/view/wnd-form-post.php:429
+#: includes/view/wnd-form-post.php:438
 msgid "文件链接"
 msgstr ""
 
-#: includes/view/wnd-form-post.php:443
+#: includes/view/wnd-form-post.php:452
 msgid "存为草稿"
 msgstr "Save as Draft"
 
-#: includes/view/wnd-form-post.php:460 includes/view/wnd-form-post.php:479
-#: includes/view/wnd-form-post.php:501
+#: includes/view/wnd-form-post.php:504
 msgid "创建post失败，无法上传文件"
 msgstr "Creating post failed to upload files"
 
@@ -1350,23 +1298,23 @@ msgstr "Creating post failed to upload files"
 msgid "头像"
 msgstr "Avatar"
 
-#: includes/view/wnd-form-wp.php:164
+#: includes/view/wnd-form-wp.php:150
 msgid "电子邮箱"
 msgstr "Email"
 
-#: includes/view/wnd-form-wp.php:169
+#: includes/view/wnd-form-wp.php:155
 msgid "手机号码"
 msgstr "Phone"
 
-#: includes/view/wnd-form-wp.php:194
+#: includes/view/wnd-form-wp.php:180
 msgid "获取验证码"
 msgstr "Send Code"
 
-#: includes/view/wnd-form-wp.php:226
+#: includes/view/wnd-form-wp.php:212
 msgid "验证码"
 msgstr "Auth Code"
 
-#: includes/view/wnd-form-wp.php:346
+#: includes/view/wnd-form-wp.php:332
 msgid "查看文件"
 msgstr "Check The File"
 
@@ -1386,44 +1334,46 @@ msgstr "Last"
 msgid " 已被其他账户占用"
 msgstr ""
 
-#: wnd-frontend.php:79
+#: wnd-frontend.php:93
 msgid "必填项为空"
 msgstr "Required fields are empty"
 
-#: wnd-frontend.php:80
+#: wnd-frontend.php:94
 msgid "提交成功"
 msgstr "Submitted successfully"
 
-#: wnd-frontend.php:81
+#: wnd-frontend.php:95
 msgid "提交失败"
 msgstr "Submission failed"
 
-#: wnd-frontend.php:83
+#: wnd-frontend.php:96
+msgid "上传成功"
+msgstr "Upload successful"
+
+#: wnd-frontend.php:97
 msgid "上传失败"
 msgstr "Upload failed"
 
-#: wnd-frontend.php:85
+#: wnd-frontend.php:99
 msgid "发送失败"
 msgstr "Send failed"
 
-#: wnd-frontend.php:88
+#: wnd-frontend.php:100
+msgid "确定"
+msgstr "Confirm"
+
+#: wnd-frontend.php:102
 msgid "系统错误"
 msgstr "System Error"
 
-#: wnd-frontend.php:90
+#: wnd-frontend.php:104
 msgid "下载中"
 msgstr "Downloading"
 
-#: wnd-frontend.php:91
+#: wnd-frontend.php:105
 msgid "再试一次"
 msgstr "Try again"
 
-#: wnd-frontend.php:92
+#: wnd-frontend.php:106
 msgid "查看"
 msgstr "Check The File"
-
-#~ msgid "充值记录"
-#~ msgstr "Recharge list"
-
-#~ msgid "订单记录"
-#~ msgstr "Order list"
