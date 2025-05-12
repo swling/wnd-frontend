@@ -14,6 +14,10 @@ use Wnd\Model\Wnd_Transaction;
  */
 class Wnd_Do_Payment extends Wnd_Action {
 
+	// 设置防抖，防止用户短期重复提交写入
+	public $period      = 5;
+	public $max_actions = 1;
+
 	private $post_id;
 	private $sku_id;
 	private $quantity;
@@ -183,17 +187,22 @@ class Wnd_Do_Payment extends Wnd_Action {
 	 *
 	 */
 	private function check_internal_payment() {
+		// 任何情况：普通用户不能站内充值
 		if ('recharge' == $this->type) {
 			throw new Exception('Internal recharge is not allowed.');
 		}
 
-		// 站内交易余额检测
+		// 其他站内消费：余额需大于消费额度
+		$balance = wnd_get_user_balance($this->user_id);
+		if ('order' != $this->type and $this->total_amount > $balance) {
+			throw new Exception(__('余额不足', 'wnd') . ':' . $this->type);
+		}
+
+		// order 订单交易余额检测
 		$post_price   = wnd_get_post_price($this->post_id, $this->sku_id);
 		$total_amount = $post_price * $this->quantity;
-		$user_money   = wnd_get_user_balance($this->user_id);
-		if ($total_amount > $user_money) {
-			$msg = '<p>' . __('当前余额：¥ ', 'wnd') . '<b>' . number_format($user_money, 2, '.', '') . '</b>&nbsp;&nbsp;' . __('本次消费：¥ ', 'wnd') . '<b>' . number_format($total_amount, 2, '.', '') . '</b></p>';
-			throw new Exception($msg);
+		if ($total_amount > $balance) {
+			throw new Exception(__('余额不足', 'wnd') . ':' . $this->type);
 		}
 	}
 

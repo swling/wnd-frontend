@@ -2,6 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
+use Wnd\Getway\Wnd_Payment_Getway;
 use Wnd\Model\Wnd_Finance;
 
 /**
@@ -68,7 +69,7 @@ class Wnd_Recharge extends Wnd_Transaction {
 			// 注册用户：新增余额（站外支付将更新整站充值统计）;匿名充值：仅更新整站充值统计
 		} else {
 			if ($user_id) {
-				$external = 'internal' != $this->get_payment_gateway();
+				$external = !Wnd_Payment_Getway::is_internal_payment($ID);
 				$action   = wnd_inc_user_balance($user_id, $total_amount, $external);
 				if (!$action) {
 					wnd_error_payment_log('【支付错误】: 写入充值失败 user_id : ' . $user_id . ' - 金额 : ' . $total_amount);

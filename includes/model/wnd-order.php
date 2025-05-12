@@ -193,6 +193,12 @@ class Wnd_Order extends Wnd_Transaction {
 
 		// 注册用户：站内订单：扣除余额、更新消费；站外订单：仅更新消费
 		if (Wnd_Payment_Getway::is_internal_payment($ID)) {
+			// 创建站内订单时理应检查余额，此处额外检查用于确保高并发订单或其他异常情况
+			if ($total_amount > wnd_get_user_balance($user_id)) {
+				$this->update_transaction_status(static::$pending_status);
+				throw new Exception(__('余额不足', 'wnd'));
+			}
+
 			wnd_inc_user_balance($user_id, $total_amount * -1, false);
 		} else {
 			wnd_inc_user_expense($user_id, $total_amount);

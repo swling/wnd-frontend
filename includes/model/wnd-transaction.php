@@ -375,7 +375,7 @@ abstract class Wnd_Transaction {
 	 *
 	 * @return true
 	 */
-	private function update_transaction_status(string $status): bool {
+	protected function update_transaction_status(string $status): bool {
 		$data = [
 			'status'  => $status,
 			'subject' => $this->subject ?: $this->get_subject(),
