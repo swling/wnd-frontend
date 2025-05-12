@@ -24,14 +24,14 @@
             </tbody>
         </table>
 
-        <!-- 总金额 -->
+        <!-- 支付方式 -->
         <div class="box">
             <p class="subtitle">
                 总金额：<strong class="has-text-danger">¥{{ totalPrice.toFixed(2) }}</strong>（余额：¥{{ userBalance.toFixed(2) }}）
             </p>
             <div class="buttons has-addons">
                 <button v-for="method in availableMethods" :key="method.value" class="button" :class="{ 'is-danger': paymentMethod === method.value }" @click="selectPayment(method.value)" :disabled="method.value === 'internal' && !canUseBalance">
-                    <span class="icon is-small" v-if="method.icon"><i :class="method.icon"></i></span>
+                    <span class="icon is-small" v-if="method.icon" v-html="method.icon"></span>
                     <span>{{ method.label }}</span>
                 </button>
             </div>

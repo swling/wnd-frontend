@@ -24,17 +24,33 @@ abstract class Wnd_Payment_Getway {
 	 * 构建支付接口名称及标识
 	 */
 	public static function get_gateway_options(): array {
-		$gateway_data['支付宝'] = wnd_get_config('alipay_qrcode') ? 'Alipay_QRCode' : 'Alipay';
+		$payments = [];
+
+		if (wnd_get_config('alipay_appid')) {
+			$payments[] = [
+				'label' => '支付宝',
+				'value' => wnd_get_config('alipay_qrcode') ? 'Alipay_QRCode' : 'Alipay',
+				'icon'  => '<i class="fab fa-alipay"></i>',
+			];
+		}
 
 		if (wnd_get_config('wechat_mchid')) {
-			$gateway_data['微信'] = wp_is_mobile() ? 'WeChat_H5' : 'WeChat_Native';
+			$payments[] = [
+				'label' => '微信',
+				'value' => wp_is_mobile() ? 'WeChat_H5' : 'WeChat_Native',
+				'icon'  => '<i class="fab fa-weixin"></i>',
+			];
 		}
 
 		if (wnd_get_config('paypal_clientid')) {
-			$gateway_data['PayPal'] = 'PayPal';
+			$payments[] = [
+				'label' => 'PayPal',
+				'value' => 'PayPal',
+				'icon'  => '<i class="fab fa-cc-paypal"></i>',
+			];
 		}
 
-		return apply_filters('wnd_payment_gateway_options', $gateway_data);
+		return apply_filters('wnd_payment_gateway_options', $payments);
 	}
 
 	/**

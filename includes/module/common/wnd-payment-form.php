@@ -35,25 +35,19 @@ class Wnd_Payment_Form extends Wnd_Module_Vue {
 
 		$balance         = wnd_get_user_balance(get_current_user_id());
 		$title           = get_the_title($post_id);
-		$gateway_options = Wnd_Payment_Getway::get_gateway_options();
+		$payments        = Wnd_Payment_Getway::get_gateway_options();
 		$default_gateway = Wnd_Payment_Getway::get_default_gateway();
+
+		// 余额支付
+		if ($balance) {
+			$payments[] = ['label' => __('余额', 'wnd'), 'value' => 'internal', 'icon' => '<i class="fas fa-wallet"></i>'];
+		}
 
 		// 未设置 sku 的 post
 		if (!$sku_id) {
 			$skus = ['single' => ['price' => wnd_get_post_price($post_id)]];
 		} else {
 			$skus = Wnd_SKU::get_object_sku($post_id);
-		}
-
-		$payments = [
-			['label' => __('余额', 'wnd'), 'value' => 'internal', 'icon' => 'fas fa-wallet'],
-		];
-		foreach ($gateway_options as $label => $gateway) {
-			$payments[] = [
-				'label' => $label,
-				'value' => $gateway,
-				'icon'  => '',
-			];
 		}
 
 		$sign = Wnd_Request::sign(['post_id', 'sku_id', 'quantity', 'receiver', 'payment_gateway', 'is_virtual']);

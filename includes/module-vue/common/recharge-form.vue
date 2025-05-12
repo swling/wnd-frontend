@@ -8,8 +8,8 @@
                 <input type="number" v-model="amount" class="input" :placeholder="t('amount')" min="0.01" step="0.01" />
             </div>
             <div class="buttons has-addons is-centered">
-                <button v-for="method in availableMethods" :key="method.value" class="button is-small" :class="{ 'is-danger': paymentMethod === method.value }" @click="selectPayment(method.value)">
-                    <span class="icon is-small" v-if="method.icon"><i :class="method.icon"></i></span>
+                <button v-for="method in availableMethods" :key="method.value" class="button" :class="{ 'is-danger': paymentMethod === method.value }" @click="selectPayment(method.value)">
+                    <span class="icon is-small" v-if="method.icon" v-html="method.icon"></span>
                     <span>{{ method.label }}</span>
                 </button>
             </div>
