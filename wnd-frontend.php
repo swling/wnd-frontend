@@ -66,6 +66,7 @@ add_action('wp_enqueue_scripts', 'wnd_enqueue_scripts');
 function wnd_enqueue_scripts($hook_suffix = '') {
 	// api 及语言本地化
 	$wnd_data = [
+		'dashboard_url'      => wnd_get_front_page_url(),
 		'rest_url'           => get_rest_url(),
 		'rest_nonce'         => wp_create_nonce('wp_rest'),
 		'disable_rest_nonce' => wnd_get_config('disable_rest_nonce'),
@@ -82,7 +83,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 			'form_pos' => wnd_get_config('comment_form_pos') ?: 'top',
 		],
 		'is_admin'           => is_admin(),
-		'lang'               => $_GET[WND_LANG_KEY] ?? get_locale(),
+		'lang'               => get_locale(),
 		'ver'                => WND_VER,
 		'color'              => [
 			'primary' => wnd_get_config('primary_color'),

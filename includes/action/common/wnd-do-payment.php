@@ -34,15 +34,20 @@ class Wnd_Do_Payment extends Wnd_Action {
 		$transaction->set_total_amount($this->total_amount);
 		$transaction->set_props($this->data);
 		$transaction->set_subject($this->subject);
-		$transaction_post = $transaction->create($this->internal);
+		$transaction_db = $transaction->create($this->internal);
 
 		/**
 		 * 站内交易订单
-		 * @since 0.8.71 新增 apply_filters('wnd_internal_payment_return', $return_array, $post_id);
 		 */
 		if ($this->internal) {
-			$return_array = ['status' => 3, 'msg' => __('支付成功', 'wnd'), 'data' => ['redirect_to' => get_permalink($this->post_id)]];
-			return apply_filters('wnd_internal_payment_return', $return_array, $transaction_post);
+			return [
+				'status' => 1,
+				'msg'    => __('支付成功', 'wnd'),
+				'data'   => [
+					'interface'   => '<h3>' . __('支付成功', 'wnd') . '</h3>',
+					'transaction' => $transaction_db,
+				],
+			];
 		}
 
 		/**
@@ -56,7 +61,14 @@ class Wnd_Do_Payment extends Wnd_Action {
 		if ($this->app_id) {
 			$result = json_decode($result, true) ?: [];
 		} else {
-			$result = ['status' => 7, 'data' => '<div class="has-text-centered">' . $payment->build_interface() . '</div>'];
+			$result = [
+				'status' => 1,
+				'msg'    => __('支付成功', 'wnd'),
+				'data'   => [
+					'interface'   => $payment->build_interface(),
+					'transaction' => $transaction_db,
+				],
+			];
 		}
 		return $result;
 	}

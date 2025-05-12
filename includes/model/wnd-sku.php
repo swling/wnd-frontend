@@ -72,6 +72,7 @@ abstract class Wnd_SKU {
 		$sku_data = [];
 		$sku_keys = array_keys(static::get_sku_keys($post_type));
 
+		$i = 0;
 		foreach ($data as $key => $sku_detail) {
 			// 过滤空值、仅提取指定 sku 属性
 			if (!wnd_array_filter($sku_detail)) {
@@ -79,8 +80,9 @@ abstract class Wnd_SKU {
 			}
 			$sku_detail = array_intersect_key($sku_detail, array_flip($sku_keys));
 
-			$key            = 'sku_' . $key;
+			$key            = 'sku_' . $i;
 			$sku_data[$key] = $sku_detail;
+			$i++;
 		}
 		unset($key, $value);
 

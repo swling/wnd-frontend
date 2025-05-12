@@ -1,60 +1,46 @@
 <?php
+
 namespace Wnd\Module\Common;
 
+use Wnd\Controller\Wnd_Request;
 use Wnd\Getway\Wnd_Payment_Getway;
-use Wnd\Model\Wnd_Recharge;
-use Wnd\Module\Wnd_Module_Form;
-use Wnd\View\Wnd_Form_WP;
+use Wnd\Module\Wnd_Module_Vue;
 
 /**
- * 充值表单
- *
- * @since 2019.01.21
+ * 在线支付订单表单
+ * 匿名支付订单默认启用人机验证
+ * @since 2020.06.30
  */
-class Wnd_User_Recharge_Form extends Wnd_Module_Form {
+class Wnd_User_Recharge_Form extends Wnd_Module_Vue {
 
-	protected static function configure_form(array $args = []): object {
-		$form = new Wnd_Form_WP();
+	/**
+	 * 根据参数读取本次订单对应产品信息
+	 * 构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
+	 * @since 0.8.76
+	 */
+	protected static function parse_data(array $args): array {
+		$gateway_options = Wnd_Payment_Getway::get_gateway_options();
+		$default_gateway = Wnd_Payment_Getway::get_default_gateway();
+
 		if (!is_user_logged_in()) {
 			$balance = wnd_get_anon_user_balance();
-			if ($balance) {
-				$form->set_message(__('<b>注意：</b>新充值将覆盖当前余额：', 'wnd') . '<b>' . number_format($balance, 2) . '</b>', 'is-danger');
-			} else {
-				$form->set_message(__('匿名充值24小时内有效，请即充即用！', 'wnd'), 'is-danger');
-			}
+			$msg     = $balance ? (__('<b>注意：</b>新充值将覆盖当前余额：', 'wnd') . $balance) : __('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd');
 		}
-		$form->add_html('<div class="has-text-centered field">');
-		$form->add_radio(
-			[
-				'name'    => 'total_amount',
-				'options' => Wnd_Recharge::get_recharge_amount_options(),
-				'class'   => 'is-checkradio is-danger',
-			]
-		);
-		$form->add_number(
-			[
-				'name'        => 'custom_total_amount',
-				'placeholder' => '自定义金额',
-				'min'         => 0.01,
-				'step'        => 0.01,
-				'value'       => ($args['amount'] ?? '') ?: '',
-			]
-		);
-		$form->add_radio(
-			[
-				'name'     => 'payment_gateway',
-				'options'  => Wnd_Payment_Getway::get_gateway_options(),
-				'required' => true,
-				'checked'  => Wnd_Payment_Getway::get_default_gateway(),
-				'class'    => 'is-checkradio is-danger',
-			]
-		);
-		$form->add_html('</div>');
-		$form->add_hidden('type', 'recharge');
-		$form->set_route('action', 'common/wnd_do_payment');
-		$form->set_submit_button(__('充值', 'wnd'));
 
-		return $form;
+		$payments = [];
+		foreach ($gateway_options as $label => $gateway) {
+			$payments[] = [
+				'label' => $label,
+				'value' => $gateway,
+				'icon'  => '',
+			];
+		}
+
+		$sign = Wnd_Request::sign(['total_amount', 'payment_gateway']);
+
+		/**
+		 * 构造：产品ID，SKU ID，数量，总金额，订单标题，SKU 提示信息
+		 */
+		return compact('payments', 'default_gateway', 'msg', 'sign');
 	}
-
 }

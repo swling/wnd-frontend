@@ -167,13 +167,6 @@ apply_filters('wnd_pay_return_url', $url, $type, $object_id);
 apply_filters('wnd_can_do_payment', ['status'=>1,'msg'=>''], $post_id, $transaction_type, $sku_id, $quantity);
 
 /**
- *站内交易成功返回信息
- *@since 0.8.71
- */
-$return_array = ['status' => 4, 'msg' => __('支付成功', 'wnd'), 'data' => ['waiting' => 5]];
-return apply_filters('wnd_internal_payment_return', $return_array, $order_post);
-
-/**
 *@since 2019.02.12 付费内容，作者收益提成，默认为文章价格* 后台比例设置
 */
 apply_filters('wnd_get_order_commission', $commission, $order_id);

@@ -25,7 +25,7 @@
 			<div class="column is-narrow">
 				<a @click="get_detail(item.ID)"><span v-text="item.subject"></span></a>
 			</div>
-			<div class="column is-full" v-show="details[item.ID] && !details[item.ID].hidden" v-html="show_detail(details[item.ID])"></div>
+			<div class="column is-full" v-show="details[item.ID] && !details[item.ID].hidden" v-html="show_detail(item)"></div>
 		</div>
 	</div>
 	<nav class="pagination is-centered">
@@ -87,11 +87,7 @@
 					this.details[id].hidden = !this.details[id].hidden;
 					return;
 				}
-
-				let res = await wnd_query("wnd_get_transaction", { "id": id });
-				if (1 == res.status) {
-					this.details[id] = res.data;
-				}
+				this.details[id] = {};
 			},
 			show_detail: function (obj) {
 				if (!obj) {

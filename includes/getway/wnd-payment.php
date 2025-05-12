@@ -175,49 +175,7 @@ abstract class Wnd_Payment {
 	 * @since 0.9.56.7
 	 */
 	public static function build_payment_interface(int $payment_id, string $payment_interface, string $title): string {
-		$interface    = '<div id="payment-interface"><h3 id="payment-title">' . $title . '</h3>' . $payment_interface . '</div>';
-		$check_script = static::build_ajax_check_script($payment_id);
-		return $interface . $check_script;
-	}
-
-	/**
-	 * ajax轮询订单状态：支付成功则更新支付界面
-	 */
-	private static function build_ajax_check_script(int $payment_id) {
-		return '
-<script>
-    var payment_checker = setInterval(wnd_check_payment, 3000, ' . $payment_id . ');
-    async function wnd_check_payment(id) {
-        let response = await wnd_query("wnd_get_transaction", { "id": id });
-
-        if ("' . Wnd_Transaction::$completed_status . '" == response.data.status) {
-            var title = document.querySelector("#payment-title");
-            title.innerText = "支付成功！/ Payment successful!";
-            clearInterval(payment_checker);
-
-			if (response.data.object_id > 0) {
-				window.location.href = response.data.object_url;
-			}
-			if("function" == typeof wnd_payment_callback){
-				wnd_payment_callback(response);
-			}
-        }
-    }
-    // 关闭弹窗时，清除定时器
-    document.addEventListener("click", function (e) {
-        if (e.target.classList.contains("modal-close")) {
-            clearInterval(payment_checker);
-            return;
-        }
-
-        // DIV
-        let div = e.target.closest("div");
-        if (div.classList.contains("modal-background")) {
-            clearInterval(payment_checker);
-            return;
-        }
-    });
-</script>';
+		return '<div><h3 id="payment-title">' . $title . '</h3>' . $payment_interface . '</div>';
 	}
 
 }
