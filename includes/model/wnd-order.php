@@ -132,6 +132,18 @@ class Wnd_Order extends Wnd_Transaction {
 	}
 
 	/**
+	 * @since 0.9.87
+	 * 定义支付成功后的订单状态
+	 * 用于区分实体订单和虚拟订单：默认虚拟订单直接完成，实体订单在支付完成后，需要处理发货等流程
+	 */
+	protected function get_paid_status(): string {
+		$props      = json_decode($this->transaction->props);
+		$is_virtual = $props->is_virtual ?? '1';
+
+		return '1' == $is_virtual ? static::$completed_status: static::$paid_status;
+	}
+
+	/**
 	 * 订单成功后，执行的统一操作
 	 * @since 2020.06.10
 	 *

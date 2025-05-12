@@ -16,6 +16,13 @@ use Wnd\WPDB\Wnd_Transaction_DB;
  * - 因为付费阅读、付费下载，目前尚不支持指定 SKU 信息查询，仅通过判断用户在当前 Post 下是否有已完成支付的订单，决定内容呈现。
  * - 简言之，付费阅读付费下载，应该设置唯一产品价格。
  *
+ * ## 约定订单属性:
+ * sku        : []
+ * sku_id     : ""
+ * quantity   : 1
+ * is_virtual : "1"
+ * ip         : "x.x.x.x"
+ *
  * @since 0.9.0
  */
 abstract class Wnd_Order_Props {
@@ -43,6 +50,9 @@ abstract class Wnd_Order_Props {
 		$sku_key      = static::$sku_key;
 		$quantity_key = static::$quantity_key;
 		$ip_key       = static::$ip_key;
+
+		// 是否为虚拟商品
+		$meta['is_virtual'] = $data['is_virtual'] ?? '';
 
 		// SKU
 		$sku_id = $data[static::$sku_id_key] ?? '';

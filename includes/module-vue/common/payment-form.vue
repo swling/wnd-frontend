@@ -205,7 +205,7 @@
                 async wnd_check_payment(id) {
                     let response = await wnd_query("wnd_get_transaction", { id: id });
 
-                    if (response.data.status === "completed") {
+                    if (response.data.status == "completed" || response.data.status == "paid") {
                         let title = document.querySelector("#payment-title");
                         if (title) {
                             title.innerText = "支付成功！/ Payment successful!";

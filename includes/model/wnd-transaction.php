@@ -51,6 +51,9 @@ abstract class Wnd_Transaction {
 	// 等待付款（订单已创建，库存已扣除）
 	public static $pending_status = 'pending';
 
+	// 实体商品支付完成（等待发货）
+	public static $paid_status = 'paid';
+
 	// 付款完成、交易等待（实体商品交易中：待收货 / 待确认）
 	public static $processing_status = 'processing';
 
@@ -226,9 +229,9 @@ abstract class Wnd_Transaction {
 	 * - 交易完成，执行相关操作
 	 * @since 2019.02.11
 	 *
-	 * @param 	bool 	$is_completed 	是否直接完成订单
+	 * @param bool $verified 站内余额支付跳过验证
 	 */
-	public function create(bool $is_completed = false): object {
+	public function create(bool $verified = false): object {
 		/**
 		 * 检测创建权限
 		 * @since 0.9.51
@@ -239,15 +242,15 @@ abstract class Wnd_Transaction {
 		 * 全局统一 Transaction 数据设定：
 		 * - @since 0.9.37 设定状态
 		 */
-		$this->status = $is_completed ? (static::$completed_status) : (static::$pending_status);
+		$this->status = static::$pending_status;
 
 		// 写入数据
 		$this->generate_transaction_data();
 		$this->insert_transaction();
 
-		// 完成
-		if ($is_completed) {
-			$this->complete();
+		// 站内余额支付直接验证
+		if ($verified) {
+			$this->verify();
 		}
 
 		// 返回创建的 WP Post Object
@@ -343,7 +346,7 @@ abstract class Wnd_Transaction {
 	public function verify() {
 		// 订单支付状态检查：已完成、已关闭、已退款的订单，终止
 		$status = $this->get_status();
-		if (static::$completed_status == $status or static::$closed_status == $status or static::$refunded_status == $status) {
+		if (in_array($status, [static::$completed_status, static::$closed_status, static::$refunded_status, static::$paid_status])) {
 			return;
 		}
 
@@ -351,8 +354,19 @@ abstract class Wnd_Transaction {
 			throw new Exception(__('订单状态无效', 'wnd') . $status);
 		}
 
-		$this->update_transaction_status(static::$completed_status);
+		$this->update_transaction_status($this->get_paid_status());
 		$this->complete();
+	}
+
+	/**
+	 * @since 0.9.87
+	 * 定义支付成功后的订单状态
+	 * 用于区分实体订单和虚拟订单
+	 * - 默认虚拟订单直接完成
+	 * - 实体订单在支付完成后，需要处理发货等流程，应在子类中复写本方法
+	 */
+	protected function get_paid_status(): string {
+		return static::$completed_status;
 	}
 
 	/**

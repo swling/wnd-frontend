@@ -15,7 +15,7 @@ class Wnd_Order_Form extends Wnd_Module_Vue {
 		$post_id  = $args['post_id'] ?? 0;
 		$defaults = [
 			'post_id'    => $post_id,
-			'is_virtual' => 0,
+			'is_virtual' => '1',
 			'skus'       => Wnd_SKU::get_object_sku($post_id),
 		];
 		return array_merge($defaults, $args);
