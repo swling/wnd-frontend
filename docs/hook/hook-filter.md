@@ -219,44 +219,6 @@ add_filter('wnd_payment_handler', function ($class_name, $payment_gateway) {
 
 ```
 
-### 支付结算表单
-```php
-/**
- * @since 0.9.77
- * 拓展支付表单
- * @param $form 表单实例
- * @param $args 订单参数
- */
-$form = apply_filters('wnd_payment_form', $form, $args);
-
-// 实例：新增一个字段（亦可参考 wnd_payment_form 代码完全新建一个表单）
-add_filter('wnd_payment_form', function ($form) {
-	$form->add_text(
-		[
-			'name'        => 'address',
-			'placeholder' => '收货地址',
-			'required'    => true,
-		]
-	);
-	return $form;
-});
-
-// 所有订单信息储存在订单 props 中
-Wnd\Model\Wnd_Order_Props::get_order_props($order_id);
-```
-
-### 充值表单金额选项
-```php
-/**
-*@param array $defaults
-*/
-apply_filters('wnd_recharge_amount_options', $defaults);
-
-// 实例
-add_filter('wnd_recharge_amount_options', function(){
-	return ['一毛' => 0.1];
-}, 12, 1);
-```
 
 ### 在线支付类型实例
 - 定义支付类型处理实例：插件内置了订单（Wnd\Model\Wnd_Order）及充值（Wnd\Model\Wnd_Recharge）

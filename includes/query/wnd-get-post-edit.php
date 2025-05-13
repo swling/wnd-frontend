@@ -179,6 +179,9 @@ final class Wnd_Get_Post_Edit extends Wnd_Query {
 	public static function get_post_meta(int $post_id): array {
 		// 获取所有的 meta
 		$all_meta = get_post_meta($post_id);
+		if (!$all_meta) {
+			return [];
+		}
 
 		$result = [];
 		foreach ($all_meta as $key => $values) {
