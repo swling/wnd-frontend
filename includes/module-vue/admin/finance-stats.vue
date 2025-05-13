@@ -16,88 +16,92 @@
 </div>
 
 <script>
-	var option = {
-		data() {
-			return {
-				res: {},
-				type: 'recharge',
-				range: '15',
-			}
-		},
-		methods: {
-			is_active: function (key, value) {
-				return this[key] == value ? 'is-active' : '';
-			},
-			set_type: function (type) {
-				this.type = type;
-				this.query_status();
-			},
-			set_range: function (range) {
-				this.range = range;
-				this.query_status();
-			},
-			query_status: async function () {
-				let res = await wnd_query('wnd_site_stats', { 'type': this.type, 'range': this.range });
-				this.res = res.data;
-				this.showCharts('finance-stats', this.res);
-			},
-			showCharts: async function (id, data) {
-				if ('undefined' == typeof uCharts) {
-					let url = static_path + 'js/lib/u-charts.min.js' + cache_suffix;
-					await wnd_load_script(url);
+	{
+		const option = {
+			data() {
+				return {
+					res: {},
+					type: 'recharge',
+					range: '15',
 				}
-				this._showCharts(id, data);
 			},
-
-			_showCharts: function (id, data) {
-				let uChartsInstance = {};
-
-				const canvas = document.getElementById(id);
-				const ctx = canvas.getContext('2d');
-				canvas.width = canvas.offsetWidth;
-				canvas.height = canvas.offsetHeight;
-				uChartsInstance[id] = new uCharts({
-					type: 'line',
-					context: ctx,
-					width: canvas.width,
-					height: canvas.height,
-					categories: data.categories,
-					series: data.series,
-					animation: true,
-					background: '#FFFFFF',
-					color: ['#1890FF', '#91CB74', '#FAC858', '#EE6666', '#73C0DE', '#3CA272', '#FC8452', '#9A60B4', '#ea7ccc'],
-					padding: [15, 10, 0, 15],
-					legend: {},
-					xAxis: {
-						disableGrid: true
-					},
-					yAxis: {
-						gridType: 'dash',
-						dashLength: 2,
-						data: [{}] // 添加此空白参数后， Y 轴刻度精度问题得以解决，原因不明
-					},
-					extra: {
-						line: {
-							type: 'curve',
-							width: 2
-						}
+			methods: {
+				is_active: function (key, value) {
+					return this[key] == value ? 'is-active' : '';
+				},
+				set_type: function (type) {
+					this.type = type;
+					this.query_status();
+				},
+				set_range: function (range) {
+					this.range = range;
+					this.query_status();
+				},
+				query_status: async function () {
+					let res = await wnd_query('wnd_site_stats', { 'type': this.type, 'range': this.range });
+					this.res = res.data;
+					this.showCharts('finance-stats', this.res);
+				},
+				showCharts: async function (id, data) {
+					if ('undefined' == typeof uCharts) {
+						let url = static_path + 'js/lib/u-charts.min.js' + cache_suffix;
+						await wnd_load_script(url);
 					}
-				});
+					this._showCharts(id, data);
+				},
 
-				canvas.onclick = function (e) {
-					uChartsInstance[e.target.id].touchLegend(getH5Offset(e));
-					uChartsInstance[e.target.id].showToolTip(getH5Offset(e));
-				};
-				canvas.onmousemove = function (e) {
-					uChartsInstance[e.target.id].showToolTip(getH5Offset(e));
-				};
+				_showCharts: function (id, data) {
+					let uChartsInstance = {};
+
+					const canvas = document.getElementById(id);
+					const ctx = canvas.getContext('2d');
+					canvas.width = canvas.offsetWidth;
+					canvas.height = canvas.offsetHeight;
+					uChartsInstance[id] = new uCharts({
+						type: 'line',
+						context: ctx,
+						width: canvas.width,
+						height: canvas.height,
+						categories: data.categories,
+						series: data.series,
+						animation: true,
+						background: '#FFFFFF',
+						color: ['#1890FF', '#91CB74', '#FAC858', '#EE6666', '#73C0DE', '#3CA272', '#FC8452', '#9A60B4', '#ea7ccc'],
+						padding: [15, 10, 0, 15],
+						legend: {},
+						xAxis: {
+							disableGrid: true
+						},
+						yAxis: {
+							gridType: 'dash',
+							dashLength: 2,
+							data: [{}] // 添加此空白参数后， Y 轴刻度精度问题得以解决，原因不明
+						},
+						extra: {
+							line: {
+								type: 'curve',
+								width: 2
+							}
+						}
+					});
+
+					canvas.onclick = function (e) {
+						uChartsInstance[e.target.id].touchLegend(getH5Offset(e));
+						uChartsInstance[e.target.id].showToolTip(getH5Offset(e));
+					};
+					canvas.onmousemove = function (e) {
+						uChartsInstance[e.target.id].showToolTip(getH5Offset(e));
+					};
+				},
 			},
-		},
 
-		mounted: function () {
-			this.query_status();
+			mounted: function () {
+				this.query_status();
+			}
 		}
-	}
 
-	Vue.createApp(option).mount('#vue-finance-stats');
+		const app = Vue.createApp(option);
+		app.mount('#vue-finance-stats');
+		vueInstances.push(app);
+	}
 </script>

@@ -1,37 +1,36 @@
-<div id="vue-attachments-app">
-	<div class="wnd-filter-tabs mb-3 is-hidden">
-		<div v-for="tab in tabs" class="columns is-marginless is-vcentered is-mobile">
-			<div class="column is-narrow">{{tab.label}}</div>
+<div id="vue-mail-list-app">
+	<div class="wnd-filter-tabs mb-3">
+		<div v-for="tab in tabs" class="columns is-vcentered is-mobile">
 			<div class="column tabs">
 				<ul class="tab">
-					<li v-for="(value, key) in tab.options" :class="is_active(tab.key, value)">
-						<a @click="update_filter(tab.key, value)">{{key}}</a>
-					</li>
+					<li class="ml-2 mr-2"><input type="checkbox" @change="toggleAll" :checked="allSelected"></li>
+					<li v-for="(value, key) in tab.options" :class="is_active(tab.key, value)"><a @click="update_filter(tab.key, value)">{{key}}</a></li>
 				</ul>
 			</div>
 		</div>
+		<!-- <a @click="toggleSelection">反选</a> -->
+		<span v-show="selectedItems.length">{{selectedItems}}</span>
 	</div>
-	<!-- <input type="checkbox" @change="toggleAll" :checked="allSelected"> -->
-	<div v-show="selectedItems.length">{{selectedItems}}</div>
 	<div id="lists">
-		<div v-for="(item, index) in data.results" class="columns is-multiline is-marginless is-justify-content-space-between" style="border-top: 1px dotted #CCC;">
+		<div v-for="(item, index) in data.results" class="columns is-multiline is-justify-content-space-between" style="border-top: 1px dotted #CCC;">
 			<div class="column is-narrow">
 				<div class="is-pulled-left mr-3" :class="get_status_class(item)">
 					<input type="checkbox" v-model="item.selected" class="mr-1">
-					{{item.file_path}}
+					<a @click="get_detail(item.ID, index)">
+						<b v-if="`unread` == item.status">{{item.subject}}</b>
+						<span v-else>{{item.subject}}</span>
+					</a>
 				</div>
-				<span class="is-size-7">{{timeToString(item.created_at)}}</span>
-				<span class="is-size-7">&nbsp;-&nbsp;
-					<em v-text="0 == item.user_id ? `[Anonymous]`: `[user : ${item.user_id}]`"></em>
-					<em v-text="0 == item.post_id ? `0`: `[post : ${item.post_id}]`"></em>
-				</span>
 			</div>
 
 			<div class="column is-narrow">
-				<a class="button is-danger is-small" @click="delete_attachment(item.ID,index)">Delete</a>
-				<!-- <a @click="get_detail(item.ID)"><span v-text="item.subject"></span></a> -->
+				<a @click="get_detail(item.ID)"><span>{{timeToString(item.sent_at)}}</span></a>
 			</div>
-			<!-- <div class="column is-full" v-show="details[item.ID] && !details[item.ID].hidden" v-html="show_detail(details[item.ID])"></div> -->
+			<div class="column is-full" v-show="details[item.ID] && !details[item.ID].hidden">
+				<div class="message is-primary is-light">
+					<div class="message-body">{{show_detail(details[item.ID])}}</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<nav class="pagination is-centered">
@@ -47,16 +46,16 @@
 </div>
 <script>
 	{
-		const parent = document.querySelector("#vue-attachments-app").parentNode;
-		const vue_param = Object.assign({
+		const parent = document.querySelector("#vue-mail-list-app").parentNode;
+		const param = Object.assign({
 			number: 20,
 			paged: 1,
-			user_id: 'any'
+			status: "any",
 		}, module_data.param);
 		const option = {
 			data() {
 				return {
-					param: vue_param,
+					param: param,
 					data: { "results": [] },
 					details: {},
 					tabs: module_data.tabs,
@@ -82,22 +81,31 @@
 					this.query();
 				},
 				query: async function () {
-					let res = await wnd_query("wnd_attachments", this.param, {
+					let res = await wnd_query("wnd_mails", this.param, {
 						"Container": "#lists"
 					});
 
 					wnd_loading("#lists", true);
 					this.data = res.data;
 				},
-				delete_attachment: async function (id, index) {
-					if (!confirm("Are you sure to delete this attachment?" + index)) {
+				get_detail: async function (id, index) {
+					if (this.details[id]) {
+						this.details[id].hidden = !this.details[id].hidden;
 						return;
 					}
-					let res = await wnd_ajax_action("common/wnd_delete_file", { "file_id": id });
-					if (1 == res.status) {
-						this.data.results.splice(index, 1);
 
+					let res = await wnd_query("wnd_get_mail", { "id": id });
+					if (1 == res.status) {
+						this.details[id] = res.data;
+						// 标记为已读
+						this.data.results[index].status = "read";
 					}
+				},
+				show_detail: function (obj) {
+					if (!obj) {
+						return '';
+					}
+					return obj.content;
 				},
 				is_active: function (key, value) {
 					return this.param[key] == value ? "is-active" : "";
@@ -167,11 +175,11 @@
 			},
 			updated() {
 				funTransitionHeight(parent, trs_time);
-			},
+			}
 		}
 
 		const app = Vue.createApp(option);
-		app.mount('#vue-attachments-app');
+		app.mount('#vue-mail-list-app');
 		vueInstances.push(app);
 	}
 </script>

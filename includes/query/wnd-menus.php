@@ -46,7 +46,7 @@ class Wnd_Menus extends Wnd_Query {
 			'items'  => [
 				['title' => __('概览', 'wnd'), 'href' => ''],
 				['title' => __('内容', 'wnd'), 'href' => 'user/wnd_user_posts_panel'],
-				['title' => __('财务', 'wnd'), 'href' => 'user/wnd_user_finance_panel'],
+				['title' => __('财务', 'wnd'), 'href' => 'user/wnd_finance_list'],
 				['title' => __('资料', 'wnd'), 'href' => 'user/wnd_profile_form'],
 				['title' => __('账户', 'wnd'), 'href' => 'user/wnd_account_form'],
 				['title' => __('消息', 'wnd'), 'href' => 'user/wnd_mail_box'],
@@ -68,7 +68,7 @@ class Wnd_Menus extends Wnd_Query {
 				['title' => __('订单', 'wnd'), 'href' => 'admin/wnd_finance_list'],
 				['title' => __('用户', 'wnd'), 'href' => 'admin/wnd_users_list'],
 				['title' => __('内容', 'wnd'), 'href' => 'user/wnd_user_posts_panel'],
-				['title' => __('财务', 'wnd'), 'href' => 'user/wnd_user_finance_panel'],
+				['title' => __('财务', 'wnd'), 'href' => 'user/wnd_finance_list'],
 				['title' => __('资料', 'wnd'), 'href' => 'user/wnd_profile_form'],
 				['title' => __('账户', 'wnd'), 'href' => 'user/wnd_account_form'],
 				['title' => __('消息', 'wnd'), 'href' => 'user/wnd_mail_box'],

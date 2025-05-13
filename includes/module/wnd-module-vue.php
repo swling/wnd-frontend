@@ -59,7 +59,7 @@ abstract class Wnd_Module_Vue extends Wnd_Module {
 	 *
 	 * 该方法用于自动获取当前类对应的 vue 文件路径
 	 */
-	private static function get_file_path(): string {
+	protected static function get_file_path(): string {
 		$class_name = (new ReflectionClass(get_called_class()))->name;
 		$class_name = strtolower($class_name);
 		$class_name = str_replace('wnd_', '', $class_name);
