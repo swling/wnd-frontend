@@ -78,6 +78,7 @@
 						this.param.paged = 1;
 					}
 
+					wnd_update_url_hash(this.param, ['ajax_type']);
 					this.query();
 				},
 				query: async function () {

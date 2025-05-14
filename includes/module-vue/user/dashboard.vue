@@ -109,7 +109,7 @@
 				}
 
 				// 阻止点击事件已经触发后的重复请求
-				if (module == this.current_module && JSON.stringify(props) == JSON.stringify(this.current_props)) {
+				if (module == this.current_module && 'post_form' != module) {
 					return;
 				}
 

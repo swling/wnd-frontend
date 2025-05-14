@@ -83,6 +83,7 @@
 					<i class="fas fa-clock mr-1"></i>时间：{{timeToString(item.time)}}
 					<i class="fas fa-money-check-alt mr-1 ml-2"></i>{{item.payment_gateway}}
 					<i class="fas fa-user mr-1 ml-2"></i> {{item.user_id}}
+					<p>{{item.subject}}</p>
 				</div>
 
 				<div class="mt-1">
@@ -136,7 +137,7 @@
 					if ("paged" != key) {
 						this.param.paged = 1;
 					}
-
+					wnd_update_url_hash(this.param, ['ajax_type']);
 					this.query();
 				},
 				query: async function () {

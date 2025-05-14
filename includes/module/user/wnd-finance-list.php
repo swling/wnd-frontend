@@ -11,12 +11,8 @@ use Wnd\Module\Wnd_Module_Vue;
 class Wnd_Finance_List extends Wnd_Module_Vue {
 
 	protected static function parse_data(array $args = []): array {
-		$user_id = !is_super_admin() ? get_current_user_id() : ($args['user_id'] ?? get_current_user_id());
-
 		$html = '';
-		if ($user_id == get_current_user_id()) {
-			$html = static::build_panel($user_id);
-		}
+		$html = static::build_panel();
 
 		// 订单列表
 		$tabs = [
@@ -42,11 +38,12 @@ class Wnd_Finance_List extends Wnd_Module_Vue {
 			],
 
 		];
-		return ['param' => ['user_id' => $user_id], 'tabs' => $tabs, 'panel' => $html];
+		return ['param' => $args, 'tabs' => $tabs, 'panel' => $html];
 	}
 
-	private static function build_panel(int $user_id): string {
-		$html = '<div id="user-finance-panel">';
+	private static function build_panel(): string {
+		$user_id = get_current_user_id();
+		$html    = '<div id="user-finance-panel">';
 		$html .= '<nav class="level is-mobile">';
 		$html .= '
 		<div class="level-item has-text-centered">

@@ -963,6 +963,31 @@ function wnd_menus_side_toggle(close = false) {
 }
 
 /**
+ *@since 0.9.88
+ *通过参数更新 url hash
+ */
+function wnd_update_url_hash(obj, ignore = []) {
+    // 解析当前 hash（去掉 #，转为 URLSearchParams）
+    const currentParams = new URLSearchParams(location.hash.slice(1));
+
+    // 将 obj 的 key-value 合并进去
+    for (const key in obj) {
+        if (ignore.length && ignore.includes(key)) {
+            continue;
+        }
+
+        if (obj[key] === null || obj[key] === undefined) {
+            currentParams.delete(key); // 可选逻辑：允许通过 null/undefined 删除字段
+        } else {
+            currentParams.set(key, obj[key]);
+        }
+    }
+
+    // 构建新的 hash 字符串
+    window.location.hash = decodeURIComponent(currentParams.toString());
+}
+
+/**
  *@since 0.9.25
  *监听点击事件
  */

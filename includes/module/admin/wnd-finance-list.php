@@ -34,7 +34,7 @@ class Wnd_Finance_List extends Wnd_Module_Vue {
 			],
 
 		];
-		return ['param' => ['user_id' => 'any'], 'tabs' => $tabs];
+		return ['param' => $args, 'tabs' => $tabs];
 	}
 
 	protected static function get_file_path(): string {

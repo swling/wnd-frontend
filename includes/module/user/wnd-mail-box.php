@@ -11,8 +11,6 @@ use Wnd\Module\Wnd_Module_Vue;
 class Wnd_Mail_Box extends Wnd_Module_Vue {
 
 	protected static function parse_data(array $args = []): array {
-		$user_id = !is_super_admin() ? get_current_user_id() : ($args['user_id'] ?? get_current_user_id());
-
 		$tabs = [
 			[
 				'label'   => '',
@@ -25,7 +23,7 @@ class Wnd_Mail_Box extends Wnd_Module_Vue {
 			],
 
 		];
-		return ['param' => ['user_id' => $user_id], 'tabs' => $tabs];
+		return ['param' => $args, 'tabs' => $tabs];
 	}
 
 	protected static function check($args) {

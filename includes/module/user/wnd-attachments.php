@@ -20,7 +20,7 @@ class Wnd_Attachments extends Wnd_Module_Vue {
 			],
 
 		];
-		return ['param' => ['user_id' => get_current_user_id()], 'tabs' => $tabs];
+		return ['param' => $args, 'tabs' => $tabs];
 	}
 
 	protected static function check($args) {
