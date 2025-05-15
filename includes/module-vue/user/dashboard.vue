@@ -53,13 +53,33 @@
 	<!-- Sidebar -->
 	<div class="column is-narrow" v-if="hasMenuForModule">
 		<aside :class="['side box is-paddingless', {'is-open':sidebarOpen,'no-transition':!isMobile}]">
+			<nav class="menu p-3" v-if="admin_menu.length">
+				<p class="menu-label">Admin</p>
+				<ul class="menu-list">
+					<li v-for="item in admin_menu">
+						<a :class="{'is-active': isActive(item) }" @click="toggleMenu(item)">
+							<span v-html="item.icon" class="mr-1 icon"></span>{{ item.name }}
+							<span v-if="item.children" class="icon is-small is-size-7">
+								<i :class="['fas', item.open ? 'fa-chevron-down' : 'fa-chevron-right']"></i>
+							</span>
+						</a>
+						<ul v-if="item.children && item.open" class="submenu">
+							<li v-for="child in item.children">
+								<a :class="{'is-active': isActive(child) }" @click="navigate(child)">
+									<span v-html="child.icon" class="mr-1 icon"></span> {{ child.name }}
+								</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
 			<nav class="menu p-3">
 				<p class="menu-label">Dashboard</p>
 				<ul class="menu-list">
 					<li v-for="item in menu">
 						<a :class="{'is-active': isActive(item) }" @click="toggleMenu(item)">
 							<span v-html="item.icon" class="mr-1 icon"></span>{{ item.name }}
-							<span v-if="item.children" class="icon is-small">
+							<span v-if="item.children" class="icon is-small is-size-7">
 								<i :class="['fas', item.open ? 'fa-chevron-down' : 'fa-chevron-right']"></i>
 							</span>
 						</a>
@@ -106,6 +126,7 @@
 				sidebarOpen: window.innerWidth <= 1024 ? false : true,
 				currentHash: location.hash.slice(1),
 				menu: wnd_dashboard.menus,
+				admin_menu: wnd_dashboard.admin_menus,
 			};
 		},
 		methods: {
@@ -190,10 +211,12 @@
 				}
 			},
 			isActive(item) {
-				return item.hash === this.currentModule;
+				const currentModule = (this.currentModule == this.default_module) ? 'index' : this.currentModule;
+				return item.hash === currentModule;
 			},
 			expandMatchingMenu() {
-				for (const item of this.menu) {
+				const menu = [...this.menu, ...this.admin_menu];
+				for (const item of menu) {
 					if (item.children) {
 						// item.open = false;
 						for (const child of item.children) {

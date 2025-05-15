@@ -21,22 +21,24 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 		$user_id        = get_current_user_id();
 		$default_module = $user_id ? 'user/wnd_user_overview' : 'user/wnd_user_center';
 		$defaults       = [
-			'menus'   => is_super_admin() ? static::get_admin_menus(): static::get_menus(),
+			'menus'       => static::get_menus(),
+			'admin_menus' => is_super_admin() ? static::get_admin_menus() : [],
 			// 'menus'   => static::get_demo_menus(),
-			'default' => apply_filters('wnd_user_page_default_module', $default_module),
-			'module'  => '',
-			'query'   => $_GET,
-			'user_id' => $user_id,
+			'default'     => apply_filters('wnd_user_page_default_module', $default_module),
+			'module'      => '',
+			'query'       => $_GET,
+			'user_id'     => $user_id,
 		];
 		$args = wp_parse_args($args, $defaults);
 
 		// 构造页面 HTML
+		wp_enqueue_script('dashboard', WND_URL . 'static/js/dashboard.js', ['wnd-main'], WND_VER);
 		get_header();
-		echo '<main id="dashboard-page" class="column is-flex">';
-		echo '<script>var wnd_dashboard = ' . json_encode($args, JSON_UNESCAPED_UNICODE) . ';</script>';
-		$html = file_get_contents(WND_PATH . '/includes/module-vue/user/dashboard.vue');
+		$html = '<main id="dashboard-page" class="column is-flex">';
+		$html .= '<script>const wnd_dashboard = ' . json_encode($args, JSON_UNESCAPED_UNICODE) . ';</script>';
+		$html .= file_get_contents(WND_PATH . '/includes/module-vue/user/dashboard.vue');
+		$html .= '</main>';
 		echo $html;
-		echo '</main>';
 		get_footer();
 
 		return '';
@@ -56,18 +58,25 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 			],
 			[
 				'name' => __('财务', 'wnd'),
-				'hash' => 'user/wnd_finance_list',
+				'hash' => 'user/wnd_finance',
 				'icon' => '<i class="fas fa-wallet"></i>', // 钱包/财务
 			],
 			[
-				'name' => __('资料', 'wnd'),
-				'hash' => 'user/wnd_profile_form',
-				'icon' => '<i class="fas fa-id-card"></i>', // 个人资料
-			],
-			[
-				'name' => __('账户', 'wnd'),
-				'hash' => 'user/wnd_account_form',
-				'icon' => '<i class="fas fa-user-cog"></i>', // 账户设置
+				'name'     => __('设置', 'wnd'),
+				'icon'     => '<i class="fas fa-user-cog"></i>',
+				'open'     => false,
+				'children' => [
+					[
+						'name' => __('资料', 'wnd'),
+						'hash' => 'user/wnd_profile_form',
+						'icon' => '<i class="fas fa-id-card"></i>', // 个人资料
+					],
+					[
+						'name' => __('账户', 'wnd'),
+						'hash' => 'user/wnd_account_form',
+						'icon' => '<i class="fas fa-key"></i>', // 账户设置
+					],
+				],
 			],
 			[
 				'name' => __('消息', 'wnd'),
@@ -80,6 +89,11 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 				'icon' => '<i class="fas fa-paperclip"></i>', // 附件
 			],
 		];
+
+		// 管理员：移除重复的 “概览” 菜单
+		if (is_super_admin()) {
+			array_shift($menu);
+		}
 
 		return $menu;
 	}
@@ -97,98 +111,34 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 				'icon' => '<i class="fas fa-check-square"></i>', // 审核
 			],
 			[
-				'name' => __('统计', 'wnd'),
-				'hash' => 'admin/wnd_finance_stats',
-				'icon' => '<i class="fas fa-chart-bar"></i>', // 数据统计
-			],
-			[
-				'name' => __('订单', 'wnd'),
-				'hash' => 'admin/wnd_finance_list',
-				'icon' => '<i class="fas fa-receipt"></i>', // 订单
+				'name'     => __('流水', 'wnd'),
+				'icon'     => '<i class="fas fa-chart-line"></i>',
+				'open'     => false,
+				'children' => [
+					[
+						'name' => __('统计', 'wnd'),
+						'hash' => 'admin/wnd_finance_stats',
+						'icon' => '<i class="fas fa-chart-bar"></i>', // 数据统计
+					],
+					[
+						'name' => __('订单', 'wnd'),
+						'hash' => 'admin/wnd_orders',
+						'icon' => '<i class="fas fa-shopping-cart"></i>', // 个人资料
+					],
+					[
+						'name' => __('充值', 'wnd'),
+						'hash' => 'admin/wnd_recharges',
+						'icon' => '<i class="fas fa-coins"></i>', // 账户设置
+					],
+				],
 			],
 			[
 				'name' => __('用户', 'wnd'),
 				'hash' => 'admin/wnd_users_list',
 				'icon' => '<i class="fas fa-users"></i>', // 用户列表
 			],
-			[
-				'name' => __('内容', 'wnd'),
-				'hash' => 'user/wnd_user_posts_panel',
-				'icon' => '<i class="fas fa-file-alt"></i>', // 文章/内容
-			],
-			[
-				'name' => __('财务', 'wnd'),
-				'hash' => 'user/wnd_finance_list',
-				'icon' => '<i class="fas fa-wallet"></i>', // 钱包/财务
-			],
-			[
-				'name' => __('资料', 'wnd'),
-				'hash' => 'user/wnd_profile_form',
-				'icon' => '<i class="fas fa-id-card"></i>', // 个人资料
-			],
-			[
-				'name' => __('账户', 'wnd'),
-				'hash' => 'user/wnd_account_form',
-				'icon' => '<i class="fas fa-user-cog"></i>', // 账户设置
-			],
-			[
-				'name' => __('消息', 'wnd'),
-				'hash' => 'user/wnd_mail_box',
-				'icon' => '<i class="fas fa-envelope"></i>', // 邮件/消息
-			],
-			[
-				'name' => __('附件', 'wnd'),
-				'hash' => 'user/wnd_attachments',
-				'icon' => '<i class="fas fa-paperclip"></i>', // 附件
-			],
 		];
 
 		return $menus;
-	}
-
-	private static function get_demo_menus() {
-		$menu = [
-			[
-				'name' => '我的信息',
-				'icon' => '<i class="fas fa-user"></i>',
-				'hash' => 'profile',
-			],
-			[
-				'name'     => '订单管理',
-				'icon'     => '<i class="fas fa-receipt"></i>',
-				'open'     => true,
-				'children' => [
-					[
-						'name' => '我的订单',
-						'icon' => '<i class="fas fa-list"></i>',
-						'hash' => 'user/wnd_finance_list',
-					],
-					[
-						'name' => '发票信息',
-						'icon' => '<i class="fas fa-file-invoice"></i>',
-						'hash' => 'invoices',
-					],
-				],
-			],
-			[
-				'name'     => '账户设置',
-				'icon'     => '<i class="fas fa-cog"></i>',
-				'open'     => true,
-				'children' => [
-					[
-						'name' => '密码修改',
-						'icon' => '<i class="fas fa-key"></i>',
-						'hash' => 'user/wnd_account_form',
-					],
-					[
-						'name' => '绑定信息',
-						'icon' => '<i class="fas fa-link"></i>',
-						'hash' => 'bindings',
-					],
-				],
-			],
-		];
-
-		return $menu;
 	}
 }

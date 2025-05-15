@@ -87,7 +87,7 @@
 				</div>
 
 				<div class="mt-1">
-					<p><i class="fas fa-money-bill-wave mr-1"></i>金额：<b class="has-text-danger">{{item.total_amount}}</b></p>
+					<p><i class="fas fa-coins"></i>金额：<b class="has-text-danger">{{item.total_amount}}</b></p>
 				</div>
 			</div>
 		</div>
@@ -173,38 +173,8 @@
 				get_status_class: function (obj) {
 					return "completed" == obj.status ? "has-text-primary" : "";
 				},
-				get_date: function (timestamp) {
-					// 创建一个新的Date对象，使用时间戳作为参数（以毫秒为单位） 
-					const date = new Date(timestamp * 1000);
-					const year = date.getFullYear();
-					const month = (date.getMonth() + 1).toString().padStart(2, '0');
-					const day = date.getDate().toString().padStart(2, '0');
-					const hours = date.getHours().toString().padStart(2, '0');
-					const minutes = date.getMinutes().toString().padStart(2, '0');
-					const seconds = date.getSeconds().toString().padStart(2, '0');
-
-					let now = new Date();
-					if (date.getFullYear() === now.getFullYear()) {
-						return `${month}-${day} ${hours}:${minutes}:${seconds}`;
-					} else {
-						return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-					}
-				},
 				timeToString: function (timestamp) {
-					let date = new Date(timestamp * 1000),
-						now = new Date(), diff = now - date, minutes = Math.floor(diff / 60000), hours = Math.floor(minutes / 60), days = Math.floor(hours / 24);
-
-					if (date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth() && date.getDate() === now.getDate()) {
-						if (hours === 0) {
-							return minutes + " minutes ago";
-						} else if (hours < 24) {
-							return hours + " hours ago";
-						} else {
-							return date.toDateString();
-						}
-					} else {
-						return this.get_date(timestamp);
-					}
+					return wnd_time_to_string(timestamp);
 				},
 				toggleAll(event) {
 					this.allSelected = event.target.checked;

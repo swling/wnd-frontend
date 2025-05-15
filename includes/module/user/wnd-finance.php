@@ -8,11 +8,12 @@ use Wnd\Module\Wnd_Module_Vue;
 /**
  * @since 2019.02.18 封装用户财务中心
  */
-class Wnd_Finance_List extends Wnd_Module_Vue {
+class Wnd_Finance extends Wnd_Module_Vue {
 
 	protected static function parse_data(array $args = []): array {
-		$html = '';
-		$html = static::build_panel();
+		$args['user_id'] = get_current_user_id();
+		$html            = '';
+		$html            = static::build_panel();
 
 		// 订单列表
 		$tabs = [
