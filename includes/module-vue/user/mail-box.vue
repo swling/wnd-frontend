@@ -8,7 +8,8 @@
 				</ul>
 			</div>
 		</div>
-		<!-- <a @click="toggleSelection">反选</a> -->
+		<a @click="toggleSelection">反选</a>
+		<input type="checkbox" @change="toggleAll" :checked="allSelected">
 		<span v-show="selectedItems.length">{{selectedItems}}</span>
 	</div>
 	<div id="lists">

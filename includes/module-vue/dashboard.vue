@@ -17,6 +17,8 @@
 
 	.side.no-transition {
 		transition: none !important;
+		position: sticky;
+		top: 0;
 	}
 
 	.submenu {
@@ -24,6 +26,11 @@
 	}
 
 	@media (max-width: 1024px) {
+		.side-menu {
+			padding: 0;
+			margin: 0;
+		}
+
 		.side {
 			position: fixed;
 			top: 0;
@@ -51,8 +58,8 @@
 <div id="dashboard-app" class="dashboard columns" style="flex: 1;">
 	<div v-if="isMobile && sidebarOpen" class="side-backdrop" @click="sidebarOpen = false"></div>
 	<!-- Sidebar -->
-	<div class="column is-narrow" v-if="hasMenuForModule">
-		<aside :class="['side box is-paddingless', {'is-open':sidebarOpen,'no-transition':!isMobile}]">
+	<div class="side-menu column is-narrow" v-if="hasMenuForModule">
+		<aside :class="['side', {'is-open':sidebarOpen,'no-transition':!isMobile}]">
 			<nav class="menu p-3" v-if="admin_menu.length">
 				<p class="menu-label">Admin</p>
 				<ul class="menu-list">
@@ -98,10 +105,13 @@
 
 	<!-- Main Content -->
 	<div class="main-content column">
-		<div v-show="isMobile" class="columns is-mobile">
-			<div class="column">Dashboard</div>
-			<div class="column is-narrow">
-				<button class="button is-light side-toggle mb-2" @click="sidebarOpen = !sidebarOpen">
+		<div v-show="isMobile">
+			<div class="level is-mobile mb-1">
+				<div class="level-left"><a href="#module=index">Dashboard</a></div>
+				<!-- <div class="navbar-burger level-right has-text-right" @click="sidebarOpen = !sidebarOpen">
+					<span></span><span></span><span></span>
+				</div> -->
+				<button class="level-right button is-light side-toggle mb-2" @click="sidebarOpen = !sidebarOpen">
 					<i class="fas fa-bars"></i>
 				</button>
 			</div>

@@ -36,7 +36,7 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 		get_header();
 		$html = '<main id="dashboard-page" class="column is-flex">';
 		$html .= '<script>const wnd_dashboard = ' . json_encode($args, JSON_UNESCAPED_UNICODE) . ';</script>';
-		$html .= file_get_contents(WND_PATH . '/includes/module-vue/user/dashboard.vue');
+		$html .= file_get_contents(WND_PATH . '/includes/module-vue/dashboard.vue');
 		$html .= '</main>';
 		echo $html;
 		get_footer();
@@ -111,14 +111,14 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 				'icon' => '<i class="fas fa-check-square"></i>', // 审核
 			],
 			[
-				'name'     => __('流水', 'wnd'),
+				'name'     => __('运营', 'wnd'),
 				'icon'     => '<i class="fas fa-chart-line"></i>',
 				'open'     => false,
 				'children' => [
 					[
-						'name' => __('统计', 'wnd'),
-						'hash' => 'admin/wnd_finance_stats',
-						'icon' => '<i class="fas fa-chart-bar"></i>', // 数据统计
+						'name' => __('发货', 'wnd'),
+						'hash' => 'admin/wnd_order_processor',
+						'icon' => '<i class="fas fa-shipping-fast"></i>', // 个人资料
 					],
 					[
 						'name' => __('订单', 'wnd'),
@@ -129,6 +129,11 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 						'name' => __('充值', 'wnd'),
 						'hash' => 'admin/wnd_recharges',
 						'icon' => '<i class="fas fa-coins"></i>', // 账户设置
+					],
+					[
+						'name' => __('统计', 'wnd'),
+						'hash' => 'admin/wnd_finance_stats',
+						'icon' => '<i class="fas fa-chart-bar"></i>', // 数据统计
 					],
 				],
 			],

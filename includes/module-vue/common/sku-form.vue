@@ -200,7 +200,9 @@
                 }
             },
             updated() {
-                funTransitionHeight(parent, trs_time);
+                this.$nextTick(() => {
+                    funTransitionHeight(parent, trs_time);
+                });
             }
         }).mount("#sku-app");
     }
