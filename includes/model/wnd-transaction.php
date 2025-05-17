@@ -54,8 +54,11 @@ abstract class Wnd_Transaction {
 	// 实体商品支付完成（等待发货）
 	public static $paid_status = 'paid';
 
-	// 付款完成、交易等待（实体商品交易中：待收货 / 待确认）
+	// 付款完成、系统处理中
 	public static $processing_status = 'processing';
+
+	// 已发货：等待用户收货
+	public static $shipped_status = 'shipped';
 
 	// 交易完成
 	public static $completed_status = 'completed';

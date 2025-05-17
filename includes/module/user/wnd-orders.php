@@ -8,7 +8,7 @@ use Wnd\Module\Wnd_Module_Vue;
 /**
  * @since 2019.02.18 封装用户财务中心
  */
-class Wnd_Finance extends Wnd_Module_Vue {
+class Wnd_Orders extends Wnd_Module_Vue {
 
 	protected static function parse_data(array $args = []): array {
 		$args['user_id'] = get_current_user_id();
@@ -32,7 +32,8 @@ class Wnd_Finance extends Wnd_Module_Vue {
 					__('全部', 'wnd')  => 'any',
 					__('已完成', 'wnd') => Wnd_Transaction::$completed_status,
 					__('待付款', 'wnd') => Wnd_Transaction::$pending_status,
-					__('待发货', 'wnd') => Wnd_Transaction::$processing_status,
+					__('待发货', 'wnd') => Wnd_Transaction::$paid_status,
+					__('已发货', 'wnd') => Wnd_Transaction::$shipped_status,
 					__('已关闭', 'wnd') => Wnd_Transaction::$closed_status,
 					__('已退款', 'wnd') => Wnd_Transaction::$refunded_status,
 				],

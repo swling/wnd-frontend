@@ -7,16 +7,16 @@ use Wnd\Model\Wnd_Transaction;
 use Wnd\Module\Wnd_Module_Vue;
 
 /**
- * @since 0.9.26 订单记录
+ * @since 0.9.87 订单处理器
  */
-class Wnd_Orders extends Wnd_Module_Vue {
+class Wnd_Order_Processor extends Wnd_Module_Vue {
 
 	protected static $transaction_type = 'order';
 
 	protected static function parse_data(array $args): array {
-		$args['type'] = static::$transaction_type;
-		$tabs         = [static::get_status_options()];
-		return ['param' => $args, 'tabs' => $tabs, 'is_manager' => 1];
+		$args['type']   = static::$transaction_type;
+		$args['status'] = $args['status'] ?? Wnd_Transaction::$paid_status;
+		return ['param' => $args, 'is_manager' => 1, 'tabs' => [static::get_status_options()]];
 	}
 
 	protected static function get_status_options(): array {
@@ -24,13 +24,8 @@ class Wnd_Orders extends Wnd_Module_Vue {
 			'label'   => __('状态', 'wnd'),
 			'key'     => 'status',
 			'options' => [
-				__('全部', 'wnd')  => '',
-				__('已完成', 'wnd') => Wnd_Transaction::$completed_status,
-				__('待付款', 'wnd') => Wnd_Transaction::$pending_status,
 				__('待发货', 'wnd') => Wnd_Transaction::$paid_status,
 				__('已发货', 'wnd') => Wnd_Transaction::$shipped_status,
-				__('已关闭', 'wnd') => Wnd_Transaction::$closed_status,
-				__('已退款', 'wnd') => Wnd_Transaction::$refunded_status,
 			],
 		];
 	}

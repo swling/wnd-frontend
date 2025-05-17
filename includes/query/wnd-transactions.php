@@ -40,9 +40,27 @@ class Wnd_Transactions extends Wnd_Query {
 		];
 
 		$handler = Wnd_Transaction_DB::get_instance();
-		$results = $handler->get_results($where, ['limit'=>$number,'offset'=> ($paged - 1) * $number]);
+		$results = $handler->get_results($where, ['limit' => $number, 'offset' => ($paged - 1) * $number]);
 
-		return ['results' => $results, 'number' => count($results)];
+		// 使用 array_map 对每个对象处理 props 字段
+		$converted = array_map(function ($item) {
+			$item->props = json_decode($item->props);
+			return $item;
+		}, $results);
+
+		return ['results' => $converted, 'number' => count($converted)];
+	}
+
+	// 统一查询对应的 posts，而非在 foreach 中逐个查询，后者会逐次执行多条 sql
+	private function get_posts(array $ids) {
+		$posts = get_posts([
+			'post__in'               => $ids,
+			'orderby'                => 'post__in', // 保持传入顺序
+			'post_type'              => 'any',
+			'numberposts'            => -1, // 获取所有
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		]);
 	}
 
 }

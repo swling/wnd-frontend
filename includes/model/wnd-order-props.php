@@ -36,6 +36,8 @@ abstract class Wnd_Order_Props {
 	// 购买商品数目（同时也为订单创建时，用户请求的数据 name）
 	public static $quantity_key = 'quantity';
 
+	public static $receiver_key = 'receiver';
+
 	// IP
 	public static $ip_key = 'ip';
 
@@ -49,6 +51,7 @@ abstract class Wnd_Order_Props {
 		$meta         = [];
 		$sku_key      = static::$sku_key;
 		$quantity_key = static::$quantity_key;
+		$receiver_key = static::$receiver_key;
 		$ip_key       = static::$ip_key;
 
 		// 是否为虚拟商品
@@ -64,6 +67,9 @@ abstract class Wnd_Order_Props {
 
 		// quantity
 		$meta[$quantity_key] = $data[static::$quantity_key] ?? 1;
+
+		// 收货地址
+		$meta[$receiver_key] = $data[static::$receiver_key] ?? [];
 
 		// IP
 		$meta[$ip_key] = wnd_get_user_ip();

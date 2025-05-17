@@ -39,24 +39,10 @@
 
         <div class="box mt-5" v-if="'1'!=isVirtual">
             <h3 class="title is-6 mb-3">收货信息</h3>
-            <div class="field is-horizontal is-flex-wrap-wrap">
-                <div class="field-body">
-                    <div class="field">
-                        <p class="control is-expanded">
-                            <input class="input" type="text" v-model.trim="receiver.name" placeholder="姓名">
-                        </p>
-                    </div>
-                    <div class="field">
-                        <p class="control is-expanded">
-                            <input class="input" type="tel" v-model.trim="receiver.phone" placeholder="手机号码">
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="field mt-2">
-                <p class="control">
-                    <input class="input" type="text" v-model.trim="receiver.address" placeholder="详细地址">
-                </p>
+            <div class="columns">
+                <div class="column is-2">姓名<text-editor :pre_editing="true" v-model="receiver.name"></text-editor></div>
+                <div class="column is-2">电话<text-editor :pre_editing="true" v-model="receiver.phone"></text-editor></div>
+                <div class="column">地址<text-editor :pre_editing="true" v-model="receiver.address"></text-editor></div>
             </div>
         </div>
 
@@ -72,6 +58,9 @@
         const { createApp } = Vue;
         let data = JSON.parse(JSON.stringify(module_data));
         createApp({
+            components: {
+                TextEditor: TextEditor,
+            },
             data() {
                 return {
                     wnd: wnd,

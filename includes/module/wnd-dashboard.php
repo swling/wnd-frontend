@@ -57,8 +57,8 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 				'icon' => '<i class="fas fa-file-alt"></i>', // 文章/内容
 			],
 			[
-				'name' => __('财务', 'wnd'),
-				'hash' => 'user/wnd_finance',
+				'name' => __('订单', 'wnd'),
+				'hash' => 'user/wnd_orders',
 				'icon' => '<i class="fas fa-wallet"></i>', // 钱包/财务
 			],
 			[
