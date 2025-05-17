@@ -11,9 +11,9 @@ use Wnd\Module\Wnd_Module_Vue;
 class Wnd_Orders extends Wnd_Module_Vue {
 
 	protected static function parse_data(array $args = []): array {
-		$args['user_id'] = get_current_user_id();
+		$args['user_id'] = static::get_user_id($args);
 		$html            = '';
-		$html            = static::build_panel();
+		$html            = static::build_panel($args);
 
 		// 订单列表
 		$tabs = [
@@ -43,8 +43,8 @@ class Wnd_Orders extends Wnd_Module_Vue {
 		return ['param' => $args, 'tabs' => $tabs, 'panel' => $html];
 	}
 
-	private static function build_panel(): string {
-		$user_id = get_current_user_id();
+	private static function build_panel($args): string {
+		$user_id = static::get_user_id($args);
 		$html    = '<div id="user-finance-panel">';
 		$html .= '<nav class="level is-mobile">';
 		$html .= '
@@ -84,6 +84,11 @@ class Wnd_Orders extends Wnd_Module_Vue {
 		$html .= '</div>';
 
 		return $html;
+	}
+
+	private static function get_user_id(array $args) {
+		$user_id = get_current_user_id();
+		return wnd_is_manager() ? ($args['user_id'] ?? $user_id) : $user_id;
 	}
 
 	protected static function check($args) {
