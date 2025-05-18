@@ -143,6 +143,29 @@ class WPDB_Row {
 	}
 
 	/**
+	 * 查询自定义数据表中的多条记录（按主键 ID 数组）。
+	 * - 主要用于已知 ids 的情况下，合并查询并按主键缓存结果，以提升多个 $this->get() 时的查询性能
+	 *
+	 * @param array  $ids            主键 ID 数组
+	 * @return array                 查询结果数组（每一项为关联数组）
+	 */
+	public function query_by_ids($ids): array {
+		// 若 ID 数组为空，直接返回空数组
+		if (empty($ids)) {
+			return [];
+		}
+
+		$results = $this->get_results([$this->primary_id_column => $ids]);
+		foreach ($results as $data) {
+			$primary_id_column = $this->primary_id_column;
+			$where             = [$primary_id_column => $data->$primary_id_column];
+			$this->cache->set_data_into_cache($where, $data);
+		}
+
+		return $results;
+	}
+
+	/**
 	 * 获取指定条件的数据记录数组合集（多行）
 	 * @since 0.9.67
 	 *
@@ -188,6 +211,19 @@ class WPDB_Row {
 		$params     = [];
 
 		foreach ($where as $field => $value) {
+			// 如果是数组，自动使用 IN 查询 @ChatGPT
+			if (is_array($value)) {
+				if (!empty($value)) {
+					$placeholders = implode(', ', array_fill(0, count($value), '%s'));
+					$conditions[] = "`$field` IN ($placeholders)";
+					array_push($params, ...$value);
+				} else {
+					// 空数组，保证返回空结果
+					$conditions[] = '0 = 1';
+				}
+				continue;
+			}
+
 			$value = trim($value);
 			if ($value === 'any') {
 				continue;
