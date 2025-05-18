@@ -47,7 +47,9 @@
 					</div>
 					<div class="level-right tags">
 						<span v-html="get_status_icon(item)" class="mr-1"></span>
-						<span><span class="tag is-danger is-light is-clickable"><i class="fas fa-trash-alt"></i></span></span>
+						<span @click="delete_transaction(item.ID, index)">
+							<span class="tag is-danger is-light is-clickable"><i class="fas fa-trash-alt"></i></span>
+						</span>
 					</div>
 				</div>
 				<div class="is-size-7 has-text-grey">
@@ -72,7 +74,9 @@
 				<div class="level is-mobile">
 					<div class="level-left">
 						<!-- 用户查看物流 -->
-						<i class="fas fa-truck mr-1"></i>运单：<span class="tag">{{item.props.express_no || `……`}}</span>
+						<template v-if="item.props.is_virtual < 1">
+							<i class="fas fa-truck mr-1"></i>运单：<span class="tag">{{item.props.express_no || `……`}}</span>
+						</template>
 					</div>
 					<div class="level-right">
 						<strong><i class="fas fa-shopping-bag mr-1"></i>总计：<i class="fas fa-yen-sign"></i>{{item.total_amount}}</strong>
@@ -92,7 +96,9 @@
 					</div>
 					<div class="level-right tags">
 						<span v-html="get_status_icon(item)" class="mr-1"></span>
-						<span><span class="tag is-danger is-light is-clickable"><i class="fas fa-trash-alt"></i></span></span>
+						<span @click="delete_transaction(item.ID, index)">
+							<span class="tag is-danger is-light is-clickable"><i class="fas fa-trash-alt"></i></span>
+						</span>
 					</div>
 				</div>
 				<div class="is-size-7 has-text-grey">
@@ -176,20 +182,16 @@
 					wnd_loading("#lists", true);
 					this.data = res.data;
 				},
-				// 管理员更新订单物流号
-				shipOrder: async function (item) {
-					if (!item.props.express_no) {
-						alert("expressNumber is empty");
+				delete_transaction: async function (id, index) {
+					if (!confirm("确认删除？")) {
 						return;
 					}
-					item.disabled = !item.disabled;
-
-					const data = {
-						"id": item.ID,
-						"status": "shipped",
-						"props": { "express_no": item.props.express_no }
-					};
-					const res = await wnd_ajax_action("admin/wnd_update_transaction", data);
+					const res = await wnd_ajax_action("common/wnd_delete_transaction", { "id": id });
+					if (res.status > 0) {
+						this.data.results.splice(index, 1); // 删除1个元素
+					} else {
+						wnd_alert_modal(`<div class="notification is-danger is-light">${res.msg}</div>`);
+					}
 				},
 				getDayClass(ts) {
 					const date = new Date(ts * 1000);
