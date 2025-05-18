@@ -308,28 +308,15 @@ apply_filters('wnd_product_props', $props, $object_id);
 apply_filters('wnd_menus_side_before', '');
 
 /**
- * $menus = []; 菜单
- * 是否在侧边栏，是否展开第一个子菜单
- * $args  = ['in_side' => false, 'expand'  => true]
+ * 自定义用户菜单
+ *
  */
 add_filter('wnd_menus', function ($menus, $args) {
-	// $menus = []; 清空已有菜单 否则为追加
-
-	// 在侧边栏第一个菜单添加子项
-	if ($args['in_side']) {
-		$menus[0]['items'][] = ['title' => 'LiveHouse', 'href' => wnd_home_url('livehouse')];
-		$menus[0]['items'][] = ['title' => __('联系', 'wndt'), 'href' => wnd_home_url('contact')];;
-
-		// 在控制菜单追加一个一级菜单
-	} else {
-		$menus[] = [
-			'label'  => '控制菜单',
-			'expand' => false, // 是否强制展开本菜单
-			'items'  => [
-				['title' => '测试菜单', 'href' => '#wnd_profile_form'],
-			],
-		];
-	}
+	$menus[] = [
+		'name' => '赞赏',
+		'hash' => 'wndt_reward_list',
+		'icon' => '<i class="fas fa-paperclip"></i>', // 附件
+	];
 	return $menus;
 }, 11, 2);
 

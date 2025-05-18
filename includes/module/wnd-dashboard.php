@@ -21,8 +21,8 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 		$user_id        = get_current_user_id();
 		$default_module = $user_id ? 'user/wnd_user_overview' : 'user/wnd_user_center';
 		$defaults       = [
-			'menus'       => static::get_menus(),
-			'admin_menus' => is_super_admin() ? static::get_admin_menus() : [],
+			'menus'       => static::get_menus($args),
+			'admin_menus' => is_super_admin() ? static::get_admin_menus($args) : [],
 			// 'menus'   => static::get_demo_menus(),
 			'default'     => apply_filters('wnd_user_page_default_module', $default_module),
 			'module'      => '',
@@ -44,7 +44,7 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 		return '';
 	}
 
-	private static function get_menus() {
+	private static function get_menus($args) {
 		$menu = [
 			[
 				'name' => __('概览', 'wnd'),
@@ -95,10 +95,10 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 			array_shift($menu);
 		}
 
-		return $menu;
+		return apply_filters('wnd_menus', $menu, $args);
 	}
 
-	private static function get_admin_menus() {
+	private static function get_admin_menus($args) {
 		$menus = [
 			[
 				'name' => __('概览', 'wnd'),
