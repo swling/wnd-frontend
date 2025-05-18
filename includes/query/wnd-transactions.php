@@ -3,6 +3,7 @@
 namespace Wnd\Query;
 
 use Exception;
+use Wnd\WPDB\Wnd_Attachment_DB;
 use Wnd\WPDB\Wnd_Transaction_DB;
 
 /**
@@ -39,28 +40,59 @@ class Wnd_Transactions extends Wnd_Query {
 			'user_id' => $user_id,
 		];
 
-		$handler = Wnd_Transaction_DB::get_instance();
-		$results = $handler->get_results($where, ['limit' => $number, 'offset' => ($paged - 1) * $number]);
+		$results = Wnd_Transaction_DB::get_instance()->get_results($where, ['limit' => $number, 'offset' => ($paged - 1) * $number]);
+
+		// 缓存产品订单：产品缩略图等信息
+		if ('order' == $type) {
+			$post_ids = array_map(fn($item) => $item->object_id, $results);
+			static::cache_thumbnail($post_ids);
+		}
 
 		// 使用 array_map 对每个对象处理 props 字段
 		$converted = array_map(function ($item) {
-			$item->props = json_decode($item->props);
+			$item->props     = json_decode($item->props);
+			$item->thumbnail = static::get_thumbnail($item->object_id);
 			return $item;
 		}, $results);
 
-		return ['results' => $converted, 'number' => count($converted)];
+		global $wpdb;
+		return ['results' => $converted, 'number' => count($converted), 'sql' => $wpdb->queries];
+	}
+
+	private static function cache_thumbnail(array $post_ids) {
+		// 去重
+		$post_ids = array_unique($post_ids);
+
+		// 缓存 meta
+		update_meta_cache('post', $post_ids);
+
+		// 缓存 attachments 数据表
+		$image_ids = [];
+		foreach ($post_ids as $post_id) {
+			$image_ids[] = wnd_get_post_meta($post_id, '_thumbnail_id');
+		}
+		$image_ids = array_unique($image_ids);
+		Wnd_Attachment_DB::get_instance()->query_by_ids($image_ids);
+	}
+
+	private static function get_thumbnail(int $post_id) {
+		$image_id = wnd_get_post_meta($post_id, '_thumbnail_id');
+		if (!$image_id) {
+			return '';
+		}
+
+		return wnd_get_attachment_url($image_id);
 	}
 
 	// 统一查询对应的 posts，而非在 foreach 中逐个查询，后者会逐次执行多条 sql
-	private function get_posts(array $ids) {
+	private static function get_posts(array $ids) {
 		$posts = get_posts([
 			'post__in'               => $ids,
 			'orderby'                => 'post__in', // 保持传入顺序
 			'post_type'              => 'any',
 			'numberposts'            => -1, // 获取所有
-			'update_post_meta_cache' => false,
+			'update_post_meta_cache' => true,
 			'update_post_term_cache' => false,
 		]);
 	}
-
 }

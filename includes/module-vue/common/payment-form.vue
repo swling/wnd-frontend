@@ -54,6 +54,9 @@
 </section>
 <script>
     {
+        if ("undefined" == typeof TextEditor) {
+            TextEditor = false;
+        }
         const parent = document.querySelector('#payment-app').parentNode;
         const { createApp } = Vue;
         let data = JSON.parse(JSON.stringify(module_data));

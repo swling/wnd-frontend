@@ -61,7 +61,7 @@
 				<div class="product-item media mt-1">
 					<figure class="media-left">
 						<p class="image is-64x64">
-							<!-- <img class="product-image" src="" alt="商品图"> -->
+							<img class="product-image" :src="item.thumbnail" alt="商品图">
 						</p>
 					</figure>
 					<div class="media-content is-size-7 has-text-grey">
