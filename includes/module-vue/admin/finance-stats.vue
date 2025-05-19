@@ -67,12 +67,18 @@
 						if ('undefined' == typeof Chart) {
 							let url = static_path + 'js/lib/chart.umd.js' + cache_suffix;
 							await wnd_load_script(url);
+							let plugin_url = static_path + 'js/lib/chartjs-plugin-datalabels.min.js' + cache_suffix;
+							await wnd_load_script(plugin_url);
 						}
 						this.showCharts();
 					}
 				},
 				showCharts: function () {
 					const ctx = this.$refs.chartCanvas.getContext('2d');
+					// 移动端空间不足
+					if (!wnd_is_mobile()) {
+						Chart.register(ChartDataLabels);
+					}
 					this.tradeChart = new Chart(ctx, {
 						type: 'line',
 						data: {
@@ -90,8 +96,21 @@
 							scales: {
 								x: { display: true, title: { display: true, text: '日期' } },
 								y: { display: true, title: { display: true, text: '金额（元）' } }
-							}
-						}
+							},
+							plugins: {
+								datalabels: {
+									anchor: 'end',
+									align: 'top',
+									color: '#EEE',
+									font: {
+										weight: 'bold'
+									},
+									backgroundColor: '#F14668',
+									borderRadius: "3",
+									formatter: value => value + ' 元'
+								}
+							},
+						},
 					});
 				},
 			},
