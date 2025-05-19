@@ -49,6 +49,8 @@ class Wnd_Site_Stats extends Wnd_Query {
 		if (in_array($type, ['order', 'recharge'])) {
 			return static::get_finance_stats($type, $range);
 		}
+
+		return [];
 	}
 
 	// 查询财务统计数据
@@ -102,17 +104,12 @@ class Wnd_Site_Stats extends Wnd_Query {
 		// 组成最终数据格式
 		$result = [
 			'categories' => [],
-			'series'     => [
-				[
-					'name' => $type,
-					'data' => [],
-				],
-			],
+			'data'       => [],
 			'total'      => number_format(array_sum($data), 2, '.'),
 		];
 		foreach ($data as $date => $value) {
-			$result['categories'][]        = $date;
-			$result['series'][0]['data'][] = $value;
+			$result['categories'][] = $date;
+			$result['data'][]       = $value;
 		}
 
 		return $result;
@@ -168,17 +165,13 @@ class Wnd_Site_Stats extends Wnd_Query {
 		// 组成最终数据格式
 		$result = [
 			'categories' => [],
-			'series'     => [
-				[
-					'name' => $type,
-					'data' => [],
-				],
-			],
+			'name'       => $type,
+			'data'       => [],
 			'total'      => number_format(array_sum($data), 2, '.'),
 		];
 		foreach ($data as $date => $value) {
-			$result['categories'][]        = $date;
-			$result['series'][0]['data'][] = $value;
+			$result['categories'][] = $date;
+			$result['data'][]       = $value;
 		}
 
 		return $result;

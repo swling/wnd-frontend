@@ -1,105 +1,104 @@
 <div id="vue-finance-stats">
 	<div class="tabs">
 		<ul>
-			<li :class="is_active('type','recharge')"><a @click="set_type('recharge')">充值统计</a></li>
-			<li :class="is_active('type','order')"><a @click="set_type('order')">消费统计</a></li>
+			<li :class="is_active('type','recharge')"><a @click="update_filter('type','recharge')">充值统计</a></li>
+			<li :class="is_active('type','order')"><a @click="update_filter('type','order')">消费统计</a></li>
 		</ul>
 	</div>
 	<div class="tabs">
 		<ul>
-			<li :class="is_active('range','15')"><a @click="set_range('15')">近15天</a></li>
-			<li :class="is_active('range','year')"><a @click="set_range('year')">近12个月</a></li>
+			<li :class="is_active('range','15')"><a @click="update_filter('range',15)">近15天</a></li>
+			<li :class="is_active('range','year')"><a @click="update_filter('range','year')">近12个月</a></li>
 		</ul>
 	</div>
-	<canvas id="finance-stats" class="charts" style="width:100%;min-height:300px;"></canvas>
-	<h3 class="has-text-centered is-size-3">Total: ${{res.total}}</h3>
+	<canvas id="finance-stats" class="charts" ref="chartCanvas" style="width:100%;max-height:500px;"></canvas>
+	<h3 class="has-text-centered is-size-4 mt-1">总计: {{res.total}}</h3>
 </div>
-
 <script>
 	{
+		const { shallowRef } = Vue;
+		const param = Object.assign({
+			paged: 1,
+			range: '15',
+			type: "recharge",
+		}, module_data);
+
 		const option = {
 			data() {
 				return {
 					res: {},
-					type: 'recharge',
-					range: '15',
+					param: param,
+					tradeChart: shallowRef(null),
 				}
 			},
 			methods: {
-				is_active: function (key, value) {
-					return this[key] == value ? 'is-active' : '';
-				},
-				set_type: function (type) {
-					this.type = type;
-					this.query_status();
-				},
-				set_range: function (range) {
-					this.range = range;
-					this.query_status();
-				},
-				query_status: async function () {
-					let res = await wnd_query('wnd_site_stats', { 'type': this.type, 'range': this.range });
-					this.res = res.data;
-					this.showCharts('finance-stats', this.res);
-				},
-				showCharts: async function (id, data) {
-					if ('undefined' == typeof uCharts) {
-						let url = static_path + 'js/lib/u-charts.min.js' + cache_suffix;
-						await wnd_load_script(url);
+				update_filter: function (key, value, remove_args = []) {
+					if (value) {
+						this.param[key] = value;
+					} else {
+						delete this.param[key];
 					}
-					this._showCharts(id, data);
+					if (remove_args) {
+						remove_args.forEach((key) => {
+							delete this.param[key];
+						});
+					}
+					// 非 翻页的其他查询，则重置页面
+					if ("paged" != key) {
+						this.param.paged = 1;
+					}
+
+					wnd_update_url_hash(this.param, ['ajax_type']);
+					this.query();
 				},
-
-				_showCharts: function (id, data) {
-					let uChartsInstance = {};
-
-					const canvas = document.getElementById(id);
-					const ctx = canvas.getContext('2d');
-					canvas.width = canvas.offsetWidth;
-					canvas.height = canvas.offsetHeight;
-					uChartsInstance[id] = new uCharts({
+				is_active: function (key, value) {
+					return this.param[key] == value ? 'is-active' : '';
+				},
+				query: async function () {
+					let res = await wnd_query('wnd_site_stats', this.param);
+					this.res = res.data;
+					// 更新数据
+					if (this.tradeChart) {
+						this.tradeChart.data.labels = this.res.categories;
+						this.tradeChart.data.datasets[0].data = this.res.data;
+						this.tradeChart.update();
+						return;
+					} else {
+						if ('undefined' == typeof Chart) {
+							let url = static_path + 'js/lib/chart.umd.js' + cache_suffix;
+							await wnd_load_script(url);
+						}
+						this.showCharts();
+					}
+				},
+				showCharts: function () {
+					const ctx = this.$refs.chartCanvas.getContext('2d');
+					this.tradeChart = new Chart(ctx, {
 						type: 'line',
-						context: ctx,
-						width: canvas.width,
-						height: canvas.height,
-						categories: data.categories,
-						series: data.series,
-						animation: true,
-						background: '#FFFFFF',
-						color: ['#1890FF', '#91CB74', '#FAC858', '#EE6666', '#73C0DE', '#3CA272', '#FC8452', '#9A60B4', '#ea7ccc'],
-						padding: [15, 10, 0, 15],
-						legend: {},
-						xAxis: {
-							disableGrid: true
+						data: {
+							labels: this.res.categories,
+							datasets: [{
+								label: '交易金额（元）',
+								data: this.res.data,
+								borderColor: 'rgba(75, 192, 192, 1)',
+								fill: false,
+								tension: 0.3
+							}]
 						},
-						yAxis: {
-							gridType: 'dash',
-							dashLength: 2,
-							data: [{}] // 添加此空白参数后， Y 轴刻度精度问题得以解决，原因不明
-						},
-						extra: {
-							line: {
-								type: 'curve',
-								width: 2
+						options: {
+							responsive: true,
+							scales: {
+								x: { display: true, title: { display: true, text: '日期' } },
+								y: { display: true, title: { display: true, text: '金额（元）' } }
 							}
 						}
 					});
-
-					canvas.onclick = function (e) {
-						uChartsInstance[e.target.id].touchLegend(getH5Offset(e));
-						uChartsInstance[e.target.id].showToolTip(getH5Offset(e));
-					};
-					canvas.onmousemove = function (e) {
-						uChartsInstance[e.target.id].showToolTip(getH5Offset(e));
-					};
 				},
 			},
-
 			mounted: function () {
-				this.query_status();
+				this.query();
 			}
 		}
-
 		const app = Vue.createApp(option);
 		app.mount('#vue-finance-stats');
 		vueInstances.push(app);
