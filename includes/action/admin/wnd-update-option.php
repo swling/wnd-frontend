@@ -14,7 +14,7 @@ class Wnd_Update_Option extends Wnd_Action_Root {
 	private $append;
 	private $option_data;
 
-	protected function execute(): array{
+	protected function execute(): array {
 		if (update_option($this->option_name, $this->option_data, false)) {
 			return ['status' => 1, 'msg' => __('更新成功', 'wnd')];
 		} else {
@@ -24,7 +24,7 @@ class Wnd_Update_Option extends Wnd_Action_Root {
 
 	protected function parse_data() {
 		$this->option_name = $this->data['option_name'];
-		$this->append      = (bool) $this->data['append'];
+		$this->append      = (bool) ($this->data['append'] ?? true);
 		$this->option_data = $this->request->get_option_data($this->option_name);
 
 		// 更新方式：附加数据，将本次提交数据和数据库数据合并

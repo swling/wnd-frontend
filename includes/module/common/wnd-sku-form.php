@@ -21,12 +21,30 @@ class Wnd_SKU_Form extends Wnd_Module_Vue {
 
 		$skus     = Wnd_SKU::get_object_sku($post_id);
 		$app_data = [
-			'post_id'  => $post_id,
-			'skus'     => (object) $skus,
-			'sign'     => Wnd_Request::sign(['sku', 'post_id']),
-			'sku_keys' => Wnd_SKU::get_sku_keys(get_post_type($post_id)),
+			'post_id' => $post_id,
+			'skus'    => (object) $skus,
+			'sign'    => Wnd_Request::sign(['sku', 'post_id']),
+			'options' => static::get_options(),
 		];
 
 		return $app_data;
+	}
+
+	private static function get_options(): array {
+		$settings = get_option('wnd_store_settings');
+		if (isset($settings['sku_keys']) and is_array($settings['sku_keys'])) {
+			return $settings['sku_keys'];
+		}
+
+		// 默认 SKU 选项
+		return [
+			[
+				'name'  => '请前往 Dashboard 定义产品 SKU 属性',
+				'attrs' => [
+					__('颜色', 'wnd'),
+					__('尺寸', 'wnd'),
+				],
+			],
+		];
 	}
 }

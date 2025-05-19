@@ -24,22 +24,6 @@ abstract class Wnd_SKU {
 	public static $name_prefix = '_sku_';
 
 	/**
-	 * SKU 属性信息合集
-	 * @param $post_type 产品类型 本插件不固定商品类型，因此可能不同类型的 post 需要不同的 SKU
-	 */
-	public static function get_sku_keys($post_type): array{
-		$sku_keys = [
-			'name'  => __('名称', 'wnd'),
-			'price' => __('价格', 'wnd'),
-			'stock' => __('库存', 'wnd'),
-			'color' => __('颜色', 'wnd'),
-			'size'  => __('尺寸', 'wnd'),
-		];
-
-		return apply_filters('wnd_sku_keys', $sku_keys, $post_type);
-	}
-
-	/**
 	 * 设置产品属性
 	 *
 	 * # SKU
@@ -51,7 +35,7 @@ abstract class Wnd_SKU {
 	 */
 	public static function set_object_sku(int $object_id, array $data): bool{
 		$post_type = get_post_type($object_id);
-		$sku_data  = static::parse_sku_data($data, $post_type);
+		$sku_data  = static::parse_sku_data($data);
 		return wnd_update_post_meta($object_id, static::$sku_meta_key, $sku_data);
 	}
 
@@ -68,9 +52,8 @@ abstract class Wnd_SKU {
 	 * 		'sku_1' => ['name' => '套餐2', 'price' => '0.2', 'stock' => 5],
 	 * 	];
 	 */
-	private static function parse_sku_data(array $data, string $post_type): array{
+	private static function parse_sku_data(array $data): array{
 		$sku_data = [];
-		$sku_keys = array_keys(static::get_sku_keys($post_type));
 
 		$i = 0;
 		foreach ($data as $key => $sku_detail) {
@@ -78,7 +61,6 @@ abstract class Wnd_SKU {
 			if (!wnd_array_filter($sku_detail)) {
 				continue;
 			}
-			$sku_detail = array_intersect_key($sku_detail, array_flip($sku_keys));
 
 			$key            = 'sku_' . $i;
 			$sku_data[$key] = $sku_detail;
@@ -155,14 +137,6 @@ abstract class Wnd_SKU {
 	 * 更新指定单个 SKU
 	 */
 	private static function update_single_sku(int $object_id, string $sku_id, array $single_sku): bool{
-		// 移除不合规的 SKU 属性
-		$sku_keys = array_keys(static::get_sku_keys(get_post_type($object_id)));
-		foreach ($single_sku as $key => $value) {
-			if (!in_array($key, $sku_keys)) {
-				unset($single_sku[$key]);
-			}
-		}unset($key, $value);
-
 		// 合并现有 SKU 后写入
 		$sku          = static::get_object_sku($object_id);
 		$sku[$sku_id] = $single_sku;

@@ -135,6 +135,11 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 						'hash' => 'admin/wnd_finance_stats',
 						'icon' => '<i class="fas fa-chart-bar"></i>', // 数据统计
 					],
+					[
+						'name' => 'SKU',
+						'hash' => 'admin/wnd_sku_keys_editor',
+						'icon' => '<i class="fas fa-barcode"></i>', // SKU
+					],
 				],
 			],
 			[

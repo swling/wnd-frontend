@@ -1,7 +1,11 @@
 <section id="sku-app">
     <div class="container">
-        <h1 class="title">SKU 管理</h1>
-
+        <div class="box">
+            <label class="radio" v-for="(option, index) in options" :key="index">
+                <input type="radio" name="optionGroup" :value="option.attrs" v-model="sku_keys">
+                {{ option.name }}
+            </label>
+        </div>
         <!-- SKU 列表 -->
         <table class="table is-fullwidth is-striped">
             <thead>
@@ -29,25 +33,25 @@
         </table>
 
         <!-- 动态输入 -->
-        <div class="box columns is-multiline">
+        <div class="box columns is-multiline mt-3">
             <div class="column" v-for="attr in attributeKeys" :key="attr">
-                <label class="label">{{ attr }}</label>
+                <label class="label is-small">{{ attr }}</label>
                 <div class="control">
-                    <input class="input" v-model="newSku[attr]" :placeholder="`请输入 ${attr}`">
+                    <input class="input is-small" v-model="newSku[attr]">
                 </div>
             </div>
 
             <div class="column">
-                <label class="label">价格</label>
+                <label class="label is-small">价格</label>
                 <div class="control">
-                    <input class="input" v-model="newSku.price" placeholder="请输入价格">
+                    <input class="input is-small" v-model="newSku.price">
                 </div>
             </div>
 
             <div class="column">
-                <label class="label">库存</label>
+                <label class="label is-small">库存</label>
                 <div class="control">
-                    <input class="input" v-model="newSku.stock" placeholder="请输入库存">
+                    <input class="input is-small" v-model="newSku.stock">
                 </div>
             </div>
 
@@ -64,9 +68,9 @@
         </div>
 
         <!-- 提交按钮 -->
-        <div class="has-text-centered mt-4">
-            <button :class="`button is-${wnd.color.primary}`" @click="submitSkus">保存</button>
-            <div class="notification is-primary is-light mt-2" v-show="msg" v-html="msg"></div>
+        <div class="has-text-centered mt-4" v-show="msg">
+            <!-- <button :class="`button is-${wnd.color.primary}`" @click="submitSkus">保存</button> -->
+            <div class="notification is-primary is-light" v-show="msg" v-html="msg"></div>
         </div>
     </div>
 </section>
@@ -76,13 +80,13 @@
         const parent = document.querySelector('#sku-app').parentNode;
         const data = JSON.parse(JSON.stringify(module_data));
 
-        const { createApp } = Vue;
-        createApp({
+        const app = Vue.createApp({
             data() {
                 return {
                     wnd: wnd,
                     skus: data.skus,
-                    sku_keys: data.sku_keys,
+                    options: data.options,
+                    sku_keys: [],
                     newSku: {},
                     editingSkuId: null,
                     duplicateWarning: false,
@@ -91,16 +95,30 @@
             },
             computed: {
                 attributeKeys() {
-                    const keys = new Set();
-                    Object.keys(this.sku_keys).forEach(key => {
-                        if (!['price', 'stock', 'name'].includes(key)) {
-                            keys.add(key);
-                        }
-                    });
-                    return Array.from(keys);
+                    const toRemove = ['price', 'stock', 'name'];
+                    return this.sku_keys.filter(item => !toRemove.includes(item));
+                }
+            },
+            mounted() {
+                if (Object.keys(data.skus).length) {
+                    const sku_keys = this.getKeysOfFirstObject(data.skus);
+                    const toRemove = ['price', 'stock', 'name'];
+                    this.sku_keys = sku_keys.filter(item => !toRemove.includes(item));
+                } else if (data.options.length) {
+                    this.sku_keys = data.options[0].attrs;
                 }
             },
             methods: {
+                getKeysOfFirstObject(obj) {
+                    const firstKey = Object.keys(obj)[0];
+                    const firstObj = obj[firstKey];
+
+                    if (typeof firstObj === 'object' && firstObj !== null) {
+                        return Object.keys(firstObj);
+                    }
+
+                    return [];
+                },
                 getCombinationKey(sku) {
                     return this.attributeKeys.map(k => sku[k] || "").join("||").toLowerCase();
                 },
@@ -157,10 +175,28 @@
                     return true;
                 },
                 addSku() {
-                    this.validateAndSaveSku(false);
+                    if (this.validateAndSaveSku(false)) {
+                        this.submitSkus();
+                    }
                 },
                 updateSku() {
-                    this.validateAndSaveSku(true);
+                    if (
+                        this.validateAndSaveSku(true)) {
+                        this.submitSkus();
+                    }
+                },
+                removeSku(id) {
+                    if (!confirm('确认删除该属性集合？')) {
+                        return;
+                    }
+
+                    if (Object.keys(this.skus).length === 1) {
+                        alert("至少保留一个 SKU");
+                        return;
+                    };
+                    delete this.skus[id];
+
+                    this.submitSkus();
                 },
                 editSku(skuId) {
                     const sku = this.skus[skuId];
@@ -185,14 +221,8 @@
                     this.newSku = {};
                     this.duplicateWarning = false;
                 },
-                removeSku(id) {
-                    if (Object.keys(this.skus).length === 1) {
-                        alert("至少保留一个 SKU");
-                        return;
-                    };
-                    delete this.skus[id];
-                },
                 async submitSkus() {
+                    this.msg = null;
                     let res = await wnd_ajax_action("common/wnd_set_sku", {
                         "sku": this.skus, "post_id": data.post_id, "_wnd_sign": data.sign
                     });
@@ -205,5 +235,6 @@
                 });
             }
         }).mount("#sku-app");
+        vueInstances.push(app);
     }
 </script>
