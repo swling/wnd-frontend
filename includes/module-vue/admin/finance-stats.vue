@@ -7,7 +7,7 @@
 	</div>
 	<div class="tabs">
 		<ul>
-			<li :class="is_active('range','15')"><a @click="update_filter('range',15)">近15天</a></li>
+			<li :class="is_active('range','14')"><a @click="update_filter('range',14)">近2周</a></li>
 			<li :class="is_active('range','year')"><a @click="update_filter('range','year')">近12个月</a></li>
 		</ul>
 	</div>
@@ -19,7 +19,7 @@
 		const { shallowRef } = Vue;
 		const param = Object.assign({
 			paged: 1,
-			range: '15',
+			range: 14,
 			type: "recharge",
 		}, module_data);
 
