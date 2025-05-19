@@ -57,10 +57,14 @@
     {
         const parent = document.querySelector('#sku-keys-app').parentNode;
         const data = JSON.parse(JSON.stringify(module_data));
+        let groups = [{ name: '', attrs: [], editable: true }];
+        if (data.sku_keys.length) {
+            groups = data.sku_keys;
+        }
         const app = Vue.createApp({
             data() {
                 return {
-                    groups: data.sku_keys,
+                    groups: groups,
                     isSubmitting: false,
                     res: {},
                     msg: null
