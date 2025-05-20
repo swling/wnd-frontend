@@ -174,7 +174,7 @@
                     }
                     this.paymentInterface = res.data.interface;
                     wnd_inner_html("#payment-interface", this.paymentInterface);
-                    this.check_transaction(res.data.transaction.ID);
+                    this.check_transaction(res.data.transaction.slug);
                 },
                 check_order() {
                     if (this.quantity <= 0) {
@@ -200,13 +200,13 @@
 
                     return true;
                 },
-                check_transaction(transaction_id) {
-                    this.paymentChecker = setInterval(this.wnd_check_payment, 3000, transaction_id);
+                check_transaction(slug) {
+                    this.paymentChecker = setInterval(this.wnd_check_payment, 3000, slug);
                     document.removeEventListener("click", this.handleModalClose);
                     document.addEventListener("click", this.handleModalClose);
                 },
-                async wnd_check_payment(id) {
-                    let response = await wnd_query("wnd_get_transaction", { id: id });
+                async wnd_check_payment(slug) {
+                    let response = await wnd_query("wnd_get_transaction", { slug: slug });
 
                     if (response.data.status == "completed" || response.data.status == "paid") {
                         let title = document.querySelector("#payment-title");

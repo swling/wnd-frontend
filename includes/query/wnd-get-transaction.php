@@ -9,14 +9,15 @@ use Wnd\Model\Wnd_Transaction;
  * 若当前用户并非交易发起者，且非超级管理员，则仅返回状态值
  *
  * @since 2023.10.30
+ * @since 0.9.89.5 修改为按 slug 查询，为匿名查询订单提供准备
  */
 class Wnd_Get_Transaction extends Wnd_Query {
 
 	protected static function query($args = []): array {
-		$id          = (int) ($args['id'] ?? 0);
-		$transaction = Wnd_Transaction::query_db(['ID' => $id]);
+		$slug        = $args['slug'] ?? '';
+		$transaction = Wnd_Transaction::query_db(['slug' => $slug]);
 		if (!$transaction) {
-			throw new Exception('Invalid Transaction ID');
+			throw new Exception('Invalid Transaction Slug');
 		}
 
 		// 产品 url
