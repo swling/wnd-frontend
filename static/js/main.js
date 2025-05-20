@@ -1028,3 +1028,114 @@ document.addEventListener('click', function (e) {
         return;
     }
 });
+
+/**
+ * 以 class 的方式编写 Vue 代码
+ * 旨在方便继承代码
+ * @link https://chatgpt.com/c/67fe0928-bb08-8004-9dae-ab8c2132efc7
+ */
+class VueClass {
+    // 将类转换为 Vue 组件对象
+    toVueComponent() {
+        const self = this;
+        return {
+            template: this.template,
+            data() {
+                return self.data();
+            },
+            methods: self.methods(),
+            watch: self.watch(),
+            computed: self.computed(),
+            components: self.components(),
+            created() {
+                self.created.call(this);
+            },
+            mounted() {
+                self.mounted.call(this);
+            },
+            updated() {
+                self.updated.call(this);
+            },
+            beforeUnmount() {
+                self.beforeUnmount.call(this);
+            },
+        };
+    }
+
+    // 自动扫描本类中所有方法，排除 vue 固有方法后，作为 methods，其中方法中的 this 仍为 vue 实例 （by ChatGPT）
+    methods() {
+        const out = {};
+        const visited = new Set();
+        const reserved = new Set([
+            'constructor', 'data', 'methods', 'watch', 'components', 'template',
+            'created', 'mounted', 'updated', 'beforeMount', 'beforeUpdate',
+            , 'beforeUnmount', 'unmounted', 'toVueComponent', 'unmount'
+        ]);
+
+        let proto = Object.getPrototypeOf(this);
+        while (proto && proto !== Object.prototype) {
+            const names = Object.getOwnPropertyNames(proto);
+            for (const name of names) {
+                if (visited.has(name)) continue; // 防止子类覆盖父类后又重复注册
+                if (reserved.has(name)) continue;
+
+                const descriptor = Object.getOwnPropertyDescriptor(proto, name);
+                if (typeof descriptor.value === 'function') {
+                    visited.add(name);
+                    out[name] = function (...args) {
+                        return descriptor.value.apply(this, args); // `this` 是 Vue 实例
+                    };
+                }
+            }
+
+            proto = Object.getPrototypeOf(proto); // 往上递归
+        }
+
+        return out;
+    }
+
+    // 定义 vue 数据
+    data() {
+        return {}
+    }
+
+    // 生命周期钩子
+    created() { }
+
+    mounted() { }
+
+    beforeUnmount() { }
+
+    updated() { }
+
+    // 注册的子组件
+    components() {
+        return {};
+    }
+
+    // 监听器
+    // watch() {
+    //     return {
+    //         post: {
+    //             handler(newVal) {
+    //                 console.log(newVal.ID);
+    //             },
+    //             deep: true // 启用深度监听
+    //         }
+    //     };
+    // }
+    watch() { }
+
+    // computed() {
+    //     return {
+    //         fullName() {
+    //             rreturn this.post.post_title;
+    //         },
+
+    //         nameLength() {
+    //             return this.fullName.length;
+    //         }
+    //     };
+    // }
+    computed() { }
+}

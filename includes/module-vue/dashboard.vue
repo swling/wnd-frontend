@@ -158,7 +158,6 @@
 			load_module: async function (module, params = {}) {
 				await this.destroyAllVueApps();
 
-				this.expandMatchingMenu();
 				if ('post_form' == module) {
 					module = 'post/wnd_post_form_vue';
 					if ("undefined" == typeof FormComponent) {
@@ -184,6 +183,8 @@
 				}
 				// 必须在对比之后再赋值
 				this.currentModule = module;
+				// 匹配菜单
+				this.expandMatchingMenu();
 				if (module) {
 					this.load_module(module, params);
 				} else {

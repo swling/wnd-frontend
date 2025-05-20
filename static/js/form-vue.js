@@ -935,7 +935,9 @@ const PaidContent = {
 
 // ********************************* Vue 实例
 // https://chatgpt.com/c/67fe0928-bb08-8004-9dae-ab8c2132efc7
-class FormComponent {
+class PostFormComponent extends VueClass {
+
+    action = "post/wnd_insert_post";
 
     // dom APP 挂载点的父节点（动态调整高度需要）
     parent_node = null;
@@ -944,73 +946,34 @@ class FormComponent {
     template = ``;
 
     constructor(container) {
+        super(container); // 格式要求，必须
         this.parent_node = document.querySelector(container).parentNode;
     }
 
-    // 定义 vue 数据
-    data() { }
-
-    // 将类转换为 Vue 组件对象
-    toVueComponent() {
-        const self = this;
+    // 默认数据：包含 post 主题，meta合集。缩略图，文件 ID 和 URL
+    data() {
         return {
-            template: this.template,
-            data() {
-                return self.data();
-            },
-            methods: self.methods(),
-            watch: self.watch(),
-            computed: self.computed(),
-            components: self.components(),
-            created() {
-                self.created.call(this);
-            },
-            mounted() {
-                self.mounted.call(this);
-            },
-            updated() {
-                self.updated.call(this);
-            },
-            beforeUnmount() {
-                self.beforeUnmount.call(this);
-            },
+            res: {},
+            post: {},
+            meta: {},
+            thumbnail: "",
+            file_id: 0,
+            file_url: "",
+
+            parent_node: this.parent_node,
+            action: this.action,
+
+            loading: true,
+            submitting: false,
+            submit_res: {},
+
+            has_error: false,
+            link: "",
+            msg: "",
+
+            wnd: wnd
         };
     }
-
-    // 自动扫描本类中所有方法，排除 vue 固有方法后，作为 methods，其中方法中的 this 仍为 vue 实例 （by ChatGPT）
-    methods() {
-        const out = {};
-        const visited = new Set();
-        const reserved = new Set([
-            'constructor', 'data', 'methods', 'watch', 'components', 'template',
-            'created', 'mounted', 'updated', 'beforeMount', 'beforeUpdate',
-            , 'beforeUnmount', 'unmounted', 'toVueComponent', 'unmount'
-        ]);
-
-        let proto = Object.getPrototypeOf(this);
-        while (proto && proto !== Object.prototype) {
-            const names = Object.getOwnPropertyNames(proto);
-            for (const name of names) {
-                if (visited.has(name)) continue; // 防止子类覆盖父类后又重复注册
-                if (reserved.has(name)) continue;
-
-                const descriptor = Object.getOwnPropertyDescriptor(proto, name);
-                if (typeof descriptor.value === 'function') {
-                    visited.add(name);
-                    out[name] = function (...args) {
-                        return descriptor.value.apply(this, args); // `this` 是 Vue 实例
-                    };
-                }
-            }
-
-            proto = Object.getPrototypeOf(proto); // 往上递归
-        }
-
-        return out;
-    }
-
-    // 生命周期钩子
-    created() { }
 
     mounted() {
         this.get_data();
@@ -1037,32 +1000,6 @@ class FormComponent {
             PaidContent,
         };
     }
-
-    // 监听器
-    // watch() {
-    //     return {
-    //         post: {
-    //             handler(newVal) {
-    //                 console.log(newVal.ID);
-    //             },
-    //             deep: true // 启用深度监听
-    //         }
-    //     };
-    // }
-    watch() { }
-
-    // computed() {
-    //     return {
-    //         fullName() {
-    //             rreturn this.post.post_title;
-    //         },
-
-    //         nameLength() {
-    //             return this.fullName.length;
-    //         }
-    //     };
-    // }
-    computed() { }
 
     updated() {
         this.$nextTick(() => {
@@ -1107,41 +1044,6 @@ class FormComponent {
         e.target.style.height = 'auto';
         // 再将高度设置为内容的高度
         e.target.style.height = e.target.scrollHeight + 'px';
-    }
-
-    // 原始方法（业务逻辑）这里的 this 为 Vue 实例。将 methods 中的方法抽离出来的原因是，方便子类针对性重写
-    async get_data() { }
-
-    async submit_data() { }
-}
-
-class PostFormComponent extends FormComponent {
-
-    action = "post/wnd_insert_post";
-
-    // 默认数据：包含 post 主题，meta合集。缩略图，文件 ID 和 URL
-    data() {
-        return {
-            res: {},
-            post: {},
-            meta: {},
-            thumbnail: "",
-            file_id: 0,
-            file_url: "",
-
-            parent_node: this.parent_node,
-            action: this.action,
-
-            loading: true,
-            submitting: false,
-            submit_res: {},
-
-            has_error: false,
-            link: "",
-            msg: "",
-
-            wnd: wnd
-        };
     }
 
     // 原始方法（业务逻辑）这里的 this 为 Vue 实例。将 methods 中的方法抽离出来的原因是，方便子类针对性重写
@@ -1255,7 +1157,13 @@ class PostFormComponent extends FormComponent {
     }
 
     onKeydown(event) {
-        super.onKeydown(event);
+        const isCmdOrCtrl = event.metaKey || event.ctrlKey;
+        if (isCmdOrCtrl && event.key === "Enter") {
+            event.preventDefault();
+            this.handle_submit();
+            return;
+        }
+
         if (event.key === "F8") {
             event.preventDefault();
             this.submit_res = {};
