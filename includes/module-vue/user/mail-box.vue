@@ -1,4 +1,4 @@
-<div id="vue-mail-list-app">
+<div id="vue-mail-box-app">
 	<div class="wnd-filter-tabs mb-3">
 		<div v-for="tab in tabs" class="columns is-vcentered is-mobile">
 			<div class="column tabs">
@@ -37,121 +37,92 @@
 	<nav class="pagination is-centered">
 		<ul class="pagination-list">
 			<li v-if="param.paged >= 2">
-				<a class="pagination-previous" @click="update_filter('paged', --param.paged)">←</a>
+				<a class="pagination-previous" @click="update_filter('paged', +param.paged -1 )">←</a>
 			</li>
 			<li v-if="data.number >= param.number">
-				<a class="pagination-next" @click="update_filter('paged', ++param.paged)">→</a>
+				<a class="pagination-next" @click="update_filter('paged', +param.paged + 1)">→</a>
 			</li>
 		</ul>
 	</nav>
 </div>
 <script>
 	{
-		const parent = document.querySelector("#vue-mail-list-app").parentNode;
-		const param = Object.assign({
-			number: 20,
-			paged: 1,
-			status: "any",
-		}, module_data.param);
-		const option = {
+		class App_Filter extends Filter {
 			data() {
-				return {
-					param: param,
+				const data = {
 					data: { "results": [] },
 					details: {},
 					tabs: module_data.tabs,
 				}
-			},
-			methods: {
-				update_filter: function (key, value, remove_args = []) {
-					if (value) {
-						this.param[key] = value;
-					} else {
-						delete this.param[key];
-					}
-					if (remove_args) {
-						remove_args.forEach((key) => {
-							delete this.param[key];
-						});
-					}
-					// 非 翻页的其他查询，则重置页面
-					if ("paged" != key) {
-						this.param.paged = 1;
-					}
 
-					wnd_update_url_hash(this.param, ['ajax_type']);
-					this.query();
-				},
-				query: async function () {
-					let res = await wnd_query("wnd_mails", this.param, {
-						"Container": "#lists"
-					});
+				const base = super.data();
+				return { ...base, ...data };
+			}
+			async query() {
+				let res = await wnd_query("wnd_mails", this.param, {
+					"Container": "#lists"
+				});
 
-					wnd_loading("#lists", true);
-					this.data = res.data;
-				},
-				get_detail: async function (id, index) {
-					if (this.details[id]) {
-						this.details[id].hidden = !this.details[id].hidden;
-						return;
-					}
-
-					let res = await wnd_query("wnd_get_mail", { "id": id });
-					if (1 == res.status) {
-						this.details[id] = res.data;
-						// 标记为已读
-						this.data.results[index].status = "read";
-					}
-				},
-				show_detail: function (obj) {
-					if (!obj) {
-						return '';
-					}
-					return obj.content;
-				},
-				is_active: function (key, value) {
-					return this.param[key] == value ? "is-active" : "";
-				},
-				get_status_class: function (obj) {
-					return "completed" == obj.status ? "has-text-primary" : "";
-				},
-				timeToString: function (timestamp) {
-					return wnd_time_to_string(timestamp);
-				},
-				toggleAll(event) {
-					this.allSelected = event.target.checked;
-				},
-				toggleSelection() {
-					this.data.results.forEach(item => {
-						item.selected = !item.selected;
-					});
+				wnd_loading("#lists", true);
+				this.data = res.data;
+			}
+			async get_detail(id, index) {
+				if (this.details[id]) {
+					this.details[id].hidden = !this.details[id].hidden;
+					return;
 				}
-			},
-			computed: {
-				allSelected: {
-					get() {
-						return this.data.results.every(item => item.selected);
+
+				let res = await wnd_query("wnd_get_mail", { "id": id });
+				if (1 == res.status) {
+					this.details[id] = res.data;
+					// 标记为已读
+					this.data.results[index].status = "read";
+				}
+			}
+			show_detail(obj) {
+				if (!obj) {
+					return '';
+				}
+				return obj.content;
+			}
+			get_status_class(obj) {
+				return "read" == obj.status ? "has-text-primary" : "";
+			}
+			timeToString(timestamp) {
+				return wnd_time_to_string(timestamp);
+			}
+			toggleAll(event) {
+				this.allSelected = event.target.checked;
+			}
+			toggleSelection() {
+				this.data.results.forEach(item => {
+					item.selected = !item.selected;
+				});
+			}
+			computed() {
+				return {
+					allSelected: {
+						get() {
+							return this.data.results.every(item => item.selected);
+						},
+						set(value) {
+							this.data.results.forEach(item => {
+								item.selected = value;
+							});
+						}
 					},
-					set(value) {
-						this.data.results.forEach(item => {
-							item.selected = value;
-						});
+					selectedItems() {
+						return this.data.results.filter(item => item.selected).map(item => item.ID);
 					}
-				},
-				selectedItems() {
-					return this.data.results.filter(item => item.selected).map(item => item.ID);
 				}
-			},
-			mounted() {
-				this.query();
-			},
-			updated() {
-				funTransitionHeight(parent, trs_time);
 			}
 		}
 
-		const app = Vue.createApp(option);
-		app.mount('#vue-mail-list-app');
+		const container = "#vue-mail-box-app";
+		const custom = new App_Filter(container);
+		const vueComponent = custom.toVueComponent();
+		const app = Vue.createApp(vueComponent);
+		app.mount(container);
 		vueInstances.push(app);
 	}
 </script>

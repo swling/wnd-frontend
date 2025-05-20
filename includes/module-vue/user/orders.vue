@@ -25,7 +25,7 @@
 		color: #48c78e;
 	}
 </style>
-<div id="vue-finance-list-app">
+<div id="vue-orders-app">
 	<div v-if="panel" v-html="panel"></div>
 	<div class="wnd-filter-tabs mb-3">
 		<div v-for="tab in tabs" class="columns is-marginless is-vcentered is-mobile">
@@ -125,141 +125,109 @@
 	<nav class="pagination is-centered">
 		<ul class="pagination-list">
 			<li v-if="param.paged >= 2">
-				<a class="pagination-previous" @click="update_filter('paged', --param.paged)">←</a>
+				<a class="pagination-previous" @click="update_filter('paged', +param.paged - 1)">←</a>
 			</li>
 			<li v-if="data.number >= param.number">
-				<a class="pagination-next" @click="update_filter('paged', ++param.paged)">→</a>
+				<a class="pagination-next" @click="update_filter('paged', +param.paged + 1)">→</a>
 			</li>
 		</ul>
 	</nav>
 </div>
 <script>
 	{
-		const parent = document.querySelector("#vue-finance-list-app").parentNode;
-		const param = Object.assign({
-			number: 20,
-			paged: 1,
-			type: "order",
-		}, module_data.param);
-		const option = {
-			components: {
-				OrderShipManager
-			},
+		class App_Filter extends Filter {
 			data() {
-				return {
+				const data = {
 					panel: module_data.panel || null,
-					param: param,
 					data: { "results": [] },
 					details: {},
 					tabs: module_data.tabs,
 					is_manager: module_data.is_manager || false,
 				}
-			},
-			methods: {
-				update_filter: function (key, value, remove_args = []) {
-					if (value) {
-						this.param[key] = value;
-					} else {
-						delete this.param[key];
-					}
-					if (remove_args) {
-						remove_args.forEach((key) => {
-							delete this.param[key];
-						});
-					}
-					// 非 翻页的其他查询，则重置页面
-					if ("paged" != key) {
-						this.param.paged = 1;
-					}
-					wnd_update_url_hash(this.param, ['ajax_type']);
-					this.query();
-				},
-				query: async function () {
-					let res = await wnd_query("wnd_transactions", this.param, {
-						"Container": "#lists"
-					});
 
-					wnd_loading("#lists", true);
-					this.data = res.data;
-				},
-				delete_transaction: async function (id, index) {
-					if (!confirm("确认删除？")) {
-						return;
-					}
-					const res = await wnd_ajax_action("common/wnd_delete_transaction", { "id": id });
-					if (res.status > 0) {
-						this.data.results.splice(index, 1); // 删除1个元素
-					} else {
-						wnd_alert_modal(`<div class="notification is-danger is-light">${res.msg}</div>`);
-					}
-				},
-				getDayClass(ts) {
-					const date = new Date(ts * 1000);
-					const now = new Date();
+				const base = super.data();
+				return { ...base, ...data };
+			}
 
-					const isSameDate = (d1, d2) =>
-						d1.getFullYear() === d2.getFullYear() &&
-						d1.getMonth() === d2.getMonth() &&
-						d1.getDate() === d2.getDate();
+			components() {
+				return { OrderShipManager };
+			}
 
-					const yesterday = new Date();
-					yesterday.setDate(now.getDate() - 1);
-
-					if (isSameDate(date, now)) {
-						return 'is-today';
-					} else if (isSameDate(date, yesterday)) {
-						return 'is-yesterday';
-					} else {
-						return '';
-					}
-				},
-				is_active: function (key, value) {
-					if (!value && !this.param[key]) {
-						return "is-active";
-					}
-					return this.param[key] == value ? "is-active" : "";
-				},
-				get_status_icon: function (item) {
-					switch (item.status) {
-						case 'pending':
-							// 待支付：强调等待付款
-							return `<span class="tag is-warning is-light"><i class="fas fa-hourglass-start mr-1"></i>待支付</span>`;
-						case 'paid':
-							// 待发货：用户已付款，等待商家操作
-							return `<span class="tag is-info is-light"><i class="fas fa-box-open mr-1"></i>待发货</span>`;
-						case 'shipped':
-							// 已发货：商品在运输中
-							return `<span class="tag is-primary is-light"><i class="fas fa-truck mr-1"></i>已发货</span>`;
-						case 'completed':
-							// 已完成：交易成功
-							return `<span class="tag is-success is-light"><i class="fas fa-check-circle mr-1"></i>已完成</span>`;
-						case 'refunded':
-							// 已退款：用户收到退款
-							return `<span class="tag is-danger is-light"><i class="fas fa-undo-alt mr-1"></i>已退款</span>`;
-						case 'closed':
-							// 已关闭：订单作废或取消
-							return `<span class="tag is-dark is-light"><i class="fas fa-times-circle mr-1"></i>已关闭</span>`;
-						default:
-							// 未知状态
-							return `<span class="tag is-danger"><i class="fas fa-question-circle mr-1"></i>未知：${item.status}</span>`;
-					}
-				},
-				timeToString: function (timestamp) {
-					return wnd_time_to_string(timestamp);
-				},
-			},
-			mounted() {
-				this.query();
-			},
-			updated() {
-				this.$nextTick(() => {
-					funTransitionHeight(parent, trs_time);
+			async query() {
+				let res = await wnd_query("wnd_transactions", this.param, {
+					"Container": "#lists"
 				});
+
+				wnd_loading("#lists", true);
+				this.data = res.data;
+			}
+			async delete_transaction(id, index) {
+				if (!confirm("确认删除？")) {
+					return;
+				}
+				const res = await wnd_ajax_action("common/wnd_delete_transaction", { "id": id });
+				if (res.status > 0) {
+					this.data.results.splice(index, 1); // 删除1个元素
+				} else {
+					wnd_alert_modal(`<div class="notification is-danger is-light">${res.msg}</div>`);
+				}
+			}
+			getDayClass(ts) {
+				const date = new Date(ts * 1000);
+				const now = new Date();
+
+				const isSameDate = (d1, d2) =>
+					d1.getFullYear() === d2.getFullYear() &&
+					d1.getMonth() === d2.getMonth() &&
+					d1.getDate() === d2.getDate();
+
+				const yesterday = new Date();
+				yesterday.setDate(now.getDate() - 1);
+
+				if (isSameDate(date, now)) {
+					return 'is-today';
+				} else if (isSameDate(date, yesterday)) {
+					return 'is-yesterday';
+				} else {
+					return '';
+				}
+			}
+
+			get_status_icon(item) {
+				switch (item.status) {
+					case 'pending':
+						// 待支付：强调等待付款
+						return `<span class="tag is-warning is-light"><i class="fas fa-hourglass-start mr-1"></i>待支付</span>`;
+					case 'paid':
+						// 待发货：用户已付款，等待商家操作
+						return `<span class="tag is-info is-light"><i class="fas fa-box-open mr-1"></i>待发货</span>`;
+					case 'shipped':
+						// 已发货：商品在运输中
+						return `<span class="tag is-primary is-light"><i class="fas fa-truck mr-1"></i>已发货</span>`;
+					case 'completed':
+						// 已完成：交易成功
+						return `<span class="tag is-success is-light"><i class="fas fa-check-circle mr-1"></i>已完成</span>`;
+					case 'refunded':
+						// 已退款：用户收到退款
+						return `<span class="tag is-danger is-light"><i class="fas fa-undo-alt mr-1"></i>已退款</span>`;
+					case 'closed':
+						// 已关闭：订单作废或取消
+						return `<span class="tag is-dark is-light"><i class="fas fa-times-circle mr-1"></i>已关闭</span>`;
+					default:
+						// 未知状态
+						return `<span class="tag is-danger"><i class="fas fa-question-circle mr-1"></i>未知：${item.status}</span>`;
+				}
+			}
+			timeToString(timestamp) {
+				return wnd_time_to_string(timestamp);
 			}
 		}
 
-		const app = Vue.createApp(option);
-		app.mount('#vue-finance-list-app');
+		const container = "#vue-orders-app";
+		const custom = new App_Filter(container);
+		const vueComponent = custom.toVueComponent();
+		const app = Vue.createApp(vueComponent);
+		app.mount(container);
 		vueInstances.push(app);
 	}
 </script>

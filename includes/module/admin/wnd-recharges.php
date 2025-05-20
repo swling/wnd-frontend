@@ -16,7 +16,7 @@ class Wnd_Recharges extends Wnd_Orders {
 			'label'   => __('状态', 'wnd'),
 			'key'     => 'status',
 			'options' => [
-				__('全部', 'wnd')  => '',
+				__('全部', 'wnd')  => 'any',
 				__('已完成', 'wnd') => Wnd_Transaction::$completed_status,
 				__('待付款', 'wnd') => Wnd_Transaction::$pending_status,
 				__('已关闭', 'wnd') => Wnd_Transaction::$closed_status,

@@ -1065,8 +1065,9 @@ class FormComponent {
     computed() { }
 
     updated() {
-        // console.log("updated");
-        funTransitionHeight(this.parent_node, trs_time);
+        this.$nextTick(() => {
+            funTransitionHeight(this.parent_node, trs_time);
+        });
     }
 
     handle_submit() {

@@ -162,6 +162,179 @@ const OrderShipManager = {
 };
 
 /**
+ * const custom = new MyPageEditor("#app-post-form");
+ * const vueComponent = custom.toVueComponent();
+ * const app = Vue.createApp(vueComponent);
+ * 
+ * 监听 hash 变动，并将其转为 Vue  data 中的 this.param
+ * wach param 变动，并触发 Vue 中的 this.query() 方法
+ * methods 方法中的 this 指向 vue 实例；data 中的 this 指向 class
+ */
+class Filter {
+
+	// dom APP 挂载点的父节点（动态调整高度需要）
+	parent_node = null;
+
+	// string 组件模板：留空则使用挂载点内部 dom
+	template = ``;
+
+	// 初始参数
+	init_param = Object.assign({
+		number: 20,
+		paged: 1,
+	}, module_data.param);
+
+	constructor(container) {
+		this.parent_node = document.querySelector(container).parentNode;
+	}
+
+	// 定义 vue 数据
+	data() {
+		return {
+			init_param: this.init_param,
+			param: structuredClone(this.init_param),
+			parent_node: this.parent_node,
+		}
+	}
+
+	// 将类转换为 Vue 组件对象
+	toVueComponent() {
+		const self = this;
+		return {
+			template: this.template,
+			data() {
+				return self.data();
+			},
+			methods: self.methods(),
+			watch: self.watch(),
+			computed: self.computed(),
+			components: self.components(),
+			created() {
+				self.created.call(this);
+			},
+			mounted() {
+				self.mounted.call(this);
+			},
+			updated() {
+				self.updated.call(this);
+			},
+			beforeUnmount() {
+				self.beforeUnmount.call(this);
+			},
+		};
+	}
+
+	// 自动扫描本类中所有方法，排除 vue 固有方法后，作为 methods，其中方法中的 this 仍为 vue 实例 （by ChatGPT）
+	methods() {
+		const out = {};
+		const visited = new Set();
+		const reserved = new Set([
+			'constructor', 'data', 'methods', 'watch', 'components', 'template',
+			'created', 'mounted', 'updated', 'beforeMount', 'beforeUpdate',
+			, 'beforeUnmount', 'unmounted', 'toVueComponent', 'unmount'
+		]);
+
+		let proto = Object.getPrototypeOf(this);
+		while (proto && proto !== Object.prototype) {
+			const names = Object.getOwnPropertyNames(proto);
+			for (const name of names) {
+				if (visited.has(name)) continue; // 防止子类覆盖父类后又重复注册
+				if (reserved.has(name)) continue;
+
+				const descriptor = Object.getOwnPropertyDescriptor(proto, name);
+				if (typeof descriptor.value === 'function') {
+					visited.add(name);
+					out[name] = function (...args) {
+						return descriptor.value.apply(this, args); // `this` 是 Vue 实例
+					};
+				}
+			}
+
+			proto = Object.getPrototypeOf(proto); // 往上递归
+		}
+
+		return out;
+	}
+
+	// 生命周期钩子
+	created() { }
+	components() { }
+	computed() { }
+
+	mounted() {
+		this.query();
+		window.addEventListener("hashchange", this.parseHash);
+	}
+
+	beforeUnmount() {
+		console.log("触发销毁：vue class");
+		window.removeEventListener("hashchange", this.parseHash);
+	}
+
+	watch() {
+		return {
+			param: {
+				handler(newVal, oldVal) {
+					this.query();
+				},
+				deep: true // 启用深度监听
+			}
+		};
+	}
+	updated() {
+		this.$nextTick(() => {
+			funTransitionHeight(this.parent_node, trs_time);
+		});
+	}
+
+	// 原始方法（业务逻辑）这里的 this 为 Vue 实例。将 methods 中的方法抽离出来的原因是，方便子类针对性重写
+	parseHash() {
+		const hash = window.location.hash.slice(1);
+		const params = new URLSearchParams(hash);
+		const obj = {};
+		for (const [key, value] of params.entries()) {
+			obj[key] = value;
+		}
+		delete obj.module;
+
+		this.param = Object.keys(obj).length ? obj : this.init_param;
+	}
+
+	update_filter(key, value, remove_args = []) {
+		const param = JSON.parse(JSON.stringify(this.param));
+		if (value) {
+			param[key] = value;
+		} else {
+			delete param[key];
+		}
+		if (remove_args) {
+			remove_args.forEach((key) => {
+				delete param[key];
+			});
+		}
+		// 非 翻页的其他查询，则重置页面
+		if ("paged" != key && param.paged) {
+			param.paged = "1";
+		}
+		// 参数重复时，无法触发 hash 变化，但仍然应该响应用户的点击（此时：点击 = 刷新）
+		if (JSON.stringify(param) === JSON.stringify(this.param)) {
+			return this.query();
+		}
+		wnd_update_url_hash(param, ['ajax_type']);
+	}
+
+	is_active(key, value) {
+		if (!this.param[key]) {
+			return 'any' == value ? "is-active" : "";
+		}
+		return this.param[key] == value ? "is-active" : "";
+	}
+
+	async query() { }
+}
+
+
+/**
  *@since 0.9.88
  *通过参数更新 url hash
  */

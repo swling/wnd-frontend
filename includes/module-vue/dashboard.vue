@@ -158,10 +158,7 @@
 			load_module: async function (module, params = {}) {
 				await this.destroyAllVueApps();
 
-				this.currentModule = module;
-				this.hashParams = params;
 				this.expandMatchingMenu();
-
 				if ('post_form' == module) {
 					module = 'post/wnd_post_form_vue';
 					if ("undefined" == typeof FormComponent) {
@@ -179,12 +176,14 @@
 				const module = hashObj.module || '';
 				const params = hashObj;
 				delete params.module;
+				this.hashParams = params;
 
 				// 阻止点击事件已经触发后的重复请求
 				if (module && module == this.currentModule && 'post_form' != module) {
 					return;
 				}
-
+				// 必须在对比之后再赋值
+				this.currentModule = module;
 				if (module) {
 					this.load_module(module, params);
 				} else {
@@ -211,6 +210,11 @@
 			navigate(item) {
 				if (this.isMobile) {
 					this.sidebarOpen = false;
+				}
+
+				// hashParams 已清空时重复点击菜单，Module Vue App 内无法刷新数据以响应点击，故此设置重复加载（刷新）
+				if (this.currentModule == item.hash) {
+					this.load_module(item.hash);
 				}
 
 				if (item.hash) {

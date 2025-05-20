@@ -24,7 +24,7 @@ class Wnd_Orders extends Wnd_Module_Vue {
 			'label'   => __('状态', 'wnd'),
 			'key'     => 'status',
 			'options' => [
-				__('全部', 'wnd')  => '',
+				__('全部', 'wnd')  => 'any',
 				__('已完成', 'wnd') => Wnd_Transaction::$completed_status,
 				__('待付款', 'wnd') => Wnd_Transaction::$pending_status,
 				__('待发货', 'wnd') => Wnd_Transaction::$paid_status,

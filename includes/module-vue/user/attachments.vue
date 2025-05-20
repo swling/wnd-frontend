@@ -16,7 +16,7 @@
 	<div id="lists">
 		<div v-for="(item, index) in data.results" class="columns is-multiline is-marginless is-justify-content-space-between" style="border-top: 1px dotted #CCC;">
 			<div class="column is-narrow">
-				<div class="is-pulled-left mr-3" :class="get_status_class(item)">
+				<div class="is-pulled-left mr-3">
 					<input type="checkbox" v-model="item.selected" class="mr-1">
 					{{item.file_path}}
 				</div>
@@ -37,111 +37,80 @@
 	<nav class="pagination is-centered">
 		<ul class="pagination-list">
 			<li v-if="param.paged >= 2">
-				<a class="pagination-previous" @click="update_filter('paged', --param.paged)">←</a>
+				<a class="pagination-previous" @click="update_filter('paged', +param.paged -1 )">←</a>
 			</li>
 			<li v-if="data.number >= param.number">
-				<a class="pagination-next" @click="update_filter('paged', ++param.paged)">→</a>
+				<a class="pagination-next" @click="update_filter('paged', +param.paged + 1)">→</a>
 			</li>
 		</ul>
 	</nav>
 </div>
 <script>
 	{
-		const parent = document.querySelector("#vue-attachments-app").parentNode;
-		const vue_param = Object.assign({
-			number: 20,
-			paged: 1,
-			user_id: 'any'
-		}, module_data.param);
-		const option = {
+		class App_Filter extends Filter {
 			data() {
-				return {
-					param: vue_param,
+				const data = {
 					data: { "results": [] },
 					details: {},
 					tabs: module_data.tabs,
-				}
-			},
-			methods: {
-				update_filter: function (key, value, remove_args = []) {
-					if (value) {
-						this.param[key] = value;
-					} else {
-						delete this.param[key];
-					}
-					if (remove_args) {
-						remove_args.forEach((key) => {
-							delete this.param[key];
-						});
-					}
-					// 非 翻页的其他查询，则重置页面
-					if ("paged" != key) {
-						this.param.paged = 1;
-					}
+				};
 
-					this.query();
-				},
-				query: async function () {
-					let res = await wnd_query("wnd_attachments", this.param, {
-						"Container": "#lists"
-					});
-
-					wnd_loading("#lists", true);
-					this.data = res.data;
-				},
-				delete_attachment: async function (id, index) {
-					if (!confirm("Are you sure to delete this attachment?" + index)) {
-						return;
-					}
-					let res = await wnd_ajax_action("common/wnd_delete_file", { "file_id": id });
-					if (1 == res.status) {
-						this.data.results.splice(index, 1);
-
-					}
-				},
-				is_active: function (key, value) {
-					return this.param[key] == value ? "is-active" : "";
-				},
-				get_status_class: function (obj) {
-					return "completed" == obj.status ? "has-text-primary" : "";
-				},
-				timeToString: function (timestamp) {
-					return wnd_time_to_string(timestamp);
-				},
-				toggleAll(event) {
-					this.allSelected = event.target.checked;
-				},
-				toggleSelection() {
-					this.data.results.forEach(item => {
-						item.selected = !item.selected;
-					});
-				}
-			},
-			computed: {
-				allSelected: {
-					get() {
-						return this.data.results.every(item => item.selected);
+				const base = super.data();
+				return { ...base, ...data };
+			}
+			computed() {
+				return {
+					allSelected: {
+						get() {
+							return this.data.results.every(item => item.selected);
+						},
+						set(value) {
+							this.data.results.forEach(item => {
+								item.selected = value;
+							});
+						}
 					},
-					set(value) {
-						this.data.results.forEach(item => {
-							item.selected = value;
-						});
+					selectedItems() {
+						return this.data.results.filter(item => item.selected).map(item => item.ID);
 					}
-				},
-				selectedItems() {
-					return this.data.results.filter(item => item.selected).map(item => item.ID);
 				}
-			},
-			mounted() {
-				this.query();
-			},
-			updated() {
-				funTransitionHeight(parent, trs_time);
-			},
+			}
+			async query() {
+				let res = await wnd_query("wnd_attachments", this.param, {
+					"Container": "#lists"
+				});
+
+				wnd_loading("#lists", true);
+				this.data = res.data;
+			}
+			async delete_attachment(id, index) {
+				if (!confirm("Are you sure to delete this attachment?" + index)) {
+					return;
+				}
+				let res = await wnd_ajax_action("common/wnd_delete_file", { "file_id": id });
+				if (1 == res.status) {
+					this.data.results.splice(index, 1);
+
+				}
+			}
+			timeToString(timestamp) {
+				return wnd_time_to_string(timestamp);
+			}
+			toggleAll(event) {
+				this.allSelected = event.target.checked;
+			}
+			toggleSelection() {
+				this.data.results.forEach(item => {
+					item.selected = !item.selected;
+				});
+			}
 		}
 
-		const app = Vue.createApp(option);
-		app.mount('#vue-attachments-app');
+		const container = "#vue-attachments-app";
+		const custom = new App_Filter(container);
+		const vueComponent = custom.toVueComponent();
+		const app = Vue.createApp(vueComponent);
+		app.mount(container);
 		vueInstances.push(app);
 	}
 </script>
