@@ -23,7 +23,7 @@ class Wnd_Transactions extends Wnd_Query {
 
 	protected static function check() {
 		if (!is_user_logged_in()) {
-			throw new Exception(__('请登录', 'wnd'), 1);
+			throw new Exception(__('请登录', 'wnd'));
 		}
 	}
 

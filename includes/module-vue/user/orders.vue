@@ -72,10 +72,14 @@
 					</div>
 				</div>
 				<div class="level is-mobile">
-					<div class="level-left">
+					<div class="level-left tags">
 						<!-- 用户查看物流 -->
 						<template v-if="item.props.is_virtual < 1">
 							<i class="fas fa-truck mr-1"></i>运单：<span class="tag">{{item.props.express_no || `……`}}</span>
+							<span class="tag is-small is-warning is-clickable" @click="confirmReceipt(item,index)" v-if="`shipped`==item.status">
+								确认收货
+							</span>
+							<span v-if="`completed` == item.status" class="tag is-small is-success">已收货</span>
 						</template>
 					</div>
 					<div class="level-right">
@@ -160,6 +164,17 @@
 
 				wnd_loading("#lists", true);
 				this.data = res.data;
+			}
+			async confirmReceipt(item, index) {
+				if (!confirm("确认收货？")) {
+					return;
+				}
+				const res = await wnd_ajax_action("common/wnd_confirm_receipt", { "id": item.ID });
+				if (res.status > 0) {
+					this.data.results[index].status = res.data.status;
+				} else {
+					wnd_alert_modal(`<div class="notification is-danger is-light">${res.msg}</div>`);
+				}
 			}
 			async delete_transaction(id, index) {
 				if (!confirm("确认删除？")) {
