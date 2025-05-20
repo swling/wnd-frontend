@@ -69,7 +69,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 		// 过去十二个月初始化数据
 		$data  = [];
 		$today = new \DateTimeImmutable(get_option('timezone_string'));
-		for ($i = 12; $i >= 0; $i--) {
+		for ($i = 12; $i > 0; $i--) {
 			$date        = $today->modify('first day of -' . $i . ' month')->format('y-m');
 			$data[$date] = 0;
 		}
@@ -77,7 +77,7 @@ class Wnd_Site_Stats extends Wnd_Query {
 
 		// 查询过去十二个月交易统计posts
 		$today     = current_time('mysql');
-		$last_year = wnd_date('Y-m-d H:i:s', strtotime('-12 months', strtotime($today)));
+		$last_year = wnd_date('Y-m-d H:i:s', strtotime('-13 months', strtotime($today)));
 		$args      = [
 			'date_query'             => [
 				[
