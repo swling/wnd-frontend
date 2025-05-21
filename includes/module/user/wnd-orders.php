@@ -3,6 +3,7 @@ namespace Wnd\Module\User;
 
 use Exception;
 use Wnd\Model\Wnd_Transaction;
+use Wnd\Model\Wnd_Transaction_Anonymous;
 use Wnd\Module\Wnd_Module_Vue;
 
 /**
@@ -11,9 +12,10 @@ use Wnd\Module\Wnd_Module_Vue;
 class Wnd_Orders extends Wnd_Module_Vue {
 
 	protected static function parse_data(array $args = []): array {
-		$args['user_id'] = static::get_user_id($args);
-		$html            = '';
-		$html            = static::build_panel($args);
+		$user_id         = static::get_user_id($args);
+		$args['user_id'] = $user_id;
+		$args['type']    = $args['type'] ?? 'order';
+		$html            = $user_id ? static::build_panel($user_id) : '';
 
 		// 订单列表
 		$tabs = [
@@ -43,9 +45,8 @@ class Wnd_Orders extends Wnd_Module_Vue {
 		return ['param' => $args, 'tabs' => $tabs, 'panel' => $html];
 	}
 
-	private static function build_panel($args): string {
-		$user_id = static::get_user_id($args);
-		$html    = '<div id="user-finance-panel">';
+	private static function build_panel($user_id): string {
+		$html = '<div id="user-finance-panel">';
 		$html .= '<nav class="level is-mobile">';
 		$html .= '
 		<div class="level-item has-text-centered">
@@ -86,13 +87,13 @@ class Wnd_Orders extends Wnd_Module_Vue {
 		return $html;
 	}
 
-	private static function get_user_id(array $args) {
+	private static function get_user_id(array $args): int {
 		$user_id = get_current_user_id();
 		return wnd_is_manager() ? ($args['user_id'] ?? $user_id) : $user_id;
 	}
 
 	protected static function check($args) {
-		if (!is_user_logged_in()) {
+		if (!is_user_logged_in() and !Wnd_Transaction_Anonymous::get_anon_cookies()) {
 			throw new Exception(__('请登录', 'wnd'));
 		}
 	}

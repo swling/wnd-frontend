@@ -124,6 +124,7 @@
 	const dashboard = Vue.createApp({
 		data() {
 			return {
+				user_id: wnd_dashboard.user_id,
 				query_module: wnd_dashboard.module, // $_GET 请求 module
 				// title: 'Home',
 				// hash: '',
@@ -251,6 +252,9 @@
 				return this.windowWidth <= 1024;
 			},
 			hasMenuForModule() {
+				if (!this.user_id) {
+					return false;
+				}
 				return !this.query_module && 'post_form' != this.currentModule;
 			},
 		},

@@ -3,6 +3,7 @@
 namespace Wnd\Query;
 
 use Exception;
+use Wnd\Model\Wnd_Transaction_Anonymous;
 use Wnd\WPDB\Wnd_Attachment_DB;
 use Wnd\WPDB\Wnd_Transaction_DB;
 
@@ -21,24 +22,17 @@ use Wnd\WPDB\Wnd_Transaction_DB;
  */
 class Wnd_Transactions extends Wnd_Query {
 
-	protected static function check() {
-		if (!is_user_logged_in()) {
+	protected static function check($args = []) {
+		if (!is_user_logged_in() and !isset($args['slug']) and !Wnd_Transaction_Anonymous::get_anon_cookies()) {
 			throw new Exception(__('请登录', 'wnd'));
 		}
 	}
 
 	protected static function query($args = []): array {
-		$type    = $args['type'] ?? 'any';
-		$status  = $args['status'] ?? 'any';
-		$paged   = $args['paged'] ?? 1;
-		$number  = $args['number'] ?? get_option('posts_per_page');
-		$user_id = !is_super_admin() ? get_current_user_id() : ($args['user_id'] ?? 'any');
-
-		$where = [
-			'type'    => $type,
-			'status'  => $status,
-			'user_id' => $user_id,
-		];
+		$type   = $args['type'] ?? 'any';
+		$paged  = $args['paged'] ?? 1;
+		$number = $args['number'] ?? get_option('posts_per_page');
+		$where  = static::get_where($args);
 
 		$results = Wnd_Transaction_DB::get_instance()->get_results($where, ['limit' => $number, 'offset' => ($paged - 1) * $number]);
 
@@ -82,6 +76,46 @@ class Wnd_Transactions extends Wnd_Query {
 		}
 
 		return wnd_get_attachment_url($image_id);
+	}
+
+	private static function get_where($args) {
+		// 匿名：仅支持按 slug 查询，且限定为 匿名订单（优先从 $_GET，其次读取 cookies）
+		if (!is_user_logged_in()) {
+			if (isset($args['slug'])) {
+				$slugs = (string) $args['slug'];
+			} else {
+				$orders = Wnd_Transaction_Anonymous::get_anon_cookies();
+				$slugs  = $orders ? array_column($orders, 'value') : [];
+			}
+
+			// 约束 any
+			if (!$slugs or 'any' == $slugs) {
+				throw new Exception('Illegal slug: ' . $slugs);
+			}
+
+			return [
+				'slug'    => $slugs,
+				'type'    => (string) ($args['type'] ?? 'any'),
+				'status'  => (string) ($args['status'] ?? 'any'),
+				'user_id' => 0,
+			];
+		}
+
+		// 登录用户：查询自己的；管理员：查询任意用户
+		return [
+			'type'    => (string) ($args['type'] ?? 'any'),
+			'status'  => (string) ($args['status'] ?? 'any'),
+			'user_id' => (int) static::get_user_id($args),
+		];
+	}
+
+	private static function get_user_id(array $args) {
+		$current_user_id = get_current_user_id();
+		if (!wnd_is_manager()) {
+			return $current_user_id;
+		}
+
+		return $args['user_id'] ?? 'any';
 	}
 
 	// 统一查询对应的 posts，而非在 foreach 中逐个查询，后者会逐次执行多条 sql
