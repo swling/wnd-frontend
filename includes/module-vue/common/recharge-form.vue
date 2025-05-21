@@ -58,6 +58,10 @@
                     this.paymentMethod = method;
                 },
                 async submitOrder() {
+                    if (!wnd.user_id && !navigator.cookieEnabled) {
+                        alert("您的浏览器禁用了 cookie，不支持匿名支付！");
+                        return;
+                    }
 
                     const order = {
                         total_amount: this.amount ? this.amount.toFixed(2) : 0,

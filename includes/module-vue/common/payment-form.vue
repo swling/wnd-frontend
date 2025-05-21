@@ -177,6 +177,11 @@
                     this.check_transaction(res.data.transaction.slug);
                 },
                 check_order() {
+                    if (!wnd.user_id && !navigator.cookieEnabled) {
+                        alert("您的浏览器禁用了 cookie，不支持匿名支付！");
+                        return;
+                    }
+
                     if (this.quantity <= 0) {
                         alert("数量不能为 0");
                         return false;

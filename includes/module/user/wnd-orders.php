@@ -51,7 +51,7 @@ class Wnd_Orders extends Wnd_Module_Vue {
 		if (!$user_id) {
 			$html = '<div class="notification is-danger is-light">';
 			$html .= '<i class="fas fa-exclamation-circle"></i> ';
-			$html .= __('您当前尚未登录，请妥善保存订单信息！', 'wnd');
+			$html .= __('匿名支付，请妥善保存订单信息！', 'wnd');
 			$html .= '</div>';
 			return $html;
 		}

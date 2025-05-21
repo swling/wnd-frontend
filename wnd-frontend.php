@@ -70,6 +70,7 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 		'rest_url'           => get_rest_url(),
 		'rest_nonce'         => wp_create_nonce('wp_rest'),
 		'disable_rest_nonce' => wnd_get_config('disable_rest_nonce'),
+		'user_id'            => get_current_user_id(),
 		'module_api'         => 'module',
 		'action_api'         => 'action',
 		'query_api'          => 'query',
