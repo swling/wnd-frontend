@@ -156,17 +156,18 @@ abstract class Wnd_Payment {
 		$object_id = $this->transaction->get_object_id();
 		$type      = $this->transaction->get_type();
 
-		// 订单
-		if ($object_id) {
-			$url = get_permalink($object_id) ?: home_url();
-		} else {
-			$url = wnd_get_front_page_url() ?: home_url();
-		}
+		// 订单列表（支持展示匿名订单）
+		$url  = wnd_get_front_page_url();
+		$args = [
+			'module' => 'user/wnd_orders',
+			'type'   => $type,
+			'from'   => $this->transaction->get_payment_gateway(),
+		];
+		$url = add_query_arg($args, $url);
 
 		// Filter
 		$return_url = apply_filters('wnd_pay_return_url', $url, $type, $object_id);
-
-		header('Location:' . add_query_arg('from', $type . '_successful', $return_url));
+		header('Location:' . $return_url);
 		exit;
 	}
 

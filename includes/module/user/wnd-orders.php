@@ -8,6 +8,7 @@ use Wnd\Module\Wnd_Module_Vue;
 
 /**
  * @since 2019.02.18 封装用户财务中心
+ * 仅管理员可传参 user id 查询他人信息 @see static::get_user_id($args)
  */
 class Wnd_Orders extends Wnd_Module_Vue {
 
@@ -15,7 +16,7 @@ class Wnd_Orders extends Wnd_Module_Vue {
 		$user_id         = static::get_user_id($args);
 		$args['user_id'] = $user_id;
 		$args['type']    = $args['type'] ?? 'order';
-		$html            = $user_id ? static::build_panel($user_id) : '';
+		$html            = static::build_panel($user_id);
 
 		// 订单列表
 		$tabs = [
@@ -46,6 +47,15 @@ class Wnd_Orders extends Wnd_Module_Vue {
 	}
 
 	private static function build_panel($user_id): string {
+		// 匿名订单
+		if (!$user_id) {
+			$html = '<div class="notification is-danger is-light">';
+			$html .= '<i class="fas fa-exclamation-circle"></i> ';
+			$html .= __('您当前尚未登录，请妥善保存订单信息！', 'wnd');
+			$html .= '</div>';
+			return $html;
+		}
+
 		$html = '<div id="user-finance-panel">';
 		$html .= '<nav class="level is-mobile">';
 		$html .= '
