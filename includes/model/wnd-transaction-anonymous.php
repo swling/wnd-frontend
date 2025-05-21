@@ -13,7 +13,7 @@ class Wnd_Transaction_Anonymous {
 	private static $max_anon_orders = 20;
 
 	// 有效期（秒）
-	private static $valid_period = 3600 * 24;
+	private static $valid_period = 3600 * 24 * 30;
 
 	/**
 	 * 写入匿名支付订单 cookies

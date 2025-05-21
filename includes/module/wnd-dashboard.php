@@ -19,7 +19,7 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 
 	protected static function build(array $args = []): string {
 		$user_id        = get_current_user_id();
-		$default_module = $user_id ? 'user/wnd_user_overview' : 'user/wnd_user_center';
+		$default_module = $user_id ? 'user/wnd_user_overview' : 'user/wnd_login_form';
 		$defaults       = [
 			'menus'       => static::get_menus($args),
 			'admin_menus' => is_super_admin() ? static::get_admin_menus($args) : [],

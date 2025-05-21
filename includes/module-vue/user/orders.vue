@@ -59,7 +59,7 @@
 				</div>
 
 				<div class="product-item media mt-1">
-					<figure class="media-left">
+					<figure class="media-left" v-if="item.thumbnail">
 						<p class="image is-64x64">
 							<img class="product-image" :src="item.thumbnail" alt="商品图">
 						</p>
