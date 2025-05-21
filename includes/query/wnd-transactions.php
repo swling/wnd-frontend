@@ -39,34 +39,21 @@ class Wnd_Transactions extends Wnd_Query {
 		// 缓存产品订单：产品缩略图等信息
 		if ('order' == $type) {
 			$post_ids = array_map(fn($item) => $item->object_id, $results);
+			$post_ids = array_unique($post_ids);
+			static::cache_posts($post_ids);
 			static::cache_thumbnail($post_ids);
 		}
 
 		// 使用 array_map 对每个对象处理 props 字段
 		$converted = array_map(function ($item) {
-			$item->props     = json_decode($item->props);
-			$item->thumbnail = static::get_thumbnail($item->object_id);
+			$item->props      = json_decode($item->props);
+			$item->thumbnail  = static::get_thumbnail($item->object_id);
+			$item->object_url = get_permalink($item->object_id);
 			return $item;
 		}, $results);
 
 		global $wpdb;
 		return ['results' => $converted, 'number' => count($converted), 'sql' => $wpdb->queries];
-	}
-
-	private static function cache_thumbnail(array $post_ids) {
-		// 去重
-		$post_ids = array_unique($post_ids);
-
-		// 缓存 meta
-		update_meta_cache('post', $post_ids);
-
-		// 缓存 attachments 数据表
-		$image_ids = [];
-		foreach ($post_ids as $post_id) {
-			$image_ids[] = wnd_get_post_meta($post_id, '_thumbnail_id');
-		}
-		$image_ids = array_unique($image_ids);
-		Wnd_Attachment_DB::get_instance()->query_by_ids($image_ids);
 	}
 
 	private static function get_thumbnail(int $post_id) {
@@ -105,7 +92,7 @@ class Wnd_Transactions extends Wnd_Query {
 		return [
 			'type'    => (string) ($args['type'] ?? 'any'),
 			'status'  => (string) ($args['status'] ?? 'any'),
-			'user_id' => (int) static::get_user_id($args),
+			'user_id' => static::get_user_id($args),
 		];
 	}
 
@@ -119,8 +106,8 @@ class Wnd_Transactions extends Wnd_Query {
 	}
 
 	// 统一查询对应的 posts，而非在 foreach 中逐个查询，后者会逐次执行多条 sql
-	private static function get_posts(array $ids) {
-		$posts = get_posts([
+	private static function cache_posts(array $ids) {
+		return get_posts([
 			'post__in'               => $ids,
 			'orderby'                => 'post__in', // 保持传入顺序
 			'post_type'              => 'any',
@@ -129,4 +116,15 @@ class Wnd_Transactions extends Wnd_Query {
 			'update_post_term_cache' => false,
 		]);
 	}
+
+	// 缓存 attachments 数据表
+	private static function cache_thumbnail(array $post_ids) {
+		$image_ids = [];
+		foreach ($post_ids as $post_id) {
+			$image_ids[] = wnd_get_post_meta($post_id, '_thumbnail_id');
+		}
+		$image_ids = array_unique($image_ids);
+		Wnd_Attachment_DB::get_instance()->query_by_ids($image_ids);
+	}
+
 }
