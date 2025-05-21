@@ -34,8 +34,8 @@ class Wnd_Attachments extends Wnd_Query {
 		$user_id = !is_super_admin() ? get_current_user_id() : ($args['user_id'] ?? 'any');
 
 		$where = [
-			'type'    => $type,
-			'status'  => $status,
+			'type'    => (string) $type,
+			'status'  => (string) $status,
 			'user_id' => $user_id,
 		];
 
