@@ -66,7 +66,7 @@
 					</figure>
 					<div class="media-content is-size-7 has-text-grey">
 						<p><i class="fas fa-stopwatch mr-1"></i><a :href="item.object_url" target="_blank"><strong>{{item.subject}}</strong></a></p>
-						<p>规格：{{item.props.sku}}</p>
+						<p v-if="item.props.sku">规格：{{item.props.sku}}</p>
 						<p>数量：{{item.props.quantity}} 小计：<i class="fas fa-yen-sign"></i>{{item.total_amount}}</p>
 						<p v-if="is_manager">网络：{{item.props.ip}}</p>
 					</div>
