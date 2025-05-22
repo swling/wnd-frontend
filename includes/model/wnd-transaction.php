@@ -426,6 +426,20 @@ abstract class Wnd_Transaction {
 	}
 
 	/**
+	 * 获取 transaction 数据对象
+	 */
+	public function get_transaction_DB(): object {
+		return $this->transaction ?: new \stdClass;
+	}
+
+	/**
+	 * 获取 transaction props
+	 */
+	public function get_props(): object {
+		return json_decode($this->transaction->props) ?: new \stdClass;
+	}
+
+	/**
 	 * 获取WordPress order/recharge post ID
 	 */
 	public function get_transaction_id() {
