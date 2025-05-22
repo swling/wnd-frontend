@@ -21,7 +21,7 @@ class Wnd_Payment_Form extends Wnd_Module_Vue {
 	 * @since 0.8.76
 	 */
 	protected static function parse_data(array $args): array {
-
+		$user_id = get_current_user_id();
 		// 将数组元素依次定义为按键名命名的变量
 		$defaults = [
 			'post_id'    => 0,
@@ -33,10 +33,14 @@ class Wnd_Payment_Form extends Wnd_Module_Vue {
 		$args = wp_parse_args($args, $defaults);
 		extract($args);
 
-		$balance         = wnd_get_user_balance(get_current_user_id());
+		$balance         = wnd_get_user_balance($user_id);
 		$title           = get_the_title($post_id);
 		$payments        = Wnd_Payment_Getway::get_gateway_options();
 		$default_gateway = Wnd_Payment_Getway::get_default_gateway();
+
+		// 收货地址，确保为符合格式要求的数组
+		$receiver = (array) (wnd_get_user_meta($user_id, 'receiver') ?: []);
+		$receiver = array_merge(['name' => '', 'phone' => '', 'address' => ''], $receiver);
 
 		// 余额支付
 		if ($balance) {
@@ -67,6 +71,7 @@ class Wnd_Payment_Form extends Wnd_Module_Vue {
 			'default_gateway',
 			'msg',
 			'is_virtual',
+			'receiver',
 			'sign'
 		);
 	}

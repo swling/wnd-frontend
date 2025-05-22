@@ -40,9 +40,9 @@
         <div class="box mt-5" v-if="'1'!=isVirtual">
             <h3 class="title is-6 mb-3">收货信息</h3>
             <div class="columns">
-                <div class="column is-2">姓名<text-editor :pre_editing="true" v-model="receiver.name"></text-editor></div>
-                <div class="column is-2">电话<text-editor :pre_editing="true" v-model="receiver.phone"></text-editor></div>
-                <div class="column">地址<text-editor :pre_editing="true" v-model="receiver.address"></text-editor></div>
+                <div class="column is-2">姓名<text-editor :pre_editing="!receiver.name" v-model="receiver.name"></text-editor></div>
+                <div class="column is-2">电话<text-editor :pre_editing="!receiver.phone" v-model="receiver.phone"></text-editor></div>
+                <div class="column">地址<text-editor :pre_editing="!receiver.address" v-model="receiver.address"></text-editor></div>
             </div>
         </div>
 
@@ -80,12 +80,7 @@
                     userBalance: data.balance,
                     paymentMethod: data.default_gateway,
                     availableMethods: data.payments,
-
-                    receiver: {
-                        name: '',
-                        phone: '',
-                        address: ''
-                    },
+                    receiver: data.receiver,
 
                     // 模拟提交结果
                     paymentInterface: null,
@@ -157,6 +152,12 @@
                     if (!this.check_order()) {
                         return;
                     }
+
+                    // 保存用户收货地址
+                    if (wnd.user_id) {
+                        wnd_ajax_action("user/wnd_update_receiver", { "receiver": this.receiver });
+                    }
+
                     const order = {
                         post_id: this.postId,
                         sku_id: this.skuId,
