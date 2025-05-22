@@ -29,7 +29,7 @@ class Wnd_Menus_Side extends Wnd_Module_Html {
 			$html .= '&nbsp;';
 			$html .= wnd_modal_button('立即登录', 'user/wnd_user_center', ['do' => 'login'], 'is-outlined');
 		} else {
-			$html .= '<a class="button is-outlined" href="' . wnd_get_front_page_url() . '">' . __('用户中心', 'wnd') . '</a>';
+			$html .= '<a class="button is-outlined" href="' . wnd_get_dashboard_url() . '">' . __('用户中心', 'wnd') . '</a>';
 			$html .= '&nbsp;';
 			$html .= '<a href="' . wp_logout_url(wnd_home_url()) . '" title="退出" class="button is-outlined">' . __('退出账户', 'wnd') . '</a>';
 		}

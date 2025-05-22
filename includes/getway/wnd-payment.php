@@ -166,7 +166,7 @@ abstract class Wnd_Payment {
 				'type'   => $type,
 				'from'   => $this->transaction->get_payment_gateway(),
 			];
-			$url = add_query_arg($args, wnd_get_front_page_url());
+			$url = add_query_arg($args, wnd_get_dashboard_url());
 		}
 
 		// Filter

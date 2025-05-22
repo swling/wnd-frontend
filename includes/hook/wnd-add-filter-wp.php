@@ -131,7 +131,7 @@ class Wnd_Add_Filter_WP {
 			return $link;
 		}
 
-		$front_page_url = wnd_get_front_page_url();
+		$front_page_url = wnd_get_dashboard_url();
 		if ($front_page_url) {
 			return $front_page_url . '#module=post_form&post_id=' . $post_id;
 		}
@@ -151,7 +151,7 @@ class Wnd_Add_Filter_WP {
 			return $link;
 		}
 
-		$url = wnd_get_front_page_url() ?: wnd_get_router_url();
+		$url = wnd_get_dashboard_url() ?: wnd_get_router_url();
 		return add_query_arg(['module' => 'post/wnd_post_detail', 'post_id' => $post->ID], $url);
 	}
 

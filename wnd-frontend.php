@@ -66,7 +66,7 @@ add_action('wp_enqueue_scripts', 'wnd_enqueue_scripts');
 function wnd_enqueue_scripts($hook_suffix = '') {
 	// api 及语言本地化
 	$wnd_data = [
-		'dashboard_url'      => wnd_get_front_page_url(),
+		'dashboard_url'      => wnd_get_dashboard_url(),
 		'rest_url'           => get_rest_url(),
 		'rest_nonce'         => wp_create_nonce('wp_rest'),
 		'disable_rest_nonce' => wnd_get_config('disable_rest_nonce'),
