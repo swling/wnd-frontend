@@ -132,7 +132,6 @@
 
 				// ChatGPT
 				currentModule: '',
-				hashParams: {},
 				windowWidth: window.innerWidth,
 				sidebarOpen: window.innerWidth <= 1024 ? false : true,
 				currentHash: location.hash.slice(1),
@@ -173,24 +172,18 @@
 			},
 			load_module_from_hash() {
 				const hashObj = this.parseHash();
-				const module = hashObj.module || '';
+				const module = hashObj.module || this.default_module;
 				const params = hashObj;
 				delete params.module;
-				this.hashParams = params;
 
 				// 阻止点击事件已经触发后的重复请求
-				if (module && module == this.currentModule && 'post_form' != module) {
+				if (module == this.currentModule && 'post_form' != module) {
 					return;
 				}
-				// 必须在对比之后再赋值
+
 				this.currentModule = module;
-				// 匹配菜单
 				this.expandMatchingMenu();
-				if (module) {
-					this.load_module(module, params);
-				} else {
-					this.load_module(this.default_module);
-				}
+				this.load_module(module, params);
 			},
 			// ChatGPT
 			parseHash() {
@@ -214,7 +207,7 @@
 					this.sidebarOpen = false;
 				}
 
-				// hashParams 已清空时重复点击菜单，Module Vue App 内无法刷新数据以响应点击，故此设置重复加载（刷新）
+				// 重复加载（刷新）
 				if (this.currentModule == item.hash) {
 					this.load_module(item.hash);
 				}
