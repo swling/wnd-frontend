@@ -36,8 +36,13 @@ class Wnd_Defender_Memcached Extends Wnd_Defender {
 			throw new Exception('Memcached is not installed yet');
 		}
 
-		$this->cache = new Memcached();
-		$this->cache->addServer('localhost', 11211);
+		try {
+			$this->cache = new Memcached();
+			$this->cache->addServer('localhost', 11211);
+		} catch (Exception $e) {
+			$this->cache = null;
+			throw new Exception($e->getMessage());
+		}
 	}
 
 	/**

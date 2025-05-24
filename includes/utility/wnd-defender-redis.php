@@ -36,8 +36,13 @@ class Wnd_Defender_Redis Extends Wnd_Defender {
 			throw new Exception('Redis is not installed yet');
 		}
 
-		$this->cache = new Redis();
-		$this->cache->connect('127.0.0.1', 6379);
+		try {
+			$this->cache = new Redis();
+			$this->cache->connect('127.0.0.1', 6379);
+		} catch (Exception $e) {
+			$this->cache = null;
+			throw new Exception($e->getMessage());
+		}
 	}
 
 	/**
