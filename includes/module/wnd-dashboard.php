@@ -147,6 +147,11 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 				'hash' => 'admin/wnd_users_list',
 				'icon' => '<i class="fas fa-users"></i>', // 用户列表
 			],
+			[
+				'name' => __('系统', 'wnd'),
+				'hash' => 'admin/wnd_system_monitor',
+				'icon' => '<i class="fas fa-info-circle"></i>', // 系统信息
+			],
 		];
 
 		return $menus;
