@@ -67,6 +67,8 @@
 						if ('undefined' == typeof Chart) {
 							let url = static_path + 'js/lib/chart.umd.js' + cache_suffix;
 							await wnd_load_script(url);
+						}
+						if ('undefined' == typeof ChartDataLabels) {
 							let plugin_url = static_path + 'js/lib/chartjs-plugin-datalabels.min.js' + cache_suffix;
 							await wnd_load_script(plugin_url);
 						}
@@ -75,9 +77,10 @@
 				},
 				showCharts: function () {
 					const ctx = this.$refs.chartCanvas.getContext('2d');
-					// 移动端空间不足
+					const plugins = [];
+					// 非移动端才启用 datalabels 插件
 					if (!wnd_is_mobile()) {
-						Chart.register(ChartDataLabels);
+						plugins.push(ChartDataLabels);
 					}
 					this.tradeChart = new Chart(ctx, {
 						type: 'line',
@@ -102,20 +105,22 @@
 									anchor: 'end',
 									align: 'top',
 									color: '#EEE',
-									font: {
-										weight: 'bold'
-									},
+									font: { weight: 'bold' },
 									backgroundColor: '#F14668',
-									borderRadius: "3",
+									borderRadius: 3,
 									formatter: value => value + ' 元'
 								}
 							},
 						},
+						plugins: plugins
 					});
 				},
 			},
 			mounted: function () {
 				this.query();
+			},
+			unmounted() {
+				this.tradeChart.destroy();
 			}
 		}
 		const app = Vue.createApp(option);
