@@ -19,7 +19,6 @@
 	<div id="charts" class="columns is-multiline">
 		<div class="column is-6">
 			<div class="box">
-				<h2 class="subtitle">OPcache 内存占用</h2>
 				<div class="canvas"><canvas id="opcacheMemoryChart"></canvas></div>
 				<table class="table is-fullwidth is-striped is-size-7 is-bordered">
 					<tbody>
@@ -33,7 +32,6 @@
 		</div>
 		<div class="column is-6">
 			<div class="box">
-				<h2 class="subtitle">Redis 内存使用</h2>
 				<div class="canvas"><canvas id="redisChart"></canvas></div>
 				<table class="table is-fullwidth is-striped is-size-7 is-bordered">
 					<tbody>
