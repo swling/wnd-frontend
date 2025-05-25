@@ -7,6 +7,11 @@ use Exception;
  * Qrcode 扫描授权登录绑定及查询
  *
  * @since 0.9.59.12
+ * 业务逻辑（以微信为例）：
+ * - web 前端生成一个随机【参数】(请在主题中自行实现)，并生微信带参二维码 @see Endpoint\Wnd_MP_QRCode
+ * - 扫码打开小程序指定页面，用户授权后，携带微信授权 code（获取openid）及随机【参数】发送至 Endpoint\Wnd_Issue_Token_Abstract
+ * - Endpoint\Wnd_Issue_Token_Abstract 注册或登录后，将接收到【参数】与 user id 绑定
+ *- 前端轮询【参数】Query\Wnd_Qrcode_Auth 若匹配，则设定对用用户登录状态
  */
 class Wnd_Qrcode_Login {
 

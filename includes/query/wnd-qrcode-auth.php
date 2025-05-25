@@ -8,10 +8,13 @@ use Wnd\Utility\Wnd_Qrcode_Login;
 /**
  * 查询参二维码注册登录用户信息
  * @since 2023.06.12
+ *
+ * 授权登录时绑定：
+ * @see Endpoint\Wnd_Issue_Token_Abstract
  */
 class Wnd_Qrcode_Auth extends Wnd_Query {
 
-	protected static function query($args = []): array{
+	protected static function query($args = []): array {
 		$scene = $args['scene'] ?? '';
 
 		$user_id = Wnd_Qrcode_Login::query($scene);
