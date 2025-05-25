@@ -1,6 +1,6 @@
 <?php
 
-namespace Wnd\Admin;
+namespace Wnd\Admin\Menu;
 
 use Wnd\View\Wnd_Form_Option;
 

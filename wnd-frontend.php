@@ -23,7 +23,7 @@
  * @since 2019.1.8 ：GitHub开通免费私人仓库，正式托管于GitHub
  */
 
-use Wnd\Model\Wnd_Init;
+use Wnd\Wnd_Init;
 
 // 版本
 define('WND_VER', '0.9.89.3');

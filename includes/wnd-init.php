@@ -1,9 +1,9 @@
 <?php
-namespace Wnd\Model;
+namespace Wnd;
 
 use Wnd\Admin\Wnd_Admin_Optimization;
 use Wnd\Admin\Wnd_Admin_Upgrade;
-use Wnd\Admin\Wnd_Menus;
+use Wnd\Admin\Menu\Wnd_Menus;
 use Wnd\Controller\Wnd_Controller;
 use Wnd\Hook\Wnd_Hook;
 use Wnd\Utility\Wnd_CDN;
