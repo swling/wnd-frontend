@@ -6,7 +6,6 @@ use Wnd\Admin\Wnd_Admin_Upgrade;
 use Wnd\Admin\Wnd_Menus;
 use Wnd\Controller\Wnd_Controller;
 use Wnd\Hook\Wnd_Hook;
-use Wnd\Model\Wnd_DB;
 use Wnd\Utility\Wnd_CDN;
 use Wnd\Utility\Wnd_Error_Handler;
 use Wnd\Utility\Wnd_JWT_Handler;
@@ -16,6 +15,7 @@ use Wnd\Utility\Wnd_OSS_Handler;
 use Wnd\Utility\Wnd_Preview_Revisions;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\Utility\Wnd_Upgrader_Plugin_This;
+use Wnd\WPDB\Wnd_DB;
 
 /**
  * 初始化 单例模式

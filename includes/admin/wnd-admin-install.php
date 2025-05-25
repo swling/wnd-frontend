@@ -1,7 +1,7 @@
 <?php
 namespace Wnd\Admin;
 
-use Wnd\Model\Wnd_DB;
+use Wnd\WPDB\Wnd_DB;
 
 /**
  * 清理站点内容
