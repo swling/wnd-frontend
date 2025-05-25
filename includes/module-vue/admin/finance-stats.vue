@@ -55,7 +55,7 @@
 					return this.param[key] == value ? 'is-active' : '';
 				},
 				query: async function () {
-					let res = await wnd_query('wnd_site_stats', this.param);
+					let res = await wnd_query('admin/wnd_finance_stats', this.param);
 					this.res = res.data;
 					// 更新数据
 					if (this.tradeChart) {

@@ -1,8 +1,9 @@
 <?php
 
-namespace Wnd\Query;
+namespace Wnd\Query\Admin;
 
 use Exception;
+use Wnd\Query\Wnd_Query;
 use WP_Query;
 
 /**
@@ -34,7 +35,7 @@ use WP_Query;
  * };
  *
  */
-class Wnd_Site_Stats extends Wnd_Query {
+class Wnd_Finance_Stats extends Wnd_Query {
 
 	protected static function check() {
 		if (!wnd_is_manager()) {
