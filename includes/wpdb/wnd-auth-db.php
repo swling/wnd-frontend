@@ -10,14 +10,14 @@ use WP_User;
  * - 设置对象缓存
  * @since 0.9.57.1
  */
-abstract class Wnd_Auth {
+abstract class Wnd_Auth_DB {
 
 	private static $auths_cache_group = 'wnd_auths';
 
 	/**
 	 * 获取用户所有 auth 合集对象
 	 */
-	public static function get_user_auths(int $user_id): object{
+	public static function get_user_auths(int $user_id): object {
 		$auths = static::get_auths_cache($user_id);
 		if ($auths) {
 			return $auths;
@@ -162,7 +162,7 @@ abstract class Wnd_Auth {
 	 * - （{$type, $open_id} 为复合唯一索引）
 	 * - 如果更新数据指定了 user_id 则更新对应的缓存
 	 */
-	public static function update_auth_db(string $type, string $open_id, array $data): bool{
+	public static function update_auth_db(string $type, string $open_id, array $data): bool {
 		$action  = static::update_db($type, $open_id, $data);
 		$user_id = $data['user_id'] ?? 0;
 		if ($action and $user_id) {
@@ -196,7 +196,7 @@ abstract class Wnd_Auth {
 	 * @param  	string 	$type
 	 * @return 	int    	$wpdb->delete
 	 */
-	public static function delete_user_openid(int $user_id, string $type): int{
+	public static function delete_user_openid(int $user_id, string $type): int {
 		$user    = static::get_user_auths($user_id);
 		$open_id = $user->$type ?? '';
 		$action  = static::delete_db($type, $open_id);
@@ -255,7 +255,7 @@ abstract class Wnd_Auth {
 	/**
 	 * 获取单个 openid 对应的 user_id 缓存
 	 */
-	private static function get_auth_cache(string $type, string $open_id): int{
+	private static function get_auth_cache(string $type, string $open_id): int {
 		$cache_group = static::get_auth_cache_group($type);
 		$user_id     = wp_cache_get($open_id, $cache_group);
 		return $user_id ?: 0;
@@ -334,7 +334,7 @@ abstract class Wnd_Auth {
 	 * - 不可在操作数据库时，直接设置对象缓存，因为写入的数据可能是待验证的数据
 	 * @since 0.9.36
 	 */
-	private static function update_db(string $type, string $open_id, array $data): bool{
+	private static function update_db(string $type, string $open_id, array $data): bool {
 		$defaults    = ['user_id' => 0, 'identifier' => $open_id, 'type' => $type, 'credential' => '', 'time' => time()];
 		$auth_record = (array) (static::get_db($type, $open_id) ?: $defaults);
 		$data        = array_merge($auth_record, $data);

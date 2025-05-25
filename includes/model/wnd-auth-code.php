@@ -2,7 +2,7 @@
 namespace Wnd\Model;
 
 use Exception;
-use Wnd\WPDB\Wnd_Auth;
+use Wnd\WPDB\Wnd_Auth_DB;
 
 /**
  * 验证授权
@@ -189,7 +189,7 @@ abstract class Wnd_Auth_Code {
 	 * @since 0.9.57
 	 */
 	private function get_db_record() {
-		return Wnd_Auth::get_db($this->identity_type, $this->identifier);
+		return Wnd_Auth_DB::get_db($this->identity_type, $this->identifier);
 	}
 
 	/**
@@ -198,7 +198,7 @@ abstract class Wnd_Auth_Code {
 	private function insert() {
 		$this->check_db_fields(true);
 
-		$action = Wnd_Auth::update_auth_db($this->identity_type, $this->identifier, ['credential' => $this->auth_code, 'time' => time()]);
+		$action = Wnd_Auth_DB::update_auth_db($this->identity_type, $this->identifier, ['credential' => $this->auth_code, 'time' => time()]);
 		if (!$action) {
 			throw new Exception(__('数据库写入失败', 'wnd'));
 		}
@@ -266,6 +266,6 @@ abstract class Wnd_Auth_Code {
 	public function bind_user(int $user_id) {
 		$this->check_db_fields(false);
 
-		return Wnd_Auth::update_user_openid($user_id, $this->identity_type, $this->identifier);
+		return Wnd_Auth_DB::update_user_openid($user_id, $this->identity_type, $this->identifier);
 	}
 }
