@@ -2,7 +2,7 @@
 use Wnd\Model\Wnd_Mail;
 use Wnd\Utility\Wnd_language;
 use Wnd\WPDB\Wnd_Auth;
-use Wnd\WPDB\Wnd_User;
+use Wnd\WPDB\Wnd_User_DB;
 
 /**
  * 随机生成用户名
@@ -19,7 +19,7 @@ function wnd_generate_login() {
  * - Users 主要数据：balance、role、attribute、last_login、client_ip
  */
 function wnd_get_wnd_user(int $user_id): object {
-	return Wnd_User::get_wnd_user($user_id);
+	return Wnd_User_DB::get_wnd_user($user_id);
 }
 
 /**

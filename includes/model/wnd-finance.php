@@ -4,7 +4,7 @@ namespace Wnd\Model;
 use Wnd\Model\Wnd_Order;
 use Wnd\Model\Wnd_Order_Anonymous;
 use Wnd\Model\Wnd_SKU;
-use Wnd\WPDB\Wnd_User;
+use Wnd\WPDB\Wnd_User_DB;
 
 /**
  * 站内财务信息
@@ -45,7 +45,7 @@ abstract class Wnd_Finance {
 			return false;
 		}
 
-		$action = Wnd_User::inc_user_balance($user_id, $amount);
+		$action = Wnd_User_DB::inc_user_balance($user_id, $amount);
 		if (!$action) {
 			return $action;
 		}
@@ -84,7 +84,7 @@ abstract class Wnd_Finance {
 			return false;
 		}
 
-		$action = Wnd_User::inc_user_expense($user_id, $amount);
+		$action = Wnd_User_DB::inc_user_expense($user_id, $amount);
 
 		// 整站按月统计充值和消费
 		if ($action) {

@@ -8,7 +8,7 @@ use Wnd\WPDB\WPDB_Row;
  * 自定义用户表及其他用户常用方法
  * @since 2019.10.25
  */
-class Wnd_User extends WPDB_Row {
+class Wnd_User_DB extends WPDB_Row {
 
 	protected $table_name        = 'wnd_users';
 	protected $object_name       = 'wnd_user';

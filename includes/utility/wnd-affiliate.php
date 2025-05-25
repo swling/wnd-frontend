@@ -3,7 +3,7 @@
 namespace Wnd\Utility;
 
 use Wnd\Model\Wnd_Recharge;
-use Wnd\WPDB\Wnd_User;
+use Wnd\WPDB\Wnd_User_DB;
 
 /**
  * 推广注册返佣
@@ -26,7 +26,7 @@ class Wnd_Affiliate {
 		}
 
 		// 仅首次登陆
-		if (!Wnd_User::is_first_login($user_id)) {
+		if (!Wnd_User_DB::is_first_login($user_id)) {
 			return;
 		}
 
@@ -59,7 +59,7 @@ class Wnd_Affiliate {
 	 */
 	public static function reg_success(int $user_id) {
 		// 钩子本身应该挂载在注册完成时，理应只在注册时执行一次，但保险起见再次权限检查
-		if (!Wnd_User::is_first_login($user_id)) {
+		if (!Wnd_User_DB::is_first_login($user_id)) {
 			return;
 		}
 

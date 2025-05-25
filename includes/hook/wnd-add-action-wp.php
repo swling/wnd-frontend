@@ -13,7 +13,7 @@ use Wnd\WPDB\Wnd_Auth;
 use Wnd\WPDB\Wnd_Mail_DB;
 use Wnd\WPDB\Wnd_Tag_Under_Category;
 use Wnd\WPDB\Wnd_Transaction_DB;
-use Wnd\WPDB\Wnd_User;
+use Wnd\WPDB\Wnd_User_DB;
 
 /**
  * WP Action
@@ -92,7 +92,7 @@ class Wnd_Add_Action_WP {
 	 */
 	public static function action_on_wp_loaded() {
 		// 记录登录日志
-		Wnd_User::write_login_log();
+		Wnd_User_DB::write_login_log();
 
 		// 拦截封禁账户登录
 		if (wnd_has_been_banned()) {
@@ -117,7 +117,7 @@ class Wnd_Add_Action_WP {
 	 */
 	public static function action_on_delete_user($user_id) {
 		// 删除自定义 wnd_users 表记录
-		Wnd_User::delete_wnd_user($user_id);
+		Wnd_User_DB::delete_wnd_user($user_id);
 
 		// 删除自定义用户 wnd_auths 表记录
 		Wnd_Auth::delete_user_auths($user_id);

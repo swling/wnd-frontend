@@ -7,7 +7,7 @@ use Wnd\Utility\Wnd_Affiliate;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Form_Option;
-use Wnd\WPDB\Wnd_User;
+use Wnd\WPDB\Wnd_User_DB;
 
 /**
  * Wnd Action
@@ -39,7 +39,7 @@ class Wnd_Add_Action {
 	 */
 	public static function action_on_user_register($user_id, $data) {
 		// 创建 Wnd_User 记录（必须在注册时即创建表记录，否则无记录可能导致在首次登陆写入前的操作无效）
-		Wnd_User::update_wnd_user($user_id, []);
+		Wnd_User_DB::update_wnd_user($user_id, []);
 
 		// 注册成功
 		Wnd_Affiliate::reg_success($user_id);

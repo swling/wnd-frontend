@@ -2,6 +2,7 @@
 namespace Wnd\Admin;
 
 use Wnd\WPDB\Wnd_DB;
+use Wnd\WPDB\Wnd_User_DB;
 
 /**
  * 升级
@@ -190,7 +191,7 @@ class Wnd_Admin_Upgrade {
 				continue;
 			}
 
-			$action = \Wnd\WPDB\Wnd_User::update_wnd_user($user_id, ['expense' => $expense]);
+			$action = Wnd_User_DB::update_wnd_user($user_id, ['expense' => $expense]);
 			if ($action) {
 				wnd_delete_user_meta($user_id, 'expense');
 			} else {
