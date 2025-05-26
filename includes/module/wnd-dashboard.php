@@ -62,21 +62,14 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 				'icon' => '<i class="fas fa-wallet"></i>', // 钱包/财务
 			],
 			[
-				'name'     => __('设置', 'wnd'),
-				'icon'     => '<i class="fas fa-user-cog"></i>',
-				'open'     => false,
-				'children' => [
-					[
-						'name' => __('资料', 'wnd'),
-						'hash' => 'user/wnd_profile_form',
-						'icon' => '<i class="fas fa-id-card"></i>', // 个人资料
-					],
-					[
-						'name' => __('账户', 'wnd'),
-						'hash' => 'user/wnd_account_form',
-						'icon' => '<i class="fas fa-key"></i>', // 账户设置
-					],
-				],
+				'name' => __('资料', 'wnd'),
+				'hash' => 'user/wnd_profile_form',
+				'icon' => '<i class="fas fa-id-card"></i>', // 个人资料
+			],
+			[
+				'name' => __('账户', 'wnd'),
+				'hash' => 'user/wnd_account_form',
+				'icon' => '<i class="fas fa-key"></i>', // 账户设置
 			],
 			[
 				'name' => __('消息', 'wnd'),
@@ -146,6 +139,11 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 				'name' => __('用户', 'wnd'),
 				'hash' => 'admin/wnd_users_list',
 				'icon' => '<i class="fas fa-users"></i>', // 用户列表
+			],
+			[
+				'name' => __('附件', 'wnd'),
+				'hash' => 'admin/wnd_attachments',
+				'icon' => '<i class="fas fa-paperclip"></i>', // 附件
 			],
 			[
 				'name' => __('系统', 'wnd'),

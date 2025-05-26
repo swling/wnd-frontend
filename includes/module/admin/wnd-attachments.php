@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Module\User;
+namespace Wnd\Module\Admin;
 
 use Exception;
 use Wnd\Module\Wnd_Module_Vue;
@@ -10,7 +10,7 @@ use Wnd\Module\Wnd_Module_Vue;
 class Wnd_Attachments extends Wnd_Module_Vue {
 
 	protected static function parse_data(array $args): array {
-		$args = array_merge(['user_id' => get_current_user_id()], $args);
+		$args = array_merge(['user_id' => 'any'], $args);
 		$tabs = [
 			[
 				'label'   => __('状态', 'wnd'),
@@ -21,12 +21,17 @@ class Wnd_Attachments extends Wnd_Module_Vue {
 			],
 
 		];
+
 		return ['param' => $args, 'tabs' => $tabs];
 	}
 
 	protected static function check($args) {
-		if (!is_user_logged_in()) {
+		if (!is_super_admin()) {
 			throw new Exception(__('权限不足', 'wnd'));
 		}
+	}
+
+	protected static function get_file_path(): string {
+		return '/includes/module-vue/user/attachments.vue';
 	}
 }
