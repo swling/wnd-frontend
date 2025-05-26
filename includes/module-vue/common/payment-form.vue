@@ -1,11 +1,10 @@
 <section id="payment-app" class="container">
     <div v-show="paymentInterface" id="payment-interface" class="has-text-centered"></div>
-
     <div v-show="!paymentInterface">
         <div class="notification is-danger is-light" v-show="msg" v-html="msg"></div>
-        <h3 v-if="'single'== skuId">{{title}}</h3>
+        <h3 class="subtitle">{{title}}</h3>
         <!-- 商品表格 -->
-        <table v-else class="table is-fullwidth is-bordered is-striped is-size-7-mobile" style="table-layout: fixed;">
+        <table v-if="'single'!=skuId" class="table is-fullwidth is-bordered is-striped is-size-7-mobile" style="table-layout: fixed;">
             <thead>
                 <tr>
                     <th v-for="(key, index) in displayKeys" :key="index">{{ keyLabels[key] || key }}</th>
@@ -23,7 +22,6 @@
                 </tr>
             </tbody>
         </table>
-
         <!-- 支付方式 -->
         <div class="box">
             <p class="subtitle">
@@ -36,7 +34,6 @@
                 </button>
             </div>
         </div>
-
         <div class="box mt-5" v-if="'1'!=isVirtual">
             <h3 class="title is-6 mb-3">收货信息</h3>
             <div class="columns">
@@ -45,7 +42,6 @@
                 <div class="column">地址<text-editor :pre_editing="!receiver.address" v-model="receiver.address"></text-editor></div>
             </div>
         </div>
-
         <!-- 提交按钮 -->
         <div class="field mt-4 has-text-centered">
             <button :class="`button is-${wnd.color.primary}`" @click="submitOrder" v-text="t('submit')"></button>
