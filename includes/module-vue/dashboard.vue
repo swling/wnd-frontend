@@ -3,7 +3,7 @@
 		max-width: 98% !important;
 	}
 
-	.post_form {
+	#ajax-module.single {
 		margin: 0 auto;
 		max-width: 1024px;
 	}
@@ -116,7 +116,7 @@
 				</button>
 			</div>
 		</div>
-		<div id="ajax-module" :class="['box',currentModule]"></div>
+		<div id="ajax-module" :class="['box', hasMenuForModule ? '' : 'single']"></div>
 	</div>
 </div>
 <script>
