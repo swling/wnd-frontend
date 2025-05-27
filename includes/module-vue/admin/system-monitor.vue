@@ -313,11 +313,11 @@
 				}
 			},
 			async mounted() {
-				this.fetchData();
 				if ('undefined' == typeof Chart) {
 					let url = static_path + 'js/lib/chart.umd.js' + cache_suffix;
 					await wnd_load_script(url);
 				}
+				this.fetchData();
 			},
 			unmounted() {
 				// 自动销毁所有图表实例
