@@ -1088,10 +1088,11 @@ class PostFormComponent extends VueClass {
         let term_data = this.get_term_data();
         let post_data = this.addPrefixToKeys(this.post, "_post_");
         let extra_data = this.get_extra_data();
+        let attachments = { "attachments": this.extractImageDataIds(this.post.post_content) };
         delete post_data._post_post_status; // 删除 post_status，避免冲突
 
         // 组合数据发起请求
-        let data = { ...meta_data, ...term_data, ...post_data, ...extra_data };
+        let data = { ...meta_data, ...term_data, ...post_data, ...extra_data, ...attachments };
         this.submitting = true;
         let res = await wnd_ajax_action(this.action, data);
         this.submitting = false;
@@ -1105,6 +1106,22 @@ class PostFormComponent extends VueClass {
         this.msg = res.msg;
         this.link = res.data.url;
         this.submit_res = res;
+    }
+    // 从 post content 字符串中提取所有 img 标签的 data-id 属性值，后端可据此删除已上传，但未使用的附件（需要额外处理缩略图，付费附件等） @chagpt
+    extractImageDataIds(htmlString) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlString, 'text/html');
+        const images = doc.querySelectorAll('img[data-id]');
+        const dataIds = [];
+
+        images.forEach(img => {
+            const id = img.getAttribute('data-id');
+            if (id !== null) {
+                dataIds.push(id);
+            }
+        });
+
+        return dataIds;
     }
 
     // 返回 meta 数据 object
