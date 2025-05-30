@@ -32,7 +32,8 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 		$args = wp_parse_args($args, $defaults);
 
 		// 构造页面 HTML
-		wp_enqueue_script('dashboard', WND_URL . 'static/js/dashboard.js', ['wnd-main'], WND_VER);
+		wp_enqueue_script('dashboard', WND_URL . 'static/js/dashboard.min.js', ['wnd-main'], WND_VER);
+		wp_enqueue_script('form-vue', WND_URL . 'static/js/form-vue.min.js', ['wnd-main'], WND_VER);
 		get_header();
 		$html = '<main id="dashboard-page" class="column is-flex">';
 		$html .= '<script>const wnd_dashboard = ' . json_encode($args, JSON_UNESCAPED_UNICODE) . ';</script>';
