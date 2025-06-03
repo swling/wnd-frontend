@@ -117,7 +117,8 @@ const DropdownSearch = {
         required: {
             type: Boolean,
             default: false
-        }
+        },
+        placeholder: '...'
     },
     emits: ['update:modelValue', 'select'],
     data() {
@@ -236,7 +237,7 @@ const DropdownSearch = {
       ref="input"
       :class="[{'selected': selectedOption }, 'input']"
       type="text"
-      placeholder="..."
+      :placeholder="placeholder"
       v-model="search"
       :disabled="options.length < 1"
       @mousedown="handleClickOnInput"

@@ -160,9 +160,6 @@
 
 				if ('post_form' == module) {
 					module = 'post/wnd_post_form_vue';
-					if ("undefined" == typeof FormComponent) {
-						await wnd_load_script(static_path + 'js/form-vue.min.js' + cache_suffix);
-					}
 				}
 
 				if (!module || "index" == module) {

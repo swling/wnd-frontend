@@ -164,7 +164,7 @@ class Wnd_Filter_Query {
 			if (0 === strpos($key, '_term_')) {
 				$term_query = [
 					'taxonomy' => str_replace('_term_', '', $key),
-					'field'    => is_numeric($value) ? 'term_id' : 'name',
+					'field'    => is_numeric($value) ? 'term_id' : 'slug',
 					'terms'    => $value,
 				];
 				$query_vars['tax_query'][] = $term_query;
