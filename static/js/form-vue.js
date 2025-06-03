@@ -118,7 +118,10 @@ const DropdownSearch = {
             type: Boolean,
             default: false
         },
-        placeholder: '...'
+        placeholder: {
+            type: String,
+            default: '...'
+        }
     },
     emits: ['update:modelValue', 'select'],
     data() {
