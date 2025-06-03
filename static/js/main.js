@@ -1033,6 +1033,16 @@ document.addEventListener('click', function (e) {
  * 以 class 的方式编写 Vue 代码
  * 旨在方便继承代码
  * @link https://chatgpt.com/c/67fe0928-bb08-8004-9dae-ab8c2132efc7
+ * 
+ * 使用示例：
+ * class MyPageEditor extends VueClass {
+ *      子类复写方法...
+ * }
+ *
+ * Vue 挂载
+ * const custom = new MyPageEditor("#app-post-form");
+ * const vueComponent = custom.toVueComponent();
+ * const app = Vue.createApp(vueComponent); 
  */
 class VueClass {
     // 将类转换为 Vue 组件对象
