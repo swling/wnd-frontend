@@ -207,7 +207,6 @@
 					return '';
 				}
 			}
-
 			get_status_icon(item) {
 				switch (item.status) {
 					case 'pending':
@@ -232,9 +231,6 @@
 						// 未知状态
 						return `<span class="tag is-danger"><i class="fas fa-question-circle mr-1"></i>未知：${item.status}</span>`;
 				}
-			}
-			timeToString(timestamp) {
-				return wnd_time_to_string(timestamp);
 			}
 		}
 

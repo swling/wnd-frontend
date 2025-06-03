@@ -274,6 +274,10 @@ class Filter extends VueClass {
 		return this.param[key] == value ? "is-active" : "";
 	}
 
+	timeToString(timestamp) {
+		return wnd_time_to_string(timestamp);
+	}
+
 	async query() { }
 }
 

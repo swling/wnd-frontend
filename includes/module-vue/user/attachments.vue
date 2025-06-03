@@ -93,9 +93,6 @@
 
 				}
 			}
-			timeToString(timestamp) {
-				return wnd_time_to_string(timestamp);
-			}
 			toggleAll(event) {
 				this.allSelected = event.target.checked;
 			}
