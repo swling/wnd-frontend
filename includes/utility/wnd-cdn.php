@@ -15,16 +15,26 @@ class Wnd_CDN {
 	protected $include_dirs = null;
 	protected $excludes     = [];
 	protected $rootrelative = false;
+	protected $domain_path  = null; // 新增属性：无协议和端口后缀的域名路径
 
 	private function __construct() {
-		$this->blog_url     = get_option('siteurl');
-		$this->cdn_url      = wnd_get_config('cdn_url');
-		$this->include_dirs = wnd_get_config('cdn_dirs') ?: 'wp-content,wp-includes';
+		$config = static::get_default_config();
 
-		$excludes       = wnd_get_config('cdn_excludes') ?: '.php';
-		$this->excludes = array_map('trim', explode(',', $excludes));
+		$this->blog_url     = get_option('siteurl');
+		$this->cdn_url      = $config['cdn_url'];
+		$this->include_dirs = $config['cdn_dirs'];
+		$this->excludes     = $config['cdn_excludes'];
+		$this->domain_path  = preg_replace('#^https?://#', '', $this->blog_url);
 
 		add_action('after_setup_theme', [$this, 'register_as_output_buffer']);
+	}
+
+	private static function get_default_config() {
+		return [
+			'cdn_url'      => wnd_get_config('cdn_url'),
+			'cdn_dirs'     => wnd_get_config('cdn_dirs') ?: 'wp-content,wp-includes',
+			'cdn_excludes' => array_map('trim', explode(',', wnd_get_config('cdn_excludes') ?: '.php')),
+		];
 	}
 
 	public function register_as_output_buffer() {
@@ -39,43 +49,48 @@ class Wnd_CDN {
 		}
 	}
 
-	protected function exclude_single($match) {
-		foreach ($this->excludes as $badword) {
-			if (stristr($match, $badword) != false) {
-				return true;
-			}
+	protected function rewrite($content) {
+		// 构建正则表达式
+		$dirs     = $this->include_dirs_to_pattern();
+		$protocol = '(?:https?:)?'; // 匹配协议或无协议
+		$domain   = '\/\/' . quotemeta($this->domain_path); // 匹配域名路径
+		$path     = '/(?:((?:' . $dirs . ')[^\"\')]+)|([^/\"\']+\.[^/\"\')]+))'; // 匹配资源路径
+		$regex    = '#(?<=[(\"\'])' . ($this->rootrelative ? '(?:' . quotemeta($this->blog_url) . ')?' : $protocol . $domain) . $path . '(?=[\"\')])#';
+
+		return preg_replace_callback($regex, [$this, 'rewrite_single'], $content);
+	}
+
+	protected function include_dirs_to_pattern() {
+		if (empty($this->include_dirs)) {
+			return 'wp\-content|wp\-includes';
 		}
-		return false;
+
+		$input = array_filter(array_map('trim', explode(',', $this->include_dirs)));
+		return $input ? implode('|', array_map('quotemeta', $input)) : 'wp\-content|wp\-includes';
 	}
 
 	protected function rewrite_single($match) {
 		if ($this->exclude_single($match[0])) {
 			return $match[0];
-		} else {
-			if (!$this->rootrelative || strstr($match[0], $this->blog_url)) {
-				return str_replace($this->blog_url, $this->cdn_url, $match[0]);
-			} else {
-				return $this->cdn_url . $match[0];
-			}
 		}
+
+		$path = $this->extract_path($match[0]);
+		return $path ? rtrim($this->cdn_url, '/') . $path : $match[0];
 	}
 
-	protected function include_dirs_to_pattern() {
-		$input = explode(',', $this->include_dirs);
-		if ($this->include_dirs == '' || count($input) < 1) {
-			return 'wp\-content|wp\-includes';
-		} else {
-			return implode('|', array_map('quotemeta', array_map('trim', $input)));
-		}
+	protected function exclude_single($match) {
+		return !empty(array_filter($this->excludes, function ($badword) use ($match) {
+			return stristr($match, $badword) !== false;
+		}));
 	}
 
-	protected function rewrite($content) {
-		$dirs  = $this->include_dirs_to_pattern();
-		$regex = '#(?<=[(\"\'])';
-		$regex .= $this->rootrelative
-		? ('(?:' . quotemeta($this->blog_url) . ')?')
-		: quotemeta($this->blog_url);
-		$regex .= '/(?:((?:' . $dirs . ')[^\"\')]+)|([^/\"\']+\.[^/\"\')]+))(?=[\"\')])#';
-		return preg_replace_callback($regex, [$this, 'rewrite_single'], $content);
+	private function extract_path($url) {
+		if (!$this->rootrelative) {
+			$pos = strpos($url, $this->domain_path);
+			return $pos !== false ? substr($url, $pos + strlen($this->domain_path)) : null;
+		}
+
+		return strstr($url, $this->blog_url) ? str_replace($this->blog_url, '', $url) : $url;
 	}
+
 }
