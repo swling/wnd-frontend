@@ -183,27 +183,20 @@ class Wnd_Do_Payment extends Wnd_Action {
 
 	/**
 	 * 站内交易检测
-	 * - 余额检测
-	 *
+	 * - 禁止站内充值（自己给自己充值）
+	 * - 订单余额检查
 	 */
 	private function check_internal_payment() {
-		// 任何情况：普通用户不能站内充值
+		// 站内充值禁止
 		if ('recharge' == $this->type) {
 			throw new Exception('Internal recharge is not allowed.');
 		}
 
-		// 其他站内消费：余额需大于消费额度
-		$balance = wnd_get_user_balance($this->user_id);
-		if ('order' != $this->type and $this->total_amount > $balance) {
-			throw new Exception(__('余额不足', 'wnd') . ':' . $this->type);
-		}
-
-		// order 订单交易余额检测
-		$post_price   = wnd_get_post_price($this->post_id, $this->sku_id);
-		$total_amount = $post_price * $this->quantity;
+		// 余额检测
+		$total_amount = ('order' == $this->type) ? (wnd_get_post_price($this->post_id, $this->sku_id) * $this->quantity) : $this->total_amount;
+		$balance      = wnd_get_user_balance($this->user_id);
 		if ($total_amount > $balance) {
-			throw new Exception(__('余额不足', 'wnd') . ':' . $this->type);
+			throw new Exception(__('余额不足', 'wnd') . ' : ' . $this->type . '. total_amount : ' . $total_amount);
 		}
 	}
-
 }
