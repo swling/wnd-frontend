@@ -158,7 +158,7 @@ abstract class Wnd_Payment {
 		$props     = $this->transaction->get_props();
 
 		// 虚拟商品：返回产品页；实体商品：返回用户订单列表（支持展示匿名订单）
-		if ($props->is_virtual > 0) {
+		if (isset($props->is_virtual) and $props->is_virtual > 0) {
 			$url = add_query_arg(['from' => $this->transaction->get_payment_gateway()], get_permalink($object_id));
 		} else {
 			$args = [
