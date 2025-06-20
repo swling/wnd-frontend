@@ -589,21 +589,36 @@ const ThumbnailCard = {
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = async (e) => {
-                    // 如果 Cropper.js 没有加载，则加载它
-                    if (typeof Cropper === 'undefined') {
-                        await wnd_load_script(static_path + 'cropper/cropper.min.js' + cache_suffix);
-                        await wnd_load_style(static_path + 'cropper/cropper.min.css' + cache_suffix);
-                    }
-                    this.tempImageUrl = e.target.result;
-                    this.showModal = true;
-                    this.$nextTick(() => {
-                        const image = this.$refs.cropImage;
-                        this.cropper = new Cropper(image, {
-                            aspectRatio: this.imgWidth / this.imgHeight,
-                            viewMode: 1,
-                            autoCropArea: 1,
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = async () => {
+                        const sameRatio = Math.abs(img.width / img.height - this.imgWidth / this.imgHeight) < 0.01;
+                        const withinSize = img.width <= this.cropWidth && img.height <= this.cropHeight;
+                        // 如果图片尺寸和比例都符合要求，直接上传
+                        if (sameRatio && withinSize) {
+                            const res = await fetch(e.target.result);
+                            const blob = await res.blob();
+                            this.uploadCroppedImage(blob, img); // 复用上传函数
+                            return;
+                        }
+
+                        // 否则启用 Cropper 裁剪
+                        if (typeof Cropper === 'undefined') {
+                            await wnd_load_script(static_path + 'cropper/cropper.min.js' + cache_suffix);
+                            await wnd_load_style(static_path + 'cropper/cropper.min.css' + cache_suffix);
+                        }
+
+                        this.tempImageUrl = e.target.result;
+                        this.showModal = true;
+                        this.$nextTick(() => {
+                            const image = this.$refs.cropImage;
+                            this.cropper = new Cropper(image, {
+                                aspectRatio: this.imgWidth / this.imgHeight,
+                                viewMode: 1,
+                                autoCropArea: 1,
+                            });
                         });
-                    });
+                    };
                 };
                 reader.readAsDataURL(file);
             }
