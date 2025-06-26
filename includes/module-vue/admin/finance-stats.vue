@@ -16,115 +16,94 @@
 </div>
 <script>
 	{
-		const { shallowRef } = Vue;
-		const param = Object.assign({
-			paged: 1,
-			range: 14,
-			type: "recharge",
-		}, module_data);
-
-		const option = {
+		class App_Filter extends Filter {
 			data() {
-				return {
+				const { shallowRef } = Vue;
+				const param = Object.assign({
+					paged: 1,
+					range: 14,
+					type: "recharge",
+				}, module_data);
+
+				const data = {
 					res: {},
 					param: param,
 					tradeChart: shallowRef(null),
 				}
-			},
-			methods: {
-				update_filter: function (key, value, remove_args = []) {
-					if (value) {
-						this.param[key] = value;
-					} else {
-						delete this.param[key];
-					}
-					if (remove_args) {
-						remove_args.forEach((key) => {
-							delete this.param[key];
-						});
-					}
-					// 非 翻页的其他查询，则重置页面
-					if ("paged" != key) {
-						this.param.paged = 1;
-					}
 
-					wnd_update_url_hash(this.param, ['ajax_type']);
-					this.query();
-				},
-				is_active: function (key, value) {
-					return this.param[key] == value ? 'is-active' : '';
-				},
-				query: async function () {
-					let res = await wnd_query('admin/wnd_finance_stats', this.param);
-					this.res = res.data;
-					// 更新数据
-					if (this.tradeChart) {
-						this.tradeChart.data.labels = this.res.categories;
-						this.tradeChart.data.datasets[0].data = this.res.data;
-						this.tradeChart.update();
-						return;
-					} else {
-						if ('undefined' == typeof Chart) {
-							let url = static_path + 'js/lib/chart.umd.js' + cache_suffix;
-							await wnd_load_script(url);
-						}
-						if ('undefined' == typeof ChartDataLabels) {
-							let plugin_url = static_path + 'js/lib/chartjs-plugin-datalabels.min.js' + cache_suffix;
-							await wnd_load_script(plugin_url);
-						}
-						this.showCharts();
+				const base = super.data();
+				return { ...base, ...data };
+			}
+			async query() {
+				let res = await wnd_query('admin/wnd_finance_stats', this.param);
+				this.res = res.data;
+				// 更新数据
+				if (this.tradeChart) {
+					this.tradeChart.data.labels = this.res.categories;
+					this.tradeChart.data.datasets[0].data = this.res.data;
+					this.tradeChart.update();
+					return;
+				} else {
+					if ('undefined' == typeof Chart) {
+						let url = static_path + 'js/lib/chart.umd.js' + cache_suffix;
+						await wnd_load_script(url);
 					}
-				},
-				showCharts: function () {
-					const ctx = this.$refs.chartCanvas.getContext('2d');
-					const plugins = [];
-					// 非移动端才启用 datalabels 插件
-					if (!wnd_is_mobile()) {
-						plugins.push(ChartDataLabels);
+					if ('undefined' == typeof ChartDataLabels) {
+						let plugin_url = static_path + 'js/lib/chartjs-plugin-datalabels.min.js' + cache_suffix;
+						await wnd_load_script(plugin_url);
 					}
-					this.tradeChart = new Chart(ctx, {
-						type: 'line',
-						data: {
-							labels: this.res.categories,
-							datasets: [{
-								label: '交易金额（元）',
-								data: this.res.data,
-								borderColor: 'rgba(75, 192, 192, 1)',
-								fill: false,
-								tension: 0.3
-							}]
+					this.showCharts();
+				}
+			}
+			showCharts() {
+				const ctx = this.$refs.chartCanvas.getContext('2d');
+				const plugins = [];
+				// 非移动端才启用 datalabels 插件
+				if (!wnd_is_mobile()) {
+					plugins.push(ChartDataLabels);
+				}
+				this.tradeChart = new Chart(ctx, {
+					type: 'line',
+					data: {
+						labels: this.res.categories,
+						datasets: [{
+							label: '交易金额（元）',
+							data: this.res.data,
+							borderColor: 'rgba(75, 192, 192, 1)',
+							fill: false,
+							tension: 0.3
+						}]
+					},
+					options: {
+						responsive: true,
+						scales: {
+							x: { display: true, title: { display: true, text: '日期' } },
+							y: { display: true, title: { display: true, text: '金额（元）' } }
 						},
-						options: {
-							responsive: true,
-							scales: {
-								x: { display: true, title: { display: true, text: '日期' } },
-								y: { display: true, title: { display: true, text: '金额（元）' } }
-							},
-							plugins: {
-								datalabels: {
-									anchor: 'end',
-									align: 'top',
-									color: '#EEE',
-									font: { weight: 'bold' },
-									backgroundColor: '#F14668',
-									borderRadius: 3,
-									formatter: value => value + ' 元'
-								}
-							},
+						plugins: {
+							datalabels: {
+								anchor: 'end',
+								align: 'top',
+								color: '#EEE',
+								font: { weight: 'bold' },
+								backgroundColor: '#F14668',
+								borderRadius: 3,
+								formatter: value => value + ' 元'
+							}
 						},
-						plugins: plugins
-					});
-				},
-			},
-			mounted: function () {
-				this.query();
-			},
+					},
+					plugins: plugins
+				});
+			}
 			unmounted() {
 				this.tradeChart.destroy();
 			}
 		}
-		const app = Vue.createApp(option);
-		app.mount('#vue-finance-stats');
+		const container = "#vue-finance-stats";
+		const custom = new App_Filter(container);
+		const vueComponent = custom.toVueComponent();
+		const app = Vue.createApp(vueComponent);
+		app.mount(container);
 		vueInstances.push(app);
 	}
 </script>
