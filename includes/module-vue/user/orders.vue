@@ -9,19 +9,23 @@
 		height: auto;
 	}
 
-	.is-today>.box {
+	.order-item>.box {
+		border-left: 3px solid #ffe08a;
+	}
+
+	.order-item.is-today>.box {
 		border-left: 3px solid #f14668;
 	}
 
-	.is-today time {
+	.order-item.is-today time {
 		color: #f14668;
 	}
 
-	.is-yesterday>.box {
+	.order-item.is-yesterday>.box {
 		border-left: 3px solid #48c78e;
 	}
 
-	.is-yesterday time {
+	.order-item.is-yesterday time {
 		color: #48c78e;
 	}
 </style>
@@ -38,7 +42,7 @@
 		</div>
 	</div>
 	<div id="lists">
-		<div v-for="(item, index) in data.results" class="order-item" :class="getDayClass(item.time)">
+		<div v-for="(item, index) in data.results" class="order-item" :class="getItemClass(item)">
 			<!-- 另一个商品订单 -->
 			<div v-if="item.type ==`order`" class="order-card box mb-5">
 				<div class="level is-mobile mb-1">
@@ -187,8 +191,9 @@
 					wnd_alert_modal(`<div class="notification is-danger is-light">${res.msg}</div>`);
 				}
 			}
-			getDayClass(ts) {
-				const date = new Date(ts * 1000);
+			getItemClass(item) {
+				const _class = item.status;
+				const date = new Date(item.time * 1000);
 				const now = new Date();
 
 				const isSameDate = (d1, d2) =>
@@ -200,11 +205,11 @@
 				yesterday.setDate(now.getDate() - 1);
 
 				if (isSameDate(date, now)) {
-					return 'is-today';
+					return _class + ' is-today';
 				} else if (isSameDate(date, yesterday)) {
-					return 'is-yesterday';
+					return _class + 'is-yesterday';
 				} else {
-					return '';
+					return _class;
 				}
 			}
 			get_status_icon(item) {
