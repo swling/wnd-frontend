@@ -161,6 +161,7 @@
                         payment_gateway: this.paymentMethod,
                         receiver: this.receiver,
                         is_virtual: this.isVirtual,
+                        request: data.request,
                         '_wnd_sign': data.sign,
                     };
 

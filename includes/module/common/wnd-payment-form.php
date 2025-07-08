@@ -28,7 +28,7 @@ class Wnd_Payment_Form extends Wnd_Module_Vue {
 			'post_id'    => 0,
 			'quantity'   => $args[Wnd_Order_Props::$quantity_key] ?? 1,
 			'sku_id'     => $args[Wnd_Order_Props::$sku_id_key] ?? '',
-			'is_virtual' => $args['is_virtual'] ?? 0,
+			'is_virtual' => $args['is_virtual'] ?? 1,
 		];
 
 		// 移除签名参数
@@ -70,7 +70,7 @@ class Wnd_Payment_Form extends Wnd_Module_Vue {
 		}
 
 		// 生成签名
-		$sign = Wnd_Request::sign(['post_id', 'sku_id', 'quantity', 'receiver', 'payment_gateway', 'is_virtual']);
+		$sign = Wnd_Request::sign(['post_id', 'sku_id', 'quantity', 'receiver', 'payment_gateway', 'is_virtual', 'request']);
 
 		// 提示信息
 		$msg = (!is_user_logged_in() && $is_virtual) ? __('您当前尚未登录，匿名订单仅24小时有效，请悉知！', 'wnd') : '';
@@ -89,6 +89,7 @@ class Wnd_Payment_Form extends Wnd_Module_Vue {
 			'is_virtual'      => $is_virtual,
 			'receiver'        => $receiver,
 			'sign'            => $sign,
+			'request'         => $args,
 		];
 	}
 }
