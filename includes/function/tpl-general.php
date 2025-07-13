@@ -160,7 +160,7 @@ function wnd_post_thumbnail($post_id, $width, $height) {
 	}
 
 	$url  = $image_id ? wnd_get_attachment_url($image_id) : WND_URL . '/static/images/default.jpg';
-	$html = '<img class="thumbnail" src="' . $url . '" width="' . $width . '" height="' . $height . '">';
+	$html = '<img class="thumbnail" src="' . $url . '" width="' . $width . '" height="' . $height . '" loading="lazy">';
 
 	return apply_filters('wnd_post_thumbnail', $html, $post_id, $width, $height);
 }
