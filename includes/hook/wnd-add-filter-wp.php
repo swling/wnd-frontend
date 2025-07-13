@@ -221,7 +221,7 @@ class Wnd_Add_Filter_WP {
 
 		//头像
 		$avatar_url = wnd_get_avatar_url($user_id, $size);
-		$avatar     = "<img alt='{$alt}' src='$avatar_url' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
+		$avatar     = "<img src=\"{$avatar_url}\" class=\"avatar avatar-{$size}\" height=\"{$size}\" width=\"{$size}\" loading=\"lazy\"/>";
 
 		//注册用户，添加链接
 		if ($user_id and !is_admin()) {
