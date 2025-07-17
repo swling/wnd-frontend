@@ -2,13 +2,13 @@
 namespace Wnd\Action\Admin;
 
 use Exception;
-use Wnd\Action\Wnd_Action;
+use Wnd\Action\Wnd_Action_Root;
 
 /**
  * @since 0.9.89
  * 设置单个 option
  */
-class Wnd_Set_Option extends Wnd_Action {
+class Wnd_Set_Option extends Wnd_Action_Root {
 
 	protected $verify_sign = false;
 
