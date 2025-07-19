@@ -207,7 +207,7 @@
 				if (isSameDate(date, now)) {
 					return _class + ' is-today';
 				} else if (isSameDate(date, yesterday)) {
-					return _class + 'is-yesterday';
+					return _class + ' is-yesterday';
 				} else {
 					return _class;
 				}
