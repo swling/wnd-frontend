@@ -3,9 +3,9 @@
  * 这不是一个标准的 Tinymce 插件
  * 仅适用于 WordPress 插件：Wnd-Frontend
  */
-tinymce.PluginManager.add('wndimage', function(editor, url) {
+tinymce.PluginManager.add('wndimage', function (editor, url) {
 	let config = editor.getParam('wnd_config');
-	var openDialog = function() {
+	let openDialog = function () {
 		return editor.windowManager.open({
 			title: '',
 			body: {
@@ -20,7 +20,7 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					type: 'input',
 					name: 'title',
 					label: 'Title'
-				}, ]
+				},]
 			},
 			buttons: [{
 				type: 'cancel',
@@ -32,7 +32,7 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 			}],
 			img: {},
 			// 提交
-			onSubmit: function(api) {
+			onSubmit: function (api) {
 				let data = api.getData();
 				if (data.title) {
 					img.alt = data.title;
@@ -42,7 +42,7 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 				editor.insertContent(img.outerHTML);
 				api.close();
 			},
-			onChange: async function(api, details) {
+			onChange: async function (api, details) {
 				// 非文件字段变动
 				if ('fileinput' !== details.name) {
 					return false;
@@ -55,6 +55,8 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 
 				// 上传文件
 				let file = data.fileinput[0];
+				const { width, height } = await getImageSizeFromFile(file);
+
 				if (config.oss_direct_upload) {
 					let sign_data = {
 						'post_parent': config.post_parent,
@@ -63,6 +65,9 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					if (file_info) {
 						img.src = file_info.url;
 						img.dataset.id = file_info.id;
+						img.width = width;
+						img.height = height;
+						img.loading = 'lazy';
 					}
 				} else {
 					let formdata = new FormData();
@@ -73,6 +78,9 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 					if (file_info) {
 						img.src = file_info.url;
 						img.dataset.id = file_info.id;
+						img.width = width;
+						img.height = height;
+						img.loading = 'lazy';
 					}
 				}
 			},
@@ -99,10 +107,26 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 		}
 	};
 
+	async function getImageSizeFromFile(file) {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = function (e) {
+				const img = new Image();
+				img.onload = function () {
+					resolve({ width: img.width, height: img.height });
+				};
+				img.onerror = reject;
+				img.src = e.target.result;
+			};
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
+	}
+
 	// 注册一个工具栏按钮名称
 	editor.ui.registry.addButton('wndimage', {
 		icon: 'image',
-		onAction: function() {
+		onAction: function () {
 			openDialog();
 		}
 	});
@@ -110,13 +134,13 @@ tinymce.PluginManager.add('wndimage', function(editor, url) {
 	// 注册一个菜单项名称 menu/menubar
 	editor.ui.registry.addMenuItem('wndimage', {
 		text: 'Wnd Image',
-		onAction: function() {
+		onAction: function () {
 			openDialog();
 		}
 	});
 
 	return {
-		getMetadata: function() {
+		getMetadata: function () {
 			return {
 				//插件名和链接会显示在“帮助”→“插件”→“已安装的插件”中
 				name: 'Wnd Image', //插件名称

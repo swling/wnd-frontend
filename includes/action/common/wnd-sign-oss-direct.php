@@ -66,6 +66,8 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 			return $this->sign_put();
 		} elseif ('DELETE' == $this->method) {
 			return $this->sign_delete();
+		} else {
+			throw new Exception('Unsupported method: ' . $this->method);
 		}
 	}
 
