@@ -128,16 +128,12 @@ class WPDB_Row {
 		// object cache
 		$data = $this->cache->get_data_from_cache($where);
 		if (false !== $data) {
-			do_action("get_{$this->object_name}_data_success", $data, $where);
 			return $data;
 		}
 
 		// get data form database success
 		$data = $this->wpdb->get_row($sql);
-		if ($data) {
-			$this->cache->set_data_into_cache($where, $data);
-			do_action("get_{$this->object_name}_data_success", $data, $where);
-		}
+		$this->cache->set_data_into_cache($where, $data);
 
 		return $data ? (object) $data : false;
 	}

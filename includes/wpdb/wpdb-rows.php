@@ -84,9 +84,7 @@ abstract class WPDB_Rows {
 			$wpdb->prepare("SELECT * FROM {$this->table} WHERE {$this->object_id_column} = %d ORDER BY %s ASC", $object_id, $this->primary_id_column)
 		);
 
-		if ($data) {
-			$this->set_object_rows_cache($object_id, $data);
-		}
+		$this->set_object_rows_cache($object_id, $data);
 
 		return $data;
 	}
@@ -151,7 +149,7 @@ abstract class WPDB_Rows {
 	 * add row data
 	 * @return int row id
 	 */
-	public function add_row(int $object_id, array $data): int{
+	public function add_row(int $object_id, array $data): int {
 		$data[$this->object_id_column] = $object_id;
 		$data                          = $this->check_insert_data($data);
 		$id                            = $this->wpdb_row->insert($data);
@@ -166,7 +164,7 @@ abstract class WPDB_Rows {
 	 * If no value already exists for the specified object ID and rowdata key, the rowdata will be added.
 	 * @return int row id
 	 */
-	public function update_row(int $object_id, array $data, array $where): int{
+	public function update_row(int $object_id, array $data, array $where): int {
 		$_data = $this->get_row($object_id, $where);
 		if (!$_data) {
 			return 0;
@@ -189,7 +187,7 @@ abstract class WPDB_Rows {
 	 *
 	 * @return int row id
 	 */
-	public function delete_row(int $object_id, array $where): int{
+	public function delete_row(int $object_id, array $where): int {
 		$data = $this->get_row($object_id, $where);
 		if (!$data) {
 			return 0;
