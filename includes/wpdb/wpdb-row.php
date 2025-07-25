@@ -133,7 +133,9 @@ class WPDB_Row {
 
 		// get data form database success
 		$data = $this->wpdb->get_row($sql);
-		$this->cache->set_data_into_cache($where, $data);
+		if ($data) {
+			$this->cache->set_data_into_cache($where, $data);
+		}
 
 		return $data ? (object) $data : false;
 	}
