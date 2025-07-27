@@ -95,35 +95,7 @@ class Wnd_Menus {
 	 * 构造选项表单
 	 */
 	protected function build_form_json(Wnd_Form_Option $form): string {
-		$form->add_radio(
-			[
-				'name'     => 'static_host',
-				'options'  => ['本地' => 'local', 'jsdeliver' => 'jsdeliver', '关闭' => 'close'],
-				'required' => 'required',
-				'class'    => 'is-checkradio is-danger',
-				'label'    => '静态资源',
-			]
-		);
-
 		$form->add_page_select('front_page', '前端页面', true);
-
-		$form->add_text(
-			[
-				'name'        => 'agreement_url',
-				'label'       => '注册协议',
-				'required'    => false,
-				'placeholder' => '新用户注册协议页面',
-			]
-		);
-
-		$form->add_url(
-			[
-				'name'        => 'reg_redirect_url',
-				'label'       => '注册跳转',
-				'required'    => false,
-				'placeholder' => '新用户注册后跳转地址',
-			]
-		);
 
 		$form->add_url(
 			[

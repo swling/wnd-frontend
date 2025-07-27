@@ -399,4 +399,11 @@ class Wnd_Admin_Upgrade {
 		} while (!empty($attachment_ids));
 	}
 
+	// 删除：已经废弃的静态资源配置
+	private static function v_0_9_90() {
+		wnd_delete_option('wnd', 'static_host');
+		wnd_delete_option('wnd', 'agreement_url');
+		wnd_delete_option('wnd', 'reg_redirect_url');
+	}
+
 }
