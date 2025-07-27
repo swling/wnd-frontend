@@ -267,7 +267,7 @@ function wnd_get_user_locale($user_id) {
  * @since 2020.04.11
  */
 function wnd_get_reg_redirect_url(string $lang = ''): string {
-	$url  = wnd_get_config('reg_redirect_url') ?: home_url();
+	$url  = wnd_get_dashboard_url() ?: home_url();
 	$lang = $lang ?: Wnd_language::parse_locale();
 
 	// 英语类 en_US, en_GB, en_CA 等统一设置 为 en

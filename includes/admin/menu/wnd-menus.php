@@ -96,6 +96,7 @@ class Wnd_Menus {
 	 */
 	protected function build_form_json(Wnd_Form_Option $form): string {
 		$form->add_page_select('front_page', '前端页面', true);
+		$form->add_page_select('agreement', '用户协议');
 
 		$form->add_url(
 			[

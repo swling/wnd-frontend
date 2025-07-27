@@ -10,7 +10,10 @@ use Wnd\View\Wnd_Form_User;
  */
 class Wnd_Reg_Form extends Wnd_Module_Form {
 
-	protected static function configure_form(array $args = []): object{
+	protected static function configure_form(array $args = []): object {
+		// 注册协议页面
+		$agreement_url = get_permalink(wnd_get_config('agreement'));
+
 		$form = new Wnd_Form_User();
 		$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>&nbsp;' . __('注册', 'wnd'), true);
 
@@ -30,16 +33,17 @@ class Wnd_Reg_Form extends Wnd_Module_Form {
 		$form->add_user_password('', __('密码', 'wnd'));
 		$form->add_user_display_name('', __('名称', 'wnd'));
 
-		if (wnd_get_config('agreement_url')) {
+		if ($agreement_url) {
+			$text = __('已阅读并同意', 'wnd');
+			$text .= '&nbsp;<i><a href="' . $agreement_url . '" target="_blank">' . get_option('blogname') . __('《注册协议》', 'wnd') . '</a></i>';
 			$form->add_checkbox(
 				[
 					'name'     => 'agreement',
-					'options'  => [__('已阅读并同意：', 'wnd') => 1],
+					'options'  => [$text => 1],
 					'checked'  => 1,
 					'required' => 'required',
 				]
 			);
-			$form->add_html('<i><a href="' . wnd_get_config('agreement_url') . '" target="_blank">' . get_option('blogname') . __('《注册协议》', 'wnd') . '</a></i>');
 		}
 
 		$form->set_route('action', 'user/wnd_reg');

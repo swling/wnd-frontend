@@ -149,12 +149,6 @@ apply_filters('wnd_get_profile', $user_profile, $user_id);
 $filter_name = 'wnd_option_' . $config_key;
 
 /**
-*@since 2020.04.11
-*注册后跳转地址
-*/
-apply_filters('wnd_option_reg_redirect_url', $redirect_url);
-
-/**
 *@since 2020.04.12
 *支付成功后跳转链接（包含订单或充值）
 */

@@ -16,10 +16,8 @@ class Wnd_Admin_Install {
 		// 默认option数据
 		if (!get_option('wnd')) {
 			$default_option = [
-				'static_host'               => 'local',
 				'front_page'                => '',
-				'agreement_url'             => '',
-				'reg_redirect_url'          => '',
+				'agreement'                 => '',
 				'default_avatar_url'        => WND_URL . 'static/images/avatar.jpg',
 
 				'max_upload_size'           => '2048',
