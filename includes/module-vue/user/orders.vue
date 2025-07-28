@@ -51,6 +51,7 @@
 					</div>
 					<div class="level-right tags">
 						<span v-html="get_status_icon(item)" class="mr-1"></span>
+						<span v-if="is_manager" class="mr-1 tag is-warning is-clickable" @click="refund(item.ID)"><i class="fas fa-undo-alt"></i></span>
 						<span @click="delete_transaction(item.ID, index)">
 							<span class="tag is-danger is-light is-clickable"><i class="fas fa-trash-alt"></i></span>
 						</span>
@@ -104,6 +105,7 @@
 					</div>
 					<div class="level-right tags">
 						<span v-html="get_status_icon(item)" class="mr-1"></span>
+						<span v-if="is_manager" class="mr-1 tag is-warning is-clickable" @click="refund(item.ID)"><i class="fas fa-undo-alt"></i></span>
 						<span @click="delete_transaction(item.ID, index)">
 							<span class="tag is-danger is-light is-clickable"><i class="fas fa-trash-alt"></i></span>
 						</span>
@@ -190,6 +192,9 @@
 				} else {
 					wnd_alert_modal(`<div class="notification is-danger is-light">${res.msg}</div>`);
 				}
+			}
+			refund(transaction_id) {
+				wnd_ajax_modal("admin/wnd_refund_form", { "transaction_id": transaction_id });
 			}
 			getItemClass(item) {
 				const _class = item.status;
