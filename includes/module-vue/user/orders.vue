@@ -47,7 +47,7 @@
 			<div v-if="item.type ==`order`" class="order-card box mb-5">
 				<div class="level is-mobile mb-1">
 					<div class="level-left">
-						<i class="fas fa-receipt mr-1"></i><strong>订单号：</strong>&nbsp;{{item.ID}}
+						<i class="fas fa-receipt mr-1"></i><strong></strong>&nbsp;{{item.ID}}
 					</div>
 					<div class="level-right tags">
 						<span v-html="get_status_icon(item)" class="mr-1"></span>
@@ -103,7 +103,7 @@
 				<div class="level is-mobile mb-1">
 					<div class="level-left">
 						<i class="fas fa-file-invoice-dollar mr-1"></i>
-						<strong>订单号：</strong>&nbsp;{{item.ID}}
+						<strong></strong>&nbsp;{{item.ID}}
 					</div>
 					<div class="level-right tags">
 						<span v-html="get_status_icon(item)" class="mr-1"></span>
