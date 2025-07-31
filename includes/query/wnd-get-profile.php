@@ -11,8 +11,8 @@ use Exception;
  */
 class Wnd_Get_Profile extends Wnd_Query {
 
-	protected static function query($args = []): array{
-		$user_id    = get_current_user_id();
+	protected static function query($args = []): array {
+		$user_id    = static::get_user_id($args);
 		$avatar_url = wnd_get_avatar_url($user_id);
 		if (!$user_id) {
 			$user_profile = [
@@ -34,7 +34,7 @@ class Wnd_Get_Profile extends Wnd_Query {
 		}
 
 		// 定义用户 profile 数组
-		unset($user->data->user_pass);
+		unset($user->data->user_pass, $user->data->user_activation_key, $user->data->user_status);
 		$user_profile                = (array) $user->data;
 		$user_profile['avatar_url']  = $avatar_url;
 		$user_profile['description'] = get_user_meta($user_id, 'description', true);
@@ -48,4 +48,17 @@ class Wnd_Get_Profile extends Wnd_Query {
 		return apply_filters('wnd_get_profile', $user_profile, $user_id);
 	}
 
+	private static function get_user_id(array $args): int {
+		// 如果不是管理员，则返回当前用户 ID
+		if (!wnd_is_manager()) {
+			return get_current_user_id();
+		}
+
+		// 如果是管理员，则返回 args 中的 user_id 或当前用户 ID
+		if (!isset($args['user_id'])) {
+			return get_current_user_id();
+		}
+
+		return (int) $args['user_id'];
+	}
 }

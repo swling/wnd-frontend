@@ -62,7 +62,7 @@
 				<div class="is-size-7 has-text-grey">
 					<time><i class="fas fa-clock mr-1"></i>{{timeToString(item.time)}}</time>
 					<i class="fas fa-money-check-alt mr-1 ml-2"></i>{{item.payment_gateway}}
-					<i class="fas fa-user mr-1 ml-2"></i>{{item.user_id}}
+					<i class="fas fa-user mr-1 ml-2"></i> <a @click="get_user_info(item.user_id)">{{item.user_id}}</a>
 				</div>
 
 				<div class="product-item media mt-1">
@@ -119,7 +119,7 @@
 					<p>
 						<time><i class="fas fa-clock mr-1"></i>{{timeToString(item.time)}}</time>
 						<i class="fas fa-money-check-alt mr-1 ml-2"></i>{{item.payment_gateway}}
-						<i class="fas fa-user mr-1 ml-2"></i> {{item.user_id}}
+						<i class="fas fa-user mr-1 ml-2"></i> <a @click="get_user_info(item.user_id)">{{item.user_id}}</a>
 					</p>
 				</div>
 				<div class="product-item mt-1 is-size-7 has-text-grey">
@@ -199,6 +199,24 @@
 			}
 			refund(transaction_id) {
 				wnd_ajax_modal("admin/wnd_refund_form", { "transaction_id": transaction_id });
+			}
+			async get_user_info(user_id) {
+				const res = await wnd_query("wnd_get_profile", { "user_id": user_id });
+				if (res.status <= 0) {
+					alert(res.msg);
+					return;
+				}
+				let html = '<table class="table is-bordered is-striped is-fullwidth"><tbody>';
+				for (const key in res.data) {
+					if (res.data.hasOwnProperty(key)) {
+						if ("avatar_url" == key) {
+							continue;
+						}
+						html += `<tr><th>${key}</th><td>${res.data[key]}</td></tr>`;
+					}
+				}
+				html += '</tbody></table>'
+				wnd_alert_modal(html);
 			}
 			getItemClass(item) {
 				const _class = item.status;
