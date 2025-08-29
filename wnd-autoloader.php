@@ -28,7 +28,19 @@
  *
  * @since 2019.07.31
  */
-spl_autoload_register(function ($class) {
+// 定义全局缓存
+global $autoload_cache;
+$autoload_cache = [];
+
+// ---------------- WordPress 插件 loader ----------------
+spl_autoload_register(function ($class) use (&$autoload_cache) {
+	// 使用全局缓存
+	global $autoload_cache;
+	if (isset($autoload_cache[$class])) {
+		require $autoload_cache[$class];
+		return;
+	}
+
 	/**
 	 * 解析class
 	 * 要判断第三方插件 component 目录，至少需要切割四组元素：Wnd_Plugin\Wndt_Demo\Component\AjaxComment;
@@ -60,7 +72,6 @@ spl_autoload_register(function ($class) {
 		// 都不匹配，表明当前类不是本插件加载范围
 		default:
 			return;
-			break;
 	}
 
 	/**
@@ -81,7 +92,9 @@ spl_autoload_register(function ($class) {
 	$path = $base_dir . DIRECTORY_SEPARATOR . ($sub_dir ? $sub_dir . DIRECTORY_SEPARATOR : '') . $class_name;
 	$path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
 	$file = $path . '.php';
-	if (file_exists($file)) {
+
+	if (is_file($file)) {
+		$autoload_cache[$class] = $file;
 		require $file;
 	}
 });
