@@ -28,6 +28,7 @@
  *
  * @since 2019.07.31
  */
+
 // 定义全局缓存
 global $autoload_cache;
 $autoload_cache = [];
@@ -96,5 +97,53 @@ spl_autoload_register(function ($class) use (&$autoload_cache) {
 	if (is_file($file)) {
 		$autoload_cache[$class] = $file;
 		require $file;
+	}
+});
+
+// ---------------- Composer loader ----------------
+/**
+ * Composer 手动包自动加载器
+ *
+ * 功能：
+ * - 支持手动下载的 Composer 包放在插件或主题根目录下的 /composer/ 目录
+ * - 遵循 PSR-4 命名空间规则
+ * - 内存缓存，避免重复文件查找，提高性能
+ * - 插件目录优先，主题目录作为备选
+ *
+ * @since 0.9.91
+ * 注意：只处理了类文件在 composer 包中 src 目录下的情况
+ */
+// ---------------- Composer loader ----------------
+spl_autoload_register(function ($class) use (&$autoload_cache) {
+	global $autoload_cache;
+	if (isset($autoload_cache[$class])) {
+		require $autoload_cache[$class];
+		return;
+	}
+
+	$parts = explode('\\', $class);
+	if (count($parts) < 2) {
+		return;
+	}
+
+	$vendor       = strtolower($parts[0]);
+	$package      = strtolower($parts[1]);
+	$relative     = implode('/', array_slice($parts, 2)) . '.php';
+	$relativePath = '/composer/' . $vendor . '/' . $package . '/src/' . $relative;
+
+	// 先插件目录
+	$file = WND_PATH . $relativePath;
+	if (is_file($file)) {
+		$autoload_cache[$class] = $file;
+		require $file;
+		return;
+	}
+
+	// 再主题目录
+	$file = get_template_directory() . $relativePath;
+	if (is_file($file)) {
+		$autoload_cache[$class] = $file;
+		require $file;
+		return;
 	}
 });
