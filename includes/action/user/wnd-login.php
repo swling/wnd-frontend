@@ -23,7 +23,7 @@ class Wnd_Login extends Wnd_Action {
 	 * - App 登录返回 token
 	 * - 常规登录设置 cookie 并返回对应数据
 	 */
-	protected function execute(): array{
+	protected function execute(): array {
 		/**
 		 * 设置当前用户
 		 */
@@ -34,7 +34,12 @@ class Wnd_Login extends Wnd_Action {
 		 */
 		if ('token' == $this->type) {
 			$this->do_login_action();
-			return ['status' => 1, 'msg' => __('登录成功', 'wnd'), 'data' => static::generate_token($this->target_user->ID)];
+
+			$jwt   = Wnd_JWT_Handler::get_instance();
+			$token = $jwt->generate_token($this->target_user->ID);
+			$exp   = $jwt->parse_token($token)['exp'] ?? 0;
+
+			return ['status' => 1, 'msg' => __('登录成功', 'wnd'), 'token' => $token, 'exp' => $exp, 'user_id' => $this->user_id];
 		}
 
 		/**
@@ -93,7 +98,7 @@ class Wnd_Login extends Wnd_Action {
 	 * 生成 Token
 	 * @since 0.9.57.5
 	 */
-	private static function generate_token(int $user_id): array{
+	private static function generate_token(int $user_id): array {
 		$jwt   = Wnd_JWT_Handler::get_instance();
 		$token = $jwt->generate_token($user_id);
 		$exp   = $jwt->parse_token($token)['exp'] ?? 0;

@@ -22,7 +22,7 @@ class Wnd_Issue_Token_Renew extends Wnd_Endpoint {
 		$token = $jwt->generate_token($this->user_id);
 		$exp   = $jwt->parse_token($token)['exp'] ?? 0;
 
-		echo json_encode(['token' => $token, 'exp' => $exp, 'user_id' => $this->user_id]);
+		echo json_encode(['status' => 1, 'token' => $token, 'exp' => $exp, 'user_id' => $this->user_id]);
 	}
 
 	protected function check() {

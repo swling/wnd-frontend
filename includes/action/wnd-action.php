@@ -30,7 +30,7 @@ abstract class Wnd_Action {
 	/**
 	 * 解析表单数据时，是否验证表单签名
 	 */
-	protected $verify_sign = true;
+	protected $verify_sign = false;
 
 	/**
 	 * 解析表单数据时，是否进行人机验证（如果存在）
