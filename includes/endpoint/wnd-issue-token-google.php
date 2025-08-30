@@ -22,7 +22,7 @@ class Wnd_Issue_Token_Google extends Wnd_Issue_Token_Abstract {
 		}
 
 		if (!$clientId) {
-			// throw new Exception('clientId 参数缺失');
+			throw new Exception('clientId 参数缺失');
 		}
 
 		$payload = $this->verify_google_id_token($idToken, $clientId);
@@ -45,7 +45,6 @@ class Wnd_Issue_Token_Google extends Wnd_Issue_Token_Abstract {
 	private function verify_google_id_token(string $idToken, string $clientId): object {
 		$jwk_url   = 'https://www.googleapis.com/oauth2/v3/certs';
 		$cache_key = 'google_jwk_keys';
-		$cache_ttl = HOUR_IN_SECONDS * 24; // 缓存 1 小时
 
 		// 尝试从 WP 缓存获取
 		$jwks = wp_cache_get($cache_key);
@@ -61,6 +60,13 @@ class Wnd_Issue_Token_Google extends Wnd_Issue_Token_Abstract {
 
 			if (!$jwks || empty($jwks['keys'])) {
 				throw new Exception('jwk_invalid', 'Google JWKs 数据无效');
+			}
+
+			// 解析 HTTP 响应头中的 Cache-Control:max-age
+			$headers   = wp_remote_retrieve_headers($response);
+			$cache_ttl = HOUR_IN_SECONDS; // 默认 1 小时
+			if (!empty($headers['cache-control']) && preg_match('/max-age=(\d+)/', $headers['cache-control'], $matches)) {
+				$cache_ttl = (int) $matches[1];
 			}
 
 			// 存入 WP 缓存
@@ -79,7 +85,7 @@ class Wnd_Issue_Token_Google extends Wnd_Issue_Token_Abstract {
 			}
 
 			if ($decoded->aud !== $clientId) {
-				// throw new Exception('invalid_aud', 'aud 不匹配');
+				throw new Exception('invalid_aud', 'aud 不匹配');
 			}
 
 			if ($decoded->exp < time()) {
