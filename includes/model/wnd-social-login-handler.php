@@ -97,18 +97,11 @@ class Wnd_Social_Login_Handler {
 			throw new Exception(__('注册失败', 'wnd'));
 		}
 
-		// 设置头像
-		if ($this->avatar_url) {
-			wnd_update_user_meta($user_id, 'avatar_url', $this->avatar_url);
-		}
-
-		// 设置 Email
-		if ($this->email) {
-			wnd_update_user_email($user_id, $this->email);
-		}
-
 		// 设置 openid
 		wnd_update_user_openid($user_id, $this->type, $this->open_id);
+
+		// 同步头像和Email
+		$this->sync_profile($user_id);
 
 		/**
 		 * 注册完成：同步执行注册钩子
@@ -126,11 +119,24 @@ class Wnd_Social_Login_Handler {
 	 */
 	private function update_user_social_login(): WP_User {
 		wnd_update_user_openid($this->current_user->ID, $this->type, $this->open_id);
-
-		if ($this->avatar_url) {
-			wnd_update_user_meta($this->current_user->ID, 'avatar_url', $this->avatar_url);
-		}
+		$this->sync_profile($this->current_user->ID);
 
 		return $this->current_user;
 	}
+
+	/**
+	 * 同步头像和Email
+	 */
+	private function sync_profile(int $user_id): void {
+		// 设置头像
+		if ($this->avatar_url) {
+			wnd_update_user_meta($user_id, 'avatar_url', $this->avatar_url);
+		}
+
+		// 设置 Email
+		if ($this->email) {
+			wnd_update_user_email($user_id, $this->email);
+		}
+	}
+
 }

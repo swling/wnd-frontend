@@ -29,6 +29,8 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 	protected $user_pass;
 
 	protected $display_name;
+	protected $avatar_url;
+	protected $email;
 
 	protected $scene;
 
@@ -74,8 +76,7 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 		 */
 		$openid       = $this->get_openid();
 		$display_name = $this->display_name ?: $this->app_type . '_' . uniqid();
-		$avatar       = '';
-		$user         = Wnd_Social_Login_Handler::login($this->app_type, $openid, $display_name, $avatar);
+		$user         = Wnd_Social_Login_Handler::login($this->app_type, $openid, $display_name, $this->avatar_url, $this->email);
 
 		// 设置当前用户
 		wp_set_current_user($user->ID);
