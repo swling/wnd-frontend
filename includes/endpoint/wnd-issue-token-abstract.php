@@ -54,7 +54,7 @@ abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 			Wnd_Qrcode_Login::bind($this->scene, $user_id);
 		}
 
-		echo json_encode(['token' => $token, 'exp' => $exp, 'user_id' => $user_id]);
+		echo json_encode(['status' => 1, 'token' => $token, 'exp' => $exp, 'user_id' => $user_id]);
 	}
 
 	/**
