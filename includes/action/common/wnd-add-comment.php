@@ -13,7 +13,7 @@ class Wnd_Add_Comment extends Wnd_Action {
 
 	protected $verify_sign = false;
 
-	protected function execute(): array{
+	protected function execute(): array {
 		// 此处插件可能通过 comment 相关 hook 抛出异常，如验证码
 		$comment = wp_handle_comment_submission(wp_unslash($this->wp_rest_request->get_params()));
 		if (is_wp_error($comment)) {
@@ -38,7 +38,7 @@ class Wnd_Add_Comment extends Wnd_Action {
 		$html .= '</article>';
 		$html .= '</li>';
 
-		return ['status' => 1, 'msg' => '提交成功', 'data' => $html];
+		return ['status' => 1, 'msg' => __('提交成功', 'wnd'), 'data' => $html];
 	}
 
 }
