@@ -1,5 +1,6 @@
 <?php
 namespace Wnd\View;
+use Exception;
 
 /**
  * 多重筛选 Json API
@@ -131,7 +132,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	 */
 	protected function get_posts(): array {
 		if (!$this->wp_query) {
-			return __('未执行WP_Query', 'wnd');
+			throw new Exception(__('未执行WP_Query', 'wnd'));
 		}
 
 		$posts = $this->wp_query->get_posts();
@@ -149,10 +150,11 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 
 			// 用户信息
 			update_post_author_caches($posts);
-			$author       = get_userdata($post->post_author);
-			$author_name  = $author ? ($author->display_name ?? $author->user_login) : 'anonymous';
-			$author_link  = $author ? get_author_posts_url($post->post_author) : '';
-			$post->author = ['name' => $author_name, 'link' => $author_link];
+			$author           = get_userdata($post->post_author);
+			$author_name      = $author ? ($author->display_name ?? $author->user_login) : 'anonymous';
+			$author_link      = $author ? get_author_posts_url($post->post_author) : '';
+			$post->author     = ['name' => $author_name, 'link' => $author_link];
+			$post->post_title = html_entity_decode($post->post_title);
 
 			// Post Link
 			$post->link = get_permalink($post);
@@ -170,7 +172,7 @@ class Wnd_Filter_Ajax extends Wnd_Filter_Abstract {
 	 */
 	protected function get_pagination($show_page = 5): array {
 		if (!$this->wp_query) {
-			return __('未执行WP_Query', 'wnd');
+			throw new Exception(__('未执行WP_Query', 'wnd'));
 		}
 
 		return [
