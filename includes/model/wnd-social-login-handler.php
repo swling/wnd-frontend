@@ -49,6 +49,14 @@ class Wnd_Social_Login_Handler {
 	private function handle_login(): WP_User {
 		// 根据openid登录或注册新用户
 		$user = wnd_get_user_by_openid($this->type, $this->open_id);
+
+		// 如果没有绑定，尝试通过 email 查找现有用户并绑定
+		if (!$user and $this->email and ($existing_user = wnd_get_user_by($this->email))) {
+			wnd_update_user_openid($existing_user->ID, $this->type, $this->open_id);
+			$user = $existing_user;
+		}
+
+		// openid 未绑定且 email 未匹配到用户，注册新用户
 		if (!$user) {
 			$user = $this->register_user();
 		}
@@ -85,10 +93,6 @@ class Wnd_Social_Login_Handler {
 	private function register_user(): WP_User {
 		if (!$this->display_name) {
 			throw new Exception('display_name is empty');
-		}
-
-		if ($this->email and wnd_get_user_by($this->email)) {
-			throw new Exception($this->email . ' ' . __('已注册', 'wnd'));
 		}
 
 		$user_login = wnd_generate_login();
