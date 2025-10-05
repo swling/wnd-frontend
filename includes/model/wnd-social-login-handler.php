@@ -53,6 +53,9 @@ class Wnd_Social_Login_Handler {
 			$user = $this->register_user();
 		}
 
+		// 同步头像和Email
+		$this->sync_profile($user->ID);
+
 		// Cookie
 		wp_set_auth_cookie($user->ID, true);
 
@@ -99,9 +102,6 @@ class Wnd_Social_Login_Handler {
 
 		// 设置 openid
 		wnd_update_user_openid($user_id, $this->type, $this->open_id);
-
-		// 同步头像和Email
-		$this->sync_profile($user_id);
 
 		/**
 		 * 注册完成：同步执行注册钩子
