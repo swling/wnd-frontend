@@ -36,6 +36,7 @@ class Wnd_Get_Profile extends Wnd_Query {
 		// 定义用户 profile 数组
 		unset($user->data->user_pass, $user->data->user_activation_key, $user->data->user_status);
 		$user_profile                = (array) $user->data;
+		$user_profile['ID']          = (int) $user_profile['ID'];
 		$user_profile['avatar_url']  = $avatar_url;
 		$user_profile['description'] = get_user_meta($user_id, 'description', true);
 		$user_profile['balance']     = wnd_get_user_balance($user_id);
