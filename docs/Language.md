@@ -46,3 +46,7 @@ add_action('init', function () {
 */
 $_GET['lang']
 ```
+## PHP 性能优化
+```php
+Wnd\Utility\Wnd_language::transform_mo_to_php();
+```
