@@ -115,10 +115,11 @@ function wnd_enqueue_scripts($hook_suffix = '') {
 	wp_enqueue_style('bulma', $static_path . 'css/bulma.min.css', [], WND_VER);
 	wp_enqueue_style('font-awesome', $static_path . 'css/font-awesome-all.min.css', [], WND_VER);
 	wp_enqueue_script('axios', $static_path . 'js/lib/axios.min.js', [], WND_VER);
-	wp_enqueue_script('vue', $static_path . 'js/lib/vue.global.prod.js', [], WND_VER);
+	wp_enqueue_script('vue', $static_path . 'js/lib/vue.global.prod.js', ['axios'], WND_VER);
 	wp_enqueue_script('wnd-main', $static_path . 'js/main.min.js', ['vue', 'axios'], WND_VER);
 
 	if (is_singular() and comments_open()) {
-		wp_enqueue_script('wnd-comment', $static_path . 'js/comment.min.js', ['axios', 'comment-reply'], WND_VER, ['strategy' => 'async']);
+		wp_add_inline_script('wnd-main', file_get_contents(ABSPATH . WPINC . '/js/comment-reply.min.js'));
+		wp_add_inline_script('wnd-main', file_get_contents(WND_PATH . '/static/js/comment.min.js'));
 	}
 }
