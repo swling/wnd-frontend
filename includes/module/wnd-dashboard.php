@@ -46,7 +46,7 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 	}
 
 	private static function get_menus($args) {
-		$menu = [
+		$menus = [
 			[
 				'name' => __('概览', 'wnd'),
 				'hash' => 'index',
@@ -86,10 +86,10 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 
 		// 管理员：移除重复的 “概览” 菜单
 		if (is_super_admin()) {
-			array_shift($menu);
+			array_shift($menus);
 		}
 
-		return apply_filters('wnd_menus', $menu, $args);
+		return apply_filters('wnd_menus', $menus, $args);
 	}
 
 	private static function get_admin_menus($args) {
@@ -152,6 +152,8 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 				'icon' => '<i class="fas fa-info-circle"></i>', // 系统信息
 			],
 		];
+
+		return apply_filters('wnd_admin_menus', $menus, $args);
 
 		return $menus;
 	}

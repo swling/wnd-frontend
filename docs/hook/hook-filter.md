@@ -310,6 +310,12 @@ add_filter('wnd_menus', function ($menus, $args) {
 }, 11, 2);
 
 /**
+ * 管理员菜单
+ * @date 2025.10.30
+ */ 
+apply_filters('wnd_admin_menus', $menus, $args);
+
+/**
 * @since 0.9.12
 * 侧边栏菜单底部
 */
