@@ -198,10 +198,10 @@ class WPDB_Row {
 	private function build_sql(array $where, array $options = []): string {
 		// 默认参数
 		$defaults = [
-			'limit'    => 0,
-			'offset'   => 0,
-			'order_by' => $this->primary_id_column,
-			'order'    => 'DESC',
+			'limit'   => 0,
+			'offset'  => 0,
+			'orderby' => $this->primary_id_column,
+			'order'   => 'DESC',
 		];
 		$options = array_merge($defaults, $options);
 
@@ -256,8 +256,8 @@ class WPDB_Row {
 		}
 
 		// 验证排序字段（仅允许字母、数字、下划线）
-		if (!preg_match('/^[a-zA-Z0-9_]+$/', $options['order_by'])) {
-			$options['order_by'] = $this->primary_id_column;
+		if (!preg_match('/^[a-zA-Z0-9_]+$/', $options['orderby'])) {
+			$options['orderby'] = $this->primary_id_column;
 		}
 
 		// 确保排序方式只能是 ASC 或 DESC
@@ -267,7 +267,7 @@ class WPDB_Row {
 		}
 
 		// 构造 SQL 语句
-		$sql = "SELECT * FROM `{$this->table}` WHERE " . implode(' AND ', $conditions) . " ORDER BY `{$options['order_by']}` {$options['order']}";
+		$sql = "SELECT * FROM `{$this->table}` WHERE " . implode(' AND ', $conditions) . " ORDER BY `{$options['orderby']}` {$options['order']}";
 
 		if ($options['limit']) {
 			$sql .= ' LIMIT %d OFFSET %d';
