@@ -135,7 +135,7 @@ const DropdownSearch = {
     computed: {
         filteredOptions() {
             return this.options.filter(opt =>
-                opt.name.toLowerCase().includes(this.search.toLowerCase())
+                opt.name.toLowerCase().startsWith(this.search.toLowerCase())
             );
         },
         maybe_required() {
@@ -391,7 +391,7 @@ const TagsInput = {
             const term = this.input.toLowerCase();
             const selectedValues = this.selectedTags.map(tag => tag.value);
             this.filteredOptions = this.options.filter(
-                opt => opt.name.toLowerCase().includes(term) && !selectedValues.includes(opt.value)
+                opt => opt.name.toLowerCase().startsWith(term) && !selectedValues.includes(opt.value)
             );
             this.selectedIndex = -1;
         },
