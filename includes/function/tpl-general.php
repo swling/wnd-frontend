@@ -23,7 +23,7 @@ function wnd_breadcrumb($font_size = 'is-small', $hierarchical = true) {
 	 * columns
 	 *
 	 */
-	$html = '<div class="breadcrumb-wrap columns is-mobile">';
+	$html = '<div class="breadcrumb-wrap columns is-mobile is-marginless">';
 
 	/**
 	 * 左侧导航
