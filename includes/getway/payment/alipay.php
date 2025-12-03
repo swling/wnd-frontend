@@ -46,8 +46,8 @@ class Alipay extends Wnd_Payment {
 			//异步通知地址 *不能带参数否则校验不过 （插件执行页面地址）
 			'notify_url'          => wnd_get_endpoint_url('wnd_verify_alipay'),
 
-			//同步跳转 *不能带参数否则校验不过 （插件执行页面地址）
-			'return_url'          => wnd_get_endpoint_url('wnd_verify_alipay'),
+			//同步跳转 *不能带参数否则校验不过 （同步回调虽然包含了签名，但不含支付状态，不得作为校验订单状态使用，仅用于跳转页面）
+			'return_url'          => wnd_get_endpoint_url('wnd_payment_return_alipay'),
 
 			//编码格式
 			'charset'             => 'utf-8',
@@ -121,10 +121,7 @@ class Alipay extends Wnd_Payment {
 				throw new Exception('异步验签失败');
 			}
 		} else {
-			$_GET = stripslashes_deep($_GET);
-			if (!static::check_return()) {
-				throw new Exception('同步验签失败');
-			}
+			throw new Exception('仅支持异步验签');
 		}
 	}
 
@@ -135,22 +132,6 @@ class Alipay extends Wnd_Payment {
 	private static function check($params): bool {
 		$aliPay = new AlipayService(static::getConfig());
 		return $aliPay->rsaCheck($params);
-	}
-
-	/**
-	 * 同步回调通知
-	 *
-	 */
-	private static function check_return(): bool {
-		/**
-		 * 验签
-		 */
-		$check = static::check($_GET);
-		if (true !== $check) {
-			echo ('fail');
-		}
-
-		return $check;
 	}
 
 	/**
