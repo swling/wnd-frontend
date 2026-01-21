@@ -53,11 +53,18 @@ abstract class Wnd_App_abstract {
 		$temp_slug   = str_replace('wndt_', '', strtolower($current_app));
 		$slug        = str_replace('_', '-', $temp_slug);
 		$app_post    = wnd_get_post_by_slug($slug, 'app');
-		$price       = wnd_get_post_price($app_post->ID);
+		if (!$app_post) {
+			return [
+				'app_id' => 0,
+				'price'  => 0,
+				'sku'    => [],
+			];
+		}
+		$price = wnd_get_post_price($app_post->ID);
 		return [
-			'app_id' => $app_post->ID ?? 0,
+			'app_id' => $app_post->ID,
 			'price'  => $price,
-			'sku'    => Wnd_SKU::get_object_sku($app_post->ID ?? 0),
+			'sku'    => Wnd_SKU::get_object_sku($app_post->ID),
 		];
 	}
 
