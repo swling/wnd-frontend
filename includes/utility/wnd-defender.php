@@ -253,7 +253,14 @@ abstract class Wnd_Defender {
 			return;
 		}
 
-		$threat_extension = ['jsp', 'jspx', 'action', 'asp', 'aspx', 'do', 'cgi', 'exe', 'bak', 'inc', '7z'];
+		// 拦截 HEAD 请求文件
+		if ('HEAD' == $_SERVER['REQUEST_METHOD']) {
+			$this->count        = $this->max_connections;
+			$this->base_count   = $this->base_count + $this->max_connections;
+			$this->blocked_time = 3600 * 24;
+		}
+
+		$threat_extension = ['jsp', 'jspx', 'action', 'asp', 'aspx', 'do', 'cgi', 'exe', 'bak', 'inc', '7z', 'rar'];
 		if (in_array($ext, $threat_extension)) {
 			$this->count        = $this->max_connections;
 			$this->base_count   = $this->base_count + $this->max_connections;
