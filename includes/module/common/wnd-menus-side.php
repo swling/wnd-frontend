@@ -10,6 +10,16 @@ use Wnd\Module\Wnd_Module_Html;
 class Wnd_Menus_Side extends Wnd_Module_Html {
 
 	protected static function build(array $args = []): string {
+		// 优先从主题目录查找菜单定义，其次为插件目录
+		$class_name = '\Wndt\Module\Common\Wndt_Menus_Side';
+		if (class_exists($class_name)) {
+			return $class_name::build($args);
+		} else {
+			return static::build_menus($args);
+		}
+	}
+
+	protected static function build_menus(array $args = []): string {
 		$html = '<aside id="menus-side" style="position: fixed;top: 0;height: 100%;z-index: 32;background: #FFF;max-width:100%;min-width:200px;overflow:auto;">';
 
 		// 搜索及按钮
@@ -34,12 +44,6 @@ class Wnd_Menus_Side extends Wnd_Module_Html {
 			$html .= '<a href="' . wp_logout_url(wnd_home_url()) . '" title="退出" class="button is-outlined">' . __('退出账户', 'wnd') . '</a>';
 		}
 		$html .= '</div>';
-
-		// 内容导航
-		$html .= apply_filters('wnd_menus_side_before', '');
-		$html .= '<div id="wnd-menus-side"></div>';
-		$html .= '<script>wnd_render_menus("#wnd-menus-side", false, true)</script>';
-		$html .= apply_filters('wnd_menus_side_after', '');
 
 		$html .= '</aside>';
 		return $html;

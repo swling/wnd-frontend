@@ -291,12 +291,6 @@ apply_filters('wnd_product_props', $props, $object_id);
 ## 菜单
 ```php
 /**
-* @since 0.9.12
-* 侧边栏菜单顶部
-*/
-apply_filters('wnd_menus_side_before', '');
-
-/**
  * 自定义用户菜单
  *
  */
@@ -314,12 +308,6 @@ add_filter('wnd_menus', function ($menus, $args) {
  * @date 2025.10.30
  */ 
 apply_filters('wnd_admin_menus', $menus, $args);
-
-/**
-* @since 0.9.12
-* 侧边栏菜单底部
-*/
-apply_filters('wnd_menus_side_after', '');
 ```
 
 ## 前端用户中心页面
