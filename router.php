@@ -23,21 +23,11 @@ unset($key, $value);
  * Rest API
  * - Action API 仅允许 POST
  */
-$action       = $_POST['action'] ?? '';
-$module       = $request['module'] ?? '';
-$query        = $request['query'] ?? '';
-$endpoint     = $request['endpoint'] ?? '';
-$filter_posts = $request['filter_posts'] ?? '';
-$filter_users = $request['filter_users'] ?? '';
+$action = $_POST['action'] ?? '';
+$module = $request['module'] ?? '';
 
 // 应急操作
 $wp_action = $request['wp_action'] ?? '';
-
-// Endpoint
-if ($endpoint) {
-	Wnd_Controller::handle_endpoint($request);
-	return;
-}
 
 // Module
 if ($module) {
@@ -62,16 +52,6 @@ if ($action) {
 // Query
 if ($query) {
 	wp_send_json(Wnd_Controller::handle_query($request));
-}
-
-// filter posts
-if ($filter_posts) {
-	wp_send_json(Wnd_Controller::filter_posts($request));
-}
-
-// filter users
-if ($filter_users) {
-	wp_send_json(Wnd_Controller::filter_users($request));
 }
 
 // WP Action 应急操作
