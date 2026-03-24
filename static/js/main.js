@@ -924,7 +924,7 @@ function wnd_load_menus_side() {
 <div id="wnd-side-background" class="modal" style="z-index:31;">
 <div class="modal-background"></div>
 </div>`);
-        wnd_ajax_embed('#wnd-side-container', 'common/wnd_menus_side', {}, 'wnd_menus_side_toggle');
+        wnd_ajax_embed('#wnd-side-container', 'common/wnd_menus_side', { 'post_id': wnd.post_id }, 'wnd_menus_side_toggle');
     } else {
         wnd_menus_side_toggle();
     }
