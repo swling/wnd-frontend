@@ -148,15 +148,30 @@ class WPDB_Row {
 	 * @return array                 查询结果数组（每一项为关联数组）
 	 */
 	public function query_by_ids($ids): array {
+		return $this->query_by_field_ids($this->primary_id_column, $ids);
+	}
+
+	/**
+	 *
+	 * - 主要用于已知特定字段 ids 的情况下，合并查询并按缓存结果，以提升后续单个条件查询性能
+	 *
+	 * @param string $field          字段名
+	 * @param array  $ids            ID 数组
+	 * @return array                 查询结果数组（每一项为关联数组）
+	 */
+	public function query_by_field_ids(string $field, array $ids): array {
 		// 若 ID 数组为空，直接返回空数组
+		$ids = array_filter($ids);
 		if (empty($ids)) {
 			return [];
 		}
 
-		$results = $this->get_results([$this->primary_id_column => $ids]);
+		// 去重 ID 数组，避免重复查询
+		$ids = array_unique($ids);
+
+		$results = $this->get_results([$field => $ids]);
 		foreach ($results as $data) {
-			$primary_id_column = $this->primary_id_column;
-			$where             = [$primary_id_column => $data->$primary_id_column];
+			$where = [$field => $data->$field];
 			$this->cache->set_data_into_cache($where, $data);
 		}
 
