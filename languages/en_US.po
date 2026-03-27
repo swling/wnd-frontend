@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wnd Frontend\n"
 "POT-Creation-Date: 2025-05-12 15:09+0800\n"
-"PO-Revision-Date: 2025-05-12 15:10+0800\n"
+"PO-Revision-Date: 2026-03-27 12:44+0800\n"
 "Last-Translator: \n"
 "Language-Team: root@swling.cn\n"
 "Language: en\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.9\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e\n"
@@ -738,7 +738,7 @@ msgstr ""
 #: includes/module/admin/wnd-delete-user-form.php:25
 #: includes/module/admin/wnd-refund-form.php:35
 msgid "确认"
-msgstr "Confirm Recharge"
+msgstr "Confirm"
 
 #: includes/module/admin/wnd-admin-posts-panel.php:20
 #: includes/module/post/wnd-post-status-form.php:27
@@ -774,7 +774,7 @@ msgstr ""
 
 #: includes/module/admin/wnd-delete-user-form.php:34
 msgid "确认删除"
-msgstr ""
+msgstr "Confirm Deletion"
 
 #: includes/module/admin/wnd-finance-list.php:16
 #: includes/module/user/wnd-user-finance-panel.php:24
@@ -830,7 +830,7 @@ msgstr ""
 
 #: includes/module/admin/wnd-refund-form.php:19
 msgid "退款"
-msgstr ""
+msgstr "Refund"
 
 #: includes/module/admin/wnd-refund-form.php:24
 msgid "留空为全额退款"
@@ -838,7 +838,7 @@ msgstr ""
 
 #: includes/module/admin/wnd-refund-form.php:44
 msgid "确认退款"
-msgstr ""
+msgstr "Confirm Refund"
 
 #: includes/module/admin/wnd-users-list.php:17
 #: includes/module/post/wnd-post-form-attachment.php:85
@@ -966,7 +966,7 @@ msgstr "New"
 #: includes/module/user/wnd-account-form.php:31
 #: includes/module/user/wnd-reset-password-form.php:26
 msgid "确认新密码"
-msgstr "Repeat"
+msgstr "Confirm New Password"
 
 #: includes/module/user/wnd-account-form.php:41
 msgid "邮箱设置"
@@ -1332,7 +1332,7 @@ msgstr "Last"
 
 #: includes/wpdb/wnd-auth.php:141
 msgid " 已被其他账户占用"
-msgstr ""
+msgstr " This account is already in use by another user"
 
 #: wnd-frontend.php:93
 msgid "必填项为空"
