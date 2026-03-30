@@ -1,7 +1,5 @@
 <?php
-namespace Wnd\View;
-
-use Wnd\View\Wnd_Pagination;
+namespace Wnd\Query;
 
 /**
  * 筛选类查询参数处理类
@@ -183,7 +181,7 @@ class Wnd_Filter_Query {
 			 * 分页
 			 * @since 2019.07.30
 			 */
-			if (Wnd_Pagination::$page_query_var == $key) {
+			if ('pages' == $key) {
 				$query_vars['paged'] = $value ?: 1;
 				continue;
 			}

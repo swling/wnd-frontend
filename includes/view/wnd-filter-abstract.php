@@ -2,7 +2,7 @@
 namespace Wnd\View;
 
 use Exception;
-use Wnd\View\Wnd_Filter_Query;
+use Wnd\Query\Wnd_Filter_Query;
 use Wnd\View\Wnd_Pagination;
 use Wnd\WPDB\Wnd_Tag_Under_Category;
 use WP_Query;
@@ -41,7 +41,7 @@ abstract class Wnd_Filter_Abstract {
 	// 当前post type的主标签 taxonomy 默认：post(post_tag) / 自定义类型 （$post_type . '_cat'）
 	public $tag_taxonomy;
 
-	// Wnd\View\Wnd_Filter_Query 查询类实例化对象;
+	// Wnd\Query\Wnd_Filter_Query 查询类实例化对象;
 	private $filter_query;
 
 	/**
@@ -514,7 +514,7 @@ abstract class Wnd_Filter_Abstract {
 	/**
 	 * 执行查询
 	 * - 执行独立 WP Query
-	 * - 当设置为非独立查询（依赖当前页面查询）时，查询参数将通过 'pre_get_posts' 实现修改，无需执行 WP Query @see Wnd\View\Wnd_Filter_Query::action_on_pre_get_posts();
+	 * - 当设置为非独立查询（依赖当前页面查询）时，查询参数将通过 'pre_get_posts' 实现修改，无需执行 WP Query @see Wnd\Query\Wnd_Filter_Query::action_on_pre_get_posts();
 	 *  当下场景中 $this->wp_query 为 global $wp_query; @see __construct();
 	 * @since 2019.08.01
 	 * @since 0.8.64
