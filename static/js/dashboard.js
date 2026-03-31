@@ -207,12 +207,12 @@ class Filter extends VueClass {
 
 	mounted() {
 		this.query();
-		window.addEventListener("hashchange", this.parseHash);
+		window.addEventListener("hashchange", this.parseHash.bind(this));
 	}
 
 	beforeUnmount() {
 		console.log("触发销毁：vue class");
-		window.removeEventListener("hashchange", this.parseHash);
+		window.removeEventListener("hashchange", this.parseHash.bind(this));
 	}
 
 	watch() {
@@ -245,15 +245,18 @@ class Filter extends VueClass {
 	}
 
 	update_filter(key, value, remove_args = []) {
+		let remove_keys = ['ajax_type'];
 		const param = JSON.parse(JSON.stringify(this.param));
 		if (value) {
 			param[key] = value;
 		} else {
 			delete param[key];
+			remove_keys.push(key);
 		}
 		if (remove_args) {
 			remove_args.forEach((key) => {
 				delete param[key];
+				remove_keys.push(key);
 			});
 		}
 		// 非 翻页的其他查询，则重置页面
@@ -264,12 +267,12 @@ class Filter extends VueClass {
 		if (JSON.stringify(param) === JSON.stringify(this.param)) {
 			return this.query();
 		}
-		wnd_update_url_hash(param, ['ajax_type']);
+		wnd_update_url_hash(param, remove_keys);
 	}
 
 	is_active(key, value) {
-		if (!this.param[key]) {
-			return 'any' == value ? "is-active" : "";
+		if (!this.param[key] || 'undefined' == typeof this.param[key]) {
+			return ('any' == value || !value) ? "is-active" : "";
 		}
 		return this.param[key] == value ? "is-active" : "";
 	}
@@ -286,25 +289,32 @@ class Filter extends VueClass {
  *@since 0.9.88
  *通过参数更新 url hash
  */
-function wnd_update_url_hash(obj, ignore = []) {
-	// 解析当前 hash（去掉 #，转为 URLSearchParams）
+function wnd_update_url_hash(obj = {}, ignore = []) {
+	// 解析当前 hash
 	const currentParams = new URLSearchParams(location.hash.slice(1));
 
-	// 将 obj 的 key-value 合并进去
-	for (const key in obj) {
-		if (ignore.length && ignore.includes(key)) {
-			continue;
-		}
+	// 1. 先删除 ignore 指定的字段
+	if (Array.isArray(ignore) && ignore.length) {
+		ignore.forEach(key => currentParams.delete(key));
+	}
 
-		if (obj[key] === null || obj[key] === undefined) {
-			currentParams.delete(key); // 可选逻辑：允许通过 null/undefined 删除字段
+	// 2. 合并 obj 参数
+	for (const key in obj) {
+		// 如果这个 key 在 ignore 中，直接跳过（双保险）
+		if (ignore.includes(key)) continue;
+
+		const value = obj[key];
+
+		if (value === null || value === undefined) {
+			currentParams.delete(key); // 删除字段
 		} else {
-			currentParams.set(key, obj[key]);
+			currentParams.set(key, value);
 		}
 	}
 
-	// 构建新的 hash 字符串
-	window.location.hash = decodeURIComponent(currentParams.toString());
+	// 3. 更新 hash
+	const newHash = currentParams.toString();
+	window.location.hash = newHash ? decodeURIComponent(newHash) : '';
 }
 
 function wnd_time_to_date(timestamp) {
