@@ -16,8 +16,10 @@ class Wnd_Users extends Wnd_Module_Vue {
 			'label'   => __('排序', 'wnd'),
 			'key'     => 'orderby',
 			'options' => [
-				__('注册时间', 'wnd') => '', //常规排序 date title等
-				__('文章数量', 'wnd') => 'post_count', //常规排序 date title等
+				__('注册时间', 'wnd') => '',
+				__('文章数量', 'wnd') => 'post_count',
+				__('登录次数', 'wnd') => 'custom.login_count',
+				__('最近登录', 'wnd') => 'custom.last_login',
 			],
 		];
 

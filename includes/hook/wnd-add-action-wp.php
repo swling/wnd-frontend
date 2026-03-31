@@ -32,6 +32,7 @@ class Wnd_Add_Action_WP {
 		add_action('post_updated', [__CLASS__, 'action_on_post_updated'], 10, 3);
 		add_action('add_attachment', [__CLASS__, 'action_on_add_attachment'], 10, 1);
 		add_action('pre_get_posts', ['Wnd\Query\Wnd_Filter_Query', 'action_on_pre_get_posts'], 10, 1);
+		add_action('pre_user_query', ['Wnd\Query\Wnd_User_Query_Extend', 'handle_query'], 10, 1);
 
 		/**
 		 * 匿名用户评论验证码，基于 WordPress 原生评论表单及 wp_handle_comment_submission 评论提交
