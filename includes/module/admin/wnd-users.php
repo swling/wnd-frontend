@@ -2,42 +2,41 @@
 namespace Wnd\Module\Admin;
 
 use Exception;
-use Wnd\Module\Wnd_Module_Filter;
-use Wnd\View\Wnd_Filter_User;
+use Wnd\Module\Wnd_Module_Vue;
 
 /**
  * @since 2020.05.06 封装前端用户列表表格
  *
  * @param $number 每页列表数目
  */
-class Wnd_Users_List extends Wnd_Module_Filter {
+class Wnd_Users extends Wnd_Module_Vue {
 
-	protected function structure(): array{
+	protected static function parse_data(array $args): array {
 		$orderby_args = [
 			'label'   => __('排序', 'wnd'),
+			'key'     => 'orderby',
 			'options' => [
-				__('注册时间', 'wnd') => 'registered', //常规排序 date title等
+				__('注册时间', 'wnd') => '', //常规排序 date title等
 				__('文章数量', 'wnd') => 'post_count', //常规排序 date title等
 			],
-			'order'   => 'DESC',
 		];
 
 		$status_args = [
 			'label'   => __('状态', 'wnd'),
+			'key'     => '_meta_status',
 			'options' => [
 				__('全部', 'wnd')  => '',
 				__('已封禁', 'wnd') => 'banned',
 			],
 		];
 
-		$filter = new Wnd_Filter_User();
-		$filter->set_number($args['number'] ?? 20);
-		// $filter->add_search_form();
-		$filter->add_orderby_filter($orderby_args);
-		$filter->add_status_filter($status_args);
-		$filter->query();
-
-		return $filter->get_filter();
+		return [
+			'param' => $args,
+			'tabs'  => [
+				$orderby_args,
+				$status_args,
+			],
+		];
 	}
 
 	protected static function check($args) {

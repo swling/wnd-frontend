@@ -138,7 +138,7 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 			],
 			[
 				'name' => __('用户', 'wnd'),
-				'hash' => 'admin/wnd_users_list',
+				'hash' => 'admin/wnd_users',
 				'icon' => '<i class="fas fa-users"></i>', // 用户列表
 			],
 			[
