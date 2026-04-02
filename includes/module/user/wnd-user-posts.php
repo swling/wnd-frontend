@@ -22,7 +22,7 @@ class Wnd_User_Posts extends Wnd_Module_Vue {
 
 		// 动态获取所有可用 post status
 		$statuses       = get_post_stati(['show_in_admin_all_list' => true], 'objects');
-		$status_options = ['全部' => 'any'];
+		$status_options = [__('全部', 'wnd') => 'any'];
 		foreach ($statuses as $status) {
 			$status_options[$status->label] = $status->name;
 		}
@@ -33,13 +33,9 @@ class Wnd_User_Posts extends Wnd_Module_Vue {
 		];
 
 		// 动态获取所有可用 post type（排除 attachment 类型）
-		$post_types = get_post_types(['public' => true], 'objects');
+		$post_types        = get_post_types(['public' => true], 'objects');
+		$post_type_options = [__('全部', 'wnd') => ''];
 		foreach ($post_types as $type) {
-			if ('post' === $type->name) {
-				$post_type_options[$type->label] = ''; // 默认 post 类型使用空字符串作为参数值，保持与 WordPress 原生请求一致
-				continue;
-			}
-
 			$post_type_options[$type->label] = $type->name;
 		}
 		$post_type_args = [

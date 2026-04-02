@@ -36,7 +36,7 @@ class Wnd_Filter_Query {
 		'date_query'             => [],
 		'meta_key'               => '',
 		'meta_value'             => '',
-		'post_type'              => '',
+		'post_type'              => 'any',
 		'post_status'            => '',
 		'author'                 => 0,
 		'no_found_rows'          => true,
