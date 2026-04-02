@@ -1,3 +1,24 @@
+<style>
+	.item.box {
+		border-left: 3px solid #ffe08a;
+	}
+
+	.item.is-today.box {
+		border-left: 3px solid #f14668;
+	}
+
+	.item.is-today time {
+		color: #f14668;
+	}
+
+	.item.is-yesterday.box {
+		border-left: 3px solid #48c78e;
+	}
+
+	.item.is-yesterday time {
+		color: #48c78e;
+	}
+</style>
 <div id="vue-users-app">
 	<div class="wnd-filter-tabs mb-3">
 		<div class="field has-addons has-addons-right mb-0">
@@ -18,9 +39,9 @@
 		</div>
 	</div>
 	<div id="lists">
-		<div v-for="(item, index) in data.results" class="box mb-4 user-card">
+		<div v-for="(item, index) in data.results" class="box item mb-5 user-card" :class="getItemClass(item)">
 			<!-- 第一行 -->
-			<div class="is-flex is-align-items-center is-justify-content-space-between">
+			<div class="is-flex is-align-items-center is-justify-content-space-between pb-1" style="border-bottom: 1px solid #EEE;">
 				<!-- 左：用户 -->
 				<div class="is-flex is-align-items-center" style="min-width:0;">
 					<figure v-if="item.avatar" class="mr-2" style="flex-shrink:0;">
@@ -33,7 +54,7 @@
 							{{ item.data.display_name || 'Unknown User' }}
 						</div>
 						<div class="is-size-7 has-text-grey">
-							{{ item.data.user_registered }}
+							<time>{{ item.data.user_registered }}</time>
 						</div>
 					</div>
 				</div>
@@ -144,6 +165,26 @@
 			formatBalance(val) {
 				if (val === 0 || !val) return '0.00';
 				return val;
+			}
+			getItemClass(item) {
+				const date = new Date(item.post_date);
+				const now = new Date();
+
+				const isSameDate = (d1, d2) =>
+					d1.getFullYear() === d2.getFullYear() &&
+					d1.getMonth() === d2.getMonth() &&
+					d1.getDate() === d2.getDate();
+
+				const yesterday = new Date();
+				yesterday.setDate(now.getDate() - 1);
+
+				if (isSameDate(date, now)) {
+					return 'is-today';
+				} else if (isSameDate(date, yesterday)) {
+					return 'is-yesterday';
+				} else {
+					return '';
+				}
 			}
 		}
 

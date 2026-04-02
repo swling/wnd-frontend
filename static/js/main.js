@@ -339,8 +339,6 @@ async function wnd_ajax_embed(container, module, param = {}, callback = '') {
 
     if ('form' == response.data.type) {
         wnd_render_form(container, response.data.structure, '', response.data.request_url);
-    } else if ('filter' == response.data.type) {
-        wnd_render_filter(container, response.data.structure);
     } else {
         wnd_inner_html(el, response.data.structure);
         funTransitionHeight(el, trs_time);

@@ -53,8 +53,8 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 				'icon' => '<i class="fas fa-tachometer-alt"></i>', // 仪表盘/概览
 			],
 			[
-				'name' => __('内容', 'wnd'),
-				'hash' => 'user/wnd_user_posts_panel',
+				'name' => __('帖子', 'wnd'),
+				'hash' => 'user/wnd_user_posts',
 				'icon' => '<i class="fas fa-file-alt"></i>', // 文章/内容
 			],
 			[
@@ -100,8 +100,8 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 				'icon' => '<i class="fas fa-tachometer-alt"></i>', // 仪表盘/概览
 			],
 			[
-				'name' => __('审核', 'wnd'),
-				'hash' => 'admin/wnd_admin_posts_panel',
+				'name' => __('帖子', 'wnd'),
+				'hash' => 'admin/wnd_posts',
 				'icon' => '<i class="fas fa-check-square"></i>', // 审核
 			],
 			[

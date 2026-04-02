@@ -44,7 +44,7 @@ class Wnd_Users extends Wnd_Query {
 		return [
 			'results' => $converted,
 			'number'  => count($users),
-			'sql'     => $wpdb->queries,
+			'sql'     => is_super_admin() ? $wpdb->queries : [],
 		];
 	}
 
