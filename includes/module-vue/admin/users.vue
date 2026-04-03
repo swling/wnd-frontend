@@ -50,8 +50,8 @@
 						</p>
 					</figure>
 					<div style="min-width:0;">
-						<div class="has-text-weight-semibold" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-							{{ item.data.display_name || 'Unknown User' }}
+						<div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+							<a :href="item.data.link" target="_blank">{{ item.data.display_name || 'Unknown User' }}</a>
 						</div>
 						<div class="is-size-7 has-text-grey">
 							<time>{{ item.data.user_registered }}</time>

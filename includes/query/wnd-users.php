@@ -35,6 +35,7 @@ class Wnd_Users extends Wnd_Query {
 
 		// 使用 array_map 将 WP_User 对象转换为包含 Wnd_User 对象的数组，方便前端使用
 		$converted = array_map(function ($user) {
+			$user->link     = get_author_posts_url($user->ID); // 添加用户链接
 			$user->wnd_user = wnd_get_wnd_user($user->ID); // 将 Wnd_User 对象附加到 WP_User 对象上，方便后续访问
 			unset($user->allcaps);
 			return $user;
