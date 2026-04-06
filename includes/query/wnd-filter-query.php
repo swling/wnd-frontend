@@ -186,6 +186,15 @@ class Wnd_Filter_Query {
 				continue;
 			}
 
+			/**
+			 * posts_per_page
+			 * @since 0.9.93
+			 */
+			if ('number' == $key) {
+				$query_vars['posts_per_page'] = $value;
+				continue;
+			}
+
 			// 其他：若在允许的查询键名范围内，按键名自动匹配
 			if (!in_array($key, $allowed_keys)) {
 				continue;

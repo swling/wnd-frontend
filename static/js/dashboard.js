@@ -186,7 +186,7 @@ class Filter extends VueClass {
 		this.parent_node = document.querySelector(container).parentNode;
 		// 初始参数
 		this.init_param = Object.assign({
-			number: 20,
+			number: wnd.posts_per_page,
 			paged: 1,
 		}, module_data.param);
 	}
