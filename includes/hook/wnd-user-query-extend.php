@@ -1,5 +1,5 @@
 <?php
-namespace Wnd\Query;
+namespace Wnd\Hook;
 
 use WP_User_Query;
 
