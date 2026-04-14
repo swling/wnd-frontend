@@ -5,15 +5,15 @@
 </style>
 <div id="sys-monitor-app" class="container">
 	<div class="buttons is-right">
-		<button class="button is-small is-warning" @click="confirmClear('clear_opcache')">
-			<i class="fas fa-broom"></i>&nbsp;清空 OPcache
+		<button class="button is-small is-warning" @click="confirmClear('opcache_reset')">
+			<i class="fas fa-broom"></i>&nbsp;opcache_reset
 		</button>
-		<button class="button is-small is-warning" @click="confirmClear('clear_object_cache')">
-			<i class="fas fa-trash"></i>&nbsp;清空 object cache
+		<button class="button is-small is-warning" @click="confirmClear('wp_cache_flush')">
+			<i class="fas fa-trash"></i>&nbsp;wp_cache_flush
 		</button>
-		<!-- <button class="button is-small is-danger" @click="confirmClear('clear_redis')">
-			<i class="fas fa-trash"></i>&nbsp;清空 Redis
-		</button> -->
+		<button class="button is-small is-warning" @click="confirmClear('clean_block_logs')">
+			<i class="fas fa-trash"></i>&nbsp;clean_block_logs
+		</button>
 	</div>
 
 	<div id="charts" class="columns is-multiline">

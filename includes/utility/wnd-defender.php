@@ -198,9 +198,9 @@ abstract class Wnd_Defender {
 	protected static function get_real_ip(): string {
 		$ip = '';
 		if (isset($_SERVER)) {
-			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['REMOTE_ADDR']);
+			$ip = $_SERVER['REMOTE_ADDR'];
 		} else {
-			$ip = getenv('HTTP_X_FORWARDED_FOR') ?: (getenv('HTTP_CLIENT_IP') ?: getenv('REMOTE_ADDR'));
+			$ip = getenv('REMOTE_ADDR');
 		}
 
 		return $ip ?: '';
@@ -418,6 +418,31 @@ abstract class Wnd_Defender {
 	}
 
 	/**
+	 * 重置指定ip的拦截统计：可用于防止错误拦截已登录用户
+	 *
+	 * @since 2026.04.14
+	 */
+	public function reset_by_ip(string $ip) {
+		if (!$this->cache) {
+			return;
+		}
+
+		$key = $this->build_key($ip);
+		$this->cache_delete($key);
+	}
+
+	/**
+	 * 清除屏蔽日志
+	 *
+	 */
+	public function clean_block_logs() {
+		if (!$this->cache) {
+			return;
+		}
+		$this->cache_delete(static::$block_logs_key);
+	}
+
+	/**
 	 * 手动加入黑名单
 	 * @since 2023.09.17
 	 *
@@ -425,4 +450,25 @@ abstract class Wnd_Defender {
 	public function add_to_blacklist(int $timeout) {
 		$this->cache_set($this->blacklist_key, 'blacklist', $timeout);
 	}
+
+	/**
+	 * 手动加入指定ip到黑名单
+	 * @since 2026.04.14
+	 *
+	 */
+	public function add_ip_to_blacklist(string $ip, int $timeout) {
+		$blacklist_key = $this->build_key('blacklist_' . $ip);
+		$this->cache_set($blacklist_key, 'blacklist', $timeout);
+	}
+
+	/**
+	 * 从黑名单移除指定ip
+	 * @since 2026.04.14
+	 *
+	 */
+	public function remove_ip_from_blacklist(string $ip) {
+		$blacklist_key = $this->build_key('blacklist_' . $ip);
+		$this->cache_delete($blacklist_key);
+	}
+
 }

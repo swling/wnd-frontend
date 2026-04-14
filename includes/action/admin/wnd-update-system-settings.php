@@ -4,6 +4,7 @@ namespace Wnd\Action\Admin;
 
 use Exception;
 use Wnd\Action\Wnd_Action_Root;
+use Wnd\Utility\Wnd_Defender;
 
 /**
  * 设置服务器系统信息
@@ -17,7 +18,7 @@ class Wnd_Update_System_Settings extends Wnd_Action_Root {
 
 	protected function execute(): array {
 		switch ($this->type) {
-			case 'clear_opcache':
+			case 'opcache_reset':
 				if (function_exists('opcache_reset')) {
 					opcache_reset();
 					break;
@@ -26,7 +27,7 @@ class Wnd_Update_System_Settings extends Wnd_Action_Root {
 				}
 				break;
 
-			case 'clear_object_cache':
+			case 'wp_cache_flush':
 				wp_cache_flush();
 				break;
 
@@ -38,6 +39,11 @@ class Wnd_Update_System_Settings extends Wnd_Action_Root {
 				} catch (Exception $e) {
 					throw new Exception('Redis 服务不可用: ' . $e->getMessage());
 				}
+				break;
+
+			case 'clean_block_logs':
+				$defender = Wnd_Defender::get_instance(0, 0, 0);
+				$defender->clean_block_logs();
 				break;
 
 			default:
