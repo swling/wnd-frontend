@@ -103,7 +103,7 @@
 				<div class="level is-mobile mb-1">
 					<div class="level-left">
 						<i class="fas fa-file-invoice-dollar mr-1"></i>
-						<strong></strong>&nbsp;{{item.ID}}
+						<b class="has-text-danger">{{item.total_amount}}</b>
 					</div>
 					<div class="level-right tags">
 						<span v-html="get_status_icon(item)" class="mr-1"></span>
@@ -125,12 +125,12 @@
 				<div class="product-item mt-1 is-size-7 has-text-grey">
 					<p v-if="is_manager"><i class="fas fa-map-marker-alt mr-1"></i>IP：{{item.props.ip}}</p>
 				</div>
-				<div class="level is-mobile">
-					<div class="level-left is-size-7">
+				<div class="level is-mobile is-size-7">
+					<div class="level-left">
 						<i class="fas fa-stopwatch mr-1"></i><strong>{{item.subject}}</strong>
 					</div>
 					<div class="level-right">
-						<i class="fas fa-coins mr-1"></i><b class="has-text-danger">{{item.total_amount}}</b>
+						<i class="fas fa-receipt mr-1"></i>{{item.ID}}
 					</div>
 				</div>
 			</div>
