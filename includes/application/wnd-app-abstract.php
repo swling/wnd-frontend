@@ -130,7 +130,7 @@ abstract class Wnd_App_abstract {
 			$app_instance = $app::get_instance();
 			$app_instance->render();
 		} catch (Exception $e) {
-			echo $e->getMessage();
+			echo wnd_notification($e->getMessage(), 'is-danger has-text-centered');
 		}
 	}
 
