@@ -80,8 +80,8 @@ class Wnd_Defender_Action {
 		];
 		$defend_args = apply_filters('wnd_action_defend_args', $defend_args, $wnd_action);
 
-		$this->period           = $wnd_action->period;
-		$this->max_actions      = $wnd_action->max_actions;
+		$this->period           = $wnd_action->period ?: 0;
+		$this->max_actions      = $wnd_action->max_actions ?: 0;
 		$this->should_be_defend = ($wnd_action->max_actions and $wnd_action->period);
 		$this->action           = $wnd_action::get_class_name();
 		$this->cache_key        = get_current_user_id() ?: wnd_get_user_ip();
