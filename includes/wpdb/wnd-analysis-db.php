@@ -48,7 +48,7 @@ class Wnd_Analysis_DB extends WPDB_Row {
 		parent::__construct();
 	}
 
-	public function update_post_views($post_id) {
+	public function update_post_views(int $post_id) {
 		// 如果数据库中也没有记录，初始化视图数据
 		$views_data = $this->get_by('post_id', $post_id);
 		$views_data = $views_data ? (array) $views_data : $views_data;
@@ -93,7 +93,7 @@ class Wnd_Analysis_DB extends WPDB_Row {
 	 *
 	 * @since 0.9.75
 	 */
-	private function update_views($postID, $views_data) {
+	private function update_views(int $postID, array $views_data) {
 		if (empty($postID)) {
 			return;
 		}
@@ -159,7 +159,7 @@ class Wnd_Analysis_DB extends WPDB_Row {
 		wp_cache_delete($cache_count_key, $cache_group);
 	}
 
-	private function update_first_daily_views($post_id, $views_data): bool {
+	private function update_first_daily_views(int $post_id, array $views_data): bool {
 		// 获取当前日期
 		$current_date   = wnd_date('Y-m-d');
 		$start_of_week  = wnd_date('Y-m-d', strtotime('monday this week'));
@@ -196,7 +196,7 @@ class Wnd_Analysis_DB extends WPDB_Row {
 		return true;
 	}
 
-	public function update_rating_score($postID, $new_rating) {
+	public function update_rating_score(int $postID, float $new_rating) {
 		global $wpdb;
 		$table_name = $wpdb->wnd_analyses;
 
@@ -225,7 +225,7 @@ class Wnd_Analysis_DB extends WPDB_Row {
 		);
 	}
 
-	public function update_favorites_count($postID, $action) {
+	public function update_favorites_count(int $postID, string $action) {
 		global $wpdb;
 		$table_name = $wpdb->wnd_analyses;
 

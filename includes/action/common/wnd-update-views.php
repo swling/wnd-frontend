@@ -12,9 +12,7 @@ use Wnd\WPDB\Wnd_Analysis_DB;
  */
 class Wnd_Update_Views extends Wnd_Action {
 
-	protected $verify_sign = false;
-
-	private $post_id;
+	private int $post_id;
 
 	protected function execute(): array {
 		$handler = Wnd_Analysis_DB::get_instance();
@@ -36,6 +34,11 @@ class Wnd_Update_Views extends Wnd_Action {
 
 	protected function check() {
 		if (!$this->post_id) {
+			throw new Exception(__('ID无效', 'wnd'));
+		}
+
+		$post = get_post($this->post_id);
+		if (!$post) {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
