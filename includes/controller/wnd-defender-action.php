@@ -22,12 +22,12 @@ use Exception;
 class Wnd_Defender_Action {
 
 	// 本次 Action 是否在防护操作中
-	protected $should_be_defend;
+	protected bool $should_be_defend;
 
 	/**
 	 * Wnd User Meta Key
 	 */
-	protected static $meta_key = 'action_log';
+	protected static string $meta_key = 'action_log';
 
 	/**
 	 * 默认 log 数据
@@ -40,24 +40,24 @@ class Wnd_Defender_Action {
 	/**
 	 * 拦截计数时间段
 	 */
-	protected $period;
+	protected int $period;
 
 	/**
 	 * 在规定时间段最多错误次数
 	 */
-	protected $max_actions;
+	protected int $max_actions;
 
 	/**
 	 * 针对当前用户的拦截标识
 	 * - 已登录用户为用户 ID
 	 * - 未登录用户基于 IP地址
 	 * **/
-	protected $cache_key;
+	protected string $cache_key;
 
 	/**
 	 * 当前 Action 操作标识
 	 */
-	protected $action;
+	protected string $action;
 
 	/**
 	 * 全部 Actions log 数据
@@ -79,11 +79,10 @@ class Wnd_Defender_Action {
 			'max_actions' => $wnd_action->max_actions,
 		];
 		$defend_args = apply_filters('wnd_action_defend_args', $defend_args, $wnd_action);
-		extract($defend_args);
 
-		$this->period           = $period;
-		$this->max_actions      = $max_actions;
-		$this->should_be_defend = ($max_actions and $period);
+		$this->period           = $wnd_action->period;
+		$this->max_actions      = $wnd_action->max_actions;
+		$this->should_be_defend = ($wnd_action->max_actions and $wnd_action->period);
 		$this->action           = $wnd_action::get_class_name();
 		$this->cache_key        = get_current_user_id() ?: wnd_get_user_ip();
 		$this->actions_log      = $this->get_actions_log();
