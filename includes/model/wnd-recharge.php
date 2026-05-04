@@ -11,22 +11,10 @@ use Wnd\Model\Wnd_Finance;
  */
 class Wnd_Recharge extends Wnd_Transaction {
 
-	protected $transaction_type = 'recharge';
+	protected string $transaction_type = 'recharge';
 
 	/**
-	 * 此方法用于补充、修改、核查外部通过方法设定的交易数据，组成最终写入数据库的数据。完整的交易记录构造如下所示：
-	 *
-	 * $post_arr = [
-	 *     'ID'           => $this->transaction_id,
-	 *     'post_type'    => $this->transaction_type,
-	 *     'post_author'  => $this->user_id,
-	 *     'post_parent'  => $this->object_id,
-	 *     'post_content' => $this->total_amount,
-	 *     'post_excerpt' => $this->payment_gateway,
-	 *     'post_status'  => $this->status,
-	 *     'post_title'   => $this->subject,
-	 *     'post_name'    => $this->transaction_slug ?: uniqid(),
-	 * ];
+	 * 此方法用于补充、修改、核查外部通过方法设定的交易数据，组成最终写入数据库的数据。
 	 *
 	 * @since 0.9.32
 	 */
@@ -52,7 +40,6 @@ class Wnd_Recharge extends Wnd_Transaction {
 	 *  - 即：本方法也必须兼顾注册用户与匿名用户
 	 *
 	 * 当充值包含关联object_id，表示收入来自站内佣金收入：更新用户佣金及产品总佣金统计
-	 * @param object 	$this->transaction			required 	订单记录Post
 	 */
 	final protected function complete_transaction(): int {
 		// 在线订单校验时，由支付平台发起请求，并指定订单ID，需根据订单ID设置对应变量

@@ -10,10 +10,10 @@ use Exception;
 class Wnd_Transaction_Anonymous {
 
 	// 单个设备最多支持的匿名订单
-	private static $max_anon_orders = 20;
+	private static int $max_anon_orders = 20;
 
 	// 有效期（秒）
-	private static $valid_period = 3600 * 24 * 30;
+	private static int $valid_period = 3600 * 24 * 30;
 
 	/**
 	 * 写入匿名支付订单 cookies
@@ -24,7 +24,7 @@ class Wnd_Transaction_Anonymous {
 	 * order: 	 order_{$object_id} = ['value' => $transaction_slug, 'time' => time()];
 	 * recharge: recharge           = ['value' => $transaction_slug, 'time' => time()];
 	 */
-	public static function set_anon_cookie(string $transaction_type, int $object_id, string $transaction_slug): bool{
+	public static function set_anon_cookie(string $transaction_type, int $object_id, string $transaction_slug): bool {
 		$cookies = static::get_anon_cookies();
 		if (count($cookies) >= static::$max_anon_orders) {
 			throw new Exception('Maximum ' . static::$max_anon_orders . ' anonymous orders per device');
@@ -60,7 +60,7 @@ class Wnd_Transaction_Anonymous {
 	 * 匿名订单 cookie 作用域
 	 * @since 0.9.37
 	 */
-	private static function get_anon_cookie_domain(): string{
+	private static function get_anon_cookie_domain(): string {
 		$domain = parse_url(home_url())['host'];
 		return apply_filters('wnd_anonymous_order_domain', $domain);
 	}
@@ -69,7 +69,7 @@ class Wnd_Transaction_Anonymous {
 	 * 获取匿名支付订单 Cookies Json 合集，并转为数组
 	 * @link https://developer.wordpress.org/reference/functions/stripslashes_deep/
 	 */
-	public static function get_anon_cookies(): array{
+	public static function get_anon_cookies(): array {
 		$cookies = $_COOKIE[LOGGED_IN_COOKIE] ?? '';
 		$cookies = stripslashes_deep($cookies);
 		if (!$cookies) {
@@ -94,7 +94,7 @@ class Wnd_Transaction_Anonymous {
 	/**
 	 * 根据 object id 获取对应订单 Slug 值
 	 */
-	public static function get_anon_cookie_value(string $transaction_type, int $object_id): string{
+	public static function get_anon_cookie_value(string $transaction_type, int $object_id): string {
 		$cookies = static::get_anon_cookies();
 		$key     = static::generate_cookie_key($transaction_type, $object_id);
 		return $cookies[$key]['value'] ?? '';

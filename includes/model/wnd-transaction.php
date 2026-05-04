@@ -13,64 +13,64 @@ use WP_User;
  */
 abstract class Wnd_Transaction {
 
-	protected $db_handler;
+	protected Wnd_Transaction_DB $db_handler;
 
 	// WP Post object
-	protected $transaction;
+	protected object $transaction;
 
 	// WP Post ID
-	protected $transaction_id = 0;
+	protected int $transaction_id = 0;
 
 	// WP Post Type
-	protected $transaction_type;
+	protected string $transaction_type;
 
 	// WP Post Name
-	protected $transaction_slug;
+	protected string $transaction_slug = '';
 
 	// 站点用户ID
-	protected $user_id = 0;
+	protected int $user_id = 0;
 
 	// 产品ID 对应WordPress产品类型Post ID
-	protected $object_id = 0;
+	protected int $object_id = 0;
 
 	// 金额
-	protected $total_amount = 0.00;
+	protected float $total_amount = 0.00;
 
 	// 支付标题：产品标题 / 充值标题 / 其他自定义
-	protected $subject = '';
+	protected string $subject = '';
 
 	// 交易订单对应的产品或服务属性
-	protected $props = [];
+	protected array $props = [];
 
 	// 状态
-	protected $status;
+	protected string $status;
 
 	// 交易数目
-	protected $quantity = 1;
+	protected int $quantity = 1;
 
 	// 等待付款（订单已创建，库存已扣除）
-	public static $pending_status = 'pending';
+	public static string $pending_status = 'pending';
 
 	// 实体商品支付完成（等待发货）
-	public static $paid_status = 'paid';
+	public static string $paid_status = 'paid';
 
 	// 付款完成、系统处理中
-	public static $processing_status = 'processing';
+	public static string $processing_status = 'processing';
 
 	// 已发货：等待用户收货
-	public static $shipped_status = 'shipped';
+	public static string $shipped_status = 'shipped';
 
 	// 交易完成
-	public static $completed_status = 'completed';
+	public static string $completed_status = 'completed';
 
 	// 交易退款
-	public static $refunded_status = 'refunded';
+	public static string $refunded_status = 'refunded';
 
 	// 交易取消（交易未完成：取消订单 \ 无效订单）
-	public static $cancelled_status = 'cancelled';
+	public static string $cancelled_status = 'cancelled';
 
 	// 交易关闭（交易完成后：因某种原因关闭）
-	public static $closed_status = 'closed';
+	public static string $closed_status = 'closed';
 
 	/**
 	 * 第三方支付接口
@@ -78,7 +78,7 @@ abstract class Wnd_Transaction {
 	 * 支付接口保存在 post_excerpt 如果此处不做默认定义，即为NLL，会报错提示：post_excerpt 不能为 null
 	 * @since 2020.06.21
 	 */
-	protected $payment_gateway = '';
+	protected string $payment_gateway = '';
 
 	/**
 	 * 构造函数
@@ -157,7 +157,7 @@ abstract class Wnd_Transaction {
 	 * 设置支付网关如（支付宝，微信支付等）
 	 * @since 2020.06.19
 	 */
-	public function set_payment_gateway($payment_gateway) {
+	public function set_payment_gateway(string $payment_gateway) {
 		$this->payment_gateway = $payment_gateway;
 	}
 

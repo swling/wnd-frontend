@@ -14,28 +14,16 @@ use Wnd\Model\Wnd_SKU;
  */
 class Wnd_Order extends Wnd_Transaction {
 
-	protected $transaction_type = 'order';
+	protected string $transaction_type = 'order';
 
 	// SKU ID
-	private $sku_id;
+	private string $sku_id;
 
 	// 是否为全新订单（用户创建而尚未支付的订单，再次调用支付时，为复用订单，非全新订单）
-	private $is_new_order;
+	private bool $is_new_order;
 
 	/**
-	 * 此方法用于补充、修改、核查外部通过方法设定的交易数据，组成最终写入数据库的数据。完整的交易记录构造如下所示：
-	 *
-	 * $post_arr = [
-	 *     'ID'           => $this->transaction_id,
-	 *     'post_type'    => $this->transaction_type,
-	 *     'post_author'  => $this->user_id,
-	 *     'post_parent'  => $this->object_id,
-	 *     'post_content' => $this->total_amount,
-	 *     'post_excerpt' => $this->payment_gateway,
-	 *     'post_status'  => $this->status,
-	 *     'post_title'   => $this->subject,
-	 *     'transaction_slug'    => $this->transaction_slug ?: uniqid(),
-	 * ];
+	 * 此方法用于补充、修改、核查外部通过方法设定的交易数据，组成最终写入数据库的数据。
 	 *
 	 * @since 0.9.32
 	 */
@@ -151,8 +139,6 @@ class Wnd_Order extends Wnd_Transaction {
 	 *  - 在线支付回调时会进入匿名状态，因此不允许在匿名子类中复写本方法
 	 *  - 即：本方法也必须兼顾注册用户与匿名用户
 	 *
-	 * @param $this->transaction
-	 * @param object               	$this->transaction		required 	订单记录Post
 	 */
 	final protected function complete_transaction(): int {
 		/**

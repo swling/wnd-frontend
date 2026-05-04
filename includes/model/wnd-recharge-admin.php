@@ -13,7 +13,7 @@ use Wnd\WPDB\Wnd_User_DB;
  */
 class Wnd_Recharge_Admin extends Wnd_Transaction {
 
-	protected $transaction_type = 'recharge';
+	protected string $transaction_type = 'recharge';
 
 	protected function generate_transaction_data() {
 		if (!$this->total_amount) {
