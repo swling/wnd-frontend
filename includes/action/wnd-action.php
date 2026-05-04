@@ -4,6 +4,7 @@ namespace Wnd\Action;
 use Wnd\Controller\Wnd_Defender_Action;
 use Wnd\Controller\Wnd_Request;
 use WP_REST_Request;
+use WP_User;
 
 /**
  * Ajax 操作基类
@@ -15,50 +16,45 @@ abstract class Wnd_Action {
 	 * Post Data Array
 	 * @since 0.8.66
 	 */
-	protected $data = [];
+	protected array $data = [];
 
 	/**
 	 * 当前用户 Object
 	 */
-	protected $user;
+	protected WP_User $user;
 
 	/**
 	 * 当前用户 ID Int
 	 */
-	protected $user_id;
-
-	/**
-	 * 解析表单数据时，是否验证表单签名
-	 */
-	protected $verify_sign = false;
-
-	/**
-	 * 解析表单数据时，是否进行人机验证（如果存在）
-	 */
-	protected $validate_captcha = true;
+	protected int $user_id;
 
 	/**
 	 * Instance of WP REST Request
 	 * @since 0.9.36
 	 */
-	protected $wp_rest_request;
+	protected WP_REST_Request $wp_rest_request;
 
 	/**
 	 * Instance of Wnd_Request
 	 */
-	protected $request;
+	protected Wnd_Request $request;
+
+	/**
+	 * 解析表单数据时，是否进行人机验证（如果存在）
+	 */
+	protected bool $validate_captcha = true;
 
 	/**
 	 * 时间范围
 	 * 与 $this->max_actions 结合，用于控制操作执行频次
 	 */
-	public $period;
+	public int $period = 0;
 
 	/**
 	 * 最多执行
 	 * 与 $this->period 结合，用于控制操作执行频次
 	 */
-	public $max_actions;
+	public int $max_actions = 0;
 
 	/**
 	 * 构造
@@ -69,7 +65,7 @@ abstract class Wnd_Action {
 	 */
 	public function __construct(WP_REST_Request $wp_rest_request) {
 		$this->wp_rest_request = $wp_rest_request;
-		$this->request         = new Wnd_Request($wp_rest_request, $this->verify_sign, $this->validate_captcha);
+		$this->request         = new Wnd_Request($wp_rest_request, false, $this->validate_captcha);
 		$this->data            = $this->request->get_request();
 		$this->user            = wp_get_current_user();
 		$this->user_id         = $this->user->ID ?? 0;

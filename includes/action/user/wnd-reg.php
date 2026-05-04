@@ -15,12 +15,12 @@ use Wnd\Action\Wnd_Action;
  */
 class Wnd_Reg extends Wnd_Action {
 	// 注册用户需设置防抖，防止用户短期重复提交写入
-	public $period      = 5;
-	public $max_actions = 1;
+	public int $period      = 5;
+	public int $max_actions = 1;
 
-	private $user_data;
-	private $user_meta_data;
-	private $wp_user_meta_data;
+	private array $user_data;
+	private array $user_meta_data;
+	private array $wp_user_meta_data;
 
 	protected function execute(): array {
 		// 写入新用户

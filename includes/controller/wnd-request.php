@@ -37,28 +37,28 @@ class Wnd_Request {
 	/**
 	 * 请求数据
 	 */
-	protected $request;
+	protected array $request;
 
 	/**
 	 * WP_REST_Request 实例
 	 * @since 0.9.36
 	 */
-	protected $wp_rest_request;
+	protected WP_REST_Request $wp_rest_request;
 
 	/**
 	 * 签名请求 name
 	 */
-	public static $sign_name = '_wnd_sign';
+	public static string $sign_name = '_wnd_sign';
 
 	/**
 	 * 解析请求数据时，是否验证请求签名
 	 */
-	protected $verify_sign = true;
+	protected bool $verify_sign = true;
 
 	/**
 	 * 解析请求数据时，是否进行人机验证（如果存在）
 	 */
-	protected $validate_captcha = true;
+	protected bool $validate_captcha = true;
 
 	/**
 	 * Construct
@@ -142,7 +142,7 @@ class Wnd_Request {
 	 *
 	 * @since 2020.01.04
 	 */
-	protected function get_data_by_prefix($prefix): array{
+	protected function get_data_by_prefix(string $prefix): array{
 		$request = [];
 		foreach ($this->request as $key => $value) {
 			if (0 === strpos($key, $prefix)) {
@@ -205,7 +205,7 @@ class Wnd_Request {
 	}
 
 	// 获取指定 option_name 数组数据
-	public function get_option_data($option_name): array{
+	public function get_option_data(string $option_name): array{
 		return $this->get_data_by_prefix('_option_' . $option_name . '_');
 	}
 

@@ -15,30 +15,25 @@ use Wnd\Application\Wnd_App_abstract;
 abstract class Wnd_Action_App extends Wnd_Action {
 
 	/**
-	 * 本操作非标准表单请求，无需验证签名
-	 */
-	protected $verify_sign = false;
-
-	/**
 	 * App Post ID
 	 */
-	protected $app_id = 0;
+	protected int $app_id = 0;
 
 	/**
 	 * App 实例
 	 *
 	 */
-	protected $app_instance;
+	protected Wnd_App_abstract $app_instance;
 
 	/**
 	 * SKU ID
 	 */
-	protected $sku_id = '';
+	protected string $sku_id = '';
 
 	/**
 	 * 付费价格
 	 */
-	protected $action_price = 0;
+	protected float $action_price = 0.00;
 
 	/**
 	 * 执行

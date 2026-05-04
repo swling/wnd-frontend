@@ -15,19 +15,19 @@ use Wnd\Model\Wnd_Transaction;
 class Wnd_Do_Payment extends Wnd_Action {
 
 	// 设置防抖，防止用户短期重复提交写入
-	public $period      = 5;
-	public $max_actions = 1;
+	public int $period      = 5;
+	public int $max_actions = 1;
 
-	private $post_id;
-	private $sku_id;
-	private $quantity;
-	private $type;
+	private int $post_id;
+	private string $sku_id;
+	private int $quantity;
+	private string $type;
 
-	private $internal;
-	private $total_amount;
-	private $payment_gateway;
-	private $subject;
-	private $app_id;
+	private bool $internal;
+	private float $total_amount;
+	private string $payment_gateway;
+	private string $subject;
+	private string $app_id;
 
 	protected function execute(): array {
 		// 写入交易记录
