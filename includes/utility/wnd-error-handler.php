@@ -19,10 +19,10 @@ use Throwable;
  */
 class Wnd_Error_Handler {
 
-	private static $instance;
+	private static ?Wnd_Error_Handler $instance = null;
 
-	public static function get_instance() {
-		if (!static::$instance) {
+	public static function get_instance(): Wnd_Error_Handler {
+		if (null === static::$instance) {
 			static::$instance = new static();
 		}
 
@@ -59,6 +59,15 @@ class Wnd_Error_Handler {
 
 	/**
 	 * Checks for a fatal error, work around for set_error_handler not working on fatal errors.
+	 *
+	 * | 类型               | 阶段     | 是否可捕获 | 常见原因               |
+	 * | ----------------- | ------   | -----     | ------------------    |
+	 * | `E_ERROR`         | 运行时    | ❌        | 调用不存在函数、类错误  |
+	 * | `E_PARSE`         | 编译前    | ❌        | 语法错误               |
+	 * | `E_CORE_ERROR`    | PHP 启动  | ❌        | PHP 配置/扩展错误      |
+	 * | `E_COMPILE_ERROR` | 编译阶段  | ❌        | include 文件语法错误    |
+	 * | `E_USER_ERROR`    | 运行时    | ❌        | trigger_error 手动触发 |
+
 	 */
 	public static function check_for_fatal() {
 		$error = error_get_last();
@@ -66,7 +75,15 @@ class Wnd_Error_Handler {
 			return;
 		}
 
-		if ($error['type'] == E_ERROR) {
+		$fatalTypes = [
+			E_ERROR,
+			E_PARSE,
+			E_CORE_ERROR,
+			E_COMPILE_ERROR,
+			E_USER_ERROR,
+		];
+
+		if (in_array($error['type'], $fatalTypes)) {
 			static::log_exception(new ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']));
 			exit();
 		}
