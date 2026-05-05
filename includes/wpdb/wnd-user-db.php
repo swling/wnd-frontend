@@ -10,12 +10,11 @@ use Wnd\WPDB\WPDB_Row;
  */
 class Wnd_User_DB extends WPDB_Row {
 
-	protected $table_name        = 'wnd_users';
-	protected $object_name       = 'wnd_user';
-	protected $primary_id_column = 'ID';
-	protected $required_columns  = ['user_id'];
-
-	protected $object_cache_fields = ['user_id'];
+	protected string $table_name         = 'wnd_users';
+	protected string $object_name        = 'wnd_user';
+	protected string $primary_id_column  = 'ID';
+	protected array $required_columns    = ['user_id'];
+	protected array $object_cache_fields = ['user_id'];
 
 	/**
 	 * 单例模式

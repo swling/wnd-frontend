@@ -3,6 +3,7 @@ namespace Wnd\WPDB;
 
 use Exception;
 use Wnd\WPDB\WPDB_Row_Cache;
+use wpdb;
 
 /**
  * # 独立数据表操作基类
@@ -27,10 +28,10 @@ use Wnd\WPDB\WPDB_Row_Cache;
  */
 class WPDB_Row {
 
-	protected $table_name;
-	protected $object_name;
-	protected $primary_id_column;
-	protected $required_columns = [];
+	protected string $table_name;
+	protected string $object_name;
+	protected string $primary_id_column;
+	protected array $required_columns = [];
 
 	/**
 	 * 需要缓存的字段
@@ -38,12 +39,13 @@ class WPDB_Row {
 	 * - 示例:['id', ['field_1', 'field_2']]
 	 * @see $this->maybe_set_data_into_cache()
 	 */
-	protected $object_cache_fields = [];
+	protected array $object_cache_fields = [];
 
-	protected $wpdb;
-	protected $table;
+	protected wpdb $wpdb;
 
-	protected $cache;
+	protected string $table;
+
+	public WPDB_Row_Cache $cache;
 
 	/**
 	 * Constructer
@@ -108,7 +110,7 @@ class WPDB_Row {
 	 * get data by column
 	 * @return object|false
 	 */
-	public function get_by(string $field, $value) {
+	public function get_by(string $field, string $value) {
 		return $this->query([$field => $value]);
 	}
 
@@ -373,7 +375,7 @@ class WPDB_Row {
 	 *
 	 * @return int The number of row which has been deleted.
 	 */
-	public function delete_by(string $field, $value): int {
+	public function delete_by(string $field, string $value): int {
 		$where   = [$field => $value];
 		$results = $this->get_results($where);
 		if (!$results) {

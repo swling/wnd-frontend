@@ -11,12 +11,11 @@ use Wnd\WPDB\WPDB_Row;
  */
 class Wnd_Attachment_DB extends WPDB_Row {
 
-	protected $table_name        = 'wnd_attachments';
-	protected $object_name       = 'wnd_attachment';
-	protected $primary_id_column = 'ID';
-	protected $required_columns  = ['file_path', 'mime_type'];
-
-	protected $object_cache_fields = ['ID'];
+	protected string $table_name         = 'wnd_attachments';
+	protected string $object_name        = 'wnd_attachment';
+	protected string $primary_id_column  = 'ID';
+	protected array $required_columns    = ['file_path', 'mime_type'];
+	protected array $object_cache_fields = ['ID'];
 
 	/**
 	 * 单例模式

@@ -16,9 +16,9 @@ class WPDB_Row_Cache {
 	 * - 示例:['id', ['field_1', 'field_2']]
 	 * @see $this->maybe_set_data_into_cache()
 	 */
-	protected $object_cache_fields = [];
+	protected array $object_cache_fields = [];
 
-	protected $cache_group = '';
+	protected string $cache_group = '';
 
 	/**
 	 * Constructer

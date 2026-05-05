@@ -22,12 +22,11 @@ use Wnd\WPDB\WPDB_Row;
  */
 class Wnd_Mail_DB extends WPDB_Row {
 
-	protected $table_name        = 'wnd_mails';
-	protected $object_name       = 'wnd_mail';
-	protected $primary_id_column = 'ID';
-	protected $required_columns  = ['receiver', 'subject', 'content', 'sent_at'];
-
-	protected $object_cache_fields = ['ID', 'receiver'];
+	protected string $table_name         = 'wnd_mails';
+	protected string $object_name        = 'wnd_mail';
+	protected string $primary_id_column  = 'ID';
+	protected array $required_columns    = ['receiver', 'subject', 'content', 'sent_at'];
+	protected array $object_cache_fields = ['ID', 'receiver'];
 
 	/**
 	 * 单例模式

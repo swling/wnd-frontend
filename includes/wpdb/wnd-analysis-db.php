@@ -32,12 +32,11 @@ use Wnd\WPDB\WPDB_Row;
  */
 class Wnd_Analysis_DB extends WPDB_Row {
 
-	protected $table_name        = 'wnd_analyses';
-	protected $object_name       = 'wnd_analysis';
-	protected $primary_id_column = 'ID';
-	protected $required_columns  = ['post_id', 'last_viewed_date'];
-
-	protected $object_cache_fields = ['post_id'];
+	protected string $table_name         = 'wnd_analyses';
+	protected string $object_name        = 'wnd_analysis';
+	protected string $primary_id_column  = 'ID';
+	protected array $required_columns    = ['post_id', 'last_viewed_date'];
+	protected array $object_cache_fields = ['post_id'];
 
 	/**
 	 * 单例模式

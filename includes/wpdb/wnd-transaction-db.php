@@ -23,12 +23,11 @@ use Wnd\WPDB\WPDB_Row;
  */
 class Wnd_Transaction_DB extends WPDB_Row {
 
-	protected $table_name        = 'wnd_transactions';
-	protected $object_name       = 'wnd_transaction';
-	protected $primary_id_column = 'ID';
-	protected $required_columns  = ['user_id', 'type', 'total_amount', 'payment_gateway', 'status', 'subject', 'slug'];
-
-	protected $object_cache_fields = ['ID', 'slug', ['object_id', 'user_id', 'type', 'status']];
+	protected string $table_name         = 'wnd_transactions';
+	protected string $object_name        = 'wnd_transaction';
+	protected string $primary_id_column  = 'ID';
+	protected array $required_columns    = ['user_id', 'type', 'total_amount', 'payment_gateway', 'status', 'subject', 'slug'];
+	protected array $object_cache_fields = ['ID', 'slug', ['object_id', 'user_id', 'type', 'status']];
 
 	/**
 	 * 单例模式

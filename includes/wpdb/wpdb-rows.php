@@ -1,6 +1,9 @@
 <?php
 namespace Wnd\WPDB;
 
+use Wnd\WPDB\WPDB_Row;
+use wpdb;
+
 /**
  * # Rows Handler
  * 同一张表中，具有共同属性的多行数据操作基类
@@ -16,21 +19,21 @@ namespace Wnd\WPDB;
 abstract class WPDB_Rows {
 
 	// 单行数据属性
-	protected $table_name;
-	protected $object_name;
-	protected $primary_id_column;
-	protected $required_columns    = [];
-	protected $object_cache_fields = [];
+	protected string $table_name;
+	protected string $object_name;
+	protected string $primary_id_column;
+	protected array $required_columns    = [];
+	protected array $object_cache_fields = [];
 
 	// 共同属性 id 字段名
-	protected $object_id_column;
+	protected string $object_id_column;
 
 	// 数据表基本属性（根据上述属性生成，故一般无需在子类额外配置）
-	protected $wpdb;
-	protected $table;
+	protected wpdb $wpdb;
+	protected string $table;
 
 	// 单行操作实例（根据上述属性生成，故一般无需在子类额外配置）
-	public $wpdb_row;
+	public WPDB_Row $wpdb_row;
 
 	/**
 	 * Constructer

@@ -12,7 +12,7 @@ use WP_User;
  */
 abstract class Wnd_Auth_DB {
 
-	private static $auths_cache_group = 'wnd_auths';
+	private static string $auths_cache_group = 'wnd_auths';
 
 	/**
 	 * 获取用户所有 auth 合集对象
