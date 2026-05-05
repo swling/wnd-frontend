@@ -12,9 +12,8 @@ use Wnd\WPDB\Wnd_Transaction_DB;
  */
 class Wnd_Delete_Transaction extends Wnd_Action_User {
 
-	protected $verify_sign = false;
-	private $transaction_id;
-	private $transaction;
+	private int $transaction_id;
+	private object $transaction;
 
 	protected function execute(): array {
 		$handler = Wnd_Transaction_DB::get_instance();

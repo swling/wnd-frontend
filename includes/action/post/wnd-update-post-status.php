@@ -7,11 +7,11 @@ use Wnd\Model\Wnd_Post;
 
 class Wnd_Update_Post_Status extends Wnd_Action {
 
-	private $post_id;
-	private $after_status;
-	private $remarks;
-	private $stick_post;
-	private $before_post;
+	private int $post_id;
+	private string $after_status;
+	private string $remarks;
+	private string $stick_post;
+	private mixed $before_post;
 
 	/**
 	 * 前端快速更改文章状态

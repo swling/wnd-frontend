@@ -10,8 +10,6 @@ use Wnd\Model\Wnd_Order_Props;
  */
 class Wnd_Update_Receiver extends Wnd_Action_User {
 
-	protected $verify_sign = false;
-
 	protected function execute(): array {
 		$key      = Wnd_Order_Props::$receiver_key;
 		$receiver = $this->data['receiver'] ?? '';

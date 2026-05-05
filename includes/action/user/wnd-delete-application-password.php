@@ -11,9 +11,7 @@ use WP_Application_Passwords;
  */
 class Wnd_Delete_Application_Password extends Wnd_Action_User {
 
-	protected $verify_sign = false;
-
-	private $uuid;
+	private string $uuid;
 
 	protected function execute(): array {
 		$delete = WP_Application_Passwords::delete_application_password($this->user_id, $this->uuid);

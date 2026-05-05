@@ -14,9 +14,9 @@ use Wnd\Action\Wnd_Action_Admin;
  */
 class Wnd_Update_Account_Status extends Wnd_Action_Admin {
 
-	private $target_user_id;
-	private $status;
-	private $before_status;
+	private int $target_user_id;
+	private string $status;
+	private string $before_status;
 
 	protected function execute(): array {
 		// 更新状态
@@ -36,6 +36,8 @@ class Wnd_Update_Account_Status extends Wnd_Action_Admin {
 			do_action('wnd_restore_account', $this->target_user_id);
 			return ['status' => 1, 'msg' => __('账户已解封', 'wnd')];
 		}
+
+		return ['status' => 0, 'msg' => 'undefined Action'];
 	}
 
 	protected function parse_data() {

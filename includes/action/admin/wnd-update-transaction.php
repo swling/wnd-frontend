@@ -16,13 +16,11 @@ use Wnd\WPDB\Wnd_Transaction_DB;
  */
 class Wnd_Update_Transaction extends Wnd_Action_Admin {
 
-	protected $verify_sign = false;
-
-	private $id;
-	private $status;
-	private $props;
-	private $after_transaction;
-	private $before_transaction;
+	private int $id;
+	private string $status;
+	private string $props;
+	private object $after_transaction;
+	private object $before_transaction;
 
 	protected function execute(): array {
 		$handler = Wnd_Transaction_DB::get_instance();

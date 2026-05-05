@@ -10,10 +10,8 @@ use Wnd\Action\Wnd_Action_Admin;
  */
 class Wnd_Update_Store_Settings extends Wnd_Action_Admin {
 
-	protected $verify_sign = false;
-
-	private $option_name = 'wnd_store_settings';
-	private $option_data;
+	private string $option_name = 'wnd_store_settings';
+	private array $option_data;
 
 	protected function execute(): array {
 		if (update_option($this->option_name, $this->option_data, false)) {

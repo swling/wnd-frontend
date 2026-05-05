@@ -4,18 +4,19 @@ namespace Wnd\Action\User;
 use Exception;
 use Wnd\Action\Wnd_Action;
 use Wnd\Utility\Wnd_JWT_handler;
+use WP_User;
 
 /**
  * @since 2019.1.13 用户登录
  */
 class Wnd_Login extends Wnd_Action {
 
-	private $username;
-	private $password;
-	private $remember;
-	private $redirect_to;
-	private $target_user;
-	private $type;
+	private string $username;
+	private string $password;
+	private string $remember;
+	private string $redirect_to;
+	private WP_User | bool $target_user;
+	private string $type;
 
 	/**
 	 * 登录

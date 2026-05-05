@@ -19,19 +19,14 @@ use Wnd\Utility\Wnd_OSS_Handler;
  */
 class Wnd_Sign_OSS_Direct extends Wnd_Action {
 
-	/**
-	 * 本操作非标准表单请求，无需验证签名
-	 */
-	protected $verify_sign = false;
-
-	private $oss_sp;
-	private $endpoint;
-	private $method;
-	private $mime_type;
-	private $md5;
-	private $file_path_name;
-	private $file;
-	private $query = [];
+	private string $oss_sp;
+	private string $endpoint;
+	private string $method;
+	private string $mime_type;
+	private string $md5;
+	private string $file_path_name;
+	private string $file;
+	private array $query = [];
 
 	/**
 	 * 短期类重复上传的文件，直接返回 url 不再存储
@@ -39,8 +34,8 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 	 * - 依赖内存缓存（memcached 及 redis）
 	 * @since 0.9.57.10
 	 */
-	private $is_duplicate_file;
-	private $cache_key;
+	private bool $is_duplicate_file = false;
+	private string $cache_key;
 
 	protected function parse_data() {
 		$this->oss_sp   = $this->data['oss_sp'] ?? '';
@@ -86,7 +81,8 @@ class Wnd_Sign_OSS_Direct extends Wnd_Action {
 			$internal_url    = str_replace('.aliyuncs.com', '-internal.aliyuncs.com', $url);
 			$signed_internal = $oss->getFileUri(1800, $this->query, true);
 		} else {
-			$internal_url = $url;
+			$internal_url    = $url;
+			$signed_internal = $signed_url;
 		}
 
 		$data = [

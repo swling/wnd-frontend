@@ -11,10 +11,10 @@ use Wnd\Model\Wnd_Auth_Code;
  */
 class Wnd_Send_Auth_Code extends Wnd_Action {
 
-	private $device;
-	private $type;
-	private $template;
-	private $device_type;
+	private string $device;
+	private string $type;
+	private string $template;
+	private string $device_type;
 
 	protected function execute(): array{
 		$auth = Wnd_Auth_Code::get_instance($this->device);

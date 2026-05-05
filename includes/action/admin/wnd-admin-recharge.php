@@ -4,6 +4,7 @@ namespace Wnd\Action\Admin;
 use Exception;
 use Wnd\Action\Wnd_Action_Admin;
 use Wnd\Model\Wnd_Recharge_Admin;
+use WP_User;
 
 /**
  * 管理员ajax手动新增用户金额
@@ -11,9 +12,9 @@ use Wnd\Model\Wnd_Recharge_Admin;
  */
 class Wnd_Admin_Recharge extends Wnd_Action_Admin {
 
-	private $total_amount;
-	private $remarks;
-	private $target_user;
+	private float $total_amount;
+	private string $remarks;
+	private WP_User | bool $target_user;
 
 	protected function execute(): array {
 		$recharge = new Wnd_Recharge_Admin();

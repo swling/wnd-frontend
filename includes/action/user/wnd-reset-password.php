@@ -4,6 +4,7 @@ namespace Wnd\Action\User;
 use Exception;
 use Wnd\Action\Wnd_Action;
 use Wnd\Utility\Wnd_Validator;
+use WP_User;
 
 /**
  * 用户找回密码
@@ -11,8 +12,8 @@ use Wnd\Utility\Wnd_Validator;
  */
 class Wnd_Reset_Password extends Wnd_Action {
 
-	private $target_user;
-	private $new_password;
+	private WP_User | bool $target_user;
+	private string $new_password;
 
 	protected function execute(): array{
 		reset_password($this->target_user, $this->new_password);

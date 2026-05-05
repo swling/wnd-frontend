@@ -13,9 +13,9 @@ use Wnd\Action\Wnd_Action_User;
  */
 class Wnd_Update_Profile extends Wnd_Action_User {
 
-	private $user_data;
-	private $user_meta_data;
-	private $wp_user_meta_data;
+	private array $user_data;
+	private array $user_meta_data;
+	private array $wp_user_meta_data;
 
 	protected function execute(): array{
 		// 更新meta

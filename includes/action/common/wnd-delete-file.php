@@ -10,14 +10,13 @@ use Wnd\Action\Wnd_Action_User;
  */
 class Wnd_Delete_File extends Wnd_Action_User {
 
-	protected $verify_sign = false;
-	private $meta_key;
-	private $file_id;
-	private $post_parent;
-	private $attachment;
+	private string $meta_key;
+	private int $file_id;
+	private int $post_parent;
+	private object $attachment;
 
 	protected function execute(): array {
-		if (wnd_delete_attachment($this->file_id, true)) {
+		if (wnd_delete_attachment($this->file_id)) {
 			do_action('wnd_delete_file', $this->file_id, $this->post_parent, $this->meta_key);
 			return ['status' => 1, 'msg' => __('删除成功', 'wnd'), 'data' => $this->file_id];
 		}

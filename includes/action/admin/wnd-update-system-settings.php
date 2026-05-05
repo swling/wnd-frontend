@@ -12,9 +12,7 @@ use Wnd\Utility\Wnd_Defender;
  */
 class Wnd_Update_System_Settings extends Wnd_Action_Root {
 
-	protected $verify_sign = false;
-
-	private $type;
+	private string $type;
 
 	protected function execute(): array {
 		switch ($this->type) {

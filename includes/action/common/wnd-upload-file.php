@@ -10,18 +10,11 @@ use Wnd\WPDB\Wnd_Attachment_DB;
  */
 class Wnd_Upload_File extends Wnd_Action {
 
-	/**
-	 * 本操作非标准表单请求，无需验证签名
-	 */
-	protected $verify_sign = false;
-
-	protected $post_parent;
-
-	protected $meta_key;
-
-	protected $relative_path;
-	protected $attachment_id;
-	protected $mime_type;
+	protected int $post_parent;
+	protected string $meta_key;
+	protected string $relative_path;
+	protected int $attachment_id;
+	protected string $mime_type;
 
 	protected function execute(): array {
 		// These files need to be included as dependencies when on the front end.

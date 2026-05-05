@@ -11,10 +11,8 @@ use WP_Application_Passwords;
  */
 class Wnd_Create_Application_Password extends Wnd_Action_User {
 
-	protected $verify_sign = false;
-
-	private $name;
-	private $app_id;
+	private string $name;
+	private string $app_id = '';
 
 	protected function execute(): array {
 		$created = WP_Application_Passwords::create_new_application_password(

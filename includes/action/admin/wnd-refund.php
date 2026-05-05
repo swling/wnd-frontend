@@ -10,8 +10,8 @@ use Wnd\Getway\Wnd_Refunder;
  */
 class Wnd_Refund extends Wnd_Action_Admin {
 
-	private $transaction_id;
-	private $refund_amount;
+	private int $transaction_id;
+	private float $refund_amount;
 
 	protected function execute(): array{
 		$refunder = Wnd_Refunder::get_instance($this->transaction_id);

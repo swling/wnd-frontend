@@ -13,8 +13,8 @@ use Wnd\Action\Wnd_Action_User;
  */
 class Wnd_Unbind_Openid extends Wnd_Action_User {
 
-	private $type;
-	private $user_pass;
+	private string $type;
+	private string $user_pass;
 
 	protected function execute(): array{
 		if (!wnd_delete_user_openid($this->user_id, $this->type)) {

@@ -11,10 +11,10 @@ use Wnd\Action\Wnd_Action;
  */
 class Wnd_Send_Mail extends Wnd_Action {
 
-	private $to;
-	private $subject;
-	private $message;
-	private $headers;
+	private string $to;
+	private string $subject;
+	private string $message;
+	private string $headers;
 
 	protected function execute(): array{
 		// 用户关闭客户端后，继续执行

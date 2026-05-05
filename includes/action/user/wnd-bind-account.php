@@ -10,9 +10,9 @@ use Wnd\Model\Wnd_Binder;
  */
 class Wnd_Bind_Account extends Wnd_Action_User {
 
-	private $email_or_phone;
-	private $auth_code;
-	private $password;
+	private string $email_or_phone;
+	private string $auth_code;
+	private string $password;
 
 	protected function execute(): array{
 		$bind = Wnd_Binder::get_instance($this->email_or_phone);

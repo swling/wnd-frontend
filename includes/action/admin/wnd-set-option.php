@@ -10,10 +10,8 @@ use Wnd\Action\Wnd_Action_Root;
  */
 class Wnd_Set_Option extends Wnd_Action_Root {
 
-	protected $verify_sign = false;
-
-	private $value;
-	private $name;
+	private string $value;
+	private string $name;
 
 	protected function execute(): array {
 		$action = update_option($this->name, $this->value);

@@ -13,9 +13,9 @@ use Wnd\Utility\Wnd_OSS_Handler;
  */
 class Wnd_Sign_OSS_Upload extends Wnd_Upload_File {
 
-	private $md5;
-	private $local_file;
-	private $is_private;
+	private string $md5;
+	private string $local_file;
+	private bool $is_private;
 
 	protected function execute(): array {
 		$oss_handler = Wnd_OSS_Handler::get_instance();

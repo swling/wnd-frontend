@@ -4,6 +4,7 @@ namespace Wnd\Action\Post;
 use Exception;
 use Wnd\Action\Wnd_Action;
 use Wnd\Model\Wnd_Post;
+use WP_Error;
 
 /**
  * 写入或更新 WP Post
@@ -12,14 +13,12 @@ use Wnd\Model\Wnd_Post;
  */
 class Wnd_Insert_Post extends Wnd_Action {
 
-	protected $verify_sign = false;
-
-	protected $post_data;
-	protected $meta_data;
-	protected $wp_meta_data;
-	protected $terms_data;
-	protected $post_id;
-	protected $update_post;
+	protected array $post_data;
+	protected array $meta_data;
+	protected array $wp_meta_data;
+	protected array $terms_data;
+	protected int | WP_Error $post_id;
+	protected object $update_post;
 
 	protected function execute(): array {
 		$this->insert();

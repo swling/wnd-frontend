@@ -10,7 +10,7 @@ use Wnd\Action\Wnd_Action_Root;
  */
 class Wnd_Delete_User extends Wnd_Action_Root {
 
-	private $target_user_id;
+	private int $target_user_id;
 
 	protected function execute(): array{
 		require_once ABSPATH . 'wp-admin/includes/user.php';

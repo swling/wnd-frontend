@@ -10,9 +10,9 @@ use Wnd\Action\Wnd_Action_Root;
  */
 class Wnd_Update_Option extends Wnd_Action_Root {
 
-	private $option_name;
-	private $append;
-	private $option_data;
+	private string $option_name;
+	private bool $append;
+	private array $option_data;
 
 	protected function execute(): array {
 		if (update_option($this->option_name, $this->option_data, false)) {

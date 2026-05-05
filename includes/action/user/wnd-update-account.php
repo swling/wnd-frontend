@@ -10,10 +10,10 @@ use Wnd\Action\Wnd_Action_User;
  */
 class Wnd_Update_Account extends Wnd_Action_User {
 
-	private $user_data;
-	private $user_pass;
-	private $new_password;
-	private $new_password_repeat;
+	private array $user_data;
+	private string $user_pass;
+	private string $new_password;
+	private string $new_password_repeat;
 
 	protected function execute(): array {
 		// 更新用户

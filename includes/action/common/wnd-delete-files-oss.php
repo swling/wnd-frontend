@@ -14,14 +14,9 @@ use Wnd\Utility\Wnd_OSS_Handler;
  */
 class Wnd_Delete_Files_OSS extends Wnd_Action {
 
-	/**
-	 * 本操作非标准表单请求，无需验证签名
-	 */
-	protected $verify_sign = false;
-
-	private $oss_sp;
-	private $endpoint;
-	private $files;
+	private string $oss_sp;
+	private string $endpoint;
+	private array $files;
 
 	protected function execute(): array {
 		$oss = Wnd_Object_Storage::get_instance($this->oss_sp, $this->endpoint);

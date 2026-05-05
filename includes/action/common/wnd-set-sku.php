@@ -11,8 +11,8 @@ use Wnd\Model\Wnd_SKU;
  */
 class Wnd_Set_SKU extends Wnd_Action_User {
 
-	private $post_id;
-	private $sku_data;
+	private int $post_id;
+	private array $sku_data;
 
 	protected function execute(): array {
 		Wnd_SKU::set_object_sku($this->post_id, $this->sku_data);
