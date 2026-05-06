@@ -11,10 +11,9 @@ use Wnd\Getway\Wnd_Social_Login_Builder;
 class Wnd_Social_Login extends Wnd_Endpoint {
 
 	// 注册用户需设置防抖，防止用户短期重复提交写入
-	public $period      = 5;
-	public $max_actions = 1;
-
-	protected $content_type = 'html';
+	public int $period             = 5;
+	public int $max_actions        = 1;
+	protected string $content_type = 'html';
 
 	protected function do() {
 		if (empty($this->data)) {

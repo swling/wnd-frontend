@@ -12,7 +12,7 @@ use Wnd\Model\Wnd_Transaction;
  */
 class Wnd_Verify_WeChat extends Wnd_Verify_Pay {
 	// 响应类型
-	protected $content_type = 'json';
+	protected string $content_type = 'json';
 
 	/**
 	 * 验签并解析返回站内交易订单对象实例化

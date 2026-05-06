@@ -12,13 +12,13 @@ use Wnd\Utility\Wnd_Wechat;
  */
 class Wnd_Issue_Token_WeChat extends Wnd_Issue_Token_Abstract {
 
-	private $app_id;
+	private string $app_id;
 
-	private $secret;
+	private string $secret;
 
-	private $openid_code;
+	private string $openid_code;
 
-	private $phone_code;
+	private string $phone_code;
 
 	protected function check() {
 		$config         = json_decode(wnd_get_config('wechat_app'));

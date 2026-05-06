@@ -10,13 +10,13 @@ use Wnd\Utility\Wnd_Wechat;
  */
 class Wnd_MP_QRCode extends Wnd_Endpoint {
 
-	private $app_id;
+	private string $app_id;
 
-	private $secret;
+	private string $secret;
 
-	private $page;
+	private string $page;
 
-	private $scene;
+	private string $scene;
 
 	protected function set_content_type() {
 		header('Content-Type: image/jpeg; charset=' . get_option('blog_charset'));

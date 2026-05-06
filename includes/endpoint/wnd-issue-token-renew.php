@@ -10,12 +10,10 @@ use Wnd\Utility\Wnd_JWT_handler;
  */
 class Wnd_Issue_Token_Renew extends Wnd_Endpoint {
 
-	public $period      = 5;
-	public $max_actions = 1;
-
-	protected $content_type = 'json';
-
-	private $user_id = 0;
+	public int $period             = 5;
+	public int $max_actions        = 1;
+	protected string $content_type = 'json';
+	private int $user_id           = 0;
 
 	final protected function do() {
 		$jwt   = Wnd_JWT_Handler::get_instance();

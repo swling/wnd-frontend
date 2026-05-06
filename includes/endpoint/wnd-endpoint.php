@@ -21,29 +21,29 @@ abstract class Wnd_Endpoint {
 	/**
 	 * Instance of Wnd_Request
 	 */
-	protected $request;
+	protected Wnd_Request $request;
 
 	/**
 	 * Request Data Array
 	 */
-	protected $data = [];
+	protected array $data = [];
 
 	/**
 	 * 响应类型
 	 */
-	protected $content_type;
+	protected string $content_type = 'text/plain';
 
 	/**
 	 * 时间范围
 	 * 与 $this->max_actions 结合，用于控制操作执行频次
 	 */
-	public $period;
+	public int $period = 0;
 
 	/**
 	 * 最多执行
 	 * 与 $this->period 结合，用于控制操作执行频次
 	 */
-	public $max_actions;
+	public int $max_actions = 0;
 
 	/**
 	 * 构造

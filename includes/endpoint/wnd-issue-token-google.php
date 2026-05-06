@@ -11,7 +11,7 @@ use Wnd\Endpoint\Wnd_Issue_Token_Abstract;
  */
 class Wnd_Issue_Token_Google extends Wnd_Issue_Token_Abstract {
 
-	protected $app_type = 'google';
+	protected string $app_type = 'google';
 
 	protected function get_app_openid(): string {
 		$idToken  = $this->data['idToken'] ?? '';

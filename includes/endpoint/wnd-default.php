@@ -9,11 +9,9 @@ use Wnd\Controller\Wnd_Defender_Action;
  */
 class Wnd_Default extends Wnd_Endpoint {
 
-	// 注册用户需设置防抖，防止用户短期重复提交写入
-	public $period      = 10;
-	public $max_actions = 3;
-
-	protected $content_type = 'json';
+	public int $period             = 10;
+	public int $max_actions        = 3;
+	protected string $content_type = 'json';
 
 	protected function do() {
 		$defender = new Wnd_Defender_Action($this);

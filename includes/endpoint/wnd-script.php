@@ -7,7 +7,7 @@ namespace Wnd\Endpoint;
  */
 class Wnd_Script extends Wnd_Endpoint {
 
-	protected $content_type = 'script';
+	protected string $content_type = 'script';
 
 	protected function do() {
 		echo 'console.log("测试输出");';

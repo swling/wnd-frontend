@@ -18,17 +18,17 @@ use Wnd\Endpoint\Wnd_Endpoint;
  */
 class Wnd_Issue_Action_Sign extends Wnd_Endpoint {
 
-	protected $content_type = 'json';
+	protected string $content_type = 'json';
 
 	/**
 	 * Action 标识
 	 */
-	private $sign_type;
+	private string $sign_type;
 
 	/**
 	 * 待签名的请求字段名
 	 */
-	private $sign_keys;
+	private array $sign_keys;
 
 	/**
 	 * 签发 Sign

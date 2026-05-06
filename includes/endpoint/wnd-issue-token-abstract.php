@@ -19,28 +19,24 @@ use Wnd\Utility\Wnd_Qrcode_Login;
 abstract class Wnd_Issue_Token_Abstract extends Wnd_Endpoint {
 
 	// 注册用户需设置防抖，防止用户短期重复提交写入
-	public $period      = 5;
-	public $max_actions = 1;
+	public int $period             = 5;
+	public int $max_actions        = 1;
+	protected string $content_type = 'json';
 
-	protected $content_type = 'json';
-
-	protected $user_login;
-
-	protected $user_pass;
-
-	protected $display_name;
-	protected $avatar_url;
-	protected $email;
-
-	protected $scene;
+	protected string $user_login;
+	protected string $user_pass;
+	protected string $display_name;
+	protected string $avatar_url;
+	protected string $email;
+	protected string $scene;
 
 	/**
 	 * 站外应用类型标识
 	 * - 站外应用必须在子类中定义该属性
 	 * - 对应社交登录中的 openid type
 	 */
-	protected $app_type = '';
-	protected $openid   = '';
+	protected string $app_type = '';
+	protected string $openid   = '';
 
 	final protected function do() {
 		$user_id = $this->register_or_login();

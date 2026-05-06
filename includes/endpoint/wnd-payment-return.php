@@ -17,7 +17,7 @@ use Wnd\Model\Wnd_Transaction;
 abstract class Wnd_Payment_Return extends Wnd_Endpoint {
 
 	// 响应类型
-	protected $content_type = 'txt';
+	protected string $content_type = 'txt';
 
 	/**
 	 * 响应操作

@@ -14,10 +14,10 @@ use Wnd\Model\Wnd_Transaction;
 abstract class Wnd_Verify_Pay extends Wnd_Endpoint {
 
 	// 响应类型
-	protected $content_type = 'txt';
+	protected string $content_type = 'txt';
 
 	// 站内交易记录实例化对象
-	protected $transaction;
+	protected Wnd_Transaction $transaction;
 
 	/**
 	 * 响应操作

@@ -9,12 +9,12 @@ use Wnd\Utility\Wnd_OSS_Handler;
  */
 class Wnd_Paid_Download extends Wnd_Endpoint_Action {
 
-	private $post_id;
-	private $sku_id;
-	private $user_id;
-	private $price;
-	private $file;
-	private $in_private_oss;
+	private int $post_id;
+	private string $sku_id;
+	private int $user_id;
+	private float $price;
+	private string $file;
+	private bool $in_private_oss;
 
 	protected function do() {
 		//1、免费，或者已付费
@@ -50,7 +50,7 @@ class Wnd_Paid_Download extends Wnd_Endpoint_Action {
 		}
 	}
 
-	private function in_private_oss(): bool{
+	private function in_private_oss(): bool {
 		$file_id     = wnd_get_paid_file_id($this->post_id);
 		$oss_handler = Wnd_OSS_Handler::get_instance();
 		return $oss_handler->is_private_storage($file_id);
