@@ -13,29 +13,32 @@ use Wnd\Component\Payment\Alipay\AlipayService;
  */
 class Transfer {
 	// 转账固定值
-	protected $method      = 'alipay.fund.trans.uni.transfer';
-	protected $productCode = 'TRANS_ACCOUNT_NO_PWD';
+	protected string $method      = 'alipay.fund.trans.uni.transfer';
+	protected string $productCode = 'TRANS_ACCOUNT_NO_PWD';
+
+	protected string $gatewayUrl;
+	protected string $charset;
 
 	// 转账金额
-	protected $trans_amount;
+	protected float $trans_amount;
 
 	// 站内唯一交易订单号
-	protected $out_biz_no;
+	protected string $out_biz_no;
 
 	// 交易订单标题
-	protected $order_title;
+	protected string $order_title;
 
 	// 收款方信息 ['identity_type'=>'ALIPAY_LOGON_ID', 'identity'=>'xxx@xx.com', 'name'=>'xxx']
-	protected $payee_info = [];
+	protected array $payee_info = [];
 
 	// 备注
-	protected $remark;
+	protected string $remark;
 
 	// 请求参数
-	protected $params;
+	protected array $params;
 
 	// 支付宝基本配置参数
-	protected $alipayConfig;
+	protected array $alipayConfig;
 
 	/**
 	 * @since 0.9.17
@@ -56,14 +59,14 @@ class Transfer {
 	/**
 	 * 交易订单号
 	 */
-	public function setOutBizNo($out_biz_no) {
+	public function setOutBizNo(string $out_biz_no) {
 		$this->out_biz_no = $out_biz_no;
 	}
 
 	/**
 	 * 订单主题
 	 */
-	public function setOrderTitle($order_title) {
+	public function setOrderTitle(string $order_title) {
 		$this->order_title = $order_title;
 	}
 
@@ -105,10 +108,9 @@ class Transfer {
 
 	/**
 	 * 建立请求，以表单HTML形式构造（默认）
-	 * @param  $para_temp               请求参数数组
-	 * @return 提交表单HTML文本
+	 *
 	 */
-	protected function buildRequestForm() {
+	protected function buildRequestForm(): string {
 		$sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='" . $this->gatewayUrl . '?charset=' . $this->charset . "' method='POST'>";
 		foreach ($this->params as $key => $val) {
 			if (false === $this->checkEmpty($val)) {

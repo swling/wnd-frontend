@@ -10,14 +10,14 @@ use Wnd\Component\Requests\Requests;
  */
 class PayQRCode extends PayBuilder {
 
-	protected $productCode = 'FACE_TO_FACE_PAYMENT';
-	protected $method      = 'alipay.trade.precreate';
+	protected string $productCode = 'FACE_TO_FACE_PAYMENT';
+	protected string $method      = 'alipay.trade.precreate';
 
 	/**
 	 * 发起请求并生产二维码
 	 * @return string 支付二维码字符串
 	 */
-	public function buildInterface(): string{
+	public function buildInterface(): string {
 		$request  = new Requests;
 		$response = $request->request($this->gatewayUrl,
 			[

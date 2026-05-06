@@ -11,23 +11,23 @@ use Wnd\Component\Requests\Requests;
  */
 class Refunder implements RefunderBuilder {
 
-	protected $gatewayUrl;
+	protected string $gatewayUrl;
 
-	protected $charset;
+	protected string $charset;
 
-	protected $method = 'alipay.trade.refund';
+	protected string $method = 'alipay.trade.refund';
 
 	// 退款金额
-	protected $refundAmount;
+	protected float $refundAmount;
 
 	// 订单号
-	protected $outTradeNo;
+	protected string $outTradeNo;
 
 	// 标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
-	protected $outRequestNo;
+	protected string $outRequestNo;
 
 	// 支付宝基本配置参数
-	protected $alipayConfig;
+	protected array $alipayConfig;
 
 	/**
 	 * @since 0.9.17
@@ -63,7 +63,7 @@ class Refunder implements RefunderBuilder {
 	 * 发起订单
 	 * @return array
 	 */
-	public function doRefund(): array{
+	public function doRefund(): array {
 		//请求参数
 		$bizContent = [
 			'out_trade_no'   => $this->outTradeNo,

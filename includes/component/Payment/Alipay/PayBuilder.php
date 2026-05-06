@@ -10,21 +10,21 @@ use Wnd\Component\Payment\PaymentBuilder;
  */
 abstract class PayBuilder implements PaymentBuilder {
 	// 支付宝接口
-	protected $gatewayUrl;
-	protected $charset;
-	protected $productCode;
-	protected $method;
+	protected string $gatewayUrl;
+	protected string $charset;
+	protected string $productCode;
+	protected string $method;
 
 	// 订单基本参数
-	protected $totalAmount;
-	protected $outTradeNo;
-	protected $subject;
+	protected float $totalAmount;
+	protected string $outTradeNo;
+	protected string $subject;
 
 	// 支付宝基本配置参数
-	protected $alipayConfig;
+	protected array $alipayConfig;
 
 	// 请求参数
-	protected $params;
+	protected array $params;
 
 	/**
 	 * @since 0.9.17

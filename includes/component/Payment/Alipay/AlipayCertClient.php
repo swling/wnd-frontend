@@ -14,8 +14,8 @@ class AlipayCertClient {
 	 * @param $certContent
 	 * @return string
 	 */
-	public static function getCertSNFromContent(string $certContent): string{
-		$ssl = openssl_x509_parse($certContent);
+	public static function getCertSNFromContent(string $certContent): string {
+		$ssl = (array) openssl_x509_parse($certContent);
 		$SN  = md5(static::array2string(array_reverse($ssl['issuer'])) . $ssl['serialNumber']);
 		return $SN;
 	}
@@ -25,7 +25,7 @@ class AlipayCertClient {
 	 * @param $certContent
 	 * @return mixed
 	 */
-	public static function getPublicKeyFromContent(string $certContent): string{
+	public static function getPublicKeyFromContent(string $certContent): string {
 		$pkey       = openssl_pkey_get_public($certContent);
 		$keyData    = openssl_pkey_get_details($pkey);
 		$public_key = str_replace('-----BEGIN PUBLIC KEY-----', '', $keyData['key']);
@@ -42,7 +42,7 @@ class AlipayCertClient {
 		$array = explode('-----END CERTIFICATE-----', $certContent);
 		$SN    = null;
 		for ($i = 0; $i < count($array) - 1; $i++) {
-			$ssl[$i] = openssl_x509_parse($array[$i] . '-----END CERTIFICATE-----');
+			$ssl[$i] = (array) openssl_x509_parse($array[$i] . '-----END CERTIFICATE-----');
 			if (strpos($ssl[$i]['serialNumber'], '0x') === 0) {
 				$ssl[$i]['serialNumber'] = static::hex2dec($ssl[$i]['serialNumberHex']);
 			}
@@ -63,7 +63,7 @@ class AlipayCertClient {
 	 * @param  $hex
 	 * @return int|string
 	 */
-	private static function hex2dec($hex) {
+	private static function hex2dec(string $hex) {
 		$dec = 0;
 		$len = strlen($hex);
 		for ($i = 1; $i <= $len; $i++) {

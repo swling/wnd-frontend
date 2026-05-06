@@ -9,9 +9,9 @@ namespace Wnd\Component\Payment\Alipay;
  */
 class PayPC extends PayBuilder {
 
-	protected $productCode = 'FAST_INSTANT_TRADE_PAY';
-	protected $method      = 'alipay.trade.page.pay';
-	protected $target      = '_blank';
+	protected string $productCode = 'FAST_INSTANT_TRADE_PAY';
+	protected string $method      = 'alipay.trade.page.pay';
+	protected string $target      = '_blank';
 
 	/**
 	 * 建立请求，以表单HTML形式构造（默认）

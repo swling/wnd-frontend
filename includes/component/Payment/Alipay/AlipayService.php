@@ -12,7 +12,7 @@ namespace Wnd\Component\Payment\Alipay;
 class AlipayService {
 
 	// 默认配置
-	public static $defaultConfig = [
+	public static array $defaultConfig = [
 		//应用ID,您的APPID。
 		'app_id'              => '',
 
@@ -48,15 +48,15 @@ class AlipayService {
 	];
 
 	// 传参后的配置
-	private $config;
+	private array $config;
 
 	/**
 	 * 公共请求参数
 	 */
-	protected $commonParams = [];
+	protected array $commonParams = [];
 
 	/**
-	 * @param array 支付宝基础配置信息
+	 * @param $config
 	 */
 	public function __construct(array $config) {
 		$this->config = array_merge(static::$defaultConfig, $config);
@@ -78,7 +78,7 @@ class AlipayService {
 	 * 签名并构造完整的付款请求参数
 	 * @return array
 	 */
-	public function generatePayParams(string $method, array $bizContent): array{
+	public function generatePayParams(string $method, array $bizContent): array {
 		$commonParams                = $this->commonParams;
 		$commonParams['notify_url']  = $this->config['notify_url'];
 		$commonParams['return_url']  = $this->config['return_url'];
@@ -95,7 +95,7 @@ class AlipayService {
 	 *
 	 * @return array
 	 */
-	public function generateRefundParams(string $method, array $bizContent): array{
+	public function generateRefundParams(string $method, array $bizContent): array {
 		$commonParams                = $this->commonParams;
 		$commonParams['method']      = $method;
 		$commonParams['biz_content'] = json_encode($bizContent);
@@ -116,7 +116,7 @@ class AlipayService {
 	 * 并按照第一个字符的键值 ASCII 码递增排序（字母升序排序），如果遇到相同字符则按照第二个字符的键值 ASCII 码递增排序，以此类推。
 	 * @link https://opendocs.alipay.com/open/291/106118
 	 */
-	private function getSignContent(array $params): string{
+	private function getSignContent(array $params): string {
 		ksort($params);
 		$stringToBeSigned = '';
 		$i                = 0;
@@ -139,7 +139,7 @@ class AlipayService {
 	/**
 	 * 生成sign
 	 */
-	private function sign(string $data, string $signType = 'RSA'): string{
+	private function sign(string $data, string $signType = 'RSA'): string {
 		$priKey = $this->config['app_private_key'];
 		$res    = "-----BEGIN RSA PRIVATE KEY-----\n" .
 		wordwrap($priKey, 64, "\n", true) .
@@ -157,7 +157,7 @@ class AlipayService {
 	/**
 	 * 验证签名
 	 */
-	public function rsaCheck(array $params): bool{
+	public function rsaCheck(array $params): bool {
 		$sign     = $params['sign'] ?? '';
 		$signType = $params['sign_type'] ?? '';
 		unset($params['sign_type']);
@@ -165,7 +165,7 @@ class AlipayService {
 		return $this->verify($this->getSignContent($params), $sign, $signType);
 	}
 
-	private function verify(string $data, string $sign, string $signType = 'RSA'): bool{
+	private function verify(string $data, string $sign, string $signType = 'RSA'): bool {
 		$pubKey = $this->config['alipay_public_key'];
 		$res    = "-----BEGIN PUBLIC KEY-----\n" .
 		wordwrap($pubKey, 64, "\n", true) .
