@@ -47,7 +47,7 @@ class Wnd_Reg_Form extends Wnd_Module_Form {
 		}
 
 		$form->set_route('action', 'user/wnd_reg');
-		$form->set_submit_button(__('注册', 'wnd', 'wnd'));
+		$form->set_submit_button(__('注册', 'wnd'));
 		// 以当前函数名设置filter hook
 		$form->set_filter(__CLASS__);
 		return $form;
