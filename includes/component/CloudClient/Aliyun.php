@@ -54,7 +54,7 @@ class Aliyun extends CloudClient {
 		return "Signature={$signature}{$sortedQueryStringTmp}";
 	}
 
-	private function encode($str) {
+	private function encode(string $str) {
 		$res = urlencode($str);
 		$res = str_replace(['+', '*'], ['%20', '%2A'], $res);
 		$res = preg_replace('/%7E/', '~', $res);

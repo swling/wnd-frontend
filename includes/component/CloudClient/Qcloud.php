@@ -10,10 +10,10 @@ use Exception;
  */
 class Qcloud extends CloudClient {
 
-	private $algorithm = 'TC3-HMAC-SHA256';
-	private $service   = '';
+	private string $algorithm = 'TC3-HMAC-SHA256';
+	private string $service   = '';
 
-	protected function generateAuthorization(): string{
+	protected function generateAuthorization(): string {
 		$this->setHeaders();
 
 		$this->service   = $this->getService();
@@ -38,7 +38,7 @@ class Qcloud extends CloudClient {
 	 * 根据请求节点域名解析出 Service，即二级域名名称。
 	 * 如：$host = "cvm.tencentcloudapi.com" 则 $service = "cvm"
 	 */
-	private function getService(): string{
+	private function getService(): string {
 		$parsedUrl = parse_url($this->url);
 		$host      = explode('.', $parsedUrl['host']);
 		$subdomain = $host[0];
@@ -46,7 +46,7 @@ class Qcloud extends CloudClient {
 		return $subdomain;
 	}
 
-	private function genSignature(): string{
+	private function genSignature(): string {
 		$date          = gmdate('Y-m-d', $this->timestamp);
 		$secretDate    = hash_hmac('SHA256', $date, 'TC3' . $this->secretKey, true);
 		$secretService = hash_hmac('SHA256', $this->service, $secretDate, true);
@@ -55,7 +55,7 @@ class Qcloud extends CloudClient {
 		return $signature;
 	}
 
-	private function buildStringToSign(): string{
+	private function buildStringToSign(): string {
 		$date                   = gmdate('Y-m-d', $this->timestamp);
 		$credentialScope        = $date . '/' . $this->service . '/tc3_request';
 		$hashedCanonicalRequest = hash('SHA256', $this->buildCanonicalRequestString());
@@ -63,7 +63,7 @@ class Qcloud extends CloudClient {
 		return $stringToSign;
 	}
 
-	private function buildCanonicalRequestString(): string{
+	private function buildCanonicalRequestString(): string {
 		$httpRequestMethod    = $this->method;
 		$canonicalUri         = '/';
 		$canonicalQueryString = $this->queryString;
@@ -81,7 +81,7 @@ class Qcloud extends CloudClient {
 	 * 解析 headers 数组生成：signedHeaders 及 CanonicalHeaders
 	 * @link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#4-canonicalheaders
 	 */
-	private function parseHeaders(): array{
+	private function parseHeaders(): array {
 		$list_array = [];
 		foreach ($this->headers as $key => $value) {
 			if (empty($value)) {

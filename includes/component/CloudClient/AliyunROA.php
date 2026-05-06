@@ -13,7 +13,7 @@ class AliyunROA extends CloudClient {
 	/**
 	 * @var string
 	 */
-	private static $headerSeparator = "\n";
+	private static string $headerSeparator = "\n";
 
 	/**
 	 * 生成 Authorization
@@ -109,7 +109,7 @@ class AliyunROA extends CloudClient {
 	}
 
 	/**
-	 * @param string $url
+	 * @param string $uri
 	 *
 	 * @return string
 	 */

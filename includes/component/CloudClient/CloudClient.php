@@ -11,18 +11,18 @@ use Wnd\Component\Requests\Requests;
  */
 abstract class CloudClient {
 
-	protected $secretID;
-	protected $secretKey;
-	protected $timestamp;
-	protected $method;
-	protected $url;
-	protected $timeout;
-	protected $host;
-	protected $path;
-	protected $queryString = '';
-	protected $headers     = [];
-	protected $body;
-	protected $response;
+	protected string $secretID;
+	protected string $secretKey;
+	protected int $timestamp;
+	protected string $method;
+	protected string $url;
+	protected int $timeout;
+	protected string $host;
+	protected string $path;
+	protected string $queryString = '';
+	protected array $headers      = [];
+	protected array | string $body;
+	protected array $response;
 
 	public function __construct(string $secretID, string $secretKey) {
 		$this->secretID  = $secretID;
@@ -30,7 +30,7 @@ abstract class CloudClient {
 		$this->timestamp = time();
 	}
 
-	public function request(string $url, array $args): array{
+	public function request(string $url, array $args): array {
 		$this->buildRequestParams($url, $args);
 		$this->excuteRequest();
 		return $this->handleResponse();
@@ -39,7 +39,7 @@ abstract class CloudClient {
 	/**
 	 * 构建完整的请求参数
 	 */
-	private function buildRequestParams(string $url, array $args): array{
+	private function buildRequestParams(string $url, array $args): array {
 		$defaults = [
 			'method'  => 'POST',
 			'headers' => [],
@@ -78,7 +78,7 @@ abstract class CloudClient {
 	/**
 	 * 拆分为独立方法，以便某些情况子类可重写覆盖
 	 */
-	protected function excuteRequest(): array{
+	protected function excuteRequest(): array {
 		$request        = new Requests;
 		$this->response = $request->request(
 			$this->url,
@@ -96,7 +96,7 @@ abstract class CloudClient {
 	/**
 	 * 解析响应结果为数组数据
 	 */
-	protected function handleResponse(): array{
+	protected function handleResponse(): array {
 		$responseBody = json_decode($this->response['body'], true);
 		static::checkResponse($responseBody);
 

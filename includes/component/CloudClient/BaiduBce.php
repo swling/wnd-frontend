@@ -10,9 +10,9 @@ use Exception;
  */
 class BaiduBce extends CloudClient {
 
-	private $expiration = 1800;
+	private int $expiration = 1800;
 
-	protected function generateAuthorization(): string{
+	protected function generateAuthorization(): string {
 		$this->setHeaders();
 
 		// 百度云特殊规定
@@ -42,7 +42,7 @@ class BaiduBce extends CloudClient {
 	/**
 	 * @link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#%E4%BB%BB%E5%8A%A1%E4%B8%89%EF%BC%9A%E7%94%9F%E6%88%90%E6%B4%BE%E7%94%9F%E5%AF%86%E9%92%A5signingkey
 	 */
-	private function genSigningKey(): string{
+	private function genSigningKey(): string {
 		$authStr = 'bce-auth-v1/' . $this->secretID . '/' . $this->timestamp . '/' . $this->expiration;
 		return $this->sha256($this->secretKey, $authStr);
 	}
@@ -60,7 +60,7 @@ class BaiduBce extends CloudClient {
 	/**
 	 * @link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#3-canonicalquerystring
 	 */
-	private function getCanonicalQueryString(): string{
+	private function getCanonicalQueryString(): string {
 		parse_str($this->queryString, $queryString);
 		$strArry = [];
 		foreach ($queryString as $key => $value) {
@@ -85,7 +85,7 @@ class BaiduBce extends CloudClient {
 	 * 解析 headers 数组生成：signedHeaders 及 CanonicalHeaders
 	 * @link https://cloud.baidu.com/doc/Reference/s/njwvz1yfu#4-canonicalheaders
 	 */
-	private function parseHeaders(): array{
+	private function parseHeaders(): array {
 		$list_array = [];
 		foreach ($this->headers as $key => $value) {
 			if (empty($value)) {
