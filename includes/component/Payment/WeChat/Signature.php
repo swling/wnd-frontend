@@ -7,9 +7,9 @@ namespace Wnd\Component\Payment\WeChat;
  */
 class Signature {
 
-	private $mchID;
-	private $privateKey;
-	private $serialNumber;
+	private string $mchID;
+	private string $privateKey;
+	private string $serialNumber;
 
 	public function __construct(string $mchID, string $serialNumber, string $privateKey) {
 		$this->mchID        = $mchID;
@@ -31,7 +31,7 @@ class Signature {
 	 * 构造签名信息
 	 * @link https://pay.weixin.qq.com/wiki/doc/apiv3/wechatpay/wechatpay4_0.shtml#part-3
 	 */
-	private function getToken(string $requestUrl, string $method, array $reqParams = []): string{
+	private function getToken(string $requestUrl, string $method, array $reqParams = []): string {
 		$body      = $reqParams ? json_encode($reqParams) : '';
 		$nonce     = $this->getNonce();
 		$timestamp = time();

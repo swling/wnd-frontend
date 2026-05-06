@@ -12,10 +12,10 @@ class Verify {
 	const KEY_LENGTH_BYTE      = 32;
 	const AUTH_TAG_LENGTH_BYTE = 16;
 
-	private $apiKey;
-	private $signature;
-	private $weChatCertificates      = [];
-	private $curretWeChatCertificate = '';
+	private string $apiKey;
+	private Signature $signature;
+	private array $weChatCertificates       = [];
+	private string $curretWeChatCertificate = '';
 
 	public function __construct(string $mchID, string $apiKey, string $serialNumber, string $privateKey) {
 		if (strlen($apiKey) != static::KEY_LENGTH_BYTE) {
@@ -46,7 +46,7 @@ class Verify {
 	/**
 	 * 验证签名
 	 */
-	public function validate(): bool{
+	public function validate(): bool {
 		$serialNo  = $this->getHeader('Wechatpay-Serial');
 		$sign      = $this->getHeader('Wechatpay-Signature');
 		$timestamp = $this->getHeader('Wechatpay-Timestamp');
@@ -79,7 +79,7 @@ class Verify {
 	 * 验签
 	 *
 	 */
-	private function verify(string $message, string $signature): bool{
+	private function verify(string $message, string $signature): bool {
 		$publicKey = openssl_get_publickey($this->curretWeChatCertificate);
 		if (!$publicKey) {
 			return false;
@@ -96,7 +96,7 @@ class Verify {
 	 * 解密报文
 	 *
 	 */
-	public function notify(): array{
+	public function notify(): array {
 		$postStr = file_get_contents('php://input');
 		if (!$postStr) {
 			return [];
@@ -141,7 +141,7 @@ class Verify {
 	 *
 	 * @return array 以序列化为键名，过期时间、证书内容组成内容的二维数组
 	 */
-	public function getRemoteWechatCertificates(): array{
+	public function getRemoteWechatCertificates(): array {
 		// 请求API获取证书
 		$reqUrl    = 'https://api.mch.weixin.qq.com/v3/certificates';
 		$reqParams = [];

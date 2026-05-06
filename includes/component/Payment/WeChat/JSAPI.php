@@ -12,7 +12,7 @@ use Exception;
  */
 class JSAPI extends PayBuilder {
 
-	protected $gateWay = 'https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi';
+	protected string $gateWay = 'https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi';
 
 	/**
 	 * ## 请求生成 prepay id，正常响应示例：
@@ -22,7 +22,7 @@ class JSAPI extends PayBuilder {
 	 *
 	 * ## 按微信规范，组合支付数据并签名
 	 */
-	public function buildInterface(): string{
+	public function buildInterface(): string {
 		$result = $this->excuteRequest();
 		$body   = json_decode($result['body'], true);
 

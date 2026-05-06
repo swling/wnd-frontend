@@ -9,20 +9,20 @@ use Wnd\Component\Requests\Requests;
  * @link https://pay.weixin.qq.com/wiki/doc/apiv3/apis/index.shtml
  */
 abstract class PayBuilder implements PaymentBuilder {
-	protected $mchID;
-	protected $appID;
-	protected $signature;
+	protected string $mchID;
+	protected string $appID;
+	protected Signature $signature;
 
-	protected $totalFee;
-	protected $outTradeNo;
-	protected $subject;
-	protected $notifyUrl;
-	protected $payer;
+	protected float $totalFee;
+	protected string $outTradeNo;
+	protected string $subject;
+	protected string $notifyUrl;
+	protected array $payer;
 
-	protected $gateWay    = '';
-	protected $method     = 'POST';
-	protected $ReqHeaders = [];
-	protected $ReqBody    = '';
+	protected string $gateWay   = '';
+	protected string $method    = 'POST';
+	protected array $ReqHeaders = [];
+	protected string $ReqBody   = '';
 
 	public function __construct(string $mchID, string $appID, string $serialNumber, string $privateKey) {
 		$this->mchID     = $mchID;
@@ -97,7 +97,7 @@ abstract class PayBuilder implements PaymentBuilder {
 	/**
 	 * 拆分为独立方法，以便某些情况子类可重写覆盖
 	 */
-	protected function excuteRequest(): array{
+	protected function excuteRequest(): array {
 		$request = new Requests;
 		return $request->request(
 			$this->gateWay,
@@ -113,7 +113,7 @@ abstract class PayBuilder implements PaymentBuilder {
 	/**
 	 * 获取客户端 ip 地址
 	 */
-	protected static function getClientIP(): string{
+	protected static function getClientIP(): string {
 		$ip = '';
 		if (isset($_SERVER)) {
 			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['REMOTE_ADDR']);

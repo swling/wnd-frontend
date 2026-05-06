@@ -8,14 +8,14 @@ use Exception;
  */
 class H5 extends PayBuilder {
 
-	protected $gateWay = 'https://api.mch.weixin.qq.com/v3/pay/transactions/h5';
+	protected string $gateWay = 'https://api.mch.weixin.qq.com/v3/pay/transactions/h5';
 
 	/**
 	 * 发起客户端支付请求
 	 *
 	 * @return string 返回构造支付请求的Html，如自动提交的表单或支付二维码
 	 */
-	public function buildInterface(): string{
+	public function buildInterface(): string {
 		$result = $this->excuteRequest();
 		$body   = json_decode($result['body'], true);
 
