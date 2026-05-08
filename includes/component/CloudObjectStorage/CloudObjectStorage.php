@@ -10,11 +10,11 @@ use Wnd\Component\Requests\Requests;
  */
 abstract class CloudObjectStorage {
 
-	protected $secretID     = ''; //"云 API 密钥 SecretId";
-	protected $secretKey    = ''; //"云 API 密钥 SecretKey";
-	protected $endpoint     = ''; // COS 节点
-	protected $filePathName = ''; // 文件在节点中的相对存储路径（签名需要）
-	protected $fileUri      = ''; // 文件的完整 URI： $this->endpoint . $this->filePathName
+	protected string $secretID     = ''; //"云 API 密钥 SecretId";
+	protected string $secretKey    = ''; //"云 API 密钥 SecretKey";
+	protected string $endpoint     = ''; // COS 节点
+	protected string $filePathName = ''; // 文件在节点中的相对存储路径（签名需要）
+	protected string $fileUri      = ''; // 文件的完整 URI： $this->endpoint . $this->filePathName
 
 	// 初始化
 	public function __construct(string $secretID, string $secretKey, string $endpoint) {

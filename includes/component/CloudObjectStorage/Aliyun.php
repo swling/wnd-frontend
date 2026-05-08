@@ -193,7 +193,7 @@ class Aliyun extends CloudObjectStorage {
 		return ['authorization' => $authorization, 'signature' => $signature];
 	}
 
-	private function getCanonicalQueryString($query) {
+	private function getCanonicalQueryString(array $query) {
 		//Canonical Query
 		$querySigned = [];
 		foreach ($query as $key => $value) {
