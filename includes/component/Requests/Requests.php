@@ -1,6 +1,7 @@
 <?php
 namespace Wnd\Component\Requests;
 
+use CurlHandle;
 use Exception;
 
 /**
@@ -17,7 +18,7 @@ use Exception;
  */
 class Requests {
 
-	private $curl;
+	private CurlHandle | null $curl;
 
 	private static $defaults = [
 		'method'     => 'GET',
@@ -31,9 +32,9 @@ class Requests {
 		'proxy'      => false,
 	];
 
-	private $args;
+	private array $args;
 
-	private $file;
+	private mixed $file = null;
 
 	public function request(string $url, array $args): array {
 		if (!filter_var($url, FILTER_VALIDATE_URL)) {
@@ -171,18 +172,25 @@ class Requests {
 	private function execute_request(): array {
 		// curl_setopt($this->curl, CURLOPT_HEADER, true); // 开启header信息以供调试
 		// curl_setopt($this->curl, CURLINFO_HEADER_OUT, true);
-		$body    = curl_exec($this->curl);
-		$headers = curl_getinfo($this->curl);
+		try {
+			$body = curl_exec($this->curl);
+			// 先检查错误
+			if (curl_errno($this->curl)) {
+				throw new Exception(
+					'Curl error: ' . curl_error($this->curl)
+				);
+			}
 
-		if ($this->file) {
-			fclose($this->file);
+			$headers = curl_getinfo($this->curl);
+			return compact('headers', 'body');
+		} finally {
+			// 关闭文件句柄
+			if (is_resource($this->file)) {
+				fclose($this->file);
+			}
+
+			// PHP 8.5+ 不再使用 curl_close()
+			$this->curl = null;
 		}
-
-		if (curl_errno($this->curl)) {
-			throw new Exception('Curl error: ' . curl_error($this->curl));
-		}
-		curl_close($this->curl);
-
-		return compact('headers', 'body');
 	}
 }
