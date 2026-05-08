@@ -28,7 +28,7 @@ class JWTAuth {
 	 * Payload 数据格式建议遵循约定，同时可根据实际应用场景自行添加或移除一项或多项
 	 *
 	 * @param  array  	$payload   	JWT 载荷
-	 * @param  string 	$secretKey 	加密密匙
+	 * @param  string 	$secretkey 	加密密匙
 	 * @return string 	$token 		Token
 	 */
 	public static function generateToken(array $payload, string $secretkey): string{
@@ -43,7 +43,7 @@ class JWTAuth {
 	 * 验证token是否有效,默认验证exp,nbf,iat时间
 	 *
 	 * @param  string       $token     需要验证的token
-	 * @param  string       $secretKey 	加密密匙
+	 * @param  string       $secretkey 	加密密匙
 	 * @return bool|array
 	 */
 	public static function parseToken(string $token, string $secretkey) {

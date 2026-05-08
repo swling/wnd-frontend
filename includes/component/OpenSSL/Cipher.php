@@ -11,10 +11,10 @@ use Exception;
  */
 class Cipher {
 
-	private $key;
-	private $cipher;
-	private $iv;
-	private $tag;
+	private string $key;
+	private string $cipher;
+	private string $iv;
+	private string | null $tag;
 
 	/**
 	 * @param string $cipher 算法 	默认 'aes-128-gcm'
