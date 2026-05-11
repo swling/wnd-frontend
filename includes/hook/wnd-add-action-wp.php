@@ -31,7 +31,7 @@ class Wnd_Add_Action_WP {
 		add_action('deleted_user', [__CLASS__, 'action_on_delete_user'], 10, 1);
 		add_action('before_delete_post', [__CLASS__, 'action_on_before_delete_post'], 10, 1);
 		// add_action('post_updated', [__CLASS__, 'action_on_post_updated'], 10, 3);
-		add_action('add_attachment', [__CLASS__, 'action_on_add_attachment'], 10, 1);
+		// add_action('add_attachment', [__CLASS__, 'action_on_add_attachment'], 10, 1);
 		add_action('pre_get_posts', ['Wnd\Query\Wnd_Filter_Query', 'action_on_pre_get_posts'], 10, 1);
 		add_action('pre_user_query', ['Wnd\Hook\Wnd_User_Query_Extend', 'handle_query'], 10, 1);
 
@@ -174,27 +174,6 @@ class Wnd_Add_Action_WP {
 	 * @since 2019.06.05
 	 */
 	// public static function action_on_post_updated($post_ID, $post_after, $post_before) {}
-
-	/**
-	 * do_action( 'add_attachment', $post_ID );
-	 * 新增上传附件时
-	 * @since 2019.07.18
-	 */
-	public static function action_on_add_attachment(int $post_ID) {
-		$post = get_post($post_ID);
-
-		/**
-		 * 记录附件children_max_menu_order、删除附件时不做修改
-		 * 记录值用途：读取后，自动给上传附件依次设置menu_order，以便按menu_order排序
-		 * 典型场景：
-		 * 删除某个特定附件后，需要新上传附件，并恢复原有排序。此时要求新附件menu_order与删除的附件一致
-		 * 通过wnd_attachment_form()上传文件，并编辑menu_order即可达到上述要求
-		 * @see wnd_filter_wp_insert_attachment_data
-		 */
-		if ($post->post_parent) {
-			wnd_inc_wnd_post_meta($post->post_parent, 'attachment_records');
-		}
-	}
 
 	/**
 	 * 匿名用户提交评论验证码前端交互

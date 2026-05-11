@@ -27,16 +27,16 @@ $post_type.'_tag';//标签taxonomy
 
 # 自定义文章类型
 *以下 post_type 并未均为私有属性('public' => false)，因此在WordPress后台无法查看到*
-- 充值：recharge
+<!-- - 充值：recharge
 - 消费、订单：order
-- 站内信：mail
+- 站内信：mail -->
 - 整站月度财务统计：stats-re(充值)、stats-ex(消费)
 
 # 自定义文章状态
 @see Wnd\Modle\Wnd_Init::register_post_status();
 
 # 自定义文章版本
-post type 为 wp 元素 revision
+post type 为 wp 原生 revision
 
 ## 版本创建条件：
 非管理员，编辑已公开发布过的文章
@@ -61,13 +61,13 @@ wnd_meta: download_count (下载统计)
 wnd_meta: order_count (订单统计，含15分钟以内未完成的订单)
 wnd_meta: total_sales：付费内容总销售额
 wnd_meta: total_commission：作者获得的总佣金
-wnd_meta: attachment_records (累积上传到当前文章的附件总次数，含已删除，用于给附件自动设置 menu_order)
+<!-- wnd_meta: attachment_records (累积上传到当前文章的附件总次数，含已删除，用于给附件自动设置 menu_order) -->
 wnd_meta: sku（产品 SKU，数组数据）
 
 # 用户自定义字段
-wnd_meta: money：余额
+<!-- wnd_meta: money：余额
 wnd_meta: expense：消费
-wnd_meta: commission：佣金
+wnd_meta: commission：佣金 -->
 wnd_meta: avatar：头像文件id
 wnd_meta: avatar_url：头像外链
 wnd_meta: locale：用户语言
@@ -76,13 +76,7 @@ wnd_meta: locale：用户语言
 
 wp_meta: status：用户状态['ok'，'banned']
 
-# 充值、消费(自定义文章类型)
-金额：post_content
-关联：post_parent
-标题：post_title
-状态：post_status: pengding / success
-类型：post_type：recharge / order
-在线支付平台：post_excerpt (如 alipay 、wepay)
+# 充值、消费
 
 ## 退款
 wnd_meta : refund_count 	（分批）退款次数
@@ -113,10 +107,6 @@ wnd_meta : quantity (int) 	订单对应的产品数量
 
 ## wp_posts：
 如需保证标题唯一：建议对post_title添加前缀索引
-
-# 站内信功能
-post_type => mail
-post_status => 未读：pengding 已读: private
 
 # wp_options
 - 插件配置：wnd

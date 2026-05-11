@@ -20,7 +20,7 @@ class Wnd_Add_Filter_WP {
 		add_filter('get_edit_post_link', [__CLASS__, 'filter_edit_post_link'], 10, 3);
 		add_filter('post_type_link', [__CLASS__, 'filter_post_type_link'], 10, 2);
 		add_filter('wp_insert_post_data', [__CLASS__, 'filter_wp_insert_post_data'], 10, 2);
-		add_filter('wp_insert_attachment_data', [__CLASS__, 'filter_wp_insert_attachment_data'], 10, 2);
+		// add_filter('wp_insert_attachment_data', [__CLASS__, 'filter_wp_insert_attachment_data'], 10, 2);
 		add_filter('get_comment_author_url', [__CLASS__, 'filter_comment_author_url'], 10, 3);
 		add_filter('get_avatar', [__CLASS__, 'filter_avatar'], 10, 5);
 		add_filter('get_comment_author', [__CLASS__, 'filter_comment_author'], 10, 3);
@@ -167,25 +167,6 @@ class Wnd_Add_Filter_WP {
 		if (empty($data['post_name'])) {
 			$data['post_name'] = uniqid();
 		}
-
-		return $data;
-	}
-
-	/**
-	 * $data = apply_filters( 'wp_insert_attachment_data', $data, $postarr );
-	 * 自动给上传的附件依次设置 menu_order
-	 * menu order值为当前附属的post上传附件总次数
-	 * @see wnd_action_add_attachment
-	 * @since 2019.07.18
-	 */
-	public static function filter_wp_insert_attachment_data(array $data, $postarr) {
-		// 如果已经指定了menu order或者附件并未附属到post
-		if ($data['menu_order'] or !$data['post_parent']) {
-			return $data;
-		}
-
-		$menu_order         = wnd_get_post_meta($data['post_parent'], 'attachment_records') ?: 0;
-		$data['menu_order'] = ++$menu_order;
 
 		return $data;
 	}
