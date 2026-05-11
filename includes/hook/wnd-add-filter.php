@@ -7,6 +7,7 @@ use Wnd\Permission\Wnd_PPC;
 use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\Utility\Wnd_Validator;
+use WP_User;
 
 /**
  * Wnd Filter
@@ -40,7 +41,7 @@ class Wnd_Add_Filter {
 	 * 检测当前信息是否可以注册新用户
 	 * @since 2019.01.22
 	 */
-	public static function filter_can_reg($can_array, $data) {
+	public static function filter_can_reg(array $can_array, array $data) {
 		if (!get_option('users_can_register')) {
 			return ['status' => 0, 'msg' => __('站点已关闭注册', 'wnd')];
 		}
@@ -58,7 +59,7 @@ class Wnd_Add_Filter {
 	 * 登录权限
 	 * @since 0.8.61
 	 */
-	public static function filter_can_login($can_array, $user) {
+	public static function filter_can_login(array $can_array, WP_User $user) {
 		// 账户已封禁
 		if (wnd_has_been_banned($user->ID)) {
 			return ['status' => 0, 'msg' => __('账户已被封禁', 'wnd')];
@@ -79,7 +80,7 @@ class Wnd_Add_Filter {
 	 * 用户显示昵称不得与登录名重复
 	 * @since  2020.03.26
 	 */
-	public static function filter_can_update_profile($can_array, $data) {
+	public static function filter_can_update_profile(array $can_array, array $data) {
 		$display_name = $data['_user_display_name'] ?? '';
 		$user_login   = wp_get_current_user()->data->user_login ?? '';
 		if ($display_name == $user_login) {
@@ -93,7 +94,7 @@ class Wnd_Add_Filter {
 	 * 删除用户权限检测
 	 * @since 0.8.64
 	 */
-	public static function filter_can_delete_user($can_array, $user_id) {
+	public static function filter_can_delete_user(array $can_array, int $user_id) {
 		$money = wnd_get_user_balance($user_id);
 		if (0 != $money) {
 			$can_array = ['status' => 0, 'msg' => __('当前账户余额不为零：¥' . $money, 'wnd')];
@@ -107,7 +108,7 @@ class Wnd_Add_Filter {
 	 * 如果 $update_id 为0 表示为新发布文章，否则为更新文章
 	 * @since 2019.02.13
 	 */
-	public static function filter_post_status($post_status, $data, $update_id) {
+	public static function filter_post_status(string $post_status, array $data, int $update_id) {
 		// 允许用户设置为草稿
 		if ('draft' == ($data['_post_post_status'][0] ?? false)) {
 			return 'draft';
@@ -125,7 +126,7 @@ class Wnd_Add_Filter {
 	 * 写入文章权限检测
 	 * @since 0.9.36
 	 */
-	public static function filter_can_insert_post(array $can_array, array $data, int $update_id): array{
+	public static function filter_can_insert_post(array $can_array, array $data, int $update_id): array {
 		$post_type   = $data['_post_post_type'] ?? '';
 		$post_status = $data['_post_post_status'] ?? '';
 		$post_title  = $data['_post_post_title'] ?? '';
@@ -159,7 +160,7 @@ class Wnd_Add_Filter {
 	 * 是否可以更新状态
 	 * @since 0.9.36
 	 */
-	public static function filter_can_update_post_status(array $can_array, object $before_post, string $after_status): array{
+	public static function filter_can_update_post_status(array $can_array, object $before_post, string $after_status): array {
 		try {
 			$ppc = Wnd_PPC::get_instance($before_post->post_type);
 			$ppc->set_post_id($before_post->ID);

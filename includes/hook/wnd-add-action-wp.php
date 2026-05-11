@@ -14,6 +14,7 @@ use Wnd\WPDB\Wnd_Mail_DB;
 use Wnd\WPDB\Wnd_Tag_Under_Category;
 use Wnd\WPDB\Wnd_Transaction_DB;
 use Wnd\WPDB\Wnd_User_DB;
+use WP_User;
 
 /**
  * WP Action
@@ -29,7 +30,7 @@ class Wnd_Add_Action_WP {
 		add_action('after_password_reset', [__CLASS__, 'action_on_password_reset'], 10, 1);
 		add_action('deleted_user', [__CLASS__, 'action_on_delete_user'], 10, 1);
 		add_action('before_delete_post', [__CLASS__, 'action_on_before_delete_post'], 10, 1);
-		add_action('post_updated', [__CLASS__, 'action_on_post_updated'], 10, 3);
+		// add_action('post_updated', [__CLASS__, 'action_on_post_updated'], 10, 3);
 		add_action('add_attachment', [__CLASS__, 'action_on_add_attachment'], 10, 1);
 		add_action('pre_get_posts', ['Wnd\Query\Wnd_Filter_Query', 'action_on_pre_get_posts'], 10, 1);
 		add_action('pre_user_query', ['Wnd\Hook\Wnd_User_Query_Extend', 'handle_query'], 10, 1);
@@ -106,7 +107,7 @@ class Wnd_Add_Action_WP {
 	 * 重设密码后
 	 * @since 0.8.62
 	 */
-	public static function action_on_password_reset($user) {
+	public static function action_on_password_reset(WP_User $user) {
 		// Defender：重设密码后清空登录失败日志
 		$defender = new Wnd_Defender_User($user->ID);
 		$defender->reset_log();
@@ -116,7 +117,7 @@ class Wnd_Add_Action_WP {
 	 * 删除用户的附加操作
 	 * @since 2018
 	 */
-	public static function action_on_delete_user($user_id) {
+	public static function action_on_delete_user(int $user_id) {
 		// 删除自定义 wnd_users 表记录
 		Wnd_User_DB::delete_wnd_user($user_id);
 
@@ -144,7 +145,7 @@ class Wnd_Add_Action_WP {
 	 * @since 2019.03.28
 	 * @since 2019.10.20
 	 */
-	public static function action_on_before_delete_post($post_id) {
+	public static function action_on_before_delete_post(int $post_id) {
 		$delete_post = get_post($post_id);
 
 		/**
@@ -172,14 +173,14 @@ class Wnd_Add_Action_WP {
 	 * 文章更新
 	 * @since 2019.06.05
 	 */
-	public static function action_on_post_updated($post_ID, $post_after, $post_before) {}
+	// public static function action_on_post_updated($post_ID, $post_after, $post_before) {}
 
 	/**
 	 * do_action( 'add_attachment', $post_ID );
 	 * 新增上传附件时
 	 * @since 2019.07.18
 	 */
-	public static function action_on_add_attachment($post_ID) {
+	public static function action_on_add_attachment(int $post_ID) {
 		$post = get_post($post_ID);
 
 		/**

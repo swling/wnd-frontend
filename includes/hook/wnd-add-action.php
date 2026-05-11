@@ -8,6 +8,7 @@ use Wnd\Utility\Wnd_Defender_User;
 use Wnd\Utility\Wnd_Singleton_Trait;
 use Wnd\View\Wnd_Form_Option;
 use Wnd\WPDB\Wnd_User_DB;
+use WP_User;
 
 /**
  * Wnd Action
@@ -37,7 +38,7 @@ class Wnd_Add_Action {
 	/**
 	 * @since 初始化 用户注册后
 	 */
-	public static function action_on_user_register($user_id, $data) {
+	public static function action_on_user_register(int $user_id, array $data) {
 		// 创建 Wnd_User 记录（必须在注册时即创建表记录，否则无记录可能导致在首次登陆写入前的操作无效）
 		Wnd_User_DB::update_wnd_user($user_id, []);
 
@@ -59,7 +60,7 @@ class Wnd_Add_Action {
 	 * 登录成功
 	 * @since 0.8.61
 	 */
-	public static function action_on_login($user) {
+	public static function action_on_login(WP_User $user) {
 		// Defender：清空登录失败日志
 		$defender = new Wnd_Defender_User($user->ID);
 		$defender->reset_log();
@@ -69,7 +70,7 @@ class Wnd_Add_Action {
 	 * 登录失败
 	 * @since 0.8.61
 	 */
-	public static function action_on_login_failed($user) {
+	public static function action_on_login_failed(WP_User $user) {
 		// Defender：写入登录失败日志
 		$defender = new Wnd_Defender_User($user->ID);
 		$defender->write_failure_log();
@@ -79,7 +80,7 @@ class Wnd_Add_Action {
 	 * ajax上传文件时，根据 meta_key 做后续处理
 	 * @since 2018
 	 */
-	public static function action_on_upload_file($attachment_id, $post_parent, $meta_key) {
+	public static function action_on_upload_file(int $attachment_id, int $post_parent, string $meta_key) {
 		if (!$meta_key) {
 			return;
 		}
@@ -88,7 +89,7 @@ class Wnd_Add_Action {
 		if (0 === stripos($meta_key, '_option_')) {
 			$old_option = Wnd_Form_Option::get_option_value_by_input_name($meta_key);
 			if ($old_option) {
-				wnd_delete_attachment($old_option, true);
+				wnd_delete_attachment($old_option);
 			}
 
 			Wnd_Form_Option::update_option_by_input_name($meta_key, $attachment_id);
@@ -99,7 +100,7 @@ class Wnd_Add_Action {
 		if ('_wpthumbnail_id' == $meta_key) {
 			$old_meta = get_post_meta($post_parent, '_thumbnail_id', true);
 			if ($old_meta) {
-				wnd_delete_attachment($old_meta, true);
+				wnd_delete_attachment($old_meta);
 			}
 
 			set_post_thumbnail($post_parent, $attachment_id);
@@ -110,7 +111,7 @@ class Wnd_Add_Action {
 		if ($post_parent) {
 			$old_meta = wnd_get_post_meta($post_parent, $meta_key);
 			if ($old_meta) {
-				wnd_delete_attachment($old_meta, true);
+				wnd_delete_attachment($old_meta);
 			}
 			wnd_update_post_meta($post_parent, $meta_key, $attachment_id);
 
@@ -119,7 +120,7 @@ class Wnd_Add_Action {
 			$user_id       = get_current_user_id();
 			$old_user_meta = wnd_get_user_meta($user_id, $meta_key);
 			if ($old_user_meta) {
-				wnd_delete_attachment($old_user_meta, true);
+				wnd_delete_attachment($old_user_meta);
 			}
 			wnd_update_user_meta($user_id, $meta_key, $attachment_id);
 		}
@@ -129,7 +130,7 @@ class Wnd_Add_Action {
 	 * ajax删除附件时
 	 * @since 2018
 	 */
-	public static function action_on_delete_file($attachment_id, $post_parent, $meta_key) {
+	public static function action_on_delete_file(int $attachment_id, int $post_parent, string $meta_key) {
 		if (!$meta_key) {
 			return;
 		}

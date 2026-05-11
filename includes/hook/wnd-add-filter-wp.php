@@ -2,6 +2,9 @@
 namespace Wnd\Hook;
 
 use Wnd\Utility\Wnd_Singleton_Trait;
+use WP_Comment;
+use WP_Post;
+use WP_Query;
 
 /**
  * WP Filter
@@ -30,7 +33,7 @@ class Wnd_Add_Filter_WP {
 	 * @since 0.9.71
 	 * 账号 cookie 有效时间
 	 */
-	public static function filter_auth_cookie_expiration($seconds, $user_id, $remember): int {
+	public static function filter_auth_cookie_expiration(int $seconds, int $user_id, bool $remember): int {
 		return $remember ? 180 * DAY_IN_SECONDS : $seconds;
 	}
 
@@ -38,7 +41,7 @@ class Wnd_Add_Filter_WP {
 	 * 限制wp editor上传附件
 	 * @since 2019.01.16
 	 */
-	public static function filter_limit_upload($file) {
+	public static function filter_limit_upload(array $file) {
 		// 排除后台
 		if (is_admin()) {
 			return $file;
@@ -71,7 +74,7 @@ class Wnd_Add_Filter_WP {
 	 * @since 0.9.86
 	 * 将图片文件转为 webp
 	 */
-	public static function convert_to_webp_and_delete_original($upload) {
+	public static function convert_to_webp_and_delete_original(array $upload) {
 		if (wnd_get_config('convert_webp') != 1) {
 			return $upload;
 		}
@@ -126,7 +129,7 @@ class Wnd_Add_Filter_WP {
 	 * 重写WordPress原生编辑链接到指定的页面
 	 * @since 2019.01.31
 	 */
-	public static function filter_edit_post_link($link, $post_id, $context) {
+	public static function filter_edit_post_link(string $link, int $post_id, $context) {
 		if (is_admin()) {
 			return $link;
 		}
@@ -142,7 +145,7 @@ class Wnd_Add_Filter_WP {
 	 * 重写插件定义的功能型非公开型 POST 链接，以通过 Module 展示相关详情
 	 * @since 0.9.0
 	 */
-	public static function filter_post_type_link($link, $post) {
+	public static function filter_post_type_link(string $link, WP_Post $post) {
 		if (is_admin()) {
 			return $link;
 		}
@@ -160,7 +163,7 @@ class Wnd_Add_Filter_WP {
 	 * - 防止插入相同标题文章时（功能型post），反复查询post name，故此设置为随机值
 	 * @since 2019.04.03
 	 */
-	public static function filter_wp_insert_post_data($data, $postarr) {
+	public static function filter_wp_insert_post_data(array $data, $postarr) {
 		if (empty($data['post_name'])) {
 			$data['post_name'] = uniqid();
 		}
@@ -175,7 +178,7 @@ class Wnd_Add_Filter_WP {
 	 * @see wnd_action_add_attachment
 	 * @since 2019.07.18
 	 */
-	public static function filter_wp_insert_attachment_data($data, $postarr) {
+	public static function filter_wp_insert_attachment_data(array $data, $postarr) {
 		// 如果已经指定了menu order或者附件并未附属到post
 		if ($data['menu_order'] or !$data['post_parent']) {
 			return $data;
@@ -193,7 +196,7 @@ class Wnd_Add_Filter_WP {
 	 * 新增检测用户是否存在，避免已删除用户的评论产生无效链接
 	 * @since 2019.01.16
 	 */
-	public static function filter_comment_author_url($url, $id, $comment) {
+	public static function filter_comment_author_url(string $url, int $id, object $comment) {
 		if ($comment->user_id and get_user_by('id', $comment->user_id)) {
 			return get_author_posts_url($comment->user_id);
 		}
@@ -204,7 +207,7 @@ class Wnd_Add_Filter_WP {
 	 * 调用用户字段 avatar存储的图像id，或者avatar_url存储的图像地址做自定义头像，并添加用户主页链接
 	 * @since 初始化
 	 */
-	public static function filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
+	public static function filter_avatar(string $avatar, mixed $id_or_email, int $size, $default, $alt) {
 		// 获取用户 ID
 		$user_id = 0;
 		if (is_numeric($id_or_email)) {
@@ -240,7 +243,7 @@ class Wnd_Add_Filter_WP {
 	 * 登录用户的评论名称同步显示为昵称
 	 * @since 0.9.11
 	 */
-	public static function filter_comment_author($author, $comment_ID, $comment) {
+	public static function filter_comment_author(string $author, int $comment_ID, WP_Comment $comment) {
 		if (!$comment->user_id) {
 			return $author;
 		}
@@ -258,7 +261,7 @@ class Wnd_Add_Filter_WP {
 	 * @since 0.9.74
 	 *
 	 */
-	public static function join_posts_analyses_table($join, $query) {
+	public static function join_posts_analyses_table(string $join, WP_Query $query) {
 		global $wpdb;
 		if (in_array($query->get('orderby'), ['today_views', 'week_views', 'month_views', 'total_views', 'favorites_count', 'rating_score'])) {
 			$join .= " LEFT JOIN {$wpdb->wnd_analyses} pa ON {$wpdb->posts}.ID = pa.post_id";
@@ -267,7 +270,7 @@ class Wnd_Add_Filter_WP {
 		return $join;
 	}
 
-	public static function order_by_posts_analyses($orderby, $query) {
+	public static function order_by_posts_analyses(string $orderby, WP_Query $query) {
 		$orderby_var = $query->get('orderby');
 		if (!$orderby_var) {
 			return $orderby;
