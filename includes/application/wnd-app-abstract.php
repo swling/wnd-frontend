@@ -25,7 +25,7 @@ abstract class Wnd_App_abstract {
 	public $action = '';
 
 	// ################### 单例模式代码开始
-	private static $instance = null;
+	private static Wnd_App_abstract | null $instance = null;
 
 	final protected function __construct() {
 		$this->init();
@@ -173,10 +173,12 @@ abstract class Wnd_App_abstract {
 			return false;
 		}
 
-		$app_instance = $app::get_instance();
-
-		echo '<script>var app = {}; var app_info = ' . json_encode($app_instance->get_app_info(), JSON_UNESCAPED_UNICODE) . ';</script>';
-
+		try {
+			$app_instance = $app::get_instance();
+			echo '<script>var app = {}; var app_info = ' . json_encode($app_instance->get_app_info(), JSON_UNESCAPED_UNICODE) . ';</script>';
+		} catch (\Throwable $th) {
+			return false;
+		}
 	}
 
 	/**
