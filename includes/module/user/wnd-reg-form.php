@@ -13,11 +13,12 @@ class Wnd_Reg_Form extends Wnd_Module_Form {
 	protected static function configure_form(array $args = []): object {
 		// 注册协议页面
 		$agreement_url = get_permalink(wnd_get_config('agreement'));
+		$type          = $args['type'] ?? '';
 
 		$form = new Wnd_Form_User();
 		$form->set_form_title('<span class="icon"><i class="fa fa-user"></i></span>&nbsp;' . __('注册', 'wnd'), true);
 
-		if ('phone' == $args['type']) {
+		if ('phone' == $type) {
 			$form->add_phone_verification('register', wnd_get_config('sms_template_r'), true);
 		} else {
 			$form->add_email_verification('register', '', true);
@@ -55,7 +56,7 @@ class Wnd_Reg_Form extends Wnd_Module_Form {
 
 	protected static function check($args) {
 		// 设定默认值
-		$args['type'] = $args['type'] ?? (wnd_get_config('enable_sms') ? 'phone' : 'email');
+		$type = $args['type'] ?? (wnd_get_config('enable_sms') ? 'phone' : 'email');
 
 		// 已登录
 		if (is_user_logged_in()) {
@@ -68,12 +69,12 @@ class Wnd_Reg_Form extends Wnd_Module_Form {
 		}
 
 		//未开启手机验证
-		if ('phone' == $args['type'] and wnd_get_config('enable_sms') != 1) {
+		if ('phone' == $type and wnd_get_config('enable_sms') != 1) {
 			throw new Exception(__('当前未配置短信验证', 'wnd'));
 		}
 
 		// 关闭了邮箱注册（强制手机验证）
-		if ('email' == $args['type'] and 1 == wnd_get_config('disable_email_reg')) {
+		if ('email' == $type and 1 == wnd_get_config('disable_email_reg')) {
 			throw new Exception(__('当前设置禁止邮箱注册', 'wnd'));
 		}
 	}
