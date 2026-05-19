@@ -18,7 +18,7 @@ class Wnd_Insert_Post extends Wnd_Action {
 	protected array $wp_meta_data;
 	protected array $terms_data;
 	protected int | WP_Error $post_id;
-	protected object $update_post;
+	protected mixed $update_post;
 
 	protected function execute(): array {
 		$this->insert();
