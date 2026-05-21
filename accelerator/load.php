@@ -47,6 +47,8 @@ spl_autoload_register(function ($class) {
 		$dir = 'rest-api';
 	} elseif (str_contains($class, 'wp_sitemaps')) {
 		$dir = 'sitemaps';
+	}elseif (str_contains($class, 'wp_html')) {
+		$dir = 'html-api';
 	}
 
 	$path     = $dir ? (ABSPATH . WPINC . DIRECTORY_SEPARATOR . $dir) : (ABSPATH . WPINC);
@@ -63,7 +65,7 @@ global $wp_version;
 // 升级或安装中
 $installing = defined('WP_INSTALLING') && WP_INSTALLING;
 
-if (6.9 == floatval($wp_version) and !$installing) {
+if (7.0 == floatval($wp_version) and !$installing) {
 	require __DIR__ . '/wp-settings.php';
 } else {
 	require ABSPATH . 'wp-settings.php';
