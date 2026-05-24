@@ -344,7 +344,7 @@ add_filter( 'rest_authentication_errors', 'rest_cookie_check_errors', 100 );
 // add_action( 'wp_head', '_wp_render_title_tag', 1 );
 add_action( 'wp_head', 'wp_enqueue_scripts', 1 );
 // add_action( 'wp_head', 'wp_resource_hints', 2 );
-add_action( 'wp_head', 'wp_preload_resources', 1 );
+// add_action( 'wp_head', 'wp_preload_resources', 1 );
 // add_action( 'wp_head', 'feed_links', 2 );
 // add_action( 'wp_head', 'feed_links_extra', 3 );
 // add_action( 'wp_head', 'rsd_link' );
@@ -439,14 +439,14 @@ add_action( 'transition_post_status', '_update_term_count_on_transition_post_sta
 add_action( 'comment_form', 'wp_comment_form_unfiltered_html_nonce' );
 
 // Privacy.
-add_action( 'user_request_action_confirmed', '_wp_privacy_account_request_confirmed' );
-add_action( 'user_request_action_confirmed', '_wp_privacy_send_request_confirmation_notification', 12 ); // After request marked as completed.
-add_filter( 'wp_privacy_personal_data_exporters', 'wp_register_comment_personal_data_exporter' );
-add_filter( 'wp_privacy_personal_data_exporters', 'wp_register_media_personal_data_exporter' );
-add_filter( 'wp_privacy_personal_data_exporters', 'wp_register_user_personal_data_exporter', 1 );
-add_filter( 'wp_privacy_personal_data_erasers', 'wp_register_comment_personal_data_eraser' );
-add_action( 'init', 'wp_schedule_delete_old_privacy_export_files' );
-add_action( 'wp_privacy_delete_old_export_files', 'wp_privacy_delete_old_export_files' );
+// add_action( 'user_request_action_confirmed', '_wp_privacy_account_request_confirmed' );
+// add_action( 'user_request_action_confirmed', '_wp_privacy_send_request_confirmation_notification', 12 ); // After request marked as completed.
+// add_filter( 'wp_privacy_personal_data_exporters', 'wp_register_comment_personal_data_exporter' );
+// add_filter( 'wp_privacy_personal_data_exporters', 'wp_register_media_personal_data_exporter' );
+// add_filter( 'wp_privacy_personal_data_exporters', 'wp_register_user_personal_data_exporter', 1 );
+// add_filter( 'wp_privacy_personal_data_erasers', 'wp_register_comment_personal_data_eraser' );
+// add_action( 'init', 'wp_schedule_delete_old_privacy_export_files' );
+// add_action( 'wp_privacy_delete_old_export_files', 'wp_privacy_delete_old_export_files' );
 
 // Cron tasks.
 add_action( 'wp_scheduled_delete', 'wp_scheduled_delete' );
