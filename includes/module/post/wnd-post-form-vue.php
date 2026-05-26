@@ -59,7 +59,6 @@ class Wnd_Post_Form_Vue extends Wnd_Module_Html {
 			return file_get_contents(WND_PATH . $file_path);
 		} else {
 			throw new Exception(__('未定义表单', 'wnd') . ' : ' . $post_type);
-			return file_get_contents(WND_PATH . '/includes/module-vue/post-form-post.vue');
 		}
 	}
 }
