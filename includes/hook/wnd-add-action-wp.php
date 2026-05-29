@@ -167,6 +167,12 @@ class Wnd_Add_Action_WP {
 
 		// 删除自定义附件
 		wnd_delete_attachment_by_post($post_id);
+
+		// 修订版本：需要手动删除 term_relationships 中的对应关系，否则会导致标题去重检测失效
+		if ('revision' == $delete_post->post_type) {
+			$post_type = get_post_field('post_type', $delete_post->post_parent);
+			wp_delete_object_term_relationships($post_id, get_object_taxonomies($post_type));
+		}
 	}
 
 	/**

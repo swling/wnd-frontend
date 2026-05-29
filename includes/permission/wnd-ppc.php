@@ -71,6 +71,10 @@ class Wnd_PPC {
 			throw new Exception(__('ID无效', 'wnd'));
 		}
 
+		if ('revision' == $this->post->post_type) {
+			return;
+		}
+
 		if ($this->post_type != $this->post->post_type) {
 			throw new Exception('指定ID 的 Post Type 与实例化 Post Type 不一致');
 		}

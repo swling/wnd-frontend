@@ -38,6 +38,8 @@ class Wnd_User_Posts extends Wnd_Module_Vue {
 		foreach ($post_types as $type) {
 			$post_type_options[$type->label] = $type->name;
 		}
+		$post_type_options['revision'] = 'revision'; // 附加 revision 类型
+
 		$post_type_args = [
 			'label'   => __('类型', 'wnd'),
 			'key'     => 'post_type',

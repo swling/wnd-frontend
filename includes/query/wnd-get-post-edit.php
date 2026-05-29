@@ -5,6 +5,7 @@ namespace Wnd\Query;
 use Exception;
 use Wnd\Model\Wnd_Post;
 use Wnd\Permission\Wnd_PPC;
+use WP_Post;
 
 /**
  * 获取 Post 编辑数据
@@ -45,7 +46,7 @@ final class Wnd_Get_Post_Edit extends Wnd_Query {
 
 		// 编辑权限检测
 		if ($post->ID) {
-			$ppc = Wnd_PPC::get_instance($post->post_type);
+			$ppc = Wnd_PPC::get_instance(static::get_post_type($post));
 			$ppc->set_post_id($post->ID);
 			$ppc->check_edit();
 
@@ -60,7 +61,7 @@ final class Wnd_Get_Post_Edit extends Wnd_Query {
 		// 获取参数
 		$post      = static::init_post_data($args);
 		$post_id   = $post->ID;
-		$post_type = $post->post_type;
+		$post_type = static::get_post_type($post);
 
 		// 获取所有注册的分类法
 		$taxonomies   = get_object_taxonomies($post_type);
@@ -231,5 +232,10 @@ final class Wnd_Get_Post_Edit extends Wnd_Query {
 		}
 
 		return $options;
+	}
+
+	// 修订版本时需要获取 post_parent 的 post_type
+	private static function get_post_type(WP_Post $post): string {
+		return ('revision' == $post->post_type) ? get_post_field('post_type', $post->post_parent) : $post->post_type;
 	}
 }
