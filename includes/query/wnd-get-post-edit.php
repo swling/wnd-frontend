@@ -5,7 +5,6 @@ namespace Wnd\Query;
 use Exception;
 use Wnd\Model\Wnd_Post;
 use Wnd\Permission\Wnd_PPC;
-use WP_Post;
 
 /**
  * 获取 Post 编辑数据
@@ -235,7 +234,7 @@ final class Wnd_Get_Post_Edit extends Wnd_Query {
 	}
 
 	// 修订版本时需要获取 post_parent 的 post_type
-	private static function get_post_type(WP_Post $post): string {
+	private static function get_post_type(object $post): string {
 		return ('revision' == $post->post_type) ? get_post_field('post_type', $post->post_parent) : $post->post_type;
 	}
 }
