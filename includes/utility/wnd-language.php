@@ -74,6 +74,13 @@ class Wnd_language {
 	}
 
 	/**
+	 * 获取用户语言
+	 */
+	public static function get_user_locale(): string {
+		return static::$user_locale;
+	}
+
+	/**
 	 * 解析用户语言并转为 WP_Locale 格式（ '-' 改 '_' ）
 	 * - $_GET 参数优先
 	 * - cookie 其次
@@ -157,7 +164,7 @@ class Wnd_language {
 	 * - 英语类 en_US, en_GB, en_CA 等统一设置 为 en
 	 * - 由于本类为单例模式，因此 static::$site_locale 已在插件初始化时被赋值
 	 */
-	public static function filter_link($link): string {
+	public static function filter_link(string $link): string {
 		$lang = static::parse_locale();
 
 		// 语言切换参数与：（站点默认语言 or Cookie 设置语言） 一致时，页面链接无需添加语言参数
@@ -176,7 +183,7 @@ class Wnd_language {
 	 * 在用户完成注册时，将当前站点语言记录到用户字段
 	 * @since 2020.04.11
 	 */
-	public static function action_on_user_register($user_id) {
+	public static function action_on_user_register(int $user_id) {
 		wnd_update_user_meta($user_id, 'locale', get_locale());
 	}
 
@@ -201,7 +208,7 @@ class Wnd_language {
 	 * Language code
 	 * @see https://en.wikipedia.org/wiki/Language_localisation
 	 *
-	 * @return [string] 	Language code/prefix
+	 * @return string 	Language code/prefix
 	 */
 	public static function get_browser_language(): string {
 		if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
