@@ -8,7 +8,7 @@ namespace Wnd\Utility;
  */
 trait Wnd_Singleton_Trait {
 
-	private static $instance;
+	private static null | self $instance = null;
 
 	public static function get_instance() {
 		if (!static::$instance) {
