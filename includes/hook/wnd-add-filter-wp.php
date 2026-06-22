@@ -26,6 +26,7 @@ class Wnd_Add_Filter_WP {
 		add_filter('get_comment_author', [__CLASS__, 'filter_comment_author'], 10, 3);
 		add_filter('posts_join', [__CLASS__, 'join_posts_analyses_table'], 10, 2);
 		add_filter('posts_orderby', [__CLASS__, 'order_by_posts_analyses'], 10, 2);
+		add_filter('posts_where', [__CLASS__, 'posts_where'], 10, 2);
 	}
 
 	/**
@@ -238,13 +239,14 @@ class Wnd_Add_Filter_WP {
 	}
 
 	/**
-	 * posts 独立分析表排序
+	 * posts 独立分析表连接
 	 * @since 0.9.74
 	 *
 	 */
 	public static function join_posts_analyses_table(string $join, WP_Query $query) {
 		global $wpdb;
-		if (in_array($query->get('orderby'), ['today_views', 'week_views', 'month_views', 'total_views', 'favorites_count', 'rating_score'])) {
+		$orderby_var = ['today_views', 'week_views', 'month_views', 'total_views', 'favorites_count', 'rating_score'];
+		if (in_array($query->get('orderby'), $orderby_var) || $query->get('views_range')) {
 			$join .= " LEFT JOIN {$wpdb->wnd_analyses} pa ON {$wpdb->posts}.ID = pa.post_id";
 		}
 
@@ -285,6 +287,28 @@ class Wnd_Add_Filter_WP {
 		}
 
 		return $orderby;
+	}
+
+	/**
+	 * 根据传入的 views_range 参数，修改查询条件，筛选出符合浏览量范围的文章
+	 * @since 0.9.97
+	 *
+	 */
+	public static function posts_where(string $where, \WP_Query $query): string {
+		global $wpdb;
+		$views_range = $query->get('views_range');
+
+		if (!$views_range) {
+			return $where;
+		}
+
+		if (is_array($views_range) && isset($views_range['min']) && isset($views_range['max'])) {
+			$min = (int) $views_range['min'];
+			$max = (int) $views_range['max'];
+			$where .= $wpdb->prepare(' AND pa.total_views BETWEEN %d AND %d', $min, $max);
+		}
+
+		return $where;
 	}
 
 }
