@@ -473,8 +473,8 @@ add_action( 'delete_post', '_wp_delete_customize_changeset_dependent_auto_drafts
 // add_action( 'attachment_updated', 'wp_check_for_changed_slugs', 12, 3 );
 
 // Redirect old dates.
-add_action( 'post_updated', 'wp_check_for_changed_dates', 12, 3 );
-add_action( 'attachment_updated', 'wp_check_for_changed_dates', 12, 3 );
+// add_action( 'post_updated', 'wp_check_for_changed_dates', 12, 3 );
+// add_action( 'attachment_updated', 'wp_check_for_changed_dates', 12, 3 );
 
 // Nonce check for post previews.
 add_action( 'init', '_show_post_preview' );
