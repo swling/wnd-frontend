@@ -18,7 +18,7 @@ class Wnd_Optimization {
 		 * 禁止WordPress admin bar
 		 * @since 2019.03.01
 		 */
-		add_filter('show_admin_bar', '__return_false');
+		// add_filter('show_admin_bar', '__return_false');
 
 		// 邮件名称
 		add_filter('wp_mail_from_name', [__CLASS__, 'filter_mail_from_name']);
