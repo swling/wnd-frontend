@@ -235,6 +235,9 @@ class Wnd_Add_Filter_WP {
 
 		$user = get_userdata($comment->user_id);
 		if (!$user) {
+			// 失效用户：更新评论避免重复查询
+			wp_update_comment(['comment_ID' => $comment_ID, 'user_id' => 0]);
+
 			return $author;
 		}
 
