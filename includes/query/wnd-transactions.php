@@ -34,6 +34,11 @@ class Wnd_Transactions extends Wnd_Query {
 		$number = $args['number'] ?? get_option('posts_per_page');
 		$where  = static::get_where($args);
 
+		// 限制最大查询数量，防止恶意请求
+		if ($number > 100) {
+			throw new Exception('Maximum number of transactions per page is 100');
+		}
+
 		$results = Wnd_Transaction_DB::get_instance()->get_results($where, ['limit' => $number, 'offset' => ($paged - 1) * $number]);
 
 		// 缓存产品订单：产品缩略图等信息
@@ -106,8 +111,13 @@ class Wnd_Transactions extends Wnd_Query {
 	}
 
 	// 统一查询对应的 posts，而非在 foreach 中逐个查询，后者会逐次执行多条 sql
-	private static function cache_posts(array $ids) {
-		return get_posts([
+	private static function cache_posts(array $ids): void {
+		// 空数组必须返回，否则 'post__in' 为空会导致查询全部数据，内存溢出
+		if (empty($ids)) {
+			return;
+		}
+
+		get_posts([
 			'post__in'               => $ids,
 			'orderby'                => 'post__in', // 保持传入顺序
 			'post_type'              => 'any',
