@@ -4,8 +4,8 @@ namespace Wnd\Query;
 
 use Exception;
 use Wnd\Model\Wnd_Transaction_Anonymous;
-use Wnd\WPDB\Wnd_Attachment_DB;
 use Wnd\WPDB\Wnd_Transaction_DB;
+use WP_Query;
 
 /**
  * posts 查询接口
@@ -46,7 +46,6 @@ class Wnd_Transactions extends Wnd_Query {
 			$post_ids = array_map(fn($item) => $item->object_id, $results);
 			$post_ids = array_unique($post_ids);
 			static::cache_posts($post_ids);
-			static::cache_thumbnail($post_ids);
 		}
 
 		// 使用 array_map 对每个对象处理 props 字段
@@ -117,24 +116,14 @@ class Wnd_Transactions extends Wnd_Query {
 			return;
 		}
 
-		get_posts([
+		$args = [
 			'post__in'               => $ids,
 			'orderby'                => 'post__in', // 保持传入顺序
 			'post_type'              => 'any',
 			'numberposts'            => -1, // 获取所有
-			'update_post_meta_cache' => true,
 			'update_post_term_cache' => false,
-		]);
+		];
+		$query = new WP_Query($args);
+		$query->get_posts();
 	}
-
-	// 缓存 attachments 数据表
-	private static function cache_thumbnail(array $post_ids) {
-		$image_ids = [];
-		foreach ($post_ids as $post_id) {
-			$image_ids[] = wnd_get_post_meta($post_id, '_thumbnail_id');
-		}
-		$image_ids = array_unique($image_ids);
-		Wnd_Attachment_DB::get_instance()->query_by_ids($image_ids);
-	}
-
 }

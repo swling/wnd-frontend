@@ -29,9 +29,6 @@ class Wnd_posts extends Wnd_Query {
 		$query   = new WP_Query($query_args);
 		$results = $query->get_posts();
 
-		$post_ids = array_map(fn($post) => $post->ID, $results);
-		static::cache_thumbnail($post_ids);
-
 		// 使用 array_map 将 WP_Post 对象转换为包含缩略图链接和分类信息的数组，方便前端使用
 		$converted = array_map(function ($post) {
 			$post->thumbnail = static::get_thumbnail($post->ID);
@@ -58,19 +55,6 @@ class Wnd_posts extends Wnd_Query {
 		}
 
 		return wnd_get_attachment_url($image_id);
-	}
-
-	// 缓存 attachments 数据表
-	protected static function cache_thumbnail(array $post_ids) {
-		$image_ids = [];
-		foreach ($post_ids as $post_id) {
-			$image_ids[] = wnd_get_post_meta($post_id, '_thumbnail_id');
-		}
-		if (empty($image_ids)) {
-			return;
-		}
-
-		Wnd_Attachment_DB::get_instance()->query_by_ids($image_ids);
 	}
 
 	// 获取文章的所有分类信息

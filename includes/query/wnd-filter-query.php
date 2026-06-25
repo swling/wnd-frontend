@@ -43,6 +43,8 @@ class Wnd_Filter_Query {
 		'paged'                  => 1,
 		'update_post_term_cache' => true,
 		'update_post_meta_cache' => true,
+		'no_thumbnails_cache'    => false, // 自定义参数：是否缓存缩略图，默认缓存 @see Wnd_Add_Filter_WP::filter_the_posts()
+		'no_views_cache'         => false, // 自定义参数：是否缓存浏览量，默认缓存 @see Wnd_Add_Filter_WP::filter_the_posts()
 		'without_content'        => false,
 		'posts_per_page'         => 0, // 默认设置为无效值 0，实际取值为 get_option( 'posts_per_page' ); 传参则覆盖之
 	];

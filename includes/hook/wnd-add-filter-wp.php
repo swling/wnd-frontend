@@ -2,6 +2,8 @@
 namespace Wnd\Hook;
 
 use Wnd\Utility\Wnd_Singleton_Trait;
+use Wnd\WPDB\Wnd_Analysis_DB;
+use Wnd\WPDB\Wnd_Attachment_DB;
 use WP_Comment;
 use WP_Post;
 use WP_Query;
@@ -27,6 +29,7 @@ class Wnd_Add_Filter_WP {
 		add_filter('posts_join', [__CLASS__, 'join_posts_analyses_table'], 10, 2);
 		add_filter('posts_orderby', [__CLASS__, 'order_by_posts_analyses'], 10, 2);
 		add_filter('posts_where', [__CLASS__, 'posts_where'], 10, 2);
+		add_filter('the_posts', [__CLASS__, 'filter_the_posts'], 10, 2);
 	}
 
 	/**
@@ -309,6 +312,45 @@ class Wnd_Add_Filter_WP {
 		}
 
 		return $where;
+	}
+
+	// 根据 自定义 参数，统一缓存 posts 对应的独立数据表
+	public static function filter_the_posts(array $posts, WP_Query $query): array {
+		if (!$posts) {
+			return $posts;
+		}
+
+		$ids = wp_list_pluck($posts, 'ID');
+
+		// 默认情况下，缓存 attachments，若设置了 no_thumbnails_cache 参数的查询将跳过
+		if (!$query->get('no_thumbnails_cache')) {
+			static::cache_thumbnails($ids);
+		}
+
+		// 默认情况下，缓存浏览量数据表，若设置了 no_views_cache 参数的查询将跳过
+		if (!$query->get('no_views_cache')) {
+			static::cache_views($ids);
+		}
+
+		return $posts;
+	}
+
+	// 缓存 attachments 数据表（附件表需要按主键缓存）
+	private static function cache_thumbnails(array $post_ids) {
+		$image_ids = [];
+		foreach ($post_ids as $post_id) {
+			$image_ids[] = wnd_get_post_meta($post_id, '_thumbnail_id');
+		}
+		if (empty($image_ids)) {
+			return;
+		}
+
+		Wnd_Attachment_DB::get_instance()->query_by_ids($image_ids);
+	}
+
+	// 缓存浏览量（按 post_id 缓存即可）
+	private static function cache_views(array $ids) {
+		Wnd_Analysis_DB::get_instance()->query_by_field_ids('post_id', $ids);
 	}
 
 }
