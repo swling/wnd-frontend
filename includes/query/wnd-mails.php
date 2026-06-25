@@ -23,6 +23,11 @@ class Wnd_Mails extends Wnd_Query {
 		$number  = $args['number'] ?? get_option('posts_per_page');
 		$user_id = !is_super_admin() ? get_current_user_id() : ($args['user_id'] ?? 'any');
 
+		// 限制最大查询数量，防止恶意请求
+		if ($number > 100) {
+			throw new Exception('maximum number of mails per page is 100');
+		}
+
 		$where = [
 			'status'   => (string) $status,
 			'receiver' => (int) $user_id,

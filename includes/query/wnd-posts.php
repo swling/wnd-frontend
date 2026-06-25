@@ -122,6 +122,12 @@ class Wnd_posts extends Wnd_Query {
 			return $args;
 		}
 
+		// 限制最大查询数量，防止恶意请求
+		$number = $args['posts_per_page'] ?? get_option('posts_per_page');
+		if ($number > 100) {
+			throw new Exception('maximum number of posts per page is 100');
+		}
+
 		$post_status     = $args['post_status'] ?? 'publish';
 		$current_user_id = get_current_user_id();
 		$post_type       = $args['post_type'] ?? 'post';
