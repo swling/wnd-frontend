@@ -189,11 +189,6 @@
                     if (!confirm('确认删除该属性集合？')) {
                         return;
                     }
-
-                    if (Object.keys(this.skus).length === 1) {
-                        alert("至少保留一个 SKU");
-                        return;
-                    };
                     delete this.skus[id];
 
                     this.submitSkus();

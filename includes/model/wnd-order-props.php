@@ -129,6 +129,26 @@ abstract class Wnd_Order_Props {
 	 * - 删除60分钟前未付款的订单，并扣除订单统计
 	 */
 	public static function release_pending_orders(int $object_id) {
+		/**
+		 * 移除钩子
+		 * - Wnd_SKU 获取产品属性时，会触发释放指定时间内未完成支付的订单
+		 * - 如果当前产品包含可释放的订单，将陷入死循环：还原库存=>触发订单释放=>还原库存
+		 * - 因而此处移除 Action
+		 * @since 0.9.38
+		 */
+		remove_action('wnd_pre_get_product_props', [__CLASS__, 'release_pending_orders'], 10);
+
+		// 如果未设置 SKU 则无库存限制，因此无需执行（ Wnd_Admin_Clean_UP 会清理超期的订单）
+		$skus = Wnd_SKU::get_object_sku($object_id);
+		if (empty($skus)) {
+			return;
+		}
+		/**
+		 * 库存恢复完成，恢复 Action
+		 * @since 0.9.38
+		 */
+		add_action('wnd_pre_get_product_props', [__CLASS__, 'release_pending_orders'], 10, 1);
+
 		$args = [
 			'type'      => 'order',
 			'object_id' => $object_id,

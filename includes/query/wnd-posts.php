@@ -4,7 +4,6 @@ namespace Wnd\Query;
 use Exception;
 use Wnd\Query\Wnd_Filter_Query;
 use Wnd\Query\Wnd_Query;
-use Wnd\WPDB\Wnd_Attachment_DB;
 use WP_Post;
 use WP_Query;
 
