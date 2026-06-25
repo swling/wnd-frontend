@@ -17,8 +17,17 @@ class Wnd_Optimization {
 		/**
 		 * 禁止WordPress admin bar
 		 * @since 2019.03.01
+		 *
+		 * Query Monitor 插件依赖 Admin Bar
+		 * 如果安装并启用了 query monitor 插件，则自动启用
+		 * @link https://cn.wordpress.org/plugins/query-monitor/
+		 * @since 2026.06.25
 		 */
-		// add_filter('show_admin_bar', '__return_false');
+		if (defined('QM_VERSION')) {
+			add_filter('show_admin_bar', '__return_true');
+		} else {
+			add_filter('show_admin_bar', '__return_false');
+		}
 
 		// 邮件名称
 		add_filter('wp_mail_from_name', [__CLASS__, 'filter_mail_from_name']);
