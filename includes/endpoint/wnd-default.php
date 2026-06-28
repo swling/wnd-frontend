@@ -9,8 +9,8 @@ use Wnd\Controller\Wnd_Defender_Action;
  */
 class Wnd_Default extends Wnd_Endpoint {
 
-	public int $period             = 10;
-	public int $max_actions        = 3;
+	public int $period             = 5;
+	public int $max_actions        = 5;
 	protected string $content_type = 'json';
 
 	protected function do() {
