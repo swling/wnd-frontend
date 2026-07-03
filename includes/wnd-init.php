@@ -1,9 +1,9 @@
 <?php
 namespace Wnd;
 
+use Wnd\Admin\Menu\Wnd_Menus;
 use Wnd\Admin\Wnd_Admin_Optimization;
 use Wnd\Admin\Wnd_Admin_Upgrade;
-use Wnd\Admin\Menu\Wnd_Menus;
 use Wnd\Controller\Wnd_Controller;
 use Wnd\Hook\Wnd_Hook;
 use Wnd\Utility\Wnd_CDN;
@@ -181,7 +181,7 @@ class Wnd_Init {
 			'wnd-closed' => [
 				'label'                     => __('关闭', 'wnd'),
 				'public'                    => true,
-				'exclude_from_search'       => false,
+				'exclude_from_search'       => true,
 				'show_in_admin_all_list'    => false,
 				'show_in_admin_status_list' => false,
 			],

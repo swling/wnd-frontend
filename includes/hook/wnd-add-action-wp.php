@@ -30,6 +30,7 @@ class Wnd_Add_Action_WP {
 		add_action('after_password_reset', [__CLASS__, 'action_on_password_reset'], 10, 1);
 		add_action('deleted_user', [__CLASS__, 'action_on_delete_user'], 10, 1);
 		add_action('before_delete_post', [__CLASS__, 'action_on_before_delete_post'], 10, 1);
+		add_action('pre_get_posts', [__CLASS__, 'action_on_pre_get_posts'], 10, 1);
 		// add_action('post_updated', [__CLASS__, 'action_on_post_updated'], 10, 3);
 		// add_action('add_attachment', [__CLASS__, 'action_on_add_attachment'], 10, 1);
 		add_action('pre_get_posts', ['Wnd\Query\Wnd_Filter_Query', 'action_on_pre_get_posts'], 10, 1);
@@ -172,6 +173,17 @@ class Wnd_Add_Action_WP {
 		if ('revision' == $delete_post->post_type) {
 			$post_type = get_post_field('post_type', $delete_post->post_parent);
 			wp_delete_object_term_relationships($post_id, get_object_taxonomies($post_type));
+		}
+	}
+
+	/**
+	 * WP_Query 查询前
+	 * @since 0.9.97
+	 * 设置默认查询状态为 publish 提升性能（排除已登录用户的 private 和 本插件自定义的 wnd-closed）
+	 */
+	public static function action_on_pre_get_posts(\WP_Query $query) {
+		if (!$query->get('post_status')) {
+			$query->set('post_status', 'publish');
 		}
 	}
 
