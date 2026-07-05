@@ -182,6 +182,10 @@ class Wnd_Add_Action_WP {
 	 * 设置默认查询状态为 publish 提升性能（排除已登录用户的 private 和 本插件自定义的 wnd-closed）
 	 */
 	public static function action_on_pre_get_posts(\WP_Query $query) {
+		if ($query->is_singular()) {
+			return;
+		}
+
 		if (!$query->get('post_status')) {
 			$query->set('post_status', 'publish');
 		}
