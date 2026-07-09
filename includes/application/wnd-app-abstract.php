@@ -56,6 +56,7 @@ abstract class Wnd_App_abstract {
 		if (!$app_post) {
 			return [
 				'app_id' => 0,
+				'title'  => '',
 				'price'  => 0,
 				'sku'    => [],
 			];
@@ -63,7 +64,8 @@ abstract class Wnd_App_abstract {
 		$price = wnd_get_post_price($app_post->ID);
 		return [
 			'app_id' => $app_post->ID,
-			'price'  => $price,
+			'title'  => $app_post->post_title,
+			'price'  => number_format($price, 2),
 			'sku'    => Wnd_SKU::get_object_sku($app_post->ID),
 		];
 	}
