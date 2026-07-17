@@ -145,11 +145,41 @@ class Wnd_Form_Render {
 	}
 
 	private function build_select(array $input_value, string $input_key): string {
-		$html = '<div class="field">';
-		$html .= $this->build_label($input_value);
-		$html .= '<div class="control">';
-		$html .= '<div class="select' . static::get_class($input_value, true) . '">';
+		$has_addons = ($input_value['addon_left'] or $input_value['addon_right']) ? true : false;
+
+		// 1. 处理 field 首部
+		if ($has_addons) {
+			$html = '<div class="field">';
+			$html .= '<div class="field has-addons">';
+			$html .= $this->build_label($input_value);
+		} else {
+			$html = '<div class="field">';
+			$html .= $this->build_label($input_value);
+		}
+
+		// 2. 准备 control 样式
+		$control_class = '';
+		$control_class .= $has_addons ? ' is-expanded' : '';
+		// 如果有图标支持，也可以在这里追加图标样式（如果 select 也支持 icon）
+		$control_class .= $input_value['icon_left'] ? ' has-icons-left' : '';
+		$control_class .= $input_value['icon_right'] ? ' has-icons-right' : '';
+
+		// 3. 左侧 addon
+		if ($input_value['addon_left']) {
+			$html .= '<div class="control">' . $input_value['addon_left'] . '</div>';
+		}
+
+		// 4. select 包裹层 class (如果是 addon 模式，建议让 select 宽度撑满)
+		$select_class = static::get_class($input_value, true);
+		if ($has_addons) {
+			$select_class .= ' is-fullwidth';
+		}
+
+		// 5. 主体 select 渲染
+		$html .= '<div class="control' . $control_class . '">';
+		$html .= '<div class="select' . $select_class . '">';
 		$html .= '<select' . static::build_input_id($input_value) . static::build_input_attr($input_value) . '>';
+
 		foreach ($input_value['options'] as $key => $value) {
 			if (is_array($input_value['selected'])) {
 				$checked = in_array($value, $input_value['selected']) ? ' selected="selected"' : '';
@@ -159,11 +189,26 @@ class Wnd_Form_Render {
 
 			$html .= '<option value="' . $value . '"' . $checked . '>' . $key . '</option>';
 		}unset($key, $value);
+
 		$html .= '</select>';
 		$html .= '</div>';
-		$html .= '</div>';
+
+		// 如果 select 同样需要支持左右 icon，可以在这里渲染
+		$html .= $input_value['icon_left'] ? '<span class="icon is-left">' . $input_value['icon_left'] . '</span>' : '';
+		$html .= $input_value['icon_right'] ? '<span class="icon is-right">' . $input_value['icon_right'] . '</span>' : '';
+
+		$html .= '</div>'; // control 结束
+
+		// 6. 右侧 addon
+		if ($input_value['addon_right']) {
+			$html .= '<div class="control">' . $input_value['addon_right'] . '</div>';
+		}
+
+		// 7. 处理 field 尾部
+		$html .= $has_addons ? '</div>' : '';
 		$html .= static::build_help($input_value);
 		$html .= '</div>';
+
 		return $html;
 	}
 
