@@ -32,12 +32,22 @@ class Wnd_Users extends Wnd_Module_Vue {
 			],
 		];
 
+		$role_args = [
+			'label'   => __('角色', 'wnd'),
+			'key'     => 'role',
+			'options' => [
+				'any'           => '',
+				'administrator' => 'administrator',
+				'editor'        => 'editor',
+				'author'        => 'author',
+				'contributor'   => 'contributor',
+				'subscriber'    => 'subscriber',
+			],
+		];
+
 		return [
 			'param' => $args,
-			'tabs'  => [
-				$orderby_args,
-				$status_args,
-			],
+			'tabs'  => [$orderby_args, $role_args, $status_args],
 		];
 	}
 

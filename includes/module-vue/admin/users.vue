@@ -81,6 +81,7 @@
 			<div class="mt-1 is-flex is-justify-content-space-between">
 				<div class="is-size-7 mr-1">
 					<a @click="get_user_info(item.ID)"><b>ID: {{ item.ID }}</b></a>
+					&nbsp;{{ item.roles || `……` }}
 					<!-- &nbsp;<i class="fas fa-user-plus"></i>&nbsp;{{ item.data.user_registered }} -->
 					<!-- &nbsp;<i class="fas fa-envelope mr-1"></i>&nbsp;{{ item.data.user_email || `……` }} -->
 				</div>
