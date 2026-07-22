@@ -94,8 +94,8 @@ class Wnd_Add_Action_WP {
 	 * @since 2020.04.30
 	 */
 	public static function action_on_wp_loaded() {
-		// 记录登录日志
-		Wnd_User_DB::write_login_log();
+		// 记录账户活跃日志：（每天只记录一次）
+		Wnd_User_DB::write_login_log(false);
 
 		// 拦截封禁账户登录
 		if (wnd_has_been_banned()) {

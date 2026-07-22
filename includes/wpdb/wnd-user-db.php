@@ -83,9 +83,11 @@ class Wnd_User_DB extends WPDB_Row {
 
 	/**
 	 * 记录登录日志
+	 * - 用户通过账户登录时：更新记录
+	 * - 保持登录状态的用户：记录用户用户当天第一次活跃时间
 	 * @since 0.9.57
 	 */
-	public static function write_login_log(): bool {
+	public static function write_login_log(bool $on_login): bool {
 		$user_id = get_current_user_id();
 		if (!$user_id) {
 			return false;
@@ -94,7 +96,8 @@ class Wnd_User_DB extends WPDB_Row {
 		$db_records  = static::get_wnd_user($user_id);
 		$last_login  = $db_records->last_login ?? 0;
 		$login_count = $db_records->login_count ?? 0;
-		if ($last_login) {
+		// 非账户登录触发时：已经登录的账户，每天只记录一次
+		if (!$on_login and $last_login) {
 			$last_login = wnd_date('Y-m-d', $last_login);
 			if ($last_login == wnd_date('Y-m-d')) {
 				return false;

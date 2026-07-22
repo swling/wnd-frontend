@@ -64,6 +64,9 @@ class Wnd_Add_Action {
 		// Defender：清空登录失败日志
 		$defender = new Wnd_Defender_User($user->ID);
 		$defender->reset_log();
+
+		// 登录成功，不受是否为当天第一次的限制，记录登录日志：
+		Wnd_User_DB::write_login_log(true);
 	}
 
 	/**
