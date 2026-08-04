@@ -1094,6 +1094,9 @@ class PostFormComponent extends VueClass {
     init_data(data) {
         // Vue.reactive() 快速把已有对象变成响应式，避免一一绑定属性。 @link https://cn.vuejs.org/api/reactivity-core#reactive
         this.post = Vue.reactive(data.post);
+
+        // 初始化 meta 数据，确保 wnd_meta 存在，避免后续访问时出现 undefined 错误（本插件通常使用 wnd_meta 数组存储）
+        data.meta.wnd_meta = data.meta.wnd_meta || {};
         this.meta = Vue.reactive(data.meta);
 
         this.post.post_title = this.post.post_title === "Auto-draft" ? "" : this.post.post_title;
