@@ -196,11 +196,10 @@
 			}
 		}
 
-		const container = "#vue-posts-app";
-		const custom = new App_Filter(container);
+		const el = "#vue-posts-app";
+		const custom = new App_Filter(el);
 		const vueComponent = custom.toVueComponent();
-		const app = Vue.createApp(vueComponent);
-		app.mount(container);
-		vueInstances.push(app);
+
+		wnd_mount_vue(el, vueComponent);
 	}
 </script>

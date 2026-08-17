@@ -102,8 +102,6 @@
 		const container = "#vue-finance-stats";
 		const custom = new App_Filter(container);
 		const vueComponent = custom.toVueComponent();
-		const app = Vue.createApp(vueComponent);
-		app.mount(container);
-		vueInstances.push(app);
+		wnd_mount_vue(container, vueComponent);
 	}
 </script>

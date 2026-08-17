@@ -31,7 +31,7 @@
 <script>
 	{
 		const parent = document.querySelector("#application-password").parentNode;
-		const option = {
+		const options = {
 			data() {
 				return {
 					passwords: module_data.passwords,
@@ -77,8 +77,6 @@
 			}
 		}
 
-		const app = Vue.createApp(option);
-		app.mount('#application-password');
-		vueInstances.push(app);
+		wnd_mount_vue('#application-password', options);
 	}
 </script>

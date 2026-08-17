@@ -120,7 +120,6 @@
 	</div>
 </div>
 <script>
-	const vueInstances = [];
 	const dashboard = Vue.createApp({
 		data() {
 			return {
@@ -140,24 +139,7 @@
 			};
 		},
 		methods: {
-			destroyAllVueApps() {
-				return new Promise((resolve) => {
-					vueInstances.forEach(app => {
-						app.unmount();
-						app = null;
-						console.log("销毁 Module app");
-					});
-					vueInstances.length = 0;
-
-					// 等 DOM 更新或微任务执行完成再继续
-					requestAnimationFrame(() => {
-						resolve();
-					});
-				});
-			},
 			load_module: async function (module, params = {}) {
-				await this.destroyAllVueApps();
-
 				if ('post_form' == module) {
 					module = 'post/wnd_post_form_vue';
 				}

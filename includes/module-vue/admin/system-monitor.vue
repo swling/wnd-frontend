@@ -105,7 +105,7 @@
 <script>
 	{
 		const parent = document.querySelector('#sys-monitor-app').parentNode;
-		const app = Vue.createApp({
+		const options = {
 			data() {
 				return {
 					opcache: {},
@@ -333,8 +333,7 @@
 					funTransitionHeight(parent, trs_time);
 				});
 			}
-		});
-		app.mount('#sys-monitor-app');
-		vueInstances.push(app);
+		};
+		wnd_mount_vue('#sys-monitor-app', options);
 	}
 </script>
