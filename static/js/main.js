@@ -47,6 +47,45 @@ axios.interceptors.request.use(function (config) {
     return config;
 });
 
+// 挂载 Vue 实例，并在元素被移除时自动销毁
+function wnd_mount_vue(selector, options) {
+    const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    if (!(el instanceof Element) || !el.isConnected) {
+        return null;
+    }
+
+    // 创建并挂载 Vue 实例
+    const app = Vue.createApp(options);
+    app.mount(el);
+
+    // 保存原始 unmount 方法，统一处理 Vue 和 Observer 的销毁
+    const unmount = app.unmount.bind(app);
+    app.unmount = function () {
+        if (app._wnd_unmounted) {
+            return;
+        }
+        app._wnd_unmounted = true;
+        app._wnd_observer?.disconnect();
+        app._wnd_observer = null;
+        unmount();
+    };
+
+    // 监听挂载节点的父元素，节点被移除时自动销毁 Vue
+    const observer = new MutationObserver(() => {
+        if (!el.isConnected) {
+            console.log('自动销毁 Module app 实例 from main.js');
+            app.unmount();
+        }
+    });
+    app._wnd_observer = observer;
+    observer.observe(el.parentNode, {
+        childList: true,
+        subtree: true
+    });
+
+    return app;
+}
+
 //判断是否为移动端
 function wnd_is_mobile() {
     if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android|ios|App\/)/i)) {
