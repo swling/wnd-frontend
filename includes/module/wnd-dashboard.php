@@ -35,7 +35,7 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 		wp_enqueue_script('dashboard', WND_URL . 'static/js/dashboard.min.js', ['wnd-main'], WND_VER);
 		wp_enqueue_script('form-vue', WND_URL . 'static/js/form-vue.min.js', ['wnd-main'], WND_VER);
 		get_header();
-		$html = '<main id="dashboard-page" class="column is-flex">';
+		$html = '<main id="dashboard-page">';
 		$html .= '<script>const wnd_dashboard = ' . json_encode($args, JSON_UNESCAPED_UNICODE) . ';</script>';
 		$html .= file_get_contents(WND_PATH . '/includes/module-vue/dashboard.vue');
 		$html .= '</main>';
