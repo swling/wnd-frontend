@@ -247,14 +247,8 @@ class Filter extends VueClass {
 
 	// 原始方法（业务逻辑）这里的 this 为 Vue 实例。将 methods 中的方法抽离出来的原因是，方便子类针对性重写
 	parseHash() {
-		const hash = window.location.hash.slice(1);
-		const params = new URLSearchParams(hash);
-		const obj = {};
-		for (const [key, value] of params.entries()) {
-			obj[key] = value;
-		}
+		const obj = wnd_get_hash_params();
 		delete obj.module;
-
 		this.param = Object.keys(obj).length ? obj : this.init_param;
 	}
 

@@ -150,7 +150,7 @@
 				wnd_ajax_embed('#ajax-module', module, params);
 			},
 			load_module_from_hash() {
-				const hashObj = this.parseHash();
+				const hashObj = wnd_get_hash_params();
 				const module = hashObj.module || this.default_module;
 				const params = hashObj;
 				delete params.module;
@@ -163,16 +163,6 @@
 				this.currentModule = module;
 				this.expandMatchingMenu();
 				this.load_module(module, params);
-			},
-			// ChatGPT
-			parseHash() {
-				const hash = window.location.hash.slice(1);
-				const params = new URLSearchParams(hash);
-				const obj = {};
-				for (const [key, value] of params.entries()) {
-					obj[key] = value;
-				}
-				return obj;
 			},
 			toggleMenu(item) {
 				if (item.children) {

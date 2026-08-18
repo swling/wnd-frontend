@@ -1067,14 +1067,8 @@ class PostFormComponent extends VueClass {
 
     // 原始方法（业务逻辑）这里的 this 为 Vue 实例。将 methods 中的方法抽离出来的原因是，方便子类针对性重写
     async get_data() {
-        const hash = window.location.hash.slice(1);
-        const params = new URLSearchParams(hash);
-        const props = {};
-        for (const [key, value] of params.entries()) {
-            if (key !== "module") {
-                props[key] = value;
-            }
-        }
+        const props = wnd_get_hash_params();
+        delete props.module;
 
         this.loading = true;
         let res = await wnd_query("wnd_get_post_edit", props);
