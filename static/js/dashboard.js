@@ -181,9 +181,16 @@ class Filter extends VueClass {
 	// 初始参数
 	init_param = {};
 
+	// 当前 Vue 实例对应的 module，仅用于判断模块是否切换
+	current_module = '';
+
 	constructor(container) {
 		super(container);
 		this.parent_node = document.querySelector(container).parentNode;
+
+		// 保存当前实例对应的 module
+		this.current_module = wnd_get_hash_param('module');
+
 		// 初始参数
 		this.init_param = Object.assign({
 			number: wnd.posts_per_page,
@@ -197,7 +204,8 @@ class Filter extends VueClass {
 			init_param: this.init_param,
 			param: structuredClone(this.init_param),
 			parent_node: this.parent_node,
-		}
+			current_module: this.current_module,
+		};
 	}
 
 	// 生命周期钩子
@@ -207,18 +215,24 @@ class Filter extends VueClass {
 
 	mounted() {
 		this.query();
-		window.addEventListener("hashchange", this.parseHash.bind(this));
+		window.addEventListener("hashchange", this.parseHash);
 	}
 
 	beforeUnmount() {
 		console.log("触发销毁：vue class");
-		window.removeEventListener("hashchange", this.parseHash.bind(this));
+		window.removeEventListener("hashchange", this.parseHash);
 	}
 
 	watch() {
 		return {
 			param: {
 				handler(newVal, oldVal) {
+					const _module = wnd_get_hash_param('module');
+					// 有 module 且与当前实例不同，说明正在切换 Vue
+					if (_module && _module !== this.current_module) {
+						return;
+					}
+
 					this.query();
 				},
 				deep: true // 启用深度监听
