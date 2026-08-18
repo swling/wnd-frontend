@@ -46,6 +46,9 @@ class Wnd_User_Posts extends Wnd_Module_Vue {
 			'options' => $post_type_options,
 		];
 
+		// 默认不限制状态
+		$args['status'] = $args['status'] ?? 'any';
+
 		return [
 			'param' => $args,
 			'tabs'  => [
@@ -63,6 +66,6 @@ class Wnd_User_Posts extends Wnd_Module_Vue {
 	}
 
 	protected static function get_file_path(): string {
-		return '/includes/module-vue/common/posts.vue';
+		return '/includes/module-vue/user/posts.vue';
 	}
 }
