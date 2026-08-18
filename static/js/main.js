@@ -47,6 +47,23 @@ axios.interceptors.request.use(function (config) {
     return config;
 });
 
+function wnd_get_hash_param(key) {
+    const hash = window.location.hash.slice(1);
+    return new URLSearchParams(hash).get(key);
+}
+
+function wnd_get_hash_params() {
+    const hash = window.location.hash.slice(1);
+    const params = new URLSearchParams(hash);
+    const obj = {};
+
+    for (const [key, value] of params.entries()) {
+        obj[key] = value;
+    }
+
+    return obj;
+}
+
 // 挂载 Vue 实例，并在元素被移除时自动销毁
 function wnd_mount_vue(selector, options) {
     const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
