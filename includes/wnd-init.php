@@ -181,7 +181,7 @@ class Wnd_Init {
 			'wnd-closed' => [
 				'label'                     => __('关闭', 'wnd'),
 				'public'                    => true,
-				'exclude_from_search'       => true,
+				'exclude_from_search'       => false,
 				'show_in_admin_all_list'    => false,
 				'show_in_admin_status_list' => false,
 			],
