@@ -23,14 +23,14 @@ var menus_side = false;
 
 // 加载中 Element
 if ('undefined' == typeof loading_el) {
-    var loading_el = `<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></div>`;
+	var loading_el = `<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></div>`;
 }
 
 // Axios 全局请求参数
 // axios.defaults.headers.Authorization = "Bearer " + token
 axios.defaults.withCredentials = true; // 跨域请求允许携带cookie
 if (!wnd.disable_rest_nonce || wnd.is_admin) {
-    axios.defaults.headers['X-WP-Nonce'] = wnd.rest_nonce;
+	axios.defaults.headers['X-WP-Nonce'] = wnd.rest_nonce;
 }
 
 /**
@@ -41,153 +41,153 @@ if (!wnd.disable_rest_nonce || wnd.is_admin) {
  *   因此应该在对响应数据进行渲染的具体方法中，设置清除“loading”效果
  */
 axios.interceptors.request.use(function (config) {
-    if (config.headers.Container || false) {
-        wnd_loading(config.headers.Container);
-    }
-    return config;
+	if (config.headers.Container || false) {
+		wnd_loading(config.headers.Container);
+	}
+	return config;
 });
 
 function wnd_get_hash_param(key) {
-    const hash = window.location.hash.slice(1);
-    return new URLSearchParams(hash).get(key);
+	const hash = window.location.hash.slice(1);
+	return new URLSearchParams(hash).get(key);
 }
 
 function wnd_get_hash_params() {
-    const hash = window.location.hash.slice(1);
-    const params = new URLSearchParams(hash);
-    const obj = {};
+	const hash = window.location.hash.slice(1);
+	const params = new URLSearchParams(hash);
+	const obj = {};
 
-    for (const [key, value] of params.entries()) {
-        obj[key] = value;
-    }
+	for (const [key, value] of params.entries()) {
+		obj[key] = value;
+	}
 
-    return obj;
+	return obj;
 }
 
 // 挂载 Vue 实例，并在元素被移除时自动销毁
 function wnd_mount_vue(selector, options) {
-    const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
-    if (!(el instanceof Element) || !el.isConnected) {
-        return null;
-    }
+	const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
+	if (!(el instanceof Element) || !el.isConnected) {
+		return null;
+	}
 
-    // 创建并挂载 Vue 实例
-    const app = Vue.createApp(options);
-    app.mount(el);
+	// 创建并挂载 Vue 实例
+	const app = Vue.createApp(options);
+	app.mount(el);
 
-    // 保存原始 unmount 方法，统一处理 Vue 和 Observer 的销毁
-    const unmount = app.unmount.bind(app);
-    app.unmount = function () {
-        if (app._wnd_unmounted) {
-            return;
-        }
-        app._wnd_unmounted = true;
-        app._wnd_observer?.disconnect();
-        app._wnd_observer = null;
-        unmount();
-    };
+	// 保存原始 unmount 方法，统一处理 Vue 和 Observer 的销毁
+	const unmount = app.unmount.bind(app);
+	app.unmount = function () {
+		if (app._wnd_unmounted) {
+			return;
+		}
+		app._wnd_unmounted = true;
+		app._wnd_observer?.disconnect();
+		app._wnd_observer = null;
+		unmount();
+	};
 
-    // 监听挂载节点的父元素，节点被移除时自动销毁 Vue
-    const observer = new MutationObserver(() => {
-        if (!el.isConnected) {
-            console.log('自动销毁 Module app 实例 from main.js');
-            app.unmount();
-        }
-    });
-    app._wnd_observer = observer;
-    observer.observe(el.parentNode, {
-        childList: true,
-        subtree: true
-    });
+	// 监听挂载节点的父元素，节点被移除时自动销毁 Vue
+	const observer = new MutationObserver(() => {
+		if (!el.isConnected) {
+			console.log('自动销毁 Module app 实例 from main.js');
+			app.unmount();
+		}
+	});
+	app._wnd_observer = observer;
+	observer.observe(el.parentNode, {
+		childList: true,
+		subtree: true
+	});
 
-    return app;
+	return app;
 }
 
 //判断是否为移动端
 function wnd_is_mobile() {
-    if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android|ios|App\/)/i)) {
-        return true;
-    } else {
-        return false;
-    }
+	if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android|ios|App\/)/i)) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 /**
  *@since 2019.02.14 搜索引擎爬虫
  */
 function wnd_is_spider() {
-    let userAgent = navigator.userAgent;
-    // 蜘蛛判断
-    if (userAgent.match(/(Googlebot|Baiduspider|spider)/i)) {
-        return true;
-    } else {
-        return false;
-    }
+	let userAgent = navigator.userAgent;
+	// 蜘蛛判断
+	if (userAgent.match(/(Googlebot|Baiduspider|spider)/i)) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 // 根据节点选择器删除
 function wnd_remove(el) {
-    let self = ('object' == typeof el) ? el : document.querySelector(el);
-    if (self) {
-        self.outerHTML = '';
-    }
+	let self = ('object' == typeof el) ? el : document.querySelector(el);
+	if (self) {
+		self.outerHTML = '';
+	}
 }
 
 /**
  *插入 HTML  支持运行 JavaScript
  * */
 function wnd_inner_html(el, html) {
-    let self = ('object' == typeof el) ? el : document.querySelector(el);
-    if (!self) {
-        return;
-    }
+	let self = ('object' == typeof el) ? el : document.querySelector(el);
+	if (!self) {
+		return;
+	}
 
-    self.innerHTML = html;
-    const scripts = self.querySelectorAll('script');
-    for (let script of scripts) {
-        runScript(script);
-    }
+	self.innerHTML = html;
+	const scripts = self.querySelectorAll('script');
+	for (let script of scripts) {
+		runScript(script);
+	}
 
-    function runScript(script) {
-        // 直接 document.head.appendChild(script) 是不会生效的，需要重新创建一个
-        const newScript = document.createElement('script');
-        // 获取 inline script
-        newScript.innerHTML = script.innerHTML;
-        // 存在 src 属性的话
-        const src = script.getAttribute('src');
-        if (src) newScript.setAttribute('src', src);
+	function runScript(script) {
+		// 直接 document.head.appendChild(script) 是不会生效的，需要重新创建一个
+		const newScript = document.createElement('script');
+		// 获取 inline script
+		newScript.innerHTML = script.innerHTML;
+		// 存在 src 属性的话
+		const src = script.getAttribute('src');
+		if (src) newScript.setAttribute('src', src);
 
-        document.body.appendChild(newScript);
-        document.body.removeChild(newScript);
-    }
+		document.body.appendChild(newScript);
+		document.body.removeChild(newScript);
+	}
 }
 
 // 尾部追加
 function wnd_append(el, html) {
-    /**  
-     *beforebegin 在元素之前
-     *afterbegin 在元素的第一个子元素之前
-     *beforeend 在元素的最后一个子元素之后
-     *afterend 在元素之后 
-     */
-    let self = ('object' == typeof el) ? el : document.querySelector(el);
-    if (self) {
-        self.insertAdjacentHTML('beforeend', html);
-    }
+	/**  
+	 *beforebegin 在元素之前
+	 *afterbegin 在元素的第一个子元素之前
+	 *beforeend 在元素的最后一个子元素之后
+	 *afterend 在元素之后 
+	 */
+	let self = ('object' == typeof el) ? el : document.querySelector(el);
+	if (self) {
+		self.insertAdjacentHTML('beforeend', html);
+	}
 }
 
 // 头部追加
 function wnd_prepend(el, html) {
-    /**  
-     *beforebegin 在元素之前
-     *afterbegin 在元素的第一个子元素之前
-     *beforeend 在元素的最后一个子元素之后
-     *afterend 在元素之后 
-     */
-    let self = ('object' == typeof el) ? el : document.querySelector(el);
-    if (self) {
-        self.insertAdjacentHTML('afterbegin', html);
-    }
+	/**  
+	 *beforebegin 在元素之前
+	 *afterbegin 在元素的第一个子元素之前
+	 *beforeend 在元素的最后一个子元素之后
+	 *afterend 在元素之后 
+	 */
+	let self = ('object' == typeof el) ? el : document.querySelector(el);
+	if (self) {
+		self.insertAdjacentHTML('afterbegin', html);
+	}
 }
 
 /**
@@ -204,28 +204,28 @@ function wnd_prepend(el, html) {
  * 
  */
 function wnd_load_script(src, callback, attrs = {}) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
+	return new Promise((resolve, reject) => {
+		const script = document.createElement('script');
+		script.src = src;
 
-        // 添加额外属性
-        for (const [key, value] of Object.entries(attrs)) {
-            script.setAttribute(key, value);
-        }
+		// 添加额外属性
+		for (const [key, value] of Object.entries(attrs)) {
+			script.setAttribute(key, value);
+		}
 
-        script.onload = () => {
-            if (typeof callback === 'function') {
-                callback();
-            }
-            resolve();
-        };
+		script.onload = () => {
+			if (typeof callback === 'function') {
+				callback();
+			}
+			resolve();
+		};
 
-        script.onerror = () => {
-            reject(new Error(`Failed to load script: ${src}`));
-        };
+		script.onerror = () => {
+			reject(new Error(`Failed to load script: ${src}`));
+		};
 
-        document.head.appendChild(script);
-    });
+		document.head.appendChild(script);
+	});
 }
 
 /**
@@ -233,51 +233,51 @@ function wnd_load_script(src, callback, attrs = {}) {
  * @param {string} url 样式地址
  */
 function wnd_load_style(url) {
-    return new Promise(function (resolve, reject) {
-        let link = document.createElement('link');
-        link.type = 'text/css';
-        link.rel = 'stylesheet';
-        link.href = url;
-        document.head.appendChild(link);
-        link.onload = () => {
-            resolve(true);
-        };
-    });
+	return new Promise(function (resolve, reject) {
+		let link = document.createElement('link');
+		link.type = 'text/css';
+		link.rel = 'stylesheet';
+		link.href = url;
+		document.head.appendChild(link);
+		link.onload = () => {
+			resolve(true);
+		};
+	});
 }
 
 // 指定容器设置加载中效果
 function wnd_loading(el, remove = false) {
-    let self = ('object' == typeof el) ? el : document.querySelector(el);
-    if (!self) {
-        return;
-    }
+	let self = ('object' == typeof el) ? el : document.querySelector(el);
+	if (!self) {
+		return;
+	}
 
-    // Modal
-    if (self.classList.contains('modal-entry')) {
-        if (remove) {
-            self.innerHTML = '';
-        } else {
-            self.innerHTML = loading_el;
-        }
-        return;
-    }
+	// Modal
+	if (self.classList.contains('modal-entry')) {
+		if (remove) {
+			self.innerHTML = '';
+		} else {
+			self.innerHTML = loading_el;
+		}
+		return;
+	}
 
-    // Embed
-    if (!remove) {
-        self.style.position = 'relative';
-        wnd_append(self, `<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:9;background:#FFF;opacity:0.7">${loading_el}</div>`);
-    } else {
-        wnd_remove(self.querySelector('.wnd-loading'));
-        self.style.removeProperty('position');
-    }
+	// Embed
+	if (!remove) {
+		self.style.position = 'relative';
+		wnd_append(self, `<div class="wnd-loading" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:9;background:#FFF;opacity:0.7">${loading_el}</div>`);
+	} else {
+		wnd_remove(self.querySelector('.wnd-loading'));
+		self.style.removeProperty('position');
+	}
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表单
 async function wnd_render_form(container, form_json, add_class, request_url) {
-    if ('function' != typeof _wnd_render_form) {
-        await wnd_load_script(static_path + 'js/form-vue.min.js' + cache_suffix);
-    }
-    _wnd_render_form(container, form_json, add_class, request_url);
+	if ('function' != typeof _wnd_render_form) {
+		await wnd_load_script(static_path + 'js/form-vue.min.js' + cache_suffix);
+	}
+	_wnd_render_form(container, form_json, add_class, request_url);
 }
 
 /**
@@ -285,20 +285,20 @@ async function wnd_render_form(container, form_json, add_class, request_url) {
  * @since 0.9.56.1
  **/
 async function wnd_qrcode(el, data, size = 250) {
-    el = ('object' == typeof el) ? el : document.querySelector(el);
-    if ('undefined' == typeof qrcanvas) {
-        let url = static_path + 'js/lib/qrcanvas.min.js' + cache_suffix;
-        await wnd_load_script(url);
-    }
-    render(el, data, size);
+	el = ('object' == typeof el) ? el : document.querySelector(el);
+	if ('undefined' == typeof qrcanvas) {
+		let url = static_path + 'js/lib/qrcanvas.min.js' + cache_suffix;
+		await wnd_load_script(url);
+	}
+	render(el, data, size);
 
-    function render(el, data, size) {
-        const canvas = qrcanvas.qrcanvas({
-            data: data,
-            size: size
-        });
-        el.appendChild(canvas);
-    }
+	function render(el, data, size) {
+		const canvas = qrcanvas.qrcanvas({
+			data: data,
+			size: size
+		});
+		el.appendChild(canvas);
+	}
 }
 
 /**
@@ -306,7 +306,7 @@ async function wnd_qrcode(el, data, size = 250) {
  * 文件直传 OSS，并写入附件记录
  **/
 async function wnd_upload_to_oss(file, sign_data = {}) {
-    return await wnd_upload_to_oss_dynamic(file, '', '', false, sign_data);
+	return await wnd_upload_to_oss_dynamic(file, '', '', false, sign_data);
 }
 
 /**
@@ -315,7 +315,7 @@ async function wnd_upload_to_oss(file, sign_data = {}) {
  * 不写入附件记录
  **/
 async function wnd_upload_to_oss_direct(file, oss_sp, endpoint, sign_data = {}) {
-    return await wnd_upload_to_oss_dynamic(file, oss_sp, endpoint, true, sign_data);
+	return await wnd_upload_to_oss_dynamic(file, oss_sp, endpoint, true, sign_data);
 }
 
 
@@ -324,11 +324,11 @@ async function wnd_upload_to_oss_direct(file, oss_sp, endpoint, sign_data = {}) 
  * 文件直传 OSS，并写入附件记录
  **/
 async function wnd_upload_to_oss_dynamic(file, oss_sp, endpoint, direct = true, sign_data = {}) {
-    if ('undefined' == typeof _wnd_upload_to_oss) {
-        let url = static_path + 'js/file.min.js' + cache_suffix;
-        await wnd_load_script(url);
-    }
-    return _wnd_upload_to_oss(file, oss_sp, endpoint, direct, sign_data);
+	if ('undefined' == typeof _wnd_upload_to_oss) {
+		let url = static_path + 'js/file.min.js' + cache_suffix;
+		await wnd_load_script(url);
+	}
+	return _wnd_upload_to_oss(file, oss_sp, endpoint, direct, sign_data);
 }
 
 /**
@@ -336,20 +336,20 @@ async function wnd_upload_to_oss_dynamic(file, oss_sp, endpoint, direct = true, 
  * 前端直接删除 OSS 文件（仅支持后台已配置的临时节点）
  */
 async function wnd_delete_oss_file(file, oss_sp, endpoint) {
-    if ('undefined' == typeof _wnd_delete_oss_file) {
-        let url = static_path + 'js/file.min.js' + cache_suffix;
-        await wnd_load_script(url);
-    }
-    return await _wnd_delete_oss_file(file, oss_sp, endpoint);
+	if ('undefined' == typeof _wnd_delete_oss_file) {
+		let url = static_path + 'js/file.min.js' + cache_suffix;
+		await wnd_load_script(url);
+	}
+	return await _wnd_delete_oss_file(file, oss_sp, endpoint);
 }
 
 // 按需加载 wnd-vue-form.js 并渲染表达
 async function wnd_render_filter(container, filter_json, add_class) {
-    if ('function' != typeof _wnd_render_filter) {
-        let url = static_path + 'js/filter.min.js' + cache_suffix;
-        await wnd_load_script(url);
-    }
-    _wnd_render_filter(container, filter_json, add_class);
+	if ('function' != typeof _wnd_render_filter) {
+		let url = static_path + 'js/filter.min.js' + cache_suffix;
+		await wnd_load_script(url);
+	}
+	_wnd_render_filter(container, filter_json, add_class);
 }
 
 /**
@@ -360,10 +360,10 @@ async function wnd_render_filter(container, filter_json, add_class) {
  *@param headers 	请求headers
  */
 async function wnd_query(query, param, headers = {}) {
-    // 请求 api
-    let api = wnd_query_api + '/' + query;
-    let response = await wnd_request_api(api, param, 'GET', headers);
-    return response;
+	// 请求 api
+	let api = wnd_query_api + '/' + query;
+	let response = await wnd_request_api(api, param, 'GET', headers);
+	return response;
 }
 
 /**
@@ -375,38 +375,38 @@ async function wnd_query(query, param, headers = {}) {
  *@param 	callback 	回调函数
  **/
 async function wnd_ajax_embed(container, module, param = {}, callback = '') {
-    // 初始高度：设置嵌入高度变化动画之用
-    let el = document.querySelector(container);
-    funTransitionHeight(el);
+	// 初始高度：设置嵌入高度变化动画之用
+	let el = document.querySelector(container);
+	funTransitionHeight(el);
 
-    // 请求 api
-    param = Object.assign({
-        'ajax_type': 'embed'
-    }, param);
-    let api = wnd_module_api + '/' + module;
-    let header = { 'Container': container };
-    let response = await wnd_request_api(api, param, 'GET', header);
+	// 请求 api
+	param = Object.assign({
+		'ajax_type': 'embed'
+	}, param);
+	let api = wnd_module_api + '/' + module;
+	let header = { 'Container': container };
+	let response = await wnd_request_api(api, param, 'GET', header);
 
-    if (response.status <= 0) {
-        wnd_inner_html(el, '<div class="message is-danger"><div class="message-body">' + response.msg + '</div></div>');
-        funTransitionHeight(el, trs_time);
-        return false;
-    }
+	if (response.status <= 0) {
+		wnd_inner_html(el, '<div class="message is-danger"><div class="message-body">' + response.msg + '</div></div>');
+		funTransitionHeight(el, trs_time);
+		return false;
+	}
 
-    if ('form' == response.data.type) {
-        wnd_render_form(container, response.data.structure, '', response.data.request_url);
-    } else {
-        wnd_inner_html(el, response.data.structure);
-        funTransitionHeight(el, trs_time);
-    }
+	if ('form' == response.data.type) {
+		wnd_render_form(container, response.data.structure, '', response.data.request_url);
+	} else {
+		wnd_inner_html(el, response.data.structure);
+		funTransitionHeight(el, trs_time);
+	}
 
-    if (callback) {
-        if ('function' == typeof callback) {
-            callback(response.data);
-        } else {
-            window[callback](response.data);
-        }
-    }
+	if (callback) {
+		if ('function' == typeof callback) {
+			callback(response.data);
+		} else {
+			window[callback](response.data);
+		}
+	}
 }
 
 
@@ -414,23 +414,23 @@ async function wnd_ajax_embed(container, module, param = {}, callback = '') {
  * @since 2019.1
 *######################## ajax动态内容请求
 *使用本函数主要用以返回更复杂的结果如：表单，页面以弹窗或嵌入指定DOM的形式呈现，以供用户操作。表单提交则通常返回较为简单的结果
-    允许携带一个参数
+		允许携带一个参数
 
-    @since 2019.01.26
-    若需要传递参数值超过一个，可将参数定义为GET参数形式如：'post_id=1&user_id=2'，后端采用:wp_parse_args() 解析参数
+		@since 2019.01.26
+		若需要传递参数值超过一个，可将参数定义为GET参数形式如：'post_id=1&user_id=2'，后端采用:wp_parse_args() 解析参数
 
-    实例：
-        前端
-        wnd_ajax_modal('wnd_xxx','post_id=1&user_id=2');
+		实例：
+				前端
+				wnd_ajax_modal('wnd_xxx','post_id=1&user_id=2');
 
-        后端
-        namespace Wnd\Module;
-        class wnd_xxx($args){
-            $args = wp_parse_args($args)
-            return($args);
-        }
-        弹窗将输出
-        Array ( [post_id] => 1 [user_id] =>2)
+				后端
+				namespace Wnd\Module;
+				class wnd_xxx($args){
+						$args = wp_parse_args($args)
+						return($args);
+				}
+				弹窗将输出
+				Array ( [post_id] => 1 [user_id] =>2)
 
 *典型用途：  击弹出登录框、点击弹出建议发布文章框
 *@param     module      string      module类
@@ -439,10 +439,10 @@ async function wnd_ajax_embed(container, module, param = {}, callback = '') {
 */
 // ajax 从后端请求内容，并以弹窗形式展现
 async function wnd_ajax_modal(module, param = {}, callback = '') {
-    wnd_alert_modal(loading_el, true);
-    let container = '#modal .modal-entry';
-    param.ajax_type = 'modal';
-    return wnd_ajax_embed(container, module, param, callback);
+	wnd_alert_modal(loading_el, true);
+	let container = '#modal .modal-entry';
+	param.ajax_type = 'modal';
+	return wnd_ajax_embed(container, module, param, callback);
 }
 
 /**
@@ -450,10 +450,10 @@ async function wnd_ajax_modal(module, param = {}, callback = '') {
  * 发送 ajax Action
  **/
 async function wnd_ajax_action(action, param = {}, headers = {}) {
-    // 请求 api
-    let api = wnd_action_api + '/' + action;
-    let response = await wnd_request_api(api, param, 'POST', headers);
-    return response;
+	// 请求 api
+	let api = wnd_action_api + '/' + action;
+	let response = await wnd_request_api(api, param, 'POST', headers);
+	return response;
 }
 
 /**
@@ -464,81 +464,81 @@ async function wnd_ajax_action(action, param = {}, headers = {}) {
  * @param 	headers 	object      headers
  **/
 async function wnd_request_api(api, param = {}, method = 'GET', headers = {}) {
-    let request = {};
-    try {
-        let config = {
-            method: method,
-            url: api,
-            headers: headers,
-        };
-        if ('POST' == method) {
-            config.data = param;
-        } else {
-            config.params = param;
-        }
+	let request = {};
+	try {
+		let config = {
+			method: method,
+			url: api,
+			headers: headers,
+		};
+		if ('POST' == method) {
+			config.data = param;
+		} else {
+			config.params = param;
+		}
 
-        request = await axios(config).then(function (response) {
-            if ('undefined' == typeof response.data.status) {
-                return { "status": 0, "msg": "unknown error" };
-            }
+		request = await axios(config).then(function (response) {
+			if ('undefined' == typeof response.data.status) {
+				return { "status": 0, "msg": "unknown error" };
+			}
 
-            return response.data;
-        });
-    } catch (error) {
-        request = { "status": 0, "msg": error.message };
-    }
+			return response.data;
+		});
+	} catch (error) {
+		request = { "status": 0, "msg": error.message };
+	}
 
-    return request;
+	return request;
 }
 
 //弹出bulma对话框
 function wnd_alert_modal(content, box = true) {
-    wnd_reset_modal();
-    let modal = document.querySelector('#modal'); // assuming you have only 1
-    let modal_entry = modal.querySelector('.modal-entry');
-    modal.classList.add('is-active');
-    if (box) {
-        modal_entry.classList.add('box');
-    }
+	wnd_reset_modal();
+	let modal = document.querySelector('#modal'); // assuming you have only 1
+	let modal_entry = modal.querySelector('.modal-entry');
+	modal.classList.add('is-active');
+	if (box) {
+		modal_entry.classList.add('box');
+	}
 
-    // 对于复杂的输入，不能直接使用 innerHTML
-    wnd_inner_html(modal_entry, content);
+	// 对于复杂的输入，不能直接使用 innerHTML
+	wnd_inner_html(modal_entry, content);
 
-    funTransitionHeight(modal_entry, trs_time);
+	funTransitionHeight(modal_entry, trs_time);
 }
 
 // 直接弹出消息
 function wnd_alert_msg(msg, time = 0) {
-    wnd_alert_modal(msg, false);
+	wnd_alert_modal(msg, false);
 
-    // 定时关闭
-    if (time > 0) {
-        let timer = null;
-        timer = setInterval(function () {
-            clearInterval(timer);
-            wnd_reset_modal();
-        }, time * 1000);
-    }
+	// 定时关闭
+	if (time > 0) {
+		let timer = null;
+		timer = setInterval(function () {
+			clearInterval(timer);
+			wnd_reset_modal();
+		}, time * 1000);
+	}
 }
 
 function wnd_alert_notification(content, add_class = '') {
-    add_class = add_class ? ('notification ' + add_class) : 'notification';
-    wnd_alert_modal('<div class="notification is-light is-danger">' + content + '</div>', false);
+	add_class = add_class ? ('notification ' + add_class) : 'notification';
+	wnd_alert_modal('<div class="notification is-light is-danger">' + content + '</div>', false);
 }
 
 // 初始化对话框
 function wnd_reset_modal() {
-    let modal = document.querySelector('#modal');
-    if (modal) {
-        let modal_entry = modal.querySelector('#modal .modal-entry');
+	let modal = document.querySelector('#modal');
+	if (modal) {
+		let modal_entry = modal.querySelector('#modal .modal-entry');
 
-        modal_entry.innerHTML = '';
-        modal.classList.remove('is-active', 'wnd-gallery');
-        modal_entry.classList.remove('box');
-        // 动画效果需要
-        modal_entry.style.height = '0';
-    } else {
-        wnd_append('body', `
+		modal_entry.innerHTML = '';
+		modal.classList.remove('is-active', 'wnd-gallery');
+		modal_entry.classList.remove('box');
+		// 动画效果需要
+		modal_entry.style.height = '0';
+	} else {
+		wnd_append('body', `
 <div id="modal" class="modal">
 <div class="modal-background"></div>
 <div class="modal-content">
@@ -546,7 +546,7 @@ function wnd_reset_modal() {
 </div>
 <button class="modal-close is-large" aria-label="close"></button>
 </div>`);
-    }
+	}
 }
 
 /**
@@ -554,204 +554,204 @@ function wnd_reset_modal() {
  * 常规表单不具备文件上传能力，主要用户构建前端各类简单表单按钮，以避免在常规页面中 Vue 动态加载造成的页面抖动 
  * */
 function wnd_ajax_submit(button, captcha_input = false) {
-    let form = button.closest('form');
-    let route = form.getAttribute('route');
+	let form = button.closest('form');
+	let route = form.getAttribute('route');
 
-    form.addEventListener('submit', function () {
-        button.classList.add('is-loading');
-    });
+	form.addEventListener('submit', function () {
+		button.classList.add('is-loading');
+	});
 
-    // 未设置 route 表示为常规 HTML 提交，而非 API 请求
-    if (!route) {
-        return false;
-    }
+	// 未设置 route 表示为常规 HTML 提交，而非 API 请求
+	if (!route) {
+		return false;
+	}
 
-    // 表单有效性检查
-    for (let i = 0, n = form.elements.length; i < n; i++) {
-        if (!form.elements[i].hasAttribute('required') || form.elements[i].hasAttribute('disabled')) {
-            continue;
-        }
+	// 表单有效性检查
+	for (let i = 0, n = form.elements.length; i < n; i++) {
+		if (!form.elements[i].hasAttribute('required') || form.elements[i].hasAttribute('disabled')) {
+			continue;
+		}
 
-        let required_error = false;
-        if (['radio', 'checkbox'].includes(form.elements[i].type)) {
-            let name = form.elements[i].name;
-            let checked = form.querySelector('[name="' + name + '"]:checked');
-            if (!checked) {
-                required_error = true;
-            }
-        } else if ('select' == form.elements[i].type && !form.elements[i].selected) {
-            required_error = true;
-        } else if (!form.elements[i].value) {
-            required_error = true;
-        }
+		let required_error = false;
+		if (['radio', 'checkbox'].includes(form.elements[i].type)) {
+			let name = form.elements[i].name;
+			let checked = form.querySelector('[name="' + name + '"]:checked');
+			if (!checked) {
+				required_error = true;
+			}
+		} else if ('select' == form.elements[i].type && !form.elements[i].selected) {
+			required_error = true;
+		} else if (!form.elements[i].value) {
+			required_error = true;
+		}
 
-        if (required_error) {
-            form.elements[i].classList.add('is-danger');
-            wnd_form_msg(form, wnd.msg.required, 'is-danger');
-            button.classList.remove('is-loading');
-            return false;
-        }
-    }
+		if (required_error) {
+			form.elements[i].classList.add('is-danger');
+			wnd_form_msg(form, wnd.msg.required, 'is-danger');
+			button.classList.remove('is-loading');
+			return false;
+		}
+	}
 
-    // Ajax 请求
-    let data = new FormData(form);
+	// Ajax 请求
+	let data = new FormData(form);
 
-    // GET 将表单序列化
-    let params = {};
-    if ('get' == form.method) {
-        for (const key of data.keys()) {
-            params[key] = data.get(key);
-        }
-    }
-    axios({
-        method: form.method,
-        url: form.action,
-        // POST
-        data: data,
-        // GET
-        params: params,
-    }).then(function (response) {
-        form_info = wnd_handle_response(response.data, route, form.parentNode);
-        if (form_info.msg) {
-            wnd_form_msg(form, form_info.msg, form_info.msg_class);
-        }
-        if (![3, 4].includes(response.data.status)) {
-            button.classList.remove('is-loading');
-        }
+	// GET 将表单序列化
+	let params = {};
+	if ('get' == form.method) {
+		for (const key of data.keys()) {
+			params[key] = data.get(key);
+		}
+	}
+	axios({
+		method: form.method,
+		url: form.action,
+		// POST
+		data: data,
+		// GET
+		params: params,
+	}).then(function (response) {
+		form_info = wnd_handle_response(response.data, route, form.parentNode);
+		if (form_info.msg) {
+			wnd_form_msg(form, form_info.msg, form_info.msg_class);
+		}
+		if (![3, 4].includes(response.data.status)) {
+			button.classList.remove('is-loading');
+		}
 
-        // 提交后清空无论后端响应如何都应清空 Captcha，因为本次 captcha 行为验证已完成
-        if (captcha_input) {
-            captcha_input.value = '';
-        }
-    });
+		// 提交后清空无论后端响应如何都应清空 Captcha，因为本次 captcha 行为验证已完成
+		if (captcha_input) {
+			captcha_input.value = '';
+		}
+	});
 }
 
 function wnd_form_msg(form, msg, msg_class) {
-    let el = form.querySelector('.form-message');
-    if (!el) {
-        return false;
-    }
+	let el = form.querySelector('.form-message');
+	if (!el) {
+		return false;
+	}
 
-    el.style.display = '';
-    el.className = `form-message message ${msg_class}`;
-    let msg_body = el.querySelector('.message-body');
+	el.style.display = '';
+	el.className = `form-message message ${msg_class}`;
+	let msg_body = el.querySelector('.message-body');
 
-    /**
-     * @since 0.9.36
-     * 当表单已包含完整的 message element（如 Vue 渲染的表单），仅替换内容不破坏原有的元素结构
-     * 防止可能因破坏原有结构导致消息无法呈现
-     **/
-    if (msg_body) {
-        msg_body.innerHTML = msg;
-    } else {
-        el.innerHTML = '<div class="message-body">' + msg + '</div>';
-    }
+	/**
+	 * @since 0.9.36
+	 * 当表单已包含完整的 message element（如 Vue 渲染的表单），仅替换内容不破坏原有的元素结构
+	 * 防止可能因破坏原有结构导致消息无法呈现
+	 **/
+	if (msg_body) {
+		msg_body.innerHTML = msg;
+	} else {
+		el.innerHTML = '<div class="message-body">' + msg + '</div>';
+	}
 
-    // 调整高度
-    modal_entry = form.closest('#modal .modal-entry');
-    if (modal_entry) {
-        funTransitionHeight(modal_entry, trs_time);
-    } else {
-        funTransitionHeight(form.parentNode, trs_time);
-    }
+	// 调整高度
+	modal_entry = form.closest('#modal .modal-entry');
+	if (modal_entry) {
+		funTransitionHeight(modal_entry, trs_time);
+	} else {
+		funTransitionHeight(form.parentNode, trs_time);
+	}
 }
 
 // 统一处理表单响应
 function wnd_handle_response(response, route, parent) {
-    let form_info = {
-        'msg': '',
-        'msg_class': ''
-    };
+	let form_info = {
+		'msg': '',
+		'msg_class': ''
+	};
 
-    /**
-     *@since 0.8.73
-     *GET 提交弹出 UI 模块
-     */
-    if ('module' == route) {
-        if (response.status >= 1) {
-            wnd_alert_modal(loading_el, false);
-            if ('form' == response.data.type) {
-                wnd_render_form('#modal .modal-entry', response.data.structure, 'box', response.data.request_url);
-            } else if ('filter' == response.data.type) {
-                wnd_render_filter('#modal .modal-entry', response.data.structure, 'box');
-            } else {
-                wnd_alert_modal(response.data.structure);
-            }
-        } else {
-            wnd_alert_modal(response.msg);
-        }
-        // this.form.submit.attrs.class = form_json.submit.attrs.class;
-        return form_info;
-    }
+	/**
+	 *@since 0.8.73
+	 *GET 提交弹出 UI 模块
+	 */
+	if ('module' == route) {
+		if (response.status >= 1) {
+			wnd_alert_modal(loading_el, false);
+			if ('form' == response.data.type) {
+				wnd_render_form('#modal .modal-entry', response.data.structure, 'box', response.data.request_url);
+			} else if ('filter' == response.data.type) {
+				wnd_render_filter('#modal .modal-entry', response.data.structure, 'box');
+			} else {
+				wnd_alert_modal(response.data.structure);
+			}
+		} else {
+			wnd_alert_modal(response.msg);
+		}
+		// this.form.submit.attrs.class = form_json.submit.attrs.class;
+		return form_info;
+	}
 
-    /**
-     * 根据后端响应处理：
-     * - response.status >= 1 表示请求正常完成;
-     * - response.status <= 0 表示请求异常
-     **/
-    form_info.msg = response.msg;
-    form_info.msg_class = (response.status <= 0) ? 'is-danger' : 'is-success';
-    switch (response.status) {
+	/**
+	 * 根据后端响应处理：
+	 * - response.status >= 1 表示请求正常完成;
+	 * - response.status <= 0 表示请求异常
+	 **/
+	form_info.msg = response.msg;
+	form_info.msg_class = (response.status <= 0) ? 'is-danger' : 'is-success';
+	switch (response.status) {
 
-        // 常规类，展示后端提示信息，状态 8 表示禁用提交按钮 
-        case 1:
-        case 8:
-            // form_info.msg =  response.data.msg;
-            break;
+		// 常规类，展示后端提示信息，状态 8 表示禁用提交按钮 
+		case 1:
+		case 8:
+			// form_info.msg =  response.data.msg;
+			break;
 
-        //更新类
-        case 2:
-            form_info.msg = response.msg + '<a href="' + response.data.url + '" target="_blank">&nbsp;' + wnd.msg.view + '</a>';
-            break;
+		//更新类
+		case 2:
+			form_info.msg = response.msg + '<a href="' + response.data.url + '" target="_blank">&nbsp;' + wnd.msg.view + '</a>';
+			break;
 
-        // 跳转类
-        case 3:
-            form_info.msg = wnd.msg.waiting;
-            window.location = response.data.redirect_to;
-            break;
+		// 跳转类
+		case 3:
+			form_info.msg = wnd.msg.waiting;
+			window.location = response.data.redirect_to;
+			break;
 
-        // 刷新当前页面
-        case 4:
-            if ("undefined" == typeof response.data || "undefined" == typeof response.data.waiting) {
-                window.location.reload();
-            }
-            break;
+		// 刷新当前页面
+		case 4:
+			if ("undefined" == typeof response.data || "undefined" == typeof response.data.waiting) {
+				window.location.reload();
+			}
+			break;
 
-        // 弹出信息并自动消失
-        case 5:
-            wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.msg + '</h5></div>', 1);
-            break;
+		// 弹出信息并自动消失
+		case 5:
+			wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.msg + '</h5></div>', 1);
+			break;
 
-        // 下载类
-        case 6:
-            form_info.msg = wnd.msg.downloading;
-            window.location = response.data.redirect_to;
-            break;
+		// 下载类
+		case 6:
+			form_info.msg = wnd.msg.downloading;
+			window.location = response.data.redirect_to;
+			break;
 
-        // 以响应数据替换当前表单
-        case 7:
-            wnd_inner_html(parent, response.data);
-            break;
+		// 以响应数据替换当前表单
+		case 7:
+			wnd_inner_html(parent, response.data);
+			break;
 
-        // -1 将异常消息作为弹窗
-        case -1:
-            wnd_alert_modal(response.msg);
-            form_info.msg = false; // false 表示维持原有信息不变
-            break;
+		// -1 将异常消息作为弹窗
+		case -1:
+			wnd_alert_modal(response.msg);
+			form_info.msg = false; // false 表示维持原有信息不变
+			break;
 
-        // 默认
-        default:
-            // wnd_ajax_form_msg(form_id, response.msg, style);
-            break;
-    }
+		// 默认
+		default:
+			// wnd_ajax_form_msg(form_id, response.msg, style);
+			break;
+	}
 
-    if (-1 != response.status) {
-        parent.scrollIntoView({
-            behavior: 'smooth'
-        });
-    }
+	if (-1 != response.status) {
+		parent.scrollIntoView({
+			behavior: 'smooth'
+		});
+	}
 
-    return form_info;
+	return form_info;
 }
 
 /**
@@ -760,110 +760,110 @@ function wnd_handle_response(response, route, parent) {
  *@param string captcha data key
  */
 function wnd_send_code(button, captcha_data_key = '') {
-    let form = button.closest('form');
-    let device = form.querySelector('input[name=\'_user_user_email\']') || form.querySelector('input[name=\'phone\']');
-    let device_value = device.value || '';
-    if (!device_value) {
-        device.classList.add('is-danger');
-        return false;
-    }
+	let form = button.closest('form');
+	let device = form.querySelector('input[name=\'_user_user_email\']') || form.querySelector('input[name=\'phone\']');
+	let device_value = device.value || '';
+	if (!device_value) {
+		device.classList.add('is-danger');
+		return false;
+	}
 
-    button.classList.add('is-loading');
+	button.classList.add('is-loading');
 
-    let data = button.dataset;
-    data.device = device_value;
-    let style = 'is-success';
+	let data = button.dataset;
+	data.device = device_value;
+	let style = 'is-success';
 
-    axios({
-        url: wnd_action_api + '/' + data.action,
-        method: 'POST',
-        data: data,
-    }).then(function (response) {
-        if (response.data.status <= 0) {
-            style = 'is-danger';
-        } else {
-            button.disabled = true;
-            button.textContent = wnd.msg.send_successfully;
+	axios({
+		url: wnd_action_api + '/' + data.action,
+		method: 'POST',
+		data: data,
+	}).then(function (response) {
+		if (response.data.status <= 0) {
+			style = 'is-danger';
+		} else {
+			button.disabled = true;
+			button.textContent = wnd.msg.send_successfully;
 
-            // 定时器
-            let time = data.interval;
-            let timer = null;
-            timer = setInterval(function () {
-                if (time <= 1) {
-                    clearInterval(timer);
-                    button.textContent = wnd.msg.try_again;
-                    button.disabled = false;
-                } else {
-                    time--;
-                    button.textContent = time;
-                }
-            }, 1000);
-        }
+			// 定时器
+			let time = data.interval;
+			let timer = null;
+			timer = setInterval(function () {
+				if (time <= 1) {
+					clearInterval(timer);
+					button.textContent = wnd.msg.try_again;
+					button.disabled = false;
+				} else {
+					time--;
+					button.textContent = time;
+				}
+			}, 1000);
+		}
 
-        wnd_form_msg(form, response.data.msg, style);
-        button.classList.remove('is-loading');
-        // 清空 captcha
-        if (captcha_data_key) {
-            button.dataset[captcha_data_key] = '';
-        }
-    });
+		wnd_form_msg(form, response.data.msg, style);
+		button.classList.remove('is-loading');
+		// 清空 captcha
+		if (captcha_data_key) {
+			button.dataset[captcha_data_key] = '';
+		}
+	});
 };
 
 /**
  * 流量统计
  */
 function wnd_update_views(post_id, interval = 3600) {
-    if (wnd_is_spider()) {
-        return;
-    }
+	if (wnd_is_spider()) {
+		return;
+	}
 
-    let timestamp = Date.parse(new Date()) / 1000;
-    let wnd_views = localStorage.getItem('wnd_views') ? JSON.parse(localStorage.getItem('wnd_views')) : [];
-    let max_length = 10;
-    let is_new = true;
+	let timestamp = Date.parse(new Date()) / 1000;
+	let wnd_views = localStorage.getItem('wnd_views') ? JSON.parse(localStorage.getItem('wnd_views')) : [];
+	let max_length = 10;
+	let is_new = true;
 
-    // 数据处理
-    for (let i = 0, n = wnd_views.length; i < n; i++) {
-        if (wnd_views[i].post_id == post_id) {
-            // 存在记录中：且时间过期
-            if (wnd_views[i].timestamp < timestamp - interval) {
-                wnd_views[i].timestamp = timestamp;
-                is_new = true;
-            } else {
-                is_new = false;
-            }
-            break;
-        }
-    }
+	// 数据处理
+	for (let i = 0, n = wnd_views.length; i < n; i++) {
+		if (wnd_views[i].post_id == post_id) {
+			// 存在记录中：且时间过期
+			if (wnd_views[i].timestamp < timestamp - interval) {
+				wnd_views[i].timestamp = timestamp;
+				is_new = true;
+			} else {
+				is_new = false;
+			}
+			break;
+		}
+	}
 
-    // 新浏览
-    if (is_new) {
-        let new_view = {
-            'post_id': post_id,
-            'timestamp': timestamp
-        };
-        wnd_views.unshift(new_view);
-    }
+	// 新浏览
+	if (is_new) {
+		let new_view = {
+			'post_id': post_id,
+			'timestamp': timestamp
+		};
+		wnd_views.unshift(new_view);
+	}
 
-    // 删除超过长度的元素
-    if (wnd_views.length > max_length) {
-        wnd_views.length = max_length;
-    }
+	// 删除超过长度的元素
+	if (wnd_views.length > max_length) {
+		wnd_views.length = max_length;
+	}
 
-    // 更新服务器数据
-    if (is_new) {
-        axios({
-            url: wnd_action_api + '/common/wnd_update_views',
-            method: 'POST',
-            data: {
-                'post_id': post_id
-            },
-        }).then(function (response) {
-            if (1 == response.data.status) {
-                localStorage.setItem('wnd_views', JSON.stringify(wnd_views));
-            }
-        });
-    }
+	// 更新服务器数据
+	if (is_new) {
+		axios({
+			url: wnd_action_api + '/common/wnd_update_views',
+			method: 'POST',
+			data: {
+				'post_id': post_id
+			},
+		}).then(function (response) {
+			if (1 == response.data.status) {
+				localStorage.setItem('wnd_views', JSON.stringify(wnd_views));
+			}
+		});
+	}
 }
 
 /**
@@ -872,80 +872,80 @@ function wnd_update_views(post_id, interval = 3600) {
 var can_click_ajax_link = true;
 
 function wnd_ajax_click(link) {
-    // 是否在弹窗中操作
-    let in_modal = link.closest('.modal.is-active') ? true : false;
+	// 是否在弹窗中操作
+	let in_modal = link.closest('.modal.is-active') ? true : false;
 
-    // 点击频率控制
-    if (!can_click_ajax_link) {
-        return;
-    }
-    can_click_ajax_link = false;
-    setTimeout(function () {
-        can_click_ajax_link = true;
-    }, 1000);
+	// 点击频率控制
+	if (!can_click_ajax_link) {
+		return;
+	}
+	can_click_ajax_link = false;
+	setTimeout(function () {
+		can_click_ajax_link = true;
+	}, 1000);
 
-    if (1 == link.dataset.disabled) {
-        wnd_alert_msg(wnd.msg.waiting, 1);
-        return;
-    }
+	if (1 == link.dataset.disabled) {
+		wnd_alert_msg(wnd.msg.waiting, 1);
+		return;
+	}
 
-    // 判断当前操作是否为取消
-    let is_cancel = 0 != link.dataset.is_cancel;
-    let action = is_cancel ? link.dataset.cancel : link.dataset.action;
-    let args = JSON.parse(link.dataset.args);
-    args._wnd_sign = link.dataset.sign;
+	// 判断当前操作是否为取消
+	let is_cancel = 0 != link.dataset.is_cancel;
+	let action = is_cancel ? link.dataset.cancel : link.dataset.action;
+	let args = JSON.parse(link.dataset.args);
+	args._wnd_sign = link.dataset.sign;
 
-    axios({
-        url: wnd_action_api + '/' + action,
-        method: 'POST',
-        data: args,
-    }).then(function (response) {
-        // 正向操作成功
-        if (response.data.status != 0 && action == link.dataset.action) {
-            // 设置了逆向操作
-            if (link.dataset.cancel) {
-                link.dataset.is_cancel = 1;
-                // 未设置逆向操作，禁止重复点击事件
-            } else {
-                link.dataset.disabled = 1;
-            }
+	axios({
+		url: wnd_action_api + '/' + action,
+		method: 'POST',
+		data: args,
+	}).then(function (response) {
+		// 正向操作成功
+		if (response.data.status != 0 && action == link.dataset.action) {
+			// 设置了逆向操作
+			if (link.dataset.cancel) {
+				link.dataset.is_cancel = 1;
+				// 未设置逆向操作，禁止重复点击事件
+			} else {
+				link.dataset.disabled = 1;
+			}
 
-        } else {
-            link.dataset.is_cancel = 0;
-        }
+		} else {
+			link.dataset.is_cancel = 0;
+		}
 
-        // 根据后端响应处理
-        switch (response.data.status) {
-            // 常规类，展示后端提示信息
-            case 1:
-                link.innerHTML = response.data.data;
-                break;
+		// 根据后端响应处理
+		switch (response.data.status) {
+			// 常规类，展示后端提示信息
+			case 1:
+				link.innerHTML = response.data.data;
+				break;
 
-            // 弹出消息
-            case 2:
-            case 0:
-            case -99:
-                if (response.data.data) {
-                    link.innerHTML = response.data.data;
-                }
-                if (!in_modal) {
-                    wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.data.msg + '</h5></div>', 2);
-                }
-                break;
+			// 弹出消息
+			case 2:
+			case 0:
+			case -99:
+				if (response.data.data) {
+					link.innerHTML = response.data.data;
+				}
+				if (!in_modal) {
+					wnd_alert_msg('<div class="has-text-centered"><h5 class="has-text-white">' + response.data.msg + '</h5></div>', 2);
+				}
+				break;
 
-            // 跳转类
-            case 3:
-                wnd_alert_msg(wnd.msg.waiting);
-                window.location.href = response.data.data.redirect_to;
-                break;
+			// 跳转类
+			case 3:
+				wnd_alert_msg(wnd.msg.waiting);
+				window.location.href = response.data.data.redirect_to;
+				break;
 
-            // 刷新当前页面
-            case 4:
-                wnd_reset_modal();
-                window.location.reload();
-                break;
-        }
-    });
+			// 刷新当前页面
+			case 4:
+				wnd_reset_modal();
+				window.location.reload();
+				break;
+		}
+	});
 }
 
 
@@ -954,17 +954,17 @@ function wnd_ajax_click(link) {
  * @link https://www.zhangxinxu.com/wordpress/2015/01/content-loading-height-change-css3-transition-better-experience/
  */
 var funTransitionHeight = function (element, time) { // time, 数值，可缺省
-    if (typeof window.getComputedStyle == 'undefined') return;
+	if (typeof window.getComputedStyle == 'undefined') return;
 
-    let height = window.getComputedStyle(element).height;
-    element.style.transition = 'none'; // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
-    element.style.height = 'auto';
-    let targetHeight = window.getComputedStyle(element).height;
-    element.style.height = height;
-    element.offsetWidth = element.offsetWidth;
-    if (time) element.style.transition = 'height ' + time + 'ms';
-    element.style.height = targetHeight;
-    element.style.overflow = 'hidden';
+	let height = window.getComputedStyle(element).height;
+	element.style.transition = 'none'; // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
+	element.style.height = 'auto';
+	let targetHeight = window.getComputedStyle(element).height;
+	element.style.height = height;
+	element.offsetWidth = element.offsetWidth;
+	if (time) element.style.transition = 'height ' + time + 'ms';
+	element.style.height = targetHeight;
+	element.style.overflow = 'hidden';
 };
 
 /**
@@ -972,16 +972,16 @@ var funTransitionHeight = function (element, time) { // time, 数值，可缺省
  *Ajax 加载侧边栏
  */
 function wnd_load_menus_side() {
-    if (!menus_side) {
-        wnd_append('body', `
+	if (!menus_side) {
+		wnd_append('body', `
 <div id="wnd-side-container"></div>
 <div id="wnd-side-background" class="modal" style="z-index:31;">
 <div class="modal-background"></div>
 </div>`);
-        wnd_ajax_embed('#wnd-side-container', 'common/wnd_menus_side', { 'post_id': wnd.post_id }, 'wnd_menus_side_toggle');
-    } else {
-        wnd_menus_side_toggle();
-    }
+		wnd_ajax_embed('#wnd-side-container', 'common/wnd_menus_side', { 'post_id': wnd.post_id }, 'wnd_menus_side_toggle');
+	} else {
+		wnd_menus_side_toggle();
+	}
 }
 
 /**
@@ -989,31 +989,31 @@ function wnd_load_menus_side() {
  *展开或关闭侧边栏
  */
 function wnd_menus_side_toggle(close = false) {
-    // 按钮及遮罩 Toggle
-    document.querySelectorAll('.wnd-side-burger').forEach(function (burger) {
-        burger.classList.toggle('is-active');
-    });
-    document.querySelector('#wnd-side-background').classList.toggle('is-active');
+	// 按钮及遮罩 Toggle
+	document.querySelectorAll('.wnd-side-burger').forEach(function (burger) {
+		burger.classList.toggle('is-active');
+	});
+	document.querySelector('#wnd-side-background').classList.toggle('is-active');
 
-    // Menus
-    menus_side = menus_side || document.querySelector('#wnd-side-container').firstChild;
-    menus_side.style.transition = 'all ' + trs_time * 2 + 'ms';
+	// Menus
+	menus_side = menus_side || document.querySelector('#wnd-side-container').firstChild;
+	menus_side.style.transition = 'all ' + trs_time * 2 + 'ms';
 
-    // close
-    if (true == close) {
-        menus_side.style.left = '-' + menus_side.offsetWidth + 'px';
-        return;
-    }
+	// close
+	if (true == close) {
+		menus_side.style.left = '-' + menus_side.offsetWidth + 'px';
+		return;
+	}
 
-    // 初次加载动画
-    if (!menus_side.style.left) {
-        menus_side.style.left = '-' + menus_side.offsetWidth + 'px';
-        setTimeout(() => {
-            menus_side.style.left = '0px';
-        }, trs_time - 50);
-    } else {
-        menus_side.style.left = '0px';
-    }
+	// 初次加载动画
+	if (!menus_side.style.left) {
+		menus_side.style.left = '-' + menus_side.offsetWidth + 'px';
+		setTimeout(() => {
+			menus_side.style.left = '0px';
+		}, trs_time - 50);
+	} else {
+		menus_side.style.left = '0px';
+	}
 }
 
 /**
@@ -1021,66 +1021,66 @@ function wnd_menus_side_toggle(close = false) {
  *监听点击事件
  */
 document.addEventListener('click', function (e) {
-    // 关闭 Modal
-    if (e.target.classList.contains('modal-close')) {
-        wnd_reset_modal();
-        return;
-    }
+	// 关闭 Modal
+	if (e.target.classList.contains('modal-close')) {
+		wnd_reset_modal();
+		return;
+	}
 
-    // Ajax link
-    let a = e.target.closest('a');
-    if (a && a.classList.contains('ajax-link')) {
-        wnd_ajax_click(a);
-        return;
-    }
+	// Ajax link
+	let a = e.target.closest('a');
+	if (a && a.classList.contains('ajax-link')) {
+		wnd_ajax_click(a);
+		return;
+	}
 
-    // DIV
-    let div = e.target.closest('div');
-    if (!div) {
-        return;
-    }
+	// DIV
+	let div = e.target.closest('div');
+	if (!div) {
+		return;
+	}
 
-    /**
-     *@since 0.9.13 从主题中移植
-     *移动导航点击展开侧边栏
-     */
-    if (div.classList.contains('wnd-side-burger')) {
-        if (div.classList.contains('is-active')) {
-            wnd_menus_side_toggle(true);
-        } else {
-            wnd_load_menus_side();
-        }
+	/**
+	 *@since 0.9.13 从主题中移植
+	 *移动导航点击展开侧边栏
+	 */
+	if (div.classList.contains('wnd-side-burger')) {
+		if (div.classList.contains('is-active')) {
+			wnd_menus_side_toggle(true);
+		} else {
+			wnd_load_menus_side();
+		}
 
-        return;
-    }
+		return;
+	}
 
-    // 点击Side Menus遮罩，关闭侧栏
-    if (div.parentElement && div.parentElement.id == 'wnd-side-background') {
-        wnd_menus_side_toggle(true);
-        return;
-    }
+	// 点击Side Menus遮罩，关闭侧栏
+	if (div.parentElement && div.parentElement.id == 'wnd-side-background') {
+		wnd_menus_side_toggle(true);
+		return;
+	}
 
-    // Modal 遮罩
-    if (div.classList.contains('modal-background')) {
-        wnd_reset_modal();
-        return;
-    }
+	// Modal 遮罩
+	if (div.classList.contains('modal-background')) {
+		wnd_reset_modal();
+		return;
+	}
 
-    // 密码输入字段可视切换
-    if (div.classList.contains('hide-pw')) {
-        // icon
-        let i = div.querySelector('i');
-        let add = i.classList.contains('fa-eye') ? 'fa-eye-slash' : 'fa-eye';
-        let remove = 'fa-eye' == add ? 'fa-eye-slash' : 'fa-eye';
-        i.classList.remove(remove);
-        i.classList.add(add);
+	// 密码输入字段可视切换
+	if (div.classList.contains('hide-pw')) {
+		// icon
+		let i = div.querySelector('i');
+		let add = i.classList.contains('fa-eye') ? 'fa-eye-slash' : 'fa-eye';
+		let remove = 'fa-eye' == add ? 'fa-eye-slash' : 'fa-eye';
+		i.classList.remove(remove);
+		i.classList.add(add);
 
-        // input type
-        let input = div.closest('div.control').querySelector('input');
-        input.type = 'fa-eye' == add ? 'password' : 'text';
+		// input type
+		let input = div.closest('div.control').querySelector('input');
+		input.type = 'fa-eye' == add ? 'password' : 'text';
 
-        return;
-    }
+		return;
+	}
 });
 
 /**
@@ -1099,107 +1099,107 @@ document.addEventListener('click', function (e) {
  * const app = Vue.createApp(vueComponent); 
  */
 class VueClass {
-    // 将类转换为 Vue 组件对象
-    toVueComponent() {
-        const self = this;
-        return {
-            template: this.template,
-            data() {
-                return self.data();
-            },
-            methods: self.methods(),
-            watch: self.watch(),
-            computed: self.computed(),
-            components: self.components(),
-            created() {
-                self.created.call(this);
-            },
-            mounted() {
-                self.mounted.call(this);
-            },
-            updated() {
-                self.updated.call(this);
-            },
-            beforeUnmount() {
-                self.beforeUnmount.call(this);
-            },
-        };
-    }
+	// 将类转换为 Vue 组件对象
+	toVueComponent() {
+		const self = this;
+		return {
+			template: this.template,
+			data() {
+				return self.data();
+			},
+			methods: self.methods(),
+			watch: self.watch(),
+			computed: self.computed(),
+			components: self.components(),
+			created() {
+				self.created.call(this);
+			},
+			mounted() {
+				self.mounted.call(this);
+			},
+			updated() {
+				self.updated.call(this);
+			},
+			beforeUnmount() {
+				self.beforeUnmount.call(this);
+			},
+		};
+	}
 
-    // 自动扫描本类中所有方法，排除 vue 固有方法后，作为 methods，其中方法中的 this 仍为 vue 实例 （by ChatGPT）
-    methods() {
-        const out = {};
-        const visited = new Set();
-        const reserved = new Set([
-            'constructor', 'data', 'methods', 'watch', 'components', 'template',
-            'created', 'mounted', 'updated', 'beforeMount', 'beforeUpdate',
-            , 'beforeUnmount', 'unmounted', 'toVueComponent', 'unmount'
-        ]);
+	// 自动扫描本类中所有方法，排除 vue 固有方法后，作为 methods，其中方法中的 this 仍为 vue 实例 （by ChatGPT）
+	methods() {
+		const out = {};
+		const visited = new Set();
+		const reserved = new Set([
+			'constructor', 'data', 'methods', 'watch', 'components', 'template',
+			'created', 'mounted', 'updated', 'beforeMount', 'beforeUpdate',
+			, 'beforeUnmount', 'unmounted', 'toVueComponent', 'unmount'
+		]);
 
-        let proto = Object.getPrototypeOf(this);
-        while (proto && proto !== Object.prototype) {
-            const names = Object.getOwnPropertyNames(proto);
-            for (const name of names) {
-                if (visited.has(name)) continue; // 防止子类覆盖父类后又重复注册
-                if (reserved.has(name)) continue;
+		let proto = Object.getPrototypeOf(this);
+		while (proto && proto !== Object.prototype) {
+			const names = Object.getOwnPropertyNames(proto);
+			for (const name of names) {
+				if (visited.has(name)) continue; // 防止子类覆盖父类后又重复注册
+				if (reserved.has(name)) continue;
 
-                const descriptor = Object.getOwnPropertyDescriptor(proto, name);
-                if (typeof descriptor.value === 'function') {
-                    visited.add(name);
-                    out[name] = function (...args) {
-                        return descriptor.value.apply(this, args); // `this` 是 Vue 实例
-                    };
-                }
-            }
+				const descriptor = Object.getOwnPropertyDescriptor(proto, name);
+				if (typeof descriptor.value === 'function') {
+					visited.add(name);
+					out[name] = function (...args) {
+						return descriptor.value.apply(this, args); // `this` 是 Vue 实例
+					};
+				}
+			}
 
-            proto = Object.getPrototypeOf(proto); // 往上递归
-        }
+			proto = Object.getPrototypeOf(proto); // 往上递归
+		}
 
-        return out;
-    }
+		return out;
+	}
 
-    // 定义 vue 数据
-    data() {
-        return {}
-    }
+	// 定义 vue 数据
+	data() {
+		return {}
+	}
 
-    // 生命周期钩子
-    created() { }
+	// 生命周期钩子
+	created() { }
 
-    mounted() { }
+	mounted() { }
 
-    beforeUnmount() { }
+	beforeUnmount() { }
 
-    updated() { }
+	updated() { }
 
-    // 注册的子组件
-    components() {
-        return {};
-    }
+	// 注册的子组件
+	components() {
+		return {};
+	}
 
-    // 监听器
-    // watch() {
-    //     return {
-    //         post: {
-    //             handler(newVal) {
-    //                 console.log(newVal.ID);
-    //             },
-    //             deep: true // 启用深度监听
-    //         }
-    //     };
-    // }
-    watch() { }
+	// 监听器
+	// watch() {
+	//     return {
+	//         post: {
+	//             handler(newVal) {
+	//                 console.log(newVal.ID);
+	//             },
+	//             deep: true // 启用深度监听
+	//         }
+	//     };
+	// }
+	watch() { }
 
-    // computed() {
-    //     return {
-    //         fullName() {
-    //             rreturn this.post.post_title;
-    //         },
+	// computed() {
+	//     return {
+	//         fullName() {
+	//             rreturn this.post.post_title;
+	//         },
 
-    //         nameLength() {
-    //             return this.fullName.length;
-    //         }
-    //     };
-    // }
-    computed() { }
+	//         nameLength() {
+	//             return this.fullName.length;
+	//         }
+	//     };
+	// }
+	computed() { }
 }
