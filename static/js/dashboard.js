@@ -219,7 +219,7 @@ class Filter extends VueClass {
 	}
 
 	beforeUnmount() {
-		console.log("触发销毁：vue class");
+		console.log("触发销毁：vue filter 基类");
 		window.removeEventListener("hashchange", this.parseHash);
 	}
 
@@ -227,12 +227,6 @@ class Filter extends VueClass {
 		return {
 			param: {
 				handler(newVal, oldVal) {
-					const _module = wnd_get_hash_param('module');
-					// 有 module 且与当前实例不同，说明正在切换 Vue
-					if (_module && _module !== this.current_module) {
-						return;
-					}
-
 					this.query();
 				},
 				deep: true // 启用深度监听
@@ -248,7 +242,14 @@ class Filter extends VueClass {
 	// 原始方法（业务逻辑）这里的 this 为 Vue 实例。将 methods 中的方法抽离出来的原因是，方便子类针对性重写
 	parseHash() {
 		const obj = wnd_get_hash_params();
+
+		// 有 module 且与当前实例不同，说明正在切换 Vue
+		const _module = obj.module || false;
+		if (_module && _module !== this.current_module) {
+			return;
+		}
 		delete obj.module;
+
 		this.param = Object.keys(obj).length ? obj : this.init_param;
 	}
 
