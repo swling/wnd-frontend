@@ -964,9 +964,13 @@ class PostFormComponent extends VueClass {
     // string 组件模板：留空则使用挂载点内部 dom
     template = ``;
 
+    // post form type
+    current_type = '';
+
     constructor(container) {
         super(container); // 格式要求，必须
         this.parent_node = document.querySelector(container).parentNode;
+        this.current_type = wnd_get_hash_param('type');
     }
 
     // 默认数据：包含 post 主题，meta合集。缩略图，文件 ID 和 URL
@@ -981,6 +985,7 @@ class PostFormComponent extends VueClass {
 
             parent_node: this.parent_node,
             action: this.action,
+            current_type: this.current_type,
 
             loading: true,
             submitting: false,
@@ -1069,6 +1074,13 @@ class PostFormComponent extends VueClass {
     async get_data() {
         const props = wnd_get_hash_params();
         delete props.module;
+
+        // 切换 post type 时阻止请求（Vue卸载滞后于 hash 监听触发请求，因此需要拦截）
+        const _type = props.type || false;
+        if (_type && _type !== this.current_type) {
+            console.log("切换 type 阻止请求");
+            return;
+        }
 
         this.loading = true;
         let res = await wnd_query("wnd_get_post_edit", props);
