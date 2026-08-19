@@ -243,9 +243,9 @@ class Filter extends VueClass {
 	parseHash() {
 		const obj = wnd_get_hash_params();
 
-		// 有 module 且与当前实例不同，说明正在切换 Vue
+		// module 与当前实例不同，说明正在切换 Vue（Vue卸载滞后于 hash 监听触发请求，因此需要拦截）
 		const _module = obj.module || false;
-		if (_module && _module !== this.current_module) {
+		if (_module !== this.current_module) {
 			return;
 		}
 		delete obj.module;

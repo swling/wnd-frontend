@@ -1077,7 +1077,7 @@ class PostFormComponent extends VueClass {
 
         // 切换 post type 时阻止请求（Vue卸载滞后于 hash 监听触发请求，因此需要拦截）
         const _type = props.type || false;
-        if (_type && _type !== this.current_type) {
+        if (_type !== this.current_type) {
             console.log("切换 type 阻止请求");
             return;
         }
