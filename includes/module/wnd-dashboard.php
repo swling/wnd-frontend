@@ -45,7 +45,7 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 		return '';
 	}
 
-	private static function get_menus($args) {
+	private static function get_menus(array $args) {
 		$menus = [
 			[
 				'name' => __('概览', 'wnd'),
@@ -92,7 +92,7 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 		return apply_filters('wnd_menus', $menus, $args);
 	}
 
-	private static function get_admin_menus($args) {
+	private static function get_admin_menus(array $args) {
 		$menus = [
 			[
 				'name' => __('概览', 'wnd'),
@@ -154,7 +154,5 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 		];
 
 		return apply_filters('wnd_admin_menus', $menus, $args);
-
-		return $menus;
 	}
 }
