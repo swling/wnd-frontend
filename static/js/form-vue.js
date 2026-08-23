@@ -1072,7 +1072,8 @@ class PostFormComponent extends VueClass {
 
 	// 原始方法（业务逻辑）这里的 this 为 Vue 实例。将 methods 中的方法抽离出来的原因是，方便子类针对性重写
 	async get_data() {
-		const props = wnd_get_hash_params();
+		let props = wnd_get_hash_params();
+		props = { ...module_data, ...props };
 		delete props.module;
 
 		// 切换 post type 时阻止请求（Vue卸载滞后于 hash 监听触发请求，因此需要拦截）

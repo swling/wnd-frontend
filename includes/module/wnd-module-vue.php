@@ -23,11 +23,13 @@ abstract class Wnd_Module_Vue extends Wnd_Module {
 
 	// 读取 Vue 文件
 	final protected static function build(array $args = []): string {
+		// ⚠️：module_data 用于当前 Vue module 的初始化数据，同一页面调用多个 Vue 时，将被后者覆盖
 		$data         = static::parse_data($args);
 		$data['lang'] = get_locale();
-		$html         = '<script>var module_data = ' . json_encode($data) . '</script>';
+		$json         = wp_json_encode($data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+		$html         = '<script>var module_data = ' . $json . ';</script>';
 
-		$file_path = static::get_file_path();
+		$file_path = static::get_file_path($args);
 
 		// 主题目录下的文件优先级高于插件目录下的文件
 		$file = get_template_directory() . $file_path;
