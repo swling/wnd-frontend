@@ -88,11 +88,14 @@
 					</span>
 				</div>
 				<div class="tags">
-					<span class="tag is-info is-light is-clickable mr-1" @click="ajax_modal('post/wnd_post_status_form', { post_id: item.ID })">
-						<i class="fas fa-cog"></i>
+					<span class="tag is-link is-light is-clickable mr-1" @click="ajax_modal('post/wnd_post_form_vue', { post_id: item.ID })">
+						<i class="fa-solid fa-pen-to-square"></i>Edit
 					</span>
-					<a class="tag is-light is-small mr-1" @click="ajax_modal('post/wnd_post_detail', { post_id: item.ID })">
-						<i class="fas fa-info-circle"></i>
+					<span class="tag is-link is-light is-clickable mr-1" @click="ajax_modal('post/wnd_post_status_form', { post_id: item.ID })">
+						<i class="fas fa-cog mr-1"></i>Status
+					</span>
+					<a class="tag is-link is-light is-small mr-1" @click="ajax_modal('post/wnd_post_detail', { post_id: item.ID })">
+						<i class="fas fa-info-circle mr-1"></i>Info
 					</a>
 				</div>
 			</div>
