@@ -88,7 +88,7 @@ class Wnd_Filter extends Wnd_Filter_Abstract {
 		}
 
 		// 输出容器
-		$tabs = '<div class="columns is-marginless is-vcentered ' . $key . '">';
+		$tabs = '<div class="columns is-marginless is-mobile is-vcentered ' . $key . '">';
 		$tabs .= '<div class="column is-narrow">' . $label . '</div>';
 		$tabs .= '<div class="tabs column">';
 		$tabs .= '<ul class="tab">';
