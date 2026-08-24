@@ -115,7 +115,7 @@ function wnd_enqueue_scripts() {
 	$static_path = WND_URL . 'static/';
 
 	wp_enqueue_style('bulma', $static_path . 'css/bulma.min.css', [], WND_VER);
-	wp_enqueue_style('font-awesome', $static_path . 'fontawesome-7.3.1/css/all.min.css');
+	wp_enqueue_style('font-awesome', $static_path . 'fontawesome/7.3.1/css/all.min.css');
 	wp_enqueue_script('axios', $static_path . 'js/lib/axios.min.js', [], WND_VER, ['strategy' => 'defer']);
 	wp_enqueue_script('vue', $static_path . 'js/lib/vue.global.prod.js', ['axios'], WND_VER, ['strategy' => 'defer']);
 	wp_enqueue_script('wnd-main', $static_path . 'js/main.min.js', ['vue', 'axios'], WND_VER, ['strategy' => 'defer']);
