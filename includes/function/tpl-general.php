@@ -276,3 +276,14 @@ function wnd_embed_link($container, $text, $module, $param = [], $add_class = ''
 
 	return $html;
 }
+
+/**
+ * 在 DOM 加载完成后执行指定的 JavaScript。
+ *
+ * 适用于依赖 defer 外部脚本或页面 DOM 的内嵌脚本。
+ *
+ * @param string $script JavaScript 代码。
+ */
+function wnd_dom_ready(string $script): string {
+	return '<script>document.addEventListener("DOMContentLoaded", () => {' . $script . '});</script>';
+}
