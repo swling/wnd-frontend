@@ -124,7 +124,6 @@
 					"Container": "#lists"
 				});
 
-				wnd_loading("#lists", true);
 				this.data = res.data;
 			}
 			async get_user_info(user_id) {

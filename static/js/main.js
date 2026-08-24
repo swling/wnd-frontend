@@ -41,11 +41,50 @@ if (!wnd.disable_rest_nonce || wnd.is_admin) {
  *   因此应该在对响应数据进行渲染的具体方法中，设置清除“loading”效果
  */
 axios.interceptors.request.use(function (config) {
-	if (config.headers.Container || false) {
+	if (config.headers?.Container) {
 		wnd_loading(config.headers.Container);
 	}
 	return config;
 });
+
+/**
+ * @since 2025.03.10  从后端请求 API 数据
+ * @param 	api      	srting      api URL
+ * @param 	param 		object 		请求参数
+ * @param 	method 		string 		请求方法
+ * @param 	headers 	object      headers
+ **/
+async function wnd_request_api(api, param = {}, method = 'GET', headers = {}) {
+	let request = {};
+	try {
+		let config = {
+			method: method,
+			url: api,
+			headers: headers,
+		};
+		if ('POST' == method) {
+			config.data = param;
+		} else {
+			config.params = param;
+		}
+
+		request = await axios(config).then(function (response) {
+			if ('undefined' == typeof response.data.status) {
+				return { "status": 0, "msg": "unknown error" };
+			}
+
+			return response.data;
+		});
+	} catch (error) {
+		request = { "status": 0, "msg": error.message };
+	} finally {
+		if (headers.Container) {
+			wnd_loading(headers.Container, true); // 隐藏加载动画
+		}
+	}
+
+	return request;
+}
 
 function wnd_get_hash_param(key) {
 	const hash = window.location.hash.slice(1);
@@ -454,41 +493,6 @@ async function wnd_ajax_action(action, param = {}, headers = {}) {
 	let api = wnd_action_api + '/' + action;
 	let response = await wnd_request_api(api, param, 'POST', headers);
 	return response;
-}
-
-/**
- * @since 2025.03.10  从后端请求 API 数据
- * @param 	api      	srting      api URL
- * @param 	param 		object 		请求参数
- * @param 	method 		string 		请求方法
- * @param 	headers 	object      headers
- **/
-async function wnd_request_api(api, param = {}, method = 'GET', headers = {}) {
-	let request = {};
-	try {
-		let config = {
-			method: method,
-			url: api,
-			headers: headers,
-		};
-		if ('POST' == method) {
-			config.data = param;
-		} else {
-			config.params = param;
-		}
-
-		request = await axios(config).then(function (response) {
-			if ('undefined' == typeof response.data.status) {
-				return { "status": 0, "msg": "unknown error" };
-			}
-
-			return response.data;
-		});
-	} catch (error) {
-		request = { "status": 0, "msg": error.message };
-	}
-
-	return request;
 }
 
 //弹出bulma对话框

@@ -130,7 +130,6 @@
 				let res = await wnd_query("wnd_posts", this.param, {
 					Container: "#posts-list"
 				});
-				wnd_loading("#posts-list", true);
 
 				this.data = res.data || { results: [], number: 0 };
 			}

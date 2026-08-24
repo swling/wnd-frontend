@@ -172,7 +172,6 @@
 					"Container": "#lists"
 				});
 
-				wnd_loading("#lists", true);
 				this.data = res.data;
 			}
 			async confirmReceipt(item, index) {
