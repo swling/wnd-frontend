@@ -241,6 +241,21 @@ class Wnd_language {
 		return $html;
 	}
 
+	public static function language_links(): string {
+		$langs       = ['zh_CN' => '简体', 'zh_TW' => '繁體', 'en' => 'EN'];
+		$user_locale = static::$user_locale;
+		if ('en_US' == $user_locale) {
+			$user_locale = 'en';
+		}
+		$html = '';
+		foreach ($langs as $key => $lang) {
+			$link  = add_query_arg('lang', $key);
+			$class = 'mx-1' . ($key == $user_locale ? ' is-active has-text-weight-bold' : '');
+			$html .= '<a rel="nofollow" href="' . esc_url($link) . '" class="' . $class . '">' . esc_html($lang) . '</a>';
+		}
+		return $html;
+	}
+
 	// 翻译文件转换 2024.04.03
 	public static function transform_mo_to_php() {
 		$mofile   = WND_PATH . '/languages/en_US.mo';
