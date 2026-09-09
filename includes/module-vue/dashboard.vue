@@ -123,19 +123,19 @@
 	const dashboard = Vue.createApp({
 		data() {
 			return {
-				user_id: wnd_dashboard.user_id,
-				query_module: wnd_dashboard.module, // $_GET 请求 module
+				user_id: dashboard_data.user_id,
+				query_module: dashboard_data.module, // $_GET 请求 module
 				// title: 'Home',
 				// hash: '',
-				default_module: wnd_dashboard.default,
+				default_module: dashboard_data.default,
 
 				// ChatGPT
 				currentModule: '',
 				windowWidth: window.innerWidth,
 				sidebarOpen: window.innerWidth <= 1024 ? false : true,
 				currentHash: location.hash.slice(1),
-				menu: wnd_dashboard.menus,
-				admin_menu: wnd_dashboard.admin_menus,
+				menu: dashboard_data.menus,
+				admin_menu: dashboard_data.admin_menus,
 			};
 		},
 		methods: {
@@ -223,7 +223,7 @@
 		mounted() {
 			// url GET 参数优先
 			if (this.query_module) {
-				wnd_ajax_embed('#ajax-module', this.query_module, wnd_dashboard.query);
+				wnd_ajax_embed('#ajax-module', this.query_module, dashboard_data.query);
 				return;
 			}
 
