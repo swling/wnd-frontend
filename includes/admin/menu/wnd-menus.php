@@ -88,7 +88,8 @@ class Wnd_Menus {
 	public function build_page() {
 		$form = new Wnd_Form_Option($this->option_name, $this->append);
 		echo '<script>var form_json = ' . $this->build_form_json($form) . ';</script>';
-		echo '<div class="wrap"><div id="form-container" class="box content mt-3"><script>wnd_render_form("#form-container", form_json)</script></div></div>';
+		echo '<div class="wrap"><div id="form-container" class="box content mt-3"></div></div>';
+		echo '<script>document.addEventListener("DOMContentLoaded", () => {wnd_render_form("#form-container", form_json)});</script>';
 	}
 
 	/**
