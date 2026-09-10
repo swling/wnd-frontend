@@ -182,7 +182,7 @@ class Filter extends VueClass {
 	init_param = {};
 
 	// 当前 Vue 实例对应的 module，仅用于判断模块是否切换
-	current_module = '';
+	current_module = null;
 
 	constructor(container) {
 		super(container);
@@ -244,7 +244,7 @@ class Filter extends VueClass {
 		const obj = wnd_get_hash_params();
 
 		// module 与当前实例不同，说明正在切换 Vue（Vue卸载滞后于 hash 监听触发请求，因此需要拦截）
-		const _module = obj.module || false;
+		const _module = obj.module || null;
 		if (_module !== this.current_module) {
 			return;
 		}
