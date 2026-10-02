@@ -227,7 +227,7 @@ add_filter( 'wp_update_term_parent', 'wp_check_term_hierarchy_for_loops', 10, 3 
 // add_filter( 'comment_text', 'make_clickable', 9 );
 // add_filter( 'comment_text', 'force_balance_tags', 25 );
 // add_filter( 'comment_text', 'convert_smilies', 20 );
-// add_filter( 'comment_text', 'wpautop', 30 );
+add_filter( 'comment_text', 'wpautop', 30 );
 
 // add_filter( 'comment_excerpt', 'convert_chars' );
 
@@ -254,21 +254,21 @@ add_filter( 'wp_update_term_parent', 'wp_check_term_hierarchy_for_loops', 10, 3 
 // add_filter( 'wp_get_custom_css', 'wp_replace_insecure_home_url' );
 
 // RSS filters.
-add_filter( 'the_title_rss', 'strip_tags' );
-add_filter( 'the_title_rss', 'ent2ncr', 8 );
-add_filter( 'the_title_rss', 'esc_html' );
-add_filter( 'the_content_rss', 'ent2ncr', 8 );
+// add_filter( 'the_title_rss', 'strip_tags' );
+// add_filter( 'the_title_rss', 'ent2ncr', 8 );
+// add_filter( 'the_title_rss', 'esc_html' );
+// add_filter( 'the_content_rss', 'ent2ncr', 8 );
 // add_filter( 'the_content_feed', 'wp_staticize_emoji' );
 // add_filter( 'the_content_feed', '_oembed_filter_feed_content' );
-add_filter( 'the_excerpt_rss', 'convert_chars' );
-add_filter( 'the_excerpt_rss', 'ent2ncr', 8 );
-add_filter( 'comment_author_rss', 'ent2ncr', 8 );
-add_filter( 'comment_text_rss', 'ent2ncr', 8 );
-add_filter( 'comment_text_rss', 'esc_html' );
+// add_filter( 'the_excerpt_rss', 'convert_chars' );
+// add_filter( 'the_excerpt_rss', 'ent2ncr', 8 );
+// add_filter( 'comment_author_rss', 'ent2ncr', 8 );
+// add_filter( 'comment_text_rss', 'ent2ncr', 8 );
+// add_filter( 'comment_text_rss', 'esc_html' );
 // add_filter( 'comment_text_rss', 'wp_staticize_emoji' );
-add_filter( 'bloginfo_rss', 'ent2ncr', 8 );
-add_filter( 'the_author', 'ent2ncr', 8 );
-add_filter( 'the_guid', 'esc_url' );
+// add_filter( 'bloginfo_rss', 'ent2ncr', 8 );
+// add_filter( 'the_author', 'ent2ncr', 8 );
+// add_filter( 'the_guid', 'esc_url' );
 
 // Email filters.
 // add_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
