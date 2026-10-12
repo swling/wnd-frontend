@@ -117,20 +117,20 @@ abstract class Wnd_Defender {
 	/**
 	 * 单例模式
 	 */
-	public static function get_instance(int $period, int $max_connections, int $blocked_time) {
+	public static function get_instance(int $period, int $max_connections, int $blocked_time, bool $use_cloudflare = false): Wnd_Defender {
 		if (!(static::$instance instanceof static )) {
 			if (class_exists('Memcached')) {
 				if (!class_exists('\Wnd\Utility\Wnd_Defender_Memcached')) {
 					require dirname(__FILE__) . '/wnd-defender-memcached.php';
 				}
 
-				static::$instance = new Wnd_Defender_Memcached($period, $max_connections, $blocked_time);
+				static::$instance = new Wnd_Defender_Memcached($period, $max_connections, $blocked_time, $use_cloudflare);
 			} elseif (class_exists('Redis')) {
 				if (!class_exists('\Wnd\Utility\Wnd_Defender_Redis')) {
 					require dirname(__FILE__) . '/wnd-defender-redis.php';
 				}
 
-				static::$instance = new Wnd_Defender_Redis($period, $max_connections, $blocked_time);
+				static::$instance = new Wnd_Defender_Redis($period, $max_connections, $blocked_time, $use_cloudflare);
 			}
 		}
 
@@ -143,7 +143,7 @@ abstract class Wnd_Defender {
 	 * @param int $max_connections 	拦截时间范围内，单ip允许的最大连接数
 	 * @param int $blocked_time    	符合拦截条件的ip锁定时间
 	 */
-	final protected function __construct(int $period, int $max_connections, int $blocked_time) {
+	final protected function __construct(int $period, int $max_connections, int $blocked_time, bool $use_cloudflare = false) {
 		try {
 			$this->cache_init();
 		} catch (Exception $e) {
@@ -156,7 +156,7 @@ abstract class Wnd_Defender {
 		$this->blocked_time    = $blocked_time;
 
 		// IP 属性
-		$this->ip            = static::get_real_ip();
+		$this->ip            = static::get_real_ip($use_cloudflare);
 		$this->ip_base       = preg_replace('/(\d+)\.(\d+)\.(\d+)\.(\d+)/is', '$1.$2.$3', $this->ip);
 		$this->key           = $this->build_key($this->ip);
 		$this->base_key      = $this->build_key($this->ip_base);
@@ -193,15 +193,11 @@ abstract class Wnd_Defender {
 
 	/**
 	 * 获取客户端 ip 地址
-	 *
+	 * - 传参处理 Cloudflare 套用的情况
 	 */
-	protected static function get_real_ip(): string {
-		$ip = '';
-		if (isset($_SERVER)) {
-			$ip = $_SERVER['REMOTE_ADDR'];
-		} else {
-			$ip = getenv('REMOTE_ADDR');
-		}
+	protected static function get_real_ip(bool $use_cloudflare = false): string {
+		$ip = $use_cloudflare ? ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? '') : '';
+		$ip = $ip ?: ($_SERVER['REMOTE_ADDR'] ?? getenv('REMOTE_ADDR'));
 
 		return $ip ?: '';
 	}
