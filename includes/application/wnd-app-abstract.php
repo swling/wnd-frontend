@@ -9,12 +9,6 @@ use Wnd\Model\Wnd_SKU;
  * 主题 Web Application 接口
  * @since 0.1.0
  *
- * 抽象基类设计为单例模式的注意事项
- *  - 需要注意在子类中单独定义 protected static $instance;
- *    以避免子类继承基类的 $instance 静态属性，导致所有子类共用基类静态属性，造成所有实例为第一个实例的问题
- *
- * 参考文档：
- * @link https://www.cnblogs.com/Nietzsche--Nc/p/6635419.html
  */
 abstract class Wnd_App_abstract {
 
@@ -25,21 +19,69 @@ abstract class Wnd_App_abstract {
 	public $action = '';
 
 	// ################### 单例模式代码开始
-	private static Wnd_App_abstract | null $instance = null;
+	/**
+	 * 单例实例存储。
+	 * @link https://chatgpt.com/c/53cbfe7a-6c4c-8324-83b0-c730bc670c12
+	 *
+	 * 使用类名作为数组键，统一存储基类及所有子类的实例。
+	 * 每个类对应一个独立的实例，同一个类重复调用 get_instance() 时，
+	 * 直接返回已存储的实例，不会重复实例化。
+	 *
+	 * 使用基类的 private static 属性统一管理，子类无需单独定义 $instance，
+	 * 也不会因为继承、重新声明静态属性而影响基类的实例管理。
+	 *
+	 * 历史子类中即使仍然定义了自己的 $instance，也不会影响这里的实例存储，
+	 * 因为两者是不同的属性，get_instance() 始终使用本数组。
+	 */
+	private static array $instances = [];
 
+	/**
+	 * 构造方法。
+	 *
+	 * 使用 final 禁止子类覆盖，确保所有子类实例都通过统一的初始化流程创建。
+	 * 使用 protected 限制外部直接实例化，但允许基类内部通过 new static() 创建实例。
+	 *
+	 * 创建实例后自动调用 init()，子类可以通过重写 init() 实现自身的初始化逻辑。
+	 */
 	final protected function __construct() {
 		$this->init();
 	}
 
+	/**
+	 * 初始化方法。
+	 *
+	 * 基类默认不执行任何操作。
+	 * 子类可以重写此方法，实现各自的初始化逻辑，无需重写构造方法。
+	 */
 	protected function init() {}
 
-	public static function get_instance() {
-		if (static::$instance === null) {
-			static::$instance = new static();
+	/**
+	 * 获取当前类的单例实例。
+	 *
+	 * 使用 static::class 获取实际调用方法的类名，而不是固定使用基类名称。
+	 * 使用 static::$instances 对应的存储方式并不合适，因为继承的静态属性可能共享存储，
+	 * 因此这里通过 self::$instances 统一访问基类维护的实例数组。
+	 *
+	 * 首次调用时，通过 new static() 实例化实际调用的类，并按类名保存实例；
+	 * 再次调用时，直接返回已有实例。
+	 *
+	 * 因此，基类及不同子类分别拥有独立的单例实例，子类无需定义自己的 $instance。
+	 *
+	 * 返回类型 static 表示返回当前实际调用类的实例（PHP 8.0+）。
+	 */
+	public static function get_instance(): static {
+		$class = static::class;
+		if (!isset(self::$instances[$class])) {
+			self::$instances[$class] = new static();
 		}
-		return static::$instance;
+		return self::$instances[$class];
 	}
 
+	/**
+	 * 禁止克隆单例对象。
+	 *
+	 * 使用 final 防止子类覆盖此方法，避免通过 clone 创建额外实例。
+	 */
 	final protected function __clone() {}
 	// ################### 单例模式代码结束
 
