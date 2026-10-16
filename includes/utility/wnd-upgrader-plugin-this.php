@@ -2,6 +2,8 @@
 
 namespace Wnd\Utility;
 
+use Exception;
+
 /**
  * 自定义插件升级
  * @since 2020.07.06
@@ -19,16 +21,19 @@ class Wnd_Upgrader_Plugin_This extends Wnd_Upgrader_Plugin {
 	 * 	$this->upgrade_info['new_version'];
 	 */
 	protected function get_remote_info() {
-		$url      = 'https://wndwp.com/wp-json/wndt/project/157';
-		$response = wnd_remote_get($url);
-		$response = json_decode($response['body'], true);
+		try {
+			$url      = 'https://wndwp.com/wp-json/wndt/project/157';
+			$response = wnd_remote_get($url);
+			$response = json_decode($response['body'], true);
+			if (!$response) {
+				return;
+			}
 
-		if (!$response) {
-			return;
-		}
-
-		if ($response['status'] > 0) {
-			$this->upgrade_info = array_merge($this->upgrade_info, $response['data']);
+			if ($response['status'] > 0) {
+				$this->upgrade_info = array_merge($this->upgrade_info, $response['data']);
+			}
+		} catch (Exception $e) {
+			$this->upgrade_info['error'] = $e->getMessage();
 		}
 	}
 }
