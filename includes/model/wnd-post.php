@@ -257,37 +257,17 @@ abstract class Wnd_Post {
 	 * @return object|null
 	 */
 	public static function get_post_by_slug($post_name, $post_type = 'post', $post_status = 'publish') {
-		global $wpdb;
-		$post_name = urlencode($post_name);
+		$posts = get_posts([
+			'name'                   => $post_name,
+			'post_type'              => $post_type,
+			'post_status'            => $post_status,
+			'posts_per_page'         => 1,
+			'suppress_filters'       => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		]);
 
-		if (is_array($post_status)) {
-			return $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND post_status in ('" . implode("','", $post_status) . "') LIMIT 1",
-					$post_name,
-					$post_type
-				)
-			);
-		}
-
-		if ('any' == $post_status) {
-			return $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s LIMIT 1",
-					$post_name,
-					$post_type
-				)
-			);
-		}
-
-		return $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM $wpdb->posts WHERE post_name = %s AND post_type = %s AND post_status = %s LIMIT 1",
-				$post_name,
-				$post_type,
-				$post_status
-			)
-		);
+		return $posts[0] ?? null;
 	}
 
 	/**
