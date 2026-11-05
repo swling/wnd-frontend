@@ -5,12 +5,12 @@
  * Description: Wnd-Frontend 是一套基于 ajax 交互逻辑的 WordPress 前端基础框架。商业用途需购买授权。<a href="https://github.com/swling/wnd-frontend/releases">更新日志</a>
  * Version: 0.9.96.12
  * Author: swling
- * Author URI: https://wndwp.com
+ * Author URI: https://github.com/swling/
  * Requires PHP: 8.0
  *
  * ## 万能的WordPress前端开发基础框架
  * - 第一版开发日期：2018.04 ~ 2018.08
- * - 官方网站： https://wndwp.com
+ * - 官方网站： https://github.com/swling/
  *
  * ## 二开或其他咨询
  * - QQ：245484493

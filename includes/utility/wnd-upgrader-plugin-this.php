@@ -16,22 +16,23 @@ class Wnd_Upgrader_Plugin_This extends Wnd_Upgrader_Plugin {
 	/**
 	 * 获取更新包详细信息，至少需要完成如下下信息构造：
 	 *
-	 * 	$this->upgrade_info['url'];
-	 * 	$this->upgrade_info['package'];
-	 * 	$this->upgrade_info['new_version'];
+	 * $this->upgrade_info['url'];
+	 * $this->upgrade_info['package'];
+	 * $this->upgrade_info['new_version'];
 	 */
 	protected function get_remote_info() {
 		try {
-			$url      = 'https://wndwp.com/wp-json/wndt/project/157';
+			$url      = 'https://api.github.com/repos/swling/wnd-frontend/releases/latest';
 			$response = wnd_remote_get($url);
 			$response = json_decode($response['body'], true);
-			if (!$response) {
+
+			if (!$response || empty($response['tag_name'])) {
 				return;
 			}
 
-			if ($response['status'] > 0) {
-				$this->upgrade_info = array_merge($this->upgrade_info, $response['data']);
-			}
+			$this->upgrade_info['url']         = $response['html_url'];
+			$this->upgrade_info['package']     = $response['zipball_url'];
+			$this->upgrade_info['new_version'] = $response['tag_name'];
 		} catch (Exception $e) {
 			$this->upgrade_info['error'] = $e->getMessage();
 		}

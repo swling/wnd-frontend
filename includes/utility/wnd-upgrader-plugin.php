@@ -32,7 +32,7 @@ abstract class Wnd_Upgrader_Plugin extends Wnd_Upgrader {
 	protected $update_transient_name = 'pre_set_site_transient_update_plugins';
 
 	// 插件的入口文件，实际插件项目中子类必须定义此属性
-	protected $plugin_file_or_theme_slug;
+	protected $plugin_file_or_theme_slug = '';
 
 	/**
 	 * 获取本地主题或插件的基本信息，需要完成对如下信息的构造
