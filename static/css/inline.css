@@ -1,0 +1,42 @@
+/* Vue 挂载节点：渲染前的遮罩效果 */
+[v-cloak] {
+  visibility: hidden !important;
+  position: relative;
+  min-width: 100px;
+  min-height: 100px;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+[v-cloak]::before {
+  content: "";
+  visibility: visible;
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, .35);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+[v-cloak]::after {
+  content: "";
+  visibility: visible;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 11;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  border: 4px solid rgba(128, 128, 128, .3);
+  border-top-color: #EEE;
+  border-radius: 50%;
+  animation: cloak-loading .8s linear infinite;
+}
+
+@keyframes cloak-loading {
+  to {
+    transform: rotate(360deg);
+  }
+}

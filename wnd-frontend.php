@@ -111,8 +111,9 @@ function wnd_enqueue_scripts() {
 	];
 	echo '<script>let wnd = ' . json_encode($wnd_data, JSON_UNESCAPED_UNICODE) . ';</script>' . PHP_EOL;
 
-	// Vue 渲染前隐藏带有 v-cloak 属性的元素（visibility: hidden 闪烁更明显）
-	echo '<style>[v-cloak] {display: none !important;}</style>' . PHP_EOL;
+	// 插件补充的少量内联 css
+	$css_content = file_get_contents(WND_PATH . '/static/css/inline.min.css');
+	echo "<style id=\"custom-inline-file-css\">$css_content</style>\n";
 
 	// 公共脚本及样式库
 	$static_path = WND_URL . 'static/';
