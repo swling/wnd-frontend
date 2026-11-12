@@ -1,4 +1,4 @@
-<div id="vue-attachments-app">
+<div id="vue-attachments-app" v-cloak>
 	<div class="wnd-filter-tabs mb-3 is-hidden">
 		<div v-for="tab in tabs" class="columns is-marginless is-vcentered is-mobile">
 			<div class="column is-narrow">{{tab.label}}</div>

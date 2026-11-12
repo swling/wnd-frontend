@@ -1,4 +1,4 @@
-<section id="payment-app" class="container">
+<section id="payment-app" class="container" v-cloak>
 	<div v-show="paymentInterface" id="payment-interface" class="has-text-centered"></div>
 	<div v-show="!paymentInterface">
 		<div class="notification is-danger is-light" v-show="msg" v-html="msg"></div>

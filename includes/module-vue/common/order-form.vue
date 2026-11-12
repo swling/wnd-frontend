@@ -1,4 +1,4 @@
-<div id="product-order-app" class="box">
+<div id="product-order-app" class="box" v-cloak>
 	<!-- 筛选属性 -->
 	<div class="field is-horizontal" v-for="(values, key) in options" :key="key">
 		<div class="field-label is-normal">

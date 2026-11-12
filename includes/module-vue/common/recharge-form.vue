@@ -1,4 +1,4 @@
-<section id="recharge-app" class="section container">
+<section id="recharge-app" class="section container" v-cloak>
 	<div v-show="paymentInterface" id="payment-interface" class="has-text-centered"></div>
 
 	<div v-show="!paymentInterface">

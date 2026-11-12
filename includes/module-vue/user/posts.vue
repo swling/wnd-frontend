@@ -19,7 +19,7 @@
 		color: #48c78e;
 	}
 </style>
-<div id="vue-posts-app">
+<div id="vue-posts-app" v-cloak>
 	<div class="wnd-filter-tabs mb-3">
 		<!-- 搜索 -->
 		<div class="field has-addons has-addons-right mb-2">

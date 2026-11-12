@@ -1,5 +1,4 @@
-<!-- ********************************* 组件结束 ********************************* -->
-<div id="app-post-form">
+<div id="app-post-form" v-cloak>
 	<form ref="formRef" @submit.prevent="handle_submit" v-if="res.status">
 		<div class="field is-horizontal">
 			<div class="field-label is-normal">

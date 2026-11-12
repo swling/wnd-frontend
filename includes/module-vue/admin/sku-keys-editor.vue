@@ -1,4 +1,4 @@
-<div id="sku-keys-app">
+<div id="sku-keys-app" v-cloak>
 	<p class="has-text-danger mb-3">
 		<i class="fas fa-info-circle"></i>【价格】【库存】为固定属性无需单独添加
 	</p>

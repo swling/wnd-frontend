@@ -29,7 +29,7 @@
 		color: #48c78e;
 	}
 </style>
-<div id="vue-orders-app">
+<div id="vue-orders-app" v-cloak>
 	<div v-if="panel" v-html="panel"></div>
 	<div class="wnd-filter-tabs mb-3">
 		<div v-for="tab in tabs" class="columns is-marginless is-vcentered is-mobile">

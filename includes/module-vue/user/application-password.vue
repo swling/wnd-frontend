@@ -1,4 +1,4 @@
-<div id="application-password">
+<div id="application-password" v-cloak>
 	<div class="field has-addons">
 		<div class="control is-expanded">
 			<input class="input" type="text" placeholder="秘钥名称" v-model="name">

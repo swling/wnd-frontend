@@ -1,4 +1,4 @@
-<div id="vue-mail-box-app">
+<div id="vue-mail-box-app" v-cloak>
 	<div class="wnd-filter-tabs mb-3">
 		<div v-for="tab in tabs" class="columns is-vcentered is-mobile">
 			<div class="column tabs">

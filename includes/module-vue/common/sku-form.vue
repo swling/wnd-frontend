@@ -1,4 +1,4 @@
-<section id="sku-app">
+<section id="sku-app" v-cloak>
 	<div class="container">
 		<div class="box">
 			<label class="radio" v-for="(option, index) in options" :key="index">

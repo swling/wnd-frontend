@@ -55,7 +55,7 @@
 		}
 	}
 </style>
-<div id="dashboard-app" class="dashboard columns" style="flex: 1;">
+<div id="dashboard-app" class="dashboard columns" style="flex: 1;" v-cloak>
 	<div v-if="isMobile && sidebarOpen" class="side-backdrop" @click="sidebarOpen = false"></div>
 	<!-- Sidebar -->
 	<div class="side-menu column is-narrow" v-if="hasMenuForModule">

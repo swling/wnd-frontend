@@ -19,7 +19,7 @@
 		color: #48c78e;
 	}
 </style>
-<div id="vue-users-app">
+<div id="vue-users-app" v-cloak>
 	<div class="wnd-filter-tabs mb-3">
 		<div class="field has-addons has-addons-right mb-0">
 			<div class="control is-expanded">

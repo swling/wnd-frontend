@@ -1,4 +1,4 @@
-<div id="vue-finance-stats">
+<div id="vue-finance-stats" v-cloak>
 	<div class="tabs">
 		<ul>
 			<li :class="is_active('type','recharge')"><a @click="update_filter('type','recharge')">充值统计</a></li>

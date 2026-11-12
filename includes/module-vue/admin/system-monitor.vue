@@ -3,7 +3,7 @@
 		max-width: 300px;
 	}
 </style>
-<div id="sys-monitor-app" class="container">
+<div id="sys-monitor-app" class="container" v-cloak>
 	<div class="buttons is-right">
 		<button class="button is-small is-warning" @click="confirmClear('opcache_reset')">
 			<i class="fas fa-broom"></i>&nbsp;opcache_reset

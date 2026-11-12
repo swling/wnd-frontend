@@ -111,9 +111,11 @@ function wnd_enqueue_scripts() {
 	];
 	echo '<script>let wnd = ' . json_encode($wnd_data, JSON_UNESCAPED_UNICODE) . ';</script>' . PHP_EOL;
 
+	// Vue 渲染前隐藏带有 v-cloak 属性的元素（visibility: hidden 会保留元素占位）
+	echo '<style>[v-cloak] {visibility: hidden;}</style>' . PHP_EOL;
+
 	// 公共脚本及样式库
 	$static_path = WND_URL . 'static/';
-
 	wp_enqueue_style('bulma', $static_path . 'css/bulma.min.css', [], WND_VER);
 	wp_enqueue_style('font-awesome', $static_path . 'fontawesome/7.3.1/css/all.min.css');
 	wp_enqueue_script('axios', $static_path . 'js/lib/axios.min.js', [], WND_VER, ['strategy' => 'defer']);
