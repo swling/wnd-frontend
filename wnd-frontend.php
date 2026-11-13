@@ -113,7 +113,7 @@ function wnd_enqueue_scripts() {
 
 	// 插件补充的少量内联 css
 	$css_content = file_get_contents(WND_PATH . '/static/css/inline.min.css');
-	echo "<style id=\"custom-inline-file-css\">$css_content</style>\n";
+	echo "<style id=\"wnd-inline-css\">$css_content</style>\n";
 
 	// 公共脚本及样式库
 	$static_path = WND_URL . 'static/';
