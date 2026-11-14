@@ -1,8 +1,4 @@
 <style>
-	.container {
-		max-width: 98% !important;
-	}
-
 	#ajax-module.single {
 		margin: 0 auto;
 		max-width: 1024px;

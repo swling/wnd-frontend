@@ -31,6 +31,12 @@ class Wnd_Dashboard extends Wnd_Module_Html {
 		];
 		$args = wp_parse_args($args, $defaults);
 
+		// 设置特殊 body class
+		add_filter('body_class', function (array $classes): array {
+			$classes = ['page', 'wnd-dashboard'];
+			return $classes;
+		});
+
 		// 构造页面 HTML
 		wp_enqueue_script('dashboard', WND_URL . 'static/js/dashboard.min.js', ['wnd-main'], WND_VER);
 		wp_enqueue_script('form-vue', WND_URL . 'static/js/form-vue.min.js', ['wnd-main'], WND_VER);
