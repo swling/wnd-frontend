@@ -117,7 +117,7 @@ abstract class Wnd_Defender {
 	/**
 	 * 单例模式
 	 */
-	public static function get_instance(int $period, int $max_connections, int $blocked_time, bool $use_cloudflare = false): Wnd_Defender {
+	public static function get_instance(int $period, int $max_connections, int $blocked_time, bool $use_cloudflare = false): Wnd_Defender | null {
 		if (!(static::$instance instanceof static )) {
 			if (class_exists('Memcached')) {
 				if (!class_exists('\Wnd\Utility\Wnd_Defender_Memcached')) {
